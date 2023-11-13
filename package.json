@@ -84,11 +84,11 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,vue,ts,tsx}": [
+    "!(web-core)*.{js,jsx,vue,ts,tsx}": [
       "prettier --write",
       "npm run lint:fix"
     ],
-    "*.{html,vue,css,sass,less}": [
+    "!(web-core)*.{html,vue,css,sass,less}": [
       "npm run stylelint:fix"
     ]
   },

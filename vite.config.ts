@@ -3,12 +3,13 @@ import path from 'node:path';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { glob } from 'glob';
-import AutoImport from 'unplugin-auto-import/vite';
-import { TDesignResolver } from 'unplugin-vue-components/resolvers';
-import Components from 'unplugin-vue-components/vite';
+// import AutoImport from 'unplugin-auto-import/vite';
+// import { TDesignResolver } from 'unplugin-vue-components/resolvers';
+// import Components from 'unplugin-vue-components/vite';
 import { ConfigEnv, loadEnv, UserConfig } from 'vite';
 import { viteMockServe } from 'vite-plugin-mock';
 import svgLoader from 'vite-svg-loader';
+
 import vitePluginHistory from './plugins/vite-plugin-history';
 
 const CWD = process.cwd();
@@ -70,26 +71,26 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         enable: true,
       }),
       svgLoader(),
-      AutoImport({
-        resolvers: [
-          // TDesignResolver({
-          //   library: 'vue-next',
-          // }),
-          // TDesignResolver({
-          //   library: 'mobile-vue',
-          // }),
-        ],
-      }),
-      Components({
-        resolvers: [
-          // TDesignResolver({
-          //   library: 'vue-next',
-          // }),
-          // TDesignResolver({
-          //   library: 'mobile-vue',
-          // }),
-        ],
-      }),
+      // AutoImport({
+      //   resolvers: [
+      //     TDesignResolver({
+      //       library: 'vue-next',
+      //     }),
+      //     TDesignResolver({
+      //       library: 'mobile-vue',
+      //     }),
+      //   ],
+      // }),
+      // Components({
+      //   resolvers: [
+      //     TDesignResolver({
+      //       library: 'vue-next',
+      //     }),
+      //     TDesignResolver({
+      //       library: 'mobile-vue',
+      //     }),
+      //   ],
+      // }),
       vitePluginHistory(),
     ],
 

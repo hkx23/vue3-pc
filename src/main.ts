@@ -7,11 +7,9 @@ import i18n from './locales';
 import router from './router';
 import { store } from './store';
 
-import './assets/libs/web-core';
+import '@/utils/core';
 import '@/style/index.less';
 import './permission';
-
-fw.config.baseUrl = import.meta.env.VITE_API_URL;
 
 const app = createApp(App);
 

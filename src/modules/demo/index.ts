@@ -7,7 +7,7 @@ import router from './router';
 import { store } from '../../store';
 import i18n from '../../locales';
 
-import '@/assets/libs/web-core';
+import '@/utils/core';
 import '@/style/index.less';
 
 const app = createApp(App);

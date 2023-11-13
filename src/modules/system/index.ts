@@ -7,7 +7,9 @@ import App from './App.vue';
 import router from './router';
 import i18n from './locales';
 
+import 'tdesign-vue-next/es/style/index.css';
 import '@/style/index.less';
+import '@/utils/core';
 
 const app = createApp(App);
 

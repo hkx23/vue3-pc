@@ -12,3 +12,5 @@ _site
 temp*
 static/
 !.prettierrc.js
+web-core.js
+web-core.d.ts

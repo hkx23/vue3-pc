@@ -28,13 +28,13 @@ export const useUserStore = defineStore('user', {
       this.token = res.access_token;
     },
     async getUserInfo() {
-      const mockRemoteUserInfo = async (token: string) => {
+      const mockRemoteUserInfo = async () => {
         return {
           name: '管理员',
           roles: ['all'], // 前端权限模型使用 如果使用请配置modules/permission-fe.ts使用
         };
       };
-      const res = await mockRemoteUserInfo(this.token);
+      const res = await mockRemoteUserInfo();
 
       this.userInfo = res;
     },

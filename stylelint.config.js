@@ -25,4 +25,5 @@ module.exports = {
       customSyntax: 'postcss-less',
     },
   ],
+  ignoreFiles: ['src/style/theme.css'],
 };

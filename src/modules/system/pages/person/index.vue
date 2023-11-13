@@ -2,7 +2,7 @@
   <div class="table-tree-container">
     <div class="list-tree-wrapper">
       <div class="list-tree-operator">
-        <t-tree :data="dataTree" line hover expandAll @click="onTreeClick" />
+        <t-tree :data="dataTree" line hover expand-all @click="onTreeClick" />
       </div>
     </div>
     <div class="list-tree-content">
@@ -62,7 +62,7 @@
             draggable
             :body="confirmBody"
             :on-cancel="onCancel"
-            :closeOnOverlayClick="false"
+            :close-on-overlay-click="false"
             @confirm="onConfirmDelete"
           />
           <t-dialog
@@ -70,7 +70,7 @@
             header="批量删除"
             mode="modal"
             draggable
-            :closeOnOverlayClick="false"
+            :close-on-overlay-click="false"
             :on-cancel="onMultiDeleteCancel"
           />
           <t-dialog
@@ -78,29 +78,29 @@
             header="编辑"
             mode="modal"
             draggable
-            :closeOnOverlayClick="false"
+            :close-on-overlay-click="false"
             :on-close="onEditCancel"
-            @confirm="onEditConfirm"
             width="40%"
+            @confirm="onEditConfirm"
           >
             <t-space direction="vertical" style="width: 98%">
               <t-form class="form-container" :data="formData">
                 <t-row class="form-container-row">
                   <t-col>
-                    <t-form-item label="用户编码" requiredMark name="personcode">
-                      <t-input placeholder="请输入内容" v-model="formData.personcode" />
+                    <t-form-item label="用户编码" required-mark name="personcode">
+                      <t-input v-model="formData.personcode" placeholder="请输入内容" />
                     </t-form-item>
                   </t-col>
                   <t-col>
-                    <t-form-item label="姓名" requiredMark>
-                      <t-input placeholder="请输入内容" v-model="formData.personname" />
+                    <t-form-item label="姓名" required-mark>
+                      <t-input v-model="formData.personname" placeholder="请输入内容" />
                     </t-form-item>
                   </t-col>
                 </t-row>
 
                 <t-row class="form-container-row">
                   <t-col>
-                    <t-form-item label="性别" requiredMark>
+                    <t-form-item label="性别" required-mark>
                       <t-select v-model="formData.gender" :style="{ width: '173px' }" placeholder="请选择性别">
                         <t-option
                           v-for="(item, index) in userGenderList"
@@ -114,8 +114,8 @@
                     </t-form-item>
                   </t-col>
                   <t-col>
-                    <t-form-item label="人员类型" requiredMark>
-                      <t-input placeholder="请输入内容" v-model="formData.usertype" />
+                    <t-form-item label="人员类型" required-mark>
+                      <t-input v-model="formData.usertype" placeholder="请输入内容" />
                     </t-form-item>
                   </t-col>
                 </t-row>
@@ -123,12 +123,12 @@
                 <t-row class="form-container-row">
                   <t-col>
                     <t-form-item label="手机号">
-                      <t-input placeholder="请输入内容" type="tel" v-model="formData.mobilePhone" />
+                      <t-input v-model="formData.mobilePhone" placeholder="请输入内容" type="tel" />
                     </t-form-item>
                   </t-col>
                   <t-col>
                     <t-form-item label="邮箱">
-                      <t-input placeholder="请输入内容" v-model="formData.email" />
+                      <t-input v-model="formData.email" placeholder="请输入内容" />
                     </t-form-item>
                   </t-col>
                 </t-row>
@@ -147,7 +147,7 @@
             v-model:visible="onShowImportVisible"
             header="导入用户"
             :on-close="onImportCancel"
-            :closeOnOverlayClick="false"
+            :close-on-overlay-click="false"
             width="40%"
           >
             <t-space direction="vertical" style="width: 100%">
@@ -165,22 +165,25 @@
 
 <script lang="ts">
 export default {
-  name: 'user',
+  name: 'Person',
 };
 </script>
 
 <script setup lang="ts">
 import { SearchIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { getList } from '@/api/list';
-import { prefix } from '@/config/global';
-import { useSettingStore } from '@/store';
-import { init } from 'echarts';
 
-//#region  页面初始化
-const store = useSettingStore();
+// import { useSettingStore } from '@/store';
+
+const Api = {
+  getlist:
+    '/person/getlist?personcode=&personname=&sortfield=personname&sorttype=desc&filterfield=&filter=测试&pagenum=1&pagesize=2',
+};
+
+// #region  页面初始化
+// const store = useSettingStore();
 const userGenderList = ref([
   { label: '男', value: '1' },
   { label: '女', value: '2' },
@@ -195,20 +198,20 @@ const formData = ref({
   mobilePhone: '12312309981',
   state: true,
 });
-const personName = ref(''); //查询
-const personCode = ref(''); //查询
+const personName = ref(''); // 查询
+const personCode = ref(''); // 查询
 
-//表格
+// 表格
 const dataTable = ref([]);
 const dataTree = ref([]);
 
-//显示控制
-const dataLoading = ref(false); //是否显示数据加载图标
-const confirmVisible = ref(false); //是否显示对话框
-const onMultiDeleteVisible = ref(false); //是否按钮删除窗口
-const onShowEditVisible = ref(false); //是否显示编辑窗口
-const onShowImportVisible = ref(false); //是否显示导入窗口
-//表格列设置
+// 显示控制
+const dataLoading = ref(false); // 是否显示数据加载图标
+const confirmVisible = ref(false); // 是否显示对话框
+const onMultiDeleteVisible = ref(false); // 是否按钮删除窗口
+const onShowEditVisible = ref(false); // 是否显示编辑窗口
+const onShowImportVisible = ref(false); // 是否显示导入窗口
+// 表格列设置
 const columnsParam: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 64, fixed: 'left' },
   {
@@ -222,7 +225,7 @@ const columnsParam: PrimaryTableCol<TableRowData>[] = [
       confirmEvents: ['onEnter'],
       props: {
         placeholder: '输入关键词',
-        //onChange: onEmailChange,
+        // onChange: onEmailChange,
       },
       showConfirmAndReset: true, // 是否显示重置取消按钮，
     },
@@ -235,55 +238,60 @@ const columnsParam: PrimaryTableCol<TableRowData>[] = [
   { title: '状态', width: 160, ellipsis: true, colKey: '状态', sorter: true },
   { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
-//表格分页设置
+// 表格分页设置
 const pagination = ref({ defaultPageSize: 10, total: 100, defaultCurrent: 1 });
 
-//#endregion
+// #endregion
 
-//#region 按钮逻辑
+// #region 按钮逻辑
 
-//删除按钮
+// 删除按钮
 const onMultiDelete = () => {
   onMultiDeleteVisible.value = true;
 };
-const onMultiDeleteCancel = () => {};
+const onMultiDeleteCancel = () => {
+  console.log('111');
+};
 
-//编辑按钮
+// 编辑按钮
 const onEdit = () => {
   onShowEditVisible.value = true;
 };
-const onEditCancel = () => {};
+const onEditCancel = () => {
+  console.log('111');
+};
 
 const onEditConfirm = () => {
-  debugger;
   MessagePlugin.info(formData.value.personname);
   MessagePlugin.success('编辑成功');
 };
 
-//导入按钮
+// 导入按钮
 const onImport = () => {
   onShowImportVisible.value = true;
 };
-const onImportCancel = () => {};
+const onImportCancel = () => {
+  console.log('111');
+};
 
-//#endregion
+// #endregion
 
-//#region 刷新表格
+// #region 刷新表格
 const fetchTable = async () => {
   dataLoading.value = true;
   try {
-    const { list } = await getList();
-    dataTable.value = list;
-    pagination.value = { ...pagination.value, total: list.length };
+    const { list } = await http.get<any>(Api.getlist);
+    // dataTable.value = list;
+    // pagination.value = { ...pagination.value, total: list.length };
   } catch (e) {
     console.log(e);
   } finally {
     dataLoading.value = false;
   }
 };
-//#endregion
+// #endregion
 
-//#region 刷新树
+// #region 刷新树
 const fetchTree = async () => {
   try {
     dataTree.value = [
@@ -318,22 +326,21 @@ const fetchTree = async () => {
 };
 
 const onTreeClick = (context: any) => {
-  debugger;
   console.info('onClick', context);
   const { node } = context;
   console.info(node.value, 'actived:', node.actived);
 };
-//#endregion
+// #endregion
 
-//#region 表格分页
+// #region 表格分页
 
 const onPageChange = (curr: any, pageInfo: any) => {
   // console.log('分页变化', curr, pageInfo);
 };
 
-//#endregion
+// #endregion
 
-//#region 表格删除
+// #region 表格删除
 const onConfirmDelete = () => {
   // 真实业务请发起请求
   dataTable.value.splice(deleteIdx.value, 1);
@@ -349,18 +356,16 @@ const onConfirmDelete = () => {
 const deleteIdx = ref(-1);
 const confirmBody = () => {
   if (deleteIdx.value > -1) {
-    debugger;
     const { name } = dataTable.value[deleteIdx.value];
     return `删除后，${name}的所有合同信息将被清空，且无法恢复`;
   }
   return '';
 };
 const onCancel = () => {
-  debugger;
   deleteIdx.value = -1;
 };
 
-//#endregion
+// #endregion
 
 onMounted(() => {
   fetchTable();
@@ -373,7 +378,7 @@ const router = useRouter();
 
 const rowKey = 'index';
 
-//选中行
+// 选中行
 const onSelectChange = (val: number[]) => {
   selectedRowKeys.value = val;
 };
@@ -428,8 +433,6 @@ const handleClickDelete = (row: { rowIndex: any }) => {
   }
 }
 
-.form-container {
-}
 .form-container-row {
   margin-top: 20px;
 }
