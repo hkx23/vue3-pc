@@ -39,13 +39,13 @@ export function getToken(params: {
   if (!params.client_secret) {
     params.client_secret = 'public';
   }
-  const data = new FormData();
+  const data = new URLSearchParams();
   data.append('grant_type', params.grant_type);
   data.append('username', params.username);
   data.append('password', params.password);
   return http.post<OAuth2Result>(Api.GetToken, data, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: `Basic ${btoa(`${params.client_id}:${params.client_secret}`)}`,
     },
   });

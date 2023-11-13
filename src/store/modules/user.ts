@@ -26,6 +26,7 @@ export const useUserStore = defineStore('user', {
         password: userInfo.password as string,
       });
       this.token = res.access_token;
+      fw.setToken(res.access_token);
     },
     async getUserInfo() {
       const mockRemoteUserInfo = async () => {
