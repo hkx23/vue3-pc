@@ -1,0 +1,23 @@
+/* eslint-disable simple-import-sort/imports */
+import TDesign from 'tdesign-vue-next';
+import { createApp } from 'vue';
+
+import App from './App.vue';
+import i18n from './locales';
+import router from './router';
+import { store } from './store';
+
+import './assets/libs/web-core';
+import '@/style/index.less';
+import './permission';
+
+fw.config.baseUrl = import.meta.env.VITE_API_URL;
+
+const app = createApp(App);
+
+app.use(TDesign);
+app.use(store);
+app.use(router);
+app.use(i18n);
+
+app.mount('#app');
