@@ -2,7 +2,7 @@ const Api = {
   getList: '/api/modeling/adminOrg/getlist',
 };
 
-export function getList(params: { parent_org_id?: number }) {
+export function getAdminOrgList(params: { parent_org_id?: number }) {
   const data = {
     parent_org_id: params.parent_org_id,
   };
