@@ -7,7 +7,10 @@ export default function vitePluginHistory(): PluginOption {
     configureServer(server) {
       server.middlewares.use(
         history({
-          rewrites: [{ from: /\/system/, to: '/system.html' }],
+          rewrites: [
+            { from: /\/system/, to: '/system.html' },
+            { from: /\/modeling/, to: '/modeling.html' },
+          ],
           htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
         }),
       );

@@ -20,13 +20,18 @@ declare interface Framework {
   utils: Utils;
 }
 
-declare interface Window {
-  fw: Framework;
-  http: Http;
-  APP: any;
-}
+// declare interface Window {
+//   fw: Framework;
+//   http: Http;
+//   APP: any;
+// }
 
 declare global {
   const fw: Framework;
   const http: Http;
+  interface Window {
+    fw: Framework;
+    http: Http;
+    APP: any;
+  }
 }
