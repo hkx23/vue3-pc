@@ -2,7 +2,7 @@
   <div class="table-tree-container">
     <div class="list-tree-wrapper">
       <div class="list-tree-operator">
-        <t-tree :data="dataTree" line hover expand-all @click="onTreeClick" />
+        <t-tree :data="dataTree" line hover expand-all activable @click="onTreeClick" />
       </div>
     </div>
     <div class="list-tree-content">
@@ -146,6 +146,7 @@ export default {
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
+import { getAdminOrgList } from '../../api/adminOrg/adminOrg';
 import { getList, postDelete, postEdit } from '../../api/person/person';
 
 // import { useRouter } from 'vue-router';
@@ -191,23 +192,23 @@ const columnsParam: PrimaryTableCol<TableRowData>[] = [
     width: 160,
     ellipsis: true,
     colKey: 'personCode',
-    filter: {
-      type: 'input',
-      resetValue: '',
-      confirmEvents: ['onEnter'],
-      props: {
-        placeholder: '输入关键词',
-        // onChange: onEmailChange,
-      },
-      showConfirmAndReset: true, // 是否显示重置取消按钮，
-    },
-    sorter: true,
+    // filter: {
+    //   type: 'input',
+    //   resetValue: '',
+    //   confirmEvents: ['onEnter'],
+    //   props: {
+    //     placeholder: '输入关键词',
+    //     // onChange: onEmailChange,
+    //   },
+    //   showConfirmAndReset: true, // 是否显示重置取消按钮，
+    // },
+    // sorter: true,
   },
-  { title: '姓名', width: 160, ellipsis: true, colKey: 'personName', sorter: true },
-  { title: '性别', width: 160, ellipsis: true, colKey: 'genderName', sorter: true },
-  { title: '手机号', width: 160, ellipsis: true, colKey: 'mobilePhone', sorter: true },
-  { title: '邮箱', width: 160, ellipsis: true, colKey: 'email', sorter: true },
-  { title: '状态', width: 160, ellipsis: true, colKey: 'stateName', sorter: true },
+  { title: '姓名', width: 160, ellipsis: true, colKey: 'personName' },
+  { title: '性别', width: 160, ellipsis: true, colKey: 'genderName' },
+  { title: '手机号', width: 160, ellipsis: true, colKey: 'mobilePhone' },
+  { title: '邮箱', width: 160, ellipsis: true, colKey: 'email' },
+  { title: '状态', width: 160, ellipsis: true, colKey: 'stateName' },
   { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 
@@ -299,35 +300,50 @@ const formInit = () => {
 
 // #region 刷新树
 const fetchTree = async () => {
+  // try {
+  //   dataTree.value = [
+  //     {
+  //       value: '工厂CODE',
+  //       label: '工厂名称',
+  //       children: [
+  //         {
+  //           value: '总经办',
+  //           label: '总经办',
+  //         },
+  //         {
+  //           value: '生产部',
+  //           label: '生产部',
+  //           children: [
+  //             {
+  //               value: '产线1',
+  //               label: '产线1',
+  //             },
+  //             {
+  //               value: '产线2',
+  //               label: '产线2',
+  //             },
+  //           ],
+  //         },
+  //       ],
+  //     },
+  //   ];
+  // } catch (e) {
+  //   console.log(e);
+  // }
+  dataLoading.value = true;
   try {
-    dataTree.value = [
-      {
-        value: '工厂CODE',
-        label: '工厂名称',
-        children: [
-          {
-            value: '总经办',
-            label: '总经办',
-          },
-          {
-            value: '生产部',
-            label: '生产部',
-            children: [
-              {
-                value: '产线1',
-                label: '产线1',
-              },
-              {
-                value: '产线2',
-                label: '产线2',
-              },
-            ],
-          },
-        ],
-      },
-    ];
+    const data = await getAdminOrgList({ parent_org_id: -1 });
+
+    dataTree.value = data.list.map((item) => ({
+      value: item.orgCode,
+      label: item.orgName,
+      actived: false,
+    }));
+    dataTree.value[0].actived = true;
   } catch (e) {
-    console.log(e);
+    // console.log(e);
+  } finally {
+    dataLoading.value = false;
   }
 };
 
