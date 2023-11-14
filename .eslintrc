@@ -15,7 +15,8 @@
   },
   "globals": {
     "defineProps": "readonly",
-    "defineEmits": "readonly"
+    "defineEmits": "readonly",
+    "IdLike": "readonly"
   },
   "plugins": ["vue", "@typescript-eslint", "simple-import-sort"],
   "parserOptions": {

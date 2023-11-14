@@ -1,12 +1,12 @@
 export default [
   {
-    path: '/user',
-    name: 'user',
-    component: () => import('@/modules/system/pages/user/index.vue'),
+    path: '/orgLevel',
+    name: 'orgLevel',
+    component: () => import('../../pages/orgLevel/index.vue'),
     meta: {
       title: {
-        zh_CN: '用户',
-        en_US: 'User',
+        zh_CN: '组织层级',
+        en_US: 'Organizational Level',
       },
       orderNo: 0,
     },

@@ -3,9 +3,6 @@ import path from 'node:path';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { glob } from 'glob';
-// import AutoImport from 'unplugin-auto-import/vite';
-// import { TDesignResolver } from 'unplugin-vue-components/resolvers';
-// import Components from 'unplugin-vue-components/vite';
 import { ConfigEnv, loadEnv, UserConfig } from 'vite';
 import { viteMockServe } from 'vite-plugin-mock';
 import svgLoader from 'vite-svg-loader';
@@ -71,26 +68,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         enable: true,
       }),
       svgLoader(),
-      // AutoImport({
-      //   resolvers: [
-      //     TDesignResolver({
-      //       library: 'vue-next',
-      //     }),
-      //     TDesignResolver({
-      //       library: 'mobile-vue',
-      //     }),
-      //   ],
-      // }),
-      // Components({
-      //   resolvers: [
-      //     TDesignResolver({
-      //       library: 'vue-next',
-      //     }),
-      //     TDesignResolver({
-      //       library: 'mobile-vue',
-      //     }),
-      //   ],
-      // }),
       vitePluginHistory(),
     ],
 
@@ -98,7 +75,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       port: 3001,
       host: '0.0.0.0',
       proxy: {
-        [VITE_API_URL_PREFIX]: 'http://127.0.0.1:3000/',
+        [VITE_API_URL_PREFIX]: 'http://127.0.0.1:8000/',
       },
     },
 

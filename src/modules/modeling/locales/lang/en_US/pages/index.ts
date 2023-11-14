@@ -1,5 +1,5 @@
-import user from './user';
+import orgLevel from './orgLevel';
 
 export default {
-  user,
+  orgLevel,
 };
