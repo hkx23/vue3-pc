@@ -1,14 +1,14 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 
+import { mapModuleRouterList } from '@/router';
+
+const pageRouters = import.meta.glob('./pages/**/*.ts', { eager: true });
+const pageRouterList = mapModuleRouterList(pageRouters);
+const routes = [...pageRouterList];
+
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: [
-    {
-      path: '/person',
-      name: 'person',
-      component: () => import('@/modules/system/pages/person/index.vue'),
-    },
-  ],
+  routes,
 });
 
 export default router;
