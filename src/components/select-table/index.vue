@@ -51,6 +51,7 @@
             :columns="tableColumns"
             @select-change="rehandleSelectChange"
             @sort-change="sortChange"
+            @filter-change="onFilterChange"
           >
             <!-- <template #[slotName]>
               <p>这里是动态插槽---{{ slotName }}</p>
@@ -165,6 +166,8 @@ const props = defineProps({
     default: '',
   },
 });
+
+type Filters = { [key: string]: any };
 // 选择下拉属性集成
 const selectAttr = computed(() => {
   return {
@@ -181,7 +184,7 @@ const popupVisible = ref(false);
 const selectSearch = ref('');
 // const popupVisible = ref(false);
 
-// const filterList = ref([]);
+const filterList = ref([]);
 
 const tableColumns = ref([
   {
@@ -207,6 +210,22 @@ const state: any = reactive({
 });
 
 const total = props.table.data.length;
+
+const onFilterChange = (filters: Filters, ctx: any) => {
+  console.log('filter-change', filters, ctx);
+  filterList.value = [];
+  for (const key in filters) {
+    const value = filters[key];
+    if (value.length) {
+      filterList.value.push({
+        field: key,
+        operator: 'LIKE',
+        value,
+      });
+    }
+  }
+  remoteLoad(selectSearch.value);
+};
 const onPageChange = (PageInfo: any) => {
   pagination.value.current = PageInfo.current;
   pagination.value.pageSize = PageInfo.pageSize;
@@ -398,19 +417,8 @@ const remoteLoad = async (val: any) => {
     pageNum: pagination.value.current,
     pageSize: pagination.value.pageSize,
     keyword: selectSearch.value,
-    sorts: [
-      {
-        field: 'id',
-        direction: 'ASC',
-      },
-    ],
-    filters: [
-      {
-        field: 'userName',
-        operator: 'LIKE',
-        value: 'admin',
-      },
-    ],
+    sorts: sortList.value,
+    filters: filterList.value,
   };
 
   // 判断两次查询条件是否一样，一样的话，不获取数据
@@ -495,6 +503,22 @@ onMounted(() => {
       colKey: element.key,
       width: element.width,
       sorter: true,
+      // 输入框过滤配置
+      filter: {
+        type: 'input',
+
+        // 文本域搜索
+        // component: Textarea,
+
+        resetValue: '',
+        // 按下 Enter 键时也触发确认搜索
+        confirmEvents: ['onEnter'],
+        props: {
+          placeholder: '输入关键词过滤',
+        },
+        // 是否显示重置取消按钮，一般情况不需要显示
+        showConfirmAndReset: true,
+      },
     });
   });
 
@@ -526,11 +550,13 @@ onMounted(() => {
     }
   });
 });
-const sort = ref([]);
+const sortList = ref([]);
 
 const sortChange = (val: any) => {
-  sort.value = val;
-  console.log(sort.value);
+  sortList.value = val;
+  console.log(sortList.value);
+  console.log('remoteLoad-排序');
+  remoteLoad(selectSearch.value);
 };
 
 // 暴露方法出去
