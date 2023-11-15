@@ -3,9 +3,9 @@ import path from 'node:path';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { glob } from 'glob';
-import { visualizer } from 'rollup-plugin-visualizer';
+// import { visualizer } from 'rollup-plugin-visualizer';
 import { ConfigEnv, loadEnv, UserConfig } from 'vite';
-import viteCompression from 'vite-plugin-compression';
+// import viteCompression from 'vite-plugin-compression';
 import { viteMockServe } from 'vite-plugin-mock';
 import svgLoader from 'vite-svg-loader';
 
@@ -68,13 +68,13 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       }),
       svgLoader(),
       vitePluginHistory(),
-      viteCompression({
-        deleteOriginFile: true,
-        threshold: 10 * 1024,
-      }),
-      visualizer({
-        gzipSize: true,
-      }),
+      // viteCompression({
+      //   deleteOriginFile: true,
+      //   threshold: 10 * 1024,
+      // }),
+      // visualizer({
+      //   gzipSize: true,
+      // }),
     ],
 
     server: {
