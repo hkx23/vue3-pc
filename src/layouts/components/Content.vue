@@ -2,7 +2,7 @@
   <router-view v-if="!isRefreshing" v-slot="{ Component }">
     <transition name="fade">
       <keep-alive :include="aliveViews">
-        <component :is="Component" />
+        <component :is="Component" v-show="activeRouteIsNotIframe" />
       </keep-alive>
     </transition>
   </router-view>
@@ -14,21 +14,22 @@ import isBoolean from 'lodash/isBoolean';
 import isUndefined from 'lodash/isUndefined';
 import type { ComputedRef } from 'vue';
 import { computed } from 'vue';
-
-import FramePage from '@/layouts/frame/index.vue';
-import { useTabsRouterStore } from '@/store';
-
 // <suspense>标签属于实验性功能，请谨慎使用
 // 如果存在需解决/page/1=> /page/2 刷新数据问题 请修改代码 使用activeRouteFullPath 作为key
 // <suspense>
 //  <component :is="Component" :key="activeRouteFullPath" />
 // </suspense>
+import { useRouter } from 'vue-router';
 
-// import { useRouter } from 'vue-router';
-// const activeRouteFullPath = computed(() => {
-//   const router = useRouter();
-//   return router.currentRoute.value.fullPath;
-// });
+import FramePage from '@/layouts/frame/index.vue';
+import { useTabsRouterStore } from '@/store';
+
+const router = useRouter();
+
+const activeRouteIsNotIframe = computed(() => {
+  const { currentRoute } = router;
+  return !currentRoute.value.meta.frameSrc;
+});
 
 const aliveViews = computed(() => {
   const tabsRouterStore = useTabsRouterStore();

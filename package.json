@@ -83,7 +83,6 @@
   },
   "lint-staged": {
     "src/**/!(web-core)*.{js,jsx,vue,ts,tsx}": [
-      "prettier --write",
       "npm run lint:fix"
     ],
     "src/**/!(web-core)*.{html,vue,css,sass,less}": [
