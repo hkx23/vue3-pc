@@ -5,7 +5,7 @@
     "dev:mock": "vite --mode mock",
     "dev": "vite --mode development",
     "dev:local": "vite --mode local",
-    "build": "vue-tsc --noEmit && vite build --mode release",
+    "build": "vue-tsc --noEmit && vite build --mode production",
     "preview": "vite preview",
     "lint": "eslint --ext .vue,.js,.jsx,.ts,.tsx ./ --max-warnings 0",
     "lint:fix": "eslint --ext .vue,.js,jsx,.ts,.tsx ./ --max-warnings 0 --fix",
