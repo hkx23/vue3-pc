@@ -31,8 +31,8 @@
             :row-key="rowKey"
             :hover="true"
             :pagination="pagination"
-            :selected-row-keys="selectedRowKeys"
             :loading="dataLoading"
+            :selected-row-keys="selectedRowKeys"
             @page-change="onPageChange"
             @select-change="onSelectChange"
           >
@@ -146,8 +146,8 @@ export default {
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-import { getAdminOrgList } from '../../api/adminOrg/adminOrg';
-import { getList, postDelete, postEdit } from '../../api/person/person';
+import { getAdminOrgList } from '../../api/adminOrg';
+import { getList, postDelete, postEdit } from '../../api/person';
 
 // import { useRouter } from 'vue-router';
 
@@ -300,36 +300,6 @@ const formInit = () => {
 
 // #region 刷新树
 const fetchTree = async () => {
-  // try {
-  //   dataTree.value = [
-  //     {
-  //       value: '工厂CODE',
-  //       label: '工厂名称',
-  //       children: [
-  //         {
-  //           value: '总经办',
-  //           label: '总经办',
-  //         },
-  //         {
-  //           value: '生产部',
-  //           label: '生产部',
-  //           children: [
-  //             {
-  //               value: '产线1',
-  //               label: '产线1',
-  //             },
-  //             {
-  //               value: '产线2',
-  //               label: '产线2',
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //     },
-  //   ];
-  // } catch (e) {
-  //   console.log(e);
-  // }
   dataLoading.value = true;
   try {
     const data = await getAdminOrgList({ parent_org_id: -1 });
@@ -395,12 +365,6 @@ const onDeleteCancel = () => {
 };
 
 // #endregion
-
-onMounted(() => {
-  fetchTable();
-  fetchTree();
-});
-
 const selectedRowKeys = ref([]);
 const rowKey = 'id';
 
@@ -428,6 +392,11 @@ const handleClickDelete = (value: any) => {
   deleteIdx.value = value.rowIndex;
   onShowDeleteConfirmVisible.value = true;
 };
+
+onMounted(() => {
+  fetchTable();
+  fetchTree();
+});
 </script>
 
 <style lang="less" scoped>
