@@ -17,7 +17,6 @@
 </template>
 
 <script setup lang="tsx" name="TSelectBusiness">
-import axios from 'axios';
 import { computed, defineAsyncComponent, onMounted, ref, useAttrs } from 'vue';
 
 const TSelectTable = defineAsyncComponent(() => import('../select-table/index.vue'));
@@ -144,26 +143,26 @@ const loadTypeSetting = () => {
   // 加载业务类型配置
   if (props.type !== '') {
     const jsonAdd = `/business/types/${props.type}.json`;
-    axios
-      .get(jsonAdd)
+    fetch(jsonAdd)
+      .then((res) => res.json())
       .then((res) => {
         // 成功数据
-        const columnsData = res.data.columns;
+        const columnsData = res.columns;
         columnsData.forEach((item: { colKey: any; key: any }) => {
           item.colKey = item.key;
         });
         finalColumns.value = columnsData;
-        if (res.data.rowKey) {
-          finalRowKey.value = res.data.rowKey;
+        if (res.rowKey) {
+          finalRowKey.value = res.rowKey;
         }
-        if (res.data.title) {
-          finalPlaceholder.value = res.data.title;
+        if (res.title) {
+          finalPlaceholder.value = res.title;
         }
 
-        if (res.data.keywords) {
-          finalKeywords.value = res.data.keywords;
+        if (res.keywords) {
+          finalKeywords.value = res.keywords;
         }
-        finalUrl.value = res.data.url;
+        finalUrl.value = res.url;
       })
       .catch((err) => {
         // 请求失败数据
