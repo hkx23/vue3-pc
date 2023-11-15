@@ -9,7 +9,7 @@ const langModuleMap = new Map<string, Object>();
 
 export const langCode: Array<string> = [];
 
-export const localeConfigKey = 'locale';
+export const localeConfigKey = 'language';
 
 // 获取浏览器默认语言环境
 const browserLanguage = navigator.language.replace('-', '_');

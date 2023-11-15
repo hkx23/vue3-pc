@@ -64,6 +64,7 @@ export declare class EventBus {
      * 目标监听器清单
      */
     targets: Dictionary<EventTarget_2>;
+    sendingEvents: Set<string | symbol>;
     constructor();
     static init(): EventBus;
     /**

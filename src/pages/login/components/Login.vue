@@ -82,17 +82,12 @@ const route = useRoute();
 
 const onSubmit = async (ctx: SubmitContext) => {
   if (ctx.validateResult === true) {
-    try {
-      await userStore.login(formData.value);
+    await userStore.login(formData.value);
 
-      MessagePlugin.success('登录成功');
-      const redirect = route.query.redirect as string;
-      const redirectUrl = redirect ? decodeURIComponent(redirect) : '/dashboard';
-      router.push(redirectUrl);
-    } catch (e) {
-      console.log(e);
-      MessagePlugin.error(e.message);
-    }
+    MessagePlugin.success('登录成功');
+    const redirect = route.query.redirect as string;
+    const redirectUrl = redirect ? decodeURIComponent(redirect) : '/dashboard';
+    router.push(redirectUrl);
   }
 };
 </script>

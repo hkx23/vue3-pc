@@ -3,10 +3,9 @@ import path from 'node:path';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { glob } from 'glob';
-// import AutoImport from 'unplugin-auto-import/vite';
-// import { TDesignResolver } from 'unplugin-vue-components/resolvers';
-// import Components from 'unplugin-vue-components/vite';
+// import { visualizer } from 'rollup-plugin-visualizer';
 import { ConfigEnv, loadEnv, UserConfig } from 'vite';
+// import viteCompression from 'vite-plugin-compression';
 import { viteMockServe } from 'vite-plugin-mock';
 import svgLoader from 'vite-svg-loader';
 
@@ -17,10 +16,10 @@ const CWD = process.cwd();
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv): UserConfig => {
   const { VITE_BASE_URL, VITE_API_URL_PREFIX, VITE_BUILDING_MODULE } = loadEnv(mode, CWD);
-  const isPrd = mode === 'release';
+  const isPrd = mode === 'production';
 
-  let inputs = null;
-  let outDir = '';
+  let inputs: { [index: string]: any } = null;
+  const outDir = './dist';
 
   const buildingModule = VITE_BUILDING_MODULE;
   if (isPrd) {
@@ -30,15 +29,12 @@ export default ({ mode }: ConfigEnv): UserConfig => {
 
       const modules: { [index: string]: any } = {};
       entries.forEach((file) => {
-        // const key = file.split('/')[2];
-        modules.index = path.resolve(__dirname, file);
+        const key = path.basename(file, path.extname(file));
+        modules[key] = path.resolve(__dirname, file);
       });
 
       inputs = { ...modules };
-
-      outDir = `./dist/pages/${buildingModule}`;
     } else {
-      outDir = './dist';
       inputs = { main: path.resolve(__dirname, 'index.html') };
     }
   }
@@ -71,34 +67,21 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         enable: true,
       }),
       svgLoader(),
-      // AutoImport({
-      //   resolvers: [
-      //     TDesignResolver({
-      //       library: 'vue-next',
-      //     }),
-      //     TDesignResolver({
-      //       library: 'mobile-vue',
-      //     }),
-      //   ],
-      // }),
-      // Components({
-      //   resolvers: [
-      //     TDesignResolver({
-      //       library: 'vue-next',
-      //     }),
-      //     TDesignResolver({
-      //       library: 'mobile-vue',
-      //     }),
-      //   ],
-      // }),
       vitePluginHistory(),
+      // viteCompression({
+      //   deleteOriginFile: true,
+      //   threshold: 10 * 1024,
+      // }),
+      // visualizer({
+      //   gzipSize: true,
+      // }),
     ],
 
     server: {
       port: 3001,
       host: '0.0.0.0',
       proxy: {
-        [VITE_API_URL_PREFIX]: 'http://127.0.0.1:3000/',
+        [VITE_API_URL_PREFIX]: 'http://127.0.0.1:8000/',
       },
     },
 
@@ -106,6 +89,11 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       outDir,
       rollupOptions: {
         input: inputs,
+        output: {
+          // manualChunks: (id) => {
+          //   if (id.includes('echarts')) return 'echarts';
+          // },
+        },
       },
     },
   };

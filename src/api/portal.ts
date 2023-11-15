@@ -1,4 +1,4 @@
-import type { MenuListResult, OAuth2Result } from '@/api/model/permissionModel';
+import type { OAuth2Result, RouteItem } from '@/api/model/permissionModel';
 
 const Api = {
   GetToken: '/api/auth/oauth2/token',
@@ -9,8 +9,8 @@ const Api = {
  * 获取菜单
  * @returns Promise<MenuListResult>
  */
-export function getMenuList() {
-  return http.get<MenuListResult>(Api.GetMenuList);
+export function getMenuList(): Promise<RouteItem[]> {
+  return http.get<Array<RouteItem>>(Api.GetMenuList, { clientType: '1' });
 }
 
 /**

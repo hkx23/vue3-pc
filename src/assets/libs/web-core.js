@@ -1,6 +1,6 @@
 var St = Object.defineProperty;
 var _t = (t, e, r) => e in t ? St(t, e, { enumerable: !0, configurable: !0, writable: !0, value: r }) : t[e] = r;
-var y = (t, e, r) => (_t(t, typeof e != "symbol" ? e + "" : e, r), r);
+var d = (t, e, r) => (_t(t, typeof e != "symbol" ? e + "" : e, r), r);
 var xt = typeof global == "object" && global && global.Object === Object && global;
 const ht = xt;
 var Ct = typeof self == "object" && self && self.Object === Object && self, kt = ht || Ct || Function("return this")();
@@ -135,10 +135,10 @@ var vt = Object.prototype, Te = vt.hasOwnProperty, je = vt.propertyIsEnumerable,
   return R(t) && Te.call(t, "callee") && !je.call(t, "callee");
 };
 const $e = Ae;
-function Oe() {
+function Ee() {
   return !1;
 }
-var Tt = typeof exports == "object" && exports && !exports.nodeType && exports, nt = Tt && typeof module == "object" && module && !module.nodeType && module, Ee = nt && nt.exports === Tt, ot = Ee ? $.Buffer : void 0, Pe = ot ? ot.isBuffer : void 0, Se = Pe || Oe;
+var Tt = typeof exports == "object" && exports && !exports.nodeType && exports, nt = Tt && typeof module == "object" && module && !module.nodeType && module, Oe = nt && nt.exports === Tt, ot = Oe ? $.Buffer : void 0, Pe = ot ? ot.isBuffer : void 0, Se = Pe || Ee;
 const _e = Se;
 var xe = "[object Arguments]", Ce = "[object Array]", ke = "[object Boolean]", Ue = "[object Date]", Re = "[object Error]", Ie = "[object Function]", Le = "[object Map]", Me = "[object Number]", We = "[object Object]", Fe = "[object RegExp]", De = "[object Set]", Be = "[object String]", qe = "[object WeakMap]", Ve = "[object ArrayBuffer]", ze = "[object DataView]", He = "[object Float32Array]", Je = "[object Float64Array]", Ge = "[object Int8Array]", Ne = "[object Int16Array]", Ke = "[object Int32Array]", Ye = "[object Uint8Array]", Xe = "[object Uint8ClampedArray]", Qe = "[object Uint16Array]", Ze = "[object Uint32Array]", g = {};
 g[He] = g[Je] = g[Ge] = g[Ne] = g[Ke] = g[Ye] = g[Xe] = g[Qe] = g[Ze] = !0;
@@ -185,8 +185,8 @@ var hr = I($, "Promise");
 const J = hr;
 var dr = I($, "Set");
 const G = dr;
-var at = "[object Map]", yr = "[object Object]", ct = "[object Promise]", ut = "[object Set]", ft = "[object WeakMap]", lt = "[object DataView]", mr = _(H), br = _(z), wr = _(J), vr = _(G), Tr = _(V), E = S;
-(H && E(new H(new ArrayBuffer(1))) != lt || z && E(new z()) != at || J && E(J.resolve()) != ct || G && E(new G()) != ut || V && E(new V()) != ft) && (E = function(t) {
+var at = "[object Map]", yr = "[object Object]", ct = "[object Promise]", ut = "[object Set]", ft = "[object WeakMap]", lt = "[object DataView]", mr = _(H), br = _(z), wr = _(J), vr = _(G), Tr = _(V), O = S;
+(H && O(new H(new ArrayBuffer(1))) != lt || z && O(new z()) != at || J && O(J.resolve()) != ct || G && O(new G()) != ut || V && O(new V()) != ft) && (O = function(t) {
   var e = S(t), r = e == yr ? t.constructor : void 0, n = r ? _(r) : "";
   if (n)
     switch (n) {
@@ -203,31 +203,31 @@ var at = "[object Map]", yr = "[object Object]", ct = "[object Promise]", ut = "
     }
   return e;
 });
-const jr = E;
+const jr = O;
 var Ar = function() {
   return $.Date.now();
 };
 const q = Ar;
-var $r = "Expected a function", Or = Math.max, Er = Math.min;
+var $r = "Expected a function", Er = Math.max, Or = Math.min;
 function At(t, e, r) {
   var n, o, p, u, f, a, i = 0, s = !1, l = !1, w = !0;
   if (typeof t != "function")
     throw new TypeError($r);
-  e = tt(e) || 0, P(r) && (s = !!r.leading, l = "maxWait" in r, p = l ? Or(tt(r.maxWait) || 0, e) : p, w = "trailing" in r ? !!r.trailing : w);
+  e = tt(e) || 0, P(r) && (s = !!r.leading, l = "maxWait" in r, p = l ? Er(tt(r.maxWait) || 0, e) : p, w = "trailing" in r ? !!r.trailing : w);
   function m(b) {
-    var O = n, x = o;
-    return n = o = void 0, i = b, u = t.apply(x, O), u;
+    var E = n, x = o;
+    return n = o = void 0, i = b, u = t.apply(x, E), u;
   }
   function h(b) {
     return i = b, f = setTimeout(v, e), s ? m(b) : u;
   }
   function T(b) {
-    var O = b - a, x = b - i, X = e - O;
-    return l ? Er(X, p - x) : X;
+    var E = b - a, x = b - i, X = e - E;
+    return l ? Or(X, p - x) : X;
   }
   function c(b) {
-    var O = b - a, x = b - i;
-    return a === void 0 || O >= e || O < 0 || l && x >= p;
+    var E = b - a, x = b - i;
+    return a === void 0 || E >= e || E < 0 || l && x >= p;
   }
   function v() {
     var b = q();
@@ -238,15 +238,15 @@ function At(t, e, r) {
   function j(b) {
     return f = void 0, w && n ? m(b) : (n = o = void 0, u);
   }
-  function d() {
+  function y() {
     f !== void 0 && clearTimeout(f), i = 0, n = a = o = f = void 0;
   }
   function F() {
     return f === void 0 ? u : j(q());
   }
   function A() {
-    var b = q(), O = c(b);
-    if (n = arguments, o = this, a = b, O) {
+    var b = q(), E = c(b);
+    if (n = arguments, o = this, a = b, E) {
       if (f === void 0)
         return h(a);
       if (l)
@@ -254,7 +254,7 @@ function At(t, e, r) {
     }
     return f === void 0 && (f = setTimeout(v, e)), u;
   }
-  return A.cancel = d, A.flush = F, A;
+  return A.cancel = y, A.flush = F, A;
 }
 var Pr = "[object String]";
 function pt(t) {
@@ -297,31 +297,31 @@ class Ir {
     /**
      * 服务基础路径
      */
-    y(this, "baseURL", "");
+    d(this, "baseURL", "");
     /**
      * 请求路径
      */
-    y(this, "path", "");
+    d(this, "path", "");
     /**
      * 请求全路径
      */
-    y(this, "url", "");
+    d(this, "url", "");
     /**
      * 请求结果
      */
-    y(this, "result", null);
+    d(this, "result", null);
     /**
      * 请求参数
      */
-    y(this, "requestOptions", {});
+    d(this, "requestOptions", {});
     /**
      * 请求信息
      */
-    y(this, "request");
+    d(this, "request");
     /**
      * 请求返回信息
      */
-    y(this, "response");
+    d(this, "response");
   }
 }
 class N {
@@ -329,15 +329,15 @@ class N {
     /**
      * 服务基础路径
      */
-    y(this, "baseURL");
+    d(this, "baseURL");
     /**
      * 指定请求超时的毫秒数（默认永不超时，Chrome中网络请求超时为300秒，Firefox中为90秒）
      */
-    y(this, "timeout");
+    d(this, "timeout");
     /**
      * 服务中间件
      */
-    y(this, "middlewares");
+    d(this, "middlewares");
     this.baseURL = e || "", this.middlewares = [];
   }
   normalizeUrl(e) {
@@ -352,8 +352,8 @@ class N {
 }
 class Lr {
   constructor(e) {
-    y(this, "middlewares");
-    y(this, "options");
+    d(this, "middlewares");
+    d(this, "options");
     this.middlewares = [], e instanceof N ? this.options = e : this.options = new N(e);
   }
   /**
@@ -448,7 +448,7 @@ class Lr {
 }
 class Mr {
   constructor() {
-    y(this, "items");
+    d(this, "items");
     this.items = {};
   }
   /**
@@ -519,7 +519,7 @@ class Mr {
 function Wr(t) {
   return t && t.__esModule && Object.prototype.hasOwnProperty.call(t, "default") ? t.default : t;
 }
-var Ot = { exports: {} };
+var Et = { exports: {} };
 (function(t) {
   var e = Object.prototype.hasOwnProperty, r = "~";
   function n() {
@@ -563,7 +563,7 @@ var Ot = { exports: {} };
     var T = r ? r + i : i;
     if (!this._events[T])
       return !1;
-    var c = this._events[T], v = arguments.length, j, d;
+    var c = this._events[T], v = arguments.length, j, y;
     if (c.fn) {
       switch (c.once && this.removeListener(i, c.fn, void 0, !0), v) {
         case 1:
@@ -579,30 +579,30 @@ var Ot = { exports: {} };
         case 6:
           return c.fn.call(c.context, s, l, w, m, h), !0;
       }
-      for (d = 1, j = new Array(v - 1); d < v; d++)
-        j[d - 1] = arguments[d];
+      for (y = 1, j = new Array(v - 1); y < v; y++)
+        j[y - 1] = arguments[y];
       c.fn.apply(c.context, j);
     } else {
       var F = c.length, A;
-      for (d = 0; d < F; d++)
-        switch (c[d].once && this.removeListener(i, c[d].fn, void 0, !0), v) {
+      for (y = 0; y < F; y++)
+        switch (c[y].once && this.removeListener(i, c[y].fn, void 0, !0), v) {
           case 1:
-            c[d].fn.call(c[d].context);
+            c[y].fn.call(c[y].context);
             break;
           case 2:
-            c[d].fn.call(c[d].context, s);
+            c[y].fn.call(c[y].context, s);
             break;
           case 3:
-            c[d].fn.call(c[d].context, s, l);
+            c[y].fn.call(c[y].context, s, l);
             break;
           case 4:
-            c[d].fn.call(c[d].context, s, l, w);
+            c[y].fn.call(c[y].context, s, l, w);
             break;
           default:
             if (!j)
               for (A = 1, j = new Array(v - 1); A < v; A++)
                 j[A - 1] = arguments[A];
-            c[d].fn.apply(c[d].context, j);
+            c[y].fn.apply(c[y].context, j);
         }
     }
     return !0;
@@ -629,8 +629,8 @@ var Ot = { exports: {} };
     var s;
     return i ? (s = r ? r + i : i, this._events[s] && u(this, s)) : (this._events = new n(), this._eventsCount = 0), this;
   }, f.prototype.off = f.prototype.removeListener, f.prototype.addListener = f.prototype.on, f.prefixed = r, f.EventEmitter = f, t.exports = f;
-})(Ot);
-var Fr = Ot.exports;
+})(Et);
+var Fr = Et.exports;
 const Dr = /* @__PURE__ */ Wr(Fr);
 class Br extends Dr {
 }
@@ -639,15 +639,15 @@ class qr {
     /**
      * 事件触发器
      */
-    y(this, "emitter");
+    d(this, "emitter");
     /**
      * iframe窗口对象
      */
-    y(this, "contentWindow", null);
+    d(this, "contentWindow", null);
     /**
      * 是否跨域
      */
-    y(this, "isCrossOrigin", !1);
+    d(this, "isCrossOrigin", !1);
     if (this.emitter = new Br(), e) {
       try {
         e.document;
@@ -688,7 +688,8 @@ class W {
     /**
      * 目标监听器清单
      */
-    y(this, "targets");
+    d(this, "targets");
+    d(this, "sendingEvents", /* @__PURE__ */ new Set());
     this.targets = new Mr();
   }
   static init() {
@@ -740,12 +741,12 @@ class W {
    * @param args 参数
    */
   send(e, r) {
-    this.targets.map((n, o) => {
+    this.sendingEvents.has(e) || (this.sendingEvents.add(e), this.targets.map((n, o) => {
       o.send(e, r);
-    });
+    }), this.sendingEvents.delete(e));
   }
 }
-var Et = /* @__PURE__ */ ((t) => (t.Mobile = "APP", t.Desktop = "WEB", t))(Et || {});
+var Ot = /* @__PURE__ */ ((t) => (t.Mobile = "APP", t.Desktop = "WEB", t))(Ot || {});
 const U = {
   ipc: W.init(),
   config: {
@@ -766,7 +767,7 @@ const U = {
   getToken() {
     switch (this.platform) {
       case "APP":
-        return window.APP.getLanguage();
+        return window.APP.getToken();
       case "WEB":
         return localStorage.getItem("_token");
       default:
@@ -791,11 +792,11 @@ class gt extends Error {
   constructor(r, n, o, p = "") {
     var u;
     super();
-    y(this, "code", -1);
-    y(this, "status", "");
-    y(this, "type", "");
-    y(this, "description", "");
-    this.message = r, this.name = "CustomError", this.code = n, this.status = o, this.type = "error", this.description = p, (u = Vr.targets.get("self")) == null || u.send("custom_error", this);
+    d(this, "code", -1);
+    d(this, "status", "");
+    d(this, "type", "");
+    d(this, "description", "");
+    this.message = r, this.name = "CustomError", this.code = n, this.status = o, this.type = "error", this.description = p, (u = Vr.targets.get("_self")) == null || u.send("custom_error", this);
   }
 }
 const zr = "YYYY-MM-DD HH:mm:ss";
@@ -817,17 +818,17 @@ const Hr = async (t, e) => {
   const r = t.requestOptions.body;
   r && Object.prototype.toString.call(r) === "[object Object]" && Pt(r), await e();
 }, Jr = async (t, e) => {
-  var f, a, i;
-  const r = t.requestOptions;
-  let n = !0;
-  const o = r.headers, p = K(o) ? null : o["Content-Type"];
-  if (p ? n = p.startsWith("application/json") : o["Content-Type"] = $t.Json, n) {
-    const s = r.body;
-    typeof s == "object" && (r.body = JSON.stringify(s));
+  var p, u, f;
+  const r = t.requestOptions, n = r.body;
+  if (!(n instanceof FormData) && !(n instanceof URLSearchParams)) {
+    let a = !0;
+    const i = r.headers, s = K(i) ? null : i == null ? void 0 : i["Content-Type"];
+    s ? a = s.startsWith("application/json") : i["Content-Type"] = $t.Json, a && typeof n == "object" && (r.body = JSON.stringify(n));
   }
-  await e();
-  const u = ((f = t.response) == null ? void 0 : f.headers.get("Content-Type")) || "";
-  (a = t.response) != null && a.ok && u && u.startsWith("application/json") && !t.result && (t.result = await ((i = t.response) == null ? void 0 : i.json()));
+  if (await e(), t.result)
+    return;
+  const o = ((p = t.response) == null ? void 0 : p.headers.get("Content-Type")) || "";
+  (u = t.response) != null && u.ok && (o != null && o.startsWith("application/json")) && (t.result = await ((f = t.response) == null ? void 0 : f.json()));
 }, Gr = async (t, e) => {
   var p, u, f, a;
   const n = t.requestOptions.headers, o = U.getToken();
@@ -850,7 +851,7 @@ const Hr = async (t, e) => {
 }, Y = new N();
 Y.baseURL = () => {
   switch (U.platform) {
-    case Et.Mobile:
+    case Ot.Mobile:
       return window.APP.getURL();
     default:
       return U.config.baseUrl || location.origin;
