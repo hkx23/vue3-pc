@@ -192,17 +192,6 @@ const columnsParam: PrimaryTableCol<TableRowData>[] = [
     width: 160,
     ellipsis: true,
     colKey: 'personCode',
-    // filter: {
-    //   type: 'input',
-    //   resetValue: '',
-    //   confirmEvents: ['onEnter'],
-    //   props: {
-    //     placeholder: '输入关键词',
-    //     // onChange: onEmailChange,
-    //   },
-    //   showConfirmAndReset: true, // 是否显示重置取消按钮，
-    // },
-    // sorter: true,
   },
   { title: '姓名', width: 160, ellipsis: true, colKey: 'personName' },
   { title: '性别', width: 160, ellipsis: true, colKey: 'genderName' },
@@ -233,7 +222,10 @@ const onEditConfirm = async () => {
       state: formData.value.state.toString(),
     });
     MessagePlugin.success('编辑成功');
+
+    onShowEditVisible.value = false;
     formInit();
+    fetchTable();
   } catch (e) {
     // debugger;
     // console.log(e);

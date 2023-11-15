@@ -1,5 +1,5 @@
 const Api = {
-  getList: '/api/modeling/mitemcategory/getlist',
+  getList: '/api/modeling/mitemCategory/getlist',
   getMitemByCategory: '/api/modeling/mitem/getlist',
 };
 
