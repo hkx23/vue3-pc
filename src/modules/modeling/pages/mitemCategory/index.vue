@@ -112,7 +112,7 @@ const fetchTable = async () => {
   }
 };
 
-const fetchMitemTable = async (categoryid) => {
+const fetchMitemTable = async (categoryid: any) => {
   dataLoading.value = true;
   try {
     const data = await getMitemList({
@@ -131,7 +131,7 @@ const fetchMitemTable = async (categoryid) => {
 };
 
 // 选中行
-const onSelectMitemCategoryChange = (value: any, options: object) => {
+const onSelectMitemCategoryChange = (value: any, options: any) => {
   selectedMitemCategoryRowKeys.value = value;
   fetchMitemTable(options.currentRowData.id);
 };
