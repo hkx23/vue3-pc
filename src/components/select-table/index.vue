@@ -8,6 +8,7 @@
       :popup-visible="popupVisible"
       :popup-props="{ overlayInnerStyle: { padding: '5px' } }"
       allow-input
+      :label="title"
       :multiple="multiple"
       :readonly="readonly"
       table-layout="auto"
@@ -69,7 +70,6 @@
 <script setup lang="tsx" name="TSelectTable">
 import { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs } from 'vue';
 // 抛出事件
 const emits = defineEmits(['selectionChange']);
@@ -145,6 +145,11 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  // 标题
+  title: {
+    type: String,
+    default: '请选择',
+  },
   // table宽度
   tableWidth: {
     type: Number,
@@ -195,7 +200,7 @@ const tableColumns = ref([
     checkProps: { allowUncheck: true },
     width: 50,
   },
-] as unknown as PrimaryTableCol<TableRowData>[]);
+] as unknown as any[]);
 
 // 获取选择控件的ref
 const selectRef = ref<any>(null);
@@ -365,7 +370,7 @@ const selectKeyup = (e: any) => {
         break;
       }
     }
-
+    console.log(e.keyCode);
     switch (e.keyCode) {
       case 40: // 下键
         // 高亮行设置方法 activeRowKeys.value = state.tableData[表格下表][props.rowKey];
@@ -393,6 +398,11 @@ const selectKeyup = (e: any) => {
           activeRowKeys.value = [state.tableData[currentIndex - 1][props.rowKey]];
         }
         break;
+      // case 9: // Tab键
+      //   if (popupVisible.value) {
+      //     closeTable();
+      //   }
+      //   break;
       case 13: // 回车
         radioSelect(activeRowKeys.value, [state.tableData[currentIndex]]);
         break;
@@ -496,8 +506,8 @@ onMounted(() => {
       width: 50,
     },
   ];
-  props.columns.forEach((element: { title: any; key: any; width: any }) => {
-    tableColumns.value.push({
+  props.columns.forEach((element: any) => {
+    let addColumn = {
       title: element.title,
       align: 'center',
       colKey: element.key,
@@ -506,10 +516,6 @@ onMounted(() => {
       // 输入框过滤配置
       filter: {
         type: 'input',
-
-        // 文本域搜索
-        // component: Textarea,
-
         resetValue: '',
         // 按下 Enter 键时也触发确认搜索
         confirmEvents: ['onEnter'],
@@ -519,7 +525,11 @@ onMounted(() => {
         // 是否显示重置取消按钮，一般情况不需要显示
         showConfirmAndReset: true,
       },
-    });
+    };
+    // 使用addColumn与element合并,element如果有一样的属性，以element为准
+    addColumn = Object.assign(addColumn, element);
+
+    tableColumns.value.push(addColumn);
   });
 
   console.log(9999, props.value);

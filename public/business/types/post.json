@@ -1,0 +1,28 @@
+{
+  "title": "岗位：",
+  "placeholder": "请选择岗位",
+  "url": "/api/modeling/post/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "岗位代码",
+      "key": "postCode",
+      "align": "center"
+    },
+    {
+      "title": "岗位名称",
+      "key": "postName",
+      "align": "center"
+    },
+    {
+      "title": "岗位描述",
+      "key": "postDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "postCode",
+    "label": "postName"
+  }
+}

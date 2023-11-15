@@ -1,0 +1,28 @@
+{
+  "title": "客户：",
+  "placeholder": "请选择客户",
+  "url": "/api/modeling/customer/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "客户代码",
+      "key": "customerCode",
+      "align": "center"
+    },
+    {
+      "title": "客户名称",
+      "key": "customerName",
+      "align": "center"
+    },
+    {
+      "title": "客户简写",
+      "key": "shortName",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "customerCode",
+    "label": "customerName"
+  }
+}

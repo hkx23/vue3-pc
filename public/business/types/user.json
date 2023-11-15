@@ -1,0 +1,28 @@
+{
+  "title": "用户：",
+  "placeholder": "请选择用户",
+  "url": "/api/system/user/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "用户名",
+      "key": "userName",
+      "align": "center"
+    },
+    {
+      "title": "显示名",
+      "key": "displayName",
+      "align": "center"
+    },
+    {
+      "title": "用户上次登录时间",
+      "key": "timeLastLogin",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "userName",
+    "label": "displayName"
+  }
+}

@@ -8,6 +8,7 @@
     :remote-url="finalUrl"
     :multiple="isMultiple"
     :readonly="readonly"
+    :title="finalTitle"
     :placeholder="finalPlaceholder"
     :keywords="finalKeywords"
     v-bind="selectAttr"
@@ -38,6 +39,11 @@ const props = defineProps({
   },
   // 占位字符
   placeholder: {
+    type: String,
+    default: '',
+  },
+  // 标题
+  title: {
     type: String,
     default: '',
   },
@@ -128,6 +134,7 @@ const finalUrl = ref(props.remoteUrl);
 const finalColumns = ref(props.columns);
 const finalRowKey = ref(props.rowKey);
 const finalPlaceholder = ref(props.placeholder);
+const finalTitle = ref(props.title);
 const finalKeywords = ref(props.keywords);
 const selectionChange = (val: any, valuKeys: any) => {
   console.log(val, valuKeys);
@@ -155,8 +162,12 @@ const loadTypeSetting = () => {
         if (res.rowKey) {
           finalRowKey.value = res.rowKey;
         }
+        if (res.placeholder) {
+          finalPlaceholder.value = res.placeholder;
+        }
+
         if (res.title) {
-          finalPlaceholder.value = res.title;
+          finalTitle.value = res.title;
         }
 
         if (res.keywords) {

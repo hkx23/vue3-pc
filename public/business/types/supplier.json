@@ -1,0 +1,33 @@
+{
+  "title": "供应商：",
+  "placeholder": "请选择供应商",
+  "url": "/api/modeling/supplier/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "供应商代码",
+      "key": "supplierCode",
+      "align": "center"
+    },
+    {
+      "title": "供应商名称",
+      "key": "supplierName",
+      "align": "center"
+    },
+    {
+      "title": "供应商联系人",
+      "key": "contactPerson",
+      "align": "center"
+    },
+    {
+      "title": "供应商联系电话",
+      "key": "contactTel",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "supplierCode",
+    "label": "supplierName"
+  }
+}
