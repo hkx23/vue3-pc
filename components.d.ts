@@ -7,13 +7,15 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    Color: typeof import('./src/components/color/index.vue')['default']
-    CommonTable: typeof import('./src/components/common-table/index.vue')['default']
-    ProductCard: typeof import('./src/components/product-card/index.vue')['default']
-    Result: typeof import('./src/components/result/index.vue')['default']
-    RouterLink: typeof import('vue-router')['RouterLink']
-    RouterView: typeof import('vue-router')['RouterView']
-    Thumbnail: typeof import('./src/components/thumbnail/index.vue')['default']
-    Trend: typeof import('./src/components/trend/index.vue')['default']
+    Color: typeof import('./src/components/color/index.vue')['default'];
+    CommonTable: typeof import('./src/components/common-table/index.vue')['default'];
+    ProductCard: typeof import('./src/components/product-card/index.vue')['default'];
+    Result: typeof import('./src/components/result/index.vue')['default'];
+    RouterLink: typeof import('vue-router')['RouterLink'];
+    RouterView: typeof import('vue-router')['RouterView'];
+    SelectBusiness: typeof import('./src/components/select-business/index.vue')['default'];
+    SelectTable: typeof import('./src/components/select-table/index.vue')['default'];
+    Thumbnail: typeof import('./src/components/thumbnail/index.vue')['default'];
+    Trend: typeof import('./src/components/trend/index.vue')['default'];
   }
 }

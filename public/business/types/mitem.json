@@ -1,0 +1,27 @@
+{
+  "title": "请选择物料",
+  "url": "/api/modeling/mitem/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "物料编码",
+      "key": "mitemCode",
+      "align": "center"
+    },
+    {
+      "title": "物料名称",
+      "key": "mitemName",
+      "align": "center"
+    },
+    {
+      "title": "物料描述",
+      "key": "mitemDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "mitemCode",
+    "label": "mitemName"
+  }
+}
