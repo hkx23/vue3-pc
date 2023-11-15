@@ -9,7 +9,7 @@ const Api = {
  * 获取菜单
  * @returns Promise<MenuListResult>
  */
-export function getMenuList() {
+export function getMenuList(): Promise<RouteItem[]> {
   return http.get<Array<RouteItem>>(Api.GetMenuList, { clientType: '1' });
 }
 
