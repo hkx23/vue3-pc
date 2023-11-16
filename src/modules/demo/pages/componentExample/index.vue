@@ -62,6 +62,33 @@
       <t-input v-model="userValue" label="用户值" />
     </div>
   </t-row>
+  <!-- 仓库 -->
+  <t-row justify="space-between">
+    <div class="left-operation-container">
+      <t-select-business v-model="warehouseValue" type="warehouse"></t-select-business>
+    </div>
+    <div class="search-input">
+      <t-input v-model="warehouseValue" label="仓库值" />
+    </div>
+  </t-row>
+  <!-- 库区 -->
+  <t-row justify="space-between">
+    <div class="left-operation-container">
+      <t-select-business v-model="districtValue" type="district"></t-select-business>
+    </div>
+    <div class="search-input">
+      <t-input v-model="districtValue" label="库区值" />
+    </div>
+  </t-row>
+  <!-- 库位 -->
+  <t-row justify="space-between">
+    <div class="left-operation-container">
+      <t-select-business v-model="locationValue" type="location"></t-select-business>
+    </div>
+    <div class="search-input">
+      <t-input v-model="locationValue" label="货位值" />
+    </div>
+  </t-row>
 </template>
 
 <script setup lang="ts">
@@ -76,6 +103,9 @@ const customerValue = ref('');
 const supplierValue = ref('');
 const postValue = ref('');
 const userValue = ref('');
+const warehouseValue = ref('');
+const districtValue = ref('');
+const locationValue = ref('');
 
 onMounted(() => {
   mitemValue.value = 'ABC123dddd1';
@@ -85,6 +115,9 @@ onMounted(() => {
   supplierValue.value = '';
   postValue.value = '';
   userValue.value = '';
+  warehouseValue.value = '';
+  districtValue.value = '';
+  locationValue.value = '';
 });
 </script>
 

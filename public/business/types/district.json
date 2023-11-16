@@ -1,0 +1,28 @@
+{
+  "title": "货区：",
+  "placeholder": "请选择货区",
+  "url": "/api/warehouse/district/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "货区编码",
+      "key": "districtCode",
+      "align": "center"
+    },
+    {
+      "title": "货区名称",
+      "key": "districtName",
+      "align": "center"
+    },
+    {
+      "title": "货区描述",
+      "key": "districtDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "districtCode",
+    "label": "districtName"
+  }
+}
