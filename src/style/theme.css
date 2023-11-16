@@ -1,4 +1,5 @@
-:root,:root[theme-mode="light"] {
+:root,
+:root[theme-mode='light'] {
   --brand-main: var(--td-brand-color-5);
   --td-brand-color-light: var(--td-brand-color-1);
   --td-brand-color-focus: var(--td-brand-color-2);
@@ -141,38 +142,42 @@
   --td-font-size-display-medium: 36px;
   --td-font-size-display-large: 48px;
   --td-line-height-common: 4px;
-  --td-line-height-link-small: calc(    var(--td-font-size-link-small) + var(--td-line-height-common)  );
-  --td-line-height-link-medium: calc(    var(--td-font-size-link-medium) + var(--td-line-height-common)  );
-  --td-line-height-link-large: calc(    var(--td-font-size-link-large) + var(--td-line-height-common)  );
-  --td-line-height-mark-small: calc(    var(--td-font-size-mark-small) + var(--td-line-height-common)  );
-  --td-line-height-mark-medium: calc(    var(--td-font-size-mark-medium) + var(--td-line-height-common)  );
-  --td-line-height-body-small: calc(    var(--td-font-size-body-small) + var(--td-line-height-common)  );
-  --td-line-height-body-medium: calc(    var(--td-font-size-body-medium) + var(--td-line-height-common)  );
-  --td-line-height-body-large: calc(    var(--td-font-size-body-large) + var(--td-line-height-common)  );
-  --td-line-height-title-small: calc(    var(--td-font-size-title-small) + var(--td-line-height-common)  );
-  --td-line-height-title-medium: calc(    var(--td-font-size-title-medium) + var(--td-line-height-common)  );
-  --td-line-height-title-large: calc(    var(--td-font-size-title-medium) + var(--td-line-height-common)  );
-  --td-line-height-headline-small: calc(    var(--td-font-size-headline-small) + var(--td-line-height-common)  );
-  --td-line-height-headline-medium: calc(    var(--td-font-size-headline-medium) + var(--td-line-height-common)  );
-  --td-line-height-headline-large: calc(    var(--td-font-size-headline-large) + var(--td-line-height-common)  );
-  --td-line-height-display-medium: calc(    var(--td-font-size-display-medium) + var(--td-line-height-common)  );
-  --td-line-height-display-large: calc(    var(--td-font-size-display-large) + var(--td-line-height-common)  );
-  --td-font-link-small: var(--td-font-size-link-small) /    var(--td-line-height-link-small) var(--td-font-family);
-  --td-font-link-medium: var(--td-font-size-link-medium) /    var(--td-line-height-link-medium) var(--td-font-family);
-  --td-font-link-large: var(--td-font-size-link-large) /    var(--td-line-height-link-large) var(--td-font-family);
-  --td-font-mark-small: 600 var(--td-font-size-mark-small) /    var(--td-line-height-mark-small) var(--td-font-family);
-  --td-font-mark-medium: 600 var(--td-font-size-mark-medium) /    var(--td-line-height-mark-medium) var(--td-font-family);
-  --td-font-body-small: var(--td-font-size-body-small) /    var(--td-line-height-body-small) var(--td-font-family);
-  --td-font-body-medium: var(--td-font-size-body-medium) /    var(--td-line-height-body-medium) var(--td-font-family);
-  --td-font-body-large: var(--td-font-size-body-large) /    var(--td-line-height-body-large) var(--td-font-family);
-  --td-font-title-small: var(--td-font-size-title-small) /    var(--td-line-height-title-small) var(--td-font-family);
-  --td-font-title-medium: var(--td-font-size-title-medium) /    var(--td-line-height-title-medium) var(--td-font-family);
-  --td-font-title-large: var(--td-font-size-title-large) /    var(--td-line-height-title-large) var(--td-font-family);
-  --td-font-headline-small: var(--td-font-size-headline-small) /    var(--td-line-height-headline-small) var(--td-font-family);
-  --td-font-headline-medium: var(--td-font-size-headline-medium) /    var(--td-line-height-headline-medium) var(--td-font-family);
-  --td-font-headline-large: var(--td-font-size-headline-large) /    var(--td-line-height-headline-large) var(--td-font-family);
-  --td-font-display-medium: var(--td-font-size-display-medium) /    var(--td-line-height-display-medium) var(--td-font-family);
-  --td-font-display-large: var(--td-font-size-display-large) /    var(--td-line-height-display-large) var(--td-font-family);
+  --td-line-height-link-small: calc(var(--td-font-size-link-small) + var(--td-line-height-common));
+  --td-line-height-link-medium: calc(var(--td-font-size-link-medium) + var(--td-line-height-common));
+  --td-line-height-link-large: calc(var(--td-font-size-link-large) + var(--td-line-height-common));
+  --td-line-height-mark-small: calc(var(--td-font-size-mark-small) + var(--td-line-height-common));
+  --td-line-height-mark-medium: calc(var(--td-font-size-mark-medium) + var(--td-line-height-common));
+  --td-line-height-body-small: calc(var(--td-font-size-body-small) + var(--td-line-height-common));
+  --td-line-height-body-medium: calc(var(--td-font-size-body-medium) + var(--td-line-height-common));
+  --td-line-height-body-large: calc(var(--td-font-size-body-large) + var(--td-line-height-common));
+  --td-line-height-title-small: calc(var(--td-font-size-title-small) + var(--td-line-height-common));
+  --td-line-height-title-medium: calc(var(--td-font-size-title-medium) + var(--td-line-height-common));
+  --td-line-height-title-large: calc(var(--td-font-size-title-medium) + var(--td-line-height-common));
+  --td-line-height-headline-small: calc(var(--td-font-size-headline-small) + var(--td-line-height-common));
+  --td-line-height-headline-medium: calc(var(--td-font-size-headline-medium) + var(--td-line-height-common));
+  --td-line-height-headline-large: calc(var(--td-font-size-headline-large) + var(--td-line-height-common));
+  --td-line-height-display-medium: calc(var(--td-font-size-display-medium) + var(--td-line-height-common));
+  --td-line-height-display-large: calc(var(--td-font-size-display-large) + var(--td-line-height-common));
+  --td-font-link-small: var(--td-font-size-link-small) / var(--td-line-height-link-small) var(--td-font-family);
+  --td-font-link-medium: var(--td-font-size-link-medium) / var(--td-line-height-link-medium) var(--td-font-family);
+  --td-font-link-large: var(--td-font-size-link-large) / var(--td-line-height-link-large) var(--td-font-family);
+  --td-font-mark-small: 600 var(--td-font-size-mark-small) / var(--td-line-height-mark-small) var(--td-font-family);
+  --td-font-mark-medium: 600 var(--td-font-size-mark-medium) / var(--td-line-height-mark-medium) var(--td-font-family);
+  --td-font-body-small: var(--td-font-size-body-small) / var(--td-line-height-body-small) var(--td-font-family);
+  --td-font-body-medium: var(--td-font-size-body-medium) / var(--td-line-height-body-medium) var(--td-font-family);
+  --td-font-body-large: var(--td-font-size-body-large) / var(--td-line-height-body-large) var(--td-font-family);
+  --td-font-title-small: var(--td-font-size-title-small) / var(--td-line-height-title-small) var(--td-font-family);
+  --td-font-title-medium: var(--td-font-size-title-medium) / var(--td-line-height-title-medium) var(--td-font-family);
+  --td-font-title-large: var(--td-font-size-title-large) / var(--td-line-height-title-large) var(--td-font-family);
+  --td-font-headline-small: var(--td-font-size-headline-small) / var(--td-line-height-headline-small)
+    var(--td-font-family);
+  --td-font-headline-medium: var(--td-font-size-headline-medium) / var(--td-line-height-headline-medium)
+    var(--td-font-family);
+  --td-font-headline-large: var(--td-font-size-headline-large) / var(--td-line-height-headline-large)
+    var(--td-font-family);
+  --td-font-display-medium: var(--td-font-size-display-medium) / var(--td-line-height-display-medium)
+    var(--td-font-family);
+  --td-font-display-large: var(--td-font-size-display-large) / var(--td-line-height-display-large) var(--td-font-family);
 
   /* 字体颜色 */
   --td-text-color-primary: var(--td-font-gray-1);
@@ -185,7 +190,7 @@
 
   /* end 字体配置 */
 
-    /* 圆角配置 */
+  /* 圆角配置 */
   --td-radius-small: 1px;
   --td-radius-default: 2px;
   --td-radius-medium: 4px;
@@ -196,14 +201,14 @@
 
   /* end 圆角配置 */
 
-/* 阴影配置 */
+  /* 阴影配置 */
   --td-shadow-1: 0 1px 10px rgb(0 0 0 / 5%), 0 4px 5px rgb(0 0 0 / 8%), 0 2px 4px -1px rgb(0 0 0 / 12%);
   --td-shadow-2: 0 3px 14px 2px rgb(0 0 0 / 5%), 0 8px 10px 1px rgb(0 0 0 / 6%), 0 5px 5px -3px rgb(0 0 0 / 10%);
   --td-shadow-3: 0 6px 30px 5px rgb(0 0 0 / 5%), 0 16px 24px 2px rgb(0 0 0 / 4%), 0 8px 10px -5px rgb(0 0 0 / 8%);
 
   /* end 阴影配置 */
 
-/* 尺寸配置 */
+  /* 尺寸配置 */
   --td-size-1: 2px;
   --td-size-2: 4px;
   --td-size-3: 6px;
@@ -263,7 +268,7 @@
   /* end 尺寸配置 */
 }
 
-:root[theme-mode="dark"] {
+:root[theme-mode='dark'] {
   --brand-main: var(--td-brand-color-6);
   --td-brand-color-light: var(--td-brand-color-1);
   --td-brand-color-focus: var(--td-brand-color-2);
@@ -382,14 +387,14 @@
 
   /* end 圆角配置 */
 
-/* 阴影配置 */
+  /* 阴影配置 */
   --td-shadow-1: 0 1px 10px rgb(0 0 0 / 5%), 0 4px 5px rgb(0 0 0 / 8%), 0 2px 4px -1px rgb(0 0 0 / 12%);
   --td-shadow-2: 0 3px 14px 2px rgb(0 0 0 / 5%), 0 8px 10px 1px rgb(0 0 0 / 6%), 0 5px 5px -3px rgb(0 0 0 / 10%);
   --td-shadow-3: 0 6px 30px 5px rgb(0 0 0 / 5%), 0 16px 24px 2px rgb(0 0 0 / 4%), 0 8px 10px -5px rgb(0 0 0 / 8%);
 
   /* end 阴影配置 */
 
-/* 尺寸配置 */
+  /* 尺寸配置 */
   --td-size-1: 2px;
   --td-size-2: 4px;
   --td-size-3: 6px;

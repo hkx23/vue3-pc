@@ -22,7 +22,6 @@
     "pinia-plugin-persistedstate": "^3.2.0",
     "qrcode.vue": "^3.4.1",
     "tdesign-icons-vue-next": "^0.2.2",
-    "tdesign-mobile-vue": "^1.0.6",
     "tdesign-vue-next": "^1.6.7",
     "tvision-color": "^1.6.0",
     "vue": "^3.3.4",
@@ -83,6 +82,7 @@
   },
   "lint-staged": {
     "src/**/!(web-core)*.{js,jsx,vue,ts,tsx}": [
+      "prettier --write",
       "npm run lint:fix"
     ],
     "src/**/!(web-core)*.{html,vue,css,sass,less}": [
