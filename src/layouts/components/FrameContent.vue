@@ -31,7 +31,7 @@ const getWrapStyle = computed((): CSSProperties => {
 
 const computedStyle = getComputedStyle(document.documentElement);
 const sizeXxxl = computedStyle.getPropertyValue('--td-comp-size-xxxl');
-const paddingTBXxl = computedStyle.getPropertyValue('--td-comp-paddingTB-xxl');
+const paddingTBXxl = computedStyle.getPropertyValue('--td-comp-paddingTB-xl');
 
 function getOuterHeight(dom: Element) {
   let height = dom.clientHeight;

@@ -4,15 +4,23 @@
       <t-row justify="space-between">
         <div class="left-operation-container">
           <t-button @click="onClickAdd">新增</t-button>
-          <t-popconfirm content="确认删除吗">
-            <t-button theme="default" @click="onClickDelete">删除</t-button>
+          <t-popconfirm content="确认删除吗" @confirm="onClickDelete">
+            <t-button theme="default">删除</t-button>
           </t-popconfirm>
         </div>
       </t-row>
-      <t-enhanced-table :columns="columns" :data="data"></t-enhanced-table>
+      <t-enhanced-table
+        ref="tableRef"
+        row-key="id"
+        :columns="columns"
+        :data="data"
+        :tree="treeConfig"
+        active-row-type="single"
+        @row-click="onRowClick"
+      ></t-enhanced-table>
     </t-card>
-    <t-dialog v-model:visible="formVisible" header="新增组织层级">
-      <org-level-form></org-level-form>
+    <t-dialog v-model:visible="formVisible" header="新增组织层级" :on-confirm="onConfirmForm">
+      <org-level-form ref="formRef"></org-level-form>
     </t-dialog>
   </div>
 </template>
@@ -23,45 +31,76 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { EnhancedTableInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
+import { nextTick, onMounted, reactive, ref } from 'vue';
 
-import { getOrgLevelTree } from '../../api/orgLevel';
+import { OrgLevel } from '../../api/model/orgLevelModel';
+import { deleteOrgLevel, getOrgLevelTree } from '../../api/orgLevel';
+import { FormRef } from './constants';
 import OrgLevelForm from './form.vue';
 
+const treeConfig = reactive({
+  childrenKey: 'children',
+  treeNodeColumnIndex: 0,
+});
 const columns = [
   {
     title: '组织层级',
-    key: 'levelName',
+    colKey: 'levelName',
   },
   {
     title: '层级代码',
-    key: 'levelCode',
+    colKey: 'levelCode',
   },
   {
     title: '层级序列',
-    key: 'levelSeq',
+    colKey: 'levelSeq',
   },
 ];
+const formRef = ref<FormRef>(null);
+const tableRef = ref<EnhancedTableInstanceFunctions>(null);
 const formVisible = ref(false);
 const data = ref([]);
+let selectedRow: OrgLevel = null;
 
 onMounted(() => {
   fetchData();
 });
 
+const onRowClick = ({ row }: { row: any }) => {
+  selectedRow = row as OrgLevel;
+};
+
 const fetchData = async () => {
   const list = await getOrgLevelTree();
   data.value = list;
+  nextTick(() => {
+    tableRef.value?.expandAll();
+  });
+};
+
+const onConfirmForm = async () => {
+  const { submit } = formRef.value;
+  submit().then(() => {
+    formVisible.value = false;
+    fetchData();
+  });
 };
 
 const onClickAdd = () => {
+  const { reset } = formRef.value;
+  reset(selectedRow);
   formVisible.value = true;
 };
 
-const onClickDelete = () => {
-  console.log(data);
-  const { length } = data.value;
-  return length;
+const onClickDelete = async () => {
+  if (!selectedRow?.id) {
+    MessagePlugin.warning('请选择行之后再尝试操作');
+    return;
+  }
+  await deleteOrgLevel(selectedRow.id);
+  MessagePlugin.success('删除成功');
+  fetchData();
 };
 </script>
 

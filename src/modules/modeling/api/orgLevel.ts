@@ -38,8 +38,8 @@ export function updateOrgLevel(data: OrgLevel) {
  * @param id
  * @returns
  */
-export function deleteOrgLevel(id: number) {
-  return http.del<any>(Api.update, { body: { id } as any });
+export function deleteOrgLevel(id: string) {
+  return http.del<any>(Api.delete, { params: { id } as any });
 }
 
 /**

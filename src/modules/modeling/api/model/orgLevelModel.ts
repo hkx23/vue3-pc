@@ -1,16 +1,12 @@
-export interface OrgLevelTreeVO {
-  levelCode: string;
-  levelName: string;
-  divisionFlag: number;
-  levelSeq: number;
+export interface OrgLevelTreeVO extends OrgLevel {
   children: Array<OrgLevelTreeVO>;
 }
 
 export interface OrgLevel {
-  id: number;
+  id?: string;
   levelCode: string;
   levelName: string;
-  parentLevelId: number;
+  parentLevelId?: string;
   divisionFlag: number;
   levelSeq: number;
 }
