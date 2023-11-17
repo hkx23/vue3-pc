@@ -220,11 +220,9 @@ const lineValue = ref('');
 
 const mitemValueSplit = computed(() => mitemValue.value.map((item) => item.value).join(','));
 
-const onMitemChange = (value: any, keys: any) => {
-  console.log(value);
-  console.log(keys);
+const onMitemChange = (selectRows: any) => {
+  console.log(selectRows);
 };
-
 onMounted(() => {
   mitemValue.value = [];
   mitemCategoryValue.value = '';
