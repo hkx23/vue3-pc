@@ -29,7 +29,14 @@
             :pagination="tableMitemCategoryPagination"
             :selected-row-keys="selectedMitemCategoryRowKeys"
             @select-change="onSelectMitemCategoryChange"
-          ></t-table>
+          >
+            <template #op="slotProps">
+              <t-space>
+                <t-icon name="edit" @click="onRowClick(slotProps)" />
+                <t-icon name="delete" @click="onRowDelete(slotProps)" />
+              </t-space>
+            </template>
+          </t-table>
         </t-row>
         <t-row style="margin-top: 10px">
           <t-table
@@ -45,6 +52,11 @@
       </div>
     </div>
   </div>
+  <div>
+    <t-dialog v-model:visible="formVisible" header="编辑物料分类" :on-confirm="onConfirmForm">
+      <t-form ref="formRef" :data="formData" :show-cancel="true" :show-error-message="false"> </t-form>
+    </t-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -55,10 +67,17 @@ import { getList, getMitemList } from '../../api/mitemCategory';
 
 const tableMitemCategoryColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'single', width: 64, fixed: 'left' },
-  { title: '分类编码', width: 160, colKey: 'categoryCode' },
-  { title: '分类名称', width: 160, colKey: 'categoryName' },
-  { title: '分类描述', width: 160, colKey: 'categoryDesc' },
-  { title: '投料规则', width: 160, colKey: 'onboardRuleCode' },
+  { title: '物料编码', width: 160, colKey: 'categoryCode' },
+  { title: '物料名称', width: 160, colKey: 'categoryName' },
+  { title: '物料描述', width: 160, colKey: 'categoryDesc' },
+  { title: '物料类别', width: 160, colKey: 'onboardRuleCode' },
+  { title: '物料类别', width: 160, colKey: '' },
+  { title: '物料类别名称', width: 160, colKey: '' },
+  { title: '主计量单位', width: 160, colKey: '' },
+  { title: '是否成品', width: 160, colKey: '' },
+  { title: '是否半成品', width: 160, colKey: '' },
+  { title: '是否原材料', width: 160, colKey: '' },
+  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 
 const tableMitemCategoryPagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
@@ -76,8 +95,18 @@ const selectedMitemRowKeys = ref([]);
 const tableDataMitemCategory = ref([]);
 const tableDataMitem = ref([]);
 const dataLoading = ref(false);
+const formVisible = ref(false);
 
 const keyword = ref('');
+const formData = ref('');
+// const formData: OrgLevelForm = reactive({
+//   parentLevelId: null,
+//   parentLevelName: '',
+//   levelCode: '',
+//   levelName: '',
+//   divisionFlag: 0,
+//   levelSeq: 0,
+// });
 
 // 查询按钮
 const onRefresh = () => {
@@ -134,6 +163,23 @@ const fetchMitemTable = async (categoryid: any) => {
 const onSelectMitemCategoryChange = (value: any, options: any) => {
   selectedMitemCategoryRowKeys.value = value;
   fetchMitemTable(options.currentRowData.id);
+};
+
+const onConfirmForm = async () => {
+  console.log('123123');
+  // const { submit } = formRef.value;
+  // submit().then(() => {
+  //   formVisible.value = false;
+  //   fetchData();
+  // });
+};
+
+const onRowClick = (value: any) => {
+  console.log(value);
+};
+
+const onRowDelete = (value: any) => {
+  console.log(value);
 };
 
 onMounted(() => {
