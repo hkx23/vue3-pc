@@ -33,11 +33,11 @@ async function getMenuIcon(iconName: string) {
 }
 
 // 动态引入路由组件
-function asyncImportRoute(routes: RouteItem[] | undefined) {
+async function asyncImportRoute(routes: RouteItem[] | undefined) {
   dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../pages/**/*.vue');
   if (!routes) return;
 
-  routes.forEach(async (item) => {
+  for await (const item of routes) {
     const { component, name } = item;
     const { children } = item;
 
@@ -55,7 +55,7 @@ function asyncImportRoute(routes: RouteItem[] | undefined) {
 
     // eslint-disable-next-line no-unused-expressions
     children && asyncImportRoute(children);
-  });
+  }
 }
 
 function dynamicImport(dynamicViewsModules: Record<string, () => Promise<Recordable>>, component: string) {
@@ -83,8 +83,8 @@ function dynamicImport(dynamicViewsModules: Record<string, () => Promise<Recorda
 }
 
 // 将背景对象变成路由对象
-export function transformObjectToRoute<T = RouteItem>(routeList: RouteItem[]): T[] {
-  routeList.forEach(async (route) => {
+export async function transformObjectToRoute<T = RouteItem>(routeList: RouteItem[]): Promise<T[]> {
+  for await (const route of routeList) {
     const component = route.component as string;
 
     if (component) {
@@ -101,9 +101,9 @@ export function transformObjectToRoute<T = RouteItem>(routeList: RouteItem[]): T
       throw new Error('component is undefined');
     }
     // eslint-disable-next-line no-unused-expressions
-    route.children && asyncImportRoute(route.children);
+    route.children && (await asyncImportRoute(route.children));
     if (route.meta.icon) route.meta.icon = await getMenuIcon(route.meta.icon);
-  });
+  }
 
   return [PAGE_NOT_FOUND_ROUTE, ...routeList] as unknown as T[];
 }
