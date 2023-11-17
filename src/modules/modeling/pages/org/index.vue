@@ -18,17 +18,19 @@
             >
           </t-popconfirm>
         </div>
-      </t-row>
-    </t-card>
-    <div class="table-tree-container">
-      <div class="list-tree-wrapper">
-        <div class="list-tree-operator">
+        <div class="search-input">
           <t-input v-model="filterText" :placeholder="$t('pages.listTree.placeholder')" @change="onInput">
             <template #suffix-icon>
               <search-icon size="var(--td-comp-size-xxxs)" />
             </template>
           </t-input>
-          <t-tree :data="TREE_DATA" hover expand-on-click-node :default-expanded="expanded" :filter="filterByText" />
+        </div>
+      </t-row>
+    </t-card>
+    <div class="table-tree-container">
+      <div class="list-tree-wrapper">
+        <div class="list-tree-operator">
+          <t-tree :data="TREE_DATA" hover expand-on-click-node :filter="filterByText" />
         </div>
         <div class="list-tree-content">
           <t-table ref="tableRef" row-key="id" :columns="columns" :data="data"></t-table>
@@ -40,6 +42,73 @@
 </template>
 <script setup lang="ts">
 import { AddIcon, EditIcon, RemoveIcon } from 'tdesign-icons-vue-next';
+import { TreeNodeModel } from 'tdesign-vue-next';
+import { onMounted, ref } from 'vue';
+
+import { TREE_DATA } from './constants';
+
+const formVisible = ref(false);
+
+const filterByText = ref();
+const filterText = ref();
+
+const data = ref([]);
+const columns = [
+  {
+    title: '组织编码',
+    colKey: 'orgCode',
+  },
+  {
+    title: '组织名称',
+    colKey: 'orgName',
+  },
+  {
+    title: '组织备注',
+    colKey: 'orgDesc',
+  },
+  {
+    title: '组织类型',
+    colKey: 'levelName',
+  },
+  {
+    title: '更新人',
+    colKey: 'modifier',
+  },
+  {
+    title: '更新时间',
+    colKey: 'timeModified',
+  },
+];
+
+onMounted(() => {
+  fetchData();
+});
+
+const fetchData = () => {
+  console.log('fetchData');
+};
+
+const onInput = () => {
+  filterByText.value = (node: TreeNodeModel) => {
+    return node.label.indexOf(filterText.value) >= 0;
+  };
+};
+
+const onClickAdd = () => {
+  console.log('onClickAdd');
+};
+
+const onClickEdit = () => {
+  console.log('onClickEdit');
+};
+
+const onClickDelete = () => {
+  console.log('onClickDelete');
+};
+
+const onConfirmForm = () => {
+  console.log('onConfirmForm');
+};
 </script>
 <style scoped lang="less">
 .list-card-container {
@@ -83,7 +152,7 @@ import { AddIcon, EditIcon, RemoveIcon } from 'tdesign-icons-vue-next';
 .list-tree-operator {
   width: 280px;
   float: left;
-  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
+  padding: var(--td-comp-paddingTB-xxs) var(--td-comp-paddingLR-xxl);
 }
 
 .list-tree-content {
