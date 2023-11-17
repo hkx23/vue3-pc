@@ -10,7 +10,7 @@
   >
     <div class="setting-container">
       <t-form ref="form" :data="formData" label-align="left">
-        <div class="setting-group-title">{{ $t('layout.setting.theme.mode') }}</div>
+        <!-- <div class="setting-group-title">{{ $t('layout.setting.theme.mode') }}</div>
         <t-radio-group v-model="formData.mode">
           <div v-for="(item, index) in MODE_OPTIONS" :key="index" class="setting-layout-drawer">
             <div>
@@ -21,6 +21,7 @@
             </div>
           </div>
         </t-radio-group>
+        -->
         <div class="setting-group-title">{{ $t('layout.setting.theme.color') }}</div>
         <t-radio-group v-model="formData.brandTheme">
           <div v-for="(item, index) in DEFAULT_COLOR_OPTIONS" :key="index" class="setting-layout-drawer">
@@ -95,25 +96,25 @@
 import type { PopupVisibleChangeContext } from 'tdesign-vue-next';
 import { computed, onMounted, ref, watchEffect } from 'vue';
 
-import SettingAutoIcon from '@/assets/assets-setting-auto.svg';
-import SettingDarkIcon from '@/assets/assets-setting-dark.svg';
-import SettingLightIcon from '@/assets/assets-setting-light.svg';
+// import SettingAutoIcon from '@/assets/assets-setting-auto.svg';
+// import SettingDarkIcon from '@/assets/assets-setting-dark.svg';
+// import SettingLightIcon from '@/assets/assets-setting-light.svg';
 import ColorContainer from '@/components/color/index.vue';
 import Thumbnail from '@/components/thumbnail/index.vue';
 import { DEFAULT_COLOR_OPTIONS } from '@/config/color';
 import STYLE_CONFIG from '@/config/style';
-import { t } from '@/locales';
+// import { t } from '@/locales';
 import { useSettingStore } from '@/store';
 
 const settingStore = useSettingStore();
 
 const LAYOUT_OPTION = ['side', 'top', 'mix'];
 
-const MODE_OPTIONS = [
-  { type: 'light', text: t('layout.setting.theme.options.light') },
-  { type: 'dark', text: t('layout.setting.theme.options.dark') },
-  { type: 'auto', text: t('layout.setting.theme.options.auto') },
-];
+// const MODE_OPTIONS = [
+//   { type: 'light', text: t('layout.setting.theme.options.light') },
+//   { type: 'dark', text: t('layout.setting.theme.options.dark') },
+//   { type: 'auto', text: t('layout.setting.theme.options.auto') },
+// ];
 
 const initStyleConfig = () => {
   const styleConfig = STYLE_CONFIG;
@@ -160,15 +161,15 @@ const onPopupVisibleChange = (visible: boolean, context: PopupVisibleChangeConte
   }
 };
 
-const getModeIcon = (mode: string) => {
-  if (mode === 'light') {
-    return SettingLightIcon;
-  }
-  if (mode === 'dark') {
-    return SettingDarkIcon;
-  }
-  return SettingAutoIcon;
-};
+// const getModeIcon = (mode: string) => {
+//   if (mode === 'light') {
+//     return SettingLightIcon;
+//   }
+//   if (mode === 'dark') {
+//     return SettingDarkIcon;
+//   }
+//   return SettingAutoIcon;
+// };
 
 const handleCloseDrawer = () => {
   settingStore.updateConfig({
