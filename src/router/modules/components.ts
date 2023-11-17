@@ -1,8 +1,10 @@
+import Layout from '@/layouts/index.vue';
+
 export default [
   {
     path: '/components',
     name: 'components',
-    // component: Layout,
+    component: Layout,
     redirect: '/components/default',
     meta: {
       title: {
@@ -19,7 +21,7 @@ export default [
         meta: {
           title: {
             zh_CN: '业务选择组件例子',
-            en_US: 'Success',
+            en_US: 'bussiness example',
           },
         },
       },
