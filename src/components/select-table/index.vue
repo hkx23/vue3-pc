@@ -17,10 +17,10 @@
       :input-value="selectSearch"
       :filterable="filterable"
       :loading="loading"
-      @clear="clear"
+      @clear="onClear"
       @tag-change="onTagChange"
-      @input-change="filterMethodHandle"
-      @keyup="selectKeyup"
+      @input-change="onInputChange"
+      @keyup="onSelectKeyup"
       @popup-visible-change="onPopupVisibleChange"
     >
       <!-- <template v-if="!multiple" #valueDisplay>
@@ -78,6 +78,16 @@ const props = defineProps({
   // 选择值
   value: {
     type: [String, Number, Array],
+  },
+  // 分类参数
+  category: {
+    type: [String],
+    default: '',
+  },
+  // 父级ID
+  parentId: {
+    type: [String],
+    default: '',
   },
   // table所需数据
   table: {
@@ -153,7 +163,7 @@ const props = defineProps({
   // table宽度
   tableWidth: {
     type: Number,
-    default: 500,
+    default: 800,
   },
   // 下拉数据指向的label/value
   keywords: {
@@ -238,7 +248,10 @@ const onPageChange = (PageInfo: any) => {
   console.log('remoteLoad-分页切换');
   remoteLoad(selectSearch.value);
 };
-const pagination = props.isShowPagination ? ref({ current: 1, pageSize: 10, total, onChange: onPageChange }) : null;
+// total强制转化成int
+const pagination = props.isShowPagination
+  ? ref({ current: 1, pageSize: 10, total: Number(total), onChange: onPageChange })
+  : null;
 // 是否多选-作用于表格
 type RowKeyType = 'multiple' | 'single';
 const activeRowType: RowKeyType = props.multiple ? 'multiple' : 'single';
@@ -285,7 +298,7 @@ const onTagChange = (currentTags: any, context: { trigger: any; index: any; item
 };
 const checkSelect = (value: any[], selectedRowData: any) => {
   selectedRowKeys.value = value;
-  console.log(selectedRowData);
+  // console.log(selectedRowData);
   if (selectedRowData && selectedRowData.length > 0) {
     state.defaultValue = selectedRowData;
     state.selectedRowData = selectedRowData;
@@ -296,12 +309,13 @@ const checkSelect = (value: any[], selectedRowData: any) => {
     state.defaultValue = '';
     state.selectedRowData = [];
   }
+  console.log('checkSelect');
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
 
 const radioSelect = (value: any[], selectedRowData: any) => {
   selectedRowKeys.value = value;
-  console.log(selectedRowData);
+  // console.log(selectedRowData);
   if (selectedRowData && selectedRowData.length > 0) {
     const [defaultValue] = selectedRowData;
     state.defaultValue = defaultValue;
@@ -315,11 +329,11 @@ const radioSelect = (value: any[], selectedRowData: any) => {
 };
 const onPopupVisibleChange = (val: boolean, context: any) => {
   selectSearch.value = '';
-  filterMethodHandle('');
+  onInputChange('');
   popupVisible.value = val;
   console.log(val, context);
 };
-const clear = () => {
+const onClear = () => {
   if (props.multiple) {
     state.defaultValue = [];
     state.selectedRowData = [];
@@ -357,8 +371,8 @@ onMounted(() => {
 });
 
 // 单选键盘事件
-const selectKeyup = (e: any) => {
-  console.log('keyup');
+const onSelectKeyup = (e: any) => {
+  // console.log('keyup');
   popupVisible.value = true;
   if (!props.multiple) {
     if (!props.isKeyup) return;
@@ -370,7 +384,7 @@ const selectKeyup = (e: any) => {
         break;
       }
     }
-    console.log(e.keyCode);
+    // console.log(e.keyCode);
     switch (e.keyCode) {
       case 40: // 下键
         // 高亮行设置方法 activeRowKeys.value = state.tableData[表格下表][props.rowKey];
@@ -427,6 +441,8 @@ const remoteLoad = async (val: any) => {
     pageNum: pagination.value.current,
     pageSize: pagination.value.pageSize,
     keyword: selectSearch.value,
+    category: props.category,
+    parentId: props.parentId,
     sorts: sortList.value,
     filters: filterList.value,
   };
@@ -444,11 +460,10 @@ const remoteLoad = async (val: any) => {
       element.value = element[props.keywords.value];
     });
     state.tableData = list;
-    pagination.value.total = total;
+    pagination.value.total = Number(total);
   } catch (e) {
     console.log(e);
   } finally {
-    console.log('fuck', val);
     // 单选-如果完全匹配，直接选中
     radioCSelectRedirct(val);
     loading.value = false;
@@ -480,8 +495,8 @@ const fetchData = debounce((val) => {
   }
 }, 500);
 // 搜索过滤
-const filterMethodHandle = (val: string) => {
-  console.log('filterMethodHandle');
+const onInputChange = (val: string) => {
+  console.log('onInputChange');
   selectSearch.value = val;
   loading.value = true;
   fetchData(val);
@@ -532,7 +547,6 @@ onMounted(() => {
     tableColumns.value.push(addColumn);
   });
 
-  console.log(9999, props.value);
   state.tableData = props.value;
   nextTick(() => {
     // 多选
@@ -570,5 +584,5 @@ const sortChange = (val: any) => {
 };
 
 // 暴露方法出去
-defineExpose({ closeTable, clear });
+defineExpose({ closeTable, onClear });
 </script>

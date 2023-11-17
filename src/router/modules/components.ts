@@ -13,34 +13,12 @@ export default [
     },
     children: [
       {
-        path: 'selecttable',
-        name: 'selecttable',
-        component: () => import('@/components/select-table/index.vue'),
-        meta: {
-          title: {
-            zh_CN: '业务选择表格',
-            en_US: 'Success',
-          },
-        },
-      },
-      {
-        path: 'selectbusiness',
-        name: 'selectbusiness',
-        component: () => import('@/components/select-business/index.vue'),
-        meta: {
-          title: {
-            zh_CN: '业务选择',
-            en_US: 'Success',
-          },
-        },
-      },
-      {
         path: 'businessexample',
         name: 'businessexample',
         component: () => import('@/modules/demo/pages/componentExample/index.vue'),
         meta: {
           title: {
-            zh_CN: '业务选择',
+            zh_CN: '业务选择组件例子',
             en_US: 'Success',
           },
         },
