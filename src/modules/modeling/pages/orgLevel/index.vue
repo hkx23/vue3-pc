@@ -3,9 +3,15 @@
     <t-card class="list-card-container" :bordered="false">
       <t-row justify="space-between">
         <div class="left-operation-container">
-          <t-button @click="onClickAdd">新增</t-button>
+          <t-button @click="onClickAdd">
+            <template #icon><add-icon /></template>
+            新增</t-button
+          >
           <t-popconfirm content="确认删除吗" @confirm="onClickDelete">
-            <t-button theme="default">删除</t-button>
+            <t-button theme="default">
+              <template #icon><remove-icon /></template>
+              删除</t-button
+            >
           </t-popconfirm>
         </div>
       </t-row>
@@ -31,6 +37,7 @@ export default {
 };
 </script>
 <script setup lang="ts">
+import { AddIcon, RemoveIcon } from 'tdesign-icons-vue-next';
 import { EnhancedTableInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 
@@ -99,6 +106,7 @@ const onClickDelete = async () => {
     return;
   }
   await deleteOrgLevel(selectedRow.id);
+  selectedRow = null;
   MessagePlugin.success('删除成功');
   fetchData();
 };
