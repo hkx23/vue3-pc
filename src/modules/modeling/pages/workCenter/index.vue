@@ -1,0 +1,161 @@
+<template>
+  <div>
+    <t-card class="list-card-container" :bordered="false">
+      <t-row justify="space-between">
+        <t-col>
+          <t-button variant="base">新增</t-button>
+          <t-divider layout="vertical" />
+          <t-button theme="default" variant="base">导出...</t-button></t-col
+        >
+        <t-col>
+          <div class="select-work">
+            <t-select
+              v-model="value1"
+              style="width: 200px; margin: 0 10px"
+              :options="options1"
+              placeholder="工作中心编号或者名称"
+              clearable
+              @focus="onFocus"
+              @blur="onBlur"
+            ></t-select>
+            <t-select
+              v-model="value2"
+              style="width: 100px; margin: 0 10px"
+              :options="options2"
+              placeholder="所有车间"
+              clearable
+              @focus="onFocus"
+              @blur="onBlur"
+            ></t-select>
+          </div>
+        </t-col>
+      </t-row>
+      <t-table
+        row-key="index"
+        vertical-align="middle"
+        :columns="columns"
+        :data="workData"
+        lazy-load
+        :pagination="workStationPagination"
+        @page-change="onworkStationPageChange"
+      >
+        <template #Work-center-number>
+          <div>
+            <t-icon name="chevron-right"></t-icon>
+            <t-link theme="primary" underline> 0752-A01-WCO1 </t-link>
+          </div>
+        </template>
+        <template #parentWorkCenter>
+          <div>11</div>
+        </template>
+        <template #edit>
+          <t-link theme="primary" hover="color"> 编辑 </t-link>
+        </template>
+      </t-table>
+    </t-card>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+// const keyword = ref('');
+const columns = ref([
+  // {
+  //   colKey: 'select',
+  //   type: 'multiple',
+  // },
+  {
+    colKey: 'Work-center-number',
+    title: '工作中心编号',
+  },
+  {
+    colKey: 'name',
+    title: '名称',
+  },
+  {
+    colKey: 'types',
+    title: '类型',
+  },
+  {
+    colKey: 'Workshop',
+    title: '所属车间',
+  },
+  {
+    colKey: 'location',
+    title: '地点',
+  },
+  {
+    colKey: 'parentWorkCenter',
+    title: '父工作中心',
+  },
+  {
+    colKey: 'head',
+    title: '负责人',
+  },
+  {
+    colKey: 'edit',
+    title: '',
+  },
+]);
+const workData = ref([
+  {
+    name: ['你好'],
+    types: '11',
+    Workshop: 'Aag',
+    location: '唱不上',
+    parentWorkCenter: '-',
+    head: '李四',
+  },
+]);
+const value1 = ref('');
+const value2 = ref('');
+const options1 = [
+  { label: '区块链', value: '3' },
+  { label: '物联网', value: '4', disabled: true },
+  { label: '人工智能', value: '5' },
+];
+const options2 = [
+  { label: '架构云', value: '1', title: '架构云选项' },
+  { label: '大数据', value: '2' },
+  { label: '区块链', value: '3' },
+];
+
+const onFocus = (ctx: any) => {
+  console.log('focus:', ctx);
+};
+
+const onBlur = (ctx: any) => {
+  console.log('blur:', ctx);
+};
+
+// 分页
+const workStationPagination = ref({
+  defaultCurrent: 1,
+  defaultPageSize: 20,
+  total: 0,
+  showJumper: true,
+});
+const onworkStationPageChange = (pageInfo: { current: number; pageSize: number }) => {
+  workStationPagination.value.defaultCurrent = pageInfo.current;
+};
+</script>
+
+<style lang="less" scoped>
+.list-card-container {
+  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
+
+  :deep(.t-card__body) {
+    padding: 0;
+  }
+}
+
+:deep(.t-divider) {
+  height: var(--td-comp-size-s);
+}
+
+.select-work {
+  display: flex;
+  width: 100%;
+}
+</style>

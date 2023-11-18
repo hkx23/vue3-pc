@@ -66,11 +66,9 @@
         </t-row>
         <!-- 控制盒子 -->
         <div class="control-box">
+          <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
           <t-popconfirm content="确认提交吗" @confirm="onSecondary">
             <t-button theme="primary" type="submit">确认</t-button>
-          </t-popconfirm>
-          <t-popconfirm content="确认提交吗" @confirm="onSecondaryReset">
-            <t-button theme="default" variant="base">取消</t-button>
           </t-popconfirm>
         </div>
       </t-form>
