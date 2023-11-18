@@ -1,0 +1,29 @@
+{
+  "title": "工作中心：",
+  "placeholder": "请选择工作中心",
+  "url": "/api/control/workcenter/items",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "工作中心代码",
+      "key": "wcCode",
+      "align": "center"
+    },
+    {
+      "title": "工作中心名称",
+      "key": "wcName",
+      "align": "center"
+    },
+    {
+      "title": "工作中心描述",
+      "key": "wcDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "wcCode",
+    "label": "wcName"
+  }
+}

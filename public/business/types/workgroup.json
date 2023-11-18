@@ -1,0 +1,28 @@
+{
+  "title": "班组：",
+  "placeholder": "请选择班组：",
+  "url": "/api/modeling/workgroup/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "班组代码",
+      "key": "workgroupCode",
+      "align": "center"
+    },
+    {
+      "title": "班组名称",
+      "key": "workgroupName",
+      "align": "center"
+    },
+    {
+      "title": "班组描述",
+      "key": "workgroupDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "workgroupCode",
+    "label": "workgroupName"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "title": "车间：",
+  "placeholder": "请选择车间：",
+  "url": "/api/modeling/org/items",
+  "httptype": "POST",
+  "category": "WORKSHOP",
+  "columns": [
+    {
+      "title": "车间代码",
+      "key": "orgCode",
+      "align": "center"
+    },
+    {
+      "title": "车间名称",
+      "key": "orgName",
+      "align": "center"
+    },
+    {
+      "title": "车间描述",
+      "key": "orgDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "orgCode",
+    "label": "orgName"
+  }
+}

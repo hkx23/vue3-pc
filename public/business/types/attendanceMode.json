@@ -1,0 +1,29 @@
+{
+  "title": "出勤模式：",
+  "placeholder": "请选择出勤模式：",
+  "url": "/api/modeling/attendanceMode/items",
+  "httptype": "POST",
+  "category": "workshop",
+  "columns": [
+    {
+      "title": "模式代码",
+      "key": "modeCode",
+      "align": "center"
+    },
+    {
+      "title": "模式名称",
+      "key": "modeName",
+      "align": "center"
+    },
+    {
+      "title": "模式描述",
+      "key": "modeDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "modeCode",
+    "label": "modeName"
+  }
+}

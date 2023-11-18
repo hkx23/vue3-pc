@@ -1,0 +1,29 @@
+{
+  "title": "工厂：",
+  "placeholder": "请选择工厂",
+  "url": "/api/modeling/org/items",
+  "httptype": "POST",
+  "category": "PLANT",
+  "columns": [
+    {
+      "title": "工厂代码",
+      "key": "orgCode",
+      "align": "center"
+    },
+    {
+      "title": "工厂名称",
+      "key": "orgName",
+      "align": "center"
+    },
+    {
+      "title": "工厂描述",
+      "key": "orgDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "orgCode",
+    "label": "orgName"
+  }
+}

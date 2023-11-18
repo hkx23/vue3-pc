@@ -1,0 +1,45 @@
+{
+  "title": "排产单：",
+  "placeholder": "请选择排产单：",
+  "url": "/api/control/moSchedule/items",
+  "httptype": "POST",
+  "category": "",
+  "tableWidth": 800,
+  "columns": [
+    {
+      "title": "工单代码",
+      "key": "moCode",
+      "align": "center"
+    },
+    {
+      "title": "排产单",
+      "key": "scheCode",
+      "align": "center"
+    },
+    {
+      "title": "计划数量",
+      "key": "planQty",
+      "align": "center"
+    },
+    {
+      "title": "排产数量",
+      "key": "scheQty",
+      "align": "center"
+    },
+    {
+      "title": "计划开始时间",
+      "key": "datetimePlanStart",
+      "align": "center"
+    },
+    {
+      "title": "计划完成时间",
+      "key": "datetimePlanEnd",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "scheCode",
+    "label": "scheCode"
+  }
+}
