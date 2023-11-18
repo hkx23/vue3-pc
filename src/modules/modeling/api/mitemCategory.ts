@@ -1,9 +1,12 @@
+import { MitemCategoryList } from './model/mitemCategoryModel';
+import { MitemList } from './model/mitemModel';
+
 const Api = {
   getList: '/api/modeling/mitemCategory/getlist',
   getMitemByCategory: '/api/modeling/mitem/getlistbymitemcategory',
 };
 
-export function getList(params: { keyword?: string; pagenum: number; pagesize: number }) {
+export function getList(params: { keyword: string; pagenum: number; pagesize: number }) {
   const data = {
     keyword: params.keyword,
     pagenum: params.pagenum,
@@ -13,12 +16,7 @@ export function getList(params: { keyword?: string; pagenum: number; pagesize: n
   return http.get<MitemCategoryList>(Api.getList, data);
 }
 
-export function getMitemList(params: {
-  keyword?: string;
-  mitemcategoryid?: number;
-  pagenum: number;
-  pagesize: number;
-}) {
+export function getMitemList(params: { keyword: string; mitemcategoryid: number; pagenum: number; pagesize: number }) {
   const data = {
     keyword: params.keyword,
     mitemcategoryid: params.mitemcategoryid,
@@ -27,38 +25,4 @@ export function getMitemList(params: {
   };
 
   return http.get<MitemList>(Api.getMitemByCategory, data);
-}
-
-export interface MitemCategoryList {
-  list: Array<MitemCategoryModel>;
-  total: number;
-}
-
-export interface MitemCategoryModel {
-  id: number;
-  state: number;
-  stateName: string;
-  isState: boolean;
-
-  categoryCode: string;
-  categoryName: string;
-  categoryDesc: string;
-  reqCalcRule: string;
-  onboardRuleCode: number;
-}
-
-export interface MitemList {
-  list: Array<MitemModel>;
-  total: number;
-}
-
-export interface MitemModel {
-  id: number;
-  state: number;
-  stateName: string;
-  isState: boolean;
-
-  mitemCode: string;
-  mitemName: string;
-  mitemDesc: string;
 }

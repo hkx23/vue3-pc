@@ -6,7 +6,7 @@ export default [
     meta: {
       title: {
         zh_CN: '物料分类',
-        en_US: 'mitemcategory',
+        en_US: 'Mitem Category',
       },
       orderNo: 0,
     },

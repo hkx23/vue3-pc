@@ -1,3 +1,5 @@
+import { PersonList } from './model/personModel';
+
 const Api = {
   getList: '/api/modeling/person/getlist',
   edit: '/api/modeling/person/edit',
@@ -5,9 +7,9 @@ const Api = {
 };
 
 export function getList(params: {
-  personcode?: string;
-  personname?: string;
-  sortfield?: string; // 排序字段
+  personcode: string;
+  personname: string;
+  sortfield: string; // 排序字段
   sorttype: string; // 排序类型 asc，desc
   filterfield: string; // 筛选字段
   filter: string; // 筛选内容
@@ -29,13 +31,13 @@ export function getList(params: {
 }
 
 export function postEdit(params: {
-  id?: string;
-  personcode?: string;
-  personname?: string;
-  gender?: string;
-  mobilephone?: string;
-  email?: string;
-  state?: string;
+  id: string;
+  personcode: string;
+  personname: string;
+  gender: string;
+  mobilephone: string;
+  email: string;
+  state: string;
 }) {
   const data = {
     id: params.id,
@@ -50,27 +52,10 @@ export function postEdit(params: {
   return http.post<any>(Api.edit, data);
 }
 
-export function postDelete(params: { id?: number }) {
+export function postDelete(params: { id: number }) {
   const data = {
     id: params.id,
   };
 
   return http.post<any>(Api.delete, data);
-}
-
-export interface PersonList {
-  list: Array<PersonModel>;
-  total: number;
-}
-
-export interface PersonModel {
-  id: number;
-  personCode: string;
-  personName: string;
-  mobilePhone: string;
-  email: string;
-  gender: number;
-  state: number;
-  genderName: string;
-  stateName: string;
 }
