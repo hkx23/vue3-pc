@@ -15,13 +15,13 @@
           </t-col>
           <t-col flex="170px">
             <div>
-              <t-button theme="default" variant="base" @click="onRefresh">查询</t-button>
-              <t-button theme="default" variant="base" @click="onReset">重置</t-button>
+              <t-button @click="onRefresh">查询</t-button>
+              <t-button theme="default" @click="onReset">重置</t-button>
             </div>
           </t-col>
         </t-row>
         <t-row style="margin-top: 10px">
-          <t-button theme="default" variant="base" @click="onImport">导入</t-button>
+          <t-button theme="default" @click="onImport">导入</t-button>
         </t-row>
         <div class="table-container">
           <t-table
@@ -148,11 +148,6 @@ import { onMounted, ref } from 'vue';
 
 import { getAdminOrgList } from '../../api/adminOrg';
 import { getList, postDelete, postEdit } from '../../api/person';
-
-// import { useRouter } from 'vue-router';
-
-// import { useSettingStore } from '@/store';
-// const store = useSettingStore();
 
 const personCode = ref(''); // 查询
 
@@ -303,7 +298,7 @@ const fetchTree = async () => {
     }));
     dataTree.value[0].actived = true;
   } catch (e) {
-    // console.log(e);
+    console.log(e);
   } finally {
     dataLoading.value = false;
   }
@@ -311,8 +306,8 @@ const fetchTree = async () => {
 
 const onTreeClick = (context: any) => {
   console.info('onClick', context);
-  const { node } = context;
-  console.info(node.value, 'actived:', node.actived);
+  // const { node } = context;
+  // console.info(node.value, 'actived:', node.actived);
 };
 // #endregion
 
@@ -384,7 +379,6 @@ const handleClickDelete = (value: any) => {
   deleteIdx.value = value.rowIndex;
   onShowDeleteConfirmVisible.value = true;
 };
-
 onMounted(() => {
   fetchTable();
   fetchTree();

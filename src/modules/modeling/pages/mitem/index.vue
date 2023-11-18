@@ -10,13 +10,13 @@
           </t-col>
           <t-col flex="170px">
             <div>
-              <t-button variant="base" @click="onRefresh">查询</t-button>
-              <t-button variant="base" @click="onReset">重置</t-button>
+              <t-button @click="onRefresh">查询</t-button>
+              <t-button theme="default" @click="onReset">重置</t-button>
             </div>
           </t-col>
         </t-row>
         <t-row style="margin-top: 10px">
-          <t-checkbox-group v-model="mitemTypeSelect" :options="mitemTypeOptions" name="city"></t-checkbox-group>
+          <t-checkbox-group v-model="mitemTypeSelect" :options="mitemTypeOptions" />
         </t-row>
         <t-row justify="space-between">
           <t-table
@@ -116,14 +116,14 @@ const fetchTable = async () => {
 
 const onEditRowClick = (value: any) => {
   // const rowData = value.row;
-  formVisible.value = true;
   formRef.value.formData = value.row;
+  formVisible.value = true;
 };
 
 const onConfirmForm = async () => {
-  // debugger;
   formRef.value.submit().then(() => {
     formVisible.value = false;
+    fetchTable();
   });
 };
 

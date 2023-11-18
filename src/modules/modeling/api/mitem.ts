@@ -1,5 +1,8 @@
+import { MitemList } from './model/mitemModel';
+
 const Api = {
   getList: '/api/modeling/mitem/getlist',
+  postEdit: '/api/modeling/mitem/edit',
 };
 
 export function getList(params: {
@@ -26,29 +29,7 @@ export function getList(params: {
   return http.post<MitemList>(Api.getList, data);
 }
 
-export interface MitemList {
-  list: Array<MitemModel>;
-  total: number;
-}
-
-export interface MitemModel {
-  id: number;
-  state: number;
-  stateName: string;
-  isState: boolean;
-
-  mitemCode: string;
-  mitemName: string;
-  mitemDesc: string;
-  mitemCategoryId: number;
-  mitemCategoryCode: number;
-  mitemCategoryName: number;
-  supplyCategory: string;
-  uom: string;
-  isProduct: number;
-  isRaw: number;
-  isInProcess: number;
-  wWarehouseId: number;
-  shelfLifeDays: number;
-  isBatchNo: number;
+export function postEdit(model: any) {
+  const data = model;
+  return http.post<any>(Api.postEdit, data);
 }
