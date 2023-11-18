@@ -129,6 +129,7 @@ const onConfirmForm = async () => {
 
 const onPageChange = (curr: any) => {
   tableMitemPagination.value.defaultCurrent = curr.current;
+  tableMitemPagination.value.defaultPageSize = curr.pageSize;
   fetchTable();
 };
 

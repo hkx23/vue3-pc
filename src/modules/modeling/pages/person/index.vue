@@ -315,6 +315,8 @@ const onTreeClick = (context: any) => {
 
 const onPageChange = (curr: any) => {
   pagination.value.defaultCurrent = curr.current;
+  pagination.value.defaultPageSize = curr.pageSize;
+
   fetchTable();
 };
 

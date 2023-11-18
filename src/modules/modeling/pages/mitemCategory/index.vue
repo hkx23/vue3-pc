@@ -114,6 +114,7 @@ const fetchTable = async () => {
 
 const onPageChange = (curr: any) => {
   tableMitemCategoryPagination.value.defaultCurrent = curr.current;
+  tableMitemCategoryPagination.value.defaultPageSize = curr.pageSize;
   fetchTable();
 };
 
