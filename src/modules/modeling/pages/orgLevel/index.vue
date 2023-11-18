@@ -41,10 +41,12 @@ import { AddIcon, RemoveIcon } from 'tdesign-icons-vue-next';
 import { EnhancedTableInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 
-import { OrgLevel } from '../../api/model/orgLevelModel';
-import { deleteOrgLevel, getOrgLevelTree } from '../../api/orgLevel';
+import { ModelingApi, OrgLevel } from '@/api/modeling';
+
 import { FormRef } from './constants';
 import OrgLevelForm from './form.vue';
+
+const api = new ModelingApi();
 
 const treeConfig = reactive({
   childrenKey: 'children',
@@ -79,7 +81,7 @@ const onRowClick = ({ row }: { row: any }) => {
 };
 
 const fetchData = async () => {
-  const list = await getOrgLevelTree();
+  const list = await api.orgLevel.tree();
   data.value = list;
   nextTick(() => {
     tableRef.value?.expandAll();
@@ -105,7 +107,7 @@ const onClickDelete = async () => {
     MessagePlugin.warning('请选择行之后再尝试操作');
     return;
   }
-  await deleteOrgLevel(selectedRow.id);
+  await api.orgLevel.delete({ id: selectedRow.id });
   selectedRow = null;
   MessagePlugin.success('删除成功');
   fetchData();

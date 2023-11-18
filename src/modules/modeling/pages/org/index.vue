@@ -41,7 +41,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { AddIcon, EditIcon, RemoveIcon } from 'tdesign-icons-vue-next';
+import { AddIcon, EditIcon, RemoveIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { TreeNodeModel } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
@@ -89,16 +89,20 @@ const fetchData = () => {
 };
 
 const onInput = () => {
-  filterByText.value = (node: TreeNodeModel) => {
-    return node.label.indexOf(filterText.value) >= 0;
-  };
+  filterByText.value = filterText.value
+    ? (node: TreeNodeModel) => {
+        return node.label.indexOf(filterText.value) >= 0;
+      }
+    : null;
 };
 
 const onClickAdd = () => {
+  formVisible.value = true;
   console.log('onClickAdd');
 };
 
 const onClickEdit = () => {
+  formVisible.value = true;
   console.log('onClickEdit');
 };
 
@@ -132,7 +136,7 @@ const onConfirmForm = () => {
 }
 
 .search-input {
-  width: 360px;
+  width: 250px;
 }
 
 .table-tree-container {

@@ -1,4 +1,5 @@
 import EventEmitter from 'eventemitter3';
+import { PluginOption } from 'vite';
 
 export declare class CustomError extends Error {
     protected code: number;
@@ -174,7 +175,7 @@ export declare class Http {
     post<T = any>(url: HttpPath, data: any, requestOptions?: RequestOptions, middleware?: HttpMiddleware | HttpMiddleware[]): Promise<T>;
     patch<T = any>(url: HttpPath, requestOptions?: RequestOptions, middleware?: HttpMiddleware | HttpMiddleware[]): Promise<T>;
     put<T = any>(url: HttpPath, requestOptions?: RequestOptions, middleware?: HttpMiddleware | HttpMiddleware[]): Promise<T>;
-    del<T = any>(url: HttpPath, requestOptions?: RequestOptions, middleware?: HttpMiddleware | HttpMiddleware[]): Promise<T>;
+    delete<T = any>(url: HttpPath, requestOptions?: RequestOptions, middleware?: HttpMiddleware | HttpMiddleware[]): Promise<T>;
     upload<T = any>(url: HttpPath, data: FormData, requestOptions?: RequestOptions, middleware?: HttpMiddleware | HttpMiddleware[]): Promise<T>;
 }
 
@@ -276,6 +277,15 @@ declare interface RequestOptions extends RequestInit {
      */
     debounce?: number;
 }
+
+export declare function swaggerApiGen(options: {
+    baseUrl: string;
+    inputs: {
+        [index: string]: any;
+    };
+    output?: string;
+    templates?: string;
+}): PluginOption;
 
 declare class TargetEmitter extends EventEmitter {
 }

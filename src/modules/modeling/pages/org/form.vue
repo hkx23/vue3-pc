@@ -1,9 +1,9 @@
 <template>
   <t-form ref="formRef" :rules="FORM_RULES" :data="formData" :show-cancel="true" :show-error-message="false">
-    <t-form-item label="上一层级" name="parentLevelId">
+    <t-form-item label="层级" name="parentLevelId">
       {{ formData.parentLevelId ? formData.parentLevelName : 'ROOT' }}
     </t-form-item>
-    <t-form-item label="组织层级名称" name="levelCode">
+    <t-form-item label="组织类型" name="levelCode">
       <t-select v-model="formData.levelCode" clearable @change="onChangeLevelCode">
         <t-option v-for="(item, index) in orgLevelOptions" :key="index" :value="item.value" :label="item.label">
           {{ item.label }}
@@ -21,8 +21,9 @@ export default {
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
-import { ModelingApi, OrgLevel } from '@/api/modeling';
+import { ModelingApi } from '@/api/modeling';
 
+import { OrgLevel } from '../../api/model/orgLevelModel';
 import { getOrgLevelDic } from '../../api/orgLevel';
 import { FormRef } from './constants';
 
@@ -68,7 +69,7 @@ const submit = async () => {
         reject();
         return;
       }
-      api.orgLevel.add(formData).then(() => {
+      api.org.add(formData).then(() => {
         MessagePlugin.success('新增成功');
         resolve(formData);
       });

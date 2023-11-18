@@ -10,33 +10,36 @@ import { viteMockServe } from 'vite-plugin-mock';
 import svgLoader from 'vite-svg-loader';
 
 import vitePluginHistory from './plugins/vite-plugin-history';
+// @ts-ignore
+import { swaggerApiGen } from './src/assets/libs/web-core';
 
 const CWD = process.cwd();
 
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv): UserConfig => {
-  const { VITE_BASE_URL, VITE_API_URL_PREFIX, VITE_IS_REQUEST_PROXY, VITE_BUILDING_MODULE } = loadEnv(mode, CWD);
+  const { VITE_BASE_URL, VITE_API_URL, VITE_API_URL_PREFIX, VITE_IS_REQUEST_PROXY, VITE_BUILDING_MODULE } = loadEnv(
+    mode,
+    CWD,
+  );
   const isPrd = mode === 'production';
 
   let inputs: { [index: string]: any } = null;
   const outDir = './dist';
 
   const buildingModule = VITE_BUILDING_MODULE;
-  if (isPrd) {
-    if (buildingModule) {
-      const pattern = path.join(`${buildingModule}.html`).replaceAll('\\', '/');
-      const entries = glob.sync(pattern);
+  if (buildingModule) {
+    const pattern = path.join(`${buildingModule}.html`).replaceAll('\\', '/');
+    const entries = glob.sync(pattern);
 
-      const modules: { [index: string]: any } = {};
-      entries.forEach((file) => {
-        const key = path.basename(file, path.extname(file));
-        modules[key] = path.resolve(__dirname, file);
-      });
+    const modules: { [index: string]: any } = {};
+    entries.forEach((file) => {
+      const key = path.basename(file, path.extname(file));
+      modules[key] = path.resolve(__dirname, file);
+    });
 
-      inputs = { ...modules };
-    } else {
-      inputs = { main: path.resolve(__dirname, 'index.html') };
-    }
+    inputs = { ...modules };
+  } else {
+    inputs = { main: path.resolve(__dirname, 'index.html') };
   }
 
   return {
@@ -67,7 +70,11 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         enable: true,
       }),
       svgLoader(),
-      vitePluginHistory(),
+      vitePluginHistory(inputs),
+      swaggerApiGen({
+        baseUrl: VITE_API_URL,
+        inputs,
+      }),
       // viteCompression({
       //   deleteOriginFile: true,
       //   threshold: 10 * 1024,
@@ -90,7 +97,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     build: {
       outDir,
       rollupOptions: {
-        input: inputs,
+        input: isPrd ? inputs : null,
         output: {
           // manualChunks: (id) => {
           //   if (id.includes('echarts')) return 'echarts';

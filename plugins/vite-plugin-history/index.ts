@@ -1,16 +1,18 @@
 import history from 'connect-history-api-fallback';
 import { PluginOption } from 'vite';
 
-export default function vitePluginHistory(): PluginOption {
+export default function vitePluginHistory(inputs: { [index: string]: any }): PluginOption {
   return {
     name: 'vite-plugin-history',
     configureServer(server) {
+      const rewrites = [];
+      for (const key in inputs) {
+        const regex = new RegExp(`^/${key}`, 'g');
+        rewrites.push({ from: regex, to: `/${key}.html` });
+      }
       server.middlewares.use(
         history({
-          rewrites: [
-            { from: /\/system/, to: '/system.html' },
-            { from: /\/modeling/, to: '/modeling.html' },
-          ],
+          rewrites,
           htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
         }),
       );
