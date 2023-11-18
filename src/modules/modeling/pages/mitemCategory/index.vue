@@ -28,6 +28,7 @@
             select-on-row-click
             :pagination="tableMitemCategoryPagination"
             :selected-row-keys="selectedMitemCategoryRowKeys"
+            @page-change="onPageChange"
             @select-change="onSelectMitemCategoryChange"
           >
           </t-table>
@@ -109,6 +110,11 @@ const fetchTable = async () => {
   } finally {
     dataLoading.value = false;
   }
+};
+
+const onPageChange = (curr: any) => {
+  tableMitemCategoryPagination.value.defaultCurrent = curr.current;
+  fetchTable();
 };
 
 const fetchMitemTable = async (categoryid: any) => {

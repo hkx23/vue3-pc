@@ -313,7 +313,7 @@ const onTreeClick = (context: any) => {
 
 // #region 表格分页
 
-const onPageChange = (curr: any, pageInfo: any) => {
+const onPageChange = (curr: any) => {
   pagination.value.defaultCurrent = curr.current;
   fetchTable();
 };
