@@ -37,7 +37,7 @@
         :data="workData"
         lazy-load
         :pagination="workStationPagination"
-        @page-change="onworkStationPageChange"
+        @page-change="onWorkStationPageChange"
       >
         <template #Work-center-number>
           <div>
@@ -49,7 +49,7 @@
           <div>11</div>
         </template>
         <template #edit>
-          <t-link theme="primary" hover="color"> 编辑 </t-link>
+          <t-link theme="primary" underline> 编辑 </t-link>
         </template>
       </t-table>
     </t-card>
@@ -136,7 +136,7 @@ const workStationPagination = ref({
   total: 0,
   showJumper: true,
 });
-const onworkStationPageChange = (pageInfo: { current: number; pageSize: number }) => {
+const onWorkStationPageChange = (pageInfo: { current: number; pageSize: number }) => {
   workStationPagination.value.defaultCurrent = pageInfo.current;
 };
 </script>

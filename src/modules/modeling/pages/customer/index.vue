@@ -93,6 +93,13 @@ const formData = ref({
   customerName: '',
   shortName: '',
 });
+// 分页pagination
+const customerPagination = ref({
+  defaultCurrent: 1,
+  defaultPageSize: 20,
+  total: 0,
+  showJumper: true,
+});
 
 // 表格th数据
 const columns = ref([
@@ -105,7 +112,11 @@ const columns = ref([
 const customerData = ref([]);
 const featCustomer = async () => {
   try {
-    const res = await getCustomer();
+    const res = await getCustomer({
+      pagenum: customerPagination.value.defaultCurrent,
+      pagesize: customerPagination.value.defaultPageSize,
+    });
+    console.log(res);
     customerData.value = res.list;
     customerPagination.value = { ...customerPagination.value, total: res.total };
   } catch (e) {
@@ -113,16 +124,12 @@ const featCustomer = async () => {
   }
 };
 featCustomer();
-// 分页pagination
-const customerPagination = ref({
-  defaultCurrent: 1,
-  defaultPageSize: 20,
-  total: 0,
-  showJumper: true,
-});
-const onPageChange = (pageInfo: { current: number; pageSize: number }) => {
+
+const onPageChange = async (pageInfo: { current: number; pageSize: number }) => {
   customerPagination.value.defaultCurrent = pageInfo.current;
+  customerPagination.value.defaultPageSize = pageInfo.pageSize;
 };
+
 // 查询
 const customerQuery = async () => {
   try {

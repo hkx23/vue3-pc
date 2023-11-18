@@ -1,13 +1,18 @@
 const Api = {
-  getCustomer: '/api/modeling/customer/items/all',
+  getCustomer: '/api/modeling/customer/items/def',
   customerSearch: '/api/modeling/customer/items',
   customerModify: 'api/modeling/customer/items/modify',
   customerSelect: `api/modeling/customer/items/select`,
+  customerTurn: '/api/modeling/customer/items/turn',
 };
 
 // 客户信息全部数据
-export function getCustomer() {
-  return http.get<CustomerList>(Api.getCustomer);
+export function getCustomer(params: { pagenum: number; pagesize: number }) {
+  const data = {
+    pagenum: params.pagenum,
+    pagesize: params.pagesize,
+  };
+  return http.get<CustomerList>(Api.getCustomer, data);
 }
 
 // 查询
@@ -45,6 +50,14 @@ export function customerModify(params: { oid: string; customerCode: string; cust
     shortName: params.shortName,
   };
   return http.post<DataModify>(Api.customerModify, data);
+}
+
+export function customerTurn(params: { pagesize: number; pagenum: number }) {
+  const data = {
+    pagesize: params.pagesize,
+    pagenum: params.pagenum,
+  };
+  return http.post(Api.customerTurn, data);
 }
 // 查询
 export interface CustomerList {
