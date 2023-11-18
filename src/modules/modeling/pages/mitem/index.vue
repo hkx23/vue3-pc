@@ -21,12 +21,13 @@
         <t-row justify="space-between">
           <t-table
             row-key="id"
-            :columns="tableMitemCategoryColumns"
-            :data="tableDataMitemCategory"
+            :columns="tableMitemColumns"
+            :data="tableDataMitem"
             :loading="dataLoading"
             :hover="true"
-            :pagination="tableMitemCategoryPagination"
-            :selected-row-keys="selectedMitemCategoryRowKeys"
+            :pagination="tableMitemPagination"
+            :selected-row-keys="selectedMitemRowKeys"
+            @page-change="onPageChange"
           >
             <template #op="slotProps">
               <t-space>
@@ -55,8 +56,7 @@ import { getList } from '../../api/mitem';
 import MitemForm from './form.vue';
 
 const keyword = ref('');
-const selectedMitemCategoryRowKeys = ref([]);
-const tableDataMitemCategory = ref([]);
+const selectedMitemRowKeys = ref([]);
 const tableDataMitem = ref([]);
 const dataLoading = ref(false);
 const mitemTypeOptions = ref(['原材料', '半成品', '成品']);
@@ -66,7 +66,7 @@ const filterlist = ref([]);
 const formVisible = ref(false);
 const formRef = ref(null);
 
-const tableMitemCategoryColumns: PrimaryTableCol<TableRowData>[] = [
+const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '序号', colKey: 'serial-number', width: 64 },
   { title: '物料编码', width: 160, colKey: 'mitemCode' },
   { title: '物料名称', width: 160, colKey: 'mitemName' },
@@ -79,7 +79,7 @@ const tableMitemCategoryColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '是否原材料', width: 160, colKey: 'isRawName' },
   { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
-const tableMitemCategoryPagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
+const tableMitemPagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
 
 // 查询按钮
 const onRefresh = () => {
@@ -93,20 +93,20 @@ const onReset = () => {
 const fetchTable = async () => {
   dataLoading.value = true;
   try {
-    selectedMitemCategoryRowKeys.value = [];
+    selectedMitemRowKeys.value = [];
     tableDataMitem.value = [];
     const data = await getList({
       keyword: keyword.value,
       isRaw: mitemTypeSelect.value.find((n) => n === '原材料') != null ? 1 : 0,
       isInProcess: mitemTypeSelect.value.find((n) => n === '半成品') != null ? 1 : 0,
       isProduct: mitemTypeSelect.value.find((n) => n === '成品') != null ? 1 : 0,
-      pagenum: tableMitemCategoryPagination.value.defaultCurrent,
-      pagesize: tableMitemCategoryPagination.value.defaultPageSize,
+      pagenum: tableMitemPagination.value.defaultCurrent,
+      pagesize: tableMitemPagination.value.defaultPageSize,
       sortlist: sortlist.value,
       filterlist: filterlist.value,
     });
-    tableDataMitemCategory.value = data.list;
-    tableMitemCategoryPagination.value = { ...tableMitemCategoryPagination.value, total: data.total };
+    tableDataMitem.value = data.list;
+    tableMitemPagination.value = { ...tableMitemPagination.value, total: data.total };
   } catch (e) {
     console.log(e);
   } finally {
@@ -125,6 +125,12 @@ const onConfirmForm = async () => {
     formVisible.value = false;
     fetchTable();
   });
+};
+
+const onPageChange = (curr: any) => {
+  tableMitemPagination.value.defaultCurrent = curr.current;
+  tableMitemPagination.value.defaultPageSize = curr.pageSize;
+  fetchTable();
 };
 
 onMounted(() => {
