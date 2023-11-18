@@ -1,6 +1,6 @@
 const Api = {
   getList: '/api/modeling/mitemCategory/getlist',
-  getMitemByCategory: '/api/modeling/mitem/getlist',
+  getMitemByCategory: '/api/modeling/mitem/getlistbymitemcategory',
 };
 
 export function getList(params: { keyword?: string; pagenum: number; pagesize: number }) {

@@ -1,32 +1,29 @@
 const Api = {
-  getList: '/api/modeling/mitemCategory/getlist',
+  getList: '/api/modeling/mitem/getlist',
 };
 
-export function getList(params: { keyword?: string; pagenum: number; pagesize: number }) {
+export function getList(params: {
+  keyword: string;
+  isRaw: number;
+  isInProcess: number;
+  isProduct: number;
+  pagenum: number;
+  pagesize: number;
+  sortlist: any[];
+  filterlist: any[];
+}) {
   const data = {
     keyword: params.keyword,
-    pagenum: params.pagenum,
-    pagesize: params.pagesize,
+    isRaw: params.isRaw,
+    isInProcess: params.isInProcess,
+    isProduct: params.isProduct,
+    pageNum: params.pagenum,
+    pageSize: params.pagesize,
+    sorts: params.sortlist,
+    filters: params.filterlist,
   };
 
-  return http.get<MitemCategoryList>(Api.getList, data);
-}
-export interface MitemCategoryList {
-  list: Array<MitemCategoryModel>;
-  total: number;
-}
-
-export interface MitemCategoryModel {
-  id: number;
-  state: number;
-  stateName: string;
-  isState: boolean;
-
-  categoryCode: string;
-  categoryName: string;
-  categoryDesc: string;
-  reqCalcRule: string;
-  onboardRuleCode: number;
+  return http.post<MitemList>(Api.getList, data);
 }
 
 export interface MitemList {
@@ -43,4 +40,15 @@ export interface MitemModel {
   mitemCode: string;
   mitemName: string;
   mitemDesc: string;
+  mitemCategoryId: number;
+  mitemCategoryCode: number;
+  mitemCategoryName: number;
+  supplyCategory: string;
+  uom: string;
+  isProduct: number;
+  isRaw: number;
+  isInProcess: number;
+  wWarehouseId: number;
+  shelfLifeDays: number;
+  isBatchNo: number;
 }

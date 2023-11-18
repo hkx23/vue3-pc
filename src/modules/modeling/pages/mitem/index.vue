@@ -5,7 +5,7 @@
         <t-row justify="space-between">
           <t-col>
             <div>
-              <t-input v-model="keyword" label="物料类别：" placeholder="请输入类别编码/名称" clearable />
+              <t-input v-model="keyword" label="物料：" placeholder="请输入物料编码/名称" clearable />
             </div>
           </t-col>
           <t-col flex="170px">
@@ -27,12 +27,23 @@
             :hover="true"
             :pagination="tableMitemCategoryPagination"
             :selected-row-keys="selectedMitemCategoryRowKeys"
-            @select-change="onSelectMitemCategoryChange"
           >
+            <template #op="slotProps">
+              <t-space>
+                <t-icon name="edit" @click="onEditRowClick(slotProps)" />
+              </t-space>
+            </template>
           </t-table>
         </t-row>
       </div>
     </div>
+  </div>
+  <div>
+    <t-dialog v-model:visible="formVisible" header="物料编辑" :on-confirm="onConfirmForm" width="50%">
+      <t-space direction="vertical" style="width: 98%">
+        <mitem-form ref="formRef"></mitem-form>
+      </t-space>
+    </t-dialog>
   </div>
 </template>
 
@@ -41,6 +52,7 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { getList } from '../../api/mitem';
+import MitemForm from './form.vue';
 
 const keyword = ref('');
 const selectedMitemCategoryRowKeys = ref([]);
@@ -49,13 +61,23 @@ const tableDataMitem = ref([]);
 const dataLoading = ref(false);
 const mitemTypeOptions = ref(['原材料', '半成品', '成品']);
 const mitemTypeSelect = ref([]);
+const sortlist = ref([]);
+const filterlist = ref([]);
+const formVisible = ref(false);
+const formRef = ref(null);
 
 const tableMitemCategoryColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', type: 'single', width: 64, fixed: 'left' },
-  { title: '分类编码', width: 160, colKey: 'categoryCode' },
-  { title: '分类名称', width: 160, colKey: 'categoryName' },
-  { title: '分类描述', width: 160, colKey: 'categoryDesc' },
-  { title: '投料规则', width: 160, colKey: 'onboardRuleCode' },
+  { title: '序号', colKey: 'serial-number', width: 64 },
+  { title: '物料编码', width: 160, colKey: 'mitemCode' },
+  { title: '物料名称', width: 160, colKey: 'mitemName' },
+  { title: '物料描述', width: 160, colKey: 'mitemDesc' },
+  { title: '物料类别', width: 160, colKey: 'mmitemCategoryCode' },
+  { title: '物料类别名称', width: 160, colKey: 'mmitemCategoryName' },
+  { title: '主计量单位', width: 160, colKey: 'uom' },
+  { title: '是否成品', width: 160, colKey: 'isProductName' },
+  { title: '是否半成品', width: 160, colKey: 'isInProcessName' },
+  { title: '是否原材料', width: 160, colKey: 'isRawName' },
+  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 const tableMitemCategoryPagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
 
@@ -75,8 +97,13 @@ const fetchTable = async () => {
     tableDataMitem.value = [];
     const data = await getList({
       keyword: keyword.value,
+      isRaw: mitemTypeSelect.value.find((n) => n === '原材料') != null ? 1 : 0,
+      isInProcess: mitemTypeSelect.value.find((n) => n === '半成品') != null ? 1 : 0,
+      isProduct: mitemTypeSelect.value.find((n) => n === '成品') != null ? 1 : 0,
       pagenum: tableMitemCategoryPagination.value.defaultCurrent,
       pagesize: tableMitemCategoryPagination.value.defaultPageSize,
+      sortlist: sortlist.value,
+      filterlist: filterlist.value,
     });
     tableDataMitemCategory.value = data.list;
     tableMitemCategoryPagination.value = { ...tableMitemCategoryPagination.value, total: data.total };
@@ -86,9 +113,18 @@ const fetchTable = async () => {
     dataLoading.value = false;
   }
 };
-// 选中行
-const onSelectMitemCategoryChange = (value: any) => {
-  selectedMitemCategoryRowKeys.value = value;
+
+const onEditRowClick = (value: any) => {
+  // const rowData = value.row;
+  formVisible.value = true;
+  formRef.value.formData = value.row;
+};
+
+const onConfirmForm = async () => {
+  // debugger;
+  formRef.value.submit().then(() => {
+    formVisible.value = false;
+  });
 };
 
 onMounted(() => {
