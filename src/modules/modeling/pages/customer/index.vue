@@ -81,7 +81,7 @@
 import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { ref, watch } from 'vue';
 
-import { customerModify, customerSelect, getCustomer } from '../../api/customer';
+import { customerModify, customerSearch, customerSelect } from '../../api/customer';
 
 // 控制
 const keyword = ref(''); // 控制模糊搜索
@@ -105,7 +105,6 @@ const customerPagination = ref({
 watch(
   () => keyword.value,
   (newValue, oldValue) => {
-    // console.log('count 的值从', oldValue, '变为', newValue);
     if (oldValue !== newValue) {
       console.log(oldValue !== newValue);
       customerPagination.value.defaultCurrent = 1;
@@ -124,11 +123,15 @@ const customerData = ref([]);
 const featCustomer = async () => {
   try {
     loading.value = true;
-    const res = await getCustomer({
+    const res = await customerSearch({
       keyword: keyword.value,
-      pagenum: customerPagination.value.defaultCurrent,
-      pagesize: customerPagination.value.defaultPageSize,
+      pageNum: customerPagination.value.defaultCurrent,
+      pageSize: customerPagination.value.defaultPageSize,
+      sorts: [],
+      filters: [],
     });
+    console.log(res);
+
     customerData.value = res.list;
     customerPagination.value = { ...customerPagination.value, total: Number(res.total) };
   } catch (e) {
@@ -173,11 +176,8 @@ const onHandleResetting = () => {
 
 // 编辑
 const onHandleEdit = (row: number) => {
-  // console.log('id', row);
   formVisible.value = true;
   customerData.value.forEach(async (item, index) => {
-    // console.log(index, item);
-    // console.log(1);
     console.log('1row', row - (1 % customerPagination.value.defaultPageSize));
 
     if (index === (row - 1) % customerPagination.value.defaultPageSize) {

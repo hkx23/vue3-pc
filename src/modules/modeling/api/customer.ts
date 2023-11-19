@@ -1,25 +1,14 @@
 const Api = {
-  getCustomer: '/api/modeling/customer/items/def',
   customerSearch: '/api/modeling/customer/items',
   customerModify: 'api/modeling/customer/items/modify',
   customerSelect: `api/modeling/customer/items/select`,
   customerTurn: '/api/modeling/customer/items/turn',
 };
 
-// 客户信息全部数据
-export function getCustomer(params: { keyword: string; pagenum: number; pagesize: number }) {
-  const data = {
-    keyword: params.keyword,
-    pagenum: params.pagenum,
-    pagesize: params.pagesize,
-  };
-  return http.get<CustomerList>(Api.getCustomer, data);
-}
-
 // 查询
 export function customerSearch(params: {
-  pageNum: string;
-  pageSize: string;
+  pageNum: number;
+  pageSize: number;
   keyword: string;
   sorts: any;
   filters: any;
