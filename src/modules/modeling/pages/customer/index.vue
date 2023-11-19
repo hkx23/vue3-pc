@@ -33,6 +33,7 @@
     <t-dialog v-model:visible="formVisible" header="客户维护编辑" :cancel-btn="null" :confirm-btn="null" width="40%">
       <t-form
         ref="form"
+        :loading="loading"
         :rules="rules"
         :data="formData"
         layout="inline"
@@ -78,14 +79,14 @@
 
 <script setup lang="ts">
 import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-import { customerModify, customerSearch, customerSelect, getCustomer } from '../../api/customer';
+import { customerModify, customerSelect, getCustomer } from '../../api/customer';
 
 // 控制
 const keyword = ref(''); // 控制模糊搜索
 const formVisible = ref(false); // 控制弹窗显示
-
+const loading = ref(false);
 // 表单初始化
 const formData = ref({
   id: '1',
@@ -100,7 +101,17 @@ const customerPagination = ref({
   total: 0,
   showJumper: true,
 });
-
+// 监听查询的时候把num改为1
+watch(
+  () => keyword.value,
+  (newValue, oldValue) => {
+    // console.log('count 的值从', oldValue, '变为', newValue);
+    if (oldValue !== newValue) {
+      console.log(oldValue !== newValue);
+      customerPagination.value.defaultCurrent = 1;
+    }
+  },
+);
 // 表格th数据
 const columns = ref([
   { colKey: 'customerCode', title: '客户编码', width: '100' },
@@ -112,38 +123,31 @@ const columns = ref([
 const customerData = ref([]);
 const featCustomer = async () => {
   try {
+    loading.value = true;
     const res = await getCustomer({
+      keyword: keyword.value,
       pagenum: customerPagination.value.defaultCurrent,
       pagesize: customerPagination.value.defaultPageSize,
     });
-    console.log(res);
     customerData.value = res.list;
-    customerPagination.value = { ...customerPagination.value, total: res.total };
+    customerPagination.value = { ...customerPagination.value, total: Number(res.total) };
   } catch (e) {
     console.log('cus', e);
+  } finally {
+    loading.value = false;
   }
 };
 featCustomer();
-
+// 分页
 const onPageChange = async (pageInfo: { current: number; pageSize: number }) => {
+  console.log(pageInfo);
   customerPagination.value.defaultCurrent = pageInfo.current;
   customerPagination.value.defaultPageSize = pageInfo.pageSize;
+  featCustomer();
 };
-
 // 查询
 const customerQuery = async () => {
-  try {
-    const list = await customerSearch({
-      pageNum: customerPagination.value.defaultCurrent.toString(),
-      pageSize: customerPagination.value.defaultPageSize.toString(),
-      keyword: keyword.value,
-      sorts: [],
-      filters: [],
-    });
-    customerData.value = list.list;
-  } catch (e) {
-    console.log(e);
-  }
+  featCustomer();
 };
 // 防抖
 const debounce = (func: { (): void; apply?: any }, delay: number) => {
@@ -168,23 +172,27 @@ const onHandleResetting = () => {
 };
 
 // 编辑
-const onHandleEdit = (e: number) => {
+const onHandleEdit = (row: number) => {
+  // console.log('id', row);
   formVisible.value = true;
   customerData.value.forEach(async (item, index) => {
-    if (index === Number(e - 1)) {
-      // console.log(item.customerCode);
+    // console.log(index, item);
+    // console.log(1);
+    console.log('1row', row - (1 % customerPagination.value.defaultPageSize));
+
+    if (index === (row - 1) % customerPagination.value.defaultPageSize) {
       try {
         const edit = await customerSelect({ code: item.customerCode });
         formData.value.id = edit.eid;
         formData.value.customerCode = edit.customerCode;
         formData.value.customerName = edit.customerName;
         formData.value.shortName = edit.shortName;
-        console.log(formData.value.shortName);
       } catch (e) {
         console.log(e);
       }
     }
   });
+  featCustomer();
 };
 // 取消按钮
 const onSecondaryReset = () => {

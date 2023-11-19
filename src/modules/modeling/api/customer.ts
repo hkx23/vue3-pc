@@ -7,8 +7,9 @@ const Api = {
 };
 
 // 客户信息全部数据
-export function getCustomer(params: { pagenum: number; pagesize: number }) {
+export function getCustomer(params: { keyword: string; pagenum: number; pagesize: number }) {
   const data = {
+    keyword: params.keyword,
     pagenum: params.pagenum,
     pagesize: params.pagesize,
   };
