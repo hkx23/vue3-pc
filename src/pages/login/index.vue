@@ -13,7 +13,7 @@
       <tdesign-setting />
     </div>
 
-    <!-- <footer class="copyright">Copyright @ 2021-2023 Getech. All Rights Reserved</footer> -->
+    <!-- <footer class="copyright">Copyright @ 2021-2023. All Rights Reserved</footer> -->
   </div>
 </template>
 <script lang="ts">
