@@ -1,3 +1,6 @@
+/* eslint-disable */
+/* tslint:disable */
+
 import { MockMethod } from '@/types/web-core';
 
 export default [
