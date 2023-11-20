@@ -1,7 +1,9 @@
+import mitem from './mitem';
 import orgLevel from './orgLevel';
 import person from './person';
 
 export default {
-  orgLevel,
   person,
+  orgLevel,
+  mitem,
 };
