@@ -60,15 +60,12 @@
           vertical-align="middle"
           :columns="columns"
           :data="workData"
-          :selected-row-keys="selectedRowKeys"
           lazy-load
-          :expanded-row-keys="expandedRowKeys"
-          :expanded-row="expandedRow"
-          :expand-on-row-click="expandOnRowClick"
-          :expand-icon="expandIcon"
-          @expand-change="rehandleExpandChange"
           @select-change="rehandleSelectChange"
         >
+          <template #expandedRow>
+            <div>1</div>
+          </template>
           <template #sequence>
             <div>1</div>
           </template>
@@ -114,19 +111,16 @@
 // );
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref } from 'vue';
-
-const expandedRowKeys = ref(['2']);
-
 // const curClass = ref(false);
 const Emit = defineEmits(['addedShow']);
 const selectedRowKeys = ref([]); // 用于存储选中行的数组
 // const expandedRow = () => {};
-const expandIcon = ref(true);
-const expandOnRowClick = ref(true);
-const rehandleExpandChange = (value: string[], params: any) => {
-  expandedRowKeys.value = value;
-  console.log('rehandleExpandChange', value, params);
-};
+// const expandIcon = ref(true);
+// const expandOnRowClick = ref(true);
+// const rehandleExpandChange = (value: string[], params: any) => {
+//   expandedRowKeys.value = value;
+//   console.log('rehandleExpandChange', value, params);
+// };
 
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
