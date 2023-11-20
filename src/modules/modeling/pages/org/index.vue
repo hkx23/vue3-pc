@@ -30,29 +30,55 @@
     <div class="table-tree-container">
       <div class="list-tree-wrapper">
         <div class="list-tree-operator">
-          <t-tree :data="TREE_DATA" hover expand-on-click-node :filter="filterByText" />
+          <t-tree
+            ref="treeRef"
+            v-model:actived="treeActiveKey"
+            :data="treeData"
+            :keys="treeKeys"
+            hover
+            :expand-on-click-node="false"
+            :filter="filterByText"
+            activable
+          />
         </div>
         <div class="list-tree-content">
           <t-table ref="tableRef" row-key="id" :columns="columns" :data="data"></t-table>
         </div>
       </div>
     </div>
-    <t-dialog v-model:visible="formVisible" header="新增生产组织架构" :on-confirm="onConfirmForm"> </t-dialog>
+    <t-dialog v-model:visible="formVisible" header="新增生产组织架构" :on-confirm="onConfirmForm">
+      <org-form ref="formRef" />
+    </t-dialog>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
+import { isEmpty } from 'lodash';
 import { AddIcon, EditIcon, RemoveIcon, SearchIcon } from 'tdesign-icons-vue-next';
-import { TreeNodeModel } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { MessagePlugin, TreeNodeModel } from 'tdesign-vue-next';
+import { onMounted, ref, watch } from 'vue';
 
-import { TREE_DATA } from './constants';
+import { ModelingApi, OrgTreeVO } from '@/api/modeling';
+
+import { getOrgLevelDic } from '../../api/orgLevel';
+import { FormRef } from './constants';
+import OrgForm from './form.vue';
+
+const api = new ModelingApi();
 
 const formVisible = ref(false);
 
 const filterByText = ref();
 const filterText = ref();
 
+let orgLevelObject = {};
 const data = ref([]);
+let currActiveData: OrgTreeVO = null;
+
+const formRef = ref<FormRef>(null);
+const treeRef = ref();
+const treeData = ref([]);
+const treeActiveKey = ref([]);
+const treeKeys = { value: 'orgCode', label: 'orgName' };
 const columns = [
   {
     title: '组织编码',
@@ -69,6 +95,11 @@ const columns = [
   {
     title: '组织类型',
     colKey: 'levelName',
+    // @ts-ignore
+    cell: (_h: any, { row }) => {
+      // @ts-ignore
+      return <div>{orgLevelObject[row.levelCode]}</div>;
+    },
   },
   {
     title: '更新人',
@@ -81,11 +112,30 @@ const columns = [
 ];
 
 onMounted(() => {
+  fetchOrgLevelDic();
   fetchData();
 });
 
-const fetchData = () => {
-  console.log('fetchData');
+watch(treeActiveKey, () => {
+  if (treeRef?.value && !isEmpty(treeActiveKey.value)) {
+    const activeNode = treeRef.value.getTreeData(treeActiveKey.value[0]);
+    currActiveData = activeNode[0] as OrgTreeVO;
+    data.value = activeNode[0].children?.length > 0 ? activeNode[0].children : activeNode;
+  } else {
+    data.value = treeData.value;
+  }
+});
+
+const fetchData = async () => {
+  treeData.value = await api.org.tree();
+  data.value = treeData.value;
+};
+
+const fetchOrgLevelDic = async () => {
+  orgLevelObject = (await getOrgLevelDic()).reduce((acc, item) => {
+    (acc as any)[item.value] = item.label;
+    return acc;
+  }, {});
 };
 
 const onInput = () => {
@@ -97,21 +147,35 @@ const onInput = () => {
 };
 
 const onClickAdd = () => {
+  const { reset } = formRef.value;
+  reset(false, currActiveData);
   formVisible.value = true;
-  console.log('onClickAdd');
 };
 
 const onClickEdit = () => {
+  const { reset } = formRef.value;
+  reset(true, currActiveData);
   formVisible.value = true;
-  console.log('onClickEdit');
 };
 
-const onClickDelete = () => {
+const onClickDelete = async () => {
   console.log('onClickDelete');
+  if (!currActiveData?.id) {
+    MessagePlugin.warning('请选择行之后再尝试操作');
+    return;
+  }
+  await api.org.delete({ id: currActiveData.id });
+  currActiveData = null;
+  MessagePlugin.success('删除成功');
+  fetchData();
 };
 
 const onConfirmForm = () => {
-  console.log('onConfirmForm');
+  const { submit } = formRef.value;
+  submit().then(() => {
+    formVisible.value = false;
+    fetchData();
+  });
 };
 </script>
 <style scoped lang="less">

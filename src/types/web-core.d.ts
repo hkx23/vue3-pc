@@ -177,6 +177,9 @@ export declare class Http {
     put<T = any>(url: HttpPath, requestOptions?: RequestOptions, middleware?: HttpMiddleware | HttpMiddleware[]): Promise<T>;
     delete<T = any>(url: HttpPath, requestOptions?: RequestOptions, middleware?: HttpMiddleware | HttpMiddleware[]): Promise<T>;
     upload<T = any>(url: HttpPath, data: FormData, requestOptions?: RequestOptions, middleware?: HttpMiddleware | HttpMiddleware[]): Promise<T>;
+    setMockData: (data: MockMethod[]) => void;
+    openMock: () => void;
+    closeMock: () => void;
 }
 
 /**
@@ -250,6 +253,14 @@ declare type HttpPath = string | (() => string);
 declare type HttpUrlParams = string | {
     [key: string]: string | number | boolean;
 } | (() => string);
+
+export declare interface MockMethod {
+    url: string;
+    method?: string;
+    timeout?: number;
+    statusCode?: number;
+    response?: Function | object;
+}
 
 declare interface RequestOptions extends RequestInit {
     /**

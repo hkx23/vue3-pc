@@ -489,16 +489,10 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   mmitemCategoryId?: string;
   wwarehouseId?: string;
   mmitemCategoryCode?: string;
   mmitemCategoryName?: string;
-  /** @format int32 */
-  wwarehouseCode?: number;
-  /** @format int32 */
-  wwarehouseName?: number;
-  stateName?: string;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
@@ -506,6 +500,12 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
+  /** @format int32 */
+  wwarehouseCode?: number;
+  /** @format int32 */
+  wwarehouseName?: number;
+  isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -1207,7 +1207,7 @@ export class ModelingApi {
      *
      * @tags 客户
      * @name Search
-     * @summary 搜索框模糊查询
+     * @summary 客户信息查询
      * @request POST:/customer/items
      * @secure
      */
@@ -1258,26 +1258,6 @@ export class ModelingApi {
       this.http.request<ResultObject['data']>(`/api/modeling/customer/items/modify`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 客户
-     * @name Def
-     * @summary 页面数据初始化
-     * @request GET:/customer/items/def
-     * @secure
-     */
-    def: (query: {
-      /** @format int32 */
-      pagenum: number;
-      /** @format int32 */
-      pagesize: number;
-    }) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/customer/items/def`, {
-        method: 'GET',
-        params: query,
       }),
   };
   attendanceMode = {
