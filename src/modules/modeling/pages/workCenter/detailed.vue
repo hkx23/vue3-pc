@@ -20,12 +20,15 @@
         </t-form-item>
         <t-form-item label="类型">
           <ul class="type-box">
-            <li v-for="item in typeData" :key="item.id" class="li-cur">{{ item.name }}</li>
+            <li v-for="item in typeData" :key="item.id" :class="curClass ? '' : 'li-cur'" @click="onHandelList">
+              {{ item.name }}
+            </li>
           </ul>
         </t-form-item>
         <t-form-item label="关联设备">
           <t-select></t-select>
         </t-form-item>
+        <t-checkbox>启用</t-checkbox>
         <div>
           <t-button>添加</t-button>
           <t-button>删除</t-button>
@@ -56,6 +59,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+const curClass = ref(false);
 const columns = ref([
   // {
   //   colKey: 'select',
@@ -140,6 +144,9 @@ const typeData = ref([
     name: '设备',
   },
 ]);
+const onHandelList = () => {
+  curClass.value = true;
+};
 const submit = () => {
   console.log(1);
 };
@@ -159,7 +166,15 @@ const submit = () => {
     width: 47px;
     height: 28px;
     line-height: 28px;
-    border: 1px solid #000;
+    border: 1px solid #eee;
+  }
+
+  li:first-child {
+    border-radius: 5px 0 0 5px;
+  }
+
+  li:last-child {
+    border-radius: 0 5px 5px 0;
   }
 
   .li-cur {

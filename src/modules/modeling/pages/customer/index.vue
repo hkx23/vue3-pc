@@ -25,7 +25,7 @@
         @page-change="onPageChange"
       >
         <template #operate="{ row }">
-          <t-link theme="primary" hover="color" @click="onHandleEdit(row.id)"> 编辑 </t-link>
+          <t-link theme="primary" hover="color" @click="onHandleEdit(row.customerCode)"> 编辑 </t-link>
         </template>
       </t-table>
     </t-card>
@@ -175,12 +175,10 @@ const onHandleResetting = () => {
 };
 
 // 编辑
-const onHandleEdit = (row: number) => {
+const onHandleEdit = (value: any) => {
   formVisible.value = true;
-  customerData.value.forEach(async (item, index) => {
-    console.log('1row', row - (1 % customerPagination.value.defaultPageSize));
-
-    if (index === (row - 1) % customerPagination.value.defaultPageSize) {
+  customerData.value.forEach(async (item) => {
+    if (item.customerCode === value) {
       try {
         const edit = await customerSelect({ code: item.customerCode });
         formData.value.id = edit.eid;
