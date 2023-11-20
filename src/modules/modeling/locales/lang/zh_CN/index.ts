@@ -16,6 +16,7 @@ export default {
       query: '查询',
       upload: '上传',
       download: '下载',
+      reset: '重置',
     },
   },
   componentsLocale,

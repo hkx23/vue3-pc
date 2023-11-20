@@ -413,8 +413,8 @@ export type Mitem = {
   shelfLifeDays?: number;
   /** @format int32 */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -489,23 +489,23 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
-  mmitemCategoryCode?: string;
   mmitemCategoryName?: string;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
+  mmitemCategoryCode?: string;
+  mmitemCategoryId?: string;
+  stateName?: string;
+  isState?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
+  isRawName?: string;
   /** @format int32 */
   wwarehouseCode?: number;
+  isBatchName?: string;
+  isRawChecked?: boolean;
   /** @format int32 */
   wwarehouseName?: number;
-  isState?: boolean;
-  stateName?: string;
+  isProductName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -552,8 +552,8 @@ export interface ResultCustomer {
 }
 
 export interface JSONObject {
-  innerMap?: Record<string, object>;
   empty?: boolean;
+  innerMap?: Record<string, object>;
   [key: string]: any;
 }
 
@@ -673,7 +673,7 @@ import { Http } from '@/types/web-core';
 /**
  * @title gc项目
  * @version v1
- * @baseUrl http://192.168.1.6:7300
+ * @baseUrl http://localhost:7300
  *
  * gc项目API汇总
  */
@@ -1286,6 +1286,21 @@ export class ModelingApi {
     getItemById: (id: string) =>
       this.http.request<ResultAttendanceMode['data']>(`/api/modeling/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+  };
+  workcenter = {
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name All
+     * @summary 页面数据初始化
+     * @request GET:/workcenter/items/all
+     * @secure
+     */
+    all: () =>
+      this.http.request<ResultObject['data']>(`/api/modeling/workcenter/items/all`, {
+        method: 'GET',
       }),
   };
   adminOrg = {

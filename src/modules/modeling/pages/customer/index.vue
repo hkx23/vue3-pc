@@ -79,7 +79,7 @@
 
 <script setup lang="ts">
 import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import { customerModify, customerSearch, customerSelect } from '../../api/customer';
 
@@ -130,8 +130,6 @@ const featCustomer = async () => {
       sorts: [],
       filters: [],
     });
-    console.log(res);
-
     customerData.value = res.list;
     customerPagination.value = { ...customerPagination.value, total: Number(res.total) };
   } catch (e) {
@@ -140,10 +138,12 @@ const featCustomer = async () => {
     loading.value = false;
   }
 };
-featCustomer();
+onMounted(() => {
+  featCustomer();
+});
+
 // 分页
 const onPageChange = async (pageInfo: { current: number; pageSize: number }) => {
-  console.log(pageInfo);
   customerPagination.value.defaultCurrent = pageInfo.current;
   customerPagination.value.defaultPageSize = pageInfo.pageSize;
   featCustomer();
