@@ -88,7 +88,8 @@
 </template>
 
 <script lang="tsx" setup name="CreateTable">
-import { useDebounceFn } from '@vueuse/core';
+// import { useSettingStore } from '@/store';
+import _ from 'lodash';
 import { DialogPlugin, MessagePlugin, TableRowData } from 'tdesign-vue-next';
 import {
   computed,
@@ -102,8 +103,6 @@ import {
   ref,
 } from 'vue';
 
-// import { useSettingStore } from '@/store';
-// import utils from '@/utils';
 import { useTable } from './common/hook';
 
 const props = defineProps({
@@ -282,7 +281,7 @@ const tableWidth = ref(0); // 表格宽度
 const tableHeight = ref(0); // 表格高度
 const comVisible = ref(true);
 
-const debounceFunction = useDebounceFn(() => {
+const debounceFunction = _.debounce(() => {
   // computedExpandBtnVisible();
   computedTableContentSize();
 }, 100);
