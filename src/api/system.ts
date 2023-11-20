@@ -169,8 +169,6 @@ export type ShowModuleVO = {
   children?: ShowModuleVO[];
 } | null;
 
-import { Http } from '@/types/web-core';
-
 /**
  * @title gc项目
  * @version v1
@@ -179,14 +177,8 @@ import { Http } from '@/types/web-core';
  * gc项目API汇总
  */
 
-export class SystemApi {
-  http: Http;
-
-  constructor() {
-    this.http = window.http;
-  }
-
-  user = {
+export const api = {
+  user: {
     /**
      * No description
      *
@@ -197,7 +189,7 @@ export class SystemApi {
      * @secure
      */
     search: (data: CommonSearch) =>
-      this.http.request<ResultObject['data']>(`/api/system/user/items`, {
+      http.request<ResultObject['data']>(`/api/system/user/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -212,7 +204,7 @@ export class SystemApi {
      * @secure
      */
     getItemById: (id: string) =>
-      this.http.request<ResultUser['data']>(`/api/system/user/items/${id}`, {
+      http.request<ResultUser['data']>(`/api/system/user/items/${id}`, {
         method: 'POST',
       }),
 
@@ -226,11 +218,11 @@ export class SystemApi {
      * @secure
      */
     currentUserInfo: () =>
-      this.http.request<ResultCurrentUserVO['data']>(`/api/system/user/currentUserInfo`, {
+      http.request<ResultCurrentUserVO['data']>(`/api/system/user/currentUserInfo`, {
         method: 'GET',
       }),
-  };
-  module = {
+  },
+  module: {
     /**
      * No description
      *
@@ -247,9 +239,9 @@ export class SystemApi {
        */
       clientType: number;
     }) =>
-      this.http.request<ResultListShowModuleVO['data']>(`/api/system/module/show`, {
+      http.request<ResultListShowModuleVO['data']>(`/api/system/module/show`, {
         method: 'GET',
         params: query,
       }),
-  };
-}
+  },
+};

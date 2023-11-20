@@ -31,12 +31,10 @@ export default {
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
-import { ModelingApi, Org, OrgTreeVO } from '@/api/modeling';
+import { api, Org, OrgTreeVO } from '@/api/modeling';
 
 import { getOrgLevelDic } from '../../api/orgLevel';
 import { FormRef } from './constants';
-
-const api = new ModelingApi();
 
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const FORM_RULES = {

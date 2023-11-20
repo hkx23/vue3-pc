@@ -1051,6 +1051,7 @@ function wn(e) {
           templates: ve.resolve(process.cwd(), (e == null ? void 0 : e.templates) || "./plugins/swagger-templates"),
           singleHttpClient: !0,
           httpClientType: "fetch",
+          withPrefix: !1,
           // @ts-ignore
           apiClassName: `${r[0].toUpperCase() + r.slice(1)}Api`,
           apiPrefix: t,

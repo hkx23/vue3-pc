@@ -21,12 +21,10 @@ export default {
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
-import { ModelingApi, OrgLevel } from '@/api/modeling';
+import { api, OrgLevel } from '@/api/modeling';
 
 import { getOrgLevelDic } from '../../api/orgLevel';
 import { FormRef } from './constants';
-
-const api = new ModelingApi();
 
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const FORM_RULES = { levelCode: [{ required: true, message: '组织层级名称必选' }] };

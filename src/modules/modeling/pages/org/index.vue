@@ -57,13 +57,11 @@ import { AddIcon, EditIcon, RemoveIcon, SearchIcon } from 'tdesign-icons-vue-nex
 import { MessagePlugin, TreeNodeModel } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 
-import { ModelingApi, OrgTreeVO } from '@/api/modeling';
+import { api, OrgTreeVO } from '@/api/modeling';
 
 import { getOrgLevelDic } from '../../api/orgLevel';
 import { FormRef } from './constants';
 import OrgForm from './form.vue';
-
-const api = new ModelingApi();
 
 const formVisible = ref(false);
 
@@ -129,6 +127,7 @@ watch(treeActiveKey, () => {
 const fetchData = async () => {
   treeData.value = await api.org.tree();
   data.value = treeData.value;
+  treeActiveKey.value = [];
 };
 
 const fetchOrgLevelDic = async () => {
