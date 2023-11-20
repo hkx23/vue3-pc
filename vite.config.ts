@@ -6,7 +6,6 @@ import { glob } from 'glob';
 // import { visualizer } from 'rollup-plugin-visualizer';
 import { ConfigEnv, loadEnv, UserConfig } from 'vite';
 // import viteCompression from 'vite-plugin-compression';
-import { viteMockServe } from 'vite-plugin-mock';
 import svgLoader from 'vite-svg-loader';
 
 import vitePluginHistory from './plugins/vite-plugin-history';
@@ -65,10 +64,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     plugins: [
       vue(),
       vueJsx(),
-      viteMockServe({
-        mockPath: 'mock',
-        enable: true,
-      }),
       svgLoader(),
       vitePluginHistory(inputs),
       swaggerApiGen({

@@ -8,6 +8,7 @@ import router from './router';
 import { store } from './store';
 
 import '@/utils/core';
+import '@/api/mock';
 import '@/style/index.less';
 import './permission';
 

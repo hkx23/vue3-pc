@@ -1,34 +1,37 @@
 <template>
   <div>
+    <detailed></detailed>
     <t-card class="list-card-container" :bordered="false">
       <t-row justify="space-between">
-        <t-col>
-          <t-button variant="base">新增</t-button>
-          <t-divider layout="vertical" />
-          <t-button theme="default" variant="base">导出...</t-button></t-col
-        >
-        <t-col>
-          <div class="select-work">
-            <t-select
-              v-model="value1"
-              style="width: 200px; margin: 0 10px"
-              :options="options1"
-              placeholder="工作中心编号或者名称"
-              clearable
-              @focus="onFocus"
-              @blur="onBlur"
-            ></t-select>
-            <t-select
-              v-model="value2"
-              style="width: 100px; margin: 0 10px"
-              :options="options2"
-              placeholder="所有车间"
-              clearable
-              @focus="onFocus"
-              @blur="onBlur"
-            ></t-select>
-          </div>
-        </t-col>
+        <div class="work-center-box">
+          <t-col>
+            <t-button variant="base">新增</t-button>
+            <t-divider layout="vertical" />
+            <t-button theme="default" variant="base">导出...</t-button></t-col
+          >
+          <t-col>
+            <div class="select-work">
+              <t-select
+                v-model="value1"
+                style="width: 200px; margin: 0 10px"
+                :options="options1"
+                placeholder="工作中心编号或者名称"
+                clearable
+                @focus="onFocus"
+                @blur="onBlur"
+              ></t-select>
+              <t-select
+                v-model="value2"
+                style="width: 100px; margin: 0 10px"
+                :options="options2"
+                placeholder="所有车间"
+                clearable
+                @focus="onFocus"
+                @blur="onBlur"
+              ></t-select>
+            </div>
+          </t-col>
+        </div>
       </t-row>
       <t-table
         row-key="index"
@@ -59,6 +62,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+import detailed from './detailed.vue';
 // const keyword = ref('');
 const columns = ref([
   // {
@@ -142,6 +146,13 @@ const onWorkStationPageChange = (pageInfo: { current: number; pageSize: number }
 </script>
 
 <style lang="less" scoped>
+.work-center-box {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--td-comp-margin-xxl);
+}
+
 .list-card-container {
   padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
 

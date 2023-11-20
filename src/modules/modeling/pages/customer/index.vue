@@ -25,7 +25,7 @@
         @page-change="onPageChange"
       >
         <template #operate="{ row }">
-          <t-link theme="primary" hover="color" @click="onHandleEdit(row.id)"> 编辑 </t-link>
+          <t-link theme="primary" hover="color" @click="onHandleEdit(row.customerCode)"> 编辑 </t-link>
         </template>
       </t-table>
     </t-card>
@@ -79,7 +79,7 @@
 
 <script setup lang="ts">
 import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import { customerModify, customerSearch, customerSelect } from '../../api/customer';
 
@@ -130,8 +130,6 @@ const featCustomer = async () => {
       sorts: [],
       filters: [],
     });
-    console.log(res);
-
     customerData.value = res.list;
     customerPagination.value = { ...customerPagination.value, total: Number(res.total) };
   } catch (e) {
@@ -140,10 +138,12 @@ const featCustomer = async () => {
     loading.value = false;
   }
 };
-featCustomer();
+onMounted(() => {
+  featCustomer();
+});
+
 // 分页
 const onPageChange = async (pageInfo: { current: number; pageSize: number }) => {
-  console.log(pageInfo);
   customerPagination.value.defaultCurrent = pageInfo.current;
   customerPagination.value.defaultPageSize = pageInfo.pageSize;
   featCustomer();
@@ -175,12 +175,10 @@ const onHandleResetting = () => {
 };
 
 // 编辑
-const onHandleEdit = (row: number) => {
+const onHandleEdit = (value: any) => {
   formVisible.value = true;
-  customerData.value.forEach(async (item, index) => {
-    console.log('1row', row - (1 % customerPagination.value.defaultPageSize));
-
-    if (index === (row - 1) % customerPagination.value.defaultPageSize) {
+  customerData.value.forEach(async (item) => {
+    if (item.customerCode === value) {
       try {
         const edit = await customerSelect({ code: item.customerCode });
         formData.value.id = edit.eid;

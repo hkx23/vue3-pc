@@ -39,14 +39,10 @@ const descriptionLines = _.compact([
 */
 <% } %>
 
-export class <%~ config.apiClassName %><% if (!config.singleHttpClient) { %> extends HttpClient<SecurityDataType> <% } %> {
+export const api<% if (!config.singleHttpClient) { %> extends HttpClient<SecurityDataType> <% } %> = {
 
 <% if(config.singleHttpClient) { %>
-  http: Http
 
-  constructor () {
-    this.http = window.http;
-  }
 <% } %>
 
 
@@ -60,13 +56,13 @@ export class <%~ config.apiClassName %><% if (!config.singleHttpClient) { %> ext
 
 <% if (routes.combined) { %>
   <% for (const { routes: combinedRoutes = [], moduleName } of routes.combined) { %>
-  <%~ moduleName %> = {
+  <%~ moduleName %> : {
   <% for (const route of combinedRoutes) { %>
 
   <%~ includeFile('./procedure-call.ejs', { ...it, route }) %>
 
   <% } %>
-  }
+  },
   <% } %>
 <% } %>
 }

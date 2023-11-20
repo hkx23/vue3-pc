@@ -503,21 +503,19 @@ export interface MitemVO {
   isBatchNo?: number;
   mmitemCategoryId?: string;
   mmitemCategoryName?: string;
-  mmitemCategoryCode?: string;
-  wwarehouseId?: string;
-  stateName?: string;
   isState?: boolean;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   /** @format int32 */
   wwarehouseCode?: number;
   /** @format int32 */
   wwarehouseName?: number;
-  isBatchName?: string;
   isProductName?: string;
-  isRawName?: string;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -680,8 +678,6 @@ export interface ResultListOrgTreeVO {
   data?: OrgTreeVO[] | null;
 }
 
-import { Http } from '@/types/web-core';
-
 /**
  * @title gc项目
  * @version v1
@@ -690,14 +686,8 @@ import { Http } from '@/types/web-core';
  * gc项目API汇总
  */
 
-export class ModelingApi {
-  http: Http;
-
-  constructor() {
-    this.http = window.http;
-  }
-
-  orgLevel = {
+export const api = {
+  orgLevel: {
     /**
      * No description
      *
@@ -708,7 +698,7 @@ export class ModelingApi {
      * @secure
      */
     update: (data: OrgLevel) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/orgLevel/update`, {
+      http.request<ResultObject['data']>(`/api/modeling/orgLevel/update`, {
         method: 'PUT',
         body: data as any,
       }),
@@ -723,7 +713,7 @@ export class ModelingApi {
      * @secure
      */
     add: (data: OrgLevel) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/orgLevel/add`, {
+      http.request<ResultObject['data']>(`/api/modeling/orgLevel/add`, {
         method: 'POST',
         body: data as any,
       }),
@@ -738,7 +728,7 @@ export class ModelingApi {
      * @secure
      */
     tree: () =>
-      this.http.request<ResultListOrgLevelTreeVO['data']>(`/api/modeling/orgLevel/tree`, {
+      http.request<ResultListOrgLevelTreeVO['data']>(`/api/modeling/orgLevel/tree`, {
         method: 'GET',
       }),
 
@@ -752,12 +742,12 @@ export class ModelingApi {
      * @secure
      */
     delete: (query: { id: string }) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/orgLevel/delete`, {
+      http.request<ResultObject['data']>(`/api/modeling/orgLevel/delete`, {
         method: 'DELETE',
         params: query,
       }),
-  };
-  org = {
+  },
+  org: {
     /**
      * No description
      *
@@ -768,7 +758,7 @@ export class ModelingApi {
      * @secure
      */
     update: (data: Org) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/org/update`, {
+      http.request<ResultObject['data']>(`/api/modeling/org/update`, {
         method: 'PUT',
         body: data as any,
       }),
@@ -782,7 +772,7 @@ export class ModelingApi {
      * @secure
      */
     search: (data: CommonSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/org/items`, {
+      http.request<ResultObject['data']>(`/api/modeling/org/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -796,7 +786,7 @@ export class ModelingApi {
      * @secure
      */
     getItemById: (id: string) =>
-      this.http.request<ResultOrg['data']>(`/api/modeling/org/items/${id}`, {
+      http.request<ResultOrg['data']>(`/api/modeling/org/items/${id}`, {
         method: 'POST',
       }),
 
@@ -810,7 +800,7 @@ export class ModelingApi {
      * @secure
      */
     add: (data: Org) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/org/add`, {
+      http.request<ResultObject['data']>(`/api/modeling/org/add`, {
         method: 'POST',
         body: data as any,
       }),
@@ -825,7 +815,7 @@ export class ModelingApi {
      * @secure
      */
     tree: () =>
-      this.http.request<ResultListOrgTreeVO['data']>(`/api/modeling/org/tree`, {
+      http.request<ResultListOrgTreeVO['data']>(`/api/modeling/org/tree`, {
         method: 'GET',
       }),
 
@@ -839,12 +829,12 @@ export class ModelingApi {
      * @secure
      */
     delete: (query: { id: string }) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/org/delete`, {
+      http.request<ResultObject['data']>(`/api/modeling/org/delete`, {
         method: 'DELETE',
         params: query,
       }),
-  };
-  workgroup = {
+  },
+  workgroup: {
     /**
      * No description
      *
@@ -854,7 +844,7 @@ export class ModelingApi {
      * @secure
      */
     search: (data: CommonSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/workgroup/items`, {
+      http.request<ResultObject['data']>(`/api/modeling/workgroup/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -868,27 +858,11 @@ export class ModelingApi {
      * @secure
      */
     getItemById: (id: string) =>
-      this.http.request<ResultWorkgroup['data']>(`/api/modeling/workgroup/items/${id}`, {
+      http.request<ResultWorkgroup['data']>(`/api/modeling/workgroup/items/${id}`, {
         method: 'POST',
       }),
-  };
-  workcenter = {
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name SearchInfo
-     * @summary 页面查询
-     * @request POST:/workcenter/items
-     * @secure
-     */
-    searchInfo: (data: WorkcenterSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/workcenter/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  };
-  supplier = {
+  },
+  supplier: {
     /**
      * No description
      *
@@ -898,7 +872,7 @@ export class ModelingApi {
      * @secure
      */
     search: (data: CommonSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/supplier/items`, {
+      http.request<ResultObject['data']>(`/api/modeling/supplier/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -912,11 +886,11 @@ export class ModelingApi {
      * @secure
      */
     getItemById: (id: string) =>
-      this.http.request<ResultSupplier['data']>(`/api/modeling/supplier/items/${id}`, {
+      http.request<ResultSupplier['data']>(`/api/modeling/supplier/items/${id}`, {
         method: 'POST',
       }),
-  };
-  post = {
+  },
+  post: {
     /**
      * No description
      *
@@ -926,7 +900,7 @@ export class ModelingApi {
      * @secure
      */
     search: (data: CommonSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/post/items`, {
+      http.request<ResultObject['data']>(`/api/modeling/post/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -940,11 +914,11 @@ export class ModelingApi {
      * @secure
      */
     getItemById: (id: string) =>
-      this.http.request<ResultPost['data']>(`/api/modeling/post/items/${id}`, {
+      http.request<ResultPost['data']>(`/api/modeling/post/items/${id}`, {
         method: 'POST',
       }),
-  };
-  person = {
+  },
+  person: {
     /**
      * No description
      *
@@ -954,7 +928,7 @@ export class ModelingApi {
      * @secure
      */
     search: (data: CommonSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/person/items`, {
+      http.request<ResultObject['data']>(`/api/modeling/person/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -968,7 +942,7 @@ export class ModelingApi {
      * @secure
      */
     getItemById: (id: string) =>
-      this.http.request<ResultPerson['data']>(`/api/modeling/person/items/${id}`, {
+      http.request<ResultPerson['data']>(`/api/modeling/person/items/${id}`, {
         method: 'POST',
       }),
 
@@ -982,7 +956,7 @@ export class ModelingApi {
      * @secure
      */
     edit: (data: PersonVO) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/person/edit`, {
+      http.request<ResultObject['data']>(`/api/modeling/person/edit`, {
         method: 'POST',
         body: data as any,
       }),
@@ -997,7 +971,7 @@ export class ModelingApi {
      * @secure
      */
     delete: (data: PersonVO) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/person/delete`, {
+      http.request<ResultObject['data']>(`/api/modeling/person/delete`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1023,12 +997,12 @@ export class ModelingApi {
       /** @format int32 */
       pagesize: number;
     }) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/person/getlist`, {
+      http.request<ResultObject['data']>(`/api/modeling/person/getlist`, {
         method: 'GET',
         params: query,
       }),
-  };
-  mitemCategory = {
+  },
+  mitemCategory: {
     /**
      * No description
      *
@@ -1038,7 +1012,7 @@ export class ModelingApi {
      * @secure
      */
     search: (data: CommonSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/mitemCategory/items`, {
+      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1052,7 +1026,7 @@ export class ModelingApi {
      * @secure
      */
     getItemById: (id: string) =>
-      this.http.request<ResultMitemCategory['data']>(`/api/modeling/mitemCategory/items/${id}`, {
+      http.request<ResultMitemCategory['data']>(`/api/modeling/mitemCategory/items/${id}`, {
         method: 'POST',
       }),
 
@@ -1065,7 +1039,7 @@ export class ModelingApi {
      * @secure
      */
     edit: (id: string, data: MitemCategory) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/mitemCategory/edit/${id}`, {
+      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/edit/${id}`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1092,7 +1066,7 @@ export class ModelingApi {
       /** @default "" */
       keyword?: string;
     }) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/mitemCategory/list`, {
+      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/list`, {
         method: 'GET',
         params: query,
       }),
@@ -1119,12 +1093,12 @@ export class ModelingApi {
        */
       pagesize?: number;
     }) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/mitemCategory/getlist`, {
+      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/getlist`, {
         method: 'GET',
         params: query,
       }),
-  };
-  mitem = {
+  },
+  mitem: {
     /**
      * No description
      *
@@ -1134,7 +1108,7 @@ export class ModelingApi {
      * @secure
      */
     search: (data: CommonSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/mitem/items`, {
+      http.request<ResultObject['data']>(`/api/modeling/mitem/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1148,7 +1122,7 @@ export class ModelingApi {
      * @secure
      */
     getItemById: (id: string) =>
-      this.http.request<ResultMitem['data']>(`/api/modeling/mitem/items/${id}`, {
+      http.request<ResultMitem['data']>(`/api/modeling/mitem/items/${id}`, {
         method: 'POST',
       }),
 
@@ -1161,7 +1135,7 @@ export class ModelingApi {
      * @secure
      */
     getList: (data: MitemSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/mitem/getlist`, {
+      http.request<ResultObject['data']>(`/api/modeling/mitem/getlist`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1175,7 +1149,7 @@ export class ModelingApi {
      * @secure
      */
     edit: (data: MitemVO) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/mitem/edit`, {
+      http.request<ResultObject['data']>(`/api/modeling/mitem/edit`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1202,7 +1176,7 @@ export class ModelingApi {
       /** @default "" */
       keyword?: string;
     }) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/mitem/list`, {
+      http.request<ResultObject['data']>(`/api/modeling/mitem/list`, {
         method: 'GET',
         params: query,
       }),
@@ -1224,12 +1198,12 @@ export class ModelingApi {
       /** @format int32 */
       pagesize: number;
     }) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/mitem/getlistbymitemcategory`, {
+      http.request<ResultObject['data']>(`/api/modeling/mitem/getlistbymitemcategory`, {
         method: 'GET',
         params: query,
       }),
-  };
-  customer = {
+  },
+  customer: {
     /**
      * No description
      *
@@ -1240,7 +1214,7 @@ export class ModelingApi {
      * @secure
      */
     search: (data: CommonSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/customer/items`, {
+      http.request<ResultObject['data']>(`/api/modeling/customer/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1254,7 +1228,7 @@ export class ModelingApi {
      * @secure
      */
     getItemById: (id: string) =>
-      this.http.request<ResultCustomer['data']>(`/api/modeling/customer/items/${id}`, {
+      http.request<ResultCustomer['data']>(`/api/modeling/customer/items/${id}`, {
         method: 'POST',
       }),
 
@@ -1268,7 +1242,7 @@ export class ModelingApi {
      * @secure
      */
     getItemByCode: (data: JSONObject) =>
-      this.http.request<ResultCustomer['data']>(`/api/modeling/customer/items/select`, {
+      http.request<ResultCustomer['data']>(`/api/modeling/customer/items/select`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1283,12 +1257,12 @@ export class ModelingApi {
      * @secure
      */
     updateItemByCode: (data: Customer) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/customer/items/modify`, {
+      http.request<ResultObject['data']>(`/api/modeling/customer/items/modify`, {
         method: 'POST',
         body: data as any,
       }),
-  };
-  attendanceMode = {
+  },
+  attendanceMode: {
     /**
      * No description
      *
@@ -1298,7 +1272,7 @@ export class ModelingApi {
      * @secure
      */
     search: (data: CommonSearch) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/attendanceMode/items`, {
+      http.request<ResultObject['data']>(`/api/modeling/attendanceMode/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1312,11 +1286,11 @@ export class ModelingApi {
      * @secure
      */
     getItemById: (id: string) =>
-      this.http.request<ResultAttendanceMode['data']>(`/api/modeling/attendanceMode/items/${id}`, {
+      http.request<ResultAttendanceMode['data']>(`/api/modeling/attendanceMode/items/${id}`, {
         method: 'POST',
       }),
-  };
-  adminOrg = {
+  },
+  adminOrg: {
     /**
      * No description
      *
@@ -1330,9 +1304,9 @@ export class ModelingApi {
       /** @format int32 */
       parent_org_id: number;
     }) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/adminOrg/getlist`, {
+      http.request<ResultObject['data']>(`/api/modeling/adminOrg/getlist`, {
         method: 'GET',
         params: query,
       }),
-  };
-}
+  },
+};
