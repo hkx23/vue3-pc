@@ -7,12 +7,12 @@
   <t-row justify="space-around">
     <!-- 物料 -->
     <div class="left-operation-container">
-      <t-select-business
+      <tm-select-business
         v-model="mitemValue"
         :is-multiple="true"
         type="mitem"
         @selection-change="onMitemChange"
-      ></t-select-business>
+      ></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="mitemValueSplit" label="物料值" />
@@ -21,7 +21,7 @@
   <!-- 物料分类 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="mitemCategoryValue" type="mitemCategory"></t-select-business>
+      <tm-select-business v-model="mitemCategoryValue" type="mitemCategory"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="mitemCategoryValue" label="物料分类值" />
@@ -30,7 +30,7 @@
   <!-- 供应商 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="supplierValue" type="supplier"></t-select-business>
+      <tm-select-business v-model="supplierValue" type="supplier"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="supplierValue" label="供应商值" />
@@ -39,7 +39,7 @@
   <!-- 客户  -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="customerValue" type="customer"></t-select-business>
+      <tm-select-business v-model="customerValue" type="customer"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="customerValue" label="客户值" />
@@ -48,7 +48,7 @@
   <!-- 人员 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="personValue" type="person"></t-select-business>
+      <tm-select-business v-model="personValue" type="person"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="personValue" label="人员值" />
@@ -57,7 +57,7 @@
   <!-- 岗位 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="postValue" type="post"></t-select-business>
+      <tm-select-business v-model="postValue" type="post"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="postValue" label="岗位值" />
@@ -66,7 +66,7 @@
   <!-- 用户 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="userValue" type="user"></t-select-business>
+      <tm-select-business v-model="userValue" type="user"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="userValue" label="用户值" />
@@ -75,7 +75,7 @@
   <!-- 仓库 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="warehouseValue" type="warehouse"></t-select-business>
+      <tm-select-business v-model="warehouseValue" type="warehouse"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="warehouseValue" label="仓库值" />
@@ -84,7 +84,7 @@
   <!-- 库区 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="districtValue" type="district"></t-select-business>
+      <tm-select-business v-model="districtValue" type="district"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="districtValue" label="库区值" />
@@ -93,7 +93,7 @@
   <!-- 库位 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="locationValue" type="location"></t-select-business>
+      <tm-select-business v-model="locationValue" type="location"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="locationValue" label="货位值" />
@@ -102,7 +102,7 @@
   <!-- 工厂 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="plantValue" type="plant"></t-select-business>
+      <tm-select-business v-model="plantValue" type="plant"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="plantValue" label="工厂值" />
@@ -111,7 +111,7 @@
   <!-- 车间 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="workshopValue" type="workshop"></t-select-business>
+      <tm-select-business v-model="workshopValue" type="workshop"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="workshopValue" label="车间值" />
@@ -120,7 +120,7 @@
   <!-- 出勤模式 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="attendanceModeValue" type="attendanceMode"></t-select-business>
+      <tm-select-business v-model="attendanceModeValue" type="attendanceMode"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="attendanceModeValue" label="出勤模式值" />
@@ -129,7 +129,7 @@
   <!-- 班组 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="workgroupValue" type="workgroup"></t-select-business>
+      <tm-select-business v-model="workgroupValue" type="workgroup"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="workgroupValue" label="班组值" />
@@ -138,7 +138,7 @@
   <!-- 工单 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="moValue" type="mo"></t-select-business>
+      <tm-select-business v-model="moValue" type="mo"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="moValue" label="工单值" />
@@ -147,7 +147,7 @@
   <!-- 排产单 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="moScheduleValue" type="moSchedule"></t-select-business>
+      <tm-select-business v-model="moScheduleValue" type="moSchedule"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="moScheduleValue" label="排产单值" />
@@ -156,7 +156,7 @@
   <!-- 工序 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="processValue" type="process"></t-select-business>
+      <tm-select-business v-model="processValue" type="process"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="processValue" label="工序值" />
@@ -165,7 +165,7 @@
   <!-- 工站 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="workstationValue" type="workstation"></t-select-business>
+      <tm-select-business v-model="workstationValue" type="workstation"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="workstationValue" label="工站值" />
@@ -174,7 +174,7 @@
   <!-- 工作中心 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="workcenterValue" type="workcenter"></t-select-business>
+      <tm-select-business v-model="workcenterValue" type="workcenter"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="workcenterValue" label="工作中心值" />
@@ -183,7 +183,7 @@
   <!-- 产线 -->
   <t-row justify="space-around">
     <div class="left-operation-container">
-      <t-select-business v-model="lineValue" type="line"></t-select-business>
+      <tm-select-business v-model="lineValue" type="line"></tm-select-business>
     </div>
     <div class="search-input">
       <t-input v-model="lineValue" label="产线值" />
@@ -194,7 +194,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 
-import TSelectBusiness from '../../../../components/select-business/index.vue';
+import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 
 const mitemValue = ref([]);
 const mitemCategoryValue = ref('');

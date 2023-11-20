@@ -3,7 +3,6 @@
     <t-select-input
       ref="selectRef"
       :value="state.defaultValue"
-      clearable
       placeholder="Please Select"
       :popup-visible="popupVisible"
       :popup-props="{ overlayInnerStyle: { padding: '5px' } }"
@@ -67,7 +66,7 @@
   </t-space>
 </template>
 
-<script setup lang="tsx" name="TSelectTable">
+<script setup lang="tsx" name="TmSelectTable">
 import { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs } from 'vue';

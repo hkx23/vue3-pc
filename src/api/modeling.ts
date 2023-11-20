@@ -154,6 +154,18 @@ export type Workgroup = {
   mworkshopId?: string;
 } | null;
 
+export interface WorkcenterSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  keyword?: string;
+  /** @format int32 */
+  workshopid?: number;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
 /** 通用响应类 */
 export interface ResultSupplier {
   /**
@@ -489,23 +501,23 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   mmitemCategoryId?: string;
-  wwarehouseId?: string;
-  mmitemCategoryCode?: string;
   mmitemCategoryName?: string;
+  mmitemCategoryCode?: string;
+  wwarehouseId?: string;
+  stateName?: string;
+  isState?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
   /** @format int32 */
   wwarehouseCode?: number;
   /** @format int32 */
   wwarehouseName?: number;
-  stateName?: string;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
+  isProductName?: string;
+  isRawName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -552,8 +564,8 @@ export interface ResultCustomer {
 }
 
 export interface JSONObject {
-  innerMap?: Record<string, object>;
   empty?: boolean;
+  innerMap?: Record<string, object>;
   [key: string]: any;
 }
 
@@ -673,7 +685,7 @@ import { Http } from '@/types/web-core';
 /**
  * @title gc项目
  * @version v1
- * @baseUrl http://192.168.1.6:7300
+ * @baseUrl http://localhost:7300
  *
  * gc项目API汇总
  */
@@ -858,6 +870,22 @@ export class ModelingApi {
     getItemById: (id: string) =>
       this.http.request<ResultWorkgroup['data']>(`/api/modeling/workgroup/items/${id}`, {
         method: 'POST',
+      }),
+  };
+  workcenter = {
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name SearchInfo
+     * @summary 页面查询
+     * @request POST:/workcenter/items
+     * @secure
+     */
+    searchInfo: (data: WorkcenterSearch) =>
+      this.http.request<ResultObject['data']>(`/api/modeling/workcenter/items`, {
+        method: 'POST',
+        body: data as any,
       }),
   };
   supplier = {
@@ -1207,7 +1235,7 @@ export class ModelingApi {
      *
      * @tags 客户
      * @name Search
-     * @summary 搜索框模糊查询
+     * @summary 客户信息查询
      * @request POST:/customer/items
      * @secure
      */
@@ -1258,26 +1286,6 @@ export class ModelingApi {
       this.http.request<ResultObject['data']>(`/api/modeling/customer/items/modify`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 客户
-     * @name Def
-     * @summary 页面数据初始化
-     * @request GET:/customer/items/def
-     * @secure
-     */
-    def: (query: {
-      /** @format int32 */
-      pagenum: number;
-      /** @format int32 */
-      pagesize: number;
-    }) =>
-      this.http.request<ResultObject['data']>(`/api/modeling/customer/items/def`, {
-        method: 'GET',
-        params: query,
       }),
   };
   attendanceMode = {

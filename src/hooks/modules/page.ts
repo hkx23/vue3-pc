@@ -1,0 +1,15 @@
+import { ref } from 'vue';
+
+/**
+ * @description 加载
+ * @params {initValue} 初始化状态
+ * @returns {pageUI} 当前页码状态
+ */
+
+export const usePage = (initValue = { page: 1, rows: 10 }) => {
+  const pageUI = ref(initValue);
+
+  return {
+    pageUI,
+  };
+};

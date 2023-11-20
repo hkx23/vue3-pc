@@ -11,7 +11,7 @@
     </t-form-item>
     <t-form-item label="物料类别">
       <t-input v-model="formData.mmitemCategoryCode" readonly />
-      <!-- <t-select-business v-model="formData.mmitemCategoryCode" type="mitemCategory" /> -->
+      <!-- <tm-select-business v-model="formData.mmitemCategoryCode" type="mitemCategory" /> -->
     </t-form-item>
     <t-form-item label="主计量单位">
       <t-select
@@ -70,7 +70,7 @@ import { postEdit } from '../../api/mitem';
 export default {
   name: 'MitemForm',
   // components: {
-  //   't-select-business': () => import('@/components/select-business/index.vue'),
+  //   'tm-select-business': () => import('@/components/select-business/index.vue'),
   // },
   setup() {
     const mitemTypeOptions = ref([

@@ -1,5 +1,5 @@
 <template>
-  <t-select-table
+  <tm-select-table
     v-if="componentType === 'table' && targetIsVisible"
     :value="modelValue"
     :columns="finalColumns"
@@ -16,13 +16,13 @@
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
-  </t-select-table>
+  </tm-select-table>
 </template>
 
 <script setup lang="tsx" name="TmSelectBusiness">
 import { computed, defineAsyncComponent, onMounted, ref, useAttrs } from 'vue';
 
-const TSelectTable = defineAsyncComponent(() => import('../tm-select-table/index.vue'));
+const TmSelectTable = defineAsyncComponent(() => import('../tm-select-table/index.vue'));
 // import TSelectTable from '../select-table/index.vue';
 
 // / 00-组件属性定义

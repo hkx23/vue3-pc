@@ -25,6 +25,17 @@ export default [
           },
         },
       },
+      {
+        path: 'tableexample',
+        name: 'tableexample',
+        component: () => import('@/modules/demo/pages/Table/Preview.vue'),
+        meta: {
+          title: {
+            zh_CN: '表格组件例子',
+            en_US: 'table example',
+          },
+        },
+      },
     ],
   },
 ];
