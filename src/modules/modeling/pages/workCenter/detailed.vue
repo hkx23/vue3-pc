@@ -1,70 +1,138 @@
 <template>
   <div class="detailed-box">
+    <!-- from -->
     <t-form layout="inline" :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
       <t-card :bordered="false">
-        <t-form-item label="工作中心编号">
-          <t-input v-model="formData.mitemCode" disabled />
+        <header class="form-item-box">
+          <t-form-item label="工作中心编号">
+            <t-input v-model="formData.workNumber" />
+          </t-form-item>
+          <t-form-item label="所属车间"> <t-select v-model="formData.workShop" /></t-form-item>
+          <t-form-item label="地点">
+            <t-input v-model="formData.location" style="width: 200px" />
+          </t-form-item>
+        </header>
+        <div class="form-item-box">
+          <t-form-item label="工作中心名称">
+            <t-input v-model="formData.workName" />
+          </t-form-item>
+          <t-form-item label="负责人">
+            <t-input v-model="formData.head" style="width: 180px" />
+          </t-form-item>
+        </div>
+        <t-form-item label="父级">
+          <t-select v-model="formData.parent" />
         </t-form-item>
-        <t-form-item label="所属车间"> <t-select v-model="formData.mitemName" /></t-form-item>
-        <t-form-item label="地点">
-          <t-input v-model="formData.mitemCode" disabled />
-        </t-form-item>
-        <t-form-item label="工作中心名称">
-          <t-input v-model="formData.mitemCode" disabled />
-        </t-form-item>
-        <t-form-item label="负责人">
-          <t-input v-model="formData.mitemCode" disabled />
-        </t-form-item>
-        <t-form-item label="父类">
-          <t-select />
-        </t-form-item>
-        <t-form-item label="类型">
-          <ul class="type-box">
-            <li v-for="item in typeData" :key="item.id" :class="curClass ? '' : 'li-cur'" @click="onHandelList">
-              {{ item.name }}
-            </li>
-          </ul>
-        </t-form-item>
-        <t-form-item label="关联设备">
-          <t-select></t-select>
-        </t-form-item>
-        <t-checkbox>启用</t-checkbox>
-        <div>
-          <t-button>添加</t-button>
-          <t-button>删除</t-button>
+        <footer class="form-item-box">
+          <t-form-item label="类型">
+            <ul class="type-box">
+              <li
+                v-for="item in typeData"
+                :key="item.id"
+                :class="item.show ? 'li-cur' : ''"
+                @click="onHandleCur(item.id)"
+              >
+                {{ item.name }}
+              </li>
+            </ul>
+          </t-form-item>
+          <t-form-item label="关联设备">
+            <t-select></t-select>
+          </t-form-item>
+        </footer>
+        <span class="form-checkbox">
+          <t-checkbox>启用</t-checkbox>
+        </span>
+        <div style="margin: 10px 100px">
+          <t-button theme="default">添加</t-button>
+          <t-button theme="default">删除</t-button>
         </div>
       </t-card>
     </t-form>
-
-    <t-table row-key="index" vertical-align="middle" :columns="columns" :data="workData" lazy-load>
-      <template #sequence>
-        <div>1</div>
-      </template>
-      <template #Work-center-number>
-        <div>
-          <t-icon name="chevron-right"></t-icon>
-          <t-link theme="primary" underline> 0752-A01-WCO1 </t-link>
-        </div>
-      </template>
-      <template #parentWorkCenter>
-        <div>11</div>
-      </template>
-      <template #edit>
-        <t-link theme="primary" underline> 编辑 </t-link>
-      </template>
-    </t-table>
+    <!-- table表格 -->
+    <footer class="detailed-work-center">
+      <span class="work-header">子工作中心</span>
+      <div class="table-work-header">
+        <t-table
+          :active-row-type="activeRow ? 'single' : undefined"
+          select-on-row-click
+          row-key="name"
+          vertical-align="middle"
+          :columns="columns"
+          :data="workData"
+          :selected-row-keys="selectedRowKeys"
+          lazy-load
+          :expanded-row-keys="expandedRowKeys"
+          :expanded-row="expandedRow"
+          :expand-on-row-click="expandOnRowClick"
+          :expand-icon="expandIcon"
+          @expand-change="rehandleExpandChange"
+          @select-change="rehandleSelectChange"
+        >
+          <template #sequence>
+            <div>1</div>
+          </template>
+          <template #Work-center-number>
+            <div>
+              <t-icon name="chevron-right"></t-icon>
+              <t-link theme="primary" underline> 0752-A01-WCO1 </t-link>
+            </div>
+          </template>
+          <template #parentWorkCenter>
+            <div>11</div>
+          </template>
+          <template #associated>
+            <t-link theme="primary" underline>PE30332705-2 </t-link>
+          </template>
+        </t-table>
+        <span class="table-btn">
+          <t-button @click="onHandleSave">保存</t-button> <t-button theme="default">取消</t-button></span
+        >
+      </div>
+    </footer>
   </div>
 </template>
 
 <script setup lang="ts">
+// const expandedRow = (h, { row }) => (
+//   // <div class="more-detail">
+//   //   <p class="title">
+//   //     <b>申请人:</b>
+//   //   </p>
+//   //   <p class="content">{row.applicant}</p>
+//   //   <br />
+//   //   <p class="title">
+//   //     <b>邮箱地址:</b>
+//   //   </p>
+//   //   <p class="content">{row.detail.email}</p>
+//   //   <br />
+//   //   <p class="title">
+//   //     <b>签署方式:</b>
+//   //   </p>
+//   //   <p class="content">{row.channel}</p>
+//   // </div>
+// );
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
-const curClass = ref(false);
-const columns = ref([
-  // {
-  //   colKey: 'select',
-  //   type: 'multiple',
-  // },
+const expandedRowKeys = ref(['2']);
+
+// const curClass = ref(false);
+const Emit = defineEmits(['addedShow']);
+const selectedRowKeys = ref([]); // 用于存储选中行的数组
+// const expandedRow = () => {};
+const expandIcon = ref(true);
+const expandOnRowClick = ref(true);
+const rehandleExpandChange = (value: string[], params: any) => {
+  expandedRowKeys.value = value;
+  console.log('rehandleExpandChange', value, params);
+};
+
+const columns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'select',
+    type: 'multiple',
+  },
   {
     colKey: 'sequence',
     title: '顺序号',
@@ -93,10 +161,26 @@ const columns = ref([
     colKey: 'head',
     title: '负责人',
   },
-]);
+];
 const workData = ref([
   {
-    name: ['你好'],
+    name: ['你好2'],
+    types: '11',
+    Workshop: 'Aag',
+    location: '唱不上',
+    associated: '-',
+    head: '李四',
+  },
+  {
+    name: ['你好1'],
+    types: '11',
+    Workshop: 'Aag',
+    location: '唱不上',
+    associated: '-',
+    head: '李四',
+  },
+  {
+    name: ['你好3'],
     types: '11',
     Workshop: 'Aag',
     location: '唱不上',
@@ -105,47 +189,60 @@ const workData = ref([
   },
 ]);
 const formData = ref({
-  id: -1,
-  mitemCode: '',
-  mitemName: '',
-  mitemDesc: '',
-  mmitemCategoryId: '',
-  mmitemCategoryCode: '',
-  mmitemCategoryName: '',
-  uom: '',
-  supplyCategory: '',
-  isProduct: 0, // 是否成品
-  isProductChecked: false,
-  isInProcess: 0, // 是否半成品
-  isInProcessChecked: false,
-  isRaw: 0, // 是否原材料
-  isRawChecked: false,
-  wWarehouseId: '', // 完工默认仓库
-  wWarehouseCode: '',
-  wWarehouseName: '',
-  shelfLifeDays: '', // 保质期天数
-  isBatchNo: '', // 是否启用批次
+  workNumber: '', // 工作中心编号
+  workName: '', // 工作中心名称
+  location: '', // 地点
+  workShop: '', // 所属车间
+  head: '', // 负责人
+  parent: '', // 父级
 });
 const typeData = ref([
   {
     id: 1,
     name: '工作区',
+    show: true,
   },
   {
     id: 2,
     name: '生产线',
+    show: false,
   },
   {
     id: 3,
     name: '工段',
+    show: false,
   },
   {
     id: 4,
     name: '设备',
+    show: false,
   },
 ]);
-const onHandelList = () => {
-  curClass.value = true;
+// const onHandelList = (item) => {
+//   if (item === 'Item 2') {
+//     // 返回指定的CSS类名，用于高亮显示
+//     return 'li-cur';
+//   }
+//   // 返回默认的CSS类名，用于普通显示
+//   return '';
+// };
+const activeRow = ref(false);
+const onHandleCur = (id: number) => {
+  typeData.value.forEach((item) => {
+    if (item.id === id) {
+      item.show = true;
+    } else {
+      item.show = false;
+    }
+  });
+};
+// checked事件
+const rehandleSelectChange = (value: any, ctx: any) => {
+  selectedRowKeys.value = value;
+  console.log('value:', value, '1', ctx);
+};
+const onHandleSave = () => {
+  Emit('addedShow', false);
 };
 const submit = () => {
   console.log(1);
@@ -163,6 +260,7 @@ const submit = () => {
   align-items: center;
 
   li {
+    cursor: pointer;
     width: 47px;
     height: 28px;
     line-height: 28px;
@@ -178,8 +276,34 @@ const submit = () => {
   }
 
   .li-cur {
-    background: #6bb2ff;
+    background: #0894fa;
     color: #fff;
+  }
+}
+// 表单盒子边距
+.form-item-box {
+  margin: 10px 0;
+}
+
+.form-checkbox {
+  margin: 10px 100px;
+}
+// 子工作中心
+.detailed-work-center {
+  display: flex;
+
+  .work-header {
+    margin: 20px;
+  }
+
+  .table-work-header {
+    flex: 1;
+    // 表格按钮
+    .table-btn {
+      display: block;
+      height: 30px;
+      margin: 10px;
+    }
   }
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <detailed></detailed>
-    <t-card class="list-card-container" :bordered="false">
+    <detailed v-if="detailedShow" @added-show="onHandleSave"></detailed>
+    <t-card v-if="!detailedShow" class="list-card-container" :bordered="false">
       <t-row justify="space-between">
         <div class="work-center-box">
           <t-col>
-            <t-button variant="base">新增</t-button>
+            <t-button variant="base" @click="onHandelAdded">新增</t-button>
             <t-divider layout="vertical" />
             <t-button theme="default" variant="base">导出...</t-button></t-col
           >
@@ -34,13 +34,15 @@
         </div>
       </t-row>
       <t-table
-        row-key="index"
+        row-key="name"
         vertical-align="middle"
         :columns="columns"
         :data="workData"
+        :selected-row-keys="selectedRowKeys"
         lazy-load
         :pagination="workStationPagination"
         @page-change="onWorkStationPageChange"
+        @select-change="rehandleSelectChange"
       >
         <template #Work-center-number>
           <div>
@@ -60,15 +62,17 @@
 </template>
 
 <script setup lang="ts">
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import detailed from './detailed.vue';
-// const keyword = ref('');
-const columns = ref([
-  // {
-  //   colKey: 'select',
-  //   type: 'multiple',
-  // },
+
+const detailedShow = ref(false); // 控制子工作中心显示隐藏
+const columns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'select',
+    type: 'multiple',
+  },
   {
     colKey: 'Work-center-number',
     title: '工作中心编号',
@@ -101,8 +105,25 @@ const columns = ref([
     colKey: 'edit',
     title: '',
   },
-]);
+];
+const selectedRowKeys = ref([]); // 用于存储选中行的数组
 const workData = ref([
+  {
+    name: ['你好'],
+    types: '11',
+    Workshop: 'Aag',
+    location: '唱不上',
+    parentWorkCenter: '-',
+    head: '李四',
+  },
+  {
+    name: ['你好'],
+    types: '11',
+    Workshop: 'Aag',
+    location: '唱不上',
+    parentWorkCenter: '-',
+    head: '李四',
+  },
   {
     name: ['你好'],
     types: '11',
@@ -142,6 +163,19 @@ const workStationPagination = ref({
 });
 const onWorkStationPageChange = (pageInfo: { current: number; pageSize: number }) => {
   workStationPagination.value.defaultCurrent = pageInfo.current;
+};
+// 新增按钮
+const onHandelAdded = () => {
+  detailedShow.value = true;
+};
+// 子组件控制
+const onHandleSave = (value: any) => {
+  detailedShow.value = value;
+};
+// checked事件
+const rehandleSelectChange = (value: any, ctx: any) => {
+  selectedRowKeys.value = value;
+  console.log('value:', value, '1', ctx);
 };
 </script>
 

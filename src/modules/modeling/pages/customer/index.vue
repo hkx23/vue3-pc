@@ -4,15 +4,15 @@
       <t-row justify="space-between">
         <t-col>
           <div>
-            <t-input v-model="keyword" label="客户信息/名称：" placeholder="请输入" clearable />
+            <t-button variant="base" @click="onHandleQuery">查询</t-button>
           </div>
         </t-col>
         <t-col flex="220px">
           <div class="btn-left">
-            <t-button variant="base" @click="onHandleQuery">查询</t-button>
-            <t-button theme="default" variant="base" @click="onHandleResetting">重置</t-button>
+            <t-input v-model="keyword" placeholder="请输入客户信息/名称：" clearable />
+            <!-- <t-button theme="default" variant="base" @click="onHandleResetting">重置</t-button>
             <span class="save-filter" style="cursor: pointer">保存筛选</span>
-            <span style="cursor: pointer">展开<t-icon name="chevron-down"></t-icon></span>
+            <span style="cursor: pointer">展开<t-icon name="chevron-down"></t-icon></span> -->
           </div>
         </t-col>
       </t-row>
@@ -170,9 +170,9 @@ const onHandleQuery = debounce(() => {
 }, 200);
 
 // 重置
-const onHandleResetting = () => {
-  keyword.value = '';
-};
+// const onHandleResetting = () => {
+//   keyword.value = '';
+// };
 
 // 编辑
 const onHandleEdit = (value: any) => {
