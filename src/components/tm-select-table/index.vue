@@ -35,6 +35,7 @@
             multiple-sort
             hover
             resizable
+            max-height="300"
             :disable-data-page="true"
             cell-empty-content="-"
             bordered

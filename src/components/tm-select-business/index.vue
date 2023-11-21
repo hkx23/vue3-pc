@@ -59,6 +59,11 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  // 是否显示标题
+  showTitle: {
+    type: Boolean,
+    default: true,
+  },
   // 远程URL
   remoteUrl: {
     type: String,
@@ -200,7 +205,7 @@ const loadTypeSetting = () => {
           finalPlaceholder.value = res.placeholder;
         }
 
-        if (res.title) {
+        if (res.title && props.showTitle) {
           finalTitle.value = res.title;
         }
 

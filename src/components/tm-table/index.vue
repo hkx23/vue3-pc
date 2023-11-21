@@ -4,10 +4,10 @@
       <div v-if="buttonsVisible" class="table-box_header">
         <t-space size="small" :align="'center'">
           <t-button theme="primary" @click="onExport">
-            <span> {{ $t('table.export') }}</span>
+            <span> {{ $t('tmTable.export') }}</span>
           </t-button>
           <t-button v-if="exportFunction" theme="default" @click="onExportAll">
-            <span> {{ $t('table.exportAll') }}</span>
+            <span> {{ $t('tmTable.exportAll') }}</span>
           </t-button>
           <slot name="button"></slot>
         </t-space>
@@ -66,7 +66,13 @@
         />
       </div>
     </div>
-    <t-drawer v-model:visible="data.visible" size="320px" close-btn :footer="false" :header="$t('table.drawer.title')">
+    <t-drawer
+      v-model:visible="data.visible"
+      size="320px"
+      close-btn
+      :footer="false"
+      :header="$t('tmTable.drawer.title')"
+    >
       <t-row :gutter="[0, 15]">
         <template v-for="(value, key) in data.colConfigs" :key="key">
           <t-col :span="12">
@@ -78,9 +84,9 @@
         </template>
         <t-col :span="12"></t-col>
         <div class="flxsc" style="width: 100%">
-          <t-button style="flex: 1" ghost @click="onAllColConfig('hide')">{{ $t('table.drawer.hide') }}</t-button>
+          <t-button style="flex: 1" ghost @click="onAllColConfig('hide')">{{ $t('tmTable.drawer.hide') }}</t-button>
           <div style="width: 20px"></div>
-          <t-button style="flex: 1" @click="onAllColConfig('show')">{{ $t('table.drawer.show') }}</t-button>
+          <t-button style="flex: 1" @click="onAllColConfig('show')">{{ $t('tmTable.drawer.show') }}</t-button>
         </div>
       </t-row>
     </t-drawer>
@@ -102,6 +108,8 @@ import {
   reactive,
   ref,
 } from 'vue';
+
+import { t } from '@/locales';
 
 import { useTable } from './common/hook';
 
@@ -234,7 +242,8 @@ const onRefresh = () => {
 
 // 导出表格数据
 const onExport = () => {
-  if (!selectedRowKeys.value.length) return MessagePlugin.warning('请选择需要导出的数据');
+  if (!selectedRowKeys.value.length) return MessagePlugin.warning(t(`tmTable.pleaseSelectExportData`));
+  // 请选择需要导出的数据
   // utils.exportExcel({
   //   selectedRowKeys: selectedRowKeys.value,
   //   columns: exportColumns.value,
