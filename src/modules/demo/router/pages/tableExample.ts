@@ -1,8 +1,8 @@
 export default [
   {
-    path: '/businessExample',
-    name: 'businessExample',
-    component: () => import('../../pages/businessExample/index.vue'),
+    path: '/tableExample',
+    name: 'tableExample',
+    component: () => import('../../pages/tableEample/index.vue'),
     meta: {
       title: {
         zh_CN: '业务选择组件例子',

@@ -1,7 +1,7 @@
 <template>
   <t-row justify="center" style="margin-bottom: 20px">
     <span style="font-size: large; color: brown">
-      参考代码路径：webpc\src\modules\demo\pages\componentExample\index.vue
+      参考代码路径：webpc\src\modules\demo\pages\businessExample\index.vue
     </span>
   </t-row>
   <t-row justify="space-around">
