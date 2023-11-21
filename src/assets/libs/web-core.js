@@ -1039,12 +1039,12 @@ function wn(e) {
     name: "swagger-api-gen",
     enforce: "pre",
     apply: "serve",
-    buildStart() {
+    async buildStart() {
       for (const r in e.inputs) {
-        if (r === "index")
+        if (r === "index" || r === "demo")
           continue;
         const t = `/api/${r}`;
-        ln.generateApi({
+        await ln.generateApi({
           name: r,
           url: `${e.baseUrl}${t}/v3/api-docs`,
           output: we.resolve(process.cwd(), (e == null ? void 0 : e.output) || "./src/api"),
