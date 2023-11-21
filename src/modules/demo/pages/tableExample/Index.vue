@@ -14,11 +14,10 @@
       <a>操作</a>
     </template>
     <template #button>
-      <t-button theme="danger">使用按钮插槽</t-button>
-      <t-button theme="success" @click="onViewKeys">查看已选中行</t-button>
+      <t-button theme="success" @click="onViewKeys">插槽例子-已选中行</t-button>
     </template>
     <template #oprate>
-      <t-button shape="circle" theme="primary" ghost> 插槽 </t-button>
+      <!-- <t-button shape="circle" theme="primary" ghost> 插槽 </t-button> -->
     </template>
   </tm-table>
 </template>
@@ -27,10 +26,9 @@
 import { DialogPlugin } from 'tdesign-vue-next';
 import { onActivated, reactive, ref } from 'vue';
 
+import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-
-import TmTable from '../../../../components/tm-table/index.vue';
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
@@ -47,7 +45,7 @@ const formData = reactive({
 });
 
 const data = reactive({
-  total: 300,
+  total: 0,
   list: [],
 });
 
@@ -56,6 +54,7 @@ const fetchData = () => {
   setLoading(true);
   setTimeout(() => {
     data.list = apiMockData(pageUI.value.rows);
+    data.total = data.list.length * 30;
     setLoading(false);
   }, 600);
 };

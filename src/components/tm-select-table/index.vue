@@ -507,7 +507,15 @@ const onInputChange = (val: string) => {
   console.log('onInputChange');
   selectSearch.value = val;
   loading.value = true;
+
   fetchData(val);
+  if (val === '') {
+    state.defaultValue = '';
+    state.selectedRowData = [];
+    const value = [];
+    const selectedRowData = [];
+    radioSelect(value, selectedRowData);
+  }
 };
 // 搜索完全匹配，直接选中
 const radioCSelectRedirct = (val: string) => {

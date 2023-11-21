@@ -93,6 +93,13 @@ const props = defineProps({
       return '';
     },
   },
+  // 显示字段
+  labelField: {
+    type: String,
+    default: () => {
+      return '';
+    },
+  },
   // 业务组件父值
   parentValue: {
     type: String,
@@ -221,6 +228,14 @@ const loadTypeSetting = () => {
         }
         if (res.tableWidth) {
           finaltableWidth.value = res.tableWidth;
+        }
+        // 如果值字段不为空
+        if (props.valueField) {
+          finalKeywords.value.value = props.valueField;
+        }
+        // 如果label字段不为空
+        if (props.labelField) {
+          finalKeywords.value.label = props.labelField;
         }
         finalUrl.value = res.url;
       })

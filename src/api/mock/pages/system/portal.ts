@@ -193,6 +193,20 @@ export default [
                     },
                     children: [],
                   },
+                  {
+                    path: 'tableExample',
+                    name: '表格组件例子',
+                    component: 'IFrame',
+                    redirect: null,
+                    meta: {
+                      title: {
+                        zh_CN: '表格组件例子',
+                      },
+                      icon: null,
+                      frameSrc: '/demo#/tableExample',
+                    },
+                    children: [],
+                  },
                 ],
               },
             ],
