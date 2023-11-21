@@ -2,7 +2,7 @@ export default [
   {
     path: '/tableExample',
     name: 'tableExample',
-    component: () => import('../../pages/tableEample/index.vue'),
+    component: () => import('../../pages/tableExample/index.vue'),
     meta: {
       title: {
         zh_CN: '业务选择组件例子',
