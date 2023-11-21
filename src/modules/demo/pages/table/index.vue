@@ -64,6 +64,7 @@ const fetchData = () => {
   }, 600);
 };
 
+// 激活页面加载数据
 onActivated(() => {
   fetchData();
 });
