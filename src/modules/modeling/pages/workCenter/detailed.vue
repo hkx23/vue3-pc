@@ -44,7 +44,7 @@
           <t-checkbox>启用</t-checkbox>
         </span>
         <div style="margin: 10px 100px">
-          <t-button theme="default">添加</t-button>
+          <t-button theme="default" type="submit">添加</t-button>
           <t-button theme="default">删除</t-button>
         </div>
       </t-card>
@@ -62,11 +62,11 @@
           lazy-load
           @select-change="rehandleSelectChange"
         >
-          <template #sequence>
-            <div></div>
-          </template>
-          <template #expandedRow="{ row }">
+          <!-- <template #expandedRow="{ row }">
             <div>{{ row }}</div>
+          </template> -->
+          <template #sequence>
+            <div>1</div>
           </template>
           <template #Work-center-number>
             <div>
@@ -106,30 +106,37 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'sequence',
     title: '顺序号',
+    align: 'center',
   },
   {
     colKey: 'Work-center-number',
     title: '工作中心编号',
+    align: 'center',
   },
   {
     colKey: 'name',
     title: '名称',
+    align: 'center',
   },
   {
     colKey: 'types',
     title: '类型',
+    align: 'center',
   },
   {
     colKey: 'location',
     title: '地点',
+    align: 'center',
   },
   {
     colKey: 'associated',
     title: '关联设备',
+    align: 'center',
   },
   {
     colKey: 'head',
     title: '负责人',
+    align: 'center',
   },
 ];
 const workData = ref([
@@ -203,14 +210,17 @@ const rehandleSelectChange = (value: any, ctx: any) => {
   selectedRowKeys.value = value;
   console.log('value:', value, '1', ctx);
 };
+// 保存
 const onHandleSave = () => {
   MessagePlugin.success('保存成功');
   Emit('addedShow', false);
 };
+// 取消
 const onHandleCancellation = () => {
   MessagePlugin.success('取消成功');
   Emit('addedShow', false);
 };
+
 const submit = () => {
   console.log(1);
 };
