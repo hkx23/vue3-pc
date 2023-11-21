@@ -54,7 +54,6 @@
       <span class="work-header">子工作中心</span>
       <div class="table-work-header">
         <t-table
-          :active-row-type="activeRow ? 'single' : undefined"
           select-on-row-click
           row-key="name"
           vertical-align="middle"
@@ -63,11 +62,11 @@
           lazy-load
           @select-change="rehandleSelectChange"
         >
-          <template #expandedRow>
-            <div>1</div>
-          </template>
           <template #sequence>
-            <div>1</div>
+            <div></div>
+          </template>
+          <template #expandedRow="{ row }">
+            <div>{{ row }}</div>
           </template>
           <template #Work-center-number>
             <div>
@@ -83,7 +82,8 @@
           </template>
         </t-table>
         <span class="table-btn">
-          <t-button @click="onHandleSave">保存</t-button> <t-button theme="default">取消</t-button></span
+          <t-button @click="onHandleSave">保存</t-button>
+          <t-button theme="default" @click="onHandleCancellation">取消</t-button></span
         >
       </div>
     </footer>
@@ -91,36 +91,12 @@
 </template>
 
 <script setup lang="ts">
-// const expandedRow = (h, { row }) => (
-//   // <div class="more-detail">
-//   //   <p class="title">
-//   //     <b>申请人:</b>
-//   //   </p>
-//   //   <p class="content">{row.applicant}</p>
-//   //   <br />
-//   //   <p class="title">
-//   //     <b>邮箱地址:</b>
-//   //   </p>
-//   //   <p class="content">{row.detail.email}</p>
-//   //   <br />
-//   //   <p class="title">
-//   //     <b>签署方式:</b>
-//   //   </p>
-//   //   <p class="content">{row.channel}</p>
-//   // </div>
-// );
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref } from 'vue';
-// const curClass = ref(false);
+// 子修改传值
 const Emit = defineEmits(['addedShow']);
+
 const selectedRowKeys = ref([]); // 用于存储选中行的数组
-// const expandedRow = () => {};
-// const expandIcon = ref(true);
-// const expandOnRowClick = ref(true);
-// const rehandleExpandChange = (value: string[], params: any) => {
-//   expandedRowKeys.value = value;
-//   console.log('rehandleExpandChange', value, params);
-// };
 
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
@@ -212,15 +188,7 @@ const typeData = ref([
     show: false,
   },
 ]);
-// const onHandelList = (item) => {
-//   if (item === 'Item 2') {
-//     // 返回指定的CSS类名，用于高亮显示
-//     return 'li-cur';
-//   }
-//   // 返回默认的CSS类名，用于普通显示
-//   return '';
-// };
-const activeRow = ref(false);
+// 高亮事件
 const onHandleCur = (id: number) => {
   typeData.value.forEach((item) => {
     if (item.id === id) {
@@ -236,6 +204,11 @@ const rehandleSelectChange = (value: any, ctx: any) => {
   console.log('value:', value, '1', ctx);
 };
 const onHandleSave = () => {
+  MessagePlugin.success('保存成功');
+  Emit('addedShow', false);
+};
+const onHandleCancellation = () => {
+  MessagePlugin.success('取消成功');
   Emit('addedShow', false);
 };
 const submit = () => {

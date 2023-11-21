@@ -3,15 +3,15 @@
     <t-card class="list-card-container" :bordered="false">
       <t-row justify="space-between">
         <t-col>
-          <div>
-            <t-button variant="base" @click="onHandleQuery">查询</t-button>
+          <div class="btn-left">
+            <t-input v-model="keyword" placeholder="请输入客户信息/名称：" clearable />
           </div>
         </t-col>
         <t-col flex="220px">
-          <div class="btn-left">
-            <t-input v-model="keyword" placeholder="请输入客户信息/名称：" clearable />
-            <!-- <t-button theme="default" variant="base" @click="onHandleResetting">重置</t-button>
-            <span class="save-filter" style="cursor: pointer">保存筛选</span>
+          <div style="display: flex; justify-content: flex-end">
+            <t-button variant="base" @click="onHandleQuery">查询</t-button>
+            <t-button theme="default" variant="base" @click="onHandleResetting">重置</t-button>
+            <!-- <span class="save-filter" style="cursor: pointer">保存筛选</span>
             <span style="cursor: pointer">展开<t-icon name="chevron-down"></t-icon></span> -->
           </div>
         </t-col>
@@ -25,7 +25,7 @@
         @page-change="onPageChange"
       >
         <template #operate="{ row }">
-          <t-link theme="primary" hover="color" @click="onHandleEdit(row.customerCode)"> 编辑 </t-link>
+          <icon name="edit-1" @click="onHandleEdit(row.customerCode)"></icon>
         </template>
       </t-table>
     </t-card>
@@ -78,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
+import { Data, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 
 import { customerModify, customerSearch, customerSelect } from '../../api/customer';
@@ -170,9 +170,9 @@ const onHandleQuery = debounce(() => {
 }, 200);
 
 // 重置
-// const onHandleResetting = () => {
-//   keyword.value = '';
-// };
+const onHandleResetting = () => {
+  keyword.value = '';
+};
 
 // 编辑
 const onHandleEdit = (value: any) => {
