@@ -154,18 +154,6 @@ export type Workgroup = {
   mworkshopId?: string;
 } | null;
 
-export interface WorkcenterSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  keyword?: string;
-  /** @format int32 */
-  workshopid?: number;
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
-
 /** 通用响应类 */
 export interface ResultSupplier {
   /**
@@ -340,6 +328,17 @@ export interface ResultOrg {
   data?: Org;
 }
 
+export interface MitemInSupplierSearch {
+  mitemKeyword?: string;
+  supplierKeyword?: string;
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
 /** 响应数据 */
 export type MitemCategory = {
   id?: string;
@@ -425,8 +424,8 @@ export type Mitem = {
   shelfLifeDays?: number;
   /** @format int32 */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -456,6 +455,74 @@ export interface MitemSearch {
   isProduct?: number;
   sorts?: SortParam[];
   filters?: Filter[];
+}
+
+/** 物料服务间调用标准实体 */
+export type MitemFeignDTO = {
+  id?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 物料类别编码 */
+  categoryCode?: string;
+  /** 物料类别名称 */
+  categoryName?: string;
+  /** 物料类别描述 */
+  categoryDesc?: string;
+  /** 供应方式 */
+  supplyCategory?: string;
+  /** 单位 */
+  uom?: string;
+  /**
+   * 是否成品，1：是；0：否
+   * @format int32
+   */
+  isProduct?: number;
+  /**
+   * 是否原材料，1：是；0：否
+   * @format int32
+   */
+  isRaw?: number;
+  /**
+   * 是否半成品,1：是；0：否
+   * @format int32
+   */
+  isInProcess?: number;
+  /**
+   * 保质期天数
+   * @format int32
+   */
+  shelfLifeDays?: number;
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
+  isBatchNo?: number;
+  wwarehouseId?: string;
+  mmitemCategoryId?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListMitemFeignDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MitemFeignDTO[] | null;
 }
 
 /** 显示物料实体 */
@@ -501,21 +568,23 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
+  mmitemCategoryCode?: string;
+  isProductChecked?: boolean;
   mmitemCategoryName?: string;
-  isState?: boolean;
+  isInProcessChecked?: boolean;
+  wwarehouseId?: string;
+  mmitemCategoryId?: string;
+  stateName?: string;
   /** @format int32 */
   wwarehouseCode?: number;
   /** @format int32 */
   wwarehouseName?: number;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
-  stateName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -663,6 +732,13 @@ export type OrgTreeVO = {
   /** 组织描述 */
   orgDesc?: string;
   parentOrgId?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
 } | null;
 
 /** 通用响应类 */
@@ -679,11 +755,11 @@ export interface ResultListOrgTreeVO {
 }
 
 /**
- * @title gc项目
+ * @title scm项目
  * @version v1
  * @baseUrl http://localhost:7300
  *
- * gc项目API汇总
+ * scm项目API汇总
  */
 
 export const api = {
@@ -1002,6 +1078,21 @@ export const api = {
         params: query,
       }),
   },
+  mitemInSupplier: {
+    /**
+     * No description
+     *
+     * @tags 物料供应商关系
+     * @name GetMitemInSupplierList
+     * @request POST:/mitemInSupplier/getmiteminsupplierlist
+     * @secure
+     */
+    getMitemInSupplierList: (data: MitemInSupplierSearch) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemInSupplier/getmiteminsupplierlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   mitemCategory: {
     /**
      * No description
@@ -1136,6 +1227,21 @@ export const api = {
      */
     getList: (data: MitemSearch) =>
       http.request<ResultObject['data']>(`/api/modeling/mitem/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料
+     * @name FeignListByIds
+     * @summary 服务间调用标准物料信息
+     * @request POST:/mitem/feignListByIds
+     * @secure
+     */
+    feignListByIds: (data: string[]) =>
+      http.request<ResultListMitemFeignDTO['data']>(`/api/modeling/mitem/feignListByIds`, {
         method: 'POST',
         body: data as any,
       }),

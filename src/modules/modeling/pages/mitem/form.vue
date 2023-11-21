@@ -9,9 +9,15 @@
     <t-form-item label="物料描述">
       <t-input v-model="formData.mitemDesc" />
     </t-form-item>
-    <t-form-item label="物料类别">
-      <t-input v-model="formData.mmitemCategoryCode" readonly />
-      <!-- <tm-select-business v-model="formData.mmitemCategoryCode" type="mitemCategory" /> -->
+    <t-form-item label="物料分类">
+      <div style="width: 156px">
+        <!-- <t-input v-model="formData.mmitemCategoryCode" readonly /> -->
+        <tm-select-business
+          v-model="formData.mmitemCategoryCode"
+          type="mitemCategory"
+          @selection-change="onMitemCategorySelectionChange"
+        />
+      </div>
     </t-form-item>
     <t-form-item label="主计量单位">
       <t-select
@@ -65,20 +71,13 @@
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-// import { postEdit } from '../../api/mitem';
 import { api } from '@/api/modeling';
+import TmSelectBusiness from '@/components/tm-select-business/index.vue';
 
 export default {
   name: 'MitemForm',
-  // components: {
-  //   'tm-select-business': () => import('@/components/select-business/index.vue'),
-  // },
+  components: { TmSelectBusiness },
   setup() {
-    const mitemTypeOptions = ref([
-      { label: '原材料', value: 'isRaw' },
-      { label: '半成品', value: 'isInProcess' },
-      { label: '成品', value: 'isProduct' },
-    ]);
     const uomOptions = ref([
       { label: 'Pcs', value: 'Pcs' },
       { label: 'Kg', value: 'Kg' },
@@ -132,13 +131,18 @@ export default {
       }
     };
 
+    const onMitemCategorySelectionChange = (val: any) => {
+      formData.value.mmitemCategoryId = val.id;
+      formData.value.mmitemCategoryCode = val.categoryCode;
+      formData.value.mmitemCategoryName = val.categoryName;
+    };
     return {
       submit,
       formData,
       uomOptions,
       supplyCategoryOptions,
       isBatchNoOptions,
-      mitemTypeOptions,
+      onMitemCategorySelectionChange,
     };
   },
 };
