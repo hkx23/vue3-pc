@@ -185,6 +185,7 @@ const onSelectionChange = (val: any, valuKeys: any) => {
   // 选择值
   emits('SelectionChange', val, valuKeys);
 };
+
 const loadTypeSetting = () => {
   // 加载业务类型配置
   if (props.type !== '') {

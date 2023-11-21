@@ -51,7 +51,7 @@ import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/modeling';
 
-import SupplierForm from './form.vue';
+// import SupplierForm from './form.vue';
 
 const keyword = ref('');
 const selectedSupplierRowKeys = ref([]);

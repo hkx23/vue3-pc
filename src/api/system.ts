@@ -170,11 +170,11 @@ export type ShowModuleVO = {
 } | null;
 
 /**
- * @title gc项目
+ * @title scm项目
  * @version v1
- * @baseUrl http://192.168.1.6:7200
+ * @baseUrl http://localhost:7200
  *
- * gc项目API汇总
+ * scm项目API汇总
  */
 
 export const api = {
