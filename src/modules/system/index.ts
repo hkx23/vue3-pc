@@ -1,15 +1,14 @@
 /* eslint-disable simple-import-sort/imports */
 import TDesign from 'tdesign-vue-next';
 import { createApp } from 'vue';
-import { store } from '@/store';
 
 import App from './App.vue';
 import router from './router';
-import i18n from './locales';
+import { store } from '../../store';
+import i18n from '../../locales';
 
-import 'tdesign-vue-next/es/style/index.css';
-import '@/style/index.less';
 import '@/utils/core';
+import '@/style/index.less';
 
 const app = createApp(App);
 

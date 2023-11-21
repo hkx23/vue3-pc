@@ -129,26 +129,31 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'stationCode',
     title: '工站代码',
     width: '90px',
+    align: 'center',
   },
   {
     colKey: 'stationName',
     title: '工站名称',
     width: '90px',
+    align: 'center',
   },
   {
     colKey: 'workDescribe',
     title: '工站描述',
     width: '90px',
+    align: 'center',
   },
   {
     colKey: 'workCenter',
     title: '工站中心',
     width: '90px',
+    align: 'center',
   },
   {
     colKey: 'production',
     title: '工序',
     width: '90px',
+    align: 'center',
   },
   {
     align: 'center',
@@ -160,21 +165,25 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'founder',
     title: '创建人',
     width: '90px',
+    align: 'center',
   },
   {
     colKey: 'creationTime',
     title: '创建时间',
     width: '160px',
+    align: 'center',
   },
   {
     colKey: 'renew',
     title: '更新人',
     width: '90px',
+    align: 'center',
   },
   {
     colKey: 'renewTime',
     title: '更新时间',
     width: '160px',
+    align: 'center',
   },
   {
     colKey: 'operate',
