@@ -22,7 +22,7 @@
   ],
   "rowKey": "id",
   "keywords": {
-    "value": "categoryCode",
+    "value": "id",
     "label": "categoryName"
   }
 }

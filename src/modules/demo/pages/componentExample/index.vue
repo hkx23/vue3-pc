@@ -24,7 +24,7 @@
       <tm-select-business v-model="mitemCategoryValue" type="mitemCategory"></tm-select-business>
     </div>
     <div class="search-input">
-      <t-input v-model="mitemCategoryValue" label="物料分类值" />
+      <t-input v-model="mitemCategoryValue" label="物料分类值-ID" />
     </div>
   </t-row>
   <!-- 供应商 -->

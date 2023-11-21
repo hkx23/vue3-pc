@@ -339,6 +339,43 @@ export interface MitemInSupplierSearch {
   filters?: Filter[];
 }
 
+export interface MitemInSupplier {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** @format int32 */
+  qty?: number;
+  inspectionStringency?: string;
+  /** @format int32 */
+  isExemptionInspection?: number;
+  /** @format int32 */
+  isForceInspection?: number;
+  /** @format int32 */
+  dateExemptionExpired?: number;
+  msupplierId?: string;
+  mmitemId?: string;
+}
+
 /** 响应数据 */
 export type MitemCategory = {
   id?: string;
@@ -568,22 +605,22 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryCode?: string;
   isProductChecked?: boolean;
-  mmitemCategoryName?: string;
   isInProcessChecked?: boolean;
-  wwarehouseId?: string;
-  mmitemCategoryId?: string;
-  stateName?: string;
+  mmitemCategoryCode?: string;
+  mmitemCategoryName?: string;
   /** @format int32 */
   wwarehouseCode?: number;
   /** @format int32 */
   wwarehouseName?: number;
-  isBatchName?: string;
-  isRawChecked?: boolean;
   isProductName?: string;
   isRawName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
+  wwarehouseId?: string;
+  mmitemCategoryId?: string;
+  stateName?: string;
+  isBatchName?: string;
   isState?: boolean;
 }
 
@@ -1089,6 +1126,34 @@ export const api = {
      */
     getMitemInSupplierList: (data: MitemInSupplierSearch) =>
       http.request<ResultObject['data']>(`/api/modeling/mitemInSupplier/getmiteminsupplierlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料供应商关系
+     * @name Edit
+     * @request POST:/mitemInSupplier/edit
+     * @secure
+     */
+    edit: (data: MitemInSupplier) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemInSupplier/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料供应商关系
+     * @name Add
+     * @request POST:/mitemInSupplier/add
+     * @secure
+     */
+    add: (data: MitemInSupplier) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemInSupplier/add`, {
         method: 'POST',
         body: data as any,
       }),

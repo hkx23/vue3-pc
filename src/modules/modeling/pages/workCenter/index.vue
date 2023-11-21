@@ -54,7 +54,8 @@
           <div>11</div>
         </template>
         <template #edit>
-          <t-link theme="primary" underline> 编辑 </t-link>
+          <icon name="edit-1"></icon>
+          <!-- <t-link theme="primary" underline> 编辑 </t-link> -->
         </template>
       </t-table>
     </t-card>
@@ -62,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { Icon, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import detailed from './detailed.vue';

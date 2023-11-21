@@ -59,6 +59,11 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  // 是否显示标题
+  showTitle: {
+    type: Boolean,
+    default: true,
+  },
   // 远程URL
   remoteUrl: {
     type: String,
@@ -83,6 +88,13 @@ const props = defineProps({
   },
   // 值字段
   valueField: {
+    type: String,
+    default: () => {
+      return '';
+    },
+  },
+  // 显示字段
+  labelField: {
     type: String,
     default: () => {
       return '';
@@ -180,6 +192,7 @@ const onSelectionChange = (val: any, valuKeys: any) => {
   // 选择值
   emits('SelectionChange', val, valuKeys);
 };
+
 const loadTypeSetting = () => {
   // 加载业务类型配置
   if (props.type !== '') {
@@ -200,7 +213,7 @@ const loadTypeSetting = () => {
           finalPlaceholder.value = res.placeholder;
         }
 
-        if (res.title) {
+        if (res.title && props.showTitle) {
           finalTitle.value = res.title;
         }
 
@@ -215,6 +228,14 @@ const loadTypeSetting = () => {
         }
         if (res.tableWidth) {
           finaltableWidth.value = res.tableWidth;
+        }
+        // 如果值字段不为空
+        if (props.valueField) {
+          finalKeywords.value.value = props.valueField;
+        }
+        // 如果label字段不为空
+        if (props.labelField) {
+          finalKeywords.value.label = props.labelField;
         }
         finalUrl.value = res.url;
       })

@@ -23,7 +23,7 @@
   ],
   "rowKey": "id",
   "keywords": {
-    "value": "processCode",
+    "value": "id",
     "label": "processName"
   }
 }

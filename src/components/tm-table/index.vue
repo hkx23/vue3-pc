@@ -1,13 +1,13 @@
 <template>
-  <div class="create-table">
+  <div class="tm-table">
     <div class="table-box">
       <div v-if="buttonsVisible" class="table-box_header">
         <t-space size="small" :align="'center'">
           <t-button theme="primary" @click="onExport">
-            <span> {{ $t('table.export') }}</span>
+            <span>导出</span>
           </t-button>
           <t-button v-if="exportFunction" theme="default" @click="onExportAll">
-            <span> {{ $t('table.exportAll') }}</span>
+            <span>导出全部</span>
           </t-button>
           <slot name="button"></slot>
         </t-space>
@@ -23,11 +23,6 @@
               <t-icon name="adjustment" />
             </template>
           </t-button>
-          <t-button v-if="searchColumn.length" shape="circle" theme="primary" ghost @click="onSearchFormSwitch">
-            <template #icon>
-              <t-icon name="search" />
-            </template>
-          </t-button>
         </t-space>
       </div>
       <!-- 表格属性备份
@@ -37,6 +32,8 @@
         <t-table
           ref="tableRef"
           hover
+          resizable
+          lazy-load
           :bordered="true"
           :row-key="rowKey"
           :columns="columns"
@@ -49,6 +46,7 @@
           :style="{ width: tableWidth + 'px' }"
           @select-change="onSelectKeysChange"
           @expand-change="onExpandKeysChange"
+          @filter-change="onFilterChange"
         >
           <template v-for="(value, key) in slots" :key="key" #[key]="{ col, colIndex, row, rowIndex }">
             <slot :name="key" :col="col" :col-index="colIndex" :row="row" :row-index="rowIndex"></slot>
@@ -66,7 +64,7 @@
         />
       </div>
     </div>
-    <t-drawer v-model:visible="data.visible" size="320px" close-btn :footer="false" :header="$t('table.drawer.title')">
+    <t-drawer v-model:visible="data.visible" size="320px" close-btn :footer="false" header="列配置">
       <t-row :gutter="[0, 15]">
         <template v-for="(value, key) in data.colConfigs" :key="key">
           <t-col :span="12">
@@ -78,9 +76,9 @@
         </template>
         <t-col :span="12"></t-col>
         <div class="flxsc" style="width: 100%">
-          <t-button style="flex: 1" ghost @click="onAllColConfig('hide')">{{ $t('table.drawer.hide') }}</t-button>
+          <t-button style="flex: 1" ghost @click="onAllColConfig('hide')">全部隐藏</t-button>
           <div style="width: 20px"></div>
-          <t-button style="flex: 1" @click="onAllColConfig('show')">{{ $t('table.drawer.show') }}</t-button>
+          <t-button style="flex: 1" @click="onAllColConfig('show')">全部显示</t-button>
         </div>
       </t-row>
     </t-drawer>
@@ -103,11 +101,13 @@ import {
   ref,
 } from 'vue';
 
+import excelUtils from '@/utils/excel';
+
 import { useTable } from './common/hook';
 
+type Filters = { [key: string]: any };
 const props = defineProps({
   searchVisible: { type: Boolean, default: true },
-  searchColumn: { type: Array, default: () => [] },
   params: {
     type: Object,
   },
@@ -137,6 +137,8 @@ const emit = defineEmits(['refresh', 'update:pagination']);
 const { selectedRowKeys, expandedRowKeys, onSelectKeysChange, onExpandKeysChange } = useTable();
 
 const formRef = ref();
+// 远程条件
+const filterList = ref([]);
 
 defineExpose({
   getSelectedRowKeys: () => selectedRowKeys.value,
@@ -167,6 +169,27 @@ const data: {
 // 列配置相关
 props.tableColumn.forEach((item) => {
   if (item.colKey !== 'row-select' && item.colKey !== 'op') {
+    if (item.sorter !== false) {
+      item.sorter = true;
+    }
+    if (!item.filter) {
+      // 输入框过滤配置
+      item.filter = {
+        type: 'input',
+
+        // 文本域搜索
+        // component: Textarea,
+
+        resetValue: '',
+        // 按下 Enter 键时也触发确认搜索
+        confirmEvents: ['onEnter'],
+        props: {
+          placeholder: '输入关键词过滤',
+        },
+        // 是否显示重置取消按钮，一般情况不需要显示
+        showConfirmAndReset: true,
+      };
+    }
     data.colConfigs[item.title] = true;
   }
 });
@@ -177,11 +200,11 @@ const columns = computed(() => {
   });
 });
 // 表格要导出的列
-// const exportColumns = computed(() => {
-//   return props.tableColumn.filter((item) => {
-//     return item.colKey !== 'row-select' && item.colKey !== 'op';
-//   });
-// });
+const exportColumns = computed(() => {
+  return props.tableColumn.filter((item) => {
+    return item.colKey !== 'row-select' && item.colKey !== 'op';
+  });
+});
 // 全选切换列展示状态
 const onAllColConfig = (type: string) => {
   Object.keys(data.colConfigs).forEach((key) => {
@@ -200,7 +223,21 @@ const onPaginationChange = (e: { pageSize: any; current: number }) => {
   emit('update:pagination', { page: e.current, rows: e.pageSize });
   emit('refresh');
 };
-
+const onFilterChange = (filters: Filters, ctx: any) => {
+  console.log('filter-change', filters, ctx);
+  filterList.value = [];
+  for (const key in filters) {
+    const value = filters[key];
+    if (value.length) {
+      filterList.value.push({
+        field: key,
+        operator: 'LIKE',
+        value,
+      });
+    }
+  }
+  // remoteLoad(selectSearch.value);
+};
 // 展开按钮点击事件
 // const onExpandSwitch = () => {
 //   data.openSearchForm = !data.openSearchForm;
@@ -210,12 +247,12 @@ const onPaginationChange = (e: { pageSize: any; current: number }) => {
 // };
 
 // 显示搜索区域按钮点击事件
-const onSearchFormSwitch = () => {
-  data.showSearchForm = !data.showSearchForm;
-  nextTick(() => {
-    computedTableContentSize();
-  });
-};
+// const onSearchFormSwitch = () => {
+//   data.showSearchForm = !data.showSearchForm;
+//   nextTick(() => {
+//     computedTableContentSize();
+//   });
+// };
 
 // 查询重置
 // const onQuery = () => {
@@ -235,12 +272,14 @@ const onRefresh = () => {
 // 导出表格数据
 const onExport = () => {
   if (!selectedRowKeys.value.length) return MessagePlugin.warning('请选择需要导出的数据');
-  // utils.exportExcel({
-  //   selectedRowKeys: selectedRowKeys.value,
-  //   columns: exportColumns.value,
-  //   tableData: props.tableData,
-  //   rowKey: props.rowKey,
-  // });
+  // if (!selectedRowKeys.value.length) return MessagePlugin.warning(t(`tmTable.pleaseSelectExportData`));
+  //
+  excelUtils.exportExcel({
+    selectedRowKeys: selectedRowKeys.value,
+    columns: exportColumns.value,
+    tableData: props.tableData,
+    rowKey: props.rowKey,
+  });
   selectedRowKeys.value = [];
   return null;
 };
@@ -255,12 +294,12 @@ const onExportAll = async () => {
       dialogTask.destroy();
       const loadTask = MessagePlugin.loading({ content: '数据导出中...', duration: 0 });
       try {
-        // const result = await props.exportFunction();
-        // utils.exportExcel({
-        //   columns: exportColumns.value,
-        //   tableData: result,
-        //   rowKey: props.rowKey,
-        // });
+        const result = await props.exportFunction();
+        excelUtils.exportExcel({
+          columns: exportColumns.value,
+          tableData: result,
+          rowKey: props.rowKey,
+        });
       } catch (error) {
         console.log('error', error);
         MessagePlugin.error('导出失败');
@@ -282,15 +321,8 @@ const tableHeight = ref(0); // 表格高度
 const comVisible = ref(true);
 
 const debounceFunction = _.debounce(() => {
-  // computedExpandBtnVisible();
   computedTableContentSize();
 }, 100);
-
-// const computedExpandBtnVisible = () => {
-//   if (formContentRef.value) {
-//     showExpand.value = parseInt(formContentRef.value.clientWidth / 360, 10) < props.searchColumn.length;
-//   }
-// };
 
 const computedTableContentSize = () => {
   // 组件处于不可见状态时将不进行计算

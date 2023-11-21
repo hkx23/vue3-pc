@@ -29,7 +29,7 @@
   ],
   "rowKey": "id",
   "keywords": {
-    "value": "moCode",
+    "value": "id",
     "label": "moCode"
   }
 }

@@ -166,6 +166,49 @@ export default [
                   },
                 ],
               },
+              {
+                path: 'demo',
+                name: '组件例子',
+                component: 'LAYOUT',
+                redirect: '/demo#/businessExample',
+                meta: {
+                  title: {
+                    zh_CN: '组件例子',
+                  },
+                  icon: 'museum',
+                  frameSrc: null,
+                },
+                children: [
+                  {
+                    path: 'businessExample',
+                    name: '业务选择组件例子',
+                    component: 'IFrame',
+                    redirect: null,
+                    meta: {
+                      title: {
+                        zh_CN: '业务选择组件例子',
+                      },
+                      icon: null,
+                      frameSrc: '/demo#/businessExample',
+                    },
+                    children: [],
+                  },
+                  {
+                    path: 'tableExample',
+                    name: '表格组件例子',
+                    component: 'IFrame',
+                    redirect: null,
+                    meta: {
+                      title: {
+                        zh_CN: '表格组件例子',
+                      },
+                      icon: null,
+                      frameSrc: '/demo#/tableExample',
+                    },
+                    children: [],
+                  },
+                ],
+              },
             ],
           },
         ],

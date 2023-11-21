@@ -35,6 +35,7 @@
             multiple-sort
             hover
             resizable
+            max-height="300"
             :disable-data-page="true"
             cell-empty-content="-"
             bordered
@@ -69,7 +70,7 @@
 <script setup lang="tsx" name="TmSelectTable">
 import { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
-import { computed, nextTick, onMounted, reactive, ref, useAttrs } from 'vue';
+import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
 // 抛出事件
 const emits = defineEmits(['selectionChange']);
 // / 00-组件属性定义
@@ -191,6 +192,10 @@ const selectAttr = computed(() => {
 });
 // 是否在加载数据
 const loading = ref(false);
+
+// 是否选择变化
+const isHandleSelectionChange = ref(false);
+
 // 是否显示弹出层
 const popupVisible = ref(false);
 
@@ -293,6 +298,7 @@ const onTagChange = (currentTags: any, context: { trigger: any; index: any; item
   //   value.value.push(current);
   //   options.value = options.value.concat(current);
   // }
+  isHandleSelectionChange.value = true;
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
 const checkSelect = (value: any[], selectedRowData: any) => {
@@ -309,6 +315,7 @@ const checkSelect = (value: any[], selectedRowData: any) => {
     state.selectedRowData = [];
   }
   console.log('checkSelect');
+  isHandleSelectionChange.value = true;
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
 
@@ -324,6 +331,7 @@ const radioSelect = (value: any[], selectedRowData: any) => {
   } else {
     state.defaultValue = '';
   }
+  isHandleSelectionChange.value = true;
   emits('selectionChange', state.defaultValue, selectedRowKeys.value);
 };
 const onPopupVisibleChange = (val: boolean, context: any) => {
@@ -466,6 +474,7 @@ const remoteLoad = async (val: any) => {
     // 单选-如果完全匹配，直接选中
     radioCSelectRedirct(val);
     loading.value = false;
+    isHandleSelectionChange.value = false;
     tempCondition.value = searchCondition;
   }
 };
@@ -498,7 +507,15 @@ const onInputChange = (val: string) => {
   console.log('onInputChange');
   selectSearch.value = val;
   loading.value = true;
+
   fetchData(val);
+  if (val === '') {
+    state.defaultValue = '';
+    state.selectedRowData = [];
+    const value = [];
+    const selectedRowData = [];
+    radioSelect(value, selectedRowData);
+  }
 };
 // 搜索完全匹配，直接选中
 const radioCSelectRedirct = (val: string) => {
@@ -581,6 +598,36 @@ const sortChange = (val: any) => {
   console.log('remoteLoad-排序');
   remoteLoad(selectSearch.value);
 };
+
+watch(
+  () => props.value,
+  (val) => {
+    console.log('watch:props.value', val);
+    nextTick(() => {
+      // 多选
+      if (props.multiple) {
+        // let valueAsArray: unknown[];
+        // if (Array.isArray(props.value)) {
+        //   valueAsArray = props.value;
+        // } else if (typeof props.value === 'string') {
+        //   valueAsArray = props.value.split(',');
+        // } else {
+        //   valueAsArray = [];
+        // }
+        // state.defaultValue = valueAsArray;
+        // state.defaultValue = (state.defaultValue || []).map((item: any) => {
+        //   return item;
+        // });
+      } else if (!isHandleSelectionChange.value) {
+        console.log('remoteLoad-按默认值查询');
+        selectSearch.value = props.value.toString();
+        remoteLoad(props.value);
+      }
+      isHandleSelectionChange.value = false;
+    });
+  },
+  { deep: true },
+);
 
 // 暴露方法出去
 defineExpose({ closeTable, onClear });

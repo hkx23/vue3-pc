@@ -39,7 +39,7 @@
   ],
   "rowKey": "id",
   "keywords": {
-    "value": "scheCode",
+    "value": "id",
     "label": "scheCode"
   }
 }

@@ -1,5 +1,5 @@
 export default {
-  markDay: 'Good afternoon, today marks your 100th day at Getech',
+  markDay: 'Good afternoon, today marks your 100th day at ',
   personalInfo: {
     title: 'Personal Info',
     position: 'Employee of the Hong Kong and Macau Business Expansion team',
