@@ -23,7 +23,7 @@
   ],
   "rowKey": "id",
   "keywords": {
-    "value": "modeCode",
+    "value": "id",
     "label": "modeName"
   }
 }

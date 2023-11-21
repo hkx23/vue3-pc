@@ -23,7 +23,7 @@
   ],
   "rowKey": "id",
   "keywords": {
-    "value": "workstationCode",
+    "value": "id",
     "label": "workstationName"
   }
 }

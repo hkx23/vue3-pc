@@ -23,7 +23,7 @@
   ],
   "rowKey": "id",
   "keywords": {
-    "value": "orgCode",
+    "value": "id",
     "label": "orgName"
   }
 }
