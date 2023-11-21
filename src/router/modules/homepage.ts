@@ -40,17 +40,17 @@ export default [
           },
         },
       },
-      {
-        path: 'table',
-        name: 'table',
-        component: () => import('@/modules/demo/pages/tableExample/index.vue'),
-        meta: {
-          title: {
-            zh_CN: '表格测试',
-            en_US: 'Dashboard Detail',
-          },
-        },
-      },
+      // {
+      //   path: 'table',
+      //   name: 'table',
+      //   component: () => import('@/modules/demo/pages/tableExample/index.vue'),
+      //   meta: {
+      //     title: {
+      //       zh_CN: '表格测试',
+      //       en_US: 'Dashboard Detail',
+      //     },
+      //   },
+      // },
     ],
   },
 ];

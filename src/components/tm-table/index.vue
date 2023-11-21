@@ -236,7 +236,7 @@ const onFilterChange = (filters: Filters, ctx: any) => {
       });
     }
   }
-  remoteLoad(selectSearch.value);
+  // remoteLoad(selectSearch.value);
 };
 // 展开按钮点击事件
 // const onExpandSwitch = () => {
