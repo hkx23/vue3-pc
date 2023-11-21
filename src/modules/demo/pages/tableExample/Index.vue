@@ -5,15 +5,18 @@
     :params="formData"
     :table-column="tableColumn"
     :table-data="data.list"
+    :enable-export="enableExport"
     :loading="loading"
     :total="data.total"
     :export-function="exportFunction"
     @refresh="fetchData"
   >
-    <template #op>
-      <a>操作</a>
+    <template #op="{ row }">
+      <icon name="edit-1" @click="onHandleEdit(row)"></icon>
     </template>
+
     <template #button>
+      <t-button theme="success" @click="onExportEnable">插槽例子-是否显示导入</t-button>
       <t-button theme="success" @click="onViewKeys">插槽例子-已选中行</t-button>
     </template>
     <template #oprate>
@@ -23,7 +26,7 @@
 </template>
 
 <script setup lang="tsx" name="TablePreview">
-import { DialogPlugin } from 'tdesign-vue-next';
+import { DialogPlugin, Icon } from 'tdesign-vue-next';
 import { onActivated, reactive, ref } from 'vue';
 
 import TmTable from '@/components/tm-table/index.vue';
@@ -34,6 +37,8 @@ const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 
 const tableRef = ref();
+
+const enableExport = ref(false);
 
 const formData = reactive({
   name: '',
@@ -69,6 +74,10 @@ const exportFunction = async () => {
     resolve(apiMockData(300));
   });
 };
+// 切换是否显示导出
+const onExportEnable = () => {
+  enableExport.value = !enableExport.value;
+};
 
 // 查看已选中行
 const onViewKeys = () => {
@@ -81,6 +90,10 @@ const onViewKeys = () => {
       dialog.destroy();
     },
   });
+};
+
+const onHandleEdit = (row: any) => {
+  console.log(row);
 };
 
 // 模拟数据
