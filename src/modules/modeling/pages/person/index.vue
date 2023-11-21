@@ -222,7 +222,6 @@ const onEditConfirm = async () => {
     formInit();
     fetchTable();
   } catch (e) {
-    // debugger;
     // console.log(e);
     // MessagePlugin.error(e);
   } finally {

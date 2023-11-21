@@ -86,7 +86,6 @@
 </template>
 
 <script lang="tsx" setup name="CreateTable">
-// import { useSettingStore } from '@/store';
 import _ from 'lodash';
 import { DialogPlugin, MessagePlugin, TableRowData } from 'tdesign-vue-next';
 import {
@@ -101,6 +100,7 @@ import {
   ref,
 } from 'vue';
 
+// import { useSettingStore } from '@/store';
 import excelUtils from '@/utils/excel';
 
 import { useTable } from './common/hook';
