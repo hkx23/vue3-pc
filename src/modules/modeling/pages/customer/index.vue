@@ -126,7 +126,7 @@ const featCustomer = async () => {
     const res = await customerSearch({
       keyword: keyword.value,
       pageNum: pageUI.value.pageIndex,
-      pageSize: pageUI.value.pageIndex,
+      pageSize: pageUI.value.pageSize,
       sorts: [],
       filters: [],
     });
