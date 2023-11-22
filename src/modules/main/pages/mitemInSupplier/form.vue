@@ -2,23 +2,10 @@
   <t-form :data="formData" :show-cancel="true" :show-error-message="false" label-width="150px" @submit="submit">
     <t-row>
       <t-col class="t-space-item">
-        <t-form-item label="供应商编码" required-mark>
-          <div style="width: 157px">
-            <tm-select-business
-              v-model="formData.msupplierId"
-              type="supplier"
-              label-field="supplierCode"
-              :show-title="false"
-              @selection-change="onSupplierChange"
-            />
-          </div>
-        </t-form-item>
-      </t-col>
-      <t-col>
         <t-form-item label="物料编码" required-mark>
           <div style="width: 157px">
             <tm-select-business
-              v-model="formData.mmitemId"
+              v-model="formData.mitemId"
               type="mitem"
               label-field="mitemCode"
               :show-title="false"
@@ -27,16 +14,29 @@
           </div>
         </t-form-item>
       </t-col>
+      <t-col>
+        <t-form-item label="供应商编码" required-mark>
+          <div style="width: 157px">
+            <tm-select-business
+              v-model="formData.supplierId"
+              type="supplier"
+              label-field="supplierCode"
+              :show-title="false"
+              @selection-change="onSupplierChange"
+            />
+          </div>
+        </t-form-item>
+      </t-col>
     </t-row>
     <t-row>
       <t-col class="t-space-item">
-        <t-form-item label="供应商名称">
-          <t-input v-model="formData.supplierName" readonly />
+        <t-form-item label="物料名称">
+          <t-input v-model="formData.mitemName" readonly />
         </t-form-item>
       </t-col>
       <t-col>
-        <t-form-item label="物料名称">
-          <t-input v-model="formData.mitemName" readonly />
+        <t-form-item label="供应商名称">
+          <t-input v-model="formData.supplierName" readonly />
         </t-form-item>
       </t-col>
     </t-row>
@@ -101,11 +101,12 @@ export default {
       { label: '否', value: 0 },
     ]); // 是否启用批次
     const formData = ref({
+      operateTpye: 'add',
       id: '',
-      mmitemId: '',
+      mitemId: '',
       mitemCode: '',
       mitemName: '',
-      msupplierId: '',
+      supplierId: '',
       supplierCode: '',
       supplierName: '',
       qty: 0, // 最小包装数
@@ -131,37 +132,45 @@ export default {
           MessagePlugin.error('请选择物料');
           return false;
         }
-        await api.mitem.edit(formData.value);
-        MessagePlugin.success('编辑成功');
+
+        if (formData.value.operateTpye === 'add') {
+          await api.mitemInSupplier.add(formData.value);
+          MessagePlugin.success('新增成功');
+        } else if (formData.value.operateTpye === 'edit') {
+          await api.mitemInSupplier.edit(formData.value);
+          MessagePlugin.success('编辑成功');
+        }
       } catch (e) {
         console.log(e);
+        return false;
       }
       return true;
     };
     const init = () => {
+      formData.value.operateTpye = 'add';
       formData.value.id = '';
-      formData.value.mmitemId = '';
+      formData.value.mitemId = '';
       formData.value.mitemCode = '';
       formData.value.mitemName = '';
-      formData.value.msupplierId = '';
+      formData.value.supplierId = '';
       formData.value.supplierCode = '';
       formData.value.supplierName = '';
       formData.value.qty = 0; // 最小包装数
-      formData.value.inspectionStringency = ''; // 检验严格度
-      formData.value.isExemptionInspection = 0; // 是否免检
+      formData.value.inspectionStringency = '正常'; // 检验严格度
+      formData.value.isExemptionInspection = 1; // 是否免检
       formData.value.isExemptionInspectionChecked = false; // 是否免检
-      formData.value.isForceInspection = 0; // 是否强制供方检验
+      formData.value.isForceInspection = 1; // 是否强制供方检验
       formData.value.isForceInspectionChecked = false; // 是否强制供方检验
       formData.value.dateExemptionExpiredStr = ''; // 免检失效日期
       formData.value.dateExemptionExpired = '';
     };
     const onSupplierChange = (value: any) => {
-      formData.value.msupplierId = value.id;
+      formData.value.supplierId = value.id;
       formData.value.supplierCode = value.supplierCode;
       formData.value.supplierName = value.supplierName;
     };
     const onMitemChange = (value: any) => {
-      formData.value.mmitemId = value.id;
+      formData.value.mitemId = value.id;
       formData.value.mitemCode = value.mitemCode;
       formData.value.mitemName = value.mitemName;
     };
