@@ -48,7 +48,7 @@
         @page-change="onWorkStationPageChange"
       >
         <template #state="{ row }">
-          <span>{{ row.state ? '启用' : '禁用' }}</span>
+          <span>{{ row.state === 1 ? '启用' : '禁用' }}</span>
         </template>
         <template #operate="{ row }">
           <!-- 编辑 -->
@@ -165,7 +165,7 @@ const onHandelList = async () => {
   const STATE = inputValue.value.statevalue;
   try {
     if (STATE === -1) {
-      inputValue.value.state = [1, 2];
+      inputValue.value.state = [1, 0];
     } else if (STATE === 1) {
       inputValue.value.state = [1];
     } else {
@@ -179,11 +179,8 @@ const onHandelList = async () => {
       workcenter: inputValue.value.workcenter,
       process: inputValue.value.process,
     });
-    console.log(res.list);
     workData.value = res.list;
-    // @ts-ignore
     workStationPagination.value.total = +res.total;
-    console.log('1', workData);
   } catch (e) {
     console.log(e);
   }
@@ -341,7 +338,9 @@ const onHandelQuery = () => {
 const onHandleDisable = (value) => {
   workData.value.forEach(async (item) => {
     if (item.id === value) {
-      console.log(1);
+      api.workstation.edit({
+        state: 0,
+      });
     }
   });
 };
@@ -380,7 +379,7 @@ const onSecondary = () => {
   }
   if (controlShow.value) {
     try {
-      api.workstation.updateItemByCode({
+      api.workstation.edit({
         workcenterName: formData.value.workcenterName,
         processName: formData.value.processName,
         workstationCode: formData.value.workstationCode,
@@ -396,7 +395,7 @@ const onSecondary = () => {
     console.log('编辑');
   } else {
     // 新增逻辑
-    api.workstation.addItem({
+    api.workstation.add({
       workcenterName: formData.value.workcenterName,
       processName: formData.value.processName,
       workstationCode: formData.value.workstationCode,
@@ -408,6 +407,7 @@ const onSecondary = () => {
   }
   console.log(controlShow.value);
   MessagePlugin.success('保存成功');
+
   formVisible.value = false;
 };
 // 保存确认按钮
