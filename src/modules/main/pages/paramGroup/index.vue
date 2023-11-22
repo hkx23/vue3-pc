@@ -63,7 +63,7 @@
                       <div></div>
                     </t-col>
                   </t-row>
-                  <vue-draggable ref="el" v-model="dataTable" @start="ondragStart" @end="ondragEnd">
+                  <vue-draggable ref="el" v-model="dataTable" :disabled="true" @start="ondragStart" @end="ondragEnd">
                     <t-row v-for="(item, index) in dataTable" :key="index" class="table-row" justify="space-between">
                       <t-col :span="2">
                         <t-input v-model="item.paramCode" :disabled="SelectNode.isSys == '1'" />
@@ -150,24 +150,25 @@
 import { SortableEvent } from 'sortablejs';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
-import { VueDraggable } from 'vue-draggable-plus';
+import { type UseDraggableReturn, VueDraggable } from 'vue-draggable-plus';
 
-import { api } from '@/api/main';
+import { api, Param, ParamInfoDTO } from '@/api/main';
 
 // 页签
 const tabModuleList = ref([]);
 
 // 树
-const selectModule = ref('modeling');
+const selectModule = ref('');
 const dataTree = ref([]);
 const SelectNode = ref({ value: '', label: '', paramGroupDesc: '', id: '', isSys: '', paramDataType: '' }); // 选中的树节点
 const filterText = ref('');
 const filterByText = ref(null);
 
 // 表格
-const totaldataTable = ref([]);
-const dataTable = ref([]);
+const totaldataTable = ref<Param[]>();
+const dataTable = ref<Param[]>();
 const deleteIdx = ref(-1);
+const el = ref<UseDraggableReturn>();
 
 // 表格分页设置
 const pagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
@@ -338,9 +339,9 @@ const onDeleteCancel = () => {
 
 // 新增按钮
 const onAddParam = (item) => {
-  const obj = ref({
-    id: -1,
-    sparamGroupId: SelectNode.value.id,
+  const obj = ref<Param>({
+    id: '',
+    paramGroupId: SelectNode.value.id,
     paramCode: '',
     paramValue: '',
     paramDesc: '',
@@ -370,7 +371,7 @@ const ondragEnd = (event: SortableEvent) => {
 };
 
 const sortTable = () => {
-  const rowIndex = ref(0);
+  const rowIndex = ref(1);
   if (dataTable.value) {
     dataTable.value.forEach((element) => {
       element.seq = rowIndex.value;
@@ -417,7 +418,7 @@ const clearTable = () => {
 };
 
 // 保存
-const onSave = () => {
+const onSave = async () => {
   const isEmpty = ref(false);
   if (totaldataTable.value.length === 0) {
     MessagePlugin.error('无数据可保存，请检查');
@@ -432,6 +433,24 @@ const onSave = () => {
     });
     if (isEmpty.value) {
       MessagePlugin.error('存在参数编码或参数值为空的数据，请检查');
+    } else {
+      sortTable();
+      dataLoading.value = true;
+      try {
+        let postData: ParamInfoDTO = {};
+        postData = {
+          details: totaldataTable.value,
+          paramGroupId: SelectNode.value.id,
+        };
+        (await api.param.save(postData)) as any;
+        MessagePlugin.success('保存成功');
+        fetchTable();
+      } catch (e) {
+        // console.log(e);
+        MessagePlugin.error(`保存失败:${e}`);
+      } finally {
+        dataLoading.value = false;
+      }
     }
   }
 };
