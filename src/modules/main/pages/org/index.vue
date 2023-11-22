@@ -42,7 +42,14 @@
           />
         </div>
         <div class="list-tree-content">
-          <t-table ref="tableRef" row-key="id" :columns="columns" :data="data"></t-table>
+          <tm-table
+            ref="tableRef"
+            row-key="id"
+            :loading="loading"
+            :show-pagination="false"
+            :table-column="columns"
+            :table-data="data"
+          ></tm-table>
         </div>
       </div>
     </div>
@@ -52,19 +59,22 @@
   </div>
 </template>
 <script setup lang="tsx">
+import dayjs from 'dayjs';
 import { isEmpty } from 'lodash';
 import { AddIcon, EditIcon, RemoveIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin, TreeNodeModel } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 
 import { api, OrgTreeVO } from '@/api/main';
+import TmTable from '@/components/tm-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
 
 import { getOrgLevelDic } from '../../api/orgLevel';
 import { FormRef } from './constants';
 import OrgForm from './form.vue';
 
 const formVisible = ref(false);
-
+const { loading, setLoading } = useLoading();
 const filterByText = ref();
 const filterText = ref();
 
@@ -106,6 +116,7 @@ const columns = [
   {
     title: '更新时间',
     colKey: 'timeModified',
+    cell: (h, { col, row }) => <div>{dayjs(row[col.colKey]).format('YYYY-MM-DD HH:mm:ss')}</div>,
   },
 ];
 
@@ -125,8 +136,10 @@ watch(treeActiveKey, () => {
 });
 
 const fetchData = async () => {
+  setLoading(true);
   treeData.value = await api.org.tree();
   data.value = treeData.value;
+  setLoading(false);
   treeActiveKey.value = [];
 };
 
