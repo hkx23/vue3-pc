@@ -299,6 +299,7 @@ const onTagChange = (currentTags: any, context: { trigger: any; index: any; item
   //   options.value = options.value.concat(current);
   // }
   isHandleSelectionChange.value = true;
+
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
 const checkSelect = (value: any[], selectedRowData: any) => {
@@ -316,6 +317,7 @@ const checkSelect = (value: any[], selectedRowData: any) => {
   }
   console.log('checkSelect');
   isHandleSelectionChange.value = true;
+
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
 
@@ -332,6 +334,7 @@ const radioSelect = (value: any[], selectedRowData: any) => {
     state.defaultValue = '';
   }
   isHandleSelectionChange.value = true;
+
   emits('selectionChange', state.defaultValue, selectedRowKeys.value);
 };
 const onPopupVisibleChange = (val: boolean, context: any) => {
@@ -379,7 +382,7 @@ onMounted(() => {
 
 // 单选键盘事件
 const onSelectKeyup = (e: any) => {
-  // console.log('keyup');
+  console.log('keyup');
   popupVisible.value = true;
   if (!props.multiple) {
     if (!props.isKeyup) return;
@@ -425,7 +428,10 @@ const onSelectKeyup = (e: any) => {
       //   }
       //   break;
       case 13: // 回车
-        radioSelect(activeRowKeys.value, [state.tableData[currentIndex]]);
+        if (!props.multiple) {
+          radioSelect(activeRowKeys.value, [state.tableData[currentIndex]]);
+        }
+
         break;
       default:
         break;
@@ -509,7 +515,7 @@ const onInputChange = (val: string) => {
   loading.value = true;
 
   fetchData(val);
-  if (val === '') {
+  if (val === '' && !props.multiple) {
     state.defaultValue = '';
     state.selectedRowData = [];
     const value = [];
@@ -603,21 +609,22 @@ watch(
   () => props.value,
   (val) => {
     console.log('watch:props.value', val);
+
     nextTick(() => {
       // 多选
       if (props.multiple) {
-        // let valueAsArray: unknown[];
-        // if (Array.isArray(props.value)) {
-        //   valueAsArray = props.value;
-        // } else if (typeof props.value === 'string') {
-        //   valueAsArray = props.value.split(',');
-        // } else {
-        //   valueAsArray = [];
-        // }
-        // state.defaultValue = valueAsArray;
-        // state.defaultValue = (state.defaultValue || []).map((item: any) => {
-        //   return item;
-        // });
+        let valueAsArray: unknown[];
+        if (Array.isArray(props.value)) {
+          valueAsArray = props.value;
+        } else if (typeof props.value === 'string') {
+          valueAsArray = props.value.split(',');
+        } else {
+          valueAsArray = [];
+        }
+        state.defaultValue = valueAsArray;
+        state.defaultValue = (state.defaultValue || []).map((item: any) => {
+          return item;
+        });
       } else if (!isHandleSelectionChange.value) {
         console.log('remoteLoad-按默认值查询');
         selectSearch.value = props.value.toString();
