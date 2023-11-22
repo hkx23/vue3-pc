@@ -14,8 +14,6 @@ export interface CommonSearch {
   pageNum?: number;
   /** @format int32 */
   pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
   keyword?: string;
   parentId?: string;
   category?: string;

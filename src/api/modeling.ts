@@ -339,6 +339,64 @@ export interface MitemUomVo {
   uomSymbol?: string;
 }
 
+export interface MitemUomSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  uom?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+export interface MitemUom {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  uom?: string;
+  uomSymbol?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemUom = {
+  list?: MitemUom[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemUom {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemUom;
+}
+
 export interface MitemInSupplierSearch {
   mitemKeyword?: string;
   supplierKeyword?: string;
@@ -383,8 +441,8 @@ export interface MitemInSupplier {
   isForceInspection?: number;
   /** @format date-time */
   dateExemptionExpired?: string;
-  mmitemId?: string;
   msupplierId?: string;
+  mmitemId?: string;
 }
 
 /** 响应数据 */
@@ -621,18 +679,18 @@ export interface MitemVO {
   mmitemCategoryCode?: string;
   wwarehouseId?: string;
   stateName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isState?: boolean;
+  isRawChecked?: boolean;
+  /** @format int32 */
+  wwarehouseCode?: number;
+  isInProcessName?: string;
+  isProductName?: string;
+  isRawName?: string;
   /** @format int32 */
   wwarehouseName?: number;
   isBatchName?: string;
-  /** @format int32 */
-  wwarehouseCode?: number;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isInProcessName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isState?: boolean;
 }
 
 export interface Customer {
@@ -1150,7 +1208,6 @@ export const api = {
      *
      * @tags 计量单位
      * @name Search
-     * @summary 计量单位名称查询
      * @request POST:/mitemUom/items
      * @secure
      */
@@ -1201,6 +1258,21 @@ export const api = {
      */
     addItem: (data: MitemUomVo) =>
       http.request<ResultObject['data']>(`/api/modeling/mitemUom/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name Getlist
+     * @summary 计量单位名称查询
+     * @request POST:/mitemUom/getlist
+     * @secure
+     */
+    getlist: (data: MitemUomSearch) =>
+      http.request<ResultPagingDataMitemUom['data']>(`/api/modeling/mitemUom/getlist`, {
         method: 'POST',
         body: data as any,
       }),
