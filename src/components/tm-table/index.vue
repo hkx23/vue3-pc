@@ -3,10 +3,10 @@
     <div class="table-box">
       <div v-if="buttonsVisible" class="table-box_header">
         <t-space size="small" :align="'center'">
-          <t-button theme="primary" @click="onExport">
+          <t-button v-if="props.enableExport" theme="primary" @click="onExport">
             <span>导出</span>
           </t-button>
-          <t-button v-if="exportFunction" theme="default" @click="onExportAll">
+          <t-button v-if="props.enableExport && exportFunction" theme="default" @click="onExportAll">
             <span>导出全部</span>
           </t-button>
           <slot name="button"></slot>
@@ -27,26 +27,27 @@
       </div>
       <!-- 表格属性备份
       :expanded-row="expandedRow" -->
-
+      <!-- :max-height="tableHeight + 'px'" -->
       <div ref="tableContentRef" class="table-box__table">
         <t-table
           ref="tableRef"
           hover
+          multiple-sort
           resizable
           lazy-load
           :bordered="true"
           :row-key="rowKey"
           :columns="columns"
-          :data="tableData"
+          :data="finalTableData"
           :loading="loading"
           :selected-row-keys="selectedRowKeys"
           :expanded-row-keys="expandedRowKeys"
           v-bind="$attrs"
-          :max-height="tableHeight + 'px'"
           :style="{ width: tableWidth + 'px' }"
           @select-change="onSelectKeysChange"
           @expand-change="onExpandKeysChange"
           @filter-change="onFilterChange"
+          @sort-change="sortChange"
         >
           <template v-for="(value, key) in slots" :key="key" #[key]="{ col, colIndex, row, rowIndex }">
             <slot :name="key" :col="col" :col-index="colIndex" :row="row" :row-index="rowIndex"></slot>
@@ -60,6 +61,7 @@
           :page-size="pagination.rows"
           :total="total"
           :disabled="loading"
+          show-jumper
           @change="onPaginationChange"
         />
       </div>
@@ -98,6 +100,7 @@ import {
   onMounted,
   reactive,
   ref,
+  watch,
 } from 'vue';
 
 // import { useSettingStore } from '@/store';
@@ -105,13 +108,37 @@ import excelUtils from '@/utils/excel';
 
 import { useTable } from './common/hook';
 
+type TableData = any[];
 type Filters = { [key: string]: any };
+interface SortListElement {
+  sortBy: string;
+  descending?: boolean;
+}
+
+interface FilterListElement {
+  field: string;
+  operator: keyof typeof Operators;
+  value: string;
+}
+
+enum Operators {
+  LIKE = 'LIKE',
+  EQ = 'EQ',
+  GT = 'GT',
+  LT = 'LT',
+  LTE = 'LTE',
+  GTE = 'GTE',
+}
+
 const props = defineProps({
   searchVisible: { type: Boolean, default: true },
   params: {
     type: Object,
   },
   buttonsVisible: { type: Boolean, default: true },
+  enableExport: { type: Boolean, default: false },
+  remoteFilter: { type: Boolean, default: false },
+  remoteSorter: { type: Boolean, default: false },
   tableColumn: {
     type: Array<TableRowData>,
     default: () => [],
@@ -138,8 +165,8 @@ const { selectedRowKeys, expandedRowKeys, onSelectKeysChange, onExpandKeysChange
 
 const formRef = ref();
 // 远程条件
-const filterList = ref([]);
-
+const filterList = ref<FilterListElement[]>([]);
+const sortList = ref<SortListElement[]>([]);
 defineExpose({
   getSelectedRowKeys: () => selectedRowKeys.value,
   setSelectedRowKeys: (keys: any) => {
@@ -151,6 +178,8 @@ defineExpose({
 // 插槽相关
 const slots = ref({});
 
+// 表格结果数据集
+const finalTableData = ref([]);
 // 组件内响应式数据
 const data: {
   visible: boolean;
@@ -236,7 +265,61 @@ const onFilterChange = (filters: Filters, ctx: any) => {
       });
     }
   }
-  // remoteLoad(selectSearch.value);
+  if (!props.remoteFilter) {
+    // 本地筛选
+    handleSortAndFilter();
+  } else {
+    // 服务端筛选
+    // remoteLoad(selectSearch.value);
+  }
+};
+
+const sortChange = (val: any) => {
+  sortList.value = val;
+  console.log(sortList.value);
+
+  if (!props.remoteSorter) {
+    // 本地筛选
+    handleSortAndFilter();
+  } else {
+    // 服务端筛选
+    console.log('remoteLoad-排序');
+    // remoteLoad(selectSearch.value);
+  }
+};
+
+const handleSortAndFilter = () => {
+  const originalTableData = _.cloneDeep(props.tableData);
+  let handleTableData: TableData = _.cloneDeep(originalTableData);
+  // 对originalTableData数据进行筛选与排序，将结果集赋值改finalTableData
+  // sortList的格式为 [{sortBy: 'name', descending: true}]
+  // filterList的格式为 [{field: 'name', Operator: 'LIKE',value:'value'}]
+  if (!_.isEmpty(filterList)) {
+    handleTableData = originalTableData.filter((row: TableData[number]) => {
+      return filterList.value.every((item: FilterListElement) => {
+        const Operators = {
+          LIKE: (a: string, b: string) => a.toString().includes(b),
+          EQ: (a: unknown, b: unknown) => a.toString() === b.toString(),
+          GT: (a: unknown, b: unknown) => a > b,
+          LT: (a: unknown, b: unknown) => a < b,
+          LTE: (a: unknown, b: unknown) => a <= b,
+          GTE: (a: unknown, b: unknown) => a >= b,
+        };
+        const op = Operators[item.operator];
+        if (!op) throw new Error('Invalid operator');
+        return op(row[item.field], item.value);
+      });
+    });
+  }
+  if (!_.isEmpty(sortList)) {
+    const sortFields = _.map(sortList.value, 'sortBy');
+    const sortDeration = _.map(sortList.value, (item) => {
+      return item.descending ? 'desc' : 'asc';
+    });
+    handleTableData = _.orderBy(handleTableData, sortFields, sortDeration);
+  }
+
+  finalTableData.value = _.cloneDeep(handleTableData);
 };
 // 展开按钮点击事件
 // const onExpandSwitch = () => {
@@ -309,6 +392,18 @@ const onExportAll = async () => {
     },
   });
 };
+watch(
+  () => props.tableData,
+  (val) => {
+    console.log('watch:props.tableData', val);
+    nextTick(() => {
+      if (props.tableData.length) {
+        finalTableData.value = _.cloneDeep(props.tableData);
+      }
+    });
+  },
+  { deep: true },
+);
 
 // ------------------------------------------------适配区------------------------------------------------
 
