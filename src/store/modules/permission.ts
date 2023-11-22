@@ -3,6 +3,7 @@ import { RouteRecordRaw } from 'vue-router';
 
 import { RouteItem } from '@/api/model/permissionModel';
 import { getMenuList } from '@/api/portal';
+import { CustomError } from '@/assets/libs/web-core';
 import router, { fixedRouterList, homepageRouterList } from '@/router';
 import { store } from '@/store';
 import { transformObjectToRoute } from '@/utils/route';
@@ -27,13 +28,13 @@ export const usePermissionStore = defineStore('permission', {
     },
     async buildAsyncRoutes() {
       try {
-        // 发起菜单权限请求 获取菜单列表
         const asyncRoutes: Array<RouteItem> = await getMenuList();
+        // 发起菜单权限请求 获取菜单列表
         this.asyncRoutes = await transformObjectToRoute(asyncRoutes);
         await this.initRoutes();
         return this.asyncRoutes;
       } catch (error) {
-        throw new Error("Can't build routes");
+        if (!(error instanceof CustomError)) throw new Error("Can't build routes");
       }
     },
     async restoreRoutes() {

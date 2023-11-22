@@ -15,6 +15,7 @@ Web桌面端主要用到的技术框架如下：
 | [Dayjs](https://dayjs.gitee.io/zh-CN/) | 日期库 |
 | [Echarts](https://echarts.apache.org/zh/index.html) | 一个基于JavaScript的开源可视化图表库 |
 | [TypeScript](https://ts.nodejs.cn/) | TypeScript 是具有类型语法的 JavaScript |
+| [vue-draggable-plus](https://alfred-skyblue.github.io/vue-draggable-plus/) | 拖拽排序模块 |
 
 
 ## 代码目录结构

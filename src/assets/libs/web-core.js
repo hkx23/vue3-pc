@@ -3,20 +3,20 @@ var Ne = (e, r, t) => r in e ? Be(e, r, { enumerable: !0, configurable: !0, writ
 var b = (e, r, t) => (Ne(e, typeof r != "symbol" ? r + "" : r, t), t);
 var qe = typeof global == "object" && global && global.Object === Object && global;
 const be = qe;
-var He = typeof self == "object" && self && self.Object === Object && self, ze = be || He || Function("return this")();
-const O = ze;
-var Je = O.Symbol;
-const F = Je;
-var Te = Object.prototype, Ve = Te.hasOwnProperty, Ge = Te.toString, U = F ? F.toStringTag : void 0;
+var He = typeof self == "object" && self && self.Object === Object && self, Je = be || He || Function("return this")();
+const $ = Je;
+var ze = $.Symbol;
+const F = ze;
+var Te = Object.prototype, Ve = Te.hasOwnProperty, Ge = Te.toString, I = F ? F.toStringTag : void 0;
 function Ke(e) {
-  var r = Ve.call(e, U), t = e[U];
+  var r = Ve.call(e, I), t = e[I];
   try {
-    e[U] = void 0;
+    e[I] = void 0;
     var n = !0;
   } catch {
   }
   var o = Ge.call(e);
-  return n && (r ? e[U] = t : delete e[U]), o;
+  return n && (r ? e[I] = t : delete e[I]), o;
 }
 var Ye = Object.prototype, Xe = Ye.toString;
 function Ze(e) {
@@ -45,7 +45,7 @@ var st = /^\s+/;
 function at(e) {
   return e && e.slice(0, it(e) + 1).replace(st, "");
 }
-function _(e) {
+function R(e) {
   var r = typeof e;
   return e != null && (r == "object" || r == "function");
 }
@@ -55,9 +55,9 @@ function oe(e) {
     return e;
   if (rt(e))
     return ne;
-  if (_(e)) {
+  if (R(e)) {
     var r = typeof e.valueOf == "function" ? e.valueOf() : e;
-    e = _(r) ? r + "" : r;
+    e = R(r) ? r + "" : r;
   }
   if (typeof e != "string")
     return e === 0 ? e : +e;
@@ -67,12 +67,12 @@ function oe(e) {
 }
 var pt = "[object AsyncFunction]", dt = "[object Function]", gt = "[object GeneratorFunction]", ht = "[object Proxy]";
 function Ee(e) {
-  if (!_(e))
+  if (!R(e))
     return !1;
   var r = C(e);
   return r == dt || r == gt || r == pt || r == ht;
 }
-var mt = O["__core-js_shared__"];
+var mt = $["__core-js_shared__"];
 const N = mt;
 var ie = function() {
   var e = /[^.]+$/.exec(N && N.keys && N.keys.IE_PROTO || "");
@@ -82,7 +82,7 @@ function yt(e) {
   return !!ie && ie in e;
 }
 var vt = Function.prototype, wt = vt.toString;
-function R(e) {
+function _(e) {
   if (e != null) {
     try {
       return wt.call(e);
@@ -99,50 +99,50 @@ var bt = /[\\^$.*+?()[\]{}|]/g, Tt = /^\[object .+?Constructor\]$/, jt = Functio
   "^" + At.call(Pt).replace(bt, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
 );
 function Ot(e) {
-  if (!_(e) || yt(e))
+  if (!R(e) || yt(e))
     return !1;
   var r = Ee(e) ? xt : Tt;
-  return r.test(R(e));
+  return r.test(_(e));
 }
-function St(e, r) {
+function $t(e, r) {
   return e == null ? void 0 : e[r];
 }
 function D(e, r) {
-  var t = St(e, r);
+  var t = $t(e, r);
   return Ot(t) ? t : void 0;
 }
-var $t = D(O, "WeakMap");
-const z = $t;
-var _t = 9007199254740991;
+var St = D($, "WeakMap");
+const J = St;
+var Rt = 9007199254740991;
 function Ae(e) {
-  return typeof e == "number" && e > -1 && e % 1 == 0 && e <= _t;
+  return typeof e == "number" && e > -1 && e % 1 == 0 && e <= Rt;
 }
 function Ct(e) {
   return e != null && Ae(e.length) && !Ee(e);
 }
-var Rt = Object.prototype;
+var _t = Object.prototype;
 function Pe(e) {
-  var r = e && e.constructor, t = typeof r == "function" && r.prototype || Rt;
+  var r = e && e.constructor, t = typeof r == "function" && r.prototype || _t;
   return e === t;
 }
 var Mt = "[object Arguments]";
 function se(e) {
   return k(e) && C(e) == Mt;
 }
-var xe = Object.prototype, It = xe.hasOwnProperty, Ut = xe.propertyIsEnumerable, Lt = se(function() {
+var xe = Object.prototype, Ut = xe.hasOwnProperty, It = xe.propertyIsEnumerable, Lt = se(function() {
   return arguments;
 }()) ? se : function(e) {
-  return k(e) && It.call(e, "callee") && !Ut.call(e, "callee");
+  return k(e) && Ut.call(e, "callee") && !It.call(e, "callee");
 };
 const kt = Lt;
 function Dt() {
   return !1;
 }
-var Oe = typeof exports == "object" && exports && !exports.nodeType && exports, ae = Oe && typeof module == "object" && module && !module.nodeType && module, Wt = ae && ae.exports === Oe, ce = Wt ? O.Buffer : void 0, Ft = ce ? ce.isBuffer : void 0, Bt = Ft || Dt;
+var Oe = typeof exports == "object" && exports && !exports.nodeType && exports, ae = Oe && typeof module == "object" && module && !module.nodeType && module, Wt = ae && ae.exports === Oe, ce = Wt ? $.Buffer : void 0, Ft = ce ? ce.isBuffer : void 0, Bt = Ft || Dt;
 const Nt = Bt;
-var qt = "[object Arguments]", Ht = "[object Array]", zt = "[object Boolean]", Jt = "[object Date]", Vt = "[object Error]", Gt = "[object Function]", Kt = "[object Map]", Yt = "[object Number]", Xt = "[object Object]", Zt = "[object RegExp]", Qt = "[object Set]", er = "[object String]", tr = "[object WeakMap]", rr = "[object ArrayBuffer]", nr = "[object DataView]", or = "[object Float32Array]", ir = "[object Float64Array]", sr = "[object Int8Array]", ar = "[object Int16Array]", cr = "[object Int32Array]", ur = "[object Uint8Array]", fr = "[object Uint8ClampedArray]", lr = "[object Uint16Array]", pr = "[object Uint32Array]", T = {};
+var qt = "[object Arguments]", Ht = "[object Array]", Jt = "[object Boolean]", zt = "[object Date]", Vt = "[object Error]", Gt = "[object Function]", Kt = "[object Map]", Yt = "[object Number]", Xt = "[object Object]", Zt = "[object RegExp]", Qt = "[object Set]", er = "[object String]", tr = "[object WeakMap]", rr = "[object ArrayBuffer]", nr = "[object DataView]", or = "[object Float32Array]", ir = "[object Float64Array]", sr = "[object Int8Array]", ar = "[object Int16Array]", cr = "[object Int32Array]", ur = "[object Uint8Array]", fr = "[object Uint8ClampedArray]", lr = "[object Uint16Array]", pr = "[object Uint32Array]", T = {};
 T[or] = T[ir] = T[sr] = T[ar] = T[cr] = T[ur] = T[fr] = T[lr] = T[pr] = !0;
-T[qt] = T[Ht] = T[rr] = T[zt] = T[nr] = T[Jt] = T[Vt] = T[Gt] = T[Kt] = T[Yt] = T[Xt] = T[Zt] = T[Qt] = T[er] = T[tr] = !1;
+T[qt] = T[Ht] = T[rr] = T[Jt] = T[nr] = T[zt] = T[Vt] = T[Gt] = T[Kt] = T[Yt] = T[Xt] = T[Zt] = T[Qt] = T[er] = T[tr] = !1;
 function dr(e) {
   return k(e) && Ae(e.length) && !!T[C(e)];
 }
@@ -151,7 +151,7 @@ function gr(e) {
     return e(r);
   };
 }
-var Se = typeof exports == "object" && exports && !exports.nodeType && exports, L = Se && typeof module == "object" && module && !module.nodeType && module, hr = L && L.exports === Se, q = hr && be.process, mr = function() {
+var $e = typeof exports == "object" && exports && !exports.nodeType && exports, L = $e && typeof module == "object" && module && !module.nodeType && module, hr = L && L.exports === $e, q = hr && be.process, mr = function() {
   try {
     var e = L && L.require && L.require("util").types;
     return e || q && q.binding && q.binding("util");
@@ -177,43 +177,43 @@ function Ar(e) {
     Er.call(e, t) && t != "constructor" && r.push(t);
   return r;
 }
-var Pr = D(O, "Map");
-const J = Pr;
-var xr = D(O, "DataView");
+var Pr = D($, "Map");
+const z = Pr;
+var xr = D($, "DataView");
 const V = xr;
-var Or = D(O, "Promise");
+var Or = D($, "Promise");
 const G = Or;
-var Sr = D(O, "Set");
-const K = Sr;
-var le = "[object Map]", $r = "[object Object]", pe = "[object Promise]", de = "[object Set]", ge = "[object WeakMap]", he = "[object DataView]", _r = R(V), Cr = R(J), Rr = R(G), Mr = R(K), Ir = R(z), S = C;
-(V && S(new V(new ArrayBuffer(1))) != he || J && S(new J()) != le || G && S(G.resolve()) != pe || K && S(new K()) != de || z && S(new z()) != ge) && (S = function(e) {
-  var r = C(e), t = r == $r ? e.constructor : void 0, n = t ? R(t) : "";
+var $r = D($, "Set");
+const K = $r;
+var le = "[object Map]", Sr = "[object Object]", pe = "[object Promise]", de = "[object Set]", ge = "[object WeakMap]", he = "[object DataView]", Rr = _(V), Cr = _(z), _r = _(G), Mr = _(K), Ur = _(J), S = C;
+(V && S(new V(new ArrayBuffer(1))) != he || z && S(new z()) != le || G && S(G.resolve()) != pe || K && S(new K()) != de || J && S(new J()) != ge) && (S = function(e) {
+  var r = C(e), t = r == Sr ? e.constructor : void 0, n = t ? _(t) : "";
   if (n)
     switch (n) {
-      case _r:
+      case Rr:
         return he;
       case Cr:
         return le;
-      case Rr:
+      case _r:
         return pe;
       case Mr:
         return de;
-      case Ir:
+      case Ur:
         return ge;
     }
   return r;
 });
-const Ur = S;
+const Ir = S;
 var Lr = function() {
-  return O.Date.now();
+  return $.Date.now();
 };
 const H = Lr;
 var kr = "Expected a function", Dr = Math.max, Wr = Math.min;
-function $e(e, r, t) {
+function Se(e, r, t) {
   var n, o, u, c, f, a, i = 0, s = !1, l = !1, w = !0;
   if (typeof e != "function")
     throw new TypeError(kr);
-  r = oe(r) || 0, _(t) && (s = !!t.leading, l = "maxWait" in t, u = l ? Dr(oe(t.maxWait) || 0, r) : u, w = "trailing" in t ? !!t.trailing : w);
+  r = oe(r) || 0, R(t) && (s = !!t.leading, l = "maxWait" in t, u = l ? Dr(oe(t.maxWait) || 0, r) : u, w = "trailing" in t ? !!t.trailing : w);
   function g(d) {
     var P = n, x = o;
     return n = o = void 0, i = d, c = e.apply(x, P), c;
@@ -266,7 +266,7 @@ function ye(e) {
     return !0;
   if (Ct(e) && (je(e) || typeof e == "string" || typeof e.splice == "function" || Nt(e) || vr(e) || kt(e)))
     return !e.length;
-  var r = Ur(e);
+  var r = Ir(e);
   if (r == Br || r == Nr)
     return !e.size;
   if (Pe(e))
@@ -276,12 +276,12 @@ function ye(e) {
       return !1;
   return !0;
 }
-var zr = "Expected a function";
-function Jr(e, r, t) {
+var Jr = "Expected a function";
+function zr(e, r, t) {
   var n = !0, o = !0;
   if (typeof e != "function")
-    throw new TypeError(zr);
-  return _(t) && (n = "leading" in t ? !!t.leading : n, o = "trailing" in t ? !!t.trailing : o), $e(e, r, {
+    throw new TypeError(Jr);
+  return R(t) && (n = "leading" in t ? !!t.leading : n, o = "trailing" in t ? !!t.trailing : o), Se(e, r, {
     leading: n,
     maxWait: r,
     trailing: o
@@ -361,7 +361,7 @@ function Vr(e) {
 }
 function Gr(e, r) {
   r === void 0 && (r = {});
-  for (var t = Vr(e), n = r.prefixes, o = n === void 0 ? "./" : n, u = "[^".concat(I(r.delimiter || "/#?"), "]+?"), c = [], f = 0, a = 0, i = "", s = function(d) {
+  for (var t = Vr(e), n = r.prefixes, o = n === void 0 ? "./" : n, u = "[^".concat(U(r.delimiter || "/#?"), "]+?"), c = [], f = 0, a = 0, i = "", s = function(d) {
     if (a < t.length && t[a].type === d)
       return t[a++].value;
   }, l = function(d) {
@@ -409,10 +409,10 @@ function Gr(e, r) {
   }
   return c;
 }
-function I(e) {
+function U(e) {
   return e.replace(/([.+*?=^!:${}()[\]|/\\])/g, "\\$1");
 }
-function _e(e) {
+function Re(e) {
   return e && e.sensitive ? "" : "i";
 }
 function Kr(e, r) {
@@ -433,7 +433,7 @@ function Yr(e, r, t) {
   var n = e.map(function(o) {
     return Ce(o, r, t).source;
   });
-  return new RegExp("(?:".concat(n.join("|"), ")"), _e(t));
+  return new RegExp("(?:".concat(n.join("|"), ")"), Re(t));
 }
 function Xr(e, r, t) {
   return Zr(Gr(e, t), r, t);
@@ -442,12 +442,12 @@ function Zr(e, r, t) {
   t === void 0 && (t = {});
   for (var n = t.strict, o = n === void 0 ? !1 : n, u = t.start, c = u === void 0 ? !0 : u, f = t.end, a = f === void 0 ? !0 : f, i = t.encode, s = i === void 0 ? function(B) {
     return B;
-  } : i, l = t.delimiter, w = l === void 0 ? "/#?" : l, g = t.endsWith, h = g === void 0 ? "" : g, j = "[".concat(I(h), "]|$"), p = "[".concat(I(w), "]"), m = c ? "^" : "", A = 0, y = e; A < y.length; A++) {
+  } : i, l = t.delimiter, w = l === void 0 ? "/#?" : l, g = t.endsWith, h = g === void 0 ? "" : g, j = "[".concat(U(h), "]|$"), p = "[".concat(U(w), "]"), m = c ? "^" : "", A = 0, y = e; A < y.length; A++) {
     var v = y[A];
     if (typeof v == "string")
-      m += I(s(v));
+      m += U(s(v));
     else {
-      var E = I(s(v.prefix)), d = I(s(v.suffix));
+      var E = U(s(v.prefix)), d = U(s(v.suffix));
       if (v.pattern)
         if (r && r.push(v), E || d)
           if (v.modifier === "+" || v.modifier === "*") {
@@ -467,17 +467,17 @@ function Zr(e, r, t) {
     var x = e[e.length - 1], M = typeof x == "string" ? p.indexOf(x[x.length - 1]) > -1 : x === void 0;
     o || (m += "(?:".concat(p, "(?=").concat(j, "))?")), M || (m += "(?=".concat(p, "|").concat(j, ")"));
   }
-  return new RegExp(m, _e(t));
+  return new RegExp(m, Re(t));
 }
 function Ce(e, r, t) {
   return e instanceof RegExp ? Kr(e, r) : Array.isArray(e) ? Yr(e, r, t) : Xr(e, r, t);
 }
-const Re = "_$mockHttp", Me = typeof window < "u", Ie = Me ? window.top || window : {}, Ue = () => Ie[Re] || {
+const _e = "_$mockHttp", Me = typeof window < "u", Ue = Me ? window.top || window : {}, Ie = () => Ue[_e] || {
   isMock: !1,
   mockData: []
 }, Q = (e) => {
-  const r = Ue();
-  Ie[Re] = Object.assign(r, e);
+  const r = Ie();
+  Ue[_e] = Object.assign(r, e);
 }, Qr = (e) => {
   Q({ mockData: e });
 }, en = () => {
@@ -489,7 +489,7 @@ if (Me) {
   const e = window.fetch;
   window.fetch = async function(...r) {
     var n;
-    const t = Ue();
+    const t = Ie();
     if (t.isMock && r[0] !== null) {
       let o, u = "";
       typeof r[0] == "object" ? (o = r[0], u = o.url) : (o = r[1], u = r[0]);
@@ -632,9 +632,9 @@ class nn {
     if (t.throttle !== void 0 && t.debounce !== void 0)
       throw new Error("throttle and debounce cannot be set at the same time");
     return t.throttle ? new Promise((o) => {
-      Jr(() => o(this.createRequest(r, t, n)), t.throttle);
+      zr(() => o(this.createRequest(r, t, n)), t.throttle);
     }) : t.debounce ? new Promise((o) => {
-      $e(() => o(this.createRequest(r, t, n)), t.debounce);
+      Se(() => o(this.createRequest(r, t, n)), t.debounce);
     }) : this.createRequest(r, t, n);
   }
   get(r, t, n = {}, o = []) {
@@ -961,11 +961,13 @@ class ee {
   }
 }
 var De = /* @__PURE__ */ ((e) => (e.Mobile = "APP", e.Desktop = "WEB", e.NODE_JS = "NodeJs", e))(De || {});
-const $ = {
+const O = {
   ipc: null,
   config: {
     language: "zh-CN",
-    baseUrl: ""
+    baseUrl: "",
+    oid: "",
+    eid: ""
   },
   platform: function() {
     return typeof window < "u" ? typeof window.APP !== void 0 && typeof window.APP < "u" ? "APP" : "WEB" : "NodeJs";
@@ -1003,17 +1005,7 @@ const $ = {
       case "APP":
         return window.APP.getOrgId();
       case "WEB":
-        return localStorage.getItem("_orgId");
-      default:
-        return "";
-    }
-  },
-  setOrgId(e) {
-    switch (this.platform) {
-      case "APP":
-        throw new Error("The operation is not supported");
-      case "WEB":
-        return localStorage.setItem("_orgId", e);
+        return this.config.oid || "0";
       default:
         return "";
     }
@@ -1030,7 +1022,7 @@ class ve extends Error {
     b(this, "status", "");
     b(this, "type", "");
     b(this, "description", "");
-    this.message = t, this.name = "CustomError", this.code = n, this.status = o, this.type = "error", this.description = u, (c = $.ipc.targets.get("_self")) == null || c.send("custom_error", this);
+    this.message = t, this.name = "CustomError", this.code = n, this.status = o, this.type = "error", this.description = u, (c = O.ipc.targets.get("_self")) == null || c.send("custom_error", this);
   }
 }
 const We = typeof window < "u", we = We ? null : require("node:path"), ln = We ? null : require("swagger-typescript-api");
@@ -1076,7 +1068,7 @@ function Fe(e) {
           throw new Error(n);
         }
     }
-    _(e[r]) && Fe(e[r]);
+    R(e[r]) && Fe(e[r]);
   }
 }
 const dn = async (e, r) => {
@@ -1096,8 +1088,8 @@ const dn = async (e, r) => {
   (c = e.response) != null && c.ok && (o != null && o.startsWith("application/json")) && (e.result = await ((f = e.response) == null ? void 0 : f.json()));
 }, hn = async (e, r) => {
   var u, c, f, a;
-  const n = e.requestOptions.headers, o = $.getToken();
-  if (o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), n.eid = 0, n.oid = 0, n.lang = "zh-CN", n["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await r(), !((u = e.response) != null && u.ok)) {
+  const n = e.requestOptions.headers, o = O.getToken();
+  if (o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), n.eid = 0, n.oid = O.getOrgId(), n["Accept-Language"] = O.getLanguage(), n["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await r(), !((u = e.response) != null && u.ok)) {
     const i = new Error("An error occurred while fetching the data.");
     throw i.message = `${(c = e.response) == null ? void 0 : c.status}|${await ((f = e.response) == null ? void 0 : f.text()) || ""}`, i;
   }
@@ -1115,16 +1107,16 @@ const dn = async (e, r) => {
   e.url += `${e.url.indexOf("?") > 0 ? "&" : "?"}_t=${t}`, await r();
 }, te = new Y();
 te.baseURL = () => {
-  switch ($.platform) {
+  switch (O.platform) {
     case De.Mobile:
       return window.APP.getURL();
     default:
-      return $.config.baseUrl || location.origin;
+      return O.config.baseUrl || location.origin;
   }
 };
 te.middlewares = () => [hn, gn, dn, mn];
 const yn = new nn(te);
-typeof window < "u" && ($.ipc = ee.init(), $.ipc.addTarget("_self", window), window.http = yn, window.fw = $);
+typeof window < "u" && (O.ipc = ee.init(), O.ipc.addTarget("_self", window), window.http = yn, window.fw = O);
 export {
   ve as CustomError,
   on as Dictionary,
