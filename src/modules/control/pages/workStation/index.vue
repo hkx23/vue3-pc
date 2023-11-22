@@ -48,7 +48,7 @@
         @page-change="onWorkStationPageChange"
       >
         <template #state="{ row }">
-          <span>{{ row.state ? '启用' : '禁用' }}</span>
+          <span>{{ row.state === 1 ? '启用' : '禁用' }}</span>
         </template>
         <template #operate="{ row }">
           <!-- 编辑 -->
@@ -58,9 +58,16 @@
         </template>
       </t-table>
     </t-card>
-    <t-dialog v-model:visible="formVisible" header="新增" :cancel-btn="null" :confirm-btn="null" width="40%">
+    <t-dialog
+      v-model:visible="formVisible"
+      header="新增"
+      :cancel-btn="null"
+      :confirm-btn="null"
+      width="40%"
+      @close="onClose"
+    >
       <t-form
-        ref="form"
+        ref="formRef"
         :rules="rules"
         :data="formData"
         layout="inline"
@@ -73,11 +80,7 @@
           <t-col>
             <t-form-item label="工作中心:" name="workcenterName">
               <!-- <t-select v-model="formData.workCenter"></t-select> -->
-              <tm-select-business
-                v-model="formData.workcenterName"
-                type="workcenter"
-                @selection-change="onMitemChange"
-              ></tm-select-business>
+              <tm-select-business v-model="formData.workcenterName" type="workcenter"></tm-select-business>
             </t-form-item>
           </t-col>
         </t-row>
@@ -85,11 +88,7 @@
         <t-row class="form-work-station">
           <t-col>
             <t-form-item label="工序:" name="processName">
-              <tm-select-business
-                v-model="formData.processName"
-                type="process"
-                @selection-change="onMitemChange"
-              ></tm-select-business>
+              <tm-select-business v-model="formData.processName" type="process"></tm-select-business>
             </t-form-item>
           </t-col>
         </t-row>
@@ -138,9 +137,9 @@
 </template>
 
 <script setup lang="ts">
-import { Data, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
+import { Data, FormInstanceFunctions, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next/es/table/type';
-import { onMounted, ref } from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
 
@@ -148,6 +147,7 @@ import TmSelectBusiness from '../../../../components/tm-select-business/index.vu
 
 const formVisible = ref(false); // 控制弹窗显示
 const controlShow = ref(false); // 控制确认按钮编辑和新增
+const formRef: Ref<FormInstanceFunctions> = ref(null);
 // 下拉定义
 const inputValue = ref({
   state: [],
@@ -165,7 +165,7 @@ const onHandelList = async () => {
   const STATE = inputValue.value.statevalue;
   try {
     if (STATE === -1) {
-      inputValue.value.state = [1, 2];
+      inputValue.value.state = [1, 0];
     } else if (STATE === 1) {
       inputValue.value.state = [1];
     } else {
@@ -179,11 +179,8 @@ const onHandelList = async () => {
       workcenter: inputValue.value.workcenter,
       process: inputValue.value.process,
     });
-    console.log(res.list);
     workData.value = res.list;
-    // @ts-ignore
     workStationPagination.value.total = +res.total;
-    console.log('1', workData);
   } catch (e) {
     console.log(e);
   }
@@ -306,7 +303,6 @@ const onHandelE = (id) => {
         }
       }
     });
-    // api.workstation.search({});
     console.log(formData);
   } else {
     // 新增
@@ -315,13 +311,19 @@ const onHandelE = (id) => {
     // api.workstation.addItem
   }
 };
-const onMitemChange = (value) => {
-  console.log('1', value);
-};
+// //
+// const onMitemChange = (value) => {
+//   console.log('1', value);
+// };
 // 编辑
 const onHandelEdit = (value) => {
   onHandelE(value);
   formVisible.value = true;
+};
+// 关闭清空
+const onClose = () => {
+  // console.log(1);
+  formRef.value.reset({ type: 'initial' });
 };
 // 新增
 const onHandelAdd = () => {
@@ -336,7 +338,9 @@ const onHandelQuery = () => {
 const onHandleDisable = (value) => {
   workData.value.forEach(async (item) => {
     if (item.id === value) {
-      console.log(1);
+      api.workstation.edit({
+        state: 0,
+      });
     }
   });
 };
@@ -351,26 +355,18 @@ const onChange = (value) => {
 };
 // 取消
 // 清空form表单
-const onFrom = () => {
-  formData.value.processName = '';
-  formData.value.showState = true;
-  formData.value.state = 1;
-  formData.value.workcenterName = '';
-  formData.value.workstationCode = '';
-  formData.value.workstationDesc = '';
-  formData.value.workstationName = '';
-};
+// const onFrom = () => {
+//   formData.value.processName = '';
+//   formData.value.showState = true;
+//   formData.value.state = 1;
+//   formData.value.workcenterName = '';
+//   formData.value.workstationCode = '';
+//   formData.value.workstationDesc = '';
+//   formData.value.workstationName = '';
+// };
+// 取消
 const onSecondaryReset = () => {
-  if (controlShow.value) {
-    // 编辑
-
-    console.log('编辑');
-    onFrom();
-    console.log(formData.value);
-  } else {
-    // 新增逻辑
-    console.log('新增');
-  }
+  formRef.value.reset({ type: 'initial' });
   MessagePlugin.success('取消成功');
   formVisible.value = false;
 };
@@ -382,14 +378,36 @@ const onSecondary = () => {
     return;
   }
   if (controlShow.value) {
+    try {
+      api.workstation.edit({
+        workcenterName: formData.value.workcenterName,
+        processName: formData.value.processName,
+        workstationCode: formData.value.workstationCode,
+        workstationName: formData.value.workstationName,
+        workstationDesc: formData.value.workstationDesc,
+        state: formData.value.state,
+      });
+      onHandelList();
+    } catch (e) {
+      console.log(e);
+    }
     // 编辑
     console.log('编辑');
   } else {
     // 新增逻辑
+    api.workstation.add({
+      workcenterName: formData.value.workcenterName,
+      processName: formData.value.processName,
+      workstationCode: formData.value.workstationCode,
+      workstationName: formData.value.workstationName,
+      workstationDesc: formData.value.workstationDesc,
+      state: formData.value.state,
+    });
     console.log('新增');
   }
   console.log(controlShow.value);
   MessagePlugin.success('保存成功');
+
   formVisible.value = false;
 };
 // 保存确认按钮
@@ -406,20 +424,20 @@ const onWorkStationSubmit = (context: RootObject) => {
 };
 // 校验
 const rules: FormRules<Data> = {
-  // workcenterName: [
-  //   {
-  //     required: true,
-  //     type: 'error',
-  //     trigger: 'blur',
-  //   },
-  // ],
-  // processName: [
-  //   {
-  //     required: true,
-  //     type: 'error',
-  //     trigger: 'blur',
-  //   },
-  // ],
+  workcenterName: [
+    {
+      required: true,
+      type: 'error',
+      trigger: 'blur',
+    },
+  ],
+  processName: [
+    {
+      required: true,
+      type: 'error',
+      trigger: 'blur',
+    },
+  ],
   workstationCode: [
     {
       required: true,
