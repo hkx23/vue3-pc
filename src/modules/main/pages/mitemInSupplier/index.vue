@@ -47,7 +47,7 @@
   <div>
     <t-dialog
       v-model:visible="formVisible"
-      header="编辑"
+      :header="formTitle"
       :on-confirm="onConfirmForm"
       width="60%"
       :close-on-overlay-click="false"
@@ -77,6 +77,7 @@ const dataLoading = ref(false);
 const sortlist = ref([]);
 const filterlist = ref([]);
 const formVisible = ref(false);
+const formTitle = ref('');
 const formRef = ref(null);
 
 const tableMitemInSupplierColumns: PrimaryTableCol<TableRowData>[] = [
@@ -88,7 +89,7 @@ const tableMitemInSupplierColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '最小包装数量', width: 160, colKey: 'qty' },
   { title: '检查严格度', width: 160, colKey: 'inspectionStringency' },
   { title: '是否免检', width: 160, colKey: 'isExemptionInspection' },
-  { title: '免检失效日期', width: 160, colKey: 'dateExemptionExpiredStr' },
+  { title: '免检失效日期', width: 160, colKey: 'dateExemptionExpired' },
   { title: '是否强制供方申请', width: 160, colKey: 'isForceInspection' },
   { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
@@ -104,7 +105,9 @@ const onReset = () => {
   supplierKeyword.value = '';
 };
 const onAdd = () => {
-  fetchTable();
+  formTitle.value = '新增';
+  formRef.value.init();
+  formVisible.value = true;
 };
 const onDelete = () => {
   fetchTable();
@@ -134,7 +137,9 @@ const fetchTable = async () => {
 
 const onEditRowClick = (value: any) => {
   // const rowData = value.row;
+  formTitle.value = '编辑';
   formRef.value.formData = JSON.parse(JSON.stringify(value.row));
+  formRef.value.formData.operateTpye = 'edit';
   formVisible.value = true;
 };
 
