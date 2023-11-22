@@ -35,7 +35,7 @@
         <t-col flex="220px">
           <div class="btn-left">
             <t-button variant="base" @click="onHandelQuery">查询</t-button>
-            <t-button theme="default" variant="base">重置</t-button>
+            <t-button theme="default" variant="base" @click="onHandelResetting">重置</t-button>
           </div>
         </t-col>
       </t-row>
@@ -88,7 +88,11 @@
         <t-row class="form-work-station">
           <t-col>
             <t-form-item label="工序:" name="processName">
-              <tm-select-business v-model="formData.processName" type="process"></tm-select-business>
+              <tm-select-business
+                v-model="formData.processName"
+                type="process"
+                :show-title="false"
+              ></tm-select-business>
             </t-form-item>
           </t-col>
         </t-row>
@@ -268,6 +272,7 @@ const formData = ref({
   workstationDesc: '', // 工作描述
   state: 1, // 控制是否启用
   showState: true,
+  id: '',
 });
 // table数据
 const workData = ref([]);
@@ -283,7 +288,6 @@ const onWorkStationPageChange = (pageInfo: { current: number; pageSize: number }
   workStationPagination.value.defaultPageSize = pageInfo.pageSize;
   onHandelList();
 };
-
 // 新增编辑按钮
 const onHandelE = (id) => {
   // 编辑
@@ -291,8 +295,9 @@ const onHandelE = (id) => {
     controlShow.value = true;
     workData.value.forEach((item) => {
       if (item.id === id) {
-        formData.value.workcenterName = item.pworkcenterId;
-        formData.value.processName = item.pprocessId;
+        formData.value.id = id;
+        formData.value.workcenterName = item.pWorkcenterId;
+        formData.value.processName = item.pProcessId;
         formData.value.workstationCode = item.workstationCode;
         formData.value.workstationName = item.workstationName;
         formData.value.workstationDesc = item.workstationDesc;
@@ -308,13 +313,8 @@ const onHandelE = (id) => {
     // 新增
     controlShow.value = false;
     console.log(1);
-    // api.workstation.addItem
   }
 };
-// //
-// const onMitemChange = (value) => {
-//   console.log('1', value);
-// };
 // 编辑
 const onHandelEdit = (value) => {
   onHandelE(value);
@@ -322,7 +322,6 @@ const onHandelEdit = (value) => {
 };
 // 关闭清空
 const onClose = () => {
-  // console.log(1);
   formRef.value.reset({ type: 'initial' });
 };
 // 新增
@@ -332,19 +331,36 @@ const onHandelAdd = () => {
 };
 // 查询
 const onHandelQuery = () => {
+  workStationPagination.value.defaultCurrent = 1;
   onHandelList();
+};
+// 重置
+const onHandelResetting = () => {
+  inputValue.value.process = '';
+  inputValue.value.state = [];
+  inputValue.value.statevalue = -1;
+  inputValue.value.workcenter = '';
+  inputValue.value.workstaion = '';
 };
 // 禁用
 const onHandleDisable = (value) => {
   workData.value.forEach(async (item) => {
     if (item.id === value) {
-      api.workstation.edit({
-        state: 0,
-      });
+      api.workstation
+        .edit({
+          id: value,
+          state: 0,
+        })
+        .then((res) => {
+          onHandelList();
+          console.log(res);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     }
   });
 };
-
 // 是否启用
 const onChange = (value) => {
   if (value) {
@@ -354,34 +370,23 @@ const onChange = (value) => {
   }
 };
 // 取消
-// 清空form表单
-// const onFrom = () => {
-//   formData.value.processName = '';
-//   formData.value.showState = true;
-//   formData.value.state = 1;
-//   formData.value.workcenterName = '';
-//   formData.value.workstationCode = '';
-//   formData.value.workstationDesc = '';
-//   formData.value.workstationName = '';
-// };
-// 取消
 const onSecondaryReset = () => {
   formRef.value.reset({ type: 'initial' });
   MessagePlugin.success('取消成功');
   formVisible.value = false;
 };
-
 let submitShow = true; // 记录保存
 // 二次保存
-const onSecondary = () => {
+const onSecondary = async () => {
   if (submitShow === true) {
     return;
   }
   if (controlShow.value) {
     try {
       api.workstation.edit({
-        workcenterName: formData.value.workcenterName,
-        processName: formData.value.processName,
+        id: formData.value.id,
+        pprocessId: formData.value.workcenterName,
+        pworkcenterId: formData.value.processName,
         workstationCode: formData.value.workstationCode,
         workstationName: formData.value.workstationName,
         workstationDesc: formData.value.workstationDesc,
@@ -392,22 +397,24 @@ const onSecondary = () => {
       console.log(e);
     }
     // 编辑
-    console.log('编辑');
   } else {
     // 新增逻辑
-    api.workstation.add({
-      workcenterName: formData.value.workcenterName,
-      processName: formData.value.processName,
-      workstationCode: formData.value.workstationCode,
-      workstationName: formData.value.workstationName,
-      workstationDesc: formData.value.workstationDesc,
-      state: formData.value.state,
-    });
-    console.log('新增');
+    try {
+      await api.workstation.add({
+        workstationCode: formData.value.workstationCode,
+        workcenterName: formData.value.workcenterName,
+        workstationDesc: formData.value.workstationDesc,
+        pworkcenterId: formData.value.workcenterName,
+        pprocessId: formData.value.processName,
+        state: formData.value.state,
+      });
+      onHandelList();
+    } catch (e) {
+      console.log(e);
+    }
   }
-  console.log(controlShow.value);
+  formRef.value.reset({ type: 'initial' });
   MessagePlugin.success('保存成功');
-
   formVisible.value = false;
 };
 // 保存确认按钮
@@ -417,8 +424,8 @@ interface RootObject {
 }
 // form保存
 const onWorkStationSubmit = (context: RootObject) => {
-  // console.log(submitShow, context.validateResult);
   if (context.validateResult === true) {
+    console.log(context.validateResult);
     submitShow = false;
   }
 };
@@ -477,7 +484,6 @@ const rules: FormRules<Data> = {
   position: absolute;
   right: var(--td-comp-size-l);
   bottom: var(--td-comp-size-s);
-  color: red;
 }
 // 启动按钮样式更改
 :deep(.t-switch.t-is-checked:hover) {
