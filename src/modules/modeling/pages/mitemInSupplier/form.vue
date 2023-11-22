@@ -1,37 +1,74 @@
 <template>
-  <t-form layout="inline" :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
-    <t-form-item label="供应商编码" required-mark>
-      <!-- <t-input v-model="formData.mSupplierCode" /> -->
-      <tm-select-business v-model="formData.mSupplierCode" type="supplier" />
+  <t-form :data="formData" :show-cancel="true" :show-error-message="false" label-width="150px" @submit="submit">
+    <t-row>
+      <t-col class="t-space-item">
+        <t-form-item label="供应商编码" required-mark>
+          <div style="width: 157px">
+            <tm-select-business
+              v-model="formData.msupplierId"
+              type="supplier"
+              label-field="supplierCode"
+              :show-title="false"
+              @selection-change="onSupplierChange"
+            />
+          </div>
+        </t-form-item>
+      </t-col>
+      <t-col>
+        <t-form-item label="物料编码" required-mark>
+          <div style="width: 157px">
+            <tm-select-business
+              v-model="formData.mmitemId"
+              type="mitem"
+              label-field="mitemCode"
+              :show-title="false"
+              @selection-change="onMitemChange"
+            />
+          </div>
+        </t-form-item>
+      </t-col>
+    </t-row>
+    <t-row>
+      <t-col class="t-space-item">
+        <t-form-item label="供应商名称">
+          <t-input v-model="formData.supplierName" readonly />
+        </t-form-item>
+      </t-col>
+      <t-col>
+        <t-form-item label="物料名称">
+          <t-input v-model="formData.mitemName" readonly />
+        </t-form-item>
+      </t-col>
+    </t-row>
+
+    <t-row>
+      <t-col class="t-space-item">
+        <t-form-item label="最小包装数量" required-mark>
+          <t-input-number v-model="formData.qty" style="width: 156px" />
+        </t-form-item>
+      </t-col>
+      <t-col>
+        <t-form-item label="检验严格度" required-mark>
+          <t-radio-group v-model="formData.inspectionStringency" :options="inspectionStringencyOptions" clearable />
+        </t-form-item>
+      </t-col>
+    </t-row>
+
+    <t-row>
+      <t-col class="t-space-item">
+        <t-form-item label="是否免检" required-mark>
+          <t-radio-group v-model="formData.isExemptionInspection" style="width: 156px" :options="isOptions" clearable />
+        </t-form-item>
+      </t-col>
+      <t-col>
+        <t-form-item label="是否强制供方检验" required-mark>
+          <t-radio-group v-model="formData.isForceInspection" style="width: 156px" :options="isOptions" clearable />
+        </t-form-item>
+      </t-col>
+    </t-row>
+    <t-form-item label="免检失效日期">
+      <t-date-picker v-model="formData.dateExemptionExpired" />
     </t-form-item>
-    <t-form-item label="供应商名称" required-mark>
-      <t-input v-model="formData.mSupplierName" />
-    </t-form-item>
-    <t-form-item label="物料编码" required-mark>
-      <!-- <t-input v-model="formData.mMitemCode" /> -->
-      <tm-select-business v-model="formData.mMitemCode" type="mitem" />
-    </t-form-item>
-    <t-form-item label="物料名称">
-      <t-input v-model="formData.mMitemName" />
-    </t-form-item>
-    <t-form-item label="最小包装数量">
-      <t-input-number v-model="formData.qty" />
-    </t-form-item>
-    <t-form-item label="检验严格度">
-      <t-radio-group
-        v-model="formData.inspectionStringency"
-        style="width: 156px"
-        :options="inspectionStringencyOptions"
-        clearable
-      />
-    </t-form-item>
-    <t-form-item label="是否免检">
-      <t-radio-group v-model="formData.isExemptionInspection" style="width: 156px" :options="isOptions" clearable />
-    </t-form-item>
-    <t-form-item label="是否强制供方检验">
-      <t-radio-group v-model="formData.isForceInspection" style="width: 156px" :options="isOptions" clearable />
-    </t-form-item>
-    <t-form-item label="免检失效日期"> </t-form-item>
   </t-form>
 </template>
 
@@ -47,7 +84,7 @@ export default {
   components: { TmSelectBusiness },
   setup() {
     const inspectionStringencyOptions = ref([
-      { label: '正常', value: '正常' },
+      { label: '正常', value: '正常', defaultChecked: true },
       { label: '加严', value: '加严' },
       { label: '放宽', value: '放宽' },
     ]);
@@ -65,19 +102,20 @@ export default {
     ]); // 是否启用批次
     const formData = ref({
       id: '',
-      mSupplierId: '',
-      mSupplierCode: '',
-      mSupplierName: '',
-      mMitemId: '',
-      mMitemCode: '',
-      mMitemName: '',
+      mmitemId: '',
+      mitemCode: '',
+      mitemName: '',
+      msupplierId: '',
+      supplierCode: '',
+      supplierName: '',
       qty: 0, // 最小包装数
       inspectionStringency: '', // 检验严格度
       isExemptionInspection: 0, // 是否免检
       isExemptionInspectionChecked: false, // 是否免检
       isForceInspection: 0, // 是否强制供方检验
       isForceInspectionChecked: false, // 是否强制供方检验
-      dateExemptionExpired: 0, // 免检失效日期
+      dateExemptionExpiredStr: '', // 免检失效日期
+      dateExemptionExpired: '',
     });
 
     onMounted(() => {
@@ -93,16 +131,50 @@ export default {
         console.log('11111');
       }
     };
-
+    const init = () => {
+      formData.value.id = '';
+      formData.value.mmitemId = '';
+      formData.value.mitemCode = '';
+      formData.value.mitemName = '';
+      formData.value.msupplierId = '';
+      formData.value.supplierCode = '';
+      formData.value.supplierName = '';
+      formData.value.qty = 0; // 最小包装数
+      formData.value.inspectionStringency = ''; // 检验严格度
+      formData.value.isExemptionInspection = 0; // 是否免检
+      formData.value.isExemptionInspectionChecked = false; // 是否免检
+      formData.value.isForceInspection = 0; // 是否强制供方检验
+      formData.value.isForceInspectionChecked = false; // 是否强制供方检验
+      formData.value.dateExemptionExpiredStr = ''; // 免检失效日期
+      formData.value.dateExemptionExpired = '';
+    };
+    const onSupplierChange = (value: any) => {
+      formData.value.msupplierId = value.id;
+      formData.value.supplierCode = value.supplierCode;
+      formData.value.supplierName = value.supplierName;
+    };
+    const onMitemChange = (value: any) => {
+      formData.value.mmitemId = value.id;
+      formData.value.mitemCode = value.mitemCode;
+      formData.value.mitemName = value.mitemName;
+    };
     return {
+      init,
       submit,
       formData,
       uomOptions,
       supplyCategoryOptions,
       isOptions,
       inspectionStringencyOptions,
+      onSupplierChange,
+      onMitemChange,
     };
   },
 };
 </script>
-`
+
+<style scoped>
+.t-space-item {
+  margin-bottom: 10px;
+}
+</style>
