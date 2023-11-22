@@ -619,29 +619,20 @@ export interface MitemVO {
   mmitemCategoryId?: string;
   mmitemCategoryName?: string;
   mmitemCategoryCode?: string;
-  /** @format int32 */
-  wwarehouseCode?: number;
-  isBatchName?: string;
-  isProductName?: string;
-  isRawName?: string;
-  isInProcessName?: string;
-  /** @format int32 */
-  wwarehouseName?: number;
   wwarehouseId?: string;
-  isState?: boolean;
   stateName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-}
-
-export interface CustomerSearch {
+  isState?: boolean;
   /** @format int32 */
-  pageNum?: number;
+  wwarehouseName?: number;
+  isBatchName?: string;
   /** @format int32 */
-  pageSize?: number;
-  keyword?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
+  wwarehouseCode?: number;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
 }
 
 export interface Customer {
@@ -1483,8 +1474,8 @@ export const api = {
      * @request POST:/customer/items
      * @secure
      */
-    search: (data: CustomerSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/customer/items`, {
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataCustomer['data']>(`/api/modeling/customer/items`, {
         method: 'POST',
         body: data as any,
       }),
