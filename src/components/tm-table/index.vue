@@ -350,7 +350,7 @@ const handleSortAndFilter = () => {
 // 刷新表格
 const onRefresh = () => {
   selectedRowKeys.value = [];
-  expandedRowKeys.value = [];
+  // expandedRowKeys.value = [];
   emit('refresh');
 };
 
