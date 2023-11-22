@@ -19,7 +19,6 @@
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-// import { postEdit } from '../../api/mitem';
 // import { api } from '@/api/modeling';
 
 export default {
@@ -42,8 +41,6 @@ export default {
         MessagePlugin.success('编辑成功');
       } catch (e) {
         console.log(e);
-      } finally {
-        console.log('11111');
       }
     };
 

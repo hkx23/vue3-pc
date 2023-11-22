@@ -614,23 +614,33 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  mmitemCategoryId?: string;
   mmitemCategoryCode?: string;
   mmitemCategoryName?: string;
+  mmitemCategoryId?: string;
   wwarehouseId?: string;
   stateName?: string;
+  isState?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
   /** @format int32 */
   wwarehouseCode?: number;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
   /** @format int32 */
   wwarehouseName?: number;
   isProductName?: string;
-  isInProcessName?: string;
-  isRawName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
+}
+
+export interface CustomerSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  keyword?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
 }
 
 /** 响应数据 */
@@ -1261,11 +1271,26 @@ export const api = {
      *
      * @tags 物料分类
      * @name Edit
-     * @request POST:/mitemCategory/edit/{id}
+     * @request POST:/mitemCategory/edit
      * @secure
      */
-    edit: (id: string, data: MitemCategory) =>
-      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/edit/${id}`, {
+    edit: (data: MitemCategory) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料分类
+     * @name Delete
+     * @summary 删除员工信息
+     * @request POST:/mitemCategory/delete
+     * @secure
+     */
+    delete: (data: MitemCategory) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/delete`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1454,7 +1479,7 @@ export const api = {
      * @request POST:/customer/items
      * @secure
      */
-    search: (data: CommonSearch) =>
+    search: (data: CustomerSearch) =>
       http.request<ResultObject['data']>(`/api/modeling/customer/items`, {
         method: 'POST',
         body: data as any,

@@ -146,8 +146,9 @@ export default {
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
+import { api } from '@/api/modeling';
+
 import { getAdminOrgList } from '../../api/adminOrg';
-import { getList, postDelete, postEdit } from '../../api/person';
 
 const personCode = ref(''); // 查询
 
@@ -160,10 +161,10 @@ const userGenderList = ref([
 
 // 编辑的form
 const formData = ref({
-  id: -1,
+  id: '',
   personcode: '',
   personname: '',
-  gender: '',
+  gender: 0,
   email: '',
   mobilePhone: '',
   state: false,
@@ -207,14 +208,14 @@ const pagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJ
 const onEditConfirm = async () => {
   dataLoading.value = true;
   try {
-    const data = await postEdit({
+    const data = await api.person.edit({
       id: formData.value.id.toString(),
-      personcode: formData.value.personcode,
-      personname: formData.value.personname,
+      personCode: formData.value.personcode,
+      personName: formData.value.personname,
       gender: formData.value.gender,
-      mobilephone: formData.value.mobilePhone,
+      mobilePhone: formData.value.mobilePhone,
       email: formData.value.email,
-      state: formData.value.state.toString(),
+      state: formData.value.state ? 1 : 0,
     });
     MessagePlugin.success('编辑成功');
 
@@ -253,7 +254,7 @@ const onReset = () => {
 const fetchTable = async () => {
   dataLoading.value = true;
   try {
-    const data = await getList({
+    const data = (await api.person.getlist({
       personcode: personCode.value,
       personname: '',
       sortfield: '',
@@ -262,7 +263,7 @@ const fetchTable = async () => {
       filter: '',
       pagenum: pagination.value.defaultCurrent,
       pagesize: pagination.value.defaultPageSize,
-    });
+    })) as any;
     dataTable.value = data.list;
     pagination.value = { ...pagination.value, total: data.total };
   } catch (e) {
@@ -274,9 +275,9 @@ const fetchTable = async () => {
 
 // 重置form
 const formInit = () => {
-  formData.value.id = -1;
+  formData.value.id = '';
   formData.value.email = '';
-  formData.value.gender = '';
+  formData.value.gender = 0;
   formData.value.mobilePhone = '';
   formData.value.personcode = '';
   formData.value.personname = '';
@@ -328,7 +329,7 @@ const onDeleteConfirm = async (e: any) => {
   dataLoading.value = true;
   try {
     const rowModel = dataTable.value[deleteIdx.value];
-    const data = await postDelete({
+    const data = await api.person.delete({
       id: rowModel.id,
     });
 

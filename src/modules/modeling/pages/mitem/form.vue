@@ -69,9 +69,8 @@
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
+import { api } from '@/api/modeling';
 import TmSelectBusiness from '@/components/tm-select-business/index.vue';
-
-import { postEdit } from '../../api/mitem';
 
 export default {
   name: 'MitemForm',
@@ -95,7 +94,8 @@ export default {
       { label: '否', value: 0 },
     ]); // 是否启用批次
     const formData = ref({
-      id: -1,
+      id: '',
+      state: -1,
       mitemCode: '',
       mitemName: '',
       mitemDesc: '',
@@ -113,8 +113,8 @@ export default {
       wWarehouseId: '', // 完工默认仓库
       wWarehouseCode: '',
       wWarehouseName: '',
-      shelfLifeDays: '', // 保质期天数
-      isBatchNo: '', // 是否启用批次
+      shelfLifeDays: 0, // 保质期天数
+      isBatchNo: 0, // 是否启用批次
     });
 
     onMounted(() => {
@@ -126,7 +126,7 @@ export default {
         formData.value.isProduct = formData.value.isProductChecked ? 1 : 0;
         formData.value.isInProcess = formData.value.isInProcessChecked ? 1 : 0;
 
-        await postEdit(formData.value);
+        await api.mitem.edit(formData.value);
         MessagePlugin.success('编辑成功');
       } catch (e) {
         console.log(e);
