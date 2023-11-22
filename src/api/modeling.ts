@@ -328,6 +328,15 @@ export interface ResultOrg {
   data?: Org;
 }
 
+/** 显示计量单位 */
+export interface MitemUomVo {
+  id?: string;
+  /** 计量单位 */
+  uom?: string;
+  /** 计量单位符号 */
+  uomSymbol?: string;
+}
+
 export interface MitemInSupplierSearch {
   mitemKeyword?: string;
   supplierKeyword?: string;
@@ -370,10 +379,10 @@ export interface MitemInSupplier {
   isExemptionInspection?: number;
   /** @format int32 */
   isForceInspection?: number;
-  /** @format int32 */
-  dateExemptionExpired?: number;
-  msupplierId?: string;
+  /** @format date-time */
+  dateExemptionExpired?: string;
   mmitemId?: string;
+  msupplierId?: string;
 }
 
 /** 响应数据 */
@@ -461,8 +470,8 @@ export type Mitem = {
   shelfLifeDays?: number;
   /** @format int32 */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -545,8 +554,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -605,23 +614,23 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
+  isState?: boolean;
+  mmitemCategoryId?: string;
   mmitemCategoryCode?: string;
   mmitemCategoryName?: string;
+  wwarehouseId?: string;
+  stateName?: string;
   /** @format int32 */
   wwarehouseCode?: number;
   /** @format int32 */
   wwarehouseName?: number;
   isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
-  wwarehouseId?: string;
-  mmitemCategoryId?: string;
-  stateName?: string;
+  isRawName?: string;
   isBatchName?: string;
-  isState?: boolean;
+  isRawChecked?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -1113,6 +1122,67 @@ export const api = {
       http.request<ResultObject['data']>(`/api/modeling/person/getlist`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  mitemUom: {
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name Search
+     * @summary 计量单位名称查询
+     * @request POST:/mitemUom/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemUom/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name RemoveItemsById
+     * @summary 删除数据
+     * @request POST:/mitemUom/items/remove
+     * @secure
+     */
+    removeItemsById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemUom/items/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name UpdateItemByCode
+     * @summary 修改
+     * @request POST:/mitemUom/items/modify
+     * @secure
+     */
+    updateItemByCode: (data: MitemUomVo) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemUom/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name AddItem
+     * @summary 新增
+     * @request POST:/mitemUom/items/add
+     * @secure
+     */
+    addItem: (data: MitemUomVo) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemUom/items/add`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   mitemInSupplier: {
