@@ -266,7 +266,7 @@ export type ShowModuleVO = {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://localhost:7200
+ * @baseUrl http://192.168.1.6:7200
  *
  * scm项目API汇总
  */

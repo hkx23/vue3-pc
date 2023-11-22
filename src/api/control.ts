@@ -88,85 +88,9 @@ export type Workstation = {
   workstationCode?: string;
   workstationName?: string;
   workstationDesc?: string;
-  pworkcenterId?: string;
   pprocessId?: string;
-} | null;
-
-/** 显示工站 */
-export interface WorkstationVO {
-  id?: string;
-  eid?: string;
-  oid?: string;
-  /** 工站代码 */
-  workstationCode?: string;
-  /** 工站名称 */
-  workstationName?: string;
-  /** 工站描述 */
-  workstationDesc?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 工序名称 */
-  processName?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 创建人 */
-  creator?: string;
-  /** 创建时间 */
-  timeCreate?: string;
-  /** 修改人 */
-  modifier?: string;
-  /** 修改时间 */
-  timeModified?: string;
   pworkcenterId?: string;
-  pprocessId?: string;
-}
-
-export interface WorkstationSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  workstaion?: string;
-  state?: number[];
-  workcenter?: string;
-  process?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
-
-/** 响应数据 */
-export type PagingDataWorkstationVO = {
-  list?: WorkstationVO[];
-  /** @format int32 */
-  total?: number;
 } | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkstationVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkstationVO;
-}
-
-export interface WorkcenterSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  category?: string;
-  state?: number[];
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
 
 /** 通用响应类 */
 export interface ResultWorkcenter {
@@ -216,8 +140,8 @@ export type Workcenter = {
   wcObjectType?: number;
   wcObjectId?: string;
   wcLocation?: string;
-  mworkshopId?: string;
   mdirectorId?: string;
+  mworkshopId?: string;
 } | null;
 
 /** 响应数据 */
@@ -339,9 +263,9 @@ export type MoSchedule = {
   scheQty?: number;
   scheCode?: string;
   mmitemId?: string;
+  mworkshopId?: string;
   pworkcenterId?: string;
   proutingRevisionId?: string;
-  mworkshopId?: string;
   wwarehouseId?: string;
 } | null;
 
@@ -576,7 +500,7 @@ export interface ResultListMoTestDTO {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://localhost:7500
+ * @baseUrl http://192.168.1.6:7500
  *
  * scm项目API汇总
  */
@@ -609,51 +533,6 @@ export const api = {
       http.request<ResultWorkstation['data']>(`/api/control/workstation/items/${id}`, {
         method: 'POST',
       }),
-
-    /**
-     * No description
-     *
-     * @tags 工站
-     * @name UpdateItemByCode
-     * @summary 修改
-     * @request POST:/workstation/items/modify
-     * @secure
-     */
-    updateItemByCode: (data: WorkstationVO) =>
-      http.request<ResultObject['data']>(`/api/control/workstation/items/modify`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站
-     * @name AddItem
-     * @summary 新增工站
-     * @request POST:/workstation/items/add
-     * @secure
-     */
-    addItem: (data: WorkstationVO) =>
-      http.request<ResultObject['data']>(`/api/control/workstation/items/add`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站
-     * @name Getlist
-     * @summary 工站查询
-     * @request POST:/workstation/getlist
-     * @secure
-     */
-    getlist: (data: WorkstationSearch) =>
-      http.request<ResultPagingDataWorkstationVO['data']>(`/api/control/workstation/getlist`, {
-        method: 'POST',
-        body: data as any,
-      }),
   },
   workcenter: {
     /**
@@ -661,11 +540,10 @@ export const api = {
      *
      * @tags 工作中心
      * @name Search
-     * @summary 工作中心查询
      * @request POST:/workcenter/items
      * @secure
      */
-    search: (data: WorkcenterSearch) =>
+    search: (data: CommonSearch) =>
       http.request<ResultObject['data']>(`/api/control/workcenter/items`, {
         method: 'POST',
         body: data as any,

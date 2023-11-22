@@ -92,6 +92,8 @@ export interface CommonSearch {
   pageNum?: number;
   /** @format int32 */
   pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
   keyword?: string;
   parentId?: string;
   category?: string;
@@ -614,37 +616,26 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  /** @format int32 */
-  wwarehouseName?: number;
-  /** @format int32 */
-  wwarehouseCode?: number;
-  isProductName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isState?: boolean;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
   mmitemCategoryCode?: string;
   mmitemCategoryName?: string;
-  wwarehouseId?: string;
-  stateName?: string;
-  isInProcessChecked?: boolean;
+  /** @format int32 */
+  wwarehouseCode?: number;
+  /** @format int32 */
+  wwarehouseName?: number;
+  isProductName?: string;
   isProductChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isState?: boolean;
+  stateName?: string;
 }
 
-export interface CustomerSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  keyword?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
-
-/** 响应数据 */
-export type Customer = {
+export interface Customer {
   id?: string;
   /**
    * 创建时间
@@ -671,7 +662,27 @@ export type Customer = {
   customerCode?: string;
   customerName?: string;
   shortName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataCustomer = {
+  list?: Customer[];
+  /** @format int32 */
+  total?: number;
 } | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataCustomer {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataCustomer;
+}
 
 /** 通用响应类 */
 export interface ResultCustomer {
@@ -682,13 +693,12 @@ export interface ResultCustomer {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
   data?: Customer;
 }
 
 export interface JSONObject {
-  empty?: boolean;
   innerMap?: Record<string, object>;
+  empty?: boolean;
   [key: string]: any;
 }
 
@@ -813,7 +823,7 @@ export interface ResultListOrgTreeVO {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://localhost:7300
+ * @baseUrl http://192.168.1.6:7300
  *
  * scm项目API汇总
  */
@@ -1271,26 +1281,11 @@ export const api = {
      *
      * @tags 物料分类
      * @name Edit
-     * @request POST:/mitemCategory/edit
+     * @request POST:/mitemCategory/edit/{id}
      * @secure
      */
-    edit: (data: MitemCategory) =>
-      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/edit`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 物料分类
-     * @name Delete
-     * @summary 删除员工信息
-     * @request POST:/mitemCategory/delete
-     * @secure
-     */
-    delete: (data: MitemCategory) =>
-      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/delete`, {
+    edit: (id: string, data: MitemCategory) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/edit/${id}`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1479,8 +1474,8 @@ export const api = {
      * @request POST:/customer/items
      * @secure
      */
-    search: (data: CustomerSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/customer/items`, {
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataCustomer['data']>(`/api/modeling/customer/items`, {
         method: 'POST',
         body: data as any,
       }),

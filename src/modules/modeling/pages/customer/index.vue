@@ -16,18 +16,18 @@
           </div>
         </t-col>
       </t-row>
-      <t-table
+      <tm-table
+        v-model:pagination="pageUI"
         row-key="index"
-        :columns="columns"
-        :data="customerData"
-        lazy-load
-        :pagination="customerPagination"
-        @page-change="onPageChange"
+        :table-column="columns"
+        :table-data="customerData"
+        :total="dataTotal"
+        @refresh="featCustomer"
       >
-        <template #operate="{ row }">
+        <template #op="{ row }">
           <icon name="edit-1" @click="onHandleEdit(row.customerCode)"></icon>
         </template>
-      </t-table>
+      </tm-table>
     </t-card>
     <!-- 弹出层 -->
     <t-dialog v-model:visible="formVisible" header="客户维护编辑" :cancel-btn="null" :confirm-btn="null" width="40%">
@@ -81,12 +81,17 @@
 import { Data, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 
+import TmTable from '@/components/tm-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
+
 import { customerModify, customerSearch, customerSelect } from '../../api/customer';
 
+const { pageUI } = usePage();
+const { loading, setLoading } = useLoading();
 // 控制
 const keyword = ref(''); // 控制模糊搜索
 const formVisible = ref(false); // 控制弹窗显示
-const loading = ref(false);
 // 表单初始化
 const formData = ref({
   id: '1',
@@ -116,13 +121,14 @@ const columns = ref([
   { colKey: 'customerCode', title: '客户编码', width: '100' },
   { colKey: 'customerName', title: '客户名称', width: '100' },
   { colKey: 'shortName', title: '客户简称', width: '100' },
-  { colKey: 'operate', title: '操作', width: '100' },
+  { colKey: 'op', title: '操作', width: '100' },
 ]);
 // 客户信息
 const customerData = ref([]);
+const dataTotal = ref(0);
 const featCustomer = async () => {
   try {
-    loading.value = true;
+    setLoading(true);
     const res = await customerSearch({
       keyword: keyword.value,
       pageNum: customerPagination.value.defaultCurrent,
@@ -131,23 +137,17 @@ const featCustomer = async () => {
       filters: [],
     });
     customerData.value = res.list;
-    customerPagination.value = { ...customerPagination.value, total: Number(res.total) };
+    dataTotal.value = Number(res.total);
   } catch (e) {
     console.log('cus', e);
   } finally {
-    loading.value = false;
+    setLoading(false);
   }
 };
 onMounted(() => {
   featCustomer();
 });
 
-// 分页
-const onPageChange = async (pageInfo: { current: number; pageSize: number }) => {
-  customerPagination.value.defaultCurrent = pageInfo.current;
-  customerPagination.value.defaultPageSize = pageInfo.pageSize;
-  featCustomer();
-};
 // 查询
 const customerQuery = async () => {
   featCustomer();
@@ -172,6 +172,8 @@ const onHandleQuery = debounce(() => {
 // 重置
 const onHandleResetting = () => {
   keyword.value = '';
+  pageUI.value.page = 1;
+  customerQuery();
 };
 
 // 编辑

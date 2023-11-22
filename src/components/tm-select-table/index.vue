@@ -633,10 +633,16 @@ watch(
           return item;
         });
       } else if (!isHandleSelectionChange.value) {
-        console.log('remoteLoad-按默认值查询');
-        selectSearch.value = props.value.toString();
-        defaultValue.value = props.value.toString();
-        remoteLoad(props.value);
+        if (props.value) {
+          console.log('remoteLoad-按默认值查询');
+          selectSearch.value = props.value.toString();
+          defaultValue.value = props.value.toString();
+          remoteLoad(props.value);
+        } else {
+          state.defaultValue = '';
+          selectedRowKeys.value = [];
+          emits('selectionChange', state.defaultValue, selectedRowKeys.value);
+        }
       }
       isHandleSelectionChange.value = false;
     });
