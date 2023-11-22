@@ -92,6 +92,8 @@ export interface CommonSearch {
   pageNum?: number;
   /** @format int32 */
   pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
   keyword?: string;
   parentId?: string;
   category?: string;
@@ -328,6 +330,73 @@ export interface ResultOrg {
   data?: Org;
 }
 
+/** 显示计量单位 */
+export interface MitemUomVo {
+  id?: string;
+  /** 计量单位 */
+  uom?: string;
+  /** 计量单位符号 */
+  uomSymbol?: string;
+}
+
+export interface MitemUomSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  uom?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+export interface MitemUom {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  uom?: string;
+  uomSymbol?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemUom = {
+  list?: MitemUom[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemUom {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemUom;
+}
+
 export interface MitemInSupplierSearch {
   mitemKeyword?: string;
   supplierKeyword?: string;
@@ -370,8 +439,8 @@ export interface MitemInSupplier {
   isExemptionInspection?: number;
   /** @format int32 */
   isForceInspection?: number;
-  /** @format int32 */
-  dateExemptionExpired?: number;
+  /** @format date-time */
+  dateExemptionExpired?: string;
   msupplierId?: string;
   mmitemId?: string;
 }
@@ -461,8 +530,8 @@ export type Mitem = {
   shelfLifeDays?: number;
   /** @format int32 */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -545,8 +614,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -605,27 +674,26 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  mmitemCategoryCode?: string;
+  isState?: boolean;
   mmitemCategoryName?: string;
+  mmitemCategoryId?: string;
+  mmitemCategoryCode?: string;
+  wwarehouseId?: string;
+  isProductName?: string;
   /** @format int32 */
   wwarehouseCode?: number;
+  isRawChecked?: boolean;
   /** @format int32 */
   wwarehouseName?: number;
-  isProductName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
-  wwarehouseId?: string;
-  mmitemCategoryId?: string;
-  stateName?: string;
   isBatchName?: string;
-  isState?: boolean;
+  stateName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
-/** 响应数据 */
-export type Customer = {
+export interface Customer {
   id?: string;
   /**
    * 创建时间
@@ -652,7 +720,27 @@ export type Customer = {
   customerCode?: string;
   customerName?: string;
   shortName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataCustomer = {
+  list?: Customer[];
+  /** @format int32 */
+  total?: number;
 } | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataCustomer {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataCustomer;
+}
 
 /** 通用响应类 */
 export interface ResultCustomer {
@@ -663,7 +751,6 @@ export interface ResultCustomer {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
   data?: Customer;
 }
 
@@ -1115,6 +1202,81 @@ export const api = {
         params: query,
       }),
   },
+  mitemUom: {
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name Search
+     * @request POST:/mitemUom/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemUom/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name RemoveItemsById
+     * @summary 删除数据
+     * @request POST:/mitemUom/items/remove
+     * @secure
+     */
+    removeItemsById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemUom/items/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name UpdateItemByCode
+     * @summary 修改
+     * @request POST:/mitemUom/items/modify
+     * @secure
+     */
+    updateItemByCode: (data: MitemUomVo) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemUom/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name AddItem
+     * @summary 新增
+     * @request POST:/mitemUom/items/add
+     * @secure
+     */
+    addItem: (data: MitemUomVo) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemUom/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name Getlist
+     * @summary 计量单位名称查询
+     * @request POST:/mitemUom/getlist
+     * @secure
+     */
+    getlist: (data: MitemUomSearch) =>
+      http.request<ResultPagingDataMitemUom['data']>(`/api/modeling/mitemUom/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   mitemInSupplier: {
     /**
      * No description
@@ -1385,7 +1547,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/customer/items`, {
+      http.request<ResultPagingDataCustomer['data']>(`/api/modeling/customer/items`, {
         method: 'POST',
         body: data as any,
       }),
