@@ -128,8 +128,8 @@ const onMitemUomPage = computed(() => {
 // 表格数据类型
 interface TableRow {
   id: number;
-  name: string;
-  symbol: string;
+  uom: string;
+  uomSymbol: string;
 }
 
 // 分页换页效果
