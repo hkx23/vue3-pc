@@ -16,10 +16,14 @@ const CWD = process.cwd();
 
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv): UserConfig => {
-  const { VITE_BASE_URL, VITE_API_URL, VITE_API_URL_PREFIX, VITE_IS_REQUEST_PROXY, VITE_BUILDING_MODULE } = loadEnv(
-    mode,
-    CWD,
-  );
+  const {
+    VITE_BASE_URL,
+    VITE_API_URL,
+    VITE_API_URL_PREFIX,
+    VITE_IS_REQUEST_PROXY,
+    VITE_BUILDING_MODULE,
+    VITE_API_GENERATE_MODULE,
+  } = loadEnv(mode, CWD);
   const isPrd = mode === 'production';
 
   let inputs: { [index: string]: any } = null;
@@ -70,7 +74,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         ? null
         : swaggerApiGen({
             baseUrl: VITE_API_URL,
-            inputs,
+            inputs: VITE_API_GENERATE_MODULE,
           }),
       // viteCompression({
       //   deleteOriginFile: true,

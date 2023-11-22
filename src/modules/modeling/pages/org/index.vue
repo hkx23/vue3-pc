@@ -65,7 +65,7 @@ import { AddIcon, EditIcon, RemoveIcon, SearchIcon } from 'tdesign-icons-vue-nex
 import { MessagePlugin, TreeNodeModel } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 
-import { api, OrgTreeVO } from '@/api/modeling';
+import { api, OrgTreeVO } from '@/api/main';
 import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
