@@ -614,23 +614,23 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryCode?: string;
-  mmitemCategoryName?: string;
-  mmitemCategoryId?: string;
-  wwarehouseId?: string;
-  stateName?: string;
-  isState?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  /** @format int32 */
-  wwarehouseCode?: number;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
   /** @format int32 */
   wwarehouseName?: number;
+  /** @format int32 */
+  wwarehouseCode?: number;
   isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isState?: boolean;
+  mmitemCategoryId?: string;
+  mmitemCategoryCode?: string;
+  mmitemCategoryName?: string;
+  wwarehouseId?: string;
+  stateName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 export interface CustomerSearch {

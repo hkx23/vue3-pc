@@ -180,12 +180,14 @@ const onSelectionChange = (val: any, valuKeys: any) => {
     //   { label: 'Miniprogram', value: 3 },
     // ]);
     const multipleValues: { label: any; value: any }[] = [];
-    val.forEach((item: any) => {
-      multipleValues.push({
-        label: item[finalKeywords.value.label],
-        value: item[finalKeywords.value.value],
+    if (val && val.length > 0) {
+      val.forEach((item: any) => {
+        multipleValues.push({
+          label: item[finalKeywords.value.label],
+          value: item[finalKeywords.value.value],
+        });
       });
-    });
+    }
 
     emits('update:modelValue', multipleValues);
   }

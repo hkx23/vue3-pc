@@ -4,14 +4,26 @@
       <t-col class="t-space-item">
         <t-form-item label="供应商编码" required-mark>
           <div style="width: 157px">
-            <tm-select-business v-model="formData.msupplierId" type="supplier" :show-title="false" />
+            <tm-select-business
+              v-model="formData.msupplierId"
+              type="supplier"
+              label-field="supplierCode"
+              :show-title="false"
+              @selection-change="onSupplierChange"
+            />
           </div>
         </t-form-item>
       </t-col>
       <t-col>
         <t-form-item label="物料编码" required-mark>
           <div style="width: 157px">
-            <tm-select-business v-model="formData.mmitemId" type="mitem" :show-title="false" />
+            <tm-select-business
+              v-model="formData.mmitemId"
+              type="mitem"
+              label-field="mitemCode"
+              :show-title="false"
+              @selection-change="onMitemChange"
+            />
           </div>
         </t-form-item>
       </t-col>
@@ -136,7 +148,16 @@ export default {
       formData.value.dateExemptionExpiredStr = ''; // 免检失效日期
       formData.value.dateExemptionExpired = '';
     };
-
+    const onSupplierChange = (value: any) => {
+      formData.value.msupplierId = value.id;
+      formData.value.supplierCode = value.supplierCode;
+      formData.value.supplierName = value.supplierName;
+    };
+    const onMitemChange = (value: any) => {
+      formData.value.mmitemId = value.id;
+      formData.value.mitemCode = value.mitemCode;
+      formData.value.mitemName = value.mitemName;
+    };
     return {
       init,
       submit,
@@ -145,6 +166,8 @@ export default {
       supplyCategoryOptions,
       isOptions,
       inspectionStringencyOptions,
+      onSupplierChange,
+      onMitemChange,
     };
   },
 };
