@@ -291,9 +291,7 @@ declare interface RequestOptions extends RequestInit {
 
 export declare function swaggerApiGen(options: {
     baseUrl: string;
-    inputs: {
-        [index: string]: any;
-    };
+    inputs: string;
     output?: string;
     templates?: string;
 }): PluginOption;
