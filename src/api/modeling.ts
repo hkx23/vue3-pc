@@ -92,6 +92,8 @@ export interface CommonSearch {
   pageNum?: number;
   /** @format int32 */
   pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
   keyword?: string;
   parentId?: string;
   category?: string;
@@ -110,8 +112,15 @@ export interface SortParam {
   descending?: boolean;
 }
 
+/** 响应数据 */
+export type PagingDataWorkgroup = {
+  list?: Workgroup[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
 /** 通用响应类 */
-export interface ResultWorkgroup {
+export interface ResultPagingDataWorkgroup {
   /**
    * 响应代码
    * @format int32
@@ -120,11 +129,10 @@ export interface ResultWorkgroup {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: Workgroup;
+  data?: PagingDataWorkgroup;
 }
 
-/** 响应数据 */
-export type Workgroup = {
+export interface Workgroup {
   id?: string;
   /**
    * 创建时间
@@ -151,11 +159,30 @@ export type Workgroup = {
   workgroupCode?: string;
   workgroupName?: string;
   workgroupDesc?: string;
-  mworkshopId?: string;
+  workshopId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultWorkgroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Workgroup;
+}
+
+/** 响应数据 */
+export type PagingDataSupplier = {
+  list?: Supplier[];
+  /** @format int32 */
+  total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultSupplier {
+export interface ResultPagingDataSupplier {
   /**
    * 响应代码
    * @format int32
@@ -164,11 +191,10 @@ export interface ResultSupplier {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: Supplier;
+  data?: PagingDataSupplier;
 }
 
-/** 响应数据 */
-export type Supplier = {
+export interface Supplier {
   id?: string;
   /**
    * 创建时间
@@ -196,10 +222,28 @@ export type Supplier = {
   supplierName?: string;
   contactPerson?: string;
   contactTel?: string;
-} | null;
+}
+
+/** 通用响应类 */
+export interface ResultSupplier {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Supplier;
+}
 
 /** 响应数据 */
-export type Post = {
+export type PagingDataPost = {
+  list?: Post[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface Post {
   id?: string;
   /**
    * 创建时间
@@ -226,7 +270,20 @@ export type Post = {
   postCode?: string;
   postName?: string;
   postDesc?: string;
-} | null;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPost {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPost;
+}
 
 /** 通用响应类 */
 export interface ResultPost {
@@ -237,12 +294,17 @@ export interface ResultPost {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
   data?: Post;
 }
 
 /** 响应数据 */
-export type Person = {
+export type PagingDataPerson = {
+  list?: Person[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface Person {
   id?: string;
   /**
    * 创建时间
@@ -271,8 +333,21 @@ export type Person = {
   gender?: number;
   email?: string;
   mobilePhone?: string;
-  madminOrgId?: string;
-} | null;
+  adminOrgId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPerson {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPerson;
+}
 
 /** 通用响应类 */
 export interface ResultPerson {
@@ -283,7 +358,6 @@ export interface ResultPerson {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
   data?: Person;
 }
 
@@ -316,6 +390,26 @@ export interface PersonVO {
   isState?: boolean;
 }
 
+/** 响应数据 */
+export type PagingDataOrg = {
+  list?: Org[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataOrg;
+}
+
 /** 通用响应类 */
 export interface ResultOrg {
   /**
@@ -335,6 +429,64 @@ export interface MitemUomVo {
   uom?: string;
   /** 计量单位符号 */
   uomSymbol?: string;
+}
+
+export interface MitemUomSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  uom?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+export interface MitemUom {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  uom?: string;
+  uomSymbol?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemUom = {
+  list?: MitemUom[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemUom {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemUom;
 }
 
 export interface MitemInSupplierSearch {
@@ -372,6 +524,8 @@ export interface MitemInSupplier {
   state?: number;
   eid?: string;
   oid?: string;
+  supplierId?: string;
+  mitemId?: string;
   /** @format int32 */
   qty?: number;
   inspectionStringency?: string;
@@ -381,12 +535,9 @@ export interface MitemInSupplier {
   isForceInspection?: number;
   /** @format date-time */
   dateExemptionExpired?: string;
-  mmitemId?: string;
-  msupplierId?: string;
 }
 
-/** 响应数据 */
-export type MitemCategory = {
+export interface MitemCategory {
   id?: string;
   /**
    * 创建时间
@@ -415,7 +566,27 @@ export type MitemCategory = {
   categoryDesc?: string;
   reqCalcRule?: string;
   onboardRuleCode?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemCategory = {
+  list?: MitemCategory[];
+  /** @format int32 */
+  total?: number;
 } | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemCategory {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemCategory;
+}
 
 /** 通用响应类 */
 export interface ResultMitemCategory {
@@ -426,8 +597,89 @@ export interface ResultMitemCategory {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
   data?: MitemCategory;
+}
+
+/** 显示物料实体 */
+export interface MitemVO {
+  id?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 供应方式 */
+  supplyCategory?: string;
+  /** 单位 */
+  uom?: string;
+  /**
+   * 是否成品，1：是；0：否
+   * @format int32
+   */
+  isProduct?: number;
+  /**
+   * 是否原材料，1：是；0：否
+   * @format int32
+   */
+  isRaw?: number;
+  /**
+   * 是否半成品,1：是；0：否
+   * @format int32
+   */
+  isInProcess?: number;
+  /**
+   * 保质期天数
+   * @format int32
+   */
+  shelfLifeDays?: number;
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
+  isBatchNo?: number;
+  mmitemCategoryId?: string;
+  wwarehouseId?: string;
+  mmitemCategoryCode?: string;
+  mmitemCategoryName?: string;
+  /** @format int32 */
+  wwarehouseName?: number;
+  isProductName?: string;
+  isProductChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
+  /** @format int32 */
+  wwarehouseCode?: number;
+  stateName?: string;
+  isState?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataMitemVO = {
+  list?: MitemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemVO;
 }
 
 /** 响应数据 */
@@ -458,6 +710,7 @@ export type Mitem = {
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
+  mitemCategoryId?: string;
   supplyCategory?: string;
   uom?: string;
   /** @format int32 */
@@ -466,12 +719,11 @@ export type Mitem = {
   isRaw?: number;
   /** @format int32 */
   isInProcess?: number;
+  warehouseId?: string;
   /** @format int32 */
   shelfLifeDays?: number;
   /** @format int32 */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
-  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -571,80 +823,7 @@ export interface ResultListMitemFeignDTO {
   data?: MitemFeignDTO[] | null;
 }
 
-/** 显示物料实体 */
-export interface MitemVO {
-  id?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 物料名称 */
-  mitemName?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  /** 供应方式 */
-  supplyCategory?: string;
-  /** 单位 */
-  uom?: string;
-  /**
-   * 是否成品，1：是；0：否
-   * @format int32
-   */
-  isProduct?: number;
-  /**
-   * 是否原材料，1：是；0：否
-   * @format int32
-   */
-  isRaw?: number;
-  /**
-   * 是否半成品,1：是；0：否
-   * @format int32
-   */
-  isInProcess?: number;
-  /**
-   * 保质期天数
-   * @format int32
-   */
-  shelfLifeDays?: number;
-  /**
-   * 是否启用批次,1：是；0：否
-   * @format int32
-   */
-  isBatchNo?: number;
-  /** @format int32 */
-  wwarehouseName?: number;
-  /** @format int32 */
-  wwarehouseCode?: number;
-  isProductName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isState?: boolean;
-  mmitemCategoryId?: string;
-  mmitemCategoryCode?: string;
-  mmitemCategoryName?: string;
-  wwarehouseId?: string;
-  stateName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-}
-
-export interface CustomerSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  keyword?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
-
-/** 响应数据 */
-export type Customer = {
+export interface Customer {
   id?: string;
   /**
    * 创建时间
@@ -671,7 +850,27 @@ export type Customer = {
   customerCode?: string;
   customerName?: string;
   shortName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataCustomer = {
+  list?: Customer[];
+  /** @format int32 */
+  total?: number;
 } | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataCustomer {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataCustomer;
+}
 
 /** 通用响应类 */
 export interface ResultCustomer {
@@ -682,13 +881,12 @@ export interface ResultCustomer {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
   data?: Customer;
 }
 
 export interface JSONObject {
-  empty?: boolean;
   innerMap?: Record<string, object>;
+  empty?: boolean;
   [key: string]: any;
 }
 
@@ -813,7 +1011,7 @@ export interface ResultListOrgTreeVO {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://localhost:7300
+ * @baseUrl http://192.168.1.6:7300
  *
  * scm项目API汇总
  */
@@ -904,7 +1102,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/org/items`, {
+      http.request<ResultPagingDataOrg['data']>(`/api/modeling/org/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -976,7 +1174,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/workgroup/items`, {
+      http.request<ResultPagingDataWorkgroup['data']>(`/api/modeling/workgroup/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1004,7 +1202,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/supplier/items`, {
+      http.request<ResultPagingDataSupplier['data']>(`/api/modeling/supplier/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1032,7 +1230,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/post/items`, {
+      http.request<ResultPagingDataPost['data']>(`/api/modeling/post/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1060,7 +1258,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/person/items`, {
+      http.request<ResultPagingDataPerson['data']>(`/api/modeling/person/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1140,7 +1338,6 @@ export const api = {
      *
      * @tags 计量单位
      * @name Search
-     * @summary 计量单位名称查询
      * @request POST:/mitemUom/items
      * @secure
      */
@@ -1191,6 +1388,21 @@ export const api = {
      */
     addItem: (data: MitemUomVo) =>
       http.request<ResultObject['data']>(`/api/modeling/mitemUom/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name Getlist
+     * @summary 计量单位名称查询
+     * @request POST:/mitemUom/getlist
+     * @secure
+     */
+    getlist: (data: MitemUomSearch) =>
+      http.request<ResultPagingDataMitemUom['data']>(`/api/modeling/mitemUom/getlist`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1248,7 +1460,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/items`, {
+      http.request<ResultPagingDataMitemCategory['data']>(`/api/modeling/mitemCategory/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1359,7 +1571,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/mitem/items`, {
+      http.request<ResultPagingDataMitemVO['data']>(`/api/modeling/mitem/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1479,8 +1691,8 @@ export const api = {
      * @request POST:/customer/items
      * @secure
      */
-    search: (data: CustomerSearch) =>
-      http.request<ResultObject['data']>(`/api/modeling/customer/items`, {
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataCustomer['data']>(`/api/modeling/customer/items`, {
         method: 'POST',
         body: data as any,
       }),

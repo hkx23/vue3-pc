@@ -107,7 +107,7 @@ export type User = {
   accountType?: number;
   /** @format date-time */
   timeExpiration?: string;
-  mpersonId?: string;
+  personId?: string;
 } | null;
 
 /** 响应数据 */
@@ -156,8 +156,7 @@ export interface ResultParamGroup {
   data?: ParamGroup;
 }
 
-/** 响应数据 */
-export type Param = {
+export interface Param {
   id?: string;
   /**
    * 创建时间
@@ -181,13 +180,46 @@ export type Param = {
   state?: number;
   eid?: string;
   oid?: string;
+  paramGroupId?: string;
   paramCode?: string;
   paramValue?: string;
   paramDesc?: string;
   /** @format int32 */
   seq?: number;
-  sparamGroupId?: string;
-} | null;
+}
+
+export interface ParamInfoDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  paramGroupId?: string;
+  paramCode?: string;
+  paramValue?: string;
+  paramDesc?: string;
+  /** @format int32 */
+  seq?: number;
+  details?: Param[];
+}
 
 /** 通用响应类 */
 export interface ResultParam {
@@ -198,7 +230,6 @@ export interface ResultParam {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
   data?: Param;
 }
 
@@ -266,7 +297,7 @@ export type ShowModuleVO = {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://localhost:7200
+ * @baseUrl http://192.168.1.6:7200
  *
  * scm项目API汇总
  */
@@ -414,6 +445,21 @@ export const api = {
       }),
   },
   param: {
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name Save
+     * @summary 保存系统字典数据
+     * @request POST:/param/save
+     * @secure
+     */
+    save: (data: ParamInfoDTO) =>
+      http.request<ResultObject['data']>(`/api/system/param/save`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

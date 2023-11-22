@@ -210,24 +210,24 @@ var Lr = function() {
 const H = Lr;
 var kr = "Expected a function", Dr = Math.max, Wr = Math.min;
 function Se(e, r, t) {
-  var n, o, u, c, f, a, i = 0, s = !1, l = !1, w = !0;
+  var n, o, c, u, f, a, i = 0, s = !1, l = !1, w = !0;
   if (typeof e != "function")
     throw new TypeError(kr);
-  r = oe(r) || 0, R(t) && (s = !!t.leading, l = "maxWait" in t, u = l ? Dr(oe(t.maxWait) || 0, r) : u, w = "trailing" in t ? !!t.trailing : w);
+  r = oe(r) || 0, R(t) && (s = !!t.leading, l = "maxWait" in t, c = l ? Dr(oe(t.maxWait) || 0, r) : c, w = "trailing" in t ? !!t.trailing : w);
   function g(d) {
     var P = n, x = o;
-    return n = o = void 0, i = d, c = e.apply(x, P), c;
+    return n = o = void 0, i = d, u = e.apply(x, P), u;
   }
   function h(d) {
-    return i = d, f = setTimeout(m, r), s ? g(d) : c;
+    return i = d, f = setTimeout(m, r), s ? g(d) : u;
   }
   function j(d) {
     var P = d - a, x = d - i, M = r - P;
-    return l ? Wr(M, u - x) : M;
+    return l ? Wr(M, c - x) : M;
   }
   function p(d) {
     var P = d - a, x = d - i;
-    return a === void 0 || P >= r || P < 0 || l && x >= u;
+    return a === void 0 || P >= r || P < 0 || l && x >= c;
   }
   function m() {
     var d = H();
@@ -236,13 +236,13 @@ function Se(e, r, t) {
     f = setTimeout(m, j(d));
   }
   function A(d) {
-    return f = void 0, w && n ? g(d) : (n = o = void 0, c);
+    return f = void 0, w && n ? g(d) : (n = o = void 0, u);
   }
   function y() {
     f !== void 0 && clearTimeout(f), i = 0, n = a = o = f = void 0;
   }
   function v() {
-    return f === void 0 ? c : A(H());
+    return f === void 0 ? u : A(H());
   }
   function E() {
     var d = H(), P = p(d);
@@ -252,7 +252,7 @@ function Se(e, r, t) {
       if (l)
         return clearTimeout(f), f = setTimeout(m, r), g(a);
     }
-    return f === void 0 && (f = setTimeout(m, r)), c;
+    return f === void 0 && (f = setTimeout(m, r)), u;
   }
   return E.cancel = y, E.flush = v, E;
 }
@@ -311,48 +311,48 @@ function Vr(e) {
       continue;
     }
     if (n === ":") {
-      for (var o = "", u = t + 1; u < e.length; ) {
-        var c = e.charCodeAt(u);
+      for (var o = "", c = t + 1; c < e.length; ) {
+        var u = e.charCodeAt(c);
         if (
           // `0-9`
-          c >= 48 && c <= 57 || // `A-Z`
-          c >= 65 && c <= 90 || // `a-z`
-          c >= 97 && c <= 122 || // `_`
-          c === 95
+          u >= 48 && u <= 57 || // `A-Z`
+          u >= 65 && u <= 90 || // `a-z`
+          u >= 97 && u <= 122 || // `_`
+          u === 95
         ) {
-          o += e[u++];
+          o += e[c++];
           continue;
         }
         break;
       }
       if (!o)
         throw new TypeError("Missing parameter name at ".concat(t));
-      r.push({ type: "NAME", index: t, value: o }), t = u;
+      r.push({ type: "NAME", index: t, value: o }), t = c;
       continue;
     }
     if (n === "(") {
-      var f = 1, a = "", u = t + 1;
-      if (e[u] === "?")
-        throw new TypeError('Pattern cannot start with "?" at '.concat(u));
-      for (; u < e.length; ) {
-        if (e[u] === "\\") {
-          a += e[u++] + e[u++];
+      var f = 1, a = "", c = t + 1;
+      if (e[c] === "?")
+        throw new TypeError('Pattern cannot start with "?" at '.concat(c));
+      for (; c < e.length; ) {
+        if (e[c] === "\\") {
+          a += e[c++] + e[c++];
           continue;
         }
-        if (e[u] === ")") {
+        if (e[c] === ")") {
           if (f--, f === 0) {
-            u++;
+            c++;
             break;
           }
-        } else if (e[u] === "(" && (f++, e[u + 1] !== "?"))
-          throw new TypeError("Capturing groups are not allowed at ".concat(u));
-        a += e[u++];
+        } else if (e[c] === "(" && (f++, e[c + 1] !== "?"))
+          throw new TypeError("Capturing groups are not allowed at ".concat(c));
+        a += e[c++];
       }
       if (f)
         throw new TypeError("Unbalanced pattern at ".concat(t));
       if (!a)
         throw new TypeError("Missing pattern at ".concat(t));
-      r.push({ type: "PATTERN", index: t, value: a }), t = u;
+      r.push({ type: "PATTERN", index: t, value: a }), t = c;
       continue;
     }
     r.push({ type: "CHAR", index: t, value: e[t++] });
@@ -361,7 +361,7 @@ function Vr(e) {
 }
 function Gr(e, r) {
   r === void 0 && (r = {});
-  for (var t = Vr(e), n = r.prefixes, o = n === void 0 ? "./" : n, u = "[^".concat(U(r.delimiter || "/#?"), "]+?"), c = [], f = 0, a = 0, i = "", s = function(d) {
+  for (var t = Vr(e), n = r.prefixes, o = n === void 0 ? "./" : n, c = "[^".concat(U(r.delimiter || "/#?"), "]+?"), u = [], f = 0, a = 0, i = "", s = function(d) {
     if (a < t.length && t[a].type === d)
       return t[a++].value;
   }, l = function(d) {
@@ -378,11 +378,11 @@ function Gr(e, r) {
     var g = s("CHAR"), h = s("NAME"), j = s("PATTERN");
     if (h || j) {
       var p = g || "";
-      o.indexOf(p) === -1 && (i += p, p = ""), i && (c.push(i), i = ""), c.push({
+      o.indexOf(p) === -1 && (i += p, p = ""), i && (u.push(i), i = ""), u.push({
         name: h || f++,
         prefix: p,
         suffix: "",
-        pattern: j || u,
+        pattern: j || c,
         modifier: s("MODIFIER") || ""
       });
       continue;
@@ -392,13 +392,13 @@ function Gr(e, r) {
       i += m;
       continue;
     }
-    i && (c.push(i), i = "");
+    i && (u.push(i), i = "");
     var A = s("OPEN");
     if (A) {
       var p = w(), y = s("NAME") || "", v = s("PATTERN") || "", E = w();
-      l("CLOSE"), c.push({
+      l("CLOSE"), u.push({
         name: y || (v ? f++ : ""),
-        pattern: y && !v ? u : v,
+        pattern: y && !v ? c : v,
         prefix: p,
         suffix: E,
         modifier: s("MODIFIER") || ""
@@ -407,7 +407,7 @@ function Gr(e, r) {
     }
     l("END");
   }
-  return c;
+  return u;
 }
 function U(e) {
   return e.replace(/([.+*?=^!:${}()[\]|/\\])/g, "\\$1");
@@ -440,9 +440,9 @@ function Xr(e, r, t) {
 }
 function Zr(e, r, t) {
   t === void 0 && (t = {});
-  for (var n = t.strict, o = n === void 0 ? !1 : n, u = t.start, c = u === void 0 ? !0 : u, f = t.end, a = f === void 0 ? !0 : f, i = t.encode, s = i === void 0 ? function(B) {
+  for (var n = t.strict, o = n === void 0 ? !1 : n, c = t.start, u = c === void 0 ? !0 : c, f = t.end, a = f === void 0 ? !0 : f, i = t.encode, s = i === void 0 ? function(B) {
     return B;
-  } : i, l = t.delimiter, w = l === void 0 ? "/#?" : l, g = t.endsWith, h = g === void 0 ? "" : g, j = "[".concat(U(h), "]|$"), p = "[".concat(U(w), "]"), m = c ? "^" : "", A = 0, y = e; A < y.length; A++) {
+  } : i, l = t.delimiter, w = l === void 0 ? "/#?" : l, g = t.endsWith, h = g === void 0 ? "" : g, j = "[".concat(U(h), "]|$"), p = "[".concat(U(w), "]"), m = u ? "^" : "", A = 0, y = e; A < y.length; A++) {
     var v = y[A];
     if (typeof v == "string")
       m += U(s(v));
@@ -491,22 +491,22 @@ if (Me) {
     var n;
     const t = Ie();
     if (t.isMock && r[0] !== null) {
-      let o, u = "";
-      typeof r[0] == "object" ? (o = r[0], u = o.url) : (o = r[1], u = r[0]);
-      const c = new URL(u, "http://localhost"), f = (n = t.mockData) == null ? void 0 : n.find((a) => {
+      let o, c = "";
+      typeof r[0] == "object" ? (o = r[0], c = o.url) : (o = r[1], c = r[0]);
+      const u = new URL(c, "http://localhost"), f = (n = t.mockData) == null ? void 0 : n.find((a) => {
         if (!a || !a.url || a.method && a.method.toUpperCase() !== (o == null ? void 0 : o.method))
           return !1;
-        const i = new URL(a.url, "http://localhost"), s = new URLSearchParams(i.search), l = new URLSearchParams(c.search);
+        const i = new URL(a.url, "http://localhost"), s = new URLSearchParams(i.search), l = new URLSearchParams(u.search);
         for (const [w, g] of s)
           if (l.get(w) !== g)
             return !1;
-        return Ce(i.pathname).test(c.pathname);
+        return Ce(i.pathname).test(u.pathname);
       });
       if (f) {
         const { response: a, timeout: i, statusCode: s } = f;
         i && await new Promise((w) => setTimeout(w, i));
         const l = typeof a == "function" ? a(o) : a;
-        return console.debug("mock success: " + u), console.debug(l), l instanceof Response ? Promise.resolve(l) : Promise.resolve(
+        return console.debug("mock success: " + c), console.debug(l), l instanceof Response ? Promise.resolve(l) : Promise.resolve(
           new Response(JSON.stringify(l), {
             status: s || 200,
             headers: { "Content-Type": "application/json" }
@@ -598,21 +598,21 @@ class nn {
   }
   createContext(r, t = {}) {
     const n = this.options, o = W(n.baseURL);
-    let u = W(r);
-    u = n.normalizeUrl(encodeURI(u));
-    const c = new rn();
-    return c.baseURL = o, c.path = u, c.url = this.getUrl(o, u, t.params), c.requestOptions = {
+    let c = W(r);
+    c = n.normalizeUrl(encodeURI(c));
+    const u = new rn();
+    return u.baseURL = o, u.path = c, u.url = this.getUrl(o, c, t.params), u.requestOptions = {
       headers: {},
       timeout: n.timeout,
       ...t
-    }, c;
+    }, u;
   }
   createRequest(r, t = {}, n = []) {
-    const o = this.createContext(r, t), u = this.options;
-    let c = [];
-    typeof u.middlewares == "function" && (c = c.concat(W(u.middlewares))), c = c.concat(this.middlewares), n && (typeof n == "function" ? c.push(n) : n instanceof Array && n.length > 0 && (c = c.concat(n)));
+    const o = this.createContext(r, t), c = this.options;
+    let u = [];
+    typeof c.middlewares == "function" && (u = u.concat(W(c.middlewares))), u = u.concat(this.middlewares), n && (typeof n == "function" ? u.push(n) : n instanceof Array && n.length > 0 && (u = u.concat(n)));
     const f = (a) => {
-      const i = c[a];
+      const i = u[a];
       if (!i) {
         if (o.requestOptions.timeout && !o.requestOptions.signal) {
           const s = new AbortController();
@@ -626,7 +626,7 @@ class nn {
         return Promise.reject(s);
       }
     };
-    return f(0).then((a) => c.length > 0 ? o.result : a);
+    return f(0).then((a) => u.length > 0 ? o.result : a);
   }
   request(r, t = {}, n = []) {
     if (t.throttle !== void 0 && t.debounce !== void 0)
@@ -741,13 +741,13 @@ var ke = { exports: {} };
   function o(a, i, s) {
     this.fn = a, this.context = i, this.once = s || !1;
   }
-  function u(a, i, s, l, w) {
+  function c(a, i, s, l, w) {
     if (typeof s != "function")
       throw new TypeError("The listener must be a function");
     var g = new o(s, l || a, w), h = t ? t + i : i;
     return a._events[h] ? a._events[h].fn ? a._events[h] = [a._events[h], g] : a._events[h].push(g) : (a._events[h] = g, a._eventsCount++), a;
   }
-  function c(a, i) {
+  function u(a, i) {
     --a._eventsCount === 0 ? a._events = new n() : delete a._events[i];
   }
   function f() {
@@ -820,27 +820,27 @@ var ke = { exports: {} };
     }
     return !0;
   }, f.prototype.on = function(i, s, l) {
-    return u(this, i, s, l, !1);
+    return c(this, i, s, l, !1);
   }, f.prototype.once = function(i, s, l) {
-    return u(this, i, s, l, !0);
+    return c(this, i, s, l, !0);
   }, f.prototype.removeListener = function(i, s, l, w) {
     var g = t ? t + i : i;
     if (!this._events[g])
       return this;
     if (!s)
-      return c(this, g), this;
+      return u(this, g), this;
     var h = this._events[g];
     if (h.fn)
-      h.fn === s && (!w || h.once) && (!l || h.context === l) && c(this, g);
+      h.fn === s && (!w || h.once) && (!l || h.context === l) && u(this, g);
     else {
       for (var j = 0, p = [], m = h.length; j < m; j++)
         (h[j].fn !== s || w && !h[j].once || l && h[j].context !== l) && p.push(h[j]);
-      p.length ? this._events[g] = p.length === 1 ? p[0] : p : c(this, g);
+      p.length ? this._events[g] = p.length === 1 ? p[0] : p : u(this, g);
     }
     return this;
   }, f.prototype.removeAllListeners = function(i) {
     var s;
-    return i ? (s = t ? t + i : i, this._events[s] && c(this, s)) : (this._events = new n(), this._eventsCount = 0), this;
+    return i ? (s = t ? t + i : i, this._events[s] && u(this, s)) : (this._events = new n(), this._eventsCount = 0), this;
   }, f.prototype.off = f.prototype.removeListener, f.prototype.addListener = f.prototype.on, f.prefixed = t, f.EventEmitter = f, e.exports = f;
 })(ke);
 var an = ke.exports;
@@ -937,8 +937,8 @@ class ee {
   }
   remove(r, t, n) {
     var o;
-    return typeof t == "function" && (n = t, t = "*"), t && n ? (o = this.targets.get(t)) == null || o.emitter.removeListener(r, n) : this.targets.map((u, c) => {
-      c.emitter.removeAllListeners(r);
+    return typeof t == "function" && (n = t, t = "*"), t && n ? (o = this.targets.get(t)) == null || o.emitter.removeListener(r, n) : this.targets.map((c, u) => {
+      u.emitter.removeAllListeners(r);
     }), this;
   }
   on(r, t, n) {
@@ -1015,43 +1015,44 @@ const O = {
   }
 };
 class ve extends Error {
-  constructor(t, n, o, u = "") {
-    var c;
+  constructor(t, n, o, c = "") {
+    var u;
     super();
     b(this, "code", -1);
     b(this, "status", "");
     b(this, "type", "");
     b(this, "description", "");
-    this.message = t, this.name = "CustomError", this.code = n, this.status = o, this.type = "error", this.description = u, (c = O.ipc.targets.get("_self")) == null || c.send("custom_error", this);
+    this.message = t, this.name = "CustomError", this.code = n, this.status = o, this.type = "error", this.description = c, (u = O.ipc.targets.get("_self")) == null || u.send("custom_error", this);
   }
 }
 const We = typeof window < "u", we = We ? null : require("node:path"), ln = We ? null : require("swagger-typescript-api");
 function wn(e) {
-  return !e || !e.baseUrl || !e.inputs ? null : e.inputs.length === 0 ? (console.log("swagger-api-gen: No input files found."), null) : {
+  if (!e || !e.baseUrl || !e.inputs)
+    return null;
+  const r = e.inputs.split(",");
+  return r.length === 0 ? (console.log("swagger-api-gen: No input modules found."), null) : {
     name: "swagger-api-gen",
     enforce: "pre",
     apply: "serve",
     async buildStart() {
-      for (const r in e.inputs) {
-        if (r === "index" || r === "demo")
-          continue;
-        const t = `/api/${r}`;
+      for await (const t of r) {
+        const n = `/api/${t}`;
         await ln.generateApi({
-          name: r,
-          url: `${e.baseUrl}${t}/v3/api-docs`,
+          name: t,
+          url: `${e.baseUrl}${n}/v3/api-docs`,
           output: we.resolve(process.cwd(), (e == null ? void 0 : e.output) || "./src/api"),
           templates: we.resolve(process.cwd(), (e == null ? void 0 : e.templates) || "./plugins/swagger-templates"),
           singleHttpClient: !0,
           httpClientType: "fetch",
           withPrefix: !1,
           // @ts-ignore
-          apiClassName: `${r[0].toUpperCase() + r.slice(1)}Api`,
-          apiPrefix: t,
+          apiClassName: `${t[0].toUpperCase() + t.slice(1)}Api`,
+          apiPrefix: n,
           importModules: 'import { Http } from "@/types/web-core";',
           hooks: {
-            onFormatRouteName: (n, o) => /\d/.test(o) && n.operationId.includes("_") ? n.operationId.split("_", 1)[0] : o
+            onFormatRouteName: (o, c) => /\d/.test(c) && o.operationId.includes("_") ? o.operationId.split("_", 1)[0] : c
           }
-        }).catch((n) => console.error(n));
+        }).catch((o) => console.error(o));
       }
     }
   };
@@ -1075,7 +1076,7 @@ const dn = async (e, r) => {
   const t = e.requestOptions.body;
   t && Object.prototype.toString.call(t) === "[object Object]" && Fe(t), await r();
 }, gn = async (e, r) => {
-  var u, c, f;
+  var c, u, f;
   const t = e.requestOptions, n = t.body;
   if (!(n instanceof FormData) && !(n instanceof URLSearchParams)) {
     let a = !0;
@@ -1084,14 +1085,14 @@ const dn = async (e, r) => {
   }
   if (await r(), e.result)
     return;
-  const o = ((u = e.response) == null ? void 0 : u.headers.get("Content-Type")) || "";
-  (c = e.response) != null && c.ok && (o != null && o.startsWith("application/json")) && (e.result = await ((f = e.response) == null ? void 0 : f.json()));
+  const o = ((c = e.response) == null ? void 0 : c.headers.get("Content-Type")) || "";
+  (u = e.response) != null && u.ok && (o != null && o.startsWith("application/json")) && (e.result = await ((f = e.response) == null ? void 0 : f.json()));
 }, hn = async (e, r) => {
-  var u, c, f, a;
+  var c, u, f, a;
   const n = e.requestOptions.headers, o = O.getToken();
-  if (o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), n.eid = 0, n.oid = O.getOrgId(), n["Accept-Language"] = O.getLanguage(), n["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await r(), !((u = e.response) != null && u.ok)) {
+  if (o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), n.eid = 0, n.oid = O.getOrgId(), n["Accept-Language"] = O.getLanguage(), n["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await r(), !((c = e.response) != null && c.ok)) {
     const i = new Error("An error occurred while fetching the data.");
-    throw i.message = `${(c = e.response) == null ? void 0 : c.status}|${await ((f = e.response) == null ? void 0 : f.text()) || ""}`, i;
+    throw i.message = `${(u = e.response) == null ? void 0 : u.status}|${await ((f = e.response) == null ? void 0 : f.text()) || ""}`, i;
   }
   if (((a = e.response) == null ? void 0 : a.status) !== 200)
     throw new ve(JSON.stringify(e.result), 500, e.response.status);
