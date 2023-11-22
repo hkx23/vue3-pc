@@ -14,6 +14,8 @@ export interface CommonSearch {
   pageNum?: number;
   /** @format int32 */
   pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
   keyword?: string;
   parentId?: string;
   category?: string;
@@ -108,6 +110,98 @@ export type User = {
   mpersonId?: string;
 } | null;
 
+/** 响应数据 */
+export type ParamGroup = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  paramDomain?: string;
+  paramGroupCode?: string;
+  paramGroupName?: string;
+  paramGroupDesc?: string;
+  /** @format int32 */
+  isSys?: number;
+  paramDataType?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultParamGroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ParamGroup;
+}
+
+/** 响应数据 */
+export type Param = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  paramCode?: string;
+  paramValue?: string;
+  paramDesc?: string;
+  /** @format int32 */
+  seq?: number;
+  sparamGroupId?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultParam {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Param;
+}
+
 /** 当前用户实体 */
 export type CurrentUserVO = {
   /** 用户名 */
@@ -172,7 +266,7 @@ export type ShowModuleVO = {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://localhost:7200
+ * @baseUrl http://192.168.1.6:7200
  *
  * scm项目API汇总
  */
@@ -220,6 +314,187 @@ export const api = {
     currentUserInfo: () =>
       http.request<ResultCurrentUserVO['data']>(`/api/system/user/currentUserInfo`, {
         method: 'GET',
+      }),
+  },
+  paramGroup: {
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name Search
+     * @request POST:/paramGroup/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/system/paramGroup/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name GetItemById
+     * @request POST:/paramGroup/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultParamGroup['data']>(`/api/system/paramGroup/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name List
+     * @request GET:/paramGroup/list
+     * @secure
+     */
+    list: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pageNum?: number;
+      /**
+       * @format int32
+       * @default 10
+       */
+      pageSize?: number;
+      /** @default "" */
+      keyword?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/system/paramGroup/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name Getlist
+     * @request GET:/paramGroup/getlist
+     * @secure
+     */
+    getlist: (query?: {
+      /** @default "" */
+      keyword?: string;
+      /**
+       * @format int32
+       * @default 1
+       */
+      pagenum?: number;
+      /**
+       * @format int32
+       * @default 20
+       */
+      pagesize?: number;
+      /** @default "" */
+      paramDomain?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/system/paramGroup/getlist`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name Getdomainlist
+     * @request GET:/paramGroup/getdomainlist
+     * @secure
+     */
+    getdomainlist: () =>
+      http.request<ResultObject['data']>(`/api/system/paramGroup/getdomainlist`, {
+        method: 'GET',
+      }),
+  },
+  param: {
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name Search
+     * @request POST:/param/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/system/param/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name GetItemById
+     * @request POST:/param/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultParam['data']>(`/api/system/param/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name List
+     * @request GET:/param/list
+     * @secure
+     */
+    list: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pageNum?: number;
+      /**
+       * @format int32
+       * @default 10
+       */
+      pageSize?: number;
+      /** @default "" */
+      keyword?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/system/param/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name Getlist
+     * @request GET:/param/getlist
+     * @secure
+     */
+    getlist: (query?: {
+      /** @default "" */
+      keyword?: string;
+      /**
+       * @format int32
+       * @default 1
+       */
+      pagenum?: number;
+      /**
+       * @format int32
+       * @default 20
+       */
+      pagesize?: number;
+      /** @default "" */
+      parmGroupId?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/system/param/getlist`, {
+        method: 'GET',
+        params: query,
       }),
   },
   module: {
