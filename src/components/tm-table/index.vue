@@ -41,11 +41,9 @@
           :data="finalTableData"
           :loading="loading"
           :selected-row-keys="selectedRowKeys"
-          :expanded-row-keys="expandedRowKeys"
           v-bind="$attrs"
           :style="{ width: tableWidth + 'px' }"
           @select-change="onSelectKeysChange"
-          @expand-change="onExpandKeysChange"
           @filter-change="onFilterChange"
           @sort-change="sortChange"
         >
@@ -54,11 +52,11 @@
           </template>
         </t-table>
       </div>
-      <div class="table-box__pagination">
+      <div v-if="showPagination" class="table-box__pagination">
         <t-pagination
           :loading="loading"
-          :current="pagination.page"
-          :page-size="pagination.rows"
+          :current="pagination.pageIndex"
+          :page-size="pagination.pageSize"
           :total="total"
           :disabled="loading"
           show-jumper
@@ -106,8 +104,6 @@ import {
 // import { useSettingStore } from '@/store';
 import excelUtils from '@/utils/excel';
 
-import { useTable } from './common/hook';
-
 type TableData = any[];
 type Filters = { [key: string]: any };
 interface SortListElement {
@@ -148,8 +144,12 @@ const props = defineProps({
   pagination: {
     type: Object,
     default: () => {
-      return { page: 1, rows: 10 };
+      return { pageIndex: 1, pageSize: 10 };
     },
+  },
+  showPagination: {
+    type: Boolean,
+    default: true,
   },
   loading: { type: Boolean, default: false },
   rowKey: { type: String, default: 'id' },
@@ -157,11 +157,14 @@ const props = defineProps({
   exportFunction: { type: Function },
 });
 
-const emit = defineEmits(['refresh', 'update:pagination']);
+const emit = defineEmits(['refresh', 'update:pagination', 'select-change']);
 
 // const settingStore = useSettingStore();
-
-const { selectedRowKeys, expandedRowKeys, onSelectKeysChange, onExpandKeysChange } = useTable();
+const selectedRowKeys = ref<number[]>([]);
+function onSelectKeysChange(val: number[]): void {
+  selectedRowKeys.value = val;
+  emit('select-change', val);
+}
 
 const formRef = ref();
 // 远程条件
@@ -194,7 +197,6 @@ const data: {
 //   openSearchForm: false, // 是否展开搜索表单
 //   colConfigs: {}, // 列配置
 // });
-
 // 列配置相关
 props.tableColumn.forEach((item) => {
   if (item.colKey !== 'row-select' && item.colKey !== 'op') {
@@ -242,14 +244,14 @@ const onAllColConfig = (type: string) => {
 };
 
 // 页码相关
-const onPaginationChange = (e: { pageSize: any; current: number }) => {
+const onPaginationChange = (e: { pageSize: any; pageIndex: number }) => {
   tableRef.value.scrollToElement({ index: 0 });
   selectedRowKeys.value = [];
-  expandedRowKeys.value = [];
+  // expandedRowKeys.value = [];
   if (props.pagination.rows !== e.pageSize) {
-    e.current = 1;
+    e.pageIndex = 1;
   }
-  emit('update:pagination', { page: e.current, rows: e.pageSize });
+  emit('update:pagination', { pageIndex: e.pageIndex, pageSize: e.pageSize });
   emit('refresh');
 };
 const onFilterChange = (filters: Filters, ctx: any) => {
@@ -348,7 +350,7 @@ const handleSortAndFilter = () => {
 // 刷新表格
 const onRefresh = () => {
   selectedRowKeys.value = [];
-  expandedRowKeys.value = [];
+  // expandedRowKeys.value = [];
   emit('refresh');
 };
 

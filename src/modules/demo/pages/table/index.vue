@@ -2,7 +2,6 @@
   <tm-table
     ref="tableRef"
     v-model:pagination="pageUI"
-    :params="formData"
     :table-column="tableColumn"
     :table-data="data.list"
     :enable-export="enableExport"
@@ -40,15 +39,6 @@ const tableRef = ref();
 
 const enableExport = ref(false);
 
-const formData = reactive({
-  name: '',
-  dealer: '',
-  status: '',
-  category: '',
-  date: '',
-  rangetime: [],
-});
-
 const data = reactive({
   total: 0,
   list: [],
@@ -58,7 +48,7 @@ const data = reactive({
 const fetchData = () => {
   setLoading(true);
   setTimeout(() => {
-    data.list = apiMockData(pageUI.value.rows);
+    data.list = apiMockData(pageUI.value.pageIndex);
     data.total = data.list.length * 30;
     setLoading(false);
   }, 600);
@@ -101,7 +91,7 @@ const onHandleEdit = (row: any) => {
 const apiMockData = (length: number) => {
   return Array.from({ length }).map((item, index) => {
     return {
-      id: `${pageUI.value.page}-${index + 1}`,
+      id: `${pageUI.value.pageIndex}-${index + 1}`,
       name: `user${index + 1}`,
       age: Math.floor(Math.random() * 100),
       avatar: 'https://th.bing.com/th/id/OIP.5CeSOSjy8zeN7nj56XMbqQHaHa?w=171&h=180&c=7&r=0&o=5&pid=1.7',

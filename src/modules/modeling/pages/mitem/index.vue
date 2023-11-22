@@ -19,22 +19,21 @@
           <t-checkbox-group v-model="mitemTypeSelect" :options="mitemTypeOptions" />
         </t-row>
         <t-row justify="space-between">
-          <t-table
+          <tm-table
+            v-model:pagination="pageUI"
             row-key="id"
-            :columns="tableMitemColumns"
-            :data="tableDataMitem"
-            :loading="dataLoading"
-            :hover="true"
-            :pagination="tableMitemPagination"
-            :selected-row-keys="selectedMitemRowKeys"
-            @page-change="onPageChange"
+            :table-column="tableMitemColumns"
+            :table-data="tableDataMitem"
+            :loading="loading"
+            :total="dataTotal"
+            @refresh="fetchTable"
           >
             <template #op="slotProps">
               <t-space>
                 <t-icon name="edit" @click="onEditRowClick(slotProps)" />
               </t-space>
             </template>
-          </t-table>
+          </tm-table>
         </t-row>
       </div>
     </div>
@@ -59,13 +58,17 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/modeling';
+import TmTable from '@/components/tm-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
 
 import MitemForm from './form.vue';
 
+const { pageUI } = usePage();
+const { loading, setLoading } = useLoading();
 const keyword = ref('');
 const selectedMitemRowKeys = ref([]);
 const tableDataMitem = ref([]);
-const dataLoading = ref(false);
 const mitemTypeOptions = ref(['原材料', '半成品', '成品']);
 const mitemTypeSelect = ref([]);
 const sortlist = ref([]);
@@ -74,7 +77,7 @@ const formVisible = ref(false);
 const formRef = ref(null);
 
 const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '序号', colKey: 'serial-number', width: 64 },
+  { title: '序号', colKey: 'serial-number', width: 74 },
   { title: '物料编码', width: 160, colKey: 'mitemCode' },
   { title: '物料名称', width: 160, colKey: 'mitemName' },
   { title: '物料描述', width: 160, colKey: 'mitemDesc' },
@@ -86,8 +89,6 @@ const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '是否原材料', width: 160, colKey: 'isRawName' },
   { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
-const tableMitemPagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
-
 // 查询按钮
 const onRefresh = () => {
   fetchTable();
@@ -96,9 +97,10 @@ const onRefresh = () => {
 const onReset = () => {
   keyword.value = '';
 };
+const dataTotal = ref(0);
 
 const fetchTable = async () => {
-  dataLoading.value = true;
+  setLoading(true);
   try {
     selectedMitemRowKeys.value = [];
     tableDataMitem.value = [];
@@ -107,17 +109,17 @@ const fetchTable = async () => {
       isRaw: mitemTypeSelect.value.find((n) => n === '原材料') != null ? 1 : 0,
       isInProcess: mitemTypeSelect.value.find((n) => n === '半成品') != null ? 1 : 0,
       isProduct: mitemTypeSelect.value.find((n) => n === '成品') != null ? 1 : 0,
-      pageNum: tableMitemPagination.value.defaultCurrent,
-      pageSize: tableMitemPagination.value.defaultPageSize,
+      pageNum: pageUI.value.pageIndex,
+      pageSize: pageUI.value.pageIndex,
       sorts: sortlist.value,
       filters: filterlist.value,
     })) as any;
     tableDataMitem.value = data.list;
-    tableMitemPagination.value = { ...tableMitemPagination.value, total: data.total };
+    dataTotal.value = data.total;
   } catch (e) {
     console.log(e);
   } finally {
-    dataLoading.value = false;
+    setLoading(false);
   }
 };
 
@@ -132,12 +134,6 @@ const onConfirmForm = async () => {
     formVisible.value = false;
     fetchTable();
   });
-};
-
-const onPageChange = (curr: any) => {
-  tableMitemPagination.value.defaultCurrent = curr.current;
-  tableMitemPagination.value.defaultPageSize = curr.pageSize;
-  fetchTable();
 };
 
 onMounted(() => {
