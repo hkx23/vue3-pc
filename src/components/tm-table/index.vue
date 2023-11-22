@@ -55,8 +55,8 @@
       <div v-if="showPagination" class="table-box__pagination">
         <t-pagination
           :loading="loading"
-          :current="pagination.pageIndex"
-          :page-size="pagination.pageSize"
+          :current="pagination.page"
+          :page-size="pagination.rows"
           :total="total"
           :disabled="loading"
           show-jumper
@@ -144,7 +144,7 @@ const props = defineProps({
   pagination: {
     type: Object,
     default: () => {
-      return { pageIndex: 1, pageSize: 10 };
+      return { page: 1, rows: 10 };
     },
   },
   showPagination: {
@@ -244,14 +244,14 @@ const onAllColConfig = (type: string) => {
 };
 
 // 页码相关
-const onPaginationChange = (e: { pageSize: any; pageIndex: number }) => {
+const onPaginationChange = (e: { pageSize: any; current: number }) => {
   tableRef.value.scrollToElement({ index: 0 });
   selectedRowKeys.value = [];
   // expandedRowKeys.value = [];
   if (props.pagination.rows !== e.pageSize) {
-    e.pageIndex = 1;
+    e.current = 1;
   }
-  emit('update:pagination', { pageIndex: e.pageIndex, pageSize: e.pageSize });
+  emit('update:pagination', { page: e.current, rows: e.pageSize });
   emit('refresh');
 };
 const onFilterChange = (filters: Filters, ctx: any) => {
@@ -350,7 +350,7 @@ const handleSortAndFilter = () => {
 // 刷新表格
 const onRefresh = () => {
   selectedRowKeys.value = [];
-  // expandedRowKeys.value = [];
+  expandedRowKeys.value = [];
   emit('refresh');
 };
 

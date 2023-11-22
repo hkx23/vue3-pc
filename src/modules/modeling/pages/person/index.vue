@@ -263,8 +263,8 @@ const fetchTable = async () => {
       sorttype: '',
       filterfield: '',
       filter: '',
-      pagenum: pageUI.value.pageIndex,
-      pagesize: pageUI.value.pageSize,
+      pagenum: pageUI.value.page,
+      pagesize: pageUI.value.rows,
     })) as any;
 
     dataTable.value = data.list;

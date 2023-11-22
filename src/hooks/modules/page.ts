@@ -6,7 +6,7 @@ import { ref } from 'vue';
  * @returns {pageUI} 当前页码状态
  */
 
-export const usePage = (initValue = { pageIndex: 1, pageSize: 10 }) => {
+export const usePage = (initValue = { page: 1, rows: 10 }) => {
   const pageUI = ref(initValue);
 
   return {

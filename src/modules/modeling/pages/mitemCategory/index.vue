@@ -139,8 +139,8 @@ const fetchTable = async () => {
     tableDataMitem.value = [];
     const data = await getList({
       keyword: keyword.value,
-      pagenum: pageUI.value.pageIndex,
-      pagesize: pageUI.value.pageSize,
+      pagenum: pageUI.value.page,
+      pagesize: pageUI.value.rows,
     });
     tableDataMitemCategory.value = data.list;
     dataTotal.value = data.total;
@@ -157,8 +157,8 @@ const fetchMitemTable = async () => {
     const data = await getMitemList({
       keyword: '',
       mitemcategoryid: selectCategoryID.value,
-      pagenum: pageMitem.value.pageIndex,
-      pagesize: pageMitem.value.pageSize,
+      pagenum: pageMitem.value.page,
+      pagesize: pageMitem.value.rows,
     });
     tableDataMitem.value = data.list;
     mitemTotal.value = data.total;

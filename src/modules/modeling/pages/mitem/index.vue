@@ -109,8 +109,8 @@ const fetchTable = async () => {
       isRaw: mitemTypeSelect.value.find((n) => n === '原材料') != null ? 1 : 0,
       isInProcess: mitemTypeSelect.value.find((n) => n === '半成品') != null ? 1 : 0,
       isProduct: mitemTypeSelect.value.find((n) => n === '成品') != null ? 1 : 0,
-      pageNum: pageUI.value.pageIndex,
-      pageSize: pageUI.value.pageIndex,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
       sorts: sortlist.value,
       filters: filterlist.value,
     })) as any;

@@ -106,7 +106,7 @@ watch(
   (newValue, oldValue) => {
     if (oldValue !== newValue) {
       console.log(oldValue !== newValue);
-      pageUI.value.pageIndex = 1;
+      pageUI.value.page = 1;
     }
   },
 );
@@ -125,8 +125,8 @@ const featCustomer = async () => {
     setLoading(true);
     const res = await customerSearch({
       keyword: keyword.value,
-      pageNum: pageUI.value.pageIndex,
-      pageSize: pageUI.value.pageSize,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
       sorts: [],
       filters: [],
     });
@@ -166,7 +166,7 @@ const onHandleQuery = debounce(() => {
 // 重置
 const onHandleResetting = () => {
   keyword.value = '';
-  pageUI.value.pageIndex = 1;
+  pageUI.value.page = 1;
   customerQuery();
 };
 
