@@ -92,6 +92,8 @@ export interface CommonSearch {
   pageNum?: number;
   /** @format int32 */
   pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
   keyword?: string;
   parentId?: string;
   category?: string;
@@ -614,23 +616,33 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   mmitemCategoryId?: string;
-  mmitemCategoryCode?: string;
   mmitemCategoryName?: string;
-  wwarehouseId?: string;
-  stateName?: string;
+  mmitemCategoryCode?: string;
   /** @format int32 */
   wwarehouseCode?: number;
+  isBatchName?: string;
+  isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
   /** @format int32 */
   wwarehouseName?: number;
-  isProductName?: string;
-  isInProcessName?: string;
-  isRawName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isProductChecked?: boolean;
+  wwarehouseId?: string;
+  isState?: boolean;
+  stateName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+}
+
+export interface CustomerSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  keyword?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
 }
 
 /** 响应数据 */
@@ -1454,7 +1466,7 @@ export const api = {
      * @request POST:/customer/items
      * @secure
      */
-    search: (data: CommonSearch) =>
+    search: (data: CustomerSearch) =>
       http.request<ResultObject['data']>(`/api/modeling/customer/items`, {
         method: 'POST',
         body: data as any,

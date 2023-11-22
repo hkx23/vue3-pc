@@ -201,6 +201,10 @@ const popupVisible = ref(false);
 
 // 查询关键字
 const selectSearch = ref('');
+
+// 选中默认值
+const defaultValue = ref('');
+
 // const popupVisible = ref(false);
 
 const filterList = ref([]);
@@ -453,6 +457,8 @@ const remoteLoad = async (val: any) => {
   const searchCondition = {
     pageNum: pagination.value.current,
     pageSize: pagination.value.pageSize,
+    selectedField: props.keywords.value,
+    selectedValue: defaultValue.value,
     keyword: selectSearch.value,
     category: props.category,
     parentId: props.parentId,
@@ -480,6 +486,7 @@ const remoteLoad = async (val: any) => {
     // 单选-如果完全匹配，直接选中
     radioCSelectRedirct(val);
     loading.value = false;
+    defaultValue.value = '';
     isHandleSelectionChange.value = false;
     tempCondition.value = searchCondition;
   }
@@ -608,7 +615,7 @@ const sortChange = (val: any) => {
 watch(
   () => props.value,
   (val) => {
-    console.log('watch:props.value', val);
+    console.log('watch:props.value', `${props.title} ss ${val}`);
 
     nextTick(() => {
       // 多选
@@ -628,6 +635,7 @@ watch(
       } else if (!isHandleSelectionChange.value) {
         console.log('remoteLoad-按默认值查询');
         selectSearch.value = props.value.toString();
+        defaultValue.value = props.value.toString();
         remoteLoad(props.value);
       }
       isHandleSelectionChange.value = false;

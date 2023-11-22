@@ -14,6 +14,8 @@ export interface CommonSearch {
   pageNum?: number;
   /** @format int32 */
   pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
   keyword?: string;
   parentId?: string;
   category?: string;
@@ -172,7 +174,7 @@ export type ShowModuleVO = {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://192.168.1.6:7200
+ * @baseUrl http://localhost:7200
  *
  * scm项目API汇总
  */
