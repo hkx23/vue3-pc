@@ -146,7 +146,7 @@ export default {
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-import { api } from '@/api/modeling';
+import { api } from '@/api/main';
 
 import { getAdminOrgList } from '../../api/adminOrg';
 

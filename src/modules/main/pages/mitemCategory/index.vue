@@ -74,7 +74,7 @@
 import { DialogPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-import { api } from '@/api/modeling';
+import { api } from '@/api/main';
 
 import { getList, getMitemList } from '../../api/mitemCategory';
 import MitemCategoryForm from './form.vue';

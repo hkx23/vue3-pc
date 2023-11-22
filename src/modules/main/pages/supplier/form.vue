@@ -19,7 +19,7 @@
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-// import { api } from '@/api/modeling';
+// import { api } from '@/api/main';
 
 export default {
   name: 'SupplierForm',

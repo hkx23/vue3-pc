@@ -1,7 +1,7 @@
 import { FormInstanceFunctions } from 'tdesign-vue-next';
 import { Ref } from 'vue';
 
-import { OrgTreeVO } from '@/api/modeling';
+import { OrgTreeVO } from '@/api/main';
 
 export interface FormRef {
   form: Ref<FormInstanceFunctions>;

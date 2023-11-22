@@ -31,7 +31,7 @@ export default {
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
-import { api, Org, OrgTreeVO } from '@/api/modeling';
+import { api, Org, OrgTreeVO } from '@/api/main';
 
 import { getOrgLevelDic } from '../../api/orgLevel';
 import { FormRef } from './constants';

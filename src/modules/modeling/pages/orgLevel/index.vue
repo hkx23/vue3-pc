@@ -41,7 +41,7 @@ import { AddIcon, RemoveIcon } from 'tdesign-icons-vue-next';
 import { EnhancedTableInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 
-import { api, OrgLevel } from '@/api/modeling';
+import { api, OrgLevel } from '@/api/main';
 
 import { FormRef } from './constants';
 import OrgLevelForm from './form.vue';

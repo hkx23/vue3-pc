@@ -58,7 +58,7 @@
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-import { api } from '@/api/modeling';
+import { api } from '@/api/main';
 
 import MitemForm from './form.vue';
 

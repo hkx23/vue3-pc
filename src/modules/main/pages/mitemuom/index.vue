@@ -71,7 +71,7 @@
 import { FormRules, Icon, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
-import { api } from '@/api/modeling';
+import { api } from '@/api/main';
 
 const showDialog = ref(false); // 控制新增模态框开关
 const tableMitemPagination = ref({ defaultPageSize: 5, total: 0, defaultCurrent: 1, showJumper: true }); // 分页参数

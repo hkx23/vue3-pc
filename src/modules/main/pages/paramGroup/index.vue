@@ -152,7 +152,7 @@ import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 import { VueDraggable } from 'vue-draggable-plus';
 
-import { api } from '@/api/system';
+import { api } from '@/api/main';
 
 // 页签
 const tabModuleList = ref([]);

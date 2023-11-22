@@ -1,0 +1,2284 @@
+/* eslint-disable */
+/* tslint:disable */
+/*
+ * ---------------------------------------------------------------
+ * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
+ * ##                                                           ##
+ * ## AUTHOR: acacode                                           ##
+ * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
+ * ---------------------------------------------------------------
+ */
+
+export interface OrgLevel {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  levelCode?: string;
+  levelName?: string;
+  parentLevelId?: string;
+  /** @format int32 */
+  levelSeq?: number;
+  /** @format int32 */
+  divisionFlag?: number;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+export interface Org {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  orgCode?: string;
+  orgName?: string;
+  orgDesc?: string;
+  parentOrgId?: string;
+  levelCode?: string;
+  /** @format int32 */
+  isActive?: number;
+}
+
+export interface CommonSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+export interface Filter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  value?: string;
+}
+
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataWorkgroup = {
+  list?: Workgroup[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkgroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkgroup;
+}
+
+export interface Workgroup {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workgroupCode?: string;
+  workgroupName?: string;
+  workgroupDesc?: string;
+  workshopId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultWorkgroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Workgroup;
+}
+
+/** 通用响应类 */
+export interface ResultUser {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: User;
+}
+
+/** 响应数据 */
+export type User = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  userName?: string;
+  displayName?: string;
+  password?: string;
+  /** @format date-time */
+  timeLastActivity?: string;
+  /** @format date-time */
+  timeLastLogin?: string;
+  /** @format date-time */
+  timeLastPasswordChanged?: string;
+  /** @format int32 */
+  isOnline?: number;
+  /** @format int32 */
+  isLockedOut?: number;
+  /** @format date-time */
+  timeLastLockedOut?: string;
+  /** @format int32 */
+  failedAttemptCount?: number;
+  /** @format date-time */
+  timeFailedAttemptStart?: string;
+  /** @format int32 */
+  accountType?: number;
+  /** @format date-time */
+  timeExpiration?: string;
+  personId?: string;
+} | null;
+
+/** 响应数据 */
+export type PagingDataSupplier = {
+  list?: Supplier[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSupplier {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSupplier;
+}
+
+export interface Supplier {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  supplierCode?: string;
+  supplierName?: string;
+  contactPerson?: string;
+  contactTel?: string;
+}
+
+/** 通用响应类 */
+export interface ResultSupplier {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Supplier;
+}
+
+/** 响应数据 */
+export type PagingDataPost = {
+  list?: Post[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface Post {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  postCode?: string;
+  postName?: string;
+  postDesc?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPost {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPost;
+}
+
+/** 通用响应类 */
+export interface ResultPost {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Post;
+}
+
+/** 响应数据 */
+export type PagingDataPerson = {
+  list?: Person[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface Person {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  personCode?: string;
+  personName?: string;
+  /** @format int32 */
+  gender?: number;
+  email?: string;
+  mobilePhone?: string;
+  adminOrgId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPerson {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPerson;
+}
+
+/** 通用响应类 */
+export interface ResultPerson {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Person;
+}
+
+/** 显示员工实体 */
+export interface PersonVO {
+  id?: string;
+  /** 人员编码 */
+  personCode?: string;
+  /** 姓名 */
+  personName?: string;
+  /**
+   * 性别
+   * @format int32
+   */
+  gender?: number;
+  /** 手机 */
+  mobilePhone?: string;
+  /** 邮箱 */
+  email?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 性别别名 */
+  genderName?: string;
+  /** 状态别名 */
+  stateName?: string;
+  /** 是否启用 */
+  isState?: boolean;
+}
+
+/** 响应数据 */
+export type ParamGroup = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  paramDomain?: string;
+  paramGroupCode?: string;
+  paramGroupName?: string;
+  paramGroupDesc?: string;
+  /** @format int32 */
+  isSys?: number;
+  paramDataType?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultParamGroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ParamGroup;
+}
+
+export interface Param {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  paramGroupId?: string;
+  paramCode?: string;
+  paramValue?: string;
+  paramDesc?: string;
+  /** @format int32 */
+  seq?: number;
+}
+
+export interface ParamInfoDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  paramGroupId?: string;
+  paramCode?: string;
+  paramValue?: string;
+  paramDesc?: string;
+  /** @format int32 */
+  seq?: number;
+  details?: Param[];
+}
+
+/** 通用响应类 */
+export interface ResultParam {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Param;
+}
+
+/** 响应数据 */
+export type PagingDataOrg = {
+  list?: Org[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataOrg;
+}
+
+/** 通用响应类 */
+export interface ResultOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Org;
+}
+
+/** 显示计量单位 */
+export interface MitemUomVo {
+  id?: string;
+  /** 计量单位 */
+  uom?: string;
+  /** 计量单位符号 */
+  uomSymbol?: string;
+}
+
+export interface MitemUomSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  uom?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+export interface MitemUom {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  uom?: string;
+  uomSymbol?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemUom = {
+  list?: MitemUom[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemUom {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemUom;
+}
+
+export interface MitemInSupplierSearch {
+  mitemKeyword?: string;
+  supplierKeyword?: string;
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+export interface MitemInSupplier {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  supplierId?: string;
+  mitemId?: string;
+  /** @format int32 */
+  qty?: number;
+  inspectionStringency?: string;
+  /** @format int32 */
+  isExemptionInspection?: number;
+  /** @format int32 */
+  isForceInspection?: number;
+  /** @format date-time */
+  dateExemptionExpired?: string;
+}
+
+export interface MitemCategory {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  categoryDesc?: string;
+  reqCalcRule?: string;
+  onboardRuleCode?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemCategory = {
+  list?: MitemCategory[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemCategory {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemCategory;
+}
+
+/** 通用响应类 */
+export interface ResultMitemCategory {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: MitemCategory;
+}
+
+/** 显示物料实体 */
+export interface MitemVO {
+  id?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 供应方式 */
+  supplyCategory?: string;
+  /** 单位 */
+  uom?: string;
+  /**
+   * 是否成品，1：是；0：否
+   * @format int32
+   */
+  isProduct?: number;
+  /**
+   * 是否原材料，1：是；0：否
+   * @format int32
+   */
+  isRaw?: number;
+  /**
+   * 是否半成品,1：是；0：否
+   * @format int32
+   */
+  isInProcess?: number;
+  /**
+   * 保质期天数
+   * @format int32
+   */
+  shelfLifeDays?: number;
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
+  isBatchNo?: number;
+  wwarehouseId?: string;
+  mmitemCategoryId?: string;
+  mmitemCategoryCode?: string;
+  mmitemCategoryName?: string;
+  /** @format int32 */
+  wwarehouseCode?: number;
+  /** @format int32 */
+  wwarehouseName?: number;
+  isState?: boolean;
+  isProductName?: string;
+  isProductChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
+  stateName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemVO = {
+  list?: MitemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemVO;
+}
+
+/** 响应数据 */
+export type Mitem = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  mitemCategoryId?: string;
+  supplyCategory?: string;
+  uom?: string;
+  /** @format int32 */
+  isProduct?: number;
+  /** @format int32 */
+  isRaw?: number;
+  /** @format int32 */
+  isInProcess?: number;
+  warehouseId?: string;
+  /** @format int32 */
+  shelfLifeDays?: number;
+  /** @format int32 */
+  isBatchNo?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMitem {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Mitem;
+}
+
+export interface MitemSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  keyword?: string;
+  /** @format int32 */
+  isRaw?: number;
+  /** @format int32 */
+  isInProcess?: number;
+  /** @format int32 */
+  isProduct?: number;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+/** 物料服务间调用标准实体 */
+export type MitemFeignDTO = {
+  id?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 物料类别编码 */
+  categoryCode?: string;
+  /** 物料类别名称 */
+  categoryName?: string;
+  /** 物料类别描述 */
+  categoryDesc?: string;
+  /** 供应方式 */
+  supplyCategory?: string;
+  /** 单位 */
+  uom?: string;
+  /**
+   * 是否成品，1：是；0：否
+   * @format int32
+   */
+  isProduct?: number;
+  /**
+   * 是否原材料，1：是；0：否
+   * @format int32
+   */
+  isRaw?: number;
+  /**
+   * 是否半成品,1：是；0：否
+   * @format int32
+   */
+  isInProcess?: number;
+  /**
+   * 保质期天数
+   * @format int32
+   */
+  shelfLifeDays?: number;
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
+  isBatchNo?: number;
+  wwarehouseId?: string;
+  mmitemCategoryId?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListMitemFeignDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MitemFeignDTO[] | null;
+}
+
+export interface Customer {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  customerCode?: string;
+  customerName?: string;
+  shortName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataCustomer = {
+  list?: Customer[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataCustomer {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataCustomer;
+}
+
+/** 通用响应类 */
+export interface ResultCustomer {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Customer;
+}
+
+export interface JSONObject {
+  innerMap?: Record<string, object>;
+  empty?: boolean;
+  [key: string]: any;
+}
+
+/** 响应数据 */
+export type AttendanceMode = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  modeCode?: string;
+  modeName?: string;
+  modeDesc?: string;
+  expression?: string;
+  shiftCode?: string;
+  memo?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultAttendanceMode {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AttendanceMode;
+}
+
+/** 当前用户实体 */
+export type CurrentUserVO = {
+  /** 用户名 */
+  userName?: string;
+  /** 显示名称 */
+  displayName?: string;
+  mpersonId?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultCurrentUserVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 当前用户实体 */
+  data?: CurrentUserVO;
+}
+
+/** 显示组织层级实体 */
+export type OrgLevelTreeVO = {
+  id?: string;
+  /** 组织层级编码 */
+  levelCode?: string;
+  /** 组织层级名称 */
+  levelName?: string;
+  /**
+   * 层级序列
+   * @format int32
+   */
+  levelSeq?: number;
+  /**
+   * 区隔标记，1表示库存组织，默认0
+   * @format int32
+   */
+  divisionFlag?: number;
+  /** 子层级 */
+  children?: OrgLevelTreeVO[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultListOrgLevelTreeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: OrgLevelTreeVO[] | null;
+}
+
+/** 显示组织层级实体 */
+export type OrgTreeVO = {
+  id?: string;
+  /** 组织层级编码 */
+  levelCode?: string;
+  /** 组织层级名称 */
+  levelName?: string;
+  /** 子层级 */
+  children?: OrgTreeVO[];
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 组织描述 */
+  orgDesc?: string;
+  parentOrgId?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListOrgTreeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: OrgTreeVO[] | null;
+}
+
+/** 菜单元数据 */
+export interface ModuleMetaVO {
+  /** 名称，多语言 */
+  title?: Record<string, string>;
+  /** 图标路径 */
+  icon?: string;
+  /** frame路径 */
+  frameSrc?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListShowModuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ShowModuleVO[] | null;
+}
+
+/** 显示菜单实体 */
+export type ShowModuleVO = {
+  /** 地址 */
+  path?: string;
+  /** 名称 */
+  name?: string;
+  /** 类型 */
+  component?: string;
+  /** 重定向地址 */
+  redirect?: string;
+  /** 菜单元数据 */
+  meta?: ModuleMetaVO;
+  /** 子菜单 */
+  children?: ShowModuleVO[];
+} | null;
+
+/**
+ * @title scm项目
+ * @version v1
+ * @baseUrl http://192.168.1.6:7210
+ *
+ * scm项目API汇总
+ */
+
+export const api = {
+  orgLevel: {
+    /**
+     * No description
+     *
+     * @tags 组织层级
+     * @name Update
+     * @summary 修改组织层级
+     * @request PUT:/orgLevel/update
+     * @secure
+     */
+    update: (data: OrgLevel) =>
+      http.request<ResultObject['data']>(`/api/main/orgLevel/update`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织层级
+     * @name Add
+     * @summary 新增组织层级
+     * @request POST:/orgLevel/add
+     * @secure
+     */
+    add: (data: OrgLevel) =>
+      http.request<ResultObject['data']>(`/api/main/orgLevel/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织层级
+     * @name Tree
+     * @summary 获取组织层级树
+     * @request GET:/orgLevel/tree
+     * @secure
+     */
+    tree: () =>
+      http.request<ResultListOrgLevelTreeVO['data']>(`/api/main/orgLevel/tree`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织层级
+     * @name Delete
+     * @summary 删除组织层级，包括子集
+     * @request DELETE:/orgLevel/delete
+     * @secure
+     */
+    delete: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/main/orgLevel/delete`, {
+        method: 'DELETE',
+        params: query,
+      }),
+  },
+  org: {
+    /**
+     * No description
+     *
+     * @tags 组织架构表
+     * @name Update
+     * @summary 修改组织
+     * @request PUT:/org/update
+     * @secure
+     */
+    update: (data: Org) =>
+      http.request<ResultObject['data']>(`/api/main/org/update`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
+     * @name Search
+     * @request POST:/org/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataOrg['data']>(`/api/main/org/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
+     * @name GetItemById
+     * @request POST:/org/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultOrg['data']>(`/api/main/org/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
+     * @name Add
+     * @summary 新增组织
+     * @request POST:/org/add
+     * @secure
+     */
+    add: (data: Org) =>
+      http.request<ResultObject['data']>(`/api/main/org/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
+     * @name Tree
+     * @summary 获取组织树
+     * @request GET:/org/tree
+     * @secure
+     */
+    tree: () =>
+      http.request<ResultListOrgTreeVO['data']>(`/api/main/org/tree`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
+     * @name Delete
+     * @summary 删除组织，包括子集
+     * @request DELETE:/org/delete
+     * @secure
+     */
+    delete: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/main/org/delete`, {
+        method: 'DELETE',
+        params: query,
+      }),
+  },
+  workgroup: {
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name Search
+     * @request POST:/workgroup/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataWorkgroup['data']>(`/api/main/workgroup/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetItemById
+     * @request POST:/workgroup/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultWorkgroup['data']>(`/api/main/workgroup/items/${id}`, {
+        method: 'POST',
+      }),
+  },
+  user: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Search
+     * @summary 获取用户信息列表
+     * @request POST:/user/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/user/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetItemById
+     * @summary 根据ID获取用户信息
+     * @request POST:/user/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultUser['data']>(`/api/main/user/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name CurrentUserInfo
+     * @summary 获取当前用户
+     * @request GET:/user/currentUserInfo
+     * @secure
+     */
+    currentUserInfo: () =>
+      http.request<ResultCurrentUserVO['data']>(`/api/main/user/currentUserInfo`, {
+        method: 'GET',
+      }),
+  },
+  supplier: {
+    /**
+     * No description
+     *
+     * @tags 供应商
+     * @name Search
+     * @request POST:/supplier/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataSupplier['data']>(`/api/main/supplier/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商
+     * @name GetItemById
+     * @request POST:/supplier/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultSupplier['data']>(`/api/main/supplier/items/${id}`, {
+        method: 'POST',
+      }),
+  },
+  post: {
+    /**
+     * No description
+     *
+     * @tags 岗位
+     * @name Search
+     * @request POST:/post/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataPost['data']>(`/api/main/post/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 岗位
+     * @name GetItemById
+     * @request POST:/post/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultPost['data']>(`/api/main/post/items/${id}`, {
+        method: 'POST',
+      }),
+  },
+  person: {
+    /**
+     * No description
+     *
+     * @tags 员工表
+     * @name Search
+     * @request POST:/person/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataPerson['data']>(`/api/main/person/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 员工表
+     * @name GetItemById
+     * @request POST:/person/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultPerson['data']>(`/api/main/person/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 员工表
+     * @name Edit
+     * @summary 编辑员工信息
+     * @request POST:/person/edit
+     * @secure
+     */
+    edit: (data: PersonVO) =>
+      http.request<ResultObject['data']>(`/api/main/person/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 员工表
+     * @name Delete
+     * @summary 删除员工信息
+     * @request POST:/person/delete
+     * @secure
+     */
+    delete: (data: PersonVO) =>
+      http.request<ResultObject['data']>(`/api/main/person/delete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 员工表
+     * @name Getlist
+     * @summary 获取员工信息
+     * @request GET:/person/getlist
+     * @secure
+     */
+    getlist: (query: {
+      personcode: string;
+      personname: string;
+      sortfield: string;
+      sorttype: string;
+      filterfield: string;
+      filter: string;
+      /** @format int32 */
+      pagenum: number;
+      /** @format int32 */
+      pagesize: number;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/person/getlist`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  paramGroup: {
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name Search
+     * @request POST:/paramGroup/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/paramGroup/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name GetItemById
+     * @request POST:/paramGroup/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultParamGroup['data']>(`/api/main/paramGroup/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name List
+     * @request GET:/paramGroup/list
+     * @secure
+     */
+    list: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pageNum?: number;
+      /**
+       * @format int32
+       * @default 10
+       */
+      pageSize?: number;
+      /** @default "" */
+      keyword?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/paramGroup/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name Getlist
+     * @request GET:/paramGroup/getlist
+     * @secure
+     */
+    getlist: (query?: {
+      /** @default "" */
+      keyword?: string;
+      /**
+       * @format int32
+       * @default 1
+       */
+      pagenum?: number;
+      /**
+       * @format int32
+       * @default 20
+       */
+      pagesize?: number;
+      /** @default "" */
+      paramDomain?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/paramGroup/getlist`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name Getdomainlist
+     * @request GET:/paramGroup/getdomainlist
+     * @secure
+     */
+    getdomainlist: () =>
+      http.request<ResultObject['data']>(`/api/main/paramGroup/getdomainlist`, {
+        method: 'GET',
+      }),
+  },
+  param: {
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name Save
+     * @summary 保存系统字典数据
+     * @request POST:/param/save
+     * @secure
+     */
+    save: (data: ParamInfoDTO) =>
+      http.request<ResultObject['data']>(`/api/main/param/save`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name Search
+     * @request POST:/param/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/param/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name GetItemById
+     * @request POST:/param/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultParam['data']>(`/api/main/param/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name List
+     * @request GET:/param/list
+     * @secure
+     */
+    list: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pageNum?: number;
+      /**
+       * @format int32
+       * @default 10
+       */
+      pageSize?: number;
+      /** @default "" */
+      keyword?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/param/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name Getlist
+     * @request GET:/param/getlist
+     * @secure
+     */
+    getlist: (query?: {
+      /** @default "" */
+      keyword?: string;
+      /**
+       * @format int32
+       * @default 1
+       */
+      pagenum?: number;
+      /**
+       * @format int32
+       * @default 20
+       */
+      pagesize?: number;
+      /** @default "" */
+      parmGroupId?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/param/getlist`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  mitemUom: {
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name Search
+     * @request POST:/mitemUom/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/mitemUom/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name RemoveItemsById
+     * @summary 删除数据
+     * @request POST:/mitemUom/items/remove
+     * @secure
+     */
+    removeItemsById: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/mitemUom/items/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name UpdateItemByCode
+     * @summary 修改
+     * @request POST:/mitemUom/items/modify
+     * @secure
+     */
+    updateItemByCode: (data: MitemUomVo) =>
+      http.request<ResultObject['data']>(`/api/main/mitemUom/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name AddItem
+     * @summary 新增
+     * @request POST:/mitemUom/items/add
+     * @secure
+     */
+    addItem: (data: MitemUomVo) =>
+      http.request<ResultObject['data']>(`/api/main/mitemUom/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 计量单位
+     * @name Getlist
+     * @summary 计量单位名称查询
+     * @request POST:/mitemUom/getlist
+     * @secure
+     */
+    getlist: (data: MitemUomSearch) =>
+      http.request<ResultPagingDataMitemUom['data']>(`/api/main/mitemUom/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  mitemInSupplier: {
+    /**
+     * No description
+     *
+     * @tags 物料供应商关系
+     * @name GetMitemInSupplierList
+     * @request POST:/mitemInSupplier/getmiteminsupplierlist
+     * @secure
+     */
+    getMitemInSupplierList: (data: MitemInSupplierSearch) =>
+      http.request<ResultObject['data']>(`/api/main/mitemInSupplier/getmiteminsupplierlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料供应商关系
+     * @name Edit
+     * @request POST:/mitemInSupplier/edit
+     * @secure
+     */
+    edit: (data: MitemInSupplier) =>
+      http.request<ResultObject['data']>(`/api/main/mitemInSupplier/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料供应商关系
+     * @name Add
+     * @request POST:/mitemInSupplier/add
+     * @secure
+     */
+    add: (data: MitemInSupplier) =>
+      http.request<ResultObject['data']>(`/api/main/mitemInSupplier/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  mitemCategory: {
+    /**
+     * No description
+     *
+     * @tags 物料分类
+     * @name Search
+     * @request POST:/mitemCategory/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataMitemCategory['data']>(`/api/main/mitemCategory/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料分类
+     * @name GetItemById
+     * @request POST:/mitemCategory/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultMitemCategory['data']>(`/api/main/mitemCategory/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料分类
+     * @name Edit
+     * @request POST:/mitemCategory/edit/{id}
+     * @secure
+     */
+    edit: (id: string, data: MitemCategory) =>
+      http.request<ResultObject['data']>(`/api/main/mitemCategory/edit/${id}`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料分类
+     * @name List
+     * @request GET:/mitemCategory/list
+     * @secure
+     */
+    list: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pageNum?: number;
+      /**
+       * @format int32
+       * @default 10
+       */
+      pageSize?: number;
+      /** @default "" */
+      keyword?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/mitemCategory/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料分类
+     * @name Getlist
+     * @request GET:/mitemCategory/getlist
+     * @secure
+     */
+    getlist: (query?: {
+      /** @default "" */
+      keyword?: string;
+      /**
+       * @format int32
+       * @default 1
+       */
+      pagenum?: number;
+      /**
+       * @format int32
+       * @default 20
+       */
+      pagesize?: number;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/mitemCategory/getlist`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  mitem: {
+    /**
+     * No description
+     *
+     * @tags 物料
+     * @name Search
+     * @request POST:/mitem/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataMitemVO['data']>(`/api/main/mitem/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料
+     * @name GetItemById
+     * @request POST:/mitem/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultMitem['data']>(`/api/main/mitem/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料
+     * @name GetList
+     * @request POST:/mitem/getlist
+     * @secure
+     */
+    getList: (data: MitemSearch) =>
+      http.request<ResultObject['data']>(`/api/main/mitem/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料
+     * @name FeignListByIds
+     * @summary 服务间调用标准物料信息
+     * @request POST:/mitem/feignListByIds
+     * @secure
+     */
+    feignListByIds: (data: string[]) =>
+      http.request<ResultListMitemFeignDTO['data']>(`/api/main/mitem/feignListByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料
+     * @name Edit
+     * @request POST:/mitem/edit
+     * @secure
+     */
+    edit: (data: MitemVO) =>
+      http.request<ResultObject['data']>(`/api/main/mitem/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料
+     * @name List
+     * @request GET:/mitem/list
+     * @secure
+     */
+    list: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pageNum?: number;
+      /**
+       * @format int32
+       * @default 10
+       */
+      pageSize?: number;
+      /** @default "" */
+      keyword?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/mitem/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料
+     * @name GetListByMitemCategory
+     * @request GET:/mitem/getlistbymitemcategory
+     * @secure
+     */
+    getListByMitemCategory: (query: {
+      keyword: string;
+      /** @format int32 */
+      mitemcategoryid: number;
+      /** @format int32 */
+      pagenum: number;
+      /** @format int32 */
+      pagesize: number;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/mitem/getlistbymitemcategory`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  customer: {
+    /**
+     * No description
+     *
+     * @tags 客户
+     * @name Search
+     * @summary 客户信息查询
+     * @request POST:/customer/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataCustomer['data']>(`/api/main/customer/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 客户
+     * @name GetItemById
+     * @request POST:/customer/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultCustomer['data']>(`/api/main/customer/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 客户
+     * @name GetItemByCode
+     * @summary 列表编辑单记录查询
+     * @request POST:/customer/items/select
+     * @secure
+     */
+    getItemByCode: (data: JSONObject) =>
+      http.request<ResultCustomer['data']>(`/api/main/customer/items/select`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 客户
+     * @name UpdateItemByCode
+     * @summary 列表编辑单记录修改
+     * @request POST:/customer/items/modify
+     * @secure
+     */
+    updateItemByCode: (data: Customer) =>
+      http.request<ResultObject['data']>(`/api/main/customer/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  attendanceMode: {
+    /**
+     * No description
+     *
+     * @tags 出勤模式
+     * @name Search
+     * @request POST:/attendanceMode/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/attendanceMode/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 出勤模式
+     * @name GetItemById
+     * @request POST:/attendanceMode/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
+        method: 'POST',
+      }),
+  },
+  module: {
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name Show
+     * @summary 显示菜单
+     * @request GET:/module/show
+     * @secure
+     */
+    show: (query: {
+      /**
+       * 客户端类型
+       * @format int32
+       */
+      clientType: number;
+    }) =>
+      http.request<ResultListShowModuleVO['data']>(`/api/main/module/show`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  adminOrg: {
+    /**
+     * No description
+     *
+     * @tags 行政组织架构表
+     * @name Getlist
+     * @summary 获取员工信息
+     * @request GET:/adminOrg/getlist
+     * @secure
+     */
+    getlist: (query: {
+      /** @format int32 */
+      parent_org_id: number;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/adminOrg/getlist`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+};
