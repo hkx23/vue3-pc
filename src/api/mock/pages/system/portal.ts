@@ -146,7 +146,7 @@ export default [
                         zh_CN: '工站',
                       },
                       icon: null,
-                      frameSrc: '/modeling#/workStation',
+                      frameSrc: '/control#/workStation',
                     },
                     children: [],
                   },
@@ -160,7 +160,64 @@ export default [
                         zh_CN: '工作中心',
                       },
                       icon: null,
-                      frameSrc: '/modeling#/workCenter',
+                      frameSrc: '/control#/workCenter',
+                    },
+                    children: [],
+                  },
+                ],
+              },
+              {
+                path: 'demo',
+                name: '组件例子',
+                component: 'LAYOUT',
+                redirect: '/demo#/businessExample',
+                meta: {
+                  title: {
+                    zh_CN: '组件例子',
+                  },
+                  icon: 'museum',
+                  frameSrc: null,
+                },
+                children: [
+                  {
+                    path: 'businessExample',
+                    name: '业务选择组件例子',
+                    component: 'IFrame',
+                    redirect: null,
+                    meta: {
+                      title: {
+                        zh_CN: '业务选择组件例子',
+                      },
+                      icon: null,
+                      frameSrc: '/demo#/businessExample',
+                    },
+                    children: [],
+                  },
+                  {
+                    path: 'tableExample',
+                    name: '表格组件例子',
+                    component: 'IFrame',
+                    redirect: null,
+                    meta: {
+                      title: {
+                        zh_CN: '表格组件例子',
+                      },
+                      icon: null,
+                      frameSrc: '/demo#/tableExample',
+                    },
+                    children: [],
+                  },
+                  {
+                    path: 'module',
+                    name: '菜单',
+                    component: 'IFrame',
+                    redirect: null,
+                    meta: {
+                      title: {
+                        zh_CN: '菜单',
+                      },
+                      icon: null,
+                      frameSrc: '/system#/module',
                     },
                     children: [],
                   },

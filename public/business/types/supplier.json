@@ -27,7 +27,7 @@
   ],
   "rowKey": "id",
   "keywords": {
-    "value": "supplierCode",
+    "value": "id",
     "label": "supplierName"
   }
 }

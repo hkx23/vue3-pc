@@ -25,9 +25,11 @@
     "tvision-color": "^1.6.0",
     "vue": "^3.3.4",
     "vue-clipboard3": "^2.0.0",
+    "vue-draggable-plus": "^0.2.7",
     "vue-hooks-plus": "^1.8.5",
     "vue-i18n": "^9.6.2",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.7",

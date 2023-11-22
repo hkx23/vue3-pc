@@ -24,7 +24,7 @@ export default {
   },
   ssl: 'SSL certificate',
   sslDescription:
-    'SSL certificate, also known as a server certificate, is a digital certificate that authenticates the identity of a website and encrypts information sent to the server using SSL technology. Getech provides you with a one-stop service for SSL certificates, including application, management, and deployment of both free and paid certificates.',
+    'SSL certificate, also known as a server certificate, is a digital certificate that authenticates the identity of a website and encrypts information sent to the server using SSL technology.  provides you with a one-stop service for SSL certificates, including application, management, and deployment of both free and paid certificates.',
   satisfaction: {
     title: 'distribution of satisfaction levels for purchased goods',
     export: 'export data',

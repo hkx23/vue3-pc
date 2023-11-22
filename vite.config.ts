@@ -66,10 +66,12 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       vueJsx(),
       svgLoader(),
       vitePluginHistory(inputs),
-      swaggerApiGen({
-        baseUrl: VITE_API_URL,
-        inputs,
-      }),
+      mode === 'mock'
+        ? null
+        : swaggerApiGen({
+            baseUrl: VITE_API_URL,
+            inputs,
+          }),
       // viteCompression({
       //   deleteOriginFile: true,
       //   threshold: 10 * 1024,

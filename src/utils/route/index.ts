@@ -27,6 +27,8 @@ let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
 async function getMenuIcon(iconName: string) {
   const RenderIcon = iconsPath[`../../../node_modules/tdesign-icons-vue-next/esm/components/${iconName}.js`];
 
+  if (!RenderIcon) return null;
+
   const Icon = await RenderIcon();
   // @ts-ignore
   return shallowRef(Icon.default);

@@ -22,7 +22,7 @@
   ],
   "rowKey": "id",
   "keywords": {
-    "value": "customerCode",
+    "value": "id",
     "label": "customerName"
   }
 }

@@ -1,6 +1,8 @@
 <template>
   <div>
+    <!-- 子from -->
     <detailed v-if="detailedShow" @added-show="onHandleSave"></detailed>
+    <!-- 头部 -->
     <t-card v-if="!detailedShow" class="list-card-container" :bordered="false">
       <t-row justify="space-between">
         <div class="work-center-box">
@@ -33,6 +35,7 @@
           </t-col>
         </div>
       </t-row>
+      <!-- 表格 -->
       <t-table
         row-key="name"
         vertical-align="middle"
@@ -44,17 +47,20 @@
         @page-change="onWorkStationPageChange"
         @select-change="rehandleSelectChange"
       >
-        <template #Work-center-number>
+        <template #Work-center-number="{ row }">
           <div>
             <t-icon name="chevron-right"></t-icon>
-            <t-link theme="primary" underline> 0752-A01-WCO1 </t-link>
+            <t-link theme="primary" underline @click="onHandelNumber(row.WorkCenterNumber)"
+              >{{ row.WorkCenterNumber }}
+            </t-link>
           </div>
         </template>
         <template #parentWorkCenter>
           <div>11</div>
         </template>
         <template #edit>
-          <t-link theme="primary" underline> 编辑 </t-link>
+          <!-- 编辑 -->
+          <icon name="edit-1"></icon>
         </template>
       </t-table>
     </t-card>
@@ -62,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { Icon, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import detailed from './detailed.vue';
@@ -76,39 +82,48 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'Work-center-number',
     title: '工作中心编号',
+    align: 'center',
   },
   {
     colKey: 'name',
     title: '名称',
+    align: 'center',
   },
   {
     colKey: 'types',
     title: '类型',
+    align: 'center',
   },
   {
     colKey: 'Workshop',
     title: '所属车间',
+    align: 'center',
   },
   {
     colKey: 'location',
     title: '地点',
+    align: 'center',
   },
   {
     colKey: 'parentWorkCenter',
     title: '父工作中心',
+    align: 'center',
   },
   {
     colKey: 'head',
     title: '负责人',
+    align: 'center',
   },
   {
     colKey: 'edit',
     title: '',
+    align: 'center',
   },
 ];
 const selectedRowKeys = ref([]); // 用于存储选中行的数组
 const workData = ref([
   {
+    WorkCenterNumber: '0752-A01-WCO1',
     name: ['你好'],
     types: '11',
     Workshop: 'Aag',
@@ -117,6 +132,7 @@ const workData = ref([
     head: '李四',
   },
   {
+    WorkCenterNumber: '0752-A01-WCO2',
     name: ['你好'],
     types: '11',
     Workshop: 'Aag',
@@ -125,6 +141,7 @@ const workData = ref([
     head: '李四',
   },
   {
+    WorkCenterNumber: '0752-A01-WCO3',
     name: ['你好'],
     types: '11',
     Workshop: 'Aag',
@@ -145,7 +162,11 @@ const options2 = [
   { label: '大数据', value: '2' },
   { label: '区块链', value: '3' },
 ];
-
+// 工作中心跳转到form
+const onHandelNumber = (value) => {
+  detailedShow.value = true;
+  console.log(value);
+};
 const onFocus = (ctx: any) => {
   console.log('focus:', ctx);
 };

@@ -5,37 +5,40 @@
     :params="formData"
     :table-column="tableColumn"
     :table-data="data.list"
+    :enable-export="enableExport"
     :loading="loading"
     :total="data.total"
     :export-function="exportFunction"
     @refresh="fetchData"
   >
-    <template #op>
-      <a>操作</a>
+    <template #op="{ row }">
+      <icon name="edit-1" @click="onHandleEdit(row)"></icon>
     </template>
+
     <template #button>
-      <t-button theme="danger">使用按钮插槽</t-button>
-      <t-button theme="success" @click="onViewKeys">查看已选中行</t-button>
+      <t-button theme="success" @click="onExportEnable">插槽例子-是否显示导入</t-button>
+      <t-button theme="success" @click="onViewKeys">插槽例子-已选中行</t-button>
     </template>
     <template #oprate>
-      <t-button shape="circle" theme="primary" ghost> 插槽 </t-button>
+      <!-- <t-button shape="circle" theme="primary" ghost> 插槽 </t-button> -->
     </template>
   </tm-table>
 </template>
 
 <script setup lang="tsx" name="TablePreview">
-import { DialogPlugin } from 'tdesign-vue-next';
+import { DialogPlugin, Icon } from 'tdesign-vue-next';
 import { onActivated, reactive, ref } from 'vue';
 
+import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-
-import TmTable from '../../../../components/tm-table/index.vue';
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 
 const tableRef = ref();
+
+const enableExport = ref(false);
 
 const formData = reactive({
   name: '',
@@ -47,7 +50,7 @@ const formData = reactive({
 });
 
 const data = reactive({
-  total: 300,
+  total: 0,
   list: [],
 });
 
@@ -56,10 +59,12 @@ const fetchData = () => {
   setLoading(true);
   setTimeout(() => {
     data.list = apiMockData(pageUI.value.rows);
+    data.total = data.list.length * 30;
     setLoading(false);
   }, 600);
 };
 
+// 激活页面加载数据
 onActivated(() => {
   fetchData();
 });
@@ -69,6 +74,10 @@ const exportFunction = async () => {
   return new Promise((resolve) => {
     resolve(apiMockData(300));
   });
+};
+// 切换是否显示导出
+const onExportEnable = () => {
+  enableExport.value = !enableExport.value;
 };
 
 // 查看已选中行
@@ -82,6 +91,10 @@ const onViewKeys = () => {
       dialog.destroy();
     },
   });
+};
+
+const onHandleEdit = (row: any) => {
+  console.log(row);
 };
 
 // 模拟数据

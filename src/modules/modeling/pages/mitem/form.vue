@@ -10,8 +10,12 @@
       <t-input v-model="formData.mitemDesc" />
     </t-form-item>
     <t-form-item label="物料类别">
-      <t-input v-model="formData.mmitemCategoryCode" readonly />
-      <!-- <tm-select-business v-model="formData.mmitemCategoryCode" type="mitemCategory" /> -->
+      <!-- <t-input v-model="formData.mmitemCategoryCode" readonly /> -->
+      <tm-select-business
+        v-model="formData.mmitemCategoryId"
+        type="mitemCategory"
+        :show-title="false"
+      ></tm-select-business>
     </t-form-item>
     <t-form-item label="主计量单位">
       <t-select
@@ -65,14 +69,12 @@
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-// import { postEdit } from '../../api/mitem';
 import { api } from '@/api/modeling';
+import TmSelectBusiness from '@/components/tm-select-business/index.vue';
 
 export default {
   name: 'MitemForm',
-  // components: {
-  //   'tm-select-business': () => import('@/components/select-business/index.vue'),
-  // },
+  components: { TmSelectBusiness },
   setup() {
     const mitemTypeOptions = ref([
       { label: '原材料', value: 'isRaw' },
@@ -93,6 +95,7 @@ export default {
     ]); // 是否启用批次
     const formData = ref({
       id: '',
+      state: -1,
       mitemCode: '',
       mitemName: '',
       mitemDesc: '',
@@ -110,7 +113,7 @@ export default {
       wWarehouseId: '', // 完工默认仓库
       wWarehouseCode: '',
       wWarehouseName: '',
-      shelfLifeDays: null, // 保质期天数
+      shelfLifeDays: 0, // 保质期天数
       isBatchNo: 0, // 是否启用批次
     });
 
