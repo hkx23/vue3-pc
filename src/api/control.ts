@@ -34,34 +34,27 @@ export interface SortParam {
   descending?: boolean;
 }
 
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
-}
-
-/** 通用响应类 */
-export interface ResultWorkstation {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: Workstation;
-}
-
 /** 响应数据 */
-export type Workstation = {
+export type PagingDataWorkstation = {
+  list?: Workstation[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkstation {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkstation;
+}
+
+export interface Workstation {
   id?: string;
   /**
    * 创建时间
@@ -88,12 +81,56 @@ export type Workstation = {
   workstationCode?: string;
   workstationName?: string;
   workstationDesc?: string;
-  pprocessId?: string;
-  pworkcenterId?: string;
-} | null;
+  processId?: string;
+  workcenterId?: string;
+}
 
 /** 通用响应类 */
-export interface ResultWorkcenter {
+export interface ResultWorkstation {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Workstation;
+}
+
+/** 显示工站 */
+export interface WorkstationVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  /** 工站代码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 工站描述 */
+  workstationDesc?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 工序名称 */
+  processName?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 创建人 */
+  creator?: string;
+  /** 创建时间 */
+  timeCreate?: string;
+  /** 修改人 */
+  modifier?: string;
+  /** 修改时间 */
+  timeModified?: string;
+  pworkcenterId?: string;
+  pprocessId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
   /**
    * 响应代码
    * @format int32
@@ -102,11 +139,63 @@ export interface ResultWorkcenter {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: Workcenter;
+  data?: object | null;
+}
+
+export interface WorkstationSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  workstaion?: string;
+  state?: number[];
+  workcenter?: string;
+  process?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
 }
 
 /** 响应数据 */
-export type Workcenter = {
+export type PagingDataWorkstationVO = {
+  list?: WorkstationVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkstationVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkstationVO;
+}
+
+/** 响应数据 */
+export type PagingDataWorkcenter = {
+  list?: Workcenter[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkcenter {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkcenter;
+}
+
+export interface Workcenter {
   id?: string;
   /**
    * 创建时间
@@ -133,6 +222,7 @@ export type Workcenter = {
   wcCode?: string;
   wcName?: string;
   wcDesc?: string;
+  workshopId?: string;
   parentWcId?: string;
   /** @format int32 */
   wcSeq?: number;
@@ -140,9 +230,20 @@ export type Workcenter = {
   wcObjectType?: number;
   wcObjectId?: string;
   wcLocation?: string;
-  mdirectorId?: string;
-  mworkshopId?: string;
-} | null;
+  directorId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultWorkcenter {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: Workcenter;
+}
 
 /** 响应数据 */
 export type PagingDataProcess = {
@@ -205,8 +306,7 @@ export interface ResultProcess {
   data?: Process;
 }
 
-/** 响应数据 */
-export type MoSchedule = {
+export interface MoSchedule {
   id?: string;
   /**
    * 创建时间
@@ -231,6 +331,7 @@ export type MoSchedule = {
   eid?: string;
   oid?: string;
   moCode?: string;
+  mitemId?: string;
   moClass?: string;
   soNo?: string;
   /** @format int32 */
@@ -253,21 +354,40 @@ export type MoSchedule = {
   datetimeActualStart?: string;
   /** @format date-time */
   datetimeActualEnd?: string;
+  warehouseId?: string;
   parentMoId?: string;
+  workshopId?: string;
   memo?: string;
   status?: string;
   moSource?: string;
+  workcenterId?: string;
   /** @format date-time */
   datetimeSche?: string;
   /** @format int32 */
   scheQty?: number;
+  routingRevisionId?: string;
   scheCode?: string;
-  mmitemId?: string;
-  mworkshopId?: string;
-  pworkcenterId?: string;
-  proutingRevisionId?: string;
-  wwarehouseId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMoSchedule = {
+  list?: MoSchedule[];
+  /** @format int32 */
+  total?: number;
 } | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMoSchedule {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMoSchedule;
+}
 
 /** 通用响应类 */
 export interface ResultMoSchedule {
@@ -278,7 +398,6 @@ export interface ResultMoSchedule {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
   data?: MoSchedule;
 }
 
@@ -307,6 +426,7 @@ export interface Mo {
   eid?: string;
   oid?: string;
   moCode?: string;
+  mitemId?: string;
   moClass?: string;
   soNo?: string;
   /** @format int32 */
@@ -329,13 +449,12 @@ export interface Mo {
   datetimeActualStart?: string;
   /** @format date-time */
   datetimeActualEnd?: string;
+  warehouseId?: string;
   parentMoId?: string;
+  workshopId?: string;
   memo?: string;
   status?: string;
   moSource?: string;
-  mmitemId?: string;
-  mworkshopId?: string;
-  wwarehouseId?: string;
 }
 
 /** 响应数据 */
@@ -451,6 +570,7 @@ export type MoTestDTO = {
   eid?: string;
   oid?: string;
   moCode?: string;
+  mitemId?: string;
   moClass?: string;
   soNo?: string;
   /** @format int32 */
@@ -473,15 +593,14 @@ export type MoTestDTO = {
   datetimeActualStart?: string;
   /** @format date-time */
   datetimeActualEnd?: string;
+  warehouseId?: string;
   parentMoId?: string;
+  workshopId?: string;
   memo?: string;
   status?: string;
   moSource?: string;
   /** 物料服务间调用标准实体 */
   mitemObject?: MitemFeignDTO;
-  mmitemId?: string;
-  mworkshopId?: string;
-  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -516,7 +635,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/control/workstation/items`, {
+      http.request<ResultPagingDataWorkstation['data']>(`/api/control/workstation/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -533,6 +652,51 @@ export const api = {
       http.request<ResultWorkstation['data']>(`/api/control/workstation/items/${id}`, {
         method: 'POST',
       }),
+
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name Edit
+     * @summary 工站修改
+     * @request POST:/workstation/items/modify
+     * @secure
+     */
+    edit: (data: WorkstationVO) =>
+      http.request<ResultObject['data']>(`/api/control/workstation/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name Add
+     * @summary 工站新增
+     * @request POST:/workstation/items/add
+     * @secure
+     */
+    add: (data: WorkstationVO) =>
+      http.request<ResultObject['data']>(`/api/control/workstation/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name Getlist
+     * @summary 工站查询
+     * @request POST:/workstation/getlist
+     * @secure
+     */
+    getlist: (data: WorkstationSearch) =>
+      http.request<ResultPagingDataWorkstationVO['data']>(`/api/control/workstation/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   workcenter: {
     /**
@@ -540,11 +704,12 @@ export const api = {
      *
      * @tags 工作中心
      * @name Search
+     * @summary 工作中心查询
      * @request POST:/workcenter/items
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/control/workcenter/items`, {
+      http.request<ResultPagingDataWorkcenter['data']>(`/api/control/workcenter/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -600,7 +765,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/control/moSchedule/items`, {
+      http.request<ResultPagingDataMoSchedule['data']>(`/api/control/moSchedule/items`, {
         method: 'POST',
         body: data as any,
       }),
