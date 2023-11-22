@@ -123,13 +123,20 @@ export default {
     });
     const submit = async () => {
       try {
+        if (isBlank(formData.value.supplierCode)) {
+          MessagePlugin.error('请选择供应商');
+          return false;
+        }
+        if (isBlank(formData.value.mitemCode)) {
+          MessagePlugin.error('请选择物料');
+          return false;
+        }
         await api.mitem.edit(formData.value);
         MessagePlugin.success('编辑成功');
       } catch (e) {
         console.log(e);
-      } finally {
-        console.log('11111');
       }
+      return true;
     };
     const init = () => {
       formData.value.id = '';
@@ -158,6 +165,11 @@ export default {
       formData.value.mitemCode = value.mitemCode;
       formData.value.mitemName = value.mitemName;
     };
+
+    const isBlank = (value: string | undefined) => {
+      return value === undefined || value.trim() === '';
+    };
+
     return {
       init,
       submit,

@@ -26,6 +26,7 @@ export const usePermissionStore = defineStore('permission', {
       // 在菜单只展示动态路由
       // this.routers = [...accessedRouters];
     },
+    // eslint-disable-next-line consistent-return
     async buildAsyncRoutes() {
       try {
         const asyncRoutes: Array<RouteItem> = await getMenuList();
