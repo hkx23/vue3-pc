@@ -41,6 +41,9 @@ dependencies:
   vue-clipboard3:
     specifier: ^2.0.0
     version: 2.0.0
+  vue-draggable-plus:
+    specifier: ^0.2.7
+    version: 0.2.7(@types/sortablejs@1.15.4)
   vue-hooks-plus:
     specifier: ^1.8.5
     version: 1.8.5(vue@3.3.7)
@@ -6011,6 +6014,18 @@ packages:
         optional: true
     dependencies:
       vue: 3.3.7(typescript@5.1.6)
+    dev: false
+
+  /vue-draggable-plus@0.2.7(@types/sortablejs@1.15.4):
+    resolution: {integrity: sha512-asNQ4OxTQtN91+m45lh8QEwscXhVveaLvPAzaRXHD8JIk1+SOg7NWPQ9EmUTeNhSP3SGkJ2Agvp5WRDt7vXM8w==}
+    peerDependencies:
+      '@types/sortablejs': ^1.15.0
+      '@vue/composition-api': '*'
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@types/sortablejs': 1.15.4
     dev: false
 
   /vue-eslint-parser@9.3.2(eslint@8.52.0):
