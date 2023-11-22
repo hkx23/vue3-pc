@@ -470,8 +470,8 @@ export type Mitem = {
   shelfLifeDays?: number;
   /** @format int32 */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -554,8 +554,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -614,33 +614,23 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
+  isState?: boolean;
+  mmitemCategoryId?: string;
   mmitemCategoryCode?: string;
   mmitemCategoryName?: string;
+  wwarehouseId?: string;
+  stateName?: string;
   /** @format int32 */
   wwarehouseCode?: number;
   /** @format int32 */
   wwarehouseName?: number;
-  wwarehouseId?: string;
-  mmitemCategoryId?: string;
-  isState?: boolean;
-  stateName?: string;
-}
-
-export interface CustomerSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  keyword?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
+  isProductName?: string;
+  isInProcessName?: string;
+  isRawName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -687,8 +677,8 @@ export interface ResultCustomer {
 }
 
 export interface JSONObject {
-  innerMap?: Record<string, object>;
   empty?: boolean;
+  innerMap?: Record<string, object>;
   [key: string]: any;
 }
 
@@ -813,7 +803,7 @@ export interface ResultListOrgTreeVO {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://192.168.1.6:7300
+ * @baseUrl http://localhost:7300
  *
  * scm项目API汇总
  */
@@ -1464,7 +1454,7 @@ export const api = {
      * @request POST:/customer/items
      * @secure
      */
-    search: (data: CustomerSearch) =>
+    search: (data: CommonSearch) =>
       http.request<ResultObject['data']>(`/api/modeling/customer/items`, {
         method: 'POST',
         body: data as any,

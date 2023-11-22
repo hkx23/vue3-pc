@@ -5,8 +5,6 @@
         <t-row justify="space-between">
           <t-col>
             <t-input v-model="mitemKeyword" label="物料：" placeholder="请输入物料编码/名称" clearable />
-
-            <!-- <tm-select-business v-model="mitemKeyword" label="物料：" placeholder="请输入物料编码/名称" clearable /> -->
           </t-col>
           <t-col>
             <t-input v-model="supplierKeyword" label="供应商：" placeholder="请输入供应商编码/名称" clearable />
@@ -47,7 +45,14 @@
     </div>
   </div>
   <div>
-    <t-dialog v-model:visible="formVisible" header="编辑" :on-confirm="onConfirmForm" width="50%">
+    <t-dialog
+      v-model:visible="formVisible"
+      header="编辑"
+      :on-confirm="onConfirmForm"
+      width="60%"
+      :close-on-overlay-click="false"
+      :on-close="onCloseForm"
+    >
       <t-space direction="vertical" style="width: 98%">
         <mitem-in-supplier-form ref="formRef"></mitem-in-supplier-form>
       </t-space>
@@ -83,7 +88,7 @@ const tableMitemInSupplierColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '最小包装数量', width: 160, colKey: 'qty' },
   { title: '检查严格度', width: 160, colKey: 'inspectionStringency' },
   { title: '是否免检', width: 160, colKey: 'isExemptionInspection' },
-  { title: '免检失效日期', width: 160, colKey: 'dateExemptionExpired' },
+  { title: '免检失效日期', width: 160, colKey: 'dateExemptionExpiredStr' },
   { title: '是否强制供方申请', width: 160, colKey: 'isForceInspection' },
   { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
@@ -129,7 +134,7 @@ const fetchTable = async () => {
 
 const onEditRowClick = (value: any) => {
   // const rowData = value.row;
-  formRef.value.formData = value.row;
+  formRef.value.formData = JSON.parse(JSON.stringify(value.row));
   formVisible.value = true;
 };
 
@@ -138,6 +143,10 @@ const onConfirmForm = async () => {
     formVisible.value = false;
     fetchTable();
   });
+};
+
+const onCloseForm = async () => {
+  formRef.value.init();
 };
 
 const onPageChange = (curr: any) => {

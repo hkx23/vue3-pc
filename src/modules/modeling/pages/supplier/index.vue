@@ -37,7 +37,13 @@
     </div>
   </div>
   <div>
-    <t-dialog v-model:visible="formVisible" header="供应商编辑" :on-confirm="onConfirmForm" width="50%">
+    <t-dialog
+      v-model:visible="formVisible"
+      header="供应商编辑"
+      :on-confirm="onConfirmForm"
+      width="50%"
+      :close-on-overlay-click="false"
+    >
       <t-space direction="vertical" style="width: 98%">
         <mitem-form ref="formRef"></mitem-form>
       </t-space>
@@ -104,7 +110,7 @@ const fetchTable = async () => {
 };
 
 const onEditRowClick = (value: any) => {
-  formRef.value.formData = value.row;
+  formRef.value.formData = JSON.parse(JSON.stringify(value.row));
   formVisible.value = true;
 };
 
