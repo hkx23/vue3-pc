@@ -159,7 +159,7 @@ export interface Workgroup {
   workgroupCode?: string;
   workgroupName?: string;
   workgroupDesc?: string;
-  mworkshopId?: string;
+  workshopId?: string;
 }
 
 /** 通用响应类 */
@@ -333,7 +333,7 @@ export interface Person {
   gender?: number;
   email?: string;
   mobilePhone?: string;
-  madminOrgId?: string;
+  adminOrgId?: string;
 }
 
 /** 通用响应类 */
@@ -524,6 +524,8 @@ export interface MitemInSupplier {
   state?: number;
   eid?: string;
   oid?: string;
+  supplierId?: string;
+  mitemId?: string;
   /** @format int32 */
   qty?: number;
   inspectionStringency?: string;
@@ -533,8 +535,6 @@ export interface MitemInSupplier {
   isForceInspection?: number;
   /** @format date-time */
   dateExemptionExpired?: string;
-  msupplierId?: string;
-  mmitemId?: string;
 }
 
 export interface MitemCategory {
@@ -643,21 +643,21 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryCode?: string;
   mmitemCategoryId?: string;
-  mmitemCategoryName?: string;
   wwarehouseId?: string;
+  mmitemCategoryCode?: string;
+  mmitemCategoryName?: string;
   /** @format int32 */
   wwarehouseName?: number;
-  /** @format int32 */
-  wwarehouseCode?: number;
   isProductName?: string;
+  isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isBatchName?: string;
   isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  isBatchName?: string;
+  /** @format int32 */
+  wwarehouseCode?: number;
   stateName?: string;
   isState?: boolean;
 }
@@ -710,6 +710,7 @@ export type Mitem = {
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
+  mitemCategoryId?: string;
   supplyCategory?: string;
   uom?: string;
   /** @format int32 */
@@ -718,12 +719,11 @@ export type Mitem = {
   isRaw?: number;
   /** @format int32 */
   isInProcess?: number;
+  warehouseId?: string;
   /** @format int32 */
   shelfLifeDays?: number;
   /** @format int32 */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
-  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1483,11 +1483,26 @@ export const api = {
      *
      * @tags 物料分类
      * @name Edit
-     * @request POST:/mitemCategory/edit/{id}
+     * @request POST:/mitemCategory/edit
      * @secure
      */
-    edit: (id: string, data: MitemCategory) =>
-      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/edit/${id}`, {
+    edit: (data: MitemCategory) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料分类
+     * @name Delete
+     * @summary 删除员工信息
+     * @request POST:/mitemCategory/delete
+     * @secure
+     */
+    delete: (data: MitemCategory) =>
+      http.request<ResultObject['data']>(`/api/modeling/mitemCategory/delete`, {
         method: 'POST',
         body: data as any,
       }),

@@ -81,8 +81,8 @@ export interface Workstation {
   workstationCode?: string;
   workstationName?: string;
   workstationDesc?: string;
-  pworkcenterId?: string;
-  pprocessId?: string;
+  processId?: string;
+  workcenterId?: string;
 }
 
 /** 通用响应类 */
@@ -95,19 +95,6 @@ export interface ResultWorkstation {
   /** 提示信息 */
   message?: string;
   data?: Workstation;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 /** 显示工站 */
@@ -140,6 +127,19 @@ export interface WorkstationVO {
   timeModified?: string;
   pworkcenterId?: string;
   pprocessId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
 }
 
 export interface WorkstationSearch {
@@ -222,6 +222,7 @@ export interface Workcenter {
   wcCode?: string;
   wcName?: string;
   wcDesc?: string;
+  workshopId?: string;
   parentWcId?: string;
   /** @format int32 */
   wcSeq?: number;
@@ -229,8 +230,7 @@ export interface Workcenter {
   wcObjectType?: number;
   wcObjectId?: string;
   wcLocation?: string;
-  mworkshopId?: string;
-  mdirectorId?: string;
+  directorId?: string;
 }
 
 /** 通用响应类 */
@@ -331,6 +331,7 @@ export interface MoSchedule {
   eid?: string;
   oid?: string;
   moCode?: string;
+  mitemId?: string;
   moClass?: string;
   soNo?: string;
   /** @format int32 */
@@ -353,20 +354,19 @@ export interface MoSchedule {
   datetimeActualStart?: string;
   /** @format date-time */
   datetimeActualEnd?: string;
+  warehouseId?: string;
   parentMoId?: string;
+  workshopId?: string;
   memo?: string;
   status?: string;
   moSource?: string;
+  workcenterId?: string;
   /** @format date-time */
   datetimeSche?: string;
   /** @format int32 */
   scheQty?: number;
+  routingRevisionId?: string;
   scheCode?: string;
-  proutingRevisionId?: string;
-  mmitemId?: string;
-  pworkcenterId?: string;
-  wwarehouseId?: string;
-  mworkshopId?: string;
 }
 
 /** 响应数据 */
@@ -426,6 +426,7 @@ export interface Mo {
   eid?: string;
   oid?: string;
   moCode?: string;
+  mitemId?: string;
   moClass?: string;
   soNo?: string;
   /** @format int32 */
@@ -448,13 +449,12 @@ export interface Mo {
   datetimeActualStart?: string;
   /** @format date-time */
   datetimeActualEnd?: string;
+  warehouseId?: string;
   parentMoId?: string;
+  workshopId?: string;
   memo?: string;
   status?: string;
   moSource?: string;
-  mmitemId?: string;
-  wwarehouseId?: string;
-  mworkshopId?: string;
 }
 
 /** 响应数据 */
@@ -570,6 +570,7 @@ export type MoTestDTO = {
   eid?: string;
   oid?: string;
   moCode?: string;
+  mitemId?: string;
   moClass?: string;
   soNo?: string;
   /** @format int32 */
@@ -592,15 +593,14 @@ export type MoTestDTO = {
   datetimeActualStart?: string;
   /** @format date-time */
   datetimeActualEnd?: string;
+  warehouseId?: string;
   parentMoId?: string;
+  workshopId?: string;
   memo?: string;
   status?: string;
   moSource?: string;
   /** 物料服务间调用标准实体 */
   mitemObject?: MitemFeignDTO;
-  mmitemId?: string;
-  wwarehouseId?: string;
-  mworkshopId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -651,28 +651,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkstation['data']>(`/api/control/workstation/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站
-     * @name UpdateState
-     * @summary 记录启用禁用
-     * @request POST:/workstation/items/updateState
-     * @secure
-     */
-    updateState: (
-      query: {
-        /** @format int32 */
-        state: number;
-      },
-      data: string,
-    ) =>
-      http.request<ResultObject['data']>(`/api/control/workstation/items/updateState`, {
-        method: 'POST',
-        params: query,
-        body: data as any,
       }),
 
     /**
