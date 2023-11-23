@@ -467,7 +467,7 @@ const remoteLoad = async (val: any) => {
   };
 
   // 判断两次查询条件是否一样，一样的话，不获取数据
-  if (JSON.stringify(tempCondition.value) === JSON.stringify(searchCondition)) {
+  if (isHandleSelectionChange.value && JSON.stringify(tempCondition.value) === JSON.stringify(searchCondition)) {
     console.log('两次查询条件一样，不获取数据');
     loading.value = false;
     return;
