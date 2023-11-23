@@ -134,7 +134,7 @@ const fetchTable = async () => {
   tableRef.value.setSelectedRowKeys([]);
   setLoading(true);
   try {
-    const data = (await api.mitemCategory.getList({
+    const data = (await api.mitemCategory.getlist({
       keyword: keyword.value,
       pagenum: pageUI.value.page,
       pagesize: pageUI.value.rows,
