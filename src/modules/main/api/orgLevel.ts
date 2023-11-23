@@ -54,6 +54,7 @@ export function getOrgLevelDic(): Promise<Array<{ value: string; label: string }
       { value: 'WORKSHOP', label: '车间' },
       { value: 'WORKSPACE', label: '工作区' },
       { value: 'LINE', label: '产线' },
+      { value: 'PROCESS', label: '工段' },
       { value: 'EQUIPMENT', label: '设备' },
     ];
     resolve(dictionary);
