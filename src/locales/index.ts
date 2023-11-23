@@ -3,7 +3,8 @@ import { computed } from 'vue';
 import { createI18n } from 'vue-i18n';
 
 // 导入语言文件
-const langModules = import.meta.glob('./lang/*/index.ts', { eager: true });
+const langPortalPages = import.meta.glob('./lang/*/index.ts', { eager: true });
+const langModulePages = import.meta.glob('../modules/*/lang/*/index.ts', { eager: true });
 
 const langModuleMap = new Map<string, Object>();
 
@@ -14,7 +15,7 @@ const browserLanguage = navigator.language.replace('-', '_');
 
 // 生成语言模块列表
 const generateLangModuleMap = () => {
-  const fullPaths = Object.keys(langModules);
+  const fullPaths = Object.keys(langPortalPages).concat(Object.keys(langModulePages));
 
   fullPaths.forEach((fullPath) => {
     const k = fullPath.replace('./lang', '');
@@ -22,7 +23,7 @@ const generateLangModuleMap = () => {
     const lastIndex = k.lastIndexOf('/');
     const code = k.substring(startIndex, lastIndex);
     langCode.push(code);
-    langModuleMap.set(code, langModules[fullPath]);
+    langModuleMap.set(code, langPortalPages[fullPath] || langModulePages[fullPath]);
   });
   fw.config.languageCodes = langCode;
 };
