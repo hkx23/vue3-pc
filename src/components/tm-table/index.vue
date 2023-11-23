@@ -400,9 +400,7 @@ watch(
   (val) => {
     console.log('watch:props.tableData', val);
     nextTick(() => {
-      if (props.tableData.length) {
-        finalTableData.value = _.cloneDeep(props.tableData);
-      }
+      finalTableData.value = _.cloneDeep(props.tableData);
     });
   },
   { deep: true },

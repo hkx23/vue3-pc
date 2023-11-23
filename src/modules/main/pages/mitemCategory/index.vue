@@ -152,6 +152,12 @@ const fetchTable = async () => {
 
 const fetchMitemTable = async () => {
   setLoadingMitem(true);
+  if (selectCategoryID.value === -1) {
+    tableDataMitem.value = [];
+    mitemTotal.value = 0;
+    setLoadingMitem(false);
+    return;
+  }
   try {
     const data = (await api.mitem.getListByMitemCategory({
       keyword: '',
