@@ -26,6 +26,7 @@
             :table-data="tableDataMitem"
             :loading="loading"
             :total="dataTotal"
+            :resizable="true"
             @refresh="fetchTable"
           >
             <template #op="slotProps">

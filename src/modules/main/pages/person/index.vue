@@ -2,7 +2,16 @@
   <div class="table-tree-container">
     <div class="list-tree-wrapper">
       <div class="list-tree-operator">
-        <t-tree :data="dataTree" line hover expand-all activable @click="onTreeClick" />
+        <t-tree
+          ref="treeRef"
+          v-model:actived="treeActiveKey"
+          :data="treeData"
+          :keys="treeKeys"
+          hover
+          :expand-on-click-node="false"
+          :filter="filterByText"
+          activable
+        />
       </div>
     </div>
     <div class="list-tree-content">
@@ -141,8 +150,9 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { isEmpty } from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 import TmTable from '@/components/tm-table/index.vue';
@@ -173,9 +183,14 @@ const formData = ref({
 
 // 表格
 const dataTable = ref([]);
-const dataTree = ref([]);
 const dataTotal = ref(0);
+const treeActiveKey = ref([]);
+const treeKeys = { value: 'orgCode', label: 'orgName' };
+const treeRef = ref();
+const treeData = ref([]);
+const treeActiveNode = ref([]);
 
+const filterByText = ref();
 // 显示控制
 const dataLoading = ref(false); // 是否显示数据加载图标
 const onShowDeleteConfirmVisible = ref(false); // 是否显示对话框
@@ -184,11 +199,7 @@ const onShowImportVisible = ref(false); // 是否显示导入窗口
 // 表格列设置
 const columnsParam: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 64 },
-  {
-    title: '人员编码',
-
-    colKey: 'personCode',
-  },
+  { title: '人员编码', colKey: 'personCode' },
   { title: '姓名', colKey: 'personName' },
   { title: '性别', colKey: 'genderName' },
   { title: '手机号', colKey: 'mobilePhone' },
@@ -290,14 +301,8 @@ const formInit = () => {
 const fetchTree = async () => {
   dataLoading.value = true;
   try {
-    const data = (await api.adminOrg.getlist({ parent_org_id: -1 })) as any;
-
-    dataTree.value = data.list.map((item) => ({
-      value: item.orgCode,
-      label: item.orgName,
-      actived: false,
-    }));
-    dataTree.value[0].actived = true;
+    const listTree = (await api.adminOrg.tree()) as any;
+    treeData.value = listTree;
   } catch (e) {
     console.log(e);
   } finally {
@@ -305,11 +310,15 @@ const fetchTree = async () => {
   }
 };
 
-const onTreeClick = (context: any) => {
-  console.info('onClick', context);
-  // const { node } = context;
-  // console.info(node.value, 'actived:', node.actived);
-};
+watch(treeActiveKey, () => {
+  if (treeRef?.value && !isEmpty(treeActiveKey.value)) {
+    const activeNode = treeRef.value.getTreeData(treeActiveKey.value[0]);
+    treeActiveNode.value = activeNode[0].children?.length > 0 ? activeNode[0].children : activeNode;
+  } else {
+    treeActiveNode.value = treeData.value;
+  }
+});
+
 // #endregion
 
 // #region 表格删除

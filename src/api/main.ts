@@ -961,15 +961,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
   stateName?: string;
   isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isProductName?: string;
+  isBatchName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -1408,6 +1408,45 @@ export type ShowModuleVO = {
   /** 子菜单 */
   children?: ShowModuleVO[];
 } | null;
+
+/** 显示行政组织层级实体 */
+export type AdminOrgVO = {
+  id?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 组织描述 */
+  orgDesc?: string;
+  parentOrgId?: string;
+  /**
+   * 是否生效（1是，0否）
+   * @format int32
+   */
+  isActive?: number;
+  /** 子层级 */
+  children?: AdminOrgVO[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultListAdminOrgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AdminOrgVO[] | null;
+}
 
 /**
  * @title scm项目
@@ -2461,6 +2500,20 @@ export const api = {
       }),
   },
   adminOrg: {
+    /**
+     * No description
+     *
+     * @tags 行政组织架构表
+     * @name Tree
+     * @summary 获取行政组织树
+     * @request GET:/adminOrg/tree
+     * @secure
+     */
+    tree: () =>
+      http.request<ResultListAdminOrgVO['data']>(`/api/main/adminOrg/tree`, {
+        method: 'GET',
+      }),
+
     /**
      * No description
      *
