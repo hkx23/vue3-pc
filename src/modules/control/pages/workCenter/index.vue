@@ -4,9 +4,11 @@
     <detailed v-if="detailedShow" @added-show="onHandleSave"></detailed>
     <!-- 头部 -->
     <t-card v-if="!detailedShow" class="list-card-container" :bordered="false">
-      <t-head-menu v-model="valueItem" theme="light">
-        <t-menu-item v-for="item in allType" :key="item.id" :value="item.value"> {{ item.name }} </t-menu-item>
-      </t-head-menu>
+      <t-space direction="horizontal" style="margin: 10px 0">
+        <t-tabs v-for="item in allType" :key="item.id" v-model="valueItem" :value="item.name">
+          <t-tab-panel :value="item.id" :label="item.name"> </t-tab-panel>
+        </t-tabs>
+      </t-space>
       <t-row justify="space-between">
         <div class="work-center-box">
           <t-col>
@@ -35,7 +37,7 @@
         :loading="loading"
         :selected-row-keys="selectedRowKeys"
         @select-change="rehandleSelectChange"
-        @refresh="fetchData"
+        @refresh="onFetchData"
       >
         <template #Work-center-number="{ row }">
           <div>
@@ -69,8 +71,8 @@ import { usePage } from '@/hooks/modules/page';
 
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 import detailed from './detailed.vue';
-
-const valueItem = ref('item1');
+// const value = ref(1);
+const valueItem = ref(0);
 const tableRef = ref();
 const allType = ref([
   {
@@ -105,12 +107,8 @@ const allType = ref([
   },
 ]);
 // 刷新
-const fetchData = async () => {
-  setLoading(true);
-  setTimeout(() => {
-    workData.value = _.cloneDeep(workData.value);
-    setLoading(false);
-  }, 600);
+const onFetchData = async () => {
+  // const list = await api.
 };
 
 const detailedShow = ref(false); // 控制子工作中心显示隐藏
@@ -235,7 +233,7 @@ const rehandleSelectChange = (value: any, ctx: any) => {
 }
 
 .list-card-container {
-  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
+  padding: var(--td-comp-paddingLR-xl) var(--td-comp-paddingLR-xxl);
 
   :deep(.t-card__body) {
     padding: 0;
