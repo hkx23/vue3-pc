@@ -36,11 +36,11 @@
         >
           <template #actionSlot="{ row }">
             <t-button size="small" variant="text" @click="onEditRow(row)">
-              <icon name="edit-1" class="red-icon" />
+              <icon name="edit-1" class="black-icon" />
             </t-button>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm">
               <t-button size="small" variant="text" @click="onDeleteRow(row)">
-                <icon name="delete" class="red-icon" />
+                <icon name="delete" class="black-icon" />
               </t-button>
             </t-popconfirm>
           </template>
@@ -117,14 +117,18 @@ onMounted(() => {
 
 // 查询按钮
 const onRefresh = () => {
-  tableMitemPagination.value.defaultCurrent = 1;
-  onGetMiteMuom();
+  if (queryData.value) {
+    tableMitemPagination.value.defaultCurrent = 1;
+    onGetMiteMuom();
+  }
 };
 
 // 重置按钮
 const onReset = () => {
   queryData.value = '';
+  onGetMiteMuom();
 };
+
 // 表单清除
 const onDialogClose = () => {
   formRef.value.reset({ type: 'empty' });
@@ -161,8 +165,8 @@ const onSecondaryReset = () => {
 const onGetMiteMuom = async () => {
   tableData.value = [];
   try {
-    const res = await api.mitemUom.getlist(onMitemUomPage.value);
-    tableData.value = res.list;
+    const res = await api.mitemUom.getlist({ ...onMitemUomPage.value, uom: queryData.value });
+    tableData.value = res.list; // 表格数据赋值
     tableMitemPagination.value.total = +res.total; // 总页数赋值
   } catch (e) {
     MessagePlugin.success(e);
@@ -174,7 +178,6 @@ const onMitemUomPage = computed(() => {
   return {
     pageNum: tableMitemPagination.value.defaultCurrent,
     pageSize: tableMitemPagination.value.defaultPageSize,
-    uom: queryData.value,
   };
 });
 
@@ -233,6 +236,7 @@ const onAddMiteMuom = async () => {
 
 // 点击新增逻辑
 const onAddMeasuring = () => {
+  queryData.value = '';
   diaTitle.value = '计量单位新增';
   showDialog.value = true;
 };
@@ -271,8 +275,16 @@ const onDeleteRow = async (row: TableRow) => {
 // 单个数据点击气泡框确认后，删除数据
 const onDelConfirm = async () => {
   await onDeleteMiteMuom();
+  // 检查当前页是否还有数据，如果没有且不在第一页，页码减一
+  if (tableData.value.length === 1 && tableMitemPagination.value.defaultCurrent > 1) {
+    tableMitemPagination.value.defaultCurrent--;
+  }
+  console.log(
+    '🚀 ~ file: index.vue:277 ~ onDelConfirm ~ tableMitemPagination.value.defaultCurrent:',
+    tableMitemPagination.value.defaultCurrent,
+  );
+  await onGetMiteMuom(); // 重新渲染
   selectedRowKeys.value = [];
-  onGetMiteMuom();
 };
 
 // 获取复选框选中的数组
@@ -303,7 +315,7 @@ const onDelConfirms = async () => {
   margin: 20px 0;
 }
 
-.red-icon {
+.black-icon {
   color: #181818;
 }
 
