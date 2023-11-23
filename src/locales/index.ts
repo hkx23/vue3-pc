@@ -9,8 +9,6 @@ const langModuleMap = new Map<string, Object>();
 
 export const langCode: Array<string> = [];
 
-export const localeConfigKey = 'language';
-
 // 获取浏览器默认语言环境
 const browserLanguage = navigator.language.replace('-', '_');
 
@@ -26,6 +24,7 @@ const generateLangModuleMap = () => {
     langCode.push(code);
     langModuleMap.set(code, langModules[fullPath]);
   });
+  fw.config.languageCodes = langCode;
 };
 
 // 导出 Message
@@ -41,7 +40,7 @@ const importMessages = computed(() => {
 
 export const i18n = createI18n({
   legacy: false,
-  locale: localStorage.getItem(localeConfigKey) || browserLanguage || 'zh_CN',
+  locale: fw.getLanguage() || browserLanguage || 'zh_CN',
   fallbackLocale: 'zh_CN',
   messages: importMessages.value,
   globalInjection: true,

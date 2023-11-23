@@ -1,8 +1,9 @@
 import type { OAuth2Result, RouteItem } from '@/api/model/permissionModel';
 
+import { api } from './main';
+
 const Api = {
   GetToken: '/api/auth/oauth2/token',
-  GetMenuList: '/api/system/module/show',
 };
 
 /**
@@ -10,7 +11,7 @@ const Api = {
  * @returns Promise<MenuListResult>
  */
 export function getMenuList(): Promise<RouteItem[]> {
-  return http.get<Array<RouteItem>>(Api.GetMenuList, { clientType: '1' });
+  return api.module.show({ clientType: 1 }) as Promise<RouteItem[]>;
 }
 
 /**

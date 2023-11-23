@@ -13,7 +13,6 @@ const descriptionLines = _.compact([
     info.license.url && `(${info.license.url})`,
   ]).join(" ")}`,
   info.termsOfService && `@termsOfService ${info.termsOfService}`,
-  server.url && `@baseUrl ${server.url}`,
   externalDocs.url && `@externalDocs ${externalDocs.url}`,
   info.contact && `@contact ${_.compact([
     info.contact.name,
