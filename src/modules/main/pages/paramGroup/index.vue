@@ -347,7 +347,7 @@ const onAddParam = (item) => {
     paramDesc: '',
   });
   if (item) {
-    dataTable.value.splice(item.seq + 1, 0, obj.value);
+    dataTable.value.splice(item.seq, 0, obj.value);
   } else {
     dataTable.value = [];
     dataTable.value.push(obj.value);
