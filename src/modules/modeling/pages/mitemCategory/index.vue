@@ -28,7 +28,7 @@
             :loading="loading"
             :total="dataTotal"
             select-on-row-click
-            @refresh="onRefresh"
+            @refresh="fetchTable"
             @select-change="onSelectMitemCategoryChange"
           >
             <template #op="slotProps">
@@ -115,6 +115,7 @@ const selectCategoryID = ref(0);
 
 // 查询按钮
 const onRefresh = () => {
+  tableRef.value.setSelectedRowKeys([]);
   fetchTable();
 };
 // 重置按钮
