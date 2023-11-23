@@ -54,6 +54,7 @@ export interface ResultPagingDataWorkstation {
   data?: PagingDataWorkstation;
 }
 
+/** 工站 */
 export interface Workstation {
   id?: string;
   /**
@@ -78,8 +79,11 @@ export interface Workstation {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工站代码 */
   workstationCode?: string;
+  /** 工站名称 */
   workstationName?: string;
+  /** 工站描述 */
   workstationDesc?: string;
   processId?: string;
   workcenterId?: string;
@@ -94,6 +98,7 @@ export interface ResultWorkstation {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 工站 */
   data?: Workstation;
 }
 
@@ -125,8 +130,8 @@ export interface WorkstationVO {
   modifier?: string;
   /** 修改时间 */
   timeModified?: string;
-  pworkcenterId?: string;
   pprocessId?: string;
+  pworkcenterId?: string;
 }
 
 /** 通用响应类 */
@@ -195,6 +200,7 @@ export interface ResultPagingDataWorkcenter {
   data?: PagingDataWorkcenter;
 }
 
+/** 工作中心 */
 export interface Workcenter {
   id?: string;
   /**
@@ -219,16 +225,26 @@ export interface Workcenter {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工站代码 */
   wcCode?: string;
+  /** 工站名称 */
   wcName?: string;
+  /** 工站描述 */
   wcDesc?: string;
   workshopId?: string;
   parentWcId?: string;
-  /** @format int32 */
+  /**
+   * 顺序
+   * @format int32
+   */
   wcSeq?: number;
-  /** @format int32 */
+  /**
+   * 类型
+   * @format int32
+   */
   wcObjectType?: number;
   wcObjectId?: string;
+  /** 地点 */
   wcLocation?: string;
   directorId?: string;
 }
@@ -242,6 +258,7 @@ export interface ResultWorkcenter {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 工作中心 */
   data?: Workcenter;
 }
 
@@ -252,6 +269,7 @@ export type PagingDataProcess = {
   total?: number;
 } | null;
 
+/** 工序 */
 export interface Process {
   id?: string;
   /**
@@ -276,8 +294,11 @@ export interface Process {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工序代码 */
   processCode?: string;
+  /** 工序名称 */
   processName?: string;
+  /** 工序描述 */
   processDesc?: string;
 }
 
@@ -303,9 +324,11 @@ export interface ResultProcess {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 工序 */
   data?: Process;
 }
 
+/** 工单排产表 */
 export interface MoSchedule {
   id?: string;
   /**
@@ -330,42 +353,85 @@ export interface MoSchedule {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工单名称 */
   moCode?: string;
   mitemId?: string;
+  /** 工单类型 */
   moClass?: string;
+  /** 销售订单 */
   soNo?: string;
-  /** @format int32 */
+  /**
+   * 销售订单行号
+   * @format int32
+   */
   soSeq?: number;
-  /** @format int32 */
+  /**
+   * 是否暂挂
+   * @format int32
+   */
   isHold?: number;
-  /** @format int32 */
+  /**
+   * 计划数量
+   * @format int32
+   */
   planQty?: number;
-  /** @format int32 */
+  /**
+   * 下线数量
+   * @format int32
+   */
   offlineQty?: number;
-  /** @format int32 */
+  /**
+   * 完工数量
+   * @format int32
+   */
   completedQty?: number;
-  /** @format int32 */
+  /**
+   * 入库数量
+   * @format int32
+   */
   stockinQty?: number;
-  /** @format date-time */
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
   datetimePlanStart?: string;
-  /** @format date-time */
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
   datetimePlanEnd?: string;
-  /** @format date-time */
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
   datetimeActualStart?: string;
-  /** @format date-time */
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
   datetimeActualEnd?: string;
   warehouseId?: string;
   parentMoId?: string;
   workshopId?: string;
+  /** 备注 */
   memo?: string;
+  /** 状态 */
   status?: string;
+  /** 工单来源 */
   moSource?: string;
   workcenterId?: string;
-  /** @format date-time */
+  /**
+   * 排产日期
+   * @format date-time
+   */
   datetimeSche?: string;
-  /** @format int32 */
+  /**
+   * 排产数量
+   * @format int32
+   */
   scheQty?: number;
   routingRevisionId?: string;
+  /** 排产工单 */
   scheCode?: string;
 }
 
@@ -398,9 +464,11 @@ export interface ResultMoSchedule {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 工单排产表 */
   data?: MoSchedule;
 }
 
+/** 工单表 */
 export interface Mo {
   id?: string;
   /**
@@ -425,35 +493,71 @@ export interface Mo {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工单名称 */
   moCode?: string;
   mitemId?: string;
+  /** 工单类型 */
   moClass?: string;
+  /** 销售订单 */
   soNo?: string;
-  /** @format int32 */
+  /**
+   * 销售订单行号
+   * @format int32
+   */
   soSeq?: number;
-  /** @format int32 */
+  /**
+   * 是否暂挂
+   * @format int32
+   */
   isHold?: number;
-  /** @format int32 */
+  /**
+   * 计划数量
+   * @format int32
+   */
   planQty?: number;
-  /** @format int32 */
+  /**
+   * 下线数量
+   * @format int32
+   */
   offlineQty?: number;
-  /** @format int32 */
+  /**
+   * 完工数量
+   * @format int32
+   */
   completedQty?: number;
-  /** @format int32 */
+  /**
+   * 入库数量
+   * @format int32
+   */
   stockinQty?: number;
-  /** @format date-time */
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
   datetimePlanStart?: string;
-  /** @format date-time */
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
   datetimePlanEnd?: string;
-  /** @format date-time */
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
   datetimeActualStart?: string;
-  /** @format date-time */
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
   datetimeActualEnd?: string;
   warehouseId?: string;
   parentMoId?: string;
   workshopId?: string;
+  /** 备注 */
   memo?: string;
+  /** 状态 */
   status?: string;
+  /** 工单来源 */
   moSource?: string;
 }
 
@@ -486,6 +590,7 @@ export interface ResultMo {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 工单表 */
   data?: Mo;
 }
 
@@ -569,35 +674,71 @@ export type MoTestDTO = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工单名称 */
   moCode?: string;
   mitemId?: string;
+  /** 工单类型 */
   moClass?: string;
+  /** 销售订单 */
   soNo?: string;
-  /** @format int32 */
+  /**
+   * 销售订单行号
+   * @format int32
+   */
   soSeq?: number;
-  /** @format int32 */
+  /**
+   * 是否暂挂
+   * @format int32
+   */
   isHold?: number;
-  /** @format int32 */
+  /**
+   * 计划数量
+   * @format int32
+   */
   planQty?: number;
-  /** @format int32 */
+  /**
+   * 下线数量
+   * @format int32
+   */
   offlineQty?: number;
-  /** @format int32 */
+  /**
+   * 完工数量
+   * @format int32
+   */
   completedQty?: number;
-  /** @format int32 */
+  /**
+   * 入库数量
+   * @format int32
+   */
   stockinQty?: number;
-  /** @format date-time */
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
   datetimePlanStart?: string;
-  /** @format date-time */
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
   datetimePlanEnd?: string;
-  /** @format date-time */
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
   datetimeActualStart?: string;
-  /** @format date-time */
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
   datetimeActualEnd?: string;
   warehouseId?: string;
   parentMoId?: string;
   workshopId?: string;
+  /** 备注 */
   memo?: string;
+  /** 状态 */
   status?: string;
+  /** 工单来源 */
   moSource?: string;
   /** 物料服务间调用标准实体 */
   mitemObject?: MitemFeignDTO;
@@ -619,7 +760,6 @@ export interface ResultListMoTestDTO {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://localhost:7500
  *
  * scm项目API汇总
  */
