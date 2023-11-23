@@ -7,7 +7,9 @@
           <t-form-item label="工作中心编号">
             <t-input v-model="formData.workNumber" />
           </t-form-item>
-          <t-form-item label="所属车间"> <t-select v-model="formData.workShop" /></t-form-item>
+          <t-form-item label="所属车间">
+            <tm-select-business v-model="formData.workShop" type="workshop" :show-title="false"></tm-select-business
+          ></t-form-item>
           <t-form-item label="地点">
             <t-input v-model="formData.location" style="width: 200px" />
           </t-form-item>
@@ -53,14 +55,18 @@
     <footer class="detailed-work-center">
       <span class="work-header">子工作中心</span>
       <div class="table-work-header">
-        <t-table
-          select-on-row-click
+        <!-- 表格 -->
+        <tm-table
+          ref="tableRef"
+          v-model:pagination="pageUI"
           row-key="name"
-          vertical-align="middle"
-          :columns="columns"
-          :data="workData"
-          lazy-load
+          :table-column="columns"
+          :table-data="workData"
+          :total="total"
+          :loading="loading"
+          :selected-row-keys="selectedRowKeys"
           @select-change="rehandleSelectChange"
+          @refresh="fetchData"
         >
           <!-- <template #expandedRow="{ row }">
             <div>{{ row }}</div>
@@ -80,7 +86,8 @@
           <template #associated>
             <t-link theme="primary" underline>PE30332705-2 </t-link>
           </template>
-        </t-table>
+          <!-- </t-table> -->
+        </tm-table>
         <span class="table-btn">
           <t-button @click="onHandleSave">保存</t-button>
           <t-button theme="default" @click="onHandleCancellation">取消</t-button></span
@@ -91,13 +98,31 @@
 </template>
 
 <script setup lang="ts">
+import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref } from 'vue';
+
+import TmTable from '@/components/tm-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
+
+import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 // 子修改传值
+
+const { pageUI } = usePage();
+const { loading, setLoading } = useLoading();
+const total = ref(10);
 const Emit = defineEmits(['addedShow']);
 
 const selectedRowKeys = ref([]); // 用于存储选中行的数组
 
+const fetchData = async () => {
+  setLoading(true);
+  setTimeout(() => {
+    workData.value = _.cloneDeep(workData.value);
+    setLoading(false);
+  }, 500);
+};
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'select',
@@ -195,6 +220,7 @@ const typeData = ref([
     show: false,
   },
 ]);
+
 // 高亮事件
 const onHandleCur = (id: number) => {
   typeData.value.forEach((item) => {

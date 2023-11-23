@@ -39,13 +39,15 @@
           </div>
         </t-col>
       </t-row>
-      <t-table
+      <tm-table
+        v-model:pagination="pageUI"
         row-key="index"
         :columns="columns"
         :data="workData"
         lazy-load
-        :pagination="workStationPagination"
-        @page-change="onWorkStationPageChange"
+        :total="total"
+        :loading="loading"
+        @refresh="onHandelList"
       >
         <template #state="{ row }">
           <span>{{ row.state === 1 ? '启用' : '禁用' }}</span>
@@ -54,17 +56,19 @@
           <!-- 编辑 -->
           <icon name="edit-1" style="margin-right: 10px; cursor: pointer" @click="onHandelEdit(row.id)"></icon>
           <!-- 禁用 -->
-          <icon name="delete" style="margin-right: 10px; cursor: pointer" @click="onHandleDisable(row.id)"></icon>
+          <t-popconfirm content="确认禁用吗" @confirm="onHandleDisable(row.id)">
+            <icon name="delete" style="margin-right: 10px; cursor: pointer"></icon>
+          </t-popconfirm>
         </template>
-      </t-table>
+      </tm-table>
+      <!-- <t-table row-key="index" :columns="columns" :data="workData" lazy-load> </t-table> -->
     </t-card>
     <t-dialog
       v-model:visible="formVisible"
-      header="新增"
+      :header="controlShow ? '编辑' : '新增'"
       :cancel-btn="null"
       :confirm-btn="null"
       width="40%"
-      @close="onClose"
     >
       <t-form
         ref="formRef"
@@ -78,21 +82,21 @@
         <!-- 工作中心-->
         <t-row class="form-customer-row">
           <t-col>
-            <t-form-item label="工作中心:" name="workcenterName">
+            <t-form-item label="工作中心:" name="PWorkcenterId">
               <!-- <t-select v-model="formData.workCenter"></t-select> -->
-              <tm-select-business v-model="formData.workcenterName" type="workcenter"></tm-select-business>
+              <tm-select-business
+                v-model="formData.PWorkcenterId"
+                type="workcenter"
+                :show-title="false"
+              ></tm-select-business>
             </t-form-item>
           </t-col>
         </t-row>
         <!-- 工序 -->
         <t-row class="form-work-station">
           <t-col>
-            <t-form-item label="工序:" name="processName">
-              <tm-select-business
-                v-model="formData.processName"
-                type="process"
-                :show-title="false"
-              ></tm-select-business>
+            <t-form-item label="工序:" name="PProcessId">
+              <tm-select-business v-model="formData.PProcessId" type="process" :show-title="false"></tm-select-business>
             </t-form-item>
           </t-col>
         </t-row>
@@ -146,12 +150,18 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next/es/table/type';
 import { onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
+import TmTable from '@/components/tm-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
 
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 
+const { pageUI } = usePage();
+const { loading, setLoading } = useLoading();
 const formVisible = ref(false); // 控制弹窗显示
 const controlShow = ref(false); // 控制确认按钮编辑和新增
 const formRef: Ref<FormInstanceFunctions> = ref(null);
+const total = ref(0); // 控制页面总数
 // 下拉定义
 const inputValue = ref({
   state: [],
@@ -168,6 +178,7 @@ onMounted(() => {
 const onHandelList = async () => {
   const STATE = inputValue.value.statevalue;
   try {
+    setLoading(true);
     if (STATE === -1) {
       inputValue.value.state = [1, 0];
     } else if (STATE === 1) {
@@ -176,17 +187,19 @@ const onHandelList = async () => {
       inputValue.value.state = [0];
     }
     const res = await api.workstation.getlist({
-      pageNum: workStationPagination.value.defaultCurrent,
-      pageSize: workStationPagination.value.defaultPageSize,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
       workstaion: inputValue.value.workstaion,
       state: inputValue.value.state,
       workcenter: inputValue.value.workcenter,
       process: inputValue.value.process,
     });
     workData.value = res.list;
-    workStationPagination.value.total = +res.total;
+    total.value = +res.total;
   } catch (e) {
     console.log(e);
+  } finally {
+    setLoading(false);
   }
 };
 // 下拉初始数据
@@ -265,8 +278,8 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 ];
 // 表单
 const formData = ref({
-  workcenterName: '', // 工作中心
-  processName: '', // 工序
+  PWorkcenterId: '', // 工作中心
+  PProcessId: '', // 工序
   workstationCode: '', // 工作代码
   workstationName: '', // 工作名称
   workstationDesc: '', // 工作描述
@@ -276,18 +289,6 @@ const formData = ref({
 });
 // table数据
 const workData = ref([]);
-// 分页控制初始数据
-const workStationPagination = ref({
-  defaultCurrent: 1,
-  defaultPageSize: 5,
-  total: 0,
-  showJumper: true,
-});
-const onWorkStationPageChange = (pageInfo: { current: number; pageSize: number }) => {
-  workStationPagination.value.defaultCurrent = pageInfo.current;
-  workStationPagination.value.defaultPageSize = pageInfo.pageSize;
-  onHandelList();
-};
 // 新增编辑按钮
 const onHandelE = (id) => {
   // 编辑
@@ -295,12 +296,14 @@ const onHandelE = (id) => {
     controlShow.value = true;
     workData.value.forEach((item) => {
       if (item.id === id) {
+        // console.log('1PWorkcenterId', item.PWorkcenterId, '2PProcessId', item.PProcessId);
         formData.value.id = id;
-        formData.value.workcenterName = item.pWorkcenterId;
-        formData.value.processName = item.pProcessId;
+        formData.value.PWorkcenterId = item.PWorkcenterId;
+        formData.value.PProcessId = item.PProcessId;
         formData.value.workstationCode = item.workstationCode;
         formData.value.workstationName = item.workstationName;
         formData.value.workstationDesc = item.workstationDesc;
+        // console.log('1', formData);
         if (formData.value.state === item.state) {
           formData.value.showState = true;
         } else {
@@ -311,8 +314,8 @@ const onHandelE = (id) => {
     console.log(formData);
   } else {
     // 新增
+    formRef.value.reset({ type: 'initial' });
     controlShow.value = false;
-    console.log(1);
   }
 };
 // 编辑
@@ -321,18 +324,18 @@ const onHandelEdit = (value) => {
   formVisible.value = true;
 };
 // 关闭清空
-const onClose = () => {
-  formRef.value.reset({ type: 'initial' });
-};
+// const onClose = () => {
+//   // formRef.value.reset({ type: 'initial' });
+// };
 // 新增
 const onHandelAdd = () => {
   formVisible.value = true;
   onHandelE(-1);
 };
 // 查询
-const onHandelQuery = () => {
-  workStationPagination.value.defaultCurrent = 1;
-  onHandelList();
+const onHandelQuery = async () => {
+  pageUI.value.page = 1;
+  await onHandelList();
 };
 // 重置
 const onHandelResetting = () => {
@@ -385,8 +388,8 @@ const onSecondary = async () => {
     try {
       api.workstation.edit({
         id: formData.value.id,
-        pprocessId: formData.value.workcenterName,
-        pworkcenterId: formData.value.processName,
+        pprocessId: formData.value.PProcessId,
+        pworkcenterId: formData.value.PWorkcenterId,
         workstationCode: formData.value.workstationCode,
         workstationName: formData.value.workstationName,
         workstationDesc: formData.value.workstationDesc,
@@ -402,10 +405,10 @@ const onSecondary = async () => {
     try {
       await api.workstation.add({
         workstationCode: formData.value.workstationCode,
-        workcenterName: formData.value.workcenterName,
+        workcenterName: formData.value.workstationName,
         workstationDesc: formData.value.workstationDesc,
-        pworkcenterId: formData.value.workcenterName,
-        pprocessId: formData.value.processName,
+        pworkcenterId: formData.value.PWorkcenterId,
+        pprocessId: formData.value.PProcessId,
         state: formData.value.state,
       });
       onHandelList();
@@ -431,14 +434,14 @@ const onWorkStationSubmit = (context: RootObject) => {
 };
 // 校验
 const rules: FormRules<Data> = {
-  workcenterName: [
+  PWorkcenterId: [
     {
       required: true,
       type: 'error',
       trigger: 'blur',
     },
   ],
-  processName: [
+  PProcessId: [
     {
       required: true,
       type: 'error',

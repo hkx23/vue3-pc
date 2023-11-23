@@ -4,48 +4,38 @@
     <detailed v-if="detailedShow" @added-show="onHandleSave"></detailed>
     <!-- 头部 -->
     <t-card v-if="!detailedShow" class="list-card-container" :bordered="false">
+      <t-head-menu v-model="valueItem" theme="light">
+        <t-menu-item v-for="item in allType" :key="item.id" :value="item.value"> {{ item.name }} </t-menu-item>
+      </t-head-menu>
       <t-row justify="space-between">
         <div class="work-center-box">
           <t-col>
             <t-button variant="base" @click="onHandelAdded">新增</t-button>
             <t-divider layout="vertical" />
-            <t-button theme="default" variant="base">导出...</t-button></t-col
-          >
+            <t-button theme="default" variant="base">导出...</t-button>
+          </t-col>
           <t-col>
             <div class="select-work">
-              <t-select
-                v-model="value1"
-                style="width: 200px; margin: 0 10px"
-                :options="options1"
-                placeholder="工作中心编号或者名称"
-                clearable
-                @focus="onFocus"
-                @blur="onBlur"
-              ></t-select>
-              <t-select
-                v-model="value2"
-                style="width: 100px; margin: 0 10px"
-                :options="options2"
-                placeholder="所有车间"
-                clearable
-                @focus="onFocus"
-                @blur="onBlur"
-              ></t-select>
+              <span style="margin: 0 20px">
+                <tm-select-business v-model="workState.workcenter" type="workcenter"></tm-select-business
+              ></span>
+              <tm-select-business v-model="workState.shop" type="workshop"></tm-select-business>
             </div>
           </t-col>
         </div>
       </t-row>
       <!-- 表格 -->
-      <t-table
+      <tm-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
         row-key="name"
-        vertical-align="middle"
-        :columns="columns"
-        :data="workData"
+        :table-column="columns"
+        :table-data="workData"
+        :total="page.total"
+        :loading="loading"
         :selected-row-keys="selectedRowKeys"
-        lazy-load
-        :pagination="workStationPagination"
-        @page-change="onWorkStationPageChange"
         @select-change="rehandleSelectChange"
+        @refresh="fetchData"
       >
         <template #Work-center-number="{ row }">
           <div>
@@ -62,19 +52,70 @@
           <!-- 编辑 -->
           <icon name="edit-1"></icon>
         </template>
-      </t-table>
+      </tm-table>
+      <!-- </t-table> -->
     </t-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Icon, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import _ from 'lodash';
+import { Icon } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
+import TmTable from '@/components/tm-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
+
+import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 import detailed from './detailed.vue';
 
+const valueItem = ref('item1');
+const tableRef = ref();
+const allType = ref([
+  {
+    name: '所有类型',
+    id: 0,
+    opId: [1, 2, 3, 4],
+    value: 'item1',
+  },
+  {
+    name: '工作区',
+    id: 1,
+    opId: [1],
+    value: 'item2',
+  },
+  {
+    name: '生产线',
+    id: 2,
+    opId: [2],
+    value: 'item3',
+  },
+  {
+    name: '工段',
+    id: 3,
+    opId: [3],
+    value: 'item4',
+  },
+  {
+    name: '设备',
+    id: 4,
+    opId: [4],
+    value: 'item5',
+  },
+]);
+// 刷新
+const fetchData = async () => {
+  setLoading(true);
+  setTimeout(() => {
+    workData.value = _.cloneDeep(workData.value);
+    setLoading(false);
+  }, 600);
+};
+
 const detailedShow = ref(false); // 控制子工作中心显示隐藏
-const columns: PrimaryTableCol<TableRowData>[] = [
+// 初始数据
+const columns = [
   {
     colKey: 'select',
     type: 'multiple',
@@ -120,6 +161,14 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
 ];
+const { pageUI } = usePage();
+const { loading, setLoading } = useLoading();
+setLoading(false);
+const page = ref({
+  pageNum: 1,
+  pageSize: 5,
+  total: 10,
+});
 const selectedRowKeys = ref([]); // 用于存储选中行的数组
 const workData = ref([
   {
@@ -150,45 +199,22 @@ const workData = ref([
     head: '李四',
   },
 ]);
-const value1 = ref('');
-const value2 = ref('');
-const options1 = [
-  { label: '区块链', value: '3' },
-  { label: '物联网', value: '4', disabled: true },
-  { label: '人工智能', value: '5' },
-];
-const options2 = [
-  { label: '架构云', value: '1', title: '架构云选项' },
-  { label: '大数据', value: '2' },
-  { label: '区块链', value: '3' },
-];
+// 通用下拉初始数据
+const workState = ref({
+  shop: '',
+  workcenter: '',
+});
 // 工作中心跳转到form
 const onHandelNumber = (value) => {
   detailedShow.value = true;
   console.log(value);
 };
-const onFocus = (ctx: any) => {
-  console.log('focus:', ctx);
-};
 
-const onBlur = (ctx: any) => {
-  console.log('blur:', ctx);
-};
-
-// 分页
-const workStationPagination = ref({
-  defaultCurrent: 1,
-  defaultPageSize: 20,
-  total: 0,
-  showJumper: true,
-});
-const onWorkStationPageChange = (pageInfo: { current: number; pageSize: number }) => {
-  workStationPagination.value.defaultCurrent = pageInfo.current;
-};
 // 新增按钮
 const onHandelAdded = () => {
   detailedShow.value = true;
 };
+
 // 子组件控制
 const onHandleSave = (value: any) => {
   detailedShow.value = value;
