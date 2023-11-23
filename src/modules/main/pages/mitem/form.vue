@@ -10,12 +10,13 @@
       <t-input v-model="formData.mitemDesc" />
     </t-form-item>
     <t-form-item label="物料类别">
-      <!-- <t-input v-model="formData.mmitemCategoryCode" readonly /> -->
-      <tm-select-business
-        v-model="formData.mmitemCategoryId"
-        type="mitemCategory"
-        :show-title="false"
-      ></tm-select-business>
+      <div style="width: 156px">
+        <tm-select-business
+          v-model="formData.mitemCategoryId"
+          type="mitemCategory"
+          :show-title="false"
+        ></tm-select-business>
+      </div>
     </t-form-item>
     <t-form-item label="主计量单位">
       <t-select
@@ -47,10 +48,10 @@
       />
     </t-form-item>
     <t-form-item label="默认仓库">
-      <t-input v-model="formData.wWarehouseCode" readonly placeholder="" />
+      <t-input v-model="formData.warehouseCode" readonly placeholder="" />
     </t-form-item>
     <t-form-item label="仓库名称">
-      <t-input v-model="formData.wWarehouseName" readonly placeholder="" />
+      <t-input v-model="formData.warehouseName" readonly placeholder="" />
     </t-form-item>
     <t-form-item label="保质期">
       <t-input-number v-model="formData.shelfLifeDays" />
@@ -99,9 +100,9 @@ export default {
       mitemCode: '',
       mitemName: '',
       mitemDesc: '',
-      mmitemCategoryId: '',
-      mmitemCategoryCode: '',
-      mmitemCategoryName: '',
+      mitemCategoryId: '',
+      mitemCategoryCode: '',
+      mitemCategoryName: '',
       uom: '',
       supplyCategory: '',
       isProduct: 0, // 是否成品
@@ -110,9 +111,9 @@ export default {
       isInProcessChecked: false,
       isRaw: 0, // 是否原材料
       isRawChecked: false,
-      wWarehouseId: '', // 完工默认仓库
-      wWarehouseCode: '',
-      wWarehouseName: '',
+      warehouseId: '', // 完工默认仓库
+      warehouseCode: '',
+      warehouseName: '',
       shelfLifeDays: 0, // 保质期天数
       isBatchNo: 0, // 是否启用批次
     });

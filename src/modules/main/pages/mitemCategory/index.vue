@@ -79,7 +79,6 @@ import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import { getList, getMitemList } from '../../api/mitemCategory';
 import MitemCategoryForm from './form.vue';
 
 const { pageUI } = usePage();
@@ -137,11 +136,11 @@ const fetchTable = async () => {
   try {
     selectedMitemCategoryRowKeys.value = [];
     tableDataMitem.value = [];
-    const data = await getList({
+    const data = (await api.mitemCategory.getlist({
       keyword: keyword.value,
       pagenum: pageUI.value.page,
       pagesize: pageUI.value.rows,
-    });
+    })) as any;
     tableDataMitemCategory.value = data.list;
     dataTotal.value = data.total;
   } catch (e) {
@@ -154,12 +153,12 @@ const fetchTable = async () => {
 const fetchMitemTable = async () => {
   setLoadingMitem(true);
   try {
-    const data = await getMitemList({
+    const data = (await api.mitem.getListByMitemCategory({
       keyword: '',
       mitemcategoryid: selectCategoryID.value,
       pagenum: pageMitem.value.page,
       pagesize: pageMitem.value.rows,
-    });
+    })) as any;
     tableDataMitem.value = data.list;
     mitemTotal.value = data.total;
   } catch (e) {
@@ -190,8 +189,8 @@ const onDeleteRowClick = async (value: any) => {
     body: '如果是手工导入的物料类别允许删除，如果是从第三方系统同步则不允许删除。是否删除？',
     confirmBtn: '确认',
     cancelBtn: '取消',
-    onConfirm: () => {
-      api.mitemCategory.delete(value.row);
+    onConfirm: async () => {
+      await api.mitemCategory.delete(value.row);
       fetchTable();
       confirmDia.hide();
     },

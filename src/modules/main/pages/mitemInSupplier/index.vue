@@ -18,8 +18,7 @@
           </t-col>
         </t-row>
         <t-row style="margin-top: 10px">
-          <t-button @click="onAdd">新增</t-button>
-          <t-button theme="default" @click="onDelete">删除</t-button>
+          <t-button theme="default" @click="onAdd">新增</t-button>
           <t-button theme="default">导入</t-button>
           <t-button theme="default">导出</t-button>
         </t-row>
@@ -37,6 +36,7 @@
             <template #op="slotProps">
               <t-space>
                 <t-icon name="edit" @click="onEditRowClick(slotProps)" />
+                <t-icon name="delete" @click="onDeleteRowClick(slotProps)" />
               </t-space>
             </template>
           </t-table>
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { DialogPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -108,9 +108,6 @@ const onAdd = () => {
   formTitle.value = '新增';
   formRef.value.init();
   formVisible.value = true;
-};
-const onDelete = () => {
-  fetchTable();
 };
 
 const fetchTable = async () => {
@@ -162,6 +159,22 @@ const onPageChange = (curr: any) => {
   fetchTable();
 };
 
+const onDeleteRowClick = async (value: any) => {
+  const confirmDia = DialogPlugin({
+    header: '删除',
+    body: '是否要删除物料与供应商关系？',
+    confirmBtn: '确认',
+    cancelBtn: '取消',
+    onConfirm: () => {
+      api.mitemInSupplier.delete(value.row);
+      fetchTable();
+      confirmDia.hide();
+    },
+    onClose: () => {
+      confirmDia.hide();
+    },
+  });
+};
 onMounted(() => {
   fetchTable();
 });
