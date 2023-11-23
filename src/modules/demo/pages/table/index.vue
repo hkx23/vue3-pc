@@ -48,7 +48,7 @@ const data = reactive({
 const fetchData = () => {
   setLoading(true);
   setTimeout(() => {
-    data.list = apiMockData(pageUI.value.page);
+    data.list = apiMockData(pageUI.value.rows);
     data.total = data.list.length * 30;
     setLoading(false);
   }, 600);

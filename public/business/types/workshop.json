@@ -1,7 +1,7 @@
 {
   "title": "车间：",
   "placeholder": "请选择车间：",
-  "url": "/api/modeling/org/items",
+  "url": "/api/main/org/items",
   "httptype": "POST",
   "category": "WORKSHOP",
   "columns": [

@@ -1,0 +1,414 @@
+<template>
+  <t-form
+    ref="formRef"
+    colon
+    class="search-form"
+    v-bind="$attrs"
+    :label-width="labelWidth"
+    :form="state.form"
+    size="default"
+    @submit.prevent
+  >
+    <div ref="formContentRef" class="search-form__content" :style="{ height: openSearchForm ? '' : '50px' }">
+      <t-form-item
+        v-for="(opt, i) in cOpts"
+        :key="i"
+        :label="opt.label"
+        :label-width="opt.labelWidth"
+        v-bind="$attrs"
+        :class="[opt.className, { render_label: opt.labelRender }]"
+      >
+        <!-- 自定义label -->
+        <template v-if="opt.labelRender" #label>
+          <render-comp :form="state.form" :render="opt.labelRender" />
+        </template>
+        <!-- 自定义输入框插槽 -->
+        <template v-if="opt.slotName">
+          <slot :name="opt.slotName" :param="state.form"></slot>
+        </template>
+        <!-- 日期控件 -->
+        <component
+          :is="opt.comp"
+          v-if="!opt.slotName && opt.comp.includes('date')"
+          v-bind="
+            typeof opt.bind == 'function'
+              ? opt.bind(state.form)
+              : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
+          "
+          v-model="state.form[opt.dataIndex]"
+          :placeholder="opt.placeholder || getPlaceholder(opt)"
+          @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+          v-on="cEvent(opt)"
+        />
+        <!-- 树选择控件 -->
+        <component
+          :is="opt.comp"
+          v-if="!opt.slotName && opt.comp.includes('tree-select')"
+          v-bind="
+            typeof opt.bind == 'function'
+              ? opt.bind(state.form)
+              : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
+          "
+          v-model="state.form[opt.dataIndex]"
+          :placeholder="opt.placeholder || getPlaceholder(opt)"
+          @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+          v-on="cEvent(opt)"
+        />
+        <!-- 非日期控件与树选择控件 -->
+        <component
+          :is="opt.comp"
+          v-if="!opt.slotName && !opt.comp.includes('date') && !opt.comp.includes('tree-select')"
+          v-bind="
+            typeof opt.bind == 'function'
+              ? opt.bind(state.form)
+              : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
+          "
+          v-model="state.form[opt.dataIndex]"
+          :placeholder="opt.placeholder || getPlaceholder(opt)"
+          @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+          v-on="cEvent(opt)"
+        >
+          <component
+            :is="compChildName(opt)"
+            v-for="(value, key, index) in selectListType(opt)"
+            :key="index"
+            :disabled="value.disabled"
+            :label="compChildLabel(opt, value)"
+            :value="compChildValue(opt, value, key)"
+            >{{ compChildShowLabel(opt, value) }}</component
+          >
+        </component>
+      </t-form-item>
+    </div>
+    <div class="search-form__button">
+      <t-space size="small" :align="'center'">
+        <t-button class="btn_check" :loading="loading" @click="checkHandle">查询</t-button>
+        <t-button v-if="reset" class="btn_reset" @click="resetHandle">重置</t-button>
+        <slot name="querybar"></slot>
+        <a v-if="showExpand" theme="primary" variant="text" @click="onExpandSwitch">
+          <span>{{ openSearchForm ? '收起' : '展开' }}</span>
+          <t-icon :name="openSearchForm ? 'chevron-up' : 'chevron-down'" />
+        </a>
+      </t-space>
+    </div>
+    <!-- <t-form-item
+      v-if="Object.keys(cOpts).length > 0"
+      label-width="0"
+      style="grid-area: submit_btn"
+      :class="['btn', { flex_end: cellLength % colLength === 0 }]"
+    >
+ 
+      <t-button v-if="originCellLength > colLength && isShowOpen" link @click="open = !open">
+        {{ open ? '收起' : '展开' }}
+        <t-icon v-if="open">
+          <ArrowUp />
+        </t-icon>
+        <t-icon v-else>
+          <ArrowDown />
+        </t-icon>
+      </t-button>
+    </t-form-item> -->
+  </t-form>
+</template>
+
+<script setup lang="tsx" name="TmQuery">
+import _ from 'lodash';
+import { computed, getCurrentInstance, onMounted, reactive, ref, watch } from 'vue';
+
+import RenderComp from './renderComp.vue';
+
+const props = defineProps({
+  opts: {
+    type: Object,
+    required: true,
+    default: () => ({}),
+  },
+  labelWidth: {
+    type: String,
+    default: '60px',
+  },
+  // 查询按钮配置
+  btnCheckBind: {
+    type: [Object],
+  },
+  // 重置按钮配置
+  btnResetBind: {
+    type: [Object],
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  reset: {
+    type: Boolean,
+    default: true,
+  },
+  boolEnter: {
+    type: Boolean,
+    default: true,
+  },
+  // 是否显示收起和展开
+  isShowOpen: {
+    type: Boolean,
+    default: true,
+  },
+  // 是否默认展开
+  isExpansion: {
+    type: Boolean,
+    default: false,
+  },
+});
+// 初始化表单数据
+const state = reactive({
+  form: Object.keys(props.opts).reduce((acc: any, field: any) => {
+    acc[field] = props.opts[field].defaultVal || null;
+    return acc;
+  }, {}),
+});
+const colLength = ref(4);
+const open = ref(false);
+// 默认展开
+if (props.isExpansion) {
+  open.value = true;
+} else {
+  open.value = false;
+}
+// 查询按钮配置
+// const queryAttrs = computed(() => {
+//   return { type: 'primary', size: 'default', ...props.btnCheckBind };
+// });
+// 重置按钮配置
+// const resetAttrs = computed(() => {
+//   return { size: 'default', ...props.btnResetBind };
+// });
+const cOpts = computed(() => {
+  let renderSpan = 0;
+  return Object.keys(props.opts).reduce((acc: any, field: any) => {
+    const opt = {
+      ...props.opts[field],
+    };
+    // 收起、展开操作
+    if (props.isShowOpen) {
+      renderSpan += opt.span ?? 1;
+      if (!open.value && renderSpan - 1 >= colLength.value) return acc;
+    }
+    opt.dataIndex = field;
+    acc[field] = opt;
+    return acc;
+  }, {});
+});
+// 引用第三方事件
+const cEvent = computed(() => {
+  return (opt: any) => {
+    const event = { ...opt.eventHandle };
+    const changeEvent = {};
+    Object.keys(event).forEach((v) => {
+      changeEvent[v] = (e) => {
+        if (!event[v]) return;
+
+        if (e) event[v](e, state.form);
+        else {
+          event[v](state.form);
+        }
+      };
+    });
+    return { ...changeEvent };
+  };
+});
+// 初始化表单数据
+const initForm = (opts: any, keepVal = false) => {
+  return Object.keys(opts).reduce((acc, field) => {
+    if (keepVal && state.form) {
+      acc[field] = state.form[field];
+    } else if (opts[field].defaultVal) {
+      acc[field] = opts[field].defaultVal;
+    } else {
+      acc[field] = null;
+    }
+    return acc;
+  }, {});
+};
+const getColLength = () => {
+  // 行列数
+  const width = window.innerWidth;
+  let colLength = 4;
+  if (width > 768 && width < 1280) {
+    colLength = 3;
+  } else if (width <= 768) {
+    colLength = 2;
+  }
+  return colLength;
+};
+const emits = defineEmits(['handleEvent', 'submit', 'reset']);
+// 重置
+const resetHandle = () => {
+  state.form = initForm(props.opts);
+  emits('reset', state.form);
+  checkHandle('reset');
+};
+// 查询条件change事件
+const handleEvent = (type, val) => {
+  emits('handleEvent', type, val, state.form);
+};
+// 查询
+const checkHandle = (flagText: any = false) => {
+  emits('submit', state.form, flagText);
+};
+// 子组件名称
+const compChildName: any = computed(() => {
+  return (opt: any) => {
+    switch (opt.type) {
+      case 'checkbox':
+        return 't-checkbox';
+      case 'radio':
+        return 't-radio';
+      case 'select-arr':
+      case 'select-obj':
+        return 't-option';
+      default:
+        return 't-input';
+    }
+  };
+});
+// 下拉数据
+const selectListType = computed(() => {
+  return (opt: any) => {
+    if (opt.listTypeInfo) {
+      return opt.listTypeInfo[opt.list];
+    }
+    return [];
+  };
+});
+// 子子组件label
+const compChildLabel = computed(() => {
+  return (opt: any, value) => {
+    switch (opt.type) {
+      case 'radio':
+      case 'checkbox':
+        return value.value;
+      case 't-select-multiple':
+      case 'select-arr':
+        return value[opt.arrLabel || 'dictLabel'];
+      case 'select-obj':
+        return value;
+      default:
+        return value;
+    }
+  };
+});
+// 子子组件value
+const compChildValue = computed(() => {
+  return (opt: any, value, key) => {
+    switch (opt.type) {
+      case 'radio':
+      case 'checkbox':
+        return value.value;
+      case 't-select-multiple':
+      case 'select-arr':
+        return value[opt.arrKey || 'dictValue'];
+      case 'select-obj':
+        return key;
+      default:
+        return value;
+    }
+  };
+});
+// 子子组件文字展示
+const compChildShowLabel = computed(() => {
+  return (opt: any, value) => {
+    switch (opt.type) {
+      case 'radio':
+      case 'checkbox':
+        return value.label;
+      case 't-select-multiple':
+      case 'select-arr':
+        return value[opt.arrLabel || 'dictLabel'];
+      case 'select-obj':
+        return value;
+      default:
+        return value;
+    }
+  };
+});
+// placeholder的显示
+const getPlaceholder = (row: any) => {
+  let placeholder;
+  if (row.comp && typeof row.comp === 'string') {
+    if (row.comp.includes('input')) {
+      placeholder = `请输入${row.label}`;
+    } else if (row.comp.includes('select') || row.comp.includes('date')) {
+      placeholder = `请选择${row.label}`;
+    } else {
+      placeholder = row.label;
+    }
+  }
+  return placeholder;
+};
+onMounted(() => {
+  colLength.value = getColLength();
+  if (props.boolEnter) {
+    document.onkeyup = (e) => {
+      const pagination = document.querySelectorAll('.t-pagination');
+      let isPaginationInputFocus = false;
+      if (pagination) {
+        pagination.forEach((ele) => {
+          const paginationInputList = ele.getElementsByTagName('input');
+          const paginationInput = paginationInputList[paginationInputList.length - 1];
+          // 判断是否有分页器筛选输入框获取焦点
+          if (paginationInput === document.activeElement) {
+            isPaginationInputFocus = true;
+          }
+        });
+      }
+      if (isPaginationInputFocus) {
+        return;
+      }
+      if (e.code === 'Enter') {
+        checkHandle();
+      }
+    };
+  }
+});
+watch(
+  () => props.opts,
+  (opts, oldValue) => {
+    console.log(1111, opts, oldValue);
+    state.form = initForm(opts, true);
+  },
+);
+const openSearchForm = ref(false);
+const showExpand = ref(true); // 是否展示展开按钮
+const formContentRef = ref<HTMLDivElement>();
+const slots = ref({});
+// 展开按钮点击事件
+const onExpandSwitch = () => {
+  openSearchForm.value = !openSearchForm.value;
+  // nextTick(() => {
+  //   computedTableContentSize();
+  // });
+};
+
+const debounceFunction = _.debounce(() => {
+  computedExpandBtnVisible();
+  // computedTableContentSize();
+}, 100);
+
+const computedExpandBtnVisible = () => {
+  if (formContentRef.value) {
+    const contentWidth = formContentRef.value.clientWidth / 360;
+    showExpand.value = contentWidth < Object.keys(props.opts).length;
+  }
+};
+onMounted(() => {
+  debounceFunction();
+  const instance = getCurrentInstance();
+  slots.value = instance?.slots;
+});
+
+// 暴露方法出去
+defineExpose({ state, props });
+</script>
+
+<style lang="less" scoped>
+@import './common/index.less';
+</style>

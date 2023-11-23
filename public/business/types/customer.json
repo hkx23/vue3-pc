@@ -1,7 +1,7 @@
 {
   "title": "客户：",
   "placeholder": "请选择客户",
-  "url": "/api/modeling/customer/items",
+  "url": "/api/main/customer/items",
   "httptype": "POST",
   "columns": [
     {

@@ -1,0 +1,37 @@
+// 表单组件
+.search-form {
+  width: 100%;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  background-color: var(--td-bg-color-container);
+  border-radius: var(--td-radius-medium);
+  display: flex;
+  justify-content: space-between;
+
+  .search-form__content {
+    width: calc(100% - 200px);
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+
+    .t-form__item {
+      height: 50px;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+
+      .t-form__controls {
+        margin-left: 0 !important;
+      }
+    }
+  }
+
+  .search-form__button {
+    width: 200px;
+    height: 50px;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
