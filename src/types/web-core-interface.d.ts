@@ -2,8 +2,8 @@
 import { EventBus, Http } from './web-core';
 
 declare interface Config {
-  language: string;
   baseUrl: string;
+  languageCodes: Array<string>;
 }
 
 declare interface Utils {
@@ -14,10 +14,15 @@ declare interface Framework {
   ipc: EventBus;
   config: Config;
   platform: string;
-  getLanguage: Function;
-  getToken: Function;
-  setToken: Function;
   utils: Utils;
+  getLanguage: () => string;
+  setLanguage: (language: string) => void;
+  getToken: () => string;
+  setToken: (token: string) => void;
+  getOrgId: () => string;
+  setOrgId: (orgId: string) => void;
+  getEnterpriseId: () => string;
+  setEnterpriseId: (enterpriseId: string) => void;
 }
 
 // declare interface Window {

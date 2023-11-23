@@ -2,13 +2,14 @@
 import TDesign from 'tdesign-vue-next';
 import { createApp } from 'vue';
 
+import '@/utils/core';
+import '@/api/mock';
+
 import App from './App.vue';
 import i18n from './locales';
 import router from './router';
 import { store } from './store';
 
-import '@/utils/core';
-import '@/api/mock';
 import '@/style/index.less';
 import './permission';
 

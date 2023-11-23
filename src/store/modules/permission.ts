@@ -3,7 +3,6 @@ import { RouteRecordRaw } from 'vue-router';
 
 import { RouteItem } from '@/api/model/permissionModel';
 import { getMenuList } from '@/api/portal';
-import { CustomError } from '@/assets/libs/web-core';
 import router, { fixedRouterList, homepageRouterList } from '@/router';
 import { store } from '@/store';
 import { transformObjectToRoute } from '@/utils/route';
@@ -28,15 +27,11 @@ export const usePermissionStore = defineStore('permission', {
     },
     // eslint-disable-next-line consistent-return
     async buildAsyncRoutes() {
-      try {
-        const asyncRoutes: Array<RouteItem> = await getMenuList();
-        // 发起菜单权限请求 获取菜单列表
-        this.asyncRoutes = await transformObjectToRoute(asyncRoutes);
-        await this.initRoutes();
-        return this.asyncRoutes;
-      } catch (error) {
-        if (!(error instanceof CustomError)) throw new Error("Can't build routes");
-      }
+      const asyncRoutes: Array<RouteItem> = await getMenuList();
+      // 发起菜单权限请求 获取菜单列表
+      this.asyncRoutes = await transformObjectToRoute(asyncRoutes);
+      await this.initRoutes();
+      return this.asyncRoutes;
     },
     async restoreRoutes() {
       // 不需要在此额外调用initRoutes更新侧边导肮内容，在登录后asyncRoutes为空会调用

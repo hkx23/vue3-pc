@@ -1,7 +1,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import { i18n, langCode, localeConfigKey } from '@/locales/index';
+import { i18n, langCode } from '@/locales/index';
 
 export function useLocale() {
   const { locale } = useI18n({ useScope: 'global' });
@@ -12,7 +12,7 @@ export function useLocale() {
     }
 
     locale.value = lang;
-    localStorage.setItem(localeConfigKey, lang);
+    fw.setLanguage(lang);
   }
 
   const getComponentsLocale = computed(() => {

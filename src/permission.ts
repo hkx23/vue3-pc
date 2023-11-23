@@ -4,6 +4,7 @@ import NProgress from 'nprogress'; // progress bar
 import { MessagePlugin } from 'tdesign-vue-next';
 import { RouteRecordRaw } from 'vue-router';
 
+import { CustomError } from '@/assets/libs/web-core';
 import router from '@/router';
 import { getPermissionStore, useUserStore } from '@/store';
 import { PAGE_NOT_FOUND_ROUTE } from '@/utils/route/constant';
@@ -49,7 +50,7 @@ router.beforeEach(async (to, from, next) => {
         next(`/`);
       }
     } catch (error) {
-      MessagePlugin.error(error.message);
+      if (!(error instanceof CustomError)) MessagePlugin.error(error.message);
       next({
         path: '/login',
         query: { redirect: encodeURIComponent(to.fullPath) },
