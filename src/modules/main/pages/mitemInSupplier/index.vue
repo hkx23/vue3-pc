@@ -23,15 +23,15 @@
           <t-button theme="default">导出</t-button>
         </t-row>
         <t-row justify="space-between">
-          <t-table
+          <tm-table
+            v-model:pagination="pageUI"
             row-key="id"
-            :columns="tableMitemInSupplierColumns"
-            :data="tableDataMitemInSupplier"
-            :loading="dataLoading"
+            :table-column="tableMitemInSupplierColumns"
+            :table-data="tableDataMitemInSupplier"
+            :loading="loading"
             :hover="true"
-            :pagination="tableMitemInSupplierPagination"
             :selected-row-keys="selectedMitemInSupplierRowKeys"
-            @page-change="onPageChange"
+            @refresh="fetchTable"
           >
             <template #op="slotProps">
               <t-space>
@@ -39,7 +39,7 @@
                 <t-icon name="delete" @click="onDeleteRowClick(slotProps)" />
               </t-space>
             </template>
-          </t-table>
+          </tm-table>
         </t-row>
       </div>
     </div>
@@ -65,15 +65,23 @@ import { DialogPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
+// 表格相关
+import TmTable from '@/components/tm-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
 
 // import TmSelectBusiness from '@/components/tm-select-business/index.vue';
 import MitemInSupplierForm from './form.vue';
+
+// 分页相关
+const { pageUI } = usePage();
+const { loading, setLoading } = useLoading();
+const dataTotal = ref(0);
 
 const mitemKeyword = ref('');
 const supplierKeyword = ref('');
 const selectedMitemInSupplierRowKeys = ref([]);
 const tableDataMitemInSupplier = ref([]);
-const dataLoading = ref(false);
 const sortlist = ref([]);
 const filterlist = ref([]);
 const formVisible = ref(false);
@@ -88,12 +96,11 @@ const tableMitemInSupplierColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '供应商名称', width: 160, colKey: 'supplierName' },
   { title: '最小包装数量', width: 160, colKey: 'qty' },
   { title: '检查严格度', width: 160, colKey: 'inspectionStringency' },
-  { title: '是否免检', width: 160, colKey: 'isExemptionInspection' },
-  { title: '免检失效日期', width: 160, colKey: 'dateExemptionExpired' },
-  { title: '是否强制供方申请', width: 160, colKey: 'isForceInspection' },
+  { title: '是否免检', width: 160, colKey: 'isExemptionInspectionName' },
+  { title: '免检失效日期', width: 160, colKey: 'dateExemptionExpiredStr' },
+  { title: '是否强制供方申请', width: 160, colKey: 'isForceInspectionName' },
   { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
-const tableMitemInSupplierPagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
 
 // 查询按钮
 const onRefresh = () => {
@@ -111,24 +118,24 @@ const onAdd = () => {
 };
 
 const fetchTable = async () => {
-  dataLoading.value = true;
+  setLoading(true);
   try {
     selectedMitemInSupplierRowKeys.value = [];
     tableDataMitemInSupplier.value = [];
     const data = (await api.mitemInSupplier.getMitemInSupplierList({
       mitemKeyword: mitemKeyword.value,
       supplierKeyword: supplierKeyword.value,
-      pageNum: tableMitemInSupplierPagination.value.defaultCurrent,
-      pageSize: tableMitemInSupplierPagination.value.defaultPageSize,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
       sorts: sortlist.value,
       filters: filterlist.value,
     })) as any;
     tableDataMitemInSupplier.value = data.list;
-    tableMitemInSupplierPagination.value = { ...tableMitemInSupplierPagination.value, total: data.total };
+    dataTotal.value = data.total;
   } catch (e) {
     console.log(e);
   } finally {
-    dataLoading.value = false;
+    setLoading(false);
   }
 };
 
@@ -151,12 +158,6 @@ const onConfirmForm = async () => {
 
 const onCloseForm = async () => {
   formRef.value.init();
-};
-
-const onPageChange = (curr: any) => {
-  tableMitemInSupplierPagination.value.defaultCurrent = curr.current;
-  tableMitemInSupplierPagination.value.defaultPageSize = curr.pageSize;
-  fetchTable();
 };
 
 const onDeleteRowClick = async (value: any) => {

@@ -16,22 +16,23 @@
           </t-col>
         </t-row>
         <t-row justify="space-between">
-          <t-table
+          <tm-table
+            v-model:pagination="pageUI"
             row-key="id"
-            :columns="tableSupplierColumns"
-            :data="tableDataSupplier"
-            :loading="dataLoading"
+            :table-column="tableSupplierColumns"
+            :table-data="tableDataSupplier"
+            :loading="loading"
+            :total="dataTotal"
             :hover="true"
-            :pagination="tableSupplierPagination"
             :selected-row-keys="selectedSupplierRowKeys"
-            @page-change="onPageChange"
+            @refresh="fetchTable"
           >
-            <template #op="slotProps">
+            <!-- <template #op="slotProps">
               <t-space>
                 <t-icon name="edit" @click="onEditRowClick(slotProps)" />
               </t-space>
-            </template>
-          </t-table>
+            </template> -->
+          </tm-table>
         </t-row>
       </div>
     </div>
@@ -56,13 +57,19 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
+import TmTable from '@/components/tm-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
 
 // import SupplierForm from './form.vue';
+
+const { pageUI } = usePage();
+const { loading, setLoading } = useLoading();
+const dataTotal = ref(0);
 
 const keyword = ref('');
 const selectedSupplierRowKeys = ref([]);
 const tableDataSupplier = ref([]);
-const dataLoading = ref(false);
 const sortlist = ref([]);
 const filterlist = ref([]);
 const formVisible = ref(false);
@@ -74,13 +81,12 @@ const tableSupplierColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '供应商名称', width: 160, colKey: 'supplierName' },
   { title: '供应商联系人', width: 160, colKey: 'contactPerson' },
   { title: '供应商联系电话', width: 160, colKey: 'contactTel' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  // { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
-const tableSupplierPagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
 
 // 查询按钮
 const onRefresh = () => {
-  tableSupplierPagination.value.defaultCurrent = 1;
+  pageUI.value.page = 1;
   fetchTable();
 };
 // 重置按钮
@@ -89,42 +95,37 @@ const onReset = () => {
 };
 
 const fetchTable = async () => {
-  dataLoading.value = true;
+  setLoading(true);
   try {
     selectedSupplierRowKeys.value = [];
     tableDataSupplier.value = [];
     const data = (await api.supplier.search({
       keyword: keyword.value,
-      pageNum: tableSupplierPagination.value.defaultCurrent,
-      pageSize: tableSupplierPagination.value.defaultPageSize,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
       sorts: sortlist.value,
       filters: filterlist.value,
     })) as any;
     tableDataSupplier.value = data.list;
-    tableSupplierPagination.value = { ...tableSupplierPagination.value, total: data.total };
+    dataTotal.value = data.total;
+    // tableSupplierPagination.value = { ...tableSupplierPagination.value, total: data.total };
   } catch (e) {
     console.log(e);
   } finally {
-    dataLoading.value = false;
+    setLoading(false);
   }
 };
 
-const onEditRowClick = (value: any) => {
-  formRef.value.formData = JSON.parse(JSON.stringify(value.row));
-  formVisible.value = true;
-};
+// const onEditRowClick = (value: any) => {
+//   formRef.value.formData = JSON.parse(JSON.stringify(value.row));
+//   formVisible.value = true;
+// };
 
 const onConfirmForm = async () => {
   formRef.value.submit().then(() => {
     formVisible.value = false;
     fetchTable();
   });
-};
-
-const onPageChange = (curr: any) => {
-  tableSupplierPagination.value.defaultCurrent = curr.current;
-  tableSupplierPagination.value.defaultPageSize = curr.pageSize;
-  fetchTable();
 };
 
 onMounted(() => {

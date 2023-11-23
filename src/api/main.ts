@@ -961,15 +961,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  stateName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isRawName?: string;
   isBatchName?: string;
+  isInProcessName?: string;
   isProductName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  isRawChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -1136,8 +1136,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1412,7 +1412,6 @@ export type ShowModuleVO = {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://localhost:7210
  *
  * scm项目API汇总
  */
@@ -1699,6 +1698,7 @@ export const api = {
      *
      * @tags 员工表
      * @name Search
+     * @summary 获取员工信息
      * @request POST:/person/items
      * @secure
      */
@@ -1713,6 +1713,7 @@ export const api = {
      *
      * @tags 员工表
      * @name GetItemById
+     * @summary 根据ID获取员工信息
      * @request POST:/person/items/{id}
      * @secure
      */
@@ -2054,6 +2055,7 @@ export const api = {
      *
      * @tags 物料供应商关系
      * @name GetMitemInSupplierList
+     * @summary 获取物料与供应商关系
      * @request POST:/mitemInSupplier/getmiteminsupplierlist
      * @secure
      */
@@ -2068,6 +2070,7 @@ export const api = {
      *
      * @tags 物料供应商关系
      * @name Edit
+     * @summary 编辑物料与供应商关系
      * @request POST:/mitemInSupplier/edit
      * @secure
      */
@@ -2082,6 +2085,7 @@ export const api = {
      *
      * @tags 物料供应商关系
      * @name Delete
+     * @summary 删除物料与供应商关系
      * @request POST:/mitemInSupplier/delete
      * @secure
      */
@@ -2096,6 +2100,7 @@ export const api = {
      *
      * @tags 物料供应商关系
      * @name Add
+     * @summary 新增物料与供应商关系
      * @request POST:/mitemInSupplier/add
      * @secure
      */
@@ -2111,6 +2116,7 @@ export const api = {
      *
      * @tags 物料分类
      * @name Search
+     * @summary 获取物料分类信息(筛选用)
      * @request POST:/mitemCategory/items
      * @secure
      */
@@ -2125,6 +2131,7 @@ export const api = {
      *
      * @tags 物料分类
      * @name GetItemById
+     * @summary 根据id获取物料分类信息
      * @request POST:/mitemCategory/items/{id}
      * @secure
      */
@@ -2138,6 +2145,7 @@ export const api = {
      *
      * @tags 物料分类
      * @name Edit
+     * @summary 编辑物料分类
      * @request POST:/mitemCategory/edit
      * @secure
      */
@@ -2152,7 +2160,7 @@ export const api = {
      *
      * @tags 物料分类
      * @name Delete
-     * @summary 删除员工信息
+     * @summary 删除物料分类
      * @request POST:/mitemCategory/delete
      * @secure
      */
@@ -2167,6 +2175,7 @@ export const api = {
      *
      * @tags 物料分类
      * @name List
+     * @summary 获取物料分类信息
      * @request GET:/mitemCategory/list
      * @secure
      */
@@ -2222,6 +2231,7 @@ export const api = {
      *
      * @tags 物料
      * @name Search
+     * @summary 获取物料（筛选用）
      * @request POST:/mitem/items
      * @secure
      */
@@ -2236,6 +2246,7 @@ export const api = {
      *
      * @tags 物料
      * @name GetItemById
+     * @summary 根据ID获取物料
      * @request POST:/mitem/items/{id}
      * @secure
      */
@@ -2249,6 +2260,7 @@ export const api = {
      *
      * @tags 物料
      * @name GetList
+     * @summary 根据物料
      * @request POST:/mitem/getlist
      * @secure
      */
@@ -2278,6 +2290,7 @@ export const api = {
      *
      * @tags 物料
      * @name Edit
+     * @summary 编辑物料
      * @request POST:/mitem/edit
      * @secure
      */
@@ -2292,6 +2305,7 @@ export const api = {
      *
      * @tags 物料
      * @name List
+     * @summary 获取物料
      * @request GET:/mitem/list
      * @secure
      */
@@ -2319,6 +2333,7 @@ export const api = {
      *
      * @tags 物料
      * @name GetListByMitemCategory
+     * @summary 根据物料分类获取物料
      * @request GET:/mitem/getlistbymitemcategory
      * @secure
      */
