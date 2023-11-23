@@ -19,6 +19,7 @@
       <tm-table
         v-model:pagination="pageUI"
         row-key="index"
+        :loading="loading"
         :table-column="columns"
         :table-data="customerData"
         :total="dataTotal"
@@ -99,20 +100,13 @@ const formData = ref({
   customerName: '',
   shortName: '',
 });
-// 分页pagination
-const customerPagination = ref({
-  defaultCurrent: 1,
-  defaultPageSize: 20,
-  total: 0,
-  showJumper: true,
-});
 // 监听查询的时候把num改为1
 watch(
   () => keyword.value,
   (newValue, oldValue) => {
     if (oldValue !== newValue) {
       console.log(oldValue !== newValue);
-      customerPagination.value.defaultCurrent = 1;
+      pageUI.value.page = 1;
     }
   },
 );
@@ -131,8 +125,8 @@ const featCustomer = async () => {
     setLoading(true);
     const res = await customerSearch({
       keyword: keyword.value,
-      pageNum: customerPagination.value.defaultCurrent,
-      pageSize: customerPagination.value.defaultPageSize,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
       sorts: [],
       filters: [],
     });

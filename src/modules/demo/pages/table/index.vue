@@ -2,7 +2,6 @@
   <tm-table
     ref="tableRef"
     v-model:pagination="pageUI"
-    :params="formData"
     :table-column="tableColumn"
     :table-data="data.list"
     :enable-export="enableExport"
@@ -40,15 +39,6 @@ const tableRef = ref();
 
 const enableExport = ref(false);
 
-const formData = reactive({
-  name: '',
-  dealer: '',
-  status: '',
-  category: '',
-  date: '',
-  rangetime: [],
-});
-
 const data = reactive({
   total: 0,
   list: [],
@@ -58,7 +48,7 @@ const data = reactive({
 const fetchData = () => {
   setLoading(true);
   setTimeout(() => {
-    data.list = apiMockData(pageUI.value.rows);
+    data.list = apiMockData(pageUI.value.page);
     data.total = data.list.length * 30;
     setLoading(false);
   }, 600);

@@ -24,17 +24,15 @@
           <t-button theme="default" @click="onImport">导入</t-button>
         </t-row>
         <div class="table-container">
-          <t-table
-            v-model="selectedTableRows"
-            :data="dataTable"
-            :columns="columnsParam"
+          <tm-table
+            ref="tableRef"
+            v-model:pagination="pageUI"
+            :table-data="dataTable"
+            :table-column="columnsParam"
             :row-key="rowKey"
-            :hover="true"
-            :pagination="pagination"
-            :loading="dataLoading"
-            :selected-row-keys="selectedRowKeys"
-            @page-change="onPageChange"
-            @select-change="onSelectChange"
+            :loading="loading"
+            :total="dataTotal"
+            @refresh="onRefresh"
           >
             <template #op="slotProps">
               <t-space>
@@ -42,7 +40,7 @@
                 <t-icon name="delete" @click="handleClickDelete(slotProps)" />
               </t-space>
             </template>
-          </t-table>
+          </tm-table>
         </div>
         <div>
           <t-dialog
@@ -147,9 +145,14 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
+import TmTable from '@/components/tm-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
 
 import { getAdminOrgList } from '../../api/adminOrg';
 
+const { pageUI } = usePage();
+const { loading, setLoading } = useLoading();
 const personCode = ref(''); // 查询
 
 // #region  页面初始化
@@ -173,7 +176,7 @@ const formData = ref({
 // 表格
 const dataTable = ref([]);
 const dataTree = ref([]);
-const selectedTableRows = ref([]); // 用于存储选中行的数组
+const dataTotal = ref(0);
 
 // 显示控制
 const dataLoading = ref(false); // 是否显示数据加载图标
@@ -182,23 +185,22 @@ const onShowEditVisible = ref(false); // 是否显示编辑窗口
 const onShowImportVisible = ref(false); // 是否显示导入窗口
 // 表格列设置
 const columnsParam: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'id', type: 'multiple', width: 64, fixed: 'left' },
+  { colKey: 'row-select', type: 'multiple', width: 64 },
   {
     title: '人员编码',
-    width: 160,
-    ellipsis: true,
+
     colKey: 'personCode',
   },
-  { title: '姓名', width: 160, ellipsis: true, colKey: 'personName' },
-  { title: '性别', width: 160, ellipsis: true, colKey: 'genderName' },
-  { title: '手机号', width: 160, ellipsis: true, colKey: 'mobilePhone' },
-  { title: '邮箱', width: 160, ellipsis: true, colKey: 'email' },
-  { title: '状态', width: 160, ellipsis: true, colKey: 'stateName' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  { title: '姓名', colKey: 'personName' },
+  { title: '性别', colKey: 'genderName' },
+  { title: '手机号', colKey: 'mobilePhone' },
+  { title: '邮箱', colKey: 'email' },
+  { title: '状态', colKey: 'stateName' },
+  { title: '操作', align: 'left', fixed: 'right', colKey: 'op' },
 ];
 
 // 表格分页设置
-const pagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
+// const pagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
 
 // #endregion
 
@@ -252,7 +254,7 @@ const onReset = () => {
 // #region 刷新表格
 
 const fetchTable = async () => {
-  dataLoading.value = true;
+  setLoading(true);
   try {
     const data = (await api.person.getlist({
       personcode: personCode.value,
@@ -261,15 +263,16 @@ const fetchTable = async () => {
       sorttype: '',
       filterfield: '',
       filter: '',
-      pagenum: pagination.value.defaultCurrent,
-      pagesize: pagination.value.defaultPageSize,
+      pagenum: pageUI.value.page,
+      pagesize: pageUI.value.rows,
     })) as any;
+
     dataTable.value = data.list;
-    pagination.value = { ...pagination.value, total: data.total };
+    dataTotal.value = data.total;
   } catch (e) {
     console.log(e);
   } finally {
-    dataLoading.value = false;
+    setLoading(false);
   }
 };
 
@@ -311,17 +314,6 @@ const onTreeClick = (context: any) => {
 };
 // #endregion
 
-// #region 表格分页
-
-const onPageChange = (curr: any) => {
-  pagination.value.defaultCurrent = curr.current;
-  pagination.value.defaultPageSize = curr.pageSize;
-
-  fetchTable();
-};
-
-// #endregion
-
 // #region 表格删除
 const deleteIdx = ref(-1);
 
@@ -354,16 +346,9 @@ const onDeleteCancel = () => {
 };
 
 // #endregion
-const selectedRowKeys = ref([]);
 const rowKey = 'id';
 
 // const router = useRouter();
-
-// 选中行
-const onSelectChange = (value: any, options: any) => {
-  selectedRowKeys.value = value;
-  // console.log(value, selectedRowData);
-};
 
 const handleClickDetail = (value: any) => {
   // router.push('/detail/base');

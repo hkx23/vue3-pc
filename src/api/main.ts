@@ -9,6 +9,7 @@
  * ---------------------------------------------------------------
  */
 
+/** 组织层级表 */
 export interface OrgLevel {
   id?: string;
   /**
@@ -32,12 +33,20 @@ export interface OrgLevel {
    */
   state?: number;
   eid?: string;
+  /** 层级编号 */
   levelCode?: string;
+  /** 层级名称 */
   levelName?: string;
   parentLevelId?: string;
-  /** @format int32 */
+  /**
+   * 层级序列
+   * @format int32
+   */
   levelSeq?: number;
-  /** @format int32 */
+  /**
+   * 区隔标记，1表示库存组织，默认0
+   * @format int32
+   */
   divisionFlag?: number;
 }
 
@@ -54,6 +63,7 @@ export interface ResultObject {
   data?: object | null;
 }
 
+/** 组织架构表 */
 export interface Org {
   id?: string;
   /**
@@ -78,12 +88,19 @@ export interface Org {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 组织编号 */
   orgCode?: string;
+  /** 组织名称 */
   orgName?: string;
+  /** 组织描述 */
   orgDesc?: string;
   parentOrgId?: string;
+  /** 组织层级代码 */
   levelCode?: string;
-  /** @format int32 */
+  /**
+   * 是否生效，1是，0否
+   * @format int32
+   */
   isActive?: number;
 }
 
@@ -132,6 +149,7 @@ export interface ResultPagingDataWorkgroup {
   data?: PagingDataWorkgroup;
 }
 
+/** 班组 */
 export interface Workgroup {
   id?: string;
   /**
@@ -156,8 +174,11 @@ export interface Workgroup {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 班组代码 */
   workgroupCode?: string;
+  /** 班组名称 */
   workgroupName?: string;
+  /** 班组描述 */
   workgroupDesc?: string;
   workshopId?: string;
 }
@@ -171,6 +192,7 @@ export interface ResultWorkgroup {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 班组 */
   data?: Workgroup;
 }
 
@@ -183,11 +205,11 @@ export interface ResultUser {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
+  /** 用户 */
   data?: User;
 }
 
-/** 响应数据 */
+/** 用户 */
 export type User = {
   id?: string;
   /**
@@ -211,28 +233,61 @@ export type User = {
    */
   state?: number;
   eid?: string;
+  /** 用户名 */
   userName?: string;
+  /** 显示名 */
   displayName?: string;
+  /** 密码 */
   password?: string;
-  /** @format date-time */
+  /**
+   * 用户上次进行身份验证时间
+   * @format date-time
+   */
   timeLastActivity?: string;
-  /** @format date-time */
+  /**
+   * 用户上次登录时间
+   * @format date-time
+   */
   timeLastLogin?: string;
-  /** @format date-time */
+  /**
+   * 上次更新成员资格用户的密码的日期和时间
+   * @format date-time
+   */
   timeLastPasswordChanged?: string;
-  /** @format int32 */
+  /**
+   * 用户当前是否联机
+   * @format int32
+   */
   isOnline?: number;
-  /** @format int32 */
+  /**
+   * 指示成员资格用户是否因被锁定而无法进行验证
+   * @format int32
+   */
   isLockedOut?: number;
-  /** @format date-time */
+  /**
+   * 最近一次锁定成员资格用户的日期和时间
+   * @format date-time
+   */
   timeLastLockedOut?: string;
-  /** @format int32 */
+  /**
+   * 输入密码尝试失败的次数
+   * @format int32
+   */
   failedAttemptCount?: number;
-  /** @format date-time */
+  /**
+   * 输入密码尝试失败的起始时间
+   * @format date-time
+   */
   timeFailedAttemptStart?: string;
-  /** @format int32 */
+  /**
+   * 用户帐号类型
+   * @format int32
+   */
   accountType?: number;
-  /** @format date-time */
+  /**
+   * 用户失效时间
+   * @format date-time
+   */
   timeExpiration?: string;
   personId?: string;
 } | null;
@@ -257,6 +312,7 @@ export interface ResultPagingDataSupplier {
   data?: PagingDataSupplier;
 }
 
+/** 供应商 */
 export interface Supplier {
   id?: string;
   /**
@@ -281,9 +337,13 @@ export interface Supplier {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 供应商代码 */
   supplierCode?: string;
+  /** 供应商名称 */
   supplierName?: string;
+  /** 供应商联系人 */
   contactPerson?: string;
+  /** 供应商联系电话 */
   contactTel?: string;
 }
 
@@ -296,6 +356,7 @@ export interface ResultSupplier {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 供应商 */
   data?: Supplier;
 }
 
@@ -306,6 +367,7 @@ export type PagingDataPost = {
   total?: number;
 } | null;
 
+/** 岗位 */
 export interface Post {
   id?: string;
   /**
@@ -330,8 +392,11 @@ export interface Post {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 岗位代码 */
   postCode?: string;
+  /** 岗位名称 */
   postName?: string;
+  /** 岗位描述 */
   postDesc?: string;
 }
 
@@ -357,6 +422,7 @@ export interface ResultPost {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 岗位 */
   data?: Post;
 }
 
@@ -367,6 +433,7 @@ export type PagingDataPerson = {
   total?: number;
 } | null;
 
+/** 员工表 */
 export interface Person {
   id?: string;
   /**
@@ -390,11 +457,18 @@ export interface Person {
    */
   state?: number;
   eid?: string;
+  /** 人员编号 */
   personCode?: string;
+  /** 姓名 */
   personName?: string;
-  /** @format int32 */
+  /**
+   * 性别，1男，0女
+   * @format int32
+   */
   gender?: number;
+  /** 邮箱 */
   email?: string;
+  /** 手机号 */
   mobilePhone?: string;
   adminOrgId?: string;
 }
@@ -421,6 +495,7 @@ export interface ResultPerson {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 员工表 */
   data?: Person;
 }
 
@@ -453,7 +528,7 @@ export interface PersonVO {
   isState?: boolean;
 }
 
-/** 响应数据 */
+/** 系统字典组 */
 export type ParamGroup = {
   id?: string;
   /**
@@ -477,12 +552,20 @@ export type ParamGroup = {
    */
   state?: number;
   eid?: string;
+  /** 业务领域 */
   paramDomain?: string;
+  /** 字典组代码 */
   paramGroupCode?: string;
+  /** 字典组名称 */
   paramGroupName?: string;
+  /** 字典组描述 */
   paramGroupDesc?: string;
-  /** @format int32 */
+  /**
+   * 是否系统字典
+   * @format int32
+   */
   isSys?: number;
+  /** 字典数据类型 */
   paramDataType?: string;
 } | null;
 
@@ -495,10 +578,11 @@ export interface ResultParamGroup {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
+  /** 系统字典组 */
   data?: ParamGroup;
 }
 
+/** 系统字典明细 */
 export interface Param {
   id?: string;
   /**
@@ -524,10 +608,16 @@ export interface Param {
   eid?: string;
   oid?: string;
   paramGroupId?: string;
+  /** 字典代码 */
   paramCode?: string;
+  /** 字典值 */
   paramValue?: string;
+  /** 字典描述 */
   paramDesc?: string;
-  /** @format int32 */
+  /**
+   * 字典序号
+   * @format int32
+   */
   seq?: number;
 }
 
@@ -556,10 +646,16 @@ export interface ParamInfoDTO {
   eid?: string;
   oid?: string;
   paramGroupId?: string;
+  /** 字典代码 */
   paramCode?: string;
+  /** 字典值 */
   paramValue?: string;
+  /** 字典描述 */
   paramDesc?: string;
-  /** @format int32 */
+  /**
+   * 字典序号
+   * @format int32
+   */
   seq?: number;
   details?: Param[];
 }
@@ -573,6 +669,7 @@ export interface ResultParam {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 系统字典明细 */
   data?: Param;
 }
 
@@ -605,6 +702,7 @@ export interface ResultOrg {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 组织架构表 */
   data?: Org;
 }
 
@@ -627,6 +725,7 @@ export interface MitemUomSearch {
   filters?: Filter[];
 }
 
+/** 计量单位 */
 export interface MitemUom {
   id?: string;
   /**
@@ -651,7 +750,9 @@ export interface MitemUom {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 计量单位 */
   uom?: string;
+  /** 计量单位符号 */
   uomSymbol?: string;
 }
 
@@ -686,6 +787,7 @@ export interface MitemInSupplierSearch {
   filters?: Filter[];
 }
 
+/** 物料供应商关系 */
 export interface MitemInSupplier {
   id?: string;
   /**
@@ -712,17 +814,31 @@ export interface MitemInSupplier {
   oid?: string;
   supplierId?: string;
   mitemId?: string;
-  /** @format int32 */
+  /**
+   * 最小包装数量
+   * @format int32
+   */
   qty?: number;
+  /** 检验严格度 */
   inspectionStringency?: string;
-  /** @format int32 */
+  /**
+   * 是否免检
+   * @format int32
+   */
   isExemptionInspection?: number;
-  /** @format int32 */
+  /**
+   * 是否强制供方检验
+   * @format int32
+   */
   isForceInspection?: number;
-  /** @format date-time */
+  /**
+   * 免检失效日期
+   * @format date-time
+   */
   dateExemptionExpired?: string;
 }
 
+/** 物料分类 */
 export interface MitemCategory {
   id?: string;
   /**
@@ -747,10 +863,15 @@ export interface MitemCategory {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 物料分类代码 */
   categoryCode?: string;
+  /** 物料分类名称 */
   categoryName?: string;
+  /** 物料分类描述 */
   categoryDesc?: string;
+  /** 小数位计算类型 */
   reqCalcRule?: string;
+  /** 物料投料规则 */
   onboardRuleCode?: string;
 }
 
@@ -783,6 +904,7 @@ export interface ResultMitemCategory {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 物料分类 */
   data?: MitemCategory;
 }
 
@@ -829,23 +951,23 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
-  mmitemCategoryId?: string;
   mmitemCategoryCode?: string;
   mmitemCategoryName?: string;
+  mmitemCategoryId?: string;
+  wwarehouseId?: string;
+  isInProcessName?: string;
   /** @format int32 */
   wwarehouseCode?: number;
   /** @format int32 */
   wwarehouseName?: number;
-  isState?: boolean;
-  isProductName?: string;
-  isProductChecked?: boolean;
   isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
+  isProductName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
   stateName?: string;
+  isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -868,7 +990,7 @@ export interface ResultPagingDataMitemVO {
   data?: PagingDataMitemVO;
 }
 
-/** 响应数据 */
+/** 物料 */
 export type Mitem = {
   id?: string;
   /**
@@ -893,22 +1015,42 @@ export type Mitem = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 物料代码 */
   mitemCode?: string;
+  /** 物料名称 */
   mitemName?: string;
+  /** 物料描述 */
   mitemDesc?: string;
   mitemCategoryId?: string;
+  /** 供应方式 */
   supplyCategory?: string;
+  /** 单位 */
   uom?: string;
-  /** @format int32 */
+  /**
+   * 是否成品，1：是；0：否
+   * @format int32
+   */
   isProduct?: number;
-  /** @format int32 */
+  /**
+   * 是否原材料，1：是；0：否
+   * @format int32
+   */
   isRaw?: number;
-  /** @format int32 */
+  /**
+   * 是否半成品,1：是；0：否
+   * @format int32
+   */
   isInProcess?: number;
   warehouseId?: string;
-  /** @format int32 */
+  /**
+   * 保质期天数
+   * @format int32
+   */
   shelfLifeDays?: number;
-  /** @format int32 */
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
   isBatchNo?: number;
 } | null;
 
@@ -921,7 +1063,7 @@ export interface ResultMitem {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
+  /** 物料 */
   data?: Mitem;
 }
 
@@ -992,8 +1134,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1009,6 +1151,7 @@ export interface ResultListMitemFeignDTO {
   data?: MitemFeignDTO[] | null;
 }
 
+/** 客户 */
 export interface Customer {
   id?: string;
   /**
@@ -1033,8 +1176,11 @@ export interface Customer {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 客户代码 */
   customerCode?: string;
+  /** 客户名称 */
   customerName?: string;
+  /** 客户简称 */
   shortName?: string;
 }
 
@@ -1067,16 +1213,17 @@ export interface ResultCustomer {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 客户 */
   data?: Customer;
 }
 
 export interface JSONObject {
-  innerMap?: Record<string, object>;
   empty?: boolean;
+  innerMap?: Record<string, object>;
   [key: string]: any;
 }
 
-/** 响应数据 */
+/** 出勤模式 */
 export type AttendanceMode = {
   id?: string;
   /**
@@ -1101,11 +1248,17 @@ export type AttendanceMode = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 出勤模式代码 */
   modeCode?: string;
+  /** 出勤模式名称 */
   modeName?: string;
+  /** 出勤模式描述 */
   modeDesc?: string;
+  /** 出勤模式表达式 */
   expression?: string;
+  /** 班次 */
   shiftCode?: string;
+  /** 备注 */
   memo?: string;
 } | null;
 
@@ -1118,7 +1271,7 @@ export interface ResultAttendanceMode {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
+  /** 出勤模式 */
   data?: AttendanceMode;
 }
 
@@ -1258,7 +1411,7 @@ export type ShowModuleVO = {
 /**
  * @title scm项目
  * @version v1
- * @baseUrl http://192.168.1.6:7210
+ * @baseUrl http://localhost:7210
  *
  * scm项目API汇总
  */
@@ -1970,11 +2123,26 @@ export const api = {
      *
      * @tags 物料分类
      * @name Edit
-     * @request POST:/mitemCategory/edit/{id}
+     * @request POST:/mitemCategory/edit
      * @secure
      */
-    edit: (id: string, data: MitemCategory) =>
-      http.request<ResultObject['data']>(`/api/main/mitemCategory/edit/${id}`, {
+    edit: (data: MitemCategory) =>
+      http.request<ResultObject['data']>(`/api/main/mitemCategory/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料分类
+     * @name Delete
+     * @summary 删除员工信息
+     * @request POST:/mitemCategory/delete
+     * @secure
+     */
+    delete: (data: MitemCategory) =>
+      http.request<ResultObject['data']>(`/api/main/mitemCategory/delete`, {
         method: 'POST',
         body: data as any,
       }),
