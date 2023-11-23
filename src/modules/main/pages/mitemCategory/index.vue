@@ -28,7 +28,7 @@
             :loading="loading"
             :total="dataTotal"
             select-on-row-click
-            @refresh="onRefresh"
+            @refresh="fetchTable"
             @select-change="onSelectMitemCategoryChange"
           >
             <template #op="slotProps">
@@ -101,7 +101,6 @@ const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '物料名称', colKey: 'mitemName' },
   { title: '物料描述', colKey: 'mitemDesc' },
 ];
-const selectedMitemCategoryRowKeys = ref([]);
 const tableDataMitemCategory = ref([]);
 const tableDataMitem = ref([]);
 const formVisible = ref(false);
@@ -132,11 +131,10 @@ const onEditRowClick = (value: any) => {
 };
 
 const fetchTable = async () => {
+  tableRef.value.setSelectedRowKeys([]);
   setLoading(true);
   try {
-    selectedMitemCategoryRowKeys.value = [];
-    tableDataMitem.value = [];
-    const data = (await api.mitemCategory.getlist({
+    const data = (await api.mitemCategory.getList({
       keyword: keyword.value,
       pagenum: pageUI.value.page,
       pagesize: pageUI.value.rows,
@@ -147,6 +145,8 @@ const fetchTable = async () => {
     console.log(e);
   } finally {
     setLoading(false);
+    selectCategoryID.value = -1;
+    fetchMitemTable();
   }
 };
 

@@ -13,12 +13,13 @@
         </t-space>
         <t-space size="small" :align="'center'">
           <slot name="oprate"></slot>
-          <t-button shape="circle" theme="primary" ghost :disabled="loading" @click="onRefresh">
+
+          <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
             <template #icon>
               <t-icon name="refresh" />
             </template>
           </t-button>
-          <t-button shape="circle" theme="primary" ghost @click="data.visible = true">
+          <t-button shape="square" variant="outline" @click="data.visible = true">
             <template #icon>
               <t-icon name="adjustment" />
             </template>
