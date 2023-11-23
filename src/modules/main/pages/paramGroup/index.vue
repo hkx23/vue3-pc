@@ -245,6 +245,7 @@ const fetchTree = async () => {
 const onTreeClick = (context: any) => {
   console.info('onClick', context);
   const { node } = context;
+  clearTable();
   const filterData = dataTree.value.filter((item: { [x: string]: string | any[] }) => {
     if (item.id === node.value) {
       return true;
@@ -302,7 +303,7 @@ const fetchTable = async () => {
       })) as any;
       if (data.list && data.list.length > 0) {
         dataTable.value = data.list;
-      } else {
+      } else if (SelectNode.value.isSys === '0') {
         onAddParam(null);
       }
       sortTable();

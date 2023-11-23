@@ -922,6 +922,11 @@ export interface MitemVO {
   mitemName?: string;
   /** 物料描述 */
   mitemDesc?: string;
+  mitemCategoryId?: string;
+  /** 物料类别编码 */
+  mitemCategoryCode?: string;
+  /** 物料类别名称 */
+  mitemCategoryName?: string;
   /** 供应方式 */
   supplyCategory?: string;
   /** 单位 */
@@ -941,6 +946,11 @@ export interface MitemVO {
    * @format int32
    */
   isInProcess?: number;
+  warehouseId?: string;
+  /** 完工默认仓库 */
+  warehouseCode?: string;
+  /** 完工默认仓库 */
+  warehouseName?: string;
   /**
    * 保质期天数
    * @format int32
@@ -951,23 +961,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryCode?: string;
-  mmitemCategoryName?: string;
-  mmitemCategoryId?: string;
-  wwarehouseId?: string;
-  isInProcessName?: string;
-  /** @format int32 */
-  wwarehouseCode?: number;
-  /** @format int32 */
-  wwarehouseName?: number;
-  isRawName?: string;
-  isProductName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  stateName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
+  stateName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isBatchName?: string;
+  isProductName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -1134,8 +1136,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1219,7 +1221,6 @@ export interface ResultCustomer {
 
 export interface JSONObject {
   empty?: boolean;
-  innerMap?: Record<string, object>;
   [key: string]: any;
 }
 
@@ -2072,6 +2073,20 @@ export const api = {
      */
     edit: (data: MitemInSupplier) =>
       http.request<ResultObject['data']>(`/api/main/mitemInSupplier/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料供应商关系
+     * @name Delete
+     * @request POST:/mitemInSupplier/delete
+     * @secure
+     */
+    delete: (data: MitemInSupplier) =>
+      http.request<ResultObject['data']>(`/api/main/mitemInSupplier/delete`, {
         method: 'POST',
         body: data as any,
       }),

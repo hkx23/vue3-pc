@@ -10,18 +10,18 @@
         </t-col>
         <t-col>
           <div class="btn-left">
-            <t-button variant="base" @click="onRefresh">查询</t-button>
-            <t-button theme="default" variant="base" @click="onReset">重置</t-button>
+            <t-button @click="onRefresh">查询</t-button>
+            <t-button theme="default" @click="onReset">重置</t-button>
           </div>
         </t-col>
       </t-row>
       <t-row class="mitemuom-function-button">
         <t-col>
-          <t-button variant="base" @click="onAddMeasuring">新增</t-button>
+          <t-button theme="default" @click="onAddMeasuring">新增</t-button>
           <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirms">
-            <t-button variant="base">批量删除</t-button>
+            <t-button theme="default">批量删除</t-button>
           </t-popconfirm>
-          <t-button variant="base">导入</t-button>
+          <t-button theme="default">导入</t-button>
         </t-col>
       </t-row>
       <t-row>
@@ -35,12 +35,12 @@
           @page-change="onPageChange"
         >
           <template #actionSlot="{ row }">
-            <t-button size="small" @click="onEditRow(row)">
-              <icon name="edit-1" />
+            <t-button size="small" variant="text" @click="onEditRow(row)">
+              <icon name="edit-1" class="black-icon" />
             </t-button>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm">
-              <t-button size="small" @click="onDeleteRow(row)">
-                <icon name="delete" />
+              <t-button size="small" variant="text" @click="onDeleteRow(row)">
+                <icon name="delete" class="black-icon" />
               </t-button>
             </t-popconfirm>
           </template>
@@ -51,31 +51,60 @@
     <t-dialog
       v-model:visible="showDialog"
       :header="diaTitle"
-      @confirm="onHandleConfirm"
-      @cancel="onHandleCancel"
+      :cancel-btn="null"
+      :confirm-btn="null"
+      width="40%"
       @close="onDialogClose"
     >
-      <t-form ref="formRef" :rules="FORM_RULES" :data="formData" :colon="true">
-        <t-form-item label="计量单位名称" name="uom">
-          <t-input v-model="formData.uom" placeholder="请输入"></t-input>
-        </t-form-item>
-        <t-form-item label="计量单位符号" name="uomSymbol">
-          <t-input v-model="formData.uomSymbol" placeholder="请输入"></t-input>
-        </t-form-item>
+      <t-form
+        ref="formRef"
+        :loading="loading"
+        :rules="FORM_RULES"
+        :data="formData"
+        layout="inline"
+        scroll-to-first-error="smooth"
+        label-align="right"
+        @submit="onSubmit"
+      >
+        <!-- 计量单位名称： -->
+        <t-row class="form-customer-row">
+          <t-col>
+            <t-form-item label="计量单位名称" name="uom">
+              <t-input v-model="formData.uom" placeholder="请输入"></t-input>
+            </t-form-item>
+          </t-col>
+        </t-row>
+        <!-- 计量单位名称： -->
+        <t-row class="form-customer-row">
+          <t-col>
+            <t-form-item label="计量单位符号" name="uomSymbol">
+              <t-input v-model="formData.uomSymbol" placeholder="请输入"></t-input>
+            </t-form-item>
+          </t-col>
+        </t-row>
+        <!-- 控制盒子 -->
+        <div class="control-box">
+          <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+          <t-button theme="primary" type="submit">确认</t-button>
+        </div>
       </t-form>
     </t-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { FormRules, Icon, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { FormInstanceFunctions, FormRules, Icon, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, onMounted, Ref, ref } from 'vue';
+
+import { useLoading } from '@/hooks/modules/loading';
+
+const { loading } = useLoading();
 
 import { api } from '@/api/main';
 
+const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const showDialog = ref(false); // 控制新增模态框开关
 const tableMitemPagination = ref({ defaultPageSize: 5, total: 0, defaultCurrent: 1, showJumper: true }); // 分页参数
-const formRef = ref(null); // 新增表单数据清除
 const tableData = ref([]); // 表格渲染数据
 const selectedRowKeys = ref([]); // 删除计量单位 id
 const formData = ref({ uom: '', uomSymbol: '', id: null }); // 新增表单数据绑定
@@ -88,18 +117,46 @@ onMounted(() => {
 
 // 查询按钮
 const onRefresh = () => {
-  onGetMiteMuom();
+  if (queryData.value) {
+    tableMitemPagination.value.defaultCurrent = 1;
+    onGetMiteMuom();
+  }
 };
 
 // 重置按钮
 const onReset = () => {
   queryData.value = '';
+  onGetMiteMuom();
 };
 
+// 表单清除
 const onDialogClose = () => {
-  formData.value.id = null;
-  formData.value.uom = '';
-  formData.value.uomSymbol = '';
+  formRef.value.reset({ type: 'empty' });
+};
+
+// 点击提交按钮，触发提交事件
+const onSubmit = async ({ validateResult, firstError }) => {
+  if (validateResult === true) {
+    if (formData.value.id) {
+      await onAmendMiteMuom(); // 有 ID 就发送编辑修改请求
+    } else {
+      await onAddMiteMuom(); // 没有 ID 就发送新增请求
+    }
+    showDialog.value = false;
+    onGetMiteMuom(); // 重新渲染数据
+    formRef.value.reset({ type: 'empty' });
+    MessagePlugin.success('提交成功');
+  } else {
+    console.log('Validate Errors: ', firstError, validateResult);
+    MessagePlugin.warning(firstError);
+  }
+};
+
+// 取消按钮
+const onSecondaryReset = () => {
+  MessagePlugin.success('取消编辑');
+  showDialog.value = false;
+  formRef.value.reset({ type: 'empty' });
 };
 
 /**
@@ -108,9 +165,9 @@ const onDialogClose = () => {
 const onGetMiteMuom = async () => {
   tableData.value = [];
   try {
-    const res = await api.mitemUom.getlist(onMitemUomPage.value);
-    tableData.value = res.list;
-    tableMitemPagination.value.total = +res.total;
+    const res = await api.mitemUom.getlist({ ...onMitemUomPage.value, uom: queryData.value });
+    tableData.value = res.list; // 表格数据赋值
+    tableMitemPagination.value.total = +res.total; // 总页数赋值
   } catch (e) {
     MessagePlugin.success(e);
   }
@@ -121,7 +178,6 @@ const onMitemUomPage = computed(() => {
   return {
     pageNum: tableMitemPagination.value.defaultCurrent,
     pageSize: tableMitemPagination.value.defaultPageSize,
-    uom: queryData.value,
   };
 });
 
@@ -160,6 +216,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'action',
     title: '操作',
     width: 160,
+    align: 'center',
     cell: 'actionSlot', // 引用具名插槽
   },
 ];
@@ -177,19 +234,9 @@ const onAddMiteMuom = async () => {
   await api.mitemUom.addItem(formData.value);
 };
 
-// 实现新增，编辑逻辑
-const onHandleConfirm = async () => {
-  if (formData.value.id) {
-    onAmendMiteMuom();
-  } else {
-    await onAddMiteMuom(); // 新增计量单位
-  }
-  onGetMiteMuom(); // 重新渲染数据，貌似没用
-  showDialog.value = false;
-};
-
 // 点击新增逻辑
 const onAddMeasuring = () => {
+  queryData.value = '';
   diaTitle.value = '计量单位新增';
   showDialog.value = true;
 };
@@ -213,17 +260,6 @@ const onAmendMiteMuom = async () => {
   formData.value.id = null; // 当前点击的 id
 };
 
-// 可以在这里实现取消逻辑
-const onHandleCancel = () => {
-  if (formData.value) {
-    // 如果有数据，就清除数据
-    formData.value.id = null;
-    formData.value.uom = '';
-    formData.value.uomSymbol = '';
-  }
-  showDialog.value = false;
-};
-
 /**
  * 删除计量单位请求
  */
@@ -239,19 +275,26 @@ const onDeleteRow = async (row: TableRow) => {
 // 单个数据点击气泡框确认后，删除数据
 const onDelConfirm = async () => {
   await onDeleteMiteMuom();
+  // 检查当前页是否还有数据，如果没有且不在第一页，页码减一
+  if (tableData.value.length === 1 && tableMitemPagination.value.defaultCurrent > 1) {
+    tableMitemPagination.value.defaultCurrent--;
+  }
+  console.log(
+    '🚀 ~ file: index.vue:277 ~ onDelConfirm ~ tableMitemPagination.value.defaultCurrent:',
+    tableMitemPagination.value.defaultCurrent,
+  );
+  await onGetMiteMuom(); // 重新渲染
   selectedRowKeys.value = [];
-  onGetMiteMuom();
 };
 
 // 获取复选框选中的数组
 const rehandleSelectChange = async (value: any[]) => {
   selectedRowKeys.value = value;
-  console.log('🚀 ~ file: index.vue:235 ~ rehandleSelectChange ~ selectedRowKeys.value:', selectedRowKeys.value);
 };
 
 // 批量删除计量单位
 const onDelConfirms = async () => {
-  if (selectedRowKeys.value) {
+  if (selectedRowKeys.value.length >= 1) {
     await onDeleteMiteMuom();
     selectedRowKeys.value = [];
     onGetMiteMuom();
@@ -270,5 +313,16 @@ const onDelConfirms = async () => {
 
 .mitemuom-function-button {
   margin: 20px 0;
+}
+
+.black-icon {
+  color: #181818;
+}
+
+.control-box {
+  position: absolute;
+  right: var(--td-comp-size-l);
+  bottom: var(--td-comp-size-s);
+  color: red;
 }
 </style>

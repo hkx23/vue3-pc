@@ -149,8 +149,6 @@ import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import { getAdminOrgList } from '../../api/adminOrg';
-
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const personCode = ref(''); // 查询
@@ -292,7 +290,7 @@ const formInit = () => {
 const fetchTree = async () => {
   dataLoading.value = true;
   try {
-    const data = await getAdminOrgList({ parent_org_id: -1 });
+    const data = (await api.adminOrg.getlist({ parent_org_id: -1 })) as any;
 
     dataTree.value = data.list.map((item) => ({
       value: item.orgCode,
