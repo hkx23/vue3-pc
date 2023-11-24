@@ -1,7 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 import { createApp } from 'vue';
 import TDesign from 'tdesign-vue-next';
-import TmPlugin from '@/components/tmPlugin';
+import TmPlugins from '@/components/tm-plugins';
 
 import '@/utils/core';
 
@@ -19,5 +19,5 @@ app.use(router);
 app.use(i18n);
 app.use(store);
 
-app.use(TmPlugin);
+app.use(TmPlugins);
 app.mount('#app');

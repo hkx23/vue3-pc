@@ -12,8 +12,8 @@ if (typeof window !== 'undefined' && window.top !== window) {
   window.top.fw?.ipc.addTarget(name, window);
 
   fw.ipc.on('change-language', (lang) => {
-    console.log('change-language', lang);
-    // const { locale } = useI18n({ useScope: 'global' });
-    // locale.value = lang;
+    // console.log('change-language', lang);
+    const { locale } = useI18n({ useScope: 'global' });
+    locale.value = lang;
   });
 }

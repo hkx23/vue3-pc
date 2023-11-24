@@ -1,21 +1,19 @@
 <template>
   <div class="page_container">
     <p class="font-red">样式示例</p>
-    <p>多语言示例：
-      <div>
-        <t-button @click="onClickChangeLang('zh_CN')">切换中文</t-button>
-        <t-button @click="onClickChangeLang('en_US')">切换英文</t-button>
-      </div>
-      <div>{{ t('hello') }}</div>
-    </p>
-    <p>
-      路由示例：
-      <div>
-        <t-button @click="onClickGoPage1">切换页面1</t-button>
-        <t-button @click="onClickGoPage2">切换页面2</t-button>
-      </div>
-      <router-view></router-view>
-    </p>
+    <p>多语言示例：</p>
+    <div>
+      <t-button @click="onClickChangeLang('zh_CN')">切换中文</t-button>
+      <t-button @click="onClickChangeLang('en_US')">切换英文</t-button>
+    </div>
+    <div>{{ t('hello') }}</div>
+
+    <p>路由示例：</p>
+    <div>
+      <t-button @click="onClickGoPage1">切换页面1</t-button>
+      <t-button @click="onClickGoPage2">切换页面2</t-button>
+    </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -47,11 +45,13 @@ p {
   margin-bottom: 30px;
   font-size: 24px;
 }
+
 .page_container {
   margin: 0 auto;
   width: 500px;
   padding: 30px;
 }
+
 .font-red {
   color: red;
 }
