@@ -254,12 +254,11 @@ export interface Workcenter {
    * 类型
    * @format int32
    */
-  wcObjectType?: any[];
+  wcObjectType?: number;
   wcObjectId?: string;
   /** 地点 */
   wcLocation?: string;
-  /** 负责人 */
-  wcOwner?: string;
+  ownerId?: string;
 }
 
 /** 通用响应类 */
@@ -273,74 +272,6 @@ export interface ResultWorkcenter {
   message?: string;
   /** 工作中心 */
   data?: Workcenter;
-}
-
-/** 响应数据 */
-export type PagingDataRouting = {
-  list?: Routing[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataRouting {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataRouting;
-}
-
-/** 工艺路线 */
-export interface Routing {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  wcObjectType?: number;
-  /** 工作中心类型 */
-  wcType?: string;
-  workshopID?: string;
-  /** 所属车间编码 */
-  workshopCode?: string;
-  /** 所属车间名称 */
-  workshopName?: string;
-  /** 工作中心地点 */
-  wcLocation?: string;
-  parentWcId?: string;
-  /** 父工作中心编码 */
-  parentWcCode?: string;
-  /** 负责人名称 */
-  wcOwner?: string;
-  wcObjectId?: string;
-  /** 关联设备编码 */
-  wcObjectCode?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工艺路线代码 */
-  routingCode?: string;
-  /** 工艺路线名称 */
-  routingName?: string;
-  /** 工艺路线描述 */
-  routingDesc?: string;
 }
 
 /** 响应数据 */
@@ -855,22 +786,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkcenter['data']>(`/api/control/workcenter/items/${id}`, {
         method: 'POST',
-      }),
-  },
-  routing: {
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name Search
-     * @summary 工艺路线信息查询
-     * @request POST:/routing/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataRouting['data']>(`/api/control/routing/items`, {
-        method: 'POST',
-        body: data as any,
       }),
   },
   routing: {
