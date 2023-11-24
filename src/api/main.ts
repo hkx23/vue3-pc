@@ -716,12 +716,21 @@ export interface MitemUomVo {
 }
 
 export interface MitemUomSearch {
-  /** @format int32 */
+  /**
+   * 页码
+   * @format int32
+   */
   pageNum?: number;
-  /** @format int32 */
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
   pageSize?: number;
+  /** 计量单位精确查询 */
   uom?: string;
+  /** 排序字段 */
   sorts?: SortParam[];
+  /** 筛选字段 */
   filters?: Filter[];
 }
 
@@ -961,15 +970,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isRawChecked?: boolean;
-  isProductName?: string;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isRawName?: string;
   stateName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -1150,6 +1159,88 @@ export interface ResultListMitemFeignDTO {
   message?: string;
   /** 响应数据 */
   data?: MitemFeignDTO[] | null;
+}
+
+/** 设备 */
+export interface Equipment {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /**
+   * 资产型号ID
+   * @format int32
+   */
+  assetModelId?: number;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+  /** 设备描述 */
+  equipmentDesc?: string;
+  /** 资产编码 */
+  assetCode?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  dateEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  dateInvalid?: string;
+  /** 存放位置 */
+  position?: string;
+  /** 保管部门 */
+  departmentOwner?: string;
+  /** 保管人 */
+  userOwner?: string;
+  /** 设备供应商 */
+  equipmentSupplier?: string;
+  /** 维保供应商 */
+  maintenanceOwner?: string;
+  /** 维保联系方式 */
+  maintenanceOwnerContact?: string;
+}
+
+/** 响应数据 */
+export type PagingDataEquipment = {
+  list?: Equipment[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataEquipment {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataEquipment;
 }
 
 /** 客户 */
@@ -1701,6 +1792,21 @@ export const api = {
       http.request<ResultSupplier['data']>(`/api/main/supplier/items/${id}`, {
         method: 'POST',
       }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商
+     * @name Edit
+     * @summary 供应商编辑
+     * @request POST:/supplier/edit
+     * @secure
+     */
+    edit: (data: Supplier) =>
+      http.request<ResultObject['data']>(`/api/main/supplier/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   post: {
     /**
@@ -2008,6 +2114,24 @@ export const api = {
       parmGroupId?: string;
     }) =>
       http.request<ResultObject['data']>(`/api/main/param/getlist`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name GetListByGroupCode
+     * @summary 根据系统参数组获取参数明细
+     * @request GET:/param/getListByGroupCode
+     * @secure
+     */
+    getListByGroupCode: (query?: {
+      /** @default "" */
+      parmGroupCode?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/param/getListByGroupCode`, {
         method: 'GET',
         params: query,
       }),
@@ -2387,6 +2511,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/mitem/getlistbymitemcategory`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  equipment: {
+    /**
+     * No description
+     *
+     * @tags 设备
+     * @name Search
+     * @request POST:/equipment/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataEquipment['data']>(`/api/main/equipment/items`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   customer: {

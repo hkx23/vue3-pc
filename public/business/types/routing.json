@@ -1,0 +1,23 @@
+{
+  "title": "工艺路线：",
+  "placeholder": "请选择工艺路线：",
+  "url": "/api/control/routing/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "工艺路线代码",
+      "key": "routingCode",
+      "align": "center"
+    },
+    {
+      "title": "工艺路线名称",
+      "key": "routingName",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "routingCode"
+  }
+}
