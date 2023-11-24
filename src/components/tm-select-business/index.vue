@@ -148,7 +148,7 @@ const props = defineProps({
   },
 });
 // 抛出事件
-const emits = defineEmits(['SelectionChange', 'update:modelValue']);
+const emits = defineEmits(['SelectionChange', 'Change', 'update:modelValue']);
 // 选择下拉属性集成
 const selectAttr = computed(() => {
   return {
@@ -193,6 +193,8 @@ const onSelectionChange = (val: any, valuKeys: any) => {
   }
   // 选择值
   emits('SelectionChange', val, valuKeys);
+  // 选择值
+  emits('Change', valuKeys);
 };
 
 const loadTypeSetting = () => {

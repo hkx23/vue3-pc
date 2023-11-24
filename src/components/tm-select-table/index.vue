@@ -595,7 +595,11 @@ onMounted(() => {
     } else {
       // state.selectSearch = props.value;
       console.log('remoteLoad-按默认值查询');
-      selectSearch.value = props.value.toString();
+      if (typeof props.value === 'string') {
+        selectSearch.value = props.value;
+      } else {
+        selectSearch.value = '';
+      }
       remoteLoad(props.value);
       // state.defaultValue = props.value ? { [props.keywords.value]: props.value } : '';
       // if (state.defaultValue) {

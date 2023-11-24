@@ -1,114 +1,110 @@
 <template>
-  <t-form
-    ref="formRef"
-    colon
-    class="search-form"
-    v-bind="$attrs"
-    :label-width="labelWidth"
-    :form="state.form"
-    size="default"
-    @submit.prevent
-  >
-    <div ref="formContentRef" class="search-form__content" :style="{ height: openSearchForm ? '' : '50px' }">
-      <t-form-item
-        v-for="(opt, i) in cOpts"
-        :key="i"
-        :label="opt.label"
-        :label-width="opt.labelWidth"
+  <t-row>
+    <t-col flex="1 1">
+      <t-form
+        ref="formRef"
+        colon
+        class="search-form"
+        :style="{ height: openSearchForm ? '' : '50px', padding: '10px' }"
         v-bind="$attrs"
-        :class="[opt.className, { render_label: opt.labelRender }]"
+        layout="inline"
+        :label-width="labelWidth"
+        :form="state.form"
+        size="default"
+        @submit.prevent
       >
-        <!-- 自定义label -->
-        <template v-if="opt.labelRender" #label>
-          <render-comp :form="state.form" :render="opt.labelRender" />
-        </template>
-        <!-- 自定义输入框插槽 -->
-        <template v-if="opt.slotName">
-          <slot :name="opt.slotName" :param="state.form"></slot>
-        </template>
-        <!-- 日期控件 -->
-        <component
-          :is="opt.comp"
-          v-if="!opt.slotName && opt.comp.includes('date')"
-          v-bind="
-            typeof opt.bind == 'function'
-              ? opt.bind(state.form)
-              : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
-          "
-          v-model="state.form[opt.dataIndex]"
-          :placeholder="opt.placeholder || getPlaceholder(opt)"
-          @change="handleEvent(opt.event, state.form[opt.dataIndex])"
-          v-on="cEvent(opt)"
-        />
-        <!-- 树选择控件 -->
-        <component
-          :is="opt.comp"
-          v-if="!opt.slotName && opt.comp.includes('tree-select')"
-          v-bind="
-            typeof opt.bind == 'function'
-              ? opt.bind(state.form)
-              : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
-          "
-          v-model="state.form[opt.dataIndex]"
-          :placeholder="opt.placeholder || getPlaceholder(opt)"
-          @change="handleEvent(opt.event, state.form[opt.dataIndex])"
-          v-on="cEvent(opt)"
-        />
-        <!-- 非日期控件与树选择控件 -->
-        <component
-          :is="opt.comp"
-          v-if="!opt.slotName && !opt.comp.includes('date') && !opt.comp.includes('tree-select')"
-          v-bind="
-            typeof opt.bind == 'function'
-              ? opt.bind(state.form)
-              : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
-          "
-          v-model="state.form[opt.dataIndex]"
-          :placeholder="opt.placeholder || getPlaceholder(opt)"
-          @change="handleEvent(opt.event, state.form[opt.dataIndex])"
-          v-on="cEvent(opt)"
+        <t-form-item
+          v-for="(opt, i) in cOpts"
+          :key="i"
+          :label="opt.label"
+          :label-width="opt.labelWidth"
+          v-bind="$attrs"
+          :class="[opt.className, { render_label: opt.labelRender }]"
         >
+          <!-- 自定义label -->
+          <template v-if="opt.labelRender" #label>
+            <render-comp :form="state.form" :render="opt.labelRender" />
+          </template>
+          <!-- 自定义输入框插槽 -->
+          <template v-if="opt.slotName">
+            <slot :name="opt.slotName" :param="state.form"></slot>
+          </template>
+          <!-- 日期控件 -->
           <component
-            :is="compChildName(opt)"
-            v-for="(value, key, index) in selectListType(opt)"
-            :key="index"
-            :disabled="value.disabled"
-            :label="compChildLabel(opt, value)"
-            :value="compChildValue(opt, value, key)"
-            >{{ compChildShowLabel(opt, value) }}</component
+            :is="opt.comp"
+            v-if="!opt.slotName && opt.comp.includes('date')"
+            v-bind="
+              typeof opt.bind == 'function'
+                ? opt.bind(state.form)
+                : { clearable: true, filterable: true, allowInput: true, ...$attrs, ...opt.bind }
+            "
+            v-model="state.form[opt.dataIndex]"
+            :placeholder="opt.placeholder || getPlaceholder(opt)"
+            @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+            v-on="cEvent(opt)"
+          />
+          <!-- 树选择控件 -->
+          <component
+            :is="opt.comp"
+            v-if="!opt.slotName && opt.comp.includes('tree-select')"
+            v-bind="
+              typeof opt.bind == 'function'
+                ? opt.bind(state.form)
+                : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
+            "
+            v-model="state.form[opt.dataIndex]"
+            :placeholder="opt.placeholder || getPlaceholder(opt)"
+            @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+            v-on="cEvent(opt)"
+          />
+          <!-- 非日期控件与树选择控件 -->
+          <component
+            :is="opt.comp"
+            v-if="
+              !opt.slotName &&
+              !opt.comp.includes('date') &&
+              !opt.comp.includes('tree-select') &&
+              !opt.comp.includes('t-select-muti')
+            "
+            v-bind="
+              typeof opt.bind == 'function'
+                ? opt.bind(state.form)
+                : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
+            "
+            v-model="state.form[opt.dataIndex]"
+            :placeholder="opt.placeholder || getPlaceholder(opt)"
+            @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+            v-on="cEvent(opt)"
           >
-        </component>
-      </t-form-item>
-    </div>
-    <div class="search-form__button">
-      <t-space size="small" :align="'center'">
-        <t-button class="btn_check" :loading="loading" @click="checkHandle">查询</t-button>
-        <t-button v-if="reset" class="btn_reset" @click="resetHandle">重置</t-button>
-        <slot name="querybar"></slot>
-        <a v-if="showExpand" theme="primary" variant="text" @click="onExpandSwitch">
-          <span>{{ openSearchForm ? '收起' : '展开' }}</span>
-          <t-icon :name="openSearchForm ? 'chevron-up' : 'chevron-down'" />
-        </a>
+            <component
+              :is="compChildName(opt)"
+              v-for="(value, key, index) in selectListType(opt)"
+              :key="index"
+              :disabled="value.disabled"
+              :label="compChildLabel(opt, value)"
+              :value="compChildValue(opt, value, key)"
+              >{{ compChildShowLabel(opt, value) }}</component
+            >
+          </component>
+        </t-form-item>
+      </t-form>
+    </t-col>
+    <t-col flex="0 1 200px">
+      <t-space direction="horizontal" class="search-space" size="large">
+        <div class="search-form__button">
+          <t-space size="small" :align="'end'">
+            <t-button class="btn_check" :loading="loading" @click="checkHandle">查询</t-button>
+            <t-button v-if="reset" class="btn_reset" theme="default" @click="resetHandle">重置</t-button>
+            <slot name="querybar"></slot>
+            <t-button v-if="showExpand" theme="primary" variant="text" @click="onExpandSwitch">
+              {{ openSearchForm ? '收起' : '展开' }}
+              <template #icon> <t-icon :name="openSearchForm ? 'chevron-up' : 'chevron-down'" /></template
+            ></t-button>
+          </t-space>
+        </div>
       </t-space>
-    </div>
-    <!-- <t-form-item
-      v-if="Object.keys(cOpts).length > 0"
-      label-width="0"
-      style="grid-area: submit_btn"
-      :class="['btn', { flex_end: cellLength % colLength === 0 }]"
-    >
- 
-      <t-button v-if="originCellLength > colLength && isShowOpen" link @click="open = !open">
-        {{ open ? '收起' : '展开' }}
-        <t-icon v-if="open">
-          <ArrowUp />
-        </t-icon>
-        <t-icon v-else>
-          <ArrowDown />
-        </t-icon>
-      </t-button>
-    </t-form-item> -->
-  </t-form>
+    </t-col>
+  </t-row>
 </template>
 
 <script setup lang="tsx" name="TmQuery">
@@ -125,7 +121,7 @@ const props = defineProps({
   },
   labelWidth: {
     type: String,
-    default: '60px',
+    default: 'calc(2em + 54px)',
   },
   // 查询按钮配置
   btnCheckBind: {
@@ -165,7 +161,6 @@ const state = reactive({
     return acc;
   }, {}),
 });
-const colLength = ref(4);
 const open = ref(false);
 // 默认展开
 if (props.isExpansion) {
@@ -182,15 +177,13 @@ if (props.isExpansion) {
 //   return { size: 'default', ...props.btnResetBind };
 // });
 const cOpts = computed(() => {
-  let renderSpan = 0;
   return Object.keys(props.opts).reduce((acc: any, field: any) => {
     const opt = {
       ...props.opts[field],
     };
     // 收起、展开操作
     if (props.isShowOpen) {
-      renderSpan += opt.span ?? 1;
-      if (!open.value && renderSpan - 1 >= colLength.value) return acc;
+      openSearchForm.value = true;
     }
     opt.dataIndex = field;
     acc[field] = opt;
@@ -227,17 +220,6 @@ const initForm = (opts: any, keepVal = false) => {
     }
     return acc;
   }, {});
-};
-const getColLength = () => {
-  // 行列数
-  const width = window.innerWidth;
-  let colLength = 4;
-  if (width > 768 && width < 1280) {
-    colLength = 3;
-  } else if (width <= 768) {
-    colLength = 2;
-  }
-  return colLength;
 };
 const emits = defineEmits(['handleEvent', 'submit', 'reset']);
 // 重置
@@ -345,7 +327,6 @@ const getPlaceholder = (row: any) => {
   return placeholder;
 };
 onMounted(() => {
-  colLength.value = getColLength();
   if (props.boolEnter) {
     document.onkeyup = (e) => {
       const pagination = document.querySelectorAll('.t-pagination');
