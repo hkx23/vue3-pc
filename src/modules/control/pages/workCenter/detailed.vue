@@ -295,7 +295,7 @@ const onHandleSave = () => {
       wcObjectId: formData.wcObjectId,
       state: formData.state,
       wcOwner: formData.ownerName,
-      wcObjectType: formData.category,
+      // wcObjectType: formData.category,
       wcSeq: 0,
       // ownerId: ,
     });
