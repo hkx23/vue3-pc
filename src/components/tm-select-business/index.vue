@@ -211,27 +211,40 @@ const loadTypeSetting = () => {
         });
         finalColumns.value = columnsData;
         if (res.rowKey) {
-          finalRowKey.value = res.rowKey;
+          if (!finalRowKey.value) {
+            finalRowKey.value = res.rowKey;
+          }
         }
         if (res.placeholder) {
-          finalPlaceholder.value = res.placeholder;
+          if (!finalPlaceholder.value) {
+            finalPlaceholder.value = res.placeholder;
+          }
         }
 
         if (res.title && props.showTitle) {
-          finalTitle.value = res.title;
+          if (!finalTitle.value) {
+            finalTitle.value = res.title;
+          }
         }
-
         if (res.keywords) {
-          finalKeywords.value = res.keywords;
+          if (!finalKeywords.value) {
+            finalKeywords.value = res.keywords;
+          }
         }
         if (res.parentId) {
-          finalParentId.value = res.parentId;
+          if (!finalParentId.value) {
+            finalParentId.value = res.parentId;
+          }
         }
         if (res.category) {
-          finalCategory.value = res.category;
+          if (!finalCategory.value) {
+            finalCategory.value = res.category;
+          }
         }
         if (res.tableWidth) {
-          finaltableWidth.value = res.tableWidth;
+          if (!finaltableWidth.value) {
+            finaltableWidth.value = res.tableWidth;
+          }
         }
         // 如果值字段不为空
         if (props.valueField) {
