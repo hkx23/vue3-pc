@@ -102,38 +102,6 @@ export interface ResultWorkstation {
   data?: Workstation;
 }
 
-/** 显示工站 */
-export interface WorkstationVO {
-  id?: string;
-  eid?: string;
-  oid?: string;
-  /** 工站代码 */
-  workstationCode?: string;
-  /** 工站名称 */
-  workstationName?: string;
-  /** 工站描述 */
-  workstationDesc?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 工序名称 */
-  processName?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 创建人 */
-  creator?: string;
-  /** 创建时间 */
-  timeCreate?: string;
-  /** 修改人 */
-  modifier?: string;
-  /** 修改时间 */
-  timeModified?: string;
-  pprocessId?: string;
-  pworkcenterId?: string;
-}
-
 /** 通用响应类 */
 export interface ResultObject {
   /**
@@ -180,24 +148,36 @@ export interface ResultPagingDataWorkstationVO {
   data?: PagingDataWorkstationVO;
 }
 
-/** 响应数据 */
-export type PagingDataWorkcenter = {
-  list?: Workcenter[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkcenter {
+/** 显示工站 */
+export interface WorkstationVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  /** 工站代码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 工站描述 */
+  workstationDesc?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 工序名称 */
+  processName?: string;
   /**
-   * 响应代码
+   * 状态
    * @format int32
    */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkcenter;
+  state?: number;
+  /** 创建人 */
+  creator?: string;
+  /** 创建时间 */
+  timeCreate?: string;
+  /** 修改人 */
+  modifier?: string;
+  /** 修改时间 */
+  timeModified?: string;
+  pprocessId?: string;
+  pworkcenterId?: string;
 }
 
 /** 工作中心 */
@@ -246,7 +226,27 @@ export interface Workcenter {
   wcObjectId?: string;
   /** 地点 */
   wcLocation?: string;
-  directorId?: string;
+  ownerId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataWorkcenter = {
+  list?: Workcenter[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkcenter {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkcenter;
 }
 
 /** 通用响应类 */
@@ -260,6 +260,88 @@ export interface ResultWorkcenter {
   message?: string;
   /** 工作中心 */
   data?: Workcenter;
+}
+
+export interface WorkcenterSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  category?: number[];
+  workcenterword?: string;
+  workshopID?: string;
+  state?: number[];
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+/** 响应数据 */
+export type PagingDataWorkcenterVO = {
+  list?: WorkcenterVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkcenterVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkcenterVO;
+}
+
+/** 工作中心显示 */
+export interface WorkcenterVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  /** 工作中心编号 */
+  wcCode?: string;
+  /** 工作中心名称 */
+  wcName?: string;
+  /**
+   * 工作中心类型
+   * @format int32
+   */
+  wcObjectType?: number;
+  /** 工作中心类型 */
+  wcType?: string;
+  workshopID?: string;
+  /** 所属车间编码 */
+  workshopCode?: string;
+  /** 所属车间名称 */
+  workshopName?: string;
+  /** 工作中心地点 */
+  wcLocation?: string;
+  parentWcId?: string;
+  /** 父工作中心编码 */
+  parentWcCode?: string;
+  ownerId?: string;
+  /** 负责人名称 */
+  ownerName?: string;
+  wcObjectId?: string;
+  /** 关联设备编码 */
+  wcObjectCode?: string;
+  /**
+   * 顺序号
+   * @format int32
+   */
+  wcSeq?: number;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+}
+
+export interface JSONObject {
+  empty?: boolean;
+  [key: string]: any;
 }
 
 /** 响应数据 */
@@ -594,158 +676,8 @@ export interface ResultMo {
   data?: Mo;
 }
 
-/** 物料服务间调用标准实体 */
-export interface MitemFeignDTO {
-  id?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 物料代码 */
-  mitemCode?: string;
-  /** 物料名称 */
-  mitemName?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  /** 物料类别编码 */
-  categoryCode?: string;
-  /** 物料类别名称 */
-  categoryName?: string;
-  /** 物料类别描述 */
-  categoryDesc?: string;
-  /** 供应方式 */
-  supplyCategory?: string;
-  /** 单位 */
-  uom?: string;
-  /**
-   * 是否成品，1：是；0：否
-   * @format int32
-   */
-  isProduct?: number;
-  /**
-   * 是否原材料，1：是；0：否
-   * @format int32
-   */
-  isRaw?: number;
-  /**
-   * 是否半成品,1：是；0：否
-   * @format int32
-   */
-  isInProcess?: number;
-  /**
-   * 保质期天数
-   * @format int32
-   */
-  shelfLifeDays?: number;
-  /**
-   * 是否启用批次,1：是；0：否
-   * @format int32
-   */
-  isBatchNo?: number;
-  wwarehouseId?: string;
-  mmitemCategoryId?: string;
-}
-
-/** 响应数据 */
-export type MoTestDTO = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工单名称 */
-  moCode?: string;
-  mitemId?: string;
-  /** 工单类型 */
-  moClass?: string;
-  /** 销售订单 */
-  soNo?: string;
-  /**
-   * 销售订单行号
-   * @format int32
-   */
-  soSeq?: number;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /**
-   * 下线数量
-   * @format int32
-   */
-  offlineQty?: number;
-  /**
-   * 完工数量
-   * @format int32
-   */
-  completedQty?: number;
-  /**
-   * 入库数量
-   * @format int32
-   */
-  stockinQty?: number;
-  /**
-   * 计划开始时间
-   * @format date-time
-   */
-  datetimePlanStart?: string;
-  /**
-   * 计划完成时间
-   * @format date-time
-   */
-  datetimePlanEnd?: string;
-  /**
-   * 实际开始时间
-   * @format date-time
-   */
-  datetimeActualStart?: string;
-  /**
-   * 实际完成时间
-   * @format date-time
-   */
-  datetimeActualEnd?: string;
-  warehouseId?: string;
-  parentMoId?: string;
-  workshopId?: string;
-  /** 备注 */
-  memo?: string;
-  /** 状态 */
-  status?: string;
-  /** 工单来源 */
-  moSource?: string;
-  /** 物料服务间调用标准实体 */
-  mitemObject?: MitemFeignDTO;
-} | null;
-
 /** 通用响应类 */
-export interface ResultListMoTestDTO {
+export interface ResultWorkcenterCount {
   /**
    * 响应代码
    * @format int32
@@ -754,8 +686,20 @@ export interface ResultListMoTestDTO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: MoTestDTO[] | null;
+  data?: WorkcenterCount;
 }
+
+/** 响应数据 */
+export type WorkcenterCount = {
+  /** @format int32 */
+  area?: number;
+  /** @format int32 */
+  line?: number;
+  /** @format int32 */
+  section?: number;
+  /** @format int32 */
+  device?: number;
+} | null;
 
 /**
  * @title scm项目
@@ -802,7 +746,7 @@ export const api = {
      * @request POST:/workstation/items/modify
      * @secure
      */
-    edit: (data: WorkstationVO) =>
+    edit: (data: Workstation) =>
       http.request<ResultObject['data']>(`/api/control/workstation/items/modify`, {
         method: 'POST',
         body: data as any,
@@ -817,7 +761,7 @@ export const api = {
      * @request POST:/workstation/items/add
      * @secure
      */
-    add: (data: WorkstationVO) =>
+    add: (data: Workstation) =>
       http.request<ResultObject['data']>(`/api/control/workstation/items/add`, {
         method: 'POST',
         body: data as any,
@@ -843,8 +787,37 @@ export const api = {
      * No description
      *
      * @tags 工作中心
+     * @name Remove
+     * @summary 删除工作中心
+     * @request POST:/workcenter/remove
+     * @secure
+     */
+    remove: (data: number[]) =>
+      http.request<ResultObject['data']>(`/api/control/workcenter/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Modify
+     * @summary 编辑工作中心
+     * @request POST:/workcenter/modify
+     * @secure
+     */
+    modify: (data: Workcenter) =>
+      http.request<ResultObject['data']>(`/api/control/workcenter/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
      * @name Search
-     * @summary 工作中心查询
      * @request POST:/workcenter/items
      * @secure
      */
@@ -865,6 +838,79 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkcenter['data']>(`/api/control/workcenter/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Getlist
+     * @summary 查询工作中心
+     * @request POST:/workcenter/getList
+     * @secure
+     */
+    getlist: (data: WorkcenterSearch) =>
+      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/control/workcenter/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetChildCenter
+     * @summary 查询子工作中心
+     * @request POST:/workcenter/getChildCenter
+     * @secure
+     */
+    getChildCenter: (data: JSONObject) =>
+      http.request<ResultObject['data']>(`/api/control/workcenter/getChildCenter`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Add
+     * @summary 新增工作中心
+     * @request POST:/workcenter/add
+     * @secure
+     */
+    add: (data: Workcenter) =>
+      http.request<ResultObject['data']>(`/api/control/workcenter/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetTagCount
+     * @summary 工作中心获取tag总记录数
+     * @request GET:/workcenter/getTagCount
+     * @secure
+     */
+    getTagCount: () =>
+      http.request<ResultWorkcenterCount['data']>(`/api/control/workcenter/getTagCount`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetCategory
+     * @summary 工作中心获取组织层级
+     * @request GET:/workcenter/getCategory
+     * @secure
+     */
+    getCategory: () =>
+      http.request<ResultObject['data']>(`/api/control/workcenter/getCategory`, {
+        method: 'GET',
       }),
   },
   process: {
@@ -949,20 +995,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultMo['data']>(`/api/control/mo/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单表
-     * @name FeignTest
-     * @summary feign关联物料测试
-     * @request GET:/mo/feignTest
-     * @secure
-     */
-    feignTest: () =>
-      http.request<ResultListMoTestDTO['data']>(`/api/control/mo/feignTest`, {
-        method: 'GET',
       }),
   },
 };
