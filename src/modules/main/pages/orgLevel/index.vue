@@ -7,7 +7,7 @@
             <template #icon><add-icon /></template>
             {{ t('common.button.add') }}
           </t-button>
-          <t-popconfirm content="确认删除吗" @confirm="onClickDelete">
+          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
             <t-button theme="default">
               <template #icon><remove-icon /></template>
               {{ t('common.button.delete') }}</t-button
@@ -25,7 +25,11 @@
         @row-click="onRowClick"
       ></t-enhanced-table>
     </t-card>
-    <t-dialog v-model:visible="formVisible" header="新增组织层级" :on-confirm="onConfirmForm">
+    <t-dialog
+      v-model:visible="formVisible"
+      :header="t('common.dialog.header.add', [t('levelName')])"
+      :on-confirm="onConfirmForm"
+    >
       <org-level-form ref="formRef"></org-level-form>
     </t-dialog>
   </div>
@@ -40,17 +44,14 @@ export default {
 import { AddIcon, RemoveIcon } from 'tdesign-icons-vue-next';
 import { EnhancedTableInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { nextTick, onMounted, reactive, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 import { api, OrgLevel } from '@/api/main';
 
 import { FormRef } from './constants';
 import OrgLevelForm from './form.vue';
-import lang from './lang';
+import { useLang } from './lang';
 
-const { t } = useI18n<{ messages: typeof lang }>({
-  messages: lang,
-});
+const { t } = useLang();
 
 const treeConfig = reactive({
   childrenKey: 'children',
@@ -108,12 +109,12 @@ const onClickAdd = () => {
 
 const onClickDelete = async () => {
   if (!selectedRow?.id) {
-    MessagePlugin.warning('请选择行之后再尝试操作');
+    MessagePlugin.warning(t('common.message.selectRowTryAgain'));
     return;
   }
   await api.orgLevel.delete({ id: selectedRow.id });
   selectedRow = null;
-  MessagePlugin.success('删除成功');
+  MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchData();
 };
 </script>

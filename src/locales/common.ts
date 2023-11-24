@@ -13,6 +13,23 @@ export default {
         upload: '上传',
         download: '下载',
       },
+      dialog: {
+        header: {
+          edit: '@:common.button.edit{0}',
+          add: '@:common.button.add{0}',
+        },
+      },
+      message: {
+        selectRowTryAgain: '请选择行之后再尝试操作',
+        success: '操作成功',
+        fail: '操作失败',
+        confirmDelete: '确认删除吗？',
+        deleteSuccess: '删除成功',
+        addSuccess: '新增成功',
+        saveSuccess: '保存成功',
+        uploadSuccess: '上传成功',
+        downloadSuccess: '下载成功',
+      },
       placeholder: {
         input: '请输入{0}',
         select: '请选择{0}',
@@ -52,6 +69,23 @@ export default {
         query: 'Query',
         upload: 'Upload',
         download: 'Download',
+      },
+      dialog: {
+        header: {
+          edit: '@:common.button.edit 0}',
+          add: '@:common.button.add {0}',
+        },
+      },
+      message: {
+        selectRowTryAgain: 'Please select a row before trying to operate',
+        success: 'Operation successful',
+        fail: 'Operation failed',
+        confirmDelete: 'Are you sure to delete?',
+        deleteSuccess: 'Deletion successful',
+        addSuccess: 'Add successful',
+        saveSuccess: 'Save successful',
+        uploadSuccess: 'Upload successful',
+        downloadSuccess: 'Download successful',
       },
       placeholder: {
         input: 'Please enter {0}',
