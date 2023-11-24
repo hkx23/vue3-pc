@@ -43,11 +43,11 @@
           </t-form-item>
         </footer>
         <span class="form-checkbox">
-          <t-checkbox>启用</t-checkbox>
+          <t-checkbox v-model="checked">启用</t-checkbox>
         </span>
         <div style="margin: 10px 100px">
-          <t-button theme="default" type="submit">添加</t-button>
-          <t-button theme="default">删除</t-button>
+          <t-button theme="default" type="submit" :disabled="props.btnShow">添加</t-button>
+          <t-button theme="default" :disabled="props.btnShow">删除</t-button>
         </div>
       </t-card>
     </t-form>
@@ -84,7 +84,7 @@
             <div>11</div>
           </template>
           <template #associated>
-            <t-link theme="primary" underline>PE30332705-2 </t-link>
+            <span>PE30332705-2 </span>
           </template>
           <!-- </t-table> -->
         </tm-table>
@@ -100,7 +100,7 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -108,14 +108,21 @@ import { usePage } from '@/hooks/modules/page';
 
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 // 子修改传值
-
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
-const total = ref(10);
-const Emit = defineEmits(['addedShow']);
-
+const total = ref(10); // 总页数
+const checked = ref(false); // 多选框控件
+const Emit = defineEmits(['addedShow']); // addedShow窗口
+const props = defineProps({
+  btnShow: {
+    type: Boolean,
+    default: false,
+  },
+});
+onMounted(() => {
+  fetchData();
+});
 const selectedRowKeys = ref([]); // 用于存储选中行的数组
-
 const fetchData = async () => {
   setLoading(true);
   setTimeout(() => {
