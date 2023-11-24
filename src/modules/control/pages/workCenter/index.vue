@@ -1,7 +1,15 @@
 <template>
   <div>
     <!-- 子from -->
-    <detailed v-if="detailedShow" :btn-show="btnShow" @added-show="onHandleSave"></detailed>
+    <detailed
+      v-if="detailedShow"
+      :btn-show="btnShow"
+      :word-center-id="workCenterId"
+      :next-add="nextAdd"
+      :data="data"
+      :next-arr="arr"
+      @added-show="onHandleSave"
+    ></detailed>
     <!-- 头部 -->
     <t-card v-if="!detailedShow" class="list-card-container" :bordered="false">
       <t-space direction="horizontal" style="margin: 10px 0">
@@ -75,8 +83,11 @@
         <template #wcCode="{ row }">
           <div>
             <t-icon name="chevron-right"></t-icon>
-            <t-link theme="primary" underline @click="onHandelNumber(row.wcCode)">{{ row.wcCode }} </t-link>
+            <t-link theme="primary" underline @click="onHandelCenter(row)">{{ row.wcCode }} </t-link>
           </div>
+        </template>
+        <template #workshopName="{ row }">
+          <div>{{ row.workshopCode }}-{{ row.workshopName }}</div>
         </template>
         <template #parentWcCode="{ row }">
           <div>{{ row.parentWcCode ? row.parentWcCode : '-' }}</div>
@@ -143,15 +154,16 @@ const allType = ref([
     code: '',
   },
 ]); // 所有类型
+const nextAdd = ref(false);
+const workCenterId = ref(); // 工作中心的obj
 const arr = ref([]); // 类型存储数组
 const detailedShow = ref(false); // 控制子工作中心显示隐藏
 // 初始数据
-const idWorkCenter = ref(''); // id工作中心
 const columns = [
-  {
-    colKey: 'select',
-    type: 'multiple',
-  },
+  // {
+  //   colKey: 'select',
+  //   type: 'multiple',
+  // },
   {
     colKey: 'wcCode',
     title: '工作中心编号',
@@ -193,6 +205,7 @@ const columns = [
     align: 'center',
   },
 ];
+const data = ref([]);
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const page = ref({
@@ -247,32 +260,32 @@ const onFetchData = async () => {
       workshopID: workState.value.shop,
     });
     workData.value = res.list;
+    data.value = res.list;
     page.value.total = res.total;
     const typeData = await api.workcenter.getTagCount();
     allType.value[1].code = typeData.area;
     allType.value[2].code = typeData.device;
     allType.value[3].code = typeData.line;
     allType.value[4].code = typeData.section;
-    console.log('list', typeData);
-    console.log('11', allType.value);
   } catch (e) {
     console.log(e);
   } finally {
     setLoading(false);
   }
 };
-// 工作中心跳转到form
-const onHandelNumber = (value) => {
+// 工作中心center跳转到form
+const onHandelCenter = (row) => {
   detailedShow.value = true; // 控制窗口
   btnShow.value = true; // 控制按钮禁用
-  idWorkCenter.value = value;
-  console.log(value);
+  workCenterId.value = row; // 获取到工作中心id
 };
 
 // 新增按钮
 const onHandelAdded = () => {
   detailedShow.value = true;
+  nextAdd.value = true; // 判断是否为新增
   btnShow.value = true; // 控制按钮禁用
+  workCenterId.value = {};
 };
 
 // 子组件控制
