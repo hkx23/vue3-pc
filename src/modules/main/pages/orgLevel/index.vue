@@ -53,10 +53,6 @@ import { useLang } from './lang';
 
 const { t } = useLang();
 
-const treeConfig = reactive({
-  childrenKey: 'children',
-  treeNodeColumnIndex: 0,
-});
 const columns = [
   {
     title: t('levelName'),
@@ -71,6 +67,10 @@ const columns = [
     colKey: 'levelSeq',
   },
 ];
+const treeConfig = reactive({
+  childrenKey: 'children',
+  treeNodeColumnIndex: 0,
+});
 const formRef = ref<FormRef>(null);
 const tableRef = ref<EnhancedTableInstanceFunctions>(null);
 const formVisible = ref(false);
@@ -86,8 +86,7 @@ const onRowClick = ({ row }: { row: any }) => {
 };
 
 const fetchData = async () => {
-  const list = await api.orgLevel.tree();
-  data.value = list;
+  data.value = await api.orgLevel.tree();
   nextTick(() => {
     tableRef.value?.expandAll();
   });
