@@ -195,7 +195,7 @@ const columns = [
     align: 'center',
   },
   {
-    colKey: 'ownerName',
+    colKey: 'wcOwner',
     title: '负责人',
     align: 'center',
   },

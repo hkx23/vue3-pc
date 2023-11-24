@@ -218,9 +218,9 @@ const formData = reactive({
   parentWcId: '', // 父级
   checked: true,
   wcType: '', // 设备类型
-  state: 1,
+  state: 1, // 启用还是禁用
   category: [],
-  wcObjectId: '',
+  wcObjectId: '', // 关联设备
 });
 const typeData = ref([
   {
@@ -291,8 +291,12 @@ const onHandleSave = () => {
       wcName: formData.wcName,
       workshopId: formData.workshopID,
       parentWcId: formData.parentWcId,
-      wcSeq: 0,
       wcLocation: formData.wcLocation,
+      wcObjectId: formData.wcObjectId,
+      state: formData.state,
+      wcOwner: formData.ownerName,
+      wcObjectType: formData.category,
+      wcSeq: 0,
       // ownerId: ,
     });
     console.log(list);
