@@ -28,8 +28,8 @@
 import type { PropType } from 'vue';
 import { computed } from 'vue';
 
-import { useLocale } from '@/locales/useLocale';
 import { getActive } from '@/router';
+import { renderMenuTitle } from '@/router/locale';
 import type { MenuRoute } from '@/types/interface';
 
 type ListItemType = MenuRoute & { icon?: string };
@@ -43,7 +43,6 @@ const props = defineProps({
 
 const active = computed(() => getActive());
 
-const { locale } = useLocale();
 const list = computed(() => {
   const { navData } = props;
   return getMenuList(navData);
@@ -53,11 +52,6 @@ const menuIcon = (item: ListItemType) => {
   if (typeof item.icon === 'string') return <t-icon name={item.icon} />;
   const RenderIcon = item.icon;
   return RenderIcon;
-};
-
-const renderMenuTitle = (title: string | Record<string, string>) => {
-  if (typeof title === 'string') return title;
-  return title[locale.value];
 };
 
 const getMenuList = (list: MenuRoute[], basePath?: string): ListItemType[] => {

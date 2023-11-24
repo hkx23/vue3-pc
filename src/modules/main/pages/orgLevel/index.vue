@@ -5,12 +5,12 @@
         <div class="left-operation-container">
           <t-button @click="onClickAdd">
             <template #icon><add-icon /></template>
-            新增</t-button
-          >
-          <t-popconfirm content="确认删除吗" @confirm="onClickDelete">
+            {{ t('common.button.add') }}
+          </t-button>
+          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
             <t-button theme="default">
               <template #icon><remove-icon /></template>
-              删除</t-button
+              {{ t('common.button.delete') }}</t-button
             >
           </t-popconfirm>
         </div>
@@ -25,7 +25,11 @@
         @row-click="onRowClick"
       ></t-enhanced-table>
     </t-card>
-    <t-dialog v-model:visible="formVisible" header="新增组织层级" :on-confirm="onConfirmForm">
+    <t-dialog
+      v-model:visible="formVisible"
+      :header="t('common.dialog.header.add', [t('levelName')])"
+      :on-confirm="onConfirmForm"
+    >
       <org-level-form ref="formRef"></org-level-form>
     </t-dialog>
   </div>
@@ -45,25 +49,28 @@ import { api, OrgLevel } from '@/api/main';
 
 import { FormRef } from './constants';
 import OrgLevelForm from './form.vue';
+import { useLang } from './lang';
 
+const { t } = useLang();
+
+const columns = [
+  {
+    title: t('levelName'),
+    colKey: 'levelName',
+  },
+  {
+    title: t('levelCode'),
+    colKey: 'levelCode',
+  },
+  {
+    title: t('levelSeq'),
+    colKey: 'levelSeq',
+  },
+];
 const treeConfig = reactive({
   childrenKey: 'children',
   treeNodeColumnIndex: 0,
 });
-const columns = [
-  {
-    title: '组织层级',
-    colKey: 'levelName',
-  },
-  {
-    title: '层级代码',
-    colKey: 'levelCode',
-  },
-  {
-    title: '层级序列',
-    colKey: 'levelSeq',
-  },
-];
 const formRef = ref<FormRef>(null);
 const tableRef = ref<EnhancedTableInstanceFunctions>(null);
 const formVisible = ref(false);
@@ -79,8 +86,7 @@ const onRowClick = ({ row }: { row: any }) => {
 };
 
 const fetchData = async () => {
-  const list = await api.orgLevel.tree();
-  data.value = list;
+  data.value = await api.orgLevel.tree();
   nextTick(() => {
     tableRef.value?.expandAll();
   });
@@ -102,12 +108,12 @@ const onClickAdd = () => {
 
 const onClickDelete = async () => {
   if (!selectedRow?.id) {
-    MessagePlugin.warning('请选择行之后再尝试操作');
+    MessagePlugin.warning(t('common.message.selectRowTryAgain'));
     return;
   }
   await api.orgLevel.delete({ id: selectedRow.id });
   selectedRow = null;
-  MessagePlugin.success('删除成功');
+  MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchData();
 };
 </script>

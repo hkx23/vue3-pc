@@ -5,32 +5,22 @@
         <t-row justify="space-between">
           <t-col>
             <div>
-              <t-input
-                v-model="keyword"
-                :label="t('business.main.mitemCode')"
-                :placeholder="
-                  t('common.placeholder.input', [t('business.main.mitemCode') + '/' + t('business.main.mitemName')])
-                "
-                clearable
-              />
+              <t-input v-model="keyword" label="工序：" placeholder="请输入工序编码/名称" clearable />
             </div>
           </t-col>
           <t-col flex="170px">
             <div>
-              <t-button @click="onRefresh">{{ t('common.button.search') }}</t-button>
-              <t-button theme="default" @click="onReset">{{ t('common.button.reset') }}</t-button>
+              <t-button @click="onRefresh">查询</t-button>
+              <t-button theme="default" @click="onReset">重置</t-button>
             </div>
           </t-col>
-        </t-row>
-        <t-row style="margin-top: 10px">
-          <t-checkbox-group v-model="mitemTypeSelect" :options="mitemTypeOptions" />
         </t-row>
         <t-row justify="space-between">
           <tm-table
             v-model:pagination="pageUI"
             row-key="id"
-            :table-column="tableMitemColumns"
-            :table-data="tableDataMitem"
+            :table-column="tableProcessColumns"
+            :table-data="tableDataProcess"
             :loading="loading"
             :total="dataTotal"
             :resizable="true"
@@ -49,13 +39,13 @@
   <div>
     <t-dialog
       v-model:visible="formVisible"
-      :header="t('dialog_title')"
+      header="工序编辑"
       :on-confirm="onConfirmForm"
       width="50%"
       :close-on-overlay-click="false"
     >
       <t-space direction="vertical" style="width: 98%">
-        <mitem-form ref="formRef"></mitem-form>
+        <process-form ref="formRef"></process-form>
       </t-space>
     </t-dialog>
   </div>
@@ -65,39 +55,29 @@
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-import { api } from '@/api/main';
+import { api } from '@/api/control';
 import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import MitemForm from './form.vue';
-import { useLang } from './lang';
+import ProcessForm from './form.vue';
 
-const { t } = useLang();
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const keyword = ref('');
-const selectedMitemRowKeys = ref([]);
-const tableDataMitem = ref([]);
-const mitemTypeOptions = ref([t('business.main.raw'), t('business.main.inProduct'), t('business.main.product')]);
-const mitemTypeSelect = ref([]);
+const selectedProcessRowKeys = ref([]);
+const tableDataProcess = ref([]);
 const sortlist = ref([]);
 const filterlist = ref([]);
 const formVisible = ref(false);
 const formRef = ref(null);
 
-const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: t('business.main.serialNumber'), colKey: 'serial-number', width: 74 },
-  { title: t('business.main.mitemCode'), width: 160, colKey: 'mitemCode' },
-  { title: t('business.main.mitemName'), width: 160, colKey: 'mitemName' },
-  { title: t('business.main.mitemDesc'), width: 160, colKey: 'mitemDesc' },
-  { title: t('business.main.mitemCategoryCode'), width: 160, colKey: 'mitemCategoryCode' },
-  { title: t('business.main.mitemCategoryName'), width: 160, colKey: 'mitemCategoryName' },
-  { title: t('business.main.uom'), width: 160, colKey: 'uom' },
-  { title: t('isProductName'), width: 160, colKey: 'isProductName' },
-  { title: t('isInProcessName'), width: 160, colKey: 'isInProcessName' },
-  { title: t('isRawName'), width: 160, colKey: 'isRawName' },
-  { title: t('common.button.operation'), align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+const tableProcessColumns: PrimaryTableCol<TableRowData>[] = [
+  { title: '序号', colKey: 'serial-number', width: 74 },
+  { title: '工序编码', width: 160, colKey: 'processCode' },
+  { title: '工序名称', width: 160, colKey: 'processName' },
+  { title: '工序描述', width: 160, colKey: 'processDesc' },
+  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 // 查询按钮
 const onRefresh = () => {
@@ -112,19 +92,16 @@ const dataTotal = ref(0);
 const fetchTable = async () => {
   setLoading(true);
   try {
-    selectedMitemRowKeys.value = [];
-    tableDataMitem.value = [];
-    const data = (await api.mitem.getList({
+    selectedProcessRowKeys.value = [];
+    tableDataProcess.value = [];
+    const data = (await api.process.search({
       keyword: keyword.value,
-      isRaw: mitemTypeSelect.value.find((n) => n === t('business.main.raw')) != null ? 1 : 0,
-      isInProcess: mitemTypeSelect.value.find((n) => n === t('business.main.inProduct')) != null ? 1 : 0,
-      isProduct: mitemTypeSelect.value.find((n) => n === t('business.main.product')) != null ? 1 : 0,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       sorts: sortlist.value,
       filters: filterlist.value,
     })) as any;
-    tableDataMitem.value = data.list;
+    tableDataProcess.value = data.list;
     dataTotal.value = data.total;
   } catch (e) {
     console.log(e);
@@ -134,7 +111,6 @@ const fetchTable = async () => {
 };
 
 const onEditRowClick = (value: any) => {
-  // const rowData = value.row;
   formRef.value.formData = JSON.parse(JSON.stringify(value.row));
   formVisible.value = true;
 };
