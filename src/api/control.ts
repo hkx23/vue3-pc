@@ -130,8 +130,8 @@ export interface WorkstationVO {
   modifier?: string;
   /** 修改时间 */
   timeModified?: string;
-  pprocessId?: string;
   pworkcenterId?: string;
+  pprocessId?: string;
 }
 
 /** 通用响应类 */
@@ -246,7 +246,7 @@ export interface Workcenter {
   wcObjectId?: string;
   /** 地点 */
   wcLocation?: string;
-  directorId?: string;
+  ownerId?: string;
 }
 
 /** 通用响应类 */
@@ -594,169 +594,6 @@ export interface ResultMo {
   data?: Mo;
 }
 
-/** 物料服务间调用标准实体 */
-export interface MitemFeignDTO {
-  id?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 物料代码 */
-  mitemCode?: string;
-  /** 物料名称 */
-  mitemName?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  /** 物料类别编码 */
-  categoryCode?: string;
-  /** 物料类别名称 */
-  categoryName?: string;
-  /** 物料类别描述 */
-  categoryDesc?: string;
-  /** 供应方式 */
-  supplyCategory?: string;
-  /** 单位 */
-  uom?: string;
-  /**
-   * 是否成品，1：是；0：否
-   * @format int32
-   */
-  isProduct?: number;
-  /**
-   * 是否原材料，1：是；0：否
-   * @format int32
-   */
-  isRaw?: number;
-  /**
-   * 是否半成品,1：是；0：否
-   * @format int32
-   */
-  isInProcess?: number;
-  /**
-   * 保质期天数
-   * @format int32
-   */
-  shelfLifeDays?: number;
-  /**
-   * 是否启用批次,1：是；0：否
-   * @format int32
-   */
-  isBatchNo?: number;
-  wwarehouseId?: string;
-  mmitemCategoryId?: string;
-}
-
-/** 响应数据 */
-export type MoTestDTO = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工单名称 */
-  moCode?: string;
-  mitemId?: string;
-  /** 工单类型 */
-  moClass?: string;
-  /** 销售订单 */
-  soNo?: string;
-  /**
-   * 销售订单行号
-   * @format int32
-   */
-  soSeq?: number;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /**
-   * 下线数量
-   * @format int32
-   */
-  offlineQty?: number;
-  /**
-   * 完工数量
-   * @format int32
-   */
-  completedQty?: number;
-  /**
-   * 入库数量
-   * @format int32
-   */
-  stockinQty?: number;
-  /**
-   * 计划开始时间
-   * @format date-time
-   */
-  datetimePlanStart?: string;
-  /**
-   * 计划完成时间
-   * @format date-time
-   */
-  datetimePlanEnd?: string;
-  /**
-   * 实际开始时间
-   * @format date-time
-   */
-  datetimeActualStart?: string;
-  /**
-   * 实际完成时间
-   * @format date-time
-   */
-  datetimeActualEnd?: string;
-  warehouseId?: string;
-  parentMoId?: string;
-  workshopId?: string;
-  /** 备注 */
-  memo?: string;
-  /** 状态 */
-  status?: string;
-  /** 工单来源 */
-  moSource?: string;
-  /** 物料服务间调用标准实体 */
-  mitemObject?: MitemFeignDTO;
-} | null;
-
-/** 通用响应类 */
-export interface ResultListMoTestDTO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: MoTestDTO[] | null;
-}
-
 /**
  * @title scm项目
  * @version v1
@@ -949,20 +786,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultMo['data']>(`/api/control/mo/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单表
-     * @name FeignTest
-     * @summary feign关联物料测试
-     * @request GET:/mo/feignTest
-     * @secure
-     */
-    feignTest: () =>
-      http.request<ResultListMoTestDTO['data']>(`/api/control/mo/feignTest`, {
-        method: 'GET',
       }),
   },
 };
