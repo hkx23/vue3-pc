@@ -13,6 +13,8 @@ export function useLocale() {
 
     locale.value = lang;
     fw.setLanguage(lang);
+
+    fw.ipc.send('change-language', lang);
   }
 
   const getComponentsLocale = computed(() => {

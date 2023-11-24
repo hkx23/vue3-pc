@@ -5,12 +5,12 @@
         <div class="left-operation-container">
           <t-button @click="onClickAdd">
             <template #icon><add-icon /></template>
-            新增</t-button
-          >
+            {{ t('common.button.add') }}
+          </t-button>
           <t-popconfirm content="确认删除吗" @confirm="onClickDelete">
             <t-button theme="default">
               <template #icon><remove-icon /></template>
-              删除</t-button
+              {{ t('common.button.delete') }}</t-button
             >
           </t-popconfirm>
         </div>
@@ -40,11 +40,17 @@ export default {
 import { AddIcon, RemoveIcon } from 'tdesign-icons-vue-next';
 import { EnhancedTableInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { nextTick, onMounted, reactive, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { api, OrgLevel } from '@/api/main';
 
 import { FormRef } from './constants';
 import OrgLevelForm from './form.vue';
+import lang from './lang';
+
+const { t } = useI18n<{ messages: typeof lang }>({
+  messages: lang,
+});
 
 const treeConfig = reactive({
   childrenKey: 'children',
@@ -52,15 +58,15 @@ const treeConfig = reactive({
 });
 const columns = [
   {
-    title: '组织层级',
+    title: t('levelName'),
     colKey: 'levelName',
   },
   {
-    title: '层级代码',
+    title: t('levelCode'),
     colKey: 'levelCode',
   },
   {
-    title: '层级序列',
+    title: t('levelSeq'),
     colKey: 'levelSeq',
   },
 ];

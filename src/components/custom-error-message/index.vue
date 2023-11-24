@@ -13,6 +13,7 @@ import { onMounted, onUnmounted } from 'vue';
 import { CustomError } from '../../types/web-core';
 
 onMounted(() => {
+  if (window.top !== window) return;
   fw.ipc.on('custom_error', (args: any) => {
     const error = args as CustomError;
     MessagePlugin.error(error.message);
