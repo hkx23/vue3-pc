@@ -970,14 +970,14 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
   isInProcessName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
   isBatchName?: string;
 }
 
