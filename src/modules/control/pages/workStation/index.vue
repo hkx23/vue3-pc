@@ -296,10 +296,9 @@ const onHandelE = (id) => {
     controlShow.value = true;
     workData.value.forEach((item) => {
       if (item.id === id) {
-        // console.log('1PWorkcenterId', item.PWorkcenterId, '2PProcessId', item.PProcessId);
         formData.value.id = id;
-        formData.value.PWorkcenterId = item.PWorkcenterId;
-        formData.value.PProcessId = item.PProcessId;
+        formData.value.PWorkcenterId = item.pWorkcenterId;
+        formData.value.PProcessId = item.pProcessId;
         formData.value.workstationCode = item.workstationCode;
         formData.value.workstationName = item.workstationName;
         formData.value.workstationDesc = item.workstationDesc;
@@ -311,7 +310,6 @@ const onHandelE = (id) => {
         }
       }
     });
-    console.log(formData);
   } else {
     // 新增
     formRef.value.reset({ type: 'initial' });
@@ -388,27 +386,27 @@ const onSecondary = async () => {
     try {
       api.workstation.edit({
         id: formData.value.id,
-        pprocessId: formData.value.PProcessId,
-        pworkcenterId: formData.value.PWorkcenterId,
+        processId: formData.value.PProcessId,
+        workcenterId: formData.value.PWorkcenterId,
         workstationCode: formData.value.workstationCode,
         workstationName: formData.value.workstationName,
         workstationDesc: formData.value.workstationDesc,
         state: formData.value.state,
       });
-      onHandelList();
     } catch (e) {
       console.log(e);
     }
+    onHandelList();
     // 编辑
   } else {
     // 新增逻辑
     try {
       await api.workstation.add({
         workstationCode: formData.value.workstationCode,
-        workcenterName: formData.value.workstationName,
+        workstationName: formData.value.workstationName,
         workstationDesc: formData.value.workstationDesc,
-        pworkcenterId: formData.value.PWorkcenterId,
-        pprocessId: formData.value.PProcessId,
+        workcenterId: formData.value.PWorkcenterId,
+        processId: formData.value.PProcessId,
         state: formData.value.state,
       });
       onHandelList();

@@ -28,7 +28,7 @@
             }"
           >
             <template v-if="!routeItem.isHome">
-              {{ renderTitle(routeItem.title) }}
+              {{ renderMenuTitle(routeItem.title) }}
             </template>
             <t-icon v-else name="home" />
             <template #dropdown>
@@ -74,7 +74,7 @@ import { computed, nextTick, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { prefix } from '@/config/global';
-import { useLocale } from '@/locales/useLocale';
+import { renderMenuTitle } from '@/router/locale';
 import { useSettingStore, useTabsRouterStore } from '@/store';
 import type { TRouterInfo, TTabRemoveOptions } from '@/types/interface';
 
@@ -90,8 +90,6 @@ const tabsRouterStore = useTabsRouterStore();
 const tabRouters = computed(() => tabsRouterStore.tabRouters.filter((route) => route.isAlive || route.isHome));
 const activeTabPath = ref('');
 
-const { locale } = useLocale();
-
 const handleChangeCurrentTab = (path: string) => {
   const { tabRouters } = tabsRouterStore;
   const route = tabRouters.find((i) => i.path === path);
@@ -106,10 +104,6 @@ const handleRemove = (options: TTabRemoveOptions) => {
   if ((options.value as string) === route.path) router.push({ path: nextRouter.path, query: nextRouter.query });
 };
 
-const renderTitle = (title: string | Record<string, string>) => {
-  if (typeof title === 'string') return title;
-  return title[locale.value];
-};
 const handleRefresh = (route: TRouterInfo, routeIdx: number) => {
   tabsRouterStore.toggleTabRouterAlive(routeIdx);
   nextTick(() => {

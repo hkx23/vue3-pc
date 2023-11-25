@@ -9,106 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-/** 筛选字段 */
-export interface Filter {
-  field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
-  value?: string;
-}
-
-/** 排序字段 */
-export interface SortParam {
-  sortBy?: string;
-  descending?: boolean;
-}
-
-export interface WorkcenterSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /**
-   * id
-   * @format int32
-   */
-  id?: number;
-  /** 多个id */
-  ids?: number[];
-  /** 工作中心-类别 */
-  category?: number[];
-  /** 工作中心编码名称模糊查询 */
-  workcenterword?: string;
-  workshopID?: string;
-  /** 工作中心-状态 */
-  state?: number[];
-  /** 排序字段 */
-  sorts?: SortParam[];
-  /** 筛选字段 */
-  filters?: Filter[];
-}
-
-/** 响应数据 */
-export type PagingDataWorkstationAuthVO = {
-  list?: WorkstationAuthVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkstationAuthVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkstationAuthVO;
-}
-
-/** 工站权限显示 */
-export interface WorkstationAuthVO {
-  id?: string;
-  eid?: string;
-  oid?: string;
-  /** 用户名 */
-  userName?: string;
-  /** 姓名 */
-  personName?: string;
-  /** 工站编码 */
-  workstationCode?: string;
-  /** 工站名称 */
-  workstationName?: string;
-  /** 工站描述 */
-  workstationDesc?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 工序名称 */
-  processName?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 创建人 */
-  creator?: string;
-  /** 创建时间 */
-  timeCreate?: string;
-  /** 修改人 */
-  modifier?: string;
-  /** 修改时间 */
-  timeModified?: string;
-  pworkcenterId?: string;
-  pprocessId?: string;
-}
-
 export interface CommonSearch {
   /** @format int32 */
   pageNum?: number;
@@ -121,6 +21,17 @@ export interface CommonSearch {
   category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
+}
+
+export interface Filter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  value?: string;
+}
+
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
 }
 
 /** 响应数据 */
@@ -277,8 +188,28 @@ export interface WorkstationVO {
   modifier?: string;
   /** 修改时间 */
   timeModified?: string;
-  pworkcenterId?: string;
   pprocessId?: string;
+  pworkcenterId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataWorkcenter = {
+  list?: Workcenter[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkcenter {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkcenter;
 }
 
 /** 工作中心 */
@@ -327,28 +258,7 @@ export interface Workcenter {
   wcObjectId?: string;
   /** 地点 */
   wcLocation?: string;
-  /** 负责人 */
-  wcOwner?: string;
-}
-
-/** 响应数据 */
-export type PagingDataWorkcenter = {
-  list?: Workcenter[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkcenter {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkcenter;
+  ownerId?: string;
 }
 
 /** 通用响应类 */
@@ -362,89 +272,6 @@ export interface ResultWorkcenter {
   message?: string;
   /** 工作中心 */
   data?: Workcenter;
-}
-
-/** 响应数据 */
-export type PagingDataWorkcenterVO = {
-  list?: WorkcenterVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkcenterVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkcenterVO;
-}
-
-/** 工作中心显示 */
-export interface WorkcenterVO {
-  id?: string;
-  eid?: string;
-  oid?: string;
-  /** 工作中心编号 */
-  wcCode?: string;
-  /** 工作中心名称 */
-  wcName?: string;
-  /**
-   * 工作中心类型
-   * @format int32
-   */
-  wcObjectType?: number;
-  /** 工作中心类型 */
-  wcType?: string;
-  workshopID?: string;
-  /** 所属车间编码 */
-  workshopCode?: string;
-  /** 所属车间名称 */
-  workshopName?: string;
-  /** 工作中心地点 */
-  wcLocation?: string;
-  parentWcId?: string;
-  /** 父工作中心编码 */
-  parentWcCode?: string;
-  /** 负责人名称 */
-  wcOwner?: string;
-  wcObjectId?: string;
-  /** 关联设备编码 */
-  wcObjectCode?: string;
-  /**
-   * 顺序号
-   * @format int32
-   */
-  wcSeq?: number;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /**
-   * 工作中心-工作区总记录数
-   * @format int32
-   */
-  area?: number;
-  /**
-   * 工作中心-生产线总记录数
-   * @format int32
-   */
-  line?: number;
-  /**
-   * 工作中心-工段总记录数
-   * @format int32
-   */
-  section?: number;
-  /**
-   * 工作中心-设备总记录数
-   * @format int32
-   */
-  device?: number;
 }
 
 /** 响应数据 */
@@ -851,19 +678,6 @@ export interface ResultMo {
   data?: Mo;
 }
 
-/** 通用响应类 */
-export interface ResultWorkcenterVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 工作中心显示 */
-  data?: WorkcenterVO;
-}
-
 /**
  * @title scm项目
  * @version v1
@@ -872,22 +686,6 @@ export interface ResultWorkcenterVO {
  */
 
 export const api = {
-  workstationAuth: {
-    /**
-     * No description
-     *
-     * @tags 工站权限
-     * @name Getlist
-     * @summary 查询工作中心
-     * @request POST:/workstationAuth/getList
-     * @secure
-     */
-    getlist: (data: WorkcenterSearch) =>
-      http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
   workstation: {
     /**
      * No description
@@ -966,37 +764,8 @@ export const api = {
      * No description
      *
      * @tags 工作中心
-     * @name Remove
-     * @summary 删除工作中心
-     * @request POST:/workcenter/remove
-     * @secure
-     */
-    remove: (data: WorkcenterSearch) =>
-      http.request<ResultObject['data']>(`/api/control/workcenter/remove`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name Modify
-     * @summary 编辑工作中心
-     * @request POST:/workcenter/modify
-     * @secure
-     */
-    modify: (data: Workcenter) =>
-      http.request<ResultObject['data']>(`/api/control/workcenter/modify`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
      * @name Search
+     * @summary 工作中心查询
      * @request POST:/workcenter/items
      * @secure
      */
@@ -1017,79 +786,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkcenter['data']>(`/api/control/workcenter/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name Getlist
-     * @summary 查询工作中心
-     * @request POST:/workcenter/getList
-     * @secure
-     */
-    getlist: (data: WorkcenterSearch) =>
-      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/control/workcenter/getList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name GetChildCenter
-     * @summary 查询子工作中心
-     * @request POST:/workcenter/getChildCenter
-     * @secure
-     */
-    getChildCenter: (data: WorkcenterSearch) =>
-      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/control/workcenter/getChildCenter`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name Add
-     * @summary 新增工作中心
-     * @request POST:/workcenter/add
-     * @secure
-     */
-    add: (data: Workcenter) =>
-      http.request<ResultObject['data']>(`/api/control/workcenter/add`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name GetTagCount
-     * @summary 工作中心获取tag总记录数
-     * @request GET:/workcenter/getTagCount
-     * @secure
-     */
-    getTagCount: () =>
-      http.request<ResultWorkcenterVO['data']>(`/api/control/workcenter/getTagCount`, {
-        method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name GetCategory
-     * @summary 工作中心获取组织层级
-     * @request GET:/workcenter/getCategory
-     * @secure
-     */
-    getCategory: () =>
-      http.request<ResultObject['data']>(`/api/control/workcenter/getCategory`, {
-        method: 'GET',
       }),
   },
   routing: {

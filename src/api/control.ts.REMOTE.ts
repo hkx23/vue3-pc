@@ -327,8 +327,7 @@ export interface Workcenter {
   wcObjectId?: string;
   /** 地点 */
   wcLocation?: string;
-  /** 负责人 */
-  wcOwner?: string;
+  ownerId?: string;
 }
 
 /** 响应数据 */
@@ -411,7 +410,7 @@ export interface WorkcenterVO {
   /** 父工作中心编码 */
   parentWcCode?: string;
   /** 负责人名称 */
-  wcOwner?: string;
+  owner?: string;
   wcObjectId?: string;
   /** 关联设备编码 */
   wcObjectCode?: string;
@@ -445,59 +444,6 @@ export interface WorkcenterVO {
    * @format int32
    */
   device?: number;
-}
-
-/** 响应数据 */
-export type PagingDataRouting = {
-  list?: Routing[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataRouting {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataRouting;
-}
-
-/** 工艺路线 */
-export interface Routing {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工艺路线代码 */
-  routingCode?: string;
-  /** 工艺路线名称 */
-  routingName?: string;
-  /** 工艺路线描述 */
-  routingDesc?: string;
 }
 
 /** 响应数据 */
@@ -802,11 +748,6 @@ export interface Mo {
    * @format date-time
    */
   datetimeActualEnd?: string;
-  /**
-   * 工单关闭时间
-   * @format date-time
-   */
-  datetimeMoClose?: string;
   warehouseId?: string;
   parentMoId?: string;
   workshopId?: string;
@@ -1092,22 +1033,6 @@ export const api = {
         method: 'GET',
       }),
   },
-  routing: {
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name Search
-     * @summary 工艺路线信息查询
-     * @request POST:/routing/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataRouting['data']>(`/api/control/routing/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
   process: {
     /**
      * No description
@@ -1220,86 +1145,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultMo['data']>(`/api/control/mo/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单表
-     * @name Getmolist
-     * @summary 获取工单管理列表
-     * @request GET:/mo/getmolist
-     * @secure
-     */
-    getmolist: (query?: {
-      /** @default "" */
-      keyword?: string;
-      /**
-       * @format int32
-       * @default 1
-       */
-      pagenum?: number;
-      /**
-       * @format int32
-       * @default 20
-       */
-      pagesize?: number;
-      /** @default "" */
-      moCode?: string;
-      /** @default "" */
-      moClass?: string;
-      /** @default "" */
-      status?: string;
-      /** @default "" */
-      datetimePlanStart?: string;
-      /** @default "" */
-      datetimePlanEnd?: string;
-      /** @default "" */
-      workshopCode?: string;
-      /** @default "" */
-      workCenterCode?: string;
-      /** @default "" */
-      rootingCode?: string;
-      /** @default "" */
-      categoryCode?: string;
-      /** @default "" */
-      mitemCode?: string;
-    }) =>
-      http.request<ResultObject['data']>(`/api/control/mo/getmolist`, {
-        method: 'GET',
-        params: query,
-      }),
-  },
-  moLog: {
-    /**
-     * No description
-     *
-     * @tags 工单日志
-     * @name GetMoLogListByMoCode
-     * @summary 根据工单号获取工单日志信息
-     * @request GET:/moLog/getMoLogListByMoCode
-     * @secure
-     */
-    getMoLogListByMoCode: (query: { moCode: string }) =>
-      http.request<ResultObject['data']>(`/api/control/moLog/getMoLogListByMoCode`, {
-        method: 'GET',
-        params: query,
-      }),
-  },
-  moBom: {
-    /**
-     * No description
-     *
-     * @tags 工单BOM
-     * @name GetMoBomListByMoCode
-     * @summary 根据工单号获取工单BOM信息
-     * @request GET:/moBom/getMoBomListByMoCode
-     * @secure
-     */
-    getMoBomListByMoCode: (query: { moCode: string }) =>
-      http.request<ResultObject['data']>(`/api/control/moBom/getMoBomListByMoCode`, {
-        method: 'GET',
-        params: query,
       }),
   },
 };

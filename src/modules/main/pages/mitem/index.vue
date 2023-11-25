@@ -5,13 +5,20 @@
         <t-row justify="space-between">
           <t-col>
             <div>
-              <t-input v-model="keyword" label="物料：" placeholder="请输入物料编码/名称" clearable />
+              <t-input
+                v-model="keyword"
+                :label="t('business.main.mitemCode')"
+                :placeholder="
+                  t('common.placeholder.input', [t('business.main.mitemCode') + '/' + t('business.main.mitemName')])
+                "
+                clearable
+              />
             </div>
           </t-col>
           <t-col flex="170px">
             <div>
-              <t-button @click="onRefresh">查询</t-button>
-              <t-button theme="default" @click="onReset">重置</t-button>
+              <t-button @click="onRefresh">{{ t('common.button.search') }}</t-button>
+              <t-button theme="default" @click="onReset">{{ t('common.button.reset') }}</t-button>
             </div>
           </t-col>
         </t-row>
@@ -42,7 +49,7 @@
   <div>
     <t-dialog
       v-model:visible="formVisible"
-      header="物料编辑"
+      :header="t('dialog_title')"
       :on-confirm="onConfirmForm"
       width="50%"
       :close-on-overlay-click="false"
@@ -64,13 +71,15 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import MitemForm from './form.vue';
+import { useLang } from './lang';
 
+const { t } = useLang();
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const keyword = ref('');
 const selectedMitemRowKeys = ref([]);
 const tableDataMitem = ref([]);
-const mitemTypeOptions = ref(['原材料', '半成品', '成品']);
+const mitemTypeOptions = ref([t('business.main.raw'), t('business.main.inProduct'), t('business.main.product')]);
 const mitemTypeSelect = ref([]);
 const sortlist = ref([]);
 const filterlist = ref([]);
@@ -78,17 +87,17 @@ const formVisible = ref(false);
 const formRef = ref(null);
 
 const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '序号', colKey: 'serial-number', width: 74 },
-  { title: '物料编码', width: 160, colKey: 'mitemCode' },
-  { title: '物料名称', width: 160, colKey: 'mitemName' },
-  { title: '物料描述', width: 160, colKey: 'mitemDesc' },
-  { title: '物料类别', width: 160, colKey: 'mitemCategoryCode' },
-  { title: '物料类别名称', width: 160, colKey: 'mitemCategoryName' },
-  { title: '主计量单位', width: 160, colKey: 'uom' },
-  { title: '是否成品', width: 160, colKey: 'isProductName' },
-  { title: '是否半成品', width: 160, colKey: 'isInProcessName' },
-  { title: '是否原材料', width: 160, colKey: 'isRawName' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  { title: t('business.main.serialNumber'), colKey: 'serial-number', width: 74 },
+  { title: t('business.main.mitemCode'), width: 160, colKey: 'mitemCode' },
+  { title: t('business.main.mitemName'), width: 160, colKey: 'mitemName' },
+  { title: t('business.main.mitemDesc'), width: 160, colKey: 'mitemDesc' },
+  { title: t('business.main.mitemCategoryCode'), width: 160, colKey: 'mitemCategoryCode' },
+  { title: t('business.main.mitemCategoryName'), width: 160, colKey: 'mitemCategoryName' },
+  { title: t('business.main.uom'), width: 160, colKey: 'uom' },
+  { title: t('isProductName'), width: 160, colKey: 'isProductName' },
+  { title: t('isInProcessName'), width: 160, colKey: 'isInProcessName' },
+  { title: t('isRawName'), width: 160, colKey: 'isRawName' },
+  { title: t('common.button.operation'), align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 // 查询按钮
 const onRefresh = () => {
@@ -107,9 +116,9 @@ const fetchTable = async () => {
     tableDataMitem.value = [];
     const data = (await api.mitem.getList({
       keyword: keyword.value,
-      isRaw: mitemTypeSelect.value.find((n) => n === '原材料') != null ? 1 : 0,
-      isInProcess: mitemTypeSelect.value.find((n) => n === '半成品') != null ? 1 : 0,
-      isProduct: mitemTypeSelect.value.find((n) => n === '成品') != null ? 1 : 0,
+      isRaw: mitemTypeSelect.value.find((n) => n === t('business.main.raw')) != null ? 1 : 0,
+      isInProcess: mitemTypeSelect.value.find((n) => n === t('business.main.inProduct')) != null ? 1 : 0,
+      isProduct: mitemTypeSelect.value.find((n) => n === t('business.main.product')) != null ? 1 : 0,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       sorts: sortlist.value,

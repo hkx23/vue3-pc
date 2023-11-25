@@ -5,49 +5,46 @@
       <t-card :bordered="false">
         <header class="form-item-box">
           <t-form-item label="工作中心编号">
-            <t-input v-model="formData.workNumber" />
+            <t-input v-model="formData.wcCode" />
           </t-form-item>
           <t-form-item label="所属车间">
-            <tm-select-business v-model="formData.workShop" type="workshop" :show-title="false"></tm-select-business
+            <tm-select-business v-model="formData.workshopID" type="workshop" :show-title="false"></tm-select-business
           ></t-form-item>
           <t-form-item label="地点">
-            <t-input v-model="formData.location" style="width: 200px" />
+            <t-input v-model="formData.wcLocation" style="width: 200px" />
           </t-form-item>
         </header>
         <div class="form-item-box">
           <t-form-item label="工作中心名称">
-            <t-input v-model="formData.workName" />
+            <t-input v-model="formData.wcName" />
           </t-form-item>
           <t-form-item label="负责人">
-            <t-input v-model="formData.head" style="width: 180px" />
+            <t-input v-model="formData.ownerName" style="width: 180px" />
           </t-form-item>
         </div>
         <t-form-item label="父级">
-          <t-select v-model="formData.parent" />
+          <tm-select-business v-model="formData.parentWcId" type="workcenter" :show-title="false"> </tm-select-business>
+          <!-- <t-select v-model="formData.parentWcCode" /> -->
         </t-form-item>
         <footer class="form-item-box">
           <t-form-item label="类型">
             <ul class="type-box">
-              <li
-                v-for="item in typeData"
-                :key="item.id"
-                :class="item.show ? 'li-cur' : ''"
-                @click="onHandleCur(item.id)"
-              >
+              <li v-for="item in typeData" :key="item.id" :class="item.show ? 'li-cur' : ''" @click="onHandleCur(item)">
                 {{ item.name }}
               </li>
             </ul>
           </t-form-item>
           <t-form-item label="关联设备">
-            <t-select></t-select>
+            <tm-select-business v-model="formData.wcObjectId" type="equipment" :show-title="false">
+            </tm-select-business>
           </t-form-item>
         </footer>
         <span class="form-checkbox">
-          <t-checkbox>启用</t-checkbox>
+          <t-checkbox v-model="formData.checked">启用</t-checkbox>
         </span>
         <div style="margin: 10px 100px">
-          <t-button theme="default" type="submit">添加</t-button>
-          <t-button theme="default">删除</t-button>
+          <t-button theme="default" type="submit" :disabled="props.btnShow">添加</t-button>
+          <t-button theme="default" :disabled="props.btnShow">删除</t-button>
         </div>
       </t-card>
     </t-form>
@@ -59,7 +56,7 @@
         <tm-table
           ref="tableRef"
           v-model:pagination="pageUI"
-          row-key="name"
+          row-key="id"
           :table-column="columns"
           :table-data="workData"
           :total="total"
@@ -68,25 +65,15 @@
           @select-change="rehandleSelectChange"
           @refresh="fetchData"
         >
-          <!-- <template #expandedRow="{ row }">
-            <div>{{ row }}</div>
-          </template> -->
           <template #sequence>
             <div>1</div>
           </template>
-          <template #Work-center-number>
+          <template #wcCode="{ row }">
             <div>
               <t-icon name="chevron-right"></t-icon>
-              <t-link theme="primary" underline> 0752-A01-WCO1 </t-link>
+              <t-link theme="primary" underline @click="onHandelCode(row.id)">{{ row.wcCode }}</t-link>
             </div>
           </template>
-          <template #parentWorkCenter>
-            <div>11</div>
-          </template>
-          <template #associated>
-            <t-link theme="primary" underline>PE30332705-2 </t-link>
-          </template>
-          <!-- </t-table> -->
         </tm-table>
         <span class="table-btn">
           <t-button @click="onHandleSave">保存</t-button>
@@ -100,28 +87,85 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 
+import { api } from '@/api/control';
 import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 // 子修改传值
-
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
-const total = ref(10);
-const Emit = defineEmits(['addedShow']);
-
+const total = ref(10); // 总页数
+const Emit = defineEmits(['addedShow']); // addedShow窗口
+const props = defineProps({
+  btnShow: {
+    type: Boolean,
+    default: false,
+  },
+  wordCenterId: {
+    type: Object,
+  },
+  nextAdd: {
+    type: Boolean,
+  },
+  nextArr: {
+    type: Array<number>,
+  },
+});
+onMounted(() => {
+  fetchData();
+});
 const selectedRowKeys = ref([]); // 用于存储选中行的数组
-
+// 首次请求
 const fetchData = async () => {
-  setLoading(true);
-  setTimeout(() => {
-    workData.value = _.cloneDeep(workData.value);
+  Object.assign(formData, props.wordCenterId);
+  console.log('for', formData);
+
+  try {
+    setLoading(true);
+    const res = await api.workcenter.getChildCenter({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+      id: +props.wordCenterId.id,
+      category: formData.category,
+    });
+    workData.value = res.list;
+    total.value = res.total;
+    if (props.nextAdd) {
+      const list = await api.workcenter.getlist({
+        pageNum: pageUI.value.page,
+        pageSize: pageUI.value.rows,
+        category: props.nextArr,
+      });
+      workData.value = list.list;
+      total.value = list.total;
+    }
+    // 拿到渲染表单
+    console.log('props', props.wordCenterId);
+
+    // 显示
+    typeData.value.forEach((item) => {
+      if (formData.wcType === item.name) {
+        item.show = true;
+        formData.category = item.opId;
+      } else {
+        item.show = false;
+      }
+    });
+    // 控制多选
+    if (formData.state === 1) {
+      formData.checked = true;
+    } else {
+      formData.checked = false;
+    }
+  } catch (e) {
+    console.log(e);
+  } finally {
     setLoading(false);
-  }, 500);
+  }
 };
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
@@ -129,103 +173,106 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     type: 'multiple',
   },
   {
-    colKey: 'sequence',
+    colKey: 'wcSeq',
     title: '顺序号',
     align: 'center',
   },
   {
-    colKey: 'Work-center-number',
+    colKey: 'wcCode',
     title: '工作中心编号',
     align: 'center',
   },
   {
-    colKey: 'name',
+    colKey: 'wcName',
     title: '名称',
     align: 'center',
   },
   {
-    colKey: 'types',
+    colKey: 'wcType',
     title: '类型',
     align: 'center',
   },
   {
-    colKey: 'location',
+    colKey: 'wcLocation',
     title: '地点',
     align: 'center',
   },
   {
-    colKey: 'associated',
+    colKey: 'wcObjectCode',
     title: '关联设备',
     align: 'center',
   },
   {
-    colKey: 'head',
+    colKey: 'ownerName',
     title: '负责人',
     align: 'center',
   },
 ];
-const workData = ref([
-  {
-    name: ['你好2'],
-    types: '11',
-    Workshop: 'Aag',
-    location: '唱不上',
-    associated: '-',
-    head: '李四',
-  },
-  {
-    name: ['你好1'],
-    types: '11',
-    Workshop: 'Aag',
-    location: '唱不上',
-    associated: '-',
-    head: '李四',
-  },
-  {
-    name: ['你好3'],
-    types: '11',
-    Workshop: 'Aag',
-    location: '唱不上',
-    associated: '-',
-    head: '李四',
-  },
-]);
-const formData = ref({
-  workNumber: '', // 工作中心编号
-  workName: '', // 工作中心名称
-  location: '', // 地点
-  workShop: '', // 所属车间
-  head: '', // 负责人
-  parent: '', // 父级
+const workData = ref([]);
+const formData = reactive({
+  wcCode: '', // 工作中心编号
+  wcName: '', // 工作中心名称
+  wcLocation: '', // 地点
+  workshopID: '', // 所属车间
+  ownerName: '', // 负责人
+  parentWcId: '', // 父级
+  checked: true,
+  wcType: '', // 设备类型
+  state: 1, // 启用还是禁用
+  category: [],
+  wcObjectId: '', // 关联设备
 });
 const typeData = ref([
   {
     id: 1,
     name: '工作区',
     show: true,
+    opId: [1],
   },
   {
     id: 2,
     name: '生产线',
     show: false,
+    opId: [2],
   },
   {
     id: 3,
     name: '工段',
     show: false,
+    opId: [3],
   },
   {
     id: 4,
     name: '设备',
     show: false,
+    opId: [4],
   },
 ]);
 
+// 点击进入发请求进子集
+const onHandelCode = async (id) => {
+  try {
+    setLoading(true);
+    const res = await api.workcenter.getChildCenter({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+      id,
+    });
+    console.log('2res', res);
+    workData.value = res.list;
+    total.value = res.total;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoading(false);
+  }
+};
 // 高亮事件
-const onHandleCur = (id: number) => {
+const onHandleCur = (all: any) => {
   typeData.value.forEach((item) => {
-    if (item.id === id) {
+    if (item.id === all.id) {
       item.show = true;
+      formData.category = item.opId;
     } else {
       item.show = false;
     }
@@ -238,17 +285,47 @@ const rehandleSelectChange = (value: any, ctx: any) => {
 };
 // 保存
 const onHandleSave = () => {
+  if (props.nextAdd) {
+    const list = api.workcenter.add({
+      wcCode: formData.wcCode,
+      wcName: formData.wcName,
+      workshopId: formData.workshopID,
+      parentWcId: formData.parentWcId,
+      wcLocation: formData.wcLocation,
+      wcObjectId: formData.wcObjectId,
+      state: formData.state,
+      wcOwner: formData.ownerName,
+      // wcObjectType: formData.category,
+      wcSeq: 0,
+      // ownerId: ,
+    });
+    console.log(list);
+  }
   MessagePlugin.success('保存成功');
   Emit('addedShow', false);
 };
 // 取消
 const onHandleCancellation = () => {
+  clearFrom();
   MessagePlugin.success('取消成功');
   Emit('addedShow', false);
 };
+// 清空表单
 
 const submit = () => {
   console.log(1);
+};
+const clearFrom = () => {
+  formData.wcCode = ''; // 工作中心编号
+  formData.wcName = ''; // 工作中心名称
+  formData.wcLocation = ''; // 地点
+  formData.workshopID = ''; // 所属车间
+  formData.ownerName = ''; // 负责人
+  formData.parentWcId = ''; // 父级
+  formData.checked = true;
+  formData.wcType = ''; // 设备类型
+  formData.category = [];
+  formData.state = 1;
 };
 </script>
 

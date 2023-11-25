@@ -1,9 +1,9 @@
 <template>
   <t-form ref="formRef" :rules="FORM_RULES" :data="formData" :show-cancel="true" :show-error-message="false">
-    <t-form-item label="上一层级" name="parentLevelId">
+    <t-form-item :label="t('parentLevel')" name="parentLevelId">
       {{ formData.parentLevelId ? formData.parentLevelName : 'ROOT' }}
     </t-form-item>
-    <t-form-item label="组织层级名称" name="levelCode">
+    <t-form-item :label="t('levelName')" name="levelCode">
       <t-select v-model="formData.levelCode" clearable @change="onChangeLevelCode">
         <t-option v-for="(item, index) in orgLevelOptions" :key="index" :value="item.value" :label="item.label">
           {{ item.label }}
@@ -25,9 +25,14 @@ import { api, OrgLevel } from '@/api/main';
 
 import { getOrgLevelDic } from '../../api/orgLevel';
 import { FormRef } from './constants';
+import { useLang } from './lang';
+
+const { t } = useLang();
 
 const formRef: Ref<FormInstanceFunctions> = ref(null);
-const FORM_RULES = { levelCode: [{ required: true, message: '组织层级名称必选' }] };
+const FORM_RULES = {
+  levelCode: [{ required: true, message: t('common.placeholder.input', [t('levelName')]) }],
+};
 
 interface OrgLevelForm extends OrgLevel {
   parentLevelName: string;
@@ -67,7 +72,7 @@ const submit = async () => {
         return;
       }
       api.orgLevel.add(formData).then(() => {
-        MessagePlugin.success('新增成功');
+        MessagePlugin.success(t('common.message.addSuccess'));
         resolve(formData);
       });
     });

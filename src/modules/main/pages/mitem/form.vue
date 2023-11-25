@@ -1,15 +1,15 @@
 <template>
   <t-form layout="inline" :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
-    <t-form-item label="物料编码" required-mark>
+    <t-form-item :label="t('business.main.mitemCode')" required-mark>
       <t-input v-model="formData.mitemCode" disabled />
     </t-form-item>
-    <t-form-item label="物料名称" required-mark>
+    <t-form-item :label="t('business.main.mitemName')" required-mark>
       <t-input v-model="formData.mitemName" />
     </t-form-item>
-    <t-form-item label="物料描述">
+    <t-form-item :label="t('business.main.mitemDesc')">
       <t-input v-model="formData.mitemDesc" />
     </t-form-item>
-    <t-form-item label="物料类别">
+    <t-form-item :label="t('business.main.mitemCategoryCode')">
       <div style="width: 156px">
         <tm-select-business
           v-model="formData.mitemCategoryId"
@@ -18,49 +18,39 @@
         ></tm-select-business>
       </div>
     </t-form-item>
-    <t-form-item label="主计量单位">
-      <t-select
-        v-model="formData.uom"
-        disabled
-        style="width: 156px"
-        :options="uomOptions"
-        placeholder="请选择单位"
-        clearable
-      />
+    <t-form-item :label="t('business.main.uom')">
+      <t-select v-model="formData.uom" disabled style="width: 156px" :options="uomOptions" clearable />
     </t-form-item>
-    <t-form-item label="供应方式">
+    <t-form-item :label="t('business.main.supplyCategory')">
       <t-select
         v-model="formData.supplyCategory"
         disabled
         style="width: 156px"
         :options="supplyCategoryOptions"
-        placeholder="请选择供应方式"
         clearable
       />
     </t-form-item>
-    <t-form-item label="启用批次">
-      <t-select
-        v-model="formData.isBatchNo"
-        style="width: 156px"
-        :options="isBatchNoOptions"
-        placeholder="是否启用批次"
-        clearable
-      />
+    <t-form-item :label="t('business.main.isBatchNo')">
+      <t-select v-model="formData.isBatchNo" style="width: 156px" :options="isBatchNoOptions" clearable />
     </t-form-item>
-    <t-form-item label="默认仓库">
+    <t-form-item :label="t('business.main.defaultWarehouse')">
       <t-input v-model="formData.warehouseCode" readonly placeholder="" />
     </t-form-item>
-    <t-form-item label="仓库名称">
+    <t-form-item :label="t('business.main.warehouseName')">
       <t-input v-model="formData.warehouseName" readonly placeholder="" />
     </t-form-item>
-    <t-form-item label="保质期">
+    <t-form-item :label="t('business.main.shelfLifeDays')">
       <t-input-number v-model="formData.shelfLifeDays" />
     </t-form-item>
     <t-form-item>
       <t-row style="width: 200px">
-        <t-col flex="auto"> <t-checkbox v-model="formData.isRawChecked" label="原材料" /> </t-col>
-        <t-col flex="auto"> <t-checkbox v-model="formData.isProductChecked" label="成品" /> </t-col>
-        <t-col flex="auto"> <t-checkbox v-model="formData.isInProcessChecked" label="半成品" /> </t-col>
+        <t-col flex="auto"> <t-checkbox v-model="formData.isRawChecked" :label="t('business.main.raw')" /> </t-col>
+        <t-col flex="auto">
+          <t-checkbox v-model="formData.isProductChecked" :label="t('business.main.product')" />
+        </t-col>
+        <t-col flex="auto">
+          <t-checkbox v-model="formData.isInProcessChecked" :label="t('business.main.inProduct')" />
+        </t-col>
       </t-row>
     </t-form-item>
   </t-form>
@@ -73,26 +63,29 @@ import { onMounted, ref } from 'vue';
 import { api } from '@/api/main';
 import TmSelectBusiness from '@/components/tm-select-business/index.vue';
 
+import { useLang } from './lang';
+
 export default {
   name: 'MitemForm',
   components: { TmSelectBusiness },
   setup() {
+    const { t } = useLang();
     const mitemTypeOptions = ref([
-      { label: '原材料', value: 'isRaw' },
-      { label: '半成品', value: 'isInProcess' },
-      { label: '成品', value: 'isProduct' },
+      { label: t('business.main.raw'), value: 'isRaw' },
+      { label: t('business.main.inProduct'), value: 'isInProcess' },
+      { label: t('business.main.product'), value: 'isProduct' },
     ]);
     const uomOptions = ref([
       { label: 'Pcs', value: 'Pcs' },
       { label: 'Kg', value: 'Kg' },
     ]); // 主单位
     const supplyCategoryOptions = ref([
-      { label: '拉式', value: '拉式' },
-      { label: '推式', value: '推式' },
+      { label: t('business.main.pull'), value: t('business.main.pull') },
+      { label: t('business.main.push'), value: t('business.main.push') },
     ]); // 供应方式
     const isBatchNoOptions = ref([
-      { label: '是', value: 1 },
-      { label: '否', value: 0 },
+      { label: t('business.main.yes'), value: 1 },
+      { label: t('business.main.no'), value: 0 },
     ]); // 是否启用批次
     const formData = ref({
       id: '',
@@ -128,7 +121,7 @@ export default {
         formData.value.isInProcess = formData.value.isInProcessChecked ? 1 : 0;
 
         await api.mitem.edit(formData.value);
-        MessagePlugin.success('编辑成功');
+        MessagePlugin.success(t('common.message.success'));
       } catch (e) {
         console.log(e);
       } finally {
@@ -137,6 +130,7 @@ export default {
     };
 
     return {
+      t,
       submit,
       formData,
       uomOptions,

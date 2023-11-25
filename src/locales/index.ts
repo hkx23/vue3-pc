@@ -4,18 +4,17 @@ import { createI18n } from 'vue-i18n';
 
 // 导入语言文件
 const langPortalPages = import.meta.glob('./lang/*/index.ts', { eager: true });
-const langModulePages = import.meta.glob('../modules/*/lang/*/index.ts', { eager: true });
-
 const langModuleMap = new Map<string, Object>();
 
 export const langCode: Array<string> = [];
 
 // 获取浏览器默认语言环境
 const browserLanguage = navigator.language.replace('-', '_');
+export const defaultLanguage = 'zh_CN';
 
 // 生成语言模块列表
 const generateLangModuleMap = () => {
-  const fullPaths = Object.keys(langPortalPages).concat(Object.keys(langModulePages));
+  const fullPaths = Object.keys(langPortalPages);
 
   fullPaths.forEach((fullPath) => {
     const k = fullPath.replace('./lang', '');
@@ -23,7 +22,7 @@ const generateLangModuleMap = () => {
     const lastIndex = k.lastIndexOf('/');
     const code = k.substring(startIndex, lastIndex);
     langCode.push(code);
-    langModuleMap.set(code, langPortalPages[fullPath] || langModulePages[fullPath]);
+    langModuleMap.set(code, langPortalPages[fullPath]);
   });
   fw.config.languageCodes = langCode;
 };
@@ -41,8 +40,8 @@ const importMessages = computed(() => {
 
 export const i18n = createI18n({
   legacy: false,
-  locale: fw.getLanguage() || browserLanguage || 'zh_CN',
-  fallbackLocale: 'zh_CN',
+  locale: fw.getLanguage() || browserLanguage || defaultLanguage,
+  fallbackLocale: defaultLanguage,
   messages: importMessages.value,
   globalInjection: true,
 });

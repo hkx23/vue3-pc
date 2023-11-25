@@ -148,7 +148,7 @@ const props = defineProps({
   },
 });
 // 抛出事件
-const emits = defineEmits(['SelectionChange', 'update:modelValue']);
+const emits = defineEmits(['SelectionChange', 'Change', 'update:modelValue']);
 // 选择下拉属性集成
 const selectAttr = computed(() => {
   return {
@@ -193,6 +193,8 @@ const onSelectionChange = (val: any, valuKeys: any) => {
   }
   // 选择值
   emits('SelectionChange', val, valuKeys);
+  // 选择值
+  emits('Change', valuKeys);
 };
 
 const loadTypeSetting = () => {
@@ -209,27 +211,40 @@ const loadTypeSetting = () => {
         });
         finalColumns.value = columnsData;
         if (res.rowKey) {
-          finalRowKey.value = res.rowKey;
+          if (!finalRowKey.value) {
+            finalRowKey.value = res.rowKey;
+          }
         }
         if (res.placeholder) {
-          finalPlaceholder.value = res.placeholder;
+          if (!finalPlaceholder.value) {
+            finalPlaceholder.value = res.placeholder;
+          }
         }
 
         if (res.title && props.showTitle) {
-          finalTitle.value = res.title;
+          if (!finalTitle.value) {
+            finalTitle.value = res.title;
+          }
         }
-
         if (res.keywords) {
-          finalKeywords.value = res.keywords;
+          if (!finalKeywords.value) {
+            finalKeywords.value = res.keywords;
+          }
         }
         if (res.parentId) {
-          finalParentId.value = res.parentId;
+          if (!finalParentId.value) {
+            finalParentId.value = res.parentId;
+          }
         }
         if (res.category) {
-          finalCategory.value = res.category;
+          if (!finalCategory.value) {
+            finalCategory.value = res.category;
+          }
         }
         if (res.tableWidth) {
-          finaltableWidth.value = res.tableWidth;
+          if (!finaltableWidth.value) {
+            finaltableWidth.value = res.tableWidth;
+          }
         }
         // 如果值字段不为空
         if (props.valueField) {

@@ -27,29 +27,18 @@ src                                # 页面代码
 │   │   │   ├── modeling           # 页面api领域目录
 │   │   │   │   ├── org.ts         # 页面api Mock
 │   │   │   │   └── ...            # 其他页面api Mock
-│   │   └── index.js               # 页面Mock api汇总
+│   │   └── main.js                # 主数据领域 api汇总
+│   │   └── control.js             # 生产领域 api汇总
+│   │   └── ...                    # 其他领域 api汇总
 ├── modules                        # 领域模块层
 │   ├── demo                       # 示例模块
-│   │   ├── api                    # 领域模块接口
-│   │   │   ├── model              # 领域模块接口模型目录
-│   │   │   │   ├── orgModel.ts    # 功能接口模型
-│   │   │   │   └── ...            # 其他功能接口模型
-│   │   │   ├── org.ts             # 功能接口
-│   │   │   └── ...                # 其他功能接口
 │   │   ├── assets                 # 领域模块静态资源
 │   │   ├── components             # 领域模块组件
-│   │   ├── locales                # 领域模块国际化
-│   │   │   ├── lang               # 领域模块多语言目录
-│   │   │   │   ├── zh-CN          # 中文目录
-│   │   │   │   │   ├── pages      # 所有功能中文目录
-│   │   │   │   │   │   ├── org.ts # 功能中文
-│   │   │   │   │   │   ├── ...    # 其他功能中文
-│   │   │   │   │   ├── index.ts   # 所有功能中文汇总
-│   │   │   │   ├── en-US          # 英文目录
-│   │   │   │   └── ...            # 其他语言目录
 │   │   ├── pages                  # 领域模块页面
 │   │   │   ├── org                # 功能页面目录
-│   │   │   │   ├── index.vue      # 功能页面代码
+│   │   │   │   ├── constants.ts   # 功能页面 常量
+│   │   │   │   ├── lang.ts        # 功能页面 多语言
+│   │   │   │   └── index.vue      # 功能页面代码
 │   │   │   └── ...                # 其他功能页面
 │   │   ├── router                 # 领域模块路由
 │   │   │   ├── pages              # 功能页面路由目录
@@ -64,6 +53,8 @@ src                                # 页面代码
 │   ├── quality                    # 质量
 │   ├── system                     # 系统
 │   └── warehouse                  # 仓库
+├── locales                        # 国际化 多语言
+│   └── common.ts                  # 公共多语言
 ├── components                     # 全局组件
 ├── utils                          # 全局工具
 └── App.vue                        # Portal 入口页面

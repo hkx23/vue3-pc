@@ -1,0 +1,28 @@
+{
+  "title": "设备: ",
+  "placeholder": "请选择设备",
+  "url": "/api/main/equipment/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "设备代码",
+      "key": "equipmentCode",
+      "align": "center"
+    },
+    {
+      "title": "设备名称",
+      "key": "equipmentName",
+      "align": "center"
+    },
+    {
+      "title": "设备描述",
+      "key": "equipmentDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "equipmentName"
+  }
+}
