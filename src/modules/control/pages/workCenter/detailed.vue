@@ -64,14 +64,17 @@
         <tm-table
           ref="tableRef"
           v-model:pagination="pageUI"
+          :show-pagination="props.typeDetailed === 3 ? true : false"
+          :total="total"
+          drag-sort="row"
           row-key="id"
           :table-column="columns"
           :table-data="workData"
-          :total="total"
           :loading="loading"
           :selected-row-keys="selectedRowKeys"
           @select-change="rehandleSelectChange"
           @refresh="fetchData"
+          @drag-sort="onDragSort"
         >
           <template #sequence>
             <div>1</div>
@@ -87,6 +90,13 @@
           <t-button v-show="props.btnShow" @click="onHandleSave">保存</t-button>
           <t-button theme="default" @click="onHandleCancellation">取消</t-button></span
         >
+        <t-dialog
+          v-model:visible="deleteVisible"
+          header="提示"
+          :cancel-btn="null"
+          :confirm-btn="null"
+          width="40%"
+        ></t-dialog>
       </div>
     </footer>
   </div>
@@ -104,10 +114,18 @@ import { usePage } from '@/hooks/modules/page';
 
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 // 子修改传值
+const total = ref(10);
+const onDragSort = (params) => {
+  // console.log('交换行', params);
+  // console.log(params.target.wcSeq);
+  workData.value = params.newData;
+  api.workcenter.modify({ wcSeq: params.target.wcSeq });
+  // fetchData();
+};
+const deleteVisible = ref(false);
 const { pageUI } = usePage(); // 页面数
 const { loading, setLoading } = useLoading();
-const total = ref(10); // 总页数
-const Emit = defineEmits(['addedShow', 'FormClear', 'ChildDefault']); // addedShow窗口
+const Emit = defineEmits(['addedShow', 'FormClear', 'ChildDefault', 'delete']); // addedShow窗口
 const props = defineProps({
   btnShowDisable: {
     type: Object,
@@ -148,15 +166,11 @@ const fetchData = async () => {
     console.log('进入页面请求');
     // 子节点请求
     const res = await api.workcenter.getChildCenter({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
       id: props.wordCenterId.id,
       category: formData.category,
     });
     workData.value = res.list;
-    total.value = res.total;
     if (props.typeDetailed === 3) {
-      console.log('3新增');
       // 点击新增渲染数据
       const list = await api.workcenter.getlist({
         pageNum: pageUI.value.page,
@@ -165,6 +179,11 @@ const fetchData = async () => {
       });
       workData.value = list.list;
       total.value = list.total;
+    }
+    if (workData.value.length) {
+      console.log(1);
+
+      Emit('delete', true);
     }
     // 拿到渲染表单
     console.log('props', props.wordCenterId);
@@ -291,14 +310,12 @@ const onHandelCode = async (row) => {
   try {
     setLoading(true);
     const res = await api.workcenter.getChildCenter({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
       id: row.id,
+      category: formData.category,
     });
-    console.log('2res', res);
+    formData.id = row.id;
     workData.value = res.list;
     Object.assign(formData, row);
-    total.value = res.total;
     onTypeList();
   } catch (e) {
     console.log(e);
@@ -311,6 +328,8 @@ const onHandleCur = (all: any) => {
   typeData.value.forEach((item) => {
     if (item.id === all.id) {
       if (item.name !== '设备') {
+        console.log(1230);
+        formData.wcObjectId = '';
         typeShow.value = true;
       } else {
         typeShow.value = false;
@@ -323,9 +342,8 @@ const onHandleCur = (all: any) => {
   });
 };
 // checked事件
-const rehandleSelectChange = (value: any, ctx: any) => {
+const rehandleSelectChange = (value: any) => {
   selectedRowKeys.value = value;
-  console.log('value:', value, '1', ctx);
 };
 // 新增
 const onWorkCenterAdd = async () => {
@@ -374,24 +392,24 @@ const onHandleSave = async () => {
   }
   MessagePlugin.success('保存成功');
   Emit('addedShow', false);
-  onWorkCenterAdd();
 };
 // 取消
 const onHandleCancellation = () => {
-  clearFrom();
-  MessagePlugin.success('取消成功');
+  deleteVisible.value = false;
+  // clearFrom();
+  // MessagePlugin.success('取消成功');
   Emit('addedShow', false);
 };
 // 添加状态
 const onHandelAdd = async () => {
   if (props.typeDetailed === 2) {
-    parentId.value = props.wordCenterId.id;
+    parentId.value = formData.id;
     clearFrom();
     formData.parentWcId = parentId.value;
     typeData.value.forEach((item) => {
       item.show = false;
     });
-    typeShow.value = false;
+    // typeShow.value = false;
     Emit('FormClear', false);
   }
 };

@@ -14,6 +14,7 @@
       @added-show="onHandleSave"
       @form-clear="onFormClear"
       @child-default="onChildDefault"
+      @delete="onDelete"
     ></detailed>
     <!-- 头部 -->
     <t-card v-if="!detailedShow" class="list-card-container" :bordered="false">
@@ -52,16 +53,18 @@
                   placeholder="工作中心或编号"
                   :default-input-value="selectValue1"
                   @input-change="onInputChange"
+                  @click="onClick"
                   @popup-visible-change="onPopupVisibleChange"
                 >
                   <template #panel>
                     <ul class="tdesign-demo__select-input-ul-auto-width">
-                      <li v-for="item in options1" :key="item" @click="() => onOptionClick(item)">
+                      <li v-for="item in options1" :key="item.id" @click="() => onOptionClick(item)">
                         {{ item }}
                       </li>
                     </ul>
-                  </template></t-select-input
-                >
+                  </template>
+                  <template #suffixIcon><search-icon /></template
+                ></t-select-input>
               </span>
               <tm-select-business
                 v-model="workState.shop"
@@ -107,6 +110,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
+import { SearchIcon } from 'tdesign-icons-vue-next';
 import { Icon } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
@@ -226,7 +230,9 @@ const workData = ref([]); // table数据
 const workState = ref({
   shop: '',
 });
-
+const onClick = () => {
+  console.log(1);
+};
 // input-select事件
 const popupVisible = ref(false);
 const selectValue = ref();
@@ -237,12 +243,15 @@ onMounted(() => {
   onFetchData();
 });
 const onOptionClick = (value) => {
-  console.log(value);
+  console.log('value', value);
 };
 const onInputChange = (keyword) => {
+  console.log(selectValue.value);
   selectValue.value = keyword;
-  console.log('1', keyword);
-  options1.value = new Array(5).fill(null).map((t, index) => `${keyword} Student ${index}`);
+  if (options1.value.length > 10) {
+    options1.value.splice(1, 1);
+  }
+  options1.value.push(keyword);
 };
 const onPopupVisibleChange = (val) => {
   OPTIONS = val;
@@ -275,9 +284,9 @@ const onFetchData = async () => {
     page.value.total = res.total;
     const typeData = await api.workcenter.getTagCount();
     allType.value[1].code = typeData.area;
-    allType.value[2].code = typeData.device;
-    allType.value[3].code = typeData.line;
-    allType.value[4].code = typeData.section;
+    allType.value[2].code = typeData.line;
+    allType.value[3].code = typeData.section;
+    allType.value[4].code = typeData.device;
   } catch (e) {
     console.log(e);
   } finally {
@@ -341,6 +350,10 @@ const onChildDefault = (value) => {
   disabledWord.value = value;
   btnShowDisable.value.add = !value;
   btnShowDisable.value.delete = !value;
+};
+
+const onDelete = (value) => {
+  btnShowDisable.value.delete = value;
 };
 // checked事件
 // const rehandleSelectChange = (value: any, ctx: any) => {
