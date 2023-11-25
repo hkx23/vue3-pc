@@ -200,7 +200,7 @@ const data: {
 // });
 // 列配置相关
 props.tableColumn.forEach((item) => {
-  if (item.colKey !== 'row-select' && item.colKey !== 'op') {
+  if (item.colKey !== 'row-select' && item.colKey !== 'op' && item.colKey !== 'serial-number') {
     if (item.sorter !== false) {
       item.sorter = true;
     }
@@ -228,13 +228,18 @@ props.tableColumn.forEach((item) => {
 // 表格内展示的列
 const columns = computed(() => {
   return props.tableColumn.filter((item) => {
-    return data.colConfigs[item.title] || item.colKey === 'row-select' || item.colKey === 'op';
+    return (
+      data.colConfigs[item.title] ||
+      item.colKey === 'row-select' ||
+      item.colKey === 'op' ||
+      item.colKey === 'serial-number'
+    );
   });
 });
 // 表格要导出的列
 const exportColumns = computed(() => {
   return props.tableColumn.filter((item) => {
-    return item.colKey !== 'row-select' && item.colKey !== 'op';
+    return item.colKey !== 'row-select' && item.colKey !== 'op' && item.colKey !== 'serial-number';
   });
 });
 // 全选切换列展示状态
