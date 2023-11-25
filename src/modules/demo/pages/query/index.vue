@@ -1,5 +1,12 @@
 <template>
-  <tm-query :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" @handle-event="handleEvent" />
+  <tm-query :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" @handle-event="handleEvent">
+    <template #querybar>
+      <t-button theme="default">querybar插槽</t-button>
+    </template>
+    <template #soltDemo="{ param }">
+      <t-tag-input v-model="param.soltDemo" clearable @paste="onPaste" @enter="onTagInputEnter" />
+    </template>
+  </tm-query>
 </template>
 
 <script setup lang="tsx">
@@ -20,6 +27,7 @@ const state = reactive({
     dateRangeValue: null,
     dateTimeRangeValue: null,
     checkedValue: null,
+    soltDemo: [],
   },
   sexList: [
     {
@@ -64,7 +72,11 @@ const opts = computed(() => {
       label: '1.普通Input',
       comp: 't-input',
       event: 'input',
-      defaultVal: '单选测试',
+      defaultVal: '单选测试(包含事件)',
+      eventHandle: {
+        focus: ($event, row) => focus($event, row),
+        blur: ($event, row) => blur($event, row),
+      },
     },
     selectValue: {
       label: '2.单选使用',
@@ -95,7 +107,9 @@ const opts = computed(() => {
       },
     },
     dateValue: {
-      label: '5.单选日期',
+      labelRender: () => {
+        return <label style="color:red">5.单选日期(label插槽)</label>;
+      },
       comp: 't-date-picker',
       event: 'date',
       defaultVal: dayjs(),
@@ -142,6 +156,11 @@ const opts = computed(() => {
         lazyLoad: true,
       },
     },
+    soltDemo: {
+      label: '10.插槽测试',
+      slotName: 'soltDemo',
+      defaultVal: [],
+    },
     // userName: {
     //   label: '业务组件',
     //   comp: 'tm-select-business',
@@ -174,6 +193,7 @@ const getQueryData = computed(() => {
     dateTimeRangeValue,
     selectMulValue,
     checkedValue,
+    soltDemo,
   } = state.queryData;
   return {
     inputValue,
@@ -185,6 +205,7 @@ const getQueryData = computed(() => {
     dateTimeRangeValue,
     selectMulValue,
     checkedValue,
+    soltDemo,
   };
 });
 // 查询条件change事件
@@ -223,6 +244,22 @@ const handleEvent = (type, val) => {
   }
   MessagePlugin.info(`值变化:type:${type},val:${val}`);
 };
+
+// 失去焦点
+const blur = (event, row) => {
+  MessagePlugin.info(`普通Input-失去焦点:${JSON.stringify(row)}`);
+};
+// 获得焦点
+const focus = (event, row) => {
+  MessagePlugin.info(`普通Input-获得焦点:${JSON.stringify(row)}`);
+};
+const onTagInputEnter = (val, context) => {
+  console.log(val, context);
+};
+const onPaste = (context) => {
+  console.log(context);
+};
+
 // 点击查询按钮
 const conditionEnter = (data: any) => {
   console.log(1122, data);
