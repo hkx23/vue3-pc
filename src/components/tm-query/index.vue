@@ -1,8 +1,7 @@
 <template>
   <t-row>
-    <t-col flex="1 1">
+    <t-col ref="formContentRef" flex="1 1">
       <t-form
-        ref="formContentRef"
         colon
         class="search-form"
         :style="{ height: openSearchForm ? '' : '50px', padding: '10px' }"
@@ -109,7 +108,7 @@
 
 <script setup lang="tsx" name="TmQuery">
 import _ from 'lodash';
-import { computed, getCurrentInstance, onMounted, reactive, ref, watch } from 'vue';
+import { computed, getCurrentInstance, nextTick, onMounted, reactive, ref, watch } from 'vue';
 
 import RenderComp from './renderComp.vue';
 
@@ -359,7 +358,7 @@ watch(
 );
 const openSearchForm = ref(false);
 const showExpand = ref(true); // 是否展示展开按钮
-const formContentRef = ref<HTMLDivElement>();
+const formContentRef = ref<any>(null);
 const slots = ref({});
 // 展开按钮点击事件
 const onExpandSwitch = () => {
@@ -375,10 +374,12 @@ const debounceFunction = _.debounce(() => {
 }, 100);
 
 const computedExpandBtnVisible = () => {
-  if (formContentRef.value) {
-    const contentWidth = formContentRef.value.clientWidth / 360;
-    showExpand.value = contentWidth <= Object.keys(props.opts).length;
-  }
+  nextTick(() => {
+    if (formContentRef.value) {
+      const contentWidth = formContentRef.value.$el.clientWidth / 360;
+      showExpand.value = contentWidth <= Object.keys(props.opts).length;
+    }
+  });
 };
 onMounted(() => {
   debounceFunction();
