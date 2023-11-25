@@ -383,6 +383,9 @@ const onSecondary = async () => {
     return;
   }
   if (controlShow.value) {
+    console.log('forme', formData.value.PProcessId);
+    console.log(formData.value.PWorkcenterId);
+
     try {
       api.workstation.edit({
         id: formData.value.id,

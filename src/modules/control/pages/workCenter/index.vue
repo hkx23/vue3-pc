@@ -3,12 +3,17 @@
     <!-- 子from -->
     <detailed
       v-if="detailedShow"
-      :btn-show="btnShow"
+      :btn-show-disable="{ add: btnShowDisable.add, delete: btnShowDisable.delete }"
       :word-center-id="workCenterId"
-      :next-add="nextAdd"
       :data="data"
       :next-arr="arr"
+      :btn-show="btnShow"
+      :type-detailed="typeDetailed"
+      :disabled-word="disabledWord"
+      :disabled-parent="disabledParent"
       @added-show="onHandleSave"
+      @form-clear="onFormClear"
+      @child-default="onChildDefault"
     ></detailed>
     <!-- 头部 -->
     <t-card v-if="!detailedShow" class="list-card-container" :bordered="false">
@@ -39,7 +44,7 @@
               <span style="margin: 0 20px">
                 <!-- <tm-select-business v-model="workState.workcenter" type="workcenter"></tm-select-business
               > -->
-                <!-- <t-select-input
+                <t-select-input
                   v-model="selectValue"
                   :options="selectValue"
                   :popup-visible="popupVisible"
@@ -56,7 +61,7 @@
                       </li>
                     </ul>
                   </template></t-select-input
-                > -->
+                >
               </span>
               <tm-select-business
                 v-model="workState.shop"
@@ -71,13 +76,11 @@
       <tm-table
         ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="wcCode"
+        row-key="id"
         :table-column="columns"
         :table-data="workData"
         :total="page.total"
         :loading="loading"
-        :selected-row-keys="selectedRowKeys"
-        @select-change="rehandleSelectChange"
         @refresh="onFetchData"
       >
         <template #wcCode="{ row }">
@@ -92,9 +95,9 @@
         <template #parentWcCode="{ row }">
           <div>{{ row.parentWcCode ? row.parentWcCode : '-' }}</div>
         </template>
-        <template #edit>
+        <template #edit="{ row }">
           <!-- 编辑 -->
-          <icon name="edit-1" style="cursor: pointer" @click="onClickEdit"></icon>
+          <icon name="edit-1" style="cursor: pointer" @click="onClickEdit(row)"></icon>
         </template>
       </tm-table>
       <!-- </t-table> -->
@@ -115,8 +118,15 @@ import { usePage } from '@/hooks/modules/page';
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 import detailed from './detailed.vue';
 
-const btnShow = ref(false); // 控制子按钮禁用
-const valueItem = ref(0); // 类型
+const btnShow = ref(false); // 默认为禁用 隐藏按钮默认为不隐藏
+const btnShowDisable = ref({
+  add: false,
+  delete: false,
+}); // 控制子按钮禁用默认不禁用  添加和删除
+const typeDetailed = ref(0); // 默认为0  1代表编辑 2代表父进子 3代表新增
+const disabledWord = ref(false); // 工作中心编号控制禁用默认为不禁用
+const disabledParent = ref(false); // 父
+const valueItem = ref(0); // space类型
 const tableRef = ref(); // 实例table
 const allType = ref([
   {
@@ -154,7 +164,6 @@ const allType = ref([
     code: '',
   },
 ]); // 所有类型
-const nextAdd = ref(false);
 const workCenterId = ref(); // 工作中心的obj
 const arr = ref([]); // 类型存储数组
 const detailedShow = ref(false); // 控制子工作中心显示隐藏
@@ -211,32 +220,34 @@ const { loading, setLoading } = useLoading();
 const page = ref({
   total: 10,
 });
-const selectedRowKeys = ref([]); // 用于存储选中行的数组
+// const selectedRowKeys = ref([]); // 用于存储选中行的数组
 const workData = ref([]); // table数据
 // 通用下拉初始数据
 const workState = ref({
   shop: '',
 });
-// const popupVisible = ref(false);
-// const selectValue = ref();
-// let OPTIONS = [];
-// const options1 = ref(OPTIONS);
-// const selectValue1 = ref('');
+
+// input-select事件
+const popupVisible = ref(false);
+const selectValue = ref();
+let OPTIONS = [];
+const options1 = ref(OPTIONS);
+const selectValue1 = ref('');
 onMounted(() => {
   onFetchData();
 });
-// const onOptionClick = (value) => {
-//   console.log(value);
-// };
-// const onInputChange = (keyword) => {
-//   selectValue.value = keyword;
-//   console.log('1', keyword);
-//   options1.value = new Array(5).fill(null).map((t, index) => `${keyword} Student ${index}`);
-// };
-// const onPopupVisibleChange = (val) => {
-//   OPTIONS = val;
-//   popupVisible.value = val;
-// };
+const onOptionClick = (value) => {
+  console.log(value);
+};
+const onInputChange = (keyword) => {
+  selectValue.value = keyword;
+  console.log('1', keyword);
+  options1.value = new Array(5).fill(null).map((t, index) => `${keyword} Student ${index}`);
+};
+const onPopupVisibleChange = (val) => {
+  OPTIONS = val;
+  popupVisible.value = val;
+};
 // 点击的类型
 const onHandelArr = (value) => {
   arr.value = value;
@@ -276,35 +287,66 @@ const onFetchData = async () => {
 // 工作中心center跳转到form
 const onHandelCenter = (row) => {
   detailedShow.value = true; // 控制窗口
-  btnShow.value = true; // 控制按钮禁用
+  // btnShow.value = true; // 控制按钮禁用
   workCenterId.value = row; // 获取到工作中心id
+  typeDetailed.value = 2; // 代表编辑
+  btnShowDisable.value.add = false;
+  btnShowDisable.value.delete = false;
+  disabledWord.value = true;
+  disabledParent.value = true;
 };
 
 // 新增按钮
 const onHandelAdded = () => {
-  detailedShow.value = true;
-  nextAdd.value = true; // 判断是否为新增
+  detailedShow.value = true; // 控制窗口
   btnShow.value = true; // 控制按钮禁用
-  workCenterId.value = {};
+  workCenterId.value = {}; // 清空对象
+  typeDetailed.value = 3; // 代表编辑
+  btnShowDisable.value.add = true;
+  btnShowDisable.value.delete = true;
+
+  disabledWord.value = false;
+  disabledParent.value = false;
 };
 
-// 子组件控制
-const onHandleSave = (value: any) => {
-  detailedShow.value = value; // 子窗口
+// 保存时子组件控制
+const onHandleSave = (i) => {
+  detailedShow.value = i; // 子窗口
   btnShow.value = false; // 按钮禁用
   pageUI.value.page = 1;
   workState.value.shop = '';
   onFetchData();
 };
 // 编辑
-const onClickEdit = () => {
+const onClickEdit = (row) => {
+  btnShow.value = true;
   detailedShow.value = true;
+  workCenterId.value = row; // 渲染子
+  typeDetailed.value = 1; // 代表编辑
+  btnShowDisable.value.add = true;
+  btnShowDisable.value.delete = true;
+  disabledWord.value = true;
+  disabledParent.value = true;
+};
+
+// 添加修改转态
+const onFormClear = (value) => {
+  disabledWord.value = value;
+  btnShow.value = !value;
+  btnShowDisable.value.add = !value;
+  btnShowDisable.value.delete = !value;
+};
+
+const onChildDefault = (value) => {
+  disabledWord.value = value;
+  btnShowDisable.value.add = !value;
+  btnShowDisable.value.delete = !value;
 };
 // checked事件
-const rehandleSelectChange = (value: any, ctx: any) => {
-  selectedRowKeys.value = value;
-  console.log('value:', value, '1', ctx);
-};
+// const rehandleSelectChange = (value: any, ctx: any) => {
+//   selectedRowKeys.value = value;
+//   console.log('value:', value, '1', ctx);
+// };
 </script>
 
 <style lang="less" scoped>

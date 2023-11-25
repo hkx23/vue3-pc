@@ -1,11 +1,11 @@
 <template>
   <div class="detailed-box">
     <!-- from -->
-    <t-form layout="inline" :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
+    <t-form layout="inline" :data="formData" :show-cancel="true" :show-error-message="false">
       <t-card :bordered="false">
         <header class="form-item-box">
           <t-form-item label="工作中心编号">
-            <t-input v-model="formData.wcCode" />
+            <t-input v-model="formData.wcCode" :disabled="props.disabledWord" />
           </t-form-item>
           <t-form-item label="所属车间">
             <tm-select-business v-model="formData.workshopID" type="workshop" :show-title="false"></tm-select-business
@@ -19,11 +19,17 @@
             <t-input v-model="formData.wcName" />
           </t-form-item>
           <t-form-item label="负责人">
-            <t-input v-model="formData.ownerName" style="width: 180px" />
+            <t-input v-model="formData.wcOwner" style="width: 180px" />
           </t-form-item>
         </div>
         <t-form-item label="父级">
-          <tm-select-business v-model="formData.parentWcId" type="workcenter" :show-title="false"> </tm-select-business>
+          <tm-select-business
+            v-model="formData.parentWcId"
+            type="workcenter"
+            :disabled="props.disabledParent"
+            :show-title="false"
+          >
+          </tm-select-business>
           <!-- <t-select v-model="formData.parentWcCode" /> -->
         </t-form-item>
         <footer class="form-item-box">
@@ -35,7 +41,7 @@
             </ul>
           </t-form-item>
           <t-form-item label="关联设备">
-            <tm-select-business v-model="formData.wcObjectId" type="equipment" :show-title="false">
+            <tm-select-business v-model="formData.wcObjectId" type="equipment" :disabled="typeShow" :show-title="false">
             </tm-select-business>
           </t-form-item>
         </footer>
@@ -43,8 +49,10 @@
           <t-checkbox v-model="formData.checked">启用</t-checkbox>
         </span>
         <div style="margin: 10px 100px">
-          <t-button theme="default" type="submit" :disabled="props.btnShow">添加</t-button>
-          <t-button theme="default" :disabled="props.btnShow">删除</t-button>
+          <t-button theme="default" type="submit" :disabled="props.btnShowDisable.add" @click="onHandelAdd"
+            >添加</t-button
+          >
+          <t-button theme="default" :disabled="props.btnShowDisable.delete" @click="onHandelRemove">删除</t-button>
         </div>
       </t-card>
     </t-form>
@@ -71,12 +79,12 @@
           <template #wcCode="{ row }">
             <div>
               <t-icon name="chevron-right"></t-icon>
-              <t-link theme="primary" underline @click="onHandelCode(row.id)">{{ row.wcCode }}</t-link>
+              <t-link theme="primary" underline @click="onHandelCode(row)">{{ row.wcCode }}</t-link>
             </div>
           </template>
         </tm-table>
         <span class="table-btn">
-          <t-button @click="onHandleSave">保存</t-button>
+          <t-button v-show="props.btnShow" @click="onHandleSave">保存</t-button>
           <t-button theme="default" @click="onHandleCancellation">取消</t-button></span
         >
       </div>
@@ -96,45 +104,60 @@ import { usePage } from '@/hooks/modules/page';
 
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 // 子修改传值
-const { pageUI } = usePage();
+const { pageUI } = usePage(); // 页面数
 const { loading, setLoading } = useLoading();
 const total = ref(10); // 总页数
-const Emit = defineEmits(['addedShow']); // addedShow窗口
+const Emit = defineEmits(['addedShow', 'FormClear', 'ChildDefault']); // addedShow窗口
 const props = defineProps({
-  btnShow: {
-    type: Boolean,
-    default: false,
+  btnShowDisable: {
+    type: Object,
   },
   wordCenterId: {
     type: Object,
   },
-  nextAdd: {
-    type: Boolean,
-  },
   nextArr: {
     type: Array<number>,
   },
+  btnShow: {
+    type: Boolean,
+  },
+  typeDetailed: {
+    type: Number,
+  },
+  disabledWord: {
+    type: Boolean,
+    default: false,
+  },
+  disabledParent: {
+    type: Boolean,
+    default: false,
+  },
 });
+const parentId = ref(); // 点击添加的时候存储父id
+const typeShow = ref(false);
 onMounted(() => {
   fetchData();
 });
 const selectedRowKeys = ref([]); // 用于存储选中行的数组
 // 首次请求
 const fetchData = async () => {
+  // 渲染表单页面
   Object.assign(formData, props.wordCenterId);
-  console.log('for', formData);
-
   try {
     setLoading(true);
+    console.log('进入页面请求');
+    // 子节点请求
     const res = await api.workcenter.getChildCenter({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      id: +props.wordCenterId.id,
+      id: props.wordCenterId.id,
       category: formData.category,
     });
     workData.value = res.list;
     total.value = res.total;
-    if (props.nextAdd) {
+    if (props.typeDetailed === 3) {
+      console.log('3新增');
+      // 点击新增渲染数据
       const list = await api.workcenter.getlist({
         pageNum: pageUI.value.page,
         pageSize: pageUI.value.rows,
@@ -145,28 +168,16 @@ const fetchData = async () => {
     }
     // 拿到渲染表单
     console.log('props', props.wordCenterId);
-
-    // 显示
-    typeData.value.forEach((item) => {
-      if (formData.wcType === item.name) {
-        item.show = true;
-        formData.category = item.opId;
-      } else {
-        item.show = false;
-      }
-    });
+    // 显示类型
+    onTypeList();
     // 控制多选
-    if (formData.state === 1) {
-      formData.checked = true;
-    } else {
-      formData.checked = false;
-    }
   } catch (e) {
     console.log(e);
   } finally {
     setLoading(false);
   }
 };
+// table类型数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'select',
@@ -198,30 +209,34 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    colKey: 'wcObjectCode',
+    colKey: 'wcType',
     title: '关联设备',
     align: 'center',
   },
   {
-    colKey: 'ownerName',
+    colKey: 'wcOwner',
     title: '负责人',
     align: 'center',
   },
 ];
+// 存在渲染数据数组
 const workData = ref([]);
+// 绑定form
 const formData = reactive({
   wcCode: '', // 工作中心编号
   wcName: '', // 工作中心名称
   wcLocation: '', // 地点
   workshopID: '', // 所属车间
-  ownerName: '', // 负责人
+  wcOwner: '', // 负责人
   parentWcId: '', // 父级
-  checked: true,
+  checked: true, // 多选控制 默认为选中
   wcType: '', // 设备类型
   state: 1, // 启用还是禁用
-  category: [],
+  category: [], // 获取设备关联
   wcObjectId: '', // 关联设备
+  id: props.wordCenterId.id, // 父节点的id
 });
+// 类型数据数组
 const typeData = ref([
   {
     id: 1,
@@ -248,29 +263,58 @@ const typeData = ref([
     opId: [4],
   },
 ]);
-
+// 判断数组里面的设备
+const onTypeList = () => {
+  typeData.value.forEach((item) => {
+    // 判断名称是否相同
+    if (formData.wcType === item.name) {
+      // 判断是否为设备
+      if (formData.wcType !== '设备') {
+        typeShow.value = true;
+      }
+      item.show = true;
+      formData.category = item.opId;
+    } else {
+      item.show = false;
+    }
+  });
+  if (formData.state === 1) {
+    formData.checked = true;
+  } else {
+    formData.checked = false;
+  }
+};
 // 点击进入发请求进子集
-const onHandelCode = async (id) => {
+const onHandelCode = async (row) => {
+  // typeShow.value = true;
+  Emit('ChildDefault', true);
   try {
     setLoading(true);
     const res = await api.workcenter.getChildCenter({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      id,
+      id: row.id,
     });
     console.log('2res', res);
     workData.value = res.list;
+    Object.assign(formData, row);
     total.value = res.total;
+    onTypeList();
   } catch (e) {
     console.log(e);
   } finally {
     setLoading(false);
   }
 };
-// 高亮事件
+// 类型高亮事件
 const onHandleCur = (all: any) => {
   typeData.value.forEach((item) => {
     if (item.id === all.id) {
+      if (item.name !== '设备') {
+        typeShow.value = true;
+      } else {
+        typeShow.value = false;
+      }
       item.show = true;
       formData.category = item.opId;
     } else {
@@ -283,10 +327,10 @@ const rehandleSelectChange = (value: any, ctx: any) => {
   selectedRowKeys.value = value;
   console.log('value:', value, '1', ctx);
 };
-// 保存
-const onHandleSave = () => {
-  if (props.nextAdd) {
-    const list = api.workcenter.add({
+// 新增
+const onWorkCenterAdd = async () => {
+  try {
+    await api.workcenter.add({
       wcCode: formData.wcCode,
       wcName: formData.wcName,
       workshopId: formData.workshopID,
@@ -294,15 +338,43 @@ const onHandleSave = () => {
       wcLocation: formData.wcLocation,
       wcObjectId: formData.wcObjectId,
       state: formData.state,
-      wcOwner: formData.ownerName,
-      // wcObjectType: formData.category,
+      wcOwner: formData.wcOwner,
+      // @ts-ignore
+      wcObjectType: formData.category,
       wcSeq: 0,
-      // ownerId: ,
     });
-    console.log(list);
+  } catch (e) {
+    console.log(e);
+  }
+};
+// 删除
+const onHandelRemove = async () => {
+  await api.workcenter.remove({ ids: selectedRowKeys.value });
+  fetchData();
+};
+// 保存
+const onHandleSave = async () => {
+  console.log('1');
+  if (props.typeDetailed === 2) {
+    onWorkCenterAdd();
+  }
+  if (props.typeDetailed === 3) {
+    console.log('新增');
+    onWorkCenterAdd();
+    console.log('2');
+  }
+  if (props.typeDetailed === 1) {
+    console.log('3');
+    console.log('编辑');
+    try {
+      api.workcenter.modify(formData);
+    } catch (e) {
+      console.log(e);
+    }
   }
   MessagePlugin.success('保存成功');
   Emit('addedShow', false);
+  onWorkCenterAdd();
 };
 // 取消
 const onHandleCancellation = () => {
@@ -310,22 +382,33 @@ const onHandleCancellation = () => {
   MessagePlugin.success('取消成功');
   Emit('addedShow', false);
 };
-// 清空表单
-
-const submit = () => {
-  console.log(1);
+// 添加状态
+const onHandelAdd = async () => {
+  if (props.typeDetailed === 2) {
+    parentId.value = props.wordCenterId.id;
+    clearFrom();
+    formData.parentWcId = parentId.value;
+    typeData.value.forEach((item) => {
+      item.show = false;
+    });
+    typeShow.value = false;
+    Emit('FormClear', false);
+  }
 };
+// 清空表单
 const clearFrom = () => {
   formData.wcCode = ''; // 工作中心编号
   formData.wcName = ''; // 工作中心名称
   formData.wcLocation = ''; // 地点
   formData.workshopID = ''; // 所属车间
-  formData.ownerName = ''; // 负责人
+  formData.wcOwner = ''; // 负责人
   formData.parentWcId = ''; // 父级
-  formData.checked = true;
+  formData.checked = true; // 多选
   formData.wcType = ''; // 设备类型
-  formData.category = [];
-  formData.state = 1;
+  formData.category = []; // 设备类型
+  formData.state = 1; // 控制多选是选择状态
+  formData.id = ''; // 父亲id
+  formData.wcObjectId = '';
 };
 </script>
 
