@@ -297,8 +297,8 @@ const onHandelE = (id) => {
     workData.value.forEach((item) => {
       if (item.id === id) {
         formData.value.id = id;
-        formData.value.PWorkcenterId = item.pWorkcenterId;
-        formData.value.PProcessId = item.pProcessId;
+        formData.value.PWorkcenterId = item.workcenterId;
+        formData.value.PProcessId = item.processId;
         formData.value.workstationCode = item.workstationCode;
         formData.value.workstationName = item.workstationName;
         formData.value.workstationDesc = item.workstationDesc;
@@ -383,6 +383,9 @@ const onSecondary = async () => {
     return;
   }
   if (controlShow.value) {
+    console.log('forme', formData.value.PProcessId);
+    console.log(formData.value.PWorkcenterId);
+
     try {
       api.workstation.edit({
         id: formData.value.id,
