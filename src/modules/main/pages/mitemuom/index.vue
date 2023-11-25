@@ -25,7 +25,7 @@
         </t-col>
       </t-row>
       <t-row>
-        <t-table
+        <!-- <t-table
           :data="tableData"
           :columns="columns"
           row-key="id"
@@ -44,7 +44,28 @@
               </t-button>
             </t-popconfirm>
           </template>
-        </t-table>
+        </t-table> -->
+        <tm-table
+          ref="tableRef"
+          v-model:pagination="pageUI"
+          :table-data="tableData"
+          :table-column="columns"
+          row-key="id"
+          :total="total"
+          @refresh="fetchData"
+          @select-change="rehandleSelectChange"
+        >
+          <template #actionSlot="{ row }">
+            <t-button size="small" variant="text" @click="onEditRow(row)">
+              <icon name="edit-1" class="black-icon" />
+            </t-button>
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm">
+              <t-button size="small" variant="text" @click="onDeleteRow(row)">
+                <icon name="delete" class="black-icon" />
+              </t-button>
+            </t-popconfirm>
+          </template>
+        </tm-table>
       </t-row>
     </t-card>
     <!-- 模态框/对话框 -->
@@ -94,9 +115,13 @@
 
 <script setup lang="ts">
 import { FormInstanceFunctions, FormRules, Icon, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, Ref, ref } from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 
+import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
+
+const { pageUI } = usePage();
 
 const { loading } = useLoading();
 
@@ -104,12 +129,13 @@ import { api } from '@/api/main';
 
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const showDialog = ref(false); // 控制新增模态框开关
-const tableMitemPagination = ref({ defaultPageSize: 5, total: 0, defaultCurrent: 1, showJumper: true }); // 分页参数
+const total = ref(null); // 总页数
 const tableData = ref([]); // 表格渲染数据
 const selectedRowKeys = ref([]); // 删除计量单位 id
 const formData = ref({ uom: '', uomSymbol: '', id: null }); // 新增表单数据绑定
 const queryData = ref(''); // 精确查询数据
 const diaTitle = ref(''); // 模态框文字
+const isPage = ref({ pageNum: null, pageSize: null });
 // 渲染函数
 onMounted(() => {
   onGetMiteMuom();
@@ -118,7 +144,7 @@ onMounted(() => {
 // 查询按钮
 const onRefresh = () => {
   if (queryData.value) {
-    tableMitemPagination.value.defaultCurrent = 1;
+    isPage.value.pageNum = 1;
     onGetMiteMuom();
   }
 };
@@ -126,6 +152,11 @@ const onRefresh = () => {
 // 重置按钮
 const onReset = () => {
   queryData.value = '';
+  onGetMiteMuom();
+};
+
+// 表单刷新按钮
+const fetchData = () => {
   onGetMiteMuom();
 };
 
@@ -147,7 +178,6 @@ const onSubmit = async ({ validateResult, firstError }) => {
     formRef.value.reset({ type: 'empty' });
     MessagePlugin.success('提交成功');
   } else {
-    console.log('Validate Errors: ', firstError, validateResult);
     MessagePlugin.warning(firstError);
   }
 };
@@ -163,23 +193,17 @@ const onSecondaryReset = () => {
  * 获取计量单位数据
  */
 const onGetMiteMuom = async () => {
+  isPage.value.pageNum = pageUI.value.page;
+  isPage.value.pageSize = pageUI.value.rows;
   tableData.value = [];
   try {
-    const res = await api.mitemUom.getlist({ ...onMitemUomPage.value, uom: queryData.value });
+    const res = await api.mitemUom.getlist({ ...isPage.value, uom: queryData.value });
     tableData.value = res.list; // 表格数据赋值
-    tableMitemPagination.value.total = +res.total; // 总页数赋值
+    total.value = res.total; // 总页数赋值
   } catch (e) {
     MessagePlugin.success(e);
   }
 };
-
-// 分页数据，使用计算属性来保持响应性
-const onMitemUomPage = computed(() => {
-  return {
-    pageNum: tableMitemPagination.value.defaultCurrent,
-    pageSize: tableMitemPagination.value.defaultPageSize,
-  };
-});
 
 // 表格数据类型
 interface TableRow {
@@ -187,13 +211,6 @@ interface TableRow {
   uom: string;
   uomSymbol: string;
 }
-
-// 分页换页效果
-const onPageChange = (curr: any) => {
-  tableMitemPagination.value.defaultCurrent = curr.current;
-  tableMitemPagination.value.defaultPageSize = curr.pageSize;
-  onGetMiteMuom();
-};
 
 // 列定义
 const columns: PrimaryTableCol<TableRowData>[] = [
@@ -276,13 +293,9 @@ const onDeleteRow = async (row: TableRow) => {
 const onDelConfirm = async () => {
   await onDeleteMiteMuom();
   // 检查当前页是否还有数据，如果没有且不在第一页，页码减一
-  if (tableData.value.length === 1 && tableMitemPagination.value.defaultCurrent > 1) {
-    tableMitemPagination.value.defaultCurrent--;
+  if (tableData.value.length <= 1 && isPage.value.pageNum > 1) {
+    pageUI.value.page--;
   }
-  console.log(
-    '🚀 ~ file: index.vue:277 ~ onDelConfirm ~ tableMitemPagination.value.defaultCurrent:',
-    tableMitemPagination.value.defaultCurrent,
-  );
   await onGetMiteMuom(); // 重新渲染
   selectedRowKeys.value = [];
 };
@@ -296,8 +309,11 @@ const rehandleSelectChange = async (value: any[]) => {
 const onDelConfirms = async () => {
   if (selectedRowKeys.value.length >= 1) {
     await onDeleteMiteMuom();
-    selectedRowKeys.value = [];
+    if (tableData.value.length <= 1 && isPage.value.pageNum > 1) {
+      pageUI.value.page--;
+    }
     onGetMiteMuom();
+    selectedRowKeys.value = [];
   }
 };
 </script>

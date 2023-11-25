@@ -439,14 +439,14 @@ const rules: FormRules<Data> = {
     {
       required: true,
       type: 'error',
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   PProcessId: [
     {
       required: true,
       type: 'error',
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   workstationCode: [
