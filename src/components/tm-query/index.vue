@@ -2,7 +2,7 @@
   <t-row>
     <t-col flex="1 1">
       <t-form
-        ref="formRef"
+        ref="formContentRef"
         colon
         class="search-form"
         :style="{ height: openSearchForm ? '' : '50px', padding: '10px' }"
@@ -377,7 +377,7 @@ const debounceFunction = _.debounce(() => {
 const computedExpandBtnVisible = () => {
   if (formContentRef.value) {
     const contentWidth = formContentRef.value.clientWidth / 360;
-    showExpand.value = contentWidth < Object.keys(props.opts).length;
+    showExpand.value = contentWidth <= Object.keys(props.opts).length;
   }
 };
 onMounted(() => {

@@ -2,7 +2,7 @@
   <div class="table-tree-container">
     <div class="list-tree-content">
       <div class="list-common-table">
-        <t-row justify="space-between">
+        <!-- <t-row justify="space-between">
           <t-col>
             <div>
               <t-input
@@ -24,7 +24,10 @@
         </t-row>
         <t-row style="margin-top: 10px">
           <t-checkbox-group v-model="mitemTypeSelect" :options="mitemTypeOptions" />
-        </t-row>
+        </t-row> -->
+
+        <tm-query :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" />
+
         <t-row justify="space-between">
           <tm-table
             v-model:pagination="pageUI"
@@ -63,7 +66,7 @@
 
 <script setup lang="ts">
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import TmTable from '@/components/tm-table/index.vue';
@@ -99,14 +102,39 @@ const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('isRawName'), width: 160, colKey: 'isRawName' },
   { title: t('common.button.operation'), align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  keyword.value = data.keyword;
+  mitemTypeSelect.value = data.mitemType;
+  onRefresh();
+};
 // 查询按钮
 const onRefresh = () => {
   fetchTable();
 };
 // 重置按钮
-const onReset = () => {
-  keyword.value = '';
-};
+// const onReset = () => {
+//   keyword.value = '';
+// };
+const opts = computed(() => {
+  return {
+    keyword: {
+      label: t('business.main.mitemCode'),
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: t('common.placeholder.input', [`${t('business.main.mitemCode')}/${t('business.main.mitemName')}`]),
+    },
+    mitemType: {
+      label: '',
+      comp: 't-checkbox-group',
+      defaultVal: [],
+      bind: {
+        options: mitemTypeOptions.value,
+        lazyLoad: true,
+      },
+    },
+  };
+});
 const dataTotal = ref(0);
 
 const fetchTable = async () => {
