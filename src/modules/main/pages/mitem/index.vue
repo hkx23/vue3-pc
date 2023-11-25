@@ -26,7 +26,7 @@
           <t-checkbox-group v-model="mitemTypeSelect" :options="mitemTypeOptions" />
         </t-row> -->
 
-        <tm-query :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" />
+        <tm-query :opts="opts" is-expansion @submit="conditionEnter" />
 
         <t-row justify="space-between">
           <tm-table
@@ -125,7 +125,7 @@ const opts = computed(() => {
       placeholder: t('common.placeholder.input', [`${t('business.main.mitemCode')}/${t('business.main.mitemName')}`]),
     },
     mitemType: {
-      label: '',
+      label: t('business.main.mitemCategoryCode'),
       comp: 't-checkbox-group',
       defaultVal: [],
       bind: {
