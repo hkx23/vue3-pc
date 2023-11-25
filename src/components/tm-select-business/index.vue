@@ -47,7 +47,7 @@ const props = defineProps({
   // 业务类型
   type: {
     type: String,
-    default: 'mitem',
+    default: '',
   },
   // 占位字符
   placeholder: {
@@ -141,8 +141,8 @@ const props = defineProps({
     type: Object,
     default: () => {
       return {
-        label: 'mitemName',
-        value: 'mitemCode',
+        label: '',
+        value: '',
       };
     },
   },
@@ -227,9 +227,7 @@ const loadTypeSetting = () => {
           }
         }
         if (res.keywords) {
-          if (!finalKeywords.value) {
-            finalKeywords.value = res.keywords;
-          }
+          finalKeywords.value = res.keywords;
         }
         if (res.parentId) {
           if (!finalParentId.value) {

@@ -297,8 +297,8 @@ const onHandelE = (id) => {
     workData.value.forEach((item) => {
       if (item.id === id) {
         formData.value.id = id;
-        formData.value.PWorkcenterId = item.pWorkcenterId;
-        formData.value.PProcessId = item.pProcessId;
+        formData.value.PWorkcenterId = item.workcenterId;
+        formData.value.PProcessId = item.processId;
         formData.value.workstationCode = item.workstationCode;
         formData.value.workstationName = item.workstationName;
         formData.value.workstationDesc = item.workstationDesc;
@@ -436,14 +436,14 @@ const rules: FormRules<Data> = {
     {
       required: true,
       type: 'error',
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   PProcessId: [
     {
       required: true,
       type: 'error',
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   workstationCode: [
