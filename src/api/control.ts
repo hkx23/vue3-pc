@@ -1346,13 +1346,13 @@ export const api = {
      * No description
      *
      * @tags 工序
-     * @name EditById
+     * @name Edit
      * @summary 工序编辑
-     * @request POST:/process/editById
+     * @request POST:/process/edit
      * @secure
      */
-    editById: (data: ProcessVO) =>
-      http.request<ResultObject['data']>(`/api/control/process/editById`, {
+    edit: (data: ProcessVO) =>
+      http.request<ResultObject['data']>(`/api/control/process/edit`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1361,13 +1361,13 @@ export const api = {
      * No description
      *
      * @tags 工序
-     * @name AddById
+     * @name Add
      * @summary 工序新增
-     * @request POST:/process/addById
+     * @request POST:/process/add
      * @secure
      */
-    addById: (data: ProcessVO) =>
-      http.request<ResultObject['data']>(`/api/control/process/addById`, {
+    add: (data: ProcessVO) =>
+      http.request<ResultObject['data']>(`/api/control/process/add`, {
         method: 'POST',
         body: data as any,
       }),
