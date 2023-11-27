@@ -51,6 +51,9 @@
                 <div class="table-container">
                   <t-row justify="space-between">
                     <t-col :span="2">
+                      <div>是否全局</div>
+                    </t-col>
+                    <t-col :span="2">
                       <div>参数编码</div>
                     </t-col>
                     <t-col :span="2">
@@ -65,6 +68,9 @@
                   </t-row>
                   <vue-draggable ref="el" v-model="dataTable" :disabled="true" @start="ondragStart" @end="ondragEnd">
                     <t-row v-for="(item, index) in dataTable" :key="index" class="table-row" justify="space-between">
+                      <t-col :span="2">
+                        <t-checkbox v-model="item.isGlobal"> </t-checkbox>
+                      </t-col>
                       <t-col :span="2">
                         <t-input v-model="item.paramCode" :disabled="SelectNode.isSys == '1'" />
                       </t-col>
@@ -166,7 +172,7 @@ const filterByText = ref(null);
 
 // 表格
 const totaldataTable = ref<Param[]>();
-const dataTable = ref<Param[]>();
+const dataTable = ref<[]>() as any;
 const deleteIdx = ref(-1);
 const el = ref<UseDraggableReturn>();
 
@@ -376,6 +382,7 @@ const sortTable = () => {
   if (dataTable.value) {
     dataTable.value.forEach((element) => {
       element.seq = rowIndex.value;
+      element.oid = element.isGlobal === true ? '0' : ''; // 0表示全局
       rowIndex.value++;
     });
   }
