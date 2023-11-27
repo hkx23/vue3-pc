@@ -9,6 +9,172 @@
  * ---------------------------------------------------------------
  */
 
+/** 筛选字段 */
+export interface Filter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  value?: string;
+}
+
+/** 排序字段 */
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
+}
+
+export interface WorkstationAuthSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  id?: string;
+  userId?: string;
+  /** 多个工站权限id */
+  ids?: string[];
+  /** 模糊关键词 */
+  keyword?: string;
+  /** 工站编码名称模糊查询 */
+  workstationWord?: string;
+  /** 用户编码名称模糊查询 */
+  userWord?: string;
+  /** 工作中心编码名称模糊 */
+  workcenterWord?: string;
+  /** 工序编码名称模糊 */
+  processWord?: string;
+  /** 排序字段 */
+  sorts?: SortParam[];
+  /** 筛选字段 */
+  filters?: Filter[];
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 工站权限 */
+export interface WorkstationAuth {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  userId?: string;
+  workstationId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataWorkstationAuthVO = {
+  list?: WorkstationAuthVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkstationAuthVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkstationAuthVO;
+}
+
+/** 工站权限显示 */
+export interface WorkstationAuthVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  userId?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 姓名 */
+  personName?: string;
+  workstationId?: string;
+  /** 工站编码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 工站描述 */
+  workstationDesc?: string;
+  /** 工作中心编码 */
+  workcenterCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 工序编码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 创建人 */
+  creator?: string;
+  /** 创建时间 */
+  timeCreate?: string;
+  /** 修改人 */
+  modifier?: string;
+  /** 修改时间 */
+  timeModified?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLong = {
+  list?: string[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLong;
+}
+
 export interface CommonSearch {
   /** @format int32 */
   pageNum?: number;
@@ -21,17 +187,6 @@ export interface CommonSearch {
   category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
-}
-
-export interface Filter {
-  field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
-  value?: string;
-}
-
-export interface SortParam {
-  sortBy?: string;
-  descending?: boolean;
 }
 
 /** 响应数据 */
@@ -100,19 +255,6 @@ export interface ResultWorkstation {
   message?: string;
   /** 工站 */
   data?: Workstation;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 export interface WorkstationSearch {
@@ -192,33 +334,6 @@ export interface WorkstationVO {
   workcenterId?: string;
 }
 
-export interface WorkcenterSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  id?: string;
-  /** 多个id */
-  ids?: string[];
-  /** 工作中心-类别 */
-  category?: number[];
-  /** 工作中心编码名称模糊查询 */
-  workcenterword?: string;
-  workshopID?: string;
-  /** 工作中心-状态 */
-  state?: number[];
-  /** 排序字段 */
-  sorts?: SortParam[];
-  /** 筛选字段 */
-  filters?: Filter[];
-}
-
 /** 工作中心 */
 export interface Workcenter {
   id?: string;
@@ -269,6 +384,35 @@ export interface Workcenter {
   wcOwner?: string;
 }
 
+export interface WorkcenterSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+  /** 多条记录 */
+  allRecord?: Workcenter[];
+  /** 工作中心-类别 */
+  category?: number[];
+  /** 工作中心编码名称模糊查询 */
+  workcenterword?: string;
+  workshopID?: string;
+  /** 工作中心-状态 */
+  state?: number[];
+  /** 排序字段 */
+  sorts?: SortParam[];
+  /** 筛选字段 */
+  filters?: Filter[];
+}
+
 /** 响应数据 */
 export type PagingDataWorkcenter = {
   list?: Workcenter[];
@@ -300,26 +444,6 @@ export interface ResultWorkcenter {
   message?: string;
   /** 工作中心 */
   data?: Workcenter;
-}
-
-/** 响应数据 */
-export type PagingDataLong = {
-  list?: string[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataLong {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataLong;
 }
 
 /** 响应数据 */
@@ -832,6 +956,112 @@ export interface ResultWorkcenterVO {
  */
 
 export const api = {
+  workstationAuth: {
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name Save
+     * @summary 保存工站权限
+     * @request POST:/workstationAuth/save
+     * @secure
+     */
+    save: (data: WorkstationAuthSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workstationAuth/save`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name Remove
+     * @summary 删除工站权限
+     * @request POST:/workstationAuth/remove
+     * @secure
+     */
+    remove: (data: WorkstationAuthSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workstationAuth/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name RemoveBatch
+     * @summary 批量删除工站权限
+     * @request POST:/workstationAuth/removeBatch
+     * @secure
+     */
+    removeBatch: (data: WorkstationAuthSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workstationAuth/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name Input
+     * @summary 导入工站权限
+     * @request POST:/workstationAuth/input
+     * @secure
+     */
+    input: (data: WorkstationAuth) =>
+      http.request<ResultObject['data']>(`/api/control/workstationAuth/input`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name GetUserList
+     * @summary 获得用户列表
+     * @request POST:/workstationAuth/getUserList
+     * @secure
+     */
+    getUserList: (data: WorkstationAuthSearch) =>
+      http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getUserList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name GetUserAuth
+     * @summary 获得选中用户所拥有的工站权限
+     * @request POST:/workstationAuth/getUserAuth
+     * @secure
+     */
+    getUserAuth: (data: WorkstationAuthSearch) =>
+      http.request<ResultPagingDataLong['data']>(`/api/control/workstationAuth/getUserAuth`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name Getlist
+     * @summary 查询主界面信息
+     * @request POST:/workstationAuth/getList
+     * @secure
+     */
+    getlist: (data: WorkstationAuthSearch) =>
+      http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   workstation: {
     /**
      * No description
@@ -932,6 +1162,23 @@ export const api = {
      */
     modify: (data: Workcenter) =>
       http.request<ResultObject['data']>(`/api/control/workcenter/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Modify2
+     * @summary 修改多条工作中心
+     * @request POST:/workcenter/modifyAll
+     * @originalName modify
+     * @duplicate
+     * @secure
+     */
+    modify2: (data: WorkcenterSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workcenter/modifyAll`, {
         method: 'POST',
         body: data as any,
       }),

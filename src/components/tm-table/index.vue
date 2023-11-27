@@ -41,6 +41,7 @@
           :columns="columns"
           :data="finalTableData"
           :loading="loading"
+          :max-height="maxHeightValue"
           :selected-row-keys="selectedRowKeys"
           v-bind="$attrs"
           :style="{ width: tableWidth + 'px' }"
@@ -154,6 +155,8 @@ const props = defineProps({
   },
   loading: { type: Boolean, default: false },
   rowKey: { type: String, default: 'id' },
+  maxHeight: { type: String, default: '' },
+  isFixedHeight: { type: Boolean, default: false },
   // expandedRow: { type: Function },
   exportFunction: { type: Function },
 });
@@ -435,6 +438,18 @@ const computedTableContentSize = () => {
     tableHeight.value = tableContentRef.value.clientHeight;
   });
 };
+// 表格计算高度
+const maxHeightValue = computed(() => {
+  // 如果直接设置了max-height，直接返回
+  if (props.maxHeight) {
+    return props.maxHeight;
+  }
+  // 如果配置了自适应高度，is-fixed-height,则使用监控的高度
+  if (props.isFixedHeight) {
+    return `${tableHeight.value}px`;
+  }
+  return '';
+});
 
 // watch(
 //   () => [settingStore.showTabs, settingStore.showBreadcrumbs, settingStore.collapsed],

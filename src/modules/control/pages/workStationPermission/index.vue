@@ -8,35 +8,43 @@
         <t-row justify="space-between">
           <t-col :span="2"
             ><t-input
-              v-model="inputValue.workstaion"
+              v-model="inputValue.workstationWord"
               label="工站代码/名称："
               placeholder="请输入工序代码/名称"
             ></t-input>
           </t-col>
           <t-col :span="2">
-            <t-input v-model="inputValue.user" label="用户：" placeholder="请输入用户"></t-input>
+            <t-input v-model="inputValue.userWord" label="用户：" placeholder="请输入用户"></t-input>
           </t-col>
           <t-col :span="2"
-            ><t-input v-model="inputValue.workcenter" label="工作中心：" placeholder="请输入工作中心/名称"></t-input>
+            ><t-input
+              v-model="inputValue.workcenterWord"
+              label="工作中心："
+              placeholder="请输入工作中心/名称"
+            ></t-input>
           </t-col>
           <t-col :span="2"
-            ><t-input v-model="inputValue.processes" label="工序：" placeholder="请输入工序"> </t-input>
+            ><t-input v-model="inputValue.processWord" label="工序：" placeholder="请输入工序"> </t-input>
           </t-col> </t-row
       ></t-card>
       <t-card :bordered="false" style="margin: 10px 0">
         <t-row justify="space-between">
           <t-col :span="2">
             <t-button @click="onHandelPermission">权限分配</t-button>
-            <t-button theme="default" variant="base">批量删除</t-button></t-col
-          >
+            <t-popconfirm content="确认删除吗" @confirm="onDeleteAll">
+              <t-button theme="default" variant="base">批量删除</t-button>
+            </t-popconfirm>
+          </t-col>
           <t-col :span="2" style="display: flex; justify-content: flex-end">
-            <t-button>查询</t-button> <t-button theme="default" variant="base">重置</t-button></t-col
+            <t-button @click="onSearch">查询</t-button>
+            <t-button theme="default" variant="base" @click="onResetting">重置</t-button></t-col
           >
         </t-row>
       </t-card>
       <tm-table
         v-model:pagination="pageUI"
-        row-key="name"
+        :loading="loading"
+        row-key="id"
         :total="total"
         :table-column="column"
         :table-data="permissionData"
@@ -44,8 +52,10 @@
         @refresh="onfetchData"
         @select-change="rehandleSelectChange"
       >
-        <template #operate>
-          <icon name="delete"></icon>
+        <template #operate="{ row }">
+          <t-popconfirm content="确认删除吗" @confirm="onDelete(row.id)">
+            <icon name="delete"></icon>
+          </t-popconfirm>
         </template>
         <!-- <template #button>
         <div style="width: 100%">
@@ -60,31 +70,46 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Icon } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { Icon, MessagePlugin } from 'tdesign-vue-next';
+import { onMounted, ref } from 'vue';
 
+import { api } from '@/api/control';
 import TmTable from '@/components/tm-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import workPermission from './permission.vue';
 
+const { loading, setLoading } = useLoading();
 const selectedRowKeys = ref([]); // 全选控制存入字段
 const { pageUI } = usePage(); // 分页
 const total = ref(10); // 分页总数
 const permission = ref(false); // 权限页面控制
-const rehandleSelectChange = (value: any, ctx: AudioNode) => {
+// 全选
+const rehandleSelectChange = (value: any) => {
   selectedRowKeys.value = value;
-  console.log(value, ctx);
+  console.log(selectedRowKeys.value);
 };
 const onPermission = (value) => {
   permission.value = value;
+  onfetchData();
 };
+onMounted(() => {
+  onfetchData();
+});
 // 搜索控制初始数据
 const inputValue = ref({
-  workstaion: '',
-  user: '',
-  workcenter: '',
-  processes: '',
+  workstationWord: '', // 工站代码/名称
+  userWord: '', // 用户
+  workcenterWord: '', // 工作中心
+  processWord: '', // 工序
+  pageNum: pageUI.value.page, // 当前页
+  pageSize: pageUI.value.rows, // 请求数
+  ids: [], // 多选数
+  id: '', // 单个晒
+  sorts: [],
+  /** 筛选字段 */
+  filters: [],
 });
 // 数据字段
 const column = ref([
@@ -95,19 +120,19 @@ const column = ref([
     align: 'center',
   },
   {
-    colKey: 'user',
+    colKey: 'userName',
     title: '用户',
     width: '90px',
     align: 'center',
   },
   {
-    colKey: 'name',
+    colKey: 'personName',
     title: '姓名',
     width: '90px',
     align: 'center',
   },
   {
-    colKey: 'stationCode',
+    colKey: 'workstationCode',
     title: '工站代码',
     width: '90px',
     align: 'center',
@@ -119,33 +144,33 @@ const column = ref([
     align: 'center',
   },
   {
-    colKey: 'workstationDes',
+    colKey: 'workstationDesc',
     title: '工站描述',
     width: '90px',
     align: 'center',
   },
   {
-    colKey: 'workCenter',
-    title: '工站名称',
-    width: '90px',
+    colKey: 'workcenterCode',
+    title: '工作中心',
+    width: '160px',
     align: 'center',
   },
   {
-    colKey: 'Process',
+    colKey: 'processCode',
     title: '工序',
     width: '90px',
     align: 'center',
   },
   {
-    colKey: 'founder',
+    colKey: 'creator',
     title: '创建人',
     width: '90px',
     align: 'center',
   },
   {
-    colKey: 'createTimer',
+    colKey: 'timeCreate',
     title: '创建时间',
-    width: '90px',
+    width: '150px',
     align: 'center',
   },
   {
@@ -153,43 +178,82 @@ const column = ref([
     title: '操作',
     width: '90px',
     align: 'center',
+    fix: 'right',
   },
 ]);
 // 表格数据
-const permissionData = ref([
-  {
-    user: '101团',
-    name: '张花',
-    stationCode: 'GZ004',
-    workstationName: '201-Dan',
-    workstationDes: '描述1',
-    workCenter: '全栈',
-    Process: '1号_(´ཀ`」∠)_',
-    founder: '张嘉丽',
-    createTimer: '2023-11-23 15-20-39',
-  },
-  {
-    user: '101团',
-    name: '罗',
-    stationCode: 'GZ004',
-    workstationName: '201-Dan',
-    workstationDes: '描述1',
-    workCenter: '全栈',
-    Process: '1号_(´ཀ`」∠)_',
-    founder: '罗刘敬',
-    createTimer: '2023-11-23 15-20-39',
-  },
-]);
+const permissionData = ref([]);
 // 请求
 const onfetchData = async () => {
-  permissionData.value = _.cloneDeep(permissionData.value);
+  try {
+    setLoading(true);
+    const list = await api.workstationAuth.getlist(inputValue.value);
+    console.log(list);
+    permissionData.value = list.list;
+    total.value = list.total;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoading(false);
+  }
+  // permissionData.value = _.cloneDeep(permissionData.value);
 };
+// 批量删除
+const onDeleteAll = async () => {
+  if (selectedRowKeys.value.length < 1) {
+    MessagePlugin.error('请选择要删除的');
+    return;
+  }
+  try {
+    await api.workstationAuth.removeBatch({ ids: selectedRowKeys.value });
+    MessagePlugin.success('删除成功');
+  } catch (e) {
+    console.log(e);
+    MessagePlugin.error('删除失败');
+  }
+  onfetchData();
+};
+// 单独删除
+const onDelete = async (id) => {
+  try {
+    const deleteId = await api.workstationAuth.remove({ id });
+    // @ts-ignore
+    if (deleteId.code !== 200) {
+      MessagePlugin.error('删除失败');
+    } else {
+      MessagePlugin.success('删除成功');
+    }
+  } catch (e) {
+    // console.log(e);
+  }
+  onfetchData();
+};
+
 // 权限点击
 const onHandelPermission = () => {
-  // console.log(1);
-  console.log(1);
-
   permission.value = true;
+};
+// 查询
+const onSearch = () => {
+  pageUI.value.page = 1;
+  onfetchData();
+};
+// 重置
+const onResetting = () => {
+  onFormCls();
+  onfetchData();
+};
+// 清空初始数据
+const onFormCls = () => {
+  inputValue.value.workcenterWord = '';
+  inputValue.value.workstationWord = '';
+  inputValue.value.processWord = '';
+  inputValue.value.userWord = '';
+  inputValue.value.ids = []; // 多选数
+  inputValue.value.id = ''; // 单个晒
+  inputValue.value.sorts = [];
+  /** 筛选字段 */
+  inputValue.value.filters = [];
 };
 </script>
 

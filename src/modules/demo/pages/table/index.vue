@@ -5,6 +5,7 @@
     :table-column="tableColumn"
     :table-data="data.list"
     :enable-export="enableExport"
+    :is-fixed-height="isFixedHeight"
     :loading="loading"
     :total="data.total"
     :export-function="exportFunction"
@@ -16,12 +17,14 @@
 
     <template #button>
       <t-button theme="success" @click="onExportEnable">插槽例子-是否显示导入</t-button>
+      <!-- <t-button theme="success" @click="onFixHeight">插槽例子-是否固定高度</t-button> -->
       <t-button theme="success" @click="onViewKeys">插槽例子-已选中行</t-button>
     </template>
     <template #oprate>
       <!-- <t-button shape="circle" theme="primary" ghost> 插槽 </t-button> -->
     </template>
   </tm-table>
+  <!-- </div> -->
 </template>
 
 <script setup lang="tsx" name="TablePreview">
@@ -38,6 +41,7 @@ const { loading, setLoading } = useLoading();
 const tableRef = ref();
 
 const enableExport = ref(false);
+const isFixedHeight = ref(true);
 
 const data = reactive({
   total: 0,
@@ -69,6 +73,9 @@ const exportFunction = async () => {
 const onExportEnable = () => {
   enableExport.value = !enableExport.value;
 };
+// const onFixHeight = () => {
+//   isFixedHeight.value = !isFixedHeight.value;
+// };
 
 // 查看已选中行
 const onViewKeys = () => {
