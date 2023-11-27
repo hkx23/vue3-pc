@@ -39,6 +39,7 @@
       <div class="form-item-box">
         <t-form-item label="销售订单"> {{ row.soNo }}</t-form-item>
         <t-form-item label="工艺路线版本"> {{ row.routingName }}</t-form-item>
+        <t-form-item label=""> </t-form-item>
       </div>
       <div class="form-item-box">
         <t-form-item label="备注"> {{ row.memo }}</t-form-item>
@@ -306,19 +307,12 @@ watch(
 // 表单盒子边距
 .form-item-box {
   margin: 0;
+  display: flex;
 
   .t-form__item {
-    display: inline-block;
-    width: 30%;
+    display: flex;
     margin: 0;
-  }
-
-  /deep/ .t-form__label {
-    display: inline-block !important;
-  }
-
-  /deep/ .t-form__controls {
-    display: inline-block !important;
+    flex: 1;
   }
 }
 
