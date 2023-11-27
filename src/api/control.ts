@@ -456,6 +456,8 @@ export interface Routing {
   routingName?: string;
   /** 工艺路线描述 */
   routingDesc?: string;
+  /** 工艺路线类型 */
+  routingType?: string;
 }
 
 /** 响应数据 */
@@ -1252,7 +1254,7 @@ export const api = {
      * @request GET:/routingRevision/getRoutRevisionByRoutingCode
      * @secure
      */
-    getRoutRevisionByRoutingCode: (query: { routingCode: string }) =>
+    getRoutRevisionByRoutingCode: (query: { routingCode: string; routingType: string }) =>
       http.request<ResultObject['data']>(`/api/control/routingRevision/getRoutRevisionByRoutingCode`, {
         method: 'GET',
         params: query,

@@ -198,7 +198,7 @@ const columnsBom: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    colKey: 'moRealQty',
+    colKey: 'pickQty',
     title: '实发数量',
     align: 'center',
   },
