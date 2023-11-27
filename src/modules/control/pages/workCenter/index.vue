@@ -53,7 +53,6 @@
                   placeholder="工作中心或编号"
                   :default-input-value="selectValue1"
                   @input-change="onInputChange"
-                  @click="onClick"
                   @popup-visible-change="onPopupVisibleChange"
                 >
                   <template #panel>
@@ -218,7 +217,7 @@ const columns = [
     align: 'center',
   },
 ];
-const data = ref([]);
+const data = ref([]); // 存储数据给到新增数据
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const page = ref({
@@ -230,9 +229,6 @@ const workData = ref([]); // table数据
 const workState = ref({
   shop: '',
 });
-const onClick = () => {
-  console.log(1);
-};
 // input-select事件
 const popupVisible = ref(false);
 const selectValue = ref();
@@ -242,28 +238,44 @@ const selectValue1 = ref('');
 onMounted(() => {
   onFetchData();
 });
-const onOptionClick = (value) => {
+const onOptionClick = (value: any) => {
   console.log('value', value);
+  selectValue.value = value;
+  onFetchData();
 };
-const onInputChange = (keyword) => {
-  console.log(selectValue.value);
+const debounce = (func: { (): void; apply?: any }, delay: number) => {
+  let timeoutId: NodeJS.Timeout;
+  return (...args: any) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      clearTimeout(timeoutId);
+      func.apply(this, args);
+    }, delay);
+  };
+};
+// @ts-ignore
+const onInputChange = debounce((keyword: any) => {
+  options1.value.push(keyword);
   selectValue.value = keyword;
   if (options1.value.length > 10) {
     options1.value.splice(1, 1);
   }
-  options1.value.push(keyword);
-};
+  onFetchData();
+}, 500);
 const onPopupVisibleChange = (val) => {
   OPTIONS = val;
   popupVisible.value = val;
 };
 // 点击的类型
-const onHandelArr = (value) => {
+const onHandelArr = (value: any[]) => {
+  pageUI.value.page = 1;
   arr.value = value;
   onFetchData();
 };
 // 车间查询
-const onSelectShop = (value) => {
+const onSelectShop = (value: any) => {
   if (!value) {
     return;
   }
@@ -278,6 +290,8 @@ const onFetchData = async () => {
       pageSize: pageUI.value.rows,
       category: arr.value,
       workshopID: workState.value.shop,
+      // eslint-disable-next-line no-bitwise
+      workcenterword: selectValue.value,
     });
     workData.value = res.list;
     data.value = res.list;
@@ -294,7 +308,7 @@ const onFetchData = async () => {
   }
 };
 // 工作中心center跳转到form
-const onHandelCenter = (row) => {
+const onHandelCenter = (row: any) => {
   detailedShow.value = true; // 控制窗口
   // btnShow.value = true; // 控制按钮禁用
   workCenterId.value = row; // 获取到工作中心id
@@ -313,13 +327,12 @@ const onHandelAdded = () => {
   typeDetailed.value = 3; // 代表编辑
   btnShowDisable.value.add = true;
   btnShowDisable.value.delete = true;
-
   disabledWord.value = false;
   disabledParent.value = false;
 };
 
 // 保存时子组件控制
-const onHandleSave = (i) => {
+const onHandleSave = (i: boolean) => {
   detailedShow.value = i; // 子窗口
   btnShow.value = false; // 按钮禁用
   pageUI.value.page = 1;
@@ -327,7 +340,7 @@ const onHandleSave = (i) => {
   onFetchData();
 };
 // 编辑
-const onClickEdit = (row) => {
+const onClickEdit = (row: any) => {
   btnShow.value = true;
   detailedShow.value = true;
   workCenterId.value = row; // 渲染子
@@ -339,20 +352,22 @@ const onClickEdit = (row) => {
 };
 
 // 添加修改转态
-const onFormClear = (value) => {
+const onFormClear = (value: boolean) => {
   disabledWord.value = value;
   btnShow.value = !value;
   btnShowDisable.value.add = !value;
   btnShowDisable.value.delete = !value;
 };
 
-const onChildDefault = (value) => {
+// 控制进入子中心的按钮
+const onChildDefault = (value: boolean) => {
   disabledWord.value = value;
   btnShowDisable.value.add = !value;
   btnShowDisable.value.delete = !value;
 };
 
-const onDelete = (value) => {
+// 控制table数组小于1删除按钮禁用
+const onDelete = (value: boolean) => {
   btnShowDisable.value.delete = value;
 };
 // checked事件
