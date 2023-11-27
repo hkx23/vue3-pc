@@ -126,7 +126,7 @@ const column = ref([
     align: 'center',
   },
   {
-    colKey: 'personName',
+    colKey: 'userDisplayName',
     title: '姓名',
     width: '90px',
     align: 'center',
@@ -187,7 +187,15 @@ const permissionData = ref([]);
 const onfetchData = async () => {
   try {
     setLoading(true);
-    const list = await api.workstationAuth.getlist(inputValue.value);
+    const list = await api.workstationAuth.getlist({
+      workcenterWord: inputValue.value.workcenterWord,
+      userWord: inputValue.value.userWord,
+      workstationWord: inputValue.value.workstationWord,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+      ids: inputValue.value.ids,
+      id: inputValue.value.id,
+    });
     console.log(list);
     permissionData.value = list.list;
     total.value = list.total;

@@ -164,7 +164,7 @@ const onFetchData = async () => {
       });
       dataTree.value = useList.list;
       dataTree.value.forEach((item) => {
-        item.label = `${item.personName}[${item.userName}]`;
+        item.label = `${item.userDisplayName}[${item.userName}]`;
         item.value = item.userId;
         item.show = false;
         value.value.push(item.value);

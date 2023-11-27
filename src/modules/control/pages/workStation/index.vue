@@ -42,8 +42,8 @@
       <tm-table
         v-model:pagination="pageUI"
         row-key="index"
-        :columns="columns"
-        :data="workData"
+        :table-column="columns"
+        :table-data="workData"
         lazy-load
         :total="total"
         :loading="loading"

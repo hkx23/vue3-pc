@@ -5,7 +5,7 @@ export default [
     component: () => import('../../pages/processDefects/index.vue'),
     meta: {
       title: {
-        zh_CN: '工作中心',
+        zh_CN: '工序缺陷',
         en_US: 'processdefects',
       },
       orderNo: 0,

@@ -9,93 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-/** 产品包装规则明细 */
-export interface ProductPackRuleDtl {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  packRuleId?: string;
-  /** 包装类型 */
-  packType?: string;
-  /**
-   * 包装数量
-   * @format int32
-   */
-  packQty?: number;
-  /** 单位 */
-  uom?: string;
-  parentPackId?: string;
-  /**
-   * 包装层级
-   * @format int32
-   */
-  packLevel?: number;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
-}
-
-/** 产品包装规则 */
-export interface ProductPackRule {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 包装规则代码 */
-  packRuleCode?: string;
-  /** 包装规则名称 */
-  packRuleName?: string;
-}
-
 /** 筛选字段 */
 export interface Filter {
   field?: string;
@@ -138,6 +51,19 @@ export interface WorkstationAuthSearch {
   sorts?: SortParam[];
   /** 筛选字段 */
   filters?: Filter[];
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
 }
 
 /** 工站权限 */
@@ -787,6 +713,7 @@ export interface MoSchedule {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工单ID */
   moId?: string;
   mitemId?: string;
   /** 工单类型 */
@@ -843,11 +770,6 @@ export interface MoSchedule {
    * @format date-time
    */
   datetimeActualEnd?: string;
-  /**
-   * 工单关闭时间
-   * @format date-time
-   */
-  datetimeMoClose?: string;
   warehouseId?: string;
   parentMoId?: string;
   workshopId?: string;
@@ -1050,64 +972,6 @@ export interface ResultWorkcenterVO {
   data?: WorkcenterVO;
 }
 
-/** 显示包装规则明细列表 */
-export type ProductPackRuleDtlVO = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  packRuleId?: string;
-  /** 包装类型 */
-  packType?: string;
-  /**
-   * 包装数量
-   * @format int32
-   */
-  packQty?: number;
-  /** 单位 */
-  uom?: string;
-  parentPackId?: string;
-  /**
-   * 包装层级
-   * @format int32
-   */
-  packLevel?: number;
-  packTypeName?: string;
-  packLevelName?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultListProductPackRuleDtlVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: ProductPackRuleDtlVO[] | null;
-}
-
 /**
  * @title scm项目
  * @version v1
@@ -1116,141 +980,6 @@ export interface ResultListProductPackRuleDtlVO {
  */
 
 export const api = {
-  productPackRuleDtl: {
-    /**
-     * No description
-     *
-     * @tags 产品包装规则明细
-     * @name Update
-     * @summary 修改包装规则明细
-     * @request PUT:/productPackRuleDtl/update
-     * @secure
-     */
-    update: (data: ProductPackRuleDtl) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRuleDtl/update`, {
-        method: 'PUT',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 产品包装规则明细
-     * @name Add
-     * @summary 新增包装规则明细
-     * @request POST:/productPackRuleDtl/add
-     * @secure
-     */
-    add: (data: ProductPackRuleDtl) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRuleDtl/add`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 产品包装规则明细
-     * @name Tree
-     * @summary 获取包装规则明细
-     * @request GET:/productPackRuleDtl/tree
-     * @secure
-     */
-    tree: (query: { productPackRuleId: string }) =>
-      http.request<ResultListProductPackRuleDtlVO['data']>(`/api/control/productPackRuleDtl/tree`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 产品包装规则明细
-     * @name Delete
-     * @summary 删除包装规则明细，包括子集
-     * @request DELETE:/productPackRuleDtl/delete
-     * @secure
-     */
-    delete: (query: { id: string }) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRuleDtl/delete`, {
-        method: 'DELETE',
-        params: query,
-      }),
-  },
-  productPackRule: {
-    /**
-     * No description
-     *
-     * @tags 产品包装规则
-     * @name Update
-     * @summary 修改包装规则
-     * @request PUT:/productPackRule/update
-     * @secure
-     */
-    update: (data: ProductPackRule) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRule/update`, {
-        method: 'PUT',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 产品包装规则
-     * @name Add
-     * @summary 新增包装规则
-     * @request POST:/productPackRule/add
-     * @secure
-     */
-    add: (data: ProductPackRule) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRule/add`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 产品包装规则
-     * @name List
-     * @summary 获取包装规则
-     * @request GET:/productPackRule/list
-     * @secure
-     */
-    list: (query?: {
-      /**
-       * @format int32
-       * @default 1
-       */
-      pageNum?: number;
-      /**
-       * @format int32
-       * @default 20
-       */
-      pageSize?: number;
-      /** @default "" */
-      packRuleCode?: string;
-    }) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRule/list`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 产品包装规则
-     * @name Delete
-     * @summary 删除包装规则，包括子集
-     * @request DELETE:/productPackRule/delete
-     * @secure
-     */
-    delete: (query: { id: string }) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRule/delete`, {
-        method: 'DELETE',
-        params: query,
-      }),
-  },
   workstationAuth: {
     /**
      * No description
