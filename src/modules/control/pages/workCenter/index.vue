@@ -5,6 +5,7 @@
       v-if="detailedShow"
       :btn-show-disable="{ add: btnShowDisable.add, delete: btnShowDisable.delete }"
       :word-center-id="workCenterId"
+      :new-arr="newArr"
       :data="data"
       :next-arr="arr"
       :btn-show="btnShow"
@@ -21,14 +22,14 @@
       <t-space direction="horizontal" style="margin: 10px 0">
         <t-tabs
           v-for="item in allType"
-          :key="item.id"
+          :key="item.wcType"
           v-model="valueItem"
-          :value="item.name"
-          @change="onHandelArr(item.opId)"
+          :value="item.wcType"
+          @change="onHandelArr(item.wcType)"
         >
-          <t-tab-panel :value="item.id" :label="item.name">
+          <t-tab-panel :value="item.wcType" :label="item.wcType">
             <template #label>
-              <div>{{ item.name }}{{ item.code === '' ? '' : item.code }}</div>
+              <div>{{ item.wcType }}{{ item.code }}</div>
             </template>
           </t-tab-panel>
         </t-tabs>
@@ -129,46 +130,13 @@ const btnShowDisable = ref({
 const typeDetailed = ref(0); // 默认为0  1代表编辑 2代表父进子 3代表新增
 const disabledWord = ref(false); // 工作中心编号控制禁用默认为不禁用
 const disabledParent = ref(false); // 父
-const valueItem = ref(0); // space类型
+const valueItem = ref('全部'); // space类型
 const tableRef = ref(); // 实例table
-const allType = ref([
-  {
-    name: '所有类型',
-    id: 0,
-    opId: [1, 2, 3, 4],
-    value: 'item1',
-  },
-  {
-    name: '工作区',
-    id: 1,
-    opId: [1],
-    value: 'item2',
-    code: '',
-  },
-  {
-    name: '生产线',
-    id: 2,
-    opId: [2],
-    value: 'item3',
-    code: '',
-  },
-  {
-    name: '工段',
-    id: 3,
-    opId: [3],
-    value: 'item4',
-    code: '',
-  },
-  {
-    name: '设备',
-    id: 4,
-    opId: [4],
-    value: 'item5',
-    code: '',
-  },
-]); // 所有类型
+const allType = ref(); // 所有类型
 const workCenterId = ref(); // 工作中心的obj
-const arr = ref([]); // 类型存储数组
+const arr = ref(); // 类型存储数组
+const newArr = ref('');
+const id = ref(0);
 const detailedShow = ref(false); // 控制子工作中心显示隐藏
 // 初始数据
 const columns = [
@@ -269,9 +237,15 @@ const onPopupVisibleChange = (val) => {
   popupVisible.value = val;
 };
 // 点击的类型
-const onHandelArr = (value: any[]) => {
+const onHandelArr = (value: any) => {
+  if (value === '全部') {
+    arr.value = '';
+  } else {
+    arr.value = value;
+  }
+  console.log('类型', arr.value);
   pageUI.value.page = 1;
-  arr.value = value;
+  console.log();
   onFetchData();
 };
 // 车间查询
@@ -293,15 +267,30 @@ const onFetchData = async () => {
       // eslint-disable-next-line no-bitwise
       workcenterword: selectValue.value,
     });
-    workData.value = res.list;
-    data.value = res.list;
+    workData.value = res.list; // table数据
+    data.value = res.list; // 新增页面
     page.value.total = res.total;
+    // 类型请求
+    const list = await api.workcenter.getCategory();
+    // 只有第一次进来的时候才拿
+    if (id.value === 0) {
+      id.value = 1;
+      allType.value = list.list; // 标签列类型
+      allType.value.forEach((item: { code: string }) => {
+        item.code = '';
+      });
+      allType.value.unshift({ wcType: '全部' });
+    }
+    // 标签页计数
     const typeData = await api.workcenter.getTagCount();
-    allType.value[1].code = typeData.area;
-    allType.value[2].code = typeData.line;
-    allType.value[3].code = typeData.section;
-    allType.value[4].code = typeData.device;
+    console.log('11', typeData, 123);
+    allType.value[1].code = typeData.line;
+    allType.value[2].code = typeData.device;
+    allType.value[3].code = typeData.area;
+    allType.value[4].code = typeData.section;
+    console.log('all', allType.value);
   } catch (e) {
+    console.log(3);
     console.log(e);
   } finally {
     setLoading(false);
@@ -309,7 +298,9 @@ const onFetchData = async () => {
 };
 // 工作中心center跳转到form
 const onHandelCenter = (row: any) => {
+  newArr.value = row.wcType;
   detailedShow.value = true; // 控制窗口
+  // arr.value = row.wcType;
   // btnShow.value = true; // 控制按钮禁用
   workCenterId.value = row; // 获取到工作中心id
   typeDetailed.value = 2; // 代表编辑
@@ -321,6 +312,7 @@ const onHandelCenter = (row: any) => {
 
 // 新增按钮
 const onHandelAdded = () => {
+  newArr.value = '';
   detailedShow.value = true; // 控制窗口
   btnShow.value = true; // 控制按钮禁用
   workCenterId.value = {}; // 清空对象
@@ -341,6 +333,7 @@ const onHandleSave = (i: boolean) => {
 };
 // 编辑
 const onClickEdit = (row: any) => {
+  newArr.value = row.wcType;
   btnShow.value = true;
   detailedShow.value = true;
   workCenterId.value = row; // 渲染子
