@@ -104,6 +104,7 @@ const opts = computed(() => {
       defaultVal: '',
       bind: {
         type: 'mitemCategory',
+        showTitle: false,
       },
     },
     dateValue: {
