@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 子from -->
+    <!-- 子from BOM -->
     <t-dialog
       v-model:visible="detailedShow"
       :row="currentrow"
@@ -9,10 +9,26 @@
       :confirm-btn="null"
       width="90%"
     >
-      <detailed :row="currentrow" @added-show="onHandleSave"></detailed>
+      <detailed :row="currentrow" @added-show="onHandleBomShow"></detailed>
+    </t-dialog>
+
+    <!-- 子from routing -->
+    <t-dialog
+      v-model:visible="routingUpdateShow"
+      :row="currentrow"
+      header="工艺路线"
+      :cancel-btn="null"
+      :confirm-btn="null"
+      width="90%"
+    >
+      <routingUpdate
+        :row="currentrow"
+        @routing-show="onHandleRoutingShow"
+        @refresh-table="onHandleTableReresh"
+      ></routingUpdate>
     </t-dialog>
     <!-- 头部 -->
-    <t-card class="list-card-container" :bordered="false">
+    <t-card class="list-card-container" :bordered="true">
       <t-row justify="space-between">
         <t-col :span="3">
           <t-select
@@ -86,7 +102,6 @@
           <t-space direction="vertical" style="width: 70%">
             <t-date-range-picker v-model="datePlanRange" />
           </t-space>
-          <!-- <t-input v-model="queryCondition.moCode" label="计划时间：" placeholder="请输入"></t-input> -->
         </t-col>
         <t-col :span="2"> </t-col>
       </t-row>
@@ -95,10 +110,9 @@
           <span>工单状态：</span>
           <!-- 复选框框组受控模式 -->
           <t-checkbox-group
+            v-model="selectMoStatus"
             class="check-box-conditon"
-            :v-model="selectMoStatus"
             :options="moStatusOption"
-            label="工单状态："
             @change="onChangeMoStatus"
           />
         </t-col>
@@ -132,61 +146,17 @@
             {{ row.moCode }}
           </a>
         </template>
-        <!-- <template #op="{ row }">
-          <icon name="edit-1"></icon>
-        </template> -->
+        <template #op="{ row }">
+          <t-icon name="edit" @click="onEditRoutingClick(row)" />
+        </template>
       </tm-table>
     </t-card>
-    <!-- 弹出层 -->
-    <!-- <t-dialog v-model:visible="formVisible" header="客户维护编辑" :cancel-btn="null" :confirm-btn="null" width="40%">
-      <t-form
-        ref="form"
-        :loading="loading"
-        :rules="rules"
-        :data="formData"
-        layout="inline"
-        scroll-to-first-error="smooth"
-        label-align="right"
-        @submit="onCustomerSubmit"
-      >
-        <t-row class="form-customer-row">
-          <t-col>
-            <t-form-item label="客户编辑:" name="customerCode">
-              <t-input v-model="formData.customerCode" readonly></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-     
-        <t-row class="form-customer-row">
-          <t-col>
-            <t-form-item label="客户名称:" name="customerName">
-              <t-input v-model="formData.customerName"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-      
-        <t-row class="form-customer-row">
-          <t-col>
-            <t-form-item label="客户简称:" name="abbreviation">
-              <t-input v-model="formData.shortName"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-      
-        <div class="control-box">
-          <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-          <t-popconfirm content="确认提交吗" @confirm="onSecondary">
-            <t-button theme="primary" type="submit">确认</t-button>
-          </t-popconfirm>
-        </div>
-      </t-form>
-    </t-dialog> -->
   </div>
 </template>
 
 <script setup lang="tsx">
 import dayjs from 'dayjs';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import { api as apicontrol } from '@/api/control';
 import { api as apimain } from '@/api/main';
@@ -196,6 +166,7 @@ import { usePage } from '@/hooks/modules/page';
 
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 import detailed from './detailed.vue';
+import routingUpdate from './routingUpdate.vue';
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
@@ -223,39 +194,19 @@ const queryCondition = ref({
   rootingCode: '',
 });
 const detailedShow = ref(false); // 控制工单BOM显示隐藏
-// 监听查询的时候把num改为1
-watch(
-  () => keyword.value,
-  (newValue, oldValue) => {
-    if (oldValue !== newValue) {
-      console.log(oldValue !== newValue);
-      pageUI.value.page = 1;
-    }
-  },
-);
+const routingUpdateShow = ref(false); // 控制工单工艺路线显示隐藏
+
 // 表格th数据
 const columns = ref([
   {
     colKey: 'moCode',
     title: '工单号',
     width: '100',
-    // cell: (h, { row }) => (
-    //   <div style="color: #4d6af9;" onClick={onHandelDetail}>
-    //     {row.moCode}
-    //   </div>
-    // ),
   },
-  { colKey: 'moClass', title: '工单类型' },
+  { colKey: 'moClassName', title: '工单类型' },
   {
-    colKey: 'status',
+    colKey: 'statusName',
     title: '工单状态',
-    // cell: (h, { row }) => <span>{moStatusOption[row.status].label}</span>,
-    // cell: (h, { row }) => {
-    //   return moStatusOption[row.status].label;
-    // },
-    // cell: (h, { row }) => {
-    //   return moStatusOption.value[row.status];
-    // },
   },
   { colKey: 'mitemCode', title: '物料编码', width: '120' },
   { colKey: 'mitemDesc', title: '物流描述', width: '150' },
@@ -270,7 +221,7 @@ const columns = ref([
   { colKey: 'datetimeActualStart', title: '实际开始时间', width: '150' },
   { colKey: 'datetimeActualEnd', title: '实际完成时间', width: '150' },
   { colKey: 'datetimeMoClose', title: '工单关闭时间', width: '150' },
-  { colKey: 'op', title: '操作', width: '100' },
+  { colKey: 'op', title: '操作', width: '100', fixed: 'right' },
 ]);
 // 工单信息
 const moData = ref([]);
@@ -373,16 +324,34 @@ const onHandleResetting = () => {
   fetchTable();
 };
 
-// 跳转到明细界面
+// 跳转到BOM明细界面
 const onHandelDetail = (row: any) => {
   detailedShow.value = true;
   currentrow.value = row;
   console.log(row);
 };
-// 子组件控制
-const onHandleSave = (value: any) => {
+
+// 跳转到工艺路线明细界面
+const onEditRoutingClick = (row: any) => {
+  routingUpdateShow.value = true;
+  currentrow.value = row;
+};
+
+// 子组件控制BOM窗口
+const onHandleBomShow = (value: any) => {
   detailedShow.value = value;
 };
+
+// 子组件控制Routing窗口
+const onHandleRoutingShow = (value: any) => {
+  routingUpdateShow.value = value;
+};
+
+// 子组件控制刷新
+const onHandleTableReresh = () => {
+  fetchTable();
+};
+
 onMounted(() => {
   initMoClass();
   initMoType();
@@ -400,13 +369,13 @@ onMounted(() => {
 
   .t-row {
     margin-bottom: 10px;
-  }
 
-  .check-box-conditon {
-    .t-checkbox {
-      border: 1px solid var(--td-border-level-2-color) !important;
-      height: 24px !important;
-      padding: 6px !important;
+    .check-box-conditon {
+      /deep/ .t-checkbox {
+        border: 1px solid var(--td-border-level-2-color) !important;
+        height: 24px !important;
+        padding: 6px !important;
+      }
     }
   }
 

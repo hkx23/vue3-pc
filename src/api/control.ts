@@ -34,8 +34,11 @@ export interface WorkstationAuthSearch {
    */
   pageSize?: number;
   id?: string;
-  /** 多个id */
-  ids?: number[];
+  userId?: string;
+  /** 多个工站权限id */
+  ids?: string[];
+  /** 模糊关键词 */
+  keyword?: string;
   /** 工站编码名称模糊查询 */
   workstationWord?: string;
   /** 用户编码名称模糊查询 */
@@ -50,15 +53,8 @@ export interface WorkstationAuthSearch {
   filters?: Filter[];
 }
 
-/** 响应数据 */
-export type PagingDataWorkstationAuthVO = {
-  list?: WorkstationAuthVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
 /** 通用响应类 */
-export interface ResultPagingDataWorkstationAuthVO {
+export interface ResultObject {
   /**
    * 响应代码
    * @format int32
@@ -67,45 +63,7 @@ export interface ResultPagingDataWorkstationAuthVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataWorkstationAuthVO;
-}
-
-/** 工站权限显示 */
-export interface WorkstationAuthVO {
-  id?: string;
-  eid?: string;
-  oid?: string;
-  /** 用户名 */
-  userName?: string;
-  /** 姓名 */
-  personName?: string;
-  /** 工站编码 */
-  workstationCode?: string;
-  /** 工站名称 */
-  workstationName?: string;
-  /** 工站描述 */
-  workstationDesc?: string;
-  /** 工作中心编码 */
-  workcenterCode?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 工序编码 */
-  processCode?: string;
-  /** 工序名称 */
-  processName?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 创建人 */
-  creator?: string;
-  /** 创建时间 */
-  timeCreate?: string;
-  /** 修改人 */
-  modifier?: string;
-  /** 修改时间 */
-  timeModified?: string;
+  data?: object | null;
 }
 
 /** 工站权限 */
@@ -137,8 +95,15 @@ export interface WorkstationAuth {
   workstationId?: string;
 }
 
+/** 响应数据 */
+export type PagingDataWorkstationAuthVO = {
+  list?: WorkstationAuthVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
 /** 通用响应类 */
-export interface ResultObject {
+export interface ResultPagingDataWorkstationAuthVO {
   /**
    * 响应代码
    * @format int32
@@ -147,7 +112,67 @@ export interface ResultObject {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: object | null;
+  data?: PagingDataWorkstationAuthVO;
+}
+
+/** 工站权限显示 */
+export interface WorkstationAuthVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  userId?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 姓名 */
+  personName?: string;
+  workstationId?: string;
+  /** 工站编码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 工站描述 */
+  workstationDesc?: string;
+  /** 工作中心编码 */
+  workcenterCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 工序编码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 创建人 */
+  creator?: string;
+  /** 创建时间 */
+  timeCreate?: string;
+  /** 修改人 */
+  modifier?: string;
+  /** 修改时间 */
+  timeModified?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLong = {
+  list?: string[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLong;
 }
 
 export interface CommonSearch {
@@ -309,33 +334,6 @@ export interface WorkstationVO {
   workcenterId?: string;
 }
 
-export interface WorkcenterSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  id?: string;
-  /** 多个id */
-  ids?: number[];
-  /** 工作中心-类别 */
-  category?: number[];
-  /** 工作中心编码名称模糊查询 */
-  workcenterword?: string;
-  workshopID?: string;
-  /** 工作中心-状态 */
-  state?: number[];
-  /** 排序字段 */
-  sorts?: SortParam[];
-  /** 筛选字段 */
-  filters?: Filter[];
-}
-
 /** 工作中心 */
 export interface Workcenter {
   id?: string;
@@ -384,6 +382,35 @@ export interface Workcenter {
   wcLocation?: string;
   /** 负责人 */
   wcOwner?: string;
+}
+
+export interface WorkcenterSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+  /** 多条记录 */
+  allRecord?: Workcenter[];
+  /** 工作中心-类别 */
+  category?: number[];
+  /** 工作中心编码名称模糊查询 */
+  workcenterword?: string;
+  workshopID?: string;
+  /** 工作中心-状态 */
+  state?: number[];
+  /** 排序字段 */
+  sorts?: SortParam[];
+  /** 筛选字段 */
+  filters?: Filter[];
 }
 
 /** 响应数据 */
@@ -660,8 +687,8 @@ export interface MoSchedule {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 工单名称 */
-  moCode?: string;
+  /** 工单ID */
+  moId?: string;
   mitemId?: string;
   /** 工单类型 */
   moClass?: string;
@@ -932,13 +959,13 @@ export const api = {
      * No description
      *
      * @tags 工站权限
-     * @name Getlist
-     * @summary 查询主界面信息
-     * @request POST:/workstationAuth/getList
+     * @name Save
+     * @summary 保存工站权限
+     * @request POST:/workstationAuth/save
      * @secure
      */
-    getlist: (data: WorkstationAuthSearch) =>
-      http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getList`, {
+    save: (data: WorkstationAuthSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workstationAuth/save`, {
         method: 'POST',
         body: data as any,
       }),
@@ -947,13 +974,88 @@ export const api = {
      * No description
      *
      * @tags 工站权限
-     * @name Add
-     * @summary 新增工站权限
-     * @request POST:/workstationAuth/add
+     * @name Remove
+     * @summary 删除工站权限
+     * @request POST:/workstationAuth/remove
      * @secure
      */
-    add: (data: WorkstationAuth) =>
-      http.request<ResultObject['data']>(`/api/control/workstationAuth/add`, {
+    remove: (data: WorkstationAuthSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workstationAuth/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name RemoveBatch
+     * @summary 批量删除工站权限
+     * @request POST:/workstationAuth/removeBatch
+     * @secure
+     */
+    removeBatch: (data: WorkstationAuthSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workstationAuth/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name Input
+     * @summary 导入工站权限
+     * @request POST:/workstationAuth/input
+     * @secure
+     */
+    input: (data: WorkstationAuth) =>
+      http.request<ResultObject['data']>(`/api/control/workstationAuth/input`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name GetUserList
+     * @summary 获得用户列表
+     * @request POST:/workstationAuth/getUserList
+     * @secure
+     */
+    getUserList: (data: WorkstationAuthSearch) =>
+      http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getUserList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name GetUserAuth
+     * @summary 获得选中用户所拥有的工站权限
+     * @request POST:/workstationAuth/getUserAuth
+     * @secure
+     */
+    getUserAuth: (data: WorkstationAuthSearch) =>
+      http.request<ResultPagingDataLong['data']>(`/api/control/workstationAuth/getUserAuth`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name Getlist
+     * @summary 查询主界面信息
+     * @request POST:/workstationAuth/getList
+     * @secure
+     */
+    getlist: (data: WorkstationAuthSearch) =>
+      http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1066,6 +1168,23 @@ export const api = {
      * No description
      *
      * @tags 工作中心
+     * @name Modify2
+     * @summary 修改多条工作中心
+     * @request POST:/workcenter/modifyAll
+     * @originalName modify
+     * @duplicate
+     * @secure
+     */
+    modify2: (data: WorkcenterSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workcenter/modifyAll`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
      * @name Search
      * @request POST:/workcenter/items
      * @secure
@@ -1087,6 +1206,21 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkcenter['data']>(`/api/control/workcenter/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name HaveChildCenter
+     * @summary 查询是否有子工作中心
+     * @request POST:/workcenter/haveChildCenter
+     * @secure
+     */
+    haveChildCenter: (data: WorkcenterSearch) =>
+      http.request<ResultPagingDataLong['data']>(`/api/control/workcenter/haveChildCenter`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
@@ -1269,6 +1403,21 @@ export const api = {
      * No description
      *
      * @tags 工单表
+     * @name UpdateMoRouting
+     * @summary 工单的工艺路线修改
+     * @request POST:/mo/updateMoRouting
+     * @secure
+     */
+    updateMoRouting: (data: MoSchedule) =>
+      http.request<ResultObject['data']>(`/api/control/mo/updateMoRouting`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单表
      * @name Search
      * @request POST:/mo/items
      * @secure
@@ -1340,6 +1489,22 @@ export const api = {
         params: query,
       }),
   },
+  routingRevision: {
+    /**
+     * No description
+     *
+     * @tags 工艺路线版本
+     * @name GetRoutRevisionByRoutingCode
+     * @summary 根据工艺路线编码获取有效的工艺路线版本信息
+     * @request GET:/routingRevision/getRoutRevisionByRoutingCode
+     * @secure
+     */
+    getRoutRevisionByRoutingCode: (query: { routingCode: string }) =>
+      http.request<ResultObject['data']>(`/api/control/routingRevision/getRoutRevisionByRoutingCode`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
   moLog: {
     /**
      * No description
@@ -1347,11 +1512,11 @@ export const api = {
      * @tags 工单日志
      * @name GetMoLogListByMoCode
      * @summary 根据工单号获取工单日志信息
-     * @request GET:/moLog/getMoLogListByMoCode
+     * @request GET:/moLog/getMoLogListByMoId
      * @secure
      */
-    getMoLogListByMoCode: (query: { moCode: string }) =>
-      http.request<ResultObject['data']>(`/api/control/moLog/getMoLogListByMoCode`, {
+    getMoLogListByMoCode: (query: { moId: string }) =>
+      http.request<ResultObject['data']>(`/api/control/moLog/getMoLogListByMoId`, {
         method: 'GET',
         params: query,
       }),
@@ -1366,7 +1531,7 @@ export const api = {
      * @request GET:/moBom/getMoBomListByMoCode
      * @secure
      */
-    getMoBomListByMoCode: (query: { moCode: string }) =>
+    getMoBomListByMoCode: (query: { moId: string }) =>
       http.request<ResultObject['data']>(`/api/control/moBom/getMoBomListByMoCode`, {
         method: 'GET',
         params: query,
