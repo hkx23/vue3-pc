@@ -33,7 +33,6 @@ import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api, Org, OrgTreeVO } from '@/api/main';
 
-import { getOrgLevelDic } from '../../api/orgLevel';
 import { FormRef } from './constants';
 
 const formRef: Ref<FormInstanceFunctions> = ref(null);
@@ -55,15 +54,14 @@ const formData: OrgForm = reactive({
   orgName: '',
   orgDesc: '',
 });
-const orgLevelOptions = ref([] as { value: string; label: string }[]);
+const orgLevelOptions = ref<{ value?: string; label?: string }[]>([]);
 
 onMounted(() => {
   fetchOrgLevelDic();
 });
 
 const fetchOrgLevelDic = async () => {
-  const list = await getOrgLevelDic();
-  orgLevelOptions.value = list;
+  orgLevelOptions.value = await api.param.getListByGroupCode({ parmGroupCode: 'ORG_LEVEL_CODE' });
 };
 
 const submit = async () => {
