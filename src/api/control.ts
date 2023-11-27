@@ -401,7 +401,7 @@ export interface WorkcenterSearch {
   /** 多条记录 */
   allRecord?: Workcenter[];
   /** 工作中心-类别 */
-  category?: number[];
+  category?: string;
   /** 工作中心编码名称模糊查询 */
   workcenterword?: string;
   workshopID?: string;
@@ -585,14 +585,13 @@ export interface Routing {
 }
 
 /** 响应数据 */
-export type PagingDataProcess = {
-  list?: Process[];
+export type PagingDataProcessVO = {
+  list?: ProcessVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
-/** 工序 */
-export interface Process {
+export interface ProcessVO {
   id?: string;
   /**
    * 创建时间
@@ -622,10 +621,16 @@ export interface Process {
   processName?: string;
   /** 工序描述 */
   processDesc?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
-export interface ResultPagingDataProcess {
+export interface ResultPagingDataProcessVO {
   /**
    * 响应代码
    * @format int32
@@ -634,8 +639,41 @@ export interface ResultPagingDataProcess {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataProcess;
+  data?: PagingDataProcessVO;
 }
+
+/** 工序 */
+export type Process = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 工序描述 */
+  processDesc?: string;
+} | null;
 
 /** 通用响应类 */
 export interface ResultProcess {
@@ -648,20 +686,6 @@ export interface ResultProcess {
   message?: string;
   /** 工序 */
   data?: Process;
-}
-
-export interface ProcessVO {
-  /** 工序代码 */
-  processCode?: string;
-  /** 工序名称 */
-  processName?: string;
-  /** 工序描述 */
-  processDesc?: string;
-  /**
-   * 工序状态
-   * @format int32
-   */
-  state?: number;
 }
 
 /** 工单排产表 */
@@ -1264,7 +1288,7 @@ export const api = {
      * @request POST:/workcenter/add
      * @secure
      */
-    add: (data: Workcenter) =>
+    add: (data: WorkcenterVO) =>
       http.request<ResultObject['data']>(`/api/control/workcenter/add`, {
         method: 'POST',
         body: data as any,
@@ -1294,7 +1318,7 @@ export const api = {
      * @secure
      */
     getCategory: () =>
-      http.request<ResultObject['data']>(`/api/control/workcenter/getCategory`, {
+      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/control/workcenter/getCategory`, {
         method: 'GET',
       }),
   },
@@ -1324,7 +1348,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataProcess['data']>(`/api/control/process/items`, {
+      http.request<ResultPagingDataProcessVO['data']>(`/api/control/process/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1346,13 +1370,13 @@ export const api = {
      * No description
      *
      * @tags 工序
-     * @name EditById
+     * @name Edit
      * @summary 工序编辑
-     * @request POST:/process/editById
+     * @request POST:/process/edit
      * @secure
      */
-    editById: (data: ProcessVO) =>
-      http.request<ResultObject['data']>(`/api/control/process/editById`, {
+    edit: (data: ProcessVO) =>
+      http.request<ResultObject['data']>(`/api/control/process/edit`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1361,13 +1385,13 @@ export const api = {
      * No description
      *
      * @tags 工序
-     * @name AddById
+     * @name Add
      * @summary 工序新增
-     * @request POST:/process/addById
+     * @request POST:/process/add
      * @secure
      */
-    addById: (data: ProcessVO) =>
-      http.request<ResultObject['data']>(`/api/control/process/addById`, {
+    add: (data: ProcessVO) =>
+      http.request<ResultObject['data']>(`/api/control/process/add`, {
         method: 'POST',
         body: data as any,
       }),
