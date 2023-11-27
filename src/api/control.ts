@@ -563,8 +563,8 @@ export interface MoSchedule {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 工单名称 */
-  moCode?: string;
+  /** 工单ID */
+  moId?: string;
   mitemId?: string;
   /** 工单类型 */
   moClass?: string;
@@ -1265,11 +1265,11 @@ export const api = {
      * @tags 工单日志
      * @name GetMoLogListByMoCode
      * @summary 根据工单号获取工单日志信息
-     * @request GET:/moLog/getMoLogListByMoCode
+     * @request GET:/moLog/getMoLogListByMoId
      * @secure
      */
-    getMoLogListByMoCode: (query: { moCode: string }) =>
-      http.request<ResultObject['data']>(`/api/control/moLog/getMoLogListByMoCode`, {
+    getMoLogListByMoCode: (query: { moId: string }) =>
+      http.request<ResultObject['data']>(`/api/control/moLog/getMoLogListByMoId`, {
         method: 'GET',
         params: query,
       }),
@@ -1284,7 +1284,7 @@ export const api = {
      * @request GET:/moBom/getMoBomListByMoCode
      * @secure
      */
-    getMoBomListByMoCode: (query: { moCode: string }) =>
+    getMoBomListByMoCode: (query: { moId: string }) =>
       http.request<ResultObject['data']>(`/api/control/moBom/getMoBomListByMoCode`, {
         method: 'GET',
         params: query,

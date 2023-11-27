@@ -126,7 +126,7 @@ const fetchTableBom = async () => {
     if (row) {
       const { id } = row;
       const res = (await apicontrol.moBom.getMoBomListByMoCode({
-        moCode: id,
+        moId: id,
       })) as any;
       moBomData.value = res.list;
     }
@@ -145,7 +145,7 @@ const fetchTableLog = async () => {
     if (row) {
       const { id } = row;
       const res = (await apicontrol.moLog.getMoLogListByMoCode({
-        moCode: id,
+        moId: id,
       })) as any;
       moLogData.value = res.list;
     }
