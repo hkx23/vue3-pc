@@ -6,10 +6,12 @@
         <t-col :span="4">
           <t-tag shape="round" size="large">{{ row.moCode }}</t-tag>
         </t-col>
-        <t-col :span="4">
-          <t-tag shape="round" theme="primary" size="large">{{ row.moClassName }}</t-tag>
+        <t-col :span="1">
+          <t-space class="tag-block-light">
+            <t-tag shape="round" theme="primary" size="large">{{ row.moClassName }}</t-tag>
+          </t-space>
         </t-col>
-        <t-col :span="4">
+        <t-col :span="1">
           <t-tag shape="round" size="large">{{ row.statusName }}</t-tag>
         </t-col>
       </t-row>
@@ -23,7 +25,7 @@
         <t-form-item label="产品编码"> {{ row.mitemCode }}</t-form-item>
       </div>
       <div class="form-item-box">
-        <t-form-item label="产品名称"> {{ row.mitemName }}</t-form-item>
+        <t-form-item label="产品名称"> {{ row.mitemDesc }}</t-form-item>
         <t-form-item label="计划数量">
           {{ row.planQty }}
         </t-form-item>
@@ -32,10 +34,10 @@
       <div class="form-item-box">
         <t-form-item label="计划开始时间"> {{ row.datetimePlanStart }}</t-form-item>
         <t-form-item label="计划完成时间"> {{ row.datetimePlanEnd }}</t-form-item>
-        <t-form-item label="入库仓库"> {{ row.warehouse_code }}</t-form-item>
+        <t-form-item label="入库仓库"> {{ row.warehouseName }}</t-form-item>
       </div>
       <div class="form-item-box">
-        <t-form-item label="销售订单"> {{ row.so_no }}</t-form-item>
+        <t-form-item label="销售订单"> {{ row.soNo }}</t-form-item>
         <t-form-item label="工艺路线版本"> {{ row.routingName }}</t-form-item>
       </div>
       <div class="form-item-box">
@@ -225,7 +227,7 @@ const columnsLog: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    colKey: 'operationType',
+    colKey: 'memo',
     title: '说明',
     align: 'center',
   },
@@ -319,6 +321,12 @@ watch(
     display: inline-block !important;
   }
 }
+
+// .tag-block-light {
+//   /deep/ .t-tag--primary {
+//     background-color: #548df3;
+//   }
+// }
 
 .form-checkbox {
   margin: 10px 100px;

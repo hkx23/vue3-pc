@@ -59,11 +59,11 @@
         <t-col :span="3">
           <tm-select-business
             v-model="queryCondition.mitemCode"
-            title="产品："
+            title="产品编码："
             type="mitem"
             value-field="mitemCode"
             :show-title="true"
-            placeholder="请选择产品"
+            placeholder="请选择产品编码"
           ></tm-select-business>
         </t-col>
         <t-col :span="3">
@@ -208,8 +208,8 @@ const columns = ref([
     colKey: 'statusName',
     title: '工单状态',
   },
-  { colKey: 'mitemCode', title: '物料编码', width: '120' },
-  { colKey: 'mitemDesc', title: '物流描述', width: '150' },
+  { colKey: 'mitemCode', title: '产品编码', width: '120' },
+  { colKey: 'mitemDesc', title: '产品描述', width: '150' },
   { colKey: 'planQty', title: '计划数量' },
   { colKey: 'completedQty', title: '完成数量' },
   { colKey: 'uom', title: '单位' },
@@ -261,12 +261,7 @@ const initMoClass = async () => {
     const res = (await apimain.param.getListByGroupCode({
       parmGroupCode: 'C_MO_TYPE',
     })) as any;
-    moClassOption.value = res.list.map((item) => {
-      return {
-        label: item.paramValue,
-        value: item.paramCode,
-      };
-    });
+    moClassOption.value = res;
   } catch (e) {
     console.log('cus', e);
   } finally {
@@ -281,14 +276,9 @@ const initMoType = async () => {
     const res = (await apimain.param.getListByGroupCode({
       parmGroupCode: 'C_MO_STATUS',
     })) as any;
-    const checkall = { label: '全选', checkAll: true };
-    moStatusOption.value = res.list.map((item) => {
-      return {
-        label: item.paramValue,
-        value: item.paramCode,
-      };
-    });
-    moStatusOption.value.splice(0, 1, checkall);
+    const checkall = { label: '全选', value: '', checkAll: true };
+    moStatusOption.value = res;
+    moStatusOption.value.unshift(checkall);
   } catch (e) {
     console.log('cus', e);
   } finally {
