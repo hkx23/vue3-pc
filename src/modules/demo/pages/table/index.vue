@@ -41,7 +41,7 @@ const { loading, setLoading } = useLoading();
 const tableRef = ref();
 
 const enableExport = ref(false);
-const isFixedHeight = ref(true);
+const isFixedHeight = ref(false);
 
 const data = reactive({
   total: 0,
