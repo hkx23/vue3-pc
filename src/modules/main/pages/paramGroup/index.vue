@@ -283,7 +283,7 @@ const setFirstSelcectNode = (treeData: any) => {
 };
 
 // 系统字典组查询
-const onTreeQueryChange = (state: String) => {
+const onTreeQueryChange = (state) => {
   console.info('on input:', state);
   if (filterText.value) {
     filterByText.value = (node) => {

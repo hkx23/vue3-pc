@@ -220,13 +220,12 @@ export interface WorkstationAuthVO {
    */
   state?: number;
   /** 创建人 */
-  creator?: string;
-  /** 创建时间 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
   timeCreate?: string;
-  /** 修改人 */
-  modifier?: string;
-  /** 修改时间 */
-  timeModified?: string;
 }
 
 /** 响应数据 */
@@ -397,12 +396,18 @@ export interface WorkstationVO {
    */
   state?: number;
   /** 创建人 */
-  creator?: string;
-  /** 创建时间 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
   timeCreate?: string;
   /** 修改人 */
-  modifier?: string;
-  /** 修改时间 */
+  modifierName?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
   timeModified?: string;
   processId?: string;
   workcenterId?: string;
@@ -601,6 +606,8 @@ export interface WorkcenterVO {
    * @format int32
    */
   device?: number;
+  /** 子工作中心 */
+  children?: WorkcenterVO[];
 }
 
 /** 响应数据 */
@@ -699,8 +706,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */

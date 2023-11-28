@@ -380,7 +380,6 @@ const onFetchData = async () => {
     }
     // 标签页计数
   } catch (e) {
-    console.log(3);
     console.log(e);
   } finally {
     loading.value = false;
