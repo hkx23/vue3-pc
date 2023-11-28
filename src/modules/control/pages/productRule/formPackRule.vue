@@ -1,9 +1,9 @@
 <template>
   <t-form ref="formRef" :rules="FORM_RULES" :show-cancel="true" :show-error-message="false">
-    <t-form-item :label="t('packRuleCode')" name="packRuleCode">
+    <t-form-item :label="t('productRule.packRuleCode')" name="packRuleCode">
       <t-input v-model="formData.packRuleCode" />
     </t-form-item>
-    <t-form-item :label="t('packRuleName')" name="packRuleCode">
+    <t-form-item :label="t('productRule.packRuleName')" name="packRuleCode">
       <t-input v-model="formData.packRuleName" clearable />
     </t-form-item>
   </t-form>
@@ -25,8 +25,8 @@ const { t } = useLang();
 
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const FORM_RULES = {
-  packRuleCode: [{ required: true, message: t('common.placeholder.input', [t('packRuleCode')]) }],
-  packRuleName: [{ required: true, message: t('common.placeholder.input', [t('packRuleName')]) }],
+  packRuleCode: [{ required: true, message: t('common.placeholder.input', [t('productRule.packRuleCode')]) }],
+  packRuleName: [{ required: true, message: t('common.placeholder.input', [t('productRule.packRuleName')]) }],
 };
 
 interface PackRuleForm extends ProductPackRule {

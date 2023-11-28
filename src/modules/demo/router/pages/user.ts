@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/user/index.vue'),
     meta: {
       title: {
-        zh_CN: '用户',
-        en_US: 'User',
+        'zh-CN': '用户',
+        'en-US': 'User',
       },
       orderNo: 0,
     },

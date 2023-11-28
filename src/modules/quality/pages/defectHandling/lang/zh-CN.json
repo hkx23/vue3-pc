@@ -1,0 +1,8 @@
+{
+  "defectHandling": {
+    "parentLevel": "上一层级",
+    "processingCategoryName": "处理方法类别名称",
+    "processingCode": "处理方法编码",
+    "processingName": "处理方法名称"
+  }
+}

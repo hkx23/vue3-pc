@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/person/index.vue'),
     meta: {
       title: {
-        zh_CN: '员工',
-        en_US: 'Person',
+        'zh-CN': '员工',
+        'en-US': 'Person',
       },
       orderNo: 0,
     },

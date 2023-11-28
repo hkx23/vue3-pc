@@ -4,8 +4,8 @@ var b = (e, r, t) => (qe(e, typeof r != "symbol" ? r + "" : r, t), t);
 var Be = typeof global == "object" && global && global.Object === Object && global;
 const be = Be;
 var He = typeof self == "object" && self && self.Object === Object && self, ze = be || He || Function("return this")();
-const O = ze;
-var Je = O.Symbol;
+const x = ze;
+var Je = x.Symbol;
 const W = Je;
 var Te = Object.prototype, Ve = Te.hasOwnProperty, Ge = Te.toString, U = W ? W.toStringTag : void 0;
 function Ke(e) {
@@ -72,7 +72,7 @@ function je(e) {
   var r = C(e);
   return r == dt || r == gt || r == pt || r == ht;
 }
-var mt = O["__core-js_shared__"];
+var mt = x["__core-js_shared__"];
 const q = mt;
 var ie = function() {
   var e = /[^.]+$/.exec(q && q.keys && q.keys.IE_PROTO || "");
@@ -81,11 +81,11 @@ var ie = function() {
 function yt(e) {
   return !!ie && ie in e;
 }
-var wt = Function.prototype, vt = wt.toString;
+var vt = Function.prototype, wt = vt.toString;
 function R(e) {
   if (e != null) {
     try {
-      return vt.call(e);
+      return wt.call(e);
     } catch {
     }
     try {
@@ -98,20 +98,20 @@ function R(e) {
 var bt = /[\\^$.*+?()[\]{}|]/g, Tt = /^\[object .+?Constructor\]$/, Et = Function.prototype, jt = Object.prototype, At = Et.toString, Pt = jt.hasOwnProperty, St = RegExp(
   "^" + At.call(Pt).replace(bt, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
 );
-function xt(e) {
+function Ot(e) {
   if (!_(e) || yt(e))
     return !1;
   var r = je(e) ? St : Tt;
   return r.test(R(e));
 }
-function Ot(e, r) {
+function xt(e, r) {
   return e == null ? void 0 : e[r];
 }
 function D(e, r) {
-  var t = Ot(e, r);
-  return xt(t) ? t : void 0;
+  var t = xt(e, r);
+  return Ot(t) ? t : void 0;
 }
-var $t = D(O, "WeakMap");
+var $t = D(x, "WeakMap");
 const z = $t;
 var _t = 9007199254740991;
 function Ae(e) {
@@ -138,7 +138,7 @@ const kt = Lt;
 function Dt() {
   return !1;
 }
-var xe = typeof exports == "object" && exports && !exports.nodeType && exports, ae = xe && typeof module == "object" && module && !module.nodeType && module, Ft = ae && ae.exports === xe, ce = Ft ? O.Buffer : void 0, Wt = ce ? ce.isBuffer : void 0, Nt = Wt || Dt;
+var Oe = typeof exports == "object" && exports && !exports.nodeType && exports, ae = Oe && typeof module == "object" && module && !module.nodeType && module, Ft = ae && ae.exports === Oe, ce = Ft ? x.Buffer : void 0, Wt = ce ? ce.isBuffer : void 0, Nt = Wt || Dt;
 const qt = Nt;
 var Bt = "[object Arguments]", Ht = "[object Array]", zt = "[object Boolean]", Jt = "[object Date]", Vt = "[object Error]", Gt = "[object Function]", Kt = "[object Map]", Yt = "[object Number]", Xt = "[object Object]", Zt = "[object RegExp]", Qt = "[object Set]", er = "[object String]", tr = "[object WeakMap]", rr = "[object ArrayBuffer]", nr = "[object DataView]", or = "[object Float32Array]", ir = "[object Float64Array]", sr = "[object Int8Array]", ar = "[object Int16Array]", cr = "[object Int32Array]", ur = "[object Uint8Array]", fr = "[object Uint8ClampedArray]", lr = "[object Uint16Array]", pr = "[object Uint32Array]", T = {};
 T[or] = T[ir] = T[sr] = T[ar] = T[cr] = T[ur] = T[fr] = T[lr] = T[pr] = !0;
@@ -151,7 +151,7 @@ function gr(e) {
     return e(r);
   };
 }
-var Oe = typeof exports == "object" && exports && !exports.nodeType && exports, L = Oe && typeof module == "object" && module && !module.nodeType && module, hr = L && L.exports === Oe, B = hr && be.process, mr = function() {
+var xe = typeof exports == "object" && exports && !exports.nodeType && exports, L = xe && typeof module == "object" && module && !module.nodeType && module, hr = L && L.exports === xe, B = hr && be.process, mr = function() {
   try {
     var e = L && L.require && L.require("util").types;
     return e || B && B.binding && B.binding("util");
@@ -160,13 +160,13 @@ var Oe = typeof exports == "object" && exports && !exports.nodeType && exports, 
 }();
 const ue = mr;
 var fe = ue && ue.isTypedArray, yr = fe ? gr(fe) : dr;
-const wr = yr;
-function vr(e, r) {
+const vr = yr;
+function wr(e, r) {
   return function(t) {
     return e(r(t));
   };
 }
-var br = vr(Object.keys, Object);
+var br = wr(Object.keys, Object);
 const Tr = br;
 var Er = Object.prototype, jr = Er.hasOwnProperty;
 function Ar(e) {
@@ -177,14 +177,14 @@ function Ar(e) {
     jr.call(e, t) && t != "constructor" && r.push(t);
   return r;
 }
-var Pr = D(O, "Map");
+var Pr = D(x, "Map");
 const J = Pr;
-var Sr = D(O, "DataView");
+var Sr = D(x, "DataView");
 const V = Sr;
-var xr = D(O, "Promise");
-const G = xr;
-var Or = D(O, "Set");
-const K = Or;
+var Or = D(x, "Promise");
+const G = Or;
+var xr = D(x, "Set");
+const K = xr;
 var le = "[object Map]", $r = "[object Object]", pe = "[object Promise]", de = "[object Set]", ge = "[object WeakMap]", he = "[object DataView]", _r = R(V), Cr = R(J), Rr = R(G), Ir = R(K), Mr = R(z), $ = C;
 (V && $(new V(new ArrayBuffer(1))) != he || J && $(new J()) != le || G && $(G.resolve()) != pe || K && $(new K()) != de || z && $(new z()) != ge) && ($ = function(e) {
   var r = C(e), t = r == $r ? e.constructor : void 0, n = t ? R(t) : "";
@@ -205,15 +205,15 @@ var le = "[object Map]", $r = "[object Object]", pe = "[object Promise]", de = "
 });
 const Ur = $;
 var Lr = function() {
-  return O.Date.now();
+  return x.Date.now();
 };
 const H = Lr;
 var kr = "Expected a function", Dr = Math.max, Fr = Math.min;
 function $e(e, r, t) {
-  var n, o, c, u, f, a, s = 0, i = !1, l = !1, v = !0;
+  var n, o, c, u, f, a, s = 0, i = !1, l = !1, w = !0;
   if (typeof e != "function")
     throw new TypeError(kr);
-  r = oe(r) || 0, _(t) && (i = !!t.leading, l = "maxWait" in t, c = l ? Dr(oe(t.maxWait) || 0, r) : c, v = "trailing" in t ? !!t.trailing : v);
+  r = oe(r) || 0, _(t) && (i = !!t.leading, l = "maxWait" in t, c = l ? Dr(oe(t.maxWait) || 0, r) : c, w = "trailing" in t ? !!t.trailing : w);
   function g(d) {
     var P = n, S = o;
     return n = o = void 0, s = d, u = e.apply(S, P), u;
@@ -236,12 +236,12 @@ function $e(e, r, t) {
     f = setTimeout(m, E(d));
   }
   function A(d) {
-    return f = void 0, v && n ? g(d) : (n = o = void 0, u);
+    return f = void 0, w && n ? g(d) : (n = o = void 0, u);
   }
   function y() {
     f !== void 0 && clearTimeout(f), s = 0, n = a = o = f = void 0;
   }
-  function w() {
+  function v() {
     return f === void 0 ? u : A(H());
   }
   function j() {
@@ -254,7 +254,7 @@ function $e(e, r, t) {
     }
     return f === void 0 && (f = setTimeout(m, r)), u;
   }
-  return j.cancel = y, j.flush = w, j;
+  return j.cancel = y, j.flush = v, j;
 }
 var Wr = "[object String]";
 function me(e) {
@@ -264,7 +264,7 @@ var Nr = "[object Map]", qr = "[object Set]", Br = Object.prototype, Hr = Br.has
 function ye(e) {
   if (e == null)
     return !0;
-  if (Ct(e) && (Ee(e) || typeof e == "string" || typeof e.splice == "function" || qt(e) || wr(e) || kt(e)))
+  if (Ct(e) && (Ee(e) || typeof e == "string" || typeof e.splice == "function" || qt(e) || vr(e) || kt(e)))
     return !e.length;
   var r = Ur(e);
   if (r == Nr || r == qr)
@@ -370,7 +370,7 @@ function Gr(e, r) {
       return P;
     var S = t[a], I = S.type, N = S.index;
     throw new TypeError("Unexpected ".concat(I, " at ").concat(N, ", expected ").concat(d));
-  }, v = function() {
+  }, w = function() {
     for (var d = "", P; P = i("CHAR") || i("ESCAPED_CHAR"); )
       d += P;
     return d;
@@ -395,10 +395,10 @@ function Gr(e, r) {
     s && (u.push(s), s = "");
     var A = i("OPEN");
     if (A) {
-      var p = v(), y = i("NAME") || "", w = i("PATTERN") || "", j = v();
+      var p = w(), y = i("NAME") || "", v = i("PATTERN") || "", j = w();
       l("CLOSE"), u.push({
-        name: y || (w ? f++ : ""),
-        pattern: y && !w ? c : w,
+        name: y || (v ? f++ : ""),
+        pattern: y && !v ? c : v,
         prefix: p,
         suffix: j,
         modifier: i("MODIFIER") || ""
@@ -442,23 +442,23 @@ function Zr(e, r, t) {
   t === void 0 && (t = {});
   for (var n = t.strict, o = n === void 0 ? !1 : n, c = t.start, u = c === void 0 ? !0 : c, f = t.end, a = f === void 0 ? !0 : f, s = t.encode, i = s === void 0 ? function(N) {
     return N;
-  } : s, l = t.delimiter, v = l === void 0 ? "/#?" : l, g = t.endsWith, h = g === void 0 ? "" : g, E = "[".concat(M(h), "]|$"), p = "[".concat(M(v), "]"), m = u ? "^" : "", A = 0, y = e; A < y.length; A++) {
-    var w = y[A];
-    if (typeof w == "string")
-      m += M(i(w));
+  } : s, l = t.delimiter, w = l === void 0 ? "/#?" : l, g = t.endsWith, h = g === void 0 ? "" : g, E = "[".concat(M(h), "]|$"), p = "[".concat(M(w), "]"), m = u ? "^" : "", A = 0, y = e; A < y.length; A++) {
+    var v = y[A];
+    if (typeof v == "string")
+      m += M(i(v));
     else {
-      var j = M(i(w.prefix)), d = M(i(w.suffix));
-      if (w.pattern)
-        if (r && r.push(w), j || d)
-          if (w.modifier === "+" || w.modifier === "*") {
-            var P = w.modifier === "*" ? "?" : "";
-            m += "(?:".concat(j, "((?:").concat(w.pattern, ")(?:").concat(d).concat(j, "(?:").concat(w.pattern, "))*)").concat(d, ")").concat(P);
+      var j = M(i(v.prefix)), d = M(i(v.suffix));
+      if (v.pattern)
+        if (r && r.push(v), j || d)
+          if (v.modifier === "+" || v.modifier === "*") {
+            var P = v.modifier === "*" ? "?" : "";
+            m += "(?:".concat(j, "((?:").concat(v.pattern, ")(?:").concat(d).concat(j, "(?:").concat(v.pattern, "))*)").concat(d, ")").concat(P);
           } else
-            m += "(?:".concat(j, "(").concat(w.pattern, ")").concat(d, ")").concat(w.modifier);
+            m += "(?:".concat(j, "(").concat(v.pattern, ")").concat(d, ")").concat(v.modifier);
         else
-          w.modifier === "+" || w.modifier === "*" ? m += "((?:".concat(w.pattern, ")").concat(w.modifier, ")") : m += "(".concat(w.pattern, ")").concat(w.modifier);
+          v.modifier === "+" || v.modifier === "*" ? m += "((?:".concat(v.pattern, ")").concat(v.modifier, ")") : m += "(".concat(v.pattern, ")").concat(v.modifier);
       else
-        m += "(?:".concat(j).concat(d, ")").concat(w.modifier);
+        m += "(?:".concat(j).concat(d, ")").concat(v.modifier);
     }
   }
   if (a)
@@ -497,14 +497,14 @@ if (Ie) {
         if (!a || !a.url || a.method && a.method.toUpperCase() !== (o == null ? void 0 : o.method))
           return !1;
         const s = new URL(a.url, "http://localhost"), i = new URLSearchParams(s.search), l = new URLSearchParams(u.search);
-        for (const [v, g] of i)
-          if (l.get(v) !== g)
+        for (const [w, g] of i)
+          if (l.get(w) !== g)
             return !1;
         return Ce(s.pathname).test(u.pathname);
       });
       if (f) {
         const { response: a, timeout: s, statusCode: i } = f;
-        s && await new Promise((v) => setTimeout(v, s));
+        s && await new Promise((w) => setTimeout(w, s));
         const l = typeof a == "function" ? a(o) : a;
         return console.debug("mock success: " + c), console.debug(l), l instanceof Response ? Promise.resolve(l) : Promise.resolve(
           new Response(JSON.stringify(l), {
@@ -573,7 +573,9 @@ class Y {
     if (Z(t))
       return "";
     const n = ~r.indexOf("?") ? "&" : "?";
-    return typeof t == "object" ? n + Object.entries(t).map((o) => encodeURIComponent(o[0]) + "=" + encodeURIComponent(o[1] || "")).join("&") : t !== "" ? n + F(t) : "";
+    return typeof t == "object" ? n + Object.entries(t).map(
+      (o) => encodeURIComponent(o[0]) + "=" + encodeURIComponent(o[1] === void 0 || o[1] === null ? "" : o[1])
+    ).join("&") : t !== "" ? n + F(t) : "";
   }
 }
 class nn {
@@ -741,10 +743,10 @@ var ke = { exports: {} };
   function o(a, s, i) {
     this.fn = a, this.context = s, this.once = i || !1;
   }
-  function c(a, s, i, l, v) {
+  function c(a, s, i, l, w) {
     if (typeof i != "function")
       throw new TypeError("The listener must be a function");
-    var g = new o(i, l || a, v), h = t ? t + s : s;
+    var g = new o(i, l || a, w), h = t ? t + s : s;
     return a._events[h] ? a._events[h].fn ? a._events[h] = [a._events[h], g] : a._events[h].push(g) : (a._events[h] = g, a._eventsCount++), a;
   }
   function u(a, s) {
@@ -766,13 +768,13 @@ var ke = { exports: {} };
       return [];
     if (l.fn)
       return [l.fn];
-    for (var v = 0, g = l.length, h = new Array(g); v < g; v++)
-      h[v] = l[v].fn;
+    for (var w = 0, g = l.length, h = new Array(g); w < g; w++)
+      h[w] = l[w].fn;
     return h;
   }, f.prototype.listenerCount = function(s) {
     var i = t ? t + s : s, l = this._events[i];
     return l ? l.fn ? 1 : l.length : 0;
-  }, f.prototype.emit = function(s, i, l, v, g, h) {
+  }, f.prototype.emit = function(s, i, l, w, g, h) {
     var E = t ? t + s : s;
     if (!this._events[E])
       return !1;
@@ -786,18 +788,18 @@ var ke = { exports: {} };
         case 3:
           return p.fn.call(p.context, i, l), !0;
         case 4:
-          return p.fn.call(p.context, i, l, v), !0;
+          return p.fn.call(p.context, i, l, w), !0;
         case 5:
-          return p.fn.call(p.context, i, l, v, g), !0;
+          return p.fn.call(p.context, i, l, w, g), !0;
         case 6:
-          return p.fn.call(p.context, i, l, v, g, h), !0;
+          return p.fn.call(p.context, i, l, w, g, h), !0;
       }
       for (y = 1, A = new Array(m - 1); y < m; y++)
         A[y - 1] = arguments[y];
       p.fn.apply(p.context, A);
     } else {
-      var w = p.length, j;
-      for (y = 0; y < w; y++)
+      var v = p.length, j;
+      for (y = 0; y < v; y++)
         switch (p[y].once && this.removeListener(s, p[y].fn, void 0, !0), m) {
           case 1:
             p[y].fn.call(p[y].context);
@@ -809,7 +811,7 @@ var ke = { exports: {} };
             p[y].fn.call(p[y].context, i, l);
             break;
           case 4:
-            p[y].fn.call(p[y].context, i, l, v);
+            p[y].fn.call(p[y].context, i, l, w);
             break;
           default:
             if (!A)
@@ -823,7 +825,7 @@ var ke = { exports: {} };
     return c(this, s, i, l, !1);
   }, f.prototype.once = function(s, i, l) {
     return c(this, s, i, l, !0);
-  }, f.prototype.removeListener = function(s, i, l, v) {
+  }, f.prototype.removeListener = function(s, i, l, w) {
     var g = t ? t + s : s;
     if (!this._events[g])
       return this;
@@ -831,10 +833,10 @@ var ke = { exports: {} };
       return u(this, g), this;
     var h = this._events[g];
     if (h.fn)
-      h.fn === i && (!v || h.once) && (!l || h.context === l) && u(this, g);
+      h.fn === i && (!w || h.once) && (!l || h.context === l) && u(this, g);
     else {
       for (var E = 0, p = [], m = h.length; E < m; E++)
-        (h[E].fn !== i || v && !h[E].once || l && h[E].context !== l) && p.push(h[E]);
+        (h[E].fn !== i || w && !h[E].once || l && h[E].context !== l) && p.push(h[E]);
       p.length ? this._events[g] = p.length === 1 ? p[0] : p : u(this, g);
     }
     return this;
@@ -961,7 +963,7 @@ class ee {
   }
 }
 var De = /* @__PURE__ */ ((e) => (e.Mobile = "APP", e.Desktop = "WEB", e.NODE_JS = "NodeJs", e))(De || {});
-const x = {
+const O = {
   ipc: null,
   config: {
     baseUrl: "",
@@ -1042,7 +1044,7 @@ const x = {
     isEmpty: Z
   }
 };
-class we extends Error {
+class ve extends Error {
   constructor(t, n, o, c = "") {
     var u;
     super();
@@ -1050,11 +1052,11 @@ class we extends Error {
     b(this, "status", "");
     b(this, "type", "");
     b(this, "description", "");
-    this.message = t, this.name = "CustomError", this.code = n, this.status = o, this.type = "error", this.description = c, (u = x.ipc.targets.get("_self")) == null || u.send("custom_error", this);
+    this.message = t, this.name = "CustomError", this.code = n, this.status = o, this.type = "error", this.description = c, (u = O.ipc.targets.get("_self")) == null || u.send("custom_error", this);
   }
 }
-const Fe = typeof window < "u", ve = Fe ? null : require("node:path"), ln = Fe ? null : require("swagger-typescript-api");
-function vn(e) {
+const Fe = typeof window < "u", we = Fe ? null : require("node:path"), ln = Fe ? null : require("swagger-typescript-api");
+function wn(e) {
   if (!e || !e.baseUrl || !e.inputs)
     return null;
   const r = e.inputs.split(",");
@@ -1068,11 +1070,10 @@ function vn(e) {
         await ln.generateApi({
           name: t,
           url: `${e.baseUrl}${n}/v3/api-docs`,
-          output: ve.resolve(process.cwd(), (e == null ? void 0 : e.output) || "./src/api"),
-          templates: ve.resolve(process.cwd(), (e == null ? void 0 : e.templates) || "./plugins/swagger-templates"),
+          output: we.resolve(process.cwd(), (e == null ? void 0 : e.output) || "./src/api"),
+          templates: we.resolve(process.cwd(), (e == null ? void 0 : e.templates) || "./plugins/swagger-templates"),
           singleHttpClient: !0,
           httpClientType: "fetch",
-          withPrefix: !1,
           // @ts-ignore
           apiClassName: `${t[0].toUpperCase() + t.slice(1)}Api`,
           apiPrefix: n,
@@ -1117,39 +1118,39 @@ const dn = async (e, r) => {
   (u = e.response) != null && u.ok && (o != null && o.startsWith("application/json")) && (e.result = await ((f = e.response) == null ? void 0 : f.json()));
 }, hn = async (e, r) => {
   var c, u, f, a, s;
-  const n = e.requestOptions.headers, o = x.getToken();
-  if (o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), n.eid = x.getEnterpriseId(), n.oid = x.getOrgId(), n["Accept-Language"] = (c = x.getLanguage()) == null ? void 0 : c.replace("_", "-"), n["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await r(), !((u = e.response) != null && u.ok)) {
+  const n = e.requestOptions.headers, o = O.getToken();
+  if (o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), n.eid = O.getEnterpriseId(), n.oid = O.getOrgId(), n["Accept-Language"] = (c = O.getLanguage()) == null ? void 0 : c.replace("_", "-"), n["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await r(), !((u = e.response) != null && u.ok)) {
     const i = new Error("An error occurred while fetching the data.");
     throw i.message = `${(f = e.response) == null ? void 0 : f.status}|${await ((a = e.response) == null ? void 0 : a.text()) || ""}`, i;
   }
   if (((s = e.response) == null ? void 0 : s.status) !== 200)
-    throw new we(JSON.stringify(e.result), 500, e.response.status);
+    throw new ve(JSON.stringify(e.result), 500, e.response.status);
   if (!e.requestOptions.returnNativeResponse) {
     const i = e.result;
     if (i.code === 0 || i.code === 200)
       e.result = i.data;
     else if (i.message)
-      throw new we(i.message, i.code, e.response.status, JSON.stringify(i));
+      throw new ve(i.message, i.code, e.response.status, JSON.stringify(i));
   }
 }, mn = async (e, r) => {
   const t = (/* @__PURE__ */ new Date()).getTime();
   e.url += `${e.url.indexOf("?") > 0 ? "&" : "?"}_t=${t}`, await r();
 }, te = new Y();
 te.baseURL = () => {
-  switch (x.platform) {
+  switch (O.platform) {
     case De.Mobile:
       return window.APP.getURL();
     default:
-      return x.config.baseUrl || location.origin;
+      return O.config.baseUrl || location.origin;
   }
 };
 te.middlewares = () => [hn, gn, dn, mn];
 const yn = new nn(te);
-typeof window < "u" && (x.ipc = ee.init(), x.ipc.addTarget("_self", window), window.http = yn, window.fw = x);
+typeof window < "u" && (O.ipc = ee.init(), O.ipc.addTarget("_self", window), window.http = yn, window.fw = O);
 export {
-  we as CustomError,
+  ve as CustomError,
   on as Dictionary,
   ee as EventBus,
   nn as Http,
-  vn as swaggerApiGen
+  wn as swaggerApiGen
 };

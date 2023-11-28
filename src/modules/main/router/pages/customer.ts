@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/customer/index.vue'),
     meta: {
       title: {
-        zh_CN: '客户信息',
-        en_US: 'customer',
+        'zh-CN': '客户信息',
+        'en-US': 'customer',
       },
       orderNo: 0,
     },

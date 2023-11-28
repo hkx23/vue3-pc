@@ -131,10 +131,10 @@ const optsValue = ref({}) as any;
 const opts = computed(() => {
   return {
     packRule: {
-      label: t('packRule'),
+      label: t('productRule.packRule'),
       comp: 't-input',
       defaultVal: '',
-      placeholder: t('common.placeholder.input', [`${t('packRule')}}`]),
+      placeholder: t('common.placeholder.input', [`${t('productRule.packRule')}}`]),
     },
     mitemCategory: {
       label: t('business.main.mitemCategoryCode'),
@@ -154,8 +154,8 @@ const opts = computed(() => {
 });
 const tableProductPackRuleColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'single', width: 40, fixed: 'left' },
-  { title: `${t('packRuleCode')}`, width: 120, colKey: 'packRuleCode' },
-  { title: `${t('packRuleName')}`, width: 130, colKey: 'packRuleName' },
+  { title: `${t('productRule.packRuleCode')}`, width: 120, colKey: 'packRuleCode' },
+  { title: `${t('productRule.packRuleName')}`, width: 130, colKey: 'packRuleName' },
   { title: `${t('business.main.creator')}`, width: 110, colKey: 'creatorName' },
   { title: `${t('business.main.timeCreate')}`, width: 140, colKey: 'timeCreate' },
   { title: `${t('business.main.modifier')}`, width: 110, colKey: 'modifierName' },
@@ -164,9 +164,9 @@ const tableProductPackRuleColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const tablePackDtlColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: `${t('packType')}`, width: 150, colKey: 'packTypeName' },
-  { title: `${t('packQty')}`, width: 50, colKey: 'packQty' },
-  { title: `${t('uom')}`, width: 50, colKey: 'uom' },
+  { title: `${t('productRule.packType')}`, width: 150, colKey: 'packTypeName' },
+  { title: `${t('productRule.packQty')}`, width: 50, colKey: 'packQty' },
+  { title: `${t('productRule.uom')}`, width: 50, colKey: 'uom' },
   { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 80, colKey: 'op' },
 ];
 

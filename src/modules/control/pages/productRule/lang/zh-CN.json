@@ -1,0 +1,10 @@
+{
+  "productRule": {
+    "packRule": "包装规则代码/名称",
+    "packRuleCode": "包装规则代码",
+    "packRuleName": "包装规则名称",
+    "packType": "包装类型",
+    "uom": "单位",
+    "packQty": "数量"
+  }
+}

@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/workStationPermission/index.vue'),
     meta: {
       title: {
-        zh_CN: '工作中心',
-        en_US: 'workStationPermission',
+        'zh-CN': '工作中心',
+        'en-US': 'workStationPermission',
       },
       orderNo: 0,
     },

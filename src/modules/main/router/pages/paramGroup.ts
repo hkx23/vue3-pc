@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/paramGroup/index.vue'),
     meta: {
       title: {
-        zh_CN: '系统字典',
-        en_US: 'paramGroup',
+        'zh-CN': '系统字典',
+        'en-US': 'paramGroup',
       },
       orderNo: 0,
     },

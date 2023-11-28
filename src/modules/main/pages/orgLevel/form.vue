@@ -1,9 +1,9 @@
 <template>
   <t-form ref="formRef" :rules="FORM_RULES" :data="formData" :show-cancel="true" :show-error-message="false">
-    <t-form-item :label="t('parentLevel')" name="parentLevelId">
+    <t-form-item :label="t('orgLevel.parentLevel')" name="parentLevelId">
       {{ formData.parentLevelId ? formData.parentLevelName : 'ROOT' }}
     </t-form-item>
-    <t-form-item :label="t('levelName')" name="levelCode">
+    <t-form-item :label="t('orgLevel.levelName')" name="levelCode">
       <t-select v-model="formData.levelCode" clearable @change="onChangeLevelCode">
         <t-option v-for="(item, index) in orgLevelOptions" :key="index" :value="item.value" :label="item.label">
           {{ item.label }}
@@ -30,7 +30,7 @@ const { t } = useLang();
 
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const FORM_RULES = {
-  levelCode: [{ required: true, message: t('common.placeholder.input', [t('levelName')]) }],
+  levelCode: [{ required: true, message: t('common.placeholder.input', [t('orgLevel.levelName')]) }],
 };
 
 interface OrgLevelForm extends OrgLevel {

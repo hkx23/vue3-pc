@@ -1,0 +1,104 @@
+{
+  "business": {
+    "control": {},
+    "main": {
+      "code": "Code",
+      "creator": "Created By",
+      "defaultWarehouse": "Default Warehouse",
+      "desc": "Description",
+      "inProduct": "Finished Product",
+      "isBatchNo": "Enable Batch Number",
+      "mitemCategoryCode": "Material Category Code",
+      "mitemCategoryName": "Material Category Name",
+      "mitemCode": "Material Code",
+      "mitemDesc": "Material Description",
+      "mitemName": "Material Name",
+      "mitemTypeCode": "Material classification",
+      "modifier": "Updated By",
+      "name": "Name",
+      "no": "No",
+      "product": "Semi-finished Product",
+      "pull": "Pull",
+      "push": "Push",
+      "raw": "Raw Materials",
+      "serialNumber": "Serial Number",
+      "shelfLifeDays": "Shelf Life (in days)",
+      "supplyCategory": "Supply Method",
+      "timeCreate": "Creation Time",
+      "timeModified": "Updated",
+      "uom": "Primary Unit of Measurement",
+      "warehouseCode": "Warehouse Code",
+      "warehouseName": "Warehouse Name",
+      "yes": "Yes"
+    },
+    "warehouse": {}
+  },
+  "common": {
+    "button": {
+      "add": "Add",
+      "batchDelete": "Batch delete",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "copy": "Copy",
+      "delete": "Delete",
+      "disable": "Disable",
+      "download": "Download",
+      "edit": "Edit",
+      "export": "Export",
+      "import": "Import",
+      "operation": "Operation",
+      "query": "Query",
+      "reset": "Reset",
+      "save": "Save",
+      "search": "Search",
+      "upload": "Upload"
+    },
+    "dialog": {
+      "header": {
+        "add": "@:common.button.add{0}",
+        "edit": "@:common.button.edit{0}"
+      }
+    },
+    "message": {
+      "addSuccess": "Addition successful",
+      "confirmDelete": "Are you sure you want to delete?",
+      "deleteSuccess": "Deletion successful",
+      "downloadSuccess": "Download successful",
+      "fail": "Operation failed",
+      "saveSuccess": "Saving successful",
+      "selectRowTryAgain": "Please select a row and try again",
+      "success": "Operation successful",
+      "uploadSuccess": "Upload successful"
+    },
+    "placeholder": {
+      "input": "Please enter {0}",
+      "search": "Please enter {0} to search",
+      "select": "Please select {0}"
+    },
+    "validation": {
+      "date": "Please enter a valid date",
+      "dateISO": "Please enter a valid date (YYYY-MM-DD)",
+      "digits": "Only numbers can be entered",
+      "email": "Please enter a valid email address",
+      "equalTo": "Your inputs do not match",
+      "extension": "Please enter a valid extension",
+      "max": "Please enter a value no greater than {0}",
+      "maxLength": "Up to {0} characters can be entered",
+      "min": "Please enter a value no less than {0}",
+      "minLength": "At least {0} characters must be entered",
+      "number": "Please enter a valid number",
+      "range": "Please enter a value between {0} and {1}",
+      "rangeLength": "Please enter a character length between {0} and {1}",
+      "remote": "Please correct this field",
+      "required": "This field is required",
+      "step": "Please enter an integer multiple of {0}",
+      "url": "Please enter a valid URL"
+    }
+  },
+  "orgLevel": {
+    "levelCode": "Hierarchy code",
+    "levelName": "organizational level",
+    "levelSeq": "hierarchical sequence",
+    "parentLevel": "Previous level"
+  }
+}

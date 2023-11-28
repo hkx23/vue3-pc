@@ -27,7 +27,7 @@
     </t-card>
     <t-dialog
       v-model:visible="formVisible"
-      :header="t('common.dialog.header.add', [t('levelName')])"
+      :header="t('common.dialog.header.add', [t('orgLevel.levelName')])"
       :on-confirm="onConfirmForm"
     >
       <org-level-form ref="formRef"></org-level-form>
@@ -55,15 +55,15 @@ const { t } = useLang();
 
 const columns = [
   {
-    title: t('levelName'),
+    title: t('orgLevel.levelName'),
     colKey: 'levelName',
   },
   {
-    title: t('levelCode'),
+    title: t('orgLevel.levelCode'),
     colKey: 'levelCode',
   },
   {
-    title: t('levelSeq'),
+    title: t('orgLevel.levelSeq'),
     colKey: 'levelSeq',
   },
 ];

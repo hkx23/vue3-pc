@@ -220,12 +220,13 @@ export interface WorkstationAuthVO {
    */
   state?: number;
   /** 创建人 */
-  creatorName?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
+  creator?: string;
+  /** 创建时间 */
   timeCreate?: string;
+  /** 修改人 */
+  modifier?: string;
+  /** 修改时间 */
+  timeModified?: string;
 }
 
 /** 响应数据 */
@@ -396,18 +397,12 @@ export interface WorkstationVO {
    */
   state?: number;
   /** 创建人 */
-  creatorName?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
+  creator?: string;
+  /** 创建时间 */
   timeCreate?: string;
   /** 修改人 */
-  modifierName?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
+  modifier?: string;
+  /** 修改时间 */
   timeModified?: string;
   processId?: string;
   workcenterId?: string;
