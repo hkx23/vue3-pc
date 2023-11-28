@@ -197,6 +197,125 @@ export interface ResultWorkgroup {
 }
 
 /** 通用响应类 */
+export interface ResultWarehouse {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 仓库 */
+  data?: Warehouse;
+}
+
+/** 仓库 */
+export type Warehouse = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 仓库描述 */
+  warehouseDesc?: string;
+  /** 仓库类型 */
+  warehouseCategory?: string;
+  /** 仓库属性 */
+  warehouseAttribute?: string;
+  /**
+   * 是否启用交易上传
+   * @format int32
+   */
+  isEnableUpload?: number;
+  /**
+   * 交易上传时间
+   * @format date-time
+   */
+  datetimeUpload?: string;
+  /**
+   * 是否启用货位管理
+   * @format int32
+   */
+  isEnableLocation?: number;
+  /** ERP仓库 */
+  erpWarehouse?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListWarehouseFeignDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WarehouseFeignDTO[] | null;
+}
+
+/** 仓库服务间调用标准实体 */
+export type WarehouseFeignDTO = {
+  id?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 仓库描述 */
+  warehouseDesc?: string;
+  /** 仓库类型 */
+  warehouseCategory?: string;
+  /** 仓库属性 */
+  warehouseAttribute?: string;
+  /**
+   * 是否启用交易上传
+   * @format int32
+   */
+  isEnableUpload?: number;
+  /**
+   * 交易上传时间
+   * @format date-time
+   */
+  datetimeUpload?: string;
+  /**
+   * 是否启用货位管理
+   * @format int32
+   */
+  isEnableLocation?: number;
+  /** ERP仓库 */
+  erpWarehouse?: string;
+} | null;
+
+/** 通用响应类 */
 export interface ResultUser {
   /**
    * 响应代码
@@ -290,6 +409,7 @@ export type User = {
    */
   timeExpiration?: string;
   personId?: string;
+  orgId?: string;
 } | null;
 
 /** 响应数据 */
@@ -971,14 +1091,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isState?: boolean;
-  stateName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
   isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
   isBatchName?: string;
+  stateName?: string;
+  isState?: boolean;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -1144,8 +1264,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1372,8 +1492,20 @@ export type CurrentUserVO = {
   userName?: string;
   /** 显示名称 */
   displayName?: string;
-  mpersonId?: string;
+  defaultOrgId?: string;
+  /** 授权组织 */
+  orgList?: OrgVO[];
 } | null;
+
+/** 组织基础实体 */
+export interface OrgVO {
+  /** 组织ID */
+  id?: string;
+  /** 组织编码 */
+  code?: string;
+  /** 组织名称 */
+  name?: string;
+}
 
 /** 通用响应类 */
 export interface ResultCurrentUserVO {
@@ -1386,6 +1518,25 @@ export interface ResultCurrentUserVO {
   message?: string;
   /** 当前用户实体 */
   data?: CurrentUserVO;
+}
+
+/** 响应数据 */
+export type KeyValuePairStringString = {
+  value?: string;
+  label?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListKeyValuePairStringString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: KeyValuePairStringString[] | null;
 }
 
 /** 显示组织层级实体 */
@@ -1719,6 +1870,49 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkgroup['data']>(`/api/main/workgroup/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  warehouse: {
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name Search
+     * @request POST:/warehouse/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/warehouse/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name GetItemById
+     * @request POST:/warehouse/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultWarehouse['data']>(`/api/main/warehouse/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name FeignListByIds
+     * @summary 服务间调用标准仓库信息
+     * @request POST:/warehouse/feignListByIds
+     * @secure
+     */
+    feignListByIds: (data: string[]) =>
+      http.request<ResultListWarehouseFeignDTO['data']>(`/api/main/warehouse/feignListByIds`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   user: {
@@ -2131,7 +2325,7 @@ export const api = {
       /** @default "" */
       parmGroupCode?: string;
     }) =>
-      http.request<ResultObject['data']>(`/api/main/param/getListByGroupCode`, {
+      http.request<ResultListKeyValuePairStringString['data']>(`/api/main/param/getListByGroupCode`, {
         method: 'GET',
         params: query,
       }),

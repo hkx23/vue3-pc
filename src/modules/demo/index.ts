@@ -11,6 +11,7 @@ import i18n from '@/locales';
 import { store } from '@/store';
 
 import '@/style/index.less';
+import '@/style/module-page.less';
 
 const app = createApp(App);
 

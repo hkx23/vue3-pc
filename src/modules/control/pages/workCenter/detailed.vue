@@ -35,8 +35,13 @@
         <footer class="form-item-box">
           <t-form-item label="类型">
             <ul class="type-box">
-              <li v-for="item in typeData" :key="item.id" :class="item.show ? 'li-cur' : ''" @click="onHandleCur(item)">
-                {{ item.name }}
+              <li
+                v-for="item in typeData"
+                :key="item.id"
+                :class="item.show ? 'li-cur' : ''"
+                @click="onHandleCur(item.wcType)"
+              >
+                {{ item.wcType }}
               </li>
             </ul>
           </t-form-item>
@@ -96,7 +101,6 @@
           </div>
           <div class="control-box">
             <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-
             <t-button theme="primary" type="submit" @click="onSecondary">确认</t-button>
           </div></t-dialog
         >
@@ -143,7 +147,7 @@ const props = defineProps({
     type: Object,
   },
   nextArr: {
-    type: Array<number>,
+    type: String,
   },
   btnShow: {
     type: Boolean,
@@ -159,7 +163,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  newArr: {
+    type: String,
+  },
 });
+const once = ref(0);
 const parentId = ref(); // 点击添加的时候存储父id
 const typeShow = ref(false);
 onMounted(() => {
@@ -179,11 +187,12 @@ const fetchData = async () => {
     });
     workData.value = res.list;
     if (props.typeDetailed === 3) {
+      clearFrom();
       // 点击新增渲染数据
       const list = await api.workcenter.getlist({
         pageNum: pageUI.value.page,
         pageSize: pageUI.value.rows,
-        category: props.nextArr,
+        // category: formData.wcType,
       });
       workData.value = list.list;
       total.value = list.total;
@@ -191,6 +200,16 @@ const fetchData = async () => {
     // 判断数组是否小于1禁用删除
     if (workData.value.length < 1) {
       Emit('delete', true);
+    }
+    // 拿到数组
+    const list = await api.workcenter.getCategory();
+    if (once.value === 0) {
+      once.value = 1;
+      typeData.value = list.list;
+      typeData.value.forEach((item) => {
+        item.show = false;
+      });
+      typeData.value[0].show = true;
     }
     // 拿到渲染表单
     // console.log('props', props.wordCenterId);
@@ -243,6 +262,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'wcOwner',
     title: '负责人',
     align: 'center',
+    fixed: 'right',
   },
 ];
 // 存在渲染数据数组
@@ -258,49 +278,24 @@ const formData = reactive({
   checked: true, // 多选控制 默认为选中
   wcType: '', // 设备类型
   state: 1, // 启用还是禁用
-  category: [], // 获取设备关联
+  category: '', // 获取设备关联
   wcObjectId: '', // 关联设备
   id: props.wordCenterId.id, // 父节点的id
   allRecord: [],
 });
 // 类型数据数组
-const typeData = ref([
-  {
-    id: 1,
-    name: '工作区',
-    show: true,
-    opId: [1],
-  },
-  {
-    id: 2,
-    name: '生产线',
-    show: false,
-    opId: [2],
-  },
-  {
-    id: 3,
-    name: '工段',
-    show: false,
-    opId: [3],
-  },
-  {
-    id: 4,
-    name: '设备',
-    show: false,
-    opId: [4],
-  },
-]);
+const typeData = ref([]);
 // 判断数组里面的设备
 const onTypeList = () => {
   typeData.value.forEach((item) => {
     // 判断名称是否相同
-    if (formData.wcType === item.name) {
+    if (props.newArr === item.wcType) {
       // 判断是否为设备
-      if (formData.wcType !== '设备') {
+      if (props.newArr !== '设备') {
         typeShow.value = true;
       }
       item.show = true;
-      formData.category = item.opId;
+      formData.category = item.wcType;
     } else {
       item.show = false;
     }
@@ -340,18 +335,18 @@ const onHandelCode = async (row) => {
   }
 };
 // 类型高亮事件
-const onHandleCur = (all: any) => {
+const onHandleCur = (all) => {
   typeData.value.forEach((item) => {
-    if (item.id === all.id) {
-      if (item.name !== '设备') {
-        console.log(1230);
+    if (item.wcType === all) {
+      if (item.wcType !== '设备') {
+        // console.log(1230);
         formData.wcObjectId = '';
         typeShow.value = true;
       } else {
         typeShow.value = false;
       }
       item.show = true;
-      formData.category = item.opId;
+      formData.category = item.wcType;
     } else {
       item.show = false;
     }
@@ -367,14 +362,13 @@ const onWorkCenterAdd = async () => {
     await api.workcenter.add({
       wcCode: formData.wcCode,
       wcName: formData.wcName,
-      workshopId: formData.workshopID,
+      workshopID: formData.workshopID,
       parentWcId: formData.parentWcId,
       wcLocation: formData.wcLocation,
       wcObjectId: formData.wcObjectId,
       state: formData.state,
       wcOwner: formData.wcOwner,
-      // @ts-ignore
-      wcObjectType: formData.category,
+      wcType: formData.category,
       wcSeq: 0,
     });
   } catch (e) {
@@ -390,8 +384,6 @@ const onHandelRemove = async () => {
   }
   const children = await api.workcenter.haveChildCenter({ ids: selectedRowKeys.value });
   childrenTotal.value = children.total;
-  console.log(childrenTotal.value);
-
   deleteVisible.value = true;
   // await api.workcenter.remove({ ids: selectedRowKeys.value });
   // MessagePlugin.success('删除成功');
@@ -414,10 +406,7 @@ const onSecondaryReset = () => {
 // 保存
 const onHandleSave = async () => {
   if (props.typeDetailed === 2) {
-    onWorkCenterAdd();
-  }
-  if (props.typeDetailed === 3) {
-    // console.log('新增');
+    // 子
     onWorkCenterAdd();
   }
   if (props.typeDetailed === 1) {
@@ -427,6 +416,11 @@ const onHandleSave = async () => {
     } catch (e) {
       console.log(e);
     }
+  }
+  // 新增
+  if (props.typeDetailed === 3) {
+    // console.log('新增');
+    onWorkCenterAdd();
   }
   MessagePlugin.success('保存成功');
   Emit('addedShow', false);
@@ -461,10 +455,10 @@ const clearFrom = () => {
   formData.parentWcId = ''; // 父级
   formData.checked = true; // 多选
   formData.wcType = ''; // 设备类型
-  formData.category = []; // 设备类型
+  formData.category = ''; // 设备类型
   formData.state = 1; // 控制多选是选择状态
   formData.id = ''; // 父亲id
-  formData.wcObjectId = '';
+  formData.wcObjectId = ''; // 设备类型id
 };
 </script>
 

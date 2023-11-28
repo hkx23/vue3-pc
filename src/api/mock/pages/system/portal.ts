@@ -19,7 +19,7 @@ export default [
     },
   },
   {
-    url: '/api/system/module/show?clientType=1',
+    url: '/api/control/module/show?clientType=1',
     method: 'GET',
     response: () => {
       return {
@@ -218,6 +218,20 @@ export default [
                       },
                       icon: null,
                       frameSrc: '/system#/module',
+                    },
+                    children: [],
+                  },
+                  {
+                    path: 'defectHandling',
+                    name: '缺陷处理',
+                    component: 'IFrame',
+                    redirect: null,
+                    meta: {
+                      title: {
+                        zh_CN: '缺陷处理',
+                      },
+                      icon: null,
+                      frameSrc: '/control#/defectHandling',
                     },
                     children: [],
                   },
