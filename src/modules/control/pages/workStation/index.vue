@@ -8,11 +8,11 @@
         <t-col :span="2">
           <t-select
             v-model="inputValue.statevalue"
-            label="状态"
+            label="状态:"
             placeholder="请选择状态"
-            auto-width
             :options="options2"
             clearable
+            style="width: 198px"
           >
           </t-select>
         </t-col>
@@ -56,7 +56,7 @@
           <!-- 编辑 -->
           <icon name="edit-1" style="margin-right: 10px; cursor: pointer" @click="onHandelEdit(row.id)"></icon>
           <!-- 禁用 -->
-          <t-popconfirm content="确认禁用吗" @confirm="onHandleDisable(row.id)">
+          <t-popconfirm :content="row.state ? '确认禁用吗' : '确认启用吗'" @confirm="onHandleDisable(row)">
             <icon name="delete" style="margin-right: 10px; cursor: pointer"></icon>
           </t-popconfirm>
         </template>
@@ -251,7 +251,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '90px',
   },
   {
-    colKey: 'creator',
+    colKey: 'creatorName',
     title: '创建人',
     width: '90px',
     align: 'center',
@@ -263,7 +263,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    colKey: 'modifier',
+    colKey: 'modifierName',
     title: '更新人',
     width: '90px',
     align: 'center',
@@ -278,6 +278,8 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'operate',
     title: '操作',
     width: '90px',
+    align: 'left',
+    fixed: 'right',
   },
 ];
 // 表单
@@ -348,26 +350,23 @@ const onHandelResetting = () => {
   inputValue.value.workstaion = '';
 };
 // 禁用
-const onHandleDisable = (value) => {
-  workData.value.forEach(async (item) => {
-    if (item.id === value) {
-      api.workstation
-        .edit({
-          id: value,
-          state: 0,
-        })
-        .then((res) => {
-          onHandelList();
-          console.log(res);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+const onHandleDisable = async (value) => {
+  console.log('console.log(value.state);', value.state);
+  if (value.state !== 1) {
+    value.state = 1;
+  } else {
+    value.state = 0;
+  }
+  console.log('console.log(value.state);', value.state);
+  await api.workstation.edit({
+    id: value.id,
+    state: value.state,
   });
+  onHandelList();
 };
 // 是否启用
 const onChange = (value) => {
+  console.log(value);
   if (value) {
     inputValue.value.state = [1];
   } else {
@@ -402,10 +401,14 @@ const onWorkStationSubmit = async (context: RootObject) => {
           workstationDesc: formData.value.workstationDesc,
           state: formData.value.state,
         });
+
+        formRef.value.reset({ type: 'initial' });
+        MessagePlugin.success('保存成功');
+        formVisible.value = false;
+        onHandelList();
       } catch (e) {
         console.log(e);
       }
-      onHandelList();
       // 编辑
     } else {
       // 新增逻辑
@@ -418,14 +421,14 @@ const onWorkStationSubmit = async (context: RootObject) => {
           processId: formData.value.PProcessId,
           state: formData.value.state,
         });
+        formRef.value.reset({ type: 'initial' });
+        MessagePlugin.success('保存成功');
         onHandelList();
+        formVisible.value = false;
       } catch (e) {
         console.log(e);
       }
     }
-    formRef.value.reset({ type: 'initial' });
-    MessagePlugin.success('保存成功');
-    formVisible.value = false;
   }
 };
 // 校验

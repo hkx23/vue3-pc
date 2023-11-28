@@ -29,7 +29,7 @@
         >
           <t-tab-panel :value="item.wcType" :label="item.wcType">
             <template #label>
-              <div>{{ item.wcType }}{{ item.code }}</div>
+              <div>{{ item.wcType }}{{ item.code !== 0 ? `(${item.code})` : '' }}</div>
             </template>
           </t-tab-panel>
         </t-tabs>
@@ -43,6 +43,16 @@
           </t-col>
           <t-col>
             <div class="select-work">
+              <t-select
+                v-model="select.state"
+                label="状态:"
+                placeholder="请选择状态"
+                :options="options2"
+                clearable
+                style="width: 198px"
+                @onchange="onHandelState"
+              >
+              </t-select>
               <span style="margin: 0 20px">
                 <!-- <tm-select-business v-model="workState.workcenter" type="workcenter"></tm-select-business
               > -->
@@ -51,6 +61,7 @@
                   :options="selectValue"
                   :popup-visible="popupVisible"
                   allow-input
+                  style="width: 198px"
                   placeholder="工作中心或编号"
                   :default-input-value="selectValue1"
                   @input-change="onInputChange"
@@ -76,15 +87,15 @@
         </div>
       </t-row>
       <!-- 表格 -->
-      <tm-table
+      <t-enhanced-table
         ref="tableRef"
-        v-model:pagination="pageUI"
         row-key="id"
-        :table-column="columns"
-        :table-data="workData"
-        :total="page.total"
+        :columns="columns"
+        :data="workData"
+        :tree="treeConfig"
         :loading="loading"
-        @refresh="onFetchData"
+        lazy-load
+        @row-click="onRowClick"
       >
         <template #wcCode="{ row }">
           <div>
@@ -98,11 +109,26 @@
         <template #parentWcCode="{ row }">
           <div>{{ row.parentWcCode ? row.parentWcCode : '-' }}</div>
         </template>
-        <template #edit="{ row }">
+        <template #op="{ row }">
+          <!-- 添加子 -->
+          <icon name="add" style="cursor: pointer" @click="onHandelCenter(row)"></icon>
           <!-- 编辑 -->
-          <icon name="edit-1" style="cursor: pointer" @click="onClickEdit(row)"></icon>
+          <icon name="edit-1" style="cursor: pointer; margin: 0 20px" @click="onClickEdit(row)"></icon>
+          <!-- 启用禁用 -->
+          <t-popconfirm :content="row.state ? '确认禁用吗' : '确认启用吗'" @confirm="onDefult(row)">
+            <icon name="delete" style="cursor: pointer"></icon>
+          </t-popconfirm>
         </template>
-      </tm-table>
+      </t-enhanced-table>
+      <t-pagination
+        v-model="page.current"
+        v-model:pageSize="page.pageSize"
+        :total="page.total"
+        show-jumper
+        style="margin: 20px 0"
+        @page-size-change="onPageSizeChange"
+        @current-change="onCurrentChange"
+      />
       <!-- </t-table> -->
     </t-card>
   </div>
@@ -111,17 +137,46 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { SearchIcon } from 'tdesign-icons-vue-next';
-import { Icon } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { Icon, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { onMounted, reactive, ref, watch } from 'vue';
 
 import { api } from '@/api/control';
-import TmTable from '@/components/tm-table/index.vue';
-import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 import detailed from './detailed.vue';
 
+const onRowClick = async ({ row }: { row: any }) => {
+  const res = await api.workcenter.getChildCenter(row);
+  console.log('12', res.list);
+  console.log(workData.value);
+  workData.value.forEach((item) => {
+    item.children = res.list;
+  });
+};
+const onPageSizeChange = (size) => {
+  page.value.current = 1;
+  console.log('page-size:', size);
+  onFetchData();
+};
+const loading = ref(false);
+const onCurrentChange = () => {
+  onFetchData();
+};
+// 下拉
+const options2 = [
+  { label: '全部', value: -1 },
+  { label: '启用', value: 1 },
+  { label: '禁用', value: 0 },
+];
+const select = ref({
+  state: -1,
+  stateVisible: [],
+});
+const treeConfig = reactive({
+  childrenKey: 'children',
+  treeNodeColumnIndex: 0,
+});
 const btnShow = ref(false); // 默认为禁用 隐藏按钮默认为不隐藏
 const btnShowDisable = ref({
   add: false,
@@ -139,7 +194,7 @@ const newArr = ref('');
 const id = ref(0);
 const detailedShow = ref(false); // 控制子工作中心显示隐藏
 // 初始数据
-const columns = [
+const columns: PrimaryTableCol<TableRowData>[] = [
   // {
   //   colKey: 'select',
   //   type: 'multiple',
@@ -147,7 +202,7 @@ const columns = [
   {
     colKey: 'wcCode',
     title: '工作中心编号',
-    align: 'center',
+    align: 'left',
   },
   {
     colKey: 'wcName',
@@ -180,37 +235,57 @@ const columns = [
     align: 'center',
   },
   {
-    colKey: 'edit',
-    title: '',
-    align: 'center',
+    colKey: 'op',
+    title: '操作',
+    align: 'left',
+    fixed: 'right',
   },
 ];
 const data = ref([]); // 存储数据给到新增数据
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+// const { loading, setLoading } = useLoading();
 const page = ref({
   total: 10,
-});
+  current: 1,
+  pageSize: 10,
+}); // 分页
+
+// 监听分页
+watch(
+  () => page.value.pageSize,
+  (oldSize, newSize) => {
+    console.log(oldSize, newSize);
+    if (oldSize === newSize) {
+      page.value.current = 1;
+    }
+  },
+);
+
 // const selectedRowKeys = ref([]); // 用于存储选中行的数组
 const workData = ref([]); // table数据
 // 通用下拉初始数据
 const workState = ref({
   shop: '',
 });
+
 // input-select事件
 const popupVisible = ref(false);
 const selectValue = ref();
 let OPTIONS = [];
 const options1 = ref(OPTIONS);
 const selectValue1 = ref('');
+// 进入的时候
 onMounted(() => {
   onFetchData();
 });
+
+// 下拉事件
 const onOptionClick = (value: any) => {
   console.log('value', value);
   selectValue.value = value;
   onFetchData();
 };
+
 const debounce = (func: { (): void; apply?: any }, delay: number) => {
   let timeoutId: NodeJS.Timeout;
   return (...args: any) => {
@@ -236,6 +311,10 @@ const onPopupVisibleChange = (val) => {
   OPTIONS = val;
   popupVisible.value = val;
 };
+// 下拉筛选
+const onHandelState = () => {
+  onFetchData();
+};
 // 点击的类型
 const onHandelArr = (value: any) => {
   if (value === '全部') {
@@ -245,7 +324,6 @@ const onHandelArr = (value: any) => {
   }
   console.log('类型', arr.value);
   pageUI.value.page = 1;
-  console.log();
   onFetchData();
 };
 // 车间查询
@@ -257,43 +335,55 @@ const onSelectShop = (value: any) => {
 };
 // 首次进入刷新
 const onFetchData = async () => {
+  const STATE = select.value.state;
+  console.log(select.value.state);
   try {
-    setLoading(true);
+    if (STATE === -1) {
+      select.value.stateVisible = [1, 0];
+    } else if (STATE === 1) {
+      select.value.stateVisible = [1];
+    } else {
+      select.value.stateVisible = [0];
+    }
+    // 父节点
+    loading.value = true;
     const res = await api.workcenter.getlist({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
+      pageNum: page.value.current,
+      pageSize: page.value.pageSize,
       category: arr.value,
       workshopID: workState.value.shop,
       // eslint-disable-next-line no-bitwise
       workcenterword: selectValue.value,
+      state: select.value.stateVisible,
     });
     workData.value = res.list; // table数据
+    workData.value.forEach((item) => {
+      item.children = [];
+    });
     data.value = res.list; // 新增页面
     page.value.total = res.total;
-    // 类型请求
-    const list = await api.workcenter.getCategory();
     // 只有第一次进来的时候才拿
     if (id.value === 0) {
+      // 类型请求
+      const list = await api.workcenter.getCategory();
       id.value = 1;
       allType.value = list.list; // 标签列类型
       allType.value.forEach((item: { code: string }) => {
         item.code = '';
       });
-      allType.value.unshift({ wcType: '全部' });
+      allType.value.unshift({ wcType: '全部', code: 0 });
+      const typeData = await api.workcenter.getTagCount();
+      allType.value[1].code = typeData.line;
+      allType.value[2].code = typeData.device;
+      allType.value[3].code = typeData.area;
+      allType.value[4].code = typeData.section;
     }
     // 标签页计数
-    const typeData = await api.workcenter.getTagCount();
-    console.log('11', typeData, 123);
-    allType.value[1].code = typeData.line;
-    allType.value[2].code = typeData.device;
-    allType.value[3].code = typeData.area;
-    allType.value[4].code = typeData.section;
-    console.log('all', allType.value);
   } catch (e) {
     console.log(3);
     console.log(e);
   } finally {
-    setLoading(false);
+    loading.value = false;
   }
 };
 // 工作中心center跳转到form
@@ -323,6 +413,18 @@ const onHandelAdded = () => {
   disabledParent.value = false;
 };
 
+// 禁用或者启用
+const onDefult = async (row) => {
+  console.log('1', row.state);
+  if (row.state === 0) {
+    row.state = 1;
+  } else {
+    row.state = 0;
+  }
+  console.log('2', row.state);
+  const res = await api.workcenter.modify({ id: row.id, state: row.state });
+  console.log(res);
+};
 // 保存时子组件控制
 const onHandleSave = (i: boolean) => {
   detailedShow.value = i; // 子窗口

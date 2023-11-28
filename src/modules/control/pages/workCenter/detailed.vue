@@ -1,118 +1,147 @@
 <template>
   <div class="detailed-box">
-    <!-- from -->
-    <t-form layout="inline" :data="formData" :show-cancel="true" :show-error-message="false">
-      <t-card :bordered="false">
-        <header class="form-item-box">
-          <t-form-item label="工作中心编号">
-            <t-input v-model="formData.wcCode" :disabled="props.disabledWord" />
-          </t-form-item>
-          <t-form-item label="所属车间">
-            <tm-select-business v-model="formData.workshopID" type="workshop" :show-title="false"></tm-select-business
-          ></t-form-item>
-          <t-form-item label="地点">
-            <t-input v-model="formData.wcLocation" style="width: 200px" />
-          </t-form-item>
-        </header>
-        <div class="form-item-box">
-          <t-form-item label="工作中心名称">
-            <t-input v-model="formData.wcName" />
-          </t-form-item>
-          <t-form-item label="负责人">
-            <t-input v-model="formData.wcOwner" style="width: 180px" />
-          </t-form-item>
-        </div>
-        <t-form-item label="父级">
-          <tm-select-business
-            v-model="formData.parentWcId"
-            type="workcenter"
-            :disabled="props.disabledParent"
-            :show-title="false"
-          >
-          </tm-select-business>
-          <!-- <t-select v-model="formData.parentWcCode" /> -->
-        </t-form-item>
-        <footer class="form-item-box">
-          <t-form-item label="类型">
-            <ul class="type-box">
-              <li
-                v-for="item in typeData"
-                :key="item.id"
-                :class="item.show ? 'li-cur' : ''"
-                @click="onHandleCur(item.wcType)"
-              >
-                {{ item.wcType }}
-              </li>
-            </ul>
-          </t-form-item>
-          <t-form-item label="关联设备">
-            <tm-select-business v-model="formData.wcObjectId" type="equipment" :disabled="typeShow" :show-title="false">
-            </tm-select-business>
-          </t-form-item>
-        </footer>
-        <span class="form-checkbox">
-          <t-checkbox v-model="formData.checked">启用</t-checkbox>
-        </span>
-        <div style="margin: 10px 100px">
-          <t-button theme="default" type="submit" :disabled="props.btnShowDisable.add" @click="onHandelAdd"
-            >添加</t-button
-          >
-          <t-button theme="default" :disabled="props.btnShowDisable.delete" @click="onHandelRemove">删除</t-button>
-        </div>
-      </t-card>
-    </t-form>
-    <!-- table表格 -->
-    <footer class="detailed-work-center">
-      <span class="work-header">子工作中心</span>
-      <div class="table-work-header">
-        <!-- 表格 -->
-        <tm-table
-          ref="tableRef"
-          v-model:pagination="pageUI"
-          :show-pagination="props.typeDetailed === 3 ? true : false"
-          :total="total"
-          drag-sort="row"
-          row-key="id"
-          :table-column="columns"
-          :table-data="workData"
-          :loading="loading"
-          :selected-row-keys="selectedRowKeys"
-          @select-change="rehandleSelectChange"
-          @refresh="fetchData"
-          @drag-sort="onDragSort"
-        >
-          <template #sequence>
-            <div>1</div>
-          </template>
-          <template #wcCode="{ row }">
-            <div>
-              <t-icon name="chevron-right"></t-icon>
-              <t-link theme="primary" underline @click="onHandelCode(row)">{{ row.wcCode }}</t-link>
-            </div>
-          </template>
-        </tm-table>
-        <span class="table-btn">
-          <t-button v-show="props.btnShow" @click="onHandleSave">保存</t-button>
-          <t-button theme="default" @click="onHandleCancellation">取消</t-button></span
-        >
-        <t-dialog v-model:visible="deleteVisible" header="提示" :cancel-btn="null" :confirm-btn="null" width="40%">
-          <div class="delete-box">
-            {{ childrenTotal > 0 ? '当前删除的工作中心下有子工作中心确认删除吗' : '确认删除吗' }}
+    <t-card class="list-card-detailed">
+      <t-form
+        ref="formRef"
+        layout="inline"
+        :data="formData"
+        :show-cancel="true"
+        :show-error-message="false"
+        :rules="rules"
+        @submit="onHandleSave"
+      >
+        <t-card :bordered="false">
+          <header class="form-item-box">
+            <t-form-item label="工作中心编号" name="wcCode">
+              <t-input v-model="formData.wcCode" :disabled="props.disabledWord" />
+            </t-form-item>
+            <t-form-item label="所属车间" name="workshopID">
+              <tm-select-business v-model="formData.workshopID" type="workshop" :show-title="false"></tm-select-business
+            ></t-form-item>
+            <t-form-item label="地点" name="wcLocation">
+              <t-input v-model="formData.wcLocation" style="width: 200px" />
+            </t-form-item>
+          </header>
+          <div class="form-item-box">
+            <t-form-item label="工作中心名称" name="wcName">
+              <t-input v-model="formData.wcName" />
+            </t-form-item>
+            <t-form-item label="负责人" name="wcOwner">
+              <t-input v-model="formData.wcOwner" style="width: 180px" />
+            </t-form-item>
+            <t-form-item label="顺序号" name="wcSeq">
+              <t-input v-model="formData.wcSeq" style="width: 200px" />
+            </t-form-item>
           </div>
-          <div class="control-box">
-            <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-            <t-button theme="primary" type="submit" @click="onSecondary">确认</t-button>
-          </div></t-dialog
-        >
-      </div>
-    </footer>
+          <t-form-item label="父级" name="parentWcId">
+            <tm-select-business
+              v-model="formData.parentWcId"
+              type="workcenter"
+              :disabled="props.disabledParent"
+              :show-title="false"
+            >
+            </tm-select-business>
+            <!-- <t-select v-model="formData.parentWcCode" /> -->
+          </t-form-item>
+          <footer class="form-item-box">
+            <t-form-item label="类型" required-mark>
+              <ul class="type-box">
+                <li
+                  v-for="item in typeData"
+                  :key="item.id"
+                  :class="item.show ? 'li-cur' : ''"
+                  @click="onHandleCur(item.wcType)"
+                >
+                  {{ item.wcType }}
+                </li>
+              </ul>
+            </t-form-item>
+            <t-form-item label="关联设备" name="wcObjectId">
+              <tm-select-business
+                v-model="formData.wcObjectId"
+                type="equipment"
+                :disabled="typeShow"
+                :show-title="false"
+              >
+              </tm-select-business>
+            </t-form-item>
+          </footer>
+          <span class="form-checkbox">
+            <t-checkbox v-model="formData.checked">启用</t-checkbox>
+          </span>
+          <footer class="detailed-work-center">
+            <span class="work-header">子工作中心</span>
+            <div class="table-work-header">
+              <!-- 表格 -->
+              <tm-table
+                ref="tableRef"
+                v-model:pagination="pageUI"
+                :show-pagination="props.typeDetailed === 3 ? true : false"
+                :total="total"
+                drag-sort="row"
+                row-key="id"
+                :table-column="columns"
+                :table-data="workData"
+                :loading="loading"
+                :selected-row-keys="selectedRowKeys"
+                @select-change="rehandleSelectChange"
+                @refresh="fetchData"
+                @drag-sort="onDragSort"
+              >
+                <template #button>
+                  <div>
+                    <t-button theme="default" type="submit" :disabled="props.btnShowDisable.add" @click="onHandelAdd"
+                      >添加</t-button
+                    >
+                    <t-button theme="default" :disabled="props.btnShowDisable.delete" @click="onHandelRemove"
+                      >删除</t-button
+                    >
+                  </div>
+                </template>
+                <template #sequence>
+                  <div>1</div>
+                </template>
+                <template #wcCode="{ row }">
+                  <div>
+                    <t-icon name="chevron-right"></t-icon>
+                    <t-link theme="primary" underline @click="onHandelCode(row)">{{ row.wcCode }}</t-link>
+                  </div>
+                </template>
+              </tm-table>
+              <span class="table-btn">
+                <t-button v-show="props.btnShow" type="submit">保存</t-button>
+                <t-button theme="default" @click="onHandleCancellation">取消</t-button>
+              </span>
+              <t-dialog
+                v-model:visible="deleteVisible"
+                header="提示"
+                :cancel-btn="null"
+                :confirm-btn="null"
+                width="40%"
+              >
+                <div class="delete-box">
+                  {{ childrenTotal > 0 ? '当前删除的工作中心下有子工作中心确认删除吗' : '确认删除吗' }}
+                </div>
+                <div class="control-box">
+                  <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+                  <t-button theme="primary" type="submit" @click="onSecondary">确认</t-button>
+                </div></t-dialog
+              >
+            </div>
+          </footer>
+        </t-card>
+
+        <!-- table表格 -->
+      </t-form></t-card
+    >
+    <!-- from -->
   </div>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, reactive, ref } from 'vue';
+import { Data, FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
 import TmTable from '@/components/tm-table/index.vue';
@@ -120,6 +149,8 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
+
+const formRef: Ref<FormInstanceFunctions> = ref(null);
 // 子修改传值
 const total = ref(10);
 // 拖拽
@@ -178,6 +209,7 @@ const selectedRowKeys = ref([]); // 用于存储选中行的数组
 const fetchData = async () => {
   // 渲染表单页面
   Object.assign(formData, props.wordCenterId);
+  console.log(formData.state);
   try {
     setLoading(true);
     // 子节点请求
@@ -261,7 +293,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'wcOwner',
     title: '负责人',
-    align: 'center',
+    align: 'left',
     fixed: 'right',
   },
 ];
@@ -282,6 +314,7 @@ const formData = reactive({
   wcObjectId: '', // 关联设备
   id: props.wordCenterId.id, // 父节点的id
   allRecord: [],
+  wcSeq: 0, // 顺序号
 });
 // 类型数据数组
 const typeData = ref([]);
@@ -309,29 +342,32 @@ const onTypeList = () => {
 // 点击进入发请求进子集
 const onHandelCode = async (row) => {
   // typeShow.value = true;
-  Emit('ChildDefault', true);
-  try {
-    setLoading(true);
-    console.log(formData.category);
-    const res = await api.workcenter.getChildCenter({
-      id: row.id,
-      category: formData.category,
-    });
-    formData.id = row.id;
-    workData.value = res.list;
-    workData.value.forEach((item) => {
-      formData.workshopID = item.workshopId;
-    });
-    Object.assign(formData, row);
-    onTypeList();
-    // 判断数组是否为0删除禁用
-    if (workData.value.length < 1) {
-      Emit('delete', true);
+
+  if (props.typeDetailed === 2) {
+    Emit('ChildDefault', true);
+    try {
+      setLoading(true);
+      console.log(formData.category);
+      const res = await api.workcenter.getChildCenter({
+        id: row.id,
+        category: formData.category,
+      });
+      formData.id = row.id;
+      workData.value = res.list;
+      workData.value.forEach((item) => {
+        formData.workshopID = item.workshopId;
+      });
+      Object.assign(formData, row);
+      onTypeList();
+      // 判断数组是否为0删除禁用
+      if (workData.value.length < 1) {
+        Emit('delete', true);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
     }
-  } catch (e) {
-    console.log(e);
-  } finally {
-    setLoading(false);
   }
 };
 // 类型高亮事件
@@ -359,7 +395,7 @@ const rehandleSelectChange = (value: any) => {
 // 新增
 const onWorkCenterAdd = async () => {
   try {
-    await api.workcenter.add({
+    const list = await api.workcenter.add({
       wcCode: formData.wcCode,
       wcName: formData.wcName,
       workshopID: formData.workshopID,
@@ -371,6 +407,9 @@ const onWorkCenterAdd = async () => {
       wcType: formData.category,
       wcSeq: 0,
     });
+    MessagePlugin.success('保存成功');
+    Emit('addedShow', false);
+    console.log(list);
   } catch (e) {
     console.log(e);
   }
@@ -404,26 +443,30 @@ const onSecondaryReset = () => {
   deleteVisible.value = false;
 };
 // 保存
-const onHandleSave = async () => {
-  if (props.typeDetailed === 2) {
-    // 子
-    onWorkCenterAdd();
-  }
-  if (props.typeDetailed === 1) {
-    // console.log('编辑');
-    try {
-      api.workcenter.modify(formData);
-    } catch (e) {
-      console.log(e);
+const onHandleSave = async (context) => {
+  if (context.validateResult === true && formData.category !== '') {
+    if (props.typeDetailed === 2) {
+      // 子
+      onWorkCenterAdd();
     }
+    if (props.typeDetailed === 1) {
+      // console.log('编辑');
+      try {
+        await api.workcenter.modify(formData);
+        MessagePlugin.success('保存成功');
+        Emit('addedShow', false);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    // 新增
+    if (props.typeDetailed === 3) {
+      // console.log('新增');
+      onWorkCenterAdd();
+    }
+  } else {
+    MessagePlugin.error('必填字段,保存失败');
   }
-  // 新增
-  if (props.typeDetailed === 3) {
-    // console.log('新增');
-    onWorkCenterAdd();
-  }
-  MessagePlugin.success('保存成功');
-  Emit('addedShow', false);
 };
 // 取消
 const onHandleCancellation = () => {
@@ -459,13 +502,60 @@ const clearFrom = () => {
   formData.state = 1; // 控制多选是选择状态
   formData.id = ''; // 父亲id
   formData.wcObjectId = ''; // 设备类型id
+  formData.wcSeq = 0; // 默认为0
+};
+const rules: FormRules<Data> = {
+  wcCode: [
+    {
+      required: true,
+      type: 'error',
+      trigger: 'blur',
+    },
+  ],
+  workshopID: [
+    {
+      required: true,
+      type: 'error',
+      trigger: 'blur',
+    },
+  ],
+  wcType: [
+    {
+      required: true,
+      type: 'error',
+      trigger: 'blur',
+    },
+  ],
+  wcName: [
+    {
+      required: true,
+      type: 'error',
+      trigger: 'blur',
+    },
+  ],
+  wcSeq: [
+    {
+      required: true,
+      type: 'error',
+      trigger: 'blur',
+    },
+  ],
 };
 </script>
 
 <style lang="less" scoped>
-.detailed-box {
-  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
+.list-card-detailed {
+  padding: var(--td-comp-paddingLR-xl) var(--td-comp-paddingLR-xxl);
+  padding-bottom: 50px;
+
+  :deep(.t-card__body) {
+    padding: 0;
+  }
 }
+
+// .detailed-box {
+//   padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
+// }
 
 .type-box {
   display: flex;
@@ -504,18 +594,22 @@ const clearFrom = () => {
 // 子工作中心
 .detailed-work-center {
   display: flex;
+  justify-content: space-between;
 
   .work-header {
-    margin: 20px;
+    // margin: 20px 30px;
+    // flex: 1;
+    padding: 45px 0;
+    width: 100px;
   }
 
   .table-work-header {
-    flex: 1;
+    width: 1200px;
     // 表格按钮
     .table-btn {
       display: block;
       height: 30px;
-      margin: 10px;
+      // margin: 10px;
     }
   }
 }
