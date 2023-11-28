@@ -1,81 +1,83 @@
 <template>
-  <div class="list-card-process">
-    <t-card :bordered="false">
-      <t-row justify="end">
-        <t-col><t-input placeholder="请输入工序或编号"></t-input></t-col>
-      </t-row>
-    </t-card>
-    <tm-table
-      row-key="id"
-      :table-column="column"
-      :table-data="processData"
-      :loading="loading"
-      :selected-row-keys="processRorKey"
-      @refresh="onFetchData"
-      @select-change="processChange"
-    >
-      <!-- 状态 -->
-      <template #state>
-        <div>启用</div>
-      </template>
-      <template #button>
-        <!-- 新增 -->
-        <t-button variant="outline" @click="onHandelAdd">
-          <template #icon><icon name="plus" /></template
-        ></t-button>
-        <!-- 删除 -->
-        <t-button variant="outline" @click="onHandelDelete">
-          <template #icon><icon name="delete" /></template
-        ></t-button>
-      </template>
-      <!-- 编辑 -->
-      <template #operate="{ row }">
-        <icon name="edit-1" @click="onEdit(row)"></icon>
-      </template>
-    </tm-table>
-    <t-dialog v-model:visible="addVisible" header="新增" :cancel-btn="null" :confirm-btn="null" width="40%">
-      <t-form
-        ref="formRef"
-        :rules="rules"
-        :data="formData"
-        layout="vertical"
-        scroll-to-first-error="smooth"
-        label-align="right"
-        @submit="onProcessSubmit"
+  <div>
+    <t-card class="list-card-process">
+      <t-card :bordered="false">
+        <t-row justify="end">
+          <t-col><t-input placeholder="请输入工序或编号"></t-input></t-col>
+        </t-row>
+      </t-card>
+      <tm-table
+        row-key="id"
+        :table-column="column"
+        :table-data="processData"
+        :loading="loading"
+        :selected-row-keys="processRorKey"
+        @refresh="onFetchData"
+        @select-change="processChange"
       >
-        <t-form-item :label="t('levelCode')" name="processCode">
-          <t-select v-model="formData.processCode"></t-select>
-        </t-form-item>
-        <t-form-item :label="t('levelName')" name="processName">
-          <t-input v-model="formData.processName"></t-input>
-        </t-form-item>
-        <t-form-item label="缺陷代码" name="processDefect">
-          <t-select v-model="formData.processDefect"></t-select>
-        </t-form-item>
-        <t-form-item label="缺陷名称" name="defectName">
-          <t-input v-model="formData.defectName"></t-input>
-        </t-form-item>
-        <t-form-item :label="`显示${t('levelSeq')}`" name="processOrder">
-          <t-input v-model="formData.processOrder"></t-input>
-        </t-form-item>
-        <t-form-item label="启用" name="showState">
-          <t-switch v-model="formData.showState" size="large" @change="onChange"></t-switch>
-        </t-form-item>
+        <!-- 状态 -->
+        <template #state>
+          <div>启用</div>
+        </template>
+        <template #button>
+          <!-- 新增 -->
+          <t-button variant="outline" @click="onHandelAdd">
+            <template #icon><icon name="plus" /></template
+          ></t-button>
+          <!-- 删除 -->
+          <t-button variant="outline" @click="onHandelDelete">
+            <template #icon><icon name="delete" /></template
+          ></t-button>
+        </template>
+        <!-- 编辑 -->
+        <template #operate="{ row }">
+          <icon name="edit-1" @click="onEdit(row)"></icon>
+        </template>
+      </tm-table>
+      <t-dialog v-model:visible="addVisible" header="新增" :cancel-btn="null" :confirm-btn="null" width="40%">
+        <t-form
+          ref="formRef"
+          :rules="rules"
+          :data="formData"
+          layout="vertical"
+          scroll-to-first-error="smooth"
+          label-align="right"
+          @submit="onProcessSubmit"
+        >
+          <t-form-item :label="t('levelCode')" name="processCode">
+            <t-select v-model="formData.processCode"></t-select>
+          </t-form-item>
+          <t-form-item :label="t('levelName')" name="processName">
+            <t-input v-model="formData.processName"></t-input>
+          </t-form-item>
+          <t-form-item label="缺陷代码" name="processDefect">
+            <t-select v-model="formData.processDefect"></t-select>
+          </t-form-item>
+          <t-form-item label="缺陷名称" name="defectName">
+            <t-input v-model="formData.defectName"></t-input>
+          </t-form-item>
+          <t-form-item :label="`显示${t('levelSeq')}`" name="processOrder">
+            <t-input v-model="formData.processOrder"></t-input>
+          </t-form-item>
+          <t-form-item label="启用" name="showState">
+            <t-switch v-model="formData.showState" size="large" @change="onChange"></t-switch>
+          </t-form-item>
+          <!-- 盒子 -->
+          <div class="control-box">
+            <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+            <t-button theme="primary" type="submit" @click="onSecondary">确认</t-button>
+          </div>
+        </t-form>
+      </t-dialog>
+      <t-dialog v-model:visible="deleteVisible" header="删除" :cancel-btn="null" :confirm-btn="null" width="40%">
+        <div class="delete-dialog-top">当前选择{{ processRorKey.length }}条</div>
         <!-- 盒子 -->
         <div class="control-box">
-          <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-          <t-button theme="primary" type="submit" @click="onSecondary">确认</t-button>
+          <t-button theme="default" variant="base" @click="onSecondaryDelete">取消</t-button>
+          <t-button theme="primary" type="submit" @click="onDeleteConfirm">确认</t-button>
         </div>
-      </t-form>
-    </t-dialog>
-    <t-dialog v-model:visible="deleteVisible" header="删除" :cancel-btn="null" :confirm-btn="null" width="40%">
-      <div class="delete-dialog-top">当前选择{{ processRorKey.length }}条</div>
-      <!-- 盒子 -->
-      <div class="control-box">
-        <t-button theme="default" variant="base" @click="onSecondaryDelete">取消</t-button>
-        <t-button theme="primary" type="submit" @click="onDeleteConfirm">确认</t-button>
-      </div>
-    </t-dialog>
+      </t-dialog>
+    </t-card>
   </div>
 </template>
 
