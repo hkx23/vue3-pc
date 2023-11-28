@@ -1,71 +1,66 @@
 <template>
-  <header>
-    <div>
-      <workPermission v-if="permission" @permission-show="onPermission"></workPermission>
-    </div>
-    <div v-if="!permission" class="list-card-container">
-      <t-card :bordered="false" gutter>
-        <t-row justify="space-between">
-          <t-col :span="2"
-            ><t-input
-              v-model="inputValue.workstationWord"
-              label="工站代码/名称："
-              placeholder="请输入工序代码/名称"
-            ></t-input>
-          </t-col>
-          <t-col :span="2">
-            <t-input v-model="inputValue.userWord" label="用户：" placeholder="请输入用户"></t-input>
-          </t-col>
-          <t-col :span="2"
-            ><t-input
-              v-model="inputValue.workcenterWord"
-              label="工作中心："
-              placeholder="请输入工作中心/名称"
-            ></t-input>
-          </t-col>
-          <t-col :span="2"
-            ><t-input v-model="inputValue.processWord" label="工序：" placeholder="请输入工序"> </t-input>
-          </t-col> </t-row
-      ></t-card>
-      <t-card :bordered="false" style="margin: 10px 0">
-        <t-row justify="space-between">
-          <t-col :span="2">
-            <t-button @click="onHandelPermission">权限分配</t-button>
-            <t-popconfirm content="确认删除吗" @confirm="onDeleteAll">
-              <t-button theme="default" variant="base">批量删除</t-button>
+  <t-card class="list-card-container">
+    <header>
+      <div>
+        <workPermission v-if="permission" @permission-show="onPermission"></workPermission>
+      </div>
+      <div v-if="!permission" class="list-card-container">
+        <t-card :bordered="false" gutter>
+          <t-row justify="space-between">
+            <t-col :span="2"
+              ><t-input
+                v-model="inputValue.workstationWord"
+                label="工站代码/名称："
+                placeholder="请输入工序代码/名称"
+              ></t-input>
+            </t-col>
+            <t-col :span="2">
+              <t-input v-model="inputValue.userWord" label="用户：" placeholder="请输入用户"></t-input>
+            </t-col>
+            <t-col :span="2"
+              ><t-input
+                v-model="inputValue.workcenterWord"
+                label="工作中心："
+                placeholder="请输入工作中心/名称"
+              ></t-input>
+            </t-col>
+            <t-col :span="2"
+              ><t-input v-model="inputValue.processWord" label="工序：" placeholder="请输入工序"> </t-input>
+            </t-col> </t-row
+        ></t-card>
+        <t-card :bordered="false" style="margin: 10px 0">
+          <t-row justify="space-between">
+            <t-col :span="2">
+              <t-button @click="onHandelPermission">权限分配</t-button>
+              <t-popconfirm content="确认删除吗" @confirm="onDeleteAll">
+                <t-button theme="default" variant="base">批量删除</t-button>
+              </t-popconfirm>
+            </t-col>
+            <t-col :span="2" style="display: flex; justify-content: flex-end">
+              <t-button @click="onSearch">查询</t-button>
+              <t-button theme="default" variant="base" @click="onResetting">重置</t-button></t-col
+            >
+          </t-row>
+        </t-card>
+        <tm-table
+          v-model:pagination="pageUI"
+          :loading="loading"
+          row-key="id"
+          :total="total"
+          :table-column="column"
+          :table-data="permissionData"
+          :selected-row-keys="selectedRowKeys"
+          @refresh="onfetchData"
+          @select-change="rehandleSelectChange"
+        >
+          <template #operate="{ row }">
+            <t-popconfirm content="确认删除吗" @confirm="onDelete(row.id)">
+              <icon name="delete"></icon>
             </t-popconfirm>
-          </t-col>
-          <t-col :span="2" style="display: flex; justify-content: flex-end">
-            <t-button @click="onSearch">查询</t-button>
-            <t-button theme="default" variant="base" @click="onResetting">重置</t-button></t-col
-          >
-        </t-row>
-      </t-card>
-      <tm-table
-        v-model:pagination="pageUI"
-        :loading="loading"
-        row-key="id"
-        :total="total"
-        :table-column="column"
-        :table-data="permissionData"
-        :selected-row-keys="selectedRowKeys"
-        @refresh="onfetchData"
-        @select-change="rehandleSelectChange"
-      >
-        <template #operate="{ row }">
-          <t-popconfirm content="确认删除吗" @confirm="onDelete(row.id)">
-            <icon name="delete"></icon>
-          </t-popconfirm>
-        </template>
-        <!-- <template #button>
-        <div style="width: 100%">
-          <t-button>批量删除</t-button>
-          <t-button>批量删除</t-button>
-        </div>
-      </template> -->
-      </tm-table>
-    </div>
-  </header>
+          </template>
+        </tm-table>
+      </div></header
+  ></t-card>
 </template>
 
 <script setup lang="ts">

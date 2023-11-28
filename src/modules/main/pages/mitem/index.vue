@@ -2,19 +2,29 @@
   <div class="table-tree-container">
     <div class="list-tree-content">
       <div class="list-common-table">
-        <!-- <t-row justify="space-between">
-          <t-col>
-            <div>
-              <t-input
-                v-model="keyword"
-                :label="t('business.main.mitemCode')"
-                :placeholder="
-                  t('common.placeholder.input', [t('business.main.mitemCode') + '/' + t('business.main.mitemName')])
-                "
-                clearable
-              />
-            </div>
+        <t-row justify="space-between">
+          <t-col flex="220px">
+            <t-input
+              v-model="keyword"
+              :label="t('business.main.mitemCode')"
+              :placeholder="
+                t('common.placeholder.input', [t('business.main.mitemCode') + '/' + t('business.main.mitemName')])
+              "
+            />
           </t-col>
+          <t-col flex="20px" />
+          <t-col flex="220px">
+            <t-input
+              v-model="mitemCategoryKeyword"
+              :label="t('business.main.mitemCategoryCode')"
+              :placeholder="
+                t('common.placeholder.input', [
+                  t('business.main.mitemCategoryCode') + '/' + t('business.main.mitemCategoryName'),
+                ])
+              "
+            />
+          </t-col>
+          <t-col flex="auto" />
           <t-col flex="170px">
             <div>
               <t-button @click="onRefresh">{{ t('common.button.search') }}</t-button>
@@ -24,9 +34,7 @@
         </t-row>
         <t-row style="margin-top: 10px">
           <t-checkbox-group v-model="mitemTypeSelect" :options="mitemTypeOptions" />
-        </t-row> -->
-
-        <tm-query :opts="opts" is-expansion @submit="conditionEnter" />
+        </t-row>
 
         <t-row justify="space-between">
           <tm-table
@@ -65,8 +73,9 @@
 </template>
 
 <script setup lang="ts">
+import _ from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import TmTable from '@/components/tm-table/index.vue';
@@ -80,6 +89,8 @@ const { t } = useLang();
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const keyword = ref('');
+const mitemCategoryKeyword = ref('');
+
 const selectedMitemRowKeys = ref([]);
 const tableDataMitem = ref([]);
 const mitemTypeOptions = ref([t('business.main.raw'), t('business.main.inProduct'), t('business.main.product')]);
@@ -97,44 +108,55 @@ const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('business.main.mitemCategoryCode'), width: 160, colKey: 'mitemCategoryCode' },
   { title: t('business.main.mitemCategoryName'), width: 160, colKey: 'mitemCategoryName' },
   { title: t('business.main.uom'), width: 160, colKey: 'uom' },
-  { title: t('isProductName'), width: 160, colKey: 'isProductName' },
-  { title: t('isInProcessName'), width: 160, colKey: 'isInProcessName' },
-  { title: t('isRawName'), width: 160, colKey: 'isRawName' },
+  { title: t('business.main.product'), width: 160, colKey: 'isProductName' },
+  { title: t('business.main.inProduct'), width: 160, colKey: 'isInProcessName' },
+  { title: t('business.main.raw'), width: 160, colKey: 'isRawName' },
   { title: t('common.button.operation'), align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
-// 点击查询按钮
-const conditionEnter = (data: any) => {
-  keyword.value = data.keyword;
-  mitemTypeSelect.value = data.mitemType;
-  onRefresh();
-};
 // 查询按钮
 const onRefresh = () => {
   fetchTable();
 };
 // 重置按钮
-// const onReset = () => {
-//   keyword.value = '';
+const onReset = () => {
+  keyword.value = '';
+  mitemCategoryKeyword.value = '';
+};
+
+// 点击查询按钮
+// const conditionEnter = (data: any) => {
+//   keyword.value = data.keyword;
+//   mitemTypeSelect.value = data.mitemType;
+//   onRefresh();
 // };
-const opts = computed(() => {
-  return {
-    keyword: {
-      label: t('business.main.mitemCode'),
-      comp: 't-input',
-      defaultVal: '',
-      placeholder: t('common.placeholder.input', [`${t('business.main.mitemCode')}/${t('business.main.mitemName')}`]),
-    },
-    mitemType: {
-      label: t('business.main.mitemCategoryCode'),
-      comp: 't-checkbox-group',
-      defaultVal: [],
-      bind: {
-        options: mitemTypeOptions.value,
-        lazyLoad: true,
-      },
-    },
-  };
-});
+// const opts = computed(() => {
+//   return {
+//     keyword: {
+//       label: t('business.main.mitemCode'),
+//       comp: 'tm-select-business',
+//       defaultVal: '',
+//       placeholder: t('common.placeholder.input', [`${t('business.main.mitemCode')}/${t('business.main.mitemName')}`]),
+//     },
+//     mitemCategory: {
+//       label: t('business.main.mitemCategoryCode'),
+//       comp: 't-input',
+//       defaultVal: [],
+//       placeholder: t('common.placeholder.input', [
+//         `${t('business.main.mitemCategoryCode')}/${t('business.main.mitemCategoryName')}`,
+//       ]),
+//     },
+//     mitemType: {
+//       // label: t('business.main.mitemTypeCode'),
+//       comp: 't-checkbox-group',
+//       defaultVal: [],
+//       bind: {
+//         options: mitemTypeOptions.value,
+//         lazyLoad: true,
+//       },
+//     },
+//   };
+// });
+
 const dataTotal = ref(0);
 
 const fetchTable = async () => {
@@ -144,6 +166,7 @@ const fetchTable = async () => {
     tableDataMitem.value = [];
     const data = (await api.mitem.getList({
       keyword: keyword.value,
+      mitemCategoryKeyword: mitemCategoryKeyword.value,
       isRaw: mitemTypeSelect.value.find((n) => n === t('business.main.raw')) != null ? 1 : 0,
       isInProcess: mitemTypeSelect.value.find((n) => n === t('business.main.inProduct')) != null ? 1 : 0,
       isProduct: mitemTypeSelect.value.find((n) => n === t('business.main.product')) != null ? 1 : 0,
@@ -163,6 +186,7 @@ const fetchTable = async () => {
 
 const onEditRowClick = (value: any) => {
   // const rowData = value.row;
+  formRef.value.getUom();
   formRef.value.formData = JSON.parse(JSON.stringify(value.row));
   formVisible.value = true;
 };

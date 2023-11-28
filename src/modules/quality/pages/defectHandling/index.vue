@@ -21,8 +21,8 @@
 import _ from 'lodash';
 import { onMounted, ref } from 'vue';
 
-import TmTable from '@/components/tm-table/index.vue';
-import { usePage } from '@/hooks/modules/page';
+import TmTable from '../../../../components/tm-table/index.vue';
+import { usePage } from '../../../../hooks/modules/page';
 
 const { pageUI } = usePage();
 const total = ref(10);
