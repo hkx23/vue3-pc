@@ -23,8 +23,13 @@
             <template #op="{ row }">
               <t-space>
                 <t-icon name="edit" />
-                <t-icon name="delete" @click="onDeletePackRowClick(row)" />
+                <t-icon name="delete" :disabled="loading" @click="onDeletePackRowClick(row)" />
               </t-space>
+            </template>
+            <template #oprate>
+              <t-button shape="square" variant="outline" @click="onClickAddPackRule">
+                <t-icon name="add" />
+              </t-button>
             </template>
           </tm-table>
         </t-row>
@@ -53,7 +58,7 @@
                 <template #op="{ row }">
                   <t-space>
                     <t-icon name="edit" @click="onRowPackRuleDtlClick(row)" />
-                    <t-icon name="delete" @click="onDeletePackDtlRowClick(row)" />
+                    <t-icon name="delete" :disabled="loadingPackDtl" @click="onDeletePackDtlRowClick(row)" />
                   </t-space> </template
               ></t-enhanced-table>
             </div>
@@ -72,11 +77,11 @@
             >
               <template #op="{ row }">
                 <t-space>
-                  <t-icon name="delete" @click="onDeleteMitemRowClick(row)" />
+                  <t-icon name="delete" :disabled="loadingMitem" @click="onDeleteMitemRowClick(row)" />
                 </t-space>
               </template>
               <template #oprate>
-                <t-button shape="square" variant="outline" :disabled="loading">
+                <t-button shape="square" variant="outline" :disabled="loadingMitem">
                   <t-icon name="add" />
                 </t-button>
               </template> </tm-table
@@ -89,20 +94,20 @@
   <div>
     <t-dialog
       v-model:visible="formVisible"
-      header="分类编辑"
+      :header="formHeader"
       :on-confirm="onConfirmForm"
       width="50%"
       :close-on-overlay-click="false"
     >
       <t-space direction="vertical" style="width: 98%">
-        <mitem-category-form ref="formRef"></mitem-category-form>
+        <form-pack-rule ref="formRef"></form-pack-rule>
       </t-space>
     </t-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { DialogPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 
 import { api as apiControl } from '@/api/control';
@@ -110,7 +115,7 @@ import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-// import formPackRule from './formPackRule.vue';
+import formPackRule from './formPackRule.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
@@ -155,14 +160,14 @@ const tableProductPackRuleColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('business.main.timeCreate')}`, width: 140, colKey: 'timeCreate' },
   { title: `${t('business.main.modifier')}`, width: 110, colKey: 'modifierName' },
   { title: `${t('business.main.timeModified')}`, width: 140, colKey: 'timeModified' },
-  { title: `${t('common.button.operation')}`, align: 'left', width: 100, colKey: 'op' },
+  { title: `${t('common.button.operation')}`, align: 'left', width: 80, colKey: 'op' },
 ];
 
 const tablePackDtlColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: `${t('packType')}`, colKey: 'packTypeName' },
-  { title: `${t('packQty')}`, colKey: 'packQty' },
-  { title: `${t('uom')}`, width: 80, colKey: 'uom' },
-  { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 120, colKey: 'op' },
+  { title: `${t('packType')}`, width: 150, colKey: 'packTypeName' },
+  { title: `${t('packQty')}`, width: 50, colKey: 'packQty' },
+  { title: `${t('uom')}`, width: 50, colKey: 'uom' },
+  { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 80, colKey: 'op' },
 ];
 
 // const tableProductPackRulePagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
@@ -171,7 +176,7 @@ const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('business.main.mitemName')}`, width: 100, colKey: 'mitemName' },
   { title: `${t('business.main.mitemCategoryCode')}`, width: 100, colKey: 'mitemCategoryCode' },
   { title: `${t('business.main.mitemCategoryName')}`, width: 120, colKey: 'mitemCategoryName' },
-  { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 120, colKey: 'op' },
+  { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 80, colKey: 'op' },
 ];
 
 const treeConfig = reactive({
@@ -188,7 +193,7 @@ const mitemTotal = ref(0);
 const tableRef = ref();
 const selectPackRuleRow = ref({}) as any; // 选中包装规则行
 const selectPackRuleDtlRow = ref({}) as any; // 选中包装规则明细行
-
+const formHeader = ref('');
 // 导入按钮
 // const onImport = () => {
 //   console.log('导入功能待完成');
@@ -241,10 +246,10 @@ const fetchPackDtlTable = async () => {
   }
   try {
     setLoadingPackDtl(true);
-    // const data = (await apiControl.productPackRuleDtl.tree({
-    //   productPackRuleId: selectPackRuleRow.value,
-    // })) as any;
-    // tableDataProductPackDtl.value = data;
+    const data = (await apiControl.productPackRuleDtl.tree({
+      productPackRuleId: selectPackRuleRow.value,
+    })) as any;
+    tableDataProductPackDtl.value = data;
     nextTick(() => {
       tableRef.value?.expandAll();
     });
@@ -263,10 +268,10 @@ const fetchMitemTable = async () => {
   }
   try {
     setLoadingMitem(true);
-    // const data = (await apiControl.productPackRuleMap.list({
-    //   packRuleId: selectPackRuleRow.value,
-    // })) as any;
-    // tableDataMitem.value = data.list;
+    const data = (await apiControl.productPackRuleMap.list({
+      packRuleId: selectPackRuleRow.value,
+    })) as any;
+    tableDataMitem.value = data.list;
   } catch (e) {
     console.log(e);
   } finally {
@@ -282,15 +287,6 @@ const clearMitemTable = async () => {
   tableDataMitem.value = [];
 };
 
-const onConfirmForm = async () => {
-  formRef.value.submit().then((data) => {
-    if (data) {
-      formVisible.value = false;
-      fetchTable();
-    }
-  });
-};
-
 // 删除包装规则
 const onDeletePackRowClick = async (row: any) => {
   console.log(row);
@@ -300,9 +296,10 @@ const onDeletePackRowClick = async (row: any) => {
     confirmBtn: t('common.button.confirm'),
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
-      await apiControl.productPackRule.delete(row.id);
+      await apiControl.productPackRule.delete({ id: row.id });
       fetchTable();
       confirmDia.hide();
+      MessagePlugin.success(t('common.message.deleteSuccess'));
     },
     onClose: () => {
       confirmDia.hide();
@@ -318,9 +315,10 @@ const onDeletePackDtlRowClick = async (row: any) => {
     confirmBtn: t('common.button.confirm'),
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
-      await apiControl.productPackRuleDtl.delete(row.id);
+      await apiControl.productPackRuleDtl.delete({ id: row.id });
       fetchPackDtlTable();
       confirmDia.hide();
+      MessagePlugin.success(t('common.message.deleteSuccess'));
     },
     onClose: () => {
       confirmDia.hide();
@@ -336,15 +334,32 @@ const onDeleteMitemRowClick = async (row: any) => {
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
       console.log(row);
-      await apiControl.productPackRuleMap.delete(row.id);
+      await apiControl.productPackRuleMap.delete({ id: row.id });
       fetchMitemTable();
       confirmDia.hide();
+      MessagePlugin.success(t('common.message.deleteSuccess'));
     },
     onClose: () => {
       confirmDia.hide();
     },
   });
 };
+
+// 弹出新增包装规则界面
+const onClickAddPackRule = () => {
+  formVisible.value = true;
+};
+
+// 包装规则界面提交
+const onConfirmForm = async () => {
+  formRef.value.submit().then((data) => {
+    if (data) {
+      formVisible.value = false;
+      fetchTable();
+    }
+  });
+};
+
 onMounted(() => {
   fetchTable();
 });
