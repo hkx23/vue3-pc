@@ -29,6 +29,8 @@
       <!-- 表格属性备份
       :expanded-row="expandedRow" -->
       <!-- :max-height="tableHeight + 'px'" -->
+
+      <!-- :style="{ width: tableWidth + 'px' }" -->
       <div ref="tableContentRef" class="table-box__table">
         <t-table
           ref="tableRef"
@@ -44,7 +46,6 @@
           :max-height="maxHeightValue"
           :selected-row-keys="selectedRowKeys"
           v-bind="$attrs"
-          :style="{ width: tableWidth + 'px' }"
           @select-change="onSelectKeysChange"
           @filter-change="onFilterChange"
           @sort-change="sortChange"
@@ -420,7 +421,7 @@ watch(
 const tableContentRef = ref();
 const tableRef = ref();
 // const showExpand = ref(true); // 是否展示展开按钮
-const tableWidth = ref(0); // 表格宽度
+// const tableWidth = ref(100); // 表格宽度
 const tableHeight = ref(0); // 表格高度
 const comVisible = ref(true);
 
@@ -431,10 +432,10 @@ const debounceFunction = _.debounce(() => {
 const computedTableContentSize = () => {
   // 组件处于不可见状态时将不进行计算
   if (!comVisible.value) return;
-  tableWidth.value = 0;
-  tableHeight.value = 0;
+  // tableWidth.value = 0;
+  // tableHeight.value = 0;
   nextTick(() => {
-    tableWidth.value = tableContentRef.value.clientWidth;
+    // tableWidth.value = tableContentRef.value.clientWidth;
     tableHeight.value = tableContentRef.value.clientHeight;
   });
 };
@@ -473,6 +474,7 @@ onActivated(() => {
 
 onDeactivated(() => {
   comVisible.value = false;
+  debounceFunction();
 });
 
 window.addEventListener('resize', debounceFunction, false);

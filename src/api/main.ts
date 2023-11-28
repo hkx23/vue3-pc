@@ -197,6 +197,125 @@ export interface ResultWorkgroup {
 }
 
 /** 通用响应类 */
+export interface ResultWarehouse {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 仓库 */
+  data?: Warehouse;
+}
+
+/** 仓库 */
+export type Warehouse = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 仓库描述 */
+  warehouseDesc?: string;
+  /** 仓库类型 */
+  warehouseCategory?: string;
+  /** 仓库属性 */
+  warehouseAttribute?: string;
+  /**
+   * 是否启用交易上传
+   * @format int32
+   */
+  isEnableUpload?: number;
+  /**
+   * 交易上传时间
+   * @format date-time
+   */
+  datetimeUpload?: string;
+  /**
+   * 是否启用货位管理
+   * @format int32
+   */
+  isEnableLocation?: number;
+  /** ERP仓库 */
+  erpWarehouse?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListWarehouseFeignDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WarehouseFeignDTO[] | null;
+}
+
+/** 仓库服务间调用标准实体 */
+export type WarehouseFeignDTO = {
+  id?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 仓库描述 */
+  warehouseDesc?: string;
+  /** 仓库类型 */
+  warehouseCategory?: string;
+  /** 仓库属性 */
+  warehouseAttribute?: string;
+  /**
+   * 是否启用交易上传
+   * @format int32
+   */
+  isEnableUpload?: number;
+  /**
+   * 交易上传时间
+   * @format date-time
+   */
+  datetimeUpload?: string;
+  /**
+   * 是否启用货位管理
+   * @format int32
+   */
+  isEnableLocation?: number;
+  /** ERP仓库 */
+  erpWarehouse?: string;
+} | null;
+
+/** 通用响应类 */
 export interface ResultUser {
   /**
    * 响应代码
@@ -290,6 +409,7 @@ export type User = {
    */
   timeExpiration?: string;
   personId?: string;
+  orgId?: string;
 } | null;
 
 /** 响应数据 */
@@ -970,15 +1090,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
   isState?: boolean;
   stateName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
   isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
   isBatchName?: string;
+  isProductName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -1144,8 +1264,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1372,8 +1492,20 @@ export type CurrentUserVO = {
   userName?: string;
   /** 显示名称 */
   displayName?: string;
-  mpersonId?: string;
+  defaultOrgId?: string;
+  /** 授权组织 */
+  orgList?: OrgVO[];
 } | null;
+
+/** 组织基础实体 */
+export interface OrgVO {
+  /** 组织ID */
+  id?: string;
+  /** 组织编码 */
+  code?: string;
+  /** 组织名称 */
+  name?: string;
+}
 
 /** 通用响应类 */
 export interface ResultCurrentUserVO {
@@ -1386,6 +1518,25 @@ export interface ResultCurrentUserVO {
   message?: string;
   /** 当前用户实体 */
   data?: CurrentUserVO;
+}
+
+/** 响应数据 */
+export type KeyValuePairStringString = {
+  value?: string;
+  label?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListKeyValuePairStringString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: KeyValuePairStringString[] | null;
 }
 
 /** 显示组织层级实体 */
@@ -1458,6 +1609,135 @@ export interface ResultListOrgTreeVO {
   message?: string;
   /** 响应数据 */
   data?: OrgTreeVO[] | null;
+}
+
+/** 领域对象扩展属性分类 */
+export type ObjectPropertyCategory = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 领域名称编码 */
+  objectCode?: string;
+  /** 类别编码 */
+  categoryCode?: string;
+  /** 类别名称 */
+  categoryName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListObjectPropertyCategory {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ObjectPropertyCategory[] | null;
+}
+
+/** 响应数据 */
+export type ObjectPropertyValueVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 领域对象编码 */
+  objectCode?: string;
+  categoryId?: string;
+  /** 属性代码 */
+  propertyCode?: string;
+  /** 属性值类型 */
+  propertyValueType?: string;
+  /** 显示在界面上的名词 */
+  displayName?: string;
+  /**
+   * 属性中的显示顺序
+   * @format int32
+   */
+  displaySequence?: number;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequire?: number;
+  /**
+   * 是否允许存在多个同类项
+   * @format int32
+   */
+  isMultiple?: number;
+  /**
+   * 是否需要校验输入
+   * @format int32
+   */
+  needValidation?: number;
+  /** 校验的正则表达式 */
+  validExpression?: string;
+  /** 扩展属性数据来源 */
+  dataSource?: string;
+  /** 数据取值路径 */
+  dataSourcePath?: string;
+  /** 备注 */
+  memo?: string;
+  /** 对象ID */
+  objectId?: string;
+  /** 对象属性值 */
+  propertyValue?: string;
+  /** 扩展属性类型编码 */
+  categoryCode?: string;
+  /** 扩展属性类型名称 */
+  categoryName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListObjectPropertyValueVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ObjectPropertyValueVO[] | null;
 }
 
 /** 菜单元数据 */
@@ -1719,6 +1999,49 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkgroup['data']>(`/api/main/workgroup/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  warehouse: {
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name Search
+     * @request POST:/warehouse/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/warehouse/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name GetItemById
+     * @request POST:/warehouse/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultWarehouse['data']>(`/api/main/warehouse/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name FeignListByIds
+     * @summary 服务间调用标准仓库信息
+     * @request POST:/warehouse/feignListByIds
+     * @secure
+     */
+    feignListByIds: (data: string[]) =>
+      http.request<ResultListWarehouseFeignDTO['data']>(`/api/main/warehouse/feignListByIds`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   user: {
@@ -2131,7 +2454,7 @@ export const api = {
       /** @default "" */
       parmGroupCode?: string;
     }) =>
-      http.request<ResultObject['data']>(`/api/main/param/getListByGroupCode`, {
+      http.request<ResultListKeyValuePairStringString['data']>(`/api/main/param/getListByGroupCode`, {
         method: 'GET',
         params: query,
       }),
@@ -2613,6 +2936,38 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  objectPropertyCategory: {
+    /**
+     * No description
+     *
+     * @tags 领域对象扩展属性分类
+     * @name GetListByObjectName
+     * @summary 根据领域对象编码获取分类
+     * @request GET:/objectPropertyCategory/getListByObjectName
+     * @secure
+     */
+    getListByObjectName: (query: { objectCode: string }) =>
+      http.request<ResultListObjectPropertyCategory['data']>(`/api/main/objectPropertyCategory/getListByObjectName`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  objectProperty: {
+    /**
+     * No description
+     *
+     * @tags 领域扩展属性
+     * @name GetObjectValueList
+     * @summary 获取领域扩展属性列表与值
+     * @request GET:/objectProperty/getObjectValueList
+     * @secure
+     */
+    getObjectValueList: (query: { objectId: string; objectCode: string; propertyCode: string }) =>
+      http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
+        method: 'GET',
+        params: query,
       }),
   },
   module: {
