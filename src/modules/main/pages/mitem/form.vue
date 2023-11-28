@@ -11,33 +11,32 @@
     </t-form-item>
     <t-form-item :label="t('business.main.mitemCategoryCode')">
       <div style="width: 156px">
-        <tm-select-business
-          v-model="formData.mitemCategoryId"
-          type="mitemCategory"
-          :show-title="false"
-        ></tm-select-business>
+        <tm-select-business v-model="formData.mitemCategoryId" type="mitemCategory" :show-title="false" />
       </div>
     </t-form-item>
     <t-form-item :label="t('business.main.uom')">
-      <t-select v-model="formData.uom" disabled style="width: 156px" :options="uomOptions" clearable />
+      <t-select v-model="formData.uom" style="width: 156px" :options="uomOptions" clearable />
     </t-form-item>
     <t-form-item :label="t('business.main.supplyCategory')">
-      <t-select
-        v-model="formData.supplyCategory"
-        disabled
-        style="width: 156px"
-        :options="supplyCategoryOptions"
-        clearable
-      />
+      <div style="width: 156px">
+        <t-select v-model="formData.supplyCategory" :options="supplyCategoryOptions" clearable />
+      </div>
     </t-form-item>
     <t-form-item :label="t('business.main.isBatchNo')">
-      <t-select v-model="formData.isBatchNo" style="width: 156px" :options="isBatchNoOptions" clearable />
+      <t-select v-model="formData.isBatchNo" :options="isBatchNoOptions" clearable style="width: 156px" />
     </t-form-item>
     <t-form-item :label="t('business.main.defaultWarehouse')">
-      <t-input v-model="formData.warehouseCode" readonly placeholder="" />
+      <div style="width: 156px">
+        <tm-select-business
+          v-model="formData.warehouseId"
+          type="warehouse"
+          :show-title="false"
+          @selection-change="onWarehouseChange"
+        />
+      </div>
     </t-form-item>
     <t-form-item :label="t('business.main.warehouseName')">
-      <t-input v-model="formData.warehouseName" readonly placeholder="" />
+      <t-input v-model="formData.warehouseName" disabled placeholder="" />
     </t-form-item>
     <t-form-item :label="t('business.main.shelfLifeDays')">
       <t-input-number v-model="formData.shelfLifeDays" />
@@ -75,10 +74,7 @@ export default {
       { label: t('business.main.inProduct'), value: 'isInProcess' },
       { label: t('business.main.product'), value: 'isProduct' },
     ]);
-    const uomOptions = ref([
-      { label: 'Pcs', value: 'Pcs' },
-      { label: 'Kg', value: 'Kg' },
-    ]); // 主单位
+    const uomOptions = ref([]); // 主单位
     const supplyCategoryOptions = ref([
       { label: t('business.main.pull'), value: t('business.main.pull') },
       { label: t('business.main.push'), value: t('business.main.push') },
@@ -112,7 +108,7 @@ export default {
     });
 
     onMounted(() => {
-      console.log('123123');
+      console.log('打开dialog');
     });
     const submit = async () => {
       try {
@@ -129,9 +125,30 @@ export default {
       }
     };
 
+    const onWarehouseChange = (value: any) => {
+      formData.value.warehouseId = value.id;
+      formData.value.warehouseCode = value.warehouseCode;
+      formData.value.warehouseName = value.warehouseName;
+    };
+
+    const getUom = async () => {
+      try {
+        // await api.mitemUom.getlist(formData.value);
+        uomOptions.value = [];
+        const dataUom = await api.mitemUom.getlist({ pageNum: 1, pageSize: 9999, uom: '' });
+        dataUom.list.forEach((n) => uomOptions.value.push({ label: n.uom, value: n.uomSymbol }));
+      } catch (e) {
+        console.log(e);
+      } finally {
+        console.log('11111');
+      }
+    };
+
     return {
       t,
       submit,
+      getUom,
+      onWarehouseChange,
       formData,
       uomOptions,
       supplyCategoryOptions,

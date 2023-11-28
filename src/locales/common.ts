@@ -66,6 +66,7 @@ export default {
         mitemDesc: '物料描述',
         mitemCategoryCode: '物料类别',
         mitemCategoryName: '物料类别名称',
+        mitemTypeCode: '物料分类',
         raw: '原材料',
         product: '半成品',
         inProduct: '成品',
