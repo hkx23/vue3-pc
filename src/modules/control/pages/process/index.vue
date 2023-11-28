@@ -15,6 +15,11 @@
             </div>
           </t-col>
         </t-row>
+        <t-row style="margin-top: 10px">
+          <t-button theme="default" @click="onAdd">新增</t-button>
+          <t-button theme="default">导入</t-button>
+          <t-button theme="default">导出</t-button>
+        </t-row>
         <t-row justify="space-between">
           <tm-table
             v-model:pagination="pageUI"
@@ -39,7 +44,7 @@
   <div>
     <t-dialog
       v-model:visible="formVisible"
-      header="工序编辑"
+      :header="formTitle"
       :on-confirm="onConfirmForm"
       width="50%"
       :close-on-overlay-click="false"
@@ -71,12 +76,18 @@ const sortlist = ref([]);
 const filterlist = ref([]);
 const formVisible = ref(false);
 const formRef = ref(null);
+const formTitle = ref('');
 
 const tableProcessColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '序号', colKey: 'serial-number', width: 74 },
-  { title: '工序编码', width: 160, colKey: 'processCode' },
+  { title: '工序代码', width: 160, colKey: 'processCode' },
   { title: '工序名称', width: 160, colKey: 'processName' },
   { title: '工序描述', width: 160, colKey: 'processDesc' },
+  { title: '状态', width: 160, colKey: 'stateName' },
+  { title: '创建人', width: 160, colKey: 'creatorName' },
+  { title: '创建时间', width: 160, colKey: 'timeCreate' },
+  { title: '更新人', width: 160, colKey: 'modifierName' },
+  { title: '更新时间', width: 160, colKey: 'timeModified' },
   { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 // 查询按钮
@@ -111,15 +122,25 @@ const fetchTable = async () => {
 };
 
 const onEditRowClick = (value: any) => {
+  formTitle.value = '编辑';
   formRef.value.formData = JSON.parse(JSON.stringify(value.row));
+  formRef.value.formData.operateTpye = 'edit';
   formVisible.value = true;
 };
 
 const onConfirmForm = async () => {
-  formRef.value.submit().then(() => {
-    formVisible.value = false;
-    fetchTable();
+  formRef.value.submit().then((data) => {
+    if (data) {
+      formVisible.value = false;
+      fetchTable();
+    }
   });
+};
+
+const onAdd = () => {
+  formTitle.value = '新增';
+  formRef.value.init();
+  formVisible.value = true;
 };
 
 onMounted(() => {

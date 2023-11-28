@@ -4,47 +4,33 @@
       <t-row justify="space-between">
         <t-col>
           <div style="display: flex; align-items: center">
-            <div style="width: 130px">计量单位名称：</div>
-            <t-input v-model="queryData" label="" placeholder="请输入" clearable size="medium" />
+            <div style="width: 130px">{{ t('unitName') }}：</div>
+            <t-input
+              v-model="queryData"
+              label=""
+              :placeholder="t('common.placeholder.input')"
+              clearable
+              size="medium"
+            />
           </div>
         </t-col>
         <t-col>
           <div class="btn-left">
-            <t-button @click="onRefresh">查询</t-button>
-            <t-button theme="default" @click="onReset">重置</t-button>
+            <t-button @click="onRefresh">{{ t('common.button.query') }}</t-button>
+            <t-button theme="default" @click="onReset">{{ t('common.button.reset') }}</t-button>
           </div>
         </t-col>
       </t-row>
       <t-row class="mitemuom-function-button">
         <t-col>
-          <t-button theme="default" @click="onAddMeasuring">新增</t-button>
-          <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirms">
-            <t-button theme="default">批量删除</t-button>
+          <t-button theme="default" @click="onAddMeasuring">{{ t('common.button.add') }}</t-button>
+          <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirms">
+            <t-button theme="default">{{ t('common.button.batchDelete') }}</t-button>
           </t-popconfirm>
-          <t-button theme="default">导入</t-button>
+          <t-button theme="default">{{ t('common.button.import') }}</t-button>
         </t-col>
       </t-row>
       <t-row>
-        <!-- <t-table
-          :data="tableData"
-          :columns="columns"
-          row-key="id"
-          :pagination="tableMitemPagination"
-          :selected-row-keys="selectedRowKeys"
-          @select-change="rehandleSelectChange"
-          @page-change="onPageChange"
-        >
-          <template #actionSlot="{ row }">
-            <t-button size="small" variant="text" @click="onEditRow(row)">
-              <icon name="edit-1" class="black-icon" />
-            </t-button>
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm">
-              <t-button size="small" variant="text" @click="onDeleteRow(row)">
-                <icon name="delete" class="black-icon" />
-              </t-button>
-            </t-popconfirm>
-          </template>
-        </t-table> -->
         <tm-table
           ref="tableRef"
           v-model:pagination="pageUI"
@@ -59,7 +45,7 @@
             <t-button size="small" variant="text" @click="onEditRow(row)">
               <icon name="edit-1" class="black-icon" />
             </t-button>
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm">
+            <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirm">
               <t-button size="small" variant="text" @click="onDeleteRow(row)">
                 <icon name="delete" class="black-icon" />
               </t-button>
@@ -90,31 +76,45 @@
         <!-- 计量单位名称： -->
         <t-row class="form-customer-row">
           <t-col>
-            <t-form-item label="计量单位名称" name="uom">
-              <t-input v-model="formData.uom" placeholder="请输入"></t-input>
+            <t-form-item :label="t('unitName')" name="uom">
+              <t-input v-model="formData.uom" :placeholder="t('common.placeholder.input')"></t-input>
             </t-form-item>
           </t-col>
         </t-row>
         <!-- 计量单位名称： -->
         <t-row class="form-customer-row">
           <t-col>
-            <t-form-item label="计量单位符号" name="uomSymbol">
-              <t-input v-model="formData.uomSymbol" placeholder="请输入"></t-input>
+            <t-form-item :label="t('unitSymbol')" name="uomSymbol">
+              <t-input
+                v-model="formData.uomSymbol"
+                :placeholder="t('common.placeholder.input')"
+                :disabled="isdisables"
+              ></t-input>
             </t-form-item>
           </t-col>
         </t-row>
         <!-- 控制盒子 -->
-        <div class="control-box">
-          <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-          <t-button theme="primary" type="submit">确认</t-button>
-        </div>
+        <t-row style="margin-left: auto">
+          <!-- 取消按钮 -->
+          <t-button theme="default" variant="base" @click="onSecondaryReset">{{ t('common.button.cancel') }}</t-button>
+          <!-- 确认按钮 -->
+          <t-button theme="primary" type="submit">{{ t('common.button.confirm') }}</t-button>
+        </t-row>
       </t-form>
     </t-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { FormInstanceFunctions, FormRules, Icon, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import {
+  CustomValidateResolveType,
+  FormInstanceFunctions,
+  FormRules,
+  Icon,
+  MessagePlugin,
+  PrimaryTableCol,
+  TableRowData,
+} from 'tdesign-vue-next';
 import { onMounted, Ref, ref } from 'vue';
 
 import TmTable from '@/components/tm-table/index.vue';
@@ -127,6 +127,10 @@ const { loading } = useLoading();
 
 import { api } from '@/api/main';
 
+import { useLang } from './lang';
+
+const { t } = useLang();
+
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const showDialog = ref(false); // 控制新增模态框开关
 const total = ref(null); // 总页数
@@ -136,6 +140,7 @@ const formData = ref({ uom: '', uomSymbol: '', id: null }); // 新增表单数�
 const queryData = ref(''); // 精确查询数据
 const diaTitle = ref(''); // 模态框文字
 const isPage = ref({ pageNum: null, pageSize: null });
+const isdisables = ref(false);
 // 渲染函数
 onMounted(() => {
   onGetMiteMuom();
@@ -144,7 +149,7 @@ onMounted(() => {
 // 查询按钮
 const onRefresh = () => {
   if (queryData.value) {
-    isPage.value.pageNum = 1;
+    pageUI.value.page = 1;
     onGetMiteMuom();
   }
 };
@@ -162,6 +167,7 @@ const fetchData = () => {
 
 // 表单清除
 const onDialogClose = () => {
+  isdisables.value = false;
   formRef.value.reset({ type: 'empty' });
 };
 
@@ -170,13 +176,14 @@ const onSubmit = async ({ validateResult, firstError }) => {
   if (validateResult === true) {
     if (formData.value.id) {
       await onAmendMiteMuom(); // 有 ID 就发送编辑修改请求
+      MessagePlugin.success(t('common.message.success'));
     } else {
       await onAddMiteMuom(); // 没有 ID 就发送新增请求
+      MessagePlugin.success(t('common.message.addSuccess'));
     }
     showDialog.value = false;
     onGetMiteMuom(); // 重新渲染数据
     formRef.value.reset({ type: 'empty' });
-    MessagePlugin.success('提交成功');
   } else {
     MessagePlugin.warning(firstError);
   }
@@ -186,6 +193,7 @@ const onSubmit = async ({ validateResult, firstError }) => {
 const onSecondaryReset = () => {
   MessagePlugin.success('取消编辑');
   showDialog.value = false;
+  isdisables.value = false; // 取消编辑符号禁用
   formRef.value.reset({ type: 'empty' });
 };
 
@@ -201,7 +209,7 @@ const onGetMiteMuom = async () => {
     tableData.value = res.list; // 表格数据赋值
     total.value = res.total; // 总页数赋值
   } catch (e) {
-    MessagePlugin.success(e);
+    MessagePlugin.success(t('common.message.selectRowTryAgain')); // 请选择行之后再尝试操作
   }
 };
 
@@ -212,7 +220,7 @@ interface TableRow {
   uomSymbol: string;
 }
 
-// 列定义
+// 列定义f
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
@@ -221,29 +229,59 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'uom',
-    title: '计量单位名称',
+    title: t('unitName'), // 计量单位名称
     align: 'center',
   },
   {
     colKey: 'uomSymbol',
-    title: '计量单位符号',
+    title: t('unitSymbol'), // 计量单位符号
     align: 'center',
   },
   {
     colKey: 'action',
-    title: '操作',
+    title: t('operation'), // 操作
     width: 160,
     align: 'center',
     cell: 'actionSlot', // 引用具名插槽
   },
 ];
 
+// 自定义计量单位 名称 新增校验规则
+function checkUomUnique(value: any): boolean | CustomValidateResolveType {
+  const currentEditingId = formData.value.id; // 获取当前正在编辑的条目的 ID
+  const isDuplicate = tableData.value.some((item) => {
+    return item.uom === value && item.id !== currentEditingId; // 检查是否有重复的名称且不是当前编辑的条目
+  });
+  if (isDuplicate) {
+    return { result: false, message: '计量单位名称已存在', type: 'error' };
+  }
+  return true;
+}
+
+// 自定义计量单位 符号 新增校验规则
+function checkUomSymbolUnique(value: any): boolean | CustomValidateResolveType {
+  // 如果当前是编辑操作并且正在编辑的数据有id，则不进行计量单位符号的验证
+  if (formData.value.id) {
+    return true;
+  }
+  const isDuplicate = tableData.value.some((item) => item.uomSymbol === value);
+  if (isDuplicate) {
+    return { result: false, message: '计量单位符号已存在', type: 'error' };
+  }
+  return true;
+}
+
 // 新增表单的验证规则
 const FORM_RULES: FormRules = {
-  uom: [{ required: true, message: '计量单位名称不能为空', trigger: 'blur' }],
-  uomSymbol: [{ required: true, message: '计量单位符号不能为空', trigger: 'blur' }],
+  uom: [
+    { required: true, message: '计量单位名称不能为空', trigger: 'blur' },
+    { validator: checkUomUnique, trigger: 'blur', message: '计量单位名称已存在' },
+  ],
+  uomSymbol: [
+    { required: true, message: '计量单位符号不能为空', trigger: 'blur' },
+    { validator: checkUomSymbolUnique, trigger: 'blur', message: '计量单位符号已存在' },
+  ],
 };
-
 /**
  * 新增计量单位
  */
@@ -261,6 +299,7 @@ const onAddMeasuring = () => {
 // 点击编辑逻辑
 const onEditRow = (row: TableRow) => {
   diaTitle.value = '计量单位编辑';
+  isdisables.value = true;
   formData.value.uom = row.uom; // 单位名称
   formData.value.uomSymbol = row.uomSymbol; // 单位名称字符
   formData.value.id = row.id; // 当前点击的 id
@@ -312,7 +351,7 @@ const onDelConfirms = async () => {
     if (tableData.value.length <= 1 && isPage.value.pageNum > 1) {
       pageUI.value.page--;
     }
-    onGetMiteMuom();
+    await onGetMiteMuom();
     selectedRowKeys.value = [];
   }
 };
@@ -336,9 +375,7 @@ const onDelConfirms = async () => {
 }
 
 .control-box {
-  position: absolute;
-  right: var(--td-comp-size-l);
-  bottom: var(--td-comp-size-s);
-  color: red;
+  display: flex;
+  justify-content: flex-end; /* 这会使按钮靠右对齐 */
 }
 </style>

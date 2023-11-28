@@ -1093,12 +1093,7 @@ export interface MitemVO {
   isState?: boolean;
   stateName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isBatchName?: string;
-  isProductName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -1203,6 +1198,7 @@ export interface MitemSearch {
   /** @format int32 */
   pageSize?: number;
   keyword?: string;
+  mitemCategoryKeyword?: string;
   /** @format int32 */
   isRaw?: number;
   /** @format int32 */
@@ -2231,6 +2227,8 @@ export const api = {
     getlist: (query: {
       personcode: string;
       personname: string;
+      /** @format int32 */
+      state: number;
       sortfield: string;
       sorttype: string;
       filterfield: string;

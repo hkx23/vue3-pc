@@ -17,7 +17,14 @@
                   <icon name="search"></icon>
                 </template>
               </t-input>
-              <t-tree :data="dataTree" :value="value" :expand-parent="false" :transition="false" @click="onClickTree">
+              <t-tree
+                :data="dataTree"
+                :value="value"
+                :expand-parent="false"
+                :transition="false"
+                :activable="true"
+                @click="onClickTree"
+              >
               </t-tree>
               <t-pagination v-model="current" v-model:pageSize="pageSize" :total="total" />
             </div>
@@ -72,7 +79,7 @@ const pageSize = ref(20); // 用户请求数
 const total = ref(10); // 用户分页总数
 const tableTotal = ref(10); // table分页总数
 const selectedRowKeys = ref([]); // 选择的
-const { loading, setLoading } = useLoading();
+const { loading, setLoading } = useLoading(); // loading
 const value = ref([]);
 const permission = ref({
   user: '',
@@ -157,8 +164,9 @@ const onFetchData = async () => {
       });
       dataTree.value = useList.list;
       dataTree.value.forEach((item) => {
-        item.label = `${item.personName}[${item.userName}]`;
+        item.label = `${item.userDisplayName}[${item.userName}]`;
         item.value = item.userId;
+        item.show = false;
         value.value.push(item.value);
       });
       total.value = useList.total;

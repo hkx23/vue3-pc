@@ -2,7 +2,7 @@
   <div class="detailed-box">
     <t-card :bordered="false">
       <div class="form-item-box">
-        <!-- <t-form-item label="工艺路线类型"> <t-input v-model="conditionData.routingType" /></t-form-item> -->
+        <t-form-item label="工艺路线类型"> <t-input v-model="currentrow.moClassName" :disabled="true" /></t-form-item>
         <t-form-item label="工艺路线">
           <t-input v-model="conditionData.routingCode" @change="onChangeKeyword" />
         </t-form-item>
@@ -50,7 +50,7 @@ const props = defineProps({
 });
 const { loading: loadingRouting, setLoading: setLoadingRouting } = useLoading();
 const Emit = defineEmits(['routingShow', 'refreshTable']);
-const currentrow = ref({}); // 当前行工单信息
+const currentrow = ref({}) as any; // 当前行工单信息
 const conditionData = reactive({
   routingCode: '',
   routingType: '',
@@ -66,8 +66,10 @@ const fetchTableRouting = async () => {
     const row = currentrow.value as any;
     if (row) {
       const { routingCode } = conditionData;
+      const { moClass } = currentrow.value;
       const res = (await apicontrol.routingRevision.getRoutRevisionByRoutingCode({
         routingCode,
+        routingType: moClass,
       })) as any;
       moRoutingData.value = res.list;
     }
@@ -84,7 +86,11 @@ const columnsRouting: PrimaryTableCol<TableRowData>[] = [
     type: 'single',
     fixed: 'left',
   },
-
+  {
+    colKey: 'routingTypeName',
+    title: '工艺路线类型',
+    align: 'center',
+  },
   {
     colKey: 'routingCode',
     title: '工艺路线编码',
@@ -198,7 +204,7 @@ watch(
 
   .t-form__item {
     display: inline-block;
-    width: 30%;
+    width: 50%;
     margin: 0;
   }
 

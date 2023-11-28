@@ -69,7 +69,6 @@ import { api, OrgTreeVO } from '@/api/main';
 import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
-import { getOrgLevelDic } from '../../api/orgLevel';
 import { FormRef } from './constants';
 import OrgForm from './form.vue';
 
@@ -144,7 +143,7 @@ const fetchData = async () => {
 };
 
 const fetchOrgLevelDic = async () => {
-  orgLevelObject = (await getOrgLevelDic()).reduce((acc, item) => {
+  orgLevelObject = (await api.param.getListByGroupCode({ parmGroupCode: 'ORG_LEVEL_CODE' })).reduce((acc, item) => {
     (acc as any)[item.value] = item.label;
     return acc;
   }, {});
@@ -232,11 +231,12 @@ const onConfirmForm = () => {
 .list-tree-operator {
   width: 280px;
   float: left;
-  padding: var(--td-comp-paddingTB-xxs) var(--td-comp-paddingLR-xxl);
+  padding: var(--td-comp-paddingTB-s) var(--td-comp-paddingLR-xxl);
+  border-right: 1px solid var(--td-border-level-1-color);
 }
 
 .list-tree-content {
-  border-left: 1px solid var(--td-border-level-1-color);
   overflow: auto;
+  padding: 8px;
 }
 </style>

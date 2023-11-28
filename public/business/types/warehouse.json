@@ -1,7 +1,7 @@
 {
   "title": "仓库：",
   "placeholder": "请选择仓库",
-  "url": "/api/warehouse/warehouse/items",
+  "url": "/api/main/warehouse/items",
   "httptype": "POST",
   "columns": [
     {

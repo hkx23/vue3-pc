@@ -6,10 +6,12 @@
         <t-col :span="4">
           <t-tag shape="round" size="large">{{ row.moCode }}</t-tag>
         </t-col>
-        <t-col :span="4">
-          <t-tag shape="round" theme="primary" size="large">{{ row.moClassName }}</t-tag>
+        <t-col :span="1">
+          <t-space class="tag-block-light">
+            <t-tag shape="round" theme="primary" size="large">{{ row.moClassName }}</t-tag>
+          </t-space>
         </t-col>
-        <t-col :span="4">
+        <t-col :span="1">
           <t-tag shape="round" size="large">{{ row.statusName }}</t-tag>
         </t-col>
       </t-row>
@@ -23,7 +25,7 @@
         <t-form-item label="产品编码"> {{ row.mitemCode }}</t-form-item>
       </div>
       <div class="form-item-box">
-        <t-form-item label="产品名称"> {{ row.mitemName }}</t-form-item>
+        <t-form-item label="产品名称"> {{ row.mitemDesc }}</t-form-item>
         <t-form-item label="计划数量">
           {{ row.planQty }}
         </t-form-item>
@@ -32,11 +34,12 @@
       <div class="form-item-box">
         <t-form-item label="计划开始时间"> {{ row.datetimePlanStart }}</t-form-item>
         <t-form-item label="计划完成时间"> {{ row.datetimePlanEnd }}</t-form-item>
-        <t-form-item label="入库仓库"> {{ row.warehouse_code }}</t-form-item>
+        <t-form-item label="入库仓库"> {{ row.warehouseName }}</t-form-item>
       </div>
       <div class="form-item-box">
-        <t-form-item label="销售订单"> {{ row.so_no }}</t-form-item>
+        <t-form-item label="销售订单"> {{ row.soNo }}</t-form-item>
         <t-form-item label="工艺路线版本"> {{ row.routingName }}</t-form-item>
+        <t-form-item label=""> </t-form-item>
       </div>
       <div class="form-item-box">
         <t-form-item label="备注"> {{ row.memo }}</t-form-item>
@@ -198,7 +201,7 @@ const columnsBom: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    colKey: 'moRealQty',
+    colKey: 'pickQty',
     title: '实发数量',
     align: 'center',
   },
@@ -225,7 +228,7 @@ const columnsLog: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    colKey: 'operationType',
+    colKey: 'memo',
     title: '说明',
     align: 'center',
   },
@@ -304,21 +307,20 @@ watch(
 // 表单盒子边距
 .form-item-box {
   margin: 0;
+  display: flex;
 
   .t-form__item {
-    display: inline-block;
-    width: 30%;
+    display: flex;
     margin: 0;
-  }
-
-  /deep/ .t-form__label {
-    display: inline-block !important;
-  }
-
-  /deep/ .t-form__controls {
-    display: inline-block !important;
+    flex: 1;
   }
 }
+
+// .tag-block-light {
+//   /deep/ .t-tag--primary {
+//     background-color: #548df3;
+//   }
+// }
 
 .form-checkbox {
   margin: 10px 100px;

@@ -42,8 +42,8 @@
       <tm-table
         v-model:pagination="pageUI"
         row-key="index"
-        :columns="columns"
-        :data="workData"
+        :table-column="columns"
+        :table-data="workData"
         lazy-load
         :total="total"
         :loading="loading"
@@ -88,6 +88,7 @@
                 v-model="formData.PWorkcenterId"
                 type="workcenter"
                 :show-title="false"
+                :disabled="controlShow ? true : false"
               ></tm-select-business>
             </t-form-item>
           </t-col>
@@ -96,7 +97,12 @@
         <t-row class="form-work-station">
           <t-col>
             <t-form-item label="工序:" name="PProcessId">
-              <tm-select-business v-model="formData.PProcessId" type="process" :show-title="false"></tm-select-business>
+              <tm-select-business
+                v-model="formData.PProcessId"
+                type="process"
+                :show-title="false"
+                :disabled="controlShow ? true : false"
+              ></tm-select-business>
             </t-form-item>
           </t-col>
         </t-row>
@@ -104,7 +110,7 @@
         <t-row class="form-work-station">
           <t-col>
             <t-form-item label="工站代码:" name="workstationCode">
-              <t-input v-model="formData.workstationCode"></t-input>
+              <t-input v-model="formData.workstationCode" :disabled="controlShow ? true : false"></t-input>
             </t-form-item>
           </t-col>
         </t-row>
@@ -135,9 +141,7 @@
         <!-- 控制盒子 -->
         <div class="control-box">
           <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-          <t-popconfirm content="确认保存吗" @confirm="onSecondary">
-            <t-button theme="primary" type="submit">保存</t-button>
-          </t-popconfirm>
+          <t-button theme="primary" type="submit">保存</t-button>
         </div>
       </t-form>
     </t-dialog>
@@ -376,61 +380,52 @@ const onSecondaryReset = () => {
   MessagePlugin.success('取消成功');
   formVisible.value = false;
 };
-let submitShow = true; // 记录保存
-// 二次保存
-const onSecondary = async () => {
-  if (submitShow === true) {
-    return;
-  }
-  if (controlShow.value) {
-    console.log('forme', formData.value.PProcessId);
-    console.log(formData.value.PWorkcenterId);
 
-    try {
-      api.workstation.edit({
-        id: formData.value.id,
-        processId: formData.value.PProcessId,
-        workcenterId: formData.value.PWorkcenterId,
-        workstationCode: formData.value.workstationCode,
-        workstationName: formData.value.workstationName,
-        workstationDesc: formData.value.workstationDesc,
-        state: formData.value.state,
-      });
-    } catch (e) {
-      console.log(e);
-    }
-    onHandelList();
-    // 编辑
-  } else {
-    // 新增逻辑
-    try {
-      await api.workstation.add({
-        workstationCode: formData.value.workstationCode,
-        workstationName: formData.value.workstationName,
-        workstationDesc: formData.value.workstationDesc,
-        workcenterId: formData.value.PWorkcenterId,
-        processId: formData.value.PProcessId,
-        state: formData.value.state,
-      });
-      onHandelList();
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  formRef.value.reset({ type: 'initial' });
-  MessagePlugin.success('保存成功');
-  formVisible.value = false;
-};
+// 二次保存
+// const onSecondary = async () => {};
 // 保存确认按钮
 interface RootObject {
   validateResult: boolean;
   firstError: string;
 }
 // form保存
-const onWorkStationSubmit = (context: RootObject) => {
+const onWorkStationSubmit = async (context: RootObject) => {
   if (context.validateResult === true) {
-    console.log(context.validateResult);
-    submitShow = false;
+    if (controlShow.value) {
+      try {
+        api.workstation.edit({
+          id: formData.value.id,
+          processId: formData.value.PProcessId,
+          workcenterId: formData.value.PWorkcenterId,
+          workstationCode: formData.value.workstationCode,
+          workstationName: formData.value.workstationName,
+          workstationDesc: formData.value.workstationDesc,
+          state: formData.value.state,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+      onHandelList();
+      // 编辑
+    } else {
+      // 新增逻辑
+      try {
+        await api.workstation.add({
+          workstationCode: formData.value.workstationCode,
+          workstationName: formData.value.workstationName,
+          workstationDesc: formData.value.workstationDesc,
+          workcenterId: formData.value.PWorkcenterId,
+          processId: formData.value.PProcessId,
+          state: formData.value.state,
+        });
+        onHandelList();
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    formRef.value.reset({ type: 'initial' });
+    MessagePlugin.success('保存成功');
+    formVisible.value = false;
   }
 };
 // 校验
