@@ -99,22 +99,30 @@
         <t-row class="form-customer-row">
           <t-col>
             <t-form-item label="计量单位符号" name="uomSymbol">
-              <t-input v-model="formData.uomSymbol" placeholder="请输入"></t-input>
+              <t-input v-model="formData.uomSymbol" placeholder="请输入" :disabled="isdisables"></t-input>
             </t-form-item>
           </t-col>
         </t-row>
         <!-- 控制盒子 -->
-        <div class="control-box">
+        <t-row style="margin-left: auto">
           <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
           <t-button theme="primary" type="submit">确认</t-button>
-        </div>
+        </t-row>
       </t-form>
     </t-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { FormInstanceFunctions, FormRules, Icon, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import {
+  CustomValidateResolveType,
+  FormInstanceFunctions,
+  FormRules,
+  Icon,
+  MessagePlugin,
+  PrimaryTableCol,
+  TableRowData,
+} from 'tdesign-vue-next';
 import { onMounted, Ref, ref } from 'vue';
 
 import TmTable from '@/components/tm-table/index.vue';
@@ -136,6 +144,7 @@ const formData = ref({ uom: '', uomSymbol: '', id: null }); // 新增表单数�
 const queryData = ref(''); // 精确查询数据
 const diaTitle = ref(''); // 模态框文字
 const isPage = ref({ pageNum: null, pageSize: null });
+const isdisables = ref(false);
 // 渲染函数
 onMounted(() => {
   onGetMiteMuom();
@@ -144,7 +153,7 @@ onMounted(() => {
 // 查询按钮
 const onRefresh = () => {
   if (queryData.value) {
-    isPage.value.pageNum = 1;
+    pageUI.value.page = 1;
     onGetMiteMuom();
   }
 };
@@ -162,6 +171,7 @@ const fetchData = () => {
 
 // 表单清除
 const onDialogClose = () => {
+  isdisables.value = false;
   formRef.value.reset({ type: 'empty' });
 };
 
@@ -170,13 +180,14 @@ const onSubmit = async ({ validateResult, firstError }) => {
   if (validateResult === true) {
     if (formData.value.id) {
       await onAmendMiteMuom(); // 有 ID 就发送编辑修改请求
+      MessagePlugin.success('编辑成功');
     } else {
       await onAddMiteMuom(); // 没有 ID 就发送新增请求
+      MessagePlugin.success('新增成功');
     }
     showDialog.value = false;
     onGetMiteMuom(); // 重新渲染数据
     formRef.value.reset({ type: 'empty' });
-    MessagePlugin.success('提交成功');
   } else {
     MessagePlugin.warning(firstError);
   }
@@ -186,6 +197,7 @@ const onSubmit = async ({ validateResult, firstError }) => {
 const onSecondaryReset = () => {
   MessagePlugin.success('取消编辑');
   showDialog.value = false;
+  isdisables.value = false; // 取消编辑符号禁用
   formRef.value.reset({ type: 'empty' });
 };
 
@@ -212,7 +224,7 @@ interface TableRow {
   uomSymbol: string;
 }
 
-// 列定义
+// 列定义f
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
@@ -238,12 +250,43 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
+function checkUomUnique(value: any): boolean | CustomValidateResolveType {
+  const currentEditingId = formData.value.id; // 获取当前正在编辑的条目的 ID
+
+  const isDuplicate = tableData.value.some((item) => {
+    return item.uom === value && item.id !== currentEditingId; // 检查是否有重复的名称且不是当前编辑的条目
+  });
+
+  if (isDuplicate) {
+    return { result: false, message: '计量单位名称已存在', type: 'error' };
+  }
+
+  return true;
+}
+
+function checkUomSymbolUnique(value: any): boolean | CustomValidateResolveType {
+  // 如果当前是编辑操作并且正在编辑的数据有id，则不进行计量单位符号的验证
+  if (formData.value.id) {
+    return true;
+  }
+  const isDuplicate = tableData.value.some((item) => item.uomSymbol === value);
+  if (isDuplicate) {
+    return { result: false, message: '计量单位符号已存在', type: 'error' };
+  }
+  return true;
+}
+
 // 新增表单的验证规则
 const FORM_RULES: FormRules = {
-  uom: [{ required: true, message: '计量单位名称不能为空', trigger: 'blur' }],
-  uomSymbol: [{ required: true, message: '计量单位符号不能为空', trigger: 'blur' }],
+  uom: [
+    { required: true, message: '计量单位名称不能为空', trigger: 'blur' },
+    { validator: checkUomUnique, trigger: 'blur', message: '计量单位名称已存在' },
+  ],
+  uomSymbol: [
+    { required: true, message: '计量单位符号不能为空', trigger: 'blur' },
+    { validator: checkUomSymbolUnique, trigger: 'blur', message: '计量单位符号已存在' },
+  ],
 };
-
 /**
  * 新增计量单位
  */
@@ -261,6 +304,7 @@ const onAddMeasuring = () => {
 // 点击编辑逻辑
 const onEditRow = (row: TableRow) => {
   diaTitle.value = '计量单位编辑';
+  isdisables.value = true;
   formData.value.uom = row.uom; // 单位名称
   formData.value.uomSymbol = row.uomSymbol; // 单位名称字符
   formData.value.id = row.id; // 当前点击的 id
@@ -312,7 +356,7 @@ const onDelConfirms = async () => {
     if (tableData.value.length <= 1 && isPage.value.pageNum > 1) {
       pageUI.value.page--;
     }
-    onGetMiteMuom();
+    await onGetMiteMuom();
     selectedRowKeys.value = [];
   }
 };
@@ -336,9 +380,7 @@ const onDelConfirms = async () => {
 }
 
 .control-box {
-  position: absolute;
-  right: var(--td-comp-size-l);
-  bottom: var(--td-comp-size-s);
-  color: red;
+  display: flex;
+  justify-content: flex-end; /* 这会使按钮靠右对齐 */
 }
 </style>
