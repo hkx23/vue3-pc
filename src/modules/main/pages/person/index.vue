@@ -17,11 +17,18 @@
     <div class="list-tree-content">
       <div class="list-common-table">
         <t-row justify="space-between">
-          <t-col>
+          <t-col flex="170px">
             <div>
-              <t-input v-model="personCode" label="员工：" placeholder="请输入员工编号或姓名" clearable />
+              <t-input v-model="personCode" label="员工" placeholder="请输入员工编号或姓名" clearable />
             </div>
           </t-col>
+          <t-col flex="20px"></t-col>
+          <t-col flex="170px">
+            <div>
+              <t-select v-model="personState" label="状态" :options="stateOptions" clearable />
+            </div>
+          </t-col>
+          <t-col flex="auto"></t-col>
           <t-col flex="170px">
             <div>
               <t-button @click="onRefresh">查询</t-button>
@@ -162,12 +169,12 @@ import { usePage } from '@/hooks/modules/page';
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const personCode = ref(''); // 查询
+const personState = ref(-1); //
 
 // #region  页面初始化
 const userGenderList = ref([
   { label: '男', value: 1 },
   { label: '女', value: 0 },
-  { label: '未知', value: -1 },
 ]);
 
 // 编辑的form
@@ -208,6 +215,12 @@ const columnsParam: PrimaryTableCol<TableRowData>[] = [
   { title: '操作', align: 'left', fixed: 'right', colKey: 'op' },
 ];
 
+// 下拉初始数据
+const stateOptions = [
+  { label: '全部', value: -1 },
+  { label: '启用', value: 1 },
+  { label: '禁用', value: 0 },
+];
 // 表格分页设置
 // const pagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
 
@@ -268,6 +281,7 @@ const fetchTable = async () => {
     const data = (await api.person.getlist({
       personcode: personCode.value,
       personname: '',
+      state: personState.value,
       sortfield: '',
       sorttype: '',
       filterfield: '',

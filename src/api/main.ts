@@ -1090,15 +1090,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isState?: boolean;
   stateName?: string;
-  isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
   isBatchName?: string;
   isInProcessName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -1265,8 +1265,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2232,6 +2232,8 @@ export const api = {
     getlist: (query: {
       personcode: string;
       personname: string;
+      /** @format int32 */
+      state: number;
       sortfield: string;
       sorttype: string;
       filterfield: string;
