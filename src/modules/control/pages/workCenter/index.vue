@@ -368,7 +368,7 @@ const onFetchData = async () => {
       const list = await api.workcenter.getCategory();
       id.value = 1;
       allType.value = list.list; // 标签列类型
-      allType.value.forEach((item: { code: string }) => {
+      allType.value.forEach((item) => {
         item.code = '';
       });
       allType.value.unshift({ wcType: '全部', code: 0 });
