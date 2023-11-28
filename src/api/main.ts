@@ -1002,6 +1002,11 @@ export interface MitemCategory {
   reqCalcRule?: string;
   /** 物料投料规则 */
   onboardRuleCode?: string;
+  /**
+   * 是否手工创建
+   * @format int32
+   */
+  isManual?: number;
 }
 
 /** 响应数据 */
@@ -1090,15 +1095,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
-  stateName?: string;
-  isState?: boolean;
   isProductName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  stateName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -1203,6 +1208,7 @@ export interface MitemSearch {
   /** @format int32 */
   pageSize?: number;
   keyword?: string;
+  mitemCategoryKeyword?: string;
   /** @format int32 */
   isRaw?: number;
   /** @format int32 */
@@ -1264,8 +1270,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1609,6 +1615,140 @@ export interface ResultListOrgTreeVO {
   message?: string;
   /** 响应数据 */
   data?: OrgTreeVO[] | null;
+}
+
+/** 领域对象扩展属性分类 */
+export type ObjectPropertyCategory = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 领域名称编码 */
+  objectCode?: string;
+  /** 类别编码 */
+  categoryCode?: string;
+  /** 类别名称 */
+  categoryName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListObjectPropertyCategory {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ObjectPropertyCategory[] | null;
+}
+
+/** 响应数据 */
+export type ObjectPropertyValueVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 领域对象编码 */
+  objectCode?: string;
+  categoryId?: string;
+  /** 属性代码 */
+  propertyCode?: string;
+  /** 属性值类型 */
+  propertyValueType?: string;
+  /** 显示在界面上的名词 */
+  displayName?: string;
+  /**
+   * 属性中的显示顺序
+   * @format int32
+   */
+  displaySequence?: number;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequire?: number;
+  /**
+   * 是否允许存在多个同类项
+   * @format int32
+   */
+  isMultiple?: number;
+  /**
+   * 是否需要校验输入
+   * @format int32
+   */
+  needValidation?: number;
+  /** 校验的正则表达式 */
+  validExpression?: string;
+  /** 扩展属性数据来源 */
+  dataSource?: string;
+  /** 数据取值路径 */
+  dataSourcePath?: string;
+  /** 备注 */
+  memo?: string;
+  /**
+   * 是否数据源多选
+   * @format int32
+   */
+  isDataMultiple?: number;
+  /** 对象ID */
+  objectId?: string;
+  /** 对象属性值 */
+  propertyValue?: string;
+  /** 扩展属性类型编码 */
+  categoryCode?: string;
+  /** 扩展属性类型名称 */
+  categoryName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListObjectPropertyValueVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ObjectPropertyValueVO[] | null;
 }
 
 /** 菜单元数据 */
@@ -2102,6 +2242,10 @@ export const api = {
     getlist: (query: {
       personcode: string;
       personname: string;
+      /** @format int32 */
+      state: number;
+      /** @format int32 */
+      adminorgid: number;
       sortfield: string;
       sorttype: string;
       filterfield: string;
@@ -2122,6 +2266,7 @@ export const api = {
      *
      * @tags 系统字典组
      * @name Search
+     * @summary 弹出框公共方法
      * @request POST:/paramGroup/items
      * @secure
      */
@@ -2136,6 +2281,7 @@ export const api = {
      *
      * @tags 系统字典组
      * @name GetItemById
+     * @summary 弹出框公共方法-根据id获取数据
      * @request POST:/paramGroup/items/{id}
      * @secure
      */
@@ -2149,6 +2295,7 @@ export const api = {
      *
      * @tags 系统字典组
      * @name List
+     * @summary 系统字典功能-获取所有列表数据
      * @request GET:/paramGroup/list
      * @secure
      */
@@ -2176,6 +2323,7 @@ export const api = {
      *
      * @tags 系统字典组
      * @name Getlist
+     * @summary 系统字典功能-查询所有参数组数据
      * @request GET:/paramGroup/getlist
      * @secure
      */
@@ -2205,6 +2353,7 @@ export const api = {
      *
      * @tags 系统字典组
      * @name Getdomainlist
+     * @summary 系统字典功能-按领域分组获取所有系统参数组
      * @request GET:/paramGroup/getdomainlist
      * @secure
      */
@@ -2234,6 +2383,7 @@ export const api = {
      *
      * @tags 系统字典明细
      * @name Search
+     * @summary 弹出框公共方法
      * @request POST:/param/items
      * @secure
      */
@@ -2248,6 +2398,7 @@ export const api = {
      *
      * @tags 系统字典明细
      * @name GetItemById
+     * @summary 弹出框公共方法
      * @request POST:/param/items/{id}
      * @secure
      */
@@ -2261,6 +2412,7 @@ export const api = {
      *
      * @tags 系统字典明细
      * @name List
+     * @summary 弹出框公共方法
      * @request GET:/param/list
      * @secure
      */
@@ -2288,6 +2440,7 @@ export const api = {
      *
      * @tags 系统字典明细
      * @name Getlist
+     * @summary 系统字典功能-查询所有参数数据
      * @request GET:/param/getlist
      * @secure
      */
@@ -2807,6 +2960,38 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  objectPropertyCategory: {
+    /**
+     * No description
+     *
+     * @tags 领域对象扩展属性分类
+     * @name GetListByObjectName
+     * @summary 根据领域对象编码获取分类
+     * @request GET:/objectPropertyCategory/getListByObjectName
+     * @secure
+     */
+    getListByObjectName: (query: { objectCode: string }) =>
+      http.request<ResultListObjectPropertyCategory['data']>(`/api/main/objectPropertyCategory/getListByObjectName`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  objectProperty: {
+    /**
+     * No description
+     *
+     * @tags 领域扩展属性
+     * @name GetObjectValueList
+     * @summary 获取领域扩展属性列表与值
+     * @request GET:/objectProperty/getObjectValueList
+     * @secure
+     */
+    getObjectValueList: (query: { objectId: string; objectCode: string; propertyCode: string }) =>
+      http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
+        method: 'GET',
+        params: query,
       }),
   },
   module: {

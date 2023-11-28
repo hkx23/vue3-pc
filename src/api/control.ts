@@ -704,8 +704,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -1098,6 +1098,8 @@ export type ProductPackRuleDtlVO = {
   packLevel?: number;
   packTypeName?: string;
   packLevelName?: string;
+  /** 子层级 */
+  children?: ProductPackRuleDtlVO[];
 } | null;
 
 /** 通用响应类 */
@@ -1235,6 +1237,10 @@ export const api = {
       pageSize?: number;
       /** @default "" */
       packRuleCode?: string;
+      /** @default "" */
+      mitemCode?: string;
+      /** @default "" */
+      mitemCategory?: string;
     }) =>
       http.request<ResultObject['data']>(`/api/control/productPackRule/list`, {
         method: 'GET',
@@ -1246,7 +1252,7 @@ export const api = {
      *
      * @tags 产品包装规则
      * @name Delete
-     * @summary 删除包装规则，包括子集
+     * @summary 删除包装规则
      * @request DELETE:/productPackRule/delete
      * @secure
      */
@@ -1678,6 +1684,7 @@ export const api = {
      *
      * @tags 工单排产表
      * @name Search
+     * @summary 弹出框公共方法
      * @request POST:/moSchedule/items
      * @secure
      */
@@ -1692,6 +1699,7 @@ export const api = {
      *
      * @tags 工单排产表
      * @name GetItemById
+     * @summary 弹出框公共方法
      * @request POST:/moSchedule/items/{id}
      * @secure
      */
@@ -1721,6 +1729,7 @@ export const api = {
      *
      * @tags 工单表
      * @name Search
+     * @summary 弹出框公共方法
      * @request POST:/mo/items
      * @secure
      */
@@ -1735,6 +1744,7 @@ export const api = {
      *
      * @tags 工单表
      * @name GetItemById
+     * @summary 弹出框公共方法
      * @request POST:/mo/items/{id}
      * @secure
      */
@@ -1804,6 +1814,40 @@ export const api = {
     getRoutRevisionByRoutingCode: (query: { routingCode: string; routingType: string }) =>
       http.request<ResultObject['data']>(`/api/control/routingRevision/getRoutRevisionByRoutingCode`, {
         method: 'GET',
+        params: query,
+      }),
+  },
+  productPackRuleMap: {
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
+     * @name List
+     * @summary 获取包装规则关联的物料信息
+     * @request GET:/productPackRuleMap/list
+     * @secure
+     */
+    list: (query?: {
+      /** @default "" */
+      packRuleId?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
+     * @name Delete
+     * @summary 删除包装规则关联的物料信息
+     * @request DELETE:/productPackRuleMap/delete
+     * @secure
+     */
+    delete: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/delete`, {
+        method: 'DELETE',
         params: query,
       }),
   },
