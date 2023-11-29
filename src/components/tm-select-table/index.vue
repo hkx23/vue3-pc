@@ -5,7 +5,7 @@
       :value="state.defaultValue"
       placeholder="Please Select"
       :popup-visible="popupVisible"
-      :popup-props="{ overlayInnerStyle: { padding: '5px' } }"
+      :popup-props="{ overlayInnerStyle: { padding: '5px', width: 'auto' } }"
       allow-input
       :label="title"
       :multiple="multiple"
