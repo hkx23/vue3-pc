@@ -30,7 +30,7 @@
               <t-input v-model="formData.wcOwner" style="width: 180px" />
             </t-form-item>
             <t-form-item label="顺序号" name="wcSeq">
-              <t-input v-model="formData.wcSeq" style="width: 200px" />
+              <!-- <t-input v-model="formData.wcSeq" style="width: 200px" /> -->
             </t-form-item>
           </div>
           <t-form-item label="父级" name="parentWcId">
