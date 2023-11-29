@@ -268,7 +268,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'wcCode',
     title: '工作中心编号',
-    align: 'center',
+    align: 'left',
   },
   {
     colKey: 'wcName',

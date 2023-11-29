@@ -95,11 +95,9 @@
         :tree="treeConfig"
         :loading="loading"
         lazy-load
-        @row-click="onRowClick"
       >
         <template #wcCode="{ row }">
           <div>
-            <t-icon name="chevron-right"></t-icon>
             <t-link theme="primary" underline @click="onHandelCenter(row)">{{ row.wcCode }} </t-link>
           </div>
         </template>
@@ -146,14 +144,6 @@ import { usePage } from '@/hooks/modules/page';
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
 import detailed from './detailed.vue';
 
-const onRowClick = async ({ row }: { row: any }) => {
-  const res = await api.workcenter.getChildCenter(row);
-  console.log('12', res.list);
-  console.log(workData.value);
-  workData.value.forEach((item) => {
-    item.children = res.list;
-  });
-};
 const onPageSizeChange = (size) => {
   page.value.current = 1;
   console.log('page-size:', size);
@@ -336,7 +326,6 @@ const onSelectShop = (value: any) => {
 // 首次进入刷新
 const onFetchData = async () => {
   const STATE = select.value.state;
-  console.log(select.value.state);
   try {
     if (STATE === -1) {
       select.value.stateVisible = [1, 0];
@@ -357,9 +346,6 @@ const onFetchData = async () => {
       state: select.value.stateVisible,
     });
     workData.value = res.list; // table数据
-    workData.value.forEach((item) => {
-      item.children = [];
-    });
     data.value = res.list; // 新增页面
     page.value.total = res.total;
     // 只有第一次进来的时候才拿
