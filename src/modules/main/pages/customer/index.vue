@@ -27,6 +27,7 @@
       >
         <template #op="{ row }">
           <icon name="edit-1" @click="onHandleEdit(row.customerCode)"></icon>
+          <!-- <icon name="edit-1" @click="onHandleEdit(row.customerCode)"></icon> -->
         </template>
       </tm-table>
     </t-card>
@@ -82,12 +83,14 @@
 import { Data, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 
+import { api } from '@/api/main';
 import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import { customerModify, customerSearch, customerSelect } from '../../api/customer';
-
+onMounted(() => {
+  featCustomer();
+});
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 // 控制
@@ -123,7 +126,7 @@ const dataTotal = ref(0);
 const featCustomer = async () => {
   try {
     setLoading(true);
-    const res = await customerSearch({
+    const res = await api.customer.search({
       keyword: keyword.value,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -138,10 +141,6 @@ const featCustomer = async () => {
     setLoading(false);
   }
 };
-onMounted(() => {
-  featCustomer();
-});
-
 // 查询
 const customerQuery = async () => {
   featCustomer();
@@ -176,7 +175,7 @@ const onHandleEdit = (value: any) => {
   customerData.value.forEach(async (item) => {
     if (item.customerCode === value) {
       try {
-        const edit = await customerSelect({ code: item.customerCode });
+        const edit = await api.customer.getItemByCode({ code: item.customerCode });
         formData.value.id = edit.eid;
         formData.value.customerCode = edit.customerCode;
         formData.value.customerName = edit.customerName;
@@ -211,7 +210,7 @@ const onSecondary = async () => {
     return;
   }
   try {
-    await customerModify({
+    await api.customer.updateItemByCode({
       customerCode: formData.value.customerCode,
       customerName: formData.value.customerName,
       shortName: formData.value.shortName,

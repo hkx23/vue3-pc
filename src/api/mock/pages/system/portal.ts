@@ -33,7 +33,7 @@ export default [
             redirect: '/system/modeling',
             meta: {
               title: {
-                zh_CN: '系统',
+                'zh-CN': '系统',
               },
               icon: 'system-3',
               frameSrc: '',
@@ -46,7 +46,7 @@ export default [
                 redirect: '/system/modeling/orgLevel',
                 meta: {
                   title: {
-                    zh_CN: '工厂建模',
+                    'zh-CN': '工厂建模',
                   },
                   icon: 'museum',
                   frameSrc: null,
@@ -59,7 +59,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '组织层级',
+                        'zh-CN': '组织层级',
                       },
                       icon: null,
                       frameSrc: '/modeling#/orgLevel',
@@ -73,7 +73,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '员工',
+                        'zh-CN': '员工',
                       },
                       icon: null,
                       frameSrc: '/modeling#/person',
@@ -87,7 +87,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '物料分类',
+                        'zh-CN': '物料分类',
                       },
                       icon: null,
                       frameSrc: '/modeling#/mitemCategory',
@@ -101,7 +101,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '客户',
+                        'zh-CN': '客户',
                       },
                       icon: null,
                       frameSrc: '/modeling#/customer',
@@ -115,7 +115,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '生产组织架构',
+                        'zh-CN': '生产组织架构',
                       },
                       icon: null,
                       frameSrc: '/modeling#/org',
@@ -129,7 +129,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '物料',
+                        'zh-CN': '物料',
                       },
                       icon: null,
                       frameSrc: '/modeling#/mitem',
@@ -143,7 +143,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '工站',
+                        'zh-CN': '工站',
                       },
                       icon: null,
                       frameSrc: '/control#/workStation',
@@ -157,7 +157,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '工作中心',
+                        'zh-CN': '工作中心',
                       },
                       icon: null,
                       frameSrc: '/control#/workCenter',
@@ -173,7 +173,7 @@ export default [
                 redirect: '/demo#/businessExample',
                 meta: {
                   title: {
-                    zh_CN: '组件例子',
+                    'zh-CN': '组件例子',
                   },
                   icon: 'museum',
                   frameSrc: null,
@@ -186,7 +186,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '业务选择组件例子',
+                        'zh-CN': '业务选择组件例子',
                       },
                       icon: null,
                       frameSrc: '/demo#/businessExample',
@@ -200,7 +200,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '表格组件例子',
+                        'zh-CN': '表格组件例子',
                       },
                       icon: null,
                       frameSrc: '/demo#/tableExample',
@@ -214,7 +214,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '菜单',
+                        'zh-CN': '菜单',
                       },
                       icon: null,
                       frameSrc: '/system#/module',
@@ -228,7 +228,7 @@ export default [
                     redirect: null,
                     meta: {
                       title: {
-                        zh_CN: '缺陷处理',
+                        'zh-CN': '缺陷处理',
                       },
                       icon: null,
                       frameSrc: '/control#/defectHandling',

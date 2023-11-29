@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/mitem/index.vue'),
     meta: {
       title: {
-        zh_CN: '物料',
-        en_US: 'Mitem',
+        'zh-CN': '物料',
+        'en-US': 'Mitem',
       },
       orderNo: 0,
     },

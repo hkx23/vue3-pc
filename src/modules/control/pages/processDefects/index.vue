@@ -44,10 +44,10 @@
           label-align="right"
           @submit="onProcessSubmit"
         >
-          <t-form-item :label="t('levelCode')" name="processCode">
+          <t-form-item :label="t('processDefects.levelCode')" name="processCode">
             <t-select v-model="formData.processCode"></t-select>
           </t-form-item>
-          <t-form-item :label="t('levelName')" name="processName">
+          <t-form-item :label="t('processDefects.levelName')" name="processName">
             <t-input v-model="formData.processName"></t-input>
           </t-form-item>
           <t-form-item label="缺陷代码" name="processDefect">
@@ -123,19 +123,19 @@ const { t } = useLang();
 const column = ref([
   { colKey: 'multiple', type: 'multiple', align: 'center' },
   {
-    title: t('levelSeq'),
+    title: t('processDefects.levelSeq'),
     colKey: 'levelSeq', // 序号
     align: 'center',
     width: 120,
   },
   {
-    title: t('levelCode'),
+    title: t('processDefects.levelCode'),
     colKey: 'levelCode', // 工序编码
     align: 'center',
     width: 120,
   },
   {
-    title: t('levelName'),
+    title: t('processDefects.levelName'),
     colKey: 'levelName', // 工序名称
     align: 'center',
     width: 120,

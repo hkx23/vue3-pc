@@ -4,7 +4,7 @@
       <t-row justify="space-between">
         <t-col>
           <div style="display: flex; align-items: center">
-            <div style="width: 130px">{{ t('unitName') }}：</div>
+            <div style="width: 130px">{{ t('mitemuom.unitName') }}：</div>
             <t-input
               v-model="queryData"
               label=""
@@ -76,7 +76,7 @@
         <!-- 计量单位名称： -->
         <t-row class="form-customer-row">
           <t-col>
-            <t-form-item :label="t('unitName')" name="uom">
+            <t-form-item :label="t('mitemuom.unitName')" name="uom">
               <t-input v-model="formData.uom" :placeholder="t('common.placeholder.input')"></t-input>
             </t-form-item>
           </t-col>
@@ -84,7 +84,7 @@
         <!-- 计量单位名称： -->
         <t-row class="form-customer-row">
           <t-col>
-            <t-form-item :label="t('unitSymbol')" name="uomSymbol">
+            <t-form-item :label="t('mitemuom.unitSymbol')" name="uomSymbol">
               <t-input
                 v-model="formData.uomSymbol"
                 :placeholder="t('common.placeholder.input')"
@@ -229,17 +229,17 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'uom',
-    title: t('unitName'), // 计量单位名称
+    title: t('mitemuom.unitName'), // 计量单位名称
     align: 'center',
   },
   {
     colKey: 'uomSymbol',
-    title: t('unitSymbol'), // 计量单位符号
+    title: t('mitemuom.unitSymbol'), // 计量单位符号
     align: 'center',
   },
   {
     colKey: 'action',
-    title: t('operation'), // 操作
+    title: t('mitemuom.operation'), // 操作
     width: 160,
     align: 'center',
     cell: 'actionSlot', // 引用具名插槽

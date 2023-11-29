@@ -3,10 +3,10 @@
     <p class="font-red">样式示例</p>
     <p>多语言示例：</p>
     <div>
-      <t-button @click="onClickChangeLang('zh_CN')">切换中文</t-button>
-      <t-button @click="onClickChangeLang('en_US')">切换英文</t-button>
+      <t-button @click="onClickChangeLang('zh-CN')">切换中文</t-button>
+      <t-button @click="onClickChangeLang('en-US')">切换英文</t-button>
     </div>
-    <div>{{ t('hello') }}</div>
+    <div>{{ t('basic.hello') }}</div>
 
     <p>路由示例：</p>
     <div>

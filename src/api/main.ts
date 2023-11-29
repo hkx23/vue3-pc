@@ -1002,6 +1002,11 @@ export interface MitemCategory {
   reqCalcRule?: string;
   /** 物料投料规则 */
   onboardRuleCode?: string;
+  /**
+   * 是否手工创建
+   * @format int32
+   */
+  isManual?: number;
 }
 
 /** 响应数据 */
@@ -1090,10 +1095,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  stateName?: string;
+  isProductName?: string;
   isRawName?: string;
+  isInProcessName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
+  stateName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -1260,8 +1270,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1713,6 +1723,11 @@ export type ObjectPropertyValueVO = {
   dataSourcePath?: string;
   /** 备注 */
   memo?: string;
+  /**
+   * 是否数据源多选
+   * @format int32
+   */
+  isDataMultiple?: number;
   /** 对象ID */
   objectId?: string;
   /** 对象属性值 */
@@ -2229,6 +2244,8 @@ export const api = {
       personname: string;
       /** @format int32 */
       state: number;
+      /** @format int32 */
+      adminorgid: number;
       sortfield: string;
       sorttype: string;
       filterfield: string;
@@ -2249,6 +2266,7 @@ export const api = {
      *
      * @tags 系统字典组
      * @name Search
+     * @summary 弹出框公共方法
      * @request POST:/paramGroup/items
      * @secure
      */
@@ -2263,6 +2281,7 @@ export const api = {
      *
      * @tags 系统字典组
      * @name GetItemById
+     * @summary 弹出框公共方法-根据id获取数据
      * @request POST:/paramGroup/items/{id}
      * @secure
      */
@@ -2276,6 +2295,7 @@ export const api = {
      *
      * @tags 系统字典组
      * @name List
+     * @summary 系统字典功能-获取所有列表数据
      * @request GET:/paramGroup/list
      * @secure
      */
@@ -2303,6 +2323,7 @@ export const api = {
      *
      * @tags 系统字典组
      * @name Getlist
+     * @summary 系统字典功能-查询所有参数组数据
      * @request GET:/paramGroup/getlist
      * @secure
      */
@@ -2332,6 +2353,7 @@ export const api = {
      *
      * @tags 系统字典组
      * @name Getdomainlist
+     * @summary 系统字典功能-按领域分组获取所有系统参数组
      * @request GET:/paramGroup/getdomainlist
      * @secure
      */
@@ -2361,6 +2383,7 @@ export const api = {
      *
      * @tags 系统字典明细
      * @name Search
+     * @summary 弹出框公共方法
      * @request POST:/param/items
      * @secure
      */
@@ -2375,6 +2398,7 @@ export const api = {
      *
      * @tags 系统字典明细
      * @name GetItemById
+     * @summary 弹出框公共方法
      * @request POST:/param/items/{id}
      * @secure
      */
@@ -2388,6 +2412,7 @@ export const api = {
      *
      * @tags 系统字典明细
      * @name List
+     * @summary 弹出框公共方法
      * @request GET:/param/list
      * @secure
      */
@@ -2415,6 +2440,7 @@ export const api = {
      *
      * @tags 系统字典明细
      * @name Getlist
+     * @summary 系统字典功能-查询所有参数数据
      * @request GET:/param/getlist
      * @secure
      */

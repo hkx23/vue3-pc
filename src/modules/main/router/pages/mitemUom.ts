@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/mitemuom/index.vue'),
     meta: {
       title: {
-        zh_CN: '计量单位',
-        en_US: 'Mitem Uom',
+        'zh-CN': '计量单位',
+        'en-US': 'Mitem Uom',
       },
       orderNo: 0,
     },

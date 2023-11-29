@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/processInspection/index.vue'),
     meta: {
       title: {
-        zh_CN: '工序检验',
-        en_US: 'processInspection',
+        'zh-CN': '工序检验',
+        'en-US': 'processInspection',
       },
       orderNo: 0,
     },

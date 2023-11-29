@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/productRule/index.vue'),
     meta: {
       title: {
-        zh_CN: '产品包装规则',
-        en_US: 'productRule',
+        'zh-CN': '产品包装规则',
+        'en-US': 'productRule',
       },
       orderNo: 0,
     },

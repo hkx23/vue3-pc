@@ -10,7 +10,7 @@ export const langCode: Array<string> = [];
 
 // 获取浏览器默认语言环境
 const browserLanguage = navigator.language.replace('-', '_');
-export const defaultLanguage = 'zh_CN';
+export const defaultLanguage = 'zh-CN';
 
 // 生成语言模块列表
 const generateLangModuleMap = () => {

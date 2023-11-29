@@ -7,8 +7,8 @@ export default [
     component: () => import('../../pages/basic/index.vue'),
     meta: {
       title: {
-        zh_CN: '基础示例',
-        en_US: 'basic demo',
+        'zh-CN': '基础示例',
+        'en-US': 'basic demo',
       },
     },
     children: [

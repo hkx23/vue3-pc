@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/mitemCategory/index.vue'),
     meta: {
       title: {
-        zh_CN: '物料分类',
-        en_US: 'Mitem Category',
+        'zh-CN': '物料分类',
+        'en-US': 'Mitem Category',
       },
       orderNo: 0,
     },

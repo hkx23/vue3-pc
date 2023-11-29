@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/extend/index.vue'),
     meta: {
       title: {
-        zh_CN: '扩展属性例子',
-        en_US: 'extend example',
+        'zh-CN': '扩展属性例子',
+        'en-US': 'extend example',
       },
     },
   },

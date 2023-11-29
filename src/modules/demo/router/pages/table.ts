@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/table/index.vue'),
     meta: {
       title: {
-        zh_CN: '表格组件例子',
-        en_US: 'table example',
+        'zh-CN': '表格组件例子',
+        'en-US': 'table example',
       },
     },
   },

@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/businessExample/index.vue'),
     meta: {
       title: {
-        zh_CN: '业务选择组件例子',
-        en_US: 'bussiness example',
+        'zh-CN': '业务选择组件例子',
+        'en-US': 'bussiness example',
       },
     },
   },
