@@ -50,7 +50,7 @@
                 :options="options2"
                 clearable
                 style="width: 198px"
-                @onchange="onHandelState"
+                @change="onHandelState"
               >
               </t-select>
               <span style="margin: 0 20px">
@@ -193,6 +193,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'wcCode',
     title: '工作中心编号',
     align: 'left',
+    width: '200px',
   },
   {
     colKey: 'wcName',

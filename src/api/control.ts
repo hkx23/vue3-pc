@@ -706,8 +706,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -1470,23 +1470,6 @@ export const api = {
      */
     modify: (data: Workcenter) =>
       http.request<ResultObject['data']>(`/api/control/workcenter/modify`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name Modify2
-     * @summary 修改多条工作中心
-     * @request POST:/workcenter/modifyAll
-     * @originalName modify
-     * @duplicate
-     * @secure
-     */
-    modify2: (data: WorkcenterSearch) =>
-      http.request<ResultObject['data']>(`/api/control/workcenter/modifyAll`, {
         method: 'POST',
         body: data as any,
       }),
