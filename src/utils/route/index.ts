@@ -87,25 +87,30 @@ function dynamicImport(dynamicViewsModules: Record<string, () => Promise<Recorda
 // 将背景对象变成路由对象
 export async function transformObjectToRoute<T = RouteItem>(routeList: RouteItem[]): Promise<T[]> {
   for await (const route of routeList) {
-    const component = route.component as string;
-
-    if (component) {
-      if (component.toUpperCase() === 'LAYOUT') {
-        route.component = LayoutMap.get(component.toUpperCase());
-      } else {
-        route.children = [cloneDeep(route)];
-        route.component = LAYOUT;
-        route.name = `${route.name}Parent`;
-        route.path = '';
-        route.meta = (route.meta || {}) as RouteMeta;
-      }
-    } else {
-      throw new Error('component is undefined');
-    }
-    // eslint-disable-next-line no-unused-expressions
-    route.children && (await asyncImportRoute(route.children));
-    if (route.meta.icon) route.meta.icon = await getMenuIcon(route.meta.icon);
+    await transformItemToRoute(route);
   }
 
   return [PAGE_NOT_FOUND_ROUTE, ...routeList] as unknown as T[];
+}
+
+export async function transformItemToRoute<T = RouteItem>(route: RouteItem): Promise<T> {
+  const component = route.component as string;
+
+  if (component) {
+    if (component.toUpperCase() === 'LAYOUT') {
+      route.component = LayoutMap.get(component.toUpperCase());
+    } else {
+      route.children = [cloneDeep(route)];
+      route.component = LAYOUT;
+      route.name = `${route.name}Parent`;
+      route.path = '';
+      route.meta = (route.meta || {}) as RouteMeta;
+    }
+  } else {
+    throw new Error('component is undefined');
+  }
+  // eslint-disable-next-line no-unused-expressions
+  route.children && (await asyncImportRoute(route.children));
+  if (route.meta.icon) route.meta.icon = await getMenuIcon(route.meta.icon);
+  return route as unknown as T;
 }
