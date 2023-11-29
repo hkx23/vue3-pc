@@ -1,0 +1,9 @@
+{
+  "exceptionHandling": {
+    "OrganizationName": "组织名称",
+    "abnormalModule": "异常模块",
+    "treatmentGroup": "处理组",
+    "processOrder": "处理顺序",
+    "transferOrders": "是否允许转单"
+  }
+}

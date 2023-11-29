@@ -479,8 +479,11 @@ export interface WorkcenterSearch {
   ids?: string[];
   /** 多条记录 */
   allRecord?: Workcenter[];
-  /** 工作中心-类别 */
-  category?: string;
+  /**
+   * 工作中心-类别
+   * @format int32
+   */
+  category?: number;
   /** 工作中心编码名称模糊查询 */
   workcenterword?: string;
   workshopID?: string;
@@ -706,8 +709,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1555,7 +1558,7 @@ export const api = {
      * @request POST:/workcenter/add
      * @secure
      */
-    add: (data: WorkcenterVO) =>
+    add: (data: Workcenter) =>
       http.request<ResultObject['data']>(`/api/control/workcenter/add`, {
         method: 'POST',
         body: data as any,

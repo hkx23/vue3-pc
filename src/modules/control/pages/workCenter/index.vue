@@ -25,7 +25,7 @@
           :key="item.wcType"
           v-model="valueItem"
           :value="item.wcType"
-          @change="onHandelArr(item.wcType)"
+          @change="onHandelArr(item.opId)"
         >
           <t-tab-panel :value="item.wcType" :label="item.wcType">
             <template #label>
@@ -135,7 +135,7 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { SearchIcon } from 'tdesign-icons-vue-next';
-import { Icon, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { Icon, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, reactive, ref, watch } from 'vue';
 
 import { api } from '@/api/control';
@@ -177,7 +177,38 @@ const disabledWord = ref(false); // 工作中心编号控制禁用默认为不�
 const disabledParent = ref(false); // 父
 const valueItem = ref('全部'); // space类型
 const tableRef = ref(); // 实例table
-const allType = ref(); // 所有类型
+const allType = ref([
+  {
+    wcType: '全部',
+    code: 0,
+    id: 0,
+    opId: 0,
+  },
+  {
+    wcType: '工作区',
+    code: 0,
+    id: 1,
+    opId: 1,
+  },
+  {
+    wcType: '生产线',
+    code: 0,
+    id: 2,
+    opId: 2,
+  },
+  {
+    wcType: '工段',
+    code: 0,
+    id: 3,
+    opId: 3,
+  },
+  {
+    wcType: '设备',
+    code: 0,
+    id: 4,
+    opId: 4,
+  },
+]); // 所有类型
 const workCenterId = ref(); // 工作中心的obj
 const arr = ref(); // 类型存储数组
 const newArr = ref('');
@@ -308,7 +339,7 @@ const onHandelState = () => {
 };
 // 点击的类型
 const onHandelArr = (value: any) => {
-  if (value === '全部') {
+  if (value === '') {
     arr.value = '';
   } else {
     arr.value = value;
@@ -352,18 +383,18 @@ const onFetchData = async () => {
     // 只有第一次进来的时候才拿
     if (id.value === 0) {
       // 类型请求
-      const list = await api.workcenter.getCategory();
-      id.value = 1;
-      allType.value = list.list; // 标签列类型
-      allType.value.forEach((item) => {
-        item.code = 0;
-      });
-      allType.value.unshift({ wcType: '全部', code: 0 });
+      // const list = await api.workcenter.getCategory();
+      // id.value = 1;
+      // allType.value = list.list; // 标签列类型
+      // allType.value.forEach((item) => {
+      //   item.code = 0;
+      // });
+
       const typeData = await api.workcenter.getTagCount();
-      allType.value[1].code = typeData.line;
-      allType.value[2].code = typeData.device;
-      allType.value[3].code = typeData.area;
-      allType.value[4].code = typeData.section;
+      allType.value[1].code = typeData.area;
+      allType.value[2].code = typeData.line;
+      allType.value[3].code = typeData.section;
+      allType.value[4].code = typeData.device;
     }
     // 标签页计数
   } catch (e) {
@@ -401,15 +432,24 @@ const onHandelAdded = () => {
 
 // 禁用或者启用
 const onDefult = async (row) => {
-  console.log('1', row.state);
   if (row.state === 0) {
     row.state = 1;
   } else {
+    const list = row.children.every((item) => {
+      return item.state === 0;
+    });
+    console.log(list);
+    if (!list) {
+      MessagePlugin.error('子级是启用转态,无法禁用');
+      return;
+    }
     row.state = 0;
   }
-  console.log('2', row.state);
-  const res = await api.workcenter.modify({ id: row.id, state: row.state });
-  console.log(res);
+  try {
+    await api.workcenter.modify({ id: row.id, parentWcId: row.parentWcId, state: row.state });
+  } catch (e) {
+    console.log(e);
+  }
 };
 // 保存时子组件控制
 const onHandleSave = (i: boolean) => {
@@ -420,6 +460,7 @@ const onHandleSave = (i: boolean) => {
   onFetchData();
 };
 // 编辑
+
 const onClickEdit = (row: any) => {
   newArr.value = row.wcType;
   btnShow.value = true;

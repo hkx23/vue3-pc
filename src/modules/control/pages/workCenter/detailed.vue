@@ -67,7 +67,7 @@
             </t-form-item>
           </footer>
           <span class="form-checkbox">
-            <t-checkbox v-model="formData.checked" @onchange="onCheCkbox">启用</t-checkbox>
+            <t-checkbox v-model="formData.checked" @change="onCheCkbox">启用</t-checkbox>
           </span>
           <div class="table-btn">
             <t-button theme="default" @click="onHandleCancellation">取消</t-button>
@@ -127,7 +127,7 @@ const props = defineProps({
     type: String,
   },
 });
-const once = ref(0);
+// const once = ref(0);
 // const parentId = ref(); // 点击添加的时候存储父id
 const typeShow = ref(false);
 onMounted(() => {
@@ -163,15 +163,15 @@ const fetchData = async () => {
       Emit('delete', true);
     }
     // 拿到数组
-    const list = await api.workcenter.getCategory();
-    if (once.value === 0) {
-      once.value = 1;
-      typeData.value = list.list;
-      typeData.value.forEach((item) => {
-        item.show = false;
-      });
-      typeData.value[0].show = true;
-    }
+    // const list = await api.workcenter.getCategory();
+    // if (once.value === 0) {
+    //   once.value = 1;
+    //   typeData.value = list.list;
+    //   typeData.value.forEach((item) => {
+    //     item.show = false;
+    //   });
+    //   typeData.value[0].show = true;
+    // }
     // 拿到渲染表单
     // console.log('props', props.wordCenterId);
     // 显示类型
@@ -195,15 +195,44 @@ const formData = reactive({
   parentWcId: '', // 父级
   checked: true, // 多选控制 默认为选中
   wcType: '', // 设备类型
-  state: 1, // 启用还是禁用
-  category: '', // 获取设备关联
+  state: props.wordCenterId.state, // 启用还是禁用
+  category: 0, // 获取设备关联
   wcObjectId: '', // 关联设备
   id: props.wordCenterId.id, // 父节点的id
   allRecord: [],
   wcSeq: 0, // 顺序号
 });
 // 类型数据数组
-const typeData = ref([]);
+const typeData = ref([
+  {
+    wcType: '工作区',
+    code: 0,
+    id: 1,
+    opId: 1,
+    show: true,
+  },
+  {
+    wcType: '生产线',
+    code: 0,
+    id: 2,
+    opId: 2,
+    show: false,
+  },
+  {
+    wcType: '工段',
+    code: 0,
+    id: 3,
+    opId: 3,
+    show: false,
+  },
+  {
+    wcType: '设备',
+    code: 0,
+    id: 4,
+    opId: 4,
+    show: false,
+  },
+]);
 // 判断数组里面的设备
 const onTypeList = () => {
   typeData.value.forEach((item) => {
@@ -214,12 +243,16 @@ const onTypeList = () => {
         typeShow.value = true;
       }
       item.show = true;
-      formData.category = item.wcType;
+      formData.category = item.opId;
     } else {
       item.show = false;
     }
   });
-  if (formData.state === 1) {
+  console.log(props.wordCenterId);
+
+  console.log('激怒人', props.wordCenterId.state);
+  console.log('激怒人2', formData.state);
+  if (props.wordCenterId.state === 1) {
     formData.checked = true;
   } else {
     formData.checked = false;
@@ -237,29 +270,25 @@ const onHandleCur = (all) => {
         typeShow.value = false;
       }
       item.show = true;
-      formData.category = item.wcType;
+      formData.category = item.opId;
     } else {
       item.show = false;
     }
   });
 };
-// checked事件
-// const rehandleSelectChange = (value: any) => {
-//   selectedRowKeys.value = value;
-// };
 // 新增
 const onWorkCenterAdd = async () => {
   try {
     const list = await api.workcenter.add({
       wcCode: formData.wcCode,
       wcName: formData.wcName,
-      workshopID: formData.workshopID,
+      workshopId: formData.workshopID,
       parentWcId: formData.parentWcId,
       wcLocation: formData.wcLocation,
       wcObjectId: formData.wcObjectId,
       state: formData.state,
       wcOwner: formData.wcOwner,
-      wcType: formData.category,
+      wcObjectType: formData.category,
       wcSeq: 0,
     });
     MessagePlugin.success('保存成功');
@@ -269,55 +298,34 @@ const onWorkCenterAdd = async () => {
     console.log(e);
   }
 };
-// 删除
-// const onHandelRemove = async () => {
-//   // deleteVisible.value = true;
-//   if (selectedRowKeys.value.length < 1) {
-//     MessagePlugin.error('请选择要删除的');
-//     return;
-//   }
-//   const children = await api.workcenter.haveChildCenter({ ids: selectedRowKeys.value });
-//   childrenTotal.value = children.total;
-//   deleteVisible.value = true;
-//   // await api.workcenter.remove({ ids: selectedRowKeys.value });
-//   // MessagePlugin.success('删除成功');
-// };
-// 确认删除
-// const onSecondary = async () => {
-//   try {
-//     await api.workcenter.remove({ ids: selectedRowKeys.value });
-//     deleteVisible.value = false;
-//     MessagePlugin.success('删除成功');
-//     fetchData();
-//   } catch (e) {
-//     console.log(e);
-//   }
-// };
-// 取消
-// const onSecondaryReset = () => {
-//   deleteVisible.value = false;
-// };
 // 禁用和启用
 const onCheCkbox = (checked: boolean) => {
-  console.log(checked);
-
-  // console.log(props.wordCenterId);
-  // props.wordCenterId.children.forEach((item) => {
-  //   if (item.state === 0) {
-  //     if (checked) {
-  //       formData.state = 1;
-  //     } else {
-  //       formData.state = 0;
-  //     }
-  //   } else {
-  //     MessagePlugin.error('子级是启用转态,不可修改');
-  //     // break;
-  //   }
-  // });
+  // 这个是新增
+  if (!props.wordCenterId.children) {
+    if (checked) {
+      formData.state = 1;
+    } else {
+      formData.state = 0;
+    }
+    return;
+  }
+  // 这个是编辑
+  const list = props.wordCenterId.children.every((item) => {
+    return item.state === 0;
+  });
+  if (checked) {
+    formData.state = 1;
+  } else {
+    if (!list) {
+      MessagePlugin.error('子级是启用转态,无法禁用');
+      return;
+    }
+    formData.state = 0;
+  }
 };
 // 保存
 const onHandleSave = async (context) => {
-  if (context.validateResult === true && formData.category !== '') {
+  if (context.validateResult === true && formData.category !== 0) {
     if (props.typeDetailed === 2) {
       // 子
       onWorkCenterAdd();
@@ -348,19 +356,6 @@ const onHandleCancellation = () => {
   MessagePlugin.success('取消成功');
   Emit('addedShow', false);
 };
-// 添加状态
-// const onHandelAdd = async () => {
-//   if (props.typeDetailed === 2) {
-//     parentId.value = formData.id;
-//     clearFrom();
-//     formData.parentWcId = parentId.value;
-//     typeData.value.forEach((item) => {
-//       item.show = false;
-//     });
-//     // typeShow.value = false;
-//     Emit('FormClear', false);
-//   }
-// };
 // 清空表单
 const clearFrom = () => {
   formData.wcCode = ''; // 工作中心编号
@@ -371,7 +366,7 @@ const clearFrom = () => {
   formData.parentWcId = ''; // 父级
   formData.checked = true; // 多选
   formData.wcType = ''; // 设备类型
-  formData.category = ''; // 设备类型
+  formData.category = 0; // 设备类型
   formData.state = 1; // 控制多选是选择状态
   formData.id = ''; // 父亲id
   formData.wcObjectId = ''; // 设备类型id
