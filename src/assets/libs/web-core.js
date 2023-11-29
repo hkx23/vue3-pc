@@ -210,23 +210,23 @@ var Lr = function() {
 const H = Lr;
 var kr = "Expected a function", Dr = Math.max, Fr = Math.min;
 function $e(e, r, t) {
-  var n, o, c, u, f, a, s = 0, i = !1, l = !1, w = !0;
+  var n, o, c, u, f, a, i = 0, s = !1, l = !1, w = !0;
   if (typeof e != "function")
     throw new TypeError(kr);
-  r = oe(r) || 0, _(t) && (i = !!t.leading, l = "maxWait" in t, c = l ? Dr(oe(t.maxWait) || 0, r) : c, w = "trailing" in t ? !!t.trailing : w);
+  r = oe(r) || 0, _(t) && (s = !!t.leading, l = "maxWait" in t, c = l ? Dr(oe(t.maxWait) || 0, r) : c, w = "trailing" in t ? !!t.trailing : w);
   function g(d) {
     var P = n, S = o;
-    return n = o = void 0, s = d, u = e.apply(S, P), u;
+    return n = o = void 0, i = d, u = e.apply(S, P), u;
   }
   function h(d) {
-    return s = d, f = setTimeout(m, r), i ? g(d) : u;
+    return i = d, f = setTimeout(m, r), s ? g(d) : u;
   }
   function E(d) {
-    var P = d - a, S = d - s, I = r - P;
+    var P = d - a, S = d - i, I = r - P;
     return l ? Fr(I, c - S) : I;
   }
   function p(d) {
-    var P = d - a, S = d - s;
+    var P = d - a, S = d - i;
     return a === void 0 || P >= r || P < 0 || l && S >= c;
   }
   function m() {
@@ -239,7 +239,7 @@ function $e(e, r, t) {
     return f = void 0, w && n ? g(d) : (n = o = void 0, u);
   }
   function y() {
-    f !== void 0 && clearTimeout(f), s = 0, n = a = o = f = void 0;
+    f !== void 0 && clearTimeout(f), i = 0, n = a = o = f = void 0;
   }
   function v() {
     return f === void 0 ? u : A(H());
@@ -361,47 +361,47 @@ function Vr(e) {
 }
 function Gr(e, r) {
   r === void 0 && (r = {});
-  for (var t = Vr(e), n = r.prefixes, o = n === void 0 ? "./" : n, c = "[^".concat(M(r.delimiter || "/#?"), "]+?"), u = [], f = 0, a = 0, s = "", i = function(d) {
+  for (var t = Vr(e), n = r.prefixes, o = n === void 0 ? "./" : n, c = "[^".concat(M(r.delimiter || "/#?"), "]+?"), u = [], f = 0, a = 0, i = "", s = function(d) {
     if (a < t.length && t[a].type === d)
       return t[a++].value;
   }, l = function(d) {
-    var P = i(d);
+    var P = s(d);
     if (P !== void 0)
       return P;
     var S = t[a], I = S.type, N = S.index;
     throw new TypeError("Unexpected ".concat(I, " at ").concat(N, ", expected ").concat(d));
   }, w = function() {
-    for (var d = "", P; P = i("CHAR") || i("ESCAPED_CHAR"); )
+    for (var d = "", P; P = s("CHAR") || s("ESCAPED_CHAR"); )
       d += P;
     return d;
   }; a < t.length; ) {
-    var g = i("CHAR"), h = i("NAME"), E = i("PATTERN");
+    var g = s("CHAR"), h = s("NAME"), E = s("PATTERN");
     if (h || E) {
       var p = g || "";
-      o.indexOf(p) === -1 && (s += p, p = ""), s && (u.push(s), s = ""), u.push({
+      o.indexOf(p) === -1 && (i += p, p = ""), i && (u.push(i), i = ""), u.push({
         name: h || f++,
         prefix: p,
         suffix: "",
         pattern: E || c,
-        modifier: i("MODIFIER") || ""
+        modifier: s("MODIFIER") || ""
       });
       continue;
     }
-    var m = g || i("ESCAPED_CHAR");
+    var m = g || s("ESCAPED_CHAR");
     if (m) {
-      s += m;
+      i += m;
       continue;
     }
-    s && (u.push(s), s = "");
-    var A = i("OPEN");
+    i && (u.push(i), i = "");
+    var A = s("OPEN");
     if (A) {
-      var p = w(), y = i("NAME") || "", v = i("PATTERN") || "", j = w();
+      var p = w(), y = s("NAME") || "", v = s("PATTERN") || "", j = w();
       l("CLOSE"), u.push({
         name: y || (v ? f++ : ""),
         pattern: y && !v ? c : v,
         prefix: p,
         suffix: j,
-        modifier: i("MODIFIER") || ""
+        modifier: s("MODIFIER") || ""
       });
       continue;
     }
@@ -440,14 +440,14 @@ function Xr(e, r, t) {
 }
 function Zr(e, r, t) {
   t === void 0 && (t = {});
-  for (var n = t.strict, o = n === void 0 ? !1 : n, c = t.start, u = c === void 0 ? !0 : c, f = t.end, a = f === void 0 ? !0 : f, s = t.encode, i = s === void 0 ? function(N) {
+  for (var n = t.strict, o = n === void 0 ? !1 : n, c = t.start, u = c === void 0 ? !0 : c, f = t.end, a = f === void 0 ? !0 : f, i = t.encode, s = i === void 0 ? function(N) {
     return N;
-  } : s, l = t.delimiter, w = l === void 0 ? "/#?" : l, g = t.endsWith, h = g === void 0 ? "" : g, E = "[".concat(M(h), "]|$"), p = "[".concat(M(w), "]"), m = u ? "^" : "", A = 0, y = e; A < y.length; A++) {
+  } : i, l = t.delimiter, w = l === void 0 ? "/#?" : l, g = t.endsWith, h = g === void 0 ? "" : g, E = "[".concat(M(h), "]|$"), p = "[".concat(M(w), "]"), m = u ? "^" : "", A = 0, y = e; A < y.length; A++) {
     var v = y[A];
     if (typeof v == "string")
-      m += M(i(v));
+      m += M(s(v));
     else {
-      var j = M(i(v.prefix)), d = M(i(v.suffix));
+      var j = M(s(v.prefix)), d = M(s(v.suffix));
       if (v.pattern)
         if (r && r.push(v), j || d)
           if (v.modifier === "+" || v.modifier === "*") {
@@ -496,19 +496,19 @@ if (Ie) {
       const u = new URL(c, "http://localhost"), f = (n = t.mockData) == null ? void 0 : n.find((a) => {
         if (!a || !a.url || a.method && a.method.toUpperCase() !== (o == null ? void 0 : o.method))
           return !1;
-        const s = new URL(a.url, "http://localhost"), i = new URLSearchParams(s.search), l = new URLSearchParams(u.search);
-        for (const [w, g] of i)
+        const i = new URL(a.url, "http://localhost"), s = new URLSearchParams(i.search), l = new URLSearchParams(u.search);
+        for (const [w, g] of s)
           if (l.get(w) !== g)
             return !1;
-        return Ce(s.pathname).test(u.pathname);
+        return Ce(i.pathname).test(u.pathname);
       });
       if (f) {
-        const { response: a, timeout: s, statusCode: i } = f;
-        s && await new Promise((w) => setTimeout(w, s));
+        const { response: a, timeout: i, statusCode: s } = f;
+        i && await new Promise((w) => setTimeout(w, i));
         const l = typeof a == "function" ? a(o) : a;
         return console.debug("mock success: " + c), console.debug(l), l instanceof Response ? Promise.resolve(l) : Promise.resolve(
           new Response(JSON.stringify(l), {
-            status: i || 200,
+            status: s || 200,
             headers: { "Content-Type": "application/json" }
           })
         );
@@ -614,18 +614,18 @@ class nn {
     let u = [];
     typeof c.middlewares == "function" && (u = u.concat(F(c.middlewares))), u = u.concat(this.middlewares), n && (typeof n == "function" ? u.push(n) : n instanceof Array && n.length > 0 && (u = u.concat(n)));
     const f = (a) => {
-      const s = u[a];
-      if (!s) {
+      const i = u[a];
+      if (!i) {
         if (o.requestOptions.timeout && !o.requestOptions.signal) {
-          const i = new AbortController();
-          o.requestOptions.signal = i.signal, setTimeout(() => i.abort(), o.requestOptions.timeout);
+          const s = new AbortController();
+          o.requestOptions.signal = s.signal, setTimeout(() => s.abort(), o.requestOptions.timeout);
         }
-        return o.request = new Request(o.url, o.requestOptions), fetch(o.request).then((i) => (o.response = i, i));
+        return o.request = new Request(o.url, o.requestOptions), fetch(o.request).then((s) => (o.response = s, s));
       }
       try {
-        return Promise.resolve(s(o, f.bind(null, a + 1)));
-      } catch (i) {
-        return Promise.reject(i);
+        return Promise.resolve(i(o, f.bind(null, a + 1)));
+      } catch (s) {
+        return Promise.reject(s);
       }
     };
     return f(0).then((a) => u.length > 0 ? o.result : a);
@@ -740,30 +740,30 @@ var ke = { exports: {} };
   function n() {
   }
   Object.create && (n.prototype = /* @__PURE__ */ Object.create(null), new n().__proto__ || (t = !1));
-  function o(a, s, i) {
-    this.fn = a, this.context = s, this.once = i || !1;
+  function o(a, i, s) {
+    this.fn = a, this.context = i, this.once = s || !1;
   }
-  function c(a, s, i, l, w) {
-    if (typeof i != "function")
+  function c(a, i, s, l, w) {
+    if (typeof s != "function")
       throw new TypeError("The listener must be a function");
-    var g = new o(i, l || a, w), h = t ? t + s : s;
+    var g = new o(s, l || a, w), h = t ? t + i : i;
     return a._events[h] ? a._events[h].fn ? a._events[h] = [a._events[h], g] : a._events[h].push(g) : (a._events[h] = g, a._eventsCount++), a;
   }
-  function u(a, s) {
-    --a._eventsCount === 0 ? a._events = new n() : delete a._events[s];
+  function u(a, i) {
+    --a._eventsCount === 0 ? a._events = new n() : delete a._events[i];
   }
   function f() {
     this._events = new n(), this._eventsCount = 0;
   }
   f.prototype.eventNames = function() {
-    var s = [], i, l;
+    var i = [], s, l;
     if (this._eventsCount === 0)
-      return s;
-    for (l in i = this._events)
-      r.call(i, l) && s.push(t ? l.slice(1) : l);
-    return Object.getOwnPropertySymbols ? s.concat(Object.getOwnPropertySymbols(i)) : s;
-  }, f.prototype.listeners = function(s) {
-    var i = t ? t + s : s, l = this._events[i];
+      return i;
+    for (l in s = this._events)
+      r.call(s, l) && i.push(t ? l.slice(1) : l);
+    return Object.getOwnPropertySymbols ? i.concat(Object.getOwnPropertySymbols(s)) : i;
+  }, f.prototype.listeners = function(i) {
+    var s = t ? t + i : i, l = this._events[s];
     if (!l)
       return [];
     if (l.fn)
@@ -771,28 +771,28 @@ var ke = { exports: {} };
     for (var w = 0, g = l.length, h = new Array(g); w < g; w++)
       h[w] = l[w].fn;
     return h;
-  }, f.prototype.listenerCount = function(s) {
-    var i = t ? t + s : s, l = this._events[i];
+  }, f.prototype.listenerCount = function(i) {
+    var s = t ? t + i : i, l = this._events[s];
     return l ? l.fn ? 1 : l.length : 0;
-  }, f.prototype.emit = function(s, i, l, w, g, h) {
-    var E = t ? t + s : s;
+  }, f.prototype.emit = function(i, s, l, w, g, h) {
+    var E = t ? t + i : i;
     if (!this._events[E])
       return !1;
     var p = this._events[E], m = arguments.length, A, y;
     if (p.fn) {
-      switch (p.once && this.removeListener(s, p.fn, void 0, !0), m) {
+      switch (p.once && this.removeListener(i, p.fn, void 0, !0), m) {
         case 1:
           return p.fn.call(p.context), !0;
         case 2:
-          return p.fn.call(p.context, i), !0;
+          return p.fn.call(p.context, s), !0;
         case 3:
-          return p.fn.call(p.context, i, l), !0;
+          return p.fn.call(p.context, s, l), !0;
         case 4:
-          return p.fn.call(p.context, i, l, w), !0;
+          return p.fn.call(p.context, s, l, w), !0;
         case 5:
-          return p.fn.call(p.context, i, l, w, g), !0;
+          return p.fn.call(p.context, s, l, w, g), !0;
         case 6:
-          return p.fn.call(p.context, i, l, w, g, h), !0;
+          return p.fn.call(p.context, s, l, w, g, h), !0;
       }
       for (y = 1, A = new Array(m - 1); y < m; y++)
         A[y - 1] = arguments[y];
@@ -800,18 +800,18 @@ var ke = { exports: {} };
     } else {
       var v = p.length, j;
       for (y = 0; y < v; y++)
-        switch (p[y].once && this.removeListener(s, p[y].fn, void 0, !0), m) {
+        switch (p[y].once && this.removeListener(i, p[y].fn, void 0, !0), m) {
           case 1:
             p[y].fn.call(p[y].context);
             break;
           case 2:
-            p[y].fn.call(p[y].context, i);
+            p[y].fn.call(p[y].context, s);
             break;
           case 3:
-            p[y].fn.call(p[y].context, i, l);
+            p[y].fn.call(p[y].context, s, l);
             break;
           case 4:
-            p[y].fn.call(p[y].context, i, l, w);
+            p[y].fn.call(p[y].context, s, l, w);
             break;
           default:
             if (!A)
@@ -821,28 +821,28 @@ var ke = { exports: {} };
         }
     }
     return !0;
-  }, f.prototype.on = function(s, i, l) {
-    return c(this, s, i, l, !1);
-  }, f.prototype.once = function(s, i, l) {
-    return c(this, s, i, l, !0);
-  }, f.prototype.removeListener = function(s, i, l, w) {
-    var g = t ? t + s : s;
+  }, f.prototype.on = function(i, s, l) {
+    return c(this, i, s, l, !1);
+  }, f.prototype.once = function(i, s, l) {
+    return c(this, i, s, l, !0);
+  }, f.prototype.removeListener = function(i, s, l, w) {
+    var g = t ? t + i : i;
     if (!this._events[g])
       return this;
-    if (!i)
+    if (!s)
       return u(this, g), this;
     var h = this._events[g];
     if (h.fn)
-      h.fn === i && (!w || h.once) && (!l || h.context === l) && u(this, g);
+      h.fn === s && (!w || h.once) && (!l || h.context === l) && u(this, g);
     else {
       for (var E = 0, p = [], m = h.length; E < m; E++)
-        (h[E].fn !== i || w && !h[E].once || l && h[E].context !== l) && p.push(h[E]);
+        (h[E].fn !== s || w && !h[E].once || l && h[E].context !== l) && p.push(h[E]);
       p.length ? this._events[g] = p.length === 1 ? p[0] : p : u(this, g);
     }
     return this;
-  }, f.prototype.removeAllListeners = function(s) {
-    var i;
-    return s ? (i = t ? t + s : s, this._events[i] && u(this, i)) : (this._events = new n(), this._eventsCount = 0), this;
+  }, f.prototype.removeAllListeners = function(i) {
+    var s;
+    return i ? (s = t ? t + i : i, this._events[s] && u(this, s)) : (this._events = new n(), this._eventsCount = 0), this;
   }, f.prototype.off = f.prototype.removeListener, f.prototype.addListener = f.prototype.on, f.prefixed = t, f.EventEmitter = f, e.exports = f;
 })(ke);
 var an = ke.exports;
@@ -973,7 +973,7 @@ const O = {
     return typeof window < "u" ? typeof window.APP !== void 0 && typeof window.APP < "u" ? "APP" : "WEB" : "NodeJs";
   }(),
   getLanguage() {
-    let e = "zh_CN";
+    let e = "zh-CN";
     switch (this.platform) {
       case "APP":
         e = window.APP.getLanguage();
@@ -982,14 +982,14 @@ const O = {
         e = localStorage.getItem("_language") || (this.config.languageCodes.includes(navigator.language) ? navigator.language : e);
         break;
     }
-    return e.replace("-", "_");
+    return e;
   },
   setLanguage(e) {
     switch (this.platform) {
       case "APP":
         throw new Error("The operation is not supported");
       default:
-        localStorage.setItem("_language", e == null ? void 0 : e.replace("-", "_"));
+        localStorage.setItem("_language", e);
     }
   },
   getToken() {
@@ -1109,21 +1109,21 @@ const dn = async (e, r) => {
   const t = e.requestOptions, n = t.body;
   if (!(n instanceof FormData) && !(n instanceof URLSearchParams)) {
     let a = !0;
-    const s = t.headers, i = Z(s) ? null : s == null ? void 0 : s["Content-Type"];
-    i ? a = i.startsWith("application/json") : s["Content-Type"] = Le.Json, a && typeof n == "object" && (t.body = JSON.stringify(n));
+    const i = t.headers, s = Z(i) ? null : i == null ? void 0 : i["Content-Type"];
+    s ? a = s.startsWith("application/json") : i["Content-Type"] = Le.Json, a && typeof n == "object" && (t.body = JSON.stringify(n));
   }
   if (await r(), e.result)
     return;
   const o = ((c = e.response) == null ? void 0 : c.headers.get("Content-Type")) || "";
   (u = e.response) != null && u.ok && (o != null && o.startsWith("application/json")) && (e.result = await ((f = e.response) == null ? void 0 : f.json()));
 }, hn = async (e, r) => {
-  var c, u, f, a, s;
+  var c, u, f, a;
   const n = e.requestOptions.headers, o = O.getToken();
-  if (o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), n.eid = O.getEnterpriseId(), n.oid = O.getOrgId(), n["Accept-Language"] = (c = O.getLanguage()) == null ? void 0 : c.replace("_", "-"), n["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await r(), !((u = e.response) != null && u.ok)) {
+  if (o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), o && ye(n.Authorization) && (n.Authorization = `Bearer ${o}`), n.eid = O.getEnterpriseId(), n.oid = O.getOrgId(), n["Accept-Language"] = O.getLanguage(), n["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await r(), !((c = e.response) != null && c.ok)) {
     const i = new Error("An error occurred while fetching the data.");
-    throw i.message = `${(f = e.response) == null ? void 0 : f.status}|${await ((a = e.response) == null ? void 0 : a.text()) || ""}`, i;
+    throw i.message = `${(u = e.response) == null ? void 0 : u.status}|${await ((f = e.response) == null ? void 0 : f.text()) || ""}`, i;
   }
-  if (((s = e.response) == null ? void 0 : s.status) !== 200)
+  if (((a = e.response) == null ? void 0 : a.status) !== 200)
     throw new ve(JSON.stringify(e.result), 500, e.response.status);
   if (!e.requestOptions.returnNativeResponse) {
     const i = e.result;
