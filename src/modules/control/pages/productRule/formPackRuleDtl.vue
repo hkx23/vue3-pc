@@ -7,7 +7,10 @@
     :show-cancel="true"
     :show-error-message="false"
   >
-    <t-form-item :label="t('productRule.packType')" name="packRuleCode">
+    <t-form-item :label="t('productRule.parentLevelName')" name="parentLevelId">
+      {{ parentName }}
+    </t-form-item>
+    <t-form-item :label="t('productRule.packType')" name="packType">
       <t-select
         v-model="formData.packType"
         :auto-width="false"
@@ -62,6 +65,7 @@ const props = defineProps({
 const { t } = useLang();
 // 下拉初始数据
 const selectOptions = ref([]);
+const parentName = ref('');
 // 是否第一节点
 const isFirstNode = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null);
@@ -76,10 +80,11 @@ interface PackRuleDtlForm extends ProductPackRuleDtl {
   packRuleName: string;
 }
 
-const formData: PackRuleDtlForm = reactive({
+const initData: PackRuleDtlForm = {
   packRuleCode: '',
   packRuleName: '',
-});
+};
+const formData: PackRuleDtlForm = reactive({ ...initData });
 
 // onMounted(() => {});
 
@@ -116,10 +121,21 @@ const initPackType = async () => {
 
 const reset = () => {
   formRef.value.reset({ type: 'empty' });
-  Object.assign(formData, {});
+  for (const key in formData) {
+    delete formData[key];
+  }
+  parentName.value = '';
 };
 
-const setRow = (packRuleDtlRow: any, PackRuleRow: any, isFirst: boolean, isAddData: boolean) => {
+const setRow = (
+  packRuleDtlRow: any,
+  PackRuleRow: any,
+  isFirst: boolean,
+  isAddData: boolean,
+  parentNameValue: string,
+) => {
+  reset();
+  parentName.value = parentNameValue;
   isFirstNode.value = isFirst;
   formData.packRuleId = PackRuleRow.id;
   // 第一层节点

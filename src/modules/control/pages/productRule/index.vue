@@ -165,7 +165,7 @@
 import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 
-import { api as apiControl, ProductPackRuleMapDTO } from '@/api/control';
+import { api as apiControl, ProductPackRuleDtlVO, ProductPackRuleMapDTO } from '@/api/control';
 import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -183,6 +183,29 @@ const { pageUI: pageMitem } = usePage();
 const { loading: loadingMitem, setLoading: setLoadingMitem } = useLoading();
 const { loading: loadingPackDtl, setLoading: setLoadingPackDtl } = useLoading();
 const isAdd = ref(true);
+
+const flattenOrgObj: { [key: string]: ProductPackRuleDtlVO } = {};
+
+const flatten = (tree: ProductPackRuleDtlVO[]) => {
+  tree?.forEach((item) => {
+    flattenOrgObj[item.id] = item;
+
+    if (item?.children && item.children.length > 0) {
+      flatten(item?.children);
+    }
+  });
+};
+
+const parentName = computed(() => {
+  let name = '';
+  let parentOrg = flattenOrgObj[selectPackRuleRowDtl.value.parentPackId];
+  while (parentOrg) {
+    name = `${parentOrg.packTypeName}/${name}`;
+    parentOrg = flattenOrgObj[parentOrg.parentPackId];
+  }
+  return name;
+});
+
 // 查询组件值
 const optsValue = ref({}) as any;
 // 查询组件
@@ -337,6 +360,7 @@ const fetchPackDtlTable = async () => {
       productPackRuleId: selectPackRuleRow.value.id,
     })) as any;
     tableDataProductPackDtl.value = data;
+    flatten(tableDataProductPackDtl.value);
     nextTick(() => {
       tableDtlRef.value?.expandAll();
     });
@@ -500,7 +524,13 @@ const onClickAddPackRuleDtl = () => {
   isAdd.value = true;
   const isFirst = !(tableDataProductPackDtl.value.length > 0);
 
-  setRow(selectPackRuleRowDtl.value, selectPackRuleRow.value, isFirst, isAdd.value); // 调用子组件赋值
+  setRow(
+    selectPackRuleRowDtl.value,
+    selectPackRuleRow.value,
+    isFirst,
+    isAdd.value,
+    parentName.value + selectPackRuleRowDtl.value.packTypeName,
+  ); // 调用子组件赋值
 };
 
 // 弹出编辑包装规则明细界面
@@ -517,7 +547,7 @@ const onClickEditPackRuleDtl = (row: any) => {
     // 顶层节点的ID为0
     isFirst = true;
   }
-  setRow(row, selectPackRuleRow.value, isFirst, isAdd.value); // 调用子组件赋值
+  setRow(row, selectPackRuleRow.value, isFirst, isAdd.value, parentName.value + row.packTypeName); // 调用子组件赋值
 };
 
 // 包装明细规则界面提交
