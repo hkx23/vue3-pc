@@ -275,7 +275,7 @@ const tablePackDtlColumns: PrimaryTableCol<TableRowData>[] = [
 // const tableProductPackRulePagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
 const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
-  { title: `${t('business.main.mitemCode')}`, colKey: 'mitemCode' },
+  { title: `${t('business.main.mitemCode')}`, width: 100, colKey: 'mitemCode' },
   { title: `${t('business.main.mitemName')}`, width: 100, colKey: 'mitemName' },
   { title: `${t('business.main.mitemCategoryCode')}`, width: 100, colKey: 'mitemCategoryCode' },
   { title: `${t('business.main.mitemCategoryName')}`, width: 120, colKey: 'mitemCategoryName' },
