@@ -147,7 +147,11 @@
           </a>
         </template>
         <template #op="{ row }">
-          <t-icon name="edit" @click="onEditRoutingClick(row)" />
+          <t-icon
+            v-if="row.status == 'Download' || row.status == 'Scheduled' || row.status == 'Ready'"
+            name="edit"
+            @click="onEditRoutingClick(row)"
+          />
         </template>
       </tm-table>
     </t-card>

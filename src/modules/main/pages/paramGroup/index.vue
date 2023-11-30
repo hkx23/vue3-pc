@@ -84,7 +84,7 @@
                         <t-input-number
                           v-else-if="SelectNode.paramDataType == 'INT'"
                           v-model="item.paramValue"
-                          theme="normal"
+                          theme="column"
                           :decimal-places="0"
                           placeholder="请输入整数"
                         />
