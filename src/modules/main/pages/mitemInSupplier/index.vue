@@ -28,6 +28,7 @@
             row-key="id"
             :table-column="tableMitemInSupplierColumns"
             :table-data="tableDataMitemInSupplier"
+            :total="dataTotal"
             :loading="loading"
             :hover="true"
             :selected-row-keys="selectedMitemInSupplierRowKeys"

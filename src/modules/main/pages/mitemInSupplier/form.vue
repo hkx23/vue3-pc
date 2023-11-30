@@ -9,6 +9,8 @@
               type="mitem"
               label-field="mitemCode"
               :show-title="false"
+              disabled
+              readonly
               @selection-change="onMitemChange"
             />
           </div>
@@ -22,6 +24,8 @@
               type="supplier"
               label-field="supplierCode"
               :show-title="false"
+              disabled
+              readonly
               @selection-change="onSupplierChange"
             />
           </div>
