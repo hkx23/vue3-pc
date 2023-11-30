@@ -131,7 +131,7 @@
   --td-font-size-mark-small: 12px;
   --td-font-size-mark-medium: 14px;
   --td-font-size-body-small: 12px;
-  --td-font-size-body-medium: 14px;
+  --td-font-size-body-medium: 12px;
   --td-font-size-body-large: 16px;
   --td-font-size-title-small: 14px;
   --td-font-size-title-medium: 16px;
@@ -190,7 +190,7 @@
 
   /* end 字体配置 */
 
- /* 圆角配置 */
+  /* 圆角配置 */
   --td-radius-small: 2px;
   --td-radius-default: 4px;
   --td-radius-medium: 6px;
@@ -201,22 +201,20 @@
 
   /* end 圆角配置 */
 
- /* 阴影配置 */
+  /* 阴影配置 */
   --td-shadow-1: 0 1px 10px rgb(0 0 0 / 5%), 0 4px 5px rgb(0 0 0 / 8%), 0 2px 4px -1px rgb(0 0 0 / 12%);
-  --td-shadow-2: 0 3px 14px 2px rgb(0 0 0 / 5%), 0 8px 10px 1px rgb(0 0 0 / 6%),
-    0 5px 5px -3px rgb(0 0 0 / 10%);
-  --td-shadow-3: 0 6px 30px 5px rgb(0 0 0 / 5%), 0 16px 24px 2px rgb(0 0 0 / 4%),
-    0 8px 10px -5px rgb(0 0 0 / 8%);
+  --td-shadow-2: 0 3px 14px 2px rgb(0 0 0 / 5%), 0 8px 10px 1px rgb(0 0 0 / 6%), 0 5px 5px -3px rgb(0 0 0 / 10%);
+  --td-shadow-3: 0 6px 30px 5px rgb(0 0 0 / 5%), 0 16px 24px 2px rgb(0 0 0 / 4%), 0 8px 10px -5px rgb(0 0 0 / 8%);
 
   /* end 阴影配置 */
 
- /* 尺寸配置 */
+  /* 尺寸配置 */
   --td-size-1: 2px;
   --td-size-2: 4px;
   --td-size-3: 6px;
   --td-size-4: 8px;
-  --td-size-5: 12px;
-  --td-size-6: 16px;
+  --td-size-5: 8px;
+  --td-size-6: 8px;
   --td-size-7: 20px;
   --td-size-8: 24px;
   --td-size-9: 28px;
@@ -427,7 +425,7 @@
 
 /* end 圆角配置 */
 
- /* 阴影配置 */
+/* 阴影配置 */
 
 /* --td-shadow-1: 0 1px 10px rgba(0, 0, 0, 0.05), 0 4px 5px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.12);
   --td-shadow-2: 0 3px 14px 2px rgba(0, 0, 0, 0.05), 0 8px 10px 1px rgba(0, 0, 0, 0.06),
@@ -437,7 +435,7 @@
 
 /* end 阴影配置 */
 
- /* 尺寸配置 */
+/* 尺寸配置 */
 
 /* --td-size-1: 2px;
   --td-size-2: 4px;
@@ -498,3 +496,23 @@
 /* end 尺寸配置 */
 
 /* } */
+.t-table thead td,
+.t-table th {
+  font-weight: 700;
+  color: rgb(69 69 69);
+  background: rgb(240 240 242);
+}
+
+.t-table--striped:not(.t-table--bordered) th,
+.t-table--striped:not(.t-table--bordered) td {
+  border-bottom: rgb(213 216 219) solid 1px;
+}
+
+.t-table table {
+  border-spacing: 0;
+  border: rgb(213 216 219) solid 1px;
+}
+
+.t-table__empty {
+  background: white;
+}
