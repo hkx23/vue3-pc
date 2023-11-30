@@ -9,7 +9,7 @@
               type="mitem"
               label-field="mitemCode"
               :show-title="false"
-              disabled
+              :disabled="formData.operateTpye === 'add' ? false : true"
               @selection-change="onMitemChange"
             />
           </div>
@@ -23,7 +23,7 @@
               type="supplier"
               label-field="supplierCode"
               :show-title="false"
-              disabled
+              :disabled="formData.operateTpye === 'add' ? false : true"
               @selection-change="onSupplierChange"
             />
           </div>
