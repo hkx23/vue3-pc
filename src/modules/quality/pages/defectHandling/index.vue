@@ -3,10 +3,10 @@
     <t-card class="list-card-defectHandling">
       <t-row justify="end">
         <t-col style="margin: 0 20px">
-          <t-input placeholder="请输入处理方法类别名称" label="处理方法类别名称"></t-input>
+          <t-input placeholder="请输入处理方法类别名称" label="处理方法类别名称:"></t-input>
         </t-col>
         <t-col>
-          <t-input placeholder="请输入方法编码/名称" label="处理方法编码/名称"></t-input>
+          <t-input placeholder="请输入方法编码/名称" label="处理方法编码/名称:"></t-input>
         </t-col>
       </t-row>
       <tm-table
@@ -69,7 +69,7 @@ const { pageUI } = usePage();
 import { useLang } from './lang';
 
 const formRef = ref(null);
-const defectVisible = ref(true); // 新增编辑窗口
+const defectVisible = ref(false); // 新增编辑窗口
 const { t } = useLang();
 const total = ref(10);
 const formData = ref({
@@ -84,9 +84,9 @@ onMounted(() => {
 const column = ref([
   { type: 'multiple', align: 'center' },
   { title: '序号', colKey: 'Serial', align: 'center', width: 120 },
-  { title: t('processingCategoryName'), colKey: 'processingCategoryName', align: 'center', width: 120 },
-  { title: t('processingCode'), colKey: 'processingCode', align: 'center', width: 120 },
-  { title: t('processingName'), colKey: 'processingName', align: 'center', width: 120 },
+  { title: t('defectHandling.processingCategoryName'), colKey: 'processingCategoryName', align: 'center', width: 120 },
+  { title: t('defectHandling.processingCode'), colKey: 'processingCode', align: 'center', width: 120 },
+  { title: t('defectHandling.processingName'), colKey: 'processingName', align: 'center', width: 120 },
   { title: '操作', colKey: 'op', align: 'left', fixed: 'right', width: 120 },
 ]);
 // table数组
@@ -119,9 +119,11 @@ const onHandelAdd = () => {
 const onEdit = () => {
   defectVisible.value = true;
 };
+// 删除
 const onDelete = (row) => {
   console.log(row);
 };
+// 提交校验
 const onSubmit = (context: any) => {
   console.log(context);
 };

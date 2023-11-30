@@ -668,6 +668,43 @@ export interface Routing {
   routingType?: string;
 }
 
+/** 包装关联物料提交的模型 */
+export interface ProductPackRuleMapDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  packRuleId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemCategoryName?: string;
+  mitemCategoryCode?: string;
+  packRuleCode?: string;
+  packRuleName?: string;
+  packRelationType?: string;
+}
+
 /** 响应数据 */
 export type PagingDataProcessVO = {
   list?: ProcessVO[];
@@ -709,8 +746,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -1103,6 +1140,7 @@ export type ProductPackRuleDtlVO = {
   packLevel?: number;
   packTypeName?: string;
   packLevelName?: string;
+  uomName?: string;
   /** 子层级 */
   children?: ProductPackRuleDtlVO[];
 } | null;
@@ -1608,6 +1646,70 @@ export const api = {
         body: data as any,
       }),
   },
+  productPackRuleMap: {
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
+     * @name Add
+     * @summary 新增包装规则关联的物料信息
+     * @request POST:/productPackRuleMap/add
+     * @secure
+     */
+    add: (data: ProductPackRuleMapDTO) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
+     * @name List
+     * @summary 获取包装规则关联的物料信息
+     * @request GET:/productPackRuleMap/list
+     * @secure
+     */
+    list: (query?: {
+      /** @default "" */
+      packRuleId?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
+     * @name Delete
+     * @summary 删除包装规则关联的物料信息
+     * @request DELETE:/productPackRuleMap/delete
+     * @secure
+     */
+    delete: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/delete`, {
+        method: 'DELETE',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
+     * @name BatchDelete
+     * @summary 批量删除包装规则关联的物料信息(逗号隔开)
+     * @request DELETE:/productPackRuleMap/batchDelete
+     * @secure
+     */
+    batchDelete: (query: { ids: string }) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/batchDelete`, {
+        method: 'DELETE',
+        params: query,
+      }),
+  },
   process: {
     /**
      * No description
@@ -1802,40 +1904,6 @@ export const api = {
     getRoutRevisionByRoutingCode: (query: { routingCode: string; routingType: string }) =>
       http.request<ResultObject['data']>(`/api/control/routingRevision/getRoutRevisionByRoutingCode`, {
         method: 'GET',
-        params: query,
-      }),
-  },
-  productPackRuleMap: {
-    /**
-     * No description
-     *
-     * @tags 产品包装规则映射
-     * @name List
-     * @summary 获取包装规则关联的物料信息
-     * @request GET:/productPackRuleMap/list
-     * @secure
-     */
-    list: (query?: {
-      /** @default "" */
-      packRuleId?: string;
-    }) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/list`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 产品包装规则映射
-     * @name Delete
-     * @summary 删除包装规则关联的物料信息
-     * @request DELETE:/productPackRuleMap/delete
-     * @secure
-     */
-    delete: (query: { id: string }) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/delete`, {
-        method: 'DELETE',
         params: query,
       }),
   },
