@@ -17,7 +17,7 @@
             :label-width="130"
           >
             <t-space v-if="formItem.ControlType == 'NumberInput'" class="input-fixed-width-200">
-              <t-input-number v-model="formModel[formItem.propertyCode]" class="input-fixed-width-200" />
+              <t-input-number v-model="formModel[formItem.propertyCode]" theme="column" class="input-fixed-width-200" />
             </t-space>
             <t-space v-if="formItem.ControlType == 'Input'" class="input-fixed-width-200">
               <t-input v-model="formModel[formItem.propertyCode]"></t-input>

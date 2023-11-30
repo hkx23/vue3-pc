@@ -17,7 +17,11 @@
       "import": "导入",
       "export": "导出",
       "disable": "禁用",
-      "copy": "复制"
+      "copy": "复制",
+      "exportAll": "导出全部",
+      "expand": "展开",
+      "collapse": "收起",
+      "expandAll": "展开全部"
     },
     "dialog": {
       "header": {
