@@ -105,11 +105,14 @@
           <div>{{ row.workshopCode }}-{{ row.workshopName }}</div>
         </template>
         <template #parentWcCode="{ row }">
-          <div>{{ row.parentWcCode ? row.parentWcCode : '-' }}</div>
+          <div>{{ row.parentWcName ? row.parentWcName : '-' }}</div>
+        </template>
+        <template #state="{ row }">
+          <div>{{ row.state ? '启用' : '禁用' }}</div>
         </template>
         <template #op="{ row }">
           <!-- 添加子 -->
-          <icon name="add" style="cursor: pointer" @click="onHandelCenter(row)"></icon>
+          <icon name="add" style="cursor: pointer" @click="onAddChilde(row)"></icon>
           <!-- 编辑 -->
           <icon name="edit-1" style="cursor: pointer; margin: 0 20px" @click="onClickEdit(row)"></icon>
           <!-- 启用禁用 -->
@@ -172,7 +175,7 @@ const btnShowDisable = ref({
   add: false,
   delete: false,
 }); // 控制子按钮禁用默认不禁用  添加和删除
-const typeDetailed = ref(0); // 默认为0  1代表编辑 2代表父进子 3代表新增
+const typeDetailed = ref(0); // 默认为0  1代表编辑 2代表父进子 3代表新增 4代表进入为添加到父级
 const disabledWord = ref(false); // 工作中心编号控制禁用默认为不禁用
 const disabledParent = ref(false); // 父
 const valueItem = ref('全部'); // space类型
@@ -230,35 +233,59 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'wcName',
     title: '名称',
     align: 'center',
+    width: '150px',
   },
   {
     colKey: 'wcType',
     title: '类型',
     align: 'center',
+    width: '150px',
   },
   {
     colKey: 'workshopName',
     title: '所属车间',
     align: 'center',
+    width: '150px',
   },
   {
     colKey: 'wcLocation',
     title: '地点',
     align: 'center',
+    width: '150px',
   },
   {
     colKey: 'parentWcCode',
     title: '父工作中心',
     align: 'center',
+    width: '150px',
   },
   {
     colKey: 'wcOwner',
     title: '负责人',
     align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'wcType',
+    title: '关联设备',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'wcSeq',
+    title: '顺序号',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'state',
+    title: '状态',
+    align: 'center',
   },
   {
     colKey: 'op',
     title: '操作',
+    width: '150px',
     align: 'left',
     fixed: 'right',
   },
@@ -460,7 +487,6 @@ const onHandleSave = (i: boolean) => {
   onFetchData();
 };
 // 编辑
-
 const onClickEdit = (row: any) => {
   newArr.value = row.wcType;
   btnShow.value = true;
@@ -472,7 +498,15 @@ const onClickEdit = (row: any) => {
   disabledWord.value = true;
   disabledParent.value = true;
 };
-
+// 添加父
+const onAddChilde = (row) => {
+  detailedShow.value = true;
+  typeDetailed.value = 4;
+  workCenterId.value = { parentWcId: row.id };
+  btnShow.value = true;
+  disabledWord.value = false;
+  disabledParent.value = true;
+};
 // 添加修改转态
 const onFormClear = (value: boolean) => {
   disabledWord.value = value;

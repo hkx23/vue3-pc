@@ -1,0 +1,28 @@
+{
+  "title": "企业：",
+  "placeholder": "请选择企业",
+  "url": "/api/main/enterprise/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "企业代码",
+      "key": "epCode",
+      "align": "center"
+    },
+    {
+      "title": "企业名称",
+      "key": "epName",
+      "align": "center"
+    },
+    {
+      "title": "企业全称",
+      "key": "epFullName",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "epName"
+  }
+}

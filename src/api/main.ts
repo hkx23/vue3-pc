@@ -481,14 +481,14 @@ export interface ResultSupplier {
 }
 
 /** 响应数据 */
-export type PagingDataRole = {
-  list?: Role[];
+export type PagingDataRoleVO = {
+  list?: RoleVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataRole {
+export interface ResultPagingDataRoleVO {
   /**
    * 响应代码
    * @format int32
@@ -497,11 +497,11 @@ export interface ResultPagingDataRole {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataRole;
+  data?: PagingDataRoleVO;
 }
 
-/** 角色 */
-export interface Role {
+/** 权限显示实体 */
+export interface RoleVO {
   id?: string;
   /**
    * 创建时间
@@ -531,6 +531,14 @@ export interface Role {
   roleName?: string;
   /** 角色描述 */
   roleDesc?: string;
+  /** 企业编码 */
+  epCode?: string;
+  /** 企业名称 */
+  epName?: string;
+  /** 组织架构编码 */
+  plantCode?: string;
+  /** 组织架构名称 */
+  plantName?: string;
 }
 
 /** 通用响应类 */
@@ -545,6 +553,39 @@ export interface ResultRole {
   /** 角色 */
   data?: Role;
 }
+
+/** 角色 */
+export type Role = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 角色代码 */
+  roleCode?: string;
+  /** 角色名称 */
+  roleName?: string;
+  /** 角色描述 */
+  roleDesc?: string;
+} | null;
 
 /** 响应数据 */
 export type PagingDataPost = {
@@ -1478,12 +1519,13 @@ export interface MitemVO {
   stateName?: string;
   isState?: boolean;
   isRawName?: string;
-  isBatchName?: string;
   isRawChecked?: boolean;
-  isProductName?: string;
-  isInProcessName?: string;
+  isState?: boolean;
+  stateName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -1650,8 +1692,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1772,7 +1814,6 @@ export interface Enterprise {
    * @default 1
    */
   state?: number;
-  eid?: string;
   /** 企业编号 */
   epCode?: string;
   /** 企业简称 */
@@ -1801,81 +1842,6 @@ export interface ResultPagingDataEnterprise {
   message?: string;
   /** 响应数据 */
   data?: PagingDataEnterprise;
-}
-
-export interface DefectCodeSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
-  keyword?: string;
-  parentId?: string;
-  category?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
-
-/** 显示缺陷代码实体 */
-export interface DefectCodeVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 缺陷代码 */
-  defectCode?: string;
-  /** 缺陷名称 */
-  defectName?: string;
-  parentDefectId?: string;
-  /**
-   * 层级序号
-   * @format int32
-   */
-  levelSeq?: number;
-  /** 不合格分类 */
-  classification?: string;
-  stateName?: string;
-  isState?: boolean;
-}
-
-/** 响应数据 */
-export type PagingDataDefectCodeVO = {
-  list?: DefectCodeVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataDefectCodeVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataDefectCodeVO;
 }
 
 /** 客户 */
@@ -2643,7 +2609,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataRole['data']>(`/api/main/role/items`, {
+      http.request<ResultPagingDataRoleVO['data']>(`/api/main/role/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3640,22 +3606,6 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataEnterprise['data']>(`/api/main/enterprise/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  defectCode: {
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name GetList
-     * @summary 查询缺陷代码
-     * @request POST:/defectCode/getList
-     * @secure
-     */
-    getList: (data: DefectCodeSearch) =>
-      http.request<ResultPagingDataDefectCodeVO['data']>(`/api/main/defectCode/getList`, {
         method: 'POST',
         body: data as any,
       }),

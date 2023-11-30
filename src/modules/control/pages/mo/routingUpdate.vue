@@ -10,7 +10,7 @@
     </t-card>
     <!-- table表格 -->
     <footer class="detailed-work-center">
-      <div v-if="selectRouting == 'MOROUTING'" class="table-work-header">
+      <div class="table-work-header">
         <tm-table
           ref="tableRoutingRef"
           row-key="id"
@@ -55,7 +55,7 @@ const conditionData = reactive({
   routingCode: '',
   routingType: '',
 });
-const selectRouting = ref('');
+
 const selectRoutingVerisonID = ref(0);
 // 工单Routing信息
 const moRoutingData = ref([]);
@@ -145,8 +145,6 @@ watch(
   () => props.row,
   (value) => {
     nextTick(() => {
-      selectRouting.value = 'MOLOG1'; // 由于弹出框表格无法显示，目前才采用弹出重绘临时解决
-      selectRouting.value = 'MOROUTING'; // 由于弹出框表格无法显示，目前才采用弹出重绘临时解决
       currentrow.value = value;
       fetchTableRouting();
     });

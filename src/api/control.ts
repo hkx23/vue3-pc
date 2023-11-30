@@ -668,6 +668,44 @@ export interface Routing {
   routingType?: string;
 }
 
+/** 包装关联物料提交的模型 */
+export interface ProductPackRuleMapDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  packRuleId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemCategoryName?: string;
+  mitemCategoryCode?: string;
+  packRuleCode?: string;
+  packRuleName?: string;
+  packRelationType?: string;
+  ids?: string[];
+}
+
 /** 响应数据 */
 export type PagingDataProcessVO = {
   list?: ProcessVO[];
@@ -709,8 +747,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -1047,6 +1085,108 @@ export interface ResultMo {
   data?: Mo;
 }
 
+/** 显示在制品条码实体 */
+export interface BarcodeWipVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  moScheId?: string;
+  workcenterId?: string;
+  processId?: string;
+  workstationId?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  seq?: number;
+  /** 在制品数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /**
+   * 缺陷次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /**
+   * 是否完工
+   * @format int32
+   */
+  isCompleted?: number;
+  /** 状态 */
+  status?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  /** 工单排产状态 */
+  scheStatus?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  /** 工单名称 */
+  moCode?: string;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 工站代码 */
+  wcCode?: string;
+  /** 工站名称 */
+  wcName?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  datetimeScheStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  isState?: boolean;
+  stateName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBarcodeWipVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示在制品条码实体 */
+  data?: BarcodeWipVO;
+}
+
 /** 通用响应类 */
 export interface ResultWorkcenterVO {
   /**
@@ -1103,6 +1243,7 @@ export type ProductPackRuleDtlVO = {
   packLevel?: number;
   packTypeName?: string;
   packLevelName?: string;
+  uomName?: string;
   /** 子层级 */
   children?: ProductPackRuleDtlVO[];
 } | null;
@@ -1608,6 +1749,70 @@ export const api = {
         body: data as any,
       }),
   },
+  productPackRuleMap: {
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
+     * @name BatchDelete
+     * @summary 批量删除包装规则关联的物料信息
+     * @request POST:/productPackRuleMap/batchDelete
+     * @secure
+     */
+    batchDelete: (data: ProductPackRuleMapDTO) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
+     * @name Add
+     * @summary 新增包装规则关联的物料信息
+     * @request POST:/productPackRuleMap/add
+     * @secure
+     */
+    add: (data: ProductPackRuleMapDTO) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
+     * @name List
+     * @summary 获取包装规则关联的物料信息
+     * @request GET:/productPackRuleMap/list
+     * @secure
+     */
+    list: (query?: {
+      /** @default "" */
+      packRuleId?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
+     * @name Delete
+     * @summary 删除包装规则关联的物料信息
+     * @request DELETE:/productPackRuleMap/delete
+     * @secure
+     */
+    delete: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/delete`, {
+        method: 'DELETE',
+        params: query,
+      }),
+  },
   process: {
     /**
      * No description
@@ -1789,6 +1994,22 @@ export const api = {
         params: query,
       }),
   },
+  barcodeWip: {
+    /**
+     * No description
+     *
+     * @tags 在制品条码表
+     * @name GetBarcodeWip
+     * @summary 获取在制品条码信息
+     * @request POST:/barcodeWip/getBarcodeWip
+     * @secure
+     */
+    getBarcodeWip: (data: BarcodeWipVO) =>
+      http.request<ResultBarcodeWipVO['data']>(`/api/control/barcodeWip/getBarcodeWip`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   routingRevision: {
     /**
      * No description
@@ -1802,40 +2023,6 @@ export const api = {
     getRoutRevisionByRoutingCode: (query: { routingCode: string; routingType: string }) =>
       http.request<ResultObject['data']>(`/api/control/routingRevision/getRoutRevisionByRoutingCode`, {
         method: 'GET',
-        params: query,
-      }),
-  },
-  productPackRuleMap: {
-    /**
-     * No description
-     *
-     * @tags 产品包装规则映射
-     * @name List
-     * @summary 获取包装规则关联的物料信息
-     * @request GET:/productPackRuleMap/list
-     * @secure
-     */
-    list: (query?: {
-      /** @default "" */
-      packRuleId?: string;
-    }) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/list`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 产品包装规则映射
-     * @name Delete
-     * @summary 删除包装规则关联的物料信息
-     * @request DELETE:/productPackRuleMap/delete
-     * @secure
-     */
-    delete: (query: { id: string }) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/delete`, {
-        method: 'DELETE',
         params: query,
       }),
   },

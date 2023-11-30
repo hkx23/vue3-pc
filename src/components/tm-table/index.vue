@@ -38,7 +38,7 @@
           multiple-sort
           resizable
           lazy-load
-          :bordered="true"
+          stripe
           :row-key="rowKey"
           :columns="columns"
           :data="finalTableData"
