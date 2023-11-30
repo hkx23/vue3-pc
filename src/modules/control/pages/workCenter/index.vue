@@ -154,6 +154,8 @@ const onPageSizeChange = (size) => {
 };
 const loading = ref(false);
 const onCurrentChange = () => {
+  console.log(1);
+
   onFetchData();
 };
 // 下拉

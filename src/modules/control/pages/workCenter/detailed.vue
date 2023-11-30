@@ -294,7 +294,7 @@ const onWorkCenterAdd = async () => {
       state: formData.state,
       wcOwner: formData.wcOwner,
       wcObjectType: formData.category,
-      wcSeq: 0,
+      wcSeq: formData.wcSeq,
     });
     MessagePlugin.success('保存成功');
     Emit('addedShow', false);

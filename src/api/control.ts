@@ -349,6 +349,8 @@ export interface WorkstationSearch {
   workcenter?: string;
   /** 工序编码名称模糊 */
   process?: string;
+  /** 模糊关键词 */
+  keyword?: string;
   /** 排序字段 */
   sorts?: SortParam[];
   /** 筛选字段 */
@@ -574,6 +576,8 @@ export interface WorkcenterVO {
   parentWcId?: string;
   /** 父工作中心编码 */
   parentWcCode?: string;
+  /** 父工作中心名称 */
+  parentWcName?: string;
   /** 负责人名称 */
   wcOwner?: string;
   wcObjectId?: string;
@@ -747,8 +751,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1167,11 +1171,11 @@ export interface BarcodeWipVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
-  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  isState?: boolean;
   stateName?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */

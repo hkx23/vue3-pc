@@ -1,7 +1,7 @@
 {
   "defectCode": {
     "parentLevel": "上一层级",
-    "defectiveCode": "缺陷代码",
+    "defectCode": "缺陷代码",
     "defectName": "缺陷名称",
     "operate": "操作"
   }

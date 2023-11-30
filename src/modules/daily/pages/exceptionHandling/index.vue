@@ -19,8 +19,19 @@
         </template>
         <template #oprate>
           <t-button @click="onAdd">新增</t-button>
-          <t-button variant="outline">编辑</t-button>
           <t-button variant="outline">删除</t-button>
+          <!-- <t-button>导入</t-button> -->
+        </template>
+        <template #operate="{ row }">
+          <t-space>
+            <!-- 编辑 -->
+            <icon name="edit-1" style="cursor: pointer" @click="onEdit(row)"></icon>
+            <!-- 删除 -->
+            <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
+              <icon name="delete" style="cursor: pointer"></icon>
+            </t-popconfirm>
+          </t-space>
+
           <!-- <t-button>导入</t-button> -->
         </template>
       </tm-table>
@@ -32,7 +43,7 @@
       :confirm-btn="null"
       width="40%"
     >
-      <t-form ref="formRef" :data="formItem" :rules="rules">
+      <t-form ref="formRef" :data="formItem" :rules="rules" @submit="onSubmit">
         <t-form-item :label="t('exceptionHandling.OrganizationName')" name="OrganizationName">
           <t-select v-model="formItem.OrganizationName" placeholder="请输入"></t-select>
         </t-form-item>
@@ -65,9 +76,10 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Data, FormInstanceFunctions, FormRules } from 'tdesign-vue-next';
+import { Data, FormInstanceFunctions, FormRules, Icon } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
+// import { api } from '@/api/daily';
 import TmQuery from '@/components/tm-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
@@ -92,7 +104,7 @@ const formItem = reactive({
   processOrder: '', // 处理顺序
   transferOrders: '', // 是否允许转单
 });
-const total = 10;
+const total = ref(10);
 const column = ref([
   {
     colKey: 'select',
@@ -123,6 +135,12 @@ const column = ref([
     title: t('exceptionHandling.transferOrders'),
     align: 'center',
   },
+  {
+    colKey: 'operate',
+    title: t('exceptionHandling.operate'),
+    align: 'center',
+    fixed: 'right',
+  },
 ]);
 const data = ref([
   {
@@ -142,10 +160,63 @@ const data = ref([
 ]);
 // 进入首页请求
 const onFetchData = async () => {
+  // try {
+  //   const list = await api.exceptionHandling.geslist({
+  //     pageNum: pageUI.value.page,
+  //     pageSize: pageUI.value.rows,
+  //   });
+  //   data.value = list.list;
+  //   total.value = list.total;
+  //   console.log(list);
+  // } catch (e) {
+  //   console.log(e);
+  // }
+
   data.value = _.cloneDeep(data.value);
 };
+const isAddAanEdit = ref(1); // 默认为添加1新增 0编辑
+const addAanEdit = async () => {
+  if (isAddAanEdit.value === 1) {
+    console.log('新增');
+    try {
+      // await api.exceptionHandling.add({});
+    } catch (e) {
+      console.log(e);
+    }
+  } else {
+    try {
+      // await api.exceptionHandling.removeDefectCode({});
+    } catch (e) {
+      console.log(e);
+    }
+    console.log('编辑');
+  }
+};
+// 添加
 const onAdd = () => {
+  isAddAanEdit.value = 1;
+  addAanEdit();
   formVisible.value = true;
+};
+// 编辑
+const onEdit = (row) => {
+  isAddAanEdit.value = 0;
+  formVisible.value = true;
+  console.log(row);
+};
+const onDelete = async (row) => {
+  try {
+    console.log(row);
+    // api.exceptionHandling.removeDefectCode({id:row.id})
+  } catch (e) {
+    console.log(e);
+  }
+};
+// 保存
+const onSubmit = (context) => {
+  if (context.validateResult === true) {
+    console.log(1);
+  }
 };
 // 窗口取消
 const onSecondaryReset = () => {
