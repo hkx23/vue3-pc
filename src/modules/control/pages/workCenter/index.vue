@@ -502,7 +502,7 @@ const onClickEdit = (row: any) => {
 const onAddChilde = (row) => {
   detailedShow.value = true;
   typeDetailed.value = 4;
-  workCenterId.value = { parentWcId: row.parentWcId };
+  workCenterId.value = { parentWcId: row.id };
   btnShow.value = true;
   disabledWord.value = false;
   disabledParent.value = true;

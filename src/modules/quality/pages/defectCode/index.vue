@@ -22,6 +22,10 @@
         @select-change="rehandleSelectChange"
       >
         <!-- <t-button>导入</t-button> -->
+        <template #operate>
+          <icon name="edit-1"></icon>
+          <icon name="delete" style="margin: 0 10px"></icon>
+        </template>
       </t-enhanced-table>
       <t-pagination
         v-model="pagination.current"
@@ -122,6 +126,7 @@ const column: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'select', type: 'multiple' },
   { colKey: 'defectiveCode', title: t('defectCode.defectiveCode'), align: 'center', width: '200px' },
   { colKey: 'defectName', title: t('defectCode.defectName'), align: 'center' },
+  { colKey: 'operate', title: t('defectCode.operate'), align: 'center', fixed: 'right' },
 ];
 const data = ref([
   {
