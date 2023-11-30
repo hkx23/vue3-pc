@@ -639,7 +639,7 @@ watch(
       } else if (!isHandleSelectionChange.value) {
         if (props.value) {
           console.log('remoteLoad-按默认值查询');
-          selectSearch.value = props.value.toString();
+          // selectSearch.value = props.value.toString();
           defaultValue.value = props.value.toString();
           remoteLoad(props.value);
         } else {

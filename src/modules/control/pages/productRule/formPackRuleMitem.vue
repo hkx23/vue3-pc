@@ -101,6 +101,7 @@ const reset = () => {
 };
 
 const setRow = (row: any) => {
+  reset();
   formData.packRuleId = row.id;
   formData.packRuleCode = row.packRuleCode;
   formData.packRuleName = row.packRuleName;

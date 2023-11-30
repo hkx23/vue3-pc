@@ -1171,11 +1171,15 @@ export interface BarcodeWipVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
+  /** 扫描信息 */
+  scanMessage?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   stateName?: string;
   datetimeScheStr?: string;
-  isState?: boolean;
 }
 
 /** 通用响应类 */

@@ -10,6 +10,7 @@
     "checkPackMitemSave": "请选择物料",
     "checkPackMitemCategorySave": "请选择物料类型",
     "packRelationType":"关联维度",
+    "parentLevelName": "层级",
     "mitem": "物料"
   }
 }

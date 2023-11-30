@@ -67,6 +67,7 @@
   },
   "business": {
     "main": {
+      "select": "选择",
       "serialNumber": "序号",
       "uom": "主计量单位",
       "mitemCode": "物料",
