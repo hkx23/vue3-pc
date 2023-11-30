@@ -135,8 +135,8 @@ export default {
       try {
         // await api.mitemUom.getlist(formData.value);
         uomOptions.value = [];
-        const dataUom = await api.mitemUom.getlist({ pageNum: 1, pageSize: 9999, uom: '' });
-        dataUom.list.forEach((n) => uomOptions.value.push({ label: n.uom, value: n.uomSymbol }));
+        const dataUom = await api.mitemUom.getlist({ pageNum: 1, pageSize: 9999, uomName: '' });
+        dataUom.list.forEach((n) => uomOptions.value.push({ label: n.uomName, value: n.uom }));
       } catch (e) {
         console.log(e);
       } finally {

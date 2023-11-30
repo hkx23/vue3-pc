@@ -481,14 +481,14 @@ export interface ResultSupplier {
 }
 
 /** 响应数据 */
-export type PagingDataRoleVO = {
-  list?: RoleVO[];
+export type PagingDataRole = {
+  list?: Role[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataRoleVO {
+export interface ResultPagingDataRole {
   /**
    * 响应代码
    * @format int32
@@ -497,11 +497,11 @@ export interface ResultPagingDataRoleVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataRoleVO;
+  data?: PagingDataRole;
 }
 
-/** 权限显示实体 */
-export interface RoleVO {
+/** 角色 */
+export interface Role {
   id?: string;
   /**
    * 创建时间
@@ -531,14 +531,6 @@ export interface RoleVO {
   roleName?: string;
   /** 角色描述 */
   roleDesc?: string;
-  /** 企业编码 */
-  epCode?: string;
-  /** 企业名称 */
-  epName?: string;
-  /** 组织架构编码 */
-  plantCode?: string;
-  /** 组织架构名称 */
-  plantName?: string;
 }
 
 /** 通用响应类 */
@@ -553,39 +545,6 @@ export interface ResultRole {
   /** 角色 */
   data?: Role;
 }
-
-/** 角色 */
-export type Role = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 角色代码 */
-  roleCode?: string;
-  /** 角色名称 */
-  roleName?: string;
-  /** 角色描述 */
-  roleDesc?: string;
-} | null;
 
 /** 响应数据 */
 export type PagingDataPost = {
@@ -835,6 +794,8 @@ export interface Param {
   eid?: string;
   oid?: string;
   paramGroupId?: string;
+  /** 字典名称 */
+  paramName?: string;
   /** 字典代码 */
   paramCode?: string;
   /** 字典值 */
@@ -873,6 +834,8 @@ export interface ParamInfoDTO {
   eid?: string;
   oid?: string;
   paramGroupId?: string;
+  /** 字典名称 */
+  paramName?: string;
   /** 字典代码 */
   paramCode?: string;
   /** 字典值 */
@@ -933,13 +896,196 @@ export interface ResultOrg {
   data?: Org;
 }
 
+/** 系统模块表 */
+export interface Module {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  clientType?: number;
+  /** 模块层次代码 */
+  moduleLevel?: string;
+  /** 模块编码 */
+  moduleCode?: string;
+  /** 模块名称 */
+  moduleName?: string;
+  /** 模块描述 */
+  moduleDesc?: string;
+  parentModuleId?: string;
+  /**
+   * 显示顺序
+   * @format int32
+   */
+  sortIndex?: number;
+  /** 模块访问地址 */
+  behaviorPath?: string;
+  /** 图标地址 */
+  iconPath?: string;
+  /** 模块类型 */
+  moduleType?: string;
+  /** 模块版本号 */
+  moduleVersion?: number;
+  /** 模块包标识 */
+  modulePackageIdentify?: string;
+}
+
+export interface ModuleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  id?: string;
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  clientType?: number;
+}
+
+/** 菜单元数据 */
+export interface ModuleMetaVO {
+  /** 名称，多语言 */
+  title?: Record<string, string>;
+  /** 图标路径 */
+  icon?: string;
+  /** frame路径 */
+  frameSrc?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListShowModuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ShowModuleVO[] | null;
+}
+
+/** 显示菜单实体 */
+export type ShowModuleVO = {
+  id?: string;
+  /** 模块编码 */
+  moduleCode?: string;
+  /** 名称 */
+  name?: string;
+  /** 模块描述 */
+  moduleDesc?: string;
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  clientType?: number;
+  /**
+   * 顺序
+   * @format int32
+   */
+  sortIndex?: number;
+  /** 图标地址 */
+  iconPath?: string;
+  /** 模块层次代码 */
+  moduleLevel?: string;
+  /** 模块类型 */
+  moduleType?: string;
+  /** 模块版本号 */
+  moduleVersion?: number;
+  /** 模块包标识 */
+  modulePackageIdentify?: string;
+  /**
+   * 是否PC端
+   * @format int32
+   */
+  isPC?: number;
+  /**
+   * 是否移动端
+   * @format int32
+   */
+  isMobile?: number;
+  /**
+   * 是否电视端
+   * @format int32
+   */
+  isTV?: number;
+  /**
+   * 是否手表端
+   * @format int32
+   */
+  isWatch?: number;
+  /**
+   * 是否微信端
+   * @format int32
+   */
+  isWeChat?: number;
+  /** 地址 */
+  path?: string;
+  /** 类型 */
+  component?: string;
+  /** 重定向地址 */
+  redirect?: string;
+  /** 菜单元数据 */
+  meta?: ModuleMetaVO;
+  /** 子菜单 */
+  children?: ShowModuleVO[];
+} | null;
+
+/** 响应数据 */
+export type PagingDataShowModuleVO = {
+  list?: ShowModuleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataShowModuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataShowModuleVO;
+}
+
 /** 显示计量单位 */
 export interface MitemUomVo {
   id?: string;
   /** 计量单位 */
-  uom?: string;
+  uomName?: string;
   /** 计量单位符号 */
-  uomSymbol?: string;
+  uom?: string;
 }
 
 export interface MitemUomSearch {
@@ -954,7 +1100,7 @@ export interface MitemUomSearch {
    */
   pageSize?: number;
   /** 计量单位精确查询 */
-  uom?: string;
+  uomName?: string;
   /** 排序字段 */
   sorts?: SortParam[];
   /** 筛选字段 */
@@ -986,10 +1132,10 @@ export interface MitemUom {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 计量单位 */
-  uom?: string;
   /** 计量单位符号 */
-  uomSymbol?: string;
+  uom?: string;
+  /** 计量单位名称 */
+  uomName?: string;
 }
 
 /** 响应数据 */
@@ -1205,12 +1351,12 @@ export interface MitemVO {
   isProductName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isState?: boolean;
-  stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
   isInProcessName?: string;
+  isBatchName?: string;
+  stateName?: string;
+  isState?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -1377,8 +1523,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1911,18 +2057,15 @@ export interface ResultListObjectPropertyValueVO {
   data?: ObjectPropertyValueVO[] | null;
 }
 
-/** 菜单元数据 */
-export interface ModuleMetaVO {
-  /** 名称，多语言 */
-  title?: Record<string, string>;
-  /** 图标路径 */
-  icon?: string;
-  /** frame路径 */
-  frameSrc?: string;
-}
+/** 响应数据 */
+export type PagingDataLong = {
+  list?: string[];
+  /** @format int32 */
+  total?: number;
+} | null;
 
 /** 通用响应类 */
-export interface ResultListShowModuleVO {
+export interface ResultPagingDataLong {
   /**
    * 响应代码
    * @format int32
@@ -1931,24 +2074,63 @@ export interface ResultListShowModuleVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: ShowModuleVO[] | null;
+  data?: PagingDataLong;
 }
 
-/** 显示菜单实体 */
-export type ShowModuleVO = {
-  /** 地址 */
-  path?: string;
-  /** 名称 */
-  name?: string;
-  /** 类型 */
-  component?: string;
-  /** 重定向地址 */
-  redirect?: string;
-  /** 菜单元数据 */
-  meta?: ModuleMetaVO;
-  /** 子菜单 */
-  children?: ShowModuleVO[];
+/** 显示缺陷代码实体 */
+export type DefectCodeVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /** 不合格分类 */
+  classification?: string;
+  child?: DefectCodeVO[];
+  stateName?: string;
+  isState?: boolean;
 } | null;
+
+/** 通用响应类 */
+export interface ResultListDefectCodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DefectCodeVO[] | null;
+}
 
 /** 显示行政组织层级实体 */
 export type AdminOrgVO = {
@@ -2313,7 +2495,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataRoleVO['data']>(`/api/main/role/items`, {
+      http.request<ResultPagingDataRole['data']>(`/api/main/role/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2699,6 +2881,118 @@ export const api = {
       parmGroupCode?: string;
     }) =>
       http.request<ResultListKeyValuePairStringString['data']>(`/api/main/param/getListByGroupCode`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  module: {
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name Remove
+     * @summary 删除菜单模块
+     * @request POST:/module/remove
+     * @secure
+     */
+    remove: (data: Module) =>
+      http.request<ResultObject['data']>(`/api/main/module/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name Modify
+     * @summary 编辑菜单模块
+     * @request POST:/module/modify
+     * @secure
+     */
+    modify: (data: Module) =>
+      http.request<ResultObject['data']>(`/api/main/module/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name GetTree
+     * @summary 查询菜单模块左侧菜单树
+     * @request POST:/module/getTree
+     * @secure
+     */
+    getTree: (data: ModuleSearch) =>
+      http.request<ResultListShowModuleVO['data']>(`/api/main/module/getTree`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name GetList
+     * @summary 查询菜单模块右侧列表
+     * @request POST:/module/getList
+     * @secure
+     */
+    getList: (data: ModuleSearch) =>
+      http.request<ResultPagingDataShowModuleVO['data']>(`/api/main/module/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name AddModule
+     * @summary 新增菜单模块
+     * @request POST:/module/addModule
+     * @secure
+     */
+    addModule: (data: Module) =>
+      http.request<ResultObject['data']>(`/api/main/module/addModule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name Show
+     * @summary 系统框架菜单显示调用接口
+     * @request GET:/module/show
+     * @secure
+     */
+    show: (query: {
+      /**
+       * 客户端类型
+       * @format int32
+       */
+      clientType: number;
+    }) =>
+      http.request<ResultListShowModuleVO['data']>(`/api/main/module/show`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name FindChild
+     * @summary 查询是否存在子菜单
+     * @request GET:/module/findChild
+     * @secure
+     */
+    findChild: (query: { id: string }) =>
+      http.request<ResultPagingDataLong['data']>(`/api/main/module/findChild`, {
         method: 'GET',
         params: query,
       }),
@@ -3229,26 +3523,19 @@ export const api = {
         params: query,
       }),
   },
-  module: {
+  defectCode: {
     /**
      * No description
      *
-     * @tags 菜单
-     * @name Show
-     * @summary 显示菜单
-     * @request GET:/module/show
+     * @tags 缺陷代码
+     * @name Tree
+     * @summary 获取缺陷树
+     * @request GET:/defectCode/tree
      * @secure
      */
-    show: (query: {
-      /**
-       * 客户端类型
-       * @format int32
-       */
-      clientType: number;
-    }) =>
-      http.request<ResultListShowModuleVO['data']>(`/api/main/module/show`, {
+    tree: () =>
+      http.request<ResultListDefectCodeVO['data']>(`/api/main/defectCode/tree`, {
         method: 'GET',
-        params: query,
       }),
   },
   adminOrg: {
