@@ -1,28 +1,31 @@
 <template>
-  <div>
-    <!-- 查询组件  -->
-    <tm-query :opts="opts" label-width="100" is-expansion @submit="conditionEnter" />
-    <!-- 表格组件  -->
-
-    <tm-table
-      ref="tableRef"
-      v-model:pagination="pageUI"
-      row-key="id"
-      :table-column="tableColumns"
-      :table-data="tableData"
-      :loading="loading"
-      :total="dataTotal"
-      select-on-row-click
-      :header-affixed-top="true"
-      @refresh="conditionEnter"
-    >
-      <template #op="{ row }">
-        <t-space> 编辑 权限 成员 删除{{ row.id }} </t-space>
-      </template>
-      <template #oprate>
-        <t-button shape="square" variant="outline" @click="onAddClick"> 新增 </t-button>
-      </template>
-    </tm-table>
+  <div class="mainpage">
+    <div class="mainpage-content">
+      <!-- 查询组件  -->
+      <tm-query :opts="opts" label-width="100" @submit="conditionEnter" />
+      <!-- 表格组件  -->
+    </div>
+    <div class="mainpage-content">
+      <tm-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="tableColumns"
+        :table-data="tableData"
+        :loading="loading"
+        :total="dataTotal"
+        select-on-row-click
+        :header-affixed-top="true"
+        @refresh="conditionEnter"
+      >
+        <template #op="{ row }">
+          <t-space> 编辑 权限 成员 删除{{ row.id }} </t-space>
+        </template>
+        <template #oprate>
+          <t-button shape="square" variant="outline" @click="onAddClick"> 新增 </t-button>
+        </template>
+      </tm-table>
+    </div>
   </div>
 </template>
 
@@ -45,15 +48,23 @@ const dataTotal = ref(0);
 const tableData = ref([]);
 // 表格列配置
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', type: 'single', width: 40, fixed: 'left' },
+  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
   {
     colKey: 'serial-number',
+    title: `${t('business.main.serialNumber')}`,
   },
   { title: `${t('role.roleCode')}`, colKey: 'roleCode' },
-  { title: `${t('role.roleName')}`, colKey: 'mitemName' },
-  { title: `${t('role.enName')}`, colKey: 'enName' },
-  { title: `${t('role.plant')}`, colKey: 'plantName' },
+  { title: `${t('role.roleName')}`, colKey: 'roleName' },
+  { title: `${t('role.eId')}`, colKey: 'enName' },
+  { title: `${t('role.org')}`, colKey: 'plantName' },
   { title: `${t('role.roleDesc')}`, colKey: 'roleDesc' },
+  {
+    colKey: 'op',
+    title: `${t('common.button.operation')}`,
+    width: '150px',
+    align: 'left',
+    fixed: 'right',
+  },
 ];
 // 查询组件
 const opts = computed(() => {
@@ -142,6 +153,17 @@ const onAddClick = () => {
 </script>
 
 <style scoped>
+.mainpage {
+  background: white;
+  margin: 16px;
+  border-radius: 8px;
+  padding: 8px 24px;
+}
+
+.mainpage-content:not(:last-child) {
+  border-bottom: 1px solid rgb(213 216 219 / 100%);
+}
+
 .row-container:not(:last-child) {
   margin-bottom: 16px;
 }

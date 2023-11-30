@@ -167,12 +167,15 @@ const state = reactive({
     return acc;
   }, {}),
 });
-const open = ref(false);
+const openSearchForm = ref(false);
+const showExpand = ref(true); // 是否展示展开按钮
+const formContentRef = ref<any>(null);
+const slots = ref({});
 // 默认展开
 if (props.isExpansion) {
-  open.value = true;
+  openSearchForm.value = true;
 } else {
-  open.value = false;
+  openSearchForm.value = false;
 }
 // 查询按钮配置
 // const queryAttrs = computed(() => {
@@ -188,9 +191,9 @@ const cOpts = computed(() => {
       ...props.opts[field],
     };
     // 收起、展开操作
-    if (props.isShowOpen) {
-      openSearchForm.value = true;
-    }
+    // if (props.isShowOpen) {
+    //   openSearchForm.value = true;
+    // }
     opt.dataIndex = field;
     acc[field] = opt;
     return acc;
@@ -363,10 +366,7 @@ watch(
     state.form = initForm(opts, true);
   },
 );
-const openSearchForm = ref(false);
-const showExpand = ref(true); // 是否展示展开按钮
-const formContentRef = ref<any>(null);
-const slots = ref({});
+
 // 展开按钮点击事件
 const onExpandSwitch = () => {
   openSearchForm.value = !openSearchForm.value;
