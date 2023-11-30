@@ -481,14 +481,14 @@ export interface ResultSupplier {
 }
 
 /** 响应数据 */
-export type PagingDataRoleVO = {
-  list?: RoleVO[];
+export type PagingDataRole = {
+  list?: Role[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataRoleVO {
+export interface ResultPagingDataRole {
   /**
    * 响应代码
    * @format int32
@@ -497,11 +497,11 @@ export interface ResultPagingDataRoleVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataRoleVO;
+  data?: PagingDataRole;
 }
 
-/** 权限显示实体 */
-export interface RoleVO {
+/** 角色 */
+export interface Role {
   id?: string;
   /**
    * 创建时间
@@ -531,14 +531,6 @@ export interface RoleVO {
   roleName?: string;
   /** 角色描述 */
   roleDesc?: string;
-  /** 企业编码 */
-  epCode?: string;
-  /** 企业名称 */
-  epName?: string;
-  /** 组织架构编码 */
-  plantCode?: string;
-  /** 组织架构名称 */
-  plantName?: string;
 }
 
 /** 通用响应类 */
@@ -553,39 +545,6 @@ export interface ResultRole {
   /** 角色 */
   data?: Role;
 }
-
-/** 角色 */
-export type Role = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 角色代码 */
-  roleCode?: string;
-  /** 角色名称 */
-  roleName?: string;
-  /** 角色描述 */
-  roleDesc?: string;
-} | null;
 
 /** 响应数据 */
 export type PagingDataPost = {
@@ -835,6 +794,8 @@ export interface Param {
   eid?: string;
   oid?: string;
   paramGroupId?: string;
+  /** 字典名称 */
+  paramName?: string;
   /** 字典代码 */
   paramCode?: string;
   /** 字典值 */
@@ -873,6 +834,8 @@ export interface ParamInfoDTO {
   eid?: string;
   oid?: string;
   paramGroupId?: string;
+  /** 字典名称 */
+  paramName?: string;
   /** 字典代码 */
   paramCode?: string;
   /** 字典值 */
@@ -986,10 +949,10 @@ export interface MitemUom {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 计量单位 */
-  uom?: string;
   /** 计量单位符号 */
-  uomSymbol?: string;
+  uom?: string;
+  /** 计量单位名称 */
+  uomName?: string;
 }
 
 /** 响应数据 */
@@ -1202,15 +1165,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
+  isState?: boolean;
+  isBatchName?: string;
   isProductName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isState?: boolean;
-  stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
   isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2313,7 +2276,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataRoleVO['data']>(`/api/main/role/items`, {
+      http.request<ResultPagingDataRole['data']>(`/api/main/role/items`, {
         method: 'POST',
         body: data as any,
       }),
