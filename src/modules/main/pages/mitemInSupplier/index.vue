@@ -117,7 +117,6 @@ const onAdd = () => {
   formRef.value.init();
   formVisible.value = true;
 };
-
 const fetchTable = async () => {
   setLoading(true);
   try {

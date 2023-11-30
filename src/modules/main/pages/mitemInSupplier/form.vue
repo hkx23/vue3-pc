@@ -57,7 +57,6 @@
         </t-form-item>
       </t-col>
     </t-row>
-
     <t-row>
       <t-col class="t-space-item">
         <t-form-item label="是否免检" required-mark>
