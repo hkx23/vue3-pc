@@ -30,7 +30,7 @@
               <t-input v-model="formData.wcOwner" style="width: 180px" />
             </t-form-item>
             <t-form-item label="顺序号" name="wcSeq">
-              <!-- <t-input v-model="formData.wcSeq" style="width: 200px" /> -->
+              <t-input-number v-model="formData.wcSeq" theme="normal" style="width: 200px" />
             </t-form-item>
           </div>
           <t-form-item label="父级" name="parentWcId">
@@ -67,68 +67,12 @@
             </t-form-item>
           </footer>
           <span class="form-checkbox">
-            <t-checkbox v-model="formData.checked">启用</t-checkbox>
+            <t-checkbox v-model="formData.checked" @change="onCheCkbox">启用</t-checkbox>
           </span>
-          <footer class="detailed-work-center">
-            <span class="work-header">子工作中心</span>
-            <div class="table-work-header">
-              <!-- 表格 -->
-              <tm-table
-                ref="tableRef"
-                v-model:pagination="pageUI"
-                :show-pagination="props.typeDetailed === 3 ? true : false"
-                :total="total"
-                drag-sort="row"
-                row-key="id"
-                :table-column="columns"
-                :table-data="workData"
-                :loading="loading"
-                :selected-row-keys="selectedRowKeys"
-                @select-change="rehandleSelectChange"
-                @refresh="fetchData"
-                @drag-sort="onDragSort"
-              >
-                <template #button>
-                  <div>
-                    <t-button theme="default" type="submit" :disabled="props.btnShowDisable.add" @click="onHandelAdd"
-                      >添加</t-button
-                    >
-                    <t-button theme="default" :disabled="props.btnShowDisable.delete" @click="onHandelRemove"
-                      >删除</t-button
-                    >
-                  </div>
-                </template>
-                <template #sequence>
-                  <div>1</div>
-                </template>
-                <template #wcCode="{ row }">
-                  <div>
-                    <t-icon name="chevron-right"></t-icon>
-                    <t-link theme="primary" underline @click="onHandelCode(row)">{{ row.wcCode }}</t-link>
-                  </div>
-                </template>
-              </tm-table>
-              <span class="table-btn">
-                <t-button v-show="props.btnShow" type="submit">保存</t-button>
-                <t-button theme="default" @click="onHandleCancellation">取消</t-button>
-              </span>
-              <t-dialog
-                v-model:visible="deleteVisible"
-                header="提示"
-                :cancel-btn="null"
-                :confirm-btn="null"
-                width="40%"
-              >
-                <div class="delete-box">
-                  {{ childrenTotal > 0 ? '当前删除的工作中心下有子工作中心确认删除吗' : '确认删除吗' }}
-                </div>
-                <div class="control-box">
-                  <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-                  <t-button theme="primary" type="submit" @click="onSecondary">确认</t-button>
-                </div></t-dialog
-              >
-            </div>
-          </footer>
+          <div class="table-btn">
+            <t-button theme="default" @click="onHandleCancellation">取消</t-button>
+            <t-button v-show="props.btnShow" type="submit">保存</t-button>
+          </div>
         </t-card>
 
         <!-- table表格 -->
@@ -140,12 +84,10 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Data, FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
-import TmTable from '@/components/tm-table/index.vue';
-import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
@@ -153,22 +95,9 @@ import TmSelectBusiness from '../../../../components/tm-select-business/index.vu
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 // 子修改传值
 const total = ref(10);
-// 拖拽
-const onDragSort = (params) => {
-  console.log('交换行', params);
-  console.log('交换行', params.data);
-  console.log('交换行', params.newData);
-  formData.allRecord = params.newData;
-  // api.workcenter.modify2({ allRecord: formData.allRecord });
-  workData.value = params.newData;
-  // console.log(params);
-  // api.workcenter.modify2(params.target);
-  // fetchData();
-};
-const childrenTotal = ref();
 const deleteVisible = ref(false);
 const { pageUI } = usePage(); // 页面数
-const { loading, setLoading } = useLoading();
+// const { loading, setLoading } = useLoading();
 const Emit = defineEmits(['addedShow', 'FormClear', 'ChildDefault', 'delete']); // addedShow窗口
 const props = defineProps({
   btnShowDisable: {
@@ -198,20 +127,20 @@ const props = defineProps({
     type: String,
   },
 });
-const once = ref(0);
-const parentId = ref(); // 点击添加的时候存储父id
+// const once = ref(0);
+// const parentId = ref(); // 点击添加的时候存储父id
 const typeShow = ref(false);
 onMounted(() => {
   fetchData();
 });
-const selectedRowKeys = ref([]); // 用于存储选中行的数组
+// const selectedRowKeys = ref([]); // 用于存储选中行的数组
 // 首次请求
 const fetchData = async () => {
   // 渲染表单页面
   Object.assign(formData, props.wordCenterId);
   console.log(formData.state);
   try {
-    setLoading(true);
+    // setLoading(true);
     // 子节点请求
     const res = await api.workcenter.getChildCenter({
       id: props.wordCenterId.id,
@@ -234,15 +163,15 @@ const fetchData = async () => {
       Emit('delete', true);
     }
     // 拿到数组
-    const list = await api.workcenter.getCategory();
-    if (once.value === 0) {
-      once.value = 1;
-      typeData.value = list.list;
-      typeData.value.forEach((item) => {
-        item.show = false;
-      });
-      typeData.value[0].show = true;
-    }
+    // const list = await api.workcenter.getCategory();
+    // if (once.value === 0) {
+    //   once.value = 1;
+    //   typeData.value = list.list;
+    //   typeData.value.forEach((item) => {
+    //     item.show = false;
+    //   });
+    //   typeData.value[0].show = true;
+    // }
     // 拿到渲染表单
     // console.log('props', props.wordCenterId);
     // 显示类型
@@ -251,52 +180,9 @@ const fetchData = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    setLoading(false);
+    // setLoading(false);
   }
 };
-// table类型数据
-const columns: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'select',
-    type: 'multiple',
-  },
-  {
-    colKey: 'wcSeq',
-    title: '顺序号',
-    align: 'center',
-  },
-  {
-    colKey: 'wcCode',
-    title: '工作中心编号',
-    align: 'left',
-  },
-  {
-    colKey: 'wcName',
-    title: '名称',
-    align: 'center',
-  },
-  {
-    colKey: 'wcType',
-    title: '类型',
-    align: 'center',
-  },
-  {
-    colKey: 'wcLocation',
-    title: '地点',
-    align: 'center',
-  },
-  {
-    colKey: 'wcType',
-    title: '关联设备',
-    align: 'center',
-  },
-  {
-    colKey: 'wcOwner',
-    title: '负责人',
-    align: 'left',
-    fixed: 'right',
-  },
-];
 // 存在渲染数据数组
 const workData = ref([]);
 // 绑定form
@@ -309,15 +195,44 @@ const formData = reactive({
   parentWcId: '', // 父级
   checked: true, // 多选控制 默认为选中
   wcType: '', // 设备类型
-  state: 1, // 启用还是禁用
-  category: '', // 获取设备关联
+  state: props.wordCenterId.state, // 启用还是禁用
+  category: 0, // 获取设备关联
   wcObjectId: '', // 关联设备
   id: props.wordCenterId.id, // 父节点的id
   allRecord: [],
   wcSeq: 0, // 顺序号
 });
 // 类型数据数组
-const typeData = ref([]);
+const typeData = ref([
+  {
+    wcType: '工作区',
+    code: 0,
+    id: 1,
+    opId: 1,
+    show: true,
+  },
+  {
+    wcType: '生产线',
+    code: 0,
+    id: 2,
+    opId: 2,
+    show: false,
+  },
+  {
+    wcType: '工段',
+    code: 0,
+    id: 3,
+    opId: 3,
+    show: false,
+  },
+  {
+    wcType: '设备',
+    code: 0,
+    id: 4,
+    opId: 4,
+    show: false,
+  },
+]);
 // 判断数组里面的设备
 const onTypeList = () => {
   typeData.value.forEach((item) => {
@@ -328,46 +243,19 @@ const onTypeList = () => {
         typeShow.value = true;
       }
       item.show = true;
-      formData.category = item.wcType;
+      formData.category = item.opId;
     } else {
       item.show = false;
     }
   });
-  if (formData.state === 1) {
+  console.log(props.wordCenterId);
+
+  console.log('激怒人', props.wordCenterId.state);
+  console.log('激怒人2', formData.state);
+  if (props.wordCenterId.state === 1) {
     formData.checked = true;
   } else {
     formData.checked = false;
-  }
-};
-// 点击进入发请求进子集
-const onHandelCode = async (row) => {
-  // typeShow.value = true;
-
-  if (props.typeDetailed === 2) {
-    Emit('ChildDefault', true);
-    try {
-      setLoading(true);
-      console.log(formData.category);
-      const res = await api.workcenter.getChildCenter({
-        id: row.id,
-        category: formData.category,
-      });
-      formData.id = row.id;
-      workData.value = res.list;
-      workData.value.forEach((item) => {
-        formData.workshopID = item.workshopId;
-      });
-      Object.assign(formData, row);
-      onTypeList();
-      // 判断数组是否为0删除禁用
-      if (workData.value.length < 1) {
-        Emit('delete', true);
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
   }
 };
 // 类型高亮事件
@@ -382,15 +270,11 @@ const onHandleCur = (all) => {
         typeShow.value = false;
       }
       item.show = true;
-      formData.category = item.wcType;
+      formData.category = item.opId;
     } else {
       item.show = false;
     }
   });
-};
-// checked事件
-const rehandleSelectChange = (value: any) => {
-  selectedRowKeys.value = value;
 };
 // 新增
 const onWorkCenterAdd = async () => {
@@ -398,13 +282,13 @@ const onWorkCenterAdd = async () => {
     const list = await api.workcenter.add({
       wcCode: formData.wcCode,
       wcName: formData.wcName,
-      workshopID: formData.workshopID,
+      workshopId: formData.workshopID,
       parentWcId: formData.parentWcId,
       wcLocation: formData.wcLocation,
       wcObjectId: formData.wcObjectId,
       state: formData.state,
       wcOwner: formData.wcOwner,
-      wcType: formData.category,
+      wcObjectType: formData.category,
       wcSeq: 0,
     });
     MessagePlugin.success('保存成功');
@@ -414,37 +298,34 @@ const onWorkCenterAdd = async () => {
     console.log(e);
   }
 };
-// 删除
-const onHandelRemove = async () => {
-  // deleteVisible.value = true;
-  if (selectedRowKeys.value.length < 1) {
-    MessagePlugin.error('请选择要删除的');
+// 禁用和启用
+const onCheCkbox = (checked: boolean) => {
+  // 这个是新增
+  if (!props.wordCenterId.children) {
+    if (checked) {
+      formData.state = 1;
+    } else {
+      formData.state = 0;
+    }
     return;
   }
-  const children = await api.workcenter.haveChildCenter({ ids: selectedRowKeys.value });
-  childrenTotal.value = children.total;
-  deleteVisible.value = true;
-  // await api.workcenter.remove({ ids: selectedRowKeys.value });
-  // MessagePlugin.success('删除成功');
-};
-// 确认删除
-const onSecondary = async () => {
-  try {
-    await api.workcenter.remove({ ids: selectedRowKeys.value });
-    deleteVisible.value = false;
-    MessagePlugin.success('删除成功');
-    fetchData();
-  } catch (e) {
-    console.log(e);
+  // 这个是编辑
+  const list = props.wordCenterId.children.every((item) => {
+    return item.state === 0;
+  });
+  if (checked) {
+    formData.state = 1;
+  } else {
+    if (!list) {
+      MessagePlugin.error('子级是启用转态,无法禁用');
+      return;
+    }
+    formData.state = 0;
   }
-};
-// 取消
-const onSecondaryReset = () => {
-  deleteVisible.value = false;
 };
 // 保存
 const onHandleSave = async (context) => {
-  if (context.validateResult === true && formData.category !== '') {
+  if (context.validateResult === true && formData.category !== 0) {
     if (props.typeDetailed === 2) {
       // 子
       onWorkCenterAdd();
@@ -475,19 +356,6 @@ const onHandleCancellation = () => {
   MessagePlugin.success('取消成功');
   Emit('addedShow', false);
 };
-// 添加状态
-const onHandelAdd = async () => {
-  if (props.typeDetailed === 2) {
-    parentId.value = formData.id;
-    clearFrom();
-    formData.parentWcId = parentId.value;
-    typeData.value.forEach((item) => {
-      item.show = false;
-    });
-    // typeShow.value = false;
-    Emit('FormClear', false);
-  }
-};
 // 清空表单
 const clearFrom = () => {
   formData.wcCode = ''; // 工作中心编号
@@ -498,7 +366,7 @@ const clearFrom = () => {
   formData.parentWcId = ''; // 父级
   formData.checked = true; // 多选
   formData.wcType = ''; // 设备类型
-  formData.category = ''; // 设备类型
+  formData.category = 0; // 设备类型
   formData.state = 1; // 控制多选是选择状态
   formData.id = ''; // 父亲id
   formData.wcObjectId = ''; // 设备类型id
@@ -606,12 +474,15 @@ const rules: FormRules<Data> = {
   .table-work-header {
     width: 1200px;
     // 表格按钮
-    .table-btn {
-      display: block;
-      height: 30px;
-      // margin: 10px;
-    }
   }
+}
+
+.table-btn {
+  position: absolute;
+  // display: block;
+  height: 30px;
+  // margin: 10px 99px;
+  right: 0;
 }
 
 .delete-box {

@@ -58,7 +58,7 @@
     </t-row>
     <!-- table表格 -->
     <footer class="detailed-work-center">
-      <div v-if="selectModule == 'MOBOM'" class="table-work-header">
+      <div v-show="selectModule == 'MOBOM'" class="table-work-header">
         <tm-table
           ref="tableBomRef"
           row-key="name"
@@ -71,7 +71,7 @@
         </tm-table>
       </div>
 
-      <div v-if="selectModule == 'MOLOG'" class="table-work-header">
+      <div v-show="selectModule == 'MOLOG'" class="table-work-header">
         <tm-table
           ref="tableLogRef"
           row-key="name"
@@ -247,6 +247,7 @@ const onChangeTab = () => {
     fetchTableLog();
   }
 };
+
 watch(
   () => props.row,
   (value) => {

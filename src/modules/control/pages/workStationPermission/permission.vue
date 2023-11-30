@@ -8,7 +8,7 @@
     </t-card>
     <t-card :bordered="false">
       <t-row>
-        <t-col :span="5">
+        <t-col :span="4">
           <t-card :bordered="false">
             <div>
               <h3 style="margin: 7px 0">用户列表</h3>
@@ -30,7 +30,7 @@
             </div>
           </t-card>
         </t-col>
-        <t-col :span="7">
+        <t-col :span="8">
           <t-card :bordered="false">
             <t-row justify="space-between">
               <t-col>
@@ -54,7 +54,6 @@
             :table-data="data"
             :total="tableTotal"
             :selected-row-keys="selectedRowKeys"
-            :show-pagination="false"
             @select-change="rehandleSelectChange"
             @refresh="onFetchData"
           ></tm-table>
@@ -103,7 +102,7 @@ const onBtnSave = async () => {
     MessagePlugin.error('请选择用户');
     return;
   }
-  console.log('保存', permission.value.userId);
+  // console.log('保存', permission.value.userId);
 
   await api.workstationAuth.save({ userId: permission.value.userId, ids: selectedRowKeys.value });
   MessagePlugin.success('保存成功');
@@ -180,8 +179,8 @@ const onFetchData = async () => {
     setLoading(true);
     try {
       const list = await api.workstation.getlist({
-        pageNum: 1,
-        pageSize: 9999,
+        pageNum: pageUI.value.page,
+        pageSize: pageUI.value.rows,
         workcenter: permission.value.work,
         workstaion: permission.value.work,
         process: permission.value.work,

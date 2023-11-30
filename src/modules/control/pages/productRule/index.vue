@@ -7,6 +7,7 @@
           <t-button theme="default" @click="onImport">导入</t-button>
         </t-row> -->
         <t-row justify="space-between">
+          <!-- 包装规则表格-->
           <tm-table
             ref="tableRef"
             v-model:pagination="pageUI"
@@ -18,11 +19,11 @@
             select-on-row-click
             :header-affixed-top="true"
             @refresh="fetchTable"
-            @select-change="onEditPackRowClick"
+            @cell-click="onEditPackRowClick"
           >
             <template #op="{ row }">
               <t-space>
-                <t-icon name="edit" />
+                <t-icon name="edit" @click="onClickEditPackRule(row)" />
                 <t-icon name="delete" :disabled="loading" @click="onDeletePackRowClick(row)" />
               </t-space>
             </template>
@@ -37,14 +38,20 @@
           <t-col :span="5">
             <div class="pack-dtl-table">
               <t-space size="small" :align="'center'" class="pack-dtl-button">
-                <t-button shape="square" variant="outline">
+                <t-button
+                  :disabled="!isShowPackRuleDtlAddBtn"
+                  shape="square"
+                  variant="outline"
+                  @click="onClickAddPackRuleDtl"
+                >
                   <template #icon>
                     <t-icon name="add" />
                   </template>
                 </t-button>
               </t-space>
+              <!-- 规则明细表格-->
               <t-enhanced-table
-                ref="tableRef"
+                ref="tableDtlRef"
                 row-key="id"
                 :columns="tablePackDtlColumns"
                 :data="tableDataProductPackDtl"
@@ -54,20 +61,22 @@
                 :header-affixed-top="true"
                 :bordered="true"
                 :resizable="true"
+                @cell-click="onRowPackRuleDtlClick"
               >
                 <template #op="{ row }">
                   <t-space>
-                    <t-icon name="edit" @click="onRowPackRuleDtlClick(row)" />
+                    <t-icon name="edit" @click="onClickEditPackRuleDtl(row)" />
                     <t-icon name="delete" :disabled="loadingPackDtl" @click="onDeletePackDtlRowClick(row)" />
                   </t-space> </template
               ></t-enhanced-table>
             </div>
           </t-col>
           <t-col :span="6" :offset="1">
+            <!-- 物料表格-->
             <tm-table
+              ref="tableMitemRef"
               v-model:pagination="pageMitem"
               row-key="id"
-              :total="mitemTotal"
               :table-column="tableMitemColumns"
               :table-data="tableDataMitem"
               :loading="loadingMitem"
@@ -81,16 +90,32 @@
                 </t-space>
               </template>
               <template #oprate>
-                <t-button shape="square" variant="outline" :disabled="loadingMitem">
+                <t-button
+                  v-if="selectPackRuleRow.id"
+                  shape="square"
+                  variant="outline"
+                  :disabled="loadingMitem"
+                  @click="onClickAddPackRuleMitem"
+                >
                   <t-icon name="add" />
                 </t-button>
-              </template> </tm-table
-          ></t-col>
+                <t-button
+                  :disabled="selectMitemRowKeys?.length == 0"
+                  theme="default"
+                  variant="outline"
+                  @click="onBatchDeleteMitemRowClick"
+                >
+                  <t-icon name="delete" />{{ t('common.button.batchDelete') }}
+                </t-button>
+              </template>
+            </tm-table></t-col
+          >
         </t-row>
       </div>
     </div>
   </div>
 
+  <!--包装规则主表弹框-->
   <div>
     <t-dialog
       v-model:visible="formVisible"
@@ -100,7 +125,37 @@
       :close-on-overlay-click="false"
     >
       <t-space direction="vertical" style="width: 98%">
-        <form-pack-rule ref="formRef"></form-pack-rule>
+        <form-pack-rule ref="formRef" :is-add="isAdd" :row="selectPackRuleRow"></form-pack-rule>
+      </t-space>
+    </t-dialog>
+  </div>
+
+  <!--包装规则主表弹框-->
+  <div>
+    <t-dialog
+      v-model:visible="formDtlVisible"
+      :header="formHeader"
+      :on-confirm="onConfirmFormRuleDtl"
+      width="50%"
+      :close-on-overlay-click="false"
+    >
+      <t-space direction="vertical" style="width: 98%">
+        <form-pack-rule-dtl ref="formDtlRef" :is-add="isAdd" :row="selectPackRuleRowDtl"></form-pack-rule-dtl>
+      </t-space>
+    </t-dialog>
+  </div>
+
+  <!--物料弹框-->
+  <div>
+    <t-dialog
+      v-model:visible="formMitemVisible"
+      :header="formHeader"
+      :on-confirm="onConfirmFormMitem"
+      width="50%"
+      :close-on-overlay-click="false"
+    >
+      <t-space direction="vertical" style="width: 98%">
+        <form-pack-rule-mitem ref="formMitemRef" :is-add="isAdd"></form-pack-rule-mitem>
       </t-space>
     </t-dialog>
   </div>
@@ -110,12 +165,14 @@
 import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 
-import { api as apiControl } from '@/api/control';
+import { api as apiControl, ProductPackRuleMapDTO } from '@/api/control';
 import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import formPackRule from './formPackRule.vue';
+import formPackRuleDtl from './formPackRuleDtl.vue';
+import formPackRuleMitem from './formPackRuleMitem.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
@@ -125,6 +182,7 @@ const { loading, setLoading } = useLoading();
 const { pageUI: pageMitem } = usePage();
 const { loading: loadingMitem, setLoading: setLoadingMitem } = useLoading();
 const { loading: loadingPackDtl, setLoading: setLoadingPackDtl } = useLoading();
+const isAdd = ref(true);
 // 查询组件值
 const optsValue = ref({}) as any;
 // 查询组件
@@ -152,6 +210,27 @@ const opts = computed(() => {
     },
   };
 });
+
+const selectMitemRowKeys = computed(() => {
+  return tableMitemRef.value?.getSelectedRowKeys();
+});
+
+const isShowPackRuleDtlAddBtn = computed(() => {
+  let isShow = false;
+  // 必须是先选中主表的行
+  if (selectPackRuleRow.value && selectPackRuleRow.value.id) {
+    // 如果明细表有数据，必须选中明细行数据，才允许新增
+    if (tableDataProductPackDtl.value.length > 0) {
+      if (selectPackRuleRowDtl.value.id) {
+        isShow = true;
+      }
+    } else {
+      isShow = true;
+    }
+  }
+  return isShow;
+});
+
 const tableProductPackRuleColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'single', width: 40, fixed: 'left' },
   { title: `${t('productRule.packRuleCode')}`, width: 120, colKey: 'packRuleCode' },
@@ -166,12 +245,13 @@ const tableProductPackRuleColumns: PrimaryTableCol<TableRowData>[] = [
 const tablePackDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('productRule.packType')}`, width: 150, colKey: 'packTypeName' },
   { title: `${t('productRule.packQty')}`, width: 50, colKey: 'packQty' },
-  { title: `${t('productRule.uom')}`, width: 50, colKey: 'uom' },
+  { title: `${t('productRule.uom')}`, width: 50, colKey: 'uomName' },
   { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 80, colKey: 'op' },
 ];
 
 // const tableProductPackRulePagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
 const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
   { title: `${t('business.main.mitemCode')}`, colKey: 'mitemCode' },
   { title: `${t('business.main.mitemName')}`, width: 100, colKey: 'mitemName' },
   { title: `${t('business.main.mitemCategoryCode')}`, width: 100, colKey: 'mitemCategoryCode' },
@@ -186,13 +266,19 @@ const treeConfig = reactive({
 const tableDataProductPackRule = ref([]);
 const tableDataProductPackDtl = ref([]);
 const tableDataMitem = ref([]);
-const formVisible = ref(false);
-const formRef = ref(null);
+
+const formVisible = ref(false); // 显示和隐藏包装规则弹出框
+const formDtlVisible = ref(false); // 显示和隐藏包装规则明细弹出框
+const formMitemVisible = ref(false); // 显示和隐藏关联物料弹出框
+const formRef = ref(null); // 规则主表
+const formDtlRef = ref(null); // 规则明细
+const formMitemRef = ref(null); // 关联物料
 const dataTotal = ref(0);
-const mitemTotal = ref(0);
 const tableRef = ref();
+const tableDtlRef = ref();
+const tableMitemRef = ref();
 const selectPackRuleRow = ref({}) as any; // 选中包装规则行
-const selectPackRuleDtlRow = ref({}) as any; // 选中包装规则明细行
+const selectPackRuleRowDtl = ref({}) as any; // 选中包装规则明细行
 const formHeader = ref('');
 // 导入按钮
 // const onImport = () => {
@@ -200,15 +286,16 @@ const formHeader = ref('');
 // };
 
 // 点击包装规则行
-const onEditPackRowClick = (id: string) => {
-  console.log(`包装规则表格点击:${{ id }}`);
-  selectPackRuleRow.value = id;
+const onEditPackRowClick = (rowObject: any) => {
+  console.log(`包装规则表格点击:${{ rowObject }}`);
+  selectPackRuleRow.value = rowObject.row;
+  selectPackRuleRowDtl.value = {};
   fetchPackDtlTable();
   fetchMitemTable();
 };
 // 点击包装规则明细行
 const onRowPackRuleDtlClick = ({ row }: { row: any }) => {
-  selectPackRuleDtlRow.value = row;
+  selectPackRuleRowDtl.value = row;
 };
 
 // 点击查询按钮
@@ -239,19 +326,19 @@ const fetchTable = async () => {
 };
 // 加载包装规则明细表格
 const fetchPackDtlTable = async () => {
-  console.log(`加载包装规则明细表格:${selectPackRuleRow.value}`);
-  if (!selectPackRuleRow.value) {
+  console.log(`加载包装规则明细表格:${selectPackRuleRow.value.id}`);
+  if (!selectPackRuleRow.value.id) {
     clearPackDtlTable();
     return;
   }
   try {
     setLoadingPackDtl(true);
     const data = (await apiControl.productPackRuleDtl.tree({
-      productPackRuleId: selectPackRuleRow.value,
+      productPackRuleId: selectPackRuleRow.value.id,
     })) as any;
     tableDataProductPackDtl.value = data;
     nextTick(() => {
-      tableRef.value?.expandAll();
+      tableDtlRef.value?.expandAll();
     });
   } catch (e) {
     console.log(e);
@@ -262,14 +349,14 @@ const fetchPackDtlTable = async () => {
 
 // 加载关联物料表格
 const fetchMitemTable = async () => {
-  if (!selectPackRuleRow.value) {
+  if (!selectPackRuleRow.value.id) {
     clearMitemTable();
     return;
   }
   try {
     setLoadingMitem(true);
     const data = (await apiControl.productPackRuleMap.list({
-      packRuleId: selectPackRuleRow.value,
+      packRuleId: selectPackRuleRow.value.id,
     })) as any;
     tableDataMitem.value = data.list;
   } catch (e) {
@@ -325,7 +412,7 @@ const onDeletePackDtlRowClick = async (row: any) => {
     },
   });
 };
-// 删除关联物料
+// 删除单个关联物料
 const onDeleteMitemRowClick = async (row: any) => {
   const confirmDia = DialogPlugin({
     header: t('common.button.delete'),
@@ -344,10 +431,52 @@ const onDeleteMitemRowClick = async (row: any) => {
     },
   });
 };
+// 批量删除关联物料
+const onBatchDeleteMitemRowClick = async (row: any) => {
+  const ids = [];
+  selectMitemRowKeys.value.forEach((element) => {
+    ids.push(element);
+  });
+  const confirmDia = DialogPlugin({
+    header: t('common.button.delete'),
+    body: t('common.message.confirmDelete'),
+    confirmBtn: t('common.button.confirm'),
+    cancelBtn: t('common.button.cancel'),
+    onConfirm: async () => {
+      console.log(row);
+      const deleteModel: ProductPackRuleMapDTO = {
+        ids,
+      };
+      await apiControl.productPackRuleMap.batchDelete(deleteModel);
+      fetchMitemTable();
+      confirmDia.hide();
+      MessagePlugin.success(t('common.message.deleteSuccess'));
+    },
+    onClose: () => {
+      confirmDia.hide();
+    },
+  });
+};
 
 // 弹出新增包装规则界面
 const onClickAddPackRule = () => {
+  const { reset } = formRef.value;
+  reset();
   formVisible.value = true;
+  formHeader.value = t('common.button.add');
+  isAdd.value = true;
+};
+
+// 弹出编辑包装规则界面
+const onClickEditPackRule = (row: any) => {
+  const { reset } = formRef.value;
+  const { setRow } = formRef.value;
+  reset();
+  formVisible.value = true;
+  formHeader.value = t('common.button.edit');
+  isAdd.value = false;
+  selectPackRuleRow.value = row;
+  setRow(row); // 调用子组件赋值
 };
 
 // 包装规则界面提交
@@ -355,7 +484,70 @@ const onConfirmForm = async () => {
   formRef.value.submit().then((data) => {
     if (data) {
       formVisible.value = false;
+      selectPackRuleRow.value = {};
       fetchTable();
+    }
+  });
+};
+
+// 弹出新增包装规则明细界面
+const onClickAddPackRuleDtl = () => {
+  const { reset } = formDtlRef.value;
+  const { setRow } = formDtlRef.value;
+  reset();
+  formDtlVisible.value = true;
+  formHeader.value = t('common.button.add');
+  isAdd.value = true;
+  const isFirst = !(tableDataProductPackDtl.value.length > 0);
+
+  setRow(selectPackRuleRowDtl.value, selectPackRuleRow.value, isFirst, isAdd.value); // 调用子组件赋值
+};
+
+// 弹出编辑包装规则明细界面
+const onClickEditPackRuleDtl = (row: any) => {
+  const { reset } = formDtlRef.value;
+  const { setRow } = formDtlRef.value;
+  reset();
+  formDtlVisible.value = true;
+  formHeader.value = t('common.button.edit');
+  isAdd.value = false;
+  selectPackRuleRowDtl.value = row;
+  let isFirst = !(tableDataProductPackDtl.value.length > 0);
+  if (row.parentPackId.toString() === '0') {
+    // 顶层节点的ID为0
+    isFirst = true;
+  }
+  setRow(row, selectPackRuleRow.value, isFirst, isAdd.value); // 调用子组件赋值
+};
+
+// 包装明细规则界面提交
+const onConfirmFormRuleDtl = async () => {
+  formDtlRef.value.submit().then((data) => {
+    if (data) {
+      formDtlVisible.value = false;
+      selectPackRuleRowDtl.value = {};
+      fetchPackDtlTable();
+    }
+  });
+};
+
+// 弹出新增关联物料界面
+const onClickAddPackRuleMitem = () => {
+  const { reset } = formMitemRef.value;
+  const { setRow } = formMitemRef.value;
+  reset();
+  formMitemVisible.value = true;
+  formHeader.value = t('common.button.add');
+  isAdd.value = true;
+  setRow(selectPackRuleRow.value); // 调用子组件赋值
+};
+
+// 包装关联物料界面提交
+const onConfirmFormMitem = async () => {
+  formMitemRef.value.submit().then((data) => {
+    if (data) {
+      formMitemVisible.value = false;
+      fetchMitemTable();
     }
   });
 };

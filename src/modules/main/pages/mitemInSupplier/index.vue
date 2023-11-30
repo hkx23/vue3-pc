@@ -28,6 +28,7 @@
             row-key="id"
             :table-column="tableMitemInSupplierColumns"
             :table-data="tableDataMitemInSupplier"
+            :total="dataTotal"
             :loading="loading"
             :hover="true"
             :selected-row-keys="selectedMitemInSupplierRowKeys"
@@ -116,7 +117,6 @@ const onAdd = () => {
   formRef.value.init();
   formVisible.value = true;
 };
-
 const fetchTable = async () => {
   setLoading(true);
   try {
@@ -166,10 +166,11 @@ const onDeleteRowClick = async (value: any) => {
     body: '是否要删除物料与供应商关系？',
     confirmBtn: '确认',
     cancelBtn: '取消',
-    onConfirm: () => {
-      api.mitemInSupplier.delete(value.row);
-      fetchTable();
-      confirmDia.hide();
+    onConfirm: async () => {
+      await api.mitemInSupplier.delete(value.row).then(() => {
+        fetchTable();
+        confirmDia.hide();
+      });
     },
     onClose: () => {
       confirmDia.hide();

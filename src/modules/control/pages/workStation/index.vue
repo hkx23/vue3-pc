@@ -217,31 +217,31 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'workstationCode',
     title: '工站代码',
-    width: '90px',
+    width: '100px',
     align: 'center',
   },
   {
     colKey: 'workstationName',
     title: '工站名称',
-    width: '90px',
+    width: '160px',
     align: 'center',
   },
   {
     colKey: 'workstationDesc',
     title: '工站描述',
-    width: '90px',
+    width: '160px',
     align: 'center',
   },
   {
     colKey: 'workcenterName',
     title: '工站中心',
-    width: '90px',
+    width: '160px',
     align: 'center',
   },
   {
     colKey: 'processName',
     title: '工序',
-    width: '90px',
+    width: '160px',
     align: 'center',
   },
   {
@@ -259,7 +259,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'timeCreate',
     title: '创建时间',
-    width: '160px',
+    width: '170px',
     align: 'center',
   },
   {
@@ -271,13 +271,13 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'timeModified',
     title: '更新时间',
-    width: '160px',
+    width: '170px',
     align: 'center',
   },
   {
     colKey: 'operate',
     title: '操作',
-    width: '90px',
+    width: '100px',
     align: 'left',
     fixed: 'right',
   },
@@ -310,8 +310,10 @@ const onHandelE = (id) => {
         formData.value.workstationDesc = item.workstationDesc;
         // console.log('1', formData);
         if (formData.value.state === item.state) {
+          console.log(1);
           formData.value.showState = true;
         } else {
+          console.log(2);
           formData.value.showState = false;
         }
       }
@@ -369,8 +371,10 @@ const onChange = (value) => {
   console.log(value);
   if (value) {
     inputValue.value.state = [1];
+    formData.value.state = 1;
   } else {
     inputValue.value.state = [0];
+    formData.value.state = 0;
   }
 };
 // 取消
@@ -391,8 +395,9 @@ interface RootObject {
 const onWorkStationSubmit = async (context: RootObject) => {
   if (context.validateResult === true) {
     if (controlShow.value) {
+      console.log('12', formData.value.state);
       try {
-        api.workstation.edit({
+        await api.workstation.edit({
           id: formData.value.id,
           processId: formData.value.PProcessId,
           workcenterId: formData.value.PWorkcenterId,
@@ -401,7 +406,6 @@ const onWorkStationSubmit = async (context: RootObject) => {
           workstationDesc: formData.value.workstationDesc,
           state: formData.value.state,
         });
-
         formRef.value.reset({ type: 'initial' });
         MessagePlugin.success('保存成功');
         formVisible.value = false;

@@ -1,0 +1,25 @@
+{
+  "title": "计量单位：",
+  "placeholder": "请选择计量单位",
+  "url": "/api/main/mitemUom/items",
+  "httptype": "POST",
+  "category": "",
+  "tableWidth": 800,
+  "columns": [
+    {
+      "title": "计量单位",
+      "key": "uom",
+      "align": "center"
+    },
+    {
+      "title": "计量单位符号",
+      "key": "uomSymbol",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "uomSymbol"
+  }
+}

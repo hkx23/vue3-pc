@@ -481,113 +481,6 @@ export interface ResultSupplier {
 }
 
 /** 响应数据 */
-export type PagingDataRoleVO = {
-  list?: RoleVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataRoleVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataRoleVO;
-}
-
-/** 权限显示实体 */
-export interface RoleVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 角色代码 */
-  roleCode?: string;
-  /** 角色名称 */
-  roleName?: string;
-  /** 角色描述 */
-  roleDesc?: string;
-  /** 企业编码 */
-  epCode?: string;
-  /** 企业名称 */
-  epName?: string;
-  /** 组织架构编码 */
-  plantCode?: string;
-  /** 组织架构名称 */
-  plantName?: string;
-}
-
-/** 通用响应类 */
-export interface ResultRole {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 角色 */
-  data?: Role;
-}
-
-/** 角色 */
-export type Role = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 角色代码 */
-  roleCode?: string;
-  /** 角色名称 */
-  roleName?: string;
-  /** 角色描述 */
-  roleDesc?: string;
-} | null;
-
-/** 响应数据 */
 export type PagingDataPost = {
   list?: Post[];
   /** @format int32 */
@@ -1202,15 +1095,16 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   isProductName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
   stateName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -2315,6 +2209,66 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataRoleVO['data']>(`/api/main/role/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name GetItemById
+     * @summary 根據ID獲取角色
+     * @request POST:/role/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultRole['data']>(`/api/main/role/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name Edit
+     * @summary 编辑角色信息
+     * @request POST:/role/edit
+     * @secure
+     */
+    edit: (data: Role) =>
+      http.request<ResultObject['data']>(`/api/main/role/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name Delete
+     * @summary 删除角色信息
+     * @request POST:/role/delete
+     * @secure
+     */
+    delete: (data: Role) =>
+      http.request<ResultObject['data']>(`/api/main/role/delete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  role: {
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name Search
+     * @summary 獲取角色列表
+     * @request POST:/role/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataRole['data']>(`/api/main/role/items`, {
         method: 'POST',
         body: data as any,
       }),
