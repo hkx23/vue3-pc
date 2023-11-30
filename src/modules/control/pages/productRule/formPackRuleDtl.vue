@@ -29,12 +29,7 @@
       ></t-input-number>
     </t-form-item>
     <t-form-item :label="t('productRule.uom')" name="uom">
-      <tm-select-business
-        v-model="formData.uom"
-        value-field="uomSymbol"
-        type="uom"
-        :show-title="false"
-      ></tm-select-business>
+      <tm-select-business v-model="formData.uom" value-field="uom" type="uom" :show-title="false"></tm-select-business>
     </t-form-item>
   </t-form>
 </template>
@@ -152,7 +147,7 @@ const setRow = (packRuleDtlRow: any, PackRuleRow: any, isFirst: boolean, isAddDa
       // 编辑模式
       formData.id = packRuleDtlRow.id;
       formData.packType = packRuleDtlRow.packType;
-      formData.uom = packRuleDtlRow.uomSymbol;
+      formData.uom = packRuleDtlRow.uom;
       formData.packQty = packRuleDtlRow.packQty;
     }
   }
