@@ -216,7 +216,7 @@ const columns = ref([
   { colKey: 'mitemDesc', title: '产品描述', width: '150' },
   { colKey: 'planQty', title: '计划数量' },
   { colKey: 'completedQty', title: '完成数量' },
-  { colKey: 'uom', title: '单位' },
+  { colKey: 'uomName', title: '单位' },
   { colKey: 'workshopName', title: '车间' },
   { colKey: 'workCenterName', title: '工作中心' },
   { colKey: 'routingName', title: '工艺路线' },

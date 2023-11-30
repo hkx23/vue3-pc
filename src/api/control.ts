@@ -703,6 +703,7 @@ export interface ProductPackRuleMapDTO {
   packRuleCode?: string;
   packRuleName?: string;
   packRelationType?: string;
+  ids?: string[];
 }
 
 /** 响应数据 */
@@ -746,8 +747,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -1166,11 +1167,11 @@ export interface BarcodeWipVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
-  datetimeScheStr?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -1753,6 +1754,21 @@ export const api = {
      * No description
      *
      * @tags 产品包装规则映射
+     * @name BatchDelete
+     * @summary 批量删除包装规则关联的物料信息
+     * @request POST:/productPackRuleMap/batchDelete
+     * @secure
+     */
+    batchDelete: (data: ProductPackRuleMapDTO) =>
+      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品包装规则映射
      * @name Add
      * @summary 新增包装规则关联的物料信息
      * @request POST:/productPackRuleMap/add
@@ -1793,21 +1809,6 @@ export const api = {
      */
     delete: (query: { id: string }) =>
       http.request<ResultObject['data']>(`/api/control/productPackRuleMap/delete`, {
-        method: 'DELETE',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 产品包装规则映射
-     * @name BatchDelete
-     * @summary 批量删除包装规则关联的物料信息(逗号隔开)
-     * @request DELETE:/productPackRuleMap/batchDelete
-     * @secure
-     */
-    batchDelete: (query: { ids: string }) =>
-      http.request<ResultObject['data']>(`/api/control/productPackRuleMap/batchDelete`, {
         method: 'DELETE',
         params: query,
       }),
