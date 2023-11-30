@@ -102,7 +102,7 @@ const onBtnSave = async () => {
     MessagePlugin.error('请选择用户');
     return;
   }
-  console.log('保存', permission.value.userId);
+  // console.log('保存', permission.value.userId);
 
   await api.workstationAuth.save({ userId: permission.value.userId, ids: selectedRowKeys.value });
   MessagePlugin.success('保存成功');
