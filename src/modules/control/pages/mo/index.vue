@@ -403,4 +403,8 @@ onMounted(() => {
 .range-time-query {
   padding-left: 118px !important ;
 }
+
+/deep/ .t-dialog__ctx .t-dialog__position.t-dialog--top {
+  padding-top: 5vh !important;
+}
 </style>
