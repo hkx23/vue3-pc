@@ -747,8 +747,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -1167,11 +1167,11 @@ export interface BarcodeWipVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
-  datetimeScheStr?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
