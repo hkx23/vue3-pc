@@ -1,8 +1,8 @@
 import '@/assets/libs/web-core';
 
 import { useI18n } from 'vue-i18n';
-import { RouteRecordRaw } from 'vue-router';
 
+// import { RouteRecordRaw } from 'vue-router';
 // import router from '@/router';
 import { useTabsRouterStore } from '@/store';
 import { TRouterInfo } from '@/types/interface';
