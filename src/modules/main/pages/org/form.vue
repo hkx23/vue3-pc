@@ -88,18 +88,18 @@ const submit = async () => {
 };
 
 let isFormEditing = false;
-const reset = (isEdit: boolean, data?: OrgTreeVO) => {
+const reset = (isEdit: boolean, data?: OrgTreeVO, parentOrgName?: string) => {
   formRef.value.reset({ type: 'empty' });
   formData.oid = '0';
   formData.isActive = 0;
   isFormEditing = isEdit;
   if (data) {
     if (isEdit) {
-      Object.assign(formData, { parentOrgName: data.orgName }, data);
+      Object.assign(formData, { parentOrgName: parentOrgName || data.orgName }, data);
     } else {
       Object.assign(formData, {
         parentOrgId: data.id,
-        parentOrgName: data.orgName,
+        parentOrgName: parentOrgName || data.orgName,
         levelCode: data.children?.length > 0 ? data.children[0]?.levelCode : '',
       });
     }

@@ -76,17 +76,17 @@
         <!-- 计量单位名称： -->
         <t-row class="form-customer-row">
           <t-col>
-            <t-form-item :label="t('mitemuom.unitName')" name="uom">
-              <t-input v-model="formData.uom" :placeholder="t('common.placeholder.input')"></t-input>
+            <t-form-item :label="t('mitemuom.unitName')" name="uomName">
+              <t-input v-model="formData.uomName" :placeholder="t('common.placeholder.input')"></t-input>
             </t-form-item>
           </t-col>
         </t-row>
         <!-- 计量单位名称： -->
         <t-row class="form-customer-row">
           <t-col>
-            <t-form-item :label="t('mitemuom.unitSymbol')" name="uomSymbol">
+            <t-form-item :label="t('mitemuom.unitSymbol')" name="uom">
               <t-input
-                v-model="formData.uomSymbol"
+                v-model="formData.uom"
                 :placeholder="t('common.placeholder.input')"
                 :disabled="isdisables"
               ></t-input>
@@ -136,7 +136,7 @@ const showDialog = ref(false); // 控制新增模态框开关
 const total = ref(null); // 总页数
 const tableData = ref([]); // 表格渲染数据
 const selectedRowKeys = ref([]); // 删除计量单位 id
-const formData = ref({ uom: '', uomSymbol: '', id: null }); // 新增表单数据绑定
+const formData = ref({ uomName: '', uom: '', id: null }); // 新增表单数据绑定
 const queryData = ref(''); // 精确查询数据
 const diaTitle = ref(''); // 模态框文字
 const isPage = ref({ pageNum: null, pageSize: null });
@@ -205,7 +205,7 @@ const onGetMiteMuom = async () => {
   isPage.value.pageSize = pageUI.value.rows;
   tableData.value = [];
   try {
-    const res = await api.mitemUom.getlist({ ...isPage.value, uom: queryData.value });
+    const res = await api.mitemUom.getlist({ ...isPage.value, uomName: queryData.value });
     tableData.value = res.list; // 表格数据赋值
     total.value = res.total; // 总页数赋值
   } catch (e) {
@@ -216,8 +216,8 @@ const onGetMiteMuom = async () => {
 // 表格数据类型
 interface TableRow {
   id: number;
+  uomName: string;
   uom: string;
-  uomSymbol: string;
 }
 
 // 列定义f
@@ -228,12 +228,12 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'uom',
+    colKey: 'uomName',
     title: t('mitemuom.unitName'), // 计量单位名称
     align: 'center',
   },
   {
-    colKey: 'uomSymbol',
+    colKey: 'uom',
     title: t('mitemuom.unitSymbol'), // 计量单位符号
     align: 'center',
   },
@@ -250,7 +250,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 function checkUomUnique(value: any): boolean | CustomValidateResolveType {
   const currentEditingId = formData.value.id; // 获取当前正在编辑的条目的 ID
   const isDuplicate = tableData.value.some((item) => {
-    return item.uom === value && item.id !== currentEditingId; // 检查是否有重复的名称且不是当前编辑的条目
+    return item.uomName === value && item.id !== currentEditingId; // 检查是否有重复的名称且不是当前编辑的条目
   });
   if (isDuplicate) {
     return { result: false, message: '计量单位名称已存在', type: 'error' };
@@ -264,7 +264,7 @@ function checkUomSymbolUnique(value: any): boolean | CustomValidateResolveType {
   if (formData.value.id) {
     return true;
   }
-  const isDuplicate = tableData.value.some((item) => item.uomSymbol === value);
+  const isDuplicate = tableData.value.some((item) => item.uom === value);
   if (isDuplicate) {
     return { result: false, message: '计量单位符号已存在', type: 'error' };
   }
@@ -273,11 +273,11 @@ function checkUomSymbolUnique(value: any): boolean | CustomValidateResolveType {
 
 // 新增表单的验证规则
 const FORM_RULES: FormRules = {
-  uom: [
+  uomName: [
     { required: true, message: '计量单位名称不能为空', trigger: 'blur' },
     { validator: checkUomUnique, trigger: 'blur', message: '计量单位名称已存在' },
   ],
-  uomSymbol: [
+  uom: [
     { required: true, message: '计量单位符号不能为空', trigger: 'blur' },
     { validator: checkUomSymbolUnique, trigger: 'blur', message: '计量单位符号已存在' },
   ],
@@ -300,8 +300,8 @@ const onAddMeasuring = () => {
 const onEditRow = (row: TableRow) => {
   diaTitle.value = '计量单位编辑';
   isdisables.value = true;
-  formData.value.uom = row.uom; // 单位名称
-  formData.value.uomSymbol = row.uomSymbol; // 单位名称字符
+  formData.value.uomName = row.uomName; // 单位名称
+  formData.value.uom = row.uom; // 单位名称字符
   formData.value.id = row.id; // 当前点击的 id
   showDialog.value = true;
 };
@@ -311,8 +311,8 @@ const onEditRow = (row: TableRow) => {
  */
 const onAmendMiteMuom = async () => {
   await api.mitemUom.updateItemByCode(formData.value);
-  formData.value.uom = ''; // 单位名称
-  formData.value.uomSymbol = ''; // 单位名称字符
+  formData.value.uomName = ''; // 单位名称
+  formData.value.uom = ''; // 单位名称字符
   formData.value.id = null; // 当前点击的 id
 };
 

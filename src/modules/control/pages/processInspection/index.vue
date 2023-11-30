@@ -7,12 +7,12 @@
             <t-content>
               <t-space align="center" direction="vertical" style="width: 98%">
                 <t-row justify="center">
-                  <t-col>车间：组装车间 工作中心：XXXXXX 工站：XXXXXX</t-col>
+                  <t-col>车间：XXXXX 工作中心：WC0001 工站：高新产业园贴标</t-col>
                 </t-row>
                 <t-row align="center">
                   <t-col :span="2" style="text-align: right">扫描 产品条码：</t-col>
                   <t-col flex="auto">
-                    <t-input v-model="serialNumber" size="large" @enter="serialNumberEnter" />
+                    <t-input v-model="mainform.serialNumber" size="large" @enter="serialNumberEnter" />
                   </t-col>
                   <t-col flex="40px" />
                 </t-row>
@@ -35,65 +35,14 @@
                   <t-col :span="7">
                     <div class="groupbox">
                       <span class="grouptitle">缺陷信息</span>
-                      <t-card :bordered="false" style="height: 400px" class="t-table__content">
+                      <t-card :bordered="false" style="min-height: 400px" class="t-table__content">
                         <t-space direction="vertical">
-                          <t-space>
-                            <t-button>缺陷分类1</t-button>
+                          <t-space v-for="(item, index) in defectCodeList" :key="index">
+                            <t-button>{{ item.defectName }}</t-button>
                             <t-space break-line>
-                              <t-button theme="default">缺陷1</t-button>
-                              <t-button theme="default">缺陷2</t-button>
-                              <t-button theme="default">缺陷3</t-button>
-                              <t-button theme="default">缺陷4</t-button>
-                              <t-button theme="default">缺陷5</t-button>
-                              <t-button theme="default">缺陷6</t-button>
-                              <t-button theme="default">缺陷7</t-button>
-                              <t-button theme="default">缺陷8</t-button>
-                              <t-button theme="default">缺陷9</t-button>
-                            </t-space>
-                          </t-space>
-
-                          <t-space>
-                            <t-button>缺陷分类2</t-button>
-                            <t-space break-line>
-                              <t-button theme="default">缺陷1</t-button>
-                              <t-button theme="default">缺陷2</t-button>
-                              <t-button theme="default">缺陷3</t-button>
-                              <t-button theme="default">缺陷4</t-button>
-                              <t-button theme="default">缺陷5</t-button>
-                              <t-button theme="default">缺陷6</t-button>
-                              <t-button theme="default">缺陷7</t-button>
-                              <t-button theme="default">缺陷8</t-button>
-                              <t-button theme="default">缺陷9</t-button>
-                            </t-space>
-                          </t-space>
-
-                          <t-space>
-                            <t-button>缺陷分类3</t-button>
-                            <t-space break-line>
-                              <t-button theme="default">缺陷1</t-button>
-                              <t-button theme="default">缺陷2</t-button>
-                              <t-button theme="default">缺陷3</t-button>
-                              <t-button theme="default">缺陷4</t-button>
-                              <t-button theme="default">缺陷5</t-button>
-                              <t-button theme="default">缺陷6</t-button>
-                              <t-button theme="default">缺陷7</t-button>
-                              <t-button theme="default">缺陷8</t-button>
-                              <t-button theme="default">缺陷9</t-button>
-                            </t-space>
-                          </t-space>
-
-                          <t-space>
-                            <t-button>缺陷分类3</t-button>
-                            <t-space break-line>
-                              <t-button theme="default">缺陷1</t-button>
-                              <t-button theme="default">缺陷2</t-button>
-                              <t-button theme="default">缺陷3</t-button>
-                              <t-button theme="default">缺陷4</t-button>
-                              <t-button theme="default">缺陷5</t-button>
-                              <t-button theme="default">缺陷6</t-button>
-                              <t-button theme="default">缺陷7</t-button>
-                              <t-button theme="default">缺陷8</t-button>
-                              <t-button theme="default">缺陷9</t-button>
+                              <t-button v-for="(item_child, index_child) in item.child" :key="index_child">
+                                {{ item_child.defectName }}
+                              </t-button>
                             </t-space>
                           </t-space>
                         </t-space>
@@ -117,7 +66,16 @@
                           </div>
                         </template>
                         <template #status="{ row }">
-                          <div class="talbe_col_nowrap" :title="row.status" :style="row.statusColor">
+                          <div
+                            class="talbe_col_nowrap"
+                            :title="row.status"
+                            :style="{
+                              backgroundColor: row.statusColor,
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                              color: 'white',
+                            }"
+                          >
                             {{ row.status }}
                           </div>
                         </template>
@@ -134,7 +92,7 @@
             </t-content>
           </t-layout>
           <t-aside style="width: 30%">
-            <div class="groupbox" style="height: 610px">
+            <div class="groupbox" style="height: 610px; max-height: 610px">
               <span class="grouptitle">消息组件</span>
               <t-list style="height: 98%" :scroll="{ type: 'virtual' }">
                 <t-list-item v-for="(item, index) in list" :key="index">
@@ -163,22 +121,15 @@ import { isEmpty } from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-// import { api } from '@/api/control';
+import { api } from '@/api/control';
+import { api as apiMain, DefectCodeVO } from '@/api/main';
 
-interface scanInfoModel {
-  serialNumber: string;
+import { scanInfoModel } from '../../api/scanInfoModel';
 
-  qty: number;
-
-  status: string;
-
-  errorinfo: string;
-
-  statusColor: string;
-}
-
+// 全局信息
 const scanInfoList = ref<scanInfoModel[]>([]);
 
+// 扫描信息
 const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '产品条码', width: 100, colKey: 'serialNumber' },
   { title: '数量', width: '50', colKey: 'qty' },
@@ -186,7 +137,15 @@ const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '缺陷信息', width: 100, colKey: 'errorinfo' },
 ];
 
-const serialNumber = ref('');
+const mainform = ref({
+  serialNumber: '',
+  workcenterId: '',
+  workstationId: '',
+  processId: '',
+});
+
+const defectCodeList = ref<DefectCodeVO[]>([]);
+
 const productInfo = ref({
   scheCode: '',
   scheDatetimeSche: '',
@@ -203,7 +162,10 @@ const list = ref([]);
 // import { api } from '@/api/control';
 // const pagination = ref({ defaultPageSize: 20, total: 100, defaultCurrent: 1 });
 const Init = () => {
-  serialNumber.value = 'LB0001';
+  mainform.value.serialNumber = 'LB0001';
+  mainform.value.workcenterId = '1728664640618328065';
+  mainform.value.workstationId = '1729475654052753410';
+  mainform.value.processId = '1';
 
   for (let i = 0; i < 3000; i++) {
     list.value.push({ content: `扫描成功`, datatime: `2023-11-12 23:22:32` });
@@ -215,24 +177,31 @@ const serialNumberEnter = async (value) => {
     // 原子校验
     // TODO 校验成功
 
+    await apiMain.defectCode.tree();
+    await api.barcodeWip
+      .getBarcodeWip({
+        serialNumber: mainform.value.serialNumber,
+        workcenterId: mainform.value.workcenterId,
+        workstationId: mainform.value.workstationId,
+        processId: mainform.value.processId,
+      })
+      .then((reData) => {
+        if (reData.scanSuccess) {
+          writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.scanMessage);
+        } else {
+          writeScanInfoError(reData.serialNumber, reData.qty, reData.scanMessage);
+        }
+      })
+      .catch((message) => {
+        console.log(message);
+      });
+
     // TODO 校验失败，写日志到右侧表
-    writeScanInfoError(value, 0, '');
-    writeScanInfoSuccess(value, 0, '');
-    // api.barcodeWip
-    //   .getBarcodeWip({ serialNumber: value })
-    //   .then((reData) => {
-    //     debugger;
-    //     writeScanInfoSuccess(reData.serialNumber, reData.qty, 'message');
-    //   })
-    //   .catch((reData) => {
-    //     debugger;
-    //     writeScanInfoError(reData.data.serialNumber, reData.data.qty, reData.message);
-    //   });
   }
 };
 
 const writeScanInfoSuccess = async (lbNo, lbQty, lbError) => {
-  scanInfoList.value.push({
+  scanInfoList.value.unshift({
     serialNumber: lbNo,
     qty: lbQty,
     status: 'OK',
@@ -242,7 +211,7 @@ const writeScanInfoSuccess = async (lbNo, lbQty, lbError) => {
 };
 
 const writeScanInfoError = async (lbNo, lbQty, lbError) => {
-  scanInfoList.value.push({
+  scanInfoList.value.unshift({
     serialNumber: lbNo,
     qty: lbQty,
     status: 'NG',

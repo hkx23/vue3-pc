@@ -85,21 +85,8 @@
   &-content-layout {
     padding: var(--td-comp-paddingTB-xl) var(--td-comp-paddingLR-xl);
     padding-right: 0;
-  }
-
-  &-layout {
-    height: calc(100vh - var(--td-comp-size-xxxl));
-    overflow-y: scroll;
-
-    &-tabs-nav {
-      max-width: 100%;
-      position: fixed;
-      overflow: visible;
-      z-index: 100;
-    }
-    &-tabs-nav + .@{starter-prefix}-content-layout {
-      padding-top: var(--td-comp-paddingTB-xl);
-    }
+    background: var(--td-bg-color-page);
+    overflow-y: overlay;
 
     &::-webkit-scrollbar {
       width: 8px;
@@ -111,6 +98,21 @@
       border: 2px solid transparent;
       background-clip: content-box;
       background-color: var(--td-scrollbar-color);
+    }
+  }
+
+  &-layout {
+    height: calc(100vh - var(--td-comp-size-xxxl));
+    // overflow-y: scroll;
+
+    &-tabs-nav {
+      max-width: 100%;
+      position: fixed;
+      overflow: visible;
+      z-index: 100;
+    }
+    &-tabs-nav + .@{starter-prefix}-content-layout {
+      padding-top: var(--td-comp-paddingTB-xl);
     }
   }
 

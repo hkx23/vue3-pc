@@ -50,29 +50,42 @@
                 </t-row>
                 <div class="table-container">
                   <t-row justify="space-between">
-                    <t-col :span="2">
+                    <t-col :span="1">
                       <div>是否全局</div>
                     </t-col>
                     <t-col :span="2">
                       <div>参数编码</div>
                     </t-col>
                     <t-col :span="2">
+                      <div>参数名称</div>
+                    </t-col>
+                    <t-col :span="2">
                       <div>参数值</div>
                     </t-col>
-                    <t-col :span="3">
+                    <t-col :span="2">
                       <div>描述</div>
                     </t-col>
                     <t-col :span="2">
                       <div></div>
                     </t-col>
                   </t-row>
-                  <vue-draggable ref="el" v-model="dataTable" :disabled="true" @start="ondragStart" @end="ondragEnd">
+                  <vue-draggable
+                    ref="el"
+                    v-model="dataTable"
+                    :handle="'.table-row'"
+                    :disabled="true"
+                    @start="ondragStart"
+                    @end="ondragEnd"
+                  >
                     <t-row v-for="(item, index) in dataTable" :key="index" class="table-row" justify="space-between">
-                      <t-col :span="2">
+                      <t-col :span="1">
                         <t-checkbox v-model="item.isGlobal"> </t-checkbox>
                       </t-col>
                       <t-col :span="2">
                         <t-input v-model="item.paramCode" :disabled="SelectNode.isSys == '1'" />
+                      </t-col>
+                      <t-col :span="2">
+                        <t-input v-model="item.paramName" />
                       </t-col>
                       <t-col :span="2">
                         <t-input
@@ -109,7 +122,7 @@
 
                         <t-input v-else v-model="item.paramValue" placeholder="请输入内容" />
                       </t-col>
-                      <t-col :span="3">
+                      <t-col :span="2">
                         <t-input v-model="item.paramDesc" placeholder="请输入内容" />
                       </t-col>
                       <t-col :span="2">
@@ -153,10 +166,9 @@
 </template>
 
 <script setup lang="ts">
-import { SortableEvent } from 'sortablejs';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
-import { type UseDraggableReturn, VueDraggable } from 'vue-draggable-plus';
+import { VueDraggable } from 'vue-draggable-plus';
 
 import { api, Param, ParamInfoDTO } from '@/api/main';
 
@@ -174,7 +186,6 @@ const filterByText = ref(null);
 const totaldataTable = ref<Param[]>();
 const dataTable = ref<[]>() as any;
 const deleteIdx = ref(-1);
-const el = ref<UseDraggableReturn>();
 
 // 表格分页设置
 const pagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
@@ -350,6 +361,7 @@ const onAddParam = (item) => {
     id: '',
     paramGroupId: SelectNode.value.id,
     paramCode: '',
+    paramName: '',
     paramValue: '',
     paramDesc: '',
   });
@@ -368,12 +380,12 @@ const handleClickDelete = (value: any, index: any) => {
   onShowDeleteConfirmVisible.value = true;
 };
 
-const ondragStart = (event: SortableEvent) => {
-  console.log(`开始拖拽${event}`);
+const ondragStart = () => {
+  console.log(`开始拖拽`);
 };
 
-const ondragEnd = (event: SortableEvent) => {
-  console.log(`拖拽结束${event}`);
+const ondragEnd = () => {
+  console.log(`拖拽结束`);
   sortTable();
 };
 
@@ -406,6 +418,11 @@ const onChangeKeyword = () => {
           return row;
         }
       }
+      if (row.paramName) {
+        if (row.paramName.indexOf(queryKey.value.toString()) >= 0) {
+          return row;
+        }
+      }
       if (row.paramValue) {
         if (row.paramValue.indexOf(queryKey.value.toString()) >= 0) {
           return row;
@@ -435,12 +452,15 @@ const onSave = async () => {
       if (item.paramCode === '' || item.paramCode === null) {
         isEmpty.value = true;
       }
+      if (item.paramName === '' || item.paramName === null) {
+        isEmpty.value = true;
+      }
       if (item.paramValue === '' || item.paramValue === null) {
         isEmpty.value = true;
       }
     });
     if (isEmpty.value) {
-      MessagePlugin.error('存在参数编码或参数值为空的数据，请检查');
+      MessagePlugin.error('存在参数编码或参数名称或参数值为空的数据，请检查');
     } else {
       sortTable();
       dataLoading.value = true;

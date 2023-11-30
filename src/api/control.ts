@@ -574,6 +574,8 @@ export interface WorkcenterVO {
   parentWcId?: string;
   /** 父工作中心编码 */
   parentWcCode?: string;
+  /** 父工作中心名称 */
+  parentWcName?: string;
   /** 负责人名称 */
   wcOwner?: string;
   wcObjectId?: string;
@@ -747,8 +749,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -1167,11 +1169,15 @@ export interface BarcodeWipVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
+  /** 扫描信息 */
+  scanMessage?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   stateName?: string;
   datetimeScheStr?: string;
-  isState?: boolean;
 }
 
 /** 通用响应类 */

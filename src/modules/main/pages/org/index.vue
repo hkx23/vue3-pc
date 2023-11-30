@@ -63,7 +63,7 @@ import dayjs from 'dayjs';
 import { isEmpty } from 'lodash';
 import { AddIcon, EditIcon, RemoveIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin, TreeNodeModel } from 'tdesign-vue-next';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { api, OrgTreeVO } from '@/api/main';
 import TmTable from '@/components/tm-table/index.vue';
@@ -83,7 +83,7 @@ let currActiveData: OrgTreeVO = null;
 
 const formRef = ref<FormRef>(null);
 const treeRef = ref();
-const treeData = ref([]);
+const treeData = ref<OrgTreeVO[]>([]);
 const treeActiveKey = ref([]);
 const treeKeys = { value: 'orgCode', label: 'orgName' };
 const columns = [
@@ -140,7 +140,30 @@ const fetchData = async () => {
   data.value = treeData.value;
   setLoading(false);
   treeActiveKey.value = [];
+  flatten(treeData.value);
 };
+
+const flattenOrgObj: { [key: string]: OrgTreeVO } = {};
+
+const flatten = (tree: OrgTreeVO[]) => {
+  tree?.forEach((item) => {
+    flattenOrgObj[item.id] = item;
+
+    if (item?.children && item.children.length > 0) {
+      flatten(item?.children);
+    }
+  });
+};
+
+const parentOrgName = computed(() => {
+  let name = '';
+  let parentOrg = flattenOrgObj[currActiveData.parentOrgId];
+  while (parentOrg) {
+    name = `${parentOrg.orgName}/${name}`;
+    parentOrg = flattenOrgObj[parentOrg.parentOrgId];
+  }
+  return name;
+});
 
 const fetchOrgLevelDic = async () => {
   orgLevelObject = (await api.param.getListByGroupCode({ parmGroupCode: 'ORG_LEVEL_CODE' })).reduce((acc, item) => {
@@ -159,13 +182,14 @@ const onInput = () => {
 
 const onClickAdd = () => {
   const { reset } = formRef.value;
-  reset(false, currActiveData);
+  reset(false, currActiveData, parentOrgName.value + currActiveData.orgName);
   formVisible.value = true;
 };
 
 const onClickEdit = () => {
   const { reset } = formRef.value;
-  reset(true, currActiveData);
+
+  reset(true, currActiveData, parentOrgName.value.replace(/\/$/, ''));
   formVisible.value = true;
 };
 
