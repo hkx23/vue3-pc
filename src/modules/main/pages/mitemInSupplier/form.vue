@@ -9,6 +9,8 @@
               type="mitem"
               label-field="mitemCode"
               :show-title="false"
+              disabled
+              readonly
               @selection-change="onMitemChange"
             />
           </div>
@@ -22,6 +24,8 @@
               type="supplier"
               label-field="supplierCode"
               :show-title="false"
+              disabled
+              readonly
               @selection-change="onSupplierChange"
             />
           </div>
@@ -53,7 +57,6 @@
         </t-form-item>
       </t-col>
     </t-row>
-
     <t-row>
       <t-col class="t-space-item">
         <t-form-item label="是否免检" required-mark>

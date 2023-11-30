@@ -746,8 +746,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1082,6 +1082,108 @@ export interface ResultMo {
   message?: string;
   /** 工单表 */
   data?: Mo;
+}
+
+/** 显示在制品条码实体 */
+export interface BarcodeWipVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  moScheId?: string;
+  workcenterId?: string;
+  processId?: string;
+  workstationId?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  seq?: number;
+  /** 在制品数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /**
+   * 缺陷次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /**
+   * 是否完工
+   * @format int32
+   */
+  isCompleted?: number;
+  /** 状态 */
+  status?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  /** 工单排产状态 */
+  scheStatus?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  /** 工单名称 */
+  moCode?: string;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 工站代码 */
+  wcCode?: string;
+  /** 工站名称 */
+  wcName?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  stateName?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
+}
+
+/** 通用响应类 */
+export interface ResultBarcodeWipVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示在制品条码实体 */
+  data?: BarcodeWipVO;
 }
 
 /** 通用响应类 */
@@ -1889,6 +1991,22 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/mo/getmolist`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  barcodeWip: {
+    /**
+     * No description
+     *
+     * @tags 在制品条码表
+     * @name GetBarcodeWip
+     * @summary 获取在制品条码信息
+     * @request POST:/barcodeWip/getBarcodeWip
+     * @secure
+     */
+    getBarcodeWip: (data: BarcodeWipVO) =>
+      http.request<ResultBarcodeWipVO['data']>(`/api/control/barcodeWip/getBarcodeWip`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   routingRevision: {

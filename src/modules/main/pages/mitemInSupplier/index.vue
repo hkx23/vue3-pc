@@ -28,6 +28,7 @@
             row-key="id"
             :table-column="tableMitemInSupplierColumns"
             :table-data="tableDataMitemInSupplier"
+            :total="dataTotal"
             :loading="loading"
             :hover="true"
             :selected-row-keys="selectedMitemInSupplierRowKeys"
@@ -116,7 +117,6 @@ const onAdd = () => {
   formRef.value.init();
   formVisible.value = true;
 };
-
 const fetchTable = async () => {
   setLoading(true);
   try {

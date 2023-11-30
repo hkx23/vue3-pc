@@ -11,26 +11,93 @@
                 </t-row>
                 <t-row align="center">
                   <t-col :span="2" style="text-align: right">扫描 产品条码：</t-col>
-                  <t-col flex="auto"> <t-input size="large" /> </t-col>
+                  <t-col flex="auto">
+                    <t-input v-model="serialNumber" size="large" @enter="serialNumberEnter" />
+                  </t-col>
                   <t-col flex="40px" />
                 </t-row>
                 <t-row align="center">
                   <div class="groupbox" style="height: auto">
                     <span class="grouptitle">产品信息</span>
-                    <t-space align="center" direction="horizontal" :break-line="true" style="margin: 10px">
-                      <t-input label="排产单号" />
-                      <t-input label="产品编码" />
-                      <t-input label="产品名称" />
-                      <t-input label="排产日期" />
-                      <t-input label="排产数量" />
-                      <t-input label="完工数量" />
-                    </t-space>
+                    <t-card :bordered="false">
+                      <t-space align="center" direction="horizontal" :break-line="true">
+                        <t-input v-model="productInfo.scheCode" label="排产单号" readonly />
+                        <t-input v-model="productInfo.moCode" label="产品编码" readonly />
+                        <t-input v-model="productInfo.moMitemName" label="产品名称" readonly />
+                        <t-input v-model="productInfo.scheDatetimeSche" label="排产日期" readonly />
+                        <t-input v-model="productInfo.scheQty" label="排产数量" readonly />
+                        <t-input v-model="productInfo.moCompletedQty" label="完工数量" readonly />
+                      </t-space>
+                    </t-card>
                   </div>
                 </t-row>
                 <t-row>
                   <t-col :span="7">
                     <div class="groupbox">
                       <span class="grouptitle">缺陷信息</span>
+                      <t-card :bordered="false" style="height: 400px" class="t-table__content">
+                        <t-space direction="vertical">
+                          <t-space>
+                            <t-button>缺陷分类1</t-button>
+                            <t-space break-line>
+                              <t-button theme="default">缺陷1</t-button>
+                              <t-button theme="default">缺陷2</t-button>
+                              <t-button theme="default">缺陷3</t-button>
+                              <t-button theme="default">缺陷4</t-button>
+                              <t-button theme="default">缺陷5</t-button>
+                              <t-button theme="default">缺陷6</t-button>
+                              <t-button theme="default">缺陷7</t-button>
+                              <t-button theme="default">缺陷8</t-button>
+                              <t-button theme="default">缺陷9</t-button>
+                            </t-space>
+                          </t-space>
+
+                          <t-space>
+                            <t-button>缺陷分类2</t-button>
+                            <t-space break-line>
+                              <t-button theme="default">缺陷1</t-button>
+                              <t-button theme="default">缺陷2</t-button>
+                              <t-button theme="default">缺陷3</t-button>
+                              <t-button theme="default">缺陷4</t-button>
+                              <t-button theme="default">缺陷5</t-button>
+                              <t-button theme="default">缺陷6</t-button>
+                              <t-button theme="default">缺陷7</t-button>
+                              <t-button theme="default">缺陷8</t-button>
+                              <t-button theme="default">缺陷9</t-button>
+                            </t-space>
+                          </t-space>
+
+                          <t-space>
+                            <t-button>缺陷分类3</t-button>
+                            <t-space break-line>
+                              <t-button theme="default">缺陷1</t-button>
+                              <t-button theme="default">缺陷2</t-button>
+                              <t-button theme="default">缺陷3</t-button>
+                              <t-button theme="default">缺陷4</t-button>
+                              <t-button theme="default">缺陷5</t-button>
+                              <t-button theme="default">缺陷6</t-button>
+                              <t-button theme="default">缺陷7</t-button>
+                              <t-button theme="default">缺陷8</t-button>
+                              <t-button theme="default">缺陷9</t-button>
+                            </t-space>
+                          </t-space>
+
+                          <t-space>
+                            <t-button>缺陷分类3</t-button>
+                            <t-space break-line>
+                              <t-button theme="default">缺陷1</t-button>
+                              <t-button theme="default">缺陷2</t-button>
+                              <t-button theme="default">缺陷3</t-button>
+                              <t-button theme="default">缺陷4</t-button>
+                              <t-button theme="default">缺陷5</t-button>
+                              <t-button theme="default">缺陷6</t-button>
+                              <t-button theme="default">缺陷7</t-button>
+                              <t-button theme="default">缺陷8</t-button>
+                              <t-button theme="default">缺陷9</t-button>
+                            </t-space>
+                          </t-space>
+                        </t-space>
+                      </t-card>
                     </div>
                   </t-col>
                   <t-col flex="auto"></t-col>
@@ -39,19 +106,24 @@
                       <span class="grouptitle">采集详情</span>
                       <t-table
                         row-key="id"
-                        :columns="tableProcessColumns"
-                        :data="tableDataProcess"
-                        height="50vh"
+                        :columns="scanInfoColumns"
+                        :data="scanInfoList"
+                        height="400px"
                         active-row-type="single"
                       >
-                        <template #processCode="{ row }">
-                          <div class="talbe_col_nowrap" :title="row.processCode">
-                            {{ row.processCode }}
+                        <template #serialNumber="{ row }">
+                          <div class="talbe_col_nowrap" :title="row.serialNumber">
+                            {{ row.serialNumber }}
                           </div>
                         </template>
-                        <template #stateName="{ row }">
-                          <div class="talbe_col_nowrap" :title="row.stateName">
-                            {{ row.stateName }}
+                        <template #status="{ row }">
+                          <div class="talbe_col_nowrap" :title="row.status" :style="row.statusColor">
+                            {{ row.status }}
+                          </div>
+                        </template>
+                        <template #errorinfo="{ row }">
+                          <div class="talbe_col_nowrap" :title="row.errorinfo">
+                            {{ row.errorinfo }}
                           </div>
                         </template>
                       </t-table>
@@ -62,17 +134,18 @@
             </t-content>
           </t-layout>
           <t-aside style="width: 30%">
-            <div class="groupbox" style="height: 88vh">
+            <div class="groupbox" style="height: 610px">
               <span class="grouptitle">消息组件</span>
               <t-list style="height: 98%" :scroll="{ type: 'virtual' }">
                 <t-list-item v-for="(item, index) in list" :key="index">
-                  <t-list-item-meta :image="item.imageurl" style="align-items: center">
+                  <t-list-item-meta style="align-items: center">
                     <template #description>
-                      <t-row>
-                        <t-col flex="50px"> {{ item.content }}</t-col>
-                        <t-col flex="10px" />
-                        <t-col> {{ item.datatime }}</t-col>
-                      </t-row>
+                      <t-space>
+                        <t-icon name="check-circle-filled" style="color: green" />
+                        <t-icon name="close-circle" style="color: red" />
+                        <div>{{ item.content }}</div>
+                        <div>{{ item.datatime }}</div>
+                      </t-space>
                     </template>
                   </t-list-item-meta>
                 </t-list-item>
@@ -86,36 +159,96 @@
 </template>
 
 <script setup lang="ts">
+import { isEmpty } from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-const tableDataProcess = ref([]);
-const tableProcessColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '产品条码', width: 100, colKey: 'processCode' },
-  { title: '数量', width: '50', colKey: 'processName' },
-  { title: '状态', width: 50, colKey: 'processDesc' },
-  { title: '缺陷信息', width: 100, colKey: 'stateName' },
+// import { api } from '@/api/control';
+
+interface scanInfoModel {
+  serialNumber: string;
+
+  qty: number;
+
+  status: string;
+
+  errorinfo: string;
+
+  statusColor: string;
+}
+
+const scanInfoList = ref<scanInfoModel[]>([]);
+
+const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
+  { title: '产品条码', width: 100, colKey: 'serialNumber' },
+  { title: '数量', width: '50', colKey: 'qty' },
+  { title: '状态', width: 50, colKey: 'status' },
+  { title: '缺陷信息', width: 100, colKey: 'errorinfo' },
 ];
 
+const serialNumber = ref('');
+const productInfo = ref({
+  scheCode: '',
+  scheDatetimeSche: '',
+  scheQty: '',
+  moCode: '',
+  moMitemName: '',
+  moCompletedQty: '',
+});
+
+// const defectCodeList = ref([]); // M_DEFECT_CODE | 缺陷代码表 table
+
 const list = ref([]);
-const imageUrl = 'https://tdesign.gtimg.com/site/avatar.jpg';
 
 // import { api } from '@/api/control';
 // const pagination = ref({ defaultPageSize: 20, total: 100, defaultCurrent: 1 });
 const Init = () => {
-  for (let i = 0; i < 28; i++) {
-    tableDataProcess.value.push({
-      id: i + 1,
-      processCode: 'XX0099019101910191',
-      processName: '111',
-      processDesc: '启用',
-      stateName: '缺陷信息缺陷信息缺陷信息',
-    });
-  }
+  serialNumber.value = 'LB0001';
 
   for (let i = 0; i < 3000; i++) {
-    list.value.push({ imageurl: imageUrl, content: `扫描成功`, datatime: `2023-11-12 23:22:32` });
+    list.value.push({ content: `扫描成功`, datatime: `2023-11-12 23:22:32` });
   }
+};
+
+const serialNumberEnter = async (value) => {
+  if (!isEmpty(value)) {
+    // 原子校验
+    // TODO 校验成功
+
+    // TODO 校验失败，写日志到右侧表
+    writeScanInfoError(value, 0, '');
+    writeScanInfoSuccess(value, 0, '');
+    // api.barcodeWip
+    //   .getBarcodeWip({ serialNumber: value })
+    //   .then((reData) => {
+    //     debugger;
+    //     writeScanInfoSuccess(reData.serialNumber, reData.qty, 'message');
+    //   })
+    //   .catch((reData) => {
+    //     debugger;
+    //     writeScanInfoError(reData.data.serialNumber, reData.data.qty, reData.message);
+    //   });
+  }
+};
+
+const writeScanInfoSuccess = async (lbNo, lbQty, lbError) => {
+  scanInfoList.value.push({
+    serialNumber: lbNo,
+    qty: lbQty,
+    status: 'OK',
+    errorinfo: lbError,
+    statusColor: 'green',
+  });
+};
+
+const writeScanInfoError = async (lbNo, lbQty, lbError) => {
+  scanInfoList.value.push({
+    serialNumber: lbNo,
+    qty: lbQty,
+    status: 'NG',
+    errorinfo: lbError,
+    statusColor: 'red',
+  });
 };
 
 onMounted(() => {
@@ -175,7 +308,7 @@ onMounted(() => {
 .groupbox {
   width: 100%;
   border: 1px solid var(--td-component-border);
-  height: 55vh;
+  height: 100%;
 
   .grouptitle {
     display: block;
@@ -193,13 +326,9 @@ onMounted(() => {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
 
-  div.t-list-item__meta-content {
-    width: 100% !important;
-
-    p.t-list-item__meta-description {
-      width: 100% !important;
-    }
-  }
+/deep/ .t-list-item__meta-description {
+  width: 100%;
 }
 </style>
