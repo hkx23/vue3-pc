@@ -92,11 +92,15 @@
       <t-space direction="horizontal" class="search-space" size="large">
         <div class="search-form__button">
           <t-space size="small" :align="'end'">
-            <t-button class="btn_check" :loading="loading" @click="checkHandle">查询</t-button>
-            <t-button v-if="reset" class="btn_reset" theme="default" @click="resetHandle">重置</t-button>
+            <t-button class="btn_check" :loading="loading" @click="checkHandle">{{
+              t('common.button.search')
+            }}</t-button>
+            <t-button v-if="reset" class="btn_reset" theme="default" @click="resetHandle">{{
+              t('common.button.reset')
+            }}</t-button>
             <slot name="querybar"></slot>
             <t-button v-if="showExpand" theme="primary" variant="text" @click="onExpandSwitch">
-              {{ openSearchForm ? '收起' : '展开' }}
+              {{ openSearchForm ? t('common.button.collapse') : t('common.button.expand') }}
               <template #icon> <t-icon :name="openSearchForm ? 'chevron-up' : 'chevron-down'" /></template
             ></t-button>
           </t-space>
@@ -110,7 +114,10 @@
 import _ from 'lodash';
 import { computed, getCurrentInstance, nextTick, onMounted, reactive, ref, watch } from 'vue';
 
+import { useLang } from './lang';
 import RenderComp from './renderComp.vue';
+
+const { t } = useLang();
 
 const props = defineProps({
   opts: {
@@ -316,9 +323,9 @@ const getPlaceholder = (row: any) => {
   let placeholder;
   if (row.comp && typeof row.comp === 'string') {
     if (row.comp.includes('input')) {
-      placeholder = `请输入${row.label}`;
+      placeholder = t('common.placeholder.input', [row.label]);
     } else if (row.comp.includes('select') || row.comp.includes('date')) {
-      placeholder = `请选择${row.label}`;
+      placeholder = t('common.placeholder.select', [row.label]);
     } else {
       placeholder = row.label;
     }

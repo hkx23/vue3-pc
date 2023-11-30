@@ -596,7 +596,7 @@ onMounted(() => {
       // state.selectSearch = props.value;
       console.log('remoteLoad-按默认值查询');
       if (typeof props.value === 'string') {
-        selectSearch.value = props.value;
+        defaultValue.value = props.value.toString();
       } else {
         selectSearch.value = '';
       }

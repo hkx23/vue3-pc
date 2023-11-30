@@ -9,8 +9,7 @@
               type="mitem"
               label-field="mitemCode"
               :show-title="false"
-              disabled
-              readonly
+              :disabled="formData.operateTpye === 'add' ? false : true"
               @selection-change="onMitemChange"
             />
           </div>
@@ -24,8 +23,7 @@
               type="supplier"
               label-field="supplierCode"
               :show-title="false"
-              disabled
-              readonly
+              :disabled="formData.operateTpye === 'add' ? false : true"
               @selection-change="onSupplierChange"
             />
           </div>
@@ -57,10 +55,17 @@
         </t-form-item>
       </t-col>
     </t-row>
+
     <t-row>
       <t-col class="t-space-item">
         <t-form-item label="是否免检" required-mark>
-          <t-radio-group v-model="formData.isExemptionInspection" style="width: 156px" :options="isOptions" clearable />
+          <t-radio-group
+            v-model="formData.isExemptionInspection"
+            style="width: 156px"
+            :options="isOptions"
+            clearable
+            :on-change="onIsExemptionInspectionChange"
+          />
         </t-form-item>
       </t-col>
       <t-col>
@@ -70,12 +75,16 @@
       </t-col>
     </t-row>
     <t-form-item label="免检失效日期">
-      <t-date-picker v-model="formData.dateExemptionExpired" />
+      <t-date-picker
+        v-model="formData.dateExemptionExpired"
+        :disabled="formData.isExemptionInspection === 1 ? false : true"
+      />
     </t-form-item>
   </t-form>
 </template>
 
 <script lang="ts">
+import { isEmpty } from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
@@ -127,12 +136,16 @@ export default {
     });
     const submit = async () => {
       try {
-        if (isBlank(formData.value.supplierCode)) {
+        if (isEmpty(formData.value.supplierCode)) {
           MessagePlugin.error('请选择供应商');
           return false;
         }
-        if (isBlank(formData.value.mitemCode)) {
+        if (isEmpty(formData.value.mitemCode)) {
           MessagePlugin.error('请选择物料');
+          return false;
+        }
+        if (formData.value.isExemptionInspection === 1 && isEmpty(formData.value.dateExemptionExpired)) {
+          MessagePlugin.error('请选择免检失效日期');
           return false;
         }
 
@@ -177,9 +190,10 @@ export default {
       formData.value.mitemCode = value.mitemCode;
       formData.value.mitemName = value.mitemName;
     };
-
-    const isBlank = (value: string | undefined) => {
-      return value === undefined || value.trim() === '';
+    const onIsExemptionInspectionChange = (value) => {
+      if (value !== 1) {
+        formData.value.dateExemptionExpired = '';
+      }
     };
 
     return {
@@ -192,6 +206,7 @@ export default {
       inspectionStringencyOptions,
       onSupplierChange,
       onMitemChange,
+      onIsExemptionInspectionChange,
     };
   },
 };

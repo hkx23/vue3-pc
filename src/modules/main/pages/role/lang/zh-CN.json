@@ -1,0 +1,15 @@
+{
+  "role": {
+    "roleCode": "角色代码",
+    "roleName": "角色名称",
+    "roleDesc": "角色描述",
+    "roleType": "角色类型",
+    "roleStatus": "角色状态",
+    "eId": "隶属企业",
+    "org": "组织架构",
+    "creator": "创建人",
+    "modifier": "更新人",
+    "createTime": "创建时间",
+    "modifyTime": "更新时间"
+  }
+}

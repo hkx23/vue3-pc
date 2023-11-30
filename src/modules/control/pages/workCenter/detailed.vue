@@ -16,7 +16,12 @@
               <t-input v-model="formData.wcCode" :disabled="props.disabledWord" />
             </t-form-item>
             <t-form-item label="所属车间" name="workshopID">
-              <tm-select-business v-model="formData.workshopID" type="workshop" :show-title="false"></tm-select-business
+              <tm-select-business
+                v-model="formData.workshopID"
+                type="workshop"
+                label-field="orgName"
+                :show-title="false"
+              ></tm-select-business
             ></t-form-item>
             <t-form-item label="地点" name="wcLocation">
               <t-input v-model="formData.wcLocation" style="width: 200px" />
@@ -293,7 +298,7 @@ const onWorkCenterAdd = async () => {
     });
     MessagePlugin.success('保存成功');
     Emit('addedShow', false);
-    console.log(list);
+    console.log(list, formData.parentWcId);
   } catch (e) {
     console.log(e);
   }
@@ -342,7 +347,13 @@ const onHandleSave = async (context) => {
     }
     // 新增
     if (props.typeDetailed === 3) {
+      if (formData.parentWcId === '' || formData.parentWcId === undefined) {
+        formData.parentWcId = '0';
+      }
       // console.log('新增');
+      onWorkCenterAdd();
+    }
+    if (props.typeDetailed === 4) {
       onWorkCenterAdd();
     }
   } else {
