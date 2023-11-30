@@ -1,9 +1,9 @@
 <template>
-  <t-form ref="formRef" :rules="FORM_RULES" :show-cancel="true" :show-error-message="false">
+  <t-form ref="formRef" :rules="FORM_RULES" :data="formData" :show-cancel="true" :show-error-message="false">
     <t-form-item :label="t('productRule.packRuleCode')" name="packRuleCode">
-      <t-input v-model="formData.packRuleCode" />
+      <t-input v-model="formData.packRuleCode" :disabled="!isAdd" />
     </t-form-item>
-    <t-form-item :label="t('productRule.packRuleName')" name="packRuleCode">
+    <t-form-item :label="t('productRule.packRuleName')" name="packRuleName">
       <t-input v-model="formData.packRuleName" clearable />
     </t-form-item>
   </t-form>
@@ -15,42 +15,39 @@ export default {
 </script>
 <script setup lang="ts">
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
-import { onMounted, reactive, Ref, ref } from 'vue';
+import { reactive, Ref, ref } from 'vue';
 
 import { api as apiControl, ProductPackRule } from '@/api/control';
 
 import { useLang } from './lang';
 
+// 子修改传值
+const props = defineProps({
+  // 组件展示类型
+  row: {
+    type: Object,
+    default: null,
+  },
+  isAdd: {
+    type: Boolean,
+    default: true,
+  },
+});
 const { t } = useLang();
-
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const FORM_RULES = {
   packRuleCode: [{ required: true, message: t('common.placeholder.input', [t('productRule.packRuleCode')]) }],
   packRuleName: [{ required: true, message: t('common.placeholder.input', [t('productRule.packRuleName')]) }],
 };
 
-interface PackRuleForm extends ProductPackRule {
-  parentLevelName: string;
-}
+type PackRuleForm = ProductPackRule;
 
 const formData: PackRuleForm = reactive({
-  parentLevelId: null,
-  parentLevelName: '',
-  levelCode: '',
-  levelName: '',
-  divisionFlag: 0,
-  levelSeq: 0,
-});
-// onst packRuleOptions = ref([] as { value: string; label: string }[]);
-
-onMounted(() => {
-  fetchPackRuleDic();
+  packRuleCode: '',
+  packRuleName: '',
 });
 
-const fetchPackRuleDic = async () => {
-  // const list = await getPackRuleDic();
-  // packRuleOptions.value = list;
-};
+// onMounted(() => {});
 
 const submit = async () => {
   return new Promise((resolve, reject) => {
@@ -58,23 +55,39 @@ const submit = async () => {
       if (result !== true) {
         MessagePlugin.warning(Object.values(result)[0][0].message);
         reject();
+        return;
       }
-      apiControl.productPackRule.add(formData).then(() => {
-        MessagePlugin.success(t('common.message.addSuccess'));
-        resolve(formData);
-      });
+      if (props.isAdd) {
+        apiControl.productPackRule.add(formData).then(() => {
+          MessagePlugin.success(t('common.message.addSuccess'));
+          resolve(formData);
+        });
+      } else {
+        apiControl.productPackRule.update(formData).then(() => {
+          MessagePlugin.success(t('common.message.saveSuccess'));
+          resolve(formData);
+        });
+      }
     });
   });
 };
 
-const reset = (data: any) => {
+const reset = () => {
   formRef.value.reset({ type: 'empty' });
+  Object.assign(formData, {});
+};
+
+const setRow = (row: any) => {
+  formData.id = row.id;
+  formData.packRuleCode = row.packRuleCode;
+  formData.packRuleName = row.packRuleName;
 };
 
 defineExpose({
   form: formRef,
   submit,
   reset,
+  setRow,
 });
 </script>
 <style lang="less" scoped></style>
