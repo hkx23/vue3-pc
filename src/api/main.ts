@@ -481,6 +481,72 @@ export interface ResultSupplier {
 }
 
 /** 响应数据 */
+export type PagingDataRole = {
+  list?: Role[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataRole {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataRole;
+}
+
+/** 角色 */
+export interface Role {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 角色代码 */
+  roleCode?: string;
+  /** 角色名称 */
+  roleName?: string;
+  /** 角色描述 */
+  roleDesc?: string;
+}
+
+/** 通用响应类 */
+export interface ResultRole {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 角色 */
+  data?: Role;
+}
+
+/** 响应数据 */
 export type PagingDataPost = {
   list?: Post[];
   /** @format int32 */
@@ -826,6 +892,320 @@ export interface ResultOrg {
   data?: Org;
 }
 
+/** 领域扩展属性 */
+export interface ObjectProperty {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 领域对象编码 */
+  objectCode?: string;
+  categoryId?: string;
+  /** 属性代码 */
+  propertyCode?: string;
+  /** 属性值类型 */
+  propertyValueType?: string;
+  /** 显示在界面上的名词 */
+  displayName?: string;
+  /**
+   * 属性中的显示顺序
+   * @format int32
+   */
+  displaySequence?: number;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequire?: number;
+  /**
+   * 是否允许存在多个同类项
+   * @format int32
+   */
+  isMultiple?: number;
+  /**
+   * 是否需要校验输入
+   * @format int32
+   */
+  needValidation?: number;
+  /** 校验的正则表达式 */
+  validExpression?: string;
+  /** 扩展属性数据来源 */
+  dataSource?: string;
+  /** 数据取值路径 */
+  dataSourcePath?: string;
+  /** 备注 */
+  memo?: string;
+  /**
+   * 是否数据源多选
+   * @format int32
+   */
+  isDataMultiple?: number;
+}
+
+/** 领域对象扩展属性分类 */
+export interface ObjectPropertyCategoryVO {
+  id?: string;
+  paramGroupId?: string;
+  /** 字典代码 */
+  paramCode?: string;
+  /** 字典值 */
+  paramValue?: string;
+  /** 字典描述 */
+  paramDesc?: string;
+  /**
+   * 字典序号
+   * @format int32
+   */
+  seq?: number;
+  /** 属性代码 */
+  propertyCode?: string;
+  /** 属性值类型 */
+  propertyValueType?: string;
+  /** 显示在界面上的名词 */
+  displayName?: string;
+  /**
+   * 属性中的显示顺序
+   * @format int32
+   */
+  displaySequence?: number;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequire?: number;
+  /**
+   * 是否允许存在多个同类项
+   * @format int32
+   */
+  isMultiple?: number;
+  /**
+   * 是否需要校验输入
+   * @format int32
+   */
+  needValidation?: number;
+}
+
+/** 响应数据 */
+export type PagingDataObjectPropertyCategoryVO = {
+  list?: ObjectPropertyCategoryVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataObjectPropertyCategoryVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataObjectPropertyCategoryVO;
+}
+
+/** 系统模块表 */
+export interface Module {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  clientType?: number;
+  /** 模块层次代码 */
+  moduleLevel?: string;
+  /** 模块编码 */
+  moduleCode?: string;
+  /** 模块名称 */
+  moduleName?: string;
+  /** 模块描述 */
+  moduleDesc?: string;
+  parentModuleId?: string;
+  /**
+   * 显示顺序
+   * @format int32
+   */
+  sortIndex?: number;
+  /** 模块访问地址 */
+  behaviorPath?: string;
+  /** 图标地址 */
+  iconPath?: string;
+  /** 模块类型 */
+  moduleType?: string;
+  /** 模块版本号 */
+  moduleVersion?: number;
+  /** 模块包标识 */
+  modulePackageIdentify?: string;
+}
+
+export interface ModuleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  id?: string;
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  clientType?: number;
+}
+
+/** 菜单元数据 */
+export interface ModuleMetaVO {
+  /** 名称，多语言 */
+  title?: Record<string, string>;
+  /** 图标路径 */
+  icon?: string;
+  /** frame路径 */
+  frameSrc?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListShowModuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ShowModuleVO[] | null;
+}
+
+/** 显示菜单实体 */
+export type ShowModuleVO = {
+  id?: string;
+  /** 模块编码 */
+  moduleCode?: string;
+  /** 名称 */
+  name?: string;
+  /** 模块描述 */
+  moduleDesc?: string;
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  clientType?: number;
+  /**
+   * 顺序
+   * @format int32
+   */
+  sortIndex?: number;
+  /** 图标地址 */
+  iconPath?: string;
+  /** 模块层次代码 */
+  moduleLevel?: string;
+  /** 模块类型 */
+  moduleType?: string;
+  /** 模块版本号 */
+  moduleVersion?: number;
+  /** 模块包标识 */
+  modulePackageIdentify?: string;
+  /**
+   * 是否PC端
+   * @format int32
+   */
+  isPC?: number;
+  /**
+   * 是否移动端
+   * @format int32
+   */
+  isMobile?: number;
+  /**
+   * 是否电视端
+   * @format int32
+   */
+  isTV?: number;
+  /**
+   * 是否手表端
+   * @format int32
+   */
+  isWatch?: number;
+  /**
+   * 是否微信端
+   * @format int32
+   */
+  isWeChat?: number;
+  /** 地址 */
+  path?: string;
+  /** 类型 */
+  component?: string;
+  /** 重定向地址 */
+  redirect?: string;
+  /** 菜单元数据 */
+  meta?: ModuleMetaVO;
+  /** 子菜单 */
+  children?: ShowModuleVO[];
+} | null;
+
+/** 响应数据 */
+export type PagingDataShowModuleVO = {
+  list?: ShowModuleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataShowModuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataShowModuleVO;
+}
+
 /** 显示计量单位 */
 export interface MitemUomVo {
   id?: string;
@@ -1095,15 +1475,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
+  stateName?: string;
+  isState?: boolean;
   isRawName?: string;
-  isInProcessName?: string;
   isBatchName?: string;
   isRawChecked?: boolean;
-  stateName?: string;
+  isProductName?: string;
+  isInProcessName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -1367,6 +1747,135 @@ export interface ResultPagingDataEquipment {
   message?: string;
   /** 响应数据 */
   data?: PagingDataEquipment;
+}
+
+/** 企业表 */
+export interface Enterprise {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 企业编号 */
+  epCode?: string;
+  /** 企业简称 */
+  epName?: string;
+  /** 企业全称 */
+  epFullName?: string;
+  /** 企业地址 */
+  epAddress?: string;
+}
+
+/** 响应数据 */
+export type PagingDataEnterprise = {
+  list?: Enterprise[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataEnterprise {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataEnterprise;
+}
+
+export interface DefectCodeSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+/** 显示缺陷代码实体 */
+export interface DefectCodeVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /** 不合格分类 */
+  classification?: string;
+  stateName?: string;
+  isState?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataDefectCodeVO = {
+  list?: DefectCodeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDefectCodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDefectCodeVO;
 }
 
 /** 客户 */
@@ -1751,18 +2260,15 @@ export interface ResultListObjectPropertyValueVO {
   data?: ObjectPropertyValueVO[] | null;
 }
 
-/** 菜单元数据 */
-export interface ModuleMetaVO {
-  /** 名称，多语言 */
-  title?: Record<string, string>;
-  /** 图标路径 */
-  icon?: string;
-  /** frame路径 */
-  frameSrc?: string;
-}
+/** 响应数据 */
+export type PagingDataLong = {
+  list?: string[];
+  /** @format int32 */
+  total?: number;
+} | null;
 
 /** 通用响应类 */
-export interface ResultListShowModuleVO {
+export interface ResultPagingDataLong {
   /**
    * 响应代码
    * @format int32
@@ -1771,24 +2277,8 @@ export interface ResultListShowModuleVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: ShowModuleVO[] | null;
+  data?: PagingDataLong;
 }
-
-/** 显示菜单实体 */
-export type ShowModuleVO = {
-  /** 地址 */
-  path?: string;
-  /** 名称 */
-  name?: string;
-  /** 类型 */
-  component?: string;
-  /** 重定向地址 */
-  redirect?: string;
-  /** 菜单元数据 */
-  meta?: ModuleMetaVO;
-  /** 子菜单 */
-  children?: ShowModuleVO[];
-} | null;
 
 /** 显示行政组织层级实体 */
 export type AdminOrgVO = {
@@ -2142,6 +2632,66 @@ export const api = {
         body: data as any,
       }),
   },
+  role: {
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name Search
+     * @summary 獲取角色列表
+     * @request POST:/role/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataRole['data']>(`/api/main/role/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name GetItemById
+     * @summary 根據ID獲取角色
+     * @request POST:/role/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultRole['data']>(`/api/main/role/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name Edit
+     * @summary 编辑角色信息
+     * @request POST:/role/edit
+     * @secure
+     */
+    edit: (data: Role) =>
+      http.request<ResultObject['data']>(`/api/main/role/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name Delete
+     * @summary 删除角色信息
+     * @request POST:/role/delete
+     * @secure
+     */
+    delete: (data: Role) =>
+      http.request<ResultObject['data']>(`/api/main/role/delete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   post: {
     /**
      * No description
@@ -2479,6 +3029,210 @@ export const api = {
       parmGroupCode?: string;
     }) =>
       http.request<ResultListKeyValuePairStringString['data']>(`/api/main/param/getListByGroupCode`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  objectPropertyCategory: {
+    /**
+     * No description
+     *
+     * @tags 领域对象扩展属性分类
+     * @name EditObjectCategory
+     * @summary 编辑领域对象
+     * @request POST:/objectPropertyCategory/editObjectCategory
+     * @secure
+     */
+    editObjectCategory: (data: ObjectProperty) =>
+      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(
+        `/api/main/objectPropertyCategory/editObjectCategory`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 领域对象扩展属性分类
+     * @name AddObjectCategory
+     * @summary 新增领域对象
+     * @request POST:/objectPropertyCategory/addObjectCategory
+     * @secure
+     */
+    addObjectCategory: (data: ObjectProperty) =>
+      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(
+        `/api/main/objectPropertyCategory/addObjectCategory`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 领域对象扩展属性分类
+     * @name GetObjectList
+     * @summary 查询领域对象列表
+     * @request GET:/objectPropertyCategory/getObjectList
+     * @secure
+     */
+    getObjectList: (query?: {
+      /** @default "" */
+      keyword?: string;
+    }) =>
+      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(`/api/main/objectPropertyCategory/getObjectList`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域对象扩展属性分类
+     * @name GetObjectCategoryList
+     * @summary 查询领域对象分类列表
+     * @request GET:/objectPropertyCategory/getObjectCategoryList
+     * @secure
+     */
+    getObjectCategoryList: (query: {
+      code: string;
+      /** @format int32 */
+      id: number;
+    }) =>
+      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(
+        `/api/main/objectPropertyCategory/getObjectCategoryList`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 领域对象扩展属性分类
+     * @name GetListByObjectName
+     * @summary 根据领域对象编码获取分类
+     * @request GET:/objectPropertyCategory/getListByObjectName
+     * @secure
+     */
+    getListByObjectName: (query: { objectCode: string }) =>
+      http.request<ResultListObjectPropertyCategory['data']>(`/api/main/objectPropertyCategory/getListByObjectName`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  module: {
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name Remove
+     * @summary 删除菜单模块
+     * @request POST:/module/remove
+     * @secure
+     */
+    remove: (data: Module) =>
+      http.request<ResultObject['data']>(`/api/main/module/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name Modify
+     * @summary 编辑菜单模块
+     * @request POST:/module/modify
+     * @secure
+     */
+    modify: (data: Module) =>
+      http.request<ResultObject['data']>(`/api/main/module/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name GetTree
+     * @summary 查询菜单模块左侧菜单树
+     * @request POST:/module/getTree
+     * @secure
+     */
+    getTree: (data: ModuleSearch) =>
+      http.request<ResultListShowModuleVO['data']>(`/api/main/module/getTree`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name GetList
+     * @summary 查询菜单模块右侧列表
+     * @request POST:/module/getList
+     * @secure
+     */
+    getList: (data: ModuleSearch) =>
+      http.request<ResultPagingDataShowModuleVO['data']>(`/api/main/module/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name AddModule
+     * @summary 新增菜单模块
+     * @request POST:/module/addModule
+     * @secure
+     */
+    addModule: (data: Module) =>
+      http.request<ResultObject['data']>(`/api/main/module/addModule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name Show
+     * @summary 系统框架菜单显示调用接口
+     * @request GET:/module/show
+     * @secure
+     */
+    show: (query: {
+      /**
+       * 客户端类型
+       * @format int32
+       */
+      clientType: number;
+    }) =>
+      http.request<ResultListShowModuleVO['data']>(`/api/main/module/show`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name FindChild
+     * @summary 查询是否存在子菜单
+     * @request GET:/module/findChild
+     * @secure
+     */
+    findChild: (query: { id: string }) =>
+      http.request<ResultPagingDataLong['data']>(`/api/main/module/findChild`, {
         method: 'GET',
         params: query,
       }),
@@ -2875,6 +3629,37 @@ export const api = {
         body: data as any,
       }),
   },
+  enterprise: {
+    /**
+     * No description
+     *
+     * @tags 企业表
+     * @name Search
+     * @request POST:/enterprise/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataEnterprise['data']>(`/api/main/enterprise/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  defectCode: {
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name GetList
+     * @summary 查询缺陷代码
+     * @request POST:/defectCode/getList
+     * @secure
+     */
+    getList: (data: DefectCodeSearch) =>
+      http.request<ResultPagingDataDefectCodeVO['data']>(`/api/main/defectCode/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   customer: {
     /**
      * No description
@@ -2962,22 +3747,6 @@ export const api = {
         method: 'POST',
       }),
   },
-  objectPropertyCategory: {
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
-     * @name GetListByObjectName
-     * @summary 根据领域对象编码获取分类
-     * @request GET:/objectPropertyCategory/getListByObjectName
-     * @secure
-     */
-    getListByObjectName: (query: { objectCode: string }) =>
-      http.request<ResultListObjectPropertyCategory['data']>(`/api/main/objectPropertyCategory/getListByObjectName`, {
-        method: 'GET',
-        params: query,
-      }),
-  },
   objectProperty: {
     /**
      * No description
@@ -2990,28 +3759,6 @@ export const api = {
      */
     getObjectValueList: (query: { objectId: string; objectCode: string; propertyCode: string }) =>
       http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
-        method: 'GET',
-        params: query,
-      }),
-  },
-  module: {
-    /**
-     * No description
-     *
-     * @tags 菜单
-     * @name Show
-     * @summary 显示菜单
-     * @request GET:/module/show
-     * @secure
-     */
-    show: (query: {
-      /**
-       * 客户端类型
-       * @format int32
-       */
-      clientType: number;
-    }) =>
-      http.request<ResultListShowModuleVO['data']>(`/api/main/module/show`, {
         method: 'GET',
         params: query,
       }),
