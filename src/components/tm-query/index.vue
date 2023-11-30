@@ -4,7 +4,7 @@
       <t-form
         colon
         class="search-form"
-        :style="{ height: openSearchForm ? '' : '50px', padding: '10px' }"
+        :style="{ height: openSearchForm ? '' : '50px', padding: '10px 0px' }"
         v-bind="$attrs"
         layout="inline"
         :label-width="labelWidth"

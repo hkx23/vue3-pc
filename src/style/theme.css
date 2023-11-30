@@ -214,12 +214,12 @@
   --td-size-3: 6px;
   --td-size-4: 8px;
   --td-size-5: 8px;
-  --td-size-6: 8px;
+  --td-size-6: 14px;
   --td-size-7: 20px;
   --td-size-8: 24px;
   --td-size-9: 28px;
   --td-size-10: 32px;
-  --td-size-11: 36px;
+  --td-size-11: 32px;
   --td-size-12: 40px;
   --td-size-13: 48px;
   --td-size-14: 56px;
@@ -496,23 +496,3 @@
 /* end 尺寸配置 */
 
 /* } */
-.t-table thead td,
-.t-table th {
-  font-weight: 700;
-  color: rgb(69 69 69);
-  background: rgb(240 240 242);
-}
-
-.t-table--striped:not(.t-table--bordered) th,
-.t-table--striped:not(.t-table--bordered) td {
-  border-bottom: rgb(213 216 219) solid 1px;
-}
-
-.t-table table {
-  border-spacing: 0;
-  border: rgb(213 216 219) solid 1px;
-}
-
-.t-table__empty {
-  background: white;
-}

@@ -155,16 +155,13 @@ const onAddClick = () => {
 <style scoped>
 .mainpage {
   background: white;
-  margin: 16px;
+  margin: 16px 16px 0;
   border-radius: 8px;
   padding: 8px 24px;
+  min-height: calc(100vh - 16px);
 }
 
 .mainpage-content:not(:last-child) {
   border-bottom: 1px solid rgb(213 216 219 / 100%);
-}
-
-.row-container:not(:last-child) {
-  margin-bottom: 16px;
 }
 </style>
