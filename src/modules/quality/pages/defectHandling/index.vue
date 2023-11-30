@@ -1,3 +1,4 @@
+<!-- 缺陷处理方法 -->
 <template>
   <div>
     <t-card class="list-card-defectHandling">
@@ -11,10 +12,13 @@
       </t-row>
       <tm-table
         v-model:pagination="pageUI"
+        row-key="Serial"
         :table-data="defectHandlingData"
         :table-column="column"
         :total="total"
         :loading="loading"
+        :selected-row-keys="selectedRowKeys"
+        @select-change="rehandleSelectChange"
         @refresh="onfetchData"
       >
         <template #op="{ row }">
@@ -25,7 +29,7 @@
             <icon name="delete" style="margin: 0 15px; cursor: pointer"></icon>
           </t-popconfirm>
         </template>
-        <template #button>
+        <template #oprate>
           <!-- 新增 -->
           <t-button theme="default" @click="onHandelAdd"> <icon name="add"></icon></t-button>
           <!-- 删除 -->
@@ -72,6 +76,13 @@ const formRef = ref(null);
 const defectVisible = ref(false); // 新增编辑窗口
 const { t } = useLang();
 const total = ref(10);
+const selectedRowKeys = ref([]); // 选择的要删除数据
+const rehandleSelectChange = (value: any) => {
+  selectedRowKeys.value = value;
+  console.log(selectedRowKeys.value);
+};
+
+// form表单
 const formData = ref({
   processingCategoryName: '', // 处理方法类别名称
   processingCode: '', // 处理方法编码
@@ -96,6 +107,12 @@ const defectHandlingData = ref([
     processingCategoryName: '调节',
     processingCode: 'B03',
     processingName: '调节面板',
+  },
+  {
+    Serial: '12',
+    processingCategoryName: '调节3',
+    processingCode: 'B034',
+    processingName: '调节面板5',
   },
 ]);
 // 首次进入

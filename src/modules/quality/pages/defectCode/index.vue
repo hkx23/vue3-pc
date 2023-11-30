@@ -1,3 +1,4 @@
+<!-- 缺陷代码库 -->
 <template>
   <div>
     <t-card>
@@ -11,7 +12,7 @@
       </t-card>
       <!-- table表格 -->
       <t-enhanced-table
-        row-key="id"
+        row-key="defectiveCode"
         :data="data"
         :columns="column"
         :tree="treeConfig"
@@ -118,21 +119,9 @@ const formItem = reactive({
 });
 const total = 10;
 const column: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'select',
-    type: 'multiple',
-  },
-  {
-    colKey: 'defectiveCode',
-    title: t('defectCode.defectiveCode'),
-    align: 'center',
-    width: '200px',
-  },
-  {
-    colKey: 'defectName',
-    title: t('defectCode.defectName'),
-    align: 'center',
-  },
+  { colKey: 'select', type: 'multiple' },
+  { colKey: 'defectiveCode', title: t('defectCode.defectiveCode'), align: 'center', width: '200px' },
+  { colKey: 'defectName', title: t('defectCode.defectName'), align: 'center' },
 ];
 const data = ref([
   {
@@ -157,7 +146,6 @@ const onFetchData = async () => {
   //   console.log(e);
   // }
 };
-
 // 控制新增或者编辑的
 const onIsAddAndEdit = () => {
   if (isAddAndEdit.value === 1) {

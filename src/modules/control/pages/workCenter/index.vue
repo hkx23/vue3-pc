@@ -107,6 +107,9 @@
         <template #parentWcCode="{ row }">
           <div>{{ row.parentWcCode ? row.parentWcCode : '-' }}</div>
         </template>
+        <template #state="{ row }">
+          <div>{{ row.state ? '启用' : '禁用' }}</div>
+        </template>
         <template #op="{ row }">
           <!-- 添加子 -->
           <icon name="add" style="cursor: pointer" @click="onHandelCenter(row)"></icon>
@@ -230,35 +233,59 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'wcName',
     title: '名称',
     align: 'center',
+    width: '150px',
   },
   {
     colKey: 'wcType',
     title: '类型',
     align: 'center',
+    width: '150px',
   },
   {
     colKey: 'workshopName',
     title: '所属车间',
     align: 'center',
+    width: '150px',
   },
   {
     colKey: 'wcLocation',
     title: '地点',
     align: 'center',
+    width: '150px',
   },
   {
     colKey: 'parentWcCode',
     title: '父工作中心',
     align: 'center',
+    width: '150px',
   },
   {
     colKey: 'wcOwner',
     title: '负责人',
     align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'wcType',
+    title: '关联设备',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'wcSeq',
+    title: '顺序号',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'state',
+    title: '状态',
+    align: 'center',
   },
   {
     colKey: 'op',
     title: '操作',
+    width: '150px',
     align: 'left',
     fixed: 'right',
   },
