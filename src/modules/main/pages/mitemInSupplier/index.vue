@@ -166,10 +166,11 @@ const onDeleteRowClick = async (value: any) => {
     body: '是否要删除物料与供应商关系？',
     confirmBtn: '确认',
     cancelBtn: '取消',
-    onConfirm: () => {
-      api.mitemInSupplier.delete(value.row);
-      fetchTable();
-      confirmDia.hide();
+    onConfirm: async () => {
+      await api.mitemInSupplier.delete(value.row).then(() => {
+        fetchTable();
+        confirmDia.hide();
+      });
     },
     onClose: () => {
       confirmDia.hide();
