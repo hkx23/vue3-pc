@@ -29,7 +29,6 @@
               <icon name="delete" style="cursor: pointer"></icon>
             </t-popconfirm>
           </t-space>
-
           <!-- <t-button>导入</t-button> -->
         </template>
       </tm-table>
@@ -48,16 +47,15 @@
         <t-form-item :label="t('exceptionHandling.abnormalModule')" name="abnormalModule">
           <t-select v-model="formItem.abnormalModule" placeholder="请输入"></t-select>
         </t-form-item>
-        <t-form-item :label="t('exceptionHandling.treatmentGroup')" name="processOrder">
-          <t-select v-model="formItem.processOrder" placeholder="请输入"></t-select>
+        <t-form-item :label="t('exceptionHandling.treatmentGroup')" name="treatmentGroup">
+          <t-select v-model="formItem.treatmentGroup" placeholder="请输入"></t-select>
         </t-form-item>
-        <t-form-item :label="t('exceptionHandling.processOrder')" name="transferOrders">
-          <t-input v-model="formItem.transferOrders" placeholder="请输入"></t-input>
+        <t-form-item :label="t('exceptionHandling.processOrder')" name="processOrder">
+          <t-input v-model="formItem.processOrder" placeholder="请输入"></t-input>
         </t-form-item>
-        <t-form-item :label="t('exceptionHandling.transferOrders')" name="treatmentGroup">
+        <t-form-item :label="t('exceptionHandling.transferOrders')" name="transferOrders">
           <t-radio-group
-            v-model="formItem.treatmentGroup"
-            default-value="允许"
+            v-model="formItem.transferOrders"
             name="city"
             :options="itemOptions"
             @change="onChange"
@@ -88,7 +86,7 @@ const formVisible = ref(false);
 
 const opts = computed(() => {
   return {
-    inputValue: {
+    keyWord: {
       label: '处理组或异常类型查询',
       comp: 't-input',
       event: 'input',
@@ -96,12 +94,14 @@ const opts = computed(() => {
     },
   };
 });
+// 搜索触发事件
 const onInput = (data) => {
-  console.log(data.inputValue);
+  formItem.keyWord = data.keyWord;
+  onFetchData();
 };
 const itemOptions = [
   { label: '允许', value: 1 },
-  { label: '不允许', value: 2 },
+  { label: '不允许', value: 0 },
 ];
 const { pageUI } = usePage();
 onMounted(() => {
@@ -109,7 +109,7 @@ onMounted(() => {
 });
 const { t } = useLang();
 
-// 单选触发
+// 单选触发F
 const onChange = (checkedValues) => {
   console.log('checkedValues:', checkedValues);
 };
@@ -127,9 +127,10 @@ const formRef: Ref<FormInstanceFunctions> = ref(null);
 const formItem = reactive({
   OrganizationName: '', // 组织名称
   abnormalModule: '', // 异常模块
-  treatmentGroup: 1, // 是否允许转单
+  treatmentGroup: '', // 是否允许转单
   processOrder: '', // 处理组
-  transferOrders: '', // 处理顺序
+  transferOrders: 1, // 处理顺序
+  keyWord: '',
 });
 // 页面总数
 const total = ref(10);
@@ -178,14 +179,14 @@ const data = ref([
     abnormalModule: '品质隐藏',
     treatmentGroup: '天外来物',
     processOrder: '12',
-    transferOrders: '是',
+    transferOrders: '允许',
   },
   {
     OrganizationName: '测试2',
     abnormalModule: '品质隐藏3',
     treatmentGroup: '天外来物4',
     processOrder: '好',
-    transferOrders: '现在',
+    transferOrders: '不允许',
   },
 ]);
 // 进入首页请求
@@ -194,6 +195,7 @@ const onFetchData = async () => {
   //   const list = await api.exceptionHandling.geslist({
   //     pageNum: pageUI.value.page,
   //     pageSize: pageUI.value.rows,
+  //     keyWord: formItem.keyWord,
   //   });
   //   data.value = list.list;
   //   total.value = list.total;
@@ -224,8 +226,9 @@ const addAanEdit = async () => {
   }
 };
 
-// 添加
+// 新增
 const onAdd = () => {
+  formRef.value.reset({ type: 'initial' });
   isAddAanEdit.value = 1; // 1为新增
   addAanEdit();
   formVisible.value = true; // 添加窗口控制
@@ -234,6 +237,17 @@ const onAdd = () => {
 // 编辑
 const onEdit = (row) => {
   isAddAanEdit.value = 0; // 编辑
+  if (row.transferOrders === '允许') {
+    formItem.transferOrders = 1;
+  } else {
+    formItem.transferOrders = 0;
+  }
+  formItem.OrganizationName = row.OrganizationName;
+  formItem.abnormalModule = row.abnormalModule;
+  formItem.processOrder = row.processOrder;
+  // formItem.transferOrders = row.transferOrders;
+  formItem.treatmentGroup = row.treatmentGroup;
+
   formVisible.value = true; // 添加窗口控制
   console.log(row);
 };
