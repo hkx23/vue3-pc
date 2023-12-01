@@ -1,11 +1,11 @@
 <template>
-  <div class="mainpage">
-    <div class="mainpage-content">
+  <div class="main-page">
+    <div class="main-page-content">
       <!-- 查询组件  -->
       <tm-query :opts="opts" label-width="100" @submit="conditionEnter" />
       <!-- 表格组件  -->
     </div>
-    <div class="mainpage-content">
+    <div class="main-page-content">
       <tm-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -153,15 +153,7 @@ const onAddClick = () => {
 </script>
 
 <style scoped>
-.mainpage {
-  background: white;
-  margin: 16px 16px 0;
-  border-radius: 8px;
-  padding: 8px 24px;
-  min-height: calc(100vh - 16px);
-}
-
-.mainpage-content:not(:last-child) {
+.main-page-content:not(:last-child) {
   border-bottom: 1px solid rgb(213 216 219 / 100%);
 }
 </style>
