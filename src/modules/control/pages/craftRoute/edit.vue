@@ -275,6 +275,7 @@ const close = () => {
 };
 watch(visible, (value: boolean) => {
   if (value && props.id) {
+    // @ts-ignore
     apiControl.routing.item(props.id).then((data) => {
       // 复制不需要赋值form表单
       if (!props.isCopy) {
@@ -349,6 +350,7 @@ const save = () => {
       // 复制走新增逻辑
       if (props.id && !props.isCopy) {
         apiControl.routing
+          // @ts-ignore
           .update(props.id, postData)
           .then(() => {
             loading.value = false;
@@ -360,6 +362,7 @@ const save = () => {
           });
       } else {
         apiControl.routing
+          // @ts-ignore
           .add(postData)
           .then(() => {
             loading.value = false;
@@ -589,6 +592,7 @@ const confirmBoom = () => {
 
   :deep(.t-form__controls-content) {
     width: 200px;
+
     .t-date-picker,
     .t-input-number,
     .t-color-picker__trigger {
@@ -602,6 +606,7 @@ const confirmBoom = () => {
     right: 50px;
     z-index: 2;
   }
+
   .sidebar {
     user-select: none;
     position: absolute;
@@ -610,6 +615,7 @@ const confirmBoom = () => {
     top: 10px;
     left: 20px;
     z-index: 2;
+
     .sidebar-item {
       color: var(--td-brand-color-active);
       display: flex;
@@ -620,10 +626,12 @@ const confirmBoom = () => {
       margin-bottom: 5px;
     }
   }
+
   .flow {
     height: 500px;
   }
 }
+
 .t-form-inline {
   row-gap: var(--td-comp-margin-xxl);
 }

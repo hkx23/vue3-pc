@@ -48,7 +48,7 @@
           <t-button theme="default">{{ t('common.button.import') }}</t-button>
           <t-button theme="default">{{ t('common.button.batchDelete') }}</t-button>
         </template>
-        <template #op="{ row }">
+        <template #op>
           <t-button variant="text" theme="primary">{{ t('common.button.delete') }}</t-button>
         </template>
       </tm-table>
@@ -206,6 +206,7 @@ const craftRouteData = reactive({
 const getRouting = () => {
   setLoading(true);
   apiControl.routing
+    // @ts-ignore
     .mainPage({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -247,6 +248,7 @@ const eidtSubmit = () => {
   getRouting();
 };
 const disable = (id: string, routingRevisionId: string) => {
+  // @ts-ignore
   apiControl.routing.moScheduleBindRoutingCount(routingRevisionId).then((total) => {
     let showText: string;
     if (total > 0) {
@@ -262,6 +264,7 @@ const disable = (id: string, routingRevisionId: string) => {
       },
       onConfirm: () => {
         confirmDia.update({ confirmBtn: { loading: true } });
+        // @ts-ignore
         apiControl.routing.disable(id).then(() => {
           confirmDia.update({ confirmBtn: { loading: false } });
           confirmDia.hide();
@@ -312,6 +315,7 @@ const productRelationData = reactive({
 <style lang="less" scoped>
 .container {
   margin: 20px;
+
   .card {
     background-color: var(--td-bg-color-container);
     border-radius: var(--td-radius-medium);
@@ -319,6 +323,7 @@ const productRelationData = reactive({
 
     :deep(.t-form__controls-content) {
       width: 200px;
+
       .t-date-picker,
       .t-input-number,
       .t-color-picker__trigger {
