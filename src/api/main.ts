@@ -1348,15 +1348,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isBatchName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
   stateName?: string;
   isState?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -1673,6 +1673,153 @@ export interface ResultPagingDataEnterprise {
   message?: string;
   /** 响应数据 */
   data?: PagingDataEnterprise;
+}
+
+export interface DefectCodeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  id?: string;
+  /** 多个ID */
+  ids?: string[];
+}
+
+/** 缺陷代码 */
+export interface DefectCode {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /** 不合格分类 */
+  classification?: string;
+}
+
+/** 响应数据 */
+export type PagingDataDefectCode = {
+  list?: DefectCode[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDefectCode {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDefectCode;
+}
+
+/** 显示缺陷代码实体 */
+export interface DefectCodeVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /** 不合格分类 */
+  classification?: string;
+  /** 前端按钮样式 */
+  themeButton?: string;
+  /** 子元素 */
+  child?: DefectCodeVO[];
+  stateName?: string;
+  isState?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataDefectCodeVO = {
+  list?: DefectCodeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDefectCodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDefectCodeVO;
 }
 
 /** 客户 */
@@ -2076,48 +2223,6 @@ export interface ResultPagingDataLong {
   /** 响应数据 */
   data?: PagingDataLong;
 }
-
-/** 显示缺陷代码实体 */
-export type DefectCodeVO = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 缺陷代码 */
-  defectCode?: string;
-  /** 缺陷名称 */
-  defectName?: string;
-  parentDefectId?: string;
-  /**
-   * 层级序号
-   * @format int32
-   */
-  levelSeq?: number;
-  /** 不合格分类 */
-  classification?: string;
-  child?: DefectCodeVO[];
-  stateName?: string;
-  isState?: boolean;
-} | null;
 
 /** 通用响应类 */
 export interface ResultListDefectCodeVO {
@@ -3404,6 +3509,111 @@ export const api = {
         body: data as any,
       }),
   },
+  defectCode: {
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name RemoveDefectCode
+     * @summary 删除缺陷代码
+     * @request POST:/defectCode/removeDefectCode
+     * @secure
+     */
+    removeDefectCode: (data: DefectCodeSearch) =>
+      http.request<ResultObject['data']>(`/api/main/defectCode/removeDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name RemoveDefectCodeBatch
+     * @summary 批量删除缺陷代码
+     * @request POST:/defectCode/removeDefectCodeBatch
+     * @secure
+     */
+    removeDefectCodeBatch: (data: DefectCodeSearch) =>
+      http.request<ResultObject['data']>(`/api/main/defectCode/removeDefectCodeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name ModifyDefectCode
+     * @summary 编辑缺陷代码
+     * @request POST:/defectCode/modifyDefectCode
+     * @secure
+     */
+    modifyDefectCode: (data: DefectCode) =>
+      http.request<ResultObject['data']>(`/api/main/defectCode/modifyDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name GetParent
+     * @summary 查询父级缺陷
+     * @request POST:/defectCode/getParent
+     * @secure
+     */
+    getParent: (data: DefectCodeSearch) =>
+      http.request<ResultPagingDataDefectCode['data']>(`/api/main/defectCode/getParent`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name GetList
+     * @summary 查询缺陷代码
+     * @request POST:/defectCode/getList
+     * @secure
+     */
+    getList: (data: DefectCodeSearch) =>
+      http.request<ResultPagingDataDefectCodeVO['data']>(`/api/main/defectCode/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name AddDefectCode
+     * @summary 新增缺陷代码
+     * @request POST:/defectCode/addDefectCode
+     * @secure
+     */
+    addDefectCode: (data: DefectCode) =>
+      http.request<ResultObject['data']>(`/api/main/defectCode/addDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name Tree
+     * @summary 获取缺陷树
+     * @request GET:/defectCode/tree
+     * @secure
+     */
+    tree: () =>
+      http.request<ResultListDefectCodeVO['data']>(`/api/main/defectCode/tree`, {
+        method: 'GET',
+      }),
+  },
   customer: {
     /**
      * No description
@@ -3521,21 +3731,6 @@ export const api = {
       http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
         method: 'GET',
         params: query,
-      }),
-  },
-  defectCode: {
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name Tree
-     * @summary 获取缺陷树
-     * @request GET:/defectCode/tree
-     * @secure
-     */
-    tree: () =>
-      http.request<ResultListDefectCodeVO['data']>(`/api/main/defectCode/tree`, {
-        method: 'GET',
       }),
   },
   adminOrg: {

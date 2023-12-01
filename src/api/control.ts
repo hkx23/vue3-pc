@@ -349,6 +349,8 @@ export interface WorkstationSearch {
   workcenter?: string;
   /** 工序编码名称模糊 */
   process?: string;
+  /** 模糊关键词 */
+  keyword?: string;
   /** 排序字段 */
   sorts?: SortParam[];
   /** 筛选字段 */
@@ -749,8 +751,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1173,11 +1175,52 @@ export interface BarcodeWipVO {
   scanMessage?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  isState?: boolean;
+  /** 扫描选中的缺陷列表 */
+  defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
   stateName?: string;
   datetimeScheStr?: string;
+  isState?: boolean;
+}
+
+/** 缺陷代码 */
+export interface DefectCode {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /** 不合格分类 */
+  classification?: string;
 }
 
 /** 通用响应类 */
@@ -2005,13 +2048,13 @@ export const api = {
      * No description
      *
      * @tags 在制品条码表
-     * @name GetBarcodeWip
+     * @name ScanBarcodeWip
      * @summary 获取在制品条码信息
-     * @request POST:/barcodeWip/getBarcodeWip
+     * @request POST:/barcodeWip/scanBarcodeWip
      * @secure
      */
-    getBarcodeWip: (data: BarcodeWipVO) =>
-      http.request<ResultBarcodeWipVO['data']>(`/api/control/barcodeWip/getBarcodeWip`, {
+    scanBarcodeWip: (data: BarcodeWipVO) =>
+      http.request<ResultBarcodeWipVO['data']>(`/api/control/barcodeWip/scanBarcodeWip`, {
         method: 'POST',
         body: data as any,
       }),
