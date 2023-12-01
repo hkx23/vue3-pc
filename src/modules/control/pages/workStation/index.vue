@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <t-card class="list-card-container" :bordered="false" gutter>
+  <div class="main-page">
+    <div class="main-page-content">
       <t-row justify="space-between">
         <t-col :span="2"
           ><t-input v-model="inputValue.workstaion" label="工站代码/名称：" placeholder="请输入工序代码/名称"></t-input>
@@ -22,16 +22,6 @@
         <t-col :span="2"
           ><t-input v-model="inputValue.process" label="工序：" placeholder="请输入工序代码/名称"> </t-input>
         </t-col>
-      </t-row>
-      <t-row justify="space-between" style="margin: 20px 0">
-        <t-col>
-          <div>
-            <t-button variant="base" @click="onHandelAdd">新增</t-button>
-            <!-- <t-button theme="default" variant="base">导入</t-button> -->
-            <!-- <input type="file" @change="handleFileUpload" />
-            <button @click="importData">导入</button> -->
-          </div>
-        </t-col>
         <t-col flex="220px">
           <div class="btn-left">
             <t-button variant="base" @click="onHandelQuery">查询</t-button>
@@ -39,6 +29,8 @@
           </div>
         </t-col>
       </t-row>
+    </div>
+    <div class="main-page-content">
       <tm-table
         v-model:pagination="pageUI"
         row-key="index"
@@ -49,6 +41,9 @@
         :loading="loading"
         @refresh="onHandelList"
       >
+        <template #button>
+          <t-button variant="base" @click="onHandelAdd">新增</t-button>
+        </template>
         <template #state="{ row }">
           <span>{{ row.state === 1 ? '启用' : '禁用' }}</span>
         </template>
@@ -61,91 +56,90 @@
           </t-popconfirm>
         </template>
       </tm-table>
-      <!-- <t-table row-key="index" :columns="columns" :data="workData" lazy-load> </t-table> -->
-    </t-card>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="controlShow ? '编辑' : '新增'"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      width="40%"
-    >
-      <t-form
-        ref="formRef"
-        :rules="rules"
-        :data="formData"
-        layout="inline"
-        scroll-to-first-error="smooth"
-        label-align="right"
-        @submit="onWorkStationSubmit"
-      >
-        <!-- 工作中心-->
-        <t-row class="form-customer-row">
-          <t-col>
-            <t-form-item label="工作中心:" name="PWorkcenterId">
-              <!-- <t-select v-model="formData.workCenter"></t-select> -->
-              <tm-select-business
-                v-model="formData.PWorkcenterId"
-                type="workcenter"
-                :show-title="false"
-                :disabled="controlShow ? true : false"
-              ></tm-select-business>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 工序 -->
-        <t-row class="form-work-station">
-          <t-col>
-            <t-form-item label="工序:" name="PProcessId">
-              <tm-select-business
-                v-model="formData.PProcessId"
-                type="process"
-                :show-title="false"
-                :disabled="controlShow ? true : false"
-              ></tm-select-business>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 工站代码 -->
-        <t-row class="form-work-station">
-          <t-col>
-            <t-form-item label="工站代码:" name="workstationCode">
-              <t-input v-model="formData.workstationCode" :disabled="controlShow ? true : false"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 工站名称 -->
-        <t-row class="form-work-station">
-          <t-col>
-            <t-form-item label="工站名称:" name="workstationName">
-              <t-input v-model="formData.workstationName"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!--工站描述  -->
-        <t-row class="form-work-station">
-          <t-col>
-            <t-form-item label="工站描述:" name="workstationDesc">
-              <t-input v-model="formData.workstationDesc"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!--启用  -->
-        <t-row class="form-work-station">
-          <t-col>
-            <t-form-item label="启用:" name="state">
-              <t-switch v-model="formData.showState" size="large" @change="onChange" />
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 控制盒子 -->
-        <div class="control-box">
-          <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-          <t-button theme="primary" type="submit">保存</t-button>
-        </div>
-      </t-form>
-    </t-dialog>
+    </div>
   </div>
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="controlShow ? '编辑' : '新增'"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    width="40%"
+  >
+    <t-form
+      ref="formRef"
+      :rules="rules"
+      :data="formData"
+      layout="inline"
+      scroll-to-first-error="smooth"
+      label-align="right"
+      @submit="onWorkStationSubmit"
+    >
+      <!-- 工作中心-->
+      <t-row class="form-customer-row">
+        <t-col>
+          <t-form-item label="工作中心:" name="PWorkcenterId">
+            <!-- <t-select v-model="formData.workCenter"></t-select> -->
+            <tm-select-business
+              v-model="formData.PWorkcenterId"
+              type="workcenter"
+              :show-title="false"
+              :disabled="controlShow ? true : false"
+            ></tm-select-business>
+          </t-form-item>
+        </t-col>
+      </t-row>
+      <!-- 工序 -->
+      <t-row class="form-work-station">
+        <t-col>
+          <t-form-item label="工序:" name="PProcessId">
+            <tm-select-business
+              v-model="formData.PProcessId"
+              type="process"
+              :show-title="false"
+              :disabled="controlShow ? true : false"
+            ></tm-select-business>
+          </t-form-item>
+        </t-col>
+      </t-row>
+      <!-- 工站代码 -->
+      <t-row class="form-work-station">
+        <t-col>
+          <t-form-item label="工站代码:" name="workstationCode">
+            <t-input v-model="formData.workstationCode" :disabled="controlShow ? true : false"></t-input>
+          </t-form-item>
+        </t-col>
+      </t-row>
+      <!-- 工站名称 -->
+      <t-row class="form-work-station">
+        <t-col>
+          <t-form-item label="工站名称:" name="workstationName">
+            <t-input v-model="formData.workstationName"></t-input>
+          </t-form-item>
+        </t-col>
+      </t-row>
+      <!--工站描述  -->
+      <t-row class="form-work-station">
+        <t-col>
+          <t-form-item label="工站描述:" name="workstationDesc">
+            <t-input v-model="formData.workstationDesc"></t-input>
+          </t-form-item>
+        </t-col>
+      </t-row>
+      <!--启用  -->
+      <t-row class="form-work-station">
+        <t-col>
+          <t-form-item label="启用:" name="state">
+            <t-switch v-model="formData.showState" size="large" @change="onChange" />
+          </t-form-item>
+        </t-col>
+      </t-row>
+      <!-- 控制盒子 -->
+      <div class="control-box">
+        <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+        <t-button theme="primary" type="submit">保存</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">

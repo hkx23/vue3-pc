@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <t-card class="list-card-container" :bordered="false">
+  <div class="main-page">
+    <div class="main-page-content">
       <t-row justify="space-between">
         <div class="left-operation-container">
           <t-button @click="onClickAdd">
@@ -26,33 +26,32 @@
           </t-input>
         </div>
       </t-row>
-    </t-card>
-    <div class="table-tree-container">
-      <div class="list-tree-wrapper">
-        <div class="list-tree-operator">
-          <t-tree
-            ref="treeRef"
-            v-model:actived="treeActiveKey"
-            :data="treeData"
-            :keys="treeKeys"
-            hover
-            :expand-on-click-node="false"
-            :filter="filterByText"
-            activable
-          />
-        </div>
-        <div class="list-tree-content">
-          <tm-table
-            ref="tableRef"
-            row-key="id"
-            :loading="loading"
-            :show-pagination="false"
-            :table-column="columns"
-            :table-data="data"
-          ></tm-table>
-        </div>
+    </div>
+    <div class="list-tree-wrapper">
+      <div class="list-tree-operator">
+        <t-tree
+          ref="treeRef"
+          v-model:actived="treeActiveKey"
+          :data="treeData"
+          :keys="treeKeys"
+          hover
+          :expand-on-click-node="false"
+          :filter="filterByText"
+          activable
+        />
+      </div>
+      <div class="list-tree-content">
+        <tm-table
+          ref="tableRef"
+          row-key="id"
+          :loading="loading"
+          :show-pagination="false"
+          :table-column="columns"
+          :table-data="data"
+        ></tm-table>
       </div>
     </div>
+
     <t-dialog
       v-model:visible="formVisible"
       :header="t('common.dialog.header.add', [t('org.title')])"
@@ -278,12 +277,18 @@ const onConfirmForm = () => {
 .list-tree-operator {
   width: 280px;
   float: left;
+  background: white;
+  border-radius: 4px;
   padding: var(--td-comp-paddingTB-s) var(--td-comp-paddingLR-xxl);
-  border-right: 1px solid var(--td-border-level-1-color);
+  margin-right: 8px;
+  // border-right: 8px solid var(--td-bg-color-page);
 }
 
 .list-tree-content {
+  background: white;
+  border-radius: 4px;
   overflow: auto;
-  padding: 8px;
+  padding: 8px 24px;
+  // border-left: 8px solid var(--td-bg-color-page);
 }
 </style>

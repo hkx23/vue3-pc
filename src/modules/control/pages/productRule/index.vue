@@ -1,117 +1,113 @@
 <template>
-  <div class="table-tree-container">
-    <div class="list-tree-content">
-      <div class="list-common-table">
-        <tm-query :opts="opts" label-width="100" is-expansion @submit="conditionEnter" />
-        <!-- <t-row style="margin-top: 10px">
-          <t-button theme="default" @click="onImport">导入</t-button>
-        </t-row> -->
-        <t-row justify="space-between">
-          <!-- 包装规则表格-->
-          <tm-table
-            ref="tableRef"
-            v-model:pagination="pageUI"
-            row-key="id"
-            :table-column="tableProductPackRuleColumns"
-            :table-data="tableDataProductPackRule"
-            :loading="loading"
-            :total="dataTotal"
-            select-on-row-click
-            :header-affixed-top="true"
-            @refresh="fetchTable"
-            @cell-click="onEditPackRowClick"
-          >
-            <template #op="{ row }">
-              <t-space>
-                <t-icon name="edit" @click="onClickEditPackRule(row)" />
-                <t-icon name="delete" :disabled="loading" @click="onDeletePackRowClick(row)" />
-              </t-space>
-            </template>
-            <template #oprate>
-              <t-button shape="square" variant="outline" @click="onClickAddPackRule">
-                <t-icon name="add" />
-              </t-button>
-            </template>
-          </tm-table>
-        </t-row>
-        <t-row style="margin-top: 10px">
-          <t-col :span="5">
-            <div class="pack-dtl-table">
-              <t-space size="small" :align="'center'" class="pack-dtl-button">
-                <t-button
-                  :disabled="!isShowPackRuleDtlAddBtn"
-                  shape="square"
-                  variant="outline"
-                  @click="onClickAddPackRuleDtl"
-                >
-                  <template #icon>
-                    <t-icon name="add" />
-                  </template>
-                </t-button>
-              </t-space>
-              <!-- 规则明细表格-->
-              <t-enhanced-table
-                ref="tableDtlRef"
-                row-key="id"
-                :columns="tablePackDtlColumns"
-                :data="tableDataProductPackDtl"
-                :tree="treeConfig"
-                active-row-type="single"
-                :loading="loadingPackDtl"
-                :header-affixed-top="true"
-                :bordered="true"
-                :resizable="true"
-                @cell-click="onRowPackRuleDtlClick"
+  <div class="main-page">
+    <div class="main-page-content">
+      <tm-query :opts="opts" label-width="100" is-expansion @submit="conditionEnter" />
+    </div>
+    <div class="main-page-content">
+      <tm-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="tableProductPackRuleColumns"
+        :table-data="tableDataProductPackRule"
+        :loading="loading"
+        :total="dataTotal"
+        select-on-row-click
+        :header-affixed-top="true"
+        @refresh="fetchTable"
+        @cell-click="onEditPackRowClick"
+      >
+        <template #op="{ row }">
+          <t-space>
+            <t-icon name="edit" @click="onClickEditPackRule(row)" />
+            <t-icon name="delete" :disabled="loading" @click="onDeletePackRowClick(row)" />
+          </t-space>
+        </template>
+        <template #oprate>
+          <t-button shape="square" variant="outline" @click="onClickAddPackRule">
+            <t-icon name="add" />
+          </t-button>
+        </template>
+      </tm-table>
+    </div>
+    <div class="main-page-content">
+      <t-row>
+        <t-col :span="5">
+          <div class="pack-dtl-table">
+            <t-space size="small" :align="'center'" class="pack-dtl-button">
+              <t-button
+                :disabled="!isShowPackRuleDtlAddBtn"
+                shape="square"
+                variant="outline"
+                @click="onClickAddPackRuleDtl"
               >
-                <template #op="{ row }">
-                  <t-space>
-                    <t-icon name="edit" @click="onClickEditPackRuleDtl(row)" />
-                    <t-icon name="delete" :disabled="loadingPackDtl" @click="onDeletePackDtlRowClick(row)" />
-                  </t-space> </template
-              ></t-enhanced-table>
-            </div>
-          </t-col>
-          <t-col :span="6" :offset="1">
-            <!-- 物料表格-->
-            <tm-table
-              ref="tableMitemRef"
-              v-model:pagination="pageMitem"
+                <template #icon>
+                  <t-icon name="add" />
+                </template>
+              </t-button>
+            </t-space>
+            <!-- 规则明细表格-->
+            <t-enhanced-table
+              ref="tableDtlRef"
               row-key="id"
-              :table-column="tableMitemColumns"
-              :table-data="tableDataMitem"
-              :loading="loadingMitem"
-              :show-pagination="false"
+              :columns="tablePackDtlColumns"
+              :data="tableDataProductPackDtl"
+              :tree="treeConfig"
+              active-row-type="single"
+              :loading="loadingPackDtl"
               :header-affixed-top="true"
-              @refresh="fetchMitemTable"
+              :bordered="true"
+              :resizable="true"
+              @cell-click="onRowPackRuleDtlClick"
             >
               <template #op="{ row }">
                 <t-space>
-                  <t-icon name="delete" :disabled="loadingMitem" @click="onDeleteMitemRowClick(row)" />
-                </t-space>
-              </template>
-              <template #oprate>
-                <t-button
-                  v-if="selectPackRuleRow.id"
-                  shape="square"
-                  variant="outline"
-                  :disabled="loadingMitem"
-                  @click="onClickAddPackRuleMitem"
-                >
-                  <t-icon name="add" />
-                </t-button>
-                <t-button
-                  :disabled="selectMitemRowKeys?.length == 0"
-                  theme="default"
-                  variant="outline"
-                  @click="onBatchDeleteMitemRowClick"
-                >
-                  <t-icon name="delete" />{{ t('common.button.batchDelete') }}
-                </t-button>
-              </template>
-            </tm-table></t-col
+                  <t-icon name="edit" @click="onClickEditPackRuleDtl(row)" />
+                  <t-icon name="delete" :disabled="loadingPackDtl" @click="onDeletePackDtlRowClick(row)" />
+                </t-space> </template
+            ></t-enhanced-table>
+          </div>
+        </t-col>
+        <t-col :span="6" :offset="1">
+          <!-- 物料表格-->
+          <tm-table
+            ref="tableMitemRef"
+            v-model:pagination="pageMitem"
+            row-key="id"
+            :table-column="tableMitemColumns"
+            :table-data="tableDataMitem"
+            :loading="loadingMitem"
+            :show-pagination="false"
+            :header-affixed-top="true"
+            @refresh="fetchMitemTable"
           >
-        </t-row>
-      </div>
+            <template #op="{ row }">
+              <t-space>
+                <t-icon name="delete" :disabled="loadingMitem" @click="onDeleteMitemRowClick(row)" />
+              </t-space>
+            </template>
+            <template #oprate>
+              <t-button
+                v-if="selectPackRuleRow.id"
+                shape="square"
+                variant="outline"
+                :disabled="loadingMitem"
+                @click="onClickAddPackRuleMitem"
+              >
+                <t-icon name="add" />
+              </t-button>
+              <t-button
+                :disabled="selectMitemRowKeys?.length == 0"
+                theme="default"
+                variant="outline"
+                @click="onBatchDeleteMitemRowClick"
+              >
+                <t-icon name="delete" />{{ t('common.button.batchDelete') }}
+              </t-button>
+            </template>
+          </tm-table></t-col
+        >
+      </t-row>
     </div>
   </div>
 

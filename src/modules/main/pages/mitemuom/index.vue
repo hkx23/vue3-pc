@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <t-card class="list-card-container" :bordered="false">
+  <div class="main-page">
+    <div class="main-page-content">
       <t-row justify="space-between">
         <t-col>
           <div style="display: flex; align-items: center">
@@ -21,39 +21,39 @@
           </div>
         </t-col>
       </t-row>
-      <t-row class="mitemuom-function-button">
-        <t-col>
-          <t-button theme="default" @click="onAddMeasuring">{{ t('common.button.add') }}</t-button>
+    </div>
+
+    <div class="main-page-content">
+      <tm-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        :table-data="tableData"
+        :table-column="columns"
+        row-key="id"
+        :total="total"
+        @refresh="fetchData"
+        @select-change="rehandleSelectChange"
+      >
+        <template #button>
+          <t-button theme="primary" @click="onAddMeasuring">{{ t('common.button.add') }}</t-button>
           <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirms">
             <t-button theme="default">{{ t('common.button.batchDelete') }}</t-button>
           </t-popconfirm>
           <t-button theme="default">{{ t('common.button.import') }}</t-button>
-        </t-col>
-      </t-row>
-      <t-row>
-        <tm-table
-          ref="tableRef"
-          v-model:pagination="pageUI"
-          :table-data="tableData"
-          :table-column="columns"
-          row-key="id"
-          :total="total"
-          @refresh="fetchData"
-          @select-change="rehandleSelectChange"
-        >
-          <template #actionSlot="{ row }">
-            <t-button size="small" variant="text" @click="onEditRow(row)">
-              <icon name="edit-1" class="black-icon" />
+        </template>
+        <template #actionSlot="{ row }">
+          <t-button size="small" variant="text" @click="onEditRow(row)">
+            <icon name="edit-1" class="black-icon" />
+          </t-button>
+          <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirm">
+            <t-button size="small" variant="text" @click="onDeleteRow(row)">
+              <icon name="delete" class="black-icon" />
             </t-button>
-            <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirm">
-              <t-button size="small" variant="text" @click="onDeleteRow(row)">
-                <icon name="delete" class="black-icon" />
-              </t-button>
-            </t-popconfirm>
-          </template>
-        </tm-table>
-      </t-row>
-    </t-card>
+          </t-popconfirm>
+        </template>
+      </tm-table>
+    </div>
+
     <!-- 模态框/对话框 -->
     <t-dialog
       v-model:visible="showDialog"

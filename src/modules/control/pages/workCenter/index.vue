@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main-page">
     <!-- 子from -->
     <detailed
       v-if="detailedShow"

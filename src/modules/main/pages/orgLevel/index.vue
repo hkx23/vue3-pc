@@ -1,20 +1,22 @@
 <template>
   <div class="main-page">
-    <t-card class="list-card-container" :bordered="false">
-      <t-row justify="space-between">
-        <div class="left-operation-container">
-          <t-button @click="onClickAdd">
-            <template #icon><add-icon /></template>
-            {{ t('common.button.add') }}
-          </t-button>
-          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
-            <t-button theme="default">
-              <template #icon><remove-icon /></template>
-              {{ t('common.button.delete') }}</t-button
-            >
-          </t-popconfirm>
-        </div>
-      </t-row>
+    <!-- <div class="main-page-content">
+    
+    </div> -->
+    <div class="main-page-content">
+      <t-space style="margin-bottom: 8px">
+        <t-button @click="onClickAdd">
+          <template #icon><add-icon /></template>
+          {{ t('common.button.add') }}
+        </t-button>
+        <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
+          <t-button theme="default">
+            <template #icon><remove-icon /></template>
+            {{ t('common.button.delete') }}</t-button
+          >
+        </t-popconfirm>
+      </t-space>
+
       <t-enhanced-table
         ref="tableRef"
         row-key="id"
@@ -23,8 +25,9 @@
         :tree="treeConfig"
         active-row-type="single"
         @row-click="onRowClick"
-      ></t-enhanced-table>
-    </t-card>
+      >
+      </t-enhanced-table>
+    </div>
     <t-dialog
       v-model:visible="formVisible"
       :header="t('common.dialog.header.add', [t('orgLevel.levelName')])"
