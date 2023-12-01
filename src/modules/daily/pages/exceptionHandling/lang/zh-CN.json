@@ -4,6 +4,7 @@
     "abnormalModule": "异常模块",
     "treatmentGroup": "处理组",
     "processOrder": "处理顺序",
-    "transferOrders": "是否允许转单"
+    "transferOrders": "是否允许转单",
+    "operate": "操作"
   }
 }

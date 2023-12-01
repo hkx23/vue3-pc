@@ -23,6 +23,10 @@
           <!-- 全局通知 -->
           <notice />
 
+          <t-button theme="default" shape="square" variant="text" @click="onClickFullScreen">
+            <fullscreen2-icon size="16" />
+          </t-button>
+
           <t-dropdown trigger="click">
             <t-button theme="default" shape="square" variant="text">
               <translate-icon />
@@ -62,9 +66,17 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronDownIcon, PoweroffIcon, SettingIcon, TranslateIcon, UserCircleIcon } from 'tdesign-icons-vue-next';
+import {
+  ChevronDownIcon,
+  Fullscreen2Icon,
+  PoweroffIcon,
+  SettingIcon,
+  TranslateIcon,
+  UserCircleIcon,
+} from 'tdesign-icons-vue-next';
 import type { PropType } from 'vue';
 import { computed } from 'vue';
+import { useFullscreen } from 'vue-hooks-plus';
 import { useRouter } from 'vue-router';
 
 import LogoFull from '@/assets/assets-logo-full.svg?component';
@@ -158,6 +170,12 @@ const handleLogout = () => {
     path: '/login',
     query: { redirect: encodeURIComponent(router.currentRoute.value.fullPath) },
   });
+};
+
+const [, { enterFullscreen }] = useFullscreen(() => document.querySelector('main.t-layout__content'));
+const onClickFullScreen = () => {
+  // fw.ipc.send('fullscreen', null);
+  enterFullscreen();
 };
 </script>
 <style lang="less" scoped>

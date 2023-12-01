@@ -15,6 +15,7 @@ import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 
 import { usePermissionStore, useSettingStore } from '@/store';
+import { MenuRoute } from '@/types/interface';
 
 import LHeader from './Header.vue';
 
@@ -31,6 +32,6 @@ const headerMenu = computed(() => {
     }
     return [];
   }
-  return menuRouters.value;
+  return menuRouters.value as MenuRoute[];
 });
 </script>
