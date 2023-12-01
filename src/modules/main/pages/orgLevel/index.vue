@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main-page">
     <t-card class="list-card-container" :bordered="false">
       <t-row justify="space-between">
         <div class="left-operation-container">
