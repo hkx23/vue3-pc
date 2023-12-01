@@ -1180,8 +1180,8 @@ export interface BarcodeWipVO {
   /** @format date-time */
   datetimeSche?: string;
   stateName?: string;
-  datetimeScheStr?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 缺陷代码 */
