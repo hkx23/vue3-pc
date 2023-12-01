@@ -13,6 +13,8 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@logicflow/core": "^1.2.18",
+    "@logicflow/extension": "^1.2.19",
     "dayjs": "^1.11.10",
     "echarts": "^5.4.3",
     "lodash": "^4.17.21",

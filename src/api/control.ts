@@ -9,6 +9,48 @@
  * ---------------------------------------------------------------
  */
 
+/** 工艺路线实体 */
+export interface RoutingDTO {
+  /** 工艺路线编码 */
+  routingCode?: string;
+  /** 工艺路线名称 */
+  routingName?: string;
+  /** 工艺路线描述 */
+  routingDesc?: string;
+  /** 工艺路线类型 */
+  routingType?: string;
+  /**
+   * 工艺路线版本
+   * @format int32
+   */
+  routingVersion?: number;
+  /**
+   * 启用时间
+   * @format date-time
+   */
+  enableDate?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  invailDate?: string;
+  /** 工艺路线图形化JSON */
+  routingGraph?: string;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
 /** 产品包装规则明细 */
 export interface ProductPackRuleDtl {
   id?: string;
@@ -50,19 +92,6 @@ export interface ProductPackRuleDtl {
    * @format int32
    */
   packLevel?: number;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 /** 产品包装规则 */
@@ -1177,11 +1206,11 @@ export interface BarcodeWipVO {
   scanSuccess?: boolean;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  stateName?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
-  datetimeScheStr?: string;
-  isState?: boolean;
 }
 
 /** 缺陷代码 */
@@ -1247,6 +1276,103 @@ export interface ResultWorkcenterVO {
   message?: string;
   /** 工作中心显示 */
   data?: WorkcenterVO;
+}
+
+/** 通用响应类 */
+export interface ResultInteger {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /**
+   * 响应数据
+   * @format int32
+   */
+  data?: number | null;
+}
+
+/** 响应数据 */
+export type PagingDataRoutingVO = {
+  list?: RoutingVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataRoutingVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataRoutingVO;
+}
+
+/** 工艺路线展示实体 */
+export interface RoutingVO {
+  id?: string;
+  /** 工艺路线编码 */
+  routingCode?: string;
+  /** 工艺路线名称 */
+  routingName?: string;
+  /** 工艺路线描述 */
+  routingDesc?: string;
+  /** 工艺路线类型 */
+  routingType?: string;
+  routingVersionId?: string;
+  /**
+   * 工艺路线版本
+   * @format int32
+   */
+  routingVersion?: number;
+  /**
+   * 启用时间
+   * @format date-time
+   */
+  enableDate?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  invailDate?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+}
+
+/** 通用响应类 */
+export interface ResultRoutingDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 工艺路线实体 */
+  data?: RoutingDTO;
 }
 
 /** 显示包装规则明细列表 */
@@ -1318,6 +1444,136 @@ export interface ResultListProductPackRuleDtlVO {
  */
 
 export const api = {
+  routing: {
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Update
+     * @summary 更新工艺路线
+     * @request PUT:/routing/update/{id}
+     * @secure
+     */
+    update: (id: string, data: RoutingDTO) =>
+      http.request<ResultObject['data']>(`/api/control/routing/update/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Enable
+     * @summary 启用
+     * @request PUT:/routing/enable/{id}
+     * @secure
+     */
+    enable: (id: string, data: RoutingDTO) =>
+      http.request<ResultObject['data']>(`/api/control/routing/enable/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Disable
+     * @summary 禁用
+     * @request PUT:/routing/disable/{id}
+     * @secure
+     */
+    disable: (id: string) =>
+      http.request<ResultObject['data']>(`/api/control/routing/disable/${id}`, {
+        method: 'PUT',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Search
+     * @summary 工艺路线信息查询
+     * @request POST:/routing/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataRouting['data']>(`/api/control/routing/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Add
+     * @summary 新增工艺路线
+     * @request POST:/routing/add
+     * @secure
+     */
+    add: (data: RoutingDTO) =>
+      http.request<ResultObject['data']>(`/api/control/routing/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name MoScheduleBindRoutingCount
+     * @summary 根据工艺路线版本ID获取未完的的工单排产
+     * @request GET:/routing/moScheduleBindRoutingCount/{routingRevisionId}
+     * @secure
+     */
+    moScheduleBindRoutingCount: (routingRevisionId: string) =>
+      http.request<ResultInteger['data']>(`/api/control/routing/moScheduleBindRoutingCount/${routingRevisionId}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name MainPage
+     * @summary 工艺路线主数据
+     * @request GET:/routing/mainPage
+     * @secure
+     */
+    mainPage: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      keyword?: string;
+      routingType?: string;
+      workcenterId?: string;
+      productCategoryId?: string;
+      productId?: string;
+      /** @format int32 */
+      state?: number;
+    }) =>
+      http.request<ResultPagingDataRoutingVO['data']>(`/api/control/routing/mainPage`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Item
+     * @summary 根据ID获取工艺路线
+     * @request GET:/routing/item/{id}
+     * @secure
+     */
+    item: (id: string) =>
+      http.request<ResultRoutingDTO['data']>(`/api/control/routing/item/${id}`, {
+        method: 'GET',
+      }),
+  },
   productPackRuleDtl: {
     /**
      * No description
@@ -1780,22 +2036,6 @@ export const api = {
     getCategory: () =>
       http.request<ResultPagingDataWorkcenterVO['data']>(`/api/control/workcenter/getCategory`, {
         method: 'GET',
-      }),
-  },
-  routing: {
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name Search
-     * @summary 工艺路线信息查询
-     * @request POST:/routing/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataRouting['data']>(`/api/control/routing/items`, {
-        method: 'POST',
-        body: data as any,
       }),
   },
   productPackRuleMap: {
