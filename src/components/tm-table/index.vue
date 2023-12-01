@@ -3,20 +3,24 @@
     <div class="table-box">
       <div v-if="buttonsVisible" class="table-box_header">
         <t-space size="small" :align="'center'">
-          <t-button v-if="props.enableExport" theme="primary" @click="onExport">
-            <span>导出</span>
-          </t-button>
-          <t-button v-if="props.enableExport && exportFunction" theme="default" @click="onExportAll">
-            <span>导出全部</span>
-          </t-button>
           <slot name="button"></slot>
         </t-space>
         <t-space size="small" :align="'center'">
           <slot name="oprate"></slot>
 
-          <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
+          <t-button v-if="false" shape="square" variant="outline" :disabled="loading" @click="onRefresh">
             <template #icon>
               <t-icon name="refresh" />
+            </template>
+          </t-button>
+          <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
+            <template #icon>
+              <t-icon name="file-export" />
+            </template>
+          </t-button>
+          <t-button v-if="props.enableExport && exportFunction" shape="square" variant="outline" @click="onExportAll">
+            <template #icon>
+              <t-icon name="file-export" />
             </template>
           </t-button>
           <t-button shape="square" variant="outline" @click="data.visible = true">
@@ -135,7 +139,7 @@ const props = defineProps({
     type: Object,
   },
   buttonsVisible: { type: Boolean, default: true },
-  enableExport: { type: Boolean, default: false },
+  enableExport: { type: Boolean, default: true },
   remoteFilter: { type: Boolean, default: false },
   remoteSorter: { type: Boolean, default: false },
   tableColumn: {
@@ -205,27 +209,27 @@ const data: {
 // 列配置相关
 props.tableColumn.forEach((item) => {
   if (item.colKey !== 'row-select' && item.colKey !== 'op' && item.colKey !== 'serial-number') {
-    if (item.sorter !== false) {
-      item.sorter = true;
-    }
-    if (!item.filter) {
-      // 输入框过滤配置
-      item.filter = {
-        type: 'input',
+    // if (item.sorter !== false) {
+    //   item.sorter = true;
+    // }
+    // if (!item.filter) {
+    //   // 输入框过滤配置
+    //   item.filter = {
+    //     type: 'input',
 
-        // 文本域搜索
-        // component: Textarea,
+    //     // 文本域搜索
+    //     // component: Textarea,
 
-        resetValue: '',
-        // 按下 Enter 键时也触发确认搜索
-        confirmEvents: ['onEnter'],
-        props: {
-          placeholder: '输入关键词过滤',
-        },
-        // 是否显示重置取消按钮，一般情况不需要显示
-        showConfirmAndReset: true,
-      };
-    }
+    //     resetValue: '',
+    //     // 按下 Enter 键时也触发确认搜索
+    //     confirmEvents: ['onEnter'],
+    //     props: {
+    //       placeholder: '输入关键词过滤',
+    //     },
+    //     // 是否显示重置取消按钮，一般情况不需要显示
+    //     showConfirmAndReset: true,
+    //   };
+    // }
     data.colConfigs[item.title] = true;
   }
 });
