@@ -202,6 +202,7 @@ const formData = reactive({
   wcType: '', // 设备类型
   state: props.wordCenterId.state, // 启用还是禁用
   category: 0, // 获取设备关联
+  wcObjectType: 0, // 更改类型
   wcObjectId: '', // 关联设备
   id: props.wordCenterId.id, // 父节点的id
   allRecord: [],
@@ -249,6 +250,7 @@ const onTypeList = () => {
       }
       item.show = true;
       formData.category = item.opId;
+      console.log(formData.category);
     } else {
       item.show = false;
     }
@@ -276,6 +278,9 @@ const onHandleCur = (all) => {
       }
       item.show = true;
       formData.category = item.opId;
+      formData.wcType = item.wcType;
+      formData.wcObjectType = item.opId;
+      console.log(formData.category);
     } else {
       item.show = false;
     }

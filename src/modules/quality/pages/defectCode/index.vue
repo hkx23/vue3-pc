@@ -26,7 +26,7 @@
           </t-popconfirm>
         </template>
       </t-enhanced-table>
-      <t-pagination
+      <!-- <t-pagination
         v-model="pagination.current"
         v-model:pageSize="pagination.pageSize"
         :total="pagination.total"
@@ -35,7 +35,7 @@
         @change="onChange"
         @page-size-change="onPageSizeChange"
         @current-change="onCurrentChange"
-      />
+      /> -->
     </t-card>
     <t-dialog
       v-model:visible="formVisible"
@@ -98,17 +98,17 @@ const pagination = ref({
   total: 10,
 });
 const isAddAndEdit = ref(1); // 判断是编辑还是新增默认为新增
-const onPageSizeChange = (size) => {
-  pagination.value.current = 1;
-  console.log('page-size:', size);
-  onFetchData();
-};
-const onCurrentChange = () => {
-  onFetchData();
-};
-const onChange = () => {
-  onFetchData();
-};
+// const onPageSizeChange = (size) => {
+//   pagination.value.current = 1;
+//   console.log('page-size:', size);
+//   onFetchData();
+// };
+// const onCurrentChange = () => {
+//   onFetchData();
+// };
+// const onChange = () => {
+//   onFetchData();
+// };
 
 // 多选框
 const selectedRowKeys = ref([]); // 选择的要删除数据
@@ -132,7 +132,7 @@ const formItem = reactive({
   id: '',
 });
 const column: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'select', type: 'multiple' },
+  { colKey: 'checkbox', type: 'multiple' },
   { colKey: 'defectCode', title: t('defectCode.defectCode'), align: 'center', width: '200px' },
   { colKey: 'defectName', title: t('defectCode.defectName'), align: 'center' },
   { colKey: 'operate', title: t('defectCode.operate'), align: 'center', fixed: 'right' },
@@ -142,8 +142,8 @@ const data = ref([]);
 const onFetchData = async () => {
   try {
     const res = await api.defectCode.getList({
-      pageNum: pagination.value.current,
-      pageSize: pagination.value.pageSize,
+      pageNum: 1,
+      pageSize: 999999,
     });
     data.value = res.list;
     pagination.value.total = res.total;

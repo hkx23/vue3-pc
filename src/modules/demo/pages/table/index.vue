@@ -1,30 +1,31 @@
 <template>
-  <tm-table
-    ref="tableRef"
-    v-model:pagination="pageUI"
-    :table-column="tableColumn"
-    :table-data="data.list"
-    :enable-export="enableExport"
-    :is-fixed-height="isFixedHeight"
-    :loading="loading"
-    :total="data.total"
-    :export-function="exportFunction"
-    @refresh="fetchData"
-  >
-    <template #op="{ row }">
-      <icon name="edit-1" @click="onHandleEdit(row)"></icon>
-    </template>
+  <div class="main-page">
+    <tm-table
+      ref="tableRef"
+      v-model:pagination="pageUI"
+      :table-column="tableColumn"
+      :table-data="data.list"
+      :enable-export="enableExport"
+      :is-fixed-height="isFixedHeight"
+      :loading="loading"
+      :total="data.total"
+      :export-function="exportFunction"
+      @refresh="fetchData"
+    >
+      <template #op="{ row }">
+        <icon name="edit-1" @click="onHandleEdit(row)"></icon>
+      </template>
 
-    <template #button>
-      <t-button theme="success" @click="onExportEnable">插槽例子-是否显示导入</t-button>
-      <!-- <t-button theme="success" @click="onFixHeight">插槽例子-是否固定高度</t-button> -->
-      <t-button theme="success" @click="onViewKeys">插槽例子-已选中行</t-button>
-    </template>
-    <template #oprate>
-      <!-- <t-button shape="circle" theme="primary" ghost> 插槽 </t-button> -->
-    </template>
-  </tm-table>
-  <!-- </div> -->
+      <template #button>
+        <t-button theme="success" @click="onExportEnable">插槽例子-是否显示导入</t-button>
+        <!-- <t-button theme="success" @click="onFixHeight">插槽例子-是否固定高度</t-button> -->
+        <t-button theme="success" @click="onViewKeys">插槽例子-已选中行</t-button>
+      </template>
+      <template #oprate>
+        <!-- <t-button shape="circle" theme="primary" ghost> 插槽 </t-button> -->
+      </template>
+    </tm-table>
+  </div>
 </template>
 
 <script setup lang="tsx" name="TablePreview">

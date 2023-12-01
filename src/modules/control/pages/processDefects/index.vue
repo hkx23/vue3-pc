@@ -8,6 +8,7 @@
         </t-row>
       </t-card>
       <tm-table
+        v-model:pagination="pageUI"
         row-key="id"
         :table-column="column"
         :table-data="processData"
@@ -87,14 +88,18 @@ import _ from 'lodash';
 import { Data, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
+// import { api } from '@/api/control';
 import TmTable from '@/components/tm-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
 
 import { useLang } from './lang';
 
 onMounted(() => {
   onFetchData();
 });
+
+const { pageUI } = usePage();
 const processRorKey = ref([]); // 存储多选选择数组
 // form表单数据
 const formData = ref({
@@ -179,7 +184,15 @@ const processData = ref([
 ]);
 
 // 进入首页发请求
-const onFetchData = () => {
+const onFetchData = async () => {
+  // try {
+  //   await api.processDefects.geslist({
+  //     pageNum: pageUI.value.page,
+  //     pageSize: pageUI.value.rows,
+  //   });
+  // } catch (e) {
+  //   console.log(e);
+  // }
   setLoading(true);
   setTimeout(() => {
     setLoading(false);
