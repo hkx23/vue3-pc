@@ -4,6 +4,7 @@ import { api } from './main';
 
 const Api = {
   GetToken: '/api/auth/oauth2/token',
+  ChangePassword: '/api/auth/user/changePassword',
 };
 
 /**
@@ -50,4 +51,12 @@ export function getToken(params: {
       Authorization: `Basic ${btoa(`${params.client_id}:${params.client_secret}`)}`,
     },
   });
+}
+
+/**
+ * 修改密码
+ * @param params
+ */
+export function changePassword(params: { oldPassword: string; newPassword: string }) {
+  return http.post(Api.ChangePassword, params);
 }

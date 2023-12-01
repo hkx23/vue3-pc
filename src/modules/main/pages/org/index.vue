@@ -5,21 +5,21 @@
         <div class="left-operation-container">
           <t-button @click="onClickAdd">
             <template #icon><add-icon /></template>
-            新增</t-button
+            {{ t('common.button.add') }}</t-button
           >
           <t-button theme="default" @click="onClickEdit">
             <template #icon><edit-icon /></template>
-            编辑</t-button
+            {{ t('common.button.edit') }}</t-button
           >
-          <t-popconfirm content="确认删除吗" @confirm="onClickDelete">
+          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
             <t-button theme="default">
               <template #icon><remove-icon /></template>
-              删除</t-button
+              {{ t('common.button.delete') }}</t-button
             >
           </t-popconfirm>
         </div>
         <div class="search-input">
-          <t-input v-model="filterText" :placeholder="$t('pages.listTree.placeholder')" @change="onInput">
+          <t-input v-model="filterText" :placeholder="t('common.placeholder.input')" @change="onInput">
             <template #suffix-icon>
               <search-icon size="var(--td-comp-size-xxxs)" />
             </template>
@@ -53,7 +53,11 @@
         </div>
       </div>
     </div>
-    <t-dialog v-model:visible="formVisible" header="新增生产组织架构" :on-confirm="onConfirmForm">
+    <t-dialog
+      v-model:visible="formVisible"
+      :header="t('common.dialog.header.add', [t('org.title')])"
+      :on-confirm="onConfirmForm"
+    >
       <org-form ref="formRef" />
     </t-dialog>
   </div>
@@ -71,7 +75,9 @@ import { useLoading } from '@/hooks/modules/loading';
 
 import { FormRef } from './constants';
 import OrgForm from './form.vue';
+import { useLang } from './lang';
 
+const { t } = useLang();
 const formVisible = ref(false);
 const { loading, setLoading } = useLoading();
 const filterByText = ref();
@@ -79,7 +85,7 @@ const filterText = ref();
 
 let orgLevelObject = {};
 const data = ref([]);
-let currActiveData: OrgTreeVO = null;
+const currActiveData = ref<OrgTreeVO>({});
 
 const formRef = ref<FormRef>(null);
 const treeRef = ref();
@@ -88,19 +94,19 @@ const treeActiveKey = ref([]);
 const treeKeys = { value: 'orgCode', label: 'orgName' };
 const columns = [
   {
-    title: '组织编码',
+    title: t('org.orgCode'),
     colKey: 'orgCode',
   },
   {
-    title: '组织名称',
+    title: t('org.orgName'),
     colKey: 'orgName',
   },
   {
-    title: '组织备注',
+    title: t('org.orgDesc'),
     colKey: 'orgDesc',
   },
   {
-    title: '组织类型',
+    title: t('org.levelName'),
     colKey: 'levelName',
     // @ts-ignore
     cell: (_h: any, { row }) => {
@@ -109,11 +115,11 @@ const columns = [
     },
   },
   {
-    title: '更新人',
+    title: t('org.modifier'),
     colKey: 'modifier',
   },
   {
-    title: '更新时间',
+    title: t('org.timeModified'),
     colKey: 'timeModified',
     cell: (h, { col, row }) => <div>{dayjs(row[col.colKey]).format('YYYY-MM-DD HH:mm:ss')}</div>,
   },
@@ -127,7 +133,7 @@ onMounted(() => {
 watch(treeActiveKey, () => {
   if (treeRef?.value && !isEmpty(treeActiveKey.value)) {
     const activeNode = treeRef.value.getTreeData(treeActiveKey.value[0]);
-    currActiveData = activeNode[0] as OrgTreeVO;
+    currActiveData.value = activeNode[0] as OrgTreeVO;
     data.value = activeNode[0].children?.length > 0 ? activeNode[0].children : activeNode;
   } else {
     data.value = treeData.value;
@@ -157,12 +163,22 @@ const flatten = (tree: OrgTreeVO[]) => {
 
 const parentOrgName = computed(() => {
   let name = '';
-  let parentOrg = flattenOrgObj[currActiveData.parentOrgId];
+  let parentOrg = flattenOrgObj[currActiveData.value.parentOrgId];
   while (parentOrg) {
     name = `${parentOrg.orgName}/${name}`;
     parentOrg = flattenOrgObj[parentOrg.parentOrgId];
   }
   return name;
+});
+
+const parentOrgLevels = computed<string[]>(() => {
+  let levels = [];
+  let parentOrg = flattenOrgObj[currActiveData.value.parentOrgId];
+  while (parentOrg) {
+    levels = [parentOrg.levelCode, ...levels];
+    parentOrg = flattenOrgObj[parentOrg.parentOrgId];
+  }
+  return levels;
 });
 
 const fetchOrgLevelDic = async () => {
@@ -182,26 +198,33 @@ const onInput = () => {
 
 const onClickAdd = () => {
   const { reset } = formRef.value;
-  reset(false, currActiveData, parentOrgName.value + currActiveData.orgName);
+  reset(
+    false,
+    currActiveData.value,
+    (parentOrgName.value || '') + (currActiveData.value.orgName || ''),
+    isEmpty(currActiveData.value.levelCode)
+      ? parentOrgLevels.value
+      : [...parentOrgLevels.value, currActiveData.value.levelCode],
+  );
   formVisible.value = true;
 };
 
 const onClickEdit = () => {
   const { reset } = formRef.value;
 
-  reset(true, currActiveData, parentOrgName.value.replace(/\/$/, ''));
+  reset(true, currActiveData.value, parentOrgName.value?.replace(/\/$/, ''), parentOrgLevels.value);
   formVisible.value = true;
 };
 
 const onClickDelete = async () => {
   console.log('onClickDelete');
-  if (!currActiveData?.id) {
-    MessagePlugin.warning('请选择行之后再尝试操作');
+  if (!currActiveData.value?.id) {
+    MessagePlugin.warning(t('common.message.selectRowTryAgain'));
     return;
   }
-  await api.org.delete({ id: currActiveData.id });
-  currActiveData = null;
-  MessagePlugin.success('删除成功');
+  await api.org.delete({ id: currActiveData.value.id });
+  currActiveData.value = null;
+  MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchData();
 };
 
