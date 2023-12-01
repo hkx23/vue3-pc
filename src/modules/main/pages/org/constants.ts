@@ -6,5 +6,5 @@ import { OrgTreeVO } from '@/api/main';
 export interface FormRef {
   form: Ref<FormInstanceFunctions>;
   submit: () => Promise<void>;
-  reset: (isEdit: boolean, data?: OrgTreeVO, parentOrgName?: string) => void;
+  reset: (isEdit: boolean, data?: OrgTreeVO, parentOrgName?: string, parentOrgLevels?: string[]) => void;
 }
