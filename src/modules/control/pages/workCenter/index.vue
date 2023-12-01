@@ -502,6 +502,7 @@ const onClickEdit = (row: any) => {
 };
 // 添加父
 const onAddChilde = (row) => {
+  newArr.value = '';
   detailedShow.value = true;
   typeDetailed.value = 4;
   workCenterId.value = { parentWcId: row.id };
