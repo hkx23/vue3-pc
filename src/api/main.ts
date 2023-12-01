@@ -974,6 +974,10 @@ export interface ObjectPropertyCategorySearch {
    * @format int32
    */
   pageSize?: number;
+  /** 左侧列表模糊关键词 */
+  keyword?: string;
+  /** 扩展属性分类-状态 */
+  state?: number[];
   id?: string;
   /** 多个id */
   ids?: string[];
@@ -1501,15 +1505,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isBatchName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -1986,8 +1990,12 @@ export interface DefectCodeVO {
   levelSeq?: number;
   /** 不合格分类 */
   classification?: string;
-  isState?: boolean;
+  /** 前端按钮样式 */
+  themeButton?: string;
+  /** 子元素 */
+  child?: DefectCodeVO[];
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -2410,6 +2418,19 @@ export interface ResultPagingDataLong {
   message?: string;
   /** 响应数据 */
   data?: PagingDataLong;
+}
+
+/** 通用响应类 */
+export interface ResultListDefectCodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DefectCodeVO[] | null;
 }
 
 /** 显示行政组织层级实体 */
@@ -3185,8 +3206,23 @@ export const api = {
      * No description
      *
      * @tags 领域对象扩展属性分类
+     * @name GetObjectList
+     * @summary 查询左侧object列表
+     * @request POST:/objectPropertyCategory/getObjectList
+     * @secure
+     */
+    getObjectList: (data: ObjectPropertyCategorySearch) =>
+      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(`/api/main/objectPropertyCategory/getObjectList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域对象扩展属性分类
      * @name GetObjectCategoryList
-     * @summary 查询领域对象分类列表
+     * @summary 查询各object的扩展属性
      * @request POST:/objectPropertyCategory/getObjectCategoryList
      * @secure
      */
@@ -3234,24 +3270,6 @@ export const api = {
           body: data as any,
         },
       ),
-
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
-     * @name GetObjectList
-     * @summary 查询领域对象列表
-     * @request GET:/objectPropertyCategory/getObjectList
-     * @secure
-     */
-    getObjectList: (query?: {
-      /** @default "" */
-      keyword?: string;
-    }) =>
-      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(`/api/main/objectPropertyCategory/getObjectList`, {
-        method: 'GET',
-        params: query,
-      }),
 
     /**
      * No description
@@ -3913,6 +3931,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/defectCode/addDefectCode`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name Tree
+     * @summary 获取缺陷树
+     * @request GET:/defectCode/tree
+     * @secure
+     */
+    tree: () =>
+      http.request<ResultListDefectCodeVO['data']>(`/api/main/defectCode/tree`, {
+        method: 'GET',
       }),
   },
   customer: {
