@@ -896,6 +896,28 @@ export interface ResultOrg {
   data?: Org;
 }
 
+export interface ObjectPropertyCategorySearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 左侧列表模糊关键词 */
+  keyword?: string;
+  /** 扩展属性分类-状态 */
+  state?: number[];
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+  /** 领域编码 */
+  objectCode?: string;
+}
+
 /** 领域对象扩展属性分类 */
 export interface ObjectPropertyCategoryVO {
   id?: string;
@@ -961,28 +983,6 @@ export interface ResultPagingDataObjectPropertyCategoryVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataObjectPropertyCategoryVO;
-}
-
-export interface ObjectPropertyCategorySearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 左侧列表模糊关键词 */
-  keyword?: string;
-  /** 扩展属性分类-状态 */
-  state?: number[];
-  id?: string;
-  /** 多个id */
-  ids?: string[];
-  /** 领域编码 */
-  objectCode?: string;
 }
 
 /** 领域扩展属性 */
@@ -1505,15 +1505,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isInProcessChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
   isProductChecked?: boolean;
-  isRawName?: string;
+  isInProcessChecked?: boolean;
   isProductName?: string;
+  isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -1680,8 +1680,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1843,13 +1843,59 @@ export interface DefectDealMethodSearch {
    * @format int32
    */
   pageSize?: number;
+  /** 缺陷处理方法类别 */
+  dealMethodType?: string;
   id?: string;
   /** 多个id */
   ids?: string[];
+  defectDealMethod?: string;
+}
+
+/** 缺陷处理方法 */
+export interface DefectDealMethod {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 处理方法代码 */
+  methodCode?: string;
+  /** 处理方法名称 */
+  methodName?: string;
+  /** 处理方法类别 */
+  dealMethodType?: string;
 }
 
 /** 显示缺陷处理方法 */
-export type DefectDealMethodVO = object;
+export interface DefectDealMethodVO {
+  id?: string;
+  /** 处理方法代码 */
+  methodCode?: string;
+  /** 处理方法名称 */
+  methodName?: string;
+  /** 缺陷处理方法类别 */
+  dealMethodType?: string;
+  /** 缺陷处理方法类别名称 */
+  dealMethodTypeName?: string;
+}
 
 /** 响应数据 */
 export type PagingDataDefectDealMethodVO = {
@@ -2309,6 +2355,26 @@ export interface ResultListObjectPropertyCategory {
   message?: string;
   /** 响应数据 */
   data?: ObjectPropertyCategory[] | null;
+}
+
+/** 响应数据 */
+export type PagingDataObjectPropertyCategory = {
+  list?: ObjectPropertyCategory[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataObjectPropertyCategory {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataObjectPropertyCategory;
 }
 
 /** 响应数据 */
@@ -3191,21 +3257,6 @@ export const api = {
      * No description
      *
      * @tags 领域对象扩展属性分类
-     * @name Search
-     * @summary 获取领域对象扩展属性分类用
-     * @request POST:/objectPropertyCategory/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(`/api/main/objectPropertyCategory/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
      * @name GetObjectList
      * @summary 查询左侧object列表
      * @request POST:/objectPropertyCategory/getObjectList
@@ -3303,6 +3354,21 @@ export const api = {
      */
     getListByObjectName: (query: { objectCode: string }) =>
       http.request<ResultListObjectPropertyCategory['data']>(`/api/main/objectPropertyCategory/getListByObjectName`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领域对象扩展属性分类
+     * @name GetCategory
+     * @summary 获取领域对象扩展属性分类用
+     * @request GET:/objectPropertyCategory/getCategory
+     * @secure
+     */
+    getCategory: (query: { objectCode: string }) =>
+      http.request<ResultPagingDataObjectPropertyCategory['data']>(`/api/main/objectPropertyCategory/getCategory`, {
         method: 'GET',
         params: query,
       }),
@@ -3831,6 +3897,51 @@ export const api = {
      * No description
      *
      * @tags 缺陷处理方法
+     * @name RemoveDefectDealMethod
+     * @summary 删除缺陷处理方法
+     * @request POST:/defectDealMethod/removeDefectDealMethod
+     * @secure
+     */
+    removeDefectDealMethod: (data: DefectDealMethodSearch) =>
+      http.request<ResultObject['data']>(`/api/main/defectDealMethod/removeDefectDealMethod`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷处理方法
+     * @name RemoveDefectDealMethodBatch
+     * @summary 批量删除缺陷处理方法
+     * @request POST:/defectDealMethod/removeDefectDealMethodBatch
+     * @secure
+     */
+    removeDefectDealMethodBatch: (data: DefectDealMethodSearch) =>
+      http.request<ResultObject['data']>(`/api/main/defectDealMethod/removeDefectDealMethodBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷处理方法
+     * @name ModifyDefectDealMethod
+     * @summary 编辑缺陷代码
+     * @request POST:/defectDealMethod/modifyDefectDealMethod
+     * @secure
+     */
+    modifyDefectDealMethod: (data: DefectDealMethod) =>
+      http.request<ResultObject['data']>(`/api/main/defectDealMethod/modifyDefectDealMethod`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷处理方法
      * @name GetList
      * @summary 查询缺陷处理方法
      * @request POST:/defectDealMethod/getList
@@ -3838,6 +3949,21 @@ export const api = {
      */
     getList: (data: DefectDealMethodSearch) =>
       http.request<ResultPagingDataDefectDealMethodVO['data']>(`/api/main/defectDealMethod/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷处理方法
+     * @name AddDefectDealMethod
+     * @summary 新增缺陷代码
+     * @request POST:/defectDealMethod/addDefectDealMethod
+     * @secure
+     */
+    addDefectDealMethod: (data: DefectDealMethod) =>
+      http.request<ResultObject['data']>(`/api/main/defectDealMethod/addDefectDealMethod`, {
         method: 'POST',
         body: data as any,
       }),
