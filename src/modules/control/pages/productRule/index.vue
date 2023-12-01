@@ -225,7 +225,7 @@ const opts = computed(() => {
         `${t('business.main.mitemCategoryCode')}/${t('business.main.mitemCategoryName')}`,
       ]),
     },
-    mitem: {
+    mitemCode: {
       label: t('business.main.mitemCode'),
       comp: 't-input',
       defaultVal: '',

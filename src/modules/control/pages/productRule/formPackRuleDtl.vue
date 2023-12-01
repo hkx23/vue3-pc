@@ -149,7 +149,7 @@ const setRow = (
       // 编辑模式
       formData.id = packRuleDtlRow.id;
       formData.packType = packRuleDtlRow.packType;
-      formData.uom = packRuleDtlRow.uomSymbol;
+      formData.uom = packRuleDtlRow.uom;
       formData.packQty = 1;
       formData.packLevel = 1;
     }
