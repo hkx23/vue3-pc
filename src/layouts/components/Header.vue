@@ -241,7 +241,7 @@ const onClickFullScreen = () => {
 
 .header-logo-container {
   width: 184px;
-  height: 26px;
+  height: 32px;
   display: flex;
   margin-left: 24px;
   color: var(--td-text-color-primary);
@@ -249,6 +249,7 @@ const onClickFullScreen = () => {
   .t-logo {
     width: 100%;
     height: 100%;
+    fill: white;
 
     &:hover {
       cursor: pointer;

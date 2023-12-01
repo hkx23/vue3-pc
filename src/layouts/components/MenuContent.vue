@@ -104,3 +104,17 @@ const openHref = (url: string) => {
   window.open(url);
 };
 </script>
+
+<style lang="less" scoped>
+.t-menu__item {
+  color: white;
+}
+
+.t-menu__item.t-is-active {
+  background-color: #0d2ed4;
+}
+
+.t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled) {
+  background-color: #0d2ed486;
+}
+</style>
