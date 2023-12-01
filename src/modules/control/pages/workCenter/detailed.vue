@@ -255,10 +255,6 @@ const onTypeList = () => {
       item.show = false;
     }
   });
-  console.log(props.wordCenterId);
-
-  console.log('激怒人', props.wordCenterId.state);
-  console.log('激怒人2', formData.state);
   if (props.wordCenterId.state === 1) {
     formData.checked = true;
   } else {
@@ -280,7 +276,6 @@ const onHandleCur = (all) => {
       formData.category = item.opId;
       formData.wcType = item.wcType;
       formData.wcObjectType = item.opId;
-      console.log(formData.category);
     } else {
       item.show = false;
     }
@@ -387,6 +382,7 @@ const clearFrom = () => {
   formData.id = ''; // 父亲id
   formData.wcObjectId = ''; // 设备类型id
   formData.wcSeq = 0; // 默认为0
+  formData.wcObjectType = 0;
 };
 const rules: FormRules<Data> = {
   wcCode: [

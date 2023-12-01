@@ -151,7 +151,7 @@
         </template>
         <template #op="{ row }">
           <t-icon
-            v-if="row.status == 'Download' || row.status == 'Scheduled' || row.status == 'Ready'"
+            v-if="row.status == 'DOWNLOAD' || row.status == 'SCHEDULED' || row.status == 'READY'"
             name="edit"
             @click="onEditRoutingClick(row)"
           />
