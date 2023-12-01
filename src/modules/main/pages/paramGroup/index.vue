@@ -50,8 +50,8 @@
                 </t-row>
                 <div class="table-container">
                   <t-row justify="space-between">
-                    <t-col :span="1">
-                      <div>是否全局</div>
+                    <t-col :span="0.5">
+                      <div>全局</div>
                     </t-col>
                     <t-col :span="2">
                       <div>参数编码</div>
@@ -65,7 +65,10 @@
                     <t-col :span="2">
                       <div>描述</div>
                     </t-col>
-                    <t-col :span="2">
+                    <t-col :span="1">
+                      <div>顺序</div>
+                    </t-col>
+                    <t-col :span="1">
                       <div></div>
                     </t-col>
                   </t-row>
@@ -73,12 +76,12 @@
                     ref="el"
                     v-model="dataTable"
                     :handle="'.table-row'"
-                    :disabled="true"
+                    :disabled="false"
                     @start="ondragStart"
                     @end="ondragEnd"
                   >
                     <t-row v-for="(item, index) in dataTable" :key="index" class="table-row" justify="space-between">
-                      <t-col :span="1">
+                      <t-col :span="0.5">
                         <t-checkbox v-model="item.isGlobal"> </t-checkbox>
                       </t-col>
                       <t-col :span="2">
@@ -125,7 +128,16 @@
                       <t-col :span="2">
                         <t-input v-model="item.paramDesc" placeholder="请输入内容" />
                       </t-col>
-                      <t-col :span="2">
+                      <t-col :span="1">
+                        <t-input-number
+                          v-model="item.seq"
+                          class="param-input-seq"
+                          :decimal-places="0"
+                          theme="normal"
+                          placeholder="请输入"
+                        />
+                      </t-col>
+                      <t-col :span="1">
                         <div>
                           <t-space>
                             <t-icon v-if="SelectNode.isSys == '0'" name="add" @click="onAddParam(item)" />
@@ -393,7 +405,7 @@ const sortTable = () => {
   const rowIndex = ref(1);
   if (dataTable.value) {
     dataTable.value.forEach((element) => {
-      element.seq = rowIndex.value;
+      // element.seq = rowIndex.value; 暂时采用手动输入顺序的方式，因此代码先注释
       element.oid = element.isGlobal === true ? '0' : ''; // 0表示全局
       rowIndex.value++;
     });
@@ -543,7 +555,7 @@ onMounted(() => {
   margin: 8px;
 
   .t-col {
-    margin: 2px;
+    margin: 1px;
   }
 }
 
@@ -553,5 +565,11 @@ onMounted(() => {
 
 .button-save {
   margin-top: 20px;
+}
+
+.param-input-seq {
+  .t-input-number {
+    width: 54px;
+  }
 }
 </style>
