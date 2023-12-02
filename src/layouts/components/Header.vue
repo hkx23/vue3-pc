@@ -37,7 +37,7 @@
               }}</t-dropdown-item></t-dropdown-menu
             >
           </t-dropdown>
-          <t-dropdown :min-column-width="135" trigger="click">
+          <t-dropdown :min-column-width="140" trigger="click">
             <template #dropdown>
               <t-dropdown-menu>
                 <t-dropdown-item class="operations-dropdown-container-item" @click="handleNav('/user/index')">
@@ -156,6 +156,7 @@ const menuCls = computed(() => {
   ];
 });
 const menuTheme = computed(() => props.theme as 'light' | 'dark');
+// const menuTheme = 'dark';
 
 // 切换语言
 const { changeLocale } = useLocale();

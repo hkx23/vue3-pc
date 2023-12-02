@@ -78,7 +78,7 @@ const flatten = (routers: RouteItem[]) => {
   routers?.forEach((router) => {
     if (router?.children && router.children.length > 0) {
       flatten(router?.children);
-    } else {
+    } else if (router?.meta?.frameSrc) {
       flattenRouters.value.push({
         label: router.path,
         text: renderMenuTitle(router.meta?.title || router.name || router.path),
