@@ -14,15 +14,20 @@
         :table-data="tableData"
         :loading="loading"
         :total="dataTotal"
-        select-on-row-click
         :header-affixed-top="true"
+        :page-affixed-top="true"
         @refresh="conditionEnter"
       >
         <template #op="{ row }">
-          <t-space> 编辑 权限 成员 删除{{ row.id }} </t-space>
+          <t-space :size="8">
+            <t-link theme="primary" @click="onRowEdit(row)">编辑</t-link>
+            <t-link theme="primary" @click="onRowPermission(row)">权限</t-link>
+            <t-link theme="primary" @click="onRowPerson(row)">成员</t-link>
+            <t-link theme="primary" @click="onRowDelete(row)">删除</t-link>
+          </t-space>
         </template>
-        <template #oprate>
-          <t-button shape="square" variant="outline" @click="onAddClick"> 新增 </t-button>
+        <template #button>
+          <t-button theme="primary" @click="onAddClick"> 新增 </t-button>
         </template>
       </tm-table>
     </div>
@@ -61,7 +66,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'op',
     title: `${t('common.button.operation')}`,
-    width: '150px',
+    width: '200px',
     align: 'left',
     fixed: 'right',
   },
@@ -69,16 +74,26 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
 // 查询组件
 const opts = computed(() => {
   return {
-    eId: {
-      label: t('role.eId'),
+    oid: {
+      label: t('role.org'),
       comp: 'tm-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'enterprise',
+        type: 'plant',
         showTitle: false,
       },
     },
+    // eId: {
+    //   label: t('role.eId'),
+    //   comp: 'tm-select-business',
+    //   event: 'business',
+    //   defaultVal: '',
+    //   bind: {
+    //     type: 'enterprise',
+    //     showTitle: false,
+    //   },
+    // },
     roleName: {
       label: t('role.roleName'),
       comp: 't-input',
@@ -88,16 +103,6 @@ const opts = computed(() => {
       label: t('role.roleCode'),
       comp: 't-input',
       defaultVal: '',
-    },
-    plant: {
-      label: t('role.org'),
-      comp: 'tm-select-business',
-      event: 'business',
-      defaultVal: '',
-      bind: {
-        type: 'plant',
-        showTitle: false,
-      },
     },
   };
 });
@@ -113,7 +118,9 @@ const conditionEnter = (data: any) => {
       value: data[key],
     };
     if (key === 'roleName') addFilter.operator = 'LIKE';
-    filterList.push(addFilter);
+    if (addFilter.value) {
+      filterList.value.push(addFilter);
+    }
   }
 
   fetchTable();
@@ -146,7 +153,19 @@ const fetchTable = async () => {
     setLoading(false);
   }
 };
+const onRowEdit = (row: any) => {
+  console.log('编辑', row);
+};
 
+const onRowPermission = (row: any) => {
+  console.log('编辑', row);
+};
+const onRowDelete = (row: any) => {
+  console.log('编辑', row);
+};
+const onRowPerson = (row: any) => {
+  console.log('编辑', row);
+};
 const onAddClick = () => {
   console.log('新增');
 };

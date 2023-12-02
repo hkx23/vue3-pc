@@ -1,57 +1,53 @@
 <template>
-  <div class="table-tree-container">
-    <div class="list-tree-content">
-      <div class="list-common-table">
-        <t-row justify="space-between">
-          <t-col>
-            <div>
-              <t-input v-model="keyword" label="物料类别：" placeholder="请输入类别编码/名称" clearable />
-            </div>
-          </t-col>
-          <t-col flex="170px">
-            <div>
-              <t-button @click="onRefresh">查询</t-button>
-              <t-button theme="default" @click="onReset">重置</t-button>
-            </div>
-          </t-col>
-        </t-row>
-        <t-row style="margin-top: 10px">
-          <t-button theme="default" @click="onImport">导入</t-button>
-        </t-row>
-        <t-row justify="space-between">
-          <tm-table
-            ref="tableRef"
-            v-model:pagination="pageUI"
-            row-key="id"
-            :table-column="tableMitemCategoryColumns"
-            :table-data="tableDataMitemCategory"
-            :loading="loading"
-            :total="dataTotal"
-            select-on-row-click
-            @refresh="fetchTable"
-            @select-change="onSelectMitemCategoryChange"
-          >
-            <template #op="slotProps">
-              <t-space>
-                <t-icon name="edit" @click="onEditRowClick(slotProps)" />
-                <t-icon name="delete" @click="onDeleteRowClick(slotProps)" />
-              </t-space>
-            </template>
-          </tm-table>
-        </t-row>
-        <t-row style="margin-top: 10px">
-          <tm-table
-            v-model:pagination="pageMitem"
-            row-key="id"
-            :total="mitemTotal"
-            :table-column="tableMitemColumns"
-            :table-data="tableDataMitem"
-            :loading="loadingMitem"
-            @refresh="fetchMitemTable"
-          >
-          </tm-table>
-        </t-row>
-      </div>
+  <div class="main-page">
+    <div class="main-page-content">
+      <t-row justify="space-between">
+        <t-col>
+          <div>
+            <t-input v-model="keyword" label="物料类别：" placeholder="请输入类别编码/名称" clearable />
+          </div>
+        </t-col>
+        <t-col flex="170px">
+          <div>
+            <t-button @click="onRefresh">查询</t-button>
+            <t-button theme="default" @click="onReset">重置</t-button>
+          </div>
+        </t-col>
+      </t-row>
+    </div>
+    <div class="main-page-content">
+      <tm-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="tableMitemCategoryColumns"
+        :table-data="tableDataMitemCategory"
+        :loading="loading"
+        :total="dataTotal"
+        select-on-row-click
+        @refresh="fetchTable"
+        @select-change="onSelectMitemCategoryChange"
+      >
+        <template #button> <t-button theme="primary" @click="onImport">导入</t-button></template>
+        <template #op="slotProps">
+          <t-space>
+            <t-icon name="edit" @click="onEditRowClick(slotProps)" />
+            <t-icon name="delete" @click="onDeleteRowClick(slotProps)" />
+          </t-space>
+        </template>
+      </tm-table>
+    </div>
+    <div class="main-page-content">
+      <tm-table
+        v-model:pagination="pageMitem"
+        row-key="id"
+        :total="mitemTotal"
+        :table-column="tableMitemColumns"
+        :table-data="tableDataMitem"
+        :loading="loadingMitem"
+        @refresh="fetchMitemTable"
+      >
+      </tm-table>
     </div>
   </div>
 

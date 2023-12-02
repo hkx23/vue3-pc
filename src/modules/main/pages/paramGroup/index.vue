@@ -1,5 +1,5 @@
 <template>
-  <div class="table-tree-container">
+  <div class="main-page">
     <div class="list-tree-content">
       <div class="list-common-table">
         <t-row justify="space-between">

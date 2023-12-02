@@ -1,5 +1,5 @@
 <template>
-  <div class="module-tree-container">
+  <div class="main-page">
     <t-card :bordered="false">
       <t-button @click="onAddFirstNode">新增</t-button>
       <header class="module-header-box">
