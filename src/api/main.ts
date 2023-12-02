@@ -926,6 +926,11 @@ export interface ObjectPropertyCategoryVO {
   paramCode?: string;
   /** 字典值 */
   paramValue?: string;
+  /** 字典组名称 */
+  getParamGroupName?: string;
+  /** 领域属性名称 */
+  objectCode?: string;
+  categoryId?: string;
   /** 属性代码 */
   propertyCode?: string;
   /** 属性值类型 */
@@ -952,10 +957,21 @@ export interface ObjectPropertyCategoryVO {
    * @format int32
    */
   needValidation?: number;
+  /** 校验的正则表达式 */
+  validExpression?: string;
+  /** 扩展属性数据来源 */
+  dataSource?: string;
+  /** 数据取值路径 */
+  dataSourcePath?: string;
+  /** 备注 */
+  memo?: string;
+  /**
+   * 是否数据源多选
+   * @format int32
+   */
+  isDataMultiple?: number;
   /** 领域属性分类名称 */
   categoryName?: string;
-  /** 领域属性名称 */
-  objectCode?: string;
 }
 
 /** 响应数据 */
@@ -1498,15 +1514,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
-  isInProcessName?: string;
-  isState?: boolean;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -1673,8 +1689,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
