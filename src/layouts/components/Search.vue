@@ -7,15 +7,11 @@
       :placeholder="$t('layout.searchPlaceholder')"
       @blur="changeSearchFocus(false)"
       @focus="changeSearchFocus(true)"
+      @enter="onEnterSearch"
+      @select="onSelectSearch"
     >
       <template #prefix-icon>
         <t-icon class="icon" name="search" size="16" />
-      </template>
-
-      <template #option="{ option }">
-        <div @click="onClickMenu(option)">
-          {{ option.text }}
-        </div>
       </template>
     </t-auto-complete>
   </div>
@@ -37,15 +33,11 @@
       :placeholder="$t('layout.searchPlaceholder')"
       :autofocus="isSearchFocus"
       @blur="changeSearchFocus(false)"
+      @enter="onEnterSearch"
+      @select="onSelectSearch"
     >
       <template #prefix-icon>
         <t-icon name="search" size="16" />
-      </template>
-
-      <template #option="{ option }">
-        <div @click="onClickMenu(option)">
-          {{ option.text }}
-        </div>
       </template>
     </t-auto-complete>
   </div>
@@ -67,11 +59,7 @@ defineProps({
 const permissionStore = usePermissionStore();
 const { routers } = storeToRefs(permissionStore);
 
-interface menuItem {
-  label: string;
-  text: string;
-}
-const flattenRouters = ref<menuItem[]>([]);
+const flattenRouters = ref<string[]>([]);
 const flattenRouterObj: { [key: string]: RouteItem } = {};
 
 const flatten = (routers: RouteItem[]) => {
@@ -79,11 +67,9 @@ const flatten = (routers: RouteItem[]) => {
     if (router?.children && router.children.length > 0) {
       flatten(router?.children);
     } else if (router?.meta?.frameSrc) {
-      flattenRouters.value.push({
-        label: router.path,
-        text: renderMenuTitle(router.meta?.title || router.name || router.path),
-      });
-      flattenRouterObj[router.path] = router;
+      const title = renderMenuTitle(router.meta?.title || router.name || router.path);
+      flattenRouters.value.push(title);
+      flattenRouterObj[title] = router;
     }
   });
 };
@@ -100,9 +86,13 @@ const changeSearchFocus = (value: boolean) => {
 };
 const router = useRouter();
 
-const onClickMenu = (option: menuItem) => {
-  const route = flattenRouterObj[option.label];
+const onSelectSearch = (value) => {
+  const route = flattenRouterObj[value];
   router.push(route);
+};
+
+const onEnterSearch = ({ value }) => {
+  onSelectSearch(value);
 };
 </script>
 <style lang="less" scoped>
