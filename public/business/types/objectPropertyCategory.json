@@ -1,0 +1,29 @@
+{
+  "title": "领域对象扩展属性分类",
+  "placeholder": "请选择分类：",
+  "url": "/api/main/objectPropertyCategory/items",
+  "httptype": "POST",
+  "category": "objectCode",
+  "columns": [
+    {
+      "title": "领域名称编码",
+      "key": "objectCode",
+      "align": "center"
+    },
+    {
+      "title": "类别编码",
+      "key": "categoryCode",
+      "align": "center"
+    },
+    {
+      "title": "类别名称",
+      "key": "categoryName",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "categoryName"
+  }
+}
