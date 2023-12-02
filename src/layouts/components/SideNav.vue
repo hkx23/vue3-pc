@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 import union from 'lodash/union';
+import { DialogPlugin } from 'tdesign-vue-next';
 import type { PropType } from 'vue';
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -130,7 +131,16 @@ const orgOptions = computed(() => {
 });
 
 const onClickOrg = (data) => {
-  userStore.setOrgId(data.value);
+  const alertDia = DialogPlugin({
+    theme: 'warning',
+    header: '警告',
+    body: '切换组织将会导致页面刷新，请确认数据是否保存！',
+    onConfirm: () => {
+      userStore.setOrgId(data.value);
+      alertDia.destroy();
+      window.location.reload();
+    },
+  });
 };
 
 const autoCollapsed = () => {
