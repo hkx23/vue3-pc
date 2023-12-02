@@ -12,14 +12,14 @@
       "align": "center"
     },
     {
-      "title": "计量单位符号",
-      "key": "uomSymbol",
+      "title": "计量单位名称",
+      "key": "uomName",
       "align": "center"
     }
   ],
   "rowKey": "id",
   "keywords": {
     "value": "id",
-    "label": "uomSymbol"
+    "label": "uomName"
   }
 }

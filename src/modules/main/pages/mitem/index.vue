@@ -1,60 +1,59 @@
 <template>
-  <div class="table-tree-container">
-    <div class="list-tree-content">
-      <div class="list-common-table">
-        <t-row justify="space-between">
-          <t-col flex="220px">
-            <t-input
-              v-model="keyword"
-              :label="t('business.main.mitemCode')"
-              :placeholder="
-                t('common.placeholder.input', [t('business.main.mitemCode') + '/' + t('business.main.mitemName')])
-              "
-            />
-          </t-col>
-          <t-col flex="20px" />
-          <t-col flex="220px">
-            <t-input
-              v-model="mitemCategoryKeyword"
-              :label="t('business.main.mitemCategoryCode')"
-              :placeholder="
-                t('common.placeholder.input', [
-                  t('business.main.mitemCategoryCode') + '/' + t('business.main.mitemCategoryName'),
-                ])
-              "
-            />
-          </t-col>
-          <t-col flex="auto" />
-          <t-col flex="170px">
-            <div>
-              <t-button @click="onRefresh">{{ t('common.button.search') }}</t-button>
-              <t-button theme="default" @click="onReset">{{ t('common.button.reset') }}</t-button>
-            </div>
-          </t-col>
-        </t-row>
-        <t-row style="margin-top: 10px">
-          <t-checkbox-group v-model="mitemTypeSelect" :options="mitemTypeOptions" />
-        </t-row>
-
-        <t-row justify="space-between">
-          <tm-table
-            v-model:pagination="pageUI"
-            row-key="id"
-            :table-column="tableMitemColumns"
-            :table-data="tableDataMitem"
-            :loading="loading"
-            :total="dataTotal"
-            :resizable="true"
-            @refresh="fetchTable"
-          >
-            <template #op="slotProps">
-              <t-space>
-                <t-icon name="edit" @click="onEditRowClick(slotProps)" />
-              </t-space>
-            </template>
-          </tm-table>
-        </t-row>
-      </div>
+  <div class="main-page">
+    <div class="main-page-content">
+      <t-row justify="space-between">
+        <t-col flex="220px">
+          <t-input
+            v-model="keyword"
+            :label="t('business.main.mitemCode')"
+            :placeholder="
+              t('common.placeholder.input', [t('business.main.mitemCode') + '/' + t('business.main.mitemName')])
+            "
+          />
+        </t-col>
+        <t-col flex="20px" />
+        <t-col flex="220px">
+          <t-input
+            v-model="mitemCategoryKeyword"
+            :label="t('business.main.mitemCategoryCode')"
+            :placeholder="
+              t('common.placeholder.input', [
+                t('business.main.mitemCategoryCode') + '/' + t('business.main.mitemCategoryName'),
+              ])
+            "
+          />
+        </t-col>
+        <t-col flex="auto" />
+        <t-col flex="170px">
+          <div>
+            <t-button @click="onRefresh">{{ t('common.button.search') }}</t-button>
+            <t-button theme="default" @click="onReset">{{ t('common.button.reset') }}</t-button>
+          </div>
+        </t-col>
+      </t-row>
+      <t-row style="margin-top: 10px">
+        <t-checkbox-group v-model="mitemTypeSelect" :options="mitemTypeOptions" />
+      </t-row>
+    </div>
+    <div class="main-page-content">
+      <t-row justify="space-between">
+        <tm-table
+          v-model:pagination="pageUI"
+          row-key="id"
+          :table-column="tableMitemColumns"
+          :table-data="tableDataMitem"
+          :loading="loading"
+          :total="dataTotal"
+          :resizable="true"
+          @refresh="fetchTable"
+        >
+          <template #op="slotProps">
+            <t-space>
+              <t-icon name="edit" @click="onEditRowClick(slotProps)" />
+            </t-space>
+          </template>
+        </tm-table>
+      </t-row>
     </div>
   </div>
   <div>

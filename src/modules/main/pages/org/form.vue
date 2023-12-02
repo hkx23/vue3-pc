@@ -1,22 +1,29 @@
 <template>
-  <t-form ref="formRef" :rules="FORM_RULES" :data="formData" :show-cancel="true" :show-error-message="false">
-    <t-form-item label="层级" name="parentLevelId">
+  <t-form
+    ref="formRef"
+    :rules="FORM_RULES"
+    :data="formData"
+    :show-cancel="true"
+    :show-error-message="false"
+    :label-width="135"
+  >
+    <t-form-item :label="t('org.parentOrgName')" name="parentLevelId">
       {{ formData.parentOrgName }}
     </t-form-item>
-    <t-form-item label="组织类型" name="levelCode">
+    <t-form-item :label="t('org.levelName')" name="levelCode">
       <t-select v-model="formData.levelCode" clearable>
         <t-option v-for="(item, index) in orgLevelOptions" :key="index" :value="item.value" :label="item.label">
           {{ item.label }}
         </t-option>
       </t-select>
     </t-form-item>
-    <t-form-item label="组织编码" name="orgCode">
+    <t-form-item :label="t('org.orgCode')" name="orgCode">
       <t-input v-model="formData.orgCode" clearable />
     </t-form-item>
-    <t-form-item label="组织名称" name="orgName">
+    <t-form-item :label="t('org.orgName')" name="orgName">
       <t-input v-model="formData.orgName" clearable />
     </t-form-item>
-    <t-form-item label="组织备注" name="orgDesc">
+    <t-form-item :label="t('org.orgDesc')" name="orgDesc">
       <t-textarea v-model="formData.orgDesc" clearable />
     </t-form-item>
     <t-divider>扩展属性</t-divider>
@@ -29,17 +36,19 @@ export default {
 </script>
 <script setup lang="ts">
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
-import { onMounted, reactive, Ref, ref } from 'vue';
+import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
-import { api, Org, OrgTreeVO } from '@/api/main';
+import { api, Org, OrgLevelTreeVO, OrgTreeVO } from '@/api/main';
 
 import { FormRef } from './constants';
+import { useLang } from './lang';
 
+const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const FORM_RULES = {
-  levelCode: [{ required: true, message: '组织类型必选' }],
-  orgCode: [{ required: true, message: '组织编码必选' }],
-  orgName: [{ required: true, message: '组织名称必选' }],
+  levelCode: [{ required: true, message: t('common.placeholder.input', [t('org.levelName')]) }],
+  orgCode: [{ required: true, message: t('common.placeholder.input', [t('org.orgCode')]) }],
+  orgName: [{ required: true, message: t('common.placeholder.input', [t('org.orgName')]) }],
 };
 
 interface OrgForm extends Org {
@@ -54,14 +63,44 @@ const formData: OrgForm = reactive({
   orgName: '',
   orgDesc: '',
 });
-const orgLevelOptions = ref<{ value?: string; label?: string }[]>([]);
+
+const orgLevelOptions = computed(() => {
+  if (!orgLevel.value || orgLevel.value.length === 0) return [];
+
+  let lastList = orgLevel.value;
+  if (!parentLevels.value || parentLevels.value.length === 0) {
+    lastList = formData.parentOrgId === '0' ? orgLevel.value : orgLevel.value[0].children;
+  } else {
+    const getChildByCode = (code: string, list: OrgLevelTreeVO[]) => {
+      for (const item of list) {
+        if (item.levelCode === code) return item.children;
+      }
+      return null;
+    };
+
+    for (const code of parentLevels.value) {
+      const list = getChildByCode(code, lastList);
+
+      if (list === null) {
+        break;
+      }
+      lastList = list;
+    }
+  }
+
+  return lastList.map((t) => ({
+    value: t.levelCode,
+    label: t.levelName,
+  }));
+});
+let orgLevel = ref<OrgLevelTreeVO[]>([]);
 
 onMounted(() => {
   fetchOrgLevelDic();
 });
 
 const fetchOrgLevelDic = async () => {
-  orgLevelOptions.value = await api.param.getListByGroupCode({ parmGroupCode: 'ORG_LEVEL_CODE' });
+  orgLevel.value = await api.orgLevel.tree();
 };
 
 const submit = async () => {
@@ -74,13 +113,13 @@ const submit = async () => {
       }
       if (isFormEditing) {
         api.org.update(formData).then(() => {
-          MessagePlugin.success('修改成功');
+          MessagePlugin.success(t('common.message.saveSuccess'));
           resolve(formData);
         });
         return;
       }
       api.org.add(formData).then(() => {
-        MessagePlugin.success('新增成功');
+        MessagePlugin.success(t('common.message.addSuccess'));
         resolve(formData);
       });
     });
@@ -88,18 +127,21 @@ const submit = async () => {
 };
 
 let isFormEditing = false;
-const reset = (isEdit: boolean, data?: OrgTreeVO) => {
+const parentLevels = ref<string[]>([]);
+const reset = (isEdit: boolean, data?: OrgTreeVO, parentOrgName?: string, parentOrgLevels?: string[]) => {
   formRef.value.reset({ type: 'empty' });
   formData.oid = '0';
   formData.isActive = 0;
   isFormEditing = isEdit;
+  parentLevels.value = parentOrgLevels || [];
   if (data) {
     if (isEdit) {
-      Object.assign(formData, { parentOrgName: data.orgName }, data);
+      Object.assign(formData, { parentOrgName: parentOrgName || data.orgName }, data);
     } else {
       Object.assign(formData, {
-        parentOrgId: data.id,
-        parentOrgName: data.orgName,
+        id: '',
+        parentOrgId: data.id || '0',
+        parentOrgName: parentOrgName || data.orgName || 'ROOT',
         levelCode: data.children?.length > 0 ? data.children[0]?.levelCode : '',
       });
     }

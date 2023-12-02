@@ -349,6 +349,8 @@ export interface WorkstationSearch {
   workcenter?: string;
   /** 工序编码名称模糊 */
   process?: string;
+  /** 模糊关键词 */
+  keyword?: string;
   /** 排序字段 */
   sorts?: SortParam[];
   /** 筛选字段 */
@@ -574,6 +576,8 @@ export interface WorkcenterVO {
   parentWcId?: string;
   /** 父工作中心编码 */
   parentWcCode?: string;
+  /** 父工作中心名称 */
+  parentWcName?: string;
   /** 负责人名称 */
   wcOwner?: string;
   wcObjectId?: string;
@@ -706,6 +710,103 @@ export interface ProductPackRuleMapDTO {
   ids?: string[];
 }
 
+export interface ProcessInDefectCodeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 工序模糊关键词 */
+  process?: string;
+  /** 工序缺陷-状态 */
+  state?: number[];
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+}
+
+/** 工序与缺陷代码关系 */
+export interface ProcessInDefectCode {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  processId?: string;
+  defectCodeId?: string;
+  /**
+   *  显示顺序
+   * @format int32
+   */
+  displaySeq?: number;
+}
+
+/** 响应数据 */
+export type PagingDataProcessInDefectCodeVO = {
+  list?: ProcessInDefectCodeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 领域对象扩展属性分类 */
+export interface ProcessInDefectCodeVO {
+  id?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /**
+   *  显示顺序
+   * @format int32
+   */
+  displaySeq?: number;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProcessInDefectCodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProcessInDefectCodeVO;
+}
+
 /** 响应数据 */
 export type PagingDataProcessVO = {
   list?: ProcessVO[];
@@ -747,8 +848,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1167,11 +1268,56 @@ export interface BarcodeWipVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
-  datetimeScheStr?: string;
+  /** 扫描信息 */
+  scanMessage?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  /** 扫描选中的缺陷列表 */
+  defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  isState?: boolean;
   stateName?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
+}
+
+/** 缺陷代码 */
+export interface DefectCode {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /** 不合格分类 */
+  classification?: string;
 }
 
 /** 通用响应类 */
@@ -1813,6 +1959,82 @@ export const api = {
         params: query,
       }),
   },
+  processInDefectCode: {
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name RemoveProcessInDefectCode
+     * @summary 删除工序缺陷
+     * @request POST:/processInDefectCode/removeProcessInDefectCode
+     * @secure
+     */
+    removeProcessInDefectCode: (data: ProcessInDefectCodeSearch) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/removeProcessInDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name RemoveProcessInDefectCodeBatch
+     * @summary 批量删除工序缺陷
+     * @request POST:/processInDefectCode/removeProcessInDefectCodeBatch
+     * @secure
+     */
+    removeProcessInDefectCodeBatch: (data: ProcessInDefectCodeSearch) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/removeProcessInDefectCodeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name ModifyProcessInDefectCode
+     * @summary 编辑工序缺陷
+     * @request POST:/processInDefectCode/modifyProcessInDefectCode
+     * @secure
+     */
+    modifyProcessInDefectCode: (data: ProcessInDefectCode) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/modifyProcessInDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name GetList
+     * @summary 查询工序缺陷
+     * @request POST:/processInDefectCode/getList
+     * @secure
+     */
+    getList: (data: ProcessInDefectCodeSearch) =>
+      http.request<ResultPagingDataProcessInDefectCodeVO['data']>(`/api/control/processInDefectCode/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name AddProcessInDefectCode
+     * @summary 新增缺陷代码
+     * @request POST:/processInDefectCode/addProcessInDefectCode
+     * @secure
+     */
+    addProcessInDefectCode: (data: ProcessInDefectCode) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/addProcessInDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   process: {
     /**
      * No description
@@ -1999,13 +2221,13 @@ export const api = {
      * No description
      *
      * @tags 在制品条码表
-     * @name GetBarcodeWip
+     * @name ScanBarcodeWip
      * @summary 获取在制品条码信息
-     * @request POST:/barcodeWip/getBarcodeWip
+     * @request POST:/barcodeWip/scanBarcodeWip
      * @secure
      */
-    getBarcodeWip: (data: BarcodeWipVO) =>
-      http.request<ResultBarcodeWipVO['data']>(`/api/control/barcodeWip/getBarcodeWip`, {
+    scanBarcodeWip: (data: BarcodeWipVO) =>
+      http.request<ResultBarcodeWipVO['data']>(`/api/control/barcodeWip/scanBarcodeWip`, {
         method: 'POST',
         body: data as any,
       }),

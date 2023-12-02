@@ -202,6 +202,7 @@ const formData = reactive({
   wcType: '', // 设备类型
   state: props.wordCenterId.state, // 启用还是禁用
   category: 0, // 获取设备关联
+  wcObjectType: 0, // 更改类型
   wcObjectId: '', // 关联设备
   id: props.wordCenterId.id, // 父节点的id
   allRecord: [],
@@ -249,14 +250,11 @@ const onTypeList = () => {
       }
       item.show = true;
       formData.category = item.opId;
+      console.log(formData.category);
     } else {
       item.show = false;
     }
   });
-  console.log(props.wordCenterId);
-
-  console.log('激怒人', props.wordCenterId.state);
-  console.log('激怒人2', formData.state);
   if (props.wordCenterId.state === 1) {
     formData.checked = true;
   } else {
@@ -276,6 +274,8 @@ const onHandleCur = (all) => {
       }
       item.show = true;
       formData.category = item.opId;
+      formData.wcType = item.wcType;
+      formData.wcObjectType = item.opId;
     } else {
       item.show = false;
     }
@@ -294,7 +294,7 @@ const onWorkCenterAdd = async () => {
       state: formData.state,
       wcOwner: formData.wcOwner,
       wcObjectType: formData.category,
-      wcSeq: 0,
+      wcSeq: formData.wcSeq,
     });
     MessagePlugin.success('保存成功');
     Emit('addedShow', false);
@@ -382,6 +382,7 @@ const clearFrom = () => {
   formData.id = ''; // 父亲id
   formData.wcObjectId = ''; // 设备类型id
   formData.wcSeq = 0; // 默认为0
+  formData.wcObjectType = 0;
 };
 const rules: FormRules<Data> = {
   wcCode: [

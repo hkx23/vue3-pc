@@ -10,9 +10,9 @@ import { transformObjectToRoute } from '@/utils/route';
 export const usePermissionStore = defineStore('permission', {
   state: () => ({
     whiteListRouters: ['/login', '/components/businessexample'],
-    routers: [],
+    routers: [] as RouteItem[],
     removeRoutes: [],
-    asyncRoutes: [],
+    asyncRoutes: [] as RouteItem[],
   }),
   actions: {
     async initRoutes() {

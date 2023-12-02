@@ -37,8 +37,19 @@
                 <span style="font-weight: bold; margin: 0 10px">{{ permission.label }}工站列表</span>
                 <t-button @click="onBtnSave">保存</t-button></t-col
               >
-              <t-col>
-                <t-input v-model="permission.work" placeholder="请输入工站/工作中心/工序" :on-enter="onInputSearchWork">
+              <t-col style="display: flex">
+                <t-select
+                  v-model="selectValue"
+                  :options="options1"
+                  placeholder="请选择云解决方案"
+                  @change="onchange1"
+                ></t-select>
+                <t-input
+                  v-model="permission.work"
+                  placeholder="请输入工站/工作中心/工序"
+                  :on-enter="onInputSearchWork"
+                  style="margin-left: 10px"
+                >
                   <template #prefix-icon>
                     <icon name="search"></icon>
                   </template>
@@ -79,12 +90,18 @@ const total = ref(10); // 用户分页总数
 const tableTotal = ref(10); // table分页总数
 const selectedRowKeys = ref([]); // 选择的
 const { loading, setLoading } = useLoading(); // loading
+const selectValue = ref(1);
+const options1 = ref([
+  { label: '生效', value: 1 },
+  { label: '未生效', value: 0 },
+]);
 const value = ref([]);
 const permission = ref({
-  user: '',
+  user: '', // 用户
   work: '',
-  userId: '',
+  userId: '', // 用户id
   label: '',
+  state: [],
 });
 const permissionName = ref(0);
 onMounted(() => {
@@ -103,7 +120,6 @@ const onBtnSave = async () => {
     return;
   }
   // console.log('保存', permission.value.userId);
-
   await api.workstationAuth.save({ userId: permission.value.userId, ids: selectedRowKeys.value });
   MessagePlugin.success('保存成功');
 };
@@ -155,6 +171,7 @@ const columns = [
 const onFetchData = async () => {
   // 用户为0 则全部渲染  1代表用户   2代表列表
   if (permissionName.value === 0 || permissionName.value === 1) {
+    // 左侧
     try {
       const useList = await api.workstationAuth.getUserList({
         pageNum: current.value,
@@ -174,16 +191,17 @@ const onFetchData = async () => {
     }
   }
 
-  // 左边列表
+  // 右边列表
   if (permissionName.value === 0 || permissionName.value === 2) {
+    console.log(selectValue.value);
+
     setLoading(true);
     try {
       const list = await api.workstation.getlist({
         pageNum: pageUI.value.page,
         pageSize: pageUI.value.rows,
-        workcenter: permission.value.work,
-        workstaion: permission.value.work,
-        process: permission.value.work,
+        keyword: permission.value.work.trim(),
+        state: permission.value.state,
       });
       data.value = list.list;
       tableTotal.value = list.total;
@@ -196,6 +214,14 @@ const onFetchData = async () => {
   // 初始化
   permissionName.value = 0;
   // permission.value.label = '';
+};
+const onchange1 = () => {
+  if (selectValue.value === 1) {
+    permission.value.state = [1];
+  } else {
+    permission.value.state = [0];
+  }
+  onFetchData();
 };
 // 点击用户拿数据
 const onClickTree = async (e: any) => {

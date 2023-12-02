@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <t-card class="list-card-container" :bordered="false">
+  <div class="main-page">
+    <div class="main-page-content">
       <t-row justify="space-between">
         <t-col>
           <div class="btn-left">
@@ -16,6 +16,8 @@
           </div>
         </t-col>
       </t-row>
+    </div>
+    <div class="main-page-content">
       <tm-table
         v-model:pagination="pageUI"
         row-key="index"
@@ -26,11 +28,11 @@
         @refresh="featCustomer"
       >
         <template #op="{ row }">
-          <icon name="edit-1" @click="onHandleEdit(row.customerCode)"></icon>
+          <icon name="edit-1" style="cursor: pointer" @click="onHandleEdit(row.customerCode)"></icon>
           <!-- <icon name="edit-1" @click="onHandleEdit(row.customerCode)"></icon> -->
         </template>
       </tm-table>
-    </t-card>
+    </div>
     <!-- 弹出层 -->
     <t-dialog v-model:visible="formVisible" header="客户维护编辑" :cancel-btn="null" :confirm-btn="null" width="40%">
       <t-form
@@ -70,9 +72,8 @@
         <!-- 控制盒子 -->
         <div class="control-box">
           <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-          <t-popconfirm content="确认提交吗" @confirm="onSecondary">
-            <t-button theme="primary" type="submit">确认</t-button>
-          </t-popconfirm>
+
+          <t-button theme="primary" type="submit" @click="onSecondary">确认</t-button>
         </div>
       </t-form>
     </t-dialog>
@@ -268,7 +269,7 @@ const rules: FormRules<Data> = {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--td-comp-margin-xxl);
+  // margin-bottom: var(--td-comp-margin-xxl);
 }
 // 控制盒子
 .control-box {

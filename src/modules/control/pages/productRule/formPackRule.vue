@@ -74,10 +74,13 @@ const submit = async () => {
 
 const reset = () => {
   formRef.value.reset({ type: 'empty' });
-  Object.assign(formData, {});
+  for (const key in formData) {
+    delete formData[key];
+  }
 };
 
 const setRow = (row: any) => {
+  reset();
   formData.id = row.id;
   formData.packRuleCode = row.packRuleCode;
   formData.packRuleName = row.packRuleName;

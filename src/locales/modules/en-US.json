@@ -41,6 +41,7 @@
       "confirm": "Confirm",
       "copy": "Copy",
       "delete": "Delete",
+      "enable": "Enable",
       "disable": "Disable",
       "download": "Download",
       "edit": "Edit",
@@ -100,5 +101,15 @@
     "levelName": "organizational level",
     "levelSeq": "hierarchical sequence",
     "parentLevel": "Previous level"
+  },
+  "org": {
+    "levelName": "Organization type",
+    "modifier": "updater",
+    "orgCode": "organization code",
+    "orgDesc": "Organization Notes",
+    "orgName": "name of association",
+    "parentOrgName": "Hierarchy",
+    "timeModified": "Update time",
+    "title": "Organization"
   }
 }

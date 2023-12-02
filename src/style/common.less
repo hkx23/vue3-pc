@@ -41,3 +41,106 @@
   padding-left: 15px;
   margin: 20px 0;
 }
+
+.t-table thead td,
+.t-table th {
+  font-weight: 700;
+  color: rgb(69 69 69);
+  background: rgb(240 240 242);
+}
+
+.t-table--striped:not(.t-table--bordered) th,
+.t-table--striped:not(.t-table--bordered) td {
+  border-bottom: rgb(213 216 219) solid 1px;
+}
+
+.t-table table {
+  border-spacing: 0;
+  border-radius: 2px;
+  border-top: #d5d8db solid 1px;
+  border-left: #d5d8db solid 1px;
+  border-right: #d5d8db solid 1px;
+}
+
+.t-table__empty {
+  background: white;
+}
+
+.t-form-inline .t-form__item {
+  background: #f0f0f2;
+  border-radius: 4px;
+}
+
+.t-form__label {
+  padding-left: 8px;
+}
+
+// .t-table__cell--title .t-table__filter-icon-wrap {
+//   display: none;
+// }
+
+// .t-table__cell--title:hover .t-table__filter-icon-wrap,
+// .t-table__cell--title:active .t-table__filter-icon-wrap {
+//   display: flex;
+// }
+
+.t-tabs__nav-item.t-size-m {
+  height: var(--td-comp-size-m);
+  line-height: var(--td-comp-size-m);
+}
+
+.t-default-menu .t-menu__item {
+  height: var(--td-comp-size-m);
+  line-height: var(--td-comp-size-m);
+}
+
+.scm-footer-layout {
+  margin-bottom: var(--td-comp-margin-m);
+}
+
+.t-breadcrumb {
+  color: var(--td-text-color-primary);
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px 16px 0;
+  list-style: none;
+  font: var(--td-font-body-medium);
+  display: flex;
+  align-items: center;
+  margin-bottom: -8px;
+  position: relative;
+  z-index: 2;
+}
+
+.main-page {
+  background: var(--td-bg-color-page);
+  margin: 16px;
+  border-radius: 8px;
+  // padding: 8px 24px;
+  min-height: calc(100vh - 32px);
+}
+
+.main-page-content {
+  background: white;
+  padding: 8px 24px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.t-button--variant-base {
+  padding-left: calc(var(--td-comp-paddingLR-l) - 1px);
+  padding-right: calc(var(--td-comp-paddingLR-l) - 1px);
+  min-width: 64px;
+}
+
+.t-table--striped.t-table--hoverable > .t-table__content > table > tbody tr {
+  background-color: var(--td-bg-color-secondarycontainer);
+}
+
+.t-table--striped:not(.t-table--header-fixed)
+  > .t-table__content
+  > table
+  > tbody
+  > tr:nth-of-type(odd):not(.t-table__expanded-row) {
+  background-color: white;
+}

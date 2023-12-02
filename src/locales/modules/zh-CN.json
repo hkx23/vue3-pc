@@ -16,6 +16,7 @@
       "operation": "操作",
       "import": "导入",
       "export": "导出",
+      "enable": "启用",
       "disable": "禁用",
       "copy": "复制",
       "exportAll": "导出全部",
@@ -67,6 +68,7 @@
   },
   "business": {
     "main": {
+      "select": "选择",
       "serialNumber": "序号",
       "uom": "主计量单位",
       "mitemCode": "物料",

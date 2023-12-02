@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main-page">
     <!-- 子from -->
     <detailed
       v-if="detailedShow"
@@ -154,6 +154,8 @@ const onPageSizeChange = (size) => {
 };
 const loading = ref(false);
 const onCurrentChange = () => {
+  console.log(1);
+
   onFetchData();
 };
 // 下拉
@@ -500,6 +502,7 @@ const onClickEdit = (row: any) => {
 };
 // 添加父
 const onAddChilde = (row) => {
+  newArr.value = '';
   detailedShow.value = true;
   typeDetailed.value = 4;
   workCenterId.value = { parentWcId: row.id };

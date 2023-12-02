@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main-page">
     <!-- 顶部 card  -->
     <top-panel class="row-container" />
     <!-- 中部图表  -->

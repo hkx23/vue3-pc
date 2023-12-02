@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main-page">
     <!-- 子from BOM -->
     <t-dialog
       v-model:visible="detailedShow"
@@ -27,9 +27,10 @@
         @refresh-table="onHandleTableReresh"
       ></routingUpdate>
     </t-dialog>
+
     <!-- 头部 -->
-    <t-card class="list-card-container" :bordered="true">
-      <t-row justify="space-between">
+    <div class="main-page-content">
+      <t-row justify="space-between" style="margin-bottom: 8px">
         <t-col :span="3">
           <t-select
             v-model="queryCondition.moClass"
@@ -55,7 +56,7 @@
           ></tm-select-business>
         </t-col>
       </t-row>
-      <t-row justify="space-between">
+      <t-row justify="space-between" style="margin-bottom: 8px">
         <t-col :span="3">
           <tm-select-business
             v-model="queryCondition.mitemCode"
@@ -86,7 +87,7 @@
           ></tm-select-business>
         </t-col>
       </t-row>
-      <t-row justify="space-between">
+      <t-row justify="space-between" style="margin-bottom: 8px">
         <t-col :span="3">
           <tm-select-business
             v-model="queryCondition.rootingCode"
@@ -124,6 +125,8 @@
           </div>
         </t-col>
       </t-row>
+    </div>
+    <div class="main-page-content">
       <tm-table
         v-model:pagination="pageUI"
         row-key="index"
@@ -148,13 +151,13 @@
         </template>
         <template #op="{ row }">
           <t-icon
-            v-if="row.status == 'Download' || row.status == 'Scheduled' || row.status == 'Ready'"
+            v-if="row.status == 'DOWNLOAD' || row.status == 'SCHEDULED' || row.status == 'READY'"
             name="edit"
             @click="onEditRoutingClick(row)"
           />
         </template>
       </tm-table>
-    </t-card>
+    </div>
   </div>
 </template>
 
@@ -402,5 +405,9 @@ onMounted(() => {
 
 .range-time-query {
   padding-left: 118px !important ;
+}
+
+/deep/ .t-dialog__ctx .t-dialog__position.t-dialog--top {
+  padding-top: 5vh !important;
 }
 </style>
