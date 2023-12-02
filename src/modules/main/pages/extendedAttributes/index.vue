@@ -52,8 +52,13 @@
                     <template #verify="{ row }">
                       <t-checkbox v-model="row.needValidation"></t-checkbox>
                     </template>
-                    <template #disableSwitch>
-                      <t-switch size="large" :label="['启用', '禁用']"></t-switch>
+                    <template #disableSwitch="{ row }">
+                      <t-switch
+                        :custom-value="[1, 0]"
+                        :default-value="row.state"
+                        size="large"
+                        @change="(value) => onSwitchChange(row, value)"
+                      ></t-switch>
                     </template>
                     <template #actionSlot="{ row }">
                       <t-button size="small" variant="text" @click="onEditRow(row)">
@@ -92,6 +97,14 @@
                       <t-button size="small" variant="text" @click="onEditRow(row)">
                         <icon name="edit-1" class="black-icon" />
                       </t-button>
+                    </template>
+                    <template #disableSwitch="{ row }">
+                      <t-switch
+                        :custom-value="[1, 0]"
+                        :default-value="row.state"
+                        size="large"
+                        @change="(value) => onSwitchChange(row, value)"
+                      ></t-switch>
                     </template>
                   </tm-table>
                 </template>
@@ -244,7 +257,7 @@ import { Icon } from 'tdesign-icons-vue-next';
 import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api } from '@/api/main';
+import { api, ObjectProperty } from '@/api/main';
 import TmTable from '@/components/tm-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
@@ -363,7 +376,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'disableSwitch',
-    title: '校验',
+    title: '禁用',
     align: 'center',
     width: '100',
     cell: 'disableSwitch',
@@ -380,7 +393,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 // 左侧列表数据
 const edabDataArr = ref([]);
 // 右侧表格数据
-const edabTabDataArr = reactive({ list: [] });
+const edabTabDataArr = reactive<{ list: ObjectProperty[] }>({ list: [] });
 // 右侧表格总页数
 const edabTotal = ref(null);
 // 上侧页签数据
@@ -393,7 +406,7 @@ const selsectDataBox = reactive({ list: [] });
 const paramTabCode = ref('');
 const editSubmitFalg = ref(true);
 
-// 路由规则
+// 表单校验规则
 const rules: FormRules<Data> = {
   propertyCode: [{ required: true, message: '属性代码不能为空', type: 'error', trigger: 'blur' }],
   displayName: [{ required: true, message: '显示名称不能为空', type: 'error', trigger: 'blur' }],
@@ -437,7 +450,6 @@ const needValidationCheckbox = computed({
 
 // 上侧 分类下拉框 change 事件
 const onObjectCodeChange = (value: any) => {
-  console.log('🚀 ~ file: index.vue:415 ~ onObjectCodeChange ~ value:', value);
   dialogFormData.list.objectCode = value.objectCode;
   dialogFormData.list.categoryId = value.id;
 };
@@ -450,6 +462,36 @@ const onDialogCodeChange = (value: any) => {
 // 左侧列表分页事件
 const onPaginationChange = async () => {
   await onGetTabList();
+};
+
+// Switch开关事件
+const onSwitchChange = async (
+  row: {
+    objectCode: any;
+    propertyValueType: any;
+    propertyCode: any;
+    displaySequence: any;
+    categoryId: any;
+    dataSource: any;
+    displayName: any;
+    id: any;
+  },
+  _value: any,
+) => {
+  const isValue = row ? 0 : 1;
+  await api.objectPropertyCategory.editObjectCategory({
+    state: isValue,
+    objectCode: row.objectCode,
+    propertyValueType: row.propertyValueType,
+    propertyCode: row.propertyCode,
+    displaySequence: row.displaySequence,
+    categoryId: row.categoryId,
+    dataSource: row.dataSource,
+    displayName: row.displayName,
+    id: row.id,
+  });
+  await onGetAllTabData();
+  MessagePlugin.success('操作成功');
 };
 
 // 左侧列表分页事件
@@ -485,7 +527,6 @@ const onGetAllTabData = async () => {
 
 // 左侧列表点击事件
 const onClickList = async (row: { objectCode: string; paramCode: string; id: any }) => {
-  console.log('🚀 ~ file: index.vue:482 ~ onClickList ~ row:', row);
   paramTabCode.value = row.paramCode; // 用于发获取全部数据请求
   const resData = await api.objectPropertyCategory.getCategory({ objectCode: row.objectCode }); // 获取表单下拉框数据
   selsectData.list = resData.list; // 上面下拉框数据赋值
@@ -500,8 +541,7 @@ const onClickList = async (row: { objectCode: string; paramCode: string; id: any
 };
 
 // 选项卡变化触发
-const tabsChange = async (value) => {
-  console.log('🚀 ~ file: index.vue:505 ~ tabsChange ~ value:', value);
+const tabsChange = async (value: number) => {
   if (value === 0) {
     await onGetAllTabData();
   } else {
@@ -538,7 +578,6 @@ const onEditRow = (row: any) => {
   dialogFormData.list.isDataMultiple = row.isDataMultiple; // @是否数据源多选
   dialogFormData.list.objectCode = row.objectCode; // @分类ID
   editID.value = row.id;
-  console.log('🚀 ~ file: index.vue:520 ~ onEditRow ~ row:', row);
   formVisible.value = true;
   diaLogTitle.value = '编辑扩展属性';
 };
