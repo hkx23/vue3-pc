@@ -58,7 +58,7 @@
         </template>
       </t-tab-panel>
     </t-tabs>
-    <t-content ref="contentRef" :class="`${prefix}-content-layout`">
+    <t-content :class="`${prefix}-content-layout`">
       <l-breadcrumb v-if="settingStore.showBreadcrumb" />
       <l-content />
     </t-content>
@@ -70,8 +70,7 @@
 
 <script setup lang="ts">
 import type { PopupVisibleChangeContext } from 'tdesign-vue-next';
-import { computed, nextTick, onMounted, ref } from 'vue';
-import { useFullscreen } from 'vue-hooks-plus';
+import { computed, nextTick, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { prefix } from '@/config/global';
@@ -82,14 +81,6 @@ import type { TRouterInfo, TTabRemoveOptions } from '@/types/interface';
 import LBreadcrumb from './Breadcrumb.vue';
 import LContent from './Content.vue';
 import LFooter from './Footer.vue';
-
-const contentRef = ref(null);
-const [, { enterFullscreen }] = useFullscreen(() => contentRef.value.$el);
-onMounted(() => {
-  fw.ipc.on('fullscreen', () => {
-    enterFullscreen();
-  });
-});
 
 const route = useRoute();
 const router = useRouter();

@@ -7,6 +7,9 @@
         </span>
       </template>
       <menu-content :nav-data="menu" />
+      <template #operations>
+        <div>{{ !collapsed ? 'scm' : '' }}</div>
+      </template>
     </t-menu>
     <div :class="`${prefix}-side-nav-placeholder${collapsed ? '-hidden' : ''}`"></div>
   </div>

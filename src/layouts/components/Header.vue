@@ -37,11 +37,14 @@
               }}</t-dropdown-item></t-dropdown-menu
             >
           </t-dropdown>
-          <t-dropdown :min-column-width="120" trigger="click">
+          <t-dropdown :min-column-width="135" trigger="click">
             <template #dropdown>
               <t-dropdown-menu>
                 <t-dropdown-item class="operations-dropdown-container-item" @click="handleNav('/user/index')">
                   <user-circle-icon />{{ $t('layout.header.user') }}
+                </t-dropdown-item>
+                <t-dropdown-item class="operations-dropdown-container-item" @click="onChangePassword">
+                  <user-password-icon />{{ $t('layout.header.changePassword') }}
                 </t-dropdown-item>
                 <t-dropdown-item class="operations-dropdown-container-item" @click="toggleSettingPanel">
                   <setting-icon />{{ $t('layout.header.themeSettings') }}
@@ -63,6 +66,9 @@
       </template>
     </t-head-menu>
   </div>
+  <t-dialog v-model:visible="formVisible" header="修改密码" :on-confirm="onConfirmForm">
+    <change-password-form ref="formRef" />
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -73,9 +79,10 @@ import {
   SettingIcon,
   TranslateIcon,
   UserCircleIcon,
+  UserPasswordIcon,
 } from 'tdesign-icons-vue-next';
 import type { PropType } from 'vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useFullscreen } from 'vue-hooks-plus';
 import { useRouter } from 'vue-router';
 
@@ -83,6 +90,7 @@ import LogoFull from '@/assets/assets-logo-full.svg?component';
 import { prefix } from '@/config/global';
 import { langList } from '@/locales/index';
 import { useLocale } from '@/locales/useLocale';
+import ChangePasswordForm from '@/pages/login/components/ChangePasswordForm.vue';
 import { getActive } from '@/router';
 import { useSettingStore, useUserStore } from '@/store';
 import type { MenuRoute } from '@/types/interface';
@@ -174,8 +182,21 @@ const handleLogout = () => {
 
 const [, { enterFullscreen }] = useFullscreen(() => document.querySelector('main.t-layout__content'));
 const onClickFullScreen = () => {
-  // fw.ipc.send('fullscreen', null);
   enterFullscreen();
+};
+
+const formRef = ref(null);
+const formVisible = ref(false);
+const onChangePassword = () => {
+  const { reset } = formRef.value;
+  reset();
+  formVisible.value = true;
+};
+const onConfirmForm = () => {
+  const { submit } = formRef.value;
+  submit().then(() => {
+    formVisible.value = false;
+  });
 };
 </script>
 <style lang="less" scoped>

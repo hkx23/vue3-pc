@@ -100,5 +100,15 @@
     "levelName": "organizational level",
     "levelSeq": "hierarchical sequence",
     "parentLevel": "Previous level"
+  },
+  "org": {
+    "levelName": "Organization type",
+    "modifier": "updater",
+    "orgCode": "organization code",
+    "orgDesc": "Organization Notes",
+    "orgName": "name of association",
+    "parentOrgName": "Hierarchy",
+    "timeModified": "Update time",
+    "title": "Organization"
   }
 }

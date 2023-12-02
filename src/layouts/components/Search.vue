@@ -1,6 +1,8 @@
 <template>
   <div v-if="layout === 'side'" class="header-menu-search">
-    <t-input
+    <t-auto-complete
+      v-model="searchData"
+      :options="flattenRouters"
       :class="['header-search', { 'hover-active': isSearchFocus }]"
       :placeholder="$t('layout.searchPlaceholder')"
       @blur="changeSearchFocus(false)"
@@ -9,7 +11,13 @@
       <template #prefix-icon>
         <t-icon class="icon" name="search" size="16" />
       </template>
-    </t-input>
+
+      <template #option="{ option }">
+        <div @click="onClickMenu(option)">
+          {{ option.text }}
+        </div>
+      </template>
+    </t-auto-complete>
   </div>
 
   <div v-else class="header-menu-search-left">
@@ -26,7 +34,7 @@
       v-model="searchData"
       :options="flattenRouters"
       :class="['header-search', { 'width-zero': !isSearchFocus }]"
-      placeholder="输入要搜索内容"
+      :placeholder="$t('layout.searchPlaceholder')"
       :autofocus="isSearchFocus"
       @blur="changeSearchFocus(false)"
     >

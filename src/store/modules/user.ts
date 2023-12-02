@@ -1,10 +1,16 @@
 import { defineStore } from 'pinia';
 
+import { api, OrgVO } from '@/api/main';
 import { getToken } from '@/api/portal';
 import { usePermissionStore } from '@/store';
 import type { UserInfo } from '@/types/interface';
 
+interface OrgUser extends UserInfo {
+  orgId?: string;
+  orgs?: OrgVO[];
+}
 const InitUserInfo: UserInfo = {
+  id: '', // 用户ID
   name: '', // 用户名，用于展示在页面右上角头像处
   roles: [], // 前端权限模型使用 如果使用请配置modules/permission-fe.ts使用
 };
@@ -12,7 +18,7 @@ const InitUserInfo: UserInfo = {
 export const useUserStore = defineStore('user', {
   state: () => ({
     token: 'main_token', // 默认token不走权限
-    userInfo: { ...InitUserInfo },
+    userInfo: { ...InitUserInfo } as OrgUser,
   }),
   getters: {
     roles: (state) => {
@@ -29,15 +35,21 @@ export const useUserStore = defineStore('user', {
       fw.setToken(res.access_token);
     },
     async getUserInfo() {
-      const mockRemoteUserInfo = async () => {
-        return {
-          name: '管理员',
-          roles: ['all'], // 前端权限模型使用 如果使用请配置modules/permission-fe.ts使用
-        };
-      };
-      const res = await mockRemoteUserInfo();
+      const res = await api.user.currentUserInfo();
+      // const mockRemoteUserInfo = async () => {
+      //   return {
+      //     name: '管理员',
+      //     roles: ['all'], // 前端权限模型使用 如果使用请配置modules/permission-fe.ts使用
+      //   };
+      // };
+      // const res = await mockRemoteUserInfo();
 
-      this.userInfo = res;
+      this.userInfo = {
+        id: res.userName,
+        name: res.displayName,
+        orgId: res.defaultOrgId,
+        orgs: res.orgList,
+      } as OrgUser;
     },
     async logout() {
       this.token = '';

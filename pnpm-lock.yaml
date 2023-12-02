@@ -30,8 +30,8 @@ dependencies:
     specifier: ^0.2.2
     version: 0.2.2(vue@3.3.7)
   tdesign-vue-next:
-    specifier: ^1.6.8
-    version: 1.6.8(vue@3.3.7)
+    specifier: ^1.7.0
+    version: 1.7.0(vue@3.3.7)
   tvision-color:
     specifier: ^1.6.0
     version: 1.6.0
@@ -3872,6 +3872,7 @@ packages:
 
   /json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
+    requiresBuild: true
     dev: true
 
   /json-stable-stringify-without-jsonify@1.0.1:
@@ -4973,6 +4974,7 @@ packages:
   /require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dev: true
 
   /resolve-dir@1.0.1:
@@ -5640,8 +5642,8 @@ packages:
       vue: 3.3.7(typescript@5.1.6)
     dev: false
 
-  /tdesign-vue-next@1.6.8(vue@3.3.7):
-    resolution: {integrity: sha512-RtAOqa8pplvVG6MjFF0xONLrj8RgVcxontnfEQXo6EKR/UH1sh+JDvSRjyVJarKYFmXY0xfmMmD2rKVeuheUmA==}
+  /tdesign-vue-next@1.7.0(vue@3.3.7):
+    resolution: {integrity: sha512-NGt30cc0T2L32UoQjffldNy2wZAHa8vA1c7kjkjTEhHbD3O2bVuiDhPJSo8EYAwnRlwc5+EzzgiQxj/5x2b1qw==}
     peerDependencies:
       vue: '>=3.1.0'
     dependencies:
