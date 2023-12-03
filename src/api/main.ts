@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -411,119 +412,6 @@ export type User = {
   personId?: string;
   orgId?: string;
 } | null;
-
-export interface SupportGroupInUserSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  id?: string;
-  /** 多个id */
-  ids?: string[];
-  /** 处理组模糊关键词 */
-  groupKeyword?: string;
-  /** 人员模糊关键词 */
-  userKeyword?: string;
-  /** 排序字段 */
-  sorts?: SortParam[];
-  /** 筛选字段 */
-  filters?: Filter[];
-}
-
-/** 响应数据 */
-export type PagingDataSupportGroupInUserVO = {
-  list?: SupportGroupInUserVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataSupportGroupInUserVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataSupportGroupInUserVO;
-}
-
-/** 工站权限显示 */
-export interface SupportGroupInUserVO {
-  id?: string;
-  eid?: string;
-  oid?: string;
-  userId?: string;
-  /** 用户名 */
-  userName?: string;
-  /** 用户显示名 */
-  userDisplayName?: string;
-  /** 处理组代码 */
-  supportGroupCode?: string;
-  /** 处理组名称 */
-  supportGroupName?: string;
-  /** 处理组类型 */
-  supportGroupType?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 人员编号 */
-  personCode?: string;
-  /** 姓名 */
-  personName?: string;
-  /**
-   * 性别，1男，0女
-   * @format int32
-   */
-  gender?: number;
-  /** 邮箱 */
-  email?: string;
-  /** 手机号 */
-  mobilePhone?: string;
-}
-
-/** 处理组表 */
-export interface SupportGroup {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 处理组代码 */
-  supportGroupCode?: string;
-  /** 处理组名称 */
-  supportGroupName?: string;
-  /** 处理组类型 */
-  supportGroupType?: string;
-}
 
 /** 响应数据 */
 export type PagingDataSupplier = {
@@ -1633,13 +1521,13 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isRawName?: string;
-  isBatchName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
   isState?: boolean;
 }
 
@@ -1807,8 +1695,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2953,53 +2841,6 @@ export const api = {
     currentUserInfo: () =>
       http.request<ResultCurrentUserVO['data']>(`/api/main/user/currentUserInfo`, {
         method: 'GET',
-      }),
-  },
-  supportGroupInUser: {
-    /**
-     * No description
-     *
-     * @tags 处理组用户表
-     * @name GetPersonList
-     * @summary 查询人员信息
-     * @request POST:/supportGroupInUser/getPersonList
-     * @secure
-     */
-    getPersonList: (data: SupportGroupInUserSearch) =>
-      http.request<ResultPagingDataSupportGroupInUserVO['data']>(`/api/main/supportGroupInUser/getPersonList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 处理组用户表
-     * @name GetGroupList
-     * @summary 查询处理组人员信息
-     * @request POST:/supportGroupInUser/getGroupList
-     * @secure
-     */
-    getGroupList: (data: SupportGroupInUserSearch) =>
-      http.request<ResultPagingDataSupportGroupInUserVO['data']>(`/api/main/supportGroupInUser/getGroupList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  supportGroup: {
-    /**
-     * No description
-     *
-     * @tags 处理组表
-     * @name AddSupportGroup
-     * @summary 新增处理组
-     * @request POST:/supportGroup/addSupportGroup
-     * @secure
-     */
-    addSupportGroup: (data: SupportGroup) =>
-      http.request<ResultObject['data']>(`/api/main/supportGroup/addSupportGroup`, {
-        method: 'POST',
-        body: data as any,
       }),
   },
   supplier: {

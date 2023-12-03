@@ -59,7 +59,7 @@
   <div>
     <t-dialog
       v-model:visible="formVisible"
-      :header="t('dialog_title')"
+      :header="t('common.dialog.header.edit')"
       :on-confirm="onConfirmForm"
       width="50%"
       :close-on-overlay-click="false"

@@ -5,3 +5,10 @@ export interface scanInfoModel {
   errorinfo: string;
   statusColor: string;
 }
+
+export interface messageModel {
+  title: string;
+  content: string;
+  datatime: string;
+  status: string;
+}
