@@ -378,6 +378,59 @@ export interface ResultPagingDataParam {
   data?: PagingDataParam;
 }
 
+/** 响应数据 */
+export type PagingDataSupportGroup = {
+  list?: SupportGroup[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSupportGroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSupportGroup;
+}
+
+/** 处理组表 */
+export interface SupportGroup {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 处理组代码 */
+  supportGroupCode?: string;
+  /** 处理组名称 */
+  supportGroupName?: string;
+  /** 处理组类型 */
+  supportGroupType?: string;
+}
+
 /** 组织架构表 */
 export interface Org {
   id?: string;
@@ -608,7 +661,7 @@ export const api = {
      * @secure
      */
     getSupportGroup: () =>
-      http.request<ResultPagingDataParam['data']>(`/api/daily/incidentCfg/getSupportGroup`, {
+      http.request<ResultPagingDataSupportGroup['data']>(`/api/daily/incidentCfg/getSupportGroup`, {
         method: 'GET',
       }),
 
