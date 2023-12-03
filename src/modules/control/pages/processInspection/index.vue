@@ -7,7 +7,9 @@
             <t-content>
               <t-space align="center" direction="vertical" style="width: 98%">
                 <t-row justify="center">
-                  <t-col>车间：XXXXX 工作中心：WC0001 工站：高新产业园贴标</t-col>
+                  <t-col
+                    >车间：XXXXX 工作中心：{{ mainform.workCenterCode }} 工站：{{ mainform.workStationCode }}</t-col
+                  >
                 </t-row>
                 <t-row align="center">
                   <t-col :span="2" style="text-align: right">扫描 产品条码：</t-col>
@@ -35,7 +37,7 @@
                   <t-col flex="490px">
                     <div class="groupbox">
                       <span class="grouptitle">缺陷信息</span>
-                      <t-card :bordered="false" style="height: 330px" class="t-table__content">
+                      <t-card :bordered="false" style="height: 295px; max-height: 295px" class="t-table__content">
                         <t-space direction="vertical">
                           <t-space v-for="(item, index) in defectCodeList" :key="index">
                             <t-button
@@ -63,7 +65,7 @@
                   <t-col flex="320px">
                     <div class="groupbox">
                       <span class="grouptitle">采集详情</span>
-                      <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="330px">
+                      <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="295px">
                         <template #serialNumber="{ row }">
                           <div class="talbe_col_nowrap" :title="row.serialNumber">
                             {{ row.serialNumber }}
@@ -96,16 +98,16 @@
             </t-content>
           </t-layout>
           <t-aside style="width: 30%">
-            <div class="groupbox" style="height: 500px; max-height: 610px">
+            <div class="groupbox" style="height: 540px">
               <span class="grouptitle">消息组件</span>
-              <t-list style="height: 98%" :scroll="{ type: 'virtual' }">
-                <t-list-item v-for="(item, index) in list" :key="index">
+              <t-list style="height: 96%" :scroll="{ type: 'virtual' }">
+                <t-list-item v-for="(item, index) in messageList" :key="index">
                   <t-list-item-meta style="align-items: center">
                     <template #description>
                       <t-space>
-                        <t-icon name="check-circle-filled" style="color: green" />
-                        <t-icon name="close-circle" style="color: red" />
-                        <div>{{ item.content }}</div>
+                        <t-icon v-if="item.status == 'OK'" name="check-circle-filled" style="color: green" />
+                        <t-icon v-if="item.status == 'NG'" name="close-circle" style="color: red" />
+                        <div :title="item.content">{{ item.title }}</div>
                         <div>{{ item.datatime }}</div>
                       </t-space>
                     </template>
@@ -128,7 +130,7 @@ import { onMounted, ref } from 'vue';
 import { api } from '@/api/control';
 import { api as apiMain, DefectCodeVO } from '@/api/main';
 
-import { scanInfoModel } from '../../api/scanInfoModel';
+import { messageModel, scanInfoModel } from '../../api/processInspection';
 // 全局信息
 const scanInfoList = ref<scanInfoModel[]>([]);
 
@@ -142,8 +144,12 @@ const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
 
 const mainform = ref({
   serialNumber: '',
-  workcenterId: '',
-  workstationId: '',
+  workCenterId: '',
+  workCenterCode: '',
+  workCenterName: '',
+  workStationId: '',
+  workStationCode: '',
+  workStationName: '',
   processId: '',
 });
 
@@ -163,18 +169,20 @@ const productInfo = ref({
   moCompletedQty: '',
 });
 
-const list = ref([]);
+// 界面消息列表
+const messageList = ref<messageModel[]>([]);
 
 const Init = async () => {
   mainform.value.serialNumber = 'LB0001';
-  mainform.value.workcenterId = '1728664640618328065';
-  mainform.value.workstationId = '1729475654052753410';
-  mainform.value.processId = '1';
-  getDefectCodeTree();
+  mainform.value.workCenterId = '1730421387954343937'; // 3-1-1
+  mainform.value.workCenterCode = '3-1-1'; // 3-1-1
+  mainform.value.workCenterName = '3号工厂1车间1区域'; // 3-1-1
 
-  for (let i = 0; i < 3000; i++) {
-    list.value.push({ content: `扫描成功`, datatime: `2023-11-12 23:22:32` });
-  }
+  mainform.value.workStationId = '1729475654052753410'; // G_TP 高新产业园贴标
+  mainform.value.workStationCode = 'G_TP';
+  mainform.value.workStationName = '高新产业园贴标';
+  mainform.value.processId = '1'; // PC001 贴标
+  getDefectCodeTree();
 };
 
 const serialNumberEnter = async (value) => {
@@ -185,8 +193,12 @@ const serialNumberEnter = async (value) => {
     await api.barcodeWip
       .scanBarcodeWip({
         serialNumber: mainform.value.serialNumber,
-        workcenterId: mainform.value.workcenterId,
-        workstationId: mainform.value.workstationId,
+        workcenterId: mainform.value.workCenterId,
+        workCenterCode: mainform.value.workCenterCode,
+        workCenterName: mainform.value.workCenterName,
+        workstationId: mainform.value.workStationId,
+        // workStationCode: mainform.value.workStationCode,
+        // workStationCode: mainform.value.workStationCode,
         processId: mainform.value.processId,
         defectCodeList: selectDefectCodeList.value,
       })
@@ -199,9 +211,18 @@ const serialNumberEnter = async (value) => {
           productInfo.value.scheQty = reData.scheQty.toString();
           productInfo.value.moCompletedQty = reData.completedQty.toString();
           mainform.value.serialNumber = '';
-          writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.scanMessage);
+          selectDefectCodeList.value = [];
+          defectCodeList.value.forEach((item) => {
+            item.themeButton = 'default';
+            item.child.forEach((cldItem) => {
+              cldItem.themeButton = 'default';
+            });
+          });
+          writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
+          writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.defectCodeStr);
         } else {
-          writeScanInfoError(reData.serialNumber, reData.qty, reData.scanMessage);
+          writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
+          writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
         }
       })
       .catch((message) => {
@@ -256,6 +277,24 @@ const writeScanInfoError = async (lbNo, lbQty, lbError) => {
     status: 'NG',
     errorinfo: lbError,
     statusColor: 'red',
+  });
+};
+
+const writeMessageListSuccess = async (content, datatime) => {
+  messageList.value.unshift({
+    title: '扫描成功',
+    content,
+    datatime,
+    status: 'OK',
+  });
+};
+
+const writeMessageListError = async (content, datatime) => {
+  messageList.value.unshift({
+    title: '扫描失败',
+    content,
+    datatime,
+    status: 'NG',
   });
 };
 
@@ -351,4 +390,10 @@ onMounted(() => {
 /deep/ .t-list-item__meta-description {
   width: 100%;
 }
+// /deep/ .t-table__content {
+//   height: 100%;
+//   .t-table--layout-fixed {
+//     height: 100%;
+//   }
+// }
 </style>
