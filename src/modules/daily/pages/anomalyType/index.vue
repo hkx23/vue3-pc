@@ -15,6 +15,7 @@
             <template #stateSwitch="{ row }">
               <t-switch
                 :custom-value="[1, 0]"
+                :value="row.state"
                 :default-value="row.state"
                 size="large"
                 @change="(value) => onSwitchChange(row, value)"
@@ -344,7 +345,7 @@ const onDelConfirm = async () => {
   if (anomalyTypeData.list.length <= 1 && page.value.pageNum > 1) {
     pageUI.value.page--;
   }
-  onGetAnomalyTypeData(); // 重新渲染数组
+  await onGetAnomalyTypeData(); // 重新渲染数组
   selectedRowKeys.value = [];
   MessagePlugin.success('删除成功');
 };
@@ -355,7 +356,7 @@ const deleteBatches = async () => {
   if (anomalyTypeData.list.length <= 1 && page.value.pageNum > 1) {
     pageUI.value.page--;
   }
-  onGetAnomalyTypeData(); // 重新渲染数组
+  await onGetAnomalyTypeData(); // 重新渲染数组
   selectedRowKeys.value = [];
   MessagePlugin.success('批量删除成功');
 };
