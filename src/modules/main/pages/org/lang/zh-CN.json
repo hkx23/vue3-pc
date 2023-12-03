@@ -1,0 +1,12 @@
+{
+  "org": {
+    "title": "组织架构",
+    "parentOrgName": "层级",
+    "orgCode": "组织编码",
+    "orgName": "组织名称",
+    "orgDesc": "组织备注",
+    "levelName": "组织类型",
+    "modifier": "更新人",
+    "timeModified": "更新时间"
+  }
+}

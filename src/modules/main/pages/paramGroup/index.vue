@@ -1,5 +1,5 @@
 <template>
-  <div class="table-tree-container">
+  <div class="main-page">
     <div class="list-tree-content">
       <div class="list-common-table">
         <t-row justify="space-between">
@@ -128,14 +128,8 @@
                       <t-col :span="2">
                         <t-input v-model="item.paramDesc" placeholder="请输入内容" />
                       </t-col>
-                      <t-col :span="1">
-                        <t-input-number
-                          v-model="item.seq"
-                          class="param-input-seq"
-                          :decimal-places="0"
-                          theme="normal"
-                          placeholder="请输入"
-                        />
+                      <t-col :span="1" class="param-input-seq">
+                        <t-input-number v-model="item.seq" :decimal-places="0" theme="normal" placeholder="请输入" />
                       </t-col>
                       <t-col :span="1">
                         <div>
@@ -568,8 +562,8 @@ onMounted(() => {
 }
 
 .param-input-seq {
-  .t-input-number {
-    width: 54px;
+  /deep/ .t-input-number {
+    width: 54px !important;
   }
 }
 </style>

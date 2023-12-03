@@ -1,7 +1,7 @@
 <template>
-  <div class="table-tree-container">
+  <div class="main-page">
     <div class="list-tree-wrapper">
-      <div class="list-tree-operator">
+      <div class="main-page-content">
         <t-tree
           ref="treeRef"
           :data="treeData"
@@ -413,6 +413,7 @@ onMounted(() => {
 .list-tree-wrapper {
   overflow-y: hidden;
   float: left;
+  margin-right: 8px;
 }
 
 .list-tree-operator {
@@ -432,7 +433,7 @@ onMounted(() => {
 
 .list-common-table {
   background-color: var(--td-bg-color-container);
-  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
+  padding: 16px 24px;
   border-radius: var(--td-radius-medium);
 
   .table-container {

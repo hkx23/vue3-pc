@@ -5,6 +5,8 @@ export default {
     user: 'Profile',
     signOut: 'Sign Out',
     setting: 'Setting',
+    changePassword: 'Change Password',
+    themeSettings: 'Theme Settings',
   },
   notice: {
     title: 'Notification Center',

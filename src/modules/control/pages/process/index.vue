@@ -1,44 +1,42 @@
 <template>
-  <div class="table-tree-container">
-    <div class="list-tree-content">
-      <div class="list-common-table">
-        <t-row justify="space-between">
-          <t-col>
-            <div>
-              <t-input v-model="keyword" label="工序：" placeholder="请输入工序编码/名称" clearable />
-            </div>
-          </t-col>
-          <t-col flex="170px">
-            <div>
-              <t-button @click="onRefresh">查询</t-button>
-              <t-button theme="default" @click="onReset">重置</t-button>
-            </div>
-          </t-col>
-        </t-row>
-        <t-row style="margin-top: 10px">
-          <t-button theme="default" @click="onAdd">新增</t-button>
+  <div class="main-page">
+    <div class="main-page-content">
+      <t-row justify="space-between">
+        <t-col>
+          <div>
+            <t-input v-model="keyword" label="工序：" placeholder="请输入工序编码/名称" clearable />
+          </div>
+        </t-col>
+        <t-col flex="170px">
+          <div>
+            <t-button @click="onRefresh">查询</t-button>
+            <t-button theme="default" @click="onReset">重置</t-button>
+          </div>
+        </t-col>
+      </t-row>
+    </div>
+    <div class="main-page-content">
+      <tm-table
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="tableProcessColumns"
+        :table-data="tableDataProcess"
+        :loading="loading"
+        :total="dataTotal"
+        :resizable="true"
+        @refresh="fetchTable"
+      >
+        <template #button>
+          <t-button theme="primary" @click="onAdd">新增</t-button>
           <t-button theme="default">导入</t-button>
           <t-button theme="default">导出</t-button>
-        </t-row>
-        <t-row justify="space-between">
-          <tm-table
-            v-model:pagination="pageUI"
-            row-key="id"
-            :table-column="tableProcessColumns"
-            :table-data="tableDataProcess"
-            :loading="loading"
-            :total="dataTotal"
-            :resizable="true"
-            @refresh="fetchTable"
-          >
-            <template #op="slotProps">
-              <t-space>
-                <t-icon name="edit" @click="onEditRowClick(slotProps)" />
-              </t-space>
-            </template>
-          </tm-table>
-        </t-row>
-      </div>
+        </template>
+        <template #op="slotProps">
+          <t-space>
+            <t-icon name="edit" @click="onEditRowClick(slotProps)" />
+          </t-space>
+        </template>
+      </tm-table>
     </div>
   </div>
   <div>

@@ -710,6 +710,103 @@ export interface ProductPackRuleMapDTO {
   ids?: string[];
 }
 
+export interface ProcessInDefectCodeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 工序模糊关键词 */
+  process?: string;
+  /** 工序缺陷-状态 */
+  state?: number[];
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+}
+
+/** 工序与缺陷代码关系 */
+export interface ProcessInDefectCode {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  processId?: string;
+  defectCodeId?: string;
+  /**
+   *  显示顺序
+   * @format int32
+   */
+  displaySeq?: number;
+}
+
+/** 响应数据 */
+export type PagingDataProcessInDefectCodeVO = {
+  list?: ProcessInDefectCodeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 领域对象扩展属性分类 */
+export interface ProcessInDefectCodeVO {
+  id?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /**
+   *  显示顺序
+   * @format int32
+   */
+  displaySeq?: number;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProcessInDefectCodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProcessInDefectCodeVO;
+}
+
 /** 响应数据 */
 export type PagingDataProcessVO = {
   list?: ProcessVO[];
@@ -1860,6 +1957,82 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/productPackRuleMap/delete`, {
         method: 'DELETE',
         params: query,
+      }),
+  },
+  processInDefectCode: {
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name RemoveProcessInDefectCode
+     * @summary 删除工序缺陷
+     * @request POST:/processInDefectCode/removeProcessInDefectCode
+     * @secure
+     */
+    removeProcessInDefectCode: (data: ProcessInDefectCodeSearch) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/removeProcessInDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name RemoveProcessInDefectCodeBatch
+     * @summary 批量删除工序缺陷
+     * @request POST:/processInDefectCode/removeProcessInDefectCodeBatch
+     * @secure
+     */
+    removeProcessInDefectCodeBatch: (data: ProcessInDefectCodeSearch) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/removeProcessInDefectCodeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name ModifyProcessInDefectCode
+     * @summary 编辑工序缺陷
+     * @request POST:/processInDefectCode/modifyProcessInDefectCode
+     * @secure
+     */
+    modifyProcessInDefectCode: (data: ProcessInDefectCode) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/modifyProcessInDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name GetList
+     * @summary 查询工序缺陷
+     * @request POST:/processInDefectCode/getList
+     * @secure
+     */
+    getList: (data: ProcessInDefectCodeSearch) =>
+      http.request<ResultPagingDataProcessInDefectCodeVO['data']>(`/api/control/processInDefectCode/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name AddProcessInDefectCode
+     * @summary 新增缺陷代码
+     * @request POST:/processInDefectCode/addProcessInDefectCode
+     * @secure
+     */
+    addProcessInDefectCode: (data: ProcessInDefectCode) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/addProcessInDefectCode`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   process: {

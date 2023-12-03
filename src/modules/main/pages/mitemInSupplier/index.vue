@@ -1,48 +1,46 @@
 <template>
-  <div class="table-tree-container">
-    <div class="list-tree-content">
-      <div class="list-common-table">
-        <t-row justify="space-between">
-          <t-col>
-            <t-input v-model="mitemKeyword" label="物料：" placeholder="请输入物料编码/名称" clearable />
-          </t-col>
-          <t-col>
-            <t-input v-model="supplierKeyword" label="供应商：" placeholder="请输入供应商编码/名称" clearable />
-          </t-col>
-          <t-col flex="45%" />
-          <t-col flex="170px">
-            <div>
-              <t-button @click="onRefresh">查询</t-button>
-              <t-button theme="default" @click="onReset">重置</t-button>
-            </div>
-          </t-col>
-        </t-row>
-        <t-row style="margin-top: 10px">
-          <t-button theme="default" @click="onAdd">新增</t-button>
+  <div class="main-page">
+    <div class="main-page-content">
+      <t-row justify="space-between">
+        <t-col>
+          <t-input v-model="mitemKeyword" label="物料：" placeholder="请输入物料编码/名称" clearable />
+        </t-col>
+        <t-col>
+          <t-input v-model="supplierKeyword" label="供应商：" placeholder="请输入供应商编码/名称" clearable />
+        </t-col>
+        <t-col flex="45%" />
+        <t-col flex="170px">
+          <div>
+            <t-button @click="onRefresh">查询</t-button>
+            <t-button theme="default" @click="onReset">重置</t-button>
+          </div>
+        </t-col>
+      </t-row>
+    </div>
+    <div class="main-page-content">
+      <tm-table
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="tableMitemInSupplierColumns"
+        :table-data="tableDataMitemInSupplier"
+        :total="dataTotal"
+        :loading="loading"
+        :hover="true"
+        :selected-row-keys="selectedMitemInSupplierRowKeys"
+        @refresh="fetchTable"
+      >
+        <template #button>
+          <t-button theme="primary" @click="onAdd">新增</t-button>
           <t-button theme="default">导入</t-button>
           <t-button theme="default">导出</t-button>
-        </t-row>
-        <t-row justify="space-between">
-          <tm-table
-            v-model:pagination="pageUI"
-            row-key="id"
-            :table-column="tableMitemInSupplierColumns"
-            :table-data="tableDataMitemInSupplier"
-            :total="dataTotal"
-            :loading="loading"
-            :hover="true"
-            :selected-row-keys="selectedMitemInSupplierRowKeys"
-            @refresh="fetchTable"
-          >
-            <template #op="slotProps">
-              <t-space>
-                <t-icon name="edit" @click="onEditRowClick(slotProps)" />
-                <t-icon name="delete" @click="onDeleteRowClick(slotProps)" />
-              </t-space>
-            </template>
-          </tm-table>
-        </t-row>
-      </div>
+        </template>
+        <template #op="slotProps">
+          <t-space>
+            <t-icon name="edit" @click="onEditRowClick(slotProps)" />
+            <t-icon name="delete" @click="onDeleteRowClick(slotProps)" />
+          </t-space>
+        </template>
+      </tm-table>
     </div>
   </div>
   <div>
