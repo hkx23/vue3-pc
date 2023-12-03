@@ -10,6 +10,7 @@
             :table-column="columns"
             :table-data="anomalyTypeData.list"
             :total="anomalyTotal"
+            :selected-row-keys="selectedRowKeys"
             @refresh="onFetchData"
             @select-change="rehandleSelectChange"
           >
