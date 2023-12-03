@@ -263,6 +263,7 @@ const rehandleSelectChange = async (value: any[]) => {
 
 // // 右侧表格删除按钮
 const onDeleteRow = (row: any) => {
+  selectedRowKeys.value = [];
   selectedRowKeys.value.push(row.id);
 };
 // // 右侧表格删除确认按钮

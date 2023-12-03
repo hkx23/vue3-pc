@@ -308,6 +308,7 @@ const onDelete = async () => {
     pageUI.value.page--;
   }
   await onFetchData();
+  MessagePlugin.success('删除成功');
   selectedRowKeys.value = [];
 };
 
@@ -318,6 +319,7 @@ const ondeleteBatches = async () => {
     pageUI.value.page--;
   }
   await onFetchData();
+  MessagePlugin.success('批量删除成功');
   selectedRowKeys.value = [];
 };
 
