@@ -11,6 +11,7 @@
             :table-column="columns"
             :table-data="alertCfgData.list"
             :total="alertCfgTotal"
+            :selected-row-keys="selectedRowKeys"
             @select-change="rehandleSelectChange"
           >
             <template #stateSwitch="{ row }">
