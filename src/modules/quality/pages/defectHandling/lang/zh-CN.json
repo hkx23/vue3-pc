@@ -1,7 +1,7 @@
 {
   "defectHandling": {
     "parentLevel": "上一层级",
-    "dealMethodType": "处理方法类别名称",
+    "dealMethodType": "处理方法类别",
     "methodCode": "处理方法编码",
     "methodName": "处理方法名称"
   }

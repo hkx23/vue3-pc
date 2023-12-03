@@ -52,8 +52,14 @@
     <t-dialog v-model:visible="defectVisible" header="新增/编辑" :cancel-btn="null" :confirm-btn="null" width="40%">
       <t-form ref="formRef" :data="formData" layout="vertical" :rules="rules" @submit="onSubmit">
         <t-form-item :label="t('defectHandling.dealMethodType')" label-width="120px" name="dealMethodType">
-          <!-- <t-select v-model="formData.dealMethodType" placeholder="请输入"></t-select> -->
-          <t-input v-model="formData.dealMethodType" placeholder="请输入" :disabled="disabledType"></t-input>
+          <t-select v-model="defectCode" :disabled="isDisabled" @change="onOrgIdChange">
+            <t-option
+              v-for="item in onDefectDealMethodData.list"
+              :key="item.id"
+              :label="item.paramValue"
+              :value="item"
+            />
+          </t-select>
         </t-form-item>
         <t-form-item :label="t('defectHandling.methodCode')" label-width="120px" name="methodCode">
           <t-input v-model="formData.methodCode" placeholder="请输入" :disabled="disabledCode"></t-input>
@@ -76,7 +82,7 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { Data, FormInstanceFunctions, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
-import { computed, onMounted, Ref, ref } from 'vue';
+import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import TmQuery from '@/components/tm-query/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -108,6 +114,21 @@ const opts = computed(() => {
   };
 });
 
+const isDisabled = ref(true);
+
+// ######下拉框 列表数据
+const onDefectDealMethodData = reactive({ list: [] });
+const onGetDefectDealMethodType = async () => {
+  const res = await api.defectDealMethod.getIncidentType();
+  onDefectDealMethodData.list = res.list;
+};
+
+// ###### 下拉框 change 事件
+const defectCode = ref('');
+const onOrgIdChange = (value: { paramCode: string }) => {
+  formData.value.dealMethodType = value.paramCode;
+};
+
 const disabledCode = ref(false); // 处理编码默认为启用
 const disabledType = ref(false); // 处理类别默认为启用
 // 搜索触发方法
@@ -138,11 +159,12 @@ const formData = ref({
 });
 onMounted(() => {
   onfetchData();
+  onGetDefectDealMethodType(); // 下拉框列表
 });
 // 装入数组
 const column = ref([
   { type: 'multiple', align: 'center', colKey: 'checkbox' },
-  { title: '序号', colKey: 'id', align: 'center', width: 120 },
+  { title: '序号', colKey: 'serial-number', align: 'center', width: 120 },
   { title: t('defectHandling.dealMethodType'), colKey: 'dealMethodType', align: 'center', width: 120 },
   { title: t('defectHandling.methodCode'), colKey: 'methodCode', align: 'center', width: 120 },
   { title: t('defectHandling.methodName'), colKey: 'methodName', align: 'center', width: 120 },
@@ -180,6 +202,9 @@ const onSave = async () => {
       ids: selectedRowKeys.value,
     });
     MessagePlugin.success('删除成功');
+    if (defectHandlingData.value.length <= 1 && pageUI.value.page > 1) {
+      pageUI.value.page--;
+    }
     onfetchData();
     deleteVisible.value = false;
   } catch (e) {
@@ -220,6 +245,9 @@ const onAddAnyEdit = async () => {
 };
 // 新增
 const onHandelAdd = () => {
+  disabledCode.value = false;
+  isDisabled.value = false;
+  defectCode.value = '';
   formData.value.id = '';
   formRef.value.reset({ type: 'initial' });
   AddAnyEdit.value = 1;
@@ -227,8 +255,11 @@ const onHandelAdd = () => {
 };
 // 编辑
 const onEdit = (row) => {
+  console.log('🚀 ~ file: index.vue:256 ~ onEdit ~ row:', row);
+  isDisabled.value = true;
   disabledCode.value = true;
   disabledType.value = true;
+  defectCode.value = row.dealMethodTypeName;
   formData.value.dealMethodType = row.dealMethodType;
   formData.value.methodCode = row.methodCode;
   formData.value.methodName = row.methodName;
@@ -242,6 +273,9 @@ const onDelete = async (row) => {
     await api.defectDealMethod.removeDefectDealMethod({
       id: row.id,
     });
+    if (defectHandlingData.value.length <= 1 && pageUI.value.page > 1) {
+      pageUI.value.page--;
+    }
     MessagePlugin.success('删除成功');
     onfetchData();
   } catch (e) {
