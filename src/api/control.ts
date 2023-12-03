@@ -1289,6 +1289,7 @@ export interface BarcodeWipVO {
    */
   completedQty?: number;
   mitemId?: string;
+
   /** 物料代码 */
   mitemCode?: string;
   /** 物料名称 */
