@@ -10,6 +10,7 @@
             :table-column="columns"
             :table-data="anomalyTypeData.list"
             :total="anomalyTotal"
+            @refresh="onFetchData"
             @select-change="rehandleSelectChange"
           >
             <template #stateSwitch="{ row }">
@@ -218,6 +219,10 @@ onMounted(async () => {
   await onGetAnomalyTypeData(); // 获取 表格 数据
   await onGetDropDownData(); // 获取下拉框数据
 });
+
+const onFetchData = () => {
+  onGetAnomalyTypeData();
+};
 
 // 获取 表格 数据
 const onGetAnomalyTypeData = async () => {

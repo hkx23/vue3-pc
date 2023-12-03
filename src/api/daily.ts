@@ -142,6 +142,47 @@ export interface IncidentCfgSearch {
   ids?: string[];
 }
 
+/** 安灯异常配置表 */
+export interface IncidentCfg {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  orgId?: string;
+  /** 异常模块 */
+  incidentModule?: string;
+  supportGroupId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /**
+   * 是否允许转单
+   * @format int32
+   */
+  isAllowTransfer?: number;
+}
+
 /** 领域对象扩展属性分类 */
 export interface IncidentCfgVO {
   id?: string;
@@ -337,6 +378,67 @@ export interface ResultPagingDataParam {
   data?: PagingDataParam;
 }
 
+/** 组织架构表 */
+export interface Org {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 组织描述 */
+  orgDesc?: string;
+  parentOrgId?: string;
+  /** 组织层级代码 */
+  levelCode?: string;
+  /**
+   * 是否生效，1是，0否
+   * @format int32
+   */
+  isActive?: number;
+}
+
+/** 响应数据 */
+export type PagingDataOrg = {
+  list?: Org[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataOrg;
+}
+
 /**
  * @title scm项目
  * @version v1
@@ -425,6 +527,51 @@ export const api = {
      * No description
      *
      * @tags 安灯异常配置表
+     * @name RemoveIncidentCfg
+     * @summary 删除异常类型
+     * @request POST:/incidentCfg/removeIncidentCfg
+     * @secure
+     */
+    removeIncidentCfg: (data: IncidentCfgSearch) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentCfg/removeIncidentCfg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常配置表
+     * @name RemoveIncidentCfgBatch
+     * @summary 批量删除异常类型
+     * @request POST:/incidentCfg/removeIncidentCfgBatch
+     * @secure
+     */
+    removeIncidentCfgBatch: (data: IncidentCfgSearch) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentCfg/removeIncidentCfgBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常配置表
+     * @name ModifyIncidentType
+     * @summary 编辑异常配置
+     * @request POST:/incidentCfg/modifyIncidentCfg
+     * @secure
+     */
+    modifyIncidentType: (data: IncidentCfg) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentCfg/modifyIncidentCfg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常配置表
      * @name GetList
      * @summary 查询异常配置
      * @request POST:/incidentCfg/getList
@@ -434,6 +581,63 @@ export const api = {
       http.request<ResultPagingDataIncidentCfgVO['data']>(`/api/daily/incidentCfg/getList`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常配置表
+     * @name AddIncidentCfg
+     * @summary 新增异常配置
+     * @request POST:/incidentCfg/addIncidentCfg
+     * @secure
+     */
+    addIncidentCfg: (data: IncidentCfg) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentCfg/addIncidentCfg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常配置表
+     * @name GetSupportGroup
+     * @summary 获取新增页面下拉列表(处理组)
+     * @request GET:/incidentCfg/getSupportGroup
+     * @secure
+     */
+    getSupportGroup: () =>
+      http.request<ResultPagingDataParam['data']>(`/api/daily/incidentCfg/getSupportGroup`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常配置表
+     * @name GetOrg
+     * @summary 获取新增页面下拉列表(组织)
+     * @request GET:/incidentCfg/getOrg
+     * @secure
+     */
+    getOrg: () =>
+      http.request<ResultPagingDataOrg['data']>(`/api/daily/incidentCfg/getOrg`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常配置表
+     * @name GetIncidentModule
+     * @summary 获取新增页面下拉列表(异常模块)
+     * @request GET:/incidentCfg/getIncidentModule
+     * @secure
+     */
+    getIncidentModule: () =>
+      http.request<ResultPagingDataParam['data']>(`/api/daily/incidentCfg/getIncidentModule`, {
+        method: 'GET',
       }),
   },
   alertCfg: {
