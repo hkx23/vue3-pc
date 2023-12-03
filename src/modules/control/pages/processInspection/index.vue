@@ -45,20 +45,12 @@
                               :content="item.defectName"
                             />
                             <t-space break-line>
-                              <!-- <t-button
-                                v-for="(item_child, index_child) in item.child"
-                                :key="index_child"
-                                :content="item_child.defectName"
-                                style="width: 100px"
-                                :theme="getThemeButton(item_child.themeButton)"
-                                @click="clickDefectCode(item_child)"
-                              /> -->
-
                               <t-button
                                 v-for="(item_child, index_child) in item.child"
                                 :key="index_child"
                                 :content="item_child.defectName"
                                 style="width: 100px"
+                                :theme="getThemeButton(item_child.themeButton)"
                                 @click="clickDefectCode(item_child)"
                               />
                             </t-space>
@@ -137,8 +129,6 @@ import { api } from '@/api/control';
 import { api as apiMain, DefectCodeVO } from '@/api/main';
 
 import { scanInfoModel } from '../../api/scanInfoModel';
-
-// const themeButton = ref<'default' | 'success' | 'primary' | 'warning' | 'danger'>();
 // 全局信息
 const scanInfoList = ref<scanInfoModel[]>([]);
 
@@ -269,22 +259,17 @@ const writeScanInfoError = async (lbNo, lbQty, lbError) => {
   });
 };
 
-// const getThemeButton = async (value) => {
-//   debugger;
-//   switch (value) {
-//     case 'success':
-//       return themeButton.value.primary;
-//     case 'primary':
-//       return themeButton.value.primary;
-//     case 'warning':
-//       return themeButton.value.warning;
-//     case 'danger':
-//       return themeButton.value.danger;
-//     case 'default':
-//     default:
-//       return themeButton.value.default;
-//   }
-// };
+const themes = {
+  default: 'default',
+  success: 'success',
+  primary: 'primary',
+  warning: 'warning',
+  danger: 'danger',
+};
+
+const getThemeButton = (value: string) => {
+  return themes[value] || themes.default;
+};
 
 onMounted(() => {
   Init();
