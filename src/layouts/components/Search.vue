@@ -87,6 +87,7 @@ const changeSearchFocus = (value: boolean) => {
 const router = useRouter();
 
 const onSelectSearch = (value) => {
+  if (!value) return;
   const route = flattenRouterObj[value];
   router.push(route);
 };
@@ -131,7 +132,17 @@ const onEnterSearch = ({ value }) => {
   }
 }
 
+.t-button--shape-square {
+  color: white;
+}
+
+.t-button--shape-square:hover,
+.t-button--shape-square:focus-visible {
+  background-color: var(--td-brand-color-3);
+}
+
 .t-button {
+  color: white;
   margin: 0 8px;
   transition: opacity @anim-duration-base @anim-time-fn-easing;
 

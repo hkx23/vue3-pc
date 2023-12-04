@@ -1280,6 +1280,7 @@ export interface BarcodeWipVO {
    * @format int32
    */
   scheQty?: number;
+  routingRevisionId?: string;
   moId?: string;
   /** 工单名称 */
   moCode?: string;
@@ -1289,7 +1290,6 @@ export interface BarcodeWipVO {
    */
   completedQty?: number;
   mitemId?: string;
-
   /** 物料代码 */
   mitemCode?: string;
   /** 物料名称 */
@@ -1314,9 +1314,9 @@ export interface BarcodeWipVO {
   /** @format date-time */
   datetimeSche?: string;
   stateName?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   defectCodeStr?: string;
+  datetimeScheStr?: string;
   isState?: boolean;
 }
 

@@ -24,7 +24,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     VITE_BUILDING_MODULE,
     VITE_API_GENERATE_MODULE,
   } = loadEnv(mode, CWD);
-  const isPrd = mode === 'production';
+  const isDev = mode === 'development';
 
   let inputs: { [index: string]: any } = null;
   const outDir = './dist';
@@ -98,7 +98,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     build: {
       outDir,
       rollupOptions: {
-        input: isPrd ? inputs : null,
+        input: isDev ? null : inputs,
         output: {
           // manualChunks: (id) => {
           //   if (id.includes('echarts')) return 'echarts';

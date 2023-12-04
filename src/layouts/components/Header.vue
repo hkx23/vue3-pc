@@ -209,6 +209,7 @@ const onConfirmForm = () => {
 
     :deep(.t-head-menu__inner) {
       padding-right: var(--td-comp-margin-xl);
+      // height: var(--td-comp-size-xl);
     }
 
     &-side {
@@ -236,6 +237,7 @@ const onConfirmForm = () => {
 
   :deep(.t-menu__item) {
     min-width: unset;
+    color: white;
   }
 }
 
@@ -251,6 +253,15 @@ const onConfirmForm = () => {
 
   .t-button {
     margin-left: var(--td-comp-margin-l);
+    color: white;
+  }
+
+  .t-button--variant-text {
+    color: white;
+  }
+
+  :deep(.t-button--shape-square) {
+    color: white;
   }
 }
 
@@ -258,12 +269,13 @@ const onConfirmForm = () => {
   display: flex;
   align-items: normal;
   line-height: 0;
-  padding-left: var(--td-comp-margin-xl);
+  padding-left: var(--td-comp-margin-s);
+  color: white;
 }
 
 .header-logo-container {
   width: 184px;
-  height: 26px;
+  height: 32px;
   display: flex;
   margin-left: 24px;
   color: var(--td-text-color-primary);
@@ -271,6 +283,7 @@ const onConfirmForm = () => {
   .t-logo {
     width: 100%;
     height: 100%;
+    fill: white;
 
     &:hover {
       cursor: pointer;
@@ -285,7 +298,8 @@ const onConfirmForm = () => {
 .header-user-account {
   display: inline-flex;
   align-items: center;
-  color: var(--td-text-color-primary);
+  // color: var(--td-text-color-primary);
+  color: white;
 }
 
 :deep(.t-head-menu__inner) {
@@ -294,7 +308,8 @@ const onConfirmForm = () => {
 
 .t-menu--light {
   .header-user-account {
-    color: var(--td-text-color-primary);
+    color: white;
+    // color: var(--td-text-color-primary);
   }
 }
 
@@ -333,6 +348,32 @@ const onConfirmForm = () => {
       margin-bottom: 8px;
     }
   }
+}
+
+.t-button--variant-text .t-button--variant-text {
+  color: white;
+}
+
+:deep(
+    .operations-container .t-button--variant-text:hover,
+    .operations-container .t-button--variant-text:focus-visible
+  ) {
+  background-color: var(--td-brand-color-3);
+}
+
+:deep(.header-menu .t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled)) {
+  background-color: var(--td-brand-color-3);
+}
+
+.t-button--variant-text:hover,
+.t-button--variant-text:focus-visible {
+  background-color: var(--td-brand-color-7);
+}
+
+.t-menu__item.t-is-active {
+  // color: var(--td-brand-color);
+  background-color: #2a36cf;
+  color: white;
 }
 </style>
 
