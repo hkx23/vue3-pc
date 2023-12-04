@@ -361,6 +361,10 @@ const onConfirmForm = () => {
   background-color: #0d2ed486;
 }
 
+:deep(.header-menu .t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled)) {
+  background-color: #0d2ed486;
+}
+
 .t-button--variant-text:hover,
 .t-button--variant-text:focus-visible {
   background-color: #0d2ed4;
