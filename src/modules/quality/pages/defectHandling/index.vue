@@ -20,7 +20,7 @@
       </t-row> -->
       <tm-table
         v-model:pagination="pageUI"
-        row-key="Serial"
+        row-key="id"
         :table-data="defectHandlingData"
         :table-column="column"
         :total="total"
@@ -44,18 +44,28 @@
           <t-button><icon name="delete" @click="onWholeAdd"></icon></t-button>
         </template>
         <template #button> <tm-query :opts="opts" @submit="onInput"> </tm-query></template>
+        <template #dealMethodType="{ row }">
+          <div>{{ `${row.dealMethodType}${row.dealMethodTypeName}` }}</div>
+        </template>
       </tm-table>
     </t-card>
     <t-dialog v-model:visible="defectVisible" header="新增/编辑" :cancel-btn="null" :confirm-btn="null" width="40%">
       <t-form ref="formRef" :data="formData" layout="vertical" :rules="rules" @submit="onSubmit">
-        <t-form-item label="处理方法类型别名称" label-width="120px" name="processingCategoryName">
-          <t-select v-model="formData.processingCategoryName" placeholder="请输入"></t-select>
+        <t-form-item :label="t('defectHandling.dealMethodType')" label-width="120px" name="dealMethodType">
+          <t-select v-model="defectCode" :disabled="isDisabled" @change="onOrgIdChange">
+            <t-option
+              v-for="item in onDefectDealMethodData.list"
+              :key="item.id"
+              :label="item.paramValue"
+              :value="item"
+            />
+          </t-select>
         </t-form-item>
-        <t-form-item label="处理方法编码" label-width="120px" name="processingCode">
-          <t-input v-model="formData.processingCode" placeholder="请输入"></t-input>
+        <t-form-item :label="t('defectHandling.methodCode')" label-width="120px" name="methodCode">
+          <t-input v-model="formData.methodCode" placeholder="请输入" :disabled="disabledCode"></t-input>
         </t-form-item>
-        <t-form-item label="处理方法名称" label-width="120px" name="processingName">
-          <t-input v-model="formData.processingName" placeholder="请输入"></t-input>
+        <t-form-item :label="t('defectHandling.methodName')" label-width="120px" name="methodName">
+          <t-input v-model="formData.methodName" placeholder="请输入"></t-input>
         </t-form-item>
         <div class="control-box">
           <t-button theme="default" variant="base" @click="onSecondaryDelete">取消</t-button>
@@ -63,14 +73,18 @@
         </div>
       </t-form>
     </t-dialog>
+    <t-dialog v-model:visible="deleteVisible" :header="t('common.message.confirmDelete')" :on-confirm="onSave">
+      <h3 class="list-save">选中{{ selectedRowKeys.length }}条</h3>
+    </t-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Data, FormInstanceFunctions, FormRules, Icon } from 'tdesign-vue-next';
-import { computed, onMounted, Ref, ref } from 'vue';
+import { Data, FormInstanceFunctions, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
+import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
+import TmQuery from '@/components/tm-query/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
 import TmTable from '../../../../components/tm-table/index.vue';
@@ -79,7 +93,7 @@ import { usePage } from '../../../../hooks/modules/page';
 const { loading, setLoading } = useLoading();
 const { pageUI } = usePage();
 
-// import { api } from '@/api/main';
+import { api } from '@/api/main';
 
 import { useLang } from './lang';
 
@@ -100,6 +114,24 @@ const opts = computed(() => {
   };
 });
 
+const isDisabled = ref(true);
+
+// ######下拉框 列表数据
+const onDefectDealMethodData = reactive({ list: [] });
+const onGetDefectDealMethodType = async () => {
+  const res = await api.defectDealMethod.getIncidentType();
+  onDefectDealMethodData.list = res.list;
+};
+
+// ###### 下拉框 change 事件
+const defectCode = ref('');
+const onOrgIdChange = (value: { paramCode: string }) => {
+  formData.value.dealMethodType = value.paramCode;
+};
+
+const disabledCode = ref(false); // 处理编码默认为启用
+const disabledType = ref(false); // 处理类别默认为启用
+// 搜索触发方法
 const onInput = (data) => {
   formData.value.categoryName = data.categoryName;
   formData.value.methodCodeName = data.methodCodeName;
@@ -115,121 +147,140 @@ const rehandleSelectChange = (value: any) => {
   console.log(selectedRowKeys.value);
 };
 
+const deleteVisible = ref(false);
 // form表单
 const formData = ref({
-  processingCategoryName: '', // 处理方法类别名称
-  processingCode: '', // 处理方法编码
-  processingName: '', // 处理方法名称
+  dealMethodType: '', // 处理方法类别名称
+  methodCode: '', // 处理方法编码
+  methodName: '', // 处理方法名称
   categoryName: '', // 处理方法类别名称
   methodCodeName: '', // 处理方法编码名称
   id: '', // 列表对应id
 });
 onMounted(() => {
   onfetchData();
+  onGetDefectDealMethodType(); // 下拉框列表
 });
 // 装入数组
 const column = ref([
   { type: 'multiple', align: 'center', colKey: 'checkbox' },
-  { title: '序号', colKey: 'Serial', align: 'center', width: 120 },
-  { title: t('defectHandling.processingCategoryName'), colKey: 'processingCategoryName', align: 'center', width: 120 },
-  { title: t('defectHandling.processingCode'), colKey: 'processingCode', align: 'center', width: 120 },
-  { title: t('defectHandling.processingName'), colKey: 'processingName', align: 'center', width: 120 },
+  { title: '序号', colKey: 'serial-number', align: 'center', width: 120 },
+  { title: t('defectHandling.dealMethodType'), colKey: 'dealMethodType', align: 'center', width: 120 },
+  { title: t('defectHandling.methodCode'), colKey: 'methodCode', align: 'center', width: 120 },
+  { title: t('defectHandling.methodName'), colKey: 'methodName', align: 'center', width: 120 },
   { title: '操作', colKey: 'op', align: 'left', fixed: 'right', width: 120 },
 ]);
 // table数组
-const defectHandlingData = ref([
-  {
-    Serial: '1',
-    processingCategoryName: '调节',
-    processingCode: 'B03',
-    processingName: '调节面板',
-  },
-  {
-    Serial: '12',
-    processingCategoryName: '调节3',
-    processingCode: 'B034',
-    processingName: '调节面板5',
-  },
-]);
+const defectHandlingData = ref([]);
 // 首次进入
 const onfetchData = async () => {
-  // try {
-  //   setLoading(true);
-  //   const res = await api.defectHandling.geslist({
-  //     pageNum: pageUI.value.page,
-  //     pageSize: pageUI.value.rows,
-  //     categoryName: formData.value.categoryName,
-  //     methodCodeName: formData.value.methodCodeName,
-  //   });
-  //   defectHandlingData.value = res.list;
-  //   total.value = res.total;
-  // } catch (e) {
-  //   console.log(e);
-  // } finally {
-  //   setLoading(false);
-  // }
-  setLoading(true);
-  setTimeout(() => {
-    defectHandlingData.value = _.cloneDeep(defectHandlingData.value);
+  try {
+    setLoading(true);
+    const res = await api.defectDealMethod.getList({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+      dealMethodType: formData.value.categoryName,
+      defectDealMethod: formData.value.methodCodeName,
+    });
+    defectHandlingData.value = res.list;
+    total.value = res.total;
+  } catch (e) {
+    console.log(e);
+  } finally {
     setLoading(false);
-  }, 500);
+  }
 };
 // 取消窗口
 const onSecondaryDelete = () => {
   defectVisible.value = false;
 };
+
+// 批量删除提示窗口
+const onSave = async () => {
+  try {
+    await api.defectDealMethod.removeDefectDealMethodBatch({
+      ids: selectedRowKeys.value,
+    });
+    MessagePlugin.success('删除成功');
+    if (defectHandlingData.value.length <= 1 && pageUI.value.page > 1) {
+      pageUI.value.page--;
+    }
+    onfetchData();
+    deleteVisible.value = false;
+  } catch (e) {
+    console.log(e);
+  }
+};
 // 批量删除
 const onWholeAdd = async () => {
-  // try {
-  //   await api.defectHandling.removeDefectCodeBatch({
-  //     ids: selectedRowKeys.value,
-  //   });
-  // } catch (e) {
-  //   console.log(e);
-  // }
+  if (selectedRowKeys.value.length === 0) {
+    MessagePlugin.error('未选择');
+    return;
+  }
+  deleteVisible.value = true;
 };
 const AddAnyEdit = ref(1); // 1表示新增  0表示编辑
 const onAddAnyEdit = async () => {
   if (AddAnyEdit.value === 1) {
     try {
-      // await api.defectHandling.add(formData.value);
+      await api.defectDealMethod.addDefectDealMethod(formData.value);
+      MessagePlugin.success('新增成功');
+      defectVisible.value = false;
+      onfetchData();
     } catch (e) {
       console.log(e);
     }
-    console.log('新增');
+    // console.log('新增');
   } else {
     try {
-      // await api.defectHandling.Edit(formData.value};
+      await api.defectDealMethod.modifyDefectDealMethod(formData.value);
+      MessagePlugin.success('编辑成功');
+      defectVisible.value = false;
+      onfetchData();
     } catch (e) {
       console.log(e);
     }
-    console.log('编辑');
+    // console.log('编辑');
   }
 };
 // 新增
 const onHandelAdd = () => {
+  disabledCode.value = false;
+  isDisabled.value = false;
+  defectCode.value = '';
+  formData.value.id = '';
   formRef.value.reset({ type: 'initial' });
   AddAnyEdit.value = 1;
   defectVisible.value = true;
 };
 // 编辑
 const onEdit = (row) => {
-  formData.value.processingCategoryName = row.processingCategoryName;
-  formData.value.processingCode = row.processingCode;
-  formData.value.processingName = row.processingName;
+  console.log('🚀 ~ file: index.vue:256 ~ onEdit ~ row:', row);
+  isDisabled.value = true;
+  disabledCode.value = true;
+  disabledType.value = true;
+  defectCode.value = row.dealMethodTypeName;
+  formData.value.dealMethodType = row.dealMethodType;
+  formData.value.methodCode = row.methodCode;
+  formData.value.methodName = row.methodName;
   AddAnyEdit.value = 0;
   formData.value.id = row.id;
   defectVisible.value = true;
 };
 // 删除
 const onDelete = async (row) => {
-  // try {
-  //   await api.defectHandling.removeDefectCode({
-  //     id: row.id,
-  //   });
-  // } catch (e) {
-  //   console.log(e);
-  // }
+  try {
+    await api.defectDealMethod.removeDefectDealMethod({
+      id: row.id,
+    });
+    if (defectHandlingData.value.length <= 1 && pageUI.value.page > 1) {
+      pageUI.value.page--;
+    }
+    MessagePlugin.success('删除成功');
+    onfetchData();
+  } catch (e) {
+    console.log(e);
+  }
   console.log(row);
 };
 // 提交校验
@@ -242,9 +293,9 @@ const onSubmit = (context: any) => {
 };
 // 校验条件
 const rules: FormRules<Data> = {
-  // processingCategoryName: [{ required: true, type: 'error', trigger: 'change' }],
-  processingCode: [{ required: true, type: 'error', trigger: 'change' }],
-  processingName: [{ required: true, type: 'error', trigger: 'change' }],
+  dealMethodType: [{ required: true, type: 'error', trigger: 'change' }],
+  methodCode: [{ required: true, type: 'error', trigger: 'change' }],
+  methodName: [{ required: true, type: 'error', trigger: 'change' }],
 };
 </script>
 
@@ -261,5 +312,10 @@ const rules: FormRules<Data> = {
   position: absolute;
   right: var(--td-comp-size-l);
   bottom: var(--td-comp-size-s);
+}
+
+.list-save {
+  text-align: center;
+  margin: 10px 0;
 }
 </style>

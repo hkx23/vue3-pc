@@ -1,7 +1,7 @@
 {
   "processDefects": {
-    "levelName": "工序名称",
-    "levelCode": "工序编码",
-    "levelSeq": "序号"
+    "defectName": "工序名称",
+    "defectCode": "工序编码",
+    "displaySeq": "显示顺序"
   }
 }

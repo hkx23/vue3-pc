@@ -4,6 +4,7 @@ export default {
     help: '帮助文档',
     user: '个人中心',
     signOut: '退出登录',
+    changePassword: '修改密码',
     themeSettings: '主题设置',
   },
   notice: {

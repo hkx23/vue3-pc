@@ -1,5 +1,12 @@
 <template>
-  <t-form ref="formRef" :rules="FORM_RULES" :data="formData" :show-cancel="true" :show-error-message="false">
+  <t-form
+    ref="formRef"
+    :rules="FORM_RULES"
+    :data="formData"
+    :show-cancel="true"
+    :show-error-message="false"
+    :label-width="135"
+  >
     <t-form-item :label="t('orgLevel.parentLevel')" name="parentLevelId">
       {{ formData.parentLevelId ? formData.parentLevelName : 'ROOT' }}
     </t-form-item>
