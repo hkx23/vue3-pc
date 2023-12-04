@@ -133,7 +133,17 @@ const onClickMenu = (option: menuItem) => {
   }
 }
 
+.t-button--shape-square {
+  color: white;
+}
+
+.t-button--shape-square:hover,
+.t-button--shape-square:focus-visible {
+  background-color: #0d2ed486;
+}
+
 .t-button {
+  color: white;
   margin: 0 8px;
   transition: opacity @anim-duration-base @anim-time-fn-easing;
 

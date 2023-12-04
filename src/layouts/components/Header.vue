@@ -187,6 +187,7 @@ const onClickFullScreen = () => {
 
     :deep(.t-head-menu__inner) {
       padding-right: var(--td-comp-margin-xl);
+      // height: var(--td-comp-size-xl);
     }
 
     &-side {
@@ -214,6 +215,7 @@ const onClickFullScreen = () => {
 
   :deep(.t-menu__item) {
     min-width: unset;
+    color: white;
   }
 }
 

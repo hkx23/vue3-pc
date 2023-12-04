@@ -114,6 +114,9 @@ const openHref = (url: string) => {
   background-color: #0d2ed4;
 }
 
+// .t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled) {
+//   background-color: #0d2ed486;
+// }
 .t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled) {
   background-color: #0d2ed486;
 }
