@@ -87,6 +87,7 @@ const changeSearchFocus = (value: boolean) => {
 const router = useRouter();
 
 const onSelectSearch = (value) => {
+  if (!value) return;
   const route = flattenRouterObj[value];
   router.push(route);
 };
