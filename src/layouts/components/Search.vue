@@ -138,7 +138,7 @@ const onEnterSearch = ({ value }) => {
 
 .t-button--shape-square:hover,
 .t-button--shape-square:focus-visible {
-  background-color: #0d2ed486;
+  background-color: var(--td-brand-color-3);
 }
 
 .t-button {
