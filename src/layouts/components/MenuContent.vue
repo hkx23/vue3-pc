@@ -106,12 +106,23 @@ const openHref = (url: string) => {
 </script>
 
 <style lang="less" scoped>
-.t-menu__item {
+// .t-menu__item {
+//   color: white;
+// }
+
+:deep(.t-menu__item.t-is-active) {
+  background-color: #0d2ed4;
   color: white;
 }
 
-.t-menu__item.t-is-active {
-  background-color: #0d2ed4;
+.t-default-menu .t-menu__item .t-icon {
+  color: var(--td-text-color-secondary);
+}
+// .t-default-menu .t-menu__item.t-is-opened:hover .t-icon {
+//   color: var(--td-text-color-primary);
+// }
+.t-default-menu .t-menu__item.t-is-active .t-icon {
+  color: white;
 }
 
 // .t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled) {

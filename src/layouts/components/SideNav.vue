@@ -180,6 +180,7 @@ const onChangeCollapsed = () => {
   .@{starter-prefix}-side-nav-mix-fixed{
     .t-default-menu__inner {
       height: calc(100vh - var(--td-comp-size-xxxl));
+
     }
   }
 }
