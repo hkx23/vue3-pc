@@ -3,12 +3,12 @@ import { PolylineEdge, PolylineEdgeModel } from '@logicflow/core';
 class SequenceModel extends PolylineEdgeModel {
   initEdgeData(data: any) {
     super.initEdgeData(data);
-    this.text.value = this.text.value || 'GOOD';
+    this.text.value = this.text.value || 'OK';
   }
 
   getEdgeStyle() {
     const style = super.getEdgeStyle();
-    const result = this.text.value || 'GOOD';
+    const result = this.text.value || 'OK';
     if (result === 'NG') {
       style.stroke = 'var(--td-error-color)';
     } else {
@@ -19,7 +19,7 @@ class SequenceModel extends PolylineEdgeModel {
 
   getTextStyle() {
     const style = super.getTextStyle();
-    const result = this.text.value || 'GOOD';
+    const result = this.text.value || 'OK';
     if (result === 'NG') {
       style.stroke = 'var(--td-error-color)';
     } else {

@@ -9,6 +9,7 @@
         :loading="loading"
         :total="craftRouteData.total"
         @refresh="getRouting"
+        @row-click="selectRouting"
       >
         <template #oprate>
           <t-button @click="addRouting">{{ t('common.button.add') }}</t-button>
@@ -26,7 +27,7 @@
               @click="disable(row.id, row.routingVersionId)"
               >{{ t('common.button.disable') }}</t-link
             >
-            <t-link v-else theme="primary" size="small" @click="enableVisible = true">{{
+            <t-link v-else theme="primary" size="small" @click="enableClick(row)">{{
               t('common.button.enable')
             }}</t-link>
             <t-link theme="primary" size="small" @click="editRouting(row.id)">{{ t('common.button.edit') }}</t-link>
@@ -37,19 +38,38 @@
     </t-card>
     <t-card class="card" :header="t('craftRoute.productRelation')" :bordered="false" header-bordered>
       <tm-table
-        v-model:pagination="pageUI"
+        v-model:selected-row-keys="routingMapKeys"
+        v-model:pagination="productPage"
+        row-key="id"
         :table-column="productRelationColumn"
         :table-data="productRelationData.list"
-        :loading="loading"
+        :loading="productLoading"
         :total="productRelationData.total"
       >
         <template #button>
-          <t-button>{{ t('common.button.add') }}</t-button>
-          <t-button theme="default">{{ t('common.button.import') }}</t-button>
-          <t-button theme="default">{{ t('common.button.batchDelete') }}</t-button>
+          <t-input
+            v-model="productRelationKeyword"
+            :placeholder="t('craftRoute.productRelationKeyword')"
+            @enter="getProductRelation"
+          />
+        </template>
+        <template #oprate>
+          <t-button :disabled="!isSelectRouting" @click="productVisible = true">{{ t('common.button.add') }}</t-button>
+          <t-button :disabled="!isSelectRouting" theme="default">{{ t('common.button.import') }}</t-button>
+          <t-button
+            :disabled="!isSelectRouting || routingMapKeys.length === 0"
+            theme="default"
+            @click="deleteProductRelationBatch"
+            >{{ t('common.button.batchDelete') }}</t-button
+          >
+        </template>
+        <template #isDefault="{ row }">
+          <t-switch :value="row.isDefault === 1" @change="setProductRelationDefault($event, row.id)"></t-switch>
         </template>
         <template #op="{ row }">
-          <t-button variant="text" theme="primary">{{ t('common.button.delete') }}</t-button>
+          <t-link theme="primary" size="small" @click="deleteProductRelation(row.id)">{{
+            t('common.button.delete')
+          }}</t-link>
         </template>
       </tm-table>
     </t-card>
@@ -62,25 +82,25 @@
           : t('common.dialog.header.edit', [t('craftRoute.craftRoute')])
       "
       :is-copy="isCopy"
-      @submit="eidtSubmit"
+      @submit="getRouting"
     ></edit>
-    <t-dialog v-model:visible="enableVisible" :header="t('common.button.enable')" width="60%">
-      <t-form :data="enableFormData" label-width="100px">
-        <t-form-item :label="t('craftRoute.craftRouteCode')" name="routingCode">
-          <t-input
-            v-model="enableFormData.routingCode"
-            disabled
-            :placeholder="t('common.placeholder.input', [t('craftRoute.craftRouteCode')])"
-          ></t-input>
-        </t-form-item>
-      </t-form>
-    </t-dialog>
+    <enable
+      v-model="enableVisible"
+      :form-data="enableFormData"
+      :routing-type-option="craftRouteTypeOption"
+      @submit="getRouting"
+    ></enable>
+    <product-relation
+      v-model="productVisible"
+      :routing-code="selectedRoutingCode"
+      :routing-name="selectedRoutingName"
+      @submit="getProductRelation"
+    ></product-relation>
   </div>
 </template>
 
 <script setup lang="ts">
 // #region import
-import dayjs from 'dayjs';
 import { find } from 'lodash';
 import { DialogPlugin } from 'tdesign-vue-next';
 import { computed, reactive, ref } from 'vue';
@@ -93,7 +113,9 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import edit from './edit.vue';
+import enable from './enable.vue';
 import { useLang } from './lang';
+import productRelation from './productRelation.vue';
 // #endregion
 
 // 使用多语言
@@ -191,7 +213,7 @@ const craftRouteColumn = [
   { colKey: 'routingVersion', title: t('craftRoute.version'), width: 100, align: 'center' },
   { colKey: 'state', title: t('craftRoute.status'), width: 100, align: 'center' },
   { colKey: 'enableDate', title: t('craftRoute.enableDate'), width: 150, align: 'center' },
-  { colKey: 'invailDate', title: t('craftRoute.invalidDate'), width: 150, align: 'center' },
+  { colKey: 'invailDate', title: t('craftRoute.invailDate'), width: 150, align: 'center' },
   { colKey: 'creator', title: t('business.main.creator'), width: 100, align: 'center' },
   { colKey: 'timeCreate', title: t('business.main.timeCreate'), width: 150, align: 'center' },
   { colKey: 'modifier', title: t('business.main.modifier'), width: 100, align: 'center' },
@@ -243,9 +265,6 @@ const copyRouting = (id: string) => {
   isCopy.value = true;
   eidtRoutingVisible.value = true;
 };
-const eidtSubmit = () => {
-  getRouting();
-};
 const disable = (id: string, routingRevisionId: string) => {
   apiControl.routing.moScheduleBindRoutingCount(routingRevisionId).then((total) => {
     let showText: string;
@@ -274,38 +293,85 @@ const disable = (id: string, routingRevisionId: string) => {
     });
   });
 };
+const enableClick = (row: any) => {
+  enableFormData.value = row;
+  enableVisible.value = true;
+};
 // #endregion
 
 // #region 启用
 const enableVisible = ref(false);
-const enableFormData = reactive({
-  routingCode: null,
-  routingName: null,
-  routingDesc: null,
-  routingType: 'STANDARD',
-  routingVersion: 1,
-  enableDate: dayjs().format(),
-  invailDate: null,
-});
+const enableFormData = ref({});
 // #endregion
 
 // #region 关联产品
+const selectedRoutingCode = ref();
+const selectedRoutingName = ref();
+const isSelectRouting = ref(false);
+const productVisible = ref(false);
+const productRelationKeyword = ref();
+const routingMapKeys = ref([]);
+const productPage = ref({
+  page: 1,
+  rows: 10,
+});
+const productLoading = ref(false);
 const productRelationColumn = [
   { colKey: 'row-select', type: 'multiple', width: 64, fixed: 'left' },
-  { colKey: 'id', title: t('craftRoute.categoryCode'), width: 120, align: 'center' },
-  { colKey: 'age', title: t('craftRoute.categoryName'), width: 120, align: 'center' },
-  { colKey: 'phone', title: t('craftRoute.productCode'), width: 120, align: 'center' },
-  { colKey: 'phone', title: t('craftRoute.productName'), width: 120, align: 'center' },
-  { colKey: 'phone', title: t('craftRoute.workcenter'), width: 120, align: 'center' },
-  { colKey: 'phone', title: t('craftRoute.isDefault'), width: 120, align: 'center' },
-  { colKey: 'phone', title: t('business.main.creator'), width: 120, align: 'center' },
-  { colKey: 'phone', title: t('business.main.timeCreate'), width: 120, align: 'center' },
+  { colKey: 'mitemCategoryCode', title: t('craftRoute.categoryCode'), width: 100, align: 'center' },
+  { colKey: 'mitemCategoryName', title: t('craftRoute.categoryName'), width: 100, align: 'center' },
+  { colKey: 'mitemCode', title: t('craftRoute.productCode'), width: 100, align: 'center' },
+  { colKey: 'mitemName', title: t('craftRoute.productName'), width: 100, align: 'center' },
+  { colKey: 'workcenter', title: t('craftRoute.workcenter'), width: 120, align: 'center' },
+  { colKey: 'isDefault', title: t('craftRoute.isDefault'), width: 100, align: 'center' },
+  { colKey: 'creator', title: t('business.main.creator'), width: 100, align: 'center' },
+  { colKey: 'timeCreate', title: t('business.main.timeCreate'), width: 150, align: 'center' },
   { colKey: 'op', title: t('common.button.operation'), width: 100, align: 'center', fixed: 'right' },
 ];
 const productRelationData = reactive({
   total: 0,
   list: [],
 });
+const selectRouting = ({ row }) => {
+  selectedRoutingCode.value = row.routingCode;
+  selectedRoutingName.value = row.routingName;
+  isSelectRouting.value = true;
+  getProductRelation();
+};
+const getProductRelation = () => {
+  productLoading.value = true;
+  apiControl.routingMap
+    .listByRoutingCode({
+      pageNum: productPage.value.page,
+      pageSize: productPage.value.rows,
+      routingCode: selectedRoutingCode.value,
+      keyword: productRelationKeyword.value,
+    })
+    .then((data) => {
+      productRelationData.list = data.list;
+      productRelationData.total = data.total;
+      productLoading.value = false;
+    })
+    .catch(() => {
+      productLoading.value = false;
+    });
+};
+const deleteProductRelation = (id: string) => {
+  apiControl.routingMap.deleteBatch([id]).then(() => getProductRelation());
+};
+const deleteProductRelationBatch = () => {
+  apiControl.routingMap.deleteBatch(routingMapKeys.value).then(() => {
+    getProductRelation();
+    routingMapKeys.value = [];
+  });
+};
+const setProductRelationDefault = ($event: boolean, id: string) => {
+  apiControl.routingMap
+    .setDefault(id, {
+      isDefault: $event ? 1 : 0,
+    })
+    .then(() => getProductRelation());
+};
 // #endregion
 </script>
 

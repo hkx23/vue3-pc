@@ -9,6 +9,19 @@
  * ---------------------------------------------------------------
  */
 
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
 /** 工艺路线实体 */
 export interface RoutingDTO {
   /** 工艺路线编码 */
@@ -36,19 +49,11 @@ export interface RoutingDTO {
   invailDate?: string;
   /** 工艺路线图形化JSON */
   routingGraph?: string;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
   /**
-   * 响应代码
+   * 工艺路线状态
    * @format int32
    */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
+  state?: number;
 }
 
 /** 产品包装规则明细 */
@@ -285,6 +290,8 @@ export interface CommonSearch {
   selectedField?: string;
   selectedValue?: string;
   keyword?: string;
+  /** @format int32 */
+  state?: number;
   parentId?: string;
   category?: string;
   sorts?: SortParam[];
@@ -646,6 +653,43 @@ export interface WorkcenterVO {
   children?: WorkcenterVO[];
 }
 
+/** 工艺路线映射表 */
+export interface RoutingMap {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工艺路线代码 */
+  routingCode?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  workcenterId?: string;
+  /**
+   * 是否默认
+   * @format int32
+   */
+  isDefault?: number;
+}
+
 /** 响应数据 */
 export type PagingDataRouting = {
   list?: Routing[];
@@ -737,6 +781,103 @@ export interface ProductPackRuleMapDTO {
   packRuleName?: string;
   packRelationType?: string;
   ids?: string[];
+}
+
+export interface ProcessInDefectCodeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 工序模糊关键词 */
+  process?: string;
+  /** 工序缺陷-状态 */
+  state?: number[];
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+}
+
+/** 工序与缺陷代码关系 */
+export interface ProcessInDefectCode {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  processId?: string;
+  defectCodeId?: string;
+  /**
+   *  显示顺序
+   * @format int32
+   */
+  displaySeq?: number;
+}
+
+/** 响应数据 */
+export type PagingDataProcessInDefectCodeVO = {
+  list?: ProcessInDefectCodeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 领域对象扩展属性分类 */
+export interface ProcessInDefectCodeVO {
+  id?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /**
+   *  显示顺序
+   * @format int32
+   */
+  displaySeq?: number;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProcessInDefectCodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProcessInDefectCodeVO;
 }
 
 /** 响应数据 */
@@ -1181,6 +1322,8 @@ export interface BarcodeWipVO {
    * @format int32
    */
   scheQty?: number;
+  routingRevisionId?: string;
+  moId?: string;
   /** 工单名称 */
   moCode?: string;
   /**
@@ -1188,14 +1331,11 @@ export interface BarcodeWipVO {
    * @format int32
    */
   completedQty?: number;
+  mitemId?: string;
   /** 物料代码 */
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  /** 工站代码 */
-  wcCode?: string;
-  /** 工站名称 */
-  wcName?: string;
   /** 工序代码 */
   processCode?: string;
   /** 工序名称 */
@@ -1204,13 +1344,22 @@ export interface BarcodeWipVO {
   scanMessage?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  /** 工作中心代码 */
+  workCenterCode?: string;
+  /** 工作中心名称 */
+  workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  defectCodeStr?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  workshopId?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 缺陷代码 */
@@ -1276,6 +1425,60 @@ export interface ResultWorkcenterVO {
   message?: string;
   /** 工作中心显示 */
   data?: WorkcenterVO;
+}
+
+/** 响应数据 */
+export type PagingDataRoutingMapVO = {
+  list?: RoutingMapVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataRoutingMapVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataRoutingMapVO;
+}
+
+/** 工艺路线关联产品实体 */
+export interface RoutingMapVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /** 类型编码 */
+  mitemCategoryCode?: string;
+  /** 类型名称 */
+  mitemCategoryName?: string;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 产品名称 */
+  mitemName?: string;
+  /** 工作中心 */
+  workcenter?: string;
+  /**
+   * 是否默认
+   * @format int32
+   */
+  isDefault?: number;
 }
 
 /** 通用响应类 */
@@ -1444,6 +1647,80 @@ export interface ResultListProductPackRuleDtlVO {
  */
 
 export const api = {
+  routingMap: {
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name SetDefault
+     * @summary 工艺路线关联产品设置默认
+     * @request PUT:/routingMap/setDefault/{id}
+     * @secure
+     */
+    setDefault: (
+      id: string,
+      query: {
+        /** @format int32 */
+        isDefault: number;
+      },
+    ) =>
+      http.request<ResultObject['data']>(`/api/control/routingMap/setDefault/${id}`, {
+        method: 'PUT',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name Add
+     * @summary 添加工艺路线关联产品
+     * @request POST:/routingMap/add
+     * @secure
+     */
+    add: (data: RoutingMap) =>
+      http.request<ResultObject['data']>(`/api/control/routingMap/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name ListByRoutingCode
+     * @summary 工艺路线关联产品
+     * @request GET:/routingMap/listByRoutingCode
+     * @secure
+     */
+    listByRoutingCode: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      routingCode: string;
+      keyword?: string;
+    }) =>
+      http.request<ResultPagingDataRoutingMapVO['data']>(`/api/control/routingMap/listByRoutingCode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name DeleteBatch
+     * @summary 批量删除工艺路线关联产品
+     * @request DELETE:/routingMap/deleteBatch
+     * @secure
+     */
+    deleteBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/control/routingMap/deleteBatch`, {
+        method: 'DELETE',
+        body: data as any,
+      }),
+  },
   routing: {
     /**
      * No description
@@ -2100,6 +2377,82 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/productPackRuleMap/delete`, {
         method: 'DELETE',
         params: query,
+      }),
+  },
+  processInDefectCode: {
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name RemoveProcessInDefectCode
+     * @summary 删除工序缺陷
+     * @request POST:/processInDefectCode/removeProcessInDefectCode
+     * @secure
+     */
+    removeProcessInDefectCode: (data: ProcessInDefectCodeSearch) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/removeProcessInDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name RemoveProcessInDefectCodeBatch
+     * @summary 批量删除工序缺陷
+     * @request POST:/processInDefectCode/removeProcessInDefectCodeBatch
+     * @secure
+     */
+    removeProcessInDefectCodeBatch: (data: ProcessInDefectCodeSearch) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/removeProcessInDefectCodeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name ModifyProcessInDefectCode
+     * @summary 编辑工序缺陷
+     * @request POST:/processInDefectCode/modifyProcessInDefectCode
+     * @secure
+     */
+    modifyProcessInDefectCode: (data: ProcessInDefectCode) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/modifyProcessInDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name GetList
+     * @summary 查询工序缺陷
+     * @request POST:/processInDefectCode/getList
+     * @secure
+     */
+    getList: (data: ProcessInDefectCodeSearch) =>
+      http.request<ResultPagingDataProcessInDefectCodeVO['data']>(`/api/control/processInDefectCode/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name AddProcessInDefectCode
+     * @summary 新增缺陷代码
+     * @request POST:/processInDefectCode/addProcessInDefectCode
+     * @secure
+     */
+    addProcessInDefectCode: (data: ProcessInDefectCode) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/addProcessInDefectCode`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   process: {
