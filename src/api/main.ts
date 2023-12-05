@@ -9,6 +9,92 @@
  * ---------------------------------------------------------------
  */
 
+/** 标签模板关联 */
+export interface PrintTmplMap {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  printTmplId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 打印模板实体 */
+export interface PrintTmplDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板代码 */
+  tmplCode?: string;
+  /** 模板名称 */
+  tmplName?: string;
+  /** 模板描述 */
+  tmplDesc?: string;
+  /** 模板内容地址 */
+  tmplBodyPath?: string;
+  /** 模板类别 */
+  tmplCategory?: string;
+  /** 模板类型 */
+  tmplType?: string;
+  /** 打印模板文件 */
+  fileContent?: string;
+  /** 打印模板下载地址 */
+  fileUrl?: string;
+}
+
 /** 组织层级表 */
 export interface OrgLevel {
   id?: string;
@@ -48,19 +134,6 @@ export interface OrgLevel {
    * @format int32
    */
   divisionFlag?: number;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 /** 组织架构表 */
@@ -715,6 +788,128 @@ export interface ResultLong {
   data?: string;
 }
 
+/** 打印模板关联实体 */
+export interface PrintTmplMapDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  printTmplId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 物料类别编码 */
+  mitemCategoryCode?: string;
+  /** 物料类别名称 */
+  mitemCategoryName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  keyword?: string;
+}
+
+/** 响应数据 */
+export type PagingDataPrintTmplMapDTO = {
+  list?: PrintTmplMapDTO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataPrintTmplMapDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPrintTmplMapDTO;
+}
+
+/** 响应数据 */
+export type PagingDataPrintTmpl = {
+  list?: PrintTmpl[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 标签模板 */
+export interface PrintTmpl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板代码 */
+  tmplCode?: string;
+  /** 模板名称 */
+  tmplName?: string;
+  /** 模板描述 */
+  tmplDesc?: string;
+  /** 模板内容地址 */
+  tmplBodyPath?: string;
+  /** 模板类别 */
+  tmplCategory?: string;
+  /** 模板类型 */
+  tmplType?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPrintTmpl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPrintTmpl;
+}
+
 /** 响应数据 */
 export type PagingDataPost = {
   list?: Post[];
@@ -1302,6 +1497,8 @@ export interface ModuleSearch {
    * @format int32
    */
   pageSize?: number;
+  /** 状态 */
+  state?: number[];
   id?: string;
   /**
    * 客户端类型
@@ -1336,6 +1533,11 @@ export interface ResultListShowModuleVO {
 /** 显示菜单实体 */
 export type ShowModuleVO = {
   id?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
   /** 模块编码 */
   moduleCode?: string;
   /** 名称 */
@@ -1356,8 +1558,11 @@ export type ShowModuleVO = {
   iconPath?: string;
   /** 模块层次代码 */
   moduleLevel?: string;
-  /** 模块类型 */
-  moduleType?: string;
+  /**
+   * 模块类型
+   * @format int32
+   */
+  moduleType?: number;
   /** 模块版本号 */
   moduleVersion?: number;
   /** 模块包标识 */
@@ -1474,7 +1679,7 @@ export interface MitemUom {
   oid?: string;
   /** 计量单位符号 */
   uom?: string;
-  /** 计量单位名称 */
+  /** 计量单位符号 */
   uomName?: string;
 }
 
@@ -1688,15 +1893,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  stateName?: string;
-  isState?: boolean;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isRawName?: string;
-  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -1863,8 +2068,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2784,6 +2989,128 @@ export interface ResultListAdminOrgVO {
  */
 
 export const api = {
+  printTmplMap: {
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name Update
+     * @summary 更新打印模板
+     * @request PUT:/printTmplMap/update/{id}
+     * @secure
+     */
+    update: (id: string, data: PrintTmplMap) =>
+      http.request<ResultObject['data']>(`/api/main/printTmplMap/update/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name Search
+     * @summary 获取模板关联
+     * @request POST:/printTmplMap/items
+     * @secure
+     */
+    search: (data: PrintTmplMapDTO) =>
+      http.request<ResultPagingDataPrintTmplMapDTO['data']>(`/api/main/printTmplMap/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/printTmplMap/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/printTmplMap/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name Add
+     * @summary 新增模板关联
+     * @request POST:/printTmplMap/add
+     * @secure
+     */
+    add: (data: PrintTmplMap) =>
+      http.request<ResultObject['data']>(`/api/main/printTmplMap/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  printTmpl: {
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name Update
+     * @summary 更新打印模板
+     * @request PUT:/printTmpl/update/{id}
+     * @secure
+     */
+    update: (id: string, data: PrintTmplDTO) =>
+      http.request<ResultObject['data']>(`/api/main/printTmpl/update/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name Search
+     * @summary 获取模板
+     * @request POST:/printTmpl/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataPrintTmpl['data']>(`/api/main/printTmpl/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/printTmpl/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/printTmpl/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name Add
+     * @summary 新增打印模板
+     * @request POST:/printTmpl/add
+     * @secure
+     */
+    add: (data: PrintTmplDTO) =>
+      http.request<ResultObject['data']>(`/api/main/printTmpl/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   orgLevel: {
     /**
      * No description
