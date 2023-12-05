@@ -7,12 +7,8 @@ import { Stimulsoft } from 'stimulsoft-reports-js/Scripts/stimulsoft.blockly.edi
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  console.log('Loading Viewer view');
-
-  console.log('Creating the report viewer with default options');
   const viewer = new Stimulsoft.Viewer.StiViewer(undefined, 'StiViewer', false);
 
-  // console.log('Creating a new report instance');
   // const report = new Stimulsoft.Report.StiReport();
 
   // // // In `onBeginProcessData` event handler add custom HTTP headers
@@ -27,19 +23,13 @@ onMounted(() => {
   // //   }
   // // };
 
-  // // console.log("Load report from url");
   // // report.loadFile("reports/SimpleListWithProtectedJson.mrt");
 
-  // console.log('Load report from url');
   // report.loadFile('/reports/SimpleList.mrt');
 
-  // console.log('Assigning report to the viewer, the report will be built automatically after rendering the viewer');
   // viewer.report = report;
 
-  console.log('Rendering the viewer to selected element');
   viewer.renderHtml('s-viewer');
-
-  console.log('Loading completed successfully!');
 });
 </script>
 

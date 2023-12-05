@@ -5,7 +5,7 @@ import { MockMethod } from '@/types/web-core';
 
 export default [
   {
-    url: '/api/modeling/org/tree',
+    url: '/api/main/org/tree',
     method: 'GET',
     response: {
       code: 200,

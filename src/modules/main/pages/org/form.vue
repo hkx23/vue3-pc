@@ -130,7 +130,6 @@ let isFormEditing = false;
 const parentLevels = ref<string[]>([]);
 const reset = (isEdit: boolean, data?: OrgTreeVO, parentOrgName?: string, parentOrgLevels?: string[]) => {
   formRef.value.reset({ type: 'empty' });
-  formData.oid = '0';
   formData.isActive = 0;
   isFormEditing = isEdit;
   parentLevels.value = parentOrgLevels || [];

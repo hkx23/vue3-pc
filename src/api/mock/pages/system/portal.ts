@@ -19,7 +19,27 @@ export default [
     },
   },
   {
-    url: '/api/control/module/show?clientType=1',
+    url: '/api/main/user/currentUserInfo',
+    method: 'GET',
+    response: {
+      code: 200,
+      data: {
+        defaultOrgId: '1725461564969635842',
+        displayName: '管理员',
+        orgList: [
+          {
+            code: 'A01',
+            id: '1725461564969635842',
+            name: '天宫生产基地',
+          },
+        ],
+        userName: 'administrator',
+      },
+      message: '操作成功',
+    },
+  },
+  {
+    url: '/api/main/module/show?clientType=1',
     method: 'GET',
     response: () => {
       return [
