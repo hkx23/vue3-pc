@@ -239,6 +239,8 @@ const onConfirmForm = () => {
     min-width: unset;
     color: white;
   }
+  font-size: 15px; // add by Neo
+  font-weight: bold; // add by Neo
 }
 
 .operations-container {
