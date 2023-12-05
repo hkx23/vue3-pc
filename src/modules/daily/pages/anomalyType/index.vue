@@ -85,9 +85,14 @@
     >
       <t-form ref="formRef" :rules="rules" :data="anomalyTypeTabData.list" @submit="onAnomalyTypeSubmit">
         <!-- 第 1️⃣ 行数据 -->
-        <t-form-item label="异常模块" name="incidentMdName">
-          <t-select v-model="anomalyTypeTabData.list.incidentMdName" @change="onObjectCodeChange">
-            <t-option v-for="item in DropDownData.list" :key="item.id" :label="item.paramValue" :value="item" />
+        <t-form-item label="异常模块" name="incidentModule">
+          <t-select v-model="anomalyTypeTabData.list.incidentModule">
+            <t-option
+              v-for="item in DropDownData.list"
+              :key="item.id"
+              :label="item.paramValue"
+              :value="item.paramCode"
+            />
           </t-select>
         </t-form-item>
         <!-- 第 2️⃣ 行数据 -->
@@ -154,7 +159,6 @@ const anomalyTypeData = reactive({ list: [] });
 // dialog 弹框数据
 const anomalyTypeTabData = reactive({
   list: {
-    incidentMdName: '', // 异常模块
     incidentModule: '', // 异常模块 code
     incidentName: '', // 异常类型名称
     incidentCode: '', // 异常类型编码
@@ -251,14 +255,14 @@ const onGetDropDownData = async () => {
 
 // 添加按钮点击事件
 const onAddTypeData = () => {
+  formRef.value.reset({ type: 'empty' });
   isDisabled.value = false;
+  formVisible.value = true;
   anomalyTypeTabData.list.incidentModule = '';
   anomalyTypeTabData.list.incidentName = ''; // 异常类型名称
-  anomalyTypeTabData.list.incidentMdName = ''; //
   anomalyTypeTabData.list.incidentCode = ''; // 异常类型编码
   anomalyTypeTabData.list.state = null; // 是否启用
   submitFalg.value = true;
-  formVisible.value = true;
   diaLogTitle.value = '添加异常类型';
 };
 
@@ -269,9 +273,10 @@ const onSearchSelect = (data) => {
 };
 
 // 下拉框点击事件
-const onObjectCodeChange = (data: { paramCode: string }) => {
-  anomalyTypeTabData.list.incidentModule = data.paramCode;
-};
+// const onObjectCodeChange = (data: { paramCode: string }) => {
+//   console.log('🚀 ~ file: index.vue:274 ~ onObjectCodeChange ~ data:', data);
+//   anomalyTypeTabData.list.incidentModule = data.paramCode;
+// };
 
 // 添加异常类型请求
 const onAddTypeRequest = async () => {
@@ -329,7 +334,6 @@ const resetButton = () => {
 // 右侧表格编辑按钮
 const onEditRow = (row: any) => {
   isDisabled.value = true;
-  anomalyTypeTabData.list.incidentMdName = row.incidentModuleName; // 异常模块名称
   anomalyTypeTabData.list.incidentModule = row.incidentModule; // 异常模块 Code
   anomalyTypeTabData.list.incidentName = row.incidentName; // 异常类型名称
   anomalyTypeTabData.list.incidentCode = row.incidentCode; // 异常类型编码
@@ -382,10 +386,9 @@ const deleteBatches = async () => {
 
 // 关闭模态框事件
 const onSecondaryReset = () => {
-  anomalyTypeTabData.list.incidentMdName = '';
+  formRef.value.reset({ type: 'empty' });
   anomalyTypeTabData.list.incidentModule = '';
   formVisible.value = false;
-  formRef.value.reset({ type: 'empty' });
 };
 
 // 表单提交事件
