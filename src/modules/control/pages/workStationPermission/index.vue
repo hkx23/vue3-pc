@@ -53,7 +53,7 @@
           @refresh="onfetchData"
           @select-change="rehandleSelectChange"
         >
-          <template #operate="{ row }">
+          <template #op="{ row }">
             <t-popconfirm content="确认删除吗" @confirm="onDelete(row.id)">
               <icon name="delete"></icon>
             </t-popconfirm>
@@ -169,7 +169,7 @@ const column = ref([
     align: 'center',
   },
   {
-    colKey: 'operate',
+    colKey: 'op',
     title: '操作',
     width: '90px',
     align: 'center',

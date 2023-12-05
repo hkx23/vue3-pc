@@ -19,7 +19,7 @@
         @select-change="rehandleSelectChange"
       >
         <!-- <t-button>导入</t-button> -->
-        <template #operate="{ row }">
+        <template #op="{ row }">
           <icon name="edit-1" style="cursor: pointer" @click="onSeparateEdit(row)"></icon>
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
             <icon name="delete" style="margin: 0 10px; cursor: pointer"></icon>
@@ -118,7 +118,7 @@ const column: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'checkbox', type: 'multiple' },
   { colKey: 'defectCode', title: t('defectCode.defectCode'), align: 'center', width: '200px' },
   { colKey: 'defectName', title: t('defectCode.defectName'), align: 'center' },
-  { colKey: 'operate', title: t('defectCode.operate'), align: 'center', fixed: 'right' },
+  { colKey: 'op', title: t('defectCode.operate'), align: 'center', fixed: 'right' },
 ];
 const data = ref([]);
 // 进入首页请求
