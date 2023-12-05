@@ -591,14 +591,14 @@ export interface ResultSupplier {
 }
 
 /** 响应数据 */
-export type PagingDataRole = {
-  list?: Role[];
+export type PagingDataRoleVO = {
+  list?: RoleVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataRole {
+export interface ResultPagingDataRoleVO {
   /**
    * 响应代码
    * @format int32
@@ -607,11 +607,11 @@ export interface ResultPagingDataRole {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataRole;
+  data?: PagingDataRoleVO;
 }
 
-/** 角色 */
-export interface Role {
+/** 权限实体 */
+export interface RoleVO {
   id?: string;
   /**
    * 创建时间
@@ -641,6 +641,14 @@ export interface Role {
   roleName?: string;
   /** 角色描述 */
   roleDesc?: string;
+  /** 企业名称 */
+  enName?: string;
+  /** 企业编码 */
+  enCode?: string;
+  /** 组织名称 */
+  plantName?: string;
+  /** 组织编码 */
+  plantCode?: string;
 }
 
 /** 通用响应类 */
@@ -654,6 +662,51 @@ export interface ResultRole {
   message?: string;
   /** 角色 */
   data?: Role;
+}
+
+/** 角色 */
+export type Role = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 角色代码 */
+  roleCode?: string;
+  /** 角色名称 */
+  roleName?: string;
+  /** 角色描述 */
+  roleDesc?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
 }
 
 /** 响应数据 */
@@ -1629,15 +1682,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
   stateName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
   isState?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2259,86 +2312,6 @@ export interface ResultCustomer {
 export interface JSONObject {
   empty?: boolean;
   [key: string]: any;
-}
-
-export interface BarcodeRuleSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 模糊查询关键词 */
-  keyword?: string;
-  /** 下拉框查询 */
-  selectKeyword?: string;
-  /** 条码类型-状态 */
-  state?: number[];
-  id?: string;
-  /** 多个id */
-  ids?: string[];
-}
-
-/** 领域对象扩展属性分类 */
-export interface BarcodeRuleVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 条码规则代码 */
-  ruleCode?: string;
-  /** 条码规则名称 */
-  ruleName?: string;
-  /** 条码规则描述 */
-  ruleDesc?: string;
-  /** 条码类型 */
-  barcodeType?: string;
-  /** 条码规则表达式 */
-  ruleExpression?: string;
-  /** 条码类型名称 */
-  barcodeTypeName?: string;
-}
-
-/** 响应数据 */
-export type PagingDataBarcodeRuleVO = {
-  list?: BarcodeRuleVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataBarcodeRuleVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataBarcodeRuleVO;
 }
 
 /** 出勤模式 */
@@ -3258,7 +3231,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataRole['data']>(`/api/main/role/items`, {
+      http.request<ResultPagingDataRoleVO['data']>(`/api/main/role/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3275,6 +3248,26 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultRole['data']>(`/api/main/role/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name GetItemByName
+     * @summary 根據名称獲取角色
+     * @request POST:/role/getbyname
+     * @secure
+     */
+    getItemByName: (query?: {
+      /** @default "0" */
+      id?: string;
+      /** @default "" */
+      roleName?: string;
+    }) =>
+      http.request<ResultLong['data']>(`/api/main/role/getbyname`, {
+        method: 'POST',
+        params: query,
       }),
 
     /**
@@ -3305,6 +3298,41 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/role/delete`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name Add
+     * @summary 编辑角色信息
+     * @request POST:/role/add
+     * @secure
+     */
+    add: (data: Role) =>
+      http.request<ResultObject['data']>(`/api/main/role/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name GetItemByCode
+     * @summary 根據编码获取角色
+     * @request GET:/role/getbycode
+     * @secure
+     */
+    getItemByCode: (query?: {
+      /** @default "0" */
+      id?: string;
+      /** @default "" */
+      roleCode?: string;
+    }) =>
+      http.request<ResultLong['data']>(`/api/main/role/getbycode`, {
+        method: 'GET',
+        params: query,
       }),
   },
   post: {
@@ -4567,22 +4595,6 @@ export const api = {
      */
     updateItemByCode: (data: Customer) =>
       http.request<ResultObject['data']>(`/api/main/customer/items/modify`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  barcodeRule: {
-    /**
-     * No description
-     *
-     * @tags 条码生成规则
-     * @name GetList
-     * @summary 查询条码类型
-     * @request POST:/barcodeRule/getList
-     * @secure
-     */
-    getList: (data: BarcodeRuleSearch) =>
-      http.request<ResultPagingDataBarcodeRuleVO['data']>(`/api/main/barcodeRule/getList`, {
         method: 'POST',
         body: data as any,
       }),
