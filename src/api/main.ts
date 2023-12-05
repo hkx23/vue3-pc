@@ -1631,13 +1631,13 @@ export interface MitemVO {
   isBatchNo?: number;
   isState?: boolean;
   stateName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  isRawChecked?: boolean;
+  isBatchName?: string;
   isRawName?: string;
   isInProcessName?: string;
   isProductName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -1804,8 +1804,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2259,6 +2259,86 @@ export interface ResultCustomer {
 export interface JSONObject {
   empty?: boolean;
   [key: string]: any;
+}
+
+export interface BarcodeRuleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊查询关键词 */
+  keyword?: string;
+  /** 下拉框查询 */
+  selectKeyword?: string;
+  /** 条码类型-状态 */
+  state?: number[];
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+}
+
+/** 领域对象扩展属性分类 */
+export interface BarcodeRuleVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码规则代码 */
+  ruleCode?: string;
+  /** 条码规则名称 */
+  ruleName?: string;
+  /** 条码规则描述 */
+  ruleDesc?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码规则表达式 */
+  ruleExpression?: string;
+  /** 条码类型名称 */
+  barcodeTypeName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeRuleVO = {
+  list?: BarcodeRuleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeRuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeRuleVO;
 }
 
 /** 出勤模式 */
@@ -4487,6 +4567,22 @@ export const api = {
      */
     updateItemByCode: (data: Customer) =>
       http.request<ResultObject['data']>(`/api/main/customer/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  barcodeRule: {
+    /**
+     * No description
+     *
+     * @tags 条码生成规则
+     * @name GetList
+     * @summary 查询条码类型
+     * @request POST:/barcodeRule/getList
+     * @secure
+     */
+    getList: (data: BarcodeRuleSearch) =>
+      http.request<ResultPagingDataBarcodeRuleVO['data']>(`/api/main/barcodeRule/getList`, {
         method: 'POST',
         body: data as any,
       }),
