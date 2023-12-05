@@ -653,6 +653,15 @@ watch(
   },
   { deep: true },
 );
+watch(
+  () => props.parentId,
+  (val) => {
+    console.log('watch:props.parentId', `${props.parentId} ss ${val}`);
+    isHandleSelectionChange.value = false;
+    remoteLoad('');
+  },
+  { deep: true },
+);
 
 // 暴露方法出去
 defineExpose({ closeTable, onClear });

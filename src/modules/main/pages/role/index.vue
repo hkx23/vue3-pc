@@ -31,6 +31,16 @@
         </template>
       </tm-table>
     </div>
+    <!-- 新增/编辑角色弹出窗 -->
+    <t-dialog
+      v-model:visible="formVisible"
+      :header="t(formAdd ? 'common.dialog.header.add' : 'common.dialog.header.edit', [t('role.role')])"
+      :on-confirm="onConfirmForm"
+    >
+      <role-form ref="formRef" />
+    </t-dialog>
+    <!-- 角色成员弹出窗 -->
+    <!-- 权限分配弹出窗 -->
   </div>
 </template>
 
@@ -42,7 +52,13 @@ import { api } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+import { FormRef } from './constants';
+import RoleForm from './form.vue';
 import { useLang } from './lang';
+
+const formVisible = ref(false);
+const formAdd = ref(true);
+const formRef = ref<FormRef>(null);
 
 const { t } = useLang();
 const { pageUI } = usePage();
@@ -153,9 +169,6 @@ const fetchTable = async () => {
     setLoading(false);
   }
 };
-const onRowEdit = (row: any) => {
-  console.log('编辑', row);
-};
 
 const onRowPermission = (row: any) => {
   console.log('编辑', row);
@@ -166,8 +179,25 @@ const onRowDelete = (row: any) => {
 const onRowPerson = (row: any) => {
   console.log('编辑', row);
 };
+const onRowEdit = (row: any) => {
+  const { reset } = formRef.value;
+  reset(true, row);
+  formAdd.value = false;
+  formVisible.value = true;
+};
 const onAddClick = () => {
   console.log('新增');
+  const { reset } = formRef.value;
+  reset(false, null);
+  formAdd.value = true;
+  formVisible.value = true;
+};
+const onConfirmForm = () => {
+  const { submit } = formRef.value;
+  submit().then(() => {
+    formVisible.value = false;
+    fetchTable();
+  });
 };
 </script>
 

@@ -112,8 +112,6 @@ export interface CommonSearch {
   selectedField?: string;
   selectedValue?: string;
   keyword?: string;
-  /** @format int32 */
-  state?: number;
   parentId?: string;
   category?: string;
   sorts?: SortParam[];
@@ -1004,177 +1002,6 @@ export interface ResultOrg {
   message?: string;
   /** 组织架构表 */
   data?: Org;
-}
-
-export interface ObjectPropertyCategorySearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 左侧列表模糊关键词 */
-  keyword?: string;
-  /** 扩展属性分类-状态 */
-  state?: number[];
-  id?: string;
-  /** 多个id */
-  ids?: string[];
-  /** 领域编码 */
-  objectCode?: string;
-}
-
-/** 领域对象扩展属性分类 */
-export interface ObjectPropertyCategoryVO {
-  id?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  paramGroupId?: string;
-  /** 字典代码 */
-  paramCode?: string;
-  /** 字典值 */
-  paramValue?: string;
-  /** 字典组名称 */
-  getParamGroupName?: string;
-  /** 领域属性名称 */
-  objectCode?: string;
-  categoryId?: string;
-  /** 属性代码 */
-  propertyCode?: string;
-  /** 属性值类型 */
-  propertyValueType?: string;
-  /** 显示在界面上的名词 */
-  displayName?: string;
-  /**
-   * 属性中的显示顺序
-   * @format int32
-   */
-  displaySequence?: number;
-  /**
-   * 是否必填项
-   * @format int32
-   */
-  isRequire?: number;
-  /**
-   * 是否允许存在多个同类项
-   * @format int32
-   */
-  isMultiple?: number;
-  /**
-   * 是否需要校验输入
-   * @format int32
-   */
-  needValidation?: number;
-  /** 校验的正则表达式 */
-  validExpression?: string;
-  /** 扩展属性数据来源 */
-  dataSource?: string;
-  /** 数据取值路径 */
-  dataSourcePath?: string;
-  /** 备注 */
-  memo?: string;
-  /**
-   * 是否数据源多选
-   * @format int32
-   */
-  isDataMultiple?: number;
-  /** 领域属性分类名称 */
-  categoryName?: string;
-}
-
-/** 响应数据 */
-export type PagingDataObjectPropertyCategoryVO = {
-  list?: ObjectPropertyCategoryVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataObjectPropertyCategoryVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataObjectPropertyCategoryVO;
-}
-
-/** 领域扩展属性 */
-export interface ObjectProperty {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  /** 领域对象编码 */
-  objectCode?: string;
-  categoryId?: string;
-  /** 属性代码 */
-  propertyCode?: string;
-  /** 属性值类型 */
-  propertyValueType?: string;
-  /** 显示在界面上的名词 */
-  displayName?: string;
-  /**
-   * 属性中的显示顺序
-   * @format int32
-   */
-  displaySequence?: number;
-  /**
-   * 是否必填项
-   * @format int32
-   */
-  isRequire?: number;
-  /**
-   * 是否允许存在多个同类项
-   * @format int32
-   */
-  isMultiple?: number;
-  /**
-   * 是否需要校验输入
-   * @format int32
-   */
-  needValidation?: number;
-  /** 校验的正则表达式 */
-  validExpression?: string;
-  /** 扩展属性数据来源 */
-  dataSource?: string;
-  /** 数据取值路径 */
-  dataSourcePath?: string;
-  /** 备注 */
-  memo?: string;
-  /**
-   * 是否数据源多选
-   * @format int32
-   */
-  isDataMultiple?: number;
 }
 
 /** 系统模块表 */
@@ -2428,26 +2255,6 @@ export interface ResultCurrentUserVO {
 }
 
 /** 响应数据 */
-export type PagingDataParam = {
-  list?: Param[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataParam {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataParam;
-}
-
-/** 响应数据 */
 export type KeyValuePairStringString = {
   value?: string;
   label?: string;
@@ -2538,26 +2345,6 @@ export interface ResultListOrgTreeVO {
   data?: OrgTreeVO[] | null;
 }
 
-/** 响应数据 */
-export type PagingDataParamGroup = {
-  list?: ParamGroup[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataParamGroup {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataParamGroup;
-}
-
 /** 领域对象扩展属性分类 */
 export type ObjectPropertyCategory = {
   id?: string;
@@ -2601,26 +2388,6 @@ export interface ResultListObjectPropertyCategory {
   message?: string;
   /** 响应数据 */
   data?: ObjectPropertyCategory[] | null;
-}
-
-/** 响应数据 */
-export type PagingDataObjectPropertyCategory = {
-  list?: ObjectPropertyCategory[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataObjectPropertyCategory {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataObjectPropertyCategory;
 }
 
 /** 响应数据 */
@@ -2730,19 +2497,6 @@ export interface ResultPagingDataLong {
   message?: string;
   /** 响应数据 */
   data?: PagingDataLong;
-}
-
-/** 通用响应类 */
-export interface ResultListDefectCodeVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: DefectCodeVO[] | null;
 }
 
 /** 显示行政组织层级实体 */
@@ -3306,6 +3060,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name Add
+     * @summary 编辑角色信息
+     * @request POST:/role/add
+     * @secure
+     */
+    add: (data: Role) =>
+      http.request<ResultObject['data']>(`/api/main/role/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   post: {
     /**
@@ -3644,141 +3413,6 @@ export const api = {
       parmGroupCode?: string;
     }) =>
       http.request<ResultListKeyValuePairStringString['data']>(`/api/main/param/getListByGroupCode`, {
-        method: 'GET',
-        params: query,
-      }),
-  },
-  objectPropertyCategory: {
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
-     * @name GetObjectList
-     * @summary 查询左侧object列表
-     * @request POST:/objectPropertyCategory/getObjectList
-     * @secure
-     */
-    getObjectList: (data: ObjectPropertyCategorySearch) =>
-      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(`/api/main/objectPropertyCategory/getObjectList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
-     * @name GetObjectCategoryList
-     * @summary 查询各object的扩展属性
-     * @request POST:/objectPropertyCategory/getObjectCategoryList
-     * @secure
-     */
-    getObjectCategoryList: (data: ObjectPropertyCategorySearch) =>
-      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(
-        `/api/main/objectPropertyCategory/getObjectCategoryList`,
-        {
-          method: 'POST',
-          body: data as any,
-        },
-      ),
-
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
-     * @name EditObjectCategory
-     * @summary 编辑领域对象
-     * @request POST:/objectPropertyCategory/editObjectCategory
-     * @secure
-     */
-    editObjectCategory: (data: ObjectProperty) =>
-      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(
-        `/api/main/objectPropertyCategory/editObjectCategory`,
-        {
-          method: 'POST',
-          body: data as any,
-        },
-      ),
-
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
-     * @name AddObjectCategory
-     * @summary 新增领域对象
-     * @request POST:/objectPropertyCategory/addObjectCategory
-     * @secure
-     */
-    addObjectCategory: (data: ObjectProperty) =>
-      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(
-        `/api/main/objectPropertyCategory/addObjectCategory`,
-        {
-          method: 'POST',
-          body: data as any,
-        },
-      ),
-
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
-     * @name GetParamGroup
-     * @summary 获得数据字典组所有组
-     * @request GET:/objectPropertyCategory/getParamGroup
-     * @secure
-     */
-    getParamGroup: () =>
-      http.request<ResultPagingDataParamGroup['data']>(`/api/main/objectPropertyCategory/getParamGroup`, {
-        method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
-     * @name GetObjectCategory
-     * @summary 查询项目扩展属性分类Tag
-     * @request GET:/objectPropertyCategory/getObjectCategory
-     * @secure
-     */
-    getObjectCategory: (query?: {
-      /** @default "" */
-      objectCode?: string;
-    }) =>
-      http.request<ResultPagingDataObjectPropertyCategoryVO['data']>(
-        `/api/main/objectPropertyCategory/getObjectCategory`,
-        {
-          method: 'GET',
-          params: query,
-        },
-      ),
-
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
-     * @name GetListByObjectName
-     * @summary 根据领域对象编码获取分类
-     * @request GET:/objectPropertyCategory/getListByObjectName
-     * @secure
-     */
-    getListByObjectName: (query: { objectCode: string }) =>
-      http.request<ResultListObjectPropertyCategory['data']>(`/api/main/objectPropertyCategory/getListByObjectName`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 领域对象扩展属性分类
-     * @name GetCategory
-     * @summary 获取领域对象扩展属性分类
-     * @request GET:/objectPropertyCategory/getCategory
-     * @secure
-     */
-    getCategory: (query: { objectCode: string }) =>
-      http.request<ResultPagingDataObjectPropertyCategory['data']>(`/api/main/objectPropertyCategory/getCategory`, {
         method: 'GET',
         params: query,
       }),
@@ -4302,216 +3936,6 @@ export const api = {
         body: data as any,
       }),
   },
-  defectDealMethod: {
-    /**
-     * No description
-     *
-     * @tags 缺陷处理方法
-     * @name RemoveDefectDealMethod
-     * @summary 删除缺陷处理方法
-     * @request POST:/defectDealMethod/removeDefectDealMethod
-     * @secure
-     */
-    removeDefectDealMethod: (data: DefectDealMethodSearch) =>
-      http.request<ResultObject['data']>(`/api/main/defectDealMethod/removeDefectDealMethod`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷处理方法
-     * @name RemoveDefectDealMethodBatch
-     * @summary 批量删除缺陷处理方法
-     * @request POST:/defectDealMethod/removeDefectDealMethodBatch
-     * @secure
-     */
-    removeDefectDealMethodBatch: (data: DefectDealMethodSearch) =>
-      http.request<ResultObject['data']>(`/api/main/defectDealMethod/removeDefectDealMethodBatch`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷处理方法
-     * @name ModifyDefectDealMethod
-     * @summary 编辑缺陷处理方法
-     * @request POST:/defectDealMethod/modifyDefectDealMethod
-     * @secure
-     */
-    modifyDefectDealMethod: (data: DefectDealMethod) =>
-      http.request<ResultObject['data']>(`/api/main/defectDealMethod/modifyDefectDealMethod`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷处理方法
-     * @name GetList
-     * @summary 查询缺陷处理方法
-     * @request POST:/defectDealMethod/getList
-     * @secure
-     */
-    getList: (data: DefectDealMethodSearch) =>
-      http.request<ResultPagingDataDefectDealMethodVO['data']>(`/api/main/defectDealMethod/getList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷处理方法
-     * @name AddDefectDealMethod
-     * @summary 新增缺陷处理方法
-     * @request POST:/defectDealMethod/addDefectDealMethod
-     * @secure
-     */
-    addDefectDealMethod: (data: DefectDealMethod) =>
-      http.request<ResultObject['data']>(`/api/main/defectDealMethod/addDefectDealMethod`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷处理方法
-     * @name GetIncidentType
-     * @summary 获取下拉列表(缺陷处理方法类别)
-     * @request GET:/defectDealMethod/getDefectDealMethodType
-     * @secure
-     */
-    getIncidentType: () =>
-      http.request<ResultPagingDataParam['data']>(`/api/main/defectDealMethod/getDefectDealMethodType`, {
-        method: 'GET',
-      }),
-  },
-  defectCode: {
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name RemoveDefectCode
-     * @summary 删除缺陷代码
-     * @request POST:/defectCode/removeDefectCode
-     * @secure
-     */
-    removeDefectCode: (data: DefectCodeSearch) =>
-      http.request<ResultObject['data']>(`/api/main/defectCode/removeDefectCode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name RemoveDefectCodeBatch
-     * @summary 批量删除缺陷代码
-     * @request POST:/defectCode/removeDefectCodeBatch
-     * @secure
-     */
-    removeDefectCodeBatch: (data: DefectCodeSearch) =>
-      http.request<ResultObject['data']>(`/api/main/defectCode/removeDefectCodeBatch`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name ModifyDefectCode
-     * @summary 编辑缺陷代码
-     * @request POST:/defectCode/modifyDefectCode
-     * @secure
-     */
-    modifyDefectCode: (data: DefectCode) =>
-      http.request<ResultObject['data']>(`/api/main/defectCode/modifyDefectCode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name Search
-     * @summary 获取缺陷代码(业务组件)
-     * @request POST:/defectCode/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataDefectCodeVO['data']>(`/api/main/defectCode/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name GetParent
-     * @summary 查询父级缺陷
-     * @request POST:/defectCode/getParent
-     * @secure
-     */
-    getParent: (data: DefectCodeSearch) =>
-      http.request<ResultPagingDataDefectCode['data']>(`/api/main/defectCode/getParent`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name GetList
-     * @summary 查询缺陷代码
-     * @request POST:/defectCode/getList
-     * @secure
-     */
-    getList: (data: DefectCodeSearch) =>
-      http.request<ResultPagingDataDefectCodeVO['data']>(`/api/main/defectCode/getList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name AddDefectCode
-     * @summary 新增缺陷代码
-     * @request POST:/defectCode/addDefectCode
-     * @secure
-     */
-    addDefectCode: (data: DefectCode) =>
-      http.request<ResultObject['data']>(`/api/main/defectCode/addDefectCode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name Tree
-     * @summary 获取缺陷树
-     * @request GET:/defectCode/tree
-     * @secure
-     */
-    tree: () =>
-      http.request<ResultListDefectCodeVO['data']>(`/api/main/defectCode/tree`, {
-        method: 'GET',
-      }),
-  },
   customer: {
     /**
      * No description
@@ -4613,6 +4037,22 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  objectPropertyCategory: {
+    /**
+     * No description
+     *
+     * @tags 领域对象扩展属性分类
+     * @name GetListByObjectName
+     * @summary 根据领域对象编码获取分类
+     * @request GET:/objectPropertyCategory/getListByObjectName
+     * @secure
+     */
+    getListByObjectName: (query: { objectCode: string }) =>
+      http.request<ResultListObjectPropertyCategory['data']>(`/api/main/objectPropertyCategory/getListByObjectName`, {
+        method: 'GET',
+        params: query,
       }),
   },
   objectProperty: {
