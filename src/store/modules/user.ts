@@ -55,6 +55,8 @@ export const useUserStore = defineStore('user', {
         orgId,
         orgs: res.orgList,
       } as OrgUser;
+
+      return this.userInfo;
     },
     setOrgId(id: string) {
       this.userInfo.orgId = id;

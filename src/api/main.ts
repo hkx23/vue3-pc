@@ -9,6 +9,92 @@
  * ---------------------------------------------------------------
  */
 
+/** 标签模板关联 */
+export interface PrintTmplMap {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  printTmplId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 打印模板实体 */
+export interface PrintTmplDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板代码 */
+  tmplCode?: string;
+  /** 模板名称 */
+  tmplName?: string;
+  /** 模板描述 */
+  tmplDesc?: string;
+  /** 模板内容地址 */
+  tmplBodyPath?: string;
+  /** 模板类别 */
+  tmplCategory?: string;
+  /** 模板类型 */
+  tmplType?: string;
+  /** 打印模板文件 */
+  fileContent?: string;
+  /** 打印模板下载地址 */
+  fileUrl?: string;
+}
+
 /** 组织层级表 */
 export interface OrgLevel {
   id?: string;
@@ -48,19 +134,6 @@ export interface OrgLevel {
    * @format int32
    */
   divisionFlag?: number;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 /** 组织架构表 */
@@ -414,7 +487,7 @@ export type User = {
   orgId?: string;
 } | null;
 
-export interface SupportGroupInUserSearch {
+export interface SupportGroupSearch {
   /**
    * 页码
    * @format int32
@@ -425,73 +498,14 @@ export interface SupportGroupInUserSearch {
    * @format int32
    */
   pageSize?: number;
-  id?: string;
+  userId?: string;
   /** 多个id */
   ids?: string[];
-  /** 处理组模糊关键词 */
+  /** 模糊关键词 */
   groupKeyword?: string;
-  /** 人员模糊关键词 */
+  /** 模糊关键词 */
   userKeyword?: string;
-  /** 排序字段 */
-  sorts?: SortParam[];
-  /** 筛选字段 */
-  filters?: Filter[];
-}
-
-/** 响应数据 */
-export type PagingDataSupportGroupInUserVO = {
-  list?: SupportGroupInUserVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataSupportGroupInUserVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataSupportGroupInUserVO;
-}
-
-/** 工站权限显示 */
-export interface SupportGroupInUserVO {
-  id?: string;
-  eid?: string;
-  oid?: string;
-  userId?: string;
-  /** 用户名 */
-  userName?: string;
-  /** 用户显示名 */
-  userDisplayName?: string;
-  /** 处理组代码 */
-  supportGroupCode?: string;
-  /** 处理组名称 */
-  supportGroupName?: string;
-  /** 处理组类型 */
-  supportGroupType?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 人员编号 */
-  personCode?: string;
-  /** 姓名 */
-  personName?: string;
-  /**
-   * 性别，1男，0女
-   * @format int32
-   */
-  gender?: number;
-  /** 邮箱 */
-  email?: string;
-  /** 手机号 */
-  mobilePhone?: string;
+  supportGroupId?: string;
 }
 
 /** 处理组表 */
@@ -525,6 +539,60 @@ export interface SupportGroup {
   supportGroupName?: string;
   /** 处理组类型 */
   supportGroupType?: string;
+}
+
+/** 响应数据 */
+export type PagingDataSupportGroupVO = {
+  list?: SupportGroupVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSupportGroupVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSupportGroupVO;
+}
+
+/** 工站权限显示 */
+export interface SupportGroupVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  userId?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 处理组代码 */
+  supportGroupCode?: string;
+  /** 处理组名称 */
+  supportGroupName?: string;
+  /** 处理组类型 */
+  supportGroupType?: string;
+  /** 处理组类型名称 */
+  supportGroupTypeName?: string;
+  userCount?: string;
+  /** 人员编号 */
+  personCode?: string;
+  /** 姓名 */
+  personName?: string;
+  /** 手机号 */
+  mobilePhone?: string;
+  /** 邮箱 */
+  email?: string;
+  /** 隶属企业 */
+  enterprise?: string;
+  /** 组织架构 */
+  organization?: string;
 }
 
 /** 响应数据 */
@@ -596,14 +664,14 @@ export interface ResultSupplier {
 }
 
 /** 响应数据 */
-export type PagingDataRole = {
-  list?: Role[];
+export type PagingDataRoleVO = {
+  list?: RoleVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataRole {
+export interface ResultPagingDataRoleVO {
   /**
    * 响应代码
    * @format int32
@@ -612,11 +680,11 @@ export interface ResultPagingDataRole {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataRole;
+  data?: PagingDataRoleVO;
 }
 
-/** 角色 */
-export interface Role {
+/** 权限实体 */
+export interface RoleVO {
   id?: string;
   /**
    * 创建时间
@@ -646,6 +714,14 @@ export interface Role {
   roleName?: string;
   /** 角色描述 */
   roleDesc?: string;
+  /** 企业名称 */
+  enName?: string;
+  /** 企业编码 */
+  enCode?: string;
+  /** 组织名称 */
+  plantName?: string;
+  /** 组织编码 */
+  plantCode?: string;
 }
 
 /** 通用响应类 */
@@ -659,6 +735,173 @@ export interface ResultRole {
   message?: string;
   /** 角色 */
   data?: Role;
+}
+
+/** 角色 */
+export type Role = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 角色代码 */
+  roleCode?: string;
+  /** 角色名称 */
+  roleName?: string;
+  /** 角色描述 */
+  roleDesc?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
+}
+
+/** 打印模板关联实体 */
+export interface PrintTmplMapDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  printTmplId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 物料类别编码 */
+  mitemCategoryCode?: string;
+  /** 物料类别名称 */
+  mitemCategoryName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  keyword?: string;
+}
+
+/** 响应数据 */
+export type PagingDataPrintTmplMapDTO = {
+  list?: PrintTmplMapDTO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataPrintTmplMapDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPrintTmplMapDTO;
+}
+
+/** 响应数据 */
+export type PagingDataPrintTmpl = {
+  list?: PrintTmpl[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 标签模板 */
+export interface PrintTmpl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板代码 */
+  tmplCode?: string;
+  /** 模板名称 */
+  tmplName?: string;
+  /** 模板描述 */
+  tmplDesc?: string;
+  /** 模板内容地址 */
+  tmplBodyPath?: string;
+  /** 模板类别 */
+  tmplCategory?: string;
+  /** 模板类型 */
+  tmplType?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPrintTmpl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPrintTmpl;
 }
 
 /** 响应数据 */
@@ -1420,7 +1663,7 @@ export interface MitemUom {
   oid?: string;
   /** 计量单位符号 */
   uom?: string;
-  /** 计量单位名称 */
+  /** 计量单位符号 */
   uomName?: string;
 }
 
@@ -1634,15 +1877,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
   isState?: boolean;
   stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -1809,8 +2052,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2110,26 +2353,6 @@ export interface DefectCode {
   classification?: string;
 }
 
-/** 响应数据 */
-export type PagingDataDefectCode = {
-  list?: DefectCode[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataDefectCode {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataDefectCode;
-}
-
 /** 显示缺陷代码实体 */
 export interface DefectCodeVO {
   id?: string;
@@ -2193,6 +2416,26 @@ export interface ResultPagingDataDefectCodeVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataDefectCodeVO;
+}
+
+/** 响应数据 */
+export type PagingDataDefectCode = {
+  list?: DefectCode[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDefectCode {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDefectCode;
 }
 
 /** 客户 */
@@ -2717,6 +2960,128 @@ export interface ResultListAdminOrgVO {
  */
 
 export const api = {
+  printTmplMap: {
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name Update
+     * @summary 更新打印模板
+     * @request PUT:/printTmplMap/update/{id}
+     * @secure
+     */
+    update: (id: string, data: PrintTmplMap) =>
+      http.request<ResultObject['data']>(`/api/main/printTmplMap/update/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name Search
+     * @summary 获取模板关联
+     * @request POST:/printTmplMap/items
+     * @secure
+     */
+    search: (data: PrintTmplMapDTO) =>
+      http.request<ResultPagingDataPrintTmplMapDTO['data']>(`/api/main/printTmplMap/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/printTmplMap/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/printTmplMap/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name Add
+     * @summary 新增模板关联
+     * @request POST:/printTmplMap/add
+     * @secure
+     */
+    add: (data: PrintTmplMap) =>
+      http.request<ResultObject['data']>(`/api/main/printTmplMap/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  printTmpl: {
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name Update
+     * @summary 更新打印模板
+     * @request PUT:/printTmpl/update/{id}
+     * @secure
+     */
+    update: (id: string, data: PrintTmplDTO) =>
+      http.request<ResultObject['data']>(`/api/main/printTmpl/update/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name Search
+     * @summary 获取模板
+     * @request POST:/printTmpl/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataPrintTmpl['data']>(`/api/main/printTmpl/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/printTmpl/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/printTmpl/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name Add
+     * @summary 新增打印模板
+     * @request POST:/printTmpl/add
+     * @secure
+     */
+    add: (data: PrintTmplDTO) =>
+      http.request<ResultObject['data']>(`/api/main/printTmpl/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   orgLevel: {
     /**
      * No description
@@ -2979,18 +3344,63 @@ export const api = {
         method: 'GET',
       }),
   },
-  supportGroupInUser: {
+  supportGroup: {
     /**
      * No description
      *
-     * @tags 处理组用户表
+     * @tags 处理组表
+     * @name RemoveSupportGroupBatch
+     * @summary 批量删除处理组
+     * @request POST:/supportGroup/removeSupportGroupBatch
+     * @secure
+     */
+    removeSupportGroupBatch: (data: SupportGroupSearch) =>
+      http.request<ResultObject['data']>(`/api/main/supportGroup/removeSupportGroupBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 处理组表
+     * @name RemovePersonBatch
+     * @summary 批量删除处理组人员
+     * @request POST:/supportGroup/removePersonBatch
+     * @secure
+     */
+    removePersonBatch: (data: SupportGroupSearch) =>
+      http.request<ResultObject['data']>(`/api/main/supportGroup/removePersonBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 处理组表
+     * @name ModifySupportGroup
+     * @summary 编辑处理组
+     * @request POST:/supportGroup/modifySupportGroup
+     * @secure
+     */
+    modifySupportGroup: (data: SupportGroup) =>
+      http.request<ResultObject['data']>(`/api/main/supportGroup/modifySupportGroup`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 处理组表
      * @name GetPersonList
      * @summary 查询人员信息
-     * @request POST:/supportGroupInUser/getPersonList
+     * @request POST:/supportGroup/getPersonList
      * @secure
      */
-    getPersonList: (data: SupportGroupInUserSearch) =>
-      http.request<ResultPagingDataSupportGroupInUserVO['data']>(`/api/main/supportGroupInUser/getPersonList`, {
+    getPersonList: (data: SupportGroupSearch) =>
+      http.request<ResultPagingDataSupportGroupVO['data']>(`/api/main/supportGroup/getPersonList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2998,33 +3408,48 @@ export const api = {
     /**
      * No description
      *
-     * @tags 处理组用户表
+     * @tags 处理组表
+     * @name GetOutPerson
+     * @summary 查询未进组人员
+     * @request POST:/supportGroup/getOutPerson
+     * @secure
+     */
+    getOutPerson: (data: SupportGroupSearch) =>
+      http.request<ResultPagingDataSupportGroupVO['data']>(`/api/main/supportGroup/getOutPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 处理组表
+     * @name GetInnerPerson
+     * @summary 查询已进组人员
+     * @request POST:/supportGroup/getInnerPerson
+     * @secure
+     */
+    getInnerPerson: (data: SupportGroupSearch) =>
+      http.request<ResultPagingDataSupportGroupVO['data']>(`/api/main/supportGroup/getInnerPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 处理组表
      * @name GetGroupList
-     * @summary 查询处理组人员信息
-     * @request POST:/supportGroupInUser/getGroupList
+     * @summary 查询处理组信息
+     * @request POST:/supportGroup/getGroupList
      * @secure
      */
-    getGroupList: (data: SupportGroupInUserSearch) =>
-      http.request<ResultPagingDataSupportGroupInUserVO['data']>(`/api/main/supportGroupInUser/getGroupList`, {
+    getGroupList: (data: SupportGroupSearch) =>
+      http.request<ResultPagingDataSupportGroupVO['data']>(`/api/main/supportGroup/getGroupList`, {
         method: 'POST',
         body: data as any,
       }),
 
-    /**
-     * No description
-     *
-     * @tags 处理组用户表
-     * @name GetSupportGroupType
-     * @summary 获取下拉列表(处理组类型)
-     * @request GET:/supportGroupInUser/getSupportGroupType
-     * @secure
-     */
-    getSupportGroupType: () =>
-      http.request<ResultPagingDataParam['data']>(`/api/main/supportGroupInUser/getSupportGroupType`, {
-        method: 'GET',
-      }),
-  },
-  supportGroup: {
     /**
      * No description
      *
@@ -3038,6 +3463,35 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/supportGroup/addSupportGroup`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 处理组表
+     * @name AddSupportGroupPerson
+     * @summary 新增处理组人员
+     * @request POST:/supportGroup/addSupportGroupPerson
+     * @secure
+     */
+    addSupportGroupPerson: (data: SupportGroupSearch) =>
+      http.request<ResultObject['data']>(`/api/main/supportGroup/addSupportGroupPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 处理组表
+     * @name GetSupportGroupType
+     * @summary 获取下拉列表(处理组类型)
+     * @request GET:/supportGroup/getSupportGroupType
+     * @secure
+     */
+    getSupportGroupType: () =>
+      http.request<ResultPagingDataParam['data']>(`/api/main/supportGroup/getSupportGroupType`, {
+        method: 'GET',
       }),
   },
   supplier: {
@@ -3094,7 +3548,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataRole['data']>(`/api/main/role/items`, {
+      http.request<ResultPagingDataRoleVO['data']>(`/api/main/role/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3111,6 +3565,26 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultRole['data']>(`/api/main/role/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name GetItemByName
+     * @summary 根據名称獲取角色
+     * @request POST:/role/getbyname
+     * @secure
+     */
+    getItemByName: (query?: {
+      /** @default "0" */
+      id?: string;
+      /** @default "" */
+      roleName?: string;
+    }) =>
+      http.request<ResultLong['data']>(`/api/main/role/getbyname`, {
+        method: 'POST',
+        params: query,
       }),
 
     /**
@@ -3141,6 +3615,41 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/role/delete`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name Add
+     * @summary 新增角色信息
+     * @request POST:/role/add
+     * @secure
+     */
+    add: (data: Role) =>
+      http.request<ResultObject['data']>(`/api/main/role/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name GetItemByCode
+     * @summary 根據编码获取角色
+     * @request GET:/role/getbycode
+     * @secure
+     */
+    getItemByCode: (query?: {
+      /** @default "0" */
+      id?: string;
+      /** @default "" */
+      roleCode?: string;
+    }) =>
+      http.request<ResultLong['data']>(`/api/main/role/getbycode`, {
+        method: 'GET',
+        params: query,
       }),
   },
   post: {
@@ -4270,6 +4779,21 @@ export const api = {
      */
     modifyDefectCode: (data: DefectCode) =>
       http.request<ResultObject['data']>(`/api/main/defectCode/modifyDefectCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name Search
+     * @summary 获取缺陷代码(业务组件)
+     * @request POST:/defectCode/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataDefectCodeVO['data']>(`/api/main/defectCode/items`, {
         method: 'POST',
         body: data as any,
       }),
