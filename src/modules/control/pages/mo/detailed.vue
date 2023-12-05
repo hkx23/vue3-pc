@@ -59,7 +59,7 @@
     <!-- table表格 -->
     <footer class="detailed-work-center">
       <div v-show="selectModule == 'MOBOM'" class="table-work-header">
-        <tm-table
+        <cmp-table
           ref="tableBomRef"
           row-key="name"
           :table-column="columnsBom"
@@ -68,11 +68,11 @@
           :show-pagination="false"
           @refresh="fetchTableBom"
         >
-        </tm-table>
+        </cmp-table>
       </div>
 
       <div v-show="selectModule == 'MOLOG'" class="table-work-header">
-        <tm-table
+        <cmp-table
           ref="tableLogRef"
           row-key="name"
           :table-column="columnsLog"
@@ -81,7 +81,7 @@
           :show-pagination="false"
           @refresh="fetchTableLog"
         >
-        </tm-table>
+        </cmp-table>
       </div>
     </footer>
     <div class="popup-mo-foot-btn">
@@ -96,7 +96,7 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { nextTick, ref, watch } from 'vue';
 
 import { api as apicontrol } from '@/api/control';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 // 子修改传值
 const props = defineProps({

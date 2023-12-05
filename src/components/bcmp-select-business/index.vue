@@ -1,5 +1,5 @@
 <template>
-  <tm-select-table
+  <bcmp-select-table
     v-if="componentType === 'table' && targetIsVisible"
     :value="modelValue"
     :columns="finalColumns"
@@ -8,6 +8,7 @@
     :remote-url="finalUrl"
     :category="finalCategory"
     :multiple="isMultiple"
+    :parent-id="finalParentId"
     :readonly="readonly"
     :title="finalTitle"
     :placeholder="finalPlaceholder"
@@ -16,13 +17,13 @@
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
-  </tm-select-table>
+  </bcmp-select-table>
 </template>
 
-<script setup lang="tsx" name="TmSelectBusiness">
-import { computed, defineAsyncComponent, onMounted, ref, useAttrs } from 'vue';
+<script setup lang="tsx" name="BcmpSelectBusiness">
+import { computed, defineAsyncComponent, onMounted, ref, useAttrs, watch } from 'vue';
 
-const TmSelectTable = defineAsyncComponent(() => import('../tm-select-table/index.vue'));
+const BcmpSelectTable = defineAsyncComponent(() => import('../bcmp-select-table/index.vue'));
 // import TSelectTable from '../select-table/index.vue';
 
 // / 00-组件属性定义
@@ -266,4 +267,11 @@ onMounted(() => {
     loadTypeSetting();
   }
 });
+watch(
+  () => props.parentId,
+  (val) => {
+    finalParentId.value = val;
+  },
+  { deep: true },
+);
 </script>

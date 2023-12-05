@@ -25,6 +25,7 @@
   </div>
 </template>
 <script setup lang="tsx">
+import { isEmpty } from 'lodash';
 import type { PropType } from 'vue';
 import { computed } from 'vue';
 
@@ -49,7 +50,7 @@ const list = computed(() => {
 });
 
 const menuIcon = (item: ListItemType) => {
-  if (typeof item.icon === 'string') return <t-icon name={item.icon} />;
+  if (typeof item.icon === 'string' && !isEmpty(item.icon)) return <t-icon name={item.icon} />;
   const RenderIcon = item.icon;
   return RenderIcon;
 };
@@ -104,3 +105,31 @@ const openHref = (url: string) => {
   window.open(url);
 };
 </script>
+
+<style lang="less" scoped>
+// .t-menu__item {
+//   color: white;
+// }
+
+:deep(.t-menu__item.t-is-active) {
+  background-color: var(--td-brand-color-7);
+  color: white;
+}
+
+.t-default-menu .t-menu__item .t-icon {
+  color: var(--td-text-color-secondary);
+}
+// .t-default-menu .t-menu__item.t-is-opened:hover .t-icon {
+//   color: var(--td-text-color-primary);
+// }
+.t-default-menu .t-menu__item.t-is-active .t-icon {
+  color: white;
+}
+
+// .t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled) {
+//   background-color: var(--td-brand-color-3);;
+// }
+.t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled) {
+  background-color: var(--td-brand-color-3);
+}
+</style>

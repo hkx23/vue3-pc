@@ -1,15 +1,19 @@
 <template>
   <div v-if="layout === 'side'" class="header-menu-search">
-    <t-input
+    <t-auto-complete
+      v-model="searchData"
+      :options="flattenRouters"
       :class="['header-search', { 'hover-active': isSearchFocus }]"
       :placeholder="$t('layout.searchPlaceholder')"
       @blur="changeSearchFocus(false)"
       @focus="changeSearchFocus(true)"
+      @enter="onEnterSearch"
+      @select="onSelectSearch"
     >
       <template #prefix-icon>
         <t-icon class="icon" name="search" size="16" />
       </template>
-    </t-input>
+    </t-auto-complete>
   </div>
 
   <div v-else class="header-menu-search-left">
@@ -26,24 +30,21 @@
       v-model="searchData"
       :options="flattenRouters"
       :class="['header-search', { 'width-zero': !isSearchFocus }]"
-      placeholder="输入要搜索内容"
+      :placeholder="$t('layout.searchPlaceholder')"
       :autofocus="isSearchFocus"
       @blur="changeSearchFocus(false)"
+      @enter="onEnterSearch"
+      @select="onSelectSearch"
     >
       <template #prefix-icon>
         <t-icon name="search" size="16" />
-      </template>
-
-      <template #option="{ option }">
-        <div @click="onClickMenu(option)">
-          {{ option.text }}
-        </div>
       </template>
     </t-auto-complete>
   </div>
 </template>
 
 <script setup lang="ts">
+import debounce from 'lodash/debounce';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -59,23 +60,17 @@ defineProps({
 const permissionStore = usePermissionStore();
 const { routers } = storeToRefs(permissionStore);
 
-interface menuItem {
-  label: string;
-  text: string;
-}
-const flattenRouters = ref<menuItem[]>([]);
+const flattenRouters = ref<string[]>([]);
 const flattenRouterObj: { [key: string]: RouteItem } = {};
 
 const flatten = (routers: RouteItem[]) => {
   routers?.forEach((router) => {
     if (router?.children && router.children.length > 0) {
       flatten(router?.children);
-    } else {
-      flattenRouters.value.push({
-        label: router.path,
-        text: renderMenuTitle(router.meta?.title || router.name || router.path),
-      });
-      flattenRouterObj[router.path] = router;
+    } else if (router?.meta?.frameSrc) {
+      const title = renderMenuTitle(router.meta?.title || router.name || router.path);
+      flattenRouters.value.push(title);
+      flattenRouterObj[title] = router;
     }
   });
 };
@@ -84,17 +79,22 @@ flatten(routers.value);
 
 const isSearchFocus = ref(false);
 const searchData = ref('');
-const changeSearchFocus = (value: boolean) => {
+const changeSearchFocus = debounce((value: boolean) => {
   if (!value) {
     searchData.value = '';
   }
   isSearchFocus.value = value;
-};
+}, 100);
 const router = useRouter();
 
-const onClickMenu = (option: menuItem) => {
-  const route = flattenRouterObj[option.label];
+const onSelectSearch = (value) => {
+  if (!value) return;
+  const route = flattenRouterObj[value];
   router.push(route);
+};
+
+const onEnterSearch = ({ value }) => {
+  onSelectSearch(value);
 };
 </script>
 <style lang="less" scoped>
@@ -133,7 +133,17 @@ const onClickMenu = (option: menuItem) => {
   }
 }
 
+.t-button--shape-square {
+  color: white;
+}
+
+.t-button--shape-square:hover,
+.t-button--shape-square:focus-visible {
+  background-color: var(--td-brand-color-3);
+}
+
 .t-button {
+  color: white;
   margin: 0 8px;
   transition: opacity @anim-duration-base @anim-time-fn-easing;
 

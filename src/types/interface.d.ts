@@ -41,6 +41,7 @@ export type CommonObjType = {
 };
 
 export interface UserInfo {
+  id: string;
   name: string;
   roles: string[];
 }

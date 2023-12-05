@@ -49,7 +49,7 @@
                 {{ treeClickData.one }}
               </t-breadcrumbItem>
             </t-breadcrumb>
-            <tm-table
+            <cmp-table
               ref="tableRef"
               v-model:pagination="pageUI"
               row-key="id"
@@ -59,19 +59,19 @@
               @refresh="fetchData"
             >
               <template #pc="{ row }">
-                <t-checkbox disabled :default-checked="row?.isPC === 1 ? true : false"></t-checkbox>
+                <t-checkbox v-model="row.isPC" disabled></t-checkbox>
               </template>
               <template #mobile="{ row }">
-                <t-checkbox disabled :default-checked="row?.isMobile === 1 ? true : false"></t-checkbox>
+                <t-checkbox v-model="row.isMobile" disabled></t-checkbox>
               </template>
               <template #tv="{ row }">
-                <t-checkbox disabled :default-checked="row?.isTV === 1 ? true : false"></t-checkbox>
+                <t-checkbox v-model="row.isTV" disabled></t-checkbox>
               </template>
               <template #Watches="{ row }">
-                <t-checkbox disabled :default-checked="row?.isWatch === 1 ? true : false"></t-checkbox>
+                <t-checkbox v-model="row.isWatch" disabled></t-checkbox>
               </template>
               <template #wx="{ row }">
-                <t-checkbox disabled :default-checked="row?.isWeChat === 1 ? true : false"></t-checkbox>
+                <t-checkbox v-model="row.isWeChat" disabled></t-checkbox>
               </template>
               <template #actionSlot="{ row }">
                 <t-popconfirm theme="default" content="确认禁用吗">
@@ -93,7 +93,7 @@
                   <custom-tabs v-model="selectedTabs" :tabs="tabItems" @selection-changed="handleSelectionChanged" />
                 </t-space>
               </template>
-            </tm-table>
+            </cmp-table>
           </t-col>
         </t-row>
       </header>
@@ -234,7 +234,7 @@ import { Data, FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol,
 import { onMounted, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 import CustomTabs from './CustomTabs.vue';
@@ -354,7 +354,7 @@ watch(tabListData, (newValue) => {
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'sortIndex',
+    colKey: 'serial-number',
     title: '序号',
     align: 'center',
     width: '90',
@@ -606,8 +606,11 @@ const onDelelist = (row: { id: string }) => {
 // 右侧 tab 删除 事件
 const onDelConfirm = async () => {
   await api.module.remove({ id: onDelelistID.value });
-  await onGetTreeData(); // 更新树组件数据
+  if (moduleData.value.length <= 1 && clickNodeId.value.pageNum > 1) {
+    pageUI.value.page--;
+  }
   await onGetTabData(); // 获取表格数据
+  MessagePlugin.success('删除成功');
 };
 
 // 筛选树组件名称数组的函数
@@ -682,6 +685,7 @@ const onGetTabData = async () => {
 
 // 树节点的点击事件，获取点击节点的文本
 const treeClick = async ({ node }: { node: any }) => {
+  pageUI.value.page = 1;
   formDataTwo.value.parentModuleId = node[`__tdesign_tree-node__`]?.data?.id;
   clickNodeId.value.id = node[`__tdesign_tree-node__`]?.data?.id; // 保存当前点击节点的 ID
   // 如果没有父节点，就不发请求
@@ -699,6 +703,7 @@ const onSecondaryReset = () => {
   isRefreshTab.value = true; // 控制页面 tab栏切换是否可点击
   disableFlag.value = false; // 控制编辑 是否禁用子模块名称
   isEditMode.value = false; // 控制一级 是新增还是编辑
+  formVisible.value = false;
   formRef.value.reset({ type: 'empty' });
 };
 
@@ -712,6 +717,7 @@ interface RootObject {
 const onAddOneModule = async () => {
   if (!isEditMode.value) {
     await onRedactOne(); // 编辑请求
+    MessagePlugin.success('编辑成功');
   } else {
     await api.module.addModule({
       // 新增请求
@@ -721,6 +727,7 @@ const onAddOneModule = async () => {
       moduleCode: formData.value.moduleCode,
       moduleDesc: formData.value.moduleDesc,
     });
+    MessagePlugin.success('新增成功');
   }
   formVisible.value = false;
 };
@@ -729,6 +736,7 @@ const onAddOneModule = async () => {
 const onAddTwoModule = async () => {
   if (!isEditModeTwo.value) {
     onRedactTwo(); // 编辑请求
+    MessagePlugin.success('编辑成功');
   } else {
     // 新增请求
     await api.module.addModule({
@@ -739,6 +747,7 @@ const onAddTwoModule = async () => {
       moduleDesc: formData.value.moduleDesc,
       parentModuleId: clickNodeId.value.id,
     });
+    MessagePlugin.success('新增成功');
   }
   formVisible.value = false;
 };
@@ -748,6 +757,7 @@ const onAddThreeModule = async () => {
   // 编辑请求
   if (!isEditModeThree.value) {
     onRedactThree();
+    MessagePlugin.success('编辑成功');
   } else {
     // 新增请求
     await api.module.addModule({
@@ -763,6 +773,7 @@ const onAddThreeModule = async () => {
       moduleVersion: formDataTwo.value.moduleVersion, // 模块版本号
       modulePackageIdentify: formDataTwo.value.modulePackageIdentify, // 模块标识
     });
+    MessagePlugin.success('新增成功');
   }
 };
 

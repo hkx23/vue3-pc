@@ -1,5 +1,6 @@
 {
   "role": {
+    "role": "角色",
     "roleCode": "角色代码",
     "roleName": "角色名称",
     "roleDesc": "角色描述",
@@ -10,6 +11,9 @@
     "creator": "创建人",
     "modifier": "更新人",
     "createTime": "创建时间",
-    "modifyTime": "更新时间"
+    "modifyTime": "更新时间",
+    "checkCode": "角色代码已存在",
+    "checkName": "角色名称已存在",
+    "roleMember": "角色成员维护"
   }
 }

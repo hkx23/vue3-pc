@@ -41,20 +41,22 @@
         />
       </div>
       <div class="list-tree-content">
-        <tm-table
+        <cmp-table
           ref="tableRef"
           row-key="id"
           :loading="loading"
           :show-pagination="false"
           :table-column="columns"
           :table-data="data"
-        ></tm-table>
+        ></cmp-table>
       </div>
     </div>
 
     <t-dialog
       v-model:visible="formVisible"
-      :header="t('common.dialog.header.add', [t('org.title')])"
+      :header="
+        isEdit ? t('common.dialog.header.edit', [t('org.title')]) : t('common.dialog.header.add', [t('org.title')])
+      "
       :on-confirm="onConfirmForm"
     >
       <org-form ref="formRef" />
@@ -69,7 +71,7 @@ import { MessagePlugin, TreeNodeModel } from 'tdesign-vue-next';
 import { computed, onMounted, ref, watch } from 'vue';
 
 import { api, OrgTreeVO } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
 import { FormRef } from './constants';
@@ -195,10 +197,12 @@ const onInput = () => {
     : null;
 };
 
+const isEdit = ref(false);
 const onClickAdd = () => {
   const { reset } = formRef.value;
+  isEdit.value = false;
   reset(
-    false,
+    isEdit.value,
     currActiveData.value,
     (parentOrgName.value || '') + (currActiveData.value.orgName || ''),
     isEmpty(currActiveData.value.levelCode)
@@ -210,8 +214,8 @@ const onClickAdd = () => {
 
 const onClickEdit = () => {
   const { reset } = formRef.value;
-
-  reset(true, currActiveData.value, parentOrgName.value?.replace(/\/$/, ''), parentOrgLevels.value);
+  isEdit.value = true;
+  reset(isEdit.value, currActiveData.value, parentOrgName.value?.replace(/\/$/, ''), parentOrgLevels.value);
   formVisible.value = true;
 };
 

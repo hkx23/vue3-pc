@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/craftRoute/index.vue'),
     meta: {
       title: {
-        zh_CN: '工艺路线',
-        en_US: 'Craft Route',
+        'zh-CN': '工艺路线',
+        'en-US': 'Craft Route',
       },
       orderNo: 0,
     },

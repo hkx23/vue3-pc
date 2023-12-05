@@ -1,17 +1,24 @@
 <template>
-  <t-form ref="formRef" :rules="FORM_RULES" :data="formData" :show-cancel="true" :show-error-message="false">
+  <t-form
+    ref="formRef"
+    :rules="FORM_RULES"
+    :data="formData"
+    :show-cancel="true"
+    :show-error-message="false"
+    :label-width="135"
+  >
     <t-form-item :label="t('org.parentOrgName')" name="parentLevelId">
       {{ formData.parentOrgName }}
     </t-form-item>
     <t-form-item :label="t('org.levelName')" name="levelCode">
-      <t-select v-model="formData.levelCode" clearable>
+      <t-select v-model="formData.levelCode" :disabled="isFormEditing" clearable>
         <t-option v-for="(item, index) in orgLevelOptions" :key="index" :value="item.value" :label="item.label">
           {{ item.label }}
         </t-option>
       </t-select>
     </t-form-item>
     <t-form-item :label="t('org.orgCode')" name="orgCode">
-      <t-input v-model="formData.orgCode" clearable />
+      <t-input v-model="formData.orgCode" :disabled="isFormEditing" clearable />
     </t-form-item>
     <t-form-item :label="t('org.orgName')" name="orgName">
       <t-input v-model="formData.orgName" clearable />
@@ -123,7 +130,6 @@ let isFormEditing = false;
 const parentLevels = ref<string[]>([]);
 const reset = (isEdit: boolean, data?: OrgTreeVO, parentOrgName?: string, parentOrgLevels?: string[]) => {
   formRef.value.reset({ type: 'empty' });
-  formData.oid = '0';
   formData.isActive = 0;
   isFormEditing = isEdit;
   parentLevels.value = parentOrgLevels || [];

@@ -32,7 +32,12 @@
       ></t-input-number>
     </t-form-item>
     <t-form-item :label="t('productRule.uom')" name="uom">
-      <tm-select-business v-model="formData.uom" value-field="uom" type="uom" :show-title="false"></tm-select-business>
+      <bcmp-select-business
+        v-model="formData.uom"
+        value-field="uom"
+        type="uom"
+        :show-title="false"
+      ></bcmp-select-business>
     </t-form-item>
   </t-form>
 </template>

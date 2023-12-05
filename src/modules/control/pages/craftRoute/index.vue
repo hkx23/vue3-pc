@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <tm-query class="card" :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" />
+    <cmp-query class="card" :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" />
     <t-card class="card" :header="t('craftRoute.craftRoute')" :bordered="false" header-bordered>
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         :table-column="craftRouteColumn"
         :table-data="craftRouteData.list"
@@ -11,7 +11,7 @@
         @refresh="getRouting"
         @row-click="selectRouting"
       >
-        <template #oprate>
+        <template #operate>
           <t-button @click="addRouting">{{ t('common.button.add') }}</t-button>
         </template>
         <template #state="{ row }">
@@ -34,10 +34,10 @@
             <t-link theme="primary" size="small" @click="copyRouting(row.id)">{{ t('common.button.copy') }}</t-link>
           </t-space>
         </template>
-      </tm-table>
+      </cmp-table>
     </t-card>
     <t-card class="card" :header="t('craftRoute.productRelation')" :bordered="false" header-bordered>
-      <tm-table
+      <cmp-table
         v-model:selected-row-keys="routingMapKeys"
         v-model:pagination="productPage"
         row-key="id"
@@ -71,7 +71,7 @@
             t('common.button.delete')
           }}</t-link>
         </template>
-      </tm-table>
+      </cmp-table>
     </t-card>
     <edit
       :id="editId"
@@ -107,8 +107,8 @@ import { computed, reactive, ref } from 'vue';
 
 import { api as apiControl } from '@/api/control';
 import { api as apiMain } from '@/api/main';
-import TmQuery from '@/components/tm-query/index.vue';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpQuery from '@/components/cmp-query/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -142,7 +142,7 @@ const opts = computed(() => {
     },
     workcenterId: {
       label: t('craftRoute.workcenter'),
-      comp: 'tm-select-business',
+      comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
@@ -152,7 +152,7 @@ const opts = computed(() => {
     },
     productCategoryId: {
       label: t('craftRoute.productType'),
-      comp: 'tm-select-business',
+      comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
@@ -162,7 +162,7 @@ const opts = computed(() => {
     },
     productId: {
       label: t('craftRoute.product'),
-      comp: 'tm-select-business',
+      comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
@@ -228,6 +228,7 @@ const craftRouteData = reactive({
 const getRouting = () => {
   setLoading(true);
   apiControl.routing
+    // @ts-ignore
     .mainPage({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -266,6 +267,7 @@ const copyRouting = (id: string) => {
   eidtRoutingVisible.value = true;
 };
 const disable = (id: string, routingRevisionId: string) => {
+  // @ts-ignore
   apiControl.routing.moScheduleBindRoutingCount(routingRevisionId).then((total) => {
     let showText: string;
     if (total > 0) {
@@ -281,6 +283,7 @@ const disable = (id: string, routingRevisionId: string) => {
       },
       onConfirm: () => {
         confirmDia.update({ confirmBtn: { loading: true } });
+        // @ts-ignore
         apiControl.routing.disable(id).then(() => {
           confirmDia.update({ confirmBtn: { loading: false } });
           confirmDia.hide();
@@ -365,7 +368,7 @@ const deleteProductRelationBatch = () => {
     routingMapKeys.value = [];
   });
 };
-const setProductRelationDefault = ($event: boolean, id: string) => {
+const setProductRelationDefault = ($event: any, id: string) => {
   apiControl.routingMap
     .setDefault(id, {
       isDefault: $event ? 1 : 0,
@@ -378,6 +381,7 @@ const setProductRelationDefault = ($event: boolean, id: string) => {
 <style lang="less" scoped>
 .container {
   margin: 20px;
+
   .card {
     background-color: var(--td-bg-color-container);
     border-radius: var(--td-radius-medium);
@@ -385,6 +389,7 @@ const setProductRelationDefault = ($event: boolean, id: string) => {
 
     :deep(.t-form__controls-content) {
       width: 200px;
+
       .t-date-picker,
       .t-input-number,
       .t-color-picker__trigger {

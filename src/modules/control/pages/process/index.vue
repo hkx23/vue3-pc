@@ -7,6 +7,13 @@
             <t-input v-model="keyword" label="工序：" placeholder="请输入工序编码/名称" clearable />
           </div>
         </t-col>
+        <t-col flex="10px" />
+        <t-col>
+          <div>
+            <t-select v-model="processState" label="状态" :options="stateOptions" clearable />
+          </div>
+        </t-col>
+        <t-col flex="auto" />
         <t-col flex="170px">
           <div>
             <t-button @click="onRefresh">查询</t-button>
@@ -16,7 +23,7 @@
       </t-row>
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
         :table-column="tableProcessColumns"
@@ -36,7 +43,7 @@
             <t-icon name="edit" @click="onEditRowClick(slotProps)" />
           </t-space>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
   </div>
   <div>
@@ -59,7 +66,7 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/control';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -75,6 +82,14 @@ const filterlist = ref([]);
 const formVisible = ref(false);
 const formRef = ref(null);
 const formTitle = ref('');
+const processState = ref(-1);
+
+// 下拉初始数据
+const stateOptions = [
+  { label: '全部', value: -1 },
+  { label: '启用', value: 1 },
+  { label: '禁用', value: 0 },
+];
 
 const tableProcessColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '序号', colKey: 'serial-number', width: 74 },
@@ -95,6 +110,7 @@ const onRefresh = () => {
 // 重置按钮
 const onReset = () => {
   keyword.value = '';
+  processState.value = -1;
 };
 const dataTotal = ref(0);
 
@@ -105,6 +121,7 @@ const fetchTable = async () => {
     tableDataProcess.value = [];
     const data = (await api.process.search({
       keyword: keyword.value,
+      state: processState.value,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       sorts: sortlist.value,

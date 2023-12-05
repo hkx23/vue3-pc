@@ -1,10 +1,10 @@
 <template>
   <div class="main-page">
     <div class="main-page-content">
-      <tm-query :opts="opts" label-width="100" is-expansion @submit="conditionEnter" />
+      <cmp-query :opts="opts" label-width="100" is-expansion @submit="conditionEnter" />
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
         row-key="id"
@@ -23,12 +23,12 @@
             <t-icon name="delete" :disabled="loading" @click="onDeletePackRowClick(row)" />
           </t-space>
         </template>
-        <template #oprate>
+        <template #operate>
           <t-button shape="square" variant="outline" @click="onClickAddPackRule">
             <t-icon name="add" />
           </t-button>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
     <div class="main-page-content">
       <t-row>
@@ -70,7 +70,7 @@
         </t-col>
         <t-col :span="6" :offset="1">
           <!-- 物料表格-->
-          <tm-table
+          <cmp-table
             ref="tableMitemRef"
             v-model:pagination="pageMitem"
             row-key="id"
@@ -86,7 +86,7 @@
                 <t-icon name="delete" :disabled="loadingMitem" @click="onDeleteMitemRowClick(row)" />
               </t-space>
             </template>
-            <template #oprate>
+            <template #operate>
               <t-button
                 v-if="selectPackRuleRow.id"
                 shape="square"
@@ -105,7 +105,7 @@
                 <t-icon name="delete" />{{ t('common.button.batchDelete') }}
               </t-button>
             </template>
-          </tm-table></t-col
+          </cmp-table></t-col
         >
       </t-row>
     </div>
@@ -162,7 +162,7 @@ import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdes
 import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 
 import { api as apiControl, ProductPackRuleDtlVO, ProductPackRuleMapDTO } from '@/api/control';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 

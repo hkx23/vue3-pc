@@ -1,129 +1,119 @@
 <template>
-  <div class="table-tree-container">
-    <div class="list-tree-content">
-      <div class="list-common-table">
+  <div class="main-page">
+    <div class="main-page-content">
+      <t-layout>
         <t-layout>
-          <t-layout>
-            <t-content>
-              <t-space align="center" direction="vertical" style="width: 98%">
-                <t-row justify="center">
-                  <t-col>车间：XXXXX 工作中心：WC0001 工站：高新产业园贴标</t-col>
-                </t-row>
-                <t-row align="center">
-                  <t-col :span="2" style="text-align: right">扫描 产品条码：</t-col>
-                  <t-col flex="auto">
-                    <t-input v-model="mainform.serialNumber" size="large" @enter="serialNumberEnter" />
-                  </t-col>
-                  <t-col flex="40px" />
-                </t-row>
-                <t-row align="center">
-                  <div class="groupbox" style="height: auto">
-                    <span class="grouptitle">产品信息</span>
-                    <t-card :bordered="false">
-                      <t-space align="center" direction="horizontal" :break-line="true">
-                        <t-input v-model="productInfo.scheCode" label="排产单号" readonly />
-                        <t-input v-model="productInfo.moCode" label="产品编码" readonly />
-                        <t-input v-model="productInfo.moMitemName" label="产品名称" readonly />
-                        <t-input v-model="productInfo.scheDatetimeSche" label="排产日期" readonly />
-                        <t-input v-model="productInfo.scheQty" label="排产数量" readonly />
-                        <t-input v-model="productInfo.moCompletedQty" label="完工数量" readonly />
+          <t-content>
+            <t-space align="center" direction="vertical" style="width: 98%">
+              <t-row justify="center">
+                <t-col>车间：XXXXX 工作中心：{{ mainform.workCenterCode }} 工站：{{ mainform.workStationCode }}</t-col>
+              </t-row>
+              <t-row align="center">
+                <t-col :span="2" style="text-align: right">扫描 产品条码：</t-col>
+                <t-col flex="auto">
+                  <t-input v-model="mainform.serialNumber" size="large" @enter="serialNumberEnter" />
+                </t-col>
+                <t-col flex="40px" />
+              </t-row>
+              <t-row align="center">
+                <div class="groupbox" style="height: auto">
+                  <span class="grouptitle">产品信息</span>
+                  <t-card :bordered="false">
+                    <t-space align="center" direction="horizontal" :break-line="true">
+                      <t-input v-model="productInfo.scheCode" label="排产单号" readonly />
+                      <t-input v-model="productInfo.moCode" label="产品编码" readonly />
+                      <t-input v-model="productInfo.moMitemName" label="产品名称" readonly />
+                      <t-input v-model="productInfo.scheDatetimeSche" label="排产日期" readonly />
+                      <t-input v-model="productInfo.scheQty" label="排产数量" readonly />
+                      <t-input v-model="productInfo.moCompletedQty" label="完工数量" readonly />
+                    </t-space>
+                  </t-card>
+                </div>
+              </t-row>
+              <t-row>
+                <t-col flex="490px">
+                  <div class="groupbox">
+                    <span class="grouptitle">缺陷信息</span>
+                    <t-card :bordered="false" style="height: 295px; max-height: 295px" class="t-table__content">
+                      <t-space direction="vertical">
+                        <t-space v-for="(item, index) in defectCodeList" :key="index">
+                          <t-button
+                            theme="default"
+                            style="width: 70px; height: 73px; max-height: 73px; white-space: normal"
+                            :v-model="item"
+                            :content="item.defectName"
+                          />
+                          <t-space break-line>
+                            <t-button
+                              v-for="(item_child, index_child) in item.child"
+                              :key="index_child"
+                              :content="item_child.defectName"
+                              style="width: 100px"
+                              :theme="getThemeButton(item_child.themeButton)"
+                              @click="clickDefectCode(item_child)"
+                            />
+                          </t-space>
+                        </t-space>
                       </t-space>
                     </t-card>
                   </div>
-                </t-row>
-                <t-row>
-                  <t-col flex="490px">
-                    <div class="groupbox">
-                      <span class="grouptitle">缺陷信息</span>
-                      <t-card :bordered="false" style="height: 330px" class="t-table__content">
-                        <t-space direction="vertical">
-                          <t-space v-for="(item, index) in defectCodeList" :key="index">
-                            <t-button
-                              theme="default"
-                              style="width: 70px; height: 73px; max-height: 73px; white-space: normal"
-                              :v-model="item"
-                              :content="item.defectName"
-                            />
-                            <t-space break-line>
-                              <!-- <t-button
-                                v-for="(item_child, index_child) in item.child"
-                                :key="index_child"
-                                :content="item_child.defectName"
-                                style="width: 100px"
-                                :theme="getThemeButton(item_child.themeButton)"
-                                @click="clickDefectCode(item_child)"
-                              /> -->
-
-                              <t-button
-                                v-for="(item_child, index_child) in item.child"
-                                :key="index_child"
-                                :content="item_child.defectName"
-                                style="width: 100px"
-                                @click="clickDefectCode(item_child)"
-                              />
-                            </t-space>
-                          </t-space>
-                        </t-space>
-                      </t-card>
-                    </div>
-                  </t-col>
-                  <t-col flex="auto"></t-col>
-                  <t-col flex="320px">
-                    <div class="groupbox">
-                      <span class="grouptitle">采集详情</span>
-                      <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="330px">
-                        <template #serialNumber="{ row }">
-                          <div class="talbe_col_nowrap" :title="row.serialNumber">
-                            {{ row.serialNumber }}
-                          </div>
-                        </template>
-                        <template #status="{ row }">
-                          <div
-                            class="talbe_col_nowrap"
-                            :title="row.status"
-                            :style="{
-                              backgroundColor: row.statusColor,
-                              textAlign: 'center',
-                              fontWeight: 'bold',
-                              color: 'white',
-                            }"
-                          >
-                            {{ row.status }}
-                          </div>
-                        </template>
-                        <template #errorinfo="{ row }">
-                          <div class="talbe_col_nowrap" :title="row.errorinfo">
-                            {{ row.errorinfo }}
-                          </div>
-                        </template>
-                      </t-table>
-                    </div>
-                  </t-col>
-                </t-row>
-              </t-space>
-            </t-content>
-          </t-layout>
-          <t-aside style="width: 30%">
-            <div class="groupbox" style="height: 500px; max-height: 610px">
-              <span class="grouptitle">消息组件</span>
-              <t-list style="height: 98%" :scroll="{ type: 'virtual' }">
-                <t-list-item v-for="(item, index) in list" :key="index">
-                  <t-list-item-meta style="align-items: center">
-                    <template #description>
-                      <t-space>
-                        <t-icon name="check-circle-filled" style="color: green" />
-                        <t-icon name="close-circle" style="color: red" />
-                        <div>{{ item.content }}</div>
-                        <div>{{ item.datatime }}</div>
-                      </t-space>
-                    </template>
-                  </t-list-item-meta>
-                </t-list-item>
-              </t-list>
-            </div>
-          </t-aside>
+                </t-col>
+                <t-col flex="auto"></t-col>
+                <t-col flex="320px">
+                  <div class="groupbox">
+                    <span class="grouptitle">采集详情</span>
+                    <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="295px">
+                      <template #serialNumber="{ row }">
+                        <div class="talbe_col_nowrap" :title="row.serialNumber">
+                          {{ row.serialNumber }}
+                        </div>
+                      </template>
+                      <template #status="{ row }">
+                        <div
+                          class="talbe_col_nowrap"
+                          :title="row.status"
+                          :style="{
+                            backgroundColor: row.statusColor,
+                            textAlign: 'center',
+                            fontWeight: 'bold',
+                            color: 'white',
+                          }"
+                        >
+                          {{ row.status }}
+                        </div>
+                      </template>
+                      <template #errorinfo="{ row }">
+                        <div class="talbe_col_nowrap" :title="row.errorinfo">
+                          {{ row.errorinfo }}
+                        </div>
+                      </template>
+                    </t-table>
+                  </div>
+                </t-col>
+              </t-row>
+            </t-space>
+          </t-content>
         </t-layout>
-      </div>
+        <t-aside style="width: 30%">
+          <div class="groupbox" style="height: 540px">
+            <span class="grouptitle">消息组件</span>
+            <t-list style="height: 96%" :scroll="{ type: 'virtual' }">
+              <t-list-item v-for="(item, index) in messageList" :key="index">
+                <t-list-item-meta style="align-items: center">
+                  <template #description>
+                    <t-space>
+                      <t-icon v-if="item.status == 'OK'" name="check-circle-filled" style="color: green" />
+                      <t-icon v-if="item.status == 'NG'" name="close-circle" style="color: red" />
+                      <div :title="item.content">{{ item.title }}</div>
+                      <div>{{ item.datatime }}</div>
+                    </t-space>
+                  </template>
+                </t-list-item-meta>
+              </t-list-item>
+            </t-list>
+          </div>
+        </t-aside>
+      </t-layout>
     </div>
   </div>
 </template>
@@ -136,9 +126,7 @@ import { onMounted, ref } from 'vue';
 import { api } from '@/api/control';
 import { api as apiMain, DefectCodeVO } from '@/api/main';
 
-import { scanInfoModel } from '../../api/scanInfoModel';
-
-// const themeButton = ref<'default' | 'success' | 'primary' | 'warning' | 'danger'>();
+import { messageModel, scanInfoModel } from '../../api/processInspection';
 // 全局信息
 const scanInfoList = ref<scanInfoModel[]>([]);
 
@@ -152,8 +140,12 @@ const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
 
 const mainform = ref({
   serialNumber: '',
-  workcenterId: '',
-  workstationId: '',
+  workCenterId: '',
+  workCenterCode: '',
+  workCenterName: '',
+  workStationId: '',
+  workStationCode: '',
+  workStationName: '',
   processId: '',
 });
 
@@ -173,18 +165,20 @@ const productInfo = ref({
   moCompletedQty: '',
 });
 
-const list = ref([]);
+// 界面消息列表
+const messageList = ref<messageModel[]>([]);
 
 const Init = async () => {
   mainform.value.serialNumber = 'LB0001';
-  mainform.value.workcenterId = '1728664640618328065';
-  mainform.value.workstationId = '1729475654052753410';
-  mainform.value.processId = '1';
-  getDefectCodeTree();
+  mainform.value.workCenterId = '1730421387954343937'; // 3-1-1
+  mainform.value.workCenterCode = '3-1-1'; // 3-1-1
+  mainform.value.workCenterName = '3号工厂1车间1区域'; // 3-1-1
 
-  for (let i = 0; i < 3000; i++) {
-    list.value.push({ content: `扫描成功`, datatime: `2023-11-12 23:22:32` });
-  }
+  mainform.value.workStationId = '1729475654052753410'; // G_TP 高新产业园贴标
+  mainform.value.workStationCode = 'G_TP';
+  mainform.value.workStationName = '高新产业园贴标';
+  mainform.value.processId = '1'; // PC001 贴标
+  getDefectCodeTree();
 };
 
 const serialNumberEnter = async (value) => {
@@ -195,8 +189,12 @@ const serialNumberEnter = async (value) => {
     await api.barcodeWip
       .scanBarcodeWip({
         serialNumber: mainform.value.serialNumber,
-        workcenterId: mainform.value.workcenterId,
-        workstationId: mainform.value.workstationId,
+        workcenterId: mainform.value.workCenterId,
+        workCenterCode: mainform.value.workCenterCode,
+        workCenterName: mainform.value.workCenterName,
+        workstationId: mainform.value.workStationId,
+        // workStationCode: mainform.value.workStationCode,
+        // workStationCode: mainform.value.workStationCode,
         processId: mainform.value.processId,
         defectCodeList: selectDefectCodeList.value,
       })
@@ -209,9 +207,23 @@ const serialNumberEnter = async (value) => {
           productInfo.value.scheQty = reData.scheQty.toString();
           productInfo.value.moCompletedQty = reData.completedQty.toString();
           mainform.value.serialNumber = '';
-          writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.scanMessage);
+          selectDefectCodeList.value = [];
+          defectCodeList.value.forEach((item) => {
+            item.themeButton = 'default';
+            item.child.forEach((cldItem) => {
+              cldItem.themeButton = 'default';
+            });
+          });
+          writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
+
+          if (reData.defectCodeStr.length > 0) {
+            writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
+          } else {
+            writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.defectCodeStr);
+          }
         } else {
-          writeScanInfoError(reData.serialNumber, reData.qty, reData.scanMessage);
+          writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
+          writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
         }
       })
       .catch((message) => {
@@ -269,22 +281,35 @@ const writeScanInfoError = async (lbNo, lbQty, lbError) => {
   });
 };
 
-// const getThemeButton = async (value) => {
-//   debugger;
-//   switch (value) {
-//     case 'success':
-//       return themeButton.value.primary;
-//     case 'primary':
-//       return themeButton.value.primary;
-//     case 'warning':
-//       return themeButton.value.warning;
-//     case 'danger':
-//       return themeButton.value.danger;
-//     case 'default':
-//     default:
-//       return themeButton.value.default;
-//   }
-// };
+const writeMessageListSuccess = async (content, datatime) => {
+  messageList.value.unshift({
+    title: '扫描成功',
+    content,
+    datatime,
+    status: 'OK',
+  });
+};
+
+const writeMessageListError = async (content, datatime) => {
+  messageList.value.unshift({
+    title: '扫描失败',
+    content,
+    datatime,
+    status: 'NG',
+  });
+};
+
+const themes = {
+  default: 'default',
+  success: 'success',
+  primary: 'primary',
+  warning: 'warning',
+  danger: 'danger',
+};
+
+const getThemeButton = (value: string) => {
+  return themes[value] || themes.default;
+};
 
 onMounted(() => {
   Init();
@@ -366,4 +391,10 @@ onMounted(() => {
 /deep/ .t-list-item__meta-description {
   width: 100%;
 }
+// /deep/ .t-table__content {
+//   height: 100%;
+//   .t-table--layout-fixed {
+//     height: 100%;
+//   }
+// }
 </style>

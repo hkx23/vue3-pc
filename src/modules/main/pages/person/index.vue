@@ -40,7 +40,7 @@
           <t-button theme="default" @click="onImport">导入</t-button>
         </t-row>
         <div class="table-container">
-          <tm-table
+          <cmp-table
             ref="tableRef"
             v-model:pagination="pageUI"
             :table-data="dataTable"
@@ -56,7 +56,7 @@
                 <t-icon name="delete" @click="handleClickDelete(slotProps)" />
               </t-space>
             </template>
-          </tm-table>
+          </cmp-table>
         </div>
         <div>
           <t-dialog
@@ -162,7 +162,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 

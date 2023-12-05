@@ -24,7 +24,7 @@
     </div>
 
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
         :table-data="tableData"
@@ -51,7 +51,7 @@
             </t-button>
           </t-popconfirm>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
 
     <!-- 模态框/对话框 -->
@@ -117,7 +117,7 @@ import {
 } from 'tdesign-vue-next';
 import { onMounted, Ref, ref } from 'vue';
 
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 

@@ -67,7 +67,7 @@
   </t-space>
 </template>
 
-<script setup lang="tsx" name="TmSelectTable">
+<script setup lang="tsx" name="BcmpSelectTable">
 import { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
@@ -650,6 +650,15 @@ watch(
       }
       isHandleSelectionChange.value = false;
     });
+  },
+  { deep: true },
+);
+watch(
+  () => props.parentId,
+  (val) => {
+    console.log('watch:props.parentId', `${props.parentId} ss ${val}`);
+    isHandleSelectionChange.value = false;
+    remoteLoad('');
   },
   { deep: true },
 );

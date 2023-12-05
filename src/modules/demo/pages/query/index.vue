@@ -1,12 +1,12 @@
 <template>
-  <tm-query :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" @handle-event="handleEvent">
+  <cmp-query :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" @handle-event="handleEvent">
     <template #querybar>
       <t-button theme="default">querybar插槽</t-button>
     </template>
     <template #soltDemo="{ param }">
       <t-tag-input v-model="param.soltDemo" clearable @paste="onPaste" @enter="onTagInputEnter" />
     </template>
-  </tm-query>
+  </cmp-query>
 </template>
 
 <script setup lang="tsx">
@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, reactive } from 'vue';
 
-import TmQuery from '@/components/tm-query/index.vue';
+import CmpQuery from '@/components/cmp-query/index.vue';
 
 const state = reactive({
   queryData: {
@@ -99,7 +99,7 @@ const opts = computed(() => {
     },
     businessValue: {
       label: '4.业务组件',
-      comp: 'tm-select-business',
+      comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
@@ -164,7 +164,7 @@ const opts = computed(() => {
     },
     // userName: {
     //   label: '业务组件',
-    //   comp: 'tm-select-business',
+    //   comp: 'bcmp-select-business',
     //   bind: {
     //     type: 'mitemCategory',
     //   },

@@ -7,7 +7,7 @@
   --td-brand-color-hover: var(--td-brand-color-5);
   --td-brand-color: var(--td-brand-color-6);
   --td-brand-color-active: var(--td-brand-color-7);
-  --td-brand-color-1: #f2f2ff;
+  --td-brand-color-1: rgb(63 93 237 / 50%);
   --td-brand-color-2: rgb(63 93 237 / 20%);
   --td-brand-color-3: rgb(63 93 237 / 50%);
   --td-brand-color-4: #97a8ff;
@@ -131,7 +131,7 @@
   --td-font-size-mark-small: 12px;
   --td-font-size-mark-medium: 14px;
   --td-font-size-body-small: 12px;
-  --td-font-size-body-medium: 12px;
+  --td-font-size-body-medium: 14px; /* Neo Changed */
   --td-font-size-body-large: 16px;
   --td-font-size-title-small: 14px;
   --td-font-size-title-medium: 16px;

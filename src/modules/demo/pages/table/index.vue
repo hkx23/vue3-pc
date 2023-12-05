@@ -1,6 +1,6 @@
 <template>
   <div class="main-page">
-    <tm-table
+    <cmp-table
       ref="tableRef"
       v-model:pagination="pageUI"
       :table-column="tableColumn"
@@ -21,10 +21,10 @@
         <!-- <t-button theme="success" @click="onFixHeight">插槽例子-是否固定高度</t-button> -->
         <t-button theme="success" @click="onViewKeys">插槽例子-已选中行</t-button>
       </template>
-      <template #oprate>
+      <template #operate>
         <!-- <t-button shape="circle" theme="primary" ghost> 插槽 </t-button> -->
       </template>
-    </tm-table>
+    </cmp-table>
   </div>
 </template>
 
@@ -32,7 +32,7 @@
 import { DialogPlugin, Icon } from 'tdesign-vue-next';
 import { onActivated, reactive, ref } from 'vue';
 
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 

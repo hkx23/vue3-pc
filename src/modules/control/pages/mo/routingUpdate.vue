@@ -11,7 +11,7 @@
     <!-- table表格 -->
     <footer class="detailed-work-center">
       <div class="table-work-header">
-        <tm-table
+        <cmp-table
           ref="tableRoutingRef"
           row-key="id"
           :table-column="columnsRouting"
@@ -22,7 +22,7 @@
           @refresh="fetchTableRouting"
           @select-change="onSelectChange"
         >
-        </tm-table>
+        </cmp-table>
       </div>
     </footer>
     <div class="popup-mo-foot-btn">
@@ -38,7 +38,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { nextTick, reactive, ref, watch } from 'vue';
 
 import { api as apicontrol } from '@/api/control';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 // 子修改传值
 const props = defineProps({

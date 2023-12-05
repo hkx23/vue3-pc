@@ -118,13 +118,13 @@
             ></t-input-number>
           </t-form-item>
           <t-form-item :label="t('craftRoute.processName')" name="processId">
-            <tm-select-business
+            <bcmp-select-business
               v-model="propertiesForm.processId"
               type="process"
               :show-title="false"
               :placeholder="t('common.placeholder.select', [t('craftRoute.processName')])"
               @selection-change="processChange"
-            ></tm-select-business>
+            ></bcmp-select-business>
           </t-form-item>
           <t-form-item :label="t('craftRoute.processType')" name="processType">
             <t-select
@@ -177,7 +177,7 @@
             </t-table>
           </t-col>
           <t-col :span="9">
-            <tm-table
+            <cmp-table
               v-model:selected-row-keys="boomSelectKeys"
               row-key="id"
               :table-column="boomColumn"
@@ -195,7 +195,7 @@
                   t('common.button.delete')
                 }}</t-button>
               </template>
-            </tm-table>
+            </cmp-table>
           </t-col>
         </t-row>
       </t-dialog>
@@ -228,8 +228,8 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { api as apiControl } from '@/api/control';
 import { api as apiMain } from '@/api/main';
-import TmSelectBusiness from '@/components/tm-select-business/index.vue';
-import TmTable from '@/components/tm-table/index.vue';
+import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 
 import { useLang } from './lang';
 import { registerCustomElement } from './node';
@@ -275,6 +275,7 @@ const close = () => {
 };
 watch(visible, (value: boolean) => {
   if (value && props.id) {
+    // @ts-ignore
     apiControl.routing.item(props.id).then((data) => {
       // 复制不需要赋值form表单
       if (!props.isCopy) {
@@ -348,6 +349,7 @@ const save = () => {
       // 复制走新增逻辑
       if (props.id && !props.isCopy) {
         apiControl.routing
+          // @ts-ignore
           .update(props.id, postData)
           .then(() => {
             loading.value = false;
@@ -359,6 +361,7 @@ const save = () => {
           });
       } else {
         apiControl.routing
+          // @ts-ignore
           .add(postData)
           .then(() => {
             loading.value = false;
@@ -588,6 +591,7 @@ const confirmBoom = () => {
 
   :deep(.t-form__controls-content) {
     width: 200px;
+
     .t-date-picker,
     .t-input-number,
     .t-color-picker__trigger {
@@ -601,6 +605,7 @@ const confirmBoom = () => {
     right: 50px;
     z-index: 2;
   }
+
   .sidebar {
     user-select: none;
     position: absolute;
@@ -609,6 +614,7 @@ const confirmBoom = () => {
     top: 10px;
     left: 20px;
     z-index: 2;
+
     .sidebar-item {
       color: var(--td-brand-color-active);
       display: flex;
@@ -619,10 +625,12 @@ const confirmBoom = () => {
       margin-bottom: 5px;
     }
   }
+
   .flow {
     height: 500px;
   }
 }
+
 .t-form-inline {
   row-gap: var(--td-comp-margin-xxl);
 }
