@@ -317,6 +317,12 @@ export type WarehouseFeignDTO = {
   erpWarehouse?: string;
 } | null;
 
+/** 角色用户操作实体 */
+export interface RoleUserDTO {
+  roleId?: string;
+  userIds?: string[];
+}
+
 /** 通用响应类 */
 export interface ResultUser {
   /**
@@ -1682,15 +1688,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
-  isInProcessName?: string;
-  isState?: boolean;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isRawName?: string;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -1857,8 +1863,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2364,6 +2370,19 @@ export interface ResultAttendanceMode {
   message?: string;
   /** 出勤模式 */
   data?: AttendanceMode;
+}
+
+/** 通用响应类 */
+export interface ResultListUser {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: User[] | null;
 }
 
 /** 当前用户实体 */
@@ -2983,6 +3002,37 @@ export const api = {
         body: data as any,
       }),
   },
+  userInRole: {
+    /**
+     * No description
+     *
+     * @tags 用户角色关系表
+     * @name DeleteUserInRole
+     * @summary 传入roleId与useIdList,删除
+     * @request POST:/userInRole/deleteUserInRole
+     * @secure
+     */
+    deleteUserInRole: (data: RoleUserDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInRole/deleteUserInRole`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户角色关系表
+     * @name AddUserInRole
+     * @summary 传入roleId与useIdList,新增
+     * @request POST:/userInRole/addUserInRole
+     * @secure
+     */
+    addUserInRole: (data: RoleUserDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInRole/addUserInRole`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   user: {
     /**
      * No description
@@ -3011,6 +3061,42 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultUser['data']>(`/api/main/user/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetUsersByRoleId
+     * @summary 根据roleId获取用户列表，用户表为User
+     * @request GET:/user/getUsersByRoleId
+     * @secure
+     */
+    getUsersByRoleId: (query?: {
+      /** @default "0" */
+      roleId?: string;
+    }) =>
+      http.request<ResultListUser['data']>(`/api/main/user/getUsersByRoleId`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetUserByRoleIdNotIn
+     * @summary 根据roleId获取没关联当前roleId的用户列表，用户表为User
+     * @request GET:/user/getUserByRoleIdNotIn
+     * @secure
+     */
+    getUserByRoleIdNotIn: (query?: {
+      /** @default "0" */
+      roleId?: string;
+    }) =>
+      http.request<ResultListUser['data']>(`/api/main/user/getUserByRoleIdNotIn`, {
+        method: 'GET',
+        params: query,
       }),
 
     /**
@@ -3305,7 +3391,7 @@ export const api = {
      *
      * @tags 角色
      * @name Add
-     * @summary 编辑角色信息
+     * @summary 新增角色信息
      * @request POST:/role/add
      * @secure
      */

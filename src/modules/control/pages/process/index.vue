@@ -23,7 +23,7 @@
       </t-row>
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
         :table-column="tableProcessColumns"
@@ -43,7 +43,7 @@
             <t-icon name="edit" @click="onEditRowClick(slotProps)" />
           </t-space>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
   </div>
   <div>
@@ -66,7 +66,7 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/control';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 

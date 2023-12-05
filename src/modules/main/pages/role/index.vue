@@ -2,11 +2,11 @@
   <div class="main-page">
     <div class="main-page-content">
       <!-- 查询组件  -->
-      <tm-query :opts="opts" label-width="100" @submit="conditionEnter" />
+      <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
       <!-- 表格组件  -->
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
         row-key="id"
@@ -32,7 +32,7 @@
         <template #button>
           <t-button theme="primary" @click="onAddClick"> 新增 </t-button>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
     <!-- 新增/编辑角色弹出窗 -->
     <t-dialog
@@ -43,15 +43,22 @@
       <role-form ref="formRef" />
     </t-dialog>
     <!-- 角色成员弹出窗 -->
-    <t-dialog v-model:visible="formUserVisible" :header="t('role.roleMember')" :on-confirm="onUserConfirmForm">
-      <role-form ref="userFormRef" />
+    <t-dialog
+      v-model:visible="formUserVisible"
+      top="25px"
+      width="800px"
+      :confirm-btn="null"
+      :header="t('role.roleMember')"
+      :on-confirm="onUserConfirmForm"
+    >
+      <user-form ref="userFormRef" :role-id="formUserRoleId" />
     </t-dialog>
     <!-- 权限分配弹出窗 -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -61,6 +68,7 @@ import { usePage } from '@/hooks/modules/page';
 import { FormRef } from './constants';
 import RoleForm from './form.vue';
 import { useLang } from './lang';
+import userForm from './userForm.vue';
 
 const formVisible = ref(false);
 const formUserVisible = ref(false);
@@ -100,7 +108,7 @@ const opts = computed(() => {
   return {
     oid: {
       label: t('role.org'),
-      comp: 'tm-select-business',
+      comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
@@ -110,7 +118,7 @@ const opts = computed(() => {
     },
     // eId: {
     //   label: t('role.eId'),
-    //   comp: 'tm-select-business',
+    //   comp: 'bcmp-select-business',
     //   event: 'business',
     //   defaultVal: '',
     //   bind: {
@@ -178,9 +186,11 @@ const fetchTable = async () => {
   }
 };
 
+const formUserRoleId = ref('');
 const onRowPerson = (row: any) => {
-  const { reset } = userFormRef.value;
-  reset(true, row);
+  // const { reset } = userFormRef.value;
+  // reset(true, row);
+  formUserRoleId.value = row.id;
   formUserVisible.value = true;
   console.log('人员分配', row);
 };
@@ -191,6 +201,7 @@ const onRowDelete = async (row: any) => {
   console.log('删除', row);
   await api.role.delete({ id: row.id });
   fetchTable();
+  MessagePlugin.success(t('common.message.deleteSuccess'));
 };
 const onRowEdit = (row: any) => {
   const { reset } = formRef.value;

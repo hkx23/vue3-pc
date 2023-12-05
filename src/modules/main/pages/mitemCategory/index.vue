@@ -16,7 +16,7 @@
       </t-row>
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
         row-key="id"
@@ -35,10 +35,10 @@
             <t-icon name="delete" @click="onDeleteRowClick(slotProps)" />
           </t-space>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         v-model:pagination="pageMitem"
         row-key="id"
         :total="mitemTotal"
@@ -47,7 +47,7 @@
         :loading="loadingMitem"
         @refresh="fetchMitemTable"
       >
-      </tm-table>
+      </cmp-table>
     </div>
   </div>
 
@@ -71,7 +71,7 @@ import { DialogPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 

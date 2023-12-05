@@ -42,7 +42,7 @@
             >
           </t-row>
         </t-card>
-        <tm-table
+        <cmp-table
           v-model:pagination="pageUI"
           :loading="loading"
           row-key="id"
@@ -58,7 +58,7 @@
               <icon name="delete"></icon>
             </t-popconfirm>
           </template>
-        </tm-table>
+        </cmp-table>
       </div></header
   ></t-card>
 </template>
@@ -69,7 +69,7 @@ import { Icon, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/control';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 

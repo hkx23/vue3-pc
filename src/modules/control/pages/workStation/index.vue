@@ -31,7 +31,7 @@
       </t-row>
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         row-key="index"
         :table-column="columns"
@@ -55,7 +55,7 @@
             <icon name="delete" style="margin-right: 10px; cursor: pointer"></icon>
           </t-popconfirm>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
   </div>
   <t-dialog
@@ -79,12 +79,12 @@
         <t-col>
           <t-form-item label="工作中心:" name="PWorkcenterId">
             <!-- <t-select v-model="formData.workCenter"></t-select> -->
-            <tm-select-business
+            <bcmp-select-business
               v-model="formData.PWorkcenterId"
               type="workcenter"
               :show-title="false"
               :disabled="controlShow ? true : false"
-            ></tm-select-business>
+            ></bcmp-select-business>
           </t-form-item>
         </t-col>
       </t-row>
@@ -92,12 +92,12 @@
       <t-row class="form-work-station">
         <t-col>
           <t-form-item label="工序:" name="PProcessId">
-            <tm-select-business
+            <bcmp-select-business
               v-model="formData.PProcessId"
               type="process"
               :show-title="false"
               :disabled="controlShow ? true : false"
-            ></tm-select-business>
+            ></bcmp-select-business>
           </t-form-item>
         </t-col>
       </t-row>
@@ -148,11 +148,11 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next/es/table/type';
 import { onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
+import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();

@@ -118,13 +118,13 @@
             ></t-input-number>
           </t-form-item>
           <t-form-item :label="t('craftRoute.processName')" name="processId">
-            <tm-select-business
+            <bcmp-select-business
               v-model="propertiesForm.processId"
               type="process"
               :show-title="false"
               :placeholder="t('common.placeholder.select', [t('craftRoute.processName')])"
               @selection-change="processChange"
-            ></tm-select-business>
+            ></bcmp-select-business>
           </t-form-item>
           <t-form-item :label="t('craftRoute.processType')" name="processType">
             <t-select
@@ -177,7 +177,7 @@
             </t-table>
           </t-col>
           <t-col :span="9">
-            <tm-table
+            <cmp-table
               v-model:selected-row-keys="boomSelectKeys"
               row-key="id"
               :table-column="boomColumn"
@@ -195,7 +195,7 @@
                   t('common.button.delete')
                 }}</t-button>
               </template>
-            </tm-table>
+            </cmp-table>
           </t-col>
         </t-row>
       </t-dialog>
@@ -228,8 +228,8 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { api as apiControl } from '@/api/control';
 import { api as apiMain } from '@/api/main';
-import TmSelectBusiness from '@/components/tm-select-business/index.vue';
-import TmTable from '@/components/tm-table/index.vue';
+import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 
 import { useLang } from './lang';
 import { registerCustomElement } from './node';

@@ -1,5 +1,5 @@
 <template>
-  <tm-select-table
+  <bcmp-select-table
     v-if="componentType === 'table' && targetIsVisible"
     :value="modelValue"
     :columns="finalColumns"
@@ -17,13 +17,13 @@
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
-  </tm-select-table>
+  </bcmp-select-table>
 </template>
 
-<script setup lang="tsx" name="TmSelectBusiness">
+<script setup lang="tsx" name="BcmpSelectBusiness">
 import { computed, defineAsyncComponent, onMounted, ref, useAttrs, watch } from 'vue';
 
-const TmSelectTable = defineAsyncComponent(() => import('../tm-select-table/index.vue'));
+const BcmpSelectTable = defineAsyncComponent(() => import('../bcmp-select-table/index.vue'));
 // import TSelectTable from '../select-table/index.vue';
 
 // / 00-组件属性定义

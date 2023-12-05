@@ -49,7 +49,7 @@
                 {{ treeClickData.one }}
               </t-breadcrumbItem>
             </t-breadcrumb>
-            <tm-table
+            <cmp-table
               ref="tableRef"
               v-model:pagination="pageUI"
               row-key="id"
@@ -93,7 +93,7 @@
                   <custom-tabs v-model="selectedTabs" :tabs="tabItems" @selection-changed="handleSelectionChanged" />
                 </t-space>
               </template>
-            </tm-table>
+            </cmp-table>
           </t-col>
         </t-row>
       </header>
@@ -234,7 +234,7 @@ import { Data, FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol,
 import { onMounted, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 import CustomTabs from './CustomTabs.vue';

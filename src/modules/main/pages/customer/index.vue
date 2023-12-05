@@ -18,7 +18,7 @@
       </t-row>
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         row-key="index"
         :loading="loading"
@@ -31,7 +31,7 @@
           <icon name="edit-1" style="cursor: pointer" @click="onHandleEdit(row.customerCode)"></icon>
           <!-- <icon name="edit-1" @click="onHandleEdit(row.customerCode)"></icon> -->
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
     <!-- 弹出层 -->
     <t-dialog v-model:visible="formVisible" header="客户维护编辑" :cancel-btn="null" :confirm-btn="null" width="40%">
@@ -85,7 +85,7 @@ import { Data, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 

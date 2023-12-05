@@ -37,7 +37,7 @@
     </div>
     <div class="main-page-content">
       <t-row justify="space-between">
-        <tm-table
+        <cmp-table
           v-model:pagination="pageUI"
           row-key="id"
           :table-column="tableMitemColumns"
@@ -52,7 +52,7 @@
               <t-icon name="edit" @click="onEditRowClick(slotProps)" />
             </t-space>
           </template>
-        </tm-table>
+        </cmp-table>
       </t-row>
     </div>
   </div>
@@ -77,7 +77,7 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -132,7 +132,7 @@ const onReset = () => {
 //   return {
 //     keyword: {
 //       label: t('business.main.mitemCode'),
-//       comp: 'tm-select-business',
+//       comp: 'bcmp-select-business',
 //       defaultVal: '',
 //       placeholder: t('common.placeholder.input', [`${t('business.main.mitemCode')}/${t('business.main.mitemName')}`]),
 //     },

@@ -15,21 +15,21 @@
       <t-input v-model="formData.roleName" clearable />
     </t-form-item>
     <t-form-item :label="t('role.eId')" name="eid">
-      <tm-select-business
+      <bcmp-select-business
         v-model="formData.eid"
         type="enterprise"
         :disabled="!isAdmin"
         :show-title="false"
-      ></tm-select-business>
+      ></bcmp-select-business>
     </t-form-item>
     <t-form-item :label="t('role.org')" name="oid">
-      <tm-select-business
+      <bcmp-select-business
         v-model="formData.oid"
         type="plant"
         :parent-id="formData.eid"
         :disabled="!isAdmin"
         :show-title="false"
-      ></tm-select-business>
+      ></bcmp-select-business>
     </t-form-item>
     <t-form-item :label="t('role.roleDesc')" name="roleDesc">
       <t-textarea v-model="formData.roleDesc" clearable />

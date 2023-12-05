@@ -41,14 +41,14 @@
         />
       </div>
       <div class="list-tree-content">
-        <tm-table
+        <cmp-table
           ref="tableRef"
           row-key="id"
           :loading="loading"
           :show-pagination="false"
           :table-column="columns"
           :table-data="data"
-        ></tm-table>
+        ></cmp-table>
       </div>
     </div>
 
@@ -69,7 +69,7 @@ import { MessagePlugin, TreeNodeModel } from 'tdesign-vue-next';
 import { computed, onMounted, ref, watch } from 'vue';
 
 import { api, OrgTreeVO } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
 import { FormRef } from './constants';

@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <tm-query class="card" :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" />
+    <cmp-query class="card" :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" />
     <t-card class="card" :header="t('craftRoute.craftRoute')" :bordered="false" header-bordered>
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         :table-column="craftRouteColumn"
         :table-data="craftRouteData.list"
@@ -10,7 +10,7 @@
         :total="craftRouteData.total"
         @refresh="getRouting"
       >
-        <template #oprate>
+        <template #operate>
           <t-button @click="addRouting">{{ t('common.button.add') }}</t-button>
         </template>
         <template #state="{ row }">
@@ -33,10 +33,10 @@
             <t-link theme="primary" size="small" @click="copyRouting(row.id)">{{ t('common.button.copy') }}</t-link>
           </t-space>
         </template>
-      </tm-table>
+      </cmp-table>
     </t-card>
     <t-card class="card" :header="t('craftRoute.productRelation')" :bordered="false" header-bordered>
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         :table-column="productRelationColumn"
         :table-data="productRelationData.list"
@@ -51,7 +51,7 @@
         <template #op>
           <t-button variant="text" theme="primary">{{ t('common.button.delete') }}</t-button>
         </template>
-      </tm-table>
+      </cmp-table>
     </t-card>
     <edit
       :id="editId"
@@ -87,8 +87,8 @@ import { computed, reactive, ref } from 'vue';
 
 import { api as apiControl } from '@/api/control';
 import { api as apiMain } from '@/api/main';
-import TmQuery from '@/components/tm-query/index.vue';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpQuery from '@/components/cmp-query/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -120,7 +120,7 @@ const opts = computed(() => {
     },
     workcenterId: {
       label: t('craftRoute.workcenter'),
-      comp: 'tm-select-business',
+      comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
@@ -130,7 +130,7 @@ const opts = computed(() => {
     },
     productCategoryId: {
       label: t('craftRoute.productType'),
-      comp: 'tm-select-business',
+      comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
@@ -140,7 +140,7 @@ const opts = computed(() => {
     },
     productId: {
       label: t('craftRoute.product'),
-      comp: 'tm-select-business',
+      comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
