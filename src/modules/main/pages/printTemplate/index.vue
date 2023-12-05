@@ -171,13 +171,14 @@ const fetchTemplateData = async () => {
 };
 const onClickAddTemplate = () => {
   const { reset } = templateFormRef.value;
-  reset(false);
+  isEditTemplate.value = false;
+  reset(isEditTemplate.value);
   templateFormVisible.value = true;
 };
 const onClickEditTemplate = (row) => {
   const { reset } = templateFormRef.value;
-
-  reset(true, row);
+  isEditTemplate.value = true;
+  reset(isEditTemplate.value, row);
   templateFormVisible.value = true;
 };
 const onClickDeleteTemplate = async (id) => {

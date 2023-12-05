@@ -11,14 +11,14 @@
       {{ formData.parentOrgName }}
     </t-form-item>
     <t-form-item :label="t('org.levelName')" name="levelCode">
-      <t-select v-model="formData.levelCode" clearable>
+      <t-select v-model="formData.levelCode" :disabled="isFormEditing" clearable>
         <t-option v-for="(item, index) in orgLevelOptions" :key="index" :value="item.value" :label="item.label">
           {{ item.label }}
         </t-option>
       </t-select>
     </t-form-item>
     <t-form-item :label="t('org.orgCode')" name="orgCode">
-      <t-input v-model="formData.orgCode" clearable />
+      <t-input v-model="formData.orgCode" :disabled="isFormEditing" clearable />
     </t-form-item>
     <t-form-item :label="t('org.orgName')" name="orgName">
       <t-input v-model="formData.orgName" clearable />

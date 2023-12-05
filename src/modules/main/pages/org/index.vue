@@ -54,7 +54,9 @@
 
     <t-dialog
       v-model:visible="formVisible"
-      :header="t('common.dialog.header.add', [t('org.title')])"
+      :header="
+        isEdit ? t('common.dialog.header.edit', [t('org.title')]) : t('common.dialog.header.add', [t('org.title')])
+      "
       :on-confirm="onConfirmForm"
     >
       <org-form ref="formRef" />
@@ -195,10 +197,12 @@ const onInput = () => {
     : null;
 };
 
+const isEdit = ref(false);
 const onClickAdd = () => {
   const { reset } = formRef.value;
+  isEdit.value = false;
   reset(
-    false,
+    isEdit.value,
     currActiveData.value,
     (parentOrgName.value || '') + (currActiveData.value.orgName || ''),
     isEmpty(currActiveData.value.levelCode)
@@ -210,8 +214,8 @@ const onClickAdd = () => {
 
 const onClickEdit = () => {
   const { reset } = formRef.value;
-
-  reset(true, currActiveData.value, parentOrgName.value?.replace(/\/$/, ''), parentOrgLevels.value);
+  isEdit.value = true;
+  reset(isEdit.value, currActiveData.value, parentOrgName.value?.replace(/\/$/, ''), parentOrgLevels.value);
   formVisible.value = true;
 };
 
