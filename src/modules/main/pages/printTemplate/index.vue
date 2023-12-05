@@ -72,7 +72,7 @@
     "
     :on-confirm="onConfirmTemplateForm"
   >
-    <template-form ref="templateFormRef" v-model:visible="templateFormVisible" />
+    <template-form ref="templateFormRef" />
   </t-dialog>
   <t-dialog
     v-model:visible="templateMapFormVisible"
@@ -92,9 +92,9 @@ import { onMounted, ref } from 'vue';
 import { api, PagingDataPrintTmpl, PagingDataPrintTmplMapDTO } from '@/api/main';
 
 import { TEMPLATE_TYPE, TemplateFormRef, TemplateMapFormRef } from './constants';
+import TemplateForm from './form.vue';
 import { useLang } from './lang';
-import templateForm from './templateForm.vue';
-import templateMapForm from './templateMapForm.vue';
+import TemplateMapForm from './mapForm.vue';
 
 const { t } = useLang();
 
