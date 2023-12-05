@@ -1,6 +1,8 @@
 <template>
   <div class="container">
-    <cmp-query class="card" :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" />
+    <t-card class="card">
+      <cmp-query :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" />
+    </t-card>
     <t-card class="card" :header="t('craftRoute.craftRoute')" :bordered="false" header-bordered>
       <cmp-table
         v-model:pagination="pageUI"
@@ -53,7 +55,7 @@
             @enter="getProductRelation"
           />
         </template>
-        <template #oprate>
+        <template #operate>
           <t-button :disabled="!isSelectRouting" @click="productVisible = true">{{ t('common.button.add') }}</t-button>
           <t-button :disabled="!isSelectRouting" theme="default">{{ t('common.button.import') }}</t-button>
           <t-button
@@ -101,6 +103,7 @@
 
 <script setup lang="ts">
 // #region import
+import dayjs from 'dayjs';
 import { find } from 'lodash';
 import { DialogPlugin } from 'tdesign-vue-next';
 import { computed, reactive, ref } from 'vue';
@@ -212,12 +215,30 @@ const craftRouteColumn = [
   { colKey: 'routingName', title: t('business.main.name'), width: 100, align: 'center' },
   { colKey: 'routingVersion', title: t('craftRoute.version'), width: 100, align: 'center' },
   { colKey: 'state', title: t('craftRoute.status'), width: 100, align: 'center' },
-  { colKey: 'enableDate', title: t('craftRoute.enableDate'), width: 150, align: 'center' },
-  { colKey: 'invailDate', title: t('craftRoute.invailDate'), width: 150, align: 'center' },
+  {
+    colKey: 'enableDate',
+    title: t('craftRoute.enableDate'),
+    width: 120,
+    align: 'center',
+    cell: (h: any, { row }: any) => {
+      const obj = dayjs(row.enableDate);
+      return obj.isValid() ? obj.format('YYYY-MM-DD') : null;
+    },
+  },
+  {
+    colKey: 'invailDate',
+    title: t('craftRoute.invailDate'),
+    width: 120,
+    align: 'center',
+    cell: (h: any, { row }: any) => {
+      const obj = dayjs(row.invailDate);
+      return obj.isValid() ? obj.format('YYYY-MM-DD') : null;
+    },
+  },
   { colKey: 'creator', title: t('business.main.creator'), width: 100, align: 'center' },
-  { colKey: 'timeCreate', title: t('business.main.timeCreate'), width: 150, align: 'center' },
+  { colKey: 'timeCreate', title: t('business.main.timeCreate'), width: 170, align: 'center' },
   { colKey: 'modifier', title: t('business.main.modifier'), width: 100, align: 'center' },
-  { colKey: 'timeModified', title: t('business.main.timeModified'), width: 150, align: 'center' },
+  { colKey: 'timeModified', title: t('business.main.timeModified'), width: 170, align: 'center' },
   { colKey: 'routingDesc', title: t('business.main.desc'), width: 150, align: 'center' },
   { colKey: 'op', title: t('common.button.operation'), width: 150, align: 'center', fixed: 'right' },
 ];

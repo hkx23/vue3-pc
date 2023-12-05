@@ -5,29 +5,29 @@
         <t-input v-model="routingName" disabled></t-input>
       </t-form-item>
       <t-form-item :label="t('craftRoute.productCategory')" name="mitemCategoryId">
-        <tm-select-business
+        <bcmp-select-business
           v-model="formData.mitemCategoryId"
           type="mitemCategory"
           :show-title="false"
           :placeholder="t('common.placeholder.select', [t('craftRoute.productCategory')])"
-        ></tm-select-business>
+        ></bcmp-select-business>
       </t-form-item>
       <t-form-item :label="t('craftRoute.product')" name="mitemId">
-        <tm-select-business
+        <bcmp-select-business
           v-model="formData.mitemId"
           type="mitem"
           :parent-value="formData.mitemCategoryId"
           :show-title="false"
           :placeholder="t('common.placeholder.select', [t('craftRoute.product')])"
-        ></tm-select-business>
+        ></bcmp-select-business>
       </t-form-item>
       <t-form-item :label="t('craftRoute.workcenter')" name="workcenterId">
-        <tm-select-business
+        <bcmp-select-business
           v-model="formData.workcenterId"
           type="workcenter"
           :show-title="false"
           :placeholder="t('common.placeholder.select', [t('craftRoute.workcenter')])"
-        ></tm-select-business>
+        ></bcmp-select-business>
       </t-form-item>
       <t-form-item :label="t('craftRoute.isDefault')" name="isDefault">
         <t-switch v-model="formData.isDefault"></t-switch>
@@ -45,7 +45,7 @@ import { Data, FormRules } from 'tdesign-vue-next';
 import { computed, reactive, ref, toRefs } from 'vue';
 
 import { api as apiControl } from '@/api/control';
-import TmSelectBusiness from '@/components/tm-select-business/index.vue';
+import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
 
 import { useLang } from './lang';
 

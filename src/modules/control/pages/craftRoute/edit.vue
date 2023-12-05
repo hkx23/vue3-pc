@@ -99,7 +99,7 @@
       <div ref="flowRef" class="flow"></div>
       <t-dialog v-model:visible="edgeVisible" :header="false" :footer="false" destroy-on-close>
         <t-select v-model="edgeText" @change="resultChange">
-          <t-option value="GOOD" />
+          <t-option value="OK" />
           <t-option value="NG" />
         </t-select>
       </t-dialog>
