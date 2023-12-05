@@ -47,7 +47,7 @@
         <template #state="{ row }">
           <span>{{ row.state === 1 ? '启用' : '禁用' }}</span>
         </template>
-        <template #operate="{ row }">
+        <template #op="{ row }">
           <!-- 编辑 -->
           <icon name="edit-1" style="margin-right: 10px; cursor: pointer" @click="onHandelEdit(row.id)"></icon>
           <!-- 禁用 -->
@@ -269,7 +269,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    colKey: 'operate',
+    colKey: 'op',
     title: '操作',
     width: '100px',
     align: 'left',
