@@ -44,7 +44,7 @@ export const useUserStore = defineStore('user', {
       // };
       // const res = await mockRemoteUserInfo();
       let orgId = fw.getOrgId();
-      if (!orgId) {
+      if (!orgId || !res.orgList.some((org) => org.id === orgId)) {
         fw.setOrgId(res.defaultOrgId);
         orgId = res.defaultOrgId;
       }
