@@ -111,7 +111,7 @@ const openHref = (url: string) => {
 // }
 
 :deep(.t-menu__item.t-is-active) {
-  background-color: #0d2ed4;
+  background-color: var(--td-brand-color-7);
   color: white;
 }
 
@@ -126,9 +126,9 @@ const openHref = (url: string) => {
 }
 
 // .t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled) {
-//   background-color: #0d2ed486;
+//   background-color: var(--td-brand-color-3);;
 // }
 .t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled) {
-  background-color: #0d2ed486;
+  background-color: var(--td-brand-color-3);
 }
 </style>

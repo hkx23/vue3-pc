@@ -37,16 +37,10 @@
         @current-change="onCurrentChange"
       /> -->
     </t-card>
-    <t-dialog
-      v-model:visible="formVisible"
-      header="新增(编辑)异常处理配置"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      width="40%"
-    >
+    <t-dialog v-model:visible="formVisible" :header="defectTitle" :cancel-btn="null" :confirm-btn="null" width="40%">
       <t-form ref="formRef" :data="formItem" :rules="rules" @submit="onBtn">
         <t-form-item :label="t('defectCode.parentLevel')" name="parentLevel">
-          <t-input v-model="formItem.parentLevel" placeholder="请输入" :disabled="disabledParentLevel"></t-input>
+          <t-input v-model="formItem.parentLevel" placeholder="请输入" :disabled="true"></t-input>
         </t-form-item>
         <t-form-item :label="t('defectCode.defectCode')" name="defectCode">
           <t-input v-model="formItem.defectCode" placeholder="请输入" :disabled="disabledShow"></t-input>
@@ -83,9 +77,9 @@ import { api } from '@/api/main';
 
 import { useLang } from './lang';
 
-const disabledParentLevel = ref(false); // 上一层是否禁用
 const disabledShow = ref(false); // 缺陷代码
 const deleteVisible = ref(false);
+const defectTitle = ref('');
 // 装数控的
 const treeConfig = reactive({
   childrenKey: 'child',
@@ -98,17 +92,6 @@ const pagination = ref({
   total: 10,
 });
 const isAddAndEdit = ref(1); // 判断是编辑还是新增默认为新增
-// const onPageSizeChange = (size) => {
-//   pagination.value.current = 1;
-//   console.log('page-size:', size);
-//   onFetchData();
-// };
-// const onCurrentChange = () => {
-//   onFetchData();
-// };
-// const onChange = () => {
-//   onFetchData();
-// };
 
 // 多选框
 const selectedRowKeys = ref([]); // 选择的要删除数据
@@ -183,8 +166,10 @@ const onIsAddAndEdit = async () => {
     console.log('编辑');
   }
 };
-// 添加
+// 添加 按钮点击事件
 const onAdd = async () => {
+  disabledShow.value = false;
+  defectTitle.value = '缺陷代码新增';
   formItem.ParentId = 0;
   isAddAndEdit.value = 1;
   if (selectedRowKeys.value.length > 1) {
@@ -201,7 +186,6 @@ const onAdd = async () => {
   if (formItem.ParentId === 0) {
     formItem.parentLevel = '全部';
   }
-  disabledParentLevel.value = true;
   formVisible.value = true;
   // onIsAddAndEdit();
 };
@@ -239,6 +223,7 @@ const onSecondaryReset = () => {
 const listDataShow = ref(1); // 控制编辑父级为全部的时候
 // 编辑
 const onSeparateEdit = async (row) => {
+  defectTitle.value = '缺陷代码编辑';
   isAddAndEdit.value = 0;
   try {
     const list = await api.defectCode.getParent({ id: row.parentDefectId });
@@ -256,7 +241,6 @@ const onSeparateEdit = async (row) => {
     formItem.id = row.id;
     formItem.defectName = row.defectName;
     formItem.defectCode = row.defectCode;
-    disabledParentLevel.value = true;
     disabledShow.value = true;
     formVisible.value = true;
   } catch (e) {

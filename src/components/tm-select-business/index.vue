@@ -8,6 +8,7 @@
     :remote-url="finalUrl"
     :category="finalCategory"
     :multiple="isMultiple"
+    :parent-id="finalParentId"
     :readonly="readonly"
     :title="finalTitle"
     :placeholder="finalPlaceholder"
@@ -20,7 +21,7 @@
 </template>
 
 <script setup lang="tsx" name="TmSelectBusiness">
-import { computed, defineAsyncComponent, onMounted, ref, useAttrs } from 'vue';
+import { computed, defineAsyncComponent, onMounted, ref, useAttrs, watch } from 'vue';
 
 const TmSelectTable = defineAsyncComponent(() => import('../tm-select-table/index.vue'));
 // import TSelectTable from '../select-table/index.vue';
@@ -266,4 +267,11 @@ onMounted(() => {
     loadTypeSetting();
   }
 });
+watch(
+  () => props.parentId,
+  (val) => {
+    finalParentId.value = val;
+  },
+  { deep: true },
+);
 </script>

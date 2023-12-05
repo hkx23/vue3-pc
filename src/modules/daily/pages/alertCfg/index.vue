@@ -85,7 +85,7 @@
 <script setup lang="ts">
 import { Icon } from 'tdesign-icons-vue-next';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
+import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
 import TmQuery from '@/components/tm-query/index.vue';
@@ -101,7 +101,6 @@ const itemOptions = [
   { label: '禁用', value: 0 },
   { label: '启用', value: 1 },
 ];
-const page = ref({ pageNum: pageUI.value.page, pageSize: pageUI.value.rows, keyword: '' });
 const submitFalg = ref(false);
 
 // 编辑回填 ID
@@ -163,10 +162,10 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 ];
 // #表单验证规则
 const rules: FormRules = {
-  alertType: [{ required: true, message: '异常模块不能为空', trigger: 'blur' }],
-  sla: [{ required: true, message: '异常类型名称不能为空', trigger: 'blur' }],
-  ola: [{ required: true, message: '异常类型编码不能为空', trigger: 'blur' }],
-  state: [{ required: true, message: '是否启用不能为空', trigger: 'blur' }],
+  alertType: [{ required: true, message: '预警机制不能为空', trigger: 'blur' }],
+  sla: [{ required: true, message: '响应时长不能为空', trigger: 'blur' }],
+  ola: [{ required: true, message: '处理时长不能为空', trigger: 'blur' }],
+  state: [{ required: true, message: '是否启用不能为空', trigger: 'change' }],
 };
 
 // 初始渲染
@@ -176,19 +175,23 @@ onMounted(async () => {
 
 // 获取 表格 数据
 const onGetAlertCfgTypeData = async () => {
-  const res = await api.alertCfg.getList(page.value);
+  const res = await api.alertCfg.getList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    keyword: '',
+  });
   alertCfgData.list = res.list;
   alertCfgTotal.value = res.total;
 };
 
-watch(
-  () => alertCfgData.list,
-  (newVal, oldVal) => {
-    console.log('🚀 ~ file: index.vue:185 ~ oldVal:', oldVal);
-    console.log('alertCfgData.list 变化了:', newVal);
-  },
-  { deep: true },
-);
+// watch(
+//   () => alertCfgData.list,
+//   (newVal, oldVal) => {
+//     console.log('🚀 ~ file: index.vue:185 ~ oldVal:', oldVal);
+//     console.log('alertCfgData.list 变化了:', newVal);
+//   },
+//   { deep: true },
+// );
 
 // #新增 添加按钮点击事件
 const onAddCfgData = () => {
@@ -223,9 +226,12 @@ const onSwitchChange = async (row: any, value: any) => {
 
 // 模糊查询事件事件
 const onInput = async (data: any) => {
-  page.value.keyword = data.categoryName;
   pageUI.value.page = 1;
-  const res = await api.alertCfg.getList(page.value);
+  const res = await api.alertCfg.getList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    keyword: data.categoryName,
+  });
   alertCfgData.list = res.list;
   alertCfgTotal.value = res.total;
   MessagePlugin.success('查询成功');
@@ -247,7 +253,7 @@ const onEditRow = (row: any) => {
   alertTypeID.value = row.id; // 编辑回填 ID
   submitFalg.value = false;
   formVisible.value = true;
-  diaLogTitle.value = '编辑异常类型';
+  diaLogTitle.value = '编辑预警机制';
 };
 
 // 编辑表格数据 请求
@@ -270,7 +276,7 @@ const onDeleteRow = (row: any) => {
 // // 右侧表格删除确认按钮
 const onDelConfirm = async () => {
   await api.alertCfg.removeAlertCfgBatch({ ids: selectedRowKeys.value });
-  if (alertCfgData.list.length <= 1 && page.value.pageNum > 1) {
+  if (alertCfgData.list.length <= 1 && pageUI.value.page > 1) {
     pageUI.value.page--;
   }
   await onGetAlertCfgTypeData(); // 渲染表格
@@ -281,7 +287,7 @@ const onDelConfirm = async () => {
 // // 批量删除
 const deleteBatches = async () => {
   await api.alertCfg.removeAlertCfgBatch({ ids: selectedRowKeys.value });
-  if (alertCfgData.list.length <= 1 && page.value.pageNum > 1) {
+  if (alertCfgData.list.length <= 1 && pageUI.value.page > 0) {
     pageUI.value.page--;
   }
   await onGetAlertCfgTypeData(); // 渲染表格

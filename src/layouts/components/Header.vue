@@ -358,16 +358,16 @@ const onConfirmForm = () => {
     .operations-container .t-button--variant-text:hover,
     .operations-container .t-button--variant-text:focus-visible
   ) {
-  background-color: #0d2ed486;
+  background-color: var(--td-brand-color-3);
 }
 
 :deep(.header-menu .t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled)) {
-  background-color: #0d2ed486;
+  background-color: var(--td-brand-color-3);
 }
 
 .t-button--variant-text:hover,
 .t-button--variant-text:focus-visible {
-  background-color: #0d2ed4;
+  background-color: var(--td-brand-color-7);
 }
 
 .t-menu__item.t-is-active {

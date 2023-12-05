@@ -8,11 +8,6 @@
         <t-space size="small" :align="'center'">
           <slot name="oprate"></slot>
 
-          <t-button v-if="false" shape="square" variant="outline" :disabled="loading" @click="onRefresh">
-            <template #icon>
-              <t-icon name="refresh" />
-            </template>
-          </t-button>
           <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
             <template #icon>
               <t-icon name="file-export" />
@@ -21,6 +16,11 @@
           <t-button v-if="props.enableExport && exportFunction" shape="square" variant="outline" @click="onExportAll">
             <template #icon>
               <t-icon name="file-export" />
+            </template>
+          </t-button>
+          <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
+            <template #icon>
+              <t-icon name="refresh" />
             </template>
           </t-button>
           <t-button shape="square" variant="outline" @click="data.visible = true">

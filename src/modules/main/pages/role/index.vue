@@ -23,7 +23,10 @@
             <t-link theme="primary" @click="onRowEdit(row)">编辑</t-link>
             <t-link theme="primary" @click="onRowPermission(row)">权限</t-link>
             <t-link theme="primary" @click="onRowPerson(row)">成员</t-link>
-            <t-link theme="primary" @click="onRowDelete(row)">删除</t-link>
+            <!-- 删除 -->
+            <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onRowDelete(row)">
+              <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
           </t-space>
         </template>
         <template #button>
@@ -31,18 +34,39 @@
         </template>
       </tm-table>
     </div>
+    <!-- 新增/编辑角色弹出窗 -->
+    <t-dialog
+      v-model:visible="formVisible"
+      :header="t(formAdd ? 'common.dialog.header.add' : 'common.dialog.header.edit', [t('role.role')])"
+      :on-confirm="onConfirmForm"
+    >
+      <role-form ref="formRef" />
+    </t-dialog>
+    <!-- 角色成员弹出窗 -->
+    <t-dialog v-model:visible="formUserVisible" :header="t('role.roleMember')" :on-confirm="onUserConfirmForm">
+      <role-form ref="userFormRef" />
+    </t-dialog>
+    <!-- 权限分配弹出窗 -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+import { FormRef } from './constants';
+import RoleForm from './form.vue';
 import { useLang } from './lang';
+
+const formVisible = ref(false);
+const formUserVisible = ref(false);
+const formAdd = ref(true);
+const formRef = ref<FormRef>(null);
+const userFormRef = ref<FormRef>(null);
 
 const { t } = useLang();
 const { pageUI } = usePage();
@@ -153,22 +177,52 @@ const fetchTable = async () => {
     setLoading(false);
   }
 };
-const onRowEdit = (row: any) => {
-  console.log('编辑', row);
-};
 
-const onRowPermission = (row: any) => {
-  console.log('编辑', row);
-};
-const onRowDelete = (row: any) => {
-  console.log('编辑', row);
-};
 const onRowPerson = (row: any) => {
-  console.log('编辑', row);
+  const { reset } = userFormRef.value;
+  reset(true, row);
+  formUserVisible.value = true;
+  console.log('人员分配', row);
+};
+const onRowPermission = (row: any) => {
+  console.log('权限分配', row);
+};
+const onRowDelete = async (row: any) => {
+  console.log('删除', row);
+  await api.role.delete({ id: row.id });
+  fetchTable();
+};
+const onRowEdit = (row: any) => {
+  const { reset } = formRef.value;
+  reset(true, row);
+  formAdd.value = false;
+  formVisible.value = true;
 };
 const onAddClick = () => {
   console.log('新增');
+  const { reset } = formRef.value;
+  reset(false, null);
+  formAdd.value = true;
+  formVisible.value = true;
 };
+const onConfirmForm = () => {
+  const { submit } = formRef.value;
+  submit().then(() => {
+    formVisible.value = false;
+    fetchTable();
+  });
+};
+const onUserConfirmForm = () => {
+  const { submit } = userFormRef.value;
+  submit().then(() => {
+    formUserVisible.value = false;
+    fetchTable();
+  });
+};
+// 渲染函数
+onMounted(() => {
+  fetchTable();
+});
 </script>
 
 <style scoped>
