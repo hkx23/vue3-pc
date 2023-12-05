@@ -1,7 +1,7 @@
 <template>
   <div class="main-page">
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         :table-column="templateColumn"
         :table-data="templateData?.list"
         :total="templateData?.total"
@@ -29,26 +29,26 @@
             <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
           </t-popconfirm>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         :table-column="templateCategoryColumn"
         :table-data="templateCategoryData?.list"
         :total="templateCategoryData?.total"
         @refresh="fetchTemplateCategoryData"
       >
         <template #button>
-          <tm-select-business
+          <bcmp-select-business
             v-model="filterMitemId"
             type="mitem"
             @change="fetchTemplateCategoryData"
-          ></tm-select-business>
-          <tm-select-business
+          ></bcmp-select-business>
+          <bcmp-select-business
             v-model="filterMitemCategoryId"
             type="mitemCategory"
             @change="fetchTemplateCategoryData"
-          ></tm-select-business>
+          ></bcmp-select-business>
         </template>
         <template #oprate>
           <t-button :disabled="!selectedRowTemplateId" @click="onClickAddMapTemplate">{{
@@ -60,7 +60,7 @@
             <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
           </t-popconfirm>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
   </div>
   <t-dialog
