@@ -1906,15 +1906,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isRawName?: string;
+  stateName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
   isState?: boolean;
-  stateName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2081,8 +2081,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2423,8 +2423,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
