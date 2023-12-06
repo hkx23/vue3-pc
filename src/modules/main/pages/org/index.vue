@@ -48,6 +48,7 @@
           :show-pagination="false"
           :table-column="columns"
           :table-data="data"
+          @refresh="fetchData"
         ></cmp-table>
       </div>
     </div>
