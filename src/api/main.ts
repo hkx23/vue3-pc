@@ -801,6 +801,128 @@ export interface ResultLong {
   data?: string;
 }
 
+/** 打印模板关联实体 */
+export interface PrintTmplMapDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  printTmplId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 物料类别编码 */
+  mitemCategoryCode?: string;
+  /** 物料类别名称 */
+  mitemCategoryName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  keyword?: string;
+}
+
+/** 响应数据 */
+export type PagingDataPrintTmplMapDTO = {
+  list?: PrintTmplMapDTO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataPrintTmplMapDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPrintTmplMapDTO;
+}
+
+/** 响应数据 */
+export type PagingDataPrintTmpl = {
+  list?: PrintTmpl[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 标签模板 */
+export interface PrintTmpl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板代码 */
+  tmplCode?: string;
+  /** 模板名称 */
+  tmplName?: string;
+  /** 模板描述 */
+  tmplDesc?: string;
+  /** 模板内容地址 */
+  tmplBodyPath?: string;
+  /** 模板类别 */
+  tmplCategory?: string;
+  /** 模板类型 */
+  tmplType?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPrintTmpl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPrintTmpl;
+}
+
 /** 响应数据 */
 export type PagingDataPost = {
   list?: Post[];
@@ -1786,11 +1908,11 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
+  isProductName?: string;
   isRawName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
 }
@@ -2301,8 +2423,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -2414,6 +2536,168 @@ export interface ResultCustomer {
 export interface JSONObject {
   empty?: boolean;
   [key: string]: any;
+}
+
+export interface BarcodeVaildateRuleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 规则模糊查询关键词 */
+  ruleKeyword?: string;
+  mitemId?: string;
+  /** 条码验证分组 */
+  barcodeValidateGroup?: string;
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+  /** 状态 */
+  state?: number[];
+}
+
+/** 条码验证规则表 */
+export interface BarcodeValidateRule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 规则代码 */
+  ruleCode?: string;
+  /** 规则名称 */
+  ruleName?: string;
+  /**
+   * 优先级
+   * @format int32
+   */
+  pri?: number;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码验证分组 */
+  barcodeValidateGroup?: string;
+  /** 条码规则 */
+  barcodeExpression?: string;
+  /**
+   * 最小
+   * @format int32
+   */
+  minLength?: number;
+  /**
+   * 最大
+   * @format int32
+   */
+  maxLength?: number;
+  /** 备注 */
+  memo?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+}
+
+/** 条码规则显示 */
+export interface BarcodeVaildateRuleVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 规则代码 */
+  ruleCode?: string;
+  /** 规则名称 */
+  ruleName?: string;
+  /**
+   * 优先级
+   * @format int32
+   */
+  pri?: number;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码验证分组 */
+  barcodeValidateGroup?: string;
+  /** 条码规则 */
+  barcodeExpression?: string;
+  /**
+   * 最小
+   * @format int32
+   */
+  minLength?: number;
+  /**
+   * 最大
+   * @format int32
+   */
+  maxLength?: number;
+  /** 备注 */
+  memo?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 条码类型名称 */
+  barcodeTypeName?: string;
+  /** 条码验证分组名称 */
+  barcodeValidateGroupName?: string;
+  /** 物料分类名称 */
+  categoryName?: string;
+  /** 物料名称 */
+  mitemName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeVaildateRuleVO = {
+  list?: BarcodeVaildateRuleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeVaildateRuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeVaildateRuleVO;
 }
 
 /** 出勤模式 */
@@ -4985,6 +5269,70 @@ export const api = {
      */
     updateItemByCode: (data: Customer) =>
       http.request<ResultObject['data']>(`/api/main/customer/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  barcodeValidateRule: {
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name RemoveBarcodeVaildateRule
+     * @summary 删除条码验证规则(逻辑删除)
+     * @request POST:/barcodeValidateRule/removeBarcodeVaildateRule
+     * @secure
+     */
+    removeBarcodeVaildateRule: (data: BarcodeVaildateRuleSearch) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeValidateRule/removeBarcodeVaildateRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name ModifyBarcodeVaildateRule
+     * @summary 编辑条码验证规则
+     * @request POST:/barcodeValidateRule/modifyBarcodeVaildateRule
+     * @secure
+     */
+    modifyBarcodeVaildateRule: (data: BarcodeValidateRule) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeValidateRule/modifyBarcodeVaildateRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name GetBarcodeVaildateRuleList
+     * @summary 查询条码验证规则
+     * @request POST:/barcodeValidateRule/getBarcodeVaildateRuleList
+     * @secure
+     */
+    getBarcodeVaildateRuleList: (data: BarcodeVaildateRuleSearch) =>
+      http.request<ResultPagingDataBarcodeVaildateRuleVO['data']>(
+        `/api/main/barcodeValidateRule/getBarcodeVaildateRuleList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name AddBarcodeVaildateRule
+     * @summary 新增条码验证规则
+     * @request POST:/barcodeValidateRule/addBarcodeVaildateRule
+     * @secure
+     */
+    addBarcodeVaildateRule: (data: BarcodeValidateRule) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeValidateRule/addBarcodeVaildateRule`, {
         method: 'POST',
         body: data as any,
       }),
