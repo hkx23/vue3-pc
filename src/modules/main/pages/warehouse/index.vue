@@ -38,6 +38,16 @@
           <t-button theme="default">导入</t-button>
           <t-button theme="default">导出</t-button>
         </template>
+        <template #opAttribute="slotProps">
+          <t-space>
+            {{ getWarehouseAttributeName(slotProps.row.warehouseAttribute) }}
+          </t-space>
+        </template>
+        <template #opCategory="slotProps">
+          <t-space>
+            {{ getWarehouseCategory(slotProps.row.warehouseCategory) }}
+          </t-space>
+        </template>
         <template #op="slotProps">
           <t-space>
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">修改</t-link>
@@ -98,15 +108,19 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '仓库编码', colKey: 'warehouseCode', width: 85 },
   { title: '仓库名称', width: 85, colKey: 'warehouseName' },
   { title: '仓库描述', width: 85, colKey: 'warehouseDesc' },
-  { title: '仓库属性', width: 85, colKey: 'warehouseAttribute' },
-  { title: '仓库类型', width: 85, colKey: 'warehouseCategory' },
+  {
+    title: '仓库属性',
+    width: 85,
+    colKey: 'opAttribute',
+  },
+  { title: '仓库类型', width: 100, colKey: 'opCategory' },
   { title: 'ERP仓库', width: 85, colKey: 'erpWarehouse' },
   { title: '启用交易上传', width: 120, colKey: 'enableUploadName' },
-  { title: '启用交易上传时间', width: 150, colKey: 'datetimeUpload' },
+  { title: '启用交易上传时间', width: 170, colKey: 'datetimeUpload' },
   { title: '状态', width: 74, colKey: 'stateName' },
   { title: '货位管理', width: 100, colKey: 'enableLocationName' },
-  { title: '最后更新人', width: 110, colKey: 'modifier' },
-  { title: '最后更新时间', width: 150, colKey: 'timeModified' },
+  { title: '最后更新人', width: 120, colKey: 'modifier' },
+  { title: '最后更新时间', width: 170, colKey: 'timeModified' },
   { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
 ];
 
@@ -150,6 +164,23 @@ const onEditRowClick = (value: any) => {
   formRef.value.formData.enableUpload = value.row.isEnableUpload === 1;
   formRef.value.formData.operateTpye = 'edit';
   formVisible.value = true;
+};
+
+const getWarehouseAttributeName = (id: any) => {
+  for (const element of formRef.value.warehousePropertyOption) {
+    if (id === element.value) {
+      return element.label;
+    }
+  }
+  return '';
+};
+const getWarehouseCategory = (id: any) => {
+  for (const element of formRef.value.warehouseTypeOption) {
+    if (id === element.value) {
+      return element.label;
+    }
+  }
+  return '';
 };
 
 const onStateRowClick = async (value: any) => {

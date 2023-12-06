@@ -1450,6 +1450,7 @@ export interface BarcodeWipVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
   workshopCode?: string;
+  workshopId?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;

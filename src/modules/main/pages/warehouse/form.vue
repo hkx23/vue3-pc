@@ -8,7 +8,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="仓库名称" required-mark>
+          <t-form-item label="仓库名称" required-mark style="width: 250px">
             <t-input v-model="formData.warehouseName" />
           </t-form-item>
         </t-col>
@@ -53,12 +53,12 @@
       </t-row>
       <t-row>
         <t-col :span="6">
-          <t-form-item label="启用交易上传" :label-width="125" style="width: 250px">
+          <t-form-item label="启用交易上传" :label-width="130" style="width: 250px">
             <t-switch v-model="formData.enableUpload" />
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="启用交易上传时间" label-width="100" style="width: 250px">
+          <t-form-item label="启用交易上传时间" label-width="130" style="width: 200px">
             <t-date-picker
               v-model="formData.datetimeUpload"
               allow-input
@@ -71,12 +71,12 @@
       </t-row>
       <t-row>
         <t-col :span="6">
-          <t-form-item label-align="left" label-width="20px" style="width: 120px">
+          <t-form-item label-align="left" label-width="20px" style="width: 100px">
             <t-checkbox v-model="formData.enableLocation">启用货位管理</t-checkbox>
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="状态" style="width: 100px">
+          <t-form-item label="状态" style="width: 120px">
             <t-switch v-model="formData.isState" />
           </t-form-item>
         </t-col>
