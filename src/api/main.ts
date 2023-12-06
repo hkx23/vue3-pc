@@ -1906,15 +1906,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isBatchName?: string;
+  isState?: boolean;
   stateName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isBatchName?: string;
   isProductName?: string;
   isRawName?: string;
-  isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2081,8 +2081,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2423,8 +2423,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -2746,6 +2746,19 @@ export interface ResultListOrgTreeVO {
   message?: string;
   /** 响应数据 */
   data?: OrgTreeVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Org[] | null;
 }
 
 /** 响应数据 */
@@ -3254,6 +3267,21 @@ export const api = {
     tree: () =>
       http.request<ResultListOrgTreeVO['data']>(`/api/main/org/tree`, {
         method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
+     * @name GetlistByLevelCode
+     * @summary 根据levelCode获取组织信息
+     * @request GET:/org/getlistByLevelCode
+     * @secure
+     */
+    getlistByLevelCode: (query: { search: string; levelCode: string }) =>
+      http.request<ResultListOrg['data']>(`/api/main/org/getlistByLevelCode`, {
+        method: 'GET',
+        params: query,
       }),
 
     /**
@@ -4781,6 +4809,20 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataEquipment['data']>(`/api/main/equipment/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备
+     * @name GetList
+     * @request POST:/equipment/getList
+     * @secure
+     */
+    getList: (data: CommonSearch) =>
+      http.request<ResultPagingDataEquipment['data']>(`/api/main/equipment/getList`, {
         method: 'POST',
         body: data as any,
       }),

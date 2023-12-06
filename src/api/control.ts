@@ -1259,6 +1259,105 @@ export interface ResultMo {
   data?: Mo;
 }
 
+/** 工单投料信息提交模型 */
+export interface MitemOnboardDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  processId?: string;
+  mitemId?: string;
+  workcenterId?: string;
+  supplierId?: string;
+  /** 扫描条码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  seq?: number;
+  /** 数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /** 单位 */
+  uom?: string;
+  /**
+   * 投料时间
+   * @format date-time
+   */
+  datetimeOnboard?: string;
+  /** 投料器 */
+  feeder?: string;
+  /** 状态 */
+  status?: string;
+  bomMitemId?: string;
+  bomMitemCode?: string;
+  bomMitemName?: string;
+  bomMitemDesc?: string;
+  bomUom?: string;
+  bomUomName?: string;
+  moMitemId?: string;
+  moMitemCode?: string;
+  moMitemName?: string;
+  moMitemDesc?: string;
+  moUom?: string;
+  moUomName?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  workCenterId?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  moScheduleId?: string;
+  statusName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  mitemOnboardId?: string;
+  moScheId?: string;
+  lotNo?: string;
+  labelNo?: string;
+}
+
+/** 工单投料信息提交模型 */
+export interface MitemOnboardSubmitDTO {
+  workcenterId?: string;
+  processId?: string;
+  moScheId?: string;
+  modelList?: MitemOnboardDTO[];
+  ids?: string[];
+}
+
+/** 工单投料信息卸料与转料模型 */
+export interface MitemOnboardUnbindDTO {
+  workcenterId?: string;
+  processId?: string;
+  moScheId?: string;
+  ids?: string[];
+}
+
 /** 显示在制品条码实体 */
 export interface BarcodeWipVO {
   id?: string;
@@ -1350,17 +1449,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
   workshopCode?: string;
+  workshopId?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  workshopId?: string;
   stateName?: string;
   isState?: boolean;
+  defectCodeStr?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 缺陷代码 */
@@ -2633,6 +2731,129 @@ export const api = {
       mitemCode?: string;
     }) =>
       http.request<ResultObject['data']>(`/api/control/mo/getmolist`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  mitemOnboard: {
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name Sumbit
+     * @summary 工单投料-提交
+     * @request POST:/mitemOnboard/save
+     * @secure
+     */
+    sumbit: (data: MitemOnboardSubmitDTO) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/save`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name SaveUnbind
+     * @summary 工单投料-卸料
+     * @request POST:/mitemOnboard/saveUnbind
+     * @secure
+     */
+    saveUnbind: (data: MitemOnboardUnbindDTO) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/saveUnbind`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name SaveTransferMo
+     * @summary 工单投料-转料
+     * @request POST:/mitemOnboard/saveTransferMo
+     * @secure
+     */
+    saveTransferMo: (data: MitemOnboardUnbindDTO) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/saveTransferMo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name Scanlabel
+     * @summary 工单投料-标签扫描
+     * @request GET:/mitemOnboard/scanlabel
+     * @secure
+     */
+    scanlabel: (query: {
+      /** @default "" */
+      labelNo?: string;
+      processId: string;
+      workcenterId: string;
+      scheId: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/scanlabel`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name MoSchelist
+     * @summary 查询近一周内的有效的排产工单
+     * @request GET:/mitemOnboard/moSchelist
+     * @secure
+     */
+    moSchelist: (query?: {
+      /** @default "" */
+      scheCode?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/moSchelist`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name List
+     * @summary 根据工站id和工作中心id获取投料信息
+     * @request GET:/mitemOnboard/list
+     * @secure
+     */
+    list: (query?: {
+      workcenterId?: string;
+      workStationId?: string;
+      /** @default "" */
+      scheId?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name GetProccesByWorkStationId
+     * @summary 工单投料-根据工站获取工序信息
+     * @request GET:/mitemOnboard/getProccesByWorkStationId
+     * @secure
+     */
+    getProccesByWorkStationId: (query?: {
+      /** @default "" */
+      workStationId?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/getProccesByWorkStationId`, {
         method: 'GET',
         params: query,
       }),
