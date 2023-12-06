@@ -11,6 +11,7 @@
         :total="exceptionTotal"
         :selected-row-keys="selectedRowKeys"
         @select-change="rehandleSelectChange"
+        @refresh="onFetchData"
       >
         <template #isAllowTransfer="{ row }">
           {{ row.isAllowTransfer ? '是' : '否' }}
@@ -36,36 +37,35 @@
         </template>
       </cmp-table>
     </t-card>
-    <t-dialog
-      v-model:visible="formVisible"
-      header="新增(编辑)异常处理配置"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      width="40%"
-    >
-      <t-form ref="formRef" :rules="rules" :data="formItem" @submit="onAnomalyTypeSubmit">
-        <t-form-item :label="t('exceptionHandling.OrganizationName')" name="OrganizationName">
-          <t-select v-model="formItem.list.OrganizationName" @change="onOrgIdChange">
-            <t-option v-for="item in organizationNameData.list" :key="item.id" :label="item.orgName" :value="item" />
+    <t-dialog v-model:visible="formVisible" :header="title" :cancel-btn="null" :confirm-btn="null" width="40%">
+      <t-form ref="formRef" :rules="rules" :data="formItem.list" @submit="onAnomalyTypeSubmit">
+        <t-form-item :label="t('exceptionHandling.OrganizationName')" name="orgId">
+          <t-select v-model="formItem.list.orgId">
+            <t-option v-for="item in organizationNameData.list" :key="item.id" :label="item.orgName" :value="item.id" />
           </t-select>
         </t-form-item>
-        <t-form-item :label="t('exceptionHandling.abnormalModule')" name="abnormalModule">
-          <t-select v-model="formItem.list.abnormalModule" @change="onIncidentModuleChange">
-            <t-option v-for="item in exceptionModuleData.list" :key="item.id" :label="item.paramValue" :value="item" />
+        <t-form-item :label="t('exceptionHandling.abnormalModule')" name="incidentModule">
+          <t-select v-model="formItem.list.incidentModule">
+            <t-option
+              v-for="item in exceptionModuleData.list"
+              :key="item.id"
+              :label="item.paramValue"
+              :value="item.paramCode"
+            />
           </t-select>
         </t-form-item>
-        <t-form-item :label="t('exceptionHandling.treatmentGroup')" name="processOrder">
-          <t-select v-model="formItem.list.processOrder" @change="onsupportGroupIdChange">
+        <t-form-item :label="t('exceptionHandling.treatmentGroup')" name="supportGroupId">
+          <t-select v-model="formItem.list.supportGroupId">
             <t-option
               v-for="item in treatmentGroupData.list"
               :key="item.id"
               :label="item.supportGroupName"
-              :value="item"
+              :value="item.id"
             />
           </t-select>
         </t-form-item>
         <t-form-item :label="t('exceptionHandling.processOrder')" name="levelSeq">
-          <t-input v-model="formItem.list.levelSeq" placeholder="请输入"></t-input>
+          <t-input v-model="formItem.list.levelSeq" :value="formItem.list.levelSeq" placeholder="请输入"></t-input>
         </t-form-item>
         <t-form-item :label="t('exceptionHandling.transferOrders')" name="isAllowTransfer">
           <t-radio-group
@@ -86,7 +86,14 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Data, FormInstanceFunctions, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
+import {
+  CustomValidateResolveType,
+  Data,
+  FormInstanceFunctions,
+  FormRules,
+  Icon,
+  MessagePlugin,
+} from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
@@ -106,6 +113,8 @@ const exceptionDataList = reactive({ list: [] });
 const exceptionTotal = ref(null);
 // 组件分页
 const { pageUI } = usePage();
+// 新增编辑文本
+const title = ref('');
 // 搜索组件配置
 const opts = computed(() => {
   return {
@@ -114,6 +123,7 @@ const opts = computed(() => {
       comp: 't-input',
       event: 'input',
       defaultVal: '',
+      labelWidth: '160px',
     },
   };
 });
@@ -121,8 +131,6 @@ const opts = computed(() => {
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 // 新增为true，编辑为false
 const submitFalg = ref(false);
-// 页面翻页
-const page = ref({ pageNum: pageUI.value.page, pageSize: pageUI.value.rows, keyword: '' });
 // 多选框删除数据数组
 const selectedRowKeys: Ref<any[]> = ref([]);
 // 单选框组件
@@ -143,9 +151,6 @@ const formItem = reactive({
     orgId: null, // 组织名称的 ID
     incidentModule: '', // 异常模块 Code
     supportGroupId: '', // 处理组 ID
-    OrganizationName: '', // 组织名称
-    abnormalModule: '', // 异常模块
-    processOrder: '', // 处理组
     levelSeq: null, // 处理顺序
     isAllowTransfer: null, // 是否允许传值
   },
@@ -190,17 +195,26 @@ const column = ref([
   },
 ]);
 
+// #刷新按钮
+const onFetchData = async () => {
+  await onFetchTabData(); // 渲染表格
+};
+
 // #初始化请求
 onMounted(async () => {
-  await onFetchData(); // 渲染表格
+  await onFetchTabData(); // 渲染表格
   await onGetOrganizationNameData();
   await onGetExceptionModuleData();
   await onGetTreatmentGroupData();
 });
 
 // #表格数据 获取
-const onFetchData = async () => {
-  const res = await api.incidentCfg.getList(page.value);
+const onFetchTabData = async () => {
+  const res = await api.incidentCfg.getList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    keyword: '',
+  });
   exceptionDataList.list = res.list;
   exceptionTotal.value = res.total;
 };
@@ -208,8 +222,13 @@ const onFetchData = async () => {
 // #搜索触发事件
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
-  page.value.keyword = data.keyWord;
-  await onFetchData();
+  const res = await api.incidentCfg.getList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    keyword: data.keyWord,
+  });
+  exceptionDataList.list = res.list;
+  exceptionTotal.value = res.total;
 };
 
 // dialog下拉框数据
@@ -221,34 +240,26 @@ const treatmentGroupData = reactive({ list: [] }); // 处理组数据
 const onGetOrganizationNameData = async () => {
   const res = await api.incidentCfg.getOrg();
   organizationNameData.list = res.list;
+  console.log(organizationNameData.list);
 };
 // 获取异常模块数据
 const onGetExceptionModuleData = async () => {
   const res = await api.incidentCfg.getIncidentModule();
   exceptionModuleData.list = res.list;
+  console.log(exceptionModuleData.list);
 };
 // 获取处理组数据
 const onGetTreatmentGroupData = async () => {
   const res = await api.incidentCfg.getSupportGroup();
   treatmentGroupData.list = res.list;
 };
-const onOrgIdChange = (value: { id: any }) => {
-  formItem.list.orgId = value.id;
-};
-const onIncidentModuleChange = (value: { paramCode: string }) => {
-  formItem.list.incidentModule = value.paramCode;
-};
-const onsupportGroupIdChange = (value: { id: string }) => {
-  formItem.list.supportGroupId = value.id;
-};
 // 新增 点击 按钮事件
 const onAdd = async () => {
+  formRef.value.reset({ type: 'empty' });
+  title.value = '新增异常处理配置';
   formItem.list.orgId = null;
   formItem.list.incidentModule = '';
   formItem.list.supportGroupId = '';
-  formItem.list.OrganizationName = ''; // 组织明称
-  formItem.list.abnormalModule = ''; // 异常模块名称
-  formItem.list.processOrder = ''; // 处理组名称
   formItem.list.levelSeq = null; // 处理顺序
   formItem.list.isAllowTransfer = null; // 是否允许转单
   submitFalg.value = true; // true为新增
@@ -258,18 +269,14 @@ const onAdd = async () => {
 // 新增请求
 const addAanEdit = async () => {
   const dataToSend = { ...formItem.list };
-  // 删除不需要的属性
-  delete dataToSend.OrganizationName;
-  delete dataToSend.abnormalModule;
-  delete dataToSend.processOrder;
   await api.incidentCfg.addIncidentCfg(dataToSend);
-  await onFetchData();
+  await onFetchTabData();
   MessagePlugin.success('新增成功');
 };
 
 // 编辑 点击按钮事件
 const onEdit = (row: any) => {
-  console.log('🚀 ~ file: index.vue:262 ~ onEdit ~ row:', row);
+  title.value = '编辑异常处理配置';
   redactID.value = row.id;
   formItem.list.orgId = row.orgId;
   formItem.list.incidentModule = row.incidentModule;
@@ -291,7 +298,7 @@ const onRedactRequest = async () => {
   delete dataToSend.abnormalModule;
   delete dataToSend.processOrder;
   await api.incidentCfg.modifyIncidentType({ ...dataToSend, id: redactID.value });
-  await onFetchData();
+  await onFetchTabData();
   MessagePlugin.success('编辑成功');
 };
 
@@ -307,20 +314,25 @@ const onDelete = async () => {
   if (exceptionDataList.list.length <= 1 && pageUI.value.page > 1) {
     pageUI.value.page--;
   }
-  await onFetchData();
+  await onFetchTabData();
   MessagePlugin.success('删除成功');
   selectedRowKeys.value = [];
 };
 
 // 批量删除
 const ondeleteBatches = async () => {
+  // 步骤 1: 检查删除前的数据总量
+  const initialLength = exceptionDataList.list.length;
+  // 步骤 2: 执行删除操作
   await api.incidentCfg.removeIncidentCfgBatch({ ids: selectedRowKeys.value });
-  if (exceptionDataList.list.length <= 1 && pageUI.value.page > 1) {
+  // 步骤 3: 检查当前页是否还有数据
+  if (initialLength === exceptionDataList.list.length && pageUI.value.page > 1) {
+    // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
+    await onFetchTabData(); // 渲染表格
+    selectedRowKeys.value = [];
+    MessagePlugin.success('批量删除成功');
   }
-  await onFetchData();
-  MessagePlugin.success('批量删除成功');
-  selectedRowKeys.value = [];
 };
 
 // 表单提交事件
@@ -336,38 +348,45 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
 };
 
 // form效验
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number.isNaN(Number(value))) {
+    return { result: false, message: '该字段必须是数字', type: 'error' };
+  }
+  return true;
+}
 const rules: FormRules<Data> = {
-  OrganizationName: [
+  orgId: [
     {
-      required: false,
+      required: true,
       type: 'error',
       trigger: 'change',
     },
   ],
-  abnormalModule: [
+  incidentModule: [
     {
-      required: false,
+      required: true,
       type: 'error',
       trigger: 'change',
     },
   ],
-  processOrder: [
+  supportGroupId: [
     {
-      required: false,
+      required: true,
       type: 'error',
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   levelSeq: [
     {
-      required: false,
+      required: true,
       type: 'error',
       trigger: 'blur',
     },
+    { validator: validateNumber, trigger: 'blur', message: '响应时长必须是数字' },
   ],
   isAllowTransfer: [
     {
-      required: false,
+      required: true,
       type: 'error',
       trigger: 'blur',
     },

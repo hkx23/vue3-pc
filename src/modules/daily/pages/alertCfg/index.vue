@@ -13,6 +13,7 @@
             :total="alertCfgTotal"
             :selected-row-keys="selectedRowKeys"
             @select-change="rehandleSelectChange"
+            @refresh="onFetchData"
           >
             <template #stateSwitch="{ row }">
               <t-switch
@@ -33,9 +34,9 @@
                 </t-button>
               </t-popconfirm>
             </template>
-            <template #button>
+            <template #operate>
               <t-space>
-                <t-button theme="primary" @click="onAddCfgData"> 新增 </t-button>
+                <t-button theme="default" @click="onAddCfgData"> 新增 </t-button>
                 <t-button theme="default"> 导入 </t-button>
                 <t-popconfirm theme="default" content="确认删除吗" @confirm="deleteBatches()">
                   <t-button theme="default"> 批量删除 </t-button>
@@ -84,7 +85,14 @@
 
 <script setup lang="ts">
 import { Icon } from 'tdesign-icons-vue-next';
-import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import {
+  CustomValidateResolveType,
+  FormInstanceFunctions,
+  FormRules,
+  MessagePlugin,
+  PrimaryTableCol,
+  TableRowData,
+} from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
@@ -152,7 +160,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     cell: 'stateSwitch',
   },
   {
-    colKey: 'operate',
+    colKey: 'ope',
     title: '操作',
     align: 'center',
     fixed: 'right',
@@ -161,10 +169,22 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 // #表单验证规则
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number.isNaN(Number(value))) {
+    return { result: false, message: '该字段必须是数字', type: 'error' };
+  }
+  return true;
+}
 const rules: FormRules = {
   alertType: [{ required: true, message: '预警机制不能为空', trigger: 'blur' }],
-  sla: [{ required: true, message: '响应时长不能为空', trigger: 'blur' }],
-  ola: [{ required: true, message: '处理时长不能为空', trigger: 'blur' }],
+  sla: [
+    { required: true, message: '响应时长不能为空', trigger: 'blur' },
+    { validator: validateNumber, trigger: 'blur', message: '响应时长必须是数字' },
+  ],
+  ola: [
+    { required: true, message: '处理时长不能为空', trigger: 'blur' },
+    { validator: validateNumber, trigger: 'blur', message: '响应时长必须是数字' },
+  ],
   state: [{ required: true, message: '是否启用不能为空', trigger: 'change' }],
 };
 
@@ -172,6 +192,11 @@ const rules: FormRules = {
 onMounted(async () => {
   await onGetAlertCfgTypeData(); // 获取 表格 数据
 });
+
+// 刷新按钮
+const onFetchData = async () => {
+  await onGetAlertCfgTypeData(); // 获取 表格 数据
+};
 
 // 获取 表格 数据
 const onGetAlertCfgTypeData = async () => {
@@ -184,21 +209,9 @@ const onGetAlertCfgTypeData = async () => {
   alertCfgTotal.value = res.total;
 };
 
-// watch(
-//   () => alertCfgData.list,
-//   (newVal, oldVal) => {
-//     console.log('🚀 ~ file: index.vue:185 ~ oldVal:', oldVal);
-//     console.log('alertCfgData.list 变化了:', newVal);
-//   },
-//   { deep: true },
-// );
-
 // #新增 添加按钮点击事件
 const onAddCfgData = () => {
-  CfgTabData.list.alertType = ''; // 预警机制名称
-  CfgTabData.list.sla = ''; // 响应时长
-  CfgTabData.list.ola = ''; // 处理时长
-  CfgTabData.list.state = null; // 是否启用
+  formRef.value.reset({ type: 'empty' });
   submitFalg.value = true;
   formVisible.value = true;
   diaLogTitle.value = '新增预警机制';
@@ -240,7 +253,7 @@ const onInput = async (data: any) => {
 // 定义自定义搜索的样式
 const opts = computed(() => {
   return {
-    categoryName: { label: '预警机制查询', comp: 't-input', event: 'input', defaultval: '' },
+    categoryName: { label: '预警机制查询', comp: 't-input', event: 'input', defaultval: '', labelWidth: '100px' },
   };
 });
 
@@ -286,13 +299,18 @@ const onDelConfirm = async () => {
 
 // // 批量删除
 const deleteBatches = async () => {
+  // 步骤 1: 检查删除前的数据总量
+  const initialLength = alertCfgData.list.length;
+  // 步骤 2: 执行删除操作
   await api.alertCfg.removeAlertCfgBatch({ ids: selectedRowKeys.value });
-  if (alertCfgData.list.length <= 1 && pageUI.value.page > 0) {
+  // 步骤 3: 检查当前页是否还有数据
+  if (initialLength === selectedRowKeys.value.length && pageUI.value.page > 1) {
+    // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
+    await onGetAlertCfgTypeData(); // 渲染表格
+    selectedRowKeys.value = [];
+    MessagePlugin.success('批量删除成功');
   }
-  await onGetAlertCfgTypeData(); // 渲染表格
-  selectedRowKeys.value = [];
-  MessagePlugin.success('批量删除成功');
 };
 
 // // 表单提交事件
