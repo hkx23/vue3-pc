@@ -113,7 +113,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
     width: 85,
     colKey: 'opAttribute',
   },
-  { title: '仓库类型', width: 85, colKey: 'opCategory' },
+  { title: '仓库类型', width: 100, colKey: 'opCategory' },
   { title: 'ERP仓库', width: 85, colKey: 'erpWarehouse' },
   { title: '启用交易上传', width: 120, colKey: 'enableUploadName' },
   { title: '启用交易上传时间', width: 170, colKey: 'datetimeUpload' },
