@@ -61,7 +61,7 @@
         <div>
           <t-dialog
             v-model:visible="onShowDeleteConfirmVisible"
-            header="确认删除"
+            header="确认"
             mode="modal"
             draggable
             :body="onDeleteConfirmBody"
@@ -355,7 +355,7 @@ const onDeleteConfirm = async (e: any) => {
 
     onShowDeleteConfirmVisible.value = false;
     fetchTable();
-    MessagePlugin.success('删除成功');
+    MessagePlugin.success('禁用成功');
   } catch (e) {
     // console.log(e);
   } finally {
@@ -365,7 +365,7 @@ const onDeleteConfirm = async (e: any) => {
 const onDeleteConfirmBody = () => {
   if (deleteIdx.value > -1) {
     const { personName } = dataTable.value[deleteIdx.value];
-    return `是否删除当前行的员工【${personName}】的信息？`;
+    return `是否禁用当前行的员工【${personName}】的信息？`;
   }
   return '';
 };
