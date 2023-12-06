@@ -235,14 +235,21 @@ props.tableColumn.forEach((item) => {
 });
 // 表格内展示的列
 const columns = computed(() => {
-  return props.tableColumn.filter((item) => {
-    return (
-      data.colConfigs[item.title] ||
-      item.colKey === 'row-select' ||
-      item.colKey === 'op' ||
-      item.colKey === 'serial-number'
-    );
-  });
+  return props.tableColumn
+    .filter((item) => {
+      return (
+        data.colConfigs[item.title] ||
+        item.colKey === 'row-select' ||
+        item.colKey === 'op' ||
+        item.colKey === 'serial-number'
+      );
+    })
+    .map((item) => {
+      return {
+        ellipsis: true,
+        ...item,
+      };
+    });
 });
 // 表格要导出的列
 const exportColumns = computed(() => {
