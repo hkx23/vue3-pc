@@ -2,7 +2,7 @@
 <template>
   <div>
     <t-card class="list-card-process">
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
         :table-column="column"
@@ -17,8 +17,8 @@
         <template #state="{ row }">
           <div>{{ row.state === 1 ? '启用' : '禁用' }}</div>
         </template>
-        <template #button> <tm-query :opts="opts" @submit="onInput"> </tm-query> </template>
-        <template #oprate>
+        <template #button> <cmp-query :opts="opts" @submit="onInput"> </cmp-query> </template>
+        <template #operate>
           <!-- 新增 -->
           <t-button @click="onHandelAdd">新增</t-button>
           <t-popconfirm content="确认删除吗" @confirm="onHandelDelete">
@@ -26,7 +26,7 @@
           </t-popconfirm>
         </template>
         <!-- 编辑 -->
-        <template #operate="{ row }">
+        <template #op="{ row }">
           <t-space>
             <icon name="edit-1" style="cursor: pointer" @click="onEdit(row)"></icon>
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
@@ -35,7 +35,7 @@
             <!-- <icon name="delete" style="cursor: pointer" @click="onDelete(row)" /> -->
           </t-space>
         </template>
-      </tm-table>
+      </cmp-table>
       <t-dialog v-model:visible="addVisible" header="新增" :cancel-btn="null" :confirm-btn="null" width="40%">
         <t-form
           ref="formRef"
@@ -99,7 +99,7 @@ import { computed, onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
 // import { api } from '@/api/control';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -178,7 +178,7 @@ const column = ref([
   { title: '缺陷名称', colKey: 'processName', align: 'center', width: 120 },
   { title: t('processDefects.displaySeq'), colKey: 'displaySeq', align: 'center', width: 120 },
   { title: '状态', colKey: 'state', align: 'center', width: 120 },
-  { title: '操作', colKey: 'operate', align: 'left', fixed: 'right', width: 120 },
+  { title: '操作', colKey: 'op', align: 'left', fixed: 'right', width: 120 },
 ]);
 // table数据
 const processData = ref([]);

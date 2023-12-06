@@ -35,7 +35,7 @@ export default {
     reset: '重置',
     query: '查询',
   },
-  tmTable: {
+  CmpTable: {
     export: '导出',
     pleaseSelectExportData: '请选择需要导出的数据',
     contractStatus: '合同状态',

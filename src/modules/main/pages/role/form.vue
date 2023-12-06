@@ -15,21 +15,21 @@
       <t-input v-model="formData.roleName" clearable />
     </t-form-item>
     <t-form-item :label="t('role.eId')" name="eid">
-      <tm-select-business
+      <bcmp-select-business
         v-model="formData.eid"
         type="enterprise"
         :disabled="!isAdmin"
         :show-title="false"
-      ></tm-select-business>
+      ></bcmp-select-business>
     </t-form-item>
     <t-form-item :label="t('role.org')" name="oid">
-      <tm-select-business
+      <bcmp-select-business
         v-model="formData.oid"
         type="plant"
         :parent-id="formData.eid"
         :disabled="!isAdmin"
         :show-title="false"
-      ></tm-select-business>
+      ></bcmp-select-business>
     </t-form-item>
     <t-form-item :label="t('role.roleDesc')" name="roleDesc">
       <t-textarea v-model="formData.roleDesc" clearable />
@@ -53,14 +53,6 @@ import { useLang } from './lang';
 
 const { t } = useLang();
 const user = useUserStore();
-const formRef: Ref<FormInstanceFunctions> = ref(null);
-const FORM_RULES = {
-  roleCode: [{ required: true, message: t('common.placeholder.input', [t('role.roleCode')]) }],
-  roleName: [{ required: true, message: t('common.placeholder.input', [t('role.roleName')]) }],
-  eid: [{ required: true, message: t('common.placeholder.select', [t('role.eId')]) }],
-  oid: [{ required: true, message: t('common.placeholder.select', [t('role.org')]) }],
-};
-
 const formData: Role = reactive({
   roleCode: '',
   roleName: '',
@@ -68,6 +60,49 @@ const formData: Role = reactive({
   oid: '',
   eid: '',
 });
+// 校验代码是否存在一样，如果一样校验失败
+// 自定义校验函数，调用自定义 API 并返回校验结果
+const checkSameCode = async (val) => {
+  try {
+    const responseData = await api.role.getItemByCode({ id: formData.id, roleCode: formData.roleCode });
+    // 根据实际需求在这里进行校验，并返回 true 或 false
+    if (Number(responseData) > 0) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false; // 如果发生错误，则返回失败
+  }
+};
+
+const checkSameName = async (val) => {
+  try {
+    const responseData = await api.role.getItemByName({ id: formData.id, roleName: formData.roleName });
+    // 根据实际需求在这里进行校验，并返回 true 或 false
+    if (Number(responseData) > 0) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false; // 如果发生错误，则返回失败
+  }
+};
+
+const formRef: Ref<FormInstanceFunctions> = ref(null);
+const FORM_RULES = {
+  roleCode: [
+    { required: true, message: t('common.placeholder.input', [t('role.roleCode')]) },
+    { validator: checkSameCode, message: t('role.checkCode') },
+  ],
+  roleName: [
+    { required: true, message: t('common.placeholder.input', [t('role.roleName')]) },
+    { validator: checkSameName, message: t('role.checkName') },
+  ],
+  eid: [{ required: true, message: t('common.placeholder.select', [t('role.eId')]) }],
+  oid: [{ required: true, message: t('common.placeholder.select', [t('role.org')]) }],
+};
 
 const submit = async () => {
   return new Promise((resolve, reject) => {

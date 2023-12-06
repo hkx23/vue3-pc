@@ -16,12 +16,12 @@
               <t-input v-model="formData.wcCode" :disabled="props.disabledWord" />
             </t-form-item>
             <t-form-item label="所属车间" name="workshopID">
-              <tm-select-business
+              <bcmp-select-business
                 v-model="formData.workshopID"
                 type="workshop"
                 label-field="orgName"
                 :show-title="false"
-              ></tm-select-business
+              ></bcmp-select-business
             ></t-form-item>
             <t-form-item label="地点" name="wcLocation">
               <t-input v-model="formData.wcLocation" style="width: 200px" />
@@ -39,13 +39,13 @@
             </t-form-item>
           </div>
           <t-form-item label="父级" name="parentWcId">
-            <tm-select-business
+            <bcmp-select-business
               v-model="formData.parentWcId"
               type="workcenter"
               :disabled="props.disabledParent"
               :show-title="false"
             >
-            </tm-select-business>
+            </bcmp-select-business>
             <!-- <t-select v-model="formData.parentWcCode" /> -->
           </t-form-item>
           <footer class="form-item-box">
@@ -62,13 +62,13 @@
               </ul>
             </t-form-item>
             <t-form-item label="关联设备" name="wcObjectId">
-              <tm-select-business
+              <bcmp-select-business
                 v-model="formData.wcObjectId"
                 type="equipment"
                 :disabled="typeShow"
                 :show-title="false"
               >
-              </tm-select-business>
+              </bcmp-select-business>
             </t-form-item>
           </footer>
           <span class="form-checkbox">
@@ -95,7 +95,7 @@ import { onMounted, reactive, Ref, ref } from 'vue';
 import { api } from '@/api/control';
 import { usePage } from '@/hooks/modules/page';
 
-import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
+import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 // 子修改传值
