@@ -3,7 +3,7 @@
     <t-card :bordered="false">
       <t-row justify="space-between">
         <t-col :span="12" flex="auto">
-          <tm-table
+          <cmp-table
             ref="tableRef"
             v-model:pagination="pageUI"
             row-key="id"
@@ -70,7 +70,7 @@
                 <t-button theme="default" @click="resetButton"> 重置 </t-button>
               </t-space>
             </template>
-          </tm-table>
+          </cmp-table>
         </t-col>
       </t-row>
     </t-card>
@@ -129,7 +129,7 @@ import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, Table
 import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const searchData = ref({

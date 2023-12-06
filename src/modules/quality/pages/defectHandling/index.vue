@@ -18,7 +18,7 @@
           ></t-input>
         </t-col>
       </t-row> -->
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
         :table-data="defectHandlingData"
@@ -37,17 +37,17 @@
             <icon name="delete" style="margin: 0 15px; cursor: pointer"></icon>
           </t-popconfirm>
         </template>
-        <template #oprate>
+        <template #operate>
           <!-- 新增 -->
           <t-button theme="default" @click="onHandelAdd"> <icon name="add"></icon></t-button>
           <!-- 删除 -->
           <t-button><icon name="delete" @click="onWholeAdd"></icon></t-button>
         </template>
-        <template #button> <tm-query :opts="opts" @submit="onInput"> </tm-query></template>
+        <template #button> <cmp-query :opts="opts" @submit="onInput"> </cmp-query></template>
         <template #dealMethodType="{ row }">
           <div>{{ `${row.dealMethodType}${row.dealMethodTypeName}` }}</div>
         </template>
-      </tm-table>
+      </cmp-table>
     </t-card>
     <t-dialog v-model:visible="defectVisible" header="新增/编辑" :cancel-btn="null" :confirm-btn="null" width="40%">
       <t-form ref="formRef" :data="formData" layout="vertical" :rules="rules" @submit="onSubmit">
@@ -84,10 +84,10 @@ import _ from 'lodash';
 import { Data, FormInstanceFunctions, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
-import TmQuery from '@/components/tm-query/index.vue';
+import CmpQuery from '@/components/cmp-query/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
-import TmTable from '../../../../components/tm-table/index.vue';
+import CmpTable from '../../../../components/cmp-table/index.vue';
 import { usePage } from '../../../../hooks/modules/page';
 
 const { loading, setLoading } = useLoading();

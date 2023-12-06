@@ -44,12 +44,12 @@
             </t-space>
 
             <t-space v-if="formItem.ControlType == 'Business'" class="input-fixed-width-200">
-              <tm-select-business
+              <bcmp-select-business
                 v-model="formModel[formItem.propertyCode]"
                 :type="formItem.dataSourcePath"
                 :show-title="false"
                 :is-multiple="formItem.isDataMultiple == 1"
-              ></tm-select-business>
+              ></bcmp-select-business>
             </t-space>
 
             <t-space v-if="formItem.isMultiple == 1 && false" class="btn-space">
@@ -67,7 +67,7 @@
   </t-form>
 </template>
 
-<script setup lang="tsx" name="TmExtend">
+<script setup lang="tsx" name="BcmpExtend">
 import _ from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';

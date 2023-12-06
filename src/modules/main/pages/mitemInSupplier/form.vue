@@ -4,7 +4,7 @@
       <t-col class="t-space-item">
         <t-form-item label="物料编码" required-mark>
           <div style="width: 157px">
-            <tm-select-business
+            <bcmp-select-business
               v-model="formData.mitemId"
               type="mitem"
               label-field="mitemCode"
@@ -18,7 +18,7 @@
       <t-col>
         <t-form-item label="供应商编码" required-mark>
           <div style="width: 157px">
-            <tm-select-business
+            <bcmp-select-business
               v-model="formData.supplierId"
               type="supplier"
               label-field="supplierCode"
@@ -89,11 +89,11 @@ import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
-import TmSelectBusiness from '@/components/tm-select-business/index.vue';
+import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
 
 export default {
   name: 'MitemInSupplierForm',
-  components: { TmSelectBusiness },
+  components: { BcmpSelectBusiness },
   setup() {
     const inspectionStringencyOptions = ref([
       { label: '正常', value: '正常', defaultChecked: true },

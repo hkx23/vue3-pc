@@ -110,7 +110,7 @@
   </t-row>
 </template>
 
-<script setup lang="tsx" name="TmQuery">
+<script setup lang="tsx" name="CmpQuery">
 import _ from 'lodash';
 import { computed, getCurrentInstance, nextTick, onMounted, reactive, ref, watch } from 'vue';
 

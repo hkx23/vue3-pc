@@ -11,14 +11,14 @@
       :label="t('productRule.mitemCategory')"
       name="mitemCategory"
     >
-      <tm-select-business
+      <bcmp-select-business
         v-model="formData.mitemCategoryId"
         type="mitemCategory"
         :show-title="false"
-      ></tm-select-business>
+      ></bcmp-select-business>
     </t-form-item>
     <t-form-item v-if="formData.packRelationType == 'mitem'" :label="t('productRule.mitem')" name="mitem">
-      <tm-select-business v-model="formData.mitemId" type="mitem" :show-title="false"></tm-select-business>
+      <bcmp-select-business v-model="formData.mitemId" type="mitem" :show-title="false"></bcmp-select-business>
     </t-form-item>
   </t-form>
 </template>
@@ -33,7 +33,7 @@ import { reactive, Ref, ref } from 'vue';
 
 import { api as apiControl, ProductPackRuleMapDTO } from '@/api/control';
 
-import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
+import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import { useLang } from './lang';
 
 // 子修改传值

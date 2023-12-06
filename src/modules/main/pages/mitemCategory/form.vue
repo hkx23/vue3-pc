@@ -38,7 +38,7 @@ import { api } from '@/api/main';
 
 export default {
   name: 'MitemCategoryForm',
-  // components: { TmSelectBusiness },
+  // components: { BcmpSelectBusiness },
   setup() {
     const onboardRuleCodeOptions = ref([
       { label: '限制工单只能使用一个生产批次', value: 'singlelotonly' },

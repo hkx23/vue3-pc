@@ -2,7 +2,7 @@
 <template>
   <div>
     <t-card>
-      <tm-table
+      <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
         row-key="id"
@@ -16,15 +16,15 @@
           {{ row.isAllowTransfer ? '是' : '否' }}
         </template>
         <template #button>
-          <tm-query :opts="opts" @submit="onInput"> </tm-query>
+          <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
         </template>
-        <template #oprate>
+        <template #operate>
           <t-button @click="onAdd">新增</t-button>
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="ondeleteBatches">
             <t-button variant="outline">批量删除</t-button>
           </t-popconfirm>
         </template>
-        <template #operate="{ row }">
+        <template #op="{ row }">
           <t-space>
             <!-- 编辑 -->
             <icon name="edit-1" style="cursor: pointer" @click="onEdit(row)"></icon>
@@ -34,7 +34,7 @@
             </t-popconfirm>
           </t-space>
         </template>
-      </tm-table>
+      </cmp-table>
     </t-card>
     <t-dialog
       v-model:visible="formVisible"
@@ -90,10 +90,10 @@ import { Data, FormInstanceFunctions, FormRules, Icon, MessagePlugin } from 'tde
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
-import TmQuery from '@/components/tm-query/index.vue';
+import CmpQuery from '@/components/cmp-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
-import TmTable from '../../../../components/tm-table/index.vue';
+import CmpTable from '../../../../components/cmp-table/index.vue';
 import { useLang } from './lang';
 
 const formVisible = ref(false);
@@ -183,7 +183,7 @@ const column = ref([
     cell: 'isAllowTransfer',
   },
   {
-    colKey: 'operate',
+    colKey: 'op',
     title: t('exceptionHandling.operate'),
     align: 'center',
     fixed: 'right',

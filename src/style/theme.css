@@ -131,7 +131,7 @@
   --td-font-size-mark-small: 12px;
   --td-font-size-mark-medium: 14px;
   --td-font-size-body-small: 12px;
-  --td-font-size-body-medium: 12px;
+  --td-font-size-body-medium: 14px; /* Neo Changed */
   --td-font-size-body-large: 16px;
   --td-font-size-title-small: 14px;
   --td-font-size-title-medium: 16px;

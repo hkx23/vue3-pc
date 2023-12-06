@@ -67,7 +67,7 @@
   </t-space>
 </template>
 
-<script setup lang="tsx" name="TmSelectTable">
+<script setup lang="tsx" name="BcmpSelectTable">
 import { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';

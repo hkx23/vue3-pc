@@ -1,18 +1,13 @@
 <template>
-  <div class="tm-table">
+  <div class="cmp-table">
     <div class="table-box">
       <div v-if="buttonsVisible" class="table-box_header">
         <t-space size="small" :align="'center'">
           <slot name="button"></slot>
         </t-space>
         <t-space size="small" :align="'center'">
-          <slot name="oprate"></slot>
+          <slot name="operate"></slot>
 
-          <t-button v-if="false" shape="square" variant="outline" :disabled="loading" @click="onRefresh">
-            <template #icon>
-              <t-icon name="refresh" />
-            </template>
-          </t-button>
           <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
             <template #icon>
               <t-icon name="file-export" />
@@ -21,6 +16,11 @@
           <t-button v-if="props.enableExport && exportFunction" shape="square" variant="outline" @click="onExportAll">
             <template #icon>
               <t-icon name="file-export" />
+            </template>
+          </t-button>
+          <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
+            <template #icon>
+              <t-icon name="refresh" />
             </template>
           </t-button>
           <t-button shape="square" variant="outline" @click="data.visible = true">
@@ -92,7 +92,7 @@
   </div>
 </template>
 
-<script lang="tsx" setup name="CreateTable">
+<script lang="tsx" setup name="CmpTable">
 import _ from 'lodash';
 import { DialogPlugin, MessagePlugin, TableRowData } from 'tdesign-vue-next';
 import {
@@ -235,14 +235,21 @@ props.tableColumn.forEach((item) => {
 });
 // 表格内展示的列
 const columns = computed(() => {
-  return props.tableColumn.filter((item) => {
-    return (
-      data.colConfigs[item.title] ||
-      item.colKey === 'row-select' ||
-      item.colKey === 'op' ||
-      item.colKey === 'serial-number'
-    );
-  });
+  return props.tableColumn
+    .filter((item) => {
+      return (
+        data.colConfigs[item.title] ||
+        item.colKey === 'row-select' ||
+        item.colKey === 'op' ||
+        item.colKey === 'serial-number'
+      );
+    })
+    .map((item) => {
+      return {
+        ellipsis: true,
+        ...item,
+      };
+    });
 });
 // 表格要导出的列
 const exportColumns = computed(() => {
@@ -371,7 +378,7 @@ const onRefresh = () => {
 // 导出表格数据
 const onExport = () => {
   if (!selectedRowKeys.value.length) return MessagePlugin.warning('请选择需要导出的数据');
-  // if (!selectedRowKeys.value.length) return MessagePlugin.warning(t(`tmTable.pleaseSelectExportData`));
+  // if (!selectedRowKeys.value.length) return MessagePlugin.warning(t(`CmpTable.pleaseSelectExportData`));
   //
   excelUtils.exportExcel({
     selectedRowKeys: selectedRowKeys.value,
