@@ -17,7 +17,7 @@
             </template>
           </t-input>
         </template>
-        <template #oprate>
+        <template #operate>
           <t-button @click="onClickAddTemplate">{{ t('common.button.add') }}</t-button>
           <t-button theme="default" @click="onClickAddTemplate">{{ t('common.button.delete') }}</t-button>
         </template>
@@ -50,7 +50,7 @@
             @change="fetchTemplateCategoryData"
           ></bcmp-select-business>
         </template>
-        <template #oprate>
+        <template #operate>
           <t-button :disabled="!selectedRowTemplateId" @click="onClickAddMapTemplate">{{
             t('printTemplate.templateMap')
           }}</t-button>
