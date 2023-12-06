@@ -339,6 +339,19 @@ export type Warehouse = {
 } | null;
 
 /** 通用响应类 */
+export interface Result {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 通用响应类 */
 export interface ResultListWarehouseFeignDTO {
   /**
    * 响应代码
@@ -1895,10 +1908,10 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isRawChecked?: boolean;
-  isRawName?: string;
   isInProcessName?: string;
   isBatchName?: string;
   isProductName?: string;
+  isRawName?: string;
   isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
@@ -2068,8 +2081,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3305,6 +3318,20 @@ export const api = {
      * No description
      *
      * @tags 仓库
+     * @name StateChange
+     * @summary 修改状态
+     * @request GET:/warehouse/items/{id}
+     * @secure
+     */
+    stateChange: (id: string) =>
+      http.request<ResultObject['data']>(`/api/main/warehouse/items/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
      * @name GetItemById
      * @request POST:/warehouse/items/{id}
      * @secure
@@ -3312,6 +3339,36 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWarehouse['data']>(`/api/main/warehouse/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name ModifyWareHouse
+     * @summary 修改仓库
+     * @request POST:/warehouse/items/modify
+     * @secure
+     */
+    modifyWareHouse: (data: Warehouse) =>
+      http.request<Result['data']>(`/api/main/warehouse/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name AddWareHouse
+     * @summary 新增仓库
+     * @request POST:/warehouse/items/add
+     * @secure
+     */
+    addWareHouse: (data: Warehouse) =>
+      http.request<Result['data']>(`/api/main/warehouse/items/add`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
