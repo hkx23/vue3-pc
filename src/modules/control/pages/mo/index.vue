@@ -46,57 +46,57 @@
           ><t-input v-model="queryCondition.moCode" label="工单号：" placeholder="请输入工单号"></t-input>
         </t-col>
         <t-col :span="3">
-          <tm-select-business
+          <bcmp-select-business
             v-model="queryCondition.mitemCategroyCode"
             type="mitemCategory"
             value-field="categoryCode"
             :show-title="true"
             title="产品类别："
             placeholder="请选择产品类别"
-          ></tm-select-business>
+          ></bcmp-select-business>
         </t-col>
       </t-row>
       <t-row justify="space-between" style="margin-bottom: 8px">
         <t-col :span="3">
-          <tm-select-business
+          <bcmp-select-business
             v-model="queryCondition.mitemCode"
             title="产品编码："
             type="mitem"
             value-field="mitemCode"
             :show-title="true"
             placeholder="请选择产品编码"
-          ></tm-select-business>
+          ></bcmp-select-business>
         </t-col>
         <t-col :span="3">
-          <tm-select-business
+          <bcmp-select-business
             v-model="queryCondition.workshopCode"
             type="workshop"
             value-field="orgCode"
             :show-title="true"
             title="车间："
-          ></tm-select-business>
+          ></bcmp-select-business>
         </t-col>
         <t-col :span="3">
-          <tm-select-business
+          <bcmp-select-business
             v-model="queryCondition.workCenterCode"
             type="workcenter"
             value-field="wcCode"
             :show-title="true"
             title="工作中心："
             placeholder="请选择工作中心"
-          ></tm-select-business>
+          ></bcmp-select-business>
         </t-col>
       </t-row>
       <t-row justify="space-between" style="margin-bottom: 8px">
         <t-col :span="3">
-          <tm-select-business
+          <bcmp-select-business
             v-model="queryCondition.rootingCode"
             type="routing"
             value-field="routingCode"
             :show-title="true"
             title="工艺路线："
             placeholder="请选择工艺路线"
-          ></tm-select-business>
+          ></bcmp-select-business>
         </t-col>
         <t-col :span="7" class="range-time-query">
           <span>计划开始时间：</span>
@@ -127,7 +127,7 @@
       </t-row>
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         row-key="index"
         :loading="loading"
@@ -156,7 +156,7 @@
             @click="onEditRoutingClick(row)"
           />
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
   </div>
 </template>
@@ -167,11 +167,11 @@ import { onMounted, ref } from 'vue';
 
 import { api as apicontrol } from '@/api/control';
 import { api as apimain } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
+import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import detailed from './detailed.vue';
 import routingUpdate from './routingUpdate.vue';
 

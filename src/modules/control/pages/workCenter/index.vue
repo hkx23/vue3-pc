@@ -54,7 +54,7 @@
               >
               </t-select>
               <span style="margin: 0 20px">
-                <!-- <tm-select-business v-model="workState.workcenter" type="workcenter"></tm-select-business
+                <!-- <bcmp-select-business v-model="workState.workcenter" type="workcenter"></bcmp-select-business
               > -->
                 <t-select-input
                   v-model="selectValue"
@@ -77,11 +77,11 @@
                   <template #suffixIcon><search-icon /></template
                 ></t-select-input>
               </span>
-              <tm-select-business
+              <bcmp-select-business
                 v-model="workState.shop"
                 type="workshop"
                 @selection-change="onSelectShop"
-              ></tm-select-business>
+              ></bcmp-select-business>
             </div>
           </t-col>
         </div>
@@ -144,7 +144,7 @@ import { onMounted, reactive, ref, watch } from 'vue';
 import { api } from '@/api/control';
 import { usePage } from '@/hooks/modules/page';
 
-import TmSelectBusiness from '../../../../components/tm-select-business/index.vue';
+import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import detailed from './detailed.vue';
 
 const onPageSizeChange = (size) => {

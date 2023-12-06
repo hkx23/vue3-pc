@@ -1,4 +1,4 @@
-# TmQuery 参数配置
+# CmpQuery 参数配置
 
 ### 1. 简介：可以让多种查询条件在输入值后置顶并且按钮显示在右侧
 
@@ -6,7 +6,7 @@
 **代码示例：**
 
 ```html
-<tm-query :opts="conditionParams" @submit="conditionEnter" />
+<cmp-query :opts="conditionParams" @submit="conditionEnter" />
 ```
 
 ### 2. 配置参数（Attributes）

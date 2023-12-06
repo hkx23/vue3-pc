@@ -11,7 +11,7 @@
     </t-form-item>
     <t-form-item :label="t('business.main.mitemCategoryCode')">
       <div style="width: 156px">
-        <tm-select-business v-model="formData.mitemCategoryId" type="mitemCategory" :show-title="false" />
+        <bcmp-select-business v-model="formData.mitemCategoryId" type="mitemCategory" :show-title="false" />
       </div>
     </t-form-item>
     <t-form-item :label="t('business.main.uom')">
@@ -27,7 +27,7 @@
     </t-form-item>
     <t-form-item :label="t('business.main.defaultWarehouse')">
       <div style="width: 156px">
-        <tm-select-business
+        <bcmp-select-business
           v-model="formData.warehouseId"
           type="warehouse"
           :show-title="false"
@@ -60,13 +60,13 @@ import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
-import TmSelectBusiness from '@/components/tm-select-business/index.vue';
+import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
 
 import { useLang } from './lang';
 
 export default {
   name: 'MitemForm',
-  components: { TmSelectBusiness },
+  components: { BcmpSelectBusiness },
   setup() {
     const { t } = useLang();
     const mitemTypeOptions = ref([

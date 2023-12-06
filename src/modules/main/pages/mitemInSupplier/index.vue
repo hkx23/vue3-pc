@@ -18,7 +18,7 @@
       </t-row>
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
         :table-column="tableMitemInSupplierColumns"
@@ -40,7 +40,7 @@
             <t-icon name="delete" @click="onDeleteRowClick(slotProps)" />
           </t-space>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
   </div>
   <div>
@@ -65,11 +65,11 @@ import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 // 表格相关
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-// import TmSelectBusiness from '@/components/tm-select-business/index.vue';
+// import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
 import MitemInSupplierForm from './form.vue';
 
 // 分页相关

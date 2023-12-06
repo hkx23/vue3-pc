@@ -19,10 +19,10 @@
   </t-select-table>
 </template>
 
-<script setup lang="tsx" name="TmSelectBusiness">
+<script setup lang="tsx" name="BcmpSelectBusiness">
 import { computed, defineAsyncComponent, onMounted, ref, useAttrs } from 'vue';
 
-const TSelectTable = defineAsyncComponent(() => import('../tm-select-table/index.vue'));
+const TSelectTable = defineAsyncComponent(() => import('../bcmp-select-table/index.vue'));
 // import TSelectTable from '../select-table/index.vue';
 
 // / 00-组件属性定义

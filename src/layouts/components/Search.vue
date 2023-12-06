@@ -44,6 +44,7 @@
 </template>
 
 <script setup lang="ts">
+import debounce from 'lodash/debounce';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -78,12 +79,12 @@ flatten(routers.value);
 
 const isSearchFocus = ref(false);
 const searchData = ref('');
-const changeSearchFocus = (value: boolean) => {
+const changeSearchFocus = debounce((value: boolean) => {
   if (!value) {
     searchData.value = '';
   }
   isSearchFocus.value = value;
-};
+}, 100);
 const router = useRouter();
 
 const onSelectSearch = (value) => {

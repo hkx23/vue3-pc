@@ -44,7 +44,7 @@ export const useUserStore = defineStore('user', {
       // };
       // const res = await mockRemoteUserInfo();
       let orgId = fw.getOrgId();
-      if (!orgId) {
+      if (!orgId || !res.orgList.some((org) => org.id === orgId)) {
         fw.setOrgId(res.defaultOrgId);
         orgId = res.defaultOrgId;
       }
@@ -55,6 +55,8 @@ export const useUserStore = defineStore('user', {
         orgId,
         orgs: res.orgList,
       } as OrgUser;
+
+      return this.userInfo;
     },
     setOrgId(id: string) {
       this.userInfo.orgId = id;

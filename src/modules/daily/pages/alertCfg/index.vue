@@ -1,10 +1,10 @@
 <template>
   <div class="module-tree-container">
     <t-card :bordered="false">
-      <tm-query :opts="opts" :bool-enter="true" @submit="onInput"></tm-query>
+      <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
       <t-row justify="space-between">
         <t-col :span="12" flex="auto">
-          <tm-table
+          <cmp-table
             ref="tableRef"
             v-model:pagination="pageUI"
             row-key="id"
@@ -42,7 +42,7 @@
                 </t-popconfirm>
               </t-space>
             </template>
-          </tm-table>
+          </cmp-table>
         </t-col>
       </t-row>
     </t-card>
@@ -88,8 +88,8 @@ import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, Table
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
-import TmQuery from '@/components/tm-query/index.vue';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpQuery from '@/components/cmp-query/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例

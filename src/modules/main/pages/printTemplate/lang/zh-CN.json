@@ -1,0 +1,12 @@
+{
+  "printTemplate": {
+    "templateCode": "模板代码",
+    "templateName": "模板名称",
+    "templateDesc": "模板描述",
+    "templateCategory": "模板类别",
+    "templateType": "模板类型",
+    "templatePath": "模板文件",
+    "templateMap": "关联模板",
+    "title": "打印模板"
+  }
+}

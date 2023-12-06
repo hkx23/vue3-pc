@@ -9,6 +9,92 @@
  * ---------------------------------------------------------------
  */
 
+/** 标签模板关联 */
+export interface PrintTmplMap {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  printTmplId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 打印模板实体 */
+export interface PrintTmplDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板代码 */
+  tmplCode?: string;
+  /** 模板名称 */
+  tmplName?: string;
+  /** 模板描述 */
+  tmplDesc?: string;
+  /** 模板内容地址 */
+  tmplBodyPath?: string;
+  /** 模板类别 */
+  tmplCategory?: string;
+  /** 模板类型 */
+  tmplType?: string;
+  /** 打印模板文件 */
+  fileContent?: string;
+  /** 打印模板下载地址 */
+  fileUrl?: string;
+}
+
 /** 组织层级表 */
 export interface OrgLevel {
   id?: string;
@@ -48,19 +134,6 @@ export interface OrgLevel {
    * @format int32
    */
   divisionFlag?: number;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 /** 组织架构表 */
@@ -266,6 +339,19 @@ export type Warehouse = {
 } | null;
 
 /** 通用响应类 */
+export interface Result {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 通用响应类 */
 export interface ResultListWarehouseFeignDTO {
   /**
    * 响应代码
@@ -316,6 +402,12 @@ export type WarehouseFeignDTO = {
   /** ERP仓库 */
   erpWarehouse?: string;
 } | null;
+
+/** 角色用户操作实体 */
+export interface RoleUserDTO {
+  roleId?: string;
+  userIds?: string[];
+}
 
 /** 通用响应类 */
 export interface ResultUser {
@@ -1357,8 +1449,11 @@ export type ShowModuleVO = {
   iconPath?: string;
   /** 模块层次代码 */
   moduleLevel?: string;
-  /** 模块类型 */
-  moduleType?: string;
+  /**
+   * 模块类型
+   * @format int32
+   */
+  moduleType?: number;
   /** 模块版本号 */
   moduleVersion?: number;
   /** 模块包标识 */
@@ -1475,7 +1570,7 @@ export interface MitemUom {
   oid?: string;
   /** 计量单位符号 */
   uom?: string;
-  /** 计量单位名称 */
+  /** 计量单位符号 */
   uomName?: string;
 }
 
@@ -2206,8 +2301,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -2373,6 +2468,19 @@ export interface ResultAttendanceMode {
   data?: AttendanceMode;
 }
 
+/** 通用响应类 */
+export interface ResultListUser {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: User[] | null;
+}
+
 /** 当前用户实体 */
 export type CurrentUserVO = {
   /** 用户名 */
@@ -2516,6 +2624,19 @@ export interface ResultListOrgTreeVO {
   message?: string;
   /** 响应数据 */
   data?: OrgTreeVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Org[] | null;
 }
 
 /** 响应数据 */
@@ -2772,6 +2893,128 @@ export interface ResultListAdminOrgVO {
  */
 
 export const api = {
+  printTmplMap: {
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name Update
+     * @summary 更新打印模板
+     * @request PUT:/printTmplMap/update/{id}
+     * @secure
+     */
+    update: (id: string, data: PrintTmplMap) =>
+      http.request<ResultObject['data']>(`/api/main/printTmplMap/update/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name Search
+     * @summary 获取模板关联
+     * @request POST:/printTmplMap/items
+     * @secure
+     */
+    search: (data: PrintTmplMapDTO) =>
+      http.request<ResultPagingDataPrintTmplMapDTO['data']>(`/api/main/printTmplMap/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/printTmplMap/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/printTmplMap/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板关联
+     * @name Add
+     * @summary 新增模板关联
+     * @request POST:/printTmplMap/add
+     * @secure
+     */
+    add: (data: PrintTmplMap) =>
+      http.request<ResultObject['data']>(`/api/main/printTmplMap/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  printTmpl: {
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name Update
+     * @summary 更新打印模板
+     * @request PUT:/printTmpl/update/{id}
+     * @secure
+     */
+    update: (id: string, data: PrintTmplDTO) =>
+      http.request<ResultObject['data']>(`/api/main/printTmpl/update/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name Search
+     * @summary 获取模板
+     * @request POST:/printTmpl/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataPrintTmpl['data']>(`/api/main/printTmpl/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/printTmpl/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/printTmpl/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name Add
+     * @summary 新增打印模板
+     * @request POST:/printTmpl/add
+     * @secure
+     */
+    add: (data: PrintTmplDTO) =>
+      http.request<ResultObject['data']>(`/api/main/printTmpl/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   orgLevel: {
     /**
      * No description
@@ -2908,6 +3151,21 @@ export const api = {
      * No description
      *
      * @tags 组织架构表
+     * @name GetlistByLevelCode
+     * @summary 根据levelCode获取组织信息
+     * @request GET:/org/getlistByLevelCode
+     * @secure
+     */
+    getlistByLevelCode: (query: { search: string; levelCode: string }) =>
+      http.request<ResultListOrg['data']>(`/api/main/org/getlistByLevelCode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
      * @name Delete
      * @summary 删除组织，包括子集
      * @request DELETE:/org/delete
@@ -2966,6 +3224,20 @@ export const api = {
      * No description
      *
      * @tags 仓库
+     * @name StateChange
+     * @summary 修改状态
+     * @request GET:/warehouse/items/{id}
+     * @secure
+     */
+    stateChange: (id: string) =>
+      http.request<ResultObject['data']>(`/api/main/warehouse/items/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
      * @name GetItemById
      * @request POST:/warehouse/items/{id}
      * @secure
@@ -2979,6 +3251,36 @@ export const api = {
      * No description
      *
      * @tags 仓库
+     * @name ModifyWareHouse
+     * @summary 修改仓库
+     * @request POST:/warehouse/items/modify
+     * @secure
+     */
+    modifyWareHouse: (data: Warehouse) =>
+      http.request<Result['data']>(`/api/main/warehouse/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name AddWareHouse
+     * @summary 新增仓库
+     * @request POST:/warehouse/items/add
+     * @secure
+     */
+    addWareHouse: (data: Warehouse) =>
+      http.request<Result['data']>(`/api/main/warehouse/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
      * @name FeignListByIds
      * @summary 服务间调用标准仓库信息
      * @request POST:/warehouse/feignListByIds
@@ -2986,6 +3288,37 @@ export const api = {
      */
     feignListByIds: (data: string[]) =>
       http.request<ResultListWarehouseFeignDTO['data']>(`/api/main/warehouse/feignListByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  userInRole: {
+    /**
+     * No description
+     *
+     * @tags 用户角色关系表
+     * @name DeleteUserInRole
+     * @summary 传入roleId与useIdList,删除
+     * @request POST:/userInRole/deleteUserInRole
+     * @secure
+     */
+    deleteUserInRole: (data: RoleUserDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInRole/deleteUserInRole`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户角色关系表
+     * @name AddUserInRole
+     * @summary 传入roleId与useIdList,新增
+     * @request POST:/userInRole/addUserInRole
+     * @secure
+     */
+    addUserInRole: (data: RoleUserDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInRole/addUserInRole`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3018,6 +3351,42 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultUser['data']>(`/api/main/user/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetUsersByRoleId
+     * @summary 根据roleId获取用户列表，用户表为User
+     * @request GET:/user/getUsersByRoleId
+     * @secure
+     */
+    getUsersByRoleId: (query?: {
+      /** @default "0" */
+      roleId?: string;
+    }) =>
+      http.request<ResultListUser['data']>(`/api/main/user/getUsersByRoleId`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetUserByRoleIdNotIn
+     * @summary 根据roleId获取没关联当前roleId的用户列表，用户表为User
+     * @request GET:/user/getUserByRoleIdNotIn
+     * @secure
+     */
+    getUserByRoleIdNotIn: (query?: {
+      /** @default "0" */
+      roleId?: string;
+    }) =>
+      http.request<ResultListUser['data']>(`/api/main/user/getUserByRoleIdNotIn`, {
+        method: 'GET',
+        params: query,
       }),
 
     /**
@@ -4318,6 +4687,20 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataEquipment['data']>(`/api/main/equipment/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备
+     * @name GetList
+     * @request POST:/equipment/getList
+     * @secure
+     */
+    getList: (data: CommonSearch) =>
+      http.request<ResultPagingDataEquipment['data']>(`/api/main/equipment/getList`, {
         method: 'POST',
         body: data as any,
       }),

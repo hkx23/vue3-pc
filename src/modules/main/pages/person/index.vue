@@ -40,7 +40,7 @@
           <t-button theme="default" @click="onImport">导入</t-button>
         </t-row>
         <div class="table-container">
-          <tm-table
+          <cmp-table
             ref="tableRef"
             v-model:pagination="pageUI"
             :table-data="dataTable"
@@ -56,12 +56,12 @@
                 <t-icon name="delete" @click="handleClickDelete(slotProps)" />
               </t-space>
             </template>
-          </tm-table>
+          </cmp-table>
         </div>
         <div>
           <t-dialog
             v-model:visible="onShowDeleteConfirmVisible"
-            header="确认删除"
+            header="确认"
             mode="modal"
             draggable
             :body="onDeleteConfirmBody"
@@ -162,7 +162,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -355,7 +355,7 @@ const onDeleteConfirm = async (e: any) => {
 
     onShowDeleteConfirmVisible.value = false;
     fetchTable();
-    MessagePlugin.success('删除成功');
+    MessagePlugin.success('禁用成功');
   } catch (e) {
     // console.log(e);
   } finally {
@@ -365,7 +365,7 @@ const onDeleteConfirm = async (e: any) => {
 const onDeleteConfirmBody = () => {
   if (deleteIdx.value > -1) {
     const { personName } = dataTable.value[deleteIdx.value];
-    return `是否删除当前行的员工【${personName}】的信息？`;
+    return `是否禁用当前行的员工【${personName}】的信息？`;
   }
   return '';
 };

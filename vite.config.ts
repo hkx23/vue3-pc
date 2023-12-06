@@ -15,7 +15,7 @@ import { swaggerApiGen } from './src/assets/libs/web-core';
 const CWD = process.cwd();
 
 // https://vitejs.dev/config/
-export default ({ mode }: ConfigEnv): UserConfig => {
+export default ({ mode, command }: ConfigEnv): UserConfig => {
   const {
     VITE_BASE_URL,
     VITE_API_URL,
@@ -24,7 +24,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     VITE_BUILDING_MODULE,
     VITE_API_GENERATE_MODULE,
   } = loadEnv(mode, CWD);
-  const isDev = mode === 'development';
+  const isBuild = command === 'build';
 
   let inputs: { [index: string]: any } = null;
   const outDir = './dist';
@@ -98,7 +98,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     build: {
       outDir,
       rollupOptions: {
-        input: isDev ? null : inputs,
+        input: isBuild ? inputs : null,
         output: {
           // manualChunks: (id) => {
           //   if (id.includes('echarts')) return 'echarts';

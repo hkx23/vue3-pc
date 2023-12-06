@@ -6,7 +6,11 @@
           <t-content>
             <t-space align="center" direction="vertical" style="width: 98%">
               <t-row justify="center">
-                <t-col>车间：XXXXX 工作中心：{{ mainform.workCenterCode }} 工站：{{ mainform.workStationCode }}</t-col>
+                <t-col
+                  >车间：{{ mainform.workShopName }} 工作中心：{{ mainform.workCenterCode }} 工站：{{
+                    mainform.workStationCode
+                  }}</t-col
+                >
               </t-row>
               <t-row align="center">
                 <t-col :span="2" style="text-align: right">扫描 产品条码：</t-col>
@@ -16,7 +20,7 @@
                 <t-col flex="40px" />
               </t-row>
               <t-row align="center">
-                <div class="groupbox" style="height: auto">
+                <div class="groupbox" style="min-height: auto">
                   <span class="grouptitle">产品信息</span>
                   <t-card :bordered="false">
                     <t-space align="center" direction="horizontal" :break-line="true">
@@ -31,15 +35,15 @@
                 </div>
               </t-row>
               <t-row>
-                <t-col flex="490px">
+                <t-col flex="65%">
                   <div class="groupbox">
                     <span class="grouptitle">缺陷信息</span>
-                    <t-card :bordered="false" style="height: 295px; max-height: 295px" class="t-table__content">
+                    <t-card :bordered="false" class="t-table__content">
                       <t-space direction="vertical">
                         <t-space v-for="(item, index) in defectCodeList" :key="index">
                           <t-button
                             theme="default"
-                            style="width: 70px; height: 73px; max-height: 73px; white-space: normal"
+                            style="width: 70px; min-height: 80px; max-height: 80px; white-space: normal"
                             :v-model="item"
                             :content="item.defectName"
                           />
@@ -48,7 +52,7 @@
                               v-for="(item_child, index_child) in item.child"
                               :key="index_child"
                               :content="item_child.defectName"
-                              style="width: 100px"
+                              style="width: 120px"
                               :theme="getThemeButton(item_child.themeButton)"
                               @click="clickDefectCode(item_child)"
                             />
@@ -58,11 +62,11 @@
                     </t-card>
                   </div>
                 </t-col>
-                <t-col flex="auto"></t-col>
-                <t-col flex="320px">
+                <t-col flex="10px" />
+                <t-col flex="34%">
                   <div class="groupbox">
                     <span class="grouptitle">采集详情</span>
-                    <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="295px">
+                    <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList">
                       <template #serialNumber="{ row }">
                         <div class="talbe_col_nowrap" :title="row.serialNumber">
                           {{ row.serialNumber }}
@@ -95,7 +99,7 @@
           </t-content>
         </t-layout>
         <t-aside style="width: 30%">
-          <div class="groupbox" style="height: 540px">
+          <div class="groupbox" style="height: calc(98vh - 40px)">
             <span class="grouptitle">消息组件</span>
             <t-list style="height: 96%" :scroll="{ type: 'virtual' }">
               <t-list-item v-for="(item, index) in messageList" :key="index">
@@ -119,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { isEmpty, isNil } from 'lodash';
+import _, { isEmpty, isNil } from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
@@ -140,6 +144,9 @@ const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
 
 const mainform = ref({
   serialNumber: '',
+  workShopId: '',
+  workShopCode: '',
+  workShopName: '',
   workCenterId: '',
   workCenterCode: '',
   workCenterName: '',
@@ -169,15 +176,6 @@ const productInfo = ref({
 const messageList = ref<messageModel[]>([]);
 
 const Init = async () => {
-  mainform.value.serialNumber = 'LB0001';
-  mainform.value.workCenterId = '1730421387954343937'; // 3-1-1
-  mainform.value.workCenterCode = '3-1-1'; // 3-1-1
-  mainform.value.workCenterName = '3号工厂1车间1区域'; // 3-1-1
-
-  mainform.value.workStationId = '1729475654052753410'; // G_TP 高新产业园贴标
-  mainform.value.workStationCode = 'G_TP';
-  mainform.value.workStationName = '高新产业园贴标';
-  mainform.value.processId = '1'; // PC001 贴标
   getDefectCodeTree();
 };
 
@@ -311,7 +309,56 @@ const getThemeButton = (value: string) => {
   return themes[value] || themes.default;
 };
 
+const getQueryString = (paramName: string) => {
+  const queryString = window.location.href.split('?')[1];
+  if (queryString) {
+    const paramsArray = queryString.split('&');
+    const paramsNameList = [{ name: '', value: '' }];
+    paramsArray.forEach((item: string) => {
+      const obj = { name: '', value: '' };
+      obj.name = item.split('=')[0].toString();
+      obj.value = item.split('=')[1].toString();
+      paramsNameList.push(obj);
+    });
+    const objInfo = _.find(paramsNameList, (item: any) => {
+      return item.name === paramName;
+    }) as any;
+    return objInfo?.value;
+  }
+  return '';
+};
+
 onMounted(() => {
+  // 底座完成后从底座获取
+  const serialNumber = getQueryString('serialNumber');
+  const workCenterId = getQueryString('workCenterId');
+  const workCenterCode = getQueryString('workCenterCode');
+  const workCenterName = getQueryString('workCenterName');
+
+  const workStationId = getQueryString('workStationId');
+  const workStationCode = getQueryString('workStationCode');
+  const workStationName = getQueryString('workStationName');
+
+  const workShopId = getQueryString('workShopId');
+  const workShopCode = getQueryString('workShopCode');
+  const workShopName = getQueryString('workShopName');
+
+  const processId = getQueryString('processId');
+  mainform.value.serialNumber = serialNumber;
+
+  mainform.value.workCenterId = workCenterId;
+  mainform.value.workCenterCode = workCenterCode;
+  mainform.value.workCenterName = workCenterName;
+
+  mainform.value.workStationId = workStationId;
+  mainform.value.workStationCode = workStationCode;
+  mainform.value.workStationName = workStationName;
+
+  mainform.value.workShopId = workShopId;
+  mainform.value.workShopCode = workShopCode;
+  mainform.value.workShopName = workShopName;
+
+  mainform.value.processId = processId;
   Init();
 });
 </script>
@@ -368,7 +415,8 @@ onMounted(() => {
 .groupbox {
   width: 100%;
   border: 1px solid var(--td-component-border);
-  height: 100%;
+  //height: 100%;
+  min-height: calc(70vh - 40px);
 
   .grouptitle {
     display: block;

@@ -2,11 +2,11 @@
   <div class="main-page">
     <div class="main-page-content">
       <!-- 查询组件  -->
-      <tm-query :opts="opts" label-width="100" @submit="conditionEnter" />
+      <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
       <!-- 表格组件  -->
     </div>
     <div class="main-page-content">
-      <tm-table
+      <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
         row-key="id"
@@ -23,13 +23,16 @@
             <t-link theme="primary" @click="onRowEdit(row)">编辑</t-link>
             <t-link theme="primary" @click="onRowPermission(row)">权限</t-link>
             <t-link theme="primary" @click="onRowPerson(row)">成员</t-link>
-            <t-link theme="primary" @click="onRowDelete(row)">删除</t-link>
+            <!-- 删除 -->
+            <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onRowDelete(row)">
+              <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
           </t-space>
         </template>
         <template #button>
           <t-button theme="primary" @click="onAddClick"> 新增 </t-button>
         </template>
-      </tm-table>
+      </cmp-table>
     </div>
     <!-- 新增/编辑角色弹出窗 -->
     <t-dialog
@@ -40,13 +43,23 @@
       <role-form ref="formRef" />
     </t-dialog>
     <!-- 角色成员弹出窗 -->
+    <t-dialog
+      v-model:visible="formUserVisible"
+      top="25px"
+      width="800px"
+      :confirm-btn="null"
+      :header="t('role.roleMember')"
+      :on-confirm="onUserConfirmForm"
+    >
+      <user-form ref="userFormRef" :role-id="formUserRoleId" />
+    </t-dialog>
     <!-- 权限分配弹出窗 -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, ref } from 'vue';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
@@ -55,10 +68,13 @@ import { usePage } from '@/hooks/modules/page';
 import { FormRef } from './constants';
 import RoleForm from './form.vue';
 import { useLang } from './lang';
+import userForm from './userForm.vue';
 
 const formVisible = ref(false);
+const formUserVisible = ref(false);
 const formAdd = ref(true);
 const formRef = ref<FormRef>(null);
+const userFormRef = ref<FormRef>(null);
 
 const { t } = useLang();
 const { pageUI } = usePage();
@@ -92,7 +108,7 @@ const opts = computed(() => {
   return {
     oid: {
       label: t('role.org'),
-      comp: 'tm-select-business',
+      comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
@@ -102,7 +118,7 @@ const opts = computed(() => {
     },
     // eId: {
     //   label: t('role.eId'),
-    //   comp: 'tm-select-business',
+    //   comp: 'bcmp-select-business',
     //   event: 'business',
     //   defaultVal: '',
     //   bind: {
@@ -170,14 +186,22 @@ const fetchTable = async () => {
   }
 };
 
-const onRowPermission = (row: any) => {
-  console.log('编辑', row);
-};
-const onRowDelete = (row: any) => {
-  console.log('编辑', row);
-};
+const formUserRoleId = ref('');
 const onRowPerson = (row: any) => {
-  console.log('编辑', row);
+  // const { reset } = userFormRef.value;
+  // reset(true, row);
+  formUserRoleId.value = row.id;
+  formUserVisible.value = true;
+  console.log('人员分配', row);
+};
+const onRowPermission = (row: any) => {
+  console.log('权限分配', row);
+};
+const onRowDelete = async (row: any) => {
+  console.log('删除', row);
+  await api.role.delete({ id: row.id });
+  fetchTable();
+  MessagePlugin.success(t('common.message.deleteSuccess'));
 };
 const onRowEdit = (row: any) => {
   const { reset } = formRef.value;
@@ -199,6 +223,17 @@ const onConfirmForm = () => {
     fetchTable();
   });
 };
+const onUserConfirmForm = () => {
+  const { submit } = userFormRef.value;
+  submit().then(() => {
+    formUserVisible.value = false;
+    fetchTable();
+  });
+};
+// 渲染函数
+onMounted(() => {
+  fetchTable();
+});
 </script>
 
 <style scoped>

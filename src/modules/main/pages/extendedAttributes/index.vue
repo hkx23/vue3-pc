@@ -34,7 +34,7 @@
             <t-tabs v-model="tabValue" @change="tabsChange">
               <t-tab-panel :value="0" label="全部" :destroy-on-hide="false">
                 <template #panel>
-                  <tm-table
+                  <cmp-table
                     ref="tableRef"
                     v-model:pagination="pageUI"
                     row-key="id"
@@ -65,7 +65,7 @@
                         <icon name="edit-1" class="black-icon" />
                       </t-button>
                     </template>
-                  </tm-table>
+                  </cmp-table>
                 </template>
               </t-tab-panel>
               <t-tab-panel
@@ -76,7 +76,7 @@
                 :destroy-on-hide="true"
               >
                 <template #panel>
-                  <tm-table
+                  <cmp-table
                     ref="tableRef"
                     v-model:pagination="pageUI"
                     row-key="id"
@@ -106,7 +106,7 @@
                         @change="(value) => onSwitchChange(row, value)"
                       ></t-switch>
                     </template>
-                  </tm-table>
+                  </cmp-table>
                 </template>
               </t-tab-panel>
             </t-tabs>
@@ -258,7 +258,7 @@ import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 't
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api, ObjectProperty } from '@/api/main';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const diaLogTitle = ref('');

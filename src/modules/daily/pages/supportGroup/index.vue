@@ -1,11 +1,11 @@
 <template>
   <div class="module-tree-container">
     <t-card :bordered="false">
-      <tm-query :opts="opts" :bool-enter="true" @submit="onInput"></tm-query>
+      <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
       <t-row justify="space-between">
         <!-- ################# 处理组表格数据 ###################### -->
         <t-col :span="12" flex="auto">
-          <tm-table
+          <cmp-table
             ref="tableRef"
             v-model:pagination="pageUI"
             row-key="id"
@@ -35,11 +35,11 @@
                 <t-button theme="default"> 处理组导入 </t-button>
               </t-space>
             </template>
-          </tm-table>
+          </cmp-table>
         </t-col>
         <!-- ################# 人员表格数据 ###################### -->
         <t-col :span="12" flex="auto">
-          <tm-table
+          <cmp-table
             ref="tableRef"
             v-model:pagination="personPage"
             row-key="id"
@@ -65,7 +65,7 @@
                 <t-button theme="default"> 处理组员工导入 </t-button>
               </t-space>
             </template>
-          </tm-table>
+          </cmp-table>
         </t-col>
       </t-row>
     </t-card>
@@ -105,7 +105,7 @@
       <!-- #新增表格数据 -->
       <t-row justify="space-around">
         <t-col :span="5">
-          <tm-table
+          <cmp-table
             ref="tableRef"
             v-model:pagination="addPage"
             row-key="id"
@@ -118,11 +118,11 @@
               <t-button size="small" variant="text" @click="addPerson(row)">
                 <icon name="add" class="black-icon" />
               </t-button>
-            </template> </tm-table
+            </template> </cmp-table
         ></t-col>
         <!-- # 删除 表格数据 -->
         <t-col :span="5">
-          <tm-table
+          <cmp-table
             ref="tableRef"
             v-model:pagination="delPage"
             row-key="id"
@@ -135,7 +135,7 @@
               <t-button size="small" variant="text" @click="delPerson(row)">
                 <icon name="remove" class="black-icon" />
               </t-button>
-            </template> </tm-table
+            </template> </cmp-table
         ></t-col>
       </t-row>
       <t-row style="margin-top: 20px">
@@ -154,8 +154,8 @@ import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, Table
 import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
-import TmQuery from '@/components/tm-query/index.vue';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpQuery from '@/components/cmp-query/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const DropDownData = reactive({ list: [] }); // 下拉框数据
