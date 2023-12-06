@@ -16,7 +16,7 @@
                 <t-col flex="40px" />
               </t-row>
               <t-row align="center">
-                <div class="groupbox" style="height: auto">
+                <div class="groupbox" style="min-height: auto">
                   <span class="grouptitle">产品信息</span>
                   <t-card :bordered="false">
                     <t-space align="center" direction="horizontal" :break-line="true">
@@ -31,15 +31,15 @@
                 </div>
               </t-row>
               <t-row>
-                <t-col flex="490px">
+                <t-col flex="65%">
                   <div class="groupbox">
                     <span class="grouptitle">缺陷信息</span>
-                    <t-card :bordered="false" style="height: 295px; max-height: 295px" class="t-table__content">
+                    <t-card :bordered="false" class="t-table__content">
                       <t-space direction="vertical">
                         <t-space v-for="(item, index) in defectCodeList" :key="index">
                           <t-button
                             theme="default"
-                            style="width: 70px; height: 73px; max-height: 73px; white-space: normal"
+                            style="width: 70px; min-height: 80px; max-height: 80px; white-space: normal"
                             :v-model="item"
                             :content="item.defectName"
                           />
@@ -48,7 +48,7 @@
                               v-for="(item_child, index_child) in item.child"
                               :key="index_child"
                               :content="item_child.defectName"
-                              style="width: 100px"
+                              style="width: 120px"
                               :theme="getThemeButton(item_child.themeButton)"
                               @click="clickDefectCode(item_child)"
                             />
@@ -58,11 +58,11 @@
                     </t-card>
                   </div>
                 </t-col>
-                <t-col flex="auto"></t-col>
-                <t-col flex="320px">
+                <t-col flex="10px" />
+                <t-col flex="34%">
                   <div class="groupbox">
                     <span class="grouptitle">采集详情</span>
-                    <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="295px">
+                    <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList">
                       <template #serialNumber="{ row }">
                         <div class="talbe_col_nowrap" :title="row.serialNumber">
                           {{ row.serialNumber }}
@@ -95,7 +95,7 @@
           </t-content>
         </t-layout>
         <t-aside style="width: 30%">
-          <div class="groupbox" style="height: 540px">
+          <div class="groupbox" style="height: calc(98vh - 40px)">
             <span class="grouptitle">消息组件</span>
             <t-list style="height: 96%" :scroll="{ type: 'virtual' }">
               <t-list-item v-for="(item, index) in messageList" :key="index">
@@ -368,7 +368,8 @@ onMounted(() => {
 .groupbox {
   width: 100%;
   border: 1px solid var(--td-component-border);
-  height: 100%;
+  //height: 100%;
+  min-height: calc(70vh - 40px);
 
   .grouptitle {
     display: block;
