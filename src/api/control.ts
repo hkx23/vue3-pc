@@ -1449,16 +1449,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  datetimeScheStr?: string;
+  isState?: boolean;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
-  workshopId?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  scanDatetimeStr?: string;
-  workshopName?: string;
+  workshopId?: string;
   workshopCode?: string;
+  workshopName?: string;
   stateName?: string;
-  isState?: boolean;
 }
 
 /** 缺陷代码 */

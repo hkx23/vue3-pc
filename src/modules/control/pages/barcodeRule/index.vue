@@ -2,23 +2,23 @@
   <div class="main-page">
     <!-- ################# 条码规则 表格数据 ###################### -->
     <div class="main-page-content">
-      <tm-query :opts="opts" :bool-enter="true" label-width="90px" @submit="onInput">
-        <!-- <template #querySelect>
-          <t-select v-model="supportGroupTabData.list.supportGroupTypeName" @change="onObjectCodeChange">
-            <t-option v-for="item in DropDownData.list" :key="item.id" :label="item.paramValue" :value="item" />
+      <cmp-query :opts="opts" :bool-enter="true" label-width="110px" @submit="onSelsectInput">
+        <template #querySelect>
+          <t-select v-model="ruleTabData.barcodeType">
+            <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
-        </template> -->
-      </tm-query>
+        </template>
+      </cmp-query>
       <t-col :span="12" flex="auto">
-        <tm-table
+        <cmp-table
           ref="tableRef"
           v-model:pagination="pageUI"
           row-key="id"
           :table-column="groupColumns"
           :table-data="ruleTabDataList.list"
           :total="ruleTabTotal"
-          :selected-row-keys="selectedRowKeys"
           @row-click="onRowClick"
+          @refresh="onRefresh"
         >
           <template #stateSwitch="{ row }">
             <t-switch
@@ -29,46 +29,56 @@
               @change="(value) => onSwitchChange(row, value)"
             ></t-switch>
           </template>
-          <template #actionSlot="{ row }">
-            <t-link theme="primary" @click="onEditRow(row)"> 编辑 </t-link>
-          </template>
-          <template #oprate>
+          <template #operate>
             <t-space>
               <t-button theme="default" @click="onAddRuleData"> 新增 </t-button>
               <t-button theme="default"> 导入关联物料 </t-button>
             </t-space>
           </template>
-        </tm-table>
+          <template #op="{ row }">
+            <t-link theme="primary" @click="onEditRow(row)"> 编辑 </t-link>
+          </template>
+        </cmp-table>
       </t-col>
     </div>
     <!-- ################# 物料分类 表格数据 ###################### -->
     <div class="main-page-content">
       <t-row justify="space-around">
         <t-col :span="12" flex="auto">
-          <tm-table
+          <cmp-table
             ref="tableRef"
             v-model:pagination="materialPage"
             row-key="id"
             :table-column="personColumns"
             :table-data="materialTabDataList.list"
             :total="materialTotal"
+            :selected-row-keys="selectedRowKeys"
+            @select-change="rehandleSelectChange"
+            @refresh="onTwoRefresh"
           >
             <template #button>
               <div class="left-operation-container">
-                <tm-select-business
-                  v-model="relatedMaterials.mitemValue"
-                  :is-multiple="true"
-                  type="mitem"
-                  @selection-change="onMitemChange"
-                ></tm-select-business>
+                <bcmp-select-business
+                  v-model="relatedMaterials.mitemCategoryId"
+                  :is-multiple="false"
+                  type="mitemCategory"
+                ></bcmp-select-business>
               </div>
               <div class="left-operation-container">
-                <tm-select-business v-model="relatedMaterials.mitemId" type="mitemCategory"></tm-select-business>
+                <bcmp-select-business
+                  v-model="relatedMaterials.mitemId"
+                  :is-multiple="false"
+                  type="mitem"
+                ></bcmp-select-business>
               </div>
-              <!-- <div><t-button theme="default" @click="onRelatedMaterials"> 关联物料 </t-button></div> -->
-              <div><t-button theme="default"> 删除 </t-button></div>
+              <div><t-button theme="default" @click="onRelatedMaterials"> 关联物料 </t-button></div>
+              <div>
+                <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches">
+                  <t-button theme="default"> 删除 </t-button>
+                </t-popconfirm>
+              </div>
             </template>
-          </tm-table>
+          </cmp-table>
         </t-col>
       </t-row>
     </div>
@@ -191,11 +201,12 @@ import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/control';
 import { api as apiMain } from '@/api/main';
-import TmQuery from '@/components/tm-query/index.vue';
-import TmTable from '@/components/tm-table/index.vue';
+import CmpQuery from '@/components/cmp-query/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
+const diaSelsect = reactive({ list: [] }); // 下拉框数据
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: materialPage } = usePage();
 const formVisible = ref(false); // 控制 处理组dialog 弹窗显示隐藏
@@ -217,7 +228,6 @@ const ruleTabDataList = reactive({ list: [] });
 const ruleTabTotal = ref(null);
 // $人员 表格数据
 const materialTabDataList = reactive({ list: [] });
-// 人员表格数据总条数
 const materialTotal = ref(null);
 // dialog 弹框数据
 const ruleTabData = ref({
@@ -230,9 +240,34 @@ const ruleTabData = ref({
 });
 // 关联物料数据
 const relatedMaterials = ref({
-  mitemId: '', // 物料
-  mitemValue: '', // 物料分类
+  barcodeRuleId: '', // 上表格ID
+  mitemId: '', // 物料 ID
+  mitemCategoryId: '', // 物料分类 ID
 });
+// # 条码规则刷新按钮
+const onRefresh = async () => {
+  await onBarcodeRuleTabData(); // 获取 条码规则表格 数据
+};
+// # 物料编码刷新按钮
+const onTwoRefresh = async () => {
+  await onMaterialTabData(); // 获取 物料编码 表格数据
+};
+// ！批量删除数组
+const rehandleSelectChange = async (value: any[]) => {
+  selectedRowKeys.value = value;
+};
+// ！批量删除
+const onDeleteBatches = async () => {
+  await api.barcodeRuleInMitem.removeMitemBatch({
+    ids: selectedRowKeys.value,
+    ruleId: personID.value,
+  });
+  if (materialTabDataList.list.length <= 1 && materialPage.value.page > 0) {
+    materialPage.value.page--;
+  }
+  await onMaterialTabData();
+  MessagePlugin.success('批量删除成功');
+};
 // #监听禁用启用
 const computedState = computed({
   get: () => ruleTabData.value.state === 1,
@@ -240,7 +275,6 @@ const computedState = computed({
     ruleTabData.value.state = newValue ? 1 : 0;
   },
 });
-const diaSelsect = reactive({ list: [] });
 // # 树组件模糊事件
 const onInput = () => {
   filterByText.value = filterText.value
@@ -316,12 +350,11 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     cell: 'stateSwitch',
   },
   {
-    colKey: 'operate',
+    colKey: 'op',
     title: '操作',
     align: 'center',
     fixed: 'right',
     width: '130',
-    cell: 'actionSlot', // 引用具名插槽
   },
 ];
 // ####物料分类 表头
@@ -367,7 +400,6 @@ const rules: FormRules = {
   ruleCode: [{ required: true, message: '规则编码不能为空', trigger: 'blur' }],
   ruleName: [{ required: true, message: '规则名称不能为空', trigger: 'blur' }],
   barcodeType: [{ required: true, message: '规则类型不能为空', trigger: 'change' }],
-  ruleDesc: [{ required: true, message: '规则描述不能为空', trigger: 'blur' }],
   ruleExpression: [{ required: true, message: '编码规则不能为空', trigger: 'change' }],
 };
 // #dialog下拉框数据
@@ -375,7 +407,7 @@ const onGetDialogSelect = async () => {
   const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_TYPE' });
   diaSelsect.list = res;
 };
-// # 初始渲染
+// ################ 初始渲染
 onMounted(async () => {
   await onBarcodeRuleTabData(); // 获取 条码规则表格 数据
   await onMaterialTabData(); // 获取 物料编码 表格数据
@@ -391,25 +423,19 @@ const opts = computed(() => {
     barCodeType: { label: '条码类型', event: 'input', defaultval: '', slotName: 'querySelect' },
   };
 });
-// // 上侧搜索提交事件
-// const onInput = async (data: any) => {
-//   pageUI.value.page = 1;
-//   materialPage.value.page = 1;
-//   const res = await api.supportGroup.getGroupList({
-//     pageNum: pageUI.value.page,
-//     pageSize: pageUI.value.rows,
-//     groupKeyword: data.categoryName,
-//   });
-//   supportGroupInUserList.list = res.list;
-//   supportGroupTotal.value = res.total;
-//   const rules = await api.supportGroup.getGroupList({
-//     pageNum: materialPage.value.page,
-//     pageSize: materialPage.value.rows,
-//     userKeyword: data.methodCodeName,
-//   });
-//   supportPersonInUserList.list = rules.list;
-//   supportPersonTotal.value = rules.total;
-// };
+// #上侧搜索提交事件
+const onSelsectInput = async (data: any) => {
+  pageUI.value.page = 1;
+  const res = await api.barcodeRuleInMitem.getBarcodeRuleList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    ruleKeyword: data.ruleNameCode, // 规则模糊查询关键词
+    mitemKeyword: data.materialNameCode, // 规则模糊查询关键词
+    selectKeyword: data.barCodeType, // 下拉模糊查询关键词
+  });
+  ruleTabDataList.list = res.list;
+  ruleTabTotal.value = res.total;
+};
 
 // #获取 条码规则 表格数据
 const onBarcodeRuleTabData = async () => {
@@ -428,7 +454,6 @@ const onMaterialTabData = async () => {
     pageSize: materialPage.value.rows,
     ruleId: personID.value,
   });
-  console.log('🚀 ~ file: index.vue:412 ~ onMaterialTabData ~ res:', res);
   materialTabDataList.list = res.list;
   materialTotal.value = res.total;
 };
@@ -452,12 +477,14 @@ const personID = ref(null); // 点击表格行 获取人员id
 const onRowClick = async ({ row }) => {
   personID.value = null; // 点击前先清空
   personID.value = row.id;
+  relatedMaterials.value.barcodeRuleId = row.id;
   await onMaterialTabData(); // 获取 物料分类 数据
 };
 
 // #添加按钮点击事件
 const onAddRuleData = () => {
   formRef.value.reset({ type: 'empty' });
+  ruleTabData.value.state = 1;
   groupDisabled.value = false; // 关闭表单禁用
   submitFalg.value = true; // true为新增
   formVisible.value = true;
@@ -495,17 +522,20 @@ const onEditrule = async () => {
 };
 
 // #关联物料
-// const onRelatedMaterials = () => {
-//   // await api.barcodeRuleInMitem.addBarcodeRuleMitem({
-//   // })
-// };
+const onRelatedMaterials = async () => {
+  const { barcodeRuleId, mitemId, mitemCategoryId } = relatedMaterials.value;
 
-// #物料选择的 change 事件
-const onMitemChange = (value) => {
-  console.log('🚀 ~ file: index.vue:520 ~ onMitemChange ~ value:', value[0].id);
-  console.log('🚀 ~ file: index.vue:522 ~ onMitemChange ~ relatedMaterials.value:', relatedMaterials.value);
+  // 检查是否所有的属性都不为空
+  if (!mitemId || !mitemCategoryId) {
+    MessagePlugin.error('参数不能为空');
+  } else if (!barcodeRuleId) {
+    MessagePlugin.error('请点击规则条码后再尝试');
+  } else {
+    await api.barcodeRuleInMitem.addBarcodeRuleMitem(relatedMaterials.value);
+    await onMaterialTabData(); // 获取 物料编码 表格数据
+    MessagePlugin.success('关联成功');
+  }
 };
-
 // // @表单提交事件
 const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
   if (context.validateResult === true) {
