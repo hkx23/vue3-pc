@@ -682,6 +682,12 @@ export interface ResultSupplier {
   data?: Supplier;
 }
 
+/** 角色权限操作实体 */
+export interface RoleAuthDTO {
+  roleId?: string;
+  permissionIds?: string[];
+}
+
 /** 响应数据 */
 export type PagingDataRoleVO = {
   list?: RoleVO[];
@@ -788,18 +794,6 @@ export type Role = {
   /** 角色描述 */
   roleDesc?: string;
 } | null;
-
-/** 通用响应类 */
-export interface ResultLong {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  data?: string;
-}
 
 /** 打印模板关联实体 */
 export interface PrintTmplMapDTO {
@@ -1908,13 +1902,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
   isProductName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2081,8 +2075,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2817,6 +2811,113 @@ export interface ResultPagingDataParam {
   message?: string;
   /** 响应数据 */
   data?: PagingDataParam;
+}
+
+/** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
+}
+
+/** 权限功能实体 */
+export type ModulePermissionDTO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  clientType?: number;
+  /** 模块层次代码 */
+  moduleLevel?: string;
+  /** 模块编码 */
+  moduleCode?: string;
+  /** 模块名称 */
+  moduleName?: string;
+  /** 模块描述 */
+  moduleDesc?: string;
+  parentModuleId?: string;
+  /**
+   * 显示顺序
+   * @format int32
+   */
+  sortIndex?: number;
+  /** 模块访问地址 */
+  behaviorPath?: string;
+  /** 图标地址 */
+  iconPath?: string;
+  /** 模块类型 */
+  moduleType?: string;
+  /** 模块版本号 */
+  moduleVersion?: number;
+  /** 模块包标识 */
+  modulePackageIdentify?: string;
+  permissionId?: string;
+  /** 权限名称 */
+  permissionName?: string;
+  /** 权限描述 */
+  permissionDescription?: string;
+  /** 权限转改 */
+  permissionState?: string;
+  /** 权限URL */
+  operationUri?: string;
+  /** 是否禁用 */
+  isForbidden?: string;
+  /** 支持设备 */
+  supportDevice?: string;
+  /** 是否角色禁用 */
+  isForbiddenRole?: string;
+  /** 是否继承角色 */
+  isFromRole?: string;
+  /** 是否不可编辑 */
+  isDisable?: string;
+  /** 功能名称-按语言 */
+  moduleNameT?: string;
+  /** 功能描述-按语言 */
+  moduleDescriptionT?: string;
+  /** 子级 */
+  children?: ModulePermissionDTO[];
+  /** 是否可用 */
+  enabled?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListModulePermissionDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ModulePermissionDTO[] | null;
 }
 
 /** 响应数据 */
@@ -3880,6 +3981,37 @@ export const api = {
         body: data as any,
       }),
   },
+  roleAuthorization: {
+    /**
+     * No description
+     *
+     * @tags 角色授权表
+     * @name Delete
+     * @summary 批量删除角色权限
+     * @request POST:/roleAuthorization/batchDelete
+     * @secure
+     */
+    delete: (data: RoleAuthDTO) =>
+      http.request<ResultObject['data']>(`/api/main/roleAuthorization/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色授权表
+     * @name Add
+     * @summary 批量新增角色权限
+     * @request POST:/roleAuthorization/batchAdd
+     * @secure
+     */
+    add: (data: RoleAuthDTO) =>
+      http.request<ResultObject['data']>(`/api/main/roleAuthorization/batchAdd`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   role: {
     /**
      * No description
@@ -3908,26 +4040,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultRole['data']>(`/api/main/role/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 角色
-     * @name GetItemByName
-     * @summary 根據名称獲取角色
-     * @request POST:/role/getbyname
-     * @secure
-     */
-    getItemByName: (query?: {
-      /** @default "0" */
-      id?: string;
-      /** @default "" */
-      roleName?: string;
-    }) =>
-      http.request<ResultLong['data']>(`/api/main/role/getbyname`, {
-        method: 'POST',
-        params: query,
       }),
 
     /**
@@ -3973,6 +4085,26 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/role/add`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
+     * @name GetItemByName
+     * @summary 根據名称獲取角色
+     * @request GET:/role/getbyname
+     * @secure
+     */
+    getItemByName: (query?: {
+      /** @default "0" */
+      id?: string;
+      /** @default "" */
+      roleName?: string;
+    }) =>
+      http.request<ResultLong['data']>(`/api/main/role/getbyname`, {
+        method: 'GET',
+        params: query,
       }),
 
     /**
@@ -5363,6 +5495,40 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  permission: {
+    /**
+     * No description
+     *
+     * @tags 权限字
+     * @name GetTreePermissionsByUserId
+     * @summary 根据用户ID获取权限树
+     * @request GET:/permission/getTreePermissionsByUserId
+     * @secure
+     */
+    getTreePermissionsByUserId: (query: { userId: string }) =>
+      http.request<ResultListModulePermissionDTO['data']>(`/api/main/permission/getTreePermissionsByUserId`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 权限字
+     * @name GetTreePermissionsByRoleId
+     * @summary 根据角色ID获取权限树
+     * @request GET:/permission/getTreePermissionsByRoleId
+     * @secure
+     */
+    getTreePermissionsByRoleId: (query: {
+      /** @format int64 */
+      roleId: number;
+    }) =>
+      http.request<ResultListModulePermissionDTO['data']>(`/api/main/permission/getTreePermissionsByRoleId`, {
+        method: 'GET',
+        params: query,
       }),
   },
   objectProperty: {
