@@ -7,33 +7,33 @@
       </t-space>
     </template>
     <t-form
-      ref="craftRouteFormRef"
+      ref="routingFormRef"
       class="card"
       :data="formData"
-      :rules="craftRouteRules"
+      :rules="routingRules"
       label-width="100px"
       layout="inline"
     >
-      <t-form-item :label="t('craftRoute.craftRouteCode')" name="craftRouteCode">
+      <t-form-item :label="t('craftRoute.craftRouteCode')" name="routingCode">
         <t-input
-          v-model="formData.craftRouteCode"
+          v-model="formData.routingCode"
           :disabled="props.id && !props.isCopy ? true : false"
           :placeholder="t('common.placeholder.input', [t('craftRoute.craftRouteCode')])"
         ></t-input>
       </t-form-item>
-      <t-form-item :label="t('craftRoute.craftRouteName')" name="craftRouteName">
+      <t-form-item :label="t('craftRoute.craftRouteName')" name="routingName">
         <t-input
-          v-model="formData.craftRouteName"
+          v-model="formData.routingName"
           :placeholder="t('common.placeholder.input', [t('craftRoute.craftRouteName')])"
         ></t-input>
       </t-form-item>
-      <t-form-item :label="t('craftRoute.craftRouteType')" name="craftRouteType">
+      <t-form-item :label="t('craftRoute.craftRouteType')" name="routingType">
         <t-select
-          v-model="formData.craftRouteType"
+          v-model="formData.routingType"
           :placeholder="t('common.placeholder.select', [t('craftRoute.craftRouteType')])"
         >
           <t-option
-            v-for="(value, key) in craftRouteTypeOption"
+            v-for="(value, key) in routingTypeOption"
             :key="key"
             :label="value.label"
             :value="value.value"
@@ -54,10 +54,10 @@
           :placeholder="t('common.placeholder.select', [t('craftRoute.enableDate')])"
         />
       </t-form-item>
-      <t-form-item :label="t('craftRoute.invalidDate')" name="invalidDate">
+      <t-form-item :label="t('craftRoute.invailDate')" name="invailDate">
         <t-date-picker
-          v-model="formData.invalidDate"
-          :placeholder="t('common.placeholder.select', [t('craftRoute.invalidDate')])"
+          v-model="formData.invailDate"
+          :placeholder="t('common.placeholder.select', [t('craftRoute.invailDate')])"
         />
       </t-form-item>
       <t-form-item :label="t('business.main.desc')" name="desc">
@@ -99,7 +99,7 @@
       <div ref="flowRef" class="flow"></div>
       <t-dialog v-model:visible="edgeVisible" :header="false" :footer="false" destroy-on-close>
         <t-select v-model="edgeText" @change="resultChange">
-          <t-option value="GOOD" />
+          <t-option value="OK" />
           <t-option value="NG" />
         </t-select>
       </t-dialog>
@@ -265,12 +265,12 @@ const visible = computed({
 const loading = ref(false);
 const close = () => {
   lf.clearData();
-  formData.craftRouteCode = null;
-  formData.craftRouteName = null;
-  formData.craftRouteType = 'STANDARD';
+  formData.routingCode = null;
+  formData.routingName = null;
+  formData.routingType = 'STANDARD';
   formData.version = 1;
   formData.enableDate = dayjs().format();
-  formData.invalidDate = null;
+  formData.invailDate = null;
   formData.desc = null;
 };
 watch(visible, (value: boolean) => {
@@ -279,12 +279,12 @@ watch(visible, (value: boolean) => {
     apiControl.routing.item(props.id).then((data) => {
       // 复制不需要赋值form表单
       if (!props.isCopy) {
-        formData.craftRouteCode = data.routingCode;
-        formData.craftRouteName = data.routingName;
-        formData.craftRouteType = data.routingType;
+        formData.routingCode = data.routingCode;
+        formData.routingName = data.routingName;
+        formData.routingType = data.routingType;
         formData.version = data.routingVersion;
         formData.enableDate = data.enableDate;
-        formData.invalidDate = data.invailDate;
+        formData.invailDate = data.invailDate;
         formData.desc = data.routingDesc;
       }
       if (data.routingGraph) {
@@ -295,30 +295,29 @@ watch(visible, (value: boolean) => {
   }
 });
 // Form表单
-const craftRouteTypeOption = ref([]);
+const routingTypeOption = ref([]);
 apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_TYPE' }).then((data) => {
-  craftRouteTypeOption.value = data;
+  routingTypeOption.value = data;
 });
-const craftRouteFormRef = ref();
-const craftRouteRules: FormRules<Data> = {
-  craftRouteCode: [{ required: true, message: t('common.validation.required'), type: 'error' }],
-  craftRouteName: [{ required: true, message: t('common.validation.required'), type: 'error' }],
-  craftRouteType: [{ required: true, message: t('common.validation.required'), type: 'error' }],
+const routingFormRef = ref();
+const routingRules: FormRules<Data> = {
+  routingCode: [{ required: true, message: t('common.validation.required'), type: 'error' }],
+  routingName: [{ required: true, message: t('common.validation.required'), type: 'error' }],
+  routingType: [{ required: true, message: t('common.validation.required'), type: 'error' }],
   version: [{ required: true, message: t('common.validation.required'), type: 'error' }],
   enableDate: [{ required: true, message: t('common.validation.required'), type: 'error' }],
 };
 const formData = reactive({
-  craftRouteCode: null,
-  craftRouteName: null,
-  craftRouteType: 'STANDARD',
+  routingCode: null,
+  routingName: null,
+  routingType: 'STANDARD',
   version: 1,
   enableDate: dayjs().format(),
-  invalidDate: null,
+  invailDate: null,
   desc: null,
 });
 const save = () => {
-  console.log(props.id);
-  craftRouteFormRef.value.validate().then((result: any) => {
+  routingFormRef.value.validate().then((result: any) => {
     if (result === true) {
       const rawData = lf.getGraphRawData();
       // 判断是否有开始节点
@@ -338,13 +337,13 @@ const save = () => {
       }
       loading.value = true;
       const postData = {
-        routingCode: formData.craftRouteCode,
-        routingName: formData.craftRouteName,
+        routingCode: formData.routingCode,
+        routingName: formData.routingName,
         routingDesc: formData.desc,
-        routingType: formData.craftRouteType,
+        routingType: formData.routingType,
         routingVersion: formData.version,
         enableDate: formData.enableDate,
-        invailDate: formData.invalidDate,
+        invailDate: formData.invailDate,
         routingGraph: JSON.stringify(rawData),
       };
       // 复制走新增逻辑

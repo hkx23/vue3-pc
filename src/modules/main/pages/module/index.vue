@@ -58,6 +58,15 @@
               :total="tabTotal"
               @refresh="fetchData"
             >
+              <template #stateSwitch="{ row }">
+                <t-switch
+                  :custom-value="[1, 0]"
+                  :value="row.state"
+                  :default-value="row.state"
+                  size="large"
+                  @change="(value) => onSwitchChange(row, value)"
+                ></t-switch>
+              </template>
               <template #pc="{ row }">
                 <t-checkbox v-model="row.isPC" disabled></t-checkbox>
               </template>
@@ -90,7 +99,7 @@
               </template>
               <template #button>
                 <t-space direction="vertical">
-                  <custom-tabs v-model="selectedTabs" :tabs="tabItems" @selection-changed="handleSelectionChanged" />
+                  <custom-tabs v-model="selectedTabs" :tabs="tabItems" @selection-changed="topSelectionChanged" />
                 </t-space>
               </template>
             </cmp-table>
@@ -372,6 +381,13 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
+    colKey: 'state',
+    title: '状态',
+    align: 'center',
+    width: '100',
+    cell: 'stateSwitch',
+  },
+  {
     colKey: 'isPC',
     title: 'pc端',
     align: 'center',
@@ -438,7 +454,29 @@ const fetchData = () => {
   onGetTabData();
 };
 
-// 顶部多端选择事件
+// #顶部多端选择事件
+const topSelectionChanged = async (num: any) => {
+  num.shift();
+  num.reverse();
+  const nums = parseInt(num.join(''), 10);
+  tabListData.value = parseInt(num.reverse().join(''), 10); // 翻转数组，将数组变成整形数据
+  // if (parseInt(num.reverse().join(''), 10) === 1) {
+  //   return;
+  // }
+  // 如果没有打开新增或者删除
+  if (isRefreshTab.value) {
+    const res = await api.module.getList({
+      id: clickNodeId.value.id,
+      clientType: nums,
+      pageNum: 1,
+      pageSize: 10,
+    });
+    pageUI.value.page = 1;
+    moduleData.value = res.list;
+    tabTotal.value = res.total;
+  }
+};
+// #DiaLog选项框选择事件
 const handleSelectionChanged = async (num: any) => {
   // const array = num.slice(1); // 删除第一位
   tabListData.value = parseInt(num.reverse().join(''), 10); // 翻转数组，将数组变成整形数据
@@ -611,6 +649,18 @@ const onDelConfirm = async () => {
   }
   await onGetTabData(); // 获取表格数据
   MessagePlugin.success('删除成功');
+};
+
+// switch 开关事件
+const onSwitchChange = async (row: { moduleCode: any; id: any }, value: any) => {
+  const isValue = value ? 1 : 0;
+  await api.module.modify({
+    state: isValue,
+    moduleCode: row.moduleCode,
+    id: row.id,
+  });
+  await onGetTabData();
+  MessagePlugin.success('操作成功');
 };
 
 // 筛选树组件名称数组的函数

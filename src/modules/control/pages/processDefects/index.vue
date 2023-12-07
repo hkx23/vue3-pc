@@ -60,7 +60,7 @@
           <t-form-item label="缺陷名称" name="defectName">
             <t-input v-model="formData.processName" :disabled="disabledShow.disabledProcessName"></t-input>
           </t-form-item>
-          <t-form-item :label="`显示${t('processDefects.displaySeq')}`" name="displaySeq">
+          <t-form-item :label="`显示${t('processDefects.displaySeq')}`" name="displaySeq" label-width="110px">
             <t-input v-model="formData.displaySeq"></t-input>
           </t-form-item>
           <t-form-item label="启用" name="showState">

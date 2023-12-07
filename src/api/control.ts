@@ -9,6 +9,19 @@
  * ---------------------------------------------------------------
  */
 
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
 /** 工艺路线实体 */
 export interface RoutingDTO {
   /** 工艺路线编码 */
@@ -36,19 +49,11 @@ export interface RoutingDTO {
   invailDate?: string;
   /** 工艺路线图形化JSON */
   routingGraph?: string;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
   /**
-   * 响应代码
+   * 工艺路线状态
    * @format int32
    */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
+  state?: number;
 }
 
 /** 产品包装规则明细 */
@@ -648,6 +653,43 @@ export interface WorkcenterVO {
   children?: WorkcenterVO[];
 }
 
+/** 工艺路线映射表 */
+export interface RoutingMap {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工艺路线代码 */
+  routingCode?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  workcenterId?: string;
+  /**
+   * 是否默认
+   * @format int32
+   */
+  isDefault?: number;
+}
+
 /** 响应数据 */
 export type PagingDataRouting = {
   list?: Routing[];
@@ -879,8 +921,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -1217,6 +1259,105 @@ export interface ResultMo {
   data?: Mo;
 }
 
+/** 工单投料信息提交模型 */
+export interface MitemOnboardDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  processId?: string;
+  mitemId?: string;
+  workcenterId?: string;
+  supplierId?: string;
+  /** 扫描条码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  seq?: number;
+  /** 数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /** 单位 */
+  uom?: string;
+  /**
+   * 投料时间
+   * @format date-time
+   */
+  datetimeOnboard?: string;
+  /** 投料器 */
+  feeder?: string;
+  /** 状态 */
+  status?: string;
+  bomMitemId?: string;
+  bomMitemCode?: string;
+  bomMitemName?: string;
+  bomMitemDesc?: string;
+  bomUom?: string;
+  bomUomName?: string;
+  moMitemId?: string;
+  moMitemCode?: string;
+  moMitemName?: string;
+  moMitemDesc?: string;
+  moUom?: string;
+  moUomName?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  workCenterId?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  moScheduleId?: string;
+  statusName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  mitemOnboardId?: string;
+  moScheId?: string;
+  lotNo?: string;
+  labelNo?: string;
+}
+
+/** 工单投料信息提交模型 */
+export interface MitemOnboardSubmitDTO {
+  workcenterId?: string;
+  processId?: string;
+  moScheId?: string;
+  modelList?: MitemOnboardDTO[];
+  ids?: string[];
+}
+
+/** 工单投料信息卸料与转料模型 */
+export interface MitemOnboardUnbindDTO {
+  workcenterId?: string;
+  processId?: string;
+  moScheId?: string;
+  ids?: string[];
+}
+
 /** 显示在制品条码实体 */
 export interface BarcodeWipVO {
   id?: string;
@@ -1308,16 +1449,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  stateName?: string;
+  isState?: boolean;
   scanDatetimeStr?: string;
   defectCodeStr?: string;
   datetimeScheStr?: string;
-  isState?: boolean;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
 }
 
 /** 缺陷代码 */
@@ -1372,6 +1513,154 @@ export interface ResultBarcodeWipVO {
   data?: BarcodeWipVO;
 }
 
+export interface BarcodeRuleInMitemSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 规则模糊查询关键词 */
+  ruleKeyword?: string;
+  /** 规则模糊查询关键词 */
+  mitemKeyword?: string;
+  /** 下拉模糊查询关键词 */
+  selectKeyword?: string[];
+  ruleId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 多个id */
+  ids?: string[];
+  /** 状态 */
+  state?: number[];
+}
+
+/** 条码生成规则 */
+export interface BarcodeRule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码规则代码 */
+  ruleCode?: string;
+  /** 条码规则名称 */
+  ruleName?: string;
+  /** 条码规则描述 */
+  ruleDesc?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码规则表达式 */
+  ruleExpression?: string;
+}
+
+/** 条码规则显示 */
+export interface BarcodeRuleInMitemVO {
+  id?: string;
+  barcodeRuleId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  /** 条码规则代码 */
+  ruleCode?: string;
+  /** 条码规则名称 */
+  ruleName?: string;
+  /** 条码规则描述 */
+  ruleDesc?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码类型名称 */
+  barcodeTypeName?: string;
+  /** 条码规则表达式 */
+  ruleExpression?: string;
+  /** 物料分类代码 */
+  categoryCode?: string;
+  /** 物料分类名称 */
+  categoryName?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeRuleInMitemVO = {
+  list?: BarcodeRuleInMitemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeRuleInMitemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeRuleInMitemVO;
+}
+
+/** 产品条码生成规则表 */
+export interface BarcodeRuleInMitem {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  barcodeRuleId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+}
+
 /** 通用响应类 */
 export interface ResultWorkcenterVO {
   /**
@@ -1383,6 +1672,60 @@ export interface ResultWorkcenterVO {
   message?: string;
   /** 工作中心显示 */
   data?: WorkcenterVO;
+}
+
+/** 响应数据 */
+export type PagingDataRoutingMapVO = {
+  list?: RoutingMapVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataRoutingMapVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataRoutingMapVO;
+}
+
+/** 工艺路线关联产品实体 */
+export interface RoutingMapVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /** 类型编码 */
+  mitemCategoryCode?: string;
+  /** 类型名称 */
+  mitemCategoryName?: string;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 产品名称 */
+  mitemName?: string;
+  /** 工作中心 */
+  workcenter?: string;
+  /**
+   * 是否默认
+   * @format int32
+   */
+  isDefault?: number;
 }
 
 /** 通用响应类 */
@@ -1543,6 +1886,69 @@ export interface ResultListProductPackRuleDtlVO {
   data?: ProductPackRuleDtlVO[] | null;
 }
 
+/** 条码段 */
+export interface BarcodeSegment {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码段名称 */
+  segmentName?: string;
+  /** 条码段类型 */
+  segmentType?: string;
+  /** 条码段格式值 */
+  segmentFormat?: string;
+  /** 备注 */
+  memo?: string;
+}
+
+/** 输出条码规则片段 */
+export interface BarcodeSegmentDTO {
+  /** 规则类别 */
+  segmentName?: string;
+  /** 规则 */
+  rules?: BarcodeSegment[];
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeSegmentDTO = {
+  list?: BarcodeSegmentDTO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeSegmentDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeSegmentDTO;
+}
+
 /**
  * @title scm项目
  * @version v1
@@ -1551,6 +1957,80 @@ export interface ResultListProductPackRuleDtlVO {
  */
 
 export const api = {
+  routingMap: {
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name SetDefault
+     * @summary 工艺路线关联产品设置默认
+     * @request PUT:/routingMap/setDefault/{id}
+     * @secure
+     */
+    setDefault: (
+      id: string,
+      query: {
+        /** @format int32 */
+        isDefault: number;
+      },
+    ) =>
+      http.request<ResultObject['data']>(`/api/control/routingMap/setDefault/${id}`, {
+        method: 'PUT',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name Add
+     * @summary 添加工艺路线关联产品
+     * @request POST:/routingMap/add
+     * @secure
+     */
+    add: (data: RoutingMap) =>
+      http.request<ResultObject['data']>(`/api/control/routingMap/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name ListByRoutingCode
+     * @summary 工艺路线关联产品
+     * @request GET:/routingMap/listByRoutingCode
+     * @secure
+     */
+    listByRoutingCode: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      routingCode: string;
+      keyword?: string;
+    }) =>
+      http.request<ResultPagingDataRoutingMapVO['data']>(`/api/control/routingMap/listByRoutingCode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name DeleteBatch
+     * @summary 批量删除工艺路线关联产品
+     * @request DELETE:/routingMap/deleteBatch
+     * @secure
+     */
+    deleteBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/control/routingMap/deleteBatch`, {
+        method: 'DELETE',
+        body: data as any,
+      }),
+  },
   routing: {
     /**
      * No description
@@ -2466,6 +2946,129 @@ export const api = {
         params: query,
       }),
   },
+  mitemOnboard: {
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name Sumbit
+     * @summary 工单投料-提交
+     * @request POST:/mitemOnboard/save
+     * @secure
+     */
+    sumbit: (data: MitemOnboardSubmitDTO) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/save`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name SaveUnbind
+     * @summary 工单投料-卸料
+     * @request POST:/mitemOnboard/saveUnbind
+     * @secure
+     */
+    saveUnbind: (data: MitemOnboardUnbindDTO) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/saveUnbind`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name SaveTransferMo
+     * @summary 工单投料-转料
+     * @request POST:/mitemOnboard/saveTransferMo
+     * @secure
+     */
+    saveTransferMo: (data: MitemOnboardUnbindDTO) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/saveTransferMo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name Scanlabel
+     * @summary 工单投料-标签扫描
+     * @request GET:/mitemOnboard/scanlabel
+     * @secure
+     */
+    scanlabel: (query: {
+      /** @default "" */
+      labelNo?: string;
+      processId: string;
+      workcenterId: string;
+      scheId: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/scanlabel`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name MoSchelist
+     * @summary 查询近一周内的有效的排产工单
+     * @request GET:/mitemOnboard/moSchelist
+     * @secure
+     */
+    moSchelist: (query?: {
+      /** @default "" */
+      scheCode?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/moSchelist`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name List
+     * @summary 根据工站id和工作中心id获取投料信息
+     * @request GET:/mitemOnboard/list
+     * @secure
+     */
+    list: (query?: {
+      workcenterId?: string;
+      workStationId?: string;
+      /** @default "" */
+      scheId?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name GetProccesByWorkStationId
+     * @summary 工单投料-根据工站获取工序信息
+     * @request GET:/mitemOnboard/getProccesByWorkStationId
+     * @secure
+     */
+    getProccesByWorkStationId: (query?: {
+      /** @default "" */
+      workStationId?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/control/mitemOnboard/getProccesByWorkStationId`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
   barcodeWip: {
     /**
      * No description
@@ -2480,6 +3083,111 @@ export const api = {
       http.request<ResultBarcodeWipVO['data']>(`/api/control/barcodeWip/scanBarcodeWip`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  barcodeRuleInMitem: {
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name RemoveMitemBatch
+     * @summary 批量删除关联物料
+     * @request POST:/barcodeRuleInMitem/removeMitemBatch
+     * @secure
+     */
+    removeMitemBatch: (data: BarcodeRuleInMitemSearch) =>
+      http.request<ResultObject['data']>(`/api/control/barcodeRuleInMitem/removeMitemBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name ModifyBarcodeRule
+     * @summary 编辑条码规则
+     * @request POST:/barcodeRuleInMitem/modifyBarcodeRule
+     * @secure
+     */
+    modifyBarcodeRule: (data: BarcodeRule) =>
+      http.request<ResultObject['data']>(`/api/control/barcodeRuleInMitem/modifyBarcodeRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name GetMitemList
+     * @summary 查询物料信息
+     * @request POST:/barcodeRuleInMitem/getMitemList
+     * @secure
+     */
+    getMitemList: (data: BarcodeRuleInMitemSearch) =>
+      http.request<ResultPagingDataBarcodeRuleInMitemVO['data']>(`/api/control/barcodeRuleInMitem/getMitemList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name GetBarcodeRuleList
+     * @summary 查询条码类型
+     * @request POST:/barcodeRuleInMitem/getBarcodeRuleList
+     * @secure
+     */
+    getBarcodeRuleList: (data: BarcodeRuleInMitemSearch) =>
+      http.request<ResultPagingDataBarcodeRuleInMitemVO['data']>(`/api/control/barcodeRuleInMitem/getBarcodeRuleList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name AddBarcodeRule
+     * @summary 新增条码规则
+     * @request POST:/barcodeRuleInMitem/addBarcodeRule
+     * @secure
+     */
+    addBarcodeRule: (data: BarcodeRule) =>
+      http.request<ResultObject['data']>(`/api/control/barcodeRuleInMitem/addBarcodeRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name AddBarcodeRuleMitem
+     * @summary 新增关联物料
+     * @request POST:/barcodeRuleInMitem/addBarcodeRuleMitem
+     * @secure
+     */
+    addBarcodeRuleMitem: (data: BarcodeRuleInMitem) =>
+      http.request<ResultObject['data']>(`/api/control/barcodeRuleInMitem/addBarcodeRuleMitem`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name GetRuleSegment
+     * @summary 新增规则界面：条码规则片段
+     * @request GET:/barcodeRuleInMitem/getRuleSegment
+     * @secure
+     */
+    getRuleSegment: () =>
+      http.request<ResultPagingDataBarcodeSegmentDTO['data']>(`/api/control/barcodeRuleInMitem/getRuleSegment`, {
+        method: 'GET',
       }),
   },
   routingRevision: {

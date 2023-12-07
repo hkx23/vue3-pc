@@ -104,12 +104,14 @@ const opts = computed(() => {
       comp: 't-input',
       event: 'input',
       defaultVal: '',
+      labelWidth: '140px',
     },
     methodCodeName: {
       label: '处理方法编码/名称:',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
+      labelWidth: '140px',
     },
   };
 });

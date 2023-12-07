@@ -25,6 +25,7 @@
   </div>
 </template>
 <script setup lang="tsx">
+import { isEmpty } from 'lodash';
 import type { PropType } from 'vue';
 import { computed } from 'vue';
 
@@ -49,7 +50,7 @@ const list = computed(() => {
 });
 
 const menuIcon = (item: ListItemType) => {
-  if (typeof item.icon === 'string') return <t-icon name={item.icon} />;
+  if (typeof item.icon === 'string' && !isEmpty(item.icon)) return <t-icon name={item.icon} />;
   const RenderIcon = item.icon;
   return RenderIcon;
 };

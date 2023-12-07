@@ -339,6 +339,19 @@ export type Warehouse = {
 } | null;
 
 /** 通用响应类 */
+export interface Result {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 通用响应类 */
 export interface ResultListWarehouseFeignDTO {
   /**
    * 响应代码
@@ -1888,14 +1901,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isRawChecked?: boolean;
+  isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isBatchName?: string;
   isRawName?: string;
-  isInProcessName?: string;
+  isRawChecked?: boolean;
   isProductName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isState?: boolean;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -2062,8 +2075,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2519,6 +2532,168 @@ export interface JSONObject {
   [key: string]: any;
 }
 
+export interface BarcodeVaildateRuleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 规则模糊查询关键词 */
+  ruleKeyword?: string;
+  mitemId?: string;
+  /** 条码验证分组 */
+  barcodeValidateGroup?: string;
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+  /** 状态 */
+  state?: number[];
+}
+
+/** 条码验证规则表 */
+export interface BarcodeValidateRule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 规则代码 */
+  ruleCode?: string;
+  /** 规则名称 */
+  ruleName?: string;
+  /**
+   * 优先级
+   * @format int32
+   */
+  pri?: number;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码验证分组 */
+  barcodeValidateGroup?: string;
+  /** 条码规则 */
+  barcodeExpression?: string;
+  /**
+   * 最小
+   * @format int32
+   */
+  minLength?: number;
+  /**
+   * 最大
+   * @format int32
+   */
+  maxLength?: number;
+  /** 备注 */
+  memo?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+}
+
+/** 条码规则显示 */
+export interface BarcodeVaildateRuleVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 规则代码 */
+  ruleCode?: string;
+  /** 规则名称 */
+  ruleName?: string;
+  /**
+   * 优先级
+   * @format int32
+   */
+  pri?: number;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码验证分组 */
+  barcodeValidateGroup?: string;
+  /** 条码规则 */
+  barcodeExpression?: string;
+  /**
+   * 最小
+   * @format int32
+   */
+  minLength?: number;
+  /**
+   * 最大
+   * @format int32
+   */
+  maxLength?: number;
+  /** 备注 */
+  memo?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 条码类型名称 */
+  barcodeTypeName?: string;
+  /** 条码验证分组名称 */
+  barcodeValidateGroupName?: string;
+  /** 物料分类名称 */
+  categoryName?: string;
+  /** 物料名称 */
+  mitemName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeVaildateRuleVO = {
+  list?: BarcodeVaildateRuleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeVaildateRuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeVaildateRuleVO;
+}
+
 /** 出勤模式 */
 export type AttendanceMode = {
   id?: string;
@@ -2832,6 +3007,19 @@ export interface ResultListOrgTreeVO {
   message?: string;
   /** 响应数据 */
   data?: OrgTreeVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Org[] | null;
 }
 
 /** 响应数据 */
@@ -3346,6 +3534,21 @@ export const api = {
      * No description
      *
      * @tags 组织架构表
+     * @name GetlistByLevelCode
+     * @summary 根据levelCode获取组织信息
+     * @request GET:/org/getlistByLevelCode
+     * @secure
+     */
+    getlistByLevelCode: (query: { search: string; levelCode: string }) =>
+      http.request<ResultListOrg['data']>(`/api/main/org/getlistByLevelCode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
      * @name Delete
      * @summary 删除组织，包括子集
      * @request DELETE:/org/delete
@@ -3404,6 +3607,20 @@ export const api = {
      * No description
      *
      * @tags 仓库
+     * @name StateChange
+     * @summary 修改状态
+     * @request GET:/warehouse/items/{id}
+     * @secure
+     */
+    stateChange: (id: string) =>
+      http.request<ResultObject['data']>(`/api/main/warehouse/items/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
      * @name GetItemById
      * @request POST:/warehouse/items/{id}
      * @secure
@@ -3411,6 +3628,36 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWarehouse['data']>(`/api/main/warehouse/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name ModifyWareHouse
+     * @summary 修改仓库
+     * @request POST:/warehouse/items/modify
+     * @secure
+     */
+    modifyWareHouse: (data: Warehouse) =>
+      http.request<Result['data']>(`/api/main/warehouse/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name AddWareHouse
+     * @summary 新增仓库
+     * @request POST:/warehouse/items/add
+     * @secure
+     */
+    addWareHouse: (data: Warehouse) =>
+      http.request<Result['data']>(`/api/main/warehouse/items/add`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
@@ -4857,6 +5104,20 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 设备
+     * @name GetList
+     * @request POST:/equipment/getList
+     * @secure
+     */
+    getList: (data: CommonSearch) =>
+      http.request<ResultPagingDataEquipment['data']>(`/api/main/equipment/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   enterprise: {
     /**
@@ -5138,6 +5399,70 @@ export const api = {
      */
     updateItemByCode: (data: Customer) =>
       http.request<ResultObject['data']>(`/api/main/customer/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  barcodeValidateRule: {
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name RemoveBarcodeVaildateRule
+     * @summary 删除条码验证规则(逻辑删除)
+     * @request POST:/barcodeValidateRule/removeBarcodeVaildateRule
+     * @secure
+     */
+    removeBarcodeVaildateRule: (data: BarcodeVaildateRuleSearch) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeValidateRule/removeBarcodeVaildateRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name ModifyBarcodeVaildateRule
+     * @summary 编辑条码验证规则
+     * @request POST:/barcodeValidateRule/modifyBarcodeVaildateRule
+     * @secure
+     */
+    modifyBarcodeVaildateRule: (data: BarcodeValidateRule) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeValidateRule/modifyBarcodeVaildateRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name GetBarcodeVaildateRuleList
+     * @summary 查询条码验证规则
+     * @request POST:/barcodeValidateRule/getBarcodeVaildateRuleList
+     * @secure
+     */
+    getBarcodeVaildateRuleList: (data: BarcodeVaildateRuleSearch) =>
+      http.request<ResultPagingDataBarcodeVaildateRuleVO['data']>(
+        `/api/main/barcodeValidateRule/getBarcodeVaildateRuleList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name AddBarcodeVaildateRule
+     * @summary 新增条码验证规则
+     * @request POST:/barcodeValidateRule/addBarcodeVaildateRule
+     * @secure
+     */
+    addBarcodeVaildateRule: (data: BarcodeValidateRule) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeValidateRule/addBarcodeVaildateRule`, {
         method: 'POST',
         body: data as any,
       }),
