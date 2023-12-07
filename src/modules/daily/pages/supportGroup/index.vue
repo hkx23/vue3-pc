@@ -129,8 +129,12 @@
               <t-button size="small" variant="text" @click="addPerson(row)">
                 <icon name="add" class="black-icon" />
               </t-button>
-            </template> </cmp-table
-        ></t-col>
+            </template>
+            <template #button>
+              <h3>选择用户</h3>
+            </template>
+          </cmp-table></t-col
+        >
         <!-- # 删除 表格数据 -->
         <t-col :span="5">
           <t-row>
@@ -150,8 +154,12 @@
               <t-button size="small" variant="text" @click="delPerson(row)">
                 <icon name="remove" class="black-icon" />
               </t-button>
-            </template> </cmp-table
-        ></t-col>
+            </template>
+            <template #button>
+              <h3>已选用户</h3>
+            </template>
+          </cmp-table></t-col
+        >
       </t-row>
       <t-row style="margin-top: 20px">
         <t-col :span="11" class="align-right">
@@ -729,19 +737,6 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
   padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
   background-color: var(--td-bg-color-container);
   border-radius: var(--td-radius-medium);
-}
-
-.module-edit {
-  margin: 0 10px;
-}
-
-.control-box {
-  text-align: right;
-  margin-top: 20px;
-}
-
-.row-class {
-  margin-bottom: 10px;
 }
 
 .align-right {
