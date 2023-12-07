@@ -32,17 +32,15 @@
               <div>{{ item.wcType }}{{ item.code !== 0 ? `(${item.code})` : '' }}</div>
             </template>
           </t-tab-panel>
+          <!-- <template #wcTypes="{ row }">
+            {{ row }}
+          </template> -->
         </t-tabs>
       </t-space>
-      <t-row justify="space-between">
-        <div class="work-center-box">
-          <t-col>
-            <t-button variant="base" @click="onHandelAdded">新增</t-button>
-            <t-divider layout="vertical" />
-            <t-button theme="default" variant="base">导出...</t-button>
-          </t-col>
-          <t-col>
-            <div class="select-work">
+      <t-row>
+        <t-col :span="12">
+          <cmp-query :opts="opts" @submit="onInput"></cmp-query>
+          <!-- <div class="select-work">
               <t-select
                 v-model="select.state"
                 label="状态:"
@@ -54,8 +52,6 @@
               >
               </t-select>
               <span style="margin: 0 20px">
-                <!-- <bcmp-select-business v-model="workState.workcenter" type="workcenter"></bcmp-select-business
-              > -->
                 <t-select-input
                   v-model="selectValue"
                   :options="selectValue"
@@ -82,9 +78,13 @@
                 type="workshop"
                 @selection-change="onSelectShop"
               ></bcmp-select-business>
-            </div>
-          </t-col>
-        </div>
+            </div> -->
+        </t-col>
+        <t-col :span="2" :push="10" style="margin: 10px 0">
+          <t-button theme="default" variant="base" @click="onHandelAdded">新增</t-button>
+          <!-- <t-divider layout="vertical" /> -->
+          <t-button theme="default" variant="base">导出</t-button>
+        </t-col>
       </t-row>
       <!-- 表格 -->
       <t-enhanced-table
@@ -137,33 +137,24 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { SearchIcon } from 'tdesign-icons-vue-next';
-import { Icon, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, reactive, ref, watch } from 'vue';
+// import { SearchIcon } from 'tdesign-icons-vue-next';
+import { Icon, MessagePlugin } from 'tdesign-vue-next';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { api } from '@/api/control';
+import CmpQuery from '@/components/cmp-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
-import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import detailed from './detailed.vue';
 
-const onPageSizeChange = (size) => {
+const onPageSizeChange = () => {
   page.value.current = 1;
-  console.log('page-size:', size);
   onFetchData();
 };
 const loading = ref(false);
 const onCurrentChange = () => {
-  console.log(1);
-
   onFetchData();
 };
-// 下拉
-const options2 = [
-  { label: '全部', value: -1 },
-  { label: '启用', value: 1 },
-  { label: '禁用', value: 0 },
-];
 const select = ref({
   state: -1,
   stateVisible: [],
@@ -219,79 +210,85 @@ const arr = ref(); // 类型存储数组
 const newArr = ref('');
 const id = ref(0);
 const detailedShow = ref(false); // 控制子工作中心显示隐藏
-// 初始数据
-const columns: PrimaryTableCol<TableRowData>[] = [
-  // {
-  //   colKey: 'select',
-  //   type: 'multiple',
-  // },
-  {
-    colKey: 'wcCode',
-    title: '工作中心编号',
-    align: 'left',
-    width: '200px',
-  },
-  {
-    colKey: 'wcName',
-    title: '名称',
-    align: 'center',
-    width: '150px',
-  },
-  {
-    colKey: 'wcType',
-    title: '类型',
-    align: 'center',
-    width: '150px',
-  },
-  {
-    colKey: 'workshopName',
-    title: '所属车间',
-    align: 'center',
-    width: '150px',
-  },
-  {
-    colKey: 'wcLocation',
-    title: '地点',
-    align: 'center',
-    width: '150px',
-  },
-  {
-    colKey: 'parentWcCode',
-    title: '父工作中心',
-    align: 'center',
-    width: '150px',
-  },
-  {
-    colKey: 'wcOwner',
-    title: '负责人',
-    align: 'center',
-    width: '150px',
-  },
-  {
-    colKey: 'wcType',
-    title: '关联设备',
-    align: 'center',
-    width: '150px',
-  },
-  {
-    colKey: 'wcSeq',
-    title: '顺序号',
-    align: 'center',
-    width: '150px',
-  },
-  {
-    colKey: 'state',
-    title: '状态',
-    align: 'center',
-  },
-  {
-    colKey: 'op',
-    title: '操作',
-    width: '150px',
-    align: 'left',
-    fixed: 'right',
-  },
-];
+
+const showWcType = ref(false); // 控制关联设备是否显示隐藏
+const columns: any = computed(() => {
+  const wcObjectCode = showWcType.value
+    ? [
+        {
+          colKey: 'wcObjectCode',
+          title: '关联设备',
+          align: 'center',
+          width: '150px',
+        },
+      ]
+    : [];
+  const cols = [
+    {
+      colKey: 'wcCode',
+      title: '工作中心编号',
+      align: 'left',
+      width: '200px',
+    },
+    {
+      colKey: 'wcName',
+      title: '名称',
+      align: 'center',
+      width: '150px',
+    },
+    {
+      colKey: 'wcType',
+      title: '类型',
+      align: 'center',
+      width: '150px',
+    },
+    {
+      colKey: 'workshopName',
+      title: '所属车间',
+      align: 'center',
+      width: '150px',
+    },
+    {
+      colKey: 'wcLocation',
+      title: '地点',
+      align: 'center',
+      width: '150px',
+    },
+    {
+      colKey: 'parentWcCode',
+      title: '父工作中心',
+      align: 'center',
+      width: '150px',
+    },
+    {
+      colKey: 'wcOwner',
+      title: '负责人',
+      align: 'center',
+      width: '150px',
+    },
+    ...wcObjectCode,
+    {
+      colKey: 'wcSeq',
+      title: '顺序号',
+      align: 'center',
+      width: '150px',
+    },
+    {
+      colKey: 'state',
+      title: '状态',
+      align: 'center',
+    },
+    {
+      colKey: 'op',
+      title: '操作',
+      width: '150px',
+      align: 'center',
+      fixed: 'right',
+    },
+  ];
+  return cols;
+});
+
 const data = ref([]); // 存储数据给到新增数据
 const { pageUI } = usePage();
 // const { loading, setLoading } = useLoading();
@@ -320,54 +317,58 @@ const workState = ref({
 });
 
 // input-select事件
-const popupVisible = ref(false);
+// const popupVisible = ref(false);
 const selectValue = ref();
-let OPTIONS = [];
-const options1 = ref(OPTIONS);
-const selectValue1 = ref('');
+// let OPTIONS = [];
+// const options1 = ref(OPTIONS);
+// const selectValue1 = ref('');
 // 进入的时候
 onMounted(() => {
   onFetchData();
 });
 
-// 下拉事件
-const onOptionClick = (value: any) => {
-  console.log('value', value);
-  selectValue.value = value;
-  onFetchData();
-};
+// // 下拉事件
+// const onOptionClick = (value: any) => {
+//   console.log('value', value);
+//   selectValue.value = value;
+//   onFetchData();
+// };
 
-const debounce = (func: { (): void; apply?: any }, delay: number) => {
-  let timeoutId: NodeJS.Timeout;
-  return (...args: any) => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      clearTimeout(timeoutId);
-      func.apply(this, args);
-    }, delay);
-  };
-};
+// const debounce = (func: { (): void; apply?: any }, delay: number) => {
+//   let timeoutId: NodeJS.Timeout;
+//   return (...args: any) => {
+//     if (timeoutId) {
+//       clearTimeout(timeoutId);
+//     }
+//     timeoutId = setTimeout(() => {
+//       clearTimeout(timeoutId);
+//       func.apply(this, args);
+//     }, delay);
+//   };
+// };
 // @ts-ignore
-const onInputChange = debounce((keyword: any) => {
-  options1.value.push(keyword);
-  selectValue.value = keyword;
-  if (options1.value.length > 10) {
-    options1.value.splice(1, 1);
-  }
-  onFetchData();
-}, 500);
-const onPopupVisibleChange = (val) => {
-  OPTIONS = val;
-  popupVisible.value = val;
-};
-// 下拉筛选
-const onHandelState = () => {
-  onFetchData();
-};
+// const onInputChange = debounce((keyword: any) => {
+//   options1.value.push(keyword);
+//   selectValue.value = keyword;
+//   if (options1.value.length > 10) {
+//     options1.value.splice(1, 1);
+//   }
+//   onFetchData();
+// }, 500);
+// const onPopupVisibleChange = (val) => {
+//   OPTIONS = val;
+//   popupVisible.value = val;
+// };
+// // 下拉筛选
+// const onHandelState = () => {
+//   onFetchData();
+// };
 // 点击的类型
+
+// #tab栏切换事件
 const onHandelArr = (value: any) => {
+  showWcType.value = value === 4;
+
   if (value === '') {
     arr.value = '';
   } else {
@@ -377,13 +378,87 @@ const onHandelArr = (value: any) => {
   pageUI.value.page = 1;
   onFetchData();
 };
-// 车间查询
-const onSelectShop = (value: any) => {
-  if (!value) {
-    return;
-  }
-  onFetchData();
+// // 查询
+// const onSelectShop = (value: any) => {
+//   if (!value) {
+//     return;
+//   }
+//   onFetchData();
+// };
+// #查询事件
+const opts = computed(() => {
+  return {
+    state: {
+      label: '状态',
+      comp: 't-select',
+      event: 'input',
+      defaultVal: '01',
+      labelWidth: '50',
+      bind: {
+        options: queryData.value.state,
+      },
+    },
+    soltDemo: {
+      label: '工作中心或编号',
+      labelWidth: '120',
+      comp: 't-input',
+      event: 'input',
+      defaultVal: '',
+    },
+    workshop: {
+      label: '车间',
+      comp: 'bcmp-select-business',
+      labelWidth: '50',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'workshop',
+        showTitle: false,
+      },
+    },
+  };
+});
+
+const queryData = ref({
+  state: [
+    {
+      label: '全部',
+      value: '01',
+    },
+    {
+      label: '启用',
+      value: '1',
+    },
+    {
+      label: '禁用',
+      value: '0',
+    },
+  ],
+  soltDemo: '',
+});
+
+// #搜索触发事件
+const onInput = async (data: any) => {
+  pageUI.value.page = 1;
+  const resultMap = {
+    '01': [1, 0],
+    '1': [1],
+    '0': [0],
+  };
+  const result = resultMap[data.state] || [];
+  const res = await api.workcenter.getlist({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    category: arr.value,
+    workshopID: data.workshop,
+    workcenterword: data.soltDemo,
+    state: result,
+  });
+  workData.value = res.list; // table数据
+  console.log('🚀 ~ file: index.vue:451 ~ onInput ~ workData.value:', workData.value);
+  data.value = res.list; // 新增页面
 };
+
 // 首次进入刷新
 const onFetchData = async () => {
   const STATE = select.value.state;
