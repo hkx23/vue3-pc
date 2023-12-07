@@ -1,5 +1,6 @@
 <template>
   <t-dialog v-model:visible="visible" mode="full-screen" :footer="false" @close="close">
+    <t-loading :loading="loading" text="加载中..." fullscreen />
     <template #header>
       <t-space align="center" style="width: 100%">
         <span>{{ title }}</span>
@@ -9,17 +10,25 @@
     <!-- 功能类型与筛选框 -->
     <t-row>
       <t-col flex="auto">
-        <t-radio-group variant="primary-filled" default-value="1">
-          <t-radio-button value="1">全部</t-radio-button>
-          <t-radio-button value="2">PC端</t-radio-button>
+        <t-radio-group v-model="selectClientType" variant="primary-filled" @change="changeClientType">
+          <t-radio-button value="0">{{ t('business.main.all') }}</t-radio-button>
+          <t-radio-button v-for="clientType in clientTypeOption" :key="clientType.value" :value="clientType.value"
+            >{{ clientType.label }}
+          </t-radio-button>
+          <!-- <t-radio-button value="7">PC端</t-radio-button>
           <t-radio-button value="3">移动端</t-radio-button>
           <t-radio-button value="4">电视端</t-radio-button>
           <t-radio-button value="5">手表端</t-radio-button>
-          <t-radio-button value="6">微信端</t-radio-button>
+          <t-radio-button value="6">微信端</t-radio-button> -->
         </t-radio-group>
       </t-col>
       <t-col flex="250px">
-        <t-input v-model="searchKey" placeholder="请输入关键词搜索" clearable>
+        <t-input
+          v-model="filterPermissionName"
+          :placeholder="t('common.placeholder.plsenterkeyword')"
+          clearable
+          @change="searchChange"
+        >
           <template #suffixIcon>
             <t-icon name="search" :style="{ cursor: 'pointer' }" />
           </template>
@@ -29,8 +38,16 @@
 
     <t-row>
       <t-col flex="230px" style="margin-top: 16px">
-        <t-menu v-model:expanded="expanded" class="menu-area" default-value="2-1" height="550px" :collapsed="collapsed">
-          <t-submenu v-for="item in permissionData" :key="item.id" :value="item.id" :title="item.moduleName">
+        <t-menu
+          v-model="selectedMenu"
+          v-model:expanded="expanded"
+          class="menu-area"
+          height="550px"
+          :collapsed="collapsed"
+          @change="menuChange"
+        >
+          <t-menu-item value="0" :title="t('common.button.all')"> {{ t('business.main.all') }} </t-menu-item>
+          <t-submenu v-for="item in originPermissionData" :key="item.id" :value="item.id" :title="item.moduleName">
             <!-- <template #icon>
               <t-icon name="control-platform" />
             </template> -->
@@ -51,16 +68,11 @@
       </t-col>
       <t-col flex="1" class="module-area" style="padding: 8px">
         <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()">全选</t-checkbox>
-        <t-collapse
-          :borderless="true"
-          :default-value="['ojbk2']"
-          expand-icon-placement="right"
-          :expand-on-row-click="false"
-        >
+        <t-collapse :borderless="true" :default-value="['']" expand-icon-placement="right" :expand-on-row-click="false">
           <!-- 如果没有按钮权限，图标不显示 -->
           <t-collapse-panel v-for="item in moduleData" :key="item.id" :value="item.id" :expand-icon="false">
             <template #header>
-              <t-checkbox v-model="item.enabled" lazy-load @change="moduleCheckChange">{{
+              <t-checkbox v-model="item.enabled" :value="item.permissionId" @change="moduleCheckChange">{{
                 item.moduleName
               }}</t-checkbox></template
             >
@@ -199,15 +211,17 @@
 // #region import
 
 // import { MessagePlugin } from 'tdesign-vue-next';
+import _ from 'lodash';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, ref, watch } from 'vue';
 
-import { api } from '@/api/main';
+import { api, RoleAuthDTO } from '@/api/main';
 
-// import { useLang } from './lang';
+import { useLang } from './lang';
 // #endregion
 
 // 使用多语言
-// const { t } = useLang();
+const { t } = useLang();
 const props = defineProps({
   id: {
     type: String,
@@ -220,15 +234,17 @@ const props = defineProps({
     default: false,
   },
 });
-const searchKey = ref('');
+const filterPermissionName = ref('');
 const collapsed = ref(false);
-const expanded = ref(['2', '3']);
+const expanded = ref([]);
 const isAllCheck = ref(false);
 const isAllIndeterminate = ref(false);
+const originPermissionData = ref([]);
 const permissionData = ref([]);
-const checkAll = () => {
-  console.log(isAllCheck.value);
-};
+const selectedMenu = ref('');
+const selectClientType = ref('0');
+const loading = ref(false);
+
 const moduleData = ref([]);
 const emit = defineEmits(['update:modelValue', 'submit']);
 const visible = computed({
@@ -242,28 +258,68 @@ const visible = computed({
 // const changeCollapsed = () => {
 //   collapsed.value = !collapsed.value;
 // };
-const moduleCheckChange = (ckecked: boolean, context: { e: Event }) => {
-  console.log(ckecked);
-  console.log(context);
+const moduleCheckChange = (checkResult: boolean, e: any) => {
+  if (checkResult) {
+    onAddPermission([e.e.target.value]);
+  } else {
+    onDeletrPermission([e.e.target.value]);
+  }
+};
+const menuChange = (active) => {
+  selectedMenu.value = active;
+  treeMenuChange();
+};
+const searchChange = (value: string) => {
+  filterPermissionName.value = value;
+  treeMenuChange();
+};
+const onAddPermission = async (rows: string[]) => {
+  const params: RoleAuthDTO = {
+    roleId: props.id,
+    permissionIds: rows,
+  };
+  await api.roleAuthorization.add(params);
+  updateOriginPermissionData(originPermissionData.value, rows, true);
+  updateOriginPermissionData(permissionData.value, rows, true);
+  MessagePlugin.success(t('common.message.addSuccess'));
+};
+const onDeletrPermission = async (rows: string[]) => {
+  const params: RoleAuthDTO = {
+    roleId: props.id,
+    permissionIds: rows,
+  };
+  await api.roleAuthorization.delete(params);
+
+  updateOriginPermissionData(originPermissionData.value, rows, false);
+  updateOriginPermissionData(permissionData.value, rows, false);
+  MessagePlugin.success(t('common.message.deleteSuccess'));
+};
+
+const changeClientType = () => {
+  treeMenuChange();
 };
 const close = () => {
   console.log('关闭窗口');
 };
+const clientTypeOption = ref([]);
+api.param.getListByGroupCode({ parmGroupCode: 'S_CLIENT_TYPE' }).then((data) => {
+  clientTypeOption.value = data;
+});
 // 加载角色数据表格
 const fetchPermissionData = async () => {
+  loading.value = true;
   // setLoading(true);
   try {
     const data = (await api.permission.getTreePermissionsByRoleId({ roleId: Number(props.id) })) as any;
-    permissionData.value = data;
-    const result = [];
-    for (const rootNode of permissionData.value) {
-      getThirdLevelNodes(rootNode, 1, result);
-    }
+    originPermissionData.value = data;
+    expanded.value = originPermissionData.value.map((item) => item.id);
 
-    moduleData.value = result;
+    treeMenuChange();
+    // moduleData.value = result;
   } catch (e) {
     console.log(e);
   } finally {
+    loading.value = false;
     // setLoading(false);
   }
 };
@@ -281,19 +337,104 @@ const getThirdLevelNodes = (node, level, result) => {
     }
   }
 };
+const checkAll = () => {
+  moduleData.value.forEach((item) => {
+    item.enabled = isAllCheck.value;
+  });
+  if (isAllCheck.value) {
+    const addPermissionIds = moduleData.value.filter((item) => item.enabled).map((item) => item.permissionId);
+    if (addPermissionIds.length > 0) {
+      onAddPermission(addPermissionIds);
+    }
+    // 根据addPermissionIds去筛选originPermissionData的所有数据，包括所有children的数据，符合item.permissionId in addPermissionIds的数据项，设置enabled为true
+    // originPermissionData可能为无限级
+    updateOriginPermissionData(originPermissionData.value, addPermissionIds, true);
+    updateOriginPermissionData(permissionData.value, addPermissionIds, true);
+  } else {
+    const deletePermissionIds = moduleData.value.filter((item) => !item.enabled).map((item) => item.permissionId);
+    if (deletePermissionIds.length > 0) {
+      onDeletrPermission(deletePermissionIds);
+    }
+    // 根据addPermissionIds去筛选originPermissionData的所有数据，包括所有children的数据，符合item.permissionId in addPermissionIds的数据项，设置enabled为false
+    // originPermissionData可能为无限级
+    updateOriginPermissionData(originPermissionData.value, deletePermissionIds, false);
+    updateOriginPermissionData(permissionData.value, deletePermissionIds, false);
+  }
+};
+// 更新originPermissionData的方法
+const updateOriginPermissionData = (data, permissionIds, enabled) => {
+  data.forEach((item) => {
+    if (permissionIds.indexOf(item.permissionId) > -1) {
+      item.enabled = enabled;
+    }
+    if (item.children && item.children.length > 0) {
+      updateOriginPermissionData(item.children, permissionIds, enabled);
+    }
+  });
+};
+const fnFilter = (node) => {
+  let result = true;
+  const filterName = _.toString(filterPermissionName.value).trim().toLowerCase();
+
+  if (filterName) {
+    result = result && _.toString(node.permissionName).toLowerCase().indexOf(filterName) > -1;
+  }
+  if (selectClientType.value !== '0') {
+    const selectClientTypeNum = Number(selectClientType.value);
+    const nodeClientType = Number(node.clientType);
+    // eslint-disable-next-line no-bitwise
+    const nodeClientTypeResult = (nodeClientType & selectClientTypeNum) !== 0;
+    result = result && nodeClientTypeResult;
+  }
+  if (selectedMenu.value !== '0') {
+    result = result && node.parentModuleId === selectedMenu.value;
+  }
+  // if (self.isRoleOwn) {
+  //   result =
+  //     result &&
+  //     (node.IS_ENABLED ||
+  //       (node.IS_FROM_ROLE == "Y" && node.IS_FORBIDDEN_ROLE == "N"));
+  // }
+  return result;
+};
+const treeFilter = (tree, func) => {
+  // 使用map复制一下节点，避免修改到原树
+  return tree
+    .map((node) => ({ ...node }))
+    .filter((node) => {
+      node.children = node.children && treeFilter(node.children, func);
+      return func(node) || (node.children && node.children.length);
+    });
+};
+const treeMenuChange = () => {
+  permissionData.value = treeFilter(originPermissionData.value, fnFilter);
+};
 
 watch(visible, (value: boolean) => {
   if (value && props.id) {
     // @ts-ignore
     // 打开时候加载数据
+    selectedMenu.value = '0';
     fetchPermissionData();
   }
 });
-// watch(permissionData, (value: any) => {
-//   const result = [];
-//   getThirdLevelNodes(value, 1, result);
-//   moduleData.value = result;
-// });
+watch(
+  permissionData,
+  (value: any) => {
+    const result = [];
+    for (const rootNode of value) {
+      getThirdLevelNodes(rootNode, 1, result);
+    }
+    moduleData.value = result;
+    // moduleData筛选出enabled为true的节点
+    // 如果全部为true,则isAllCheck设置为true,否则设置成false
+    // 如果有部分为true,则isAllIndeterminate设置为true
+    const enabled = moduleData.value.filter((item) => item.enabled);
+    isAllCheck.value = enabled.length === moduleData.value.length;
+    isAllIndeterminate.value = enabled.length > 0 && enabled.length < moduleData.value.length;
+  },
+  { deep: true },
+);
 </script>
 
 <style lang="less" scoped>
