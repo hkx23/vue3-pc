@@ -34,12 +34,15 @@
                   </t-card>
                 </div>
               </t-row>
-              <t-row>
-                <t-col flex="65%">
-                  <div class="groupbox">
+              <t-row :gutter="16">
+                <t-col :span="8">
+                  <div class="groupbox" style="min-height: calc(71vh - 50px); max-height: calc(71vh - 50px)">
                     <span class="grouptitle">缺陷信息</span>
-                    <t-card :bordered="false" class="t-table__content">
-                      <t-space direction="vertical">
+                    <t-card :bordered="false">
+                      <t-space
+                        direction="vertical"
+                        style="overflow-y: auto; min-height: calc(61vh - 50px); max-height: calc(61vh - 50px)"
+                      >
                         <t-space v-for="(item, index) in defectCodeList" :key="index">
                           <t-button
                             theme="default"
@@ -62,9 +65,8 @@
                     </t-card>
                   </div>
                 </t-col>
-                <t-col flex="10px" />
-                <t-col flex="34%">
-                  <div class="groupbox">
+                <t-col :span="4">
+                  <div class="groupbox" style="min-height: calc(71vh - 50px); max-height: calc(71vh - 50px)">
                     <span class="grouptitle">采集详情</span>
                     <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList">
                       <template #serialNumber="{ row }">
@@ -99,9 +101,9 @@
           </t-content>
         </t-layout>
         <t-aside style="width: 30%">
-          <div class="groupbox" style="height: calc(98vh - 40px)">
+          <div class="groupbox" style="min-height: calc(100vh - 50px); max-height: calc(100vh - 50px)">
             <span class="grouptitle">消息组件</span>
-            <t-list style="height: 96%" :scroll="{ type: 'virtual' }">
+            <t-list style="height: 100%" :scroll="{ type: 'virtual' }">
               <t-list-item v-for="(item, index) in messageList" :key="index">
                 <t-list-item-meta style="align-items: center">
                   <template #description>
@@ -136,10 +138,10 @@ const scanInfoList = ref<scanInfoModel[]>([]);
 
 // 扫描信息
 const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '产品条码', width: 80, colKey: 'serialNumber' },
-  { title: '数量', width: '50', colKey: 'qty' },
-  { title: '状态', width: 50, colKey: 'status' },
-  { title: '缺陷信息', width: 120, colKey: 'errorinfo' },
+  { title: '产品条码', width: 'auto', colKey: 'serialNumber' },
+  { title: '数量', width: 'auto', colKey: 'qty' },
+  { title: '状态', width: 'auto', colKey: 'status' },
+  { title: '缺陷信息', width: 'auto', colKey: 'errorinfo' },
 ];
 
 const mainform = ref({
@@ -303,7 +305,7 @@ const themes = {
   primary: 'primary',
   warning: 'warning',
   danger: 'danger',
-};
+} as any;
 
 const getThemeButton = (value: string) => {
   return themes[value] || themes.default;
@@ -416,7 +418,6 @@ onMounted(() => {
   width: 100%;
   border: 1px solid var(--td-component-border);
   //height: 100%;
-  min-height: calc(70vh - 40px);
 
   .grouptitle {
     display: block;
@@ -439,10 +440,8 @@ onMounted(() => {
 /deep/ .t-list-item__meta-description {
   width: 100%;
 }
-// /deep/ .t-table__content {
-//   height: 100%;
-//   .t-table--layout-fixed {
-//     height: 100%;
-//   }
-// }
+
+/deep/.t-table--layout-fixed {
+  border-width: 0;
+}
 </style>
