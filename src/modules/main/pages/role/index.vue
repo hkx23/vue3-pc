@@ -54,6 +54,7 @@
       <user-form ref="userFormRef" :role-id="formUserRoleId" />
     </t-dialog>
     <!-- 权限分配弹出窗 -->
+    <dialog-permission :id="selectRoleId" v-model="formPermissionVisible" title="角色/权限配置"></dialog-permission>
   </div>
 </template>
 
@@ -66,12 +67,14 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import { FormRef } from './constants';
+import dialogPermission from './dialogPermission.vue';
 import RoleForm from './form.vue';
 import { useLang } from './lang';
 import userForm from './userForm.vue';
 
 const formVisible = ref(false);
 const formUserVisible = ref(false);
+const formPermissionVisible = ref(false);
 const formAdd = ref(true);
 const formRef = ref<FormRef>(null);
 const userFormRef = ref<FormRef>(null);
@@ -83,6 +86,8 @@ const { loading, setLoading } = useLoading();
 const dataTotal = ref(0);
 // 表格数据
 const tableData = ref([]);
+// 选中行ID,点击权限按钮时赋值
+const selectRoleId = ref('');
 // 表格列配置
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
@@ -195,6 +200,8 @@ const onRowPerson = (row: any) => {
   console.log('人员分配', row);
 };
 const onRowPermission = (row: any) => {
+  selectRoleId.value = row.id;
+  formPermissionVisible.value = true;
   console.log('权限分配', row);
 };
 const onRowDelete = async (row: any) => {
