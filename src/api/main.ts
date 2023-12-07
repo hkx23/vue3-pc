@@ -1900,15 +1900,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   stateName?: string;
   isState?: boolean;
-  isBatchName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
   isProductName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2903,6 +2903,8 @@ export type ModulePermissionDTO = {
   moduleDescriptionT?: string;
   /** 子级 */
   children?: ModulePermissionDTO[];
+  /** 是否可用 */
+  enabled?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -3990,7 +3992,7 @@ export const api = {
      * @secure
      */
     delete: (data: RoleAuthDTO) =>
-      http.request<void['data']>(`/api/main/roleAuthorization/batchDelete`, {
+      http.request<ResultObject['data']>(`/api/main/roleAuthorization/batchDelete`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4005,7 +4007,7 @@ export const api = {
      * @secure
      */
     add: (data: RoleAuthDTO) =>
-      http.request<void['data']>(`/api/main/roleAuthorization/batchAdd`, {
+      http.request<ResultObject['data']>(`/api/main/roleAuthorization/batchAdd`, {
         method: 'POST',
         body: data as any,
       }),

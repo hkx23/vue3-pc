@@ -50,7 +50,7 @@
         </t-menu>
       </t-col>
       <t-col flex="1" class="module-area" style="padding: 8px">
-        <t-checkbox>全选</t-checkbox>
+        <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()">全选</t-checkbox>
         <t-collapse
           :borderless="true"
           :default-value="['ojbk2']"
@@ -60,7 +60,9 @@
           <!-- 如果没有按钮权限，图标不显示 -->
           <t-collapse-panel v-for="item in moduleData" :key="item.id" :value="item.id" :expand-icon="false">
             <template #header>
-              <t-checkbox>{{ item.moduleName }}</t-checkbox></template
+              <t-checkbox v-model="item.enabled" lazy-load @change="moduleCheckChange">{{
+                item.moduleName
+              }}</t-checkbox></template
             >
           </t-collapse-panel>
           <!-- 如果有按钮权限，图标显示，可以展开显示按钮权限列表 -->
@@ -221,8 +223,12 @@ const props = defineProps({
 const searchKey = ref('');
 const collapsed = ref(false);
 const expanded = ref(['2', '3']);
-
+const isAllCheck = ref(false);
+const isAllIndeterminate = ref(false);
 const permissionData = ref([]);
+const checkAll = () => {
+  console.log(isAllCheck.value);
+};
 const moduleData = ref([]);
 const emit = defineEmits(['update:modelValue', 'submit']);
 const visible = computed({
@@ -236,6 +242,10 @@ const visible = computed({
 // const changeCollapsed = () => {
 //   collapsed.value = !collapsed.value;
 // };
+const moduleCheckChange = (ckecked: boolean, context: { e: Event }) => {
+  console.log(ckecked);
+  console.log(context);
+};
 const close = () => {
   console.log('关闭窗口');
 };
