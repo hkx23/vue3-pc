@@ -1900,15 +1900,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
+  stateName?: string;
   isInProcessName?: string;
-  isBatchName?: string;
+  isProductName?: string;
   isRawChecked?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -2075,8 +2075,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2335,6 +2335,11 @@ export interface DefectCodeSearch {
   id?: string;
   /** 多个ID */
   ids?: string[];
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
 }
 
 /** 缺陷代码 */
@@ -2417,8 +2422,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5326,7 +5331,7 @@ export const api = {
      * @request POST:/defectCode/addDefectCode
      * @secure
      */
-    addDefectCode: (data: DefectCode) =>
+    addDefectCode: (data: DefectCodeSearch) =>
       http.request<ResultObject['data']>(`/api/main/defectCode/addDefectCode`, {
         method: 'POST',
         body: data as any,

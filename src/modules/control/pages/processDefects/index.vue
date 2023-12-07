@@ -47,15 +47,28 @@
           @submit="onProcessSubmit"
         >
           <t-form-item :label="t('processDefects.defectCode')" name="defectCode">
-            <!-- <t-select v-model="formData.defectCode"></t-select> -->
-            <t-input v-model="formData.defectCode" :disabled="disabledShow.disabledDefectCode"></t-input>
+            <bcmp-select-business
+              v-model="formData.defectCode"
+              :value="formData.defectCode"
+              label=""
+              label-field="processCode"
+              type="process"
+              :disabled="disabledShow.disabledDefectCode"
+              @selection-change="defectCodeChange"
+            ></bcmp-select-business>
           </t-form-item>
           <t-form-item :label="t('processDefects.defectName')" name="defectName">
             <t-input v-model="formData.defectName" :disabled="disabledShow.disabledDefectName"></t-input>
           </t-form-item>
           <t-form-item label="缺陷代码" name="processCode">
-            <!-- <t-select v-model="formData.processCode"></t-select> -->
-            <t-input v-model="formData.processCode" :disabled="disabledShow.disabledProcessCode"></t-input>
+            <bcmp-select-business
+              v-model="formData.processCode"
+              label=""
+              label-field="defectCode"
+              type="defectiveCode"
+              :disabled="disabledShow.disabledProcessCode"
+              @selection-change="processCodeChange"
+            ></bcmp-select-business>
           </t-form-item>
           <t-form-item label="缺陷名称" name="defectName">
             <t-input v-model="formData.processName" :disabled="disabledShow.disabledProcessName"></t-input>
@@ -180,6 +193,14 @@ const column = ref([
   { title: '状态', colKey: 'state', align: 'center', width: 120 },
   { title: '操作', colKey: 'op', align: 'left', fixed: 'right', width: 120 },
 ]);
+// 工序编码Change事件
+const defectCodeChange = (data) => {
+  formData.value.defectName = data.processName;
+};
+// 缺陷代码Change事件
+const processCodeChange = (data) => {
+  formData.value.processName = data.defectName;
+};
 // table数据
 const processData = ref([]);
 // 进入首页发请求
@@ -219,7 +240,11 @@ const onDelete = async (row) => {
 const isEditAndAdd = ref(1); // 1为新增 0为编辑
 // 新增
 const onHandelAdd = () => {
-  formRef.value.reset({ type: 'initial' });
+  formRef.value.reset({ type: 'empty' });
+  disabledShow.value.disabledDefectCode = false; // 工序编号
+  disabledShow.value.disabledDefectName = true; // 工序名称
+  disabledShow.value.disabledProcessCode = false; // 缺陷代码
+  disabledShow.value.disabledProcessName = true; // 缺陷名称
   formData.value.displaySeq = null;
   isEditAndAdd.value = 1;
   addVisible.value = true;
@@ -232,16 +257,16 @@ const onEdit = (row) => {
   } else {
     formData.value.showState = false;
   }
-  // formData.value.state = row.state;
-  // formData.value.defectCode = row.defectCode;
-  // formData.value.defectName = row.defectName;
-  // formData.value.displaySeq = row.displaySeq;
-  // formData.value.processName = row.processName;
-  // formData.value.processCode = row.processCode;
-  // formData.value.id = row.id;
-  Object.assign(formData.value, row);
-  disabledShow.value.disabledDefectName = true; // 工序名称
+  formData.value.state = row.state;
+  formData.value.defectCode = row.defectCode;
+  formData.value.defectName = row.defectName;
+  formData.value.displaySeq = row.displaySeq;
+  formData.value.processName = row.processName;
+  formData.value.processCode = row.processCode;
+  formData.value.id = row.id;
+  // Object.assign(formData.value, row);
   disabledShow.value.disabledDefectCode = true; // 工序编号
+  disabledShow.value.disabledDefectName = true; // 工序名称
   disabledShow.value.disabledProcessCode = true; // 缺陷代码
   disabledShow.value.disabledProcessName = true; // 缺陷名称
   addVisible.value = true;
@@ -254,13 +279,14 @@ const onEditAndAdd = async () => {
     // 新增
     try {
       await api.processInDefectCode.addProcessInDefectCode({
-        ...formData.value,
-        processId: '1729034428150992898',
-        defectCodeId: '1',
+        processId: formData.value.defectCode,
+        defectCodeId: formData.value.processCode,
+        displaySeq: formData.value.displaySeq,
+        state: formData.value.state,
       });
-      addVisible.value = false;
-      MessagePlugin.success('新增成功');
       onFetchData();
+      MessagePlugin.success('新增成功');
+      addVisible.value = false;
     } catch (e) {
       console.log(e);
     }
@@ -315,28 +341,14 @@ const onProcessSubmit = (context: RootObject) => {
 
 // 校验
 const rules: FormRules<Data> = {
-  // defectCode: [
-  //   {
-  //     required: true,
-  //     type: 'error',
-  //     trigger: 'blur',
-  //   },
-  // ],
-  defectName: [
+  defectCode: [
     {
       required: true,
       type: 'error',
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   displaySeq: [
-    {
-      required: true,
-      type: 'error',
-      trigger: 'blur',
-    },
-  ],
-  processName: [
     {
       required: true,
       type: 'error',
@@ -347,7 +359,7 @@ const rules: FormRules<Data> = {
     {
       required: true,
       type: 'error',
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
 };
