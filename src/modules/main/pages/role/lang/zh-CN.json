@@ -14,6 +14,7 @@
     "modifyTime": "更新时间",
     "checkCode": "角色代码已存在",
     "checkName": "角色名称已存在",
-    "roleMember": "角色成员维护"
+    "authority": "权限",
+    "member": "成员"
   }
 }

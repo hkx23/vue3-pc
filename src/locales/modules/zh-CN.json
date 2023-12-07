@@ -44,7 +44,8 @@
     "placeholder": {
       "input": "请输入{0}",
       "select": "请选择{0}",
-      "search": "请输入{0}搜索"
+      "search": "请输入{0}搜索",
+      "plsenterkeyword": "请输入关键词搜索"
     },
     "validation": {
       "required": "这是必填字段",
@@ -96,7 +97,8 @@
       "modifier": "更新人",
       "code": "编码",
       "name": "名称",
-      "desc": "描述"
+      "desc": "描述",
+      "all": "全部",
     },
     "control": {},
     "warehouse": {}

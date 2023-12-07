@@ -11,7 +11,7 @@
     <t-row>
       <t-col flex="auto">
         <t-radio-group v-model="selectClientType" variant="primary-filled" @change="changeClientType">
-          <t-radio-button value="0">全部</t-radio-button>
+          <t-radio-button value="0">{{ t('business.main.all') }}</t-radio-button>
           <t-radio-button v-for="clientType in clientTypeOption" :key="clientType.value" :value="clientType.value"
             >{{ clientType.label }}
           </t-radio-button>
@@ -23,7 +23,12 @@
         </t-radio-group>
       </t-col>
       <t-col flex="250px">
-        <t-input v-model="filterPermissionName" placeholder="请输入关键词搜索" clearable @change="searchChange">
+        <t-input
+          v-model="filterPermissionName"
+          :placeholder="t('common.placeholder.plsenterkeyword')"
+          clearable
+          @change="searchChange"
+        >
           <template #suffixIcon>
             <t-icon name="search" :style="{ cursor: 'pointer' }" />
           </template>
@@ -41,7 +46,7 @@
           :collapsed="collapsed"
           @change="menuChange"
         >
-          <t-menu-item value="0" :title="t('common.button.all')"> 全部 </t-menu-item>
+          <t-menu-item value="0" :title="t('common.button.all')"> {{ t('business.main.all') }} </t-menu-item>
           <t-submenu v-for="item in originPermissionData" :key="item.id" :value="item.id" :title="item.moduleName">
             <!-- <template #icon>
               <t-icon name="control-platform" />
