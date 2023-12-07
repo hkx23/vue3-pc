@@ -86,14 +86,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import {
-  CustomValidateResolveType,
-  Data,
-  FormInstanceFunctions,
-  FormRules,
-  Icon,
-  MessagePlugin,
-} from 'tdesign-vue-next';
+import { CustomValidateResolveType, FormInstanceFunctions, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
@@ -281,9 +274,6 @@ const onEdit = (row: any) => {
   formItem.list.orgId = row.orgId;
   formItem.list.incidentModule = row.incidentModule;
   formItem.list.supportGroupId = row.supportGroupId;
-  formItem.list.OrganizationName = row.orgName; // 组织明称
-  formItem.list.abnormalModule = row.incidentModuleName; // 异常模块名称
-  formItem.list.processOrder = row.supportGroupName; // 处理组名称
   formItem.list.levelSeq = row.levelSeq; // 处理顺序
   formItem.list.isAllowTransfer = row.isAllowTransfer; // 是否允许转单
   submitFalg.value = false; // false为编辑
@@ -293,10 +283,6 @@ const onEdit = (row: any) => {
 // 编辑请求
 const onRedactRequest = async () => {
   const dataToSend = { ...formItem.list };
-  // 删除不需要的属性
-  delete dataToSend.OrganizationName;
-  delete dataToSend.abnormalModule;
-  delete dataToSend.processOrder;
   await api.incidentCfg.modifyIncidentType({ ...dataToSend, id: redactID.value });
   await onFetchTabData();
   MessagePlugin.success('编辑成功');
@@ -354,7 +340,7 @@ function validateNumber(value: any): boolean | CustomValidateResolveType {
   }
   return true;
 }
-const rules: FormRules<Data> = {
+const rules: FormRules = {
   orgId: [
     {
       required: true,
