@@ -29,6 +29,7 @@
       <div style="width: 156px">
         <bcmp-select-business
           v-model="formData.warehouseId"
+          label-field="warehouseCode"
           type="warehouse"
           :show-title="false"
           @selection-change="onWarehouseChange"
