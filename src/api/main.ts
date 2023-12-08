@@ -409,21 +409,20 @@ export interface RoleUserDTO {
   userIds?: string[];
 }
 
-/** 通用响应类 */
-export interface ResultUser {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 用户 */
-  data?: User;
+/** 用户组织操作实体 */
+export interface UserOrgDTO {
+  userId?: string;
+  orgIds?: string[];
+}
+
+/** 角色权限操作实体 */
+export interface UserAuthDTO {
+  userId?: string;
+  permissionIds?: string[];
 }
 
 /** 用户 */
-export type User = {
+export interface User {
   id?: string;
   /**
    * 创建时间
@@ -504,7 +503,20 @@ export type User = {
   timeExpiration?: string;
   personId?: string;
   orgId?: string;
-} | null;
+}
+
+/** 通用响应类 */
+export interface ResultUser {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 用户 */
+  data?: User;
+}
 
 export interface SupportGroupSearch {
   /**
@@ -600,10 +612,10 @@ export interface SupportGroupVO {
   /** 处理组类型名称 */
   supportGroupTypeName?: string;
   userCount?: string;
-  /** 人员编号 */
-  personCode?: string;
-  /** 姓名 */
-  personName?: string;
+  /** 用户账号 */
+  userName?: string;
+  /** 用户显示名 */
+  userDisplayName?: string;
   /** 手机号 */
   mobilePhone?: string;
   /** 邮箱 */
@@ -1900,15 +1912,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isState?: boolean;
   stateName?: string;
-  isInProcessName?: string;
   isProductName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
   isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -2075,8 +2087,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2750,6 +2762,46 @@ export interface ResultAttendanceMode {
   /** 出勤模式 */
   data?: AttendanceMode;
 }
+
+/** 通用响应类 */
+export interface ResultListUserInOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: UserInOrg[] | null;
+}
+
+/** 用户组织关系表 */
+export type UserInOrg = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  userId?: string;
+  orgId?: string;
+} | null;
 
 /** 通用响应类 */
 export interface ResultListUser {
@@ -3713,7 +3765,144 @@ export const api = {
         body: data as any,
       }),
   },
+  userInOrg: {
+    /**
+     * No description
+     *
+     * @tags 用户组织关系表
+     * @name DeleteUserInOrg
+     * @summary 删除用户在组织中的信息
+     * @request POST:/userInOrg/deleteUserInOrg
+     * @secure
+     */
+    deleteUserInOrg: (data: UserOrgDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInOrg/deleteUserInOrg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户组织关系表
+     * @name AddUserInOrg
+     * @summary 新增用户在组织中的信息
+     * @request POST:/userInOrg/addUserInOrg
+     * @secure
+     */
+    addUserInOrg: (data: UserOrgDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInOrg/addUserInOrg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户组织关系表
+     * @name GetUserInOrgByUserId
+     * @summary 根据用户ID查询用户在组织中的信息
+     * @request GET:/userInOrg/getUserInOrgByUserId
+     * @secure
+     */
+    getUserInOrgByUserId: (query: { userId: string }) =>
+      http.request<ResultListUserInOrg['data']>(`/api/main/userInOrg/getUserInOrgByUserId`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  userAuthorization: {
+    /**
+     * No description
+     *
+     * @tags 用户授权表
+     * @name Forbidden
+     * @summary 用户权限-设置拒绝
+     * @request POST:/userAuthorization/forbidden
+     * @secure
+     */
+    forbidden: (data: UserAuthDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userAuthorization/forbidden`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户授权表
+     * @name BatchDelete
+     * @summary 批量删除用户权限
+     * @request POST:/userAuthorization/batchDelete
+     * @secure
+     */
+    batchDelete: (data: UserAuthDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userAuthorization/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户授权表
+     * @name BatchAdd
+     * @summary 批量新增用户权限
+     * @request POST:/userAuthorization/batchAdd
+     * @secure
+     */
+    batchAdd: (data: UserAuthDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userAuthorization/batchAdd`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   user: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name SetOnline
+     * @summary 禁用/启用用户
+     * @request POST:/user/setOnline
+     * @secure
+     */
+    setOnline: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/setOnline`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name SetDefaultOrg
+     * @summary 设置用户默认库存组织
+     * @request POST:/user/setDefaultOrg
+     * @secure
+     */
+    setDefaultOrg: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/setDefaultOrg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name ResetPassword
+     * @summary 重置用户密码
+     * @request POST:/user/resetPassword
+     * @secure
+     */
+    resetPassword: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/resetPassword`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
@@ -3741,6 +3930,36 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultUser['data']>(`/api/main/user/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Edit
+     * @summary 编辑用户信息
+     * @request POST:/user/edit
+     * @secure
+     */
+    edit: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Add
+     * @summary 新增用户信息
+     * @request POST:/user/add
+     * @secure
+     */
+    add: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/add`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**

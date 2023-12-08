@@ -46,12 +46,12 @@
           label-align="right"
           @submit="onProcessSubmit"
         >
-          <t-form-item :label="t('processDefects.defectCode')" name="defectCode">
+          <t-form-item :label="t('processDefects.defectCode')" name="processCode">
             <bcmp-select-business
-              v-model="formData.defectCode"
-              :value="formData.defectCode"
+              v-model="formData.processCode"
               label=""
               label-field="processCode"
+              value-field="processCode"
               type="process"
               :disabled="disabledShow.disabledDefectCode"
               @selection-change="defectCodeChange"
@@ -60,12 +60,12 @@
           <t-form-item :label="t('processDefects.defectName')" name="defectName">
             <t-input v-model="formData.defectName" :disabled="disabledShow.disabledDefectName"></t-input>
           </t-form-item>
-          <t-form-item label="缺陷代码" name="processCode">
+          <t-form-item label="缺陷代码" name="defectCode">
             <bcmp-select-business
-              v-model="formData.processCode"
-              label=""
+              v-model="formData.defectCode"
+              type="defectCode"
               label-field="defectCode"
-              type="defectiveCode"
+              value-field="defectCode"
               :disabled="disabledShow.disabledProcessCode"
               @selection-change="processCodeChange"
             ></bcmp-select-business>
@@ -143,15 +143,16 @@ const processRorKey = ref([]); // 存储多选选择数组
 // form表单数据
 const formData = ref({
   showState: true, // 默认为启用
-  defectCode: '', // 工序编号
-  defectName: '', // 工序名称
+  defectCode: '', // 缺陷代码
+  defectName: '', // 缺陷名称
   displaySeq: 0, // 显示顺序
-  processCode: '', // 缺陷代码
-  processName: '', // 缺陷名称
+  processCode: '', // 工序编号
+  processName: '', // 工序名称
   process: '', // 模糊查询
   state: 1, // 状态
   id: '',
 });
+// 禁用
 const disabledShow = ref({
   disabledDefectName: false, // 工序名称
   disabledDefectCode: false, // 工序编号
@@ -176,19 +177,19 @@ const { t } = useLang();
 const column = ref([
   { colKey: 'multiple', type: 'multiple', align: 'center' },
   {
-    title: t('processDefects.defectCode'),
-    colKey: 'defectCode', // 工序编码
+    title: t('processDefects.defectName'),
+    colKey: 'processCode', // 工序编码
     align: 'center',
     width: 120,
   },
   {
-    title: t('processDefects.defectName'),
-    colKey: 'defectName', // 工序名称
+    title: t('processDefects.defectCode'),
+    colKey: 'processName', // 工序名称
     align: 'center',
     width: 120,
   },
-  { title: '缺陷代码', colKey: 'processCode', align: 'center', width: 120 },
-  { title: '缺陷名称', colKey: 'processName', align: 'center', width: 120 },
+  { title: '缺陷代码', colKey: 'defectCode', align: 'center', width: 120 },
+  { title: '缺陷名称', colKey: 'defectName', align: 'center', width: 120 },
   { title: t('processDefects.displaySeq'), colKey: 'displaySeq', align: 'center', width: 120 },
   { title: '状态', colKey: 'state', align: 'center', width: 120 },
   { title: '操作', colKey: 'op', align: 'left', fixed: 'right', width: 120 },

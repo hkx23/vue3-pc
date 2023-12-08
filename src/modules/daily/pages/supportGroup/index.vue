@@ -495,10 +495,6 @@ const supportGroupInUserTabData = async () => {
     groupKeyword: '',
   });
   supportGroupInUserList.list = res.list;
-  console.log(
-    '🚀 ~ file: index.vue:451 ~ supportGroupInUserTabData ~ supportGroupInUserList.list:',
-    supportGroupInUserList.list,
-  );
   supportGroupTotal.value = res.total;
 };
 
@@ -533,7 +529,6 @@ const onAddSupportGroup = async () => {
 const onGetDropDownData = async () => {
   const res = await api.supportGroup.getSupportGroupType();
   DropDownData.list = res.list;
-  console.log('🚀 ~ file: index.vue:482 ~ onGetDropDownData ~ DropDownData.list:', DropDownData.list);
 };
 
 // #添加按钮点击事件
@@ -550,7 +545,6 @@ const onAddTypeData = async () => {
 
 // #编辑 点击 处理组右侧表格编辑按钮
 const onEditRow = (row: any) => {
-  console.log('🚀 ~ file: index.vue:504 ~ onEditRow ~ row:', row);
   groupDisabled.value = true; // 启用表单禁用
   supportGroupTabData.list.supportGroupCode = row.supportGroupCode; // 处理组代码
   supportGroupTabData.list.supportGroupName = row.supportGroupName; // 处理组名称
