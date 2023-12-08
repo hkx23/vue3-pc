@@ -271,6 +271,228 @@ export interface ResultWorkgroup {
   data?: Workgroup;
 }
 
+/** 工作中心 */
+export interface Workcenter {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工站代码 */
+  wcCode?: string;
+  /** 工站名称 */
+  wcName?: string;
+  /** 工站描述 */
+  wcDesc?: string;
+  workshopId?: string;
+  parentWcId?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  wcSeq?: number;
+  /**
+   * 类型
+   * @format int32
+   */
+  wcObjectType?: number;
+  wcObjectId?: string;
+  /** 地点 */
+  wcLocation?: string;
+  /** 负责人 */
+  wcOwner?: string;
+}
+
+export interface WorkcenterSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+  /** 多条记录 */
+  allRecord?: Workcenter[];
+  /**
+   * 工作中心-类别
+   * @format int32
+   */
+  category?: number;
+  /** 工作中心编码名称模糊查询 */
+  workcenterword?: string;
+  workshopID?: string;
+  /** 工作中心-状态 */
+  state?: number[];
+  /** 排序字段 */
+  sorts?: SortParam[];
+  /** 筛选字段 */
+  filters?: Filter[];
+}
+
+/** 响应数据 */
+export type PagingDataWorkcenter = {
+  list?: Workcenter[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkcenter {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkcenter;
+}
+
+/** 通用响应类 */
+export interface ResultWorkcenter {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 工作中心 */
+  data?: Workcenter;
+}
+
+/** 响应数据 */
+export type PagingDataLong = {
+  list?: string[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLong;
+}
+
+/** 响应数据 */
+export type PagingDataWorkcenterVO = {
+  list?: WorkcenterVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkcenterVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkcenterVO;
+}
+
+/** 工作中心显示 */
+export interface WorkcenterVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  /** 工作中心编号 */
+  wcCode?: string;
+  /** 工作中心名称 */
+  wcName?: string;
+  /**
+   * 工作中心类型
+   * @format int32
+   */
+  wcObjectType?: number;
+  /** 工作中心类型 */
+  wcType?: string;
+  workshopID?: string;
+  /** 所属车间编码 */
+  workshopCode?: string;
+  /** 所属车间名称 */
+  workshopName?: string;
+  /** 工作中心地点 */
+  wcLocation?: string;
+  parentWcId?: string;
+  /** 父工作中心编码 */
+  parentWcCode?: string;
+  /** 父工作中心名称 */
+  parentWcName?: string;
+  /** 负责人名称 */
+  wcOwner?: string;
+  wcObjectId?: string;
+  /** 关联设备编码 */
+  wcObjectCode?: string;
+  /**
+   * 顺序号
+   * @format int32
+   */
+  wcSeq?: number;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /**
+   * 工作中心-工作区总记录数
+   * @format int32
+   */
+  area?: number;
+  /**
+   * 工作中心-生产线总记录数
+   * @format int32
+   */
+  line?: number;
+  /**
+   * 工作中心-工段总记录数
+   * @format int32
+   */
+  section?: number;
+  /**
+   * 工作中心-设备总记录数
+   * @format int32
+   */
+  device?: number;
+  /** 子工作中心 */
+  children?: WorkcenterVO[];
+}
+
 /** 通用响应类 */
 export interface ResultWarehouse {
   /**
@@ -503,6 +725,118 @@ export interface User {
   timeExpiration?: string;
   personId?: string;
   orgId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataUserVO = {
+  list?: UserVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataUserVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataUserVO;
+}
+
+/** 当前用户关联实体 */
+export interface UserVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 显示名 */
+  displayName?: string;
+  /** 密码 */
+  password?: string;
+  /**
+   * 用户上次进行身份验证时间
+   * @format date-time
+   */
+  timeLastActivity?: string;
+  /**
+   * 用户上次登录时间
+   * @format date-time
+   */
+  timeLastLogin?: string;
+  /**
+   * 上次更新成员资格用户的密码的日期和时间
+   * @format date-time
+   */
+  timeLastPasswordChanged?: string;
+  /**
+   * 用户当前是否联机
+   * @format int32
+   */
+  isOnline?: number;
+  /**
+   * 指示成员资格用户是否因被锁定而无法进行验证
+   * @format int32
+   */
+  isLockedOut?: number;
+  /**
+   * 最近一次锁定成员资格用户的日期和时间
+   * @format date-time
+   */
+  timeLastLockedOut?: string;
+  /**
+   * 输入密码尝试失败的次数
+   * @format int32
+   */
+  failedAttemptCount?: number;
+  /**
+   * 输入密码尝试失败的起始时间
+   * @format date-time
+   */
+  timeFailedAttemptStart?: string;
+  /**
+   * 用户帐号类型
+   * @format int32
+   */
+  accountType?: number;
+  /**
+   * 用户失效时间
+   * @format date-time
+   */
+  timeExpiration?: string;
+  personId?: string;
+  orgId?: string;
+  /** 企业编码 */
+  epCode?: string;
+  /** 企业名称 */
+  epName?: string;
+  /** 组织编码 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
 }
 
 /** 通用响应类 */
@@ -1912,15 +2246,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isState?: boolean;
   stateName?: string;
-  isProductName?: string;
-  isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
+  isRawName?: string;
+  isProductName?: string;
   isBatchName?: string;
+  isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2087,8 +2421,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2434,8 +2768,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -2761,6 +3095,19 @@ export interface ResultAttendanceMode {
   message?: string;
   /** 出勤模式 */
   data?: AttendanceMode;
+}
+
+/** 通用响应类 */
+export interface ResultWorkcenterVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 工作中心显示 */
+  data?: WorkcenterVO;
 }
 
 /** 通用响应类 */
@@ -3255,26 +3602,6 @@ export interface ResultListObjectPropertyValueVO {
   data?: ObjectPropertyValueVO[] | null;
 }
 
-/** 响应数据 */
-export type PagingDataLong = {
-  list?: string[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataLong {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataLong;
-}
-
 /** 通用响应类 */
 export interface ResultListDefectCodeVO {
   /**
@@ -3647,6 +3974,152 @@ export const api = {
         method: 'POST',
       }),
   },
+  workcenter: {
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Remove
+     * @summary 删除工作中心
+     * @request POST:/workcenter/remove
+     * @secure
+     */
+    remove: (data: WorkcenterSearch) =>
+      http.request<ResultObject['data']>(`/api/main/workcenter/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Modify
+     * @summary 编辑工作中心
+     * @request POST:/workcenter/modify
+     * @secure
+     */
+    modify: (data: Workcenter) =>
+      http.request<ResultObject['data']>(`/api/main/workcenter/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Search
+     * @request POST:/workcenter/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataWorkcenter['data']>(`/api/main/workcenter/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetItemById
+     * @request POST:/workcenter/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultWorkcenter['data']>(`/api/main/workcenter/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name HaveChildCenter
+     * @summary 查询是否有子工作中心
+     * @request POST:/workcenter/haveChildCenter
+     * @secure
+     */
+    haveChildCenter: (data: WorkcenterSearch) =>
+      http.request<ResultPagingDataLong['data']>(`/api/main/workcenter/haveChildCenter`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Getlist
+     * @summary 查询工作中心
+     * @request POST:/workcenter/getList
+     * @secure
+     */
+    getlist: (data: WorkcenterSearch) =>
+      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetChildCenter
+     * @summary 查询子工作中心
+     * @request POST:/workcenter/getChildCenter
+     * @secure
+     */
+    getChildCenter: (data: WorkcenterSearch) =>
+      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getChildCenter`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Add
+     * @summary 新增工作中心
+     * @request POST:/workcenter/add
+     * @secure
+     */
+    add: (data: Workcenter) =>
+      http.request<ResultObject['data']>(`/api/main/workcenter/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetTagCount
+     * @summary 工作中心获取tag总记录数
+     * @request GET:/workcenter/getTagCount
+     * @secure
+     */
+    getTagCount: () =>
+      http.request<ResultWorkcenterVO['data']>(`/api/main/workcenter/getTagCount`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetCategory
+     * @summary 工作中心获取组织层级
+     * @request GET:/workcenter/getCategory
+     * @secure
+     */
+    getCategory: () =>
+      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getCategory`, {
+        method: 'GET',
+      }),
+  },
   warehouse: {
     /**
      * No description
@@ -3913,7 +4386,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/main/user/items`, {
+      http.request<ResultPagingDataUserVO['data']>(`/api/main/user/items`, {
         method: 'POST',
         body: data as any,
       }),
