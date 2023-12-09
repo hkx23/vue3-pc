@@ -83,18 +83,9 @@
                 <t-checkbox v-model="row.isWeChat" disabled></t-checkbox>
               </template>
               <template #actionSlot="{ row }">
-                <t-popconfirm theme="default" content="确认禁用吗">
-                  <t-button size="small" variant="text">
-                    <icon name="delete" class="black-icon" />
-                  </t-button>
-                </t-popconfirm>
-                <t-button size="small" variant="text" @click="onEditRow(row)">
-                  <icon name="edit-1" class="black-icon" />
-                </t-button>
-                <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm">
-                  <t-button size="small" variant="text" @click="onDelelist(row)">
-                    <icon name="delete-1" class="black-icon" />
-                  </t-button>
+                <t-link theme="primary" style="margin-right: 10px" @click="onEditRow(row)"> 编辑 </t-link>
+                <t-popconfirm content="确认删除吗" @confirm="onDelConfirm">
+                  <t-link theme="primary" @click="onDelelist(row)"> 删除 </t-link>
                 </t-popconfirm>
               </template>
               <template #button>
@@ -143,7 +134,7 @@
           <t-input v-model="formData.moduleCode" :disabled="disableFlag"></t-input>
         </t-form-item>
         <t-form-item label="子模块名称" name="moduleName">
-          <t-input v-model="formData.moduleName" :disabled="disableFlag"></t-input>
+          <t-input v-model="formData.moduleName"></t-input>
         </t-form-item>
         <t-form-item label="子模块描述" name="moduleDesc">
           <t-textarea
@@ -163,21 +154,31 @@
       <!-- #表单数据dialog -->
       <t-form v-if="showFormData" ref="formRef" :rules="rules" :data="formDataTwo" @submit="onWorkStationSubmit">
         <t-form-item label="菜单模块" name="menuName">
-          <t-input v-model="parentClickTree" disabled></t-input>
+          <t-input v-if="isEditModeTwo" v-model="parentClickTree" :disabled="isEditModeTwo"></t-input>
+          <t-select v-if="!isEditModeTwo" v-model="menuId" @change="onMenuSonID">
+            <t-option v-for="item in menuSelectList" :key="item.id" :label="item.moduleName" :value="item.id" />
+          </t-select>
         </t-form-item>
         <t-form-item label="菜单子模块" name="moduleName">
-          <t-input v-model="oneselfClickTree" disabled></t-input>
+          <t-input v-if="isEditModeTwo" v-model="oneselfClickTree" :disabled="isEditModeTwo"></t-input>
+          <t-select v-if="!isEditModeTwo" v-model="formDataTwo.parentModuleId">
+            <t-option v-for="item in menuSonSelectList" :key="item.id" :label="item.moduleName" :value="item.id" />
+          </t-select>
         </t-form-item>
         <t-form-item label="终端类型" name="moduleName">
           <t-space direction="vertical">
-            <custom-tabs v-model="dialogTabs" :tabs="dialogTabItems" @selection-changed="handleSelectionChanged" />
+            <custom-tabs-two
+              v-model="dialogTabs"
+              :tabs="dialogTabItems"
+              @selection-changed="handleSelectionChanged"
+            ></custom-tabs-two>
           </t-space>
         </t-form-item>
         <t-form-item label="模块编码" name="moduleCode">
           <t-input v-model="formDataTwo.moduleCode"></t-input>
         </t-form-item>
         <t-form-item label="菜单名称" name="moduleName">
-          <t-input v-model="formDataTwo.moduleName" :disabled="disableFlag"></t-input>
+          <t-input v-model="formDataTwo.moduleName"></t-input>
         </t-form-item>
         <t-form-item label="菜单描述" name="moduleName">
           <t-textarea
@@ -190,23 +191,22 @@
         <t-form-item label="菜单地址" name="moduleName">
           <t-input v-model="formDataTwo.behaviorPath"></t-input>
         </t-form-item>
-        <t-form-item v-if="tabListData !== 1" label="插件类型" name="moduleName">
+        <t-form-item v-if="dialogListData !== 1" label="插件类型" name="moduleName">
           <t-select v-model="formDataTwo.moduleType" style="width: 150px; margin-right: 30px">
-            <t-option key="apple" label="Apple" value="apple" />
-            <t-option key="orange" label="Orange" value="orange">OrangeContentSlot</t-option>
-            <t-option key="banana" label="Banana" value="banana" />
+            <t-option key="LOCAL" label="本地插件" value="LOCAL" />
+            <t-option key="URL" label="远程URl" value="URL" />
           </t-select>
-          <t-upload theme="custom">
+          <t-upload v-if="formDataTwo.moduleType === 'LOCAL'" theme="custom">
             <span>文件上传：</span>
             <t-button theme="primary">上传</t-button>
           </t-upload>
         </t-form-item>
-        <t-form-item v-if="tabListData !== 1" label="插件版本" name="moduleName">
+        <t-form-item v-if="dialogListData !== 1" label="插件版本" name="moduleName">
           <t-space direction="vertical">
             <t-input-number v-model="formDataTwo.moduleVersion" :default-value="200" align="center" />
           </t-space>
         </t-form-item>
-        <t-form-item v-if="tabListData !== 1" label="插件包标识" name="moduleName">
+        <t-form-item v-if="dialogListData !== 1" label="插件包标识" name="moduleName">
           <t-input v-model="formDataTwo.modulePackageIdentify"></t-input>
         </t-form-item>
         <t-form-item label="菜单图标" name="moduleName">
@@ -247,6 +247,7 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 import CustomTabs from './CustomTabs.vue';
+import CustomTabsTwo from './CustomTabsTwo.vue';
 // 获取全部图标的列表
 const options = ref(manifest);
 const iconValue = ref('add');
@@ -302,16 +303,16 @@ const treeClickData = ref({ one: '', two: '' }); // 面包屑文本
 const parentClickTree = ref(''); // 编辑模块，当前点击 父节点 的名称
 const oneselfClickTree = ref(''); // 编辑模块，当前点击 自身节点 的名称
 const treeData = ref<TreeNode[]>([]); // 树组件数据
-const tabListData = ref(1); // 多端选中数据
-const clickNodeId = ref({ id: '', clientType: 1, pageNum: 1, pageSize: 10 });
+const tabListData = ref(0); // 多端选中数据
+const dialogListData = ref(1); // 模态框多端选中数据
+const clickNodeId = ref({ id: '', clientType: tabListData.value, pageNum: 1, pageSize: 10 });
 const tabTotal = ref(null); // 表格数据总页数
 const isEditMode = ref(false); // false 表示默认为新增模式
 const isEditModeTwo = ref(false); // false 表示默认为新增模式
 const isEditModeThree = ref(false); // false 表示默认为新增模式
 const onDelelistID = ref(''); // 右侧删除id
-const isRefreshTab = ref(true);
 const moduleData = ref([]); // 表格数据
-// 模态框输入框数据
+// 模态框输入框数据clientType
 const formData = ref({
   moduleCode: '', // 模块编码
   menuName: '', // 菜单模块
@@ -358,6 +359,11 @@ watch(
 // 在 tabListData 改变时更新 formDataTwo.clientType
 watch(tabListData, (newValue) => {
   formDataTwo.value.clientType = newValue;
+});
+
+// 在 tabListData 改变时更新 clickNodeId.value.clientType
+watch(tabListData, (newValue) => {
+  clickNodeId.value.clientType = newValue;
 });
 
 // 表格列表数据
@@ -454,47 +460,50 @@ const fetchData = () => {
   onGetTabData();
 };
 
+// 获取菜单模块下拉菜单
+const menuSelectList = ref([]);
+const menuId = ref(null);
+const menuSelectData = async () => {
+  const res = await api.module.getRootModules();
+  menuSelectList.value = res.list;
+};
+
+// 菜单子模块 下拉事件
+const onMenuSonID = async (data) => {
+  menuId.value = data;
+  await menuSonSelectData();
+};
+
+// 获取菜单子模块 下拉菜单
+const menuSonSelectList = ref([]);
+const menuSonSelectData = async () => {
+  const res = await api.module.getAllModules({ id: menuId.value });
+  menuSonSelectList.value = res.list;
+};
+
 // #顶部多端选择事件
-const topSelectionChanged = async (num: any) => {
+const topSelectionChanged = async (originalNum: any) => {
+  const num = [...originalNum];
   num.shift();
   num.reverse();
-  const nums = parseInt(num.join(''), 10);
-  tabListData.value = parseInt(num.reverse().join(''), 10); // 翻转数组，将数组变成整形数据
-  // if (parseInt(num.reverse().join(''), 10) === 1) {
-  //   return;
-  // }
+  tabListData.value = parseInt(num.join(''), 10); // 翻转数组，将数组变成整形数据
   // 如果没有打开新增或者删除
-  if (isRefreshTab.value) {
-    const res = await api.module.getList({
-      id: clickNodeId.value.id,
-      clientType: nums,
-      pageNum: 1,
-      pageSize: 10,
-    });
-    pageUI.value.page = 1;
-    moduleData.value = res.list;
-    tabTotal.value = res.total;
-  }
+  const res = await api.module.getList({
+    id: clickNodeId.value.id,
+    clientType: parseInt(num.join(''), 10),
+    pageNum: 1,
+    pageSize: 10,
+  });
+  pageUI.value.page = 1;
+  moduleData.value = res.list;
+  tabTotal.value = res.total;
 };
 // #DiaLog选项框选择事件
-const handleSelectionChanged = async (num: any) => {
+const handleSelectionChanged = async (originalNum: any) => {
   // const array = num.slice(1); // 删除第一位
-  tabListData.value = parseInt(num.reverse().join(''), 10); // 翻转数组，将数组变成整形数据
-  if (parseInt(num.reverse().join(''), 10) === 1) {
-    return;
-  }
-  // 如果没有打开新增或者删除
-  if (isRefreshTab.value) {
-    const res = await api.module.getList({
-      id: clickNodeId.value.id,
-      clientType: parseInt(num.reverse().join(''), 10),
-      pageNum: 1,
-      pageSize: 10,
-    });
-    pageUI.value.page = 1;
-    moduleData.value = res.list;
-    tabTotal.value = res.total;
-  }
+  const num = [...originalNum];
+  num.reverse();
+  dialogListData.value = parseInt(num.join(''), 10); // 翻转数组，将数组变成整形数据
 };
 
 // 点击 左侧 新增按钮
@@ -507,7 +516,6 @@ const onAddFirstNode = () => {
   showFormData.value = false; // 三级
   disableFlag.value = false; // 开关
   formVisible.value = true; // 模态框
-  isRefreshTab.value = false; // 控制页面 tab栏切换是否可点击
   dialogTitle.value = '添加节点';
 };
 
@@ -522,12 +530,10 @@ const onAddSecondNode = (node: any) => {
     showFormData.value = false; // 三级
     disableFlag.value = false; // 开关
     formVisible.value = true; // 模态框
-    isRefreshTab.value = false; // 控制页面 tab栏切换是否可点击
     formData.value.menuName = node[`__tdesign_tree-node__`].label;
     clickNodeId.value.id = node[`__tdesign_tree-node__`]?.data?.id; // 获取当前节点 ID
   } else {
     dialogTabs.value = ['0'];
-    tabListData.value = 1;
     formDataTwo.value.moduleCode = ''; // 模块编码
     formDataTwo.value.moduleName = ''; // 菜单名称
     formDataTwo.value.moduleDesc = ''; // 菜单描述
@@ -535,7 +541,7 @@ const onAddSecondNode = (node: any) => {
     formDataTwo.value.moduleType = ''; // 模块类型
     formDataTwo.value.moduleVersion = null; // 模块版本号
     formDataTwo.value.modulePackageIdentify = ''; // 模块标识
-    formDataTwo.value.iconPath = 'add'; // 图标地址
+    formDataTwo.value.iconPath = ''; // 图标地址
     isEditMode.value = true;
     isEditModeTwo.value = true;
     isEditModeThree.value = true;
@@ -544,7 +550,6 @@ const onAddSecondNode = (node: any) => {
     showFormData.value = true; // 三级
     disableFlag.value = false; // 开关
     formVisible.value = true; // 模态框
-    isRefreshTab.value = false; // 控制页面 tab栏切换是否可点击
   }
   parentClickTree.value = node[`__tdesign_tree-node__`].parent.label; // 设置父组件名称
   oneselfClickTree.value = node[`__tdesign_tree-node__`].label; // 设置 自身名称
@@ -595,8 +600,7 @@ function extractValues(data: { isMobile: number; isTV: number; isWatch: number; 
 
 // 点击 右侧 表单数据编辑按钮
 const onEditRow = (row: any) => {
-  isRefreshTab.value = false; // 控制页面 tab栏切换是否可点击
-  tabListData.value = row.clientType;
+  dialogListData.value = row.clientType;
   onDelelistID.value = row.id; // 存储当前 id
   if (row.isPC === 1) {
     dialogTabs.value = ['0'];
@@ -610,9 +614,9 @@ const onEditRow = (row: any) => {
   formDataTwo.value.moduleName = row.name; // 菜单名称
   formDataTwo.value.moduleDesc = row.moduleDesc; // 菜单描述
   formDataTwo.value.behaviorPath = row.path; // 菜单地址
-  formDataTwo.value.moduleType = row.moduleType; // 模块类型
-  formDataTwo.value.moduleVersion = row.moduleVersion; // 模块版本号
-  formDataTwo.value.modulePackageIdentify = row.modulePackageIdentify; // 模块标识
+  // formDataTwo.value.moduleType = row.moduleType; // 模块类型
+  formDataTwo.value.moduleVersion = row.moduleVersion; // 插件版本号
+  formDataTwo.value.modulePackageIdentify = row.modulePackageIdentify; // 插件包标识
   isEditMode.value = false;
   isEditModeTwo.value = false;
   isEditModeThree.value = false;
@@ -701,13 +705,14 @@ function simplifyObject(obj) {
 // 在组件挂载后模拟 点击 第一个节点下面的子节点
 onMounted(async () => {
   await onGetTreeData();
+  await menuSelectData(); // 获取 菜单名称
   // 确保树的第一个节点存在，并且它有子节点
   if (treeData.value.length > 0 && treeData.value[0].children && treeData.value[0].children.length > 0) {
     const firstNode = treeData.value[0]; // 第一个节点
     const firstChildNode = treeData.value[0].children[0]; // 第一个节点的第一个子节点
     const { id } = firstChildNode; // 保存该子节点的 ID
     clickNodeId.value.id = id; // 保存当前节点的 ID
-    const rules = await api.module.getList({ id, clientType: 1, pageNum: 1, pageSize: 10 }); // 请求：获取第二节点的数据
+    const rules = await api.module.getList({ id, clientType: 0, pageNum: 1, pageSize: 10 }); // 请求：获取第二节点的数据
     moduleData.value = rules.list; // 表格数据赋值
     tabTotal.value = rules.total;
     treeClick({ node: { '__tdesign_tree-node__': firstChildNode } }); // 模拟点击第一个节点下的第一个子节点
@@ -749,8 +754,6 @@ const treeClick = async ({ node }: { node: any }) => {
 
 // 关闭模态框事件
 const onSecondaryReset = () => {
-  MessagePlugin.success('取消编辑');
-  isRefreshTab.value = true; // 控制页面 tab栏切换是否可点击
   disableFlag.value = false; // 控制编辑 是否禁用子模块名称
   isEditMode.value = false; // 控制一级 是新增还是编辑
   formVisible.value = false;
@@ -812,7 +815,7 @@ const onAddThreeModule = async () => {
     // 新增请求
     await api.module.addModule({
       moduleLevel: formDataTwo.value.moduleLevel,
-      clientType: formDataTwo.value.clientType, // 终端类型
+      clientType: dialogListData.value, // 终端类型
       moduleCode: formDataTwo.value.moduleCode, // 模块编码
       moduleName: formDataTwo.value.moduleName, // 菜单名称
       moduleDesc: formDataTwo.value.moduleDesc, // 菜单描述
@@ -854,8 +857,9 @@ const onRedactTwo = async () => {
 // 编辑三级请求
 const onRedactThree = async () => {
   await api.module.modify({
+    parentModuleId: formDataTwo.value.parentModuleId, // 父 ID
     moduleLevel: formDataTwo.value.moduleLevel,
-    clientType: formDataTwo.value.clientType, // 终端类型
+    clientType: dialogListData.value, // 终端类型
     moduleCode: formDataTwo.value.moduleCode, // 模块编码
     moduleName: formDataTwo.value.moduleName, // 菜单名称
     moduleDesc: formDataTwo.value.moduleDesc, // 菜单描述
@@ -883,27 +887,11 @@ const onWorkStationSubmit = async (context: RootObject) => {
   }
   await onGetTreeData(); // 更新树组件数据
   await onGetTabData(); // 获取表格数据
-  isRefreshTab.value = true; // 控制页面 tab栏切换是否可点击
   formVisible.value = false;
 };
 </script>
 
 <style lang="less" scoped>
-.module-tree-container {
-  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
-  background-color: var(--td-bg-color-container);
-  border-radius: var(--td-radius-medium);
-}
-
-.module-edit {
-  margin: 0 10px;
-}
-
-.control-box {
-  text-align: right;
-  margin-top: 20px;
-}
-
 .align-right {
   display: flex;
   justify-content: flex-end;

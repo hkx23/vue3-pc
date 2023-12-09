@@ -181,8 +181,10 @@ const onHandelList = async () => {
       inputValue.value.state = [1, 0];
     } else if (STATE === 1) {
       inputValue.value.state = [1];
-    } else {
+    } else if (STATE === 0) {
       inputValue.value.state = [0];
+    } else {
+      inputValue.value.state = [1, 0];
     }
     const res = await api.workstation.getlist({
       pageNum: pageUI.value.page,

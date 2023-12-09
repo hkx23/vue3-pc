@@ -2248,13 +2248,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isInProcessName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
   isRawName?: string;
   isBatchName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2421,8 +2421,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3602,6 +3602,26 @@ export interface ResultListObjectPropertyValueVO {
   message?: string;
   /** 响应数据 */
   data?: ObjectPropertyValueVO[] | null;
+}
+
+/** 响应数据 */
+export type PagingDataModule = {
+  list?: Module[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataModule {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataModule;
 }
 
 /** 通用响应类 */
@@ -5395,6 +5415,35 @@ export const api = {
       clientType: number;
     }) =>
       http.request<ResultListShowModuleVO['data']>(`/api/main/module/show`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name GetRootModules
+     * @summary 获取所有一级菜单模块
+     * @request GET:/module/getROOTModules
+     * @secure
+     */
+    getRootModules: () =>
+      http.request<ResultPagingDataModule['data']>(`/api/main/module/getROOTModules`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name GetAllModules
+     * @summary 获取所有二级菜单模块
+     * @request GET:/module/getAllModules
+     * @secure
+     */
+    getAllModules: (query: { id: string }) =>
+      http.request<ResultPagingDataModule['data']>(`/api/main/module/getAllModules`, {
         method: 'GET',
         params: query,
       }),

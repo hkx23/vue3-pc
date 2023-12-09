@@ -1,26 +1,22 @@
 <template>
   <div class="main-page">
     <!-- 子from -->
-    <t-dialog v-model:visible="deleteVisible" header="fhssdfg">
-      <h3 class="list-save">选中12431条</h3>
-      <detailed
-        v-if="detailedShow"
-        :btn-show-disable="{ add: btnShowDisable.add, delete: btnShowDisable.delete }"
-        :word-center-id="workCenterId"
-        :new-arr="newArr"
-        :data="data"
-        :next-arr="arr"
-        :btn-show="btnShow"
-        :type-detailed="typeDetailed"
-        :disabled-word="disabledWord"
-        :disabled-parent="disabledParent"
-        @added-show="onHandleSave"
-        @form-clear="onFormClear"
-        @child-default="onChildDefault"
-        @delete="onDelete"
-      ></detailed>
-    </t-dialog>
-
+    <detailed
+      v-if="detailedShow"
+      :btn-show-disable="{ add: btnShowDisable.add, delete: btnShowDisable.delete }"
+      :word-center-id="workCenterId"
+      :new-arr="newArr"
+      :data="data"
+      :next-arr="arr"
+      :btn-show="btnShow"
+      :type-detailed="typeDetailed"
+      :disabled-word="disabledWord"
+      :disabled-parent="disabledParent"
+      @added-show="onHandleSave"
+      @form-clear="onFormClear"
+      @child-default="onChildDefault"
+      @delete="onDelete"
+    ></detailed>
     <!-- 头部 -->
     <t-card v-if="!detailedShow" class="list-card-container" :bordered="false">
       <t-space direction="horizontal" style="margin: 10px 0">
@@ -132,7 +128,6 @@
         @current-change="onCurrentChange"
       />
       <!-- </t-table> -->
-      <t-button @click="deleteVisible = true">dianji1</t-button>
     </t-card>
   </div>
 </template>
@@ -149,7 +144,6 @@ import { usePage } from '@/hooks/modules/page';
 
 import detailed from './detailed.vue';
 
-const deleteVisible = ref(false);
 const onPageSizeChange = () => {
   page.value.current = 1;
   onFetchData();
