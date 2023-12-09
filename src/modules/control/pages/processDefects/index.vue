@@ -28,9 +28,9 @@
         <!-- 编辑 -->
         <template #op="{ row }">
           <t-space>
-            <icon name="edit-1" style="cursor: pointer" @click="onEdit(row)"></icon>
+            <t-link theme="primary" @click="onEdit(row)"> 编辑 </t-link>
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
-              <icon name="delete" style="cursor: pointer"></icon>
+              <t-link theme="primary"> 删除 </t-link>
             </t-popconfirm>
             <!-- <icon name="delete" style="cursor: pointer" @click="onDelete(row)" /> -->
           </t-space>
@@ -46,12 +46,11 @@
           label-align="right"
           @submit="onProcessSubmit"
         >
-          <t-form-item :label="t('processDefects.defectCode')" name="processCode">
+          <t-form-item :label="t('processDefects.defectCode')" name="processId">
             <bcmp-select-business
-              v-model="formData.processCode"
+              v-model="formData.processId"
               label=""
               label-field="processCode"
-              value-field="processCode"
               type="process"
               :disabled="disabledShow.disabledDefectCode"
               @selection-change="defectCodeChange"
@@ -60,12 +59,12 @@
           <t-form-item :label="t('processDefects.defectName')" name="defectName">
             <t-input v-model="formData.defectName" :disabled="disabledShow.disabledDefectName"></t-input>
           </t-form-item>
-          <t-form-item label="缺陷代码" name="defectCode">
+          <t-form-item label="缺陷代码" name="defectCodeId">
             <bcmp-select-business
-              v-model="formData.defectCode"
+              v-model="formData.defectCodeId"
+              label=""
               type="defectCode"
               label-field="defectCode"
-              value-field="defectCode"
               :disabled="disabledShow.disabledProcessCode"
               @selection-change="processCodeChange"
             ></bcmp-select-business>
@@ -107,7 +106,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Data, FormInstanceFunctions, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
+import { Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
@@ -143,10 +142,10 @@ const processRorKey = ref([]); // 存储多选选择数组
 // form表单数据
 const formData = ref({
   showState: true, // 默认为启用
-  defectCode: '', // 缺陷代码
+  defectCodeId: '', // 缺陷代码
   defectName: '', // 缺陷名称
   displaySeq: 0, // 显示顺序
-  processCode: '', // 工序编号
+  processId: '', // 工序编号
   processName: '', // 工序名称
   process: '', // 模糊查询
   state: 1, // 状态
@@ -192,7 +191,7 @@ const column = ref([
   { title: '缺陷名称', colKey: 'defectName', align: 'center', width: 120 },
   { title: t('processDefects.displaySeq'), colKey: 'displaySeq', align: 'center', width: 120 },
   { title: '状态', colKey: 'state', align: 'center', width: 120 },
-  { title: '操作', colKey: 'op', align: 'left', fixed: 'right', width: 120 },
+  { title: '操作', colKey: 'op', align: 'center', fixed: 'right', width: 120 },
 ]);
 // 工序编码Change事件
 const defectCodeChange = (data) => {
@@ -246,12 +245,12 @@ const onHandelAdd = () => {
   disabledShow.value.disabledDefectName = true; // 工序名称
   disabledShow.value.disabledProcessCode = false; // 缺陷代码
   disabledShow.value.disabledProcessName = true; // 缺陷名称
-  formData.value.displaySeq = null;
   isEditAndAdd.value = 1;
   addVisible.value = true;
 };
 // 编辑
-const onEdit = (row) => {
+const onEdit = (row: any) => {
+  console.log('🚀 ~ file: index.vue:258 ~ onEdit ~ row:', row);
   isEditAndAdd.value = 0;
   if (row.state === 1) {
     formData.value.showState = true;
@@ -259,11 +258,11 @@ const onEdit = (row) => {
     formData.value.showState = false;
   }
   formData.value.state = row.state;
-  formData.value.defectCode = row.defectCode;
+  formData.value.defectCodeId = row.defectCodeId;
   formData.value.defectName = row.defectName;
   formData.value.displaySeq = row.displaySeq;
   formData.value.processName = row.processName;
-  formData.value.processCode = row.processCode;
+  formData.value.processId = row.processId;
   formData.value.id = row.id;
   // Object.assign(formData.value, row);
   disabledShow.value.disabledDefectCode = true; // 工序编号
@@ -280,8 +279,8 @@ const onEditAndAdd = async () => {
     // 新增
     try {
       await api.processInDefectCode.addProcessInDefectCode({
-        processId: formData.value.defectCode,
-        defectCodeId: formData.value.processCode,
+        processId: formData.value.processId,
+        defectCodeId: formData.value.defectCodeId,
         displaySeq: formData.value.displaySeq,
         state: formData.value.state,
       });
@@ -294,7 +293,13 @@ const onEditAndAdd = async () => {
   } else {
     // 编辑
     try {
-      await api.processInDefectCode.modifyProcessInDefectCode(formData.value);
+      await api.processInDefectCode.modifyProcessInDefectCode({
+        processId: formData.value.processId,
+        defectCodeId: formData.value.defectCodeId,
+        id: formData.value.id,
+        displaySeq: formData.value.displaySeq,
+        state: formData.value.state,
+      });
       addVisible.value = false;
       MessagePlugin.success('编辑成功');
       onFetchData();
@@ -342,7 +347,7 @@ const onProcessSubmit = (context: RootObject) => {
 
 // 校验
 const rules: FormRules<Data> = {
-  defectCode: [
+  defectCodeId: [
     {
       required: true,
       type: 'error',
@@ -356,7 +361,7 @@ const rules: FormRules<Data> = {
       trigger: 'blur',
     },
   ],
-  processCode: [
+  processId: [
     {
       required: true,
       type: 'error',

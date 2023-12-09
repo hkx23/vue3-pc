@@ -2247,14 +2247,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isInProcessName?: string;
   isProductName?: string;
+  isRawChecked?: boolean;
   isRawName?: string;
   isBatchName?: string;
-  isRawChecked?: boolean;
-  isState?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2421,8 +2421,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
