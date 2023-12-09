@@ -92,7 +92,7 @@ import _ from 'lodash';
 import { Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
-import { api } from '@/api/control';
+import { api } from '@/api/main';
 import { usePage } from '@/hooks/modules/page';
 
 import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';

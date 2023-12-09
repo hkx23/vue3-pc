@@ -32,9 +32,6 @@
               <div>{{ item.wcType }}{{ item.code !== 0 ? `(${item.code})` : '' }}</div>
             </template>
           </t-tab-panel>
-          <!-- <template #wcTypes="{ row }">
-            {{ row }}
-          </template> -->
         </t-tabs>
       </t-space>
       <t-row>
@@ -141,7 +138,7 @@ import _ from 'lodash';
 import { Icon, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
-import { api } from '@/api/control';
+import { api } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
