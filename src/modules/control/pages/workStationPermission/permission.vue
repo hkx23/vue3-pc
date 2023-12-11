@@ -80,6 +80,7 @@ import { Icon, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/control';
+import { api as apiMain } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -197,7 +198,7 @@ const onFetchData = async () => {
 
     setLoading(true);
     try {
-      const list = await api.workstation.getlist({
+      const list = await apiMain.workstation.getlist({
         pageNum: pageUI.value.page,
         pageSize: pageUI.value.rows,
         keyword: permission.value.work.trim(),
