@@ -56,7 +56,7 @@ onMounted(() => {
 const onSaveReport = (e) => {
   e.preventDefault = true;
   const args = {
-    fileName: props.fileName || e.fileName,
+    fileName: e.fileName,
     fileContent: e.report.saveToJsonString(),
   } as DesignerArgs;
 
