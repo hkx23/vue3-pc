@@ -125,7 +125,8 @@ const formRef: Ref<FormInstanceFunctions> = ref(null);
 const opts = computed(() => {
   return {
     process: {
-      label: '请输入工序名称或编码:',
+      labelWidth: '160px',
+      label: '请输入工序名称或编码',
       comp: 't-input',
       event: 'input',
       defaultVal: '',

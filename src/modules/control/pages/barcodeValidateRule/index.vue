@@ -3,12 +3,12 @@
   <div class="main-page">
     <div class="main-page-content">
       <cmp-query :opts="opts" @submit="onInput">
-        <template v-if="!tabValue" #cellType>
+        <template #cellType>
           <t-select v-model="barcodeData.barcodeType">
             <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </template>
-        <template v-if="tabValue" #cellMaterial>
+        <template #cellMaterial>
           <bcmp-select-business
             v-model="barcodeData.mitemCategoryId"
             :disabled="radioValue"
@@ -297,7 +297,7 @@ const columnsText: PrimaryTableCol<TableRowData>[] = [
     cell: 'stateSwitch',
   },
   {
-    colKey: 'barcodeTypeName	',
+    colKey: 'barcodeTypeName',
     title: '验证类型名称',
     align: 'center',
     width: '100',
@@ -534,6 +534,7 @@ const opts = computed(() => {
     type: {
       label: '条码类型',
       labelWidth: '60',
+      isHide: tabValue.value,
       event: 'select',
       defaultVal: '',
       slotName: 'cellType',
@@ -541,6 +542,7 @@ const opts = computed(() => {
     material: {
       label: '物料名称',
       labelWidth: '60',
+      isHide: !tabValue.value,
       event: 'select',
       defaultVal: '',
       slotName: 'cellMaterial',
