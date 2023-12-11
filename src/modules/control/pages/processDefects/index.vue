@@ -206,6 +206,7 @@ const processCodeChange = (data) => {
 const processData = ref([]);
 // 进入首页发请求
 const onFetchData = async () => {
+  processRorKey.value = [];
   try {
     setLoading(true);
     const res = await api.processInDefectCode.getList({
@@ -324,6 +325,7 @@ const onDeleteConfirm = async () => {
     MessagePlugin.success('删除成功');
     deleteVisible.value = false;
     onFetchData();
+    processRorKey.value = [];
   } catch (e) {
     console.log(e);
   }
