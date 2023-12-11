@@ -1461,8 +1461,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2632,15 +2632,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
+  stateName?: string;
   isInProcessName?: string;
   isBatchName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
   isState?: boolean;
-  stateName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2807,8 +2807,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3154,8 +3154,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -7100,6 +7100,22 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  routingRevision: {
+    /**
+     * No description
+     *
+     * @tags 工艺路线版本
+     * @name GetRoutRevisionByRoutingCode
+     * @summary 根据工艺路线编码获取有效的工艺路线版本信息
+     * @request GET:/routingRevision/getRoutRevisionByRoutingCode
+     * @secure
+     */
+    getRoutRevisionByRoutingCode: (query: { routingCode: string; routingType: string }) =>
+      http.request<ResultObject['data']>(`/api/main/routingRevision/getRoutRevisionByRoutingCode`, {
+        method: 'GET',
+        params: query,
       }),
   },
   permission: {

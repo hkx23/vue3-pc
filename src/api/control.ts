@@ -775,6 +775,201 @@ export interface MitemOnboardUnbindDTO {
   ids?: string[];
 }
 
+/** 显示过站采集实体 */
+export interface BarcodeWipCollectVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  moScheId?: string;
+  workcenterId?: string;
+  processId?: string;
+  workstationId?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  seq?: number;
+  /** 在制品数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /**
+   * 缺陷次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /**
+   * 是否完工
+   * @format int32
+   */
+  isCompleted?: number;
+  /** 状态 */
+  status?: string;
+  /** 扫码类型(SCANEXT,KEYPART) */
+  uom?: string;
+  uomName?: string;
+  scanType?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  /** 工单排产状态 */
+  scheStatus?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  routingRevisionId?: string;
+  moId?: string;
+  /** 工单名称 */
+  moCode?: string;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  mitemId?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 扫描信息 */
+  scanMessage?: string;
+  /** 工作中心代码 */
+  workCenterCode?: string;
+  /** 工作中心名称 */
+  workCenterName?: string;
+  /** 关键件数量汇总信息 */
+  keyPartSumList?: WipKeyPartCollectVO[];
+  /** 是否提交事务 */
+  isCommit?: boolean;
+  stateName?: string;
+  workshopCode?: string;
+  workshopId?: string;
+  workshopName?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
+}
+
+/** 显示过站采集关键件实体 */
+export interface WipKeyPartCollectVO {
+  moScheId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 扫描信息 */
+  scanMessage?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  /**
+   * 工单需求量
+   * @format int32
+   */
+  moRequestQty?: number;
+  /**
+   * 关键件已扫数量
+   * @format int32
+   */
+  scanQty?: number;
+  /** 关键条码信息 */
+  keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
+  getkeyPartCodeStr?: string;
+}
+
+/** 在制品关键件采集表 */
+export interface WipKeypart {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  /** 关键件条码 */
+  keypartBarcode?: string;
+  /** 关键件条码类型 */
+  keypartBarcodeType?: string;
+  moScheId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  supplierId?: string;
+  /** 生产批次 */
+  lotNo?: string;
+  /** 使用数量 */
+  qty?: number;
+  workstationId?: string;
+  processId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBarcodeWipCollectVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示过站采集实体 */
+  data?: BarcodeWipCollectVO;
+}
+
 /** 显示在制品条码实体 */
 export interface BarcodeWipVO {
   id?: string;
@@ -866,16 +1061,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
-  isState?: boolean;
   stateName?: string;
   workshopCode?: string;
+  workshopId?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  defectCodeStr?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  isState?: boolean;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -1839,6 +2034,22 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/mitemOnboard/getProccesByWorkStationId`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  barcodeWipCollect: {
+    /**
+     * No description
+     *
+     * @tags 过站采集
+     * @name ScanBarcodeWipCollect
+     * @summary 过站采集扫码
+     * @request POST:/barcodeWipCollect/scanBarcodeWipCollect
+     * @secure
+     */
+    scanBarcodeWipCollect: (data: BarcodeWipCollectVO) =>
+      http.request<ResultBarcodeWipCollectVO['data']>(`/api/control/barcodeWipCollect/scanBarcodeWipCollect`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   barcodeWip: {

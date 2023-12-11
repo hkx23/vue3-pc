@@ -1,0 +1,25 @@
+{
+  "wipCollect": {
+    "workshopName": "车间",
+    "workcentName": "工作中心",
+    "workstationName": "工站",
+    "scanlabel": "扫描 产品条码",
+    "product": "产品信息",
+    "scheCode": "排产单号",
+    "mitemCode": "产品编码",
+    "mitemName": "产品名称",
+    "scheDate": "排产日期",
+    "scheQty": "排产数量",
+    "completeQty": "完工数量",
+    "collectDtl": "采集详情",
+    "messageCom": "消息组件",
+    "barcode": "产品条码",
+    "uom": "单位",
+    "qty": "数量",
+    "requestqty": "用量",
+    "scanBarcode": "请扫描条码",
+    "scanKeypart": "请扫描关键件",
+    "keypartInfo":"关键件信息",
+    "scanqty": "已扫"
+  }
+}
