@@ -663,6 +663,7 @@ const menuSonSelectDataTwo = async () => {
 
 // 点击 右侧 表单数据编辑按钮
 const onEditRow = async (row: any) => {
+  console.log('🚀 ~ file: index.vue:666 ~ onEditRow ~ any:', row);
   formDataTwo.value.menuId = row.parentModuleId;
   await menuSonSelectDataTwo();
   dialogListData.value = row.clientType;
@@ -673,7 +674,6 @@ const onEditRow = async (row: any) => {
     const newArr = extractValues(row);
     dialogTabs.value = newArr;
   }
-
   oneselfClickTree.value = treeClickData.value.one;
   formDataTwo.value.parentClickTree = row.grandpaName; // 模块编码
   formDataTwo.value.parentModuleId = row.parentModuleId; // 模块编码

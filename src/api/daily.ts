@@ -100,6 +100,10 @@ export interface IncidentTypeVO {
   creatorName?: string;
   /** 异常模块名称 */
   incidentModuleName?: string;
+  /** 子层级 */
+  children?: IncidentTypeVO[];
+  /** 前端按钮样式 */
+  themeButton?: string;
 }
 
 /** 响应数据 */
@@ -120,6 +124,223 @@ export interface ResultPagingDataIncidentTypeVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIncidentTypeVO;
+}
+
+/** 通用响应类 */
+export interface ResultArrayListIncidentTypeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: IncidentTypeVO[] | null;
+}
+
+export interface IncidentDealSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊查询关键词 */
+  keyword?: string;
+  /** 报障单状态 */
+  statusList?: string[];
+}
+
+/** 安灯警报配置 */
+export interface AlertCfgVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 警报类型 */
+  alertType?: string;
+  /**
+   * 响应时间
+   * @format int32
+   */
+  sla?: number;
+  /**
+   * 处理时间
+   * @format int32
+   */
+  ola?: number;
+  /** 前端按钮样式 */
+  themeButton?: string;
+  /** 前端按钮样式 */
+  variantButton?: string;
+}
+
+/** 前端文件VO */
+export interface FileVO {
+  /** 文件名 */
+  name?: string;
+  size?: string;
+  /** 文件MIME类型 */
+  type?: string;
+  lastModified?: string;
+  /** 文件相对路径 */
+  webkitRelativePath?: string;
+  /** 文件路径（也可能是Base64数据） */
+  url?: string;
+}
+
+/** 领域对象扩展属性分类 */
+export interface IncidentDealVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  incidentTypeId?: string;
+  orgId?: string;
+  workcenterId?: string;
+  alertCfgId?: string;
+  curSupportGroupId?: string;
+  curUserId?: string;
+  /**
+   * 是否允许转单
+   * @format int32
+   */
+  isSolveOvertime?: number;
+  /** 异常备注 */
+  memo?: string;
+  /** 状态 */
+  status?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 显示名 */
+  displayName?: string;
+  /** 工作中心编码 */
+  workcenterCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  localId?: string;
+  /** 当前组织或者设备编码 */
+  localCode?: string;
+  /** 当前组织或者设备名称 */
+  localName?: string;
+  /** 当前类型 */
+  localType?: string;
+  /** 领域对象扩展属性分类 */
+  selectIncidentTypeVO?: IncidentTypeVO;
+  /** 异常名称 */
+  incidentName?: string;
+  /** 异常代码 */
+  incidentCode?: string;
+  /** 异常模块 */
+  incidentModule?: string;
+  /** 安灯警报配置 */
+  selectAlertCfgVO?: AlertCfgVO;
+  /** 警报类型 */
+  alertType?: string;
+  /**
+   * 响应时间
+   * @format int32
+   */
+  sla?: number;
+  /**
+   * 处理时间
+   * @format int32
+   */
+  ola?: number;
+  /** 处理组代码 */
+  supportGroupCode?: string;
+  /** 处理组名称 */
+  supportGroupName?: string;
+  /** 处理组类型 */
+  supportGroupType?: string;
+  /** 报障组织 */
+  orgCode?: string;
+  /** 报障组织名称 */
+  orgName?: string;
+  /** 邮箱 */
+  email?: string;
+  /** 手机号 */
+  mobilePhone?: string;
+  /** 报障文件 */
+  uploadFiles?: FileVO[];
+}
+
+/** 响应数据 */
+export type PagingDataIncidentDealVO = {
+  list?: IncidentDealVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataIncidentDealVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataIncidentDealVO;
+}
+
+/** 通用响应类 */
+export interface ResultIncidentDealVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 领域对象扩展属性分类 */
+  data?: IncidentDealVO;
 }
 
 export interface IncidentCfgSearch {
@@ -295,6 +516,26 @@ export interface AlertCfgSearch {
   id?: string;
   /** 多个id */
   ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataAlertCfgVO = {
+  list?: AlertCfgVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAlertCfgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAlertCfgVO;
 }
 
 /** 响应数据 */
@@ -550,6 +791,24 @@ export const api = {
      * No description
      *
      * @tags 安灯异常类型表
+     * @name GetIncidentTypeGroupIncidentModule
+     * @summary 根据异常模块分组查询异常类型
+     * @request POST:/incidentType/getIncidentTypeGroupIncidentModule
+     * @secure
+     */
+    getIncidentTypeGroupIncidentModule: (data: IncidentTypeSearch) =>
+      http.request<ResultArrayListIncidentTypeVO['data']>(
+        `/api/daily/incidentType/getIncidentTypeGroupIncidentModule`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常类型表
      * @name AddIncidentType
      * @summary 新增异常类型
      * @request POST:/incidentType/addIncidentType
@@ -573,6 +832,52 @@ export const api = {
     getIncidentType: () =>
       http.request<ResultPagingDataParam['data']>(`/api/daily/incidentType/getIncidentType`, {
         method: 'GET',
+      }),
+  },
+  incidentDeal: {
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name GetVoList
+     * @summary 查询预警机制
+     * @request POST:/incidentDeal/getVoList
+     * @secure
+     */
+    getVoList: (data: IncidentDealSearch) =>
+      http.request<ResultPagingDataIncidentDealVO['data']>(`/api/daily/incidentDeal/getVoList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name GetIncidentDealDtl
+     * @summary 获取报障明细
+     * @request POST:/incidentDeal/getIncidentDealDtl
+     * @secure
+     */
+    getIncidentDealDtl: (query: { billNo: string }) =>
+      http.request<ResultIncidentDealVO['data']>(`/api/daily/incidentDeal/getIncidentDealDtl`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name AddIncidentDeal
+     * @summary 提交报障单
+     * @request POST:/incidentDeal/addIncidentDeal
+     * @secure
+     */
+    addIncidentDeal: (data: IncidentDealVO) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentDeal/addIncidentDeal`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   incidentCfg: {
@@ -720,6 +1025,21 @@ export const api = {
      */
     modifyAlertCfg: (data: AlertCfg) =>
       http.request<ResultObject['data']>(`/api/daily/alertCfg/modifyAlertCfg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯警报配置表
+     * @name GetVoList
+     * @summary 查询预警机制
+     * @request POST:/alertCfg/getVoList
+     * @secure
+     */
+    getVoList: (data: AlertCfgSearch) =>
+      http.request<ResultPagingDataAlertCfgVO['data']>(`/api/daily/alertCfg/getVoList`, {
         method: 'POST',
         body: data as any,
       }),
