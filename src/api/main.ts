@@ -801,6 +801,91 @@ export interface ResultLong {
   data?: string;
 }
 
+export interface ProfileSearch {
+  /** 模糊搜索字段 */
+  key?: string;
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  nodeId?: string;
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  attribute?: number;
+}
+
+/** 响应数据 */
+export type PagingDataProfileSearchVO = {
+  list?: ProfileSearchVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface ProfileSearchVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  moduleId?: string;
+  /** 配置项编码 */
+  profileCode?: string;
+  /** 配置项名称 */
+  profileName?: string;
+  /** 配置项描述 */
+  profileDesc?: string;
+  /** 配置项值类型 */
+  valueType?: string;
+  /** 配置项值范围 */
+  valueRange?: string;
+  /** 模块名称 */
+  moduleName?: string;
+  /** 配置项维度 */
+  profileCategory?: string;
+  /** 配置项维度值 */
+  profileCategoryValue?: string;
+  /** 配置项值 */
+  profileValue?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProfileSearchVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProfileSearchVO;
+}
+
 /** 打印模板关联实体 */
 export interface PrintTmplMapDTO {
   id?: string;
@@ -1906,15 +1991,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isBatchName?: string;
-  isState?: boolean;
   stateName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
   isProductName?: string;
+  isRawChecked?: boolean;
   isRawName?: string;
+  isBatchName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -2423,8 +2508,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -2746,19 +2831,6 @@ export interface ResultListOrgTreeVO {
   message?: string;
   /** 响应数据 */
   data?: OrgTreeVO[] | null;
-}
-
-/** 通用响应类 */
-export interface ResultListOrg {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: Org[] | null;
 }
 
 /** 响应数据 */
@@ -3267,21 +3339,6 @@ export const api = {
     tree: () =>
       http.request<ResultListOrgTreeVO['data']>(`/api/main/org/tree`, {
         method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 组织架构表
-     * @name GetlistByLevelCode
-     * @summary 根据levelCode获取组织信息
-     * @request GET:/org/getlistByLevelCode
-     * @secure
-     */
-    getlistByLevelCode: (query: { search: string; levelCode: string }) =>
-      http.request<ResultListOrg['data']>(`/api/main/org/getlistByLevelCode`, {
-        method: 'GET',
-        params: query,
       }),
 
     /**
@@ -3831,6 +3888,36 @@ export const api = {
       http.request<ResultLong['data']>(`/api/main/role/getbycode`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  profile: {
+    /**
+     * No description
+     *
+     * @tags 配置项
+     * @name GetProfileList
+     * @summary 主界面表格区
+     * @request POST:/profile/items/getList
+     * @secure
+     */
+    getProfileList: (data: ProfileSearch) =>
+      http.request<ResultPagingDataProfileSearchVO['data']>(`/api/main/profile/items/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项
+     * @name GetAllTree
+     * @summary 主界面树形区域
+     * @request GET:/profile/items/tree
+     * @secure
+     */
+    getAllTree: () =>
+      http.request<ResultObject['data']>(`/api/main/profile/items/tree`, {
+        method: 'GET',
       }),
   },
   post: {
@@ -4809,20 +4896,6 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataEquipment['data']>(`/api/main/equipment/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 设备
-     * @name GetList
-     * @request POST:/equipment/getList
-     * @secure
-     */
-    getList: (data: CommonSearch) =>
-      http.request<ResultPagingDataEquipment['data']>(`/api/main/equipment/getList`, {
         method: 'POST',
         body: data as any,
       }),
