@@ -248,114 +248,6 @@ export interface ResultPagingDataLong {
   data?: PagingDataLong;
 }
 
-/** 工艺路线映射表 */
-export interface RoutingMap {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工艺路线代码 */
-  routingCode?: string;
-  mitemId?: string;
-  mitemCategoryId?: string;
-  workcenterId?: string;
-  /**
-   * 是否默认
-   * @format int32
-   */
-  isDefault?: number;
-}
-
-export interface CommonSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
-  keyword?: string;
-  /** @format int32 */
-  state?: number;
-  parentId?: string;
-  category?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
-
-/** 响应数据 */
-export type PagingDataRouting = {
-  list?: Routing[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataRouting {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataRouting;
-}
-
-/** 工艺路线 */
-export interface Routing {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工艺路线代码 */
-  routingCode?: string;
-  /** 工艺路线名称 */
-  routingName?: string;
-  /** 工艺路线描述 */
-  routingDesc?: string;
-  /** 工艺路线类型 */
-  routingType?: string;
-}
-
 /** 包装关联物料提交的模型 */
 export interface ProductPackRuleMapDTO {
   id?: string;
@@ -974,23 +866,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
-  scanDatetimeStr?: string;
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopId?: string;
+  isState?: boolean;
+  stateName?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
   defectCodeStr?: string;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
-  isState?: boolean;
+  scanDatetimeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -1191,157 +1076,6 @@ export interface BarcodeRuleInMitem {
   barcodeRuleId?: string;
   mitemId?: string;
   mitemCategoryId?: string;
-}
-
-/** 响应数据 */
-export type PagingDataRoutingMapVO = {
-  list?: RoutingMapVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataRoutingMapVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataRoutingMapVO;
-}
-
-/** 工艺路线关联产品实体 */
-export interface RoutingMapVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /** 类型编码 */
-  mitemCategoryCode?: string;
-  /** 类型名称 */
-  mitemCategoryName?: string;
-  /** 产品编码 */
-  mitemCode?: string;
-  /** 产品名称 */
-  mitemName?: string;
-  /** 工作中心 */
-  workcenter?: string;
-  /**
-   * 是否默认
-   * @format int32
-   */
-  isDefault?: number;
-}
-
-/** 通用响应类 */
-export interface ResultInteger {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /**
-   * 响应数据
-   * @format int32
-   */
-  data?: number | null;
-}
-
-/** 响应数据 */
-export type PagingDataRoutingVO = {
-  list?: RoutingVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataRoutingVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataRoutingVO;
-}
-
-/** 工艺路线展示实体 */
-export interface RoutingVO {
-  id?: string;
-  /** 工艺路线编码 */
-  routingCode?: string;
-  /** 工艺路线名称 */
-  routingName?: string;
-  /** 工艺路线描述 */
-  routingDesc?: string;
-  /** 工艺路线类型 */
-  routingType?: string;
-  routingVersionId?: string;
-  /**
-   * 工艺路线版本
-   * @format int32
-   */
-  routingVersion?: number;
-  /**
-   * 启用时间
-   * @format date-time
-   */
-  enableDate?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  invailDate?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-}
-
-/** 通用响应类 */
-export interface ResultRoutingDTO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 工艺路线实体 */
-  data?: RoutingDTO;
 }
 
 /** 显示包装规则明细列表 */

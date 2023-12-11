@@ -226,7 +226,6 @@ import {
 import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
-import { api as apiControl } from '@/api/control';
 import { api as apiMain } from '@/api/main';
 import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -276,7 +275,7 @@ const close = () => {
 watch(visible, (value: boolean) => {
   if (value && props.id) {
     // @ts-ignore
-    apiControl.routing.item(props.id).then((data) => {
+    apiMain.routing.item(props.id).then((data) => {
       // 复制不需要赋值form表单
       if (!props.isCopy) {
         formData.routingCode = data.routingCode;
