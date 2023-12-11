@@ -348,7 +348,7 @@ const save = () => {
       };
       // 复制走新增逻辑
       if (props.id && !props.isCopy) {
-        apiControl.routing
+        apiMain.routing
           // @ts-ignore
           .update(props.id, postData)
           .then(() => {
@@ -360,7 +360,7 @@ const save = () => {
             loading.value = false;
           });
       } else {
-        apiControl.routing
+        apiMain.routing
           // @ts-ignore
           .add(postData)
           .then(() => {
