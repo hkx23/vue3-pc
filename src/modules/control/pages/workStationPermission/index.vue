@@ -237,9 +237,19 @@ const onHandelPermission = () => {
   permission.value = true;
 };
 // 查询
-const onSearch = () => {
+const onSearch = async () => {
   pageUI.value.page = 1;
-  onfetchData();
+  const res = await api.workstationAuth.getlist({
+    workcenterWord: inputValue.value.workcenterWord,
+    userWord: inputValue.value.userWord,
+    workstationWord: inputValue.value.workstationWord,
+    processWord: inputValue.value.processWord,
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+  });
+  permissionData.value = res.list;
+  total.value = res.total;
+  MessagePlugin.success('查询成功');
 };
 // 重置
 const onResetting = () => {

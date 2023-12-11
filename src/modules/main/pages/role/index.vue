@@ -20,9 +20,9 @@
       >
         <template #op="{ row }">
           <t-space :size="8">
-            <t-link theme="primary" @click="onRowEdit(row)">编辑</t-link>
-            <t-link theme="primary" @click="onRowPermission(row)">权限</t-link>
-            <t-link theme="primary" @click="onRowPerson(row)">成员</t-link>
+            <t-link theme="primary" @click="onRowEdit(row)">{{ $t('common.edit') }}</t-link>
+            <t-link theme="primary" @click="onRowPermission(row)">{{ $t('role.authority') }}</t-link>
+            <t-link theme="primary" @click="onRowPerson(row)">{{ $t('role.member') }}</t-link>
             <!-- 删除 -->
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onRowDelete(row)">
               <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
@@ -30,7 +30,7 @@
           </t-space>
         </template>
         <template #button>
-          <t-button theme="primary" @click="onAddClick"> 新增 </t-button>
+          <t-button theme="primary" @click="onAddClick"> {{ t('common.button.add') }} </t-button>
         </template>
       </cmp-table>
     </div>
@@ -54,6 +54,11 @@
       <user-form ref="userFormRef" :role-id="formUserRoleId" />
     </t-dialog>
     <!-- 权限分配弹出窗 -->
+    <dialog-permission
+      :id="selectRoleId"
+      v-model="formPermissionVisible"
+      :title="t('role.authTitle')"
+    ></dialog-permission>
   </div>
 </template>
 
@@ -66,12 +71,14 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import { FormRef } from './constants';
+import dialogPermission from './dialogPermission.vue';
 import RoleForm from './form.vue';
 import { useLang } from './lang';
 import userForm from './userForm.vue';
 
 const formVisible = ref(false);
 const formUserVisible = ref(false);
+const formPermissionVisible = ref(false);
 const formAdd = ref(true);
 const formRef = ref<FormRef>(null);
 const userFormRef = ref<FormRef>(null);
@@ -83,6 +90,8 @@ const { loading, setLoading } = useLoading();
 const dataTotal = ref(0);
 // 表格数据
 const tableData = ref([]);
+// 选中行ID,点击权限按钮时赋值
+const selectRoleId = ref('');
 // 表格列配置
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
@@ -173,8 +182,8 @@ const fetchTable = async () => {
     // 如果列表项目oid等于0，plantCode与plantName都为全部
     list.forEach((element) => {
       if (element.oid === 0) {
-        element.plantCode = '全部';
-        element.plantName = '全部';
+        element.plantCode = t('business.main.all');
+        element.plantName = t('business.main.all');
       }
     });
     tableData.value = list;
@@ -192,13 +201,15 @@ const onRowPerson = (row: any) => {
   // reset(true, row);
   formUserRoleId.value = row.id;
   formUserVisible.value = true;
-  console.log('人员分配', row);
+  // console.log('人员分配', row);
 };
 const onRowPermission = (row: any) => {
-  console.log('权限分配', row);
+  selectRoleId.value = row.id;
+  formPermissionVisible.value = true;
+  // console.log('权限分配', row);
 };
 const onRowDelete = async (row: any) => {
-  console.log('删除', row);
+  // console.log('删除', row);
   await api.role.delete({ id: row.id });
   fetchTable();
   MessagePlugin.success(t('common.message.deleteSuccess'));
@@ -210,7 +221,7 @@ const onRowEdit = (row: any) => {
   formVisible.value = true;
 };
 const onAddClick = () => {
-  console.log('新增');
+  // console.log('新增');
   const { reset } = formRef.value;
   reset(false, null);
   formAdd.value = true;

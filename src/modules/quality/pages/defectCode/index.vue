@@ -137,12 +137,11 @@ const onFetchData = async () => {
 // 控制新增或者编辑的
 const onIsAddAndEdit = async () => {
   if (isAddAndEdit.value === 1) {
-    console.log('新增');
     try {
       await api.defectCode.addDefectCode({
         defectCode: formItem.defectCode,
         defectName: formItem.defectName,
-        parentDefectId: formItem.ParentId.toString(),
+        parentDefectId: selectedRowKeys.value[0],
       });
       formVisible.value = false;
       onFetchData();

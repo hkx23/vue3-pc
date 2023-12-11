@@ -14,6 +14,7 @@
       >
         <t-form-item
           v-for="(opt, i) in cOpts"
+          v-show="!opt.isHide"
           :key="i"
           :label="opt.label"
           :label-width="opt.labelWidth"

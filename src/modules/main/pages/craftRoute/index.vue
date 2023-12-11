@@ -248,7 +248,7 @@ const craftRouteData = reactive({
 });
 const getRouting = () => {
   setLoading(true);
-  apiControl.routing
+  apiMain.routing
     // @ts-ignore
     .mainPage({
       pageNum: pageUI.value.page,
@@ -364,7 +364,7 @@ const selectRouting = ({ row }) => {
 };
 const getProductRelation = () => {
   productLoading.value = true;
-  apiControl.routingMap
+  apiMain.routingMap
     .listByRoutingCode({
       pageNum: productPage.value.page,
       pageSize: productPage.value.rows,
@@ -381,16 +381,16 @@ const getProductRelation = () => {
     });
 };
 const deleteProductRelation = (id: string) => {
-  apiControl.routingMap.deleteBatch([id]).then(() => getProductRelation());
+  apiMain.routingMap.deleteBatch([id]).then(() => getProductRelation());
 };
 const deleteProductRelationBatch = () => {
-  apiControl.routingMap.deleteBatch(routingMapKeys.value).then(() => {
+  apiMain.routingMap.deleteBatch(routingMapKeys.value).then(() => {
     getProductRelation();
     routingMapKeys.value = [];
   });
 };
 const setProductRelationDefault = ($event: any, id: string) => {
-  apiControl.routingMap
+  apiMain.routingMap
     .setDefault(id, {
       isDefault: $event ? 1 : 0,
     })

@@ -44,7 +44,7 @@
 import { Data, FormRules } from 'tdesign-vue-next';
 import { computed, reactive, ref, toRefs } from 'vue';
 
-import { api as apiControl } from '@/api/control';
+import { api } from '@/api/main';
 import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
 
 import { useLang } from './lang';
@@ -84,7 +84,7 @@ const add = async () => {
   try {
     const result = await formRef.value.validate();
     if (result === true) {
-      await apiControl.routingMap.add({
+      await api.routingMap.add({
         routingCode: props.routingCode,
         mitemCategoryId: formData.mitemCategoryId,
         mitemId: formData.mitemId,

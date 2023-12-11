@@ -25,6 +25,7 @@
 | 参数          | 说明                                       | 类型               |     默认值 |
 | :---------- | :--------------------------------------- | :--------------- | ------: |
 | label       | 表单字段说明标题                                 | string           |       无 |
+| isHide       | 是否隐藏表单字段                                 | boolean           |       无 |
 | className   | 自定义 class                                | string           |       无 |
 | labelRender | 自定义 label（render 函数 jsx 方式编写）            | function         |       无 |
 | slotName    | 自定义输入框插槽(作用域插槽解构接收{param}返回当前所有表单初始值)    | string           |       无 |

@@ -48,5 +48,10 @@
   "i18n-ally.localesPaths": ["src/locales/modules", "src/modules/**/pages/**/lang"],
   "i18n-ally.pathMatcher": "{locale}.json",
   "i18n-ally.keystyle": "nested",
-  "i18n-ally.displayLanguage": "zh-CN"
+  "i18n-ally.displayLanguage": "zh-CN",
+  "[javascript][javascriptreact][typescript][typescriptreact][vue]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  }
 }

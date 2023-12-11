@@ -2,6 +2,18 @@
   <div class="module-tree-container">
     <t-card :bordered="false">
       <t-row justify="space-between">
+        <cmp-query :opts="opts" @submit="onInput">
+          <template #cellType>
+            <t-select v-model="queryData.cellType">
+              <t-option
+                v-for="item in DropDownData.list"
+                :key="item.id"
+                :label="item.paramValue"
+                :value="item.paramCode"
+              />
+            </t-select>
+          </template>
+        </cmp-query>
         <t-col :span="12" flex="auto">
           <cmp-table
             ref="tableRef"
@@ -42,32 +54,13 @@
                 </t-button>
               </t-popconfirm>
             </template>
-            <template #button>
+            <template #operate>
               <t-space>
-                <t-button theme="primary" @click="onAddTypeData"> 新建 </t-button>
+                <t-button theme="default" @click="onAddTypeData"> 新建 </t-button>
                 <t-button theme="default"> 导入 </t-button>
                 <t-popconfirm theme="default" content="确认删除吗" @confirm="deleteBatches()">
                   <t-button theme="default"> 批量删除 </t-button>
                 </t-popconfirm>
-              </t-space>
-              <t-form>
-                <t-form-item
-                  label-width="200px"
-                  label="异常类型编码/名称:"
-                  name="displayName"
-                  style="display: inline-block"
-                >
-                  <t-input v-model="searchData.inputData"></t-input>
-                </t-form-item>
-                <t-form-item label="异常模块" name="propertyValueType" style="display: inline-block">
-                  <t-select v-model="searchData.selectData" :autofocus="false" @change="onSearchSelect">
-                    <t-option v-for="item in DropDownData.list" :key="item.id" :label="item.paramValue" :value="item" />
-                  </t-select>
-                </t-form-item>
-              </t-form>
-              <t-space>
-                <t-button theme="primary" @click="searchButton"> 查询 </t-button>
-                <t-button theme="default" @click="resetButton"> 重置 </t-button>
               </t-space>
             </template>
           </cmp-table>
@@ -126,17 +119,13 @@
 <script setup lang="ts">
 import { Icon } from 'tdesign-icons-vue-next';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, reactive, Ref, ref } from 'vue';
+import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
+import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
-const searchData = ref({
-  inputData: '',
-  selectData: '',
-  selectCode: '',
-});
 const isDisabled = ref(false);
 const DropDownData = reactive({ list: [] });
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
@@ -173,7 +162,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'incidentModule',
+    colKey: 'incidentModuleName',
     title: '异常模块',
     align: 'center',
     width: '110',
@@ -210,7 +199,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'operate',
+    colKey: 'op',
     title: '操作',
     align: 'center',
     fixed: 'right',
@@ -218,7 +207,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     cell: 'actionSlot', // 引用具名插槽
   },
 ];
-
+// 表单验证规则
 const rules: FormRules = {
   incidentMdName: [{ required: true, message: '异常模块不能为空', trigger: 'change' }],
   incidentName: [{ required: true, message: '异常类型名称不能为空', trigger: 'blur' }],
@@ -266,15 +255,8 @@ const onAddTypeData = () => {
   diaLogTitle.value = '添加异常类型';
 };
 
-// 搜索下拉框事件
-const onSearchSelect = (data) => {
-  console.log('🚀 ~ file: index.vue:232 ~ onSearchSelect ~ data:', data);
-  searchData.value.selectCode = data.paramCode;
-};
-
 // 下拉框点击事件
 // const onObjectCodeChange = (data: { paramCode: string }) => {
-//   console.log('🚀 ~ file: index.vue:274 ~ onObjectCodeChange ~ data:', data);
 //   anomalyTypeTabData.list.incidentModule = data.paramCode;
 // };
 
@@ -296,24 +278,74 @@ const onSwitchChange = async (row: { incidentName: any; id: any }, value: any) =
   await onGetAnomalyTypeData();
   MessagePlugin.success('操作成功');
 };
-// 查询事件
-const searchButton = async () => {
+// #查询参数
+const queryData = ref({
+  state: [
+    {
+      label: '全部',
+      value: '01',
+    },
+    {
+      label: '启用',
+      value: '1',
+    },
+    {
+      label: '禁用',
+      value: '0',
+    },
+  ],
+  soltDemo: '',
+  cellType: '',
+});
+
+// #query 查询参数
+const opts = computed(() => {
+  return {
+    state: {
+      label: '状态',
+      comp: 't-select',
+      event: 'input',
+      defaultVal: '01',
+      labelWidth: '50',
+      bind: {
+        options: queryData.value.state,
+      },
+    },
+    soltDemo: {
+      label: '异常类型编码/名称',
+      labelWidth: '120',
+      comp: 't-input',
+      event: 'input',
+      defaultVal: '',
+    },
+    workshop: {
+      label: '异常模块',
+      labelWidth: '50',
+      event: 'business',
+      defaultVal: '',
+      slotName: 'cellType',
+    },
+  };
+});
+
+const onInput = async (data: any) => {
   pageUI.value.page = 1;
+  const resultMap = {
+    '01': [1, 0],
+    '1': [1],
+    '0': [0],
+  };
+  const result = resultMap[data.state] || [];
   const res = await api.incidentType.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
-    keyword: searchData.value.inputData,
-    selectKeyword: searchData.value.selectCode,
+    keyword: data.soltDemo,
+    selectKeyword: queryData.value.cellType,
+    state: result,
   });
   anomalyTypeData.list = res.list;
   anomalyTotal.value = res.total;
   MessagePlugin.success('查询成功');
-};
-// 重置事件
-const resetButton = () => {
-  searchData.value.inputData = '';
-  searchData.value.selectCode = '';
-  searchData.value.selectData = '';
 };
 
 /** **
@@ -375,13 +407,18 @@ const onDelConfirm = async () => {
 
 // 批量删除
 const deleteBatches = async () => {
+  // 步骤 1: 检查删除前的数据总量
+  const initialLength = anomalyTypeData.list.length;
+  // 步骤 2: 执行删除操作
   await api.incidentType.removeIncidentTypeBatch({ ids: selectedRowKeys.value });
-  if (anomalyTypeData.list.length <= 1 && pageUI.value.page > 0) {
+  // 步骤 3: 检查当前页是否还有数据
+  if (initialLength === anomalyTypeData.list.length && pageUI.value.page > 1) {
+    // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
+    await onGetAnomalyTypeData(); // 重新渲染数组
+    selectedRowKeys.value = [];
+    MessagePlugin.success('批量删除成功');
   }
-  await onGetAnomalyTypeData(); // 重新渲染数组
-  selectedRowKeys.value = [];
-  MessagePlugin.success('批量删除成功');
 };
 
 // 关闭模态框事件

@@ -15,6 +15,7 @@
             :selected-row-keys="selectedRowKeys"
             @select-change="onGroupSelectChange"
             @row-click="onRowClick"
+            @refresh="onFetchGroupData"
           >
             <template #actionSlot="{ row }">
               <t-button size="small" variant="text" @click="onEditRow(row)">
@@ -48,6 +49,7 @@
             :total="supportPersonTotal"
             :selected-row-keys="delPersonRowKeys"
             @select-change="onPersonSelectChange"
+            @refresh="onFetchGroupData"
           >
             <template #actionSlot="{ row }">
               <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelPersonConfirm()">
@@ -58,11 +60,11 @@
             </template>
             <template #button>
               <t-space>
-                <t-button theme="primary" @click="onAddPersonData"> 新增员工 </t-button>
+                <t-button theme="primary" @click="onAddPersonData"> 新增用户 </t-button>
                 <t-popconfirm theme="default" content="确认删除吗" @confirm="onPersondeleteBatches()">
-                  <t-button theme="default"> 员工批量删除 </t-button>
+                  <t-button theme="default"> 用户批量删除 </t-button>
                 </t-popconfirm>
-                <t-button theme="default"> 处理组员工导入 </t-button>
+                <t-button theme="default"> 处理组用户导入 </t-button>
               </t-space>
             </template>
           </cmp-table>
@@ -81,9 +83,14 @@
           <t-input v-model="supportGroupTabData.list.supportGroupName"></t-input>
         </t-form-item>
         <!-- 第 3️⃣ 行数据 -->
-        <t-form-item label="处理组类型" name="supportGroupTypeName">
-          <t-select v-model="supportGroupTabData.list.supportGroupTypeName" @change="onObjectCodeChange">
-            <t-option v-for="item in DropDownData.list" :key="item.id" :label="item.paramValue" :value="item" />
+        <t-form-item label="处理组类型" name="supportGroupType">
+          <t-select v-model="supportGroupTabData.list.supportGroupType">
+            <t-option
+              v-for="item in DropDownData.list"
+              :key="item.id"
+              :label="item.paramValue"
+              :value="item.paramCode"
+            />
           </t-select>
         </t-form-item>
         <t-row>
@@ -105,6 +112,9 @@
       <!-- #新增表格数据 -->
       <t-row justify="space-around">
         <t-col :span="5">
+          <t-row>
+            <t-col><cmp-query :opts="optsAdd" :bool-enter="true" @submit="onInputAdd"></cmp-query></t-col>
+          </t-row>
           <cmp-table
             ref="tableRef"
             v-model:pagination="addPage"
@@ -112,16 +122,24 @@
             :table-column="addPersonColumns"
             :table-data="onAddPersonTabList.list"
             :total="addPersonTotal"
-            @select-change="onGroupSelectChange"
+            @select-change="onFetchPersonData"
+            @refresh="onFetchAddData"
           >
             <template #addPerson="{ row }">
               <t-button size="small" variant="text" @click="addPerson(row)">
                 <icon name="add" class="black-icon" />
               </t-button>
-            </template> </cmp-table
-        ></t-col>
+            </template>
+            <template #button>
+              <h3>选择用户</h3>
+            </template>
+          </cmp-table></t-col
+        >
         <!-- # 删除 表格数据 -->
         <t-col :span="5">
+          <t-row>
+            <t-col><cmp-query :opts="optsDel" :bool-enter="true" @submit="onInputDel"></cmp-query></t-col>
+          </t-row>
           <cmp-table
             ref="tableRef"
             v-model:pagination="delPage"
@@ -130,13 +148,18 @@
             :table-data="onDelPersonTabList.list"
             :total="delPersonTotal"
             @select-change="onGroupSelectChange"
+            @refresh="onFetchDelData"
           >
             <template #delPerson="{ row }">
               <t-button size="small" variant="text" @click="delPerson(row)">
                 <icon name="remove" class="black-icon" />
               </t-button>
-            </template> </cmp-table
-        ></t-col>
+            </template>
+            <template #button>
+              <h3>已选用户</h3>
+            </template>
+          </cmp-table></t-col
+        >
       </t-row>
       <t-row style="margin-top: 20px">
         <t-col :span="11" class="align-right">
@@ -187,9 +210,25 @@ const supportGroupTabData = reactive({
     supportGroupCode: '', // 处理组编码
     supportGroupName: '', // 处理组名称
     supportGroupType: '', // 处理组类型
-    supportGroupTypeName: '', //  处理组类型名称
   },
 });
+
+// # 处理组刷新按钮
+const onFetchGroupData = async () => {
+  await supportGroupInUserTabData(); // 获取 处理组表格 数据
+};
+// # 人员刷新按钮
+const onFetchPersonData = async () => {
+  await supportPersonInUserTabData(); // 获取 人员表格 数据
+};
+// # 人员添加刷新按钮
+const onFetchAddData = async () => {
+  await onAddPersonTabData();
+};
+// # 人员删除刷新按钮
+const onFetchDelData = async () => {
+  await onDelPersonTabData();
+};
 // ####处理组 表头
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
   {
@@ -210,7 +249,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
-    colKey: 'supportGroupType',
+    colKey: 'supportGroupTypeName',
     title: '处理组类型',
     align: 'center',
     width: '130',
@@ -238,13 +277,13 @@ const personColumns: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'personCode',
+    colKey: 'userName',
     title: '用户账号',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'personName',
+    colKey: 'userDisplayName',
     title: '姓名',
     align: 'center',
     width: '110',
@@ -285,13 +324,13 @@ const personColumns: PrimaryTableCol<TableRowData>[] = [
 // ####人员新增 表头
 const addPersonColumns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'personCode',
+    colKey: 'userName',
     title: '用户账号',
     align: 'center',
     width: '70',
   },
   {
-    colKey: 'personName',
+    colKey: 'userDisplayName',
     title: '姓名',
     align: 'center',
     width: '70',
@@ -332,13 +371,13 @@ const addPersonColumns: PrimaryTableCol<TableRowData>[] = [
 // ####人员删除 表头
 const delPersonColumns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'personCode',
+    colKey: 'userName',
     title: '用户账号',
     align: 'center',
     width: '70',
   },
   {
-    colKey: 'personName',
+    colKey: 'userDisplayName',
     title: '姓名',
     align: 'center',
     width: '70',
@@ -403,16 +442,49 @@ const onInput = async (data: any) => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     groupKeyword: data.categoryName,
+    userKeyword: data.methodCodeName,
   });
   supportGroupInUserList.list = res.list;
   supportGroupTotal.value = res.total;
-  const rules = await api.supportGroup.getGroupList({
-    pageNum: personPage.value.page,
-    pageSize: personPage.value.rows,
-    userKeyword: data.methodCodeName,
+};
+
+// ## 添加             员工                    搜索
+const optsAdd = computed(() => {
+  return {
+    categoryName: { label: '查询用户', comp: 't-input', event: 'input', defaultval: '' },
+  };
+});
+// 上侧搜索提交事件
+const onInputAdd = async (data: any) => {
+  addPage.value.page = 1;
+  const res = await api.supportGroup.getOutPerson({
+    pageNum: addPage.value.page,
+    pageSize: addPage.value.rows,
+    userKeyword: data.categoryName,
+    supportGroupId: personID.value,
   });
-  supportPersonInUserList.list = rules.list;
-  supportPersonTotal.value = rules.total;
+  onAddPersonTabList.list = res.list;
+  addPersonTotal.value = res.total;
+};
+
+// ## 删除             员工                   搜索
+
+const optsDel = computed(() => {
+  return {
+    categoryName: { label: '已选用户', comp: 't-input', event: 'input', defaultval: '' },
+  };
+});
+// 上侧搜索提交事件
+const onInputDel = async (data: any) => {
+  delPage.value.page = 1;
+  const res = await api.supportGroup.getInnerPerson({
+    pageNum: delPage.value.page,
+    pageSize: delPage.value.rows,
+    userKeyword: data.categoryName,
+    supportGroupId: personID.value,
+  });
+  onDelPersonTabList.list = res.list;
+  delPersonTotal.value = res.total;
 };
 
 // #获取 处理组表格 数据
@@ -432,8 +504,6 @@ const onRowClick = async ({ row }) => {
   personID.value = null; // 点击前先清空
   personID.value = row.id;
   await supportPersonInUserTabData(); // 获取 人员表格 数据
-  await onAddPersonTabData(); // 获取 添加 表格人员数据
-  await onDelPersonTabData(); // 获取 删除 表格人员数据
 };
 
 // #获取 人员表格 数据
@@ -462,20 +532,15 @@ const onGetDropDownData = async () => {
 };
 
 // #添加按钮点击事件
-const onAddTypeData = () => {
+const onAddTypeData = async () => {
+  formRef.value.reset({ type: 'empty' });
   supportGroupTabData.list.supportGroupCode = ''; // 处理组代码
   supportGroupTabData.list.supportGroupName = ''; // 处理组名称
   supportGroupTabData.list.supportGroupType = ''; // 处理组类型
-  supportGroupTabData.list.supportGroupTypeName = ''; // 处理组类型名称
   groupDisabled.value = false; // 关闭表单禁用
   submitFalg.value = true; // true为新增
   formVisible.value = true;
   diaLogTitle.value = '新增处理组';
-};
-
-// #下拉框点击事件
-const onObjectCodeChange = (data: { paramCode: string }) => {
-  supportGroupTabData.list.supportGroupType = data.paramCode;
 };
 
 // #编辑 点击 处理组右侧表格编辑按钮
@@ -483,8 +548,7 @@ const onEditRow = (row: any) => {
   groupDisabled.value = true; // 启用表单禁用
   supportGroupTabData.list.supportGroupCode = row.supportGroupCode; // 处理组代码
   supportGroupTabData.list.supportGroupName = row.supportGroupName; // 处理组名称
-  supportGroupTabData.list.supportGroupType = row.incidentModuleName; // 处理组类型
-  supportGroupTabData.list.supportGroupTypeName = row.supportGroupTypeName; // 处理组类型名称
+  supportGroupTabData.list.supportGroupType = row.supportGroupType; // 处理组类型
   incidentID.value = row.id; // 编辑回填 ID
   submitFalg.value = false; // 编辑为 false
   formVisible.value = true;
@@ -509,29 +573,31 @@ const onGroupDelect = (row: { id: any }) => {
   selectedRowKeys.value.push(row.id);
 };
 
-// ！单项删除请求
-const onGroupDelectTabData = async () => {
+// ！处理组表格删除确认按钮
+const onDelConfirm = async () => {
   await api.supportGroup.removeSupportGroupBatch({ ids: selectedRowKeys.value });
   if (supportGroupInUserList.list.length <= 1 && pageUI.value.page > 1) {
     pageUI.value.page--;
   }
-  await supportPersonInUserTabData(); // 获取 处理组表格 数据
-  if (selectedRowKeys.value.length > 1) {
-    MessagePlugin.success('批量删除成功');
-  } else {
-    MessagePlugin.success('删除成功');
-  }
+  await supportGroupInUserTabData(); // 获取 处理组表格 数据
   selectedRowKeys.value = [];
-};
-
-// ！处理组表格删除确认按钮
-const onDelConfirm = async () => {
-  onGroupDelectTabData();
+  MessagePlugin.success('删除成功');
 };
 
 // ！处理组表格批量删除按钮
-const onGroupDeleteBatches = () => {
-  onGroupDelectTabData();
+const onGroupDeleteBatches = async () => {
+  // 步骤 1: 检查删除前的数据总量
+  const initialLength = supportGroupInUserList.list.length;
+  // 步骤 2: 执行删除操作
+  await api.supportGroup.removeSupportGroupBatch({ ids: selectedRowKeys.value });
+  // 步骤 3: 检查当前页是否还有数据
+  if (initialLength === supportGroupInUserList.list.length && pageUI.value.page > 1) {
+    // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
+    pageUI.value.page--;
+    selectedRowKeys.value = [];
+    MessagePlugin.success('批量删除成功');
+  }
+  await supportGroupInUserTabData(); // 获取 处理组表格 数据
 };
 
 /* $*@ *************************  人员部分  ****************************** */
@@ -541,21 +607,6 @@ const delPersonRowKeys: Ref<any[]> = ref([]);
 const onPersonSelectChange = async (value: any[]) => {
   delPersonRowKeys.value = value;
 };
-// ！删除员工请求
-const onDelPersonData = async () => {
-  await api.supportGroup.removePersonBatch({ supportGroupId: personID.value, ids: delPersonRowKeys.value });
-  if (supportPersonInUserList.list.length <= 1 && personPage.value.page > 1) {
-    personPage.value.page--;
-  }
-  await onAddPersonTabData(); // 获取 添加 表格人员数据
-  await onDelPersonTabData(); // 获取 删除 表格人员数据
-  if (delPersonRowKeys.value.length > 1) {
-    MessagePlugin.success('批量删除成功');
-  } else {
-    MessagePlugin.success('删除成功');
-  }
-  delPersonRowKeys.value = [];
-};
 // ！删除员工 点击获取 ID
 const onDelPersonRow = (row: { id: any[] }) => {
   delPersonRowKeys.value = [];
@@ -563,15 +614,38 @@ const onDelPersonRow = (row: { id: any[] }) => {
 };
 // ！删除 员工 单个 气泡框
 const onDelPersonConfirm = async () => {
-  await onDelPersonData();
+  await api.supportGroup.removePersonBatch({ supportGroupId: personID.value, ids: delPersonRowKeys.value });
+  if (supportPersonInUserList.list.length <= 1 && personPage.value.page > 1) {
+    personPage.value.page--;
+  }
+  await supportPersonInUserTabData(); // 获取 人员表格 数据
+  await onAddPersonTabData(); // 获取 添加 表格人员数据
+  await onDelPersonTabData(); // 获取 删除 表格人员数据
+  MessagePlugin.success('删除成功');
+  delPersonRowKeys.value = [];
 };
 // ！多个删除 员工 气泡框
 const onPersondeleteBatches = async () => {
-  await onDelPersonData();
+  // 步骤 1: 检查删除前的数据总量
+  const initialLength = supportPersonInUserList.list.length;
+  // 步骤 2: 执行删除操作
+  await api.supportGroup.removePersonBatch({ supportGroupId: personID.value, ids: delPersonRowKeys.value });
+  // 步骤 3: 检查当前页是否还有数据
+  if (initialLength === supportPersonInUserList.list.length && pageUI.value.page > 1) {
+    // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
+    pageUI.value.page--;
+    delPersonRowKeys.value = [];
+    MessagePlugin.success('批量删除成功');
+  }
+  await supportPersonInUserTabData(); // 获取 人员表格 数据
+  await onAddPersonTabData(); // 获取 添加 表格人员数据
+  await onDelPersonTabData(); // 获取 删除 表格人员数据
 };
 
 // #添加 人员点击 按钮
-const onAddPersonData = () => {
+const onAddPersonData = async () => {
+  await onAddPersonTabData(); // 获取 添加 表格人员数据
+  await onDelPersonTabData(); // 获取 删除 表格人员数据
   personVisible.value = true;
 };
 
@@ -587,6 +661,7 @@ const onAddPersonTabData = async () => {
   onAddPersonTabList.list = res.list;
   addPersonTotal.value = res.total;
 };
+
 // # 获取 删除 人员信息
 const onDelPersonTabList = reactive({ list: [] });
 const delPersonTotal = ref(null);
@@ -656,19 +731,6 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
   padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
   background-color: var(--td-bg-color-container);
   border-radius: var(--td-radius-medium);
-}
-
-.module-edit {
-  margin: 0 10px;
-}
-
-.control-box {
-  text-align: right;
-  margin-top: 20px;
-}
-
-.row-class {
-  margin-bottom: 10px;
 }
 
 .align-right {

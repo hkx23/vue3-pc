@@ -140,7 +140,7 @@ const setRow = (
   parentNameValue: string,
 ) => {
   reset();
-  parentName.value = parentNameValue;
+  parentName.value = parentNameValue === 'undefined' ? '' : parentNameValue;
   isFirstNode.value = isFirst;
   formData.packRuleId = PackRuleRow.id;
   // 第一层节点
