@@ -384,6 +384,7 @@ const formDataTwo = ref({
   iconPath: iconValue.value, // 图标地址
   parentModuleId: null, // 父组件 ID
   menuId: null,
+  clientTypeData: null, // 中断类型，进制
 });
 
 // 侦听 formDataTwo.iconPath 的变化
@@ -575,7 +576,6 @@ const onAddFirstNode = () => {
 
 // 点击 左侧 新增图标
 const onAddSecondNode = (node: any) => {
-  console.log('🚀 ~ file: index.vue:582 ~ onAddSecondNode ~ node:', node);
   if (!node[`__tdesign_tree-node__`].parent?.label) {
     isEditMode.value = true;
     isEditModeTwo.value = true;
@@ -615,7 +615,6 @@ const onAddSecondNode = (node: any) => {
 
 // 点击 左侧 编辑图标
 const onQueryTree = (node: any) => {
-  console.log('🚀 ~ file: index.vue:622 ~ onQueryTree ~ node:', node);
   clickNodeId.value.id = node[`__tdesign_tree-node__`]?.data?.id; // 保存当前节点 id
   formData.value.moduleCode = node[`__tdesign_tree-node__`]?.data?.moduleCode; // 模块编码回填
   formData.value.moduleDesc = node[`__tdesign_tree-node__`]?.data?.moduleDesc; // 模块描述回填
@@ -663,9 +662,10 @@ const menuSonSelectDataTwo = async () => {
 
 // 点击 右侧 表单数据编辑按钮
 const onEditRow = async (row: any) => {
-  console.log('🚀 ~ file: index.vue:666 ~ onEditRow ~ any:', row);
-  formDataTwo.value.menuId = row.parentModuleId;
-  await menuSonSelectDataTwo();
+  const decimalNumber = row.clientType; // 十进制数
+  const binaryString = parseInt(decimalNumber.toString(2), 10); // 将十进制数转换为二进制字符串
+  formDataTwo.value.menuId = row.parentModuleId; // 获取父菜单 ID 方便数据回填
+  await menuSonSelectDataTwo(); // 根据获取到的父菜单 ID，获取子菜单和子菜单ID
   dialogListData.value = row.clientType;
   onDelelistID.value = row.id; // 存储当前 id
   if (row.isPC === 1) {
@@ -675,6 +675,7 @@ const onEditRow = async (row: any) => {
     dialogTabs.value = newArr;
   }
   oneselfClickTree.value = treeClickData.value.one;
+  formDataTwo.value.clientTypeData = binaryString;
   formDataTwo.value.parentClickTree = row.grandpaName; // 模块编码
   formDataTwo.value.parentModuleId = row.parentModuleId; // 模块编码
   formDataTwo.value.moduleCode = row.moduleCode; // 模块编码
@@ -754,7 +755,6 @@ function filterLabels(treeData: any[]) {
 
 // 筛选树节点递归函数
 function simplifyObject(obj: any) {
-  // console.log('🚀 ~ file: index.vue:746 ~ simplifyObject ~ obj:', obj);
   // 创建一个新对象，仅包含 name 和 children 字段
   const simplified = {
     moduleDesc: obj.moduleDesc, // 模块描述
@@ -765,7 +765,6 @@ function simplifyObject(obj: any) {
     sortIndex: obj.sortIndex,
     children: obj.children ? obj.children.map((child: any) => simplifyObject(child)) : [],
   };
-  console.log('🚀 ~ file: index.vue:757 ~ simplifyObject ~ simplified:', simplified);
   // 检查是否存在 children 字段
   if (obj.children && Array.isArray(obj.children)) {
     // 递归处理每个子对象
@@ -935,7 +934,7 @@ const onRedactThree = async () => {
   await api.module.modify({
     parentModuleId: formDataTwo.value.parentModuleId, // 父 ID
     moduleLevel: formDataTwo.value.moduleLevel,
-    clientType: dialogListData.value, // 终端类型
+    clientType: formDataTwo.value.clientTypeData, // 终端类型
     moduleCode: formDataTwo.value.moduleCode, // 模块编码
     moduleName: formDataTwo.value.moduleName, // 菜单名称
     moduleDesc: formDataTwo.value.moduleDesc, // 菜单描述
