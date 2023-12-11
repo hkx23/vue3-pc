@@ -1,0 +1,23 @@
+{
+  "title": "角色：",
+  "placeholder": "请选择角色",
+  "url": "/api/main/role/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "角色编码",
+      "key": "roleCode",
+      "align": "center"
+    },
+    {
+      "title": "角色名称",
+      "key": "roleName",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "roleName"
+  }
+}

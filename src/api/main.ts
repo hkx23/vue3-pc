@@ -409,21 +409,20 @@ export interface RoleUserDTO {
   userIds?: string[];
 }
 
-/** 通用响应类 */
-export interface ResultUser {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 用户 */
-  data?: User;
+/** 用户组织操作实体 */
+export interface UserOrgDTO {
+  userId?: string;
+  orgIds?: string[];
+}
+
+/** 角色权限操作实体 */
+export interface UserAuthDTO {
+  userId?: string;
+  permissionIds?: string[];
 }
 
 /** 用户 */
-export type User = {
+export interface User {
   id?: string;
   /**
    * 创建时间
@@ -504,7 +503,20 @@ export type User = {
   timeExpiration?: string;
   personId?: string;
   orgId?: string;
-} | null;
+}
+
+/** 通用响应类 */
+export interface ResultUser {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 用户 */
+  data?: User;
+}
 
 export interface SupportGroupSearch {
   /**
@@ -600,10 +612,10 @@ export interface SupportGroupVO {
   /** 处理组类型名称 */
   supportGroupTypeName?: string;
   userCount?: string;
-  /** 人员编号 */
-  personCode?: string;
-  /** 姓名 */
-  personName?: string;
+  /** 用户账号 */
+  userName?: string;
+  /** 用户显示名 */
+  userDisplayName?: string;
   /** 手机号 */
   mobilePhone?: string;
   /** 邮箱 */
@@ -680,6 +692,12 @@ export interface ResultSupplier {
   message?: string;
   /** 供应商 */
   data?: Supplier;
+}
+
+/** 角色权限操作实体 */
+export interface RoleAuthDTO {
+  roleId?: string;
+  permissionIds?: string[];
 }
 
 /** 响应数据 */
@@ -789,18 +807,6 @@ export type Role = {
   roleDesc?: string;
 } | null;
 
-/** 通用响应类 */
-export interface ResultLong {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  data?: string;
-}
-
 export interface ProfileSearch {
   /** 模糊搜索字段 */
   key?: string;
@@ -816,20 +822,20 @@ export interface ProfileSearch {
   pageSize?: number;
   nodeId?: string;
   /**
-   * 客户端类型
+   * 节点类型
    * @format int32
    */
   attribute?: number;
 }
 
 /** 响应数据 */
-export type PagingDataProfileSearchVO = {
-  list?: ProfileSearchVO[];
+export type PagingDataProfileValueSearchVO = {
+  list?: ProfileValueSearchVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
-export interface ProfileSearchVO {
+export interface ProfileValueSearchVO {
   id?: string;
   /**
    * 创建时间
@@ -874,7 +880,7 @@ export interface ProfileSearchVO {
 }
 
 /** 通用响应类 */
-export interface ResultPagingDataProfileSearchVO {
+export interface ResultPagingDataProfileValueSearchVO {
   /**
    * 响应代码
    * @format int32
@@ -883,7 +889,40 @@ export interface ResultPagingDataProfileSearchVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataProfileSearchVO;
+  data?: PagingDataProfileValueSearchVO;
+}
+
+/** 配置项值 */
+export interface ProfileValue {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  profileId?: string;
+  /** 配置项分类 */
+  profileCategory?: string;
+  /** 配置项分类值 */
+  profileCategoryValue?: string;
+  /** 配置项值 */
+  profileValue?: string;
 }
 
 /** 打印模板关联实体 */
@@ -1991,15 +2030,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
   isInProcessName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
   isRawName?: string;
+  isProductName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -2426,6 +2465,11 @@ export interface DefectCodeSearch {
   id?: string;
   /** 多个ID */
   ids?: string[];
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
 }
 
 /** 缺陷代码 */
@@ -2508,8 +2552,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -2623,6 +2667,168 @@ export interface JSONObject {
   [key: string]: any;
 }
 
+export interface BarcodeVaildateRuleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 规则模糊查询关键词 */
+  ruleKeyword?: string;
+  mitemId?: string;
+  /** 条码验证分组 */
+  barcodeValidateGroup?: string;
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+  /** 状态 */
+  state?: number[];
+}
+
+/** 条码验证规则表 */
+export interface BarcodeValidateRule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 规则代码 */
+  ruleCode?: string;
+  /** 规则名称 */
+  ruleName?: string;
+  /**
+   * 优先级
+   * @format int32
+   */
+  pri?: number;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码验证分组 */
+  barcodeValidateGroup?: string;
+  /** 条码规则 */
+  barcodeExpression?: string;
+  /**
+   * 最小
+   * @format int32
+   */
+  minLength?: number;
+  /**
+   * 最大
+   * @format int32
+   */
+  maxLength?: number;
+  /** 备注 */
+  memo?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+}
+
+/** 条码规则显示 */
+export interface BarcodeVaildateRuleVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 规则代码 */
+  ruleCode?: string;
+  /** 规则名称 */
+  ruleName?: string;
+  /**
+   * 优先级
+   * @format int32
+   */
+  pri?: number;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码验证分组 */
+  barcodeValidateGroup?: string;
+  /** 条码规则 */
+  barcodeExpression?: string;
+  /**
+   * 最小
+   * @format int32
+   */
+  minLength?: number;
+  /**
+   * 最大
+   * @format int32
+   */
+  maxLength?: number;
+  /** 备注 */
+  memo?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 条码类型名称 */
+  barcodeTypeName?: string;
+  /** 条码验证分组名称 */
+  barcodeValidateGroupName?: string;
+  /** 物料分类名称 */
+  categoryName?: string;
+  /** 物料名称 */
+  mitemName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeVaildateRuleVO = {
+  list?: BarcodeVaildateRuleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeVaildateRuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeVaildateRuleVO;
+}
+
 /** 出勤模式 */
 export type AttendanceMode = {
   id?: string;
@@ -2674,6 +2880,46 @@ export interface ResultAttendanceMode {
   /** 出勤模式 */
   data?: AttendanceMode;
 }
+
+/** 通用响应类 */
+export interface ResultListUserInOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: UserInOrg[] | null;
+}
+
+/** 用户组织关系表 */
+export type UserInOrg = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  userId?: string;
+  orgId?: string;
+} | null;
 
 /** 通用响应类 */
 export interface ResultListUser {
@@ -2740,6 +2986,163 @@ export interface ResultPagingDataParam {
   message?: string;
   /** 响应数据 */
   data?: PagingDataParam;
+}
+
+/** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
+}
+
+/** 配置项 */
+export type Profile = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  moduleId?: string;
+  /** 配置项编码 */
+  profileCode?: string;
+  /** 配置项名称 */
+  profileName?: string;
+  /** 配置项描述 */
+  profileDesc?: string;
+  /** 配置项值类型 */
+  valueType?: string;
+  /** 配置项值范围 */
+  valueRange?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultProfile {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 配置项 */
+  data?: Profile;
+}
+
+/** 权限功能实体 */
+export type ModulePermissionDTO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  clientType?: number;
+  /** 模块层次代码 */
+  moduleLevel?: string;
+  /** 模块编码 */
+  moduleCode?: string;
+  /** 模块名称 */
+  moduleName?: string;
+  /** 模块描述 */
+  moduleDesc?: string;
+  parentModuleId?: string;
+  /**
+   * 显示顺序
+   * @format int32
+   */
+  sortIndex?: number;
+  /** 模块访问地址 */
+  behaviorPath?: string;
+  /** 图标地址 */
+  iconPath?: string;
+  /** 模块类型 */
+  moduleType?: string;
+  /** 模块版本号 */
+  moduleVersion?: number;
+  /** 模块包标识 */
+  modulePackageIdentify?: string;
+  permissionId?: string;
+  /** 权限名称 */
+  permissionName?: string;
+  /** 权限描述 */
+  permissionDescription?: string;
+  /** 权限转改 */
+  permissionState?: string;
+  /** 权限URL */
+  operationUri?: string;
+  /** 是否禁用 */
+  isForbidden?: string;
+  /** 支持设备 */
+  supportDevice?: string;
+  /** 是否角色禁用 */
+  isForbiddenRole?: string;
+  /** 是否继承角色 */
+  isFromRole?: string;
+  /** 是否不可编辑 */
+  isDisable?: string;
+  /** 功能名称-按语言 */
+  moduleNameT?: string;
+  /** 功能描述-按语言 */
+  moduleDescriptionT?: string;
+  /** 子级 */
+  children?: ModulePermissionDTO[];
+  /** 是否可用 */
+  enabled?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListModulePermissionDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ModulePermissionDTO[] | null;
 }
 
 /** 响应数据 */
@@ -2831,6 +3234,19 @@ export interface ResultListOrgTreeVO {
   message?: string;
   /** 响应数据 */
   data?: OrgTreeVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Org[] | null;
 }
 
 /** 响应数据 */
@@ -3345,6 +3761,21 @@ export const api = {
      * No description
      *
      * @tags 组织架构表
+     * @name GetlistByLevelCode
+     * @summary 根据levelCode获取组织信息
+     * @request GET:/org/getlistByLevelCode
+     * @secure
+     */
+    getlistByLevelCode: (query: { search: string; levelCode: string }) =>
+      http.request<ResultListOrg['data']>(`/api/main/org/getlistByLevelCode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
      * @name Delete
      * @summary 删除组织，包括子集
      * @request DELETE:/org/delete
@@ -3502,7 +3933,144 @@ export const api = {
         body: data as any,
       }),
   },
+  userInOrg: {
+    /**
+     * No description
+     *
+     * @tags 用户组织关系表
+     * @name DeleteUserInOrg
+     * @summary 删除用户在组织中的信息
+     * @request POST:/userInOrg/deleteUserInOrg
+     * @secure
+     */
+    deleteUserInOrg: (data: UserOrgDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInOrg/deleteUserInOrg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户组织关系表
+     * @name AddUserInOrg
+     * @summary 新增用户在组织中的信息
+     * @request POST:/userInOrg/addUserInOrg
+     * @secure
+     */
+    addUserInOrg: (data: UserOrgDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInOrg/addUserInOrg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户组织关系表
+     * @name GetUserInOrgByUserId
+     * @summary 根据用户ID查询用户在组织中的信息
+     * @request GET:/userInOrg/getUserInOrgByUserId
+     * @secure
+     */
+    getUserInOrgByUserId: (query: { userId: string }) =>
+      http.request<ResultListUserInOrg['data']>(`/api/main/userInOrg/getUserInOrgByUserId`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  userAuthorization: {
+    /**
+     * No description
+     *
+     * @tags 用户授权表
+     * @name Forbidden
+     * @summary 用户权限-设置拒绝
+     * @request POST:/userAuthorization/forbidden
+     * @secure
+     */
+    forbidden: (data: UserAuthDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userAuthorization/forbidden`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户授权表
+     * @name BatchDelete
+     * @summary 批量删除用户权限
+     * @request POST:/userAuthorization/batchDelete
+     * @secure
+     */
+    batchDelete: (data: UserAuthDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userAuthorization/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户授权表
+     * @name BatchAdd
+     * @summary 批量新增用户权限
+     * @request POST:/userAuthorization/batchAdd
+     * @secure
+     */
+    batchAdd: (data: UserAuthDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userAuthorization/batchAdd`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   user: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name SetOnline
+     * @summary 禁用/启用用户
+     * @request POST:/user/setOnline
+     * @secure
+     */
+    setOnline: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/setOnline`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name SetDefaultOrg
+     * @summary 设置用户默认库存组织
+     * @request POST:/user/setDefaultOrg
+     * @secure
+     */
+    setDefaultOrg: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/setDefaultOrg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name ResetPassword
+     * @summary 重置用户密码
+     * @request POST:/user/resetPassword
+     * @secure
+     */
+    resetPassword: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/resetPassword`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
@@ -3530,6 +4098,36 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultUser['data']>(`/api/main/user/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Edit
+     * @summary 编辑用户信息
+     * @request POST:/user/edit
+     * @secure
+     */
+    edit: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Add
+     * @summary 新增用户信息
+     * @request POST:/user/add
+     * @secure
+     */
+    add: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/add`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
@@ -3775,6 +4373,37 @@ export const api = {
         body: data as any,
       }),
   },
+  roleAuthorization: {
+    /**
+     * No description
+     *
+     * @tags 角色授权表
+     * @name Delete
+     * @summary 批量删除角色权限
+     * @request POST:/roleAuthorization/batchDelete
+     * @secure
+     */
+    delete: (data: RoleAuthDTO) =>
+      http.request<ResultObject['data']>(`/api/main/roleAuthorization/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色授权表
+     * @name Add
+     * @summary 批量新增角色权限
+     * @request POST:/roleAuthorization/batchAdd
+     * @secure
+     */
+    add: (data: RoleAuthDTO) =>
+      http.request<ResultObject['data']>(`/api/main/roleAuthorization/batchAdd`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   role: {
     /**
      * No description
@@ -3803,26 +4432,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultRole['data']>(`/api/main/role/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 角色
-     * @name GetItemByName
-     * @summary 根據名称獲取角色
-     * @request POST:/role/getbyname
-     * @secure
-     */
-    getItemByName: (query?: {
-      /** @default "0" */
-      id?: string;
-      /** @default "" */
-      roleName?: string;
-    }) =>
-      http.request<ResultLong['data']>(`/api/main/role/getbyname`, {
-        method: 'POST',
-        params: query,
       }),
 
     /**
@@ -3874,6 +4483,26 @@ export const api = {
      * No description
      *
      * @tags 角色
+     * @name GetItemByName
+     * @summary 根據名称獲取角色
+     * @request GET:/role/getbyname
+     * @secure
+     */
+    getItemByName: (query?: {
+      /** @default "0" */
+      id?: string;
+      /** @default "" */
+      roleName?: string;
+    }) =>
+      http.request<ResultLong['data']>(`/api/main/role/getbyname`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 角色
      * @name GetItemByCode
      * @summary 根據编码获取角色
      * @request GET:/role/getbycode
@@ -3890,18 +4519,18 @@ export const api = {
         params: query,
       }),
   },
-  profile: {
+  profileValue: {
     /**
      * No description
      *
-     * @tags 配置项
-     * @name GetProfileList
-     * @summary 主界面表格区
-     * @request POST:/profile/items/getList
+     * @tags 配置项值
+     * @name GetProfileValueList
+     * @summary 获取配置项列表
+     * @request POST:/profileValue/items/getProfileValueList
      * @secure
      */
-    getProfileList: (data: ProfileSearch) =>
-      http.request<ResultPagingDataProfileSearchVO['data']>(`/api/main/profile/items/getList`, {
+    getProfileValueList: (data: ProfileSearch) =>
+      http.request<ResultPagingDataProfileValueSearchVO['data']>(`/api/main/profileValue/items/getProfileValueList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3909,15 +4538,31 @@ export const api = {
     /**
      * No description
      *
-     * @tags 配置项
-     * @name GetAllTree
-     * @summary 主界面树形区域
-     * @request GET:/profile/items/tree
+     * @tags 配置项值
+     * @name ChangeProfileValue
+     * @summary 修改配置项值
+     * @request POST:/profileValue/items/changeProfileValue
      * @secure
      */
-    getAllTree: () =>
-      http.request<ResultObject['data']>(`/api/main/profile/items/tree`, {
-        method: 'GET',
+    changeProfileValue: (data: ProfileValue) =>
+      http.request<Result['data']>(`/api/main/profileValue/items/changeProfileValue`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项值
+     * @name AddProfileValue
+     * @summary 新增配置项值
+     * @request POST:/profileValue/items/addProfileValue
+     * @secure
+     */
+    addProfileValue: (data: ProfileValue) =>
+      http.request<Result['data']>(`/api/main/profileValue/items/addProfileValue`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   post: {
@@ -4899,6 +5544,20 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 设备
+     * @name GetList
+     * @request POST:/equipment/getList
+     * @secure
+     */
+    getList: (data: CommonSearch) =>
+      http.request<ResultPagingDataEquipment['data']>(`/api/main/equipment/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   enterprise: {
     /**
@@ -5105,7 +5764,7 @@ export const api = {
      * @request POST:/defectCode/addDefectCode
      * @secure
      */
-    addDefectCode: (data: DefectCode) =>
+    addDefectCode: (data: DefectCodeSearch) =>
       http.request<ResultObject['data']>(`/api/main/defectCode/addDefectCode`, {
         method: 'POST',
         body: data as any,
@@ -5184,6 +5843,70 @@ export const api = {
         body: data as any,
       }),
   },
+  barcodeValidateRule: {
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name RemoveBarcodeVaildateRule
+     * @summary 删除条码验证规则(逻辑删除)
+     * @request POST:/barcodeValidateRule/removeBarcodeVaildateRule
+     * @secure
+     */
+    removeBarcodeVaildateRule: (data: BarcodeVaildateRuleSearch) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeValidateRule/removeBarcodeVaildateRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name ModifyBarcodeVaildateRule
+     * @summary 编辑条码验证规则
+     * @request POST:/barcodeValidateRule/modifyBarcodeVaildateRule
+     * @secure
+     */
+    modifyBarcodeVaildateRule: (data: BarcodeValidateRule) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeValidateRule/modifyBarcodeVaildateRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name GetBarcodeVaildateRuleList
+     * @summary 查询条码验证规则
+     * @request POST:/barcodeValidateRule/getBarcodeVaildateRuleList
+     * @secure
+     */
+    getBarcodeVaildateRuleList: (data: BarcodeVaildateRuleSearch) =>
+      http.request<ResultPagingDataBarcodeVaildateRuleVO['data']>(
+        `/api/main/barcodeValidateRule/getBarcodeVaildateRuleList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name AddBarcodeVaildateRule
+     * @summary 新增条码验证规则
+     * @request POST:/barcodeValidateRule/addBarcodeVaildateRule
+     * @secure
+     */
+    addBarcodeVaildateRule: (data: BarcodeValidateRule) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeValidateRule/addBarcodeVaildateRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   attendanceMode: {
     /**
      * No description
@@ -5210,6 +5933,68 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  profile: {
+    /**
+     * No description
+     *
+     * @tags 配置项
+     * @name SelectById
+     * @request GET:/profile/items/{id}
+     * @secure
+     */
+    selectById: (id: number) =>
+      http.request<ResultProfile['data']>(`/api/main/profile/items/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项
+     * @name GetAllTree
+     * @summary 主界面树形区域
+     * @request GET:/profile/items/tree
+     * @secure
+     */
+    getAllTree: () =>
+      http.request<ResultObject['data']>(`/api/main/profile/items/tree`, {
+        method: 'GET',
+      }),
+  },
+  permission: {
+    /**
+     * No description
+     *
+     * @tags 权限字
+     * @name GetTreePermissionsByUserId
+     * @summary 根据用户ID获取权限树
+     * @request GET:/permission/getTreePermissionsByUserId
+     * @secure
+     */
+    getTreePermissionsByUserId: (query: { userId: string }) =>
+      http.request<ResultListModulePermissionDTO['data']>(`/api/main/permission/getTreePermissionsByUserId`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 权限字
+     * @name GetTreePermissionsByRoleId
+     * @summary 根据角色ID获取权限树
+     * @request GET:/permission/getTreePermissionsByRoleId
+     * @secure
+     */
+    getTreePermissionsByRoleId: (query: {
+      /** @format int64 */
+      roleId: number;
+    }) =>
+      http.request<ResultListModulePermissionDTO['data']>(`/api/main/permission/getTreePermissionsByRoleId`, {
+        method: 'GET',
+        params: query,
       }),
   },
   objectProperty: {

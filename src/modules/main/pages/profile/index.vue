@@ -3,10 +3,31 @@
     <t-card :bordered="false">
       <header class="module-header-box">
         <t-row justify="space-between">
-          <!-- 左侧盒子 -->
-          <t-col :span="3" flex="auto">
+          <t-col :span="3">
+            <!-- 上面的盒子 -->
+            <t-row style="width: 100%">
+              <t-col :span="7">
+                <t-input
+                  v-model="treeKey"
+                  placeholder="输入关键字进行过滤"
+                  clearable
+                  :on-enter="treeSearch"
+                  style="max-width: 200px"
+                />
+              </t-col>
+              <t-col :span="2">
+                <t-button shape="square" variant="outline" @click="onRefreshTree">
+                  <template #icon>
+                    <t-icon name="refresh" />
+                  </template>
+                </t-button>
+              </t-col>
+            </t-row>
+
+            <!-- 下面的盒子，包括树 -->
             <t-tree
               ref="treeRef"
+              style="width: 70%"
               :data="treeData"
               hover
               activable
@@ -26,7 +47,7 @@
             </t-tree>
           </t-col>
           <!-- 右侧盒子 -->
-          <t-col :span="9" flex="auto" style="padding-left: 20px">
+          <t-col :span="9" flex="auto">
             <t-breadcrumb :max-item-width="'150'" style="margin-bottom: 10px">
               <t-breadcrumbItem v-if="treeClickData?.two">{{ treeClickData.two }}</t-breadcrumbItem>
               <t-breadcrumbItem v-if="treeClickData?.one" :max-width="'160'">
@@ -47,13 +68,26 @@
                   {{ getstateName(slotProps.row.state) }}
                 </t-space>
               </template>
-              <template #actionSlot="{ row }">
-                <t-button size="small" variant="text" @click="onEditRowClick(row)">
+              <template #profileCategoryOp="slotProps">
+                <t-space>
+                  {{ getProfileCategory(slotProps.row.profileCategory) }}
+                </t-space>
+              </template>
+              <template #op="slotProps">
+                <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
                   <icon name="edit-1" class="black-icon" />
                 </t-button>
               </template>
               <template #button>
-                <t-space direction="vertical"> <t-button theme="primary" @click="onAdd()">新增</t-button> </t-space>
+                <t-space direction="vertical">
+                  <t-button theme="primary" :disabled="isButtonDisabled" @click="onAdd()">新增</t-button>
+                </t-space>
+                <t-space direction="vertical">
+                  <t-button theme="primary" @click="onRefresh">查询</t-button>
+                </t-space>
+                <div style="text-align: right">
+                  <t-input v-model="keyword" placeholder="输入关键字进行过滤" clearable :on-enter="onRefresh" />
+                </div>
               </template>
             </cmp-table>
           </t-col>
@@ -111,10 +145,24 @@ const treeRef = ref(null); // 树组件实例
 const treeArr = ref<TreeLabelData | null>(null); // 组件挂载获取树组件名称数组
 const treeClickData = ref({ one: '', two: '' }); // 面包屑文本
 const treeData = ref<TreeNode[]>([]); // 树组件数据
+const filteredTreeData = ref<TreeNode[]>([]); // 树组件数据
 const tabListData = ref(1); // 多端选中数据
-const clickNodeId = ref({ nodeId: '', clientType: 1, pageNum: 1, pageSize: 10, attribute: 0, moduleName: '' });
+const clickNodeId = ref({
+  nodeId: '',
+  clientType: 1,
+  pageNum: 1,
+  pageSize: 10,
+  attribute: 0,
+  moduleName: '',
+  key: '',
+  profileDesc: '',
+  parentModuleName: '',
+});
 const tabTotal = ref(null); // 表格数据总页数
 const moduleData = ref([]); // 表格数据
+const isButtonDisabled = ref(true); // 新增按钮禁用
+const keyword = ref(''); // 右侧文本搜索
+const treeKey = ref(''); // 左侧文本搜索
 
 // 表格模态框数据
 const formDataTwo = ref({
@@ -178,25 +226,22 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
-    colKey: 'profileCategory',
+    colKey: 'profileCategoryOp',
     title: '配置项维度',
     align: 'center',
     width: '100',
-    cell: 'pc', // 指定插槽名称
   },
   {
-    colKey: 'profileCategoryValue',
+    colKey: 'profileCategoryValueName',
     title: '维度值',
     align: 'center',
     width: '100',
-    cell: 'mobile', // 指定插槽名称
   },
   {
     colKey: 'profileValue',
     title: '配置项值',
     align: 'center',
     width: '100',
-    cell: 'tv', // 指定插槽名称
   },
   {
     colKey: 'stateOp',
@@ -209,17 +254,19 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     title: '配置项说明',
     align: 'center',
     width: '100',
-    cell: 'wx', // 指定插槽名称
   },
   {
-    colKey: 'operate',
+    colKey: 'op',
     title: '操作',
     align: 'center',
     fixed: 'right',
     width: '130',
-    cell: 'actionSlot', // 引用具名插槽
   },
 ];
+// 查询按钮
+const onRefresh = () => {
+  onGetTabData();
+};
 
 // 表格刷新按钮
 const fetchData = () => {
@@ -244,11 +291,13 @@ const onConfirmForm = async () => {
 const onEditRowClick = (value: any) => {
   formTitle.value = '编辑';
   formRef.value.formData = JSON.parse(JSON.stringify(value.row));
+  formRef.value.formData.id = value.row.id;
   formRef.value.formData.isState = value.row.state === 1;
   formRef.value.formData.enableLocation = value.row.isEnableLocation === 1;
   formRef.value.formData.enableUpload = value.row.isEnableUpload === 1;
   formRef.value.formData.operateTpye = 'edit';
   formVisible.value = true;
+  onGetTabData();
 };
 
 const stateOptions = [
@@ -262,6 +311,36 @@ const getstateName = (id: any) => {
     }
   }
   return '';
+};
+const treeSearch = () => {
+  filteredTreeData.value = filterTreeNodes(treeData.value);
+  treeData.value = filteredTreeData.value;
+  console.log(treeData.value);
+};
+
+const getProfileCategory = (value: any) => {
+  for (const element of formRef.value.profileCategoryOption) {
+    if (value === element.value) {
+      return element.label;
+    }
+  }
+  return '';
+};
+const filterTreeNodes = (nodes) => {
+  // 递归过滤树节点
+  return nodes.filter((node) => {
+    // 检查当前节点是否包含关键字
+    const nodeMatchesKeyword = node.label.includes(treeKey.value.trim());
+    console.log(node.label);
+    console.log(nodeMatchesKeyword);
+    // 递归过滤子节点
+    if (node.children && node.children.length > 0) {
+      node.children = filterTreeNodes(node.children);
+    }
+
+    // 如果当前节点或其子节点包含关键字，则保留该节点
+    return nodeMatchesKeyword || (node.children && node.children.length > 0);
+  });
 };
 
 // 筛选树组件名称数组的函数
@@ -287,6 +366,7 @@ function simplifyObject(obj) {
     id: obj.id,
     label: obj.modelName,
     attribute: obj.attribute,
+    profileDesc: obj.profileDesc,
     children: obj.childList ? obj.childList.map((child: any) => simplifyObject(child)) : [],
   };
   // 检查是否存在 children 字段
@@ -297,23 +377,32 @@ function simplifyObject(obj) {
   return simplified;
 }
 
-// 在组件挂载后模拟 点击 第一个节点下面的子节点
+// 在组件挂载后模拟 点击 第一个节点
 onMounted(async () => {
   await onGetTreeData();
   // 确保树的第一个节点存在，并且它有子节点
   if (treeData.value.length > 0 && treeData.value[0].children && treeData.value[0].children.length > 0) {
     const firstNode = treeData.value[0]; // 第一个节点
-    const firstChildNode = treeData.value[0].children[0]; // 第一个节点的第一个子节点
-    const { id } = firstChildNode; // 保存该子节点的 ID
+    const { id } = firstNode; // 保存该子节点的 ID
     clickNodeId.value.nodeId = id; // 保存当前节点的 ID
-    const rules = await api.module.getList({ id, clientType: 1, pageNum: 1, pageSize: 10 }); // 请求：获取第二节点的数据
+    const rules = await api.profileValue.getProfileValueList({
+      key: '',
+      pageNum: 1,
+      pageSize: 10,
+      nodeId: id,
+      attribute: 0,
+    }); // 请求：获取第二节点的数据
     moduleData.value = rules.list; // 表格数据赋值
     tabTotal.value = rules.total;
-    treeClick({ node: { '__tdesign_tree-node__': firstChildNode } }); // 模拟点击第一个节点下的第一个子节点
-    treeClickData.value.two = firstNode.label; // 赋值第一个节点名称给面包屑
-    treeClickData.value.one = firstChildNode.label; // 赋值第二个节点名称给面包屑
+    treeClick({ node: { '__tdesign_tree-node__': firstNode } }); // 模拟点击第一个节点下的第一个子节点
+    treeClickData.value.one = firstNode.label; // 赋值第二个节点名称给面包屑
   }
 });
+const onRefreshTree = () => {
+  onGetTreeData();
+  fetchData();
+  treeKey.value = '';
+};
 
 // 获取树组件数据
 const onGetTreeData = async () => {
@@ -327,7 +416,8 @@ const onGetTreeData = async () => {
 const onGetTabData = async () => {
   clickNodeId.value.pageNum = pageUI.value.page;
   clickNodeId.value.pageSize = pageUI.value.rows;
-  const res = await api.profile.getProfileList(clickNodeId.value); // 获取第二节点的数据
+  clickNodeId.value.key = keyword.value;
+  const res = await api.profileValue.getProfileValueList(clickNodeId.value); // 获取第二节点的数据
   moduleData.value = res.list; // 表格数据赋值
   tabTotal.value = res.total;
 };
@@ -339,8 +429,17 @@ const treeClick = async ({ node }: { node: any }) => {
   clickNodeId.value.nodeId = node[`__tdesign_tree-node__`]?.data?.id; // 保存当前点击节点的 ID
   clickNodeId.value.attribute = node[`__tdesign_tree-node__`]?.data?.attribute; // 保存当前点击节点的 属性
   clickNodeId.value.moduleName = node[`__tdesign_tree-node__`]?.data?.label; // 保存当前点击节点的 名称
-  clickNodeId.value.moduleName = node[`__tdesign_tree-node__`]?.data?.label; // 保存当前点击节点的 说明
-  console.log(node[`__tdesign_tree-node__`]?.data);
+  clickNodeId.value.parentModuleName = node[`__tdesign_tree-node__`]?.data?.label; // 保存当前点击节点的 说明
+  clickNodeId.value.parentModuleName = node[`__tdesign_tree-node__`]?.parent?.label; // 保存当前点击节点父节点名称
+  console.log(node.data);
+  // 判断是否有子节点
+  if (node.data.children && node.data.children.length > 0) {
+    isButtonDisabled.value = true;
+  } else if (clickNodeId.value.attribute === 2) {
+    // 没有子节点
+    isButtonDisabled.value = false;
+  }
+
   await onGetTabData();
   treeClickData.value.one = node['__tdesign_tree-node__'].label;
   treeClickData.value.two = node['__tdesign_tree-node__'].parent?.label;

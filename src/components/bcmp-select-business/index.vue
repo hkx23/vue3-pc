@@ -274,4 +274,12 @@ watch(
   },
   { deep: true },
 );
+watch(
+  () => props.type,
+  (val) => {
+    console.log(val);
+    loadTypeSetting();
+  },
+  { deep: true },
+);
 </script>
