@@ -2752,15 +2752,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
-  isProductName?: string;
   isRawName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
-  isRawChecked?: boolean;
+  isProductName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3950,6 +3950,19 @@ export interface ResultListProfileLeftTreeTopVO {
   data?: ProfileLeftTreeTopVO[] | null;
 }
 
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
+}
+
 /** 权限功能实体 */
 export type ModulePermissionDTO = {
   id?: string;
@@ -4675,7 +4688,7 @@ export const api = {
      *
      * @tags 标签模板
      * @name Search
-     * @summary 获取模板
+     * @summary 获取模板清单
      * @request POST:/printTmpl/items
      * @secure
      */
@@ -4713,6 +4726,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/printTmpl/add`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name GetTmplByPath
+     * @summary 获取模板
+     * @request GET:/printTmpl/getTmplByPath
+     * @secure
+     */
+    getTmplByPath: (query: { path: string }) =>
+      http.request<ResultString['data']>(`/api/main/printTmpl/getTmplByPath`, {
+        method: 'GET',
+        params: query,
       }),
   },
   orgLevel: {

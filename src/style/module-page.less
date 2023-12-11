@@ -1,5 +1,10 @@
 html, body{
   background: var(--td-bg-color-page);
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
   
   &::-webkit-scrollbar {
     width: 8px;
@@ -12,4 +17,9 @@ html, body{
     background-clip: content-box;
     background-color: var(--td-scrollbar-color);
   }
+}
+
+
+#app {
+  flex: 1;
 }

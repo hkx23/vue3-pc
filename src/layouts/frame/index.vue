@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showFrame">
+  <div v-if="showFrame" class="iframe-container">
     <template v-for="frame in getFramePages" :key="frame.path">
       <frame-content v-if="hasRenderFrame(frame.name)" v-show="showIframe(frame)" :frame-src="frame.meta.frameSrc" />
     </template>
@@ -23,3 +23,10 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="less" scoped>
+.iframe-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+</style>

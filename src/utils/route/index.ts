@@ -8,6 +8,7 @@ import {
   EXCEPTION_COMPONENT,
   IFRAME,
   LAYOUT,
+  NOT_FOUNT,
   PAGE_NOT_FOUND_ROUTE,
   PARENT_LAYOUT,
 } from '@/utils/route/constant';
@@ -44,9 +45,14 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
     const { children } = item;
 
     if (component) {
-      const layoutFound = LayoutMap.get(component.toUpperCase());
+      const componentName = component.toUpperCase();
+      const layoutFound = LayoutMap.get(componentName);
       if (layoutFound) {
-        item.component = layoutFound;
+        if (componentName === 'LAYOUT' && (children === null || children.length === 0)) {
+          item.component = NOT_FOUNT;
+        } else {
+          item.component = layoutFound;
+        }
       } else {
         item.component = dynamicImport(dynamicViewsModules, component);
       }
