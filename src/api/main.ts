@@ -1581,8 +1581,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2752,15 +2752,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isRawChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
+  isProductName?: string;
+  isRawName?: string;
   isInProcessName?: string;
   isBatchName?: string;
-  isRawName?: string;
-  isProductName?: string;
-  isState?: boolean;
-  stateName?: string;
-  isProductChecked?: boolean;
+  isRawChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -2927,8 +2927,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3274,8 +3274,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3920,6 +3920,34 @@ export interface ResultProfile {
   message?: string;
   /** 配置项 */
   data?: Profile;
+}
+
+/** 配置左侧树形实体 */
+export type ProfileLeftTreeTopVO = {
+  id?: string;
+  /** 级别名称 */
+  modelName?: string;
+  parentModuleId?: string;
+  /**
+   * 属性
+   * @format int32
+   */
+  attribute?: number;
+  /** 子模块 */
+  childList?: object[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultListProfileLeftTreeTopVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProfileLeftTreeTopVO[] | null;
 }
 
 /** 权限功能实体 */
@@ -7358,7 +7386,7 @@ export const api = {
      * @secure
      */
     getAllTree: () =>
-      http.request<ResultObject['data']>(`/api/main/profile/items/tree`, {
+      http.request<ResultListProfileLeftTreeTopVO['data']>(`/api/main/profile/items/tree`, {
         method: 'GET',
       }),
   },
