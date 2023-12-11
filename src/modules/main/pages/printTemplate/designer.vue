@@ -34,17 +34,21 @@ let designer: StiDesigner;
 onMounted(() => {
   const options = new Stimulsoft.Designer.StiDesignerOptions();
   options.appearance.fullScreenMode = true;
+  // options.appearance.showLocalization = true;
 
+  Stimulsoft.Base.Localization.StiLocalization.setLocalizationFile(`./libs/stimulsoft/locales/${fw.getLanguage()}.xml`);
   designer = new Stimulsoft.Designer.StiDesigner(options, 'StiDesigner', false);
 
   designer.onSaveReport = onSaveReport;
 
-  if (props.fileName && props.fileContent) {
-    const report = new Stimulsoft.Report.StiReport();
-    report.reportName = props.fileName;
-    report.load(props.fileContent);
-    designer.report = report;
-  }
+  setTimeout(() => {
+    if (props.fileName && props.fileContent) {
+      const report = new Stimulsoft.Report.StiReport();
+      report.reportName = props.fileName;
+      report.load(props.fileContent);
+      designer.report = report;
+    }
+  }, 800);
 
   designer.renderHtml('s-designer');
 });
