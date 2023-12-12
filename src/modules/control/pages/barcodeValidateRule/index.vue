@@ -173,12 +173,12 @@
         <!-- 第 6️⃣ 行数据 -->
         <t-row justify="space-between" style="margin-bottom: 30px">
           <t-col :span="9">
-            <t-form-item label="条码示例" name="incidentName">
-              <t-input></t-input>
+            <t-form-item label="条码示例" name="sampleBarcode">
+              <t-input v-model="sampleBarcode"></t-input>
             </t-form-item>
           </t-col>
           <t-col :span="3" align="right">
-            <t-button>验证</t-button>
+            <t-button @click="onBarcodeVerification">验证</t-button>
           </t-col>
         </t-row>
         <!-- 第 7️⃣ 行数据 -->
@@ -247,6 +247,8 @@ const submitFalg = ref(false);
 // 编辑回填 ID
 // const incidentID = ref('');
 // tab 表格?
+// 条码示例
+const sampleBarcode = ref('');
 const tabValue = ref(0);
 const barcodeData = ref({
   ruleCode: '', // 规则编码
@@ -465,6 +467,7 @@ const tabChange = (data: number) => {
 
 // 新增按钮点击
 const onAddRuleData = () => {
+  sampleBarcode.value = '';
   formRef.value.reset({ type: 'empty' });
   formVisible.value = true;
   submitFalg.value = true;
@@ -521,6 +524,19 @@ const onKeyDelConfirm = async (row: { id: any }) => {
   MessagePlugin.success('删除成功');
 };
 
+// 条码验证 ""按钮 ""点击事件
+const onBarcodeVerification = async () => {
+  const res = await api.barcodeValidateRule.vaildateBarcodeRule({
+    expression: barcodeData.value.barcodeExpression,
+    barcode: sampleBarcode.value,
+  });
+  if (res) {
+    MessagePlugin.success('验证成功');
+  } else {
+    MessagePlugin.error('验证失败');
+  }
+};
+
 // #query 查询参数
 const opts = computed(() => {
   return {
@@ -558,6 +574,7 @@ const onInput = async (data: any) => {
       pageSize: pageUITwo.value.rows,
       ruleKeyword: data.code,
       barcodeTypeCode: barcodeData.value.barcodeType,
+      barcodeValidateGroup: 'SCANEXT',
     });
     textTabData.list = res.list;
     totalText.value = res.total;
@@ -568,6 +585,7 @@ const onInput = async (data: any) => {
       pageSize: pageUI.value.rows,
       ruleKeyword: data.code,
       mitemId: barcodeData.value.mitemCategoryId,
+      barcodeValidateGroup: 'KEYPART',
     });
     keyTabData.list = res.list;
     totalKey.value = res.total;

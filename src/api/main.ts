@@ -1420,6 +1420,126 @@ export type Role = {
   roleDesc?: string;
 } | null;
 
+export interface ProfileSearch {
+  /** 模糊搜索字段 */
+  key?: string;
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  nodeId?: string;
+  /**
+   * 节点类型
+   * @format int32
+   */
+  attribute?: number;
+}
+
+/** 响应数据 */
+export type PagingDataProfileValueSearchVO = {
+  list?: ProfileValueSearchVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface ProfileValueSearchVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  moduleId?: string;
+  /** 配置项编码 */
+  profileCode?: string;
+  /** 配置项名称 */
+  profileName?: string;
+  /** 配置项描述 */
+  profileDesc?: string;
+  /** 配置项值类型 */
+  valueType?: string;
+  /** 配置项值范围 */
+  valueRange?: string;
+  /** 模块名称 */
+  moduleName?: string;
+  /** 配置项维度 */
+  profileCategory?: string;
+  /** 配置项维度值id */
+  profileCategoryValue?: string;
+  /** 配置项维度值名称 */
+  profileCategoryValueName?: string;
+  /** 配置项值 */
+  profileValue?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProfileValueSearchVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProfileValueSearchVO;
+}
+
+/** 配置项值 */
+export interface ProfileValue {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  profileId?: string;
+  /** 配置项分类 */
+  profileCategory?: string;
+  /** 配置项分类值 */
+  profileCategoryValue?: string;
+  /** 配置项值 */
+  profileValue?: string;
+}
+
 /** 响应数据 */
 export type PagingDataProcessVO = {
   list?: ProcessVO[];
@@ -1461,8 +1581,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2167,6 +2287,19 @@ export interface ObjectProperty {
   isDataMultiple?: number;
 }
 
+/** 通用响应类 */
+export interface ResultResponseEntityString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
+}
+
 /** 系统模块表 */
 export interface Module {
   id?: string;
@@ -2306,6 +2439,8 @@ export type ShowModuleVO = {
   parentModuleId?: string;
   /** 所在一级菜单名称 */
   grandpaName?: string;
+  /** 模块访问地址 */
+  behaviorPath?: string;
   /**
    * 是否PC端
    * @format int32
@@ -2632,15 +2767,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isRawName?: string;
-  isProductName?: string;
+  isInProcessChecked?: boolean;
+  stateName?: string;
   isRawChecked?: boolean;
+  isProductName?: string;
   isInProcessName?: string;
+  isRawName?: string;
   isBatchName?: string;
   isState?: boolean;
-  stateName?: string;
 }
 
 /** 响应数据 */
@@ -3154,8 +3289,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3557,6 +3692,7 @@ export type CurrentUserVO = {
   userName?: string;
   /** 显示名称 */
   displayName?: string;
+  eid?: string;
   defaultOrgId?: string;
   /** 授权组织 */
   orgList?: OrgVO[];
@@ -3750,6 +3886,97 @@ export interface ResultLong {
   /** 提示信息 */
   message?: string;
   data?: string;
+}
+
+/** 配置项 */
+export type Profile = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  moduleId?: string;
+  /** 配置项编码 */
+  profileCode?: string;
+  /** 配置项名称 */
+  profileName?: string;
+  /** 配置项描述 */
+  profileDesc?: string;
+  /** 配置项值类型 */
+  valueType?: string;
+  /** 配置项值范围 */
+  valueRange?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultProfile {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 配置项 */
+  data?: Profile;
+}
+
+/** 配置左侧树形实体 */
+export type ProfileLeftTreeTopVO = {
+  id?: string;
+  /** 级别名称 */
+  modelName?: string;
+  parentModuleId?: string;
+  /**
+   * 属性
+   * @format int32
+   */
+  attribute?: number;
+  /** 子模块 */
+  childList?: object[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultListProfileLeftTreeTopVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProfileLeftTreeTopVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
 }
 
 /** 权限功能实体 */
@@ -4158,6 +4385,19 @@ export interface ResultListDefectCodeVO {
   data?: DefectCodeVO[] | null;
 }
 
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
+}
+
 /** 显示行政组织层级实体 */
 export type AdminOrgVO = {
   id?: string;
@@ -4477,7 +4717,7 @@ export const api = {
      *
      * @tags 标签模板
      * @name Search
-     * @summary 获取模板
+     * @summary 获取模板清单
      * @request POST:/printTmpl/items
      * @secure
      */
@@ -4515,6 +4755,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/printTmpl/add`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name GetTmplByPath
+     * @summary 获取模板
+     * @request GET:/printTmpl/getTmplByPath
+     * @secure
+     */
+    getTmplByPath: (query: { path: string }) =>
+      http.request<ResultString['data']>(`/api/main/printTmpl/getTmplByPath`, {
+        method: 'GET',
+        params: query,
       }),
   },
   orgLevel: {
@@ -5630,6 +5885,52 @@ export const api = {
         params: query,
       }),
   },
+  profileValue: {
+    /**
+     * No description
+     *
+     * @tags 配置项值
+     * @name GetProfileValueList
+     * @summary 获取配置项列表
+     * @request POST:/profileValue/items/getProfileValueList
+     * @secure
+     */
+    getProfileValueList: (data: ProfileSearch) =>
+      http.request<ResultPagingDataProfileValueSearchVO['data']>(`/api/main/profileValue/items/getProfileValueList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项值
+     * @name ChangeProfileValue
+     * @summary 修改配置项值
+     * @request POST:/profileValue/items/changeProfileValue
+     * @secure
+     */
+    changeProfileValue: (data: ProfileValue) =>
+      http.request<Result['data']>(`/api/main/profileValue/items/changeProfileValue`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项值
+     * @name AddProfileValue
+     * @summary 新增配置项值
+     * @request POST:/profileValue/items/addProfileValue
+     * @secure
+     */
+    addProfileValue: (data: ProfileValue) =>
+      http.request<Result['data']>(`/api/main/profileValue/items/addProfileValue`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   process: {
     /**
      * No description
@@ -6165,6 +6466,30 @@ export const api = {
       }),
   },
   module: {
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name UploadFile
+     * @summary 菜单文件上传
+     * @request POST:/module/uploadFile
+     * @secure
+     */
+    uploadFile: (
+      query: {
+        path: string;
+      },
+      data: {
+        /** @format binary */
+        file: File;
+      },
+    ) =>
+      http.request<ResultResponseEntityString['data']>(`/api/main/module/uploadFile`, {
+        method: 'POST',
+        params: query,
+        body: data as any,
+      }),
+
     /**
      * No description
      *
@@ -7073,6 +7398,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name VaildateBarcodeRule
+     * @summary 验证条码是否与条码规则匹配
+     * @request GET:/barcodeValidateRule/VaildateBarcodeRule
+     * @secure
+     */
+    vaildateBarcodeRule: (query: { expression: string; barcode: string }) =>
+      http.request<ResultBoolean['data']>(`/api/main/barcodeValidateRule/VaildateBarcodeRule`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   attendanceMode: {
     /**
@@ -7100,6 +7440,50 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  routingRevision: {
+    /**
+     * No description
+     *
+     * @tags 工艺路线版本
+     * @name GetRoutRevisionByRoutingCode
+     * @summary 根据工艺路线编码获取有效的工艺路线版本信息
+     * @request GET:/routingRevision/getRoutRevisionByRoutingCode
+     * @secure
+     */
+    getRoutRevisionByRoutingCode: (query: { routingCode: string; routingType: string }) =>
+      http.request<ResultObject['data']>(`/api/main/routingRevision/getRoutRevisionByRoutingCode`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  profile: {
+    /**
+     * No description
+     *
+     * @tags 配置项
+     * @name SelectById
+     * @request GET:/profile/items/{id}
+     * @secure
+     */
+    selectById: (id: number) =>
+      http.request<ResultProfile['data']>(`/api/main/profile/items/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项
+     * @name GetAllTree
+     * @summary 主界面树形区域
+     * @request GET:/profile/items/tree
+     * @secure
+     */
+    getAllTree: () =>
+      http.request<ResultListProfileLeftTreeTopVO['data']>(`/api/main/profile/items/tree`, {
+        method: 'GET',
       }),
   },
   permission: {
