@@ -150,7 +150,7 @@
                 <bcmp-select-business
                   v-model="barcodeData.mitemId"
                   :disabled="!radioValue"
-                  type="mitemCategory"
+                  type="mitem"
                   label=""
                 ></bcmp-select-business>
               </div>
