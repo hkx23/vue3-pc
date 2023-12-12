@@ -5,19 +5,44 @@
         <t-tabs v-model="currProcessTab">
           <t-tab-panel value="process" label="工序">
             <t-list size="small" split>
-              <t-list-item v-for="item in processList" :key="item.id" @click="onClickProcess(item)">
+              <t-list-item v-for="item in processList" :key="item.id" @click="onClickProcess(item.id, 'process')">
                 {{ item.processName }}
                 <template #action>
-                  <edit-icon v-if="currProcess.id == item.id" />
+                  <edit-icon v-if="currProcessId == item.id" />
                 </template>
               </t-list-item>
             </t-list>
           </t-tab-panel>
-          <t-tab-panel value="route" label="工艺路线"> </t-tab-panel>
+          <t-tab-panel value="routingProcess" label="工艺路线">
+            <t-tree
+              :data="routingProcessTree"
+              :keys="treeKeys"
+              hover
+              :expand-on-click-node="false"
+              activable
+              @click="({ node }) => (node.data.children ? null : onClickProcess(node.data.id, 'routingProcess'))"
+            >
+              <template #operations="{ node }">
+                <edit-icon v-if="currProcessId == node.data.id" />
+                <t-tag v-if="node.data.children" size="small" theme="success" variant="outline">
+                  {{ node.data.version }}
+                </t-tag>
+              </template>
+            </t-tree>
+          </t-tab-panel>
         </t-tabs>
       </cmp-card>
       <cmp-card :span="6">
-        <t-tabs v-model="barcodeCategoryTab" :addable="true" @add="onClickAddTab" @remove="onChangeRemoveTab">
+        <div v-if="panelData == null || panelData.length == 0">
+          <t-button block variant="dashed" style="margin-bottom: 32px" @click="onClickAddTab">选择条码类型</t-button>
+          <ul>
+            <li v-for="i in 3" :key="i" style="margin-bottom: 32px">
+              <t-skeleton theme="paragraph"></t-skeleton>
+            </li>
+          </ul>
+        </div>
+
+        <t-tabs v-else v-model="barcodeCategoryTab" :addable="true" @add="onClickAddTab" @remove="onChangeRemoveTab">
           <t-tab-panel
             v-for="item in panelData"
             :key="item.value"
@@ -58,11 +83,6 @@
             </div>
           </t-tab-panel>
         </t-tabs>
-        <ul v-if="panelData == null || panelData.length == 0">
-          <li v-for="i in 3" :key="i" style="margin-bottom: 32px">
-            <t-skeleton theme="paragraph"></t-skeleton>
-          </li>
-        </ul>
       </cmp-card>
       <cmp-card :span="3" :ghost="true">
         <cmp-container :full="true">
@@ -94,7 +114,7 @@
               </t-tab-panel>
               <!-- <t-tab-panel value="script" label="Script"></t-tab-panel> -->
             </t-tabs>
-            <t-dialog v-model:visible="newTabSelectedVisible" :footer="false" header="选择新增条码类型">
+            <t-dialog v-model:visible="newTabSelectedVisible" :footer="false" header="选择条码类型">
               <t-select
                 v-model="newTabSelectedValue"
                 :options="barcodeTypeOptions"
@@ -145,6 +165,7 @@ import {
   KeyValuePairStringString,
   ProcessBusinessLibDtl,
   ProcessVO,
+  RoutingProcessVO,
 } from '@/api/main';
 
 import { API_CATEGORY } from './constants';
@@ -153,6 +174,7 @@ import { useLang } from './lang';
 const { t } = useLang();
 const currProcessTab = ref('process');
 const barcodeTypeOptions = ref<KeyValuePairStringString[]>([]);
+const routingProcessTree = ref<RoutingProcessVO[]>([]);
 const processList = ref<ProcessVO[]>([]);
 const apiAtomList = ref<BusinessUnit[]>([]);
 const templateList = ref<BusinessTmplLib[]>([]);
@@ -170,6 +192,10 @@ const fetchProcess = async () => {
       pageSize: 99999,
     })
   ).list;
+};
+
+const fetchRoutingProcess = async () => {
+  routingProcessTree.value = await api.routing.getProcessTree();
 };
 
 // 获取api 原子清单
@@ -192,7 +218,8 @@ const atomById = (id: string) => {
 
 const fetchDetail = async (processId: string, barcodeCategory: string) => {
   const params = {
-    processId,
+    processId: currProcessType.value === 'process' ? processId : '0',
+    routingProcessId: currProcessType.value === 'routingProcess' ? processId : '0',
     barcodeCategory,
   };
   const detailList = await api.processBusinessLib.listByIds(params);
@@ -218,9 +245,12 @@ const fetchDetail = async (processId: string, barcodeCategory: string) => {
 onMounted(() => {
   fetchBarcodeType();
   fetchProcess();
+  fetchRoutingProcess();
   fetchApiAtomList();
   fetchTemplate();
 });
+
+const treeKeys = { value: 'id', label: 'title' };
 
 const barcodeCategoryTab = ref('');
 const newTabSelectedValue = ref('');
@@ -245,19 +275,21 @@ const onChangeNewTab = (option) => {
     label: option.label,
   });
 
-  if (isEmpty(currProcess.value.id)) return;
-  fetchDetail(currProcess.value.id, option.value);
+  if (isEmpty(currProcessId.value)) return;
+  fetchDetail(currProcessId.value, option.value);
 };
 const onChangeRemoveTab = (options) => {
   panelData.value = panelData.value.filter((t) => t.value !== options.value);
 };
 
-const currProcess = ref<ProcessVO>({});
-const onClickProcess = (item: ProcessVO) => {
-  if (item.id === currProcess.value.id) return;
-  currProcess.value = item;
+const currProcessId = ref('');
+const currProcessType = ref('');
+const onClickProcess = (id: string, type: string) => {
+  if (id === currProcessId.value) return;
+  currProcessId.value = id;
+  currProcessType.value = type;
   if (isEmpty(barcodeCategoryTab.value)) return;
-  fetchDetail(item.id, barcodeCategoryTab.value);
+  fetchDetail(id, barcodeCategoryTab.value);
 };
 
 const getAtomInfo = (id: string) => {
