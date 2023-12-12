@@ -90,7 +90,11 @@
               <!-- <t-tab-panel value="script" label="Script"></t-tab-panel> -->
             </t-tabs>
             <t-dialog v-model:visible="newTabSelectedVisible" :footer="false" header="选择新增条码类型">
-              <t-select :options="barcodeTypeOptions" @change="(_value, { option }) => onChangeNewTab(option)">
+              <t-select
+                v-model="newTabSelectedValue"
+                :options="barcodeTypeOptions"
+                @change="(_value, { option }) => onChangeNewTab(option)"
+              >
               </t-select>
             </t-dialog>
             <t-dialog
@@ -126,7 +130,7 @@
 import { isEmpty } from 'lodash';
 import { CloseIcon, DeleteIcon, EditIcon } from 'tdesign-icons-vue-next';
 import { DialogPlugin, MessagePlugin } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
 import {
   api,
@@ -214,6 +218,7 @@ onMounted(() => {
 });
 
 const barcodeCategoryTab = ref('');
+const newTabSelectedValue = ref('');
 const newTabSelectedVisible = ref(false);
 const panelData = ref<
   { label: string; value: string; data?: { mainId: string; detailList: ProcessBusinessLibDtl[] } }[]
@@ -222,13 +227,18 @@ const onClickAddTab = () => {
   newTabSelectedVisible.value = true;
 };
 const onChangeNewTab = (option) => {
-  if (panelData.value.find((t) => t.value === option.value)) return;
+  nextTick(() => {
+    newTabSelectedValue.value = '';
+    barcodeCategoryTab.value = option.value;
+    newTabSelectedVisible.value = false;
+  });
+  if (panelData.value.find((t) => t.value === option.value)) {
+    return;
+  }
   panelData.value.push({
     value: option.value,
     label: option.label,
   });
-  barcodeCategoryTab.value = option.value;
-  newTabSelectedVisible.value = false;
 
   if (isEmpty(currProcess.value.id)) return;
   fetchDetail(currProcess.value.id, option.value);
