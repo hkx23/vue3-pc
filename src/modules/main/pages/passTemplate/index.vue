@@ -40,7 +40,9 @@
                     </t-button>
                   </div>
                   <div class="stepTag">
-                    <t-tag theme="success" variant="outline">{{ item.value }}</t-tag>
+                    <t-tag theme="success" variant="outline">{{
+                      atomById(detailItem.businessUnitId).paramCategory
+                    }}</t-tag>
                   </div>
                 </template>
               </t-step-item>
@@ -88,7 +90,7 @@
               <!-- <t-tab-panel value="script" label="Script"></t-tab-panel> -->
             </t-tabs>
             <t-dialog v-model:visible="newTabSelectedVisible" :footer="false" header="选择新增条码类型">
-              <t-select :options="barcodeTypeOptions" @change="(value, { option }) => onChangeNewTab(value, option)">
+              <t-select :options="barcodeTypeOptions" @change="(_value, { option }) => onChangeNewTab(option)">
               </t-select>
             </t-dialog>
             <t-dialog
@@ -172,7 +174,11 @@ const fetchTemplate = async () => {
 };
 
 const atomListByCategory = (category: string) => {
-  return apiAtomList.value.filter((t) => t.paramCategory === category) as BusinessUnit[];
+  return apiAtomList.value?.filter((t) => t.paramCategory === category) as BusinessUnit[];
+};
+
+const atomById = (id: string) => {
+  return apiAtomList.value?.find((t) => t.id === id) as BusinessUnit;
 };
 
 const fetchDetail = async (processId: string, barcodeCategory: string) => {
@@ -215,17 +221,17 @@ const panelData = ref<
 const onClickAddTab = () => {
   newTabSelectedVisible.value = true;
 };
-const onChangeNewTab = (value, option) => {
-  if (panelData.value.find((t) => t.value === value)) return;
+const onChangeNewTab = (option) => {
+  if (panelData.value.find((t) => t.value === option.value)) return;
   panelData.value.push({
-    value,
+    value: option.value,
     label: option.label,
   });
-  barcodeCategoryTab.value = value;
+  barcodeCategoryTab.value = option.value;
   newTabSelectedVisible.value = false;
 
   if (isEmpty(currProcess.value.id)) return;
-  fetchDetail(currProcess.value.id, value);
+  fetchDetail(currProcess.value.id, option.value);
 };
 const onChangeRemoveTab = (options) => {
   panelData.value = panelData.value.filter((t) => t.value !== options.value);
