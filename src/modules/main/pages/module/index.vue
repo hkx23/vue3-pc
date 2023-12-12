@@ -914,7 +914,6 @@ const onSecondaryReset = () => {
   disableFlag.value = false; // 控制编辑 是否禁用子模块名称
   isEditMode.value = false; // 控制一级 是新增还是编辑
   formVisible.value = false;
-  formRef.value.reset({ type: 'empty' });
 };
 
 // 保存确认按钮
