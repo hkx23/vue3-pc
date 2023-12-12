@@ -2,10 +2,10 @@ import EventEmitter from 'eventemitter3';
 import { PluginOption } from 'vite';
 
 export declare class CustomError extends Error {
-    protected code: number;
-    protected status: string | number;
-    protected type: string;
-    protected description: string;
+    code: number;
+    status: string | number;
+    type: string;
+    description: string;
     constructor(message: string, code: number, status: string | number, description?: string);
 }
 

@@ -1,0 +1,24 @@
+{
+  "title": "缺陷代码：",
+  "placeholder": "请选缺陷代码",
+  "url": "/api/main/defectCode/items",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "缺陷代码库代码",
+      "key": "defectCode",
+      "align": "center"
+    },
+    {
+      "title": "缺陷代码库名称",
+      "key": "defectName",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "defectName"
+  }
+}

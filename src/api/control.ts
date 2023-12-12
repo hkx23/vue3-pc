@@ -9,53 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
-}
-
-/** 工艺路线实体 */
-export interface RoutingDTO {
-  /** 工艺路线编码 */
-  routingCode?: string;
-  /** 工艺路线名称 */
-  routingName?: string;
-  /** 工艺路线描述 */
-  routingDesc?: string;
-  /** 工艺路线类型 */
-  routingType?: string;
-  /**
-   * 工艺路线版本
-   * @format int32
-   */
-  routingVersion?: number;
-  /**
-   * 启用时间
-   * @format date-time
-   */
-  enableDate?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  invailDate?: string;
-  /** 工艺路线图形化JSON */
-  routingGraph?: string;
-  /**
-   * 工艺路线状态
-   * @format int32
-   */
-  state?: number;
-}
-
 /** 产品包装规则明细 */
 export interface ProductPackRuleDtl {
   id?: string;
@@ -97,6 +50,19 @@ export interface ProductPackRuleDtl {
    * @format int32
    */
   packLevel?: number;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
 }
 
 /** 产品包装规则 */
@@ -282,467 +248,32 @@ export interface ResultPagingDataLong {
   data?: PagingDataLong;
 }
 
-export interface CommonSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
-  keyword?: string;
-  /** @format int32 */
-  state?: number;
-  parentId?: string;
-  category?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
-
-/** 响应数据 */
-export type PagingDataWorkstation = {
-  list?: Workstation[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkstation {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkstation;
-}
-
-/** 工站 */
-export interface Workstation {
+/** 完工入库标签实体 */
+export interface WipCompletionLabelDTO {
   id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工站代码 */
-  workstationCode?: string;
-  /** 工站名称 */
-  workstationName?: string;
-  /** 工站描述 */
-  workstationDesc?: string;
-  processId?: string;
-  workcenterId?: string;
-}
-
-/** 通用响应类 */
-export interface ResultWorkstation {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 工站 */
-  data?: Workstation;
-}
-
-export interface WorkstationSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 工站编码名称模糊 */
-  workstaion?: string;
-  /** 工站-状态 */
-  state?: number[];
-  /** 工作中心编码名称模糊 */
-  workcenter?: string;
-  /** 工序编码名称模糊 */
-  process?: string;
-  /** 模糊关键词 */
-  keyword?: string;
-  /** 排序字段 */
-  sorts?: SortParam[];
-  /** 筛选字段 */
-  filters?: Filter[];
-}
-
-/** 响应数据 */
-export type PagingDataWorkstationVO = {
-  list?: WorkstationVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkstationVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkstationVO;
-}
-
-/** 显示工站 */
-export interface WorkstationVO {
-  id?: string;
-  eid?: string;
-  oid?: string;
-  /** 工站代码 */
-  workstationCode?: string;
-  /** 工站名称 */
-  workstationName?: string;
-  /** 工站描述 */
-  workstationDesc?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 工序名称 */
-  processName?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 创建人 */
-  creatorName?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 修改人 */
-  modifierName?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  processId?: string;
-  workcenterId?: string;
-}
-
-/** 工作中心 */
-export interface Workcenter {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工站代码 */
-  wcCode?: string;
-  /** 工站名称 */
-  wcName?: string;
-  /** 工站描述 */
-  wcDesc?: string;
-  workshopId?: string;
-  parentWcId?: string;
-  /**
-   * 顺序
-   * @format int32
-   */
-  wcSeq?: number;
-  /**
-   * 类型
-   * @format int32
-   */
-  wcObjectType?: number;
-  wcObjectId?: string;
-  /** 地点 */
-  wcLocation?: string;
-  /** 负责人 */
-  wcOwner?: string;
-}
-
-export interface WorkcenterSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  id?: string;
-  /** 多个id */
-  ids?: string[];
-  /** 多条记录 */
-  allRecord?: Workcenter[];
-  /**
-   * 工作中心-类别
-   * @format int32
-   */
-  category?: number;
-  /** 工作中心编码名称模糊查询 */
-  workcenterword?: string;
-  workshopID?: string;
-  /** 工作中心-状态 */
-  state?: number[];
-  /** 排序字段 */
-  sorts?: SortParam[];
-  /** 筛选字段 */
-  filters?: Filter[];
-}
-
-/** 响应数据 */
-export type PagingDataWorkcenter = {
-  list?: Workcenter[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkcenter {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkcenter;
-}
-
-/** 通用响应类 */
-export interface ResultWorkcenter {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 工作中心 */
-  data?: Workcenter;
-}
-
-/** 响应数据 */
-export type PagingDataWorkcenterVO = {
-  list?: WorkcenterVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkcenterVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkcenterVO;
-}
-
-/** 工作中心显示 */
-export interface WorkcenterVO {
-  id?: string;
-  eid?: string;
-  oid?: string;
-  /** 工作中心编号 */
-  wcCode?: string;
-  /** 工作中心名称 */
-  wcName?: string;
-  /**
-   * 工作中心类型
-   * @format int32
-   */
-  wcObjectType?: number;
-  /** 工作中心类型 */
-  wcType?: string;
-  workshopID?: string;
-  /** 所属车间编码 */
-  workshopCode?: string;
-  /** 所属车间名称 */
-  workshopName?: string;
-  /** 工作中心地点 */
-  wcLocation?: string;
-  parentWcId?: string;
-  /** 父工作中心编码 */
-  parentWcCode?: string;
-  /** 父工作中心名称 */
-  parentWcName?: string;
-  /** 负责人名称 */
-  wcOwner?: string;
-  wcObjectId?: string;
-  /** 关联设备编码 */
-  wcObjectCode?: string;
-  /**
-   * 顺序号
-   * @format int32
-   */
-  wcSeq?: number;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /**
-   * 工作中心-工作区总记录数
-   * @format int32
-   */
-  area?: number;
-  /**
-   * 工作中心-生产线总记录数
-   * @format int32
-   */
-  line?: number;
-  /**
-   * 工作中心-工段总记录数
-   * @format int32
-   */
-  section?: number;
-  /**
-   * 工作中心-设备总记录数
-   * @format int32
-   */
-  device?: number;
-  /** 子工作中心 */
-  children?: WorkcenterVO[];
-}
-
-/** 工艺路线映射表 */
-export interface RoutingMap {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工艺路线代码 */
-  routingCode?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 业务类型编码 */
+  businessCategoryCode?: string;
   mitemId?: string;
+  /** 物料名称 */
+  mitemName?: string;
   mitemCategoryId?: string;
-  workcenterId?: string;
-  /**
-   * 是否默认
-   * @format int32
-   */
-  isDefault?: number;
-}
-
-/** 响应数据 */
-export type PagingDataRouting = {
-  list?: Routing[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataRouting {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataRouting;
-}
-
-/** 工艺路线 */
-export interface Routing {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工艺路线代码 */
-  routingCode?: string;
-  /** 工艺路线名称 */
-  routingName?: string;
-  /** 工艺路线描述 */
-  routingDesc?: string;
-  /** 工艺路线类型 */
-  routingType?: string;
+  /** 物料类型名称 */
+  mitemCategoryName?: string;
+  warehouseId?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 状态 */
+  status?: string;
 }
 
 /** 包装关联物料提交的模型 */
@@ -847,10 +378,12 @@ export type PagingDataProcessInDefectCodeVO = {
 /** 领域对象扩展属性分类 */
 export interface ProcessInDefectCodeVO {
   id?: string;
+  processId?: string;
   /** 工序代码 */
   processCode?: string;
   /** 工序名称 */
   processName?: string;
+  defectCodeId?: string;
   /** 缺陷代码 */
   defectCode?: string;
   /** 缺陷名称 */
@@ -880,108 +413,20 @@ export interface ResultPagingDataProcessInDefectCodeVO {
   data?: PagingDataProcessInDefectCodeVO;
 }
 
-/** 响应数据 */
-export type PagingDataProcessVO = {
-  list?: ProcessVO[];
+export interface CommonSearch {
   /** @format int32 */
-  total?: number;
-} | null;
-
-export interface ProcessVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
   state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工序代码 */
-  processCode?: string;
-  /** 工序名称 */
-  processName?: string;
-  /** 工序描述 */
-  processDesc?: string;
-  /** 创建人名称 */
-  creatorName?: string;
-  /** 修改人名称 */
-  modifierName?: string;
-  isState?: boolean;
-  stateName?: string;
-}
-
-/** 通用响应类 */
-export interface ResultPagingDataProcessVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataProcessVO;
-}
-
-/** 工序 */
-export type Process = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工序代码 */
-  processCode?: string;
-  /** 工序名称 */
-  processName?: string;
-  /** 工序描述 */
-  processDesc?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultProcess {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 工序 */
-  data?: Process;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
 }
 
 /** 工单排产表 */
@@ -1358,6 +803,201 @@ export interface MitemOnboardUnbindDTO {
   ids?: string[];
 }
 
+/** 显示过站采集实体 */
+export interface BarcodeWipCollectVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  moScheId?: string;
+  workcenterId?: string;
+  processId?: string;
+  workstationId?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  seq?: number;
+  /** 在制品数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /**
+   * 缺陷次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /**
+   * 是否完工
+   * @format int32
+   */
+  isCompleted?: number;
+  /** 状态 */
+  status?: string;
+  /** 扫码类型(SCANEXT,KEYPART) */
+  uom?: string;
+  uomName?: string;
+  scanType?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  /** 工单排产状态 */
+  scheStatus?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  routingRevisionId?: string;
+  moId?: string;
+  /** 工单名称 */
+  moCode?: string;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  mitemId?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 扫描信息 */
+  scanMessage?: string;
+  /** 工作中心代码 */
+  workCenterCode?: string;
+  /** 工作中心名称 */
+  workCenterName?: string;
+  /** 关键件数量汇总信息 */
+  keyPartSumList?: WipKeyPartCollectVO[];
+  /** 是否提交事务 */
+  isCommit?: boolean;
+  stateName?: string;
+  isState?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  workshopId?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
+}
+
+/** 显示过站采集关键件实体 */
+export interface WipKeyPartCollectVO {
+  moScheId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 扫描信息 */
+  scanMessage?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  /**
+   * 工单需求量
+   * @format int32
+   */
+  moRequestQty?: number;
+  /**
+   * 关键件已扫数量
+   * @format int32
+   */
+  scanQty?: number;
+  /** 关键条码信息 */
+  keyPartList?: WipKeypart[];
+  getkeyPartCodeStr?: string;
+  isScanFinish?: boolean;
+}
+
+/** 在制品关键件采集表 */
+export interface WipKeypart {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  /** 关键件条码 */
+  keypartBarcode?: string;
+  /** 关键件条码类型 */
+  keypartBarcodeType?: string;
+  moScheId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  supplierId?: string;
+  /** 生产批次 */
+  lotNo?: string;
+  /** 使用数量 */
+  qty?: number;
+  workstationId?: string;
+  processId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBarcodeWipCollectVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示过站采集实体 */
+  data?: BarcodeWipCollectVO;
+}
+
 /** 显示在制品条码实体 */
 export interface BarcodeWipVO {
   id?: string;
@@ -1449,16 +1089,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
-  defectCodeStr?: string;
+  workshopId?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
+  defectCodeStr?: string;
   workshopCode?: string;
   workshopName?: string;
-  stateName?: string;
 }
 
 /** 缺陷代码 */
@@ -1662,27 +1302,7 @@ export interface BarcodeRuleInMitem {
 }
 
 /** 通用响应类 */
-export interface ResultWorkcenterVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 工作中心显示 */
-  data?: WorkcenterVO;
-}
-
-/** 响应数据 */
-export type PagingDataRoutingMapVO = {
-  list?: RoutingMapVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataRoutingMapVO {
+export interface ResultListWipCompletionLabelDTO {
   /**
    * 响应代码
    * @format int32
@@ -1691,68 +1311,18 @@ export interface ResultPagingDataRoutingMapVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataRoutingMapVO;
-}
-
-/** 工艺路线关联产品实体 */
-export interface RoutingMapVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /** 类型编码 */
-  mitemCategoryCode?: string;
-  /** 类型名称 */
-  mitemCategoryName?: string;
-  /** 产品编码 */
-  mitemCode?: string;
-  /** 产品名称 */
-  mitemName?: string;
-  /** 工作中心 */
-  workcenter?: string;
-  /**
-   * 是否默认
-   * @format int32
-   */
-  isDefault?: number;
-}
-
-/** 通用响应类 */
-export interface ResultInteger {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /**
-   * 响应数据
-   * @format int32
-   */
-  data?: number | null;
+  data?: WipCompletionLabelDTO[] | null;
 }
 
 /** 响应数据 */
-export type PagingDataRoutingVO = {
-  list?: RoutingVO[];
+export type PagingDataWipCompletionBillVO = {
+  list?: WipCompletionBillVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataRoutingVO {
+export interface ResultPagingDataWipCompletionBillVO {
   /**
    * 响应代码
    * @format int32
@@ -1761,68 +1331,14 @@ export interface ResultPagingDataRoutingVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataRoutingVO;
+  data?: PagingDataWipCompletionBillVO;
 }
 
-/** 工艺路线展示实体 */
-export interface RoutingVO {
+export interface WipCompletionBillVO {
   id?: string;
-  /** 工艺路线编码 */
-  routingCode?: string;
-  /** 工艺路线名称 */
-  routingName?: string;
-  /** 工艺路线描述 */
-  routingDesc?: string;
-  /** 工艺路线类型 */
-  routingType?: string;
-  routingVersionId?: string;
-  /**
-   * 工艺路线版本
-   * @format int32
-   */
-  routingVersion?: number;
-  /**
-   * 启用时间
-   * @format date-time
-   */
-  enableDate?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  invailDate?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
+  billNo?: string;
+  warehouse?: string;
   creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-}
-
-/** 通用响应类 */
-export interface ResultRoutingDTO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 工艺路线实体 */
-  data?: RoutingDTO;
 }
 
 /** 显示包装规则明细列表 */
@@ -1957,210 +1473,6 @@ export interface ResultPagingDataBarcodeSegmentDTO {
  */
 
 export const api = {
-  routingMap: {
-    /**
-     * No description
-     *
-     * @tags 工艺路线映射表
-     * @name SetDefault
-     * @summary 工艺路线关联产品设置默认
-     * @request PUT:/routingMap/setDefault/{id}
-     * @secure
-     */
-    setDefault: (
-      id: string,
-      query: {
-        /** @format int32 */
-        isDefault: number;
-      },
-    ) =>
-      http.request<ResultObject['data']>(`/api/control/routingMap/setDefault/${id}`, {
-        method: 'PUT',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺路线映射表
-     * @name Add
-     * @summary 添加工艺路线关联产品
-     * @request POST:/routingMap/add
-     * @secure
-     */
-    add: (data: RoutingMap) =>
-      http.request<ResultObject['data']>(`/api/control/routingMap/add`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺路线映射表
-     * @name ListByRoutingCode
-     * @summary 工艺路线关联产品
-     * @request GET:/routingMap/listByRoutingCode
-     * @secure
-     */
-    listByRoutingCode: (query: {
-      /** @format int32 */
-      pageNum: number;
-      /** @format int32 */
-      pageSize: number;
-      routingCode: string;
-      keyword?: string;
-    }) =>
-      http.request<ResultPagingDataRoutingMapVO['data']>(`/api/control/routingMap/listByRoutingCode`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺路线映射表
-     * @name DeleteBatch
-     * @summary 批量删除工艺路线关联产品
-     * @request DELETE:/routingMap/deleteBatch
-     * @secure
-     */
-    deleteBatch: (data: string[]) =>
-      http.request<ResultObject['data']>(`/api/control/routingMap/deleteBatch`, {
-        method: 'DELETE',
-        body: data as any,
-      }),
-  },
-  routing: {
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name Update
-     * @summary 更新工艺路线
-     * @request PUT:/routing/update/{id}
-     * @secure
-     */
-    update: (id: string, data: RoutingDTO) =>
-      http.request<ResultObject['data']>(`/api/control/routing/update/${id}`, {
-        method: 'PUT',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name Enable
-     * @summary 启用
-     * @request PUT:/routing/enable/{id}
-     * @secure
-     */
-    enable: (id: string, data: RoutingDTO) =>
-      http.request<ResultObject['data']>(`/api/control/routing/enable/${id}`, {
-        method: 'PUT',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name Disable
-     * @summary 禁用
-     * @request PUT:/routing/disable/{id}
-     * @secure
-     */
-    disable: (id: string) =>
-      http.request<ResultObject['data']>(`/api/control/routing/disable/${id}`, {
-        method: 'PUT',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name Search
-     * @summary 工艺路线信息查询
-     * @request POST:/routing/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataRouting['data']>(`/api/control/routing/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name Add
-     * @summary 新增工艺路线
-     * @request POST:/routing/add
-     * @secure
-     */
-    add: (data: RoutingDTO) =>
-      http.request<ResultObject['data']>(`/api/control/routing/add`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name MoScheduleBindRoutingCount
-     * @summary 根据工艺路线版本ID获取未完的的工单排产
-     * @request GET:/routing/moScheduleBindRoutingCount/{routingRevisionId}
-     * @secure
-     */
-    moScheduleBindRoutingCount: (routingRevisionId: string) =>
-      http.request<ResultInteger['data']>(`/api/control/routing/moScheduleBindRoutingCount/${routingRevisionId}`, {
-        method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name MainPage
-     * @summary 工艺路线主数据
-     * @request GET:/routing/mainPage
-     * @secure
-     */
-    mainPage: (query: {
-      /** @format int32 */
-      pageNum: number;
-      /** @format int32 */
-      pageSize: number;
-      keyword?: string;
-      routingType?: string;
-      workcenterId?: string;
-      productCategoryId?: string;
-      productId?: string;
-      /** @format int32 */
-      state?: number;
-    }) =>
-      http.request<ResultPagingDataRoutingVO['data']>(`/api/control/routing/mainPage`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工艺路线
-     * @name Item
-     * @summary 根据ID获取工艺路线
-     * @request GET:/routing/item/{id}
-     * @secure
-     */
-    item: (id: string) =>
-      http.request<ResultRoutingDTO['data']>(`/api/control/routing/item/${id}`, {
-        method: 'GET',
-      }),
-  },
   productPackRuleDtl: {
     /**
      * No description
@@ -2406,17 +1718,18 @@ export const api = {
         body: data as any,
       }),
   },
-  workstation: {
+  wip: {
     /**
      * No description
      *
-     * @tags 工站
-     * @name Search
-     * @request POST:/workstation/items
+     * @tags 在制品表
+     * @name SaveByWipCompletionLabel
+     * @summary 通过扫描标签保存完工入库单据
+     * @request POST:/wip/saveByWipCompletionLabel
      * @secure
      */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataWorkstation['data']>(`/api/control/workstation/items`, {
+    saveByWipCompletionLabel: (data: WipCompletionLabelDTO) =>
+      http.request<ResultObject['data']>(`/api/control/wip/saveByWipCompletionLabel`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2424,205 +1737,53 @@ export const api = {
     /**
      * No description
      *
-     * @tags 工站
-     * @name GetItemById
-     * @request POST:/workstation/items/{id}
+     * @tags 在制品表
+     * @name GetWipCompletionLabelList
+     * @summary 根据单据ID获取已扫入的完工入库条码
+     * @request GET:/wip/getWipCompletionLabelList
      * @secure
      */
-    getItemById: (id: string) =>
-      http.request<ResultWorkstation['data']>(`/api/control/workstation/items/${id}`, {
-        method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站
-     * @name Edit
-     * @summary 工站修改
-     * @request POST:/workstation/items/modify
-     * @secure
-     */
-    edit: (data: Workstation) =>
-      http.request<ResultObject['data']>(`/api/control/workstation/items/modify`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站
-     * @name Add
-     * @summary 工站新增
-     * @request POST:/workstation/items/add
-     * @secure
-     */
-    add: (data: Workstation) =>
-      http.request<ResultObject['data']>(`/api/control/workstation/items/add`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站
-     * @name Getlist
-     * @summary 工站查询
-     * @request POST:/workstation/getlist
-     * @secure
-     */
-    getlist: (data: WorkstationSearch) =>
-      http.request<ResultPagingDataWorkstationVO['data']>(`/api/control/workstation/getlist`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  workcenter: {
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name Remove
-     * @summary 删除工作中心
-     * @request POST:/workcenter/remove
-     * @secure
-     */
-    remove: (data: WorkcenterSearch) =>
-      http.request<ResultObject['data']>(`/api/control/workcenter/remove`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name Modify
-     * @summary 编辑工作中心
-     * @request POST:/workcenter/modify
-     * @secure
-     */
-    modify: (data: Workcenter) =>
-      http.request<ResultObject['data']>(`/api/control/workcenter/modify`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name Search
-     * @request POST:/workcenter/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataWorkcenter['data']>(`/api/control/workcenter/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name GetItemById
-     * @request POST:/workcenter/items/{id}
-     * @secure
-     */
-    getItemById: (id: string) =>
-      http.request<ResultWorkcenter['data']>(`/api/control/workcenter/items/${id}`, {
-        method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name HaveChildCenter
-     * @summary 查询是否有子工作中心
-     * @request POST:/workcenter/haveChildCenter
-     * @secure
-     */
-    haveChildCenter: (data: WorkcenterSearch) =>
-      http.request<ResultPagingDataLong['data']>(`/api/control/workcenter/haveChildCenter`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name Getlist
-     * @summary 查询工作中心
-     * @request POST:/workcenter/getList
-     * @secure
-     */
-    getlist: (data: WorkcenterSearch) =>
-      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/control/workcenter/getList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name GetChildCenter
-     * @summary 查询子工作中心
-     * @request POST:/workcenter/getChildCenter
-     * @secure
-     */
-    getChildCenter: (data: WorkcenterSearch) =>
-      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/control/workcenter/getChildCenter`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name Add
-     * @summary 新增工作中心
-     * @request POST:/workcenter/add
-     * @secure
-     */
-    add: (data: Workcenter) =>
-      http.request<ResultObject['data']>(`/api/control/workcenter/add`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
-     * @name GetTagCount
-     * @summary 工作中心获取tag总记录数
-     * @request GET:/workcenter/getTagCount
-     * @secure
-     */
-    getTagCount: () =>
-      http.request<ResultWorkcenterVO['data']>(`/api/control/workcenter/getTagCount`, {
+    getWipCompletionLabelList: (query: { id: string }) =>
+      http.request<ResultListWipCompletionLabelDTO['data']>(`/api/control/wip/getWipCompletionLabelList`, {
         method: 'GET',
+        params: query,
       }),
 
     /**
      * No description
      *
-     * @tags 工作中心
-     * @name GetCategory
-     * @summary 工作中心获取组织层级
-     * @request GET:/workcenter/getCategory
+     * @tags 在制品表
+     * @name GetDraftWipCompletionBillList
+     * @summary 获取未提交的完工入库单据
+     * @request GET:/wip/getDraftWipCompletionBillList
      * @secure
      */
-    getCategory: () =>
-      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/control/workcenter/getCategory`, {
+    getDraftWipCompletionBillList: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      categoryCode: string;
+      isSelf: boolean;
+    }) =>
+      http.request<ResultPagingDataWipCompletionBillVO['data']>(`/api/control/wip/getDraftWipCompletionBillList`, {
         method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品表
+     * @name DeleteBarcode
+     * @summary 根据交易明细标签ID删除对应的明细标签
+     * @request DELETE:/wip/deleteBarcode
+     * @secure
+     */
+    deleteBarcode: (query: { barcodeId: string }) =>
+      http.request<ResultObject['data']>(`/api/control/wip/deleteBarcode`, {
+        method: 'DELETE',
+        params: query,
       }),
   },
   productPackRuleMap: {
@@ -2761,64 +1922,6 @@ export const api = {
      */
     addProcessInDefectCode: (data: ProcessInDefectCode) =>
       http.request<ResultObject['data']>(`/api/control/processInDefectCode/addProcessInDefectCode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  process: {
-    /**
-     * No description
-     *
-     * @tags 工序
-     * @name Search
-     * @request POST:/process/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataProcessVO['data']>(`/api/control/process/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工序
-     * @name GetItemById
-     * @request POST:/process/items/{id}
-     * @secure
-     */
-    getItemById: (id: string) =>
-      http.request<ResultProcess['data']>(`/api/control/process/items/${id}`, {
-        method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工序
-     * @name Edit
-     * @summary 工序编辑
-     * @request POST:/process/edit
-     * @secure
-     */
-    edit: (data: ProcessVO) =>
-      http.request<ResultObject['data']>(`/api/control/process/edit`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工序
-     * @name Add
-     * @summary 工序新增
-     * @request POST:/process/add
-     * @secure
-     */
-    add: (data: ProcessVO) =>
-      http.request<ResultObject['data']>(`/api/control/process/add`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3069,6 +2172,22 @@ export const api = {
         params: query,
       }),
   },
+  barcodeWipCollect: {
+    /**
+     * No description
+     *
+     * @tags 过站采集
+     * @name ScanBarcodeWipCollect
+     * @summary 过站采集扫码
+     * @request POST:/barcodeWipCollect/scanBarcodeWipCollect
+     * @secure
+     */
+    scanBarcodeWipCollect: (data: BarcodeWipCollectVO) =>
+      http.request<ResultBarcodeWipCollectVO['data']>(`/api/control/barcodeWipCollect/scanBarcodeWipCollect`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   barcodeWip: {
     /**
      * No description
@@ -3188,22 +2307,6 @@ export const api = {
     getRuleSegment: () =>
       http.request<ResultPagingDataBarcodeSegmentDTO['data']>(`/api/control/barcodeRuleInMitem/getRuleSegment`, {
         method: 'GET',
-      }),
-  },
-  routingRevision: {
-    /**
-     * No description
-     *
-     * @tags 工艺路线版本
-     * @name GetRoutRevisionByRoutingCode
-     * @summary 根据工艺路线编码获取有效的工艺路线版本信息
-     * @request GET:/routingRevision/getRoutRevisionByRoutingCode
-     * @secure
-     */
-    getRoutRevisionByRoutingCode: (query: { routingCode: string; routingType: string }) =>
-      http.request<ResultObject['data']>(`/api/control/routingRevision/getRoutRevisionByRoutingCode`, {
-        method: 'GET',
-        params: query,
       }),
   },
   moLog: {

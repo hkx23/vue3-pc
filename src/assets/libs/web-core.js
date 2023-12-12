@@ -655,10 +655,7 @@ class nn {
     return t.method = "DELETE", this.request(r, t, n);
   }
   upload(r, t, n = {}, o = []) {
-    return n.method = "POST", n.body = t, n.headers = {
-      "Content-Type": "multipart/form-data;charset=UTF-8"
-      /* FormData */
-    }, this.request(r, n, o);
+    return n.method = "POST", n.body = t, this.request(r, n, o);
   }
 }
 class on {

@@ -9,6 +9,53 @@
  * ---------------------------------------------------------------
  */
 
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 工艺路线实体 */
+export interface RoutingDTO {
+  /** 工艺路线编码 */
+  routingCode?: string;
+  /** 工艺路线名称 */
+  routingName?: string;
+  /** 工艺路线描述 */
+  routingDesc?: string;
+  /** 工艺路线类型 */
+  routingType?: string;
+  /**
+   * 工艺路线版本
+   * @format int32
+   */
+  routingVersion?: number;
+  /**
+   * 启用时间
+   * @format date-time
+   */
+  enableDate?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  invailDate?: string;
+  /** 工艺路线图形化JSON */
+  routingGraph?: string;
+  /**
+   * 工艺路线状态
+   * @format int32
+   */
+  state?: number;
+}
+
 /** 标签模板关联 */
 export interface PrintTmplMap {
   id?: string;
@@ -37,19 +84,6 @@ export interface PrintTmplMap {
   printTmplId?: string;
   mitemCategoryId?: string;
   mitemId?: string;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 /** 打印模板实体 */
@@ -205,6 +239,159 @@ export interface SortParam {
 }
 
 /** 响应数据 */
+export type PagingDataWorkstation = {
+  list?: Workstation[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkstation {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkstation;
+}
+
+/** 工站 */
+export interface Workstation {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工站代码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 工站描述 */
+  workstationDesc?: string;
+  processId?: string;
+  workcenterId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultWorkstation {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 工站 */
+  data?: Workstation;
+}
+
+export interface WorkstationSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 工站编码名称模糊 */
+  workstaion?: string;
+  /** 工站-状态 */
+  state?: number[];
+  /** 工作中心编码名称模糊 */
+  workcenter?: string;
+  /** 工序编码名称模糊 */
+  process?: string;
+  /** 模糊关键词 */
+  keyword?: string;
+  /** 排序字段 */
+  sorts?: SortParam[];
+  /** 筛选字段 */
+  filters?: Filter[];
+}
+
+/** 响应数据 */
+export type PagingDataWorkstationVO = {
+  list?: WorkstationVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkstationVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkstationVO;
+}
+
+/** 显示工站 */
+export interface WorkstationVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  /** 工站代码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 工站描述 */
+  workstationDesc?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 工序名称 */
+  processName?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 创建人 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 修改人 */
+  modifierName?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  processId?: string;
+  workcenterId?: string;
+}
+
+/** 响应数据 */
 export type PagingDataWorkgroup = {
   list?: Workgroup[];
   /** @format int32 */
@@ -269,6 +456,228 @@ export interface ResultWorkgroup {
   message?: string;
   /** 班组 */
   data?: Workgroup;
+}
+
+/** 工作中心 */
+export interface Workcenter {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工站代码 */
+  wcCode?: string;
+  /** 工站名称 */
+  wcName?: string;
+  /** 工站描述 */
+  wcDesc?: string;
+  workshopId?: string;
+  parentWcId?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  wcSeq?: number;
+  /**
+   * 类型
+   * @format int32
+   */
+  wcObjectType?: number;
+  wcObjectId?: string;
+  /** 地点 */
+  wcLocation?: string;
+  /** 负责人 */
+  wcOwner?: string;
+}
+
+export interface WorkcenterSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+  /** 多条记录 */
+  allRecord?: Workcenter[];
+  /**
+   * 工作中心-类别
+   * @format int32
+   */
+  category?: number;
+  /** 工作中心编码名称模糊查询 */
+  workcenterword?: string;
+  workshopID?: string;
+  /** 工作中心-状态 */
+  state?: number[];
+  /** 排序字段 */
+  sorts?: SortParam[];
+  /** 筛选字段 */
+  filters?: Filter[];
+}
+
+/** 响应数据 */
+export type PagingDataWorkcenter = {
+  list?: Workcenter[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkcenter {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkcenter;
+}
+
+/** 通用响应类 */
+export interface ResultWorkcenter {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 工作中心 */
+  data?: Workcenter;
+}
+
+/** 响应数据 */
+export type PagingDataLong = {
+  list?: string[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLong;
+}
+
+/** 响应数据 */
+export type PagingDataWorkcenterVO = {
+  list?: WorkcenterVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkcenterVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkcenterVO;
+}
+
+/** 工作中心显示 */
+export interface WorkcenterVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  /** 工作中心编号 */
+  wcCode?: string;
+  /** 工作中心名称 */
+  wcName?: string;
+  /**
+   * 工作中心类型
+   * @format int32
+   */
+  wcObjectType?: number;
+  /** 工作中心类型 */
+  wcType?: string;
+  workshopID?: string;
+  /** 所属车间编码 */
+  workshopCode?: string;
+  /** 所属车间名称 */
+  workshopName?: string;
+  /** 工作中心地点 */
+  wcLocation?: string;
+  parentWcId?: string;
+  /** 父工作中心编码 */
+  parentWcCode?: string;
+  /** 父工作中心名称 */
+  parentWcName?: string;
+  /** 负责人名称 */
+  wcOwner?: string;
+  wcObjectId?: string;
+  /** 关联设备编码 */
+  wcObjectCode?: string;
+  /**
+   * 顺序号
+   * @format int32
+   */
+  wcSeq?: number;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /**
+   * 工作中心-工作区总记录数
+   * @format int32
+   */
+  area?: number;
+  /**
+   * 工作中心-生产线总记录数
+   * @format int32
+   */
+  line?: number;
+  /**
+   * 工作中心-工段总记录数
+   * @format int32
+   */
+  section?: number;
+  /**
+   * 工作中心-设备总记录数
+   * @format int32
+   */
+  device?: number;
+  /** 子工作中心 */
+  children?: WorkcenterVO[];
 }
 
 /** 通用响应类 */
@@ -812,6 +1221,98 @@ export interface ResultSupplier {
   data?: Supplier;
 }
 
+/** 工艺路线映射表 */
+export interface RoutingMap {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工艺路线代码 */
+  routingCode?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  workcenterId?: string;
+  /**
+   * 是否默认
+   * @format int32
+   */
+  isDefault?: number;
+}
+
+/** 响应数据 */
+export type PagingDataRouting = {
+  list?: Routing[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataRouting {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataRouting;
+}
+
+/** 工艺路线 */
+export interface Routing {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工艺路线代码 */
+  routingCode?: string;
+  /** 工艺路线名称 */
+  routingName?: string;
+  /** 工艺路线描述 */
+  routingDesc?: string;
+  /** 工艺路线类型 */
+  routingType?: string;
+}
+
 /** 角色权限操作实体 */
 export interface RoleAuthDTO {
   roleId?: string;
@@ -924,6 +1425,320 @@ export type Role = {
   /** 角色描述 */
   roleDesc?: string;
 } | null;
+
+export interface ProfileSearch {
+  /** 模糊搜索字段 */
+  key?: string;
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  nodeId?: string;
+  /**
+   * 节点类型
+   * @format int32
+   */
+  attribute?: number;
+}
+
+/** 响应数据 */
+export type PagingDataProfileValueSearchVO = {
+  list?: ProfileValueSearchVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface ProfileValueSearchVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  moduleId?: string;
+  /** 配置项编码 */
+  profileCode?: string;
+  /** 配置项名称 */
+  profileName?: string;
+  /** 配置项描述 */
+  profileDesc?: string;
+  /** 配置项值类型 */
+  valueType?: string;
+  /** 配置项值范围 */
+  valueRange?: string;
+  /** 模块名称 */
+  moduleName?: string;
+  /** 配置项维度 */
+  profileCategory?: string;
+  /** 配置项维度值id */
+  profileCategoryValue?: string;
+  /** 配置项维度值名称 */
+  profileCategoryValueName?: string;
+  /** 配置项值 */
+  profileValue?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProfileValueSearchVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProfileValueSearchVO;
+}
+
+/** 配置项值 */
+export interface ProfileValue {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  profileId?: string;
+  /** 配置项分类 */
+  profileCategory?: string;
+  /** 配置项分类值 */
+  profileCategoryValue?: string;
+  /** 配置项值 */
+  profileValue?: string;
+}
+
+/** 工序业务执行单元库明细表 */
+export interface ProcessBusinessLibDtl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  processBusinessLibId?: string;
+  businessUnitId?: string;
+  /**
+   * 执行顺序
+   * @format int32
+   */
+  execSeq?: number;
+}
+
+/** 工序业务执行单元库头表 */
+export interface ProcessBusinessLib {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  routingProcessId?: string;
+  processId?: string;
+  /** 条码类型 */
+  barcodeCategory?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListProcessBusinessLibDtl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProcessBusinessLibDtl[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
+}
+
+/** 响应数据 */
+export type PagingDataProcessVO = {
+  list?: ProcessVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface ProcessVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 工序描述 */
+  processDesc?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  isState?: boolean;
+  stateName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProcessVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProcessVO;
+}
+
+/** 工序 */
+export type Process = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 工序描述 */
+  processDesc?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultProcess {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 工序 */
+  data?: Process;
+}
 
 /** 打印模板关联实体 */
 export interface PrintTmplMapDTO {
@@ -1568,6 +2383,19 @@ export interface ObjectProperty {
   isDataMultiple?: number;
 }
 
+/** 通用响应类 */
+export interface ResultResponseEntityString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
+}
+
 /** 系统模块表 */
 export interface Module {
   id?: string;
@@ -1704,6 +2532,11 @@ export type ShowModuleVO = {
   moduleVersion?: number;
   /** 模块包标识 */
   modulePackageIdentify?: string;
+  parentModuleId?: string;
+  /** 所在一级菜单名称 */
+  grandpaName?: string;
+  /** 模块访问地址 */
+  behaviorPath?: string;
   /**
    * 是否PC端
    * @format int32
@@ -2030,13 +2863,13 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
-  isInProcessName?: string;
   isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
   isRawName?: string;
   isProductName?: string;
-  isBatchName?: string;
-  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
 }
@@ -2552,8 +3385,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -2667,6 +3500,95 @@ export interface JSONObject {
   [key: string]: any;
 }
 
+/** 业务单元模板库明细表 */
+export interface BusinessTmplLibDtl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  businessTmplId?: string;
+  /**
+   * 执行顺序
+   * @format int32
+   */
+  execSeq?: number;
+  businessUnitId?: string;
+}
+
+/** 业务单元模板库表 */
+export interface BusinessTmplLib {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板名称 */
+  tmplName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListBusinessTmplLibDtl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessTmplLibDtl[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListBusinessTmplLib {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessTmplLib[] | null;
+}
+
 export interface BarcodeVaildateRuleSearch {
   /**
    * 页码
@@ -2680,6 +3602,8 @@ export interface BarcodeVaildateRuleSearch {
   pageSize?: number;
   /** 规则模糊查询关键词 */
   ruleKeyword?: string;
+  /** 条码类型 */
+  barcodeTypeCode?: string;
   mitemId?: string;
   /** 条码验证分组 */
   barcodeValidateGroup?: string;
@@ -2882,6 +3806,19 @@ export interface ResultAttendanceMode {
 }
 
 /** 通用响应类 */
+export interface ResultWorkcenterVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 工作中心显示 */
+  data?: WorkcenterVO;
+}
+
+/** 通用响应类 */
 export interface ResultListUserInRoleVO {
   /**
    * 响应代码
@@ -3005,24 +3942,13 @@ export interface ResultListUser {
   data?: User[] | null;
 }
 
-/** 通用响应类 */
-export interface ResultLong {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  data?: string;
-}
-
 /** 当前用户实体 */
 export type CurrentUserVO = {
   /** 用户名 */
   userName?: string;
   /** 显示名称 */
   displayName?: string;
+  eid?: string;
   defaultOrgId?: string;
   /** 授权组织 */
   orgList?: OrgVO[];
@@ -3069,6 +3995,232 @@ export interface ResultPagingDataParam {
   message?: string;
   /** 响应数据 */
   data?: PagingDataParam;
+}
+
+/** 响应数据 */
+export type PagingDataRoutingMapVO = {
+  list?: RoutingMapVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataRoutingMapVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataRoutingMapVO;
+}
+
+/** 工艺路线关联产品实体 */
+export interface RoutingMapVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /** 类型编码 */
+  mitemCategoryCode?: string;
+  /** 类型名称 */
+  mitemCategoryName?: string;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 产品名称 */
+  mitemName?: string;
+  /** 工作中心 */
+  workcenter?: string;
+  /**
+   * 是否默认
+   * @format int32
+   */
+  isDefault?: number;
+}
+
+/** 响应数据 */
+export type PagingDataRoutingVO = {
+  list?: RoutingVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataRoutingVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataRoutingVO;
+}
+
+/** 工艺路线展示实体 */
+export interface RoutingVO {
+  id?: string;
+  /** 工艺路线编码 */
+  routingCode?: string;
+  /** 工艺路线名称 */
+  routingName?: string;
+  /** 工艺路线描述 */
+  routingDesc?: string;
+  /** 工艺路线类型 */
+  routingType?: string;
+  routingVersionId?: string;
+  /**
+   * 工艺路线版本
+   * @format int32
+   */
+  routingVersion?: number;
+  /**
+   * 启用时间
+   * @format date-time
+   */
+  enableDate?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  invailDate?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+}
+
+/** 通用响应类 */
+export interface ResultRoutingDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 工艺路线实体 */
+  data?: RoutingDTO;
+}
+
+/** 配置项 */
+export type Profile = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  moduleId?: string;
+  /** 配置项编码 */
+  profileCode?: string;
+  /** 配置项名称 */
+  profileName?: string;
+  /** 配置项描述 */
+  profileDesc?: string;
+  /** 配置项值类型 */
+  valueType?: string;
+  /** 配置项值范围 */
+  valueRange?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultProfile {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 配置项 */
+  data?: Profile;
+}
+
+/** 配置左侧树形实体 */
+export type ProfileLeftTreeTopVO = {
+  id?: string;
+  /** 级别名称 */
+  modelName?: string;
+  parentModuleId?: string;
+  /**
+   * 属性
+   * @format int32
+   */
+  attribute?: number;
+  /** 子模块 */
+  childList?: object[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultListProfileLeftTreeTopVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProfileLeftTreeTopVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
 }
 
 /** 权限功能实体 */
@@ -3445,14 +4597,14 @@ export interface ResultListObjectPropertyValueVO {
 }
 
 /** 响应数据 */
-export type PagingDataLong = {
-  list?: string[];
+export type PagingDataModule = {
+  list?: Module[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataLong {
+export interface ResultPagingDataModule {
   /**
    * 响应代码
    * @format int32
@@ -3461,7 +4613,7 @@ export interface ResultPagingDataLong {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataLong;
+  data?: PagingDataModule;
 }
 
 /** 通用响应类 */
@@ -3475,6 +4627,71 @@ export interface ResultListDefectCodeVO {
   message?: string;
   /** 响应数据 */
   data?: DefectCodeVO[] | null;
+}
+
+/** 业务执行单元表 */
+export type BusinessUnit = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 服务名称 */
+  apiName?: string;
+  /** 服务描述 */
+  apiDesc?: string;
+  /** 服务路径 */
+  apiPath?: string;
+  /** 入参列表 */
+  paramInput?: string;
+  /** 出参列表 */
+  paramOutput?: string;
+  /** 服务分类 */
+  paramCategory?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListBusinessUnit {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessUnit[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
 }
 
 /** 显示行政组织层级实体 */
@@ -3524,6 +4741,196 @@ export interface ResultListAdminOrgVO {
  */
 
 export const api = {
+  routingMap: {
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name SetDefault
+     * @summary 工艺路线关联产品设置默认
+     * @request PUT:/routingMap/setDefault/{id}
+     * @secure
+     */
+    setDefault: (
+      id: string,
+      query: {
+        /** @format int32 */
+        isDefault: number;
+      },
+    ) =>
+      http.request<ResultObject['data']>(`/api/main/routingMap/setDefault/${id}`, {
+        method: 'PUT',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name Add
+     * @summary 添加工艺路线关联产品
+     * @request POST:/routingMap/add
+     * @secure
+     */
+    add: (data: RoutingMap) =>
+      http.request<ResultObject['data']>(`/api/main/routingMap/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name ListByRoutingCode
+     * @summary 工艺路线关联产品
+     * @request GET:/routingMap/listByRoutingCode
+     * @secure
+     */
+    listByRoutingCode: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      routingCode: string;
+      keyword?: string;
+    }) =>
+      http.request<ResultPagingDataRoutingMapVO['data']>(`/api/main/routingMap/listByRoutingCode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线映射表
+     * @name DeleteBatch
+     * @summary 批量删除工艺路线关联产品
+     * @request DELETE:/routingMap/deleteBatch
+     * @secure
+     */
+    deleteBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/routingMap/deleteBatch`, {
+        method: 'DELETE',
+        body: data as any,
+      }),
+  },
+  routing: {
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Update
+     * @summary 更新工艺路线
+     * @request PUT:/routing/update/{id}
+     * @secure
+     */
+    update: (id: string, data: RoutingDTO) =>
+      http.request<ResultObject['data']>(`/api/main/routing/update/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Enable
+     * @summary 启用
+     * @request PUT:/routing/enable/{id}
+     * @secure
+     */
+    enable: (id: string, data: RoutingDTO) =>
+      http.request<ResultObject['data']>(`/api/main/routing/enable/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Disable
+     * @summary 禁用
+     * @request PUT:/routing/disable/{id}
+     * @secure
+     */
+    disable: (id: string) =>
+      http.request<ResultObject['data']>(`/api/main/routing/disable/${id}`, {
+        method: 'PUT',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Search
+     * @summary 工艺路线信息查询
+     * @request POST:/routing/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataRouting['data']>(`/api/main/routing/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Add
+     * @summary 新增工艺路线
+     * @request POST:/routing/add
+     * @secure
+     */
+    add: (data: RoutingDTO) =>
+      http.request<ResultObject['data']>(`/api/main/routing/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name MainPage
+     * @summary 工艺路线主数据
+     * @request GET:/routing/mainPage
+     * @secure
+     */
+    mainPage: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      keyword?: string;
+      routingType?: string;
+      workcenterId?: string;
+      productCategoryId?: string;
+      productId?: string;
+      /** @format int32 */
+      state?: number;
+    }) =>
+      http.request<ResultPagingDataRoutingVO['data']>(`/api/main/routing/mainPage`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name Item
+     * @summary 根据ID获取工艺路线
+     * @request GET:/routing/item/{id}
+     * @secure
+     */
+    item: (id: string) =>
+      http.request<ResultRoutingDTO['data']>(`/api/main/routing/item/${id}`, {
+        method: 'GET',
+      }),
+  },
   printTmplMap: {
     /**
      * No description
@@ -3606,7 +5013,7 @@ export const api = {
      *
      * @tags 标签模板
      * @name Search
-     * @summary 获取模板
+     * @summary 获取模板清单
      * @request POST:/printTmpl/items
      * @secure
      */
@@ -3644,6 +5051,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/printTmpl/add`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name GetTmplByPath
+     * @summary 获取模板
+     * @request GET:/printTmpl/getTmplByPath
+     * @secure
+     */
+    getTmplByPath: (query: { path: string }) =>
+      http.request<ResultString['data']>(`/api/main/printTmpl/getTmplByPath`, {
+        method: 'GET',
+        params: query,
       }),
   },
   orgLevel: {
@@ -3808,6 +5230,79 @@ export const api = {
         params: query,
       }),
   },
+  workstation: {
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name Search
+     * @request POST:/workstation/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataWorkstation['data']>(`/api/main/workstation/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name GetItemById
+     * @request POST:/workstation/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultWorkstation['data']>(`/api/main/workstation/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name Edit
+     * @summary 工站修改
+     * @request POST:/workstation/items/modify
+     * @secure
+     */
+    edit: (data: Workstation) =>
+      http.request<ResultObject['data']>(`/api/main/workstation/items/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name Add
+     * @summary 工站新增
+     * @request POST:/workstation/items/add
+     * @secure
+     */
+    add: (data: Workstation) =>
+      http.request<ResultObject['data']>(`/api/main/workstation/items/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name Getlist
+     * @summary 工站查询
+     * @request POST:/workstation/getlist
+     * @secure
+     */
+    getlist: (data: WorkstationSearch) =>
+      http.request<ResultPagingDataWorkstationVO['data']>(`/api/main/workstation/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   workgroup: {
     /**
      * No description
@@ -3834,6 +5329,152 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkgroup['data']>(`/api/main/workgroup/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  workcenter: {
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Remove
+     * @summary 删除工作中心
+     * @request POST:/workcenter/remove
+     * @secure
+     */
+    remove: (data: WorkcenterSearch) =>
+      http.request<ResultObject['data']>(`/api/main/workcenter/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Modify
+     * @summary 编辑工作中心
+     * @request POST:/workcenter/modify
+     * @secure
+     */
+    modify: (data: Workcenter) =>
+      http.request<ResultObject['data']>(`/api/main/workcenter/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Search
+     * @request POST:/workcenter/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataWorkcenter['data']>(`/api/main/workcenter/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetItemById
+     * @request POST:/workcenter/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultWorkcenter['data']>(`/api/main/workcenter/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name HaveChildCenter
+     * @summary 查询是否有子工作中心
+     * @request POST:/workcenter/haveChildCenter
+     * @secure
+     */
+    haveChildCenter: (data: WorkcenterSearch) =>
+      http.request<ResultPagingDataLong['data']>(`/api/main/workcenter/haveChildCenter`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Getlist
+     * @summary 查询工作中心
+     * @request POST:/workcenter/getList
+     * @secure
+     */
+    getlist: (data: WorkcenterSearch) =>
+      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetChildCenter
+     * @summary 查询子工作中心
+     * @request POST:/workcenter/getChildCenter
+     * @secure
+     */
+    getChildCenter: (data: WorkcenterSearch) =>
+      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getChildCenter`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name Add
+     * @summary 新增工作中心
+     * @request POST:/workcenter/add
+     * @secure
+     */
+    add: (data: Workcenter) =>
+      http.request<ResultObject['data']>(`/api/main/workcenter/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetTagCount
+     * @summary 工作中心获取tag总记录数
+     * @request GET:/workcenter/getTagCount
+     * @secure
+     */
+    getTagCount: () =>
+      http.request<ResultWorkcenterVO['data']>(`/api/main/workcenter/getTagCount`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetCategory
+     * @summary 工作中心获取组织层级
+     * @request GET:/workcenter/getCategory
+     * @secure
+     */
+    getCategory: () =>
+      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getCategory`, {
+        method: 'GET',
       }),
   },
   warehouse: {
@@ -4605,6 +6246,157 @@ export const api = {
         params: query,
       }),
   },
+  profileValue: {
+    /**
+     * No description
+     *
+     * @tags 配置项值
+     * @name GetProfileValueList
+     * @summary 获取配置项列表
+     * @request POST:/profileValue/items/getProfileValueList
+     * @secure
+     */
+    getProfileValueList: (data: ProfileSearch) =>
+      http.request<ResultPagingDataProfileValueSearchVO['data']>(`/api/main/profileValue/items/getProfileValueList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项值
+     * @name ChangeProfileValue
+     * @summary 修改配置项值
+     * @request POST:/profileValue/items/changeProfileValue
+     * @secure
+     */
+    changeProfileValue: (data: ProfileValue) =>
+      http.request<Result['data']>(`/api/main/profileValue/items/changeProfileValue`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项值
+     * @name AddProfileValue
+     * @summary 新增配置项值
+     * @request POST:/profileValue/items/addProfileValue
+     * @secure
+     */
+    addProfileValue: (data: ProfileValue) =>
+      http.request<Result['data']>(`/api/main/profileValue/items/addProfileValue`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  processBusinessLibDtl: {
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库明细表
+     * @name AddList
+     * @summary 新增明细清单
+     * @request POST:/processBusinessLibDtl/addList
+     * @secure
+     */
+    addList: (data: ProcessBusinessLibDtl[]) =>
+      http.request<ResultObject['data']>(`/api/main/processBusinessLibDtl/addList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  processBusinessLib: {
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name ListByIds
+     * @summary 根据工序和分类获取明细
+     * @request POST:/processBusinessLib/listByIds
+     * @secure
+     */
+    listByIds: (data: ProcessBusinessLib) =>
+      http.request<ResultListProcessBusinessLibDtl['data']>(`/api/main/processBusinessLib/listByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name Add
+     * @summary 新增工序业务执行单元库头表
+     * @request POST:/processBusinessLib/add
+     * @secure
+     */
+    add: (data: ProcessBusinessLib) =>
+      http.request<ResultLong['data']>(`/api/main/processBusinessLib/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  process: {
+    /**
+     * No description
+     *
+     * @tags 工序
+     * @name Search
+     * @request POST:/process/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataProcessVO['data']>(`/api/main/process/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序
+     * @name GetItemById
+     * @request POST:/process/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultProcess['data']>(`/api/main/process/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序
+     * @name Edit
+     * @summary 工序编辑
+     * @request POST:/process/edit
+     * @secure
+     */
+    edit: (data: ProcessVO) =>
+      http.request<ResultObject['data']>(`/api/main/process/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序
+     * @name Add
+     * @summary 工序新增
+     * @request POST:/process/add
+     * @secure
+     */
+    add: (data: ProcessVO) =>
+      http.request<ResultObject['data']>(`/api/main/process/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   post: {
     /**
      * No description
@@ -5086,6 +6878,30 @@ export const api = {
      * No description
      *
      * @tags 菜单
+     * @name UploadFile
+     * @summary 菜单文件上传
+     * @request POST:/module/uploadFile
+     * @secure
+     */
+    uploadFile: (
+      query: {
+        path: string;
+      },
+      data: {
+        /** @format binary */
+        file: File;
+      },
+    ) =>
+      http.request<ResultResponseEntityString['data']>(`/api/main/module/uploadFile`, {
+        method: 'POST',
+        params: query,
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
      * @name Remove
      * @summary 删除菜单模块
      * @request POST:/module/remove
@@ -5174,6 +6990,50 @@ export const api = {
       clientType: number;
     }) =>
       http.request<ResultListShowModuleVO['data']>(`/api/main/module/show`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name GetRootModules
+     * @summary 获取所有一级菜单模块
+     * @request GET:/module/getROOTModules
+     * @secure
+     */
+    getRootModules: () =>
+      http.request<ResultPagingDataModule['data']>(`/api/main/module/getROOTModules`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name GetBackfill
+     * @summary 获取所有二级菜单模块(回填)
+     * @request GET:/module/getBackfill
+     * @secure
+     */
+    getBackfill: (query: { id: string }) =>
+      http.request<ResultPagingDataModule['data']>(`/api/main/module/getBackfill`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name GetAllModules
+     * @summary 获取所有二级菜单模块
+     * @request GET:/module/getAllModules
+     * @secure
+     */
+    getAllModules: (query: { id: string }) =>
+      http.request<ResultPagingDataModule['data']>(`/api/main/module/getAllModules`, {
         method: 'GET',
         params: query,
       }),
@@ -5883,6 +7743,97 @@ export const api = {
         body: data as any,
       }),
   },
+  businessTmplLibDtl: {
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库明细表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/businessTmplLibDtl/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLibDtl/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库明细表
+     * @name AddList
+     * @summary 新增明细清单
+     * @request POST:/businessTmplLibDtl/addList
+     * @secure
+     */
+    addList: (data: BusinessTmplLibDtl[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLibDtl/addList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  businessTmplLib: {
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name ListByIds
+     * @summary 根据名称获取明细
+     * @request POST:/businessTmplLib/listByIds
+     * @secure
+     */
+    listByIds: (data: BusinessTmplLib) =>
+      http.request<ResultListBusinessTmplLibDtl['data']>(`/api/main/businessTmplLib/listByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name Items
+     * @summary 获取模板清单
+     * @request POST:/businessTmplLib/items
+     * @secure
+     */
+    items: () =>
+      http.request<ResultListBusinessTmplLib['data']>(`/api/main/businessTmplLib/items`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/businessTmplLib/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLib/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name Add
+     * @summary 新增工序业务执行单元库头表
+     * @request POST:/businessTmplLib/add
+     * @secure
+     */
+    add: (data: BusinessTmplLib) =>
+      http.request<ResultLong['data']>(`/api/main/businessTmplLib/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   barcodeValidateRule: {
     /**
      * No description
@@ -5946,6 +7897,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name VaildateBarcodeRule
+     * @summary 验证条码是否与条码规则匹配
+     * @request GET:/barcodeValidateRule/VaildateBarcodeRule
+     * @secure
+     */
+    vaildateBarcodeRule: (query: { expression: string; barcode: string }) =>
+      http.request<ResultBoolean['data']>(`/api/main/barcodeValidateRule/VaildateBarcodeRule`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   attendanceMode: {
     /**
@@ -5973,6 +7939,50 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  routingRevision: {
+    /**
+     * No description
+     *
+     * @tags 工艺路线版本
+     * @name GetRoutRevisionByRoutingCode
+     * @summary 根据工艺路线编码获取有效的工艺路线版本信息
+     * @request GET:/routingRevision/getRoutRevisionByRoutingCode
+     * @secure
+     */
+    getRoutRevisionByRoutingCode: (query: { routingCode: string; routingType: string }) =>
+      http.request<ResultObject['data']>(`/api/main/routingRevision/getRoutRevisionByRoutingCode`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  profile: {
+    /**
+     * No description
+     *
+     * @tags 配置项
+     * @name SelectById
+     * @request GET:/profile/items/{id}
+     * @secure
+     */
+    selectById: (id: number) =>
+      http.request<ResultProfile['data']>(`/api/main/profile/items/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项
+     * @name GetAllTree
+     * @summary 主界面树形区域
+     * @request GET:/profile/items/tree
+     * @secure
+     */
+    getAllTree: () =>
+      http.request<ResultListProfileLeftTreeTopVO['data']>(`/api/main/profile/items/tree`, {
+        method: 'GET',
       }),
   },
   permission: {
@@ -6023,6 +8033,21 @@ export const api = {
       http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  businessUnit: {
+    /**
+     * No description
+     *
+     * @tags 业务执行单元表
+     * @name Items
+     * @summary 获取原子清单
+     * @request GET:/businessUnit/items
+     * @secure
+     */
+    items: () =>
+      http.request<ResultListBusinessUnit['data']>(`/api/main/businessUnit/items`, {
+        method: 'GET',
       }),
   },
   adminOrg: {

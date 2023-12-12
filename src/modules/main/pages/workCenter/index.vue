@@ -32,9 +32,6 @@
               <div>{{ item.wcType }}{{ item.code !== 0 ? `(${item.code})` : '' }}</div>
             </template>
           </t-tab-panel>
-          <!-- <template #wcTypes="{ row }">
-            {{ row }}
-          </template> -->
         </t-tabs>
       </t-space>
       <t-row>
@@ -138,10 +135,10 @@
 <script setup lang="ts">
 import _ from 'lodash';
 // import { SearchIcon } from 'tdesign-icons-vue-next';
-import { Icon, MessagePlugin } from 'tdesign-vue-next';
+import { Icon, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
-import { api } from '@/api/control';
+import { api } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
@@ -212,82 +209,151 @@ const id = ref(0);
 const detailedShow = ref(false); // 控制子工作中心显示隐藏
 
 const showWcType = ref(false); // 控制关联设备是否显示隐藏
-const columns: any = computed(() => {
-  const wcObjectCode = showWcType.value
-    ? [
-        {
-          colKey: 'wcObjectCode',
-          title: '关联设备',
-          align: 'center',
-          width: '150px',
-        },
-      ]
-    : [];
-  const cols = [
-    {
-      colKey: 'wcCode',
-      title: '工作中心编号',
-      align: 'left',
-      width: '200px',
-    },
-    {
-      colKey: 'wcName',
-      title: '名称',
-      align: 'center',
-      width: '150px',
-    },
-    {
-      colKey: 'wcType',
-      title: '类型',
-      align: 'center',
-      width: '150px',
-    },
-    {
-      colKey: 'workshopName',
-      title: '所属车间',
-      align: 'center',
-      width: '150px',
-    },
-    {
-      colKey: 'wcLocation',
-      title: '地点',
-      align: 'center',
-      width: '150px',
-    },
-    {
-      colKey: 'parentWcCode',
-      title: '父工作中心',
-      align: 'center',
-      width: '150px',
-    },
-    {
-      colKey: 'wcOwner',
-      title: '负责人',
-      align: 'center',
-      width: '150px',
-    },
-    ...wcObjectCode,
-    {
-      colKey: 'wcSeq',
-      title: '顺序号',
-      align: 'center',
-      width: '150px',
-    },
-    {
-      colKey: 'state',
-      title: '状态',
-      align: 'center',
-    },
-    {
-      colKey: 'op',
-      title: '操作',
-      width: '150px',
-      align: 'center',
-      fixed: 'right',
-    },
-  ];
-  return cols;
-});
+// const columns: any = computed(() => {
+//   const wcObjectCode = showWcType.value
+//     ? [
+//         {
+//           colKey: 'wcObjectCode',
+//           title: '关联设备',
+//           align: 'center',
+//           width: '150px',
+//         },
+//       ]
+//     : [];
+//   const cols = [
+//     {
+//       colKey: 'wcCode',
+//       title: '工作中心编号',
+//       align: 'left',
+//       width: '200px',
+//     },
+//     {
+//       colKey: 'wcName',
+//       title: '名称',
+//       align: 'center',
+//       width: '150px',
+//     },
+//     {
+//       colKey: 'wcType',
+//       title: '类型',
+//       align: 'center',
+//       width: '150px',
+//     },
+//     {
+//       colKey: 'workshopName',
+//       title: '所属车间',
+//       align: 'center',
+//       width: '150px',
+//     },
+//     {
+//       colKey: 'wcLocation',
+//       title: '地点',
+//       align: 'center',
+//       width: '150px',
+//     },
+//     {
+//       colKey: 'parentWcCode',
+//       title: '父工作中心',
+//       align: 'center',
+//       width: '150px',
+//     },
+//     {
+//       colKey: 'wcOwner',
+//       title: '负责人',
+//       align: 'center',
+//       width: '150px',
+//     },
+//     ...wcObjectCode,
+//     {
+//       colKey: 'wcSeq',
+//       title: '顺序号',
+//       align: 'center',
+//       width: '150px',
+//     },
+//     {
+//       colKey: 'state',
+//       title: '状态',
+//       align: 'center',
+//     },
+//     {
+//       colKey: 'op',
+//       title: '操作',
+//       width: '150px',
+//       align: 'center',
+//       fixed: 'right',
+//     },
+//   ];
+//   return cols;
+// });
+
+const columns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'wcCode',
+    title: '工作中心编号',
+    align: 'left',
+    width: '200px',
+  },
+  {
+    colKey: 'wcName',
+    title: '名称',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'wcType',
+    title: '类型',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'workshopName',
+    title: '所属车间',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'wcLocation',
+    title: '地点',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'parentWcCode',
+    title: '父工作中心',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'wcOwner',
+    title: '负责人',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'wcObjectCode',
+    title: '关联设备',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'wcSeq',
+    title: '顺序号',
+    align: 'center',
+    width: '150px',
+  },
+  {
+    colKey: 'state',
+    title: '状态',
+    align: 'center',
+  },
+  {
+    colKey: 'op',
+    title: '操作',
+    width: '150px',
+    align: 'center',
+    fixed: 'right',
+  },
+];
 
 const data = ref([]); // 存储数据给到新增数据
 const { pageUI } = usePage();

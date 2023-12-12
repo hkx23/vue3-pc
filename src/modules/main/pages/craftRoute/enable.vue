@@ -75,7 +75,7 @@
 import { Data, FormRules } from 'tdesign-vue-next';
 import { computed, ref, toRefs } from 'vue';
 
-import { api as apiControl, RoutingVO } from '@/api/control';
+import { api, RoutingVO } from '@/api/main';
 
 import { useLang } from './lang';
 
@@ -120,7 +120,7 @@ const save = () => {
         state: 1,
       };
       // 启用走更新逻辑
-      apiControl.routing
+      api.routing
         .enable(formData.value.id, postData)
         .then(() => {
           loading.value = false;
