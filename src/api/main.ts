@@ -1540,6 +1540,96 @@ export interface ProfileValue {
   profileValue?: string;
 }
 
+/** 工序业务执行单元库明细表 */
+export interface ProcessBusinessLibDtl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  processBusinessLibId?: string;
+  businessUnitId?: string;
+  /**
+   * 执行顺序
+   * @format int32
+   */
+  execSeq?: number;
+}
+
+/** 工序业务执行单元库头表 */
+export interface ProcessBusinessLib {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  routingProcessId?: string;
+  processId?: string;
+  /** 条码类型 */
+  barcodeCategory?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListProcessBusinessLibDtl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProcessBusinessLibDtl[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
+}
+
 /** 响应数据 */
 export type PagingDataProcessVO = {
   list?: ProcessVO[];
@@ -2752,15 +2842,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isProductName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   stateName?: string;
   isState?: boolean;
+  isRawName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3389,6 +3479,95 @@ export interface JSONObject {
   [key: string]: any;
 }
 
+/** 业务单元模板库明细表 */
+export interface BusinessTmplLibDtl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  businessTmplId?: string;
+  /**
+   * 执行顺序
+   * @format int32
+   */
+  execSeq?: number;
+  businessUnitId?: string;
+}
+
+/** 业务单元模板库表 */
+export interface BusinessTmplLib {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板名称 */
+  tmplName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListBusinessTmplLibDtl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessTmplLibDtl[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListBusinessTmplLib {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessTmplLib[] | null;
+}
+
 export interface BarcodeVaildateRuleSearch {
   /**
    * 页码
@@ -3858,18 +4037,6 @@ export interface ResultRoutingDTO {
   message?: string;
   /** 工艺路线实体 */
   data?: RoutingDTO;
-}
-
-/** 通用响应类 */
-export interface ResultLong {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  data?: string;
 }
 
 /** 配置项 */
@@ -4367,6 +4534,58 @@ export interface ResultListDefectCodeVO {
   message?: string;
   /** 响应数据 */
   data?: DefectCodeVO[] | null;
+}
+
+/** 业务执行单元表 */
+export type BusinessUnit = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 服务名称 */
+  apiName?: string;
+  /** 服务描述 */
+  apiDesc?: string;
+  /** 服务路径 */
+  apiPath?: string;
+  /** 入参列表 */
+  paramInput?: string;
+  /** 出参列表 */
+  paramOutput?: string;
+  /** 服务分类 */
+  paramCategory?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListBusinessUnit {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessUnit[] | null;
 }
 
 /** 显示行政组织层级实体 */
@@ -5902,6 +6121,53 @@ export const api = {
         body: data as any,
       }),
   },
+  processBusinessLibDtl: {
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库明细表
+     * @name AddList
+     * @summary 新增明细清单
+     * @request POST:/processBusinessLibDtl/addList
+     * @secure
+     */
+    addList: (data: ProcessBusinessLibDtl[]) =>
+      http.request<ResultObject['data']>(`/api/main/processBusinessLibDtl/addList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  processBusinessLib: {
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name ListByIds
+     * @summary 根据工序和分类获取明细
+     * @request POST:/processBusinessLib/listByIds
+     * @secure
+     */
+    listByIds: (data: ProcessBusinessLib) =>
+      http.request<ResultListProcessBusinessLibDtl['data']>(`/api/main/processBusinessLib/listByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name Add
+     * @summary 新增工序业务执行单元库头表
+     * @request POST:/processBusinessLib/add
+     * @secure
+     */
+    add: (data: ProcessBusinessLib) =>
+      http.request<ResultLong['data']>(`/api/main/processBusinessLib/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   process: {
     /**
      * No description
@@ -7282,6 +7548,97 @@ export const api = {
         body: data as any,
       }),
   },
+  businessTmplLibDtl: {
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库明细表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/businessTmplLibDtl/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLibDtl/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库明细表
+     * @name AddList
+     * @summary 新增明细清单
+     * @request POST:/businessTmplLibDtl/addList
+     * @secure
+     */
+    addList: (data: BusinessTmplLibDtl[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLibDtl/addList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  businessTmplLib: {
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name ListByIds
+     * @summary 根据名称获取明细
+     * @request POST:/businessTmplLib/listByIds
+     * @secure
+     */
+    listByIds: (data: BusinessTmplLib) =>
+      http.request<ResultListBusinessTmplLibDtl['data']>(`/api/main/businessTmplLib/listByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name Items
+     * @summary 获取模板清单
+     * @request POST:/businessTmplLib/items
+     * @secure
+     */
+    items: () =>
+      http.request<ResultListBusinessTmplLib['data']>(`/api/main/businessTmplLib/items`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/businessTmplLib/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLib/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name Add
+     * @summary 新增工序业务执行单元库头表
+     * @request POST:/businessTmplLib/add
+     * @secure
+     */
+    add: (data: BusinessTmplLib) =>
+      http.request<ResultLong['data']>(`/api/main/businessTmplLib/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   barcodeValidateRule: {
     /**
      * No description
@@ -7466,6 +7823,21 @@ export const api = {
       http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  businessUnit: {
+    /**
+     * No description
+     *
+     * @tags 业务执行单元表
+     * @name Items
+     * @summary 获取原子清单
+     * @request GET:/businessUnit/items
+     * @secure
+     */
+    items: () =>
+      http.request<ResultListBusinessUnit['data']>(`/api/main/businessUnit/items`, {
+        method: 'GET',
       }),
   },
   adminOrg: {
