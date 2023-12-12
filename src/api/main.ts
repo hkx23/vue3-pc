@@ -1540,6 +1540,96 @@ export interface ProfileValue {
   profileValue?: string;
 }
 
+/** 工序业务执行单元库明细表 */
+export interface ProcessBusinessLibDtl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  processBusinessLibId?: string;
+  businessUnitId?: string;
+  /**
+   * 执行顺序
+   * @format int32
+   */
+  execSeq?: number;
+}
+
+/** 工序业务执行单元库头表 */
+export interface ProcessBusinessLib {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  routingProcessId?: string;
+  processId?: string;
+  /** 条码类型 */
+  barcodeCategory?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListProcessBusinessLibDtl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProcessBusinessLibDtl[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
+}
+
 /** 响应数据 */
 export type PagingDataProcessVO = {
   list?: ProcessVO[];
@@ -1581,8 +1671,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2767,15 +2857,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
+  stateName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  stateName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
   isInProcessName?: string;
   isRawName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
   isBatchName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3289,8 +3379,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4056,97 +4146,6 @@ export interface ResultString {
   data?: string | null;
 }
 
-/** 配置项 */
-export type Profile = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  moduleId?: string;
-  /** 配置项编码 */
-  profileCode?: string;
-  /** 配置项名称 */
-  profileName?: string;
-  /** 配置项描述 */
-  profileDesc?: string;
-  /** 配置项值类型 */
-  valueType?: string;
-  /** 配置项值范围 */
-  valueRange?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultProfile {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 配置项 */
-  data?: Profile;
-}
-
-/** 配置左侧树形实体 */
-export type ProfileLeftTreeTopVO = {
-  id?: string;
-  /** 级别名称 */
-  modelName?: string;
-  parentModuleId?: string;
-  /**
-   * 属性
-   * @format int32
-   */
-  attribute?: number;
-  /** 子模块 */
-  childList?: object[];
-} | null;
-
-/** 通用响应类 */
-export interface ResultListProfileLeftTreeTopVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: ProfileLeftTreeTopVO[] | null;
-}
-
-/** 通用响应类 */
-export interface ResultString {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: string | null;
-}
-
 /** 权限功能实体 */
 export type ModulePermissionDTO = {
   id?: string;
@@ -4551,6 +4550,58 @@ export interface ResultListDefectCodeVO {
   message?: string;
   /** 响应数据 */
   data?: DefectCodeVO[] | null;
+}
+
+/** 业务执行单元表 */
+export type BusinessUnit = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 服务名称 */
+  apiName?: string;
+  /** 服务描述 */
+  apiDesc?: string;
+  /** 服务路径 */
+  apiPath?: string;
+  /** 入参列表 */
+  paramInput?: string;
+  /** 出参列表 */
+  paramOutput?: string;
+  /** 服务分类 */
+  paramCategory?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListBusinessUnit {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessUnit[] | null;
 }
 
 /** 通用响应类 */
@@ -6095,6 +6146,53 @@ export const api = {
      */
     addProfileValue: (data: ProfileValue) =>
       http.request<Result['data']>(`/api/main/profileValue/items/addProfileValue`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  processBusinessLibDtl: {
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库明细表
+     * @name AddList
+     * @summary 新增明细清单
+     * @request POST:/processBusinessLibDtl/addList
+     * @secure
+     */
+    addList: (data: ProcessBusinessLibDtl[]) =>
+      http.request<ResultObject['data']>(`/api/main/processBusinessLibDtl/addList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  processBusinessLib: {
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name ListByIds
+     * @summary 根据工序和分类获取明细
+     * @request POST:/processBusinessLib/listByIds
+     * @secure
+     */
+    listByIds: (data: ProcessBusinessLib) =>
+      http.request<ResultListProcessBusinessLibDtl['data']>(`/api/main/processBusinessLib/listByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name Add
+     * @summary 新增工序业务执行单元库头表
+     * @request POST:/processBusinessLib/add
+     * @secure
+     */
+    add: (data: ProcessBusinessLib) =>
+      http.request<ResultLong['data']>(`/api/main/processBusinessLib/add`, {
         method: 'POST',
         body: data as any,
       }),

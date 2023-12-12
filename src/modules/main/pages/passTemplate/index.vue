@@ -58,6 +58,11 @@
             </div>
           </t-tab-panel>
         </t-tabs>
+        <ul v-if="panelData == null || panelData.length == 0">
+          <li v-for="i in 3" :key="i" style="margin-bottom: 32px">
+            <t-skeleton theme="paragraph"></t-skeleton>
+          </li>
+        </ul>
       </cmp-card>
       <cmp-card :span="3" :ghost="true">
         <cmp-container :full="true">
