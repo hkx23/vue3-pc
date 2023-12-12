@@ -6,6 +6,7 @@
     "dev": "vite --mode development",
     "build": "vue-tsc --noEmit && vite build --mode production",
     "build:uat": "vue-tsc --noEmit && vite build --mode uat",
+    "tsc": "vue-tsc --noEmit",
     "preview": "vite preview",
     "lint": "eslint --ext .vue,.js,.jsx,.ts,.tsx ./ --max-warnings 0",
     "lint:fix": "eslint --ext .vue,.js,jsx,.ts,.tsx ./ --max-warnings 0 --fix",
@@ -87,7 +88,8 @@
   "lint-staged": {
     "src/**/!(web-core)*.{js,jsx,vue,ts,tsx}": [
       "prettier --write",
-      "npm run lint:fix"
+      "npm run lint:fix",
+      "npm run tsc"
     ],
     "src/**/!(web-core)*.{html,vue,css,sass,less}": [
       "npm run stylelint:fix"
