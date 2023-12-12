@@ -71,6 +71,9 @@ const fetchTableRouting = async () => {
       const res = (await apimain.routingRevision.getRoutRevisionByRoutingCode({
         routingCode,
         routingType: moClass,
+        workcenterId: currentrow.value.workCenterId,
+        mitemId: currentrow.value.mitemId,
+        mitemcategoryId: currentrow.value.categoryId,
       })) as any;
       moRoutingData.value = res.list;
     }
