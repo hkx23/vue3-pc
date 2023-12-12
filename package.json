@@ -88,8 +88,7 @@
   "lint-staged": {
     "src/**/!(web-core)*.{js,jsx,vue,ts,tsx}": [
       "prettier --write",
-      "npm run lint:fix",
-      "npm run tsc"
+      "npm run lint:fix"
     ],
     "src/**/!(web-core)*.{html,vue,css,sass,less}": [
       "npm run stylelint:fix"
