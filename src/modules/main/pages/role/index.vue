@@ -20,9 +20,9 @@
       >
         <template #op="{ row }">
           <t-space :size="8">
-            <t-link theme="primary" @click="onRowEdit(row)">{{ $t('common.edit') }}</t-link>
-            <t-link theme="primary" @click="onRowPermission(row)">{{ $t('role.authority') }}</t-link>
-            <t-link theme="primary" @click="onRowPerson(row)">{{ $t('role.member') }}</t-link>
+            <t-link theme="primary" @click="onRowEdit(row)">{{ t('common.button.edit') }}</t-link>
+            <t-link theme="primary" @click="onRowPermission(row)">{{ t('role.authority') }}</t-link>
+            <t-link theme="primary" @click="onRowPerson(row)">{{ t('role.member') }}</t-link>
             <!-- 删除 -->
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onRowDelete(row)">
               <t-link theme="primary">{{ t('common.button.delete') }}</t-link>

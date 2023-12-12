@@ -150,7 +150,7 @@
                 <bcmp-select-business
                   v-model="barcodeData.mitemId"
                   :disabled="!radioValue"
-                  type="mitemCategory"
+                  type="mitem"
                   label=""
                 ></bcmp-select-business>
               </div>
@@ -473,11 +473,9 @@ const onAddRuleData = () => {
   submitFalg.value = true;
 };
 
-// 添加请求事件
+// 新增请求事件
 const onAddRuleCode = async () => {
   await api.barcodeValidateRule.addBarcodeVaildateRule(barcodeData.value);
-  await onGetTextDataList(); // 获取 文本 数据
-  await onGetKeyDataList(); // 获取 关键件 数据
   MessagePlugin.success('新增成功');
 };
 
@@ -485,7 +483,12 @@ const RuleCodeID = ref(null);
 // 文本验证 编辑事件
 const onTextEditRow = (row: { id: any }) => {
   RuleCodeID.value = row.id;
-  Object.assign(barcodeData.value, row);
+  Object.keys(barcodeData.value).reduce((acc, key) => {
+    if (Object.prototype.hasOwnProperty.call(row, key)) {
+      acc[key] = row[key];
+    }
+    return acc;
+  }, barcodeData.value);
   formVisible.value = true;
   submitFalg.value = false;
 };
@@ -493,7 +496,12 @@ const onTextEditRow = (row: { id: any }) => {
 // 关键件 编辑事件
 const onKeyEditRow = (row: { id: any }) => {
   RuleCodeID.value = row.id;
-  Object.assign(barcodeData.value, row);
+  Object.keys(barcodeData.value).reduce((acc, key) => {
+    if (Object.prototype.hasOwnProperty.call(row, key)) {
+      acc[key] = row[key];
+    }
+    return acc;
+  }, barcodeData.value);
   formVisible.value = true;
   submitFalg.value = false;
 };
@@ -606,11 +614,16 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
     } else {
       await onEditRuleCode(); // 编辑请求
     }
-    if (tabValue.value) {
-      await onGetValidationGroups(); // 获取验证分组 下列 数组
+    if (barcodeData.value.barcodeValidateGroup === 'SCANEXT') {
+      await onGetTextDataList(); // 获取 文本 数据
     } else {
-      await onGetBarcodeType(); // 获取条码类型 下列 数组
+      await onGetKeyDataList(); // 获取 关键件 数据
     }
+    // if (!tabValue.value) {
+    //   await onGetValidationGroups(); // 获取验证分组 下列 数组
+    // } else {
+    //   await onGetBarcodeType(); // 获取条码类型 下列 数组
+    // }
     formVisible.value = false;
   }
 };

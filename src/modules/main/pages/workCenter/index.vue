@@ -521,7 +521,6 @@ const onInput = async (data: any) => {
     state: result,
   });
   workData.value = res.list; // table数据
-  console.log('🚀 ~ file: index.vue:451 ~ onInput ~ workData.value:', workData.value);
   data.value = res.list; // 新增页面
 };
 
