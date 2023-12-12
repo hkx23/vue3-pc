@@ -88,7 +88,8 @@
               <!-- <t-tab-panel value="script" label="Script"></t-tab-panel> -->
             </t-tabs>
             <t-dialog v-model:visible="newTabSelectedVisible" :footer="false" header="选择新增条码类型">
-              <t-select :options="barcodeTypeOptions" @change="onChangeNewTab"> </t-select>
+              <t-select :options="barcodeTypeOptions" @change="(value, { option }) => onChangeNewTab(value, option)">
+              </t-select>
             </t-dialog>
             <t-dialog
               v-model:visible="newTemplateVisible"
@@ -214,7 +215,7 @@ const panelData = ref<
 const onClickAddTab = () => {
   newTabSelectedVisible.value = true;
 };
-const onChangeNewTab = (value, { option }) => {
+const onChangeNewTab = (value, option) => {
   if (panelData.value.find((t) => t.value === value)) return;
   panelData.value.push({
     value,
