@@ -888,26 +888,32 @@ export interface BarcodeWipCollectVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
+  /** 下个工序代码 */
+  nextProcessCode?: string;
+  /** 下个工序名称 */
+  nextProcessName?: string;
   /** 扫描信息 */
   scanMessage?: string;
   /** 工作中心代码 */
   workCenterCode?: string;
   /** 工作中心名称 */
   workCenterName?: string;
+  routingProcessId?: string;
+  nextPRoutingProcessId?: string;
   /** 关键件数量汇总信息 */
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
+  stateName?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  stateName?: string;
   isState?: boolean;
 }
 
@@ -1089,15 +1095,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   stateName?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
   isState?: boolean;
 }
 

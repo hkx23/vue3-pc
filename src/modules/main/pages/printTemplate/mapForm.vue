@@ -1,18 +1,20 @@
 <template>
   <t-form ref="formRef" :data="formData" :show-cancel="true" :show-error-message="false" :label-width="135">
+    <t-form-item :label="t('business.main.mitemCategoryCode')" name="mitemCategoryId">
+      <bcmp-select-business
+        v-model="formData.mitemCategoryId"
+        :show-title="false"
+        type="mitemCategory"
+        :disabled="!isEmpty(formData.mitemId)"
+      ></bcmp-select-business>
+    </t-form-item>
     <t-form-item :label="t('business.main.mitemCode')" name="mitemId">
       <bcmp-select-business
         v-model="formData.mitemId"
         :is-multiple="false"
         :show-title="false"
         type="mitem"
-      ></bcmp-select-business>
-    </t-form-item>
-    <t-form-item :label="t('business.main.mitemCategoryCode')" name="mitemCategoryId">
-      <bcmp-select-business
-        v-model="formData.mitemCategoryId"
-        :show-title="false"
-        type="mitemCategory"
+        :disabled="!isEmpty(formData.mitemCategoryId)"
       ></bcmp-select-business>
     </t-form-item>
   </t-form>
@@ -23,6 +25,7 @@ export default {
 };
 </script>
 <script setup lang="ts">
+import { isEmpty } from 'lodash';
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 

@@ -1,11 +1,11 @@
 <template>
   <t-row>
     <t-col :flex="6">
-      <div style="background-color: yellow">
+      <div>
         <t-card :title="toSelectTitle" header-bordered :style="{ width: '100%' }">
           <template #actions> {{ waitSelectCount + '/' + waitCount }} </template>
           <t-space direction="vertical" :size="8">
-            <t-input v-model="searchWait" placeholder="请输入用户名/姓名" clearable>
+            <t-input v-model="searchWait" :placeholder="t('role.plsEnterUserKey')" clearable>
               <template #suffixIcon>
                 <search-icon :style="{ cursor: 'pointer' }" />
               </template>

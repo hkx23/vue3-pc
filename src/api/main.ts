@@ -813,6 +813,12 @@ export type WarehouseFeignDTO = {
 } | null;
 
 /** 角色用户操作实体 */
+export interface UserRoleDTO {
+  userId?: string;
+  roleIds?: string[];
+}
+
+/** 角色用户操作实体 */
 export interface RoleUserDTO {
   roleId?: string;
   userIds?: string[];
@@ -2859,11 +2865,11 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isRawName?: string;
-  isProductName?: string;
   isInProcessName?: string;
   isBatchName?: string;
   isRawChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
 }
@@ -3813,7 +3819,7 @@ export interface ResultWorkcenterVO {
 }
 
 /** 通用响应类 */
-export interface ResultListUserInOrg {
+export interface ResultListUserInRoleVO {
   /**
    * 响应代码
    * @format int32
@@ -3822,11 +3828,11 @@ export interface ResultListUserInOrg {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: UserInOrg[] | null;
+  data?: UserInRoleVO[] | null;
 }
 
-/** 用户组织关系表 */
-export type UserInOrg = {
+/** 响应数据 */
+export type UserInRoleVO = {
   id?: string;
   /**
    * 创建时间
@@ -3848,8 +3854,79 @@ export type UserInOrg = {
    * @default 1
    */
   state?: number;
+  eid?: string;
+  oid?: string;
+  /** 角色代码 */
+  roleCode?: string;
+  /** 角色名称 */
+  roleName?: string;
+  /** 角色描述 */
+  roleDesc?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 用户id */
   userId?: string;
-  orgId?: string;
+  relate?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListUserInOrgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: UserInOrgVO[] | null;
+}
+
+/** 响应数据 */
+export type UserInOrgVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 组织描述 */
+  orgDesc?: string;
+  parentOrgId?: string;
+  /** 组织层级代码 */
+  levelCode?: string;
+  /**
+   * 是否生效，1是，0否
+   * @format int32
+   */
+  isActive?: number;
+  /** 用户名 */
+  userName?: string;
+  /** 用户id */
+  userId?: string;
+  default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -4053,6 +4130,97 @@ export interface ResultRoutingDTO {
   message?: string;
   /** 工艺路线实体 */
   data?: RoutingDTO;
+}
+
+/** 通用响应类 */
+export interface ResultListRoutingProcessTreeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: RoutingProcessTreeVO[] | null;
+}
+
+/** 响应数据 */
+export type RoutingProcessTreeVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工艺路线代码 */
+  routingCode?: string;
+  /** 工艺路线名称 */
+  routingName?: string;
+  /** 工艺路线描述 */
+  routingDesc?: string;
+  /** 工艺路线类型 */
+  routingType?: string;
+  routingRevisionId?: string;
+  /**
+   * 版本
+   * @format int32
+   */
+  version?: number;
+  /** 显示名称 */
+  title?: string;
+  /** 子层级 */
+  children?: RoutingProcessVO[];
+} | null;
+
+/** 子层级 */
+export interface RoutingProcessVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  routingRevisionId?: string;
+  processId?: string;
+  /** 工序类型 */
+  processType?: string;
+  /** 工序显示名称 */
+  title?: string;
 }
 
 /** 配置项 */
@@ -4853,6 +5021,20 @@ export const api = {
       http.request<ResultRoutingDTO['data']>(`/api/main/routing/item/${id}`, {
         method: 'GET',
       }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name GetProcessTree
+     * @summary 获取工艺路线工序树
+     * @request GET:/routing/getProcessTree
+     * @secure
+     */
+    getProcessTree: () =>
+      http.request<ResultListRoutingProcessTreeVO['data']>(`/api/main/routing/getProcessTree`, {
+        method: 'GET',
+      }),
   },
   printTmplMap: {
     /**
@@ -5492,8 +5674,23 @@ export const api = {
      * No description
      *
      * @tags 用户角色关系表
+     * @name ModifyUserInRoleFromUser
+     * @summary 新增用户的角色
+     * @request POST:/userInRole/modifyUserInRoleFromUser
+     * @secure
+     */
+    modifyUserInRoleFromUser: (data: UserRoleDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInRole/modifyUserInRoleFromUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户角色关系表
      * @name DeleteUserInRole
-     * @summary 传入roleId与useIdList,删除
+     * @summary 删除角色的用户
      * @request POST:/userInRole/deleteUserInRole
      * @secure
      */
@@ -5507,8 +5704,23 @@ export const api = {
      * No description
      *
      * @tags 用户角色关系表
+     * @name DeleteUserInRoleFromUser
+     * @summary 删除用户的角色
+     * @request POST:/userInRole/deleteUserInRoleFromUser
+     * @secure
+     */
+    deleteUserInRoleFromUser: (data: UserRoleDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInRole/deleteUserInRoleFromUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户角色关系表
      * @name AddUserInRole
-     * @summary 传入roleId与useIdList,新增
+     * @summary 新增角色的用户
      * @request POST:/userInRole/addUserInRole
      * @secure
      */
@@ -5516,6 +5728,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/userInRole/addUserInRole`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户角色关系表
+     * @name GetUserInRoleListByUserId
+     * @summary 根据用户ID查询用户在组织中的信息
+     * @request GET:/userInRole/getUserInRoleListByUserId
+     * @secure
+     */
+    getUserInRoleListByUserId: (query: { userId: string }) =>
+      http.request<ResultListUserInRoleVO['data']>(`/api/main/userInRole/getUserInRoleListByUserId`, {
+        method: 'GET',
+        params: query,
       }),
   },
   userInOrg: {
@@ -5559,7 +5786,7 @@ export const api = {
      * @secure
      */
     getUserInOrgByUserId: (query: { userId: string }) =>
-      http.request<ResultListUserInOrg['data']>(`/api/main/userInOrg/getUserInOrgByUserId`, {
+      http.request<ResultListUserInOrgVO['data']>(`/api/main/userInOrg/getUserInOrgByUserId`, {
         method: 'GET',
         params: query,
       }),
@@ -5747,6 +5974,26 @@ export const api = {
       roleId?: string;
     }) =>
       http.request<ResultListUser['data']>(`/api/main/user/getUserByRoleIdNotIn`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetByUsername
+     * @summary 根據用户名获取用户
+     * @request GET:/user/getByUsername
+     * @secure
+     */
+    getByUsername: (query?: {
+      /** @default "0" */
+      id?: string;
+      /** @default "" */
+      userName?: string;
+    }) =>
+      http.request<ResultLong['data']>(`/api/main/user/getByUsername`, {
         method: 'GET',
         params: query,
       }),

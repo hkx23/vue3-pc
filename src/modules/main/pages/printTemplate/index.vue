@@ -19,7 +19,6 @@
         </template>
         <template #operate>
           <t-button @click="onClickAddTemplate">{{ t('common.button.add') }}</t-button>
-          <t-button theme="default" @click="onClickAddTemplate">{{ t('common.button.delete') }}</t-button>
         </template>
         <template #op="{ row }">
           <t-link theme="primary" style="margin-right: 8px" @click="onClickEditTemplate(row)">{{
@@ -34,20 +33,20 @@
     <div class="main-page-content">
       <cmp-table
         :table-column="templateCategoryColumn"
-        :table-data="templateCategoryData?.list"
-        :total="templateCategoryData?.total"
-        @refresh="fetchTemplateCategoryData"
+        :table-data="templateMapData?.list"
+        :total="templateMapData?.total"
+        @refresh="fetchTemplateMapData"
       >
         <template #button>
           <bcmp-select-business
             v-model="filterMitemId"
             type="mitem"
-            @change="fetchTemplateCategoryData"
+            @change="fetchTemplateMapData"
           ></bcmp-select-business>
           <bcmp-select-business
             v-model="filterMitemCategoryId"
             type="mitemCategory"
-            @change="fetchTemplateCategoryData"
+            @change="fetchTemplateMapData"
           ></bcmp-select-business>
         </template>
         <template #operate>
@@ -185,13 +184,16 @@ const onClickDeleteTemplate = async (id) => {
   await api.printTmpl.batchDelete([id]);
   MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchTemplateData();
+  if (selectedRowTemplateId.value === id) {
+    templateMapData.value = {};
+  }
 };
 const selectedRowTemplateId = ref<string>(null);
 const onSelectTemplate = (ids: string[]) => {
   if (ids.length > 0) {
     const [first] = ids;
     selectedRowTemplateId.value = first;
-    fetchTemplateCategoryData();
+    fetchTemplateMapData();
   }
 };
 const templateFormVisible = ref(false);
@@ -238,9 +240,9 @@ const templateCategoryColumn = [
 const filterMitemId = ref('');
 const filterMitemCategoryId = ref('');
 
-const templateCategoryData = ref<PagingDataPrintTmplMapDTO>(null);
-const fetchTemplateCategoryData = async () => {
-  templateCategoryData.value = await api.printTmplMap.search({
+const templateMapData = ref<PagingDataPrintTmplMapDTO>(null);
+const fetchTemplateMapData = async () => {
+  templateMapData.value = await api.printTmplMap.search({
     printTmplId: selectedRowTemplateId.value,
     mitemId: filterMitemId.value,
     mitemCategoryId: filterMitemCategoryId.value,
@@ -256,7 +258,7 @@ const onClickAddMapTemplate = () => {
 const onClickDeleteMapTemplate = async (id) => {
   await api.printTmplMap.batchDelete([id]);
   MessagePlugin.success(t('common.message.deleteSuccess'));
-  fetchTemplateCategoryData();
+  fetchTemplateMapData();
 };
 const templateMapFormVisible = ref(false);
 const templateMapFormRef = ref<TemplateMapFormRef>(null);
@@ -264,7 +266,7 @@ const onConfirmTemplateMapForm = () => {
   const { submit } = templateMapFormRef.value;
   submit().then(() => {
     templateMapFormVisible.value = false;
-    fetchTemplateCategoryData();
+    fetchTemplateMapData();
   });
 };
 

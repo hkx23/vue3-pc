@@ -1,0 +1,636 @@
+<!-- eslint-disable vue-scoped-css/enforce-style-type -->
+<template>
+  <t-dialog
+    v-model:visible="visible"
+    mode="full-screen"
+    :header="false"
+    :footer="false"
+    class="permission-dialog"
+    @close="close"
+  >
+    <t-loading :loading="loading" text="加载中..." fullscreen />
+    <t-tabs v-model="tabValue">
+      <t-tab-panel :value="1" label="用户权限/隶属角色" :destroy-on-hide="false">
+        <!-- #region 角色选择框 -->
+        <div class="main-page-content">
+          <!-- 查询组件  -->
+          <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
+          <!-- 表格组件  -->
+        </div>
+        <div class="main-page-content">
+          <cmp-table
+            ref="roleTableRef"
+            row-key="id"
+            max-height="60vh"
+            :buttons-visible="false"
+            :table-column="tableColumns"
+            :table-data="tableFilterData"
+            :loading="tableloading"
+            :show-pagination="false"
+            :header-affixed-top="true"
+            :page-affixed-top="true"
+            @refresh="conditionEnter"
+            @select-change="roleChange"
+          >
+          </cmp-table>
+        </div>
+        <!-- #endregion 角色选择框结束 -->
+      </t-tab-panel>
+      <t-tab-panel :value="2" label="用户权限/权限配置" :destroy-on-hide="false">
+        <template #panel>
+          <!-- 功能类型与筛选框 -->
+          <t-row>
+            <t-col flex="auto">
+              <t-radio-group v-model="selectClientType" variant="primary-filled" @change="changeClientType">
+                <t-radio-button value="0">{{ t('business.main.all') }}</t-radio-button>
+                <t-radio-button v-for="clientType in clientTypeOption" :key="clientType.value" :value="clientType.value"
+                  >{{ clientType.label }}
+                </t-radio-button>
+              </t-radio-group>
+            </t-col>
+            <t-col flex="250px">
+              <t-input
+                v-model="filterPermissionName"
+                :placeholder="t('common.placeholder.plsenterkeyword')"
+                clearable
+                @change="searchChange"
+              >
+                <template #suffixIcon>
+                  <t-icon name="search" :style="{ cursor: 'pointer' }" />
+                </template>
+              </t-input>
+            </t-col>
+          </t-row>
+
+          <t-row>
+            <t-col flex="230px" style="margin-top: 16px">
+              <t-menu
+                v-model="selectedMenu"
+                v-model:expanded="expanded"
+                class="menu-area"
+                height="550px"
+                :collapsed="collapsed"
+                @change="menuChange"
+              >
+                <t-menu-item value="0" :title="t('business.main.all')"> {{ t('business.main.all') }} </t-menu-item>
+                <t-submenu
+                  v-for="item in originPermissionData"
+                  :key="item.id"
+                  :value="item.id"
+                  :title="item.moduleName"
+                >
+                  <!-- <template #icon>
+              <t-icon name="control-platform" />
+            </template> -->
+                  <template #title>
+                    <span>{{ item.moduleName }}</span>
+                  </template>
+                  <t-menu-item v-for="brach in item.children" :key="brach.id" :value="brach.id">
+                    {{ brach.moduleName }}
+                  </t-menu-item>
+                </t-submenu>
+
+                <!-- <template #operations>
+            <t-button class="t-demo-collapse-btn" variant="text" shape="square" @click="changeCollapsed">
+              <template #icon><t-icon name="view-list" /></template>
+            </t-button>
+          </template> -->
+              </t-menu>
+            </t-col>
+            <t-col flex="1" class="module-area" style="padding: 8px">
+              <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()"
+                >全选</t-checkbox
+              >
+              <t-collapse
+                :borderless="true"
+                :default-value="['']"
+                expand-icon-placement="right"
+                :expand-on-row-click="false"
+              >
+                <!-- 如果没有按钮权限，图标不显示 -->
+                <t-collapse-panel v-for="item in moduleData" :key="item.id" :value="item.id" :expand-icon="false">
+                  <template #header>
+                    <t-checkbox v-model="item.enabled" :value="item.permissionId" @change="moduleCheckChange">{{
+                      item.moduleName
+                    }}</t-checkbox></template
+                  >
+                </t-collapse-panel>
+                <!-- 如果有按钮权限，图标显示，可以展开显示按钮权限列表 -->
+                <!-- <t-collapse-panel value="ojbk2">
+            <template #header> <t-checkbox>过站扫描2</t-checkbox></template>
+            <t-space break-line size="8">
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+            </t-space>
+          </t-collapse-panel>
+          <t-collapse-panel value="ojbk4">
+            <template #header> <t-checkbox>过站扫描2</t-checkbox></template>
+            <t-space break-line size="8">
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+            </t-space>
+          </t-collapse-panel>
+          <t-collapse-panel value="ojbk3">
+            <template #header> <t-checkbox>过站扫描2</t-checkbox></template>
+            <t-space break-line size="8">
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+              <div class="buttonPermissionItem">
+                <div>按钮权限</div>
+                <t-checkbox>允许</t-checkbox>
+              </div>
+            </t-space>
+          </t-collapse-panel> -->
+              </t-collapse>
+            </t-col>
+          </t-row>
+        </template>
+      </t-tab-panel>
+    </t-tabs>
+  </t-dialog>
+</template>
+
+<script setup lang="ts">
+// #region import
+
+// import { MessagePlugin } from 'tdesign-vue-next';
+import _ from 'lodash';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, ref, watch } from 'vue';
+
+import { api, UserAuthDTO, UserRoleDTO } from '@/api/main';
+import { useLoading } from '@/hooks/modules/loading';
+
+import { useLang } from './lang';
+
+// #endregion
+
+// 使用多语言
+const { t } = useLang();
+const props = defineProps({
+  id: {
+    type: String,
+  },
+  title: {
+    type: String,
+  },
+  modelValue: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const roleTableRef = ref<any>(null);
+
+// 查询组件
+const opts = computed(() => {
+  return {
+    roleName: {
+      label: t('user.roleName'),
+      comp: 't-input',
+      defaultVal: '',
+    },
+    roleCode: {
+      label: t('user.roleCode'),
+      comp: 't-input',
+      defaultVal: '',
+    },
+  };
+});
+// 表格数据总数
+const dataTotal = ref(0);
+// 表格数据
+const tableData = ref([]);
+
+// 筛选表格结果数据
+const tableFilterData = ref([]);
+
+const { loading: tableloading, setLoading } = useLoading();
+
+const tabValue = ref(1);
+const filterPermissionName = ref('');
+const collapsed = ref(false);
+const expanded = ref([]);
+const isAllCheck = ref(false);
+const isAllIndeterminate = ref(false);
+const originPermissionData = ref([]);
+const permissionData = ref([]);
+const selectedMenu = ref('');
+const selectClientType = ref('0');
+const loading = ref(false);
+
+const moduleData = ref([]);
+const emit = defineEmits(['update:modelValue', 'submit']);
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(val: boolean) {
+    emit('update:modelValue', val);
+  },
+});
+
+// 查询条件处理数据
+const filterList = ref([]) as any;
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  filterList.value = [];
+  for (const key in data) {
+    const addFilter = {
+      field: key,
+      operator: 'EQ',
+      value: data[key],
+    };
+    if (key === 'roleName') addFilter.operator = 'LIKE';
+    if (addFilter.value) {
+      filterList.value.push(addFilter);
+    }
+  }
+  filterRoleTable();
+};
+
+const filterRoleTable = () => {
+  // 针对以上筛选条件，对tableData数据源进行筛选，筛选结果存进 tableFilterData
+  tableFilterData.value = tableData.value.filter((item: any) => {
+    return filterList.value.every((filter: any) => {
+      switch (filter.operator) {
+        case 'EQ':
+          return item[filter.field] === filter.value;
+        case 'LIKE':
+          return item[filter.field].includes(filter.value);
+        default:
+          return false;
+      }
+    });
+  });
+};
+// 表格列配置
+const tableColumns: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
+  {
+    colKey: 'serial-number',
+    title: `${t('business.main.serialNumber')}`,
+  },
+  { title: `${t('user.roleCode')}`, colKey: 'roleCode' },
+  { title: `${t('user.roleName')}`, colKey: 'roleName' },
+  { title: `${t('user.eId')}`, colKey: 'enName' },
+  { title: `${t('user.org')}`, colKey: 'plantName' },
+  { title: `${t('user.roleDesc')}`, colKey: 'roleDesc' },
+];
+
+// 加载角色数据表格
+const fetchRoleTable = async () => {
+  setLoading(true);
+  try {
+    // 查询条件
+    // const searchCondition = {
+    //   pageNum: 1,
+    //   pageSize: 99999,
+    //   filters: filterList.value,
+    // };
+
+    const data = (await api.userInRole.getUserInRoleListByUserId({ userId: props.id })) as any;
+    const list = data;
+    // 如果列表项目oid等于0，plantCode与plantName都为全部
+    list.forEach((element) => {
+      if (element.oid === 0) {
+        element.plantCode = t('business.main.all');
+        element.plantName = t('business.main.all');
+      }
+    });
+    tableData.value = list;
+    dataTotal.value = data.total;
+    // selectedRowKeys等于结果集中relate为true的id
+    const selectKeys = list.filter((item) => item.relate).map((item) => item.id);
+    roleTableRef.value.setSelectedRowKeys(selectKeys);
+    filterRoleTable();
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoading(false);
+  }
+};
+const roleChange = (values: any) => {
+  console.log(values);
+  const userDatas: UserRoleDTO = {
+    userId: props.id,
+    roleIds: values,
+  };
+
+  api.userInRole
+    .modifyUserInRoleFromUser(userDatas)
+    .then(() => {
+      MessagePlugin.success(t('user.setUserRolesSuccess'));
+      fetchRoleTable();
+    })
+    .catch((err) => {
+      MessagePlugin.error(err.message);
+    });
+};
+
+// const changeCollapsed = () => {
+//   collapsed.value = !collapsed.value;
+// };
+const moduleCheckChange = (checkResult: boolean, e: any) => {
+  if (checkResult) {
+    onAddPermission([e.e.target.value]);
+  } else {
+    onDeletrPermission([e.e.target.value]);
+  }
+};
+const menuChange = (active) => {
+  selectedMenu.value = active;
+  treeMenuChange();
+};
+const searchChange = (value: string) => {
+  filterPermissionName.value = value;
+  treeMenuChange();
+};
+const onAddPermission = async (rows: string[]) => {
+  const params: UserAuthDTO = {
+    userId: props.id,
+    permissionIds: rows,
+  };
+  await api.userAuthorization.batchAdd(params);
+  updateOriginPermissionData(originPermissionData.value, rows, true);
+  updateOriginPermissionData(permissionData.value, rows, true);
+  MessagePlugin.success(t('common.message.addSuccess'));
+};
+const onDeletrPermission = async (rows: string[]) => {
+  const params: UserAuthDTO = {
+    userId: props.id,
+    permissionIds: rows,
+  };
+  await api.userAuthorization.batchDelete(params);
+
+  updateOriginPermissionData(originPermissionData.value, rows, false);
+  updateOriginPermissionData(permissionData.value, rows, false);
+  MessagePlugin.success(t('common.message.deleteSuccess'));
+};
+
+const changeClientType = () => {
+  treeMenuChange();
+};
+const close = () => {
+  console.log('关闭窗口');
+};
+const clientTypeOption = ref([]);
+api.param.getListByGroupCode({ parmGroupCode: 'S_CLIENT_TYPE' }).then((data) => {
+  clientTypeOption.value = data;
+});
+// 加载角色数据表格
+const fetchPermissionData = async () => {
+  loading.value = true;
+  // setLoading(true);
+  try {
+    const data = (await api.permission.getTreePermissionsByUserId({ userId: props.id })) as any;
+    originPermissionData.value = data;
+    expanded.value = originPermissionData.value.map((item) => item.id);
+
+    treeMenuChange();
+    // moduleData.value = result;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    loading.value = false;
+    // setLoading(false);
+  }
+};
+
+const getThirdLevelNodes = (node, level, result) => {
+  if (level === 3) {
+    // 判断是否为第三层节点
+    result.push(node);
+    return;
+  }
+
+  if (node.children && node.children.length > 0) {
+    for (const child of node.children) {
+      getThirdLevelNodes(child, level + 1, result); // 递归调用，进入下一层节点
+    }
+  }
+};
+const checkAll = () => {
+  moduleData.value.forEach((item) => {
+    item.enabled = isAllCheck.value;
+  });
+  if (isAllCheck.value) {
+    const addPermissionIds = moduleData.value.filter((item) => item.enabled).map((item) => item.permissionId);
+    if (addPermissionIds.length > 0) {
+      onAddPermission(addPermissionIds);
+    }
+    // 根据addPermissionIds去筛选originPermissionData的所有数据，包括所有children的数据，符合item.permissionId in addPermissionIds的数据项，设置enabled为true
+    // originPermissionData可能为无限级
+    updateOriginPermissionData(originPermissionData.value, addPermissionIds, true);
+    updateOriginPermissionData(permissionData.value, addPermissionIds, true);
+  } else {
+    const deletePermissionIds = moduleData.value.filter((item) => !item.enabled).map((item) => item.permissionId);
+    if (deletePermissionIds.length > 0) {
+      onDeletrPermission(deletePermissionIds);
+    }
+    // 根据addPermissionIds去筛选originPermissionData的所有数据，包括所有children的数据，符合item.permissionId in addPermissionIds的数据项，设置enabled为false
+    // originPermissionData可能为无限级
+    updateOriginPermissionData(originPermissionData.value, deletePermissionIds, false);
+    updateOriginPermissionData(permissionData.value, deletePermissionIds, false);
+  }
+};
+// 更新originPermissionData的方法
+const updateOriginPermissionData = (data, permissionIds, enabled) => {
+  data.forEach((item) => {
+    if (permissionIds.indexOf(item.permissionId) > -1) {
+      item.enabled = enabled;
+    }
+    if (item.children && item.children.length > 0) {
+      updateOriginPermissionData(item.children, permissionIds, enabled);
+    }
+  });
+};
+const fnFilter = (node) => {
+  let result = true;
+  const filterName = _.toString(filterPermissionName.value).trim().toLowerCase();
+
+  if (filterName) {
+    result = result && _.toString(node.permissionName).toLowerCase().indexOf(filterName) > -1;
+  }
+  if (selectClientType.value !== '0') {
+    const selectClientTypeNum = Number(selectClientType.value);
+    const nodeClientType = Number(node.clientType);
+    // eslint-disable-next-line no-bitwise
+    const nodeClientTypeResult = (nodeClientType & selectClientTypeNum) !== 0;
+    result = result && nodeClientTypeResult;
+  }
+  if (selectedMenu.value !== '0') {
+    result = result && node.parentModuleId === selectedMenu.value;
+  }
+  // if (self.isRoleOwn) {
+  //   result =
+  //     result &&
+  //     (node.IS_ENABLED ||
+  //       (node.IS_FROM_ROLE == "Y" && node.IS_FORBIDDEN_ROLE == "N"));
+  // }
+  return result;
+};
+const treeFilter = (tree, func) => {
+  // 使用map复制一下节点，避免修改到原树
+  return tree
+    .map((node) => ({ ...node }))
+    .filter((node) => {
+      node.children = node.children && treeFilter(node.children, func);
+      return func(node) || (node.children && node.children.length);
+    });
+};
+const treeMenuChange = () => {
+  permissionData.value = treeFilter(originPermissionData.value, fnFilter);
+};
+
+watch(visible, (value: boolean) => {
+  if (value && props.id) {
+    // @ts-ignore
+    // 打开时候加载数据
+    tabValue.value = 1;
+    selectedMenu.value = '0';
+    fetchRoleTable();
+    fetchPermissionData();
+  }
+});
+watch(
+  permissionData,
+  (value: any) => {
+    const result = [];
+    for (const rootNode of value) {
+      getThirdLevelNodes(rootNode, 1, result);
+    }
+    moduleData.value = result;
+    // moduleData筛选出enabled为true的节点
+    // 如果全部为true,则isAllCheck设置为true,否则设置成false
+    // 如果有部分为true,则isAllIndeterminate设置为true
+    const enabled = moduleData.value.filter((item) => item.enabled);
+    isAllCheck.value = enabled.length === moduleData.value.length;
+    isAllIndeterminate.value = enabled.length > 0 && enabled.length < moduleData.value.length;
+  },
+  { deep: true },
+);
+</script>
+
+<style lang="less" scoped>
+.menu-area {
+  box-shadow: 4px 4px 6px 4px rgb(0 0 0 / 20%);
+}
+
+.module-area {
+  box-shadow: 4px 4px 6px 4px rgb(0 0 0 / 20%);
+  overflow: auto;
+  margin-top: 16px;
+  margin-left: 16px;
+  max-height: calc(100vh - 200px);
+  padding: 8px;
+}
+
+.buttonPermissionItem {
+  display: block;
+  line-height: 2;
+  padding: 4px 8px;
+  border: 1px solid rgb(128 128 128 / 30%);
+  border-radius: 4px;
+  margin: 4px;
+  width: 150px;
+}
+</style>

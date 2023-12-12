@@ -58,7 +58,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="启用交易上传时间" label-width="130" style="width: 200px">
+          <t-form-item label="启用交易上传时间" label-width="130" style="width: 300px">
             <t-date-picker
               v-model="formData.datetimeUpload"
               allow-input

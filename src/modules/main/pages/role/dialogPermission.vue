@@ -1,6 +1,6 @@
 <template>
   <t-dialog v-model:visible="visible" mode="full-screen" :footer="false" @close="close">
-    <t-loading :loading="loading" text="加载中..." fullscreen />
+    <t-loading :loading="loading" :text="t('common.message.loading')" fullscreen />
     <template #header>
       <t-space align="center" style="width: 100%">
         <span>{{ title }}</span>
@@ -46,7 +46,7 @@
           :collapsed="collapsed"
           @change="menuChange"
         >
-          <t-menu-item value="0" :title="t('common.button.all')"> {{ t('business.main.all') }} </t-menu-item>
+          <t-menu-item value="0" :title="t('business.main.all')"> {{ t('business.main.all') }} </t-menu-item>
           <t-submenu v-for="item in originPermissionData" :key="item.id" :value="item.id" :title="item.moduleName">
             <!-- <template #icon>
               <t-icon name="control-platform" />
@@ -67,7 +67,9 @@
         </t-menu>
       </t-col>
       <t-col flex="1" class="module-area" style="padding: 8px">
-        <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()">全选</t-checkbox>
+        <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()">{{
+          t('common.button.selectAll')
+        }}</t-checkbox>
         <t-collapse :borderless="true" :default-value="['']" expand-icon-placement="right" :expand-on-row-click="false">
           <!-- 如果没有按钮权限，图标不显示 -->
           <t-collapse-panel v-for="item in moduleData" :key="item.id" :value="item.id" :expand-icon="false">
