@@ -1,86 +1,122 @@
+<!-- eslint-disable vue-scoped-css/enforce-style-type -->
 <template>
-  <t-dialog v-model:visible="visible" mode="full-screen" :footer="false" @close="close">
-    <t-loading :loading="loading" :text="t('common.message.loading')" fullscreen />
-    <template #header>
-      <t-space align="center" style="width: 100%">
-        <span>{{ title }}</span>
-        <!-- <t-button :loading="loading" style="float: right" @click="save">{{ t('common.button.save') }}</t-button> -->
-      </t-space>
-    </template>
-    <!-- 功能类型与筛选框 -->
-    <t-row>
-      <t-col flex="auto">
-        <t-radio-group v-model="selectClientType" variant="primary-filled" @change="changeClientType">
-          <t-radio-button value="0">{{ t('business.main.all') }}</t-radio-button>
-          <t-radio-button v-for="clientType in clientTypeOption" :key="clientType.value" :value="clientType.value"
-            >{{ clientType.label }}
-          </t-radio-button>
-          <!-- <t-radio-button value="7">PC端</t-radio-button>
-          <t-radio-button value="3">移动端</t-radio-button>
-          <t-radio-button value="4">电视端</t-radio-button>
-          <t-radio-button value="5">手表端</t-radio-button>
-          <t-radio-button value="6">微信端</t-radio-button> -->
-        </t-radio-group>
-      </t-col>
-      <t-col flex="250px">
-        <t-input
-          v-model="filterPermissionName"
-          :placeholder="t('common.placeholder.plsenterkeyword')"
-          clearable
-          @change="searchChange"
-        >
-          <template #suffixIcon>
-            <t-icon name="search" :style="{ cursor: 'pointer' }" />
-          </template>
-        </t-input>
-      </t-col>
-    </t-row>
+  <t-dialog
+    v-model:visible="visible"
+    mode="full-screen"
+    :header="false"
+    :footer="false"
+    class="permission-dialog"
+    @close="close"
+  >
+    <t-loading :loading="loading" text="加载中..." fullscreen />
+    <t-tabs v-model="tabValue">
+      <t-tab-panel :value="1" label="用户权限/隶属角色" :destroy-on-hide="false">
+        <!-- #region 角色选择框 -->
+        <div class="main-page-content">
+          <!-- 查询组件  -->
+          <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
+          <!-- 表格组件  -->
+        </div>
+        <div class="main-page-content">
+          <cmp-table
+            ref="roleTableRef"
+            row-key="id"
+            max-height="60vh"
+            :buttons-visible="false"
+            :table-column="tableColumns"
+            :table-data="tableFilterData"
+            :loading="tableloading"
+            :show-pagination="false"
+            :header-affixed-top="true"
+            :page-affixed-top="true"
+            @refresh="conditionEnter"
+            @select-change="roleChange"
+          >
+          </cmp-table>
+        </div>
+        <!-- #endregion 角色选择框结束 -->
+      </t-tab-panel>
+      <t-tab-panel :value="2" label="用户权限/权限配置" :destroy-on-hide="false">
+        <template #panel>
+          <!-- 功能类型与筛选框 -->
+          <t-row>
+            <t-col flex="auto">
+              <t-radio-group v-model="selectClientType" variant="primary-filled" @change="changeClientType">
+                <t-radio-button value="0">{{ t('business.main.all') }}</t-radio-button>
+                <t-radio-button v-for="clientType in clientTypeOption" :key="clientType.value" :value="clientType.value"
+                  >{{ clientType.label }}
+                </t-radio-button>
+              </t-radio-group>
+            </t-col>
+            <t-col flex="250px">
+              <t-input
+                v-model="filterPermissionName"
+                :placeholder="t('common.placeholder.plsenterkeyword')"
+                clearable
+                @change="searchChange"
+              >
+                <template #suffixIcon>
+                  <t-icon name="search" :style="{ cursor: 'pointer' }" />
+                </template>
+              </t-input>
+            </t-col>
+          </t-row>
 
-    <t-row>
-      <t-col flex="230px" style="margin-top: 16px">
-        <t-menu
-          v-model="selectedMenu"
-          v-model:expanded="expanded"
-          class="menu-area"
-          height="550px"
-          :collapsed="collapsed"
-          @change="menuChange"
-        >
-          <t-menu-item value="0" :title="t('business.main.all')"> {{ t('business.main.all') }} </t-menu-item>
-          <t-submenu v-for="item in originPermissionData" :key="item.id" :value="item.id" :title="item.moduleName">
-            <!-- <template #icon>
+          <t-row>
+            <t-col flex="230px" style="margin-top: 16px">
+              <t-menu
+                v-model="selectedMenu"
+                v-model:expanded="expanded"
+                class="menu-area"
+                height="550px"
+                :collapsed="collapsed"
+                @change="menuChange"
+              >
+                <t-menu-item value="0" :title="t('business.main.all')"> {{ t('business.main.all') }} </t-menu-item>
+                <t-submenu
+                  v-for="item in originPermissionData"
+                  :key="item.id"
+                  :value="item.id"
+                  :title="item.moduleName"
+                >
+                  <!-- <template #icon>
               <t-icon name="control-platform" />
             </template> -->
-            <template #title>
-              <span>{{ item.moduleName }}</span>
-            </template>
-            <t-menu-item v-for="brach in item.children" :key="brach.id" :value="brach.id">
-              {{ brach.moduleName }}
-            </t-menu-item>
-          </t-submenu>
+                  <template #title>
+                    <span>{{ item.moduleName }}</span>
+                  </template>
+                  <t-menu-item v-for="brach in item.children" :key="brach.id" :value="brach.id">
+                    {{ brach.moduleName }}
+                  </t-menu-item>
+                </t-submenu>
 
-          <!-- <template #operations>
+                <!-- <template #operations>
             <t-button class="t-demo-collapse-btn" variant="text" shape="square" @click="changeCollapsed">
               <template #icon><t-icon name="view-list" /></template>
             </t-button>
           </template> -->
-        </t-menu>
-      </t-col>
-      <t-col flex="1" class="module-area" style="padding: 8px">
-        <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()">{{
-          t('common.button.selectAll')
-        }}</t-checkbox>
-        <t-collapse :borderless="true" :default-value="['']" expand-icon-placement="right" :expand-on-row-click="false">
-          <!-- 如果没有按钮权限，图标不显示 -->
-          <t-collapse-panel v-for="item in moduleData" :key="item.id" :value="item.id" :expand-icon="false">
-            <template #header>
-              <t-checkbox v-model="item.enabled" :value="item.permissionId" @change="moduleCheckChange">{{
-                item.moduleName
-              }}</t-checkbox></template
-            >
-          </t-collapse-panel>
-          <!-- 如果有按钮权限，图标显示，可以展开显示按钮权限列表 -->
-          <!-- <t-collapse-panel value="ojbk2">
+              </t-menu>
+            </t-col>
+            <t-col flex="1" class="module-area" style="padding: 8px">
+              <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()"
+                >全选</t-checkbox
+              >
+              <t-collapse
+                :borderless="true"
+                :default-value="['']"
+                expand-icon-placement="right"
+                :expand-on-row-click="false"
+              >
+                <!-- 如果没有按钮权限，图标不显示 -->
+                <t-collapse-panel v-for="item in moduleData" :key="item.id" :value="item.id" :expand-icon="false">
+                  <template #header>
+                    <t-checkbox v-model="item.enabled" :value="item.permissionId" @change="moduleCheckChange">{{
+                      item.moduleName
+                    }}</t-checkbox></template
+                  >
+                </t-collapse-panel>
+                <!-- 如果有按钮权限，图标显示，可以展开显示按钮权限列表 -->
+                <!-- <t-collapse-panel value="ojbk2">
             <template #header> <t-checkbox>过站扫描2</t-checkbox></template>
             <t-space break-line size="8">
               <div class="buttonPermissionItem">
@@ -203,9 +239,12 @@
               </div>
             </t-space>
           </t-collapse-panel> -->
-        </t-collapse>
-      </t-col>
-    </t-row>
+              </t-collapse>
+            </t-col>
+          </t-row>
+        </template>
+      </t-tab-panel>
+    </t-tabs>
   </t-dialog>
 </template>
 
@@ -214,12 +253,14 @@
 
 // import { MessagePlugin } from 'tdesign-vue-next';
 import _ from 'lodash';
-import { MessagePlugin } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, ref, watch } from 'vue';
 
-import { api, RoleAuthDTO } from '@/api/main';
+import { api, UserAuthDTO, UserRoleDTO } from '@/api/main';
+import { useLoading } from '@/hooks/modules/loading';
 
 import { useLang } from './lang';
+
 // #endregion
 
 // 使用多语言
@@ -236,6 +277,35 @@ const props = defineProps({
     default: false,
   },
 });
+
+const roleTableRef = ref<any>(null);
+
+// 查询组件
+const opts = computed(() => {
+  return {
+    roleName: {
+      label: t('user.roleName'),
+      comp: 't-input',
+      defaultVal: '',
+    },
+    roleCode: {
+      label: t('user.roleCode'),
+      comp: 't-input',
+      defaultVal: '',
+    },
+  };
+});
+// 表格数据总数
+const dataTotal = ref(0);
+// 表格数据
+const tableData = ref([]);
+
+// 筛选表格结果数据
+const tableFilterData = ref([]);
+
+const { loading: tableloading, setLoading } = useLoading();
+
+const tabValue = ref(1);
 const filterPermissionName = ref('');
 const collapsed = ref(false);
 const expanded = ref([]);
@@ -257,6 +327,105 @@ const visible = computed({
     emit('update:modelValue', val);
   },
 });
+
+// 查询条件处理数据
+const filterList = ref([]) as any;
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  filterList.value = [];
+  for (const key in data) {
+    const addFilter = {
+      field: key,
+      operator: 'EQ',
+      value: data[key],
+    };
+    if (key === 'roleName') addFilter.operator = 'LIKE';
+    if (addFilter.value) {
+      filterList.value.push(addFilter);
+    }
+  }
+  filterRoleTable();
+};
+
+const filterRoleTable = () => {
+  // 针对以上筛选条件，对tableData数据源进行筛选，筛选结果存进 tableFilterData
+  tableFilterData.value = tableData.value.filter((item: any) => {
+    return filterList.value.every((filter: any) => {
+      switch (filter.operator) {
+        case 'EQ':
+          return item[filter.field] === filter.value;
+        case 'LIKE':
+          return item[filter.field].includes(filter.value);
+        default:
+          return false;
+      }
+    });
+  });
+};
+// 表格列配置
+const tableColumns: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
+  {
+    colKey: 'serial-number',
+    title: `${t('business.main.serialNumber')}`,
+  },
+  { title: `${t('user.roleCode')}`, colKey: 'roleCode' },
+  { title: `${t('user.roleName')}`, colKey: 'roleName' },
+  { title: `${t('user.eId')}`, colKey: 'enName' },
+  { title: `${t('user.org')}`, colKey: 'plantName' },
+  { title: `${t('user.roleDesc')}`, colKey: 'roleDesc' },
+];
+
+// 加载角色数据表格
+const fetchRoleTable = async () => {
+  setLoading(true);
+  try {
+    // 查询条件
+    // const searchCondition = {
+    //   pageNum: 1,
+    //   pageSize: 99999,
+    //   filters: filterList.value,
+    // };
+
+    const data = (await api.userInRole.getUserInRoleListByUserId({ userId: props.id })) as any;
+    const list = data;
+    // 如果列表项目oid等于0，plantCode与plantName都为全部
+    list.forEach((element) => {
+      if (element.oid === 0) {
+        element.plantCode = t('business.main.all');
+        element.plantName = t('business.main.all');
+      }
+    });
+    tableData.value = list;
+    dataTotal.value = data.total;
+    // selectedRowKeys等于结果集中relate为true的id
+    const selectKeys = list.filter((item) => item.relate).map((item) => item.id);
+    roleTableRef.value.setSelectedRowKeys(selectKeys);
+    filterRoleTable();
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoading(false);
+  }
+};
+const roleChange = (values: any) => {
+  console.log(values);
+  const userDatas: UserRoleDTO = {
+    userId: props.id,
+    roleIds: values,
+  };
+
+  api.userInRole
+    .modifyUserInRoleFromUser(userDatas)
+    .then(() => {
+      MessagePlugin.success(t('user.setUserRolesSuccess'));
+      fetchRoleTable();
+    })
+    .catch((err) => {
+      MessagePlugin.error(err.message);
+    });
+};
+
 // const changeCollapsed = () => {
 //   collapsed.value = !collapsed.value;
 // };
@@ -276,21 +445,21 @@ const searchChange = (value: string) => {
   treeMenuChange();
 };
 const onAddPermission = async (rows: string[]) => {
-  const params: RoleAuthDTO = {
-    roleId: props.id,
+  const params: UserAuthDTO = {
+    userId: props.id,
     permissionIds: rows,
   };
-  await api.roleAuthorization.add(params);
+  await api.userAuthorization.batchAdd(params);
   updateOriginPermissionData(originPermissionData.value, rows, true);
   updateOriginPermissionData(permissionData.value, rows, true);
   MessagePlugin.success(t('common.message.addSuccess'));
 };
 const onDeletrPermission = async (rows: string[]) => {
-  const params: RoleAuthDTO = {
-    roleId: props.id,
+  const params: UserAuthDTO = {
+    userId: props.id,
     permissionIds: rows,
   };
-  await api.roleAuthorization.delete(params);
+  await api.userAuthorization.batchDelete(params);
 
   updateOriginPermissionData(originPermissionData.value, rows, false);
   updateOriginPermissionData(permissionData.value, rows, false);
@@ -312,7 +481,7 @@ const fetchPermissionData = async () => {
   loading.value = true;
   // setLoading(true);
   try {
-    const data = (await api.permission.getTreePermissionsByRoleId({ roleId: Number(props.id) })) as any;
+    const data = (await api.permission.getTreePermissionsByUserId({ userId: props.id })) as any;
     originPermissionData.value = data;
     expanded.value = originPermissionData.value.map((item) => item.id);
 
@@ -416,7 +585,9 @@ watch(visible, (value: boolean) => {
   if (value && props.id) {
     // @ts-ignore
     // 打开时候加载数据
+    tabValue.value = 1;
     selectedMenu.value = '0';
+    fetchRoleTable();
     fetchPermissionData();
   }
 });
