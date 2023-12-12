@@ -3404,6 +3404,95 @@ export interface JSONObject {
   [key: string]: any;
 }
 
+/** 业务单元模板库明细表 */
+export interface BusinessTmplLibDtl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  businessTmplId?: string;
+  /**
+   * 执行顺序
+   * @format int32
+   */
+  execSeq?: number;
+  businessUnitId?: string;
+}
+
+/** 业务单元模板库表 */
+export interface BusinessTmplLib {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板名称 */
+  tmplName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListBusinessTmplLibDtl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessTmplLibDtl[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListBusinessTmplLib {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessTmplLib[] | null;
+}
+
 export interface BarcodeVaildateRuleSearch {
   /**
    * 页码
@@ -3876,8 +3965,45 @@ export interface ResultRoutingDTO {
   data?: RoutingDTO;
 }
 
+/** 配置项 */
+export type Profile = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  moduleId?: string;
+  /** 配置项编码 */
+  profileCode?: string;
+  /** 配置项名称 */
+  profileName?: string;
+  /** 配置项描述 */
+  profileDesc?: string;
+  /** 配置项值类型 */
+  valueType?: string;
+  /** 配置项值范围 */
+  valueRange?: string;
+} | null;
+
 /** 通用响应类 */
-export interface ResultLong {
+export interface ResultProfile {
   /**
    * 响应代码
    * @format int32
@@ -3885,7 +4011,49 @@ export interface ResultLong {
   code?: number;
   /** 提示信息 */
   message?: string;
-  data?: string;
+  /** 配置项 */
+  data?: Profile;
+}
+
+/** 配置左侧树形实体 */
+export type ProfileLeftTreeTopVO = {
+  id?: string;
+  /** 级别名称 */
+  modelName?: string;
+  parentModuleId?: string;
+  /**
+   * 属性
+   * @format int32
+   */
+  attribute?: number;
+  /** 子模块 */
+  childList?: object[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultListProfileLeftTreeTopVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProfileLeftTreeTopVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
 }
 
 /** 配置项 */
@@ -7335,6 +7503,97 @@ export const api = {
         body: data as any,
       }),
   },
+  businessTmplLibDtl: {
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库明细表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/businessTmplLibDtl/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLibDtl/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库明细表
+     * @name AddList
+     * @summary 新增明细清单
+     * @request POST:/businessTmplLibDtl/addList
+     * @secure
+     */
+    addList: (data: BusinessTmplLibDtl[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLibDtl/addList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  businessTmplLib: {
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name ListByIds
+     * @summary 根据名称获取明细
+     * @request POST:/businessTmplLib/listByIds
+     * @secure
+     */
+    listByIds: (data: BusinessTmplLib) =>
+      http.request<ResultListBusinessTmplLibDtl['data']>(`/api/main/businessTmplLib/listByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name Items
+     * @summary 获取模板清单
+     * @request POST:/businessTmplLib/items
+     * @secure
+     */
+    items: () =>
+      http.request<ResultListBusinessTmplLib['data']>(`/api/main/businessTmplLib/items`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/businessTmplLib/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLib/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name Add
+     * @summary 新增工序业务执行单元库头表
+     * @request POST:/businessTmplLib/add
+     * @secure
+     */
+    add: (data: BusinessTmplLib) =>
+      http.request<ResultLong['data']>(`/api/main/businessTmplLib/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   barcodeValidateRule: {
     /**
      * No description
@@ -7534,6 +7793,21 @@ export const api = {
       http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  businessUnit: {
+    /**
+     * No description
+     *
+     * @tags 业务执行单元表
+     * @name Items
+     * @summary 获取原子清单
+     * @request GET:/businessUnit/items
+     * @secure
+     */
+    items: () =>
+      http.request<ResultListBusinessUnit['data']>(`/api/main/businessUnit/items`, {
+        method: 'GET',
       }),
   },
   adminOrg: {

@@ -22,13 +22,9 @@
         </template>
         <template #op="{ row }">
           <t-space size="small">
-            <t-link
-              v-if="row.state === 1"
-              theme="primary"
-              size="small"
-              @click="disable(row.id, row.routingVersionId)"
-              >{{ t('common.button.disable') }}</t-link
-            >
+            <t-link v-if="row.state === 1" theme="primary" size="small" @click="disable(row.id)">{{
+              t('common.button.disable')
+            }}</t-link>
             <t-link v-else theme="primary" size="small" @click="enableClick(row)">{{
               t('common.button.enable')
             }}</t-link>
@@ -108,7 +104,6 @@ import { find } from 'lodash';
 import { DialogPlugin } from 'tdesign-vue-next';
 import { computed, reactive, ref } from 'vue';
 
-import { api as apiControl } from '@/api/control';
 import { api as apiMain } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -249,7 +244,6 @@ const craftRouteData = reactive({
 const getRouting = () => {
   setLoading(true);
   apiMain.routing
-    // @ts-ignore
     .mainPage({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -287,34 +281,24 @@ const copyRouting = (id: string) => {
   isCopy.value = true;
   eidtRoutingVisible.value = true;
 };
-const disable = (id: string, routingRevisionId: string) => {
-  // @ts-ignore
-  apiControl.routing.moScheduleBindRoutingCount(routingRevisionId).then((total) => {
-    let showText: string;
-    if (total > 0) {
-      showText = t('craftRoute.disableHasCount', [total]);
-    } else {
-      showText = t('craftRoute.disableNotCount');
-    }
-    const confirmDia = DialogPlugin.confirm({
-      header: t('common.button.disable'),
-      body: showText,
-      confirmBtn: {
-        loading: false,
-      },
-      onConfirm: () => {
-        confirmDia.update({ confirmBtn: { loading: true } });
-        // @ts-ignore
-        apiControl.routing.disable(id).then(() => {
-          confirmDia.update({ confirmBtn: { loading: false } });
-          confirmDia.hide();
-          getRouting();
-        });
-      },
-      onClose: () => {
+const disable = (id: string) => {
+  const confirmDia = DialogPlugin.confirm({
+    header: t('common.button.disable'),
+    body: t('craftRoute.disableNotCount'),
+    confirmBtn: {
+      loading: false,
+    },
+    onConfirm: () => {
+      confirmDia.update({ confirmBtn: { loading: true } });
+      apiMain.routing.disable(id).then(() => {
+        confirmDia.update({ confirmBtn: { loading: false } });
         confirmDia.hide();
-      },
-    });
+        getRouting();
+      });
+    },
+    onClose: () => {
+      confirmDia.hide();
+    },
   });
 };
 const enableClick = (row: any) => {

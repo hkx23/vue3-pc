@@ -35,7 +35,7 @@
       <div v-if="formData.tmplType == 'mrt'">
         <t-button theme="default" @click="onClickDesigner">设计模板</t-button>
         <div v-if="formData.tmplBodyPath">
-          {{ formData.tmplBodyPath }}
+          {{ formData.tmplBodyPath?.split('/').pop() }}
           <t-button shape="square" variant="text" @click="onClickRemoveFile">
             <template #icon><close-icon /></template>
           </t-button>
@@ -44,6 +44,7 @@
       <t-upload
         v-if="formData.tmplType == 'btw'"
         v-model="fileBody"
+        accept=".btw"
         :auto-upload="false"
         :show-upload-progress="false"
       ></t-upload>
@@ -51,6 +52,7 @@
   </t-form>
   <t-dialog v-model:visible="designerVisible" mode="full-screen" header="设计器">
     <designer
+      v-if="designerVisible"
       v-model:visible="designerVisible"
       :file-name="formData.tmplBodyPath"
       :file-content="formData.fileContent"
@@ -115,7 +117,10 @@ const fetchDic = async () => {
   categoryOptions.value = await api.param.getListByGroupCode({ parmGroupCode: 'PRINT_TMPL_CATEGORY' });
 };
 
-const onClickDesigner = () => {
+const onClickDesigner = async () => {
+  if (formData.tmplBodyPath) {
+    formData.fileContent = await api.printTmpl.getTmplByPath({ path: formData.tmplBodyPath });
+  }
   designerVisible.value = true;
 };
 
@@ -130,6 +135,12 @@ const submit = async () => {
 
       if (fileBody.value.length > 0) {
         const [file] = fileBody.value;
+        if (formData.tmplType === 'btw') {
+          if (file.name.split('.').pop() !== 'btw') {
+            MessagePlugin.error(t('printTemplate.fileTypeError'));
+            return;
+          }
+        }
         formData.tmplBodyPath = file.name;
         formData.fileContent = await file.raw.text();
       }

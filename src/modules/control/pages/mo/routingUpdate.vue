@@ -38,6 +38,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { nextTick, reactive, ref, watch } from 'vue';
 
 import { api as apicontrol } from '@/api/control';
+import { api as apimain } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 // 子修改传值
@@ -67,7 +68,7 @@ const fetchTableRouting = async () => {
     if (row) {
       const { routingCode } = conditionData;
       const { moClass } = currentrow.value;
-      const res = (await apicontrol.routingRevision.getRoutRevisionByRoutingCode({
+      const res = (await apimain.routingRevision.getRoutRevisionByRoutingCode({
         routingCode,
         routingType: moClass,
       })) as any;
