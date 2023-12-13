@@ -1009,8 +1009,6 @@ export interface BarcodeWipCollectVO {
   oid?: string;
   /** 条码序列号 */
   serialNumber?: string;
-  /** 流程卡号 */
-  runCard?: string;
   moScheId?: string;
   workcenterId?: string;
   processId?: string;
@@ -1040,6 +1038,7 @@ export interface BarcodeWipCollectVO {
   uom?: string;
   uomName?: string;
   scanType?: string;
+  keypartCode?: string;
   /** 排产工单 */
   scheCode?: string;
   /** 工单排产状态 */
@@ -1067,10 +1066,14 @@ export interface BarcodeWipCollectVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
+  /** 下个工序ID */
+  nextProcessId?: string;
   /** 下个工序代码 */
   nextProcessCode?: string;
   /** 下个工序名称 */
   nextProcessName?: string;
+  /** 下个工序类型 */
+  nextProcessType?: string;
   /** 扫描信息 */
   scanMessage?: string;
   /** 工作中心代码 */
@@ -1083,17 +1086,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  isState?: boolean;
-  datetimeScheStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  scanDatetimeStr?: string;
-  workshopName?: string;
-  workshopCode?: string;
   workshopId?: string;
   stateName?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1123,8 +1126,8 @@ export interface WipKeyPartCollectVO {
   scanQty?: number;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  getkeyPartCodeStr?: string;
   isScanFinish?: boolean;
+  getkeyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -1210,8 +1213,6 @@ export interface BarcodeWipVO {
   oid?: string;
   /** 条码序列号 */
   serialNumber?: string;
-  /** 流程卡号 */
-  runCard?: string;
   moScheId?: string;
   workcenterId?: string;
   processId?: string;
@@ -1274,16 +1275,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
-  datetimeScheStr?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  scanDatetimeStr?: string;
-  workshopName?: string;
-  workshopCode?: string;
   workshopId?: string;
-  defectCodeStr?: string;
   stateName?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
