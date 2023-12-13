@@ -67,7 +67,7 @@
           >
             <t-steps
               v-if="item.data?.detailList.length > 0"
-              v-draggable="[item.data.detailList as unknown as Ref<any[]>]"
+              v-draggable="[item.data.detailList as unknown as Ref<any[]>, { animation: 150 }]"
               layout="vertical"
               separator="dashed"
               readonly
@@ -346,7 +346,7 @@ const onClickProcess = (id: string, type: string) => {
 
   const panel = [];
   const categoryList = headerCategoryData.value[id];
-  console.log('🚀 ~ file: index.vue:325 ~ onClickProcess ~ headerCategoryData:', headerCategoryData);
+
   if (categoryList && categoryList.length > 0) {
     for (let i = 0; i < categoryList.length; i++) {
       const item = categoryList[i];
@@ -361,7 +361,6 @@ const onClickProcess = (id: string, type: string) => {
   }
 
   panelData.value = panel;
-  console.log('🚀 ~ file: index.vue:339 ~ onClickProcess ~ panel:', panel);
 
   if (isEmpty(barcodeCategoryTab.value)) return;
   fetchDetail(id, barcodeCategoryTab.value);
