@@ -356,7 +356,6 @@ const onDeleteConfirm = async (e: any) => {
 
     onShowDeleteConfirmVisible.value = false;
     fetchTable();
-    MessagePlugin.success('禁用成功');
   } catch (e) {
     // console.log(e);
   } finally {
