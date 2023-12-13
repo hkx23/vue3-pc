@@ -32,6 +32,7 @@ const props = withDefaults(defineProps<CmpCardProps>(), {
   ghost: false,
   bordered: false,
   noFill: false,
+  hoverShadow: true,
 });
 const attrs: Partial<CmpCardProps> = useAttrs();
 const targetAttrs = computed<CmpCardProps>(() => {
