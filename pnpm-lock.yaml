@@ -39,8 +39,8 @@ dependencies:
     specifier: ^0.2.2
     version: 0.2.2(vue@3.3.7)
   tdesign-vue-next:
-    specifier: ^1.7.0
-    version: 1.7.0(vue@3.3.7)
+    specifier: ^1.7.1
+    version: 1.7.1(vue@3.3.7)
   tvision-color:
     specifier: ^1.6.0
     version: 1.6.0
@@ -8330,8 +8330,8 @@ packages:
       vue: 3.3.7(typescript@5.1.6)
     dev: false
 
-  /tdesign-vue-next@1.7.0(vue@3.3.7):
-    resolution: {integrity: sha512-NGt30cc0T2L32UoQjffldNy2wZAHa8vA1c7kjkjTEhHbD3O2bVuiDhPJSo8EYAwnRlwc5+EzzgiQxj/5x2b1qw==}
+  /tdesign-vue-next@1.7.1(vue@3.3.7):
+    resolution: {integrity: sha512-zPfzkgul4zAltUt3OJIzItZkhBxYT7kc5uoW/pGRvlcKwqOj4v+LdgAU9UfYztgKVyrwLQVc82KRaM+4y2nlYg==}
     peerDependencies:
       vue: '>=3.1.0'
     dependencies:
