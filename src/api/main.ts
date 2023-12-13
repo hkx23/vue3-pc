@@ -1677,8 +1677,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2863,13 +2863,13 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isRawName?: string;
   isProductName?: string;
+  isRawName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
 }
@@ -3385,8 +3385,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4132,6 +4132,97 @@ export interface ResultRoutingDTO {
   data?: RoutingDTO;
 }
 
+/** 通用响应类 */
+export interface ResultListRoutingProcessTreeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: RoutingProcessTreeVO[] | null;
+}
+
+/** 响应数据 */
+export type RoutingProcessTreeVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工艺路线代码 */
+  routingCode?: string;
+  /** 工艺路线名称 */
+  routingName?: string;
+  /** 工艺路线描述 */
+  routingDesc?: string;
+  /** 工艺路线类型 */
+  routingType?: string;
+  routingRevisionId?: string;
+  /**
+   * 版本
+   * @format int32
+   */
+  version?: number;
+  /** 显示名称 */
+  title?: string;
+  /** 子层级 */
+  children?: RoutingProcessVO[];
+} | null;
+
+/** 子层级 */
+export interface RoutingProcessVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  routingRevisionId?: string;
+  processId?: string;
+  /** 工序类型 */
+  processType?: string;
+  /** 工序显示名称 */
+  title?: string;
+}
+
 /** 配置项 */
 export type Profile = {
   id?: string;
@@ -4293,16 +4384,24 @@ export type ModulePermissionDTO = {
   isForbiddenRole?: string;
   /** 是否继承角色 */
   isFromRole?: string;
-  /** 是否不可编辑 */
-  isDisable?: string;
+  /** 继承角色 */
+  fromRoleName?: string;
   /** 功能名称-按语言 */
   moduleNameT?: string;
   /** 功能描述-按语言 */
   moduleDescriptionT?: string;
   /** 子级 */
   children?: ModulePermissionDTO[];
+  /** 按钮权限 */
+  buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -4928,6 +5027,20 @@ export const api = {
      */
     item: (id: string) =>
       http.request<ResultRoutingDTO['data']>(`/api/main/routing/item/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name GetProcessTree
+     * @summary 获取工艺路线工序树
+     * @request GET:/routing/getProcessTree
+     * @secure
+     */
+    getProcessTree: () =>
+      http.request<ResultListRoutingProcessTreeVO['data']>(`/api/main/routing/getProcessTree`, {
         method: 'GET',
       }),
   },
@@ -7947,11 +8060,17 @@ export const api = {
      *
      * @tags 工艺路线版本
      * @name GetRoutRevisionByRoutingCode
-     * @summary 根据工艺路线编码获取有效的工艺路线版本信息
+     * @summary 获取工单的工艺路线版本信息(工单匹配规则:按产线和按物料类型或按物料)
      * @request GET:/routingRevision/getRoutRevisionByRoutingCode
      * @secure
      */
-    getRoutRevisionByRoutingCode: (query: { routingCode: string; routingType: string }) =>
+    getRoutRevisionByRoutingCode: (query: {
+      routingCode: string;
+      routingType: string;
+      workcenterId: string;
+      mitemId: string;
+      mitemcategoryId: string;
+    }) =>
       http.request<ResultObject['data']>(`/api/main/routingRevision/getRoutRevisionByRoutingCode`, {
         method: 'GET',
         params: query,

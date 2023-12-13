@@ -51,7 +51,7 @@
       :header="t('role.roleMember')"
       :on-confirm="onUserConfirmForm"
     >
-      <user-form ref="userFormRef" :role-id="formUserRoleId" />
+      <user-form ref="userFormRef" :role-id="formUserRoleId" :visable="formUserVisible" />
     </t-dialog>
     <!-- 权限分配弹出窗 -->
     <dialog-permission
