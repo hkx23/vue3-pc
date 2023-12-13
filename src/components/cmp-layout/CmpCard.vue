@@ -36,7 +36,7 @@ const props = withDefaults(defineProps<CmpCardProps>(), {
 });
 const attrs: Partial<CmpCardProps> = useAttrs();
 const targetAttrs = computed<CmpCardProps>(() => {
-  return { ...attrs, ...props };
+  return { ...attrs, ...props, title: undefined };
 });
 const styleAttrs = computed(() => {
   return {
