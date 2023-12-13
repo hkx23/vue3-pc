@@ -139,21 +139,103 @@ export interface ResultArrayListIncidentTypeVO {
   data?: IncidentTypeVO[] | null;
 }
 
-export interface IncidentDealSearch {
+/** 领域对象扩展属性分类 */
+export type IncidentTypeUserVO = {
+  /** 异常模块 */
+  incidentModule?: string;
+  /** 异常模块名称 */
+  incidentModuleName?: string;
+  /** 子层级 */
+  childrenSupportGroup?: SupportGroupVO[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultArrayListIncidentTypeUserVO {
   /**
-   * 页码
+   * 响应代码
    * @format int32
    */
-  pageNum?: number;
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: IncidentTypeUserVO[] | null;
+}
+
+/** 处理组与用户VO */
+export interface SupportGroupInUserVO {
+  id?: string;
   /**
-   * 页最大记录条数
-   * @format int32
+   * 创建时间
+   * @format date-time
    */
-  pageSize?: number;
-  /** 模糊查询关键词 */
-  keyword?: string;
-  /** 报障单状态 */
-  statusList?: string[];
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  supportGroupId?: string;
+  userId?: string;
+  /** 处理组顺序 */
+  levelSeq?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 显示名 */
+  displayName?: string;
+  /** 邮箱 */
+  email?: string;
+  /** 手机号 */
+  mobilePhone?: string;
+  /** 前端按钮样式 */
+  themeButton?: string;
+}
+
+/** 处理组VO */
+export interface SupportGroupVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 处理组代码 */
+  supportGroupCode?: string;
+  /** 处理组名称 */
+  supportGroupName?: string;
+  /** 处理组类型 */
+  supportGroupType?: string;
+  /** 子层级 */
+  childrenUser?: SupportGroupInUserVO[];
 }
 
 /** 安灯警报配置 */
@@ -253,6 +335,12 @@ export interface IncidentDealVO {
   isSolveOvertime?: number;
   /** 异常备注 */
   memo?: string;
+  /** 异常原因 */
+  incidentReason?: string;
+  /** 处理方法 */
+  dealMethod?: string;
+  /** 处理方法 */
+  dealDetail?: string;
   /** 状态 */
   status?: string;
   /** 用户名 */
@@ -308,6 +396,27 @@ export interface IncidentDealVO {
   mobilePhone?: string;
   /** 报障文件 */
   uploadFiles?: FileVO[];
+  /** 单据状态名称 */
+  statusName?: string;
+}
+
+export interface IncidentDealSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊查询关键词 */
+  keyword?: string;
+  /** 创建人 */
+  creator?: string;
+  /** 报障单状态 */
+  statusList?: string[];
 }
 
 /** 响应数据 */
@@ -328,6 +437,26 @@ export interface ResultPagingDataIncidentDealVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIncidentDealVO;
+}
+
+/** 领域对象扩展属性分类 */
+export type IncidentDealSumVO = {
+  dealNum1?: string;
+  dealNum2?: string;
+  dealNum3?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultIncidentDealSumVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 领域对象扩展属性分类 */
+  data?: IncidentDealSumVO;
 }
 
 /** 通用响应类 */
@@ -418,15 +547,22 @@ export interface IncidentCfgVO {
    */
   timeCreate?: string;
   orgId?: string;
-  /** 异常模块 */
-  incidentModule?: string;
-  supportGroupId?: string;
   /** 安灯组织名称 */
   orgName?: string;
-  /** 异常模块名称 */
-  incidentModuleName?: string;
+  supportGroupId?: string;
   /** 处理组名称 */
   supportGroupName?: string;
+  /** 处理组编码 */
+  supportGroupCode?: string;
+  /** 异常模块 */
+  incidentModule?: string;
+  /** 异常模块名称 */
+  incidentModuleName?: string;
+  userId?: string;
+  /** 处理组用户名 */
+  userName?: string;
+  /** 处理组用户显示名 */
+  displayName?: string;
   /**
    * 层级序号
    * @format int32
@@ -809,6 +945,24 @@ export const api = {
      * No description
      *
      * @tags 安灯异常类型表
+     * @name GetIncidentTypeBySupportGroupInUser
+     * @summary 根据异常模块查询对应的处理组和用户信息
+     * @request POST:/incidentType/getIncidentTypeBySupportGroupInUser
+     * @secure
+     */
+    getIncidentTypeBySupportGroupInUser: (data: IncidentTypeSearch) =>
+      http.request<ResultArrayListIncidentTypeUserVO['data']>(
+        `/api/daily/incidentType/getIncidentTypeBySupportGroupInUser`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常类型表
      * @name AddIncidentType
      * @summary 新增异常类型
      * @request POST:/incidentType/addIncidentType
@@ -839,8 +993,113 @@ export const api = {
      * No description
      *
      * @tags 安灯异常处理表
+     * @name UpdateIncidentDealTransfering
+     * @summary 安灯报障单据更新转单待处理（转单）状态
+     * @request POST:/incidentDeal/updateIncidentDealTransfering
+     * @secure
+     */
+    updateIncidentDealTransfering: (data: IncidentDealVO) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentDeal/updateIncidentDealTransfering`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name UpdateIncidentDealReject
+     * @summary 安灯报障单据更新已报障（驳回）状态
+     * @request POST:/incidentDeal/updateIncidentDealReject
+     * @secure
+     */
+    updateIncidentDealReject: (data: IncidentDealVO) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentDeal/updateIncidentDealReject`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name UpdateIncidentDealProcessing
+     * @summary 安灯报障单据更新待处理（响应）状态
+     * @request POST:/incidentDeal/updateIncidentDealProcessing
+     * @secure
+     */
+    updateIncidentDealProcessing: (data: IncidentDealVO) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentDeal/updateIncidentDealProcessing`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name UpdateIncidentDealProcessed
+     * @summary 安灯报障单据更新已处理（解决）状态
+     * @request POST:/incidentDeal/updateIncidentDealProcessed
+     * @secure
+     */
+    updateIncidentDealProcessed: (data: IncidentDealVO) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentDeal/updateIncidentDealProcessed`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name UpdateIncidentDealLevelUp
+     * @summary 安灯报障单据更新待处理（升级）状态
+     * @request POST:/incidentDeal/updateIncidentDealLevelUp
+     * @secure
+     */
+    updateIncidentDealLevelUp: (data: IncidentDealVO) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentDeal/updateIncidentDealLevelUp`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name UpdateIncidentDealClose
+     * @summary 安灯报障单据更新已关闭（验收）状态
+     * @request POST:/incidentDeal/updateIncidentDealClose
+     * @secure
+     */
+    updateIncidentDealClose: (data: IncidentDealVO) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentDeal/updateIncidentDealClose`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name UpdateIncidentDealCanceled
+     * @summary 安灯报障单据更新取消（超时相应）状态
+     * @request POST:/incidentDeal/updateIncidentDealCanceled
+     * @secure
+     */
+    updateIncidentDealCanceled: (data: IncidentDealVO) =>
+      http.request<ResultObject['data']>(`/api/daily/incidentDeal/updateIncidentDealCanceled`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
      * @name GetVoList
-     * @summary 查询预警机制
+     * @summary 查询报障单据
      * @request POST:/incidentDeal/getVoList
      * @secure
      */
@@ -848,6 +1107,50 @@ export const api = {
       http.request<ResultPagingDataIncidentDealVO['data']>(`/api/daily/incidentDeal/getVoList`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name GetVoListByUser
+     * @summary 查询报障单据（当前用户单据）
+     * @request POST:/incidentDeal/getVoListByUser
+     * @secure
+     */
+    getVoListByUser: (data: IncidentDealSearch) =>
+      http.request<ResultPagingDataIncidentDealVO['data']>(`/api/daily/incidentDeal/getVoListByUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name GetVoListByTimeOut
+     * @summary 查询报障单据（当前用户的超时单据）
+     * @request POST:/incidentDeal/getVoListByTimeOut
+     * @secure
+     */
+    getVoListByTimeOut: (data: IncidentDealSearch) =>
+      http.request<ResultPagingDataIncidentDealVO['data']>(`/api/daily/incidentDeal/getVoListByTimeOut`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name GetSumList
+     * @summary 查询报障单据（汇总单据）
+     * @request POST:/incidentDeal/getSumList
+     * @secure
+     */
+    getSumList: () =>
+      http.request<ResultIncidentDealSumVO['data']>(`/api/daily/incidentDeal/getSumList`, {
+        method: 'POST',
       }),
 
     /**
