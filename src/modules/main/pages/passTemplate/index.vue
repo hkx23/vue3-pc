@@ -4,20 +4,34 @@
       <cmp-card :span="3">
         <t-tabs v-model="currProcessTab">
           <t-tab-panel value="process" label="工序">
+            <t-input v-model="filterText" style="margin: 8px 0" :placeholder="t('common.placeholder.input')">
+              <template #suffix-icon>
+                <search-icon size="var(--td-comp-size-xxxs)" />
+              </template>
+            </t-input>
+
             <t-list size="small" split>
-              <t-list-item v-for="item in processList" :key="item.id" @click="onClickProcess(item.id, 'process')">
+              <t-list-item v-for="item in filterProcessList" :key="item.id" @click="onClickProcess(item.id, 'process')">
                 {{ item.processName }}
                 <template #action>
                   <edit-icon v-if="currProcessId == item.id" />
+                  <div v-if="headerCategoryData[item.id]" class="activeProcess"></div>
                 </template>
               </t-list-item>
             </t-list>
           </t-tab-panel>
           <t-tab-panel value="routingProcess" label="工艺路线">
+            <t-input v-model="filterText" style="margin: 8px 0" :placeholder="t('common.placeholder.input')">
+              <template #suffix-icon>
+                <search-icon size="var(--td-comp-size-xxxs)" />
+              </template>
+            </t-input>
+
             <t-tree
               :data="routingProcessTree"
               :keys="treeKeys"
               hover
+              :filter="filterTreeByText"
               :expand-on-click-node="false"
               activable
               @click="({ node }) => (node.data.children ? null : onClickProcess(node.data.id, 'routingProcess'))"
@@ -27,6 +41,7 @@
                 <t-tag v-if="node.data.children" size="small" theme="success" variant="outline">
                   {{ node.data.version }}
                 </t-tag>
+                <div v-if="headerCategoryData[node.data.id]" class="activeProcess"></div>
               </template>
             </t-tree>
           </t-tab-panel>
@@ -50,10 +65,17 @@
             :label="item.label"
             :removable="true"
           >
-            <t-steps layout="vertical" separator="dashed" readonly class="steps" style="width: 100%">
+            <t-steps
+              v-if="item.data?.detailList.length > 0"
+              v-draggable="[item.data.detailList as unknown as Ref<any[]>]"
+              layout="vertical"
+              separator="dashed"
+              readonly
+              class="steps"
+            >
               <t-step-item
-                v-for="(detailItem, index) in item.data?.detailList"
-                :key="index"
+                v-for="(detailItem, index) in item.data.detailList"
+                :key="detailItem.businessUnitId"
                 :title="getAtomInfo(detailItem.businessUnitId).apiName"
                 :content="getAtomInfo(detailItem.businessUnitId).apiDesc"
                 status="process"
@@ -122,21 +144,18 @@
               >
               </t-select>
             </t-dialog>
-            <t-dialog
-              v-model:visible="newTemplateVisible"
-              header="请确认是否添加到模板"
-              @confirm="onConfirmNewTemplate"
-            >
+            <t-dialog v-model:visible="newTemplateVisible" header="请输入模板名称" @confirm="onConfirmNewTemplate">
               <t-input v-model="templateName" placeholder="模板名称"></t-input>
             </t-dialog>
           </cmp-card>
           <cmp-card title="模板库" header-bordered>
             <t-list size="small" split>
-              <t-list-item v-for="item in templateList" :key="item.id" @click="onClickTemplate(item)">
-                {{ item.tmplName }}
+              <t-list-item v-for="item in templateList" :key="item.id">
+                <div style="width: 100%" @click="onClickTemplate(item)">
+                  {{ item.tmplName }}
+                </div>
                 <template #action>
                   <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDeleteTemplate(item)">
-                    <!-- <t-link theme="primary">{{ t('common.button.delete') }}</t-link> -->
                     <t-button variant="text" shape="square">
                       <delete-icon />
                     </t-button>
@@ -153,9 +172,10 @@
 
 <script setup lang="ts">
 import { isEmpty } from 'lodash';
-import { CloseIcon, DeleteIcon, EditIcon } from 'tdesign-icons-vue-next';
-import { DialogPlugin, MessagePlugin } from 'tdesign-vue-next';
-import { nextTick, onMounted, ref } from 'vue';
+import { CloseIcon, DeleteIcon, EditIcon, SearchIcon } from 'tdesign-icons-vue-next';
+import { DialogPlugin, MessagePlugin, TreeNodeModel } from 'tdesign-vue-next';
+import { computed, nextTick, onMounted, Ref, ref } from 'vue';
+import { vDraggable } from 'vue-draggable-plus';
 
 import {
   api,
@@ -174,6 +194,7 @@ import { useLang } from './lang';
 const { t } = useLang();
 const currProcessTab = ref('process');
 const barcodeTypeOptions = ref<KeyValuePairStringString[]>([]);
+const barcodeTypeObj = ref({});
 const routingProcessTree = ref<RoutingProcessVO[]>([]);
 const processList = ref<ProcessVO[]>([]);
 const apiAtomList = ref<BusinessUnit[]>([]);
@@ -182,6 +203,10 @@ const templateList = ref<BusinessTmplLib[]>([]);
 // 获取条码类型
 const fetchBarcodeType = async () => {
   barcodeTypeOptions.value = await api.param.getListByGroupCode({ parmGroupCode: 'BARCODE_TYPE' });
+  barcodeTypeObj.value = barcodeTypeOptions.value.reduce((acc, item) => {
+    (acc as any)[item.value] = item.label;
+    return acc;
+  }, {});
 };
 
 // 获取工序
@@ -216,6 +241,23 @@ const atomById = (id: string) => {
   return apiAtomList.value?.find((t) => t.id === id) as BusinessUnit;
 };
 
+const headerCategoryData = ref<{ [key: string]: string[] }>({});
+// 获取已维护工序
+const fetchHeaderMaintained = async () => {
+  const list = await api.processBusinessLib.list();
+  for (const item of list) {
+    const key = item.processId === '0' ? item.routingProcessId : item.processId;
+    let data: string[] = [];
+    if (Object.prototype.hasOwnProperty.call(headerCategoryData.value, key)) {
+      data = headerCategoryData.value[key];
+      if (data.indexOf(item.barcodeCategory) < 0) data.push(item.barcodeCategory);
+    } else {
+      data = [item.barcodeCategory];
+    }
+    headerCategoryData.value[key] = data;
+  }
+};
+
 const fetchDetail = async (processId: string, barcodeCategory: string) => {
   const params = {
     processId: currProcessType.value === 'process' ? processId : '0',
@@ -242,12 +284,25 @@ const fetchDetail = async (processId: string, barcodeCategory: string) => {
   currPanelData.data = newItem;
 };
 
+const filterText = ref();
+const filterTreeByText = computed(() => {
+  if (isEmpty(filterText.value)) return null;
+  return (node: TreeNodeModel) => {
+    return node.label.indexOf(filterText.value) >= 0;
+  };
+});
+const filterProcessList = computed(() => {
+  if (isEmpty(filterText.value)) return processList.value;
+  return processList.value.filter((t) => t.processName.includes(filterText.value));
+});
+
 onMounted(() => {
   fetchBarcodeType();
   fetchProcess();
   fetchRoutingProcess();
   fetchApiAtomList();
   fetchTemplate();
+  fetchHeaderMaintained();
 });
 
 const treeKeys = { value: 'id', label: 'title' };
@@ -288,6 +343,26 @@ const onClickProcess = (id: string, type: string) => {
   if (id === currProcessId.value) return;
   currProcessId.value = id;
   currProcessType.value = type;
+
+  const panel = [];
+  const categoryList = headerCategoryData.value[id];
+  console.log('🚀 ~ file: index.vue:325 ~ onClickProcess ~ headerCategoryData:', headerCategoryData);
+  if (categoryList && categoryList.length > 0) {
+    for (let i = 0; i < categoryList.length; i++) {
+      const item = categoryList[i];
+      if (i === 0) {
+        barcodeCategoryTab.value = item;
+      }
+      panel.push({
+        value: item,
+        label: barcodeTypeObj.value[item] || item,
+      });
+    }
+  }
+
+  panelData.value = panel;
+  console.log('🚀 ~ file: index.vue:339 ~ onClickProcess ~ panel:', panel);
+
   if (isEmpty(barcodeCategoryTab.value)) return;
   fetchDetail(id, barcodeCategoryTab.value);
 };
@@ -308,6 +383,8 @@ const onClickAtom = (item: BusinessUnit) => {
 
 const onClickSaveData = async (list: ProcessBusinessLibDtl[]) => {
   await api.processBusinessLibDtl.addList(list);
+  fetchDetail(currProcessId.value, barcodeCategoryTab.value);
+  fetchHeaderMaintained();
   MessagePlugin.success(t('common.message.saveSuccess'));
 };
 
@@ -322,8 +399,9 @@ const templateDetailList = ref<ProcessBusinessLibDtl[]>([]);
 
 const onConfirmNewTemplate = async () => {
   await addTemplate(templateName.value, templateDetailList.value);
-  await fetchTemplate();
+  fetchTemplate();
   newTemplateVisible.value = false;
+  MessagePlugin.success(t('common.message.saveSuccess'));
 };
 const addTemplate = async (tmplName: string, list: ProcessBusinessLibDtl[]) => {
   const mainId = await api.businessTmplLib.add({
@@ -400,5 +478,15 @@ const onClickDeleteTemplate = async (item: BusinessTmplLib) => {
     top: 4px;
     right: 48px;
   }
+}
+
+.activeProcess {
+  background-color: var(--td-brand-color);
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  position: absolute;
+  left: 0;
+  top: 11px;
 }
 </style>
