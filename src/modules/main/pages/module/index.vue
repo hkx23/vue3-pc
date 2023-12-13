@@ -205,7 +205,6 @@
         </t-row>
       </t-form>
       <!-- #表单数据dialog -->
-
       <t-form v-if="showFormData" ref="formRefThree" :rules="rules" :data="formDataTwo" @submit="onWorkStationSubmit">
         <!-- 第 1️⃣ 行数据 -->
         <t-form-item label="菜单模块" name="parentClickTree">
@@ -234,7 +233,7 @@
           </t-space>
         </t-form-item>
         <!-- 第 4️⃣ 行数据 -->
-        <t-form-item label="模块编码" name="moduleCode">
+        <t-form-item label="菜单编码" name="moduleCode">
           <t-input v-model="formDataTwo.moduleCode"></t-input>
         </t-form-item>
         <!-- 第 5️⃣ 行数据 -->
@@ -612,6 +611,13 @@ const menuSonSelectData = async () => {
   menuSonSelectList.value = res.list;
 };
 
+// // 三级 编辑回填 获取 回填数据
+// const sonID = ref(null);
+// const menuSonSelectDataTwo = async () => {
+//   const res = await api.module.getBackfill({ id: sonID.value });
+//   console.log('🚀 ~ file: index.vue:618 ~ menuSonSelectDataTwo ~ res:', res);
+// };
+
 // #顶部多端选择事件
 const topSelectionChanged = async (originalNum: any) => {
   const num = [...originalNum];
@@ -735,8 +741,10 @@ const onQueryTree = (node: any) => {
 const onEditRow = async (row: any) => {
   const decimalNumber = row.clientType; // 十进制数
   const binaryString = parseInt(decimalNumber.toString(2), 10); // 将十进制数转换为二进制字符串
-  formDataTwo.value.menuId = row.parentModuleId; // 获取父菜单 ID 方便数据回填
-  await menuSonSelectDataTwo(); // 根据获取到的父菜单 ID，获取子菜单和子菜单ID
+  formDataTwo.value.menuId = row.grandpaId;
+  // sonID.value = row.parentModuleId; // 获取父菜单 ID 方便数据回填
+  // await menuSonSelectDataTwo(); // 根据获取到的父菜单 ID，获取子菜单和子菜单ID
+  await menuSonSelectData();
   dialogListData.value = row.clientType;
   onDelelistID.value = row.id; // 存储当前 id
   if (row.isPC === 1) {
@@ -778,11 +786,6 @@ function extractValues(data: { isMobile: number; isTV: number; isWatch: number; 
   if (data.isWeChat !== undefined && data.isWeChat === 1) result.push('4');
   return result;
 }
-
-const menuSonSelectDataTwo = async () => {
-  const res = await api.module.getBackfill({ id: formDataTwo.value.menuId });
-  menuSonSelectList.value = res.list;
-};
 
 // 点击删除树节点按钮事件
 const onDeleteTree = async () => {

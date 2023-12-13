@@ -526,10 +526,10 @@ const onRelatedMaterials = async () => {
   const { barcodeRuleId, mitemId, mitemCategoryId } = relatedMaterials.value;
 
   // 检查是否所有的属性都不为空
-  if (!mitemId || !mitemCategoryId) {
+  if (!mitemId && !mitemCategoryId) {
     MessagePlugin.error('参数不能为空');
   } else if (!barcodeRuleId) {
-    MessagePlugin.error('请点击规则条码后再尝试');
+    MessagePlugin.error('请选择规则条码后再尝试');
   } else {
     await api.barcodeRuleInMitem.addBarcodeRuleMitem(relatedMaterials.value);
     await onMaterialTabData(); // 获取 物料编码 表格数据

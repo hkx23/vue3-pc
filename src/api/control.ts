@@ -803,6 +803,173 @@ export interface MitemOnboardUnbindDTO {
   ids?: string[];
 }
 
+export interface LabelSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  mitemId?: string;
+  /** 工单状态 */
+  moStatus?: string;
+  /** 是否仅显示已打印 */
+  isFinishDisplay?: boolean;
+  moScheduleId?: string;
+  /** 是否仅显示已生成 */
+  isCreated?: boolean;
+  /** 多个id */
+  ids?: string[];
+  /** 状态 */
+  state?: number[];
+  moId?: string;
+}
+
+/** 显示工单投料标签扫描 */
+export interface LabelVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标签号 */
+  labelNo?: string;
+  /** 标签类别 */
+  labelCategory?: string;
+  mitemId?: string;
+  /** 批次号 */
+  lotNo?: string;
+  /** 到货批次 */
+  batchLot?: string;
+  supplierId?: string;
+  /** 标签初始化数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  onhandId?: string;
+  moScheId?: string;
+  printTmplId?: string;
+  /**
+   * 标签顺序号
+   * @format int32
+   */
+  printSeq?: number;
+  /** 送货单号 */
+  deliveryNo?: string;
+  /** 接收单号 */
+  receiveNo?: string;
+  /** 状态 */
+  status?: string;
+  /** 工单 */
+  scheCode?: string;
+  /** 工单状态 */
+  moStatus?: string;
+  /**
+   * 计划生产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 已生成数量
+   * @format int32
+   */
+  generateQty?: number;
+  /**
+   * 已打印数量
+   * @format int32
+   */
+  displayQty?: number;
+  /**
+   * 本次生成数量
+   * @format int32
+   */
+  thisTimeQty?: number;
+  /** 计量单位 */
+  uom?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 计量单位名称 */
+  uomName?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 条码状态 */
+  barcodeStatus?: string;
+  /**
+   * 在制品数量
+   * @format int32
+   */
+  wipNum?: number;
+  /** 创建人名称 */
+  creatorName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLabelVO = {
+  list?: LabelVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLabelVO;
+}
+
 /** 显示过站采集实体 */
 export interface BarcodeWipCollectVO {
   id?: string;
@@ -888,27 +1055,33 @@ export interface BarcodeWipCollectVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
+  /** 下个工序代码 */
+  nextProcessCode?: string;
+  /** 下个工序名称 */
+  nextProcessName?: string;
   /** 扫描信息 */
   scanMessage?: string;
   /** 工作中心代码 */
   workCenterCode?: string;
   /** 工作中心名称 */
   workCenterName?: string;
+  routingProcessId?: string;
+  nextPRoutingProcessId?: string;
   /** 关键件数量汇总信息 */
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
-  isState?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  workshopName?: string;
   workshopId?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
-  workshopName?: string;
+  stateName?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -938,8 +1111,8 @@ export interface WipKeyPartCollectVO {
   scanQty?: number;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  getkeyPartCodeStr?: string;
   isScanFinish?: boolean;
+  getkeyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -1089,16 +1262,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
-  isState?: boolean;
+  workshopName?: string;
   workshopId?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  stateName?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
   defectCodeStr?: string;
-  workshopCode?: string;
-  workshopName?: string;
 }
 
 /** 缺陷代码 */
@@ -1400,6 +1573,26 @@ export interface ResultListProductPackRuleDtlVO {
   message?: string;
   /** 响应数据 */
   data?: ProductPackRuleDtlVO[] | null;
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeRule = {
+  list?: BarcodeRule[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeRule {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeRule;
 }
 
 /** 条码段 */
@@ -2170,6 +2363,51 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/mitemOnboard/getProccesByWorkStationId`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  label: {
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetMoScheduleList
+     * @summary 查询工单排产
+     * @request POST:/label/getMoScheduleList
+     * @secure
+     */
+    getMoScheduleList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/control/label/getMoScheduleList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetBarcodeWipList
+     * @summary 查询在制品条码
+     * @request POST:/label/getBarcodeWipList
+     * @secure
+     */
+    getBarcodeWipList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/control/label/getBarcodeWipList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetBarcodeRuleList
+     * @summary 获得条码规则下拉数据
+     * @request GET:/label/getBarcodeRuleList
+     * @secure
+     */
+    getBarcodeRuleList: () =>
+      http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/label/getBarcodeRuleList`, {
+        method: 'GET',
       }),
   },
   barcodeWipCollect: {
