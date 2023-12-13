@@ -32,6 +32,7 @@
       }
     },
     "message": {
+      "message": "消息",
       "selectRowTryAgain": "请选择行之后再尝试操作",
       "success": "操作成功",
       "fail": "操作失败",
@@ -100,7 +101,11 @@
       "code": "编码",
       "name": "名称",
       "desc": "描述",
-      "all": "全部"
+      "all": "全部",
+      "org": "组织",
+      "workshop": "车间",
+      "workcenter": "工作中心",
+      "workstation": "工站"
     },
     "control": {},
     "warehouse": {}
