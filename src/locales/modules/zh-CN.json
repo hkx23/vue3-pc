@@ -32,6 +32,7 @@
       }
     },
     "message": {
+      "message": "消息",
       "selectRowTryAgain": "请选择行之后再尝试操作",
       "success": "操作成功",
       "fail": "操作失败",
