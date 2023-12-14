@@ -100,7 +100,7 @@ const submit = async () => {
         reject();
         return;
       }
-      if (isFormEditing) {
+      if (isFormEditing.value) {
         api.user.edit(formData).then(() => {
           MessagePlugin.success(t('common.message.saveSuccess'));
           resolve(formData);
@@ -114,7 +114,7 @@ const submit = async () => {
     });
   });
 };
-let isFormEditing = false;
+const isFormEditing = ref(false);
 const reset = (isEdit: boolean, data?: User) => {
   // isAdmin = false;
   formRef.value.reset({ type: 'empty' });
@@ -129,7 +129,7 @@ const reset = (isEdit: boolean, data?: User) => {
     // formData.oid = fw.getOrgId();
   }
 
-  isFormEditing = isEdit;
+  isFormEditing.value = isEdit;
   if (data) {
     if (isEdit) {
       Object.assign(formData, data);

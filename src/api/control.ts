@@ -830,6 +830,10 @@ export interface LabelSearch {
   moScheduleId?: string;
   /** 是否仅显示已生成 */
   isCreated?: boolean;
+  /** 条码状态 */
+  barcodeStatus?: string;
+  /** 条码 */
+  barcode?: string;
   /**
    * 生成开始日期
    * @format date-time
@@ -840,10 +844,25 @@ export interface LabelSearch {
    * @format date-time
    */
   createDateEnd?: string;
-  /** 条码状态 */
-  barcodeStatus?: string;
-  /** 条码 */
-  barcode?: string;
+  barcodeRuleId?: string;
+  /** 条码规则名称 */
+  barcodeRuleName?: string;
+  /** 条码规则表达式 */
+  ruleExpression?: string;
+  /**
+   * 生成数量
+   * @format int32
+   */
+  createNum?: number;
+  /** 条码类型 */
+  barcodeType?: string;
+  barcodeWipId?: string;
+  /** 在制品条码 */
+  serialNumber?: string;
+  /** 在制品条码状态 */
+  barcodeWipStatus?: string;
+  /** 原因 */
+  reason?: string;
   moId?: string;
 }
 
@@ -948,7 +967,7 @@ export interface LabelVO {
   /** 计量单位名称 */
   uomName?: string;
   /** 条码 */
-  runCard?: string;
+  serialNumber?: string;
   /** 条码状态 */
   barcodeStatus?: string;
   /**
@@ -1086,17 +1105,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  stateName?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
+  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  isState?: boolean;
+  stateName?: string;
+  workshopId?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopName?: string;
+  workshopCode?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1126,8 +1145,8 @@ export interface WipKeyPartCollectVO {
   scanQty?: number;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  isScanFinish?: boolean;
   getkeyPartCodeStr?: string;
+  isScanFinish?: boolean;
 }
 
 /** 在制品关键件采集表 */
@@ -1275,16 +1294,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  isState?: boolean;
+  stateName?: string;
+  workshopId?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
-  defectCodeStr?: string;
-  isState?: boolean;
 }
 
 /** 缺陷代码 */
@@ -1847,6 +1866,19 @@ export interface ResultPagingDataBarcodeSegmentDTO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeSegmentDTO;
+}
+
+/** 通用响应类 */
+export interface Result {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
 }
 
 /**
@@ -2564,6 +2596,36 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name ReprintBarcode
+     * @summary 补打条码
+     * @request POST:/label/reprintBarcode
+     * @secure
+     */
+    reprintBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/control/label/reprintBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name PrintBarcode
+     * @summary 打印条码
+     * @request POST:/label/printBarcode
+     * @secure
+     */
+    printBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/control/label/printBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name GetMoScheduleList
      * @summary 查询工单排产(标签打印上表格)
      * @request POST:/label/getMoScheduleList
@@ -2614,17 +2676,9 @@ export const api = {
      * @request POST:/label/generateBarcode
      * @secure
      */
-    generateBarcode: (
-      query: {
-        barcodeRule: string;
-        /** @format int32 */
-        num: number;
-      },
-      data: string,
-    ) =>
+    generateBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/control/label/generateBarcode`, {
         method: 'POST',
-        params: query,
         body: data as any,
       }),
 
@@ -2632,22 +2686,14 @@ export const api = {
      * No description
      *
      * @tags 标签表
-     * @name DisplayBarcode
-     * @summary 打印条码
-     * @request POST:/label/displayBarcode
+     * @name CancellationBarcode
+     * @summary 作废条码
+     * @request POST:/label/cancellationBarcode
      * @secure
      */
-    displayBarcode: (
-      query: {
-        barcodeRule: string;
-        /** @format int32 */
-        num: number;
-      },
-      data: string,
-    ) =>
-      http.request<ResultObject['data']>(`/api/control/label/displayBarcode`, {
+    cancellationBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/control/label/cancellationBarcode`, {
         method: 'POST',
-        params: query,
         body: data as any,
       }),
 
@@ -2830,6 +2876,19 @@ export const api = {
       http.request<ResultPagingDataMoBarcodePkgVO['data']>(`/api/control/barcodePkg/items/getMoPkgList`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 包装条码表
+     * @name GetPkgRule
+     * @request GET:/barcodePkg/getPkgRule/{mitemId}/{moScheId}
+     * @secure
+     */
+    getPkgRule: (mitemId: string, moScheId: string) =>
+      http.request<Result['data']>(`/api/control/barcodePkg/getPkgRule/${mitemId}/${moScheId}`, {
+        method: 'GET',
       }),
   },
   moLog: {

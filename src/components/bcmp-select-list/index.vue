@@ -5,7 +5,7 @@
       :value="state.defaultValue"
       placeholder="Please Select"
       :popup-visible="popupVisible"
-      :popup-props="{ overlayInnerStyle: { padding: '5px', width: 'auto' } }"
+      :popup-props="{ overlayClassName: 't-autocomplete-option-list' }"
       allow-input
       :label="title"
       :multiple="multiple"
@@ -16,48 +16,25 @@
       :input-value="selectSearch"
       :filterable="filterable"
       :loading="loading"
-      @clear="onClear"
-      @tag-change="onTagChange"
       @input-change="onInputChange"
-      @keyup="onSelectKeyup"
+      @clear="onClear"
       @popup-visible-change="onPopupVisibleChange"
     >
-      <!-- <template v-if="!multiple" #valueDisplay>
-        <span v-if="state.defaultValue" class="displaySpan">
-          <icon name="component-dropdown" />
-          {{ state.defaultValue[keywords.label] }}
-        </span>
-      </template> -->
       <template #panel>
-        <div class="t-table-select__table" :style="{ width: `${tableWidth}px` }">
-          <t-table
-            ref="selectTable"
-            multiple-sort
-            hover
-            resizable
-            max-height="300"
-            :disable-data-page="true"
-            cell-empty-content="-"
-            bordered
-            :pagination="pagination"
-            :data="state.tableData"
-            lazy-load
-            :active-row-type="activeRowType"
-            highlight-current-row
-            :active-row-keys="activeRowKeys"
-            :selected-row-keys="selectedRowKeys"
-            select-on-row-click
-            :row-key="rowKey"
-            v-bind="$attrs"
-            :columns="tableColumns"
-            @select-change="rehandleSelectChange"
-            @sort-change="sortChange"
-            @filter-change="onFilterChange"
-          >
-            <!-- <template #[slotName]>
-              <p>这里是动态插槽---{{ slotName }}</p>
-            </template> -->
-          </t-table>
+        <div
+          v-for="item in state.tableData"
+          :key="item[keywords.value]"
+          class="custom-option"
+          @click="() => onOptionClick(item)"
+        >
+          <t-icon :name="listSetting.icon" size="24" class="custom-option__icon"></t-icon>
+          <div class="custom-option__main">
+            <t-highlight-option
+              :content="item[listSetting.codeField]"
+              :keyword="state.defaultValue && state.defaultValue[listSetting.codeField]"
+            />
+            <small class="description">{{ item[listSetting.descField] || '-' }}</small>
+          </div>
         </div>
       </template>
       <template #suffixIcon>
@@ -70,6 +47,7 @@
 <script setup lang="tsx" name="BcmpSelectTable">
 import { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
+import { HighlightOption as THighlightOption } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
 // 抛出事件
 const emits = defineEmits(['selectionChange']);
@@ -89,18 +67,6 @@ const props = defineProps({
     type: [String],
     default: '',
   },
-  // table所需数据
-  table: {
-    type: Object,
-    default: () => {
-      return {
-        currentPage: 1,
-        pageSize: 10,
-        total: 0,
-        data: [],
-      };
-    },
-  },
   // 远程URL
   remoteUrl: {
     type: String,
@@ -110,11 +76,6 @@ const props = defineProps({
   isKeyup: {
     type: Boolean,
     default: true,
-  },
-  // 表头数据
-  columns: {
-    type: Array as unknown as any[],
-    default: () => [],
   },
   // rowKey，一般为ID，如果没有ID字段，需要设置成唯一的Key值
   rowKey: {
@@ -160,11 +121,6 @@ const props = defineProps({
     type: String,
     default: '请选择',
   },
-  // table宽度
-  tableWidth: {
-    type: Number,
-    default: 800,
-  },
   // 下拉数据指向的label/value
   keywords: {
     type: Object,
@@ -175,14 +131,29 @@ const props = defineProps({
       };
     },
   },
+  listSetting: {
+    type: Object,
+    default: () => {
+      return {
+        icon: 'building-1',
+        nameField: '',
+        codeField: '',
+        descField: '',
+      };
+    },
+  },
   // 设置默认选中项--keywords.value值（单选是String, Number类型；多选时是数组）
   defaultSelectVal: {
     type: [String, Number, Array],
     default: '',
   },
 });
-
-type Filters = { [key: string]: any };
+const onOptionClick = (item) => {
+  state.defaultValue = item;
+  popupVisible.value = false;
+  state.selectedRowData = item;
+  emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
+};
 // 选择下拉属性集成
 const selectAttr = computed(() => {
   return {
@@ -207,148 +178,24 @@ const defaultValue = ref('');
 
 // const popupVisible = ref(false);
 
-const filterList = ref([]);
-
-const tableColumns = ref([
-  {
-    title: props.selectTxt,
-    align: 'center',
-    colKey: 'row-select',
-    type: props.multiple ? 'multiple' : 'single',
-    checkProps: { allowUncheck: true },
-    width: 50,
-  },
-] as unknown as any[]);
-
 // 获取选择控件的ref
 const selectRef = ref<any>(null);
 const isDefaultSelectVal = ref(true); // 是否已经重新选择了
 const state: any = reactive({
   defaultSelectValue: props.defaultSelectVal, // 默认选中
-  tableData: props.table.data, // table数据
+  tableData: [], // table数据
   selectedRowData: [], // 选中行数据
   defaultValue: props.value, // 选中值
   ids: [], // 多选id集合
   tabularMap: {}, // 存储下拉tale的所有name
 });
 
-const total = props.table.data.length;
-
-const onFilterChange = (filters: Filters, ctx: any) => {
-  console.log('filter-change', filters, ctx);
-  filterList.value = [];
-  for (const key in filters) {
-    const value = filters[key];
-    if (value.length) {
-      filterList.value.push({
-        field: key,
-        operator: 'LIKE',
-        value,
-      });
-    }
-  }
-  remoteLoad(selectSearch.value);
-};
-const onPageChange = (PageInfo: any) => {
-  pagination.value.current = PageInfo.current;
-  pagination.value.pageSize = PageInfo.pageSize;
-  console.log(PageInfo);
-  console.log('remoteLoad-分页切换');
-  remoteLoad(selectSearch.value);
-};
-// total强制转化成int
-const pagination = props.isShowPagination
-  ? ref({ current: 1, pageSize: 10, total: Number(total), onChange: onPageChange })
-  : null;
 // 是否多选-作用于表格
-type RowKeyType = 'multiple' | 'single';
-const activeRowType: RowKeyType = props.multiple ? 'multiple' : 'single';
+// type RowKeyType = 'multiple' | 'single';
+// const activeRowType: RowKeyType = props.multiple ? 'multiple' : 'single';
 // 选中的行-值
 const selectedRowKeys = ref([]);
-// 键盘控制选中的行-值
-const activeRowKeys = ref([]);
-// 选中事件
-const rehandleSelectChange = (value: any[], { selectedRowData }: any) => {
-  activeRowKeys.value = value;
-  if (props.multiple) {
-    checkSelect(value, selectedRowData);
-  } else {
-    radioSelect(value, selectedRowData);
-  }
-};
-// 可以根据触发来源，自由定制标签变化时的筛选器行为
-const onTagChange = (currentTags: any, context: { trigger: any; index: any; item: any }) => {
-  if (state.defaultValue === '') {
-    state.defaultValue = [];
-    state.selectedRowData = [];
-  }
 
-  // state.defaultValue = [];
-  // console.log(currentTags, context);
-  const { trigger, index, item } = context;
-  console.log(trigger, index, item);
-  if (trigger === 'clear') {
-    state.defaultValue = [];
-    state.selectedRowData = [];
-  }
-  if (['tag-remove', 'backspace'].includes(trigger)) {
-    state.defaultValue = state.defaultValue.filter((element: any, i: any) => i !== index);
-    state.selectedRowData = state.selectedRowData.filter((element: any, i: any) => i !== index);
-    selectedRowKeys.value = state.selectedRowData.map((item: { [x: string]: any }) => item[props.rowKey]);
-    activeRowKeys.value = selectedRowKeys.value;
-  }
-  // if (trigger === 'enter') {
-  //   const current = { label: item, value: item };
-  //   value.value.push(current);
-  //   options.value = options.value.concat(current);
-  // }
-
-  isHandleSelectionChange.value = true;
-
-  emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
-};
-const checkSelect = (value: any[], selectedRowData: any) => {
-  selectedRowKeys.value = value;
-  // console.log(selectedRowData);
-  if (selectedRowData && selectedRowData.length > 0) {
-    state.defaultValue = selectedRowData;
-    state.selectedRowData = selectedRowData;
-
-    // 释放-关闭窗口
-    // closeTable();
-  } else {
-    state.defaultValue = '';
-    state.selectedRowData = [];
-  }
-  console.log('checkSelect');
-  if (value.length === 0) {
-    isHandleSelectionChange.value = false;
-  } else {
-    isHandleSelectionChange.value = true;
-  }
-
-  emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
-};
-
-const radioSelect = (value: any[], selectedRowData: any) => {
-  selectedRowKeys.value = value;
-  // console.log(selectedRowData);
-  if (selectedRowData && selectedRowData.length > 0) {
-    const [defaultValue] = selectedRowData;
-    state.defaultValue = defaultValue;
-
-    // 释放-关闭窗口
-    closeTable();
-  } else {
-    state.defaultValue = '';
-  }
-  if (value.length === 0) {
-    isHandleSelectionChange.value = false;
-  } else {
-    isHandleSelectionChange.value = true;
-  }
-  emits('selectionChange', state.defaultValue, selectedRowKeys.value);
-};
 const onPopupVisibleChange = (val: boolean, context: any) => {
   selectSearch.value = '';
   onInputChange('');
@@ -392,64 +239,6 @@ onMounted(() => {
   }
 });
 
-// 单选键盘事件
-const onSelectKeyup = (e: any) => {
-  console.log('keyup');
-  popupVisible.value = true;
-  if (!props.multiple) {
-    if (!props.isKeyup) return;
-    if (state.tableData.length === 0) return;
-    let currentIndex = -1; // 当前高亮行的索引
-    for (let i = 0; i < state.tableData.length; i++) {
-      if (state.tableData[i][props.rowKey] === activeRowKeys.value[0]) {
-        currentIndex = i;
-        break;
-      }
-    }
-    // console.log(e.keyCode);
-    switch (e.keyCode) {
-      case 40: // 下键
-        // 高亮行设置方法 activeRowKeys.value = state.tableData[表格下表][props.rowKey];
-        // 获取当前高亮行，如果没有当前高亮行，则选中第一个为当前高亮
-        // 如果有当前高亮行，则获取到当前高亮行处于state.tableData里面的第几个，取下一个
-        // 如果有已经是最后一个了，则结束
-        // :todo 上下键判断是否可翻页，如果按下键，有下一页就跳转到下一页的第一项
-        if (currentIndex === -1) {
-          if (state.tableData.length > 0) {
-            const [defaultValue] = state.tableData;
-            activeRowKeys.value = [defaultValue[props.rowKey]];
-          }
-        } else if (currentIndex < state.tableData.length - 1) {
-          activeRowKeys.value = [state.tableData[currentIndex + 1][props.rowKey]];
-        }
-        break;
-      case 38: // 上键
-        // :todo 上下键判断是否可翻页，如果按上键，有上一页就跳转到上一页的最后一项
-        if (currentIndex === -1) {
-          if (state.tableData.length > 0) {
-            const [defaultValue] = state.tableData;
-            activeRowKeys.value = [defaultValue[props.rowKey]];
-          }
-        } else if (currentIndex > 0) {
-          activeRowKeys.value = [state.tableData[currentIndex - 1][props.rowKey]];
-        }
-        break;
-      // case 9: // Tab键
-      //   if (popupVisible.value) {
-      //     closeTable();
-      //   }
-      //   break;
-      case 13: // 回车
-        if (!props.multiple) {
-          radioSelect(activeRowKeys.value, [state.tableData[currentIndex]]);
-        }
-
-        break;
-      default:
-        break;
-    }
-  }
-};
 // todo: 默认选中（且只能默认选中第一页的数据）
 // 触发select隐藏
 const closeTable = () => {
@@ -457,21 +246,35 @@ const closeTable = () => {
   popupVisible.value = false;
   selectSearch.value = '';
 };
-
+// 选中事件
+const rehandleSelectChange = (value: any[], { selectedRowData }: any) => {
+  // activeRowKeys.value = value;
+  if (props.multiple) {
+    // checkSelect(value, selectedRowData);
+  } else {
+    onOptionClick(selectedRowData);
+  }
+};
+// 搜索完全匹配，直接选中
+const radioCSelectRedirct = (val: string) => {
+  if (!props.multiple) {
+    if (state.tableData.length === 1 && val === state.tableData[0][props.keywords.value]) {
+      rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: state.tableData[0] });
+    }
+  }
+};
 const tempCondition = ref({});
 
 const remoteLoad = async (val: any) => {
   loading.value = true;
   const searchCondition = {
-    pageNum: pagination.value.current,
-    pageSize: pagination.value.pageSize,
+    pageNum: 1, // pagination.value.current,
+    pageSize: 999, // pagination.value.pageSize,
     selectedField: props.keywords.value,
     selectedValue: defaultValue.value,
     keyword: selectSearch.value,
     category: props.category,
     parentId: props.parentId,
-    sorts: sortList.value,
-    filters: filterList.value,
   };
 
   // 判断两次查询条件是否一样，一样的话，不获取数据
@@ -481,13 +284,12 @@ const remoteLoad = async (val: any) => {
     return;
   }
   try {
-    const { list, total } = await http.post<any>(props.remoteUrl, searchCondition);
+    const { list } = await http.post<any>(props.remoteUrl, searchCondition);
     list.forEach((element: { [x: string]: any; label: any; value: any }) => {
       element.label = element[props.keywords.label];
       element.value = element[props.keywords.value];
     });
     state.tableData = list;
-    pagination.value.total = Number(total);
   } catch (e) {
     console.log(e);
   } finally {
@@ -533,57 +335,13 @@ const onInputChange = (val: string) => {
   if (val === '' && !props.multiple) {
     state.defaultValue = '';
     state.selectedRowData = [];
-    const value = [];
-    const selectedRowData = [];
-    radioSelect(value, selectedRowData);
-  }
-};
-// 搜索完全匹配，直接选中
-const radioCSelectRedirct = (val: string) => {
-  if (!props.multiple) {
-    if (state.tableData.length === 1 && val === state.tableData[0][props.keywords.value]) {
-      rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: [state.tableData[0]] });
-    }
+    // const value = [];
+    // const selectedRowData = [];
+    // radioSelect(value, selectedRowData);
   }
 };
 // 设置默认值
 onMounted(() => {
-  tableColumns.value = [
-    {
-      title: props.selectTxt,
-      align: 'center',
-      colKey: 'row-select',
-      type: props.multiple ? 'multiple' : 'single',
-      checkProps: { allowUncheck: true },
-      width: 50,
-    },
-  ];
-  props.columns.forEach((element: any) => {
-    let addColumn = {
-      title: element.title,
-      align: 'center',
-      colKey: element.key,
-      width: element.width,
-      sorter: true,
-      // 输入框过滤配置
-      filter: {
-        type: 'input',
-        resetValue: '',
-        // 按下 Enter 键时也触发确认搜索
-        confirmEvents: ['onEnter'],
-        props: {
-          placeholder: '输入关键词过滤',
-        },
-        // 是否显示重置取消按钮，一般情况不需要显示
-        showConfirmAndReset: true,
-      },
-    };
-    // 使用addColumn与element合并,element如果有一样的属性，以element为准
-    addColumn = Object.assign(addColumn, element);
-
-    tableColumns.value.push(addColumn);
-  });
-
   state.tableData = props.value;
   nextTick(() => {
     // 多选
@@ -609,26 +367,14 @@ onMounted(() => {
         selectSearch.value = '';
       }
       remoteLoad(props.value);
-      // state.defaultValue = props.value ? { [props.keywords.value]: props.value } : '';
-      // if (state.defaultValue) {
-      // }
     }
   });
 });
-const sortList = ref([]);
-
-const sortChange = (val: any) => {
-  sortList.value = val;
-  console.log(sortList.value);
-  console.log('remoteLoad-排序');
-  remoteLoad(selectSearch.value);
-};
 
 watch(
   () => props.value,
   (val) => {
     console.log('watch:props.value', `${props.title} ss ${val}`);
-
     nextTick(() => {
       // 多选
       if (props.multiple) {
@@ -647,7 +393,6 @@ watch(
       } else if (!isHandleSelectionChange.value) {
         if (props.value) {
           console.log('remoteLoad-按默认值查询');
-          // selectSearch.value = props.value.toString();
           defaultValue.value = props.value.toString();
           remoteLoad(props.value);
         } else {
@@ -674,3 +419,53 @@ watch(
 // 暴露方法出去
 defineExpose({ closeTable, onClear });
 </script>
+<style lang="less" scoped>
+.t-autocomplete-option-list .t-select-option {
+  height: 50px;
+}
+
+.t-autocomplete-option-list .custom-option {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f6f6f6;
+}
+
+.t-autocomplete-option-list .custom-option:hover {
+  background-color: var(--td-gray-color-3);
+  border-radius: 6px;
+}
+
+.t-autocomplete-option-list .custom-option > img {
+  max-height: 40px;
+  border-radius: 50%;
+}
+
+.t-autocomplete-option-list .custom-option .custom-option__icon {
+  max-height: 40px;
+  margin: 0 8px;
+  color: var(--td-gray-color-8);
+}
+
+.t-autocomplete-option-list .custom-option__main::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to top, rgb(0 0 0 / 0%), #ececec 50%, rgb(0 0 0 / 0%));
+}
+
+.t-autocomplete-option-list .custom-option__main {
+  position: relative;
+  padding: 2px 2px 2px 16px;
+}
+
+.t-autocomplete-option-list .custom-option__main .t-select-option__highlight-item {
+  font-weight: 600;
+}
+
+.t-autocomplete-option-list .custom-option .description {
+  color: var(--td-gray-color-9);
+}
+</style>

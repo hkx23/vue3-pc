@@ -25,5 +25,12 @@
   "keywords": {
     "value": "id",
     "label": "orgName"
-  }
+  },
+  "listSetting": {
+    "icon": "building-1",
+    "codeField": "orgCode",
+    "nameField": "orgName",
+    "descField": "orgDesc"
+  },
+  "componentType": "list"
 }
