@@ -494,7 +494,13 @@ const onTextEditRow = (row: { id: any }) => {
 };
 
 // 关键件 编辑事件
-const onKeyEditRow = (row: { id: any }) => {
+const onKeyEditRow = (row: any) => {
+  console.log('🚀 ~ file: index.vue:498 ~ onKeyEditRow ~ row:', row);
+  if (!row.mitemCategoryId) {
+    radioValue.value = 1;
+  } else {
+    radioValue.value = 0;
+  }
   RuleCodeID.value = row.id;
   Object.keys(barcodeData.value).reduce((acc, key) => {
     if (Object.prototype.hasOwnProperty.call(row, key)) {
