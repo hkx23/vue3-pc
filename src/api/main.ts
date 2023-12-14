@@ -1693,8 +1693,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2556,6 +2556,8 @@ export type ShowModuleVO = {
   grandpaName?: string;
   /** 模块访问地址 */
   behaviorPath?: string;
+  /** 模块包名称 */
+  packageName?: string;
   /**
    * 是否PC端
    * @format int32
@@ -2882,15 +2884,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
-  isRawName?: string;
-  isProductName?: string;
+  stateName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3057,8 +3059,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3404,8 +3406,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -7105,6 +7107,36 @@ export const api = {
       http.request<ResultPagingDataShowModuleVO['data']>(`/api/main/module/getList`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name DowmloadFile
+     * @summary 菜单文件下载
+     * @request POST:/module/dowmloadFile
+     * @secure
+     */
+    dowmloadFile: (query: { fileName: string; path: string }) =>
+      http.request<ResultResponseEntityString['data']>(`/api/main/module/dowmloadFile`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name DeleteFile
+     * @summary 删除菜单上传文件
+     * @request POST:/module/deleteFile
+     * @secure
+     */
+    deleteFile: (query: { fileName: string; path: string }) =>
+      http.request<ResultResponseEntityString['data']>(`/api/main/module/deleteFile`, {
+        method: 'POST',
+        params: query,
       }),
 
     /**

@@ -37,7 +37,11 @@
                     :total="totalPrintTop"
                     @row-click="onTopRowClick"
                     @refresh="onTopRefresh"
+                    @row-validata="onRowValidate"
                   >
+                    <template #thisTimeQty="{ row }">
+                      {{ row.thisTimeQtys }}
+                    </template>
                     <template #button>
                       <t-row align="middle">
                         <t-col>条码规则： </t-col>
@@ -124,7 +128,7 @@
                 </t-space>
               </template>
               <template #operations>
-                <t-link theme="primary"> 编辑 </t-link>
+                <t-link theme="primary" @click="onLogInterface"> 日志 </t-link>
               </template>
             </cmp-table>
           </template>
@@ -157,36 +161,23 @@
       </t-form>
     </t-dialog>
     <!---%日志 dialog 弹窗  -->>
-    <t-dialog v-model:visible="formVisible" :confirm-btn="buttonSwitch" :header="diaLogTitle" width="40%">
-      <t-form>
-        <t-form-item v-if="reprintVoidSwitch" label-width="50px" label="补打原因" name="incidentName">
-          <t-select>
-            <t-option
-              v-for="item in barCodeStateList.list"
-              :key="item.id"
-              :label="item.paramValue"
-              :value="item.paramCode"
-            />
-          </t-select>
-        </t-form-item>
-        <t-form-item v-if="!reprintVoidSwitch" label-width="50px" label="作废" name="incidentName">
-          <t-select>
-            <t-option
-              v-for="item in barCodeStateList.list"
-              :key="item.id"
-              :label="item.paramValue"
-              :value="item.paramCode"
-            />
-          </t-select>
-        </t-form-item>
-      </t-form>
+    <t-dialog v-model:visible="logInterfaceVisible" :cancel-btn="null" :confirm-btn="null" header="日志" width="60%">
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="pageUIDay"
+        row-key="id"
+        :table-column="logInterface"
+        :table-data="dayTabData.list"
+        :total="totalDay"
+        @refresh="onRightFetchData"
+      ></cmp-table>
     </t-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { Input, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/control';
@@ -199,7 +190,9 @@ import { usePage } from '@/hooks/modules/page';
 const { pageUI: pageUITop } = usePage(); // 分页工具
 const { pageUI: pageUIDown } = usePage(); // 分页工具
 const { pageUI } = usePage(); // 分页工具
+const { pageUI: pageUIDay } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
+const logInterfaceVisible = ref(false); // 控制日志 Dialog 显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
 const buttonSwitch = ref(''); // 确认按钮title
 const tabValue = ref(0);
@@ -221,6 +214,10 @@ const totalPrintDown = ref(0);
 // 产品标签管理 表格数据
 const manageTabData = reactive({ list: [] });
 const totalManage = ref(0);
+
+// 日志界面 表格数据
+const dayTabData = reactive({ list: [] });
+const totalDay = ref(0);
 
 // 产品标签打印 上表格列表数据
 const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
@@ -278,6 +275,41 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     title: '本次生成数量',
     align: 'center',
     width: '130',
+    cell: 'thisTimeQty',
+    edit: {
+      component: Input,
+      props: {
+        clearable: true,
+        autofocus: true,
+        autoWidth: true,
+      },
+      rules: [
+        { required: true, message: '不能为空' },
+        { max: 2, message: '不能大于十', type: 'warning' },
+      ],
+      showEditIcon: true,
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      on: (editContext) => ({
+        onBlur: () => {
+          console.log('🚀 ~ file: index.vue:291 ~ editContext:', editContext);
+        },
+        onEnter: (ctx) => {
+          ctx?.e?.preventDefault();
+          console.log('🚀 ~ file: index.vue:295 ~ ctx:', ctx);
+        },
+      }),
+      abortEditOnEvent: ['onEnter'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: (context) => {
+        console.log('🚀 ~ file: index.vue:302 ~ context:', context);
+        // const newData = [...data.value];
+        // newData.splice(context.rowIndex, 1, context.newRowData);
+        // data.value = newData;
+        // console.log('Edit firstName:', context);
+        MessagePlugin.success('Success');
+      },
+    },
   },
   {
     colKey: 'uom',
@@ -428,51 +460,51 @@ const labelManage: PrimaryTableCol<TableRowData>[] = [
 ];
 
 // 日志界面 表格数据
-// const logInterface: PrimaryTableCol<TableRowData>[] = [
-//   {
-//     colKey: 'serialNumber',
-//     title: '条码',
-//     align: 'center',
-//     width: '110',
-//   },
-//   {
-//     colKey: 'barcodeStatus',
-//     title: '条码状态',
-//     align: 'center',
-//     width: '130',
-//   },
-//   {
-//     colKey: 'wipNum',
-//     title: '数量',
-//     align: 'center',
-//     width: '100',
-//     cell: 'stateSwitch',
-//   },
-//   {
-//     colKey: 'creatorName',
-//     title: '操作类型',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '原因',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '操作人',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '操作时间',
-//     align: 'center',
-//     width: '100',
-//   },
-// ];
+const logInterface: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'serialNumber',
+    title: '条码',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'barcodeStatus',
+    title: '条码状态',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'wipNum',
+    title: '数量',
+    align: 'center',
+    width: '100',
+    cell: 'stateSwitch',
+  },
+  {
+    colKey: 'creatorName',
+    title: '操作类型',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '原因',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '操作人',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '操作时间',
+    align: 'center',
+    width: '100',
+  },
+];
 
 // 初始渲染
 onMounted(async () => {
@@ -583,6 +615,16 @@ const onCancellation = () => {
   buttonSwitch.value = '作废';
 };
 
+// 日志点击事件
+const onLogInterface = () => {
+  logInterfaceVisible.value = true; // 控制界面显示隐藏
+};
+
+// 行编辑事件
+const onRowValidate = (params) => {
+  console.log('Event Table Row Validate:', params);
+};
+
 // TAb 栏切换事件
 const tabChange = (value: number) => {
   if (!value) {
@@ -596,8 +638,6 @@ const tabChange = (value: number) => {
 const workStateData = ref('');
 const initialDate = ref(1);
 const opts = computed(() => {
-  console.log('🚀 ~ file: index.vue:562 ~ opts ~ value:', initialDate.value);
-  console.log('🚀 ~ file: index.vue:562 ~ opts ~ value:', [dayjs().subtract(initialDate.value, 'day'), dayjs()]);
   return {
     scheduledProductionDate: {
       label: '计划生产日期',
@@ -606,8 +646,7 @@ const opts = computed(() => {
       event: 'daterangetime',
       defaultVal: [dayjs().subtract(initialDate.value, 'day'), dayjs()],
       bind: {
-        // enableTimePicker: false,
-        // value: [dayjs().subtract(initialDate.value, 'day'), dayjs()],
+        enableTimePicker: false,
         format: 'YYYY-MM-DD',
       },
     },
@@ -619,8 +658,8 @@ const opts = computed(() => {
       event: 'daterangetime',
       defaultVal: [dayjs().subtract(3, 'day'), dayjs()],
       bind: {
-        enableTimePicker: true,
-        // format: 'YYYY-MM-DD',
+        enableTimePicker: false,
+        format: 'YYYY-MM-DD',
       },
     },
     mo: {
@@ -700,34 +739,6 @@ const opts = computed(() => {
 const onInput = async (data: any) => {
   console.log('🚀 ~ file: index.vue:613 ~ onInput ~ data:', data);
 };
-
-// 关闭模态框事件
-// const onSecondaryReset = () => {
-//   formRef.value.reset({ type: 'empty' });
-//   formVisible.value = false;
-// };
-
-// 表单提交事件
-// const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
-//   if (context.validateResult === true) {
-//     if (submitFalg.value) {
-//       await onAddRuleCode(); // 新增请求
-//     } else {
-//       await onEditRuleCode(); // 编辑请求
-//     }
-//     if (barcodeData.value.barcodeValidateGroup === 'SCANEXT') {
-//       await onGetTextDataList(); // 获取 文本 数据
-//     } else {
-//       await onGetKeyDataList(); // 获取 关键件 数据
-//     }
-//     // if (!tabValue.value) {
-//     //   await onGetValidationGroups(); // 获取验证分组 下列 数组
-//     // } else {
-//     //   await onGetBarcodeType(); // 获取条码类型 下列 数组
-//     // }
-//     formVisible.value = false;
-//   }
-// };
 </script>
 
 <style lang="less" scoped>
