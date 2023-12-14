@@ -22,8 +22,8 @@
           <t-space :size="8">
             <t-link theme="primary" @click="onRowEdit(row)">{{ t('common.button.edit') }}</t-link>
             <t-link theme="primary" @click="onRowPermission(row)">{{ t('user.authority') }}</t-link>
-            <t-link theme="primary" @click="onRowOnlineChange(row)">{{
-              row.isOnline == 0 ? t('user.enable') : t('user.disable')
+            <t-link theme="primary" @click="onRowStateChange(row)">{{
+              row.state == 0 ? t('user.enable') : t('user.disable')
             }}</t-link>
             <t-link theme="primary" @click="onRowOrgSetting(row)">{{ t('user.org') }}</t-link>
             <t-link theme="primary" @click="onRowResetPassword(row)">重置密码</t-link>
@@ -228,7 +228,7 @@ const onRowOrgSetting = (row: any) => {
   // console.log('重置密码', row);
 };
 
-const onRowOnlineChange = async (row: any) => {
+const onRowStateChange = async (row: any) => {
   const confirmDia = DialogPlugin({
     header: row.state === 1 ? '禁用' : '启用',
     body: row.state === 1 ? '是否确认禁用账号' : '是否确认启用用账号',
@@ -240,9 +240,9 @@ const onRowOnlineChange = async (row: any) => {
       const postRow = _.cloneDeep(row);
       if (postRow.state === 1) {
         postRow.state = 0;
-        postRow.isOnline = 0;
+        // postRow.isOnline = 0;
         api.user
-          .setOnline(postRow)
+          .setState(postRow)
           .then(() => {
             MessagePlugin.success('禁用成功');
             fetchTable();
@@ -254,9 +254,9 @@ const onRowOnlineChange = async (row: any) => {
           });
       } else {
         postRow.state = 1;
-        postRow.isOnline = 1;
+        // postRow.isOnline = 1;
         api.user
-          .setOnline(postRow)
+          .setState(postRow)
           .then(() => {
             MessagePlugin.success('启用成功');
             fetchTable();

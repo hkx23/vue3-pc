@@ -1038,6 +1038,7 @@ export interface BarcodeWipCollectVO {
   uom?: string;
   uomName?: string;
   scanType?: string;
+  keypartCode?: string;
   /** 排产工单 */
   scheCode?: string;
   /** 工单排产状态 */
@@ -1065,10 +1066,14 @@ export interface BarcodeWipCollectVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
+  /** 下个工序ID */
+  nextProcessId?: string;
   /** 下个工序代码 */
   nextProcessCode?: string;
   /** 下个工序名称 */
   nextProcessName?: string;
+  /** 下个工序类型 */
+  nextProcessType?: string;
   /** 扫描信息 */
   scanMessage?: string;
   /** 工作中心代码 */

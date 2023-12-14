@@ -1378,6 +1378,8 @@ export interface RoleVO {
   plantName?: string;
   /** 组织编码 */
   plantCode?: string;
+  /** 企业组织名称 */
+  enPlantName?: string;
 }
 
 /** 通用响应类 */
@@ -1581,7 +1583,7 @@ export interface ProcessBusinessLibDtl {
 }
 
 /** 工序业务执行单元库头表 */
-export interface ProcessBusinessLib {
+export type ProcessBusinessLib = {
   id?: string;
   /**
    * 创建时间
@@ -1609,6 +1611,19 @@ export interface ProcessBusinessLib {
   processId?: string;
   /** 条码类型 */
   barcodeCategory?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListProcessBusinessLib {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProcessBusinessLib[] | null;
 }
 
 /** 通用响应类 */
@@ -1677,8 +1692,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2533,6 +2548,7 @@ export type ShowModuleVO = {
   /** 模块包标识 */
   modulePackageIdentify?: string;
   parentModuleId?: string;
+  grandpaId?: string;
   /** 所在一级菜单名称 */
   grandpaName?: string;
   /** 模块访问地址 */
@@ -2863,15 +2879,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isProductName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
   isRawName?: string;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -3385,8 +3401,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4384,14 +4400,22 @@ export type ModulePermissionDTO = {
   isForbiddenRole?: string;
   /** 是否继承角色 */
   isFromRole?: string;
-  /** 是否不可编辑 */
-  isDisable?: string;
+  /** 继承角色 */
+  fromRoleName?: string;
   /** 功能名称-按语言 */
   moduleNameT?: string;
   /** 功能描述-按语言 */
   moduleDescriptionT?: string;
   /** 子级 */
   children?: ModulePermissionDTO[];
+  /** 按钮权限 */
+  buttons?: ModulePermissionDTO[];
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
 } | null;
@@ -5842,13 +5866,13 @@ export const api = {
      * No description
      *
      * @tags 用户
-     * @name SetOnline
+     * @name SetState
      * @summary 禁用/启用用户
-     * @request POST:/user/setOnline
+     * @request POST:/user/setState
      * @secure
      */
-    setOnline: (data: User) =>
-      http.request<ResultObject['data']>(`/api/main/user/setOnline`, {
+    setState: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/setState`, {
         method: 'POST',
         body: data as any,
       }),
@@ -6414,6 +6438,20 @@ export const api = {
       }),
   },
   processBusinessLib: {
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name List
+     * @summary 根据头表明细
+     * @request POST:/processBusinessLib/list
+     * @secure
+     */
+    list: () =>
+      http.request<ResultListProcessBusinessLib['data']>(`/api/main/processBusinessLib/list`, {
+        method: 'POST',
+      }),
+
     /**
      * No description
      *

@@ -112,9 +112,9 @@
   --td-scrollbar-color: rgb(0 0 0 / 10%);
   --td-scrollbar-hover-color: rgb(0 0 0 / 30%);
   --td-scroll-track-color: #fff;
-  --td-bg-color-specialcomponent: rgb(240 240 242);
+  --td-bg-color-specialcomponent: #f8f8f8f8;
   --td-border-level-1-color: var(--td-gray-color-3);
-  --td-border-level-2-color: var(--td-gray-color-4);
+  --td-border-level-2-color: #aaa;
   --td-shadow-inset-top: inset 0 0.5px 0 #dcdcdc;
   --td-shadow-inset-right: inset 0.5px 0 0 #dcdcdc;
   --td-shadow-inset-bottom: inset 0 -0.5px 0 #dcdcdc;
@@ -123,8 +123,8 @@
   --td-mask-disabled: rgb(255 255 255 / 60%);
 
   /* 字体配置 */
-  --td-font-family: pingfang sc, microsoft yahei, arial regular;
-  --td-font-family-medium: pingfang sc, microsoft yahei, arial medium;
+  --td-font-family: pf, pingfang sc, arial regular;
+  --td-font-family-medium: pf, pingfang sc, arial medium;
   --td-font-size-link-small: 12px;
   --td-font-size-link-medium: 14px;
   --td-font-size-link-large: 16px;

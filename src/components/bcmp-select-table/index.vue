@@ -302,6 +302,7 @@ const onTagChange = (currentTags: any, context: { trigger: any; index: any; item
   //   value.value.push(current);
   //   options.value = options.value.concat(current);
   // }
+
   isHandleSelectionChange.value = true;
 
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
@@ -320,7 +321,11 @@ const checkSelect = (value: any[], selectedRowData: any) => {
     state.selectedRowData = [];
   }
   console.log('checkSelect');
-  isHandleSelectionChange.value = true;
+  if (value.length === 0) {
+    isHandleSelectionChange.value = false;
+  } else {
+    isHandleSelectionChange.value = true;
+  }
 
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
@@ -337,8 +342,11 @@ const radioSelect = (value: any[], selectedRowData: any) => {
   } else {
     state.defaultValue = '';
   }
-  isHandleSelectionChange.value = true;
-
+  if (value.length === 0) {
+    isHandleSelectionChange.value = false;
+  } else {
+    isHandleSelectionChange.value = true;
+  }
   emits('selectionChange', state.defaultValue, selectedRowKeys.value);
 };
 const onPopupVisibleChange = (val: boolean, context: any) => {

@@ -18,6 +18,7 @@
     "member": "成员",
     "roleMember": "角色成员维护",
     "authTitle": "角色/权限配置",
-    "plsEnterUserKey": "请输入用户名/姓名"
+    "plsEnterUserKey": "请输入用户名/姓名",
+    "roleCodeName": "角色代码/名称"
   }
 }
