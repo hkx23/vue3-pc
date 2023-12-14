@@ -2,7 +2,7 @@
 <template>
   <div class="main-page">
     <div class="main-page-content">
-      <cmp-query :opts="opts" @submit="onInput">
+      <cmp-query ref="queryComponent" :opts="opts" @submit="onInput">
         <template #workState>
           <t-select v-model="workStateData">
             <t-option v-for="item in workStateDataList.list" :key="item.id" :label="item.label" :value="item.value" />

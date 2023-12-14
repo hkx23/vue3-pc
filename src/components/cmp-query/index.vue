@@ -13,7 +13,7 @@
         @submit.prevent
       >
         <t-row class="item-row" :gutter="[32, 0]"
-          ><t-col v-for="(opt, i) in cOpts" v-show="!opt.isHide" :key="i" :span="5"
+          ><t-col v-for="(opt, i) in cOpts" v-show="!opt.isHide" :key="i" :span="opt.span"
             ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">
               <!-- 自定义label -->
               <template v-if="opt.labelRender" #label>
@@ -88,7 +88,7 @@
         >
       </t-form>
     </t-col>
-    <t-col flex="0 1 200px">
+    <t-col flex="0 1 300px" style="text-align: end">
       <t-space direction="horizontal" class="search-space" size="large">
         <div class="search-form__button">
           <t-space size="small" :align="'end'">
@@ -127,7 +127,7 @@ const props = defineProps({
   },
   labelWidth: {
     type: String,
-    default: 'calc(2em + 54px)',
+    default: '0',
   },
   // 查询按钮配置
   btnCheckBind: {
@@ -194,6 +194,11 @@ const cOpts = computed(() => {
     // if (props.isShowOpen) {
     //   openSearchForm.value = true;
     // }
+    if (opt.comp && opt.comp.includes('range')) {
+      opt.span = 6;
+    } else {
+      opt.span = 4;
+    }
     opt.dataIndex = field;
     acc[field] = opt;
     return acc;
@@ -362,9 +367,10 @@ onMounted(() => {
 watch(
   () => props.opts,
   (opts, oldValue) => {
-    console.log(1111, opts, oldValue);
-    state.form = initForm(opts, true);
+    console.log('query change', opts, oldValue);
+    state.form = initForm(opts, false);
   },
+  { deep: true },
 );
 
 // 展开按钮点击事件
