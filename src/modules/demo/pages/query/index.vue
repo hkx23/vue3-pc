@@ -1,5 +1,5 @@
 <template>
-  <cmp-query :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" @handle-event="handleEvent">
+  <cmp-query :opts="opts" is-expansion @submit="conditionEnter" @handle-event="handleEvent">
     <template #querybar>
       <t-button theme="default">querybar插槽</t-button>
     </template>
