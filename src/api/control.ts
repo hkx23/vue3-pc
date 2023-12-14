@@ -1105,17 +1105,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  isState?: boolean;
+  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   stateName?: string;
-  scanDatetimeStr?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1145,8 +1145,8 @@ export interface WipKeyPartCollectVO {
   scanQty?: number;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  getkeyPartCodeStr?: string;
   isScanFinish?: boolean;
+  getkeyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -1294,16 +1294,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  defectCodeStr?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  isState?: boolean;
+  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   stateName?: string;
-  scanDatetimeStr?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -1504,6 +1504,79 @@ export interface BarcodeRuleInMitem {
   barcodeRuleId?: string;
   mitemId?: string;
   mitemCategoryId?: string;
+}
+
+export interface MoBarcodePkgSearch {
+  /**
+   * 计划生成时间开始
+   * @format date
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划生成时间结束
+   * @format date
+   */
+  datetimePlanEnd?: string;
+  mitemId?: string;
+  moId?: string;
+  /** 工单状态 */
+  moStatus?: string;
+  workshopId?: string;
+  workCenterId?: string;
+  /**
+   * 分页页数
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 分页大小
+   * @format int32
+   */
+  pageSize?: number;
+}
+
+export interface MoBarcodePkgVO {
+  /** 工单编码 */
+  moCode?: string;
+  /** 工单状态 */
+  moClass?: string;
+  /**
+   * 计划生产日期
+   * @format date
+   */
+  datetimePlanStart?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 计划数量 */
+  planQty?: string;
+  /** 单位 */
+  uom?: string;
+  /** 车间 */
+  workshopName?: string;
+  /** 工作中心 */
+  workcenterName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMoBarcodePkgVO = {
+  list?: MoBarcodePkgVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMoBarcodePkgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMoBarcodePkgVO;
 }
 
 /** 通用响应类 */
@@ -1793,6 +1866,19 @@ export interface ResultPagingDataBarcodeSegmentDTO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeSegmentDTO;
+}
+
+/** 通用响应类 */
+export interface Result {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
 }
 
 /**
@@ -2773,6 +2859,35 @@ export const api = {
      */
     getRuleSegment: () =>
       http.request<ResultPagingDataBarcodeSegmentDTO['data']>(`/api/control/barcodeRuleInMitem/getRuleSegment`, {
+        method: 'GET',
+      }),
+  },
+  barcodePkg: {
+    /**
+     * No description
+     *
+     * @tags 包装条码表
+     * @name GetMoPkgList
+     * @summary 查询工单信息
+     * @request POST:/barcodePkg/items/getMoPkgList
+     * @secure
+     */
+    getMoPkgList: (data: MoBarcodePkgSearch) =>
+      http.request<ResultPagingDataMoBarcodePkgVO['data']>(`/api/control/barcodePkg/items/getMoPkgList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 包装条码表
+     * @name GetPkgRule
+     * @request GET:/barcodePkg/getPkgRule/{mitemId}/{moScheId}
+     * @secure
+     */
+    getPkgRule: (mitemId: string, moScheId: string) =>
+      http.request<Result['data']>(`/api/control/barcodePkg/getPkgRule/${mitemId}/${moScheId}`, {
         method: 'GET',
       }),
   },
