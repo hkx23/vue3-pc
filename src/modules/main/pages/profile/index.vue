@@ -27,7 +27,7 @@
             <!-- 下面的盒子，包括树 -->
             <t-tree
               ref="treeRef"
-              style="width: 70%"
+              style="width: 100%"
               :data="treeData"
               hover
               line
@@ -54,7 +54,7 @@
             </t-tree>
           </t-col>
           <!-- 右侧盒子 -->
-          <t-col :span="9" flex="auto">
+          <t-col :span="8" flex="auto">
             <t-breadcrumb :max-item-width="'150'" style="margin-bottom: 10px">
               <t-breadcrumbItem v-if="treeClickData?.two">{{ treeClickData.two }}</t-breadcrumbItem>
               <t-breadcrumbItem v-if="treeClickData?.one" :max-width="'160'">
@@ -218,19 +218,19 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'serial-number',
     title: '序号',
     align: 'center',
-    width: '90',
+    width: '60',
   },
   {
     colKey: 'moduleName',
     title: '功能名称',
     align: 'center',
-    width: '110',
+    width: '90',
   },
   {
     colKey: 'profileName',
     title: '配置项名称',
     align: 'center',
-    width: '110',
+    width: '140',
   },
   {
     colKey: 'profileCategoryOp',
