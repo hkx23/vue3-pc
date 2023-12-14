@@ -18,9 +18,17 @@
               </t-row>
               <t-row class="custom-row">
                 <t-col :span="2" class="custom-row-item-header">{{ t('wipCollect.scanlabel') }}：</t-col>
-                <t-col :span="7">
+                <t-col v-if="keyPartSumList && keyPartSumList.length == 0" :span="7">
                   <t-input
                     v-model="mainform.serialNumber"
+                    :placeholder="scanDesc"
+                    size="large"
+                    @enter="serialNumberEnter"
+                  />
+                </t-col>
+                <t-col v-else :span="7">
+                  <t-input
+                    v-model="mainform.keypartCode"
                     :placeholder="scanDesc"
                     size="large"
                     @enter="serialNumberEnter"
@@ -181,7 +189,8 @@ const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const mainform = ref({
-  serialNumber: '',
+  serialNumber: '', // 条码
+  keypartCode: '', // 关键件
   workshopCode: '',
   workshopName: '',
   workCenterId: '',
@@ -204,6 +213,7 @@ const productInfo = ref({
   moMitemName: '',
   moCompletedQty: '',
   header: '',
+  moScheId: '',
 });
 
 // 关键件信息信息
@@ -214,6 +224,7 @@ const messageList = ref<messageModel[]>([]);
 
 const Init = async () => {
   mainform.value.serialNumber = '';
+  mainform.value.keypartCode = '';
   mainform.value.workCenterId = '1730421387954343937'; // 3-1-1
   mainform.value.workCenterCode = '3-1-1'; // 3-1-1
   mainform.value.workCenterName = '3号工厂1车间1区域'; // 3-1-1
@@ -252,37 +263,54 @@ const serialNumberEnter = async (value) => {
     await api.barcodeWipCollect
       .scanBarcodeWipCollect({
         serialNumber: mainform.value.serialNumber,
+        keypartCode: mainform.value.keypartCode,
         workcenterId: mainform.value.workCenterId,
         workCenterCode: mainform.value.workCenterCode,
         workCenterName: mainform.value.workCenterName,
         workstationId: mainform.value.workStationId,
         processId: mainform.value.processId,
         scanType: scanType.value,
+        moScheId: productInfo.value.moScheId,
       })
       .then((reData) => {
         if (reData.scanSuccess) {
-          productInfo.value.scheCode = reData.scheCode;
-          productInfo.value.moCode = reData.moCode;
-          productInfo.value.moMitemCode = reData.mitemCode;
-          productInfo.value.moMitemName = reData.mitemName;
-          productInfo.value.scheDatetimeSche = reData.datetimeSche;
-          productInfo.value.scheDatetimeScheStr = reData.datetimeScheStr;
-          productInfo.value.scheQty = reData.scheQty.toString();
-          productInfo.value.moCompletedQty = reData.completedQty.toString();
-          mainform.value.serialNumber = '';
+          if (scanType.value === 'SCANEXT') {
+            productInfo.value.scheCode = reData.scheCode;
+            productInfo.value.moCode = reData.moCode;
+            productInfo.value.moMitemCode = reData.mitemCode;
+            productInfo.value.moMitemName = reData.mitemName;
+            productInfo.value.scheDatetimeSche = reData.datetimeSche;
+            productInfo.value.scheDatetimeScheStr = reData.datetimeScheStr;
+            productInfo.value.scheQty = reData.scheQty.toString();
+            productInfo.value.moCompletedQty = reData.completedQty.toString();
+            productInfo.value.moScheId = reData.moScheId;
+            writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.scanMessage); // 扫描成功
+          }
+
           writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
-          writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.scanMessage); // 扫描成功
+
           if (reData.keyPartSumList.length > 0) {
             productInfo.value.header = `${t('wipCollect.keypartInfo')}:${productInfo.value.moMitemCode}(${
               productInfo.value.moMitemName
             })`;
             keyPartSumList.value = reData.keyPartSumList;
+            resetKeypartCode();
+          } else {
+            resetBarcode();
           }
-          resetHandle();
+
+          if (reData.isCommit) {
+            resetHandle();
+          }
         } else {
           writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
+          if (scanType.value === 'SCANEXT') {
+            resetBarcode();
+          }
+          if (reData.isCommit) {
+            resetKeypartCode();
+          }
           // writeScanInfoError(reData.serialNumber, reData.qty, reData.scanMessage); // 扫描失败
-          resetHandle();
         }
       })
       .catch((message) => {
@@ -296,7 +324,16 @@ const serialNumberEnter = async (value) => {
 // 重置
 const resetHandle = () => {
   mainform.value.serialNumber = '';
+  mainform.value.keypartCode = '';
   keyPartSumList.value = [];
+};
+
+const resetBarcode = () => {
+  mainform.value.serialNumber = '';
+};
+
+const resetKeypartCode = () => {
+  mainform.value.keypartCode = '';
 };
 
 const writeScanInfoSuccess = async (lbNo, lbQty, lbError) => {
@@ -320,15 +357,17 @@ const writeScanInfoSuccess = async (lbNo, lbQty, lbError) => {
 // };
 
 // 校验条码是否扫重复
-const checkBarcodeRepeat = async (lbNo) => {
+const checkBarcodeRepeat = (lbNo) => {
   let isSuccess = true;
-  const barcodeInfo = _.find(
-    scanInfoList.value,
-    (item: scanInfoModel) => item.status === 'OK' && item.serialNumber === lbNo,
-  );
-  if (barcodeInfo) {
-    isSuccess = false;
-    writeMessageListError(`该条码(${lbNo})已扫描,请勿重复扫描`, dayjs().format('YYYY-MM-DD HH:mm:ss'));
+  if (scanType.value === 'SCANEXT') {
+    const barcodeInfo = _.find(
+      scanInfoList.value,
+      (item: scanInfoModel) => item.status === 'OK' && item.serialNumber === lbNo,
+    );
+    if (barcodeInfo) {
+      isSuccess = false;
+      writeMessageListError(`该条码(${lbNo})已扫描,请勿重复扫描`, dayjs().format('YYYY-MM-DD HH:mm:ss'));
+    }
   }
   return isSuccess;
 };
@@ -363,7 +402,44 @@ const writeMessageListError = async (content, datatime) => {
 //   return themes[value] || themes.default;
 // };
 
+const getQueryString = (paramName: string) => {
+  const queryString = window.location.href.split('?')[1];
+  if (queryString) {
+    const paramsArray = queryString.split('&');
+    const paramsNameList = [{ name: '', value: '' }];
+    paramsArray.forEach((item: string) => {
+      const obj = { name: '', value: '' };
+      obj.name = item.split('=')[0].toString();
+      obj.value = item.split('=')[1].toString();
+      paramsNameList.push(obj);
+    });
+    const objInfo = _.find(paramsNameList, (item: any) => {
+      return item.name === paramName;
+    }) as any;
+    return objInfo?.value;
+  }
+  return '';
+};
+
 onMounted(() => {
+  // 底座完成后从底座获取
+  const serialNumber = getQueryString('serialNumber');
+  const workCenterId = getQueryString('workCenterId');
+  const workStationId = getQueryString('workStationId');
+  const processId = getQueryString('processId');
+  if (serialNumber) {
+    mainform.value.serialNumber = serialNumber;
+  }
+  if (workCenterId) {
+    mainform.value.workCenterId = workCenterId;
+  }
+  if (workStationId) {
+    mainform.value.workStationId = workStationId;
+  }
+  if (processId) {
+    mainform.value.processId = processId;
+  }
+
   Init();
 });
 </script>

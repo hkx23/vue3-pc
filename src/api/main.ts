@@ -1583,7 +1583,7 @@ export interface ProcessBusinessLibDtl {
 }
 
 /** 工序业务执行单元库头表 */
-export interface ProcessBusinessLib {
+export type ProcessBusinessLib = {
   id?: string;
   /**
    * 创建时间
@@ -1611,6 +1611,19 @@ export interface ProcessBusinessLib {
   processId?: string;
   /** 条码类型 */
   barcodeCategory?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListProcessBusinessLib {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProcessBusinessLib[] | null;
 }
 
 /** 通用响应类 */
@@ -2535,6 +2548,7 @@ export type ShowModuleVO = {
   /** 模块包标识 */
   modulePackageIdentify?: string;
   parentModuleId?: string;
+  grandpaId?: string;
   /** 所在一级菜单名称 */
   grandpaName?: string;
   /** 模块访问地址 */
@@ -2867,13 +2881,13 @@ export interface MitemVO {
   isBatchNo?: number;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isBatchName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isProductName?: string;
   stateName?: string;
   isState?: boolean;
+  isInProcessName?: string;
+  isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -6424,6 +6438,20 @@ export const api = {
       }),
   },
   processBusinessLib: {
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name List
+     * @summary 根据头表明细
+     * @request POST:/processBusinessLib/list
+     * @secure
+     */
+    list: () =>
+      http.request<ResultListProcessBusinessLib['data']>(`/api/main/processBusinessLib/list`, {
+        method: 'POST',
+      }),
+
     /**
      * No description
      *
