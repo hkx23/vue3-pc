@@ -1,0 +1,14 @@
+{
+  "productPacking": {
+    "scanType": "扫描模式",
+    "normal": "常规",
+    "scanLabel": "扫描标签",
+    "scanSuccess": "扫描成功",
+    "scanFailed": "扫描失败",
+    "productLabel": "产品条码",
+    "packingList": "装箱清单",
+    "plsScanPackLabel": "请先扫描要装箱的标签",
+    "plsScanLabel": "请先扫描需要装箱的标签",
+    "plsScanDelLabel": "请扫描需要删除装箱清单内的标签"
+  }
+}
