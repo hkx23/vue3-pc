@@ -2,7 +2,7 @@
   <div class="main-page">
     <!-- ################# 工单 表格数据 ###################### -->
     <div class="main-page-content">
-      <t-tabs v-model="tagValue">
+      <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="包装标签打印" :destroy-on-hide="false">
           <!-- 查询组件  -->
           <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
@@ -20,10 +20,9 @@
             </cmp-table>
           </t-col>
           <t-checkbox v-model="queryCondition.onlyDisplayCreated">仅显示已生成</t-checkbox>
-          <!-- ################# 条码分类 表格数据 ###################### -->
           <div class="main-page-content">
             <t-tabs v-model="tabValue" @change="handleTabClick">
-              <!-- $$$$$$$$$$$    栈分组  $$$$$$$$$$$$$$-->
+              <!-- $$$$$$$$$$$    包装页签  $$$$$$$$$$$$$$-->
               <t-tab-panel
                 v-for="(tab, index) in tabList"
                 :key="index"
@@ -57,7 +56,7 @@
         </t-tab-panel>
         <t-tab-panel :value="1" label="包装标签管理" :destroy-on-hide="false">
           <!-- 查询组件  -->
-          <cmp-query :opts="pkgBarcodeManageOp" label-width="100" @submit="conditionEnter" />
+          <cmp-query :opts="pkgBarcodeManageOp" label-width="100" @submit="managePageSearchClick" />
           <t-row>
             <t-button>生成</t-button>
             <t-button theme="default">打印</t-button>
@@ -68,14 +67,18 @@
               v-model:pagination="pageUI"
               row-key="id"
               :loading="loading"
-              :table-column="groupColumns"
-              :table-data="moDataList.list"
-              :total="bracodeMannageTotal"
-              @row-click="onRowClick"
+              :table-column="pkgBarcodeManageColumns"
+              :table-data="pkgManageDataList.list"
+              :total="pkgManageTabTotal"
               @refresh="onRefresh"
             >
             </cmp-table>
           </t-col>
+          <template #op="slotProps">
+            <t-space>
+              <t-link variant="text" theme="primary" name="edit" @click="openLog(slotProps)">日志</t-link>
+            </t-space>
+          </template>
         </t-tab-panel>
       </t-tabs>
     </div>
@@ -95,18 +98,15 @@ import { usePage } from '@/hooks/modules/page';
 
 const { loading, setLoading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
-const { pageUI: materialPage } = usePage();
-// $处理组 表格数据
+// $打印上 表格数据
 const moDataList = reactive({ list: [] });
 const moTabTotal = ref(0);
-const barcodeTotal = ref(null);
-const bracodeMannageTotal = ref(null);
+// $管理上 表格数据
+const pkgManageDataList = reactive({ list: [] });
+const pkgManageTabTotal = ref(0);
+const barcodeTotal = ref(0);
 const dataSummary = ref(null);
-// $人员 表格数据
-const materialTabDataList = reactive({ list: [] });
-const materialTotal = ref(null);
-// 计划开始时间初始化
-// 上方查询初始化
+// 打印上方查询初始化
 const queryCondition = ref({
   moId: '',
   mitemId: '',
@@ -119,21 +119,34 @@ const queryCondition = ref({
   pageNum: 1,
   pageSize: 10,
 });
-// 上下方查询初始化
+// 管理上方查询初始化
+const manageQueryCondition = ref({
+  moId: '',
+  mitemId: '',
+  barcodeStatus: '',
+  barcodeType: '',
+  datetimePlanStart: '',
+  timeCreatedStart: '',
+  datetimePlanEnd: '',
+  timeCreatedEnd: '',
+  workshopId: '',
+  workCenterId: '',
+  pkgBarcode: '',
+  printTmplId: '',
+  pageNum: 1,
+  pageSize: 10,
+});
+// 包装规则查询初始化
 // tab 表格?
 const tabValue = ref(0);
 const tagValue = ref(0);
 
-// dialog 弹框数据
-// 关联物料数据
-const relatedMaterials = ref({
-  barcodeRuleId: '', // 上表格ID
-  mitemId: '', // 物料 ID
-  mitemCategoryId: '', // 物料分类 ID
-});
 // # 条码规则刷新按钮
 const onRefresh = async () => {
-  await onBarcodeRuleTabData(); // 获取 条码规则表格 数据
+  await fetchMoTable(); // 获取 条码规则表格 数据
+};
+const openLog = (value: any) => {
+  console.log(value);
 };
 
 // #### 条码规则 表头
@@ -237,7 +250,112 @@ const barcodeColumns: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
 ];
-// 点击查询按钮
+const pkgBarcodeManageColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'row-select',
+    type: 'multiple',
+    width: 46,
+  },
+  {
+    colKey: 'pkgBarcode',
+    title: '条码',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'pkgBarcodeType',
+    title: '条码类型',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'status',
+    title: '条码状态',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'datetimePlanStart',
+    title: '计划生产日期',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'workshopName',
+    title: '车间',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'workcenterName',
+    title: '工作中心',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'moCode',
+    title: '工单',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'mitemCode',
+    title: '物料编码',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'mitemName',
+    title: '物料名称',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'qty',
+    title: '数量',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'uom',
+    title: '单位',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'subPkgBarcodeType',
+    title: '子条码类型',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'creator',
+    title: '生成人',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '生成时间',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'op',
+    title: '日志',
+    align: 'center',
+    width: '130',
+  },
+];
+// 打印界面点击查询按钮
+const switchTab = (selectedTabIndex: any) => {
+  if (selectedTabIndex === 1) {
+    fetchBracodeManageTable();
+  } else {
+    fetchMoTable();
+  }
+};
+// 打印界面点击查询按钮
 const conditionEnter = (data: any) => {
   queryCondition.value = data;
   const [datetimePlanStart, datetimePlanEnd] = data.datetimePlanRange;
@@ -245,16 +363,43 @@ const conditionEnter = (data: any) => {
   queryCondition.value.datetimePlanEnd = datetimePlanEnd;
   queryCondition.value.pageNum = pageUI.value.page;
   queryCondition.value.pageSize = pageUI.value.rows;
-  fetchTable();
+  fetchMoTable();
+};
+// 管理界面点击查询按钮
+const managePageSearchClick = (data: any) => {
+  manageQueryCondition.value = data;
+  const [datetimePlanStart, datetimePlanEnd] = data.datetimePlanRange;
+  const [timeCreatedStart, timeCreatedEnd] = data.timeCreatedRange;
+  manageQueryCondition.value.datetimePlanStart = datetimePlanStart;
+  manageQueryCondition.value.datetimePlanEnd = datetimePlanEnd;
+  manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
+  manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
+  manageQueryCondition.value.pageNum = pageUI.value.page;
+  manageQueryCondition.value.pageSize = pageUI.value.rows;
+  fetchBracodeManageTable();
 };
 // 加载工单数据表格
-const fetchTable = async () => {
+const fetchMoTable = async () => {
   setLoading(true);
   try {
     const data = (await api.barcodePkg.getMoPkgList(queryCondition.value)) as any;
     const { list } = data;
     moDataList.list = list;
     moTabTotal.value = data.total;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoading(false);
+  }
+};
+// 加载条码管理数据表格
+const fetchBracodeManageTable = async () => {
+  setLoading(true);
+  try {
+    const data = (await api.barcodePkg.getMoPkgList(manageQueryCondition.value)) as any;
+    const { list } = data;
+    pkgManageDataList.list = list;
+    pkgManageTabTotal.value = data.total;
   } catch (e) {
     console.log(e);
   } finally {
@@ -373,7 +518,7 @@ const barcodeOpts = computed(() => {
 // 查询组件
 const pkgBarcodeManageOp = computed(() => {
   return {
-    datetimePlanStart: {
+    datetimePlanRange: {
       label: '计划生产日期',
       comp: 't-date-range-picker',
       defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
@@ -408,7 +553,7 @@ const pkgBarcodeManageOp = computed(() => {
         showTitle: false,
       },
     },
-    datetimePStart: {
+    timeCreatedRange: {
       label: '生产日期',
       comp: 't-date-range-picker',
       defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
@@ -469,42 +614,15 @@ apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' }).then((data) =
 });
 // ################ 初始渲染
 onMounted(async () => {
-  await onBarcodeRuleTabData(); // 获取 条码规则表格 数据
-  await onMaterialTabData(); // 获取 物料编码 表格数据
+  await fetchMoTable(); // 获取 物料编码 表格数据
 });
-
-// #获取 条码规则 表格数据
-const onBarcodeRuleTabData = async () => {
-  const res = await api.barcodeRuleInMitem.getBarcodeRuleList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-  });
-  moDataList.list = res.list;
-  moTabTotal.value = res.total;
-};
-
-// # 获取 物料分类 表格数据
-const onMaterialTabData = async () => {
-  const res = await api.barcodeRuleInMitem.getMitemList({
-    pageNum: materialPage.value.page,
-    pageSize: materialPage.value.rows,
-    ruleId: personID.value,
-  });
-  materialTabDataList.list = res.list;
-  materialTotal.value = res.total;
-};
 
 const handleTabClick = (selectedTabIndex: any) => {
   const selectedTab = tabList.value[selectedTabIndex];
   console.log(selectedTab);
 };
-// #条码规则 表格 行点击事件
-const personID = ref(null); // 点击表格行 获取人员id
-const onRowClick = async ({ row }) => {
-  personID.value = null; // 点击前先清空
-  personID.value = row.id;
-  relatedMaterials.value.barcodeRuleId = row.id;
-  await onMaterialTabData(); // 获取 物料分类 数据
+const onRowClick = () => {
+  handleTabClick(0);
 };
 </script>
 

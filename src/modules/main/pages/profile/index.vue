@@ -30,6 +30,7 @@
               style="width: 70%"
               :data="treeData"
               hover
+              line
               activable
               :expand-level="2"
               :height="600"
@@ -44,6 +45,12 @@
               }"
               @click="treeClick"
             >
+              <template #icon="{ node }">
+                <icon v-if="node.getChildren() && !node.expanded" name="caret-right" />
+                <icon v-else-if="node.getChildren() && node.expanded && node.loading" name="loading" />
+                <icon v-else-if="node.getChildren() && node.expanded" name="caret-down" />
+                <icon v-else-if="node.data.attribute == 2" name="attach" />
+              </template>
             </t-tree>
           </t-col>
           <!-- 右侧盒子 -->
@@ -325,6 +332,7 @@ const getProfileCategory = (value: any) => {
   }
   return '';
 };
+
 const filterTreeNodes = (nodes) => {
   // 递归过滤树节点
   return nodes.filter((node) => {
