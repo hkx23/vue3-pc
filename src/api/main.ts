@@ -1378,6 +1378,8 @@ export interface RoleVO {
   plantName?: string;
   /** 组织编码 */
   plantCode?: string;
+  /** 企业组织名称 */
+  enPlantName?: string;
 }
 
 /** 通用响应类 */
@@ -2863,15 +2865,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isProductName?: string;
-  isRawName?: string;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isState?: boolean;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isProductName?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3038,8 +3040,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
