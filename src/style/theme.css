@@ -123,8 +123,8 @@
   --td-mask-disabled: rgb(255 255 255 / 60%);
 
   /* 字体配置 */
-  --td-font-family: pf, pingfang sc, arial regular;
-  --td-font-family-medium: pf, pingfang sc, arial medium;
+  --td-font-family: pingfang sc, microsoft yahei, arial regular;
+  --td-font-family-medium: pingfang sc, microsoft yahei, arial medium;
   --td-font-size-link-small: 12px;
   --td-font-size-link-medium: 14px;
   --td-font-size-link-large: 16px;
