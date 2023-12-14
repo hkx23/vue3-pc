@@ -131,7 +131,7 @@
         </t-tab-panel>
       </t-tabs>
     </div>
-    <!-- dialog 弹窗 -->
+    <!-- % dialog 弹窗 -->
     <t-dialog v-model:visible="formVisible" :confirm-btn="buttonSwitch" :header="diaLogTitle" width="40%">
       <t-form>
         <t-form-item v-if="reprintVoidSwitch" label-width="50px" label="补打原因" name="incidentName">
@@ -156,7 +156,7 @@
         </t-form-item>
       </t-form>
     </t-dialog>
-
+    <!---%日志 dialog 弹窗  -->>
     <t-dialog v-model:visible="formVisible" :confirm-btn="buttonSwitch" :header="diaLogTitle" width="40%">
       <t-form>
         <t-form-item v-if="reprintVoidSwitch" label-width="50px" label="补打原因" name="incidentName">

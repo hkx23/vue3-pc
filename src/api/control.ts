@@ -830,6 +830,10 @@ export interface LabelSearch {
   moScheduleId?: string;
   /** 是否仅显示已生成 */
   isCreated?: boolean;
+  /** 条码状态 */
+  barcodeStatus?: string;
+  /** 条码 */
+  barcode?: string;
   /**
    * 生成开始日期
    * @format date-time
@@ -840,10 +844,13 @@ export interface LabelSearch {
    * @format date-time
    */
   createDateEnd?: string;
-  /** 条码状态 */
-  barcodeStatus?: string;
-  /** 条码 */
-  barcode?: string;
+  /** 条码规则表达式 */
+  ruleExpression?: string;
+  /**
+   * 生成数量
+   * @format int32
+   */
+  createNum?: number;
   moId?: string;
 }
 
@@ -1038,7 +1045,6 @@ export interface BarcodeWipCollectVO {
   uom?: string;
   uomName?: string;
   scanType?: string;
-  keypartCode?: string;
   /** 排产工单 */
   scheCode?: string;
   /** 工单排产状态 */
@@ -1066,14 +1072,10 @@ export interface BarcodeWipCollectVO {
   processCode?: string;
   /** 工序名称 */
   processName?: string;
-  /** 下个工序ID */
-  nextProcessId?: string;
   /** 下个工序代码 */
   nextProcessCode?: string;
   /** 下个工序名称 */
   nextProcessName?: string;
-  /** 下个工序类型 */
-  nextProcessType?: string;
   /** 扫描信息 */
   scanMessage?: string;
   /** 工作中心代码 */
@@ -1086,17 +1088,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
+  workshopCode?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
+  workshopId?: string;
   stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  isState?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1275,16 +1277,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  defectCodeStr?: string;
-  workshopId?: string;
+  workshopCode?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
+  workshopId?: string;
   stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -2541,18 +2543,9 @@ export const api = {
      * @request POST:/label/generateBarcode
      * @secure
      */
-    generateBarcode: (
-      query: {
-        workcenterId: string;
-        ruleExpression: string;
-        /** @format int32 */
-        num: number;
-      },
-      data: string,
-    ) =>
+    generateBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/control/label/generateBarcode`, {
         method: 'POST',
-        params: query,
         body: data as any,
       }),
 
