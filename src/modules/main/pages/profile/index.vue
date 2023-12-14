@@ -292,9 +292,8 @@ const onEditRowClick = (value: any) => {
   formTitle.value = '编辑';
   formRef.value.formData = JSON.parse(JSON.stringify(value.row));
   formRef.value.formData.id = value.row.id;
-  formRef.value.formData.isState = value.row.state === 1;
-  formRef.value.formData.enableLocation = value.row.isEnableLocation === 1;
-  formRef.value.formData.enableUpload = value.row.isEnableUpload === 1;
+  console.log(value.row.valueType);
+  formRef.value.formData.valueType = value.row.valueType;
   formRef.value.formData.operateTpye = 'edit';
   formVisible.value = true;
   onGetTabData();

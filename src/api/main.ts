@@ -531,7 +531,7 @@ export interface WorkcenterSearch {
   category?: number;
   /** 工作中心编码名称模糊查询 */
   workcenterword?: string;
-  workshopID?: string;
+  workshopId?: string;
   /** 工作中心-状态 */
   state?: number[];
   /** 排序字段 */
@@ -629,7 +629,7 @@ export interface WorkcenterVO {
   wcObjectType?: number;
   /** 工作中心类型 */
   wcType?: string;
-  workshopID?: string;
+  workshopId?: string;
   /** 所属车间编码 */
   workshopCode?: string;
   /** 所属车间名称 */
@@ -1492,6 +1492,7 @@ export interface ProfileValueSearchVO {
   valueRange?: string;
   /** 模块名称 */
   moduleName?: string;
+  profileId?: string;
   /** 配置项维度 */
   profileCategory?: string;
   /** 配置项维度值id */
@@ -2464,6 +2465,8 @@ export interface Module {
   moduleVersion?: number;
   /** 模块包标识 */
   modulePackageIdentify?: string;
+  /** 模块包名称 */
+  packageName?: string;
 }
 
 export interface ModuleSearch {
@@ -2553,6 +2556,8 @@ export type ShowModuleVO = {
   grandpaName?: string;
   /** 模块访问地址 */
   behaviorPath?: string;
+  /** 模块包名称 */
+  packageName?: string;
   /**
    * 是否PC端
    * @format int32
@@ -2880,14 +2885,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   isState?: boolean;
-  isProductName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isRawName?: string;
+  stateName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  stateName?: string;
+  isProductName?: string;
+  isRawName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3054,8 +3059,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4383,6 +4388,8 @@ export type ModulePermissionDTO = {
   moduleVersion?: number;
   /** 模块包标识 */
   modulePackageIdentify?: string;
+  /** 模块包名称 */
+  packageName?: string;
   permissionId?: string;
   /** 权限名称 */
   permissionName?: string;
@@ -4410,14 +4417,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
+  /** 是否可用 */
+  enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否可用 */
-  enabled?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -4489,6 +4496,7 @@ export interface ResultListOrgLevelTreeVO {
 /** 显示组织层级实体 */
 export type OrgTreeVO = {
   id?: string;
+  oid?: string;
   /** 组织层级编码 */
   levelCode?: string;
   /** 组织层级名称 */
@@ -7099,6 +7107,36 @@ export const api = {
       http.request<ResultPagingDataShowModuleVO['data']>(`/api/main/module/getList`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name DowmloadFile
+     * @summary 菜单文件下载
+     * @request POST:/module/dowmloadFile
+     * @secure
+     */
+    dowmloadFile: (query: { fileName: string; path: string }) =>
+      http.request<ResultResponseEntityString['data']>(`/api/main/module/dowmloadFile`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name DeleteFile
+     * @summary 删除菜单上传文件
+     * @request POST:/module/deleteFile
+     * @secure
+     */
+    deleteFile: (query: { fileName: string; path: string }) =>
+      http.request<ResultResponseEntityString['data']>(`/api/main/module/deleteFile`, {
+        method: 'POST',
+        params: query,
       }),
 
     /**

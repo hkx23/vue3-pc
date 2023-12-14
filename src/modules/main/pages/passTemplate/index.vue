@@ -94,7 +94,7 @@
                 </template>
               </t-step-item>
             </t-steps>
-            <div>
+            <div style="margin-top: 24px; text-align: center">
               <t-button @click="onClickSaveData(item.data?.detailList)">保存</t-button>
               <t-button
                 v-if="item.data?.detailList.length > 0"

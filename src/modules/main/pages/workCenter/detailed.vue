@@ -15,9 +15,9 @@
             <t-form-item label="工作中心编号" name="wcCode">
               <t-input v-model="formData.wcCode" :disabled="props.disabledWord" />
             </t-form-item>
-            <t-form-item label="所属车间" name="workshopID">
+            <t-form-item label="所属车间" name="workshopId">
               <bcmp-select-business
-                v-model="formData.workshopID"
+                v-model="formData.workshopId"
                 type="workshop"
                 label-field="orgName"
                 :show-title="false"
@@ -195,7 +195,7 @@ const formData = reactive({
   wcCode: '', // 工作中心编号
   wcName: '', // 工作中心名称
   wcLocation: '', // 地点
-  workshopID: '', // 所属车间
+  workshopId: '', // 所属车间
   wcOwner: '', // 负责人
   parentWcId: '', // 父级
   checked: true, // 多选控制 默认为选中
@@ -287,7 +287,7 @@ const onWorkCenterAdd = async () => {
     const list = await api.workcenter.add({
       wcCode: formData.wcCode,
       wcName: formData.wcName,
-      workshopId: formData.workshopID,
+      workshopId: formData.workshopId,
       parentWcId: formData.parentWcId,
       wcLocation: formData.wcLocation,
       wcObjectId: formData.wcObjectId,
@@ -372,7 +372,7 @@ const clearFrom = () => {
   formData.wcCode = ''; // 工作中心编号
   formData.wcName = ''; // 工作中心名称
   formData.wcLocation = ''; // 地点
-  formData.workshopID = ''; // 所属车间
+  formData.workshopId = ''; // 所属车间
   formData.wcOwner = ''; // 负责人
   formData.parentWcId = ''; // 父级
   formData.checked = true; // 多选
@@ -392,7 +392,7 @@ const rules: FormRules<Data> = {
       trigger: 'blur',
     },
   ],
-  workshopID: [
+  workshopId: [
     {
       required: true,
       type: 'error',

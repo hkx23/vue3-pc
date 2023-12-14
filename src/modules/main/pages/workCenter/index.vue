@@ -516,7 +516,7 @@ const onInput = async (data: any) => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     category: arr.value,
-    workshopID: data.workshop,
+    workshopId: data.workshop,
     workcenterword: data.soltDemo,
     state: result,
   });
@@ -541,7 +541,7 @@ const onFetchData = async () => {
       pageNum: page.value.current,
       pageSize: page.value.pageSize,
       category: arr.value,
-      workshopID: workState.value.shop,
+      workshopId: workState.value.shop,
       // eslint-disable-next-line no-bitwise
       workcenterword: selectValue.value,
       state: select.value.stateVisible,

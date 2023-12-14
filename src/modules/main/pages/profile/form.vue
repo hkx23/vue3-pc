@@ -5,7 +5,7 @@
     :data="formData"
     :show-cancel="true"
     :show-error-message="true"
-    @submit="submit"
+    @submit="onAnomalyTypeSubmit"
   >
     <t-space direction="vertical">
       <t-form-item label="功能名称" required-mark>
@@ -130,6 +130,12 @@ export default {
     onMounted(() => {
       console.log('123123');
     });
+    // 表单提交事件
+    const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
+      if (context.validateResult === true) {
+        submit();
+      }
+    };
     const submit = async () => {
       try {
         formData.value.state = formData.value.isState === true ? 1 : 0;
@@ -157,14 +163,14 @@ export default {
         {
           required: true,
           type: 'error',
-          trigger: 'blur',
+          trigger: 'change',
         },
       ],
       profileValue: [
         {
           required: true,
           type: 'error',
-          trigger: 'blur',
+          trigger: 'change',
         },
       ],
       profileCategoryValue: [
@@ -172,7 +178,6 @@ export default {
           required: true,
           type: 'error',
           message: '配置项维度值必填',
-          trigger: 'blur',
         },
       ],
     };
@@ -180,6 +185,9 @@ export default {
       formData.value.operateTpye = 'add';
       formData.value.profileId = value.value.nodeId;
       formData.value.moduleName = value.value.attribute === 2 ? value.value.parentModuleName : value.value.moduleName;
+      formData.value.profileCategory = '';
+      formData.value.profileCategoryValue = '';
+      formData.value.profileValue = '';
       formData.value.isState = true;
       onGetProfileData();
     };
@@ -194,6 +202,7 @@ export default {
     return {
       init,
       submit,
+      onAnomalyTypeSubmit,
       formData,
       profileValueOption,
       profileCategoryOption,
