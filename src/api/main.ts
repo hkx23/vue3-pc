@@ -531,7 +531,7 @@ export interface WorkcenterSearch {
   category?: number;
   /** 工作中心编码名称模糊查询 */
   workcenterword?: string;
-  workshopID?: string;
+  workshopId?: string;
   /** 工作中心-状态 */
   state?: number[];
   /** 排序字段 */
@@ -629,7 +629,7 @@ export interface WorkcenterVO {
   wcObjectType?: number;
   /** 工作中心类型 */
   wcType?: string;
-  workshopID?: string;
+  workshopId?: string;
   /** 所属车间编码 */
   workshopCode?: string;
   /** 所属车间名称 */
@@ -1492,6 +1492,7 @@ export interface ProfileValueSearchVO {
   valueRange?: string;
   /** 模块名称 */
   moduleName?: string;
+  profileId?: string;
   /** 配置项维度 */
   profileCategory?: string;
   /** 配置项维度值id */
@@ -1692,8 +1693,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2464,6 +2465,8 @@ export interface Module {
   moduleVersion?: number;
   /** 模块包标识 */
   modulePackageIdentify?: string;
+  /** 模块包名称 */
+  packageName?: string;
 }
 
 export interface ModuleSearch {
@@ -2879,15 +2882,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
   isState?: boolean;
-  isProductName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
+  isRawChecked?: boolean;
+  isBatchName?: string;
   isRawName?: string;
+  isProductName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  stateName?: string;
 }
 
 /** 响应数据 */
@@ -3401,8 +3404,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4383,6 +4386,8 @@ export type ModulePermissionDTO = {
   moduleVersion?: number;
   /** 模块包标识 */
   modulePackageIdentify?: string;
+  /** 模块包名称 */
+  packageName?: string;
   permissionId?: string;
   /** 权限名称 */
   permissionName?: string;
@@ -4410,14 +4415,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
+  /** 是否可用 */
+  enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否可用 */
-  enabled?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -4489,6 +4494,7 @@ export interface ResultListOrgLevelTreeVO {
 /** 显示组织层级实体 */
 export type OrgTreeVO = {
   id?: string;
+  oid?: string;
   /** 组织层级编码 */
   levelCode?: string;
   /** 组织层级名称 */
