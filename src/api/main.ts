@@ -531,7 +531,7 @@ export interface WorkcenterSearch {
   category?: number;
   /** 工作中心编码名称模糊查询 */
   workcenterword?: string;
-  workshopID?: string;
+  workshopId?: string;
   /** 工作中心-状态 */
   state?: number[];
   /** 排序字段 */
@@ -629,7 +629,7 @@ export interface WorkcenterVO {
   wcObjectType?: number;
   /** 工作中心类型 */
   wcType?: string;
-  workshopID?: string;
+  workshopId?: string;
   /** 所属车间编码 */
   workshopCode?: string;
   /** 所属车间名称 */
@@ -1492,6 +1492,7 @@ export interface ProfileValueSearchVO {
   valueRange?: string;
   /** 模块名称 */
   moduleName?: string;
+  profileId?: string;
   /** 配置项维度 */
   profileCategory?: string;
   /** 配置项维度值id */
@@ -2880,14 +2881,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   isState?: boolean;
-  isProductName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isRawName?: string;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   stateName?: string;
+  isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -3054,8 +3055,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4410,14 +4411,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */

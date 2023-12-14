@@ -438,6 +438,7 @@ const formDataTwo = ref({
 
 // 文件上传事件
 const beforeUpload = (file: any) => {
+  console.log('🚀 ~ file: index.vue:441 ~ beforeUpload ~ file:', file);
   if (file.size > 5 * 1024 * 1024) {
     MessagePlugin.warning('上传的图片不能大于5M');
     return false;
@@ -976,7 +977,6 @@ const onAddThreeModule = async () => {
       data.append('path', formDataTwo.value.behaviorPath);
       data.append('file', files?.value[0]?.raw);
       await http.upload('/api/main/module/uploadFile', data);
-      MessagePlugin.success('新增成功');
     }
     MessagePlugin.success('编辑成功');
   } else {
@@ -999,8 +999,8 @@ const onAddThreeModule = async () => {
       data.append('path', formDataTwo.value.behaviorPath);
       data.append('file', files?.value[0]?.raw);
       await http.upload('/api/main/module/uploadFile', data);
-      MessagePlugin.success('新增成功');
     }
+    MessagePlugin.success('新增成功');
   }
 };
 
