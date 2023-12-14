@@ -157,14 +157,14 @@ export default {
         {
           required: true,
           type: 'error',
-          trigger: 'blur',
+          trigger: 'change',
         },
       ],
       profileValue: [
         {
           required: true,
           type: 'error',
-          trigger: 'blur',
+          trigger: 'change',
         },
       ],
       profileCategoryValue: [
@@ -172,7 +172,6 @@ export default {
           required: true,
           type: 'error',
           message: '配置项维度值必填',
-          trigger: 'blur',
         },
       ],
     };
