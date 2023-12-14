@@ -183,6 +183,18 @@ const parentOrgLevels = computed<string[]>(() => {
   return levels;
 });
 
+// 获取当前组织的工厂id，如果大于工厂层级则为0
+const currOrgId = computed<string>(() => {
+  if (currActiveData.value.levelCode === 'PLANT') return currActiveData.value.id;
+
+  let parentOrg = flattenOrgObj[currActiveData.value.parentOrgId];
+  while (parentOrg) {
+    if (parentOrg.levelCode === 'PLANT') return parentOrg.id;
+    parentOrg = flattenOrgObj[parentOrg.parentOrgId];
+  }
+  return '0';
+});
+
 const fetchOrgLevelDic = async () => {
   orgLevelObject = (await api.param.getListByGroupCode({ parmGroupCode: 'ORG_LEVEL_CODE' })).reduce((acc, item) => {
     (acc as any)[item.value] = item.label;
@@ -202,6 +214,7 @@ const isEdit = ref(false);
 const onClickAdd = () => {
   const { reset } = formRef.value;
   isEdit.value = false;
+  currActiveData.value.oid = currOrgId.value;
   reset(
     isEdit.value,
     currActiveData.value,

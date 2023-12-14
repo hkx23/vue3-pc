@@ -1693,8 +1693,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2465,6 +2465,8 @@ export interface Module {
   moduleVersion?: number;
   /** 模块包标识 */
   modulePackageIdentify?: string;
+  /** 模块包名称 */
+  packageName?: string;
 }
 
 export interface ModuleSearch {
@@ -2880,6 +2882,7 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
   isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
@@ -3402,8 +3405,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4384,6 +4387,8 @@ export type ModulePermissionDTO = {
   moduleVersion?: number;
   /** 模块包标识 */
   modulePackageIdentify?: string;
+  /** 模块包名称 */
+  packageName?: string;
   permissionId?: string;
   /** 权限名称 */
   permissionName?: string;
@@ -4490,6 +4495,7 @@ export interface ResultListOrgLevelTreeVO {
 /** 显示组织层级实体 */
 export type OrgTreeVO = {
   id?: string;
+  oid?: string;
   /** 组织层级编码 */
   levelCode?: string;
   /** 组织层级名称 */
