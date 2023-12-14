@@ -12,50 +12,47 @@
               row-key="id"
               :table-column="groupColumns"
               :table-data="moDataList.list"
-              :total="ruleTabTotal"
+              :loading="loading"
+              :total="moTabTotal"
               @row-click="onRowClick"
               @refresh="onRefresh"
             >
-              <template #stateSwitch="{ row }">
-                <t-switch
-                  :custom-value="[1, 0]"
-                  :value="row.state"
-                  :default-value="row.state"
-                  size="large"
-                  @change="(value) => onSwitchChange(row, value)"
-                ></t-switch>
-              </template>
             </cmp-table>
           </t-col>
           <t-checkbox v-model="queryCondition.onlyDisplayCreated">仅显示已生成</t-checkbox>
           <!-- ################# 条码分类 表格数据 ###################### -->
           <div class="main-page-content">
-            <t-tabs v-model="tabValue" @change="tabChange">
+            <t-tabs v-model="tabValue" @change="handleTabClick">
               <!-- $$$$$$$$$$$    栈分组  $$$$$$$$$$$$$$-->
-              <t-tab-panel :value="0" :label="labelOp" :destroy-on-hide="false">
-                <template #panel>
-                  <t-row style="margin-top: 10px">
-                    <t-space>
-                      <span>计划打印数/已生成数/已打印数</span>
-                      <span>{{ dataSummary }}</span>
-                    </t-space>
-                    <t-button>生成</t-button>
-                    <t-button theme="default">打印</t-button>
-                  </t-row>
-                  <!-- 查询组件  -->
-                  <cmp-query :opts="barcodeOpts" label-width="100" @submit="conditionEnter" />
-                  <cmp-table
-                    v-model:pagination="pageUI"
-                    row-key="id"
-                    :table-column="barcodeColumns"
-                    :table-data="tableData.list"
-                    :total="totalText"
-                    @refresh="onLeftFetchData"
-                  >
-                  </cmp-table>
-                </template>
+              <t-tab-panel
+                v-for="(tab, index) in tabList"
+                :key="index"
+                :value="index"
+                :label="tab.label"
+                :destroy-on-hide="false"
+              >
               </t-tab-panel>
             </t-tabs>
+            <t-row style="margin-top: 10px">
+              <t-space>
+                <span>计划打印数/已生成数/已打印数</span>
+                <span>{{ dataSummary }}</span>
+              </t-space>
+              <t-button>生成</t-button>
+              <t-button theme="default">打印</t-button>
+            </t-row>
+            <!-- 查询组件  -->
+            <cmp-query :opts="barcodeOpts" label-width="100" @submit="conditionEnter" />
+            <cmp-table
+              v-model:pagination="pageUI"
+              row-key="id"
+              :loading="loading"
+              :table-column="barcodeColumns"
+              :table-data="moDataList.list"
+              :total="barcodeTotal"
+              @refresh="onRefresh"
+            >
+            </cmp-table>
           </div>
         </t-tab-panel>
         <t-tab-panel :value="1" label="包装标签管理" :destroy-on-hide="false">
@@ -70,21 +67,13 @@
             <cmp-table
               v-model:pagination="pageUI"
               row-key="id"
+              :loading="loading"
               :table-column="groupColumns"
               :table-data="moDataList.list"
-              :total="ruleTabTotal"
+              :total="bracodeMannageTotal"
               @row-click="onRowClick"
               @refresh="onRefresh"
             >
-              <template #stateSwitch="{ row }">
-                <t-switch
-                  :custom-value="[1, 0]"
-                  :value="row.state"
-                  :default-value="row.state"
-                  size="large"
-                  @change="(value) => onSwitchChange(row, value)"
-                ></t-switch>
-              </template>
             </cmp-table>
           </t-col>
         </t-tab-panel>
@@ -95,63 +84,47 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, Ref, ref } from 'vue';
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/control';
 import { api as apiMain } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
+const { loading, setLoading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: materialPage } = usePage();
-const formVisible = ref(false); // 控制 处理组dialog 弹窗显示隐藏
-const diaLogTitle = ref(''); // 弹窗标题
-const groupDisabled = ref(false); // 处理组表单禁用开关
-const submitFalg = ref(false);
 // $处理组 表格数据
 const moDataList = reactive({ list: [] });
-const ruleTabTotal = ref(null);
+const moTabTotal = ref(0);
+const barcodeTotal = ref(null);
+const bracodeMannageTotal = ref(null);
 const dataSummary = ref(null);
 // $人员 表格数据
 const materialTabDataList = reactive({ list: [] });
 const materialTotal = ref(null);
-const tableData = reactive({ list: [] });
 // 计划开始时间初始化
 // 上方查询初始化
 const queryCondition = ref({
-  moCode: '',
-  mitemCode: '',
+  moId: '',
+  mitemId: '',
   moStatus: '',
   datetimePlanStart: '',
-  workshopCode: '',
-  workCenterCode: '',
+  datetimePlanEnd: '',
+  workshopId: '',
+  workCenterId: '',
   onlyDisplayCreated: true,
+  pageNum: 1,
+  pageSize: 10,
 });
 // 上下方查询初始化
-const pkgQueryCondition = ref({
-  barcodeRule: '',
-  mitemCode: '',
-  moStatus: '',
-  datetimePlanStart: '',
-  workshopCode: '',
-  workCenterCode: '',
-  onlyDisplayCreated: true,
-});
 // tab 表格?
 const tabValue = ref(0);
 const tagValue = ref(0);
 
 // dialog 弹框数据
-const ruleTabData = ref({
-  ruleCode: '', // 规则编码
-  ruleName: '', // 规则名称
-  barcodeType: '', // 条码类型
-  ruleDesc: '', //  规则描述
-  ruleExpression: '', // 条码规则表达式
-  state: 1, // 启用禁用
-});
 // 关联物料数据
 const relatedMaterials = ref({
   barcodeRuleId: '', // 上表格ID
@@ -214,7 +187,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'workcenter',
+    colKey: 'workcenterName',
     title: '工作中心',
     align: 'center',
     width: '130',
@@ -263,53 +236,25 @@ const barcodeColumns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '130',
   },
-  {
-    colKey: 'creator',
-    title: '打印人',
-    align: 'center',
-    width: '130',
-  },
-  {
-    colKey: 'timeCreate',
-    title: '打印时间',
-    align: 'center',
-    width: '130',
-  },
 ];
-// 查询条件处理数据
-const filterList = ref([]) as any;
 // 点击查询按钮
 const conditionEnter = (data: any) => {
-  filterList.value = [];
-  for (const key in data) {
-    const addFilter = {
-      field: key,
-      operator: 'EQ',
-      value: data[key],
-    };
-    if (key === 'roleName') addFilter.operator = 'LIKE';
-    if (addFilter.value) {
-      filterList.value.push(addFilter);
-    }
-  }
-
+  queryCondition.value = data;
+  const [datetimePlanStart, datetimePlanEnd] = data.datetimePlanRange;
+  queryCondition.value.datetimePlanStart = datetimePlanStart;
+  queryCondition.value.datetimePlanEnd = datetimePlanEnd;
+  queryCondition.value.pageNum = pageUI.value.page;
+  queryCondition.value.pageSize = pageUI.value.rows;
   fetchTable();
 };
-// 加载角色数据表格
+// 加载工单数据表格
 const fetchTable = async () => {
   setLoading(true);
   try {
-    // 查询条件
-    const searchCondition = {
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      filters: filterList.value,
-    };
-
-    const data = (await api.role.search(searchCondition)) as any;
+    const data = (await api.barcodePkg.getMoPkgList(queryCondition.value)) as any;
     const { list } = data;
-    tableData.value = list;
-    dataTotal.value = data.total;
+    moDataList.list = list;
+    moTabTotal.value = data.total;
   } catch (e) {
     console.log(e);
   } finally {
@@ -327,12 +272,12 @@ const fetchTable = async () => {
 // 查询组件
 const opts = computed(() => {
   return {
-    datetimePlanStart: {
+    datetimePlanRange: {
       label: '计划生产日期',
       comp: 't-date-range-picker',
       defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
     },
-    moCode: {
+    moId: {
       label: '工单',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -342,7 +287,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    workshopCode: {
+    workshopId: {
       label: '车间',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -352,7 +297,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    workCenterCode: {
+    workCenterId: {
       label: '工作中心',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -362,7 +307,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    mitemCode: {
+    mitemId: {
       label: '物料',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -517,12 +462,15 @@ const moStatusOption = ref([]);
 apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' }).then((data) => {
   moStatusOption.value = data;
 });
+const tabList = ref([]);
+apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' }).then((data) => {
+  tabList.value = data;
+  console.log(tabList);
+});
 // ################ 初始渲染
 onMounted(async () => {
   await onBarcodeRuleTabData(); // 获取 条码规则表格 数据
   await onMaterialTabData(); // 获取 物料编码 表格数据
-  await ongetRuleTreeSegment(); // 获取树状数据
-  await onGetDialogSelect(); // 获取dia下拉框数据
 });
 
 // #获取 条码规则 表格数据
@@ -532,7 +480,7 @@ const onBarcodeRuleTabData = async () => {
     pageSize: pageUI.value.rows,
   });
   moDataList.list = res.list;
-  ruleTabTotal.value = res.total;
+  moTabTotal.value = res.total;
 };
 
 // # 获取 物料分类 表格数据
@@ -546,20 +494,10 @@ const onMaterialTabData = async () => {
   materialTotal.value = res.total;
 };
 
-// # Switch 状态获取
-const onSwitchChange = async (row: any, value: any) => {
-  const isValue = value ? 1 : 0;
-  await api.barcodeRuleInMitem.modifyBarcodeRule({
-    state: isValue,
-    ruleName: row.ruleName,
-    barcodeType: row.barcodeType,
-    ruleExpression: row.ruleExpression,
-    id: row.id,
-  });
-  await onBarcodeRuleTabData();
-  MessagePlugin.success('操作成功');
+const handleTabClick = (selectedTabIndex: any) => {
+  const selectedTab = tabList.value[selectedTabIndex];
+  console.log(selectedTab);
 };
-
 // #条码规则 表格 行点击事件
 const personID = ref(null); // 点击表格行 获取人员id
 const onRowClick = async ({ row }) => {
@@ -567,16 +505,6 @@ const onRowClick = async ({ row }) => {
   personID.value = row.id;
   relatedMaterials.value.barcodeRuleId = row.id;
   await onMaterialTabData(); // 获取 物料分类 数据
-};
-
-// #添加按钮点击事件
-const onAddRuleData = () => {
-  formRef.value.reset({ type: 'empty' });
-  ruleTabData.value.state = 1;
-  groupDisabled.value = false; // 关闭表单禁用
-  submitFalg.value = true; // true为新增
-  formVisible.value = true;
-  diaLogTitle.value = '条码规则配置新增';
 };
 </script>
 
