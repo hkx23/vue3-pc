@@ -39,8 +39,8 @@ dependencies:
     specifier: ^0.2.2
     version: 0.2.2(vue@3.3.7)
   tdesign-vue-next:
-    specifier: ^1.7.0
-    version: 1.7.0(vue@3.3.7)
+    specifier: ^1.7.1
+    version: 1.7.1(vue@3.3.7)
   tvision-color:
     specifier: ^1.6.0
     version: 1.6.0
@@ -51,8 +51,8 @@ dependencies:
     specifier: ^2.0.0
     version: 2.0.0
   vue-draggable-plus:
-    specifier: ^0.2.7
-    version: 0.2.7(@types/sortablejs@1.15.4)
+    specifier: ^0.3.2
+    version: 0.3.2(@types/sortablejs@1.15.4)
   vue-hooks-plus:
     specifier: ^1.8.5
     version: 1.8.5(vue@3.3.7)
@@ -8330,8 +8330,8 @@ packages:
       vue: 3.3.7(typescript@5.1.6)
     dev: false
 
-  /tdesign-vue-next@1.7.0(vue@3.3.7):
-    resolution: {integrity: sha512-NGt30cc0T2L32UoQjffldNy2wZAHa8vA1c7kjkjTEhHbD3O2bVuiDhPJSo8EYAwnRlwc5+EzzgiQxj/5x2b1qw==}
+  /tdesign-vue-next@1.7.1(vue@3.3.7):
+    resolution: {integrity: sha512-zPfzkgul4zAltUt3OJIzItZkhBxYT7kc5uoW/pGRvlcKwqOj4v+LdgAU9UfYztgKVyrwLQVc82KRaM+4y2nlYg==}
     peerDependencies:
       vue: '>=3.1.0'
     dependencies:
@@ -8860,8 +8860,8 @@ packages:
       vue: 3.3.7(typescript@5.1.6)
     dev: false
 
-  /vue-draggable-plus@0.2.7(@types/sortablejs@1.15.4):
-    resolution: {integrity: sha512-asNQ4OxTQtN91+m45lh8QEwscXhVveaLvPAzaRXHD8JIk1+SOg7NWPQ9EmUTeNhSP3SGkJ2Agvp5WRDt7vXM8w==}
+  /vue-draggable-plus@0.3.2(@types/sortablejs@1.15.4):
+    resolution: {integrity: sha512-O3ryS/Djei1HAv2ijIGDmIxd32B3rNaaJCafT2H15JBv2ffff5mr9LCcpWgex2QvPTypeDnHAdin+LaKh80g8Q==}
     peerDependencies:
       '@types/sortablejs': ^1.15.0
       '@vue/composition-api': '*'

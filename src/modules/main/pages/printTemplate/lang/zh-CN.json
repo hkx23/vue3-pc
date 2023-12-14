@@ -7,6 +7,7 @@
     "templateType": "模板类型",
     "templatePath": "模板文件",
     "templateMap": "关联模板",
-    "title": "打印模板"
+    "title": "打印模板",
+    "fileTypeError": "BARTENDER文件类型错误，必须是btw后缀文件"
   }
 }

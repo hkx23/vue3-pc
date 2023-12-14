@@ -813,6 +813,12 @@ export type WarehouseFeignDTO = {
 } | null;
 
 /** 角色用户操作实体 */
+export interface UserRoleDTO {
+  userId?: string;
+  roleIds?: string[];
+}
+
+/** 角色用户操作实体 */
 export interface RoleUserDTO {
   roleId?: string;
   userIds?: string[];
@@ -1372,6 +1378,8 @@ export interface RoleVO {
   plantName?: string;
   /** 组织编码 */
   plantCode?: string;
+  /** 企业组织名称 */
+  enPlantName?: string;
 }
 
 /** 通用响应类 */
@@ -1540,6 +1548,109 @@ export interface ProfileValue {
   profileValue?: string;
 }
 
+/** 工序业务执行单元库明细表 */
+export interface ProcessBusinessLibDtl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  processBusinessLibId?: string;
+  businessUnitId?: string;
+  /**
+   * 执行顺序
+   * @format int32
+   */
+  execSeq?: number;
+}
+
+/** 工序业务执行单元库头表 */
+export type ProcessBusinessLib = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  routingProcessId?: string;
+  processId?: string;
+  /** 条码类型 */
+  barcodeCategory?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListProcessBusinessLib {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProcessBusinessLib[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListProcessBusinessLibDtl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProcessBusinessLibDtl[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
+}
+
 /** 响应数据 */
 export type PagingDataProcessVO = {
   list?: ProcessVO[];
@@ -1581,8 +1692,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2287,6 +2398,19 @@ export interface ObjectProperty {
   isDataMultiple?: number;
 }
 
+/** 通用响应类 */
+export interface ResultResponseEntityString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
+}
+
 /** 系统模块表 */
 export interface Module {
   id?: string;
@@ -2424,8 +2548,11 @@ export type ShowModuleVO = {
   /** 模块包标识 */
   modulePackageIdentify?: string;
   parentModuleId?: string;
+  grandpaId?: string;
   /** 所在一级菜单名称 */
   grandpaName?: string;
+  /** 模块访问地址 */
+  behaviorPath?: string;
   /**
    * 是否PC端
    * @format int32
@@ -2752,15 +2879,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   isState?: boolean;
   isProductName?: string;
   isBatchName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isRawName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -3274,8 +3401,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -3387,6 +3514,95 @@ export interface ResultCustomer {
 export interface JSONObject {
   empty?: boolean;
   [key: string]: any;
+}
+
+/** 业务单元模板库明细表 */
+export interface BusinessTmplLibDtl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  businessTmplId?: string;
+  /**
+   * 执行顺序
+   * @format int32
+   */
+  execSeq?: number;
+  businessUnitId?: string;
+}
+
+/** 业务单元模板库表 */
+export interface BusinessTmplLib {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板名称 */
+  tmplName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListBusinessTmplLibDtl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessTmplLibDtl[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListBusinessTmplLib {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessTmplLib[] | null;
 }
 
 export interface BarcodeVaildateRuleSearch {
@@ -3619,7 +3835,7 @@ export interface ResultWorkcenterVO {
 }
 
 /** 通用响应类 */
-export interface ResultListUserInOrg {
+export interface ResultListUserInRoleVO {
   /**
    * 响应代码
    * @format int32
@@ -3628,11 +3844,11 @@ export interface ResultListUserInOrg {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: UserInOrg[] | null;
+  data?: UserInRoleVO[] | null;
 }
 
-/** 用户组织关系表 */
-export type UserInOrg = {
+/** 响应数据 */
+export type UserInRoleVO = {
   id?: string;
   /**
    * 创建时间
@@ -3654,8 +3870,79 @@ export type UserInOrg = {
    * @default 1
    */
   state?: number;
+  eid?: string;
+  oid?: string;
+  /** 角色代码 */
+  roleCode?: string;
+  /** 角色名称 */
+  roleName?: string;
+  /** 角色描述 */
+  roleDesc?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 用户id */
   userId?: string;
-  orgId?: string;
+  relate?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListUserInOrgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: UserInOrgVO[] | null;
+}
+
+/** 响应数据 */
+export type UserInOrgVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 组织描述 */
+  orgDesc?: string;
+  parentOrgId?: string;
+  /** 组织层级代码 */
+  levelCode?: string;
+  /**
+   * 是否生效，1是，0否
+   * @format int32
+   */
+  isActive?: number;
+  /** 用户名 */
+  userName?: string;
+  /** 用户id */
+  userId?: string;
+  default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -3677,6 +3964,7 @@ export type CurrentUserVO = {
   userName?: string;
   /** 显示名称 */
   displayName?: string;
+  eid?: string;
   defaultOrgId?: string;
   /** 授权组织 */
   orgList?: OrgVO[];
@@ -3861,7 +4149,7 @@ export interface ResultRoutingDTO {
 }
 
 /** 通用响应类 */
-export interface ResultLong {
+export interface ResultListRoutingProcessTreeVO {
   /**
    * 响应代码
    * @format int32
@@ -3869,7 +4157,86 @@ export interface ResultLong {
   code?: number;
   /** 提示信息 */
   message?: string;
-  data?: string;
+  /** 响应数据 */
+  data?: RoutingProcessTreeVO[] | null;
+}
+
+/** 响应数据 */
+export type RoutingProcessTreeVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工艺路线代码 */
+  routingCode?: string;
+  /** 工艺路线名称 */
+  routingName?: string;
+  /** 工艺路线描述 */
+  routingDesc?: string;
+  /** 工艺路线类型 */
+  routingType?: string;
+  routingRevisionId?: string;
+  /**
+   * 版本
+   * @format int32
+   */
+  version?: number;
+  /** 显示名称 */
+  title?: string;
+  /** 子层级 */
+  children?: RoutingProcessVO[];
+} | null;
+
+/** 子层级 */
+export interface RoutingProcessVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  routingRevisionId?: string;
+  processId?: string;
+  /** 工序类型 */
+  processType?: string;
+  /** 工序显示名称 */
+  title?: string;
 }
 
 /** 配置项 */
@@ -4033,14 +4400,22 @@ export type ModulePermissionDTO = {
   isForbiddenRole?: string;
   /** 是否继承角色 */
   isFromRole?: string;
-  /** 是否不可编辑 */
-  isDisable?: string;
+  /** 继承角色 */
+  fromRoleName?: string;
   /** 功能名称-按语言 */
   moduleNameT?: string;
   /** 功能描述-按语言 */
   moduleDescriptionT?: string;
   /** 子级 */
   children?: ModulePermissionDTO[];
+  /** 按钮权限 */
+  buttons?: ModulePermissionDTO[];
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
 } | null;
@@ -4369,6 +4744,71 @@ export interface ResultListDefectCodeVO {
   data?: DefectCodeVO[] | null;
 }
 
+/** 业务执行单元表 */
+export type BusinessUnit = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 服务名称 */
+  apiName?: string;
+  /** 服务描述 */
+  apiDesc?: string;
+  /** 服务路径 */
+  apiPath?: string;
+  /** 入参列表 */
+  paramInput?: string;
+  /** 出参列表 */
+  paramOutput?: string;
+  /** 服务分类 */
+  paramCategory?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListBusinessUnit {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessUnit[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
+}
+
 /** 显示行政组织层级实体 */
 export type AdminOrgVO = {
   id?: string;
@@ -4603,6 +5043,20 @@ export const api = {
      */
     item: (id: string) =>
       http.request<ResultRoutingDTO['data']>(`/api/main/routing/item/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺路线
+     * @name GetProcessTree
+     * @summary 获取工艺路线工序树
+     * @request GET:/routing/getProcessTree
+     * @secure
+     */
+    getProcessTree: () =>
+      http.request<ResultListRoutingProcessTreeVO['data']>(`/api/main/routing/getProcessTree`, {
         method: 'GET',
       }),
   },
@@ -5244,8 +5698,23 @@ export const api = {
      * No description
      *
      * @tags 用户角色关系表
+     * @name ModifyUserInRoleFromUser
+     * @summary 新增用户的角色
+     * @request POST:/userInRole/modifyUserInRoleFromUser
+     * @secure
+     */
+    modifyUserInRoleFromUser: (data: UserRoleDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInRole/modifyUserInRoleFromUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户角色关系表
      * @name DeleteUserInRole
-     * @summary 传入roleId与useIdList,删除
+     * @summary 删除角色的用户
      * @request POST:/userInRole/deleteUserInRole
      * @secure
      */
@@ -5259,8 +5728,23 @@ export const api = {
      * No description
      *
      * @tags 用户角色关系表
+     * @name DeleteUserInRoleFromUser
+     * @summary 删除用户的角色
+     * @request POST:/userInRole/deleteUserInRoleFromUser
+     * @secure
+     */
+    deleteUserInRoleFromUser: (data: UserRoleDTO) =>
+      http.request<ResultObject['data']>(`/api/main/userInRole/deleteUserInRoleFromUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户角色关系表
      * @name AddUserInRole
-     * @summary 传入roleId与useIdList,新增
+     * @summary 新增角色的用户
      * @request POST:/userInRole/addUserInRole
      * @secure
      */
@@ -5268,6 +5752,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/userInRole/addUserInRole`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户角色关系表
+     * @name GetUserInRoleListByUserId
+     * @summary 根据用户ID查询用户在组织中的信息
+     * @request GET:/userInRole/getUserInRoleListByUserId
+     * @secure
+     */
+    getUserInRoleListByUserId: (query: { userId: string }) =>
+      http.request<ResultListUserInRoleVO['data']>(`/api/main/userInRole/getUserInRoleListByUserId`, {
+        method: 'GET',
+        params: query,
       }),
   },
   userInOrg: {
@@ -5311,7 +5810,7 @@ export const api = {
      * @secure
      */
     getUserInOrgByUserId: (query: { userId: string }) =>
-      http.request<ResultListUserInOrg['data']>(`/api/main/userInOrg/getUserInOrgByUserId`, {
+      http.request<ResultListUserInOrgVO['data']>(`/api/main/userInOrg/getUserInOrgByUserId`, {
         method: 'GET',
         params: query,
       }),
@@ -5367,13 +5866,13 @@ export const api = {
      * No description
      *
      * @tags 用户
-     * @name SetOnline
+     * @name SetState
      * @summary 禁用/启用用户
-     * @request POST:/user/setOnline
+     * @request POST:/user/setState
      * @secure
      */
-    setOnline: (data: User) =>
-      http.request<ResultObject['data']>(`/api/main/user/setOnline`, {
+    setState: (data: User) =>
+      http.request<ResultObject['data']>(`/api/main/user/setState`, {
         method: 'POST',
         body: data as any,
       }),
@@ -5499,6 +5998,26 @@ export const api = {
       roleId?: string;
     }) =>
       http.request<ResultListUser['data']>(`/api/main/user/getUserByRoleIdNotIn`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetByUsername
+     * @summary 根據用户名获取用户
+     * @request GET:/user/getByUsername
+     * @secure
+     */
+    getByUsername: (query?: {
+      /** @default "0" */
+      id?: string;
+      /** @default "" */
+      userName?: string;
+    }) =>
+      http.request<ResultLong['data']>(`/api/main/user/getByUsername`, {
         method: 'GET',
         params: query,
       }),
@@ -5898,6 +6417,67 @@ export const api = {
      */
     addProfileValue: (data: ProfileValue) =>
       http.request<Result['data']>(`/api/main/profileValue/items/addProfileValue`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  processBusinessLibDtl: {
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库明细表
+     * @name AddList
+     * @summary 新增明细清单
+     * @request POST:/processBusinessLibDtl/addList
+     * @secure
+     */
+    addList: (data: ProcessBusinessLibDtl[]) =>
+      http.request<ResultObject['data']>(`/api/main/processBusinessLibDtl/addList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  processBusinessLib: {
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name List
+     * @summary 根据头表明细
+     * @request POST:/processBusinessLib/list
+     * @secure
+     */
+    list: () =>
+      http.request<ResultListProcessBusinessLib['data']>(`/api/main/processBusinessLib/list`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name ListByIds
+     * @summary 根据工序和分类获取明细
+     * @request POST:/processBusinessLib/listByIds
+     * @secure
+     */
+    listByIds: (data: ProcessBusinessLib) =>
+      http.request<ResultListProcessBusinessLibDtl['data']>(`/api/main/processBusinessLib/listByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name Add
+     * @summary 新增工序业务执行单元库头表
+     * @request POST:/processBusinessLib/add
+     * @secure
+     */
+    add: (data: ProcessBusinessLib) =>
+      http.request<ResultLong['data']>(`/api/main/processBusinessLib/add`, {
         method: 'POST',
         body: data as any,
       }),
@@ -6437,6 +7017,30 @@ export const api = {
       }),
   },
   module: {
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name UploadFile
+     * @summary 菜单文件上传
+     * @request POST:/module/uploadFile
+     * @secure
+     */
+    uploadFile: (
+      query: {
+        path: string;
+      },
+      data: {
+        /** @format binary */
+        file: File;
+      },
+    ) =>
+      http.request<ResultResponseEntityString['data']>(`/api/main/module/uploadFile`, {
+        method: 'POST',
+        params: query,
+        body: data as any,
+      }),
+
     /**
      * No description
      *
@@ -7282,6 +7886,97 @@ export const api = {
         body: data as any,
       }),
   },
+  businessTmplLibDtl: {
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库明细表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/businessTmplLibDtl/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLibDtl/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库明细表
+     * @name AddList
+     * @summary 新增明细清单
+     * @request POST:/businessTmplLibDtl/addList
+     * @secure
+     */
+    addList: (data: BusinessTmplLibDtl[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLibDtl/addList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  businessTmplLib: {
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name ListByIds
+     * @summary 根据名称获取明细
+     * @request POST:/businessTmplLib/listByIds
+     * @secure
+     */
+    listByIds: (data: BusinessTmplLib) =>
+      http.request<ResultListBusinessTmplLibDtl['data']>(`/api/main/businessTmplLib/listByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name Items
+     * @summary 获取模板清单
+     * @request POST:/businessTmplLib/items
+     * @secure
+     */
+    items: () =>
+      http.request<ResultListBusinessTmplLib['data']>(`/api/main/businessTmplLib/items`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/businessTmplLib/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/businessTmplLib/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 业务单元模板库表
+     * @name Add
+     * @summary 新增工序业务执行单元库头表
+     * @request POST:/businessTmplLib/add
+     * @secure
+     */
+    add: (data: BusinessTmplLib) =>
+      http.request<ResultLong['data']>(`/api/main/businessTmplLib/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   barcodeValidateRule: {
     /**
      * No description
@@ -7345,6 +8040,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 条码验证规则表
+     * @name VaildateBarcodeRule
+     * @summary 验证条码是否与条码规则匹配
+     * @request GET:/barcodeValidateRule/VaildateBarcodeRule
+     * @secure
+     */
+    vaildateBarcodeRule: (query: { expression: string; barcode: string }) =>
+      http.request<ResultBoolean['data']>(`/api/main/barcodeValidateRule/VaildateBarcodeRule`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   attendanceMode: {
     /**
@@ -7380,11 +8090,17 @@ export const api = {
      *
      * @tags 工艺路线版本
      * @name GetRoutRevisionByRoutingCode
-     * @summary 根据工艺路线编码获取有效的工艺路线版本信息
+     * @summary 获取工单的工艺路线版本信息(工单匹配规则:按产线和按物料类型或按物料)
      * @request GET:/routingRevision/getRoutRevisionByRoutingCode
      * @secure
      */
-    getRoutRevisionByRoutingCode: (query: { routingCode: string; routingType: string }) =>
+    getRoutRevisionByRoutingCode: (query: {
+      routingCode: string;
+      routingType: string;
+      workcenterId: string;
+      mitemId: string;
+      mitemcategoryId: string;
+    }) =>
       http.request<ResultObject['data']>(`/api/main/routingRevision/getRoutRevisionByRoutingCode`, {
         method: 'GET',
         params: query,
@@ -7466,6 +8182,21 @@ export const api = {
       http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  businessUnit: {
+    /**
+     * No description
+     *
+     * @tags 业务执行单元表
+     * @name Items
+     * @summary 获取原子清单
+     * @request GET:/businessUnit/items
+     * @secure
+     */
+    items: () =>
+      http.request<ResultListBusinessUnit['data']>(`/api/main/businessUnit/items`, {
+        method: 'GET',
       }),
   },
   adminOrg: {

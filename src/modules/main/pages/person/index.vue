@@ -351,11 +351,11 @@ const onDeleteConfirm = async (e: any) => {
     const rowModel = dataTable.value[deleteIdx.value];
     const data = await api.person.delete({
       id: rowModel.id,
+      state: rowModel.state === 0 ? 1 : 0,
     });
 
     onShowDeleteConfirmVisible.value = false;
     fetchTable();
-    MessagePlugin.success('禁用成功');
   } catch (e) {
     // console.log(e);
   } finally {
@@ -364,7 +364,10 @@ const onDeleteConfirm = async (e: any) => {
 };
 const onDeleteConfirmBody = () => {
   if (deleteIdx.value > -1) {
-    const { personName } = dataTable.value[deleteIdx.value];
+    const { personName, state } = dataTable.value[deleteIdx.value];
+    if (state === 0) {
+      return `是否启用当前行的员工【${personName}】的信息？`;
+    }
     return `是否禁用当前行的员工【${personName}】的信息？`;
   }
   return '';

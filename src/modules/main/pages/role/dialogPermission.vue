@@ -1,6 +1,6 @@
 <template>
   <t-dialog v-model:visible="visible" mode="full-screen" :footer="false" @close="close">
-    <t-loading :loading="loading" text="加载中..." fullscreen />
+    <t-loading :loading="loading" :text="t('common.message.loading')" fullscreen />
     <template #header>
       <t-space align="center" style="width: 100%">
         <span>{{ title }}</span>
@@ -15,11 +15,6 @@
           <t-radio-button v-for="clientType in clientTypeOption" :key="clientType.value" :value="clientType.value"
             >{{ clientType.label }}
           </t-radio-button>
-          <!-- <t-radio-button value="7">PC端</t-radio-button>
-          <t-radio-button value="3">移动端</t-radio-button>
-          <t-radio-button value="4">电视端</t-radio-button>
-          <t-radio-button value="5">手表端</t-radio-button>
-          <t-radio-button value="6">微信端</t-radio-button> -->
         </t-radio-group>
       </t-col>
       <t-col flex="250px">
@@ -46,7 +41,7 @@
           :collapsed="collapsed"
           @change="menuChange"
         >
-          <t-menu-item value="0" :title="t('common.button.all')"> {{ t('business.main.all') }} </t-menu-item>
+          <t-menu-item value="0" :title="t('business.main.all')"> {{ t('business.main.all') }} </t-menu-item>
           <t-submenu v-for="item in originPermissionData" :key="item.id" :value="item.id" :title="item.moduleName">
             <!-- <template #icon>
               <t-icon name="control-platform" />
@@ -67,140 +62,41 @@
         </t-menu>
       </t-col>
       <t-col flex="1" class="module-area" style="padding: 8px">
-        <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()">全选</t-checkbox>
-        <t-collapse :borderless="true" :default-value="['']" expand-icon-placement="right" :expand-on-row-click="false">
+        <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()">{{
+          t('common.button.selectAll')
+        }}</t-checkbox>
+        <t-collapse
+          v-model="expandedValues"
+          :borderless="true"
+          expand-icon-placement="right"
+          :expand-on-row-click="false"
+        >
           <!-- 如果没有按钮权限，图标不显示 -->
-          <t-collapse-panel v-for="item in moduleData" :key="item.id" :value="item.id" :expand-icon="false">
+          <t-collapse-panel
+            v-for="item in moduleData"
+            :key="item.id"
+            :value="item.id"
+            :expand-icon="item.buttons.length > 0"
+          >
             <template #header>
               <t-checkbox v-model="item.enabled" :value="item.permissionId" @change="moduleCheckChange">{{
                 item.moduleName
               }}</t-checkbox></template
             >
-          </t-collapse-panel>
-          <!-- 如果有按钮权限，图标显示，可以展开显示按钮权限列表 -->
-          <!-- <t-collapse-panel value="ojbk2">
-            <template #header> <t-checkbox>过站扫描2</t-checkbox></template>
             <t-space break-line size="8">
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
+              <div
+                v-for="buttionItem in item.buttons"
+                :key="buttionItem.id"
+                class="buttonPermissionItem"
+                :value="buttionItem.id"
+              >
+                <div>{{ buttionItem.permissionName }}</div>
+                <t-checkbox v-model="buttionItem.enabled" :value="buttionItem.permissionId" @change="buttonCheckChange"
+                  >允许</t-checkbox
+                >
               </div>
             </t-space>
           </t-collapse-panel>
-          <t-collapse-panel value="ojbk4">
-            <template #header> <t-checkbox>过站扫描2</t-checkbox></template>
-            <t-space break-line size="8">
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-            </t-space>
-          </t-collapse-panel>
-          <t-collapse-panel value="ojbk3">
-            <template #header> <t-checkbox>过站扫描2</t-checkbox></template>
-            <t-space break-line size="8">
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-              <div class="buttonPermissionItem">
-                <div>按钮权限</div>
-                <t-checkbox>允许</t-checkbox>
-              </div>
-            </t-space>
-          </t-collapse-panel> -->
         </t-collapse>
       </t-col>
     </t-row>
@@ -240,10 +136,12 @@ const expanded = ref([]);
 const isAllCheck = ref(false);
 const isAllIndeterminate = ref(false);
 const originPermissionData = ref([]);
-const permissionData = ref([]);
+
 const selectedMenu = ref('');
 const selectClientType = ref('0');
 const loading = ref(false);
+const permissionData = ref([]);
+const expandedValues = ref([]);
 
 const moduleData = ref([]);
 const emit = defineEmits(['update:modelValue', 'submit']);
@@ -259,12 +157,32 @@ const visible = computed({
 //   collapsed.value = !collapsed.value;
 // };
 const moduleCheckChange = (checkResult: boolean, e: any) => {
+  const postIds = [];
+  const selectedModuleId = e.e.target.value;
+  postIds.push(selectedModuleId);
+  const postRows = _.filter(moduleData.value, (item) => {
+    return item.permissionId === selectedModuleId;
+  });
+  if (postRows.length > 0 && postRows[0].buttons.length > 0) {
+    // 循环 postRows[0].buttons
+    for (let i = 0; i < postRows[0].buttons.length; i++) {
+      postIds.push(postRows[0].buttons[i].permissionId);
+    }
+  }
+  if (checkResult) {
+    onAddPermission(postIds);
+  } else {
+    onDeletrPermission(postIds);
+  }
+};
+const buttonCheckChange = (checkResult: boolean, e: any) => {
   if (checkResult) {
     onAddPermission([e.e.target.value]);
   } else {
     onDeletrPermission([e.e.target.value]);
   }
 };
+
 const menuChange = (active) => {
   selectedMenu.value = active;
   treeMenuChange();
@@ -343,6 +261,13 @@ const checkAll = () => {
   });
   if (isAllCheck.value) {
     const addPermissionIds = moduleData.value.filter((item) => item.enabled).map((item) => item.permissionId);
+
+    moduleData.value.forEach((item) => {
+      item.buttons.forEach((button) => {
+        addPermissionIds.push(button.permissionId);
+      });
+    });
+
     if (addPermissionIds.length > 0) {
       onAddPermission(addPermissionIds);
     }
@@ -352,6 +277,11 @@ const checkAll = () => {
     updateOriginPermissionData(permissionData.value, addPermissionIds, true);
   } else {
     const deletePermissionIds = moduleData.value.filter((item) => !item.enabled).map((item) => item.permissionId);
+    moduleData.value.forEach((item) => {
+      item.buttons.forEach((button) => {
+        deletePermissionIds.push(button.permissionId);
+      });
+    });
     if (deletePermissionIds.length > 0) {
       onDeletrPermission(deletePermissionIds);
     }
@@ -369,6 +299,9 @@ const updateOriginPermissionData = (data, permissionIds, enabled) => {
     }
     if (item.children && item.children.length > 0) {
       updateOriginPermissionData(item.children, permissionIds, enabled);
+    }
+    if (item.buttons && item.buttons.length > 0) {
+      updateOriginPermissionData(item.buttons, permissionIds, enabled);
     }
   });
 };
@@ -426,6 +359,7 @@ watch(
       getThirdLevelNodes(rootNode, 1, result);
     }
     moduleData.value = result;
+    expandedValues.value = result.filter((item) => item.buttons && item.buttons.length > 0).map((item) => item.id);
     // moduleData筛选出enabled为true的节点
     // 如果全部为true,则isAllCheck设置为true,否则设置成false
     // 如果有部分为true,则isAllIndeterminate设置为true

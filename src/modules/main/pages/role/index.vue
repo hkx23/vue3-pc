@@ -1,11 +1,9 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <!-- 查询组件  -->
+  <cmp-container :full="false">
+    <cmp-card :span="12" :full="false">
       <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
-      <!-- 表格组件  -->
-    </div>
-    <div class="main-page-content">
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -20,9 +18,9 @@
       >
         <template #op="{ row }">
           <t-space :size="8">
-            <t-link theme="primary" @click="onRowEdit(row)">{{ $t('common.edit') }}</t-link>
-            <t-link theme="primary" @click="onRowPermission(row)">{{ $t('role.authority') }}</t-link>
-            <t-link theme="primary" @click="onRowPerson(row)">{{ $t('role.member') }}</t-link>
+            <t-link theme="primary" @click="onRowEdit(row)">{{ t('common.button.edit') }}</t-link>
+            <t-link theme="primary" @click="onRowPermission(row)">{{ t('role.authority') }}</t-link>
+            <t-link theme="primary" @click="onRowPerson(row)">{{ t('role.member') }}</t-link>
             <!-- 删除 -->
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onRowDelete(row)">
               <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
@@ -33,33 +31,34 @@
           <t-button theme="primary" @click="onAddClick"> {{ t('common.button.add') }} </t-button>
         </template>
       </cmp-table>
-    </div>
-    <!-- 新增/编辑角色弹出窗 -->
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="t(formAdd ? 'common.dialog.header.add' : 'common.dialog.header.edit', [t('role.role')])"
-      :on-confirm="onConfirmForm"
-    >
-      <role-form ref="formRef" />
-    </t-dialog>
-    <!-- 角色成员弹出窗 -->
-    <t-dialog
-      v-model:visible="formUserVisible"
-      top="25px"
-      width="800px"
-      :confirm-btn="null"
-      :header="t('role.roleMember')"
-      :on-confirm="onUserConfirmForm"
-    >
-      <user-form ref="userFormRef" :role-id="formUserRoleId" />
-    </t-dialog>
-    <!-- 权限分配弹出窗 -->
-    <dialog-permission
-      :id="selectRoleId"
-      v-model="formPermissionVisible"
-      :title="t('role.authTitle')"
-    ></dialog-permission>
-  </div>
+    </cmp-card>
+  </cmp-container>
+
+  <!-- 新增/编辑角色弹出窗 -->
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="t(formAdd ? 'common.dialog.header.add' : 'common.dialog.header.edit', [t('role.role')])"
+    :on-confirm="onConfirmForm"
+  >
+    <role-form ref="formRef" />
+  </t-dialog>
+  <!-- 角色成员弹出窗 -->
+  <t-dialog
+    v-model:visible="formUserVisible"
+    top="25px"
+    width="800px"
+    :confirm-btn="null"
+    :header="t('role.roleMember')"
+    :on-confirm="onUserConfirmForm"
+  >
+    <user-form ref="userFormRef" :role-id="formUserRoleId" :visable="formUserVisible" />
+  </t-dialog>
+  <!-- 权限分配弹出窗 -->
+  <dialog-permission
+    :id="selectRoleId"
+    v-model="formPermissionVisible"
+    :title="t('role.authTitle')"
+  ></dialog-permission>
 </template>
 
 <script setup lang="ts">
@@ -98,12 +97,14 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
     title: `${t('business.main.serialNumber')}`,
+    align: 'right',
+    width: '60px',
   },
   { title: `${t('role.roleCode')}`, colKey: 'roleCode' },
   { title: `${t('role.roleName')}`, colKey: 'roleName' },
-  { title: `${t('role.eId')}`, colKey: 'enName' },
-  { title: `${t('role.org')}`, colKey: 'plantName' },
   { title: `${t('role.roleDesc')}`, colKey: 'roleDesc' },
+  { title: `${t('role.org')}`, colKey: 'enPlantName' },
+
   {
     colKey: 'op',
     title: `${t('common.button.operation')}`,
@@ -135,18 +136,14 @@ const opts = computed(() => {
     //     showTitle: false,
     //   },
     // },
-    roleName: {
-      label: t('role.roleName'),
-      comp: 't-input',
-      defaultVal: '',
-    },
-    roleCode: {
-      label: t('role.roleCode'),
+    keyWord: {
+      label: t('role.roleCodeName'),
       comp: 't-input',
       defaultVal: '',
     },
   };
 });
+const keyWord = ref('');
 // 查询条件处理数据
 const filterList = ref([]) as any;
 // 点击查询按钮
@@ -158,9 +155,11 @@ const conditionEnter = (data: any) => {
       operator: 'EQ',
       value: data[key],
     };
-    if (key === 'roleName') addFilter.operator = 'LIKE';
-    if (addFilter.value) {
+    if (key !== 'keyWord' && addFilter.value) {
       filterList.value.push(addFilter);
+    }
+    if (key === 'keyWord') {
+      keyWord.value = data[key];
     }
   }
 
@@ -175,6 +174,7 @@ const fetchTable = async () => {
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       filters: filterList.value,
+      keyWord: keyWord.value,
     };
 
     const data = (await api.role.search(searchCondition)) as any;

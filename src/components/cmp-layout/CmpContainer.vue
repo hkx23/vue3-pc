@@ -1,5 +1,5 @@
 <template>
-  <t-space direction="vertical" :class="classAttrs" :size="16">
+  <t-space direction="vertical" :class="classAttrs" :size="12">
     <slot></slot>
   </t-space>
 </template>

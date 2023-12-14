@@ -4,7 +4,7 @@
       <t-form
         colon
         class="search-form"
-        :style="{ height: openSearchForm ? '' : '50px', padding: '10px 0px' }"
+        :style="{ height: openSearchForm ? '' : '50px', padding: '0px 0px' }"
         v-bind="$attrs"
         layout="inline"
         :label-width="labelWidth"
@@ -12,84 +12,83 @@
         size="default"
         @submit.prevent
       >
-        <t-form-item
-          v-for="(opt, i) in cOpts"
-          v-show="!opt.isHide"
-          :key="i"
-          :label="opt.label"
-          :label-width="opt.labelWidth"
-          v-bind="$attrs"
-          :class="[opt.className, { render_label: opt.labelRender }]"
+        <t-row class="item-row" :gutter="[32, 0]"
+          ><t-col v-for="(opt, i) in cOpts" v-show="!opt.isHide" :key="i" :span="opt.span"
+            ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">
+              <!-- 自定义label -->
+              <template v-if="opt.labelRender" #label>
+                <render-comp :form="state.form" :render="opt.labelRender" />
+              </template>
+              <!-- 自定义输入框插槽 -->
+              <template v-if="opt.slotName">
+                <slot :name="opt.slotName" :param="state.form"></slot>
+              </template>
+              <!-- 日期控件 -->
+              <component
+                :is="opt.comp"
+                v-if="!opt.slotName && opt.comp.includes('date')"
+                v-bind="
+                  typeof opt.bind == 'function'
+                    ? opt.bind(state.form)
+                    : { clearable: true, filterable: true, allowInput: true, ...$attrs, ...opt.bind }
+                "
+                v-model="state.form[opt.dataIndex]"
+                :label="opt.label"
+                :placeholder="opt.placeholder || getPlaceholder(opt)"
+                @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+                v-on="cEvent(opt)"
+              />
+              <!-- 树选择控件 -->
+              <component
+                :is="opt.comp"
+                v-if="!opt.slotName && opt.comp.includes('tree-select')"
+                v-bind="
+                  typeof opt.bind == 'function'
+                    ? opt.bind(state.form)
+                    : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
+                "
+                v-model="state.form[opt.dataIndex]"
+                :label="opt.label"
+                :placeholder="opt.placeholder || getPlaceholder(opt)"
+                @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+                v-on="cEvent(opt)"
+              />
+              <!-- 非日期控件与树选择控件 -->
+              <component
+                :is="opt.comp"
+                v-if="
+                  !opt.slotName &&
+                  !opt.comp.includes('date') &&
+                  !opt.comp.includes('tree-select') &&
+                  !opt.comp.includes('t-select-muti')
+                "
+                v-bind="
+                  typeof opt.bind == 'function'
+                    ? opt.bind(state.form)
+                    : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
+                "
+                v-model="state.form[opt.dataIndex]"
+                :label="opt.label"
+                :placeholder="opt.placeholder || getPlaceholder(opt)"
+                @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+                v-on="cEvent(opt)"
+              >
+                <component
+                  :is="compChildName(opt)"
+                  v-for="(value, key, index) in selectListType(opt)"
+                  :key="index"
+                  :disabled="value.disabled"
+                  :label="compChildLabel(opt, value)"
+                  :value="compChildValue(opt, value, key)"
+                  >{{ compChildShowLabel(opt, value) }}</component
+                >
+              </component>
+            </t-form-item></t-col
+          ></t-row
         >
-          <!-- 自定义label -->
-          <template v-if="opt.labelRender" #label>
-            <render-comp :form="state.form" :render="opt.labelRender" />
-          </template>
-          <!-- 自定义输入框插槽 -->
-          <template v-if="opt.slotName">
-            <slot :name="opt.slotName" :param="state.form"></slot>
-          </template>
-          <!-- 日期控件 -->
-          <component
-            :is="opt.comp"
-            v-if="!opt.slotName && opt.comp.includes('date')"
-            v-bind="
-              typeof opt.bind == 'function'
-                ? opt.bind(state.form)
-                : { clearable: true, filterable: true, allowInput: true, ...$attrs, ...opt.bind }
-            "
-            v-model="state.form[opt.dataIndex]"
-            :placeholder="opt.placeholder || getPlaceholder(opt)"
-            @change="handleEvent(opt.event, state.form[opt.dataIndex])"
-            v-on="cEvent(opt)"
-          />
-          <!-- 树选择控件 -->
-          <component
-            :is="opt.comp"
-            v-if="!opt.slotName && opt.comp.includes('tree-select')"
-            v-bind="
-              typeof opt.bind == 'function'
-                ? opt.bind(state.form)
-                : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
-            "
-            v-model="state.form[opt.dataIndex]"
-            :placeholder="opt.placeholder || getPlaceholder(opt)"
-            @change="handleEvent(opt.event, state.form[opt.dataIndex])"
-            v-on="cEvent(opt)"
-          />
-          <!-- 非日期控件与树选择控件 -->
-          <component
-            :is="opt.comp"
-            v-if="
-              !opt.slotName &&
-              !opt.comp.includes('date') &&
-              !opt.comp.includes('tree-select') &&
-              !opt.comp.includes('t-select-muti')
-            "
-            v-bind="
-              typeof opt.bind == 'function'
-                ? opt.bind(state.form)
-                : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
-            "
-            v-model="state.form[opt.dataIndex]"
-            :placeholder="opt.placeholder || getPlaceholder(opt)"
-            @change="handleEvent(opt.event, state.form[opt.dataIndex])"
-            v-on="cEvent(opt)"
-          >
-            <component
-              :is="compChildName(opt)"
-              v-for="(value, key, index) in selectListType(opt)"
-              :key="index"
-              :disabled="value.disabled"
-              :label="compChildLabel(opt, value)"
-              :value="compChildValue(opt, value, key)"
-              >{{ compChildShowLabel(opt, value) }}</component
-            >
-          </component>
-        </t-form-item>
       </t-form>
     </t-col>
-    <t-col flex="0 1 200px">
+    <t-col flex="0 1 300px" style="text-align: end">
       <t-space direction="horizontal" class="search-space" size="large">
         <div class="search-form__button">
           <t-space size="small" :align="'end'">
@@ -128,7 +127,7 @@ const props = defineProps({
   },
   labelWidth: {
     type: String,
-    default: 'calc(2em + 54px)',
+    default: '0',
   },
   // 查询按钮配置
   btnCheckBind: {
@@ -195,6 +194,11 @@ const cOpts = computed(() => {
     // if (props.isShowOpen) {
     //   openSearchForm.value = true;
     // }
+    if (opt.comp && opt.comp.includes('range')) {
+      opt.span = 6;
+    } else {
+      opt.span = 4;
+    }
     opt.dataIndex = field;
     acc[field] = opt;
     return acc;
@@ -363,9 +367,10 @@ onMounted(() => {
 watch(
   () => props.opts,
   (opts, oldValue) => {
-    console.log(1111, opts, oldValue);
-    state.form = initForm(opts, true);
+    console.log('query change', opts, oldValue);
+    state.form = initForm(opts, false);
   },
+  { deep: true },
 );
 
 // 展开按钮点击事件

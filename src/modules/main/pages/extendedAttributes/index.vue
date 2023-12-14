@@ -11,7 +11,7 @@
               </template>
             </t-input>
             <t-list stripe :split="true">
-              <t-list-item v-for="(item, index) in edabDataArr" :key="`stripe${index}`" @click="onClickList(item)">
+              <t-list-item v-for="(item, index) in edabDataArr" :key="index" @click="onClickList(item)">
                 {{ item.paramValue }}
                 <template #action>
                   <t-button size="small" variant="text" @click="onAddProperty">

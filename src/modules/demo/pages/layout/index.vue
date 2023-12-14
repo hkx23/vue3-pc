@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full-screen="true">
+  <cmp-container :full="true">
     <cmp-row>
       <cmp-card :span="3">
         <t-tabs>
@@ -14,7 +14,7 @@
         </t-tabs>
       </cmp-card>
       <cmp-card :span="3" :ghost="true">
-        <cmp-container :full-screen="true">
+        <cmp-container :full="true">
           <cmp-card>
             <t-tabs>
               <t-tab-panel value="api" label="API"> API </t-tab-panel>

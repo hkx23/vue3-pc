@@ -1,11 +1,11 @@
 <template>
   <t-row>
     <t-col :flex="6">
-      <div style="background-color: yellow">
+      <div>
         <t-card :title="toSelectTitle" header-bordered :style="{ width: '100%' }">
           <template #actions> {{ waitSelectCount + '/' + waitCount }} </template>
           <t-space direction="vertical" :size="8">
-            <t-input v-model="searchWait" placeholder="请输入用户名/姓名" clearable>
+            <t-input v-model="searchWait" :placeholder="t('role.plsEnterUserKey')" clearable>
               <template #suffixIcon>
                 <search-icon :style="{ cursor: 'pointer' }" />
               </template>
@@ -18,7 +18,6 @@
               select-on-row-click
               :columns="waitColumns"
               :selected-row-keys="selectedRowKeys"
-              :active-row-type="'single'"
               :hover="true"
               lazy-load
               @select-change="rehandleSelectChange"
@@ -68,7 +67,6 @@
             :data="finalSelectedData"
             select-on-row-click
             :selected-row-keys="selectedRowKeysS"
-            :active-row-type="'single'"
             :columns="selectedColumns"
             :hover="true"
             lazy-load
@@ -102,6 +100,7 @@ import { useLang } from './lang';
 const { t } = useLang();
 const props = defineProps({
   roleId: { type: String, default: '' },
+  visable: { type: Boolean, default: false },
 });
 const toSelectTitle = '待选列表';
 const selectedTitle = '已选列表';
@@ -270,11 +269,10 @@ watch(
     }
   },
 );
-
 watch(
-  () => props.roleId,
+  () => props.visable,
   (value, prevValue) => {
-    if (props.roleId) {
+    if (value && props.roleId) {
       fetchSelectedTable();
       fetchWaitTable();
     }

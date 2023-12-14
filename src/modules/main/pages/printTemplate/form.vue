@@ -44,6 +44,7 @@
       <t-upload
         v-if="formData.tmplType == 'btw'"
         v-model="fileBody"
+        accept=".btw"
         :auto-upload="false"
         :show-upload-progress="false"
       ></t-upload>
@@ -134,6 +135,12 @@ const submit = async () => {
 
       if (fileBody.value.length > 0) {
         const [file] = fileBody.value;
+        if (formData.tmplType === 'btw') {
+          if (file.name.split('.').pop() !== 'btw') {
+            MessagePlugin.error(t('printTemplate.fileTypeError'));
+            return;
+          }
+        }
         formData.tmplBodyPath = file.name;
         formData.fileContent = await file.raw.text();
       }

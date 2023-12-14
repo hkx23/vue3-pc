@@ -15,6 +15,10 @@
     "checkCode": "角色代码已存在",
     "checkName": "角色名称已存在",
     "authority": "权限",
-    "member": "成员"
+    "member": "成员",
+    "roleMember": "角色成员维护",
+    "authTitle": "角色/权限配置",
+    "plsEnterUserKey": "请输入用户名/姓名",
+    "roleCodeName": "角色代码/名称"
   }
 }

@@ -150,7 +150,7 @@
                 <bcmp-select-business
                   v-model="barcodeData.mitemId"
                   :disabled="!radioValue"
-                  type="mitemCategory"
+                  type="mitem"
                   label=""
                 ></bcmp-select-business>
               </div>
@@ -173,12 +173,12 @@
         <!-- 第 6️⃣ 行数据 -->
         <t-row justify="space-between" style="margin-bottom: 30px">
           <t-col :span="9">
-            <t-form-item label="条码示例" name="incidentName">
-              <t-input></t-input>
+            <t-form-item label="条码示例" name="sampleBarcode">
+              <t-input v-model="sampleBarcode"></t-input>
             </t-form-item>
           </t-col>
           <t-col :span="3" align="right">
-            <t-button>验证</t-button>
+            <t-button @click="onBarcodeVerification">验证</t-button>
           </t-col>
         </t-row>
         <!-- 第 7️⃣ 行数据 -->
@@ -247,6 +247,8 @@ const submitFalg = ref(false);
 // 编辑回填 ID
 // const incidentID = ref('');
 // tab 表格?
+// 条码示例
+const sampleBarcode = ref('');
 const tabValue = ref(0);
 const barcodeData = ref({
   ruleCode: '', // 规则编码
@@ -465,16 +467,15 @@ const tabChange = (data: number) => {
 
 // 新增按钮点击
 const onAddRuleData = () => {
+  sampleBarcode.value = '';
   formRef.value.reset({ type: 'empty' });
   formVisible.value = true;
   submitFalg.value = true;
 };
 
-// 添加请求事件
+// 新增请求事件
 const onAddRuleCode = async () => {
   await api.barcodeValidateRule.addBarcodeVaildateRule(barcodeData.value);
-  await onGetTextDataList(); // 获取 文本 数据
-  await onGetKeyDataList(); // 获取 关键件 数据
   MessagePlugin.success('新增成功');
 };
 
@@ -482,15 +483,31 @@ const RuleCodeID = ref(null);
 // 文本验证 编辑事件
 const onTextEditRow = (row: { id: any }) => {
   RuleCodeID.value = row.id;
-  Object.assign(barcodeData.value, row);
+  Object.keys(barcodeData.value).reduce((acc, key) => {
+    if (Object.prototype.hasOwnProperty.call(row, key)) {
+      acc[key] = row[key];
+    }
+    return acc;
+  }, barcodeData.value);
   formVisible.value = true;
   submitFalg.value = false;
 };
 
 // 关键件 编辑事件
-const onKeyEditRow = (row: { id: any }) => {
+const onKeyEditRow = (row: any) => {
+  console.log('🚀 ~ file: index.vue:498 ~ onKeyEditRow ~ row:', row);
+  if (!row.mitemCategoryId) {
+    radioValue.value = 1;
+  } else {
+    radioValue.value = 0;
+  }
   RuleCodeID.value = row.id;
-  Object.assign(barcodeData.value, row);
+  Object.keys(barcodeData.value).reduce((acc, key) => {
+    if (Object.prototype.hasOwnProperty.call(row, key)) {
+      acc[key] = row[key];
+    }
+    return acc;
+  }, barcodeData.value);
   formVisible.value = true;
   submitFalg.value = false;
 };
@@ -519,6 +536,19 @@ const onKeyDelConfirm = async (row: { id: any }) => {
   }
   await onGetKeyDataList(); // 获取 关键件 数据
   MessagePlugin.success('删除成功');
+};
+
+// 条码验证 ""按钮 ""点击事件
+const onBarcodeVerification = async () => {
+  const res = await api.barcodeValidateRule.vaildateBarcodeRule({
+    expression: barcodeData.value.barcodeExpression,
+    barcode: sampleBarcode.value,
+  });
+  if (res) {
+    MessagePlugin.success('验证成功');
+  } else {
+    MessagePlugin.error('验证失败');
+  }
 };
 
 // #query 查询参数
@@ -558,6 +588,7 @@ const onInput = async (data: any) => {
       pageSize: pageUITwo.value.rows,
       ruleKeyword: data.code,
       barcodeTypeCode: barcodeData.value.barcodeType,
+      barcodeValidateGroup: 'SCANEXT',
     });
     textTabData.list = res.list;
     totalText.value = res.total;
@@ -568,6 +599,7 @@ const onInput = async (data: any) => {
       pageSize: pageUI.value.rows,
       ruleKeyword: data.code,
       mitemId: barcodeData.value.mitemCategoryId,
+      barcodeValidateGroup: 'KEYPART',
     });
     keyTabData.list = res.list;
     totalKey.value = res.total;
@@ -588,11 +620,16 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
     } else {
       await onEditRuleCode(); // 编辑请求
     }
-    if (tabValue.value) {
-      await onGetValidationGroups(); // 获取验证分组 下列 数组
+    if (barcodeData.value.barcodeValidateGroup === 'SCANEXT') {
+      await onGetTextDataList(); // 获取 文本 数据
     } else {
-      await onGetBarcodeType(); // 获取条码类型 下列 数组
+      await onGetKeyDataList(); // 获取 关键件 数据
     }
+    // if (!tabValue.value) {
+    //   await onGetValidationGroups(); // 获取验证分组 下列 数组
+    // } else {
+    //   await onGetBarcodeType(); // 获取条码类型 下列 数组
+    // }
     formVisible.value = false;
   }
 };
