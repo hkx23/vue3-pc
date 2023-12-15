@@ -2,7 +2,7 @@
   <div class="main-page">
     <div class="main-page-content">
       <!-- 查询组件  -->
-      <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
+      <cmp-query :opts="opts" @submit="conditionEnter" />
       <!-- 表格组件  -->
     </div>
     <div class="main-page-content">

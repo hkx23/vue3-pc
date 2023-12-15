@@ -2884,15 +2884,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isState?: boolean;
   stateName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
+  isRawChecked?: boolean;
   isBatchName?: string;
   isInProcessName?: string;
-  isRawChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
 }
 
 /** 响应数据 */

@@ -82,6 +82,17 @@ const props = defineProps({
     type: String,
     default: 'id',
   },
+  table: {
+    type: Object,
+    default: () => {
+      return {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+        data: [],
+      };
+    },
+  },
   // 单选或多选文案
   selectTxt: {
     type: String,
@@ -212,7 +223,6 @@ const onClear = () => {
 
   selectSearch.value = '';
   selectedRowKeys.value = [];
-  activeRowKeys.value = [];
   popupVisible.value = false;
 };
 // 初始化远程数据
