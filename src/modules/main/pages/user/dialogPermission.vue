@@ -639,11 +639,11 @@ watch(
 
 <style lang="less" scoped>
 .menu-area {
-  box-shadow: 4px 4px 6px 4px rgb(0 0 0 / 20%);
+  box-shadow: var(--td-shadow-1);
 }
 
 .module-area {
-  box-shadow: 4px 4px 6px 4px rgb(0 0 0 / 20%);
+  box-shadow: var(--td-shadow-1);
   overflow: auto;
   margin-top: 16px;
   margin-left: 16px;
