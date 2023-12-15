@@ -13,8 +13,9 @@ export default [
     },
     children: [
       {
-        path: 'page1',
+        path: 'page1/:id',
         name: 'page1',
+        props: true,
         component: () => import('../../pages/basic/page1.vue'),
       },
       {

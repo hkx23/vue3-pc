@@ -6,6 +6,7 @@ import { usePermissionStore } from '@/store';
 import type { UserInfo } from '@/types/interface';
 
 interface OrgUser extends UserInfo {
+  eid?: string;
   orgId?: string;
   orgs?: OrgVO[];
 }
@@ -49,9 +50,11 @@ export const useUserStore = defineStore('user', {
         orgId = res.defaultOrgId;
       }
 
+      fw.setEnterpriseId(res.eid);
       this.userInfo = {
         id: res.userName,
         name: res.displayName,
+        eid: res.eid,
         orgId,
         orgs: res.orgList,
       } as OrgUser;

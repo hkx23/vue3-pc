@@ -32,10 +32,16 @@ const onClickChangeLang = (lang: string) => {
 // 使用路由
 const router = useRouter();
 const onClickGoPage1 = () => {
-  router.push('/basic/page1');
+  router.push({
+    name: 'page1',
+    params: { id: '112233' },
+  });
 };
 const onClickGoPage2 = () => {
-  router.push('/basic/page2');
+  router.push({
+    path: '/basic/page2',
+    query: { code: 'private' },
+  });
 };
 </script>
 

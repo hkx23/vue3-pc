@@ -5,6 +5,7 @@ import BcmpSelectTable from './bcmp-select-table/index.vue';
 import CmpCard from './cmp-layout/CmpCard.vue';
 import CmpContainer from './cmp-layout/CmpContainer.vue';
 import CmpRow from './cmp-layout/CmpRow.vue';
+import CmpMessage from './cmp-message/index.vue';
 import CmpQuery from './cmp-query/index.vue';
 import CmpTable from './cmp-table/index.vue';
 
@@ -16,6 +17,7 @@ export default {
     app.component('CmpQuery', CmpQuery);
     app.component('BcmpExtend', BcmpExtend);
     app.component('CmpTable', CmpTable);
+    app.component('CmpMessage', CmpMessage);
     // 布局
     app.component('CmpContainer', CmpContainer);
     app.component('CmpRow', CmpRow);
