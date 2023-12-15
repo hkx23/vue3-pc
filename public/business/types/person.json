@@ -16,7 +16,7 @@
     },
     {
       "title": "性别",
-      "key": "gender",
+      "key": "genderName",
       "align": "center"
     }
   ],
