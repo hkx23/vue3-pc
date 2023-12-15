@@ -212,6 +212,11 @@ const onPopupVisibleChange = (val: boolean, context: any) => {
   onInputChange('');
   popupVisible.value = val;
   console.log(val, context);
+  if (val) {
+    state.defaultValue = '';
+    selectedRowKeys.value = [];
+    emits('selectionChange', state.defaultValue, selectedRowKeys.value);
+  }
 };
 const onClear = () => {
   if (props.multiple) {
