@@ -111,5 +111,8 @@
     "parentOrgName": "Hierarchy",
     "timeModified": "Update time",
     "title": "Organization"
+  },
+  "basic": {
+    "hello": "Hello World"
   }
 }

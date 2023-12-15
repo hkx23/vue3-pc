@@ -1,6 +1,6 @@
 <template>
-  <cmp-container :full="false">
-    <cmp-card :span="12" :full="false">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
       <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
     </cmp-card>
     <cmp-card :span="12">
@@ -12,6 +12,7 @@
         :table-data="tableData"
         :loading="loading"
         :total="dataTotal"
+        fixed-height="true"
         :header-affixed-top="true"
         :page-affixed-top="true"
         @refresh="conditionEnter"

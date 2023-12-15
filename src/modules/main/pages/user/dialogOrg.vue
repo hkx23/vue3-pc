@@ -2,7 +2,7 @@
   <t-dialog
     v-model:visible="visible"
     :header="t('user.org')"
-    width="40%"
+    width="600px"
     :confirm-on-enter="true"
     :on-confirm="onConfirmAnother"
   >

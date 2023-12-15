@@ -166,6 +166,8 @@
 .permission-dialog .t-dialog__header--fullscreen {
   background-color: #fff !important;
   min-height: 0 !important;
+  border-bottom: 0 solid #eee;
+  padding: 0 32px;
 }
 
 .permission-dialog .t-dialog__close--fullscreen {
@@ -180,4 +182,30 @@
 
 .permission-dialog .t-tab-panel {
   padding: 16px;
+}
+
+.t-dialog--default {
+  padding: 0;
+  border-radius: 6px;
+  box-shadow: var(--td-shadow-1);
+}
+
+.t-dialog__header {
+  padding: 24px 32px;
+  background: rgb(250 250 250);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom: 1px solid rgb(232 232 232);
+}
+
+.t-dialog__body {
+  padding: 24px 32px;
+}
+
+.t-dialog__footer {
+  padding: 20px 32px;
+  background: rgb(250 250 250);
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-top: 1px solid rgb(232 232 232);
 }

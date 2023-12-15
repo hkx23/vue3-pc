@@ -6,14 +6,21 @@
         class="search-form"
         :style="{ height: openSearchForm ? '' : '50px', padding: '0px 0px' }"
         v-bind="$attrs"
-        layout="inline"
-        :label-width="labelWidth"
+        :label-width="0"
         :form="state.form"
         size="default"
         @submit.prevent
       >
-        <t-row class="item-row" :gutter="[32, 0]"
-          ><t-col v-for="(opt, i) in cOpts" v-show="!opt.isHide" :key="i" :span="opt.span"
+        <t-row ref="formRowRef" class="item-row" :gutter="[32, 0]"
+          ><t-col
+            v-for="(opt, i) in cOpts"
+            v-show="!opt.isHide"
+            :key="i"
+            :xs="12"
+            :sm="6"
+            :md="4"
+            :lg="opt.span"
+            :xl="opt.span"
             ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">
               <!-- 自定义label -->
               <template v-if="opt.labelRender" #label>
@@ -89,8 +96,8 @@
       </t-form>
     </t-col>
     <t-col flex="0 1 300px" style="text-align: end">
-      <t-space direction="horizontal" class="search-space" size="large">
-        <div class="search-form__button">
+      <t-space direction="horizontal" class="search-space search-form__button" size="large">
+        <div class="">
           <t-space size="small" :align="'end'">
             <t-button class="btn_check" :loading="loading" @click="checkHandle">{{
               t('common.button.search')
@@ -112,7 +119,7 @@
 
 <script setup lang="tsx" name="CmpQuery">
 import _ from 'lodash';
-import { computed, getCurrentInstance, nextTick, onMounted, reactive, ref, watch } from 'vue';
+import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 
 import { useLang } from './lang';
 import RenderComp from './renderComp.vue';
@@ -170,6 +177,8 @@ const state = reactive({
 const openSearchForm = ref(false);
 const showExpand = ref(true); // 是否展示展开按钮
 const formContentRef = ref<any>(null);
+const formRowRef = ref<any>(null);
+
 const slots = ref({});
 // 默认展开
 if (props.isExpansion) {
@@ -197,7 +206,7 @@ const cOpts = computed(() => {
     if (opt.comp && opt.comp.includes('range')) {
       opt.span = 6;
     } else {
-      opt.span = 4;
+      opt.span = 3;
     }
     opt.dataIndex = field;
     acc[field] = opt;
@@ -388,18 +397,22 @@ const debounceFunction = _.debounce(() => {
 
 const computedExpandBtnVisible = () => {
   nextTick(() => {
-    if (formContentRef.value) {
-      const contentWidth = formContentRef.value.$el.clientWidth / 360;
-      showExpand.value = contentWidth <= Object.keys(props.opts).length;
+    if (formRowRef.value) {
+      const { clientHeight } = formRowRef.value.$el;
+      showExpand.value = clientHeight >= 50;
     }
   });
 };
 onMounted(() => {
   debounceFunction();
+  window.addEventListener('resize', debounceFunction, false);
+
   const instance = getCurrentInstance();
   slots.value = instance?.slots;
 });
-
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', debounceFunction);
+});
 // 暴露方法出去
 defineExpose({ state, props });
 </script>

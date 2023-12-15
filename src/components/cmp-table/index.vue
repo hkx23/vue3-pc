@@ -1,5 +1,5 @@
 <template>
-  <div class="cmp-table">
+  <div ref="tableBoxRef" class="cmp-table">
     <div class="table-box">
       <div v-if="buttonsVisible" class="table-box_header">
         <t-space size="small" :align="'center'">
@@ -100,13 +100,13 @@ import {
   getCurrentInstance,
   nextTick,
   onActivated,
-  onBeforeUnmount,
   onDeactivated,
   onMounted,
   reactive,
   ref,
   watch,
 } from 'vue';
+import { useResizeObserver } from 'vue-hooks-plus';
 
 // import { useSettingStore } from '@/store';
 import excelUtils from '@/utils/excel';
@@ -132,6 +132,8 @@ enum Operators {
   LTE = 'LTE',
   GTE = 'GTE',
 }
+const boxHeight = ref(0);
+const boxWidth = ref(0);
 
 const props = defineProps({
   searchVisible: { type: Boolean, default: true },
@@ -161,7 +163,7 @@ const props = defineProps({
   loading: { type: Boolean, default: false },
   rowKey: { type: String, default: 'id' },
   maxHeight: { type: String, default: '' },
-  isFixedHeight: { type: Boolean, default: false },
+  fixedHeight: { type: Boolean, default: false },
   // expandedRow: { type: Function },
   exportFunction: { type: Function },
 });
@@ -434,21 +436,28 @@ const tableContentRef = ref();
 const tableRef = ref();
 // const showExpand = ref(true); // 是否展示展开按钮
 // const tableWidth = ref(100); // 表格宽度
-const tableHeight = ref(0); // 表格高度
 const comVisible = ref(true);
-
-const debounceFunction = _.debounce(() => {
-  computedTableContentSize();
+const tableBoxRef = ref(null);
+useResizeObserver(tableBoxRef, (entries) => {
+  const entry = entries[0];
+  debounceFunction(entry);
+});
+const debounceFunction = _.debounce((entry) => {
+  computedTableContentSize(entry);
 }, 100);
 
-const computedTableContentSize = () => {
+const computedTableContentSize = (entry) => {
   // 组件处于不可见状态时将不进行计算
   if (!comVisible.value) return;
-  // tableWidth.value = 0;
-  // tableHeight.value = 0;
+  const { width: _w, height: _h } = entry.contentRect;
+  boxWidth.value = 0;
+  boxHeight.value = 0;
   nextTick(() => {
-    // tableWidth.value = tableContentRef.value.clientWidth;
-    tableHeight.value = tableContentRef.value.clientHeight;
+    boxHeight.value =
+      tableBoxRef.value.parentElement.clientHeight -
+      120 -
+      (props.buttonsVisible ? 0 : 40) -
+      (props.showPagination ? 0 : -50);
   });
 };
 // 表格计算高度
@@ -458,8 +467,9 @@ const maxHeightValue = computed(() => {
     return props.maxHeight;
   }
   // 如果配置了自适应高度，is-fixed-height,则使用监控的高度
-  if (props.isFixedHeight) {
-    return `${tableHeight.value}px`;
+  if (props.fixedHeight) {
+    console.log('fixedHeight', boxHeight.value);
+    return `${boxHeight.value}px`;
   }
   return '';
 });
@@ -474,25 +484,21 @@ const maxHeightValue = computed(() => {
 // );
 
 onMounted(() => {
-  debounceFunction();
   const instance = getCurrentInstance();
   slots.value = instance?.slots;
+  // debugger;
+  // const elements = tableBoxRef.value.$el.querySelectorAll(':scope > .t-space-item') as HTMLInputElement[];
+  // if (elements.length > 0) {
+  //   elements[props.flexIndex || elements.length - 1].style.flex = '1';
+  // }
 });
 
 onActivated(() => {
   comVisible.value = true;
-  debounceFunction();
 });
 
 onDeactivated(() => {
   comVisible.value = false;
-  debounceFunction();
-});
-
-window.addEventListener('resize', debounceFunction, false);
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', debounceFunction);
 });
 </script>
 

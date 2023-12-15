@@ -103,7 +103,7 @@
     <!-- 工厂 -->
     <t-row justify="space-around">
       <div class="left-operation-container">
-        <bcmp-select-business v-model="plantValue" type="plant"></bcmp-select-business>
+        <bcmp-select-business v-model="plantValue" component-type="list" type="plant"></bcmp-select-business>
       </div>
       <div class="search-input">
         <t-input v-model="plantValue" label="工厂值" />

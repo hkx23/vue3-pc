@@ -1,6 +1,6 @@
 <template>
   <bcmp-select-table
-    v-if="componentType === 'table' && targetIsVisible"
+    v-if="finalComponentType === 'table' && targetIsVisible"
     :value="modelValue"
     :columns="finalColumns"
     :row-key="finalRowKey"
@@ -18,6 +18,27 @@
     @selection-change="onSelectionChange"
   >
   </bcmp-select-table>
+
+  <bcmp-select-list
+    v-if="finalComponentType === 'list' && targetIsVisible"
+    :value="modelValue"
+    :columns="finalColumns"
+    :row-key="finalRowKey"
+    :select-txt="selectTxt"
+    :remote-url="finalUrl"
+    :category="finalCategory"
+    :multiple="isMultiple"
+    :parent-id="finalParentId"
+    :readonly="readonly"
+    :title="finalTitle"
+    :placeholder="finalPlaceholder"
+    :keywords="finalKeywords"
+    :table-width="finaltableWidth"
+    :list-setting="finalListSetting"
+    v-bind="selectAttr"
+    @selection-change="onSelectionChange"
+  >
+  </bcmp-select-list>
 </template>
 
 <script setup lang="tsx" name="BcmpSelectBusiness">
@@ -31,7 +52,7 @@ const props = defineProps({
   // 组件展示类型
   componentType: {
     type: [String],
-    default: 'table',
+    default: '',
   },
   // 分类参数
   category: {
@@ -147,6 +168,18 @@ const props = defineProps({
       };
     },
   },
+  // 下拉框指定的图标，名称，描述
+  listSetting: {
+    type: Object,
+    default: () => {
+      return {
+        icon: 'building-1',
+        nameField: 'orgName',
+        codeField: 'orgCode',
+        descField: 'orgDesc',
+      };
+    },
+  },
 });
 // 抛出事件
 const emits = defineEmits(['SelectionChange', 'Change', 'update:modelValue']);
@@ -169,6 +202,8 @@ const finalKeywords = ref(props.keywords);
 const finalCategory = ref(props.category);
 const finalParentId = ref(props.parentId);
 const finaltableWidth = ref(props.tableWidth);
+const finalComponentType = ref(props.componentType);
+const finalListSetting = ref(props.listSetting);
 
 const onSelectionChange = (val: any, valuKeys: any) => {
   if (!props.isMultiple) {
@@ -211,6 +246,25 @@ const loadTypeSetting = () => {
           item.colKey = item.key;
         });
         finalColumns.value = columnsData;
+        // 如过组件类型为空，则读取res的配置
+        if (!props.componentType) {
+          if (res.componentType) {
+            finalComponentType.value = res.componentType;
+          } else {
+            finalComponentType.value = 'table';
+          }
+        } else {
+          finalComponentType.value = props.componentType;
+        }
+        if (res.componentType) {
+          if (!finaltableWidth.value) {
+            finaltableWidth.value = res.tableWidth;
+          }
+        }
+        if (res.listSetting) {
+          finalListSetting.value = res.listSetting;
+        }
+
         if (res.rowKey) {
           if (!finalRowKey.value) {
             finalRowKey.value = res.rowKey;
