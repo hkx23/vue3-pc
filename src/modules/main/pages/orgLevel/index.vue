@@ -1,22 +1,16 @@
 <template>
-  <div class="main-page">
-    <!-- <div class="main-page-content">
-    
-    </div> -->
-    <div class="main-page-content">
-      <t-space style="margin-bottom: 8px">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <t-space size="8">
         <t-button @click="onClickAdd">
-          <template #icon><add-icon /></template>
           {{ t('common.button.add') }}
         </t-button>
         <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
-          <t-button theme="default">
-            <template #icon><remove-icon /></template>
-            {{ t('common.button.delete') }}</t-button
-          >
+          <t-button theme="default"> {{ t('common.button.delete') }}</t-button>
         </t-popconfirm>
       </t-space>
-
+    </cmp-card>
+    <cmp-card :span="12">
       <t-enhanced-table
         ref="tableRef"
         row-key="id"
@@ -27,15 +21,15 @@
         @row-click="onRowClick"
       >
       </t-enhanced-table>
-    </div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="t('common.dialog.header.add', [t('orgLevel.levelName')])"
-      :on-confirm="onConfirmForm"
-    >
-      <org-level-form ref="formRef"></org-level-form>
-    </t-dialog>
-  </div>
+    </cmp-card>
+  </cmp-container>
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="t('common.dialog.header.add', [t('orgLevel.levelName')])"
+    :on-confirm="onConfirmForm"
+  >
+    <org-level-form ref="formRef"></org-level-form>
+  </t-dialog>
 </template>
 
 <script lang="ts">
@@ -44,7 +38,6 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { AddIcon, RemoveIcon } from 'tdesign-icons-vue-next';
 import { EnhancedTableInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 

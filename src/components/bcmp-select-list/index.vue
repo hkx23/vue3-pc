@@ -224,6 +224,7 @@ const onClear = () => {
   selectSearch.value = '';
   selectedRowKeys.value = [];
   popupVisible.value = false;
+  emits('selectionChange', state.defaultValue, selectedRowKeys.value);
 };
 // 初始化远程数据
 onMounted(() => {
@@ -441,7 +442,7 @@ defineExpose({ closeTable, onClear });
 }
 
 .t-autocomplete-option-list .custom-option:hover {
-  background-color: var(--td-gray-color-3);
+  background-color: var(--td-bg-color-container-hover);
   border-radius: 6px;
 }
 

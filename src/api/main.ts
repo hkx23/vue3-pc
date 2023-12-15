@@ -1693,8 +1693,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1945,14 +1945,56 @@ export interface ResultPost {
 }
 
 /** 响应数据 */
-export type PagingDataPerson = {
-  list?: Person[];
+export type PagingDataPersonVO = {
+  list?: PersonVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
+/** 显示员工实体 */
+export interface PersonVO {
+  id?: string;
+  /** 人员编码 */
+  personCode?: string;
+  /** 姓名 */
+  personName?: string;
+  /**
+   * 性别
+   * @format int32
+   */
+  gender?: number;
+  /** 手机 */
+  mobilePhone?: string;
+  /** 邮箱 */
+  email?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 性别别名 */
+  genderName?: string;
+  /** 状态别名 */
+  stateName?: string;
+  /** 是否启用 */
+  isState?: boolean;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPersonVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPersonVO;
+}
+
 /** 员工表 */
-export interface Person {
+export type Person = {
   id?: string;
   /**
    * 创建时间
@@ -1989,20 +2031,7 @@ export interface Person {
   /** 手机号 */
   mobilePhone?: string;
   adminOrgId?: string;
-}
-
-/** 通用响应类 */
-export interface ResultPagingDataPerson {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataPerson;
-}
+} | null;
 
 /** 通用响应类 */
 export interface ResultPerson {
@@ -2015,35 +2044,6 @@ export interface ResultPerson {
   message?: string;
   /** 员工表 */
   data?: Person;
-}
-
-/** 显示员工实体 */
-export interface PersonVO {
-  id?: string;
-  /** 人员编码 */
-  personCode?: string;
-  /** 姓名 */
-  personName?: string;
-  /**
-   * 性别
-   * @format int32
-   */
-  gender?: number;
-  /** 手机 */
-  mobilePhone?: string;
-  /** 邮箱 */
-  email?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 性别别名 */
-  genderName?: string;
-  /** 状态别名 */
-  stateName?: string;
-  /** 是否启用 */
-  isState?: boolean;
 }
 
 /** 系统字典组 */
@@ -2884,15 +2884,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isBatchName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isRawName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isState?: boolean;
   stateName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
-  isRawName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3406,8 +3406,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4419,10 +4419,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -6587,7 +6587,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataPerson['data']>(`/api/main/person/items`, {
+      http.request<ResultPagingDataPersonVO['data']>(`/api/main/person/items`, {
         method: 'POST',
         body: data as any,
       }),
