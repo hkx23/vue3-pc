@@ -19,7 +19,7 @@
             >
             </cmp-table>
           </t-col>
-          <t-checkbox v-model="queryCondition.onlyDisplayCreated">仅显示已生成</t-checkbox>
+          <t-radio v-model="queryCondition.onlyDisplayCreated" allow-uncheck>仅显示已生成</t-radio>
           <div class="main-page-content">
             <t-tabs v-model="tabValue" @change="handleTabClick">
               <!-- $$$$$$$$$$$    包装页签  $$$$$$$$$$$$$$-->
@@ -38,10 +38,8 @@
                 <span>{{ dataSummary }}</span>
               </t-space>
               <t-button>生成</t-button>
-              <t-button theme="default">打印</t-button>
+              <t-button theme="default" :disabled="printButtonOp">打印</t-button>
             </t-row>
-            <!-- 查询组件  -->
-            <cmp-query :opts="barcodeOpts" label-width="100" @submit="conditionEnter" />
             <cmp-table
               v-model:pagination="pageUI"
               row-key="id"
@@ -51,17 +49,46 @@
               :total="barcodeTotal"
               @refresh="onRefresh"
             >
+              <template #button>
+                <t-row align="middle" style="margin-top: 10px">
+                  <t-col>条码规则： </t-col>
+                  <t-col :span="2">
+                    <t-select style="width: 90%">
+                      <t-option
+                        v-for="item in onPrintRulesList.list"
+                        :key="item.id"
+                        :label="item.ruleName"
+                        :value="item.ruleName"
+                      />
+                    </t-select>
+                  </t-col>
+                  <t-col>打印摸板： </t-col>
+                  <t-col :span="2">
+                    <t-select style="width: 90%">
+                      <t-option
+                        v-for="item in onPrintTemplateList.list"
+                        :key="item.id"
+                        :label="item.tmplName"
+                        :value="item.tmplName"
+                      />
+                    </t-select>
+                  </t-col>
+                  <t-col>本次打印数： </t-col>
+                  <t-col :span="2">
+                    <t-input v-model="printMode.thisPrintNum" style="width: 80%" />
+                  </t-col>
+                  <t-col>包装规格： </t-col>
+                  <t-col :span="2">
+                    <t-input v-model="printMode.pkgSpec" style="width: 80%" />
+                  </t-col>
+                </t-row>
+              </template>
             </cmp-table>
           </div>
         </t-tab-panel>
         <t-tab-panel :value="1" label="包装标签管理" :destroy-on-hide="false">
           <!-- 查询组件  -->
           <cmp-query :opts="pkgBarcodeManageOp" label-width="100" @submit="managePageSearchClick" />
-          <t-row>
-            <t-button>生成</t-button>
-            <t-button theme="default">打印</t-button>
-            <t-button theme="default">导出</t-button>
-          </t-row>
           <t-col :span="12" flex="auto">
             <cmp-table
               v-model:pagination="pageUI"
@@ -72,15 +99,58 @@
               :total="pkgManageTabTotal"
               @refresh="onRefresh"
             >
+              <template #operate>
+                <t-space>
+                  <t-button theme="default" @click="onReprint"> 补打 </t-button>
+                  <t-button theme="default" @click="onCancellation"> 作废 </t-button>
+                  <t-button theme="default"> 导出 </t-button>
+                </t-space>
+              </template>
+              <template #operations>
+                <t-space>
+                  <t-link theme="primary" @click="openLog"> 日志 </t-link>
+                </t-space>
+              </template>
             </cmp-table>
           </t-col>
-          <template #op="slotProps">
-            <t-space>
-              <t-link variant="text" theme="primary" name="edit" @click="openLog(slotProps)">日志</t-link>
-            </t-space>
-          </template>
         </t-tab-panel>
       </t-tabs>
+      <!-- % dialog 弹窗 -->
+      <t-dialog v-model:visible="formVisible" :confirm-btn="buttonSwitch" :header="diaLogTitle" width="40%">
+        <t-form>
+          <t-form-item v-if="reprintVoidSwitch" label-width="50px" label="补打原因" name="incidentName">
+            <t-select>
+              <t-option
+                v-for="(value, key) in bracodeStatusOption"
+                :key="key"
+                :label="value.label"
+                :value="value.value"
+              ></t-option>
+            </t-select>
+          </t-form-item>
+          <t-form-item v-if="!reprintVoidSwitch" label-width="50px" label="作废" name="incidentName">
+            <t-select>
+              <t-option
+                v-for="(value, key) in bracodeStatusOption"
+                :key="key"
+                :label="value.label"
+                :value="value.value"
+              ></t-option>
+            </t-select>
+          </t-form-item>
+        </t-form>
+      </t-dialog>
+      <t-dialog v-model:visible="logInterfaceVisible" :cancel-btn="null" :confirm-btn="null" header="日志" width="60%">
+        <cmp-table
+          ref="tableRef"
+          v-model:pagination="pageUIDay"
+          row-key="id"
+          :table-column="logInterface"
+          :table-data="dayTabData.list"
+          :total="totalDay"
+          @refresh="onRightFetchData"
+        ></cmp-table>
+      </t-dialog>
     </div>
   </div>
 </template>
@@ -98,6 +168,7 @@ import { usePage } from '@/hooks/modules/page';
 
 const { loading, setLoading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
+const { pageUI: pageUIDay } = usePage(); // 分页工具
 // $打印上 表格数据
 const moDataList = reactive({ list: [] });
 const moTabTotal = ref(0);
@@ -106,11 +177,26 @@ const pkgManageDataList = reactive({ list: [] });
 const pkgManageTabTotal = ref(0);
 const barcodeTotal = ref(0);
 const dataSummary = ref(null);
+const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
+const diaLogTitle = ref(''); // 弹窗标题
+const buttonSwitch = ref(''); // 确认按钮title
+const logInterfaceVisible = ref(false); // 控制日志 Dialog 显示隐藏
+const printButtonOp = ref(true); // 控制打印按钮禁用
+// 日志界面 表格数据
+const dayTabData = reactive({ list: [] });
+const totalDay = ref(0);
+// 打印按钮模型初始化
+const printMode = ref({
+  bracodeRuleId: '',
+  printTempId: '',
+  thisPrintNum: 0,
+  pkgSpec: 0,
+});
 // 打印上方查询初始化
 const queryCondition = ref({
   moId: '',
   mitemId: '',
-  moStatus: '',
+  scheStatus: '',
   datetimePlanStart: '',
   datetimePlanEnd: '',
   workshopId: '',
@@ -140,31 +226,105 @@ const manageQueryCondition = ref({
 // tab 表格?
 const tabValue = ref(0);
 const tagValue = ref(0);
+// 补打 点击事件
+const reprintVoidSwitch = ref(false); // 控制
+const onReprint = () => {
+  formVisible.value = true;
+  reprintVoidSwitch.value = true;
+  diaLogTitle.value = '补打';
+  buttonSwitch.value = '补打';
+};
+
+// 作废 点击事件
+const onCancellation = () => {
+  formVisible.value = true;
+  reprintVoidSwitch.value = false;
+  diaLogTitle.value = '作废';
+  buttonSwitch.value = '作废';
+};
 
 // # 条码规则刷新按钮
 const onRefresh = async () => {
   await fetchMoTable(); // 获取 条码规则表格 数据
 };
-const openLog = (value: any) => {
-  console.log(value);
+const openLog = () => {
+  logInterfaceVisible.value = true; // 控制界面显示隐藏
 };
+// 获取 打印规则 下拉数据
+const onPrintRulesList = reactive({ list: [] });
+const onPrintRulesData = async () => {
+  const res = await api.label.getBarcodeRuleList();
+  onPrintRulesList.list = res.list;
+};
+// 获取 打印摸板 下拉数据
+const onPrintTemplateList = reactive({ list: [] });
+const onPrintTemplateData = async () => {
+  const res = await api.label.getPrintTmplList();
+  onPrintTemplateList.list = res.list;
+};
+// 日志界面 表格数据
+const logInterface: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'serialNumber',
+    title: '条码',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'barcodeStatus',
+    title: '条码状态',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'wipNum',
+    title: '数量',
+    align: 'center',
+    width: '100',
+    cell: 'stateSwitch',
+  },
+  {
+    colKey: 'creatorName',
+    title: '操作类型',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '原因',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '操作人',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '操作时间',
+    align: 'center',
+    width: '100',
+  },
+];
 
 // #### 条码规则 表头
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'moCode',
+    colKey: 'scheCode',
     title: '工单',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'moClass',
+    colKey: 'scheStatusName',
     title: '工单状态',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'datetimePlanStart',
+    colKey: 'datetimeSche',
     title: '计划生产日期',
     align: 'center',
     width: '130',
@@ -188,7 +348,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'uom',
+    colKey: 'uomName',
     title: '单位',
     align: 'center',
     width: '130',
@@ -341,13 +501,15 @@ const pkgBarcodeManageColumns: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'op',
-    title: '日志',
+    colKey: 'operations',
+    title: '操作',
     align: 'center',
+    fixed: 'right',
     width: '130',
+    cell: 'actionSlot', // 引用具名插槽
   },
 ];
-// 打印界面点击查询按钮
+
 const switchTab = (selectedTabIndex: any) => {
   if (selectedTabIndex === 1) {
     fetchBracodeManageTable();
@@ -358,6 +520,7 @@ const switchTab = (selectedTabIndex: any) => {
 // 打印界面点击查询按钮
 const conditionEnter = (data: any) => {
   queryCondition.value = data;
+  queryCondition.value.scheStatus = data.scheStatus;
   const [datetimePlanStart, datetimePlanEnd] = data.datetimePlanRange;
   queryCondition.value.datetimePlanStart = datetimePlanStart;
   queryCondition.value.datetimePlanEnd = datetimePlanEnd;
@@ -378,11 +541,15 @@ const managePageSearchClick = (data: any) => {
   manageQueryCondition.value.pageSize = pageUI.value.rows;
   fetchBracodeManageTable();
 };
+// 右表格数据刷新
+const onRightFetchData = async () => {
+  await fetchBracodeManageTable();
+};
 // 加载工单数据表格
 const fetchMoTable = async () => {
   setLoading(true);
   try {
-    const data = (await api.barcodePkg.getMoPkgList(queryCondition.value)) as any;
+    const data = (await api.barcodePkg.getMoScheduleList(queryCondition.value)) as any;
     const { list } = data;
     moDataList.list = list;
     moTabTotal.value = data.total;
@@ -392,11 +559,12 @@ const fetchMoTable = async () => {
     setLoading(false);
   }
 };
+
 // 加载条码管理数据表格
 const fetchBracodeManageTable = async () => {
   setLoading(true);
   try {
-    const data = (await api.barcodePkg.getMoPkgList(manageQueryCondition.value)) as any;
+    const data = (await api.barcodePkg.getMoScheduleList(manageQueryCondition.value)) as any;
     const { list } = data;
     pkgManageDataList.list = list;
     pkgManageTabTotal.value = data.total;
@@ -462,49 +630,8 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    moStatus: {
+    scheStatus: {
       label: '工单状态',
-      comp: 't-select',
-      event: 'single',
-      defaultVal: '',
-      bind: {
-        options: moStatusOption.value,
-      },
-    },
-  };
-});
-// 查询组件
-const barcodeOpts = computed(() => {
-  return {
-    braCode: {
-      label: '条码规则',
-      comp: 't-select',
-      event: 'single',
-      defaultVal: '',
-      bind: {
-        options: moStatusOption.value,
-      },
-    },
-    tmplCode: {
-      label: '打印模板',
-      comp: 't-select',
-      event: 'single',
-      defaultVal: '',
-      bind: {
-        options: moStatusOption.value,
-      },
-    },
-    qty: {
-      label: '本次生成数',
-      comp: 't-select',
-      event: 'single',
-      defaultVal: '',
-      bind: {
-        options: moStatusOption.value,
-      },
-    },
-    packRuleId: {
-      label: '包装规格',
       comp: 't-select',
       event: 'single',
       defaultVal: '',
@@ -583,7 +710,7 @@ const pkgBarcodeManageOp = computed(() => {
       event: 'single',
       defaultVal: '',
       bind: {
-        options: moStatusOption.value,
+        options: bracodeTypeOption.value,
       },
     },
     bracodeState: {
@@ -592,7 +719,7 @@ const pkgBarcodeManageOp = computed(() => {
       event: 'single',
       defaultVal: '',
       bind: {
-        options: moStatusOption.value,
+        options: bracodeStatusOption.value,
       },
     },
     bracodeCode: {
@@ -607,6 +734,14 @@ const moStatusOption = ref([]);
 apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' }).then((data) => {
   moStatusOption.value = data;
 });
+const bracodeTypeOption = ref([]);
+apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_TYPE' }).then((data) => {
+  bracodeTypeOption.value = data;
+});
+const bracodeStatusOption = ref([]);
+apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_WIP_STATUS' }).then((data) => {
+  bracodeStatusOption.value = data;
+});
 const tabList = ref([]);
 apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' }).then((data) => {
   tabList.value = data;
@@ -615,6 +750,8 @@ apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' }).then((data) =
 // ################ 初始渲染
 onMounted(async () => {
   await fetchMoTable(); // 获取 物料编码 表格数据
+  await onPrintRulesData(); // 获取 条码规则下拉数据
+  await onPrintTemplateData(); // 获取 打印模板下拉数据
 });
 
 const handleTabClick = (selectedTabIndex: any) => {
