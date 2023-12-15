@@ -820,11 +820,12 @@ export interface LabelSearch {
    * @format date-time
    */
   planDateEnd?: string;
+  moId?: string;
   workshopId?: string;
   workcenterId?: string;
   mitemId?: string;
   /** 工单状态 */
-  moStatus?: string;
+  scheStatus?: string;
   /** 是否仅显示已打印 */
   isFinishDisplay?: boolean;
   moScheduleId?: string;
@@ -845,17 +846,11 @@ export interface LabelSearch {
    */
   createDateEnd?: string;
   barcodeRuleId?: string;
-  /** 条码规则名称 */
-  barcodeRuleName?: string;
-  /** 条码规则表达式 */
-  ruleExpression?: string;
   /**
    * 生成数量
    * @format int32
    */
   createNum?: number;
-  /** 条码类型 */
-  barcodeType?: string;
   barcodeWipId?: string;
   /** 在制品条码 */
   serialNumber?: string;
@@ -863,10 +858,11 @@ export interface LabelSearch {
   barcodeWipStatus?: string;
   /** 原因 */
   reason?: string;
-  moId?: string;
+  /** 批量ID */
+  ids?: string[];
 }
 
-/** 显示工单投料标签扫描 */
+/** 显示产品条码管理 */
 export interface LabelVO {
   id?: string;
   /**
@@ -921,8 +917,8 @@ export interface LabelVO {
   status?: string;
   /** 排产单编码 */
   scheCode?: string;
-  /** 工单状态 */
-  moStatus?: string;
+  /** 排产单状态 */
+  scheStatusName?: string;
   /**
    * 计划生产日期
    * @format date-time
@@ -956,20 +952,22 @@ export interface LabelVO {
   barcodeRule?: string;
   /** 打印模板 */
   printTmpl?: string;
-  /** 计量单位 */
-  uom?: string;
   /** 车间名称 */
   workshopName?: string;
+  workcenterId?: string;
   /** 工作中心名称 */
   workcenterName?: string;
   /** 物料描述 */
   mitemDesc?: string;
   /** 计量单位名称 */
   uomName?: string;
+  /** 计量单位 */
+  uom?: string;
+  barcodeWipId?: string;
   /** 条码 */
   serialNumber?: string;
-  /** 条码状态 */
-  barcodeStatus?: string;
+  /** 在制品条码状态 */
+  barcodeWipStatusName?: string;
   /**
    * 在制品数量
    * @format int32
@@ -977,8 +975,13 @@ export interface LabelVO {
   wipNum?: number;
   /** 创建人名称 */
   creatorName?: string;
+  moScheduleId?: string;
   /** 工单编码 */
   moCode?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /** 原因 */
+  reason?: string;
 }
 
 /** 响应数据 */
@@ -1105,17 +1108,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  /** @format date-time */
+  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  /** @format date-time */
-  datetimeSche?: string;
   stateName?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
+  isState?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1294,16 +1297,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  /** @format date-time */
+  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  /** @format date-time */
-  datetimeSche?: string;
   stateName?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   defectCodeStr?: string;
+  isState?: boolean;
 }
 
 /** 缺陷代码 */
@@ -1506,68 +1509,95 @@ export interface BarcodeRuleInMitem {
   mitemCategoryId?: string;
 }
 
-export interface MoBarcodePkgSearch {
+export interface BarcodePkgSearch {
   /**
-   * 计划生成时间开始
-   * @format date
-   */
-  datetimePlanStart?: string;
-  /**
-   * 计划生成时间结束
-   * @format date
-   */
-  datetimePlanEnd?: string;
-  mitemId?: string;
-  moId?: string;
-  /** 工单状态 */
-  moStatus?: string;
-  workshopId?: string;
-  workCenterId?: string;
-  /**
-   * 分页页数
+   * 页码
    * @format int32
    */
   pageNum?: number;
   /**
-   * 分页大小
+   * 页最大记录条数
    * @format int32
    */
   pageSize?: number;
+  /**
+   * 计划开始日期
+   * @format date-time
+   */
+  planDateStart?: string;
+  /**
+   * 计划结束日期
+   * @format date-time
+   */
+  planDateEnd?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  mitemId?: string;
+  /** 排产单单状态 */
+  scheStatus?: string;
+  moScheduleId?: string;
+  moId?: string;
 }
 
-export interface MoBarcodePkgVO {
-  /** 工单编码 */
-  moCode?: string;
-  /** 工单状态 */
-  moClass?: string;
+/** 显示包装条码管理 */
+export interface BarcodePkgVO {
+  /** 排产单编码 */
+  scheCode?: string;
+  /** 排产单状态 */
+  scheStatusName?: string;
   /**
    * 计划生产日期
-   * @format date
+   * @format date-time
    */
-  datetimePlanStart?: string;
+  datetimeSche?: string;
   /** 物料编码 */
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  /** 计划数量 */
-  planQty?: string;
-  /** 单位 */
-  uom?: string;
-  /** 车间 */
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /** 计量单位名称 */
+  uomName?: string;
+  /** 车间名称 */
   workshopName?: string;
-  /** 工作中心 */
+  workcenterId?: string;
+  /** 工作中心名称 */
   workcenterName?: string;
+  moScheduleId?: string;
+  /** 包装类型名称 */
+  packTypeName?: string;
+  /**
+   * 已打印数量
+   * @format int32
+   */
+  displayQty?: number;
+  /** 包装类型TAG名称 */
+  packTypeTagName?: string;
+  /**
+   * 已打印数量
+   * @format int32
+   */
+  packQty?: number;
+  /**
+   * 包装层级
+   * @format int32
+   */
+  packLevel?: number;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
-export type PagingDataMoBarcodePkgVO = {
-  list?: MoBarcodePkgVO[];
+export type PagingDataBarcodePkgVO = {
+  list?: BarcodePkgVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataMoBarcodePkgVO {
+export interface ResultPagingDataBarcodePkgVO {
   /**
    * 响应代码
    * @format int32
@@ -1576,7 +1606,7 @@ export interface ResultPagingDataMoBarcodePkgVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataMoBarcodePkgVO;
+  data?: PagingDataBarcodePkgVO;
 }
 
 /** 通用响应类 */
@@ -1866,19 +1896,6 @@ export interface ResultPagingDataBarcodeSegmentDTO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeSegmentDTO;
-}
-
-/** 通用响应类 */
-export interface Result {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 /**
@@ -2656,6 +2673,21 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name GetBarcodeWipLog
+     * @summary 查询日志
+     * @request POST:/label/getBarcodeWipLog
+     * @secure
+     */
+    getBarcodeWipLog: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/control/label/getBarcodeWipLog`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name GetBarcodeWipList
      * @summary 查询在制品条码(标签打印下表格)
      * @request POST:/label/getBarcodeWipList
@@ -2867,13 +2899,13 @@ export const api = {
      * No description
      *
      * @tags 包装条码表
-     * @name GetMoPkgList
-     * @summary 查询工单信息
-     * @request POST:/barcodePkg/items/getMoPkgList
+     * @name GetTagList
+     * @summary 查询包装条码下表格Tag
+     * @request POST:/barcodePkg/getTagList
      * @secure
      */
-    getMoPkgList: (data: MoBarcodePkgSearch) =>
-      http.request<ResultPagingDataMoBarcodePkgVO['data']>(`/api/control/barcodePkg/items/getMoPkgList`, {
+    getTagList: (data: BarcodePkgSearch) =>
+      http.request<ResultPagingDataBarcodePkgVO['data']>(`/api/control/barcodePkg/getTagList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2882,13 +2914,15 @@ export const api = {
      * No description
      *
      * @tags 包装条码表
-     * @name GetPkgRule
-     * @request GET:/barcodePkg/getPkgRule/{mitemId}/{moScheId}
+     * @name GetMoScheduleList
+     * @summary 查询工单排产(标签打印上表格)
+     * @request POST:/barcodePkg/getMoScheduleList
      * @secure
      */
-    getPkgRule: (mitemId: string, moScheId: string) =>
-      http.request<Result['data']>(`/api/control/barcodePkg/getPkgRule/${mitemId}/${moScheId}`, {
-        method: 'GET',
+    getMoScheduleList: (data: BarcodePkgSearch) =>
+      http.request<ResultPagingDataBarcodePkgVO['data']>(`/api/control/barcodePkg/getMoScheduleList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   moLog: {
