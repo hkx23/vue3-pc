@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full="false">
+  <cmp-container :full="true">
     <cmp-card :span="12" :full="false">
       <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
     </cmp-card>
