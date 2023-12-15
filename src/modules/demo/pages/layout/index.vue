@@ -14,13 +14,14 @@
         </t-tabs>
       </cmp-card>
       <cmp-card :span="3" :ghost="true">
-        <cmp-container :full="true">
+        <cmp-container :full="true" :full-sub-index="[0, 2]">
           <cmp-card>
             <t-tabs>
               <t-tab-panel value="api" label="API"> API </t-tab-panel>
               <t-tab-panel value="script" label="Script"> Script </t-tab-panel>
             </t-tabs>
           </cmp-card>
+          <cmp-card> center </cmp-card>
           <cmp-card> bottom corner </cmp-card>
         </cmp-container>
       </cmp-card>
