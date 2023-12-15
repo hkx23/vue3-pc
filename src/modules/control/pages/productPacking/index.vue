@@ -161,20 +161,24 @@ const msgList = ref<
   display: flex;
   justify-content: flex-end;
 }
+
 .scan-panel {
   .scan-line {
     .qty-info {
       display: flex;
       align-items: baseline;
+
       .label-qty {
         font-size: 28px;
       }
+
       .label-uom {
         font-size: 10px;
         padding-left: 5px;
       }
     }
   }
+
   .pkg-panel {
     color: var(--td-brand-color-active);
     display: flex;
@@ -182,26 +186,32 @@ const msgList = ref<
     align-items: center;
     margin: 10px 0;
   }
+
   .label {
     text-align: right;
   }
 }
+
 .sn-label {
   margin-bottom: 10px;
 }
+
 .message {
   min-height: 600px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
+
   .info {
     width: 100%;
     height: 600px;
     overflow: auto;
+
     :deep(.t-alert__description) {
       width: 100%;
     }
+
     .time {
       text-align: right;
     }
