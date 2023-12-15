@@ -39,10 +39,11 @@ watch(
 
 const setFull = () => {
   const elements = container.value.$el.querySelectorAll(':scope > .t-space-item') as HTMLInputElement[];
-  if (elements.length > 0 && props.fullSubIndex) {
+  if (elements.length === 0) return;
+  if (props.fullSubIndex) {
     for (let i = 0; i < elements.length; i++) {
       const element = elements[i];
-      elements[i].style.flex = props.fullSubIndex.indexOf(i) >= 0 ? '1' : 'none';
+      element.style.flex = props.fullSubIndex.indexOf(i) >= 0 ? '1' : 'none';
     }
   } else {
     elements[elements.length - 1].style.flex = '1';
