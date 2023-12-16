@@ -211,7 +211,7 @@ import '@logicflow/extension/lib/style/index.css';
 import LogicFlow from '@logicflow/core';
 import { Menu } from '@logicflow/extension';
 import dayjs from 'dayjs';
-import { clone, find, findIndex, remove } from 'lodash';
+import { clone, filter, find, findIndex, remove } from 'lodash';
 import {
   AddIcon,
   PlayCircleIcon,
@@ -319,9 +319,16 @@ const save = () => {
   routingFormRef.value.validate().then((result: any) => {
     if (result === true) {
       const rawData = lf.getGraphRawData();
+      console.log(rawData);
+      const allStartNodes = filter(rawData.nodes, ['type', 'start']);
       // 判断是否有开始节点
-      if (findIndex(rawData.nodes, (o) => o.type === 'start') === -1) {
+      if (allStartNodes.length === 0) {
         MessagePlugin.error(t('craftRoute.notStartNode'));
+        return;
+      }
+      // 判断是否有多个开始节点
+      if (allStartNodes.length > 1) {
+        MessagePlugin.error(t('craftRoute.notMoreStartNode'));
         return;
       }
       // 判断是否有结束节点
@@ -329,10 +336,28 @@ const save = () => {
         MessagePlugin.error(t('craftRoute.notEndNode'));
         return;
       }
+      const allProcessNodes = filter(rawData.nodes, ['type', 'process']);
       // 判断是否有工序
-      if (findIndex(rawData.nodes, (o) => o.type === 'process') === -1) {
+      if (allProcessNodes.length === 0) {
         MessagePlugin.error(t('craftRoute.notProcessNode'));
         return;
+      }
+      // 判断所有工序节点都有下一个节点
+      for (let i = 0; i < allProcessNodes.length; i++) {
+        const process = allProcessNodes[i];
+        // 判断工序节点是否有选择工序
+        if (process.properties.processId === null) {
+          MessagePlugin.error(t('craftRoute.processNodeNotSelect'));
+          return;
+        }
+        if (findIndex(rawData.edges, ['targetNodeId', process.id]) === -1) {
+          MessagePlugin.error(t('craftRoute.processNodeNotPre', [process.properties.processName]));
+          return;
+        }
+        if (findIndex(rawData.edges, ['sourceNodeId', process.id]) === -1) {
+          MessagePlugin.error(t('craftRoute.processNodeNotNext', [process.properties.processName]));
+          return;
+        }
       }
       loading.value = true;
       const postData = {
