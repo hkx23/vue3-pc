@@ -174,7 +174,8 @@ const emit = defineEmits(['refresh', 'update:pagination', 'select-change']);
 const selectedRowKeys = ref<number[]>([]);
 function onSelectKeysChange(val: number[]): void {
   selectedRowKeys.value = val;
-  emit('select-change', val);
+  // eslint-disable-next-line prefer-rest-params
+  emit('select-change', ...arguments);
 }
 
 const formRef = ref();

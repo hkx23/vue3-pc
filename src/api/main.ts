@@ -1693,8 +1693,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2884,15 +2884,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
+  isRawName?: string;
   isBatchName?: string;
+  stateName?: string;
   isProductName?: string;
+  isProductChecked?: boolean;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isRawName?: string;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3406,8 +3406,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4244,6 +4244,19 @@ export interface RoutingProcessVO {
   title?: string;
 }
 
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
+}
+
 /** 配置项 */
 export type Profile = {
   id?: string;
@@ -4320,19 +4333,6 @@ export interface ResultListProfileLeftTreeTopVO {
   message?: string;
   /** 响应数据 */
   data?: ProfileLeftTreeTopVO[] | null;
-}
-
-/** 通用响应类 */
-export interface ResultString {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: string | null;
 }
 
 /** 权限功能实体 */
@@ -4419,10 +4419,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -6427,6 +6427,27 @@ export const api = {
       http.request<Result['data']>(`/api/main/profileValue/items/addProfileValue`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项值
+     * @name GetValueByProfileCode
+     * @summary 根据配置编码获取配置的值
+     * @request GET:/profileValue/getValueByProfileCode
+     * @secure
+     */
+    getValueByProfileCode: (query: {
+      code: string;
+      orgId?: string;
+      workshopId?: string;
+      workcenterId?: string;
+      workstationId?: string;
+    }) =>
+      http.request<ResultString['data']>(`/api/main/profileValue/getValueByProfileCode`, {
+        method: 'GET',
+        params: query,
       }),
   },
   processBusinessLibDtl: {
