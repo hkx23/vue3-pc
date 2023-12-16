@@ -1,0 +1,7 @@
+{
+  "person": {
+    "personCode": "人员编码",
+    "personName": "人员名称",
+    "personDesc": "人员描述"
+  }
+}

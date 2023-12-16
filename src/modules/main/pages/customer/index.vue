@@ -1,23 +1,10 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <t-row justify="space-between">
-        <t-col>
-          <div class="btn-left">
-            <t-input v-model="keyword" placeholder="请输入客户信息/名称：" clearable />
-          </div>
-        </t-col>
-        <t-col flex="220px">
-          <div style="display: flex; justify-content: flex-end">
-            <t-button variant="base" @click="onHandleQuery">查询</t-button>
-            <t-button theme="default" variant="base" @click="onHandleResetting">重置</t-button>
-            <!-- <span class="save-filter" style="cursor: pointer">保存筛选</span>
-            <span style="cursor: pointer">展开<t-icon name="chevron-down"></t-icon></span> -->
-          </div>
-        </t-col>
-      </t-row>
-    </div>
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <!-- 查询组件  -->
+      <cmp-query :opts="opts" @submit="conditionEnter" />
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="index"
@@ -25,70 +12,66 @@
         :table-column="columns"
         :table-data="customerData"
         :total="dataTotal"
+        :fixed-height="true"
         @refresh="featCustomer"
       >
         <template #op="{ row }">
-          <icon name="edit-1" style="cursor: pointer" @click="onHandleEdit(row.customerCode)"></icon>
+          <t-link theme="primary" @click="onHandleEdit(row.customerCode)">{{ t('common.button.edit') }}</t-link>
+          <!-- <icon name="edit-1" style="cursor: pointer" @click="onHandleEdit(row.customerCode)"></icon> -->
           <!-- <icon name="edit-1" @click="onHandleEdit(row.customerCode)"></icon> -->
         </template>
       </cmp-table>
-    </div>
-    <!-- 弹出层 -->
-    <t-dialog v-model:visible="formVisible" header="客户维护编辑" :cancel-btn="null" :confirm-btn="null" width="40%">
-      <t-form
-        ref="form"
-        :loading="loading"
-        :rules="rules"
-        :data="formData"
-        layout="inline"
-        scroll-to-first-error="smooth"
-        label-align="right"
-        @submit="onCustomerSubmit"
-      >
-        <!-- 客户编辑： -->
-        <t-row class="form-customer-row">
-          <t-col>
-            <t-form-item label="客户编辑:" name="customerCode">
-              <t-input v-model="formData.customerCode" readonly></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 客户名称： -->
-        <t-row class="form-customer-row">
-          <t-col>
-            <t-form-item label="客户名称:" name="customerName">
-              <t-input v-model="formData.customerName"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 客户简称： -->
-        <t-row class="form-customer-row">
-          <t-col>
-            <t-form-item label="客户简称:" name="abbreviation">
-              <t-input v-model="formData.shortName"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 控制盒子 -->
-        <div class="control-box">
-          <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+    </cmp-card>
+  </cmp-container>
+  <!-- 弹出层 -->
+  <t-dialog v-model:visible="formVisible" header="客户维护编辑" :on-confirm="onSecondary">
+    <t-form
+      ref="formRef"
+      :loading="loading"
+      :rules="rules"
+      :data="formData"
+      :label-width="95"
+      scroll-to-first-error="smooth"
+      label-align="right"
+      @submit="onCustomerSubmit"
+    >
+      <!-- 客户编辑： -->
+      <t-form-item label="客户编辑:" name="customerCode">
+        <t-input v-model="formData.customerCode" readonly></t-input>
+      </t-form-item>
 
-          <t-button theme="primary" type="submit" @click="onSecondary">确认</t-button>
-        </div>
-      </t-form>
-    </t-dialog>
-  </div>
+      <!-- 客户名称： -->
+      <t-form-item label="客户名称:" name="customerName">
+        <t-input v-model="formData.customerName"></t-input>
+      </t-form-item>
+
+      <!-- 客户简称： -->
+      <t-form-item label="客户简称:" name="abbreviation">
+        <t-input v-model="formData.shortName"></t-input>
+      </t-form-item>
+
+      <!-- 控制盒子 -->
+      <!-- <div class="control-box">
+        <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+
+        <t-button theme="primary" type="submit" @click="onSecondary">确认</t-button>
+      </div> -->
+    </t-form>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
-import { Data, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
-import { onMounted, ref, watch } from 'vue';
+import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+import { useLang } from './lang';
+
+const { t } = useLang();
 onMounted(() => {
   featCustomer();
 });
@@ -142,6 +125,22 @@ const featCustomer = async () => {
     setLoading(false);
   }
 };
+// 查询组件
+const opts = computed(() => {
+  return {
+    keyword: {
+      label: '客户',
+      comp: 't-input',
+      placeholder: '请输入客户信息/名称',
+      defaultVal: '',
+    },
+  };
+});
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  keyword.value = data.keyword;
+  onHandleQuery();
+};
 // 查询
 const customerQuery = async () => {
   featCustomer();
@@ -164,11 +163,11 @@ const onHandleQuery = debounce(() => {
 }, 200);
 
 // 重置
-const onHandleResetting = () => {
-  keyword.value = '';
-  pageUI.value.page = 1;
-  customerQuery();
-};
+// const onHandleResetting = () => {
+//   keyword.value = '';
+//   pageUI.value.page = 1;
+//   customerQuery();
+// };
 
 // 编辑
 const onHandleEdit = (value: any) => {
@@ -189,10 +188,10 @@ const onHandleEdit = (value: any) => {
   featCustomer();
 };
 // 取消按钮
-const onSecondaryReset = () => {
-  MessagePlugin.success('取消编辑');
-  formVisible.value = false;
-};
+// const onSecondaryReset = () => {
+//   MessagePlugin.success('取消编辑');
+//   formVisible.value = false;
+// };
 // onCustomerSubmit
 interface RootObject {
   validateResult: boolean;
@@ -205,29 +204,33 @@ const clearFrom = () => {
   formData.value.shortName = '';
   formData.value.id = '';
 };
+const formRef = ref(null);
 // 二次确认按钮
 const onSecondary = async () => {
-  if (submitShow === false) {
-    return;
-  }
-  try {
-    await api.customer.updateItemByCode({
-      customerCode: formData.value.customerCode,
-      customerName: formData.value.customerName,
-      shortName: formData.value.shortName,
-      oid: formData.value.id,
-    });
-    MessagePlugin.success('提交成功');
-    formVisible.value = false;
-    clearFrom();
-  } catch (e) {
-    console.log(e);
-  }
-  featCustomer();
+  formRef.value.validate().then(async (result) => {
+    if (result !== true) {
+      MessagePlugin.warning(Object.values(result)[0][0].message);
+    } else {
+      try {
+        await api.customer.updateItemByCode({
+          customerCode: formData.value.customerCode,
+          customerName: formData.value.customerName,
+          shortName: formData.value.shortName,
+        });
+        MessagePlugin.success('提交成功');
+        formVisible.value = false;
+        clearFrom();
+      } catch (e) {
+        console.log(e);
+      }
+      featCustomer();
+    }
+  });
 };
 let submitShow = false; // 控制二次确认按钮
 // 确认保存
 const onCustomerSubmit = (context: RootObject) => {
+  // debugger;
   console.log(submitShow, context.validateResult);
   if (context.validateResult === true) {
     submitShow = true;

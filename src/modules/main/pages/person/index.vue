@@ -1,7 +1,7 @@
 <template>
-  <div class="main-page">
-    <div class="list-tree-wrapper">
-      <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-row>
+      <cmp-card flex="250px">
         <t-tree
           ref="treeRef"
           :data="treeData"
@@ -12,142 +12,123 @@
           :activable="true"
           @click="onTreeClick"
         />
+      </cmp-card>
+      <cmp-card flex="auto" :ghost="true">
+        <cmp-container :full="true">
+          <cmp-card>
+            <!-- 查询组件  -->
+            <cmp-query :opts="opts" @submit="conditionEnter" @reset="onReset" />
+            <!-- <t-row justify="space-between">
+              <t-col flex="170px">
+                <div>
+                  <t-input v-model="personCode" label="员工" placeholder="请输入员工编号或姓名" clearable />
+                </div>
+              </t-col>
+              <t-col flex="20px"></t-col>
+              <t-col flex="170px">
+                <div>
+                  <t-select v-model="personState" label="状态" :options="stateOptions" clearable />
+                </div>
+              </t-col>
+              <t-col flex="auto"></t-col>
+              <t-col flex="170px">
+                <div>
+                  <t-button @click="onRefresh">查询</t-button>
+                  <t-button theme="default" @click="onReset">重置</t-button>
+                </div>
+              </t-col>
+            </t-row> -->
+          </cmp-card>
+          <cmp-card>
+            <cmp-table
+              ref="tableRef"
+              v-model:pagination="pageUI"
+              :table-data="dataTable"
+              :table-column="columnsParam"
+              :row-key="rowKey"
+              :loading="loading"
+              :total="dataTotal"
+              @refresh="onRefresh"
+            >
+              <template #op="slotProps">
+                <t-space>
+                  <t-link theme="primary" @click="handleClickDetail(slotProps)">{{ t('common.button.edit') }}</t-link>
+                  <t-link theme="primary" @click="handleClickDelete(slotProps)">{{ t('common.button.delete') }}</t-link>
+                  <!-- <t-icon name="edit" @click="handleClickDetail(slotProps)" />
+                  <t-icon name="delete" @click="handleClickDelete(slotProps)" /> -->
+                </t-space>
+              </template>
+              <template #button>
+                <t-button theme="primary" @click="onImport">导入</t-button>
+              </template>
+            </cmp-table>
+          </cmp-card>
+        </cmp-container>
+      </cmp-card>
+    </cmp-row>
+  </cmp-container>
+
+  <t-dialog
+    v-model:visible="onShowDeleteConfirmVisible"
+    header="确认"
+    mode="modal"
+    draggable
+    :body="onDeleteConfirmBody"
+    :on-cancel="onDeleteCancel"
+    :close-on-overlay-click="false"
+    @confirm="onDeleteConfirm"
+  >
+  </t-dialog>
+  <t-dialog
+    v-model:visible="onShowEditVisible"
+    header="编辑"
+    mode="modal"
+    draggable
+    :close-on-overlay-click="false"
+    width="40%"
+    @confirm="onEditConfirm"
+  >
+    <t-space direction="vertical" style="width: 98%">
+      <t-form :data="formData">
+        <t-form-item label="员工编码" required-mark>
+          <t-input v-model="formData.personcode" disabled />
+        </t-form-item>
+        <t-form-item label="姓名" required-mark>
+          <t-input v-model="formData.personname" placeholder="请输入内容" />
+        </t-form-item>
+        <t-form-item label="性别" required-mark>
+          <t-select v-model="formData.gender" placeholder="请选择性别">
+            <t-option v-for="(item, index) in userGenderList" :key="index" :value="item.value" :label="item.label">
+              {{ item.label }}
+            </t-option>
+          </t-select>
+        </t-form-item>
+        <t-form-item label="手机号">
+          <t-input v-model="formData.mobilePhone" placeholder="请输入内容" type="tel" />
+        </t-form-item>
+        <t-form-item label="邮箱">
+          <t-input v-model="formData.email" placeholder="请输入内容" />
+        </t-form-item>
+        <t-form-item label="启用">
+          <t-switch v-model="formData.state" />
+        </t-form-item>
+      </t-form>
+    </t-space>
+  </t-dialog>
+  <t-dialog
+    v-model:visible="onShowImportVisible"
+    header="导入用户"
+    :on-close="onImportCancel"
+    :close-on-overlay-click="false"
+    width="40%"
+  >
+    <t-space direction="vertical" style="width: 100%">
+      <div>
+        <p>这是导入窗口</p>
+        <p>This is Dialog Content</p>
       </div>
-    </div>
-    <div class="list-tree-content">
-      <div class="list-common-table">
-        <t-row justify="space-between">
-          <t-col flex="170px">
-            <div>
-              <t-input v-model="personCode" label="员工" placeholder="请输入员工编号或姓名" clearable />
-            </div>
-          </t-col>
-          <t-col flex="20px"></t-col>
-          <t-col flex="170px">
-            <div>
-              <t-select v-model="personState" label="状态" :options="stateOptions" clearable />
-            </div>
-          </t-col>
-          <t-col flex="auto"></t-col>
-          <t-col flex="170px">
-            <div>
-              <t-button @click="onRefresh">查询</t-button>
-              <t-button theme="default" @click="onReset">重置</t-button>
-            </div>
-          </t-col>
-        </t-row>
-        <t-row style="margin-top: 10px">
-          <t-button theme="default" @click="onImport">导入</t-button>
-        </t-row>
-        <div class="table-container">
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="pageUI"
-            :table-data="dataTable"
-            :table-column="columnsParam"
-            :row-key="rowKey"
-            :loading="loading"
-            :total="dataTotal"
-            @refresh="onRefresh"
-          >
-            <template #op="slotProps">
-              <t-space>
-                <t-icon name="edit" @click="handleClickDetail(slotProps)" />
-                <t-icon name="delete" @click="handleClickDelete(slotProps)" />
-              </t-space>
-            </template>
-          </cmp-table>
-        </div>
-        <div>
-          <t-dialog
-            v-model:visible="onShowDeleteConfirmVisible"
-            header="确认"
-            mode="modal"
-            draggable
-            :body="onDeleteConfirmBody"
-            :on-cancel="onDeleteCancel"
-            :close-on-overlay-click="false"
-            @confirm="onDeleteConfirm"
-          >
-          </t-dialog>
-          <t-dialog
-            v-model:visible="onShowEditVisible"
-            header="编辑"
-            mode="modal"
-            draggable
-            :close-on-overlay-click="false"
-            width="40%"
-            @confirm="onEditConfirm"
-          >
-            <t-space direction="vertical" style="width: 98%">
-              <t-form class="form-container" :data="formData">
-                <t-row class="form-container-row">
-                  <t-col>
-                    <t-form-item label="员工编码" required-mark>
-                      <t-input v-model="formData.personcode" disabled />
-                    </t-form-item>
-                    <t-form-item label="姓名" required-mark>
-                      <t-input v-model="formData.personname" placeholder="请输入内容" />
-                    </t-form-item>
-                  </t-col>
-                </t-row>
-
-                <t-row class="form-container-row">
-                  <t-col>
-                    <t-form-item label="性别" required-mark>
-                      <t-select v-model="formData.gender" :style="{ width: '155px' }" placeholder="请选择性别">
-                        <t-option
-                          v-for="(item, index) in userGenderList"
-                          :key="index"
-                          :value="item.value"
-                          :label="item.label"
-                        >
-                          {{ item.label }}
-                        </t-option>
-                      </t-select>
-                    </t-form-item>
-                  </t-col>
-                </t-row>
-
-                <t-row class="form-container-row">
-                  <t-col>
-                    <t-form-item label="手机号">
-                      <t-input v-model="formData.mobilePhone" placeholder="请输入内容" type="tel" />
-                    </t-form-item>
-                    <t-form-item label="邮箱">
-                      <t-input v-model="formData.email" placeholder="请输入内容" />
-                    </t-form-item>
-                  </t-col>
-                </t-row>
-
-                <t-row class="form-container-row">
-                  <t-col>
-                    <t-form-item label="启用">
-                      <t-switch v-model="formData.state" />
-                    </t-form-item>
-                  </t-col>
-                </t-row>
-              </t-form>
-            </t-space>
-          </t-dialog>
-          <t-dialog
-            v-model:visible="onShowImportVisible"
-            header="导入用户"
-            :on-close="onImportCancel"
-            :close-on-overlay-click="false"
-            width="40%"
-          >
-            <t-space direction="vertical" style="width: 100%">
-              <div>
-                <p>这是导入窗口</p>
-                <p>This is Dialog Content</p>
-              </div>
-            </t-space>
-          </t-dialog>
-        </div>
-      </div>
-    </div>
-  </div>
+    </t-space>
+  </t-dialog>
 </template>
 
 <script lang="ts">
@@ -159,19 +140,21 @@ export default {
 <script setup lang="ts">
 // import { isEmpty } from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+import { useLang } from './lang';
+
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const personCode = ref(''); // 查询
 const personState = ref(-1); //
 const adminOrgId = ref(-1); //
-
+const { t } = useLang();
 // #region  页面初始化
 const userGenderList = ref([
   { label: '男', value: 1 },
@@ -220,6 +203,32 @@ const stateOptions = [
   { label: '启用', value: 1 },
   { label: '禁用', value: 0 },
 ];
+// 查询组件
+const opts = computed(() => {
+  return {
+    personCode: {
+      label: '员工',
+      comp: 't-input',
+      placeholder: '请输入员工编号或姓名',
+      defaultVal: personCode.value,
+    },
+    personState: {
+      label: '状态',
+      comp: 't-select',
+      placeholder: '请选择状态',
+      defaultVal: personState.value,
+      bind: {
+        options: stateOptions,
+      },
+    },
+  };
+});
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  personCode.value = data.personCode;
+  personState.value = data.personState;
+  onRefresh();
+};
 // 表格分页设置
 // const pagination = ref({ defaultPageSize: 20, total: 0, defaultCurrent: 1, showJumper: true });
 

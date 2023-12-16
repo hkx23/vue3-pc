@@ -13,7 +13,7 @@
         :table-data="tableData"
         :loading="loading"
         :total="dataTotal"
-        fixed-height="true"
+        :fixed-height="true"
         :header-affixed-top="true"
         :page-affixed-top="true"
         @refresh="conditionEnter"
