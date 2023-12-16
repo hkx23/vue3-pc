@@ -7,8 +7,18 @@
     "scanFailed": "扫描失败",
     "productLabel": "产品条码",
     "packingList": "装箱清单",
-    "plsScanPackLabel": "请先扫描要装箱的标签",
+    "tailPacking": "尾数封箱",
+    "packingLog": "装箱记录",
+    "plsScanPackLabel": "请扫描箱标签",
+    "plsContinueScanPackLabel": "请继续扫描要装箱的标签",
     "plsScanLabel": "请先扫描需要装箱的标签",
-    "plsScanDelLabel": "请扫描需要删除装箱清单内的标签"
+    "plsScanDelLabel": "请扫描需要删除装箱清单内的标签",
+    "tipsBarcodeRepeat": "条码重复扫描",
+    "tipsPkgRuleInconsistent": "包装规格不一致",
+    "tipsQtyUpperLimite": "数量超出上限",
+    "tipsCompletedTail": "是否完成尾数封箱",
+    "tipsQtyFailed": "包装的数量大于箱数量",
+    "saveSuccess": "保存成功",
+    "saveFailed": "保存失败"
   }
 }
