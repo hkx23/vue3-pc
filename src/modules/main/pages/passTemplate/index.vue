@@ -1,7 +1,7 @@
 <template>
   <cmp-container :full="true" class="root">
     <cmp-row>
-      <cmp-card :span="3">
+      <cmp-card flex="280px">
         <t-tabs v-model="currProcessTab">
           <t-tab-panel value="process" label="工序">
             <t-input v-model="filterText" style="margin: 8px 0" :placeholder="t('common.placeholder.input')">
@@ -47,7 +47,7 @@
           </t-tab-panel>
         </t-tabs>
       </cmp-card>
-      <cmp-card :span="6">
+      <cmp-card flex="auto">
         <div v-if="panelData == null || panelData.length == 0">
           <t-button block variant="dashed" style="margin-bottom: 32px" @click="onClickAddTab">选择条码类型</t-button>
           <ul>
@@ -106,8 +106,8 @@
           </t-tab-panel>
         </t-tabs>
       </cmp-card>
-      <cmp-card :span="3" :ghost="true">
-        <cmp-container :full="true">
+      <cmp-card flex="280px" :ghost="true">
+        <cmp-container :full="true" :full-sub-index="[0]">
           <cmp-card>
             <t-tabs model-value="api">
               <t-tab-panel value="api" label="API" style="overflow-y: auto">
