@@ -1,24 +1,29 @@
-html, body{
+html,
+body {
   background: var(--td-bg-color-page);
   height: 100%;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  
-  &::-webkit-scrollbar {
-    width: 8px;
+
+  ::-webkit-scrollbar {
+    width: 10px;
     background: transparent;
   }
 
-  &::-webkit-scrollbar-thumb {
+  ::-webkit-scrollbar-thumb {
     border-radius: 6px;
     border: 2px solid transparent;
     background-clip: content-box;
     background-color: var(--td-scrollbar-color);
   }
-}
 
+  ::-webkit-scrollbar-thumb:vertical:hover,
+  ::-webkit-scrollbar-thumb:horizontal:hover {
+    background-color: var(--td-scrollbar-hover-color);
+  }
+}
 
 #app {
   flex: 1;

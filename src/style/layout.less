@@ -94,7 +94,7 @@
     flex-direction: column;
 
     &::-webkit-scrollbar {
-      width: 8px;
+      width: 10px;
       background: transparent;
     }
 
@@ -103,6 +103,11 @@
       border: 2px solid transparent;
       background-clip: content-box;
       background-color: var(--td-scrollbar-color);
+    }
+
+    &::-webkit-scrollbar-thumb:vertical:hover,
+    &::-webkit-scrollbar-thumb:horizontal:hover {
+      background-color: var(--td-scrollbar-hover-color);
     }
   }
 
