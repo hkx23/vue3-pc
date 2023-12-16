@@ -272,6 +272,7 @@
             <span>文件上传：</span>
             <t-button theme="primary">上传</t-button>
           </t-upload>
+          <t-tag variant="outline" theme="primary" closable>标签一</t-tag>
           <div v-if="files && files.length" style="margin-left: 10px">
             <ul style="padding: 0">
               <li v-for="(item, index) in files" :key="index" style="list-style-type: none">{{ item.name }}</li>

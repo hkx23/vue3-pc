@@ -11,16 +11,9 @@
                   v-model="treeKey"
                   placeholder="输入关键字进行过滤"
                   clearable
-                  :on-enter="treeSearch"
                   style="max-width: 200px"
+                  @change="demo1Input"
                 />
-              </t-col>
-              <t-col :span="2">
-                <t-button shape="square" variant="outline" @click="onRefreshTree">
-                  <template #icon>
-                    <t-icon name="refresh" />
-                  </template>
-                </t-button>
               </t-col>
             </t-row>
 
@@ -32,6 +25,7 @@
               hover
               line
               activable
+              :filter="demo1Filter"
               :expand-level="2"
               :height="600"
               :transition="true"
@@ -152,7 +146,6 @@ const treeRef = ref(null); // 树组件实例
 const treeArr = ref<TreeLabelData | null>(null); // 组件挂载获取树组件名称数组
 const treeClickData = ref({ one: '', two: '' }); // 面包屑文本
 const treeData = ref<TreeNode[]>([]); // 树组件数据
-const filteredTreeData = ref<TreeNode[]>([]); // 树组件数据
 const tabListData = ref(1); // 多端选中数据
 const clickNodeId = ref({
   nodeId: '',
@@ -288,7 +281,7 @@ const onAdd = () => {
 };
 
 const onConfirmForm = async () => {
-  formRef.value.submit().then((data) => {
+  formRef.value.submit().then((data: any) => {
     if (data) {
       formVisible.value = false;
       fetchData();
@@ -318,11 +311,6 @@ const getstateName = (id: any) => {
   }
   return '';
 };
-const treeSearch = () => {
-  filteredTreeData.value = filterTreeNodes(treeData.value);
-  treeData.value = filteredTreeData.value;
-  console.log(treeData.value);
-};
 
 const getProfileCategory = (value: any) => {
   for (const element of formRef.value.profileCategoryOption) {
@@ -331,23 +319,6 @@ const getProfileCategory = (value: any) => {
     }
   }
   return '';
-};
-
-const filterTreeNodes = (nodes) => {
-  // 递归过滤树节点
-  return nodes.filter((node) => {
-    // 检查当前节点是否包含关键字
-    const nodeMatchesKeyword = node.label.includes(treeKey.value.trim());
-    console.log(node.label);
-    console.log(nodeMatchesKeyword);
-    // 递归过滤子节点
-    if (node.children && node.children.length > 0) {
-      node.children = filterTreeNodes(node.children);
-    }
-
-    // 如果当前节点或其子节点包含关键字，则保留该节点
-    return nodeMatchesKeyword || (node.children && node.children.length > 0);
-  });
 };
 
 // 筛选树组件名称数组的函数
@@ -367,7 +338,14 @@ function filterLabels(treeData: any[]) {
 }
 
 // 筛选树节点递归函数
-function simplifyObject(obj) {
+function simplifyObject(obj: {
+  id: any;
+  modelName: any;
+  attribute: any;
+  profileDesc: any;
+  childList: any[];
+  children: any[];
+}) {
   // 创建一个新对象，仅包含 name 和 children 字段
   const simplified = {
     id: obj.id,
@@ -405,11 +383,6 @@ onMounted(async () => {
     treeClickData.value.one = firstNode.label; // 赋值第二个节点名称给面包屑
   }
 });
-const onRefreshTree = () => {
-  onGetTreeData();
-  fetchData();
-  treeKey.value = '';
-};
 
 // 获取树组件数据
 const onGetTreeData = async () => {
@@ -450,6 +423,23 @@ const treeClick = async ({ node }: { node: any }) => {
   await onGetTabData();
   treeClickData.value.one = node['__tdesign_tree-node__'].label;
   treeClickData.value.two = node['__tdesign_tree-node__'].parent?.label;
+};
+const demo1Filter = ref(null);
+const demo1Input = (state: any) => {
+  console.info('demo1 input:', state);
+  if (treeKey.value) {
+    // 存在过滤文案，才启用过滤
+    demo1Filter.value = (node: { data: { label: string | any[] } }) => {
+      const rs = node.data.label.indexOf(treeKey.value) >= 0;
+      // 命中的节点会强制展示
+      // 命中节点的路径节点会锁定展示
+      // 未命中的节点会隐藏
+      return rs;
+    };
+  } else {
+    // 过滤文案为空，则还原 tree 为无过滤状态
+    demo1Filter.value = null;
+  }
 };
 </script>
 
