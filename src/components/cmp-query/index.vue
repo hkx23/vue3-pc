@@ -96,8 +96,8 @@
       </t-form>
     </t-col>
     <t-col flex="0 1 300px" style="text-align: end">
-      <t-space direction="horizontal" class="search-space" size="large">
-        <div class="search-form__button">
+      <t-space direction="horizontal" class="search-space search-form__button" size="large">
+        <div class="">
           <t-space size="small" :align="'end'">
             <t-button class="btn_check" :loading="loading" @click="checkHandle">{{
               t('common.button.search')
@@ -404,6 +404,7 @@ const computedExpandBtnVisible = () => {
   });
 };
 onMounted(() => {
+  debounceFunction();
   window.addEventListener('resize', debounceFunction, false);
 
   const instance = getCurrentInstance();

@@ -1945,14 +1945,56 @@ export interface ResultPost {
 }
 
 /** 响应数据 */
-export type PagingDataPerson = {
-  list?: Person[];
+export type PagingDataPersonVO = {
+  list?: PersonVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
+/** 显示员工实体 */
+export interface PersonVO {
+  id?: string;
+  /** 人员编码 */
+  personCode?: string;
+  /** 姓名 */
+  personName?: string;
+  /**
+   * 性别
+   * @format int32
+   */
+  gender?: number;
+  /** 手机 */
+  mobilePhone?: string;
+  /** 邮箱 */
+  email?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 性别别名 */
+  genderName?: string;
+  /** 状态别名 */
+  stateName?: string;
+  /** 是否启用 */
+  isState?: boolean;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPersonVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPersonVO;
+}
+
 /** 员工表 */
-export interface Person {
+export type Person = {
   id?: string;
   /**
    * 创建时间
@@ -1989,20 +2031,7 @@ export interface Person {
   /** 手机号 */
   mobilePhone?: string;
   adminOrgId?: string;
-}
-
-/** 通用响应类 */
-export interface ResultPagingDataPerson {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataPerson;
-}
+} | null;
 
 /** 通用响应类 */
 export interface ResultPerson {
@@ -2015,35 +2044,6 @@ export interface ResultPerson {
   message?: string;
   /** 员工表 */
   data?: Person;
-}
-
-/** 显示员工实体 */
-export interface PersonVO {
-  id?: string;
-  /** 人员编码 */
-  personCode?: string;
-  /** 姓名 */
-  personName?: string;
-  /**
-   * 性别
-   * @format int32
-   */
-  gender?: number;
-  /** 手机 */
-  mobilePhone?: string;
-  /** 邮箱 */
-  email?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 性别别名 */
-  genderName?: string;
-  /** 状态别名 */
-  stateName?: string;
-  /** 是否启用 */
-  isState?: boolean;
 }
 
 /** 系统字典组 */
@@ -2884,15 +2884,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
   isState?: boolean;
-  stateName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
   isRawName?: string;
+  isBatchName?: string;
+  stateName?: string;
+  isProductName?: string;
+  isProductChecked?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4244,6 +4244,19 @@ export interface RoutingProcessVO {
   title?: string;
 }
 
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
+}
+
 /** 配置项 */
 export type Profile = {
   id?: string;
@@ -4320,19 +4333,6 @@ export interface ResultListProfileLeftTreeTopVO {
   message?: string;
   /** 响应数据 */
   data?: ProfileLeftTreeTopVO[] | null;
-}
-
-/** 通用响应类 */
-export interface ResultString {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: string | null;
 }
 
 /** 权限功能实体 */
@@ -6428,6 +6428,27 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 配置项值
+     * @name GetValueByProfileCode
+     * @summary 根据配置编码获取配置的值
+     * @request GET:/profileValue/getValueByProfileCode
+     * @secure
+     */
+    getValueByProfileCode: (query: {
+      code: string;
+      orgId?: string;
+      workshopId?: string;
+      workcenterId?: string;
+      workstationId?: string;
+    }) =>
+      http.request<ResultString['data']>(`/api/main/profileValue/getValueByProfileCode`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   processBusinessLibDtl: {
     /**
@@ -6587,7 +6608,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataPerson['data']>(`/api/main/person/items`, {
+      http.request<ResultPagingDataPersonVO['data']>(`/api/main/person/items`, {
         method: 'POST',
         body: data as any,
       }),

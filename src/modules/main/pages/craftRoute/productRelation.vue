@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import { isEmpty } from 'lodash';
 import { Data, FormRules } from 'tdesign-vue-next';
 import { computed, reactive, ref, toRefs } from 'vue';
 
@@ -75,9 +76,16 @@ const formData = reactive({
   isDefault: false,
 });
 const routingRules: FormRules<Data> = {
-  mitemCategoryId: [{ required: true, message: t('common.validation.required'), type: 'error' }],
-  mitemId: [{ required: true, message: t('common.validation.required'), type: 'error' }],
-  workcenterId: [{ required: true, message: t('common.validation.required'), type: 'error' }],
+  mitemCategoryId: [
+    { validator: () => validateMitemOrCategory(), message: t('craftRoute.mitemOrCategoryMustSelectOne') },
+  ],
+  mitemId: [{ validator: () => validateMitemOrCategory(), message: t('craftRoute.mitemOrCategoryMustSelectOne') }],
+};
+const validateMitemOrCategory = () => {
+  if (isEmpty(formData.mitemId) && isEmpty(formData.mitemCategoryId)) {
+    return false;
+  }
+  return true;
 };
 const add = async () => {
   loading.value = true;
@@ -86,9 +94,9 @@ const add = async () => {
     if (result === true) {
       await api.routingMap.add({
         routingCode: props.routingCode,
-        mitemCategoryId: formData.mitemCategoryId,
-        mitemId: formData.mitemId,
-        workcenterId: formData.workcenterId,
+        mitemCategoryId: isEmpty(formData.mitemCategoryId) ? '0' : formData.mitemCategoryId,
+        mitemId: isEmpty(formData.mitemId) ? '0' : formData.mitemId,
+        workcenterId: isEmpty(formData.workcenterId) ? '0' : formData.workcenterId,
         isDefault: formData.isDefault ? 1 : 0,
       });
     } else {

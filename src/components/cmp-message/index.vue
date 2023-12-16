@@ -61,13 +61,16 @@ const clear = () => {
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
+
   .info {
     width: 100%;
     height: 600px;
     overflow: auto;
+
     :deep(.t-alert__description) {
       width: 100%;
     }
+
     .time {
       text-align: right;
     }

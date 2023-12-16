@@ -1,35 +1,35 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <t-row justify="space-between">
-        <div class="left-operation-container">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <cmp-row justify="space-between">
+        <t-space :size="8">
           <t-button @click="onClickAdd">
-            <template #icon><add-icon /></template>
+            <!-- <template #icon><add-icon /></template> -->
             {{ t('common.button.add') }}</t-button
           >
           <t-button theme="default" @click="onClickEdit">
-            <template #icon><edit-icon /></template>
+            <!-- <template #icon><edit-icon /></template> -->
             {{ t('common.button.edit') }}</t-button
           >
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
             <t-button theme="default">
-              <template #icon><remove-icon /></template>
+              <!-- <template #icon><remove-icon /></template> -->
               {{ t('common.button.delete') }}</t-button
             >
           </t-popconfirm>
-        </div>
+        </t-space>
         <div class="search-input">
-          <t-input v-model="filterText" :placeholder="t('common.placeholder.input')" @change="onInput">
+          <t-input v-model="filterText" :placeholder="t('common.placeholder.input')" clearable @change="onInput">
             <template #suffix-icon>
               <search-icon size="var(--td-comp-size-xxxs)" />
             </template>
           </t-input>
         </div>
-      </t-row>
-    </div>
-    <div class="list-tree-wrapper">
-      <div class="list-tree-operator">
-        <t-tree
+      </cmp-row>
+    </cmp-card>
+    <cmp-row>
+      <cmp-card :span="3"
+        ><t-tree
           ref="treeRef"
           v-model:actived="treeActiveKey"
           :data="treeData"
@@ -39,8 +39,8 @@
           :filter="filterByText"
           activable
         />
-      </div>
-      <div class="list-tree-content">
+      </cmp-card>
+      <cmp-card :span="9">
         <cmp-table
           ref="tableRef"
           row-key="id"
@@ -50,24 +50,23 @@
           :table-data="data"
           @refresh="fetchData"
         ></cmp-table>
-      </div>
-    </div>
-
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="
-        isEdit ? t('common.dialog.header.edit', [t('org.title')]) : t('common.dialog.header.add', [t('org.title')])
-      "
-      :on-confirm="onConfirmForm"
-    >
-      <org-form ref="formRef" />
-    </t-dialog>
-  </div>
+      </cmp-card>
+    </cmp-row>
+  </cmp-container>
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="
+      isEdit ? t('common.dialog.header.edit', [t('org.title')]) : t('common.dialog.header.add', [t('org.title')])
+    "
+    :on-confirm="onConfirmForm"
+  >
+    <org-form ref="formRef" />
+  </t-dialog>
 </template>
 <script setup lang="tsx">
 import dayjs from 'dayjs';
 import { isEmpty } from 'lodash';
-import { AddIcon, EditIcon, RemoveIcon, SearchIcon } from 'tdesign-icons-vue-next';
+import { SearchIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin, TreeNodeModel } from 'tdesign-vue-next';
 import { computed, onMounted, ref, watch } from 'vue';
 

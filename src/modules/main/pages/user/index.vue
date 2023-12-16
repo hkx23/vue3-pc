@@ -1,11 +1,10 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
       <!-- 查询组件  -->
       <cmp-query :opts="opts" @submit="conditionEnter" />
-      <!-- 表格组件  -->
-    </div>
-    <div class="main-page-content">
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -14,6 +13,7 @@
         :table-data="tableData"
         :loading="loading"
         :total="dataTotal"
+        :fixed-height="true"
         :header-affixed-top="true"
         :page-affixed-top="true"
         @refresh="conditionEnter"
@@ -37,40 +37,30 @@
           <t-button theme="primary" @click="onAddClick"> {{ t('common.button.add') }} </t-button>
         </template>
       </cmp-table>
-    </div>
-    <!-- 新增/编辑用户弹出窗 -->
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="t(formAdd ? 'common.dialog.header.add' : 'common.dialog.header.edit', [t('user.user')])"
-      :on-confirm="onConfirmForm"
-    >
-      <user-form ref="formRef" />
-    </t-dialog>
-    <!-- 组织弹出窗 -->
-    <dialog-org :id="selectuserId" v-model="formOrgVisible" :title="t('user.org')"></dialog-org>
-    <!-- <t-dialog
-      v-model:visible="formUserVisible"
-      top="25px"
-      width="800px"
-      :confirm-btn="null"
-      :header="t('user.userMember')"
-      :on-confirm="onUserConfirmForm"
-    >
-      <user-form ref="userFormRef" :user-id="formUseruserId" />
-    </t-dialog> -->
-    <!-- 权限分配弹出窗 -->
-    <dialog-permission
-      :id="selectuserId"
-      v-model="formPermissionVisible"
-      :title="t('user.authTitle')"
-    ></dialog-permission>
-    <!-- 重置密码弹出窗 -->
-    <dialog-reset-password
-      :id="selectuserId"
-      v-model="formResetPwdVisible"
-      :title="t('user.resetPassword')"
-    ></dialog-reset-password>
-  </div>
+    </cmp-card>
+  </cmp-container>
+  <!-- 新增/编辑用户弹出窗 -->
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="t(formAdd ? 'common.dialog.header.add' : 'common.dialog.header.edit', [t('user.user')])"
+    :on-confirm="onConfirmForm"
+  >
+    <user-form ref="formRef" />
+  </t-dialog>
+  <!-- 组织弹出窗 -->
+  <dialog-org :id="selectuserId" v-model="formOrgVisible" :title="t('user.org')"></dialog-org>
+  <!-- 权限分配弹出窗 -->
+  <dialog-permission
+    :id="selectuserId"
+    v-model="formPermissionVisible"
+    :title="t('user.authTitle')"
+  ></dialog-permission>
+  <!-- 重置密码弹出窗 -->
+  <dialog-reset-password
+    :id="selectuserId"
+    v-model="formResetPwdVisible"
+    :title="t('user.resetPassword')"
+  ></dialog-reset-password>
 </template>
 
 <script setup lang="ts">
@@ -125,7 +115,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'op',
     title: `${t('common.button.operation')}`,
-    width: '240px',
+    width: '260px',
     align: 'left',
     fixed: 'right',
   },

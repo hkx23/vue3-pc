@@ -26,6 +26,7 @@ const targetAttrs = computed<CmpRowProps>(() => {
 const styleAttrs = computed(() => {
   return {
     height: props.height,
+    'flex-wrap': 'nowrap',
   };
 });
 </script>

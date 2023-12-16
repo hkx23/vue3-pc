@@ -1,5 +1,5 @@
 <template>
-  <t-form layout="inline" :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
+  <t-form :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
     <t-form-item label="分类编码" required-mark>
       <t-input v-model="formData.categoryCode" disabled />
     </t-form-item>
@@ -12,7 +12,6 @@
     <t-form-item label="小数位计算">
       <t-select
         v-model="formData.reqCalcRule"
-        style="width: 156px"
         :options="reqCalcRuleOptions"
         placeholder="请选择小数位计算类型"
         clearable
@@ -21,7 +20,6 @@
     <t-form-item label="投料规则">
       <t-select
         v-model="formData.onboardRuleCode"
-        style="width: 156px"
         :options="onboardRuleCodeOptions"
         placeholder="请选择投料规则"
         clearable
