@@ -1073,7 +1073,7 @@ export interface BarcodeWipCollectVO {
   isCompleted?: number;
   /** 状态 */
   status?: string;
-  /** 扫码类型(SCANEXT,KEYPART) */
+  /** 扫码类型(SCANTEXT,KEYPART) */
   uom?: string;
   uomName?: string;
   scanType?: string;
@@ -1126,16 +1126,16 @@ export interface BarcodeWipCollectVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopName?: string;
-  workshopCode?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  isState?: boolean;
+  workshopCode?: string;
   stateName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1166,7 +1166,7 @@ export interface WipKeyPartCollectVO {
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
   isScanFinish?: boolean;
-  getkeyPartCodeStr?: string;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -1315,14 +1315,14 @@ export interface BarcodeWipVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
   workshopName?: string;
-  workshopCode?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  isState?: boolean;
+  workshopCode?: string;
   stateName?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
   defectCodeStr?: string;
 }
 
