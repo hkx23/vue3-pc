@@ -1,6 +1,5 @@
 export interface scanInfoModel {
   serialNumber: string;
-  uomName: string;
   qty: number;
   status: string;
   errorinfo: string;
@@ -12,4 +11,13 @@ export interface messageModel {
   content: string;
   datatime: string;
   status: string;
+}
+
+export interface scanCollectInfoModel {
+  serialNumber: string;
+  uomName: string;
+  qty: number;
+  status: string;
+  errorinfo: string;
+  statusColor: string;
 }

@@ -173,10 +173,10 @@ import { computed, onMounted, ref } from 'vue';
 
 import { api, WipKeyPartCollectVO } from '@/api/control';
 
-import { messageModel, scanInfoModel } from '../../api/processInspection';
+import { messageModel, scanCollectInfoModel } from '../../api/processInspection';
 import { useLang } from './lang';
 // 全局信息
-const scanInfoList = ref<scanInfoModel[]>([]);
+const scanInfoList = ref<scanCollectInfoModel[]>([]);
 const { t } = useLang();
 // 扫描信息
 const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
@@ -355,7 +355,7 @@ const resetKeyPartList = () => {
 };
 
 const writeScanInfoSuccess = async (lbNo, lbQty, uomName, lbError) => {
-  const barcodeInfo = _.find(scanInfoList.value, (item: scanInfoModel) => item.serialNumber === lbNo);
+  const barcodeInfo = _.find(scanInfoList.value, (item: scanCollectInfoModel) => item.serialNumber === lbNo);
   if (!barcodeInfo) {
     // 如果不存在则插入
     scanInfoList.value.unshift({
@@ -385,7 +385,7 @@ const checkBarcodeRepeat = (lbNo) => {
   if (scanType.value === 'SCANTEXT') {
     const barcodeInfo = _.find(
       scanInfoList.value,
-      (item: scanInfoModel) => item.status === 'OK' && item.serialNumber === lbNo,
+      (item: scanCollectInfoModel) => item.status === 'OK' && item.serialNumber === lbNo,
     );
     if (barcodeInfo) {
       isSuccess = false;
