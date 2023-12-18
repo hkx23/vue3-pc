@@ -814,6 +814,7 @@ export interface MitemOnboardUnbindDTO {
   processId?: string;
   moScheId?: string;
   ids?: string[];
+  boardListIds?: string[];
 }
 
 export interface LabelSearch {
@@ -1125,17 +1126,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
+  workshopId?: string;
   workshopCode?: string;
   stateName?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  isState?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
-  isState?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1314,15 +1315,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
+  workshopId?: string;
   workshopCode?: string;
   stateName?: string;
+  isState?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
-  isState?: boolean;
   defectCodeStr?: string;
 }
 
@@ -1685,7 +1686,6 @@ export interface BarcodePkgVO {
    * @format int32
    */
   packLevel?: number;
-  barcodeWipId?: string;
   /** 包装条码 */
   pkgBarcode?: string;
   /** 包装条码状态 */
@@ -1710,12 +1710,19 @@ export interface BarcodePkgVO {
   packRuleName?: string;
   /** 工单编码 */
   moCode?: string;
+  /** 包装条码类型 */
+  pkgBarcodeType?: string;
+  /** 包装条码类型名称 */
+  pkgBarcodeTypeName?: string;
   /** 子包装条码类型 */
   subPkgBarcodeType?: string;
+  /** 子包装条码类型名称 */
+  subPkgBarcodeTypeName?: string;
   /** 操作类型 */
   operateType?: string;
   /** 原因 */
   reason?: string;
+  barcodePkgId?: string;
   ruleDtlId?: string;
 }
 
@@ -3254,7 +3261,7 @@ export const api = {
      * @request POST:/barcodePkg/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: (data: number) =>
+    getBarcodeRuleList: (data: string) =>
       http.request<ResultPagingDataProductPackRule['data']>(`/api/control/barcodePkg/getBarcodeRuleList`, {
         method: 'POST',
         body: data as any,
@@ -3344,9 +3351,10 @@ export const api = {
      * @request GET:/barcodePkg/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: () =>
+    getPrintTmplList: (query: { packType: string }) =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/barcodePkg/getPrintTmplList`, {
         method: 'GET',
+        params: query,
       }),
   },
   atomicSaveKeypart: {
