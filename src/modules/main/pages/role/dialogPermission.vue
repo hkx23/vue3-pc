@@ -228,7 +228,7 @@ const fetchPermissionData = async () => {
   loading.value = true;
   // setLoading(true);
   try {
-    const data = (await api.permission.getTreePermissionsByRoleId({ roleId: Number(props.id) })) as any;
+    const data = (await api.permission.getTreePermissionsByRoleId({ roleId: props.id })) as any;
     originPermissionData.value = data;
     expanded.value = originPermissionData.value.map((item) => item.id);
 

@@ -38,6 +38,7 @@
       <div ref="tableContentRef" class="table-box__table">
         <t-table
           ref="tableRef"
+          :vertical-align="'middle'"
           hover
           multiple-sort
           resizable

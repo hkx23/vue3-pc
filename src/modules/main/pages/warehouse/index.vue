@@ -1,28 +1,10 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <t-row justify="space-between">
-        <t-col>
-          <div>
-            <t-input v-model="keyword" label="仓库编码/名称/描述：" placeholder="请输入" clearable />
-          </div>
-        </t-col>
-        <t-col flex="10px" />
-        <t-col>
-          <div>
-            <t-select v-model="warehouseState" label="状态" :options="stateOptions" clearable />
-          </div>
-        </t-col>
-        <t-col flex="auto" />
-        <t-col flex="170px">
-          <div>
-            <t-button @click="onRefresh">查询</t-button>
-            <t-button theme="default" @click="onReset">重置</t-button>
-          </div>
-        </t-col>
-      </t-row>
-    </div>
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <!-- 查询组件  -->
+      <cmp-query :opts="opts" @submit="conditionEnter" @reset="conditionReset" />
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
@@ -30,6 +12,7 @@
         :table-data="tableDataWarehouse"
         :loading="loading"
         :total="dataTotal"
+        :fixed-height="true"
         :resizable="true"
         @refresh="fetchTable"
       >
@@ -57,26 +40,25 @@
           </t-space>
         </template>
       </cmp-table>
-    </div>
-  </div>
+    </cmp-card>
+  </cmp-container>
+
   <div>
     <t-dialog
       v-model:visible="formVisible"
       :header="formTitle"
       :on-confirm="onConfirmForm"
-      width="50%"
+      width="750px"
       :close-on-overlay-click="false"
     >
-      <t-space direction="vertical" style="width: 98%">
-        <warehouse-form ref="formRef"></warehouse-form>
-      </t-space>
+      <warehouse-form ref="formRef"></warehouse-form>
     </t-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -124,12 +106,38 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
 ];
 
+// 查询组件
+const opts = computed(() => {
+  return {
+    keyword: {
+      label: '仓库编码/名称/描述',
+      comp: 't-input',
+      placeholder: '请输入仓库编码/名称/描述',
+      defaultVal: keyword.value,
+    },
+    warehouseState: {
+      label: '状态',
+      comp: 't-select',
+      defaultVal: warehouseState.value,
+      bind: {
+        options: stateOptions,
+      },
+    },
+  };
+});
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  keyword.value = data.keyword;
+  warehouseState.value = data.warehouseState;
+  onRefresh();
+};
+
 // 查询按钮
 const onRefresh = () => {
   fetchTable();
 };
 // 重置按钮
-const onReset = () => {
+const conditionReset = () => {
   keyword.value = '';
   warehouseState.value = -1;
 };
@@ -142,7 +150,7 @@ const fetchTable = async () => {
     tableDataWarehouse.value = [];
     const data = (await api.warehouse.search({
       keyword: keyword.value,
-      state: warehouseState.value,
+      state: warehouseState.value || -1,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       filters: filterlist.value,

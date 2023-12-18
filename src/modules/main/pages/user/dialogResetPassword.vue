@@ -16,7 +16,7 @@
         :label-width="95"
       >
         <t-form-item :label="t('user.resetPassword')" name="password">
-          <t-input v-model="formData.password" type="password" clearable />
+          <t-input v-model="formData.password" clearable />
         </t-form-item>
         <div style="height: 5px"></div>
       </t-form>
@@ -117,6 +117,8 @@ const visible = computed({
     return props.modelValue;
   },
   set(val: boolean) {
+    formData.password = '';
+    formRef.value.reset();
     emit('update:modelValue', val);
   },
 });

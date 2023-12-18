@@ -1,7 +1,7 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <t-space size="8">
+      <t-space :size="8">
         <t-button @click="onClickAdd">
           {{ t('common.button.add') }}
         </t-button>

@@ -1,5 +1,5 @@
 <template>
-  <t-row>
+  <t-row @keydown.enter="enterCheckHandle">
     <t-col ref="formContentRef" flex="1 1">
       <t-form
         colon
@@ -259,6 +259,13 @@ const handleEvent = (type, val) => {
 const checkHandle = (flagText: any = false) => {
   emits('submit', state.form, flagText);
 };
+
+// 查询
+const enterCheckHandle = (flagText: any = false) => {
+  if (props.boolEnter) {
+    emits('submit', state.form, flagText);
+  }
+};
 // 子组件名称
 const compChildName: any = computed(() => {
   return (opt: any) => {
@@ -350,28 +357,28 @@ const getPlaceholder = (row: any) => {
   return placeholder;
 };
 onMounted(() => {
-  if (props.boolEnter) {
-    document.onkeyup = (e) => {
-      const pagination = document.querySelectorAll('.t-pagination');
-      let isPaginationInputFocus = false;
-      if (pagination) {
-        pagination.forEach((ele) => {
-          const paginationInputList = ele.getElementsByTagName('input');
-          const paginationInput = paginationInputList[paginationInputList.length - 1];
-          // 判断是否有分页器筛选输入框获取焦点
-          if (paginationInput === document.activeElement) {
-            isPaginationInputFocus = true;
-          }
-        });
-      }
-      if (isPaginationInputFocus) {
-        return;
-      }
-      if (e.code === 'Enter') {
-        checkHandle();
-      }
-    };
-  }
+  // if (props.boolEnter) {
+  //   document.onkeyup = (e) => {
+  //     const pagination = document.querySelectorAll('.t-pagination');
+  //     let isPaginationInputFocus = false;
+  //     if (pagination) {
+  //       pagination.forEach((ele) => {
+  //         const paginationInputList = ele.getElementsByTagName('input');
+  //         const paginationInput = paginationInputList[paginationInputList.length - 1];
+  //         // 判断是否有分页器筛选输入框获取焦点
+  //         if (paginationInput === document.activeElement) {
+  //           isPaginationInputFocus = true;
+  //         }
+  //       });
+  //     }
+  //     if (isPaginationInputFocus) {
+  //       return;
+  //     }
+  //     if (e.code === 'Enter') {
+  //       checkHandle();
+  //     }
+  //   };
+  // }
 });
 watch(
   () => props.opts,
