@@ -299,20 +299,24 @@ const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', msg: string
   display: flex;
   justify-content: flex-end;
 }
+
 .scan-panel {
   .scan-line {
     .qty-info {
       display: flex;
       align-items: baseline;
+
       .label-qty {
         font-size: 28px;
       }
+
       .label-uom {
         font-size: 10px;
         padding-left: 5px;
       }
     }
   }
+
   .pkg-panel {
     color: var(--td-brand-color-active);
     display: flex;
@@ -320,16 +324,20 @@ const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', msg: string
     align-items: center;
     margin: 10px 0;
   }
+
   .label {
     text-align: right;
   }
 }
+
 .label-list {
   margin-bottom: 10px;
+
   :deep(.t-alert__description) {
     flex: 1;
   }
 }
+
 .label-footer {
   display: flex;
   justify-content: flex-end;
