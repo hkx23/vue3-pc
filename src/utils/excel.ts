@@ -22,12 +22,13 @@ const randomString = (length = 6) => {
  * @param {columns} 表格列
  * @param {list} 表格数据
  */
-const exportExcel = ({ selectedRowKeys = [], columns, tableData, rowKey = 'id' }) => {
-  if (selectedRowKeys.length > 0) {
-    tableData = cloneDeep(tableData.filter((item) => selectedRowKeys.includes(item[rowKey])));
-  } else {
-    tableData = cloneDeep(tableData);
-  }
+const exportExcel = ({ columns, tableData }) => {
+  // if (selectedRowKeys.length > 0) {
+  //   tableData = cloneDeep(tableData.filter((item) => selectedRowKeys.includes(item[rowKey])));
+  // } else {
+
+  // }
+  tableData = cloneDeep(tableData);
   tableData.forEach((item) => {
     for (const key in item) {
       item[key] += '';

@@ -1165,8 +1165,8 @@ export interface WipKeyPartCollectVO {
   scanQty?: number;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  isScanFinish?: boolean;
   getkeyPartCodeStr?: string;
+  isScanFinish?: boolean;
 }
 
 /** 在制品关键件采集表 */

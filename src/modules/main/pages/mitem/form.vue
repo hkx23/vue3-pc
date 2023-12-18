@@ -1,58 +1,71 @@
 <template>
-  <t-form layout="inline" :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
-    <t-form-item :label="t('business.main.mitemCode')" required-mark>
-      <t-input v-model="formData.mitemCode" disabled />
-    </t-form-item>
-    <t-form-item :label="t('business.main.mitemName')" required-mark>
-      <t-input v-model="formData.mitemName" />
-    </t-form-item>
-    <t-form-item :label="t('business.main.mitemDesc')">
-      <t-input v-model="formData.mitemDesc" />
-    </t-form-item>
-    <t-form-item :label="t('business.main.mitemCategoryCode')">
-      <div style="width: 156px">
-        <bcmp-select-business v-model="formData.mitemCategoryId" type="mitemCategory" :show-title="false" />
-      </div>
-    </t-form-item>
-    <t-form-item :label="t('business.main.uom')">
-      <t-select v-model="formData.uom" style="width: 156px" :options="uomOptions" clearable />
-    </t-form-item>
-    <t-form-item :label="t('business.main.supplyCategory')">
-      <div style="width: 156px">
-        <t-select v-model="formData.supplyCategory" :options="supplyCategoryOptions" clearable />
-      </div>
-    </t-form-item>
-    <t-form-item :label="t('business.main.isBatchNo')">
-      <t-select v-model="formData.isBatchNo" :options="isBatchNoOptions" clearable style="width: 156px" />
-    </t-form-item>
-    <t-form-item :label="t('business.main.defaultWarehouse')">
-      <div style="width: 156px">
-        <bcmp-select-business
-          v-model="formData.warehouseId"
-          label-field="warehouseCode"
-          type="warehouse"
-          :show-title="false"
-          @selection-change="onWarehouseChange"
-        />
-      </div>
-    </t-form-item>
-    <t-form-item :label="t('business.main.warehouseName')">
-      <t-input v-model="formData.warehouseName" disabled placeholder="" />
-    </t-form-item>
-    <t-form-item :label="t('business.main.shelfLifeDays')">
-      <t-input-number v-model="formData.shelfLifeDays" />
-    </t-form-item>
-    <t-form-item>
-      <t-row style="width: 200px">
-        <t-col flex="auto"> <t-checkbox v-model="formData.isRawChecked" :label="t('business.main.raw')" /> </t-col>
-        <t-col flex="auto">
-          <t-checkbox v-model="formData.isProductChecked" :label="t('business.main.product')" />
-        </t-col>
-        <t-col flex="auto">
-          <t-checkbox v-model="formData.isInProcessChecked" :label="t('business.main.inProduct')" />
-        </t-col>
-      </t-row>
-    </t-form-item>
+  <t-form
+    ref="formRef"
+    :data="formData"
+    :rules="FORM_RULES"
+    :show-cancel="true"
+    :show-error-message="true"
+    @submit="submit"
+  >
+    <t-row :gutter="[32, 16]">
+      <t-col :span="6">
+        <t-form-item :label="t('business.main.mitemCode')" required-mark name="mitemCode">
+          <t-input v-model="formData.mitemCode" disabled /> </t-form-item
+      ></t-col>
+      <t-col :span="6">
+        <t-form-item :label="t('business.main.mitemName')" required-mark name="mitemName">
+          <t-input v-model="formData.mitemName" /> </t-form-item
+      ></t-col>
+      <t-col :span="6">
+        <t-form-item :label="t('business.main.mitemDesc')"> <t-input v-model="formData.mitemDesc" /> </t-form-item
+      ></t-col>
+      <t-col :span="6">
+        <t-form-item :label="t('business.main.mitemCategoryCode')">
+          <bcmp-select-business
+            v-model="formData.mitemCategoryId"
+            type="mitemCategory"
+            :show-title="false"
+          /> </t-form-item
+      ></t-col>
+      <t-col :span="6">
+        <t-form-item :label="t('business.main.uom')">
+          <t-select v-model="formData.uom" :options="uomOptions" clearable /> </t-form-item
+      ></t-col>
+      <t-col :span="6">
+        <t-form-item :label="t('business.main.supplyCategory')">
+          <t-select v-model="formData.supplyCategory" :options="supplyCategoryOptions" clearable /> </t-form-item
+      ></t-col>
+      <t-col :span="6">
+        <t-form-item :label="t('business.main.isBatchNo')">
+          <t-select v-model="formData.isBatchNo" :options="isBatchNoOptions" clearable /> </t-form-item
+      ></t-col>
+      <t-col :span="6">
+        <t-form-item :label="t('business.main.defaultWarehouse')">
+          <bcmp-select-business
+            v-model="formData.warehouseId"
+            label-field="warehouseCode"
+            type="warehouse"
+            :show-title="false"
+            @selection-change="onWarehouseChange"
+          /> </t-form-item
+      ></t-col>
+      <t-col :span="6">
+        <t-form-item :label="t('business.main.warehouseName')">
+          <t-input v-model="formData.warehouseName" disabled placeholder="" /> </t-form-item
+      ></t-col>
+      <t-col :span="6">
+        <t-form-item :label="t('business.main.shelfLifeDays')">
+          <t-input-number v-model="formData.shelfLifeDays" /> </t-form-item
+      ></t-col>
+      <t-col :span="6">
+        <t-form-item>
+          <t-space :size="16">
+            <t-checkbox v-model="formData.isRawChecked" :label="t('business.main.raw')" />
+            <t-checkbox v-model="formData.isProductChecked" :label="t('business.main.product')" />
+            <t-checkbox v-model="formData.isInProcessChecked" :label="t('business.main.inProduct')" />
+          </t-space> </t-form-item
+      ></t-col>
+    </t-row>
   </t-form>
 </template>
 
@@ -107,23 +120,31 @@ export default {
       shelfLifeDays: 0, // 保质期天数
       isBatchNo: 0, // 是否启用批次
     });
+    const formRef = ref(null);
+    const FORM_RULES = ref({
+      mitemCode: [{ required: true, message: t('common.placeholder.input', [t('mitem.mitemCode')]) }],
+      mitemName: [{ required: true, message: t('common.placeholder.input', [t('mitem.mitemName')]) }],
+    });
 
     onMounted(() => {
       console.log('打开dialog');
     });
     const submit = async () => {
-      try {
-        formData.value.isRaw = formData.value.isRawChecked ? 1 : 0;
-        formData.value.isProduct = formData.value.isProductChecked ? 1 : 0;
-        formData.value.isInProcess = formData.value.isInProcessChecked ? 1 : 0;
+      return new Promise((resolve, reject) => {
+        formRef.value.validate().then((result) => {
+          if (result !== true) {
+            MessagePlugin.warning(Object.values(result)[0][0].message);
+            reject();
+            return;
+          }
+          formData.value.isRaw = formData.value.isRawChecked ? 1 : 0;
+          formData.value.isProduct = formData.value.isProductChecked ? 1 : 0;
+          formData.value.isInProcess = formData.value.isInProcessChecked ? 1 : 0;
 
-        await api.mitem.edit(formData.value);
-        MessagePlugin.success(t('common.message.success'));
-      } catch (e) {
-        console.log(e);
-      } finally {
-        console.log('11111');
-      }
+          api.mitem.edit(formData.value);
+          MessagePlugin.success(t('common.message.success'));
+        });
+      });
     };
 
     const onWarehouseChange = (value: any) => {
@@ -155,6 +176,8 @@ export default {
       supplyCategoryOptions,
       isBatchNoOptions,
       mitemTypeOptions,
+      FORM_RULES,
+      formRef,
     };
   },
 };

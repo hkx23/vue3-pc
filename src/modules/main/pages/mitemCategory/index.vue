@@ -1,21 +1,10 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <t-row justify="space-between">
-        <t-col>
-          <div>
-            <t-input v-model="keyword" label="物料类别：" placeholder="请输入类别编码/名称" clearable />
-          </div>
-        </t-col>
-        <t-col flex="170px">
-          <div>
-            <t-button @click="onRefresh">查询</t-button>
-            <t-button theme="default" @click="onReset">重置</t-button>
-          </div>
-        </t-col>
-      </t-row>
-    </div>
-    <div class="main-page-content">
+  <cmp-container :full="true" :full-sub-index="[1, 2]">
+    <cmp-card :span="12">
+      <!-- 查询组件  -->
+      <cmp-query :opts="opts" @submit="conditionEnter" />
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -24,6 +13,7 @@
         :table-data="tableDataMitemCategory"
         :loading="loading"
         :total="dataTotal"
+        :fixed-height="true"
         select-on-row-click
         @refresh="fetchTable"
         @select-change="onSelectMitemCategoryChange"
@@ -31,16 +21,19 @@
         <template #button> <t-button theme="primary" @click="onImport">导入</t-button></template>
         <template #op="slotProps">
           <t-space>
-            <t-icon name="edit" @click="onEditRowClick(slotProps)" />
-            <t-icon name="delete" @click="onDeleteRowClick(slotProps)" />
+            <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
+            <t-link theme="primary" @click="onDeleteRowClick(slotProps)">{{ t('common.button.delete') }}</t-link>
+            <!-- <t-icon name="edit" @click="onEditRowClick(slotProps)" />
+            <t-icon name="delete" @click="onDeleteRowClick(slotProps)" /> -->
           </t-space>
         </template>
       </cmp-table>
-    </div>
-    <div class="main-page-content">
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageMitem"
         row-key="id"
+        :fixed-height="true"
         :total="mitemTotal"
         :table-column="tableMitemColumns"
         :table-data="tableDataMitem"
@@ -48,27 +41,24 @@
         @refresh="fetchMitemTable"
       >
       </cmp-table>
-    </div>
-  </div>
+    </cmp-card>
+  </cmp-container>
 
   <div>
     <t-dialog
       v-model:visible="formVisible"
       header="分类编辑"
       :on-confirm="onConfirmForm"
-      width="50%"
       :close-on-overlay-click="false"
     >
-      <t-space direction="vertical" style="width: 98%">
-        <mitem-category-form ref="formRef"></mitem-category-form>
-      </t-space>
+      <mitem-category-form ref="formRef"></mitem-category-form>
     </t-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { DialogPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -76,7 +66,9 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import MitemCategoryForm from './form.vue';
+import { useLang } from './lang';
 
+const { t } = useLang();
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const { pageUI: pageMitem } = usePage();
@@ -107,14 +99,33 @@ const keyword = ref('');
 const tableRef = ref();
 const selectCategoryID = ref(0);
 
+// 查询组件
+const opts = computed(() => {
+  return {
+    keyword: {
+      label: t('business.main.mitemCategoryCode'),
+      comp: 't-input',
+      placeholder: t('common.placeholder.input', [
+        `${t('business.main.mitemCategoryCode')}/${t('business.main.mitemCategoryName')}`,
+      ]),
+      defaultVal: '',
+    },
+  };
+});
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  keyword.value = data.keyword;
+  onRefresh();
+};
+
 // 查询按钮
 const onRefresh = () => {
   fetchTable();
 };
 // 重置按钮
-const onReset = () => {
-  keyword.value = '';
-};
+// const onReset = () => {
+//   keyword.value = '';
+// };
 
 // 导入按钮
 const onImport = () => {

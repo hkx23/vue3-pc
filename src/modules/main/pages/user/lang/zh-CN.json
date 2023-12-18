@@ -38,6 +38,8 @@
     "roleName": "角色名称",
     "roleDesc": "角色描述",
     "roleType": "角色类型",
-    "setUserRolesSuccess": "更新用户角色成功"
+    "setUserRolesSuccess": "更新用户角色成功",
+    "confirmDisable": "是否确认禁用账号",
+    "confirmEnable": "是否确认启用账号"
   }
 }

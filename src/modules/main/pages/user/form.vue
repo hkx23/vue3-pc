@@ -20,7 +20,7 @@
       <bcmp-select-business v-model="formData.personId" type="person" :show-title="false"></bcmp-select-business>
     </t-form-item>
     <t-form-item v-if="!isFormEditing" :label="t('user.setPassword')" name="password">
-      <t-input v-model="formData.password" type="password" clearable />
+      <t-input v-model="formData.password" clearable />
     </t-form-item>
     <div style="height: 5px"></div>
   </t-form>
@@ -121,6 +121,7 @@ const reset = (isEdit: boolean, data?: User) => {
   formData.id = '';
   // formData.oid = '';
   formData.eid = '';
+  formData.password = '';
   // 将id小写后比较
 
   // 新增时，默认企业ID

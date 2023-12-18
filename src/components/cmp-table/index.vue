@@ -38,6 +38,7 @@
       <div ref="tableContentRef" class="table-box__table">
         <t-table
           ref="tableRef"
+          :vertical-align="'middle'"
           hover
           multiple-sort
           resizable
@@ -380,16 +381,13 @@ const onRefresh = () => {
 
 // 导出表格数据
 const onExport = () => {
-  if (!selectedRowKeys.value.length) return MessagePlugin.warning('请选择需要导出的数据');
+  if (!props.tableData.length) return MessagePlugin.warning('当前无数据可导出');
   // if (!selectedRowKeys.value.length) return MessagePlugin.warning(t(`CmpTable.pleaseSelectExportData`));
   //
   excelUtils.exportExcel({
-    selectedRowKeys: selectedRowKeys.value,
     columns: exportColumns.value,
     tableData: props.tableData,
-    rowKey: props.rowKey,
   });
-  selectedRowKeys.value = [];
   return null;
 };
 
@@ -407,7 +405,6 @@ const onExportAll = async () => {
         excelUtils.exportExcel({
           columns: exportColumns.value,
           tableData: result,
-          rowKey: props.rowKey,
         });
       } catch (error) {
         console.log('error', error);

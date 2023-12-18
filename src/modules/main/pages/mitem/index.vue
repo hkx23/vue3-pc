@@ -1,70 +1,40 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <t-row justify="space-between">
-        <t-col flex="220px">
-          <t-input
-            v-model="keyword"
-            :label="t('business.main.mitemCode')"
-            :placeholder="
-              t('common.placeholder.input', [t('business.main.mitemCode') + '/' + t('business.main.mitemName')])
-            "
-          />
-        </t-col>
-        <t-col flex="20px" />
-        <t-col flex="220px">
-          <t-input
-            v-model="mitemCategoryKeyword"
-            :label="t('business.main.mitemCategoryCode')"
-            :placeholder="
-              t('common.placeholder.input', [
-                t('business.main.mitemCategoryCode') + '/' + t('business.main.mitemCategoryName'),
-              ])
-            "
-          />
-        </t-col>
-        <t-col flex="auto" />
-        <t-col flex="170px">
-          <div>
-            <t-button @click="onRefresh">{{ t('common.button.search') }}</t-button>
-            <t-button theme="default" @click="onReset">{{ t('common.button.reset') }}</t-button>
-          </div>
-        </t-col>
-      </t-row>
-      <t-row style="margin-top: 10px">
-        <t-checkbox-group v-model="mitemTypeSelect" :options="mitemTypeOptions" />
-      </t-row>
-    </div>
-    <div class="main-page-content">
-      <t-row justify="space-between">
-        <cmp-table
-          v-model:pagination="pageUI"
-          row-key="id"
-          :table-column="tableMitemColumns"
-          :table-data="tableDataMitem"
-          :loading="loading"
-          :total="dataTotal"
-          :resizable="true"
-          @refresh="fetchTable"
-        >
-          <template #op="slotProps">
-            <t-space>
-              <t-icon name="edit" @click="onEditRowClick(slotProps)" />
-            </t-space>
-          </template>
-        </cmp-table>
-      </t-row>
-    </div>
-  </div>
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <!-- 查询组件  -->
+      <cmp-query :opts="opts" @submit="conditionEnter" />
+    </cmp-card>
+    <cmp-card :span="12">
+      <cmp-table
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="tableMitemColumns"
+        :table-data="tableDataMitem"
+        :loading="loading"
+        :total="dataTotal"
+        :resizable="true"
+        :fixed-height="true"
+        @refresh="fetchTable"
+      >
+        <template #op="slotProps">
+          <t-space>
+            <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
+            <!-- <t-icon name="edit" @click="onEditRowClick(slotProps)" /> -->
+          </t-space>
+        </template>
+      </cmp-table>
+    </cmp-card>
+  </cmp-container>
+
   <div>
     <t-dialog
       v-model:visible="formVisible"
       :header="t('common.dialog.header.edit')"
       :on-confirm="onConfirmForm"
-      width="50%"
+      width="750px"
       :close-on-overlay-click="false"
     >
-      <t-space direction="vertical" style="width: 98%">
+      <t-space direction="vertical">
         <mitem-form ref="formRef"></mitem-form>
       </t-space>
     </t-dialog>
@@ -74,7 +44,7 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -117,44 +87,45 @@ const onRefresh = () => {
   fetchTable();
 };
 // 重置按钮
-const onReset = () => {
-  keyword.value = '';
-  mitemCategoryKeyword.value = '';
-};
+// const onReset = () => {
+//   keyword.value = '';
+//   mitemCategoryKeyword.value = '';
+// };
 
 // 点击查询按钮
-// const conditionEnter = (data: any) => {
-//   keyword.value = data.keyword;
-//   mitemTypeSelect.value = data.mitemType;
-//   onRefresh();
-// };
-// const opts = computed(() => {
-//   return {
-//     keyword: {
-//       label: t('business.main.mitemCode'),
-//       comp: 'bcmp-select-business',
-//       defaultVal: '',
-//       placeholder: t('common.placeholder.input', [`${t('business.main.mitemCode')}/${t('business.main.mitemName')}`]),
-//     },
-//     mitemCategory: {
-//       label: t('business.main.mitemCategoryCode'),
-//       comp: 't-input',
-//       defaultVal: [],
-//       placeholder: t('common.placeholder.input', [
-//         `${t('business.main.mitemCategoryCode')}/${t('business.main.mitemCategoryName')}`,
-//       ]),
-//     },
-//     mitemType: {
-//       // label: t('business.main.mitemTypeCode'),
-//       comp: 't-checkbox-group',
-//       defaultVal: [],
-//       bind: {
-//         options: mitemTypeOptions.value,
-//         lazyLoad: true,
-//       },
-//     },
-//   };
-// });
+const conditionEnter = (data: any) => {
+  keyword.value = data.keyword;
+  mitemCategoryKeyword.value = data.mitemCategory;
+  mitemTypeSelect.value = data.mitemType;
+  onRefresh();
+};
+const opts = computed(() => {
+  return {
+    keyword: {
+      label: t('business.main.mitemCode'),
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: t('common.placeholder.input', [`${t('business.main.mitemCode')}/${t('business.main.mitemName')}`]),
+    },
+    mitemCategory: {
+      label: t('business.main.mitemCategoryCode'),
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: t('common.placeholder.input', [
+        `${t('business.main.mitemCategoryCode')}/${t('business.main.mitemCategoryName')}`,
+      ]),
+    },
+    mitemType: {
+      // label: t('business.main.mitemTypeCode'),
+      comp: 't-checkbox-group',
+      defaultVal: [],
+      bind: {
+        options: mitemTypeOptions.value,
+        lazyLoad: true,
+      },
+    },
+  };
+});
 
 const dataTotal = ref(0);
 

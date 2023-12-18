@@ -43,17 +43,17 @@
                   </template>
                 </t-input>
               </t-col>
-              <t-col v-if="isScanPackage" :span="2" class="qty-info">
-                <div class="label-qty">{{ pkgInfo.qty }}</div>
-                <div>/{{ pkgInfo.qty }}</div>
-                <div class="label-uom">{{ pkgInfo.uom }}/箱</div>
+              <t-col v-if="labelList.length > 0" :span="2" class="qty-info">
+                <div class="label-qty">{{ allQty }}</div>
+                <div>/{{ pkgInfo.packQty }}</div>
+                <div class="label-uom">{{ pkgInfo.uom }}/{{ pkgInfo.packUom }}</div>
               </t-col>
             </t-row>
-            <t-row v-if="isScanPackage" :gutter="16">
+            <t-row v-if="labelList.length > 0" :gutter="16">
               <t-col :span="12" class="pkg-panel">
                 <t-space>
                   <qrcode-icon />
-                  <div>{{ pkgInfo.pkgBarcode }}</div>
+                  <div>{{ pkgInfo.barcode }}</div>
                   <t-tag theme="success" variant="outline">{{ t('productPacking.productLabel') }}</t-tag>
                 </t-space>
               </t-col>
@@ -67,36 +67,24 @@
               <t-col :span="7">{{ pkgInfo.mitemName }}</t-col>
             </t-row>
           </t-card>
-          <t-card v-if="isScanPackage" :header="t('productPacking.packingList')">
+          <t-card v-if="labelList.length > 0" :header="t('productPacking.packingList')">
             <t-row :gutter="10">
-              <t-col v-for="index in pkgInfo.qty" :key="index" :span="4" class="sn-label">
-                <t-alert theme="warning" message="">
-                  <template #icon>{{ index }}</template>
+              <t-col v-for="(label, index) in labelList" :key="index" :span="4" class="label-list">
+                <t-alert theme="info" :message="label.barcode">
+                  <template #icon>{{ index + 1 }}</template>
+                  <template #operation><close-icon @click="removeLabel(label.barcode)" /></template>
                 </t-alert>
               </t-col>
             </t-row>
+            <div class="label-footer">
+              <t-button theme="primary" @click="tailPkg">{{ t('productPacking.tailPacking') }}</t-button>
+              <t-button theme="default">{{ t('productPacking.packingLog') }}</t-button>
+            </div>
           </t-card>
         </t-space>
       </t-col>
       <cmp-card :span="3" :header="t('common.message.message')">
-        <div class="message">
-          <t-space direction="vertical" size="small" class="info">
-            <t-alert v-for="(msg, index) in msgList.slice().reverse()" :key="index" :theme="msg.theme">
-              <div>{{ msg.content }}</div>
-              <div class="time">{{ msg.time }}</div>
-            </t-alert>
-          </t-space>
-          <t-space align="center" size="small" separator="|">
-            <t-button variant="text">
-              <template #icon><file-copy-icon /></template>
-              {{ t('common.button.copy') }}
-            </t-button>
-            <t-button variant="text" theme="danger">
-              <template #icon><clear-icon /></template>
-              {{ t('common.button.clear') }}
-            </t-button>
-          </t-space>
-        </div>
+        <cmp-message v-model="msgList"></cmp-message>
       </cmp-card>
     </cmp-row>
   </cmp-container>
@@ -104,40 +92,175 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { ClearIcon, FileCopyIcon, QrcodeIcon } from 'tdesign-icons-vue-next';
+import { findIndex, remove, sumBy } from 'lodash';
+import { CloseIcon, QrcodeIcon } from 'tdesign-icons-vue-next';
+import { DialogPlugin } from 'tdesign-vue-next';
 import { computed, ref } from 'vue';
+
+import { api as apiControl, BarcodePkg, WipPkgInfoVO } from '@/api/control';
+import { api as apiMain } from '@/api/main';
 
 import { useLang } from './lang';
 
 // 使用多语言
 const { t } = useLang();
 const scanType = ref('normal');
+const isOnlinePrint = ref(false);
+// 获取是否在线打印配置
+apiMain.profileValue
+  .getValueByProfileCode({
+    code: 'ONLINE_PRINT',
+    orgId: fw.getOrgId(),
+  })
+  .then((val) => {
+    if (val === '1' || val === 'Y') {
+      isOnlinePrint.value = true;
+    }
+  });
 
 // 扫描页
 const scanPlaceholder = computed(() => {
+  if (isScanPkg.value) {
+    return t('productPacking.plsScanPackLabel');
+  }
   if (scanType.value === 'delete') {
     return t('productPacking.plsScanDelLabel');
   }
   return t('productPacking.plsScanLabel');
 });
-const isScanPackage = ref(false);
+const isScanPkg = ref(false);
 const scanLabel = ref();
-const labelList = ref([]);
-const pkgInfo = computed(() => {
-  if (labelList.value.length > 0) {
-    return labelList.value[0];
+const pkgLabel = ref<BarcodePkg>();
+const allQty = computed(() => {
+  if (labelList.value.length === 0) {
+    return 0;
   }
-  return {};
+  return sumBy(labelList.value, (o) => o.barcodeQty);
 });
+const pkgInfo = ref<WipPkgInfoVO>();
+const labelList = ref<WipPkgInfoVO[]>([]);
 const scan = () => {
-  if (scanType.value === 'delete') {
-    // todo 删除标签
+  if (isScanPkg.value) {
+    apiControl.barcodePkg
+      .getByBarcode({
+        barcode: scanLabel.value,
+      })
+      .then((data) => {
+        if (data.packRuleId !== labelList.value[0].packRuleId) {
+          pushMessage('error', t('productPacking.tipsPkgRuleInconsistent'));
+          return;
+        }
+        if (allQty.value > data.qty) {
+          pushMessage('error', t('productPacking.tipsQtyFailed'));
+          return;
+        }
+        pkgLabel.value = data;
+        packing();
+      })
+      .catch((err) => {
+        pushMessage('error', err.message);
+      });
+    return;
   }
-  msgList.value.push({
-    theme: 'success',
-    content: `[${scanLabel.value}]${t('productPacking.scanSuccess')}`,
-    time: dayjs().format('HH:mm:ss'),
+  if (scanType.value === 'delete') {
+    removeLabel(scanLabel.value);
+    scanLabel.value = null;
+  } else {
+    // 判断是否重复扫描
+    if (findIndex(labelList.value, ['barcode', scanLabel.value]) > -1) {
+      pushMessage('error', t('productPacking.tipsBarcodeRepeat'));
+      return;
+    }
+    apiControl.barcodeWip
+      .getWipPkgInfo({
+        barcode: scanLabel.value,
+      })
+      .then((data) => {
+        // 当前数量是否超出规格
+        if (data.barcodeQty > data.packQty) {
+          pushMessage('error', t('productPacking.tipsQtyUpperLimite'));
+          return;
+        }
+        if (labelList.value.length > 0) {
+          // 判断包装规则是否一致
+          if (data.packRuleId !== labelList.value[0].packRuleId) {
+            pushMessage('error', t('productPacking.tipsPkgRuleInconsistent'));
+            return;
+          }
+          // 判断累加的数量是否超出规格
+          if (allQty.value + data.barcodeQty > pkgInfo.value.packQty) {
+            pushMessage('error', t('productPacking.tipsQtyUpperLimite'));
+            return;
+          }
+        }
+
+        pkgInfo.value = data;
+        labelList.value.push(data);
+        pushMessage('success', t('productPacking.plsContinueScanPackLabel'));
+        scanLabel.value = null;
+
+        // 判断累恰好等于箱包数量，自动装箱
+        if (allQty.value === pkgInfo.value.packQty) {
+          preparePack();
+        }
+      })
+      .catch((err) => {
+        pushMessage('error', err.message);
+        scanLabel.value = null;
+      });
+  }
+};
+const removeLabel = (barcode: string) => {
+  console.log(barcode);
+  remove(labelList.value, (o) => {
+    return o.barcode === barcode;
   });
+};
+const tailPkg = () => {
+  const confirmDia = DialogPlugin.confirm({
+    header: false,
+    body: t('productPacking.tipsCompletedTail'),
+    onConfirm: () => {
+      preparePack();
+      confirmDia.hide();
+    },
+    onClose: () => {
+      confirmDia.hide();
+    },
+  });
+};
+const preparePack = () => {
+  // 判断是否在线打印，如果是，则自动包装生成条码打印
+  // 如果不是，需要扫箱条码
+  if (isOnlinePrint.value) {
+    packing();
+  } else {
+    isScanPkg.value = true;
+    pushMessage('info', t('productPacking.plsScanPackLabel'));
+  }
+};
+const packing = () => {
+  const postData = [];
+  labelList.value.forEach((val) => {
+    postData.push({
+      moScheId: val.moScheId,
+      pkgBarcode: val.barcode,
+      pkgBarcodeType: val.barcodeType,
+      parentPkgBarcode: pkgLabel.value ? pkgLabel.value.pkgBarcode : null,
+      parentPkgType: pkgLabel.value ? pkgLabel.value.pkgBarcodeType : null,
+    });
+  });
+  apiControl.pkgRelation
+    .save(postData)
+    .then(() => {
+      pushMessage('success', t('productPacking.saveSuccess'));
+      labelList.value = [];
+      scanLabel.value = null;
+    })
+    .catch(() => {
+      pushMessage('error', t('productPacking.saveFailed'));
+      scanLabel.value = null;
+    });
 };
 
 // 消息
@@ -154,6 +277,21 @@ const msgList = ref<
     time: '16:27:11',
   },
 ]);
+const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', msg: string) => {
+  let content: string;
+  if (type === 'success') {
+    content = `[${scanLabel.value}]${t('productPacking.scanSuccess')},${msg}`;
+  } else if (type === 'error') {
+    content = `[${scanLabel.value}]${t('productPacking.scanFailed')},${msg}`;
+  } else {
+    content = msg;
+  }
+  msgList.value.push({
+    theme: type,
+    content,
+    time: dayjs().format('HH:mm:ss'),
+  });
+};
 </script>
 
 <style lang="less" scoped>
@@ -192,29 +330,16 @@ const msgList = ref<
   }
 }
 
-.sn-label {
+.label-list {
   margin-bottom: 10px;
+
+  :deep(.t-alert__description) {
+    flex: 1;
+  }
 }
 
-.message {
-  min-height: 600px;
+.label-footer {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-end;
-
-  .info {
-    width: 100%;
-    height: 600px;
-    overflow: auto;
-
-    :deep(.t-alert__description) {
-      width: 100%;
-    }
-
-    .time {
-      text-align: right;
-    }
-  }
+  justify-content: flex-end;
 }
 </style>

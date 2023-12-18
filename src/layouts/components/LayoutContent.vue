@@ -93,7 +93,9 @@ const activeTabPath = ref('');
 const handleChangeCurrentTab = (path: string) => {
   const { tabRouters } = tabsRouterStore;
   const route = tabRouters.find((i) => i.path === path);
+  console.log('🚀 ~ file: LayoutContent.vue:96 ~ handleChangeCurrentTab ~ route:', route);
   router.push({ path, query: route.query });
+  console.log('🚀 ~ file: LayoutContent.vue:98 ~ handleChangeCurrentTab ~ path:', path);
 };
 
 const handleRemove = (options: TTabRemoveOptions) => {

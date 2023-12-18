@@ -1,27 +1,17 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <t-row justify="space-between">
-        <t-col>
-          <div>
-            <t-input v-model="keyword" label="供应商：" placeholder="请输入供应商编码/名称" clearable />
-          </div>
-        </t-col>
-        <t-col flex="170px">
-          <div>
-            <t-button @click="onRefresh">查询</t-button>
-            <t-button theme="default" @click="onReset">重置</t-button>
-          </div>
-        </t-col>
-      </t-row>
-    </div>
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <!-- 查询组件  -->
+      <cmp-query :opts="opts" @submit="conditionEnter" />
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
         :table-column="tableSupplierColumns"
         :table-data="tableDataSupplier"
         :loading="loading"
+        :fixed-height="true"
         :total="dataTotal"
         :hover="true"
         :selected-row-keys="selectedSupplierRowKeys"
@@ -33,26 +23,25 @@
               </t-space>
             </template> -->
       </cmp-table>
-    </div>
-  </div>
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      header="供应商编辑"
-      :on-confirm="onConfirmForm"
-      width="50%"
-      :close-on-overlay-click="false"
-    >
-      <t-space direction="vertical" style="width: 98%">
-        <mitem-form ref="formRef"></mitem-form>
-      </t-space>
-    </t-dialog>
-  </div>
+    </cmp-card>
+  </cmp-container>
+
+  <t-dialog
+    v-model:visible="formVisible"
+    header="供应商编辑"
+    :on-confirm="onConfirmForm"
+    width="50%"
+    :close-on-overlay-click="false"
+  >
+    <t-space direction="vertical" style="width: 98%">
+      <mitem-form ref="formRef"></mitem-form>
+    </t-space>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -81,16 +70,31 @@ const tableSupplierColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '供应商联系电话', width: 160, colKey: 'contactTel' },
   // { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
-
+// 查询组件
+const opts = computed(() => {
+  return {
+    keyword: {
+      label: '供应商',
+      comp: 't-input',
+      placeholder: '请输入供应商编码/名称',
+      defaultVal: '',
+    },
+  };
+});
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  keyword.value = data.keyword;
+  onRefresh();
+};
 // 查询按钮
 const onRefresh = () => {
   pageUI.value.page = 1;
   fetchTable();
 };
 // 重置按钮
-const onReset = () => {
-  keyword.value = '';
-};
+// const onReset = () => {
+//   keyword.value = '';
+// };
 
 const fetchTable = async () => {
   setLoading(true);

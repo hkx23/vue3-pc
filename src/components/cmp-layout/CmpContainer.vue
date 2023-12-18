@@ -56,13 +56,18 @@ onMounted(() => {
 </script>
 <style lang="less" scoped>
 .cmp-container {
-  padding: 16px;
+  padding: 12px;
   width: 100%;
 }
 
 .cmp-container-full {
   height: 100%;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
+
+  :deep(> .t-space-item) {
+    min-height: 0;
+  }
 }
 </style>
