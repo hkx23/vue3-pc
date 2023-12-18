@@ -1125,17 +1125,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  isState?: boolean;
-  workshopCode?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  stateName?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1165,8 +1165,8 @@ export interface WipKeyPartCollectVO {
   scanQty?: number;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  getkeyPartCodeStr?: string;
   isScanFinish?: boolean;
+  getkeyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -1314,15 +1314,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  isState?: boolean;
-  workshopCode?: string;
-  workshopName?: string;
   workshopId?: string;
-  stateName?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
   defectCodeStr?: string;
 }
 
@@ -1791,6 +1791,26 @@ export interface ResultBarcodePkg {
   data?: BarcodePkg;
 }
 
+/** 响应数据 */
+export type PagingDataProductPackRule = {
+  list?: ProductPackRule[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataProductPackRule {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProductPackRule;
+}
+
 /** 原子模型定义-Context上下文定义 */
 export interface AtomicContext {
   /** 是否执行成功 */
@@ -2101,26 +2121,6 @@ export interface ResultPagingDataBarcodeSegmentDTO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeSegmentDTO;
-}
-
-/** 响应数据 */
-export type PagingDataProductPackRule = {
-  list?: ProductPackRule[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataProductPackRule {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataProductPackRule;
 }
 
 /**
@@ -3249,6 +3249,21 @@ export const api = {
      * No description
      *
      * @tags 包装条码表
+     * @name GetBarcodeRuleList
+     * @summary 获得条码规则下拉数据
+     * @request POST:/barcodePkg/getBarcodeRuleList
+     * @secure
+     */
+    getBarcodeRuleList: (data: number) =>
+      http.request<ResultPagingDataProductPackRule['data']>(`/api/control/barcodePkg/getBarcodeRuleList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 包装条码表
      * @name GetBarcodePkgManagerList
      * @summary 查询在制品条码(标签管理表格)
      * @request POST:/barcodePkg/getBarcodePkgManagerList
@@ -3332,24 +3347,6 @@ export const api = {
     getPrintTmplList: () =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/barcodePkg/getPrintTmplList`, {
         method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 包装条码表
-     * @name GetBarcodeRuleList
-     * @summary 获得条码规则下拉数据
-     * @request GET:/barcodePkg/getBarcodeRuleList
-     * @secure
-     */
-    getBarcodeRuleList: (query: {
-      /** @format int32 */
-      packLevel: number;
-    }) =>
-      http.request<ResultPagingDataProductPackRule['data']>(`/api/control/barcodePkg/getBarcodeRuleList`, {
-        method: 'GET',
-        params: query,
       }),
   },
   atomicSaveKeypart: {

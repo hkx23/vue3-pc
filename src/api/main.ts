@@ -1223,6 +1223,62 @@ export interface ResultSupplier {
   data?: Supplier;
 }
 
+/** 消息发送日志表 */
+export interface MsgSendLog {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 标题 */
+  title?: string;
+  /** 内容 */
+  content?: string;
+  /** 发送方式 */
+  sendType?: string;
+  /** 发送地址 */
+  sendAddress?: string;
+  /** 发送结果 */
+  sendResult?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMsgSendLog = {
+  list?: MsgSendLog[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMsgSendLog {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMsgSendLog;
+}
+
 /** 工艺路线映射表 */
 export interface RoutingMap {
   id?: string;
@@ -1695,8 +1751,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3010,15 +3066,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  stateName?: string;
   isState?: boolean;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
   isRawName?: string;
   isProductName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  stateName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3185,8 +3241,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3532,8 +3588,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4072,8 +4128,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  relate?: boolean;
   default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -4143,62 +4199,6 @@ export interface ResultPagingDataParam {
   message?: string;
   /** 响应数据 */
   data?: PagingDataParam;
-}
-
-/** 消息发送日志表 */
-export interface MsgSendLog {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  /** 标题 */
-  title?: string;
-  /** 内容 */
-  content?: string;
-  /** 发送方式 */
-  sendType?: string;
-  /** 发送地址 */
-  sendAddress?: string;
-  /** 发送结果 */
-  sendResult?: string;
-}
-
-/** 响应数据 */
-export type PagingDataMsgSendLog = {
-  list?: MsgSendLog[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataMsgSendLog {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataMsgSendLog;
 }
 
 /** 响应数据 */
@@ -4587,14 +4587,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否可用 */
   enabled?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6412,14 +6412,30 @@ export const api = {
      * No description
      *
      * @tags 压力测试
+     * @name SearchLog
+     * @summary 数据库交易型：查询日志
+     * @request POST:/stressTest/searchLog
+     * @secure
+     */
+    searchLog: (data: string[]) =>
+      http.request<ResultPagingDataMsgSendLog['data']>(`/api/main/stressTest/searchLog`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
      * @name InsertBatch
-     * @summary 数据库交易型：Mitem插100
+     * @summary 数据库交易型：Mitem插数据
      * @request POST:/stressTest/insertBatch
      * @secure
      */
-    insertBatch: () =>
+    insertBatch: (data: number) =>
       http.request<ResultObject['data']>(`/api/main/stressTest/insertBatch`, {
         method: 'POST',
+        body: data as any,
       }),
 
     /**
@@ -6448,21 +6464,6 @@ export const api = {
     cpuCompute: () =>
       http.request<ResultObject['data']>(`/api/main/stressTest/CPUCompute`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 压力测试
-     * @name SearchLog
-     * @summary 数据库交易型：查十条日志
-     * @request GET:/stressTest/searchLog
-     * @secure
-     */
-    searchLog: (query: { ids: string[] }) =>
-      http.request<ResultPagingDataMsgSendLog['data']>(`/api/main/stressTest/searchLog`, {
-        method: 'GET',
-        params: query,
       }),
   },
   roleAuthorization: {
@@ -8477,10 +8478,7 @@ export const api = {
      * @request GET:/permission/getTreePermissionsByRoleId
      * @secure
      */
-    getTreePermissionsByRoleId: (query: {
-      /** @format int64 */
-      roleId: number;
-    }) =>
+    getTreePermissionsByRoleId: (query: { roleId: string }) =>
       http.request<ResultListModulePermissionDTO['data']>(`/api/main/permission/getTreePermissionsByRoleId`, {
         method: 'GET',
         params: query,
