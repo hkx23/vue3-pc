@@ -11,16 +11,8 @@
         size="default"
         @submit.prevent
       >
-        <t-row ref="formRowRef" class="item-row" :gutter="[32, 0]"
-          ><t-col
-            v-for="(opt, i) in cOpts"
-            v-show="!opt.isHide"
-            :key="i"
-            :xs="12"
-            :sm="6"
-            :md="4"
-            :lg="opt.span"
-            :xl="opt.span"
+        <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" ref="formRowRef" class="item-row" :gutter="[32, 0]"
+          ><t-col v-for="(opt, i) in optRow" v-show="!opt.isHide" :key="i" :flex="opt.flex"
             ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">
               <!-- 自定义label -->
               <template v-if="opt.labelRender" #label>
@@ -195,7 +187,9 @@ if (props.isExpansion) {
 //   return { size: 'default', ...props.btnResetBind };
 // });
 const cOpts = computed(() => {
-  return Object.keys(props.opts).reduce((acc: any, field: any) => {
+  // 先按row字段分组
+
+  const result = Object.keys(props.opts).reduce((acc: any, field: any) => {
     const opt = {
       ...props.opts[field],
     };
@@ -203,15 +197,20 @@ const cOpts = computed(() => {
     // if (props.isShowOpen) {
     //   openSearchForm.value = true;
     // }
-    if (opt.comp && opt.comp.includes('range')) {
-      opt.span = 6;
-    } else {
-      opt.span = 4;
+    if (opt.flex === undefined && opt.comp && opt.comp.includes('range')) {
+      opt.flex = '600px';
+    } else if (opt.flex === undefined) {
+      opt.flex = '300px';
+    }
+    if (opt.row === undefined) {
+      opt.row = 999;
     }
     opt.dataIndex = field;
     acc[field] = opt;
     return acc;
   }, {});
+  const optRows = _.groupBy(result, 'row');
+  return optRows;
 });
 // 引用第三方事件
 const cEvent = computed(() => {

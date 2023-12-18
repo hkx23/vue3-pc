@@ -1,23 +1,10 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <t-row justify="space-between">
-        <t-col>
-          <t-input v-model="mitemKeyword" label="物料：" placeholder="请输入物料编码/名称" clearable />
-        </t-col>
-        <t-col>
-          <t-input v-model="supplierKeyword" label="供应商：" placeholder="请输入供应商编码/名称" clearable />
-        </t-col>
-        <t-col flex="45%" />
-        <t-col flex="170px">
-          <div>
-            <t-button @click="onRefresh">查询</t-button>
-            <t-button theme="default" @click="onReset">重置</t-button>
-          </div>
-        </t-col>
-      </t-row>
-    </div>
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <!-- 查询组件  -->
+      <cmp-query :opts="opts" @reset="onReset" @submit="conditionEnter" />
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
@@ -25,6 +12,7 @@
         :table-data="tableDataMitemInSupplier"
         :total="dataTotal"
         :loading="loading"
+        :fixed-height="true"
         :hover="true"
         :selected-row-keys="selectedMitemInSupplierRowKeys"
         @refresh="fetchTable"
@@ -41,27 +29,26 @@
           </t-space>
         </template>
       </cmp-table>
-    </div>
-  </div>
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="formTitle"
-      :on-confirm="onConfirmForm"
-      width="60%"
-      :close-on-overlay-click="false"
-      :on-close="onCloseForm"
-    >
-      <t-space direction="vertical" style="width: 98%">
-        <mitem-in-supplier-form ref="formRef"></mitem-in-supplier-form>
-      </t-space>
-    </t-dialog>
-  </div>
+    </cmp-card>
+  </cmp-container>
+
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="formTitle"
+    :on-confirm="onConfirmForm"
+    width="60%"
+    :close-on-overlay-click="false"
+    :on-close="onCloseForm"
+  >
+    <t-space direction="vertical" style="width: 98%">
+      <mitem-in-supplier-form ref="formRef"></mitem-in-supplier-form>
+    </t-space>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
 import { DialogPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 // 表格相关
@@ -105,6 +92,29 @@ const tableMitemInSupplierColumns: PrimaryTableCol<TableRowData>[] = [
 const onRefresh = () => {
   fetchTable();
 };
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  mitemKeyword.value = data.mitemKeyword;
+  supplierKeyword.value = data.supplierKeyword;
+  onRefresh();
+};
+
+const opts = computed(() => {
+  return {
+    mitemKeyword: {
+      label: '物料',
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: '请输入物料编码/名称',
+    },
+    supplierKeyword: {
+      label: '供应商',
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: '请输入供应商编码/名称',
+    },
+  };
+});
 // 重置按钮
 const onReset = () => {
   mitemKeyword.value = '';
