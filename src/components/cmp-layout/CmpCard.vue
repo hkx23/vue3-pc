@@ -63,13 +63,14 @@ const classAttrs = computed(() => {
 
     > .t-card__body {
       height: 100%;
+      overflow: auto;
     }
   }
 }
 
 .cmp-card-ghost {
   :deep(> .cmp-card) {
-    margin: 0 -8px;
+    margin: 0 -6px;
   }
 }
 

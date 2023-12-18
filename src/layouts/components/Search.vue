@@ -59,6 +59,7 @@ defineProps({
 
 const permissionStore = usePermissionStore();
 const { routers } = storeToRefs(permissionStore);
+console.log('🚀 ~ file: Search.vue:62 ~ routers:', routers);
 
 const flattenRouters = ref<string[]>([]);
 const flattenRouterObj: { [key: string]: RouteItem } = {};
@@ -67,8 +68,10 @@ const flatten = (routers: RouteItem[]) => {
   routers?.forEach((router) => {
     if (router?.children && router.children.length > 0) {
       flatten(router?.children);
-    } else if (router?.meta?.frameSrc) {
+      // } else if (router?.meta?.frameSrc) {
+    } else if ((router as any)?.moduleCode) {
       const title = renderMenuTitle(router.meta?.title || router.name || router.path);
+      console.log('🚀 ~ file: Search.vue:74 ~ routers?.forEach ~ router:', router);
       flattenRouters.value.push(title);
       flattenRouterObj[title] = router;
     }

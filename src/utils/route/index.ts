@@ -1,5 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep';
 import { shallowRef } from 'vue';
+import { RouteRecordRaw } from 'vue-router';
 
 import { RouteItem } from '@/api/model/permissionModel';
 import { RouteMeta } from '@/types/interface';
@@ -24,8 +25,25 @@ LayoutMap.set('IFRAME', IFRAME);
 
 let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
 
+const dynamicModules: Record<string, any> = {};
+
+const moduleRouterMap = import.meta.glob('../../modules/**/router/pages/*.ts');
+for (const path in moduleRouterMap) {
+  transformRouterToModules(path);
+}
+async function transformRouterToModules(path: string) {
+  if (Object.prototype.hasOwnProperty.call(moduleRouterMap, path)) {
+    const router = moduleRouterMap[path];
+    const moduleName = path.split('/')[3];
+    const routerList = ((await router()) as any).default as Array<RouteRecordRaw>;
+    for (const item of routerList) {
+      dynamicModules[`/${moduleName}#${item.path}`.toLowerCase()] = item;
+    }
+  }
+}
+
 // 动态从包内引入单个Icon
-async function getMenuIcon(iconName: string) {
+async function getMenuIcon(iconName: string): Promise<string> {
   const RenderIcon = iconsPath[`../../../node_modules/tdesign-icons-vue-next/esm/components/${iconName}.js`];
 
   if (!RenderIcon) return null;
@@ -48,10 +66,20 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
       const componentName = component.toUpperCase();
       const layoutFound = LayoutMap.get(componentName);
       if (layoutFound) {
-        if (componentName === 'LAYOUT' && (children === null || children.length === 0)) {
+        if (componentName === 'IFRAME' || item.meta?.frameSrc) {
+          const cmp = dynamicModules[item.meta.frameSrc.toLowerCase()];
+          if (cmp?.component) {
+            item.meta.frameSrc = null;
+          }
+          item.component = cmp?.component || layoutFound;
+          item.meta.title = {
+            ...cmp?.meta.title,
+            ...(item.meta.title as any),
+          };
+        } else if (componentName === 'LAYOUT' && (children === null || children.length === 0)) {
           item.component = NOT_FOUNT;
         } else {
-          item.component = layoutFound;
+          item.component = BLANK_LAYOUT;
         }
       } else {
         item.component = dynamicImport(dynamicViewsModules, component);
