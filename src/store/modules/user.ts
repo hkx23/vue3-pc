@@ -13,6 +13,7 @@ interface OrgUser extends UserInfo {
 const InitUserInfo: UserInfo = {
   id: '', // 用户ID
   name: '', // 用户名，用于展示在页面右上角头像处
+  code: '', // 用户编码
   roles: [], // 前端权限模型使用 如果使用请配置modules/permission-fe.ts使用
 };
 
@@ -52,8 +53,9 @@ export const useUserStore = defineStore('user', {
 
       fw.setEnterpriseId(res.eid);
       this.userInfo = {
-        id: res.userName,
+        id: res.userId,
         name: res.displayName,
+        code: res.userName,
         eid: res.eid,
         orgId,
         orgs: res.orgList,

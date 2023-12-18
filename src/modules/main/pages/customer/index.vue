@@ -37,7 +37,7 @@
     >
       <!-- 客户编辑： -->
       <t-form-item label="客户编辑:" name="customerCode">
-        <t-input v-model="formData.customerCode" readonly></t-input>
+        <t-input v-model="formData.customerCode" disabled></t-input>
       </t-form-item>
 
       <!-- 客户名称： -->

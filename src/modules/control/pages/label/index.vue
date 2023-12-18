@@ -211,7 +211,7 @@
         </t-form-item>
       </t-form>
     </t-dialog>
-    <!---%日志 dialog 弹窗  -->>
+    <!---%日志 dialog 弹窗  -->
     <t-dialog v-model:visible="logInterfaceVisible" :cancel-btn="null" :confirm-btn="null" header="日志" width="60%">
       <cmp-table
         ref="tableRef"
@@ -651,6 +651,8 @@ const onGetPrintTopTabData = async () => {
   const res = await api.label.getMoScheduleList({
     pageNum: pageUITop.value.page,
     pageSize: pageUITop.value.rows,
+    planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+    planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
     isFinishDisplay: true,
   });
   printTopTabData.list = res.list;
@@ -695,6 +697,10 @@ const onLabelManageTabData = async () => {
   const res = await api.label.getBarcodeWipManagerList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
+    planDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+    planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
+    createDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 生产开始日期
+    createDateEnd: dayjs().format('YYYY-MM-DD'), // 生产结束日期
   });
   manageTabData.list = res.list;
   totalManage.value = res.total;
@@ -900,7 +906,6 @@ const opts = computed(() => {
 });
 // #query 查询函数
 const onInput = async (data: any) => {
-  console.log('🚀 ~ file: index.vue:778 ~ onInput ~ data:', data);
   if (!tabValue.value) {
     let isFinishDisplay = false;
     if (!data.showState) {

@@ -210,13 +210,13 @@ const opts = computed(() => {
       label: '员工',
       comp: 't-input',
       placeholder: '请输入员工编号或姓名',
-      defaultVal: personCode.value,
+      defaultVal: '',
     },
     personState: {
       label: '状态',
       comp: 't-select',
       placeholder: '请选择状态',
-      defaultVal: personState.value,
+      defaultVal: -1,
       bind: {
         options: stateOptions,
       },
@@ -295,7 +295,7 @@ const fetchTable = async () => {
     const data = (await api.person.getlist({
       personcode: personCode.value,
       personname: '',
-      state: personState.value,
+      state: personState.value == null ? -1 : personState.value,
       adminorgid: adminOrgId.value,
       sortfield: '',
       sorttype: '',

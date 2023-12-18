@@ -6,6 +6,7 @@
   "columns": [
     {
       "title": "人员编号",
+      "width": "120px",
       "key": "personCode",
       "align": "center"
     },
@@ -17,6 +18,17 @@
     {
       "title": "性别",
       "key": "genderName",
+      "align": "center"
+    },
+    {
+      "title": "联系方式",
+      "width": "120px",
+      "key": "mobilePhone",
+      "align": "center"
+    },
+    {
+      "title": "邮箱",
+      "key": "email",
       "align": "center"
     }
   ],

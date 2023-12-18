@@ -13,18 +13,24 @@
         :loading="loading"
         :total="dataTotal"
         fixed-height="true"
-        :header-affixed-top="true"
-        :page-affixed-top="true"
         @refresh="conditionEnter"
       >
         <template #op="{ row }">
           <t-space :size="8">
-            <t-link theme="primary" @click="onRowEdit(row)">{{ t('common.button.edit') }}</t-link>
-            <t-link theme="primary" @click="onRowPermission(row)">{{ t('role.authority') }}</t-link>
-            <t-link theme="primary" @click="onRowPerson(row)">{{ t('role.member') }}</t-link>
+            <t-link hover="color" theme="primary" @click="onRowEdit(row)">
+              <t-tag theme="primary" variant="light">{{ t('common.button.edit') }}</t-tag>
+            </t-link>
+            <t-link hover="color" theme="primary" @click="onRowPermission(row)">
+              <t-tag theme="primary" variant="light">{{ t('role.authority') }}</t-tag>
+            </t-link>
+            <t-link hover="color" theme="primary" @click="onRowPerson(row)">
+              <t-tag theme="primary" variant="light">{{ t('role.member') }}</t-tag>
+            </t-link>
             <!-- 删除 -->
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onRowDelete(row)">
-              <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+              <t-link hover="color" theme="primary" @click="onRowEdit(row)">
+                <t-tag theme="primary" variant="light">{{ t('common.button.delete') }}</t-tag>
+              </t-link>
             </t-popconfirm>
           </t-space>
         </template>
@@ -109,7 +115,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'op',
     title: `${t('common.button.operation')}`,
-    width: '200px',
+    width: '230px',
     align: 'left',
     fixed: 'right',
   },

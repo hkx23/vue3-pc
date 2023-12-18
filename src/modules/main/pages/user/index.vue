@@ -14,17 +14,18 @@
         :loading="loading"
         :total="dataTotal"
         :fixed-height="true"
-        :header-affixed-top="true"
-        :page-affixed-top="true"
         @refresh="conditionEnter"
       >
         <template #op="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onRowEdit(row)">{{ t('common.button.edit') }}</t-link>
             <t-link theme="primary" @click="onRowPermission(row)">{{ t('user.authority') }}</t-link>
-            <t-link theme="primary" @click="onRowStateChange(row)">{{
-              row.state == 0 ? t('user.enable') : t('user.disable')
-            }}</t-link>
+            <t-popconfirm
+              :content="row.state == 0 ? t('user.confirmEnable') : t('user.confirmDisable')"
+              @confirm="onRowStateChange(row)"
+            >
+              <t-link theme="primary">{{ row.state == 0 ? t('user.enable') : t('user.disable') }}</t-link>
+            </t-popconfirm>
             <t-link theme="primary" @click="onRowOrgSetting(row)">{{ t('user.org') }}</t-link>
             <t-link theme="primary" @click="onRowResetPassword(row)">重置密码</t-link>
             <!-- 启用/禁用 -->
@@ -65,7 +66,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -219,51 +220,52 @@ const onRowOrgSetting = (row: any) => {
 };
 
 const onRowStateChange = async (row: any) => {
-  const confirmDia = DialogPlugin({
-    header: row.state === 1 ? '禁用' : '启用',
-    body: row.state === 1 ? '是否确认禁用账号' : '是否确认启用用账号',
-    confirmBtn: '确认',
-    cancelBtn: '取消',
-    onConfirm: ({ e }) => {
-      console.log('confirm button has been clicked!');
-      console.log('e: ', e);
-      const postRow = _.cloneDeep(row);
-      if (postRow.state === 1) {
-        postRow.state = 0;
-        // postRow.isOnline = 0;
-        api.user
-          .setState(postRow)
-          .then(() => {
-            MessagePlugin.success('禁用成功');
-            fetchTable();
-            // 请求成功后，销毁弹框
-            confirmDia.destroy();
-          })
-          .catch(() => {
-            MessagePlugin.error('禁用失败');
-          });
-      } else {
-        postRow.state = 1;
-        // postRow.isOnline = 1;
-        api.user
-          .setState(postRow)
-          .then(() => {
-            MessagePlugin.success('启用成功');
-            fetchTable();
-            // 请求成功后，销毁弹框
-            confirmDia.destroy();
-          })
-          .catch(() => {
-            MessagePlugin.error('启用失败');
-          });
-      }
-    },
-    onClose: ({ e, trigger }) => {
-      console.log('e: ', e);
-      console.log('trigger: ', trigger);
-      confirmDia.hide();
-    },
-  });
+  console.log('confirm button has been clicked!');
+  // console.log('e: ', e);
+  const postRow = _.cloneDeep(row);
+  if (postRow.state === 1) {
+    postRow.state = 0;
+    // postRow.isOnline = 0;
+    api.user
+      .setState(postRow)
+      .then(() => {
+        MessagePlugin.success('禁用成功');
+        fetchTable();
+        // 请求成功后，销毁弹框
+        // confirmDia.destroy();
+      })
+      .catch(() => {
+        MessagePlugin.error('禁用失败');
+      });
+  } else {
+    postRow.state = 1;
+    // postRow.isOnline = 1;
+    api.user
+      .setState(postRow)
+      .then(() => {
+        MessagePlugin.success('启用成功');
+        fetchTable();
+        // 请求成功后，销毁弹框
+        // confirmDia.destroy();
+      })
+      .catch(() => {
+        MessagePlugin.error('启用失败');
+      });
+  }
+  // const confirmDia = DialogPlugin({
+  //   header: row.state === 1 ? '禁用' : '启用',
+  //   body: row.state === 1 ? '是否确认禁用账号' : '是否确认启用用账号',
+  //   confirmBtn: '确认',
+  //   cancelBtn: '取消',
+  //   onConfirm: ({ e }) => {
+
+  //   },
+  //   onClose: ({ e, trigger }) => {
+  //     console.log('e: ', e);
+  //     console.log('trigger: ', trigger);
+  //     confirmDia.hide();
+  //   },
+  // });
   // if (row.state === 1) {
 
   //   row.state = 0;

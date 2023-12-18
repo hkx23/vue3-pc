@@ -1168,12 +1168,12 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  stateName?: string;
   isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
@@ -1357,16 +1357,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  stateName?: string;
   isState?: boolean;
-  defectCodeStr?: string;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */

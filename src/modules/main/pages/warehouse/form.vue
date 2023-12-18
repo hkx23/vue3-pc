@@ -1,87 +1,84 @@
 <template>
-  <t-form layout="inline" :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
-    <t-space direction="vertical">
-      <t-row>
-        <t-col :span="6">
-          <t-form-item label="仓库编码" required-mark>
-            <t-input v-model="formData.warehouseCode" :disabled="!(formData.operateTpye === 'add')" />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="仓库名称" required-mark style="width: 250px">
-            <t-input v-model="formData.warehouseName" />
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <t-row>
-        <t-col :span="6">
-          <t-form-item label="仓库描述">
-            <t-input v-model="formData.warehouseDesc" />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="仓库属性" style="width: 250px">
-            <t-select v-model="formData.warehouseAttribute">
-              <t-option
-                v-for="(value, key) in warehousePropertyOption"
-                :key="key"
-                :label="value.label"
-                :value="value.value"
-              ></t-option>
-            </t-select>
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <t-row>
-        <t-col :span="6">
-          <t-form-item label="ERP仓库">
-            <t-input v-model="formData.erpWarehouse" />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="仓库类型" style="width: 250px">
-            <t-select v-model="formData.warehouseCategory">
-              <t-option
-                v-for="(value, key) in warehouseTypeOption"
-                :key="key"
-                :label="value.label"
-                :value="value.value"
-              ></t-option>
-            </t-select>
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <t-row>
-        <t-col :span="6">
-          <t-form-item label="启用交易上传" :label-width="130" style="width: 250px">
-            <t-switch v-model="formData.enableUpload" />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="启用交易上传时间" label-width="130" style="width: 300px">
-            <t-date-picker
-              v-model="formData.datetimeUpload"
-              allow-input
-              enable-time-picker
-              clearable
-              format="YYYY-MM-DD HH:mm:ss"
-            />
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <t-row>
-        <t-col :span="6">
-          <t-form-item label-align="left" label-width="20px" style="width: 100px">
-            <t-checkbox v-model="formData.enableLocation">启用货位管理</t-checkbox>
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="状态" style="width: 120px">
-            <t-switch v-model="formData.isState" />
-          </t-form-item>
-        </t-col>
-      </t-row>
-    </t-space>
+  <t-form
+    :data="formData"
+    :show-cancel="true"
+    label-align="right"
+    label-width="125px"
+    :show-error-message="false"
+    @submit="submit"
+  >
+    <t-row :gutter="[32, 16]">
+      <t-col :span="6">
+        <t-form-item label="仓库编码" required-mark>
+          <t-input v-model="formData.warehouseCode" :disabled="!(formData.operateTpye === 'add')" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="仓库名称" required-mark>
+          <t-input v-model="formData.warehouseName" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="仓库描述">
+          <t-input v-model="formData.warehouseDesc" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="仓库属性">
+          <t-select v-model="formData.warehouseAttribute">
+            <t-option
+              v-for="(value, key) in warehousePropertyOption"
+              :key="key"
+              :label="value.label"
+              :value="value.value"
+            ></t-option>
+          </t-select>
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="ERP仓库">
+          <t-input v-model="formData.erpWarehouse" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="仓库类型">
+          <t-select v-model="formData.warehouseCategory">
+            <t-option
+              v-for="(value, key) in warehouseTypeOption"
+              :key="key"
+              :label="value.label"
+              :value="value.value"
+            ></t-option>
+          </t-select>
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="启用交易上传">
+          <t-switch v-model="formData.enableUpload" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="交易上传时间">
+          <t-date-picker
+            v-model="formData.datetimeUpload"
+            allow-input
+            enable-time-picker
+            clearable
+            format="YYYY-MM-DD HH:mm:ss"
+          />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label-align="left">
+          <t-checkbox v-model="formData.enableLocation">启用货位管理</t-checkbox>
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="状态">
+          <t-switch v-model="formData.isState" />
+        </t-form-item>
+      </t-col>
+    </t-row>
   </t-form>
 </template>
 

@@ -1,0 +1,7 @@
+{
+  "workstation": {
+    "workstationCode": "工站编码",
+    "workstationName": "工站名称",
+    "workstationDesc": "工站描述"
+  }
+}

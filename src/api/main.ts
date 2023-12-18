@@ -646,6 +646,8 @@ export interface WorkcenterVO {
   wcObjectId?: string;
   /** 关联设备编码 */
   wcObjectCode?: string;
+  /** 关联设备名称 */
+  wcObjectCodeName?: string;
   /**
    * 顺序号
    * @format int32
@@ -1221,6 +1223,62 @@ export interface ResultSupplier {
   data?: Supplier;
 }
 
+/** 消息发送日志表 */
+export interface MsgSendLog {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 标题 */
+  title?: string;
+  /** 内容 */
+  content?: string;
+  /** 发送方式 */
+  sendType?: string;
+  /** 发送地址 */
+  sendAddress?: string;
+  /** 发送结果 */
+  sendResult?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMsgSendLog = {
+  list?: MsgSendLog[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMsgSendLog {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMsgSendLog;
+}
+
 /** 工艺路线映射表 */
 export interface RoutingMap {
   id?: string;
@@ -1693,8 +1751,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2399,6 +2457,117 @@ export interface ObjectProperty {
   isDataMultiple?: number;
 }
 
+/** 信息推送主表 */
+export interface MsgDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 消息来源表 */
+  sourceTableName?: string;
+  /** 消息来源行ID */
+  sourceRowId?: string;
+  /** 标题 */
+  title?: string;
+  /** 内容 */
+  content?: string;
+  /** 备注 */
+  remark?: string;
+  /** 子层级 */
+  msgDtlList?: MsgDtlDTO[];
+}
+
+/** 信息推送明细表 */
+export interface MsgDtlDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  msgId?: string;
+  /** 消息推送类型 */
+  pushType?: string;
+  /** 消息推送目标 */
+  pushTarget?: string;
+  /**
+   * 预计发送时间
+   * @format date-time
+   */
+  datetimePushPlan?: string;
+  /**
+   * 最后推送时间
+   * @format date-time
+   */
+  datetimePushLast?: string;
+  /**
+   * 发送间隔周期
+   * @format int32
+   */
+  pushIntervalCycle?: number;
+  /**
+   * 计划发送次数
+   * @format int32
+   */
+  pushCount?: number;
+  /**
+   * 已发送次数
+   * @format int32
+   */
+  pushSendCount?: number;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  datetimePushDisable?: string;
+  personId?: string;
+  userId?: string;
+  /**
+   * 是否有效
+   * @format int32
+   */
+  isDisable?: number;
+  /**
+   * 是否已读
+   * @format int32
+   */
+  isRead?: number;
+}
+
 /** 通用响应类 */
 export interface ResultResponseEntityString {
   /**
@@ -2594,6 +2763,19 @@ export type ShowModuleVO = {
   /** 子菜单 */
   children?: ShowModuleVO[];
 } | null;
+
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
+}
 
 /** 响应数据 */
 export type PagingDataShowModuleVO = {
@@ -2884,15 +3066,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
   stateName?: string;
-  isProductName?: string;
+  isState?: boolean;
+  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -3406,8 +3588,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3965,6 +4147,7 @@ export interface ResultListUser {
 
 /** 当前用户实体 */
 export type CurrentUserVO = {
+  userId?: string;
   /** 用户名 */
   userName?: string;
   /** 显示名称 */
@@ -4244,19 +4427,6 @@ export interface RoutingProcessVO {
   title?: string;
 }
 
-/** 通用响应类 */
-export interface ResultString {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: string | null;
-}
-
 /** 配置项 */
 export type Profile = {
   id?: string;
@@ -4421,10 +4591,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6237,6 +6407,65 @@ export const api = {
         body: data as any,
       }),
   },
+  stressTest: {
+    /**
+     * No description
+     *
+     * @tags 压力测试
+     * @name SearchLog
+     * @summary 数据库交易型：查询日志
+     * @request POST:/stressTest/searchLog
+     * @secure
+     */
+    searchLog: (data: string[]) =>
+      http.request<ResultPagingDataMsgSendLog['data']>(`/api/main/stressTest/searchLog`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
+     * @name InsertBatch
+     * @summary 数据库交易型：Mitem插数据
+     * @request POST:/stressTest/insertBatch
+     * @secure
+     */
+    insertBatch: (data: number) =>
+      http.request<ResultObject['data']>(`/api/main/stressTest/insertBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
+     * @name MemoryUsageLog
+     * @summary 内存使用型(打印日志)
+     * @request POST:/stressTest/MemoryUsageLog
+     * @secure
+     */
+    memoryUsageLog: () =>
+      http.request<ResultObject['data']>(`/api/main/stressTest/MemoryUsageLog`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
+     * @name CpuCompute
+     * @summary CPU计算型
+     * @request POST:/stressTest/CPUCompute
+     * @secure
+     */
+    cpuCompute: () =>
+      http.request<ResultObject['data']>(`/api/main/stressTest/CPUCompute`, {
+        method: 'POST',
+      }),
+  },
   roleAuthorization: {
     /**
      * No description
@@ -7045,6 +7274,37 @@ export const api = {
         params: query,
       }),
   },
+  msg: {
+    /**
+     * No description
+     *
+     * @tags 消息主表
+     * @name GetLastSendBySource
+     * @summary 查询安灯报障的消息推送
+     * @request POST:/msg/getLastSendBySource
+     * @secure
+     */
+    getLastSendBySource: (query: { sourceTableName: string; sourceRowId: string; remark: string }) =>
+      http.request<ResultObject['data']>(`/api/main/msg/getLastSendBySource`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 消息主表
+     * @name AddMsg
+     * @summary 新增消息推送
+     * @request POST:/msg/addMsg
+     * @secure
+     */
+    addMsg: (data: MsgDTO) =>
+      http.request<ResultObject['data']>(`/api/main/msg/addMsg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   module: {
     /**
      * No description
@@ -7119,6 +7379,21 @@ export const api = {
      * No description
      *
      * @tags 菜单
+     * @name GetSignedUrl
+     * @summary 获取菜单文件URL
+     * @request POST:/module/getSignedUrl
+     * @secure
+     */
+    getSignedUrl: (query: { packageName: string; behaviorPath: string }) =>
+      http.request<ResultString['data']>(`/api/main/module/getSignedUrl`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
      * @name GetList
      * @summary 查询菜单模块右侧列表
      * @request POST:/module/getList
@@ -7134,27 +7409,12 @@ export const api = {
      * No description
      *
      * @tags 菜单
-     * @name DowmloadFile
-     * @summary 菜单文件下载
-     * @request POST:/module/dowmloadFile
-     * @secure
-     */
-    dowmloadFile: (query: { fileName: string; path: string }) =>
-      http.request<ResultResponseEntityString['data']>(`/api/main/module/dowmloadFile`, {
-        method: 'POST',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 菜单
      * @name DeleteFile
      * @summary 删除菜单上传文件
      * @request POST:/module/deleteFile
      * @secure
      */
-    deleteFile: (query: { fileName: string; path: string }) =>
+    deleteFile: (query: { id: string; packageName: string; behaviorPath: string }) =>
       http.request<ResultResponseEntityString['data']>(`/api/main/module/deleteFile`, {
         method: 'POST',
         params: query,
@@ -8218,10 +8478,7 @@ export const api = {
      * @request GET:/permission/getTreePermissionsByRoleId
      * @secure
      */
-    getTreePermissionsByRoleId: (query: {
-      /** @format int64 */
-      roleId: number;
-    }) =>
+    getTreePermissionsByRoleId: (query: { roleId: string }) =>
       http.request<ResultListModulePermissionDTO['data']>(`/api/main/permission/getTreePermissionsByRoleId`, {
         method: 'GET',
         params: query,

@@ -12,3 +12,12 @@ export interface messageModel {
   datatime: string;
   status: string;
 }
+
+export interface scanCollectInfoModel {
+  serialNumber: string;
+  uomName: string;
+  qty: number;
+  status: string;
+  errorinfo: string;
+  statusColor: string;
+}

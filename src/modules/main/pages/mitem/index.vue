@@ -31,7 +31,7 @@
       v-model:visible="formVisible"
       :header="t('common.dialog.header.edit')"
       :on-confirm="onConfirmForm"
-      width="50%"
+      width="750px"
       :close-on-overlay-click="false"
     >
       <t-space direction="vertical">

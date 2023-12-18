@@ -263,7 +263,7 @@
             v-if="formDataTwo.moduleType === 'LOCAL'"
             ref="uploadRef"
             v-model="files"
-            theme="custom"
+            theme="file"
             :tips="tips"
             :auto-upload="false"
             :before-upload="beforeUpload"
@@ -272,12 +272,27 @@
             <span>文件上传：</span>
             <t-button theme="primary">上传</t-button>
           </t-upload>
-          <t-tag variant="outline" theme="primary" closable>标签一</t-tag>
-          <div v-if="files && files.length" style="margin-left: 10px">
+          <t-tag
+            v-if="formDataTwo?.packageName && !files.length && formDataTwo.moduleType === 'LOCAL'"
+            variant="outline"
+            theme="primary"
+            closable
+            style="margin: 0 10px"
+            @close="onDelFileClose"
+          >
+            {{ formDataTwo?.packageName }}</t-tag
+          >
+          <t-button
+            v-if="formDataTwo?.packageName && !files.length && formDataTwo.moduleType === 'LOCAL'"
+            @click="onUploadFile"
+          >
+            下载文件
+          </t-button>
+          <!-- <div v-if="files && files.length" style="margin-left: 10px">
             <ul style="padding: 0">
               <li v-for="(item, index) in files" :key="index" style="list-style-type: none">{{ item.name }}</li>
             </ul>
-          </div>
+          </div> -->
         </t-form-item>
         <t-form-item v-if="dialogListData !== 1" label="插件版本" name="moduleVersion">
           <t-space direction="vertical">
@@ -435,11 +450,12 @@ const formDataTwo = ref({
   parentModuleId: null, // 父组件 ID
   menuId: null,
   clientTypeData: null, // 中断类型，进制
+  packageName: '', // 上传文件文件名
 });
 
 // 文件上传事件
 const beforeUpload = (file: any) => {
-  console.log('🚀 ~ file: index.vue:441 ~ beforeUpload ~ file:', file);
+  formDataTwo.value.packageName = file?.name;
   if (file.size > 5 * 1024 * 1024) {
     MessagePlugin.warning('上传的图片不能大于5M');
     return false;
@@ -449,6 +465,53 @@ const beforeUpload = (file: any) => {
 // 文件上传错误提示事件
 const handleFail = ({ file }) => {
   MessagePlugin.error(`文件 ${file.name} 上传失败`);
+};
+
+// 编辑回填文件删除 点击事件
+const delFileClick = ref(false);
+const onDelFileClose = async () => {
+  formDataTwo.value.packageName = '';
+  delFileClick.value = true;
+};
+// 编辑回填文件删除 请求
+const onDelFile = async () => {
+  await api.module.deleteFile({
+    packageName: formDataTwo.value.packageName,
+    behaviorPath: formDataTwo.value.behaviorPath,
+    id: onDelelistID.value,
+  });
+};
+
+// 文件下载
+const onUploadFile = async () => {
+  const res = await api.module.getSignedUrl({
+    packageName: formDataTwo?.value?.packageName,
+    behaviorPath: formDataTwo?.value?.behaviorPath,
+  });
+  console.log('🚀 ~ file: index.vue:491 ~ onUploadFile ~ res:', res);
+  window.open(res);
+  // try {
+  //   // 假设这是文件的URL
+  //   const fileUrl = res;
+  //   // 获取文件数据
+  //   const response = await fetch(fileUrl);
+  //   if (!response.ok) throw new Error('下载失败');
+  //   const data = await response.blob();
+  //   // 创建Blob URL
+  //   const url = window.URL.createObjectURL(data);
+  //   // 创建下载链接
+  //   const link = document.createElement('a');
+  //   link.href = url;
+  //   link.download = '下载的文件名.pdf'; // 这里可以指定下载文件的名称
+  //   document.body.appendChild(link); // 将链接添加到DOM中以使其可以被点击
+  //   // 触发下载
+  //   link.click();
+  //   // 清理
+  //   window.URL.revokeObjectURL(url);
+  //   document.body.removeChild(link);
+  // } catch (error) {
+  //   console.error('下载文件时发生错误:', error);
+  // }
 };
 
 // // 侦听 formDataTwo.iconPath 的变化
@@ -663,6 +726,7 @@ const onAddFirstNode = async () => {
 
 // 点击 左侧 新增图标
 const onAddSecondNode = async (node: any) => {
+  console.log('🚀 ~ file: index.vue:700 ~ onAddSecondNode ~ dialogListData.value:', dialogListData.value);
   if (!node[`__tdesign_tree-node__`].parent?.label) {
     isEditMode.value = true;
     isEditModeTwo.value = true;
@@ -679,6 +743,7 @@ const onAddSecondNode = async (node: any) => {
     clickNodeId.value.id = node[`__tdesign_tree-node__`]?.data?.id; // 获取当前节点 ID
   } else {
     dialogTabs.value = ['0'];
+    dialogListData.value = 1;
     formDataTwo.value.moduleCode = ''; // 模块编码
     formDataTwo.value.moduleName = ''; // 菜单名称
     formDataTwo.value.moduleDesc = ''; // 菜单描述
@@ -687,6 +752,7 @@ const onAddSecondNode = async (node: any) => {
     formDataTwo.value.moduleVersion = null; // 模块版本号
     formDataTwo.value.modulePackageIdentify = ''; // 模块标识
     formDataTwo.value.iconPath = ''; // 图标地址
+    formDataTwo.value.packageName = ''; // 文件名
     files.value = [];
     isEditMode.value = true;
     isEditModeTwo.value = true;
@@ -739,8 +805,12 @@ const onQueryTree = (node: any) => {
   dialogTitle.value = '编辑节点';
 };
 
-// 点击 右侧 表单数据编辑按钮
+// 点击 右侧  编辑按钮
 const onEditRow = async (row: any) => {
+  console.log('🚀 ~ file: index.vue:780 ~ onEditRow ~ row:', row);
+  files.value = [];
+  formDataTwo.value.moduleType = '';
+  delFileClick.value = false;
   const decimalNumber = row.clientType; // 十进制数
   const binaryString = parseInt(decimalNumber.toString(2), 10); // 将十进制数转换为二进制字符串
   formDataTwo.value.menuId = row.grandpaId;
@@ -755,6 +825,7 @@ const onEditRow = async (row: any) => {
     const newArr = extractValues(row);
     dialogTabs.value = newArr;
   }
+  formDataTwo.value.packageName = row.packageName; // 上传文件文件名赋值
   formDataTwo.value.oneselfClickTree = treeClickData.value.one;
   formDataTwo.value.clientTypeData = binaryString;
   formDataTwo.value.parentClickTree = row.grandpaName; // 模块编码
@@ -972,16 +1043,27 @@ const onAddTwoModule = async () => {
 const onAddThreeModule = async () => {
   // 编辑请求
   if (!isEditModeThree.value) {
-    await onRedactThree();
+    console.log('🚀 ~ file: index.vue:1023 ~ onAddThreeModule ~ delFileClick.value:', delFileClick.value);
+    await onRedactThree(); // 编辑请求
+    if (delFileClick.value) {
+      await onDelFile(); // 删除文件
+    }
     if (files?.value[0]?.raw) {
       const data = new FormData();
       data.append('path', formDataTwo.value.behaviorPath);
       data.append('file', files?.value[0]?.raw);
       await http.upload('/api/main/module/uploadFile', data);
     }
+    await onGetTabData(); // 刷新表格
     MessagePlugin.success('编辑成功');
   } else {
     // 新增请求
+    if (files?.value[0]?.raw) {
+      const data = new FormData();
+      data.append('path', formDataTwo.value.behaviorPath);
+      data.append('file', files?.value[0]?.raw);
+      await http.upload('/api/main/module/uploadFile', data);
+    }
     await api.module.addModule({
       moduleLevel: formDataTwo.value.moduleLevel,
       clientType: dialogListData.value, // 终端类型
@@ -994,13 +1076,8 @@ const onAddThreeModule = async () => {
       moduleType: formDataTwo.value.moduleType, // 模块类型
       moduleVersion: formDataTwo.value.moduleVersion, // 模块版本号
       modulePackageIdentify: formDataTwo.value.modulePackageIdentify, // 模块标识
+      packageName: formDataTwo.value.packageName, // 文件上传名称
     });
-    if (files?.value[0]?.raw) {
-      const data = new FormData();
-      data.append('path', formDataTwo.value.behaviorPath);
-      data.append('file', files?.value[0]?.raw);
-      await http.upload('/api/main/module/uploadFile', data);
-    }
     MessagePlugin.success('新增成功');
   }
 };
@@ -1046,6 +1123,7 @@ const onRedactThree = async () => {
     moduleType: formDataTwo.value.moduleType, // 模块类型
     moduleVersion: formDataTwo.value.moduleVersion, // 模块版本号
     modulePackageIdentify: formDataTwo.value.modulePackageIdentify, // 模块标识
+    packageName: formDataTwo.value.packageName, // 文件上传名称
   });
 };
 

@@ -1,174 +1,161 @@
 <template>
-  <div class="main-page">
-    <div class="list-tree-content">
-      <div class="list-common-table">
-        <t-row justify="space-between">
-          <t-col>
-            <t-space>
-              <t-space direction="horizontal">
-                <t-tabs
-                  v-for="(item, index) in tabModuleList"
-                  :key="index"
-                  v-model="selectModule"
-                  @change="onChangeTab"
-                >
-                  <t-tab-panel :value="item.moduleCode" :label="item.moduleName"> </t-tab-panel>
-                </t-tabs>
-              </t-space>
-            </t-space>
-          </t-col>
-          <t-col class="param-group-header-desc">
-            <div>{{ SelectNode.label }}:{{ SelectNode.paramGroupDesc }}</div>
-          </t-col>
-        </t-row>
-        <t-row style="margin-top: 10px">
-          <div class="table-tree-container">
-            <div class="list-tree-wrapper">
-              <div class="list-tree-operator">
-                <t-space>
-                  <t-input-adornment prepend="过滤:">
-                    <t-input v-model="filterText" @change="onTreeQueryChange" />
-                  </t-input-adornment>
-                </t-space>
-                <t-tree :data="dataTree" :filter="filterByText" line hover expand-all activable @click="onTreeClick" />
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <cmp-row>
+        <t-col flex="auto">
+          <t-tabs v-model="selectModule" @change="onChangeTab">
+            <t-tab-panel
+              v-for="(item, index) in tabModuleList"
+              :key="index"
+              :value="item.moduleCode"
+              :label="item.moduleName"
+            >
+            </t-tab-panel>
+          </t-tabs>
+        </t-col>
+        <t-col style="text-align: end; line-height: 32px" flex="340px"
+          >{{ SelectNode.label }}:{{ SelectNode.paramGroupDesc }}</t-col
+        >
+      </cmp-row>
+    </cmp-card>
+    <cmp-row>
+      <cmp-card flex="300px">
+        <t-space direction="vertical" :size="8">
+          <t-space>
+            <t-input-adornment prepend="过滤:">
+              <t-input v-model="filterText" @change="onTreeQueryChange" />
+            </t-input-adornment>
+          </t-space>
+          <t-tree :data="dataTree" :filter="filterByText" line hover expand-all activable @click="onTreeClick" />
+        </t-space>
+      </cmp-card>
+      <cmp-card flex="auto">
+        <t-space direction="vertical" :size="8" style="width: 100%">
+          <t-row justify="space-between">
+            <t-col>
+              <div>
+                <t-input
+                  v-model="keyword"
+                  label="参数编码："
+                  placeholder="请输入参数编号或参数值"
+                  clearable
+                  @change="onChangeKeyword"
+                />
               </div>
-            </div>
-            <div class="list-tree-content">
-              <div class="list-common-table-right">
-                <t-row justify="space-between">
-                  <t-col>
-                    <div>
-                      <t-input
-                        v-model="keyword"
-                        label="参数编码："
-                        placeholder="请输入参数编号或参数值"
-                        clearable
-                        @change="onChangeKeyword"
-                      />
-                    </div>
-                  </t-col>
-                </t-row>
-                <div class="table-container">
-                  <t-row justify="space-between">
-                    <t-col :span="0.5">
-                      <div>全局</div>
-                    </t-col>
-                    <t-col :span="2">
-                      <div>参数编码</div>
-                    </t-col>
-                    <t-col :span="2">
-                      <div>参数名称</div>
-                    </t-col>
-                    <t-col :span="2">
-                      <div>参数值</div>
-                    </t-col>
-                    <t-col :span="2">
-                      <div>描述</div>
-                    </t-col>
-                    <t-col :span="1">
-                      <div>顺序</div>
-                    </t-col>
-                    <t-col :span="1">
-                      <div></div>
-                    </t-col>
-                  </t-row>
-                  <vue-draggable
-                    ref="el"
-                    v-model="dataTable"
-                    :handle="'.table-row'"
-                    :disabled="false"
-                    @start="ondragStart"
-                    @end="ondragEnd"
+            </t-col>
+          </t-row>
+          <div class="table-container">
+            <t-row justify="space-between">
+              <t-col :span="0.5">
+                <div>全局</div>
+              </t-col>
+              <t-col :span="2">
+                <div>参数编码</div>
+              </t-col>
+              <t-col :span="2">
+                <div>参数名称</div>
+              </t-col>
+              <t-col :span="2">
+                <div>参数值</div>
+              </t-col>
+              <t-col :span="2">
+                <div>描述</div>
+              </t-col>
+              <t-col :span="1">
+                <div>顺序</div>
+              </t-col>
+              <t-col :span="1">
+                <div></div>
+              </t-col>
+            </t-row>
+            <vue-draggable
+              ref="el"
+              v-model="dataTable"
+              :handle="'.table-row'"
+              :disabled="false"
+              @start="ondragStart"
+              @end="ondragEnd"
+            >
+              <t-row v-for="(item, index) in dataTable" :key="index" class="table-row" justify="space-between">
+                <t-col :span="0.5">
+                  <t-checkbox v-model="item.isGlobal" :disabled="SelectNode.isSys == '1'"> </t-checkbox>
+                </t-col>
+                <t-col :span="2">
+                  <t-input v-model="item.paramCode" :disabled="SelectNode.isSys == '1'" />
+                </t-col>
+                <t-col :span="2">
+                  <t-input v-model="item.paramName" />
+                </t-col>
+                <t-col :span="2">
+                  <t-input
+                    v-if="SelectNode.paramDataType == 'VARCHAR'"
+                    v-model="item.paramValue"
+                    placeholder="请输入内容"
+                  />
+
+                  <t-input-number
+                    v-else-if="SelectNode.paramDataType == 'INT'"
+                    v-model="item.paramValue"
+                    theme="column"
+                    :decimal-places="0"
+                    placeholder="请输入整数"
+                  />
+
+                  <t-input-number
+                    v-else-if="SelectNode.paramDataType == 'NUMBER'"
+                    v-model="item.paramValue"
+                    theme="normal"
+                    :decimal-places="6"
+                    placeholder="请输入数字"
+                  />
+
+                  <t-select
+                    v-else-if="SelectNode.paramDataType == 'BOOL'"
+                    v-model="item.paramValue"
+                    placeholder="请选择"
                   >
-                    <t-row v-for="(item, index) in dataTable" :key="index" class="table-row" justify="space-between">
-                      <t-col :span="0.5">
-                        <t-checkbox v-model="item.isGlobal" :disabled="SelectNode.isSys == '1'"> </t-checkbox>
-                      </t-col>
-                      <t-col :span="2">
-                        <t-input v-model="item.paramCode" :disabled="SelectNode.isSys == '1'" />
-                      </t-col>
-                      <t-col :span="2">
-                        <t-input v-model="item.paramName" />
-                      </t-col>
-                      <t-col :span="2">
-                        <t-input
-                          v-if="SelectNode.paramDataType == 'VARCHAR'"
-                          v-model="item.paramValue"
-                          placeholder="请输入内容"
-                        />
+                    <t-option v-for="(bool, i) in boolList" :key="i" :value="bool.value" :label="bool.label">
+                      {{ bool.label }}
+                    </t-option>
+                  </t-select>
 
-                        <t-input-number
-                          v-else-if="SelectNode.paramDataType == 'INT'"
-                          v-model="item.paramValue"
-                          theme="column"
-                          :decimal-places="0"
-                          placeholder="请输入整数"
-                        />
-
-                        <t-input-number
-                          v-else-if="SelectNode.paramDataType == 'NUMBER'"
-                          v-model="item.paramValue"
-                          theme="normal"
-                          :decimal-places="6"
-                          placeholder="请输入数字"
-                        />
-
-                        <t-select
-                          v-else-if="SelectNode.paramDataType == 'BOOL'"
-                          v-model="item.paramValue"
-                          placeholder="请选择"
-                        >
-                          <t-option v-for="(bool, i) in boolList" :key="i" :value="bool.value" :label="bool.label">
-                            {{ bool.label }}
-                          </t-option>
-                        </t-select>
-
-                        <t-input v-else v-model="item.paramValue" placeholder="请输入内容" />
-                      </t-col>
-                      <t-col :span="2">
-                        <t-input v-model="item.paramDesc" placeholder="请输入内容" />
-                      </t-col>
-                      <t-col :span="1" class="param-input-seq">
-                        <t-input-number v-model="item.seq" :decimal-places="0" theme="normal" placeholder="请输入" />
-                      </t-col>
-                      <t-col :span="1">
-                        <div>
-                          <t-space>
-                            <t-icon v-if="SelectNode.isSys == '0'" name="add" @click="onAddParam(item)" />
-                            <t-icon
-                              v-if="SelectNode.isSys == '0'"
-                              name="delete"
-                              @click="handleClickDelete(item, index)"
-                            />
-                          </t-space>
-                        </div>
-                      </t-col>
-                    </t-row>
-                  </vue-draggable>
-                </div>
-                <t-row v-show="totaldataTable && totaldataTable.length > 0" class="button-save" justify="space-between">
-                  <t-button theme="primary" @click="onSave">保存</t-button>
-                </t-row>
-                <div>
-                  <t-dialog
-                    v-model:visible="onShowDeleteConfirmVisible"
-                    header="确认删除"
-                    mode="modal"
-                    draggable
-                    :body="onDeleteConfirmBody"
-                    :on-cancel="onDeleteCancel"
-                    :close-on-overlay-click="false"
-                    @confirm="onDeleteConfirm"
-                  >
-                  </t-dialog>
-                </div>
-              </div>
-            </div>
+                  <t-input v-else v-model="item.paramValue" placeholder="请输入内容" />
+                </t-col>
+                <t-col :span="2">
+                  <t-input v-model="item.paramDesc" placeholder="请输入内容" />
+                </t-col>
+                <t-col :span="1" class="param-input-seq">
+                  <t-input-number v-model="item.seq" :decimal-places="0" theme="normal" placeholder="请输入" />
+                </t-col>
+                <t-col :span="1">
+                  <div>
+                    <t-space>
+                      <t-icon v-if="SelectNode.isSys == '0'" name="add" @click="onAddParam(item)" />
+                      <t-icon v-if="SelectNode.isSys == '0'" name="delete" @click="handleClickDelete(item, index)" />
+                    </t-space>
+                  </div>
+                </t-col>
+              </t-row>
+            </vue-draggable>
           </div>
-        </t-row>
-      </div>
-    </div>
-  </div>
+          <t-row v-show="totaldataTable && totaldataTable.length > 0" class="button-save" justify="space-between">
+            <t-button theme="primary" @click="onSave">保存</t-button>
+          </t-row></t-space
+        >
+      </cmp-card>
+    </cmp-row>
+  </cmp-container>
+  <t-dialog
+    v-model:visible="onShowDeleteConfirmVisible"
+    header="确认删除"
+    mode="modal"
+    draggable
+    :body="onDeleteConfirmBody"
+    :on-cancel="onDeleteCancel"
+    :close-on-overlay-click="false"
+    @confirm="onDeleteConfirm"
+  >
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -558,7 +545,7 @@ onMounted(() => {
 }
 
 .button-save {
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 .param-input-seq {

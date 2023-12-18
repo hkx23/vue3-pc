@@ -38,6 +38,7 @@
       <div ref="tableContentRef" class="table-box__table">
         <t-table
           ref="tableRef"
+          :vertical-align="'middle'"
           hover
           multiple-sort
           resizable
@@ -451,7 +452,7 @@ const computedTableContentSize = (entry) => {
   nextTick(() => {
     boxHeight.value =
       tableBoxRef.value.parentElement.clientHeight -
-      120 -
+      118 -
       (props.buttonsVisible ? 0 : 40) -
       (props.showPagination ? 0 : -50);
   });

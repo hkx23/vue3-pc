@@ -1,5 +1,5 @@
 <template>
-  <t-row>
+  <t-row @keydown.enter="enterCheckHandle">
     <t-col ref="formContentRef" flex="1 1">
       <t-form
         colon
@@ -11,88 +11,82 @@
         size="default"
         @submit.prevent
       >
-        <t-row ref="formRowRef" class="item-row" :gutter="[32, 0]"
-          ><t-col
-            v-for="(opt, i) in cOpts"
-            v-show="!opt.isHide"
-            :key="i"
-            :xs="12"
-            :sm="6"
-            :md="4"
-            :lg="opt.span"
-            :xl="opt.span"
-            ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">
-              <!-- 自定义label -->
-              <template v-if="opt.labelRender" #label>
-                <render-comp :form="state.form" :render="opt.labelRender" />
-              </template>
-              <!-- 自定义输入框插槽 -->
-              <template v-if="opt.slotName">
-                <slot :name="opt.slotName" :param="state.form"></slot>
-              </template>
-              <!-- 日期控件 -->
-              <component
-                :is="opt.comp"
-                v-if="!opt.slotName && opt.comp.includes('date')"
-                v-bind="
-                  typeof opt.bind == 'function'
-                    ? opt.bind(state.form)
-                    : { clearable: true, filterable: true, allowInput: true, ...$attrs, ...opt.bind }
-                "
-                v-model="state.form[opt.dataIndex]"
-                :label="opt.label"
-                :placeholder="opt.placeholder || getPlaceholder(opt)"
-                @change="handleEvent(opt.event, state.form[opt.dataIndex])"
-                v-on="cEvent(opt)"
-              />
-              <!-- 树选择控件 -->
-              <component
-                :is="opt.comp"
-                v-if="!opt.slotName && opt.comp.includes('tree-select')"
-                v-bind="
-                  typeof opt.bind == 'function'
-                    ? opt.bind(state.form)
-                    : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
-                "
-                v-model="state.form[opt.dataIndex]"
-                :label="opt.label"
-                :placeholder="opt.placeholder || getPlaceholder(opt)"
-                @change="handleEvent(opt.event, state.form[opt.dataIndex])"
-                v-on="cEvent(opt)"
-              />
-              <!-- 非日期控件与树选择控件 -->
-              <component
-                :is="opt.comp"
-                v-if="
-                  !opt.slotName &&
-                  !opt.comp.includes('date') &&
-                  !opt.comp.includes('tree-select') &&
-                  !opt.comp.includes('t-select-muti')
-                "
-                v-bind="
-                  typeof opt.bind == 'function'
-                    ? opt.bind(state.form)
-                    : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
-                "
-                v-model="state.form[opt.dataIndex]"
-                :label="opt.label"
-                :placeholder="opt.placeholder || getPlaceholder(opt)"
-                @change="handleEvent(opt.event, state.form[opt.dataIndex])"
-                v-on="cEvent(opt)"
-              >
+        <div ref="formRowRef" style="width: 100%">
+          <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[32, 0]"
+            ><t-col v-for="(opt, i) in optRow" v-show="!opt.isHide" :key="i" :flex="opt.flex"
+              ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">
+                <!-- 自定义label -->
+                <template v-if="opt.labelRender" #label>
+                  <render-comp :form="state.form" :render="opt.labelRender" />
+                </template>
+                <!-- 自定义输入框插槽 -->
+                <template v-if="opt.slotName">
+                  <slot :name="opt.slotName" :param="state.form"></slot>
+                </template>
+                <!-- 日期控件 -->
                 <component
-                  :is="compChildName(opt)"
-                  v-for="(value, key, index) in selectListType(opt)"
-                  :key="index"
-                  :disabled="value.disabled"
-                  :label="compChildLabel(opt, value)"
-                  :value="compChildValue(opt, value, key)"
-                  >{{ compChildShowLabel(opt, value) }}</component
+                  :is="opt.comp"
+                  v-if="!opt.slotName && opt.comp.includes('date')"
+                  v-bind="
+                    typeof opt.bind == 'function'
+                      ? opt.bind(state.form)
+                      : { clearable: true, filterable: true, allowInput: true, ...$attrs, ...opt.bind }
+                  "
+                  v-model="state.form[opt.dataIndex]"
+                  :label="opt.label"
+                  :placeholder="opt.placeholder || getPlaceholder(opt)"
+                  @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+                  v-on="cEvent(opt)"
+                />
+                <!-- 树选择控件 -->
+                <component
+                  :is="opt.comp"
+                  v-if="!opt.slotName && opt.comp.includes('tree-select')"
+                  v-bind="
+                    typeof opt.bind == 'function'
+                      ? opt.bind(state.form)
+                      : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
+                  "
+                  v-model="state.form[opt.dataIndex]"
+                  :label="opt.label"
+                  :placeholder="opt.placeholder || getPlaceholder(opt)"
+                  @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+                  v-on="cEvent(opt)"
+                />
+                <!-- 非日期控件与树选择控件 -->
+                <component
+                  :is="opt.comp"
+                  v-if="
+                    !opt.slotName &&
+                    !opt.comp.includes('date') &&
+                    !opt.comp.includes('tree-select') &&
+                    !opt.comp.includes('t-select-muti')
+                  "
+                  v-bind="
+                    typeof opt.bind == 'function'
+                      ? opt.bind(state.form)
+                      : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
+                  "
+                  v-model="state.form[opt.dataIndex]"
+                  :label="opt.label"
+                  :placeholder="opt.placeholder || getPlaceholder(opt)"
+                  @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+                  v-on="cEvent(opt)"
                 >
-              </component>
-            </t-form-item></t-col
-          ></t-row
-        >
+                  <component
+                    :is="compChildName(opt)"
+                    v-for="(value, key, index) in selectListType(opt)"
+                    :key="index"
+                    :disabled="value.disabled"
+                    :label="compChildLabel(opt, value)"
+                    :value="compChildValue(opt, value, key)"
+                    >{{ compChildShowLabel(opt, value) }}</component
+                  >
+                </component>
+              </t-form-item></t-col
+            ></t-row
+          >
+        </div>
       </t-form>
     </t-col>
     <t-col flex="0 1 300px" style="text-align: end">
@@ -195,7 +189,9 @@ if (props.isExpansion) {
 //   return { size: 'default', ...props.btnResetBind };
 // });
 const cOpts = computed(() => {
-  return Object.keys(props.opts).reduce((acc: any, field: any) => {
+  // 先按row字段分组
+
+  const result = Object.keys(props.opts).reduce((acc: any, field: any) => {
     const opt = {
       ...props.opts[field],
     };
@@ -203,15 +199,20 @@ const cOpts = computed(() => {
     // if (props.isShowOpen) {
     //   openSearchForm.value = true;
     // }
-    if (opt.comp && opt.comp.includes('range')) {
-      opt.span = 6;
-    } else {
-      opt.span = 3;
+    if (opt.flex === undefined && opt.comp && opt.comp.includes('range')) {
+      opt.flex = '600px';
+    } else if (opt.flex === undefined) {
+      opt.flex = '300px';
+    }
+    if (opt.row === undefined) {
+      opt.row = 999;
     }
     opt.dataIndex = field;
     acc[field] = opt;
     return acc;
   }, {});
+  const optRows = _.groupBy(result, 'row');
+  return optRows;
 });
 // 引用第三方事件
 const cEvent = computed(() => {
@@ -258,6 +259,13 @@ const handleEvent = (type, val) => {
 // 查询
 const checkHandle = (flagText: any = false) => {
   emits('submit', state.form, flagText);
+};
+
+// 查询
+const enterCheckHandle = (flagText: any = false) => {
+  if (props.boolEnter) {
+    emits('submit', state.form, flagText);
+  }
 };
 // 子组件名称
 const compChildName: any = computed(() => {
@@ -350,28 +358,28 @@ const getPlaceholder = (row: any) => {
   return placeholder;
 };
 onMounted(() => {
-  if (props.boolEnter) {
-    document.onkeyup = (e) => {
-      const pagination = document.querySelectorAll('.t-pagination');
-      let isPaginationInputFocus = false;
-      if (pagination) {
-        pagination.forEach((ele) => {
-          const paginationInputList = ele.getElementsByTagName('input');
-          const paginationInput = paginationInputList[paginationInputList.length - 1];
-          // 判断是否有分页器筛选输入框获取焦点
-          if (paginationInput === document.activeElement) {
-            isPaginationInputFocus = true;
-          }
-        });
-      }
-      if (isPaginationInputFocus) {
-        return;
-      }
-      if (e.code === 'Enter') {
-        checkHandle();
-      }
-    };
-  }
+  // if (props.boolEnter) {
+  //   document.onkeyup = (e) => {
+  //     const pagination = document.querySelectorAll('.t-pagination');
+  //     let isPaginationInputFocus = false;
+  //     if (pagination) {
+  //       pagination.forEach((ele) => {
+  //         const paginationInputList = ele.getElementsByTagName('input');
+  //         const paginationInput = paginationInputList[paginationInputList.length - 1];
+  //         // 判断是否有分页器筛选输入框获取焦点
+  //         if (paginationInput === document.activeElement) {
+  //           isPaginationInputFocus = true;
+  //         }
+  //       });
+  //     }
+  //     if (isPaginationInputFocus) {
+  //       return;
+  //     }
+  //     if (e.code === 'Enter') {
+  //       checkHandle();
+  //     }
+  //   };
+  // }
 });
 watch(
   () => props.opts,
@@ -398,8 +406,8 @@ const debounceFunction = _.debounce(() => {
 const computedExpandBtnVisible = () => {
   nextTick(() => {
     if (formRowRef.value) {
-      const { clientHeight } = formRowRef.value.$el;
-      showExpand.value = clientHeight >= 50;
+      const { clientHeight } = formRowRef.value;
+      showExpand.value = clientHeight > 50;
     }
   });
 };
