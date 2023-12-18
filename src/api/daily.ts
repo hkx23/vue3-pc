@@ -189,6 +189,10 @@ export interface SupportGroupInUserVO {
   oid?: string;
   supportGroupId?: string;
   userId?: string;
+  /** 处理组代码 */
+  supportGroupCode?: string;
+  /** 处理组名称 */
+  supportGroupName?: string;
   /** 处理组顺序 */
   levelSeq?: string;
   /** 用户名 */

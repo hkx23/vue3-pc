@@ -9,6 +9,19 @@
  * ---------------------------------------------------------------
  */
 
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
 /** 产品包装规则明细 */
 export interface ProductPackRuleDtl {
   id?: string;
@@ -50,19 +63,6 @@ export interface ProductPackRuleDtl {
    * @format int32
    */
   packLevel?: number;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 /** 产品包装规则 */
@@ -1073,7 +1073,7 @@ export interface BarcodeWipCollectVO {
   isCompleted?: number;
   /** 状态 */
   status?: string;
-  /** 扫码类型(SCANEXT,KEYPART) */
+  /** 扫码类型(SCANTEXT,KEYPART) */
   uom?: string;
   uomName?: string;
   scanType?: string;
@@ -1125,17 +1125,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   isState?: boolean;
-  workshopId?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopName?: string;
+  workshopId?: string;
   workshopCode?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1165,8 +1165,8 @@ export interface WipKeyPartCollectVO {
   scanQty?: number;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  getkeyPartCodeStr?: string;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -1314,16 +1314,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
   isState?: boolean;
-  workshopId?: string;
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopName?: string;
+  workshopId?: string;
   workshopCode?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -1791,6 +1791,36 @@ export interface ResultBarcodePkg {
   data?: BarcodePkg;
 }
 
+/** 响应数据 */
+export type PagingDataProductPackRule = {
+  list?: ProductPackRule[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataProductPackRule {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProductPackRule;
+}
+
+/** 原子模型定义-Context上下文定义 */
+export interface AtomicContext {
+  /** 是否执行成功 */
+  success?: boolean;
+  /** 执行描述 */
+  message?: string;
+  /** 执行描述 */
+  hashMaps?: Record<string, object>;
+}
+
 /** 通用响应类 */
 export interface ResultAtomicContext {
   /**
@@ -1801,16 +1831,7 @@ export interface ResultAtomicContext {
   /** 提示信息 */
   message?: string;
   /** 原子模型定义-Context上下文定义 */
-  data?: {
-    /** 是否执行成功 */
-    success?: boolean;
-    /** 执行描述 */
-    message?: string;
-    /** 执行描述 */
-    hashMaps?: Record<string, object>;
-    empty?: boolean;
-    [key: string]: any;
-  } | null;
+  data?: AtomicContext;
 }
 
 /** 通用响应类 */
@@ -2102,26 +2123,6 @@ export interface ResultPagingDataBarcodeSegmentDTO {
   data?: PagingDataBarcodeSegmentDTO;
 }
 
-/** 响应数据 */
-export type PagingDataProductPackRule = {
-  list?: ProductPackRule[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataProductPackRule {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataProductPackRule;
-}
-
 /**
  * @title scm项目
  * @version v1
@@ -2130,6 +2131,97 @@ export interface ResultPagingDataProductPackRule {
  */
 
 export const api = {
+  wipCompletion: {
+    /**
+     * No description
+     *
+     * @tags 完工入库
+     * @name Submit
+     * @summary 根据单据ID提交单据状态
+     * @request PUT:/wipCompletion/submit/{id}
+     * @secure
+     */
+    submit: (
+      id: string,
+      query: {
+        status: string;
+      },
+    ) =>
+      http.request<ResultObject['data']>(`/api/control/wipCompletion/submit/${id}`, {
+        method: 'PUT',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 完工入库
+     * @name ScanLabel
+     * @summary 扫描标签
+     * @request POST:/wipCompletion/scanLabel
+     * @secure
+     */
+    scanLabel: (data: ScanLabelDTO) =>
+      http.request<ResultLong['data']>(`/api/control/wipCompletion/scanLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 完工入库
+     * @name GetWipCompletionLabelList
+     * @summary 根据单据ID获取已扫入的完工入库条码
+     * @request GET:/wipCompletion/getWipCompletionLabelList
+     * @secure
+     */
+    getWipCompletionLabelList: (query: { id: string }) =>
+      http.request<ResultListWipCompletionLabelDTO['data']>(`/api/control/wipCompletion/getWipCompletionLabelList`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 完工入库
+     * @name GetDraftWipCompletionBillList
+     * @summary 获取未提交的完工入库单据
+     * @request GET:/wipCompletion/getDraftWipCompletionBillList
+     * @secure
+     */
+    getDraftWipCompletionBillList: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      categoryCode: string;
+      isSelf: boolean;
+    }) =>
+      http.request<ResultPagingDataWipCompletionBillVO['data']>(
+        `/api/control/wipCompletion/getDraftWipCompletionBillList`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 完工入库
+     * @name DeleteBarcode
+     * @summary 根据交易明细标签ID删除对应的明细标签
+     * @request DELETE:/wipCompletion/deleteBarcode
+     * @secure
+     */
+    deleteBarcode: (query: { barcodeId: string }) =>
+      http.request<ResultObject['data']>(`/api/control/wipCompletion/deleteBarcode`, {
+        method: 'DELETE',
+        params: query,
+      }),
+  },
   productPackRuleDtl: {
     /**
      * No description
@@ -2373,77 +2465,6 @@ export const api = {
       http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getList`, {
         method: 'POST',
         body: data as any,
-      }),
-  },
-  wipCompletion: {
-    /**
-     * No description
-     *
-     * @tags 完工入库
-     * @name ScanLabel
-     * @summary 扫描标签
-     * @request POST:/wipCompletion/scanLabel
-     * @secure
-     */
-    scanLabel: (data: ScanLabelDTO) =>
-      http.request<ResultLong['data']>(`/api/control/wipCompletion/scanLabel`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 完工入库
-     * @name GetWipCompletionLabelList
-     * @summary 根据单据ID获取已扫入的完工入库条码
-     * @request GET:/wipCompletion/getWipCompletionLabelList
-     * @secure
-     */
-    getWipCompletionLabelList: (query: { id: string }) =>
-      http.request<ResultListWipCompletionLabelDTO['data']>(`/api/control/wipCompletion/getWipCompletionLabelList`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 完工入库
-     * @name GetDraftWipCompletionBillList
-     * @summary 获取未提交的完工入库单据
-     * @request GET:/wipCompletion/getDraftWipCompletionBillList
-     * @secure
-     */
-    getDraftWipCompletionBillList: (query: {
-      /** @format int32 */
-      pageNum: number;
-      /** @format int32 */
-      pageSize: number;
-      categoryCode: string;
-      isSelf: boolean;
-    }) =>
-      http.request<ResultPagingDataWipCompletionBillVO['data']>(
-        `/api/control/wipCompletion/getDraftWipCompletionBillList`,
-        {
-          method: 'GET',
-          params: query,
-        },
-      ),
-
-    /**
-     * No description
-     *
-     * @tags 完工入库
-     * @name DeleteBarcode
-     * @summary 根据交易明细标签ID删除对应的明细标签
-     * @request DELETE:/wipCompletion/deleteBarcode
-     * @secure
-     */
-    deleteBarcode: (query: { barcodeId: string }) =>
-      http.request<ResultObject['data']>(`/api/control/wipCompletion/deleteBarcode`, {
-        method: 'DELETE',
-        params: query,
       }),
   },
   productPackRuleMap: {
@@ -3228,6 +3249,21 @@ export const api = {
      * No description
      *
      * @tags 包装条码表
+     * @name GetBarcodeRuleList
+     * @summary 获得条码规则下拉数据
+     * @request POST:/barcodePkg/getBarcodeRuleList
+     * @secure
+     */
+    getBarcodeRuleList: (data: number) =>
+      http.request<ResultPagingDataProductPackRule['data']>(`/api/control/barcodePkg/getBarcodeRuleList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 包装条码表
      * @name GetBarcodePkgManagerList
      * @summary 查询在制品条码(标签管理表格)
      * @request POST:/barcodePkg/getBarcodePkgManagerList
@@ -3312,24 +3348,6 @@ export const api = {
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/barcodePkg/getPrintTmplList`, {
         method: 'GET',
       }),
-
-    /**
-     * No description
-     *
-     * @tags 包装条码表
-     * @name GetBarcodeRuleList
-     * @summary 获得条码规则下拉数据
-     * @request GET:/barcodePkg/getBarcodeRuleList
-     * @secure
-     */
-    getBarcodeRuleList: (query: {
-      /** @format int32 */
-      packLevel: number;
-    }) =>
-      http.request<ResultPagingDataProductPackRule['data']>(`/api/control/barcodePkg/getBarcodeRuleList`, {
-        method: 'GET',
-        params: query,
-      }),
   },
   atomicSaveKeypart: {
     /**
@@ -3341,9 +3359,10 @@ export const api = {
      * @request POST:/atomicSaveKeypart/excuteAtomic
      * @secure
      */
-    excuteAtomic: () =>
+    excuteAtomic: (data: AtomicContext) =>
       http.request<ResultAtomicContext['data']>(`/api/control/atomicSaveKeypart/excuteAtomic`, {
         method: 'POST',
+        body: data as any,
       }),
   },
   atomicMoBarcodCheck: {
@@ -3356,9 +3375,10 @@ export const api = {
      * @request POST:/atomicMoBarcodCheck/excuteAtomic
      * @secure
      */
-    excuteAtomic: () =>
+    excuteAtomic: (data: AtomicContext) =>
       http.request<ResultAtomicContext['data']>(`/api/control/atomicMoBarcodCheck/excuteAtomic`, {
         method: 'POST',
+        body: data as any,
       }),
   },
   atomicCheckKeypart: {
@@ -3371,9 +3391,10 @@ export const api = {
      * @request POST:/atomicCheckKeypart/excuteAtomic
      * @secure
      */
-    excuteAtomic: () =>
+    excuteAtomic: (data: AtomicContext) =>
       http.request<ResultAtomicContext['data']>(`/api/control/atomicCheckKeypart/excuteAtomic`, {
         method: 'POST',
+        body: data as any,
       }),
   },
   atomicCheckBarcodeRouting: {
@@ -3386,9 +3407,10 @@ export const api = {
      * @request POST:/atomicCheckBarcodeRouting/excuteAtomic
      * @secure
      */
-    excuteAtomic: () =>
+    excuteAtomic: (data: AtomicContext) =>
       http.request<ResultAtomicContext['data']>(`/api/control/atomicCheckBarcodeRouting/excuteAtomic`, {
         method: 'POST',
+        body: data as any,
       }),
   },
   atomicCheckBarcodeRepeat: {
@@ -3401,9 +3423,10 @@ export const api = {
      * @request POST:/atomicCheckBarcodeRepeat/excuteAtomic
      * @secure
      */
-    excuteAtomic: () =>
+    excuteAtomic: (data: AtomicContext) =>
       http.request<ResultAtomicContext['data']>(`/api/control/atomicCheckBarcodeRepeat/excuteAtomic`, {
         method: 'POST',
+        body: data as any,
       }),
   },
   moLog: {

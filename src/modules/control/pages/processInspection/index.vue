@@ -1,109 +1,109 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <t-layout>
-        <t-layout>
-          <t-content>
-            <t-space align="center" direction="vertical" style="width: 98%">
-              <t-row justify="center">
-                <t-col
-                  >车间：{{ mainform.workShopName }} 工作中心：{{ mainform.workCenterCode }} 工站：{{
-                    mainform.workStationCode
-                  }}</t-col
-                >
-              </t-row>
-              <t-row align="center">
-                <t-col :span="2" style="text-align: right">扫描 产品条码：</t-col>
-                <t-col flex="auto">
-                  <t-input v-model="mainform.serialNumber" size="large" @enter="serialNumberEnter" />
-                </t-col>
-                <t-col flex="40px" />
-              </t-row>
-              <t-row align="center">
-                <div class="groupbox" style="min-height: auto">
-                  <span class="grouptitle">产品信息</span>
-                  <t-card :bordered="false">
-                    <t-space align="center" direction="horizontal" :break-line="true">
-                      <t-input v-model="productInfo.scheCode" label="排产单号" readonly />
-                      <t-input v-model="productInfo.moCode" label="产品编码" readonly />
-                      <t-input v-model="productInfo.moMitemName" label="产品名称" readonly />
-                      <t-input v-model="productInfo.scheDatetimeSche" label="排产日期" readonly />
-                      <t-input v-model="productInfo.scheQty" label="排产数量" readonly />
-                      <t-input v-model="productInfo.moCompletedQty" label="完工数量" readonly />
-                    </t-space>
-                  </t-card>
-                </div>
-              </t-row>
-              <t-row :gutter="16">
-                <t-col :span="8">
-                  <div class="groupbox" style="min-height: calc(71vh - 50px); max-height: calc(71vh - 50px)">
-                    <span class="grouptitle">缺陷信息</span>
-                    <t-card :bordered="false">
-                      <t-space
-                        direction="vertical"
-                        style="overflow-y: auto; min-height: calc(61vh - 50px); max-height: calc(61vh - 50px)"
-                      >
-                        <t-space v-for="(item, index) in defectCodeList" :key="index">
-                          <t-button
-                            theme="default"
-                            style="width: 70px; min-height: 80px; max-height: 80px; white-space: normal"
-                            :v-model="item"
-                            :content="item.defectName"
-                          />
-                          <t-space break-line>
-                            <t-button
-                              v-for="(item_child, index_child) in item.child"
-                              :key="index_child"
-                              :content="item_child.defectName"
-                              style="width: 120px"
-                              :theme="getThemeButton(item_child.themeButton)"
-                              @click="clickDefectCode(item_child)"
-                            />
-                          </t-space>
-                        </t-space>
+  <cmp-container :full="true">
+    <cmp-row>
+      <cmp-card :span="9">
+        <cmp-container>
+          <t-row justify="center">
+            <t-col>
+              车间：{{ mainform.workShopName }} 工作中心：{{ mainform.workCenterCode }} 工站：{{
+                mainform.workStationCode
+              }}
+            </t-col>
+          </t-row>
+          <t-row align="center">
+            <t-col :span="2" style="text-align: right">扫描 产品条码：</t-col>
+            <t-col flex="auto">
+              <t-input v-model="mainform.serialNumber" size="large" @enter="serialNumberEnter" />
+            </t-col>
+            <t-col flex="40px" />
+          </t-row>
+          <t-row align="center">
+            <div class="groupbox" style="min-height: auto">
+              <span class="grouptitle">产品信息</span>
+              <t-card :bordered="false">
+                <t-space align="center" direction="horizontal" :break-line="true">
+                  <t-input v-model="productInfo.scheCode" label="排产单号" placeholder="" readonly />
+                  <t-input v-model="productInfo.moCode" label="产品编码" placeholder="" readonly />
+                  <t-input v-model="productInfo.moMitemName" label="产品名称" placeholder="" readonly />
+                  <t-input v-model="productInfo.scheDatetimeSche" label="排产日期" placeholder="" readonly />
+                  <t-input v-model="productInfo.scheQty" label="排产数量" placeholder="" readonly />
+                  <t-input v-model="productInfo.moCompletedQty" placeholder="" label="完工数量" readonly />
+                </t-space>
+              </t-card>
+            </div>
+          </t-row>
+          <t-row :gutter="16">
+            <t-col :span="8">
+              <div class="groupbox" style="min-height: calc(60vh - 50px); max-height: calc(60vh - 50px)">
+                <span class="grouptitle">缺陷信息</span>
+                <t-card :bordered="false">
+                  <t-space
+                    direction="vertical"
+                    style="overflow-y: auto; min-height: calc(55vh - 50px); max-height: calc(55vh - 50px)"
+                  >
+                    <t-space v-for="(item, index) in defectCodeList" :key="index">
+                      <t-button
+                        theme="default"
+                        style="width: 70px; min-height: 80px; max-height: 80px; white-space: normal"
+                        :v-model="item"
+                        :content="item.defectName"
+                      />
+                      <t-space break-line>
+                        <t-button
+                          v-for="(item_child, index_child) in item.child"
+                          :key="index_child"
+                          :content="item_child.defectName"
+                          style="width: 120px"
+                          :theme="getThemeButton(item_child.themeButton)"
+                          @click="clickDefectCode(item_child)"
+                        />
                       </t-space>
-                    </t-card>
-                  </div>
-                </t-col>
-                <t-col :span="4">
-                  <div class="groupbox" style="min-height: calc(71vh - 50px); max-height: calc(71vh - 50px)">
-                    <span class="grouptitle">采集详情</span>
-                    <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList">
-                      <template #serialNumber="{ row }">
-                        <div class="talbe_col_nowrap" :title="row.serialNumber">
-                          {{ row.serialNumber }}
-                        </div>
-                      </template>
-                      <template #status="{ row }">
-                        <div
-                          class="talbe_col_nowrap"
-                          :title="row.status"
-                          :style="{
-                            backgroundColor: row.statusColor,
-                            textAlign: 'center',
-                            fontWeight: 'bold',
-                            color: 'white',
-                          }"
-                        >
-                          {{ row.status }}
-                        </div>
-                      </template>
-                      <template #errorinfo="{ row }">
-                        <div class="talbe_col_nowrap" :title="row.errorinfo">
-                          {{ row.errorinfo }}
-                        </div>
-                      </template>
-                    </t-table>
-                  </div>
-                </t-col>
-              </t-row>
-            </t-space>
-          </t-content>
-        </t-layout>
-        <t-aside style="width: 30%">
-          <div class="groupbox" style="min-height: calc(100vh - 50px); max-height: calc(100vh - 50px)">
-            <span class="grouptitle">消息组件</span>
-            <t-list style="height: 100%" :scroll="{ type: 'virtual' }">
+                    </t-space>
+                  </t-space>
+                </t-card>
+              </div>
+            </t-col>
+            <t-col :span="4">
+              <div class="groupbox" style="min-height: calc(60vh - 50px); max-height: calc(60vh - 50px)">
+                <span class="grouptitle">采集详情</span>
+                <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="calc(55vh - 50px)">
+                  <template #serialNumber="{ row }">
+                    <div class="talbe_col_nowrap" :title="row.serialNumber">
+                      {{ row.serialNumber }}
+                    </div>
+                  </template>
+                  <template #status="{ row }">
+                    <div
+                      class="talbe_col_nowrap"
+                      :title="row.status"
+                      :style="{
+                        backgroundColor: row.statusColor,
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        color: 'white',
+                      }"
+                    >
+                      {{ row.status }}
+                    </div>
+                  </template>
+                  <template #errorinfo="{ row }">
+                    <div class="talbe_col_nowrap" :title="row.errorinfo">
+                      {{ row.errorinfo }}
+                    </div>
+                  </template>
+                </t-table>
+              </div>
+            </t-col>
+          </t-row>
+        </cmp-container>
+      </cmp-card>
+      <cmp-card :span="3">
+        <cmp-container :full="true" :full-sub-index="[1]">
+          <cmp-card :ghost="true">
+            <span>消息组件</span>
+          </cmp-card>
+          <cmp-card :ghost="true">
+            <t-list style="height: 95%; margin-top: 10px" :scroll="{ type: 'virtual' }">
               <t-list-item v-for="(item, index) in messageList" :key="index">
                 <t-list-item-meta style="align-items: center">
                   <template #description>
@@ -117,14 +117,15 @@
                 </t-list-item-meta>
               </t-list-item>
             </t-list>
-          </div>
-        </t-aside>
-      </t-layout>
-    </div>
-  </div>
+          </cmp-card>
+        </cmp-container>
+      </cmp-card>
+    </cmp-row>
+  </cmp-container>
 </template>
 
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import _, { isEmpty, isNil } from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
@@ -222,12 +223,13 @@ const serialNumberEnter = async (value) => {
             writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.defectCodeStr);
           }
         } else {
-          writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
-          writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
+          throw new Error(reData.scanMessage);
+          // writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
+          // writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
         }
       })
-      .catch((message) => {
-        console.log(message);
+      .catch((e) => {
+        writeMessageListError(e.message, dayjs().format('YYYY-MM-DD HH:mm:ss'));
       });
 
     // TODO 校验失败，写日志到右侧表
