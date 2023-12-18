@@ -10,8 +10,13 @@
                 <icon name="search" class="black-icon" />
               </template>
             </t-input>
-            <t-list stripe :split="true">
-              <t-list-item v-for="(item, index) in edabDataArr" :key="index" @click="onClickList(item)">
+            <t-list stripe :split="true" class="listOll">
+              <t-list-item
+                v-for="(item, index) in edabDataArr"
+                :key="index"
+                :class="{ 'selected-background': selectedListItemIndex === index }"
+                @click="onClickList(item, index)"
+              >
                 {{ item.paramValue }}
                 <template #action>
                   <t-button size="small" variant="text" @click="onAddProperty">
@@ -376,7 +381,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'disableSwitch',
-    title: '禁用',
+    title: '状态',
     align: 'center',
     width: '100',
     cell: 'disableSwitch',
@@ -510,7 +515,7 @@ const onGetTabList = async () => {
 onMounted(async () => {
   await onGetTabList();
   if (edabDataArr.value.length > 0) {
-    onClickList(edabDataArr.value[0]);
+    onClickList(edabDataArr.value[0], 0);
   }
 });
 
@@ -526,7 +531,9 @@ const onGetAllTabData = async () => {
 };
 
 // 左侧列表点击事件
-const onClickList = async (row: { objectCode: string; paramCode: string; id: any }) => {
+const selectedListItemIndex = ref(0);
+const onClickList = async (row: any, index?: any) => {
+  selectedListItemIndex.value = index;
   paramTabCode.value = row.paramCode; // 用于发获取全部数据请求
   const resData = await api.objectPropertyCategory.getCategory({ objectCode: row.objectCode }); // 获取表单下拉框数据
   selsectData.list = resData.list; // 上面下拉框数据赋值
@@ -639,5 +646,9 @@ const onWorkStationSubmit = async (context: { validateResult: boolean }) => {
 
 .three-checkbox {
   margin-left: 25px;
+}
+
+.selected-background {
+  background-color: #beb0a2 !important; /* 替换为你希望的颜色 */
 }
 </style>
