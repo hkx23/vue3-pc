@@ -206,7 +206,7 @@ const cOpts = computed(() => {
     if (opt.comp && opt.comp.includes('range')) {
       opt.span = 6;
     } else {
-      opt.span = 3;
+      opt.span = 4;
     }
     opt.dataIndex = field;
     acc[field] = opt;
