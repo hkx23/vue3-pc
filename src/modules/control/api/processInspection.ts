@@ -1,5 +1,6 @@
 export interface scanInfoModel {
   serialNumber: string;
+  uomName: string;
   qty: number;
   status: string;
   errorinfo: string;

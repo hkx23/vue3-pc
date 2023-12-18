@@ -18,7 +18,7 @@
               </t-row>
               <t-row class="custom-row">
                 <t-col :span="2" class="custom-row-item-header">{{ t('wipCollect.scanlabel') }}：</t-col>
-                <t-col v-if="keyPartSumList && keyPartSumList.length == 0" :span="7">
+                <t-col v-if="scanType == 'SCANTEXT'" :span="7">
                   <t-input
                     v-model="mainform.serialNumber"
                     :placeholder="scanDesc"
@@ -35,13 +35,9 @@
                   />
                 </t-col>
                 <t-col :span="1" class="custom-row-item-reset">
-                  <t-button
-                    v-if="keyPartSumList && keyPartSumList.length > 0"
-                    class="btn_reset"
-                    theme="default"
-                    @click="resetHandle"
-                    >{{ t('common.button.reset') }}</t-button
-                  >
+                  <t-button class="btn_reset" theme="default" @click="resetHandle">{{
+                    t('common.button.reset')
+                  }}</t-button>
                 </t-col>
               </t-row>
               <t-row class="custom-row">
@@ -91,7 +87,7 @@
                       <t-collapse-panel destroy-on-collapse :header="productInfo.header">
                         <t-list v-for="(item, index) in keyPartSumList" :key="index">
                           <t-list-item>
-                            {{ item.getkeyPartCodeStr }}/{{ item.mitemCode }}/{{ item.mitemName }}/{{
+                            {{ item.keyPartCodeStr }}/{{ item.mitemCode }}/{{ item.mitemName }}/{{
                               t('wipCollect.requestqty')
                             }}:{{ item.moRequestQty }},{{ t('wipCollect.scanqty') }}: {{ item.scanQty }}
                             <template #action>
@@ -154,8 +150,9 @@
                       <t-icon v-if="item.status == 'NG'" name="close-circle" style="color: red" />
                       <t-tooltip :content="item.content" placement="mouse">
                         <span>{{ item.title }}</span>
+                        <span style="margin-left: 8px"> {{ item.datatime }}</span>
                       </t-tooltip>
-                      <div>{{ item.datatime }}</div>
+                      <!-- <div>{{ item.datatime }}</div> -->
                     </t-space>
                   </template>
                 </t-list-item-meta>
@@ -171,7 +168,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import _, { isEmpty } from 'lodash';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { LoadingPlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api, WipKeyPartCollectVO } from '@/api/control';
@@ -200,6 +197,7 @@ const mainform = ref({
   workStationCode: '',
   workStationName: '',
   processId: '',
+  isCommit: false,
 });
 
 // 界面产品信息
@@ -236,9 +234,13 @@ const Init = async () => {
 };
 
 const scanType = computed(() => {
-  let scanType = 'SCANEXT';
+  let scanType = 'SCANTEXT';
   if (keyPartSumList.value && keyPartSumList.value.length > 0) {
     scanType = 'KEYPART';
+  }
+
+  if (mainform.value.isCommit) {
+    scanType = 'SCANTEXT';
   }
   return scanType;
 });
@@ -257,7 +259,7 @@ const serialNumberEnter = async (value) => {
     if (!checkBarcodeRepeat(mainform.value.serialNumber)) {
       return;
     }
-
+    LoadingPlugin(true);
     // 原子校验
     // TODO 校验成功
     await api.barcodeWipCollect
@@ -274,7 +276,8 @@ const serialNumberEnter = async (value) => {
       })
       .then((reData) => {
         if (reData.scanSuccess) {
-          if (scanType.value === 'SCANEXT') {
+          mainform.value.isCommit = reData.isCommit;
+          if (scanType.value === 'SCANTEXT') {
             productInfo.value.scheCode = reData.scheCode;
             productInfo.value.moCode = reData.moCode;
             productInfo.value.moMitemCode = reData.mitemCode;
@@ -284,7 +287,7 @@ const serialNumberEnter = async (value) => {
             productInfo.value.scheQty = reData.scheQty.toString();
             productInfo.value.moCompletedQty = reData.completedQty.toString();
             productInfo.value.moScheId = reData.moScheId;
-            writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.scanMessage); // 扫描成功
+            writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.uomName, reData.scanMessage); // 扫描成功
           }
 
           writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
@@ -296,15 +299,19 @@ const serialNumberEnter = async (value) => {
             keyPartSumList.value = reData.keyPartSumList;
             resetKeypartCode();
           } else {
+            // 没有关键件时，则清空以下信息
             resetBarcode();
+            resetKeyPartList();
           }
 
           if (reData.isCommit) {
-            resetHandle();
+            // 提交时,清空扫描框即可
+            resetBarcode();
+            resetKeypartCode();
           }
         } else {
           writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
-          if (scanType.value === 'SCANEXT') {
+          if (scanType.value === 'SCANTEXT') {
             resetBarcode();
           }
           if (reData.isCommit) {
@@ -312,9 +319,11 @@ const serialNumberEnter = async (value) => {
           }
           // writeScanInfoError(reData.serialNumber, reData.qty, reData.scanMessage); // 扫描失败
         }
+        LoadingPlugin(false);
       })
       .catch((message) => {
         console.log(message);
+        LoadingPlugin(false);
       });
 
     // TODO 校验失败，写日志到右侧表
@@ -326,6 +335,11 @@ const resetHandle = () => {
   mainform.value.serialNumber = '';
   mainform.value.keypartCode = '';
   keyPartSumList.value = [];
+  scanInfoList.value = [];
+  // 清除所有对象的值
+  Object.keys(productInfo.value).forEach((key) => {
+    delete productInfo.value[key];
+  });
 };
 
 const resetBarcode = () => {
@@ -336,14 +350,23 @@ const resetKeypartCode = () => {
   mainform.value.keypartCode = '';
 };
 
-const writeScanInfoSuccess = async (lbNo, lbQty, lbError) => {
-  scanInfoList.value.unshift({
-    serialNumber: lbNo,
-    qty: lbQty,
-    status: 'OK',
-    errorinfo: lbError,
-    statusColor: 'green',
-  });
+const resetKeyPartList = () => {
+  keyPartSumList.value = [];
+};
+
+const writeScanInfoSuccess = async (lbNo, lbQty, uomName, lbError) => {
+  const barcodeInfo = _.find(scanInfoList.value, (item: scanInfoModel) => item.serialNumber === lbNo);
+  if (!barcodeInfo) {
+    // 如果不存在则插入
+    scanInfoList.value.unshift({
+      serialNumber: lbNo,
+      qty: lbQty,
+      uomName,
+      status: 'OK',
+      errorinfo: lbError,
+      statusColor: 'green',
+    });
+  }
 };
 
 // const writeScanInfoError = async (lbNo, lbQty, lbError) => {
@@ -359,7 +382,7 @@ const writeScanInfoSuccess = async (lbNo, lbQty, lbError) => {
 // 校验条码是否扫重复
 const checkBarcodeRepeat = (lbNo) => {
   let isSuccess = true;
-  if (scanType.value === 'SCANEXT') {
+  if (scanType.value === 'SCANTEXT') {
     const barcodeInfo = _.find(
       scanInfoList.value,
       (item: scanInfoModel) => item.status === 'OK' && item.serialNumber === lbNo,
@@ -372,35 +395,32 @@ const checkBarcodeRepeat = (lbNo) => {
   return isSuccess;
 };
 
+// 成功消息体
 const writeMessageListSuccess = async (content, datatime) => {
+  if (messageList.value && messageList.value.length > 10) {
+    messageList.value.splice(0, messageList.value.length);
+  }
   messageList.value.unshift({
     title: '扫描成功',
     content,
     datatime,
     status: 'OK',
   });
+  NotifyPlugin.success({ title: '扫描成功', content, duration: 2000 });
 };
-
+// 失败消息体
 const writeMessageListError = async (content, datatime) => {
+  if (messageList.value && messageList.value.length > 10) {
+    messageList.value.splice(-1, 1);
+  }
   messageList.value.unshift({
     title: '扫描失败',
     content,
     datatime,
     status: 'NG',
   });
+  NotifyPlugin.error({ title: '扫描失败', content, duration: 2000 });
 };
-
-// const themes = {
-//   default: 'default',
-//   success: 'success',
-//   primary: 'primary',
-//   warning: 'warning',
-//   danger: 'danger',
-// };
-
-// const getThemeButton = (value: string) => {
-//   return themes[value] || themes.default;
-// };
 
 const getQueryString = (paramName: string) => {
   const queryString = window.location.href.split('?')[1];
