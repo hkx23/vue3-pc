@@ -452,7 +452,7 @@ const computedTableContentSize = (entry) => {
   nextTick(() => {
     boxHeight.value =
       tableBoxRef.value.parentElement.clientHeight -
-      120 -
+      118 -
       (props.buttonsVisible ? 0 : 40) -
       (props.showPagination ? 0 : -50);
   });
