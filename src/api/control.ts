@@ -290,6 +290,167 @@ export interface ResultPagingDataLong {
   data?: PagingDataLong;
 }
 
+/** 通用响应类 */
+export interface ResultListWipRepairDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WipRepairDtlVO[] | null;
+}
+
+/** 维修单 */
+export type WipRepairDtlVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  wipRepairId?: string;
+  defectCodeId?: string;
+  /** 缺陷原因 */
+  defectReason?: string;
+  /** 缺陷责任别 */
+  defectBlame?: string;
+  defectDealMethodId?: string;
+  /** 缺陷代码编码 */
+  defectCode?: string;
+  /** 缺陷代码 */
+  defectName?: string;
+  /** 缺陷处理方法编码 */
+  defectDealMethodCode?: string;
+  /** 缺陷处理方法 */
+  defectDealMethodName?: string;
+} | null;
+
+/** 维修单查询 */
+export interface WipRepairSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+/** 响应数据 */
+export type PagingDataWipRepairVO = {
+  list?: WipRepairVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWipRepairVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWipRepairVO;
+}
+
+/** 维修单 */
+export interface WipRepairVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  /** 产品条形码 */
+  scanBarcode?: string;
+  moScheId?: string;
+  /**
+   * 维修次数
+   * @format int32
+   */
+  repairTimes?: number;
+  /**
+   * 不合格次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /** 来源工艺路线工序ID */
+  fromRoutingProcessId?: string;
+  /** 来源工站ID */
+  fromWorkstationId?: string;
+  /** 维修开始时间 */
+  datetimeRepairing?: string;
+  /** 维修结束时间 */
+  datetimeRepaired?: string;
+  userRepairId?: string;
+  returnRoutingProcessId?: string;
+  /** 维修结果 */
+  repairResult?: string;
+  /** 状态 */
+  status?: string;
+  moScheCode?: string;
+  /** 来源工艺路线工序编码 */
+  fromRoutingProcessCode?: string;
+  /** 来源工艺路线工序 */
+  fromRoutingProcessName?: string;
+  /** 来源工站编码 */
+  fromWorkstationCode?: string;
+  /** 来源工站 */
+  fromWorkstationName?: string;
+  userNameRepair?: string;
+  displayNameRepair?: string;
+  returnRoutingProcessCode?: string;
+  returnRoutingProcessName?: string;
+}
+
 /** 完工入库单据实体 */
 export interface ScanLabelDTO {
   /** 业务类型编码 */
@@ -1168,16 +1329,16 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
+  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  workshopId?: string;
+  stateName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   isState?: boolean;
 }
 
@@ -1357,14 +1518,14 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
+  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  workshopId?: string;
+  stateName?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   isState?: boolean;
   defectCodeStr?: string;
 }
@@ -1764,8 +1925,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -2518,6 +2679,38 @@ export const api = {
      */
     getlist: (data: WorkstationAuthSearch) =>
       http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  wipRepairDtl: {
+    /**
+     * No description
+     *
+     * @tags 产品维修明细表
+     * @name Search
+     * @summary 获返工工单
+     * @request POST:/wipRepairDtl/items
+     * @secure
+     */
+    search: (query: { wipRepairId: string }) =>
+      http.request<ResultListWipRepairDtlVO['data']>(`/api/control/wipRepairDtl/items`, {
+        method: 'POST',
+        params: query,
+      }),
+  },
+  wipRepair: {
+    /**
+     * No description
+     *
+     * @tags 产品维修表
+     * @name Search
+     * @summary 获返工工单
+     * @request POST:/wipRepair/items
+     * @secure
+     */
+    search: (data: WipRepairSearch) =>
+      http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepair/items`, {
         method: 'POST',
         body: data as any,
       }),
