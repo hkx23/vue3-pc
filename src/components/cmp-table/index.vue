@@ -250,7 +250,7 @@ const columns = computed(() => {
     })
     .map((item) => {
       return {
-        align: 'center',
+        ellipsis: true,
         ...item,
       };
     });
