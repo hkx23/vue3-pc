@@ -60,6 +60,11 @@ export const langList = computed(() => {
   return list;
 });
 
+export const langName = computed(() => {
+  const item = langList.value.find((t) => t.value === i18n.global.locale.value);
+  return item ? item.content : i18n.global.locale.value;
+});
+
 // @ts-ignore
 export const { t } = i18n.global;
 
