@@ -45,7 +45,7 @@
               </t-col>
             </t-row>
             <cmp-table
-              v-model:pagination="pageUI"
+              v-model:pagination="pageUIBracode"
               row-key="barcodePkgId"
               :loading="loading"
               select-on-row-click
@@ -98,7 +98,7 @@
           <cmp-query :opts="pkgBarcodeManageOp" label-width="100" @submit="managePageSearchClick" />
           <t-col :span="12" flex="auto">
             <cmp-table
-              v-model:pagination="pageUI"
+              v-model:pagination="pageUIMannage"
               row-key="barcodePkgId"
               select-on-row-click
               :selected-row-keys="selectedManageRowKeys"
@@ -209,6 +209,8 @@ import { usePage } from '@/hooks/modules/page';
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { loading, setLoading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
+const { pageUI: pageUIBracode } = usePage(); // 分页工具
+const { pageUI: pageUIMannage } = usePage(); // 分页工具
 const { pageUI: pageUIDay } = usePage(); // 分页工具
 // $打印上 表格数据
 const moDataList = reactive({ list: [] });
@@ -693,8 +695,6 @@ const conditionEnter = (data: any) => {
   const [datetimePlanStart, datetimePlanEnd] = data.datetimePlanRange;
   queryCondition.value.datetimePlanStart = datetimePlanStart;
   queryCondition.value.datetimePlanEnd = datetimePlanEnd;
-  queryCondition.value.pageNum = pageUI.value.page;
-  queryCondition.value.pageSize = pageUI.value.rows;
   fetchMoTable();
 };
 // 管理界面点击查询按钮
@@ -706,8 +706,6 @@ const managePageSearchClick = (data: any) => {
   manageQueryCondition.value.datetimePlanEnd = datetimePlanEnd;
   manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
   manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
-  manageQueryCondition.value.pageNum = pageUI.value.page;
-  manageQueryCondition.value.pageSize = pageUI.value.rows;
   fetchBracodeManageTable();
 };
 // 右表格数据刷新
@@ -725,6 +723,8 @@ const onRightFetchData = async () => {
 const fetchMoTable = async () => {
   setLoading(true);
   try {
+    queryCondition.value.pageNum = pageUI.value.page;
+    queryCondition.value.pageSize = pageUI.value.rows;
     const data = (await api.barcodePkg.getMoScheduleList(queryCondition.value)) as any;
     const { list } = data;
     moDataList.list = list;
@@ -740,6 +740,8 @@ const fetchMoTable = async () => {
 const fetchBracodeManageTable = async () => {
   setLoading(true);
   try {
+    manageQueryCondition.value.pageNum = pageUIMannage.value.page;
+    manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
     const data = (await api.barcodePkg.getBarcodePkgManagerList(manageQueryCondition.value)) as any;
     const { list } = data;
     pkgManageDataList.list = list;
@@ -967,6 +969,8 @@ const onRowClick = ({ row }) => {
   tabValue.value = 1;
   queryCondition.value.moScheduleId = row.moScheduleId;
   printMode.value.moScheduleId = row.moScheduleId;
+  queryCondition.value.pageNum = pageUIBracode.value.page;
+  queryCondition.value.pageSize = pageUIBracode.value.rows;
   api.barcodePkg.getTagList(queryCondition.value).then((data) => {
     tabList.list = data.list;
     console.log(tabList.list);
