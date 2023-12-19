@@ -17,7 +17,8 @@
           :table-column="groupColumns"
           :table-data="ruleTabDataList.list"
           :total="ruleTabTotal"
-          @row-click="onRowClick"
+          select-on-row-click
+          @select-change="onGenerateChange"
           @refresh="onRefresh"
         >
           <template #stateSwitch="{ row }">
@@ -59,23 +60,29 @@
             <template #button>
               <div class="left-operation-container">
                 <bcmp-select-business
-                  v-model="relatedMaterials.mitemCategoryId"
+                  v-model="mitemData.mitemCategoryId"
                   :is-multiple="false"
                   type="mitemCategory"
+                  @change="onMaterialTabData"
                 ></bcmp-select-business>
               </div>
               <div class="left-operation-container">
                 <bcmp-select-business
-                  v-model="relatedMaterials.mitemId"
+                  v-model="mitemData.mitemId"
                   :is-multiple="false"
                   type="mitem"
+                  @change="onMaterialTabData"
                 ></bcmp-select-business>
               </div>
-              <div><t-button theme="default" @click="onRelatedMaterials"> 关联物料 </t-button></div>
               <div>
                 <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches">
                   <t-button theme="default"> 删除 </t-button>
                 </t-popconfirm>
+              </div>
+            </template>
+            <template #operate>
+              <div>
+                <t-button theme="default" :disabled="!personID" @click="onformData"> 关联物料 </t-button>
               </div>
             </template>
           </cmp-table>
@@ -192,6 +199,28 @@
       </t-col>
     </t-form>
   </t-dialog>
+  <!-- 关联物料弹出框 -->
+  <t-dialog v-model:visible="materialVisible" header="新增关联摸板" width="50%" :on-confirm="onConfirm">
+    <t-form ref="materiaFormRef" :data="formData">
+      <t-form-item label="物料类别" name="mitemCategoryId">
+        <bcmp-select-business
+          v-model="formData.mitemCategoryId"
+          :show-title="false"
+          type="mitemCategory"
+          :disabled="!isEmpty(formData.mitemId)"
+        ></bcmp-select-business>
+      </t-form-item>
+      <t-form-item label="物料" name="mitemId">
+        <bcmp-select-business
+          v-model="formData.mitemId"
+          :is-multiple="false"
+          :show-title="false"
+          type="mitem"
+          :disabled="!isEmpty(formData.mitemCategoryId)"
+        ></bcmp-select-business>
+      </t-form-item>
+    </t-form>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -206,10 +235,12 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
+const materiaFormRef: Ref<FormInstanceFunctions> = ref(null);
 const diaSelsect = reactive({ list: [] }); // 下拉框数据
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: materialPage } = usePage();
 const formVisible = ref(false); // 控制 处理组dialog 弹窗显示隐藏
+const materialVisible = ref(false); // 控制 关联物料 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys: Ref<any[]> = ref([]); // 删除计量单位 id
 const groupDisabled = ref(false); // 处理组表单禁用开关
@@ -229,6 +260,12 @@ const ruleTabTotal = ref(null);
 // $人员 表格数据
 const materialTabDataList = reactive({ list: [] });
 const materialTotal = ref(null);
+// 物料弹框数据
+const formData = ref({
+  barcodeRuleId: '', // 上表格ID
+  mitemId: '', // 物料 ID
+  mitemCategoryId: '', // 物料分类 ID
+});
 // dialog 弹框数据
 const ruleTabData = ref({
   ruleCode: '', // 规则编码
@@ -238,11 +275,10 @@ const ruleTabData = ref({
   ruleExpression: '', // 条码规则表达式
   state: 1, // 启用禁用
 });
-// 关联物料数据
-const relatedMaterials = ref({
-  barcodeRuleId: '', // 上表格ID
-  mitemId: '', // 物料 ID
-  mitemCategoryId: '', // 物料分类 ID
+// 物料搜索 ID
+const mitemData = ref({
+  mitemCategoryId: null,
+  mitemId: null,
 });
 // # 条码规则刷新按钮
 const onRefresh = async () => {
@@ -312,6 +348,11 @@ const treeClick = ({ node }) => {
 const ruleTreeDataList = reactive({ list: [] });
 // #### 条码规则 表头
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'row-select',
+    type: 'single',
+    width: 46,
+  },
   {
     colKey: 'serial-number',
     title: '序号',
@@ -453,6 +494,8 @@ const onMaterialTabData = async () => {
     pageNum: materialPage.value.page,
     pageSize: materialPage.value.rows,
     ruleId: personID.value,
+    mitemId: mitemData.value.mitemId,
+    mitemCategoryId: mitemData.value.mitemCategoryId,
   });
   materialTabDataList.list = res.list;
   materialTotal.value = res.total;
@@ -473,11 +516,11 @@ const onSwitchChange = async (row: any, value: any) => {
 };
 
 // #条码规则 表格 行点击事件
-const personID = ref(null); // 点击表格行 获取人员id
-const onRowClick = async ({ row }) => {
+const personID = ref(null); // 点击表格行 获取人员id // 下面有两个参数
+const onGenerateChange = async (value: any) => {
   personID.value = null; // 点击前先清空
-  personID.value = row.id;
-  relatedMaterials.value.barcodeRuleId = row.id;
+  [personID.value] = value;
+  [formData.value.barcodeRuleId] = value;
   await onMaterialTabData(); // 获取 物料分类 数据
 };
 
@@ -522,19 +565,24 @@ const onEditrule = async () => {
 };
 
 // #关联物料
-const onRelatedMaterials = async () => {
-  const { barcodeRuleId, mitemId, mitemCategoryId } = relatedMaterials.value;
+const onformData = async () => {
+  formData.value.mitemId = '';
+  formData.value.mitemCategoryId = '';
+  materialVisible.value = true;
+};
 
-  // 检查是否所有的属性都不为空
+// 物料关联确认按钮
+const onConfirm = async () => {
+  const { mitemId, mitemCategoryId } = formData.value;
+  // 检查是否所有的属性都不为空;
   if (!mitemId && !mitemCategoryId) {
     MessagePlugin.error('参数不能为空');
-  } else if (!barcodeRuleId) {
-    MessagePlugin.error('请选择规则条码后再尝试');
-  } else {
-    await api.barcodeRuleInMitem.addBarcodeRuleMitem(relatedMaterials.value);
-    await onMaterialTabData(); // 获取 物料编码 表格数据
-    MessagePlugin.success('关联成功');
+    return;
   }
+  await api.barcodeRuleInMitem.addBarcodeRuleMitem(formData.value);
+  await onMaterialTabData(); // 获取 物料编码 表格数据
+  MessagePlugin.success('关联成功');
+  materialVisible.value = false;
 };
 // // @表单提交事件
 const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
