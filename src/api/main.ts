@@ -3063,14 +3063,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
-  isRawName?: string;
+  isState?: boolean;
   isProductName?: string;
+  isRawName?: string;
+  isBatchName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isState?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3237,8 +3237,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7337,29 +7337,6 @@ export const api = {
       },
     ) =>
       http.request<ResultResponseEntityString['data']>(`/api/main/module/uploadFile`, {
-        method: 'POST',
-        params: query,
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 菜单
-     * @name SortThisLevelAll
-     * @summary 菜单拖拽排序
-     * @request POST:/module/sortThisLevelAll
-     * @secure
-     */
-    sortThisLevelAll: (
-      query: {
-        /** @format int32 */
-        pageNum: number;
-        ids: string[];
-      },
-      data: number,
-    ) =>
-      http.request<ResultObject['data']>(`/api/main/module/sortThisLevelAll`, {
         method: 'POST',
         params: query,
         body: data as any,
