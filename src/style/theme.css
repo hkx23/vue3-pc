@@ -112,7 +112,9 @@
   --td-scrollbar-color: rgb(0 0 0 / 10%);
   --td-scrollbar-hover-color: rgb(0 0 0 / 30%);
   --td-scroll-track-color: #fff;
-  --td-bg-color-specialcomponent: #f8f8f8f8;
+
+  /* #f8f8f8f8; */
+  --td-bg-color-specialcomponent: transparent;
   --td-border-level-1-color: var(--td-gray-color-3);
   --td-border-level-2-color: #aaa;
   --td-shadow-inset-top: inset 0 0.5px 0 #dcdcdc;

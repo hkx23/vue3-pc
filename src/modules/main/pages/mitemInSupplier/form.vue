@@ -1,63 +1,51 @@
 <template>
   <t-form :data="formData" :show-cancel="true" :show-error-message="false" label-width="150px" @submit="submit">
-    <t-row>
-      <t-col class="t-space-item">
+    <t-row :gutter="[32, 16]">
+      <t-col :span="6">
         <t-form-item label="物料编码" required-mark>
-          <div style="width: 157px">
-            <bcmp-select-business
-              v-model="formData.mitemId"
-              type="mitem"
-              label-field="mitemCode"
-              :show-title="false"
-              :disabled="formData.operateTpye === 'add' ? false : true"
-              @selection-change="onMitemChange"
-            />
-          </div>
+          <bcmp-select-business
+            v-model="formData.mitemId"
+            type="mitem"
+            label-field="mitemCode"
+            :show-title="false"
+            :disabled="formData.operateTpye === 'add' ? false : true"
+            @selection-change="onMitemChange"
+          />
         </t-form-item>
       </t-col>
-      <t-col>
+      <t-col :span="6">
         <t-form-item label="供应商编码" required-mark>
-          <div style="width: 157px">
-            <bcmp-select-business
-              v-model="formData.supplierId"
-              type="supplier"
-              label-field="supplierCode"
-              :show-title="false"
-              :disabled="formData.operateTpye === 'add' ? false : true"
-              @selection-change="onSupplierChange"
-            />
-          </div>
+          <bcmp-select-business
+            v-model="formData.supplierId"
+            type="supplier"
+            label-field="supplierCode"
+            :show-title="false"
+            :disabled="formData.operateTpye === 'add' ? false : true"
+            @selection-change="onSupplierChange"
+          />
         </t-form-item>
       </t-col>
-    </t-row>
-    <t-row>
-      <t-col class="t-space-item">
+      <t-col :span="6">
         <t-form-item label="物料名称">
           <t-input v-model="formData.mitemName" readonly />
         </t-form-item>
       </t-col>
-      <t-col>
+      <t-col :span="6">
         <t-form-item label="供应商名称">
           <t-input v-model="formData.supplierName" readonly />
         </t-form-item>
       </t-col>
-    </t-row>
-
-    <t-row>
-      <t-col class="t-space-item">
+      <t-col :span="6">
         <t-form-item label="最小包装数量" required-mark>
           <t-input-number v-model="formData.qty" style="width: 156px" />
         </t-form-item>
       </t-col>
-      <t-col>
+      <t-col :span="6">
         <t-form-item label="检验严格度" required-mark>
           <t-radio-group v-model="formData.inspectionStringency" :options="inspectionStringencyOptions" clearable />
         </t-form-item>
       </t-col>
-    </t-row>
-
-    <t-row>
-      <t-col class="t-space-item">
+      <t-col :span="6">
         <t-form-item label="是否免检" required-mark>
           <t-radio-group
             v-model="formData.isExemptionInspection"
@@ -68,18 +56,20 @@
           />
         </t-form-item>
       </t-col>
-      <t-col>
+      <t-col :span="6">
         <t-form-item label="是否强制供方检验" required-mark>
           <t-radio-group v-model="formData.isForceInspection" style="width: 156px" :options="isOptions" clearable />
         </t-form-item>
       </t-col>
+      <t-col :span="6">
+        <t-form-item label="免检失效日期">
+          <t-date-picker
+            v-model="formData.dateExemptionExpired"
+            :disabled="formData.isExemptionInspection === 1 ? false : true"
+          />
+        </t-form-item>
+      </t-col>
     </t-row>
-    <t-form-item label="免检失效日期">
-      <t-date-picker
-        v-model="formData.dateExemptionExpired"
-        :disabled="formData.isExemptionInspection === 1 ? false : true"
-      />
-    </t-form-item>
   </t-form>
 </template>
 
