@@ -1,5 +1,5 @@
 export default {
-  loginTitle: 'Login in',
+  loginTitle: 'Welcome to MES',
   noAccount: 'No Account?',
   createAccount: 'Create Account',
   remember: 'Remember Account',
