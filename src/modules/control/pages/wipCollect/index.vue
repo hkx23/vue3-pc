@@ -10,11 +10,13 @@
           <t-content>
             <t-space class="custom-row" direction="vertical" style="width: 98%">
               <t-row justify="center">
-                <t-col class="header-title">
-                  <span>{{ t('wipCollect.workshopName') }}: {{ mainform.workStationName }}</span>
-                  <span> {{ t('wipCollect.workcentName') }}：{{ mainform.workCenterCode }}</span>
-                  <span> {{ t('wipCollect.workstationName') }}：{{ mainform.workStationCode }}</span>
-                </t-col>
+                <t-tag shape="round" size="large">
+                  <t-col class="header-title">
+                    <span>{{ t('wipCollect.workshopName') }}: {{ mainform.workStationName }}</span>
+                    <span> {{ t('wipCollect.workcentName') }}：{{ mainform.workCenterCode }}</span>
+                    <span> {{ t('wipCollect.workstationName') }}：{{ mainform.workStationCode }}</span>
+                  </t-col>
+                </t-tag>
               </t-row>
               <t-row class="custom-row">
                 <t-col :span="2" class="custom-row-item-header">{{ t('wipCollect.scanlabel') }}：</t-col>

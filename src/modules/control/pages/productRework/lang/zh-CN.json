@@ -1,5 +1,5 @@
 {
-  "wipCollect": {
+  "productRework": {
     "workshopName": "车间",
     "workcentName": "工作中心",
     "workstationName": "工站",
@@ -20,6 +20,16 @@
     "scanBarcode": "请扫描条码",
     "scanKeypart": "请扫描关键件",
     "keypartInfo":"关键件信息",
+    "setting":"配置项",
+    "isSameProcess":"是否同工序产品返工",
+    "isSameMo":"是否同工单产品返工",
+    "isByReworkMo":"是否按返工工单返工",
+    "reworkMo":"返工工单",
+    "reworkRouting":"返工工艺路线",
+    "reworkLine":"返工线体",
+    "reworkProcess":"重投工序",
+    "tip":"提示",
+    "checkreworkRouting":"请先维护工单的工艺路线",
     "scanqty": "已扫"
   }
 }
