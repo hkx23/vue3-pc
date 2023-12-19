@@ -4,13 +4,13 @@
 
     <div class="login-wrapper">
       <cmp-row>
-        <cmp-card :span="6" :ghost="true" class="login-main-image"></cmp-card>
-        <cmp-card :span="6" :ghost="true" style="width: 500px">
+        <cmp-card :md="6" :xs="0" :ghost="true" class="login-main-image"></cmp-card>
+        <cmp-card :md="6" :xs="12" :ghost="true">
           <t-space break-line size="5" class="toolbar">
             <span>下载二维码</span>
             <t-divider layout="vertical" />
             <t-dropdown trigger="click">
-              <div class="lang-btn">{{ langName }}</div>
+              <div class="lang-btn">{{ langName }}<t-icon name="chevron-down" size="14" /></div>
               <t-dropdown-menu>
                 <t-dropdown-item
                   v-for="(lang, index) in langList"
@@ -31,11 +31,11 @@
             <register v-else @register-success="switchType('login')" />
             <tdesign-setting />
           </div>
-          <div class="auth-message">
+          <!-- <div class="auth-message">
             <error-circle-filled-icon class="icon" />
             <span class="title">授权到期时间</span>
             2024-09-12
-          </div>
+          </div> -->
         </cmp-card>
       </cmp-row>
     </div>
@@ -49,7 +49,7 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { ErrorCircleFilledIcon } from 'tdesign-icons-vue-next';
+// import { ErrorCircleFilledIcon } from 'tdesign-icons-vue-next';
 import { DropdownOption } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
@@ -114,6 +114,13 @@ const switchType = (val: string) => {
 
       .lang-btn {
         cursor: pointer;
+
+        .t-icon {
+          position: relative;
+          top: -1px;
+          left: 3px;
+          line-height: 16px;
+        }
       }
     }
 
@@ -163,7 +170,7 @@ const switchType = (val: string) => {
     text-align: center;
     width: 100%;
     position: absolute;
-    bottom: 42px;
+    bottom: 28px;
     font-size: 12px;
   }
 }
