@@ -649,6 +649,6 @@ const onWorkStationSubmit = async (context: { validateResult: boolean }) => {
 }
 
 .selected-background {
-  background-color: #beb0a2 !important; /* 替换为你希望的颜色 */
+  background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
 }
 </style>

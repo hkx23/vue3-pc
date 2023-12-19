@@ -9,6 +9,48 @@
  * ---------------------------------------------------------------
  */
 
+/** 完工入库标签实体 */
+export interface WipCompletionLabelDTO {
+  dtlBarcodeId?: string;
+  billId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 业务类型编码 */
+  businessCategoryCode?: string;
+  mitemId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  mitemCategoryId?: string;
+  warehouseId?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  /** 工单编码 */
+  moCode?: string;
+  workshopId?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workcenterId?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+}
+
 /** 通用响应类 */
 export interface ResultObject {
   /**
@@ -1126,17 +1168,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  stateName?: string;
-  isState?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  stateName?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  isState?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1166,8 +1208,8 @@ export interface WipKeyPartCollectVO {
   scanQty?: number;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
+  isScanFinish?: boolean;
 }
 
 /** 在制品关键件采集表 */
@@ -1315,15 +1357,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  stateName?: string;
-  isState?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  stateName?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  isState?: boolean;
   defectCodeStr?: string;
 }
 
@@ -1798,26 +1840,6 @@ export interface ResultBarcodePkg {
   data?: BarcodePkg;
 }
 
-/** 响应数据 */
-export type PagingDataProductPackRule = {
-  list?: ProductPackRule[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataProductPackRule {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataProductPackRule;
-}
-
 /** 原子模型定义-Context上下文定义 */
 export interface AtomicContext {
   /** 是否执行成功 */
@@ -1853,48 +1875,6 @@ export interface ResultListWipCompletionLabelDTO {
   /** 响应数据 */
   data?: WipCompletionLabelDTO[] | null;
 }
-
-/** 完工入库标签实体 */
-export type WipCompletionLabelDTO = {
-  barcodeId?: string;
-  billId?: string;
-  /** 单据号 */
-  billNo?: string;
-  /** 业务类型编码 */
-  businessCategoryCode?: string;
-  mitemId?: string;
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  mitemCategoryId?: string;
-  warehouseId?: string;
-  /** 仓库编码 */
-  warehouseCode?: string;
-  /** 工单编码 */
-  moCode?: string;
-  workshopId?: string;
-  /** 车间名称 */
-  workshopName?: string;
-  workcenterId?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 数量 */
-  qty?: number;
-  /** 单位 */
-  uom?: string;
-  /** 扫描的条形码 */
-  scanBarcode?: string;
-  /** 条码类型 */
-  barcodeType?: string;
-  /** 状态 */
-  status?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-} | null;
 
 /** 响应数据 */
 export type PagingDataWipCompletionBillVO = {
@@ -2130,6 +2110,79 @@ export interface ResultPagingDataBarcodeSegmentDTO {
   data?: PagingDataBarcodeSegmentDTO;
 }
 
+/** 箱包关系外箱信息 */
+export type PkgInfoRelationVO = {
+  /** 外箱条码 */
+  barcode?: string;
+  /** 外箱条码类型 */
+  barcodeType?: string;
+  /**
+   * 包装数量
+   * @format int32
+   */
+  packQty?: number;
+  /**
+   * 产品规则包装数量
+   * @format int32
+   */
+  packRuleQty?: number;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 产品描述 */
+  mitemDesc?: string;
+  /** 箱包关系 */
+  relation?: PkgRelationVO[];
+  /** 是否尾数装箱 */
+  whole?: boolean;
+} | null;
+
+/** 箱包关系前端显示 */
+export interface PkgRelationVO {
+  id?: string;
+  /** 包装条码 */
+  pkgBarcode?: string;
+  /** 包装条码类型 */
+  pkgBarcodeType?: string;
+  /**
+   * 包装序号
+   * @format int32
+   */
+  seq?: number;
+}
+
+/** 通用响应类 */
+export interface ResultPkgInfoRelationVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 箱包关系外箱信息 */
+  data?: PkgInfoRelationVO;
+}
+
+/** 响应数据 */
+export type PagingDataProductPackRule = {
+  list?: ProductPackRule[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataProductPackRule {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProductPackRule;
+}
+
 /**
  * @title scm项目
  * @version v1
@@ -2148,15 +2201,10 @@ export const api = {
      * @request PUT:/wipCompletion/submit/{id}
      * @secure
      */
-    submit: (
-      id: string,
-      query: {
-        status: string;
-      },
-    ) =>
+    submit: (id: string, data: WipCompletionLabelDTO[]) =>
       http.request<ResultObject['data']>(`/api/control/wipCompletion/submit/${id}`, {
         method: 'PUT',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -2223,7 +2271,7 @@ export const api = {
      * @request DELETE:/wipCompletion/deleteBarcode
      * @secure
      */
-    deleteBarcode: (query: { barcodeId: string }) =>
+    deleteBarcode: (query: { dtlBarcodeId: string }) =>
       http.request<ResultObject['data']>(`/api/control/wipCompletion/deleteBarcode`, {
         method: 'DELETE',
         params: query,
@@ -2620,6 +2668,7 @@ export const api = {
      *
      * @tags 在制品箱包关系表
      * @name Save
+     * @summary 保存箱包关系
      * @request POST:/pkgRelation/save
      * @secure
      */
@@ -2627,6 +2676,36 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/pkgRelation/save`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品箱包关系表
+     * @name Release
+     * @summary 解除箱包关系
+     * @request DELETE:/pkgRelation/release
+     * @secure
+     */
+    release: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/control/pkgRelation/release`, {
+        method: 'DELETE',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品箱包关系表
+     * @name ReleaseAll
+     * @summary 解除箱包关系
+     * @request DELETE:/pkgRelation/releaseAll
+     * @secure
+     */
+    releaseAll: (query: { parentBarcode: string }) =>
+      http.request<ResultObject['data']>(`/api/control/pkgRelation/releaseAll`, {
+        method: 'DELETE',
+        params: query,
       }),
   },
   moSchedule: {
@@ -3256,21 +3335,6 @@ export const api = {
      * No description
      *
      * @tags 包装条码表
-     * @name GetBarcodeRuleList
-     * @summary 获得条码规则下拉数据
-     * @request POST:/barcodePkg/getBarcodeRuleList
-     * @secure
-     */
-    getBarcodeRuleList: (data: string) =>
-      http.request<ResultPagingDataProductPackRule['data']>(`/api/control/barcodePkg/getBarcodeRuleList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 包装条码表
      * @name GetBarcodePkgManagerList
      * @summary 查询在制品条码(标签管理表格)
      * @request POST:/barcodePkg/getBarcodePkgManagerList
@@ -3353,6 +3417,36 @@ export const api = {
      */
     getPrintTmplList: (query: { packType: string }) =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/barcodePkg/getPrintTmplList`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 包装条码表
+     * @name GetPkgInfoRelation
+     * @summary 根据外箱条码获取箱包关系信息
+     * @request GET:/barcodePkg/getPkgInfoRelation
+     * @secure
+     */
+    getPkgInfoRelation: (query: { barcode: string }) =>
+      http.request<ResultPkgInfoRelationVO['data']>(`/api/control/barcodePkg/getPkgInfoRelation`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 包装条码表
+     * @name GetBarcodeRuleList
+     * @summary 获得条码规则下拉数据
+     * @request GET:/barcodePkg/getBarcodeRuleList
+     * @secure
+     */
+    getBarcodeRuleList: (query: { packType: string }) =>
+      http.request<ResultPagingDataProductPackRule['data']>(`/api/control/barcodePkg/getBarcodeRuleList`, {
         method: 'GET',
         params: query,
       }),

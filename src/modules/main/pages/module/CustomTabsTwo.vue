@@ -92,7 +92,7 @@ const toggleSelection = (value: string, event?: MouseEvent) => {
 }
 
 .custom-multi-tabs button.is-selected {
-  background-color: lightblue; /* 选中时的背景色（浅蓝色） */
+  background-color: var(--td-brand-color); /* 选中时的背景色（浅蓝色） */
   color: white; /* 选中时的文字色 */
 }
 </style>

@@ -2,6 +2,8 @@
   <div class="main-page">
     <t-card :bordered="false">
       <t-button @click="onAddFirstNode">新增</t-button>
+      <!-- <t-button theme="default" @click="onEditFirstNode">编辑</t-button>
+      <t-button theme="default" @click="onDelFirstNode">删除</t-button> -->
       <header class="module-header-box">
         <t-row justify="space-between">
           <!-- 左侧盒子 -->
@@ -10,19 +12,15 @@
               ref="treeRef"
               :data="treeData"
               hover
-              activable
-              expand-all
+              :expand-mutex="true"
               :height="600"
               :transition="true"
               :expand-on-click-node="false"
               :icon="true"
-              :scroll="{
-                rowHeight: 34,
-                bufferSize: 10,
-                threshold: 10,
-                type: 'virtual',
-              }"
+              :scroll="treeScroll"
+              :activable="true"
               @click="treeClick"
+              @active="onActive"
             >
               <template #icon="{ node }">
                 <icon v-if="node[`__tdesign_tree-node__`]?.data" :name="node[`__tdesign_tree-node__`]?.data.iconPath" />
@@ -59,6 +57,8 @@
               :table-column="columns"
               :table-data="moduleData"
               :total="tabTotal"
+              drag-sort="row"
+              @drag-sort="onDragSort"
               @refresh="fetchData"
             >
               <template #stateSwitch="{ row }">
@@ -338,7 +338,15 @@
 
 <script setup lang="ts">
 import { Icon, manifest } from 'tdesign-icons-vue-next';
-import { Data, FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import {
+  Data,
+  FormInstanceFunctions,
+  FormRules,
+  MessagePlugin,
+  PrimaryTableCol,
+  TableRowData,
+  TScroll,
+} from 'tdesign-vue-next';
 import { nextTick, onMounted, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
@@ -377,6 +385,7 @@ interface TabItem {
 
 const selectedTabs = ref<string[]>(['0']); // 选中的端
 const dialogTabs = ref<string[]>(['0']); // 选中的端
+// 表格 选项卡 数据
 const tabItems = ref<TabItem[]>([
   { label: '全部', value: '0' },
   { label: 'pc端', value: '1' },
@@ -385,6 +394,7 @@ const tabItems = ref<TabItem[]>([
   { label: '手表端', value: '4' },
   { label: '微信端', value: '5' },
 ]);
+// DiaLog 选项卡 数据
 const dialogTabItems = ref<TabItem[]>([
   { label: 'pc端', value: '0' },
   { label: '移动端', value: '1' },
@@ -397,6 +407,12 @@ const showSecondNode = ref(false); // 二级
 const showFormData = ref(false); // 三级
 const disableFlag = ref(false); // 编辑按钮禁用 input 功能
 const treeRef = ref(null); // 树组件实例
+const treeScroll = ref({
+  rowHeight: 34,
+  bufferSize: 10,
+  threshold: 10,
+  type: 'virtual',
+} as TScroll);
 const formRefOne: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const formRefTwo: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const formRefThree: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
@@ -452,6 +468,18 @@ const formDataTwo = ref({
   clientTypeData: null, // 中断类型，进制
   packageName: '', // 上传文件文件名
 });
+
+// 表格拖拽
+const onDragSort = (params: any) => {
+  console.log('🚀 ~ file: index.vue:460 ~ onDragSort ~ params:', params);
+};
+
+// 树节点高亮
+const onActive = (vals, state) => {
+  console.info('on active:', vals, state);
+  // this.activeIds = vals;
+  // this.activeId = vals[0] || '';
+};
 
 // 文件上传事件
 const beforeUpload = (file: any) => {
@@ -957,6 +985,7 @@ onMounted(async () => {
 // 获取树组件数据
 const onGetTreeData = async () => {
   const res = await api.module.getTree({ clientType: 1 }); // 获取节点数据
+  console.log('🚀 ~ file: index.vue:990 ~ onGetTreeData ~ res:', res);
   treeData.value = res.map(simplifyObject); // 转化数据保存
   const filteredLabels = filterLabels(treeData.value); // 转化数组
   treeArr.value = filteredLabels;
@@ -980,7 +1009,7 @@ const treeClick = async ({ node }: { node: any }) => {
   if (!node[`__tdesign_tree-node__`].parent) {
     return;
   }
-  await onGetTabData();
+  await onGetTabData(); // 获取表格数据
   treeClickData.value.one = node['__tdesign_tree-node__'].label;
   treeClickData.value.two = node['__tdesign_tree-node__'].parent?.label;
 };
@@ -1039,30 +1068,42 @@ const onAddTwoModule = async () => {
   formVisible.value = false;
 };
 
+const uploadFileData = async () => {
+  await api.module.uploadFile(
+    {
+      path: formDataTwo.value.behaviorPath,
+    },
+    {
+      file: files?.value[0]?.raw,
+    },
+  );
+};
+
 // 三级菜单新增，编辑请求
 const onAddThreeModule = async () => {
   // 编辑请求
   if (!isEditModeThree.value) {
-    console.log('🚀 ~ file: index.vue:1023 ~ onAddThreeModule ~ delFileClick.value:', delFileClick.value);
     await onRedactThree(); // 编辑请求
     if (delFileClick.value) {
       await onDelFile(); // 删除文件
     }
     if (files?.value[0]?.raw) {
-      const data = new FormData();
-      data.append('path', formDataTwo.value.behaviorPath);
-      data.append('file', files?.value[0]?.raw);
-      await http.upload('/api/main/module/uploadFile', data);
+      await uploadFileData();
+      // const data = new FormData();
+      // data.append('path', formDataTwo.value.behaviorPath);
+      // data.append('file', files?.value[0]?.raw);
+      // await http.upload('/api/main/module/uploadFile', data);
     }
     await onGetTabData(); // 刷新表格
     MessagePlugin.success('编辑成功');
   } else {
     // 新增请求
     if (files?.value[0]?.raw) {
-      const data = new FormData();
-      data.append('path', formDataTwo.value.behaviorPath);
-      data.append('file', files?.value[0]?.raw);
-      await http.upload('/api/main/module/uploadFile', data);
+      await uploadFileData();
+      // const data = new FormData();
+      // data.append('path', formDataTwo.value.behaviorPath);
+      // data.append('file', files?.value[0]?.raw);
+      // await http.upload('/api/main/module/uploadFile', data);
     }
     await api.module.addModule({
       moduleLevel: formDataTwo.value.moduleLevel,
