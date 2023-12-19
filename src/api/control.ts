@@ -360,6 +360,9 @@ export interface WipRepairSearch {
   category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
+  /** 条码 */
+  scanBarcode?: string;
+  moScheId?: string;
 }
 
 /** 响应数据 */
@@ -422,9 +425,7 @@ export interface WipRepairVO {
    * @format int32
    */
   ngTimes?: number;
-  /** 来源工艺路线工序ID */
   fromRoutingProcessId?: string;
-  /** 来源工站ID */
   fromWorkstationId?: string;
   /** 维修开始时间 */
   datetimeRepairing?: string;
@@ -645,8 +646,8 @@ export interface CommonSearch {
   filters?: Filter[];
 }
 
-/** 工单排产表 */
-export interface MoSchedule {
+/** 显示工单投料的视图 */
+export interface MoScheduleVO {
   id?: string;
   /**
    * 创建时间
@@ -754,17 +755,25 @@ export interface MoSchedule {
   routingRevisionId?: string;
   /** 排产工单 */
   scheCode?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uomName?: string;
+  statusName?: string;
+  moCode?: string;
+  routingCode?: string;
+  routingName?: string;
 }
 
 /** 响应数据 */
-export type PagingDataMoSchedule = {
-  list?: MoSchedule[];
+export type PagingDataMoScheduleVO = {
+  list?: MoScheduleVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataMoSchedule {
+export interface ResultPagingDataMoScheduleVO {
   /**
    * 响应代码
    * @format int32
@@ -773,8 +782,119 @@ export interface ResultPagingDataMoSchedule {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataMoSchedule;
+  data?: PagingDataMoScheduleVO;
 }
+
+/** 工单排产表 */
+export type MoSchedule = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moId?: string;
+  mitemId?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 销售订单 */
+  soNo?: string;
+  /**
+   * 销售订单行号
+   * @format int32
+   */
+  soSeq?: number;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 下线数量
+   * @format int32
+   */
+  offlineQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 入库数量
+   * @format int32
+   */
+  stockinQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
+   * 工单关闭时间
+   * @format date-time
+   */
+  datetimeMoClose?: string;
+  warehouseId?: string;
+  parentMoId?: string;
+  workshopId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 状态 */
+  status?: string;
+  /** 工单来源 */
+  moSource?: string;
+  workcenterId?: string;
+  /**
+   * 排产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  routingRevisionId?: string;
+  /** 排产工单 */
+  scheCode?: string;
+} | null;
 
 /** 通用响应类 */
 export interface ResultMoSchedule {
@@ -1045,7 +1165,7 @@ export interface LabelSearch {
   workshopId?: string;
   workcenterId?: string;
   mitemId?: string;
-  /** 工单状态 */
+  /** 排产单状态 */
   scheStatus?: string;
   /** 是否仅显示已打印 */
   isFinishDisplay?: boolean;
@@ -1329,17 +1449,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  isState?: boolean;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1518,15 +1638,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  isState?: boolean;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
+  datetimeScheStr?: string;
   defectCodeStr?: string;
 }
 
@@ -2912,7 +3032,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataMoSchedule['data']>(`/api/control/moSchedule/items`, {
+      http.request<ResultPagingDataMoScheduleVO['data']>(`/api/control/moSchedule/items`, {
         method: 'POST',
         body: data as any,
       }),
