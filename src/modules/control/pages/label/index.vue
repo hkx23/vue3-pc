@@ -518,7 +518,6 @@ const labelManage: PrimaryTableCol<TableRowData>[] = [
     cell: 'actionSlot', // 引用具名插槽
   },
 ];
-
 // 日志界面 表格数据
 const logInterface: PrimaryTableCol<TableRowData>[] = [
   {
@@ -667,7 +666,6 @@ const onGetPrintDownTabData = async () => {
   } else {
     isCreated = false;
   }
-  console.log('🚀 ~ file: index.vue:663 ~ onGetPrintDownTabData ~ isCreated:', isCreated);
   const res = await api.label.getBarcodeWipList({
     pageNum: pageUIDown.value.page,
     pageSize: pageUIDown.value.rows,

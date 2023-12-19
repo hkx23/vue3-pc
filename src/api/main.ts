@@ -2710,11 +2710,8 @@ export type ShowModuleVO = {
   iconPath?: string;
   /** 模块层次代码 */
   moduleLevel?: string;
-  /**
-   * 模块类型
-   * @format int32
-   */
-  moduleType?: number;
+  /** 模块类型 */
+  moduleType?: string;
   /** 模块版本号 */
   moduleVersion?: number;
   /** 模块包标识 */
@@ -3066,15 +3063,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isProductName?: string;
+  isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
+  isProductName?: string;
   isInProcessName?: string;
-  isBatchName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3241,8 +3238,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
