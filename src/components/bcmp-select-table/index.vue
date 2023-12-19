@@ -552,6 +552,8 @@ const radioCSelectRedirct = (val: string) => {
   if (!props.multiple) {
     if (state.tableData.length === 1 && val === state.tableData[0][props.keywords.value]) {
       rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: [state.tableData[0]] });
+    } else {
+      rehandleSelectChange([], { selectedRowData: [] });
     }
   }
 };
