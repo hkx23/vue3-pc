@@ -2580,6 +2580,29 @@ export interface ResultResponseEntityString {
   data?: string | null;
 }
 
+export interface ModuleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 状态 */
+  state?: number[];
+  id?: string;
+  /** 多个ID */
+  ids?: string[];
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  clientType?: number;
+}
+
 /** 系统模块表 */
 export interface Module {
   id?: string;
@@ -2635,27 +2658,6 @@ export interface Module {
   modulePackageIdentify?: string;
   /** 模块包名称 */
   packageName?: string;
-}
-
-export interface ModuleSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 状态 */
-  state?: number[];
-  id?: string;
-  /**
-   * 客户端类型
-   * @format int32
-   */
-  clientType?: number;
 }
 
 /** 菜单元数据 */
@@ -3063,14 +3065,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isBatchName?: string;
-  isRawName?: string;
   isProductName?: string;
+  isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isState?: boolean;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -4601,12 +4603,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -7351,17 +7353,9 @@ export const api = {
      * @request POST:/module/sortThisLevelAll
      * @secure
      */
-    sortThisLevelAll: (
-      query: {
-        /** @format int32 */
-        pageNum: number;
-        ids: string[];
-      },
-      data: number,
-    ) =>
+    sortThisLevelAll: (data: ModuleSearch) =>
       http.request<ResultObject['data']>(`/api/main/module/sortThisLevelAll`, {
         method: 'POST',
-        params: query,
         body: data as any,
       }),
 
