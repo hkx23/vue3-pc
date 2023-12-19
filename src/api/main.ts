@@ -1223,62 +1223,6 @@ export interface ResultSupplier {
   data?: Supplier;
 }
 
-/** 消息发送日志表 */
-export interface MsgSendLog {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  /** 标题 */
-  title?: string;
-  /** 内容 */
-  content?: string;
-  /** 发送方式 */
-  sendType?: string;
-  /** 发送地址 */
-  sendAddress?: string;
-  /** 发送结果 */
-  sendResult?: string;
-}
-
-/** 响应数据 */
-export type PagingDataMsgSendLog = {
-  list?: MsgSendLog[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataMsgSendLog {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataMsgSendLog;
-}
-
 /** 工艺路线映射表 */
 export interface RoutingMap {
   id?: string;
@@ -2709,8 +2653,11 @@ export type ShowModuleVO = {
   iconPath?: string;
   /** 模块层次代码 */
   moduleLevel?: string;
-  /** 模块类型 */
-  moduleType?: string;
+  /**
+   * 模块类型
+   * @format int32
+   */
+  moduleType?: number;
   /** 模块版本号 */
   moduleVersion?: number;
   /** 模块包标识 */
@@ -6424,30 +6371,14 @@ export const api = {
      * No description
      *
      * @tags 压力测试
-     * @name SearchLog
-     * @summary 数据库交易型：查询日志
-     * @request POST:/stressTest/searchLog
-     * @secure
-     */
-    searchLog: (data: string[]) =>
-      http.request<ResultPagingDataMsgSendLog['data']>(`/api/main/stressTest/searchLog`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 压力测试
      * @name InsertBatch
-     * @summary 数据库交易型：Mitem插数据
+     * @summary 数据库交易型：Mitem插100
      * @request POST:/stressTest/insertBatch
      * @secure
      */
-    insertBatch: (data: number) =>
+    insertBatch: () =>
       http.request<ResultObject['data']>(`/api/main/stressTest/insertBatch`, {
         method: 'POST',
-        body: data as any,
       }),
 
     /**
@@ -6476,6 +6407,21 @@ export const api = {
     cpuCompute: () =>
       http.request<ResultInteger['data']>(`/api/main/stressTest/CPUCompute`, {
         method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
+     * @name SearchLog
+     * @summary 数据库交易型：查十条日志
+     * @request GET:/stressTest/searchLog
+     * @secure
+     */
+    searchLog: (query: { ids: string[] }) =>
+      http.request<ResultPagingDataMsgSendLog['data']>(`/api/main/stressTest/searchLog`, {
+        method: 'GET',
+        params: query,
       }),
   },
   roleAuthorization: {
@@ -7426,7 +7372,7 @@ export const api = {
      * @request POST:/module/deleteFile
      * @secure
      */
-    deleteFile: (query: { id: string; packageName: string; behaviorPath: string }) =>
+    deleteFile: (query: { packageName: string; behaviorPath: string }) =>
       http.request<ResultResponseEntityString['data']>(`/api/main/module/deleteFile`, {
         method: 'POST',
         params: query,

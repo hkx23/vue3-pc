@@ -9,7 +9,7 @@
   >
     <template v-if="type == 'password'">
       <t-form-item name="account">
-        <t-input v-model="formData.account" size="large" :placeholder="`${$t('pages.login.input.account')}`">
+        <t-input v-model="formData.account" :placeholder="`${$t('pages.login.input.account')}`">
           <template #prefix-icon>
             <t-icon name="user" />
           </template>
@@ -19,7 +19,6 @@
       <t-form-item name="password">
         <t-input
           v-model="formData.password"
-          size="large"
           :type="showPsw ? 'text' : 'password'"
           clearable
           :placeholder="`${$t('pages.login.input.password')}`"
@@ -40,7 +39,7 @@
     </template>
 
     <t-form-item v-if="type !== 'qrcode'" class="btn-container">
-      <t-button block size="large" type="submit"> {{ $t('pages.login.signIn') }} </t-button>
+      <t-button block type="submit"> {{ $t('pages.login.signIn') }} </t-button>
     </t-form-item>
   </t-form>
 </template>
@@ -93,5 +92,8 @@ const onSubmit = async (ctx: SubmitContext) => {
 </script>
 
 <style lang="less" scoped>
-@import '../index.less';
+// @import '../index.less';
+.btn-container {
+  margin-top: 40px !important;
+}
 </style>

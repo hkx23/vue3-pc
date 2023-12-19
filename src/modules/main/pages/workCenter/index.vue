@@ -1,87 +1,39 @@
 <template>
-  <div class="main-page">
-    <!-- 子from -->
-    <detailed
-      v-if="detailedShow"
-      :btn-show-disable="{ add: btnShowDisable.add, delete: btnShowDisable.delete }"
-      :word-center-id="workCenterId"
-      :new-arr="newArr"
-      :data="data"
-      :next-arr="arr"
-      :btn-show="btnShow"
-      :type-detailed="typeDetailed"
-      :disabled-word="disabledWord"
-      :disabled-parent="disabledParent"
-      @added-show="onHandleSave"
-      @form-clear="onFormClear"
-      @child-default="onChildDefault"
-      @delete="onDelete"
-    ></detailed>
-    <!-- 头部 -->
-    <t-card v-if="!detailedShow" class="list-card-container" :bordered="false">
-      <t-space direction="horizontal" style="margin: 10px 0">
-        <t-tabs
-          v-for="item in allType"
-          :key="item.wcType"
-          v-model="valueItem"
-          :value="item.wcType"
-          @change="onHandelArr(item.opId)"
-        >
-          <t-tab-panel :value="item.wcType" :label="item.wcType">
-            <template #label>
-              <div>{{ item.wcType }}{{ item.code !== 0 ? `(${item.code})` : '' }}</div>
-            </template>
-          </t-tab-panel>
-        </t-tabs>
-      </t-space>
-      <t-row>
-        <t-col :span="12">
-          <cmp-query :opts="opts" @submit="onInput"></cmp-query>
-          <!-- <div class="select-work">
-              <t-select
-                v-model="select.state"
-                label="状态:"
-                placeholder="请选择状态"
-                :options="options2"
-                clearable
-                style="width: 198px"
-                @change="onHandelState"
-              >
-              </t-select>
-              <span style="margin: 0 20px">
-                <t-select-input
-                  v-model="selectValue"
-                  :options="selectValue"
-                  :popup-visible="popupVisible"
-                  allow-input
-                  style="width: 198px"
-                  placeholder="工作中心或编号"
-                  :default-input-value="selectValue1"
-                  @input-change="onInputChange"
-                  @popup-visible-change="onPopupVisibleChange"
-                >
-                  <template #panel>
-                    <ul class="tdesign-demo__select-input-ul-auto-width">
-                      <li v-for="item in options1" :key="item.id" @click="() => onOptionClick(item)">
-                        {{ item }}
-                      </li>
-                    </ul>
-                  </template>
-                  <template #suffixIcon><search-icon /></template
-                ></t-select-input>
-              </span>
-              <bcmp-select-business
-                v-model="workState.shop"
-                type="workshop"
-                @selection-change="onSelectShop"
-              ></bcmp-select-business>
-            </div> -->
-        </t-col>
-        <t-col :span="2" :push="10" style="margin: 10px 0">
-          <t-button theme="default" variant="base" @click="onHandelAdded">新增</t-button>
-          <!-- <t-divider layout="vertical" /> -->
-          <t-button theme="default" variant="base">导出</t-button>
-        </t-col>
+  <!-- 子from -->
+  <detailed
+    :detailed-show="detailedShow"
+    :btn-show-disable="{ add: btnShowDisable.add, delete: btnShowDisable.delete }"
+    :word-center-id="workCenterId"
+    :new-arr="newArr"
+    :data="data"
+    :next-arr="arr"
+    :btn-show="btnShow"
+    :type-detailed="typeDetailed"
+    :disabled-word="disabledWord"
+    :disabled-parent="disabledParent"
+    @added-show="onHandleSave"
+    @form-clear="onFormClear"
+    @child-default="onChildDefault"
+    @delete="onDelete"
+  ></detailed>
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <t-tabs v-model="valueItem" @change="onHandelArr">
+        <t-tab-panel v-for="item in allType" :key="item.wcType" :value="item.id" :label="item.wcType">
+          <template #label>
+            <div>{{ item.wcType }}{{ item.code !== 0 ? `(${item.code})` : '' }}</div>
+          </template>
+        </t-tab-panel>
+      </t-tabs>
+    </cmp-card>
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" @submit="onInput"></cmp-query>
+    </cmp-card>
+    <cmp-card :span="12">
+      <t-row :span="2" :push="10" style="margin-bottom: 8px">
+        <t-button theme="primary" variant="base" @click="onHandelAdded">新增</t-button>
+        <!-- <t-divider layout="vertical" /> -->
+        <t-button theme="default" variant="base">导出</t-button>
       </t-row>
       <!-- 表格 -->
       <t-enhanced-table
@@ -108,14 +60,15 @@
           <div>{{ row.state ? '启用' : '禁用' }}</div>
         </template>
         <template #op="{ row }">
-          <!-- 添加子 -->
-          <icon name="add" style="cursor: pointer" @click="onAddChilde(row)"></icon>
-          <!-- 编辑 -->
-          <icon name="edit-1" style="cursor: pointer; margin: 0 20px" @click="onClickEdit(row)"></icon>
-          <!-- 启用禁用 -->
-          <t-popconfirm :content="row.state ? '确认禁用吗' : '确认启用吗'" @confirm="onDefult(row)">
-            <icon name="delete" style="cursor: pointer"></icon>
-          </t-popconfirm>
+          <t-space :size="8">
+            <!-- 添加子 -->
+            <t-link theme="primary" @click="onAddChilde(row)">新增</t-link>
+            <t-link theme="primary" @click="onClickEdit(row)">编辑</t-link>
+            <!-- 启用禁用 -->
+            <t-popconfirm :content="row.state ? '确认禁用吗' : '确认启用吗'" @confirm="onDefult(row)">
+              <t-link theme="primary">{{ row.state == 1 ? '禁用' : '启用' }}</t-link>
+            </t-popconfirm>
+          </t-space>
         </template>
       </t-enhanced-table>
       <t-pagination
@@ -127,15 +80,14 @@
         @page-size-change="onPageSizeChange"
         @current-change="onCurrentChange"
       />
-      <!-- </t-table> -->
-    </t-card>
-  </div>
+    </cmp-card>
+  </cmp-container>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
 // import { SearchIcon } from 'tdesign-icons-vue-next';
-import { Icon, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
@@ -291,55 +243,52 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'wcCode',
     title: '工作中心编号',
     align: 'left',
-    width: '200px',
+    width: '150px',
   },
   {
     colKey: 'wcName',
     title: '名称',
     align: 'center',
-    width: '150px',
+    ellipsis: true,
   },
   {
     colKey: 'wcType',
     title: '类型',
     align: 'center',
-    width: '150px',
+    ellipsis: true,
   },
   {
     colKey: 'workshopName',
     title: '所属车间',
     align: 'center',
-    width: '150px',
+    ellipsis: true,
   },
   {
     colKey: 'wcLocation',
     title: '地点',
     align: 'center',
-    width: '150px',
+    ellipsis: true,
   },
   {
     colKey: 'parentWcCode',
     title: '父工作中心',
     align: 'center',
-    width: '150px',
+    ellipsis: true,
   },
   {
     colKey: 'wcOwner',
     title: '负责人',
     align: 'center',
-    width: '150px',
   },
   {
     colKey: 'wcObjectCodeName',
     title: '关联设备',
     align: 'center',
-    width: '150px',
   },
   {
     colKey: 'wcSeq',
     title: '顺序号',
     align: 'center',
-    width: '150px',
   },
   {
     colKey: 'state',

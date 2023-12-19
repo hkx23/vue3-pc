@@ -239,7 +239,7 @@ props.tableColumn.forEach((item) => {
 });
 // 表格内展示的列
 const columns = computed(() => {
-  return props.tableColumn
+  let tableColumn = props.tableColumn
     .filter((item) => {
       return (
         data.colConfigs[item.title] ||
@@ -250,10 +250,18 @@ const columns = computed(() => {
     })
     .map((item) => {
       return {
-        ellipsis: true,
+        align: 'center',
         ...item,
       };
     });
+  tableColumn = tableColumn.map((item) => {
+    return {
+      align: 'center',
+      ...item,
+    };
+  });
+  console.log(tableColumn);
+  return tableColumn;
 });
 // 表格要导出的列
 const exportColumns = computed(() => {

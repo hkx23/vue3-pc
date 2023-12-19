@@ -1,43 +1,50 @@
 <template>
-  <div class="detailed-box">
-    <t-card class="list-card-detailed">
-      <t-form
-        ref="formRef"
-        layout="inline"
-        :data="formData"
-        :show-cancel="true"
-        :show-error-message="false"
-        :rules="rules"
-        @submit="onHandleSave"
-      >
-        <t-card :bordered="false">
-          <header class="form-item-box">
-            <t-form-item label="工作中心编号" name="wcCode">
-              <t-input v-model="formData.wcCode" :disabled="props.disabledWord" />
-            </t-form-item>
-            <t-form-item label="所属车间" name="workshopId">
-              <bcmp-select-business
-                v-model="formData.workshopId"
-                type="workshop"
-                label-field="orgName"
-                :show-title="false"
-              ></bcmp-select-business
-            ></t-form-item>
-            <t-form-item label="地点" name="wcLocation">
-              <t-input v-model="formData.wcLocation" style="width: 200px" />
-            </t-form-item>
-          </header>
-          <div class="form-item-box">
-            <t-form-item label="工作中心名称" name="wcName">
-              <t-input v-model="formData.wcName" />
-            </t-form-item>
-            <t-form-item label="负责人" name="wcOwner">
-              <t-input v-model="formData.wcOwner" style="width: 180px" />
-            </t-form-item>
-            <t-form-item label="顺序号" name="wcSeq">
-              <t-input-number v-model="formData.wcSeq" theme="normal" style="width: 200px" />
-            </t-form-item>
-          </div>
+  <t-dialog v-model:visible="visible" header="工作中心维护" width="750px" @close="onHandleCancellation">
+    <t-form
+      ref="formRef"
+      :data="formData"
+      :show-cancel="true"
+      :show-error-message="false"
+      :rules="rules"
+      label-width="120px"
+      @submit="onHandleSave"
+    >
+      <t-row :gutter="[32, 16]">
+        <t-col :span="6">
+          <t-form-item label="工作中心编号" name="wcCode">
+            <t-input v-model="formData.wcCode" :disabled="props.disabledWord" /> </t-form-item
+        ></t-col>
+        <t-col :span="6">
+          <t-form-item label="所属车间" name="workshopId">
+            <bcmp-select-business
+              v-model="formData.workshopId"
+              type="workshop"
+              label-field="orgName"
+              :show-title="false"
+            ></bcmp-select-business
+          ></t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="地点" name="wcLocation">
+            <t-input v-model="formData.wcLocation" />
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="工作中心名称" name="wcName">
+            <t-input v-model="formData.wcName" />
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="负责人" name="wcOwner">
+            <t-input v-model="formData.wcOwner" />
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="顺序号" name="wcSeq">
+            <t-input-number v-model="formData.wcSeq" theme="column" />
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
           <t-form-item label="父级" name="parentWcId">
             <bcmp-select-business
               v-model="formData.parentWcId"
@@ -48,49 +55,54 @@
             </bcmp-select-business>
             <!-- <t-select v-model="formData.parentWcCode" /> -->
           </t-form-item>
-          <footer class="form-item-box">
-            <t-form-item label="类型" required-mark>
-              <ul class="type-box">
-                <li
-                  v-for="item in typeData"
-                  :key="item.id"
-                  :class="item.show ? 'li-cur' : ''"
-                  @click="onHandleCur(item.wcType)"
-                >
-                  {{ item.wcType }}
-                </li>
-              </ul>
-            </t-form-item>
-            <t-form-item label="关联设备" name="wcObjectId">
-              <bcmp-select-business
-                v-model="formData.wcObjectId"
-                type="equipment"
-                :disabled="typeShow"
-                :show-title="false"
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="类型" required-mark>
+            <ul class="type-box">
+              <li
+                v-for="item in typeData"
+                :key="item.id"
+                :class="item.show ? 'li-cur' : ''"
+                @click="onHandleCur(item.wcType)"
               >
-              </bcmp-select-business>
-            </t-form-item>
-          </footer>
-          <span class="form-checkbox">
+                {{ item.wcType }}
+              </li>
+            </ul>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="关联设备" name="wcObjectId">
+            <bcmp-select-business
+              v-model="formData.wcObjectId"
+              type="equipment"
+              :disabled="typeShow"
+              :show-title="false"
+            >
+            </bcmp-select-business>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="" name="checked">
             <t-checkbox v-model="formData.checked" @change="onCheCkbox">启用</t-checkbox>
-          </span>
-          <div class="table-btn">
-            <t-button theme="default" @click="onHandleCancellation">取消</t-button>
-            <t-button v-show="props.btnShow" type="submit">保存</t-button>
-          </div>
-        </t-card>
+          </t-form-item>
+        </t-col>
+      </t-row>
 
-        <!-- table表格 -->
-      </t-form></t-card
+      <!-- table表格 -->
+    </t-form>
+
+    <template #footer>
+      <t-button theme="default" @click="onHandleCancellation">取消</t-button>
+      <t-button v-show="props.btnShow" @click="onFormSubmit">保存</t-button></template
     >
     <!-- from -->
-  </div>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
 import { Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
-import { onMounted, reactive, Ref, ref } from 'vue';
+import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 import { usePage } from '@/hooks/modules/page';
@@ -103,8 +115,12 @@ const total = ref(10);
 const deleteVisible = ref(false);
 const { pageUI } = usePage(); // 页面数
 // const { loading, setLoading } = useLoading();
-const Emit = defineEmits(['addedShow', 'FormClear', 'ChildDefault', 'delete']); // addedShow窗口
+const Emit = defineEmits(['addedShow', 'FormClear', 'ChildDefault', 'delete', 'update:detailedShow']); // addedShow窗口
 const props = defineProps({
+  detailedShow: {
+    type: Boolean,
+    default: false,
+  },
   btnShowDisable: {
     type: Object,
   },
@@ -132,11 +148,27 @@ const props = defineProps({
     type: String,
   },
 });
+const visible = computed({
+  get() {
+    return props.detailedShow;
+  },
+  set(val: boolean) {
+    Emit('update:detailedShow', val);
+  },
+});
+watch(
+  () => props.detailedShow,
+  (visibleValue) => {
+    if (visibleValue) {
+      fetchData();
+    }
+  },
+);
 // const once = ref(0);
 // const parentId = ref(); // 点击添加的时候存储父id
 const typeShow = ref(false);
 onMounted(() => {
-  fetchData();
+  // fetchData();
 });
 // const selectedRowKeys = ref([]); // 用于存储选中行的数组
 // 首次请求
@@ -200,11 +232,11 @@ const formData = reactive({
   parentWcId: '', // 父级
   checked: true, // 多选控制 默认为选中
   wcType: '', // 设备类型
-  state: props.wordCenterId.state, // 启用还是禁用
+  state: props.wordCenterId && props.wordCenterId.state, // 启用还是禁用
   category: 0, // 获取设备关联
   wcObjectType: 0, // 更改类型
   wcObjectId: '', // 关联设备
-  id: props.wordCenterId.id, // 父节点的id
+  id: props.wordCenterId && props.wordCenterId.id, // 父节点的id
   allRecord: [],
   wcSeq: 0, // 顺序号
 });
@@ -328,6 +360,9 @@ const onCheCkbox = (checked: boolean) => {
     formData.state = 0;
   }
 };
+const onFormSubmit = () => {
+  formRef.value.submit();
+};
 // 保存
 const onHandleSave = async (context) => {
   if (context.validateResult === true && formData.category !== 0) {
@@ -444,9 +479,9 @@ const rules: FormRules<Data> = {
 
   li {
     cursor: pointer;
-    width: 47px;
-    height: 28px;
-    line-height: 28px;
+    width: 55px;
+    height: 32px;
+    line-height: 32px;
     border: 1px solid #eee;
   }
 
@@ -459,7 +494,7 @@ const rules: FormRules<Data> = {
   }
 
   .li-cur {
-    background: #0894fa;
+    background: var(--brand-main);
     color: #fff;
   }
 }

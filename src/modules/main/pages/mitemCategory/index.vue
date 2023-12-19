@@ -20,7 +20,7 @@
       >
         <template #button> <t-button theme="primary" @click="onImport">导入</t-button></template>
         <template #op="slotProps">
-          <t-space>
+          <t-space :size="8">
             <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
             <t-link theme="primary" @click="onDeleteRowClick(slotProps)">{{ t('common.button.delete') }}</t-link>
             <!-- <t-icon name="edit" @click="onEditRowClick(slotProps)" />

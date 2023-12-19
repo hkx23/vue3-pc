@@ -1,5 +1,5 @@
 export default {
-  loginTitle: '登录到',
+  loginTitle: '欢迎使用MES',
   noAccount: '没有账号吗?',
   existAccount: '已有账号?',
   createAccount: '注册新账号',
