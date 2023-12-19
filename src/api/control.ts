@@ -1172,12 +1172,12 @@ export interface BarcodeWipCollectVO {
   datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   stateName?: string;
-  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  workshopId?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   isState?: boolean;
 }
 
@@ -1208,8 +1208,8 @@ export interface WipKeyPartCollectVO {
   scanQty?: number;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -1362,9 +1362,9 @@ export interface BarcodeWipVO {
   /** @format date-time */
   datetimeSche?: string;
   stateName?: string;
-  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  workshopId?: string;
   isState?: boolean;
   defectCodeStr?: string;
 }
