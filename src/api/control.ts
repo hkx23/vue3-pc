@@ -1165,7 +1165,7 @@ export interface LabelSearch {
   workshopId?: string;
   workcenterId?: string;
   mitemId?: string;
-  /** 工单状态 */
+  /** 排产单状态 */
   scheStatus?: string;
   /** 是否仅显示已打印 */
   isFinishDisplay?: boolean;
@@ -1450,16 +1450,16 @@ export interface BarcodeWipCollectVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   isState?: boolean;
-  scanDatetimeStr?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  datetimeScheStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  workshopId?: string;
-  stateName?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1639,15 +1639,16 @@ export interface BarcodeWipVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
   isState?: boolean;
-  scanDatetimeStr?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
   datetimeScheStr?: string;
   defectCodeStr?: string;
   workshopName?: string;
   workshopCode?: string;
-  workshopId?: string;
-  stateName?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */

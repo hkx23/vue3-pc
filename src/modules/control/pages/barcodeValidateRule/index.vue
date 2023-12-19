@@ -496,18 +496,25 @@ const onTextEditRow = (row: { id: any }) => {
 // 关键件 编辑事件
 const onKeyEditRow = (row: any) => {
   console.log('🚀 ~ file: index.vue:498 ~ onKeyEditRow ~ row:', row);
-  if (!row.mitemCategoryId) {
+  if (!+row.mitemCategoryId) {
     radioValue.value = 1;
   } else {
     radioValue.value = 0;
   }
   RuleCodeID.value = row.id;
   Object.keys(barcodeData.value).reduce((acc, key) => {
+    // 添加判断条件，当row中的mitemCategoryId或mitemId为'0'时，跳过赋值
+    if (key === 'mitemCategoryId' || key === 'mitemId') {
+      if (row[key] === '0') {
+        return acc;
+      }
+    }
     if (Object.prototype.hasOwnProperty.call(row, key)) {
       acc[key] = row[key];
     }
     return acc;
   }, barcodeData.value);
+  console.log('🚀 ~ file: index.vue:515 ~ onKeyEditRow ~ barcodeData.value:', barcodeData.value);
   formVisible.value = true;
   submitFalg.value = false;
 };

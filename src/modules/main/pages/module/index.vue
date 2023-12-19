@@ -915,7 +915,6 @@ const onDelConfirm = async () => {
 
 // switch 开关事件
 const onSwitchChange = async (row: any, value: any) => {
-  console.log('🚀 ~ file: index.vue:918 ~ onSwitchChange ~ row:', row);
   const decimalNumber = row.clientType; // 十进制数
   const binaryString = parseInt(decimalNumber.toString(2), 10); // 将十进制数转换为二进制字符串
   const isValue = value ? 1 : 0;

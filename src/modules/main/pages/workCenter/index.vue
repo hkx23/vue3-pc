@@ -270,7 +270,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     ellipsis: true,
   },
   {
-    colKey: 'parentWcCode',
+    colKey: 'parentWcName',
     title: '父工作中心',
     align: 'center',
     ellipsis: true,
