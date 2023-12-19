@@ -1,7 +1,7 @@
 {
   "title": "产线：",
   "placeholder": "请选择产线",
-  "url": "/api/control/workcenter/items",
+  "url": "/api/main/workcenter/items",
   "httptype": "POST",
   "category": "4",
   "columns": [
