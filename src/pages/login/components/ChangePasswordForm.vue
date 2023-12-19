@@ -25,7 +25,7 @@ const userStore = useUserStore();
 
 const formRef = ref<FormInstanceFunctions>();
 const formData = ref({
-  username: userStore.userInfo.id,
+  username: `${userStore.userInfo.name} (${userStore.userInfo.code})`,
   oldPassword: '',
   newPassword: '',
   rePassword: '',
