@@ -26,6 +26,7 @@
     "label": "epName"
   },
   "listSetting": {
+    "image": "src/assets/assets-enterprise.svg",
     "icon": "building-1",
     "codeField": "epCode",
     "nameField": "epName",

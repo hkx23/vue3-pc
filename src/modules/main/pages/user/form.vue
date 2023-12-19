@@ -69,7 +69,7 @@ const checkSameUserName = async (val) => {
 const validatePassword: (val: string) => Promise<boolean> = (val) =>
   new Promise((resolve) => {
     const timer = setTimeout(() => {
-      const reg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+{}|:"<>?]).{8,18}$/;
+      const reg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$;%^&*()_+{}|:"<>?]).{8,18}$/;
       resolve(reg.test(val));
       clearTimeout(timer);
     });

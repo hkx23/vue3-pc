@@ -27,6 +27,7 @@
     "label": "orgName"
   },
   "listSetting": {
+    "image": "src/assets/assets-factory.svg",
     "icon": "building-1",
     "codeField": "orgCode",
     "nameField": "orgName",
