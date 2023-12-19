@@ -12,28 +12,28 @@
     <t-tabs v-model="tabValue">
       <t-tab-panel :value="1" label="用户权限/隶属角色" :destroy-on-hide="false">
         <!-- #region 角色选择框 -->
-        <div class="main-page-content">
-          <!-- 查询组件  -->
-          <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
-          <!-- 表格组件  -->
-        </div>
-        <div class="main-page-content">
-          <cmp-table
-            ref="roleTableRef"
-            row-key="id"
-            max-height="60vh"
-            :buttons-visible="false"
-            :table-column="tableColumns"
-            :table-data="tableFilterData"
-            :loading="tableloading"
-            :show-pagination="false"
-            :header-affixed-top="true"
-            :page-affixed-top="true"
-            @refresh="conditionEnter"
-            @select-change="roleChange"
-          >
-          </cmp-table>
-        </div>
+        <cmp-container :full="true">
+          <cmp-card :span="12" :ghost="true">
+            <!-- 查询组件  -->
+            <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
+            <!-- 表格组件  -->
+          </cmp-card>
+          <cmp-card :span="12" :ghost="true">
+            <cmp-table
+              ref="roleTableRef"
+              row-key="id"
+              max-height="70vh"
+              :buttons-visible="false"
+              :table-column="tableColumns"
+              :table-data="tableFilterData"
+              :loading="tableloading"
+              :show-pagination="false"
+              @refresh="conditionEnter"
+              @select-change="roleChange"
+            >
+            </cmp-table>
+          </cmp-card>
+        </cmp-container>
         <!-- #endregion 角色选择框结束 -->
       </t-tab-panel>
       <t-tab-panel :value="2" label="用户权限/权限配置" :destroy-on-hide="false">
