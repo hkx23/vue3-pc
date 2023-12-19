@@ -15,10 +15,10 @@
               :expand-mutex="true"
               :height="600"
               :transition="true"
-              :expand-on-click-node="false"
               :icon="true"
               :scroll="treeScroll"
               :activable="true"
+              :expand-on-click-node="true"
               @click="treeClick"
               @active="onActive"
             >
@@ -158,7 +158,7 @@
         @submit="onWorkStationSubmit"
       >
         <t-form-item label="菜单模块" name="menuName">
-          <t-input v-model="formDataOne.menuName" disabled></t-input>
+          <t-input v-model="formDataOne.menuName" :disabled="!disableFlag"></t-input>
         </t-form-item>
         <t-form-item label="子模块编码" name="moduleCode">
           <t-input v-model="formDataOne.moduleCode" :disabled="disableFlag"></t-input>
@@ -256,8 +256,8 @@
         <!-- 第 5️⃣ 行数据 -->
         <t-form-item v-if="dialogListData !== 1" label="插件类型" name="moduleType">
           <t-select v-model="formDataTwo.moduleType" style="width: 150px; margin-right: 30px">
-            <t-option key="LOCAL" label="本地插件" value="LOCAL" />
-            <t-option key="URL" label="远程URl" value="URL" />
+            <t-option label="本地插件" value="LOCAL" />
+            <t-option label="远程URl" value="URL" />
           </t-select>
           <t-upload
             v-if="formDataTwo.moduleType === 'LOCAL'"
@@ -425,7 +425,7 @@ const treeData = ref<TreeNode[]>([]); // 树组件数据
 const tabListData = ref(0); // 多端选中数据
 const dialogListData = ref(1); // 模态框多端选中数据
 const clickNodeId = ref({ id: '', clientType: tabListData.value, pageNum: 1, pageSize: 10 });
-const tabTotal = ref(null); // 表格数据总页数
+const tabTotal = ref(0); // 表格数据总页数
 const isEditMode = ref(false); // false 表示默认为新增模式
 const isEditModeTwo = ref(false); // false 表示默认为新增模式
 const isEditModeThree = ref(false); // false 表示默认为新增模式
@@ -453,7 +453,7 @@ const formDataOne = ref({
 const formDataTwo = ref({
   parentClickTree: '', // 编辑模块，当前点击 父节点 的名称
   oneselfClickTree: '', // 自身节点名称，用于回填
-  moduleType: '', // 模块类型
+  moduleType: 'LOCAL', // 模块类型
   moduleVersion: null, // 模块版本号
   modulePackageIdentify: '', // 模块标识
   moduleLevel: 'LEAF',
@@ -835,9 +835,8 @@ const onQueryTree = (node: any) => {
 
 // 点击 右侧  编辑按钮
 const onEditRow = async (row: any) => {
-  console.log('🚀 ~ file: index.vue:780 ~ onEditRow ~ row:', row);
   files.value = [];
-  formDataTwo.value.moduleType = '';
+  formDataTwo.value.moduleType = row.moduleType;
   delFileClick.value = false;
   const decimalNumber = row.clientType; // 十进制数
   const binaryString = parseInt(decimalNumber.toString(2), 10); // 将十进制数转换为二进制字符串
@@ -915,9 +914,13 @@ const onDelConfirm = async () => {
 };
 
 // switch 开关事件
-const onSwitchChange = async (row: { moduleCode: any; id: any; name: any }, value: any) => {
+const onSwitchChange = async (row: any, value: any) => {
+  console.log('🚀 ~ file: index.vue:918 ~ onSwitchChange ~ row:', row);
+  const decimalNumber = row.clientType; // 十进制数
+  const binaryString = parseInt(decimalNumber.toString(2), 10); // 将十进制数转换为二进制字符串
   const isValue = value ? 1 : 0;
   await api.module.modify({
+    clientType: binaryString,
     state: isValue,
     moduleCode: row.moduleCode,
     moduleName: row.name,
@@ -1068,6 +1071,7 @@ const onAddTwoModule = async () => {
   formVisible.value = false;
 };
 
+// 文件上传
 const uploadFileData = async () => {
   await api.module.uploadFile(
     {
@@ -1094,7 +1098,6 @@ const onAddThreeModule = async () => {
       // data.append('file', files?.value[0]?.raw);
       // await http.upload('/api/main/module/uploadFile', data);
     }
-    await onGetTabData(); // 刷新表格
     MessagePlugin.success('编辑成功');
   } else {
     // 新增请求
