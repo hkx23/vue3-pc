@@ -459,8 +459,10 @@ const formDataTwo = ref({
 });
 
 // 表格拖拽
-const onDragSort = (params: any) => {
-  console.log('🚀 ~ file: index.vue:460 ~ onDragSort ~ params:', params);
+const onDragSort = async (params: any) => {
+  moduleData.value = params.newData;
+  const ids = params.newData.map((obj: any) => obj.id);
+  await api.module.sortThisLevelAll({ ids });
 };
 
 // 树节点高亮
@@ -515,7 +517,6 @@ const onUploadFile = async () => {
     packageName: formDataTwo?.value?.packageName,
     behaviorPath: formDataTwo?.value?.behaviorPath,
   });
-  console.log('🚀 ~ file: index.vue:491 ~ onUploadFile ~ res:', res);
   window.open(res);
   // try {
   //   // 假设这是文件的URL
@@ -707,7 +708,6 @@ const menuSonSelectData = async () => {
 // const sonID = ref(null);
 // const menuSonSelectDataTwo = async () => {
 //   const res = await api.module.getBackfill({ id: sonID.value });
-//   console.log('🚀 ~ file: index.vue:618 ~ menuSonSelectDataTwo ~ res:', res);
 // };
 
 // #顶部多端选择事件
@@ -753,7 +753,6 @@ const onAddFirstNode = async () => {
 
 // 点击 左侧 新增图标
 const onAddSecondNode = async (node: any) => {
-  console.log('🚀 ~ file: index.vue:700 ~ onAddSecondNode ~ dialogListData.value:', dialogListData.value);
   if (!node[`__tdesign_tree-node__`].parent?.label) {
     isEditMode.value = true;
     isEditModeTwo.value = true;
@@ -986,7 +985,6 @@ onMounted(async () => {
 // 获取树组件数据
 const onGetTreeData = async () => {
   const res = await api.module.getTree({ clientType: 1 }); // 获取节点数据
-  console.log('🚀 ~ file: index.vue:990 ~ onGetTreeData ~ res:', res);
   treeData.value = res.map(simplifyObject); // 转化数据保存
   const filteredLabels = filterLabels(treeData.value); // 转化数组
   treeArr.value = filteredLabels;
