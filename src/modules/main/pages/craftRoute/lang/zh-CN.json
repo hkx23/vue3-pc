@@ -36,6 +36,7 @@
     "stepNotRepeat": "步骤不能和其他节点重复",
     "notStartNode": "没有开始节点",
     "notMoreStartNode": "不允许有多个开始节点",
+    "notMoreEndNode": "不允许有多个结束节点",
     "notEndNode": "没有结束节点",
     "notProcessNode": "没有工序节点",
     "typeNotRepeat": "已有该类型，不能重复添加",
@@ -44,8 +45,10 @@
     "productRelationKeyword": "产品/工作中心",
     "productCategory": "产品类别",
     "processNodeNotSelect": "有工序节点没有选择工序",
-    "processNodeNotPre": "工序节点[{0}]没有上个节点",
-    "processNodeNotNext": "工序节点[{0}]没有下个节点",
-    "mitemOrCategoryMustSelectOne": "产品或产品类别必须选一个"
+    "processNodeNotPre": "工序节点[{0}]没有入口",
+    "processNodeNotNext": "工序节点[{0}]没有出口",
+    "mitemOrCategoryMustSelectOne": "产品或产品类别必须选一个",
+    "startNodeNotEdge": "开始节点没有连线",
+    "endNodeNotEdge": "结束节点没有连线"
   }
 }
