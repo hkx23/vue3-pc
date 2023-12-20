@@ -37,7 +37,11 @@
                   :placeholder="opt.placeholder || getPlaceholder(opt)"
                   @change="handleEvent(opt.event, state.form[opt.dataIndex])"
                   v-on="cEvent(opt)"
-                />
+                >
+                  <template #prefixIcon>
+                    <span style="width: 100%; padding: 8px 0 8px 8px; text-wrap: nowrap"> {{ opt.label }}</span>
+                  </template>
+                </component>
                 <!-- 树选择控件 -->
                 <component
                   :is="opt.comp"
