@@ -10,6 +10,7 @@ import { generateColorMap, insertThemeStylesheet } from '@/utils/color';
 const state = {
   ...STYLE_CONFIG,
   showSettingPanel: false,
+  showPasswordPanel: false,
   colorList: {},
   chartColors: LIGHT_CHART_COLORS,
 };

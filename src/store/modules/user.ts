@@ -8,6 +8,8 @@ import type { UserInfo } from '@/types/interface';
 interface OrgUser extends UserInfo {
   eid?: string;
   orgId?: string;
+  timeModified?: string;
+  timeLastPasswordChanged?: string;
   orgs?: OrgVO[];
 }
 const InitUserInfo: UserInfo = {
@@ -21,6 +23,20 @@ export const useUserStore = defineStore('user', {
   state: () => ({
     token: 'main_token', // 默认token不走权限
     userInfo: { ...InitUserInfo } as OrgUser,
+    orgInfo: {
+      orgId: '',
+      orgCode: '',
+      orgName: '',
+      workShopId: '',
+      workShopCode: '',
+      workShopName: '',
+      workCenterId: '',
+      workCenterCode: '',
+      workCenterName: '',
+      workStationId: '',
+      workStationCode: '',
+      workStationName: '',
+    },
   }),
   getters: {
     roles: (state) => {
@@ -57,6 +73,8 @@ export const useUserStore = defineStore('user', {
         name: res.displayName,
         code: res.userName,
         eid: res.eid,
+        timeModified: res.timeModified,
+        timeLastPasswordChanged: res.timeLastPasswordChanged,
         orgId,
         orgs: res.orgList,
       } as OrgUser;
@@ -78,6 +96,6 @@ export const useUserStore = defineStore('user', {
       permissionStore.initRoutes();
     },
     key: 'user',
-    paths: ['token', 'userInfo'],
+    paths: ['token', 'userInfo', 'orgInfo'],
   },
 });

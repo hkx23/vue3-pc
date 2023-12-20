@@ -66,7 +66,7 @@
       </template>
     </t-head-menu>
   </div>
-  <t-dialog v-model:visible="formVisible" header="修改密码" :on-confirm="onConfirmForm">
+  <t-dialog v-model:visible="settingStore.showPasswordPanel" header="修改密码" :on-confirm="onConfirmForm">
     <change-password-form ref="formRef" />
   </t-dialog>
 </template>
@@ -187,16 +187,22 @@ const onClickFullScreen = () => {
 };
 
 const formRef = ref(null);
-const formVisible = ref(false);
+// const formVisible = ref(false);
 const onChangePassword = () => {
   const { reset } = formRef.value;
   reset();
-  formVisible.value = true;
+  settingStore.updateConfig({
+    showPasswordPanel: true,
+  });
+  // formVisible.value = true;
 };
 const onConfirmForm = () => {
   const { submit } = formRef.value;
   submit().then(() => {
-    formVisible.value = false;
+    settingStore.updateConfig({
+      showPasswordPanel: false,
+    });
+    // formVisible.value = false;
   });
 };
 </script>
