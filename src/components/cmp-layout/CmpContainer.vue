@@ -40,13 +40,11 @@ watch(
 const setFull = () => {
   const elements = container.value.$el.querySelectorAll(':scope > .t-space-item') as HTMLInputElement[];
   if (elements.length === 0) return;
+
   if (props.fullSubIndex) {
     for (let i = elements.length - 1; i >= 0; i--) {
       const element = elements[i];
-      element.style.flex = props.fullSubIndex.indexOf(i) >= 0 ? '1' : 'none';
-      if (!element.innerText) {
-        element.parentNode.removeChild(element);
-      }
+      element.style.flex = props.fullSubIndex.lastIndexOf(i) >= 0 ? '1' : 'none';
     }
   } else {
     elements[elements.length - 1].style.flex = '1';
