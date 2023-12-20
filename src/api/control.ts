@@ -49,6 +49,7 @@ export interface WipCompletionLabelDTO {
    * @format date-time
    */
   timeCreate?: string;
+  onhandId?: string;
 }
 
 /** 通用响应类 */
@@ -1362,37 +1363,6 @@ export interface ResultPagingDataLabelVO {
   data?: PagingDataLabelVO;
 }
 
-export interface MoScheduleSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /**
-   * 计划开始日期
-   * @format date-time
-   */
-  planDateStart?: string;
-  /**
-   * 计划结束日期
-   * @format date-time
-   */
-  planDateEnd?: string;
-  moId?: string;
-  workshopId?: string;
-  workcenterId?: string;
-  mitemId?: string;
-  /** 排产单状态 */
-  scheStatus?: string;
-  /** 是否仅显示已打印 */
-  isFinishDisplay?: boolean;
-}
-
 /** 显示过站采集实体 */
 export interface BarcodeWipCollectVO {
   id?: string;
@@ -1443,6 +1413,7 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   isCompleted?: number;
+  onhandId?: string;
   /** 状态 */
   status?: string;
   /** 扫码类型(SCANTEXT,KEYPART) */
@@ -1497,17 +1468,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  isState?: boolean;
-  workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  isState?: boolean;
+  stateName?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1647,6 +1618,7 @@ export interface BarcodeWipVO {
    * @format int32
    */
   isCompleted?: number;
+  onhandId?: string;
   /** 状态 */
   status?: string;
   /** 排产工单 */
@@ -1686,15 +1658,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
-  workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  isState?: boolean;
+  stateName?: string;
   defectCodeStr?: string;
 }
 
@@ -2190,6 +2162,37 @@ export interface ResultAtomicContext {
   message?: string;
   /** 原子模型定义-Context上下文定义 */
   data?: AtomicContext;
+}
+
+export interface MoScheduleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 计划开始日期
+   * @format date-time
+   */
+  planDateStart?: string;
+  /**
+   * 计划结束日期
+   * @format date-time
+   */
+  planDateEnd?: string;
+  moId?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  mitemId?: string;
+  /** 排产单状态 */
+  scheStatus?: string;
+  /** 是否仅显示已打印 */
+  isFinishDisplay?: boolean;
 }
 
 /** 通用响应类 */
@@ -3059,7 +3062,7 @@ export const api = {
      *
      * @tags 在制品箱包关系表
      * @name ReleaseAll
-     * @summary 解除箱包关系
+     * @summary 解除所有箱包关系
      * @request DELETE:/pkgRelation/releaseAll
      * @secure
      */
@@ -3462,22 +3465,6 @@ export const api = {
     getBarcodeRuleList: () =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/label/getBarcodeRuleList`, {
         method: 'GET',
-      }),
-  },
-  deliveryCardFeign: {
-    /**
-     * No description
-     *
-     * @tags 配送卡Feign表
-     * @name GetMoScheduleList
-     * @summary 查询工单排产
-     * @request POST:/deliveryCardFeign/getMoScheduleList
-     * @secure
-     */
-    getMoScheduleList: (data: MoScheduleSearch) =>
-      http.request<ResultPagingDataMoScheduleVO['data']>(`/api/control/deliveryCardFeign/getMoScheduleList`, {
-        method: 'POST',
-        body: data as any,
       }),
   },
   barcodeWipCollect: {
@@ -3904,6 +3891,22 @@ export const api = {
      */
     excuteAtomic: (data: AtomicContext) =>
       http.request<ResultAtomicContext['data']>(`/api/control/atomicCheckBarcodeRepeat/excuteAtomic`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  deliveryCardOfControl: {
+    /**
+     * No description
+     *
+     * @tags 配送卡Feign
+     * @name GetMoScheduleList
+     * @summary 查询工单排产
+     * @request POST:/DeliveryCardOfControl/getMoScheduleList
+     * @secure
+     */
+    getMoScheduleList: (data: MoScheduleSearch) =>
+      http.request<ResultPagingDataMoScheduleVO['data']>(`/api/control/DeliveryCardOfControl/getMoScheduleList`, {
         method: 'POST',
         body: data as any,
       }),
