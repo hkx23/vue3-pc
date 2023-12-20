@@ -290,6 +290,185 @@ export interface ResultPagingDataLong {
   data?: PagingDataLong;
 }
 
+/** 通用响应类 */
+export interface ResultListWipRepairDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WipRepairDtlVO[] | null;
+}
+
+/** 维修单 */
+export type WipRepairDtlVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  wipRepairId?: string;
+  defectCodeId?: string;
+  /** 缺陷原因 */
+  defectReason?: string;
+  /** 缺陷责任别 */
+  defectBlame?: string;
+  /** 维修人 */
+  userNameRepair?: string;
+  /** 维修人名称 */
+  displayNameRepair?: string;
+  /** 维修结束时间 */
+  datetimeRepaired?: string;
+  wipRepairMethodId?: string;
+  /** 产品条形码 */
+  scanBarcode?: string;
+  /** 缺陷代码编码 */
+  defectCode?: string;
+  /** 缺陷代码 */
+  defectName?: string;
+  /** 缺陷处理方法编码 */
+  defectDealMethodCode?: string;
+  /** 缺陷处理方法 */
+  defectDealMethodName?: string;
+} | null;
+
+/** 维修单查询 */
+export interface WipRepairSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  /** 排产工单 */
+  moScheCode?: string;
+  /** 开始时间 */
+  beginDate?: string;
+  /** 结束时间 */
+  endDate?: string;
+}
+
+/** 响应数据 */
+export type PagingDataWipRepairVO = {
+  list?: WipRepairVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWipRepairVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWipRepairVO;
+}
+
+/** 维修单 */
+export interface WipRepairVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  /** 产品条形码 */
+  scanBarcode?: string;
+  moScheId?: string;
+  /**
+   * 维修次数
+   * @format int32
+   */
+  repairTimes?: number;
+  /**
+   * 不合格次数
+   * @format int32
+   */
+  ngTimes?: number;
+  fromRoutingProcessId?: string;
+  fromWorkstationId?: string;
+  /** 维修开始时间 */
+  datetimeRepairing?: string;
+  /** 维修结束时间 */
+  datetimeRepaired?: string;
+  userRepairId?: string;
+  returnRoutingProcessId?: string;
+  /** 维修结果 */
+  repairResult?: string;
+  /** 状态 */
+  status?: string;
+  mitemId?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  moScheCode?: string;
+  /** 来源工艺路线工序编码 */
+  fromRoutingProcessCode?: string;
+  /** 来源工艺路线工序 */
+  fromRoutingProcessName?: string;
+  /** 来源工站编码 */
+  fromWorkstationCode?: string;
+  /** 来源工站 */
+  fromWorkstationName?: string;
+  userNameRepair?: string;
+  displayNameRepair?: string;
+  returnRoutingProcessCode?: string;
+  returnRoutingProcessName?: string;
+  retentionTime?: string;
+}
+
 /** 完工入库单据实体 */
 export interface ScanLabelDTO {
   /** 业务类型编码 */
@@ -484,8 +663,8 @@ export interface CommonSearch {
   filters?: Filter[];
 }
 
-/** 工单排产表 */
-export interface MoSchedule {
+/** 显示工单投料的视图 */
+export interface MoScheduleVO {
   id?: string;
   /**
    * 创建时间
@@ -593,17 +772,25 @@ export interface MoSchedule {
   routingRevisionId?: string;
   /** 排产工单 */
   scheCode?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uomName?: string;
+  statusName?: string;
+  moCode?: string;
+  routingCode?: string;
+  routingName?: string;
 }
 
 /** 响应数据 */
-export type PagingDataMoSchedule = {
-  list?: MoSchedule[];
+export type PagingDataMoScheduleVO = {
+  list?: MoScheduleVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataMoSchedule {
+export interface ResultPagingDataMoScheduleVO {
   /**
    * 响应代码
    * @format int32
@@ -612,8 +799,119 @@ export interface ResultPagingDataMoSchedule {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataMoSchedule;
+  data?: PagingDataMoScheduleVO;
 }
+
+/** 工单排产表 */
+export type MoSchedule = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moId?: string;
+  mitemId?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 销售订单 */
+  soNo?: string;
+  /**
+   * 销售订单行号
+   * @format int32
+   */
+  soSeq?: number;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 下线数量
+   * @format int32
+   */
+  offlineQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 入库数量
+   * @format int32
+   */
+  stockinQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
+   * 工单关闭时间
+   * @format date-time
+   */
+  datetimeMoClose?: string;
+  warehouseId?: string;
+  parentMoId?: string;
+  workshopId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 状态 */
+  status?: string;
+  /** 工单来源 */
+  moSource?: string;
+  workcenterId?: string;
+  /**
+   * 排产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  routingRevisionId?: string;
+  /** 排产工单 */
+  scheCode?: string;
+} | null;
 
 /** 通用响应类 */
 export interface ResultMoSchedule {
@@ -884,7 +1182,7 @@ export interface LabelSearch {
   workshopId?: string;
   workcenterId?: string;
   mitemId?: string;
-  /** 工单状态 */
+  /** 排产单状态 */
   scheStatus?: string;
   /** 是否仅显示已打印 */
   isFinishDisplay?: boolean;
@@ -1064,6 +1362,37 @@ export interface ResultPagingDataLabelVO {
   data?: PagingDataLabelVO;
 }
 
+export interface MoScheduleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 计划开始日期
+   * @format date-time
+   */
+  planDateStart?: string;
+  /**
+   * 计划结束日期
+   * @format date-time
+   */
+  planDateEnd?: string;
+  moId?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  mitemId?: string;
+  /** 排产单状态 */
+  scheStatus?: string;
+  /** 是否仅显示已打印 */
+  isFinishDisplay?: boolean;
+}
+
 /** 显示过站采集实体 */
 export interface BarcodeWipCollectVO {
   id?: string;
@@ -1168,17 +1497,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
+  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  stateName?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  isState?: boolean;
+  stateName?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1208,8 +1537,8 @@ export interface WipKeyPartCollectVO {
   scanQty?: number;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -1357,15 +1686,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
+  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  isState?: boolean;
+  stateName?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   defectCodeStr?: string;
 }
 
@@ -1678,9 +2007,10 @@ export interface BarcodePkgSearch {
 
 /** 显示包装条码管理 */
 export interface BarcodePkgVO {
+  moScheduleId?: string;
   /** 排产单编码 */
   scheCode?: string;
-  /** 排产单状态 */
+  /** 排产单状态名称 */
   scheStatusName?: string;
   /**
    * 计划生产日期
@@ -1703,7 +2033,6 @@ export interface BarcodePkgVO {
   workcenterId?: string;
   /** 工作中心名称 */
   workcenterName?: string;
-  moScheduleId?: string;
   /** 包装类型名称 */
   packTypeName?: string;
   /** 包装类型TAG名称 */
@@ -1764,8 +2093,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -2522,6 +2851,38 @@ export const api = {
         body: data as any,
       }),
   },
+  wipRepairDtl: {
+    /**
+     * No description
+     *
+     * @tags 产品维修明细表
+     * @name GetListByWipRepairId
+     * @summary 获返工工单
+     * @request POST:/wipRepairDtl/GetListByWipRepairId
+     * @secure
+     */
+    getListByWipRepairId: (query: { wipRepairId: string }) =>
+      http.request<ResultListWipRepairDtlVO['data']>(`/api/control/wipRepairDtl/GetListByWipRepairId`, {
+        method: 'POST',
+        params: query,
+      }),
+  },
+  wipRepair: {
+    /**
+     * No description
+     *
+     * @tags 产品维修表
+     * @name Search
+     * @summary 获返工工单
+     * @request POST:/wipRepair/items
+     * @secure
+     */
+    search: (data: WipRepairSearch) =>
+      http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepair/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   productPackRuleMap: {
     /**
      * No description
@@ -2719,7 +3080,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataMoSchedule['data']>(`/api/control/moSchedule/items`, {
+      http.request<ResultPagingDataMoScheduleVO['data']>(`/api/control/moSchedule/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3101,6 +3462,22 @@ export const api = {
     getBarcodeRuleList: () =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/label/getBarcodeRuleList`, {
         method: 'GET',
+      }),
+  },
+  deliveryCardFeign: {
+    /**
+     * No description
+     *
+     * @tags 配送卡Feign表
+     * @name GetMoScheduleList
+     * @summary 查询工单排产
+     * @request POST:/deliveryCardFeign/getMoScheduleList
+     * @secure
+     */
+    getMoScheduleList: (data: MoScheduleSearch) =>
+      http.request<ResultPagingDataMoScheduleVO['data']>(`/api/control/deliveryCardFeign/getMoScheduleList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   barcodeWipCollect: {

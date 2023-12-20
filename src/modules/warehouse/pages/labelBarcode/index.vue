@@ -1,0 +1,965 @@
+<template>
+  <div class="main-page">
+    <!-- ################# 工单 表格数据 ###################### -->
+    <div class="main-page-content">
+      <t-tabs v-model="tagValue" @change="switchTab">
+        <t-tab-panel :value="0" label="来料标签打印" :destroy-on-hide="false">
+          <!-- 查询组件  -->
+          <cmp-query :opts="opts" label-width="100" @submit="conditionEnter">
+            <t-checkbox v-model="queryCondition.showState" allow-uncheck>仅显示未打印完成</t-checkbox></cmp-query
+          >
+          <t-checkbox v-model="queryCondition.showState" allow-uncheck>仅显示未打印完成</t-checkbox>
+          <t-col :span="12" flex="auto">
+            <cmp-table
+              v-model:pagination="pageUI"
+              row-key="id"
+              :table-column="groupColumns"
+              :table-data="moDataList.list"
+              :loading="loading"
+              :total="moTabTotal"
+              style="margin-top: 10px"
+              @row-click="onRowClick"
+              @refresh="onRefresh"
+            >
+              <template #button>
+                <t-row align="middle" style="margin-top: 10px">
+                  <t-col :span="3">
+                    <t-button @click="generateBracode">生成</t-button>
+                    <t-button theme="default" :disabled="printButtonOp" @click="onPrint">打印</t-button>
+                  </t-col>
+                  <t-col>条码规则： </t-col>
+                  <t-col :span="3">
+                    <t-select v-model="printMode.productPackRuleId" style="width: 90%">
+                      <t-option
+                        v-for="item in onPrintRulesList.list"
+                        :key="item.id"
+                        :label="item.packRuleName"
+                        :value="item.id"
+                      />
+                    </t-select>
+                  </t-col>
+                  <t-col>打印摸板： </t-col>
+                  <t-col :span="3">
+                    <t-select v-model="printMode.printTempId" style="width: 90%">
+                      <t-option
+                        v-for="item in onPrintTemplateList.list"
+                        :key="item.id"
+                        :label="item.tmplName"
+                        :value="item.id"
+                      />
+                    </t-select>
+                  </t-col>
+                </t-row>
+              </template>
+            </cmp-table>
+          </t-col>
+          <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck>仅显示已生成</t-radio>
+          <div class="main-page-content">
+            <cmp-table
+              v-model:pagination="pageUIBracode"
+              row-key="barcodePkgId"
+              :loading="loading"
+              select-on-row-click
+              :selected-row-keys="selectedRowKeys"
+              :table-column="barcodeColumns"
+              :table-data="moBelowList.list"
+              :total="barcodeTotal"
+              @select-change="onPrintChange"
+              @refresh="onRefresh"
+            >
+            </cmp-table>
+          </div>
+        </t-tab-panel>
+        <t-tab-panel :value="1" label="物料标签管理" :destroy-on-hide="false">
+          <!-- 查询组件  -->
+          <cmp-query :opts="mitemBarcodeManageOp" label-width="100" @submit="managePageSearchClick" />
+          <t-col :span="12" flex="auto">
+            <cmp-table
+              v-model:pagination="pageUIMannage"
+              row-key="barcodePkgId"
+              select-on-row-click
+              :selected-row-keys="selectedManageRowKeys"
+              :loading="loading"
+              :table-column="pkgBarcodeManageColumns"
+              :table-data="pkgManageDataList.list"
+              :total="pkgManageTabTotal"
+              @select-change="onProductRightFetchData"
+              @refresh="onRefresh"
+            >
+              <template #operate>
+                <t-space>
+                  <t-row align="middle" style="margin-top: 10px">
+                    <t-col>打印摸板： </t-col>
+                    <t-col>
+                      <t-select v-model="printMode.printTempId" style="width: 90%">
+                        <t-option
+                          v-for="item in onPrintTemplateList.list"
+                          :key="item.id"
+                          :label="item.tmplName"
+                          :value="item.id"
+                        />
+                      </t-select>
+                    </t-col>
+                    <t-button theme="default" :disabled="isEnable" @click="onReprint"> 补打 </t-button>
+                    <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 作废 </t-button>
+                    <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 拆分 </t-button>
+                    <t-button theme="default"> 导出 </t-button>
+                  </t-row>
+                </t-space>
+              </template>
+              <template #operations="{ row }">
+                <t-link theme="primary" @click.stop="openLog(row)"> 日志 </t-link>
+              </template>
+            </cmp-table>
+          </t-col>
+        </t-tab-panel>
+      </t-tabs>
+      <!-- % 补打， 作废 dialog 弹窗 -->
+      <t-dialog
+        v-model:visible="formVisible"
+        :confirm-btn="buttonSwitch"
+        :header="diaLogTitle"
+        width="40%"
+        @confirm="onConfirm"
+      >
+        <t-form ref="formRef" :data="reprintDialog">
+          <t-form-item v-if="reprintVoidSwitch" label-width="80px" label="补打原因" name="reprintData">
+            <t-select v-model="reprintDialog.reprintData">
+              <t-option
+                v-for="item in reprintDataList.list"
+                :key="item.label"
+                :label="item.label"
+                :value="item.value"
+              />
+            </t-select>
+          </t-form-item>
+          <t-form-item v-if="!reprintVoidSwitch" label-width="80px" label="作废" name="reprintData">
+            <t-select v-model="reprintDialog.reprintData">
+              <t-option
+                v-for="item in cancellationDataList.list"
+                :key="item.label"
+                :label="item.label"
+                :value="item.value"
+              />
+            </t-select>
+          </t-form-item>
+          <t-form-item
+            v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+            label="补打原因"
+            label-width="80px"
+            name="restsData"
+          >
+            <t-textarea
+              v-model="reprintDialog.restsData"
+              placeholder="请输入补打原因"
+              name="description"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+            />
+          </t-form-item>
+          <t-form-item
+            v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+            label="作废原因"
+            label-width="80px"
+            name="restsData"
+          >
+            <t-textarea
+              v-model="reprintDialog.restsData"
+              placeholder="请输入作废原因"
+              name="description"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+            />
+          </t-form-item>
+        </t-form>
+      </t-dialog>
+      <t-dialog v-model:visible="logInterfaceVisible" :cancel-btn="null" :confirm-btn="null" header="日志" width="60%">
+        <cmp-table
+          ref="tableRef"
+          v-model:pagination="pageUIDay"
+          row-key="id"
+          :table-column="logInterface"
+          :table-data="dayTabData.list"
+          :total="totalDay"
+          @refresh="onRightFetchData"
+        ></cmp-table>
+      </t-dialog>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import dayjs from 'dayjs';
+import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, onMounted, reactive, Ref, ref } from 'vue';
+
+import { api } from '@/api/control';
+import { api as apiMain } from '@/api/main';
+import CmpTable from '@/components/cmp-table/index.vue';
+import { useLoading } from '@/hooks/modules/loading';
+import { usePage } from '@/hooks/modules/page';
+
+const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
+const { loading, setLoading } = useLoading();
+const { pageUI } = usePage(); // 分页工具
+const { pageUI: pageUIBracode } = usePage(); // 分页工具
+const { pageUI: pageUIMannage } = usePage(); // 分页工具
+const { pageUI: pageUIDay } = usePage(); // 分页工具
+// $打印上 表格数据
+const moDataList = reactive({ list: [] });
+// $打印上 表格数据
+const moBelowList = reactive({ list: [] });
+const moTabTotal = ref(0);
+const offsetButton = ref(0);
+// $管理上 表格数据
+const pkgManageDataList = reactive({ list: [] });
+const pkgManageTabTotal = ref(0);
+const barcodeTotal = ref(0);
+const dataSummary = ref('0/0/0');
+const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
+const diaLogTitle = ref(''); // 弹窗标题
+const buttonSwitch = ref(''); // 确认按钮title
+const logInterfaceVisible = ref(false); // 控制日志 Dialog 显示隐藏
+const printButtonOp = ref(true); // 控制打印按钮禁用
+const isEnable = ref(true); // 控制打印按钮禁用
+// 日志界面 表格数据
+const dayTabData = reactive({ list: [] });
+const selectedRowKeys: Ref<any[]> = ref([]); // 打印数组
+const selectedManageRowKeys: Ref<any[]> = ref([]); // 打印数组
+const isReprintCancellation = ref(false);
+// 补打，作废 DiaLog 数据
+const reprintDialog = ref({
+  reprintData: '',
+  restsData: '',
+});
+// 点击 打印事件
+const onPrint = async () => {
+  // 校验是否已经选择条码规则
+  if (!printMode.value.printTempId) {
+    // 提示错误信息
+    MessagePlugin.warning('请选择打印模板！');
+    return;
+  }
+  await api.barcodePkg.printBarcode({ ids: selectedRowKeys.value });
+  handleTabClick(tabValue.value); // 刷新数据
+  MessagePlugin.success('打印成功');
+};
+// 补打，作废确定
+const onConfirm = async () => {
+  let reason = '';
+  if (reprintDialog.value.restsData) {
+    reason = reprintDialog.value.restsData;
+  } else {
+    reason = reprintDialog.value.reprintData;
+  }
+  if (isReprintCancellation.value) {
+    await api.barcodePkg.reprintBarcode({
+      ids: selectedManageRowKeys.value,
+      reason,
+    });
+    selectedManageRowKeys.value = [];
+    MessagePlugin.success('补打成功');
+  } else {
+    await api.barcodePkg.cancellationBarcode({
+      ids: selectedManageRowKeys.value,
+      reason,
+    });
+    await fetchBracodeManageTable(); // 刷新表格数据
+    MessagePlugin.success('作废成功');
+  }
+  await fetchBracodeManageTable(); // 刷新表格数据
+  formVisible.value = false;
+};
+
+// 打印选择 框 行 事件
+const onPrintChange = (value: any) => {
+  selectedRowKeys.value = value;
+  printButtonOp.value = !(selectedRowKeys.value.length > 0);
+};
+
+const totalDay = ref(0);
+// 打印按钮模型初始化
+const printMode = ref({
+  productPackRuleId: '',
+  printTempId: '',
+  createNum: 0,
+  packQty: 0,
+  packType: '',
+  moScheduleId: '',
+  generalQty: 0,
+  planQty: 0,
+});
+
+// 生成按钮模型初始化
+const generateBracode = async () => {
+  const residueQty = printMode.value.planQty - printMode.value.generalQty;
+  // 校验规格数量是否为正整数
+  if (
+    !Number.isInteger(printMode.value.packQty) ||
+    printMode.value.packQty <= 0 ||
+    printMode.value.createNum > residueQty
+  ) {
+    // 提示错误信息
+    MessagePlugin.warning(`本次生成数量需要为小于已生成数的正整数`);
+    return;
+  }
+
+  // 校验是否已经选择条码规则
+  if (!printMode.value.productPackRuleId) {
+    // 提示错误信息
+    MessagePlugin.warning('请选择条码规则！');
+    return;
+  }
+  await api.barcodePkg.generateBarcode(printMode.value);
+  handleTabClick(tabValue.value);
+  MessagePlugin.success('生成成功');
+};
+
+// 打印上方查询初始化
+const queryCondition = ref({
+  showState: true,
+  mitemId: '',
+  scheStatus: '',
+  datetimePlanStart: '',
+  datetimePlanEnd: '',
+  workshopId: '',
+  workCenterId: '',
+  pageNum: 1,
+  pageSize: 10,
+  moScheduleId: '',
+});
+// 打印下方查询初始化
+const queryBelowCondition = ref({
+  isCreated: true,
+  pageNum: 1,
+  packType: '',
+  pageSize: 10,
+  moScheduleId: '',
+});
+// 管理上方查询初始化
+const manageQueryCondition = ref({
+  moId: '',
+  mitemId: '',
+  barcodeStatus: '',
+  barcodeType: '',
+  datetimePlanStart: '',
+  timeCreatedStart: '',
+  datetimePlanEnd: '',
+  timeCreatedEnd: '',
+  workshopId: '',
+  workCenterId: '',
+  pkgBarcode: '',
+  printTmplId: '',
+  pageNum: 1,
+  pageSize: 10,
+});
+// 包装规则查询初始化
+// tab 表格?
+const tabValue = ref(0);
+const tagValue = ref(0);
+const barcodeWipStatusNameArr = ref([]);
+const onProductRightFetchData = (value: any, context: any) => {
+  barcodeWipStatusNameArr.value = context.selectedRowData.map((item: any) => item.barcodeWipStatusName);
+  selectedManageRowKeys.value = value;
+  isEnable.value = !(selectedManageRowKeys.value.length > 0);
+};
+// 补打 点击事件
+const reprintVoidSwitch = ref(false); // 控制
+const onReprint = () => {
+  formRef.value.reset({ type: 'empty' });
+  const specificStatus = barcodeWipStatusNameArr.value.some((item) => item === '已生成' || item === '已报废');
+  if (specificStatus) {
+    MessagePlugin.warning('存在条码状态为已生成、已报废状态，不允许补打');
+    return;
+  }
+  isReprintCancellation.value = true;
+  formVisible.value = true;
+  reprintVoidSwitch.value = true;
+  diaLogTitle.value = '补打';
+  buttonSwitch.value = '补打';
+};
+
+// 作废 点击事件
+const onCancellation = () => {
+  formRef.value.reset({ type: 'empty' });
+  const specificStatus = barcodeWipStatusNameArr.value.every((item) => item === '已生成' || item === '已打印');
+  if (!specificStatus) {
+    MessagePlugin.warning('存在条码状态不为已生成、已打印状态，不允许作废！');
+    return;
+  }
+  isReprintCancellation.value = false;
+  formVisible.value = true;
+  reprintVoidSwitch.value = false;
+  diaLogTitle.value = '作废';
+  buttonSwitch.value = '作废';
+};
+// 按钮偏移量
+const calculateButtonOffset = () => {
+  offsetButton.value = Math.max(0, dataSummary.value.length - 20);
+};
+
+// # 条码规则刷新按钮
+const onRefresh = async () => {
+  await fetchMoTable(); // 获取 条码规则表格 数据
+  await fetchBracodeManageTable(); // 获取 条码管理 数据
+};
+const logNodeCode = ref(null);
+// 日志 点击 事件
+const openLog = async (row: any) => {
+  logNodeCode.value = row.pkgBarcode;
+  console.log(row.value);
+  logInterfaceVisible.value = true; // 控制界面显示隐藏
+  const res = await api.barcodePkg.getBarcodePkgLog({
+    pkgBarcode: row.pkgBarcode,
+    pageNum: pageUIDay.value.page,
+    pageSize: pageUIDay.value.rows,
+  });
+  dayTabData.list = res.list;
+  totalDay.value = res.total;
+};
+// 获取 打印规则 下拉数据
+const onPrintRulesList = reactive({ list: [] });
+// 打印规则查询条件
+const printRuCondition = ref({
+  packType: '',
+});
+const onPrintRulesData = async () => {
+  const res = await api.barcodePkg.getBarcodeRuleList(printRuCondition.value);
+  onPrintRulesList.list = res.list;
+};
+// 获取 打印摸板 下拉数据
+const onPrintTemplateList = reactive({ list: [] });
+const onPrintTemplateData = async () => {
+  const res = await api.barcodePkg.getPrintTmplList(printRuCondition.value);
+  onPrintTemplateList.list = res.list;
+};
+// 日志界面 表格数据
+const logInterface: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'pkgBarcode',
+    title: '条码',
+    align: 'center',
+    width: '180',
+  },
+  {
+    colKey: 'pkgBarcodeStatusName',
+    title: '条码状态',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'creatorName',
+    title: '操作类型',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '原因',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '操作人',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '操作时间',
+    align: 'center',
+    width: '100',
+  },
+];
+
+// #### 条码规则 表头
+const groupColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'row-select',
+    type: 'single',
+    align: 'center',
+    width: '30',
+  },
+  {
+    colKey: 'scheStatusName',
+    title: '送货单',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'datetimeSche',
+    title: '供应商编码',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'datetimeSche',
+    title: '供应商名称',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'mitemCode',
+    title: '物料编码',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'mitemName',
+    title: '物料名称',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'mitemName',
+    title: '物料名称',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'planQty',
+    title: '批次号',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'uomName',
+    title: '数量',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'workshopName',
+    title: '已生成数量',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'workshopName',
+    title: '已打印数量',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'workcenterName',
+    title: '最小包装数',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'workcenterName',
+    title: '单位',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'workcenterName',
+    title: '收货人',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'workcenterName',
+    title: '收货时间',
+    align: 'center',
+    width: '130',
+  },
+];
+// ####条码 表头
+const barcodeColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'row-select',
+    type: 'multiple',
+    width: 46,
+  },
+  {
+    colKey: 'pkgBarcode',
+    title: '条码',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'pkgBarcodeStatusName',
+    title: '条码状态',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'uomName',
+    title: '单位',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'creatorName',
+    title: '生成人',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '生成时间',
+    align: 'center',
+    width: '130',
+  },
+];
+const pkgBarcodeManageColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'row-select',
+    type: 'multiple',
+    width: 30,
+  },
+  {
+    colKey: 'pkgBarcode',
+    title: '条码',
+    align: 'center',
+    width: '180',
+  },
+  {
+    colKey: 'pkgBarcodeStatusName',
+    title: '条码状态',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'datetimeSche',
+    title: '送货单',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'workshopName',
+    title: '供应商编码',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'workcenterName',
+    title: '供应商名称',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'mitemCode',
+    title: '物料编码',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'mitemName',
+    title: '物料名称',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'mitemName',
+    title: '批次号',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'qty',
+    title: '数量',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'uomName',
+    title: '单位',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'subPkgBarcodeTypeName',
+    title: '仓库',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'subPkgBarcodeTypeName',
+    title: '货区',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'subPkgBarcodeTypeName',
+    title: '货位',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'creatorName',
+    title: '生成人',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '生成时间',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'operations',
+    title: '操作',
+    align: 'center',
+    fixed: 'right',
+    width: '130',
+    cell: 'actionSlot', // 引用具名插槽
+  },
+];
+
+const switchTab = (selectedTabIndex: any) => {
+  if (selectedTabIndex === 1) {
+    fetchBracodeManageTable();
+  } else {
+    fetchMoTable();
+  }
+};
+// 打印界面点击查询按钮
+const conditionEnter = (data: any) => {
+  queryCondition.value = data;
+  queryCondition.value.scheStatus = data.scheStatus;
+  const [datetimePlanStart, datetimePlanEnd] = data.datetimePlanRange;
+  queryCondition.value.datetimePlanStart = datetimePlanStart;
+  queryCondition.value.datetimePlanEnd = datetimePlanEnd;
+  fetchMoTable();
+};
+// 管理界面点击查询按钮
+const managePageSearchClick = (data: any) => {
+  manageQueryCondition.value = data;
+  const [datetimePlanStart, datetimePlanEnd] = data.datetimePlanRange;
+  const [timeCreatedStart, timeCreatedEnd] = data.timeCreatedRange;
+  manageQueryCondition.value.datetimePlanStart = datetimePlanStart;
+  manageQueryCondition.value.datetimePlanEnd = datetimePlanEnd;
+  manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
+  manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
+  fetchBracodeManageTable();
+};
+// 右表格数据刷新
+const onRightFetchData = async () => {
+  const res = await api.barcodePkg.getBarcodePkgLog({
+    pkgBarcode: logNodeCode.value,
+    pageNum: pageUIDay.value.page,
+    pageSize: pageUIDay.value.rows,
+  });
+  dayTabData.list = res.list;
+  totalDay.value = res.total;
+};
+
+// 加载工单数据表格
+const fetchMoTable = async () => {
+  setLoading(true);
+  try {
+    queryCondition.value.pageNum = pageUI.value.page;
+    queryCondition.value.pageSize = pageUI.value.rows;
+    const data = (await api.barcodePkg.getMoScheduleList(queryCondition.value)) as any;
+    const { list } = data;
+    moDataList.list = list;
+    moTabTotal.value = data.total;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// 加载条码管理数据表格
+const fetchBracodeManageTable = async () => {
+  setLoading(true);
+  try {
+    manageQueryCondition.value.pageNum = pageUIMannage.value.page;
+    manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
+    const data = (await api.barcodePkg.getBarcodePkgManagerList(manageQueryCondition.value)) as any;
+    const { list } = data;
+    pkgManageDataList.list = list;
+    pkgManageTabTotal.value = data.total;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoading(false);
+  }
+};
+// moCode: '',
+//   mitemCode: '',
+//   moStatus: '',
+//   datetimePlanStart: '',
+//   workshopCode: '',
+//   workCenterCode: '',
+//   onlyDisplayCreated: true,
+
+// 查询组件
+const opts = computed(() => {
+  return {
+    datetimePlanRange: {
+      label: '收货日期',
+      comp: 't-date-range-picker',
+      defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+    },
+    moId: {
+      label: '供应商',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'supplier',
+        showTitle: false,
+      },
+    },
+    mitemId: {
+      label: '物料',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'mitem',
+        showTitle: false,
+      },
+    },
+    scheStatus: {
+      label: '送货单',
+      comp: 't-input',
+      defaultVal: '',
+    },
+    scheStatus1: {
+      label: '批次号',
+      comp: 't-input',
+      defaultVal: '',
+    },
+    showState: {
+      label: '',
+      labelWidth: '10',
+      event: 'checkbox',
+      defaultValue: true,
+      slotName: 'showState',
+    },
+  };
+});
+
+// 查询组件
+const mitemBarcodeManageOp = computed(() => {
+  return {
+    datetimePlanRange: {
+      label: '生成日期',
+      comp: 't-date-range-picker',
+      defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+    },
+    workshopCode: {
+      label: '供应商',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'supplier',
+        showTitle: false,
+      },
+    },
+    mitemCode: {
+      label: '物料',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'mitem',
+        showTitle: false,
+      },
+    },
+    bracodeState: {
+      label: '条码状态',
+      comp: 't-select',
+      event: 'single',
+      defaultVal: '',
+      bind: {
+        options: bracodeStatusOption.value,
+      },
+    },
+    bracodeCode: {
+      label: '条码',
+      comp: 't-input',
+      defaultVal: '',
+    },
+    T: {
+      label: '送货单',
+      comp: 't-input',
+      defaultVal: '',
+    },
+  };
+});
+
+// 获取 补打原因 下拉数据
+const reprintDataList = reactive({ list: [] });
+const onReprintSelextData = async () => {
+  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'REPRINT_REASON' });
+  reprintDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
+};
+// 获取 作废原因 下拉数据
+const cancellationDataList = reactive({ list: [] });
+const onCancellationSelextData = async () => {
+  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'SCRAP_REASON' });
+  cancellationDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
+};
+
+const moStatusOption = ref([]);
+apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' }).then((data) => {
+  moStatusOption.value = data;
+});
+const bracodeTypeOption = ref([]);
+apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_TYPE' }).then((data) => {
+  bracodeTypeOption.value = data;
+});
+const bracodeStatusOption = ref([]);
+apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_WIP_STATUS' }).then((data) => {
+  bracodeStatusOption.value = data;
+});
+const tabList = reactive({ list: [] });
+// ################ 初始渲染
+onMounted(async () => {
+  await fetchMoTable(); // 获取 物料编码 表格数据
+  await onPrintTemplateData(); // 获取 打印模板下拉数据
+  await onReprintSelextData(); // 获取补打原因列表
+  await onCancellationSelextData(); // 获取作废原因列表
+});
+
+const handleTabClick = (selectedTabIndex: any) => {
+  if (tabList.list.length > selectedTabIndex - 1 && selectedTabIndex > 0) {
+    const selectedTab = tabList.list[selectedTabIndex - 1];
+    printRuCondition.value.packType = selectedTab.packType;
+    console.log(selectedTab.packType);
+    queryBelowCondition.value.moScheduleId = queryCondition.value.moScheduleId;
+    queryBelowCondition.value.packType = selectedTab.packType;
+    printMode.value.packType = selectedTab.packType;
+    printMode.value.generalQty = selectedTab.generalQty;
+    printMode.value.planQty = selectedTab.planQty;
+    dataSummary.value = `${selectedTab.planQty}/${selectedTab.generalQty}/${selectedTab.displayQty}`;
+    console.log(dataSummary.value);
+    calculateButtonOffset();
+    printMode.value.createNum = selectedTab.planQty - selectedTab.generalQty;
+    printMode.value.packQty = selectedTab.packQty;
+    api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {
+      moBelowList.list = data.list;
+      barcodeTotal.value = data.total;
+    });
+    onPrintRulesData();
+    onPrintTemplateData();
+  }
+};
+const onRowClick = ({ row }) => {
+  tabValue.value = 1;
+  queryCondition.value.moScheduleId = row.moScheduleId;
+  printMode.value.moScheduleId = row.moScheduleId;
+  queryCondition.value.pageNum = pageUIBracode.value.page;
+  queryCondition.value.pageSize = pageUIBracode.value.rows;
+  api.barcodePkg.getTagList(queryCondition.value).then((data) => {
+    tabList.list = data.list;
+    console.log(tabList.list);
+    handleTabClick(1);
+  });
+};
+</script>
+
+<style lang="less" scoped>
+.align-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+</style>
