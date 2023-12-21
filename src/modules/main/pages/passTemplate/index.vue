@@ -57,7 +57,14 @@
           </ul>
         </div>
 
-        <t-tabs v-else v-model="barcodeCategoryTab" :addable="true" @add="onClickAddTab" @remove="onChangeRemoveTab">
+        <t-tabs
+          v-else
+          v-model="barcodeCategoryTab"
+          :addable="true"
+          @change="onChangeTab"
+          @add="onClickAddTab"
+          @remove="onChangeRemoveTab"
+        >
           <t-tab-panel
             v-for="item in panelData"
             :key="item.value"
@@ -66,15 +73,15 @@
             :removable="true"
           >
             <t-steps
-              v-if="item.data?.detailList.length > 0"
-              v-draggable="[item.data.detailList as unknown as Ref<any[]>, { animation: 150 }]"
+              v-if="item?.detailList?.length > 0"
+              v-draggable="[item.detailList as unknown as Ref<any[]>, { animation: 150 }]"
               layout="vertical"
               separator="dashed"
               readonly
               class="steps"
             >
               <t-step-item
-                v-for="(detailItem, index) in item.data.detailList"
+                v-for="(detailItem, index) in item.detailList"
                 :key="detailItem.businessUnitId"
                 :title="getAtomInfo(detailItem.businessUnitId).apiName"
                 :content="getAtomInfo(detailItem.businessUnitId).apiDesc"
@@ -82,7 +89,7 @@
               >
                 <template #extra>
                   <div class="stepRemoveBtn">
-                    <t-button shape="square" variant="text" @click="item.data?.detailList.splice(index, 1)">
+                    <t-button shape="square" variant="text" @click="item?.detailList.splice(index, 1)">
                       <template #icon><close-icon /></template>
                     </t-button>
                   </div>
@@ -95,13 +102,18 @@
               </t-step-item>
             </t-steps>
             <div style="margin-top: 24px; text-align: center">
-              <t-button @click="onClickSaveData(item.data?.detailList)">保存</t-button>
+              <t-button @click="onClickSaveData(item?.detailList)">保存</t-button>
               <t-button
-                v-if="item.data?.detailList.length > 0"
+                v-if="item?.detailList?.length > 0"
                 theme="default"
-                @click="onClickSaveTemplate(item.data?.detailList)"
+                @click="onClickSaveTemplate(item?.detailList)"
                 >添加到模板</t-button
               >
+              <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDeleteHeader(item.mainId)">
+                <t-button theme="default">
+                  {{ t('common.button.delete') }}
+                </t-button>
+              </t-popconfirm>
             </div>
           </t-tab-panel>
         </t-tabs>
@@ -244,6 +256,7 @@ const atomById = (id: string) => {
 const headerCategoryData = ref<{ [key: string]: string[] }>({});
 // 获取已维护工序
 const fetchHeaderMaintained = async () => {
+  headerCategoryData.value = {};
   const list = await api.processBusinessLib.list();
   for (const item of list) {
     const key = item.processId === '0' ? item.routingProcessId : item.processId;
@@ -270,18 +283,13 @@ const fetchDetail = async (processId: string, barcodeCategory: string) => {
   if (currPanelData == null) return;
 
   if (detailList == null || detailList.length === 0) {
-    currPanelData.data = {
-      mainId: await api.processBusinessLib.add(params),
-      detailList: [],
-    };
+    currPanelData.mainId = await api.processBusinessLib.add(params);
+    currPanelData.detailList = [];
     return;
   }
 
-  const newItem = {
-    mainId: detailList[0].processBusinessLibId,
-    detailList,
-  };
-  currPanelData.data = newItem;
+  currPanelData.mainId = detailList[0].processBusinessLibId;
+  currPanelData.detailList = detailList;
 };
 
 const filterText = ref();
@@ -310,11 +318,12 @@ const treeKeys = { value: 'id', label: 'title' };
 const barcodeCategoryTab = ref('');
 const newTabSelectedValue = ref('');
 const newTabSelectedVisible = ref(false);
-const panelData = ref<
-  { label: string; value: string; data?: { mainId: string; detailList: ProcessBusinessLibDtl[] } }[]
->([]);
+const panelData = ref<{ label: string; value: string; mainId?: string; detailList?: ProcessBusinessLibDtl[] }[]>([]);
 const onClickAddTab = () => {
   newTabSelectedVisible.value = true;
+};
+const onChangeTab = async (val) => {
+  await fetchDetail(currProcessId.value, val);
 };
 const onChangeNewTab = (option) => {
   nextTick(() => {
@@ -343,10 +352,8 @@ const onClickProcess = (id: string, type: string) => {
   if (id === currProcessId.value) return;
   currProcessId.value = id;
   currProcessType.value = type;
-
   const panel = [];
   const categoryList = headerCategoryData.value[id];
-
   if (categoryList && categoryList.length > 0) {
     for (let i = 0; i < categoryList.length; i++) {
       const item = categoryList[i];
@@ -373,16 +380,16 @@ const getAtomInfo = (id: string) => {
 const onClickAtom = (item: BusinessUnit) => {
   const currPanelData = panelData.value.find((t) => t.value === barcodeCategoryTab.value);
   if (currPanelData == null) return;
-  if (currPanelData.data.detailList.findIndex((t) => t.businessUnitId === item.id) >= 0) return;
-  currPanelData.data.detailList.push({
-    processBusinessLibId: currPanelData.data.mainId,
+  if (currPanelData.detailList.findIndex((t) => t.businessUnitId === item.id) >= 0) return;
+  currPanelData.detailList.push({
+    processBusinessLibId: currPanelData.mainId,
     businessUnitId: item.id,
   });
 };
 
 const onClickSaveData = async (list: ProcessBusinessLibDtl[]) => {
   await api.processBusinessLibDtl.addList(list);
-  fetchDetail(currProcessId.value, barcodeCategoryTab.value);
+  await fetchDetail(currProcessId.value, barcodeCategoryTab.value);
   fetchHeaderMaintained();
   MessagePlugin.success(t('common.message.saveSuccess'));
 };
@@ -425,11 +432,11 @@ const onClickTemplate = async (item: BusinessTmplLib) => {
       const list = await api.businessTmplLib.listByIds(item);
       const currPanelData = panelData.value.find((t) => t.value === barcodeCategoryTab.value);
       if (currPanelData == null) return;
-      currPanelData.data.detailList = [];
+      currPanelData.detailList = [];
       for (let i = 0; i < list.length; i++) {
         const detailItem = list[i];
-        currPanelData.data.detailList.push({
-          processBusinessLibId: currPanelData.data.mainId,
+        currPanelData.detailList.push({
+          processBusinessLibId: currPanelData.mainId,
           businessUnitId: detailItem.businessUnitId,
         });
       }
@@ -443,6 +450,17 @@ const onClickTemplate = async (item: BusinessTmplLib) => {
 const onClickDeleteTemplate = async (item: BusinessTmplLib) => {
   await api.businessTmplLib.batchDelete([item.id]);
   await fetchTemplate();
+  MessagePlugin.success(t('common.message.deleteSuccess'));
+};
+
+const onClickDeleteHeader = async (mainId) => {
+  if (!mainId) return;
+  await api.processBusinessLib.batchDelete([mainId]);
+  panelData.value = panelData.value.filter((t) => t.value !== barcodeCategoryTab.value);
+  if (panelData.value.length > 0) {
+    barcodeCategoryTab.value = panelData.value[0].value;
+  }
+  fetchHeaderMaintained();
   MessagePlugin.success(t('common.message.deleteSuccess'));
 };
 </script>

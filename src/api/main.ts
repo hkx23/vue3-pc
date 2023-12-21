@@ -3067,14 +3067,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
-  isBatchName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isInProcessName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3241,8 +3241,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4618,10 +4618,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6756,6 +6756,21 @@ export const api = {
      */
     listByIds: (data: ProcessBusinessLib) =>
       http.request<ResultListProcessBusinessLibDtl['data']>(`/api/main/processBusinessLib/listByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/processBusinessLib/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/processBusinessLib/batchDelete`, {
         method: 'POST',
         body: data as any,
       }),
