@@ -30,6 +30,7 @@
     "reworkProcess":"重投工序",
     "tip":"提示",
     "checkreworkRouting":"请先维护工单的工艺路线",
+    "checkPresetting":"请先配置返工前配置项后，点击确定",
     "scanqty": "已扫"
   }
 }
