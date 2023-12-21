@@ -614,7 +614,7 @@ onMounted(() => {
   .pack-dtl-button {
     display: flex;
     justify-content: flex-start;
-    padding-bottom: 6px;
+    margin-bottom: 8px;
   }
 }
 

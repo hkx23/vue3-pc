@@ -4,7 +4,7 @@
       <cmp-card flex="300px">
         <cmp-container :full="true" :full-sub-index="[1]">
           <cmp-card :ghost="true" :span="12">
-            <t-input v-model="page.keyword" placeholder="请输入" :autofocus="true" size="large" @enter="onEnter">
+            <t-input v-model="page.keyword" placeholder="请输入" :autofocus="true" @enter="onEnter">
               <template #prefixIcon>
                 <icon name="search" class="black-icon" />
               </template>
@@ -656,10 +656,12 @@ const onWorkStationSubmit = async (context: { validateResult: boolean }) => {
 
 .selected-background {
   color: #fff;
+  background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
 }
 
 .listOll {
   .selected-background {
+    background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
     .black-icon {
       color: #fff;
     }

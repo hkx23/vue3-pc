@@ -511,12 +511,12 @@ const rules: FormRules<Data> = {
   right: var(--td-comp-size-l);
   bottom: var(--td-comp-size-s);
 }
-// 启动按钮样式更改
-:deep(.t-switch.t-is-checked:hover) {
-  background: var(--td-success-color-4);
-}
+// // 启动按钮样式更改
+// :deep(.t-switch.t-is-checked:hover) {
+//   background: var(--td-success-color-4);
+// }
 
-:deep(.t-switch.t-is-checked) {
-  background: var(--td-success-color-4);
-}
+// :deep(.t-switch.t-is-checked) {
+//   background: var(--td-success-color-4);
+// }
 </style>

@@ -1,9 +1,9 @@
 <template>
-  <div class="container">
-    <t-card class="card">
-      <cmp-query :opts="opts" is-expansion label-width="100px" @submit="conditionEnter" />
-    </t-card>
-    <t-card class="card" :header="t('craftRoute.craftRoute')" :bordered="false" header-bordered>
+  <cmp-container :full="false">
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
+    </cmp-card>
+    <cmp-card :span="12" :header="t('craftRoute.craftRoute')" header-bordered>
       <cmp-table
         v-model:pagination="pageUI"
         :table-column="craftRouteColumn"
@@ -33,8 +33,8 @@
           </t-space>
         </template>
       </cmp-table>
-    </t-card>
-    <t-card class="card" :header="t('craftRoute.productRelation')" :bordered="false" header-bordered>
+    </cmp-card>
+    <cmp-card :span="12" :header="t('craftRoute.productRelation')" header-bordered>
       <cmp-table
         v-model:selected-row-keys="routingMapKeys"
         v-model:pagination="productPage"
@@ -70,31 +70,31 @@
           }}</t-link>
         </template>
       </cmp-table>
-    </t-card>
-    <edit
-      :id="editId"
-      v-model="eidtRoutingVisible"
-      :title="
-        isAdd
-          ? t('common.dialog.header.add', [t('craftRoute.craftRoute')])
-          : t('common.dialog.header.edit', [t('craftRoute.craftRoute')])
-      "
-      :is-copy="isCopy"
-      @submit="getRouting"
-    ></edit>
-    <enable
-      v-model="enableVisible"
-      :form-data="enableFormData"
-      :routing-type-option="craftRouteTypeOption"
-      @submit="getRouting"
-    ></enable>
-    <product-relation
-      v-model="productVisible"
-      :routing-code="selectedRoutingCode"
-      :routing-name="selectedRoutingName"
-      @submit="getProductRelation"
-    ></product-relation>
-  </div>
+    </cmp-card>
+  </cmp-container>
+  <edit
+    :id="editId"
+    v-model="eidtRoutingVisible"
+    :title="
+      isAdd
+        ? t('common.dialog.header.add', [t('craftRoute.craftRoute')])
+        : t('common.dialog.header.edit', [t('craftRoute.craftRoute')])
+    "
+    :is-copy="isCopy"
+    @submit="getRouting"
+  ></edit>
+  <enable
+    v-model="enableVisible"
+    :form-data="enableFormData"
+    :routing-type-option="craftRouteTypeOption"
+    @submit="getRouting"
+  ></enable>
+  <product-relation
+    v-model="productVisible"
+    :routing-code="selectedRoutingCode"
+    :routing-name="selectedRoutingName"
+    @submit="getProductRelation"
+  ></product-relation>
 </template>
 
 <script setup lang="ts">
@@ -384,23 +384,23 @@ const setProductRelationDefault = ($event: any, id: string) => {
 </script>
 
 <style lang="less" scoped>
-.container {
-  margin: 20px;
+// .container {
+//   margin: 20px;
 
-  .card {
-    background-color: var(--td-bg-color-container);
-    border-radius: var(--td-radius-medium);
-    margin-bottom: 5px;
+//   .card {
+//     background-color: var(--td-bg-color-container);
+//     border-radius: var(--td-radius-medium);
+//     margin-bottom: 5px;
 
-    :deep(.t-form__controls-content) {
-      width: 200px;
+//     :deep(.t-form__controls-content) {
+//       width: 200px;
 
-      .t-date-picker,
-      .t-input-number,
-      .t-color-picker__trigger {
-        width: 200px;
-      }
-    }
-  }
-}
+//       .t-date-picker,
+//       .t-input-number,
+//       .t-color-picker__trigger {
+//         width: 200px;
+//       }
+//     }
+//   }
+// }
 </style>

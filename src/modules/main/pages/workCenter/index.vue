@@ -41,6 +41,7 @@
         row-key="id"
         :columns="columns"
         :data="workData"
+        resizable
         :tree="treeConfig"
         :max-height="boxHeight"
         :loading="loading"
