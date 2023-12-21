@@ -1,6 +1,6 @@
 {
   "productRule": {
-    "packRule": "包装规则代码/名称",
+    "packRule": "包装规则",
     "packRuleCode": "包装规则代码",
     "packRuleName": "包装规则名称",
     "packType": "包装类型",
@@ -9,7 +9,7 @@
     "mitemCategory": "物料类型",
     "checkPackMitemSave": "请选择物料",
     "checkPackMitemCategorySave": "请选择物料类型",
-    "packRelationType":"关联维度",
+    "packRelationType": "关联维度",
     "parentLevelName": "层级",
     "mitem": "物料"
   }

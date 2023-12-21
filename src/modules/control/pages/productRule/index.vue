@@ -1,9 +1,10 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <cmp-query :opts="opts" label-width="100" is-expansion @submit="conditionEnter" />
-    </div>
-    <div class="main-page-content">
+  <cmp-container :full="true" :full-sub-index="[1, 2]">
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
+    </cmp-card>
+    <cmp-card :span="12">
+      <!-- ################# 处理组表格数据 ###################### -->
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -12,6 +13,7 @@
         :table-data="tableDataProductPackRule"
         :loading="loading"
         :total="dataTotal"
+        :fixed-height="true"
         select-on-row-click
         :header-affixed-top="true"
         @refresh="fetchTable"
@@ -29,8 +31,10 @@
           </t-button>
         </template>
       </cmp-table>
-    </div>
-    <div class="main-page-content">
+    </cmp-card>
+    <cmp-card :span="12">
+      <!-- ################# 子数据数据 ###################### -->
+
       <t-row>
         <t-col :span="5">
           <div class="pack-dtl-table">
@@ -108,53 +112,47 @@
           </cmp-table></t-col
         >
       </t-row>
-    </div>
-  </div>
+    </cmp-card>
+  </cmp-container>
 
   <!--包装规则主表弹框-->
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="formHeader"
-      :on-confirm="onConfirmForm"
-      width="50%"
-      :close-on-overlay-click="false"
-    >
-      <t-space direction="vertical" style="width: 98%">
-        <form-pack-rule ref="formRef" :is-add="isAdd" :row="selectPackRuleRow"></form-pack-rule>
-      </t-space>
-    </t-dialog>
-  </div>
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="formHeader"
+    :on-confirm="onConfirmForm"
+    width="50%"
+    :close-on-overlay-click="false"
+  >
+    <t-space direction="vertical" style="width: 98%">
+      <form-pack-rule ref="formRef" :is-add="isAdd" :row="selectPackRuleRow"></form-pack-rule>
+    </t-space>
+  </t-dialog>
 
   <!--包装规则主表弹框-->
-  <div>
-    <t-dialog
-      v-model:visible="formDtlVisible"
-      :header="formHeader"
-      :on-confirm="onConfirmFormRuleDtl"
-      width="50%"
-      :close-on-overlay-click="false"
-    >
-      <t-space direction="vertical" style="width: 98%">
-        <form-pack-rule-dtl ref="formDtlRef" :is-add="isAdd" :row="selectPackRuleRowDtl"></form-pack-rule-dtl>
-      </t-space>
-    </t-dialog>
-  </div>
+  <t-dialog
+    v-model:visible="formDtlVisible"
+    :header="formHeader"
+    :on-confirm="onConfirmFormRuleDtl"
+    width="50%"
+    :close-on-overlay-click="false"
+  >
+    <t-space direction="vertical" style="width: 98%">
+      <form-pack-rule-dtl ref="formDtlRef" :is-add="isAdd" :row="selectPackRuleRowDtl"></form-pack-rule-dtl>
+    </t-space>
+  </t-dialog>
 
   <!--物料弹框-->
-  <div>
-    <t-dialog
-      v-model:visible="formMitemVisible"
-      :header="formHeader"
-      :on-confirm="onConfirmFormMitem"
-      width="50%"
-      :close-on-overlay-click="false"
-    >
-      <t-space direction="vertical" style="width: 98%">
-        <form-pack-rule-mitem ref="formMitemRef" :is-add="isAdd"></form-pack-rule-mitem>
-      </t-space>
-    </t-dialog>
-  </div>
+  <t-dialog
+    v-model:visible="formMitemVisible"
+    :header="formHeader"
+    :on-confirm="onConfirmFormMitem"
+    width="50%"
+    :close-on-overlay-click="false"
+  >
+    <t-space direction="vertical" style="width: 98%">
+      <form-pack-rule-mitem ref="formMitemRef" :is-add="isAdd"></form-pack-rule-mitem>
+    </t-space>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -211,7 +209,7 @@ const opts = computed(() => {
       label: t('productRule.packRule'),
       comp: 't-input',
       defaultVal: '',
-      placeholder: t('common.placeholder.input', [`${t('productRule.packRule')}}`]),
+      placeholder: t('common.placeholder.input', [`${t('productRule.packRule')}`]),
     },
     mitemCategory: {
       label: t('business.main.mitemCategoryCode'),

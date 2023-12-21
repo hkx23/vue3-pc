@@ -93,7 +93,7 @@
         </div>
       </t-form>
     </t-col>
-    <t-col flex="0 1 250px" style="text-align: end">
+    <t-col v-if="showButton" flex="0 1 250px" style="text-align: end">
       <t-space direction="horizontal" class="search-space search-form__button" size="large">
         <div class="">
           <t-space size="small" :align="'end'">
@@ -129,6 +129,10 @@ const props = defineProps({
     type: Object,
     required: true,
     default: () => ({}),
+  },
+  showButton: {
+    type: Boolean,
+    default: true,
   },
   labelWidth: {
     type: String,
