@@ -440,13 +440,12 @@ export interface WipRepairSearch {
   category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
-  moScheId?: string;
+  /** 排产工单 */
+  moScheCode?: string;
   /** 开始时间 */
   beginDate?: string;
   /** 结束时间 */
   endDate?: string;
-  /** 已返修 */
-  isRepair?: string;
 }
 
 /** 响应数据 */
@@ -526,7 +525,6 @@ export interface WipRepairVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  /** 排产工单编码 */
   moScheCode?: string;
   /** 来源工艺路线工序编码 */
   fromRoutingProcessCode?: string;
@@ -540,8 +538,6 @@ export interface WipRepairVO {
   displayNameRepair?: string;
   returnRoutingProcessCode?: string;
   returnRoutingProcessName?: string;
-  /** 维修状态 */
-  repairStatusName?: string;
   retentionTime?: string;
 }
 
@@ -691,9 +687,9 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
   /** 扫描状态 */
@@ -1805,17 +1801,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
   stateName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  isState?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1921,15 +1917,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
   stateName?: string;
-  isState?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  isState?: boolean;
   defectCodeStr?: string;
 }
 
@@ -2328,8 +2324,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */

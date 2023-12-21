@@ -28,7 +28,7 @@
             </t-link>
             <!-- 删除 -->
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onRowDelete(row)">
-              <t-link hover="color" theme="primary" @click="onRowEdit(row)">
+              <t-link hover="color" theme="primary">
                 <t-tag theme="primary" variant="light">{{ t('common.button.delete') }}</t-tag>
               </t-link>
             </t-popconfirm>
@@ -104,7 +104,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
     title: `${t('business.main.serialNumber')}`,
-    align: 'right',
     width: '60px',
   },
   { title: `${t('role.roleCode')}`, colKey: 'roleCode' },
@@ -116,7 +115,6 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'op',
     title: `${t('common.button.operation')}`,
     width: '230px',
-    align: 'left',
     fixed: 'right',
   },
 ];

@@ -1,5 +1,5 @@
 <template>
-  <t-form layout="inline" :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
+  <t-form :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
     <t-form-item label="工序编码" required-mark>
       <t-input v-model="formData.processCode" :disabled="!(formData.operateTpye === 'add')" />
     </t-form-item>

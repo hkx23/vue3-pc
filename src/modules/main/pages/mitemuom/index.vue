@@ -1,35 +1,17 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <t-row justify="space-between">
-        <t-col>
-          <div style="display: flex; align-items: center">
-            <div style="width: 130px">{{ t('mitemuom.unitName') }}：</div>
-            <t-input
-              v-model="queryData"
-              label=""
-              :placeholder="t('common.placeholder.input')"
-              clearable
-              size="medium"
-            />
-          </div>
-        </t-col>
-        <t-col>
-          <div class="btn-left">
-            <t-button @click="onRefresh">{{ t('common.button.query') }}</t-button>
-            <t-button theme="default" @click="onReset">{{ t('common.button.reset') }}</t-button>
-          </div>
-        </t-col>
-      </t-row>
-    </div>
-
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <!-- 查询组件  -->
+      <cmp-query :opts="opts" @submit="conditionEnter" @reset="onReset" />
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
         :table-data="tableData"
         :table-column="columns"
         row-key="id"
+        :fixed-height="true"
         :total="total"
         @refresh="fetchData"
         @select-change="rehandleSelectChange"
@@ -42,67 +24,47 @@
           <t-button theme="default">{{ t('common.button.import') }}</t-button>
         </template>
         <template #actionSlot="{ row }">
-          <t-button size="small" variant="text" @click="onEditRow(row)">
-            <icon name="edit-1" class="black-icon" />
-          </t-button>
-          <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirm">
-            <t-button size="small" variant="text" @click="onDeleteRow(row)">
-              <icon name="delete" class="black-icon" />
-            </t-button>
-          </t-popconfirm>
+          <t-space>
+            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+
+            <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirm">
+              <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
+          </t-space>
         </template>
       </cmp-table>
-    </div>
+    </cmp-card>
+  </cmp-container>
 
-    <!-- 模态框/对话框 -->
-    <t-dialog
-      v-model:visible="showDialog"
-      :header="diaTitle"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      width="40%"
-      @close="onDialogClose"
+  <!-- 模态框/对话框 -->
+  <t-dialog
+    v-model:visible="showDialog"
+    :header="diaTitle"
+    @close="onDialogClose"
+    @cancel="onSecondaryReset"
+    @confirm="submitForm"
+  >
+    <t-form
+      ref="formRef"
+      :loading="loading"
+      :rules="FORM_RULES"
+      :data="formData"
+      scroll-to-first-error="smooth"
+      label-align="right"
+      label-width="150px"
+      label-placement="left"
+      @submit="onSubmit"
     >
-      <t-form
-        ref="formRef"
-        :loading="loading"
-        :rules="FORM_RULES"
-        :data="formData"
-        layout="inline"
-        scroll-to-first-error="smooth"
-        label-align="right"
-        @submit="onSubmit"
-      >
-        <!-- 计量单位名称： -->
-        <t-row class="form-customer-row">
-          <t-col>
-            <t-form-item :label="t('mitemuom.unitName')" name="uomName">
-              <t-input v-model="formData.uomName" :placeholder="t('common.placeholder.input')"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 计量单位名称： -->
-        <t-row class="form-customer-row">
-          <t-col>
-            <t-form-item :label="t('mitemuom.unitSymbol')" name="uom">
-              <t-input
-                v-model="formData.uom"
-                :placeholder="t('common.placeholder.input')"
-                :disabled="isdisables"
-              ></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 控制盒子 -->
-        <t-row style="margin-left: auto">
-          <!-- 取消按钮 -->
-          <t-button theme="default" variant="base" @click="onSecondaryReset">{{ t('common.button.cancel') }}</t-button>
-          <!-- 确认按钮 -->
-          <t-button theme="primary" type="submit">{{ t('common.button.confirm') }}</t-button>
-        </t-row>
-      </t-form>
-    </t-dialog>
-  </div>
+      <!-- 计量单位名称： -->
+      <t-form-item :label="t('mitemuom.unitName')" name="uomName">
+        <t-input v-model="formData.uomName" :placeholder="t('common.placeholder.input')"></t-input>
+      </t-form-item>
+
+      <t-form-item :label="t('mitemuom.unitSymbol')" name="uom">
+        <t-input v-model="formData.uom" :placeholder="t('common.placeholder.input')" :disabled="isdisables"></t-input>
+      </t-form-item>
+    </t-form>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -110,12 +72,11 @@ import {
   CustomValidateResolveType,
   FormInstanceFunctions,
   FormRules,
-  Icon,
   MessagePlugin,
   PrimaryTableCol,
   TableRowData,
 } from 'tdesign-vue-next';
-import { onMounted, Ref, ref } from 'vue';
+import { computed, onMounted, Ref, ref } from 'vue';
 
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -153,6 +114,22 @@ const onRefresh = () => {
     onGetMiteMuom();
   }
 };
+
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  queryData.value = data.queryData;
+  onRefresh();
+};
+const opts = computed(() => {
+  return {
+    queryData: {
+      label: t('mitemuom.unitName'),
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: t('common.placeholder.input'),
+    },
+  };
+});
 
 // 重置按钮
 const onReset = () => {
@@ -240,7 +217,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'action',
     title: t('mitemuom.operation'), // 操作
-    width: 160,
+    width: 180,
     align: 'center',
     cell: 'actionSlot', // 引用具名插槽
   },
@@ -326,6 +303,9 @@ const onDeleteMiteMuom = async () => {
 // 单个数据实现删除逻辑
 const onDeleteRow = async (row: TableRow) => {
   selectedRowKeys.value.push(row.id);
+};
+const submitForm = () => {
+  formRef.value.submit();
 };
 
 // 单个数据点击气泡框确认后，删除数据

@@ -1,72 +1,44 @@
 <template>
-  <t-card class="list-card-container">
-    <header>
-      <div>
-        <workPermission v-if="permission" @permission-show="onPermission"></workPermission>
-      </div>
-      <div v-if="!permission" class="list-card-container">
-        <t-card :bordered="false" gutter>
-          <t-row justify="space-between">
-            <t-col :span="2"
-              ><t-input
-                v-model="inputValue.workstationWord"
-                label="工站代码/名称："
-                placeholder="请输入工序代码/名称"
-              ></t-input>
-            </t-col>
-            <t-col :span="2">
-              <t-input v-model="inputValue.userWord" label="用户：" placeholder="请输入用户"></t-input>
-            </t-col>
-            <t-col :span="2"
-              ><t-input
-                v-model="inputValue.workcenterWord"
-                label="工作中心："
-                placeholder="请输入工作中心/名称"
-              ></t-input>
-            </t-col>
-            <t-col :span="2"
-              ><t-input v-model="inputValue.processWord" label="工序：" placeholder="请输入工序"> </t-input>
-            </t-col> </t-row
-        ></t-card>
-        <t-card :bordered="false" style="margin: 10px 0">
-          <t-row justify="space-between">
-            <t-col :span="2">
-              <t-button @click="onHandelPermission">权限分配</t-button>
-              <t-popconfirm content="确认删除吗" @confirm="onDeleteAll">
-                <t-button theme="default" variant="base">批量删除</t-button>
-              </t-popconfirm>
-            </t-col>
-            <t-col :span="2" style="display: flex; justify-content: flex-end">
-              <t-button @click="onSearch">查询</t-button>
-              <t-button theme="default" variant="base" @click="onResetting">重置</t-button></t-col
-            >
-          </t-row>
-        </t-card>
-        <cmp-table
-          v-model:pagination="pageUI"
-          :loading="loading"
-          row-key="id"
-          :total="total"
-          :table-column="column"
-          :table-data="permissionData"
-          :selected-row-keys="selectedRowKeys"
-          @refresh="onfetchData"
-          @select-change="rehandleSelectChange"
-        >
-          <template #op="{ row }">
-            <t-popconfirm content="确认删除吗" @confirm="onDelete(row.id)">
-              <icon name="delete"></icon>
-            </t-popconfirm>
-          </template>
-        </cmp-table>
-      </div></header
-  ></t-card>
+  <workPermission v-if="permission" @permission-show="onPermission"></workPermission>
+
+  <cmp-container v-if="!permission" :full="true">
+    <cmp-card :span="12">
+      <!-- 查询组件  -->
+      <cmp-query :opts="opts" @submit="conditionEnter" @reset="onResetting" />
+    </cmp-card>
+    <cmp-card :span="12">
+      <cmp-table
+        v-model:pagination="pageUI"
+        :loading="loading"
+        row-key="id"
+        :total="total"
+        :table-column="column"
+        :fixed-height="true"
+        :table-data="permissionData"
+        :selected-row-keys="selectedRowKeys"
+        @refresh="onfetchData"
+        @select-change="rehandleSelectChange"
+      >
+        <template #button>
+          <t-button @click="onHandelPermission">权限分配</t-button>
+          <t-popconfirm content="确认删除吗" @confirm="onDeleteAll">
+            <t-button theme="default" variant="base">批量删除</t-button>
+          </t-popconfirm>
+        </template>
+        <template #op="{ row }">
+          <t-popconfirm content="确认删除吗" @confirm="onDelete(row.id)">
+            <t-link theme="primary">删除</t-link>
+          </t-popconfirm>
+        </template>
+      </cmp-table>
+    </cmp-card>
+  </cmp-container>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Icon, MessagePlugin } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { MessagePlugin } from 'tdesign-vue-next';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/control';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -178,6 +150,43 @@ const column = ref([
 ]);
 // 表格数据
 const permissionData = ref([]);
+
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  inputValue.value.workstationWord = data.workstationWord;
+  inputValue.value.userWord = data.userWord;
+  inputValue.value.workcenterWord = data.workcenterWord;
+  inputValue.value.processWord = data.processWord;
+  onSearch();
+};
+const opts = computed(() => {
+  return {
+    workstationWord: {
+      label: '工站代码/名称',
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: '请输入工序代码/名称',
+    },
+    userWord: {
+      label: '用户',
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: '请输入用户',
+    },
+    workcenterWord: {
+      label: '工作中心',
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: '请输入工作中心/名称',
+    },
+    processWord: {
+      label: '工序',
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: '请输入工序',
+    },
+  };
+});
 // 请求
 const onfetchData = async () => {
   try {
@@ -219,15 +228,10 @@ const onDeleteAll = async () => {
 // 单独删除
 const onDelete = async (id) => {
   try {
-    const deleteId = await api.workstationAuth.remove({ id });
-    // @ts-ignore
-    if (deleteId.code !== 200) {
-      MessagePlugin.error('删除失败');
-    } else {
-      MessagePlugin.success('删除成功');
-    }
+    await api.workstationAuth.remove({ id });
+    MessagePlugin.success('删除成功');
   } catch (e) {
-    // console.log(e);
+    MessagePlugin.error('删除失败');
   }
   onfetchData();
 };
@@ -249,7 +253,6 @@ const onSearch = async () => {
   });
   permissionData.value = res.list;
   total.value = res.total;
-  MessagePlugin.success('查询成功');
 };
 // 重置
 const onResetting = () => {

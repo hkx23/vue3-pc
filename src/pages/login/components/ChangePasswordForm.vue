@@ -1,7 +1,7 @@
 <template>
   <t-form ref="formRef" :data="formData" :rules="FORM_RULES" style="padding-bottom: 16px">
     <t-form-item label="用户名">
-      {{ formData.username }}
+      {{ username }}
     </t-form-item>
     <t-form-item label="旧密码" name="oldPassword">
       <t-input v-model="formData.oldPassword" type="password"></t-input>
@@ -16,7 +16,7 @@
 </template>
 <script setup lang="ts">
 import { FormInstanceFunctions, FormRule, MessagePlugin } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { changePassword } from '@/api/portal';
 import { useUserStore } from '@/store';
@@ -24,8 +24,10 @@ import { useUserStore } from '@/store';
 const userStore = useUserStore();
 
 const formRef = ref<FormInstanceFunctions>();
+const username = computed(() => {
+  return `${userStore.userInfo.name} (${userStore.userInfo.code})`;
+});
 const formData = ref({
-  username: userStore.userInfo.id,
   oldPassword: '',
   newPassword: '',
   rePassword: '',
@@ -55,6 +57,7 @@ const submit = async () => {
         newPassword: formData.value.newPassword,
       }).then(() => {
         MessagePlugin.success('保存成功');
+        userStore.getUserInfo();
         resolve(formData);
       });
     });

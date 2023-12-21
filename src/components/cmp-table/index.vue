@@ -39,11 +39,12 @@
         <t-table
           ref="tableRef"
           :vertical-align="'middle'"
-          hover
+          :hover="hover"
           multiple-sort
           resizable
           lazy-load
-          stripe
+          :stripe="stripe"
+          :active-row-type="activeRowType"
           :row-key="rowKey"
           :columns="columns"
           :data="finalTableData"
@@ -161,6 +162,18 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  activeRowType: {
+    type: String as () => 'multiple' | 'single',
+    default: '',
+  },
+  hover: {
+    type: Boolean,
+    default: true,
+  },
+  stripe: {
+    type: Boolean,
+    default: true,
+  },
   loading: { type: Boolean, default: false },
   rowKey: { type: String, default: 'id' },
   maxHeight: { type: String, default: '' },
@@ -239,7 +252,7 @@ props.tableColumn.forEach((item) => {
 });
 // 表格内展示的列
 const columns = computed(() => {
-  return props.tableColumn
+  let tableColumn = props.tableColumn
     .filter((item) => {
       return (
         data.colConfigs[item.title] ||
@@ -254,6 +267,14 @@ const columns = computed(() => {
         ...item,
       };
     });
+  tableColumn = tableColumn.map((item) => {
+    return {
+      align: 'center',
+      ...item,
+    };
+  });
+  console.log(tableColumn);
+  return tableColumn;
 });
 // 表格要导出的列
 const exportColumns = computed(() => {
@@ -455,8 +476,10 @@ const computedTableContentSize = (entry) => {
       118 -
       (props.buttonsVisible ? 0 : 40) -
       (props.showPagination ? 0 : -50);
+    boxWidth.value = tableBoxRef.value.parentElement.clientWidth;
   });
 };
+
 // 表格计算高度
 const maxHeightValue = computed(() => {
   // 如果直接设置了max-height，直接返回

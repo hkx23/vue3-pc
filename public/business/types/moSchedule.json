@@ -9,31 +9,49 @@
     {
       "title": "工单代码",
       "key": "moCode",
+      "width": "150",
       "align": "center"
     },
     {
       "title": "排产单",
       "key": "scheCode",
+      "width": "150",
       "align": "center"
     },
     {
       "title": "计划数量",
       "key": "planQty",
+      "width": "150",
       "align": "center"
     },
     {
       "title": "排产数量",
       "key": "scheQty",
+      "width": "150",
       "align": "center"
     },
     {
       "title": "计划开始时间",
       "key": "datetimePlanStart",
+      "width": "150",
       "align": "center"
     },
     {
       "title": "计划完成时间",
       "key": "datetimePlanEnd",
+      "width": "150",
+      "align": "center"
+    },
+    {
+      "title": "工艺路线编码",
+      "key": "routingCode",
+      "width": "150",
+      "align": "center"
+    },
+    {
+      "title": "工艺路线名称",
+      "key": "routingName",
+      "width": "150",
       "align": "center"
     }
   ],

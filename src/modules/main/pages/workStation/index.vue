@@ -1,94 +1,145 @@
 <template>
-  <cmp-container :full="true">
-    <cmp-card :span="12">
-      <!-- 查询组件  -->
-      <cmp-query :opts="opts" @submit="conditionEnter" @reset="onHandelResetting" />
-    </cmp-card>
-    <cmp-card :span="12">
+  <div class="main-page">
+    <div class="main-page-content">
+      <t-row justify="space-between">
+        <t-col :span="2"
+          ><t-input v-model="inputValue.workstaion" label="工站代码/名称：" placeholder="请输入工序代码/名称"></t-input>
+        </t-col>
+        <t-col :span="2">
+          <t-select
+            v-model="inputValue.statevalue"
+            label="状态:"
+            placeholder="请选择状态"
+            :options="options2"
+            clearable
+            style="width: 198px"
+          >
+          </t-select>
+        </t-col>
+        <t-col :span="2"
+          ><t-input v-model="inputValue.workcenter" label="工作中心：" placeholder="请输入工作中心/名称"></t-input>
+        </t-col>
+        <t-col :span="2"
+          ><t-input v-model="inputValue.process" label="工序：" placeholder="请输入工序代码/名称"> </t-input>
+        </t-col>
+        <t-col flex="220px">
+          <div class="btn-left">
+            <t-button variant="base" @click="onHandelQuery">查询</t-button>
+            <t-button theme="default" variant="base" @click="onHandelResetting">重置</t-button>
+          </div>
+        </t-col>
+      </t-row>
+    </div>
+    <div class="main-page-content">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="index"
         :table-column="columns"
         :table-data="workData"
         lazy-load
-        :fixed-height="true"
         :total="total"
         :loading="loading"
         @refresh="onHandelList"
       >
+        <template #stateSwitch="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            size="large"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
+        </template>
         <template #button>
           <t-button variant="base" @click="onHandelAdd">新增</t-button>
         </template>
-        <template #state="{ row }">
-          <span>{{ row.state === 1 ? '启用' : '禁用' }}</span>
-        </template>
         <template #op="{ row }">
-          <t-space>
-            <!-- 编辑 -->
-            <t-link theme="primary" @click="onHandelEdit(row.id)">{{ t('common.button.edit') }}</t-link>
-            <!-- 禁用 -->
-            <t-popconfirm :content="row.state ? '确认禁用吗' : '确认启用吗'" @confirm="onHandleDisable(row)">
-              <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
-            </t-popconfirm>
-          </t-space>
+          <!-- 编辑 -->
+          <t-link theme="primary" style="margin-right: 10px" @click="onHandelEdit(row.id)"> 编辑 </t-link>
         </template>
       </cmp-table>
-    </cmp-card>
-  </cmp-container>
+    </div>
+  </div>
   <t-dialog
     v-model:visible="formVisible"
     :header="controlShow ? '编辑' : '新增'"
-    @reset="onSecondaryReset"
-    @confirm="onFormSubmit"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    width="40%"
   >
     <t-form
       ref="formRef"
       :rules="rules"
       :data="formData"
+      layout="inline"
       scroll-to-first-error="smooth"
       label-align="right"
       @submit="onWorkStationSubmit"
     >
       <!-- 工作中心-->
-      <t-form-item label="工作中心:" name="PWorkcenterId">
-        <!-- <t-select v-model="formData.workCenter"></t-select> -->
-        <bcmp-select-business
-          v-model="formData.PWorkcenterId"
-          type="workcenter"
-          :show-title="false"
-          :disabled="controlShow ? true : false"
-        ></bcmp-select-business>
-      </t-form-item>
+      <t-row class="form-customer-row">
+        <t-col>
+          <t-form-item label="工作中心:" name="PWorkcenterId">
+            <!-- <t-select v-model="formData.workCenter"></t-select> -->
+            <bcmp-select-business
+              v-model="formData.PWorkcenterId"
+              type="workcenter"
+              :show-title="false"
+              :disabled="controlShow ? true : false"
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
+      </t-row>
       <!-- 工序 -->
-      <t-form-item label="工序:" name="PProcessId">
-        <bcmp-select-business
-          v-model="formData.PProcessId"
-          type="process"
-          :show-title="false"
-          :disabled="controlShow ? true : false"
-        ></bcmp-select-business>
-      </t-form-item>
+      <t-row class="form-work-station">
+        <t-col>
+          <t-form-item label="工序:" name="PProcessId">
+            <bcmp-select-business
+              v-model="formData.PProcessId"
+              type="process"
+              :show-title="false"
+              :disabled="controlShow ? true : false"
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
+      </t-row>
       <!-- 工站代码 -->
-      <t-form-item label="工站代码:" name="workstationCode">
-        <t-input v-model="formData.workstationCode" :disabled="controlShow ? true : false"></t-input>
-      </t-form-item>
+      <t-row class="form-work-station">
+        <t-col>
+          <t-form-item label="工站代码:" name="workstationCode">
+            <t-input v-model="formData.workstationCode" :disabled="controlShow ? true : false"></t-input>
+          </t-form-item>
+        </t-col>
+      </t-row>
       <!-- 工站名称 -->
-      <t-form-item label="工站名称:" name="workstationName">
-        <t-input v-model="formData.workstationName"></t-input>
-      </t-form-item>
+      <t-row class="form-work-station">
+        <t-col>
+          <t-form-item label="工站名称:" name="workstationName">
+            <t-input v-model="formData.workstationName"></t-input>
+          </t-form-item>
+        </t-col>
+      </t-row>
       <!--工站描述  -->
-      <t-form-item label="工站描述:" name="workstationDesc">
-        <t-input v-model="formData.workstationDesc"></t-input>
-      </t-form-item>
+      <t-row class="form-work-station">
+        <t-col>
+          <t-form-item label="工站描述:" name="workstationDesc">
+            <t-input v-model="formData.workstationDesc"></t-input>
+          </t-form-item>
+        </t-col>
+      </t-row>
       <!--启用  -->
-      <t-form-item label="启用:" name="state">
-        <t-switch v-model="formData.showState" size="large" @change="onChange" />
-      </t-form-item>
+      <t-row class="form-work-station">
+        <t-col>
+          <t-form-item label="启用:" name="state">
+            <t-switch v-model="formData.showState" size="large" @change="onChange" />
+          </t-form-item>
+        </t-col>
+      </t-row>
       <!-- 控制盒子 -->
-      <!-- <div class="control-box">
+      <div class="control-box">
         <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
         <t-button theme="primary" type="submit">保存</t-button>
-      </div> -->
+      </div>
     </t-form>
   </t-dialog>
 </template>
@@ -96,7 +147,7 @@
 <script setup lang="ts">
 import { Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next/es/table/type';
-import { computed, onMounted, Ref, ref } from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -104,9 +155,7 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
-import { useLang } from './lang';
 
-const { t } = useLang();
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const formVisible = ref(false); // 控制弹窗显示
@@ -125,7 +174,6 @@ const inputValue = ref({
 onMounted(() => {
   onHandelList();
 });
-
 // 页面请求
 const onHandelList = async () => {
   const STATE = inputValue.value.statevalue;
@@ -195,10 +243,11 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    align: 'center',
     colKey: 'state',
     title: '状态',
+    align: 'center',
     width: '90px',
+    cell: 'stateSwitch',
   },
   {
     colKey: 'creatorName',
@@ -227,8 +276,8 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'op',
     title: '操作',
-    width: '120px',
-    align: 'left',
+    width: '100px',
+    align: 'center',
     fixed: 'right',
   },
 ];
@@ -245,47 +294,6 @@ const formData = ref({
 });
 // table数据
 const workData = ref([]);
-// 点击查询按钮
-const conditionEnter = (data: any) => {
-  inputValue.value.workstaion = data.workstaion;
-  inputValue.value.statevalue = data.statevalue;
-  inputValue.value.workcenter = data.workcenter;
-  inputValue.value.process = data.process;
-  onHandelQuery();
-};
-const opts = computed(() => {
-  return {
-    workstaion: {
-      label: '工站代码/名称',
-      comp: 't-input',
-      defaultVal: '',
-      placeholder: '请输入工序代码/名称',
-    },
-    statevalue: {
-      label: '状态',
-      comp: 't-select',
-      bind: {
-        options: options2,
-        lazyLoad: true,
-      },
-      defaultVal: '',
-      placeholder: '请选择状态',
-    },
-    workcenter: {
-      label: '工作中心',
-      comp: 't-input',
-      defaultVal: '',
-      placeholder: '请输入工作中心',
-    },
-    process: {
-      label: '工序',
-      comp: 't-input',
-      defaultVal: '',
-      placeholder: '请输入工序代码/名称',
-    },
-  };
-});
-
 // 新增编辑按钮
 const onHandelE = (id) => {
   // 编辑
@@ -317,7 +325,6 @@ const onHandelE = (id) => {
 };
 // 编辑
 const onHandelEdit = (value) => {
-  formRef.value.reset({ type: 'initial' });
   onHandelE(value);
   formVisible.value = true;
 };
@@ -327,12 +334,8 @@ const onHandelEdit = (value) => {
 // };
 // 新增
 const onHandelAdd = () => {
-  formRef.value.reset({ type: 'initial' });
   formVisible.value = true;
   onHandelE(-1);
-};
-const onFormSubmit = () => {
-  formRef.value.submit();
 };
 // 查询
 const onHandelQuery = async () => {
@@ -340,28 +343,39 @@ const onHandelQuery = async () => {
   await onHandelList();
 };
 // 重置
-const onHandelResetting = () => {
+const onHandelResetting = async () => {
   inputValue.value.process = '';
   inputValue.value.state = [];
   inputValue.value.statevalue = -1;
   inputValue.value.workcenter = '';
   inputValue.value.workstaion = '';
+  await onHandelList();
 };
-// 禁用
-const onHandleDisable = async (value) => {
-  console.log('console.log(value.state);', value.state);
-  if (value.state !== 1) {
-    value.state = 1;
-  } else {
-    value.state = 0;
-  }
-  console.log('console.log(value.state);', value.state);
+
+// switch 开关事件
+const onSwitchChange = async (row: { incidentName: any; id: any }, value: any) => {
+  const isValue = value ? 1 : 0;
   await api.workstation.edit({
-    id: value.id,
-    state: value.state,
+    state: isValue,
+    id: row.id,
   });
-  onHandelList();
+  await onHandelList();
+  MessagePlugin.success('操作成功');
 };
+// const onHandleDisable = async (value) => {
+//   console.log('console.log(value.state);', value.state);
+//   if (value.state !== 1) {
+//     value.state = 1;
+//   } else {
+//     value.state = 0;
+//   }
+//   console.log('console.log(value.state);', value.state);
+//   await api.workstation.edit({
+//     id: value.id,
+//     state: value.state,
+//   });
+//   onHandelList();
+// };
 // 是否启用
 const onChange = (value) => {
   console.log(value);
@@ -402,14 +416,12 @@ const onWorkStationSubmit = async (context: RootObject) => {
           workstationDesc: formData.value.workstationDesc,
           state: formData.value.state,
         });
-
+        formRef.value.reset({ type: 'initial' });
         MessagePlugin.success('保存成功');
         formVisible.value = false;
         onHandelList();
       } catch (e) {
         console.log(e);
-      } finally {
-        // formRef.value.reset({ type: 'initial' });
       }
       // 编辑
     } else {
@@ -423,13 +435,12 @@ const onWorkStationSubmit = async (context: RootObject) => {
           processId: formData.value.PProcessId,
           state: formData.value.state,
         });
+        formRef.value.reset({ type: 'initial' });
         MessagePlugin.success('保存成功');
         onHandelList();
         formVisible.value = false;
       } catch (e) {
         console.log(e);
-      } finally {
-        // formRef.value.reset({ type: 'initial' });
       }
     }
   }
@@ -440,12 +451,14 @@ const rules: FormRules<Data> = {
     {
       required: true,
       type: 'error',
+      trigger: 'change',
     },
   ],
   PProcessId: [
     {
       required: true,
       type: 'error',
+      trigger: 'change',
     },
   ],
   workstationCode: [
@@ -488,12 +501,12 @@ const rules: FormRules<Data> = {
   right: var(--td-comp-size-l);
   bottom: var(--td-comp-size-s);
 }
-// 启动按钮样式更改
-:deep(.t-switch.t-is-checked:hover) {
-  background: var(--td-success-color-4);
-}
+// // 启动按钮样式更改
+// :deep(.t-switch.t-is-checked:hover) {
+//   background: var(--td-success-color-4);
+// }
 
-:deep(.t-switch.t-is-checked) {
-  background: var(--td-success-color-4);
-}
+// :deep(.t-switch.t-is-checked) {
+//   background: var(--td-success-color-4);
+// }
 </style>

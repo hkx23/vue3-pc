@@ -23,9 +23,9 @@
           <t-button theme="default">导出</t-button>
         </template>
         <template #op="slotProps">
-          <t-space>
-            <t-icon name="edit" @click="onEditRowClick(slotProps)" />
-            <t-icon name="delete" @click="onDeleteRowClick(slotProps)" />
+          <t-space :size="8">
+            <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
+            <t-link theme="primary" @click="onDeleteRowClick(slotProps)">{{ t('common.button.delete') }}</t-link>
           </t-space>
         </template>
       </cmp-table>
@@ -36,13 +36,11 @@
     v-model:visible="formVisible"
     :header="formTitle"
     :on-confirm="onConfirmForm"
-    width="60%"
+    width="750px"
     :close-on-overlay-click="false"
     :on-close="onCloseForm"
   >
-    <t-space direction="vertical" style="width: 98%">
-      <mitem-in-supplier-form ref="formRef"></mitem-in-supplier-form>
-    </t-space>
+    <mitem-in-supplier-form ref="formRef"></mitem-in-supplier-form>
   </t-dialog>
 </template>
 
@@ -58,7 +56,9 @@ import { usePage } from '@/hooks/modules/page';
 
 // import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
 import MitemInSupplierForm from './form.vue';
+import { useLang } from './lang';
 
+const { t } = useLang();
 // 分页相关
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
@@ -85,7 +85,7 @@ const tableMitemInSupplierColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '是否免检', width: 160, colKey: 'isExemptionInspectionName' },
   { title: '免检失效日期', width: 160, colKey: 'dateExemptionExpiredStr' },
   { title: '是否强制供方申请', width: 160, colKey: 'isForceInspectionName' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  { title: '操作', fixed: 'right', width: 160, colKey: 'op' },
 ];
 
 // 查询按钮

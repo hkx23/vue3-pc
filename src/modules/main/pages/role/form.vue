@@ -136,7 +136,7 @@ const reset = (isEdit: boolean, data?: Role) => {
   formData.eid = '';
   // 将id小写后比较
 
-  if (user.userInfo.id.toLowerCase() === 'administrator') {
+  if (user.userInfo.code.toLowerCase() === 'administrator') {
     isAdmin = true;
   } else if (!isEdit) {
     formData.eid = fw.getEnterpriseId();

@@ -1,42 +1,39 @@
 <template>
-  <div>
-    <t-card :bordered="false" style="margin-bottom: 10px">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
       <t-row justify="space-between">
         <t-col><h2>权限分配</h2></t-col>
         <t-col><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
       </t-row>
-    </t-card>
-    <t-card :bordered="false">
-      <t-row>
-        <t-col :span="4">
-          <t-card :bordered="false">
-            <div>
-              <h3 style="margin: 10px 0">用户列表</h3>
-              <t-input v-model="permission.user" placeholder="admin" :on-enter="onInputSearchUser">
-                <template #prefix-icon>
-                  <icon name="search"></icon>
-                </template>
-              </t-input>
-              <t-tree
-                :data="dataTree"
-                :value="value"
-                :expand-parent="false"
-                :transition="false"
-                :activable="true"
-                @click="onClickTree"
-              >
-              </t-tree>
-              <t-pagination v-model="current" v-model:pageSize="pageSize" :total="total" />
-            </div>
-          </t-card>
-        </t-col>
-        <t-col :span="8">
-          <t-card :bordered="false">
+    </cmp-card>
+    <cmp-row>
+      <cmp-card ref="treeCard" flex="350px">
+        <t-space direction="vertical" :size="8">
+          <h3 style="margin: 10px 0">用户列表</h3>
+          <t-input v-model="permission.user" placeholder="admin" :on-enter="onInputSearchUser">
+            <template #prefix-icon>
+              <icon name="search"></icon>
+            </template>
+          </t-input>
+          <t-tree
+            class="scorllTree"
+            :data="dataTree"
+            :value="value"
+            :height="treeHeight"
+            :expand-parent="false"
+            :transition="false"
+            :activable="true"
+            @click="onClickTree"
+          >
+          </t-tree>
+          <t-pagination v-model="current" v-model:pageSize="pageSize" :total="total" />
+        </t-space>
+      </cmp-card>
+      <cmp-card flex="auto">
+        <cmp-container :full="true" style="padding: 0">
+          <cmp-card :span="12" :ghost="true">
             <t-row justify="space-between">
-              <t-col style="margin: 3px 0">
-                <span style="font-weight: bold; margin: 0 10px">{{ permission.label }}工站列表</span>
-                <t-button @click="onBtnSave">保存</t-button></t-col
-              >
+              <t-col style="margin: 3px 0"> <t-button :loading="saveLoading" @click="onBtnSave">保存</t-button></t-col>
               <t-col style="display: flex">
                 <t-select
                   v-model="selectValue"
@@ -54,8 +51,45 @@
                     <icon name="search"></icon>
                   </template>
                 </t-input>
-              </t-col>
-            </t-row>
+              </t-col> </t-row
+          ></cmp-card>
+          <cmp-card :span="12" :ghost="true">
+            <cmp-table
+              v-model:pagination="pageUI"
+              row-key="id"
+              :table-column="columns"
+              :loading="loading"
+              :table-data="data"
+              :total="tableTotal"
+              :selected-row-keys="selectedRowKeys"
+              @select-change="rehandleSelectChange"
+              @refresh="onFetchData"
+            >
+              <template #button>
+                <span style="font-weight: bold; margin: 0 10px">{{ permission.label }} 工站列表</span>
+              </template>
+            </cmp-table>
+          </cmp-card>
+        </cmp-container>
+      </cmp-card>
+    </cmp-row>
+  </cmp-container>
+  <!-- <div>
+    <t-card :bordered="false" style="margin-bottom: 10px">
+    
+    </t-card>
+    <t-card :bordered="false">
+      <t-row>
+        <t-col :span="4">
+          <t-card :bordered="false">
+            <div>
+            
+            </div>
+          </t-card>
+        </t-col>
+        <t-col :span="8">
+          <t-card :bordered="false">
+           
           </t-card>
           <cmp-table
             v-model:pagination="pageUI"
@@ -71,13 +105,14 @@
         </t-col>
       </t-row>
     </t-card>
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
 import { Icon, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
+import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/control';
 import { api as apiMain } from '@/api/main';
@@ -90,6 +125,7 @@ const pageSize = ref(20); // 用户请求数
 const total = ref(10); // 用户分页总数
 const tableTotal = ref(10); // table分页总数
 const selectedRowKeys = ref([]); // 选择的
+const saveLoading = ref(false); // 选择的
 const { loading, setLoading } = useLoading(); // loading
 const selectValue = ref(1);
 const options1 = ref([
@@ -120,8 +156,10 @@ const onBtnSave = async () => {
     MessagePlugin.error('请选择用户');
     return;
   }
+  saveLoading.value = true;
   // console.log('保存', permission.value.userId);
   await api.workstationAuth.save({ userId: permission.value.userId, ids: selectedRowKeys.value });
+  saveLoading.value = false;
   MessagePlugin.success('保存成功');
 };
 
@@ -255,10 +293,24 @@ const onInputSearchWork = () => {
   permissionName.value = 2;
   onFetchData();
 };
+
+const treeCard = ref(null);
+const treeHeight = ref('300px');
+useResizeObserver(treeCard, (entries) => {
+  const entry = entries[0];
+
+  const { height } = entry.contentRect;
+  treeHeight.value = `${height * 0.9 - 100}px`;
+  console.error('treeHeight', treeHeight.value);
+});
 </script>
 
 <style lang="less" scoped>
 .header-save {
   display: flex;
+}
+
+.scorllTree {
+  overflow-y: auto;
 }
 </style>

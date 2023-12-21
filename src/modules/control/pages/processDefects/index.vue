@@ -1,7 +1,10 @@
 <!-- 工序缺陷 -->
 <template>
-  <div>
-    <t-card class="list-card-process">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
@@ -9,6 +12,8 @@
         :table-data="processData"
         :loading="loading"
         :total="total"
+        :hover="false"
+        :stripe="false"
         :selected-row-keys="processRorKey"
         @refresh="onFetchData"
         @select-change="processChange"
@@ -17,9 +22,7 @@
         <template #state="{ row }">
           <div>{{ row.state === 1 ? '启用' : '禁用' }}</div>
         </template>
-        <template #button> <cmp-query :opts="opts" @submit="onInput"> </cmp-query> </template>
-        <template #operate>
-          <!-- 新增 -->
+        <template #button>
           <t-button @click="onHandelAdd">新增</t-button>
           <t-popconfirm content="确认删除吗" @confirm="onHandelDelete">
             <t-button theme="default" variant="base">删除</t-button>
@@ -27,7 +30,7 @@
         </template>
         <!-- 编辑 -->
         <template #op="{ row }">
-          <t-space>
+          <t-space :size="8">
             <t-link theme="primary" @click="onEdit(row)"> 编辑 </t-link>
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
               <t-link theme="primary"> 删除 </t-link>
@@ -36,72 +39,65 @@
           </t-space>
         </template>
       </cmp-table>
-      <t-dialog v-model:visible="addVisible" header="新增" :cancel-btn="null" :confirm-btn="null" width="40%">
-        <t-form
-          ref="formRef"
-          :rules="rules"
-          :data="formData"
-          layout="vertical"
-          scroll-to-first-error="smooth"
-          label-align="right"
-          @submit="onProcessSubmit"
-        >
-          <t-form-item :label="t('processDefects.defectCode')" name="processId">
-            <bcmp-select-business
-              v-model="formData.processId"
-              label=""
-              label-field="processCode"
-              type="process"
-              :disabled="disabledShow.disabledDefectCode"
-              @selection-change="defectCodeChange"
-            ></bcmp-select-business>
-          </t-form-item>
-          <t-form-item :label="t('processDefects.defectName')" name="defectName">
-            <t-input v-model="formData.defectName" :disabled="disabledShow.disabledDefectName"></t-input>
-          </t-form-item>
-          <t-form-item label="缺陷代码" name="defectCodeId">
-            <bcmp-select-business
-              v-model="formData.defectCodeId"
-              label=""
-              type="defectCode"
-              label-field="defectCode"
-              :disabled="disabledShow.disabledProcessCode"
-              @selection-change="processCodeChange"
-            ></bcmp-select-business>
-          </t-form-item>
-          <t-form-item label="缺陷名称" name="defectName">
-            <t-input v-model="formData.processName" :disabled="disabledShow.disabledProcessName"></t-input>
-          </t-form-item>
-          <t-form-item :label="`显示${t('processDefects.displaySeq')}`" name="displaySeq" label-width="110px">
-            <t-input v-model="formData.displaySeq"></t-input>
-          </t-form-item>
-          <t-form-item label="启用" name="showState">
-            <t-switch v-model="formData.showState" size="large" @change="onChange"></t-switch>
-          </t-form-item>
-          <!-- 盒子 -->
-          <div class="control-box">
-            <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-            <t-button theme="primary" type="submit">确认</t-button>
-          </div>
-        </t-form>
-      </t-dialog>
-      <!-- <t-dialog v-model:visible="deleteVisible" header="删除" :cancel-btn="null" :confirm-btn="null" width="40%">
-        <div class="delete-dialog-top">当前选择{{ processRorKey.length }}条</div>
-        盒子
-        <div class="control-box">
-          <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-          <t-button theme="primary" type="submit" @click="onSecondary">确认</t-button>
-        </div>
-      </t-dialog> -->
-      <t-dialog
-        v-model:visible="deleteVisible"
-        :header="t('common.message.confirmDelete')"
-        :on-confirm="onDeleteConfirm"
-      >
-        <h3 class="list-save">选中{{ processRorKey.length }}条</h3>
-      </t-dialog>
-    </t-card>
-  </div>
+    </cmp-card>
+  </cmp-container>
+  <t-dialog v-model:visible="addVisible" header="新增" :cancel-btn="null" :confirm-btn="null">
+    <t-form
+      ref="formRef"
+      :rules="rules"
+      :data="formData"
+      layout="vertical"
+      label-width="120px"
+      scroll-to-first-error="smooth"
+      label-align="right"
+      @submit="onProcessSubmit"
+    >
+      <t-form-item :label="t('processDefects.defectCode')" name="processId">
+        <bcmp-select-business
+          v-model="formData.processId"
+          label=""
+          label-field="processCode"
+          type="process"
+          :disabled="disabledShow.disabledDefectCode"
+          @selection-change="defectCodeChange"
+        ></bcmp-select-business>
+      </t-form-item>
+      <t-form-item :label="t('processDefects.defectName')" name="defectName">
+        <t-input v-model="formData.defectName" :disabled="disabledShow.disabledDefectName"></t-input>
+      </t-form-item>
+      <t-form-item label="缺陷代码" name="defectCodeId">
+        <bcmp-select-business
+          v-model="formData.defectCodeId"
+          label=""
+          type="defectCode"
+          label-field="defectCode"
+          :disabled="disabledShow.disabledProcessCode"
+          @selection-change="processCodeChange"
+        ></bcmp-select-business>
+      </t-form-item>
+      <t-form-item label="缺陷名称" name="defectName">
+        <t-input v-model="formData.processName" :disabled="disabledShow.disabledProcessName"></t-input>
+      </t-form-item>
+      <t-form-item :label="`${t('processDefects.displaySeq')}`" name="displaySeq">
+        <t-input-number
+          v-model="formData.displaySeq"
+          style="width: 100%"
+          :auto-width="false"
+          theme="column"
+        ></t-input-number>
+      </t-form-item>
+      <t-form-item label="启用" name="showState">
+        <t-switch v-model="formData.showState" size="large" @change="onChange"></t-switch>
+      </t-form-item>
+    </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+      <t-button theme="primary" @click="onSecondarySubmit">确认</t-button>
+    </template>
+  </t-dialog>
+  <t-dialog v-model:visible="deleteVisible" :header="t('common.message.confirmDelete')" :on-confirm="onDeleteConfirm">
+    <h3 class="list-save">选中{{ processRorKey.length }}条</h3>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -120,13 +116,15 @@ import { useLang } from './lang';
 onMounted(() => {
   onFetchData();
 });
+
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 // input框搜索
 const opts = computed(() => {
   return {
     process: {
       labelWidth: '160px',
-      label: '请输入工序名称或编码',
+      label: '工序',
+      placeholder: '请输入工序名称或编码',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
@@ -309,6 +307,9 @@ const onEditAndAdd = async () => {
       console.log(e);
     }
   }
+};
+const onSecondarySubmit = () => {
+  formRef.value.submit();
 };
 // 删除按钮
 const onHandelDelete = async () => {

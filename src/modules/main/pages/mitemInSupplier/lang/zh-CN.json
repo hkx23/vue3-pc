@@ -1,0 +1,7 @@
+{
+  "mitemSupplier": {
+    "mitemCatCode": "物料类型编码",
+    "mitemCatName": "物料类型名称",
+    "mitemCatDesc": "物料类型描述"
+  }
+}

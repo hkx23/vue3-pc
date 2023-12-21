@@ -1,77 +1,63 @@
 <!-- 缺陷代码库 -->
 <template>
-  <div>
-    <t-card>
-      <t-card :bordered="false">
-        <!-- 新增 -->
-        <t-button @click="onAdd"><icon name="add"></icon></t-button>
-        <!-- 删除 -->
-        <t-button variant="outline" @click="onDeletes"><icon name="delete"></icon></t-button>
-      </t-card>
-      <!-- table表格 -->
+  <cmp-container :full="true">
+    <cmp-card ref="tableCardRef" :span="12">
+      <t-space :size="8" style="margin-bottom: 8px">
+        <t-button @click="onAdd">新增</t-button>
+        <t-button theme="default" @click="onDeletes">删除</t-button>
+      </t-space>
       <t-enhanced-table
         row-key="id"
         :data="data"
         :columns="column"
         :tree="treeConfig"
+        :max-height="boxHeight"
         lazy-load
         :selected-row-keys="selectedRowKeys"
         @select-change="rehandleSelectChange"
       >
         <!-- <t-button>导入</t-button> -->
         <template #op="{ row }">
-          <icon name="edit-1" style="cursor: pointer" @click="onSeparateEdit(row)"></icon>
-          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
-            <icon name="delete" style="margin: 0 10px; cursor: pointer"></icon>
-          </t-popconfirm>
+          <t-space :size="8">
+            <t-link theme="primary" @click="onSeparateEdit(row)">编辑</t-link>
+            <!-- <icon name="edit-1" style="cursor: pointer" @click="onSeparateEdit(row)"></icon> -->
+            <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
+              <t-link theme="primary">删除</t-link>
+              <!-- <icon name="delete" style="margin: 0 10px; cursor: pointer"></icon> -->
+            </t-popconfirm>
+          </t-space>
         </template>
       </t-enhanced-table>
-      <!-- <t-pagination
-        v-model="pagination.current"
-        v-model:pageSize="pagination.pageSize"
-        :total="pagination.total"
-        show-jumper
-        style="margin: 20px 0"
-        @change="onChange"
-        @page-size-change="onPageSizeChange"
-        @current-change="onCurrentChange"
-      /> -->
-    </t-card>
-    <t-dialog v-model:visible="formVisible" :header="defectTitle" :cancel-btn="null" :confirm-btn="null" width="40%">
-      <t-form ref="formRef" :data="formItem" :rules="rules" @submit="onBtn">
-        <t-form-item :label="t('defectCode.parentLevel')" name="parentLevel">
-          <t-input v-model="formItem.parentLevel" placeholder="请输入" :disabled="true"></t-input>
-        </t-form-item>
-        <t-form-item :label="t('defectCode.defectCode')" name="defectCode">
-          <t-input v-model="formItem.defectCode" placeholder="请输入" :disabled="disabledShow"></t-input>
-        </t-form-item>
-        <t-form-item :label="t('defectCode.defectName')" name="defectName">
-          <t-input v-model="formItem.defectName" placeholder="请输入"></t-input>
-        </t-form-item>
-        <div class="control-box">
-          <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-          <t-button theme="primary" type="submit">保存</t-button>
-        </div>
-      </t-form>
-    </t-dialog>
-    <t-dialog v-model:visible="deleteVisible" :header="t('common.message.confirmDelete')" :on-confirm="onSave1">
-      <h3 class="list-save">选中{{ selectedRowKeys.length }}条</h3>
-    </t-dialog>
-  </div>
+    </cmp-card>
+  </cmp-container>
+
+  <t-dialog v-model:visible="formVisible" :header="defectTitle" :cancel-btn="null" :confirm-btn="null">
+    <t-form ref="formRef" :data="formItem" :rules="rules" @submit="onBtn">
+      <t-form-item :label="t('defectCode.parentLevel')" name="parentLevel">
+        <t-input v-model="formItem.parentLevel" placeholder="请输入" :disabled="true"></t-input>
+      </t-form-item>
+      <t-form-item :label="t('defectCode.defectCode')" name="defectCode">
+        <t-input v-model="formItem.defectCode" placeholder="请输入" :disabled="disabledShow"></t-input>
+      </t-form-item>
+      <t-form-item :label="t('defectCode.defectName')" name="defectName">
+        <t-input v-model="formItem.defectName" placeholder="请输入"></t-input>
+      </t-form-item>
+    </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+      <t-button theme="primary" @click="onSecondarySubmit">保存</t-button>
+    </template>
+  </t-dialog>
+  <t-dialog v-model:visible="deleteVisible" :header="t('common.message.confirmDelete')" :on-confirm="onSave1">
+    <h3 class="list-save">选中{{ selectedRowKeys.length }}条</h3>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
-import {
-  Data,
-  FormInstanceFunctions,
-  FormRules,
-  Icon,
-  MessagePlugin,
-  PrimaryTableCol,
-  TableRowData,
-} from 'tdesign-vue-next';
-import { onMounted, reactive, Ref, ref } from 'vue';
+import { Data, FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { nextTick, onMounted, reactive, Ref, ref } from 'vue';
+import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/main';
 
@@ -270,6 +256,30 @@ const rules: FormRules<Data> = {
       trigger: 'blur',
     },
   ],
+};
+
+const tableCardRef = ref(null);
+const boxHeight = ref(0);
+const boxWidth = ref(0);
+useResizeObserver(tableCardRef, (entries) => {
+  const entry = entries[0];
+  debounceFunction(entry);
+});
+const debounceFunction = _.debounce((entry) => {
+  computedTableContentSize(entry);
+}, 100);
+
+const computedTableContentSize = (entry) => {
+  // 组件处于不可见状态时将不进行计算
+  const { width: _w, height: _h } = entry.contentRect;
+  boxWidth.value = 0;
+  boxHeight.value = 0;
+  nextTick(() => {
+    boxHeight.value = _h - 80;
+  });
+};
+const onSecondarySubmit = () => {
+  formRef.value.submit();
 };
 </script>
 

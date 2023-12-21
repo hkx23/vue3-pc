@@ -8,6 +8,9 @@ import type { UserInfo } from '@/types/interface';
 interface OrgUser extends UserInfo {
   eid?: string;
   orgId?: string;
+  personId?: string;
+  timeModified?: string;
+  timeLastPasswordChanged?: string;
   orgs?: OrgVO[];
 }
 const InitUserInfo: UserInfo = {
@@ -17,14 +20,40 @@ const InitUserInfo: UserInfo = {
   roles: [], // 前端权限模型使用 如果使用请配置modules/permission-fe.ts使用
 };
 
+interface orgInfo {
+  orgId: string;
+  orgCode: string;
+  orgName: string;
+  workShopId: string;
+  workShopCode: string;
+  workShopName: string;
+  workCenterId: string;
+  workCenterCode: string;
+  workCenterName: string;
+  processId: string;
+  processCode: string;
+  processName: string;
+  workStationId: string;
+  workStationCode: string;
+  workStationName: string;
+}
+
+interface userOrg {
+  [key: string]: orgInfo;
+}
+
 export const useUserStore = defineStore('user', {
   state: () => ({
     token: 'main_token', // 默认token不走权限
     userInfo: { ...InitUserInfo } as OrgUser,
+    userOrgInfo: {} as userOrg,
   }),
   getters: {
     roles: (state) => {
       return state.userInfo?.roles;
+    },
+    currUserOrgInfo: (state) => {
+      return state.userOrgInfo[state.userInfo.id];
     },
   },
   actions: {
@@ -57,11 +86,34 @@ export const useUserStore = defineStore('user', {
         name: res.displayName,
         code: res.userName,
         eid: res.eid,
+        personId: res.personId,
+        timeModified: res.timeModified,
+        timeLastPasswordChanged: res.timeLastPasswordChanged,
         orgId,
         orgs: res.orgList,
       } as OrgUser;
 
+      const userOrgInfo = this.currUserOrgInfo;
+      if (!userOrgInfo) {
+        this.updateOrg();
+      }
       return this.userInfo;
+    },
+    updateOrg(orgInfo?: orgInfo) {
+      this.userOrgInfo[this.userInfo.id] = orgInfo || {
+        orgId: '',
+        orgCode: '',
+        orgName: '',
+        workShopId: '',
+        workShopCode: '',
+        workShopName: '',
+        workCenterId: '',
+        workCenterCode: '',
+        workCenterName: '',
+        workStationId: '',
+        workStationCode: '',
+        workStationName: '',
+      };
     },
     setOrgId(id: string) {
       this.userInfo.orgId = id;
@@ -78,6 +130,6 @@ export const useUserStore = defineStore('user', {
       permissionStore.initRoutes();
     },
     key: 'user',
-    paths: ['token', 'userInfo'],
+    paths: ['token', 'userInfo', 'userOrgInfo'],
   },
 });
