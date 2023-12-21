@@ -7,6 +7,7 @@
     "orgDesc": "组织备注",
     "levelName": "组织类型",
     "modifier": "更新人",
-    "timeModified": "更新时间"
+    "timeModified": "更新时间",
+    "enterpriseMust": "请维护企业信息"
   }
 }

@@ -9,8 +9,8 @@
         <t-link v-else theme="primary" @click="userIsEdit = true">修改</t-link>
       </template>
       <t-row align="middle" justify="space-around">
-        <t-col :span="3"> <user-icon class="user-image"></user-icon> </t-col>
-        <t-col :span="9">
+        <t-col :xs="0" :sm="3" :lg="3"> <user-icon class="user-image"></user-icon> </t-col>
+        <t-col :xs="12" :sm="9" :lg="5">
           <t-form :label-width="180" label-align="left">
             <t-form-item label="用户名">
               <t-input v-if="userIsEdit" v-model="userInfo.name"></t-input>
@@ -35,6 +35,7 @@
             </t-form-item>
           </t-form>
         </t-col>
+        <t-col :xs="0" :sm="0" :lg="3"> </t-col>
       </t-row>
     </cmp-card>
     <cmp-card title="组织信息" header-bordered>
@@ -45,9 +46,9 @@
         </t-space>
         <t-link v-else theme="primary" @click="orgIsEdit = true">修改</t-link>
       </template>
-      <t-row>
-        <t-col :span="3"> </t-col>
-        <t-col :span="9">
+      <t-row align="middle" justify="space-around">
+        <t-col :xs="0" :sm="3" :lg="3"> </t-col>
+        <t-col :xs="12" :sm="9" :lg="5">
           <t-form :label-width="180" label-align="left">
             <t-form-item label="组织">
               <bcmp-select-business
@@ -118,21 +119,23 @@
             </t-form-item>
           </t-form>
         </t-col>
+        <t-col :xs="0" :sm="0" :lg="3"> </t-col>
       </t-row>
     </cmp-card>
     <cmp-card title="密码信息" header-bordered>
       <template #actions>
         <t-link theme="primary" @click="onClickShowEditPwd">修改</t-link>
       </template>
-      <t-row>
-        <t-col :span="3"></t-col>
-        <t-col :span="9">
+      <t-row align="middle" justify="space-around">
+        <t-col :xs="0" :sm="3" :lg="3"></t-col>
+        <t-col :xs="12" :sm="9" :lg="5">
           <t-form :label-width="180" label-align="left">
             <t-form-item label="最后一次修改密码时间">
               <div>{{ userInfo.timeLastPasswordChanged || '-' }}</div>
             </t-form-item>
           </t-form>
         </t-col>
+        <t-col :xs="0" :sm="0" :lg="3"> </t-col>
       </t-row>
     </cmp-card>
   </cmp-container>

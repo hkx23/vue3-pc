@@ -2718,6 +2718,8 @@ export type ShowModuleVO = {
   /** 模块包标识 */
   modulePackageIdentify?: string;
   parentModuleId?: string;
+  /** 父模块Name */
+  parentModuleName?: string;
   grandpaId?: string;
   /** 所在一级菜单名称 */
   grandpaName?: string;
@@ -3066,13 +3068,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isRawName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
   isBatchName?: string;
-  isInProcessChecked?: boolean;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4691,6 +4693,7 @@ export interface ResultListOrgLevelTreeVO {
 /** 显示组织层级实体 */
 export type OrgTreeVO = {
   id?: string;
+  eid?: string;
   oid?: string;
   /** 组织层级编码 */
   levelCode?: string;
