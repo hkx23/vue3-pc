@@ -65,7 +65,7 @@ const props = defineProps({
   },
 });
 const { loading: loadingRouting, setLoading: setLoadingRouting } = useLoading();
-const Emit = defineEmits(['routingShow', 'refreshTable']);
+const Emit = defineEmits(['routingShow', 'refreshTable', 'update:modelValue', 'submit']);
 const currentrow = ref({}) as any; // 当前行工单信息
 const conditionData = reactive({
   routingCode: '',
@@ -103,7 +103,7 @@ const visible = computed({
     return props.modelValue;
   },
   set(val: boolean) {
-    emit('update:modelValue', val);
+    Emit('update:modelValue', val);
   },
 });
 const columnsRouting: PrimaryTableCol<TableRowData>[] = [

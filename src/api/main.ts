@@ -1751,8 +1751,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3064,14 +3064,13 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
+  isState?: boolean;
+  isProductName?: string;
   isRawName?: string;
   isInProcessName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
-  isProductName?: string;
   isBatchName?: string;
-  isState?: boolean;
-  stateName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
 }
@@ -3240,8 +3239,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3587,8 +3586,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4155,16 +4154,6 @@ export type CurrentUserVO = {
   defaultOrgId?: string;
   /** 授权组织 */
   orgList?: OrgVO[];
-  /**
-   * 上次更新成员资格用户的密码的日期和时间
-   * @format date-time
-   */
-  timeLastPasswordChanged?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
 } | null;
 
 /** 组织基础实体 */
@@ -6457,13 +6446,10 @@ export const api = {
      * @request POST:/stressTest/insertBatch
      * @secure
      */
-    insertBatch: (query: {
-      /** @format int32 */
-      num: number;
-    }) =>
+    insertBatch: (data: number) =>
       http.request<ResultObject['data']>(`/api/main/stressTest/insertBatch`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -6475,13 +6461,9 @@ export const api = {
      * @request POST:/stressTest/MemoryUsageLog
      * @secure
      */
-    memoryUsageLog: (query: {
-      /** @format int32 */
-      num: number;
-    }) =>
+    memoryUsageLog: () =>
       http.request<ResultObject['data']>(`/api/main/stressTest/MemoryUsageLog`, {
         method: 'POST',
-        params: query,
       }),
 
     /**
