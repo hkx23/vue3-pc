@@ -1,188 +1,226 @@
 <template>
-  <t-row :gutter="[24, 24]">
-    <t-col :flex="3">
-      <div class="user-left-greeting">
-        <div>
-          Hi，Image
-          <span class="regular"> {{ $t('pages.user.markDay') }}</span>
-        </div>
-        <img src="@/assets/images/logo.png" class="logo" />
-      </div>
-
-      <t-card class="user-info-list" :title="$t('pages.user.personalInfo.title')" :bordered="false">
-        <template #actions>
-          <t-button theme="default" shape="square" variant="text">
-            <t-icon name="ellipsis" />
-          </t-button>
-        </template>
-        <t-row class="content" justify="space-between">
-          <t-col v-for="(item, index) in USER_INFO_LIST" :key="index" class="contract" :span="item.span ?? 3">
-            <div class="contract-title">
-              {{ item.title }}
-            </div>
-            <div class="contract-detail">
-              {{ item.content }}
-            </div>
-          </t-col>
-        </t-row>
-      </t-card>
-
-      <t-card class="content-container" :bordered="false">
-        <t-tabs value="second">
-          <t-tab-panel value="first" :label="$t('pages.user.contentList')">
-            <p>{{ $t('pages.user.contentList') }}</p>
-          </t-tab-panel>
-          <t-tab-panel value="second" :label="$t('pages.user.contentList')">
-            <t-card :bordered="false" class="card-padding-no" :title="$t('pages.user.visitData')" describe="（次）">
-              <template #actions>
-                <t-date-range-picker
-                  class="card-date-picker-container"
-                  :default-value="LAST_7_DAYS"
-                  theme="primary"
-                  mode="date"
-                  @change="onLineChange"
-                />
-              </template>
-              <div id="lineContainer" style="width: 100%; height: 328px" />
-            </t-card>
-          </t-tab-panel>
-          <t-tab-panel value="third" :label="$t('pages.user.contentList')">
-            <p>{{ $t('pages.user.contentList') }}</p>
-          </t-tab-panel>
-        </t-tabs>
-      </t-card>
-    </t-col>
-
-    <t-col :flex="1">
-      <t-card class="user-intro" :bordered="false">
-        <t-avatar size="80px">T</t-avatar>
-        <div class="name">My Account</div>
-        <div class="position">{{ $t('pages.user.personalInfo.position') }}</div>
-      </t-card>
-
-      <t-card :title="$t('pages.user.teamMember')" class="user-team" :bordered="false">
-        <template #actions>
-          <t-button theme="default" shape="square" variant="text">
-            <t-icon name="ellipsis" />
-          </t-button>
-        </template>
-        <t-list :split="false">
-          <t-list-item v-for="(item, index) in TEAM_MEMBERS" :key="index">
-            <t-list-item-meta :image="item.avatar" :title="item.title" :description="item.description" />
-          </t-list-item>
-        </t-list>
-      </t-card>
-
-      <t-card :title="$t('pages.user.serviceProduction')" class="product-container" :bordered="false">
-        <template #actions>
-          <t-button theme="default" shape="square" variant="text">
-            <t-icon name="ellipsis" />
-          </t-button>
-        </template>
-        <t-row class="content" :getters="16">
-          <t-col v-for="(item, index) in PRODUCT_LIST" :key="index" :span="3">
-            <component :is="getIcon(item)"></component>
-          </t-col>
-        </t-row>
-      </t-card>
-    </t-col>
-  </t-row>
+  <cmp-container class="user-form">
+    <cmp-card title="用户信息" header-bordered>
+      <template #actions>
+        <t-space v-if="userIsEdit">
+          <t-link theme="primary" @click="onClickSaveUser">保存</t-link>
+          <t-link @click="userIsEdit = false">取消</t-link>
+        </t-space>
+        <t-link v-else theme="primary" @click="userIsEdit = true">修改</t-link>
+      </template>
+      <t-row align="middle" justify="space-around">
+        <t-col :xs="0" :sm="3" :lg="3"> <user-icon class="user-image"></user-icon> </t-col>
+        <t-col :xs="12" :sm="9" :lg="5">
+          <t-form :label-width="180" label-align="left">
+            <t-form-item label="用户名">
+              <t-input v-if="userIsEdit" v-model="userInfo.name"></t-input>
+              <div v-else>{{ userInfo.name }}</div>
+            </t-form-item>
+            <t-form-item label="角色">
+              <t-space v-if="roles && roles.length > 0">
+                <t-tooltip v-for="item in roles" :key="item.id" :content="item.roleDesc">
+                  <t-tag>{{ item.roleName }}</t-tag>
+                </t-tooltip>
+              </t-space>
+              <div v-else>-</div>
+            </t-form-item>
+            <t-form-item label="邮箱">
+              <div>{{ personInfo.email || '-' }}</div>
+            </t-form-item>
+            <t-form-item label="手机号">
+              <div>{{ personInfo.mobilePhone || '-' }}</div>
+            </t-form-item>
+            <t-form-item label="最后一次修改资料时间">
+              <div>{{ userInfo.timeModified || '-' }}</div>
+            </t-form-item>
+          </t-form>
+        </t-col>
+        <t-col :xs="0" :sm="0" :lg="3"> </t-col>
+      </t-row>
+    </cmp-card>
+    <cmp-card title="组织信息" header-bordered>
+      <template #actions>
+        <t-space v-if="orgIsEdit">
+          <t-link theme="primary" @click="onClickSaveOrg">保存</t-link>
+          <t-link @click="onClickCancelOrg">取消</t-link>
+        </t-space>
+        <t-link v-else theme="primary" @click="orgIsEdit = true">修改</t-link>
+      </template>
+      <t-row align="middle" justify="space-around">
+        <t-col :xs="0" :sm="3" :lg="3"> </t-col>
+        <t-col :xs="12" :sm="9" :lg="5">
+          <t-form :label-width="180" label-align="left">
+            <t-form-item label="组织">
+              <bcmp-select-business
+                v-if="orgIsEdit"
+                v-model="orgInfo.orgId"
+                component-type="list"
+                type="plant"
+                :show-title="false"
+                @selection-change="
+                  (val) => {
+                    orgInfo.orgCode = val.orgCode;
+                    orgInfo.orgName = val.orgName;
+                  }
+                "
+              ></bcmp-select-business>
+              <div v-else>{{ orgInfo.orgName || '-' }}</div>
+            </t-form-item>
+            <t-form-item label="车间"
+              ><bcmp-select-business
+                v-if="orgIsEdit"
+                v-model="orgInfo.workShopId"
+                :parent-id="orgInfo.orgId"
+                type="workshop"
+                :show-title="false"
+                @selection-change="
+                  (val) => {
+                    orgInfo.workShopCode = val.orgCode;
+                    orgInfo.workShopName = val.orgName;
+                  }
+                "
+              ></bcmp-select-business>
+              <div v-else>{{ orgInfo.workShopName || '-' }}</div>
+            </t-form-item>
+            <t-form-item label="工作中心"
+              ><bcmp-select-business
+                v-if="orgIsEdit"
+                v-model="orgInfo.workCenterId"
+                :parent-id="orgInfo.workShopId"
+                type="workcenter"
+                :show-title="false"
+                @selection-change="
+                  (val) => {
+                    orgInfo.workCenterCode = val.wcCode;
+                    orgInfo.workCenterName = val.wcName;
+                  }
+                "
+              ></bcmp-select-business>
+              <div v-else>{{ orgInfo.workCenterName || '-' }}</div>
+            </t-form-item>
+            <t-form-item label="工站"
+              ><bcmp-select-business
+                v-if="orgIsEdit"
+                v-model="orgInfo.workStationId"
+                :parent-id="orgInfo.workCenterId"
+                type="workstationAuth"
+                :show-title="false"
+                @selection-change="
+                  (val) => {
+                    orgInfo.processId = val.processId;
+                    orgInfo.processCode = '';
+                    orgInfo.processName = '';
+                    orgInfo.workStationCode = val.workstationCode;
+                    orgInfo.workStationName = val.workstationName;
+                  }
+                "
+              ></bcmp-select-business>
+              <div v-else>{{ (orgInfo?.processName || '') + ' - ' + (orgInfo.workStationName || '') }}</div>
+            </t-form-item>
+          </t-form>
+        </t-col>
+        <t-col :xs="0" :sm="0" :lg="3"> </t-col>
+      </t-row>
+    </cmp-card>
+    <cmp-card title="密码信息" header-bordered>
+      <template #actions>
+        <t-link theme="primary" @click="onClickShowEditPwd">修改</t-link>
+      </template>
+      <t-row align="middle" justify="space-around">
+        <t-col :xs="0" :sm="3" :lg="3"></t-col>
+        <t-col :xs="12" :sm="9" :lg="5">
+          <t-form :label-width="180" label-align="left">
+            <t-form-item label="最后一次修改密码时间">
+              <div>{{ userInfo.timeLastPasswordChanged || '-' }}</div>
+            </t-form-item>
+          </t-form>
+        </t-col>
+        <t-col :xs="0" :sm="0" :lg="3"> </t-col>
+      </t-row>
+    </cmp-card>
+  </cmp-container>
 </template>
-<script lang="ts">
-export default {
-  name: 'UserIndex',
-};
-</script>
 <script setup lang="ts">
-import { LineChart } from 'echarts/charts';
-import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
-import * as echarts from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import type { DateRangeValue } from 'tdesign-vue-next';
-import { computed, nextTick, onMounted, onUnmounted, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
-import ProductAIcon from '@/assets/assets-product-1.svg';
-import ProductBIcon from '@/assets/assets-product-2.svg';
-import ProductCIcon from '@/assets/assets-product-3.svg';
-import ProductDIcon from '@/assets/assets-product-4.svg';
-import { useSettingStore } from '@/store';
-import { changeChartsTheme } from '@/utils/color';
-import { LAST_7_DAYS } from '@/utils/date';
+import { api, Person, UserInRoleVO } from '@/api/main';
+import UserIcon from '@/assets/assets-user.svg?component';
+import { useSettingStore, useUserStore } from '@/store';
 
-import { PRODUCT_LIST, TEAM_MEMBERS, USER_INFO_LIST } from './constants';
-import { getFolderLineDataSet } from './index';
+const settingStore = useSettingStore();
 
-echarts.use([GridComponent, TooltipComponent, LineChart, CanvasRenderer, LegendComponent]);
-
-let lineContainer: HTMLElement;
-let lineChart: echarts.ECharts;
-const store = useSettingStore();
-const chartColors = computed(() => store.chartColors);
-
-const onLineChange = (value: DateRangeValue) => {
-  lineChart.setOption(
-    getFolderLineDataSet({
-      dateTime: value as string[],
-      ...chartColors.value,
-    }),
-  );
+const userStore = useUserStore();
+const userInfo = computed(() => userStore.userInfo);
+const userIsEdit = ref(false);
+const onClickSaveUser = async () => {
+  const user = await api.user.getItemById(userInfo.value.id);
+  user.displayName = userInfo.value.name;
+  await api.user.edit(user);
+  userIsEdit.value = false;
+  await userStore.getUserInfo();
 };
 
-const initChart = () => {
-  lineContainer = document.getElementById('lineContainer');
-  lineChart = echarts.init(lineContainer);
-  lineChart.setOption({
-    grid: {
-      x: 30, // 默认是80px
-      y: 30, // 默认是60px
-      x2: 10, // 默认80px
-      y2: 30, // 默认60px
-    },
-    ...getFolderLineDataSet({ ...chartColors.value }),
+const onClickShowEditPwd = () => {
+  settingStore.updateConfig({
+    showPasswordPanel: true,
   });
 };
 
-const updateContainer = () => {
-  lineChart?.resize({
-    width: lineContainer.clientWidth,
-    height: lineContainer.clientHeight,
+const roles = ref<UserInRoleVO[]>([]);
+const personInfo = ref<Person>({});
+onMounted(async () => {
+  roles.value = await api.userInRole.getUserInRoleListByUserId({
+    userId: userInfo.value.id,
   });
-};
-
-onMounted(() => {
-  nextTick(() => {
-    initChart();
-  });
-  window.addEventListener('resize', updateContainer, false);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateContainer);
-});
-
-const getIcon = (type: string) => {
-  switch (type) {
-    case 'a':
-      return ProductAIcon;
-    case 'b':
-      return ProductBIcon;
-    case 'c':
-      return ProductCIcon;
-    case 'd':
-      return ProductDIcon;
-    default:
-      return ProductAIcon;
+  if (userInfo.value.personId) {
+    personInfo.value = await api.person.getItemById(userInfo.value.personId);
   }
+});
+
+const orgInfo = ref({ ...userStore.currUserOrgInfo });
+const orgIsEdit = ref(false);
+const onClickSaveOrg = async () => {
+  if (orgInfo.value.processId) {
+    const processInfo = await api.process.getItemById(orgInfo.value.processId);
+    orgInfo.value.processCode = processInfo.processCode;
+    orgInfo.value.processName = processInfo.processName;
+  }
+  userStore.updateOrg(orgInfo.value);
+  orgIsEdit.value = false;
 };
-
-watch(
-  () => store.brandTheme,
-  () => {
-    changeChartsTheme([lineChart]);
-  },
-);
+const onClickCancelOrg = async () => {
+  orgInfo.value = { ...userStore.currUserOrgInfo };
+  orgIsEdit.value = false;
+};
 </script>
-
 <style lang="less" scoped>
-@import './index.less';
+.user-image {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  right: 68px;
+  top: calc(50% - 50px);
+}
+
+.edit-btn {
+  position: absolute;
+  right: 30px;
+  top: calc(50% - 16px);
+}
+
+.user-form {
+  :deep(.t-form__label) {
+    label {
+      color: var(--td-text-color-secondary);
+    }
+  }
+
+  :deep(.t-form__item) {
+    margin-bottom: 8px;
+  }
+
+  :deep(.t-tag--default) {
+    background-color: #edeefb;
+  }
+}
 </style>

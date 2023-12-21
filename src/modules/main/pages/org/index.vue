@@ -73,12 +73,15 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { api, OrgTreeVO } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
+import { useUserStore } from '@/store';
 
 import { FormRef } from './constants';
 import OrgForm from './form.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
+const userStore = useUserStore();
+
 const formVisible = ref(false);
 const { loading, setLoading } = useLoading();
 const filterByText = ref();
@@ -141,6 +144,35 @@ watch(treeActiveKey, () => {
   }
 });
 
+const fetchEnterprise = async () => {
+  const enterprises = await api.enterprise.search({});
+  if (!enterprises || !enterprises.list || enterprises.total === 0) {
+    MessagePlugin.warning(t('org.enterpriseMust'));
+  } else {
+    const isAdmin = userStore.userInfo.code === 'administrator';
+    const list: OrgTreeVO[] = [];
+    for (let i = 0; i < enterprises.list.length; i++) {
+      const enterprise = enterprises.list[i];
+      const item = {
+        eid: enterprise.id,
+        orgCode: `${enterprise.id}0`,
+        orgName: enterprise.epName,
+      } as OrgTreeVO;
+
+      if (isAdmin) {
+        item.children = treeData.value.filter((t) => t.eid === enterprise.id);
+        list.push(item);
+      } else if (enterprise.id === userStore.userInfo.eid) {
+        item.children = treeData.value.filter((t) => t.eid === enterprise.id);
+        list.push(item);
+        break;
+      }
+    }
+
+    treeData.value = list;
+  }
+};
+
 const fetchData = async () => {
   setLoading(true);
   treeData.value = await api.org.tree();
@@ -148,6 +180,7 @@ const fetchData = async () => {
   setLoading(false);
   treeActiveKey.value = [];
   flatten(treeData.value);
+  fetchEnterprise();
 };
 
 const flattenOrgObj: { [key: string]: OrgTreeVO } = {};

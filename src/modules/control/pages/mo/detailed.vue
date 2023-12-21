@@ -84,9 +84,10 @@
         </cmp-table>
       </div>
     </footer>
-    <div class="popup-mo-foot-btn">
+
+    <!-- <div class="popup-mo-foot-btn">
       <t-button theme="default" @click="onHandleCancellation">取消</t-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -260,6 +261,9 @@ watch(
   },
   { deep: true },
 );
+defineExpose({
+  onHandleCancellation,
+});
 </script>
 
 <style lang="less" scoped>
@@ -269,7 +273,7 @@ watch(
 }
 
 .detailed-box {
-  padding: var(--td-comp-paddingTB-xl) var(--td-comp-paddingLR-xl);
+  // padding: var(--td-comp-paddingTB-xl) var(--td-comp-paddingLR-xl);
 
   .popup-mo-foot-btn {
     display: block;

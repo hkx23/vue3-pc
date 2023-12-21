@@ -1,15 +1,16 @@
 <template>
-  <div class="module-tree-container">
-    <t-card :bordered="false">
-      <header class="module-header-box">
-        <t-row justify="space-between">
-          <!-- 左侧盒子 -->
-          <t-col :span="3" flex="auto" style="margin-right: 20px">
-            <t-input v-model="page.keyword" placeholder="请输入" :autofocus="true" size="large" @enter="onEnter">
+  <cmp-container :full="true">
+    <cmp-row>
+      <cmp-card flex="300px">
+        <cmp-container :full="true" :full-sub-index="[1]">
+          <cmp-card :ghost="true" :span="12">
+            <t-input v-model="page.keyword" placeholder="请输入" :autofocus="true" @enter="onEnter">
               <template #prefixIcon>
                 <icon name="search" class="black-icon" />
               </template>
             </t-input>
+          </cmp-card>
+          <cmp-card :ghost="true" :span="12">
             <t-list stripe :split="true" class="listOll">
               <t-list-item
                 v-for="(item, index) in edabDataArr"
@@ -25,236 +26,217 @@
                 </template>
               </t-list-item>
             </t-list>
+          </cmp-card>
+          <cmp-card :ghost="true" :span="12">
             <t-pagination
               v-model:current="page.pageNum"
               v-model:page-size="page.pageSize"
-              style="margin-top: 20px"
+              style="margin-top: 8px"
+              :show-page-size="false"
               :total="tabTotal"
               @page-size-change="onPaginationChange"
               @current-change="onCurrentChange"
             />
-          </t-col>
-          <!-- 右侧盒子 -->
-          <t-col :span="8" flex="auto">
-            <t-tabs v-model="tabValue" @change="tabsChange">
-              <t-tab-panel :value="0" label="全部" :destroy-on-hide="false">
-                <template #panel>
-                  <cmp-table
-                    ref="tableRef"
-                    v-model:pagination="pageUI"
-                    row-key="id"
-                    :table-column="columns"
-                    :table-data="edabTabDataArr.list"
-                    :total="edabTotal"
-                    @refresh="fetchData"
-                  >
-                    <template #required="{ row }">
-                      <t-checkbox v-model="row.isRequire"></t-checkbox>
-                    </template>
-                    <template #multiterm="{ row }">
-                      <t-checkbox v-model="row.isMultiple"></t-checkbox>
-                    </template>
-                    <template #verify="{ row }">
-                      <t-checkbox v-model="row.needValidation"></t-checkbox>
-                    </template>
-                    <template #disableSwitch="{ row }">
-                      <t-switch
-                        :custom-value="[1, 0]"
-                        :default-value="row.state"
-                        size="large"
-                        @change="(value) => onSwitchChange(row, value)"
-                      ></t-switch>
-                    </template>
-                    <template #actionSlot="{ row }">
-                      <t-button size="small" variant="text" @click="onEditRow(row)">
-                        <icon name="edit-1" class="black-icon" />
-                      </t-button>
-                    </template>
-                  </cmp-table>
-                </template>
-              </t-tab-panel>
-              <t-tab-panel
-                v-for="(item, index) in edabTopDataArr"
-                :key="item.id"
-                :value="index + 1"
-                :label="item.categoryName"
-                :destroy-on-hide="true"
-              >
-                <template #panel>
-                  <cmp-table
-                    ref="tableRef"
-                    v-model:pagination="pageUI"
-                    row-key="id"
-                    :table-column="columns"
-                    :table-data="edabTabDataArr.list"
-                    :total="edabTotal"
-                  >
-                    <template #required="{ row }">
-                      <t-checkbox v-model="row.isRequire"></t-checkbox>
-                    </template>
-                    <template #multiterm="{ row }">
-                      <t-checkbox v-model="row.isMultiple"></t-checkbox>
-                    </template>
-                    <template #verify="{ row }">
-                      <t-checkbox v-model="row.needValidation"></t-checkbox>
-                    </template>
-                    <template #actionSlot="{ row }">
-                      <t-button size="small" variant="text" @click="onEditRow(row)">
-                        <icon name="edit-1" class="black-icon" />
-                      </t-button>
-                    </template>
-                    <template #disableSwitch="{ row }">
-                      <t-switch
-                        :custom-value="[1, 0]"
-                        :default-value="row.state"
-                        size="large"
-                        @change="(value) => onSwitchChange(row, value)"
-                      ></t-switch>
-                    </template>
-                  </cmp-table>
-                </template>
-              </t-tab-panel>
-            </t-tabs>
-          </t-col>
-        </t-row>
-      </header>
-    </t-card>
-    <!-- dialog 弹窗 -->
-    <t-dialog
-      v-model:visible="formVisible"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      :header="diaLogTitle"
-      width="70%"
-      @close="onDialogClose"
-    >
-      <!-- 扩展属性添加表单 -->
-      <t-form ref="formRef" :rules="rules" :data="dialogFormData.list" @submit="onWorkStationSubmit">
-        <!-- 第 1️⃣ 行数据 -->
-        <t-row class="row-class">
-          <t-col :span="5">
-            <t-form-item label="属性代码" name="propertyCode">
-              <t-input v-model="dialogFormData.list.propertyCode"></t-input>
-            </t-form-item>
-          </t-col>
-          <t-col :span="6">
-            <t-form-item label="属性值类型" name="propertyValueType">
-              <t-select v-model="dialogFormData.list.propertyValueType">
-                <t-option key="INT" label="整数型" value="INT" />
-                <t-option key="STRING" label="字符型" value="STRING" />
-                <t-option key="DATETIME" label="事件日期" value="DATETIME" />
-              </t-select>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 第 2️⃣ 行数据 -->
-        <t-row class="row-class">
-          <t-col :span="5">
-            <t-form-item label="显示名称" name="displayName">
-              <t-input v-model="dialogFormData.list.displayName"></t-input>
-            </t-form-item>
-          </t-col>
-          <t-col :span="6">
-            <t-form-item label="显示顺序" name="displaySequence">
-              <t-input-number
-                v-model="dialogFormData.list.displaySequence"
-                style="margin: 0 50px"
-                :max="15"
-                :min="-2"
-              ></t-input-number>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 第 3️⃣ 行数据 -->
-        <t-row class="row-class">
-          <t-col :span="5">
-            <t-form-item label="分类" name="classifyData">
-              <t-select v-model="classifyData" @change="onObjectCodeChange">
-                <t-option v-for="item in selsectData.list" :key="item.id" :label="item.categoryName" :value="item" />
-              </t-select>
-            </t-form-item>
-          </t-col>
-          <t-col :span="6" class="three-checkbox">
-            <t-form-item label="" label-width="var(--td-size-9)">
+          </cmp-card>
+        </cmp-container>
+      </cmp-card>
+      <cmp-card flex="auto" style="min-width: 1px" class="full-tab">
+        <t-tabs v-model="tabValue" @change="tabsChange">
+          <t-tab-panel :value="0" label="全部" :destroy-on-hide="false">
+            <template #panel>
+              <cmp-container :full="true">
+                <cmp-table
+                  ref="tableRef"
+                  v-model:pagination="pageUI"
+                  row-key="id"
+                  :table-column="columns"
+                  :table-data="edabTabDataArr.list"
+                  :total="edabTotal"
+                  @refresh="fetchData"
+                >
+                  <template #required="{ row }">
+                    <t-checkbox v-model="row.isRequire"></t-checkbox>
+                  </template>
+                  <template #multiterm="{ row }">
+                    <t-checkbox v-model="row.isMultiple"></t-checkbox>
+                  </template>
+                  <template #verify="{ row }">
+                    <t-checkbox v-model="row.needValidation"></t-checkbox>
+                  </template>
+                  <template #disableSwitch="{ row }">
+                    <t-switch
+                      :custom-value="[1, 0]"
+                      :default-value="row.state"
+                      size="large"
+                      @change="(value) => onSwitchChange(row, value)"
+                    ></t-switch>
+                  </template>
+                  <template #actionSlot="{ row }">
+                    <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+                  </template>
+                </cmp-table>
+              </cmp-container>
+            </template>
+          </t-tab-panel>
+          <t-tab-panel
+            v-for="(item, index) in edabTopDataArr"
+            :key="item.id"
+            :value="index + 1"
+            :label="item.categoryName"
+            :destroy-on-hide="true"
+          >
+            <template #panel>
+              <cmp-container :full="true">
+                <cmp-table
+                  ref="tableRef"
+                  v-model:pagination="pageUI"
+                  row-key="id"
+                  :table-column="columns"
+                  :table-data="edabTabDataArr.list"
+                  :total="edabTotal"
+                >
+                  <template #required="{ row }">
+                    <t-checkbox v-model="row.isRequire"></t-checkbox>
+                  </template>
+                  <template #multiterm="{ row }">
+                    <t-checkbox v-model="row.isMultiple"></t-checkbox>
+                  </template>
+                  <template #verify="{ row }">
+                    <t-checkbox v-model="row.needValidation"></t-checkbox>
+                  </template>
+                  <template #actionSlot="{ row }">
+                    <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+                    <!-- <t-button size="small" variant="text" @click="onEditRow(row)">
+                      <icon name="edit-1" class="black-icon" />
+                    </t-button> -->
+                  </template>
+                  <template #disableSwitch="{ row }">
+                    <t-switch
+                      :custom-value="[1, 0]"
+                      :default-value="row.state"
+                      size="large"
+                      @change="(value) => onSwitchChange(row, value)"
+                    ></t-switch>
+                  </template>
+                </cmp-table>
+              </cmp-container>
+            </template>
+          </t-tab-panel>
+        </t-tabs>
+      </cmp-card>
+    </cmp-row>
+  </cmp-container>
+
+  <!-- dialog 弹窗 -->
+  <t-dialog
+    v-model:visible="formVisible"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    :header="diaLogTitle"
+    width="750px"
+    @close="onDialogClose"
+  >
+    <!-- 扩展属性添加表单 -->
+    <t-form ref="formRef" :rules="rules" :data="dialogFormData.list" @submit="onWorkStationSubmit">
+      <t-row :gutter="[32, 16]">
+        <t-col :span="6">
+          <t-form-item label="属性代码" name="propertyCode">
+            <t-input v-model="dialogFormData.list.propertyCode"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="属性值类型" name="propertyValueType">
+            <t-select v-model="dialogFormData.list.propertyValueType">
+              <t-option key="INT" label="整数型" value="INT" />
+              <t-option key="STRING" label="字符型" value="STRING" />
+              <t-option key="DATETIME" label="事件日期" value="DATETIME" />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="显示名称" name="displayName">
+            <t-input v-model="dialogFormData.list.displayName"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="显示顺序" name="displaySequence">
+            <t-input-number
+              v-model="dialogFormData.list.displaySequence"
+              theme="column"
+              :max="15"
+              :min="-2"
+            ></t-input-number>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="分类" name="classifyData">
+            <t-select v-model="classifyData" @change="onObjectCodeChange">
+              <t-option v-for="item in selsectData.list" :key="item.id" :label="item.categoryName" :value="item" />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item
+            ><t-space direction="horizontal" :size="8">
               <t-checkbox v-model="isRequireCheckbox">必填项</t-checkbox>
               <t-checkbox v-model="isMultipleCheckbox">多项</t-checkbox>
-              <t-checkbox v-model="needValidationCheckbox">校验</t-checkbox>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 第 4️⃣ 行数据 -->
-        <t-row class="row-class">
-          <t-col :span="5">
-            <t-form-item label="数据来源">
-              <t-select v-model="dialogFormData.list.dataSource" name="dataSource">
-                <t-option key="DEFAULT" label="DEFAULT" value="DEFAULT" />
-                <t-option key="PARAM" label="PARAM" value="PARAM"></t-option>
-                <t-option key="SERVICE" label="SERVICE" value="SERVICE" />
-              </t-select>
-            </t-form-item>
-          </t-col>
-          <t-col :span="4">
-            <t-form-item
-              v-if="dialogFormData.list.dataSource == 'PARAM' || dialogFormData.list.dataSource == 'SERVICE'"
-              label="对话框类型"
+              <t-checkbox v-model="needValidationCheckbox">校验</t-checkbox></t-space
             >
-              <t-input
-                v-if="dialogFormData.list.dataSource === 'SERVICE'"
-                v-model="dialogFormData.list.dataSourcePath"
-              ></t-input>
-              <t-select
-                v-if="dialogFormData.list.dataSource === 'PARAM'"
-                v-model="dataType"
-                @change="onDialogCodeChange"
-              >
-                <t-option
-                  v-for="item in selsectDataBox.list"
-                  :key="item.id"
-                  :label="item.paramGroupName"
-                  :value="item"
-                />
-              </t-select>
-            </t-form-item>
-          </t-col>
-          <t-col :span="3">
-            <t-form-item
-              v-if="dialogFormData.list.dataSource === 'PARAM' || dialogFormData.list.dataSource === 'SERVICE'"
-              label-width="20px"
-            >
-              <t-radio-group
-                v-model="dialogFormData.list.isDataMultiple"
-                name="city"
-                :options="itemOptions"
-                size="small"
-              ></t-radio-group>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 第 5️⃣ 行数据 -->
-        <t-row class="row-class">
-          <t-col :span="11">
-            <t-form-item label="校验表达式" name="validExpression">
-              <t-input v-model="dialogFormData.list.validExpression"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 第 6️⃣ 行数据 -->
-        <t-row class="row-class">
-          <t-col :span="11">
-            <t-form-item label="备注" name="memo">
-              <t-input v-model="dialogFormData.list.memo"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <t-row>
-          <t-col :span="11" class="align-right">
-            <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
-            <t-button theme="primary" type="submit">保存</t-button>
-          </t-col>
-        </t-row>
-      </t-form>
-    </t-dialog>
-  </div>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="数据来源">
+            <t-select v-model="dialogFormData.list.dataSource" name="dataSource">
+              <t-option key="DEFAULT" label="DEFAULT" value="DEFAULT" />
+              <t-option key="PARAM" label="PARAM" value="PARAM"></t-option>
+              <t-option key="SERVICE" label="SERVICE" value="SERVICE" />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col
+          v-if="dialogFormData.list.dataSource == 'PARAM' || dialogFormData.list.dataSource == 'SERVICE'"
+          :span="6"
+        >
+          <t-form-item label="对话框类型">
+            <t-input
+              v-if="dialogFormData.list.dataSource === 'SERVICE'"
+              v-model="dialogFormData.list.dataSourcePath"
+            ></t-input>
+            <t-select v-if="dialogFormData.list.dataSource === 'PARAM'" v-model="dataType" @change="onDialogCodeChange">
+              <t-option v-for="item in selsectDataBox.list" :key="item.id" :label="item.paramGroupName" :value="item" />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col
+          v-if="dialogFormData.list.dataSource === 'PARAM' || dialogFormData.list.dataSource === 'SERVICE'"
+          :span="6"
+        >
+          <t-form-item>
+            <t-radio-group
+              v-model="dialogFormData.list.isDataMultiple"
+              name="city"
+              :options="itemOptions"
+              size="small"
+            ></t-radio-group>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="校验表达式" name="validExpression">
+            <t-input v-model="dialogFormData.list.validExpression"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="备注" name="memo">
+            <t-input v-model="dialogFormData.list.memo"></t-input>
+          </t-form-item>
+        </t-col>
+      </t-row>
+    </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
+      <t-button theme="primary" @click="submitForm">保存</t-button>
+    </template>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -266,6 +248,9 @@ import { api, ObjectProperty } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
+import { useLang } from './lang';
+
+const { t } = useLang();
 const diaLogTitle = ref('');
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
@@ -280,7 +265,7 @@ const listParamID = ref(null);
 const formRef = ref(null);
 
 const tabTotal = ref(null);
-const page = ref({ pageNum: 1, pageSize: 5, keyword: '' });
+const page = ref({ pageNum: 1, pageSize: 10, keyword: '' });
 
 const classifyData = ref('');
 const dataType = ref('');
@@ -608,11 +593,15 @@ const onAddProperty = () => {
 // dialog 弹框关闭时执行的操作
 const onDialogClose = () => {
   formRef.value.reset({ type: 'initial' });
+  formVisible.value = false;
 };
 
 // 刷新按钮
 const fetchData = () => {
   onGetAllTabData();
+};
+const submitForm = () => {
+  formRef.value.submit();
 };
 
 // 提交事件
@@ -648,7 +637,34 @@ const onWorkStationSubmit = async (context: { validateResult: boolean }) => {
   margin-left: 25px;
 }
 
+// .selected-background {
+//   background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
+// }
+.full-tab {
+  :deep(.t-tabs) {
+    height: 100%;
+  }
+
+  :deep(.t-tabs__content) {
+    height: calc(100% - 24px);
+  }
+
+  :deep(.t-tab-panel) {
+    height: 100%;
+  }
+}
+
 .selected-background {
+  color: #fff;
   background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
+}
+
+.listOll {
+  .selected-background {
+    background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
+    .black-icon {
+      color: #fff;
+    }
+  }
 }
 </style>

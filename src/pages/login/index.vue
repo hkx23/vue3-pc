@@ -99,6 +99,7 @@ const switchType = (val: string) => {
     top: calc(50% - 316px);
     border-radius: 8px;
     box-shadow: 0 0 20px rgb(107 107 107 / 24%);
+    overflow: hidden;
 
     .login-main-image {
       background-image: url('@/assets/images/login-bg.png');

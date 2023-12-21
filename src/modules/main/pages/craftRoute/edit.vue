@@ -331,9 +331,25 @@ const save = () => {
         MessagePlugin.error(t('craftRoute.notMoreStartNode'));
         return;
       }
+      // 判断开始节点是否有连线
+      if (findIndex(rawData.edges, ['sourceNodeId', allStartNodes[0].id]) === -1) {
+        MessagePlugin.error(t('craftRoute.startNodeNotEdge'));
+        return;
+      }
+      const allEndNodes = filter(rawData.nodes, ['type', 'end']);
       // 判断是否有结束节点
-      if (findIndex(rawData.nodes, (o) => o.type === 'end') === -1) {
+      if (allEndNodes.length === 0) {
         MessagePlugin.error(t('craftRoute.notEndNode'));
+        return;
+      }
+      // 判断是否有多个结束节点
+      if (allEndNodes.length > 1) {
+        MessagePlugin.error(t('craftRoute.notMoreEndNode'));
+        return;
+      }
+      // 判断结束节点是否有连线
+      if (findIndex(rawData.edges, ['targetNodeId', allEndNodes[0].id]) === -1) {
+        MessagePlugin.error(t('craftRoute.endNodeNotEdge'));
         return;
       }
       const allProcessNodes = filter(rawData.nodes, ['type', 'process']);
@@ -350,11 +366,13 @@ const save = () => {
           MessagePlugin.error(t('craftRoute.processNodeNotSelect'));
           return;
         }
-        if (findIndex(rawData.edges, ['targetNodeId', process.id]) === -1) {
+        // 判断是否有上一个节点，同时不能是自链接
+        if (findIndex(rawData.edges, (o) => o.targetNodeId === process.id && o.sourceNodeId !== process.id) === -1) {
           MessagePlugin.error(t('craftRoute.processNodeNotPre', [process.properties.processName]));
           return;
         }
-        if (findIndex(rawData.edges, ['sourceNodeId', process.id]) === -1) {
+        // 判断是否有下一个节点，同时不能是自链接
+        if (findIndex(rawData.edges, (o) => o.sourceNodeId === process.id && o.targetNodeId !== process.id) === -1) {
           MessagePlugin.error(t('craftRoute.processNodeNotNext', [process.properties.processName]));
           return;
         }

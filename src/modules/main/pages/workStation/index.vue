@@ -16,20 +16,29 @@
         :loading="loading"
         @refresh="onHandelList"
       >
+        <template #stateSwitch="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
+        </template>
+
         <template #button>
           <t-button variant="base" @click="onHandelAdd">新增</t-button>
         </template>
-        <template #state="{ row }">
+        <!-- <template #state="{ row }">
           <span>{{ row.state === 1 ? '启用' : '禁用' }}</span>
-        </template>
+        </template> -->
         <template #op="{ row }">
-          <t-space>
+          <t-space :size="8">
             <!-- 编辑 -->
             <t-link theme="primary" @click="onHandelEdit(row.id)">{{ t('common.button.edit') }}</t-link>
             <!-- 禁用 -->
-            <t-popconfirm :content="row.state ? '确认禁用吗' : '确认启用吗'" @confirm="onHandleDisable(row)">
+            <!-- <t-popconfirm :content="row.state ? '确认禁用吗' : '确认启用吗'" @confirm="onHandleDisable(row)">
               <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
-            </t-popconfirm>
+            </t-popconfirm> -->
           </t-space>
         </template>
       </cmp-table>
@@ -195,11 +204,13 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    align: 'center',
     colKey: 'state',
     title: '状态',
+    align: 'center',
     width: '90px',
+    cell: 'stateSwitch',
   },
+
   {
     colKey: 'creatorName',
     title: '创建人',
@@ -224,6 +235,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '170px',
     align: 'center',
   },
+
   {
     colKey: 'op',
     title: '操作',
@@ -348,20 +360,31 @@ const onHandelResetting = () => {
   inputValue.value.workstaion = '';
 };
 // 禁用
-const onHandleDisable = async (value) => {
-  console.log('console.log(value.state);', value.state);
-  if (value.state !== 1) {
-    value.state = 1;
-  } else {
-    value.state = 0;
-  }
-  console.log('console.log(value.state);', value.state);
+// const onHandleDisable = async (value) => {
+//   console.log('console.log(value.state);', value.state);
+//   if (value.state !== 1) {
+//     value.state = 1;
+//   } else {
+//     value.state = 0;
+//   }
+//   console.log('console.log(value.state);', value.state);
+//   await api.workstation.edit({
+//     id: value.id,
+//     state: value.state,
+//   });
+//   onHandelList();
+// };
+// switch 开关事件
+const onSwitchChange = async (row: { incidentName: any; id: any }, value: any) => {
+  const isValue = value ? 1 : 0;
   await api.workstation.edit({
-    id: value.id,
-    state: value.state,
+    state: isValue,
+    id: row.id,
   });
-  onHandelList();
+  await onHandelList();
+  MessagePlugin.success('操作成功');
 };
+
 // 是否启用
 const onChange = (value) => {
   console.log(value);
@@ -488,12 +511,12 @@ const rules: FormRules<Data> = {
   right: var(--td-comp-size-l);
   bottom: var(--td-comp-size-s);
 }
-// 启动按钮样式更改
-:deep(.t-switch.t-is-checked:hover) {
-  background: var(--td-success-color-4);
-}
+// // 启动按钮样式更改
+// :deep(.t-switch.t-is-checked:hover) {
+//   background: var(--td-success-color-4);
+// }
 
-:deep(.t-switch.t-is-checked) {
-  background: var(--td-success-color-4);
-}
+// :deep(.t-switch.t-is-checked) {
+//   background: var(--td-success-color-4);
+// }
 </style>

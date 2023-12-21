@@ -1,9 +1,10 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <cmp-query :opts="opts" label-width="100" is-expansion @submit="conditionEnter" />
-    </div>
-    <div class="main-page-content">
+  <cmp-container :full="false">
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
+    </cmp-card>
+    <cmp-card :span="12">
+      <!-- ################# 处理组表格数据 ###################### -->
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -12,149 +13,125 @@
         :table-data="tableDataProductPackRule"
         :loading="loading"
         :total="dataTotal"
+        :hover="false"
+        :stripe="false"
+        active-row-type="single"
         select-on-row-click
         :header-affixed-top="true"
         @refresh="fetchTable"
         @cell-click="onEditPackRowClick"
       >
         <template #op="{ row }">
-          <t-space>
-            <t-icon name="edit" @click="onClickEditPackRule(row)" />
-            <t-icon name="delete" :disabled="loading" @click="onDeletePackRowClick(row)" />
+          <t-space :size="8">
+            <t-link theme="primary" @click="onClickEditPackRule(row)">{{ t('common.button.edit') }}</t-link>
+            <t-link theme="primary" :disabled="loading" @click="onDeletePackRowClick(row)">{{
+              t('common.button.delete')
+            }}</t-link>
           </t-space>
         </template>
-        <template #operate>
-          <t-button shape="square" variant="outline" @click="onClickAddPackRule">
-            <t-icon name="add" />
+        <template #button>
+          <t-button @click="onClickAddPackRule">
+            {{ t('common.button.add') }}
           </t-button>
         </template>
       </cmp-table>
-    </div>
-    <div class="main-page-content">
-      <t-row>
-        <t-col :span="5">
-          <div class="pack-dtl-table">
-            <t-space size="small" :align="'center'" class="pack-dtl-button">
-              <t-button
-                :disabled="!isShowPackRuleDtlAddBtn"
-                shape="square"
-                variant="outline"
-                @click="onClickAddPackRuleDtl"
-              >
-                <template #icon>
-                  <t-icon name="add" />
-                </template>
-              </t-button>
-            </t-space>
-            <!-- 规则明细表格-->
-            <t-enhanced-table
-              ref="tableDtlRef"
-              row-key="id"
-              :columns="tablePackDtlColumns"
-              :data="tableDataProductPackDtl"
-              :tree="treeConfig"
-              active-row-type="single"
-              :loading="loadingPackDtl"
-              :header-affixed-top="true"
-              :bordered="true"
-              :resizable="true"
-              @cell-click="onRowPackRuleDtlClick"
-            >
-              <template #op="{ row }">
-                <t-space>
-                  <t-icon name="edit" @click="onClickEditPackRuleDtl(row)" />
-                  <t-icon name="delete" :disabled="loadingPackDtl" @click="onDeletePackDtlRowClick(row)" />
-                </t-space> </template
-            ></t-enhanced-table>
-          </div>
-        </t-col>
-        <t-col :span="6" :offset="1">
-          <!-- 物料表格-->
-          <cmp-table
-            ref="tableMitemRef"
-            v-model:pagination="pageMitem"
+    </cmp-card>
+    <cmp-row>
+      <!-- ################# 子数据数据 ###################### -->
+      <cmp-card :span="6">
+        <div class="pack-dtl-table">
+          <t-space size="small" :align="'center'" class="pack-dtl-button">
+            <t-button :disabled="!isShowPackRuleDtlAddBtn" @click="onClickAddPackRuleDtl">
+              {{ t('common.button.add') }}
+            </t-button>
+          </t-space>
+          <!-- 规则明细表格-->
+          <t-enhanced-table
+            ref="tableDtlRef"
             row-key="id"
-            :table-column="tableMitemColumns"
-            :table-data="tableDataMitem"
-            :loading="loadingMitem"
-            :show-pagination="false"
+            :columns="tablePackDtlColumns"
+            :data="tableDataProductPackDtl"
+            :tree="treeConfig"
+            active-row-type="single"
+            :loading="loadingPackDtl"
             :header-affixed-top="true"
-            @refresh="fetchMitemTable"
+            :bordered="false"
+            :resizable="true"
+            @cell-click="onRowPackRuleDtlClick"
           >
             <template #op="{ row }">
-              <t-space>
-                <t-icon name="delete" :disabled="loadingMitem" @click="onDeleteMitemRowClick(row)" />
+              <t-space :size="8">
+                <t-link theme="primary" @click="onClickEditPackRuleDtl(row)">{{ t('common.button.edit') }}</t-link>
+                <t-link theme="primary" :disabled="loadingPackDtl" @click="onDeletePackDtlRowClick(row)">{{
+                  t('common.button.delete')
+                }}</t-link>
               </t-space>
-            </template>
-            <template #operate>
-              <t-button
-                v-if="selectPackRuleRow.id"
-                shape="square"
-                variant="outline"
-                :disabled="loadingMitem"
-                @click="onClickAddPackRuleMitem"
-              >
-                <t-icon name="add" />
-              </t-button>
-              <t-button
-                :disabled="selectMitemRowKeys?.length == 0"
-                theme="default"
-                variant="outline"
-                @click="onBatchDeleteMitemRowClick"
-              >
-                <t-icon name="delete" />{{ t('common.button.batchDelete') }}
-              </t-button>
-            </template>
-          </cmp-table></t-col
+            </template></t-enhanced-table
+          >
+        </div>
+      </cmp-card>
+      <cmp-card :span="6">
+        <!-- 物料表格-->
+        <cmp-table
+          ref="tableMitemRef"
+          v-model:pagination="pageMitem"
+          row-key="id"
+          :table-column="tableMitemColumns"
+          :table-data="tableDataMitem"
+          :loading="loadingMitem"
+          :show-pagination="false"
+          :header-affixed-top="true"
+          @refresh="fetchMitemTable"
         >
-      </t-row>
-    </div>
-  </div>
+          <template #op="{ row }">
+            <t-space>
+              <t-link theme="primary" :disabled="loadingMitem" @click="onDeleteMitemRowClick(row)">{{
+                t('common.button.delete')
+              }}</t-link>
+            </t-space>
+          </template>
+          <template #button>
+            <t-button v-if="selectPackRuleRow.id" :disabled="loadingMitem" @click="onClickAddPackRuleMitem">
+              {{ t('common.button.add') }}
+            </t-button>
+            <t-button :disabled="selectMitemRowKeys?.length == 0" theme="default" @click="onBatchDeleteMitemRowClick">
+              {{ t('common.button.batchDelete') }}
+            </t-button>
+          </template>
+        </cmp-table>
+      </cmp-card>
+    </cmp-row>
+  </cmp-container>
 
   <!--包装规则主表弹框-->
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="formHeader"
-      :on-confirm="onConfirmForm"
-      width="50%"
-      :close-on-overlay-click="false"
-    >
-      <t-space direction="vertical" style="width: 98%">
-        <form-pack-rule ref="formRef" :is-add="isAdd" :row="selectPackRuleRow"></form-pack-rule>
-      </t-space>
-    </t-dialog>
-  </div>
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="formHeader"
+    :on-confirm="onConfirmForm"
+    :close-on-overlay-click="false"
+  >
+    <form-pack-rule ref="formRef" :is-add="isAdd" :row="selectPackRuleRow"></form-pack-rule>
+  </t-dialog>
 
   <!--包装规则主表弹框-->
-  <div>
-    <t-dialog
-      v-model:visible="formDtlVisible"
-      :header="formHeader"
-      :on-confirm="onConfirmFormRuleDtl"
-      width="50%"
-      :close-on-overlay-click="false"
-    >
-      <t-space direction="vertical" style="width: 98%">
-        <form-pack-rule-dtl ref="formDtlRef" :is-add="isAdd" :row="selectPackRuleRowDtl"></form-pack-rule-dtl>
-      </t-space>
-    </t-dialog>
-  </div>
+  <t-dialog
+    v-model:visible="formDtlVisible"
+    :header="formHeader"
+    :on-confirm="onConfirmFormRuleDtl"
+    :close-on-overlay-click="false"
+  >
+    <form-pack-rule-dtl ref="formDtlRef" :is-add="isAdd" :row="selectPackRuleRowDtl"></form-pack-rule-dtl>
+  </t-dialog>
 
   <!--物料弹框-->
-  <div>
-    <t-dialog
-      v-model:visible="formMitemVisible"
-      :header="formHeader"
-      :on-confirm="onConfirmFormMitem"
-      width="50%"
-      :close-on-overlay-click="false"
-    >
-      <t-space direction="vertical" style="width: 98%">
-        <form-pack-rule-mitem ref="formMitemRef" :is-add="isAdd"></form-pack-rule-mitem>
-      </t-space>
-    </t-dialog>
-  </div>
+  <t-dialog
+    v-model:visible="formMitemVisible"
+    :header="formHeader"
+    :on-confirm="onConfirmFormMitem"
+    :close-on-overlay-click="false"
+  >
+    <form-pack-rule-mitem ref="formMitemRef" :is-add="isAdd"></form-pack-rule-mitem>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -211,7 +188,7 @@ const opts = computed(() => {
       label: t('productRule.packRule'),
       comp: 't-input',
       defaultVal: '',
-      placeholder: t('common.placeholder.input', [`${t('productRule.packRule')}}`]),
+      placeholder: t('common.placeholder.input', [`${t('productRule.packRule')}`]),
     },
     mitemCategory: {
       label: t('business.main.mitemCategoryCode'),
@@ -251,7 +228,7 @@ const isShowPackRuleDtlAddBtn = computed(() => {
 });
 
 const tableProductPackRuleColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', type: 'single', width: 40, fixed: 'left' },
+  // { colKey: 'row-select', type: 'single', width: 40, fixed: 'left' },
   { title: `${t('productRule.packRuleCode')}`, width: 120, colKey: 'packRuleCode' },
   { title: `${t('productRule.packRuleName')}`, width: 130, colKey: 'packRuleName' },
   { title: `${t('business.main.creator')}`, width: 110, colKey: 'creatorName' },
@@ -400,6 +377,7 @@ const onDeletePackRowClick = async (row: any) => {
   const confirmDia = DialogPlugin({
     header: t('common.button.delete'),
     body: t('common.message.confirmDelete'),
+    theme: 'warning',
     confirmBtn: t('common.button.confirm'),
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
@@ -419,6 +397,7 @@ const onDeletePackDtlRowClick = async (row: any) => {
   const confirmDia = DialogPlugin({
     header: t('common.button.delete'),
     body: t('common.message.confirmDelete'),
+    theme: 'warning',
     confirmBtn: t('common.button.confirm'),
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
@@ -437,6 +416,7 @@ const onDeleteMitemRowClick = async (row: any) => {
   const confirmDia = DialogPlugin({
     header: t('common.button.delete'),
     body: t('common.message.confirmDelete'),
+    theme: 'warning',
     confirmBtn: t('common.button.confirm'),
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
@@ -460,6 +440,7 @@ const onBatchDeleteMitemRowClick = async (row: any) => {
   const confirmDia = DialogPlugin({
     header: t('common.button.delete'),
     body: t('common.message.confirmDelete'),
+    theme: 'warning',
     confirmBtn: t('common.button.confirm'),
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
@@ -628,12 +609,12 @@ onMounted(() => {
 }
 
 .pack-dtl-table {
-  padding-top: 8px;
+  padding-top: 0;
 
   .pack-dtl-button {
     display: flex;
-    justify-content: flex-end;
-    padding-bottom: 6px;
+    justify-content: flex-start;
+    margin-bottom: 8px;
   }
 }
 

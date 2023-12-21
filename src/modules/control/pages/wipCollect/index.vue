@@ -444,6 +444,7 @@ const getQueryString = (paramName: string) => {
 };
 
 onMounted(() => {
+  Init();
   // 底座完成后从底座获取
   const serialNumber = getQueryString('serialNumber');
   const workCenterId = getQueryString('workCenterId');
@@ -461,8 +462,6 @@ onMounted(() => {
   if (processId) {
     mainform.value.processId = processId;
   }
-
-  Init();
 });
 </script>
 

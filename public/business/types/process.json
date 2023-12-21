@@ -1,6 +1,6 @@
 {
   "title": "工序：",
-  "placeholder": "请选择工序：",
+  "placeholder": "请选择工序",
   "url": "/api/main/process/items",
   "httptype": "POST",
   "category": "",

@@ -60,9 +60,12 @@ const classAttrs = computed(() => {
 .cmp-card-full {
   :deep(> .cmp-card) {
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 
     > .t-card__body {
-      height: 100%;
+      flex: 1;
       overflow: auto;
     }
   }

@@ -1,174 +1,167 @@
 <template>
-  <div class="module-tree-container">
-    <t-card :bordered="false">
+  <cmp-container :full="true" :full-sub-index="[1, 2]">
+    <cmp-card :span="12">
       <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
-      <t-row justify="space-between">
-        <!-- ################# 处理组表格数据 ###################### -->
-        <t-col :span="12" flex="auto">
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="pageUI"
-            row-key="id"
-            :table-column="groupColumns"
-            :table-data="supportGroupInUserList.list"
-            :total="supportGroupTotal"
-            :selected-row-keys="selectedRowKeys"
-            @select-change="onGroupSelectChange"
-            @row-click="onRowClick"
-            @refresh="onFetchGroupData"
-          >
-            <template #actionSlot="{ row }">
-              <t-button size="small" variant="text" @click="onEditRow(row)">
-                <icon name="edit-1" class="black-icon" />
-              </t-button>
-              <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
-                <t-button size="small" variant="text" @click="onGroupDelect(row)">
-                  <icon name="delete-1" class="black-icon" />
-                </t-button>
-              </t-popconfirm>
-            </template>
-            <template #button>
-              <t-space>
-                <t-button theme="primary" @click="onAddTypeData"> 新增处理组 </t-button>
-                <t-popconfirm theme="default" content="确认删除吗" @confirm="onGroupDeleteBatches()">
-                  <t-button theme="default"> 处理组批量删除 </t-button>
-                </t-popconfirm>
-                <t-button theme="default"> 处理组导入 </t-button>
-              </t-space>
-            </template>
-          </cmp-table>
-        </t-col>
-        <!-- ################# 人员表格数据 ###################### -->
-        <t-col :span="12" flex="auto">
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="personPage"
-            row-key="id"
-            :table-column="personColumns"
-            :table-data="supportPersonInUserList.list"
-            :total="supportPersonTotal"
-            :selected-row-keys="delPersonRowKeys"
-            @select-change="onPersonSelectChange"
-            @refresh="onFetchGroupData"
-          >
-            <template #actionSlot="{ row }">
-              <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelPersonConfirm()">
-                <t-button size="small" variant="text" @click="onDelPersonRow(row)">
-                  <icon name="delete-1" class="black-icon" />
-                </t-button>
-              </t-popconfirm>
-            </template>
-            <template #button>
-              <t-space>
-                <t-button theme="primary" @click="onAddPersonData"> 新增用户 </t-button>
-                <t-popconfirm theme="default" content="确认删除吗" @confirm="onPersondeleteBatches()">
-                  <t-button theme="default"> 用户批量删除 </t-button>
-                </t-popconfirm>
-                <t-button theme="default"> 处理组用户导入 </t-button>
-              </t-space>
-            </template>
-          </cmp-table>
-        </t-col>
-      </t-row>
-    </t-card>
-    <!-- #处理组 dialog 弹窗 -->
-    <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="70%">
-      <t-form ref="formRef" :rules="rules" :data="supportGroupTabData.list" @submit="onAnomalyTypeSubmit">
-        <!-- 第 1️⃣ 行数据 -->
-        <t-form-item label="处理组编码" name="supportGroupCode">
-          <t-input v-model="supportGroupTabData.list.supportGroupCode" :disabled="groupDisabled"></t-input>
-        </t-form-item>
-        <!-- 第 2️⃣ 行数据 -->
-        <t-form-item label="处理组名称" name="incidentName">
-          <t-input v-model="supportGroupTabData.list.supportGroupName"></t-input>
-        </t-form-item>
-        <!-- 第 3️⃣ 行数据 -->
-        <t-form-item label="处理组类型" name="supportGroupType">
-          <t-select v-model="supportGroupTabData.list.supportGroupType">
-            <t-option
-              v-for="item in DropDownData.list"
-              :key="item.id"
-              :label="item.paramValue"
-              :value="item.paramCode"
-            />
-          </t-select>
-        </t-form-item>
+    </cmp-card>
+    <cmp-card :span="12">
+      <!-- ################# 处理组表格数据 ###################### -->
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        row-key="id"
+        :hover="false"
+        :stripe="false"
+        :table-column="groupColumns"
+        active-row-type="single"
+        :table-data="supportGroupInUserList.list"
+        :total="supportGroupTotal"
+        :fixed-height="true"
+        :selected-row-keys="selectedRowKeys"
+        @select-change="onGroupSelectChange"
+        @row-click="onRowClick"
+        @refresh="onFetchGroupData"
+      >
+        <template #actionSlot="{ row }">
+          <t-space :size="8">
+            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
+              <t-link theme="primary" @click="onGroupDelect(row)">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
+          </t-space>
+        </template>
+        <template #button>
+          <t-space :size="8">
+            <t-button theme="primary" @click="onAddTypeData"> 新增处理组 </t-button>
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onGroupDeleteBatches()">
+              <t-button theme="default"> 处理组批量删除 </t-button>
+            </t-popconfirm>
+            <t-button theme="default"> 处理组导入 </t-button>
+          </t-space>
+        </template>
+      </cmp-table>
+    </cmp-card>
+    <cmp-card :span="12">
+      <!-- ################# 人员表格数据 ###################### -->
+
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="personPage"
+        row-key="id"
+        :fixed-height="true"
+        :table-column="personColumns"
+        :table-data="supportPersonInUserList.list"
+        :total="supportPersonTotal"
+        :selected-row-keys="delPersonRowKeys"
+        @select-change="onPersonSelectChange"
+        @refresh="onFetchGroupData"
+      >
+        <template #actionSlot="{ row }">
+          <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelPersonConfirm()">
+            <t-link theme="primary" @click="onDelPersonRow(row)">{{ t('common.button.delete') }}</t-link>
+          </t-popconfirm>
+        </template>
+        <template #button>
+          <t-space :size="8">
+            <t-button theme="primary" @click="onAddPersonData"> 新增用户 </t-button>
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onPersondeleteBatches()">
+              <t-button theme="default"> 用户批量删除 </t-button>
+            </t-popconfirm>
+            <t-button theme="default"> 处理组用户导入 </t-button>
+          </t-space>
+        </template>
+      </cmp-table>
+    </cmp-card>
+  </cmp-container>
+
+  <!-- #处理组 dialog 弹窗 -->
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
+    <t-form ref="formRef" :rules="rules" :data="supportGroupTabData.list" @submit="onAnomalyTypeSubmit">
+      <!-- 第 1️⃣ 行数据 -->
+      <t-form-item label="处理组编码" name="supportGroupCode">
+        <t-input v-model="supportGroupTabData.list.supportGroupCode" :disabled="groupDisabled"></t-input>
+      </t-form-item>
+      <!-- 第 2️⃣ 行数据 -->
+      <t-form-item label="处理组名称" name="incidentName">
+        <t-input v-model="supportGroupTabData.list.supportGroupName"></t-input>
+      </t-form-item>
+      <!-- 第 3️⃣ 行数据 -->
+      <t-form-item label="处理组类型" name="supportGroupType">
+        <t-select v-model="supportGroupTabData.list.supportGroupType">
+          <t-option v-for="item in DropDownData.list" :key="item.id" :label="item.paramValue" :value="item.paramCode" />
+        </t-select>
+      </t-form-item>
+    </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
+      <t-button theme="primary" @click="eidtFormSubmit">保存</t-button>
+    </template>
+  </t-dialog>
+  <!-- #人员 DiaLog 弹窗 -->
+  <t-dialog v-model:visible="personVisible" :cancel-btn="null" :confirm-btn="null" header="添加处理组用户" width="95%">
+    <!-- #新增表格数据 -->
+    <t-row justify="space-around">
+      <t-col :span="5">
         <t-row>
-          <t-col :span="11" class="align-right">
-            <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
-            <t-button theme="primary" type="submit">保存</t-button>
-          </t-col>
+          <t-col
+            ><cmp-query :opts="optsAdd" :bool-enter="true" :show-button="false" @submit="onInputAdd"></cmp-query
+          ></t-col>
         </t-row>
-      </t-form>
-    </t-dialog>
-    <!-- #人员 DiaLog 弹窗 -->
-    <t-dialog
-      v-model:visible="personVisible"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      header="添加处理组用户"
-      width="95%"
-    >
-      <!-- #新增表格数据 -->
-      <t-row justify="space-around">
-        <t-col :span="5">
-          <t-row>
-            <t-col><cmp-query :opts="optsAdd" :bool-enter="true" @submit="onInputAdd"></cmp-query></t-col>
-          </t-row>
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="addPage"
-            row-key="id"
-            :table-column="addPersonColumns"
-            :table-data="onAddPersonTabList.list"
-            :total="addPersonTotal"
-            @select-change="onFetchPersonData"
-            @refresh="onFetchAddData"
-          >
-            <template #addPerson="{ row }">
-              <t-button size="small" variant="text" @click="addPerson(row)">
-                <icon name="add" class="black-icon" />
-              </t-button>
-            </template>
-            <template #button>
-              <h3>选择用户</h3>
-            </template>
-          </cmp-table></t-col
+        <cmp-table
+          ref="tableRef"
+          v-model:pagination="addPage"
+          row-key="id"
+          height="400px"
+          :table-column="addPersonColumns"
+          :table-data="onAddPersonTabList.list"
+          :total="addPersonTotal"
+          @select-change="onFetchPersonData"
+          @refresh="onFetchAddData"
         >
-        <!-- # 删除 表格数据 -->
-        <t-col :span="5">
-          <t-row>
-            <t-col><cmp-query :opts="optsDel" :bool-enter="true" @submit="onInputDel"></cmp-query></t-col>
-          </t-row>
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="delPage"
-            row-key="id"
-            :table-column="delPersonColumns"
-            :table-data="onDelPersonTabList.list"
-            :total="delPersonTotal"
-            @select-change="onGroupSelectChange"
-            @refresh="onFetchDelData"
-          >
-            <template #delPerson="{ row }">
-              <t-button size="small" variant="text" @click="delPerson(row)">
-                <icon name="remove" class="black-icon" />
-              </t-button>
-            </template>
-            <template #button>
-              <h3>已选用户</h3>
-            </template>
-          </cmp-table></t-col
+          <template #addPerson="{ row }">
+            <t-button size="small" variant="text" @click="addPerson(row)">
+              <icon name="add" class="black-icon" />
+            </t-button>
+          </template>
+          <template #button>
+            <h3>选择用户</h3>
+          </template>
+        </cmp-table></t-col
+      >
+      <!-- # 删除 表格数据 -->
+      <t-col :span="5">
+        <t-row>
+          <t-col
+            ><cmp-query :opts="optsDel" :bool-enter="true" :show-button="false" @submit="onInputDel"></cmp-query
+          ></t-col>
+        </t-row>
+        <cmp-table
+          ref="tableRef"
+          v-model:pagination="delPage"
+          row-key="id"
+          height="400px"
+          :table-column="delPersonColumns"
+          :table-data="onDelPersonTabList.list"
+          :total="delPersonTotal"
+          @select-change="onGroupSelectChange"
+          @refresh="onFetchDelData"
         >
-      </t-row>
-      <t-row style="margin-top: 20px">
-        <t-col :span="11" class="align-right">
-          <t-button theme="default" variant="base" @click="personVisible = false">取消</t-button>
-          <t-button theme="primary" type="submit" style="margin-left: 50px" @click="onAddPersons">保存</t-button>
-        </t-col>
-      </t-row>
-    </t-dialog>
-  </div>
+          <template #delPerson="{ row }">
+            <t-button size="small" variant="text" @click="delPerson(row)">
+              <icon name="remove" class="black-icon" />
+            </t-button>
+          </template>
+          <template #button>
+            <h3>已选用户</h3>
+          </template>
+        </cmp-table></t-col
+      >
+    </t-row>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="personVisible = false">取消</t-button>
+      <t-button theme="primary" type="submit" :loading="personSaveLoading" @click="onAddPersons">保存</t-button>
+    </template>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -181,6 +174,9 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
+import { useLang } from './lang';
+
+const { t } = useLang();
 const DropDownData = reactive({ list: [] }); // 下拉框数据
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { pageUI } = usePage(); // 分页工具
@@ -193,17 +189,18 @@ const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys: Ref<any[]> = ref([]); // 删除计量单位 id
 const groupDisabled = ref(false); // 处理组表单禁用开关
 const submitFalg = ref(false);
+const personSaveLoading = ref(false);
 
 // 编辑回填 ID
 const incidentID = ref('');
 // $处理组 表格数据
 const supportGroupInUserList = reactive({ list: [] });
 // 处理组表格数据总条数
-const supportGroupTotal = ref(null);
+const supportGroupTotal = ref(0);
 // $人员 表格数据
 const supportPersonInUserList = reactive({ list: [] });
 // 人员表格数据总条数
-const supportPersonTotal = ref(null);
+const supportPersonTotal = ref(0);
 // dialog 弹框数据
 const supportGroupTabData = reactive({
   list: {
@@ -430,8 +427,8 @@ onMounted(async () => {
 // #搜索
 const opts = computed(() => {
   return {
-    categoryName: { label: '处理组查询', comp: 't-input', event: 'input', defaultval: '' },
-    methodCodeName: { label: '人员查询', comp: 't-input', event: 'input', defaultval: '' },
+    categoryName: { label: '处理组', comp: 't-input', event: 'input', defaultval: '' },
+    methodCodeName: { label: '人员', comp: 't-input', event: 'input', defaultval: '' },
   };
 });
 // 上侧搜索提交事件
@@ -485,6 +482,9 @@ const onInputDel = async (data: any) => {
   });
   onDelPersonTabList.list = res.list;
   delPersonTotal.value = res.total;
+};
+const eidtFormSubmit = () => {
+  formRef.value.submit();
 };
 
 // #获取 处理组表格 数据
@@ -707,10 +707,18 @@ watch(
 
 // #添加变更后员工事件
 const onAddPersons = async () => {
-  await api.supportGroup.addSupportGroupPerson({ supportGroupId: personID.value, ids: arrPersonID.value });
-  MessagePlugin.success('变更成功');
-  await supportPersonInUserTabData(); // 获取 人员表格 数据
-  personVisible.value = false;
+  try {
+    personSaveLoading.value = true;
+    await api.supportGroup.addSupportGroupPerson({ supportGroupId: personID.value, ids: arrPersonID.value });
+    MessagePlugin.success('变更成功');
+    await supportPersonInUserTabData(); // 获取 人员表格 数据
+    personVisible.value = false;
+  } catch (error) {
+    console.error('Error occurred:', error);
+    MessagePlugin.error('变更失败');
+  } finally {
+    personSaveLoading.value = false;
+  }
 };
 
 // @表单提交事件

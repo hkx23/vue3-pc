@@ -4,17 +4,17 @@
     <div class="main-page-content">
       <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
         <template #workState="{ param }">
-          <t-select v-model="param.workState">
+          <t-select v-model="param.workState" label="工单状态">
             <t-option v-for="item in workStateDataList.list" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </template>
         <template #showState="{ param }">
           <t-radio-group v-model="param.showState">
-            <t-radio allow-uncheck :value="1">仅显示已生成</t-radio>
+            <t-radio allow-uncheck :value="1">仅显示未打印完成</t-radio>
           </t-radio-group>
         </template>
         <template #barCodeState="{ param }">
-          <t-select v-model="param.barCodeState">
+          <t-select v-model="param.barCodeState" label="条码状态">
             <t-option v-for="item in barCodeStateList.list" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </template>
@@ -893,7 +893,6 @@ const opts = computed(() => {
     barCodeState: {
       isHide: !tabValue.value,
       label: '条码状态',
-      labelWidth: '10',
       event: 'select',
       defaultVal: '',
       slotName: 'barCodeState',

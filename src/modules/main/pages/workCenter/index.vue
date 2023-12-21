@@ -29,7 +29,7 @@
     <cmp-card :span="12">
       <cmp-query :opts="opts" @submit="onInput"></cmp-query>
     </cmp-card>
-    <cmp-card :span="12">
+    <cmp-card ref="tableCardRef" :span="12">
       <t-row :span="2" :push="10" style="margin-bottom: 8px">
         <t-button theme="primary" variant="base" @click="onHandelAdded">新增</t-button>
         <!-- <t-divider layout="vertical" /> -->
@@ -41,7 +41,9 @@
         row-key="id"
         :columns="columns"
         :data="workData"
+        resizable
         :tree="treeConfig"
+        :max-height="boxHeight"
         :loading="loading"
         lazy-load
       >
@@ -88,7 +90,8 @@
 import _ from 'lodash';
 // import { SearchIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
+import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
@@ -122,6 +125,7 @@ const disabledWord = ref(false); // 工作中心编号控制禁用默认为不�
 const disabledParent = ref(false); // 父
 const valueItem = ref('全部'); // space类型
 const tableRef = ref(); // 实例table
+const tableCardRef = ref(null);
 const allType = ref([
   {
     wcType: '全部',
@@ -623,6 +627,25 @@ const onDelete = (value: boolean) => {
 //   selectedRowKeys.value = value;
 //   console.log('value:', value, '1', ctx);
 // };
+const boxHeight = ref(0);
+const boxWidth = ref(0);
+useResizeObserver(tableCardRef, (entries) => {
+  const entry = entries[0];
+  debounceFunction(entry);
+});
+const debounceFunction = _.debounce((entry) => {
+  computedTableContentSize(entry);
+}, 100);
+
+const computedTableContentSize = (entry) => {
+  // 组件处于不可见状态时将不进行计算
+  const { width: _w, height: _h } = entry.contentRect;
+  boxWidth.value = 0;
+  boxHeight.value = 0;
+  nextTick(() => {
+    boxHeight.value = _h - 140;
+  });
+};
 </script>
 
 <style lang="less" scoped>

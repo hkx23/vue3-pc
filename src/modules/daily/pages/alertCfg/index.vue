@@ -1,90 +1,81 @@
 <template>
-  <div class="module-tree-container">
-    <t-card :bordered="false">
+  <cmp-container :full="true" :full-sub-index="[1, 2]">
+    <cmp-card :span="12">
       <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
-      <t-row justify="space-between">
-        <t-col :span="12" flex="auto">
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="pageUI"
-            row-key="id"
-            :table-column="columns"
-            :table-data="alertCfgData.list"
-            :total="alertCfgTotal"
-            :selected-row-keys="selectedRowKeys"
-            @select-change="rehandleSelectChange"
-            @refresh="onFetchData"
-          >
-            <template #stateSwitch="{ row }">
-              <t-switch
-                :custom-value="[1, 0]"
-                :value="row.state"
-                :default-value="row.state"
-                size="large"
-                @change="(value) => onSwitchChange(row, value)"
-              ></t-switch>
-            </template>
-            <template #actionSlot="{ row }">
-              <t-button size="small" variant="text" @click="onEditRow(row)">
-                <icon name="edit-1" class="black-icon" />
-              </t-button>
-              <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
-                <t-button size="small" variant="text" @click="onDeleteRow(row)">
-                  <icon name="delete-1" class="black-icon" />
-                </t-button>
-              </t-popconfirm>
-            </template>
-            <template #operate>
-              <t-space>
-                <t-button theme="default" @click="onAddCfgData"> 新增 </t-button>
-                <t-button theme="default"> 导入 </t-button>
-                <t-popconfirm theme="default" content="确认删除吗" @confirm="deleteBatches()">
-                  <t-button theme="default"> 批量删除 </t-button>
-                </t-popconfirm>
-              </t-space>
-            </template>
-          </cmp-table>
-        </t-col>
-      </t-row>
-    </t-card>
-    <!-- dialog 弹窗 -->
-    <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="70%">
-      <t-form ref="formRef" :rules="rules" :data="CfgTabData.list" @submit="onAlertTypeSubmit">
-        <!-- 第 1️⃣ 行数据 -->
-        <t-form-item label="预警机制名称" name="alertType">
-          <t-input v-model="CfgTabData.list.alertType"></t-input>
-        </t-form-item>
-        <!-- 第 2️⃣ 行数据 -->
-        <t-form-item label="响应时长" name="sla">
-          <t-input v-model="CfgTabData.list.sla"></t-input>
-        </t-form-item>
-        <!-- 第 3️⃣ 行数据 -->
-        <t-form-item label="处理时长" name="ola">
-          <t-input v-model="CfgTabData.list.ola"></t-input>
-        </t-form-item>
+    </cmp-card>
+    <cmp-card :span="12">
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="columns"
+        :table-data="alertCfgData.list"
+        :total="alertCfgTotal"
+        :selected-row-keys="selectedRowKeys"
+        @select-change="rehandleSelectChange"
+        @refresh="onFetchData"
+      >
+        <template #stateSwitch="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
+        </template>
+        <template #actionSlot="{ row }">
+          <t-space :size="8">
+            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
 
-        <!-- 第 4️⃣ 行数据 -->
-        <t-form-item label="状态" name="state">
-          <t-radio-group
-            v-model="CfgTabData.list.state"
-            name="city"
-            :options="itemOptions"
-            size="small"
-          ></t-radio-group>
-        </t-form-item>
-        <t-row>
-          <t-col :span="11" class="align-right">
-            <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
-            <t-button theme="primary" type="submit">保存</t-button>
-          </t-col>
-        </t-row>
-      </t-form>
-    </t-dialog>
-  </div>
+            <!-- <t-button size="small" variant="text" @click="onEditRow(row)">
+            <icon name="edit-1" class="black-icon" />
+          </t-button> -->
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
+              <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
+          </t-space>
+        </template>
+        <template #button>
+          <t-space :size="8">
+            <t-button theme="primary" @click="onAddCfgData"> 新增 </t-button>
+            <t-button theme="default"> 导入 </t-button>
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="deleteBatches()">
+              <t-button theme="default"> 批量删除 </t-button>
+            </t-popconfirm>
+          </t-space>
+        </template>
+      </cmp-table>
+    </cmp-card>
+  </cmp-container>
+  <!-- dialog 弹窗 -->
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
+    <t-form ref="formRef" :rules="rules" :data="CfgTabData.list" label-width="120px" @submit="onAlertTypeSubmit">
+      <!-- 第 1️⃣ 行数据 -->
+      <t-form-item label="预警机制名称" name="alertType">
+        <t-input v-model="CfgTabData.list.alertType"></t-input>
+      </t-form-item>
+      <!-- 第 2️⃣ 行数据 -->
+      <t-form-item label="响应时长" name="sla">
+        <t-input-number v-model="CfgTabData.list.sla" theme="column" style="width: 100%"></t-input-number>
+      </t-form-item>
+      <!-- 第 3️⃣ 行数据 -->
+      <t-form-item label="处理时长" name="ola">
+        <t-input-number v-model="CfgTabData.list.ola" theme="column" style="width: 100%"></t-input-number>
+      </t-form-item>
+
+      <!-- 第 4️⃣ 行数据 -->
+      <t-form-item label="状态" name="state">
+        <t-radio-group v-model="CfgTabData.list.state" name="city" :options="itemOptions" size="small"></t-radio-group>
+      </t-form-item>
+    </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
+      <t-button theme="primary" @click="formSubmit">保存</t-button>
+    </template>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
-import { Icon } from 'tdesign-icons-vue-next';
 import {
   CustomValidateResolveType,
   FormInstanceFunctions,
@@ -100,6 +91,9 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
+import { useLang } from './lang';
+
+const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
@@ -216,6 +210,9 @@ const onAddCfgData = () => {
   formVisible.value = true;
   diaLogTitle.value = '新增预警机制';
 };
+const formSubmit = () => {
+  formRef.value.submit();
+};
 
 // 新增异常类型请求;
 const onAddAlertCfgRequest = async () => {
@@ -253,7 +250,7 @@ const onInput = async (data: any) => {
 // 定义自定义搜索的样式
 const opts = computed(() => {
   return {
-    categoryName: { label: '预警机制查询', comp: 't-input', event: 'input', defaultval: '', labelWidth: '100px' },
+    categoryName: { label: '预警机制', comp: 't-input', event: 'input', defaultval: '', labelWidth: '100px' },
   };
 });
 

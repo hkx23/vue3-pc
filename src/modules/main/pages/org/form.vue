@@ -56,6 +56,7 @@ interface OrgForm extends Org {
 }
 
 const formData: OrgForm = reactive({
+  eid: '',
   oid: '',
   parentOrgId: '',
   parentOrgName: '',
@@ -140,6 +141,7 @@ const reset = (isEdit: boolean, data?: OrgTreeVO, parentOrgName?: string, parent
     } else {
       Object.assign(formData, {
         id: '',
+        eid: data.eid,
         oid: data.oid,
         parentOrgId: data.id || '0',
         parentOrgName: parentOrgName || data.orgName || 'ROOT',

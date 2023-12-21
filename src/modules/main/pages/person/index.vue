@@ -53,7 +53,9 @@
               <template #op="slotProps">
                 <t-space>
                   <t-link theme="primary" @click="handleClickDetail(slotProps)">{{ t('common.button.edit') }}</t-link>
-                  <t-link theme="primary" @click="handleClickDelete(slotProps)">{{ t('common.button.delete') }}</t-link>
+                  <t-link theme="primary" @click="handleClickDelete(slotProps)">{{
+                    slotProps.row.state === 1 ? t('common.button.disable') : t('common.button.enable')
+                  }}</t-link>
                   <!-- <t-icon name="edit" @click="handleClickDetail(slotProps)" />
                   <t-icon name="delete" @click="handleClickDelete(slotProps)" /> -->
                 </t-space>

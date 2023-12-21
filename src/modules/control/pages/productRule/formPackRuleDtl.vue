@@ -6,9 +6,10 @@
     :data="formData"
     :show-cancel="true"
     :show-error-message="false"
+    label-width="120px"
   >
     <t-form-item :label="t('productRule.parentLevelName')" name="parentLevelId">
-      {{ parentName }}
+      {{ parentName || '顶层' }}
     </t-form-item>
     <t-form-item :label="t('productRule.packType')" name="packType">
       <t-select

@@ -66,7 +66,7 @@
       </template>
     </t-head-menu>
   </div>
-  <t-dialog v-model:visible="formVisible" header="修改密码" :on-confirm="onConfirmForm">
+  <t-dialog v-model:visible="settingStore.showPasswordPanel" header="修改密码" :on-confirm="onConfirmForm">
     <change-password-form ref="formRef" />
   </t-dialog>
 </template>
@@ -82,7 +82,7 @@ import {
   UserPasswordIcon,
 } from 'tdesign-icons-vue-next';
 import type { PropType } from 'vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useFullscreen } from 'vue-hooks-plus';
 import { useRouter } from 'vue-router';
 
@@ -187,16 +187,29 @@ const onClickFullScreen = () => {
 };
 
 const formRef = ref(null);
-const formVisible = ref(false);
+watch(
+  () => settingStore.showPasswordPanel,
+  (val) => {
+    if (val) {
+      const { reset } = formRef.value;
+      reset();
+    }
+  },
+);
 const onChangePassword = () => {
-  const { reset } = formRef.value;
-  reset();
-  formVisible.value = true;
+  // const { reset } = formRef.value;
+  // reset();
+  settingStore.updateConfig({
+    showPasswordPanel: true,
+  });
 };
 const onConfirmForm = () => {
   const { submit } = formRef.value;
   submit().then(() => {
-    formVisible.value = false;
+    settingStore.updateConfig({
+      showPasswordPanel: false,
+    });
+    // formVisible.value = false;
   });
 };
 </script>

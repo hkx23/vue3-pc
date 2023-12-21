@@ -33,7 +33,7 @@
         <cmp-container :full="true" style="padding: 0">
           <cmp-card :span="12" :ghost="true">
             <t-row justify="space-between">
-              <t-col style="margin: 3px 0"> <t-button @click="onBtnSave">保存</t-button></t-col>
+              <t-col style="margin: 3px 0"> <t-button :loading="saveLoading" @click="onBtnSave">保存</t-button></t-col>
               <t-col style="display: flex">
                 <t-select
                   v-model="selectValue"
@@ -66,7 +66,7 @@
               @refresh="onFetchData"
             >
               <template #button>
-                <span style="font-weight: bold; margin: 0 10px">{{ permission.label }}工站列表</span>
+                <span style="font-weight: bold; margin: 0 10px">{{ permission.label }} 工站列表</span>
               </template>
             </cmp-table>
           </cmp-card>
@@ -125,6 +125,7 @@ const pageSize = ref(20); // 用户请求数
 const total = ref(10); // 用户分页总数
 const tableTotal = ref(10); // table分页总数
 const selectedRowKeys = ref([]); // 选择的
+const saveLoading = ref(false); // 选择的
 const { loading, setLoading } = useLoading(); // loading
 const selectValue = ref(1);
 const options1 = ref([
@@ -155,8 +156,10 @@ const onBtnSave = async () => {
     MessagePlugin.error('请选择用户');
     return;
   }
+  saveLoading.value = true;
   // console.log('保存', permission.value.userId);
   await api.workstationAuth.save({ userId: permission.value.userId, ids: selectedRowKeys.value });
+  saveLoading.value = false;
   MessagePlugin.success('保存成功');
 };
 
@@ -297,7 +300,7 @@ useResizeObserver(treeCard, (entries) => {
   const entry = entries[0];
 
   const { height } = entry.contentRect;
-  treeHeight.value = `${height * 0.9 - 100}px`;
+  treeHeight.value = `${height - 160}px`;
   console.error('treeHeight', treeHeight.value);
 });
 </script>

@@ -4,7 +4,7 @@
       <t-button @click="onAddFirstNode">新增</t-button>
     </cmp-card>
     <cmp-row>
-      <cmp-card ref="treeCard" flex="380px">
+      <cmp-card ref="treeCard" flex="300px">
         <t-tree
           ref="treeRef"
           :data="treeData"
@@ -39,8 +39,8 @@
           </template>
         </t-tree>
       </cmp-card>
-      <cmp-card flex="auto">
-        <cmp-container :full="true" style="padding: 0">
+      <cmp-card flex="auto" style="min-width: 1px">
+        <cmp-container :full="true">
           <t-breadcrumb :max-item-width="'150'" style="padding-left: 0">
             <t-breadcrumbItem v-if="treeClickData?.two">{{ treeClickData.two }}</t-breadcrumbItem>
             <t-breadcrumbItem v-if="treeClickData?.one" :max-width="'160'">
@@ -505,7 +505,6 @@ const treeCard = ref(null);
 const treeHeight = ref('500px');
 useResizeObserver(treeCard, (entries) => {
   const entry = entries[0];
-
   const { height } = entry.contentRect;
   treeHeight.value = `${height * 0.9}px`;
   console.error('treeHeight', treeHeight.value);
@@ -588,6 +587,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     title: '序号',
     align: 'center',
     width: '90',
+    fixed: 'left',
   },
   {
     colKey: 'name',
@@ -1190,5 +1190,10 @@ const onWorkStationSubmit = async (context: RootObject) => {
 .align-right {
   display: flex;
   justify-content: flex-end;
+}
+
+.table-area {
+  width: calc(100% - 10px);
+  padding: 0;
 }
 </style>

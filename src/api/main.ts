@@ -2718,6 +2718,8 @@ export type ShowModuleVO = {
   /** 模块包标识 */
   modulePackageIdentify?: string;
   parentModuleId?: string;
+  /** 父模块Name */
+  parentModuleName?: string;
   grandpaId?: string;
   /** 所在一级菜单名称 */
   grandpaName?: string;
@@ -3065,14 +3067,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3239,8 +3241,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4154,6 +4156,17 @@ export type CurrentUserVO = {
   defaultOrgId?: string;
   /** 授权组织 */
   orgList?: OrgVO[];
+  personId?: string;
+  /**
+   * 上次更新成员资格用户的密码的日期和时间
+   * @format date-time
+   */
+  timeLastPasswordChanged?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
 } | null;
 
 /** 组织基础实体 */
@@ -4605,10 +4618,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -4680,6 +4693,7 @@ export interface ResultListOrgLevelTreeVO {
 /** 显示组织层级实体 */
 export type OrgTreeVO = {
   id?: string;
+  eid?: string;
   oid?: string;
   /** 组织层级编码 */
   levelCode?: string;
@@ -6446,10 +6460,13 @@ export const api = {
      * @request POST:/stressTest/insertBatch
      * @secure
      */
-    insertBatch: (data: number) =>
+    insertBatch: (query: {
+      /** @format int32 */
+      num: number;
+    }) =>
       http.request<ResultObject['data']>(`/api/main/stressTest/insertBatch`, {
         method: 'POST',
-        body: data as any,
+        params: query,
       }),
 
     /**
@@ -6461,9 +6478,13 @@ export const api = {
      * @request POST:/stressTest/MemoryUsageLog
      * @secure
      */
-    memoryUsageLog: () =>
+    memoryUsageLog: (query: {
+      /** @format int32 */
+      num: number;
+    }) =>
       http.request<ResultObject['data']>(`/api/main/stressTest/MemoryUsageLog`, {
         method: 'POST',
+        params: query,
       }),
 
     /**
@@ -6735,6 +6756,21 @@ export const api = {
      */
     listByIds: (data: ProcessBusinessLib) =>
       http.request<ResultListProcessBusinessLibDtl['data']>(`/api/main/processBusinessLib/listByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/processBusinessLib/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/processBusinessLib/batchDelete`, {
         method: 'POST',
         body: data as any,
       }),

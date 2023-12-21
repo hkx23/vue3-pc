@@ -39,11 +39,12 @@
         <t-table
           ref="tableRef"
           :vertical-align="'middle'"
-          hover
+          :hover="hover"
           multiple-sort
           resizable
           lazy-load
-          stripe
+          :stripe="stripe"
+          :active-row-type="activeRowType"
           :row-key="rowKey"
           :columns="columns"
           :data="finalTableData"
@@ -158,6 +159,18 @@ const props = defineProps({
     },
   },
   showPagination: {
+    type: Boolean,
+    default: true,
+  },
+  activeRowType: {
+    type: String as () => 'multiple' | 'single',
+    default: '',
+  },
+  hover: {
+    type: Boolean,
+    default: true,
+  },
+  stripe: {
     type: Boolean,
     default: true,
   },
@@ -463,8 +476,10 @@ const computedTableContentSize = (entry) => {
       118 -
       (props.buttonsVisible ? 0 : 40) -
       (props.showPagination ? 0 : -50);
+    boxWidth.value = tableBoxRef.value.parentElement.clientWidth;
   });
 };
+
 // 表格计算高度
 const maxHeightValue = computed(() => {
   // 如果直接设置了max-height，直接返回

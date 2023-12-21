@@ -70,7 +70,10 @@ export interface TRouterInfo {
 
 export interface TTabRouterType {
   isRefreshing: boolean;
-  tabRouterList: Array<TRouterInfo>;
+  // tabRouterList: Array<TRouterInfo>;
+  userTabRouterList: {
+    [key: string]: Array<TRouterInfo>;
+  };
 }
 
 export interface TTabRemoveOptions {
