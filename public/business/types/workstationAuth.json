@@ -1,0 +1,29 @@
+{
+  "title": "工站：",
+  "placeholder": "请选择工站：",
+  "url": "/api/control/workstationAuth/currentUserWorkstation",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "工站代码",
+      "key": "workstationCode",
+      "align": "center"
+    },
+    {
+      "title": "工站名称",
+      "key": "workstationName",
+      "align": "center"
+    },
+    {
+      "title": "工站描述",
+      "key": "workstationDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "workstationName"
+  }
+}

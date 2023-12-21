@@ -112,16 +112,17 @@
                 v-if="orgIsEdit"
                 v-model="orgInfo.workStationId"
                 :parent-id="orgInfo.workCenterId"
-                type="workstation"
+                type="workstationAuth"
                 :show-title="false"
                 @selection-change="
                   (val) => {
+                    orgInfo.processId = val.processId;
                     orgInfo.workStationCode = val.workstationCode;
                     orgInfo.workStationName = val.workstationName;
                   }
                 "
               ></bcmp-select-business>
-              <div v-else>{{ orgInfo.workStationName }}</div>
+              <div v-else>{{ orgInfo.processName + ' - ' + orgInfo.workStationName }}</div>
             </t-form-item>
           </t-form>
         </t-col>
@@ -165,6 +166,11 @@ onMounted(async () => {
 const orgInfo = ref({ ...userStore.currUserOrgInfo });
 const orgIsEdit = ref(false);
 const onClickSaveOrg = async () => {
+  if (orgInfo.value.processId) {
+    const processInfo = await api.process.getItemById(orgInfo.value.processId);
+    orgInfo.value.processCode = processInfo.processCode;
+    orgInfo.value.processName = processInfo.processName;
+  }
   userStore.updateOrg(orgInfo.value);
   orgIsEdit.value = false;
 };
