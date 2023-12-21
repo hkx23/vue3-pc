@@ -4,7 +4,7 @@
       <t-form
         colon
         class="search-form"
-        :style="{ height: openSearchForm ? '' : '50px', padding: '0px 0px' }"
+        :style="{ height: openSearchForm ? '' : '32px', padding: '0px 0px' }"
         v-bind="$attrs"
         :label-width="0"
         :form="state.form"
@@ -12,7 +12,7 @@
         @submit.prevent
       >
         <div ref="formRowRef" style="width: 100%">
-          <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[16, 0]"
+          <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[16, 16]"
             ><t-col v-for="(opt, i) in optRow" v-show="!opt.isHide" :key="i" :flex="opt.flex"
               ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">
                 <!-- 自定义label -->
@@ -93,7 +93,7 @@
         </div>
       </t-form>
     </t-col>
-    <t-col v-if="showButton" flex="0 1 250px" style="text-align: end">
+    <t-col v-if="showButton" flex="0 1 230px" style="text-align: end">
       <t-space direction="horizontal" class="search-space search-form__button" size="large">
         <div class="">
           <t-space size="small" :align="'end'">
@@ -415,7 +415,7 @@ const computedExpandBtnVisible = () => {
   nextTick(() => {
     if (formRowRef.value) {
       const { clientHeight } = formRowRef.value;
-      showExpand.value = clientHeight > 50;
+      showExpand.value = clientHeight > 40;
     }
   });
 };

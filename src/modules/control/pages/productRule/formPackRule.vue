@@ -1,5 +1,12 @@
 <template>
-  <t-form ref="formRef" :rules="FORM_RULES" :data="formData" :show-cancel="true" :show-error-message="false">
+  <t-form
+    ref="formRef"
+    :rules="FORM_RULES"
+    :data="formData"
+    label-width="120px"
+    :show-cancel="true"
+    :show-error-message="false"
+  >
     <t-form-item :label="t('productRule.packRuleCode')" name="packRuleCode">
       <t-input v-model="formData.packRuleCode" :disabled="!isAdd" />
     </t-form-item>

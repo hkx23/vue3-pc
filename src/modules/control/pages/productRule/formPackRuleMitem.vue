@@ -1,5 +1,5 @@
 <template>
-  <t-form ref="formRef" :data="formData" :show-cancel="true" :show-error-message="false">
+  <t-form ref="formRef" :data="formData" label-width="120px" :show-cancel="true" :show-error-message="false">
     <t-form-item :label="t('productRule.packRuleName')" name="packRuleName">
       <t-input v-model="formData.packRuleName" :disabled="true" />
     </t-form-item>
