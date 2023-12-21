@@ -3,6 +3,8 @@ import { defineStore } from 'pinia';
 import { store } from '@/store';
 import type { TRouterInfo, TTabRouterType } from '@/types/interface';
 
+import { useUserStore } from './user';
+
 const homeRoute: Array<TRouterInfo> = [
   {
     path: '/dashboard/base',
@@ -13,8 +15,11 @@ const homeRoute: Array<TRouterInfo> = [
   },
 ];
 
-const state = {
-  tabRouterList: homeRoute,
+const stateData = {
+  // tabRouterList: homeRoute,
+  userTabRouterList: {} as {
+    [key: string]: Array<TRouterInfo>;
+  },
   isRefreshing: false,
 };
 
@@ -23,12 +28,30 @@ const state = {
 const ignoreCacheRoutes = ['login'];
 
 export const useTabsRouterStore = defineStore('tabsRouter', {
-  state: () => state,
+  state: () => {
+    const userStore = useUserStore();
+    stateData.userTabRouterList = {
+      [userStore.userInfo.id]: homeRoute,
+    };
+    return stateData;
+  },
   getters: {
-    tabRouters: (state: TTabRouterType) => state.tabRouterList,
+    tabRouters: (state: TTabRouterType) => {
+      const userStore = useUserStore();
+      let result = state.userTabRouterList[userStore.userInfo.id];
+      if (!result || result.length === 0) {
+        state.userTabRouterList[userStore.userInfo.id] = homeRoute;
+        result = homeRoute;
+      }
+      return result;
+    },
     refreshing: (state: TTabRouterType) => state.isRefreshing,
   },
   actions: {
+    updateCurrUserTab(list: Array<TRouterInfo>) {
+      const userStore = useUserStore();
+      this.userTabRouterList[userStore.userInfo.id] = list;
+    },
     // 处理刷新
     toggleTabRouterAlive(routeIdx: number) {
       this.isRefreshing = !this.isRefreshing;
@@ -40,42 +63,42 @@ export const useTabsRouterStore = defineStore('tabsRouter', {
       const needAlive = !ignoreCacheRoutes.includes(newRoute.name as string) && newRoute.meta?.keepAlive !== false;
       if (!this.tabRouters.find((route: TRouterInfo) => route.path === newRoute.path)) {
         // eslint-disable-next-line no-param-reassign
-        this.tabRouterList = this.tabRouterList.concat({ ...newRoute, isAlive: needAlive });
+        this.updateCurrUserTab(this.tabRouters.concat({ ...newRoute, isAlive: needAlive }));
       }
     },
     // 处理关闭当前
     subtractCurrentTabRouter(newRoute: TRouterInfo) {
       const { routeIdx } = newRoute;
-      this.tabRouterList = this.tabRouterList.slice(0, routeIdx).concat(this.tabRouterList.slice(routeIdx + 1));
+      this.updateCurrUserTab(this.tabRouters.slice(0, routeIdx).concat(this.tabRouters.slice(routeIdx + 1)));
     },
     // 处理关闭右侧
     subtractTabRouterBehind(newRoute: TRouterInfo) {
       const { routeIdx } = newRoute;
       const homeIdx: number = this.tabRouters.findIndex((route: TRouterInfo) => route.isHome);
-      let tabRouterList: Array<TRouterInfo> = this.tabRouterList.slice(0, routeIdx + 1);
+      let tabRouterList: Array<TRouterInfo> = this.tabRouters.slice(0, routeIdx + 1);
       if (routeIdx < homeIdx) {
         tabRouterList = tabRouterList.concat(homeRoute);
       }
-      this.tabRouterList = tabRouterList;
+      this.updateCurrUserTab(tabRouterList);
     },
     // 处理关闭左侧
     subtractTabRouterAhead(newRoute: TRouterInfo) {
       const { routeIdx } = newRoute;
       const homeIdx: number = this.tabRouters.findIndex((route: TRouterInfo) => route.isHome);
-      let tabRouterList: Array<TRouterInfo> = this.tabRouterList.slice(routeIdx);
+      let tabRouterList: Array<TRouterInfo> = this.tabRouters.slice(routeIdx);
       if (routeIdx > homeIdx) {
         tabRouterList = homeRoute.concat(tabRouterList);
       }
-      this.tabRouterList = tabRouterList;
+      this.updateCurrUserTab(tabRouterList);
     },
     // 处理关闭其他
     subtractTabRouterOther(newRoute: TRouterInfo) {
       const { routeIdx } = newRoute;
       const homeIdx: number = this.tabRouters.findIndex((route: TRouterInfo) => route.isHome);
-      this.tabRouterList = routeIdx === homeIdx ? homeRoute : homeRoute.concat([this.tabRouterList?.[routeIdx]]);
+      this.updateCurrUserTab(routeIdx === homeIdx ? homeRoute : homeRoute.concat([this.tabRouters?.[routeIdx]]));
     },
     removeTabRouterList() {
-      this.tabRouterList = [];
+      this.updateCurrUserTab([]);
     },
     initTabRouterList(newRoutes: TRouterInfo[]) {
       newRoutes?.forEach((route: TRouterInfo) => this.appendTabRouterList(route));

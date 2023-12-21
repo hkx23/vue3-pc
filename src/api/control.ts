@@ -291,6 +291,77 @@ export interface ResultPagingDataLong {
   data?: PagingDataLong;
 }
 
+export interface CommonSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+/** 响应数据 */
+export type PagingDataWorkstation = {
+  list?: Workstation[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkstation {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkstation;
+}
+
+/** 工站 */
+export interface Workstation {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工站代码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 工站描述 */
+  workstationDesc?: string;
+  processId?: string;
+  workcenterId?: string;
+}
+
 /** 通用响应类 */
 export interface ResultListWipRepairDtlVO {
   /**
@@ -623,8 +694,8 @@ export interface ProductReworkVO {
   workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -712,22 +783,6 @@ export interface ResultProductReworkVO {
   message?: string;
   /** 显示产品返工实体 */
   data?: ProductReworkVO;
-}
-
-export interface CommonSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
-  keyword?: string;
-  /** @format int32 */
-  state?: number;
-  parentId?: string;
-  category?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
 }
 
 /** 响应数据 */
@@ -1754,8 +1809,8 @@ export interface BarcodeWipCollectVO {
   stateName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   isState?: boolean;
 }
 
@@ -1868,8 +1923,8 @@ export interface BarcodeWipVO {
   workshopName?: string;
   workshopCode?: string;
   stateName?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   isState?: boolean;
   defectCodeStr?: string;
 }
@@ -3054,6 +3109,21 @@ export const api = {
      */
     getlist: (data: WorkstationAuthSearch) =>
       http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name CurrentUserWorkstation
+     * @summary 获得当前用户所拥有权限的工站
+     * @request POST:/workstationAuth/currentUserWorkstation
+     * @secure
+     */
+    currentUserWorkstation: (data: CommonSearch) =>
+      http.request<ResultPagingDataWorkstation['data']>(`/api/control/workstationAuth/currentUserWorkstation`, {
         method: 'POST',
         body: data as any,
       }),

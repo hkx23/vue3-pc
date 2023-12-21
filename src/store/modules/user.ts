@@ -29,6 +29,9 @@ interface orgInfo {
   workCenterId: string;
   workCenterCode: string;
   workCenterName: string;
+  processId: string;
+  processCode: string;
+  processName: string;
   workStationId: string;
   workStationCode: string;
   workStationName: string;
