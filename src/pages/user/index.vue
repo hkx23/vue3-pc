@@ -51,7 +51,7 @@
       <template #actions>
         <t-space v-if="orgIsEdit">
           <t-link theme="primary" @click="onClickSaveOrg">保存</t-link>
-          <t-link @click="orgIsEdit = false">取消</t-link>
+          <t-link @click="onClickCancelOrg">取消</t-link>
         </t-space>
         <t-link v-else theme="primary" @click="orgIsEdit = true">修改</t-link>
       </template>
@@ -79,6 +79,7 @@
               ><bcmp-select-business
                 v-if="orgIsEdit"
                 v-model="orgInfo.workShopId"
+                :parent-id="orgInfo.orgId"
                 type="workshop"
                 :show-title="false"
                 @selection-change="
@@ -94,6 +95,7 @@
               ><bcmp-select-business
                 v-if="orgIsEdit"
                 v-model="orgInfo.workCenterId"
+                :parent-id="orgInfo.workShopId"
                 type="workcenter"
                 :show-title="false"
                 @selection-change="
@@ -109,6 +111,7 @@
               ><bcmp-select-business
                 v-if="orgIsEdit"
                 v-model="orgInfo.workStationId"
+                :parent-id="orgInfo.workCenterId"
                 type="workstation"
                 :show-title="false"
                 @selection-change="
@@ -159,10 +162,14 @@ onMounted(async () => {
   });
 });
 
-const orgInfo = ref(userStore.currUserOrgInfo);
+const orgInfo = ref({ ...userStore.currUserOrgInfo });
 const orgIsEdit = ref(false);
 const onClickSaveOrg = async () => {
   userStore.updateOrg(orgInfo.value);
+  orgIsEdit.value = false;
+};
+const onClickCancelOrg = async () => {
+  orgInfo.value = { ...userStore.currUserOrgInfo };
   orgIsEdit.value = false;
 };
 </script>
