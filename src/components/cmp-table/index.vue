@@ -3,11 +3,13 @@
     <div class="table-box">
       <div v-if="buttonsVisible" class="table-box_header">
         <t-space size="small" :align="'center'">
-          <slot name="button"></slot>
+          <slot name="title"></slot>
         </t-space>
         <t-space size="small" :align="'center'">
           <slot name="operate"></slot>
-
+          <t-space size="small" :align="'center'">
+            <slot name="button"></slot>
+          </t-space>
           <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
             <template #icon>
               <t-icon name="file-export" />

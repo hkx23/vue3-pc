@@ -11,7 +11,7 @@
       class="card"
       :data="formData"
       :rules="routingRules"
-      label-width="100px"
+      label-width="120px"
       layout="inline"
     >
       <t-form-item :label="t('craftRoute.craftRouteCode')" name="routingCode">
@@ -674,6 +674,6 @@ const confirmBoom = () => {
 }
 
 .t-form-inline {
-  row-gap: var(--td-comp-margin-xxl);
+  row-gap: var(--td-comp-margin-m);
 }
 </style>

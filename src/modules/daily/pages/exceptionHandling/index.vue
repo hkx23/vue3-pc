@@ -1,7 +1,7 @@
 <!-- 异常处理配置 -->
 <template>
-  <div>
-    <t-card>
+  <cmp-container :full="true">
+    <cmp-card :span="12">
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -16,10 +16,10 @@
         <template #isAllowTransfer="{ row }">
           {{ row.isAllowTransfer ? '是' : '否' }}
         </template>
-        <template #button>
-          <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
+        <template #title>
+          <cmp-query :opts="opts" :show-button="false" @submit="onInput"> </cmp-query>
         </template>
-        <template #operate>
+        <template #button>
           <t-button @click="onAdd">新增</t-button>
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="ondeleteBatches">
             <t-button variant="outline">批量删除</t-button>
@@ -36,52 +36,52 @@
           </t-space>
         </template>
       </cmp-table>
-    </t-card>
-    <t-dialog v-model:visible="formVisible" :header="title" :cancel-btn="null" :confirm-btn="null" width="40%">
-      <t-form ref="formRef" :rules="rules" :data="formItem.list" @submit="onAnomalyTypeSubmit">
-        <t-form-item :label="t('exceptionHandling.OrganizationName')" name="orgId">
-          <t-select v-model="formItem.list.orgId">
-            <t-option v-for="item in organizationNameData.list" :key="item.id" :label="item.orgName" :value="item.id" />
-          </t-select>
-        </t-form-item>
-        <t-form-item :label="t('exceptionHandling.abnormalModule')" name="incidentModule">
-          <t-select v-model="formItem.list.incidentModule">
-            <t-option
-              v-for="item in exceptionModuleData.list"
-              :key="item.id"
-              :label="item.paramValue"
-              :value="item.paramCode"
-            />
-          </t-select>
-        </t-form-item>
-        <t-form-item :label="t('exceptionHandling.treatmentGroup')" name="supportGroupId">
-          <t-select v-model="formItem.list.supportGroupId">
-            <t-option
-              v-for="item in treatmentGroupData.list"
-              :key="item.id"
-              :label="item.supportGroupName"
-              :value="item.id"
-            />
-          </t-select>
-        </t-form-item>
-        <t-form-item :label="t('exceptionHandling.processOrder')" name="levelSeq">
-          <t-input v-model="formItem.list.levelSeq" :value="formItem.list.levelSeq" placeholder="请输入"></t-input>
-        </t-form-item>
-        <t-form-item :label="t('exceptionHandling.transferOrders')" name="isAllowTransfer">
-          <t-radio-group
-            v-model="formItem.list.isAllowTransfer"
-            name="city"
-            :options="itemOptions"
-            size="small"
-          ></t-radio-group
-        ></t-form-item>
-        <div class="control-box">
-          <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
-          <t-button theme="primary" type="submit">保存</t-button>
-        </div>
-      </t-form>
-    </t-dialog>
-  </div>
+    </cmp-card>
+  </cmp-container>
+  <t-dialog v-model:visible="formVisible" :header="title" :cancel-btn="null" :confirm-btn="null" width="40%">
+    <t-form ref="formRef" :rules="rules" :data="formItem.list" @submit="onAnomalyTypeSubmit">
+      <t-form-item :label="t('exceptionHandling.OrganizationName')" name="orgId">
+        <t-select v-model="formItem.list.orgId">
+          <t-option v-for="item in organizationNameData.list" :key="item.id" :label="item.orgName" :value="item.id" />
+        </t-select>
+      </t-form-item>
+      <t-form-item :label="t('exceptionHandling.abnormalModule')" name="incidentModule">
+        <t-select v-model="formItem.list.incidentModule">
+          <t-option
+            v-for="item in exceptionModuleData.list"
+            :key="item.id"
+            :label="item.paramValue"
+            :value="item.paramCode"
+          />
+        </t-select>
+      </t-form-item>
+      <t-form-item :label="t('exceptionHandling.treatmentGroup')" name="supportGroupId">
+        <t-select v-model="formItem.list.supportGroupId">
+          <t-option
+            v-for="item in treatmentGroupData.list"
+            :key="item.id"
+            :label="item.supportGroupName"
+            :value="item.id"
+          />
+        </t-select>
+      </t-form-item>
+      <t-form-item :label="t('exceptionHandling.processOrder')" name="levelSeq">
+        <t-input v-model="formItem.list.levelSeq" :value="formItem.list.levelSeq" placeholder="请输入"></t-input>
+      </t-form-item>
+      <t-form-item :label="t('exceptionHandling.transferOrders')" name="isAllowTransfer">
+        <t-radio-group
+          v-model="formItem.list.isAllowTransfer"
+          name="city"
+          :options="itemOptions"
+          size="small"
+        ></t-radio-group
+      ></t-form-item>
+      <div class="control-box">
+        <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
+        <t-button theme="primary" type="submit">保存</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
