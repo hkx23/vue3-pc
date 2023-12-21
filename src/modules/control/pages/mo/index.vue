@@ -106,7 +106,7 @@ const queryCondition = ref({
   workCenterCode: '',
   rootingCode: '',
   datePlanRange: datePlanRangeDefault.value,
-  moStatus: '',
+  moStatus: [],
 });
 const detailedShow = ref(false); // 控制工单BOM显示隐藏
 const routingUpdateShow = ref(false); // 控制工单工艺路线显示隐藏

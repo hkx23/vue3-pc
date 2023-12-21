@@ -4,7 +4,7 @@
       <t-button @click="onAddFirstNode">新增</t-button>
     </cmp-card>
     <cmp-row>
-      <cmp-card ref="treeCard" flex="380px">
+      <cmp-card ref="treeCard" flex="300px">
         <t-tree
           ref="treeRef"
           :data="treeData"

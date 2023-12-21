@@ -12,7 +12,7 @@
         @submit.prevent
       >
         <div ref="formRowRef" style="width: 100%">
-          <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[32, 0]"
+          <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[16, 0]"
             ><t-col v-for="(opt, i) in optRow" v-show="!opt.isHide" :key="i" :flex="opt.flex"
               ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">
                 <!-- 自定义label -->
@@ -93,7 +93,7 @@
         </div>
       </t-form>
     </t-col>
-    <t-col flex="0 1 300px" style="text-align: end">
+    <t-col flex="0 1 250px" style="text-align: end">
       <t-space direction="horizontal" class="search-space search-form__button" size="large">
         <div class="">
           <t-space size="small" :align="'end'">
@@ -204,9 +204,9 @@ const cOpts = computed(() => {
     //   openSearchForm.value = true;
     // }
     if (opt.flex === undefined && opt.comp && opt.comp.includes('range')) {
-      opt.flex = '600px';
+      opt.flex = '480px';
     } else if (opt.flex === undefined) {
-      opt.flex = '300px';
+      opt.flex = '240px';
     }
     if (opt.row === undefined) {
       opt.row = 999;

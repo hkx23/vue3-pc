@@ -151,7 +151,7 @@ const fetchTable = async () => {
     tableDataProcess.value = [];
     const data = (await api.process.search({
       keyword: keyword.value,
-      state: processState.value === '' || processState.value === null ? -1 : processState.value,
+      state: processState.value === null ? -1 : processState.value,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       sorts: sortlist.value,
