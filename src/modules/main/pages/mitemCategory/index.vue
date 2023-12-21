@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { DialogPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -204,6 +204,8 @@ const onDeleteRowClick = async (value: any) => {
     cancelBtn: '取消',
     onConfirm: async () => {
       await api.mitemCategory.delete(value.row);
+
+      MessagePlugin.success('删除成功');
       fetchTable();
       confirmDia.hide();
     },

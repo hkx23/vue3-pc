@@ -421,6 +421,9 @@ export interface IncidentDealSearch {
   creator?: string;
   /** 报障单状态 */
   statusList?: string[];
+  curUserId?: string;
+  /** 是否查询处理组 */
+  isSearchSupportGroup?: boolean;
 }
 
 /** 响应数据 */

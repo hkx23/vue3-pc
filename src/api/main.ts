@@ -2483,7 +2483,6 @@ export interface MsgDTO {
   eid?: string;
   /** 消息来源表 */
   sourceTableName?: string;
-  /** 消息来源行ID */
   sourceRowId?: string;
   /** 标题 */
   title?: string;
@@ -2581,6 +2580,29 @@ export interface ResultResponseEntityString {
   data?: string | null;
 }
 
+export interface ModuleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 状态 */
+  state?: number[];
+  id?: string;
+  /** 多个ID */
+  ids?: string[];
+  /**
+   * 客户端类型
+   * @format int32
+   */
+  clientType?: number;
+}
+
 /** 系统模块表 */
 export interface Module {
   id?: string;
@@ -2636,27 +2658,6 @@ export interface Module {
   modulePackageIdentify?: string;
   /** 模块包名称 */
   packageName?: string;
-}
-
-export interface ModuleSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 状态 */
-  state?: number[];
-  id?: string;
-  /**
-   * 客户端类型
-   * @format int32
-   */
-  clientType?: number;
 }
 
 /** 菜单元数据 */
@@ -3063,15 +3064,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isBatchName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   stateName?: string;
   isState?: boolean;
+  isRawName?: string;
+  isProductName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isBatchName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4153,6 +4154,17 @@ export type CurrentUserVO = {
   defaultOrgId?: string;
   /** 授权组织 */
   orgList?: OrgVO[];
+  personId?: string;
+  /**
+   * 上次更新成员资格用户的密码的日期和时间
+   * @format date-time
+   */
+  timeLastPasswordChanged?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
 } | null;
 
 /** 组织基础实体 */
@@ -4196,6 +4208,22 @@ export interface ResultPagingDataParam {
   message?: string;
   /** 响应数据 */
   data?: PagingDataParam;
+}
+
+/** 通用响应类 */
+export interface ResultInteger {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /**
+   * 响应数据
+   * @format int32
+   */
+  data?: number | null;
 }
 
 /** 响应数据 */
@@ -4588,10 +4616,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6429,10 +6457,13 @@ export const api = {
      * @request POST:/stressTest/insertBatch
      * @secure
      */
-    insertBatch: (data: number) =>
+    insertBatch: (query: {
+      /** @format int32 */
+      num: number;
+    }) =>
       http.request<ResultObject['data']>(`/api/main/stressTest/insertBatch`, {
         method: 'POST',
-        body: data as any,
+        params: query,
       }),
 
     /**
@@ -6444,9 +6475,13 @@ export const api = {
      * @request POST:/stressTest/MemoryUsageLog
      * @secure
      */
-    memoryUsageLog: () =>
+    memoryUsageLog: (query: {
+      /** @format int32 */
+      num: number;
+    }) =>
       http.request<ResultObject['data']>(`/api/main/stressTest/MemoryUsageLog`, {
         method: 'POST',
+        params: query,
       }),
 
     /**
@@ -6455,12 +6490,12 @@ export const api = {
      * @tags 压力测试
      * @name CpuCompute
      * @summary CPU计算型
-     * @request POST:/stressTest/CPUCompute
+     * @request GET:/stressTest/CPUCompute
      * @secure
      */
     cpuCompute: () =>
-      http.request<ResultObject['data']>(`/api/main/stressTest/CPUCompute`, {
-        method: 'POST',
+      http.request<ResultInteger['data']>(`/api/main/stressTest/CPUCompute`, {
+        method: 'GET',
       }),
   },
   roleAuthorization: {
@@ -7324,6 +7359,21 @@ export const api = {
       http.request<ResultResponseEntityString['data']>(`/api/main/module/uploadFile`, {
         method: 'POST',
         params: query,
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name SortThisLevelAll
+     * @summary 菜单拖拽排序
+     * @request POST:/module/sortThisLevelAll
+     * @secure
+     */
+    sortThisLevelAll: (data: ModuleSearch) =>
+      http.request<ResultObject['data']>(`/api/main/module/sortThisLevelAll`, {
+        method: 'POST',
         body: data as any,
       }),
 
