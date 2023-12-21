@@ -17,11 +17,12 @@
               <div v-else>{{ userInfo.name }}</div>
             </t-form-item>
             <t-form-item label="角色">
-              <t-space>
+              <t-space v-if="roles && roles.length > 0">
                 <t-tooltip v-for="item in roles" :key="item.id" :content="item.roleDesc">
                   <t-tag>{{ item.roleName }}</t-tag>
                 </t-tooltip>
               </t-space>
+              <div v-else>-</div>
             </t-form-item>
             <t-form-item label="邮箱">
               <div>{{ personInfo.email || '-' }}</div>
@@ -168,7 +169,9 @@ onMounted(async () => {
   roles.value = await api.userInRole.getUserInRoleListByUserId({
     userId: userInfo.value.id,
   });
-  personInfo.value = await api.person.getItemById(userInfo.value.id);
+  if (userInfo.value.personId) {
+    personInfo.value = await api.person.getItemById(userInfo.value.personId);
+  }
 });
 
 const orgInfo = ref({ ...userStore.currUserOrgInfo });
