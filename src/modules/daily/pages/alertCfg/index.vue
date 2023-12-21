@@ -1,8 +1,5 @@
 <template>
-  <cmp-container :full="true" :full-sub-index="[1, 2]">
-    <cmp-card :span="12">
-      <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
-    </cmp-card>
+  <cmp-container :full="true">
     <cmp-card :span="12">
       <cmp-table
         ref="tableRef"
@@ -34,6 +31,9 @@
               <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
             </t-popconfirm>
           </t-space>
+        </template>
+        <template #title>
+          <cmp-query :opts="opts" :bool-enter="true" :show-button="false" @submit="onInput"></cmp-query>
         </template>
         <template #button>
           <t-space :size="8">
