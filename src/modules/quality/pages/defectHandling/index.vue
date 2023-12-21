@@ -1,87 +1,70 @@
 <!-- 缺陷处理方法 -->
 <template>
-  <div>
-    <t-card class="list-card-defectHandling">
-      <!-- <t-row justify="end">
-        <t-col style="margin: 0 20px">
-          <t-input
-            v-model="formData.categoryName"
-            placeholder="请输入处理方法类别名称"
-            label="处理方法类别名称:"
-          ></t-input>
-        </t-col>
-        <t-col>
-          <t-input
-            v-model="formData.methodCodeName"
-            placeholder="请输入方法编码/名称"
-            label="处理方法编码/名称:"
-          ></t-input>
-        </t-col>
-      </t-row> -->
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
+    </cmp-card>
+    <cmp-card ref="tableCardRef" :span="12">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
         :table-data="defectHandlingData"
         :table-column="column"
         :total="total"
+        :fixed-height="true"
         :loading="loading"
         :selected-row-keys="selectedRowKeys"
         @select-change="rehandleSelectChange"
         @refresh="onfetchData"
       >
+        <template #button>
+          <t-button theme="primary" @click="onHandelAdd">新增</t-button>
+          <t-button theme="default" @click="onWholeAdd">删除</t-button>
+        </template>
         <template #op="{ row }">
-          <!-- 编辑 -->
-          <icon name="edit-1" style="cursor: pointer" @click="onEdit(row)"></icon>
-          <!-- 删除 -->
-          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
-            <icon name="delete" style="margin: 0 15px; cursor: pointer"></icon>
-          </t-popconfirm>
+          <t-space :size="8">
+            <t-link theme="primary" @click="onEdit(row)">{{ t('common.button.edit') }}</t-link>
+            <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
+              <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
+          </t-space>
         </template>
-        <template #operate>
-          <!-- 新增 -->
-          <t-button theme="default" @click="onHandelAdd"> <icon name="add"></icon></t-button>
-          <!-- 删除 -->
-          <t-button><icon name="delete" @click="onWholeAdd"></icon></t-button>
-        </template>
-        <template #button> <cmp-query :opts="opts" @submit="onInput"> </cmp-query></template>
+
         <template #dealMethodType="{ row }">
-          <div>{{ `${row.dealMethodType}${row.dealMethodTypeName}` }}</div>
+          <div>{{ `${row.dealMethodType}-${row.dealMethodTypeName}` }}</div>
         </template>
       </cmp-table>
-    </t-card>
-    <t-dialog v-model:visible="defectVisible" header="新增/编辑" :cancel-btn="null" :confirm-btn="null" width="40%">
-      <t-form ref="formRef" :data="formData" layout="vertical" :rules="rules" @submit="onSubmit">
-        <t-form-item :label="t('defectHandling.dealMethodType')" label-width="120px" name="dealMethodType">
-          <t-select v-model="defectCode" :disabled="isDisabled" @change="onOrgIdChange">
-            <t-option
-              v-for="item in onDefectDealMethodData.list"
-              :key="item.id"
-              :label="item.paramValue"
-              :value="item"
-            />
-          </t-select>
-        </t-form-item>
-        <t-form-item :label="t('defectHandling.methodCode')" label-width="120px" name="methodCode">
-          <t-input v-model="formData.methodCode" placeholder="请输入" :disabled="disabledCode"></t-input>
-        </t-form-item>
-        <t-form-item :label="t('defectHandling.methodName')" label-width="120px" name="methodName">
-          <t-input v-model="formData.methodName" placeholder="请输入"></t-input>
-        </t-form-item>
-        <div class="control-box">
-          <t-button theme="default" variant="base" @click="onSecondaryDelete">取消</t-button>
-          <t-button theme="primary" type="submit">确认</t-button>
-        </div>
-      </t-form>
-    </t-dialog>
-    <t-dialog v-model:visible="deleteVisible" :header="t('common.message.confirmDelete')" :on-confirm="onSave">
-      <h3 class="list-save">选中{{ selectedRowKeys.length }}条</h3>
-    </t-dialog>
-  </div>
+    </cmp-card>
+  </cmp-container>
+
+  <t-dialog v-model:visible="defectVisible" header="新增/编辑" :cancel-btn="null" :confirm-btn="null">
+    <t-form ref="formRef" :data="formData" layout="vertical" :rules="rules" @submit="onSubmit">
+      <t-form-item :label="t('defectHandling.dealMethodType')" label-width="120px" name="dealMethodType">
+        <t-select v-model="defectCode" :disabled="isDisabled" @change="onOrgIdChange">
+          <t-option v-for="item in onDefectDealMethodData.list" :key="item.id" :label="item.paramValue" :value="item" />
+        </t-select>
+      </t-form-item>
+      <t-form-item :label="t('defectHandling.methodCode')" label-width="120px" name="methodCode">
+        <t-input v-model="formData.methodCode" placeholder="请输入" :disabled="disabledCode"></t-input>
+      </t-form-item>
+      <t-form-item :label="t('defectHandling.methodName')" label-width="120px" name="methodName">
+        <t-input v-model="formData.methodName" placeholder="请输入"></t-input>
+      </t-form-item>
+      <div class="control-box"></div>
+    </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="onSecondaryDelete">取消</t-button>
+      <t-button theme="primary" @click="onSecondarySubmit">确认</t-button>
+    </template>
+  </t-dialog>
+  <t-dialog v-model:visible="deleteVisible" :header="t('common.message.confirmDelete')" :on-confirm="onSave">
+    <h3 class="list-save">选中{{ selectedRowKeys.length }}条</h3>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Data, FormInstanceFunctions, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
+import { Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import CmpQuery from '@/components/cmp-query/index.vue';
@@ -100,18 +83,16 @@ import { useLang } from './lang';
 const opts = computed(() => {
   return {
     categoryName: {
-      label: '处理方法类别名称:',
+      label: '处理方法类别',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
-      labelWidth: '140px',
     },
     methodCodeName: {
-      label: '处理方法编码/名称:',
+      label: '处理方法',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
-      labelWidth: '140px',
     },
   };
 });
@@ -197,6 +178,9 @@ const onSecondaryDelete = () => {
   defectVisible.value = false;
 };
 
+const onSecondarySubmit = () => {
+  formRef.value.submit();
+};
 // 批量删除提示窗口
 const onSave = async () => {
   try {

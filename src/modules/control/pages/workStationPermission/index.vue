@@ -1,16 +1,5 @@
 <template>
   <workPermission v-if="permission" @permission-show="onPermission"></workPermission>
-  <!-- <t-dialog
-    v-model:visible="formVisible"
-    :header="t('common.dialog.header.edit')"
-    :on-confirm="onConfirmForm"
-    width="750px"
-    :close-on-overlay-click="false"
-  >
-    <t-space direction="vertical">
-      <mitem-form ref="formRef"></mitem-form>
-    </t-space>
-  </t-dialog> -->
 
   <cmp-container v-if="!permission" :full="true">
     <cmp-card :span="12">
@@ -38,77 +27,17 @@
         </template>
         <template #op="{ row }">
           <t-popconfirm content="确认删除吗" @confirm="onDelete(row.id)">
-            <icon name="delete"></icon>
+            <t-link theme="primary">删除</t-link>
           </t-popconfirm>
         </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
-
-  <!-- <t-card class="list-card-container">
-    <header>
-      <div>
-      
-      </div>
-      <div class="list-card-container">
-        <t-card :bordered="false" gutter>
-          <t-row justify="space-between">
-            <t-col :span="2"
-              ><t-input
-                v-model="inputValue.workstationWord"
-                label="工站代码/名称："
-                placeholder="请输入工序代码/名称"
-              ></t-input>
-            </t-col>
-            <t-col :span="2">
-              <t-input v-model="inputValue.userWord" label="用户：" placeholder="请输入用户"></t-input>
-            </t-col>
-            <t-col :span="2"
-              ><t-input
-                v-model="inputValue.workcenterWord"
-                label="："
-                placeholder="请输入工作中心/名称"
-              ></t-input>
-            </t-col>
-            <t-col :span="2"
-              ><t-input v-model="inputValue.processWord" label="工序：" placeholder="请输入工序"> </t-input>
-            </t-col> </t-row
-        ></t-card>
-        <t-card :bordered="false" style="margin: 10px 0">
-          <t-row justify="space-between">
-            <t-col :span="2">
-              
-            </t-col>
-            <t-col :span="2" style="display: flex; justify-content: flex-end">
-              <t-button @click="">查询</t-button>
-              <t-button theme="default" variant="base" @click="">重置</t-button></t-col
-            >
-          </t-row>
-        </t-card>
-        <cmp-table
-          v-model:pagination="pageUI"
-          :loading="loading"
-          row-key="id"
-          :total="total"
-          :table-column="column"
-          :table-data="permissionData"
-          :selected-row-keys="selectedRowKeys"
-          @refresh="onfetchData"
-          @select-change="rehandleSelectChange"
-        >
-          <template #op="{ row }">
-            <t-popconfirm content="确认删除吗" @confirm="onDelete(row.id)">
-              <icon name="delete"></icon>
-            </t-popconfirm>
-          </template>
-        </cmp-table>
-      </div></header
-  ></t-card> -->
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Icon, MessagePlugin } from 'tdesign-vue-next';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/control';

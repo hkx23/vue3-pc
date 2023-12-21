@@ -1,5 +1,34 @@
 <template>
-  <div class="main-page">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <!-- 查询组件  -->
+      <cmp-query :opts="opts" @submit="conditionEnter" @reset="onReset" />
+    </cmp-card>
+    <cmp-card :span="12">
+      <cmp-table
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="tableProcessColumns"
+        :table-data="tableDataProcess"
+        :loading="loading"
+        :fixed-height="true"
+        :total="dataTotal"
+        :resizable="true"
+        @refresh="fetchTable"
+      >
+        <template #button>
+          <t-button theme="primary" @click="onAdd">新增</t-button>
+          <!-- <t-button theme="default">导入</t-button>
+          <t-button theme="default">导出</t-button> -->
+        </template>
+        <template #op="slotProps">
+          <t-link theme="primary" @click="onEditRowClick(slotProps)"> 编辑 </t-link>
+        </template>
+      </cmp-table>
+    </cmp-card>
+  </cmp-container>
+
+  <!-- <div class="main-page">
     <div class="main-page-content">
       <t-row justify="space-between">
         <t-col>
@@ -23,47 +52,22 @@
       </t-row>
     </div>
     <div class="main-page-content">
-      <cmp-table
-        v-model:pagination="pageUI"
-        row-key="id"
-        :table-column="tableProcessColumns"
-        :table-data="tableDataProcess"
-        :loading="loading"
-        :total="dataTotal"
-        :resizable="true"
-        @refresh="fetchTable"
-      >
-        <template #button>
-          <t-button theme="primary" @click="onAdd">新增</t-button>
-          <t-button theme="default">导入</t-button>
-          <t-button theme="default">导出</t-button>
-        </template>
-        <template #op="slotProps">
-          <t-space>
-            <t-icon name="edit" @click="onEditRowClick(slotProps)" />
-          </t-space>
-        </template>
-      </cmp-table>
+     
     </div>
-  </div>
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="formTitle"
-      :on-confirm="onConfirmForm"
-      width="50%"
-      :close-on-overlay-click="false"
-    >
-      <t-space direction="vertical" style="width: 98%">
-        <process-form ref="formRef"></process-form>
-      </t-space>
-    </t-dialog>
-  </div>
+  </div> -->
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="formTitle"
+    :on-confirm="onConfirmForm"
+    :close-on-overlay-click="false"
+  >
+    <process-form ref="formRef"></process-form>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -103,6 +107,32 @@ const tableProcessColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '更新时间', width: 160, colKey: 'timeModified' },
   { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  keyword.value = data.keyword;
+  processState.value = data.processState;
+  onRefresh();
+};
+const opts = computed(() => {
+  return {
+    keyword: {
+      label: '工序',
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: '请输入工序编码/名称',
+    },
+    processState: {
+      label: '状态',
+      comp: 't-select',
+      defaultVal: '',
+      placeholder: '请选择状态',
+      bind: {
+        options: stateOptions,
+      },
+    },
+  };
+});
+
 // 查询按钮
 const onRefresh = () => {
   fetchTable();
@@ -121,7 +151,7 @@ const fetchTable = async () => {
     tableDataProcess.value = [];
     const data = (await api.process.search({
       keyword: keyword.value,
-      state: processState.value,
+      state: processState.value === '' || processState.value === null ? -1 : processState.value,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       sorts: sortlist.value,

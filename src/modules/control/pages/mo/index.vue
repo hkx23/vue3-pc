@@ -1,138 +1,17 @@
 <template>
-  <div class="main-page">
-    <!-- 子from BOM -->
-    <t-dialog
-      v-model:visible="detailedShow"
-      :row="currentrow"
-      header="工单BOM"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      width="90%"
-    >
-      <detailed :row="currentrow" @added-show="onHandleBomShow"></detailed>
-    </t-dialog>
-
-    <!-- 子from routing -->
-    <t-dialog
-      v-model:visible="routingUpdateShow"
-      :row="currentrow"
-      header="工艺路线"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      width="90%"
-    >
-      <routingUpdate
-        :row="currentrow"
-        @routing-show="onHandleRoutingShow"
-        @refresh-table="onHandleTableReresh"
-      ></routingUpdate>
-    </t-dialog>
-
-    <!-- 头部 -->
-    <div class="main-page-content">
-      <t-row justify="space-between" style="margin-bottom: 8px">
-        <t-col :span="3">
-          <t-select
-            v-model="queryCondition.moClass"
-            :auto-width="false"
-            label="工单类别："
-            placeholder="请选择工单类别"
-            :options="moClassOption"
-            clearable
-          >
-          </t-select>
-        </t-col>
-        <t-col :span="3"
-          ><t-input v-model="queryCondition.moCode" label="工单号：" placeholder="请输入工单号"></t-input>
-        </t-col>
-        <t-col :span="3">
-          <bcmp-select-business
-            v-model="queryCondition.mitemCategroyCode"
-            type="mitemCategory"
-            value-field="categoryCode"
-            :show-title="true"
-            title="产品类别："
-            placeholder="请选择产品类别"
-          ></bcmp-select-business>
-        </t-col>
-      </t-row>
-      <t-row justify="space-between" style="margin-bottom: 8px">
-        <t-col :span="3">
-          <bcmp-select-business
-            v-model="queryCondition.mitemCode"
-            title="产品编码："
-            type="mitem"
-            value-field="mitemCode"
-            :show-title="true"
-            placeholder="请选择产品编码"
-          ></bcmp-select-business>
-        </t-col>
-        <t-col :span="3">
-          <bcmp-select-business
-            v-model="queryCondition.workshopCode"
-            type="workshop"
-            value-field="orgCode"
-            :show-title="true"
-            title="车间："
-          ></bcmp-select-business>
-        </t-col>
-        <t-col :span="3">
-          <bcmp-select-business
-            v-model="queryCondition.workCenterCode"
-            type="workcenter"
-            value-field="wcCode"
-            :show-title="true"
-            title="工作中心："
-            placeholder="请选择工作中心"
-          ></bcmp-select-business>
-        </t-col>
-      </t-row>
-      <t-row justify="space-between" style="margin-bottom: 8px">
-        <t-col :span="3">
-          <bcmp-select-business
-            v-model="queryCondition.rootingCode"
-            type="routing"
-            value-field="routingCode"
-            :show-title="true"
-            title="工艺路线："
-            placeholder="请选择工艺路线"
-          ></bcmp-select-business>
-        </t-col>
-        <t-col :span="7" class="range-time-query">
-          <span>计划开始时间：</span>
-          <t-space direction="vertical" style="width: 70%">
-            <t-date-range-picker v-model="datePlanRange" />
-          </t-space>
-        </t-col>
-        <t-col :span="2"> </t-col>
-      </t-row>
-      <t-row justify="space-between">
-        <t-col :span="10">
-          <span>工单状态：</span>
-          <!-- 复选框框组受控模式 -->
-          <t-checkbox-group
-            v-model="selectMoStatus"
-            class="check-box-conditon"
-            :options="moStatusOption"
-            @change="onChangeMoStatus"
-          />
-        </t-col>
-
-        <t-col :span="2">
-          <div style="display: flex; justify-content: flex-end">
-            <t-button variant="base" @click="onHandleQuery">查询</t-button>
-            <t-button theme="default" variant="base" @click="onHandleResetting">重置</t-button>
-          </div>
-        </t-col>
-      </t-row>
-    </div>
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <!-- 查询组件  -->
+      <cmp-query :opts="opts" @submit="conditionEnter" @reset="onHandleResetting" />
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="index"
         :loading="loading"
         :table-column="columns"
         :table-data="moData"
+        :fixed-height="true"
         :total="dataTotal"
         :header-affixed-top="true"
         @refresh="fetchTable"
@@ -150,20 +29,46 @@
           </a>
         </template>
         <template #op="{ row }">
-          <t-icon
+          <t-link
             v-if="row.status == 'DOWNLOAD' || row.status == 'SCHEDULED' || row.status == 'READY'"
-            name="edit"
+            theme="primary"
             @click="onEditRoutingClick(row)"
-          />
+          >
+            编辑
+          </t-link>
         </template>
       </cmp-table>
-    </div>
-  </div>
+    </cmp-card>
+  </cmp-container>
+  <!-- 子from BOM -->
+  <t-dialog
+    v-model:visible="detailedShow"
+    :row="currentrow"
+    header="工单BOM"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    top="60px"
+    width="950px"
+  >
+    <detailed ref="detailFormRef" :row="currentrow" @added-show="onHandleBomShow"></detailed>
+    <template #footer>
+      <t-button theme="default" @click="onHandleCancellation">取消</t-button>
+    </template>
+  </t-dialog>
+  <!-- 子from 工艺路线更新 -->
+  <routingUpdate
+    ref="routingFormRef"
+    v-model="routingUpdateShow"
+    :row="currentrow"
+    @routing-show="onHandleRoutingShow"
+    @refresh-table="onHandleTableReresh"
+  ></routingUpdate>
 </template>
 
 <script setup lang="tsx">
 import dayjs from 'dayjs';
-import { onMounted, ref } from 'vue';
+import _ from 'lodash';
+import { computed, onMounted, ref } from 'vue';
 
 import { api as apicontrol } from '@/api/control';
 import { api as apimain } from '@/api/main';
@@ -171,18 +76,19 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import detailed from './detailed.vue';
+import { useLang } from './lang';
 import routingUpdate from './routingUpdate.vue';
 
+const { t } = useLang();
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const currentrow = ref({}); // 当前行工单信息
 // 控制
 const keyword = ref(''); // 控制模糊搜索
 // const formVisible = ref(false); // 控制弹窗显示
-const selectMoStatus = ref([]); // 选中的工单状态
-const datePlanRange = ref([dayjs().format('YYYY-MM-DD'), dayjs().subtract(-31, 'day').format('YYYY-MM-DD')]); // 初始化日期控件
+// const selectMoStatus = ref([]); // 选中的工单状态
+const datePlanRangeDefault = ref([dayjs().format('YYYY-MM-DD'), dayjs().subtract(-31, 'day').format('YYYY-MM-DD')]); // 初始化日期控件
 // 工单类型下拉初始数据
 const moClassOption = ref([]);
 // 工单状态下拉初始数据
@@ -199,10 +105,12 @@ const queryCondition = ref({
   workshopCode: '',
   workCenterCode: '',
   rootingCode: '',
+  datePlanRange: datePlanRangeDefault.value,
+  moStatus: '',
 });
 const detailedShow = ref(false); // 控制工单BOM显示隐藏
 const routingUpdateShow = ref(false); // 控制工单工艺路线显示隐藏
-
+const routingFormRef = ref(null);
 // 表格th数据
 const columns = ref([
   {
@@ -228,24 +136,25 @@ const columns = ref([
   { colKey: 'datetimeActualStart', title: '实际开始时间', width: '150' },
   { colKey: 'datetimeActualEnd', title: '实际完成时间', width: '150' },
   { colKey: 'datetimeMoClose', title: '工单关闭时间', width: '150' },
-  { colKey: 'op', title: '操作', width: '100', fixed: 'right' },
+  { colKey: 'op', title: t('common.button.operation'), width: '100', fixed: 'right' },
 ]);
 // 工单信息
 const moData = ref([]);
 const dataTotal = ref(0);
+const detailFormRef = ref(null);
 const fetchTable = async () => {
   try {
     setLoading(true);
-    if (datePlanRange.value) {
-      if (datePlanRange.value[0]) {
-        queryCondition.value.datetimePlanStart = datePlanRange.value[0].toString();
+    if (queryCondition.value.datePlanRange) {
+      if (queryCondition.value.datePlanRange[0]) {
+        queryCondition.value.datetimePlanStart = queryCondition.value.datePlanRange[0].toString();
       }
-      if (datePlanRange.value[1]) {
-        queryCondition.value.datetimePlanEnd = datePlanRange.value[1].toString();
+      if (queryCondition.value.datePlanRange[1]) {
+        queryCondition.value.datetimePlanEnd = queryCondition.value.datePlanRange[1].toString();
       }
     }
-    if (selectMoStatus.value) {
-      queryCondition.value.status = selectMoStatus.value.join(',');
+    if (queryCondition.value.moStatus) {
+      queryCondition.value.status = queryCondition.value.moStatus.join(',');
     }
     const res = (await apicontrol.mo.getmolist({
       ...queryCondition.value,
@@ -292,10 +201,104 @@ const initMoType = async () => {
     setLoading(false);
   }
 };
-
-const onChangeMoStatus = (val) => {
-  console.log(selectMoStatus.value, val);
+const onHandleCancellation = () => {
+  detailFormRef.value.onHandleCancellation();
 };
+// const onChangeMoStatus = (val) => {
+//   console.log(selectMoStatus.value, val);
+// };
+// 点击查询按钮
+const conditionEnter = (data: any) => {
+  queryCondition.value = _.cloneDeep(data);
+  onHandleQuery();
+};
+const opts = computed(() => {
+  return {
+    moClass: {
+      label: '工单类别',
+      comp: 't-select',
+      defaultVal: '',
+      placeholder: '请选择工单类别',
+      bind: {
+        options: moClassOption.value,
+      },
+    },
+    moCode: {
+      label: '工单号',
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: '请输入工单号',
+    },
+    mitemCategroyCode: {
+      label: '产品类别',
+      comp: 'bcmp-select-business',
+      defaultVal: '',
+      placeholder: '请选择产品类别',
+      bind: {
+        type: 'mitemCategory',
+        valueField: 'categoryCode',
+      },
+    },
+    mitemCode: {
+      label: '产品编码',
+      comp: 'bcmp-select-business',
+      defaultVal: '',
+      placeholder: '请选择产品编码',
+      bind: {
+        type: 'mitem',
+        valueField: 'mitemCode',
+      },
+    },
+    workshopCode: {
+      label: '车间',
+      comp: 'bcmp-select-business',
+      defaultVal: '',
+      placeholder: '请选择车间',
+      bind: {
+        type: 'workshop',
+        valueField: 'orgCode',
+      },
+    },
+    workCenterCode: {
+      label: '工作中心',
+      comp: 'bcmp-select-business',
+      defaultVal: '',
+      placeholder: '请选择工作中心',
+      bind: {
+        type: 'workcenter',
+        valueField: 'wcCode',
+      },
+    },
+    rootingCode: {
+      label: '工艺路线',
+      comp: 'bcmp-select-business',
+      defaultVal: '',
+      placeholder: '请选择工艺路线',
+      bind: {
+        type: 'routing',
+        valueField: 'routingCode',
+      },
+    },
+    datePlanRange: {
+      label: '计划开始时间',
+      comp: 't-date-range-picker',
+      defaultVal: datePlanRangeDefault.value,
+      placeholder: '请选择计划开始时间',
+    },
+    moStatus: {
+      label: '工单状态',
+      comp: 't-checkbox-group',
+      placeholder: '请选择工单状态',
+      flex: '600px',
+      defaultVal: [],
+      bind: {
+        class: 'check-box-conditon',
+        options: moStatusOption.value,
+        lazyLoad: true,
+      },
+    },
+  };
+});
 
 // 防抖
 const debounce = (func: { (): void; apply?: any }, delay: number) => {

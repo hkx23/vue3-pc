@@ -1,85 +1,9 @@
 <template>
-  <div class="module-tree-container">
-    <t-card :bordered="false">
-      <t-row justify="space-between">
-        <cmp-query :opts="opts" @submit="onInput">
-          <template #cellType>
-            <t-select v-model="queryData.cellType">
-              <t-option
-                v-for="item in DropDownData.list"
-                :key="item.id"
-                :label="item.paramValue"
-                :value="item.paramCode"
-              />
-            </t-select>
-          </template>
-        </cmp-query>
-        <t-col :span="12" flex="auto">
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="pageUI"
-            row-key="id"
-            :table-column="columns"
-            :table-data="anomalyTypeData.list"
-            :total="anomalyTotal"
-            :selected-row-keys="selectedRowKeys"
-            @refresh="onFetchData"
-            @select-change="rehandleSelectChange"
-          >
-            <template #stateSwitch="{ row }">
-              <t-switch
-                :custom-value="[1, 0]"
-                :value="row.state"
-                :default-value="row.state"
-                size="large"
-                @change="(value) => onSwitchChange(row, value)"
-              ></t-switch>
-            </template>
-            <template #required="{ row }">
-              <t-checkbox v-model="row.required"></t-checkbox>
-            </template>
-            <template #multiterm="{ row }">
-              <t-checkbox v-model="row.multiterm"></t-checkbox>
-            </template>
-            <template #verify="{ row }">
-              <t-checkbox v-model="row.verify"></t-checkbox>
-            </template>
-            <template #actionSlot="{ row }">
-              <t-button size="small" variant="text" @click="onEditRow(row)">
-                <icon name="edit-1" class="black-icon" />
-              </t-button>
-              <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
-                <t-button size="small" variant="text" @click="onDeleteRow(row)">
-                  <icon name="delete-1" class="black-icon" />
-                </t-button>
-              </t-popconfirm>
-            </template>
-            <template #operate>
-              <t-space>
-                <t-button theme="default" @click="onAddTypeData"> 新建 </t-button>
-                <t-button theme="default"> 导入 </t-button>
-                <t-popconfirm theme="default" content="确认删除吗" @confirm="deleteBatches()">
-                  <t-button theme="default"> 批量删除 </t-button>
-                </t-popconfirm>
-              </t-space>
-            </template>
-          </cmp-table>
-        </t-col>
-      </t-row>
-    </t-card>
-    <!-- dialog 弹窗 -->
-    <t-dialog
-      v-model:visible="formVisible"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      :header="diaLogTitle"
-      width="70%"
-      @close="onSecondaryReset"
-    >
-      <t-form ref="formRef" :rules="rules" :data="anomalyTypeTabData.list" @submit="onAnomalyTypeSubmit">
-        <!-- 第 1️⃣ 行数据 -->
-        <t-form-item label="异常模块" name="incidentModule">
-          <t-select v-model="anomalyTypeTabData.list.incidentModule">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" @submit="onInput">
+        <template #cellType>
+          <t-select v-model="queryData.cellType" label="异常模块">
             <t-option
               v-for="item in DropDownData.list"
               :key="item.id"
@@ -87,37 +11,107 @@
               :value="item.paramCode"
             />
           </t-select>
-        </t-form-item>
-        <!-- 第 2️⃣ 行数据 -->
-        <t-form-item label="异常类型名称" name="incidentName">
-          <t-input v-model="anomalyTypeTabData.list.incidentName"></t-input>
-        </t-form-item>
-        <!-- 第 3️⃣ 行数据 -->
-        <t-form-item label="异常类型编码" name="incidentCode">
-          <t-input v-model="anomalyTypeTabData.list.incidentCode" :disabled="isDisabled"></t-input>
-        </t-form-item>
-        <!-- 第 4️⃣ 行数据 -->
-        <t-form-item label="是否启用" name="state">
-          <t-radio-group
-            v-model="anomalyTypeTabData.list.state"
-            name="city"
-            :options="itemOptions"
-            size="small"
-          ></t-radio-group>
-        </t-form-item>
-        <t-row>
-          <t-col :span="11" class="align-right">
-            <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-            <t-button theme="primary" type="submit">保存</t-button>
-          </t-col>
-        </t-row>
-      </t-form>
-    </t-dialog>
-  </div>
-</template>
+        </template>
+      </cmp-query>
+    </cmp-card>
+    <cmp-card :span="12">
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="columns"
+        :fixed-height="true"
+        :table-data="anomalyTypeData.list"
+        :total="anomalyTotal"
+        :selected-row-keys="selectedRowKeys"
+        @refresh="onFetchData"
+        @select-change="rehandleSelectChange"
+      >
+        <template #stateSwitch="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            size="large"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
+        </template>
+        <template #required="{ row }">
+          <t-checkbox v-model="row.required"></t-checkbox>
+        </template>
+        <template #multiterm="{ row }">
+          <t-checkbox v-model="row.multiterm"></t-checkbox>
+        </template>
+        <template #verify="{ row }">
+          <t-checkbox v-model="row.verify"></t-checkbox>
+        </template>
+        <template #actionSlot="{ row }">
+          <t-space :size="8">
+            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
 
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
+              <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
+          </t-space>
+        </template>
+        <template #button>
+          <t-space :size="8">
+            <t-button theme="primary" @click="onAddTypeData">新建</t-button>
+            <t-button theme="default">导入</t-button>
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="deleteBatches()">
+              <t-button theme="default">批量删除</t-button>
+            </t-popconfirm>
+          </t-space>
+        </template>
+      </cmp-table>
+    </cmp-card>
+  </cmp-container>
+  <!-- dialog 弹窗 -->
+  <t-dialog
+    v-model:visible="formVisible"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    :header="diaLogTitle"
+    @close="onSecondaryReset"
+  >
+    <t-form
+      ref="formRef"
+      :rules="rules"
+      :data="anomalyTypeTabData.list"
+      label-width="120px"
+      @submit="onAnomalyTypeSubmit"
+    >
+      <!-- 第 1️⃣ 行数据 -->
+      <t-form-item label="异常模块" name="incidentModule">
+        <t-select v-model="anomalyTypeTabData.list.incidentModule">
+          <t-option v-for="item in DropDownData.list" :key="item.id" :label="item.paramValue" :value="item.paramCode" />
+        </t-select>
+      </t-form-item>
+      <!-- 第 2️⃣ 行数据 -->
+      <t-form-item label="异常类型名称" name="incidentName">
+        <t-input v-model="anomalyTypeTabData.list.incidentName"></t-input>
+      </t-form-item>
+      <!-- 第 3️⃣ 行数据 -->
+      <t-form-item label="异常类型编码" name="incidentCode">
+        <t-input v-model="anomalyTypeTabData.list.incidentCode" :disabled="isDisabled"></t-input>
+      </t-form-item>
+      <!-- 第 4️⃣ 行数据 -->
+      <t-form-item label="是否启用" name="state">
+        <t-radio-group
+          v-model="anomalyTypeTabData.list.state"
+          name="city"
+          :options="itemOptions"
+          size="small"
+        ></t-radio-group>
+      </t-form-item>
+    </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+      <t-button theme="primary" @click="onSecondarySubmit">保存</t-button>
+    </template>
+  </t-dialog>
+</template>
 <script setup lang="ts">
-import { Icon } from 'tdesign-icons-vue-next';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
@@ -126,6 +120,9 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
+import { useLang } from './lang';
+
+const { t } = useLang();
 const isDisabled = ref(false);
 const DropDownData = reactive({ list: [] });
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
@@ -140,7 +137,7 @@ const itemOptions = [
 const submitFalg = ref(false);
 
 // 表格数据总条数
-const anomalyTotal = ref(null);
+const anomalyTotal = ref(0);
 // 编辑回填 ID
 const incidentID = ref('');
 // 表格数据
@@ -306,21 +303,18 @@ const opts = computed(() => {
       comp: 't-select',
       event: 'input',
       defaultVal: '01',
-      labelWidth: '50',
       bind: {
         options: queryData.value.state,
       },
     },
     soltDemo: {
-      label: '异常类型编码/名称',
-      labelWidth: '120',
+      label: '异常类型',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
     },
     workshop: {
       label: '异常模块',
-      labelWidth: '50',
       event: 'business',
       defaultVal: '',
       slotName: 'cellType',
@@ -362,7 +356,9 @@ const onInput = async (data: any) => {
 // };
  * 
  */
-
+const onSecondarySubmit = () => {
+  formRef.value.submit();
+};
 // 右侧表格编辑按钮
 const onEditRow = (row: any) => {
   isDisabled.value = true;

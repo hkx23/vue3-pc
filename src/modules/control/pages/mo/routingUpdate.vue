@@ -1,41 +1,52 @@
 <template>
-  <div class="detailed-box">
-    <t-card :bordered="false">
-      <div class="form-item-box">
-        <t-form-item label="工艺路线类型"> <t-input v-model="currentrow.moClassName" :disabled="true" /></t-form-item>
-        <t-form-item label="工艺路线">
-          <t-input v-model="conditionData.routingCode" @change="onChangeKeyword" />
-        </t-form-item>
-      </div>
-    </t-card>
-    <!-- table表格 -->
-    <footer class="detailed-work-center">
-      <div class="table-work-header">
-        <cmp-table
-          ref="tableRoutingRef"
-          row-key="id"
-          :table-column="columnsRouting"
-          :table-data="moRoutingData"
-          :loading="loadingRouting"
-          :show-pagination="false"
-          select-on-row-click
-          @refresh="fetchTableRouting"
-          @select-change="onSelectChange"
-        >
-        </cmp-table>
-      </div>
-    </footer>
-    <div class="popup-mo-foot-btn">
+  <t-dialog
+    v-model:visible="visible"
+    :row="currentrow"
+    header="工艺路线"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    top="60px"
+    width="950px"
+    @close="onHandleCancel"
+  >
+    <div class="detailed-box">
+      <t-card :bordered="false">
+        <div class="form-item-box">
+          <t-form-item label="工艺路线类型"> <t-input v-model="currentrow.moClassName" :disabled="true" /></t-form-item>
+          <t-form-item label="工艺路线">
+            <t-input v-model="conditionData.routingCode" @change="onChangeKeyword" />
+          </t-form-item>
+        </div>
+      </t-card>
+      <!-- table表格 -->
+      <footer class="detailed-work-center">
+        <div class="table-work-header">
+          <cmp-table
+            ref="tableRoutingRef"
+            row-key="id"
+            :table-column="columnsRouting"
+            :table-data="moRoutingData"
+            :loading="loadingRouting"
+            :show-pagination="false"
+            select-on-row-click
+            @refresh="fetchTableRouting"
+            @select-change="onSelectChange"
+          >
+          </cmp-table>
+        </div>
+      </footer>
+    </div>
+    <template #footer>
       <t-button v-show="selectRoutingVerisonID > 0" theme="primary" @click="onHandlesave">保存</t-button>
       <t-button theme="default" @click="onHandleCancel">取消</t-button>
-    </div>
-  </div>
+    </template>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { nextTick, reactive, ref, watch } from 'vue';
+import { computed, nextTick, reactive, ref, watch } from 'vue';
 
 import { api as apicontrol } from '@/api/control';
 import { api as apimain } from '@/api/main';
@@ -47,6 +58,10 @@ const props = defineProps({
   row: {
     type: Object,
     default: null,
+  },
+  modelValue: {
+    type: Boolean,
+    default: false,
   },
 });
 const { loading: loadingRouting, setLoading: setLoadingRouting } = useLoading();
@@ -83,7 +98,14 @@ const fetchTableRouting = async () => {
     setLoadingRouting(false);
   }
 };
-
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(val: boolean) {
+    emit('update:modelValue', val);
+  },
+});
 const columnsRouting: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
@@ -164,7 +186,7 @@ watch(
 }
 
 .detailed-box {
-  padding: var(--td-comp-paddingTB-xl) var(--td-comp-paddingLR-xl);
+  // padding: var(--td-comp-paddingTB-xl) var(--td-comp-paddingLR-xl);
 
   .popup-mo-foot-btn {
     display: block;
