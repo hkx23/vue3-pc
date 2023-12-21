@@ -39,11 +39,12 @@
         <t-table
           ref="tableRef"
           :vertical-align="'middle'"
-          hover
+          :hover="hover"
           multiple-sort
           resizable
           lazy-load
-          stripe
+          :stripe="stripe"
+          :active-row-type="activeRowType"
           :row-key="rowKey"
           :columns="columns"
           :data="finalTableData"
@@ -158,6 +159,18 @@ const props = defineProps({
     },
   },
   showPagination: {
+    type: Boolean,
+    default: true,
+  },
+  activeRowType: {
+    type: String,
+    default: '',
+  },
+  hover: {
+    type: Boolean,
+    default: true,
+  },
+  stripe: {
     type: Boolean,
     default: true,
   },

@@ -21,19 +21,20 @@
       @popup-visible-change="onPopupVisibleChange"
     >
       <template #panel>
-        <div
-          v-for="item in state.tableData"
-          :key="item[keywords.value]"
-          class="custom-option"
-          @click="() => onOptionClick(item)"
-        >
-          <div class="item-title">
-            <img :src="listSetting.image" />
-            <div class="data_code">{{ item[listSetting.codeField] }}</div>
-            <div class="data_name">{{ item[listSetting.nameField] }}</div>
-          </div>
-          <div class="data_desc">{{ item[listSetting.descField] || '-' }}</div>
-          <!-- <t-icon :name="listSetting.icon" size="24" class="custom-option__icon"></t-icon>
+        <div class="t-select__data">
+          <div
+            v-for="item in state.tableData"
+            :key="item[keywords.value]"
+            class="custom-option"
+            @click="() => onOptionClick(item)"
+          >
+            <div class="item-title">
+              <img :src="listSetting.image" />
+              <div class="data_code">{{ item[listSetting.codeField] }}</div>
+              <div class="data_name">{{ item[listSetting.nameField] }}</div>
+            </div>
+            <div class="data_desc">{{ item[listSetting.descField] || '-' }}</div>
+            <!-- <t-icon :name="listSetting.icon" size="24" class="custom-option__icon"></t-icon>
           <div class="custom-option__main">
             <t-highlight-option
               :content="item[listSetting.codeField]"
@@ -41,6 +42,7 @@
             />
             <small class="description">{{ item[listSetting.descField] || '-' }}</small>
           </div> -->
+          </div>
         </div>
       </template>
       <template #suffixIcon>
@@ -476,15 +478,21 @@ defineExpose({ closeTable, onClear });
 
 .cmp-selector {
   min-width: 400px;
+  width: 400px;
+
+  .t-select__data {
+    min-width: 300px;
+    display: block;
+  }
 }
 
 .cmp-selector .custom-option {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 6px;
+  padding: 6px 6px 0;
   align-items: center;
-  border-bottom: 1px solid #f6f6f6;
+  // border-bottom: 1px solid #f6f6f6;
 }
 
 .cmp-selector .custom-option:hover {
