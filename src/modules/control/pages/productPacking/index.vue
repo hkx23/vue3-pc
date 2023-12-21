@@ -5,19 +5,19 @@
         <t-col :span="3">
           <t-space>
             <div>{{ t('business.main.workshop') }}</div>
-            <div>总装一车间</div>
+            <div>{{ currUserOrgInfo.workShopName }}</div>
           </t-space>
         </t-col>
         <t-col :span="3">
           <t-space>
             <div>{{ t('business.main.workcenter') }}</div>
-            <div>总装一线</div>
+            <div>{{ currUserOrgInfo.workCenterName }}</div>
           </t-space>
         </t-col>
         <t-col :span="3">
           <t-space>
             <div>{{ t('business.main.workstation') }}</div>
-            <div>Z1-1成品装箱</div>
+            <div>{{ currUserOrgInfo.workStationName }}</div>
           </t-space>
         </t-col>
         <t-col :span="3" class="right-label">
@@ -99,11 +99,13 @@ import { computed, ref } from 'vue';
 
 import { api as apiControl, BarcodePkg, WipPkgInfoVO } from '@/api/control';
 import { api as apiMain } from '@/api/main';
+import { useUserStore } from '@/store';
 
 import { useLang } from './lang';
 
 // 使用多语言
 const { t } = useLang();
+const { currUserOrgInfo } = useUserStore();
 const scanType = ref('normal');
 const isOnlinePrint = ref(false);
 // 获取是否在线打印配置
@@ -248,6 +250,9 @@ const packing = () => {
       pkgBarcodeType: val.barcodeType,
       parentPkgBarcode: pkgLabel.value ? pkgLabel.value.pkgBarcode : null,
       parentPkgType: pkgLabel.value ? pkgLabel.value.pkgBarcodeType : null,
+      workshopId: currUserOrgInfo.workShopId,
+      workcenterId: currUserOrgInfo.workCenterId,
+      workstationId: currUserOrgInfo.workStationId,
     });
   });
   apiControl.pkgRelation
