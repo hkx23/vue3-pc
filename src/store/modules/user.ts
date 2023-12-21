@@ -8,6 +8,7 @@ import type { UserInfo } from '@/types/interface';
 interface OrgUser extends UserInfo {
   eid?: string;
   orgId?: string;
+  personId?: string;
   timeModified?: string;
   timeLastPasswordChanged?: string;
   orgs?: OrgVO[];
@@ -85,6 +86,7 @@ export const useUserStore = defineStore('user', {
         name: res.displayName,
         code: res.userName,
         eid: res.eid,
+        personId: res.personId,
         timeModified: res.timeModified,
         timeLastPasswordChanged: res.timeLastPasswordChanged,
         orgId,

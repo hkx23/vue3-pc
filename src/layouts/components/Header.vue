@@ -82,7 +82,7 @@ import {
   UserPasswordIcon,
 } from 'tdesign-icons-vue-next';
 import type { PropType } from 'vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useFullscreen } from 'vue-hooks-plus';
 import { useRouter } from 'vue-router';
 
@@ -187,14 +187,21 @@ const onClickFullScreen = () => {
 };
 
 const formRef = ref(null);
-// const formVisible = ref(false);
+watch(
+  () => settingStore.showPasswordPanel,
+  (val) => {
+    if (val) {
+      const { reset } = formRef.value;
+      reset();
+    }
+  },
+);
 const onChangePassword = () => {
-  const { reset } = formRef.value;
-  reset();
+  // const { reset } = formRef.value;
+  // reset();
   settingStore.updateConfig({
     showPasswordPanel: true,
   });
-  // formVisible.value = true;
 };
 const onConfirmForm = () => {
   const { submit } = formRef.value;

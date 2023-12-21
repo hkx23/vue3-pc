@@ -23,25 +23,14 @@
                 </t-tooltip>
               </t-space>
             </t-form-item>
-            <t-form-item label="手机号"></t-form-item>
-            <t-form-item label="邮箱"></t-form-item>
-            <t-form-item label="最后一次修改资料时间">
-              <div>{{ userInfo.timeModified }}</div>
+            <t-form-item label="邮箱">
+              <div>{{ personInfo.email || '-' }}</div>
             </t-form-item>
-          </t-form>
-        </t-col>
-      </t-row>
-    </cmp-card>
-    <cmp-card title="密码信息" header-bordered>
-      <template #actions>
-        <t-link theme="primary" @click="onClickShowEditPwd">修改</t-link>
-      </template>
-      <t-row>
-        <t-col :span="3"></t-col>
-        <t-col :span="9">
-          <t-form :label-width="180" label-align="left">
-            <t-form-item label="最后一次修改密码时间">
-              <div>{{ userInfo.timeLastPasswordChanged }}</div>
+            <t-form-item label="手机号">
+              <div>{{ personInfo.mobilePhone || '-' }}</div>
+            </t-form-item>
+            <t-form-item label="最后一次修改资料时间">
+              <div>{{ userInfo.timeModified || '-' }}</div>
             </t-form-item>
           </t-form>
         </t-col>
@@ -73,7 +62,7 @@
                   }
                 "
               ></bcmp-select-business>
-              <div v-else>{{ orgInfo.orgName }}</div>
+              <div v-else>{{ orgInfo.orgName || '-' }}</div>
             </t-form-item>
             <t-form-item label="车间"
               ><bcmp-select-business
@@ -89,7 +78,7 @@
                   }
                 "
               ></bcmp-select-business>
-              <div v-else>{{ orgInfo.workShopName }}</div>
+              <div v-else>{{ orgInfo.workShopName || '-' }}</div>
             </t-form-item>
             <t-form-item label="工作中心"
               ><bcmp-select-business
@@ -105,7 +94,7 @@
                   }
                 "
               ></bcmp-select-business>
-              <div v-else>{{ orgInfo.workCenterName }}</div>
+              <div v-else>{{ orgInfo.workCenterName || '-' }}</div>
             </t-form-item>
             <t-form-item label="工站"
               ><bcmp-select-business
@@ -130,26 +119,41 @@
         </t-col>
       </t-row>
     </cmp-card>
+    <cmp-card title="密码信息" header-bordered>
+      <template #actions>
+        <t-link theme="primary" @click="onClickShowEditPwd">修改</t-link>
+      </template>
+      <t-row>
+        <t-col :span="3"></t-col>
+        <t-col :span="9">
+          <t-form :label-width="180" label-align="left">
+            <t-form-item label="最后一次修改密码时间">
+              <div>{{ userInfo.timeLastPasswordChanged || '-' }}</div>
+            </t-form-item>
+          </t-form>
+        </t-col>
+      </t-row>
+    </cmp-card>
   </cmp-container>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
-import { api, UserInRoleVO } from '@/api/main';
+import { api, Person, UserInRoleVO } from '@/api/main';
 import UserIcon from '@/assets/assets-user.svg?component';
 import { useSettingStore, useUserStore } from '@/store';
 
 const settingStore = useSettingStore();
 
 const userStore = useUserStore();
-const userInfo = ref(userStore.userInfo);
+const userInfo = computed(() => userStore.userInfo);
 const userIsEdit = ref(false);
 const onClickSaveUser = async () => {
   const user = await api.user.getItemById(userInfo.value.id);
   user.displayName = userInfo.value.name;
   await api.user.edit(user);
   userIsEdit.value = false;
-  userInfo.value = await userStore.getUserInfo();
+  await userStore.getUserInfo();
 };
 
 const onClickShowEditPwd = () => {
@@ -159,10 +163,12 @@ const onClickShowEditPwd = () => {
 };
 
 const roles = ref<UserInRoleVO[]>([]);
+const personInfo = ref<Person>({});
 onMounted(async () => {
   roles.value = await api.userInRole.getUserInRoleListByUserId({
     userId: userInfo.value.id,
   });
+  personInfo.value = await api.person.getItemById(userInfo.value.id);
 });
 
 const orgInfo = ref({ ...userStore.currUserOrgInfo });
@@ -201,6 +207,14 @@ const onClickCancelOrg = async () => {
     label {
       color: var(--td-text-color-secondary);
     }
+  }
+
+  :deep(.t-form__item) {
+    margin-bottom: 8px;
+  }
+
+  :deep(.t-tag--default) {
+    background-color: #edeefb;
   }
 }
 </style>
