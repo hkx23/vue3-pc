@@ -3068,11 +3068,11 @@ export interface MitemVO {
   isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
   isRawName?: string;
   isProductName?: string;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -4154,6 +4154,7 @@ export type CurrentUserVO = {
   defaultOrgId?: string;
   /** 授权组织 */
   orgList?: OrgVO[];
+  personId?: string;
   /**
    * 上次更新成员资格用户的密码的日期和时间
    * @format date-time
@@ -4613,12 +4614,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */

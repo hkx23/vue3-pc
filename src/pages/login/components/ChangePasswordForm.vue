@@ -57,6 +57,7 @@ const submit = async () => {
         newPassword: formData.value.newPassword,
       }).then(() => {
         MessagePlugin.success('保存成功');
+        userStore.getUserInfo();
         resolve(formData);
       });
     });
