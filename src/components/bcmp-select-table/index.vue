@@ -236,6 +236,7 @@ const total = props.table.data.length;
 
 const onFilterChange = (filters: Filters, ctx: any) => {
   console.log('filter-change', filters, ctx);
+  pagination.value.current = 1;
   filterList.value = [];
   for (const key in filters) {
     const value = filters[key];
@@ -258,7 +259,15 @@ const onPageChange = (PageInfo: any) => {
 };
 // total强制转化成int
 const pagination = props.isShowPagination
-  ? ref({ current: 1, pageSize: 10, total: Number(total), onChange: onPageChange })
+  ? ref({
+      current: 1,
+      pageSize: 10,
+      showPageNumber: false,
+      showJumper: true,
+      showPreviousAndNextBtn: false,
+      total: Number(total),
+      onChange: onPageChange,
+    })
   : null;
 // 是否多选-作用于表格
 type RowKeyType = 'multiple' | 'single';
@@ -543,6 +552,8 @@ const radioCSelectRedirct = (val: string) => {
   if (!props.multiple) {
     if (state.tableData.length === 1 && val === state.tableData[0][props.keywords.value]) {
       rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: [state.tableData[0]] });
+    } else {
+      rehandleSelectChange([], { selectedRowData: [] });
     }
   }
 };

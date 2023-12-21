@@ -757,7 +757,12 @@ const onGenerateChange = async (value: any, context: any) => {
 
 // 生成点击事件
 const onGenerate = async () => {
-  if (!generateData?.value?.moScheduleId || !generateData?.value?.workcenterId) {
+  console.log('🚀 ~ file: index.vue:761 ~ onGenerate ~ generateData:', generateData.value);
+  if (!generateData?.value?.workcenterId) {
+    MessagePlugin.warning('参数有误，请联系管理员');
+    return;
+  }
+  if (!generateData?.value?.moScheduleId) {
     MessagePlugin.warning('请选择需打印的数据');
     return;
   }

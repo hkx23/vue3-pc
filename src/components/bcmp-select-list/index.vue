@@ -5,7 +5,7 @@
       :value="state.defaultValue"
       placeholder="Please Select"
       :popup-visible="popupVisible"
-      :popup-props="{ overlayClassName: 't-autocomplete-option-list' }"
+      :popup-props="{ overlayClassName: 'cmp-selector' }"
       allow-input
       :label="title"
       :multiple="multiple"
@@ -27,14 +27,20 @@
           class="custom-option"
           @click="() => onOptionClick(item)"
         >
-          <t-icon :name="listSetting.icon" size="24" class="custom-option__icon"></t-icon>
+          <div class="item-title">
+            <img :src="listSetting.image" />
+            <div class="data_code">{{ item[listSetting.codeField] }}</div>
+            <div class="data_name">{{ item[listSetting.nameField] }}</div>
+          </div>
+          <div class="data_desc">{{ item[listSetting.descField] || '-' }}</div>
+          <!-- <t-icon :name="listSetting.icon" size="24" class="custom-option__icon"></t-icon>
           <div class="custom-option__main">
             <t-highlight-option
               :content="item[listSetting.codeField]"
               :keyword="state.defaultValue && state.defaultValue[listSetting.codeField]"
             />
             <small class="description">{{ item[listSetting.descField] || '-' }}</small>
-          </div>
+          </div> -->
         </div>
       </template>
       <template #suffixIcon>
@@ -47,7 +53,6 @@
 <script setup lang="tsx" name="BcmpSelectTable">
 import { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
-import { HighlightOption as THighlightOption } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
 // 抛出事件
 const emits = defineEmits(['selectionChange']);
@@ -440,22 +445,6 @@ defineExpose({ closeTable, onClear });
   height: 50px;
 }
 
-.t-autocomplete-option-list .custom-option {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #f6f6f6;
-}
-
-.t-autocomplete-option-list .custom-option:hover {
-  background-color: var(--td-bg-color-container-hover);
-  border-radius: 6px;
-}
-
-.t-autocomplete-option-list .custom-option > img {
-  max-height: 40px;
-  border-radius: 50%;
-}
-
 .t-autocomplete-option-list .custom-option .custom-option__icon {
   max-height: 40px;
   margin: 0 8px;
@@ -483,5 +472,62 @@ defineExpose({ closeTable, onClear });
 
 .t-autocomplete-option-list .custom-option .description {
   color: var(--td-gray-color-9);
+}
+
+.cmp-selector {
+  min-width: 400px;
+}
+
+.cmp-selector .custom-option {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 6px;
+  align-items: center;
+  border-bottom: 1px solid #f6f6f6;
+}
+
+.cmp-selector .custom-option:hover {
+  background-color: var(--td-bg-color-container-hover);
+  border-radius: 6px;
+}
+
+.cmp-selector .custom-option > img {
+  max-height: 24px;
+  border-radius: 50%;
+}
+
+.item-title {
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  align-self: flex-start;
+}
+
+.item-title > img {
+  max-width: 16px;
+  max-height: 16px;
+  margin-right: 5px;
+}
+
+.data_code {
+  font-size: 14px;
+  text-decoration: underline;
+  color: rgb(70 70 70 / 94%);
+  margin-right: 5px;
+}
+
+.data_name {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.data_desc {
+  padding: 0 4px;
+  font-size: 12px;
+  white-space: normal;
+  color: var(--td-text-color-secondary);
+  align-self: flex-start;
 }
 </style>

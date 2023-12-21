@@ -9,35 +9,51 @@
  * ---------------------------------------------------------------
  */
 
-export interface CommonSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
-  keyword?: string;
-  /** @format int32 */
-  state?: number;
-  parentId?: string;
-  category?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
-
-export interface Filter {
-  field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
-  value?: string;
-}
-
-export interface SortParam {
-  sortBy?: string;
-  descending?: boolean;
+/** 完工入库标签实体 */
+export interface WipCompletionLabelDTO {
+  dtlBarcodeId?: string;
+  billId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 业务类型编码 */
+  businessCategoryCode?: string;
+  mitemId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  mitemCategoryId?: string;
+  warehouseId?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  /** 工单编码 */
+  moCode?: string;
+  workshopId?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workcenterId?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  onhandId?: string;
 }
 
 /** 通用响应类 */
-export interface ResultObject {
+export interface ResultListWipCompletionLabelDTO {
   /**
    * 响应代码
    * @format int32
@@ -46,11 +62,11 @@ export interface ResultObject {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: object | null;
+  data?: WipCompletionLabelDTO[] | null;
 }
 
 /** 货位 */
-export type Location = {
+export interface Location {
   id?: string;
   /**
    * 创建时间
@@ -82,7 +98,47 @@ export type Location = {
   locationDesc?: string;
   warehouseId?: string;
   districtId?: string;
-} | null;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+export interface CommonSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+export interface Filter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  value?: string;
+}
+
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
+}
 
 /** 通用响应类 */
 export interface ResultLocation {
@@ -97,8 +153,276 @@ export interface ResultLocation {
   data?: Location;
 }
 
+export interface LocationSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  warehouseId?: string;
+  districtId?: string;
+  /** 货位搜索关键字 */
+  locationKeyword?: string;
+}
+
+/** 显示产品条码管理 */
+export interface LocationVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 货位代码 */
+  locationCode?: string;
+  /** 货位名称 */
+  locationName?: string;
+  /** 货位描述 */
+  locationDesc?: string;
+  warehouseId?: string;
+  districtId?: string;
+  /** 货位代码 */
+  districtCode?: string;
+  /** 货位名称 */
+  districtName?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 修改人 */
+  modifierName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLocationVO = {
+  list?: LocationVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLocationVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLocationVO;
+}
+
+export interface LabelSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 收货开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 收货结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  supplierId?: string;
+  mitemId?: string;
+  /** 批次号 */
+  lotNo?: string;
+  /** 送货单 */
+  billNo?: string;
+  /** 是否仅显示未打印完成 */
+  isFinishDisplay?: boolean;
+  deliveryId?: string;
+  /** 是否仅显示已生成 */
+  isCreated?: boolean;
+  /** 条码状态 */
+  barcodeStatus?: string;
+  /** 条码 */
+  labelNo?: string;
+  /**
+   * 生成开始日期
+   * @format date-time
+   */
+  timeCreatedStart?: string;
+  /**
+   * 生成结束日期
+   * @format date-time
+   */
+  timeCreatedEnd?: string;
+  barcodeRuleId?: string;
+  /** 条码 */
+  barcode?: string;
+  /**
+   * 生成数量
+   * @format int32
+   */
+  createNum?: number;
+  printTempId?: string;
+  /** 原因 */
+  reason?: string;
+  /** 批量ID */
+  ids?: string[];
+}
+
+/** 显示产品条码管理 */
+export interface LabelVO {
+  id?: string;
+  /**
+   * 收货时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标签号 */
+  labelNo?: string;
+  /** 标签类别 */
+  labelCategory?: string;
+  mitemId?: string;
+  /** 生产批次号 */
+  lotNo?: string;
+  /** 到货批次号 */
+  batchLot?: string;
+  supplierId?: string;
+  /** 数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  onhandId?: string;
+  moScheId?: string;
+  printTmplId?: string;
+  /**
+   * 标签顺序号
+   * @format int32
+   */
+  printSeq?: number;
+  deliveryId?: string;
+  /** 接收单号 */
+  receiveNo?: string;
+  /** 状态 */
+  status?: string;
+  /** 送货单 */
+  billNo?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 接收数量 */
+  receivedQty?: number;
+  /**
+   * 已打印数量
+   * @format int32
+   */
+  printedQty?: number;
+  /**
+   * 已生成数量
+   * @format int32
+   */
+  createdQty?: number;
+  /**
+   * 最小包装数
+   * @format int32
+   */
+  minPkgQty?: number;
+  /** 条码规则 */
+  barcodeRule?: string;
+  /** 打印模板 */
+  printTmpl?: string;
+  /** 计量单位名称 */
+  uomName?: string;
+  /** 计量单位 */
+  uom?: string;
+  /** 条码 */
+  serialNumber?: string;
+  /** 条码状态 */
+  barcodeStatusName?: string;
+  /** 收货人名称 */
+  creatorName?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 货区名称 */
+  districtName?: string;
+  /** 货位名称 */
+  locationName?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /** 原因 */
+  reason?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLabelVO = {
+  list?: LabelVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLabelVO;
+}
+
 /** 货区 */
-export type District = {
+export interface District {
   id?: string;
   /**
    * 创建时间
@@ -129,7 +453,7 @@ export type District = {
   /** 货位描述 */
   districtDesc?: string;
   warehouseId?: string;
-} | null;
+}
 
 /** 通用响应类 */
 export interface ResultDistrict {
@@ -144,36 +468,71 @@ export interface ResultDistrict {
   data?: District;
 }
 
-/** 完工入库标签实体 */
-export interface WipCompletionLabelDTO {
-  id?: string;
-  /** 单据号 */
-  billNo?: string;
-  /** 业务类型编码 */
-  businessCategoryCode?: string;
-  mitemId?: string;
-  /** 物料名称 */
-  mitemName?: string;
-  mitemCategoryId?: string;
-  /** 物料类型名称 */
-  mitemCategoryName?: string;
+export interface DistrictSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
   warehouseId?: string;
-  /** 仓库名称 */
-  warehouseName?: string;
-  /** 数量 */
-  qty?: number;
-  /** 单位 */
-  uom?: string;
-  /** 扫描的条形码 */
-  scanBarcode?: string;
-  /** 条码类型 */
-  barcodeType?: string;
-  /** 状态 */
-  status?: string;
+  /** 货区搜索关键字 */
+  districtKeyword?: string;
 }
 
+/** 公共方法输出类 */
+export interface DistrictVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 货位代码 */
+  districtCode?: string;
+  /** 货位名称 */
+  districtName?: string;
+  /** 货位描述 */
+  districtDesc?: string;
+  warehouseId?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 修改人 */
+  modifierName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataDistrictVO = {
+  list?: DistrictVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
 /** 通用响应类 */
-export interface ResultListWipCompletionLabelDTO {
+export interface ResultPagingDataDistrictVO {
   /**
    * 响应代码
    * @format int32
@@ -182,7 +541,240 @@ export interface ResultListWipCompletionLabelDTO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: WipCompletionLabelDTO[] | null;
+  data?: PagingDataDistrictVO;
+}
+
+/** 查询条码信息 */
+export type BarcodeDTO = {
+  id?: string;
+  barcode?: string;
+  moScheId?: string;
+  qty?: number;
+  barcodeType?: string;
+  status?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListBarcodeDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BarcodeDTO[] | null;
+}
+
+export interface MoScheduleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 计划开始日期
+   * @format date-time
+   */
+  planDateStart?: string;
+  /**
+   * 计划结束日期
+   * @format date-time
+   */
+  planDateEnd?: string;
+  moId?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  mitemId?: string;
+  /** 排产单状态 */
+  scheStatus?: string;
+  /** 是否仅显示已打印 */
+  isFinishDisplay?: boolean;
+}
+
+/** 公共方法输出类 */
+export interface MoScheduleVO {
+  moScheduleId?: string;
+  /** 排产单编码 */
+  scheCode?: string;
+  /** 排产单状态名称 */
+  scheStatusName?: string;
+  /**
+   * 计划生产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 已生成数量
+   * @format int32
+   */
+  generateQty?: number;
+  /**
+   * 已打印数量
+   * @format int32
+   */
+  displayQty?: number;
+  /**
+   * 本次生成数量
+   * @format int32
+   */
+  thisTimeQty?: number;
+  /** 计量单位名称 */
+  uomName?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workcenterId?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMoScheduleVO = {
+  list?: MoScheduleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMoScheduleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMoScheduleVO;
+}
+
+/** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
+}
+
+/** 标签模板 */
+export type PrintTmpl = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板代码 */
+  tmplCode?: string;
+  /** 模板名称 */
+  tmplName?: string;
+  /** 模板描述 */
+  tmplDesc?: string;
+  /** 模板内容地址 */
+  tmplBodyPath?: string;
+  /** 模板类别 */
+  tmplCategory?: string;
+  /** 模板类型 */
+  tmplType?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListPrintTmpl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PrintTmpl[] | null;
+}
+
+/** 条码生成规则 */
+export type BarcodeRule = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码规则代码 */
+  ruleCode?: string;
+  /** 条码规则名称 */
+  ruleName?: string;
+  /** 条码规则描述 */
+  ruleDesc?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码规则表达式 */
+  ruleExpression?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListBarcodeRule {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BarcodeRule[] | null;
 }
 
 /** 响应数据 */
@@ -205,10 +797,14 @@ export interface ResultPagingDataWipCompletionBillVO {
   data?: PagingDataWipCompletionBillVO;
 }
 
+/** 完工入库单据实体 */
 export interface WipCompletionBillVO {
   id?: string;
+  /** 单据号 */
   billNo?: string;
+  /** 仓库 */
   warehouse?: string;
+  /** 创建人 */
   creator?: string;
 }
 
@@ -220,63 +816,22 @@ export interface WipCompletionBillVO {
  */
 
 export const api = {
-  location: {
-    /**
-     * No description
-     *
-     * @tags 货位
-     * @name Search
-     * @request POST:/location/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/location/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 货位
-     * @name GetItemById
-     * @request POST:/location/items/{id}
-     * @secure
-     */
-    getItemById: (id: string) =>
-      http.request<ResultLocation['data']>(`/api/warehouse/location/items/${id}`, {
-        method: 'POST',
-      }),
-  },
-  district: {
-    /**
-     * No description
-     *
-     * @tags 货区
-     * @name Search
-     * @request POST:/district/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/district/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 货区
-     * @name GetItemById
-     * @request POST:/district/items/{id}
-     * @secure
-     */
-    getItemById: (id: string) =>
-      http.request<ResultDistrict['data']>(`/api/warehouse/district/items/${id}`, {
-        method: 'POST',
-      }),
-  },
   billInfo: {
+    /**
+     * No description
+     *
+     * @tags 单据信息表
+     * @name Submit
+     * @summary 根据单据ID提交单据状态
+     * @request PUT:/billInfo/submit/{id}
+     * @secure
+     */
+    submit: (id: string, data: WipCompletionLabelDTO[]) =>
+      http.request<ResultListWipCompletionLabelDTO['data']>(`/api/warehouse/billInfo/submit/${id}`, {
+        method: 'PUT',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
@@ -287,7 +842,7 @@ export const api = {
      * @secure
      */
     saveByWipCompletionLabel: (data: WipCompletionLabelDTO) =>
-      http.request<ResultObject['data']>(`/api/warehouse/billInfo/saveByWipCompletionLabel`, {
+      http.request<ResultLong['data']>(`/api/warehouse/billInfo/saveByWipCompletionLabel`, {
         method: 'POST',
         body: data as any,
       }),
@@ -341,10 +896,306 @@ export const api = {
      * @request DELETE:/billInfo/deleteBarcode
      * @secure
      */
-    deleteBarcode: (query: { barcodeId: string }) =>
+    deleteBarcode: (query: { dtlBarcodeId: string }) =>
       http.request<ResultObject['data']>(`/api/warehouse/billInfo/deleteBarcode`, {
         method: 'DELETE',
         params: query,
+      }),
+  },
+  location: {
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name ModifyLocation
+     * @summary 编辑货区
+     * @request POST:/location/modifyLocation
+     * @secure
+     */
+    modifyLocation: (data: Location) =>
+      http.request<ResultObject['data']>(`/api/warehouse/location/modifyLocation`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name Search
+     * @request POST:/location/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/location/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name GetItemById
+     * @request POST:/location/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultLocation['data']>(`/api/warehouse/location/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name GetList
+     * @summary 查询货位
+     * @request POST:/location/getList
+     * @secure
+     */
+    getList: (data: LocationSearch) =>
+      http.request<ResultPagingDataLocationVO['data']>(`/api/warehouse/location/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name AddLocation
+     * @summary 新增货位
+     * @request POST:/location/addLocation
+     * @secure
+     */
+    addLocation: (data: Location) =>
+      http.request<ResultObject['data']>(`/api/warehouse/location/addLocation`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  label: {
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name PrintBarcode
+     * @summary 打印条码
+     * @request POST:/label/printBarcode
+     * @secure
+     */
+    printBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/label/printBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelManageList
+     * @summary 获取打印页送货单数据
+     * @request POST:/label/getLabelManageList
+     * @secure
+     */
+    getLabelManageList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/warehouse/label/getLabelManageList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelLog
+     * @summary 查询日志
+     * @request POST:/label/getLabelLog
+     * @secure
+     */
+    getLabelLog: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/warehouse/label/getLabelLog`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelList
+     * @summary 获取打印页标签数据
+     * @request POST:/label/getLabelList
+     * @secure
+     */
+    getLabelList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/warehouse/label/getLabelList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetDeliveryList
+     * @summary 获取打印页送货单数据
+     * @request POST:/label/getDeliveryList
+     * @secure
+     */
+    getDeliveryList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/warehouse/label/getDeliveryList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GenerateBarcode
+     * @summary 生成条码
+     * @request POST:/label/generateBarcode
+     * @secure
+     */
+    generateBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/label/generateBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelPrintTmplList
+     * @summary 获取条码规则数据
+     * @request GET:/label/getLabelPrintTmplList
+     * @secure
+     */
+    getLabelPrintTmplList: () =>
+      http.request<ResultListPrintTmpl['data']>(`/api/warehouse/label/getLabelPrintTmplList`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelBarcodeRuleList
+     * @summary 获取条码规则数据
+     * @request GET:/label/getLabelBarcodeRuleList
+     * @secure
+     */
+    getLabelBarcodeRuleList: () =>
+      http.request<ResultListBarcodeRule['data']>(`/api/warehouse/label/getLabelBarcodeRuleList`, {
+        method: 'GET',
+      }),
+  },
+  district: {
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name ModifyDistrict
+     * @summary 编辑货区
+     * @request POST:/district/modifyDistrict
+     * @secure
+     */
+    modifyDistrict: (data: District) =>
+      http.request<ResultObject['data']>(`/api/warehouse/district/modifyDistrict`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name Search
+     * @request POST:/district/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/district/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name GetItemById
+     * @request POST:/district/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultDistrict['data']>(`/api/warehouse/district/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name GetList
+     * @summary 查询货区
+     * @request POST:/district/getList
+     * @secure
+     */
+    getList: (data: DistrictSearch) =>
+      http.request<ResultPagingDataDistrictVO['data']>(`/api/warehouse/district/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name AddDistrict
+     * @summary 新增货区
+     * @request POST:/district/addDistrict
+     * @secure
+     */
+    addDistrict: (data: District) =>
+      http.request<ResultObject['data']>(`/api/warehouse/district/addDistrict`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  deliveryCard: {
+    /**
+     * No description
+     *
+     * @tags 配送卡表
+     * @name WipCompletionScanList
+     * @summary 完工入库扫描配送卡
+     * @request POST:/deliveryCard/wipCompletionScanList
+     * @secure
+     */
+    wipCompletionScanList: (data: string[]) =>
+      http.request<ResultListBarcodeDTO['data']>(`/api/warehouse/deliveryCard/wipCompletionScanList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
+     * @name GetMoScheduleList
+     * @summary 查询工单排产
+     * @request POST:/deliveryCard/getMoScheduleList
+     * @secure
+     */
+    getMoScheduleList: (data: MoScheduleSearch) =>
+      http.request<ResultPagingDataMoScheduleVO['data']>(`/api/warehouse/deliveryCard/getMoScheduleList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
 };

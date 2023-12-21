@@ -30,12 +30,9 @@
     v-model:visible="formVisible"
     header="供应商编辑"
     :on-confirm="onConfirmForm"
-    width="50%"
     :close-on-overlay-click="false"
   >
-    <t-space direction="vertical" style="width: 98%">
-      <mitem-form ref="formRef"></mitem-form>
-    </t-space>
+    <mitem-form ref="formRef"></mitem-form>
   </t-dialog>
 </template>
 

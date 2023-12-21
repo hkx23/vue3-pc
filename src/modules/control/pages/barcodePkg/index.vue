@@ -60,7 +60,7 @@
                 <t-row align="middle" style="margin-top: 10px">
                   <t-col>条码规则： </t-col>
                   <t-col :span="2">
-                    <t-select v-model="printMode.productPackRuleId" style="width: 90%">
+                    <t-select v-model="printMode.barcodeRuleId" style="width: 90%">
                       <t-option
                         v-for="item in onPrintRulesList.list"
                         :key="item.id"
@@ -287,7 +287,7 @@ const onPrintChange = (value: any) => {
 const totalDay = ref(0);
 // 打印按钮模型初始化
 const printMode = ref({
-  productPackRuleId: '',
+  barcodeRuleId: '',
   printTempId: '',
   createNum: 0,
   packQty: 0,
@@ -312,7 +312,7 @@ const generateBracode = async () => {
   }
 
   // 校验是否已经选择条码规则
-  if (!printMode.value.productPackRuleId) {
+  if (!printMode.value.barcodeRuleId) {
     // 提示错误信息
     MessagePlugin.warning('请选择条码规则！');
     return;
@@ -683,6 +683,19 @@ const pkgBarcodeManageColumns: PrimaryTableCol<TableRowData>[] = [
 
 const switchTab = (selectedTabIndex: any) => {
   if (selectedTabIndex === 1) {
+    // 获取当前日期
+    const today = new Date();
+
+    // 计算三天前的日期
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(today.getDate() - 3);
+
+    // 将日期转换为字符串，格式可以根据需要进行调整
+    const timeCreatedStart = threeDaysAgo.toISOString().split('T')[0];
+    const timeCreatedEnd = today.toISOString().split('T')[0];
+
+    manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
+    manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
     fetchBracodeManageTable();
   } else {
     fetchMoTable();

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32"
+  viewBox="0 0 32 32" fill="none">
+  <g opacity="1" transform="translate(0 0)  rotate(0)">
+    <mask id="bg-mask-0" fill="white">
+      <use transform="translate(0 0)  rotate(0)" xlink:href="#path_0"></use>
+    </mask>
+    <g mask="url(#bg-mask-0)">
+      <path id="路径 1" fill-rule="evenodd" style="fill:#040000" opacity="1"
+        d="M27,26c0.6,0 1,0.4 1,1c0,0.6 -0.4,1 -1,1h-22c-0.6,0 -1,-0.4 -1,-1c0,-0.6 0.4,-1 1,-1h1v-21c0,-0.6 0.4,-1 1,-1h12c0.6,0 1,0.4 1,1v5h5c0.6,0 1,0.4 1,1v15zM20,12v14h4v-14zM8,26h10v-20h-10z">
+      </path>
+      <path id="路径 2" fill-rule="evenodd" style="fill:#040000" opacity="1"
+        d="M11,10c-0.6,0 -1,-0.4 -1,-1c0,-0.6 0.4,-1 1,-1h4c0.6,0 1,0.4 1,1c0,0.6 -0.4,1 -1,1zM22,17c-0.6,0 -1,-0.4 -1,-1v-1c0,-0.6 0.4,-1 1,-1c0.6,0 1,0.4 1,1v1c0,0.6 -0.4,1 -1,1zM22,22c-0.6,0 -1,-0.4 -1,-1v-1c0,-0.6 0.4,-1 1,-1c0.6,0 1,0.4 1,1v1c0,0.6 -0.4,1 -1,1zM15,12c0.6,0 1,0.4 1,1c0,0.6 -0.4,1 -1,1h-4c-0.6,0 -1,-0.4 -1,-1c0,-0.6 0.4,-1 1,-1zM15,16c0.6,0 1,0.4 1,1c0,0.6 -0.4,1 -1,1h-4c-0.6,0 -1,-0.4 -1,-1c0,-0.6 0.4,-1 1,-1zM15,20c0.6,0 1,0.4 1,1c0,0.6 -0.4,1 -1,1h-4c-0.6,0 -1,-0.4 -1,-1c0,-0.6 0.4,-1 1,-1z">
+      </path>
+    </g>
+  </g>
+  <defs>
+    <rect id="path_0" x="0" y="0" width="32" height="32" />
+  </defs>
+</svg>

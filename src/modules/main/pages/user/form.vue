@@ -22,7 +22,6 @@
     <t-form-item v-if="!isFormEditing" :label="t('user.setPassword')" name="password">
       <t-input v-model="formData.password" clearable />
     </t-form-item>
-    <div style="height: 5px"></div>
   </t-form>
 </template>
 <script lang="ts">
@@ -69,7 +68,7 @@ const checkSameUserName = async (val) => {
 const validatePassword: (val: string) => Promise<boolean> = (val) =>
   new Promise((resolve) => {
     const timer = setTimeout(() => {
-      const reg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+{}|:"<>?]).{8,18}$/;
+      const reg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$;%^&*()_+{}|:"<>?]).{8,18}$/;
       resolve(reg.test(val));
       clearTimeout(timer);
     });
@@ -122,6 +121,7 @@ const reset = (isEdit: boolean, data?: User) => {
   // formData.oid = '';
   formData.eid = '';
   formData.password = '';
+  formData.personId = '';
   // 将id小写后比较
 
   // 新增时，默认企业ID

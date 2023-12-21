@@ -17,7 +17,7 @@
         @refresh="fetchTable"
       >
         <template #op="slotProps">
-          <t-space>
+          <t-space :size="8">
             <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
             <!-- <t-icon name="edit" @click="onEditRowClick(slotProps)" /> -->
           </t-space>
