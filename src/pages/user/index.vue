@@ -117,12 +117,14 @@
                 @selection-change="
                   (val) => {
                     orgInfo.processId = val.processId;
+                    orgInfo.processCode = '';
+                    orgInfo.processName = '';
                     orgInfo.workStationCode = val.workstationCode;
                     orgInfo.workStationName = val.workstationName;
                   }
                 "
               ></bcmp-select-business>
-              <div v-else>{{ orgInfo.processName + ' - ' + orgInfo.workStationName }}</div>
+              <div v-else>{{ (orgInfo?.processName || '') + ' - ' + (orgInfo.workStationName || '') }}</div>
             </t-form-item>
           </t-form>
         </t-col>
