@@ -109,7 +109,29 @@
       "workcenter": "工作中心",
       "workstation": "工站"
     },
-    "control": {},
+    "control": {
+      "scanTime":"采集时间",
+      "scanBarcode":"条码",
+      "moScheCode":"排产工单",
+      "repairTimes":"维修次数",
+      "ngTimes":"不合格次数",
+      "fromRoutingProcessName":"来源工序",
+      "fromWorkstationName":"来源站点",
+      "repairStatusName":"返修状态",      
+      "productCode": "产品编码",
+      "productName": "产品名称",
+      "retentionTime": "滞留时间（分钟）",
+      "defectName":"缺陷现象",
+      "defectReason":"缺陷原因",
+      "userNameRepair":"维修人",
+      "datetimeRepairing":"维修开始时间",
+      "datetimeRepaired":"维修结束时间",
+      "defectDealMethodName":"处理方法",
+      "defectBlame":"责任别",
+      "repairResult":"维修结果",
+      "returnRoutingProcessName":"回流站点",
+      "repairStatus":"返修状态"      
+    },
     "warehouse": {}
   }
 }
