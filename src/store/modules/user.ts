@@ -19,28 +19,37 @@ const InitUserInfo: UserInfo = {
   roles: [], // 前端权限模型使用 如果使用请配置modules/permission-fe.ts使用
 };
 
+interface orgInfo {
+  orgId: string;
+  orgCode: string;
+  orgName: string;
+  workShopId: string;
+  workShopCode: string;
+  workShopName: string;
+  workCenterId: string;
+  workCenterCode: string;
+  workCenterName: string;
+  workStationId: string;
+  workStationCode: string;
+  workStationName: string;
+}
+
+interface userOrg {
+  [key: string]: orgInfo;
+}
+
 export const useUserStore = defineStore('user', {
   state: () => ({
     token: 'main_token', // 默认token不走权限
     userInfo: { ...InitUserInfo } as OrgUser,
-    orgInfo: {
-      orgId: '',
-      orgCode: '',
-      orgName: '',
-      workShopId: '',
-      workShopCode: '',
-      workShopName: '',
-      workCenterId: '',
-      workCenterCode: '',
-      workCenterName: '',
-      workStationId: '',
-      workStationCode: '',
-      workStationName: '',
-    },
+    userOrgInfo: {} as userOrg,
   }),
   getters: {
     roles: (state) => {
       return state.userInfo?.roles;
+    },
+    currUserOrgInfo: (state) => {
+      return state.userOrgInfo[state.userInfo.id];
     },
   },
   actions: {
@@ -79,7 +88,27 @@ export const useUserStore = defineStore('user', {
         orgs: res.orgList,
       } as OrgUser;
 
+      const userOrgInfo = this.currUserOrgInfo;
+      if (!userOrgInfo) {
+        this.updateOrg();
+      }
       return this.userInfo;
+    },
+    updateOrg(orgInfo?: orgInfo) {
+      this.userOrgInfo[this.userInfo.id] = orgInfo || {
+        orgId: '',
+        orgCode: '',
+        orgName: '',
+        workShopId: '',
+        workShopCode: '',
+        workShopName: '',
+        workCenterId: '',
+        workCenterCode: '',
+        workCenterName: '',
+        workStationId: '',
+        workStationCode: '',
+        workStationName: '',
+      };
     },
     setOrgId(id: string) {
       this.userInfo.orgId = id;
@@ -96,6 +125,6 @@ export const useUserStore = defineStore('user', {
       permissionStore.initRoutes();
     },
     key: 'user',
-    paths: ['token', 'userInfo', 'orgInfo'],
+    paths: ['token', 'userInfo', 'userOrgInfo'],
   },
 });

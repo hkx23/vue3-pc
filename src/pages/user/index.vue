@@ -159,9 +159,10 @@ onMounted(async () => {
   });
 });
 
-const orgInfo = ref(userStore.orgInfo);
+const orgInfo = ref(userStore.currUserOrgInfo);
 const orgIsEdit = ref(false);
 const onClickSaveOrg = async () => {
+  userStore.updateOrg(orgInfo.value);
   orgIsEdit.value = false;
 };
 </script>
