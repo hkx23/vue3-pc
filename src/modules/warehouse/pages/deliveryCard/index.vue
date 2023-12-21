@@ -4,17 +4,17 @@
     <div class="main-page-content">
       <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
         <template #workState="{ param }">
-          <t-select v-model="param.workState" label="工单状态">
+          <t-select v-model="param.workState">
             <t-option v-for="item in workStateDataList.list" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </template>
         <template #showState="{ param }">
           <t-radio-group v-model="param.showState">
-            <t-radio allow-uncheck :value="1">仅显示未打印完成</t-radio>
+            <t-radio allow-uncheck :value="1">仅显示已生成</t-radio>
           </t-radio-group>
         </template>
         <template #barCodeState="{ param }">
-          <t-select v-model="param.barCodeState" label="条码状态">
+          <t-select v-model="param.barCodeState">
             <t-option v-for="item in barCodeStateList.list" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </template>
@@ -25,12 +25,13 @@
         <t-tab-panel :value="0" label="产品标签打印" :destroy-on-hide="false">
           <template #panel>
             <div class="main-page-content">
-              <!-- ################# 产品标签打印 上1️⃣上 表格数据 ###################### -->
+              <!-- ################# 配送卡打印 上1️⃣上 表格数据 ###################### -->
               <div class="main-page-content">
                 <t-col :span="12" flex="auto">
                   <cmp-table
                     ref="tableRef"
                     v-model:pagination="pageUITop"
+                    empty="没有符合条件的数据"
                     row-key="moScheduleId"
                     :table-column="labelPrintTop"
                     :table-data="printTopTabData.list"
@@ -82,6 +83,7 @@
                     <cmp-table
                       ref="tableRef"
                       v-model:pagination="pageUIDown"
+                      empty="没有符合条件的数据"
                       row-key="barcodeWipId"
                       :table-column="labelPrintDown"
                       :table-data="printDownTabData.list"
@@ -893,6 +895,7 @@ const opts = computed(() => {
     barCodeState: {
       isHide: !tabValue.value,
       label: '条码状态',
+      labelWidth: '10',
       event: 'select',
       defaultVal: '',
       slotName: 'barCodeState',

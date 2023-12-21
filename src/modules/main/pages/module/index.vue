@@ -505,7 +505,6 @@ const treeCard = ref(null);
 const treeHeight = ref('500px');
 useResizeObserver(treeCard, (entries) => {
   const entry = entries[0];
-
   const { height } = entry.contentRect;
   treeHeight.value = `${height * 0.9}px`;
   console.error('treeHeight', treeHeight.value);
