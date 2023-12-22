@@ -1,5 +1,5 @@
 <template>
-  <div class="login-bg">
+  <cmp-row align="middle" justify="space-around" class="login-bg">
     <div class="logo"></div>
 
     <div class="login-wrapper">
@@ -41,7 +41,7 @@
     </div>
 
     <footer class="copyright">Copyright @ 2021-2023. All Rights Reserved</footer>
-  </div>
+  </cmp-row>
 </template>
 <script lang="ts">
 export default {
@@ -91,12 +91,12 @@ const switchType = (val: string) => {
 
   .login-wrapper {
     margin: 0 auto;
-    width: 1010px;
-    height: 638px;
+    width: calc(0.7 * 100vw);
+    height: calc(0.7 * 100vh);
     background-color: white;
     z-index: 100;
-    position: relative;
-    top: calc(50% - 316px);
+    // position: relative;
+    // top: calc(50% + (calc(0.7 * 100vh) * 50%));
     border-radius: 8px;
     box-shadow: 0 0 20px rgb(107 107 107 / 24%);
     overflow: hidden;

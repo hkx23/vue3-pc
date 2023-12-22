@@ -1,7 +1,7 @@
 <template>
-  <t-space ref="container" direction="vertical" :class="classAttrs" :size="12">
+  <t-row ref="container" :gutter="[0, 16]" :class="classAttrs">
     <slot></slot>
-  </t-space>
+  </t-row>
 </template>
 <script lang="ts">
 export default {
@@ -38,7 +38,8 @@ watch(
 );
 
 const setFull = () => {
-  const elements = container.value.$el.querySelectorAll(':scope > .t-space-item') as HTMLInputElement[];
+  const elements = container.value.$el.querySelectorAll(':scope > *') as HTMLInputElement[];
+  // const elements = container.value.$el.querySelectorAll(':scope > .t-space-item') as HTMLInputElement[];
   if (elements.length === 0) return;
 
   if (props.fullSubIndex) {
@@ -59,13 +60,32 @@ onMounted(() => {
 .cmp-container {
   padding: 12px;
   width: 100%;
+  flex-flow: column;
+  align-items: normal;
+
+  :deep(> .t-col) {
+    &.t-col-1,
+    &.t-col-2,
+    &.t-col-3,
+    &.t-col-4,
+    &.t-col-5,
+    &.t-col-6,
+    &.t-col-7,
+    &.t-col-8,
+    &.t-col-9,
+    &.t-col-10,
+    &.t-col-11,
+    &.t-col-12 {
+      flex: 0 0 auto;
+    }
+  }
 }
 
 .cmp-container-full {
   height: 100%;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  // overflow: hidden;
 
   :deep(> .t-space-item) {
     min-height: 0;
