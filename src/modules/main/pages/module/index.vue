@@ -1,49 +1,53 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card :span="12">
-      <t-button @click="onAddFirstNode">新增</t-button>
-    </cmp-card>
     <cmp-row>
       <cmp-card ref="treeCard" flex="300px">
-        <t-tree
-          ref="treeRef"
-          :data="treeData.list"
-          hover
-          :keys="keyList"
-          :height="600"
-          :transition="true"
-          :icon="true"
-          :expand-level="1"
-          :activable="true"
-          :expand-on-click-node="true"
-          :actived="[treeClickActive]"
-          @click="treeClick"
-          @active="onActive"
-        >
-          <template #icon="{ node }">
-            <icon v-if="node[`__tdesign_tree-node__`]?.data" :name="node[`__tdesign_tree-node__`]?.data.iconPath" />
-          </template>
-          <template #operations="{ node }">
-            <div v-if="treeClickActive === node[`__tdesign_tree-node__`]?.data.id" class="tdesign-demo-block-row">
-              <t-button size="small" variant="text" @click="onAddSecondNode(node)">
-                <icon name="add" class="black-icon" />
-              </t-button>
-              <t-button size="small" variant="text" @click="onQueryTree(node)">
-                <icon name="edit-1" class="black-icon" />
-              </t-button>
-              <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteTree">
-                <t-button size="small" variant="text">
-                  <icon name="delete-1" class="black-icon" />
+        <cmp-container :full="true" style="padding: 0" :full-sub-index="[0]">
+          <t-tree
+            ref="treeRef"
+            :data="treeData.list"
+            hover
+            :keys="keyList"
+            :height="treeHeight"
+            :scroll="treeScroll"
+            :transition="true"
+            :icon="true"
+            :expand-level="1"
+            :activable="true"
+            :expand-on-click-node="true"
+            :actived="[treeClickActive]"
+            @click="treeClick"
+            @active="onActive"
+          >
+            <template #icon="{ node }">
+              <icon v-if="node[`__tdesign_tree-node__`]?.data" :name="node[`__tdesign_tree-node__`]?.data.iconPath" />
+            </template>
+            <template #operations="{ node }">
+              <div v-if="treeClickActive === node[`__tdesign_tree-node__`]?.data.id" class="tdesign-demo-block-row">
+                <t-button size="small" variant="text" @click="onAddSecondNode(node)">
+                  <icon name="add" class="black-icon" />
                 </t-button>
-              </t-popconfirm>
-            </div>
-          </template>
-        </t-tree>
+                <t-button size="small" variant="text" @click="onQueryTree(node)">
+                  <icon name="edit-1" class="black-icon" />
+                </t-button>
+                <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteTree">
+                  <t-button size="small" variant="text">
+                    <icon name="delete-1" class="black-icon" />
+                  </t-button>
+                </t-popconfirm>
+              </div>
+            </template>
+          </t-tree>
+          <cmp-card :span="12" :ghost="true">
+            <t-button theme="default" variant="dashed" @click="onAddFirstNode">新增</t-button>
+          </cmp-card>
+        </cmp-container>
       </cmp-card>
+
       <!-- 右侧盒子 -->
       <cmp-card flex="auto" style="min-width: 1px">
-        <cmp-container :full="true">
-          <t-breadcrumb :max-item-width="'150'" style="padding-left: 0">
+        <cmp-container :full="true" style="padding: 0">
+          <t-breadcrumb :max-item-width="'150'" style="padding: 0">
             <t-breadcrumbItem v-if="treeClickData?.two">{{ treeClickData.two }}</t-breadcrumbItem>
             <t-breadcrumbItem v-if="treeClickData?.one" :max-width="'160'">
               {{ treeClickData.one }}
@@ -91,7 +95,7 @@
                 <t-link theme="primary" @click="onDelelist(row)"> 删除 </t-link>
               </t-popconfirm>
             </template>
-            <template #button>
+            <template #title>
               <t-space direction="vertical">
                 <custom-tabs v-model="selectedTabs" :tabs="tabItems" @selection-changed="topSelectionChanged" />
               </t-space>
@@ -107,11 +111,19 @@
     :header="dialogTitle"
     :cancel-btn="null"
     :confirm-btn="null"
-    width="50%"
+    top="60px"
+    :width="showFormData ? '750px' : '400px'"
     @close="onSecondaryReset"
   >
     <!-- #一级菜单 dialog -->
-    <t-form v-if="showFirstNode" ref="formRefOne" :rules="oneRules" :data="formData" @submit="onWorkStationSubmit">
+    <t-form
+      v-if="showFirstNode"
+      ref="formRefOne"
+      :rules="oneRules"
+      :data="formData"
+      label-width="120px"
+      @submit="onWorkStationSubmit"
+    >
       <t-form-item label="模块编码" name="moduleCode">
         <t-input v-model="formData.moduleCode" :disabled="disableFlag"></t-input>
       </t-form-item>
@@ -142,15 +154,16 @@
           >
         </t-select>
       </t-form-item>
-      <t-row>
-        <t-col :span="12" class="align-right">
-          <t-button theme="default" variant="base" @click="onSecondaryReset()">取消</t-button>
-          <t-button theme="primary" type="submit">保存</t-button>
-        </t-col>
-      </t-row>
     </t-form>
     <!-- #二级菜单 dialog -->
-    <t-form v-if="showSecondNode" ref="formRefTwo" :rules="twoRules" :data="formDataOne" @submit="onWorkStationSubmit">
+    <t-form
+      v-if="showSecondNode"
+      ref="formRefTwo"
+      :rules="twoRules"
+      :data="formDataOne"
+      label-width="120px"
+      @submit="onWorkStationSubmit"
+    >
       <t-form-item label="菜单模块" name="menuName">
         <!-- <t-input v-if="isEditModeTwo" v-model="formDataTwo.parentClickTree" :disabled="isEditModeTwo"></t-input> -->
         <t-select v-model="formDataOne.menuName" :disabled="!disableFlag">
@@ -192,147 +205,186 @@
           >
         </t-select>
       </t-form-item>
-      <t-row>
-        <t-col :span="12" class="align-right">
-          <t-button theme="default" variant="base" @click="onSecondaryReset()">取消</t-button>
-          <t-button theme="primary" type="submit">保存</t-button>
-        </t-col>
-      </t-row>
     </t-form>
     <!-- #三级菜单 dialog -->
-    <t-form v-if="showFormData" ref="formRefThree" :rules="rules" :data="formDataTwo" @submit="onWorkStationSubmit">
-      <!-- 第 1️⃣ 行数据 -->
-      <t-form-item label="菜单模块" name="parentClickTree">
-        <t-input v-if="isEditModeTwo" v-model="formDataTwo.parentClickTree" :disabled="isEditModeTwo"></t-input>
-        <t-select v-if="!isEditModeTwo" v-model="formDataTwo.parentClickTree" @change="onMenuSonID">
-          <t-option v-for="item in menuSelectList" :key="item.id" :label="item.moduleName" :value="item.id" />
-        </t-select>
-      </t-form-item>
-      <!-- 第 2️⃣ 行数据 -->
-      <t-form-item v-if="isEditModeTwo" label="菜单子模块" name="oneselfClickTree">
-        <t-input v-model="formDataTwo.oneselfClickTree" :disabled="isEditModeTwo"></t-input>
-      </t-form-item>
-      <t-form-item v-if="!isEditModeTwo" label="菜单子模块" name="parentModuleId">
-        <t-select v-model="formDataTwo.parentModuleId">
-          <t-option v-for="item in menuSonSelectList" :key="item.id" :label="item.moduleName" :value="item.id" />
-        </t-select>
-      </t-form-item>
-      <!-- 第 3️⃣ 行数据 -->
-      <t-form-item label="终端类型">
-        <t-space direction="vertical">
-          <custom-tabs-two
-            v-model="dialogTabs"
-            :tabs="dialogTabItems"
-            @selection-changed="handleSelectionChanged"
-          ></custom-tabs-two>
-        </t-space>
-      </t-form-item>
-      <!-- 第 4️⃣ 行数据 -->
-      <t-form-item label="菜单编码" name="moduleCode">
-        <t-input v-model="formDataTwo.moduleCode"></t-input>
-      </t-form-item>
-      <!-- 第 5️⃣ 行数据 -->
-      <t-form-item label="菜单名称" name="moduleName">
-        <t-input v-model="formDataTwo.moduleName"></t-input>
-      </t-form-item>
-      <!-- 第 6️⃣ 行数据 -->
-      <t-form-item label="菜单描述" name="moduleDesc">
-        <t-textarea
-          v-model="formDataTwo.moduleDesc"
-          placeholder="请输入"
-          name="description"
-          :autosize="{ minRows: 3, maxRows: 5 }"
-        />
-      </t-form-item>
-      <!-- 第 5️⃣ 行数据 -->
-      <t-form-item label="菜单地址" name="behaviorPath">
-        <t-input v-model="formDataTwo.behaviorPath"></t-input>
-      </t-form-item>
-      <!-- 第 5️⃣ 行数据 -->
-      <t-form-item v-if="dialogListData !== 1" label="插件类型" name="moduleType">
-        <t-select v-model="formDataTwo.moduleType" style="width: 150px; margin-right: 30px">
-          <t-option label="本地插件" value="LOCAL" />
-          <t-option label="远程URl" value="URL" />
-        </t-select>
-        <t-upload
-          v-if="formDataTwo.moduleType === 'LOCAL'"
-          ref="uploadRef"
-          v-model="files"
-          theme="file"
-          :tips="tips"
-          :auto-upload="false"
-          :before-upload="beforeUpload"
-          placeholder=""
-          @fail="handleFail"
-          @remove="onRemove"
-        >
-          <span>文件上传：</span>
-          <t-button theme="primary">上传</t-button>
-        </t-upload>
-        <t-tag
-          v-if="formDataTwo?.packageName && !files.length && formDataTwo.moduleType === 'LOCAL'"
-          variant="outline"
-          theme="primary"
-          closable
-          style="margin: 0 10px"
-          @close="onDelFileClose"
-        >
-          {{ formDataTwo?.packageName }}</t-tag
-        >
-        <t-button
-          v-if="formDataTwo?.packageName && !files.length && formDataTwo.moduleType === 'LOCAL'"
-          @click="onUploadFile"
-        >
-          下载文件
-        </t-button>
-        <!-- <div v-if="files && files.length" style="margin-left: 10px">
+    <t-form
+      v-if="showFormData"
+      ref="formRefThree"
+      :rules="rules"
+      :data="formDataTwo"
+      label-width="120px"
+      @submit="onWorkStationSubmit"
+    >
+      <t-row :gutter="[32, 16]">
+        <t-col :span="12">
+          <!-- 第 3️⃣ 行数据 -->
+          <t-form-item label="终端类型">
+            <t-space direction="vertical">
+              <custom-tabs-two
+                v-model="dialogTabs"
+                :tabs="dialogTabItems"
+                @selection-changed="handleSelectionChanged"
+              ></custom-tabs-two>
+            </t-space>
+          </t-form-item>
+        </t-col>
+        <!-- 第 1️⃣ 行数据 -->
+        <t-col :span="6">
+          <t-form-item label="菜单模块" name="parentClickTree">
+            <t-input v-if="isEditModeTwo" v-model="formDataTwo.parentClickTree" :disabled="isEditModeTwo"></t-input>
+            <t-select v-if="!isEditModeTwo" v-model="formDataTwo.parentClickTree" @change="onMenuSonID">
+              <t-option v-for="item in menuSelectList" :key="item.id" :label="item.moduleName" :value="item.id" />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <!-- 第 2️⃣ 行数据 -->
+          <t-form-item v-if="isEditModeTwo" label="菜单子模块" name="oneselfClickTree">
+            <t-input v-model="formDataTwo.oneselfClickTree" :disabled="isEditModeTwo"></t-input>
+          </t-form-item>
+          <t-form-item v-if="!isEditModeTwo" label="菜单子模块" name="parentModuleId">
+            <t-select v-model="formDataTwo.parentModuleId">
+              <t-option v-for="item in menuSonSelectList" :key="item.id" :label="item.moduleName" :value="item.id" />
+            </t-select>
+          </t-form-item>
+        </t-col>
+
+        <t-col :span="6">
+          <!-- 第 4️⃣ 行数据 -->
+          <t-form-item label="菜单编码" name="moduleCode">
+            <t-input v-model="formDataTwo.moduleCode"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <!-- 第 5️⃣ 行数据 -->
+          <t-form-item label="菜单名称" name="moduleName">
+            <t-input v-model="formDataTwo.moduleName"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="12">
+          <!-- 第 6️⃣ 行数据 -->
+          <t-form-item label="菜单描述" name="moduleDesc">
+            <t-textarea
+              v-model="formDataTwo.moduleDesc"
+              placeholder="请输入"
+              name="description"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+            />
+          </t-form-item>
+        </t-col>
+        <t-col :span="12">
+          <!-- 第 5️⃣ 行数据 -->
+          <t-form-item label="菜单地址" name="behaviorPath">
+            <t-input v-model="formDataTwo.behaviorPath"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col v-if="dialogListData !== 1" :span="6">
+          <!-- 第 5️⃣ 行数据 -->
+          <t-form-item label="插件类型" name="moduleType">
+            <t-select v-model="formDataTwo.moduleType">
+              <t-option label="本地插件" value="LOCAL" />
+              <t-option label="远程URl" value="URL" />
+            </t-select>
+
+            <!-- <div v-if="files && files.length" style="margin-left: 10px">
             <ul style="padding: 0">
               <li v-for="(item, index) in files" :key="index" style="list-style-type: none">{{ item.name }}</li>
             </ul>
           </div> -->
-      </t-form-item>
-      <t-form-item v-if="dialogListData !== 1" label="插件版本" name="moduleVersion">
-        <t-space direction="vertical">
-          <t-input-number v-model="formDataTwo.moduleVersion" :default-value="200" align="center" />
-        </t-space>
-      </t-form-item>
-      <t-form-item v-if="dialogListData !== 1" label="插件包标识" name="modulePackageIdentify">
-        <t-input v-model="formDataTwo.modulePackageIdentify"></t-input>
-      </t-form-item>
-      <t-form-item label="菜单图标">
-        <t-select
-          v-model="formDataTwo.iconPath"
-          :style="{ width: '100%' }"
-          :popup-props="{ overlayInnerStyle: { width: '500px' } }"
-        >
-          <t-option
-            v-for="item in options"
-            :key="item.stem"
-            :value="item.stem"
-            style="display: inline-block; font-size: 20px"
+          </t-form-item>
+        </t-col>
+        <t-col v-if="formDataTwo.moduleType === 'LOCAL' && dialogListData !== 1" :span="6">
+          <t-upload
+            ref="uploadRef"
+            v-model="files"
+            theme="file"
+            :tips="tips"
+            :auto-upload="false"
+            :before-upload="beforeUpload"
+            placeholder=""
+            @fail="handleFail"
+            @remove="onRemove"
           >
-            <div>
-              <t-icon :name="item.stem" />
-            </div>
-          </t-option>
-          <template #valueDisplay
-            ><t-icon :name="formDataTwo.iconPath" :style="{ marginRight: '8px' }" />{{ formDataTwo.iconPath }}</template
+            <span>文件上传：</span>
+            <t-button theme="primary">上传</t-button>
+          </t-upload>
+          <t-tag
+            v-if="formDataTwo?.packageName && !files.length && formDataTwo.moduleType === 'LOCAL'"
+            variant="outline"
+            theme="primary"
+            closable
+            style="margin: 0 10px"
+            @close="onDelFileClose"
           >
-        </t-select>
-      </t-form-item>
-      <t-row>
-        <t-col :span="12" class="align-right">
-          <t-button theme="default" variant="base" @click="onSecondaryReset()">取消</t-button>
-          <t-button theme="primary" type="submit">保存</t-button>
+            {{ formDataTwo?.packageName }}</t-tag
+          >
+          <t-button
+            v-if="formDataTwo?.packageName && !files.length && formDataTwo.moduleType === 'LOCAL'"
+            @click="onUploadFile"
+          >
+            下载文件
+          </t-button>
+        </t-col>
+        <t-col v-if="dialogListData !== 1" :span="6">
+          <t-form-item label="插件版本" name="moduleVersion">
+            <t-input-number
+              v-model="formDataTwo.moduleVersion"
+              theme="column"
+              style="width: 100%"
+              :default-value="200"
+            />
+          </t-form-item>
+        </t-col>
+        <t-col v-if="dialogListData !== 1" :span="6">
+          <t-form-item label="插件包标识" name="modulePackageIdentify">
+            <t-input v-model="formDataTwo.modulePackageIdentify"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="菜单图标">
+            <t-select
+              v-model="formDataTwo.iconPath"
+              :style="{ width: '100%' }"
+              :popup-props="{ overlayInnerStyle: { width: '500px' } }"
+            >
+              <t-option
+                v-for="item in options"
+                :key="item.stem"
+                :value="item.stem"
+                style="display: inline-block; font-size: 20px"
+              >
+                <div>
+                  <t-icon :name="item.stem" />
+                </div>
+              </t-option>
+              <template #valueDisplay
+                ><t-icon :name="formDataTwo.iconPath" :style="{ marginRight: '8px' }" />{{
+                  formDataTwo.iconPath
+                }}</template
+              >
+            </t-select>
+          </t-form-item>
         </t-col>
       </t-row>
     </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="onSecondaryReset()">取消</t-button>
+      <t-button theme="primary" @click="onSecondarySubmit()">保存</t-button>
+    </template>
   </t-dialog>
 </template>
 
 <script setup lang="ts">
 import { Icon, manifest } from 'tdesign-icons-vue-next';
-import { Data, FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import {
+  Data,
+  FormInstanceFunctions,
+  FormRules,
+  MessagePlugin,
+  PrimaryTableCol,
+  TableRowData,
+  TScroll,
+} from 'tdesign-vue-next';
 import { nextTick, onMounted, reactive, Ref, ref, watch } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
@@ -382,6 +434,12 @@ const showSecondNode = ref(false); // 二级
 const showFormData = ref(false); // 三级
 const disableFlag = ref(false); // 编辑按钮禁用 input 功能
 const treeRef = ref(null); // 树组件实例
+// const treeScroll = ref({
+//   rowHeight: 34,
+//   bufferSize: 10,
+//   threshold: 10,
+//   type: 'virtual',
+// } as TScroll);
 const formRefOne: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const formRefTwo: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const formRefThree: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
@@ -488,14 +546,20 @@ const onDelFile = async () => {
 };
 
 const treeCard = ref(null);
-const treeHeight = ref('500px');
+const treeHeight = ref('400px');
 useResizeObserver(treeCard, (entries) => {
   const entry = entries[0];
   const { height } = entry.contentRect;
-  treeHeight.value = `${height * 0.9}px`;
+  treeHeight.value = `${height - 80}px`;
   console.error('treeHeight', treeHeight.value);
 });
 
+const treeScroll = ref({
+  rowHeight: 34,
+  bufferSize: 10,
+  threshold: 10,
+  type: 'virtual',
+} as TScroll);
 // 文件下载
 const onUploadFile = async () => {
   const res = await api.module.getSignedUrl({
@@ -503,6 +567,15 @@ const onUploadFile = async () => {
     behaviorPath: formDataTwo?.value?.behaviorPath,
   });
   window.open(res); // 文件下载
+};
+const onSecondarySubmit = () => {
+  if (showFirstNode.value) {
+    formRefOne.value.submit();
+  } else if (showSecondNode.value) {
+    formRefTwo.value.submit();
+  } else if (showFormData.value) {
+    formRefThree.value.submit();
+  }
 };
 
 // // 侦听 formDataTwo.iconPath 的变化
@@ -550,13 +623,15 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'serial-number',
     title: '序号',
     align: 'center',
-    width: '90',
+    width: '60',
+    fixed: 'left',
   },
   {
     colKey: 'name',
     title: '模块名称',
     align: 'center',
     width: '110',
+    fixed: 'left',
   },
   {
     colKey: 'moduleDesc',
