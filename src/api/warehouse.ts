@@ -265,7 +265,6 @@ export interface LabelSearch {
   /** 是否仅显示未打印完成 */
   isFinishDisplay?: boolean;
   deliveryId?: string;
-  labelId?: string;
   /** 是否仅显示已生成 */
   isCreated?: boolean;
   /** 条码状态 */
@@ -290,11 +289,6 @@ export interface LabelSearch {
    * @format int32
    */
   createNum?: number;
-  /**
-   * 拆分数量
-   * @format int32
-   */
-  splitNum?: number;
   printTempId?: string;
   /** 原因 */
   reason?: string;
@@ -1086,36 +1080,6 @@ export const api = {
      * No description
      *
      * @tags 标签表
-     * @name SplitBarcode
-     * @summary 拆分条码
-     * @request POST:/label/splitBarcode
-     * @secure
-     */
-    splitBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/label/splitBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name ReprintBarcode
-     * @summary 补打条码
-     * @request POST:/label/reprintBarcode
-     * @secure
-     */
-    reprintBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/label/reprintBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
      * @name PrintBarcode
      * @summary 打印条码
      * @request POST:/label/printBarcode
@@ -1198,21 +1162,6 @@ export const api = {
      */
     generateBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/warehouse/label/generateBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name CancellationBarcode
-     * @summary 作废条码
-     * @request POST:/label/cancellationBarcode
-     * @secure
-     */
-    cancellationBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/label/cancellationBarcode`, {
         method: 'POST',
         body: data as any,
       }),
