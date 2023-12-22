@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full-screen="true">
+  <cmp-container :full="true">
     <cmp-card>
       <t-row align="middle" justify="space-around">
         <t-col :span="3">
