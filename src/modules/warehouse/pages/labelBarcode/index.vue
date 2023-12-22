@@ -1057,16 +1057,8 @@ const onCancellationSelextData = async () => {
   cancellationDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 
-const moStatusOption = ref([]);
-apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' }).then((data) => {
-  moStatusOption.value = data;
-});
-const bracodeTypeOption = ref([]);
-apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_TYPE' }).then((data) => {
-  bracodeTypeOption.value = data;
-});
 const bracodeStatusOption = ref([]);
-apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_WIP_STATUS' }).then((data) => {
+apiMain.param.getListByGroupCode({ parmGroupCode: 'W_MITEM_LABEL_STATUS' }).then((data) => {
   bracodeStatusOption.value = data;
 });
 // ################ 初始渲染
