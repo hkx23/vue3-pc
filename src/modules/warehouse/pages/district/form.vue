@@ -131,7 +131,7 @@ const onMaterialTabData = async (event) => {
 };
 
 const submit = async () => {
-  // formData.value.state = formData.value.state ? 1 : 0; //* 处理启用
+  formData.value.state = formData.value.state ? 1 : 0; //* 处理启用(必须)
   try {
     if (props.formTitle === '新增') {
       await api.district.addDistrict(formData.value);
