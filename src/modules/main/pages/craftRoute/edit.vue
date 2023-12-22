@@ -561,6 +561,11 @@ const categoryPagination = reactive({
   pageSize: 10,
   showPageNumber: false,
   showPageSize: false,
+  total: 0,
+  onChange({ current }) {
+    categoryPagination.current = current;
+    getMitemCategory();
+  },
 });
 const boomColumn = [
   { colKey: 'row-select', type: 'multiple' },
@@ -585,6 +590,7 @@ const getMitemCategory = () => {
     .then((data) => {
       boomData.list = data.list;
       boomData.total = data.total;
+      categoryPagination.total = data.total;
     });
 };
 const boomSelectKeys = ref([]);
