@@ -440,12 +440,17 @@ export interface WipRepairSearch {
   category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
-  /** 排产工单 */
-  moScheCode?: string;
+  moScheId?: string;
   /** 开始时间 */
   beginDate?: string;
   /** 结束时间 */
   endDate?: string;
+  /** 已返修 */
+  isRepair?: string;
+  /** 批量维修ID */
+  wipRepairIds?: string[];
+  /** 维修状态 */
+  statusList?: string[];
 }
 
 /** 响应数据 */
@@ -525,6 +530,7 @@ export interface WipRepairVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  /** 排产工单编码 */
   moScheCode?: string;
   /** 来源工艺路线工序编码 */
   fromRoutingProcessCode?: string;
@@ -538,6 +544,8 @@ export interface WipRepairVO {
   displayNameRepair?: string;
   returnRoutingProcessCode?: string;
   returnRoutingProcessName?: string;
+  /** 维修状态 */
+  repairStatusName?: string;
   retentionTime?: string;
 }
 
@@ -688,15 +696,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1820,17 +1828,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   stateName?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -1936,15 +1944,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -3258,12 +3266,27 @@ export const api = {
      *
      * @tags 产品维修表
      * @name Search
-     * @summary 获返工工单
+     * @summary 获取维修工单
      * @request POST:/wipRepair/items
      * @secure
      */
     search: (data: WipRepairSearch) =>
       http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepair/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品维修表
+     * @name UpdateWipRepairStatus
+     * @summary 更新维修单状态
+     * @request POST:/wipRepair/UpdateWipRepairStatus
+     * @secure
+     */
+    updateWipRepairStatus: (data: WipRepairSearch) =>
+      http.request<ResultObject['data']>(`/api/control/wipRepair/UpdateWipRepairStatus`, {
         method: 'POST',
         body: data as any,
       }),

@@ -137,6 +137,9 @@ import { messageModel, scanInfoModel } from '../../api/processInspection';
 // 全局信息
 const scanInfoList = ref<scanInfoModel[]>([]);
 
+import { useUserStore } from '@/store';
+
+const userStore = useUserStore();
 // 扫描信息
 const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '产品条码', width: 'auto', colKey: 'serialNumber' },
@@ -147,16 +150,16 @@ const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
 
 const mainform = ref({
   serialNumber: '',
-  workShopId: '',
-  workShopCode: '',
-  workShopName: '',
-  workCenterId: '',
-  workCenterCode: '',
-  workCenterName: '',
-  workStationId: '',
-  workStationCode: '',
-  workStationName: '',
-  processId: '',
+  workShopId: userStore.currUserOrgInfo.workShopId,
+  workShopCode: userStore.currUserOrgInfo.workShopCode,
+  workShopName: userStore.currUserOrgInfo.workShopName,
+  workCenterId: userStore.currUserOrgInfo.workCenterId,
+  workCenterCode: userStore.currUserOrgInfo.workCenterCode,
+  workCenterName: userStore.currUserOrgInfo.workCenterName,
+  workStationId: userStore.currUserOrgInfo.workStationId,
+  workStationCode: userStore.currUserOrgInfo.workStationCode,
+  workStationName: userStore.currUserOrgInfo.workStationName,
+  processId: userStore.currUserOrgInfo.processId,
 });
 
 // 全局缺陷列表
@@ -313,56 +316,56 @@ const getThemeButton = (value: string) => {
   return themes[value] || themes.default;
 };
 
-const getQueryString = (paramName: string) => {
-  const queryString = window.location.href.split('?')[1];
-  if (queryString) {
-    const paramsArray = queryString.split('&');
-    const paramsNameList = [{ name: '', value: '' }];
-    paramsArray.forEach((item: string) => {
-      const obj = { name: '', value: '' };
-      obj.name = item.split('=')[0].toString();
-      obj.value = item.split('=')[1].toString();
-      paramsNameList.push(obj);
-    });
-    const objInfo = _.find(paramsNameList, (item: any) => {
-      return item.name === paramName;
-    }) as any;
-    return objInfo?.value;
-  }
-  return '';
-};
+// const getQueryString = (paramName: string) => {
+//   const queryString = window.location.href.split('?')[1];
+//   if (queryString) {
+//     const paramsArray = queryString.split('&');
+//     const paramsNameList = [{ name: '', value: '' }];
+//     paramsArray.forEach((item: string) => {
+//       const obj = { name: '', value: '' };
+//       obj.name = item.split('=')[0].toString();
+//       obj.value = item.split('=')[1].toString();
+//       paramsNameList.push(obj);
+//     });
+//     const objInfo = _.find(paramsNameList, (item: any) => {
+//       return item.name === paramName;
+//     }) as any;
+//     return objInfo?.value;
+//   }
+//   return '';
+// };
 
 onMounted(() => {
   // 底座完成后从底座获取
-  const serialNumber = getQueryString('serialNumber');
-  const workCenterId = getQueryString('workCenterId');
-  const workCenterCode = getQueryString('workCenterCode');
-  const workCenterName = getQueryString('workCenterName');
+  // const serialNumber = getQueryString('serialNumber');
+  // const workCenterId = getQueryString('workCenterId');
+  // const workCenterCode = getQueryString('workCenterCode');
+  // const workCenterName = getQueryString('workCenterName');
 
-  const workStationId = getQueryString('workStationId');
-  const workStationCode = getQueryString('workStationCode');
-  const workStationName = getQueryString('workStationName');
+  // const workStationId = getQueryString('workStationId');
+  // const workStationCode = getQueryString('workStationCode');
+  // const workStationName = getQueryString('workStationName');
 
-  const workShopId = getQueryString('workShopId');
-  const workShopCode = getQueryString('workShopCode');
-  const workShopName = getQueryString('workShopName');
+  // const workShopId = getQueryString('workShopId');
+  // const workShopCode = getQueryString('workShopCode');
+  // const workShopName = getQueryString('workShopName');
 
-  const processId = getQueryString('processId');
-  mainform.value.serialNumber = serialNumber;
+  // const processId = getQueryString('processId');
+  // mainform.value.serialNumber = serialNumber;
 
-  mainform.value.workCenterId = workCenterId;
-  mainform.value.workCenterCode = workCenterCode;
-  mainform.value.workCenterName = workCenterName;
+  // mainform.value.workCenterId = workCenterId;
+  // mainform.value.workCenterCode = workCenterCode;
+  // mainform.value.workCenterName = workCenterName;
 
-  mainform.value.workStationId = workStationId;
-  mainform.value.workStationCode = workStationCode;
-  mainform.value.workStationName = workStationName;
+  // mainform.value.workStationId = workStationId;
+  // mainform.value.workStationCode = workStationCode;
+  // mainform.value.workStationName = workStationName;
 
-  mainform.value.workShopId = workShopId;
-  mainform.value.workShopCode = workShopCode;
-  mainform.value.workShopName = workShopName;
+  // mainform.value.workShopId = workShopId;
+  // mainform.value.workShopCode = workShopCode;
+  // mainform.value.workShopName = workShopName;
 
-  mainform.value.processId = processId;
+  // mainform.value.processId = processId;
   Init();
 });
 </script>
