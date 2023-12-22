@@ -434,7 +434,7 @@ const onGetTextDataList = async () => {
   const res = await api.barcodeValidateRule.getBarcodeVaildateRuleList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
-    barcodeValidateGroup: 'SCANEXT',
+    barcodeValidateGroup: 'SCANTEXT',
   });
   textTabData.list = res.list;
   totalText.value = res.total;
@@ -603,7 +603,7 @@ const onInput = async (data: any) => {
       pageSize: pageUITwo.value.rows,
       ruleKeyword: data.code,
       barcodeTypeCode: barcodeData.value.barcodeType,
-      barcodeValidateGroup: 'SCANEXT',
+      barcodeValidateGroup: 'SCANTEXT',
     });
     textTabData.list = res.list;
     totalText.value = res.total;
@@ -635,7 +635,7 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
     } else {
       await onEditRuleCode(); // 编辑请求
     }
-    if (barcodeData.value.barcodeValidateGroup === 'SCANEXT') {
+    if (barcodeData.value.barcodeValidateGroup === 'SCANTEXT') {
       await onGetTextDataList(); // 获取 文本 数据
     } else {
       await onGetKeyDataList(); // 获取 关键件 数据
