@@ -113,26 +113,6 @@
                           {{ row.serialNumber }}
                         </div>
                       </template>
-                      <template #status="{ row }">
-                        <div
-                          class="talbe_col_nowrap"
-                          :title="row.status"
-                          :style="{
-                            // eslint-disable-next-line prettier/prettier
-                            backgroundColor: row.statusColor,
-                            textAlign: 'center',
-                            fontWeight: 'bold',
-                            color: 'white',
-                          }"
-                        >
-                          {{ row.status }}
-                        </div>
-                      </template>
-                      <template #errorinfo="{ row }">
-                        <div class="talbe_col_nowrap" :title="row.errorinfo">
-                          {{ row.errorinfo }}
-                        </div>
-                      </template>
                     </t-table>
                   </div>
                 </t-col>
@@ -174,9 +154,12 @@ import { LoadingPlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdes
 import { computed, onMounted, ref } from 'vue';
 
 import { api, WipKeyPartCollectVO } from '@/api/control';
+import { useUserStore } from '@/store';
 
 import { messageModel, scanCollectInfoModel } from '../../api/processInspection';
 import { useLang } from './lang';
+
+const userStore = useUserStore();
 // 全局信息
 const scanInfoList = ref<scanCollectInfoModel[]>([]);
 const { t } = useLang();
@@ -225,14 +208,21 @@ const messageList = ref<messageModel[]>([]);
 const Init = async () => {
   mainform.value.serialNumber = '';
   mainform.value.keypartCode = '';
-  mainform.value.workCenterId = '1730421387954343937'; // 3-1-1
-  mainform.value.workCenterCode = '3-1-1'; // 3-1-1
-  mainform.value.workCenterName = '3号工厂1车间1区域'; // 3-1-1
 
-  mainform.value.workStationId = '1729475654052753410'; // G_TP 高新产业园贴标
-  mainform.value.workStationCode = 'G_TP';
-  mainform.value.workStationName = '高新产业园贴标';
-  mainform.value.processId = '3'; // PC001 贴标
+  // 底座完成后从底座获取
+  mainform.value.workCenterId = userStore.currUserOrgInfo.workCenterId;
+  mainform.value.workStationId = userStore.currUserOrgInfo.workStationId;
+  mainform.value.processId = userStore.currUserOrgInfo.processId;
+
+  mainform.value.workCenterCode = userStore.currUserOrgInfo.workCenterCode;
+  mainform.value.workCenterName = userStore.currUserOrgInfo.workCenterName;
+
+  mainform.value.workStationCode = userStore.currUserOrgInfo.workStationCode;
+  mainform.value.workStationName = userStore.currUserOrgInfo.workStationName;
+
+  if (!mainform.value.workStationId) {
+    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+  }
 };
 
 const scanType = computed(() => {
@@ -256,6 +246,10 @@ const scanDesc = computed(() => {
 });
 
 const serialNumberEnter = async (value) => {
+  if (!mainform.value.workStationId) {
+    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+    return;
+  }
   if (!isEmpty(value)) {
     // 前端校验一次，条码是否扫重复，后端再校验一次
     if (!checkBarcodeRepeat(mainform.value.serialNumber)) {
@@ -424,44 +418,8 @@ const writeMessageListError = async (content, datatime) => {
   NotifyPlugin.error({ title: '扫描失败', content, duration: 2000 });
 };
 
-const getQueryString = (paramName: string) => {
-  const queryString = window.location.href.split('?')[1];
-  if (queryString) {
-    const paramsArray = queryString.split('&');
-    const paramsNameList = [{ name: '', value: '' }];
-    paramsArray.forEach((item: string) => {
-      const obj = { name: '', value: '' };
-      obj.name = item.split('=')[0].toString();
-      obj.value = item.split('=')[1].toString();
-      paramsNameList.push(obj);
-    });
-    const objInfo = _.find(paramsNameList, (item: any) => {
-      return item.name === paramName;
-    }) as any;
-    return objInfo?.value;
-  }
-  return '';
-};
-
 onMounted(() => {
   Init();
-  // 底座完成后从底座获取
-  const serialNumber = getQueryString('serialNumber');
-  const workCenterId = getQueryString('workCenterId');
-  const workStationId = getQueryString('workStationId');
-  const processId = getQueryString('processId');
-  if (serialNumber) {
-    mainform.value.serialNumber = serialNumber;
-  }
-  if (workCenterId) {
-    mainform.value.workCenterId = workCenterId;
-  }
-  if (workStationId) {
-    mainform.value.workStationId = workStationId;
-  }
-  if (processId) {
-    mainform.value.processId = processId;
-  }
 });
 </script>
 

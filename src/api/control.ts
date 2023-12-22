@@ -440,12 +440,17 @@ export interface WipRepairSearch {
   category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
-  /** 排产工单 */
-  moScheCode?: string;
+  moScheId?: string;
   /** 开始时间 */
   beginDate?: string;
   /** 结束时间 */
   endDate?: string;
+  /** 已返修 */
+  isRepair?: string;
+  /** 批量维修ID */
+  wipRepairIds?: string[];
+  /** 维修状态 */
+  statusList?: string[];
 }
 
 /** 响应数据 */
@@ -525,6 +530,7 @@ export interface WipRepairVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  /** 排产工单编码 */
   moScheCode?: string;
   /** 来源工艺路线工序编码 */
   fromRoutingProcessCode?: string;
@@ -538,6 +544,8 @@ export interface WipRepairVO {
   displayNameRepair?: string;
   returnRoutingProcessCode?: string;
   returnRoutingProcessName?: string;
+  /** 维修状态 */
+  repairStatusName?: string;
   retentionTime?: string;
 }
 
@@ -571,7 +579,8 @@ export interface ProductReworkPreSettingDTO {
   isSameMo?: boolean;
   isByReworkMo?: boolean;
   reworkRoutingRevisionId?: string;
-  reworkMo?: string;
+  reworkMoSheId?: string;
+  reworkMoId?: string;
   reworkRouting?: string;
   reworkRoutingName?: string;
   reworkLine?: string;
@@ -692,10 +701,10 @@ export interface ProductReworkVO {
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -709,6 +718,12 @@ export interface WipKeyPartCollectVO {
   mitemName?: string;
   /** 物料描述 */
   mitemDesc?: string;
+  /** 工序id */
+  processId?: string;
+  /** 工序编码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
   /** 扫描信息 */
   scanMessage?: string;
   /** 扫描状态 */
@@ -723,6 +738,8 @@ export interface WipKeyPartCollectVO {
    * @format int32
    */
   scanQty?: number;
+  /** 产品返工：是否需要删除 */
+  isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
   isScanFinish?: boolean;
@@ -783,6 +800,16 @@ export interface ResultProductReworkVO {
   message?: string;
   /** 显示产品返工实体 */
   data?: ProductReworkVO;
+}
+
+/** 产品返工执行模型 */
+export interface ProductReworkDTO {
+  /** 条码集合信息 */
+  barcodeList?: ProductReworkVO[];
+  /** 产品返工返工前配置信息 */
+  preSetting?: ProductReworkPreSettingDTO;
+  /** 关键件数量汇总信息 */
+  keyPartSumList?: WipKeyPartCollectVO[];
 }
 
 /** 响应数据 */
@@ -1807,11 +1834,11 @@ export interface BarcodeWipCollectVO {
   workshopName?: string;
   workshopCode?: string;
   stateName?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 通用响应类 */
@@ -1923,9 +1950,9 @@ export interface BarcodeWipVO {
   workshopName?: string;
   workshopCode?: string;
   stateName?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
   defectCodeStr?: string;
 }
 
@@ -2324,8 +2351,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3239,12 +3266,27 @@ export const api = {
      *
      * @tags 产品维修表
      * @name Search
-     * @summary 获返工工单
+     * @summary 获取维修工单
      * @request POST:/wipRepair/items
      * @secure
      */
     search: (data: WipRepairSearch) =>
       http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepair/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品维修表
+     * @name UpdateWipRepairStatus
+     * @summary 更新维修单状态
+     * @request POST:/wipRepair/UpdateWipRepairStatus
+     * @secure
+     */
+    updateWipRepairStatus: (data: WipRepairSearch) =>
+      http.request<ResultObject['data']>(`/api/control/wipRepair/UpdateWipRepairStatus`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3261,6 +3303,21 @@ export const api = {
      */
     scanProductNo: (data: ProductReworkVO) =>
       http.request<ResultProductReworkVO['data']>(`/api/control/productRework/scanProductNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品返工
+     * @name Save
+     * @summary 产品返工执行
+     * @request POST:/productRework/save
+     * @secure
+     */
+    save: (data: ProductReworkDTO) =>
+      http.request<ResultObject['data']>(`/api/control/productRework/save`, {
         method: 'POST',
         body: data as any,
       }),

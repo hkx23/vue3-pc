@@ -3066,6 +3066,9 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
   stateName?: string;
   isProductName?: string;
   isRawName?: string;
