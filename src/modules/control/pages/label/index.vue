@@ -341,10 +341,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
         autofocus: true,
         autoWidth: true,
       },
-      rules: [
-        { required: true, message: '不能为空' },
-        { max: 1000, message: '不能大于十', type: 'warning' },
-      ],
+      rules: [{ required: true, message: '不能为空' }],
       keepEditMode: true,
       showEditIcon: true,
       validateTrigger: 'change',

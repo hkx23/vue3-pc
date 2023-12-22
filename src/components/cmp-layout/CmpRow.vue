@@ -1,5 +1,5 @@
 <template>
-  <t-row v-bind="targetAttrs" :gutter="12" :style="styleAttrs">
+  <t-row v-bind="targetAttrs" :gutter="[12, 0]" class="cmp-row" :style="styleAttrs">
     <slot></slot>
   </t-row>
 </template>
@@ -26,8 +26,15 @@ const targetAttrs = computed<CmpRowProps>(() => {
 const styleAttrs = computed(() => {
   return {
     height: props.height,
-    'flex-wrap': 'nowrap',
   };
 });
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.cmp-row {
+  flex-wrap: nowrap;
+
+  :deep(> .cmp-card) {
+    height: 100%;
+  }
+}
+</style>

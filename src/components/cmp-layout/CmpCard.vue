@@ -27,7 +27,7 @@ export interface CmpCardProps extends Omit<ColProps, 'options'>, Omit<CardProps,
 }
 
 const props = withDefaults(defineProps<CmpCardProps>(), {
-  height: '100%',
+  // height: '100%',
   full: true,
   ghost: false,
   bordered: false,
@@ -45,7 +45,7 @@ const styleAttrs = computed(() => {
 });
 
 const classAttrs = computed(() => {
-  return `cmp-container ${props.full ? 'cmp-card-full' : ''} ${props.ghost ? 'cmp-card-ghost' : ''} ${
+  return `cmp-card ${props.full ? 'cmp-card-full' : ''} ${props.ghost ? 'cmp-card-ghost' : ''} ${
     props.noFill ? 'cmp-card-no-fill' : ''
   }`;
 });
@@ -73,7 +73,7 @@ const classAttrs = computed(() => {
 
 .cmp-card-ghost {
   :deep(> .cmp-card) {
-    margin: 0 -6px;
+    // margin: 0 -6px;
   }
 }
 

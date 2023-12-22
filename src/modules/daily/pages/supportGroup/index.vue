@@ -11,6 +11,7 @@
         row-key="id"
         :hover="false"
         :stripe="false"
+        :fixed-height="true"
         :table-column="groupColumns"
         active-row-type="single"
         :table-data="supportGroupInUserList.list"

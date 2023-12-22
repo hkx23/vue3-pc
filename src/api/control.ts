@@ -701,10 +701,10 @@ export interface ProductReworkVO {
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1835,10 +1835,10 @@ export interface BarcodeWipCollectVO {
   workshopCode?: string;
   stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -2695,6 +2695,33 @@ export interface ResultListProductPackRuleDtlVO {
   data?: ProductPackRuleDtlVO[] | null;
 }
 
+/** 箱包关系前端显示 */
+export type PkgRelationVO = {
+  id?: string;
+  /** 包装条码 */
+  pkgBarcode?: string;
+  /** 包装条码类型 */
+  pkgBarcodeType?: string;
+  /**
+   * 包装序号
+   * @format int32
+   */
+  seq?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListPkgRelationVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PkgRelationVO[] | null;
+}
+
 /** 响应数据 */
 export type PagingDataPrintTmpl = {
   list?: PrintTmpl[];
@@ -2862,20 +2889,6 @@ export type PkgInfoRelationVO = {
   /** 是否尾数装箱 */
   whole?: boolean;
 } | null;
-
-/** 箱包关系前端显示 */
-export interface PkgRelationVO {
-  id?: string;
-  /** 包装条码 */
-  pkgBarcode?: string;
-  /** 包装条码类型 */
-  pkgBarcodeType?: string;
-  /**
-   * 包装序号
-   * @format int32
-   */
-  seq?: number;
-}
 
 /** 通用响应类 */
 export interface ResultPkgInfoRelationVO {
@@ -3490,6 +3503,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/pkgRelation/save`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品箱包关系表
+     * @name GetPkgRelationByParentBarcode
+     * @summary 根据父条码获取包装关系
+     * @request GET:/pkgRelation/getPkgRelationByParentBarcode
+     * @secure
+     */
+    getPkgRelationByParentBarcode: (query: { barcode: string }) =>
+      http.request<ResultListPkgRelationVO['data']>(`/api/control/pkgRelation/getPkgRelationByParentBarcode`, {
+        method: 'GET',
+        params: query,
       }),
 
     /**

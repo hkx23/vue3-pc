@@ -23,7 +23,7 @@
         <t-col :span="3" class="right-label">
           <t-space align="center">
             <div>{{ t('productPacking.scanType') }}</div>
-            <t-radio-group v-model="scanType" variant="primary-filled">
+            <t-radio-group v-model="scanType" variant="primary-filled" @change="scanTypeChange">
               <t-radio-button value="normal">{{ t('productPacking.normal') }}</t-radio-button>
               <t-radio-button value="delete">{{ t('common.button.delete') }}</t-radio-button>
             </t-radio-group>
@@ -141,6 +141,14 @@ const allQty = computed(() => {
 });
 const pkgInfo = ref<WipPkgInfoVO>();
 const labelList = ref<WipPkgInfoVO[]>([]);
+const scanTypeChange = (val: any) => {
+  if (val === 'delete') {
+    pushMessage('info', t('productPacking.plsScanDelLabel'));
+  } else {
+    pushMessage('info', t('productPacking.plsScanLabel'));
+  }
+  isScanPkg.value = false;
+};
 const scan = () => {
   if (isScanPkg.value) {
     apiControl.barcodePkg
@@ -213,7 +221,6 @@ const scan = () => {
   }
 };
 const removeLabel = (barcode: string) => {
-  console.log(barcode);
   remove(labelList.value, (o) => {
     return o.barcode === barcode;
   });
@@ -261,6 +268,7 @@ const packing = () => {
       pushMessage('success', t('productPacking.saveSuccess'));
       labelList.value = [];
       scanLabel.value = null;
+      isScanPkg.value = false;
     })
     .catch(() => {
       pushMessage('error', t('productPacking.saveFailed'));
