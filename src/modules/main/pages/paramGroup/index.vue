@@ -78,7 +78,7 @@
             >
               <t-row v-for="(item, index) in dataTable" :key="index" class="table-row" justify="space-between">
                 <t-col :span="0.5">
-                  <t-checkbox v-model="item.isGlobal" :disabled="SelectNode.isSys == '1'"> </t-checkbox>
+                  <t-checkbox v-model="item.isGlobal" :disabled="true"> </t-checkbox>
                 </t-col>
                 <t-col :span="2">
                   <t-input v-model="item.paramCode" :disabled="SelectNode.isSys == '1'" />

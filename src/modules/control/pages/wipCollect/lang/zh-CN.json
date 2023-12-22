@@ -20,6 +20,8 @@
     "scanBarcode": "请扫描条码",
     "scanKeypart": "请扫描关键件",
     "keypartInfo":"关键件信息",
+    "tip":"提示",
+    "tipsetting":"请先配置工站信息",
     "scanqty": "已扫"
   }
 }

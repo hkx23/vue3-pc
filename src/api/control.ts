@@ -571,7 +571,8 @@ export interface ProductReworkPreSettingDTO {
   isSameMo?: boolean;
   isByReworkMo?: boolean;
   reworkRoutingRevisionId?: string;
-  reworkMo?: string;
+  reworkMoSheId?: string;
+  reworkMoId?: string;
   reworkRouting?: string;
   reworkRoutingName?: string;
   reworkLine?: string;
@@ -687,15 +688,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -709,6 +710,12 @@ export interface WipKeyPartCollectVO {
   mitemName?: string;
   /** 物料描述 */
   mitemDesc?: string;
+  /** 工序id */
+  processId?: string;
+  /** 工序编码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
   /** 扫描信息 */
   scanMessage?: string;
   /** 扫描状态 */
@@ -723,6 +730,8 @@ export interface WipKeyPartCollectVO {
    * @format int32
    */
   scanQty?: number;
+  /** 产品返工：是否需要删除 */
+  isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
   isScanFinish?: boolean;
@@ -783,6 +792,16 @@ export interface ResultProductReworkVO {
   message?: string;
   /** 显示产品返工实体 */
   data?: ProductReworkVO;
+}
+
+/** 产品返工执行模型 */
+export interface ProductReworkDTO {
+  /** 条码集合信息 */
+  barcodeList?: ProductReworkVO[];
+  /** 产品返工返工前配置信息 */
+  preSetting?: ProductReworkPreSettingDTO;
+  /** 关键件数量汇总信息 */
+  keyPartSumList?: WipKeyPartCollectVO[];
 }
 
 /** 响应数据 */
@@ -1801,17 +1820,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
   stateName?: string;
+  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -1917,15 +1936,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
   stateName?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   isState?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   defectCodeStr?: string;
 }
 
@@ -2324,8 +2343,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3261,6 +3280,21 @@ export const api = {
      */
     scanProductNo: (data: ProductReworkVO) =>
       http.request<ResultProductReworkVO['data']>(`/api/control/productRework/scanProductNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品返工
+     * @name Save
+     * @summary 产品返工执行
+     * @request POST:/productRework/save
+     * @secure
+     */
+    save: (data: ProductReworkDTO) =>
+      http.request<ResultObject['data']>(`/api/control/productRework/save`, {
         method: 'POST',
         body: data as any,
       }),
