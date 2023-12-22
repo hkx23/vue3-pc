@@ -550,7 +550,7 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
     colKey: 'labelNo',
     title: '条码',
     align: 'center',
-    width: '180',
+    width: '250',
   },
   {
     colKey: 'barcodeStatusName',
@@ -559,7 +559,7 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'creatorName',
+    colKey: 'operateType',
     title: '操作类型',
     align: 'center',
     width: '100',
@@ -718,7 +718,7 @@ const barcodeColumns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'labelNo',
     title: '条码',
     align: 'center',
-    width: '110',
+    width: '250',
   },
   {
     colKey: 'barcodeStatusName',
@@ -755,7 +755,7 @@ const pkgBarcodeManageColumns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'labelNo',
     title: '条码',
     align: 'center',
-    width: '180',
+    width: '250',
   },
   {
     colKey: 'barcodeStatusName',
