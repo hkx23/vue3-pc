@@ -1,6 +1,6 @@
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
       <cmp-table
         :table-column="templateColumn"
         :table-data="templateData?.list"
@@ -10,14 +10,19 @@
         @select-change="onSelectTemplate"
         @refresh="fetchTemplateData"
       >
-        <template #button>
-          <t-input v-model="filterText" :placeholder="t('common.placeholder.input')" @change="onInputFilter">
+        <template #title>
+          <t-input
+            v-model="filterText"
+            style="width: 248px"
+            :placeholder="t('common.placeholder.input')"
+            @change="onInputFilter"
+          >
             <template #suffix-icon>
               <search-icon size="var(--td-comp-size-xxxs)" />
             </template>
           </t-input>
         </template>
-        <template #operate>
+        <template #button>
           <t-button @click="onClickAddTemplate">{{ t('common.button.add') }}</t-button>
         </template>
         <template #op="{ row }">
@@ -29,27 +34,29 @@
           </t-popconfirm>
         </template>
       </cmp-table>
-    </div>
-    <div class="main-page-content">
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         :table-column="templateCategoryColumn"
         :table-data="templateMapData?.list"
         :total="templateMapData?.total"
         @refresh="fetchTemplateMapData"
       >
-        <template #button>
-          <bcmp-select-business
-            v-model="filterMitemId"
-            type="mitem"
-            @change="fetchTemplateMapData"
-          ></bcmp-select-business>
-          <bcmp-select-business
-            v-model="filterMitemCategoryId"
-            type="mitemCategory"
-            @change="fetchTemplateMapData"
-          ></bcmp-select-business>
+        <template #title>
+          <t-space>
+            <bcmp-select-business
+              v-model="filterMitemId"
+              type="mitem"
+              @change="fetchTemplateMapData"
+            ></bcmp-select-business>
+            <bcmp-select-business
+              v-model="filterMitemCategoryId"
+              type="mitemCategory"
+              @change="fetchTemplateMapData"
+            ></bcmp-select-business>
+          </t-space>
         </template>
-        <template #operate>
+        <template #button>
           <t-button :disabled="!selectedRowTemplateId" @click="onClickAddMapTemplate">{{
             t('printTemplate.templateMap')
           }}</t-button>
@@ -60,8 +67,8 @@
           </t-popconfirm>
         </template>
       </cmp-table>
-    </div>
-  </div>
+    </cmp-card>
+  </cmp-container>
   <t-dialog
     v-model:visible="templateFormVisible"
     :header="

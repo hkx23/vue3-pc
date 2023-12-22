@@ -501,20 +501,18 @@ const onKeyEditRow = (row: any) => {
   } else {
     radioValue.value = 0;
   }
-  // if (row.mitemId === '0') {
-  //   barcodeData.value.mitemId = '';
-  // } else {
-  //   barcodeData.value.mitemId = row.mitemId; // 物料编码 ID
-  // }
-  // if (row.mitemCategoryId === '0') {
-  //   barcodeData.value.mitemCategoryId = '';
-  // } else {
-  //   barcodeData.value.mitemCategoryId = row.mitemCategoryId; // 物料类别 ID
-  // }
+  if (row.mitemId === '0') {
+    barcodeData.value.mitemId = '';
+  } else {
+    barcodeData.value.mitemId = row.mitemId; // 物料编码 ID
+  }
+  if (row.mitemCategoryId === '0') {
+    barcodeData.value.mitemCategoryId = '';
+  } else {
+    barcodeData.value.mitemCategoryId = row.mitemCategoryId; // 物料类别 ID
+  }
   RuleCodeID.value = row.id;
   sampleBarcode.value = '';
-  barcodeData.value.mitemCategoryId = row.mitemCategoryId; // 物料类别 ID
-  barcodeData.value.mitemId = row.mitemId; // 物料编码 ID
   barcodeData.value.ruleCode = row.ruleCode; // 规则编码
   barcodeData.value.ruleName = row.ruleName; // 规则名称
   barcodeData.value.pri = row.pri; // 优先级
@@ -524,7 +522,7 @@ const onKeyEditRow = (row: any) => {
   barcodeData.value.minLength = row.minLength; // 最小长度
   barcodeData.value.maxLength = row.maxLength; // 最大长度
   barcodeData.value.memo = row.memo; // 备注
-  console.log('🚀 ~ file: index.vue:523 ~ onKeyEditRow ~ barcodeData.value:', barcodeData.value);
+  console.log('🚀 ~ file: index.vue:525 ~ onKeyEditRow ~ barcodeData.value:', barcodeData.value);
   formVisible.value = true;
   submitFalg.value = false;
 };

@@ -1,206 +1,185 @@
 <template>
-  <div class="main-page">
-    <!-- ################# 条码规则 表格数据 ###################### -->
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
       <cmp-query :opts="opts" :bool-enter="true" label-width="110px" @submit="onSelsectInput">
         <template #querySelect>
-          <t-select v-model="ruleTabData.barcodeType">
+          <t-select v-model="ruleTabData.barcodeType" label="条码类型" clearable>
             <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </template>
       </cmp-query>
-      <t-col :span="12" flex="auto">
-        <cmp-table
-          ref="tableRef"
-          v-model:pagination="pageUI"
-          row-key="id"
-          :table-column="groupColumns"
-          :table-data="ruleTabDataList.list"
-          :total="ruleTabTotal"
-          select-on-row-click
-          @select-change="onGenerateChange"
-          @refresh="onRefresh"
-        >
-          <template #stateSwitch="{ row }">
-            <t-switch
-              :custom-value="[1, 0]"
-              :value="row.state"
-              :default-value="row.state"
-              size="large"
-              @change="(value) => onSwitchChange(row, value)"
-            ></t-switch>
-          </template>
-          <template #operate>
-            <t-space>
-              <t-button theme="default" @click="onAddRuleData"> 新增 </t-button>
-              <t-button theme="default"> 导入关联物料 </t-button>
-            </t-space>
-          </template>
-          <template #op="{ row }">
-            <t-link theme="primary" @click="onEditRow(row)"> 编辑 </t-link>
-          </template>
-        </cmp-table>
-      </t-col>
-    </div>
-    <!-- ################# 物料分类 表格数据 ###################### -->
-    <div class="main-page-content">
-      <t-row justify="space-around">
-        <t-col :span="12" flex="auto">
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="materialPage"
-            row-key="id"
-            :table-column="personColumns"
-            :table-data="materialTabDataList.list"
-            :total="materialTotal"
-            :selected-row-keys="selectedRowKeys"
-            @select-change="rehandleSelectChange"
-            @refresh="onTwoRefresh"
-          >
-            <template #button>
-              <div class="left-operation-container">
-                <bcmp-select-business
-                  v-model="mitemData.mitemCategoryId"
-                  :is-multiple="false"
-                  type="mitemCategory"
-                  @change="onMaterialTabData"
-                ></bcmp-select-business>
-              </div>
-              <div class="left-operation-container">
-                <bcmp-select-business
-                  v-model="mitemData.mitemId"
-                  :is-multiple="false"
-                  type="mitem"
-                  @change="onMaterialTabData"
-                ></bcmp-select-business>
-              </div>
-              <div>
-                <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches">
-                  <t-button theme="default"> 删除 </t-button>
-                </t-popconfirm>
-              </div>
-            </template>
-            <template #operate>
-              <div>
-                <t-button theme="default" :disabled="!personID" @click="onformData"> 关联物料 </t-button>
-              </div>
-            </template>
-          </cmp-table>
-        </t-col>
-      </t-row>
-    </div>
-  </div>
+    </cmp-card>
+    <cmp-card :span="12">
+      <!-- ################# 条码规则 表格数据 ###################### -->
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="groupColumns"
+        :table-data="ruleTabDataList.list"
+        :total="ruleTabTotal"
+        select-on-row-click
+        @select-change="onGenerateChange"
+        @refresh="onRefresh"
+      >
+        <template #stateSwitch="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            size="large"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
+        </template>
+        <template #button>
+          <t-space :size="8">
+            <t-button theme="primary" @click="onAddRuleData"> 新增 </t-button>
+            <t-button theme="default"> 导入关联物料 </t-button>
+          </t-space>
+        </template>
+        <template #op="{ row }">
+          <t-link theme="primary" @click="onEditRow(row)"> 编辑 </t-link>
+        </template>
+      </cmp-table>
+    </cmp-card>
+    <cmp-card :span="12">
+      <!-- ################# 物料分类 表格数据 ###################### -->
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="materialPage"
+        row-key="id"
+        :table-column="personColumns"
+        :table-data="materialTabDataList.list"
+        :total="materialTotal"
+        :selected-row-keys="selectedRowKeys"
+        @select-change="rehandleSelectChange"
+        @refresh="onTwoRefresh"
+      >
+        <template #title>
+          <t-space>
+            <div class="left-operation-container">
+              <bcmp-select-business
+                v-model="mitemData.mitemCategoryId"
+                :is-multiple="false"
+                type="mitemCategory"
+                @change="onMaterialTabData"
+              ></bcmp-select-business>
+            </div>
+            <div class="left-operation-container">
+              <bcmp-select-business
+                v-model="mitemData.mitemId"
+                :is-multiple="false"
+                type="mitem"
+                @change="onMaterialTabData"
+              ></bcmp-select-business>
+            </div>
+          </t-space>
+        </template>
+        <template #button>
+          <div>
+            <t-button theme="primary" :disabled="!personID" @click="onformData"> 关联物料 </t-button>
+          </div>
+          <div>
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches">
+              <t-button theme="default"> 删除 </t-button>
+            </t-popconfirm>
+          </div>
+        </template>
+      </cmp-table>
+    </cmp-card>
+  </cmp-container>
+
   <!-- #处理组 dialog 弹窗 -->
-  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="70%">
+  <t-dialog
+    v-model:visible="formVisible"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    :header="diaLogTitle"
+    width="850px"
+    top="60px"
+  >
     <t-form ref="formRef" :data="ruleTabData" :rules="rules" @submit="onAnomalyTypeSubmit">
-      <!-- 第 1️⃣ 行数据 -->
-      <t-row justify="space-between">
-        <t-col :span="5">
+      <t-row :gutter="[16, 16]">
+        <t-col flex="320px">
           <t-form-item label="规则编码" name="ruleCode">
             <t-input v-model="ruleTabData.ruleCode" :disabled="groupDisabled"></t-input>
           </t-form-item>
         </t-col>
-        <!-- 第 2️⃣ 行数据 -->
-        <t-col :span="5">
+        <t-col flex="320px">
           <t-form-item label="规则名称" name="ruleName">
             <t-input v-model="ruleTabData.ruleName"></t-input>
           </t-form-item>
         </t-col>
-        <t-col :span="2"></t-col>
-      </t-row>
-      <!-- 第 3️⃣ 行数据 -->
-      <t-row justify="space-between" style="margin-top: 30px">
-        <t-col :span="5">
+        <t-col flex="320px">
           <t-form-item label="规则类型" name="barcodeType">
             <t-select v-model="ruleTabData.barcodeType">
               <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
             </t-select>
           </t-form-item>
         </t-col>
-        <!-- 第 4️⃣ 行数据 -->
-        <t-col :span="5">
+        <t-col flex="320px">
           <t-form-item label="规则描述" name="ruleDesc">
             <t-input v-model="ruleTabData.ruleDesc"></t-input>
           </t-form-item>
         </t-col>
-        <t-col :span="2">
+        <t-col flex="150px" style="text-align: center">
           <t-radio v-model="computedState" allow-uncheck> 启用 </t-radio>
         </t-col>
       </t-row>
       <!-- 第 5️⃣ 行数据 -->
-      <t-card title="条码规则" :bordered="true" hover-shadow :style="{ width: '100%' }">
-        <t-row justify="space-around">
-          <t-col :span="5">
-            <t-space>
-              <t-space>
-                <t-input-adornment prepend="搜索:">
-                  <t-input v-model="filterText" style="width: 300px" @change="onInput" />
-                </t-input-adornment>
-              </t-space>
-            </t-space>
-            <!-- <t-tree
-              ref="treeRef"
-              :keys="keyList"
-              :data="ruleTreeDataList.list"
-              hover
-              activable
-              expand-all
-              :height="300"
-              :transition="true"
-              expand-on-click-node
-              :icon="true"
-              :filter="treeDim.demo1Filter"
-              :scroll="{
-                rowHeight: 34,
-                bufferSize: 10,
-                threshold: 10,
-                type: 'virtual',
-              }"
-              @click="treeClick"
-            ></t-tree> -->
-            <t-tree
-              ref="treeRef"
-              v-model:actived="treeActiveKey"
-              :keys="keyList"
-              :data="ruleTreeDataList.list"
-              hover
-              :expand-on-click-node="false"
-              :filter="filterByText"
-              activable
-              :scroll="{
-                rowHeight: 34,
-                bufferSize: 10,
-                threshold: 10,
-                type: 'virtual',
-              }"
-              @click="treeClick"
-            />
-          </t-col>
-          <t-col :span="5">
-            <h3>编码规则</h3>
-            <t-form-item name="ruleExpression" label-width="10px">
-              <t-textarea
-                v-model="ruleTabData.ruleExpression"
-                placeholder="请添加规则"
-                name="description"
-                :autosize="{ minRows: 3, maxRows: 5 }"
+      <cmp-card title="条码规则" style="margin-top: 16px" bordered shadow header-bordered>
+        <cmp-row>
+          <cmp-card :span="5" :ghost="true">
+            <t-space direction="vertical" :size="8">
+              <t-input-adornment prepend="搜索:">
+                <t-input v-model="filterText" style="width: 238px" @change="onInput" />
+              </t-input-adornment>
+              <t-tree
+                ref="treeRef"
+                v-model:actived="treeActiveKey"
+                :keys="keyList"
+                :data="ruleTreeDataList.list"
+                hover
+                height="300px"
+                :expand-on-click-node="false"
+                :filter="filterByText"
+                activable
+                :scroll="{
+                  rowHeight: 34,
+                  bufferSize: 10,
+                  threshold: 10,
+                  type: 'virtual',
+                }"
+                @click="treeClick"
               />
-            </t-form-item>
-            <t-row justify="space-between">
-              <t-col :span="5"><t-button>条码规则预览</t-button></t-col>
-              <t-col :span="7"><t-input placeholder=""></t-input></t-col>
-            </t-row>
-          </t-col>
-        </t-row>
-      </t-card>
-      <t-col :span="11" class="align-right">
-        <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
-        <t-button theme="primary" type="submit">保存</t-button>
-      </t-col>
+            </t-space>
+          </cmp-card>
+          <cmp-card :span="7" :ghost="true">
+            <t-space direction="vertical" :size="8" style="padding-left: 75px">
+              <h4>编码规则</h4>
+              <t-form-item name="ruleExpression" label-width="10px" style="margin-left: -30px">
+                <t-textarea
+                  v-model="ruleTabData.ruleExpression"
+                  placeholder="请添加规则"
+                  name="description"
+                  :autosize="{ minRows: 3, maxRows: 5 }"
+                />
+              </t-form-item>
+              <t-row>
+                <t-col flex="120px"><t-button>条码规则预览</t-button></t-col>
+                <t-col flex="auto"><t-input placeholder=""></t-input></t-col>
+              </t-row> </t-space
+          ></cmp-card>
+        </cmp-row>
+      </cmp-card>
     </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
+      <t-button theme="primary" @click="submitClick">保存</t-button>
+    </template>
   </t-dialog>
   <!-- 关联物料弹出框 -->
-  <t-dialog v-model:visible="materialVisible" header="新增关联摸板" width="50%" :on-confirm="onConfirm">
+  <t-dialog v-model:visible="materialVisible" header="新增关联摸板" :on-confirm="onConfirm">
     <t-form ref="materiaFormRef" :data="formData">
       <t-form-item label="物料类别" name="mitemCategoryId">
         <bcmp-select-business
@@ -459,8 +438,8 @@ onMounted(async () => {
 // #搜索
 const opts = computed(() => {
   return {
-    ruleNameCode: { label: '规则名称/编码', comp: 't-input', event: 'input', defaultval: '' },
-    materialNameCode: { label: '物料名称/编码', comp: 't-input', event: 'input', defaultval: '' },
+    ruleNameCode: { label: '条码规则', comp: 't-input', event: 'input', defaultval: '' },
+    materialNameCode: { label: '物料', comp: 't-input', event: 'input', defaultval: '' },
     barCodeType: { label: '条码类型', event: 'input', defaultval: '', slotName: 'querySelect' },
   };
 });
@@ -533,7 +512,9 @@ const onAddRuleData = () => {
   formVisible.value = true;
   diaLogTitle.value = '条码规则配置新增';
 };
-
+const submitClick = () => {
+  formRef.value.submit();
+};
 // #  新增 条码规则
 const onAddrule = async () => {
   await api.barcodeRuleInMitem.addBarcodeRule(ruleTabData.value);

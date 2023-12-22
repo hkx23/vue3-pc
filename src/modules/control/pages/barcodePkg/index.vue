@@ -4,16 +4,19 @@
     <div class="main-page-content">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="包装标签打印" :destroy-on-hide="false">
+          <t-row style="margin-top: 15px"></t-row>
           <!-- 查询组件  -->
           <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
           <t-col :span="12" flex="auto">
             <cmp-table
               v-model:pagination="pageUI"
-              row-key="id"
+              row-key="moScheduleId"
               :table-column="groupColumns"
               :table-data="moDataList.list"
               :loading="loading"
               :total="moTabTotal"
+              :selected-row-keys="moscheRowKeys"
+              @select-change="onSelectionChange"
               @row-click="onRowClick"
               @refresh="onRefresh"
             >
@@ -94,6 +97,7 @@
           </div>
         </t-tab-panel>
         <t-tab-panel :value="1" label="包装标签管理" :destroy-on-hide="false">
+          <t-row style="margin-top: 15px"></t-row>
           <!-- 查询组件  -->
           <cmp-query :opts="pkgBarcodeManageOp" label-width="100" @submit="managePageSearchClick" />
           <t-col :span="12" flex="auto">
@@ -232,6 +236,7 @@ const isEnable = ref(true); // 控制打印按钮禁用
 // 日志界面 表格数据
 const dayTabData = reactive({ list: [] });
 const selectedRowKeys: Ref<any[]> = ref([]); // 打印数组
+const moscheRowKeys: Ref<any[]> = ref([]); // 工单表数组
 const selectedManageRowKeys: Ref<any[]> = ref([]); // 打印数组
 const isReprintCancellation = ref(false);
 // 补打，作废 DiaLog 数据
@@ -282,6 +287,20 @@ const onConfirm = async () => {
 const onPrintChange = (value: any) => {
   selectedRowKeys.value = value;
   printButtonOp.value = !(selectedRowKeys.value.length > 0);
+};
+// 打印选择 框 行 事件
+const onSelectionChange = (selectedRows) => {
+  moscheRowKeys.value = selectedRows;
+  console.log(selectedRows);
+  queryBelowCondition.value.pageNum = pageUIBracode.value.page;
+  queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
+  const [firstItem] = selectedRows;
+  printMode.value.moScheduleId = firstItem;
+  queryBelowCondition.value.moScheduleId = firstItem;
+  api.barcodePkg.getTagList(queryBelowCondition.value).then((data) => {
+    moBelowList.list = data.list;
+    barcodeTotal.value = data.total;
+  });
 };
 
 const totalDay = ref(0);
@@ -482,6 +501,12 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
 
 // #### 条码规则 表头
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'row-select',
+    type: 'single',
+    align: 'center',
+    width: '30',
+  },
   {
     colKey: 'scheCode',
     title: '工单',
@@ -982,6 +1007,8 @@ const onRowClick = ({ row }) => {
   tabValue.value = 1;
   queryCondition.value.moScheduleId = row.moScheduleId;
   printMode.value.moScheduleId = row.moScheduleId;
+  moscheRowKeys.value = [];
+  moscheRowKeys.value.push(row.moScheduleId);
   queryCondition.value.pageNum = pageUIBracode.value.page;
   queryCondition.value.pageSize = pageUIBracode.value.rows;
   api.barcodePkg.getTagList(queryCondition.value).then((data) => {
