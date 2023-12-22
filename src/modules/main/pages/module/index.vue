@@ -889,6 +889,7 @@ const onSwitchChange = async (row: any, value: any) => {
   const binaryString = parseInt(decimalNumber.toString(2), 10); // 将十进制数转换为二进制字符串
   const isValue = value ? 1 : 0;
   await api.module.modify({
+    parentModuleId: row.parentModuleId,
     moduleLevel: row.moduleLevel,
     clientType: binaryString,
     state: isValue,

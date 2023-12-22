@@ -552,6 +552,7 @@ export type BarcodeDTO = {
   qty?: number;
   barcodeType?: string;
   status?: string;
+  parentBarcode?: string;
 } | null;
 
 /** 通用响应类 */
