@@ -131,12 +131,12 @@ const onMaterialTabData = async (event) => {
 };
 
 const submit = async () => {
-  formData.value.state = formData.value.state ? 1 : 0; //* 处理启用
+  // formData.value.state = formData.value.state ? 1 : 0; //* 处理启用
   try {
-    if (formTitle.formTitle === '新增') {
+    if (props.formTitle === '新增') {
       await api.district.addDistrict(formData.value);
       MessagePlugin.success('新增成功');
-    } else if (formTitle.formTitle === '编辑') {
+    } else if (props.formTitle === '编辑') {
       await api.district.modifyDistrict(formData.value);
       MessagePlugin.success('编辑成功');
     }
