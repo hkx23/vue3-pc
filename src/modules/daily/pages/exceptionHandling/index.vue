@@ -26,20 +26,22 @@
           </t-popconfirm>
         </template>
         <template #op="{ row }">
-          <t-space>
+          <t-space size="small">
             <!-- 编辑 -->
-            <icon name="edit-1" style="cursor: pointer" @click="onEdit(row)"></icon>
+            <t-link theme="primary" @click="onEdit(row)">{{ t('common.button.edit') }}</t-link>
+            <!-- <icon name="edit-1" style="cursor: pointer" @click="onEdit(row)"></icon> -->
             <!-- 删除 -->
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete">
-              <icon name="delete" style="cursor: pointer" @click="onSingleDeletion(row)"></icon>
+              <t-link theme="primary" @click="onSingleDeletion(row)">{{ t('common.button.delete') }}</t-link>
+              <!-- <icon name="delete" style="cursor: pointer" @click="onSingleDeletion(row)"></icon> -->
             </t-popconfirm>
           </t-space>
         </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
-  <t-dialog v-model:visible="formVisible" :header="title" :cancel-btn="null" :confirm-btn="null" width="40%">
-    <t-form ref="formRef" :rules="rules" :data="formItem.list" @submit="onAnomalyTypeSubmit">
+  <t-dialog v-model:visible="formVisible" :header="title" :cancel-btn="null" :confirm-btn="null">
+    <t-form ref="formRef" :rules="rules" label-width="120px" :data="formItem.list" @submit="onAnomalyTypeSubmit">
       <t-form-item :label="t('exceptionHandling.OrganizationName')" name="orgId">
         <t-select v-model="formItem.list.orgId">
           <t-option v-for="item in organizationNameData.list" :key="item.id" :label="item.orgName" :value="item.id" />
@@ -66,7 +68,13 @@
         </t-select>
       </t-form-item>
       <t-form-item :label="t('exceptionHandling.processOrder')" name="levelSeq">
-        <t-input v-model="formItem.list.levelSeq" :value="formItem.list.levelSeq" placeholder="请输入"></t-input>
+        <t-input-number
+          v-model="formItem.list.levelSeq"
+          style="width: 100%"
+          :value="formItem.list.levelSeq"
+          placeholder="请输入"
+          theme="column"
+        ></t-input-number>
       </t-form-item>
       <t-form-item :label="t('exceptionHandling.transferOrders')" name="isAllowTransfer">
         <t-radio-group
@@ -76,17 +84,17 @@
           size="small"
         ></t-radio-group
       ></t-form-item>
-      <div class="control-box">
-        <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
-        <t-button theme="primary" type="submit">保存</t-button>
-      </div>
     </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
+      <t-button theme="primary" t @click="formSubmit">保存</t-button>
+    </template>
   </t-dialog>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { CustomValidateResolveType, FormInstanceFunctions, FormRules, Icon, MessagePlugin } from 'tdesign-vue-next';
+import { CustomValidateResolveType, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
@@ -112,9 +120,10 @@ const title = ref('');
 const opts = computed(() => {
   return {
     keyWord: {
-      label: '处理组或异常类型查询',
+      label: '处理组/异常类型',
       comp: 't-input',
       event: 'input',
+      flex: '400px',
       defaultVal: '',
       labelWidth: '160px',
     },
@@ -122,6 +131,7 @@ const opts = computed(() => {
 });
 // form实例
 const formRef: Ref<FormInstanceFunctions> = ref(null);
+
 // 新增为true，编辑为false
 const submitFalg = ref(false);
 // 多选框删除数据数组
@@ -331,6 +341,9 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
     }
     formVisible.value = false;
   }
+};
+const formSubmit = () => {
+  formRef.value.submit();
 };
 
 // form效验
