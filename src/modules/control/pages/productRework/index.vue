@@ -35,10 +35,10 @@
             <template #label="slotProps">{{ slotProps.value ? '是' : '否' }}</template>
           </t-switch>
         </t-form-item>
-        <t-form-item v-show="preSetting.isByReworkMo" :label="t('productRework.reworkMo')" name="reworkMo">
+        <t-form-item v-show="preSetting.isByReworkMo" :label="t('productRework.reworkMoSheId')" name="reworkMoSheId">
           <bcmp-select-business
-            v-model="preSetting.reworkMo"
-            :placeholder="t('common.placeholder.input', [`${t('productRework.reworkMo')}`])"
+            v-model="preSetting.reworkMoSheId"
+            :placeholder="t('common.placeholder.input', [`${t('productRework.reworkMoSheId')}`])"
             type="moSchedule"
             :show-title="false"
             @selection-change="moScheduleSelectChange"
@@ -92,9 +92,6 @@
                 @enter="serialNumberEnter"
               />
             </t-col>
-            <t-col :span="1" class="custom-row-item-reset">
-              <t-button class="btn_reset" theme="default" @click="resetHandle">{{ t('common.button.reset') }}</t-button>
-            </t-col>
           </t-row>
           <t-row class="custom-row">
             <div class="groupbox" style="height: auto">
@@ -143,12 +140,9 @@
                   <t-collapse-panel destroy-on-collapse :header="productInfo.header">
                     <t-list v-for="(item, index) in keyPartSumList" :key="index">
                       <t-list-item>
-                        {{ item.keyPartCodeStr }}/{{ item.mitemCode }}/{{ item.mitemName }}/{{
-                          t('productRework.requestqty')
-                        }}:{{ item.moRequestQty }},{{ t('productRework.scanqty') }}: {{ item.scanQty }}
+                        {{ item.processName }}/{{ item.mitemCode }}/{{ item.mitemName }}
                         <template #action>
-                          <t-icon v-if="item.isScanFinish" size="24px" name="check" class="success" />
-                          <!-- <t-icon v-else class="error" size="24px" name="close" /> -->
+                          <t-checkbox v-model="item.isDeleteKeyPart"> </t-checkbox>
                         </template>
                       </t-list-item>
                     </t-list>
@@ -167,28 +161,28 @@
                       {{ row.serialNumber }}
                     </div>
                   </template>
-                  <template #status="{ row }">
-                    <div
-                      class="talbe_col_nowrap"
-                      :title="row.status"
-                      :style="{
-                        // eslint-disable-next-line prettier/prettier
-                        backgroundColor: row.statusColor,
-                        textAlign: 'center',
-                        fontWeight: 'bold',
-                        color: 'white',
-                      }"
-                    >
-                      {{ row.status }}
-                    </div>
-                  </template>
-                  <template #errorinfo="{ row }">
-                    <div class="talbe_col_nowrap" :title="row.errorinfo">
-                      {{ row.errorinfo }}
-                    </div>
+                  <template #op="{ row }">
+                    <t-link theme="primary" @click="onRemove(row)"> 移除 </t-link>
                   </template>
                 </t-table>
               </div>
+            </t-col>
+          </t-row>
+          <t-row>
+            <t-col :span="12" class="custom-row-item-reset">
+              <t-popconfirm
+                theme="default"
+                content="t('productRework.isconfirm')"
+                confirm-btn="t('common.button.confirm')"
+                cancel-btn="t('common.button.cancel')"
+                @confirm="onConfirm"
+              >
+                <t-button class="btn_reset" theme="primary" :disabled="!(scanInfoList && scanInfoList.length > 0)">{{
+                  t('productRework.confirm')
+                }}</t-button>
+              </t-popconfirm>
+
+              <t-button class="btn_reset" theme="default" @click="resetHandle">{{ t('common.button.reset') }}</t-button>
             </t-col>
           </t-row>
         </t-space>
@@ -225,18 +219,22 @@ import _, { isEmpty } from 'lodash';
 import { LoadingPlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
-import { api, WipKeyPartCollectVO } from '@/api/control';
+import { api, ProductReworkVO, WipKeyPartCollectVO } from '@/api/control';
+import { useUserStore } from '@/store';
 
 import { messageModel, scanCollectInfoModel } from '../../api/processInspection';
 import { useLang } from './lang';
+
+const userStore = useUserStore();
 // 全局信息
-const scanInfoList = ref<scanCollectInfoModel[]>([]);
+const scanInfoList = ref<ProductReworkVO[]>([]);
 const { t } = useLang();
 // 扫描信息
 const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '产品条码', width: 80, colKey: 'serialNumber' },
   { title: '数量', width: '50', colKey: 'qty' },
   { title: '单位', width: 50, colKey: 'uomName' },
+  { title: '操作', width: 50, colKey: 'op' },
 ];
 // 页签
 const tabModuleList = ref([
@@ -249,7 +247,8 @@ const preSetting = ref({
   isSameProcess: false,
   isSameMo: true,
   isByReworkMo: false,
-  reworkMo: '',
+  reworkMoSheId: '', // 返工排产单id
+  reworkMoId: '', // 返工工单id
   reworkRoutingRevisionId: '', // 返工工单的工艺路线版本id
   reworkRouting: '',
   reworkRoutingName: '',
@@ -264,7 +263,6 @@ const preSetting = ref({
 
 const mainform = ref({
   serialNumber: '', // 条码
-  keypartCode: '', // 关键件
   workshopCode: '',
   workshopName: '',
   workCenterId: '',
@@ -299,18 +297,27 @@ const messageList = ref<messageModel[]>([]);
 
 const Init = async () => {
   mainform.value.serialNumber = '';
-  mainform.value.keypartCode = '';
-  mainform.value.workCenterId = '1730421387954343937'; // 3-1-1
-  mainform.value.workCenterCode = '3-1-1'; // 3-1-1
-  mainform.value.workCenterName = '3号工厂1车间1区域'; // 3-1-1
 
-  mainform.value.workStationId = '1729475654052753410'; // G_TP 高新产业园贴标
-  mainform.value.workStationCode = 'G_TP';
-  mainform.value.workStationName = '高新产业园贴标';
-  mainform.value.processId = '3'; // PC001 贴标
+  // 底座完成后从底座获取
+  mainform.value.workCenterId = userStore.currUserOrgInfo.workCenterId;
+  mainform.value.workStationId = userStore.currUserOrgInfo.workStationId;
+  mainform.value.processId = userStore.currUserOrgInfo.processId;
+
+  mainform.value.workCenterCode = userStore.currUserOrgInfo.workCenterCode;
+  mainform.value.workCenterName = userStore.currUserOrgInfo.workCenterName;
+
+  mainform.value.workStationCode = userStore.currUserOrgInfo.workStationCode;
+  mainform.value.workStationName = userStore.currUserOrgInfo.workStationName;
+
+  if (!mainform.value.workStationId) {
+    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+  }
 };
 
 const serialNumberEnter = async (value) => {
+  if (!mainform.value.workStationId) {
+    NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
+  }
   if (!isEmpty(value)) {
     // 前端校验一次，条码是否扫重复，后端再校验一次
     if (!checkBarcodeRepeat(mainform.value.serialNumber)) {
@@ -322,7 +329,6 @@ const serialNumberEnter = async (value) => {
     await api.productRework
       .scanProductNo({
         serialNumber: mainform.value.serialNumber,
-        keypartCode: mainform.value.keypartCode,
         workcenterId: mainform.value.workCenterId,
         workCenterCode: mainform.value.workCenterCode,
         workCenterName: mainform.value.workCenterName,
@@ -334,7 +340,6 @@ const serialNumberEnter = async (value) => {
       .then((reData) => {
         if (reData.scanSuccess) {
           mainform.value.isCommit = reData.isCommit;
-
           productInfo.value.scheCode = reData.scheCode;
           productInfo.value.moCode = reData.moCode;
           productInfo.value.moMitemCode = reData.mitemCode;
@@ -344,7 +349,7 @@ const serialNumberEnter = async (value) => {
           productInfo.value.scheQty = reData.scheQty.toString();
           productInfo.value.moCompletedQty = reData.completedQty.toString();
           productInfo.value.moScheId = reData.moScheId;
-          writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.uomName, reData.scanMessage); // 扫描成功
+          addBarcodeInfo(reData); // 扫描成功
 
           writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
 
@@ -352,8 +357,7 @@ const serialNumberEnter = async (value) => {
             productInfo.value.header = `${t('productRework.keypartInfo')}:${productInfo.value.moMitemCode}(${
               productInfo.value.moMitemName
             })`;
-            keyPartSumList.value = reData.keyPartSumList;
-            resetKeypartCode();
+            setKeypartList(reData.keyPartSumList);
           } else {
             // 没有关键件时，则清空以下信息
             resetBarcode();
@@ -363,17 +367,9 @@ const serialNumberEnter = async (value) => {
           if (reData.isCommit) {
             // 提交时,清空扫描框即可
             resetBarcode();
-            resetKeypartCode();
           }
         } else {
           writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
-          // if (scanType.value === 'SCANTEXT') {
-          //   resetBarcode();
-          // }
-          if (reData.isCommit) {
-            resetKeypartCode();
-          }
-          // writeScanInfoError(reData.serialNumber, reData.qty, reData.scanMessage); // 扫描失败
         }
         LoadingPlugin(false);
       })
@@ -386,54 +382,37 @@ const serialNumberEnter = async (value) => {
   }
 };
 
-// 重置
-const resetHandle = () => {
-  mainform.value.serialNumber = '';
-  mainform.value.keypartCode = '';
-  keyPartSumList.value = [];
-  scanInfoList.value = [];
-  // 清除所有对象的值
-  Object.keys(productInfo.value).forEach((key) => {
-    delete productInfo.value[key];
+// 关键件信息赋值
+const setKeypartList = (keypartList: WipKeyPartCollectVO[]) => {
+  const partList = [];
+  keypartList.forEach((item) => {
+    const keypartInfo = _.find(
+      keyPartSumList.value,
+      (p: WipKeyPartCollectVO) => p.processId === item.processId && p.mitemId === item.mitemId,
+    );
+    // 如果是重复的关键件则无需添加
+    if (!keypartInfo) {
+      partList.push(keypartInfo);
+    }
   });
+  keyPartSumList.value = [...keyPartSumList.value, ...partList];
 };
 
 const resetBarcode = () => {
   mainform.value.serialNumber = '';
 };
 
-const resetKeypartCode = () => {
-  mainform.value.keypartCode = '';
-};
-
 const resetKeyPartList = () => {
   keyPartSumList.value = [];
 };
 
-const writeScanInfoSuccess = async (lbNo, lbQty, uomName, lbError) => {
-  const barcodeInfo = _.find(scanInfoList.value, (item: scanCollectInfoModel) => item.serialNumber === lbNo);
+const addBarcodeInfo = async (resData: ProductReworkVO) => {
+  const barcodeInfo = _.find(scanInfoList.value, (item: ProductReworkVO) => item.serialNumber === resData.serialNumber);
   if (!barcodeInfo) {
     // 如果不存在则插入
-    scanInfoList.value.unshift({
-      serialNumber: lbNo,
-      qty: lbQty,
-      uomName,
-      status: 'OK',
-      errorinfo: lbError,
-      statusColor: 'green',
-    });
+    scanInfoList.value.unshift(resData);
   }
 };
-
-// const writeScanInfoError = async (lbNo, lbQty, lbError) => {
-//   scanInfoList.value.unshift({
-//     serialNumber: lbNo,
-//     qty: lbQty,
-//     status: 'NG',
-//     errorinfo: lbError,
-//     statusColor: 'red',
-//   });
-// };
 
 // 校验条码是否扫重复
 const checkBarcodeRepeat = (lbNo) => {
@@ -476,25 +455,6 @@ const writeMessageListError = async (content, datatime) => {
   NotifyPlugin.error({ title: '扫描失败', content, duration: 2000 });
 };
 
-const getQueryString = (paramName: string) => {
-  const queryString = window.location.href.split('?')[1];
-  if (queryString) {
-    const paramsArray = queryString.split('&');
-    const paramsNameList = [{ name: '', value: '' }];
-    paramsArray.forEach((item: string) => {
-      const obj = { name: '', value: '' };
-      obj.name = item.split('=')[0].toString();
-      obj.value = item.split('=')[1].toString();
-      paramsNameList.push(obj);
-    });
-    const objInfo = _.find(paramsNameList, (item: any) => {
-      return item.name === paramName;
-    }) as any;
-    return objInfo?.value;
-  }
-  return '';
-};
-
 const onchangeTab = () => {
   if (selectModule.value === 'REWORK') {
     if (!preSetting.value.isLock) {
@@ -512,10 +472,10 @@ const onchangeTab = () => {
 
 const onClickSetting = () => {
   if (preSetting.value.isByReworkMo) {
-    if (!preSetting.value.reworkMo) {
+    if (!preSetting.value.reworkMoSheId) {
       NotifyPlugin.error({
         title: t('productRework.tip'),
-        content: t('common.placeholder.input', [`${t('productRework.reworkMo')}`]),
+        content: t('common.placeholder.input', [`${t('productRework.reworkMoSheId')}`]),
         duration: 2000,
       });
       return '';
@@ -545,6 +505,7 @@ const onClickSetting = () => {
     });
     return '';
   }
+
   preSetting.value.isLock = true;
   selectModule.value = 'REWORK';
   return '';
@@ -552,32 +513,38 @@ const onClickSetting = () => {
 
 // 工序编码Change事件
 const moScheduleSelectChange = (data) => {
-  preSetting.value.reworkProcess = '';
-  preSetting.value.reworkRoutingRevisionId = data.routingRevisionId;
-  preSetting.value.reworkRouting = data.routingCode;
-  preSetting.value.reworkRoutingName = data.routingName;
+  if (!preSetting.value.isLock) {
+    preSetting.value.reworkMoId = data.moId;
+    preSetting.value.reworkProcess = '';
+    preSetting.value.reworkRoutingRevisionId = data.routingRevisionId;
+    preSetting.value.reworkRouting = data.routingCode;
+    preSetting.value.reworkRoutingName = data.routingName;
+  }
+};
+
+// 移除条码
+const onRemove = (row) => {
+  scanInfoList.value.splice(0, row);
+};
+
+// 执行
+const onConfirm = () => {
+  scanInfoList.value = [];
+};
+
+// 重置
+const resetHandle = () => {
+  mainform.value.serialNumber = '';
+  keyPartSumList.value = [];
+  scanInfoList.value = [];
+  // 清除所有对象的值
+  Object.keys(productInfo.value).forEach((key) => {
+    delete productInfo.value[key];
+  });
 };
 
 onMounted(() => {
   Init();
-
-  // 底座完成后从底座获取
-  const serialNumber = getQueryString('serialNumber');
-  const workCenterId = getQueryString('workCenterId');
-  const workStationId = getQueryString('workStationId');
-  const processId = getQueryString('processId');
-  if (serialNumber) {
-    mainform.value.serialNumber = serialNumber;
-  }
-  if (workCenterId) {
-    mainform.value.workCenterId = workCenterId;
-  }
-  if (workStationId) {
-    mainform.value.workStationId = workStationId;
-  }
-  if (processId) {
-    mainform.value.processId = processId;
-  }
 });
 </script>
 
@@ -693,7 +660,7 @@ onMounted(() => {
 }
 
 .custom-row-item-reset {
-  margin-left: 33px;
+  text-align: right;
 }
 
 /deep/ .t-table table {

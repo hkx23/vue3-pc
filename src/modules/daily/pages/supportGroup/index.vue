@@ -15,7 +15,6 @@
         active-row-type="single"
         :table-data="supportGroupInUserList.list"
         :total="supportGroupTotal"
-        :fixed-height="true"
         :selected-row-keys="selectedRowKeys"
         @select-change="onGroupSelectChange"
         @row-click="onRowClick"

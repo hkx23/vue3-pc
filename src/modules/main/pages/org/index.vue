@@ -1,23 +1,7 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card :span="12">
-      <cmp-row justify="space-between">
-        <t-space :size="8">
-          <t-button @click="onClickAdd">
-            <!-- <template #icon><add-icon /></template> -->
-            {{ t('common.button.add') }}</t-button
-          >
-          <t-button theme="default" @click="onClickEdit">
-            <!-- <template #icon><edit-icon /></template> -->
-            {{ t('common.button.edit') }}</t-button
-          >
-          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
-            <t-button theme="default">
-              <!-- <template #icon><remove-icon /></template> -->
-              {{ t('common.button.delete') }}</t-button
-            >
-          </t-popconfirm>
-        </t-space>
+    <cmp-row>
+      <cmp-card :sm="5" :md="4" :lg="3">
         <div class="search-input">
           <t-input v-model="filterText" :placeholder="t('common.placeholder.input')" clearable @change="onInput">
             <template #suffix-icon>
@@ -25,11 +9,7 @@
             </template>
           </t-input>
         </div>
-      </cmp-row>
-    </cmp-card>
-    <cmp-row>
-      <cmp-card :span="3"
-        ><t-tree
+        <t-tree
           ref="treeRef"
           v-model:actived="treeActiveKey"
           :data="treeData"
@@ -40,7 +20,7 @@
           activable
         />
       </cmp-card>
-      <cmp-card :span="9">
+      <cmp-card :sm="7" :md="8" :lg="9">
         <cmp-table
           ref="tableRef"
           row-key="id"
@@ -49,7 +29,25 @@
           :table-column="columns"
           :table-data="data"
           @refresh="fetchData"
-        ></cmp-table>
+        >
+          <template #title>{{ currActiveData.orgName }}</template>
+          <template #operate>
+            <t-button @click="onClickAdd">
+              <!-- <template #icon><add-icon /></template> -->
+              {{ t('common.button.add') }}</t-button
+            >
+            <t-button theme="default" @click="onClickEdit">
+              <!-- <template #icon><edit-icon /></template> -->
+              {{ t('common.button.edit') }}</t-button
+            >
+            <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
+              <t-button theme="default">
+                <!-- <template #icon><remove-icon /></template> -->
+                {{ t('common.button.delete') }}</t-button
+              >
+            </t-popconfirm>
+          </template>
+        </cmp-table>
       </cmp-card>
     </cmp-row>
   </cmp-container>
@@ -139,12 +137,10 @@ watch(treeActiveKey, () => {
     const activeNode = treeRef.value.getTreeData(treeActiveKey.value[0]);
     currActiveData.value = activeNode[0] as OrgTreeVO;
     data.value = activeNode[0].children?.length > 0 ? activeNode[0].children : activeNode;
-  } else {
-    data.value = treeData.value;
   }
 });
 
-const fetchEnterprise = async () => {
+const fetchEnterprise = async (tree) => {
   const enterprises = await api.enterprise.search({});
   if (!enterprises || !enterprises.list || enterprises.total === 0) {
     MessagePlugin.warning(t('org.enterpriseMust'));
@@ -160,10 +156,10 @@ const fetchEnterprise = async () => {
       } as OrgTreeVO;
 
       if (isAdmin) {
-        item.children = treeData.value.filter((t) => t.eid === enterprise.id);
+        item.children = tree.filter((t) => t.eid === enterprise.id);
         list.push(item);
       } else if (enterprise.id === userStore.userInfo.eid) {
-        item.children = treeData.value.filter((t) => t.eid === enterprise.id);
+        item.children = tree.filter((t) => t.eid === enterprise.id);
         list.push(item);
         break;
       }
@@ -175,12 +171,12 @@ const fetchEnterprise = async () => {
 
 const fetchData = async () => {
   setLoading(true);
-  treeData.value = await api.org.tree();
-  data.value = treeData.value;
+  const tree = await api.org.tree();
+  data.value = tree;
   setLoading(false);
   treeActiveKey.value = [];
-  flatten(treeData.value);
-  fetchEnterprise();
+  flatten(tree);
+  await fetchEnterprise(tree);
 };
 
 const flattenOrgObj: { [key: string]: OrgTreeVO } = {};
@@ -307,7 +303,7 @@ const onConfirmForm = () => {
 }
 
 .search-input {
-  width: 250px;
+  margin-bottom: 16px;
 }
 
 .table-tree-container {

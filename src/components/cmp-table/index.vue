@@ -2,12 +2,14 @@
   <div ref="tableBoxRef" class="cmp-table">
     <div class="table-box">
       <div v-if="buttonsVisible" class="table-box_header">
-        <t-space size="small" :align="'center'">
-          <slot name="button"></slot>
-        </t-space>
+        <div class="table-title">
+          <slot name="title"></slot>
+        </div>
         <t-space size="small" :align="'center'">
           <slot name="operate"></slot>
-
+          <t-space size="small" :align="'center'">
+            <slot name="button"></slot>
+          </t-space>
           <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
             <template #icon>
               <t-icon name="file-export" />
@@ -524,4 +526,9 @@ onDeactivated(() => {
 
 <style lang="less" scoped>
 @import './common/index.less';
+
+.table-title {
+  font-weight: 400;
+  font-size: 18px;
+}
 </style>

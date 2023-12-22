@@ -115,14 +115,14 @@
         </t-row>
         <!-- 第 3️⃣ 行数据 -->
         <t-row justify="space-around" style="margin-bottom: 30px">
-          <t-col v-if="barcodeData.barcodeValidateGroup === 'SCANEXT'" :span="12">
+          <t-col v-if="barcodeData?.barcodeValidateGroup === 'SCANTEXT'" :span="12">
             <t-form-item label="条码类型" name="barcodeType">
               <t-select v-model="barcodeData.barcodeType">
                 <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
               </t-select>
             </t-form-item>
           </t-col>
-          <t-col v-if="barcodeData.barcodeValidateGroup === 'KEYPART'" :span="12">
+          <t-col v-if="barcodeData?.barcodeValidateGroup === 'KEYPART'" :span="12">
             <t-form-item label="关联纬度" name="incidentName">
               <t-radio-group v-model="radioValue">
                 <t-radio :value="0">物料类别</t-radio>
@@ -501,20 +501,28 @@ const onKeyEditRow = (row: any) => {
   } else {
     radioValue.value = 0;
   }
+  if (row.mitemId === '0') {
+    barcodeData.value.mitemId = '';
+  } else {
+    barcodeData.value.mitemId = row.mitemId; // 物料编码 ID
+  }
+  if (row.mitemCategoryId === '0') {
+    barcodeData.value.mitemCategoryId = '';
+  } else {
+    barcodeData.value.mitemCategoryId = row.mitemCategoryId; // 物料类别 ID
+  }
   RuleCodeID.value = row.id;
-  Object.keys(barcodeData.value).reduce((acc, key) => {
-    // 添加判断条件，当row中的mitemCategoryId或mitemId为'0'时，跳过赋值
-    if (key === 'mitemCategoryId' || key === 'mitemId') {
-      if (row[key] === '0') {
-        return acc;
-      }
-    }
-    if (Object.prototype.hasOwnProperty.call(row, key)) {
-      acc[key] = row[key];
-    }
-    return acc;
-  }, barcodeData.value);
-  console.log('🚀 ~ file: index.vue:515 ~ onKeyEditRow ~ barcodeData.value:', barcodeData.value);
+  sampleBarcode.value = '';
+  barcodeData.value.ruleCode = row.ruleCode; // 规则编码
+  barcodeData.value.ruleName = row.ruleName; // 规则名称
+  barcodeData.value.pri = row.pri; // 优先级
+  barcodeData.value.barcodeValidateGroup = row.barcodeValidateGroup; // 验证分组
+  barcodeData.value.barcodeType = row.barcodeType; // 条码类型
+  barcodeData.value.barcodeExpression = row.barcodeExpression; // 条码规则
+  barcodeData.value.minLength = row.minLength; // 最小长度
+  barcodeData.value.maxLength = row.maxLength; // 最大长度
+  barcodeData.value.memo = row.memo; // 备注
+  console.log('🚀 ~ file: index.vue:525 ~ onKeyEditRow ~ barcodeData.value:', barcodeData.value);
   formVisible.value = true;
   submitFalg.value = false;
 };

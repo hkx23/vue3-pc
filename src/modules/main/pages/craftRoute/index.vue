@@ -13,7 +13,7 @@
         @refresh="getRouting"
         @row-click="selectRouting"
       >
-        <template #operate>
+        <template #button>
           <t-button @click="addRouting">{{ t('common.button.add') }}</t-button>
         </template>
         <template #state="{ row }">
@@ -44,14 +44,14 @@
         :loading="productLoading"
         :total="productRelationData.total"
       >
-        <template #button>
+        <template #title>
           <t-input
             v-model="productRelationKeyword"
             :placeholder="t('craftRoute.productRelationKeyword')"
             @enter="getProductRelation"
           />
         </template>
-        <template #operate>
+        <template #button>
           <t-button :disabled="!isSelectRouting" @click="productVisible = true">{{ t('common.button.add') }}</t-button>
           <t-button :disabled="!isSelectRouting" theme="default">{{ t('common.button.import') }}</t-button>
           <t-button
