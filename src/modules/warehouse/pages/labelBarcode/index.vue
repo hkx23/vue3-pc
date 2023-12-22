@@ -4,8 +4,10 @@
     <div class="main-page-content">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="来料标签打印" :destroy-on-hide="false">
+          <t-row style="margin-top: 15px"></t-row>
           <!-- 查询组件  -->
           <cmp-query :opts="opts" label-width="100" @submit="conditionEnter"></cmp-query>
+          <t-row style="margin-top: 15px"></t-row>
           <t-checkbox v-model="queryCondition.isFinishDisplay" allow-uncheck>仅显示未打印完成</t-checkbox>
           <t-col :span="12" flex="auto">
             <cmp-table
@@ -16,6 +18,7 @@
               :loading="loading"
               :total="moTabTotal"
               style="margin-top: 10px"
+              :selected-row-keys="delivertRowKeys"
               @select-change="onSelectionChange"
               @row-click="onRowClick"
               @refresh="onRefresh"
@@ -64,13 +67,14 @@
               :table-data="labelBelowList.list"
               :total="barcodeTotal"
               @select-change="onPrintChange"
-              @refresh="onRefresh"
+              @refresh="onRefreshBelow"
             >
             </cmp-table>
           </div>
         </t-tab-panel>
         <t-tab-panel :value="1" label="物料标签管理" :destroy-on-hide="false">
           <!-- 查询组件  -->
+          <t-row style="margin-top: 15px"></t-row>
           <cmp-query :opts="mitemBarcodeManageOp" label-width="100" @submit="managePageSearchClick" />
           <t-col :span="12" flex="auto">
             <cmp-table
@@ -83,7 +87,7 @@
               :table-data="pkgManageDataList.list"
               :total="pkgManageTabTotal"
               @select-change="onProductRightFetchData"
-              @refresh="onRefreshBelow"
+              @refresh="onRefreshManage"
             >
               <template #operate>
                 <t-space>
@@ -101,7 +105,7 @@
                     </t-col>
                     <t-button theme="default" :disabled="isEnable" @click="onReprint"> 补打 </t-button>
                     <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 作废 </t-button>
-                    <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 拆分 </t-button>
+                    <t-button theme="default" :disabled="isEnable" @click="onSplit"> 拆分 </t-button>
                     <t-button theme="default"> 导出 </t-button>
                   </t-row>
                 </t-space>
@@ -122,7 +126,7 @@
         @confirm="onConfirm"
       >
         <t-form ref="formRef" :data="reprintDialog">
-          <t-form-item v-if="reprintVoidSwitch" label-width="80px" label="补打原因" name="reprintData">
+          <t-form-item v-if="reprintVoidSwitch === 1" label-width="80px" label="补打原因" name="reprintData">
             <t-select v-model="reprintDialog.reprintData">
               <t-option
                 v-for="item in reprintDataList.list"
@@ -132,7 +136,16 @@
               />
             </t-select>
           </t-form-item>
-          <t-form-item v-if="!reprintVoidSwitch" label-width="80px" label="作废" name="reprintData">
+          <t-alert v-if="reprintVoidSwitch === 2" theme="warning">
+            <template #message> 若作废则当前条码对应接收单条码将全部作废 </template>
+          </t-alert>
+          <t-form-item
+            v-if="reprintVoidSwitch === 2"
+            label-width="80px"
+            style="margin-top: 15px"
+            label="作废原因"
+            name="reprintData"
+          >
             <t-select v-model="reprintDialog.reprintData">
               <t-option
                 v-for="item in cancellationDataList.list"
@@ -142,8 +155,24 @@
               />
             </t-select>
           </t-form-item>
+          <t-form-item v-if="reprintVoidSwitch === 3" label-width="80px" label="标签号" name="reprintData">
+            <t-input v-model="reprintDialog.labelNo" readonly :disabled="true" />
+          </t-form-item>
+          <t-form-item v-if="reprintVoidSwitch === 3" label-width="80px" label="拆分数量" name="reprintData">
+            <t-input v-model="reprintDialog.splitNum" />
+          </t-form-item>
+          <t-form-item v-if="reprintVoidSwitch === 3" label-width="80px" label="拆分原因" name="reprintData">
+            <t-select v-model="reprintDialog.reprintData">
+              <t-option
+                v-for="item in reprintDataList.list"
+                :key="item.label"
+                :label="item.label"
+                :value="item.value"
+              />
+            </t-select>
+          </t-form-item>
           <t-form-item
-            v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+            v-if="isReprintCancellation === 1 && reprintDialog.reprintData === '其他原因'"
             label="补打原因"
             label-width="80px"
             name="restsData"
@@ -156,7 +185,7 @@
             />
           </t-form-item>
           <t-form-item
-            v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+            v-if="isReprintCancellation === 2 && reprintDialog.reprintData === '其他原因'"
             label="作废原因"
             label-width="80px"
             name="restsData"
@@ -164,6 +193,19 @@
             <t-textarea
               v-model="reprintDialog.restsData"
               placeholder="请输入作废原因"
+              name="description"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+            />
+          </t-form-item>
+          <t-form-item
+            v-if="isReprintCancellation === 3 && reprintDialog.reprintData === '其他原因'"
+            label="拆分原因"
+            label-width="80px"
+            name="restsData"
+          >
+            <t-textarea
+              v-model="reprintDialog.restsData"
+              placeholder="请输入拆分原因"
               name="description"
               :autosize="{ minRows: 3, maxRows: 5 }"
             />
@@ -190,7 +232,6 @@ import dayjs from 'dayjs';
 import { FormInstanceFunctions, Input, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
-import { api } from '@/api/control';
 import { api as apiMain } from '@/api/main';
 import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -221,12 +262,17 @@ const isEnable = ref(true); // 控制打印按钮禁用
 // 日志界面 表格数据
 const dayTabData = reactive({ list: [] });
 const selectedRowKeys: Ref<any[]> = ref([]); // 打印数组
+const delivertRowKeys: Ref<any[]> = ref([]); // 工单表数组
 const selectedManageRowKeys: Ref<any[]> = ref([]); // 打印数组
-const isReprintCancellation = ref(false);
+const isReprintCancellation = ref(0);
 // 补打，作废 DiaLog 数据
 const reprintDialog = ref({
   reprintData: '',
   restsData: '',
+  labelNo: '',
+  labelId: '',
+  splitNum: '',
+  qty: 0,
 });
 // 点击 打印事件
 const onPrint = async () => {
@@ -248,24 +294,40 @@ const onConfirm = async () => {
   } else {
     reason = reprintDialog.value.reprintData;
   }
-  if (isReprintCancellation.value) {
-    await api.barcodePkg.reprintBarcode({
+
+  if (isReprintCancellation.value === 1) {
+    await apiWarehouse.label.reprintBarcode({
       ids: selectedManageRowKeys.value,
       reason,
+      printTempId: printMode.value.printTempId,
     });
     selectedManageRowKeys.value = [];
     MessagePlugin.success('补打成功');
+  } else if (isReprintCancellation.value === 3) {
+    const intValue = parseInt(reprintDialog.value.splitNum, 10);
+    if (!Number.isInteger(intValue) || intValue === 0 || intValue > reprintDialog.value.qty) {
+      MessagePlugin.warning(`拆分数量需为小于${reprintDialog.value.qty}的正整数`);
+      return;
+    }
+    await apiWarehouse.label.splitBarcode({
+      labelId: reprintDialog.value.labelId,
+      splitNum: intValue,
+      printTempId: printMode.value.printTempId,
+      reason,
+    });
+    MessagePlugin.success('拆分成功');
   } else {
-    await api.barcodePkg.cancellationBarcode({
+    await apiWarehouse.label.cancellationBarcode({
       ids: selectedManageRowKeys.value,
       reason,
     });
-    await fetchBracodeManageTable(); // 刷新表格数据
     MessagePlugin.success('作废成功');
   }
+
   await fetchBracodeManageTable(); // 刷新表格数据
   formVisible.value = false;
 };
+
 // 打印选择 框 行 事件
 const onPrintChange = (value: any) => {
   selectedRowKeys.value = value;
@@ -274,7 +336,7 @@ const onPrintChange = (value: any) => {
 
 // 打印选择 框 行 事件
 const onSelectionChange = (selectedRows) => {
-  console.log(selectedRows);
+  delivertRowKeys.value = selectedRows;
   queryBelowCondition.value.pageNum = pageUIBracode.value.page;
   queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
   const [firstItem] = selectedRows;
@@ -360,12 +422,16 @@ const manageQueryCondition = ref({
 const tagValue = ref(0);
 const barcodeStatusNameArr = ref([]);
 const onProductRightFetchData = (value: any, context: any) => {
+  reprintDialog.value.labelNo = context.selectedRowData[0].labelNo;
+  reprintDialog.value.qty = context.selectedRowData[0].qty;
+  reprintDialog.value.labelId = context.selectedRowData[0].id;
   barcodeStatusNameArr.value = context.selectedRowData.map((item: any) => item.barcodeStatusName);
   selectedManageRowKeys.value = value;
+
   isEnable.value = !(selectedManageRowKeys.value.length > 0);
 };
 // 补打 点击事件
-const reprintVoidSwitch = ref(false); // 控制
+const reprintVoidSwitch = ref(1); // 控制
 const onReprint = () => {
   formRef.value.reset({ type: 'empty' });
   const specificStatus = barcodeStatusNameArr.value.some((item) => item === '已生成' || item === '已报废');
@@ -378,9 +444,9 @@ const onReprint = () => {
     MessagePlugin.warning('请选择打印模板！');
     return;
   }
-  isReprintCancellation.value = true;
+  isReprintCancellation.value = 1;
   formVisible.value = true;
-  reprintVoidSwitch.value = true;
+  reprintVoidSwitch.value = 1;
   diaLogTitle.value = '补打';
   buttonSwitch.value = '补打';
 };
@@ -393,24 +459,63 @@ const onCancellation = () => {
     MessagePlugin.warning('存在条码状态不为已生成、已打印状态，不允许作废！');
     return;
   }
-  isReprintCancellation.value = false;
+  isReprintCancellation.value = 2;
   formVisible.value = true;
-  reprintVoidSwitch.value = false;
+  reprintVoidSwitch.value = 2;
   diaLogTitle.value = '作废';
   buttonSwitch.value = '作废';
 };
+// 拆分 点击事件
+const onSplit = () => {
+  const rowStatus = selectedManageRowKeys.value.length > 1;
+  if (rowStatus) {
+    MessagePlugin.warning('请选择一行数据！');
+    return;
+  }
+  if (!printMode.value.printTempId) {
+    // 提示错误信息
+    MessagePlugin.warning('请选择打印模板！');
+    return;
+  }
+  formRef.value.reset({ type: 'empty' });
+  const specificStatus = barcodeStatusNameArr.value.every((item) => item === '已报废');
+  if (specificStatus) {
+    MessagePlugin.warning('存在条码状态为已报废状态，不允许拆分！');
+    return;
+  }
+  isReprintCancellation.value = 3;
+  formVisible.value = true;
+  reprintVoidSwitch.value = 3;
+  diaLogTitle.value = '拆分';
+  buttonSwitch.value = '拆分';
+};
 
-// # 条码规则刷新按钮
+// # 送货刷新按钮
 const onRefresh = async () => {
   await fetchMoTable(); // 获取 条码规则表格 数据
-  await fetchBracodeManageTable(); // 获取 条码管理 数据
 };
-// # 条码规则刷新按钮
+// # 条码标签刷新按钮
 const onRefreshBelow = async () => {
+  queryBelowCondition.value.pageNum = pageUIBracode.value.page;
+  console.log(pageUIBracode.value);
+  queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
   apiWarehouse.label.getLabelList(queryBelowCondition.value).then((data) => {
     labelBelowList.list = data.list;
     barcodeTotal.value = data.total;
   });
+  selectedRowKeys.value = [];
+};
+// # 条码标签刷新按钮
+const onRefreshManage = async () => {
+  manageQueryCondition.value.pageNum = pageUIMannage.value.page;
+  console.log(pageUIBracode.value);
+  manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
+  apiWarehouse.label.getLabelManageList(manageQueryCondition.value).then((data) => {
+    pkgManageDataList.list = data.list;
+    barcodeTotal.value = data.total;
+  });
+  selectedManageRowKeys.value = [];
+  isEnable.value = true;
 };
 const logNodeCode = ref(null);
 // 日志 点击 事件
@@ -764,7 +869,6 @@ const switchTab = (selectedTabIndex: any) => {
     // 将日期转换为字符串，格式可以根据需要进行调整
     const timeCreatedStart = threeDaysAgo.toISOString().split('T')[0];
     const timeCreatedEnd = today.toISOString().split('T')[0];
-
     manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
     manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
     fetchBracodeManageTable();
@@ -792,12 +896,14 @@ const managePageSearchClick = (data: any) => {
   manageQueryCondition.value.billNo = data.billNo;
   manageQueryCondition.value.mitemId = data.mitemId;
   manageQueryCondition.value.supplierId = data.supplierId;
+  selectedManageRowKeys.value = [];
+  isEnable.value = true;
   fetchBracodeManageTable();
 };
 // 右表格数据刷新
 const onRightFetchData = async () => {
-  const res = await api.barcodePkg.getBarcodePkgLog({
-    pkgBarcode: logNodeCode.value,
+  const res = await apiWarehouse.label.getLabelLog({
+    labelNo: logNodeCode.value,
     pageNum: pageUIDay.value.page,
     pageSize: pageUIDay.value.rows,
   });
@@ -938,6 +1044,12 @@ const onReprintSelextData = async () => {
   const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'REPRINT_REASON' });
   reprintDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
+// 获取 拆分原因 下拉数据
+const splitDataList = reactive({ list: [] });
+const onsplitelextData = async () => {
+  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'SPLIT_REASON' });
+  splitDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
+};
 // 获取 作废原因 下拉数据
 const cancellationDataList = reactive({ list: [] });
 const onCancellationSelextData = async () => {
@@ -963,6 +1075,7 @@ onMounted(async () => {
   await onBracodeRulesData(); // 获取 条码模板下拉数据
   await onPrintTemplateData(); // 获取 打印模板下拉数据
   await onReprintSelextData(); // 获取补打原因列表
+  await onsplitelextData(); // 获取拆分原因列表
   await onCancellationSelextData(); // 获取作废原因列表
 });
 
@@ -970,6 +1083,8 @@ const onRowClick = ({ row }) => {
   queryBelowCondition.value.pageNum = pageUIBracode.value.page;
   queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
   queryBelowCondition.value.deliveryId = row.id;
+  delivertRowKeys.value = [];
+  delivertRowKeys.value.push(row.id);
   apiWarehouse.label.getLabelList(queryBelowCondition.value).then((data) => {
     labelBelowList.list = data.list;
     barcodeTotal.value = data.total;
