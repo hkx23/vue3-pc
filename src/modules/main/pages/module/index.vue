@@ -7,15 +7,16 @@
       <cmp-card ref="treeCard" flex="300px">
         <t-tree
           ref="treeRef"
-          :data="treeData"
+          :data="treeData.list"
           hover
-          :expand-mutex="false"
+          :keys="keyList"
+          :height="600"
           :transition="true"
-          :height="treeHeight"
           :icon="true"
-          :scroll="treeScroll"
+          :expand-level="1"
           :activable="true"
           :expand-on-click-node="true"
+          :actived="[treeClickActive]"
           @click="treeClick"
           @active="onActive"
         >
@@ -23,7 +24,7 @@
             <icon v-if="node[`__tdesign_tree-node__`]?.data" :name="node[`__tdesign_tree-node__`]?.data.iconPath" />
           </template>
           <template #operations="{ node }">
-            <div class="tdesign-demo-block-row">
+            <div v-if="treeClickActive === node[`__tdesign_tree-node__`]?.data.id" class="tdesign-demo-block-row">
               <t-button size="small" variant="text" @click="onAddSecondNode(node)">
                 <icon name="add" class="black-icon" />
               </t-button>
@@ -39,6 +40,7 @@
           </template>
         </t-tree>
       </cmp-card>
+      <!-- 右侧盒子 -->
       <cmp-card flex="auto" style="min-width: 1px">
         <cmp-container :full="true">
           <t-breadcrumb :max-item-width="'150'" style="padding-left: 0">
@@ -99,7 +101,6 @@
       </cmp-card>
     </cmp-row>
   </cmp-container>
-
   <t-dialog
     v-model:visible="formVisible"
     :close-on-overlay-click="false"
@@ -109,7 +110,7 @@
     width="50%"
     @close="onSecondaryReset"
   >
-    <!-- #树组件添加功能 dialog -->
+    <!-- #一级菜单 dialog -->
     <t-form v-if="showFirstNode" ref="formRefOne" :rules="oneRules" :data="formData" @submit="onWorkStationSubmit">
       <t-form-item label="模块编码" name="moduleCode">
         <t-input v-model="formData.moduleCode" :disabled="disableFlag"></t-input>
@@ -148,10 +149,13 @@
         </t-col>
       </t-row>
     </t-form>
-    <!-- #树组件编辑功能 dialog -->
+    <!-- #二级菜单 dialog -->
     <t-form v-if="showSecondNode" ref="formRefTwo" :rules="twoRules" :data="formDataOne" @submit="onWorkStationSubmit">
       <t-form-item label="菜单模块" name="menuName">
-        <t-input v-model="formDataOne.menuName" :disabled="!disableFlag"></t-input>
+        <!-- <t-input v-if="isEditModeTwo" v-model="formDataTwo.parentClickTree" :disabled="isEditModeTwo"></t-input> -->
+        <t-select v-model="formDataOne.menuName" :disabled="!disableFlag">
+          <t-option v-for="item in menuSelectList" :key="item.id" :label="item.moduleName" :value="item.id" />
+        </t-select>
       </t-form-item>
       <t-form-item label="子模块编码" name="moduleCode">
         <t-input v-model="formDataOne.moduleCode" :disabled="disableFlag"></t-input>
@@ -195,7 +199,7 @@
         </t-col>
       </t-row>
     </t-form>
-    <!-- #表单数据dialog -->
+    <!-- #三级菜单 dialog -->
     <t-form v-if="showFormData" ref="formRefThree" :rules="rules" :data="formDataTwo" @submit="onWorkStationSubmit">
       <!-- 第 1️⃣ 行数据 -->
       <t-form-item label="菜单模块" name="parentClickTree">
@@ -258,7 +262,9 @@
           :tips="tips"
           :auto-upload="false"
           :before-upload="beforeUpload"
+          placeholder=""
           @fail="handleFail"
+          @remove="onRemove"
         >
           <span>文件上传：</span>
           <t-button theme="primary">上传</t-button>
@@ -326,16 +332,8 @@
 
 <script setup lang="ts">
 import { Icon, manifest } from 'tdesign-icons-vue-next';
-import {
-  Data,
-  FormInstanceFunctions,
-  FormRules,
-  MessagePlugin,
-  PrimaryTableCol,
-  TableRowData,
-  TScroll,
-} from 'tdesign-vue-next';
-import { nextTick, onMounted, Ref, ref, watch } from 'vue';
+import { Data, FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { nextTick, onMounted, reactive, Ref, ref, watch } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/main';
@@ -352,20 +350,8 @@ const { pageUI } = usePage();
 const files = ref([]);
 const uploadRef = ref();
 const tips = '上传文件大小在 5M 以内';
-
-// 树组件节点名称 TS 类型
-interface TreeLabelData {
-  firstLayerLabels: string[];
-  secondLayerLabels: string[];
-  thirdLayerLabels: string[];
-}
-
-// 树状数据 TS 类型
-interface TreeNode {
-  id?: string;
-  label: string;
-  children?: TreeNode[]; // 可选属性，表示子节点数组
-}
+// 树状结构定义
+const keyList = ref({ value: 'id', label: 'name', children: 'children' });
 
 interface TabItem {
   label: string;
@@ -396,24 +382,22 @@ const showSecondNode = ref(false); // 二级
 const showFormData = ref(false); // 三级
 const disableFlag = ref(false); // 编辑按钮禁用 input 功能
 const treeRef = ref(null); // 树组件实例
-const treeScroll = ref({
-  rowHeight: 34,
-  bufferSize: 10,
-  threshold: 10,
-  type: 'virtual',
-} as TScroll);
 const formRefOne: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const formRefTwo: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const formRefThree: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 
 const dialogTitle = ref(''); // 模态框标题
 const formVisible = ref(false); // 控制模态框显示隐藏
-const treeArr = ref<TreeLabelData | null>(null); // 组件挂载获取树组件名称数组
 const treeClickData = ref({ one: '', two: '' }); // 面包屑文本
-const treeData = ref<TreeNode[]>([]); // 树组件数据
+const treeData = reactive({ list: [] }); // 树组件数据
 const tabListData = ref(0); // 多端选中数据
 const dialogListData = ref(1); // 模态框多端选中数据
-const clickNodeId = ref({ id: '', clientType: tabListData.value, pageNum: 1, pageSize: 10 });
+const clickNodeId = ref({
+  id: '',
+  clientType: tabListData.value,
+  pageNum: pageUI.value.page,
+  pageSize: pageUI.value.rows,
+});
 const tabTotal = ref(0); // 表格数据总页数
 const isEditMode = ref(false); // false 表示默认为新增模式
 const isEditModeTwo = ref(false); // false 表示默认为新增模式
@@ -462,14 +446,13 @@ const formDataTwo = ref({
 const onDragSort = async (params: any) => {
   moduleData.value = params.newData;
   const ids = params.newData.map((obj: any) => obj.id);
-  await api.module.sortThisLevelAll({ ids });
+  await api.module.sortThisLevelAll({ ids, pageNum: pageUI.value.page, pageSize: pageUI.value.rows });
 };
 
-// 树节点高亮
-const onActive = (vals, state) => {
-  console.info('on active:', vals, state);
-  // this.activeIds = vals;
-  // this.activeId = vals[0] || '';
+// 树节点高亮 有两个参数
+const treeClickActive = ref('');
+const onActive = (vals: any) => {
+  [treeClickActive.value] = vals;
 };
 
 // 文件上传事件
@@ -481,14 +464,17 @@ const beforeUpload = (file: any) => {
   }
   return true;
 };
+const onRemove = () => {
+  formDataTwo.value.packageName = '';
+};
 // 文件上传错误提示事件
 const handleFail = ({ file }) => {
   MessagePlugin.error(`文件 ${file.name} 上传失败`);
 };
-
 // 编辑回填文件删除 点击事件
 const delFileClick = ref(false);
 const onDelFileClose = async () => {
+  await onDelFile(); // 删除文件
   formDataTwo.value.packageName = '';
   delFileClick.value = true;
 };
@@ -516,29 +502,7 @@ const onUploadFile = async () => {
     packageName: formDataTwo?.value?.packageName,
     behaviorPath: formDataTwo?.value?.behaviorPath,
   });
-  window.open(res);
-  // try {
-  //   // 假设这是文件的URL
-  //   const fileUrl = res;
-  //   // 获取文件数据
-  //   const response = await fetch(fileUrl);
-  //   if (!response.ok) throw new Error('下载失败');
-  //   const data = await response.blob();
-  //   // 创建Blob URL
-  //   const url = window.URL.createObjectURL(data);
-  //   // 创建下载链接
-  //   const link = document.createElement('a');
-  //   link.href = url;
-  //   link.download = '下载的文件名.pdf'; // 这里可以指定下载文件的名称
-  //   document.body.appendChild(link); // 将链接添加到DOM中以使其可以被点击
-  //   // 触发下载
-  //   link.click();
-  //   // 清理
-  //   window.URL.revokeObjectURL(url);
-  //   document.body.removeChild(link);
-  // } catch (error) {
-  //   console.error('下载文件时发生错误:', error);
-  // }
+  window.open(res); // 文件下载
 };
 
 // // 侦听 formDataTwo.iconPath 的变化
@@ -587,7 +551,6 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     title: '序号',
     align: 'center',
     width: '90',
-    fixed: 'left',
   },
   {
     colKey: 'name',
@@ -677,6 +640,8 @@ const rules: FormRules<Data> = {
   parentClickTree: [{ required: true, type: 'error', trigger: 'blur' }],
   oneselfClickTree: [{ required: true, type: 'error', trigger: 'blur' }],
   moduleName: [{ required: true, type: 'error', trigger: 'blur' }],
+  moduleCode: [{ required: true, type: 'error', trigger: 'blur' }],
+  behaviorPath: [{ required: true, type: 'error', trigger: 'blur' }],
 };
 
 // 表格刷新按钮
@@ -708,6 +673,7 @@ const menuSonSelectData = async () => {
 // const sonID = ref(null);
 // const menuSonSelectDataTwo = async () => {
 //   const res = await api.module.getBackfill({ id: sonID.value });
+//   console.log('🚀 ~ file: index.vue:618 ~ menuSonSelectDataTwo ~ res:', res);
 // };
 
 // #顶部多端选择事件
@@ -733,6 +699,7 @@ const handleSelectionChanged = async (originalNum: any) => {
   const num = [...originalNum];
   num.reverse();
   dialogListData.value = parseInt(num.join(''), 10); // 翻转数组，将数组变成整形数据
+  formDataTwo.value.clientTypeData = dialogListData.value;
 };
 
 // 点击 左侧 新增按钮
@@ -797,6 +764,7 @@ const onAddSecondNode = async (node: any) => {
 
 // 点击 左侧 编辑图标
 const onQueryTree = (node: any) => {
+  console.log('🚀 ~ file: index.vue:769 ~ onQueryTree ~ node:', node);
   clickNodeId.value.id = node[`__tdesign_tree-node__`]?.data?.id; // 保存当前节点 id
   // 判断有无父节点
   if (!node[`__tdesign_tree-node__`].parent?.label) {
@@ -813,7 +781,7 @@ const onQueryTree = (node: any) => {
     formVisible.value = true; // 模态框
     disableFlag.value = true; // input禁用按钮
   } else {
-    formDataOne.value.menuName = node[`__tdesign_tree-node__`].parent.label; // 父级菜单模块 回填
+    formDataOne.value.menuName = node[`__tdesign_tree-node__`].data.parentModuleId; // 父级菜单模块 回填
     formDataOne.value.moduleCode = node[`__tdesign_tree-node__`]?.data?.moduleCode; // 模块编码 回填
     formDataOne.value.moduleName = node[`__tdesign_tree-node__`].label; // 模块名称 回填
     formDataOne.value.moduleDesc = node[`__tdesign_tree-node__`]?.data?.moduleDesc; // 模块描述回填
@@ -832,8 +800,11 @@ const onQueryTree = (node: any) => {
 };
 
 // 点击 右侧  编辑按钮
+const editState = ref(null);
 const onEditRow = async (row: any) => {
-  files.value = [];
+  console.log('🚀 ~ file: index.vue:811 ~ onEditRow ~ row:', row);
+  editState.value = row.state; // 状态回填
+  files.value = []; // 文件上传文件 清空
   formDataTwo.value.moduleType = row.moduleType;
   delFileClick.value = false;
   const decimalNumber = row.clientType; // 十进制数
@@ -913,87 +884,51 @@ const onDelConfirm = async () => {
 
 // switch 开关事件
 const onSwitchChange = async (row: any, value: any) => {
+  console.log('🚀 ~ file: index.vue:886 ~ onSwitchChange ~ row:', row);
   const decimalNumber = row.clientType; // 十进制数
   const binaryString = parseInt(decimalNumber.toString(2), 10); // 将十进制数转换为二进制字符串
   const isValue = value ? 1 : 0;
   await api.module.modify({
+    moduleLevel: row.moduleLevel,
     clientType: binaryString,
     state: isValue,
     moduleCode: row.moduleCode,
     moduleName: row.name,
+    behaviorPath: row.behaviorPath,
     id: row.id,
   });
   await onGetTabData();
   MessagePlugin.success('操作成功');
 };
 
-// 筛选树组件名称数组的函数
-function filterLabels(treeData: any[]) {
-  const firstLayerLabels = treeData.map((node: { label: any }) => node.label);
-  const secondLayerLabels = treeData.flatMap((node: { children: any[] }) =>
-    node.children ? node.children.map((child: { label: any }) => child.label) : [],
-  );
-  const thirdLayerLabels = treeData.flatMap((node: { children: any[] }) =>
-    node.children
-      ? node.children.flatMap((child: { children: any[] }) =>
-          child.children ? child.children.map((grandchild: { label: any }) => grandchild.label) : [],
-        )
-      : [],
-  );
-  return { firstLayerLabels, secondLayerLabels, thirdLayerLabels };
-}
-
-// 筛选树节点递归函数
-function simplifyObject(obj: any) {
-  // 创建一个新对象，仅包含 name 和 children 字段
-  const simplified = {
-    moduleDesc: obj.moduleDesc, // 模块描述
-    moduleCode: obj.moduleCode, // 模块编码
-    iconPath: obj.iconPath,
-    id: obj.id,
-    label: obj.name,
-    sortIndex: obj.sortIndex,
-    children: obj.children ? obj.children.map((child: any) => simplifyObject(child)) : [],
-  };
-  // 检查是否存在 children 字段
-  if (obj.children && Array.isArray(obj.children)) {
-    // 递归处理每个子对象
-    simplified.children = obj.children.map((child: any) => simplifyObject(child));
-  }
-  return simplified;
-}
-
 // 在组件挂载后模拟 点击 第一个节点下面的子节点
 onMounted(async () => {
-  await onGetTreeData();
+  await onGetTreeData(); // 获取树组件数据
   await menuSelectData(); // 获取 菜单名称
   // 确保树的第一个节点存在，并且它有子节点
-  if (treeData.value.length > 0 && treeData.value[0].children && treeData.value[0].children.length > 0) {
-    const firstNode = treeData.value[0]; // 第一个节点
-    const firstChildNode = treeData.value[0].children[0]; // 第一个节点的第一个子节点
+  if (treeData.list.length > 0 && treeData.list[0].children && treeData.list[0].children.length > 0) {
+    const firstChildNode = treeData.list[0].children[0]; // 第一个节点的第一个子节点
     const { id } = firstChildNode; // 保存该子节点的 ID
     clickNodeId.value.id = id; // 保存当前节点的 ID
+    treeClickActive.value = id; // 节点高亮 ID
     const rules = await api.module.getList({ id, clientType: 0, pageNum: 1, pageSize: 10 }); // 请求：获取第二节点的数据
+    console.log('🚀 ~ file: index.vue:922 ~ onMounted ~ rules:', rules);
     moduleData.value = rules.list; // 表格数据赋值
-    tabTotal.value = rules.total;
-    treeClick({ node: { '__tdesign_tree-node__': firstChildNode } }); // 模拟点击第一个节点下的第一个子节点
-    treeClickData.value.two = firstNode.label; // 赋值第一个节点名称给面包屑
-    treeClickData.value.one = firstChildNode.label; // 赋值第二个节点名称给面包屑
+    tabTotal.value = rules.total; // 数据条数赋值
+    treeClickData.value.two = rules.list[0].grandpaName; // 赋值第一个节点名称给面包屑
+    treeClickData.value.one = rules.list[0].parentModuleName; // 赋值第二个节点名称给面包屑
   }
 });
 
 // 获取树组件数据
 const onGetTreeData = async () => {
   const res = await api.module.getTree({ clientType: 1 }); // 获取节点数据
-  treeData.value = res.map(simplifyObject); // 转化数据保存
-  const filteredLabels = filterLabels(treeData.value); // 转化数组
-  treeArr.value = filteredLabels;
+  console.log('🚀 ~ file: index.vue:940 ~ onGetTreeData ~ res:', res);
+  treeData.list = res;
 };
 
 // 获取表格数据
 const onGetTabData = async () => {
-  clickNodeId.value.pageNum = pageUI.value.page;
-  clickNodeId.value.pageSize = pageUI.value.rows;
   const res = await api.module.getList(clickNodeId.value); // 获取第二节点的数据
   moduleData.value = res.list; // 表格数据赋值
   tabTotal.value = res.total;
@@ -1084,9 +1019,6 @@ const onAddThreeModule = async () => {
   // 编辑请求
   if (!isEditModeThree.value) {
     await onRedactThree(); // 编辑请求
-    if (delFileClick.value) {
-      await onDelFile(); // 删除文件
-    }
     if (files?.value[0]?.raw) {
       await uploadFileData();
       // const data = new FormData();
@@ -1139,12 +1071,13 @@ const onRedactOne = async () => {
 const onRedactTwo = async () => {
   await api.module.modify({
     id: clickNodeId.value.id,
-    moduleLevel: 'ROOT',
+    moduleLevel: 'BARNCH',
     clientType: 1,
     moduleName: formDataOne.value.moduleName,
     moduleCode: formDataOne.value.moduleCode,
     moduleDesc: formDataOne.value.moduleDesc,
     iconPath: formDataOne.value.iconPath,
+    parentModuleId: formDataOne.value.menuName,
   });
 };
 
@@ -1164,6 +1097,7 @@ const onRedactThree = async () => {
     moduleVersion: formDataTwo.value.moduleVersion, // 模块版本号
     modulePackageIdentify: formDataTwo.value.modulePackageIdentify, // 模块标识
     packageName: formDataTwo.value.packageName, // 文件上传名称
+    state: editState.value, // 状态回填
   });
 };
 
@@ -1179,10 +1113,10 @@ const onWorkStationSubmit = async (context: RootObject) => {
     if (showFormData.value) {
       await onAddThreeModule(); // 新增，编辑 第三节点
     }
+    await onGetTabData(); // 获取表格数据
+    await onGetTreeData(); // 更新树组件数据
+    formVisible.value = false;
   }
-  await onGetTreeData(); // 更新树组件数据
-  await onGetTabData(); // 获取表格数据
-  formVisible.value = false;
 };
 </script>
 
@@ -1190,10 +1124,5 @@ const onWorkStationSubmit = async (context: RootObject) => {
 .align-right {
   display: flex;
   justify-content: flex-end;
-}
-
-.table-area {
-  width: calc(100% - 10px);
-  padding: 0;
 }
 </style>

@@ -2,9 +2,9 @@
   <div ref="tableBoxRef" class="cmp-table">
     <div class="table-box">
       <div v-if="buttonsVisible" class="table-box_header">
-        <t-space size="small" :align="'center'">
+        <div class="table-title">
           <slot name="title"></slot>
-        </t-space>
+        </div>
         <t-space size="small" :align="'center'">
           <slot name="operate"></slot>
           <t-space size="small" :align="'center'">
@@ -526,4 +526,9 @@ onDeactivated(() => {
 
 <style lang="less" scoped>
 @import './common/index.less';
+
+.table-title {
+  font-weight: 400;
+  font-size: 18px;
+}
 </style>
