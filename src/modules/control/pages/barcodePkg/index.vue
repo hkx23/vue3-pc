@@ -36,7 +36,7 @@
               </t-tab-panel>
             </t-tabs>
             <t-row style="margin-top: 15px">
-              <t-col :span="3">
+              <t-col :span="4">
                 <t-space>
                   <span>计划打印数 / 已生成数 / 打印数：</span>
                   <span>{{ dataSummary }}</span>
@@ -89,7 +89,7 @@
                   </t-col>
                   <t-col>包装规格： </t-col>
                   <t-col :span="2">
-                    <t-input v-model="printMode.packQty" style="width: 80%" />
+                    <t-input v-model="printMode.packQtyShow" style="width: 80%" />
                   </t-col>
                 </t-row>
               </template>
@@ -312,16 +312,16 @@ const printMode = ref({
   barcodeRuleId: '',
   printTempId: '',
   createNum: 0,
-  packQty: 0,
+  packQtyShow: '',
   packType: '',
   moScheduleId: '',
-  generalQty: 0,
+  generateQty: 0,
   planQty: 0,
 });
 
 // 生成按钮模型初始化
 const generateBracode = async () => {
-  const residueQty = printMode.value.planQty - printMode.value.generalQty;
+  const residueQty = printMode.value.planQty - printMode.value.generateQty;
   // 校验规格数量是否为正整数
   if (!Number.isInteger(printMode.value.createNum) || printMode.value.createNum > residueQty) {
     // 提示错误信息
@@ -1004,12 +1004,12 @@ const handleTabClick = (selectedTabIndex: any) => {
 
     queryBelowCondition.value.packType = selectedTab.packType;
     printMode.value.packType = selectedTab.packType;
-    printMode.value.generalQty = selectedTab.generalQty;
+    printMode.value.generateQty = selectedTab.generateQty;
     printMode.value.planQty = selectedTab.planQty;
     calculateButtonOffset();
-    printMode.value.createNum = selectedTab.planQty - selectedTab.generalQty;
-    printMode.value.packQty = selectedTab.packQty;
-    dataSummary.value = `${selectedTab.planQty}/${selectedTab.generalQty}/${selectedTab.displayQty}`;
+    printMode.value.createNum = selectedTab.planQty - selectedTab.generateQty;
+    printMode.value.packQtyShow = selectedTab.packQtyShow;
+    dataSummary.value = `${selectedTab.planQty}/${selectedTab.generateQty}/${selectedTab.displayQty}`;
     api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {
       moBelowList.list = data.list;
       barcodeTotal.value = data.total;
