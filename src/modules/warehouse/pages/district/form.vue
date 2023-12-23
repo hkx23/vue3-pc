@@ -77,7 +77,7 @@
 import { FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { computed, ComputedRef, defineProps, ref } from 'vue';
 
-import { api } from '@/api/warehouse';
+import { api, District } from '@/api/warehouse';
 
 //* 获取title
 const props = defineProps({
@@ -86,8 +86,16 @@ const props = defineProps({
     default: '',
   },
 });
+
+interface DistrictForm extends District {
+  operateTpye: string;
+  warehouseName: string;
+  warehouseDesc: string;
+  warehouseCode: string;
+}
+
 const formRef = ref(null);
-const formData = ref({
+const formData = ref<DistrictForm>({
   id: '',
   operateTpye: 'add',
   districtCode: '', // 货区编码
@@ -95,7 +103,7 @@ const formData = ref({
   districtDesc: '',
   warehouseName: '',
   warehouseDesc: '',
-  state: true,
+  state: 1,
   warehouseId: '',
   warehouseCode: '',
 });
@@ -120,7 +128,7 @@ const init = () => {
   formData.value.districtName = '';
   formData.value.districtDesc = '';
   formData.value.warehouseId = '';
-  formData.value.state = true;
+  formData.value.state = 1;
 };
 
 //* 关联仓库名称
@@ -131,12 +139,12 @@ const onMaterialTabData = async (event) => {
 };
 
 const submit = async () => {
-  formData.value.state = formData.value.state ? 1 : 0; //* 处理启用
+  formData.value.state = formData.value.state ? 1 : 0; //* 处理启用(必须)
   try {
-    if (formTitle.formTitle === '新增') {
+    if (props.formTitle === '新增') {
       await api.district.addDistrict(formData.value);
       MessagePlugin.success('新增成功');
-    } else if (formTitle.formTitle === '编辑') {
+    } else if (props.formTitle === '编辑') {
       await api.district.modifyDistrict(formData.value);
       MessagePlugin.success('编辑成功');
     }
