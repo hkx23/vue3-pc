@@ -980,7 +980,9 @@ onMounted(async () => {
   const timeCreatedStart = threeDaysAgo.toISOString().split('T')[0];
   const timeCreatedEnd = today.toISOString().split('T')[0];
   manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
+  manageQueryCondition.value.datetimePlanStart = timeCreatedStart;
   manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
+  manageQueryCondition.value.datetimePlanEnd = timeCreatedEnd;
   queryCondition.value.datetimePlanStart = timeCreatedStart;
   queryCondition.value.datetimePlanEnd = timeCreatedEnd;
   await fetchMoTable(); // 获取 物料编码 表格数据
