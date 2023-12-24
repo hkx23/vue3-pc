@@ -117,6 +117,10 @@ const { pageUI } = usePage(); // 页面数
 // const { loading, setLoading } = useLoading();
 const Emit = defineEmits(['addedShow', 'FormClear', 'ChildDefault', 'delete', 'update:detailedShow']); // addedShow窗口
 const props = defineProps({
+  typeShowChild: {
+    type: Boolean,
+    default: false,
+  },
   detailedShow: {
     type: Boolean,
     default: false,
@@ -272,12 +276,21 @@ const typeData = ref([
   },
 ]);
 // 判断数组里面的设备
+// const typeShowChild = ref(props.typeShowChild);
+watch(
+  () => props.typeShowChild,
+  (newValue) => {
+    console.log('🚀 ~ file: detailed.vue:283 ~ newValue:', newValue);
+    typeShow.value = newValue;
+  },
+);
 const onTypeList = () => {
   typeData.value.forEach((item) => {
     // 判断名称是否相同
     if (props.newArr === item.wcType) {
       // 判断是否为设备
       if (props.newArr !== '设备') {
+        console.log('🚀 ~ file: detailed.vue:281 ~ typeData.value.forEach ~ props.newArr:', props.newArr);
         typeShow.value = true;
       }
       item.show = true;
@@ -295,6 +308,7 @@ const onTypeList = () => {
 };
 // 类型高亮事件
 const onHandleCur = (all) => {
+  console.log('🚀 ~ file: detailed.vue:298 ~ onHandleCur ~ context:', all);
   typeData.value.forEach((item) => {
     if (item.wcType === all) {
       if (item.wcType !== '设备') {
