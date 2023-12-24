@@ -265,6 +265,7 @@ export interface LabelSearch {
   /** 是否仅显示未打印完成 */
   isFinishDisplay?: boolean;
   deliveryId?: string;
+  deliveryDtlId?: string;
   labelId?: string;
   /** 是否仅显示已生成 */
   isCreated?: boolean;
@@ -389,8 +390,7 @@ export interface LabelVO {
   uomName?: string;
   /** 计量单位 */
   uom?: string;
-  /** 条码 */
-  serialNumber?: string;
+  deliveryDtlId?: string;
   /** 条码状态 */
   barcodeStatusName?: string;
   /** 收货人名称 */
@@ -405,6 +405,11 @@ export interface LabelVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
+  /**
+   * 送货时间
+   * @format date-time
+   */
+  dataDelivery?: string;
 }
 
 /** 响应数据 */
@@ -653,15 +658,9 @@ export interface DeliveryCardVO {
    * @format int32
    */
   planQty?: number;
-  /**
-   * 已生成数量
-   * @format int32
-   */
+  /** 已生成数量 */
   generateQty?: number;
-  /**
-   * 已打印数量
-   * @format int32
-   */
+  /** 已打印数量 */
   displayQty?: number;
   /**
    * 本次生成数量
