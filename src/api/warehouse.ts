@@ -402,6 +402,12 @@ export interface LabelVO {
   districtName?: string;
   /** 货位名称 */
   locationName?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  /** 货区编码 */
+  districtCode?: string;
+  /** 货位编码 */
+  locationCode?: string;
   /** 操作类型 */
   operateType?: string;
   /** 原因 */
