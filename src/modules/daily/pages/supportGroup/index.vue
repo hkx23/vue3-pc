@@ -1,9 +1,10 @@
 <template>
-  <cmp-container :full="true" :full-sub-index="[1, 2]">
-    <cmp-card :span="12">
+  <!-- :full-sub-index="[1, 2]" -->
+  <cmp-container :full="false">
+    <cmp-card>
       <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
     </cmp-card>
-    <cmp-card :span="12">
+    <cmp-card>
       <!-- ################# 处理组表格数据 ###################### -->
       <cmp-table
         ref="tableRef"
@@ -11,7 +12,7 @@
         row-key="id"
         :hover="false"
         :stripe="false"
-        :fixed-height="true"
+        :fixed-height="false"
         :table-column="groupColumns"
         active-row-type="single"
         :table-data="supportGroupInUserList.list"
@@ -41,14 +42,15 @@
         </template>
       </cmp-table>
     </cmp-card>
-    <cmp-card :span="12">
+    <cmp-card>
       <!-- ################# 人员表格数据 ###################### -->
 
       <cmp-table
         ref="tableRef"
         v-model:pagination="personPage"
         row-key="id"
-        :fixed-height="true"
+        class="son-table"
+        :fixed-height="false"
         :table-column="personColumns"
         :table-data="supportPersonInUserList.list"
         :total="supportPersonTotal"

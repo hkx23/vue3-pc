@@ -656,6 +656,7 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
   }
 
   :deep(.t-tabs__content) {
+    padding-top: 8px;
     height: calc(100% - 24px);
   }
 

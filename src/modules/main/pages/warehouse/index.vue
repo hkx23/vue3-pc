@@ -32,7 +32,7 @@
           </t-space>
         </template>
         <template #op="slotProps">
-          <t-space>
+          <t-space :size="8">
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">修改</t-link>
             <t-link variant="text" theme="primary" @click="onStateRowClick(slotProps)">{{
               slotProps.row.state == 1 ? '失效' : '生效'

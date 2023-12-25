@@ -37,7 +37,7 @@
       </t-col>
       <t-col :span="6">
         <t-form-item label="最小包装数量" required-mark>
-          <t-input-number v-model="formData.qty" style="width: 156px" />
+          <t-input-number v-model="formData.qty" style="width: 100%" theme="column" />
         </t-form-item>
       </t-col>
       <t-col :span="6">

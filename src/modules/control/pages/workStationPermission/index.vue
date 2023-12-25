@@ -162,10 +162,10 @@ const conditionEnter = (data: any) => {
 const opts = computed(() => {
   return {
     workstationWord: {
-      label: '工站代码/名称',
+      label: '工站',
       comp: 't-input',
       defaultVal: '',
-      placeholder: '请输入工序代码/名称',
+      placeholder: '请输入工站代码/名称',
     },
     userWord: {
       label: '用户',
