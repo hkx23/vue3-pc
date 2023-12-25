@@ -617,7 +617,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'billNo',
     title: '送货单',
     align: 'center',
-    width: '110',
+    width: '200',
   },
   {
     colKey: 'supplierCode',
