@@ -110,7 +110,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 const opts = computed(() => {
   return {
     keyword: {
-      label: '仓库编码/名称/描述',
+      label: '仓库',
       comp: 't-input',
       placeholder: '请输入仓库编码/名称/描述',
       defaultVal: keyword.value,

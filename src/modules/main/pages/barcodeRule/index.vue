@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full="true">
+  <cmp-container>
     <cmp-card :span="12">
       <cmp-query :opts="opts" :bool-enter="true" label-width="110px" @submit="onSelsectInput">
         <template #querySelect>
@@ -127,12 +127,12 @@
         </t-col>
       </t-row>
       <!-- 第 5️⃣ 行数据 -->
-      <cmp-card title="条码规则" style="margin-top: 16px" bordered shadow header-bordered>
+      <cmp-card title="条码规则" style="margin-top: 16px" bordered header-bordered>
         <cmp-row>
           <cmp-card :span="5" :ghost="true">
             <t-space direction="vertical" :size="8">
               <t-input-adornment prepend="搜索:">
-                <t-input v-model="filterText" style="width: 238px" @change="onInput" />
+                <t-input v-model="filterText" style="width: 230px" @change="onInput" />
               </t-input-adornment>
               <t-tree
                 ref="treeRef"
@@ -140,12 +140,13 @@
                 :keys="keyList"
                 :data="ruleTreeDataList.list"
                 hover
-                height="300px"
+                :transition="true"
+                height="250px"
                 :expand-on-click-node="false"
                 :filter="filterByText"
                 activable
                 :scroll="{
-                  rowHeight: 34,
+                  rowHeight: 10,
                   bufferSize: 10,
                   threshold: 10,
                   type: 'virtual',

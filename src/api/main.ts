@@ -830,6 +830,7 @@ export interface RoleUserDTO {
 export interface UserOrgDTO {
   userId?: string;
   orgIds?: string[];
+  defaultOrgId?: string;
 }
 
 /** 角色权限操作实体 */

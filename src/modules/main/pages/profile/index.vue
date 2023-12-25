@@ -1,66 +1,67 @@
 <template>
-  <div class="main-page">
-    <t-card :bordered="false">
-      <header class="module-header-box">
-        <t-row justify="space-between">
-          <t-col :span="3">
-            <!-- 上面的盒子 -->
-            <t-row style="width: 100%">
-              <t-col :span="7">
-                <t-input
-                  v-model="treeKey"
-                  placeholder="输入关键字进行过滤"
-                  clearable
-                  style="max-width: 200px"
-                  @change="demo1Input"
-                />
-              </t-col>
-            </t-row>
-
-            <!-- 下面的盒子，包括树 -->
-            <t-tree
-              ref="treeRef"
-              style="width: 100%"
-              :data="treeData"
-              hover
-              line
-              activable
-              :filter="demo1Filter"
-              :expand-level="2"
-              :height="600"
-              :transition="true"
-              :expand-on-click-node="false"
-              :icon="true"
-              :scroll="{
-                rowHeight: 34,
-                bufferSize: 10,
-                threshold: 10,
-                type: 'virtual',
-              }"
-              @click="treeClick"
-            >
-              <template #icon="{ node }">
-                <icon v-if="node.getChildren() && !node.expanded" name="caret-right" />
-                <icon v-else-if="node.getChildren() && node.expanded && node.loading" name="loading" />
-                <icon v-else-if="node.getChildren() && node.expanded" name="caret-down" />
-                <icon v-else-if="node.data.attribute == 2" name="attach" />
-              </template>
-            </t-tree>
-          </t-col>
-          <!-- 右侧盒子 -->
-          <t-col :span="8" flex="auto">
-            <t-breadcrumb :max-item-width="'150'" style="margin-bottom: 10px">
+  <cmp-container :full="true">
+    <cmp-row>
+      <cmp-card ref="treeCard" flex="300px">
+        <t-space direction="vertical" :size="8">
+          <t-input
+            v-model="treeKey"
+            style="width: 230px"
+            placeholder="输入关键字进行过滤"
+            clearable
+            @change="demo1Input"
+          >
+            <template #suffixIcon>
+              <search-icon :style="{ cursor: 'pointer' }" @click="demo1Input" />
+            </template>
+          </t-input>
+          <t-tree
+            ref="treeRef"
+            style="width: 100%"
+            :data="treeData"
+            hover
+            line
+            activable
+            :filter="demo1Filter"
+            :expand-level="2"
+            :height="treeHeight"
+            :transition="true"
+            :expand-on-click-node="false"
+            :icon="true"
+            :scroll="{
+              rowHeight: 10,
+              bufferSize: 10,
+              threshold: 10,
+              type: 'virtual',
+            }"
+            @click="treeClick"
+          >
+            <template #icon="{ node }">
+              <icon v-if="node.getChildren() && !node.expanded" name="caret-right" />
+              <icon v-else-if="node.getChildren() && node.expanded && node.loading" name="loading" />
+              <icon v-else-if="node.getChildren() && node.expanded" name="caret-down" />
+              <icon v-else-if="node.data.attribute == 2" name="attach" />
+            </template>
+          </t-tree>
+        </t-space>
+      </cmp-card>
+      <cmp-card flex="auto">
+        <cmp-container :full="true" style="padding: 0">
+          <cmp-card :ghost="true">
+            <t-breadcrumb :max-item-width="'150'" style="padding-left: 0">
               <t-breadcrumbItem v-if="treeClickData?.two">{{ treeClickData.two }}</t-breadcrumbItem>
               <t-breadcrumbItem v-if="treeClickData?.one" :max-width="'160'">
                 {{ treeClickData.one }}
               </t-breadcrumbItem>
             </t-breadcrumb>
+          </cmp-card>
+          <cmp-card :ghost="true">
             <cmp-table
               ref="tableRef"
               v-model:pagination="pageUI"
               row-key="id"
               :table-column="columns"
               :table-data="moduleData"
+              :fixed-height="true"
               :total="tabTotal"
               @refresh="fetchData"
             >
@@ -75,53 +76,64 @@
                 </t-space>
               </template>
               <template #op="slotProps">
-                <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
+                <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
+                <!-- <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
                   <icon name="edit-1" class="black-icon" />
-                </t-button>
+                </t-button> -->
+              </template>
+              <template #title>
+                <t-space direction="horizontal">
+                  <t-input
+                    v-model="keyword"
+                    style="width: 250px"
+                    placeholder="输入关键字进行过滤"
+                    :on-enter="onRefresh"
+                  >
+                    <template #suffixIcon>
+                      <search-icon :style="{ cursor: 'pointer' }" @click="onRefresh" />
+                    </template>
+                  </t-input>
+
+                  <!-- <t-button theme="primary" @click="onRefresh">查询</t-button> -->
+                </t-space>
               </template>
               <template #button>
                 <t-space direction="vertical">
                   <t-button theme="primary" :disabled="isButtonDisabled" @click="onAdd()">新增</t-button>
                 </t-space>
-                <t-space direction="vertical">
-                  <t-button theme="primary" @click="onRefresh">查询</t-button>
-                </t-space>
-                <div style="text-align: right">
-                  <t-input v-model="keyword" placeholder="输入关键字进行过滤" clearable :on-enter="onRefresh" />
-                </div>
               </template>
             </cmp-table>
-          </t-col>
-        </t-row>
-      </header>
-    </t-card>
-  </div>
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="formTitle"
-      :on-confirm="onConfirmForm"
-      width="50%"
-      :close-on-overlay-click="false"
-    >
-      <t-space direction="vertical" style="width: 98%">
-        <profile-form ref="formRef"></profile-form>
-      </t-space>
-    </t-dialog>
-  </div>
+          </cmp-card>
+        </cmp-container>
+      </cmp-card>
+    </cmp-row>
+  </cmp-container>
+
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="formTitle"
+    :on-confirm="onConfirmForm"
+    width="750px"
+    :close-on-overlay-click="false"
+  >
+    <profile-form ref="formRef"></profile-form>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
-import { Icon } from 'tdesign-icons-vue-next';
+import { Icon, SearchIcon } from 'tdesign-icons-vue-next';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
+import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 import ProfileForm from './form.vue';
+import { useLang } from './lang';
 
+const { t } = useLang();
 // 获取全部图标的列表
 const iconValue = ref('add');
 const { pageUI } = usePage();
@@ -295,6 +307,7 @@ const onEditRowClick = (value: any) => {
   formRef.value.formData.valueType = value.row.valueType;
   formRef.value.formData.isState = value.row.state === 1;
   formRef.value.formData.operateTpye = 'edit';
+  formRef.value.setCategoryLabel();
   formVisible.value = true;
   onGetTabData();
 };
@@ -441,6 +454,14 @@ const demo1Input = (state: any) => {
     demo1Filter.value = null;
   }
 };
+const treeCard = ref(null);
+const treeHeight = ref('400px');
+useResizeObserver(treeCard, (entries) => {
+  const entry = entries[0];
+  const { height } = entry.contentRect;
+  treeHeight.value = `${height - 120}px`;
+  console.error('treeHeight', treeHeight.value);
+});
 </script>
 
 <style lang="less" scoped>
