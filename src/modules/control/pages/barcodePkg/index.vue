@@ -47,6 +47,44 @@
                 <t-button theme="default" :disabled="printButtonOp" @click="onPrint">打印</t-button>
               </t-col>
             </t-row>
+            <t-row style="margin-top: 10px; align-items: center">
+              <t-col>条码规则： </t-col>
+              <t-col :span="3">
+                <t-select v-model="printMode.barcodeRuleId" style="width: 90%">
+                  <t-option
+                    v-for="item in onPrintRulesList.list"
+                    :key="item.id"
+                    :label="item.ruleName"
+                    :value="item.id"
+                  />
+                </t-select>
+              </t-col>
+              <t-col>打印摸板： </t-col>
+              <t-col :span="3">
+                <t-select v-model="printMode.printTempId" style="width: 90%">
+                  <t-option
+                    v-for="item in onPrintTemplateList.list"
+                    :key="item.id"
+                    :label="item.tmplName"
+                    :value="item.id"
+                  />
+                </t-select>
+              </t-col>
+            </t-row>
+            <t-row style="margin-top: 10px; align-items: center">
+              <t-col>本次生成数（张数）： </t-col>
+              <t-col :span="2">
+                <t-input v-model="printMode.createNum" style="width: 80%" />
+              </t-col>
+              <t-col>本次生成数（产品数）： </t-col>
+              <t-col :span="2">
+                <t-input v-model="printMode.createPDNum" style="width: 80%" />
+              </t-col>
+              <t-col>包装规格： </t-col>
+              <t-col :span="2">
+                <t-input v-model="printMode.packQtyShow" style="width: 80%" :disabled="true" />
+              </t-col>
+            </t-row>
             <cmp-table
               v-model:pagination="pageUIBracode"
               row-key="barcodePkgId"
@@ -59,40 +97,6 @@
               @select-change="onPrintChange"
               @refresh="onRefreshBelow"
             >
-              <template #button>
-                <t-row align="middle" style="margin-top: 10px">
-                  <t-col>条码规则： </t-col>
-                  <t-col :span="2">
-                    <t-select v-model="printMode.barcodeRuleId" style="width: 90%">
-                      <t-option
-                        v-for="item in onPrintRulesList.list"
-                        :key="item.id"
-                        :label="item.packRuleName"
-                        :value="item.id"
-                      />
-                    </t-select>
-                  </t-col>
-                  <t-col>打印摸板： </t-col>
-                  <t-col :span="2">
-                    <t-select v-model="printMode.printTempId" style="width: 90%">
-                      <t-option
-                        v-for="item in onPrintTemplateList.list"
-                        :key="item.id"
-                        :label="item.tmplName"
-                        :value="item.id"
-                      />
-                    </t-select>
-                  </t-col>
-                  <t-col>本次生成数： </t-col>
-                  <t-col :span="2">
-                    <t-input v-model="printMode.createNum" style="width: 80%" />
-                  </t-col>
-                  <t-col>包装规格： </t-col>
-                  <t-col :span="2">
-                    <t-input v-model="printMode.packQtyShow" style="width: 80%" />
-                  </t-col>
-                </t-row>
-              </template>
             </cmp-table>
           </div>
         </t-tab-panel>
@@ -312,6 +316,7 @@ const printMode = ref({
   barcodeRuleId: '',
   printTempId: '',
   createNum: 0,
+  createPDNum: 0,
   packQtyShow: '',
   packType: '',
   moScheduleId: '',
@@ -354,8 +359,8 @@ const queryCondition = ref({
   moId: '',
   mitemId: '',
   scheStatus: '',
-  datetimePlanStart: '',
-  datetimePlanEnd: '',
+  planDateStart: '',
+  planDateEnd: '',
   workshopId: '',
   workCenterId: '',
   pageNum: 1,
@@ -376,9 +381,9 @@ const manageQueryCondition = ref({
   mitemId: '',
   barcodeStatus: '',
   barcodeType: '',
-  datetimePlanStart: '',
+  planDateStart: '',
   timeCreatedStart: '',
-  datetimePlanEnd: '',
+  planDateEnd: '',
   timeCreatedEnd: '',
   workshopId: '',
   workCenterId: '',
@@ -461,7 +466,7 @@ const onPrintRulesData = async () => {
   const res = await api.barcodePkg.getBarcodeRuleList(printRuCondition.value);
   onPrintRulesList.list = res.list;
 };
-// 获取 打印摸板 下拉数据
+// 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async () => {
   const res = await api.barcodePkg.getPrintTmplList(printRuCondition.value);
@@ -725,18 +730,18 @@ const switchTab = (selectedTabIndex: any) => {
 const conditionEnter = (data: any) => {
   queryCondition.value = data;
   queryCondition.value.scheStatus = data.scheStatus;
-  const [datetimePlanStart, datetimePlanEnd] = data.datetimePlanRange;
-  queryCondition.value.datetimePlanStart = datetimePlanStart;
-  queryCondition.value.datetimePlanEnd = datetimePlanEnd;
+  const [planDateStart, planDateEnd] = data.datetimePlanRange;
+  queryCondition.value.planDateStart = planDateStart;
+  queryCondition.value.planDateEnd = planDateEnd;
   fetchMoTable();
 };
 // 管理界面点击查询按钮
 const managePageSearchClick = (data: any) => {
   manageQueryCondition.value = data;
-  const [datetimePlanStart, datetimePlanEnd] = data.datetimePlanRange;
+  const [planDateStart, planDateEnd] = data.datetimePlanRange;
   const [timeCreatedStart, timeCreatedEnd] = data.timeCreatedRange;
-  manageQueryCondition.value.datetimePlanStart = datetimePlanStart;
-  manageQueryCondition.value.datetimePlanEnd = datetimePlanEnd;
+  manageQueryCondition.value.planDateStart = planDateStart;
+  manageQueryCondition.value.planDateEnd = planDateEnd;
   manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
   manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
   fetchBracodeManageTable();
@@ -788,7 +793,7 @@ const fetchBracodeManageTable = async () => {
 // moCode: '',
 //   mitemCode: '',
 //   moStatus: '',
-//   datetimePlanStart: '',
+//   planDateStart: '',
 //   workshopCode: '',
 //   workCenterCode: '',
 //   onlyDisplayCreated: true,
@@ -980,11 +985,11 @@ onMounted(async () => {
   const timeCreatedStart = threeDaysAgo.toISOString().split('T')[0];
   const timeCreatedEnd = today.toISOString().split('T')[0];
   manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
-  manageQueryCondition.value.datetimePlanStart = timeCreatedStart;
+  manageQueryCondition.value.planDateStart = timeCreatedStart;
   manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
-  manageQueryCondition.value.datetimePlanEnd = timeCreatedEnd;
-  queryCondition.value.datetimePlanStart = timeCreatedStart;
-  queryCondition.value.datetimePlanEnd = timeCreatedEnd;
+  manageQueryCondition.value.planDateEnd = timeCreatedEnd;
+  queryCondition.value.planDateStart = timeCreatedStart;
+  queryCondition.value.planDateEnd = timeCreatedEnd;
   await fetchMoTable(); // 获取 物料编码 表格数据
   await onPrintTemplateData(); // 获取 打印模板下拉数据
   await onReprintSelextData(); // 获取补打原因列表
@@ -1007,7 +1012,7 @@ const handleTabClick = (selectedTabIndex: any) => {
     printMode.value.generateQty = selectedTab.generateQty;
     printMode.value.planQty = selectedTab.planQty;
     calculateButtonOffset();
-    printMode.value.createNum = selectedTab.planQty - selectedTab.generateQty;
+    printMode.value.createPDNum = selectedTab.planQty - selectedTab.generateQty;
     printMode.value.packQtyShow = selectedTab.packQtyShow;
     dataSummary.value = `${selectedTab.planQty}/${selectedTab.generateQty}/${selectedTab.displayQty}`;
     api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {

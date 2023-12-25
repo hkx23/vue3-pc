@@ -40,7 +40,7 @@
                       />
                     </t-select>
                   </t-col>
-                  <t-col>打印摸板： </t-col>
+                  <t-col>打印模板： </t-col>
                   <t-col :span="3">
                     <t-select v-model="printMode.printTempId" style="width: 90%">
                       <t-option
@@ -92,7 +92,7 @@
               <template #operate>
                 <t-space>
                   <t-row align="middle" style="margin-top: 10px">
-                    <t-col>打印摸板： </t-col>
+                    <t-col>打印模板： </t-col>
                     <t-col>
                       <t-select v-model="printMode.printTempId" style="width: 90%">
                         <t-option
@@ -534,7 +534,7 @@ const onBracodeRulesData = async () => {
   const res = await apiWarehouse.label.getLabelBarcodeRuleList();
   onBracodeRulesList.list = res;
 };
-// 获取 打印摸板 下拉数据
+// 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async () => {
   const res = await apiWarehouse.label.getLabelPrintTmplList();
@@ -617,7 +617,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'billNo',
     title: '送货单',
     align: 'center',
-    width: '110',
+    width: '200',
   },
   {
     colKey: 'supplierCode',

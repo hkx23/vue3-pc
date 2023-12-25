@@ -1,16 +1,17 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card :span="12">
-      <t-space :size="8">
-        <t-button @click="onClickAdd">
-          {{ t('common.button.add') }}
-        </t-button>
-        <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
-          <t-button theme="default"> {{ t('common.button.delete') }}</t-button>
-        </t-popconfirm>
+    <cmp-card>
+      <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
+        <t-space size="small" :align="'end'">
+          <t-button @click="onClickAdd">
+            {{ t('common.button.add') }}
+          </t-button>
+          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onClickDelete">
+            <t-button theme="default"> {{ t('common.button.delete') }}</t-button>
+          </t-popconfirm>
+        </t-space>
       </t-space>
-    </cmp-card>
-    <cmp-card :span="12">
+
       <t-enhanced-table
         ref="tableRef"
         row-key="id"

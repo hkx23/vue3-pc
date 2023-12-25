@@ -1,81 +1,103 @@
 <!-- 条码验证规则 -->
 <template>
   <cmp-container :full="true">
-    <cmp-card>
-      <cmp-query :opts="opts" @submit="onInput">
-        <template #cellType>
-          <t-select v-model="barcodeData.barcodeType" label="条码类型">
-            <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </template>
-        <template #cellMaterial>
-          <bcmp-select-business
-            v-model="barcodeData.mitemCategoryId"
-            :disabled="radioValue"
-            :is-multiple="false"
-            type="mitemCategory"
-            label="物料分类"
-          ></bcmp-select-business>
-        </template>
-      </cmp-query>
-    </cmp-card>
     <cmp-card class="full-tab">
       <t-tabs v-model="tabValue" @change="tabChange">
         <!-- $$$$$$$$$$$    文本验证分组  $$$$$$$$$$$$$$-->
         <t-tab-panel :value="0" label="文本验证分组" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :full="true">
-              <cmp-table
-                ref="tableRefForm"
-                v-model:pagination="pageUI"
-                row-key="id"
-                :fixed-height="true"
-                :table-column="columnsText"
-                :table-data="textTabData.list"
-                :total="totalText"
-                @refresh="onLeftFetchData"
-              >
-                <template #actionSlot="{ row }">
-                  <t-link theme="primary" style="margin-right: 10px" @click="onTextEditRow(row)"> 编辑 </t-link>
-                  <t-popconfirm theme="default" content="确认删除吗" @confirm="onTextDelConfirm(row)">
-                    <t-link theme="primary"> 删除 </t-link>
-                  </t-popconfirm>
-                </template>
-                <template #button>
-                  <t-space>
-                    <t-button theme="primary" @click="onAddRuleData"> 新增 </t-button>
-                  </t-space>
-                </template>
-              </cmp-table>
+            <cmp-container :full="true" :gutter="[0, 0]">
+              <cmp-card :ghost="true" class="padding-bottom-line-16">
+                <cmp-query :opts="opts" @submit="onInput">
+                  <template #cellType>
+                    <t-select v-model="barcodeData.barcodeType" label="条码类型">
+                      <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
+                    </t-select>
+                  </template>
+                  <template #cellMaterial>
+                    <bcmp-select-business
+                      v-model="barcodeData.mitemCategoryId"
+                      :disabled="radioValue"
+                      :is-multiple="false"
+                      type="mitemCategory"
+                      label="物料分类"
+                    ></bcmp-select-business>
+                  </template>
+                </cmp-query>
+              </cmp-card>
+              <cmp-card :ghost="true" class="padding-top-noline-16">
+                <cmp-table
+                  ref="tableRefForm"
+                  v-model:pagination="pageUI"
+                  row-key="id"
+                  :fixed-height="true"
+                  :table-column="columnsText"
+                  :table-data="textTabData.list"
+                  :total="totalText"
+                  @refresh="onLeftFetchData"
+                >
+                  <template #actionSlot="{ row }">
+                    <t-link theme="primary" style="margin-right: 10px" @click="onTextEditRow(row)"> 编辑 </t-link>
+                    <t-popconfirm theme="default" content="确认删除吗" @confirm="onTextDelConfirm(row)">
+                      <t-link theme="primary"> 删除 </t-link>
+                    </t-popconfirm>
+                  </template>
+                  <template #button>
+                    <t-space>
+                      <t-button theme="primary" @click="onAddRuleData"> 新增 </t-button>
+                    </t-space>
+                  </template>
+                </cmp-table>
+              </cmp-card>
             </cmp-container>
           </template>
         </t-tab-panel>
         <!-- ###############    关键件验证分组   ######## -->
         <t-tab-panel :value="1" label="关键件验证分组" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :full="true">
-              <cmp-table
-                ref="tableRef"
-                v-model:pagination="pageUITwo"
-                row-key="id"
-                :fixed-height="true"
-                :table-column="columnsKey"
-                :table-data="keyTabData.list"
-                :total="totalKey"
-                @refresh="onRightFetchData"
-              >
-                <template #actionSlot="{ row }">
-                  <t-link theme="primary" style="margin-right: 10px" @click="onKeyEditRow(row)"> 编辑 </t-link>
-                  <t-popconfirm theme="default" content="确认删除吗" @confirm="onKeyDelConfirm(row)">
-                    <t-link theme="primary"> 删除 </t-link>
-                  </t-popconfirm>
-                </template>
-                <template #button>
-                  <t-space>
-                    <t-button theme="primary" @click="onAddRuleData"> 新增 </t-button>
-                  </t-space>
-                </template>
-              </cmp-table>
+            <cmp-container :full="true" :gutter="[0, 0]">
+              <cmp-card :ghost="true" class="padding-bottom-line-16">
+                <cmp-query :opts="opts" @submit="onInput">
+                  <template #cellType>
+                    <t-select v-model="barcodeData.barcodeType" label="条码类型">
+                      <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
+                    </t-select>
+                  </template>
+                  <template #cellMaterial>
+                    <bcmp-select-business
+                      v-model="barcodeData.mitemCategoryId"
+                      :disabled="radioValue"
+                      :is-multiple="false"
+                      type="mitemCategory"
+                      label="物料分类"
+                    ></bcmp-select-business>
+                  </template>
+                </cmp-query>
+              </cmp-card>
+              <cmp-card :ghost="true" class="padding-top-noline-16">
+                <cmp-table
+                  ref="tableRef"
+                  v-model:pagination="pageUITwo"
+                  row-key="id"
+                  :fixed-height="true"
+                  :table-column="columnsKey"
+                  :table-data="keyTabData.list"
+                  :total="totalKey"
+                  @refresh="onRightFetchData"
+                >
+                  <template #actionSlot="{ row }">
+                    <t-link theme="primary" style="margin-right: 10px" @click="onKeyEditRow(row)"> 编辑 </t-link>
+                    <t-popconfirm theme="default" content="确认删除吗" @confirm="onKeyDelConfirm(row)">
+                      <t-link theme="primary"> 删除 </t-link>
+                    </t-popconfirm>
+                  </template>
+                  <template #button>
+                    <t-space>
+                      <t-button theme="primary" @click="onAddRuleData"> 新增 </t-button>
+                    </t-space>
+                  </template>
+                </cmp-table>
+              </cmp-card>
             </cmp-container>
           </template>
         </t-tab-panel>
@@ -648,19 +670,5 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
 .align-right {
   display: flex;
   justify-content: flex-end;
-}
-
-.full-tab {
-  :deep(.t-tabs) {
-    height: 100%;
-  }
-
-  :deep(.t-tabs__content) {
-    height: calc(100% - 24px);
-  }
-
-  :deep(.t-tab-panel) {
-    height: 100%;
-  }
 }
 </style>

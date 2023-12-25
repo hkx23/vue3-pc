@@ -64,6 +64,7 @@
             allow-input
             enable-time-picker
             clearable
+            style="width: 100%"
             format="YYYY-MM-DD HH:mm:ss"
           />
         </t-form-item>
