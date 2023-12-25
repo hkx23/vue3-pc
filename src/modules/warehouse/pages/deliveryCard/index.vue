@@ -40,6 +40,16 @@
                     @select-change="onGenerateChange"
                     @refresh="onTopRefresh"
                   >
+                    <template #specificationQuantity="{ row }">
+                      <t-input-number v-model="row.specificationQuantity" :auto-width="true" theme="column" :min="0" />
+                    </template>
+                    <template #thisAmountSheets="{ row }">
+                      {{
+                        isNaN(+row.specificationQuantity) || +row.specificationQuantity === 0
+                          ? 0
+                          : Math.ceil(+row.thisTimeQty / +row.specificationQuantity)
+                      }}
+                    </template>
                     <template #button>
                       <t-row align="middle">
                         <t-col>条码规则： </t-col>
@@ -61,9 +71,6 @@
                           生成
                         </t-button>
                       </t-space>
-                    </template>
-                    <template #thisAmountSheets>
-                      {{ 0 }}
                     </template>
                   </cmp-table>
                 </t-col>
@@ -93,7 +100,7 @@
                       <template #operate>
                         <t-button theme="default" @click="onPrint"> 打印 </t-button>
                         <t-row align="middle">
-                          <t-col :push="1">打印摸板： </t-col>
+                          <t-col :push="1">打印模板： </t-col>
                           <t-col :push="1">
                             <t-select v-modele="printTemplateName.printTemplate" @change="printTemplateNameSelect">
                               <t-option
@@ -135,7 +142,7 @@
                 </t-popconfirm>
               </template>
               <template #operate>
-                <t-col :push="1">打印摸板： </t-col>
+                <t-col :push="1">打印模板： </t-col>
                 <t-col :push="1" style="margin-right: 20px">
                   <t-select v-modele="printTemplateName.printTemplate" @change="printTemplateNameSelect">
                     <t-option
@@ -267,7 +274,14 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { FormInstanceFunctions, Input, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import {
+  CustomValidateResolveType,
+  FormInstanceFunctions,
+  Input,
+  MessagePlugin,
+  PrimaryTableCol,
+  TableRowData,
+} from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
@@ -298,13 +312,10 @@ const reprintDialog = ref({
   resolutionNum: '', // 拆分数量
   resolutionCause: '', // 拆分原因
 });
-// 打印摸板 数据
+// 打印模板 数据
 const printTemplateName = ref({
   printTemplate: '',
 });
-
-const theGeneration = ref(''); // 本次生成数量
-const specificationQuantity = ref(null); // 规格数量
 
 // !产品标签打印 上 表格数据
 const printTopTabData = reactive({ list: [] });
@@ -382,33 +393,24 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     colKey: 'thisTimeQty',
     title: '本次生成数量',
     align: 'center',
-    width: '130',
+    width: '100',
     edit: {
       component: Input,
       props: {
         clearable: true,
         autofocus: true,
-        autoWidth: true,
+        autoWidth: false,
       },
-      rules: [{ required: true, message: '不能为空' }],
+      rules: [
+        { required: true, message: '不能为空' },
+        { validator: validateNumber, trigger: 'blur' },
+      ],
       keepEditMode: true,
       showEditIcon: true,
       validateTrigger: 'change',
-      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
-      // on: (editContext) => ({
-      //   onBlur: () => {
-      //     console.log('🚀 ~ file: index.vue:291 ~ editContext:', editContext);
-      //   },
-      // onEnter: (ctx) => {
-      //   ctx?.e?.preventDefault();
-      //   console.log('🚀 ~ file: index.vue:295 ~ ctx:', ctx);
-      // },
-      // }),
       abortEditOnEvent: ['onEnter'],
       // 编辑完成，退出编辑态后触发
       onEdited: (context) => {
-        console.log('🚀 ~ file: index.vue:416 ~ context:', context);
-        theGeneration.value = context.newRowData.thisTimeQty;
         const num = context.newRowData.planQty - context.newRowData.generateQty;
         if (context.newRowData.thisTimeQty > num) {
           MessagePlugin.warning(`本次生成数量需要为小于等于${num}的正整数`);
@@ -423,41 +425,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     colKey: 'specificationQuantity',
     title: '规格数量',
     align: 'center',
-    width: '130',
-    edit: {
-      component: Input,
-      props: {
-        clearable: true,
-        autofocus: true,
-        autoWidth: true,
-      },
-      keepEditMode: true,
-      showEditIcon: true,
-      validateTrigger: 'change',
-      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
-      // on: (editContext) => ({
-      //   onBlur: () => {
-      //     console.log('🚀 ~ file: index.vue:291 ~ editContext:', editContext);
-      //   },
-      // onEnter: (ctx) => {
-      //   ctx?.e?.preventDefault();
-      //   console.log('🚀 ~ file: index.vue:295 ~ ctx:', ctx);
-      // },
-      // }),
-      abortEditOnEvent: ['onEnter'],
-      // 编辑完成，退出编辑态后触发
-      onEdited: (context) => {
-        specificationQuantity.value = Math.ceil(+theGeneration.value / +context.newRowData.thisTimeQty);
-
-        // const num = context.newRowData.planQty - context.newRowData.generateQty;
-        // if (context.newRowData.thisTimeQty > num) {
-        //   MessagePlugin.warning(`本次生成数量需要为小于等于${num}的正整数`);
-        //   return;
-        // }
-        // printTopTabData.list[context?.rowIndex] = context?.newRowData;
-        // generateData.value.createNum = printTopTabData.list[context?.rowIndex].thisTimeQty; // 变化后的数字
-      },
-    },
+    width: '120',
   },
   {
     colKey: 'thisAmountSheets',
@@ -482,7 +450,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '180',
     title: '工作中心',
-    // fixed: 'right',
+    fixed: 'right',
   },
 ];
 // 产品标签打印 下表格列表数据
@@ -506,7 +474,7 @@ const labelPrintDown: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'qty',
-    title: 'createNum',
+    title: '数量',
     align: 'center',
     width: '100',
     cell: 'stateSwitch',
@@ -658,16 +626,28 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number.isNaN(Number(value))) {
+    return { result: false, message: '该字段必须是数字', type: 'error' };
+  }
+  if (Number(value) < 0) {
+    return { result: false, message: '该字段不能为负数', type: 'error' };
+  }
+  return true;
+}
+
 // 初始渲染
 onMounted(async () => {
   await onGetPrintTopTabData(); // 产品标签打印 上 请求
-  await onLabelManageTabData(); // 配送卡管理 表格数据
   await onWorkStatus(); // 工单状态下拉数据
   await onBarCodeState(); // 获取条码状态数据
   await onPrintRulesData(); // 获取 打印规则下拉数据
-  await onPrintTemplateData(); // 获取 打印摸板下拉数据
+  await onPrintTemplateData(); // 获取 打印模板下拉数据
   await onReprintSelextData(); // 获取补打原因列表
   await onCancellationSelextData(); // 获取作废原因列表
+  if (reprintDataList.list.length > 0 && reprintVoidSwitch.value === 1) {
+    reprintDialog.value.reprintData = reprintDataList.list[0].value;
+  }
 });
 
 // 上表格数据刷新
@@ -699,7 +679,7 @@ const onPrintRulesData = async () => {
   onPrintRulesList.list = res?.list;
 };
 
-// // 获取 打印摸板 下拉数据
+// // 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async () => {
   const res = await api.deliveryCard.getPrintTmplList();
@@ -753,11 +733,12 @@ const onGetPrintTopTabData = async () => {
   const res = await api.deliveryCard.getMoScheduleList({
     pageNum: pageUITop.value.page,
     pageSize: pageUITop.value.rows,
-    // planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
-    // planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
+    planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+    planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
     isFinishDisplay: true,
   });
-  printTopTabData.list = res.list;
+  const newArr = res.list.map((item) => ({ ...item, specificationQuantity: 0, numberGeneration: 0 })); // 规格数量
+  printTopTabData.list = newArr;
   totalPrintTop.value = res.total;
 };
 
@@ -798,10 +779,10 @@ const onLabelManageTabData = async () => {
   const res = await api.deliveryCard.getBarcodePkgManagerList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
-    // planDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
-    // planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
-    // createDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 生产开始日期
-    // createDateEnd: dayjs().format('YYYY-MM-DD'), // 生产结束日期
+    planDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+    planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
+    createDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 生产开始日期
+    createDateEnd: dayjs().format('YYYY-MM-DD'), // 生产结束日期
   });
   console.log('🚀 ~ file: index.vue:747 ~ onLabelManageTabData ~ res:', res);
   manageTabData.list = res.list;
@@ -924,9 +905,12 @@ const onGenerate = async () => {
 
 // // 点击 打印事件
 const onPrint = async () => {
-  console.log('🚀 ~ file: index.vue:841 ~ onGenerate ~ printTemplateName.value:', printTemplateName.value);
   if (!printTemplateName.value.printTemplate) {
     MessagePlugin.warning('参请选择条码规则！');
+    return;
+  }
+  if (selectedRowKeys.value.length < 1) {
+    MessagePlugin.warning('至少选择一条需要打印的记录！');
     return;
   }
   await api.deliveryCard.printBarcode({ ids: selectedRowKeys.value });
@@ -942,11 +926,12 @@ const onPrintChange = (value: any) => {
 
 // // TAb 栏切换事件
 const tabChange = async (value: number) => {
-  printTemplateName.value.printTemplate = ''; // 清空打印摸板缓存
+  printTemplateName.value.printTemplate = ''; // 清空打印模板缓存
   if (!value) {
     initialDate.value = 1;
   } else {
     initialDate.value = 3;
+    await onLabelManageTabData(); // 配送卡管理 表格数据
   }
 };
 

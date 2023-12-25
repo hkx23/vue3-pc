@@ -31,7 +31,7 @@
           @refresh="fetchData"
         >
           <template #title>{{ currActiveData.orgName }}</template>
-          <template #operate>
+          <template #button>
             <t-button @click="onClickAdd">
               <!-- <template #icon><add-icon /></template> -->
               {{ t('common.button.add') }}</t-button

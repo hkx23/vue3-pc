@@ -40,6 +40,7 @@
       <cmp-table
         v-model:pagination="templateMapPage"
         :table-column="templateCategoryColumn"
+        class="son-table"
         :table-data="templateMapData?.list"
         :total="templateMapData?.total"
         @refresh="fetchTemplateMapData"

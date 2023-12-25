@@ -1,229 +1,258 @@
 <!-- 条码验证规则 -->
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
-        <template #workState="{ param }">
-          <t-select v-model="param.workState" label="工单状态">
-            <t-option v-for="item in workStateDataList.list" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </template>
-        <template #showState="{ param }">
-          <t-radio-group v-model="param.showState">
-            <t-radio allow-uncheck :value="1">仅显示未打印完成</t-radio>
-          </t-radio-group>
-        </template>
-        <template #barCodeState="{ param }">
-          <t-select v-model="param.barCodeState" label="条码状态">
-            <t-option v-for="item in barCodeStateList.list" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </template>
-      </cmp-query>
-    </div>
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card class="not-full-tab">
       <t-tabs v-model="tabValue" @change="tabChange">
         <t-tab-panel :value="0" label="产品标签打印" :destroy-on-hide="false">
           <template #panel>
-            <div class="main-page-content">
-              <!-- ################# 产品标签打印 上1️⃣上 表格数据 ###################### -->
-              <div class="main-page-content">
-                <t-col :span="12" flex="auto">
-                  <cmp-table
-                    ref="tableRef"
-                    v-model:pagination="pageUITop"
-                    row-key="moScheduleId"
-                    :table-column="labelPrintTop"
-                    :table-data="printTopTabData.list"
-                    :total="totalPrintTop"
-                    select-on-row-click
-                    @select-change="onGenerateChange"
-                    @refresh="onTopRefresh"
-                  >
-                    <template #button>
-                      <t-row align="middle">
-                        <t-col>条码规则： </t-col>
-                        <t-col>
-                          <t-select v-model="generateData.barcodeRuleId">
-                            <t-option
-                              v-for="item in onPrintRulesList.list"
-                              :key="item.id"
-                              :label="item.ruleName"
-                              :value="item.id"
-                            />
-                          </t-select>
-                        </t-col>
-                        <t-col :push="1">打印摸板： </t-col>
-                        <t-col :push="1">
-                          <t-select>
-                            <t-option
-                              v-for="item in onPrintTemplateList.list"
-                              :key="item.id"
-                              :label="item.tmplName"
-                              :value="item.id"
-                            />
-                          </t-select>
-                        </t-col>
-                      </t-row>
-                    </template>
-                    <template #operate>
-                      <t-space>
-                        <t-button theme="default" :disabled="!generateData.moScheduleId" @click="onGenerate">
-                          生成
-                        </t-button>
-                      </t-space>
-                    </template>
-                  </cmp-table>
-                </t-col>
-              </div>
-              <!-- ################# 产品标签打印 下2️⃣下 表格数据 ###################### -->
-              <div class="main-page-content">
-                <t-row justify="space-around">
-                  <t-col :span="12" flex="auto">
-                    <cmp-table
-                      ref="tableRef"
-                      v-model:pagination="pageUIDown"
-                      row-key="barcodeWipId"
-                      :table-column="labelPrintDown"
-                      :table-data="printDownTabData.list"
-                      :total="totalPrintDown"
-                      select-on-row-click
-                      :selected-row-keys="selectedRowKeys"
-                      @select-change="onPrintChange"
-                      @refresh="onDownRefresh"
-                    >
-                      <template #button>
-                        <t-radio-group v-model="radioValue">
-                          <t-radio allow-uncheck :value="1"> 仅显示已生成</t-radio>
-                        </t-radio-group>
-                      </template>
-                      <template #operate>
-                        <t-button theme="default" @click="onPrint"> 打印 </t-button>
-                      </template>
-                    </cmp-table>
-                  </t-col>
-                </t-row>
-              </div>
-            </div>
+            <cmp-container :gutter="[0, 0]">
+              <cmp-card :ghost="true" class="padding-bottom-line-16">
+                <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
+                  <template #workState="{ param }">
+                    <t-select v-model="param.workState" label="工单状态">
+                      <t-option
+                        v-for="item in workStateDataList.list"
+                        :key="item.id"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </t-select>
+                  </template>
+                  <template #showState="{ param }">
+                    <t-radio-group v-model="param.showState">
+                      <t-radio allow-uncheck :value="1">仅显示未打印完成</t-radio>
+                    </t-radio-group>
+                  </template>
+                  <template #barCodeState="{ param }">
+                    <t-select v-model="param.barCodeState" label="条码状态">
+                      <t-option
+                        v-for="item in barCodeStateList.list"
+                        :key="item.id"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </t-select>
+                  </template>
+                </cmp-query>
+              </cmp-card>
+              <cmp-card :ghost="true" class="padding-top-noline-16">
+                <!-- ################# 产品标签打印 上1️⃣上 表格数据 ###################### -->
+                <cmp-table
+                  ref="tableRef"
+                  v-model:pagination="pageUITop"
+                  row-key="moScheduleId"
+                  :table-column="labelPrintTop"
+                  :table-data="printTopTabData.list"
+                  :total="totalPrintTop"
+                  select-on-row-click
+                  @select-change="onGenerateChange"
+                  @refresh="onTopRefresh"
+                >
+                  <template #button>
+                    <t-space :size="8">
+                      <t-select v-model="generateData.barcodeRuleId" style="width: 240px" label="条码规则">
+                        <t-option
+                          v-for="item in onPrintRulesList.list"
+                          :key="item.id"
+                          :label="item.ruleName"
+                          :value="item.id"
+                        />
+                      </t-select>
+                      <t-select label="打印模板" style="width: 240px">
+                        <t-option
+                          v-for="item in onPrintTemplateList.list"
+                          :key="item.id"
+                          :label="item.tmplName"
+                          :value="item.id"
+                        />
+                      </t-select>
+                      <t-button theme="primary" :disabled="!generateData.moScheduleId" @click="onGenerate">
+                        生成
+                      </t-button>
+                    </t-space>
+                  </template>
+                </cmp-table>
+              </cmp-card>
+              <cmp-card header="条码列表" header-bordered class="padding-top-noline-16 no-h-padding-card">
+                <!-- ################# 产品标签打印 下2️⃣下 表格数据 ###################### -->
+                <cmp-table
+                  ref="tableRef"
+                  v-model:pagination="pageUIDown"
+                  row-key="barcodeWipId"
+                  :table-column="labelPrintDown"
+                  :table-data="printDownTabData.list"
+                  :total="totalPrintDown"
+                  select-on-row-click
+                  :selected-row-keys="selectedRowKeys"
+                  @select-change="onPrintChange"
+                  @refresh="onDownRefresh"
+                >
+                  <template #title>
+                    <t-radio-group v-model="radioValue">
+                      <t-radio allow-uncheck :value="1"> 仅显示已生成</t-radio>
+                    </t-radio-group>
+                  </template>
+                  <template #button>
+                    <t-button theme="primary" @click="onPrint"> 打印 </t-button>
+                  </template>
+                </cmp-table>
+              </cmp-card>
+            </cmp-container>
           </template>
         </t-tab-panel>
         <!-- ###############    产品标签管理 3️⃣ 表格数据   ######## -->
         <t-tab-panel :value="1" label="产品标签管理" :destroy-on-hide="false">
           <template #panel>
-            <cmp-table
-              ref="tableRef"
-              v-model:pagination="pageUI"
-              row-key="barcodeWipId"
-              :table-column="labelManage"
-              :table-data="manageTabData.list"
-              :total="totalManage"
-              select-on-row-click
-              :selected-row-keys="productSelectedRowKeys"
-              @select-change="onProductRightFetchData"
-              @refresh="onRightFetchData"
-            >
-              <template #actionSlot>
-                <t-link theme="primary" style="margin-right: 10px"> 编辑 </t-link>
-                <t-popconfirm theme="default" content="确认删除吗">
-                  <t-link theme="primary"> 删除 </t-link>
-                </t-popconfirm>
-              </template>
-              <template #operate>
-                <t-col :push="1">打印摸板： </t-col>
-                <t-col :push="1" style="margin-right: 20px">
-                  <t-select>
-                    <t-option
-                      v-for="item in onPrintTemplateList.list"
-                      :key="item.id"
-                      :label="item.tmplName"
-                      :value="item.id"
-                    />
-                  </t-select>
-                </t-col>
-                <t-button theme="default" :disabled="!productSelectedRowKeys.length ? true : false" @click="onReprint">
-                  补打
-                </t-button>
-                <t-button
-                  theme="default"
-                  :disabled="!productSelectedRowKeys.length ? true : false"
-                  @click="onCancellation"
+            <cmp-container :gutter="[0, 0]">
+              <cmp-card :ghost="true" class="padding-bottom-line-16">
+                <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
+                  <template #workState="{ param }">
+                    <t-select v-model="param.workState" label="工单状态">
+                      <t-option
+                        v-for="item in workStateDataList.list"
+                        :key="item.id"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </t-select>
+                  </template>
+                  <template #showState="{ param }">
+                    <t-radio-group v-model="param.showState">
+                      <t-radio allow-uncheck :value="1">仅显示未打印完成</t-radio>
+                    </t-radio-group>
+                  </template>
+                  <template #barCodeState="{ param }">
+                    <t-select v-model="param.barCodeState" label="条码状态">
+                      <t-option
+                        v-for="item in barCodeStateList.list"
+                        :key="item.id"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </t-select>
+                  </template>
+                </cmp-query>
+              </cmp-card>
+              <cmp-card :ghost="true" class="padding-top-noline-16">
+                <cmp-table
+                  ref="tableRef"
+                  v-model:pagination="pageUI"
+                  row-key="barcodeWipId"
+                  :table-column="labelManage"
+                  :table-data="manageTabData.list"
+                  :total="totalManage"
+                  select-on-row-click
+                  :selected-row-keys="productSelectedRowKeys"
+                  @select-change="onProductRightFetchData"
+                  @refresh="onRightFetchData"
                 >
-                  作废
-                </t-button>
-                <t-button theme="default"> 导出 </t-button>
-              </template>
-              <template #operations="{ row }">
-                <t-link theme="primary" @click.stop="onLogInterface(row)"> 日志 </t-link>
-              </template>
-            </cmp-table>
+                  <template #actionSlot>
+                    <t-link theme="primary" style="margin-right: 10px"> 编辑 </t-link>
+                    <t-popconfirm theme="default" content="确认删除吗">
+                      <t-link theme="primary"> 删除 </t-link>
+                    </t-popconfirm>
+                  </template>
+                  <template #button>
+                    <t-select label="打印模板" style="width: 240px">
+                      <t-option
+                        v-for="item in onPrintTemplateList.list"
+                        :key="item.id"
+                        :label="item.tmplName"
+                        :value="item.id"
+                      />
+                    </t-select>
+                    <t-button
+                      theme="primary"
+                      :disabled="!productSelectedRowKeys.length ? true : false"
+                      @click="onReprint"
+                    >
+                      补打
+                    </t-button>
+                    <t-button
+                      theme="default"
+                      :disabled="!productSelectedRowKeys.length ? true : false"
+                      @click="onCancellation"
+                    >
+                      作废
+                    </t-button>
+                    <t-button theme="default"> 导出 </t-button>
+                  </template>
+                  <template #operations="{ row }">
+                    <t-link theme="primary" @click.stop="onLogInterface(row)"> 日志 </t-link>
+                  </template>
+                </cmp-table>
+              </cmp-card>
+            </cmp-container>
           </template>
         </t-tab-panel>
       </t-tabs>
-    </div>
-    <!-- % 补打， 作废 dialog 弹窗 -->
-    <t-dialog
-      v-model:visible="formVisible"
-      :confirm-btn="buttonSwitch"
-      :header="diaLogTitle"
-      width="40%"
-      @confirm="onConfirm"
-    >
-      <t-form ref="formRef" :data="reprintDialog">
-        <t-form-item v-if="reprintVoidSwitch" label-width="80px" label="补打原因" name="reprintData">
-          <t-select v-model="reprintDialog.reprintData">
-            <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
-          </t-select>
-        </t-form-item>
-        <t-form-item v-if="!reprintVoidSwitch" label-width="80px" label="作废" name="reprintData">
-          <t-select v-model="reprintDialog.reprintData">
-            <t-option
-              v-for="item in cancellationDataList.list"
-              :key="item.label"
-              :label="item.label"
-              :value="item.value"
-            />
-          </t-select>
-        </t-form-item>
-        <t-form-item
-          v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-          label="补打原因"
-          label-width="80px"
-          name="restsData"
-        >
-          <t-textarea
-            v-model="reprintDialog.restsData"
-            placeholder="请输入补打原因"
-            name="description"
-            :autosize="{ minRows: 3, maxRows: 5 }"
+    </cmp-card>
+  </cmp-container>
+
+  <!-- % 补打， 作废 dialog 弹窗 -->
+  <t-dialog
+    v-model:visible="formVisible"
+    :confirm-btn="buttonSwitch"
+    :header="diaLogTitle"
+    width="40%"
+    @confirm="onConfirm"
+  >
+    <t-form ref="formRef" :data="reprintDialog">
+      <t-form-item v-if="reprintVoidSwitch" label-width="80px" label="补打原因" name="reprintData">
+        <t-select v-model="reprintDialog.reprintData">
+          <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
+        </t-select>
+      </t-form-item>
+      <t-form-item v-if="!reprintVoidSwitch" label-width="80px" label="作废" name="reprintData">
+        <t-select v-model="reprintDialog.reprintData">
+          <t-option
+            v-for="item in cancellationDataList.list"
+            :key="item.label"
+            :label="item.label"
+            :value="item.value"
           />
-        </t-form-item>
-        <t-form-item
-          v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-          label="作废原因"
-          label-width="80px"
-          name="restsData"
-        >
-          <t-textarea
-            v-model="reprintDialog.restsData"
-            placeholder="请输入作废原因"
-            name="description"
-            :autosize="{ minRows: 3, maxRows: 5 }"
-          />
-        </t-form-item>
-      </t-form>
-    </t-dialog>
-    <!---%日志 dialog 弹窗  -->
-    <t-dialog v-model:visible="logInterfaceVisible" :cancel-btn="null" :confirm-btn="null" header="日志" width="60%">
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="pageUIDay"
-        row-key="id"
-        :table-column="logInterface"
-        :table-data="dayTabData.list"
-        :total="totalDay"
-        @refresh="onRightFetchData"
-      ></cmp-table>
-    </t-dialog>
-  </div>
+        </t-select>
+      </t-form-item>
+      <t-form-item
+        v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+        label="补打原因"
+        label-width="80px"
+        name="restsData"
+      >
+        <t-textarea
+          v-model="reprintDialog.restsData"
+          placeholder="请输入补打原因"
+          name="description"
+          :autosize="{ minRows: 3, maxRows: 5 }"
+        />
+      </t-form-item>
+      <t-form-item
+        v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+        label="作废原因"
+        label-width="80px"
+        name="restsData"
+      >
+        <t-textarea
+          v-model="reprintDialog.restsData"
+          placeholder="请输入作废原因"
+          name="description"
+          :autosize="{ minRows: 3, maxRows: 5 }"
+        />
+      </t-form-item>
+    </t-form>
+  </t-dialog>
+  <!---%日志 dialog 弹窗  -->
+  <t-dialog v-model:visible="logInterfaceVisible" :cancel-btn="null" :confirm-btn="null" header="日志" width="60%">
+    <cmp-table
+      ref="tableRef"
+      v-model:pagination="pageUIDay"
+      row-key="id"
+      :table-column="logInterface"
+      :table-data="dayTabData.list"
+      :total="totalDay"
+      @refresh="onRightFetchData"
+    ></cmp-table>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -385,7 +414,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '180',
     title: '工作中心',
-    // fixed: 'right',
+    fixed: 'right',
   },
 ];
 // 产品标签打印 下表格列表数据
@@ -562,7 +591,7 @@ onMounted(async () => {
   await onWorkStatus(); // 工单状态下拉数据
   await onBarCodeState(); // 获取条码状态数据
   await onPrintRulesData(); // 获取 打印规则下拉数据
-  await onPrintTemplateData(); // 获取 打印摸板下拉数据
+  await onPrintTemplateData(); // 获取 打印模板下拉数据
   await onReprintSelextData(); // 获取补打原因列表
   await onCancellationSelextData(); // 获取作废原因列表
 });
@@ -594,7 +623,7 @@ const onPrintRulesData = async () => {
   onPrintRulesList.list = res?.list;
 };
 
-// 获取 打印摸板 下拉数据
+// 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async () => {
   const res = await api.label.getPrintTmplList();
@@ -819,6 +848,16 @@ const opts = computed(() => {
         format: 'YYYY-MM-DD',
       },
     },
+    mo: {
+      label: '工单',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'mo',
+        showTitle: false,
+      },
+    },
     datePproduced: {
       isHide: !tabValue.value,
       label: '生成日期',
@@ -831,13 +870,13 @@ const opts = computed(() => {
         format: 'YYYY-MM-DD',
       },
     },
-    mo: {
-      label: '工单',
+    mitem: {
+      label: '物料',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'mo',
+        type: 'mitem',
         showTitle: false,
       },
     },
@@ -861,16 +900,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    mitem: {
-      label: '物料',
-      comp: 'bcmp-select-business',
-      event: 'business',
-      defaultVal: '',
-      bind: {
-        type: 'mitem',
-        showTitle: false,
-      },
-    },
+
     workState: {
       isHide: tabValue.value,
       label: '工单状态',

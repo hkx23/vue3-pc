@@ -9,9 +9,9 @@
     <cmp-row>
       <cmp-card ref="treeCard" flex="350px">
         <t-space direction="vertical" :size="8">
-          <h3 style="margin: 10px 0">用户列表</h3>
-          <t-input v-model="permission.user" placeholder="admin" :on-enter="onInputSearchUser">
-            <template #prefix-icon>
+          <h3>用户列表</h3>
+          <t-input v-model="permission.user" placeholder="admin" style="width: 250px" :on-enter="onInputSearchUser">
+            <template #suffixIcon>
               <icon name="search"></icon>
             </template>
           </t-input>
@@ -26,19 +26,26 @@
             @click="onClickTree"
           >
           </t-tree>
-          <t-pagination v-model="current" v-model:pageSize="pageSize" :total="total" />
+          <t-pagination
+            v-model="current"
+            v-model:pageSize="pageSize"
+            :show-page-size="false"
+            :show-previous-and-next-btn="false"
+            :show-page-number="false"
+            :show-jumper="true"
+            :total="total"
+          />
         </t-space>
       </cmp-card>
       <cmp-card flex="auto">
-        <cmp-container :full="true" style="padding: 0">
+        <t-space direction="vertical" :size="8" style="padding: 0">
           <cmp-card :span="12" :ghost="true">
-            <t-row justify="space-between">
-              <t-col style="margin: 3px 0"> <t-button :loading="saveLoading" @click="onBtnSave">保存</t-button></t-col>
+            <t-row justify="space-between" :gutter="8">
               <t-col style="display: flex">
                 <t-select
                   v-model="selectValue"
                   :options="options1"
-                  placeholder="请选择云解决方案"
+                  placeholder="请选择状态"
                   @change="onchange1"
                 ></t-select>
                 <t-input
@@ -51,26 +58,27 @@
                     <icon name="search"></icon>
                   </template>
                 </t-input>
-              </t-col> </t-row
-          ></cmp-card>
+              </t-col>
+              <t-col> <t-button :loading="saveLoading" @click="onBtnSave">保存</t-button></t-col>
+            </t-row></cmp-card
+          >
           <cmp-card :span="12" :ghost="true">
             <cmp-table
               v-model:pagination="pageUI"
               row-key="id"
               :table-column="columns"
               :loading="loading"
+              :max-height="treeHeight"
               :table-data="data"
               :total="tableTotal"
               :selected-row-keys="selectedRowKeys"
               @select-change="rehandleSelectChange"
               @refresh="onFetchData"
             >
-              <template #button>
-                <span style="font-weight: bold; margin: 0 10px">{{ permission.label }} 工站列表</span>
-              </template>
+              <template #title> {{ permission.label }} 工站列表 </template>
             </cmp-table>
           </cmp-card>
-        </cmp-container>
+        </t-space>
       </cmp-card>
     </cmp-row>
   </cmp-container>
@@ -300,7 +308,7 @@ useResizeObserver(treeCard, (entries) => {
   const entry = entries[0];
 
   const { height } = entry.contentRect;
-  treeHeight.value = `${height - 160}px`;
+  treeHeight.value = `${height - 180}px`;
   console.error('treeHeight', treeHeight.value);
 });
 </script>

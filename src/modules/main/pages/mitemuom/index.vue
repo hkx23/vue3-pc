@@ -24,7 +24,7 @@
           <t-button theme="default">{{ t('common.button.import') }}</t-button>
         </template>
         <template #actionSlot="{ row }">
-          <t-space>
+          <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
 
             <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirm">

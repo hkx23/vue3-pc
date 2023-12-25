@@ -47,6 +47,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="materialPage"
+        class="son-table"
         row-key="id"
         :table-column="personColumns"
         :table-data="materialTabDataList.list"
@@ -208,8 +209,7 @@ import { isEmpty } from 'lodash';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
 
-import { api } from '@/api/control';
-import { api as apiMain } from '@/api/main';
+import { api, api as apiMain } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -236,10 +236,10 @@ const currActiveData = ref({}); // ????
 const incidentID = ref('');
 // $处理组 表格数据
 const ruleTabDataList = reactive({ list: [] });
-const ruleTabTotal = ref(null);
+const ruleTabTotal = ref(0);
 // $人员 表格数据
 const materialTabDataList = reactive({ list: [] });
-const materialTotal = ref(null);
+const materialTotal = ref(0);
 // 物料弹框数据
 const formData = ref({
   barcodeRuleId: '', // 上表格ID
@@ -313,7 +313,6 @@ watch(treeActiveKey, () => {
 const ongetRuleTreeSegment = async () => {
   const res = await api.barcodeRuleInMitem.getRuleSegment();
   ruleTreeDataList.list = res.list;
-  console.log('🚀 ~ file: index.vue:375 ~ ongetRuleTreeSegment ~ res:', res);
 };
 // #树节点 点击事件
 const treeClick = ({ node }) => {
@@ -525,7 +524,6 @@ const onAddrule = async () => {
 
 // #编码规则 编辑 按钮点击
 const onEditRow = (row: any) => {
-  console.log('🚀 ~ file: index.vue:436 ~ onEditRow ~ row:', row);
   ruleTabData.value.ruleCode = row.ruleCode;
   ruleTabData.value.ruleName = row.ruleName;
   ruleTabData.value.barcodeType = row.barcodeType;

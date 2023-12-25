@@ -1,5 +1,5 @@
 <template>
-  <t-row ref="container" :gutter="[0, 16]" :class="classAttrs">
+  <t-row ref="container" :gutter="gutter" :class="classAttrs">
     <slot></slot>
   </t-row>
 </template>
@@ -9,12 +9,17 @@ export default {
 };
 </script>
 <script setup lang="ts">
+import type { GutterObject } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
   full?: boolean;
   fullSubIndex?: number[];
+  gutter?: number | GutterObject | (number | GutterObject)[];
 }>();
+
+const gutter = ref(props.gutter ?? [0, 16]); // 使用默认值
+
 const classAttrs = computed(() => {
   return `cmp-container ${props.full ? 'cmp-container-full' : ''}`;
 });
