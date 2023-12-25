@@ -227,7 +227,7 @@ const onGetAnomalyTypeData = async () => {
   const res = await api.incidentType.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
-    keyword: '',
+    state: [0, 1],
   });
   anomalyTypeData.list = res.list;
   anomalyTotal.value = res.total;

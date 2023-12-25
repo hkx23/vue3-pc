@@ -41,7 +41,7 @@
         </t-col>
         <t-col :span="6">
           <t-form-item label="顺序号" name="wcSeq">
-            <t-input-number v-model="formData.wcSeq" theme="column" />
+            <t-input-number v-model="formData.wcSeq" theme="column" min="0" />
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -101,7 +101,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
+import { CustomValidateResolveType, Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
@@ -463,13 +463,20 @@ const rules: FormRules<Data> = {
     },
   ],
   wcSeq: [
-    {
-      required: true,
-      type: 'error',
-      trigger: 'blur',
-    },
+    { required: true, message: '顺序号不能为空', trigger: 'blur' },
+    { validator: validateNumber, trigger: 'blur' },
   ],
 };
+
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number.isNaN(Number(value))) {
+    return { result: false, message: '该字段必须是数字', type: 'error' };
+  }
+  if (Number(value) < 0) {
+    return { result: false, message: '该字段不能为负数', type: 'error' };
+  }
+  return true;
+}
 </script>
 
 <style lang="less" scoped>

@@ -542,7 +542,7 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'creator',
+    colKey: 'creatorName',
     title: '操作人',
     align: 'center',
     width: '100',

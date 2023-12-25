@@ -84,6 +84,7 @@
           style="width: 100%"
           :auto-width="false"
           theme="column"
+          min="0"
         ></t-input-number>
       </t-form-item>
       <t-form-item label="启用" name="showState">
@@ -102,7 +103,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
+import { CustomValidateResolveType, Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
@@ -364,6 +365,7 @@ const rules: FormRules<Data> = {
       type: 'error',
       trigger: 'blur',
     },
+    { validator: validateNumber, trigger: 'blur' },
   ],
   processId: [
     {
@@ -373,6 +375,16 @@ const rules: FormRules<Data> = {
     },
   ],
 };
+
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number.isNaN(Number(value))) {
+    return { result: false, message: '该字段必须是数字', type: 'error' };
+  }
+  if (Number(value) < 0) {
+    return { result: false, message: '该字段不能为负数', type: 'error' };
+  }
+  return true;
+}
 </script>
 
 <style lang="less" scoped>
