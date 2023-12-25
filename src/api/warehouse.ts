@@ -165,7 +165,8 @@ export interface LocationSearch {
    */
   pageSize?: number;
   warehouseId?: string;
-  districtId?: string;
+  /** 货区Id */
+  districtKeyword?: string;
   /** 货位搜索关键字 */
   locationKeyword?: string;
 }
@@ -265,6 +266,8 @@ export interface LabelSearch {
   /** 是否仅显示未打印完成 */
   isFinishDisplay?: boolean;
   deliveryId?: string;
+  deliveryDtlId?: string;
+  labelId?: string;
   /** 是否仅显示已生成 */
   isCreated?: boolean;
   /** 条码状态 */
@@ -289,6 +292,11 @@ export interface LabelSearch {
    * @format int32
    */
   createNum?: number;
+  /**
+   * 拆分数量
+   * @format int32
+   */
+  splitNum?: number;
   printTempId?: string;
   /** 原因 */
   reason?: string;
@@ -383,8 +391,7 @@ export interface LabelVO {
   uomName?: string;
   /** 计量单位 */
   uom?: string;
-  /** 条码 */
-  serialNumber?: string;
+  deliveryDtlId?: string;
   /** 条码状态 */
   barcodeStatusName?: string;
   /** 收货人名称 */
@@ -395,10 +402,21 @@ export interface LabelVO {
   districtName?: string;
   /** 货位名称 */
   locationName?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  /** 货区编码 */
+  districtCode?: string;
+  /** 货位编码 */
+  locationCode?: string;
   /** 操作类型 */
   operateType?: string;
   /** 原因 */
   reason?: string;
+  /**
+   * 送货时间
+   * @format date-time
+   */
+  dataDelivery?: string;
 }
 
 /** 响应数据 */
@@ -1080,6 +1098,36 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name SplitBarcode
+     * @summary 拆分条码
+     * @request POST:/label/splitBarcode
+     * @secure
+     */
+    splitBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/label/splitBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name ReprintBarcode
+     * @summary 补打条码
+     * @request POST:/label/reprintBarcode
+     * @secure
+     */
+    reprintBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/label/reprintBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name PrintBarcode
      * @summary 打印条码
      * @request POST:/label/printBarcode
@@ -1162,6 +1210,21 @@ export const api = {
      */
     generateBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/warehouse/label/generateBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name CancellationBarcode
+     * @summary 作废条码
+     * @request POST:/label/cancellationBarcode
+     * @secure
+     */
+    cancellationBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/label/cancellationBarcode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1427,10 +1490,9 @@ export const api = {
      * @request GET:/deliveryCard/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: (query: { packType: string }) =>
+    getPrintTmplList: () =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/warehouse/deliveryCard/getPrintTmplList`, {
         method: 'GET',
-        params: query,
       }),
 
     /**
@@ -1442,10 +1504,9 @@ export const api = {
      * @request GET:/deliveryCard/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: (query: { packType: string }) =>
+    getBarcodeRuleList: () =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/warehouse/deliveryCard/getBarcodeRuleList`, {
         method: 'GET',
-        params: query,
       }),
   },
 };

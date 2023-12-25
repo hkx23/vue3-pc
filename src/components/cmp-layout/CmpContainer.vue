@@ -63,6 +63,10 @@ onMounted(() => {
   flex-flow: column;
   align-items: normal;
 
+  :deep(.cmp-container) {
+    padding: 0;
+  }
+
   :deep(> .t-col) {
     &.t-col-1,
     &.t-col-2,
@@ -89,6 +93,28 @@ onMounted(() => {
 
   :deep(> .t-space-item) {
     min-height: 0;
+  }
+
+  :deep(> .t-tabs) {
+    display: flex;
+    flex-flow: column;
+    min-height: 0;
+
+    > .t-tabs__content {
+      flex: 1;
+      display: flex;
+      flex-flow: column;
+      min-height: 0;
+
+      > .t-tab-panel {
+        > .cmp-card {
+          > .t-card {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+          }
+        }
+      }
+    }
   }
 }
 </style>

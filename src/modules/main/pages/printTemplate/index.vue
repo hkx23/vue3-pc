@@ -1,7 +1,8 @@
 <template>
-  <cmp-container :full="true">
-    <cmp-card :span="12">
+  <cmp-container>
+    <cmp-card>
       <cmp-table
+        v-model:pagination="templatePage"
         :table-column="templateColumn"
         :table-data="templateData?.list"
         :total="templateData?.total"
@@ -35,8 +36,9 @@
         </template>
       </cmp-table>
     </cmp-card>
-    <cmp-card :span="12">
+    <cmp-card>
       <cmp-table
+        v-model:pagination="templateMapPage"
         :table-column="templateCategoryColumn"
         :table-data="templateMapData?.list"
         :total="templateMapData?.total"
@@ -169,9 +171,15 @@ const templateColumn = [
     colKey: 'op',
   },
 ];
+const templatePage = ref({
+  page: 1,
+  rows: 10,
+});
 const templateData = ref<PagingDataPrintTmpl>(null);
 const fetchTemplateData = async () => {
   templateData.value = await api.printTmpl.search({
+    pageNum: templatePage.value.page,
+    pageSize: templatePage.value.rows,
     keyword: filterText.value,
   });
 };
@@ -247,9 +255,15 @@ const templateCategoryColumn = [
 const filterMitemId = ref('');
 const filterMitemCategoryId = ref('');
 
+const templateMapPage = ref({
+  page: 1,
+  rows: 10,
+});
 const templateMapData = ref<PagingDataPrintTmplMapDTO>(null);
 const fetchTemplateMapData = async () => {
   templateMapData.value = await api.printTmplMap.search({
+    pageNum: templateMapPage.value.page,
+    pageSize: templateMapPage.value.rows,
     printTmplId: selectedRowTemplateId.value,
     mitemId: filterMitemId.value,
     mitemCategoryId: filterMitemCategoryId.value,

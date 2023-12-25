@@ -36,7 +36,7 @@
               </t-tab-panel>
             </t-tabs>
             <t-row style="margin-top: 15px">
-              <t-col :span="3">
+              <t-col :span="4">
                 <t-space>
                   <span>计划打印数 / 已生成数 / 打印数：</span>
                   <span>{{ dataSummary }}</span>
@@ -57,7 +57,7 @@
               :table-data="moBelowList.list"
               :total="barcodeTotal"
               @select-change="onPrintChange"
-              @refresh="onRefresh"
+              @refresh="onRefreshBelow"
             >
               <template #button>
                 <t-row align="middle" style="margin-top: 10px">
@@ -83,13 +83,13 @@
                       />
                     </t-select>
                   </t-col>
-                  <t-col>本次打印数： </t-col>
+                  <t-col>本次生成数： </t-col>
                   <t-col :span="2">
                     <t-input v-model="printMode.createNum" style="width: 80%" />
                   </t-col>
                   <t-col>包装规格： </t-col>
                   <t-col :span="2">
-                    <t-input v-model="printMode.packQty" style="width: 80%" />
+                    <t-input v-model="printMode.packQtyShow" style="width: 80%" />
                   </t-col>
                 </t-row>
               </template>
@@ -255,6 +255,8 @@ const onPrint = async () => {
   await api.barcodePkg.printBarcode({ ids: selectedRowKeys.value });
   handleTabClick(tabValue.value); // 刷新数据
   MessagePlugin.success('打印成功');
+  onRefreshBelow();
+  onRefreshTag();
 };
 // 补打，作废确定
 const onConfirm = async () => {
@@ -291,15 +293,16 @@ const onPrintChange = (value: any) => {
 // 打印选择 框 行 事件
 const onSelectionChange = (selectedRows) => {
   moscheRowKeys.value = selectedRows;
-  console.log(selectedRows);
   queryBelowCondition.value.pageNum = pageUIBracode.value.page;
   queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
   const [firstItem] = selectedRows;
   printMode.value.moScheduleId = firstItem;
   queryBelowCondition.value.moScheduleId = firstItem;
   api.barcodePkg.getTagList(queryBelowCondition.value).then((data) => {
-    moBelowList.list = data.list;
-    barcodeTotal.value = data.total;
+    tabList.list = data.list;
+    console.log(tabList.list);
+    handleTabClick(1);
+    tabValue.value = 1;
   });
 };
 
@@ -309,24 +312,27 @@ const printMode = ref({
   barcodeRuleId: '',
   printTempId: '',
   createNum: 0,
-  packQty: 0,
+  packQtyShow: '',
   packType: '',
   moScheduleId: '',
-  generalQty: 0,
+  generateQty: 0,
   planQty: 0,
 });
 
 // 生成按钮模型初始化
 const generateBracode = async () => {
-  const residueQty = printMode.value.planQty - printMode.value.generalQty;
+  const residueQty = printMode.value.planQty - printMode.value.generateQty;
   // 校验规格数量是否为正整数
-  if (
-    !Number.isInteger(printMode.value.packQty) ||
-    printMode.value.packQty <= 0 ||
-    printMode.value.createNum > residueQty
-  ) {
+  if (!Number.isInteger(printMode.value.createNum) || printMode.value.createNum > residueQty) {
     // 提示错误信息
-    MessagePlugin.warning(`本次生成数量需要为小于已生成数的正整数`);
+    MessagePlugin.warning(`本次生成数量需要为小于${residueQty}已生成数的正整数`);
+    return;
+  }
+
+  // 校验规格数量是否为正整数
+  if (printMode.value.createNum === 0) {
+    // 提示错误信息
+    MessagePlugin.warning(`本次生成数量不得为0`);
     return;
   }
 
@@ -339,6 +345,8 @@ const generateBracode = async () => {
   await api.barcodePkg.generateBarcode(printMode.value);
   handleTabClick(tabValue.value);
   MessagePlugin.success('生成成功');
+  onRefreshBelow();
+  onRefreshTag();
 };
 
 // 打印上方查询初始化
@@ -385,7 +393,7 @@ const tabValue = ref(0);
 const tagValue = ref(0);
 const barcodeWipStatusNameArr = ref([]);
 const onProductRightFetchData = (value: any, context: any) => {
-  barcodeWipStatusNameArr.value = context.selectedRowData.map((item: any) => item.barcodeWipStatusName);
+  barcodeWipStatusNameArr.value = context.selectedRowData.map((item: any) => item.pkgBarcodeStatusName);
   selectedManageRowKeys.value = value;
   isEnable.value = !(selectedManageRowKeys.value.length > 0);
 };
@@ -474,19 +482,19 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'creatorName',
+    colKey: 'operateType',
     title: '操作类型',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'reason',
     title: '原因',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'creatorName',
     title: '操作人',
     align: 'center',
     width: '100',
@@ -708,19 +716,6 @@ const pkgBarcodeManageColumns: PrimaryTableCol<TableRowData>[] = [
 
 const switchTab = (selectedTabIndex: any) => {
   if (selectedTabIndex === 1) {
-    // 获取当前日期
-    const today = new Date();
-
-    // 计算三天前的日期
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(today.getDate() - 3);
-
-    // 将日期转换为字符串，格式可以根据需要进行调整
-    const timeCreatedStart = threeDaysAgo.toISOString().split('T')[0];
-    const timeCreatedEnd = today.toISOString().split('T')[0];
-
-    manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
-    manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
     fetchBracodeManageTable();
   } else {
     fetchMoTable();
@@ -974,6 +969,22 @@ apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_WIP_STATUS' }).then((
 const tabList = reactive({ list: [] });
 // ################ 初始渲染
 onMounted(async () => {
+  // 获取当前日期
+  const today = new Date();
+
+  // 计算三天前的日期
+  const threeDaysAgo = new Date();
+  threeDaysAgo.setDate(today.getDate() - 3);
+
+  // 将日期转换为字符串，格式可以根据需要进行调整
+  const timeCreatedStart = threeDaysAgo.toISOString().split('T')[0];
+  const timeCreatedEnd = today.toISOString().split('T')[0];
+  manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
+  manageQueryCondition.value.datetimePlanStart = timeCreatedStart;
+  manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
+  manageQueryCondition.value.datetimePlanEnd = timeCreatedEnd;
+  queryCondition.value.datetimePlanStart = timeCreatedStart;
+  queryCondition.value.datetimePlanEnd = timeCreatedEnd;
   await fetchMoTable(); // 获取 物料编码 表格数据
   await onPrintTemplateData(); // 获取 打印模板下拉数据
   await onReprintSelextData(); // 获取补打原因列表
@@ -981,20 +992,24 @@ onMounted(async () => {
 });
 
 const handleTabClick = (selectedTabIndex: any) => {
+  // 清空 条件模板 和 打印模板
+  printMode.value.barcodeRuleId = '';
+  printMode.value.printTempId = '';
   if (tabList.list.length > selectedTabIndex - 1 && selectedTabIndex > 0) {
     const selectedTab = tabList.list[selectedTabIndex - 1];
     printRuCondition.value.packType = selectedTab.packType;
-    console.log(selectedTab.packType);
-    queryBelowCondition.value.moScheduleId = queryCondition.value.moScheduleId;
+    queryBelowCondition.value.moScheduleId = queryCondition.value.moScheduleId
+      ? queryCondition.value.moScheduleId
+      : queryBelowCondition.value.moScheduleId;
+
     queryBelowCondition.value.packType = selectedTab.packType;
     printMode.value.packType = selectedTab.packType;
-    printMode.value.generalQty = selectedTab.generalQty;
+    printMode.value.generateQty = selectedTab.generateQty;
     printMode.value.planQty = selectedTab.planQty;
-    dataSummary.value = `${selectedTab.planQty}/${selectedTab.generalQty}/${selectedTab.displayQty}`;
-    console.log(dataSummary.value);
     calculateButtonOffset();
-    printMode.value.createNum = selectedTab.planQty - selectedTab.generalQty;
-    printMode.value.packQty = selectedTab.packQty;
+    printMode.value.createNum = selectedTab.planQty - selectedTab.generateQty;
+    printMode.value.packQtyShow = selectedTab.packQtyShow;
+    dataSummary.value = `${selectedTab.planQty}/${selectedTab.generateQty}/${selectedTab.displayQty}`;
     api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {
       moBelowList.list = data.list;
       barcodeTotal.value = data.total;
@@ -1003,6 +1018,23 @@ const handleTabClick = (selectedTabIndex: any) => {
     onPrintTemplateData();
   }
 };
+const onRefreshBelow = () => {
+  api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {
+    moBelowList.list = data.list;
+    barcodeTotal.value = data.total;
+  });
+  onPrintRulesData();
+  onPrintTemplateData();
+};
+const onRefreshTag = () => {
+  api.barcodePkg.getTagList(queryCondition.value).then((data) => {
+    tabList.list = data.list;
+    barcodeTotal.value = data.total;
+  });
+  onPrintRulesData();
+  onPrintTemplateData();
+};
+
 const onRowClick = ({ row }) => {
   tabValue.value = 1;
   queryCondition.value.moScheduleId = row.moScheduleId;
