@@ -988,7 +988,6 @@ onMounted(async () => {
     clickNodeId.value.id = id; // 保存当前节点的 ID
     treeClickActive.value = id; // 节点高亮 ID
     const rules = await api.module.getList({ id, clientType: 0, pageNum: 1, pageSize: 10 }); // 请求：获取第二节点的数据
-    console.log('🚀 ~ file: index.vue:922 ~ onMounted ~ rules:', rules);
     moduleData.value = rules.list; // 表格数据赋值
     tabTotal.value = rules.total; // 数据条数赋值
     treeClickData.value.two = rules.list[0].grandpaName; // 赋值第一个节点名称给面包屑
@@ -999,13 +998,17 @@ onMounted(async () => {
 // 获取树组件数据
 const onGetTreeData = async () => {
   const res = await api.module.getTree({ clientType: 1 }); // 获取节点数据
-  console.log('🚀 ~ file: index.vue:940 ~ onGetTreeData ~ res:', res);
   treeData.list = res;
 };
 
 // 获取表格数据
 const onGetTabData = async () => {
-  const res = await api.module.getList(clickNodeId.value); // 获取第二节点的数据
+  const res = await api.module.getList({
+    id: clickNodeId.value.id,
+    clientType: clickNodeId.value.clientType,
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+  }); // 获取第二节点的数据
   moduleData.value = res.list; // 表格数据赋值
   tabTotal.value = res.total;
 };

@@ -1752,8 +1752,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3067,15 +3067,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isRawChecked?: boolean;
+  stateName?: string;
   isProductName?: string;
   isRawName?: string;
-  isInProcessName?: string;
+  isRawChecked?: boolean;
   isBatchName?: string;
+  isInProcessName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3242,8 +3242,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3589,8 +3589,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -3955,6 +3955,154 @@ export interface ResultPagingDataBarcodeVaildateRuleVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeVaildateRuleVO;
+}
+
+export interface BarcodeRuleInMitemSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 规则模糊查询关键词 */
+  ruleKeyword?: string;
+  /** 规则模糊查询关键词 */
+  mitemKeyword?: string;
+  /** 下拉模糊查询关键词 */
+  selectKeyword?: string[];
+  ruleId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 多个id */
+  ids?: string[];
+  /** 状态 */
+  state?: number[];
+}
+
+/** 条码生成规则 */
+export interface BarcodeRule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码规则代码 */
+  ruleCode?: string;
+  /** 条码规则名称 */
+  ruleName?: string;
+  /** 条码规则描述 */
+  ruleDesc?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码规则表达式 */
+  ruleExpression?: string;
+}
+
+/** 条码规则显示 */
+export interface BarcodeRuleInMitemVO {
+  id?: string;
+  barcodeRuleId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  /** 条码规则代码 */
+  ruleCode?: string;
+  /** 条码规则名称 */
+  ruleName?: string;
+  /** 条码规则描述 */
+  ruleDesc?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 条码类型名称 */
+  barcodeTypeName?: string;
+  /** 条码规则表达式 */
+  ruleExpression?: string;
+  /** 物料分类代码 */
+  categoryCode?: string;
+  /** 物料分类名称 */
+  categoryName?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeRuleInMitemVO = {
+  list?: BarcodeRuleInMitemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeRuleInMitemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeRuleInMitemVO;
+}
+
+/** 产品条码生成规则表 */
+export interface BarcodeRuleInMitem {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  barcodeRuleId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
 }
 
 /** 出勤模式 */
@@ -5014,6 +5162,69 @@ export interface ResultBoolean {
   message?: string;
   /** 响应数据 */
   data?: boolean | null;
+}
+
+/** 条码段 */
+export interface BarcodeSegment {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码段名称 */
+  segmentName?: string;
+  /** 条码段类型 */
+  segmentType?: string;
+  /** 条码段格式值 */
+  segmentFormat?: string;
+  /** 备注 */
+  memo?: string;
+}
+
+/** 输出条码规则片段 */
+export interface BarcodeSegmentDTO {
+  /** 规则类别 */
+  segmentName?: string;
+  /** 规则 */
+  rules?: BarcodeSegment[];
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeSegmentDTO = {
+  list?: BarcodeSegmentDTO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeSegmentDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeSegmentDTO;
 }
 
 /** 显示行政组织层级实体 */
@@ -8439,6 +8650,111 @@ export const api = {
       http.request<ResultBoolean['data']>(`/api/main/barcodeValidateRule/VaildateBarcodeRule`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  barcodeRuleInMitem: {
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name RemoveMitemBatch
+     * @summary 批量删除关联物料
+     * @request POST:/barcodeRuleInMitem/removeMitemBatch
+     * @secure
+     */
+    removeMitemBatch: (data: BarcodeRuleInMitemSearch) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeRuleInMitem/removeMitemBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name ModifyBarcodeRule
+     * @summary 编辑条码规则
+     * @request POST:/barcodeRuleInMitem/modifyBarcodeRule
+     * @secure
+     */
+    modifyBarcodeRule: (data: BarcodeRule) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeRuleInMitem/modifyBarcodeRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name GetMitemList
+     * @summary 查询物料信息
+     * @request POST:/barcodeRuleInMitem/getMitemList
+     * @secure
+     */
+    getMitemList: (data: BarcodeRuleInMitemSearch) =>
+      http.request<ResultPagingDataBarcodeRuleInMitemVO['data']>(`/api/main/barcodeRuleInMitem/getMitemList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name GetBarcodeRuleList
+     * @summary 查询条码类型
+     * @request POST:/barcodeRuleInMitem/getBarcodeRuleList
+     * @secure
+     */
+    getBarcodeRuleList: (data: BarcodeRuleInMitemSearch) =>
+      http.request<ResultPagingDataBarcodeRuleInMitemVO['data']>(`/api/main/barcodeRuleInMitem/getBarcodeRuleList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name AddBarcodeRule
+     * @summary 新增条码规则
+     * @request POST:/barcodeRuleInMitem/addBarcodeRule
+     * @secure
+     */
+    addBarcodeRule: (data: BarcodeRule) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeRuleInMitem/addBarcodeRule`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name AddBarcodeRuleMitem
+     * @summary 新增关联物料
+     * @request POST:/barcodeRuleInMitem/addBarcodeRuleMitem
+     * @secure
+     */
+    addBarcodeRuleMitem: (data: BarcodeRuleInMitem) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeRuleInMitem/addBarcodeRuleMitem`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name GetRuleSegment
+     * @summary 新增规则界面：条码规则片段
+     * @request GET:/barcodeRuleInMitem/getRuleSegment
+     * @secure
+     */
+    getRuleSegment: () =>
+      http.request<ResultPagingDataBarcodeSegmentDTO['data']>(`/api/main/barcodeRuleInMitem/getRuleSegment`, {
+        method: 'GET',
       }),
   },
   attendanceMode: {
