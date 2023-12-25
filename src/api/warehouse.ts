@@ -165,7 +165,8 @@ export interface LocationSearch {
    */
   pageSize?: number;
   warehouseId?: string;
-  districtId?: string;
+  /** 货区Id */
+  districtKeyword?: string;
   /** 货位搜索关键字 */
   locationKeyword?: string;
 }
@@ -401,6 +402,12 @@ export interface LabelVO {
   districtName?: string;
   /** 货位名称 */
   locationName?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  /** 货区编码 */
+  districtCode?: string;
+  /** 货位编码 */
+  locationCode?: string;
   /** 操作类型 */
   operateType?: string;
   /** 原因 */
@@ -658,9 +665,15 @@ export interface DeliveryCardVO {
    * @format int32
    */
   planQty?: number;
-  /** 已生成数量 */
+  /**
+   * 已生成数量
+   * @format int32
+   */
   generateQty?: number;
-  /** 已打印数量 */
+  /**
+   * 已打印数量
+   * @format int32
+   */
   displayQty?: number;
   /**
    * 本次生成数量
@@ -1477,10 +1490,9 @@ export const api = {
      * @request GET:/deliveryCard/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: (query: { packType: string }) =>
+    getPrintTmplList: () =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/warehouse/deliveryCard/getPrintTmplList`, {
         method: 'GET',
-        params: query,
       }),
 
     /**
@@ -1492,10 +1504,9 @@ export const api = {
      * @request GET:/deliveryCard/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: (query: { packType: string }) =>
+    getBarcodeRuleList: () =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/warehouse/deliveryCard/getBarcodeRuleList`, {
         method: 'GET',
-        params: query,
       }),
   },
 };
