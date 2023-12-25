@@ -830,6 +830,7 @@ export interface RoleUserDTO {
 export interface UserOrgDTO {
   userId?: string;
   orgIds?: string[];
+  defaultOrgId?: string;
 }
 
 /** 角色权限操作实体 */
@@ -3066,15 +3067,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
   isRawChecked?: boolean;
   isBatchName?: string;
-  isInProcessName?: string;
-  isRawName?: string;
-  isProductName?: string;
-  isInProcessChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
