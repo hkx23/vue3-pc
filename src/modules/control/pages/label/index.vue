@@ -385,7 +385,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '180',
     title: '工作中心',
-    // fixed: 'right',
+    fixed: 'right',
   },
 ];
 // 产品标签打印 下表格列表数据

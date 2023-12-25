@@ -100,7 +100,7 @@
                       <template #operate>
                         <t-button theme="default" @click="onPrint"> 打印 </t-button>
                         <t-row align="middle">
-                          <t-col :push="1">打印模版： </t-col>
+                          <t-col :push="1">打印模板： </t-col>
                           <t-col :push="1">
                             <t-select v-modele="printTemplateName.printTemplate" @change="printTemplateNameSelect">
                               <t-option
@@ -450,7 +450,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '180',
     title: '工作中心',
-    // fixed: 'right',
+    fixed: 'right',
   },
 ];
 // 产品标签打印 下表格列表数据
@@ -474,7 +474,7 @@ const labelPrintDown: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'qty',
-    title: 'createNum',
+    title: '数量',
     align: 'center',
     width: '100',
     cell: 'stateSwitch',
@@ -639,13 +639,15 @@ function validateNumber(value: any): boolean | CustomValidateResolveType {
 // 初始渲染
 onMounted(async () => {
   await onGetPrintTopTabData(); // 产品标签打印 上 请求
-  await onLabelManageTabData(); // 配送卡管理 表格数据
   await onWorkStatus(); // 工单状态下拉数据
   await onBarCodeState(); // 获取条码状态数据
   await onPrintRulesData(); // 获取 打印规则下拉数据
   await onPrintTemplateData(); // 获取 打印摸板下拉数据
   await onReprintSelextData(); // 获取补打原因列表
   await onCancellationSelextData(); // 获取作废原因列表
+  if (reprintDataList.list.length > 0 && reprintVoidSwitch.value === 1) {
+    reprintDialog.value.reprintData = reprintDataList.list[0].value;
+  }
 });
 
 // 上表格数据刷新
@@ -903,9 +905,12 @@ const onGenerate = async () => {
 
 // // 点击 打印事件
 const onPrint = async () => {
-  console.log('🚀 ~ file: index.vue:841 ~ onGenerate ~ printTemplateName.value:', printTemplateName.value);
   if (!printTemplateName.value.printTemplate) {
     MessagePlugin.warning('参请选择条码规则！');
+    return;
+  }
+  if (selectedRowKeys.value.length < 1) {
+    MessagePlugin.warning('至少选择一条需要打印的记录！');
     return;
   }
   await api.deliveryCard.printBarcode({ ids: selectedRowKeys.value });
@@ -926,6 +931,7 @@ const tabChange = async (value: number) => {
     initialDate.value = 1;
   } else {
     initialDate.value = 3;
+    await onLabelManageTabData(); // 配送卡管理 表格数据
   }
 };
 
