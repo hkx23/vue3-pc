@@ -821,7 +821,7 @@ const opts = computed(() => {
     },
     datePproduced: {
       isHide: !tabValue.value,
-      label: '生产日期',
+      label: '生成日期',
       labelWidth: '100px',
       comp: 't-date-range-picker',
       event: 'daterangetime',

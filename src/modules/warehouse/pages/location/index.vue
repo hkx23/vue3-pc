@@ -1,4 +1,4 @@
-<!-- 货区 -->
+<!-- 货位 -->
 <template>
   <div class="main-page">
     <div class="main-page-content">
@@ -9,7 +9,7 @@
         v-model:pagination="pageUI"
         row-key="id"
         :table-column="tableWarehouseColumns"
-        :table-data="tableDataWarehouse"
+        :table-data="tableDataLocation"
         :loading="loading"
         :total="dataTotal"
         @refresh="tabRefresh"
@@ -47,7 +47,7 @@
       </template>
       <t-space direction="vertical" style="width: 98%">
         <!-- 传递 formData 给子组件 -->
-        <district-form ref="formRef" :form-title="formTitle"></district-form>
+        <location-form ref="formRef" :form-title="formTitle"></location-form>
       </t-space>
     </t-dialog>
   </div>
@@ -57,18 +57,18 @@
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
-import { api } from '@/api/warehouse';
+import { api, LocationSearch } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue'; //* 查询组件
 import CmpTable from '@/components/cmp-table/index.vue'; //* 表格组件
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import DistrictForm from './form.vue';
+import LocationForm from './form.vue';
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const selectedWarehouseRowKeys = ref([]);
-const tableDataWarehouse = ref([]); //* 表格数据
+const tableDataLocation = ref([]); //* 表格数据
 const formVisible = ref(false); //* 弹窗默认关闭
 const formTitle = ref('');
 const dataTotal = ref(0);
@@ -95,7 +95,15 @@ const opts = computed(() => {
       },
     },
     districtKeyword: {
-      label: '货区编码/名称',
+      label: '货区编码',
+      labelWidth: '140',
+      isHide: tabValue.value,
+      event: 'input',
+      comp: 't-input',
+      defaultVal: '',
+    },
+    locationKeyword: {
+      label: '货位编码',
       labelWidth: '140',
       isHide: tabValue.value,
       event: 'input',
@@ -108,9 +116,11 @@ const opts = computed(() => {
 //* 表格标题
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '货区编码', colKey: 'districtCode', width: 85 },
-  { title: '货区名称', width: 85, colKey: 'districtName' },
-  { title: '货区描述', width: 85, colKey: 'districtDesc' },
+  { title: '货位编码', colKey: 'locationCode', width: 85 },
+  { title: '货位名称', width: 85, colKey: 'locationName' },
+  { title: '货位描述', width: 85, colKey: 'locationDesc' },
+  { title: '货区编码', width: 85, colKey: 'districtCode' }, //* ?
+  { title: '货区名称', width: 85, colKey: 'districtName' }, //* ?
   {
     title: '仓库编码',
     width: 85,
@@ -121,6 +131,9 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
     title: '状态',
     width: 85,
     colKey: 'state',
+    // render: (h, { row }) => {
+    //   return h('span', row.state ? '已启用' : '已禁用');
+    // },
   },
   { title: '修改人', width: 120, colKey: 'modifier' },
   { title: '修改时间', width: 170, colKey: 'timeModified' },
@@ -130,12 +143,12 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 const fetchTable = async () => {
   setLoading(true);
   selectedWarehouseRowKeys.value = [];
-  tableDataWarehouse.value = [];
-  const data = await api.district.getList({
+  tableDataLocation.value = [];
+  const data = await api.location.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
-  tableDataWarehouse.value = data.list;
+  tableDataLocation.value = data.list;
   dataTotal.value = data.total;
   setLoading(false);
 };
@@ -147,35 +160,36 @@ const tabRefresh = async () => {
 //* 查询
 const onInput = async (data: any) => {
   if (!data.value) {
-    const { warehouseId, districtKeyword } = data;
+    const { warehouseId, districtKeyword, locationKeyword } = data;
     pageUI.value.page = 1;
-    const reslut = await api.district.getList({
+    const result = await api.location.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       warehouseId,
       districtKeyword,
-    });
-    tableDataWarehouse.value = reslut.list;
-    dataTotal.value = reslut.total;
+      locationKeyword,
+    } as LocationSearch);
+    tableDataLocation.value = result.list;
+    dataTotal.value = result.total;
   }
 };
-//* 编辑
+
 const onEditRowClick = async (value: any) => {
   formTitle.value = '编辑';
   controlShow.value = true;
-  await api.district.getItemById(value.row.id);
+  await api.location.getItemById(value.row.id);
   const editedData = {
     ...value.row,
-    state: value.row.state ? 1 : 0, //* 1 表示开启，0 表示关闭
+    state: value.row.state ? 1 : 0,
   };
   formRef.value.formData = JSON.parse(JSON.stringify(editedData));
   formVisible.value = true;
 };
 
-//* 删除
+//* 货位 删除
 const onStateRowClick = async (row: { row: any }) => {
-  await api.district.removeDistrict({ id: row.row.id });
-  if (tableDataWarehouse.value.length <= 1 && pageUI.value.page > 1) {
+  await api.location.removeLocation({ id: row.row.id });
+  if (tableDataLocation.value.length <= 1 && pageUI.value.page > 1) {
     pageUI.value.page--;
   }
   await fetchTable(); // *获取 货区 数据
