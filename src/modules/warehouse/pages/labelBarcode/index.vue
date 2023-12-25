@@ -55,7 +55,7 @@
               </template>
             </cmp-table>
           </t-col>
-          <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck>仅显示已生成</t-radio>
+          <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck @change="onRefreshBelow">仅显示已生成</t-radio>
           <div class="main-page-content">
             <cmp-table
               v-model:pagination="pageUIBracode"
@@ -163,12 +163,7 @@
           </t-form-item>
           <t-form-item v-if="reprintVoidSwitch === 3" label-width="80px" label="拆分原因" name="reprintData">
             <t-select v-model="reprintDialog.reprintData">
-              <t-option
-                v-for="item in reprintDataList.list"
-                :key="item.label"
-                :label="item.label"
-                :value="item.value"
-              />
+              <t-option v-for="item in splitDataList.list" :key="item.label" :label="item.label" :value="item.value" />
             </t-select>
           </t-form-item>
           <t-form-item
@@ -284,6 +279,7 @@ const onPrint = async () => {
   }
   await apiWarehouse.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
   MessagePlugin.success('打印成功');
+  onRefresh();
   onRefreshBelow();
 };
 // 补打，作废确定
@@ -560,6 +556,30 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
+    colKey: 'qty',
+    title: '数量',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'warehouseName',
+    title: '仓库',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'districtName',
+    title: '货区',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'locationName',
+    title: '货位',
+    align: 'center',
+    width: '130',
+  },
+  {
     colKey: 'operateType',
     title: '操作类型',
     align: 'center',
@@ -717,6 +737,12 @@ const barcodeColumns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
+    colKey: 'qty',
+    title: '数量',
+    align: 'center',
+    width: '130',
+  },
+  {
     colKey: 'uomName',
     title: '单位',
     align: 'center',
@@ -797,7 +823,13 @@ const pkgBarcodeManageColumns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'qty',
-    title: '数量',
+    title: '初始数量',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'balanceQty',
+    title: '结余数量',
     align: 'center',
     width: '130',
   },
