@@ -72,7 +72,7 @@
                       />
                     </t-select>
                   </t-col>
-                  <t-col>打印摸板： </t-col>
+                  <t-col>打印模板： </t-col>
                   <t-col :span="2">
                     <t-select v-model="printMode.printTempId" style="width: 90%">
                       <t-option
@@ -461,7 +461,7 @@ const onPrintRulesData = async () => {
   const res = await api.barcodePkg.getBarcodeRuleList(printRuCondition.value);
   onPrintRulesList.list = res.list;
 };
-// 获取 打印摸板 下拉数据
+// 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async () => {
   const res = await api.barcodePkg.getPrintTmplList(printRuCondition.value);

@@ -312,7 +312,7 @@ const reprintDialog = ref({
   resolutionNum: '', // 拆分数量
   resolutionCause: '', // 拆分原因
 });
-// 打印摸板 数据
+// 打印模板 数据
 const printTemplateName = ref({
   printTemplate: '',
 });
@@ -642,7 +642,7 @@ onMounted(async () => {
   await onWorkStatus(); // 工单状态下拉数据
   await onBarCodeState(); // 获取条码状态数据
   await onPrintRulesData(); // 获取 打印规则下拉数据
-  await onPrintTemplateData(); // 获取 打印摸板下拉数据
+  await onPrintTemplateData(); // 获取 打印模板下拉数据
   await onReprintSelextData(); // 获取补打原因列表
   await onCancellationSelextData(); // 获取作废原因列表
   if (reprintDataList.list.length > 0 && reprintVoidSwitch.value === 1) {
@@ -679,7 +679,7 @@ const onPrintRulesData = async () => {
   onPrintRulesList.list = res?.list;
 };
 
-// // 获取 打印摸板 下拉数据
+// // 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async () => {
   const res = await api.deliveryCard.getPrintTmplList();
@@ -926,7 +926,7 @@ const onPrintChange = (value: any) => {
 
 // // TAb 栏切换事件
 const tabChange = async (value: number) => {
-  printTemplateName.value.printTemplate = ''; // 清空打印摸板缓存
+  printTemplateName.value.printTemplate = ''; // 清空打印模板缓存
   if (!value) {
     initialDate.value = 1;
   } else {
