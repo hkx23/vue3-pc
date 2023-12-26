@@ -50,7 +50,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="启用" :label-width="130" style="width: 250px">
+          <t-form-item label="启用">
             <t-switch v-model="formData.state" :custom-value="[1, 0]" />
           </t-form-item>
         </t-col>
@@ -59,7 +59,6 @@
   </t-form>
 </template>
 <script setup lang="ts">
-// import { isEmpty } from 'lodash';
 import { FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { computed, ComputedRef, ref } from 'vue';
 
@@ -109,6 +108,8 @@ const init = () => {
   formData.value.districtDesc = '';
   formData.value.warehouseId = '';
   formData.value.state = 1;
+  formData.value.timeCreate = '';
+  formData.value.timeModified = '';
 };
 
 //* 关联仓库名称

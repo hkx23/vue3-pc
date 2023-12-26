@@ -39,7 +39,7 @@
       v-model:visible="formVisible"
       :header="formTitle"
       :on-confirm="onConfirmForm"
-      width="44%"
+      width="49%"
       :close-on-overlay-click="false"
     >
       <template #header>
@@ -186,7 +186,7 @@ const onEditRowClick = async (value: any) => {
   formVisible.value = true;
 };
 
-//* 货位 删除
+//* 删除
 const onStateRowClick = async (row: { row: any }) => {
   await api.location.removeLocation({ id: row.row.id });
   if (tableDataLocation.value.length <= 1 && pageUI.value.page > 1) {
