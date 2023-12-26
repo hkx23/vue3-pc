@@ -57,7 +57,8 @@
     "dialog": {
       "header": {
         "add": "@:common.button.add{0}",
-        "edit": "@:common.button.edit{0}"
+        "edit": "@:common.button.edit{0}",
+        "tip": "Tip"
       }
     },
     "message": {

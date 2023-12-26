@@ -1,5 +1,6 @@
 {
   "productRepair": {
-    "Repair": "维修"
+    "Repair": "维修",
+    "UnRepair": "删除"
   }
 }
