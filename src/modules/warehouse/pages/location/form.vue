@@ -1,99 +1,86 @@
 <template>
   <t-form
     ref="formRef"
-    layout="inline"
     :data="formData"
     :show-cancel="true"
+    label-width="110px"
     :show-error-message="false"
     @submit="submit"
   >
-    <t-space direction="vertical">
-      <t-row>
-        <t-col v-if="props.formTitle === '编辑'" :span="6">
-          <t-form-item label="选择仓库" required-mark>
-            <div>
-              <t-input v-model="formData.warehouseId" disabled />
-            </div>
-          </t-form-item>
-        </t-col>
-        <t-col v-else :span="6">
-          <t-form-item label="选择仓库" required-mark>
-            <div>
-              <bcmp-select-business
-                v-model="formData.warehouseId"
-                :is-multiple="false"
-                type="warehouse"
-                label-field="warehouseName"
-                value-field="warehouseCode"
-                @selection-change="onMaterialTabData"
-              ></bcmp-select-business>
-            </div>
-          </t-form-item>
-        </t-col>
+    <t-row :gutter="[32, 16]">
+      <t-col v-if="props.formTitle === '编辑'" :span="6">
+        <t-form-item label="选择仓库" required-mark>
+          <div>
+            <t-input v-model="formData.warehouseId" disabled />
+          </div>
+        </t-form-item>
+      </t-col>
+      <t-col v-else :span="6">
+        <t-form-item label="选择仓库" required-mark>
+          <bcmp-select-business
+            v-model="formData.warehouseId"
+            :show-title="false"
+            :is-multiple="false"
+            type="warehouse"
+            label-field="warehouseName"
+            value-field="warehouseCode"
+            @selection-change="onMaterialTabData"
+          ></bcmp-select-business>
+        </t-form-item>
+      </t-col>
 
-        <t-col :span="6">
-          <t-form-item label="仓库名称" required-mark>
-            <t-input v-model="formData.warehouseName" disabled placeholder="请输入仓库名称" />
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <t-row>
-        <t-col v-if="props.formTitle === '编辑'" :span="6">
-          <t-form-item label="选择货区" required-mark>
-            <div>
-              <t-input v-model="formData.districtId" disabled />
-            </div>
-          </t-form-item>
-        </t-col>
-        <t-col v-else :span="6">
-          <t-form-item label="选择货区" required-mark>
-            <div>
-              <bcmp-select-business
-                v-model="formData.districtId"
-                :is-multiple="false"
-                type="district"
-                label-field="districtName"
-                value-field="districtCode"
-                @selection-change="onMaterialTabDatas"
-              ></bcmp-select-business>
-            </div>
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="货区名称" style="width: 250px" required-mark>
-            <t-input v-model="formData.districtName" placeholder="手动输入...." disabled />
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <t-row>
-        <t-col :span="6">
-          <t-form-item label="货位编码" required-mark>
-            <t-input
-              v-model="formData.locationCode"
-              placeholder="手动输入...."
-              :disabled="props.formTitle === '编辑'"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="货位名称" required-mark>
-            <t-input v-model="formData.locationName" placeholder="手动输入...." />
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <t-row>
-        <t-col :span="6">
-          <t-form-item label="货位描述" required-mark>
-            <t-textarea v-model="formData.locationDesc" placeholder="手动输入...." />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="启用" :label-width="130" style="width: 250px">
-            <t-switch v-model="formData.state" :custom-value="[1, 0]" />
-          </t-form-item>
-        </t-col>
-      </t-row>
-    </t-space>
+      <t-col :span="6">
+        <t-form-item label="仓库名称" required-mark>
+          <t-input v-model="formData.warehouseName" disabled placeholder="请输入仓库名称" />
+        </t-form-item>
+      </t-col>
+
+      <t-col v-if="props.formTitle === '编辑'" :span="6">
+        <t-form-item label="选择货区" required-mark>
+          <t-input v-model="formData.districtId" disabled />
+        </t-form-item>
+      </t-col>
+      <t-col v-else :span="6">
+        <t-form-item label="选择货区" required-mark>
+          <bcmp-select-business
+            v-model="formData.districtId"
+            :show-title="false"
+            :is-multiple="false"
+            type="district"
+            label-field="districtName"
+            value-field="districtCode"
+            @selection-change="onMaterialTabDatas"
+          ></bcmp-select-business>
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="货区名称" required-mark>
+          <t-input v-model="formData.districtName" placeholder="手动输入...." disabled />
+        </t-form-item>
+      </t-col>
+
+      <t-col :span="6">
+        <t-form-item label="货位编码" required-mark>
+          <t-input v-model="formData.locationCode" placeholder="手动输入...." :disabled="props.formTitle === '编辑'" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="货位名称" required-mark>
+          <t-input v-model="formData.locationName" placeholder="手动输入...." />
+        </t-form-item>
+      </t-col>
+
+      <t-col :span="6">
+        <t-form-item label="货位描述" required-mark>
+          <t-textarea v-model="formData.locationDesc" placeholder="手动输入...." />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="启用">
+          <t-switch v-model="formData.state" :custom-value="[1, 0]" />
+        </t-form-item>
+      </t-col>
+    </t-row>
   </t-form>
 </template>
 <script setup lang="ts">

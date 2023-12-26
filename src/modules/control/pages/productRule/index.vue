@@ -40,7 +40,7 @@
       <!-- ################# 子数据数据 ###################### -->
       <cmp-card :span="6">
         <div class="pack-dtl-table">
-          <t-space size="small" :align="'center'" class="pack-dtl-button">
+          <t-space size="small" :align="'end'" class="pack-dtl-button">
             <t-button :disabled="!isShowPackRuleDtlAddBtn" @click="onClickAddPackRuleDtl">
               {{ t('common.button.add') }}
             </t-button>
@@ -48,6 +48,7 @@
           <!-- 规则明细表格-->
           <t-enhanced-table
             ref="tableDtlRef"
+            class="son-table"
             row-key="id"
             :columns="tablePackDtlColumns"
             :data="tableDataProductPackDtl"
@@ -81,6 +82,7 @@
           :loading="loadingMitem"
           :show-pagination="false"
           :header-affixed-top="true"
+          class="son-table"
           @refresh="fetchMitemTable"
         >
           <template #op="{ row }">

@@ -31,11 +31,13 @@
       <cmp-query :opts="opts" @submit="onInput"></cmp-query>
     </cmp-card>
     <cmp-card ref="tableCardRef" :span="12">
-      <t-row :span="2" :push="10" style="margin-bottom: 8px">
-        <t-button theme="primary" variant="base" @click="onHandelAdded">新增</t-button>
-        <!-- <t-divider layout="vertical" /> -->
-        <t-button theme="default" variant="base">导出</t-button>
-      </t-row>
+      <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
+        <t-space size="small" :align="'end'">
+          <t-button theme="primary" variant="base" @click="onHandelAdded">新增</t-button>
+          <t-button theme="default" variant="base">导出</t-button>
+        </t-space>
+      </t-space>
+
       <!-- 表格 -->
       <t-enhanced-table
         ref="tableRef"
@@ -653,7 +655,7 @@ const computedTableContentSize = (entry) => {
   boxWidth.value = 0;
   boxHeight.value = 0;
   nextTick(() => {
-    boxHeight.value = _h - 140;
+    boxHeight.value = _h - 145;
   });
 };
 </script>

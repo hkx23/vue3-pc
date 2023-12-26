@@ -1,15 +1,16 @@
 <!-- 货位 -->
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card>
       <cmp-query :opts="opts" @submit="onInput"></cmp-query>
-    </div>
-    <div class="main-page-content">
+    </cmp-card>
+    <cmp-card>
       <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
         :table-column="tableWarehouseColumns"
         :table-data="tableDataLocation"
+        :fixed-height="true"
         :loading="loading"
         :total="dataTotal"
         @refresh="tabRefresh"
@@ -31,26 +32,23 @@
           </t-space>
         </template>
       </cmp-table>
-    </div>
-  </div>
+    </cmp-card>
+  </cmp-container>
   <!-- 弹窗 -->
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="formTitle"
-      :on-confirm="onConfirmForm"
-      width="50%"
-      :close-on-overlay-click="false"
-    >
-      <template #header>
-        {{ formTitle }}
-      </template>
-      <t-space direction="vertical" style="width: 98%">
-        <!-- 传递 formData 给子组件 -->
-        <location-form ref="formRef" :form-title="formTitle"></location-form>
-      </t-space>
-    </t-dialog>
-  </div>
+
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="formTitle"
+    :on-confirm="onConfirmForm"
+    width="750px"
+    :close-on-overlay-click="false"
+  >
+    <template #header>
+      {{ formTitle }}
+    </template>
+    <!-- 传递 formData 给子组件 -->
+    <location-form ref="formRef" :form-title="formTitle"></location-form>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">

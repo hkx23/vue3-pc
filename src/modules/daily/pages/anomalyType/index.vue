@@ -323,6 +323,7 @@ const opts = computed(() => {
 });
 
 const onInput = async (data: any) => {
+  console.log('🚀 ~ file: index.vue:326 ~ onInput ~ data:', data);
   pageUI.value.page = 1;
   const resultMap = {
     '01': [1, 0],
@@ -334,7 +335,7 @@ const onInput = async (data: any) => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     keyword: data.soltDemo,
-    selectKeyword: queryData.value.cellType,
+    selectKeyword: data.cellType,
     state: result,
   });
 

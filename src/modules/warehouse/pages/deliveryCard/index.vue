@@ -1072,7 +1072,7 @@ const onInput = async (data: any) => {
       workshopId: data.workshop, // 车间 ID
       workcenterId: data.workcenter, // 工作中心ID
       mitemId: data.mitem, // 物料 ID
-      deliveryStatus: data.barCodeState, // 条码状态
+      // deliveryStatus: data.barCodeState, // 条码状态
       deliveryCardNo: data.barCode, // 条码
     });
     manageTabData.list = res.list;
