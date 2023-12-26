@@ -320,7 +320,7 @@ const Init = async () => {
   mainform.value.workStationName = userStore.currUserOrgInfo.workStationName;
 
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
   }
 };
 
