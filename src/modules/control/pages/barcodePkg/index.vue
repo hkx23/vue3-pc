@@ -59,7 +59,7 @@
                   />
                 </t-select>
               </t-col>
-              <t-col>打印摸板： </t-col>
+              <t-col>打印模板： </t-col>
               <t-col :span="3">
                 <t-select v-model="printMode.printTempId" style="width: 90%">
                   <t-option
@@ -81,10 +81,11 @@
                 <t-input v-model="printMode.createPDNum" style="width: 80%" />
               </t-col>
               <t-col>包装规格： </t-col>
-              <t-col :span="2">
+              <t-col :span="4">
                 <t-input v-model="printMode.packQtyShow" style="width: 80%" :disabled="true" />
               </t-col>
             </t-row>
+            <t-row style="margin-top: 15px"></t-row>
             <cmp-table
               v-model:pagination="pageUIBracode"
               row-key="barcodePkgId"
@@ -288,6 +289,11 @@ const onConfirm = async () => {
   await fetchBracodeManageTable(); // 刷新表格数据
   formVisible.value = false;
 };
+// // 本次生成产品数求生成张数
+// const onComplementation = (value: any) => {
+//   selectedRowKeys.value = value;
+//   printButtonOp.value = !(selectedRowKeys.value.length > 0);
+// };
 
 // 打印选择 框 行 事件
 const onPrintChange = (value: any) => {
@@ -315,7 +321,8 @@ const totalDay = ref(0);
 const printMode = ref({
   barcodeRuleId: '',
   printTempId: '',
-  createNum: 0,
+  createNum: '',
+  packQty: 0,
   createPDNum: 0,
   packQtyShow: '',
   packType: '',
@@ -328,14 +335,15 @@ const printMode = ref({
 const generateBracode = async () => {
   const residueQty = printMode.value.planQty - printMode.value.generateQty;
   // 校验规格数量是否为正整数
-  if (!Number.isInteger(printMode.value.createNum) || printMode.value.createNum > residueQty) {
+  const intValue = parseInt(printMode.value.createNum, 10);
+  if (!Number.isInteger(intValue) || intValue > residueQty) {
     // 提示错误信息
-    MessagePlugin.warning(`本次生成数量需要为小于${residueQty}已生成数的正整数`);
+    MessagePlugin.warning(`本次生成数量需要为小于剩余生成数${residueQty}的正整数`);
     return;
   }
 
   // 校验规格数量是否为正整数
-  if (printMode.value.createNum === 0) {
+  if (intValue === 0) {
     // 提示错误信息
     MessagePlugin.warning(`本次生成数量不得为0`);
     return;
@@ -347,7 +355,10 @@ const generateBracode = async () => {
     MessagePlugin.warning('请选择条码规则！');
     return;
   }
-  await api.barcodePkg.generateBarcode(printMode.value);
+  await api.barcodePkg.generateBarcode({
+    ...printMode.value,
+    createNum: intValue,
+  });
   handleTabClick(tabValue.value);
   MessagePlugin.success('生成成功');
   onRefreshBelow();
@@ -597,12 +608,6 @@ const barcodeColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'qty',
     title: '数量',
-    align: 'center',
-    width: '130',
-  },
-  {
-    colKey: 'uomName',
-    title: '单位',
     align: 'center',
     width: '130',
   },
@@ -1011,6 +1016,7 @@ const handleTabClick = (selectedTabIndex: any) => {
     printMode.value.packType = selectedTab.packType;
     printMode.value.generateQty = selectedTab.generateQty;
     printMode.value.planQty = selectedTab.planQty;
+    printMode.value.packQty = selectedTab.packQty;
     calculateButtonOffset();
     printMode.value.createPDNum = selectedTab.planQty - selectedTab.generateQty;
     printMode.value.packQtyShow = selectedTab.packQtyShow;

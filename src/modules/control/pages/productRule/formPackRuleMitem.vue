@@ -1,13 +1,20 @@
 <template>
-  <t-form ref="formRef" :data="formData" label-width="120px" :show-cancel="true" :show-error-message="false">
+  <t-form
+    ref="formRef"
+    :rules="FORM_RULES"
+    :data="formData"
+    label-width="120px"
+    :show-cancel="true"
+    :show-error-message="false"
+  >
     <t-form-item :label="t('productRule.packRuleName')" name="packRuleName">
       <t-input v-model="formData.packRuleName" :disabled="true" />
     </t-form-item>
-    <t-form-item :label="t('productRule.packRelationType')" required-mark>
+    <t-form-item :label="t('productRule.packRelationType')" required-mark name="packRelationType">
       <t-radio-group v-model="formData.packRelationType" :options="radioOptions" clearable />
     </t-form-item>
     <t-form-item
-      v-if="formData.packRelationType == 'mitemCategory'"
+      v-show="formData.packRelationType == 'mitemCategory'"
       :label="t('productRule.mitemCategory')"
       name="mitemCategory"
     >
@@ -17,7 +24,7 @@
         :show-title="false"
       ></bcmp-select-business>
     </t-form-item>
-    <t-form-item v-if="formData.packRelationType == 'mitem'" :label="t('productRule.mitem')" name="mitem">
+    <t-form-item v-show="formData.packRelationType == 'mitem'" :label="t('productRule.mitem')" name="mitem">
       <bcmp-select-business v-model="formData.mitemId" type="mitem" :show-title="false"></bcmp-select-business>
     </t-form-item>
   </t-form>
@@ -50,10 +57,9 @@ const props = defineProps({
 });
 const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null);
-// const FORM_RULES = {
-//   packRuleCode: [{ required: true, message: t('common.placeholder.input', [t('productRule.packRuleCode')]) }],
-//   packRuleName: [{ required: true, message: t('common.placeholder.input', [t('productRule.packRuleName')]) }],
-// };
+const FORM_RULES = {
+  packRelationType: [{ required: true, message: t('common.placeholder.input', [t('productRule.packRelationType')]) }],
+};
 const radioOptions = ref([
   { label: t('productRule.mitem'), value: 'mitem', defaultChecked: true },
   { label: t('productRule.mitemCategory'), value: 'mitemCategory' },
@@ -87,9 +93,11 @@ const submit = async () => {
       return;
     }
     if (props.isAdd) {
-      apiControl.productPackRuleMap.add(formData).then(() => {
-        MessagePlugin.success(t('common.message.addSuccess'));
-        resolve(formData);
+      formRef.value.validate().then((result) => {
+        apiControl.productPackRuleMap.add(formData).then(() => {
+          MessagePlugin.success(t('common.message.addSuccess'));
+          resolve(formData);
+        });
       });
     }
   });
@@ -100,6 +108,7 @@ const reset = () => {
   for (const key in formData) {
     delete formData[key];
   }
+  formData.packRelationType = 'mitem';
 };
 
 const setRow = (row: any) => {

@@ -37,7 +37,7 @@
       </t-col>
       <t-col :span="6">
         <t-form-item label="最小包装数量" required-mark>
-          <t-input-number v-model="formData.qty" style="width: 100%" theme="column" />
+          <t-input-number v-model="formData.qty" style="width: 100%" theme="column" min="0" />
         </t-form-item>
       </t-col>
       <t-col :span="6">
@@ -136,6 +136,11 @@ export default {
         }
         if (formData.value.isExemptionInspection === 1 && isEmpty(formData.value.dateExemptionExpired)) {
           MessagePlugin.error('请选择免检失效日期');
+          return false;
+        }
+
+        if (formData.value.qty <= 0) {
+          MessagePlugin.error('最小包装数量必须大于0');
           return false;
         }
 

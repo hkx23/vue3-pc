@@ -576,8 +576,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -684,6 +684,7 @@ export interface ProductReworkPreSettingDTO {
   reworkRoutingRevisionId?: string;
   reworkMoSheId?: string;
   reworkMoId?: string;
+  reworkMoCode?: string;
   reworkRouting?: string;
   reworkRoutingName?: string;
   reworkLine?: string;
@@ -750,6 +751,7 @@ export interface ProductReworkVO {
   uom?: string;
   uomName?: string;
   keypartCode?: string;
+  wipId?: string;
   /** 排产工单 */
   scheCode?: string;
   /** 工单排产状态 */
@@ -773,6 +775,7 @@ export interface ProductReworkVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  preProcessId?: string;
   /** 工序代码 */
   processCode?: string;
   /** 工序名称 */
@@ -799,15 +802,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -905,6 +908,19 @@ export interface ResultProductReworkVO {
   data?: ProductReworkVO;
 }
 
+/** 个人中心配置相关属性 */
+export interface PersonalCenterSettingDTO {
+  workshopCode?: string;
+  workshopName?: string;
+  workCenterId?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  workStationId?: string;
+  workStationCode?: string;
+  workStationName?: string;
+  processId?: string;
+}
+
 /** 产品返工执行模型 */
 export interface ProductReworkDTO {
   /** 条码集合信息 */
@@ -913,6 +929,8 @@ export interface ProductReworkDTO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 关键件数量汇总信息 */
   keyPartSumList?: WipKeyPartCollectVO[];
+  /** 个人中心配置相关属性 */
+  centersetting?: PersonalCenterSettingDTO;
 }
 
 /** 响应数据 */
@@ -956,8 +974,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1127,79 +1145,6 @@ export interface PkgRelationDTO {
   pkgRuleId?: string;
 }
 
-/** 物料使用信息 */
-export interface LabelNoSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 标签集合 */
-  list?: string[];
-}
-
-/** 关键物料正向追溯VO */
-export interface MFTSubVO {
-  /** 物料标签 */
-  mitemLabelNo?: string;
-  /** 批次 */
-  lotNo?: string;
-  /** 供应商编码 */
-  supplierCode?: string;
-  /** 供应商名称 */
-  supplierName?: string;
-  /** 数量 */
-  qty?: number;
-  /** 操作员 */
-  operatorName?: string;
-  /** 仓库名称 */
-  warehouseName?: string;
-  /** 工作中心 */
-  workcenterName?: string;
-  /** 产品编码 */
-  pdCode?: string;
-  /** 工单号 */
-  moCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  /** 物料描述 */
-  mitemCode?: string;
-  /** 绑定工序 */
-  processName?: string;
-  /** 操作类型 */
-  operateType?: string;
-  /**
-   * 加工时间
-   * @format date-time
-   */
-  processDate?: string;
-}
-
-/** 响应数据 */
-export type PagingDataMFTSubVO = {
-  list?: MFTSubVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataMFTSubVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataMFTSubVO;
-}
-
 /** 工单投料信息提交模型 */
 export interface MitemOnboardDTO {
   id?: string;
@@ -1298,6 +1243,132 @@ export interface MitemOnboardUnbindDTO {
   moScheId?: string;
   ids?: string[];
   boardListIds?: string[];
+}
+
+export interface MitemForwardTraceSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 物料批次 */
+  mitemLotNo?: string;
+  /** 物料标签 */
+  mitemLabelNo?: string;
+  mitemId?: string;
+}
+
+/** 关键物料正向追溯VO */
+export type MFTSubVO = {
+  /** 物料标签 */
+  mitemLabelNo?: string;
+  /** 批次 */
+  lotNo?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 供应商联系人 */
+  contactPerson?: string;
+  /** 供应商联系电话 */
+  contactTel?: string;
+  /** 数量 */
+  qty?: number;
+  /** 操作员 */
+  operatorName?: string;
+  /** 仓库名称 */
+  pdCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 工作中心 */
+  workcenterName?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 物料描述 */
+  mitemCode?: string;
+  /** 绑定工序 */
+  processName?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /**
+   * 加工时间
+   * @format date-time
+   */
+  processDate?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMFTSubVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 关键物料正向追溯VO */
+  data?: MFTSubVO;
+}
+
+/** 响应数据 */
+export type PagingDataMFTSubVO = {
+  list?: MFTSubVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMFTSubVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMFTSubVO;
+}
+
+/** 关键物料正向追溯VO */
+export type MFTVO = {
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 批次 */
+  lotNo?: string;
+  /** 数量 */
+  qty?: number;
+  /** 当前状态 */
+  statusName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  receiveTime?: string;
+  /** 响应数据 */
+  tableData?: PagingDataMFTSubVO;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMFTVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 关键物料正向追溯VO */
+  data?: MFTVO;
 }
 
 export interface LabelSearch {
@@ -1610,17 +1681,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  isState?: boolean;
-  stateName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  stateName?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -1726,16 +1797,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
+  stateName?: string;
+  isState?: boolean;
+  defectCodeStr?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
-  stateName?: string;
-  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -1873,6 +1944,11 @@ export interface BarcodePkgSearch {
    * @format int32
    */
   createNum?: number;
+  /**
+   * 生成规格
+   * @format int32
+   */
+  packQty?: number;
   /** 包装类型 */
   packType?: string;
   /**
@@ -1947,6 +2023,21 @@ export interface BarcodePkgVO {
    */
   displayQty?: number;
   /**
+   * 计划数量张数
+   * @format int32
+   */
+  planSheet?: number;
+  /**
+   * 已生成数量张数
+   * @format int32
+   */
+  generateSheet?: number;
+  /**
+   * 已打印数量张数
+   * @format int32
+   */
+  displaySheet?: number;
+  /**
    * 本次生成数量
    * @format int32
    */
@@ -1992,8 +2083,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3085,22 +3176,6 @@ export const api = {
         params: query,
       }),
   },
-  moOnboard: {
-    /**
-     * No description
-     *
-     * @tags 工单投料表
-     * @name GetMitemUseInfo
-     * @summary 根据物料标签查询投料
-     * @request POST:/moOnboard/getMitemUseInfo
-     * @secure
-     */
-    getMitemUseInfo: (data: LabelNoSearch) =>
-      http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/moOnboard/getMitemUseInfo`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
   mitemOnboard: {
     /**
      * No description
@@ -3222,6 +3297,67 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/mitemOnboard/getProccesByWorkStationId`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  mitemForwardTrace: {
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetSupplierInfo
+     * @summary 物料供应商信息
+     * @request POST:/mitemForwardTrace/getSupplierInfo
+     * @secure
+     */
+    getSupplierInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultMFTSubVO['data']>(`/api/control/mitemForwardTrace/getSupplierInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetMitemUseInfo
+     * @summary 物料使用信息
+     * @request POST:/mitemForwardTrace/getMitemUseInfo
+     * @secure
+     */
+    getMitemUseInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getMitemUseInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetMitemBasicInfo
+     * @summary 物料基础信息
+     * @request POST:/mitemForwardTrace/getMitemBasicInfo
+     * @secure
+     */
+    getMitemBasicInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultMFTVO['data']>(`/api/control/mitemForwardTrace/getMitemBasicInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetIoInfo
+     * @summary 物料使用信息
+     * @request POST:/mitemForwardTrace/getIOInfo
+     * @secure
+     */
+    getIoInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getIOInfo`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   label: {
