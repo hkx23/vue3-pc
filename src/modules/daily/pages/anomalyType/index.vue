@@ -2,8 +2,8 @@
   <cmp-container :full="true">
     <cmp-card :span="12">
       <cmp-query :opts="opts" @submit="onInput">
-        <template #cellType>
-          <t-select v-model="queryData.cellType" label="异常模块">
+        <template #cellType="{ param }">
+          <t-select v-model="param.cellType" label="异常模块" default-value="">
             <t-option
               v-for="item in DropDownData.list"
               :key="item.id"
@@ -337,6 +337,7 @@ const onInput = async (data: any) => {
     selectKeyword: queryData.value.cellType,
     state: result,
   });
+
   anomalyTypeData.list = res.list;
   anomalyTotal.value = res.total;
   MessagePlugin.success('查询成功');
