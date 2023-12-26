@@ -2,9 +2,11 @@
 <template>
   <cmp-container :full="true">
     <cmp-card ref="tableCardRef" :span="12">
-      <t-space :size="8" style="margin-bottom: 8px">
-        <t-button @click="onAdd">新增</t-button>
-        <t-button theme="default" @click="onDeletes">删除</t-button>
+      <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
+        <t-space size="small" :align="'end'">
+          <t-button @click="onAdd">新增</t-button>
+          <t-button theme="default" @click="onDeletes">删除</t-button>
+        </t-space>
       </t-space>
       <t-enhanced-table
         row-key="id"
