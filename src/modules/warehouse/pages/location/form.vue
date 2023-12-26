@@ -1,51 +1,40 @@
 <template>
   <t-form
     ref="formRef"
-    layout="inline"
     :data="formData"
     :show-cancel="true"
     :show-error-message="false"
+    layout="inline"
+    label-width="125px"
+    label-align="right"
     @submit="submit"
   >
     <t-space direction="vertical">
-      <t-row>
-        <t-col v-if="props.formTitle === '编辑'" :span="6">
+      <t-row :gutter="[32, 16]">
+        <t-col v-if="formData.operateTpye === 'add'" :span="6">
           <t-form-item label="选择仓库" required-mark>
-            <div>
-              <t-input v-model="formData.warehouseId" disabled />
-            </div>
+            <bcmp-select-business
+              v-model="formData.warehouseId"
+              :is-multiple="false"
+              type="warehouse"
+              label-field="warehouseName"
+              value-field="warehouseCode"
+              @selection-change="onMaterialTabData"
+            ></bcmp-select-business>
           </t-form-item>
         </t-col>
+        <!-- edit  lable   warehouseId -->
         <t-col v-else :span="6">
           <t-form-item label="选择仓库" required-mark>
-            <div>
-              <bcmp-select-business
-                v-model="formData.warehouseId"
-                :is-multiple="false"
-                type="warehouse"
-                label-field="warehouseName"
-                value-field="warehouseCode"
-                @selection-change="onMaterialTabData"
-              ></bcmp-select-business>
-            </div>
+            <t-input v-model="formData.warehouseId" disabled />
           </t-form-item>
         </t-col>
-
         <t-col :span="6">
           <t-form-item label="仓库名称" required-mark>
             <t-input v-model="formData.warehouseName" disabled placeholder="请输入仓库名称" />
           </t-form-item>
         </t-col>
-      </t-row>
-      <t-row>
-        <t-col v-if="props.formTitle === '编辑'" :span="6">
-          <t-form-item label="选择货区" required-mark>
-            <div>
-              <t-input v-model="formData.districtId" disabled />
-            </div>
-          </t-form-item>
-        </t-col>
-        <t-col v-else :span="6">
+        <t-col v-if="formData.operateTpye === 'add'" :span="6">
           <t-form-item label="选择货区" required-mark>
             <div>
               <bcmp-select-business
@@ -54,24 +43,31 @@
                 type="district"
                 label-field="districtName"
                 value-field="districtCode"
+                :disabled="formData.operateTpye !== 'add'"
                 @selection-change="onMaterialTabDatas"
               ></bcmp-select-business>
             </div>
           </t-form-item>
         </t-col>
+        <t-col v-else :span="6">
+          <t-form-item label="选择货区" required-mark>
+            <div>
+              <t-input v-model="formData.districtId" disabled />
+            </div>
+          </t-form-item>
+        </t-col>
+
         <t-col :span="6">
-          <t-form-item label="货区名称" style="width: 250px" required-mark>
+          <t-form-item label="货区名称" required-mark>
             <t-input v-model="formData.districtName" placeholder="手动输入...." disabled />
           </t-form-item>
         </t-col>
-      </t-row>
-      <t-row>
         <t-col :span="6">
           <t-form-item label="货位编码" required-mark>
             <t-input
               v-model="formData.locationCode"
+              :disabled="formData.operateTpye !== 'add'"
               placeholder="手动输入...."
-              :disabled="props.formTitle === '编辑'"
             />
           </t-form-item>
         </t-col>
@@ -80,8 +76,7 @@
             <t-input v-model="formData.locationName" placeholder="手动输入...." />
           </t-form-item>
         </t-col>
-      </t-row>
-      <t-row>
+
         <t-col :span="6">
           <t-form-item label="货位描述" required-mark>
             <t-textarea v-model="formData.locationDesc" placeholder="手动输入...." />
@@ -97,19 +92,12 @@
   </t-form>
 </template>
 <script setup lang="ts">
-// import { isEmpty } from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 
 import { api, District } from '@/api/warehouse';
 
-//* 获取title
-const props = defineProps({
-  formTitle: {
-    type: String,
-    default: '',
-  },
-});
+const formRef = ref(null);
 
 interface LocationForm extends District {
   operateTpye: string;
@@ -122,7 +110,6 @@ interface LocationForm extends District {
   locationDesc: string;
 }
 
-const formRef = ref(null);
 const formData = ref<LocationForm>({
   id: '',
   operateTpye: 'add',
@@ -173,10 +160,10 @@ const onMaterialTabDatas = async (event) => {
 const submit = async () => {
   formData.value.state = formData.value.state ? 1 : 0; //* 处理启用(必须)
   try {
-    if (props.formTitle === '新增') {
+    if (formData.value.operateTpye === 'add') {
       await api.location.addLocation(formData.value);
       MessagePlugin.success('新增成功');
-    } else if (props.formTitle === '编辑') {
+    } else {
       await api.location.modifyLocation(formData.value);
       MessagePlugin.success('编辑成功');
     }
