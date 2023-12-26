@@ -65,6 +65,113 @@ export interface ResultListWipCompletionLabelDTO {
   data?: WipCompletionLabelDTO[] | null;
 }
 
+export interface MitemForwardTraceSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 物料批次 */
+  mitemLotNo?: string;
+  /** 物料标签 */
+  mitemLabelNo?: string;
+  mitemId?: string;
+}
+
+/** 关键物料正向追溯VO */
+export interface MFTSubVO {
+  /** 物料标签 */
+  mitemLabelNo?: string;
+  /** 批次 */
+  lotNo?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 操作员 */
+  operatorName?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 工作中心 */
+  workcenterName?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 物料描述 */
+  mitemCode?: string;
+  /** 绑定工序 */
+  processName?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /**
+   * 加工时间
+   * @format date-time
+   */
+  processDate?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMFTSubVO = {
+  list?: MFTSubVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMFTSubVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMFTSubVO;
+}
+
+/** 关键物料正向追溯VO */
+export type MFTVO = {
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 批次 */
+  lotNo?: string;
+  /** 数量 */
+  qty?: number;
+  /** 当前状态 */
+  statusName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  receiveTime?: string;
+  /** 响应数据 */
+  tableData?: PagingDataMFTSubVO;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMFTVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 关键物料正向追溯VO */
+  data?: MFTVO;
+}
+
 /** 通用响应类 */
 export interface ResultObject {
   /**
@@ -165,7 +272,8 @@ export interface LocationSearch {
    */
   pageSize?: number;
   warehouseId?: string;
-  districtId?: string;
+  /** 货区Id */
+  districtKeyword?: string;
   /** 货位搜索关键字 */
   locationKeyword?: string;
 }
@@ -265,6 +373,7 @@ export interface LabelSearch {
   /** 是否仅显示未打印完成 */
   isFinishDisplay?: boolean;
   deliveryId?: string;
+  deliveryDtlId?: string;
   labelId?: string;
   /** 是否仅显示已生成 */
   isCreated?: boolean;
@@ -389,8 +498,7 @@ export interface LabelVO {
   uomName?: string;
   /** 计量单位 */
   uom?: string;
-  /** 条码 */
-  serialNumber?: string;
+  deliveryDtlId?: string;
   /** 条码状态 */
   barcodeStatusName?: string;
   /** 收货人名称 */
@@ -401,10 +509,21 @@ export interface LabelVO {
   districtName?: string;
   /** 货位名称 */
   locationName?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  /** 货区编码 */
+  districtCode?: string;
+  /** 货位编码 */
+  locationCode?: string;
   /** 操作类型 */
   operateType?: string;
   /** 原因 */
   reason?: string;
+  /**
+   * 送货时间
+   * @format date-time
+   */
+  dataDelivery?: string;
 }
 
 /** 响应数据 */
@@ -619,7 +738,7 @@ export interface DeliveryCardSearch {
   /** 包装条码状态 */
   barcodePkgStatus?: string;
   /** 包装条码 */
-  pkgBarcode?: string;
+  deliveryCardNo?: string;
   barcodeRuleId?: string;
   /**
    * 生成数量
@@ -675,11 +794,11 @@ export interface DeliveryCardVO {
   workcenterId?: string;
   /** 工作中心名称 */
   workcenterName?: string;
-  barcodePkgId?: string;
-  /** barcodePkg条码 */
-  pkgBarcode?: string;
-  /** barcodePkg状态名称 */
-  barcodePkgStatuName?: string;
+  deliveryCardId?: string;
+  /** deliveryCard条码 */
+  deliveryCardNo?: string;
+  /** deliveryCard状态名称 */
+  deliveryCardStatuName?: string;
   /** barcodePkg数量 */
   qty?: number;
   /** 创建人名称 */
@@ -991,6 +1110,37 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/billInfo/deleteBarcode`, {
         method: 'DELETE',
         params: query,
+      }),
+  },
+  mitemForwardTrace: {
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetMitemUseInfo
+     * @summary 物料使用信息
+     * @request POST:/mitemForwardTrace/getMitemUseInfo
+     * @secure
+     */
+    getMitemUseInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultPagingDataMFTSubVO['data']>(`/api/warehouse/mitemForwardTrace/getMitemUseInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetMitemBasicInfo
+     * @summary 物料基础信息
+     * @request POST:/mitemForwardTrace/getMitemBasicInfo
+     * @secure
+     */
+    getMitemBasicInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultMFTVO['data']>(`/api/warehouse/mitemForwardTrace/getMitemBasicInfo`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   location: {
@@ -1398,13 +1548,13 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
-     * @name GetBarcodePkgManagerList
+     * @name GetDeliveryCardManagerList
      * @summary 查询在制品条码(标签管理表格)
-     * @request POST:/deliveryCard/getBarcodePkgManagerList
+     * @request POST:/deliveryCard/getDeliveryCardManagerList
      * @secure
      */
-    getBarcodePkgManagerList: (data: DeliveryCardSearch) =>
-      http.request<ResultPagingDataDeliveryCardVO['data']>(`/api/warehouse/deliveryCard/getBarcodePkgManagerList`, {
+    getDeliveryCardManagerList: (data: DeliveryCardSearch) =>
+      http.request<ResultPagingDataDeliveryCardVO['data']>(`/api/warehouse/deliveryCard/getDeliveryCardManagerList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1413,13 +1563,13 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
-     * @name GetBarcodePkgLog
+     * @name GetDeliveryCardLog
      * @summary 查询日志
-     * @request POST:/deliveryCard/getBarcodePkgLog
+     * @request POST:/deliveryCard/getDeliveryCardLog
      * @secure
      */
-    getBarcodePkgLog: (data: DeliveryCardSearch) =>
-      http.request<ResultPagingDataDeliveryCardVO['data']>(`/api/warehouse/deliveryCard/getBarcodePkgLog`, {
+    getDeliveryCardLog: (data: DeliveryCardSearch) =>
+      http.request<ResultPagingDataDeliveryCardVO['data']>(`/api/warehouse/deliveryCard/getDeliveryCardLog`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1428,13 +1578,13 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
-     * @name GetBarcodePkgList
+     * @name GetDeliveryCardList
      * @summary 查询在制品条码(打印下表格)
-     * @request POST:/deliveryCard/getBarcodePkgList
+     * @request POST:/deliveryCard/getDeliveryCardList
      * @secure
      */
-    getBarcodePkgList: (data: DeliveryCardSearch) =>
-      http.request<ResultPagingDataDeliveryCardVO['data']>(`/api/warehouse/deliveryCard/getBarcodePkgList`, {
+    getDeliveryCardList: (data: DeliveryCardSearch) =>
+      http.request<ResultPagingDataDeliveryCardVO['data']>(`/api/warehouse/deliveryCard/getDeliveryCardList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1478,10 +1628,9 @@ export const api = {
      * @request GET:/deliveryCard/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: (query: { packType: string }) =>
+    getPrintTmplList: () =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/warehouse/deliveryCard/getPrintTmplList`, {
         method: 'GET',
-        params: query,
       }),
 
     /**
@@ -1493,10 +1642,9 @@ export const api = {
      * @request GET:/deliveryCard/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: (query: { packType: string }) =>
+    getBarcodeRuleList: () =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/warehouse/deliveryCard/getBarcodeRuleList`, {
         method: 'GET',
-        params: query,
       }),
   },
 };
