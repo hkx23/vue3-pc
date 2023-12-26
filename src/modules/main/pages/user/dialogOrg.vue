@@ -3,6 +3,11 @@
     v-model:visible="visible"
     :header="t('user.org')"
     width="600px"
+    :confirm-btn="{
+      content: '保存',
+      theme: 'primary',
+      loading: saveLoading,
+    }"
     :confirm-on-enter="true"
     :on-confirm="onConfirmAnother"
   >
@@ -33,9 +38,9 @@
 
 <script setup lang="tsx">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
-import { api, User, UserOrgDTO } from '@/api/main';
+import { api, UserOrgDTO } from '@/api/main';
 
 import { useLang } from './lang';
 
@@ -57,6 +62,8 @@ const orgData = ref([]);
 const selectedRowKeys = ref([]);
 
 const loading = ref(false);
+const saveLoading = ref(false);
+
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
     // title: '单选',
@@ -114,9 +121,50 @@ const fetchOrgData = async () => {
 const rehandleSelectChange = (value, { selectedRowData }) => {
   selectedRowKeys.value = value;
   console.log(value, selectedRowData);
+};
+const setDefaultOrg = (currenRow: any) => {
+  console.log('默认库存组织', currenRow);
+  // 除了当前行，其他行数据的default值需要设置成false
+  // orgData.value 为表格数据
+  // Clone the original data to avoid mutating it
+  const newData = [...orgData.value];
+  newData.forEach((row, index) => {
+    if (row.id !== currenRow.id) {
+      newData[index].default = false;
+    }
+  });
+
+  // Update the orgData.value with the new data
+  orgData.value = newData;
+  if (!selectedRowKeys.value.includes(currenRow.id)) {
+    selectedRowKeys.value.push(currenRow.id);
+  }
+
+  // const userData: User = reactive({
+  //   id: props.id,
+  //   orgId: row.id,
+  // });
+
+  // api.user
+  //   .setDefaultOrg(userData)
+  //   .then(() => {
+  //     MessagePlugin.success(t('user.setDefaultSuccess'));
+  //     fetchOrgData();
+  //   })
+  //   .catch((err) => {
+  //     MessagePlugin.error(err.message);
+  //   });
+};
+const onConfirmAnother = (context) => {
+  saveLoading.value = true;
+  console.log('点击了确认按钮', context);
+  const defaultRow = orgData.value.filter((item) => {
+    return item.default === true;
+  });
   const userDatas: UserOrgDTO = {
     userId: props.id,
     orgIds: selectedRowKeys.value,
+    defaultOrgId: defaultRow[0].id,
   };
 
   api.userInOrg
@@ -124,31 +172,14 @@ const rehandleSelectChange = (value, { selectedRowData }) => {
     .then(() => {
       MessagePlugin.success(t('user.setUserOrgsSuccess'));
       fetchOrgData();
+      visible.value = false;
+      saveLoading.value = false;
     })
     .catch((err) => {
       MessagePlugin.error(err.message);
+      saveLoading.value = false;
     });
-};
-const setDefaultOrg = (row: any) => {
-  console.log('默认库存组织', row);
-  const userData: User = reactive({
-    id: props.id,
-    orgId: row.id,
-  });
 
-  api.user
-    .setDefaultOrg(userData)
-    .then(() => {
-      MessagePlugin.success(t('user.setDefaultSuccess'));
-      fetchOrgData();
-    })
-    .catch((err) => {
-      MessagePlugin.error(err.message);
-    });
-};
-const onConfirmAnother = (context) => {
-  console.log('点击了确认按钮', context);
-  visible.value = false;
   // submit().then((data) => {
   //   console.log('提交成功', data);
   //   visible.value = false;

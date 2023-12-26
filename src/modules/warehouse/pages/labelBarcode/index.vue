@@ -12,7 +12,7 @@
           <t-col :span="12" flex="auto">
             <cmp-table
               v-model:pagination="pageUI"
-              row-key="id"
+              row-key="deliveryDtlId"
               :table-column="groupColumns"
               :table-data="deliveryList.list"
               :loading="loading"
@@ -40,7 +40,7 @@
                       />
                     </t-select>
                   </t-col>
-                  <t-col>打印摸板： </t-col>
+                  <t-col>打印模板： </t-col>
                   <t-col :span="3">
                     <t-select v-model="printMode.printTempId" style="width: 90%">
                       <t-option
@@ -55,7 +55,7 @@
               </template>
             </cmp-table>
           </t-col>
-          <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck>仅显示已生成</t-radio>
+          <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck @change="onRefreshBelow">仅显示已生成</t-radio>
           <div class="main-page-content">
             <cmp-table
               v-model:pagination="pageUIBracode"
@@ -92,7 +92,7 @@
               <template #operate>
                 <t-space>
                   <t-row align="middle" style="margin-top: 10px">
-                    <t-col>打印摸板： </t-col>
+                    <t-col>打印模板： </t-col>
                     <t-col>
                       <t-select v-model="printMode.printTempId" style="width: 90%">
                         <t-option
@@ -163,12 +163,7 @@
           </t-form-item>
           <t-form-item v-if="reprintVoidSwitch === 3" label-width="80px" label="拆分原因" name="reprintData">
             <t-select v-model="reprintDialog.reprintData">
-              <t-option
-                v-for="item in reprintDataList.list"
-                :key="item.label"
-                :label="item.label"
-                :value="item.value"
-              />
+              <t-option v-for="item in splitDataList.list" :key="item.label" :label="item.label" :value="item.value" />
             </t-select>
           </t-form-item>
           <t-form-item
@@ -284,6 +279,7 @@ const onPrint = async () => {
   }
   await apiWarehouse.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
   MessagePlugin.success('打印成功');
+  onRefresh();
   onRefreshBelow();
 };
 // 补打，作废确定
@@ -340,8 +336,8 @@ const onSelectionChange = (selectedRows) => {
   queryBelowCondition.value.pageNum = pageUIBracode.value.page;
   queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
   const [firstItem] = selectedRows;
-  printMode.value.deliveryId = firstItem;
-  queryBelowCondition.value.deliveryId = firstItem;
+  printMode.value.deliveryDtlId = firstItem;
+  queryBelowCondition.value.deliveryDtlId = firstItem;
   apiWarehouse.label.getLabelList(queryBelowCondition.value).then((data) => {
     labelBelowList.list = data.list;
     barcodeTotal.value = data.total;
@@ -355,6 +351,7 @@ const printMode = ref({
   printTempId: '',
   packQty: 0,
   deliveryId: '',
+  deliveryDtlId: '',
   generalQty: 0,
   planQty: 0,
   lotNo: '',
@@ -362,9 +359,13 @@ const printMode = ref({
 
 // 生成按钮模型初始化
 const generateBracode = async () => {
-  const index = printMode.value.deliveryId;
-  const item = deliveryList.list.find((element) => element.id === index);
-  console.log(item);
+  const index = printMode.value.deliveryDtlId;
+  const item = deliveryList.list.find((element) => element.deliveryDtlId === index);
+  if (!printMode.value.deliveryDtlId) {
+    // 提示错误信息
+    MessagePlugin.warning('请选择送货单！');
+    return;
+  }
   // 校验是否已经选择条码规则
   if (!item.lotNo) {
     // 提示错误信息
@@ -377,14 +378,10 @@ const generateBracode = async () => {
     MessagePlugin.warning('请选择条码规则！');
     return;
   }
-  if (!printMode.value.deliveryId) {
-    // 提示错误信息
-    MessagePlugin.warning('请选择送货单！');
-    return;
-  }
   await apiWarehouse.label.generateBarcode(printMode.value);
   MessagePlugin.success('生成成功');
   onRefreshBelow();
+  onRefresh();
 };
 
 // 打印上方查询初始化
@@ -403,7 +400,7 @@ const queryBelowCondition = ref({
   isCreated: true,
   pageNum: 1,
   pageSize: 10,
-  deliveryId: '',
+  deliveryDtlId: '',
 });
 // 管理上方查询初始化
 const manageQueryCondition = ref({
@@ -422,11 +419,11 @@ const manageQueryCondition = ref({
 const tagValue = ref(0);
 const barcodeStatusNameArr = ref([]);
 const onProductRightFetchData = (value: any, context: any) => {
+  selectedManageRowKeys.value = value;
   reprintDialog.value.labelNo = context.selectedRowData[0].labelNo;
   reprintDialog.value.qty = context.selectedRowData[0].qty;
   reprintDialog.value.labelId = context.selectedRowData[0].id;
   barcodeStatusNameArr.value = context.selectedRowData.map((item: any) => item.barcodeStatusName);
-  selectedManageRowKeys.value = value;
 
   isEnable.value = !(selectedManageRowKeys.value.length > 0);
 };
@@ -537,7 +534,7 @@ const onBracodeRulesData = async () => {
   const res = await apiWarehouse.label.getLabelBarcodeRuleList();
   onBracodeRulesList.list = res;
 };
-// 获取 打印摸板 下拉数据
+// 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async () => {
   const res = await apiWarehouse.label.getLabelPrintTmplList();
@@ -555,6 +552,30 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'barcodeStatusName',
     title: '条码状态',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'qty',
+    title: '数量',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'warehouseName',
+    title: '仓库',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'districtName',
+    title: '货区',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'locationName',
+    title: '货位',
     align: 'center',
     width: '130',
   },
@@ -596,7 +617,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'billNo',
     title: '送货单',
     align: 'center',
-    width: '110',
+    width: '200',
   },
   {
     colKey: 'supplierCode',
@@ -651,14 +672,9 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
       //   console.log('🚀 ~ file: index.vue:295 ~ ctx:', ctx);
       // },
       // }),
-      abortEditOnEvent: ['onEnter'],
+      abortEditOnEvent: ['onBlur'],
       // 编辑完成，退出编辑态后触发
       onEdited: (context) => {
-        const num = context.newRowData.planQty - context.newRowData.generateQty;
-        if (context.newRowData.lotNo > num) {
-          MessagePlugin.warning(`本次生成数量需要为小于等于${num}的正整数`);
-          return;
-        }
         deliveryList.list[context?.rowIndex] = context?.newRowData;
         printMode.value.lotNo = deliveryList.list[context?.rowIndex].lotNo; // 变化后的数字
       },
@@ -695,14 +711,8 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'creatorName',
-    title: '收货人',
-    align: 'center',
-    width: '130',
-  },
-  {
-    colKey: 'timeCreate',
-    title: '收货时间',
+    colKey: 'dataDelivery',
+    title: '送货日期',
     align: 'center',
     width: '130',
   },
@@ -725,6 +735,12 @@ const barcodeColumns: PrimaryTableCol<TableRowData>[] = [
     title: '条码状态',
     align: 'center',
     width: '110',
+  },
+  {
+    colKey: 'qty',
+    title: '数量',
+    align: 'center',
+    width: '130',
   },
   {
     colKey: 'uomName',
@@ -807,7 +823,13 @@ const pkgBarcodeManageColumns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'qty',
-    title: '数量',
+    title: '初始数量',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'balanceQty',
+    title: '结余数量',
     align: 'center',
     width: '130',
   },
@@ -956,7 +978,7 @@ const fetchBracodeManageTable = async () => {
 const opts = computed(() => {
   return {
     datetimePlanRange: {
-      label: '收货日期',
+      label: '送货日期',
       comp: 't-date-range-picker',
       defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
     },
@@ -1063,6 +1085,18 @@ apiMain.param.getListByGroupCode({ parmGroupCode: 'W_MITEM_LABEL_STATUS' }).then
 });
 // ################ 初始渲染
 onMounted(async () => {
+  // 获取当前日期
+  const today = new Date();
+
+  // 计算三天前的日期
+  const threeDaysAgo = new Date();
+  threeDaysAgo.setDate(today.getDate() - 3);
+
+  // 将日期转换为字符串，格式可以根据需要进行调整
+  const timeCreatedStart = threeDaysAgo.toISOString().split('T')[0];
+  const timeCreatedEnd = today.toISOString().split('T')[0];
+  queryCondition.value.dateStart = timeCreatedStart;
+  queryCondition.value.dateEnd = timeCreatedEnd;
   await fetchMoTable(); // 获取 物料编码 表格数据
   await onBracodeRulesData(); // 获取 条码模板下拉数据
   await onPrintTemplateData(); // 获取 打印模板下拉数据
@@ -1074,9 +1108,10 @@ onMounted(async () => {
 const onRowClick = ({ row }) => {
   queryBelowCondition.value.pageNum = pageUIBracode.value.page;
   queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
-  queryBelowCondition.value.deliveryId = row.id;
+  queryBelowCondition.value.deliveryDtlId = row.deliveryDtlId;
+  printMode.value.deliveryDtlId = row.deliveryDtlId;
   delivertRowKeys.value = [];
-  delivertRowKeys.value.push(row.id);
+  delivertRowKeys.value.push(row.deliveryDtlId);
   apiWarehouse.label.getLabelList(queryBelowCondition.value).then((data) => {
     labelBelowList.list = data.list;
     barcodeTotal.value = data.total;

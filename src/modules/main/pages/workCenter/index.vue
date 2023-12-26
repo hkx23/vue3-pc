@@ -1,6 +1,7 @@
 <template>
   <!-- 子from -->
   <detailed
+    :type-show="parentTypeShow"
     :detailed-show="detailedShow"
     :btn-show-disable="{ add: btnShowDisable.add, delete: btnShowDisable.delete }"
     :word-center-id="workCenterId"
@@ -99,6 +100,7 @@ import { usePage } from '@/hooks/modules/page';
 
 import detailed from './detailed.vue';
 
+const parentTypeShow = ref(false); // 子组件控制设备禁用
 const onPageSizeChange = () => {
   page.value.current = 1;
   onFetchData();
@@ -394,7 +396,7 @@ const onHandelArr = (value: any) => {
     arr.value = value;
   }
   console.log('类型', arr.value);
-  pageUI.value.page = 1;
+  page.value.current = 1;
   onFetchData();
 };
 // // 查询
@@ -458,7 +460,7 @@ const queryData = ref({
 
 // #搜索触发事件
 const onInput = async (data: any) => {
-  pageUI.value.page = 1;
+  page.value.current = 1;
   const resultMap = {
     '01': [1, 0],
     '1': [1],
@@ -474,6 +476,7 @@ const onInput = async (data: any) => {
     state: result,
   });
   workData.value = res.list; // table数据
+  page.value.total = res.total;
   data.value = res.list; // 新增页面
 };
 
@@ -502,6 +505,8 @@ const onFetchData = async () => {
     workData.value = res.list; // table数据
     data.value = res.list; // 新增页面
     page.value.total = res.total;
+    console.log('🚀 ~ file: index.vue:506 ~ onFetchData ~  res.total:', res.total);
+    console.log('🚀 ~ file: index.vue:506 ~ onFetchData ~ page.value.total:', page.value.total);
     // 只有第一次进来的时候才拿
     if (id.value === 0) {
       // 类型请求
@@ -584,6 +589,11 @@ const onHandleSave = (i: boolean) => {
 // 编辑
 const onClickEdit = (row: any) => {
   newArr.value = row.wcType;
+  if (row.wcType === '设备') {
+    parentTypeShow.value = false;
+  } else {
+    parentTypeShow.value = true;
+  }
   btnShow.value = true;
   detailedShow.value = true;
   workCenterId.value = row; // 渲染子

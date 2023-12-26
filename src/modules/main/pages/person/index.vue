@@ -51,7 +51,7 @@
               @refresh="onRefresh"
             >
               <template #op="slotProps">
-                <t-space>
+                <t-space :size="8">
                   <t-link theme="primary" @click="handleClickDetail(slotProps)">{{ t('common.button.edit') }}</t-link>
                   <t-link theme="primary" @click="handleClickDelete(slotProps)">{{
                     slotProps.row.state === 1 ? t('common.button.disable') : t('common.button.enable')
@@ -196,7 +196,7 @@ const columnsParam: PrimaryTableCol<TableRowData>[] = [
   { title: '手机号', colKey: 'mobilePhone' },
   { title: '邮箱', colKey: 'email' },
   { title: '状态', colKey: 'stateName' },
-  { title: '操作', align: 'left', fixed: 'right', colKey: 'op' },
+  { title: '操作', align: 'left', fixed: 'right', colKey: 'op', width: 120 },
 ];
 
 // 下拉初始数据

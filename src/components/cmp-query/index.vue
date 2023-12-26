@@ -1,5 +1,5 @@
 <template>
-  <t-row @keydown.enter="enterCheckHandle">
+  <t-row ref="QueryRef" @keydown.enter="enterCheckHandle">
     <t-col ref="formContentRef" flex="1 1">
       <t-form
         colon
@@ -118,6 +118,7 @@
 <script setup lang="tsx" name="CmpQuery">
 import _ from 'lodash';
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import { useResizeObserver } from 'vue-hooks-plus';
 
 import { useLang } from './lang';
 import RenderComp from './renderComp.vue';
@@ -179,6 +180,7 @@ const state = reactive({
 const openSearchForm = ref(false);
 const showExpand = ref(true); // 是否展示展开按钮
 const formContentRef = ref<any>(null);
+const QueryRef = ref<any>(null);
 const formRowRef = ref<any>(null);
 
 const slots = ref({});
@@ -406,6 +408,11 @@ const onExpandSwitch = () => {
   // });
 };
 
+useResizeObserver(QueryRef, (entries) => {
+  const entry = entries[0];
+  console.log(entry);
+  debounceFunction();
+});
 const debounceFunction = _.debounce(() => {
   computedExpandBtnVisible();
   // computedTableContentSize();
@@ -421,13 +428,13 @@ const computedExpandBtnVisible = () => {
 };
 onMounted(() => {
   debounceFunction();
-  window.addEventListener('resize', debounceFunction, false);
+  // window.addEventListener('resize', debounceFunction, false);
 
   const instance = getCurrentInstance();
   slots.value = instance?.slots;
 });
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', debounceFunction);
+  // window.removeEventListener('resize', debounceFunction);
 });
 // 暴露方法出去
 defineExpose({ state, props });

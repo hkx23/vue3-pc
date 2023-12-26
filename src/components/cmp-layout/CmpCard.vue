@@ -52,6 +52,8 @@ const classAttrs = computed(() => {
 </script>
 <style lang="less" scoped>
 .cmp-card {
+  min-width: 1px;
+
   :deep(> .cmp-container-full) {
     padding: 0;
   }

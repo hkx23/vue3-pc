@@ -1,10 +1,11 @@
 <template>
-  <cmp-container :full="true" :full-sub-index="[1, 2]">
-    <cmp-card :span="12">
+  <!-- :full-sub-index="[1, 2]" -->
+  <cmp-container :full="false">
+    <cmp-card>
       <!-- 查询组件  -->
       <cmp-query :opts="opts" @submit="conditionEnter" />
     </cmp-card>
-    <cmp-card :span="12">
+    <cmp-card>
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -13,7 +14,7 @@
         :table-data="tableDataMitemCategory"
         :loading="loading"
         :total="dataTotal"
-        :fixed-height="true"
+        :fixed-height="false"
         select-on-row-click
         @refresh="fetchTable"
         @select-change="onSelectMitemCategoryChange"
@@ -29,11 +30,12 @@
         </template>
       </cmp-table>
     </cmp-card>
-    <cmp-card :span="12">
+    <cmp-card>
       <cmp-table
         v-model:pagination="pageMitem"
+        class="son-table"
         row-key="id"
-        :fixed-height="true"
+        :fixed-height="false"
         :total="mitemTotal"
         :table-column="tableMitemColumns"
         :table-data="tableDataMitem"

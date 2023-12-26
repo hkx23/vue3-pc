@@ -2,8 +2,8 @@
   <cmp-container :full="true">
     <cmp-card :span="12">
       <cmp-query :opts="opts" @submit="onInput">
-        <template #cellType>
-          <t-select v-model="queryData.cellType" label="异常模块">
+        <template #cellType="{ param }">
+          <t-select v-model="param.cellType" label="异常模块" default-value="">
             <t-option
               v-for="item in DropDownData.list"
               :key="item.id"
@@ -227,7 +227,7 @@ const onGetAnomalyTypeData = async () => {
   const res = await api.incidentType.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
-    keyword: '',
+    state: [0, 1],
   });
   anomalyTypeData.list = res.list;
   anomalyTotal.value = res.total;
@@ -323,6 +323,7 @@ const opts = computed(() => {
 });
 
 const onInput = async (data: any) => {
+  console.log('🚀 ~ file: index.vue:326 ~ onInput ~ data:', data);
   pageUI.value.page = 1;
   const resultMap = {
     '01': [1, 0],
@@ -334,9 +335,10 @@ const onInput = async (data: any) => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     keyword: data.soltDemo,
-    selectKeyword: queryData.value.cellType,
+    selectKeyword: data.cellType,
     state: result,
   });
+
   anomalyTypeData.list = res.list;
   anomalyTotal.value = res.total;
   MessagePlugin.success('查询成功');

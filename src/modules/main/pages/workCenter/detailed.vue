@@ -41,7 +41,7 @@
         </t-col>
         <t-col :span="6">
           <t-form-item label="顺序号" name="wcSeq">
-            <t-input-number v-model="formData.wcSeq" theme="column" />
+            <t-input-number v-model="formData.wcSeq" theme="column" min="0" />
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -101,7 +101,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
+import { CustomValidateResolveType, Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
@@ -117,6 +117,10 @@ const { pageUI } = usePage(); // 页面数
 // const { loading, setLoading } = useLoading();
 const Emit = defineEmits(['addedShow', 'FormClear', 'ChildDefault', 'delete', 'update:detailedShow']); // addedShow窗口
 const props = defineProps({
+  typeShowChild: {
+    type: Boolean,
+    default: false,
+  },
   detailedShow: {
     type: Boolean,
     default: false,
@@ -272,12 +276,21 @@ const typeData = ref([
   },
 ]);
 // 判断数组里面的设备
+// const typeShowChild = ref(props.typeShowChild);
+watch(
+  () => props.typeShowChild,
+  (newValue) => {
+    console.log('🚀 ~ file: detailed.vue:283 ~ newValue:', newValue);
+    typeShow.value = newValue;
+  },
+);
 const onTypeList = () => {
   typeData.value.forEach((item) => {
     // 判断名称是否相同
     if (props.newArr === item.wcType) {
       // 判断是否为设备
       if (props.newArr !== '设备') {
+        console.log('🚀 ~ file: detailed.vue:281 ~ typeData.value.forEach ~ props.newArr:', props.newArr);
         typeShow.value = true;
       }
       item.show = true;
@@ -295,6 +308,7 @@ const onTypeList = () => {
 };
 // 类型高亮事件
 const onHandleCur = (all) => {
+  console.log('🚀 ~ file: detailed.vue:298 ~ onHandleCur ~ context:', all);
   typeData.value.forEach((item) => {
     if (item.wcType === all) {
       if (item.wcType !== '设备') {
@@ -449,13 +463,20 @@ const rules: FormRules<Data> = {
     },
   ],
   wcSeq: [
-    {
-      required: true,
-      type: 'error',
-      trigger: 'blur',
-    },
+    { required: true, message: '顺序号不能为空', trigger: 'blur' },
+    { validator: validateNumber, trigger: 'blur' },
   ],
 };
+
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number.isNaN(Number(value))) {
+    return { result: false, message: '该字段必须是数字', type: 'error' };
+  }
+  if (Number(value) < 0) {
+    return { result: false, message: '该字段不能为负数', type: 'error' };
+  }
+  return true;
+}
 </script>
 
 <style lang="less" scoped>

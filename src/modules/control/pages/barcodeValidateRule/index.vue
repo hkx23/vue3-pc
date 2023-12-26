@@ -1,221 +1,231 @@
 <!-- 条码验证规则 -->
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <cmp-query :opts="opts" @submit="onInput">
-        <template #cellType>
-          <t-select v-model="barcodeData.barcodeType">
-            <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </template>
-        <template #cellMaterial>
-          <bcmp-select-business
-            v-model="barcodeData.mitemCategoryId"
-            :disabled="radioValue"
-            :is-multiple="false"
-            type="mitemCategory"
-            label=""
-          ></bcmp-select-business>
-        </template>
-      </cmp-query>
-    </div>
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card class="full-tab">
       <t-tabs v-model="tabValue" @change="tabChange">
         <!-- $$$$$$$$$$$    文本验证分组  $$$$$$$$$$$$$$-->
         <t-tab-panel :value="0" label="文本验证分组" :destroy-on-hide="false">
           <template #panel>
-            <cmp-table
-              ref="tableRefForm"
-              v-model:pagination="pageUI"
-              row-key="id"
-              :table-column="columnsText"
-              :table-data="textTabData.list"
-              :total="totalText"
-              @refresh="onLeftFetchData"
-            >
-              <template #actionSlot="{ row }">
-                <t-link theme="primary" style="margin-right: 10px" @click="onTextEditRow(row)"> 编辑 </t-link>
-                <t-popconfirm theme="default" content="确认删除吗" @confirm="onTextDelConfirm(row)">
-                  <t-link theme="primary"> 删除 </t-link>
-                </t-popconfirm>
-              </template>
-              <template #operate>
-                <t-space>
-                  <t-button theme="default" @click="onAddRuleData"> 新增 </t-button>
-                </t-space>
-              </template>
-            </cmp-table>
+            <cmp-container :full="true" :gutter="[0, 0]">
+              <cmp-card :ghost="true" class="padding-bottom-line-16">
+                <cmp-query :opts="opts" @submit="onInput">
+                  <template #cellType>
+                    <t-select v-model="barcodeData.barcodeType" label="条码类型">
+                      <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
+                    </t-select>
+                  </template>
+                  <template #cellMaterial>
+                    <bcmp-select-business
+                      v-model="barcodeData.mitemCategoryId"
+                      :disabled="radioValue"
+                      :is-multiple="false"
+                      type="mitemCategory"
+                      label="物料分类"
+                    ></bcmp-select-business>
+                  </template>
+                </cmp-query>
+              </cmp-card>
+              <cmp-card :ghost="true" class="padding-top-noline-16">
+                <cmp-table
+                  ref="tableRefForm"
+                  v-model:pagination="pageUI"
+                  row-key="id"
+                  :fixed-height="true"
+                  :table-column="columnsText"
+                  :table-data="textTabData.list"
+                  :total="totalText"
+                  @refresh="onLeftFetchData"
+                >
+                  <template #actionSlot="{ row }">
+                    <t-link theme="primary" style="margin-right: 10px" @click="onTextEditRow(row)"> 编辑 </t-link>
+                    <t-popconfirm theme="default" content="确认删除吗" @confirm="onTextDelConfirm(row)">
+                      <t-link theme="primary"> 删除 </t-link>
+                    </t-popconfirm>
+                  </template>
+                  <template #button>
+                    <t-space>
+                      <t-button theme="primary" @click="onAddRuleData"> 新增 </t-button>
+                    </t-space>
+                  </template>
+                </cmp-table>
+              </cmp-card>
+            </cmp-container>
           </template>
         </t-tab-panel>
         <!-- ###############    关键件验证分组   ######## -->
         <t-tab-panel :value="1" label="关键件验证分组" :destroy-on-hide="false">
           <template #panel>
-            <cmp-table
-              ref="tableRef"
-              v-model:pagination="pageUITwo"
-              row-key="id"
-              :table-column="columnsKey"
-              :table-data="keyTabData.list"
-              :total="totalKey"
-              @refresh="onRightFetchData"
-            >
-              <template #actionSlot="{ row }">
-                <t-link theme="primary" style="margin-right: 10px" @click="onKeyEditRow(row)"> 编辑 </t-link>
-                <t-popconfirm theme="default" content="确认删除吗" @confirm="onKeyDelConfirm(row)">
-                  <t-link theme="primary"> 删除 </t-link>
-                </t-popconfirm>
-              </template>
-              <template #operate>
-                <t-space>
-                  <t-button theme="default" @click="onAddRuleData"> 新增 </t-button>
-                </t-space>
-              </template>
-            </cmp-table>
+            <cmp-container :full="true" :gutter="[0, 0]">
+              <cmp-card :ghost="true" class="padding-bottom-line-16">
+                <cmp-query :opts="opts" @submit="onInput">
+                  <template #cellType>
+                    <t-select v-model="barcodeData.barcodeType" label="条码类型">
+                      <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
+                    </t-select>
+                  </template>
+                  <template #cellMaterial>
+                    <bcmp-select-business
+                      v-model="barcodeData.mitemCategoryId"
+                      :disabled="radioValue"
+                      :is-multiple="false"
+                      type="mitemCategory"
+                      label="物料分类"
+                    ></bcmp-select-business>
+                  </template>
+                </cmp-query>
+              </cmp-card>
+              <cmp-card :ghost="true" class="padding-top-noline-16">
+                <cmp-table
+                  ref="tableRef"
+                  v-model:pagination="pageUITwo"
+                  row-key="id"
+                  :fixed-height="true"
+                  :table-column="columnsKey"
+                  :table-data="keyTabData.list"
+                  :total="totalKey"
+                  @refresh="onRightFetchData"
+                >
+                  <template #actionSlot="{ row }">
+                    <t-link theme="primary" style="margin-right: 10px" @click="onKeyEditRow(row)"> 编辑 </t-link>
+                    <t-popconfirm theme="default" content="确认删除吗" @confirm="onKeyDelConfirm(row)">
+                      <t-link theme="primary"> 删除 </t-link>
+                    </t-popconfirm>
+                  </template>
+                  <template #button>
+                    <t-space>
+                      <t-button theme="primary" @click="onAddRuleData"> 新增 </t-button>
+                    </t-space>
+                  </template>
+                </cmp-table>
+              </cmp-card>
+            </cmp-container>
           </template>
         </t-tab-panel>
       </t-tabs>
-    </div>
-    <!-- dialog 弹窗 -->
-    <t-dialog
-      v-model:visible="formVisible"
-      :cancel-btn="null"
-      :confirm-btn="null"
-      :header="diaLogTitle"
-      width="60%"
-      @close="onSecondaryReset"
-    >
-      <t-form ref="formRef" :rules="rules" :data="barcodeData" @submit="onAnomalyTypeSubmit">
-        <!-- 第 1️⃣ 行数据 -->
-        <t-row justify="space-around" style="margin-bottom: 30px">
-          <t-col :span="6">
-            <t-form-item label="编码规则" name="ruleCode">
-              <t-input v-model="barcodeData.ruleCode"></t-input>
-            </t-form-item>
-          </t-col>
-          <t-col :span="6">
-            <t-form-item label="规则名称" name="ruleName">
-              <t-input v-model="barcodeData.ruleName"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <!-- 第 2️⃣ 行数据 -->
-        <t-row justify="space-around" style="margin-bottom: 30px">
-          <t-col :span="6">
-            <t-form-item label="优先级" name="pri">
-              <t-input v-model="barcodeData.pri"></t-input>
-            </t-form-item>
-          </t-col>
-          <t-col :span="6">
-            <t-form-item label="验证分组" name="barcodeValidateGroup">
-              <t-select v-model="barcodeData.barcodeValidateGroup">
-                <t-option v-for="item in ValidationGroupsArr" :key="item.id" :label="item.label" :value="item.value" />
-              </t-select>
-            </t-form-item>
-          </t-col>
-        </t-row>
+    </cmp-card>
+  </cmp-container>
+  <!-- dialog 弹窗 -->
+  <t-dialog
+    v-model:visible="formVisible"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    :header="diaLogTitle"
+    top="60px"
+    width="750px"
+    @close="onSecondaryReset"
+  >
+    <t-form ref="formRef" :rules="rules" :data="barcodeData" @submit="onAnomalyTypeSubmit">
+      <!-- 第 1️⃣ 行数据 -->
+      <t-row :gutter="[32, 16]">
+        <t-col :span="6">
+          <t-form-item label="编码规则" name="ruleCode">
+            <t-input v-model="barcodeData.ruleCode"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="规则名称" name="ruleName">
+            <t-input v-model="barcodeData.ruleName"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="优先级" name="pri">
+            <t-input-number v-model="barcodeData.pri" theme="column" style="width: 100%"></t-input-number>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="验证分组" name="barcodeValidateGroup">
+            <t-select v-model="barcodeData.barcodeValidateGroup">
+              <t-option v-for="item in ValidationGroupsArr" :key="item.id" :label="item.label" :value="item.value" />
+            </t-select>
+          </t-form-item>
+        </t-col>
         <!-- 第 3️⃣ 行数据 -->
-        <t-row justify="space-around" style="margin-bottom: 30px">
-          <t-col v-if="barcodeData?.barcodeValidateGroup === 'SCANTEXT'" :span="12">
-            <t-form-item label="条码类型" name="barcodeType">
-              <t-select v-model="barcodeData.barcodeType">
-                <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
-              </t-select>
-            </t-form-item>
-          </t-col>
-          <t-col v-if="barcodeData?.barcodeValidateGroup === 'KEYPART'" :span="12">
-            <t-form-item label="关联纬度" name="incidentName">
-              <t-radio-group v-model="radioValue">
-                <t-radio :value="0">物料类别</t-radio>
-                <t-radio :value="1">物料</t-radio>
-              </t-radio-group>
-            </t-form-item>
-          </t-col>
-        </t-row>
+        <t-col v-if="barcodeData?.barcodeValidateGroup === 'SCANTEXT'" :span="12">
+          <t-form-item label="条码类型" name="barcodeType">
+            <t-select v-model="barcodeData.barcodeType">
+              <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col v-if="barcodeData?.barcodeValidateGroup === 'KEYPART'" :span="12">
+          <t-form-item label="关联纬度" name="incidentName">
+            <t-radio-group v-model="radioValue">
+              <t-radio :value="0">物料类别</t-radio>
+              <t-radio :value="1">物料</t-radio>
+            </t-radio-group>
+          </t-form-item>
+        </t-col>
         <!-- 第 4️⃣ 行数据 -->
-        <t-row v-if="barcodeData.barcodeValidateGroup === 'KEYPART'" justify="space-around" style="margin-bottom: 30px">
-          <t-col :span="6">
-            <t-form-item label="物料类别" name="mitemCategoryId">
-              <bcmp-select-business
-                v-model="barcodeData.mitemCategoryId"
-                :disabled="radioValue"
-                :is-multiple="false"
-                type="mitemCategory"
-                label=""
-              ></bcmp-select-business>
-            </t-form-item>
-          </t-col>
-          <t-col :span="6">
-            <t-form-item label="物料编码" name="mitemId">
-              <div class="left-operation-container">
-                <bcmp-select-business
-                  v-model="barcodeData.mitemId"
-                  :disabled="!radioValue"
-                  type="mitem"
-                  label=""
-                ></bcmp-select-business>
-              </div>
-            </t-form-item>
-          </t-col>
-        </t-row>
+        <t-col v-if="barcodeData.barcodeValidateGroup === 'KEYPART'" :span="6">
+          <t-form-item label="物料类别" name="mitemCategoryId">
+            <bcmp-select-business
+              v-model="barcodeData.mitemCategoryId"
+              :disabled="radioValue"
+              :is-multiple="false"
+              type="mitemCategory"
+              label=""
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
+        <t-col v-if="barcodeData.barcodeValidateGroup === 'KEYPART'" :span="6">
+          <t-form-item label="物料编码" name="mitemId">
+            <bcmp-select-business
+              v-model="barcodeData.mitemId"
+              :disabled="!radioValue"
+              type="mitem"
+              label=""
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
         <!-- 第 5️⃣ 行数据 -->
-        <t-row justify="space-around" style="margin-bottom: 30px">
-          <t-col :span="12">
-            <t-form-item label="条码规则" name="barcodeExpression">
-              <t-textarea
-                v-model="barcodeData.barcodeExpression"
-                placeholder="请输入条码规则"
-                name="description"
-                :autosize="{ minRows: 5, maxRows: 7 }"
-              />
-            </t-form-item>
-          </t-col>
-        </t-row>
+        <t-col :span="12">
+          <t-form-item label="条码规则" name="barcodeExpression">
+            <t-textarea
+              v-model="barcodeData.barcodeExpression"
+              placeholder="请输入条码规则"
+              name="description"
+              :autosize="{ minRows: 5, maxRows: 7 }"
+            />
+          </t-form-item>
+        </t-col>
         <!-- 第 6️⃣ 行数据 -->
-        <t-row justify="space-between" style="margin-bottom: 30px">
-          <t-col :span="9">
-            <t-form-item label="条码示例" name="sampleBarcode">
-              <t-input v-model="sampleBarcode"></t-input>
-            </t-form-item>
-          </t-col>
-          <t-col :span="3" align="right">
-            <t-button @click="onBarcodeVerification">验证</t-button>
-          </t-col>
-        </t-row>
+        <t-col :span="9">
+          <t-form-item label="条码示例" name="sampleBarcode">
+            <t-input v-model="sampleBarcode"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="3" align="right">
+          <t-button @click="onBarcodeVerification">验证</t-button>
+        </t-col>
         <!-- 第 7️⃣ 行数据 -->
-        <t-row justify="space-around" style="margin-bottom: 30px">
-          <t-col :span="6">
-            <t-form-item label="最小长度" name="minLength">
-              <t-input v-model="barcodeData.minLength"></t-input>
-            </t-form-item>
-          </t-col>
-          <t-col :span="6">
-            <t-form-item label="最大长度" name="maxLength">
-              <t-input v-model="barcodeData.maxLength"></t-input>
-            </t-form-item>
-          </t-col>
-        </t-row>
+        <t-col :span="6">
+          <t-form-item label="最小长度" name="minLength">
+            <t-input-number v-model="barcodeData.minLength" theme="column" style="width: 100%"></t-input-number>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="最大长度" name="maxLength">
+            <t-input-number v-model="barcodeData.maxLength" theme="column" style="width: 100%"></t-input-number>
+          </t-form-item>
+        </t-col>
         <!-- 第 8️⃣ 行数据 -->
-        <t-row justify="space-around" style="margin-bottom: 30px">
-          <t-col :span="12">
-            <t-form-item label="备注" name="memo">
-              <t-textarea
-                v-model="barcodeData.memo"
-                placeholder="请输入备注"
-                name="description"
-                :autosize="{ minRows: 3, maxRows: 5 }"
-              />
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <t-row>
-          <t-col :span="12" class="align-right">
-            <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-            <t-button theme="primary" type="submit">保存</t-button>
-          </t-col>
-        </t-row>
-      </t-form>
-    </t-dialog>
-  </div>
+        <t-col :span="12">
+          <t-form-item label="备注" name="memo">
+            <t-textarea
+              v-model="barcodeData.memo"
+              placeholder="请输入备注"
+              name="description"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+            />
+          </t-form-item>
+        </t-col>
+      </t-row>
+    </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+      <t-button theme="primary" @click="onSecondarySubmit">保存</t-button>
+    </template>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -468,6 +478,7 @@ const tabChange = (data: number) => {
 // 新增按钮点击
 const onAddRuleData = () => {
   sampleBarcode.value = '';
+  diaLogTitle.value = '新增规则';
   formRef.value.reset({ type: 'empty' });
   formVisible.value = true;
   submitFalg.value = true;
@@ -482,6 +493,7 @@ const onAddRuleCode = async () => {
 const RuleCodeID = ref(null);
 // 文本验证 编辑事件
 const onTextEditRow = (row: { id: any }) => {
+  sampleBarcode.value = ''; // 条码示例置空
   RuleCodeID.value = row.id;
   Object.keys(barcodeData.value).reduce((acc, key) => {
     if (Object.prototype.hasOwnProperty.call(row, key)) {
@@ -496,6 +508,7 @@ const onTextEditRow = (row: { id: any }) => {
 // 关键件 编辑事件
 const onKeyEditRow = (row: any) => {
   console.log('🚀 ~ file: index.vue:498 ~ onKeyEditRow ~ row:', row);
+  diaLogTitle.value = '编辑规则';
   if (!+row.mitemCategoryId) {
     radioValue.value = 1;
   } else {
@@ -570,8 +583,9 @@ const onBarcodeVerification = async () => {
 const opts = computed(() => {
   return {
     code: {
-      label: '规则名称/编码',
+      label: '规则',
       labelWidth: '120',
+      placeholder: '请输入规则名称/编码',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
@@ -625,6 +639,9 @@ const onInput = async (data: any) => {
 const onSecondaryReset = () => {
   formRef.value.reset({ type: 'empty' });
   formVisible.value = false;
+};
+const onSecondarySubmit = () => {
+  formRef.value.submit();
 };
 
 // 表单提交事件

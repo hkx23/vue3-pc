@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full="true">
+  <cmp-container>
     <cmp-card :span="12">
       <cmp-query :opts="opts" :bool-enter="true" label-width="110px" @submit="onSelsectInput">
         <template #querySelect>
@@ -47,6 +47,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="materialPage"
+        class="son-table"
         row-key="id"
         :table-column="personColumns"
         :table-data="materialTabDataList.list"
@@ -127,12 +128,12 @@
         </t-col>
       </t-row>
       <!-- 第 5️⃣ 行数据 -->
-      <cmp-card title="条码规则" style="margin-top: 16px" bordered shadow header-bordered>
+      <cmp-card title="条码规则" style="margin-top: 16px" bordered header-bordered>
         <cmp-row>
           <cmp-card :span="5" :ghost="true">
             <t-space direction="vertical" :size="8">
               <t-input-adornment prepend="搜索:">
-                <t-input v-model="filterText" style="width: 238px" @change="onInput" />
+                <t-input v-model="filterText" style="width: 230px" @change="onInput" />
               </t-input-adornment>
               <t-tree
                 ref="treeRef"
@@ -140,12 +141,13 @@
                 :keys="keyList"
                 :data="ruleTreeDataList.list"
                 hover
-                height="300px"
+                :transition="true"
+                height="250px"
                 :expand-on-click-node="false"
                 :filter="filterByText"
                 activable
                 :scroll="{
-                  rowHeight: 34,
+                  rowHeight: 10,
                   bufferSize: 10,
                   threshold: 10,
                   type: 'virtual',
@@ -179,7 +181,7 @@
     </template>
   </t-dialog>
   <!-- 关联物料弹出框 -->
-  <t-dialog v-model:visible="materialVisible" header="新增关联摸板" :on-confirm="onConfirm">
+  <t-dialog v-model:visible="materialVisible" header="新增关联模板" :on-confirm="onConfirm">
     <t-form ref="materiaFormRef" :data="formData">
       <t-form-item label="物料类别" name="mitemCategoryId">
         <bcmp-select-business
@@ -207,8 +209,7 @@ import { isEmpty } from 'lodash';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
 
-import { api } from '@/api/control';
-import { api as apiMain } from '@/api/main';
+import { api, api as apiMain } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -235,10 +236,10 @@ const currActiveData = ref({}); // ????
 const incidentID = ref('');
 // $处理组 表格数据
 const ruleTabDataList = reactive({ list: [] });
-const ruleTabTotal = ref(null);
+const ruleTabTotal = ref(0);
 // $人员 表格数据
 const materialTabDataList = reactive({ list: [] });
-const materialTotal = ref(null);
+const materialTotal = ref(0);
 // 物料弹框数据
 const formData = ref({
   barcodeRuleId: '', // 上表格ID
@@ -312,7 +313,6 @@ watch(treeActiveKey, () => {
 const ongetRuleTreeSegment = async () => {
   const res = await api.barcodeRuleInMitem.getRuleSegment();
   ruleTreeDataList.list = res.list;
-  console.log('🚀 ~ file: index.vue:375 ~ ongetRuleTreeSegment ~ res:', res);
 };
 // #树节点 点击事件
 const treeClick = ({ node }) => {
@@ -524,7 +524,6 @@ const onAddrule = async () => {
 
 // #编码规则 编辑 按钮点击
 const onEditRow = (row: any) => {
-  console.log('🚀 ~ file: index.vue:436 ~ onEditRow ~ row:', row);
   ruleTabData.value.ruleCode = row.ruleCode;
   ruleTabData.value.ruleName = row.ruleName;
   ruleTabData.value.barcodeType = row.barcodeType;

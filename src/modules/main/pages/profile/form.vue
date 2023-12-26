@@ -1,64 +1,94 @@
 <template>
   <t-form
     :rules="rules"
-    layout="inline"
     :data="formData"
     :show-cancel="true"
     :show-error-message="true"
+    label-width="120px"
     @submit="onAnomalyTypeSubmit"
   >
-    <t-space direction="vertical">
-      <t-form-item label="功能名称" required-mark>
-        <t-input v-model="formData.moduleName" :disabled="true" />
-      </t-form-item>
-      <t-form-item label="配置项名称" required-mark>
-        <t-input v-model="formData.profileName" :disabled="true" />
-      </t-form-item>
-      <t-col :span="7">
+    <t-row :gutter="[32, 16]">
+      <t-col :span="6">
+        <t-form-item label="功能名称" required-mark>
+          <t-input v-model="formData.moduleName" :disabled="true" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="配置项名称" required-mark>
+          <t-input v-model="formData.profileName" :disabled="true" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="12">
         <t-form-item label="配置项说明" name="profileDesc">
           <t-textarea v-model="formData.profileDesc" :disabled="true" />
         </t-form-item>
       </t-col>
-      <t-row>
-        <t-col :span="7">
-          <t-form-item label="配置项维度" name="profileCategory">
-            <t-select v-model="formData.profileCategory">
-              <t-option
-                v-for="(value, key) in profileCategoryOption"
-                :key="key"
-                :label="value.label"
-                :value="value.value"
-              ></t-option>
-            </t-select>
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label-align="left" name="profileCategoryValue" label-width="20px">
-            <template v-if="formData.profileCategory === 'plant'">
-              <bcmp-select-business v-model="formData.profileCategoryValue" type="plant"></bcmp-select-business>
-            </template>
-            <template v-if="formData.profileCategory === 'workshop'">
-              <bcmp-select-business v-model="formData.profileCategoryValue" type="workshop"></bcmp-select-business>
-            </template>
-            <template v-if="formData.profileCategory === 'workcenter'">
-              <bcmp-select-business v-model="formData.profileCategoryValue" type="workcenter"></bcmp-select-business>
-            </template>
-            <template v-if="formData.profileCategory === 'process'">
-              <bcmp-select-business v-model="formData.profileCategoryValue" type="process"></bcmp-select-business>
-            </template>
-            <template v-if="formData.profileCategory === 'workstation'">
-              <bcmp-select-business v-model="formData.profileCategoryValue" type="workstation"></bcmp-select-business>
-            </template>
-            <template v-if="formData.profileCategory === 'role'">
-              <bcmp-select-business v-model="formData.profileCategoryValue" type="role"></bcmp-select-business>
-            </template>
-            <template v-if="formData.profileCategory === 'user'">
-              <bcmp-select-business v-model="formData.profileCategoryValue" type="user"></bcmp-select-business>
-            </template>
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <t-col :span="7">
+      <t-col :span="6">
+        <t-form-item label="配置项维度" name="profileCategory">
+          <t-select v-model="formData.profileCategory" @change="onCatChange">
+            <t-option
+              v-for="(value, key) in profileCategoryOption"
+              :key="key"
+              :label="value.label"
+              :value="value.value"
+            ></t-option>
+          </t-select>
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item name="profileCategoryValue" :label="profileCategoryValueLabel">
+          <template v-if="formData.profileCategory === 'plant'">
+            <bcmp-select-business
+              v-model="formData.profileCategoryValue"
+              type="plant"
+              :show-title="false"
+            ></bcmp-select-business>
+          </template>
+          <template v-if="formData.profileCategory === 'workshop'">
+            <bcmp-select-business
+              v-model="formData.profileCategoryValue"
+              :show-title="false"
+              type="workshop"
+            ></bcmp-select-business>
+          </template>
+          <template v-if="formData.profileCategory === 'workcenter'">
+            <bcmp-select-business
+              v-model="formData.profileCategoryValue"
+              type="workcenter"
+              :show-title="false"
+            ></bcmp-select-business>
+          </template>
+          <template v-if="formData.profileCategory === 'process'">
+            <bcmp-select-business
+              v-model="formData.profileCategoryValue"
+              type="process"
+              :show-title="false"
+            ></bcmp-select-business>
+          </template>
+          <template v-if="formData.profileCategory === 'workstation'">
+            <bcmp-select-business
+              v-model="formData.profileCategoryValue"
+              type="workstation"
+              :show-title="false"
+            ></bcmp-select-business>
+          </template>
+          <template v-if="formData.profileCategory === 'role'">
+            <bcmp-select-business
+              v-model="formData.profileCategoryValue"
+              type="role"
+              :show-title="false"
+            ></bcmp-select-business>
+          </template>
+          <template v-if="formData.profileCategory === 'user'">
+            <bcmp-select-business
+              v-model="formData.profileCategoryValue"
+              type="user"
+              :show-title="false"
+            ></bcmp-select-business>
+          </template>
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
         <t-form-item label="配置项值" name="profileValue">
           <template v-if="formData.valueType === 'DROPLIST'">
             <t-select v-model="formData.profileValue" label-width="113px">
@@ -75,10 +105,12 @@
           </template>
         </t-form-item>
       </t-col>
-      <t-form-item label="启用">
-        <t-switch v-model="formData.isState" />
-      </t-form-item>
-    </t-space>
+      <t-col :span="6">
+        <t-form-item label="启用">
+          <t-switch v-model="formData.isState" />
+        </t-form-item>
+      </t-col>
+    </t-row>
   </t-form>
 </template>
 
@@ -91,6 +123,8 @@ import { api } from '@/api/main';
 export default {
   name: 'MitemForm',
   setup() {
+    const profileCategoryValueLabel = ref('');
+
     const formData = ref({
       operateTpye: 'add',
       id: '',
@@ -135,6 +169,41 @@ export default {
       if (context.validateResult === true) {
         submit();
       }
+    };
+    const onCatChange = (value: string) => {
+      formData.value.profileCategory = value;
+      setCategoryLabel();
+    };
+    const setCategoryLabel = () => {
+      let result = '';
+      switch (formData.value.profileCategory) {
+        case 'plant':
+          result = '组织';
+          break;
+        case 'workshop':
+          result = '车间';
+          break;
+        case 'workcenter':
+          result = '工作中心';
+          break;
+        case 'process':
+          result = '工序';
+          break;
+        case 'workstation':
+          result = '工站';
+          break;
+        case 'role':
+          result = '角色';
+          break;
+        case 'user':
+          result = '用户';
+          break;
+
+        default:
+          break;
+      }
+
+      profileCategoryValueLabel.value = result;
     };
     const submit = async () => {
       try {
@@ -181,6 +250,7 @@ export default {
         },
       ],
     };
+
     const init = (value: any) => {
       formData.value.operateTpye = 'add';
       formData.value.profileId = value.value.nodeId;
@@ -189,6 +259,7 @@ export default {
       formData.value.profileCategoryValue = '';
       formData.value.profileValue = '';
       formData.value.isState = true;
+      setCategoryLabel();
       onGetProfileData();
     };
     // 获取表单数据
@@ -207,6 +278,9 @@ export default {
       profileValueOption,
       profileCategoryOption,
       rules,
+      profileCategoryValueLabel,
+      onCatChange,
+      setCategoryLabel,
     };
   },
 };

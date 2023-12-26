@@ -189,13 +189,15 @@ const onDeletes = async () => {
   }
   deleteVisible.value = true;
 };
+// 批量删除确定
 const onSave1 = async () => {
   try {
     await api.defectCode.removeDefectCodeBatch({
       ids: selectedRowKeys.value,
     });
     deleteVisible.value = false;
-    onFetchData();
+    await onFetchData();
+    selectedRowKeys.value = [];
   } catch (e) {
     console.log(e);
   }
