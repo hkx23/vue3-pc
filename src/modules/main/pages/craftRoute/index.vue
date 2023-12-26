@@ -365,12 +365,44 @@ const getProductRelation = () => {
     });
 };
 const deleteProductRelation = (id: string) => {
-  apiMain.routingMap.deleteBatch([id]).then(() => getProductRelation());
+  const confirmDia = DialogPlugin.confirm({
+    header: t('common.dialog.header.tip'),
+    body: t('common.message.confirmDelete'),
+    confirmBtn: {
+      loading: false,
+    },
+    onConfirm: () => {
+      confirmDia.update({ confirmBtn: { loading: true } });
+      apiMain.routingMap.deleteBatch([id]).then(() => {
+        confirmDia.update({ confirmBtn: { loading: false } });
+        confirmDia.hide();
+        getProductRelation();
+      });
+    },
+    onClose: () => {
+      confirmDia.hide();
+    },
+  });
 };
 const deleteProductRelationBatch = () => {
-  apiMain.routingMap.deleteBatch(routingMapKeys.value).then(() => {
-    getProductRelation();
-    routingMapKeys.value = [];
+  const confirmDia = DialogPlugin.confirm({
+    header: t('common.dialog.header.tip'),
+    body: t('common.message.confirmDelete'),
+    confirmBtn: {
+      loading: false,
+    },
+    onConfirm: () => {
+      confirmDia.update({ confirmBtn: { loading: true } });
+      apiMain.routingMap.deleteBatch(routingMapKeys.value).then(() => {
+        confirmDia.update({ confirmBtn: { loading: false } });
+        confirmDia.hide();
+        getProductRelation();
+        routingMapKeys.value = [];
+      });
+    },
+    onClose: () => {
+      confirmDia.hide();
+    },
   });
 };
 const setProductRelationDefault = ($event: any, id: string) => {
