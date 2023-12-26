@@ -735,9 +735,9 @@ export interface DeliveryCardSearch {
    * @format date-time
    */
   createDateEnd?: string;
-  /** 包装条码状态 */
+  /** 配送卡状态 */
   deliveryStatus?: string;
-  /** 包装条码 */
+  /** 配送卡条码 */
   deliveryCardNo?: string;
   barcodeRuleId?: string;
   /**
@@ -799,7 +799,7 @@ export interface DeliveryCardVO {
   deliveryCardNo?: string;
   /** deliveryCard状态名称 */
   deliveryCardStatuName?: string;
-  /** barcodePkg数量 */
+  /** deliveryCard数量 */
   qty?: number;
   /** 创建人名称 */
   creatorName?: string;

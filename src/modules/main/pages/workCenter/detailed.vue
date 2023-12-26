@@ -115,8 +115,19 @@ const total = ref(10);
 const deleteVisible = ref(false);
 const { pageUI } = usePage(); // 页面数
 // const { loading, setLoading } = useLoading();
-const Emit = defineEmits(['addedShow', 'FormClear', 'ChildDefault', 'delete', 'update:detailedShow']); // addedShow窗口
+const Emit = defineEmits([
+  'addedShow',
+  'FormClear',
+  'ChildDefault',
+  'delete',
+  'update:detailedShow',
+  'update-type-show',
+]); // addedShow窗口
 const props = defineProps({
+  typeShowProp: {
+    type: Boolean,
+    default: false,
+  },
   typeShowChild: {
     type: Boolean,
     default: false,
@@ -171,6 +182,9 @@ watch(
 // const once = ref(0);
 // const parentId = ref(); // 点击添加的时候存储父id
 const typeShow = ref(false);
+watch(typeShow, (newValue) => {
+  Emit('update-type-show', newValue);
+});
 onMounted(() => {
   // fetchData();
 });
@@ -278,9 +292,8 @@ const typeData = ref([
 // 判断数组里面的设备
 // const typeShowChild = ref(props.typeShowChild);
 watch(
-  () => props.typeShowChild,
+  () => props.typeShowProp,
   (newValue) => {
-    console.log('🚀 ~ file: detailed.vue:283 ~ newValue:', newValue);
     typeShow.value = newValue;
   },
 );
@@ -290,12 +303,10 @@ const onTypeList = () => {
     if (props.newArr === item.wcType) {
       // 判断是否为设备
       if (props.newArr !== '设备') {
-        console.log('🚀 ~ file: detailed.vue:281 ~ typeData.value.forEach ~ props.newArr:', props.newArr);
         typeShow.value = true;
       }
       item.show = true;
       formData.category = item.opId;
-      console.log(formData.category);
     } else {
       item.show = false;
     }
@@ -308,11 +319,10 @@ const onTypeList = () => {
 };
 // 类型高亮事件
 const onHandleCur = (all) => {
-  console.log('🚀 ~ file: detailed.vue:298 ~ onHandleCur ~ context:', all);
+  console.log('🚀 ~ file: detailed.vue:178 ~ typeShow:', typeShow.value);
   typeData.value.forEach((item) => {
     if (item.wcType === all) {
       if (item.wcType !== '设备') {
-        // console.log(1230);
         formData.wcObjectId = '';
         typeShow.value = true;
       } else {
