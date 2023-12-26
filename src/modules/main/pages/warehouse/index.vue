@@ -118,9 +118,10 @@ const opts = computed(() => {
     warehouseState: {
       label: '状态',
       comp: 't-select',
-      defaultVal: warehouseState.value,
+      defaultVal: -1,
       bind: {
         options: stateOptions,
+        lazyLoad: true,
       },
     },
   };
