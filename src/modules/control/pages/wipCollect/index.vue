@@ -379,10 +379,7 @@ const writeScanInfoSuccess = async (lbNo, lbQty, uomName, lbError) => {
 const checkBarcodeRepeat = (lbNo) => {
   let isSuccess = true;
   if (scanType.value === 'SCANTEXT') {
-    const barcodeInfo = _.find(
-      scanInfoList.value,
-      (item: scanCollectInfoModel) => item.status === 'OK' && item.serialNumber === lbNo,
-    );
+    const barcodeInfo = _.find(scanInfoList.value, (item: scanCollectInfoModel) => item.serialNumber === lbNo);
     if (barcodeInfo) {
       isSuccess = false;
       writeMessageListError(`该条码(${lbNo})已扫描,请勿重复扫描`, dayjs().format('YYYY-MM-DD HH:mm:ss'));
