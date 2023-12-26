@@ -58,14 +58,7 @@
                           :value="item.id"
                         />
                       </t-select>
-                      <t-select label="打印模板" style="width: 240px">
-                        <t-option
-                          v-for="item in onPrintTemplateList.list"
-                          :key="item.id"
-                          :label="item.tmplName"
-                          :value="item.id"
-                        />
-                      </t-select>
+
                       <t-button theme="primary" :disabled="!generateData.moScheduleId" @click="onGenerate">
                         生成
                       </t-button>
@@ -94,6 +87,14 @@
                     </t-radio-group>
                   </template>
                   <template #button>
+                    <t-select label="打印模板" style="width: 240px">
+                      <t-option
+                        v-for="item in onPrintTemplateList.list"
+                        :key="item.id"
+                        :label="item.tmplName"
+                        :value="item.id"
+                      />
+                    </t-select>
                     <t-button theme="primary" @click="onPrint"> 打印 </t-button>
                   </template>
                 </cmp-table>
