@@ -2,7 +2,7 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
+      <!-- <cmp-query :opts="opts" @submit="onInput"> </cmp-query> -->
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
@@ -23,12 +23,12 @@
   </cmp-container>
 </template>
 <script setup lang="ts">
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, Ref, ref } from 'vue';
+import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/daily';
-import CmpQuery from '@/components/cmp-query/index.vue';
+// import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
@@ -99,10 +99,14 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
+const rehandleSelectChange = () => {
+  console.log('111');
+};
+
 // 初始渲染
 onMounted(async () => {
   await onGetAnomalyTypeData(); // 获取 表格 数据
-  await onGetDropDownData(); // 获取下拉框数据
+  // await onGetDropDownData(); // 获取下拉框数据
 });
 
 // 刷新按钮
@@ -122,48 +126,48 @@ const onGetAnomalyTypeData = async () => {
 };
 
 // #query 查询参数
-const opts = computed(() => {
-  return {
-    productCode: {
-      label: '产品条码',
-      comp: 't-input',
-      event: 'input',
-      defaultVal: '',
-    },
-    productNo: {
-      label: '产品编码',
-      comp: 't-select',
-      event: 't-select',
-      defaultVal: '',
-    },
-    workOrder: {
-      label: '排产单号',
-      comp: 'bcmp-select-business',
-      event: 'business',
-      defaultVal: '',
-      bind: {
-        type: 'moSchedule',
-        showTitle: false,
-      },
-    },
-    boxCode: {
-      label: '箱条码',
-      comp: 't-input',
-      event: 'input',
-      defaultVal: '',
-    },
-    operationTime: {
-      label: '操作时间',
-      comp: 't-date-range-picker',
-      event: 'daterangetime',
-      defaultVal: [dayjs().subtract(1, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
-      bind: {
-        enableTimePicker: false,
-        format: 'YYYY-MM-DD',
-      },
-    },
-  };
-});
+// const opts = computed(() => {
+//   return {
+//     productCode: {
+//       label: '产品条码',
+//       comp: 't-input',
+//       event: 'input',
+//       defaultVal: '',
+//     },
+//     productNo: {
+//       label: '产品编码',
+//       comp: 't-select',
+//       event: 't-select',
+//       defaultVal: '',
+//     },
+//     workOrder: {
+//       label: '排产单号',
+//       comp: 'bcmp-select-business',
+//       event: 'business',
+//       defaultVal: '',
+//       bind: {
+//         type: 'moSchedule',
+//         showTitle: false,
+//       },
+//     },
+//     boxCode: {
+//       label: '箱条码',
+//       comp: 't-input',
+//       event: 'input',
+//       defaultVal: '',
+//     },
+//     operationTime: {
+//       label: '操作时间',
+//       comp: 't-date-range-picker',
+//       event: 'daterangetime',
+//       defaultVal: [dayjs().subtract(1, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+//       bind: {
+//         enableTimePicker: false,
+//         format: 'YYYY-MM-DD',
+//       },
+//     },
+//   };
+// });
 </script>
 
 <style lang="less" scoped>
