@@ -830,7 +830,6 @@ export interface RoleUserDTO {
 export interface UserOrgDTO {
   userId?: string;
   orgIds?: string[];
-  defaultOrgId?: string;
 }
 
 /** 角色权限操作实体 */
@@ -3068,14 +3067,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
   isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isRawChecked?: boolean;
-  isBatchName?: string;
   isRawName?: string;
-  isProductName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isState?: boolean;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -4765,12 +4764,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */

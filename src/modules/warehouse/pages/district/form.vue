@@ -1,23 +1,17 @@
 <template>
   <t-form
     ref="formRef"
-    layout="inline"
     :data="formData"
     :show-cancel="true"
     :show-error-message="false"
     :rules="rules"
+    label-width="125px"
+    label-align="right"
     @submit="submit"
   >
     <t-space direction="vertical">
-      <t-row>
-        <t-col v-if="props.formTitle === '编辑'" :span="6">
-          <t-form-item label="选择仓库" required-mark>
-            <div>
-              <t-input v-model="formData.warehouseId" disabled />
-            </div>
-          </t-form-item>
-        </t-col>
-        <t-col v-else :span="6">
+      <t-row :gutter="[32, 16]">
+        <t-col v-if="formData.operateTpye === 'add'" :span="6">
           <t-form-item label="选择仓库" required-mark>
             <div>
               <bcmp-select-business
@@ -26,47 +20,41 @@
                 type="warehouse"
                 label-field="warehouseName"
                 value-field="warehouseCode"
+                :disabled="formData.operateTpye !== 'add'"
                 @selection-change="onMaterialTabData"
               ></bcmp-select-business>
             </div>
           </t-form-item>
         </t-col>
-
-        <t-col :span="6">
-          <t-form-item label="仓库名称" required-mark>
-            <t-input
-              v-model="formData.warehouseName"
-              :disabled="props.formTitle === '编辑'"
-              placeholder="请输入仓库名称"
-            />
+        <t-col v-else :span="6">
+          <t-form-item label="选择仓库" required-mark>
+            <t-input v-model="formData.warehouseId" disabled />
           </t-form-item>
         </t-col>
-      </t-row>
-      <t-row>
+        <t-col :span="6">
+          <t-form-item label="仓库名称" required-mark>
+            <t-input v-model="formData.warehouseName" disabled placeholder="请输入仓库名称" />
+          </t-form-item>
+        </t-col>
         <t-col :span="6">
           <t-form-item label="货区编码" required-mark>
             <t-input
               v-model="formData.districtCode"
               placeholder="手动输入...."
-              :disabled="props.formTitle === '编辑'"
+              :disabled="formData.operateTpye !== 'add'"
             />
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="货区名称" style="width: 250px" required-mark>
+          <t-form-item label="货区名称" required-mark>
             <t-input v-model="formData.districtName" placeholder="手动输入...." />
           </t-form-item>
         </t-col>
-      </t-row>
-      <t-row>
         <t-col :span="6">
           <t-form-item label="货区描述" required-mark>
             <t-textarea v-model="formData.districtDesc" placeholder="手动输入...." />
           </t-form-item>
         </t-col>
-      </t-row>
-
-      <t-row>
         <t-col :span="6">
           <t-form-item label="启用" :label-width="130" style="width: 250px">
             <t-switch v-model="formData.state" :custom-value="[1, 0]" />
@@ -77,19 +65,10 @@
   </t-form>
 </template>
 <script setup lang="ts">
-// import { isEmpty } from 'lodash';
 import { FormRules, MessagePlugin } from 'tdesign-vue-next';
-import { computed, ComputedRef, defineProps, ref } from 'vue';
+import { ref } from 'vue';
 
 import { api, District } from '@/api/warehouse';
-
-//* 获取title
-const props = defineProps({
-  formTitle: {
-    type: String,
-    default: '',
-  },
-});
 
 interface DistrictForm extends District {
   operateTpye: string;
@@ -112,16 +91,14 @@ const formData = ref<DistrictForm>({
   warehouseCode: '',
 });
 
-const rules: ComputedRef<FormRules> = computed(() => {
-  return {
-    warehouseId: [{ required: true, message: '请选择仓库', trigger: 'change' }],
-    districtCode: [{ required: true, message: '请输入货区编码', trigger: 'blur' }],
-    districtName: [{ required: true, message: '请输入货区名称', trigger: 'blur' }],
-    warehouseName: [{ required: true, message: '请输入仓库名称', trigger: 'blur' }],
-    districtDesc: [{ required: true, message: '请输入货区描述', trigger: 'blur' }],
-    state: [{ required: true, message: '请选择启用状态', trigger: 'change' }],
-  };
-});
+const rules: FormRules = {
+  warehouseId: [{ required: true, message: '请选择仓库', trigger: 'change' }],
+  districtCode: [{ required: true, message: '请输入货区编码', trigger: 'blur' }],
+  districtName: [{ required: true, message: '请输入货区名称', trigger: 'blur' }],
+  warehouseName: [{ required: true, message: '请输入仓库名称', trigger: 'blur' }],
+  districtDesc: [{ required: true, message: '请输入货区描述', trigger: 'blur' }],
+  state: [{ required: true, message: '请选择启用状态', trigger: 'change' }],
+};
 
 //* 新增清除数据
 const init = () => {
@@ -147,10 +124,10 @@ const onMaterialTabData = async (event) => {
 const submit = async () => {
   formData.value.state = formData.value.state ? 1 : 0; //* 处理启用(必须)
   try {
-    if (props.formTitle === '新增') {
+    if (formData.value.operateTpye === 'add') {
       await api.district.addDistrict(formData.value);
       MessagePlugin.success('新增成功');
-    } else if (props.formTitle === '编辑') {
+    } else {
       await api.district.modifyDistrict(formData.value);
       MessagePlugin.success('编辑成功');
     }
