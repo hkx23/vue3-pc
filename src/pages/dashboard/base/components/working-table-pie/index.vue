@@ -12,7 +12,8 @@ import * as echarts from 'echarts';
 import { onMounted, ref } from 'vue';
 
 const option = ref({});
-const chart = ref({});
+const chart = ref();
+
 //* 所需数据
 const responseData = [
   { value: 160, name: '外观划伤' },
@@ -28,14 +29,7 @@ const sevenDaysAgo = currentDate.subtract(7, 'day');
 const currentDateString = currentDate.format('YYYY-MM-DD');
 const sevenDaysAgoDateString = sevenDaysAgo.format('YYYY-MM-DD');
 
-onMounted(async () => {
-  const myChart = echarts.init(chart.value);
-  await getPieData();
-  myChart.setOption(option.value);
-});
-
-// 模拟接口请求
-// const getPieData = await api.xxx.ii();
+// 定义 getPieData 函数
 const getPieData = async () => {
   try {
     option.value = {
@@ -71,6 +65,13 @@ const getPieData = async () => {
     console.error('获取饼图数据时出错', error);
   }
 };
+
+onMounted(async () => {
+  const myChart = echarts.init(chart.value);
+  // 确保 getPieData 在调用之前被定义
+  await getPieData();
+  myChart.setOption(option.value);
+});
 </script>
 
 <style scoped>
