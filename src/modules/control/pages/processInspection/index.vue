@@ -243,10 +243,21 @@ const getDefectCodeTree = async () => {
   try {
     const data = await apiMain.defectCode.tree();
 
-    data.forEach((n) => {
-      n.child.forEach((m) => {
-        defectCodeList.value.push(m);
-      });
+    data.forEach((first) => {
+      if (!isEmpty(first.child)) {
+        first.child.forEach((second) => {
+          // 3级为空，加1和2级
+          // 3级不为空，加2和3级
+          if (isEmpty(second.child)) {
+            defectCodeList.value.push(first);
+          } else {
+            defectCodeList.value.push(second);
+          }
+        });
+      } else {
+        // 2级为空
+        defectCodeList.value.push(first);
+      }
     });
   } catch (error) {
     console.log(error);
@@ -316,56 +327,7 @@ const getThemeButton = (value: string) => {
   return themes[value] || themes.default;
 };
 
-// const getQueryString = (paramName: string) => {
-//   const queryString = window.location.href.split('?')[1];
-//   if (queryString) {
-//     const paramsArray = queryString.split('&');
-//     const paramsNameList = [{ name: '', value: '' }];
-//     paramsArray.forEach((item: string) => {
-//       const obj = { name: '', value: '' };
-//       obj.name = item.split('=')[0].toString();
-//       obj.value = item.split('=')[1].toString();
-//       paramsNameList.push(obj);
-//     });
-//     const objInfo = _.find(paramsNameList, (item: any) => {
-//       return item.name === paramName;
-//     }) as any;
-//     return objInfo?.value;
-//   }
-//   return '';
-// };
-
 onMounted(() => {
-  // 底座完成后从底座获取
-  // const serialNumber = getQueryString('serialNumber');
-  // const workCenterId = getQueryString('workCenterId');
-  // const workCenterCode = getQueryString('workCenterCode');
-  // const workCenterName = getQueryString('workCenterName');
-
-  // const workStationId = getQueryString('workStationId');
-  // const workStationCode = getQueryString('workStationCode');
-  // const workStationName = getQueryString('workStationName');
-
-  // const workShopId = getQueryString('workShopId');
-  // const workShopCode = getQueryString('workShopCode');
-  // const workShopName = getQueryString('workShopName');
-
-  // const processId = getQueryString('processId');
-  // mainform.value.serialNumber = serialNumber;
-
-  // mainform.value.workCenterId = workCenterId;
-  // mainform.value.workCenterCode = workCenterCode;
-  // mainform.value.workCenterName = workCenterName;
-
-  // mainform.value.workStationId = workStationId;
-  // mainform.value.workStationCode = workStationCode;
-  // mainform.value.workStationName = workStationName;
-
-  // mainform.value.workShopId = workShopId;
-  // mainform.value.workShopCode = workShopCode;
-  // mainform.value.workShopName = workShopName;
-
-  // mainform.value.processId = processId;
   Init();
 });
 </script>

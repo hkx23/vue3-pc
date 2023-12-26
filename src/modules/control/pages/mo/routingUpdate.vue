@@ -48,7 +48,6 @@ import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, nextTick, reactive, ref, watch } from 'vue';
 
-import { api as apicontrol } from '@/api/control';
 import { api as apimain } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -142,7 +141,7 @@ const onHandleCancel = () => {
 const onHandlesave = async () => {
   if (selectRoutingVerisonID.value) {
     const row = currentrow.value as any;
-    await apicontrol.mo.updateMoRouting({
+    await apimain.mo.updateMoRouting({
       id: row.moScheduleId,
       routingRevisionId: selectRoutingVerisonID.value.toString(),
     });

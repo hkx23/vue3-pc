@@ -11,205 +11,214 @@
         </t-tab-panel>
       </t-tabs>
     </cmp-card>
-    <cmp-card v-if="selectModule == 'SETTING'">
-      <t-form
-        ref="formRef"
-        :disabled="preSetting.isLock"
-        :data="preSetting"
-        :show-cancel="true"
-        :show-error-message="true"
-        :label-width="150"
-      >
-        <t-form-item :label="t('productRework.isSameProcess')" name="isSameProcess">
-          <t-switch v-model="preSetting.isSameProcess" size="large">
-            <template #label="slotProps">{{ slotProps.value ? '是' : '否' }}</template>
-          </t-switch>
-        </t-form-item>
-        <t-form-item :label="t('productRework.isSameMo')" name="isSameMo">
-          <t-switch v-model="preSetting.isSameMo" size="large">
-            <template #label="slotProps">{{ slotProps.value ? '是' : '否' }}</template>
-          </t-switch>
-        </t-form-item>
-        <t-form-item :label="t('productRework.isByReworkMo')" name="isByReworkMo">
-          <t-switch v-model="preSetting.isByReworkMo" size="large">
-            <template #label="slotProps">{{ slotProps.value ? '是' : '否' }}</template>
-          </t-switch>
-        </t-form-item>
-        <t-form-item v-show="preSetting.isByReworkMo" :label="t('productRework.reworkMoSheId')" name="reworkMoSheId">
-          <bcmp-select-business
-            v-model="preSetting.reworkMoSheId"
-            :placeholder="t('common.placeholder.input', [`${t('productRework.reworkMoSheId')}`])"
-            type="moSchedule"
-            :show-title="false"
-            @selection-change="moScheduleSelectChange"
-          ></bcmp-select-business>
-        </t-form-item>
-        <t-form-item v-show="preSetting.isByReworkMo" :label="t('productRework.reworkRouting')" name="reworkRouting">
-          <t-input v-model="preSetting.reworkRouting" :disabled="true" />
-        </t-form-item>
-        <t-form-item :label="t('productRework.reworkLine')" name="reworkLine">
-          <bcmp-select-business
-            v-model="preSetting.reworkLine"
-            type="line"
-            :placeholder="t('common.placeholder.input', [`${t('productRework.reworkLine')}`])"
-            :show-title="false"
-          ></bcmp-select-business>
-        </t-form-item>
-        <t-form-item :label="t('productRework.reworkProcess')" name="reworkProcess">
-          <bcmp-select-business
-            v-model="preSetting.reworkProcess"
-            type="routingProcess"
-            :parent-id="preSetting.reworkRoutingRevisionId"
-            :placeholder="t('common.placeholder.input', [`${t('productRework.reworkProcess')}`])"
-            :show-title="false"
-          ></bcmp-select-business>
-          <!-- <t-input v-model="preSetting.reworkProcess" clearable /> -->
-        </t-form-item>
-      </t-form>
-      <t-space align="end" class="space-border text-align-rgiht">
-        <t-button :disabled="preSetting.isLock" @click="onClickSetting">确定 </t-button>
-      </t-space>
-    </cmp-card>
-    <cmp-row v-if="selectModule == 'REWORK'" :disabled="!preSetting.isLock">
-      <cmp-card :span="9" :ghost="false">
-        <t-space class="custom-row" direction="vertical" style="width: 98%">
-          <t-row justify="center">
-            <t-tag shape="round" size="large">
-              <t-col class="header-title">
-                <span>{{ t('productRework.workshopName') }}: {{ mainform.workStationName }}</span>
-                <span> {{ t('productRework.workcentName') }}：{{ mainform.workCenterCode }}</span>
-                <span> {{ t('productRework.workstationName') }}：{{ mainform.workStationCode }}</span>
-              </t-col>
-            </t-tag>
-          </t-row>
-          <t-row class="custom-row">
-            <t-col :span="2" class="custom-row-item-header">{{ t('productRework.scanlabel') }}：</t-col>
-            <t-col :span="7">
-              <t-input
-                v-model="mainform.serialNumber"
-                :placeholder="t('productRework.scanBarcode')"
-                size="large"
-                @enter="serialNumberEnter"
-              />
-            </t-col>
-          </t-row>
-          <t-row class="custom-row">
-            <div class="groupbox" style="height: auto">
-              <span class="grouptitle">{{ t('productRework.product') }}</span>
-              <t-card :bordered="false">
-                <t-space class="custom-row-item" direction="horizontal" :break-line="true">
-                  <t-input
-                    v-model="productInfo.scheCode"
-                    placeholder=""
-                    :label="t('productRework.scheCode')"
-                    readonly
-                  />
-                  <t-input
-                    v-model="productInfo.moMitemCode"
-                    placeholder=""
-                    :label="t('productRework.mitemCode')"
-                    readonly
-                  />
-                  <t-input
-                    v-model="productInfo.moMitemName"
-                    placeholder=""
-                    :label="t('productRework.mitemName')"
-                    readonly
-                  />
-                  <t-input
-                    v-model="productInfo.scheDatetimeScheStr"
-                    placeholder=""
-                    :label="t('productRework.scheDate')"
-                    readonly
-                  />
-                  <t-input v-model="productInfo.scheQty" placeholder="" :label="t('productRework.scheQty')" readonly />
-                  <t-input
-                    v-model="productInfo.moCompletedQty"
-                    placeholder=""
-                    :label="t('productRework.completeQty')"
-                    readonly
-                  />
-                </t-space>
-              </t-card>
-            </div>
-          </t-row>
-          <t-row v-if="keyPartSumList && keyPartSumList.length > 0" class="custom-row">
-            <t-col class="custom-col">
-              <div class="groupbox">
-                <t-collapse :default-expand-all="true">
-                  <t-collapse-panel destroy-on-collapse :header="productInfo.header">
-                    <t-list v-for="(item, index) in keyPartSumList" :key="index">
-                      <t-list-item>
-                        {{ item.processName }}/{{ item.mitemCode }}/{{ item.mitemName }}
-                        <template #action>
-                          <t-checkbox v-model="item.isDeleteKeyPart"> </t-checkbox>
-                        </template>
-                      </t-list-item>
-                    </t-list>
-                  </t-collapse-panel>
-                </t-collapse>
-              </div>
-            </t-col>
-          </t-row>
-          <t-row>
-            <t-col>
-              <div class="groupbox">
-                <span class="grouptitle">{{ t('productRework.collectDtl') }}</span>
-                <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="295px">
-                  <template #serialNumber="{ row }">
-                    <div class="talbe_col_nowrap" :title="row.serialNumber">
-                      {{ row.serialNumber }}
-                    </div>
-                  </template>
-                  <template #op="{ row }">
-                    <t-link theme="primary" @click="onRemove(row)"> 移除 </t-link>
-                  </template>
-                </t-table>
-              </div>
-            </t-col>
-          </t-row>
-          <t-row>
-            <t-col :span="12" class="custom-row-item-reset">
-              <t-popconfirm
-                theme="default"
-                content="t('productRework.isconfirm')"
-                confirm-btn="t('common.button.confirm')"
-                cancel-btn="t('common.button.cancel')"
-                @confirm="onConfirm"
-              >
-                <t-button class="btn_reset" theme="primary" :disabled="!(scanInfoList && scanInfoList.length > 0)">{{
-                  t('productRework.confirm')
-                }}</t-button>
-              </t-popconfirm>
-
-              <t-button class="btn_reset" theme="default" @click="resetHandle">{{ t('common.button.reset') }}</t-button>
-            </t-col>
-          </t-row>
+    <cmp-card :ghost="true">
+      <cmp-card v-if="selectModule == 'SETTING'" :span="12">
+        <t-form
+          ref="formRef"
+          :disabled="preSetting.isLock"
+          :data="preSetting"
+          :show-cancel="true"
+          :show-error-message="true"
+          :label-width="150"
+        >
+          <t-form-item :label="t('productRework.isSameProcess')" name="isSameProcess">
+            <t-switch v-model="preSetting.isSameProcess" size="large">
+              <template #label="slotProps">{{ slotProps.value ? '是' : '否' }}</template>
+            </t-switch>
+          </t-form-item>
+          <t-form-item :label="t('productRework.isSameMo')" name="isSameMo">
+            <t-switch v-model="preSetting.isSameMo" size="large">
+              <template #label="slotProps">{{ slotProps.value ? '是' : '否' }}</template>
+            </t-switch>
+          </t-form-item>
+          <t-form-item :label="t('productRework.isByReworkMo')" name="isByReworkMo">
+            <t-switch v-model="preSetting.isByReworkMo" size="large">
+              <template #label="slotProps">{{ slotProps.value ? '是' : '否' }}</template>
+            </t-switch>
+          </t-form-item>
+          <t-form-item v-show="preSetting.isByReworkMo" :label="t('productRework.reworkMoSheId')" name="reworkMoSheId">
+            <bcmp-select-business
+              v-model="preSetting.reworkMoSheId"
+              :placeholder="t('common.placeholder.input', [`${t('productRework.reworkMoSheId')}`])"
+              type="moSchedule"
+              :show-title="false"
+              @selection-change="moScheduleSelectChange"
+            ></bcmp-select-business>
+          </t-form-item>
+          <t-form-item v-show="preSetting.isByReworkMo" :label="t('productRework.reworkRouting')" name="reworkRouting">
+            <t-input v-model="preSetting.reworkRouting" :disabled="true" />
+          </t-form-item>
+          <t-form-item :label="t('productRework.reworkLine')" name="reworkLine">
+            <bcmp-select-business
+              v-model="preSetting.reworkLine"
+              type="line"
+              :placeholder="t('common.placeholder.input', [`${t('productRework.reworkLine')}`])"
+              :show-title="false"
+            ></bcmp-select-business>
+          </t-form-item>
+          <t-form-item :label="t('productRework.reworkProcess')" name="reworkProcess">
+            <bcmp-select-business
+              v-model="preSetting.reworkProcess"
+              type="routingProcess"
+              :parent-id="preSetting.reworkRoutingRevisionId"
+              :placeholder="t('common.placeholder.input', [`${t('productRework.reworkProcess')}`])"
+              :show-title="false"
+            ></bcmp-select-business>
+            <!-- <t-input v-model="preSetting.reworkProcess" clearable /> -->
+          </t-form-item>
+        </t-form>
+        <t-space align="end" class="space-border text-align-rgiht">
+          <t-button :disabled="preSetting.isLock" @click="onClickSetting">确定 </t-button>
         </t-space>
       </cmp-card>
-      <cmp-card :span="3">
-        <div class="groupbox">
-          <span class="grouptitle">{{ t('productRework.messageCom') }}</span>
-          <t-list style="height: 96%" :scroll="{ type: 'virtual' }">
-            <t-list-item v-for="(item, index) in messageList" :key="index">
-              <t-list-item-meta style="align-items: center">
-                <template #description>
-                  <t-space>
-                    <t-icon v-if="item.status == 'OK'" name="check-circle-filled" style="color: green" />
-                    <t-icon v-if="item.status == 'NG'" name="close-circle" style="color: red" />
-                    <t-tooltip :content="item.content" placement="mouse">
-                      <span>{{ item.title }}</span>
-                      <span style="margin-left: 8px"> {{ item.datatime }}</span>
-                    </t-tooltip>
-                    <!-- <div>{{ item.datatime }}</div> -->
+      <cmp-row v-if="selectModule == 'REWORK'" :span="12" :disabled="!preSetting.isLock">
+        <cmp-card :span="9" :ghost="false">
+          <t-space class="custom-row" direction="vertical" style="width: 98%">
+            <t-row justify="center">
+              <t-tag shape="round" size="large">
+                <t-col class="header-title">
+                  <span>{{ t('productRework.workshopName') }}: {{ mainform.workStationName }}</span>
+                  <span> {{ t('productRework.workcentName') }}：{{ mainform.workCenterCode }}</span>
+                  <span> {{ t('productRework.workstationName') }}：{{ mainform.workStationCode }}</span>
+                </t-col>
+              </t-tag>
+            </t-row>
+            <t-row class="custom-row">
+              <t-col :span="2" class="custom-row-item-header">{{ t('productRework.scanlabel') }}：</t-col>
+              <t-col :span="7">
+                <t-input
+                  v-model="mainform.serialNumber"
+                  :placeholder="t('productRework.scanBarcode')"
+                  size="large"
+                  @enter="serialNumberEnter"
+                />
+              </t-col>
+            </t-row>
+            <t-row class="custom-row">
+              <div class="groupbox" style="height: auto">
+                <span class="grouptitle">{{ t('productRework.product') }}</span>
+                <t-card :bordered="false">
+                  <t-space class="custom-row-item" direction="horizontal" :break-line="true">
+                    <t-input
+                      v-model="productInfo.scheCode"
+                      placeholder=""
+                      :label="t('productRework.scheCode')"
+                      readonly
+                    />
+                    <t-input
+                      v-model="productInfo.moMitemCode"
+                      placeholder=""
+                      :label="t('productRework.mitemCode')"
+                      readonly
+                    />
+                    <t-input
+                      v-model="productInfo.moMitemName"
+                      placeholder=""
+                      :label="t('productRework.mitemName')"
+                      readonly
+                    />
+                    <t-input
+                      v-model="productInfo.scheDatetimeScheStr"
+                      placeholder=""
+                      :label="t('productRework.scheDate')"
+                      readonly
+                    />
+                    <t-input
+                      v-model="productInfo.scheQty"
+                      placeholder=""
+                      :label="t('productRework.scheQty')"
+                      readonly
+                    />
+                    <t-input
+                      v-model="productInfo.moCompletedQty"
+                      placeholder=""
+                      :label="t('productRework.completeQty')"
+                      readonly
+                    />
                   </t-space>
-                </template>
-              </t-list-item-meta>
-            </t-list-item>
-          </t-list>
-        </div></cmp-card
-      >
-    </cmp-row>
+                </t-card>
+              </div>
+            </t-row>
+            <t-row v-if="keyPartSumList && keyPartSumList.length > 0" class="custom-row">
+              <t-col class="custom-col">
+                <div class="groupbox">
+                  <t-collapse :default-expand-all="true">
+                    <t-collapse-panel destroy-on-collapse :header="productInfo.header">
+                      <t-list v-for="(item, index) in keyPartSumList" :key="index">
+                        <t-list-item>
+                          {{ item.processName }}/{{ item.mitemCode }}/{{ item.mitemName }}
+                          <template #action>
+                            <t-checkbox v-model="item.isDeleteKeyPart"> </t-checkbox>
+                          </template>
+                        </t-list-item>
+                      </t-list>
+                    </t-collapse-panel>
+                  </t-collapse>
+                </div>
+              </t-col>
+            </t-row>
+            <t-row>
+              <t-col>
+                <div class="groupbox">
+                  <span class="grouptitle">{{ t('productRework.collectDtl') }}</span>
+                  <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="295px">
+                    <template #serialNumber="{ row }">
+                      <div class="talbe_col_nowrap" :title="row.serialNumber">
+                        {{ row.serialNumber }}
+                      </div>
+                    </template>
+                    <template #op="{ row }">
+                      <t-link theme="primary" @click="onRemove(row)"> 移除 </t-link>
+                    </template>
+                  </t-table>
+                </div>
+              </t-col>
+            </t-row>
+            <t-row>
+              <t-col :span="12" class="custom-row-item-reset">
+                <t-popconfirm
+                  theme="default"
+                  :content="t('productRework.isconfirm')"
+                  :confirm-btn="t('common.button.confirm')"
+                  :cancel-btn="t('common.button.cancel')"
+                  @confirm="onConfirm"
+                >
+                  <t-button class="btn_reset" theme="primary" :disabled="!(scanInfoList && scanInfoList.length > 0)">{{
+                    t('productRework.confirm')
+                  }}</t-button>
+                </t-popconfirm>
+
+                <t-button class="btn_reset" theme="default" @click="resetHandle">{{
+                  t('common.button.reset')
+                }}</t-button>
+              </t-col>
+            </t-row>
+          </t-space>
+        </cmp-card>
+        <cmp-card :span="3">
+          <div class="groupbox">
+            <span class="grouptitle">{{ t('productRework.messageCom') }}</span>
+            <t-list style="height: 96%" :scroll="{ type: 'virtual' }">
+              <t-list-item v-for="(item, index) in messageList" :key="index">
+                <t-list-item-meta style="align-items: center">
+                  <template #description>
+                    <t-space>
+                      <t-icon v-if="item.status == 'OK'" name="check-circle-filled" style="color: green" />
+                      <t-icon v-if="item.status == 'NG'" name="close-circle" style="color: red" />
+                      <t-tooltip :content="item.content" placement="mouse">
+                        <span>{{ item.title }}</span>
+                        <span style="margin-left: 8px"> {{ item.datatime }}</span>
+                      </t-tooltip>
+                      <!-- <div>{{ item.datatime }}</div> -->
+                    </t-space>
+                  </template>
+                </t-list-item-meta>
+              </t-list-item>
+            </t-list>
+          </div></cmp-card
+        >
+      </cmp-row>
+    </cmp-card>
   </cmp-container>
 </template>
 
@@ -247,16 +256,17 @@ const preSetting = ref({
   isSameProcess: false,
   isSameMo: true,
   isByReworkMo: false,
-  reworkMoSheId: '', // 返工排产单id
-  reworkMoId: '', // 返工工单id
+  reworkMoSheId: null, // 返工排产单id
+  reworkMoId: null, // 返工工单id
+  reworkMoCode: '', // 返工工单号
   reworkRoutingRevisionId: '', // 返工工单的工艺路线版本id
   reworkRouting: '',
   reworkRoutingName: '',
   reworkLine: '',
   reworkProcess: '',
   curMitemId: '', // 条码对应的物料id
-  curProcessId: '', // 条码当前所在的工序
-  curMoScheId: '', // 条码当前所在的排产单
+  curProcessId: null, // 条码当前所在的工序
+  curMoScheId: null, // 条码当前所在的排产单
   scanType: 'BARCODE', // BARCODE,RUNCARD
   isLock: false,
 });
@@ -310,13 +320,14 @@ const Init = async () => {
   mainform.value.workStationName = userStore.currUserOrgInfo.workStationName;
 
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
   }
 };
 
 const serialNumberEnter = async (value) => {
   if (!mainform.value.workStationId) {
     NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
+    return;
   }
   if (!isEmpty(value)) {
     // 前端校验一次，条码是否扫重复，后端再校验一次
@@ -392,7 +403,7 @@ const setKeypartList = (keypartList: WipKeyPartCollectVO[]) => {
     );
     // 如果是重复的关键件则无需添加
     if (!keypartInfo) {
-      partList.push(keypartInfo);
+      partList.push(item);
     }
   });
   keyPartSumList.value = [...keyPartSumList.value, ...partList];
@@ -417,10 +428,7 @@ const addBarcodeInfo = async (resData: ProductReworkVO) => {
 // 校验条码是否扫重复
 const checkBarcodeRepeat = (lbNo) => {
   let isSuccess = true;
-  const barcodeInfo = _.find(
-    scanInfoList.value,
-    (item: scanCollectInfoModel) => item.status === 'OK' && item.serialNumber === lbNo,
-  );
+  const barcodeInfo = _.find(scanInfoList.value, (item: scanCollectInfoModel) => item.serialNumber === lbNo);
   if (barcodeInfo) {
     isSuccess = false;
     writeMessageListError(`该条码(${lbNo})已扫描,请勿重复扫描`, dayjs().format('YYYY-MM-DD HH:mm:ss'));
@@ -515,6 +523,7 @@ const onClickSetting = () => {
 const moScheduleSelectChange = (data) => {
   if (!preSetting.value.isLock) {
     preSetting.value.reworkMoId = data.moId;
+    preSetting.value.reworkMoCode = data.moCode;
     preSetting.value.reworkProcess = '';
     preSetting.value.reworkRoutingRevisionId = data.routingRevisionId;
     preSetting.value.reworkRouting = data.routingCode;
@@ -524,12 +533,32 @@ const moScheduleSelectChange = (data) => {
 
 // 移除条码
 const onRemove = (row) => {
-  scanInfoList.value.splice(0, row);
+  scanInfoList.value = scanInfoList.value.filter((item) => item.id !== row.id);
 };
 
 // 执行
-const onConfirm = () => {
-  scanInfoList.value = [];
+const onConfirm = async () => {
+  LoadingPlugin(true);
+  // 原子校验
+  // TODO 校验成功
+  const scanTime = dayjs().format('YYYY-MM-DD hh:mm:ss');
+  await api.productRework
+    .save({
+      barcodeList: scanInfoList.value,
+      preSetting: preSetting.value,
+      keyPartSumList: keyPartSumList.value,
+      centersetting: { ...mainform.value },
+    })
+    .then(() => {
+      resetHandle();
+      writeMessageListSuccess(t('productRework.success'), scanTime);
+      LoadingPlugin(false);
+    })
+    .catch((message) => {
+      console.log(message);
+      LoadingPlugin(false);
+      writeMessageListError(message, scanTime);
+    });
 };
 
 // 重置
@@ -697,4 +726,8 @@ onMounted(() => {
   text-align: right;
   width: 100%;
 }
+
+// .card-left {
+//   margin-top: -12px; //由于tdesign的bug，先临时解决
+// }
 </style>

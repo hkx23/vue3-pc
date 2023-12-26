@@ -18,26 +18,6 @@
           <cmp-card>
             <!-- 查询组件  -->
             <cmp-query :opts="opts" @submit="conditionEnter" @reset="onReset" />
-            <!-- <t-row justify="space-between">
-              <t-col flex="170px">
-                <div>
-                  <t-input v-model="personCode" label="员工" placeholder="请输入员工编号或姓名" clearable />
-                </div>
-              </t-col>
-              <t-col flex="20px"></t-col>
-              <t-col flex="170px">
-                <div>
-                  <t-select v-model="personState" label="状态" :options="stateOptions" clearable />
-                </div>
-              </t-col>
-              <t-col flex="auto"></t-col>
-              <t-col flex="170px">
-                <div>
-                  <t-button @click="onRefresh">查询</t-button>
-                  <t-button theme="default" @click="onReset">重置</t-button>
-                </div>
-              </t-col>
-            </t-row> -->
           </cmp-card>
           <cmp-card>
             <cmp-table
@@ -56,8 +36,6 @@
                   <t-link theme="primary" @click="handleClickDelete(slotProps)">{{
                     slotProps.row.state === 1 ? t('common.button.disable') : t('common.button.enable')
                   }}</t-link>
-                  <!-- <t-icon name="edit" @click="handleClickDetail(slotProps)" />
-                  <t-icon name="delete" @click="handleClickDelete(slotProps)" /> -->
                 </t-space>
               </template>
               <template #button>
@@ -140,7 +118,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-// import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
@@ -242,6 +220,11 @@ const conditionEnter = (data: any) => {
 const onEditConfirm = async () => {
   dataLoading.value = true;
   try {
+    if (isEmpty(formData.value.personname)) {
+      MessagePlugin.error('请输入姓名');
+      return false;
+    }
+
     const data = await api.person.edit({
       id: formData.value.id.toString(),
       personCode: formData.value.personcode,
@@ -262,6 +245,7 @@ const onEditConfirm = async () => {
   } finally {
     dataLoading.value = false;
   }
+  return true;
 };
 
 // 导入按钮
@@ -340,16 +324,6 @@ const fetchTree = async () => {
     dataLoading.value = false;
   }
 };
-
-// watch(treeActiveKey, () => {
-//   debugger;
-//   if (treeRef?.value && !isEmpty(treeActiveKey.value)) {
-//     const activeNode = treeRef.value.getTreeData(treeActiveKey.value[0]);
-//     treeActiveNode.value = activeNode[0].children?.length > 0 ? activeNode[0].children : activeNode;
-//   } else {
-//     treeActiveNode.value = treeData.value;
-//   }
-// });
 
 // #endregion
 

@@ -551,7 +551,6 @@ useResizeObserver(treeCard, (entries) => {
   const entry = entries[0];
   const { height } = entry.contentRect;
   treeHeight.value = `${height - 80}px`;
-  console.error('treeHeight', treeHeight.value);
 });
 
 const treeScroll = ref({
@@ -748,7 +747,6 @@ const menuSonSelectData = async () => {
 // const sonID = ref(null);
 // const menuSonSelectDataTwo = async () => {
 //   const res = await api.module.getBackfill({ id: sonID.value });
-//   console.log('🚀 ~ file: index.vue:618 ~ menuSonSelectDataTwo ~ res:', res);
 // };
 
 // #顶部多端选择事件
@@ -839,7 +837,6 @@ const onAddSecondNode = async (node: any) => {
 
 // 点击 左侧 编辑图标
 const onQueryTree = (node: any) => {
-  console.log('🚀 ~ file: index.vue:769 ~ onQueryTree ~ node:', node);
   clickNodeId.value.id = node[`__tdesign_tree-node__`]?.data?.id; // 保存当前节点 id
   // 判断有无父节点
   if (!node[`__tdesign_tree-node__`].parent?.label) {
@@ -877,7 +874,6 @@ const onQueryTree = (node: any) => {
 // 点击 右侧  编辑按钮
 const editState = ref(null);
 const onEditRow = async (row: any) => {
-  console.log('🚀 ~ file: index.vue:811 ~ onEditRow ~ row:', row);
   editState.value = row.state; // 状态回填
   files.value = []; // 文件上传文件 清空
   formDataTwo.value.moduleType = row.moduleType;
@@ -943,13 +939,15 @@ const onDeleteTree = async () => {
 };
 
 // 获取本行 ID
-const onDelelist = (row: { id: string }) => {
+const delThreeBehaviorPath = ref('');
+const onDelelist = (row: any) => {
   onDelelistID.value = row.id;
+  delThreeBehaviorPath.value = row.behaviorPath;
 };
 
 // 右侧 tab 删除 事件
 const onDelConfirm = async () => {
-  await api.module.remove({ id: onDelelistID.value });
+  await api.module.remove({ id: onDelelistID.value, behaviorPath: delThreeBehaviorPath.value, moduleLevel: 'LEAF' });
   if (moduleData.value.length <= 1 && clickNodeId.value.pageNum > 1) {
     pageUI.value.page--;
   }
@@ -959,7 +957,6 @@ const onDelConfirm = async () => {
 
 // switch 开关事件
 const onSwitchChange = async (row: any, value: any) => {
-  console.log('🚀 ~ file: index.vue:886 ~ onSwitchChange ~ row:', row);
   const decimalNumber = row.clientType; // 十进制数
   const binaryString = parseInt(decimalNumber.toString(2), 10); // 将十进制数转换为二进制字符串
   const isValue = value ? 1 : 0;

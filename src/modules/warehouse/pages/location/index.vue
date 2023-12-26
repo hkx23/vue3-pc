@@ -1,16 +1,15 @@
 <!-- 货位 -->
 <template>
-  <cmp-container :full="true">
-    <cmp-card>
+  <div class="main-page">
+    <div class="main-page-content">
       <cmp-query :opts="opts" @submit="onInput"></cmp-query>
-    </cmp-card>
-    <cmp-card>
+    </div>
+    <div class="main-page-content">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
         :table-column="tableWarehouseColumns"
         :table-data="tableDataLocation"
-        :fixed-height="true"
         :loading="loading"
         :total="dataTotal"
         @refresh="tabRefresh"
@@ -32,26 +31,30 @@
           </t-space>
         </template>
       </cmp-table>
-    </cmp-card>
-  </cmp-container>
+    </div>
+  </div>
   <!-- 弹窗 -->
-
-  <t-dialog
-    v-model:visible="formVisible"
-    :header="formTitle"
-    :on-confirm="onConfirmForm"
-    width="750px"
-    :close-on-overlay-click="false"
-  >
-    <template #header>
-      {{ formTitle }}
-    </template>
-    <!-- 传递 formData 给子组件 -->
-    <location-form ref="formRef" :form-title="formTitle"></location-form>
-  </t-dialog>
+  <div>
+    <t-dialog
+      v-model:visible="formVisible"
+      :header="formTitle"
+      :on-confirm="onConfirmForm"
+      width="49%"
+      :close-on-overlay-click="false"
+    >
+      <template #header>
+        {{ formTitle }}
+      </template>
+      <t-space direction="vertical" style="width: 98%">
+        <!-- 传递 formData 给子组件 -->
+        <location-form ref="formRef" :form-title="formTitle"></location-form>
+      </t-space>
+    </t-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { forEach } from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
@@ -180,11 +183,38 @@ const onEditRowClick = async (value: any) => {
     ...value.row,
     state: value.row.state ? 1 : 0,
   };
-  formRef.value.formData = JSON.parse(JSON.stringify(editedData));
+  // formRef.value.formData = JSON.parse(JSON.stringify(editedData)); // todo
+  formRef.value.formData = clone2(editedData);
+  console.log('🚀 ~ file: index.vue:188 ~ onEditRowClick ~ formRef.value.formData:', formRef.value.formData);
+
   formVisible.value = true;
 };
 
-//* 货位 删除
+//* CloneObject
+function Clone(target, map = new WeakMap()) {
+  if (typeof target === 'object') {
+    const isArray = Array.isArray(target);
+    const cloneTarget = isArray ? [] : {};
+    if (map.get(target)) {
+      return map.get(target);
+    }
+    map.set(target, cloneTarget);
+
+    const keys = isArray ? undefined : Object.keys(target);
+    forEach(keys || target, (value, key) => {
+      if (keys) {
+        key = value;
+      }
+      cloneTarget[key] = clone2(target[key], map);
+    });
+
+    return cloneTarget;
+  }
+  return target;
+}
+const clone2 = Clone;
+
+//* 删除
 const onStateRowClick = async (row: { row: any }) => {
   await api.location.removeLocation({ id: row.row.id });
   if (tableDataLocation.value.length <= 1 && pageUI.value.page > 1) {
