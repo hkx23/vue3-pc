@@ -150,7 +150,7 @@ const fetchTable = async () => {
     tableDataWarehouse.value = [];
     const data = (await api.warehouse.search({
       keyword: keyword.value,
-      state: warehouseState.value || -1,
+      state: warehouseState.value,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       filters: filterlist.value,
