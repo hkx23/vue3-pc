@@ -493,6 +493,7 @@ const onAddRuleCode = async () => {
 const RuleCodeID = ref(null);
 // 文本验证 编辑事件
 const onTextEditRow = (row: { id: any }) => {
+  sampleBarcode.value = ''; // 条码示例置空
   RuleCodeID.value = row.id;
   Object.keys(barcodeData.value).reduce((acc, key) => {
     if (Object.prototype.hasOwnProperty.call(row, key)) {

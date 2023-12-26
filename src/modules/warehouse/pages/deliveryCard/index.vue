@@ -742,7 +742,7 @@ const onGetPrintTopTabData = async () => {
   totalPrintTop.value = res.total;
 };
 
-// // #产品标签打印 下 表格数据
+// // #配送卡 下 表格数据
 const onGetPrintDownTabData = async () => {
   let isCreated = null;
   if (radioValue.value) {
@@ -750,7 +750,7 @@ const onGetPrintDownTabData = async () => {
   } else {
     isCreated = false;
   }
-  const res = await api.deliveryCard.getBarcodePkgList({
+  const res = await api.deliveryCard.getDeliveryCardList({
     pageNum: pageUIDown.value.page,
     pageSize: pageUIDown.value.rows,
     moScheduleId: topPrintID.value,
@@ -776,7 +776,7 @@ const onBarCodeState = async () => {
 
 // #配送卡管理 表格数据
 const onLabelManageTabData = async () => {
-  const res = await api.deliveryCard.getBarcodePkgManagerList({
+  const res = await api.deliveryCard.getDeliveryCardManagerList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     planDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
@@ -862,8 +862,8 @@ const onResolution = () => {
 // // 日志 点击 事件
 const onLogInterface = async (row: any) => {
   logInterfaceVisible.value = true; // 控制界面显示隐藏
-  const res = await api.deliveryCard.getBarcodePkgLog({
-    pkgBarcode: row.pkgBarcode,
+  const res = await api.deliveryCard.getDeliveryCardLog({
+    deliveryCardNo: row.pkgBarcode,
     pageNum: pageUIDay.value.page,
     pageSize: pageUIDay.value.rows,
   });
@@ -1061,7 +1061,7 @@ const onInput = async (data: any) => {
     totalPrintTop.value = res.total;
   } else {
     pageUI.value.page = 1;
-    const res = await api.deliveryCard.getBarcodePkgManagerList({
+    const res = await api.deliveryCard.getDeliveryCardManagerList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       planDateStart: data.scheduledProductionDate[0], // 计划生产开始日期
@@ -1072,8 +1072,8 @@ const onInput = async (data: any) => {
       workshopId: data.workshop, // 车间 ID
       workcenterId: data.workcenter, // 工作中心ID
       mitemId: data.mitem, // 物料 ID
-      barcodePkgStatus: data.barCodeState, // 条码状态
-      pkgBarcode: data.barCode, // 条码
+      // deliveryStatus: data.barCodeState, // 条码状态
+      deliveryCardNo: data.barCode, // 条码
     });
     manageTabData.list = res.list;
     totalManage.value = res.total;

@@ -41,7 +41,7 @@
         </t-col>
         <t-col :span="6">
           <t-form-item label="顺序号" name="wcSeq">
-            <t-input-number v-model="formData.wcSeq" theme="column" />
+            <t-input-number v-model="formData.wcSeq" theme="column" min="0" />
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -101,7 +101,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
+import { CustomValidateResolveType, Data, FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
@@ -115,8 +115,19 @@ const total = ref(10);
 const deleteVisible = ref(false);
 const { pageUI } = usePage(); // 页面数
 // const { loading, setLoading } = useLoading();
-const Emit = defineEmits(['addedShow', 'FormClear', 'ChildDefault', 'delete', 'update:detailedShow']); // addedShow窗口
+const Emit = defineEmits([
+  'addedShow',
+  'FormClear',
+  'ChildDefault',
+  'delete',
+  'update:detailedShow',
+  'update-type-show',
+]); // addedShow窗口
 const props = defineProps({
+  typeShowProp: {
+    type: Boolean,
+    default: false,
+  },
   typeShowChild: {
     type: Boolean,
     default: false,
@@ -171,6 +182,9 @@ watch(
 // const once = ref(0);
 // const parentId = ref(); // 点击添加的时候存储父id
 const typeShow = ref(false);
+watch(typeShow, (newValue) => {
+  Emit('update-type-show', newValue);
+});
 onMounted(() => {
   // fetchData();
 });
@@ -278,9 +292,8 @@ const typeData = ref([
 // 判断数组里面的设备
 // const typeShowChild = ref(props.typeShowChild);
 watch(
-  () => props.typeShowChild,
+  () => props.typeShowProp,
   (newValue) => {
-    console.log('🚀 ~ file: detailed.vue:283 ~ newValue:', newValue);
     typeShow.value = newValue;
   },
 );
@@ -290,12 +303,10 @@ const onTypeList = () => {
     if (props.newArr === item.wcType) {
       // 判断是否为设备
       if (props.newArr !== '设备') {
-        console.log('🚀 ~ file: detailed.vue:281 ~ typeData.value.forEach ~ props.newArr:', props.newArr);
         typeShow.value = true;
       }
       item.show = true;
       formData.category = item.opId;
-      console.log(formData.category);
     } else {
       item.show = false;
     }
@@ -308,11 +319,10 @@ const onTypeList = () => {
 };
 // 类型高亮事件
 const onHandleCur = (all) => {
-  console.log('🚀 ~ file: detailed.vue:298 ~ onHandleCur ~ context:', all);
+  console.log('🚀 ~ file: detailed.vue:178 ~ typeShow:', typeShow.value);
   typeData.value.forEach((item) => {
     if (item.wcType === all) {
       if (item.wcType !== '设备') {
-        // console.log(1230);
         formData.wcObjectId = '';
         typeShow.value = true;
       } else {
@@ -463,13 +473,20 @@ const rules: FormRules<Data> = {
     },
   ],
   wcSeq: [
-    {
-      required: true,
-      type: 'error',
-      trigger: 'blur',
-    },
+    { required: true, message: '顺序号不能为空', trigger: 'blur' },
+    { validator: validateNumber, trigger: 'blur' },
   ],
 };
+
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number.isNaN(Number(value))) {
+    return { result: false, message: '该字段必须是数字', type: 'error' };
+  }
+  if (Number(value) < 0) {
+    return { result: false, message: '该字段不能为负数', type: 'error' };
+  }
+  return true;
+}
 </script>
 
 <style lang="less" scoped>

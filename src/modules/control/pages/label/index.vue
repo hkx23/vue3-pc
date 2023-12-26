@@ -78,6 +78,7 @@
                 <cmp-table
                   ref="tableRef"
                   v-model:pagination="pageUIDown"
+                  class="son-table"
                   row-key="barcodeWipId"
                   :table-column="labelPrintDown"
                   :table-data="printDownTabData.list"
@@ -571,7 +572,7 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'creator',
+    colKey: 'creatorName',
     title: '操作人',
     align: 'center',
     width: '100',

@@ -1,6 +1,7 @@
 <template>
   <!-- 子from -->
   <detailed
+    :type-show-prop="typeShowProp"
     :type-show="parentTypeShow"
     :detailed-show="detailedShow"
     :btn-show-disable="{ add: btnShowDisable.add, delete: btnShowDisable.delete }"
@@ -12,6 +13,7 @@
     :type-detailed="typeDetailed"
     :disabled-word="disabledWord"
     :disabled-parent="disabledParent"
+    @update-type-show="handleTypeShowUpdate"
     @added-show="onHandleSave"
     @form-clear="onFormClear"
     @child-default="onChildDefault"
@@ -31,11 +33,13 @@
       <cmp-query :opts="opts" @submit="onInput"></cmp-query>
     </cmp-card>
     <cmp-card ref="tableCardRef" :span="12">
-      <t-row :span="2" :push="10" style="margin-bottom: 8px">
-        <t-button theme="primary" variant="base" @click="onHandelAdded">新增</t-button>
-        <!-- <t-divider layout="vertical" /> -->
-        <t-button theme="default" variant="base">导出</t-button>
-      </t-row>
+      <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
+        <t-space size="small" :align="'end'">
+          <t-button theme="primary" variant="base" @click="onHandelAdded">新增</t-button>
+          <t-button theme="default" variant="base">导出</t-button>
+        </t-space>
+      </t-space>
+
       <!-- 表格 -->
       <t-enhanced-table
         ref="tableRef"
@@ -323,7 +327,6 @@ const page = ref({
 watch(
   () => page.value.pageSize,
   (oldSize, newSize) => {
-    console.log(oldSize, newSize);
     if (oldSize === newSize) {
       page.value.current = 1;
     }
@@ -350,7 +353,6 @@ onMounted(() => {
 
 // // 下拉事件
 // const onOptionClick = (value: any) => {
-//   console.log('value', value);
 //   selectValue.value = value;
 //   onFetchData();
 // };
@@ -395,7 +397,6 @@ const onHandelArr = (value: any) => {
   } else {
     arr.value = value;
   }
-  console.log('类型', arr.value);
   page.value.current = 1;
   onFetchData();
 };
@@ -505,8 +506,6 @@ const onFetchData = async () => {
     workData.value = res.list; // table数据
     data.value = res.list; // 新增页面
     page.value.total = res.total;
-    console.log('🚀 ~ file: index.vue:506 ~ onFetchData ~  res.total:', res.total);
-    console.log('🚀 ~ file: index.vue:506 ~ onFetchData ~ page.value.total:', page.value.total);
     // 只有第一次进来的时候才拿
     if (id.value === 0) {
       // 类型请求
@@ -565,7 +564,6 @@ const onDefult = async (row) => {
     const list = row.children.every((item) => {
       return item.state === 0;
     });
-    console.log(list);
     if (!list) {
       MessagePlugin.error('子级是启用转态,无法禁用');
       return;
@@ -587,12 +585,18 @@ const onHandleSave = (i: boolean) => {
   onFetchData();
 };
 // 编辑
+const handleTypeShowUpdate = (newValue) => {
+  typeShowProp.value = newValue;
+};
+const typeShowProp = ref(true);
 const onClickEdit = (row: any) => {
   newArr.value = row.wcType;
   if (row.wcType === '设备') {
     parentTypeShow.value = false;
+    typeShowProp.value = false;
   } else {
     parentTypeShow.value = true;
+    typeShowProp.value = true;
   }
   btnShow.value = true;
   detailedShow.value = true;
@@ -635,7 +639,6 @@ const onDelete = (value: boolean) => {
 // checked事件
 // const rehandleSelectChange = (value: any, ctx: any) => {
 //   selectedRowKeys.value = value;
-//   console.log('value:', value, '1', ctx);
 // };
 const boxHeight = ref(0);
 const boxWidth = ref(0);
@@ -653,7 +656,7 @@ const computedTableContentSize = (entry) => {
   boxWidth.value = 0;
   boxHeight.value = 0;
   nextTick(() => {
-    boxHeight.value = _h - 140;
+    boxHeight.value = _h - 145;
   });
 };
 </script>

@@ -56,11 +56,11 @@
       </t-form-item>
       <!-- 第 2️⃣ 行数据 -->
       <t-form-item label="响应时长" name="sla">
-        <t-input-number v-model="CfgTabData.list.sla" theme="column" style="width: 100%"></t-input-number>
+        <t-input-number v-model="CfgTabData.list.sla" theme="column" style="width: 100%" min="0"></t-input-number>
       </t-form-item>
       <!-- 第 3️⃣ 行数据 -->
       <t-form-item label="处理时长" name="ola">
-        <t-input-number v-model="CfgTabData.list.ola" theme="column" style="width: 100%"></t-input-number>
+        <t-input-number v-model="CfgTabData.list.ola" theme="column" style="width: 100%" min="0"></t-input-number>
       </t-form-item>
 
       <!-- 第 4️⃣ 行数据 -->
@@ -163,24 +163,28 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 // #表单验证规则
-function validateNumber(value: any): boolean | CustomValidateResolveType {
-  if (Number.isNaN(Number(value))) {
-    return { result: false, message: '该字段必须是数字', type: 'error' };
-  }
-  return true;
-}
 const rules: FormRules = {
   alertType: [{ required: true, message: '预警机制不能为空', trigger: 'blur' }],
   sla: [
     { required: true, message: '响应时长不能为空', trigger: 'blur' },
-    { validator: validateNumber, trigger: 'blur', message: '响应时长必须是数字' },
+    { validator: validateNumber, trigger: 'blur' },
   ],
   ola: [
     { required: true, message: '处理时长不能为空', trigger: 'blur' },
-    { validator: validateNumber, trigger: 'blur', message: '响应时长必须是数字' },
+    { validator: validateNumber, trigger: 'blur' },
   ],
   state: [{ required: true, message: '是否启用不能为空', trigger: 'change' }],
 };
+
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number.isNaN(Number(value))) {
+    return { result: false, message: '该字段必须是数字', type: 'error' };
+  }
+  if (Number(value) < 0) {
+    return { result: false, message: '该字段不能为负数', type: 'error' };
+  }
+  return true;
+}
 
 // 初始渲染
 onMounted(async () => {

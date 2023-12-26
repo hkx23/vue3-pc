@@ -34,6 +34,7 @@
     "tipsetting":"请先配置工站信息",
     "checkreworkRouting":"请先维护工单的工艺路线",
     "checkPresetting":"请先配置返工前配置项后，点击确定",
+    "success":"执行成功",
     "scanqty": "已扫"
   }
 }
