@@ -327,6 +327,7 @@ const Init = async () => {
 const serialNumberEnter = async (value) => {
   if (!mainform.value.workStationId) {
     NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
+    return;
   }
   if (!isEmpty(value)) {
     // 前端校验一次，条码是否扫重复，后端再校验一次
