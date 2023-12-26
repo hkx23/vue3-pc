@@ -1,30 +1,31 @@
 <template>
   <div>
-    <t-card style="width: 100%; height: 400px">
+    <t-card style="width: 50%; height: 400px">
       <div ref="chart" style="width: 80%; height: 300px"></div>
     </t-card>
   </div>
 </template>
 
 <script setup lang="ts">
-// import { api } from '@/api/main';
-// import Mock from 'mockjs';
 import dayjs from 'dayjs';
 import * as echarts from 'echarts';
 import { onMounted, ref } from 'vue';
 
 const option = ref({});
-const chart = ref(null);
+const chart = ref({});
+//* 所需数据
+const responseData = [
+  { value: 160, name: '外观划伤' },
+  { value: 245, name: '功能不良' },
+  { value: 180, name: '缺件' },
+  { value: 584, name: '空焊' },
+  { value: 600, name: '短路' },
+  { value: 300, name: '其他' },
+];
 
-// Get current date
 const currentDate = dayjs();
-
-// Get the date 7 days ago
 const sevenDaysAgo = currentDate.subtract(7, 'day');
-
-//* 开始计算时间
 const currentDateString = currentDate.format('YYYY-MM-DD');
-//* 结束计算时间
 const sevenDaysAgoDateString = sevenDaysAgo.format('YYYY-MM-DD');
 
 onMounted(async () => {
@@ -33,47 +34,29 @@ onMounted(async () => {
   myChart.setOption(option.value);
 });
 
-//* 接口数据
+// 模拟接口请求
+// const getPieData = await api.xxx.ii();
 const getPieData = async () => {
   try {
-    // const response = await;  //todo  使用mock 将图表渲染
-    // const response = await Mock.mock('/api/getPieData', 'get', {
-    //   'list|5': [
-    //     {
-    //       'value|100-500': 100,
-    //       'name|+1': ['类别1', '类别2', '类别3', '类别4', '类别5'],
-    //     },
-    //   ],
-    // });
-
     option.value = {
       title: {
         text: `过程不良TOP5 (周 ${sevenDaysAgoDateString} ~ ${currentDateString})`,
-        left: 'letf',
+        left: 'left',
       },
       tooltip: {
         trigger: 'item',
       },
       legend: {
         orient: 'vertical',
-        right: 200,
+        right: 35,
         top: 100,
-        bottom: 20,
+        bottom: 10,
       },
       series: [
         {
-          name: 'Access From',
           type: 'pie',
           radius: '50%',
-          data: [
-            { value: 1360, name: 'Search Engine' },
-            { value: 835, name: 'Direct' },
-            { value: 510, name: 'Email' },
-            { value: 584, name: 'Union Adss' },
-            { value: 600, name: 'Video Ads' },
-            { value: 300, name: 'Video Ad' },
-          ],
-          // data: response.list.map((item) => ({ value: item.value, name: item.name })),
+          data: responseData,
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
@@ -85,7 +68,7 @@ const getPieData = async () => {
       ],
     };
   } catch (error) {
-    console.error('Error fetching pie chart data', error);
+    console.error('获取饼图数据时出错', error);
   }
 };
 </script>
