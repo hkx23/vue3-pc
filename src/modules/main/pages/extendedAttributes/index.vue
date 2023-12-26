@@ -164,7 +164,7 @@
               v-model="dialogFormData.list.displaySequence"
               theme="column"
               :max="15"
-              :min="-2"
+              :min="0"
             ></t-input-number>
           </t-form-item>
         </t-col>
@@ -241,7 +241,14 @@
 
 <script setup lang="ts">
 import { Icon } from 'tdesign-icons-vue-next';
-import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import {
+  CustomValidateResolveType,
+  Data,
+  FormRules,
+  MessagePlugin,
+  PrimaryTableCol,
+  TableRowData,
+} from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api, ObjectProperty } from '@/api/main';
@@ -400,8 +407,21 @@ const editSubmitFalg = ref(true);
 const rules: FormRules<Data> = {
   propertyCode: [{ required: true, message: '属性代码不能为空', type: 'error', trigger: 'blur' }],
   displayName: [{ required: true, message: '显示名称不能为空', type: 'error', trigger: 'blur' }],
-  displaySequence: [{ required: true, message: '显示顺序不能为空', type: 'error', trigger: 'blur' }],
+  displaySequence: [
+    { required: true, message: '显示顺序不能为空', type: 'error', trigger: 'blur' },
+    { validator: validateNumber, trigger: 'blur' },
+  ],
 };
+
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number.isNaN(Number(value))) {
+    return { result: false, message: '该字段必须是数字', type: 'error' };
+  }
+  if (Number(value) < 0) {
+    return { result: false, message: '该字段不能为负数', type: 'error' };
+  }
+  return true;
+}
 
 // 新增请求
 const onAddExtendedAttributes = async () => {

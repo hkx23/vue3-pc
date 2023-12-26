@@ -830,7 +830,6 @@ export interface RoleUserDTO {
 export interface UserOrgDTO {
   userId?: string;
   orgIds?: string[];
-  defaultOrgId?: string;
 }
 
 /** 角色权限操作实体 */
@@ -4771,6 +4770,8 @@ export type ModulePermissionDTO = {
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
