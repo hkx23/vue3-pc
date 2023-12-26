@@ -3475,14 +3475,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isState?: boolean;
   isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3649,8 +3649,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5174,10 +5174,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -7119,6 +7119,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/stressTest/MemoryUsageLog`, {
         method: 'POST',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
+     * @name CountLog
+     * @summary 查询日志表总数
+     * @request GET:/stressTest/countLog
+     * @secure
+     */
+    countLog: () =>
+      http.request<ResultLong['data']>(`/api/main/stressTest/countLog`, {
+        method: 'GET',
       }),
 
     /**

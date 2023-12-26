@@ -2,7 +2,7 @@
   <t-dialog
     v-model:visible="visible"
     :header="t('user.org')"
-    width="600px"
+    width="750px"
     :confirm-btn="{
       content: '保存',
       theme: 'primary',
@@ -77,7 +77,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     title: '默认库存组织',
     align: 'center',
     colKey: 'defaultOrg',
-    width: 100,
+    width: 120,
   },
   { colKey: 'orgCode', title: '组织代码', width: '120' },
   { colKey: 'orgName', title: '组织名称', ellipsis: true },

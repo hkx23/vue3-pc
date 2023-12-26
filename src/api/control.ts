@@ -802,15 +802,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1042,6 +1042,10 @@ export interface ProcessInDefectCodeSearch {
   pageSize?: number;
   /** 工序模糊关键词 */
   process?: string;
+  /** 缺陷模糊关键词 */
+  keyWord?: string;
+  /** 工序ID */
+  processId?: string;
   /** 工序缺陷-状态 */
   state?: number[];
   id?: string;
@@ -1081,6 +1085,82 @@ export interface ProcessInDefectCode {
    * @format int32
    */
   displaySeq?: number;
+}
+
+export interface DefectCodeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyWord?: string;
+  /** 工序ID */
+  processId?: string;
+}
+
+/** 缺陷代码 */
+export interface DefectCode {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /** 不合格分类 */
+  classification?: string;
+}
+
+/** 响应数据 */
+export type PagingDataDefectCode = {
+  list?: DefectCode[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDefectCode {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDefectCode;
 }
 
 /** 响应数据 */
@@ -1126,6 +1206,11 @@ export interface ResultPagingDataProcessInDefectCodeVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataProcessInDefectCodeVO;
+}
+
+export interface ProcessInDefectDTO {
+  processId?: string;
+  defectIds?: string[];
 }
 
 /** 装箱关系实体 */
@@ -1681,17 +1766,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -1797,55 +1882,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   stateName?: string;
   isState?: boolean;
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-}
-
-/** 缺陷代码 */
-export interface DefectCode {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 缺陷代码 */
-  defectCode?: string;
-  /** 缺陷名称 */
-  defectName?: string;
-  parentDefectId?: string;
-  /**
-   * 层级序号
-   * @format int32
-   */
-  levelSeq?: number;
-  /** 不合格分类 */
-  classification?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -2083,8 +2129,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -3089,6 +3135,21 @@ export const api = {
      * No description
      *
      * @tags 工序与缺陷代码关系
+     * @name GetNotRelateList
+     * @summary 查询指定工序未关联的缺陷列表
+     * @request POST:/processInDefectCode/getNotRelateList
+     * @secure
+     */
+    getNotRelateList: (data: DefectCodeSearch) =>
+      http.request<ResultPagingDataDefectCode['data']>(`/api/control/processInDefectCode/getNotRelateList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
      * @name GetList
      * @summary 查询工序缺陷
      * @request POST:/processInDefectCode/getList
@@ -3096,6 +3157,36 @@ export const api = {
      */
     getList: (data: ProcessInDefectCodeSearch) =>
       http.request<ResultPagingDataProcessInDefectCodeVO['data']>(`/api/control/processInDefectCode/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name ChangeSeq
+     * @summary 根据工序批量添加缺陷代码
+     * @request POST:/processInDefectCode/changeSeq
+     * @secure
+     */
+    changeSeq: (data: ProcessInDefectCodeVO[]) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/changeSeq`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name BatchAdd
+     * @summary 根据工序批量添加缺陷代码
+     * @request POST:/processInDefectCode/batchAdd
+     * @secure
+     */
+    batchAdd: (data: ProcessInDefectDTO) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/batchAdd`, {
         method: 'POST',
         body: data as any,
       }),

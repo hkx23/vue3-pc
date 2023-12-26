@@ -1,7 +1,7 @@
 <template>
   <div ref="tableBoxRef" class="cmp-table">
     <div class="table-box">
-      <div v-if="buttonsVisible" class="table-box_header">
+      <div v-if="showToolbar" class="table-box_header">
         <div class="table-title">
           <slot name="title"></slot>
         </div>
@@ -144,7 +144,7 @@ const props = defineProps({
   params: {
     type: Object,
   },
-  buttonsVisible: { type: Boolean, default: true },
+  showToolbar: { type: Boolean, default: true },
   enableExport: { type: Boolean, default: true },
   remoteFilter: { type: Boolean, default: false },
   remoteSorter: { type: Boolean, default: false },
