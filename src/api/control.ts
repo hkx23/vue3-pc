@@ -447,10 +447,16 @@ export interface WipRepairSearch {
   endDate?: string;
   /** 已返修 */
   isRepair?: string;
+  /** 登录工序 */
+  processId?: string;
   /** 批量维修ID */
   wipRepairIds?: string[];
   /** 维修状态 */
   statusList?: string[];
+  loginProcessId?: string;
+  loginWorkstationId?: string;
+  /** 是否报废 */
+  isScrapped?: boolean;
 }
 
 /** 响应数据 */
@@ -540,13 +546,110 @@ export interface WipRepairVO {
   fromWorkstationCode?: string;
   /** 来源工站 */
   fromWorkstationName?: string;
+  /** 维修用户 */
   userNameRepair?: string;
+  /** 维修用户名称 */
   displayNameRepair?: string;
+  /** 回流工艺路线工序编码 */
   returnRoutingProcessCode?: string;
+  /** 回流工艺路线工序 */
   returnRoutingProcessName?: string;
   /** 维修状态 */
   repairStatusName?: string;
+  routingRevisionId?: string;
+  /** 维修中ID */
+  idsRepairingList?: string[];
+  curRepairProcessId?: string;
+  curWorkstationId?: string;
+  loginProcessId?: string;
+  loginWorkstationId?: string;
+  /** 缺陷原因 */
+  defectReason?: string;
+  /** 缺陷责任别 */
+  defectBlame?: string;
+  defectCodeId?: string;
+  /** 缺陷处理方法ID */
+  defectDealMethodIdList?: string[];
+  mttr?: string;
+  /** 是否报废 */
+  isScrapped?: boolean;
+  wipRepairId?: string;
+  /** 维修中提交的ID */
+  wipRepairIdList?: string[];
+  outTimeShowColor?: string;
   retentionTime?: string;
+}
+
+export interface DefectDealMethodSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 缺陷处理方法类别 */
+  dealMethodType?: string;
+  id?: string;
+  /** 多个id */
+  ids?: string[];
+  defectDealMethod?: string;
+}
+
+/** 显示缺陷处理方法 */
+export interface DefectDealMethodVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 处理方法代码 */
+  methodCode?: string;
+  /** 处理方法名称 */
+  methodName?: string;
+  /** 处理方法类别 */
+  dealMethodType?: string;
+}
+
+/** 响应数据 */
+export type PagingDataDefectDealMethodVO = {
+  list?: DefectDealMethodVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDefectDealMethodVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDefectDealMethodVO;
 }
 
 /** 完工入库单据实体 */
@@ -581,6 +684,7 @@ export interface ProductReworkPreSettingDTO {
   reworkRoutingRevisionId?: string;
   reworkMoSheId?: string;
   reworkMoId?: string;
+  reworkMoCode?: string;
   reworkRouting?: string;
   reworkRoutingName?: string;
   reworkLine?: string;
@@ -647,6 +751,7 @@ export interface ProductReworkVO {
   uom?: string;
   uomName?: string;
   keypartCode?: string;
+  wipId?: string;
   /** 排产工单 */
   scheCode?: string;
   /** 工单排产状态 */
@@ -670,6 +775,7 @@ export interface ProductReworkVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  preProcessId?: string;
   /** 工序代码 */
   processCode?: string;
   /** 工序名称 */
@@ -699,8 +805,8 @@ export interface ProductReworkVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
@@ -802,6 +908,19 @@ export interface ResultProductReworkVO {
   data?: ProductReworkVO;
 }
 
+/** 个人中心配置相关属性 */
+export interface PersonalCenterSettingDTO {
+  workshopCode?: string;
+  workshopName?: string;
+  workCenterId?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  workStationId?: string;
+  workStationCode?: string;
+  workStationName?: string;
+  processId?: string;
+}
+
 /** 产品返工执行模型 */
 export interface ProductReworkDTO {
   /** 条码集合信息 */
@@ -810,6 +929,8 @@ export interface ProductReworkDTO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 关键件数量汇总信息 */
   keyPartSumList?: WipKeyPartCollectVO[];
+  /** 个人中心配置相关属性 */
+  centersetting?: PersonalCenterSettingDTO;
 }
 
 /** 响应数据 */
@@ -921,6 +1042,10 @@ export interface ProcessInDefectCodeSearch {
   pageSize?: number;
   /** 工序模糊关键词 */
   process?: string;
+  /** 缺陷模糊关键词 */
+  keyWord?: string;
+  /** 工序ID */
+  processId?: string;
   /** 工序缺陷-状态 */
   state?: number[];
   id?: string;
@@ -960,6 +1085,82 @@ export interface ProcessInDefectCode {
    * @format int32
    */
   displaySeq?: number;
+}
+
+export interface DefectCodeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyWord?: string;
+  /** 工序ID */
+  processId?: string;
+}
+
+/** 缺陷代码 */
+export interface DefectCode {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /** 不合格分类 */
+  classification?: string;
+}
+
+/** 响应数据 */
+export type PagingDataDefectCode = {
+  list?: DefectCode[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDefectCode {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDefectCode;
 }
 
 /** 响应数据 */
@@ -1007,6 +1208,11 @@ export interface ResultPagingDataProcessInDefectCodeVO {
   data?: PagingDataProcessInDefectCodeVO;
 }
 
+export interface ProcessInDefectDTO {
+  processId?: string;
+  defectIds?: string[];
+}
+
 /** 装箱关系实体 */
 export interface PkgRelationDTO {
   moScheId?: string;
@@ -1022,473 +1228,6 @@ export interface PkgRelationDTO {
   workcenterId?: string;
   workshopId?: string;
   pkgRuleId?: string;
-}
-
-/** 显示工单投料的视图 */
-export interface MoScheduleVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  moId?: string;
-  mitemId?: string;
-  /** 工单类型 */
-  moClass?: string;
-  /** 销售订单 */
-  soNo?: string;
-  /**
-   * 销售订单行号
-   * @format int32
-   */
-  soSeq?: number;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /**
-   * 下线数量
-   * @format int32
-   */
-  offlineQty?: number;
-  /**
-   * 完工数量
-   * @format int32
-   */
-  completedQty?: number;
-  /**
-   * 入库数量
-   * @format int32
-   */
-  stockinQty?: number;
-  /**
-   * 计划开始时间
-   * @format date-time
-   */
-  datetimePlanStart?: string;
-  /**
-   * 计划完成时间
-   * @format date-time
-   */
-  datetimePlanEnd?: string;
-  /**
-   * 实际开始时间
-   * @format date-time
-   */
-  datetimeActualStart?: string;
-  /**
-   * 实际完成时间
-   * @format date-time
-   */
-  datetimeActualEnd?: string;
-  /**
-   * 工单关闭时间
-   * @format date-time
-   */
-  datetimeMoClose?: string;
-  warehouseId?: string;
-  parentMoId?: string;
-  workshopId?: string;
-  /** 备注 */
-  memo?: string;
-  /** 状态 */
-  status?: string;
-  /** 工单来源 */
-  moSource?: string;
-  workcenterId?: string;
-  /**
-   * 排产日期
-   * @format date-time
-   */
-  datetimeSche?: string;
-  /**
-   * 排产数量
-   * @format int32
-   */
-  scheQty?: number;
-  routingRevisionId?: string;
-  /** 排产工单 */
-  scheCode?: string;
-  mitemCode?: string;
-  mitemName?: string;
-  mitemDesc?: string;
-  uomName?: string;
-  statusName?: string;
-  moCode?: string;
-  routingCode?: string;
-  routingName?: string;
-}
-
-/** 响应数据 */
-export type PagingDataMoScheduleVO = {
-  list?: MoScheduleVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataMoScheduleVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataMoScheduleVO;
-}
-
-/** 工单排产表 */
-export type MoSchedule = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  moId?: string;
-  mitemId?: string;
-  /** 工单类型 */
-  moClass?: string;
-  /** 销售订单 */
-  soNo?: string;
-  /**
-   * 销售订单行号
-   * @format int32
-   */
-  soSeq?: number;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /**
-   * 下线数量
-   * @format int32
-   */
-  offlineQty?: number;
-  /**
-   * 完工数量
-   * @format int32
-   */
-  completedQty?: number;
-  /**
-   * 入库数量
-   * @format int32
-   */
-  stockinQty?: number;
-  /**
-   * 计划开始时间
-   * @format date-time
-   */
-  datetimePlanStart?: string;
-  /**
-   * 计划完成时间
-   * @format date-time
-   */
-  datetimePlanEnd?: string;
-  /**
-   * 实际开始时间
-   * @format date-time
-   */
-  datetimeActualStart?: string;
-  /**
-   * 实际完成时间
-   * @format date-time
-   */
-  datetimeActualEnd?: string;
-  /**
-   * 工单关闭时间
-   * @format date-time
-   */
-  datetimeMoClose?: string;
-  warehouseId?: string;
-  parentMoId?: string;
-  workshopId?: string;
-  /** 备注 */
-  memo?: string;
-  /** 状态 */
-  status?: string;
-  /** 工单来源 */
-  moSource?: string;
-  workcenterId?: string;
-  /**
-   * 排产日期
-   * @format date-time
-   */
-  datetimeSche?: string;
-  /**
-   * 排产数量
-   * @format int32
-   */
-  scheQty?: number;
-  routingRevisionId?: string;
-  /** 排产工单 */
-  scheCode?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultMoSchedule {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 工单排产表 */
-  data?: MoSchedule;
-}
-
-/** 物料使用信息 */
-export interface LabelNoSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 标签集合 */
-  list?: string[];
-}
-
-/** 关键物料正向追溯VO */
-export interface MFTSubVO {
-  /** 物料标签 */
-  mitemLabelNo?: string;
-  /** 批次 */
-  lotNo?: string;
-  /** 供应商编码 */
-  supplierCode?: string;
-  /** 供应商名称 */
-  supplierName?: string;
-  /** 数量 */
-  qty?: number;
-  /** 操作员 */
-  operatorName?: string;
-  /** 仓库名称 */
-  warehouseName?: string;
-  /** 工作中心 */
-  workcenterName?: string;
-  /** 产品编码 */
-  pdCode?: string;
-  /** 工单号 */
-  moCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  /** 物料描述 */
-  mitemCode?: string;
-  /** 绑定工序 */
-  processName?: string;
-  /** 操作类型 */
-  operateType?: string;
-  /**
-   * 加工时间
-   * @format date-time
-   */
-  processDate?: string;
-}
-
-/** 响应数据 */
-export type PagingDataMFTSubVO = {
-  list?: MFTSubVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataMFTSubVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataMFTSubVO;
-}
-
-/** 工单表 */
-export interface Mo {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工单名称 */
-  moCode?: string;
-  mitemId?: string;
-  /** 工单类型 */
-  moClass?: string;
-  /** 销售订单 */
-  soNo?: string;
-  /**
-   * 销售订单行号
-   * @format int32
-   */
-  soSeq?: number;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /**
-   * 下线数量
-   * @format int32
-   */
-  offlineQty?: number;
-  /**
-   * 完工数量
-   * @format int32
-   */
-  completedQty?: number;
-  /**
-   * 入库数量
-   * @format int32
-   */
-  stockinQty?: number;
-  /**
-   * 计划开始时间
-   * @format date-time
-   */
-  datetimePlanStart?: string;
-  /**
-   * 计划完成时间
-   * @format date-time
-   */
-  datetimePlanEnd?: string;
-  /**
-   * 实际开始时间
-   * @format date-time
-   */
-  datetimeActualStart?: string;
-  /**
-   * 实际完成时间
-   * @format date-time
-   */
-  datetimeActualEnd?: string;
-  /**
-   * 工单关闭时间
-   * @format date-time
-   */
-  datetimeMoClose?: string;
-  warehouseId?: string;
-  parentMoId?: string;
-  workshopId?: string;
-  /** 备注 */
-  memo?: string;
-  /** 状态 */
-  status?: string;
-  /** 工单来源 */
-  moSource?: string;
-}
-
-/** 响应数据 */
-export type PagingDataMo = {
-  list?: Mo[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataMo {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataMo;
-}
-
-/** 通用响应类 */
-export interface ResultMo {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 工单表 */
-  data?: Mo;
 }
 
 /** 工单投料信息提交模型 */
@@ -1589,6 +1328,132 @@ export interface MitemOnboardUnbindDTO {
   moScheId?: string;
   ids?: string[];
   boardListIds?: string[];
+}
+
+export interface MitemForwardTraceSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 物料批次 */
+  mitemLotNo?: string;
+  /** 物料标签 */
+  mitemLabelNo?: string;
+  mitemId?: string;
+}
+
+/** 关键物料正向追溯VO */
+export type MFTSubVO = {
+  /** 物料标签 */
+  mitemLabelNo?: string;
+  /** 批次 */
+  lotNo?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 供应商联系人 */
+  contactPerson?: string;
+  /** 供应商联系电话 */
+  contactTel?: string;
+  /** 数量 */
+  qty?: number;
+  /** 操作员 */
+  operatorName?: string;
+  /** 仓库名称 */
+  pdCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 工作中心 */
+  workcenterName?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 物料描述 */
+  mitemCode?: string;
+  /** 绑定工序 */
+  processName?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /**
+   * 加工时间
+   * @format date-time
+   */
+  processDate?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMFTSubVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 关键物料正向追溯VO */
+  data?: MFTSubVO;
+}
+
+/** 响应数据 */
+export type PagingDataMFTSubVO = {
+  list?: MFTSubVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMFTSubVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMFTSubVO;
+}
+
+/** 关键物料正向追溯VO */
+export type MFTVO = {
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 批次 */
+  lotNo?: string;
+  /** 数量 */
+  qty?: number;
+  /** 当前状态 */
+  statusName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  receiveTime?: string;
+  /** 响应数据 */
+  tableData?: PagingDataMFTSubVO;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMFTVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 关键物料正向追溯VO */
+  data?: MFTVO;
 }
 
 export interface LabelSearch {
@@ -1904,14 +1769,14 @@ export interface BarcodeWipCollectVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
+  stateName?: string;
+  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2020,52 +1885,13 @@ export interface BarcodeWipVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
+  stateName?: string;
+  defectCodeStr?: string;
+  isState?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
-  stateName?: string;
-  isState?: boolean;
-  defectCodeStr?: string;
-}
-
-/** 缺陷代码 */
-export interface DefectCode {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 缺陷代码 */
-  defectCode?: string;
-  /** 缺陷名称 */
-  defectName?: string;
-  parentDefectId?: string;
-  /**
-   * 层级序号
-   * @format int32
-   */
-  levelSeq?: number;
-  /** 不合格分类 */
-  classification?: string;
 }
 
 /** 通用响应类 */
@@ -2164,6 +1990,11 @@ export interface BarcodePkgSearch {
    * @format int32
    */
   createNum?: number;
+  /**
+   * 生成规格
+   * @format int32
+   */
+  packQty?: number;
   /** 包装类型 */
   packType?: string;
   /**
@@ -2237,6 +2068,21 @@ export interface BarcodePkgVO {
    * @format int32
    */
   displayQty?: number;
+  /**
+   * 计划数量张数
+   * @format int32
+   */
+  planSheet?: number;
+  /**
+   * 已生成数量张数
+   * @format int32
+   */
+  generateSheet?: number;
+  /**
+   * 已打印数量张数
+   * @format int32
+   */
+  displaySheet?: number;
   /**
    * 本次生成数量
    * @format int32
@@ -3038,6 +2884,21 @@ export const api = {
         method: 'POST',
         params: query,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 产品维修明细表
+     * @name GetListByRepairing
+     * @summary 获维修工单明细
+     * @request POST:/wipRepairDtl/GetListByRepairing
+     * @secure
+     */
+    getListByRepairing: (data: WipRepairSearch) =>
+      http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepairDtl/GetListByRepairing`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   wipRepair: {
     /**
@@ -3059,6 +2920,36 @@ export const api = {
      * No description
      *
      * @tags 产品维修表
+     * @name GetDefectDealMethodList
+     * @summary 查询缺陷处理方法
+     * @request POST:/wipRepair/getDefectDealMethodList
+     * @secure
+     */
+    getDefectDealMethodList: (data: DefectDealMethodSearch) =>
+      http.request<ResultPagingDataDefectDealMethodVO['data']>(`/api/control/wipRepair/getDefectDealMethodList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品维修表
+     * @name UpdateWipRepairUnRepair
+     * @summary 从维修中改为待维修状态
+     * @request POST:/wipRepair/UpdateWipRepairUnRepair
+     * @secure
+     */
+    updateWipRepairUnRepair: (data: WipRepairSearch) =>
+      http.request<ResultObject['data']>(`/api/control/wipRepair/UpdateWipRepairUnRepair`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品维修表
      * @name UpdateWipRepairStatus
      * @summary 更新维修单状态
      * @request POST:/wipRepair/UpdateWipRepairStatus
@@ -3066,6 +2957,21 @@ export const api = {
      */
     updateWipRepairStatus: (data: WipRepairSearch) =>
       http.request<ResultObject['data']>(`/api/control/wipRepair/UpdateWipRepairStatus`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品维修表
+     * @name UpdateRepaired
+     * @summary 维修完成
+     * @request POST:/wipRepair/UpdateRepaired
+     * @secure
+     */
+    updateRepaired: (data: WipRepairVO) =>
+      http.request<ResultObject['data']>(`/api/control/wipRepair/UpdateRepaired`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3229,6 +3135,21 @@ export const api = {
      * No description
      *
      * @tags 工序与缺陷代码关系
+     * @name GetNotRelateList
+     * @summary 查询指定工序未关联的缺陷列表
+     * @request POST:/processInDefectCode/getNotRelateList
+     * @secure
+     */
+    getNotRelateList: (data: DefectCodeSearch) =>
+      http.request<ResultPagingDataDefectCode['data']>(`/api/control/processInDefectCode/getNotRelateList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
      * @name GetList
      * @summary 查询工序缺陷
      * @request POST:/processInDefectCode/getList
@@ -3236,6 +3157,36 @@ export const api = {
      */
     getList: (data: ProcessInDefectCodeSearch) =>
       http.request<ResultPagingDataProcessInDefectCodeVO['data']>(`/api/control/processInDefectCode/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name ChangeSeq
+     * @summary 根据工序批量添加缺陷代码
+     * @request POST:/processInDefectCode/changeSeq
+     * @secure
+     */
+    changeSeq: (data: ProcessInDefectCodeVO[]) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/changeSeq`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序与缺陷代码关系
+     * @name BatchAdd
+     * @summary 根据工序批量添加缺陷代码
+     * @request POST:/processInDefectCode/batchAdd
+     * @secure
+     */
+    batchAdd: (data: ProcessInDefectDTO) =>
+      http.request<ResultObject['data']>(`/api/control/processInDefectCode/batchAdd`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3313,145 +3264,6 @@ export const api = {
     releaseAll: (query: { parentBarcode: string }) =>
       http.request<ResultObject['data']>(`/api/control/pkgRelation/releaseAll`, {
         method: 'DELETE',
-        params: query,
-      }),
-  },
-  moSchedule: {
-    /**
-     * No description
-     *
-     * @tags 工单排产表
-     * @name Search
-     * @summary 弹出框公共方法
-     * @request POST:/moSchedule/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataMoScheduleVO['data']>(`/api/control/moSchedule/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单排产表
-     * @name GetItemById
-     * @summary 弹出框公共方法
-     * @request POST:/moSchedule/items/{id}
-     * @secure
-     */
-    getItemById: (id: string) =>
-      http.request<ResultMoSchedule['data']>(`/api/control/moSchedule/items/${id}`, {
-        method: 'POST',
-      }),
-  },
-  moOnboard: {
-    /**
-     * No description
-     *
-     * @tags 工单投料表
-     * @name GetMitemUseInfo
-     * @summary 根据物料标签查询投料
-     * @request POST:/moOnboard/getMitemUseInfo
-     * @secure
-     */
-    getMitemUseInfo: (data: LabelNoSearch) =>
-      http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/moOnboard/getMitemUseInfo`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  mo: {
-    /**
-     * No description
-     *
-     * @tags 工单表
-     * @name UpdateMoRouting
-     * @summary 工单的工艺路线修改
-     * @request POST:/mo/updateMoRouting
-     * @secure
-     */
-    updateMoRouting: (data: MoSchedule) =>
-      http.request<ResultObject['data']>(`/api/control/mo/updateMoRouting`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单表
-     * @name Search
-     * @summary 弹出框公共方法
-     * @request POST:/mo/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultPagingDataMo['data']>(`/api/control/mo/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单表
-     * @name GetItemById
-     * @summary 弹出框公共方法
-     * @request POST:/mo/items/{id}
-     * @secure
-     */
-    getItemById: (id: string) =>
-      http.request<ResultMo['data']>(`/api/control/mo/items/${id}`, {
-        method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单表
-     * @name Getmolist
-     * @summary 获取工单管理列表
-     * @request GET:/mo/getmolist
-     * @secure
-     */
-    getmolist: (query?: {
-      /** @default "" */
-      keyword?: string;
-      /**
-       * @format int32
-       * @default 1
-       */
-      pagenum?: number;
-      /**
-       * @format int32
-       * @default 20
-       */
-      pagesize?: number;
-      /** @default "" */
-      moCode?: string;
-      /** @default "" */
-      moClass?: string;
-      /** @default "" */
-      status?: string;
-      /** @default "" */
-      datetimePlanStart?: string;
-      /** @default "" */
-      datetimePlanEnd?: string;
-      /** @default "" */
-      workshopCode?: string;
-      /** @default "" */
-      workCenterCode?: string;
-      /** @default "" */
-      rootingCode?: string;
-      /** @default "" */
-      categoryCode?: string;
-      /** @default "" */
-      mitemCode?: string;
-    }) =>
-      http.request<ResultObject['data']>(`/api/control/mo/getmolist`, {
-        method: 'GET',
         params: query,
       }),
   },
@@ -3576,6 +3388,67 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/mitemOnboard/getProccesByWorkStationId`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  mitemForwardTrace: {
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetSupplierInfo
+     * @summary 物料供应商信息
+     * @request POST:/mitemForwardTrace/getSupplierInfo
+     * @secure
+     */
+    getSupplierInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultMFTSubVO['data']>(`/api/control/mitemForwardTrace/getSupplierInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetMitemUseInfo
+     * @summary 物料使用信息
+     * @request POST:/mitemForwardTrace/getMitemUseInfo
+     * @secure
+     */
+    getMitemUseInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getMitemUseInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetMitemBasicInfo
+     * @summary 物料基础信息
+     * @request POST:/mitemForwardTrace/getMitemBasicInfo
+     * @secure
+     */
+    getMitemBasicInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultMFTVO['data']>(`/api/control/mitemForwardTrace/getMitemBasicInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetIoInfo
+     * @summary 物料使用信息
+     * @request POST:/mitemForwardTrace/getIOInfo
+     * @secure
+     */
+    getIoInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getIOInfo`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   label: {
