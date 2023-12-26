@@ -105,7 +105,7 @@ const opts = computed(() => {
   };
 });
 
-//* 表格标题
+//* 表格标题~
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '货区编码', colKey: 'districtCode', width: 85 },

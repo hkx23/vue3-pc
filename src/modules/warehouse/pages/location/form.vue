@@ -144,7 +144,6 @@ const onMaterialTabDatas = async (event) => {
 
 const submit = async () => {
   formData.value.state = formData.value.state ? 1 : 0; //* 处理启用(必须)
-  console.log('🚀 ~ file: form.vue:145 ~ submit ~ formData.value:', formData.value);
   try {
     if (formData.value.operateTpye === 'add') {
       await api.location.addLocation(formData.value);
