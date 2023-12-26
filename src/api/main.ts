@@ -830,6 +830,7 @@ export interface RoleUserDTO {
 export interface UserOrgDTO {
   userId?: string;
   orgIds?: string[];
+  defaultOrgId?: string;
 }
 
 /** 角色权限操作实体 */
@@ -1224,7 +1225,7 @@ export interface ResultSupplier {
 }
 
 /** 消息发送日志表 */
-export interface MsgSendLog {
+export type MsgSendLog = {
   id?: string;
   /**
    * 创建时间
@@ -1257,6 +1258,19 @@ export interface MsgSendLog {
   sendAddress?: string;
   /** 发送结果 */
   sendResult?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMsgSendLog {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 消息发送日志表 */
+  data?: MsgSendLog;
 }
 
 /** 响应数据 */
@@ -1751,8 +1765,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3460,15 +3474,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  stateName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
-  isRawName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3635,8 +3649,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3982,8 +3996,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5158,14 +5172,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -7043,6 +7055,21 @@ export const api = {
       }),
   },
   stressTest: {
+    /**
+     * No description
+     *
+     * @tags 压力测试
+     * @name SelectAndInsertWipLog
+     * @summary 数据库交易型：查询和插入日志
+     * @request POST:/stressTest/selectAndInsertWipLog
+     * @secure
+     */
+    selectAndInsertWipLog: (data: string[]) =>
+      http.request<ResultMsgSendLog['data']>(`/api/main/stressTest/selectAndInsertWipLog`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
