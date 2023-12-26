@@ -298,6 +298,7 @@ const onConfirm = async () => {
       printTempId: printMode.value.printTempId,
     });
     selectedManageRowKeys.value = [];
+    isEnable.value = true;
     MessagePlugin.success('补打成功');
   } else if (isReprintCancellation.value === 3) {
     const intValue = parseInt(reprintDialog.value.splitNum, 10);
@@ -311,12 +312,16 @@ const onConfirm = async () => {
       printTempId: printMode.value.printTempId,
       reason,
     });
+    selectedManageRowKeys.value = [];
+    isEnable.value = true;
     MessagePlugin.success('拆分成功');
   } else {
     await apiWarehouse.label.cancellationBarcode({
       ids: selectedManageRowKeys.value,
       reason,
     });
+    selectedManageRowKeys.value = [];
+    isEnable.value = true;
     MessagePlugin.success('作废成功');
   }
 
@@ -420,12 +425,11 @@ const tagValue = ref(0);
 const barcodeStatusNameArr = ref([]);
 const onProductRightFetchData = (value: any, context: any) => {
   selectedManageRowKeys.value = value;
+  isEnable.value = !(selectedManageRowKeys.value.length > 0);
   reprintDialog.value.labelNo = context.selectedRowData[0].labelNo;
   reprintDialog.value.qty = context.selectedRowData[0].qty;
   reprintDialog.value.labelId = context.selectedRowData[0].id;
   barcodeStatusNameArr.value = context.selectedRowData.map((item: any) => item.barcodeStatusName);
-
-  isEnable.value = !(selectedManageRowKeys.value.length > 0);
 };
 // 补打 点击事件
 const reprintVoidSwitch = ref(1); // 控制
