@@ -29,7 +29,8 @@
     "dialog": {
       "header": {
         "edit": "@:common.button.edit{0}",
-        "add": "@:common.button.add{0}"
+        "add": "@:common.button.add{0}",
+        "tip": "提示"
       }
     },
     "message": {
