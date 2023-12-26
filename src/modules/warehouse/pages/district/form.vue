@@ -23,7 +23,7 @@
               @selection-change="onMaterialTabData"
             ></bcmp-select-business>
           </t-form-item>
-          <t-form-item v-else>
+          <t-form-item v-else label="选择仓库" required-mark>
             <t-input v-model="formData.warehouseId" disabled></t-input>
           </t-form-item>
         </t-col>
