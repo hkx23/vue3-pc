@@ -736,7 +736,7 @@ export interface DeliveryCardSearch {
    */
   createDateEnd?: string;
   /** 包装条码状态 */
-  deliveryStatus?: string;
+  barcodePkgStatus?: string;
   /** 包装条码 */
   deliveryCardNo?: string;
   barcodeRuleId?: string;

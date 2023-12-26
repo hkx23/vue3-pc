@@ -363,9 +363,9 @@ const onReset = () => {
   formData.queryData.beginDate = dayjs().subtract(+initialDate.value, 'day').format('YYYY-MM-DD');
   formData.queryData.endDate = dayjs().format('YYYY-MM-DD');
   formData.queryData.routingRevisionId = '';
-  formData.queryData.checkedDefectBlameOptions = [];
-  formData.queryData.checkedDefectDealMethodOptions = [];
-  formData.queryData.checkedDefectReasonOptions = [];
+  formData.queryData.checkedDefectBlame = '';
+  formData.queryData.checkedDefectDealMethod = [];
+  formData.queryData.checkedDefectReason = '';
 
   fetchTable();
   fetchRepairingTable();
