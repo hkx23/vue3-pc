@@ -67,7 +67,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="启用" :label-width="130" style="width: 250px">
+          <t-form-item label="启用">
             <t-switch v-model="formData.state" :custom-value="[1, 0]" />
           </t-form-item>
         </t-col>
@@ -126,6 +126,8 @@ const init = () => {
   formData.value.locationCode = '';
   formData.value.locationName = '';
   formData.value.locationDesc = '';
+  formData.value.timeCreate = ''; //* 清除创建时间(必须)
+  formData.value.timeModified = ''; //* 清除时间模式化(必须)
 };
 
 //* 关联仓库名称
@@ -142,6 +144,7 @@ const onMaterialTabDatas = async (event) => {
 
 const submit = async () => {
   formData.value.state = formData.value.state ? 1 : 0; //* 处理启用(必须)
+  console.log('🚀 ~ file: form.vue:145 ~ submit ~ formData.value:', formData.value);
   try {
     if (formData.value.operateTpye === 'add') {
       await api.location.addLocation(formData.value);

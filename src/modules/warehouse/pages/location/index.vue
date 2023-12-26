@@ -39,7 +39,7 @@
       v-model:visible="formVisible"
       :header="formTitle"
       :on-confirm="onConfirmForm"
-      width="44%"
+      width="49%"
       :close-on-overlay-click="false"
     >
       <template #header>

@@ -45,6 +45,7 @@ const getPieData = async () => {
     //     },
     //   ],
     // });
+
     option.value = {
       title: {
         text: `过程不良TOP5 (周 ${sevenDaysAgoDateString} ~ ${currentDateString})`,
