@@ -297,6 +297,10 @@ export interface FileVO {
   webkitRelativePath?: string;
   /** 文件路径（也可能是Base64数据） */
   url?: string;
+  /** 上传状态 */
+  status?: string;
+  /** 文件内容 */
+  fileContent?: string;
 }
 
 /** 领域对象扩展属性分类 */
@@ -351,6 +355,10 @@ export interface IncidentDealVO {
   userName?: string;
   /** 显示名 */
   displayName?: string;
+  /** 最后处理用户名 */
+  curUserName?: string;
+  /** 最后处理显示名 */
+  curDisplayName?: string;
   /** 工作中心编码 */
   workcenterCode?: string;
   /** 工作中心名称 */
@@ -398,10 +406,14 @@ export interface IncidentDealVO {
   email?: string;
   /** 手机号 */
   mobilePhone?: string;
-  /** 报障文件 */
-  uploadFiles?: FileVO[];
   /** 单据状态名称 */
   statusName?: string;
+  /** 上传的图片 */
+  uploadFiles?: FileVO[];
+  /** 报障图片 */
+  submitUploadFiles?: FileVO[];
+  /** 处理后图片 */
+  processedUploadFiles?: FileVO[];
 }
 
 export interface IncidentDealSearch {

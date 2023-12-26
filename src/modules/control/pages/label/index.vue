@@ -78,6 +78,7 @@
                 <cmp-table
                   ref="tableRef"
                   v-model:pagination="pageUIDown"
+                  class="son-table"
                   row-key="barcodeWipId"
                   :table-column="labelPrintDown"
                   :table-data="printDownTabData.list"

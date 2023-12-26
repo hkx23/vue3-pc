@@ -70,7 +70,6 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { computed, onMounted, ref } from 'vue';
 
-import { api as apicontrol } from '@/api/control';
 import { api as apimain } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -156,7 +155,7 @@ const fetchTable = async () => {
     if (queryCondition.value.moStatus) {
       queryCondition.value.status = queryCondition.value.moStatus.join(',');
     }
-    const res = (await apicontrol.mo.getmolist({
+    const res = (await apimain.mo.getmolist({
       ...queryCondition.value,
       pagenum: pageUI.value.page,
       pagesize: pageUI.value.rows,

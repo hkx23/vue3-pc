@@ -38,6 +38,7 @@
       <cmp-table
         v-model:selected-row-keys="routingMapKeys"
         v-model:pagination="productPage"
+        class="son-table"
         row-key="id"
         :table-column="productRelationColumn"
         :table-data="productRelationData.list"
