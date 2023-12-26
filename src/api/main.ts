@@ -1225,7 +1225,7 @@ export interface ResultSupplier {
 }
 
 /** 消息发送日志表 */
-export interface MsgSendLog {
+export type MsgSendLog = {
   id?: string;
   /**
    * 创建时间
@@ -1258,6 +1258,19 @@ export interface MsgSendLog {
   sendAddress?: string;
   /** 发送结果 */
   sendResult?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMsgSendLog {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 消息发送日志表 */
+  data?: MsgSendLog;
 }
 
 /** 响应数据 */
@@ -7042,6 +7055,21 @@ export const api = {
       }),
   },
   stressTest: {
+    /**
+     * No description
+     *
+     * @tags 压力测试
+     * @name SelectAndInsertWipLog
+     * @summary 数据库交易型：查询和插入日志
+     * @request POST:/stressTest/selectAndInsertWipLog
+     * @secure
+     */
+    selectAndInsertWipLog: (data: string[]) =>
+      http.request<ResultMsgSendLog['data']>(`/api/main/stressTest/selectAndInsertWipLog`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
