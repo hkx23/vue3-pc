@@ -40,7 +40,7 @@
             <bcmp-select-business
               v-model="preSetting.reworkMoSheId"
               :placeholder="t('common.placeholder.input', [`${t('productRework.reworkMoSheId')}`])"
-              type="moSchedule"
+              type="reworkMoSchedule"
               :show-title="false"
               @selection-change="moScheduleSelectChange"
             ></bcmp-select-business>
