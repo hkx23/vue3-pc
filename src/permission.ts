@@ -50,7 +50,10 @@ router.beforeEach(async (to, from, next) => {
         next(`/`);
       }
     } catch (error) {
-      if (!(error instanceof CustomError)) MessagePlugin.error(error.message);
+      console.error(error);
+      if (!(error instanceof CustomError)) {
+        MessagePlugin.error(error.message);
+      }
       next({
         path: '/login',
         query: { redirect: encodeURIComponent(to.fullPath) },
