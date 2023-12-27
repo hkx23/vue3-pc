@@ -2,6 +2,7 @@ import BcmpExtend from './bcmp-extend/index.vue';
 import BcmpSelectBusiness from './bcmp-select-business/index.vue';
 import BcmpSelectList from './bcmp-select-list/index.vue';
 import BcmpSelectTable from './bcmp-select-table/index.vue';
+import CmpButton from './cmp-button/index.vue';
 import CmpCard from './cmp-layout/CmpCard.vue';
 import CmpContainer from './cmp-layout/CmpContainer.vue';
 import CmpRow from './cmp-layout/CmpRow.vue';
@@ -22,6 +23,7 @@ export default {
     app.component('CmpContainer', CmpContainer);
     app.component('CmpRow', CmpRow);
     app.component('CmpCard', CmpCard);
+    app.component('CmpButton', CmpButton);
   },
 };
 
@@ -30,5 +32,6 @@ declare module '@vue/runtime-core' {
     CmpContainer: typeof CmpContainer;
     CmpRow: typeof CmpRow;
     CmpCard: typeof CmpCard;
+    CmpButton: typeof CmpButton;
   }
 }

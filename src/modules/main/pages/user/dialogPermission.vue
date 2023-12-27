@@ -23,7 +23,7 @@
               ref="roleTableRef"
               row-key="id"
               max-height="70vh"
-              :buttons-visible="false"
+              :show-toolbar="false"
               :table-column="tableColumns"
               :table-data="tableFilterData"
               :loading="tableloading"

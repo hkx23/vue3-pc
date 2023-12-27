@@ -1,5 +1,7 @@
 <template>
   <div class="main-page">
+    <!-- 常用菜单 card  -->
+    <oftenUseMenu class="row-container" />
     <!-- 顶部 card  -->
     <top-panel class="row-container" />
     <!-- 中部图表  -->
@@ -8,6 +10,7 @@
     <rank-list class="row-container" />
     <!-- 出入库概览 -->
     <output-overview class="row-container" />
+    <top-pie class="row-container" />
   </div>
 </template>
 
@@ -19,9 +22,11 @@ export default {
 
 <script setup lang="ts">
 import MiddleChart from './components/MiddleChart.vue';
+import oftenUseMenu from './components/often-use-menu/index.vue';
 import OutputOverview from './components/OutputOverview.vue';
 import RankList from './components/RankList.vue';
 import TopPanel from './components/TopPanel.vue';
+import TopPie from './components/working-table-pie/index.vue';
 </script>
 
 <style scoped>

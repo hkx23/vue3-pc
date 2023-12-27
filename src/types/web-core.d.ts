@@ -161,6 +161,8 @@ declare class EventTarget_2 {
 export declare class Http {
     middlewares: HttpMiddleware[];
     options: HttpOptions;
+    pendingMap: Map<string, HttpContext>;
+    cacheMap: Map<string, Promise<Response>>;
     constructor(options?: HttpOptions | string);
     /**
      * 新增中间件
@@ -210,6 +212,10 @@ declare class HttpContext {
      * 请求信息
      */
     request?: Request;
+    /**
+     * 请求体
+     */
+    requestBody?: BodyInit | null;
     /**
      * 请求返回信息
      */

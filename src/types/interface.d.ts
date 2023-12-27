@@ -6,6 +6,7 @@ import STYLE_CONFIG from '@/config/style';
 export interface RouteMeta {
   title?: string | Record<string, string>;
   icon?: string;
+  iconName?: string;
   expanded?: boolean;
   orderNo?: number;
   hidden?: boolean;

@@ -40,7 +40,7 @@
             <bcmp-select-business
               v-model="preSetting.reworkMoSheId"
               :placeholder="t('common.placeholder.input', [`${t('productRework.reworkMoSheId')}`])"
-              type="moSchedule"
+              type="reworkMoSchedule"
               :show-title="false"
               @selection-change="moScheduleSelectChange"
             ></bcmp-select-business>
@@ -320,13 +320,14 @@ const Init = async () => {
   mainform.value.workStationName = userStore.currUserOrgInfo.workStationName;
 
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
   }
 };
 
 const serialNumberEnter = async (value) => {
   if (!mainform.value.workStationId) {
     NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
+    return;
   }
   if (!isEmpty(value)) {
     // 前端校验一次，条码是否扫重复，后端再校验一次

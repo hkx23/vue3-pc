@@ -6,7 +6,7 @@ import { RouteRecordRaw } from 'vue-router';
 
 import { CustomError } from '@/assets/libs/web-core';
 import router from '@/router';
-import { getPermissionStore, useUserStore } from '@/store';
+import { getPermissionStore, getUserTabsHistoryStore, useUserStore } from '@/store';
 import { PAGE_NOT_FOUND_ROUTE } from '@/utils/route/constant';
 
 NProgress.configure({ showSpinner: false });
@@ -50,7 +50,10 @@ router.beforeEach(async (to, from, next) => {
         next(`/`);
       }
     } catch (error) {
-      if (!(error instanceof CustomError)) MessagePlugin.error(error.message);
+      console.error(error);
+      if (!(error instanceof CustomError)) {
+        MessagePlugin.error(error.message);
+      }
       next({
         path: '/login',
         query: { redirect: encodeURIComponent(to.fullPath) },
@@ -79,5 +82,14 @@ router.afterEach((to) => {
     userStore.logout();
     permissionStore.restoreRoutes();
   }
+  const userTabsHistoryStore = getUserTabsHistoryStore();
+
+  userTabsHistoryStore.appendTabHistoryList({
+    path: to.path,
+    title: to.name as string,
+    name: to.name,
+    isAlive: true,
+    meta: to.meta,
+  });
   NProgress.done();
 });
