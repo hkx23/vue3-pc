@@ -146,6 +146,14 @@
                   @refresh="onRefresh"
                 >
                   <template #button>
+                    <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
+                      <t-option
+                        v-for="item in onPrintTemplateList.list"
+                        :key="item.id"
+                        :label="item.tmplName"
+                        :value="item.id"
+                      />
+                    </t-select>
                     <t-button theme="primary" :disabled="isEnable" @click="onReprint"> 补打 </t-button>
                     <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 作废 </t-button>
                     <t-button theme="default"> 导出 </t-button>
@@ -438,6 +446,11 @@ const onProductRightFetchData = (value: any, context: any) => {
 // 补打 点击事件
 const reprintVoidSwitch = ref(false); // 控制
 const onReprint = () => {
+  if (!printMode.value.printTempId) {
+    // 提示错误信息
+    MessagePlugin.warning('请选择打印模板！');
+    return;
+  }
   formRef.value.reset({ type: 'empty' });
   const specificStatus = barcodeWipStatusNameArr.value.some((item) => item === '已生成' || item === '已报废');
   if (specificStatus) {
@@ -936,15 +949,6 @@ const pkgBarcodeManageOp = computed(() => {
       bind: {
         type: 'mo',
         showTitle: false,
-      },
-    },
-    tmplCode: {
-      label: '打印模板',
-      comp: 't-select',
-      event: 'single',
-      defaultVal: '',
-      bind: {
-        options: moStatusOption.value,
       },
     },
     bracodeType: {
