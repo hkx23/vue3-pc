@@ -1765,8 +1765,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3474,6 +3474,7 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
@@ -3482,7 +3483,6 @@ export interface MitemVO {
   isInProcessName?: string;
   isBatchName?: string;
   isRawName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3996,8 +3996,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
