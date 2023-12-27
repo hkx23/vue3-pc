@@ -803,8 +803,8 @@ export interface ProductReworkVO {
   workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1306,6 +1306,18 @@ export interface PkgRelationReportVO {
   workshopId?: string;
   /** 状态 */
   status?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 工单状态 */
+  moStatusName?: string;
+  /** 排产单号 */
+  scheCode?: string;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 产品名称 */
+  mitemName?: string;
+  /** 产品描述 */
+  mitemDesc?: string;
   /** 用户名 */
   userName?: string;
   /** 包装条码类型名称 */
@@ -1316,6 +1328,10 @@ export interface PkgRelationReportVO {
   statusName?: string;
   /** 父级包装条码的上级条码（如果为空说明是顶级） */
   topParentPkgBarcode?: string;
+  /** 是否存在子集 */
+  existPkgRelationReportcChildren?: boolean;
+  /** 报表子集 */
+  children?: PkgRelationReportVO[];
 }
 
 /** 通用响应类 */
@@ -1449,6 +1465,8 @@ export interface MitemForwardTraceSearch {
   /** 物料标签 */
   mitemLabelNo?: string;
   mitemId?: string;
+  /** 物料id */
+  ids?: string[];
 }
 
 /** 关键物料正向追溯VO */
@@ -1465,6 +1483,12 @@ export type MFTSubVO = {
   contactPerson?: string;
   /** 供应商联系电话 */
   contactTel?: string;
+  /** 检验单号 */
+  billNo?: string;
+  /** 检验类型 */
+  inspectType?: string;
+  /** 质检结果 */
+  inspectResult?: string;
   /** 数量 */
   qty?: number;
   /** 操作员 */
@@ -1862,17 +1886,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  stateName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -1978,16 +2002,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  defectCodeStr?: string;
-  scanDatetimeStr?: string;
+  stateName?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -2225,8 +2249,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -3517,6 +3541,21 @@ export const api = {
      */
     getMitemUseInfo: (data: MitemForwardTraceSearch) =>
       http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getMitemUseInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetMitemQualityInfo
+     * @summary 物料质量信息
+     * @request POST:/mitemForwardTrace/getMitemQualityInfo
+     * @secure
+     */
+    getMitemQualityInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getMitemQualityInfo`, {
         method: 'POST',
         body: data as any,
       }),

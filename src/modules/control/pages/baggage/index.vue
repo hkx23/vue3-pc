@@ -2,91 +2,84 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <!-- <cmp-query :opts="opts" @submit="onInput"> </cmp-query> -->
+      <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
     </cmp-card>
     <cmp-card :span="12">
-      <cmp-table
+      <t-enhanced-table
         ref="tableRef"
-        v-model:pagination="pageUI"
         row-key="id"
-        :table-column="columns"
-        :fixed-height="true"
-        :table-data="anomalyTypeData.list"
-        :total="anomalyTotal"
-        select-on-row-click
-        :selected-row-keys="selectedRowKeys"
-        @refresh="onFetchData"
-        @select-change="rehandleSelectChange"
-      >
-      </cmp-table>
+        :columns="columns"
+        :data="anomalyTypeData.list"
+        resizable
+        :tree="treeConfig"
+        lazy-load
+        @expanded-tree-nodes-change="onExpandedTreeNodesChange"
+      ></t-enhanced-table>
     </cmp-card>
   </cmp-container>
 </template>
 <script setup lang="ts">
-// import dayjs from 'dayjs';
+import dayjs from 'dayjs';
+import _ from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, reactive, Ref, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api } from '@/api/daily';
-// import CmpQuery from '@/components/cmp-query/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
+import { api } from '@/api/control';
+import CmpQuery from '@/components/cmp-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage(); // 分页工具
-const selectedRowKeys: Ref<any[]> = ref([]); // 删除计量单位 id
+// 表格实例
+const tableRef = ref(null);
 
 // 表格数据
 const anomalyTypeData = reactive({ list: [] });
 // 表格数据总条数
 const anomalyTotal = ref(0);
 // 表格列表数据
+const treeConfig = reactive({
+  childrenKey: 'children',
+});
 
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'incidentModuleName',
+    colKey: 'pkgBarcode',
     title: '条码',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'incidentCode',
+    colKey: 'pkgBarcodeType',
     title: '条码类型',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'incidentName',
+    colKey: 'scheCode',
     title: '排产单号',
     align: 'center',
     width: '130',
   },
   {
-    colKey: 'state',
-    title: '工单号',
-    align: 'center',
-    width: '100',
-    cell: 'stateSwitch',
-  },
-  {
-    colKey: 'creatorName',
+    colKey: 'mitemCode',
     title: '产品编码',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'mitemDesc',
     title: '产品描述',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'moStatusName',
     title: '工单状态',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'creator',
     title: '操作人',
     align: 'center',
     width: '100',
@@ -99,99 +92,127 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-const rehandleSelectChange = () => {
-  console.log('111');
-};
-
 // 初始渲染
 onMounted(async () => {
   await onGetAnomalyTypeData(); // 获取 表格 数据
-  // await onGetDropDownData(); // 获取下拉框数据
 });
 
-// 刷新按钮
-const onFetchData = () => {
-  onGetAnomalyTypeData();
-};
+// 表格数据 字段
+const bagsSuitcasesData = ref({
+  pageNum: 1,
+  pageSize: 10,
+  barcode: '', // 每条数据的code
+  mitemCode: '', // 产品编码 物料接口
+  moScheCode: '', // 排产单号
+  pkgBarcode: '', // 箱条码
+  beginDate: '', // 开始日期
+  endDate: '', // 结束日期
+  parentPkgBarcode: '', // 获取子节点数据的 CODE
+});
 
 // 获取 表格 数据
 const onGetAnomalyTypeData = async () => {
-  const res = await api.incidentType.getList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    keyword: '',
+  bagsSuitcasesData.value.pageNum = pageUI.value.page;
+  bagsSuitcasesData.value.pageSize = pageUI.value.rows;
+  const res = await api.pkgRelation.getPkgRelationReportList(bagsSuitcasesData.value);
+  const newData = res.list.map((item) => {
+    if (item.existPkgRelationReportcChildren) {
+      if (item.children && item.children.length === 0) {
+        return {
+          ...item,
+          children: true, // 在 children 中添加一个新对象，包含一个唯一ID
+        };
+      }
+    }
+    return item;
   });
-  anomalyTypeData.list = res.list;
+  anomalyTypeData.list = newData;
   anomalyTotal.value = res.total;
 };
 
+// 点击节点获取子节点数据
+const onExpandedTreeNodesChange = async (expandedTreeNodes: any, options: any) => {
+  expandedTreeNodes = [];
+  const res = await api.pkgRelation.getPkgRelationReportList({
+    parentPkgBarcode: options.row.pkgBarcode,
+    pageNum: 1,
+    pageSize: 9999,
+  });
+  const newData = res.list.map((item) => {
+    if (item.existPkgRelationReportcChildren) {
+      if (item.children && item.children.length === 0) {
+        return {
+          ...item,
+          children: true, // 在 children 中添加一个新对象，包含一个唯一ID
+        };
+      }
+    }
+    return item;
+  });
+  if (options.row.children === true) {
+    tableRef.value.appendTo(options.rowState.row.id, [...newData]);
+  }
+};
+
 // #query 查询参数
-// const opts = computed(() => {
-//   return {
-//     productCode: {
-//       label: '产品条码',
-//       comp: 't-input',
-//       event: 'input',
-//       defaultVal: '',
-//     },
-//     productNo: {
-//       label: '产品编码',
-//       comp: 't-select',
-//       event: 't-select',
-//       defaultVal: '',
-//     },
-//     workOrder: {
-//       label: '排产单号',
-//       comp: 'bcmp-select-business',
-//       event: 'business',
-//       defaultVal: '',
-//       bind: {
-//         type: 'moSchedule',
-//         showTitle: false,
-//       },
-//     },
-//     boxCode: {
-//       label: '箱条码',
-//       comp: 't-input',
-//       event: 'input',
-//       defaultVal: '',
-//     },
-//     operationTime: {
-//       label: '操作时间',
-//       comp: 't-date-range-picker',
-//       event: 'daterangetime',
-//       defaultVal: [dayjs().subtract(1, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
-//       bind: {
-//         enableTimePicker: false,
-//         format: 'YYYY-MM-DD',
-//       },
-//     },
-//   };
-// });
+const opts = computed(() => {
+  return {
+    productCode: {
+      label: '产品条码',
+      comp: 't-input',
+      event: 'input',
+      defaultVal: '',
+    },
+    boxCode: {
+      label: '箱条码',
+      comp: 't-input',
+      event: 'input',
+      defaultVal: '',
+    },
+    workOrder: {
+      label: '排产单号',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'moSchedule',
+        showTitle: false,
+      },
+    },
+    productNo: {
+      label: '产品编码',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'mitem',
+        showTitle: false,
+      },
+    },
+    operationTime: {
+      label: '操作时间',
+      comp: 't-date-range-picker',
+      event: 'daterangetime',
+      defaultVal: [dayjs().subtract(1, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+      bind: {
+        enableTimePicker: false,
+        format: 'YYYY-MM-DD',
+      },
+    },
+  };
+});
+
+const onInput = async (context) => {
+  bagsSuitcasesData.value.pageNum = 1;
+  const [beginDate, endDate] = context.operationTime;
+  bagsSuitcasesData.value.barcode = context.productCode; // 每条数据的code
+  bagsSuitcasesData.value.mitemCode = context?.productNo ? context?.productNo : ''; // 产品编码 物料接口
+  bagsSuitcasesData.value.moScheCode = context?.workOrder ? context?.workOrder : ''; // 排产单号
+  bagsSuitcasesData.value.pkgBarcode = context.boxCode; // 箱条码
+  bagsSuitcasesData.value.beginDate = beginDate; // 开始日期
+  bagsSuitcasesData.value.endDate = endDate; // 结束日期
+  await onGetAnomalyTypeData();
+};
 </script>
 
-<style lang="less" scoped>
-.module-tree-container {
-  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
-  background-color: var(--td-bg-color-container);
-  border-radius: var(--td-radius-medium);
-}
-
-.module-edit {
-  margin: 0 10px;
-}
-
-.control-box {
-  text-align: right;
-  margin-top: 20px;
-}
-
-.row-class {
-  margin-bottom: 10px;
-}
-
-.align-right {
-  display: flex;
-  justify-content: flex-end;
-}
-</style>
+<style lang="less" scoped></style>
