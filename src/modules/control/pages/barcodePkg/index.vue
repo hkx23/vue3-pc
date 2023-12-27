@@ -98,6 +98,7 @@
                     row-key="barcodePkgId"
                     :loading="loading"
                     select-on-row-click
+                    class="son-table"
                     :selected-row-keys="selectedRowKeys"
                     :table-column="barcodeColumns"
                     :table-data="moBelowList.list"
@@ -126,34 +127,45 @@
           </template>
         </t-tab-panel>
         <t-tab-panel :value="1" label="包装标签管理" :destroy-on-hide="false">
-          <t-row style="margin-top: 15px"></t-row>
-          <!-- 查询组件  -->
-          <cmp-query :opts="pkgBarcodeManageOp" label-width="100" @submit="managePageSearchClick" />
-          <t-col :span="12" flex="auto">
-            <cmp-table
-              v-model:pagination="pageUIMannage"
-              row-key="barcodePkgId"
-              select-on-row-click
-              :selected-row-keys="selectedManageRowKeys"
-              :loading="loading"
-              :table-column="pkgBarcodeManageColumns"
-              :table-data="pkgManageDataList.list"
-              :total="pkgManageTabTotal"
-              @select-change="onProductRightFetchData"
-              @refresh="onRefresh"
-            >
-              <template #operate>
-                <t-space>
-                  <t-button theme="default" :disabled="isEnable" @click="onReprint"> 补打 </t-button>
-                  <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 作废 </t-button>
-                  <t-button theme="default"> 导出 </t-button>
-                </t-space>
-              </template>
-              <template #operations="{ row }">
-                <t-link theme="primary" @click.stop="openLog(row)"> 日志 </t-link>
-              </template>
-            </cmp-table>
-          </t-col>
+          <template #panel>
+            <cmp-container :gutter="[0, 0]">
+              <cmp-card :ghost="true" class="padding-bottom-line-16">
+                <!-- 查询组件  -->
+                <cmp-query :opts="pkgBarcodeManageOp" label-width="100" @submit="managePageSearchClick" />
+              </cmp-card>
+              <cmp-card :ghost="true" class="padding-top-noline-16">
+                <cmp-table
+                  v-model:pagination="pageUIMannage"
+                  row-key="barcodePkgId"
+                  select-on-row-click
+                  :selected-row-keys="selectedManageRowKeys"
+                  :loading="loading"
+                  :table-column="pkgBarcodeManageColumns"
+                  :table-data="pkgManageDataList.list"
+                  :total="pkgManageTabTotal"
+                  @select-change="onProductRightFetchData"
+                  @refresh="onRefresh"
+                >
+                  <template #button>
+                    <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
+                      <t-option
+                        v-for="item in onPrintTemplateList.list"
+                        :key="item.id"
+                        :label="item.tmplName"
+                        :value="item.id"
+                      />
+                    </t-select>
+                    <t-button theme="primary" :disabled="isEnable" @click="onReprint"> 补打 </t-button>
+                    <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 作废 </t-button>
+                    <t-button theme="default"> 导出 </t-button>
+                  </template>
+                  <template #operations="{ row }">
+                    <t-link theme="primary" @click.stop="openLog(row)"> 日志 </t-link>
+                  </template>
+                </cmp-table>
+              </cmp-card>
+            </cmp-container>
+          </template>
         </t-tab-panel>
       </t-tabs>
     </cmp-card>
@@ -435,6 +447,11 @@ const onProductRightFetchData = (value: any, context: any) => {
 // 补打 点击事件
 const reprintVoidSwitch = ref(false); // 控制
 const onReprint = () => {
+  if (!printMode.value.printTempId) {
+    // 提示错误信息
+    MessagePlugin.warning('请选择打印模板！');
+    return;
+  }
   formRef.value.reset({ type: 'empty' });
   const specificStatus = barcodeWipStatusNameArr.value.some((item) => item === '已生成' || item === '已报废');
   if (specificStatus) {
@@ -933,15 +950,6 @@ const pkgBarcodeManageOp = computed(() => {
       bind: {
         type: 'mo',
         showTitle: false,
-      },
-    },
-    tmplCode: {
-      label: '打印模板',
-      comp: 't-select',
-      event: 'single',
-      defaultVal: '',
-      bind: {
-        options: moStatusOption.value,
       },
     },
     bracodeType: {

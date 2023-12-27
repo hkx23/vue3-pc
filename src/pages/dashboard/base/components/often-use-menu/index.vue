@@ -2,9 +2,16 @@
   <div v-show="recommendList && recommendList.length > 0">
     <t-card class="recommend">
       <div v-for="(item, index) in recommendList" :key="index" class="recommend-item" @click="onModuleClick(item)">
-        <t-icon :name="item.meta && item.meta.iconName" />
-        <span>{{ renderMenuTitle(item.title) }}</span>
+        <div class="recommend-icon">
+          <t-icon :name="item.meta && item.meta.iconName" />
+        </div>
+        <span>{{ renderMenuTitle(item.meta.title) }}</span>
       </div>
+      <template #footer>
+        <div class="recommend-more">
+          <t-icon name="chevron-right" />
+        </div>
+      </template>
     </t-card>
   </div>
 </template>
@@ -40,7 +47,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 /* 可添加组件样式 */
 .recommend {
   width: 100%;
@@ -63,5 +70,14 @@ onMounted(async () => {
   display: inline-flex;
   margin-right: 16px;
   margin-bottom: 10px;
+}
+
+/deep/ .t-card__body {
+  flex: 1;
+}
+
+/deep/ .t-card__footer {
+  cursor: pointer;
+  flex: 0;
 }
 </style>
