@@ -12,16 +12,18 @@
     <t-space direction="vertical">
       <t-row :gutter="[32, 16]">
         <t-col :span="6">
-          <t-form-item label="选择仓库" required-mark>
+          <t-form-item v-if="formData.operateTpye === 'add'" label="选择仓库" required-mark>
             <bcmp-select-business
               v-model="formData.warehouseId"
               :is-multiple="false"
               type="warehouse"
               label-field="warehouseName"
               value-field="warehouseCode"
-              :disabled="formData.operateTpye !== 'add'"
               @selection-change="onMaterialTabData"
             ></bcmp-select-business>
+          </t-form-item>
+          <t-form-item v-else label="选择仓库" required-mark>
+            <t-input v-model="formData.warehouseId" disabled></t-input>
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -30,7 +32,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="选择货区" required-mark>
+          <t-form-item v-if="formData.operateTpye === 'add'" label="选择货区" required-mark>
             <bcmp-select-business
               v-model="formData.districtId"
               :is-multiple="false"
@@ -40,6 +42,9 @@
               :disabled="formData.operateTpye !== 'add'"
               @selection-change="onMaterialTabDatas"
             ></bcmp-select-business>
+          </t-form-item>
+          <t-form-item v-else label="选择货区" required-mark>
+            <t-input v-model="formData.districtId" disabled></t-input>
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -167,3 +172,12 @@ defineExpose({
   formData,
 });
 </script>
+
+<style scoped>
+/* 添加样式设置输入框宽度 */
+.t-input,
+.bcmp-select-business,
+.t-textarea {
+  width: 100%;
+}
+</style>
