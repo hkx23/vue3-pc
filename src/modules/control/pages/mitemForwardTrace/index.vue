@@ -432,31 +432,31 @@ const mitemQualityInfo: PrimaryTableCol<TableRowData>[] = [
     width: '60',
   },
   {
-    colKey: 'workcenterName',
+    colKey: 'billNo',
     title: '检验单号',
     align: 'center',
     width: '250',
   },
   {
-    colKey: 'moCode',
+    colKey: 'inspectType',
     title: '检验类型',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'pdCode',
+    colKey: 'operatorName',
     title: '检验人',
     align: 'center',
     width: '130',
   },
   {
-    colKey: 'mitemLabelNo',
+    colKey: 'inspectResult',
     title: '质检结果',
     align: 'center',
     width: '130',
   },
   {
-    colKey: 'mitemCode',
+    colKey: 'processDate',
     title: '质检时间',
     align: 'center',
     width: '130',
@@ -486,6 +486,8 @@ const fetchMoTable = async () => {
         mitemInfo.value.qty = '无数据';
         mitemInfo.value.status = '无数据';
         mitemInfo.value.receiveTime = '无数据';
+        mitemBaseInfoList.list = [];
+        mitemBaseInfoTabTotal.value = 0;
       }
     }
     if (tagValue.value === 1) {
@@ -504,6 +506,15 @@ const fetchMoTable = async () => {
         supplierInfo.value.contactTel = '无数据';
         supplierInfo.value.supplierCode = '无数据';
         supplierInfo.value.supplierName = '无数据';
+      }
+    }
+    if (tagValue.value === 3) {
+      queryCondition.value.pageNum = pageUIIOInfo.value.page;
+      queryCondition.value.pageSize = pageUIIOInfo.value.rows;
+      const data = (await api.mitemForwardTrace.getMitemQualityInfo(queryCondition.value)) as any;
+      if (data) {
+        mitemQualityInfoList.list = data.list;
+        mitemQualityInfoTabTotal.value = data.total;
       }
     }
     if (tagValue.value === 4) {
