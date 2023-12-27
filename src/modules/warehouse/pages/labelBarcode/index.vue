@@ -277,10 +277,9 @@ const onPrint = async () => {
     MessagePlugin.warning('请选择打印模板！');
     return;
   }
-  await apiWarehouse.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
-  MessagePlugin.success('打印成功');
-  onRefresh();
+  await apiMain.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
   onRefreshBelow();
+  MessagePlugin.success('打印成功');
 };
 // 补打，作废确定
 const onConfirm = async () => {
@@ -292,13 +291,14 @@ const onConfirm = async () => {
   }
 
   if (isReprintCancellation.value === 1) {
-    await apiWarehouse.label.reprintBarcode({
+    await apiMain.label.reprintBarcode({
       ids: selectedManageRowKeys.value,
       reason,
       printTempId: printMode.value.printTempId,
     });
     selectedManageRowKeys.value = [];
     isEnable.value = true;
+    onRefreshManage();
     MessagePlugin.success('补打成功');
   } else if (isReprintCancellation.value === 3) {
     const intValue = parseInt(reprintDialog.value.splitNum, 10);
@@ -306,7 +306,7 @@ const onConfirm = async () => {
       MessagePlugin.warning(`拆分数量需为小于${reprintDialog.value.qty}的正整数`);
       return;
     }
-    await apiWarehouse.label.splitBarcode({
+    await apiMain.label.splitBarcode({
       labelId: reprintDialog.value.labelId,
       splitNum: intValue,
       printTempId: printMode.value.printTempId,
@@ -314,14 +314,16 @@ const onConfirm = async () => {
     });
     selectedManageRowKeys.value = [];
     isEnable.value = true;
+    onRefreshManage();
     MessagePlugin.success('拆分成功');
   } else {
-    await apiWarehouse.label.cancellationBarcode({
+    await apiMain.label.cancellationBarcode({
       ids: selectedManageRowKeys.value,
       reason,
     });
     selectedManageRowKeys.value = [];
     isEnable.value = true;
+    onRefreshManage();
     MessagePlugin.success('作废成功');
   }
 
@@ -383,10 +385,10 @@ const generateBracode = async () => {
     MessagePlugin.warning('请选择条码规则！');
     return;
   }
-  await apiWarehouse.label.generateBarcode(printMode.value);
-  MessagePlugin.success('生成成功');
+  await apiMain.label.generateBarcode(printMode.value);
   onRefreshBelow();
   onRefresh();
+  MessagePlugin.success('生成成功');
 };
 
 // 打印上方查询初始化
