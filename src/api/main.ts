@@ -3475,14 +3475,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
-  isState?: boolean;
-  isProductName?: string;
   isProductChecked?: boolean;
-  isRawName?: string;
+  isInProcessChecked?: boolean;
+  isProductName?: string;
   isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3649,8 +3649,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4684,8 +4684,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  default?: boolean;
   relate?: boolean;
+  default?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -5170,14 +5170,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否可用 */
-  enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 是否可用 */
+  enabled?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -7119,6 +7119,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/stressTest/MemoryUsageLog`, {
         method: 'POST',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
+     * @name CountLog
+     * @summary 查询日志表总数
+     * @request GET:/stressTest/countLog
+     * @secure
+     */
+    countLog: () =>
+      http.request<ResultLong['data']>(`/api/main/stressTest/countLog`, {
+        method: 'GET',
       }),
 
     /**
