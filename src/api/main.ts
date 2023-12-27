@@ -1765,8 +1765,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3474,15 +3474,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
   isProductName?: string;
-  isRawName?: string;
   isRawChecked?: boolean;
+  isRawName?: string;
   isInProcessName?: string;
   isBatchName?: string;
-  stateName?: string;
-  isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3649,8 +3649,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3996,8 +3996,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -7119,6 +7119,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/stressTest/MemoryUsageLog`, {
         method: 'POST',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
+     * @name CountLog
+     * @summary 查询日志表总数
+     * @request GET:/stressTest/countLog
+     * @secure
+     */
+    countLog: () =>
+      http.request<ResultLong['data']>(`/api/main/stressTest/countLog`, {
+        method: 'GET',
       }),
 
     /**

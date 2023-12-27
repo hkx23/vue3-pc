@@ -160,12 +160,7 @@
         </t-col>
         <t-col :span="6">
           <t-form-item label="显示顺序" name="displaySequence">
-            <t-input-number
-              v-model="dialogFormData.list.displaySequence"
-              theme="column"
-              :max="15"
-              :min="0"
-            ></t-input-number>
+            <t-input-number v-model="dialogFormData.list.displaySequence" theme="column" :min="0"></t-input-number>
           </t-form-item>
         </t-col>
         <t-col :span="6">

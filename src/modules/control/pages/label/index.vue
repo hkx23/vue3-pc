@@ -164,14 +164,14 @@
                     </t-select>
                     <t-button
                       theme="primary"
-                      :disabled="!productSelectedRowKeys.length ? true : false"
+                      :disabled="!productSelectedRowKeys?.length ? true : false"
                       @click="onReprint"
                     >
                       补打
                     </t-button>
                     <t-button
                       theme="default"
-                      :disabled="!productSelectedRowKeys.length ? true : false"
+                      :disabled="!productSelectedRowKeys?.length ? true : false"
                       @click="onCancellation"
                     >
                       作废
@@ -616,7 +616,7 @@ const generateData = ref({
   barcodeRuleId: '', // select ID
   workcenterId: null, // 工作中心 Id
   moScheduleId: null, // 行 Id
-  createNum: null, // 变化后的数字
+  createNum: null, // 本次生成数量
 });
 const onPrintRulesList = reactive({ list: [] });
 const onPrintRulesData = async () => {
@@ -776,6 +776,7 @@ const onLogInterface = async (row: any) => {
 
 // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
+  console.log('🚀 ~ file: index.vue:781 ~ onGenerateChange ~ context:', context);
   generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
   generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
   [topPrintID.value] = value;
@@ -784,7 +785,6 @@ const onGenerateChange = async (value: any, context: any) => {
 
 // 生成点击事件
 const onGenerate = async () => {
-  console.log('🚀 ~ file: index.vue:761 ~ onGenerate ~ generateData:', generateData.value);
   if (!generateData?.value?.workcenterId) {
     MessagePlugin.warning('参数有误，请联系管理员');
     return;
