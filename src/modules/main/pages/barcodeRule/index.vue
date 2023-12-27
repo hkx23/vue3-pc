@@ -2,8 +2,11 @@
   <cmp-container>
     <cmp-card :span="12">
       <cmp-query :opts="opts" :bool-enter="true" label-width="110px" @submit="onSelsectInput">
-        <template #querySelect>
-          <t-select v-model="ruleTabData.barcodeType" label="条码类型" clearable>
+        <template #querySelect="{ param }">
+          <!-- <t-select v-model="ruleTabData.barcodeType" label="条码类型" clearable>
+            <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
+          </t-select> -->
+          <t-select v-model="param.barCodeType" label="条码类型" clearable>
             <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </template>

@@ -648,7 +648,6 @@ const onPersondeleteBatches = async () => {
 
 // #添加 人员点击 按钮
 const onAddPersonData = async () => {
-  console.log('🚀 ~ file: index.vue:646 ~ onAddPersonData ~   selectedRowKeys.value:', selectedRowKeys.value);
   if (selectedRowKeys.value.length > 1) {
     MessagePlugin.warning('只能选择一个处理组！');
     return;
