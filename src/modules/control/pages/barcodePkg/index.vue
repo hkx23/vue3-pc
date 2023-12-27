@@ -98,6 +98,7 @@
                     row-key="barcodePkgId"
                     :loading="loading"
                     select-on-row-click
+                    class="son-table"
                     :selected-row-keys="selectedRowKeys"
                     :table-column="barcodeColumns"
                     :table-data="moBelowList.list"

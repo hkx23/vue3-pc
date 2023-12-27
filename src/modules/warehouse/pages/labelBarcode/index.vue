@@ -49,6 +49,7 @@
                   v-model:pagination="pageUIBracode"
                   row-key="id"
                   :loading="loading"
+                  class="son-table"
                   select-on-row-click
                   :selected-row-keys="selectedRowKeys"
                   :table-column="barcodeColumns"
