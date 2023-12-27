@@ -573,8 +573,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -803,8 +803,8 @@ export interface ProductReworkVO {
   workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1862,17 +1862,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  stateName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1978,16 +1978,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  defectCodeStr?: string;
-  scanDatetimeStr?: string;
+  stateName?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
