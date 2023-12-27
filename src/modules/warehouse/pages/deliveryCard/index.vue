@@ -79,6 +79,7 @@
                 <cmp-table
                   ref="tableRef"
                   v-model:pagination="pageUIDown"
+                  class="son-table"
                   empty="没有符合条件的数据"
                   row-key="deliveryCardId"
                   :table-column="labelPrintDown"
