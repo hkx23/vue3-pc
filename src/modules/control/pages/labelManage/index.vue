@@ -165,14 +165,14 @@
                     </t-select>
                     <t-button
                       theme="primary"
-                      :disabled="!productSelectedRowKeys.length ? true : false"
+                      :disabled="!productSelectedRowKeys?.length ? true : false"
                       @click="onReprint"
                     >
                       补打
                     </t-button>
                     <t-button
                       theme="default"
-                      :disabled="!productSelectedRowKeys.length ? true : false"
+                      :disabled="!productSelectedRowKeys?.length ? true : false"
                       @click="onCancellation"
                     >
                       作废
@@ -617,18 +617,18 @@ const generateData = ref({
   barcodeRuleId: '', // select ID
   workcenterId: null, // 工作中心 Id
   moScheduleId: null, // 行 Id
-  createNum: null, // 变化后的数字
+  createNum: null, // 本次生成数量
 });
 const onPrintRulesList = reactive({ list: [] });
 const onPrintRulesData = async () => {
-  const res = await api.label.getBarcodeRuleList();
+  const res = await api.labelManage.getBarcodeRuleList();
   onPrintRulesList.list = res?.list;
 };
 
 // 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async () => {
-  const res = await api.label.getPrintTmplList();
+  const res = await api.labelManage.getPrintTmplList();
   onPrintTemplateList.list = res?.list;
 };
 
@@ -654,14 +654,14 @@ const onConfirm = async () => {
     reason = reprintDialog.value.reprintData;
   }
   if (isReprintCancellation.value) {
-    await api.label.reprintBarcode({
+    await api.labelManage.reprintBarcode({
       ids: productSelectedRowKeys.value,
       reason,
     });
     productSelectedRowKeys.value = [];
     MessagePlugin.success('补打成功');
   } else {
-    await api.label.cancellationBarcode({
+    await api.labelManage.cancellationBarcode({
       ids: productSelectedRowKeys.value,
       reason,
     });
@@ -675,7 +675,7 @@ const onConfirm = async () => {
 // #产品标签打印 上 表格数据
 const topPrintID = ref(null);
 const onGetPrintTopTabData = async () => {
-  const res = await api.label.getMoScheduleList({
+  const res = await api.labelManage.getMoScheduleList({
     pageNum: pageUITop.value.page,
     pageSize: pageUITop.value.rows,
     planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
@@ -694,7 +694,7 @@ const onGetPrintDownTabData = async () => {
   } else {
     isCreated = false;
   }
-  const res = await api.label.getBarcodeWipList({
+  const res = await api.labelManage.getBarcodeWipList({
     pageNum: pageUIDown.value.page,
     pageSize: pageUIDown.value.rows,
     moScheduleId: topPrintID.value,
@@ -720,7 +720,7 @@ const onBarCodeState = async () => {
 
 // #产品标签管理 表格数据
 const onLabelManageTabData = async () => {
-  const res = await api.label.getBarcodeWipManagerList({
+  const res = await api.labelManage.getBarcodeWipManagerList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     planDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
@@ -766,7 +766,7 @@ const onCancellation = () => {
 // 日志 点击 事件
 const onLogInterface = async (row: any) => {
   logInterfaceVisible.value = true; // 控制界面显示隐藏
-  const res = await api.label.getBarcodeWipLog({
+  const res = await api.labelManage.getBarcodeWipLog({
     serialNumber: row.serialNumber,
     pageNum: pageUIDay.value.page,
     pageSize: pageUIDay.value.rows,
@@ -777,6 +777,7 @@ const onLogInterface = async (row: any) => {
 
 // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
+  console.log('🚀 ~ file: index.vue:781 ~ onGenerateChange ~ context:', context);
   generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
   generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
   [topPrintID.value] = value;
@@ -785,7 +786,6 @@ const onGenerateChange = async (value: any, context: any) => {
 
 // 生成点击事件
 const onGenerate = async () => {
-  console.log('🚀 ~ file: index.vue:761 ~ onGenerate ~ generateData:', generateData.value);
   if (!generateData?.value?.workcenterId) {
     MessagePlugin.warning('参数有误，请联系管理员');
     return;
@@ -802,7 +802,7 @@ const onGenerate = async () => {
     MessagePlugin.warning('请正确填写数量后回车');
     return;
   }
-  await api.label.generateBarcode(generateData.value); // 生成请求
+  await api.labelManage.generateBarcode(generateData.value); // 生成请求
   await onGetPrintTopTabData(); // 刷新数据
   await onGetPrintDownTabData();
   MessagePlugin.success('生成成功');
@@ -810,7 +810,7 @@ const onGenerate = async () => {
 
 // 点击 打印事件
 const onPrint = async () => {
-  await api.label.printBarcode({ ids: selectedRowKeys.value });
+  await api.labelManage.printBarcode({ ids: selectedRowKeys.value });
   await onGetPrintDownTabData(); // 刷新数据
   MessagePlugin.success('打印成功');
 };
@@ -945,7 +945,7 @@ const onInput = async (data: any) => {
       isFinishDisplay = true;
     }
     pageUITop.value.page = 1;
-    const res = await api.label.getMoScheduleList({
+    const res = await api.labelManage.getMoScheduleList({
       pageNum: pageUITop.value.page,
       pageSize: pageUITop.value.rows,
       planDateStart: data.scheduledProductionDate[0], // 计划生产开始日期
@@ -961,7 +961,7 @@ const onInput = async (data: any) => {
     totalPrintTop.value = res.total;
   } else {
     pageUI.value.page = 1;
-    const res = await api.label.getBarcodeWipManagerList({
+    const res = await api.labelManage.getBarcodeWipManagerList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       planDateStart: data.scheduledProductionDate[0], // 计划生产开始日期

@@ -74,6 +74,7 @@
           :value="formItem.list.levelSeq"
           placeholder="请输入"
           theme="column"
+          min="0"
         ></t-input-number>
       </t-form-item>
       <t-form-item :label="t('exceptionHandling.transferOrders')" name="isAllowTransfer">
@@ -325,10 +326,10 @@ const ondeleteBatches = async () => {
   if (initialLength === exceptionDataList.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
-    await onFetchTabData(); // 渲染表格
-    selectedRowKeys.value = [];
-    MessagePlugin.success('批量删除成功');
   }
+  await onFetchTabData(); // 渲染表格
+  selectedRowKeys.value = [];
+  MessagePlugin.success('批量删除成功');
 };
 
 // 表单提交事件
@@ -346,13 +347,6 @@ const formSubmit = () => {
   formRef.value.submit();
 };
 
-// form效验
-function validateNumber(value: any): boolean | CustomValidateResolveType {
-  if (Number.isNaN(Number(value))) {
-    return { result: false, message: '该字段必须是数字', type: 'error' };
-  }
-  return true;
-}
 const rules: FormRules = {
   orgId: [
     {
@@ -376,12 +370,9 @@ const rules: FormRules = {
     },
   ],
   levelSeq: [
-    {
-      required: true,
-      type: 'error',
-      trigger: 'blur',
-    },
-    { validator: validateNumber, trigger: 'blur', message: '响应时长必须是数字' },
+    { required: true, message: '处理顺序不能为空', type: 'error' },
+    { number: true, message: '处理顺序必须是数字', type: 'error' },
+    { validator: validateNumber, trigger: 'change' },
   ],
   isAllowTransfer: [
     {
@@ -391,6 +382,13 @@ const rules: FormRules = {
     },
   ],
 };
+
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number(value) < 0) {
+    return { result: false, message: '处理顺序不能为负数', type: 'error' };
+  }
+  return true;
+}
 </script>
 
 <style lang="less" scoped>

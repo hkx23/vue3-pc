@@ -480,6 +480,130 @@ export interface LabelSearch {
   ids?: string[];
 }
 
+export interface MitemForwardTraceSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 物料批次 */
+  mitemLotNo?: string;
+  /** 物料标签 */
+  mitemLabelNo?: string;
+  mitemId?: string;
+}
+
+/** 关键物料正向追溯VO */
+export type MFTSubVO = {
+  /** 物料标签 */
+  mitemLabelNo?: string;
+  /** 批次 */
+  lotNo?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 供应商联系人 */
+  contactPerson?: string;
+  /** 供应商联系电话 */
+  contactTel?: string;
+  /** 数量 */
+  qty?: number;
+  /** 操作员 */
+  operatorName?: string;
+  /** 仓库名称 */
+  pdCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 工作中心 */
+  workcenterName?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 物料描述 */
+  mitemCode?: string;
+  /** 绑定工序 */
+  processName?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /**
+   * 加工时间
+   * @format date-time
+   */
+  processDate?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMFTSubVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 关键物料正向追溯VO */
+  data?: MFTSubVO;
+}
+
+/** 关键物料正向追溯VO */
+export type MFTVO = {
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 批次 */
+  lotNo?: string;
+  /** 数量 */
+  qty?: number;
+  /** 当前状态 */
+  statusName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  receiveTime?: string;
+  tableData?: PagingDataMFTSubVO;
+} | null;
+
+export interface PagingDataMFTSubVO {
+  list?: MFTSubVO[];
+  /** @format int32 */
+  total?: number;
+}
+
+/** 通用响应类 */
+export interface ResultMFTVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 关键物料正向追溯VO */
+  data?: MFTVO;
+}
+
+/** 通用响应类 */
+export interface ResultListString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: (string | null)[];
+}
+
 /** 显示产品条码管理 */
 export interface LabelVO {
   id?: string;
@@ -1333,6 +1457,51 @@ export const api = {
      */
     getLabelVo: (data: string) =>
       http.request<ResultObject['data']>(`/api/warehouse/label/getLabelVO`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelNoList
+     * @summary 获取物料标签集合
+     * @request POST:/label/getLabelNoList
+     * @secure
+     */
+    getLabelNoList: (data: MitemForwardTraceSearch) =>
+      http.request<ResultListString['data']>(`/api/warehouse/label/getLabelNoList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetSupplierInfo
+     * @summary 物料供应商信息
+     * @request POST:/label/getSupplierInfo
+     * @secure
+     */
+    getSupplierInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultMFTSubVO['data']>(`/api/warehouse/label/getSupplierInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetMitemBasicInfo
+     * @summary 物料基础信息
+     * @request POST:/label/getMitemBasicInfo
+     * @secure
+     */
+    getMitemBasicInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultMFTVO['data']>(`/api/warehouse/label/getMitemBasicInfo`, {
         method: 'POST',
         body: data as any,
       }),

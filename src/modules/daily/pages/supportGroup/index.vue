@@ -48,7 +48,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="personPage"
-        row-key="id"
+        row-key="userId"
         class="son-table"
         :hover="false"
         :stripe="false"
@@ -548,8 +548,14 @@ const onGroupRequest = async () => {
 };
 
 // ！删除 获取 处理组 批量删除数组
-const onGroupSelectChange = async (value: any[]) => {
+const rowGroupId = ref(''); // 点击行ID
+const onGroupSelectChange = async (value: any, context: any) => {
   selectedRowKeys.value = value;
+  rowGroupId.value = context.currentRowKey;
+  if (context.currentRowKey === 'CHECK_ALL_BOX') {
+    return;
+  }
+  console.log('🚀index.vue555: ', rowGroupId.value);
   await supportPersonInUserTabData(); // 获取 人员表格 数据
 };
 
@@ -559,7 +565,7 @@ const supportPersonInUserTabData = async () => {
     pageNum: personPage.value.page,
     pageSize: personPage.value.rows,
     groupKeyword: '',
-    supportGroupId: selectedRowKeys.value[0],
+    supportGroupId: rowGroupId.value,
   });
   supportPersonInUserList.list = res.list;
   supportPersonTotal.value = res.total;

@@ -1,324 +1,292 @@
 <!-- 配送卡管理 -->
 <template>
-  <cmp-container :full="true">
-    <cmp-card class="not-full-tab">
+  <div class="main-page">
+    <div class="main-page-content">
+      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
+        <template #workState="{ param }">
+          <t-select v-model="param.workState" label="工单状态">
+            <t-option v-for="item in workStateDataList.list" :key="item.id" :label="item.label" :value="item.value" />
+          </t-select>
+        </template>
+        <template #showState="{ param }">
+          <t-radio-group v-model="param.showState">
+            <t-radio allow-uncheck :value="1">仅显示未打印完成</t-radio>
+          </t-radio-group>
+        </template>
+        <template #barCodeState="{ param }">
+          <t-select v-model="param.barCodeState" label="条码状态">
+            <t-option v-for="item in barCodeStateList.list" :key="item.id" :label="item.label" :value="item.value" />
+          </t-select>
+        </template>
+      </cmp-query>
+    </div>
+    <div class="main-page-content">
       <t-tabs v-model="tabValue" @change="tabChange">
         <t-tab-panel :value="0" label="配送卡打印" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :gutter="[0, 0]">
-              <cmp-card :ghost="true" class="padding-bottom-line-16">
-                <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
-                  <template #workState="{ param }">
-                    <t-select v-model="param.workState" label="工单状态">
-                      <t-option
-                        v-for="item in workStateDataList.list"
-                        :key="item.id"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </t-select>
-                  </template>
-                  <template #showState="{ param }">
-                    <t-radio-group v-model="param.showState">
-                      <t-radio allow-uncheck :value="1">仅显示未打印完成</t-radio>
-                    </t-radio-group>
-                  </template>
-                  <template #barCodeState="{ param }">
-                    <t-select v-model="param.barCodeState" label="条码状态">
-                      <t-option
-                        v-for="item in barCodeStateList.list"
-                        :key="item.id"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </t-select>
-                  </template>
-                </cmp-query>
-              </cmp-card>
-              <cmp-card :ghost="true" class="padding-top-noline-16">
-                <!-- ################# 配送卡打印 上1️⃣上 表格数据 ###################### -->
-
-                <cmp-table
-                  ref="tableRef"
-                  v-model:pagination="pageUITop"
-                  empty="没有符合条件的数据"
-                  row-key="moScheduleId"
-                  :table-column="labelPrintTop"
-                  :table-data="printTopTabData.list"
-                  :total="totalPrintTop"
-                  select-on-row-click
-                  @select-change="onGenerateChange"
-                  @refresh="onTopRefresh"
-                >
-                  <template #specificationQuantity="{ row }">
-                    <t-input-number v-model="row.specificationQuantity" :auto-width="true" theme="column" :min="0" />
-                  </template>
-                  <template #thisAmountSheets="{ row }">
-                    {{
-                      isNaN(+row.specificationQuantity) || +row.specificationQuantity === 0
-                        ? 0
-                        : Math.ceil(+row.thisTimeQty / +row.specificationQuantity)
-                    }}
-                  </template>
-                  <template #button>
-                    <t-select v-model="generateData.barcodeRuleId" label="条码规则" style="width: 240px">
-                      <t-option
-                        v-for="item in onPrintRulesList?.list"
-                        :key="item.id"
-                        :label="item.ruleName"
-                        :value="item.id"
-                      />
-                    </t-select>
-                    <t-button theme="primary" :disabled="!generateData.moScheduleId" @click="onGenerate">
-                      生成
-                    </t-button>
-                  </template>
-                </cmp-table>
-              </cmp-card>
+            <div class="main-page-content">
+              <!-- ################# 配送卡打印 上1️⃣上 表格数据 ###################### -->
+              <div class="main-page-content">
+                <t-col :span="12" flex="auto">
+                  <cmp-table
+                    ref="tableRefs"
+                    v-model:pagination="pageUITop"
+                    empty="没有符合条件的数据"
+                    row-key="moScheduleId"
+                    :table-column="labelPrintTop"
+                    :table-data="printTopTabData.list"
+                    :total="totalPrintTop"
+                    select-on-row-click
+                    @select-change="onGenerateChange"
+                    @refresh="onTopRefresh"
+                  >
+                    <template #specificationQuantity="{ row }">
+                      <t-input-number v-model="row.specificationQuantity" :auto-width="true" theme="column" :min="0" />
+                    </template>
+                    <template #thisAmountSheets="{ row }">
+                      {{
+                        isNaN(+row.specificationQuantity) || +row.specificationQuantity === 0
+                          ? 0
+                          : Math.ceil(+row.thisTimeQty / +row.specificationQuantity)
+                      }}
+                    </template>
+                    <template #button>
+                      <t-row align="middle">
+                        <t-col>条码规则： </t-col>
+                        <t-col>
+                          <t-select v-model="generateData.barcodeRuleId">
+                            <t-option
+                              v-for="item in onPrintRulesList.list"
+                              :key="item.id"
+                              :label="item.ruleName"
+                              :value="item.id"
+                            />
+                          </t-select>
+                        </t-col>
+                      </t-row>
+                    </template>
+                    <template #operate>
+                      <t-space>
+                        <t-button theme="default" :disabled="!generateData.moScheduleId" @click="onGenerate">
+                          生成
+                        </t-button>
+                      </t-space>
+                    </template>
+                  </cmp-table>
+                </t-col>
+              </div>
               <!-- ################# 配送卡打印 下2️⃣下 表格数据 ###################### -->
-              <cmp-card header="条码列表" header-bordered class="padding-top-noline-16 no-h-padding-card">
-                <cmp-table
-                  ref="tableRef"
-                  v-model:pagination="pageUIDown"
-                  empty="没有符合条件的数据"
-                  row-key="barcodePkgId"
-                  :table-column="labelPrintDown"
-                  :table-data="printDownTabData.list"
-                  :total="totalPrintDown"
-                  select-on-row-click
-                  :selected-row-keys="selectedRowKeys"
-                  @select-change="onPrintChange"
-                  @refresh="onDownRefresh"
-                >
-                  <template #title>
-                    <t-radio-group v-model="radioValue">
-                      <t-radio allow-uncheck :value="1"> 仅显示已生成</t-radio>
-                    </t-radio-group>
-                  </template>
-                  <template #button>
-                    <t-select
-                      v-modele="printTemplateName.printTemplate"
-                      style="width: 240px"
-                      label="打印模板"
-                      @change="printTemplateNameSelect"
+              <div class="main-page-content">
+                <t-row justify="space-around">
+                  <t-col :span="12" flex="auto">
+                    <cmp-table
+                      ref="tableRef"
+                      v-model:pagination="pageUIDown"
+                      empty="没有符合条件的数据"
+                      row-key="deliveryCardId"
+                      :table-column="labelPrintDown"
+                      :table-data="printDownTabData.list"
+                      :total="totalPrintDown"
+                      select-on-row-click
+                      :selected-row-keys="selectedRowKeys"
+                      @select-change="onPrintChange"
+                      @refresh="onDownRefresh"
                     >
-                      <t-option
-                        v-for="item in onPrintTemplateList?.list"
-                        :key="item.id"
-                        :label="item.tmplName"
-                        :value="item.id"
-                      />
-                    </t-select>
-                    <t-button theme="primary" @click="onPrint"> 打印 </t-button>
-                  </template>
-                </cmp-table>
-              </cmp-card>
-            </cmp-container>
+                      <template #button>
+                        <t-radio-group v-model="radioValue" style="margin-left: 20px">
+                          <t-radio allow-uncheck :value="1"> 仅显示已生成</t-radio>
+                        </t-radio-group>
+                      </template>
+                      <template #operate>
+                        <t-button theme="default" @click="onPrint"> 打印 </t-button>
+                        <t-row align="middle">
+                          <t-col :push="1">打印模板： </t-col>
+                          <t-col :push="1">
+                            <t-select v-model="printTemplateName" :options="onPrintTemplateList"> </t-select>
+                          </t-col>
+                        </t-row>
+                      </template>
+                    </cmp-table>
+                  </t-col>
+                </t-row>
+              </div>
+            </div>
           </template>
         </t-tab-panel>
         <!-- ###############    配送卡管理 3️⃣ 表格数据   ######## -->
         <t-tab-panel :value="1" label="配送卡管理" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :gutter="[0, 0]">
-              <cmp-card :ghost="true" class="padding-bottom-line-16">
-                <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
-                  <template #workState="{ param }">
-                    <t-select v-model="param.workState" label="工单状态">
-                      <t-option
-                        v-for="item in workStateDataList.list"
-                        :key="item.id"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </t-select>
-                  </template>
-                  <template #showState="{ param }">
-                    <t-radio-group v-model="param.showState">
-                      <t-radio allow-uncheck :value="1">仅显示未打印完成</t-radio>
-                    </t-radio-group>
-                  </template>
-                  <template #barCodeState="{ param }">
-                    <t-select v-model="param.barCodeState" label="条码状态">
-                      <t-option
-                        v-for="item in barCodeStateList.list"
-                        :key="item.id"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </t-select>
-                  </template>
-                </cmp-query>
-              </cmp-card>
-              <cmp-card :ghost="true" class="padding-top-noline-16">
-                <cmp-table
-                  ref="tableRef"
-                  v-model:pagination="pageUI"
-                  row-key="barcodePkgId"
-                  :table-column="labelManage"
-                  :table-data="manageTabData.list"
-                  :total="totalManage"
-                  select-on-row-click
-                  :selected-row-keys="productSelectedRowKeys"
-                  @select-change="onProductRightFetchData"
-                  @refresh="onRightFetchData"
+            <cmp-table
+              ref="tableRefCard"
+              v-model:pagination="pageUI"
+              row-key="deliveryCardId"
+              :table-column="labelManage"
+              :table-data="manageTabData.list"
+              :total="totalManage"
+              select-on-row-click
+              :selected-row-keys="productSelectedRowKeys"
+              @select-change="onProductRightFetchData"
+              @refresh="onRightFetchData"
+            >
+              <template #actionSlot>
+                <t-link theme="primary" style="margin-right: 10px"> 编辑 </t-link>
+                <t-popconfirm theme="default" content="确认删除吗">
+                  <t-link theme="primary"> 删除 </t-link>
+                </t-popconfirm>
+              </template>
+              <template #operate>
+                <t-col :push="1">打印模板： </t-col>
+                <t-col :push="1" style="margin-right: 20px">
+                  <t-select v-model="printTemplateName" :options="onPrintTemplateList"> </t-select>
+                </t-col>
+                <t-button theme="default" :disabled="!productSelectedRowKeys?.length ? true : false" @click="onReprint">
+                  补打
+                </t-button>
+                <t-button
+                  theme="default"
+                  :disabled="!productSelectedRowKeys?.length ? true : false"
+                  @click="onResolution"
                 >
-                  <template #actionSlot>
-                    <t-link theme="primary" style="margin-right: 10px"> 编辑 </t-link>
-                    <t-popconfirm theme="default" content="确认删除吗">
-                      <t-link theme="primary"> 删除 </t-link>
-                    </t-popconfirm>
-                  </template>
-                  <template #button>
-                    <t-select
-                      v-modele="printTemplateName.printTemplate"
-                      label="打印模板"
-                      @change="printTemplateNameSelect"
-                    >
-                      <t-option
-                        v-for="item in onPrintTemplateList?.list"
-                        :key="item.id"
-                        :label="item.tmplName"
-                        :value="item.id"
-                      />
-                    </t-select>
-
-                    <t-button
-                      theme="default"
-                      :disabled="!productSelectedRowKeys.length ? true : false"
-                      @click="onReprint"
-                    >
-                      补打
-                    </t-button>
-                    <t-button
-                      theme="default"
-                      :disabled="!productSelectedRowKeys.length ? true : false"
-                      @click="onResolution"
-                    >
-                      拆分
-                    </t-button>
-                    <t-button
-                      theme="default"
-                      :disabled="!productSelectedRowKeys.length ? true : false"
-                      @click="onCancellation"
-                    >
-                      作废
-                    </t-button>
-                    <t-button theme="default"> 导出 </t-button>
-                  </template>
-                  <template #operations="{ row }">
-                    <t-link theme="primary" @click.stop="onLogInterface(row)"> 日志 </t-link>
-                  </template>
-                </cmp-table>
-              </cmp-card>
-            </cmp-container>
+                  拆分
+                </t-button>
+                <t-button
+                  theme="default"
+                  :disabled="!productSelectedRowKeys?.length ? true : false"
+                  @click="onCancellation"
+                >
+                  作废
+                </t-button>
+                <t-button theme="default"> 导出 </t-button>
+              </template>
+              <template #operations="{ row }">
+                <t-link theme="primary" @click.stop="onLogInterface(row)"> 日志 </t-link>
+              </template>
+            </cmp-table>
           </template>
         </t-tab-panel>
       </t-tabs>
-    </cmp-card>
-  </cmp-container>
-
-  <!-- % 补打， 作废 dialog 弹窗 -->
-  <t-dialog
-    v-model:visible="formVisible"
-    :confirm-btn="buttonSwitch"
-    :header="diaLogTitle"
-    width="40%"
-    @confirm="onConfirm"
-  >
-    <t-form ref="formRef" :data="reprintDialog">
-      <!-- #1️⃣补打原因 -->
-      <t-form-item v-if="reprintVoidSwitch === 1" label-width="80px" label="补打原因" name="reprintData">
-        <t-select v-model="reprintDialog.reprintData">
-          <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
-        </t-select>
-      </t-form-item>
-      <t-form-item
-        v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-        label="补打原因"
-        label-width="80px"
-        name="restsData"
-      >
-        <t-textarea
-          v-model="reprintDialog.restsData"
-          placeholder="请输入补打原因"
-          name="description"
-          :autosize="{ minRows: 3, maxRows: 5 }"
-        />
-      </t-form-item>
-      <!-- #2️⃣作废原因 -->
-      <t-form-item v-if="reprintVoidSwitch === 2" label-width="80px" label="作废" name="reprintData">
-        <t-select v-model="reprintDialog.reprintData">
-          <t-option
-            v-for="item in cancellationDataList.list"
-            :key="item.label"
-            :label="item.label"
-            :value="item.value"
+    </div>
+    <!-- % 补打， 作废 dialog 弹窗 -->
+    <t-dialog v-model:visible="formVisible" :header="diaLogTitle" :cancel-btn="null" :confirm-btn="null">
+      <t-form ref="formRef" :data="reprintDialog" :rules="rules" @submit="onSecondarySubmit">
+        <!-- #1️⃣补打原因 -->
+        <t-form-item v-if="reprintVoidSwitch === 1" label-width="80px" label="补打原因" name="reprintData">
+          <t-select v-model="reprintDialog.reprintData">
+            <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
+          </t-select>
+        </t-form-item>
+        <t-form-item
+          v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+          label="补打原因"
+          label-width="80px"
+          name="restsData"
+        >
+          <t-textarea
+            v-model="reprintDialog.restsData"
+            placeholder="请输入补打原因"
+            name="restsData"
+            :autosize="{ minRows: 3, maxRows: 5 }"
           />
-        </t-select>
-      </t-form-item>
-      <t-form-item
-        v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-        label="作废原因"
-        label-width="80px"
-        name="restsData"
-      >
-        <t-textarea
-          v-model="reprintDialog.restsData"
-          placeholder="请输入作废原因"
-          name="description"
-          :autosize="{ minRows: 3, maxRows: 5 }"
-        />
-      </t-form-item>
-      <!-- #3️⃣拆分原因 -->
-      <t-row v-if="reprintVoidSwitch === 3" justify="space-around">
-        <t-col :span="10" style="margin-bottom: 30px">
-          <t-form-item label="条码" name="ruleName">
-            <t-input v-model="reprintDialog.barCode" disabled></t-input>
-          </t-form-item>
-        </t-col>
-        <t-col :span="10" style="margin-bottom: 30px">
-          <t-form-item label="拆分数量" name="reprintData">
-            <t-input v-model="reprintDialog.resolutionNum" placeholder="请输入拆分数量"></t-input>
-          </t-form-item>
-        </t-col>
-        <t-col :span="10">
-          <t-form-item label="拆分原因" name="restsData">
-            <t-textarea
-              v-model="reprintDialog.resolutionCause"
-              placeholder="请输入拆分原因"
-              name="description"
-              :autosize="{ minRows: 3, maxRows: 5 }"
+        </t-form-item>
+        <!-- #2️⃣作废原因 -->
+        <t-form-item v-if="reprintVoidSwitch === 2" label-width="80px" label="作废" name="reprintData">
+          <t-select v-model="reprintDialog.reprintData">
+            <t-option
+              v-for="item in cancellationDataList.list"
+              :key="item.label"
+              :label="item.label"
+              :value="item.value"
             />
-          </t-form-item>
-        </t-col>
-      </t-row>
-    </t-form>
-  </t-dialog>
-  <!---%日志 dialog 弹窗  -->
-  <t-dialog v-model:visible="logInterfaceVisible" :cancel-btn="null" :confirm-btn="null" header="日志" width="60%">
-    <cmp-table
-      ref="tableRef"
-      v-model:pagination="pageUIDay"
-      row-key="id"
-      :table-column="logInterface"
-      :table-data="dayTabData.list"
-      :total="totalDay"
-      @refresh="onRightFetchData"
-    ></cmp-table>
-  </t-dialog>
+          </t-select>
+        </t-form-item>
+        <t-form-item
+          v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+          label="作废原因"
+          label-width="80px"
+          name="restsData"
+        >
+          <t-textarea
+            v-model="reprintDialog.restsData"
+            placeholder="请输入作废原因"
+            name="description"
+            :autosize="{ minRows: 3, maxRows: 5 }"
+          />
+        </t-form-item>
+        <!-- #3️⃣拆分原因 -->
+        <t-row v-if="reprintVoidSwitch === 3">
+          <t-col :span="12" style="margin-bottom: 30px">
+            <t-form-item label="条码" name="barCode">
+              <t-input v-model="reprintDialog.barCode" disabled></t-input>
+            </t-form-item>
+          </t-col>
+          <t-col :span="12" style="margin-bottom: 30px">
+            <t-form-item label="拆分数量" name="resolutionNum">
+              <t-input-number
+                v-model="reprintDialog.resolutionNum"
+                style="width: 100%"
+                theme="column"
+                :min="0"
+              ></t-input-number>
+            </t-form-item>
+          </t-col>
+          <t-col :span="12" style="margin-bottom: 30px">
+            <t-form-item label="拆分原因" name="resolutionCause">
+              <t-select v-model="reprintDialog.resolutionCause">
+                <t-option
+                  v-for="item in resolutionList.list"
+                  :key="item.label"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </t-select>
+            </t-form-item>
+          </t-col>
+          <t-col :span="12">
+            <t-form-item v-if="reprintDialog.resolutionCause === '其他原因'" label="拆分原因" name="restsData">
+              <t-textarea
+                v-model="reprintDialog.restsData"
+                placeholder="请输入拆分原因"
+                name="restsData"
+                :autosize="{ minRows: 3, maxRows: 5 }"
+              />
+            </t-form-item>
+          </t-col>
+        </t-row>
+      </t-form>
+      <template #footer>
+        <t-button theme="default" variant="base">取消</t-button>
+        <t-button theme="primary" @click="onSecondaryClick">{{ buttonSwitch }}</t-button>
+      </template>
+    </t-dialog>
+    <!---%日志 dialog 弹窗  -->
+    <t-dialog v-model:visible="logInterfaceVisible" :cancel-btn="null" :confirm-btn="null" header="日志">
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="pageUIDay"
+        row-key="id"
+        :table-column="logInterface"
+        :table-data="dayTabData.list"
+        :total="totalDay"
+        @refresh="onRightFetchData"
+      ></cmp-table>
+    </t-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
+import { debounce } from 'lodash';
 import {
   CustomValidateResolveType,
+  Data,
   FormInstanceFunctions,
+  FormRules,
   Input,
   MessagePlugin,
   PrimaryTableCol,
   TableRowData,
 } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, Ref, ref } from 'vue';
+import { computed, nextTick, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api } from '@/api/warehouse';
@@ -340,18 +308,49 @@ const diaLogTitle = ref(''); // 弹窗标题
 const buttonSwitch = ref(''); // 确认按钮title
 const tabValue = ref(0);
 const isReprintCancellation = ref(false);
+const tableRefs = ref(); // 配送卡打印 上 表格 实例
+const tableRefCard = ref(); // 配送卡管理 表格 实例
 // 补打，作废，拆分 DiaLog 数据
 const reprintDialog = ref({
   reprintData: '',
   restsData: '',
   barCode: '', // 条码
-  resolutionNum: '', // 拆分数量
+  resolutionNum: null, // 拆分数量
   resolutionCause: '', // 拆分原因
 });
-// 打印模板 数据
-const printTemplateName = ref({
-  printTemplate: '',
+// 配送卡 上表格 数据
+const cardPrintData = ref({
+  pageNum: 1,
+  pageSize: 10,
+  isFinishDisplay: true,
+  planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+  planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
+  moId: '', // 工单ID
+  workshopId: '', // 车间 ID
+  workcenterId: '', // 工作中心ID
+  mitemId: '', // 物料 ID
+  scheStatus: '', // 工单状态
 });
+
+// 配送卡管理 表格 数据
+const cardManageData = ref({
+  pageNum: 1,
+  pageSize: 10,
+  isFinishDisplay: true,
+  planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+  planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
+  createDateStart: dayjs().subtract(2, 'day').format('YYYY-MM-DD'), // 生产开始日期
+  createDateEnd: dayjs().format('YYYY-MM-DD'), // 生产结束日期
+  moId: '', // 工单ID
+  workshopId: '', // 车间 ID
+  workcenterId: '', // 工作中心ID
+  mitemId: '', // 物料 ID
+  deliveryStatus: '', // 条码状态
+  deliveryCardNo: '', // 条码
+});
+
+// 打印模板 数据
+const printTemplateName = ref('');
 
 // !产品标签打印 上 表格数据
 const printTopTabData = reactive({ list: [] });
@@ -453,7 +452,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
           return;
         }
         printTopTabData.list[context?.rowIndex] = context?.newRowData;
-        generateData.value.createNum = printTopTabData.list[context?.rowIndex].thisTimeQty; // 变化后的数字
+        generateData.value.createNum = +printTopTabData.list[context?.rowIndex].thisTimeQty; // 变化后的数字
       },
     },
   },
@@ -497,13 +496,13 @@ const labelPrintDown: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'pkgBarcode',
+    colKey: 'deliveryCardNo',
     title: '条码',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'barcodePkgStatuName',
+    colKey: 'deliveryCardStatuName',
     title: '条码状态',
     align: 'center',
     width: '130',
@@ -536,13 +535,13 @@ const labelManage: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'pkgBarcode',
+    colKey: 'deliveryCardNo',
     title: '条码',
     align: 'center',
     width: '150',
   },
   {
-    colKey: 'barcodePkgStatuName',
+    colKey: 'deliveryCardStatuName',
     title: '条码状态',
     align: 'center',
     width: '110',
@@ -619,13 +618,13 @@ const labelManage: PrimaryTableCol<TableRowData>[] = [
 // 日志界面 表格数据
 const logInterface: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'pkgBarcode',
+    colKey: 'deliveryCardNo',
     title: '条码',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'barcodePkgStatuName',
+    colKey: 'deliveryCardStatuName',
     title: '条码状态',
     align: 'center',
     width: '130',
@@ -664,13 +663,26 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
 
 function validateNumber(value: any): boolean | CustomValidateResolveType {
   if (Number.isNaN(Number(value))) {
-    return { result: false, message: '该字段必须是数字', type: 'error' };
+    return { result: false, message: '请输入数字', type: 'error' };
   }
   if (Number(value) < 0) {
     return { result: false, message: '该字段不能为负数', type: 'error' };
   }
   return true;
 }
+
+// 表单校验规则
+const rules: FormRules<Data> = {
+  reprintData: [{ required: true, message: '原因不能为空', type: 'error', trigger: 'change' }],
+  restsData: [{ required: true, message: '原因不能为空', type: 'error', trigger: 'blur' }],
+  barCode: [{ required: true, message: '条码不能为空', type: 'error', trigger: 'blur' }],
+  resolutionNum: [
+    { required: true, message: '拆分数量不能为空', type: 'error', trigger: 'blur' },
+    { number: true, message: '请输入数字', type: 'error' },
+    { validator: validateNumber, trigger: 'blur' },
+  ],
+  resolutionCause: [{ required: true, message: '拆分原因不能为空', type: 'error', trigger: 'change' }],
+};
 
 // 初始渲染
 onMounted(async () => {
@@ -679,13 +691,14 @@ onMounted(async () => {
   await onBarCodeState(); // 获取条码状态数据
   await onPrintRulesData(); // 获取 打印规则下拉数据
   await onPrintTemplateData(); // 获取 打印模板下拉数据
-  await onReprintSelextData(); // 获取补打原因列表
-  await onCancellationSelextData(); // 获取作废原因列表
-  if (reprintDataList.list.length > 0 && reprintVoidSwitch.value === 1) {
+  await onReprintSelectData(); // 获取补打原因列表
+  await onCancellationSelectData(); // 获取作废原因列表
+  await onResolutionSelectData(); // 获取拆分原因列表
+  await nextTick();
+  if (reprintDataList?.list?.length > 0 && reprintVoidSwitch?.value === 1) {
     reprintDialog.value.reprintData = reprintDataList.list[0].value;
   }
 });
-
 // 上表格数据刷新
 const onTopRefresh = async () => {
   await onGetPrintTopTabData();
@@ -706,6 +719,8 @@ const generateData = ref({
   workcenterId: null, // 工作中心 Id
   moScheduleId: null, // 行 Id
   createNum: null, // 变化后的数字
+  createSize: 0, // 生成规格
+  mitemId: null, // 物料ID
 });
 
 // 提条码规则下拉数据
@@ -716,63 +731,44 @@ const onPrintRulesData = async () => {
 };
 
 // // 获取 打印模板 下拉数据
-const onPrintTemplateList = reactive({ list: [] });
+const onPrintTemplateList = ref([]);
 const onPrintTemplateData = async () => {
   const res = await api.deliveryCard.getPrintTmplList();
-  onPrintTemplateList.list = res?.list;
+  const transformedArray = res.list.map((item) => {
+    return {
+      value: item.id,
+      label: item.tmplName,
+    };
+  });
+  onPrintTemplateList.value = transformedArray;
 };
 
 // // 获取 补打原因 下拉数据
 const reprintDataList = reactive({ list: [] });
-const onReprintSelextData = async () => {
+const onReprintSelectData = async () => {
   const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'REPRINT_REASON' });
   reprintDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 // 获取 作废原因 下拉数据
 const cancellationDataList = reactive({ list: [] });
-const onCancellationSelextData = async () => {
+const onCancellationSelectData = async () => {
   const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'SCRAP_REASON' });
   cancellationDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 
-// // 补打，作废确定
-const onConfirm = async () => {
-  let reason = '';
-  if (reprintDialog.value.restsData) {
-    reason = reprintDialog.value.restsData;
-  } else {
-    reason = reprintDialog.value.reprintData;
-  }
-  if (isReprintCancellation.value) {
-    await api.deliveryCard.reprintBarcode({
-      ids: productSelectedRowKeys.value,
-      reason,
-    });
-    productSelectedRowKeys.value = [];
-    MessagePlugin.success('补打成功');
-  } else {
-    await api.deliveryCard.cancellationBarcode({
-      ids: productSelectedRowKeys.value,
-      reason,
-    });
-    await onLabelManageTabData(); // 刷新表格数据
-    MessagePlugin.success('作废成功');
-  }
-  await onLabelManageTabData(); // 刷新表格数据
-  productSelectedRowKeys.value = [];
-  formVisible.value = false;
+// 获取 拆分原因 下拉数据
+const resolutionList = reactive({ list: [] });
+const onResolutionSelectData = async () => {
+  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'SPLIT_REASON' });
+  resolutionList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 
 // // #配送卡打印 上 表格数据
 const topPrintID = ref(null);
 const onGetPrintTopTabData = async () => {
-  const res = await api.deliveryCard.getMoScheduleList({
-    pageNum: pageUITop.value.page,
-    pageSize: pageUITop.value.rows,
-    planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
-    planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
-    isFinishDisplay: true,
-  });
+  cardPrintData.value.pageNum = pageUITop.value.page;
+  cardPrintData.value.pageSize = pageUITop.value.rows;
+  const res = await api.deliveryCard.getMoScheduleList(cardPrintData.value);
   const newArr = res.list.map((item) => ({ ...item, specificationQuantity: 0, numberGeneration: 0 })); // 规格数量
   printTopTabData.list = newArr;
   totalPrintTop.value = res.total;
@@ -812,29 +808,20 @@ const onBarCodeState = async () => {
 
 // #配送卡管理 表格数据
 const onLabelManageTabData = async () => {
-  const res = await api.deliveryCard.getDeliveryCardManagerList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    planDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
-    planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
-    createDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 生产开始日期
-    createDateEnd: dayjs().format('YYYY-MM-DD'), // 生产结束日期
-  });
-  console.log('🚀 ~ file: index.vue:747 ~ onLabelManageTabData ~ res:', res);
+  cardManageData.value.pageNum = pageUI.value.page;
+  cardManageData.value.pageSize = pageUI.value.rows;
+  const res = await api.deliveryCard.getDeliveryCardManagerList(cardManageData.value);
   manageTabData.list = res.list;
   totalManage.value = res.total;
 };
 
+// 配送卡管理行点击事件
 const barcodePkgStatuNameArr = ref([]);
-const pkgBarcodeName = ref([]); // 条码回填 数组 （一个）
+const pkgBarcodeName = ref([]); // 条码回 填 数组 （一个）
 const onProductRightFetchData = (value: any, context: any) => {
-  barcodePkgStatuNameArr.value = context.selectedRowData.map((item: any) => item.barcodePkgStatuName);
-  pkgBarcodeName.value = context.selectedRowData.map((item: any) => item.pkgBarcode);
+  barcodePkgStatuNameArr.value = context.selectedRowData.map((item: any) => item.deliveryCardStatuName); // 获取条码状态
+  pkgBarcodeName.value = context.selectedRowData.map((item: any) => item.deliveryCardNo); // 条码回填
   productSelectedRowKeys.value = value;
-};
-
-const printTemplateNameSelect = (context) => {
-  printTemplateName.value.printTemplate = context;
 };
 
 // // 补打 点击事件
@@ -846,7 +833,7 @@ const onReprint = () => {
     MessagePlugin.warning('存在条码状态为已生成、已报废状态，不允许补打！');
     return;
   }
-  if (!printTemplateName.value.printTemplate) {
+  if (!printTemplateName.value) {
     MessagePlugin.warning('请选择打印模板！');
     return;
   }
@@ -871,15 +858,14 @@ const onCancellation = () => {
   buttonSwitch.value = '作废';
   formVisible.value = true;
 };
-
-// // 拆分按钮点击事件
+// // 拆分 点击事件
 const onResolution = () => {
   formRef.value.reset({ type: 'empty' });
-  if (productSelectedRowKeys.value.length > 1) {
+  if (productSelectedRowKeys?.value?.length > 1) {
     MessagePlugin.warning('请选择一行数据！');
     return;
   }
-  if (!printTemplateName.value.printTemplate) {
+  if (!printTemplateName?.value) {
     MessagePlugin.warning('请选择打印模板！');
     return;
   }
@@ -894,29 +880,78 @@ const onResolution = () => {
   buttonSwitch.value = '拆分';
   formVisible.value = true;
 };
-
 // // 日志 点击 事件
 const onLogInterface = async (row: any) => {
-  logInterfaceVisible.value = true; // 控制界面显示隐藏
   const res = await api.deliveryCard.getDeliveryCardLog({
-    deliveryCardNo: row.pkgBarcode,
+    deliveryCardNo: row.deliveryCardNo,
     pageNum: pageUIDay.value.page,
     pageSize: pageUIDay.value.rows,
   });
   dayTabData.list = res.list;
   totalDay.value = res.total;
+  logInterfaceVisible.value = true; // 控制界面显示隐藏
+};
+
+const onSecondaryClick = () => {
+  formRef.value.submit();
+};
+
+// 补打、拆分、作废按钮事件
+const onSecondarySubmit = async (context: { validateResult: boolean }) => {
+  let reason = '';
+  let resolution = '';
+  // 判断选其他还是选下拉内容
+  if (reprintDialog.value.restsData) {
+    reason = reprintDialog.value.restsData;
+  } else {
+    reason = reprintDialog.value.reprintData;
+  }
+  if (reprintDialog.value.resolutionCause === '其他原因') {
+    resolution = reprintDialog.value.restsData;
+  } else {
+    resolution = reprintDialog.value.resolutionCause;
+  }
+  if (context.validateResult === true) {
+    if (reprintVoidSwitch.value === 1) {
+      await api.deliveryCard.reprintBarcode({
+        ids: productSelectedRowKeys.value,
+        reason,
+      });
+      productSelectedRowKeys.value = [];
+      MessagePlugin.success('补打成功');
+    } else if (reprintVoidSwitch.value === 2) {
+      await api.deliveryCard.cancellationBarcode({
+        ids: productSelectedRowKeys.value,
+        reason,
+      });
+      await onLabelManageTabData(); // 刷新表格数据
+      MessagePlugin.success('作废成功');
+    } else {
+      await api.deliveryCard.splitBarcode({
+        deliveryCardId: productSelectedRowKeys.value[0],
+        splitNum: reprintDialog.value.resolutionNum,
+        reason: resolution,
+      });
+      MessagePlugin.success('拆分成功');
+    }
+    await onLabelManageTabData(); // 刷新表格数据
+    productSelectedRowKeys.value = [];
+    formVisible.value = false;
+  }
 };
 
 // // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
   generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
   generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
+  generateData.value.mitemId = context.currentRowData.mitemId; // 物料 Id
+  generateData.value.createSize = context.selectedRowData[0].specificationQuantity; // 获取规格数量
   [topPrintID.value] = value;
   await onGetPrintDownTabData();
 };
 
 // // 生成点击事件
-const onGenerate = async () => {
+const onGenerate = debounce(async () => {
   if (!generateData?.value?.workcenterId) {
     MessagePlugin.warning('参数有误，请联系管理员');
     return;
@@ -933,26 +968,32 @@ const onGenerate = async () => {
     MessagePlugin.warning('请正确填写数量后回车');
     return;
   }
+  if (!generateData?.value?.createSize) {
+    MessagePlugin.warning('请正确填写规格数量');
+    return;
+  }
   await api.deliveryCard.generateBarcode(generateData.value); // 生成请求
   await onGetPrintTopTabData(); // 刷新数据
   await onGetPrintDownTabData(); // 下表格数据
   MessagePlugin.success('生成成功');
-};
+}, 500);
 
 // // 点击 打印事件
-const onPrint = async () => {
-  if (!printTemplateName.value.printTemplate) {
-    MessagePlugin.warning('参请选择条码规则！');
+const onPrint = debounce(async () => {
+  console.log('🚀 ~ file: index.vue:997 ~ onPrint ~ printTemplateName.value:', printTemplateName.value);
+  if (!printTemplateName.value) {
+    MessagePlugin.warning('请选择打印模板！');
     return;
   }
-  if (selectedRowKeys.value.length < 1) {
+  if (selectedRowKeys?.value?.length < 1) {
     MessagePlugin.warning('至少选择一条需要打印的记录！');
     return;
   }
   await api.deliveryCard.printBarcode({ ids: selectedRowKeys.value });
   await onGetPrintDownTabData(); // 刷新数据
   MessagePlugin.success('打印成功');
-};
+  selectedRowKeys.value = [];
+}, 500);
 
 // // 打印选择 框 行 事件
 const onPrintChange = (value: any) => {
@@ -962,17 +1003,13 @@ const onPrintChange = (value: any) => {
 
 // // TAb 栏切换事件
 const tabChange = async (value: number) => {
-  printTemplateName.value.printTemplate = ''; // 清空打印模板缓存
-  if (!value) {
-    initialDate.value = 1;
-  } else {
-    initialDate.value = 3;
+  printTemplateName.value = ''; // 清空打印模板缓存
+  if (value) {
     await onLabelManageTabData(); // 配送卡管理 表格数据
   }
 };
 
 // // #query 查询参数
-const initialDate = ref(1);
 const opts = computed(() => {
   return {
     scheduledProductionDate: {
@@ -980,7 +1017,19 @@ const opts = computed(() => {
       labelWidth: '100px',
       comp: 't-date-range-picker',
       event: 'daterangetime',
-      defaultVal: [dayjs().subtract(+initialDate.value, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+      defaultVal: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+      bind: {
+        enableTimePicker: false,
+        format: 'YYYY-MM-DD',
+      },
+    },
+    datePproduced: {
+      isHide: !tabValue.value,
+      label: '生成日期',
+      labelWidth: '100px',
+      comp: 't-date-range-picker',
+      event: 'daterangetime',
+      defaultVal: [dayjs().subtract(+2, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
       bind: {
         enableTimePicker: false,
         format: 'YYYY-MM-DD',
@@ -993,28 +1042,6 @@ const opts = computed(() => {
       defaultVal: '',
       bind: {
         type: 'mo',
-        showTitle: false,
-      },
-    },
-    datePproduced: {
-      isHide: !tabValue.value,
-      label: '生成日期',
-      labelWidth: '100px',
-      comp: 't-date-range-picker',
-      event: 'daterangetime',
-      defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
-      bind: {
-        enableTimePicker: false,
-        format: 'YYYY-MM-DD',
-      },
-    },
-    mitem: {
-      label: '物料',
-      comp: 'bcmp-select-business',
-      event: 'business',
-      defaultVal: '',
-      bind: {
-        type: 'mitem',
         showTitle: false,
       },
     },
@@ -1038,7 +1065,16 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-
+    mitem: {
+      label: '物料',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'mitem',
+        showTitle: false,
+      },
+    },
     workState: {
       isHide: tabValue.value,
       label: '工单状态',
@@ -1082,38 +1118,36 @@ const onInput = async (data: any) => {
       isFinishDisplay = true;
     }
     pageUITop.value.page = 1;
-    const res = await api.deliveryCard.getMoScheduleList({
-      pageNum: pageUITop.value.page,
-      pageSize: pageUITop.value.rows,
-      planDateStart: data.scheduledProductionDate[0], // 计划生产开始日期
-      planDateEnd: data.scheduledProductionDate[1], // 计划生产结束日期
-      moId: data.mo, // 工单ID
-      workshopId: data.workshop, // 车间 ID
-      workcenterId: data.workcenter, // 工作中心ID
-      mitemId: data.mitem, // 物料 ID
-      scheStatus: data.workState, // 工单状态
-      isFinishDisplay, // 是否仅显示已打印
-    });
-    printTopTabData.list = res.list;
-    totalPrintTop.value = res.total;
+    const [planDateStart, planDateEnd] = data.scheduledProductionDate;
+    cardPrintData.value.planDateStart = planDateStart; // 计划生产开始日期
+    cardPrintData.value.planDateEnd = planDateEnd; // 计划生产结束日期
+    cardPrintData.value.moId = data.mo; // 工单ID
+    cardPrintData.value.workshopId = data.workshop; // 车间 ID
+    cardPrintData.value.workcenterId = data.workcenter; // 工作中心ID
+    cardPrintData.value.mitemId = data.mitem; // 物料 ID
+    cardPrintData.value.scheStatus = data.workState; // 工单状态
+    cardPrintData.value.isFinishDisplay = isFinishDisplay; // 是否仅显示已打印
+    await onGetPrintTopTabData(); // 表格数据渲染
+    topPrintID.value = null; // 置空行ID
+    printDownTabData.list = [];
+    tableRefs.value.setSelectedRowKeys([]);
   } else {
     pageUI.value.page = 1;
-    const res = await api.deliveryCard.getDeliveryCardManagerList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      planDateStart: data.scheduledProductionDate[0], // 计划生产开始日期
-      planDateEnd: data.scheduledProductionDate[1], // 计划生产结束日期
-      createDateStart: data.scheduledProductionDate[0], // 生产开始日期
-      createDateEnd: data.scheduledProductionDate[1], // 生产结束日期
-      moId: data.mo, // 工单ID
-      workshopId: data.workshop, // 车间 ID
-      workcenterId: data.workcenter, // 工作中心ID
-      mitemId: data.mitem, // 物料 ID
-      // deliveryStatus: data.barCodeState, // 条码状态
-      deliveryCardNo: data.barCode, // 条码
-    });
-    manageTabData.list = res.list;
-    totalManage.value = res.total;
+    const [planDateStart, planDateEnd] = data.scheduledProductionDate;
+    const [createDateStart, createDateEnd] = data.scheduledProductionDate;
+    cardManageData.value.planDateStart = planDateStart; // 计划生产开始日期
+    cardManageData.value.planDateEnd = planDateEnd; // 计划生产结束日期
+    cardManageData.value.createDateStart = createDateStart; // 生产开始日期
+    cardManageData.value.createDateEnd = createDateEnd; // 生产结束日期
+    cardManageData.value.moId = data.mo; // 工单ID
+    cardManageData.value.workshopId = data.workshop; // 车间 ID
+    cardManageData.value.workcenterId = data.workcenter; // 工作中心ID
+    cardManageData.value.mitemId = data.mitem; // 物料 ID
+    cardManageData.value.deliveryStatus = data.barCodeState; // 条码状态
+    cardManageData.value.deliveryCardNo = data.barCode; // 条码
+    await onLabelManageTabData();
+    tableRefCard.value.setSelectedRowKeys([]);
+    productSelectedRowKeys.value = [];
   }
   MessagePlugin.success('查询成功');
 };
