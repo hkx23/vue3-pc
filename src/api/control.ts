@@ -352,11 +352,8 @@ export interface Workstation {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 工站代码 */
   workstationCode?: string;
-  /** 工站名称 */
   workstationName?: string;
-  /** 工站描述 */
   workstationDesc?: string;
   processId?: string;
   workcenterId?: string;
@@ -576,8 +573,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -624,11 +621,8 @@ export interface DefectDealMethodVO {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 处理方法代码 */
   methodCode?: string;
-  /** 处理方法名称 */
   methodName?: string;
-  /** 处理方法类别 */
   dealMethodType?: string;
 }
 
@@ -970,6 +964,8 @@ export interface ProcessVO {
   processName?: string;
   /** 工序描述 */
   processDesc?: string;
+  /** 工序别名 */
+  processAlias?: string;
   /** 创建人名称 */
   creatorName?: string;
   /** 修改人名称 */
@@ -1129,9 +1125,7 @@ export interface DefectCode {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 缺陷代码 */
   defectCode?: string;
-  /** 缺陷名称 */
   defectName?: string;
   parentDefectId?: string;
   /**
@@ -1139,7 +1133,6 @@ export interface DefectCode {
    * @format int32
    */
   levelSeq?: number;
-  /** 不合格分类 */
   classification?: string;
 }
 
@@ -1230,6 +1223,114 @@ export interface PkgRelationDTO {
   pkgRuleId?: string;
 }
 
+export interface PkgRelationSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  /** 产品条码 */
+  barcode?: string;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 排产单号 */
+  moScheCode?: string;
+  /** 箱条码 */
+  pkgBarcode?: string;
+  /** 开始时间 */
+  beginDate?: string;
+  /** 结束时间 */
+  endDate?: string;
+  /** 父级包装条码 */
+  parentPkgBarcode?: string;
+}
+
+/** 响应数据 */
+export type PagingDataPkgRelationReportVO = {
+  list?: PkgRelationReportVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 箱包关系报表前端显示 */
+export interface PkgRelationReportVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moScheId?: string;
+  /** 包装条码 */
+  pkgBarcode?: string;
+  /** 包装条码类型 */
+  pkgBarcodeType?: string;
+  /** 父级包装条码 */
+  parentPkgBarcode?: string;
+  /** 父级包装条码类型 */
+  parentPkgType?: string;
+  /**
+   * 包装序号
+   * @format int32
+   */
+  seq?: number;
+  workstationId?: string;
+  workcenterId?: string;
+  workshopId?: string;
+  /** 状态 */
+  status?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 包装条码类型名称 */
+  pkgBarcodeTypeName?: string;
+  /** 父级包装条码类型名称 */
+  parentPkgTypeName?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /** 父级包装条码的上级条码（如果为空说明是顶级） */
+  topParentPkgBarcode?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPkgRelationReportVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPkgRelationReportVO;
+}
+
 /** 工单投料信息提交模型 */
 export interface MitemOnboardDTO {
   id?: string;
@@ -1283,6 +1384,7 @@ export interface MitemOnboardDTO {
   feeder?: string;
   /** 状态 */
   status?: string;
+  workstationId?: string;
   bomMitemId?: string;
   bomMitemCode?: string;
   bomMitemName?: string;
@@ -1315,6 +1417,7 @@ export interface MitemOnboardDTO {
 /** 工单投料信息提交模型 */
 export interface MitemOnboardSubmitDTO {
   workcenterId?: string;
+  workStationId?: string;
   processId?: string;
   moScheId?: string;
   modelList?: MitemOnboardDTO[];
@@ -1456,7 +1559,7 @@ export interface ResultMFTVO {
   data?: MFTVO;
 }
 
-export interface LabelSearch {
+export interface LabelManageSearch {
   /**
    * 页码
    * @format int32
@@ -1520,7 +1623,7 @@ export interface LabelSearch {
 }
 
 /** 显示产品条码管理 */
-export interface LabelVO {
+export interface LabelManageVO {
   id?: string;
   /**
    * 创建时间
@@ -1544,14 +1647,10 @@ export interface LabelVO {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 标签号 */
   labelNo?: string;
-  /** 标签类别 */
   labelCategory?: string;
   mitemId?: string;
-  /** 批次号 */
   lotNo?: string;
-  /** 到货批次 */
   batchLot?: string;
   supplierId?: string;
   /** 标签初始化数量 */
@@ -1566,11 +1665,8 @@ export interface LabelVO {
    * @format int32
    */
   printSeq?: number;
-  /** 送货单号 */
-  deliveryNo?: string;
-  /** 接收单号 */
+  deliveryDtlId?: string;
   receiveNo?: string;
-  /** 状态 */
   status?: string;
   /** 排产单编码 */
   scheCode?: string;
@@ -1642,14 +1738,14 @@ export interface LabelVO {
 }
 
 /** 响应数据 */
-export type PagingDataLabelVO = {
-  list?: LabelVO[];
+export type PagingDataLabelManageVO = {
+  list?: LabelManageVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataLabelVO {
+export interface ResultPagingDataLabelManageVO {
   /**
    * 响应代码
    * @format int32
@@ -1658,7 +1754,7 @@ export interface ResultPagingDataLabelVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataLabelVO;
+  data?: PagingDataLabelManageVO;
 }
 
 /** 显示过站采集实体 */
@@ -1766,13 +1862,13 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  stateName?: string;
+  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
-  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
@@ -1882,16 +1978,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  stateName?: string;
+  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
-  isState?: boolean;
+  defectCodeStr?: string;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
-  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -2129,8 +2225,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -2392,17 +2488,11 @@ export interface PrintTmpl {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 模板代码 */
   tmplCode?: string;
-  /** 模板名称 */
   tmplName?: string;
-  /** 模板描述 */
   tmplDesc?: string;
-  /** 模板内容地址 */
   tmplBodyPath?: string;
-  /** 模板类别 */
   tmplCategory?: string;
-  /** 模板类型 */
   tmplType?: string;
 }
 
@@ -2444,15 +2534,10 @@ export interface BarcodeRule {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 条码规则代码 */
   ruleCode?: string;
-  /** 条码规则名称 */
   ruleName?: string;
-  /** 条码规则描述 */
   ruleDesc?: string;
-  /** 条码类型 */
   barcodeType?: string;
-  /** 条码规则表达式 */
   ruleExpression?: string;
 }
 
@@ -3226,6 +3311,21 @@ export const api = {
      * No description
      *
      * @tags 在制品箱包关系表
+     * @name GetPkgRelationReportList
+     * @summary 根据箱包关系报表
+     * @request POST:/pkgRelation/getPkgRelationReportList
+     * @secure
+     */
+    getPkgRelationReportList: (data: PkgRelationSearch) =>
+      http.request<ResultPagingDataPkgRelationReportVO['data']>(`/api/control/pkgRelation/getPkgRelationReportList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品箱包关系表
      * @name GetPkgRelationByParentBarcode
      * @summary 根据父条码获取包装关系
      * @request GET:/pkgRelation/getPkgRelationByParentBarcode
@@ -3451,18 +3551,18 @@ export const api = {
         body: data as any,
       }),
   },
-  label: {
+  labelManage: {
     /**
      * No description
      *
      * @tags 标签表
      * @name ReprintBarcode
-     * @summary 补打条码
-     * @request POST:/label/reprintBarcode
+     * @summary 补打产品条码
+     * @request POST:/labelManage/reprintBarcode
      * @secure
      */
-    reprintBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/control/label/reprintBarcode`, {
+    reprintBarcode: (data: LabelManageSearch) =>
+      http.request<ResultObject['data']>(`/api/control/labelManage/reprintBarcode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3472,12 +3572,12 @@ export const api = {
      *
      * @tags 标签表
      * @name PrintBarcode
-     * @summary 打印条码
-     * @request POST:/label/printBarcode
+     * @summary 打印产品条码
+     * @request POST:/labelManage/printBarcode
      * @secure
      */
-    printBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/control/label/printBarcode`, {
+    printBarcode: (data: LabelManageSearch) =>
+      http.request<ResultObject['data']>(`/api/control/labelManage/printBarcode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3488,11 +3588,11 @@ export const api = {
      * @tags 标签表
      * @name GetMoScheduleList
      * @summary 查询工单排产(标签打印上表格)
-     * @request POST:/label/getMoScheduleList
+     * @request POST:/labelManage/getMoScheduleList
      * @secure
      */
-    getMoScheduleList: (data: LabelSearch) =>
-      http.request<ResultPagingDataLabelVO['data']>(`/api/control/label/getMoScheduleList`, {
+    getMoScheduleList: (data: LabelManageSearch) =>
+      http.request<ResultPagingDataLabelManageVO['data']>(`/api/control/labelManage/getMoScheduleList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3503,11 +3603,11 @@ export const api = {
      * @tags 标签表
      * @name GetBarcodeWipManagerList
      * @summary 查询在制品条码(标签管理表格)
-     * @request POST:/label/getBarcodeWipManagerList
+     * @request POST:/labelManage/getBarcodeWipManagerList
      * @secure
      */
-    getBarcodeWipManagerList: (data: LabelSearch) =>
-      http.request<ResultPagingDataLabelVO['data']>(`/api/control/label/getBarcodeWipManagerList`, {
+    getBarcodeWipManagerList: (data: LabelManageSearch) =>
+      http.request<ResultPagingDataLabelManageVO['data']>(`/api/control/labelManage/getBarcodeWipManagerList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3517,12 +3617,12 @@ export const api = {
      *
      * @tags 标签表
      * @name GetBarcodeWipLog
-     * @summary 查询日志
-     * @request POST:/label/getBarcodeWipLog
+     * @summary 查询产品条码日志
+     * @request POST:/labelManage/getBarcodeWipLog
      * @secure
      */
-    getBarcodeWipLog: (data: LabelSearch) =>
-      http.request<ResultPagingDataLabelVO['data']>(`/api/control/label/getBarcodeWipLog`, {
+    getBarcodeWipLog: (data: LabelManageSearch) =>
+      http.request<ResultPagingDataLabelManageVO['data']>(`/api/control/labelManage/getBarcodeWipLog`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3533,11 +3633,11 @@ export const api = {
      * @tags 标签表
      * @name GetBarcodeWipList
      * @summary 查询在制品条码(标签打印下表格)
-     * @request POST:/label/getBarcodeWipList
+     * @request POST:/labelManage/getBarcodeWipList
      * @secure
      */
-    getBarcodeWipList: (data: LabelSearch) =>
-      http.request<ResultPagingDataLabelVO['data']>(`/api/control/label/getBarcodeWipList`, {
+    getBarcodeWipList: (data: LabelManageSearch) =>
+      http.request<ResultPagingDataLabelManageVO['data']>(`/api/control/labelManage/getBarcodeWipList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3547,12 +3647,12 @@ export const api = {
      *
      * @tags 标签表
      * @name GenerateBarcode
-     * @summary 生成条码
-     * @request POST:/label/generateBarcode
+     * @summary 生成产品条码
+     * @request POST:/labelManage/generateBarcode
      * @secure
      */
-    generateBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/control/label/generateBarcode`, {
+    generateBarcode: (data: LabelManageSearch) =>
+      http.request<ResultObject['data']>(`/api/control/labelManage/generateBarcode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3562,12 +3662,12 @@ export const api = {
      *
      * @tags 标签表
      * @name CancellationBarcode
-     * @summary 作废条码
-     * @request POST:/label/cancellationBarcode
+     * @summary 作废产品条码
+     * @request POST:/labelManage/cancellationBarcode
      * @secure
      */
-    cancellationBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/control/label/cancellationBarcode`, {
+    cancellationBarcode: (data: LabelManageSearch) =>
+      http.request<ResultObject['data']>(`/api/control/labelManage/cancellationBarcode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3578,11 +3678,11 @@ export const api = {
      * @tags 标签表
      * @name GetPrintTmplList
      * @summary 获得打印模板下拉数据
-     * @request GET:/label/getPrintTmplList
+     * @request GET:/labelManage/getPrintTmplList
      * @secure
      */
     getPrintTmplList: () =>
-      http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/label/getPrintTmplList`, {
+      http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/labelManage/getPrintTmplList`, {
         method: 'GET',
       }),
 
@@ -3592,11 +3692,11 @@ export const api = {
      * @tags 标签表
      * @name GetBarcodeRuleList
      * @summary 获得条码规则下拉数据
-     * @request GET:/label/getBarcodeRuleList
+     * @request GET:/labelManage/getBarcodeRuleList
      * @secure
      */
     getBarcodeRuleList: () =>
-      http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/label/getBarcodeRuleList`, {
+      http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/labelManage/getBarcodeRuleList`, {
         method: 'GET',
       }),
   },
