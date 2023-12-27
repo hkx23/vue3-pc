@@ -1,10 +1,38 @@
 <template>
-  <div class="main-page">
-    <!-- ################# 工单 表格数据 ###################### -->
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card class="not-full-tab">
+      <!-- ################# 工单 表格数据 ###################### -->
       <!-- 查询组件  -->
-      <t-row style="margin-top: 15px">
-        <t-space>
+      <cmp-card>
+        <cmp-query :opts="opts" @submit="conditionEnter" @reset="onRestCondition">
+          <template #searchType="{ param }">
+            <t-radio-group v-model="param.searchType" @change="onRestCondition">
+              <t-radio value="mintemBatch">物料批次</t-radio>
+              <t-radio value="mintemLabel">物料标签</t-radio>
+            </t-radio-group>
+          </template>
+          <template #mitemLotNo="{ param }">
+            <t-input
+              v-if="param.searchType === 'mintemBatch'"
+              v-model="param.mitemLotNo"
+              placeholder="请输入批次信息"
+            ></t-input>
+            <t-input
+              v-if="param.searchType === 'mintemLabel'"
+              v-model="param.mitemLabelNo"
+              placeholder="请输入物料标签"
+            ></t-input>
+          </template>
+          <template #mitemId="{ param }">
+            <bcmp-select-business
+              v-if="param.searchType === 'mintemBatch'"
+              v-model="param.mitemId"
+              type="mitem"
+            ></bcmp-select-business>
+          </template>
+        </cmp-query>
+      </cmp-card>
+      <!-- <t-space>
           <t-radio-group v-model="queryCondition.searchType" @change="onRestCondition">
             <t-radio value="mintemBatch">物料批次</t-radio>
             <t-radio value="mintemLabel">物料标签</t-radio>
@@ -28,12 +56,11 @@
             <t-button @click="conditionEnter">查询</t-button>
             <t-button theme="default" @click="onRestCondition">重置</t-button>
           </t-col>
-        </t-space>
-      </t-row>
+        </t-space> -->
       <t-row style="margin-top: 15px"></t-row>
       <t-tabs v-model="tagValue">
         <t-tab-panel :value="0" label="物料基础信息" :destroy-on-hide="false">
-          <div style="background-color: #f0f0f0">
+          <cmp-card class="padding-top-noline-16 no-h-padding-card">
             <t-row>
               <t-space style="font-weight: bold; font-size: larger; margin-top: 15px; margin-left: 10px"
                 >物料信息</t-space
@@ -68,7 +95,7 @@
               </t-col>
             </t-row>
             <t-row style="margin-top: 15px"></t-row>
-          </div>
+          </cmp-card>
           <t-col :span="12" flex="auto">
             <cmp-table
               v-model:pagination="pageUI"
@@ -101,7 +128,7 @@
           </t-col>
         </t-tab-panel>
         <t-tab-panel :value="2" label="供应商信息" :destroy-on-hide="false">
-          <div style="background-color: #f0f0f0">
+          <cmp-card class="padding-top-noline-16 no-h-padding-card">
             <t-row>
               <t-space style="font-weight: bold; font-size: larger; margin-top: 15px; margin-left: 10px"
                 >物料信息</t-space
@@ -128,7 +155,7 @@
               </t-col>
             </t-row>
             <t-row style="margin-top: 15px"></t-row>
-          </div>
+          </cmp-card>
         </t-tab-panel>
         <t-tab-panel :value="3" label="物料质量信息" :destroy-on-hide="false">
           <t-col :span="12" flex="auto">
@@ -163,13 +190,13 @@
           </t-col>
         </t-tab-panel>
       </t-tabs>
-    </div>
-  </div>
+    </cmp-card>
+  </cmp-container>
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { reactive, ref } from 'vue';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, reactive, ref } from 'vue';
 
 import { api } from '@/api/control';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -189,9 +216,6 @@ const mitemBaseInfoTabTotal = ref(0);
 const IOInfoTabTotal = ref(0);
 const mitemUseInfoTabTotal = ref(0);
 const mitemQualityInfoTabTotal = ref(0);
-// $管理上 表格数据
-// 日志界面 表格数据
-// 补打，作废 DiaLog 数据
 const mitemInfo = ref({
   lotNo: '',
   mitemCode: '',
@@ -216,6 +240,11 @@ const onRestCondition = async () => {
     mitemId: '',
   };
 };
+
+// const searchTypeOp = ref([
+//   { value: 'mintemBatch', label: '物料批次' },
+//   { value: 'mintemLabel', label: '物料标签' },
+// ]);
 
 // 打印上方查询初始化
 const queryCondition = ref({
@@ -463,14 +492,53 @@ const mitemQualityInfo: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
+// 查询组件
+const opts = computed(() => {
+  return {
+    searchType: {
+      slotName: 'searchType',
+      defaultVal: 'mintemBatch',
+    },
+    mitemLotNo: {
+      slotName: 'mitemLotNo',
+      defaultVal: '',
+    },
+
+    mitemId: {
+      slotName: 'mitemId',
+      defaultVal: '',
+    },
+    mitemLabelNo: {
+      slotName: 'mitemLabelNo',
+      defaultVal: '',
+    },
+  };
+});
+
 // 打印界面点击查询按钮
-const conditionEnter = () => {
+const conditionEnter = (data: any) => {
+  queryCondition.value = data;
+
+  if (queryCondition.value.searchType === 'mintemBatch') {
+    queryCondition.value.mitemLabelNo = '';
+  } else {
+    queryCondition.value.mitemLotNo = '';
+    queryCondition.value.mitemId = '';
+  }
+
   fetchMoTable();
 };
 // 加载工单数据表格
 const fetchMoTable = async () => {
   setLoading(true);
   try {
+    if (queryCondition.value.searchType === 'mintemBatch') {
+      if (!queryCondition.value.mitemId) {
+        MessagePlugin.warning('请选择物料');
+        return;
+      }
+    }
+
     if (tagValue.value === 0) {
       queryCondition.value.pageNum = pageUI.value.page;
       queryCondition.value.pageSize = pageUI.value.rows;
