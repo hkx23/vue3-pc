@@ -2,11 +2,13 @@
   <div v-show="recommendList && recommendList.length > 0">
     <t-card class="recommend">
       <div v-for="(item, index) in recommendList" :key="index" class="recommend-item" @click="onModuleClick(item)">
-        <t-icon :name="item.meta && item.meta.iconName" />
+        <div class="recommend-icon">
+          <t-icon :name="item.meta && item.meta.iconName" />
+        </div>
         <span>{{ renderMenuTitle(item.meta.title) }}</span>
       </div>
       <template #footer>
-        <div class="recommend-more" @click="onModuleClick(item)">
+        <div class="recommend-more">
           <t-icon name="chevron-right" />
         </div>
       </template>
