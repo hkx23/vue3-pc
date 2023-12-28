@@ -12,7 +12,7 @@
               <t-row justify="center">
                 <t-tag shape="round" size="large">
                   <t-col class="header-title">
-                    <span>{{ t('wipCollect.workshopName') }}: {{ mainform.workStationName }}</span>
+                    <span>{{ t('wipCollect.workshopName') }}: {{ mainform.workshopCode }}</span>
                     <span> {{ t('wipCollect.workcentName') }}：{{ mainform.workCenterCode }}</span>
                     <span> {{ t('wipCollect.workstationName') }}：{{ mainform.workStationCode }}</span>
                   </t-col>
@@ -219,6 +219,9 @@ const Init = async () => {
 
   mainform.value.workStationCode = userStore.currUserOrgInfo.workStationCode;
   mainform.value.workStationName = userStore.currUserOrgInfo.workStationName;
+
+  mainform.value.workshopCode = userStore.currUserOrgInfo.workShopCode;
+  mainform.value.workshopName = userStore.currUserOrgInfo.workShopName;
 
   if (!mainform.value.workStationId) {
     NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
