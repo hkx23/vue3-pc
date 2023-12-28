@@ -464,11 +464,6 @@ const onDialogCodeChange = (value: any) => {
   dialogFormData.list.dataSourcePath = value.paramGroupCode;
 };
 
-// 左侧列表分页事件
-const onPaginationChange = async () => {
-  await onGetTabList();
-};
-
 // Switch开关事件
 const onSwitchChange = async (
   row: {
@@ -501,6 +496,11 @@ const onSwitchChange = async (
 
 // 左侧列表分页事件
 const onCurrentChange = async () => {
+  await onGetTabList();
+};
+
+// 左侧列表分页事件
+const onPaginationChange = async () => {
   await onGetTabList();
 };
 

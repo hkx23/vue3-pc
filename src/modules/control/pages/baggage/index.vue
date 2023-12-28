@@ -16,6 +16,17 @@
         @expanded-tree-nodes-change="onExpandedTreeNodesChange"
       ></t-enhanced-table>
     </cmp-card>
+    <cmp-card :ghost="true" :span="12">
+      <t-pagination
+        v-model:current="bagsSuitcasesData.pageNum"
+        v-model:page-size="bagsSuitcasesData.pageSize"
+        style="margin-top: 8px"
+        :show-page-size="false"
+        :total="anomalyTotal"
+        @page-size-change="onPaginationChange"
+        @current-change="onCurrentChange"
+      />
+    </cmp-card>
   </cmp-container>
 </template>
 <script setup lang="ts">
@@ -26,9 +37,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/control';
 import CmpQuery from '@/components/cmp-query/index.vue';
-import { usePage } from '@/hooks/modules/page';
 
-const { pageUI } = usePage(); // 分页工具
 // 表格实例
 const tableRef = ref(null);
 
@@ -112,8 +121,6 @@ const bagsSuitcasesData = ref({
 
 // 获取 表格 数据
 const onGetAnomalyTypeData = async () => {
-  bagsSuitcasesData.value.pageNum = pageUI.value.page;
-  bagsSuitcasesData.value.pageSize = pageUI.value.rows;
   const res = await api.pkgRelation.getPkgRelationReportList(bagsSuitcasesData.value);
   const newData = res.list.map((item) => {
     if (item.existPkgRelationReportcChildren) {
@@ -128,6 +135,14 @@ const onGetAnomalyTypeData = async () => {
   });
   anomalyTypeData.list = newData;
   anomalyTotal.value = res.total;
+};
+
+const onPaginationChange = async () => {
+  await onGetAnomalyTypeData();
+};
+
+const onCurrentChange = async () => {
+  await onGetAnomalyTypeData();
 };
 
 // 点击节点获取子节点数据
