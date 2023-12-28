@@ -573,8 +573,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -799,12 +799,12 @@ export interface ProductReworkVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -970,8 +970,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1345,6 +1345,81 @@ export interface ResultPagingDataPkgRelationReportVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataPkgRelationReportVO;
+}
+
+export interface MoOnboardSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 投料开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 投料结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  moId?: string;
+  workcenterId?: string;
+  mitemId?: string;
+  /** 产品编码id */
+  mitemLabelNo?: string;
+}
+
+export interface MoOnboardSearchVO {
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 产品编码 */
+  pdCode?: string;
+  /** 物料标签 */
+  mitemLabelNo?: string;
+  /** 工单号 */
+  moCode?: string;
+  moMitemId?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 工站名称 */
+  workstationrName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 作业员名称 */
+  creatorName?: string;
+  /**
+   * 投料时间
+   * @format date-time
+   */
+  timeCreate?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMoOnboardSearchVO = {
+  list?: MoOnboardSearchVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMoOnboardSearchVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMoOnboardSearchVO;
 }
 
 /** 工单投料信息提交模型 */
@@ -1886,17 +1961,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopCode?: string;
   stateName?: string;
+  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -2002,16 +2077,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  defectCodeStr?: string;
+  workshopCode?: string;
   stateName?: string;
+  defectCodeStr?: string;
+  isState?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -3403,6 +3478,22 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/pkgRelation/releaseAll`, {
         method: 'DELETE',
         params: query,
+      }),
+  },
+  moOnboard: {
+    /**
+     * No description
+     *
+     * @tags 工单投料表
+     * @name GetMoOnboardList
+     * @summary 工单投料报表
+     * @request POST:/moOnboard/getMoOnboardList
+     * @secure
+     */
+    getMoOnboardList: (data: MoOnboardSearch) =>
+      http.request<ResultPagingDataMoOnboardSearchVO['data']>(`/api/control/moOnboard/getMoOnboardList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   mitemOnboard: {
