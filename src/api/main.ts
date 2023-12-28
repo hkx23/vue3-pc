@@ -3334,14 +3334,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
   isState?: boolean;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -3503,8 +3503,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3586,6 +3586,34 @@ export interface LabelSearch {
   reason?: string;
   /** 批量ID */
   ids?: string[];
+}
+
+/** 菜单收藏夹表 */
+export interface Favorite {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  userId?: string;
+  moduleId?: string;
 }
 
 /** 设备 */
@@ -4549,8 +4577,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  relate?: boolean;
   default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -5016,14 +5044,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -5326,6 +5354,19 @@ export interface ResultPagingDataModule {
   message?: string;
   /** 响应数据 */
   data?: PagingDataModule;
+}
+
+/** 通用响应类 */
+export interface ResultListFavorite {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Favorite[] | null;
 }
 
 /** 通用响应类 */
@@ -8627,6 +8668,51 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/label/cancellationBarcode`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  favorite: {
+    /**
+     * No description
+     *
+     * @tags 菜单收藏夹表
+     * @name Add
+     * @summary 新增菜单收藏
+     * @request POST:/favorite/add
+     * @secure
+     */
+    add: (data: Favorite) =>
+      http.request<ResultObject['data']>(`/api/main/favorite/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单收藏夹表
+     * @name List
+     * @summary 获取菜单收藏
+     * @request GET:/favorite/list
+     * @secure
+     */
+    list: () =>
+      http.request<ResultListFavorite['data']>(`/api/main/favorite/list`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单收藏夹表
+     * @name Delete
+     * @summary 删除菜单收藏
+     * @request DELETE:/favorite/delete
+     * @secure
+     */
+    delete: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/main/favorite/delete`, {
+        method: 'DELETE',
+        params: query,
       }),
   },
   equipment: {

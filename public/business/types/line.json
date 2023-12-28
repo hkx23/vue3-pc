@@ -3,7 +3,7 @@
   "placeholder": "请选择产线",
   "url": "/api/main/workcenter/items",
   "httptype": "POST",
-  "category": "4",
+  "category": "2",
   "columns": [
     {
       "title": "产线代码",

@@ -9,19 +9,10 @@
             <cmp-container :full="true" :gutter="[0, 0]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query :opts="opts" @submit="onInput">
-                  <template #cellType>
-                    <t-select v-model="barcodeData.barcodeType" label="条码类型">
+                  <template #cellType="{ param }">
+                    <t-select v-model="param.type" label="条码类型">
                       <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
                     </t-select>
-                  </template>
-                  <template #cellMaterial>
-                    <bcmp-select-business
-                      v-model="barcodeData.mitemCategoryId"
-                      :disabled="radioValue"
-                      :is-multiple="false"
-                      type="mitemCategory"
-                      label="物料分类"
-                    ></bcmp-select-business>
                   </template>
                 </cmp-query>
               </cmp-card>
@@ -58,8 +49,8 @@
             <cmp-container :full="true" :gutter="[0, 0]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query :opts="opts" @submit="onInput">
-                  <template #cellType>
-                    <t-select v-model="barcodeData.barcodeType" label="条码类型">
+                  <template #cellType="{ param }">
+                    <t-select v-model="param.type" label="条码类型">
                       <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
                     </t-select>
                   </template>
@@ -386,9 +377,13 @@ watch(
 );
 // 表单验证规则
 // form效验
+
 function validateNumber(value: any): boolean | CustomValidateResolveType {
   if (Number.isNaN(Number(value))) {
     return { result: false, message: '该字段必须是数字', type: 'error' };
+  }
+  if (Number(value) < 0) {
+    return { result: false, message: '该字段不能为负数', type: 'error' };
   }
   return true;
 }
@@ -398,8 +393,9 @@ const rules: ComputedRef<FormRules> = computed(() => {
     ruleCode: [{ required: true, message: '编码规则不能为空', trigger: 'change' }],
     ruleName: [{ required: true, message: '规则名称不能为空', trigger: 'blur' }],
     pri: [
-      { required: true, message: '优先级不能为空', trigger: 'blur' },
-      { validator: validateNumber, trigger: 'blur', message: '优先级必须是数字' },
+      { required: true, message: '优先级必填', type: 'error' },
+      { number: true, message: '该字段必须是数字', type: 'warning' },
+      { validator: validateNumber, trigger: 'blur' },
     ],
     barcodeValidateGroup: [{ required: true, message: '验证分组不能为空', trigger: 'change' }],
     barcodeType: [{ required: true, message: '条码类型不能为空', trigger: 'change' }],
@@ -411,9 +407,14 @@ const rules: ComputedRef<FormRules> = computed(() => {
     barcodeExpression: [{ required: true, message: '条码规则不能为空', trigger: 'blur' }],
     minLength: [
       { required: true, message: '最小长度不能为空', trigger: 'blur' },
-      { validator: validateNumber, trigger: 'blur', message: '最小长度必须是数字' },
+      { number: true, message: '该字段必须是数字', type: 'warning' },
+      { validator: validateNumber, trigger: 'blur' },
     ],
-    maxLength: [{ required: true, message: '最大长度不能为空', trigger: 'blur' }],
+    maxLength: [
+      { required: true, message: '最大长度不能为空', trigger: 'blur' },
+      { number: true, message: '该字段必须是数字', type: 'warning' },
+      { validator: validateNumber, trigger: 'blur' },
+    ],
   };
 });
 
@@ -507,7 +508,6 @@ const onTextEditRow = (row: { id: any }) => {
 
 // 关键件 编辑事件
 const onKeyEditRow = (row: any) => {
-  console.log('🚀 ~ file: index.vue:498 ~ onKeyEditRow ~ row:', row);
   diaLogTitle.value = '编辑规则';
   if (!+row.mitemCategoryId) {
     radioValue.value = 1;
@@ -535,7 +535,6 @@ const onKeyEditRow = (row: any) => {
   barcodeData.value.minLength = row.minLength; // 最小长度
   barcodeData.value.maxLength = row.maxLength; // 最大长度
   barcodeData.value.memo = row.memo; // 备注
-  console.log('🚀 ~ file: index.vue:525 ~ onKeyEditRow ~ barcodeData.value:', barcodeData.value);
   formVisible.value = true;
   submitFalg.value = false;
 };
@@ -584,7 +583,6 @@ const opts = computed(() => {
   return {
     code: {
       label: '规则',
-      labelWidth: '120',
       placeholder: '请输入规则名称/编码',
       comp: 't-input',
       event: 'input',
@@ -592,7 +590,6 @@ const opts = computed(() => {
     },
     type: {
       label: '条码类型',
-      labelWidth: '60',
       isHide: tabValue.value,
       event: 'select',
       defaultVal: '',
@@ -600,11 +597,14 @@ const opts = computed(() => {
     },
     material: {
       label: '物料名称',
-      labelWidth: '60',
       isHide: !tabValue.value,
-      event: 'select',
+      comp: 'bcmp-select-business',
+      event: 'business',
       defaultVal: '',
-      slotName: 'cellMaterial',
+      bind: {
+        type: 'mitemCategory',
+        showTitle: false,
+      },
     },
   };
 });
@@ -627,7 +627,7 @@ const onInput = async (data: any) => {
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       ruleKeyword: data.code,
-      mitemId: barcodeData.value.mitemCategoryId,
+      mitemId: data.material,
       barcodeValidateGroup: 'KEYPART',
     });
     keyTabData.list = res.list;
