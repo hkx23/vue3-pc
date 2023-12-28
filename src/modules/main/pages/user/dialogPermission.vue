@@ -91,7 +91,6 @@
                       type: 'virtual',
                     }"
                     @active="onActive"
-                    @click="treeClick"
                   >
                     <template #label="{ node }">
                       <t-space :size="8"
@@ -260,7 +259,7 @@ const permissionData = ref([]);
 const expandedValues = ref([]);
 const selectClientType = ref('0');
 const loading = ref(false);
-
+const tree = ref(null);
 const moduleData = ref([]);
 const emit = defineEmits(['update:modelValue', 'submit']);
 const visible = computed({
@@ -277,6 +276,9 @@ const keyList = ref({ value: 'id', label: 'moduleName', children: 'children' });
 const treeClickActive = ref('0');
 const onActive = (vals: any) => {
   [treeClickActive.value] = vals;
+  const activeNode = tree.value.getItem(treeClickActive.value);
+  selectedMenu.value = activeNode.data;
+  treeMenuChange();
 };
 const selectedMenu = ref(null);
 const treeCard = ref(null);
@@ -662,12 +664,6 @@ function clearSecondLevelChildren(node) {
   }
   return newNode;
 }
-// 树节点的点击事件，获取点击节点的文本
-const treeClick = async ({ node }: { node: any }) => {
-  console.log(node);
-  selectedMenu.value = node.data;
-  treeMenuChange();
-};
 
 const processTree = (treeArray) => {
   return treeArray.map((node) => clearSecondLevelChildren(node));
