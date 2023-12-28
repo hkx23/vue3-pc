@@ -4,6 +4,7 @@ import { LocationQueryRaw, RouteRecordName } from 'vue-router';
 import STYLE_CONFIG from '@/config/style';
 
 export interface RouteMeta {
+  id?: string;
   title?: string | Record<string, string>;
   icon?: string;
   iconName?: string;
