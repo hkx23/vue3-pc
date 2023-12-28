@@ -21,7 +21,7 @@
         v-model:current="bagsSuitcasesData.pageNum"
         v-model:page-size="bagsSuitcasesData.pageSize"
         style="margin-top: 8px"
-        :show-page-size="false"
+        :show-page-size="true"
         :total="anomalyTotal"
         @page-size-change="onPaginationChange"
         @current-change="onCurrentChange"
@@ -138,6 +138,7 @@ const onGetAnomalyTypeData = async () => {
 };
 
 const onPaginationChange = async () => {
+  bagsSuitcasesData.value.pageNum = 1;
   await onGetAnomalyTypeData();
 };
 
@@ -190,6 +191,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
+        valueField: 'scheCode',
         type: 'moSchedule',
         showTitle: false,
       },
@@ -200,6 +202,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
+        valueField: 'mitemCode',
         type: 'mitem',
         showTitle: false,
       },
@@ -208,22 +211,27 @@ const opts = computed(() => {
       label: '操作时间',
       comp: 't-date-range-picker',
       event: 'daterangetime',
-      defaultVal: [dayjs().subtract(1, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+      defaultVal: [startOfToday.format('YYYY-MM-DD'), endOfToday.format('YYYY-MM-DD HH:mm:ss')], // 初始化日期控件
       bind: {
-        enableTimePicker: false,
-        format: 'YYYY-MM-DD',
+        enableTimePicker: true,
+        // format: 'YYYY-MM-DD',
       },
     },
   };
 });
 
+// 获取当前日期的 00:00:00
+const startOfToday = dayjs().startOf('day');
+// 获取当前日期的 23:59:59
+const endOfToday = dayjs().endOf('day');
+
 const onInput = async (context) => {
   bagsSuitcasesData.value.pageNum = 1;
   const [beginDate, endDate] = context.operationTime;
-  bagsSuitcasesData.value.barcode = context.productCode; // 每条数据的code
+  bagsSuitcasesData.value.barcode = context?.productCode ? context?.productCode : ''; // 每条数据的code
   bagsSuitcasesData.value.mitemCode = context?.productNo ? context?.productNo : ''; // 产品编码 物料接口
   bagsSuitcasesData.value.moScheCode = context?.workOrder ? context?.workOrder : ''; // 排产单号
-  bagsSuitcasesData.value.pkgBarcode = context.boxCode; // 箱条码
+  bagsSuitcasesData.value.pkgBarcode = context?.boxCode ? context?.boxCode : ''; // 箱条码
   bagsSuitcasesData.value.beginDate = beginDate; // 开始日期
   bagsSuitcasesData.value.endDate = endDate; // 结束日期
   await onGetAnomalyTypeData();
