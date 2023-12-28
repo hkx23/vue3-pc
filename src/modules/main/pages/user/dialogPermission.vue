@@ -39,128 +39,153 @@
       <t-tab-panel :value="2" label="用户权限/权限配置" :destroy-on-hide="false">
         <template #panel>
           <!-- 功能类型与筛选框 -->
-          <t-row>
-            <t-col flex="auto">
-              <t-radio-group v-model="selectClientType" variant="primary-filled" @change="changeClientType">
-                <t-radio-button value="0">{{ t('business.main.all') }}</t-radio-button>
-                <t-radio-button v-for="clientType in clientTypeOption" :key="clientType.value" :value="clientType.value"
-                  >{{ clientType.label }}
-                </t-radio-button>
-              </t-radio-group>
-            </t-col>
-            <t-col flex="250px">
-              <t-input
-                v-model="filterPermissionName"
-                :placeholder="t('common.placeholder.plsenterkeyword')"
-                clearable
-                @change="searchChange"
-              >
-                <template #suffixIcon>
-                  <t-icon name="search" :style="{ cursor: 'pointer' }" />
-                </template>
-              </t-input>
-            </t-col>
-          </t-row>
-
-          <t-row>
-            <t-col flex="230px" style="margin-top: 16px">
-              <t-menu
-                v-model="selectedMenu"
-                v-model:expanded="expanded"
-                class="menu-area"
-                height="550px"
-                :collapsed="collapsed"
-                @change="menuChange"
-              >
-                <t-menu-item value="0" :title="t('business.main.all')"> {{ t('business.main.all') }} </t-menu-item>
-                <t-submenu
-                  v-for="item in originPermissionData"
-                  :key="item.id"
-                  :value="item.id"
-                  :title="item.moduleName"
-                >
-                  <!-- <template #icon>
-              <t-icon name="control-platform" />
-            </template> -->
-                  <template #title>
-                    <span>{{ item.moduleName }}</span>
-                  </template>
-                  <t-menu-item v-for="brach in item.children" :key="brach.id" :value="brach.id">
-                    {{ brach.moduleName }}
-                  </t-menu-item>
-                </t-submenu>
-
-                <!-- <template #operations>
-            <t-button class="t-demo-collapse-btn" variant="text" shape="square" @click="changeCollapsed">
-              <template #icon><t-icon name="view-list" /></template>
-            </t-button>
-          </template> -->
-              </t-menu>
-            </t-col>
-            <t-col flex="1" class="module-area" style="padding: 8px">
-              <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()">{{
-                t('common.button.selectAll')
-              }}</t-checkbox>
-              <t-collapse
-                v-model="expandedValues"
-                :borderless="true"
-                expand-icon-placement="right"
-                :expand-on-row-click="false"
-              >
-                <!-- 如果没有按钮权限，图标不显示 -->
-                <t-collapse-panel
-                  v-for="item in moduleData"
-                  :key="item.id"
-                  :value="item.id"
-                  :expand-icon="item.buttons.length > 0"
-                >
-                  <template #header>
-                    <t-checkbox
-                      v-model="item.enabled"
-                      :disabled="item.disable"
-                      :value="item.permissionId"
-                      @change="moduleCheckChange"
-                      >{{ item.moduleName }}</t-checkbox
-                    ></template
+          <cmp-container :full="true">
+            <cmp-card :ghost="true">
+              <t-row>
+                <t-col flex="auto">
+                  <t-radio-group v-model="selectClientType" variant="primary-filled" @change="changeClientType">
+                    <t-radio-button value="0">{{ t('business.main.all') }}</t-radio-button>
+                    <t-radio-button
+                      v-for="clientType in clientTypeOption"
+                      :key="clientType.value"
+                      :value="clientType.value"
+                      >{{ clientType.label }}
+                    </t-radio-button>
+                  </t-radio-group>
+                </t-col>
+                <t-col flex="250px">
+                  <t-input
+                    v-model="filterPermissionName"
+                    :placeholder="t('common.placeholder.plsenterkeyword')"
+                    clearable
+                    @change="searchChange"
                   >
-                  <template #headerRightContent>
-                    <t-checkbox
-                      v-model="item.refuse"
-                      :disabled="item.refuseDisable"
-                      :value="item.permissionId"
-                      @change="moduleRefuseCheckChange"
-                      >拒绝</t-checkbox
-                    ></template
+                    <template #suffixIcon>
+                      <t-icon name="search" :style="{ cursor: 'pointer' }" />
+                    </template>
+                  </t-input>
+                </t-col>
+              </t-row>
+            </cmp-card>
+            <cmp-card ref="treeCard" :ghost="true">
+              <t-row>
+                <t-col flex="330px" class="module-area" style="margin-top: 16px; padding: 8px; margin-left: 0">
+                  <t-tree
+                    ref="tree"
+                    :data="originPermissionTreeData"
+                    hover
+                    :keys="keyList"
+                    activable
+                    :checkable="false"
+                    expand-all
+                    :transition="true"
+                    :expand-on-click-node="false"
+                    :line="true"
+                    :icon="true"
+                    :height="treeHeight"
+                    :actived="[treeClickActive]"
+                    :scroll="{
+                      rowHeight: 10,
+                      bufferSize: 10,
+                      threshold: 10,
+                      type: 'virtual',
+                    }"
+                    @active="onActive"
+                    @click="treeClick"
                   >
+                    <template #label="{ node }">
+                      <t-space :size="8"
+                        ><t-icon v-if="node?.data" :name="node?.data.iconPath" /><span> {{ node.label }}</span></t-space
+                      >
+                    </template>
+                  </t-tree>
+                  <!-- <t-menu
+          v-model="selectedMenu"
+          v-model:expanded="expanded"
+          class="menu-area"
+          height="550px"
+          :collapsed="collapsed"
+          @change="menuChange"
+        >
+          <t-menu-item value="0" :title="t('business.main.all')"> {{ t('business.main.all') }} </t-menu-item>
+          <t-submenu v-for="item in originPermissionData" :key="item.id" :value="item.id" :title="item.moduleName">
+           
+            <template #title>
+              <span>{{ item.moduleName }}</span>
+            </template>
+            <t-menu-item v-for="brach in item.children" :key="brach.id" :value="brach.id">
+              {{ brach.moduleName }}
+            </t-menu-item>
+          </t-submenu>
 
-                  <t-space break-line size="8">
-                    <div
-                      v-for="buttionItem in item.buttons"
-                      :key="buttionItem.id"
-                      class="buttonPermissionItem"
-                      :value="buttionItem.id"
+        </t-menu> -->
+                </t-col>
+                <t-col flex="1" class="module-area" style="padding: 8px">
+                  <t-checkbox v-model="isAllCheck" :indeterminate="isAllIndeterminate" @change="checkAll()">{{
+                    t('common.button.selectAll')
+                  }}</t-checkbox>
+                  <t-collapse
+                    v-model="expandedValues"
+                    :borderless="true"
+                    expand-icon-placement="right"
+                    :expand-on-row-click="false"
+                  >
+                    <!-- 如果没有按钮权限，图标不显示 -->
+                    <t-collapse-panel
+                      v-for="item in moduleData"
+                      :key="item.id"
+                      :value="item.id"
+                      :expand-icon="item.buttons.length > 0"
                     >
-                      <div>{{ buttionItem.permissionName }}</div>
-                      <t-checkbox
-                        v-model="buttionItem.enabled"
-                        :disabled="item.disable"
-                        :value="buttionItem.permissionId"
-                        @change="buttonCheckChange"
-                        >允许</t-checkbox
+                      <template #header>
+                        <t-checkbox
+                          v-model="item.enabled"
+                          :disabled="item.disable"
+                          :value="item.permissionId"
+                          @change="moduleCheckChange"
+                          >{{ item.moduleName }}</t-checkbox
+                        ></template
                       >
-                      <t-checkbox
-                        v-model="buttionItem.refuse"
-                        :disabled="item.refuseDisable"
-                        :value="buttionItem.permissionId"
-                        @change="buttonRefuseCheckChange"
-                        >拒绝</t-checkbox
+                      <template #headerRightContent>
+                        <t-checkbox
+                          v-model="item.refuse"
+                          :disabled="item.refuseDisable"
+                          :value="item.permissionId"
+                          @change="moduleRefuseCheckChange"
+                          >拒绝</t-checkbox
+                        ></template
                       >
-                    </div>
-                  </t-space>
-                </t-collapse-panel>
-              </t-collapse>
-            </t-col>
-          </t-row>
+
+                      <t-space break-line size="8">
+                        <div
+                          v-for="buttionItem in item.buttons"
+                          :key="buttionItem.id"
+                          class="buttonPermissionItem"
+                          :value="buttionItem.id"
+                        >
+                          <div>{{ buttionItem.permissionName }}</div>
+                          <t-checkbox
+                            v-model="buttionItem.enabled"
+                            :disabled="item.disable"
+                            :value="buttionItem.permissionId"
+                            @change="buttonCheckChange"
+                            >允许</t-checkbox
+                          >
+                          <t-checkbox
+                            v-model="buttionItem.refuse"
+                            :disabled="item.refuseDisable"
+                            :value="buttionItem.permissionId"
+                            @change="buttonRefuseCheckChange"
+                            >拒绝</t-checkbox
+                          >
+                        </div>
+                      </t-space>
+                    </t-collapse-panel>
+                  </t-collapse>
+                </t-col>
+              </t-row>
+            </cmp-card>
+          </cmp-container>
         </template>
       </t-tab-panel>
     </t-tabs>
@@ -174,6 +199,7 @@
 import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, ref, watch } from 'vue';
+import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api, UserAuthDTO, UserRoleDTO } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
@@ -226,14 +252,12 @@ const { loading: tableloading, setLoading } = useLoading();
 
 const tabValue = ref(1);
 const filterPermissionName = ref('');
-const collapsed = ref(false);
 const expanded = ref([]);
 const isAllCheck = ref(false);
 const isAllIndeterminate = ref(false);
 const originPermissionData = ref([]);
 const permissionData = ref([]);
 const expandedValues = ref([]);
-const selectedMenu = ref('');
 const selectClientType = ref('0');
 const loading = ref(false);
 
@@ -247,7 +271,21 @@ const visible = computed({
     emit('update:modelValue', val);
   },
 });
-
+// 树状结构定义
+const keyList = ref({ value: 'id', label: 'moduleName', children: 'children' });
+// 树节点高亮 有两个参数
+const treeClickActive = ref('0');
+const onActive = (vals: any) => {
+  [treeClickActive.value] = vals;
+};
+const selectedMenu = ref(null);
+const treeCard = ref(null);
+const treeHeight = ref('400px');
+useResizeObserver(treeCard, (entries) => {
+  const entry = entries[0];
+  const { height } = entry.contentRect;
+  treeHeight.value = `${height - 80}px`;
+});
 // 查询条件处理数据
 const filterList = ref([]) as any;
 // 点击查询按钮
@@ -408,10 +446,10 @@ const buttonRefuseCheckChange = (checkResult: boolean, e: any) => {
   }
 };
 
-const menuChange = (active) => {
-  selectedMenu.value = active;
-  treeMenuChange();
-};
+// const menuChange = (active) => {
+//   selectedMenu.value = active;
+//   treeMenuChange();
+// };
 const searchChange = (value: string) => {
   filterPermissionName.value = value;
   treeMenuChange();
@@ -583,9 +621,16 @@ const fnFilter = (node) => {
     const nodeClientTypeResult = (nodeClientType & selectClientTypeNum) !== 0;
     result = result && nodeClientTypeResult;
   }
-  if (selectedMenu.value !== '0') {
-    result = result && node.parentModuleId === selectedMenu.value;
+  if (selectedMenu.value.id !== '0') {
+    if (selectedMenu.value.moduleLevel !== 'ROOT') {
+      result = result && node.parentModuleId === selectedMenu.value.id;
+    } else {
+      result = result && selectedMenu.value.children.map((item) => item.id).includes(node.parentModuleId);
+    }
   }
+  // if (selectedMenu.value !== '0') {
+  //   result = result && node.parentModuleId === selectedMenu.value;
+  // }
   // if (self.isRoleOwn) {
   //   result =
   //     result &&
@@ -606,13 +651,44 @@ const treeFilter = (tree, func) => {
 const treeMenuChange = () => {
   permissionData.value = treeFilter(originPermissionData.value, fnFilter);
 };
+function clearSecondLevelChildren(node) {
+  const newNode = { ...node };
+  if (node.children && Array.isArray(node.children)) {
+    newNode.children = node.children.map((child) => {
+      const childNode = { ...child };
+      delete childNode.children;
+      return childNode;
+    });
+  }
+  return newNode;
+}
+// 树节点的点击事件，获取点击节点的文本
+const treeClick = async ({ node }: { node: any }) => {
+  console.log(node);
+  selectedMenu.value = node.data;
+  treeMenuChange();
+};
 
+const processTree = (treeArray) => {
+  return treeArray.map((node) => clearSecondLevelChildren(node));
+};
+const originPermissionTreeData = computed(() => {
+  const resultData = processTree(originPermissionData.value);
+  // 在resultData头部插入一条全部数据
+  resultData.unshift({
+    id: '0',
+    moduleName: '全部',
+    iconPath: 'home',
+  });
+  return resultData;
+});
 watch(visible, (value: boolean) => {
   if (value && props.id) {
     // @ts-ignore
     // 打开时候加载数据
     tabValue.value = 1;
-    selectedMenu.value = '0';
+    selectedMenu.value = { id: '0' };
+    treeClickActive.value = '0';
     fetchRoleTable();
     fetchPermissionData();
   }
@@ -647,8 +723,17 @@ watch(
   overflow: auto;
   margin-top: 16px;
   margin-left: 16px;
-  max-height: calc(100vh - 200px);
-  padding: 8px;
+  height: calc(100vh - 200px);
+  padding: 16px;
+
+  :deep(.t-tree__label) {
+    width: calc(100% - 20px);
+    padding: 8px;
+  }
+
+  :deep(.t-is-active .t-tree__label) {
+    color: var(--td-brand-color);
+  }
 }
 
 .buttonPermissionItem {
