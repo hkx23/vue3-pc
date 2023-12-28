@@ -576,6 +576,9 @@ const onConfirm = async () => {
 // 重置
 const resetHandle = () => {
   mainform.value.serialNumber = '';
+  preSetting.value.curMitemId = '';
+  preSetting.value.curMoScheId = '';
+  preSetting.value.curProcessId = '';
   keyPartSumList.value = [];
   scanInfoList.value = [];
   // 清除所有对象的值
