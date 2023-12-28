@@ -323,7 +323,6 @@ const opts = computed(() => {
 });
 
 const onInput = async (data: any) => {
-  console.log('🚀 ~ file: index.vue:326 ~ onInput ~ data:', data);
   pageUI.value.page = 1;
   const resultMap = {
     '01': [1, 0],

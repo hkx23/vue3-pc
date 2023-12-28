@@ -103,11 +103,8 @@ export interface Location {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 货位代码 */
   locationCode?: string;
-  /** 货位名称 */
   locationName?: string;
-  /** 货位描述 */
   locationDesc?: string;
   warehouseId?: string;
   districtId?: string;
@@ -196,11 +193,8 @@ export interface LocationVO {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 货位代码 */
   locationCode?: string;
-  /** 货位名称 */
   locationName?: string;
-  /** 货位描述 */
   locationDesc?: string;
   warehouseId?: string;
   districtId?: string;
@@ -236,72 +230,62 @@ export interface ResultPagingDataLocationVO {
   data?: PagingDataLocationVO;
 }
 
-export interface LabelSearch {
+/** 标签日志表 */
+export interface LabelLog {
+  id?: string;
   /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /**
-   * 收货开始日期
+   * 创建时间
    * @format date-time
    */
-  dateStart?: string;
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
   /**
-   * 收货结束日期
+   * 修改时间
    * @format date-time
    */
-  dateEnd?: string;
-  supplierId?: string;
-  mitemId?: string;
-  /** 批次号 */
-  lotNo?: string;
-  /** 送货单 */
-  billNo?: string;
-  /** 是否仅显示未打印完成 */
-  isFinishDisplay?: boolean;
-  deliveryId?: string;
-  deliveryDtlId?: string;
-  labelId?: string;
-  /** 是否仅显示已生成 */
-  isCreated?: boolean;
-  /** 条码状态 */
-  barcodeStatus?: string;
-  /** 条码 */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
   labelNo?: string;
-  /**
-   * 生成开始日期
-   * @format date-time
-   */
-  timeCreatedStart?: string;
-  /**
-   * 生成结束日期
-   * @format date-time
-   */
-  timeCreatedEnd?: string;
-  barcodeRuleId?: string;
-  /** 条码 */
-  barcode?: string;
-  /**
-   * 生成数量
-   * @format int32
-   */
-  createNum?: number;
-  /**
-   * 拆分数量
-   * @format int32
-   */
-  splitNum?: number;
-  printTempId?: string;
-  /** 原因 */
   reason?: string;
-  /** 批量ID */
-  ids?: string[];
+  tmplCode?: string;
+  tmplName?: string;
+  tmplCategory?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  districtCode?: string;
+  districtName?: string;
+  locationCode?: string;
+  locationName?: string;
+  /** 数量 */
+  qty?: number;
+  hostname?: string;
+  ipaddress?: string;
+  memo?: string;
+  operateType?: string;
+  status?: string;
+}
+
+/** 通用响应类 */
+export interface Result {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
 }
 
 export interface MitemForwardTraceSearch {
@@ -428,6 +412,74 @@ export interface ResultListString {
   data?: (string | null)[];
 }
 
+export interface LabelSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 收货开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 收货结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  supplierId?: string;
+  mitemId?: string;
+  /** 批次号 */
+  lotNo?: string;
+  /** 送货单 */
+  billNo?: string;
+  /** 是否仅显示未打印完成 */
+  isFinishDisplay?: boolean;
+  deliveryId?: string;
+  deliveryDtlId?: string;
+  labelId?: string;
+  /** 是否仅显示已生成 */
+  isCreated?: boolean;
+  /** 条码状态 */
+  barcodeStatus?: string;
+  /** 条码 */
+  labelNo?: string;
+  /**
+   * 生成开始日期
+   * @format date-time
+   */
+  timeCreatedStart?: string;
+  /**
+   * 生成结束日期
+   * @format date-time
+   */
+  timeCreatedEnd?: string;
+  barcodeRuleId?: string;
+  /** 条码 */
+  barcode?: string;
+  /**
+   * 生成数量
+   * @format int32
+   */
+  createNum?: number;
+  /**
+   * 拆分数量
+   * @format int32
+   */
+  splitNum?: number;
+  printTempId?: string;
+  /** 原因 */
+  reason?: string;
+  /** 批量ID */
+  ids?: string[];
+}
+
 /** 显示产品条码管理 */
 export interface LabelVO {
   id?: string;
@@ -475,7 +527,7 @@ export interface LabelVO {
    * @format int32
    */
   printSeq?: number;
-  deliveryId?: string;
+  deliveryDtlId?: string;
   /** 接收单号 */
   receiveNo?: string;
   /** 状态 */
@@ -515,7 +567,7 @@ export interface LabelVO {
   uomName?: string;
   /** 计量单位 */
   uom?: string;
-  deliveryDtlId?: string;
+  deliveryId?: string;
   /** 条码状态 */
   barcodeStatusName?: string;
   /** 收货人名称 */
@@ -600,11 +652,8 @@ export interface District {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 货位代码 */
   districtCode?: string;
-  /** 货位名称 */
   districtName?: string;
-  /** 货位描述 */
   districtDesc?: string;
   warehouseId?: string;
 }
@@ -663,11 +712,8 @@ export interface DistrictVO {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 货位代码 */
   districtCode?: string;
-  /** 货位名称 */
   districtName?: string;
-  /** 货位描述 */
   districtDesc?: string;
   warehouseId?: string;
   /** 仓库代码 */
@@ -911,17 +957,11 @@ export type PrintTmpl = {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 模板代码 */
   tmplCode?: string;
-  /** 模板名称 */
   tmplName?: string;
-  /** 模板描述 */
   tmplDesc?: string;
-  /** 模板内容地址 */
   tmplBodyPath?: string;
-  /** 模板类别 */
   tmplCategory?: string;
-  /** 模板类型 */
   tmplType?: string;
 } | null;
 
@@ -963,15 +1003,10 @@ export type BarcodeRule = {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 条码规则代码 */
   ruleCode?: string;
-  /** 条码规则名称 */
   ruleName?: string;
-  /** 条码规则描述 */
   ruleDesc?: string;
-  /** 条码类型 */
   barcodeType?: string;
-  /** 条码规则表达式 */
   ruleExpression?: string;
 } | null;
 
@@ -1241,52 +1276,22 @@ export const api = {
         body: data as any,
       }),
   },
+  labelLog: {
+    /**
+     * No description
+     *
+     * @tags 标签日志表
+     * @name BatchSaveLog
+     * @request POST:/labelLog/batchSaveLog
+     * @secure
+     */
+    batchSaveLog: (data: LabelLog[]) =>
+      http.request<Result['data']>(`/api/warehouse/labelLog/batchSaveLog`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   label: {
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name SplitBarcode
-     * @summary 拆分条码
-     * @request POST:/label/splitBarcode
-     * @secure
-     */
-    splitBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/label/splitBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name ReprintBarcode
-     * @summary 补打条码
-     * @request POST:/label/reprintBarcode
-     * @secure
-     */
-    reprintBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/label/reprintBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name PrintBarcode
-     * @summary 打印条码
-     * @request POST:/label/printBarcode
-     * @secure
-     */
-    printBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/label/printBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
     /**
      * No description
      *
@@ -1313,6 +1318,21 @@ export const api = {
      */
     getMitemBasicInfo: (data: MitemForwardTraceSearch) =>
       http.request<ResultMFTVO['data']>(`/api/warehouse/label/getMitemBasicInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelVo
+     * @summary 获取日志插入信息
+     * @request POST:/label/getLabelVO
+     * @secure
+     */
+    getLabelVo: (data: string) =>
+      http.request<ResultObject['data']>(`/api/warehouse/label/getLabelVO`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1418,21 +1438,6 @@ export const api = {
      */
     generateBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/warehouse/label/generateBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name CancellationBarcode
-     * @summary 作废条码
-     * @request POST:/label/cancellationBarcode
-     * @secure
-     */
-    cancellationBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/label/cancellationBarcode`, {
         method: 'POST',
         body: data as any,
       }),
