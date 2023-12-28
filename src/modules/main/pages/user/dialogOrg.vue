@@ -44,6 +44,7 @@ import { api, UserOrgDTO } from '@/api/main';
 
 import { useLang } from './lang';
 
+const emit = defineEmits(['update:modelValue', 'submitSucess']);
 const { t } = useLang();
 
 const props = defineProps({
@@ -120,6 +121,11 @@ const fetchOrgData = async () => {
 };
 const rehandleSelectChange = (value, { selectedRowData }) => {
   selectedRowKeys.value = value;
+  if (selectedRowData.length === 1) {
+    selectedRowData.forEach((item) => {
+      item.default = true;
+    });
+  }
   console.log(value, selectedRowData);
 };
 const setDefaultOrg = (currenRow: any) => {
@@ -171,7 +177,8 @@ const onConfirmAnother = (context) => {
     .addUserInOrg(userDatas)
     .then(() => {
       MessagePlugin.success(t('user.setUserOrgsSuccess'));
-      fetchOrgData();
+      // fetchOrgData();
+      emit('submitSucess');
       visible.value = false;
       saveLoading.value = false;
     })
@@ -186,7 +193,7 @@ const onConfirmAnother = (context) => {
   // });
   //
 };
-const emit = defineEmits(['update:modelValue', 'submit']);
+
 const visible = computed({
   get() {
     return props.modelValue;
