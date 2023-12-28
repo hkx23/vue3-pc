@@ -3335,13 +3335,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
   isProductName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isState?: boolean;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5046,12 +5046,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -5354,6 +5354,19 @@ export interface ResultPagingDataModule {
   message?: string;
   /** 响应数据 */
   data?: PagingDataModule;
+}
+
+/** 通用响应类 */
+export interface ResultListFavorite {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Favorite[] | null;
 }
 
 /** 通用响应类 */
@@ -8683,7 +8696,7 @@ export const api = {
      * @secure
      */
     list: () =>
-      http.request<ResultObject['data']>(`/api/main/favorite/list`, {
+      http.request<ResultListFavorite['data']>(`/api/main/favorite/list`, {
         method: 'GET',
       }),
 
