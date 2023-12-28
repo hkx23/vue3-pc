@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { api, OrgVO } from '@/api/main';
+import { api, Favorite, OrgVO } from '@/api/main';
 import { getToken } from '@/api/portal';
 import { usePermissionStore } from '@/store';
 import type { UserInfo } from '@/types/interface';
@@ -12,6 +12,7 @@ interface OrgUser extends UserInfo {
   timeModified?: string;
   timeLastPasswordChanged?: string;
   orgs?: OrgVO[];
+  favorites?: Favorite[];
 }
 const InitUserInfo: UserInfo = {
   id: '', // 用户ID
@@ -67,6 +68,7 @@ export const useUserStore = defineStore('user', {
     },
     async getUserInfo() {
       const res = await api.user.currentUserInfo();
+      const resfavorites = await api.favorite.list();
       // const mockRemoteUserInfo = async () => {
       //   return {
       //     name: '管理员',
@@ -91,6 +93,7 @@ export const useUserStore = defineStore('user', {
         timeLastPasswordChanged: res.timeLastPasswordChanged,
         orgId,
         orgs: res.orgList,
+        favorites: resfavorites,
       } as OrgUser;
 
       const userOrgInfo = this.currUserOrgInfo;
@@ -118,6 +121,9 @@ export const useUserStore = defineStore('user', {
     setOrgId(id: string) {
       this.userInfo.orgId = id;
       fw.setOrgId(id);
+    },
+    setFavorites(favorites: Favorite[]) {
+      this.userInfo.favorites = favorites;
     },
     async logout() {
       this.token = '';

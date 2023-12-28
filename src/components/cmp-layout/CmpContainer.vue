@@ -18,7 +18,7 @@ const props = defineProps<{
   gutter?: number | GutterObject | (number | GutterObject)[];
 }>();
 
-const gutter = ref(props.gutter ?? [0, 16]); // 使用默认值
+const gutter = ref(props.gutter ?? [0, 12]); // 使用默认值
 
 const classAttrs = computed(() => {
   return `cmp-container ${props.full ? 'cmp-container-full' : ''}`;

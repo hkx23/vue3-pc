@@ -91,6 +91,9 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
     if (item.meta.icon) {
       item.meta.icon = await getMenuIcon(item.meta.icon);
     }
+    if ((item as any).id) {
+      item.meta.id = (item as any).id;
+    }
 
     // eslint-disable-next-line no-unused-expressions
     children && asyncImportRoute(children);
@@ -151,6 +154,9 @@ export async function transformItemToRoute<T = RouteItem>(route: RouteItem): Pro
   route.meta.iconName = route.meta.icon;
   if (route.meta.icon) {
     route.meta.icon = await getMenuIcon(route.meta.icon);
+  }
+  if ((route as any).id) {
+    route.meta.id = (route as any).id;
   }
   return route as unknown as T;
 }

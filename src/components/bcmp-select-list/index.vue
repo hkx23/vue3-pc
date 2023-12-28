@@ -21,7 +21,7 @@
       @popup-visible-change="onPopupVisibleChange"
     >
       <template #panel>
-        <div class="t-select__data">
+        <div class="t-select__data" style="max-height: 300px">
           <div
             v-for="item in state.tableData"
             :key="item[keywords.value]"
@@ -483,6 +483,7 @@ defineExpose({ closeTable, onClear });
   .t-select__data {
     min-width: 300px;
     display: block;
+    overflow: auto;
   }
 }
 
