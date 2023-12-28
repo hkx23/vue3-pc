@@ -1700,8 +1700,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3333,15 +3333,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
+  isState?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
   isBatchName?: string;
   isInProcessName?: string;
-  isRawChecked?: boolean;
   isProductName?: string;
-  isRawName?: string;
-  isInProcessChecked?: boolean;
+  stateName?: string;
   isProductChecked?: boolean;
-  isState?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3923,8 +3923,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5046,12 +5046,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -8675,6 +8675,21 @@ export const api = {
      * No description
      *
      * @tags 菜单收藏夹表
+     * @name Delete
+     * @summary 删除菜单收藏
+     * @request POST:/favorite/delete
+     * @secure
+     */
+    delete: (data: Favorite) =>
+      http.request<ResultObject['data']>(`/api/main/favorite/delete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单收藏夹表
      * @name Add
      * @summary 新增菜单收藏
      * @request POST:/favorite/add
@@ -8698,21 +8713,6 @@ export const api = {
     list: () =>
       http.request<ResultListFavorite['data']>(`/api/main/favorite/list`, {
         method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 菜单收藏夹表
-     * @name Delete
-     * @summary 删除菜单收藏
-     * @request DELETE:/favorite/delete
-     * @secure
-     */
-    delete: (query: { id: string }) =>
-      http.request<ResultObject['data']>(`/api/main/favorite/delete`, {
-        method: 'DELETE',
-        params: query,
       }),
   },
   equipment: {
