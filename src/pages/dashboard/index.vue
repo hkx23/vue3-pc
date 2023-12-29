@@ -41,8 +41,17 @@
       use-css-transforms
     >
       <template #item="{ item }">
-        <cmp-card height="100%" :full="true" class="text" :title="getTitle(item.i)" :is-mini="item.h <= 2">
-          <component :is="getComponent(item.i)" />
+        <cmp-card
+          v-for="comp in comps.filter((t) => t.code === item.i)"
+          :key="comp.code"
+          height="100%"
+          :full="true"
+          :ghost="comp.ghost"
+          :title="comp.showTitle ? comp.title : ''"
+          :subtitle="comp.showTitle ? comp.subtitle : ''"
+          :is-mini="item.h <= 2"
+        >
+          <component :is="comp?.component" />
           <template #actions>
             <t-dropdown
               v-if="moreBtnOptions.length > 0"
@@ -148,16 +157,6 @@ const groupedComponents = computed<groupedComponentItem[]>(() => {
   );
 });
 
-const getComponent = (code: string) => {
-  const comp = comps.value.find((t) => t.code === code);
-  return comp?.component;
-};
-
-const getTitle = (code: string) => {
-  const comp = comps.value.find((t) => t.code === code);
-  return comp.showTitle ? comp.title : '';
-};
-
 const onDrag = (dragItem: componentItem) => {
   const parentRect = wrapperRef.value?.getBoundingClientRect();
 
@@ -230,7 +229,11 @@ const onDragEnd = (dragItem) => {
   }
 
   layout.value.push({
-    ...dragItem,
+    // ...dragItem,
+    x: dragItem.x,
+    y: dragItem.y,
+    w: dragItem.w,
+    h: dragItem.h,
     i: dragItem.code,
   });
   gridLayoutRef.value.dragEvent('dragend', dragItem.i, dragItem.x, dragItem.y, dragItem.h, dragItem.w);

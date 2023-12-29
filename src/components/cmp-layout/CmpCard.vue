@@ -62,26 +62,57 @@ const classAttrs = computed(() => {
   :deep(> .cmp-container-full) {
     padding: 0;
   }
+
+  :deep(.t-card) {
+    > .t-card__header {
+      > .t-card__header-wrapper {
+        > div {
+          > .t-card__subtitle {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
 }
 
-.cmp-card-mini {
-  :deep(.t-card__header) {
-    padding: 0;
-
-    .t-card__title {
-      display: none;
-    }
-
-    .t-card__actions {
+.cmp-card-ghost {
+  :deep(> .cmp-card) {
+    // margin: 0 -6px;
+    .cmp-card-actions {
       position: absolute;
-      right: 16px;
+      right: var(--td-comp-paddingLR-xl);
       top: 8px;
       z-index: 100;
     }
   }
+}
 
-  :deep(.t-card__body) {
-    padding: 0 var(--td-comp-paddingLR-xl);
+.cmp-card-mini {
+  :deep(.t-card) {
+    > .t-card__header {
+      padding: 0;
+
+      > .t-card__header-wrapper {
+        > div {
+          > .t-card__title,
+          > .t-card__subtitle {
+            display: none;
+          }
+        }
+      }
+
+      > .t-card__actions {
+        position: absolute;
+        right: var(--td-comp-paddingLR-xl);
+        top: 8px;
+        z-index: 100;
+      }
+    }
+
+    > .t-card__body {
+      padding: 0 var(--td-comp-paddingLR-xl);
+    }
   }
 }
 
@@ -95,18 +126,6 @@ const classAttrs = computed(() => {
     > .t-card__body {
       flex: 1;
       overflow: auto;
-    }
-  }
-}
-
-.cmp-card-ghost {
-  :deep(> .cmp-card) {
-    // margin: 0 -6px;
-    .cmp-card-actions {
-      position: absolute;
-      right: 16px;
-      top: 8px;
-      z-index: 100;
     }
   }
 }
