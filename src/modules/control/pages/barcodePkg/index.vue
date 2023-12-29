@@ -961,7 +961,7 @@ const pkgBarcodeManageOp = computed(() => {
         showTitle: false,
       },
     },
-    bracodeType: {
+    barcodeType: {
       label: '条码类型',
       comp: 't-select',
       event: 'single',
