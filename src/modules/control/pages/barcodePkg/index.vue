@@ -361,7 +361,7 @@ const totalDay = ref(0);
 const printMode = ref({
   barcodeRuleId: '',
   printTempId: '',
-  createNum: '',
+  createNum: 0,
   packQty: 0,
   createPDNum: 0,
   packQtyShow: '',
@@ -374,18 +374,18 @@ const printMode = ref({
 // 生成按钮模型初始化
 const generateBracode = async () => {
   const residueQty = printMode.value.planQty - printMode.value.generateQty;
-  // 校验规格数量是否为正整数
-  const intValue = parseInt(printMode.value.createNum, 10);
-  if (!Number.isInteger(intValue) || intValue > residueQty) {
+  console.log(residueQty);
+
+  if (!Number.isInteger(printMode.value.createPDNum) || printMode.value.createPDNum > residueQty) {
     // 提示错误信息
     MessagePlugin.warning(`本次生成数量需要为小于剩余生成数${residueQty}的正整数`);
     return;
   }
 
   // 校验规格数量是否为正整数
-  if (intValue === 0) {
+  if (printMode.value.createPDNum <= 0) {
     // 提示错误信息
-    MessagePlugin.warning(`本次生成数量不得为0`);
+    MessagePlugin.warning(`本次生成数量需为正整数`);
     return;
   }
 
@@ -397,7 +397,7 @@ const generateBracode = async () => {
   }
   await api.barcodePkg.generateBarcode({
     ...printMode.value,
-    createNum: intValue,
+    createNum: printMode.value.createNum,
   });
   handleTabClick(tabValue.value);
   MessagePlugin.success('生成成功');
@@ -1077,7 +1077,6 @@ const onRefreshBelow = () => {
 const onRefreshTag = () => {
   api.barcodePkg.getTagList(queryCondition.value).then((data) => {
     tabList.list = data.list;
-    barcodeTotal.value = data.total;
   });
   onPrintRulesData();
   onPrintTemplateData();
