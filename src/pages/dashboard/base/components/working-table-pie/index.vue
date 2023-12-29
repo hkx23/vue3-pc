@@ -8,6 +8,7 @@ import { PieChart } from 'echarts/charts';
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
+import { debounce } from 'lodash';
 import { onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
@@ -35,17 +36,19 @@ const renderCountChart = async () => {
   countChart.setOption(optionChart.value);
 };
 
-useResizeObserver(countContainerParentRef, (entries) => {
-  const entry = entries[0];
-  countChart.resize({
-    width: entry.contentRect.width,
-    height: entry.contentRect.height,
-    animation: {
-      duration: 300,
-      delay: 200,
-    },
-  });
-});
+useResizeObserver(
+  countContainerParentRef,
+  debounce((entries) => {
+    const entry = entries[0];
+    countChart.resize({
+      width: entry.contentRect.width,
+      height: entry.contentRect.height,
+      animation: {
+        duration: 300,
+      },
+    });
+  }, 600),
+);
 
 onMounted(() => {
   renderCountChart();
