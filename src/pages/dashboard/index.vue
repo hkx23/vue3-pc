@@ -41,11 +41,11 @@
       use-css-transforms
     >
       <template #item="{ item }">
-        <cmp-card height="100%" :full="true" class="text" :title="getTitle(item.i)">
+        <cmp-card height="100%" :full="true" class="text" :title="getTitle(item.i)" :is-mini="item.h <= 2">
           <component :is="getComponent(item.i)" />
           <template #actions>
             <t-dropdown
-              v-if="settingStore.enableEditingMode"
+              v-if="moreBtnOptions.length > 0"
               :options="moreBtnOptions"
               @click="(data) => onClickMore(data, item.i)"
             >
@@ -71,7 +71,13 @@ const settingStore = useSettingStore();
 
 const wrapperRef = ref<HTMLElement>();
 const gridLayoutRef = ref<InstanceType<typeof GridLayout>>();
-const moreBtnOptions = [{ content: '删除面板', value: 'REMOVE_PANEL' }];
+const moreBtnOptions = computed(() => {
+  let result = [];
+  if (settingStore.enableEditingMode) {
+    result = [{ content: '删除面板', value: 'REMOVE_PANEL' }, ...result];
+  }
+  return result;
+});
 const onClickMore = (data, id) => {
   switch (data.value) {
     case 'REMOVE_PANEL':

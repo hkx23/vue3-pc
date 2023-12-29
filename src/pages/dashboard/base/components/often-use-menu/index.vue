@@ -1,6 +1,6 @@
 <template>
   <div v-show="cRecommendList && cRecommendList.length > 0">
-    <div class="recommend cmp-card">
+    <div class="recommend">
       <div class="recommend-body">
         <div v-for="(item, index) in cRecommendList" :key="index" class="recommend-item" @click="onModuleClick(item)">
           <div :class="randomNumber()">
