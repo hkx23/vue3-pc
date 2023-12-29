@@ -68,6 +68,10 @@ const classAttrs = computed(() => {
   :deep(.t-card__header) {
     padding: 0;
 
+    .t-card__title {
+      display: none;
+    }
+
     .t-card__actions {
       position: absolute;
       right: 16px;
