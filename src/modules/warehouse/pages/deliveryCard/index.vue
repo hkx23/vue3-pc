@@ -180,7 +180,6 @@
                       :options="onPrintTemplateList"
                     >
                     </t-select>
-
                     <t-button
                       theme="primary"
                       :disabled="!productSelectedRowKeys?.length ? true : false"
@@ -303,7 +302,6 @@
   <!---%日志 dialog 弹窗  -->
   <t-dialog v-model:visible="logInterfaceVisible" width="750px" :cancel-btn="null" :confirm-btn="null" header="日志">
     <cmp-table
-      ref="tableRef"
       v-model:pagination="pageUIDay"
       row-key="id"
       :table-column="logInterface"
@@ -327,7 +325,7 @@ import {
   PrimaryTableCol,
   TableRowData,
 } from 'tdesign-vue-next';
-import { computed, nextTick, onMounted, reactive, Ref, ref } from 'vue';
+import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api } from '@/api/warehouse';
@@ -501,7 +499,6 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     colKey: 'specificationQuantity',
     title: '规格数量',
     align: 'center',
-    width: '120',
   },
   {
     colKey: 'thisAmountSheets',
@@ -552,7 +549,6 @@ const labelPrintDown: PrimaryTableCol<TableRowData>[] = [
     colKey: 'qty',
     title: '数量',
     align: 'center',
-    width: '100',
     cell: 'stateSwitch',
   },
   {
@@ -735,10 +731,6 @@ onMounted(async () => {
   await onReprintSelectData(); // 获取补打原因列表
   await onCancellationSelectData(); // 获取作废原因列表
   await onResolutionSelectData(); // 获取拆分原因列表
-  await nextTick();
-  if (reprintDataList?.list?.length > 0 && reprintVoidSwitch?.value === 1) {
-    reprintDialog.value.reprintData = reprintDataList.list[0].value;
-  }
 });
 // 上表格数据刷新
 const onTopRefresh = async () => {

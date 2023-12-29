@@ -573,8 +573,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1173,13 +1173,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
   workshopId?: string;
   workshopName?: string;
-  workshopCode?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1203,6 +1203,16 @@ export interface WipKeyPartCollectVO {
   scanMessage?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  /**
+   * 用量分子
+   * @format int32
+   */
+  numeratorQty?: number;
+  /**
+   * 用量分母
+   * @format int32
+   */
+  denomainatorQty?: number;
   /**
    * 用量分子
    * @format int32
@@ -1751,7 +1761,7 @@ export interface MoOnboardSearch {
    */
   dateEnd?: string;
   moId?: string;
-  workCenterId?: string;
+  workcenterId?: string;
   mitemId?: string;
   /** 产品编码id */
   mitemLabelNo?: string;
@@ -2345,15 +2355,15 @@ export interface BarcodeWipCollectVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
   workshopId?: string;
   workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
-  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2461,14 +2471,14 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
   workshopId?: string;
   workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
-  isState?: boolean;
   defectCodeStr?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -2706,8 +2716,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3554,21 +3564,6 @@ export const api = {
     getRepairTop5: () =>
       http.request<ResultObject['data']>(`/api/control/wipRepair/getRepairTop5`, {
         method: 'GET',
-      }),
-  },
-  wipLog: {
-    /**
-     * No description
-     *
-     * @tags 在制品日志表
-     * @name Search
-     * @request POST:/wipLog/search
-     * @secure
-     */
-    search: (data: WipLogSearch) =>
-      http.request<ResultPagingDataWipLogSearchVO['data']>(`/api/control/wipLog/search`, {
-        method: 'POST',
-        body: data as any,
       }),
   },
   reversetraceability: {
