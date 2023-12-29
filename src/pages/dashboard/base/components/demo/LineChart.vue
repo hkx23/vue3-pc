@@ -20,6 +20,7 @@ import { LineChart } from 'echarts/charts';
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
+import { debounce } from 'lodash';
 import { computed, onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
@@ -62,17 +63,19 @@ const renderMonitorChart = () => {
   monitorChart.setOption(getLineChartDataSet({ ...chartColors.value }));
 };
 
-useResizeObserver(monitorContainerParentRef, (entries) => {
-  const entry = entries[0];
-  monitorChart.resize({
-    width: entry.contentRect.width,
-    height: entry.contentRect.height,
-    animation: {
-      duration: 300,
-      delay: 200,
-    },
-  });
-});
+useResizeObserver(
+  monitorContainerParentRef,
+  debounce((entries) => {
+    const entry = entries[0];
+    monitorChart.resize({
+      width: entry.contentRect.width,
+      height: entry.contentRect.height,
+      animation: {
+        duration: 300,
+      },
+    });
+  }, 600),
+);
 
 onMounted(() => {
   renderMonitorChart();
