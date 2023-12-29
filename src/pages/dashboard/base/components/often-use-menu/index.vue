@@ -118,7 +118,7 @@ const onModuleClick = (item: TRouterInfo) => {
   color: #161c24;
   display: inline-flex;
   margin-right: 16px;
-  margin-bottom: 10px;
+  //margin-bottom: 10px;
 }
 
 /deep/ .t-card__body {
