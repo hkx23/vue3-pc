@@ -81,7 +81,7 @@ const classAttrs = computed(() => {
   }
 
   :deep(.t-card__body) {
-    padding: 0;
+    padding: 0 var(--td-comp-paddingLR-xl);
   }
 }
 

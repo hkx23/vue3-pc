@@ -93,6 +93,7 @@ const onModuleClick = (item: TRouterInfo) => {
   display: flex;
   flex-wrap: nowrap;
   overflow: hidden;
+  padding: var(--td-comp-paddingTB-l) 0;
 
   .t-icon {
     height: 1.5em;
