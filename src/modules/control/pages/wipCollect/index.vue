@@ -68,7 +68,7 @@
                         <t-list-item :class="{ 'selected-item': item.isScanFinish }">
                           {{ item.keyPartCodeStr }}/{{ item.mitemCode }}/{{ item.mitemName }}/{{
                             t('wipCollect.requestqty')
-                          }}:{{ item.moRequestQty }},{{ t('wipCollect.scanqty') }}: {{ item.scanQty }}
+                          }}:{{ item.requestQty }},{{ t('wipCollect.scanqty') }}: {{ item.scanQty }}
                           <template #action>
                             <t-icon v-if="item.isScanFinish" size="24px" name="check" class="success" />
                             <!-- <t-icon v-else class="error" size="24px" name="close" /> -->
@@ -202,7 +202,12 @@ const Init = async () => {
   mainform.value.workshopName = userStore.currUserOrgInfo.workShopName;
 
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({
+      title: t('wipCollect.tip'),
+      content: t('wipCollect.tipsetting'),
+      duration: 2000,
+      closeBtn: true,
+    });
   }
 };
 
@@ -228,7 +233,12 @@ const scanDesc = computed(() => {
 
 const serialNumberEnter = async (value) => {
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({
+      title: t('wipCollect.tip'),
+      content: t('wipCollect.tipsetting'),
+      duration: 2000,
+      closeBtn: true,
+    });
     return;
   }
   if (!isEmpty(value)) {

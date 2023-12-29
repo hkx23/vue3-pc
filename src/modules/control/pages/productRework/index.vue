@@ -323,13 +323,23 @@ const Init = async () => {
   mainform.value.workshopName = userStore.currUserOrgInfo.workShopName;
 
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({
+      title: t('productRework.tip'),
+      content: t('productRework.tipsetting'),
+      duration: 2000,
+      closeBtn: true,
+    });
   }
 };
 
 const serialNumberEnter = async (value) => {
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({
+      title: t('productRework.tip'),
+      content: t('productRework.tipsetting'),
+      duration: 2000,
+      closeBtn: true,
+    });
     return;
   }
   if (!isEmpty(value)) {
@@ -459,7 +469,7 @@ const writeMessageListSuccess = async (content, datatime) => {
     datatime,
     status: 'OK',
   });
-  NotifyPlugin.success({ title: '扫描成功', content, duration: 2000 });
+  NotifyPlugin.success({ title: '扫描成功', content, duration: 2000, closeBtn: true });
 };
 // 失败消息体
 const writeMessageListError = async (content, datatime) => {
@@ -472,7 +482,7 @@ const writeMessageListError = async (content, datatime) => {
     datatime,
     status: 'NG',
   });
-  NotifyPlugin.error({ title: '扫描失败', content, duration: 2000 });
+  NotifyPlugin.error({ title: '扫描失败', content, duration: 2000, closeBtn: true });
 };
 
 const onchangeTab = () => {
@@ -482,6 +492,7 @@ const onchangeTab = () => {
         title: t('productRework.tip'),
         content: t('productRework.checkPresetting'),
         duration: 2000,
+        closeBtn: true,
       });
       selectModule.value = 'SETTING';
       return '';
@@ -497,6 +508,7 @@ const onClickSetting = () => {
         title: t('productRework.tip'),
         content: t('common.placeholder.input', [`${t('productRework.reworkMoSheId')}`]),
         duration: 2000,
+        closeBtn: true,
       });
       return '';
     }
@@ -505,6 +517,7 @@ const onClickSetting = () => {
         title: t('productRework.tip'),
         content: t('productRework.checkreworkRouting'),
         duration: 2000,
+        closeBtn: true,
       });
       return '';
     }
@@ -514,6 +527,7 @@ const onClickSetting = () => {
       title: t('productRework.tip'),
       content: t('common.placeholder.input', [`${t('productRework.reworkLine')}`]),
       duration: 2000,
+      closeBtn: true,
     });
     return '';
   }
@@ -522,6 +536,7 @@ const onClickSetting = () => {
       title: t('productRework.tip'),
       content: t('common.placeholder.input', [`${t('productRework.reworkProcess')}`]),
       duration: 2000,
+      closeBtn: true,
     });
     return '';
   }

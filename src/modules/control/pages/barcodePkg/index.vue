@@ -68,18 +68,21 @@
                           </t-col>
                           <t-col flex="250px">
                             <t-input-number
-                              v-model="printMode.createNum"
-                              theme="column"
-                              style="width: 100%"
-                              label="本次生产数(张数)"
-                            />
-                          </t-col>
-                          <t-col flex="250px">
-                            <t-input-number
                               v-model="printMode.createPDNum"
                               theme="column"
                               style="width: 100%"
                               label="本次生成数(产品数)"
+                              @change="onCreateChange"
+                            />
+                          </t-col>
+                          <t-col flex="250px">
+                            <t-input-number
+                              v-model="printMode.createNum"
+                              theme="column"
+                              style="width: 100%"
+                              label="本次生产数(张数)"
+                              placeholder=""
+                              :disabled="true"
                             />
                           </t-col>
                         </t-row>
@@ -331,6 +334,12 @@ const onPrintChange = (value: any) => {
   selectedRowKeys.value = value;
   printButtonOp.value = !(selectedRowKeys.value.length > 0);
 };
+
+const onCreateChange = () => {
+  const { createPDNum } = printMode.value;
+  const { packQty } = printMode.value;
+  printMode.value.createNum = Math.ceil(createPDNum / packQty);
+};
 // 打印选择 框 行 事件
 const onSelectionChange = (selectedRows) => {
   moscheRowKeys.value = selectedRows;
@@ -352,7 +361,7 @@ const totalDay = ref(0);
 const printMode = ref({
   barcodeRuleId: '',
   printTempId: '',
-  createNum: '',
+  createNum: 0,
   packQty: 0,
   createPDNum: 0,
   packQtyShow: '',
@@ -365,18 +374,18 @@ const printMode = ref({
 // 生成按钮模型初始化
 const generateBracode = async () => {
   const residueQty = printMode.value.planQty - printMode.value.generateQty;
-  // 校验规格数量是否为正整数
-  const intValue = parseInt(printMode.value.createNum, 10);
-  if (!Number.isInteger(intValue) || intValue > residueQty) {
+  console.log(residueQty);
+
+  if (!Number.isInteger(printMode.value.createPDNum) || printMode.value.createPDNum > residueQty) {
     // 提示错误信息
     MessagePlugin.warning(`本次生成数量需要为小于剩余生成数${residueQty}的正整数`);
     return;
   }
 
   // 校验规格数量是否为正整数
-  if (intValue === 0) {
+  if (printMode.value.createPDNum <= 0) {
     // 提示错误信息
-    MessagePlugin.warning(`本次生成数量不得为0`);
+    MessagePlugin.warning(`本次生成数量需为正整数`);
     return;
   }
 
@@ -388,7 +397,7 @@ const generateBracode = async () => {
   }
   await api.barcodePkg.generateBarcode({
     ...printMode.value,
-    createNum: intValue,
+    createNum: printMode.value.createNum,
   });
   handleTabClick(tabValue.value);
   MessagePlugin.success('生成成功');
@@ -1047,11 +1056,12 @@ const handleTabClick = (selectedTabIndex: any) => {
     calculateButtonOffset();
     printMode.value.createPDNum = selectedTab.planQty - selectedTab.generateQty;
     printMode.value.packQtyShow = selectedTab.packQtyShow;
-    dataSummary.value = `${selectedTab.planQty}/${selectedTab.generateQty}/${selectedTab.displayQty}`;
+    dataSummary.value = `${selectedTab.planQty} (${selectedTab.planSheet}) / ${selectedTab.generateQty} (${selectedTab.generateSheet}) / ${selectedTab.displayQty} (${selectedTab.displaySheet}) `;
     api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {
       moBelowList.list = data.list;
       barcodeTotal.value = data.total;
     });
+    onCreateChange();
     onPrintRulesData();
     onPrintTemplateData();
   }
@@ -1067,7 +1077,6 @@ const onRefreshBelow = () => {
 const onRefreshTag = () => {
   api.barcodePkg.getTagList(queryCondition.value).then((data) => {
     tabList.list = data.list;
-    barcodeTotal.value = data.total;
   });
   onPrintRulesData();
   onPrintTemplateData();

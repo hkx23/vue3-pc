@@ -573,8 +573,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -646,6 +646,86 @@ export interface ResultPagingDataDefectDealMethodVO {
   data?: PagingDataDefectDealMethodVO;
 }
 
+export interface WipLogSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 过站开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 过站结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  moId?: string;
+  workCenterId?: string;
+  workstationId?: string;
+  workshopId?: string;
+  mitemId?: string;
+  /** 产品条码 */
+  serialNumber?: string;
+}
+
+/** 响应数据 */
+export type PagingDataWipLogSearchVO = {
+  list?: WipLogSearchVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWipLogSearchVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWipLogSearchVO;
+}
+
+export interface WipLogSearchVO {
+  /** 排产单号 */
+  moScheCode?: string;
+  /** 产品编码 */
+  pdCode?: string;
+  /** 产品条码 */
+  serialNumber?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 上一个工站名称 */
+  preWorkstationrName?: string;
+  /** 当前工站名称 */
+  curWorkstationrName?: string;
+  /** 工作中心描述 */
+  workcenterDesc?: string;
+  /** 产品描述 */
+  pdDesc?: string;
+  /** 过站人 */
+  creatorName?: string;
+  /**
+   * 过站时间
+   * @format date-time
+   */
+  timeCreate?: string;
+}
+
 /** 完工入库单据实体 */
 export interface ScanLabelDTO {
   /** 业务类型编码 */
@@ -668,6 +748,498 @@ export interface ResultLong {
   /** 提示信息 */
   message?: string;
   data?: string;
+}
+
+/** 关键物料追溯（反向）-查询 */
+export interface ReverseTraceabilityReportSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** 产品条码 */
+  serialNumber?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 包装箱码 */
+  parentPkgBarcode?: string;
+}
+
+/** 响应数据 */
+export type PagingDataProductWipRepairVO = {
+  list?: ProductWipRepairVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 追溯维修单 */
+export interface ProductWipRepairVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  /** 产品条形码 */
+  scanBarcode?: string;
+  moScheId?: string;
+  /**
+   * 维修次数
+   * @format int32
+   */
+  repairTimes?: number;
+  /**
+   * 不合格次数
+   * @format int32
+   */
+  ngTimes?: number;
+  fromRoutingProcessId?: string;
+  fromWorkstationId?: string;
+  /** 维修开始时间 */
+  datetimeRepairing?: string;
+  /** 维修结束时间 */
+  datetimeRepaired?: string;
+  userRepairId?: string;
+  returnRoutingProcessId?: string;
+  /** 维修结果 */
+  repairResult?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 采集时间
+   * @format date-time
+   */
+  timeScanBarcode?: string;
+  /** 父级包装条码 */
+  parentPkgBarcode?: string;
+  /** 工单 */
+  moCode?: string;
+  mitemId?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 排产工单编码 */
+  moScheCode?: string;
+  /** 来源工艺路线工序编码 */
+  fromRoutingProcessCode?: string;
+  /** 来源工艺路线工序 */
+  fromRoutingProcessName?: string;
+  /** 来源工站编码 */
+  fromWorkstationCode?: string;
+  /** 来源工站 */
+  fromWorkstationName?: string;
+  /** 维修用户 */
+  userNameRepair?: string;
+  /** 维修用户名称 */
+  displayNameRepair?: string;
+  /** 回流工艺路线工序编码 */
+  returnRoutingProcessCode?: string;
+  /** 回流工艺路线工序 */
+  returnRoutingProcessName?: string;
+  /** 维修状态 */
+  repairStatusName?: string;
+  routingRevisionId?: string;
+  /** 维修中ID */
+  idsRepairingList?: string[];
+  curRepairProcessId?: string;
+  curWorkstationId?: string;
+  loginProcessId?: string;
+  loginWorkstationId?: string;
+  /** 缺陷原因 */
+  defectReason?: string;
+  /** 缺陷责任别 */
+  defectBlame?: string;
+  defectCodeId?: string;
+  /** 缺陷处理方法ID */
+  defectDealMethodIdList?: string[];
+  mttr?: string;
+  /** 是否报废 */
+  isScrapped?: boolean;
+  wipRepairId?: string;
+  /** 维修中提交的ID */
+  wipRepairIdList?: string[];
+  retentionTime?: string;
+  outTimeShowColor?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProductWipRepairVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProductWipRepairVO;
+}
+
+/** 关键物料追溯（反向）-产品基础信息 */
+export type ProductBaseReportVO = {
+  /** 产品条码 */
+  serialNumber?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 包装箱码 */
+  parentPkgBarcode?: string;
+  /**
+   * 产品创建时间
+   * @format date-time
+   */
+  serialNumberTimeCreate?: string;
+  /**
+   * 在制品最后修改时间
+   * @format date-time
+   */
+  lastTimeModified?: string;
+  /** 排产单号 */
+  moScheCode?: string;
+  /** 当前工序编码 */
+  curProcessCode?: string;
+  /** 当前工序名称 */
+  curProcessName?: string;
+  /** 当前工站编码 */
+  curWorkstationCode?: string;
+  /** 当前工站名称 */
+  curWorkstationName?: string;
+  /** 当前车间编码 */
+  curWorkshopCode?: string;
+  /** 当前车间名称 */
+  curWorkshopName?: string;
+  /** 当前工作中心编码 */
+  curWorkcenterCode?: string;
+  /** 当前工作中心间名称 */
+  curWorkcenterName?: string;
+  /** 生产历史信息 */
+  wipLogList?: WipLog[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultProductBaseReportVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 关键物料追溯（反向）-产品基础信息 */
+  data?: ProductBaseReportVO;
+}
+
+/** 在制品日志表 */
+export interface WipLog {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  moScheId?: string;
+  moId?: string;
+  /** 工单号 */
+  moCode?: string;
+  mitemId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  workcenterId?: string;
+  /** 工作中心编码 */
+  workcenterCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  preProcessId?: string;
+  /** 来源工序编码 */
+  preProcessCode?: string;
+  /** 来源工序名称 */
+  preProcessName?: string;
+  preWorkstationId?: string;
+  /** 来源工站编码 */
+  preWorkstationCode?: string;
+  /** 来源工站名称 */
+  preWorkstationName?: string;
+  curProcessId?: string;
+  /** 当前工序编码 */
+  curProcessCode?: string;
+  /** 当前工序名称 */
+  curProcessName?: string;
+  curWorkstationId?: string;
+  /** 当前工站编码 */
+  curWorkstationCode?: string;
+  /** 当前工站名称 */
+  curWorkstationName?: string;
+  /** 车间编码 */
+  workshopCode?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 班组编码 */
+  workgroupCode?: string;
+  /** 班组名称 */
+  workgroupName?: string;
+  /** 班次编码 */
+  shiftCode?: string;
+  /**
+   * 排班日期
+   * @format date-time
+   */
+  shiftDay?: string;
+  /**
+   * 年
+   * @format int32
+   */
+  scanYear?: number;
+  /**
+   * 月
+   * @format int32
+   */
+  scanMonth?: number;
+  /**
+   * 日
+   * @format int32
+   */
+  scanDay?: number;
+  /**
+   * 时
+   * @format int32
+   */
+  scanHour?: number;
+  /**
+   * 分
+   * @format int32
+   */
+  scanMinute?: number;
+  /**
+   * 周
+   * @format int32
+   */
+  scanWeek?: number;
+  /** 在制品数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /**
+   * 缺陷次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /**
+   * 是否完工
+   * @format int32
+   */
+  isCompleted?: number;
+  /**
+   * 是否合格
+   * @format int32
+   */
+  dcResult?: number;
+  /**
+   * 是否暂停
+   * @format int32
+   */
+  isHold?: number;
+  /** 终端计算机名 */
+  terminal?: string;
+}
+
+/** 关键物料追溯（反向）-物料信息 */
+export type MitemBaseReportVO = {
+  /** 关键件列表 */
+  wipKeypartReportList?: WipKeypartReportVO[];
+  /** 物料投料列表 */
+  moOnboardReportList?: MoOnboardReportVO[];
+} | null;
+
+/** 关键物料追溯（反向）-关键件信息 */
+export interface MoOnboardReportVO {
+  /** 物料条码 */
+  serialNumber?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 排产单号 */
+  moScheCode?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 包装箱码 */
+  parentPkgBarcode?: string;
+  /** 绑定工序 */
+  processCode?: string;
+  /** 绑定工序名称 */
+  processName?: string;
+  /** 绑定工站 */
+  workstationCode?: string;
+  /** 绑定工站名称 */
+  workstationName?: string;
+  /** 员工 */
+  userName?: string;
+  /** 员工名称 */
+  displayName?: string;
+  /** 产品编码 */
+  moMitemCode?: string;
+  /** 物料批次 */
+  mitemLotNo?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 投料状态 */
+  status?: string;
+  /** 投料状态 */
+  statusName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultMitemBaseReportVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 关键物料追溯（反向）-物料信息 */
+  data?: MitemBaseReportVO;
+}
+
+/** 关键物料追溯（反向）-关键件信息 */
+export interface WipKeypartReportVO {
+  /** 产品条码 */
+  serialNumber?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 排产单号 */
+  moScheCode?: string;
+  /** 包装箱码 */
+  parentPkgBarcode?: string;
+  /** 工序编码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 工站编码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 状态 */
+  status?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /**
+   * 数量
+   * @format double
+   */
+  qty?: number;
+  /** 员工 */
+  userName?: string;
+  /** 员工名称 */
+  displayName?: string;
+}
+
+/** 维修单 */
+export type ProductWipRepairDtlVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  wipRepairId?: string;
+  defectCodeId?: string;
+  /** 缺陷原因 */
+  defectReason?: string;
+  /** 缺陷责任别 */
+  defectBlame?: string;
+  /** 维修人 */
+  userNameRepair?: string;
+  /** 维修人名称 */
+  displayNameRepair?: string;
+  /** 维修结束时间 */
+  datetimeRepaired?: string;
+  wipRepairMethodId?: string;
+  /** 产品条形码 */
+  scanBarcode?: string;
+  /** 缺陷代码编码 */
+  defectCode?: string;
+  /** 缺陷代码 */
+  defectName?: string;
+  /** 缺陷处理方法编码 */
+  defectDealMethodCode?: string;
+  /** 缺陷处理方法 */
+  defectDealMethodName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListProductWipRepairDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProductWipRepairDtlVO[] | null;
 }
 
 /** 产品返工返工前配置信息 */
@@ -796,14 +1368,14 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
 }
 
@@ -829,10 +1401,15 @@ export interface WipKeyPartCollectVO {
   /** 扫描状态 */
   scanSuccess?: boolean;
   /**
-   * 工单需求量
+   * 用量分子
    * @format int32
    */
-  moRequestQty?: number;
+  numeratorQty?: number;
+  /**
+   * 用量分母
+   * @format int32
+   */
+  denomainatorQty?: number;
   /**
    * 关键件已扫数量
    * @format int32
@@ -842,6 +1419,8 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  /** @format int32 */
+  requestQty?: number;
   isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
@@ -1369,7 +1948,7 @@ export interface MoOnboardSearch {
    */
   dateEnd?: string;
   moId?: string;
-  workcenterId?: string;
+  workCenterId?: string;
   mitemId?: string;
   /** 产品编码id */
   mitemLabelNo?: string;
@@ -1961,17 +2540,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  stateName?: string;
+  workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
-  isState?: boolean;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2077,16 +2656,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  stateName?: string;
+  workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
-  defectCodeStr?: string;
-  isState?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  isState?: boolean;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -2324,8 +2903,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -2422,6 +3001,34 @@ export interface ResultAtomicContext {
   /** 原子模型定义-Context上下文定义 */
   data?: AtomicContext;
 }
+
+/** 通用响应类 */
+export interface ResultListWipRepairDtlTop5VO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WipRepairDtlTop5VO[] | null;
+}
+
+/** 维修单的缺陷明细TOP5 */
+export type WipRepairDtlTop5VO = {
+  defectCode?: string;
+  defectName?: string;
+  /** @format double */
+  defectCodePercent?: number;
+  /** @format int32 */
+  defectCodeTotal?: number;
+  /** @format date-time */
+  beginDate?: string;
+  /** @format date-time */
+  endDate?: string;
+  defectCodePercentStr?: string;
+} | null;
 
 /** 通用响应类 */
 export interface ResultListWipCompletionLabelDTO {
@@ -3170,8 +3777,84 @@ export const api = {
      * @secure
      */
     getRepairTop5: () =>
-      http.request<ResultObject['data']>(`/api/control/wipRepair/getRepairTop5`, {
+      http.request<ResultListWipRepairDtlTop5VO['data']>(`/api/control/wipRepair/getRepairTop5`, {
         method: 'GET',
+      }),
+  },
+  wipLog: {
+    /**
+     * No description
+     *
+     * @tags 在制品日志表
+     * @name Search
+     * @request POST:/wipLog/search
+     * @secure
+     */
+    search: (data: WipLogSearch) =>
+      http.request<ResultPagingDataWipLogSearchVO['data']>(`/api/control/wipLog/search`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  reversetraceability: {
+    /**
+     * No description
+     *
+     * @tags 关键物料追溯（反向）
+     * @name GetWipRepairList
+     * @summary 获取维修单信息
+     * @request POST:/reversetraceability/getWipRepairList
+     * @secure
+     */
+    getWipRepairList: (data: ReverseTraceabilityReportSearch) =>
+      http.request<ResultPagingDataProductWipRepairVO['data']>(`/api/control/reversetraceability/getWipRepairList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料追溯（反向）
+     * @name GetProductBaseInfo
+     * @summary 获取产品基础信息
+     * @request POST:/reversetraceability/getProductBaseInfo
+     * @secure
+     */
+    getProductBaseInfo: (data: ReverseTraceabilityReportSearch) =>
+      http.request<ResultProductBaseReportVO['data']>(`/api/control/reversetraceability/getProductBaseInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料追溯（反向）
+     * @name GetMitemBaseInfo
+     * @summary 获取物料信息
+     * @request POST:/reversetraceability/getMitemBaseInfo
+     * @secure
+     */
+    getMitemBaseInfo: (data: ReverseTraceabilityReportSearch) =>
+      http.request<ResultMitemBaseReportVO['data']>(`/api/control/reversetraceability/getMitemBaseInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料追溯（反向）
+     * @name GetListByWipRepairId
+     * @summary 获取维修单明细
+     * @request POST:/reversetraceability/getListByWipRepairId
+     * @secure
+     */
+    getListByWipRepairId: (query: { wipRepairId: string }) =>
+      http.request<ResultListProductWipRepairDtlVO['data']>(`/api/control/reversetraceability/getListByWipRepairId`, {
+        method: 'POST',
+        params: query,
       }),
   },
   productRework: {

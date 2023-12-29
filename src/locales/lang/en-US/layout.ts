@@ -7,6 +7,7 @@ export default {
     setting: 'Setting',
     changePassword: 'Change Password',
     themeSettings: 'Theme Settings',
+    configurationWorkbench: 'Configuration Workbench',
   },
   notice: {
     title: 'Notification Center',

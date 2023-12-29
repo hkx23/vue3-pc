@@ -46,7 +46,10 @@
                 <t-dropdown-item class="operations-dropdown-container-item" @click="onChangePassword">
                   <user-password-icon />{{ $t('layout.header.changePassword') }}
                 </t-dropdown-item>
-                <t-dropdown-item class="operations-dropdown-container-item" @click="toggleSettingPanel">
+                <t-dropdown-item class="operations-dropdown-container-item" @click="onClickConfigurationWorkbench">
+                  <edit2-icon />{{ $t('layout.header.configurationWorkbench') }}
+                </t-dropdown-item>
+                <t-dropdown-item class="operations-dropdown-container-item" @click="onClickToggleSettingPanel">
                   <setting-icon />{{ $t('layout.header.themeSettings') }}
                 </t-dropdown-item>
                 <t-dropdown-item class="operations-dropdown-container-item" @click="handleLogout">
@@ -74,6 +77,7 @@
 <script setup lang="ts">
 import {
   ChevronDownIcon,
+  Edit2Icon,
   Fullscreen2Icon,
   PoweroffIcon,
   SettingIcon,
@@ -134,9 +138,21 @@ const router = useRouter();
 const settingStore = useSettingStore();
 const user = useUserStore();
 
-const toggleSettingPanel = () => {
+const onClickToggleSettingPanel = () => {
   settingStore.updateConfig({
     showSettingPanel: true,
+  });
+};
+
+const onClickConfigurationWorkbench = () => {
+  if (!settingStore.enableEditingMode) {
+    router.push({
+      path: '/dashboard',
+    });
+  }
+
+  settingStore.updateConfig({
+    enableEditingMode: !settingStore.enableEditingMode,
   });
 };
 

@@ -21,7 +21,7 @@ export default [
       {
         path: 'base',
         name: 'DashboardBase',
-        component: () => import('@/pages/dashboard/base/index.vue'),
+        component: () => import('@/pages/dashboard/index.vue'),
         meta: {
           title: {
             'zh-CN': '概览仪表盘',

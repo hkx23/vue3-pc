@@ -38,7 +38,7 @@
               <cmp-card :ghost="true" class="padding-top-noline-16">
                 <!-- ################# 产品标签打印 上1️⃣上 表格数据 ###################### -->
                 <cmp-table
-                  ref="tableRef"
+                  ref="tableRefTop"
                   v-model:pagination="pageUITop"
                   row-key="moScheduleId"
                   :table-column="labelPrintTop"
@@ -137,7 +137,7 @@
               </cmp-card>
               <cmp-card :ghost="true" class="padding-top-noline-16">
                 <cmp-table
-                  ref="tableRef"
+                  ref="tableRefRight"
                   v-model:pagination="pageUI"
                   row-key="barcodeWipId"
                   :table-column="labelManage"
@@ -281,6 +281,8 @@ const logInterfaceVisible = ref(false); // 控制日志 Dialog 显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
 const buttonSwitch = ref(''); // 确认按钮title
 const tabValue = ref(0);
+const tableRefTop = ref(); // 上表格实例
+const tableRefRight = ref(); // 右表格实例
 const isReprintCancellation = ref(false);
 // 补打，作废 DiaLog 数据
 const reprintDialog = ref({
@@ -589,7 +591,6 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
 // 初始渲染
 onMounted(async () => {
   await onGetPrintTopTabData(); // 产品标签打印 上 请求
-  await onLabelManageTabData(); // 产品标签管理 表格数据
   await onWorkStatus(); // 工单状态下拉数据
   await onBarCodeState(); // 获取条码状态数据
   await onPrintRulesData(); // 获取 打印规则下拉数据
@@ -674,14 +675,22 @@ const onConfirm = async () => {
 
 // #产品标签打印 上 表格数据
 const topPrintID = ref(null);
+const topPrintData = ref({
+  pageNum: 1,
+  pageSize: 10,
+  planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+  planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
+  moId: '', // 工单ID
+  workshopId: '', // 车间 ID
+  workcenterId: '', // 工作中心ID
+  mitemId: '', // 物料 ID
+  scheStatus: '', // 工单状态
+  isFinishDisplay: true, // 是否仅显示已打印
+});
 const onGetPrintTopTabData = async () => {
-  const res = await api.labelManage.getMoScheduleList({
-    pageNum: pageUITop.value.page,
-    pageSize: pageUITop.value.rows,
-    planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
-    planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
-    isFinishDisplay: true,
-  });
+  topPrintData.value.pageNum = pageUITop.value.page;
+  topPrintData.value.pageSize = pageUITop.value.rows;
+  const res = await api.labelManage.getMoScheduleList(topPrintData.value);
   printTopTabData.list = res.list;
   totalPrintTop.value = res.total;
 };
@@ -719,15 +728,24 @@ const onBarCodeState = async () => {
 };
 
 // #产品标签管理 表格数据
+const ManageTabData = ref({
+  pageNum: 1,
+  pageSize: 10,
+  planDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+  planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
+  createDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 生产开始日期
+  createDateEnd: dayjs().format('YYYY-MM-DD'), // 生产结束日期
+  moId: '', // 工单ID
+  workshopId: '', // 车间 ID
+  workcenterId: '', // 工作中心ID
+  mitemId: '', // 物料 ID
+  barcodeWipStatus: '', // 条码状态
+  serialNumber: '', // 条码
+});
 const onLabelManageTabData = async () => {
-  const res = await api.labelManage.getBarcodeWipManagerList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    planDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
-    planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
-    createDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 生产开始日期
-    createDateEnd: dayjs().format('YYYY-MM-DD'), // 生产结束日期
-  });
+  ManageTabData.value.pageNum = pageUI.value.page;
+  ManageTabData.value.pageSize = pageUI.value.rows;
+  const res = await api.labelManage.getBarcodeWipManagerList(ManageTabData.value);
   manageTabData.list = res.list;
   totalManage.value = res.total;
 };
@@ -777,7 +795,6 @@ const onLogInterface = async (row: any) => {
 
 // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
-  console.log('🚀 ~ file: index.vue:781 ~ onGenerateChange ~ context:', context);
   generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
   generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
   [topPrintID.value] = value;
@@ -832,6 +849,7 @@ const tabChange = async (value: number) => {
     initialDate.value = 1;
   } else {
     initialDate.value = 3;
+    await onLabelManageTabData(); // 产品标签管理 表格数据
   }
 };
 
@@ -945,38 +963,33 @@ const onInput = async (data: any) => {
       isFinishDisplay = true;
     }
     pageUITop.value.page = 1;
-    const res = await api.labelManage.getMoScheduleList({
-      pageNum: pageUITop.value.page,
-      pageSize: pageUITop.value.rows,
-      planDateStart: data.scheduledProductionDate[0], // 计划生产开始日期
-      planDateEnd: data.scheduledProductionDate[1], // 计划生产结束日期
-      moId: data.mo, // 工单ID
-      workshopId: data.workshop, // 车间 ID
-      workcenterId: data.workcenter, // 工作中心ID
-      mitemId: data.mitem, // 物料 ID
-      scheStatus: data.workState, // 工单状态
-      isFinishDisplay, // 是否仅显示已打印
-    });
-    printTopTabData.list = res.list;
-    totalPrintTop.value = res.total;
+    const [planDateStart, planDateEnd] = data.scheduledProductionDate;
+    topPrintData.value.planDateStart = planDateStart; // 计划生产开始日期
+    topPrintData.value.planDateEnd = planDateEnd; // 计划生产结束日期
+    topPrintData.value.moId = data.mo; // 工单ID
+    topPrintData.value.workshopId = data.workshop; // 车间 ID
+    topPrintData.value.workcenterId = data.workcenter; // 工作中心ID
+    topPrintData.value.mitemId = data.mitem; // 物料 ID
+    topPrintData.value.scheStatus = data.workState; // 工单状态
+    topPrintData.value.isFinishDisplay = isFinishDisplay; // 是否仅显示已打印
+    await onGetPrintTopTabData(); // 产品标签打印 上 请求
+    printDownTabData.list = [];
+    tableRefTop.value.setSelectedRowKeys([]);
   } else {
     pageUI.value.page = 1;
-    const res = await api.labelManage.getBarcodeWipManagerList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      planDateStart: data.scheduledProductionDate[0], // 计划生产开始日期
-      planDateEnd: data.scheduledProductionDate[1], // 计划生产结束日期
-      createDateStart: data.scheduledProductionDate[0], // 生产开始日期
-      createDateEnd: data.scheduledProductionDate[1], // 生产结束日期
-      moId: data.mo, // 工单ID
-      workshopId: data.workshop, // 车间 ID
-      workcenterId: data.workcenter, // 工作中心ID
-      mitemId: data.mitem, // 物料 ID
-      barcodeWipStatus: data.barCodeState, // 条码状态
-      serialNumber: data.barCode, // 条码
-    });
-    manageTabData.list = res.list;
-    totalManage.value = res.total;
+    const [planDateStart, planDateEnd, createDateStart, createDateEnd] = data.scheduledProductionDate;
+    ManageTabData.value.planDateStart = planDateStart; // 计划生产开始日期
+    ManageTabData.value.planDateEnd = planDateEnd; // 计划生产结束日期
+    ManageTabData.value.createDateStart = createDateStart; // 生产开始日期
+    ManageTabData.value.createDateEnd = createDateEnd; // 生产结束日期
+    ManageTabData.value.moId = data.mo; // 工单ID
+    ManageTabData.value.workshopId = data.workshop; // 车间 ID
+    ManageTabData.value.workcenterId = data.workcenter; // 工作中心ID
+    ManageTabData.value.mitemId = data.mitem; // 物料 ID
+    ManageTabData.value.barcodeWipStatus = data.barCodeState; // 条码状态
+    ManageTabData.value.serialNumber = data.barCode; // 条码
+    await onLabelManageTabData(); // 产品标签管理 表格数据
+    tableRefRight.value.setSelectedRowKeys([]);
   }
   MessagePlugin.success('查询成功');
 };

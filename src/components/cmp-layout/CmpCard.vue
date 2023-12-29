@@ -1,6 +1,9 @@
 <template>
   <t-col v-bind="targetAttrs" :class="classAttrs" :style="styleAttrs">
     <div v-if="props.ghost" class="cmp-card">
+      <div class="cmp-card-actions">
+        <slot name="actions"></slot>
+      </div>
       <slot></slot>
     </div>
     <t-card v-else v-bind="props" class="cmp-card">
@@ -23,6 +26,7 @@ export interface CmpCardProps extends Omit<ColProps, 'options'>, Omit<CardProps,
   height?: string;
   full?: boolean;
   ghost?: boolean;
+  isMini?: boolean;
   noFill?: boolean;
 }
 
@@ -30,6 +34,7 @@ const props = withDefaults(defineProps<CmpCardProps>(), {
   // height: '100%',
   full: true,
   ghost: false,
+  isMini: false,
   bordered: false,
   noFill: false,
   hoverShadow: true,
@@ -45,9 +50,9 @@ const styleAttrs = computed(() => {
 });
 
 const classAttrs = computed(() => {
-  return `cmp-card ${props.full ? 'cmp-card-full' : ''} ${props.ghost ? 'cmp-card-ghost' : ''} ${
-    props.noFill ? 'cmp-card-no-fill' : ''
-  }`;
+  return `cmp-card${props.full ? ' cmp-card-full' : ''}${props.ghost ? ' cmp-card-ghost' : ''}${
+    props.noFill ? ' cmp-card-no-fill' : ''
+  }${props.isMini ? ' cmp-card-mini' : ''}`;
 });
 </script>
 <style lang="less" scoped>
@@ -56,6 +61,27 @@ const classAttrs = computed(() => {
 
   :deep(> .cmp-container-full) {
     padding: 0;
+  }
+}
+
+.cmp-card-mini {
+  :deep(.t-card__header) {
+    padding: 0;
+
+    .t-card__title {
+      display: none;
+    }
+
+    .t-card__actions {
+      position: absolute;
+      right: 16px;
+      top: 8px;
+      z-index: 100;
+    }
+  }
+
+  :deep(.t-card__body) {
+    padding: 0 var(--td-comp-paddingLR-xl);
   }
 }
 
@@ -76,6 +102,12 @@ const classAttrs = computed(() => {
 .cmp-card-ghost {
   :deep(> .cmp-card) {
     // margin: 0 -6px;
+    .cmp-card-actions {
+      position: absolute;
+      right: 16px;
+      top: 8px;
+      z-index: 100;
+    }
   }
 }
 
