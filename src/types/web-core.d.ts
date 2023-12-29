@@ -1,6 +1,8 @@
 import EventEmitter from 'eventemitter3';
 import { PluginOption } from 'vite';
 
+export declare function autoCheckUpdates(): PluginOption;
+
 export declare class CustomError extends Error {
     code: number;
     status: string | number;

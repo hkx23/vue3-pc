@@ -10,7 +10,7 @@ import svgLoader from 'vite-svg-loader';
 
 import vitePluginHistory from './plugins/vite-plugin-history';
 // @ts-ignore
-import { swaggerApiGen } from './src/assets/libs/web-core';
+import { autoCheckUpdates, swaggerApiGen } from './src/assets/libs/web-core';
 
 const CWD = process.cwd();
 
@@ -76,6 +76,7 @@ export default ({ mode, command }: ConfigEnv): UserConfig => {
             baseUrl: VITE_API_URL,
             inputs: VITE_API_GENERATE_MODULE,
           }),
+      autoCheckUpdates(),
       // viteCompression({
       //   deleteOriginFile: true,
       //   threshold: 10 * 1024,

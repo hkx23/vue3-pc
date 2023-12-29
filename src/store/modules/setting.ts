@@ -11,6 +11,7 @@ const state = {
   ...STYLE_CONFIG,
   showSettingPanel: false,
   showPasswordPanel: false,
+  enableEditingMode: false,
   colorList: {},
   chartColors: LIGHT_CHART_COLORS,
 };
