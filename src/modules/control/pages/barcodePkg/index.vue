@@ -68,18 +68,21 @@
                           </t-col>
                           <t-col flex="250px">
                             <t-input-number
-                              v-model="printMode.createNum"
-                              theme="column"
-                              style="width: 100%"
-                              label="本次生产数(张数)"
-                            />
-                          </t-col>
-                          <t-col flex="250px">
-                            <t-input-number
                               v-model="printMode.createPDNum"
                               theme="column"
                               style="width: 100%"
                               label="本次生成数(产品数)"
+                              @change="onCreateChange"
+                            />
+                          </t-col>
+                          <t-col flex="250px">
+                            <t-input-number
+                              v-model="printMode.createNum"
+                              theme="column"
+                              style="width: 100%"
+                              label="本次生产数(张数)"
+                              placeholder=""
+                              :disabled="true"
                             />
                           </t-col>
                         </t-row>
@@ -330,6 +333,12 @@ const onConfirm = async () => {
 const onPrintChange = (value: any) => {
   selectedRowKeys.value = value;
   printButtonOp.value = !(selectedRowKeys.value.length > 0);
+};
+
+const onCreateChange = () => {
+  const { createPDNum } = printMode.value;
+  const { packQty } = printMode.value;
+  printMode.value.createNum = String(Math.ceil(Number(createPDNum) / Number(packQty)));
 };
 // 打印选择 框 行 事件
 const onSelectionChange = (selectedRows) => {
@@ -1052,6 +1061,7 @@ const handleTabClick = (selectedTabIndex: any) => {
       moBelowList.list = data.list;
       barcodeTotal.value = data.total;
     });
+    onCreateChange();
     onPrintRulesData();
     onPrintTemplateData();
   }
