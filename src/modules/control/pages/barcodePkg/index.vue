@@ -338,7 +338,7 @@ const onPrintChange = (value: any) => {
 const onCreateChange = () => {
   const { createPDNum } = printMode.value;
   const { packQty } = printMode.value;
-  printMode.value.createNum = Math.ceil(Number(createPDNum) / Number(packQty));
+  printMode.value.createNum = Math.ceil(createPDNum / packQty);
 };
 // 打印选择 框 行 事件
 const onSelectionChange = (selectedRows) => {
@@ -1056,7 +1056,7 @@ const handleTabClick = (selectedTabIndex: any) => {
     calculateButtonOffset();
     printMode.value.createPDNum = selectedTab.planQty - selectedTab.generateQty;
     printMode.value.packQtyShow = selectedTab.packQtyShow;
-    dataSummary.value = `${selectedTab.planQty}/${selectedTab.generateSheet}/${selectedTab.generateQty}/${selectedTab.displayQty}`;
+    dataSummary.value = `${selectedTab.planQty} (${selectedTab.planSheet}) / ${selectedTab.generateQty} (${selectedTab.generateSheet}) / ${selectedTab.displayQty} (${selectedTab.displaySheet}) `;
     api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {
       moBelowList.list = data.list;
       barcodeTotal.value = data.total;
