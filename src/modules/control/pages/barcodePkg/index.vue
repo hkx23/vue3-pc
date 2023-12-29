@@ -80,7 +80,7 @@
                               v-model="printMode.createNum"
                               theme="column"
                               style="width: 100%"
-                              label="本次生产数(张数)"
+                              label="本次生成数(张数)"
                               placeholder=""
                               :disabled="true"
                             />
