@@ -430,14 +430,14 @@ const queryBelowCondition = ref({
 const manageQueryCondition = ref({
   moId: '',
   mitemId: '',
-  barcodeStatus: '',
+  barcodePkgStatus: '',
   barcodeType: '',
   planDateStart: '',
-  timeCreatedStart: '',
+  createDateStart: '',
   planDateEnd: '',
-  timeCreatedEnd: '',
+  createDateEnd: '',
   workshopId: '',
-  workCenterId: '',
+  workcenterId: '',
   pkgBarcode: '',
   printTmplId: '',
   pageNum: 1,
@@ -792,8 +792,8 @@ const managePageSearchClick = (data: any) => {
   const [timeCreatedStart, timeCreatedEnd] = data.timeCreatedRange;
   manageQueryCondition.value.planDateStart = planDateStart;
   manageQueryCondition.value.planDateEnd = planDateEnd;
-  manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
-  manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
+  manageQueryCondition.value.createDateStart = timeCreatedStart;
+  manageQueryCondition.value.createDateEnd = timeCreatedEnd;
   fetchBracodeManageTable();
 };
 // 右表格数据刷新
@@ -916,7 +916,7 @@ const pkgBarcodeManageOp = computed(() => {
       comp: 't-date-range-picker',
       defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
     },
-    workshopCode: {
+    workshopId: {
       label: '车间',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -926,7 +926,7 @@ const pkgBarcodeManageOp = computed(() => {
         showTitle: false,
       },
     },
-    workCenterCode: {
+    workcenterId: {
       label: '工作中心',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -936,7 +936,7 @@ const pkgBarcodeManageOp = computed(() => {
         showTitle: false,
       },
     },
-    mitemCode: {
+    mitemId: {
       label: '物料',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -951,7 +951,7 @@ const pkgBarcodeManageOp = computed(() => {
       comp: 't-date-range-picker',
       defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
     },
-    moCode: {
+    MoId: {
       label: '工单',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -961,7 +961,7 @@ const pkgBarcodeManageOp = computed(() => {
         showTitle: false,
       },
     },
-    bracodeType: {
+    barcodeType: {
       label: '条码类型',
       comp: 't-select',
       event: 'single',
@@ -970,7 +970,7 @@ const pkgBarcodeManageOp = computed(() => {
         options: bracodeTypeOption.value,
       },
     },
-    bracodeState: {
+    barcodePkgStatus: {
       label: '条码状态',
       comp: 't-select',
       event: 'single',
@@ -979,7 +979,7 @@ const pkgBarcodeManageOp = computed(() => {
         options: bracodeStatusOption.value,
       },
     },
-    bracodeCode: {
+    pkgBarcode: {
       label: '条码',
       comp: 't-input',
       defaultVal: '',
@@ -1025,9 +1025,9 @@ onMounted(async () => {
   // 将日期转换为字符串，格式可以根据需要进行调整
   const timeCreatedStart = threeDaysAgo.toISOString().split('T')[0];
   const timeCreatedEnd = today.toISOString().split('T')[0];
-  manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
+  manageQueryCondition.value.createDateStart = timeCreatedStart;
   manageQueryCondition.value.planDateStart = timeCreatedStart;
-  manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
+  manageQueryCondition.value.createDateEnd = timeCreatedEnd;
   manageQueryCondition.value.planDateEnd = timeCreatedEnd;
   queryCondition.value.planDateStart = timeCreatedStart;
   queryCondition.value.planDateEnd = timeCreatedEnd;

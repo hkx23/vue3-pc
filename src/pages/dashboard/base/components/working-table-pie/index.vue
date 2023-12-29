@@ -1,56 +1,68 @@
 <template>
-  <div
-    id="chartTop5Container"
-    :style="{ width: `${resizeWidth * resizeMin}px`, height: `${resizeHeight * resizeMin}px`, margin: '0 auto' }"
-  ></div>
+  <div id="top5Chart" :style="{ width: '100%', height: '100%' }" />
 </template>
-<script lang="ts">
-export default {
-  name: 'WorkingTablePie',
-};
-</script>
+
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import * as echarts from 'echarts';
-import { nextTick, onMounted, ref } from 'vue';
+import { PieChart } from 'echarts/charts';
+import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
+import * as echarts from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+import { debounce } from 'lodash';
+import { onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/control';
+import { useSettingStore } from '@/store';
+import { changeChartsTheme } from '@/utils/color';
 
+echarts.use([TooltipComponent, LegendComponent, GridComponent, PieChart, CanvasRenderer]);
+
+const store = useSettingStore();
 const optionChart = ref({});
-const resizeWidth = ref(1);
-const resizeHeight = ref(1);
-const resizeMin = ref(200);
 
-let chartTop5Container: HTMLElement;
-let chartTop5Chart: echarts.ECharts;
-
-onMounted(async () => {
-  if (!chartTop5Container) {
-    chartTop5Container = document.getElementById('chartTop5Container');
+// monitorChart
+let top5Chart: HTMLElement;
+const countContainerParentRef = ref<HTMLElement>();
+let countChart: echarts.ECharts;
+const renderCountChart = async () => {
+  if (!top5Chart) {
+    top5Chart = document.getElementById('top5Chart');
+    countContainerParentRef.value = top5Chart.parentElement;
   }
+  countChart = echarts.init(top5Chart);
 
-  chartTop5Chart = echarts.init(chartTop5Container);
   await getPieData();
-  chartTop5Chart.setOption(optionChart.value);
+  countChart.setOption(optionChart.value);
+};
 
-  nextTick(() => {
-    updateContainer();
-  });
-  window.addEventListener('resize', updateContainer, false);
+useResizeObserver(
+  countContainerParentRef,
+  debounce((entries) => {
+    const entry = entries[0];
+    countChart.resize({
+      width: entry.contentRect.width,
+      height: entry.contentRect.height,
+      animation: {
+        duration: 300,
+      },
+    });
+  }, 600),
+);
+
+onMounted(() => {
+  renderCountChart();
 });
 
-const updateContainer = () => {
-  resizeWidth.value = Number(
-    ((chartTop5Container.parentElement.clientWidth - 50) / chartTop5Container.clientWidth).toFixed(2),
-  );
-  resizeHeight.value = Number(
-    ((chartTop5Container.parentElement.clientHeight - 30) / chartTop5Container.clientHeight).toFixed(2),
-  );
-  chartTop5Chart.resize({
-    width: Math.min(resizeWidth.value, resizeHeight.value) * resizeMin.value,
-    height: Math.min(resizeWidth.value, resizeHeight.value) * resizeMin.value,
+onUnmounted(() => {
+  [countChart].forEach((item) => {
+    item.dispose();
   });
-};
+});
+
+onDeactivated(() => {
+  storeBrandThemeWatch();
+});
 
 //* 接口数据
 const getPieData = async () => {
@@ -76,10 +88,9 @@ const getPieData = async () => {
           {
             name: 'Access From',
             type: 'pie',
-            radius: '50%',
+            radius: '100%',
             label: {
               show: true,
-              width: 200,
               formatter(param) {
                 return `${param.name} (${param.percent}%)`;
               },
@@ -100,8 +111,13 @@ const getPieData = async () => {
     console.error('Error fetching pie chart data', error);
   }
 };
+
+const storeBrandThemeWatch = watch(
+  () => store.brandTheme,
+  () => {
+    changeChartsTheme([countChart]);
+  },
+);
 </script>
 
-<style scoped>
-/* 可添加组件样式 */
-</style>
+<style lang="less" scoped></style>

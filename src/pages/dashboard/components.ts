@@ -1,38 +1,9 @@
 import { LayoutItem } from 'grid-layout-plus';
 
-export interface groupedComponentItem {
-  category: string;
-  children: componentItem[];
-}
-
-export interface componentItem extends LayoutItem {
-  /**
-   * 唯一编码
-   */
-  code: string;
-  /**
-   * 分类
-   */
-  category: string;
-  /**
-   * 标题
-   */
-  title: string;
-  /**
-   * 显示标题
-   */
-  showTitle?: boolean;
-  /**
-   * 描述
-   */
-  description?: string;
-  /**
-   * 组件
-   */
-  component?: any;
-}
-
-import MiddleChart from './base/components/MiddleChart.vue';
+// demo
+import LineChart from './base/components/demo/LineChart.vue';
+import PieChart from './base/components/demo/PieChart.vue';
+// 功能组件
 import oftenUseMenu from './base/components/often-use-menu/index.vue';
 import WorkingTablePie from './base/components/working-table-pie/index.vue';
 
@@ -57,13 +28,63 @@ export const components = [
     h: 3,
   },
   {
-    code: 'working-table-pie1',
-    title: 'MiddleChart',
+    code: 'LineChartDemo',
+    ghost: true,
+    title: '折线图',
+    description: '折线图示例',
+    category: '示例',
+    component: LineChart,
+    w: 6,
+    h: 5,
+  },
+  {
+    code: 'PieChartDemo',
+    title: '饼图',
     showTitle: true,
-    description: '过程不良TOP5 按周 11',
-    category: '生产',
-    component: MiddleChart,
-    w: 4,
-    h: 3,
+    description: '饼图示例',
+    category: '示例',
+    component: PieChart,
+    w: 2,
+    h: 5,
   },
 ] as componentItem[];
+
+export interface groupedComponentItem {
+  category: string;
+  children: componentItem[];
+}
+
+export interface componentItem extends LayoutItem {
+  /**
+   * 唯一编码
+   */
+  code: string;
+  /**
+   * 分类
+   */
+  category: string;
+  /**
+   * 标题
+   */
+  title: string;
+  /**
+   * 子标题
+   */
+  subtitle?: string;
+  /**
+   * 显示标题
+   */
+  showTitle?: boolean;
+  /**
+   * 描述
+   */
+  description?: string;
+  /**
+   * 组件
+   */
+  component?: any;
+  /**
+   * 透明组件，用于自定义样式
+   */
+  ghost?: boolean;
+}
