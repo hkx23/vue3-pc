@@ -82,7 +82,7 @@
                   @refresh="onDownRefresh"
                 >
                   <template #title>
-                    <t-radio-group v-model="radioValue">
+                    <t-radio-group v-model="radioValue" @change="onRadioChange">
                       <t-radio allow-uncheck :value="1"> 仅显示已生成</t-radio>
                     </t-radio-group>
                   </template>
@@ -613,6 +613,16 @@ const onDownRefresh = async () => {
 // 右表格数据刷新
 const onRightFetchData = async () => {
   await onLabelManageTabData();
+};
+
+const onRadioChange = async (checked: any) => {
+  const radioValueNum = !checked ? 1 : 0;
+  if (!topPrintID.value) {
+    radioValue.value = radioValueNum;
+    MessagePlugin.warning('请先选择上表格数据！');
+    return;
+  }
+  await onGetPrintDownTabData();
 };
 
 // 获取 打印规则 下拉数据
