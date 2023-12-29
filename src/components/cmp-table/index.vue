@@ -10,26 +10,28 @@
           <t-space size="small" :align="'center'">
             <slot name="button"></slot>
           </t-space>
-          <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
-            <template #icon>
-              <t-icon name="file-export" />
-            </template>
-          </t-button>
-          <t-button v-if="props.enableExport && exportFunction" shape="square" variant="outline" @click="onExportAll">
-            <template #icon>
-              <t-icon name="file-export" />
-            </template>
-          </t-button>
-          <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
-            <template #icon>
-              <t-icon name="refresh" />
-            </template>
-          </t-button>
-          <t-button shape="square" variant="outline" @click="data.visible = true">
-            <template #icon>
-              <t-icon name="adjustment" />
-            </template>
-          </t-button>
+          <t-space v-if="showSetting" size="small" :align="'center'">
+            <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
+              <template #icon>
+                <t-icon name="file-export" />
+              </template>
+            </t-button>
+            <t-button v-if="props.enableExport && exportFunction" shape="square" variant="outline" @click="onExportAll">
+              <template #icon>
+                <t-icon name="file-export" />
+              </template>
+            </t-button>
+            <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
+              <template #icon>
+                <t-icon name="refresh" />
+              </template>
+            </t-button>
+            <t-button shape="square" variant="outline" @click="data.visible = true">
+              <template #icon>
+                <t-icon name="adjustment" />
+              </template>
+            </t-button>
+          </t-space>
         </t-space>
       </div>
       <!-- 表格属性备份
@@ -145,6 +147,7 @@ const props = defineProps({
     type: Object,
   },
   showToolbar: { type: Boolean, default: true },
+  showSetting: { type: Boolean, default: true },
   enableExport: { type: Boolean, default: true },
   remoteFilter: { type: Boolean, default: false },
   remoteSorter: { type: Boolean, default: false },
