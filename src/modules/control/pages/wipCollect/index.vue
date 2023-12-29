@@ -92,7 +92,7 @@
                           <t-list-item>
                             {{ item.keyPartCodeStr }}/{{ item.mitemCode }}/{{ item.mitemName }}/{{
                               t('wipCollect.requestqty')
-                            }}:{{ item.moRequestQty }},{{ t('wipCollect.scanqty') }}: {{ item.scanQty }}
+                            }}:{{ item.requestQty }},{{ t('wipCollect.scanqty') }}: {{ item.scanQty }}
                             <template #action>
                               <t-icon v-if="item.isScanFinish" size="24px" name="check" class="success" />
                               <!-- <t-icon v-else class="error" size="24px" name="close" /> -->
