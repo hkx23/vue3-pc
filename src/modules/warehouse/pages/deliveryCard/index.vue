@@ -1013,7 +1013,6 @@ const onGenerate = debounce(async () => {
 
 // // 点击 打印事件
 const onPrint = debounce(async () => {
-  console.log('🚀 ~ file: index.vue:997 ~ onPrint ~ printTemplateName.value:', printTemplateName.value);
   if (!printTemplateName.value) {
     MessagePlugin.warning('请选择打印模板！');
     return;
