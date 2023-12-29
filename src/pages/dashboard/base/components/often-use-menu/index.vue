@@ -1,20 +1,22 @@
 <template>
   <div v-show="cRecommendList && cRecommendList.length > 0">
-    <div class="cmp-card recommend">
-      <div v-for="(item, index) in cRecommendList" :key="index" class="recommend-item" @click="onModuleClick(item)">
-        <div :class="randomNumber()">
-          <t-icon :name="item.meta && item.meta.iconName" />
+    <div class="recommend cmp-card">
+      <div class="recommend-body">
+        <div v-for="(item, index) in cRecommendList" :key="index" class="recommend-item" @click="onModuleClick(item)">
+          <div :class="randomNumber()">
+            <t-icon :name="item.meta && item.meta.iconName" />
+          </div>
+          <div class="recomend-text">
+            <t-button class="recomend-btn" variant="text">{{ renderMenuTitle(item.meta.title) }}</t-button>
+            <!-- <span>{{ renderMenuTitle(item.meta.title) }}</span> -->
+          </div>
         </div>
-        <div class="recomend-text">
-          <t-button class="recomend-btn" variant="text">{{ renderMenuTitle(item.meta.title) }}</t-button>
-          <!-- <span>{{ renderMenuTitle(item.meta.title) }}</span> -->
-        </div>
-      </div>
-      <!-- <template #footer>
+        <!-- <template #footer>
         <div class="recommend-more">
           <t-icon name="chevron-right" />
         </div>
       </template> -->
+      </div>
     </div>
   </div>
 </template>
@@ -111,6 +113,10 @@ const onModuleClick = (item: TRouterInfo) => {
   border: 1px solid var(--td-component-border);
 }
 
+.recommend-body {
+  display: flow-root;
+}
+
 .recommend-item {
   width: fit-content;
   border-radius: 4px;
@@ -118,7 +124,7 @@ const onModuleClick = (item: TRouterInfo) => {
   color: #161c24;
   display: inline-flex;
   margin-right: 16px;
-  //margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 /deep/ .t-card__body {
