@@ -62,9 +62,7 @@
         <t-tab-panel :value="0" label="物料基础信息" :destroy-on-hide="false">
           <cmp-card class="padding-top-noline-16 no-h-padding-card">
             <t-row>
-              <t-space style="font-weight: bold; font-size: larger; margin-top: 15px; margin-left: 10px"
-                >物料信息</t-space
-              >
+              <t-space style="font-weight: bold; font-size: larger; margin-left: 10px">物料信息</t-space>
             </t-row>
             <t-row style="margin-top: 15px; margin-left: 50px">
               <t-col :span="3">
@@ -130,9 +128,7 @@
         <t-tab-panel :value="2" label="供应商信息" :destroy-on-hide="false">
           <cmp-card class="padding-top-noline-16 no-h-padding-card">
             <t-row>
-              <t-space style="font-weight: bold; font-size: larger; margin-top: 15px; margin-left: 10px"
-                >物料信息</t-space
-              >
+              <t-space style="font-weight: bold; font-size: larger; margin-left: 10px">物料信息</t-space>
             </t-row>
             <t-row style="margin-top: 15px; margin-left: 50px">
               <t-col :span="3">

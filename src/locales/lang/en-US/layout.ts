@@ -7,6 +7,7 @@ export default {
     setting: 'Setting',
     changePassword: 'Change Password',
     themeSettings: 'Theme Settings',
+    configurationWorkbench: 'Configuration Workbench',
   },
   notice: {
     title: 'Notification Center',
@@ -20,6 +21,8 @@ export default {
     closeOther: 'close other',
     closeLeft: 'close left',
     closeRight: 'close right',
+    addFavority: 'favorite menu',
+    remveFavority: 'cancel favorite',
     refresh: 'refresh',
   },
   searchPlaceholder: 'Enter search content',

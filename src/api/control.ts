@@ -646,6 +646,86 @@ export interface ResultPagingDataDefectDealMethodVO {
   data?: PagingDataDefectDealMethodVO;
 }
 
+export interface WipLogSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 过站开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 过站结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  moId?: string;
+  workCenterId?: string;
+  workstationId?: string;
+  workshopId?: string;
+  mitemId?: string;
+  /** 产品条码 */
+  serialNumber?: string;
+}
+
+/** 响应数据 */
+export type PagingDataWipLogSearchVO = {
+  list?: WipLogSearchVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWipLogSearchVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWipLogSearchVO;
+}
+
+export interface WipLogSearchVO {
+  /** 排产单号 */
+  moScheCode?: string;
+  /** 产品编码 */
+  pdCode?: string;
+  /** 产品条码 */
+  serialNumber?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 上一个工站名称 */
+  preWorkstationrName?: string;
+  /** 当前工站名称 */
+  curWorkstationrName?: string;
+  /** 工作中心描述 */
+  workcenterDesc?: string;
+  /** 产品描述 */
+  pdDesc?: string;
+  /** 过站人 */
+  creatorName?: string;
+  /**
+   * 过站时间
+   * @format date-time
+   */
+  timeCreate?: string;
+}
+
 /** 完工入库单据实体 */
 export interface ScanLabelDTO {
   /** 业务类型编码 */
@@ -1124,10 +1204,15 @@ export interface WipKeyPartCollectVO {
   /** 扫描状态 */
   scanSuccess?: boolean;
   /**
-   * 工单需求量
+   * 用量分子
    * @format int32
    */
-  moRequestQty?: number;
+  numeratorQty?: number;
+  /**
+   * 用量分母
+   * @format int32
+   */
+  denomainatorQty?: number;
   /**
    * 用量分子
    * @format int32
@@ -1147,6 +1232,8 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  /** @format int32 */
+  requestQty?: number;
   isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }

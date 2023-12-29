@@ -385,27 +385,27 @@ const onDeleteClick = async ({ row }) => {
 // 维修完成按钮
 const onSubmit = async () => {
   if (selectRepairingId.value.length === 0) {
-    MessagePlugin.success('请选择维修工单。');
+    MessagePlugin.error('请选择维修工单。');
     return;
   }
 
   if (_.isEmpty(formData.queryData.returnRoutingProcessId)) {
-    MessagePlugin.success('请选择回流工序');
+    MessagePlugin.error('请选择回流工序');
     return;
   }
 
   // if (_.isEmpty(formData.queryData.checkedDefectReason)) {
-  //   MessagePlugin.success('请选择缺陷原因');
+  //   MessagePlugin.error('请选择缺陷原因');
   //   return;
   // }
 
   // if (_.isEmpty(formData.queryData.checkedDefectDealMethod)) {
-  //   MessagePlugin.success('请选择处理方法');
+  //   MessagePlugin.error('请选择处理方法');
   //   return;
   // }
 
   // if (_.isEmpty(formData.queryData.checkedDefectBlame)) {
-  //   MessagePlugin.success('请选择责任别');
+  //   MessagePlugin.error('请选择责任别');
   //   return;
   // }
 
@@ -432,7 +432,7 @@ const fetchTable = async () => {
   try {
     const rangDays = dayjs(formData.queryData.endDate).diff(dayjs(formData.queryData.beginDate), 'days');
     if (rangDays + 1 > 31) {
-      MessagePlugin.success('日期跨度最大不超过31天');
+      MessagePlugin.error('日期跨度最大不超过31天');
       return;
     }
 
@@ -557,7 +557,7 @@ const onRepairRowClick = async ({ row }) => {
   await apiControl.wipRepair.updateWipRepairStatus({
     wipRepairIds: [row.id],
   });
-  MessagePlugin.success('当前产品已开始维修');
+  MessagePlugin.error('当前产品已开始维修');
   repairDtlData.value = [];
   fetchTable();
 };
@@ -581,7 +581,7 @@ const onBatchRepairing = async () => {
     });
     repairDtlData.value = [];
     fetchTable();
-    MessagePlugin.success('选择产品已开始维修');
+    MessagePlugin.error('选择产品已开始维修');
   } catch (e) {
     console.log(e);
   }

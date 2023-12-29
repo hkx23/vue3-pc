@@ -52,6 +52,14 @@
                   <t-icon name="close-circle" />
                   {{ $t('layout.tagTabs.closeOther') }}
                 </t-dropdown-item>
+                <t-dropdown-item v-if="isMenuFavorite(routeItem)" @click="() => handleRemovefavorite(routeItem, index)">
+                  <t-icon name="link-unlink" />
+                  {{ $t('layout.tagTabs.remveFavority') }}
+                </t-dropdown-item>
+                <t-dropdown-item v-else @click="() => handleAddfavorite(routeItem, index)">
+                  <t-icon name="link-unlink" />
+                  {{ $t('layout.tagTabs.addFavority') }}
+                </t-dropdown-item>
               </t-dropdown-menu>
             </template>
           </t-dropdown>
@@ -69,13 +77,15 @@
 </template>
 
 <script setup lang="ts">
+import _ from 'lodash';
 import type { PopupVisibleChangeContext } from 'tdesign-vue-next';
 import { computed, nextTick, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+import { api, Favorite } from '@/api/main';
 import { prefix } from '@/config/global';
 import { renderMenuTitle } from '@/router/locale';
-import { useSettingStore, useTabsRouterStore } from '@/store';
+import { useSettingStore, useTabsRouterStore, useUserStore } from '@/store';
 import type { TRouterInfo, TTabRemoveOptions } from '@/types/interface';
 
 import LBreadcrumb from './Breadcrumb.vue';
@@ -84,6 +94,7 @@ import LFooter from './Footer.vue';
 
 const route = useRoute();
 const router = useRouter();
+const userStore = useUserStore();
 
 const settingStore = useSettingStore();
 const tabsRouterStore = useTabsRouterStore();
@@ -126,6 +137,42 @@ const handleCloseOther = (path: string, routeIdx: number) => {
   tabsRouterStore.subtractTabRouterOther({ path, routeIdx });
 
   handleOperationEffect('other', routeIdx);
+};
+
+// 收藏菜单
+const handleAddfavorite = async (routeItem: TRouterInfo, routeIdx: number) => {
+  activeTabPath.value = null;
+  console.log(routeItem, routeIdx);
+  if (routeItem.meta && routeItem.meta.id && userStore.userInfo.id) {
+    await api.favorite.add({
+      userId: userStore.userInfo.id,
+      moduleId: routeItem.meta.id,
+    });
+    const resfavorites = await api.favorite.list();
+    userStore.setFavorites(resfavorites);
+  }
+};
+
+// 取消收藏菜单
+const handleRemovefavorite = async (routeItem: TRouterInfo, routeIdx: number) => {
+  console.log(routeItem, routeIdx);
+  activeTabPath.value = null;
+  await api.favorite.delete({
+    userId: userStore.userInfo.id,
+    moduleId: routeItem.meta.id,
+  });
+  const resfavorites = await api.favorite.list();
+  userStore.setFavorites(resfavorites);
+};
+
+// 校验是否菜单已收藏
+const isMenuFavorite = (routeItem: TRouterInfo) => {
+  const { favorites } = userStore.userInfo;
+  let hasValue = false;
+  if (routeItem.meta && routeItem.meta.id) {
+    hasValue = _.some(favorites, (item: Favorite) => item.moduleId === routeItem.meta.id);
+  }
+  return hasValue;
 };
 
 // 处理非当前路由操作的副作用

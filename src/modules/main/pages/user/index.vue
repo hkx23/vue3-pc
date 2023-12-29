@@ -49,7 +49,12 @@
     <user-form ref="formRef" />
   </t-dialog>
   <!-- 组织弹出窗 -->
-  <dialog-org :id="selectuserId" v-model="formOrgVisible" :title="t('user.org')"></dialog-org>
+  <dialog-org
+    :id="selectuserId"
+    v-model="formOrgVisible"
+    :title="t('user.org')"
+    @submit-sucess="fetchTable"
+  ></dialog-org>
   <!-- 权限分配弹出窗 -->
   <dialog-permission
     :id="selectuserId"

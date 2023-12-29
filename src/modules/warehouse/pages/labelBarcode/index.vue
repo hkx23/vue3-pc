@@ -386,9 +386,12 @@ const generateBracode = async () => {
     return;
   }
   await apiMain.label.generateBarcode(printMode.value);
-  onRefreshBelow();
-  onRefresh();
   MessagePlugin.success('生成成功');
+  // 延时几百毫秒后执行刷新操作
+  setTimeout(() => {
+    onRefreshBelow();
+    onRefresh();
+  }, 2000); // 300毫秒延时示例，根据需要调整延时时间
 };
 
 // 打印上方查询初始化

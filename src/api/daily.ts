@@ -232,11 +232,8 @@ export interface SupportGroupVO {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 处理组代码 */
   supportGroupCode?: string;
-  /** 处理组名称 */
   supportGroupName?: string;
-  /** 处理组类型 */
   supportGroupType?: string;
   /** 子层级 */
   childrenUser?: SupportGroupInUserVO[];
@@ -746,13 +743,9 @@ export interface Param {
   eid?: string;
   oid?: string;
   paramGroupId?: string;
-  /** 字典名称 */
   paramName?: string;
-  /** 字典代码 */
   paramCode?: string;
-  /** 字典值 */
   paramValue?: string;
-  /** 字典描述 */
   paramDesc?: string;
   /**
    * 字典序号
@@ -819,11 +812,8 @@ export interface SupportGroup {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 处理组代码 */
   supportGroupCode?: string;
-  /** 处理组名称 */
   supportGroupName?: string;
-  /** 处理组类型 */
   supportGroupType?: string;
 }
 
@@ -852,14 +842,10 @@ export interface Org {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 组织编号 */
   orgCode?: string;
-  /** 组织名称 */
   orgName?: string;
-  /** 组织描述 */
   orgDesc?: string;
   parentOrgId?: string;
-  /** 组织层级代码 */
   levelCode?: string;
   /**
    * 是否生效，1是，0否

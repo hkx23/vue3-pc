@@ -685,3 +685,10 @@ watch(
 // 暴露方法出去
 defineExpose({ closeTable, onClear });
 </script>
+<style scoped lang="less">
+.t-table-select__table {
+  :deep(.t-table) {
+    border: 0;
+  }
+}
+</style>

@@ -6,6 +6,7 @@ export default {
     signOut: '退出登录',
     changePassword: '修改密码',
     themeSettings: '主题设置',
+    configurationWorkbench: '配置工作台',
   },
   notice: {
     title: '通知中心',
@@ -20,6 +21,8 @@ export default {
     closeOther: '关闭其他',
     closeLeft: '关闭左侧',
     closeRight: '关闭右侧',
+    addFavority: '收藏菜单',
+    remveFavority: '取消收藏',
     refresh: '刷新',
   },
   setting: {

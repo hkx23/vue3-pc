@@ -12,7 +12,7 @@
               <t-row justify="center">
                 <t-tag shape="round" size="large">
                   <t-col class="header-title">
-                    <span>{{ t('wipCollect.workshopName') }}: {{ mainform.workStationName }}</span>
+                    <span>{{ t('wipCollect.workshopName') }}: {{ mainform.workshopCode }}</span>
                     <span> {{ t('wipCollect.workcentName') }}：{{ mainform.workCenterCode }}</span>
                     <span> {{ t('wipCollect.workstationName') }}：{{ mainform.workStationCode }}</span>
                   </t-col>
@@ -23,6 +23,7 @@
                 <t-col v-if="scanType == 'SCANTEXT'" :span="7">
                   <t-input
                     v-model="mainform.serialNumber"
+                    :autofocus="true"
                     :placeholder="scanDesc"
                     size="large"
                     @enter="serialNumberEnter"
@@ -91,7 +92,7 @@
                           <t-list-item>
                             {{ item.keyPartCodeStr }}/{{ item.mitemCode }}/{{ item.mitemName }}/{{
                               t('wipCollect.requestqty')
-                            }}:{{ item.moRequestQty }},{{ t('wipCollect.scanqty') }}: {{ item.scanQty }}
+                            }}:{{ item.requestQty }},{{ t('wipCollect.scanqty') }}: {{ item.scanQty }}
                             <template #action>
                               <t-icon v-if="item.isScanFinish" size="24px" name="check" class="success" />
                               <!-- <t-icon v-else class="error" size="24px" name="close" /> -->
@@ -220,8 +221,16 @@ const Init = async () => {
   mainform.value.workStationCode = userStore.currUserOrgInfo.workStationCode;
   mainform.value.workStationName = userStore.currUserOrgInfo.workStationName;
 
+  mainform.value.workshopCode = userStore.currUserOrgInfo.workShopCode;
+  mainform.value.workshopName = userStore.currUserOrgInfo.workShopName;
+
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({
+      title: t('wipCollect.tip'),
+      content: t('wipCollect.tipsetting'),
+      duration: 2000,
+      closeBtn: true,
+    });
   }
 };
 
@@ -247,7 +256,12 @@ const scanDesc = computed(() => {
 
 const serialNumberEnter = async (value) => {
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({
+      title: t('wipCollect.tip'),
+      content: t('wipCollect.tipsetting'),
+      duration: 2000,
+      closeBtn: true,
+    });
     return;
   }
   if (!isEmpty(value)) {
@@ -399,7 +413,7 @@ const writeMessageListSuccess = async (content, datatime) => {
     datatime,
     status: 'OK',
   });
-  NotifyPlugin.success({ title: '扫描成功', content, duration: 2000 });
+  NotifyPlugin.success({ title: '扫描成功', content, duration: 2000, closeBtn: true });
 };
 // 失败消息体
 const writeMessageListError = async (content, datatime) => {
@@ -412,7 +426,7 @@ const writeMessageListError = async (content, datatime) => {
     datatime,
     status: 'NG',
   });
-  NotifyPlugin.error({ title: '扫描失败', content, duration: 2000 });
+  NotifyPlugin.error({ title: '扫描失败', content, duration: 2000, closeBtn: true });
 };
 
 onMounted(() => {

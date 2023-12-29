@@ -77,7 +77,7 @@
             <t-row justify="center">
               <t-tag shape="round" size="large">
                 <t-col class="header-title">
-                  <span>{{ t('productRework.workshopName') }}: {{ mainform.workStationName }}</span>
+                  <span>{{ t('productRework.workshopName') }}: {{ mainform.workshopName }}</span>
                   <span> {{ t('productRework.workcentName') }}：{{ mainform.workCenterCode }}</span>
                   <span> {{ t('productRework.workstationName') }}：{{ mainform.workStationCode }}</span>
                 </t-col>
@@ -319,14 +319,27 @@ const Init = async () => {
   mainform.value.workStationCode = userStore.currUserOrgInfo.workStationCode;
   mainform.value.workStationName = userStore.currUserOrgInfo.workStationName;
 
+  mainform.value.workshopCode = userStore.currUserOrgInfo.workShopCode;
+  mainform.value.workshopName = userStore.currUserOrgInfo.workShopName;
+
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({
+      title: t('productRework.tip'),
+      content: t('productRework.tipsetting'),
+      duration: 2000,
+      closeBtn: true,
+    });
   }
 };
 
 const serialNumberEnter = async (value) => {
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('productRework.tip'), content: t('productRework.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({
+      title: t('productRework.tip'),
+      content: t('productRework.tipsetting'),
+      duration: 2000,
+      closeBtn: true,
+    });
     return;
   }
   if (!isEmpty(value)) {
@@ -360,6 +373,15 @@ const serialNumberEnter = async (value) => {
           productInfo.value.scheQty = reData.scheQty.toString();
           productInfo.value.moCompletedQty = reData.completedQty.toString();
           productInfo.value.moScheId = reData.moScheId;
+          if (reData.preSetting && reData.preSetting.curMitemId) {
+            preSetting.value.curMitemId = reData.preSetting.curMitemId;
+          }
+          if (reData.preSetting && reData.preSetting.curMoScheId) {
+            preSetting.value.curMoScheId = reData.preSetting.curMoScheId;
+          }
+          if (reData.preSetting && reData.preSetting.curProcessId) {
+            preSetting.value.curProcessId = reData.preSetting.curProcessId;
+          }
           addBarcodeInfo(reData); // 扫描成功
 
           writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
@@ -447,7 +469,7 @@ const writeMessageListSuccess = async (content, datatime) => {
     datatime,
     status: 'OK',
   });
-  NotifyPlugin.success({ title: '扫描成功', content, duration: 2000 });
+  NotifyPlugin.success({ title: '扫描成功', content, duration: 2000, closeBtn: true });
 };
 // 失败消息体
 const writeMessageListError = async (content, datatime) => {
@@ -460,7 +482,7 @@ const writeMessageListError = async (content, datatime) => {
     datatime,
     status: 'NG',
   });
-  NotifyPlugin.error({ title: '扫描失败', content, duration: 2000 });
+  NotifyPlugin.error({ title: '扫描失败', content, duration: 2000, closeBtn: true });
 };
 
 const onchangeTab = () => {
@@ -470,6 +492,7 @@ const onchangeTab = () => {
         title: t('productRework.tip'),
         content: t('productRework.checkPresetting'),
         duration: 2000,
+        closeBtn: true,
       });
       selectModule.value = 'SETTING';
       return '';
@@ -485,6 +508,7 @@ const onClickSetting = () => {
         title: t('productRework.tip'),
         content: t('common.placeholder.input', [`${t('productRework.reworkMoSheId')}`]),
         duration: 2000,
+        closeBtn: true,
       });
       return '';
     }
@@ -493,6 +517,7 @@ const onClickSetting = () => {
         title: t('productRework.tip'),
         content: t('productRework.checkreworkRouting'),
         duration: 2000,
+        closeBtn: true,
       });
       return '';
     }
@@ -502,6 +527,7 @@ const onClickSetting = () => {
       title: t('productRework.tip'),
       content: t('common.placeholder.input', [`${t('productRework.reworkLine')}`]),
       duration: 2000,
+      closeBtn: true,
     });
     return '';
   }
@@ -510,6 +536,7 @@ const onClickSetting = () => {
       title: t('productRework.tip'),
       content: t('common.placeholder.input', [`${t('productRework.reworkProcess')}`]),
       duration: 2000,
+      closeBtn: true,
     });
     return '';
   }
@@ -564,6 +591,9 @@ const onConfirm = async () => {
 // 重置
 const resetHandle = () => {
   mainform.value.serialNumber = '';
+  preSetting.value.curMitemId = '';
+  preSetting.value.curMoScheId = '';
+  preSetting.value.curProcessId = '';
   keyPartSumList.value = [];
   scanInfoList.value = [];
   // 清除所有对象的值
