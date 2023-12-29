@@ -1,6 +1,6 @@
 <template>
   <div v-show="cRecommendList && cRecommendList.length > 0">
-    <t-card class="recommend">
+    <div class="cmp-card recommend">
       <div v-for="(item, index) in cRecommendList" :key="index" class="recommend-item" @click="onModuleClick(item)">
         <div :class="randomNumber()">
           <t-icon :name="item.meta && item.meta.iconName" />
@@ -15,7 +15,7 @@
           <t-icon name="chevron-right" />
         </div>
       </template> -->
-    </t-card>
+    </div>
   </div>
 </template>
 
@@ -90,12 +90,25 @@ const onModuleClick = (item: TRouterInfo) => {
   height: 48px;
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: hidden;
 
   .t-icon {
     height: 1.5em;
   }
+}
+
+.cmp-card {
+  font: var(--td-font-body-medium);
+  margin: 0;
+  padding: var(--td-comp-paddingTB-l);
+  list-style: none;
+  position: relative;
+  box-sizing: border-box;
+  border-radius: var(--td-radius-medium);
+  background-color: var(--td-bg-color-container);
+  color: var(--td-text-color-primary);
+  transition: box-shadow 0.2s cubic-bezier(0.38, 0, 0.24, 1);
+  border: 1px solid var(--td-component-border);
 }
 
 .recommend-item {
