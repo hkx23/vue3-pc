@@ -334,7 +334,7 @@ const onConfirm = async () => {
 // 打印选择 框 行 事件
 const onPrintChange = (value: any) => {
   selectedRowKeys.value = value;
-  printButtonOp.value = !(selectedRowKeys.value.length > 0);
+  printButtonOp.value = !(selectedRowKeys?.value?.length > 0);
 };
 
 // 打印选择 框 行 事件
@@ -427,7 +427,7 @@ const tagValue = ref(0);
 const barcodeStatusNameArr = ref([]);
 const onProductRightFetchData = (value: any, context: any) => {
   selectedManageRowKeys.value = value;
-  isEnable.value = !(selectedManageRowKeys.value.length > 0);
+  isEnable.value = !(selectedManageRowKeys?.value?.length > 0);
   reprintDialog.value.labelNo = context.selectedRowData[0].labelNo;
   reprintDialog.value.qty = context.selectedRowData[0].qty;
   reprintDialog.value.labelId = context.selectedRowData[0].id;
@@ -470,7 +470,7 @@ const onCancellation = () => {
 };
 // 拆分 点击事件
 const onSplit = () => {
-  const rowStatus = selectedManageRowKeys.value.length > 1;
+  const rowStatus = selectedManageRowKeys?.value?.length > 1;
   if (rowStatus) {
     MessagePlugin.warning('请选择一行数据！');
     return;
