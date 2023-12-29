@@ -719,6 +719,7 @@ const onGetPrintDownTabData = async () => {
 const workStateDataList = reactive({ list: [] });
 const onWorkStatus = async () => {
   const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' });
+  console.log('🚀 ~ file: index.vue:722 ~ onWorkStatus ~ res:', res);
   workStateDataList.list = res;
 };
 
@@ -741,8 +742,8 @@ const ManageTabData = ref({
   workshopId: '', // 车间 ID
   workcenterId: '', // 工作中心ID
   mitemId: '', // 物料 ID
-  barcodeWipStatus: '', // 条码状态
-  serialNumber: '', // 条码
+  barcodeStatus: '', // 条码状态
+  barcode: '', // 条码
 });
 const onLabelManageTabData = async () => {
   ManageTabData.value.pageNum = pageUI.value.page;
@@ -996,7 +997,8 @@ const onInput = async (data: any) => {
     tableRefTop.value.setSelectedRowKeys([]);
   } else {
     pageUI.value.page = 1;
-    const [planDateStart, planDateEnd, createDateStart, createDateEnd] = data.scheduledProductionDate;
+    const [planDateStart, planDateEnd] = data.scheduledProductionDate;
+    const [createDateStart, createDateEnd] = data.datePproduced;
     ManageTabData.value.planDateStart = planDateStart; // 计划生产开始日期
     ManageTabData.value.planDateEnd = planDateEnd; // 计划生产结束日期
     ManageTabData.value.createDateStart = createDateStart; // 生产开始日期
@@ -1005,8 +1007,8 @@ const onInput = async (data: any) => {
     ManageTabData.value.workshopId = data.workshop; // 车间 ID
     ManageTabData.value.workcenterId = data.workcenter; // 工作中心ID
     ManageTabData.value.mitemId = data.mitem; // 物料 ID
-    ManageTabData.value.barcodeWipStatus = data.barCodeState; // 条码状态
-    ManageTabData.value.serialNumber = data.barCode; // 条码
+    ManageTabData.value.barcodeStatus = data.barCodeState; // 条码状态
+    ManageTabData.value.barcode = data.barCode; // 条码
     await onLabelManageTabData(); // 产品标签管理 表格数据
     tableRefRight.value.setSelectedRowKeys([]);
   }

@@ -1166,7 +1166,7 @@ const onInput = async (data: any) => {
   } else {
     pageUI.value.page = 1;
     const [planDateStart, planDateEnd] = data.scheduledProductionDate;
-    const [createDateStart, createDateEnd] = data.scheduledProductionDate;
+    const [createDateStart, createDateEnd] = data.datePproduced;
     cardManageData.value.planDateStart = planDateStart; // 计划生产开始日期
     cardManageData.value.planDateEnd = planDateEnd; // 计划生产结束日期
     cardManageData.value.createDateStart = createDateStart; // 生产开始日期
