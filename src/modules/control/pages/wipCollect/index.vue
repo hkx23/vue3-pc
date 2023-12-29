@@ -3,149 +3,118 @@
 <!-- eslint-disable prettier/prettier -->
 <!-- eslint-disable prettier/prettier -->
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
-      <t-layout>
-        <t-layout>
-          <t-content>
-            <t-space class="custom-row" direction="vertical" style="width: 98%">
-              <t-row justify="center">
-                <t-tag shape="round" size="large">
-                  <t-col class="header-title">
-                    <span>{{ t('wipCollect.workshopName') }}: {{ mainform.workshopCode }}</span>
-                    <span> {{ t('wipCollect.workcentName') }}：{{ mainform.workCenterCode }}</span>
-                    <span> {{ t('wipCollect.workstationName') }}：{{ mainform.workStationCode }}</span>
-                  </t-col>
-                </t-tag>
+  <cmp-container :full="true">
+    <cmp-row>
+      <cmp-card flex="auto" :ghost="true">
+        <cmp-container :full="true" header>
+          <!-- 扫描区 -->
+          <cmp-card>
+            <bcmp-workstation-info />
+            <t-row class="padding-top-line-8" style="padding-bottom: 8px">
+              <t-col flex="auto">
+                <cmp-scan-input
+                  v-if="scanType == 'SCANTEXT'"
+                  v-model="mainform.serialNumber"
+                  label="产品条码"
+                  :placeholder="scanDesc"
+                  @enter="serialNumberEnter"
+                ></cmp-scan-input>
+                <cmp-scan-input
+                  v-else
+                  v-model="mainform.keypartCode"
+                  label="关键件条码"
+                  :placeholder="scanDesc"
+                  @enter="serialNumberEnter"
+                ></cmp-scan-input>
+              </t-col>
+              <t-col flex="80px" style="text-align: right">
+                <t-button class="btn_reset" theme="default" @click="resetHandle">{{
+                  t('common.button.reset')
+                }}</t-button>
+              </t-col>
+            </t-row>
+            <t-form label-width="80px" label-align="left" style="border-top: 1px solid var(--td-component-stroke)">
+              <t-row class="item-row" :gutter="[4, 0]">
+                <t-col flex="210px"
+                  ><t-form-item :label="t('wipCollect.scheCode')">{{ productInfo.scheCode }} </t-form-item>
+                </t-col>
+                <t-col flex="210px"
+                  ><t-form-item :label="t('wipCollect.mitemCode')">{{ productInfo.moMitemCode }} </t-form-item>
+                </t-col>
+                <t-col flex="210px"
+                  ><t-form-item :label="t('wipCollect.mitemName')">{{ productInfo.moMitemName }} </t-form-item>
+                </t-col>
+                <t-col flex="210px"
+                  ><t-form-item :label="t('wipCollect.scheDate')">{{ productInfo.scheDatetimeScheStr }} </t-form-item>
+                </t-col>
+                <t-col flex="210px"
+                  ><t-form-item :label="t('wipCollect.scheQty')">{{ productInfo.scheQty }} </t-form-item>
+                </t-col>
+                <t-col flex="210px"
+                  ><t-form-item :label="t('wipCollect.completeQty')">{{ productInfo.scheQty }} </t-form-item>
+                </t-col>
               </t-row>
-              <t-row class="custom-row">
-                <t-col :span="2" class="custom-row-item-header">{{ t('wipCollect.scanlabel') }}：</t-col>
-                <t-col v-if="scanType == 'SCANTEXT'" :span="7">
-                  <t-input
-                    v-model="mainform.serialNumber"
-                    :autofocus="true"
-                    :placeholder="scanDesc"
-                    size="large"
-                    @enter="serialNumberEnter"
-                  />
-                </t-col>
-                <t-col v-else :span="7">
-                  <t-input
-                    v-model="mainform.keypartCode"
-                    :placeholder="scanDesc"
-                    size="large"
-                    @enter="serialNumberEnter"
-                  />
-                </t-col>
-                <t-col :span="1" class="custom-row-item-reset">
-                  <t-button class="btn_reset" theme="default" @click="resetHandle">{{
-                    t('common.button.reset')
-                  }}</t-button>
-                </t-col>
-              </t-row>
-              <t-row class="custom-row">
-                <div class="groupbox" style="height: auto">
-                  <span class="grouptitle">{{ t('wipCollect.product') }}</span>
-                  <t-card :bordered="false">
-                    <t-space class="custom-row-item" direction="horizontal" :break-line="true">
-                      <t-input
-                        v-model="productInfo.scheCode"
-                        placeholder=""
-                        :label="t('wipCollect.scheCode')"
-                        readonly
-                      />
-                      <t-input
-                        v-model="productInfo.moMitemCode"
-                        placeholder=""
-                        :label="t('wipCollect.mitemCode')"
-                        readonly
-                      />
-                      <t-input
-                        v-model="productInfo.moMitemName"
-                        placeholder=""
-                        :label="t('wipCollect.mitemName')"
-                        readonly
-                      />
-                      <t-input
-                        v-model="productInfo.scheDatetimeScheStr"
-                        placeholder=""
-                        :label="t('wipCollect.scheDate')"
-                        readonly
-                      />
-                      <t-input v-model="productInfo.scheQty" placeholder="" :label="t('wipCollect.scheQty')" readonly />
-                      <t-input
-                        v-model="productInfo.moCompletedQty"
-                        placeholder=""
-                        :label="t('wipCollect.completeQty')"
-                        readonly
-                      />
-                    </t-space>
-                  </t-card>
+            </t-form>
+          </cmp-card>
+          <!-- 信息区 -->
+
+          <cmp-card v-if="keyPartSumList && keyPartSumList.length > 0">
+            <t-row class="custom-row">
+              <t-col class="custom-col">
+                <div class="groupbox">
+                  <t-collapse :default-expand-all="true" expand-icon-placement="right">
+                    <t-collapse-panel destroy-on-collapse :header="productInfo.header">
+                      <t-list v-for="(item, index) in keyPartSumList" :key="index">
+                        <t-list-item :class="{ 'selected-item': item.isScanFinish }">
+                          {{ item.keyPartCodeStr }}/{{ item.mitemCode }}/{{ item.mitemName }}/{{
+                            t('wipCollect.requestqty')
+                          }}:{{ item.requestQty }},{{ t('wipCollect.scanqty') }}: {{ item.scanQty }}
+                          <template #action>
+                            <t-icon v-if="item.isScanFinish" size="24px" name="check" class="success" />
+                            <!-- <t-icon v-else class="error" size="24px" name="close" /> -->
+                          </template>
+                        </t-list-item>
+                      </t-list>
+                    </t-collapse-panel>
+                  </t-collapse>
                 </div>
-              </t-row>
-              <t-row v-if="keyPartSumList && keyPartSumList.length > 0" class="custom-row">
-                <t-col class="custom-col">
-                  <div class="groupbox">
-                    <t-collapse :default-expand-all="true">
-                      <t-collapse-panel destroy-on-collapse :header="productInfo.header">
-                        <t-list v-for="(item, index) in keyPartSumList" :key="index">
-                          <t-list-item>
-                            {{ item.keyPartCodeStr }}/{{ item.mitemCode }}/{{ item.mitemName }}/{{
-                              t('wipCollect.requestqty')
-                            }}:{{ item.requestQty }},{{ t('wipCollect.scanqty') }}: {{ item.scanQty }}
-                            <template #action>
-                              <t-icon v-if="item.isScanFinish" size="24px" name="check" class="success" />
-                              <!-- <t-icon v-else class="error" size="24px" name="close" /> -->
-                            </template>
-                          </t-list-item>
-                        </t-list>
-                      </t-collapse-panel>
-                    </t-collapse>
-                  </div>
-                </t-col>
-              </t-row>
-              <t-row>
-                <t-col>
-                  <div class="groupbox">
-                    <span class="grouptitle">{{ t('wipCollect.collectDtl') }}</span>
-                    <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="295px">
-                      <template #serialNumber="{ row }">
-                        <div class="talbe_col_nowrap" :title="row.serialNumber">
-                          {{ row.serialNumber }}
-                        </div>
-                      </template>
-                    </t-table>
-                  </div>
-                </t-col>
-              </t-row>
-            </t-space>
-          </t-content>
-        </t-layout>
-        <t-aside style="width: 30%">
-          <div class="groupbox">
-            <span class="grouptitle">{{ t('wipCollect.messageCom') }}</span>
-            <t-list style="height: 96%" :scroll="{ type: 'virtual' }">
-              <t-list-item v-for="(item, index) in messageList" :key="index">
-                <t-list-item-meta style="align-items: center">
-                  <template #description>
-                    <t-space>
-                      <t-icon v-if="item.status == 'OK'" name="check-circle-filled" style="color: green" />
-                      <t-icon v-if="item.status == 'NG'" name="close-circle" style="color: red" />
-                      <t-tooltip :content="item.content" placement="mouse">
-                        <span>{{ item.title }}</span>
-                        <span style="margin-left: 8px"> {{ item.datatime }}</span>
-                      </t-tooltip>
-                      <!-- <div>{{ item.datatime }}</div> -->
-                    </t-space>
-                  </template>
-                </t-list-item-meta>
-              </t-list-item>
-            </t-list>
-          </div>
-        </t-aside>
-      </t-layout>
-    </div>
-  </div>
+              </t-col>
+            </t-row>
+          </cmp-card>
+          <!-- 采集详情区 -->
+          <cmp-card>
+            <cmp-table
+              ref="refInfoTable"
+              row-key="serialNumber"
+              :row-class-name="getRowClassName"
+              :columns="scanInfoColumns"
+              :fixed-height="true"
+              :show-toolbar="true"
+              :table-data="scanInfoList"
+              :show-pagination="false"
+              :show-setting="false"
+              :hover="false"
+              :stript="false"
+            >
+              <template #title> {{ t('wipCollect.collectDtl') }} </template>
+              <template #serialNumber="{ row }">
+                <div class="talbe_col_nowrap" :title="row.serialNumber">
+                  {{ row.serialNumber }}
+                </div>
+              </template>
+            </cmp-table>
+          </cmp-card>
+        </cmp-container>
+      </cmp-card>
+      <cmp-card flex="300px" :ghost="true">
+        <cmp-container :full="true" header>
+          <cmp-card>
+            <cmp-message v-model="msgList"></cmp-message>
+          </cmp-card>
+        </cmp-container>
+      </cmp-card>
+    </cmp-row>
+  </cmp-container>
 </template>
 
 <script setup lang="ts">
@@ -155,9 +124,10 @@ import { LoadingPlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdes
 import { computed, onMounted, ref } from 'vue';
 
 import { api, WipKeyPartCollectVO } from '@/api/control';
+import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
 import { useUserStore } from '@/store';
 
-import { messageModel, scanCollectInfoModel } from '../../api/processInspection';
+import { scanCollectInfoModel } from '../../api/processInspection';
 import { useLang } from './lang';
 
 const userStore = useUserStore();
@@ -204,8 +174,15 @@ const productInfo = ref({
 const keyPartSumList = ref<WipKeyPartCollectVO[]>([]);
 
 // 界面消息列表
-const messageList = ref<messageModel[]>([]);
-
+// const messageList = ref<messageModel[]>([]);
+// 消息
+const msgList = ref<
+  {
+    theme: 'success' | 'info' | 'error' | 'warning';
+    content: string;
+    time: string;
+  }[]
+>([]);
 const Init = async () => {
   mainform.value.serialNumber = '';
   mainform.value.keypartCode = '';
@@ -299,8 +276,8 @@ const serialNumberEnter = async (value) => {
             productInfo.value.moScheId = reData.moScheId;
             writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.uomName, reData.scanMessage); // 扫描成功
           }
-
-          writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
+          pushMessage('success', value, reData.scanMessage);
+          // writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
 
           if (reData.keyPartSumList.length > 0) {
             productInfo.value.header = `${t('wipCollect.keypartInfo')}:${productInfo.value.moMitemCode}(${
@@ -320,7 +297,8 @@ const serialNumberEnter = async (value) => {
             resetKeypartCode();
           }
         } else {
-          writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
+          pushMessage('error', value, reData.scanMessage);
+          // writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
           if (scanType.value === 'SCANTEXT') {
             resetBarcode();
           }
@@ -396,37 +374,33 @@ const checkBarcodeRepeat = (lbNo) => {
     const barcodeInfo = _.find(scanInfoList.value, (item: scanCollectInfoModel) => item.serialNumber === lbNo);
     if (barcodeInfo) {
       isSuccess = false;
-      writeMessageListError(`该条码(${lbNo})已扫描,请勿重复扫描`, dayjs().format('YYYY-MM-DD HH:mm:ss'));
+      pushMessage('error', lbNo, `该条码已扫描,请勿重复扫描`);
+      // writeMessageListError(`该条码(${lbNo})已扫描,请勿重复扫描`, dayjs().format('YYYY-MM-DD HH:mm:ss'));
     }
   }
   return isSuccess;
 };
 
-// 成功消息体
-const writeMessageListSuccess = async (content, datatime) => {
-  if (messageList.value && messageList.value.length > 10) {
-    messageList.value.splice(0, messageList.value.length);
+const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', scanLabel: string, msg: string) => {
+  let content: string;
+  if (type === 'success') {
+    content = `[${scanLabel}]${t('wipCollect.scanSuccess')} , ${msg}`;
+    NotifyPlugin.success({ title: t('wipCollect.scanSuccess'), content, duration: 2000 });
+  } else if (type === 'error') {
+    content = `[${scanLabel}]${t('wipCollect.scanFailed')} , ${msg}`;
+    NotifyPlugin.error({ title: t('wipCollect.scanFailed'), content, duration: 2000 });
+  } else {
+    content = msg;
   }
-  messageList.value.unshift({
-    title: '扫描成功',
+  msgList.value.push({
+    theme: type,
     content,
-    datatime,
-    status: 'OK',
+    time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
   });
-  NotifyPlugin.success({ title: '扫描成功', content, duration: 2000, closeBtn: true });
 };
-// 失败消息体
-const writeMessageListError = async (content, datatime) => {
-  if (messageList.value && messageList.value.length > 10) {
-    messageList.value.splice(-1, 1);
-  }
-  messageList.value.unshift({
-    title: '扫描失败',
-    content,
-    datatime,
-    status: 'NG',
-  });
-  NotifyPlugin.error({ title: '扫描失败', content, duration: 2000, closeBtn: true });
+const getRowClassName = ({ rowIndex }) => {
+  if (rowIndex === 0) return 'custom-third-class-name';
+  return '';
 };
 
 onMounted(() => {
@@ -446,6 +420,10 @@ onMounted(() => {
   .t-tree {
     margin-top: var(--td-comp-margin-xxl);
   }
+}
+
+.selected-item {
+  background: #18c9771a;
 }
 
 .list-tree-wrapper {
@@ -485,7 +463,7 @@ onMounted(() => {
 
 .groupbox {
   width: 100%;
-  border: #d5d8db solid 1px;
+  // border: #d5d8db solid 1px;
   height: 100%;
 
   .grouptitle {
@@ -566,5 +544,18 @@ onMounted(() => {
 
 /deep/ .t-collapse {
   border: none;
+}
+
+:deep(.t-form__label) {
+  color: var(--td-gray-color-7);
+}
+
+:deep(.t-collapse-panel__wrapper .t-collapse-panel__body) {
+  background: white;
+}
+
+:deep(.t-table .custom-third-class-name) > td {
+  background-color: var(--td-brand-color-light);
+  font-weight: bold;
 }
 </style>

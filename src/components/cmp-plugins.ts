@@ -8,6 +8,7 @@ import CmpContainer from './cmp-layout/CmpContainer.vue';
 import CmpRow from './cmp-layout/CmpRow.vue';
 import CmpMessage from './cmp-message/index.vue';
 import CmpQuery from './cmp-query/index.vue';
+import CmpScanInput from './cmp-scan-input/index.vue';
 import CmpTable from './cmp-table/index.vue';
 
 export default {
@@ -24,6 +25,7 @@ export default {
     app.component('CmpRow', CmpRow);
     app.component('CmpCard', CmpCard);
     app.component('CmpButton', CmpButton);
+    app.component('CmpScanInput', CmpScanInput);
   },
 };
 

@@ -1,47 +1,21 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card>
-      <t-row align="middle" justify="space-around">
-        <t-col :span="3">
-          <t-space>
-            <div>{{ t('business.main.workshop') }}</div>
-            <div>{{ currUserOrgInfo.workShopName }}</div>
-          </t-space>
-        </t-col>
-        <t-col :span="3">
-          <t-space>
-            <div>{{ t('business.main.workcenter') }}</div>
-            <div>{{ currUserOrgInfo.workCenterName }}</div>
-          </t-space>
-        </t-col>
-        <t-col :span="3">
-          <t-space>
-            <div>{{ t('business.main.workstation') }}</div>
-            <div>{{ currUserOrgInfo.workStationName }}</div>
-          </t-space>
-        </t-col>
-        <t-col :span="3" class="right-label">
-          <t-space align="center">
-            <div>{{ t('productPacking.scanType') }}</div>
-            <t-radio-group v-model="scanType" variant="primary-filled" @change="scanTypeChange">
-              <t-radio-button value="normal">{{ t('productPacking.normal') }}</t-radio-button>
-              <t-radio-button value="delete">{{ t('common.button.delete') }}</t-radio-button>
-            </t-radio-group>
-          </t-space>
-        </t-col>
-      </t-row>
-    </cmp-card>
     <cmp-row>
-      <t-col :span="9">
+      <cmp-card flex="auto">
         <t-space direction="vertical" :size="12" style="width: 100%">
+          <bcmp-workstation-info />
           <t-card :header="t('productPacking.scanLabel')" class="scan-panel">
             <t-row align="middle" :gutter="10" class="scan-line">
-              <t-col :span="10">
-                <t-input v-model="scanLabel" :placeholder="scanPlaceholder" @enter="scan">
-                  <template #suffixIcon>
-                    <qrcode-icon />
-                  </template>
-                </t-input>
+              <t-col>
+                <t-space align="center">
+                  <t-radio-group v-model="scanType" variant="primary-filled" @change="scanTypeChange">
+                    <t-radio-button value="normal">{{ t('productPacking.normal') }}</t-radio-button>
+                    <t-radio-button value="delete">{{ t('common.button.delete') }}</t-radio-button>
+                  </t-radio-group>
+                </t-space>
+              </t-col>
+              <t-col :span="8">
+                <cmp-scan-input v-model="scanLabel" :placeholder="scanPlaceholder" @enter="scan"></cmp-scan-input>
               </t-col>
               <t-col v-if="labelList.length > 0" :span="2" class="qty-info">
                 <div class="label-qty">{{ allQty }}</div>
@@ -82,9 +56,21 @@
             </div>
           </t-card>
         </t-space>
-      </t-col>
-      <cmp-card :span="3" :header="t('common.message.message')">
-        <cmp-message v-model="msgList"></cmp-message>
+      </cmp-card>
+      <cmp-card flex="300px" :ghost="true">
+        <cmp-container :full="true" header>
+          <!-- 
+          <t-space align="center">
+                  <div>{{ t('productPacking.scanType') }}</div>
+                  <t-radio-group v-model="scanType" variant="primary-filled" @change="scanTypeChange">
+                    <t-radio-button value="normal">{{ t('productPacking.normal') }}</t-radio-button>
+                    <t-radio-button value="delete">{{ t('common.button.delete') }}</t-radio-button>
+                  </t-radio-group>
+                </t-space> -->
+          <cmp-card>
+            <cmp-message v-model="msgList"></cmp-message>
+          </cmp-card>
+        </cmp-container>
       </cmp-card>
     </cmp-row>
   </cmp-container>
@@ -99,12 +85,13 @@ import { computed, ref } from 'vue';
 
 import { api as apiControl, BarcodePkg, WipPkgInfoVO } from '@/api/control';
 import { api as apiMain } from '@/api/main';
+import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
 import { useUserStore } from '@/store';
 
 import { useLang } from './lang';
-
 // 使用多语言
 const { t } = useLang();
+
 const { currUserOrgInfo } = useUserStore();
 const scanType = ref('normal');
 const isOnlinePrint = ref(false);
@@ -284,11 +271,11 @@ const msgList = ref<
     time: string;
   }[]
 >([
-  {
-    theme: 'info',
-    content: t('productPacking.plsScanLabel'),
-    time: '16:27:11',
-  },
+  // {
+  //   theme: 'info',
+  //   content: t('productPacking.plsScanLabel'),
+  //   time: dayjs().format('HH:mm:ss'),
+  // },
 ]);
 const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', msg: string) => {
   let content: string;
