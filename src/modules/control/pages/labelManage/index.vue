@@ -876,15 +876,15 @@ const onProductRightFetchData = (value: any, context: any) => {
 const tabChange = async (value: number) => {
   printTemplate.value = '';
   if (!value) {
-    initialDate.value = 1;
+    initialDate.value = 0;
   } else {
-    initialDate.value = 3;
+    initialDate.value = 2;
     await onLabelManageTabData(); // 产品标签管理 表格数据
   }
 };
 
 // #query 查询参数
-const initialDate = ref(1);
+const initialDate = ref(0);
 const opts = computed(() => {
   return {
     scheduledProductionDate: {
@@ -914,7 +914,7 @@ const opts = computed(() => {
       labelWidth: '100px',
       comp: 't-date-range-picker',
       event: 'daterangetime',
-      defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+      defaultVal: [dayjs().subtract(+2, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
       bind: {
         enableTimePicker: false,
         format: 'YYYY-MM-DD',
