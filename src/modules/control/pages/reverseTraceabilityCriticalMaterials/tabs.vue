@@ -6,26 +6,26 @@
         <cmp-container v-if="tabKey === 0" :full="true">
           <t-card :bordered="false">
             <div class="form-item-box">
-              <t-form-item label="工序">{{ productBasicInformationform?.curProcessName }}</t-form-item>
-              <t-form-item label="工站"> {{ productBasicInformationform?.curWorkstationName }}</t-form-item>
-              <t-form-item label="工作中心"> {{ productBasicInformationform?.curWorkcenterName }}</t-form-item>
-              <t-form-item label="车间"> {{ productBasicInformationform?.curWorkshopName }}</t-form-item>
+              <t-form-item label="工序">{{ productBasicInformationForm?.curProcessName }}</t-form-item>
+              <t-form-item label="工站"> {{ productBasicInformationForm?.curWorkstationName }}</t-form-item>
+              <t-form-item label="工作中心"> {{ productBasicInformationForm?.curWorkcenterName }}</t-form-item>
+              <t-form-item label="车间"> {{ productBasicInformationForm?.curWorkshopName }}</t-form-item>
             </div>
             <div class="form-item-box">
-              <t-form-item label="产品编码">{{ productBasicInformationform?.serialNumber }}</t-form-item>
-              <t-form-item label="排产单号"> {{ productBasicInformationform?.moScheCode }}</t-form-item>
-              <t-form-item label="创建时间"> {{ productBasicInformationform?.serialNumberTimeCreate }}</t-form-item>
-              <t-form-item label="最后更新时间"> {{ productBasicInformationform?.lastTimeModified }}</t-form-item>
+              <t-form-item label="产品编码">{{ productBasicInformationForm?.serialNumber }}</t-form-item>
+              <t-form-item label="排产单号"> {{ productBasicInformationForm?.moScheCode }}</t-form-item>
+              <t-form-item label="创建时间"> {{ productBasicInformationForm?.serialNumberTimeCreate }}</t-form-item>
+              <t-form-item label="最后更新时间"> {{ productBasicInformationForm?.lastTimeModified }}</t-form-item>
             </div>
           </t-card>
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
                 ref="tableRefCard"
-                v-model:pagination="pageUI"
+                v-model:pagination="pageUIOne"
                 row-key="deliveryCardId"
                 :table-column="productBasicInformation"
-                :table-data="productBasicInformationform.wipLogList"
+                :table-data="productBasicInformationForm.wipLogList"
                 :total="2"
               >
                 <template #dcResult="{ row }">
@@ -38,7 +38,7 @@
                   {{ row.isHold ? '是' : '否' }}
                 </template>
                 <template #title>
-                  {{ `工单信息( 工单号：${productBasicInformationform.moCode} )` }}
+                  {{ `工单信息( 工单号：${productBasicInformationForm.moCode} )` }}
                 </template>
               </cmp-table>
             </div>
@@ -55,6 +55,7 @@
               <cmp-table
                 ref="tableRefCard"
                 v-model:pagination="pageUI"
+                :table-column="materialkey"
                 row-key="deliveryCardId"
                 :table-data="jiashuju"
                 :total="2"
@@ -68,6 +69,7 @@
               <cmp-table
                 ref="tableRefCard"
                 v-model:pagination="pageUI"
+                :table-column="materialWorkOrder"
                 row-key="deliveryCardId"
                 :table-data="jiashuju"
                 :total="2"
@@ -241,16 +243,16 @@
 
 <script setup lang="ts">
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, reactive, ref } from 'vue';
+import { defineProps, onMounted, reactive, ref, watch } from 'vue';
 
-import { api, ProductBaseReportVO } from '@/api/control';
+import { api, MoOnboardReportVO, ProductBaseReportVO, WipKeypartReportVO } from '@/api/control';
 import { api as apimain } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 import detailed from './detailed.vue';
 
-const { pageUI } = usePage();
+const { pageUI, pageUI: pageUIOne, pageUI: pageUIThree } = usePage();
 
 const tabPanel = [
   '产品基础信息',
@@ -338,150 +340,150 @@ const productBasicInformation: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 // // 3️⃣ - 1️⃣物料信息 关键信息 表格列数据
-// const materialkey: PrimaryTableCol<TableRowData>[] = [
-//   {
-//     colKey: 'serial-number',
-//     title: '序号',
-//     align: 'center',
-//     width: '60',
-//   },
-//   {
-//     colKey: 'deliveryCardStatuName',
-//     title: '工单号',
-//     align: 'center',
-//     width: '130',
-//   },
-//   {
-//     colKey: 'qty',
-//     title: '关键件条码',
-//     align: 'center',
-//     width: '60',
-//   },
-//   {
-//     colKey: 'operateType',
-//     title: '工序',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'reason',
-//     title: '工站',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'creator',
-//     title: '状态',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '数量',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '员工',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '班次',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '加工时间',
-//     align: 'center',
-//     width: '100',
-//   },
-// ];
+const materialkey: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'serial-number',
+    title: '序号',
+    align: 'center',
+    width: '60',
+  },
+  {
+    colKey: 'deliveryCardStatuName',
+    title: '工单号',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'qty',
+    title: '关键件条码',
+    align: 'center',
+    width: '60',
+  },
+  {
+    colKey: 'operateType',
+    title: '工序',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'reason',
+    title: '工站',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'creator',
+    title: '状态',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '数量',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '员工',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '班次',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '加工时间',
+    align: 'center',
+    width: '100',
+  },
+];
 
 // // 3️⃣ - 2️⃣物料信息 工单投料信息 表格列数据
-// const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
-//   {
-//     colKey: 'serial-number',
-//     title: '序号',
-//     align: 'center',
-//     width: '60',
-//   },
-//   {
-//     colKey: 'deliveryCardStatuName',
-//     title: '工作中心',
-//     align: 'center',
-//     width: '130',
-//   },
-//   {
-//     colKey: 'qty',
-//     title: '工单号',
-//     align: 'center',
-//     width: '60',
-//   },
-//   {
-//     colKey: 'operateType',
-//     title: '产品编码',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'reason',
-//     title: '物料条码',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'creator',
-//     title: '物料编码',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '物料批次',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '供应商编码',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '物料描述',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '绑定工序',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '绑定工站',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '作业员',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '加工时间',
-//     align: 'center',
-//     width: '100',
-//   },
-// ];
+const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'serial-number',
+    title: '序号',
+    align: 'center',
+    width: '60',
+  },
+  {
+    colKey: 'deliveryCardStatuName',
+    title: '工作中心',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'qty',
+    title: '工单号',
+    align: 'center',
+    width: '60',
+  },
+  {
+    colKey: 'operateType',
+    title: '产品编码',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'reason',
+    title: '物料条码',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'creator',
+    title: '物料编码',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '物料批次',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '供应商编码',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '物料描述',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '绑定工序',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '绑定工站',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '作业员',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '加工时间',
+    align: 'center',
+    width: '100',
+  },
+];
 
 // // 4️⃣包装信息 表格列数据
 // const packagingInformation: PrimaryTableCol<TableRowData>[] = [
@@ -813,34 +815,41 @@ const productBasicInformation: PrimaryTableCol<TableRowData>[] = [
 //   },
 // ];
 
-// 获取工单信息 数据
-const workOrderData = reactive({ list: [] });
-const onGetWorkOrder = async () => {
-  const res = (await apimain.mo.getmolist({
-    moCode: 'ben0002',
-    pagenum: pageUI.value.page,
-    pagesize: pageUI.value.rows,
-  })) as any;
-  [workOrderData.list] = res.list;
-};
-
-// #获取 产品基础信息 数据
-const productBasicInformationform = ref<ProductBaseReportVO>({});
-const productBasicInformationList = ref({
-  pagenum: 1,
-  pagesize: 10,
-  serialNumber: 'SN202312270027', // 产品条码
-  moCode: '', // 工单号
-  parentPkgBarcode: '', // 包装箱码
+const props = defineProps({
+  onInputData: {
+    type: Object, // 或者其他适合您数据的类型
+    default: () => {
+      return {
+        pagenum: 1,
+        pagesize: 10,
+        serialNumber: 'SN202312270027', // 产品条码
+        moCode: '', // 工单号
+        parentPkgBarcode: '', // 包装箱码
+      }; // 返回一个对象作为默认值
+    },
+  },
 });
-// 产品基础信息 请求
-const onGetProductBasicInformation = async () => {
-  const res = await api.reversetraceability.getProductBaseInfo(productBasicInformationList.value);
-  console.log('🚀 ~ file: tabs.vue:838 ~ onGetProductBasicInformation ~ res:', res);
-  productBasicInformationform.value = res;
-};
 
-// 页面初始化
+watch(
+  () => props.onInputData,
+  async (newVal: any) => {
+    // 当 onInputData 改变时，更新 productBasicInformationList 的值
+    productBasicInformationList.value = { ...newVal };
+    if (tabKey.value === 0) {
+      pageUIOne.value.page = 1;
+      await onGetProductBasicInformation();
+    }
+    if (tabKey.value === 2) {
+      pageUIThree.value.page = 1;
+      await onMaterialWorkOrder();
+    }
+  },
+  {
+    deep: true, // 由于 onInputData 是一个对象，使用深度监听
+  },
+);
+
+// 🌈 页面初始化
 onMounted(async () => {
   await onGetProductBasicInformation(); // 产品基础信息 数据获取
 });
@@ -852,6 +861,54 @@ const tabChange = (context: number) => {
   if (context === 1) {
     onGetWorkOrder();
   }
+  if (context === 2) {
+    onMaterialWorkOrder();
+  }
+};
+// @ 获取 产品基础信息 1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣ 数据
+const productBasicInformationForm = ref<ProductBaseReportVO>({});
+const productBasicInformationList = ref({
+  pagenum: 1,
+  pagesize: 10,
+  serialNumber: 'SN202312270027', // 产品条码
+  moCode: '', // 工单号
+  parentPkgBarcode: '', // 包装箱码
+});
+// 产品基础信息 请求
+const onGetProductBasicInformation = async () => {
+  productBasicInformationList.value.pagenum = pageUIOne.value.page;
+  productBasicInformationList.value.pagesize = pageUIOne.value.rows;
+  const res = await api.reversetraceability.getProductBaseInfo(productBasicInformationList.value);
+  productBasicInformationForm.value = res;
+};
+
+// 获取 工单信息 2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣  数据
+const workOrderData = reactive({ list: [] });
+const onGetWorkOrder = async () => {
+  const res = (await apimain.mo.getmolist({
+    moCode: 'ben0002',
+    pagenum: pageUI.value.page,
+    pagesize: pageUI.value.rows,
+  })) as any;
+  [workOrderData.list] = res.list;
+};
+// 获取 物料信息 3️⃣3️⃣3️⃣3️⃣3️⃣3️⃣  数据
+const WipKeypartReportVOForm = ref<WipKeypartReportVO[]>([]);
+const MoOnboardReportVOForm = ref<MoOnboardReportVO[]>([]);
+const materialWorkOrderList = ref({
+  pagenum: 1,
+  pagesize: 10,
+  serialNumber: '', // 产品条码
+  moCode: '', // 工单号
+  parentPkgBarcode: '', // 包装箱码
+});
+// 物料信息 请求
+const onMaterialWorkOrder = async () => {
+  materialWorkOrderList.value.pagenum = pageUIThree.value.page;
+  materialWorkOrderList.value.pagesize = pageUIThree.value.rows;
+  const res = await api.reversetraceability.getMitemBaseInfo(materialWorkOrderList.value);
+  MoOnboardReportVOForm.value = res.moOnboardReportList;
+  WipKeypartReportVOForm.value = res.wipKeypartReportList;
 };
 </script>
 
@@ -863,7 +920,6 @@ const tabChange = (context: number) => {
 
 .detailed-box {
   // padding: var(--td-comp-paddingTB-xl) var(--td-comp-paddingLR-xl);
-
   .popup-mo-foot-btn {
     display: block;
     height: 30px;

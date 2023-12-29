@@ -4,13 +4,13 @@
       <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
     </cmp-card>
     <cmp-card class="not-full-tab">
-      <tabs ref="tabsRef"></tabs>
+      <tabs ref="tabsRef" :on-input-data="onInputData"></tabs>
     </cmp-card>
   </cmp-container>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import CmpQuery from '@/components/cmp-query/index.vue';
 
@@ -40,8 +40,18 @@ const opts = computed(() => {
   };
 });
 // // #query 查询函数
+function fillEmptyValuesWithEmptyString(obj) {
+  // 判断 搜索返回的数据是不是为 null 或者  undefined
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] === null || obj[key] === undefined || obj[key] === '') {
+      obj[key] = '';
+    }
+  });
+}
+const onInputData = ref({});
 const onInput = async (data: any) => {
-  console.log('🚀 ~ file: index.vue:162 ~ onInput ~ data:', data);
+  fillEmptyValuesWithEmptyString(data);
+  onInputData.value = data;
 };
 </script>
 
