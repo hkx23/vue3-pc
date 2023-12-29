@@ -21,7 +21,11 @@ shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' } } } ] };
     </t-card>
   </div>
 </template>
-
+<script lang="ts">
+export default {
+  name: 'WorkingTablePie',
+};
+</script>
 <script setup lang="ts">
 // import { api } from '@/api/main';
 // import Mock from 'mockjs';

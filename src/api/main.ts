@@ -659,6 +659,35 @@ export interface WorkcenterVO {
   children?: WorkcenterVO[];
 }
 
+/** 工作台布局表 */
+export interface WorkbenchLayout {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  userId?: string;
+  /** 布局内容 */
+  layout?: string;
+}
+
 /** 通用响应类 */
 export interface ResultWarehouse {
   /**
@@ -3334,14 +3363,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isBatchName?: string;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isRawName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -3503,8 +3532,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4478,6 +4507,80 @@ export interface ResultWorkcenterVO {
 }
 
 /** 通用响应类 */
+export interface ResultWorkbenchLayout {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 工作台布局表 */
+  data?: WorkbenchLayout;
+}
+
+/** 通用响应类 */
+export interface ResultListWorkbenchIndex {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WorkbenchIndex[] | null;
+}
+
+/** 工作台指标表 */
+export type WorkbenchIndex = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 指标编码 */
+  indexCode?: string;
+  /** 指标名称 */
+  indexName?: string;
+  /** 指标描述 */
+  indexDesc?: string;
+  /** 指标地址 */
+  indexUrl?: string;
+  /**
+   * 指标宽
+   * @format int32
+   */
+  indexWidth?: number;
+  /**
+   * 指标高
+   * @format int32
+   */
+  indexHeigth?: number;
+  /** 指标分类 */
+  indexCategory?: string;
+  /** 指标图标 */
+  indexIcon?: string;
+} | null;
+
+/** 通用响应类 */
 export interface ResultListUserInRoleVO {
   /**
    * 响应代码
@@ -5046,12 +5149,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -5354,6 +5457,19 @@ export interface ResultPagingDataModule {
   message?: string;
   /** 响应数据 */
   data?: PagingDataModule;
+}
+
+/** 通用响应类 */
+export interface ResultListFavorite {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Favorite[] | null;
 }
 
 /** 通用响应类 */
@@ -6281,6 +6397,36 @@ export const api = {
      */
     getCategory: () =>
       http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getCategory`, {
+        method: 'GET',
+      }),
+  },
+  workbenchLayout: {
+    /**
+     * No description
+     *
+     * @tags 工作台布局表
+     * @name SaveByCurrentUser
+     * @summary 保存当前用户工作台配置
+     * @request POST:/workbenchLayout/saveByCurrentUser
+     * @secure
+     */
+    saveByCurrentUser: (data: WorkbenchLayout) =>
+      http.request<ResultObject['data']>(`/api/main/workbenchLayout/saveByCurrentUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作台布局表
+     * @name GetByCurrentUser
+     * @summary 获取当前用户工作台配置
+     * @request GET:/workbenchLayout/getByCurrentUser
+     * @secure
+     */
+    getByCurrentUser: () =>
+      http.request<ResultWorkbenchLayout['data']>(`/api/main/workbenchLayout/getByCurrentUser`, {
         method: 'GET',
       }),
   },
@@ -8662,6 +8808,21 @@ export const api = {
      * No description
      *
      * @tags 菜单收藏夹表
+     * @name Delete
+     * @summary 删除菜单收藏
+     * @request POST:/favorite/delete
+     * @secure
+     */
+    delete: (data: Favorite) =>
+      http.request<ResultObject['data']>(`/api/main/favorite/delete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单收藏夹表
      * @name Add
      * @summary 新增菜单收藏
      * @request POST:/favorite/add
@@ -8683,23 +8844,8 @@ export const api = {
      * @secure
      */
     list: () =>
-      http.request<ResultObject['data']>(`/api/main/favorite/list`, {
+      http.request<ResultListFavorite['data']>(`/api/main/favorite/list`, {
         method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 菜单收藏夹表
-     * @name Delete
-     * @summary 删除菜单收藏
-     * @request DELETE:/favorite/delete
-     * @secure
-     */
-    delete: (query: { id: string }) =>
-      http.request<ResultObject['data']>(`/api/main/favorite/delete`, {
-        method: 'DELETE',
-        params: query,
       }),
   },
   equipment: {
@@ -9280,6 +9426,21 @@ export const api = {
      * No description
      *
      * @tags 产品条码生成规则表
+     * @name PreviewBarcode
+     * @summary 预览条码
+     * @request GET:/barcodeRuleInMitem/previewBarcode
+     * @secure
+     */
+    previewBarcode: (query: { expression: string; barcodeType: string }) =>
+      http.request<ResultString['data']>(`/api/main/barcodeRuleInMitem/previewBarcode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
      * @name GetRuleSegment
      * @summary 新增规则界面：条码规则片段
      * @request GET:/barcodeRuleInMitem/getRuleSegment
@@ -9316,6 +9477,21 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  workbenchIndex: {
+    /**
+     * No description
+     *
+     * @tags 工作台指标表
+     * @name GetAll
+     * @summary 获取所有指标
+     * @request GET:/workbenchIndex/getAll
+     * @secure
+     */
+    getAll: () =>
+      http.request<ResultListWorkbenchIndex['data']>(`/api/main/workbenchIndex/getAll`, {
+        method: 'GET',
       }),
   },
   routingRevision: {
