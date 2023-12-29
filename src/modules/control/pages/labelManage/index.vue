@@ -87,7 +87,7 @@
                     </t-radio-group>
                   </template>
                   <template #button>
-                    <t-select label="打印模板" style="width: 240px">
+                    <t-select v-model="printTemplate" label="打印模板" style="width: 240px">
                       <t-option
                         v-for="item in onPrintTemplateList.list"
                         :key="item.id"
@@ -155,7 +155,7 @@
                     </t-popconfirm>
                   </template>
                   <template #button>
-                    <t-select label="打印模板" style="width: 240px">
+                    <t-select v-model="printTemplate" label="打印模板" style="width: 240px">
                       <t-option
                         v-for="item in onPrintTemplateList.list"
                         :key="item.id"
@@ -259,6 +259,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
+import { debounce } from 'lodash';
 import { FormInstanceFunctions, Input, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
@@ -284,6 +285,7 @@ const tabValue = ref(0);
 const tableRefTop = ref(); // 上表格实例
 const tableRefRight = ref(); // 右表格实例
 const isReprintCancellation = ref(false);
+const printTemplate = ref(''); // 打印模板数据
 // 补打，作废 DiaLog 数据
 const reprintDialog = ref({
   reprintData: '',
@@ -754,6 +756,10 @@ const onLabelManageTabData = async () => {
 const reprintVoidSwitch = ref(false); // 控制
 const onReprint = () => {
   formRef.value.reset({ type: 'empty' });
+  if (!printTemplate.value) {
+    MessagePlugin.warning('请选择打印模板！');
+    return;
+  }
   const specificStatus = barcodeWipStatusNameArr.value.some((item) => item === '已生成' || item === '已报废');
   if (specificStatus) {
     MessagePlugin.warning('存在条码状态为已生成、已报废状态，不允许补打');
@@ -769,6 +775,10 @@ const onReprint = () => {
 // 作废 点击事件
 const onCancellation = () => {
   formRef.value.reset({ type: 'empty' });
+  if (!printTemplate.value) {
+    MessagePlugin.warning('请选择打印模板！');
+    return;
+  }
   const specificStatus = barcodeWipStatusNameArr.value.every((item) => item === '已生成' || item === '已打印');
   if (!specificStatus) {
     MessagePlugin.warning('存在条码状态不为已生成、已打印状态，不允许作废！');
@@ -802,35 +812,43 @@ const onGenerateChange = async (value: any, context: any) => {
 };
 
 // 生成点击事件
-const onGenerate = async () => {
+const onGenerate = debounce(async () => {
   if (!generateData?.value?.workcenterId) {
-    MessagePlugin.warning('参数有误，请联系管理员');
+    MessagePlugin.warning('参数有误，请联系管理员！');
     return;
   }
   if (!generateData?.value?.moScheduleId) {
-    MessagePlugin.warning('请选择需打印的数据');
+    MessagePlugin.warning('请选择需打印的数据！');
     return;
   }
   if (!generateData?.value?.barcodeRuleId) {
-    MessagePlugin.warning('请选择条码规则');
+    MessagePlugin.warning('请选择条码规则！');
     return;
   }
   if (!generateData?.value?.createNum) {
-    MessagePlugin.warning('请正确填写数量后回车');
+    MessagePlugin.warning('请正确填写数量后回车！');
     return;
   }
   await api.labelManage.generateBarcode(generateData.value); // 生成请求
   await onGetPrintTopTabData(); // 刷新数据
   await onGetPrintDownTabData();
   MessagePlugin.success('生成成功');
-};
-
+}, 1000);
 // 点击 打印事件
-const onPrint = async () => {
+const onPrint = debounce(async () => {
+  if (!selectedRowKeys.value.length) {
+    MessagePlugin.warning('请选择需要打印的数据！');
+    return;
+  }
+  if (!printTemplate.value) {
+    MessagePlugin.warning('请选择打印模板！');
+    return;
+  }
   await api.labelManage.printBarcode({ ids: selectedRowKeys.value });
   await onGetPrintDownTabData(); // 刷新数据
   MessagePlugin.success('打印成功');
-};
+  selectedRowKeys.value = [];
+}, 1000);
 
 // 打印选择 框 行 事件
 const onPrintChange = (value: any) => {
@@ -845,6 +863,7 @@ const onProductRightFetchData = (value: any, context: any) => {
 
 // TAb 栏切换事件
 const tabChange = async (value: number) => {
+  printTemplate.value = '';
   if (!value) {
     initialDate.value = 1;
   } else {
