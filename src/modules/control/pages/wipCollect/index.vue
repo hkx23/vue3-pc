@@ -23,6 +23,7 @@
                 <t-col v-if="scanType == 'SCANTEXT'" :span="7">
                   <t-input
                     v-model="mainform.serialNumber"
+                    :autofocus="true"
                     :placeholder="scanDesc"
                     size="large"
                     @enter="serialNumberEnter"
@@ -224,7 +225,12 @@ const Init = async () => {
   mainform.value.workshopName = userStore.currUserOrgInfo.workShopName;
 
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({
+      title: t('wipCollect.tip'),
+      content: t('wipCollect.tipsetting'),
+      duration: 2000,
+      closeBtn: true,
+    });
   }
 };
 
@@ -250,7 +256,12 @@ const scanDesc = computed(() => {
 
 const serialNumberEnter = async (value) => {
   if (!mainform.value.workStationId) {
-    NotifyPlugin.error({ title: t('wipCollect.tip'), content: t('wipCollect.tipsetting'), duration: 2000 });
+    NotifyPlugin.error({
+      title: t('wipCollect.tip'),
+      content: t('wipCollect.tipsetting'),
+      duration: 2000,
+      closeBtn: true,
+    });
     return;
   }
   if (!isEmpty(value)) {
@@ -402,7 +413,7 @@ const writeMessageListSuccess = async (content, datatime) => {
     datatime,
     status: 'OK',
   });
-  NotifyPlugin.success({ title: '扫描成功', content, duration: 2000 });
+  NotifyPlugin.success({ title: '扫描成功', content, duration: 2000, closeBtn: true });
 };
 // 失败消息体
 const writeMessageListError = async (content, datatime) => {
@@ -415,7 +426,7 @@ const writeMessageListError = async (content, datatime) => {
     datatime,
     status: 'NG',
   });
-  NotifyPlugin.error({ title: '扫描失败', content, duration: 2000 });
+  NotifyPlugin.error({ title: '扫描失败', content, duration: 2000, closeBtn: true });
 };
 
 onMounted(() => {
