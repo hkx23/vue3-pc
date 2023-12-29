@@ -1,9 +1,8 @@
 <template>
-  <div>
-    <t-card style="width: 100%; height: 100%">
-      <div ref="chart" style="width: 500px; height: 500px"></div>
-    </t-card>
-  </div>
+  <div
+    id="chartTop5Container"
+    :style="{ width: `${resizeWidth * resizeMin}px`, height: `${resizeHeight * resizeMin}px`, margin: '0 auto' }"
+  ></div>
 </template>
 <script lang="ts">
 export default {
@@ -13,18 +12,45 @@ export default {
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import * as echarts from 'echarts';
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
 import { api } from '@/api/control';
 
-const option = ref({});
-const chart = ref(null);
+const optionChart = ref({});
+const resizeWidth = ref(1);
+const resizeHeight = ref(1);
+const resizeMin = ref(200);
+
+let chartTop5Container: HTMLElement;
+let chartTop5Chart: echarts.ECharts;
 
 onMounted(async () => {
-  const myChart = echarts.init(chart.value);
+  if (!chartTop5Container) {
+    chartTop5Container = document.getElementById('chartTop5Container');
+  }
+
+  chartTop5Chart = echarts.init(chartTop5Container);
   await getPieData();
-  myChart.setOption(option.value);
+  chartTop5Chart.setOption(optionChart.value);
+
+  nextTick(() => {
+    updateContainer();
+  });
+  window.addEventListener('resize', updateContainer, false);
 });
+
+const updateContainer = () => {
+  resizeWidth.value = Number(
+    ((chartTop5Container.parentElement.clientWidth - 50) / chartTop5Container.clientWidth).toFixed(2),
+  );
+  resizeHeight.value = Number(
+    ((chartTop5Container.parentElement.clientHeight - 30) / chartTop5Container.clientHeight).toFixed(2),
+  );
+  chartTop5Chart.resize({
+    width: Math.min(resizeWidth.value, resizeHeight.value) * resizeMin.value,
+    height: Math.min(resizeWidth.value, resizeHeight.value) * resizeMin.value,
+  });
+};
 
 //* 接口数据
 const getPieData = async () => {
@@ -36,7 +62,7 @@ const getPieData = async () => {
 
       data.forEach((n) => echarData.push({ value: n.defectCodePercent * 100, name: n.defectName }));
 
-      option.value = {
+      optionChart.value = {
         title: {
           text: `过程不良TOP5 (周 ${dayjs(first.beginDate).format('YYYY-MM-DD')} ~ ${dayjs(first.endDate).format(
             'YYYY-MM-DD',
