@@ -268,13 +268,13 @@ const handleEvent = (type, val) => {
 };
 // 查询
 const checkHandle = (flagText: any = false) => {
-  emits('submit', state.form, flagText);
+  emits('submit', _.cloneDeep(state.form), flagText);
 };
 
 // 查询
 const enterCheckHandle = (flagText: any = false) => {
   if (props.boolEnter) {
-    emits('submit', state.form, flagText);
+    emits('submit', _.cloneDeep(state.form), flagText);
   }
 };
 // 子组件名称

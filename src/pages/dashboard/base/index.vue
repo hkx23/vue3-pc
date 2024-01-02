@@ -10,6 +10,7 @@
     <rank-list class="row-container" />
     <!-- 出入库概览 -->
     <output-overview class="row-container" />
+    <!-- 不良TOP5 -->
     <top-pie class="row-container" />
   </div>
 </template>

@@ -71,153 +71,134 @@
           <t-button :disabled="preSetting.isLock" @click="onClickSetting">确定 </t-button>
         </t-space>
       </cmp-card>
-      <cmp-row v-if="selectModule == 'REWORK'" :span="12" :disabled="!preSetting.isLock">
-        <cmp-card :span="9" :ghost="false">
-          <t-space class="custom-row" direction="vertical" style="width: 98%">
-            <t-row justify="center">
-              <t-tag shape="round" size="large">
-                <t-col class="header-title">
-                  <span>{{ t('productRework.workshopName') }}: {{ mainform.workshopName }}</span>
-                  <span> {{ t('productRework.workcentName') }}：{{ mainform.workCenterCode }}</span>
-                  <span> {{ t('productRework.workstationName') }}：{{ mainform.workStationCode }}</span>
-                </t-col>
-              </t-tag>
-            </t-row>
-            <t-row class="custom-row">
-              <t-col :span="2" class="custom-row-item-header">{{ t('productRework.scanlabel') }}：</t-col>
-              <t-col :span="7">
-                <t-input
-                  v-model="mainform.serialNumber"
-                  :placeholder="t('productRework.scanBarcode')"
-                  size="large"
-                  @enter="serialNumberEnter"
-                />
-              </t-col>
-            </t-row>
-            <t-row class="custom-row">
-              <div class="groupbox" style="height: auto">
-                <span class="grouptitle">{{ t('productRework.product') }}</span>
-                <t-card :bordered="false">
-                  <t-space class="custom-row-item" direction="horizontal" :break-line="true">
-                    <t-input
-                      v-model="productInfo.scheCode"
-                      placeholder=""
-                      :label="t('productRework.scheCode')"
-                      readonly
-                    />
-                    <t-input
-                      v-model="productInfo.moMitemCode"
-                      placeholder=""
-                      :label="t('productRework.mitemCode')"
-                      readonly
-                    />
-                    <t-input
-                      v-model="productInfo.moMitemName"
-                      placeholder=""
-                      :label="t('productRework.mitemName')"
-                      readonly
-                    />
-                    <t-input
-                      v-model="productInfo.scheDatetimeScheStr"
-                      placeholder=""
-                      :label="t('productRework.scheDate')"
-                      readonly
-                    />
-                    <t-input
-                      v-model="productInfo.scheQty"
-                      placeholder=""
-                      :label="t('productRework.scheQty')"
-                      readonly
-                    />
-                    <t-input
-                      v-model="productInfo.moCompletedQty"
-                      placeholder=""
-                      :label="t('productRework.completeQty')"
-                      readonly
-                    />
-                  </t-space>
-                </t-card>
-              </div>
-            </t-row>
-            <t-row v-if="keyPartSumList && keyPartSumList.length > 0" class="custom-row">
-              <t-col class="custom-col">
-                <div class="groupbox">
-                  <t-collapse :default-expand-all="true">
-                    <t-collapse-panel destroy-on-collapse :header="productInfo.header">
-                      <t-list v-for="(item, index) in keyPartSumList" :key="index">
-                        <t-list-item>
-                          {{ item.processName }}/{{ item.mitemCode }}/{{ item.mitemName }}
-                          <template #action>
-                            <t-checkbox v-model="item.isDeleteKeyPart"> </t-checkbox>
-                          </template>
-                        </t-list-item>
-                      </t-list>
-                    </t-collapse-panel>
-                  </t-collapse>
-                </div>
-              </t-col>
-            </t-row>
-            <t-row>
-              <t-col>
-                <div class="groupbox">
-                  <span class="grouptitle">{{ t('productRework.collectDtl') }}</span>
-                  <t-table row-key="id" :columns="scanInfoColumns" :data="scanInfoList" height="295px">
-                    <template #serialNumber="{ row }">
-                      <div class="talbe_col_nowrap" :title="row.serialNumber">
-                        {{ row.serialNumber }}
-                      </div>
-                    </template>
-                    <template #op="{ row }">
-                      <t-link theme="primary" @click="onRemove(row)"> 移除 </t-link>
-                    </template>
-                  </t-table>
-                </div>
-              </t-col>
-            </t-row>
-            <t-row>
-              <t-col :span="12" class="custom-row-item-reset">
-                <t-popconfirm
-                  theme="default"
-                  :content="t('productRework.isconfirm')"
-                  :confirm-btn="t('common.button.confirm')"
-                  :cancel-btn="t('common.button.cancel')"
-                  @confirm="onConfirm"
-                >
-                  <t-button class="btn_reset" theme="primary" :disabled="!(scanInfoList && scanInfoList.length > 0)">{{
-                    t('productRework.confirm')
-                  }}</t-button>
-                </t-popconfirm>
-
-                <t-button class="btn_reset" theme="default" @click="resetHandle">{{
+      <cmp-card v-if="selectModule == 'REWORK'" :ghost="true" :span="12" :disabled="!preSetting.isLock">
+        <cmp-row>
+          <cmp-card flex="auto" :ghost="true">
+            <cmp-container :full="true" header>
+              <!-- 扫描区 -->
+              <cmp-card>
+                <bcmp-workstation-info />
+                <t-row class="padding-top-line-8" style="padding-bottom: 8px">
+                  <t-col flex="auto">
+                    <cmp-scan-input
+                      v-model="mainform.serialNumber"
+                      label="产品条码"
+                      :placeholder="t('productRework.scanBarcode')"
+                      @enter="serialNumberEnter"
+                    ></cmp-scan-input>
+                  </t-col>
+                  <t-col flex="80px" style="text-align: right">
+                    <!-- <t-button class="btn_reset" theme="default" @click="resetHandle">{{
                   t('common.button.reset')
-                }}</t-button>
-              </t-col>
-            </t-row>
-          </t-space>
-        </cmp-card>
-        <cmp-card :span="3">
-          <div class="groupbox">
-            <span class="grouptitle">{{ t('productRework.messageCom') }}</span>
-            <t-list style="height: 96%" :scroll="{ type: 'virtual' }">
-              <t-list-item v-for="(item, index) in messageList" :key="index">
-                <t-list-item-meta style="align-items: center">
-                  <template #description>
-                    <t-space>
-                      <t-icon v-if="item.status == 'OK'" name="check-circle-filled" style="color: green" />
-                      <t-icon v-if="item.status == 'NG'" name="close-circle" style="color: red" />
-                      <t-tooltip :content="item.content" placement="mouse">
-                        <span>{{ item.title }}</span>
-                        <span style="margin-left: 8px"> {{ item.datatime }}</span>
-                      </t-tooltip>
-                      <!-- <div>{{ item.datatime }}</div> -->
-                    </t-space>
+                }}</t-button> -->
+                  </t-col>
+                </t-row>
+                <t-form label-width="80px" label-align="left" style="border-top: 1px solid var(--td-component-stroke)">
+                  <t-row class="item-row" :gutter="[4, 0]">
+                    <t-col flex="210px"
+                      ><t-form-item :label="t('productRework.scheCode')">{{ productInfo.scheCode }} </t-form-item>
+                    </t-col>
+                    <t-col flex="210px"
+                      ><t-form-item :label="t('productRework.mitemCode')">{{ productInfo.moMitemCode }} </t-form-item>
+                    </t-col>
+                    <t-col flex="210px"
+                      ><t-form-item :label="t('productRework.mitemName')">{{ productInfo.moMitemName }} </t-form-item>
+                    </t-col>
+                    <t-col flex="210px"
+                      ><t-form-item :label="t('productRework.scheDate')"
+                        >{{ productInfo.scheDatetimeScheStr }}
+                      </t-form-item>
+                    </t-col>
+                    <t-col flex="210px"
+                      ><t-form-item :label="t('productRework.scheQty')">{{ productInfo.scheQty }} </t-form-item>
+                    </t-col>
+                    <t-col flex="210px"
+                      ><t-form-item :label="t('productRework.completeQty')"
+                        >{{ productInfo.moCompletedQty }}
+                      </t-form-item>
+                    </t-col>
+                  </t-row>
+                </t-form>
+              </cmp-card>
+              <!-- 信息区 -->
+
+              <cmp-card v-if="keyPartSumList && keyPartSumList.length > 0">
+                <t-row class="custom-row">
+                  <t-col class="custom-col">
+                    <div class="groupbox">
+                      <t-collapse :default-expand-all="true" expand-icon-placement="right">
+                        <t-collapse-panel destroy-on-collapse :header="productInfo.header">
+                          <t-list v-for="(item, index) in keyPartSumList" :key="index">
+                            <t-list-item :class="{ 'selected-item': item.isScanFinish }">
+                              {{ item.processName }}/{{ item.mitemCode }}/{{ item.mitemName }}
+                              <template #action>
+                                <t-checkbox v-model="item.isDeleteKeyPart"> </t-checkbox>
+                              </template>
+                            </t-list-item>
+                          </t-list>
+                        </t-collapse-panel>
+                      </t-collapse>
+                    </div>
+                  </t-col>
+                </t-row>
+              </cmp-card>
+              <!-- 采集详情区 -->
+              <cmp-card>
+                <cmp-table
+                  ref="refInfoTable"
+                  row-key="serialNumber"
+                  :row-class-name="getRowClassName"
+                  :columns="scanInfoColumns"
+                  :fixed-height="false"
+                  :show-toolbar="true"
+                  :table-data="scanInfoList"
+                  :show-pagination="false"
+                  :show-setting="false"
+                  :hover="false"
+                  :stript="false"
+                >
+                  <template #title> {{ t('productRework.collectDtl') }} </template>
+                  <template #serialNumber="{ row }">
+                    <div class="talbe_col_nowrap" :title="row.serialNumber">
+                      {{ row.serialNumber }}
+                    </div>
                   </template>
-                </t-list-item-meta>
-              </t-list-item>
-            </t-list>
-          </div></cmp-card
-        >
-      </cmp-row>
+                  <template #op="{ row }">
+                    <t-link theme="primary" @click="onRemove(row)"> 移除 </t-link>
+                  </template>
+                  <template #button>
+                    <t-popconfirm
+                      theme="default"
+                      :content="t('productRework.isconfirm')"
+                      :confirm-btn="t('common.button.confirm')"
+                      :cancel-btn="t('common.button.cancel')"
+                      @confirm="onConfirm"
+                    >
+                      <t-button
+                        class="btn_reset"
+                        theme="primary"
+                        :disabled="!(scanInfoList && scanInfoList.length > 0)"
+                        >{{ t('productRework.confirm') }}</t-button
+                      >
+                    </t-popconfirm>
+
+                    <t-button class="btn_reset" theme="default" @click="resetHandle">{{
+                      t('common.button.reset')
+                    }}</t-button></template
+                  >
+                </cmp-table>
+              </cmp-card>
+            </cmp-container>
+          </cmp-card>
+          <cmp-card flex="300px" :ghost="true">
+            <cmp-container :full="true" header>
+              <cmp-card>
+                <cmp-message v-model="msgList"></cmp-message>
+              </cmp-card>
+            </cmp-container>
+          </cmp-card>
+        </cmp-row>
+      </cmp-card>
     </cmp-card>
   </cmp-container>
 </template>
@@ -229,6 +210,7 @@ import { LoadingPlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdes
 import { onMounted, ref } from 'vue';
 
 import { api, ProductReworkVO, WipKeyPartCollectVO } from '@/api/control';
+import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
 import { useUserStore } from '@/store';
 
 import { messageModel, scanCollectInfoModel } from '../../api/processInspection';
@@ -331,6 +313,18 @@ const Init = async () => {
     });
   }
 };
+// 消息
+const msgList = ref<
+  {
+    theme: 'success' | 'info' | 'error' | 'warning';
+    content: string;
+    time: string;
+  }[]
+>([]);
+const getRowClassName = ({ rowIndex }) => {
+  if (rowIndex === 0) return 'custom-third-class-name';
+  return '';
+};
 
 const serialNumberEnter = async (value) => {
   if (!mainform.value.workStationId) {
@@ -384,7 +378,7 @@ const serialNumberEnter = async (value) => {
           }
           addBarcodeInfo(reData); // 扫描成功
 
-          writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
+          writeMessageListSuccess(reData.scanMessage);
 
           if (reData.keyPartSumList.length > 0) {
             productInfo.value.header = `${t('productRework.keypartInfo')}:${productInfo.value.moMitemCode}(${
@@ -402,7 +396,7 @@ const serialNumberEnter = async (value) => {
             resetBarcode();
           }
         } else {
-          writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
+          writeMessageListError(reData.scanMessage);
         }
         LoadingPlugin(false);
       })
@@ -453,35 +447,53 @@ const checkBarcodeRepeat = (lbNo) => {
   const barcodeInfo = _.find(scanInfoList.value, (item: scanCollectInfoModel) => item.serialNumber === lbNo);
   if (barcodeInfo) {
     isSuccess = false;
-    writeMessageListError(`该条码(${lbNo})已扫描,请勿重复扫描`, dayjs().format('YYYY-MM-DD HH:mm:ss'));
+    writeMessageListError(`该条码(${lbNo})已扫描,请勿重复扫描`);
   }
   return isSuccess;
 };
-
+const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', msg: string) => {
+  let content: string;
+  if (type === 'success') {
+    content = `${t('productRework.scanSuccess')} , ${msg}`;
+    // NotifyPlugin.success({ title: t('productRework.scanSuccess'), content, duration: 2000 });
+  } else if (type === 'error') {
+    content = `${t('productRework.scanFailed')} , ${msg}`;
+    // NotifyPlugin.error({ title: t('productRework.scanFailed'), content, duration: 2000 });
+  } else {
+    content = msg;
+  }
+  msgList.value.push({
+    theme: type,
+    content,
+    time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+  });
+};
 // 成功消息体
-const writeMessageListSuccess = async (content, datatime) => {
+const writeMessageListSuccess = async (content) => {
   if (messageList.value && messageList.value.length > 10) {
     messageList.value.splice(0, messageList.value.length);
   }
-  messageList.value.unshift({
-    title: '扫描成功',
-    content,
-    datatime,
-    status: 'OK',
-  });
+  pushMessage('success', content);
+  // messageList.value.unshift({
+  //   title: '扫描成功',
+  //   content,
+  //   datatime,
+  //   status: 'OK',
+  // });
   NotifyPlugin.success({ title: '扫描成功', content, duration: 2000, closeBtn: true });
 };
 // 失败消息体
-const writeMessageListError = async (content, datatime) => {
+const writeMessageListError = async (content) => {
   if (messageList.value && messageList.value.length > 10) {
     messageList.value.splice(-1, 1);
   }
-  messageList.value.unshift({
-    title: '扫描失败',
-    content,
-    datatime,
-    status: 'NG',
-  });
+  pushMessage('error', content);
+  // messageList.value.unshift({
+  //   title: '扫描失败',
+  //   content,
+  //   datatime,
+  //   status: 'NG',
+  // });
   NotifyPlugin.error({ title: '扫描失败', content, duration: 2000, closeBtn: true });
 };
 
@@ -568,7 +580,7 @@ const onConfirm = async () => {
   LoadingPlugin(true);
   // 原子校验
   // TODO 校验成功
-  const scanTime = dayjs().format('YYYY-MM-DD hh:mm:ss');
+  // const scanTime = dayjs().format('YYYY-MM-DD hh:mm:ss');
   await api.productRework
     .save({
       barcodeList: scanInfoList.value,
@@ -578,13 +590,13 @@ const onConfirm = async () => {
     })
     .then(() => {
       resetHandle();
-      writeMessageListSuccess(t('productRework.success'), scanTime);
+      writeMessageListSuccess(t('productRework.success'));
       LoadingPlugin(false);
     })
     .catch((message) => {
       console.log(message);
       LoadingPlugin(false);
-      writeMessageListError(message, scanTime);
+      writeMessageListError(message);
     });
 };
 
@@ -757,6 +769,18 @@ onMounted(() => {
   width: 100%;
 }
 
+:deep(.t-form__label) {
+  color: var(--td-gray-color-7);
+}
+
+:deep(.t-collapse-panel__wrapper .t-collapse-panel__body) {
+  background: white;
+}
+
+:deep(.t-table .custom-third-class-name) > td {
+  background-color: var(--td-brand-color-light);
+  font-weight: bold;
+}
 // .card-left {
 //   margin-top: -12px; //由于tdesign的bug，先临时解决
 // }

@@ -8,14 +8,8 @@
           </div>
           <div class="recomend-text">
             <t-button class="recomend-btn" variant="text">{{ renderMenuTitle(item.meta.title) }}</t-button>
-            <!-- <span>{{ renderMenuTitle(item.meta.title) }}</span> -->
           </div>
         </div>
-        <!-- <template #footer>
-        <div class="recommend-more">
-          <t-icon name="chevron-right" />
-        </div>
-      </template> -->
       </div>
     </div>
   </div>

@@ -1,46 +1,57 @@
 <template>
   <cmp-container :full="true">
     <cmp-row>
-      <cmp-card flex="auto">
-        <t-space direction="vertical" :size="12" style="width: 100%">
-          <bcmp-workstation-info />
-          <t-card :header="t('productPacking.scanLabel')" class="scan-panel">
-            <t-row align="middle" :gutter="10" class="scan-line">
-              <t-col>
-                <t-space align="center">
-                  <t-radio-group v-model="scanType" variant="primary-filled" @change="scanTypeChange">
-                    <t-radio-button value="normal">{{ t('productPacking.normal') }}</t-radio-button>
-                    <t-radio-button value="delete">{{ t('common.button.delete') }}</t-radio-button>
-                  </t-radio-group>
-                </t-space>
-              </t-col>
-              <t-col :span="8">
+      <cmp-card flex="auto" :ghost="true">
+        <cmp-container :full="true" header>
+          <!-- 扫描区 -->
+          <cmp-card>
+            <bcmp-workstation-info />
+            <t-row class="padding-top-line-8" style="padding-bottom: 8px">
+              <t-col flex="auto">
                 <cmp-scan-input v-model="scanLabel" :placeholder="scanPlaceholder" @enter="scan"></cmp-scan-input>
               </t-col>
-              <t-col v-if="labelList.length > 0" :span="2" class="qty-info">
+              <t-col v-if="labelList.length > 0" flex="120px" style="text-align: right">
                 <div class="label-qty">{{ allQty }}</div>
                 <div>/{{ pkgInfo.packQty }}</div>
                 <div class="label-uom">{{ pkgInfo.uom }}/{{ pkgInfo.packUom }}</div>
               </t-col>
-            </t-row>
-            <t-row v-if="labelList.length > 0" :gutter="16">
-              <t-col :span="12" class="pkg-panel">
-                <t-space>
-                  <qrcode-icon />
-                  <div>{{ pkgInfo.barcode }}</div>
-                  <t-tag theme="success" variant="outline">{{ t('productPacking.productLabel') }}</t-tag>
-                </t-space>
+              <t-col flex="120px" style="text-align: right">
+                <t-radio-group v-model="scanType" variant="primary-filled" @change="scanTypeChange">
+                  <t-radio-button value="normal">{{ t('productPacking.normal') }}</t-radio-button>
+                  <t-radio-button value="delete">{{ t('common.button.delete') }}</t-radio-button>
+                </t-radio-group>
               </t-col>
-              <t-col :span="1" class="label">工单</t-col>
-              <t-col :span="3">{{ pkgInfo.moCode }}</t-col>
-              <t-col :span="1" class="label">工作中心</t-col>
-              <t-col :span="7">{{ pkgInfo.workcenterName }}</t-col>
-              <t-col :span="1" class="label">产品编码</t-col>
-              <t-col :span="3">{{ pkgInfo.mitemCode }}</t-col>
-              <t-col :span="1" class="label">产品名称</t-col>
-              <t-col :span="7">{{ pkgInfo.mitemName }}</t-col>
             </t-row>
-          </t-card>
+            <t-form
+              v-if="labelList.length > 0"
+              label-width="80px"
+              label-align="left"
+              style="border-top: 1px solid var(--td-component-stroke)"
+            >
+              <t-row class="item-row" :gutter="[4, 0]">
+                <t-col :span="12" class="pkg-panel">
+                  <t-space>
+                    <qrcode-icon />
+                    <div>{{ pkgInfo && pkgInfo.barcode }}</div>
+                    <t-tag theme="success" variant="outline">{{ t('productPacking.productLabel') }}</t-tag>
+                  </t-space>
+                </t-col>
+                <t-col flex="210px"
+                  ><t-form-item label="工单">{{ pkgInfo && pkgInfo.moCode }} </t-form-item>
+                </t-col>
+                <t-col flex="210px"
+                  ><t-form-item label="工作中心">{{ pkgInfo && pkgInfo.workcenterName }} </t-form-item>
+                </t-col>
+                <t-col flex="210px"
+                  ><t-form-item label="产品编码">{{ pkgInfo && pkgInfo.mitemCode }} </t-form-item>
+                </t-col>
+                <t-col flex="210px"
+                  ><t-form-item label="产品名称">{{ pkgInfo && pkgInfo.mitemName }} </t-form-item>
+                </t-col>
+              </t-row>
+            </t-form>
+          </cmp-card>
+          <!-- 采集详情区 -->
           <t-card v-if="labelList.length > 0" :header="t('productPacking.packingList')">
             <t-row :gutter="10">
               <t-col v-for="(label, index) in labelList" :key="index" :span="4" class="label-list">
@@ -55,18 +66,10 @@
               <t-button theme="default">{{ t('productPacking.packingLog') }}</t-button>
             </div>
           </t-card>
-        </t-space>
+        </cmp-container>
       </cmp-card>
       <cmp-card flex="300px" :ghost="true">
         <cmp-container :full="true" header>
-          <!-- 
-          <t-space align="center">
-                  <div>{{ t('productPacking.scanType') }}</div>
-                  <t-radio-group v-model="scanType" variant="primary-filled" @change="scanTypeChange">
-                    <t-radio-button value="normal">{{ t('productPacking.normal') }}</t-radio-button>
-                    <t-radio-button value="delete">{{ t('common.button.delete') }}</t-radio-button>
-                  </t-radio-group>
-                </t-space> -->
           <cmp-card>
             <cmp-message v-model="msgList"></cmp-message>
           </cmp-card>
@@ -317,17 +320,17 @@ const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', msg: string
     }
   }
 
-  .pkg-panel {
-    color: var(--td-brand-color-active);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 10px 0;
-  }
-
   .label {
     text-align: right;
   }
+}
+
+.pkg-panel {
+  color: var(--td-brand-color-active);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 10px;
 }
 
 .label-list {
@@ -341,5 +344,18 @@ const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', msg: string
 .label-footer {
   display: flex;
   justify-content: flex-end;
+}
+
+:deep(.t-form__label) {
+  color: var(--td-gray-color-7);
+}
+
+:deep(.t-collapse-panel__wrapper .t-collapse-panel__body) {
+  background: white;
+}
+
+:deep(.t-table .custom-third-class-name) > td {
+  background-color: var(--td-brand-color-light);
+  font-weight: bold;
 }
 </style>
