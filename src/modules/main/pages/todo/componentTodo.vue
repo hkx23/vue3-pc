@@ -1,70 +1,57 @@
-<!-- 我的待办 -->
+<!-- 我的待办-我的工作台 -->
 <template>
-  <cmp-container :full="true" class="root">
-    <cmp-row>
-      <cmp-card ref="refTodoCard" flex="260px">
-        <t-list size="small" split :style="{ 'max-height': `${todoHeight}` }">
-          <div v-for="item in filterTodoList" :key="item.value">
-            <t-badge :show-zero="true" :count="item.count" class="list-item" :offset="[15, 16]">
-              <t-list-item :class="{ 'is-selected': currTodoId == item.value }" @click="onClickTodo(item.value)">
-                {{ item.label }}
-                <template #action>
-                  <!-- <t-icon v-if="currTodoId == item.value" name="focus" /> -->
-                  <div v-if="currTodoId == item.value" class="activeTodo"></div>
-                </template>
-              </t-list-item>
-            </t-badge>
-          </div>
-        </t-list>
-      </cmp-card>
-      <cmp-container class="cpm-box" :full="true" :ghost="true">
-        <cmp-card>
-          <!-- 查询组件  -->
-          <cmp-query :opts="opts" @submit="conditionEnter" />
-        </cmp-card>
-        <cmp-card flex="auto">
-          <cmp-table
-            v-model:pagination="pageUI"
-            row-key="id"
-            :table-column="column"
-            :table-data="todoData"
-            :loading="loading"
-            :total="total"
-            :fixed-height="true"
-            @refresh="onFetchData"
-          >
-            <template #titleName="{ row }">
-              <a
-                class="table-cell-href"
-                @click="
-                  {
-                    onHandelUrl(row);
-                  }
-                "
-              >
-                {{ row.titleName }}
-              </a>
-            </template>
-            <template #isReadName="{ row }">
-              <div v-if="row.isRead == 1" class="green-icon">
-                <t-icon name="check-circle" />
-              </div>
-              <div v-if="row.isRead == 0" class="gray-icon">
-                <t-icon name="circle" />
-              </div>
-            </template>
-          </cmp-table>
-        </cmp-card>
-      </cmp-container>
-    </cmp-row>
-  </cmp-container>
+  <cmp-card v-model:pagination="pageUI" :full="true" height="100%">
+    <cmp-table
+      class="component-table"
+      row-key="id"
+      :table-column="column"
+      :table-data="todoData"
+      :loading="loading"
+      :total="total"
+      :fixed-height="false"
+      :show-toolbar="false"
+      :show-pagination="false"
+      @refresh="onFetchData"
+    >
+      <template #titleName="{ row }">
+        <a
+          class="table-cell-href"
+          @click="
+            {
+              onHandelUrl(row);
+            }
+          "
+        >
+          {{ row.titleName }}
+        </a>
+      </template>
+      <template #isReadName="{ row }">
+        <div v-if="row.isRead == 1" class="green-icon">
+          <t-icon name="check-circle" />
+        </div>
+        <div v-if="row.isRead == 0" class="gray-icon">
+          <t-icon name="circle" />
+        </div>
+      </template>
+    </cmp-table>
+
+    <div class="recommend-more" @click="onHandelTodoMenu">
+      <span>{{ t('common.button.more') }}</span>
+      <t-icon name="chevron-right"></t-icon>
+    </div>
+
+    <template #title>
+      <t-badge :show-zero="true" :count="unProcessCount" class="list-item" :offset="[-10, 11]">
+        <div class="t-card__title">{{ t('todo.title') }}</div>
+      </t-badge>
+    </template>
+  </cmp-card>
 </template>
 
 <script setup lang="ts">
 // import dayjs from 'dayjs';
 import _ from 'lodash';
-import { computed, onMounted, ref } from 'vue';
-import { useResizeObserver } from 'vue-hooks-plus';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { api as apiMain } from '@/api/main';
@@ -77,39 +64,6 @@ onMounted(() => {
   onFetchData();
 });
 const router = useRouter();
-
-const refTodoCard = ref(null);
-const todoHeight = ref('300px');
-useResizeObserver(refTodoCard, (entries) => {
-  const entry = entries[0];
-  const { height } = entry.contentRect;
-  todoHeight.value = `${height - 130}px`;
-  console.error('treeHeight', todoHeight.value);
-});
-
-// input框搜索
-const opts = computed(() => {
-  return {
-    title: {
-      label: t('todo.titleName'),
-      placeholder: '请输入',
-      comp: 't-input',
-      event: 'input',
-      defaultVal: '',
-    },
-    datePlanRange: {
-      label: t('todo.timeCreate'),
-      comp: 't-date-range-picker',
-      defaultVal: datePlanRangeDefault.value,
-      placeholder: '请选择',
-    },
-  };
-});
-const conditionEnter = (data) => {
-  queryCondition.value = _.cloneDeep(data);
-  onFetchData();
-};
-
 const total = ref(10);
 const { pageUI } = usePage();
 const datePlanRangeDefault = ref([]); // 初始化日期控件
@@ -125,10 +79,7 @@ const queryCondition = ref({
 
 const { loading, setLoading } = useLoading();
 const { t } = useLang();
-const filterTodoList = ref([
-  { label: '待处理', value: 'UNPROCESS', count: 0 },
-  { label: '已处理', value: 'PROCESSED', count: 0 },
-]);
+const unProcessCount = ref(0);
 
 // table定义
 const column = ref([
@@ -146,11 +97,6 @@ const column = ref([
 // table数据
 const todoData = ref([]);
 const currTodoId = ref('UNPROCESS');
-const onClickTodo = (id: string) => {
-  if (id === currTodoId.value) return;
-  currTodoId.value = id;
-  onFetchData();
-};
 
 // 获取待办列表和待办总数信息
 const onFetchData = async () => {
@@ -167,6 +113,8 @@ const onFetchData = async () => {
     queryCondition.value.status = currTodoId.value;
 
     // 获取待办列表信息
+    pageUI.value.page = 1;
+    pageUI.value.rows = 5;
     const res = (await apiMain.workbenchTodo.list({
       pagenum: pageUI.value.page,
       pagesize: pageUI.value.rows,
@@ -178,8 +126,7 @@ const onFetchData = async () => {
     // 获取待办总数信息
     const resListCount = (await apiMain.workbenchTodo.listCount()) as any;
     if (resListCount) {
-      filterTodoList.value[0].count = resListCount.unProcessedCount;
-      filterTodoList.value[1].count = resListCount.processedCount;
+      unProcessCount.value = resListCount.unProcessedCount;
     }
   } catch (e) {
     console.log(e);
@@ -204,6 +151,17 @@ const onHandelUrl = async (row: any) => {
     }
   }
   console.log(row);
+};
+
+// 跳转到我的待办
+const onHandelTodoMenu = async () => {
+  const toDoUrl = '/main#/todo';
+  const tabRouters = router.getRoutes();
+  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === toDoUrl);
+  if (routeInfo) {
+    const url = `${routeInfo.path}`;
+    router.push(url);
+  }
 };
 </script>
 
@@ -265,6 +223,30 @@ const onHandelUrl = async (row: any) => {
 .table-cell-href {
   color: rgb(63 93 237 / 100%);
   cursor: pointer;
+}
+
+:deep(.t-table) {
+  border: none !important;
+}
+
+:deep(.t-table--layout-fixed) {
+  border: 1px solid #d5d8db !important;
+}
+
+.recommend-more {
+  margin-top: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 17.38px;
+  color: rgb(69 69 69 / 100%);
+  text-align: right;
+  vertical-align: middle;
+}
+
+.component-table {
+  height: auto !important;
 }
 
 .gray-icon {
