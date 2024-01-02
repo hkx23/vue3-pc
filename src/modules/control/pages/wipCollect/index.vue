@@ -51,7 +51,7 @@
                   ><t-form-item :label="t('wipCollect.scheQty')">{{ productInfo.scheQty }} </t-form-item>
                 </t-col>
                 <t-col flex="210px"
-                  ><t-form-item :label="t('wipCollect.completeQty')">{{ productInfo.scheQty }} </t-form-item>
+                  ><t-form-item :label="t('wipCollect.completeQty')">{{ productInfo.moCompletedQty }} </t-form-item>
                 </t-col>
               </t-row>
             </t-form>
