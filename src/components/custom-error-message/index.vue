@@ -7,7 +7,7 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { MessagePlugin } from 'tdesign-vue-next';
+import { DialogPlugin, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -24,7 +24,19 @@ onMounted(() => {
         query: { redirect: encodeURIComponent(router.currentRoute.value.fullPath) },
       });
     }
-    MessagePlugin.error(args.message);
+
+    if (args.name === 'OperationError') {
+      const alertDia = DialogPlugin.alert({
+        theme: 'info',
+        header: '提示',
+        body: args.message,
+        onConfirm: () => {
+          alertDia.hide();
+        },
+      });
+    } else {
+      MessagePlugin.error(args.message);
+    }
   });
 });
 

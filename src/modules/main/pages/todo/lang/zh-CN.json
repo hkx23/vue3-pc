@@ -1,0 +1,10 @@
+{
+  "todo": {
+    "displaySeq":"顺序",
+    "titleName": "待办标题",
+    "todoUrl": "待办URL",
+    "isReadName": "是否已读",
+    "timeCreate": "创建时间",
+    "title": "我的待办"
+  }
+}

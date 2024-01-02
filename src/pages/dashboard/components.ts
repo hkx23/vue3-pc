@@ -1,5 +1,7 @@
 import { LayoutItem } from 'grid-layout-plus';
 
+import Todo from '@/modules/main/pages/todo/componentTodo.vue';
+
 // demo
 import LineChart from './base/components/demo/LineChart.vue';
 import PieChart from './base/components/demo/PieChart.vue';
@@ -44,6 +46,17 @@ export const components = [
     description: '饼图示例',
     category: '示例',
     component: PieChart,
+    w: 2,
+    h: 5,
+  },
+  {
+    code: 'todo',
+    title: '我的待办',
+    showTitle: false,
+    ghost: true,
+    description: '我的待办',
+    category: '示例',
+    component: Todo,
     w: 2,
     h: 5,
   },

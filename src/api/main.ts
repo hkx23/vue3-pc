@@ -659,6 +659,48 @@ export interface WorkcenterVO {
   children?: WorkcenterVO[];
 }
 
+export interface WorkbenchTodoVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 标题 */
+  titleName?: string;
+  /** 待办URL */
+  todoUrl?: string;
+  dataId?: string;
+  /** 状态 */
+  status?: string;
+  todoUserId?: string;
+  todoId?: string;
+  userId?: string;
+  /**
+   * 是否处理
+   * @format int32
+   */
+  isRead?: number;
+  statusName?: string;
+  isReadName?: string;
+}
+
 /** 工作台布局表 */
 export interface WorkbenchLayout {
   id?: string;
@@ -1729,8 +1771,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3362,15 +3404,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
   stateName?: string;
-  isInProcessName?: string;
+  isState?: boolean;
+  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isRawChecked?: boolean;
+  isRawName?: string;
   isBatchName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -3952,8 +3994,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4708,7 +4750,13 @@ export type CurrentUserVO = {
   defaultOrgId?: string;
   /** 授权组织 */
   orgList?: OrgVO[];
+  /** 关联角色 */
+  roleList?: UserRoleVO[];
   personId?: string;
+  /** 邮箱 */
+  email?: string;
+  /** 手机号 */
+  mobilePhone?: string;
   /**
    * 上次更新成员资格用户的密码的日期和时间
    * @format date-time
@@ -4742,6 +4790,15 @@ export interface ResultCurrentUserVO {
   message?: string;
   /** 当前用户实体 */
   data?: CurrentUserVO;
+}
+
+/**  用户角色实体 */
+export interface UserRoleVO {
+  id?: string;
+  /** 角色编码 */
+  code?: string;
+  /** 角色名称 */
+  name?: string;
 }
 
 /** 响应数据 */
@@ -5149,10 +5206,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -6397,6 +6454,85 @@ export const api = {
      */
     getCategory: () =>
       http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getCategory`, {
+        method: 'GET',
+      }),
+  },
+  workbenchTodo: {
+    /**
+     * No description
+     *
+     * @tags 个人工作台待办表
+     * @name UpdateStatus
+     * @summary 设置待办已处理
+     * @request POST:/workbenchTodo/updateStatus
+     * @secure
+     */
+    updateStatus: (data: WorkbenchTodoVO) =>
+      http.request<ResultObject['data']>(`/api/main/workbenchTodo/updateStatus`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 个人工作台待办表
+     * @name UpdateIsRead
+     * @summary 设置待办已读
+     * @request POST:/workbenchTodo/updateIsRead
+     * @secure
+     */
+    updateIsRead: (data: WorkbenchTodoVO) =>
+      http.request<ResultObject['data']>(`/api/main/workbenchTodo/updateIsRead`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 个人工作台待办表
+     * @name List
+     * @summary 获取待办
+     * @request GET:/workbenchTodo/list
+     * @secure
+     */
+    list: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pagenum?: number;
+      /**
+       * @format int32
+       * @default 20
+       */
+      pagesize?: number;
+      /** @default "" */
+      title?: string;
+      /** @default "" */
+      status?: string;
+      /** @default "" */
+      datetimeStart?: string;
+      /** @default "" */
+      datetimeEnd?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/workbenchTodo/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 个人工作台待办表
+     * @name ListCount
+     * @summary 获取待办数量
+     * @request GET:/workbenchTodo/listCount
+     * @secure
+     */
+    listCount: () =>
+      http.request<ResultObject['data']>(`/api/main/workbenchTodo/listCount`, {
         method: 'GET',
       }),
   },
