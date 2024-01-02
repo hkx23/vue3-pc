@@ -68,47 +68,46 @@ onDeactivated(() => {
 const getPieData = async () => {
   try {
     const data = await api.wipRepair.getRepairTop5();
-    if (data.length > 0) {
-      const first = data[0];
-      const echarData = [];
 
-      data.forEach((n) => echarData.push({ value: n.defectCodePercent * 100, name: n.defectName }));
+    if (data.length === 0) {
+      return;
+    }
 
-      optionChart.value = {
-        title: {
-          text: `过程不良TOP5 (周 ${dayjs(first.beginDate).format('YYYY-MM-DD')} ~ ${dayjs(first.endDate).format(
-            'YYYY-MM-DD',
-          )})`,
-          left: 'letf',
-        },
-        tooltip: {
-          trigger: 'item',
-        },
-        series: [
-          {
-            name: 'Access From',
-            type: 'pie',
-            radius: '100%',
-            label: {
-              show: true,
-              formatter(param) {
-                return `${param.name} (${param.percent}%)`;
-              },
-            },
-            data: echarData,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)',
-              },
+    const first = data[0];
+    const echarData = data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
+
+    optionChart.value = {
+      title: {
+        text: `过程不良TOP5 (周 ${dayjs(first.beginDate).format('YYYY-MM-DD')} ~ ${dayjs(first.endDate).format(
+          'YYYY-MM-DD',
+        )})`,
+        left: 'left',
+      },
+      tooltip: {
+        trigger: 'item',
+      },
+      series: [
+        {
+          name: 'Access From',
+          type: 'pie',
+          radius: '100%',
+          label: {
+            show: true,
+            formatter: (param) => `${param.name} (${param.percent}%)`,
+          },
+          data: echarData,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
             },
           },
-        ],
-      };
-    }
+        },
+      ],
+    };
   } catch (error) {
-    console.error('Error fetching pie chart data', error);
+    console.error('获取饼图数据时出错', error);
   }
 };
 
