@@ -75,7 +75,7 @@
                 </cmp-table>
               </cmp-card>
               <!-- ################# 配送卡打印 下2️⃣下 表格数据 ###################### -->
-              <cmp-card header="条码列表" header-bordered class="padding-top-noline-16 no-h-padding-card">
+              <cmp-card header="" header-bordered class="padding-top-noline-16 no-h-padding-card">
                 <cmp-table
                   ref="tableRef"
                   v-model:pagination="pageUIDown"
@@ -91,7 +91,7 @@
                   @refresh="onDownRefresh"
                 >
                   <template #title>
-                    <t-radio-group v-model="radioValue">
+                    <t-radio-group v-model="radioValue" @change="onRadioChange">
                       <t-radio allow-uncheck :value="1"> 仅显示已生成</t-radio>
                     </t-radio-group>
                   </template>
@@ -166,11 +166,6 @@
 
                   <template #operations="{ row }">
                     <t-link theme="primary" @click.stop="onLogInterface(row)"> 日志 </t-link>
-                  </template>
-                  <template #title>
-                    <t-radio-group v-model="radioValue">
-                      <t-radio allow-uncheck :value="1"> 仅显示已生成</t-radio>
-                    </t-radio-group>
                   </template>
                   <template #button>
                     <t-select
@@ -1039,6 +1034,16 @@ const tabChange = async (value: number) => {
   if (value) {
     await onLabelManageTabData(); // 配送卡管理 表格数据
   }
+};
+
+const onRadioChange = async (checked: any) => {
+  const radioValueNum = !checked ? 1 : 0;
+  if (!topPrintID.value) {
+    radioValue.value = radioValueNum;
+    MessagePlugin.warning('请先选择上表格数据！');
+    return;
+  }
+  await onGetPrintDownTabData();
 };
 
 // // #query 查询参数
