@@ -1,150 +1,155 @@
 <template>
   <cmp-container :full="true">
-    <t-tabs :default-value="1">
-      <t-tab-panel :value="1" label="产品维修台账" style="background: var(--td-bg-color-page)" :destroy-on-hide="false">
-        <cmp-container :full="true">
-          <cmp-card>
-            <cmp-query :opts="opts" :is-expansion="true" @submit="conditionEnter" @reset="onReset" />
-          </cmp-card>
-          <cmp-card>
-            <cmp-table
-              v-model:pagination="pageTab1"
-              row-key="id"
-              :hover="false"
-              :stript="false"
-              :table-column="repairColumns"
-              active-row-type="single"
-              :table-data="repairData"
-              :total="repairDataTotal"
-              :loading="loading"
-              :resizable="true"
-              @select-change="onSelectRepairChange"
-              @active-change="onActiveChange"
-              @refresh="fetchTable"
-            >
-              <template #button>
-                <t-button theme="primary" @click="onBatchRepairing">批量维修</t-button>
-              </template>
-              <template #op="slotProps">
-                <t-space>
-                  <t-link theme="primary" @click="onRepairRowClick(slotProps)">{{ t('productRepair.Repair') }}</t-link>
-                </t-space>
-              </template>
-            </cmp-table>
-          </cmp-card>
-          <cmp-card>
-            <cmp-table
-              :show-pagination="false"
-              row-key="id"
-              :table-column="repairDtlColumns"
-              :table-data="repairDtlData"
-              :loading="loading"
-              :resizable="true"
-              @refresh="fetchDtlTable"
-            >
-            </cmp-table>
-          </cmp-card>
-        </cmp-container>
-      </t-tab-panel>
-      <t-tab-panel
-        :value="2"
-        label="产品维修工作台"
-        style="background: var(--td-bg-color-page)"
-        :destroy-on-hide="false"
-      >
-        <cmp-container :full="true">
-          <cmp-card>
-            <cmp-table
-              v-model:pagination="pageTab2"
-              row-key="id"
-              :hover="false"
-              :stript="false"
-              :table-column="repairingColumns"
-              active-row-type="single"
-              :table-data="repairingData"
-              :total="repairingDataTotal"
-              :loading="loading"
-              :resizable="true"
-              @select-change="onSelectRepairingChange"
-              @refresh="fetchRepairingTable"
-            >
-              <!-- <template #op="slotProps"> -->
-              <template #op="slotProps">
-                <t-space>
-                  <t-link theme="primary" @click="onDeleteClick(slotProps)">{{ t('productRepair.UnRepair') }}</t-link>
-                </t-space>
-              </template>
-            </cmp-table>
-          </cmp-card>
-          <cmp-card :ghost="true">
-            <cmp-row>
-              <cmp-card :span="4">
-                <div style="margin-bottom: 10px">缺陷原因</div>
-                <t-radio-group
-                  v-model="formData.queryData.checkedDefectReason"
-                  style="
-                    display: flex;
-                    flex-direction: column;
-                    overflow: auto;
-                    height: calc(20vh);
-                    align-items: flex-start;
-                  "
-                  :options="formData.queryData.defectReasonOptions"
-                />
+    <cmp-card class="not-full-tab">
+      <t-tabs :default-value="1">
+        <t-tab-panel :value="1" label="产品维修台账" :destroy-on-hide="false">
+          <template #panel>
+            <cmp-container :gutter="[0, 0]">
+              <cmp-card :ghost="true" class="padding-bottom-line-16">
+                <cmp-query :opts="opts" :is-expansion="true" @submit="conditionEnter" @reset="onReset" />
               </cmp-card>
-              <cmp-card :span="4">
-                <div style="margin-bottom: 10px">处理方法</div>
-                <t-checkbox-group
-                  v-model="formData.queryData.checkedDefectDealMethod"
-                  style="
-                    display: flex;
-                    flex-direction: column;
-                    overflow: auto;
-                    height: calc(20vh);
-                    align-items: flex-start;
-                  "
-                  :options="formData.queryData.defectDealMethodOptions"
-                />
+              <cmp-card :ghost="true" class="padding-top-noline-16 padding-bottom-line-0">
+                <cmp-table
+                  v-model:pagination="pageTab1"
+                  row-key="id"
+                  :hover="false"
+                  :stript="false"
+                  :table-column="repairColumns"
+                  active-row-type="single"
+                  :table-data="repairData"
+                  :total="repairDataTotal"
+                  :loading="loading"
+                  :resizable="true"
+                  @select-change="onSelectRepairChange"
+                  @active-change="onActiveChange"
+                  @refresh="fetchTable"
+                >
+                  <template #title> 维修记录 </template>
+                  <template #button>
+                    <t-button theme="primary" @click="onBatchRepairing">批量维修</t-button>
+                  </template>
+                  <template #op="slotProps">
+                    <t-space>
+                      <t-link theme="primary" @click="onRepairRowClick(slotProps)">{{
+                        t('productRepair.Repair')
+                      }}</t-link>
+                    </t-space>
+                  </template>
+                </cmp-table>
               </cmp-card>
-              <cmp-card :span="4"
-                ><div style="margin-bottom: 10px">责任别</div>
-                <t-radio-group
-                  v-model="formData.queryData.checkedDefectBlame"
-                  style="
-                    display: flex;
-                    flex-direction: column;
-                    overflow: auto;
-                    height: calc(20vh);
-                    align-items: flex-start;
-                  "
-                  :options="formData.queryData.defectBlameOptions"
-                />
+              <cmp-card :ghost="true" class="padding-top-noline-16">
+                <cmp-table
+                  :show-pagination="false"
+                  row-key="id"
+                  :table-column="repairDtlColumns"
+                  :table-data="repairDtlData"
+                  :loading="loading"
+                  :resizable="true"
+                  @refresh="fetchDtlTable"
+                >
+                  <template #title> 维修明细 </template>
+                </cmp-table>
               </cmp-card>
-            </cmp-row>
-          </cmp-card>
-          <cmp-card>
-            <cmp-row>
-              <cmp-card :span="4">
-                <bcmp-select-business
-                  v-model="formData.queryData.returnRoutingProcessId"
-                  type="routingProcess"
-                  placeholder="请选择回流工序"
-                  :show-title="false"
-                />
-                <!-- :parent-id="formData.queryData.routingRevisionId" -->
+            </cmp-container>
+          </template>
+        </t-tab-panel>
+        <!-- ###############    产品维修工作台 表格数据   ######## -->
+        <t-tab-panel :value="2" label="产品维修工作台" :destroy-on-hide="false">
+          <template #panel>
+            <cmp-container :gutter="[0, 0]">
+              <cmp-card :ghost="true" class="padding-bottom-line-0">
+                <cmp-table
+                  v-model:pagination="pageTab2"
+                  row-key="id"
+                  :hover="false"
+                  :stript="false"
+                  :table-column="repairingColumns"
+                  active-row-type="single"
+                  :table-data="repairingData"
+                  :total="repairingDataTotal"
+                  :loading="loading"
+                  :resizable="true"
+                  @select-change="onSelectRepairingChange"
+                  @refresh="fetchRepairingTable"
+                >
+                  <!-- <template #op="slotProps"> -->
+                  <template #op="slotProps">
+                    <t-space>
+                      <t-link theme="primary" @click="onDeleteClick(slotProps)">{{
+                        t('productRepair.UnRepair')
+                      }}</t-link>
+                    </t-space>
+                  </template>
+                </cmp-table>
               </cmp-card>
-              <cmp-card :span="4">
-                <t-checkbox v-model="formData.queryData.isScrapped" label="是否报废" />
+              <cmp-card :ghost="true">
+                <t-row>
+                  <cmp-card :span="4" :ghost="true" style="padding: 8px">
+                    <t-tabs :default-value="1">
+                      <t-tab-panel :value="1" label="缺陷原因" :destroy-on-hide="false">
+                        <template #panel>
+                          <t-radio-group
+                            v-model="formData.queryData.checkedDefectReason"
+                            :options="formData.queryData.defectReasonOptions"
+                          />
+                        </template>
+                      </t-tab-panel>
+                    </t-tabs>
+                  </cmp-card>
+                  <cmp-card :span="4" :ghost="true" style="padding: 8px">
+                    <t-tabs :default-value="1">
+                      <t-tab-panel :value="1" label="处理方法" :destroy-on-hide="false">
+                        <template #panel>
+                          <t-checkbox-group
+                            v-model="formData.queryData.checkedDefectDealMethod"
+                            :options="formData.queryData.defectDealMethodOptions"
+                          />
+                        </template>
+                      </t-tab-panel>
+                    </t-tabs>
+                  </cmp-card>
+                  <cmp-card :span="4" :ghost="true" style="padding: 8px">
+                    <t-tabs :default-value="1">
+                      <t-tab-panel :value="1" label="责任别" :destroy-on-hide="false">
+                        <template #panel>
+                          <t-radio-group
+                            v-model="formData.queryData.checkedDefectBlame"
+                            :options="formData.queryData.defectBlameOptions"
+                          />
+                        </template>
+                      </t-tab-panel>
+                    </t-tabs>
+                  </cmp-card>
+                </t-row>
               </cmp-card>
-              <cmp-card :span="4">
-                <t-button content="维修完成" @click="onSubmit" />
-                <t-button content="重置" @click="onReset" />
+              <cmp-card :ghost="true" class="padding-top-line-0">
+                <t-row>
+                  <cmp-card :span="4" :ghost="true" style="padding: 8px">
+                    <bcmp-select-business
+                      v-model="formData.queryData.returnRoutingProcessId"
+                      type="routingProcess"
+                      placeholder="请选择回流工序"
+                      :show-title="false"
+                      label="回流工序"
+                    />
+                    <!-- :parent-id="formData.queryData.routingRevisionId" -->
+                  </cmp-card>
+                  <cmp-card :span="4" :ghost="true" style="padding: 8px">
+                    <t-checkbox v-model="formData.queryData.isScrapped" label="是否报废" />
+                  </cmp-card>
+                  <cmp-card :span="3" :ghost="true" style="padding: 8px">
+                    <t-space :size="8" style="float: right">
+                      <t-button content="维修完成" @click="onSubmit" />
+                      <t-button theme="default" content="重置" @click="onReset" />
+                    </t-space>
+                  </cmp-card>
+                </t-row>
               </cmp-card>
-            </cmp-row>
-          </cmp-card>
-        </cmp-container>
-      </t-tab-panel>
-    </t-tabs>
+            </cmp-container>
+          </template>
+        </t-tab-panel>
+      </t-tabs>
+    </cmp-card>
   </cmp-container>
 </template>
 
