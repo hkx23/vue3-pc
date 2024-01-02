@@ -1,0 +1,17 @@
+{
+  "todo": {
+    "displaySeq":"顺序",
+    "titleName": "待办标题",
+    "todoUrl": "待办URL",
+    "isReadName": "是否已读",
+    "timeCreate": "创建时间",
+    "setUserDefectsSuccess": "工序设置缺陷成功",
+    "setUserDefectsEmpty": "请选择缺陷",
+    "defectType": "缺陷类型",
+    "defectStatus": "缺陷状态",
+    "defectLevel": "缺陷等级",
+    "defectType1": "系统缺陷",
+    "defectType2": "人为缺陷",
+    "defectStatus1": "待处理"
+  }
+}
