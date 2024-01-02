@@ -3,8 +3,8 @@
     <div style="border-bottom: 1px solid var(--td-component-border); padding: 0 0 4px; font-weight: bold">
       {{ showTitle }}
     </div>
-    <cmp-card :ghost="true">
-      <t-space direction="vertical" size="small" class="info">
+    <cmp-card ref="refMsgCard" :ghost="true">
+      <t-space direction="vertical" size="small" class="info" :style="{ height: `${messageHeight}` }">
         <t-alert v-for="(msg, index) in msgList.slice().reverse()" :key="index" :theme="msg.theme">
           <div>{{ msg.content }}</div>
           <div class="time">{{ msg.time }}</div>
@@ -29,11 +29,32 @@
   </cmp-container>
 </template>
 <script setup lang="ts">
+import _ from 'lodash';
 import { ClearIcon, FileCopyIcon } from 'tdesign-icons-vue-next';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
+import { useResizeObserver } from 'vue-hooks-plus';
 
 import { useLang } from './lang';
 
+const messageHeight = ref('100px');
+const refMsgCard = ref(null);
+useResizeObserver(refMsgCard, (entries) => {
+  const entry = entries[0];
+  debounceFunction(entry);
+});
+const debounceFunction = _.debounce((entry) => {
+  computedTableContentSize(entry);
+}, 100);
+
+const computedTableContentSize = (entry) => {
+  // 组件处于不可见状态时将不进行计算
+  const { width: _w, height: _h } = entry.contentRect;
+  messageHeight.value = '0px';
+  nextTick(() => {
+    const { height } = entry.contentRect;
+    messageHeight.value = `${height}px`;
+  });
+};
 // 使用多语言
 const { t } = useLang();
 const props = defineProps<{
