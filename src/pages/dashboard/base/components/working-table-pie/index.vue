@@ -80,15 +80,20 @@ const getPieData = async () => {
           'YYYY-MM-DD',
         )})`,
         left: 'left',
+        textStyle: {
+          fontSize: 15,
+        },
       },
+
       tooltip: {
         trigger: 'item',
       },
+
       series: [
         {
           // name: 'Access From',
           type: 'pie',
-          radius: '100%',
+          radius: '50%',
           label: {
             show: true,
             formatter: (param) => `${param.name} (${param.percent}%)`,

@@ -4,14 +4,23 @@
 
 <script setup lang="ts">
 import { BarChart, PieChart } from 'echarts/charts';
-import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components';
+import { DatasetComponent, GridComponent, LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { debounce } from 'lodash';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
-echarts.use([TooltipComponent, LegendComponent, GridComponent, PieChart, BarChart, CanvasRenderer, TitleComponent]);
+echarts.use([
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  PieChart,
+  BarChart,
+  CanvasRenderer,
+  TitleComponent,
+  DatasetComponent,
+]);
 
 const optionChart = ref({});
 
@@ -69,40 +78,30 @@ onUnmounted(() => {
 
 const getBarData = async () => {
   // 模拟 API 数据
-  // const echarData = [
-  //   ['Hannah Krause', 48, 'Engineer', 94, '2011-02-12'],
-  //   ['Zhao Qian', 20, 'Teacher', 68, '2011-03-01'],
-  //   ['Jasmin Krause ', 52, 'Musician', 87, '2011-02-14'],
-  //   ['Li Lei', 37, 'Teacher', 65, '2011-02-18'],
-  //   ['Karle Neumann', 25, 'Engineer', 77, '2011-04-02'],
-  //   ['Adrian Groß', 19, 'Teacher', 69, '2011-01-16'],
-  //   ['Mia Neumann', 71, 'Engineer', 65, '2011-03-19'],
-  //   ['Böhm Fuchs', 36, 'Musician', 88, '2011-02-24'],
-  //   ['Han Meimei', 67, 'Engineer', 66, '2011-03-12'],
-  // ];
+  const echarData = [
+    ['Hannah Krause', 48, 'Engineer', 94, '2011-02-12'],
+    ['Zhao Qian', 20, 'Teacher', 68, '2011-03-01'],
+    ['Jasmin Krause ', 52, 'Musician', 87, '2011-02-14'],
+    ['Li Lei', 37, 'Teacher', 65, '2011-02-18'],
+    ['Karle Neumann', 25, 'Engineer', 77, '2011-04-02'],
+    ['Adrian Groß', 19, 'Teacher', 69, '2011-01-16'],
+    ['Mia Neumann', 71, 'Engineer', 65, '2011-03-19'],
+    ['Böhm Fuchs', 36, 'Musician', 88, '2011-02-24'],
+    ['Han Meimei', 67, 'Engineer', 66, '2011-03-12'],
+  ];
 
   optionChart.value = {
     title: {
       text: '当天生产达成率排行',
       left: 'center',
       textStyle: {
-        fontSize: 18,
+        fontSize: 15,
       },
     },
     dataset: [
       {
         dimensions: ['name', 'age', 'profession', 'score', 'date'],
-        source: [
-          ['Hannah Krause', 48, 'Engineer', 94, '2011-02-12'],
-          ['Zhao Qian', 20, 'Teacher', 68, '2011-03-01'],
-          ['Jasmin Krause ', 52, 'Musician', 87, '2011-02-14'],
-          ['Li Lei', 37, 'Teacher', 65, '2011-02-18'],
-          ['Karle Neumann', 25, 'Engineer', 77, '2011-04-02'],
-          ['Adrian Groß', 19, 'Teacher', 69, '2011-01-16'],
-          ['Mia Neumann', 71, 'Engineer', 65, '2011-03-19'],
-          ['Böhm Fuchs', 36, 'Musician', 88, '2011-02-24'],
-          ['Han Meimei', 67, 'Engineer', 66, '2011-03-12'],
-        ],
+        source: echarData,
       },
       {
         transform: {
