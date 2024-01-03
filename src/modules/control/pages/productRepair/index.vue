@@ -1,8 +1,8 @@
 <template>
   <cmp-container :full="true">
     <cmp-card class="not-full-tab">
-      <t-tabs :default-value="1">
-        <t-tab-panel :value="1" label="产品维修台账" :destroy-on-hide="false">
+      <t-tabs :model-value="selectTabValue" @change="tabsChange">
+        <t-tab-panel value="tab1" label="产品维修台账" :destroy-on-hide="false">
           <template #panel>
             <cmp-container :gutter="[0, 0]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
@@ -54,7 +54,7 @@
           </template>
         </t-tab-panel>
         <!-- ###############    产品维修工作台 表格数据   ######## -->
-        <t-tab-panel :value="2" label="产品维修工作台" :destroy-on-hide="false">
+        <t-tab-panel value="tab2" label="产品维修工作台" :destroy-on-hide="false">
           <template #panel>
             <cmp-container :gutter="[0, 0]">
               <cmp-card :ghost="true" class="padding-bottom-line-0">
@@ -69,6 +69,7 @@
                   :total="repairingDataTotal"
                   :loading="loading"
                   :resizable="true"
+                  :selected-row-keys="selectRepairingIds"
                   @select-change="onSelectRepairingChange"
                   @refresh="fetchRepairingTable"
                 >
@@ -160,7 +161,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 // import { DialogPlugin } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api as apiControl, WipRepairDtlVO, WipRepairVO } from '@/api/control';
+import { api as apiControl, WipRepairDtlVO, WipRepairIds, WipRepairVO } from '@/api/control';
 import { api as apiMain } from '@/api/main';
 // import { api as apiMain } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
@@ -179,9 +180,11 @@ const { pageUI: pageTab2 } = usePage();
 const repairDataTotal = ref(0);
 const repairingDataTotal = ref(0);
 const initialDate = ref(1);
+const selectTabValue = ref('tab1');
 const selectRepairId = ref([]); // 待维修的主表数据
-const selectRepairingId = ref([]); // 维修中选中的明细数据
-const selectWipRepairingId = ref([]); // 维修中选中的主表
+const selectRepairingIds = ref([]); // 维修中选中的明细数据
+// const selectWipRepairingId = ref([]); // 维修中选中的主表
+const selectWipRepairIds = ref<WipRepairIds[]>([]); // 维修中选中的主表
 const selectRepairRowId = ref(null);
 const formData = reactive({
   queryData: {
@@ -321,7 +324,7 @@ const repairDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('business.control.repairTimes'), width: 160, colKey: 'repairTimes' },
   { title: t('business.control.defectDealMethodName'), width: 160, colKey: 'defectDealMethodName' },
   { title: t('business.control.defectBlame'), width: 160, colKey: 'defectBlame' },
-  { title: t('business.control.repairResult'), width: 160, colKey: 'repairResult' },
+  { title: t('business.control.repairResult'), width: 160, colKey: 'repairStatusName' },
 ];
 
 const repairingData = ref<WipRepairVO[]>([]);
@@ -381,7 +384,7 @@ const onReset = () => {
 // 删除按钮
 const onDeleteClick = async ({ row }) => {
   await apiControl.wipRepair.updateWipRepairUnRepair({
-    wipRepairIds: [row.id],
+    wipRepairIds: [row.wipRepairId],
   });
 
   await fetchRepairingTable();
@@ -389,8 +392,8 @@ const onDeleteClick = async ({ row }) => {
 
 // 维修完成按钮
 const onSubmit = async () => {
-  if (selectRepairingId.value.length === 0) {
-    MessagePlugin.error('请选择维修工单。');
+  if (selectRepairingIds.value.length === 0) {
+    MessagePlugin.error('请选择维修产品。');
     return;
   }
 
@@ -414,6 +417,17 @@ const onSubmit = async () => {
   //   return;
   // }
 
+  const listSelectWipRepairing = repairingData.value.filter((value) => selectRepairingIds.value.indexOf(value.id) > -1);
+
+  listSelectWipRepairing.forEach((item) => {
+    const ids = selectWipRepairIds.value.find((n) => n.wipRepairId === item.wipRepairId);
+    if (ids === null || ids === undefined) {
+      selectWipRepairIds.value.push({ wipRepairId: item.wipRepairId, idsRepairingList: [item.id] });
+    } else {
+      ids.idsRepairingList.push(item.id);
+    }
+  }); // 已经选中的维修单主表ID
+
   await apiControl.wipRepair.updateRepaired({
     loginProcessId: userStore.currUserOrgInfo.processId,
     loginWorkstationId: userStore.currUserOrgInfo.workStationId,
@@ -423,11 +437,19 @@ const onSubmit = async () => {
     defectBlame: formData.queryData.checkedDefectBlame,
     defectDealMethodIdList: formData.queryData.checkedDefectDealMethod,
     isScrapped: formData.queryData.isScrapped,
-    idsRepairingList: selectRepairingId.value,
-    wipRepairIdList: selectWipRepairingId.value,
+    wipRepairIdList: selectWipRepairIds.value,
   });
 
   MessagePlugin.success('维修成功。');
+
+  formData.queryData.returnRoutingProcessId = '';
+  formData.queryData.mitemId = '';
+  formData.queryData.checkedDefectReason = '';
+  formData.queryData.checkedDefectBlame = '';
+  formData.queryData.checkedDefectDealMethod = [];
+  formData.queryData.isScrapped = false;
+  selectRepairingIds.value = [];
+  selectWipRepairIds.value = [];
 
   fetchTable();
   fetchRepairingTable();
@@ -473,6 +495,7 @@ const fetchDtlTable = async () => {
 };
 const fetchRepairingTable = async () => {
   try {
+    selectRepairingIds.value = [];
     const data = await apiControl.wipRepairDtl.getListByRepairing({
       pageNum: pageTab2.value.page,
       pageSize: pageTab2.value.rows,
@@ -524,7 +547,7 @@ const onSelectRepairingChange = (value: any, { selectedRowData }) => {
     .map((n) => n.mitemCode)
     .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
   if (!_.isEmpty(distinctMitemCode) && distinctMitemCode.length > 1) {
-    MessagePlugin.error('只能选择相同产品的返修工单');
+    MessagePlugin.error('只能选择相同产品的条码');
 
     // 保留第一个产品的所有选择
     const ids = selectedRowData.filter((n) => n.mitemCode === selectedRowData[0].mitemCode).map((n) => n.id);
@@ -532,12 +555,7 @@ const onSelectRepairingChange = (value: any, { selectedRowData }) => {
       return ids.indexOf(n) === -1;
     });
   }
-  selectRepairingId.value = value;
-
-  const distinctWipRepairingId = selectedRowData
-    .map((n) => n.wipRepairId)
-    .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
-  selectWipRepairingId.value = distinctWipRepairingId;
+  selectRepairingIds.value = value;
 
   if (value.length > 0) {
     const firstRow = selectedRowData.find((n) => n.id === value[0]);
@@ -559,12 +577,16 @@ const onRepairRowClick = async ({ row }) => {
     return;
   }
 
-  await apiControl.wipRepair.updateWipRepairStatus({
-    wipRepairIds: [row.id],
-  });
-  MessagePlugin.error('当前产品已开始维修');
-  repairDtlData.value = [];
-  fetchTable();
+  await apiControl.wipRepair
+    .updateWipRepairStatus({
+      wipRepairIds: [row.id],
+    })
+    .then(() => {
+      repairDtlData.value = [];
+      fetchTable();
+      fetchRepairingTable();
+      selectTabValue.value = 'tab2';
+    });
 };
 const onBatchRepairing = async () => {
   try {
@@ -595,6 +617,10 @@ const onActiveChange = async (highlightRowKeys) => {
   selectRepairRowId.value = `${highlightRowKeys[0]}`;
   await fetchDtlTable();
 };
+const tabsChange = async (tabValue) => {
+  selectTabValue.value = tabValue;
+};
+
 onMounted(() => {
   fetchTable();
   fetchRepairingTable();

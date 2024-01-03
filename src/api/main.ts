@@ -697,8 +697,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -789,6 +789,11 @@ export type Warehouse = {
    */
   isEnableLocation?: number;
   erpWarehouse?: string;
+  /**
+   * 是否先进先出
+   * @format int32
+   */
+  isFifo?: number;
 } | null;
 
 /** 通用响应类 */
@@ -1771,8 +1776,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3404,15 +3409,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
   isProductName?: string;
+  isBatchName?: string;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -3994,8 +3999,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5206,10 +5211,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
 } | null;
@@ -5231,6 +5236,9 @@ export interface ResultListModulePermissionDTO {
 export type KeyValuePairStringString = {
   value?: string;
   label?: string;
+  /** @format int32 */
+  num?: number;
+  res?: string[];
 } | null;
 
 /** 通用响应类 */
