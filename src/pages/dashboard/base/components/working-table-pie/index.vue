@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import { PieChart } from 'echarts/charts';
-import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
+import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { debounce } from 'lodash';
@@ -16,7 +16,7 @@ import { api } from '@/api/control';
 import { useSettingStore } from '@/store';
 import { changeChartsTheme } from '@/utils/color';
 
-echarts.use([TooltipComponent, LegendComponent, GridComponent, PieChart, CanvasRenderer]);
+echarts.use([TooltipComponent, LegendComponent, GridComponent, PieChart, CanvasRenderer, TitleComponent]);
 
 const store = useSettingStore();
 const optionChart = ref({});
@@ -68,11 +68,9 @@ onDeactivated(() => {
 const getPieData = async () => {
   try {
     const data = await api.wipRepair.getRepairTop5();
-
     if (data.length === 0) {
       return;
     }
-
     const first = data[0];
     const echarData = data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
 
@@ -88,7 +86,7 @@ const getPieData = async () => {
       },
       series: [
         {
-          name: 'Access From',
+          // name: 'Access From',
           type: 'pie',
           radius: '100%',
           label: {

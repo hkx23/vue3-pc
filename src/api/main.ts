@@ -1776,8 +1776,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3409,15 +3409,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
   isInProcessName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
+  isInProcessChecked?: boolean;
   isBatchName?: string;
+  isState?: boolean;
+  isProductName?: string;
+  isProductChecked?: boolean;
   isRawName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3999,8 +3999,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5211,12 +5211,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
