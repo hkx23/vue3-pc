@@ -89,7 +89,12 @@ const getPieData = async () => {
           fontSize: 15,
         },
       },
-
+      legend: {
+        orient: 'vertical',
+        right: 200,
+        top: 100,
+        bottom: 20,
+      },
       tooltip: {
         trigger: 'item',
       },

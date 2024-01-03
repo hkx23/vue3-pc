@@ -77,6 +77,8 @@ onUnmounted(() => {
 });
 
 const getBarData = async () => {
+  // const data = await api.wipRepair.getRepairTop5();
+  // const echarData = data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
   // 模拟 API 数据
   const echarData = [
     ['Hannah Krause', 48, 'Engineer', 94, '2011-02-12'],
@@ -130,6 +132,11 @@ const getBarData = async () => {
         itemStyle: {
           color: '#92d050',
         },
+        // tooltip: {
+        //   formatter: function (params) {
+        //     return params.name + '<br/>' + '达成率: ' + params.value + '%';
+        //   },
+        // },
       },
     ],
   };
