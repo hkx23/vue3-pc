@@ -6,14 +6,14 @@
     label-align="right"
     :data="formData"
     :show-cancel="true"
-    :show-error-message="false"
+    :show-error-message="true"
     :rules="rules"
     @submit="submit"
   >
     <t-space direction="vertical">
-      <t-row :gutter="[32, 16]">
+      <t-row :gutter="[32, 20]">
         <t-col :span="6">
-          <t-form-item v-if="formData.operateTpye === 'add'" label="选择仓库" required-mark>
+          <t-form-item v-if="formData.operateTpye === 'add'" label="选择仓库" name="warehouseId">
             <bcmp-select-business
               v-model="formData.warehouseId"
               :is-multiple="false"
@@ -33,7 +33,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="货区编码" required-mark>
+          <t-form-item label="货区编码" name="districtCode">
             <t-input
               v-model="formData.districtCode"
               placeholder="手动输入...."
@@ -42,12 +42,12 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="货区名称" required-mark>
+          <t-form-item label="货区名称" name="districtName">
             <t-input v-model="formData.districtName" placeholder="手动输入...." />
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="货区描述" required-mark>
+          <t-form-item label="货区描述" name="districtDesc">
             <t-textarea v-model="formData.districtDesc" placeholder="手动输入...." />
           </t-form-item>
         </t-col>
@@ -61,8 +61,9 @@
   </t-form>
 </template>
 <script setup lang="ts">
-import { FormRules, MessagePlugin } from 'tdesign-vue-next';
-import { computed, ComputedRef, ref } from 'vue';
+import { isEmpty } from 'lodash';
+import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
+import { ref } from 'vue';
 
 import { api, District } from '@/api/warehouse';
 
@@ -86,19 +87,38 @@ const formData = ref<DistrictForm>({
   warehouseId: '',
   warehouseCode: '',
 });
-
-const rules: ComputedRef<FormRules> = computed(() => {
-  return {
-    warehouseId: [{ required: true, message: '请选择仓库', trigger: 'change' }],
-    districtCode: [{ required: true, message: '请输入货区编码', trigger: 'blur' }],
-    districtName: [{ required: true, message: '请输入货区名称', trigger: 'blur' }],
-    warehouseName: [{ required: true, message: '请输入仓库名称', trigger: 'blur' }],
-    districtDesc: [{ required: true, message: '请输入货区描述', trigger: 'blur' }],
-    state: [{ required: true, message: '请选择启用状态', trigger: 'change' }],
-  };
-});
-
-//* 新增清除数据
+// 校验规则
+const rules: FormRules<Data> = {
+  warehouseId: [
+    {
+      required: true,
+      message: '请选择仓库',
+      trigger: 'change',
+    },
+  ],
+  districtCode: [
+    {
+      required: true,
+      message: '请输入货区编码',
+      trigger: 'blur',
+    },
+  ],
+  districtName: [
+    {
+      required: true,
+      message: '请输入货区名称',
+      trigger: 'blur',
+    },
+  ],
+  districtDesc: [
+    {
+      required: true,
+      message: '请输入货区描述',
+      trigger: 'blur',
+    },
+  ],
+};
+//*
 const init = () => {
   formData.value.operateTpye = 'add';
   formData.value.id = '';
@@ -122,21 +142,65 @@ const onMaterialTabData = async (event) => {
 };
 
 const submit = async () => {
-  formData.value.state = formData.value.state ? 1 : 0; //* 处理启用(必须)
+  // // // 在提交之前验证表单数据
+  // const formValidation = await validateForm();
+  // // 检查是否有验证错误
+  // if (!formValidation) {
+  //   return;
+  // }
   try {
+    const fieldsToValidate = [
+      { field: formData.value.warehouseId, message: '请选择仓库' },
+      { field: formData.value.districtCode, message: '请输入货区编码' },
+      { field: formData.value.districtName, message: '请输入货区名称' },
+      { field: formData.value.districtDesc, message: '请输入货区描述' },
+    ];
+    // if (isEmpty(formData.value.warehouseId)) {
+    //   MessagePlugin.error('请选择仓库');
+    //   return false;
+    // }
+
+    // if (isEmpty(formData.value.districtCode)) {
+    //   MessagePlugin.error('请输入货区编码');
+    //   return false;
+    // }
+    // if (isEmpty(formData.value.districtName)) {
+    //   MessagePlugin.error('请输入货区名称');
+    //   return false;
+    // }
+    // if (isEmpty(formData.value.districtDesc)) {
+    //   MessagePlugin.error('请输入货区描述');
+    //   return false;
+    // }
+
+    for (const field of fieldsToValidate) {
+      if (isEmpty(field.field)) {
+        MessagePlugin.error(field.message);
+        return false;
+      }
+    }
+
+    formData.value.state = formData.value.state ? 1 : 0; //* 处理启用(必须)
     if (formData.value.operateTpye === 'add') {
       await api.district.addDistrict(formData.value);
       MessagePlugin.success('新增成功');
-    } else {
-      await api.district.modifyDistrict(formData.value);
-      MessagePlugin.success('编辑成功');
+      return true;
     }
+    await api.district.modifyDistrict(formData.value);
+    MessagePlugin.success('编辑成功');
+    return true;
   } catch (e) {
     console.log(e);
     return false;
   }
-  return true;
 };
+
+// const validateForm = async () => {
+//   // 在提交之前验证表单数据
+//   const formValidation = await formRef.value.validate();
+//   // 返回验证结果
+//   return formValidation;
+// };
 
 //* 暴露 init 方法
 defineExpose({

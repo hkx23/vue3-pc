@@ -54,7 +54,6 @@
 </template>
 
 <script setup lang="ts">
-import { forEach } from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
@@ -132,9 +131,6 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
     title: '状态',
     width: 85,
     colKey: 'state',
-    // render: (h, { row }) => {
-    //   return h('span', row.state ? '已启用' : '已禁用');
-    // },
   },
   { title: '修改人', width: 120, colKey: 'modifier' },
   { title: '修改时间', width: 170, colKey: 'timeModified' },
@@ -183,36 +179,10 @@ const onEditRowClick = async (value: any) => {
     ...value.row,
     state: value.row.state ? 1 : 0,
   };
-  // formRef.value.formData = JSON.parse(JSON.stringify(editedData)); // todo
-  formRef.value.formData = clone2(editedData);
-  console.log('🚀 ~ file: index.vue:188 ~ onEditRowClick ~ formRef.value.formData:', formRef.value.formData);
-
+  formRef.value.formData = JSON.parse(JSON.stringify(editedData)); // todo
+  // formRef.value.formData = clone2(editedData);
   formVisible.value = true;
 };
-
-//* CloneObject
-function Clone(target, map = new WeakMap()) {
-  if (typeof target === 'object') {
-    const isArray = Array.isArray(target);
-    const cloneTarget = isArray ? [] : {};
-    if (map.get(target)) {
-      return map.get(target);
-    }
-    map.set(target, cloneTarget);
-
-    const keys = isArray ? undefined : Object.keys(target);
-    forEach(keys || target, (value, key) => {
-      if (keys) {
-        key = value;
-      }
-      cloneTarget[key] = clone2(target[key], map);
-    });
-
-    return cloneTarget;
-  }
-  return target;
-}
-const clone2 = Clone;
 
 //* 删除
 const onStateRowClick = async (row: { row: any }) => {
@@ -225,9 +195,11 @@ const onStateRowClick = async (row: { row: any }) => {
 };
 
 const onConfirmForm = async () => {
-  formRef.value.submit().then(() => {
-    formVisible.value = false;
-    fetchTable();
+  formRef.value.submit().then((data) => {
+    if (data) {
+      formVisible.value = false;
+      fetchTable();
+    }
   });
 };
 const onAdd = () => {

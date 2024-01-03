@@ -169,6 +169,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  // 是否重置触发查询
+  isResetQuery: {
+    type: Boolean,
+    default: true,
+  },
 });
 // 初始化表单数据
 const state = reactive({
@@ -259,8 +264,10 @@ const emits = defineEmits(['handleEvent', 'submit', 'reset']);
 // 重置
 const resetHandle = () => {
   state.form = initForm(props.opts);
-  emits('reset', state.form);
-  checkHandle('reset');
+  emits('reset', _.cloneDeep(state.form));
+  if (props.isResetQuery) {
+    checkHandle('reset');
+  }
 };
 // 查询条件change事件
 const handleEvent = (type, val) => {

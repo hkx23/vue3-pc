@@ -789,6 +789,11 @@ export type Warehouse = {
    */
   isEnableLocation?: number;
   erpWarehouse?: string;
+  /**
+   * 是否先进先出
+   * @format int32
+   */
+  isFifo?: number;
 } | null;
 
 /** 通用响应类 */
@@ -3405,14 +3410,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
   isState?: boolean;
   isProductName?: string;
+  isProductChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */

@@ -130,20 +130,17 @@ export default {
       console.log('打开dialog');
     });
     const submit = async () => {
-      return new Promise((resolve, reject) => {
-        formRef.value.validate().then((result) => {
-          if (result !== true) {
-            MessagePlugin.warning(Object.values(result)[0][0].message);
-            reject();
-            return;
-          }
-          formData.value.isRaw = formData.value.isRawChecked ? 1 : 0;
-          formData.value.isProduct = formData.value.isProductChecked ? 1 : 0;
-          formData.value.isInProcess = formData.value.isInProcessChecked ? 1 : 0;
+      formRef.value.validate().then((result) => {
+        if (result !== true) {
+          MessagePlugin.warning(Object.values(result)[0][0].message);
+          return;
+        }
+        formData.value.isRaw = formData.value.isRawChecked ? 1 : 0;
+        formData.value.isProduct = formData.value.isProductChecked ? 1 : 0;
+        formData.value.isInProcess = formData.value.isInProcessChecked ? 1 : 0;
 
-          api.mitem.edit(formData.value);
-          MessagePlugin.success(t('common.message.success'));
-        });
+        api.mitem.edit(formData.value);
+        MessagePlugin.success(t('common.message.success'));
       });
     };
 

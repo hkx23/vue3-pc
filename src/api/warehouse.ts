@@ -65,6 +65,105 @@ export interface ResultListWipCompletionLabelDTO {
   data?: WipCompletionLabelDTO[] | null;
 }
 
+/** 关键物料追溯（反向）-查询 */
+export interface ReverseTraceabilityReportSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int32 */
+  page2Num?: number;
+  /** @format int32 */
+  page2Size?: number;
+  /** 产品条码 */
+  serialNumber?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 包装箱码 */
+  parentPkgBarcode?: string;
+}
+
+/** 响应数据 */
+export type PagingDataTransferHeadVO = {
+  list?: TransferHeadVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataTransferHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataTransferHeadVO;
+}
+
+/** 交易事务头表 */
+export interface TransferHeadVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  billNo?: string;
+  /**
+   * 单身行数
+   * @format int32
+   */
+  lineCount?: number;
+  erpBillNo?: string;
+  purpose?: string;
+  voucherNo?: string;
+  noticeVoucherNo?: string;
+  supplierId?: string;
+  memo?: string;
+  businessCategoryId?: string;
+  /** 单据业务类型编码 */
+  businessCategoryCode?: string;
+  /** 单据业务类型名称 */
+  businessCategoryName?: string;
+  userTransferId?: string;
+  userTransferName?: string;
+  displayTransferName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 工单 */
+  moCode?: string;
+  warehouseId?: string;
+  /** 来源仓库编码 */
+  warehouseCode?: string;
+  /** 来源仓库名称 */
+  warehouseName?: string;
+  toWarehouseId?: string;
+  /** 目标仓库编码 */
+  toWarehouseCode?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
+}
+
 /** 通用响应类 */
 export interface ResultObject {
   /**
@@ -304,10 +403,12 @@ export interface MitemForwardTraceSearch {
   /** 物料标签 */
   mitemLabelNo?: string;
   mitemId?: string;
+  /** 物料id */
+  ids?: string[];
 }
 
 /** 关键物料正向追溯VO */
-export type MFTSubVO = {
+export interface MFTSubVO {
   /** 物料标签 */
   mitemLabelNo?: string;
   /** 批次 */
@@ -320,6 +421,12 @@ export type MFTSubVO = {
   contactPerson?: string;
   /** 供应商联系电话 */
   contactTel?: string;
+  /** 检验单号 */
+  billNo?: string;
+  /** 检验类型 */
+  inspectType?: string;
+  /** 质检结果 */
+  inspectResult?: string;
   /** 数量 */
   qty?: number;
   /** 操作员 */
@@ -345,19 +452,6 @@ export type MFTSubVO = {
    * @format date-time
    */
   processDate?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultMFTSubVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 关键物料正向追溯VO */
-  data?: MFTSubVO;
 }
 
 /** 关键物料正向追溯VO */
@@ -397,19 +491,6 @@ export interface ResultMFTVO {
   message?: string;
   /** 关键物料正向追溯VO */
   data?: MFTVO;
-}
-
-/** 通用响应类 */
-export interface ResultListString {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: (string | null)[];
 }
 
 export interface LabelSearch {
@@ -1188,6 +1269,22 @@ export const api = {
         params: query,
       }),
   },
+  transferHead: {
+    /**
+     * No description
+     *
+     * @tags 交易单头表
+     * @name GetTransferHeadList
+     * @summary 获取出入库信息
+     * @request POST:/transferHead/getTransferHeadList
+     * @secure
+     */
+    getTransferHeadList: (data: ReverseTraceabilityReportSearch) =>
+      http.request<ResultPagingDataTransferHeadVO['data']>(`/api/warehouse/transferHead/getTransferHeadList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   location: {
     /**
      * No description
@@ -1296,21 +1393,6 @@ export const api = {
      * No description
      *
      * @tags 标签表
-     * @name GetSupplierInfo
-     * @summary 物料供应商信息
-     * @request POST:/label/getSupplierInfo
-     * @secure
-     */
-    getSupplierInfo: (data: MitemForwardTraceSearch) =>
-      http.request<ResultMFTSubVO['data']>(`/api/warehouse/label/getSupplierInfo`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
      * @name GetMitemBasicInfo
      * @summary 物料基础信息
      * @request POST:/label/getMitemBasicInfo
@@ -1333,21 +1415,6 @@ export const api = {
      */
     getLabelVo: (data: string) =>
       http.request<ResultObject['data']>(`/api/warehouse/label/getLabelVO`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name GetLabelNoList
-     * @summary 获取物料标签集合
-     * @request POST:/label/getLabelNoList
-     * @secure
-     */
-    getLabelNoList: (data: MitemForwardTraceSearch) =>
-      http.request<ResultListString['data']>(`/api/warehouse/label/getLabelNoList`, {
         method: 'POST',
         body: data as any,
       }),

@@ -12,7 +12,7 @@
 <script setup lang="tsx">
 import dayjs from 'dayjs';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 import CmpQuery from '@/components/cmp-query/index.vue';
 
@@ -65,6 +65,7 @@ const state = reactive({
     { value: '选项三', label: '选项三' },
   ],
 });
+const disableTest = ref(true);
 
 const opts = computed(() => {
   return {
@@ -155,6 +156,7 @@ const opts = computed(() => {
       bind: {
         options: state.checkOptions,
         lazyLoad: true,
+        disabled: disableTest.value,
       },
     },
     soltDemo: {
@@ -218,6 +220,7 @@ const handleEvent = (type, val) => {
       break;
     case 'single':
       console.log('获取event==single的数据', val);
+      disableTest.value = val === 'F';
       break;
     case 'mulselect':
       console.log('获取event==mulselect的数据', val);
