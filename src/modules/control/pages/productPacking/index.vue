@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <cmp-row>
       <cmp-card flex="auto" :ghost="true">
-        <cmp-container :full="true" header>
+        <cmp-container :full="true" header :full-sub-index="labelList.length > 0 ? [1] : [0]">
           <!-- 扫描区 -->
           <cmp-card>
             <bcmp-workstation-info />
@@ -10,10 +10,12 @@
               <t-col flex="auto">
                 <cmp-scan-input v-model="scanLabel" :placeholder="scanPlaceholder" @enter="scan"></cmp-scan-input>
               </t-col>
-              <t-col v-if="labelList.length > 0" flex="120px" style="text-align: right">
-                <div class="label-qty">{{ allQty }}</div>
-                <div>/{{ pkgInfo.packQty }}</div>
-                <div class="label-uom">{{ pkgInfo.uom }}/{{ pkgInfo.packUom }}</div>
+              <t-col v-if="labelList.length > 0" flex="150px" style="text-align: right">
+                <t-space :size="8" align="center" class="qty-info">
+                  <div class="label-qty">{{ allQty }}</div>
+                  <div>/{{ pkgInfo.packQty }}</div>
+                  <div class="label-uom">{{ pkgInfo.uom }}/{{ pkgInfo.packUom }}</div>
+                </t-space>
               </t-col>
               <t-col flex="120px" style="text-align: right">
                 <t-radio-group v-model="scanType" variant="primary-filled" @change="scanTypeChange">
@@ -52,7 +54,7 @@
             </t-form>
           </cmp-card>
           <!-- 采集详情区 -->
-          <t-card v-if="labelList.length > 0" :header="t('productPacking.packingList')">
+          <cmp-card v-if="labelList.length > 0" :header="t('productPacking.packingList')" header-bordered>
             <t-row :gutter="10">
               <t-col v-for="(label, index) in labelList" :key="index" :span="4" class="label-list">
                 <t-alert theme="info" :message="label.barcode">
@@ -65,7 +67,7 @@
               <t-button theme="primary" @click="tailPkg">{{ t('productPacking.tailPacking') }}</t-button>
               <t-button theme="default">{{ t('productPacking.packingLog') }}</t-button>
             </div>
-          </t-card>
+          </cmp-card>
         </cmp-container>
       </cmp-card>
       <cmp-card flex="300px" :ghost="true">
@@ -303,25 +305,19 @@ const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', msg: string
   justify-content: flex-end;
 }
 
-.scan-panel {
-  .scan-line {
-    .qty-info {
-      display: flex;
-      align-items: baseline;
+.qty-info {
+  padding-top: 4px;
+  padding-left: 16px;
+  display: flex;
+  align-items: baseline;
 
-      .label-qty {
-        font-size: 28px;
-      }
-
-      .label-uom {
-        font-size: 10px;
-        padding-left: 5px;
-      }
-    }
+  .label-qty {
+    font-size: 28px;
   }
 
-  .label {
-    text-align: right;
+  .label-uom {
+    font-size: 10px;
+    padding-left: 5px;
   }
 }
 

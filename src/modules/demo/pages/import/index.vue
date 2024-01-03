@@ -1,3 +1,5 @@
 <template>
-  <cmp-container :full="true"> 导入按钮例子 </cmp-container>
+  <cmp-container :full="true">
+    <bcmp-import-button />
+  </cmp-container>
 </template>
