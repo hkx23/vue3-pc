@@ -84,7 +84,7 @@ const getPieData = async () => {
         text: `过程不良TOP5 (周 ${dayjs(first.beginDate).format('YYYY-MM-DD')} ~ ${dayjs(first.endDate).format(
           'YYYY-MM-DD',
         )})`,
-        left: 'left',
+        left: 'center',
         textStyle: {
           fontSize: 15,
         },
