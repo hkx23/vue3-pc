@@ -132,8 +132,8 @@
                       placeholder="请选择回流工序"
                       :show-title="false"
                       label="回流工序"
+                      :parent-id="formData.queryData.routingRevisionId"
                     />
-                    <!-- :parent-id="formData.queryData.routingRevisionId" -->
                   </cmp-card>
                   <cmp-card :span="4" :ghost="true" style="padding: 8px">
                     <t-checkbox v-model="formData.queryData.isScrapped" label="是否报废" />
