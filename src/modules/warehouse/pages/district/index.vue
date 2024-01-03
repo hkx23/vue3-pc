@@ -183,9 +183,12 @@ const onStateRowClick = async (row: { row: any }) => {
 };
 
 const onConfirmForm = async () => {
-  formRef.value.submit().then(() => {
-    formVisible.value = false;
-    fetchTable();
+  formRef.value.submit().then((data) => {
+    // 判断数据是否符合
+    if (data) {
+      formVisible.value = false;
+      fetchTable();
+    }
   });
 };
 const onAdd = () => {

@@ -4,15 +4,16 @@
     layout="inline"
     label-width="125px"
     label-align="right"
+    :rules="rules"
     :data="formData"
     :show-cancel="true"
-    :show-error-message="false"
+    :show-error-message="true"
     @submit="submit"
   >
     <t-space direction="vertical">
-      <t-row :gutter="[32, 16]">
+      <t-row :gutter="[32, 20]">
         <t-col :span="6">
-          <t-form-item v-if="formData.operateTpye === 'add'" label="选择仓库" required-mark>
+          <t-form-item v-if="formData.operateTpye === 'add'" label="选择仓库" name="warehouseId">
             <bcmp-select-business
               v-model="formData.warehouseId"
               :is-multiple="false"
@@ -32,7 +33,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item v-if="formData.operateTpye === 'add'" label="选择货区" required-mark>
+          <t-form-item v-if="formData.operateTpye === 'add'" label="选择货区" name="districtId">
             <bcmp-select-business
               v-model="formData.districtId"
               :is-multiple="false"
@@ -53,7 +54,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="货位编码" required-mark>
+          <t-form-item label="货位编码" name="locationCode">
             <t-input
               v-model="formData.locationCode"
               placeholder="手动输入...."
@@ -62,12 +63,12 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="货位名称" required-mark>
+          <t-form-item label="货位名称" name="locationName">
             <t-input v-model="formData.locationName" placeholder="手动输入...." />
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="货位描述" required-mark>
+          <t-form-item label="货位描述" name="locationDesc">
             <t-textarea v-model="formData.locationDesc" placeholder="手动输入...." />
           </t-form-item>
         </t-col>
@@ -81,7 +82,8 @@
   </t-form>
 </template>
 <script setup lang="ts">
-import { MessagePlugin } from 'tdesign-vue-next';
+import { isEmpty } from 'lodash';
+import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import { api, District } from '@/api/warehouse';
@@ -148,8 +150,23 @@ const onMaterialTabDatas = async (event) => {
 };
 
 const submit = async () => {
-  formData.value.state = formData.value.state ? 1 : 0; //* 处理启用(必须)
   try {
+    const fieldsToValidate = [
+      { field: formData.value.warehouseId, message: '请选择仓库' },
+      { field: formData.value.districtId, message: '请选择货区' },
+      { field: formData.value.locationCode, message: '请输入货位编码' },
+      { field: formData.value.locationName, message: '请输入货位名称' },
+      { field: formData.value.locationDesc, message: '请输入货位描述' },
+    ];
+
+    for (const field of fieldsToValidate) {
+      if (isEmpty(field.field)) {
+        MessagePlugin.error(field.message);
+        return false;
+      }
+    }
+
+    formData.value.state = formData.value.state ? 1 : 0; //* 处理启用(必须)
     if (formData.value.operateTpye === 'add') {
       await api.location.addLocation(formData.value);
       MessagePlugin.success('新增成功');
@@ -162,6 +179,45 @@ const submit = async () => {
     return false;
   }
   return true;
+};
+
+// 校验规则
+const rules: FormRules<Data> = {
+  warehouseId: [
+    {
+      required: true,
+      message: '请选择仓库',
+      trigger: 'change',
+    },
+  ],
+  districtId: [
+    {
+      required: true,
+      message: '请选择货区',
+      trigger: 'change',
+    },
+  ],
+  locationCode: [
+    {
+      required: true,
+      message: '请输入货位编码',
+      trigger: 'blur',
+    },
+  ],
+  locationName: [
+    {
+      required: true,
+      message: '请输入货位名称',
+      trigger: 'blur',
+    },
+  ],
+  locationDesc: [
+    {
+      required: true,
+      message: '请输入货位描述',
+      trigger: 'blur',
+    },
+  ],
 };
 
 //* 暴露 init 方法
