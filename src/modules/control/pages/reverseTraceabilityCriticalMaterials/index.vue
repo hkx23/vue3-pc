@@ -40,7 +40,7 @@ const opts = computed(() => {
   };
 });
 // // #query 查询函数
-function fillEmptyValuesWithEmptyString(obj) {
+function fillEmptyValuesWithEmptyString(obj: any) {
   // 判断 搜索返回的数据是不是为 null 或者  undefined
   Object.keys(obj).forEach((key) => {
     if (obj[key] === null || obj[key] === undefined || obj[key] === '') {
@@ -48,10 +48,11 @@ function fillEmptyValuesWithEmptyString(obj) {
     }
   });
 }
+
 const onInputData = ref({});
 const onInput = async (data: any) => {
   fillEmptyValuesWithEmptyString(data);
-  onInputData.value = data;
+  onInputData.value = JSON.parse(JSON.stringify(data));
 };
 </script>
 

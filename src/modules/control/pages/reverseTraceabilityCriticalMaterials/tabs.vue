@@ -23,10 +23,11 @@
               <cmp-table
                 ref="tableRefCard"
                 v-model:pagination="pageUIOne"
+                empty="没有符合条件的数据"
                 row-key="deliveryCardId"
                 :table-column="productBasicInformation"
-                :table-data="productBasicInformationForm.wipLogList"
-                :total="2"
+                :table-data="productBasicInformationForm?.wipLogList?.list"
+                :total="productBasicInformationForm?.wipLogList?.total"
               >
                 <template #dcResult="{ row }">
                   {{ row.dcResult ? '是' : '否' }}
@@ -38,7 +39,11 @@
                   {{ row.isHold ? '是' : '否' }}
                 </template>
                 <template #title>
-                  {{ `工单信息( 工单号：${productBasicInformationForm.moCode} )` }}
+                  {{
+                    `工单信息( 工单号：${
+                      productBasicInformationForm.moCode ? productBasicInformationForm.moCode : ''
+                    } )`
+                  }}
                 </template>
               </cmp-table>
             </div>
@@ -48,13 +53,14 @@
         <cmp-container v-if="tabKey === 1" :full="true">
           <detailed :row="workOrderData.list"></detailed>
         </cmp-container>
-        <!-- # 3️⃣ 工单信息 -->
+        <!-- # 3️⃣ 物料信息 -->
         <cmp-container v-if="tabKey === 2" :full="true">
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
                 ref="tableRefCard"
                 v-model:pagination="pageUI"
+                empty="没有符合条件的数据"
                 :table-column="materialkey"
                 row-key="deliveryCardId"
                 :table-data="jiashuju"
@@ -69,6 +75,7 @@
               <cmp-table
                 ref="tableRefCard"
                 v-model:pagination="pageUI"
+                empty="没有符合条件的数据"
                 :table-column="materialWorkOrder"
                 row-key="deliveryCardId"
                 :table-data="jiashuju"
@@ -81,7 +88,7 @@
             </div>
           </footer>
         </cmp-container>
-        <!-- # 4️⃣ 工单信息 -->
+        <!-- # 4️⃣ 包装信息 -->
         <cmp-container v-if="tabKey === 3" :full="true">
           <cmp-card :full="false">
             <t-form>
@@ -112,7 +119,7 @@
             </cmp-table>
           </cmp-card>
         </cmp-container>
-        <!-- # 5️⃣ 产品基础信息 -->
+        <!-- # 5️⃣ 品质信息 -->
         <cmp-container v-if="tabKey === 4" :full="true">
           <cmp-card :full="false">
             <t-form>
@@ -143,7 +150,7 @@
             </cmp-table>
           </cmp-card>
         </cmp-container>
-        <!-- # 6️⃣ 工单信息 -->
+        <!-- # 6️⃣ 工艺信息 -->
         <cmp-container v-if="tabKey === 5" :full="true">
           <cmp-card :full="false">
             <t-form>
@@ -174,67 +181,60 @@
             </cmp-table>
           </cmp-card>
         </cmp-container>
-        <!-- # 7️⃣ 工单信息 -->
+        <!-- # 7️⃣ 不良维修信息 -->
         <cmp-container v-if="tabKey === 6" :full="true">
-          <cmp-card :full="false">
-            <t-form>
-              <t-row>
-                <t-col :span="3"
-                  ><t-form-item label="工序">{{ 'FMVP' }}</t-form-item></t-col
-                >
-                <t-col :span="3"><t-form-item label="工站"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="工作中心"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="车间"> </t-form-item></t-col>
-              </t-row>
-              <t-row>
-                <t-col :span="3"><t-form-item label="产品编码"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="排产单号"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="创建时间"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="最后更新时间"> </t-form-item></t-col>
-              </t-row>
-            </t-form>
-          </cmp-card>
-          <cmp-card :full="false">
-            <cmp-table
-              ref="tableRefCard"
-              v-model:pagination="pageUI"
-              row-key="deliveryCardId"
-              :table-data="jiashuju"
-              :total="2"
-            >
-            </cmp-table>
-          </cmp-card>
+          <footer class="detailed-work-center">
+            <div class="table-work-header">
+              <cmp-table
+                ref="tableRefCard"
+                v-model:pagination="pageUI"
+                row-key="id"
+                select-on-row-click
+                :table-data="badMaintenanceData.list"
+                :table-column="productDefect"
+                :total="badMaintenanceTotal"
+                @select-change="onGenerateChange"
+              >
+                <template #title>
+                  {{ '产品不良信息' }}
+                </template>
+              </cmp-table>
+            </div>
+            <div class="table-work-header">
+              <cmp-table
+                ref="tableRefCard"
+                v-model:pagination="pageUI"
+                row-key="id"
+                :table-data="badMaintenanceDataTwo.list"
+                :table-column="maintenanceDetail"
+                :show-pagination="false"
+              >
+                <template #title>
+                  {{ '维修明细' }}
+                </template>
+              </cmp-table>
+            </div>
+          </footer>
         </cmp-container>
-        <!-- # 8️⃣ 工单信息 -->
+        <!-- # 8️⃣ 出入库信息 -->
         <cmp-container v-if="tabKey === 7" :full="true">
-          <cmp-card :full="false">
-            <t-form>
-              <t-row>
-                <t-col :span="3"
-                  ><t-form-item label="工序">{{ 'FMVP' }}</t-form-item></t-col
-                >
-                <t-col :span="3"><t-form-item label="工站"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="工作中心"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="车间"> </t-form-item></t-col>
-              </t-row>
-              <t-row>
-                <t-col :span="3"><t-form-item label="产品编码"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="排产单号"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="创建时间"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="最后更新时间"> </t-form-item></t-col>
-              </t-row>
-            </t-form>
-          </cmp-card>
-          <cmp-card :full="false">
-            <cmp-table
-              ref="tableRefCard"
-              v-model:pagination="pageUI"
-              row-key="deliveryCardId"
-              :table-data="jiashuju"
-              :total="2"
-            >
-            </cmp-table>
-          </cmp-card>
+          <footer class="detailed-work-center">
+            <div class="table-work-header">
+              <cmp-table
+                ref="tableRefCard"
+                v-model:pagination="pageUI"
+                row-key="id"
+                select-on-row-click
+                :table-data="inventoryInOutData.list"
+                :table-column="inventoryInOut"
+                :total="inventoryInOutTotal"
+              >
+                <template #title>
+                  {{ '出入库信息' }}
+                </template>
+              </cmp-table>
+            </div>
+          </footer>
         </cmp-container>
       </template>
     </t-tab-panel>
@@ -245,7 +245,7 @@
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { defineProps, onMounted, reactive, ref, watch } from 'vue';
 
-import { api, MoOnboardReportVO, ProductBaseReportVO, WipKeypartReportVO } from '@/api/control';
+import { api, ProductBaseReportVO, TransferHeadVO } from '@/api/control';
 import { api as apimain } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -258,7 +258,7 @@ const tabPanel = [
   '产品基础信息',
   '工单信息',
   '物料信息',
-  '报装信息',
+  '包装信息',
   '品质信息',
   '工艺信息',
   '不良维修信息',
@@ -333,8 +333,8 @@ const productBasicInformation: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'shiftDay',
-    title: 'timeModified',
+    colKey: 'timeModified',
+    title: '加工时间',
     align: 'center',
     width: '100',
   },
@@ -623,208 +623,213 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
 //   },
 // ];
 
-// // 其7️⃣ - 1️⃣ 产品不良 表格列数据
-// const productDefect: PrimaryTableCol<TableRowData>[] = [
-//   {
-//     colKey: 'serial-number',
-//     title: '序号',
-//     align: 'center',
-//     width: '60',
-//   },
-//   {
-//     colKey: 'deliveryCardStatuName',
-//     title: '产品条码',
-//     align: 'center',
-//     width: '130',
-//   },
-//   {
-//     colKey: 'qty',
-//     title: '排产工单',
-//     align: 'center',
-//     width: '60',
-//   },
-//   {
-//     colKey: 'operateType',
-//     title: '产品编码',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'reason',
-//     title: '产品名称',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'creator',
-//     title: '来源工序',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '来源工站',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '采集时间',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '滞留时间(分钟)',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '不合格次数',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '维修次数',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '返修状态',
-//     align: 'center',
-//     width: '100',
-//   },
-// ];
+// 其7️⃣ - 1️⃣ 产品不良 表格列数据
+const productDefect: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'row-select',
+    type: 'single',
+    width: 46,
+  },
+  {
+    colKey: 'serial-number',
+    title: '序号',
+    align: 'center',
+    width: '60',
+  },
+  {
+    colKey: 'scanBarcode',
+    title: '产品条码',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'moScheCode',
+    title: '排产工单',
+    align: 'center',
+    width: '60',
+  },
+  {
+    colKey: 'mitemCode',
+    title: '产品编码',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'mitemName',
+    title: '产品名称',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'fromRoutingProcessName',
+    title: '来源工序',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'fromWorkstationName',
+    title: '来源工站',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeScanBarcode',
+    title: '采集时间',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'retentionTime',
+    title: '滞留时间(分钟)',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'ngTimes',
+    title: '不合格次数',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'repairTimes',
+    title: '维修次数',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'repairStatusName',
+    title: '返修状态',
+    align: 'center',
+    width: '100',
+  },
+];
 
 // // 其7️⃣ - 2️⃣ 维修明细 表格列数据
-// const maintenanceDetail: PrimaryTableCol<TableRowData>[] = [
-//   {
-//     colKey: 'deliveryCardStatuName',
-//     title: '产品条码',
-//     align: 'center',
-//     width: '60',
-//   },
-//   {
-//     colKey: 'deliveryCardStatuName',
-//     title: '缺陷现象',
-//     align: 'center',
-//     width: '130',
-//   },
-//   {
-//     colKey: 'qty',
-//     title: '缺陷原因',
-//     align: 'center',
-//     width: '60',
-//   },
-//   {
-//     colKey: 'operateType',
-//     title: '维修人',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'reason',
-//     title: '维修结束事件',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'creator',
-//     title: '返修次数',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '处理方法',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '责任人',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '维修结果',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '回流站点',
-//     align: 'center',
-//     width: '100',
-//   },
-// ];
+const maintenanceDetail: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'scanBarcode',
+    title: '产品条码',
+    align: 'center',
+    width: '140',
+  },
+  {
+    colKey: 'defectName',
+    title: '缺陷现象',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'defectReason',
+    title: '缺陷原因',
+    align: 'center',
+    width: '60',
+  },
+  {
+    colKey: 'userNameRepair',
+    title: '维修人',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'datetimeRepaired',
+    title: '维修结束时间',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'creator',
+    title: '返修次数',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'defectDealMethodName',
+    title: '处理方法',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'displayNameRepair',
+    title: '责任人',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '维修结果',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '回流站点',
+    align: 'center',
+    width: '100',
+  },
+];
 
 // // 其8️⃣ 出入库信息 表格列数据
-// const inventoryInOut: PrimaryTableCol<TableRowData>[] = [
-//   {
-//     colKey: 'serial-number',
-//     title: '序号',
-//     align: 'center',
-//     width: '60',
-//   },
-//   {
-//     colKey: 'deliveryCardStatuName',
-//     title: '业务单据号',
-//     align: 'center',
-//     width: '130',
-//   },
-//   {
-//     colKey: 'qty',
-//     title: '交易类型',
-//     align: 'center',
-//     width: '60',
-//   },
-//   {
-//     colKey: 'operateType',
-//     title: '数量',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'reason',
-//     title: '源仓库',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'creator',
-//     title: '目标仓库',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '交易人',
-//     align: 'center',
-//     width: '100',
-//   },
-//   {
-//     colKey: 'timeCreate',
-//     title: '交易日期',
-//     align: 'center',
-//     width: '100',
-//   },
-// ];
+const inventoryInOut: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'serial-number',
+    title: '序号',
+    align: 'center',
+    width: '60',
+  },
+  {
+    colKey: 'businessCategoryCode',
+    title: '业务单据号',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'qty',
+    title: '交易类型',
+    align: 'center',
+    width: '120',
+  },
+  {
+    colKey: 'qty',
+    title: '数量',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'warehouseName',
+    title: '源仓库',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'toWarehouseName',
+    title: '目标仓库',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '交易人',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '交易日期',
+    align: 'center',
+    width: '100',
+  },
+];
 
 const props = defineProps({
   onInputData: {
-    type: Object, // 或者其他适合您数据的类型
+    type: Object, // 或者其他适合数据的类型
     default: () => {
       return {
-        pagenum: 1,
-        pagesize: 10,
-        serialNumber: 'SN202312270027', // 产品条码
-        moCode: '', // 工单号
-        parentPkgBarcode: '', // 包装箱码
+        pageNum: 1,
+        pageSize: 10,
+        serialNumber: ' ', // 产品条码
+        moCode: ' ', // 工单号
+        parentPkgBarcode: ' ', // 包装箱码
       }; // 返回一个对象作为默认值
     },
   },
@@ -834,8 +839,9 @@ watch(
   () => props.onInputData,
   async (newVal: any) => {
     // 当 onInputData 改变时，更新 productBasicInformationList 的值
-    productBasicInformationList.value = { ...newVal };
+    commonParametersList.value = { ...newVal };
     if (tabKey.value === 0) {
+      ProductBasicInformationList.value = { ...newVal };
       pageUIOne.value.page = 1;
       await onGetProductBasicInformation();
     }
@@ -856,29 +862,48 @@ onMounted(async () => {
 
 // 🌈 tab 切换事件
 const tabKey = ref(0);
-const tabChange = (context: number) => {
+const tabChange = (context: any) => {
   tabKey.value = context;
+  if (context === 0) {
+    onGetProductBasicInformation();
+  }
   if (context === 1) {
     onGetWorkOrder();
   }
   if (context === 2) {
     onMaterialWorkOrder();
   }
+  if (context === 6) {
+    onBadMaintenance();
+  }
+  if (context === 7) {
+    onInventoryInOut();
+  }
 };
-// @ 获取 产品基础信息 1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣ 数据
-const productBasicInformationForm = ref<ProductBaseReportVO>({});
-const productBasicInformationList = ref({
-  pagenum: 1,
-  pagesize: 10,
-  serialNumber: 'SN202312270027', // 产品条码
+
+// 产品基础信息 专用参数
+const ProductBasicInformationList = ref({
+  pageNum: 1,
+  pageSize: 10,
+  serialNumber: ' ', // 产品条码
+  moCode: ' ', // 工单号
+  parentPkgBarcode: ' ', // 包装箱码
+});
+
+// 🌈🌈🌈 公共参数
+const commonParametersList = ref({
+  pageNum: 1,
+  pageSize: 10,
+  serialNumber: '', // 产品条码
   moCode: '', // 工单号
   parentPkgBarcode: '', // 包装箱码
 });
+// @ 获取 产品基础信息 1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣ 数据
+const productBasicInformationForm = ref<ProductBaseReportVO>({});
 // 产品基础信息 请求
 const onGetProductBasicInformation = async () => {
-  productBasicInformationList.value.pagenum = pageUIOne.value.page;
-  productBasicInformationList.value.pagesize = pageUIOne.value.rows;
-  const res = await api.reversetraceability.getProductBaseInfo(productBasicInformationList.value);
+  const res = await api.reversetraceability.getProductBaseInfo(ProductBasicInformationList.value);
+  console.log('🚀 ~ file: tabs.vue:903 ~ onGetProductBasicInformation ~ res:', res);
   productBasicInformationForm.value = res;
 };
 
@@ -893,22 +918,47 @@ const onGetWorkOrder = async () => {
   [workOrderData.list] = res.list;
 };
 // 获取 物料信息 3️⃣3️⃣3️⃣3️⃣3️⃣3️⃣  数据
-const WipKeypartReportVOForm = ref<WipKeypartReportVO[]>([]);
-const MoOnboardReportVOForm = ref<MoOnboardReportVO[]>([]);
-const materialWorkOrderList = ref({
-  pagenum: 1,
-  pagesize: 10,
-  serialNumber: '', // 产品条码
-  moCode: '', // 工单号
-  parentPkgBarcode: '', // 包装箱码
-});
+// const WipKeypartReportVOForm = ref<PagingDataWipKeypartReportVO[]>([]);
+// const MoOnboardReportVOForm = ref<PagingDataMoOnboardReportVO[]>([]);
 // 物料信息 请求
 const onMaterialWorkOrder = async () => {
-  materialWorkOrderList.value.pagenum = pageUIThree.value.page;
-  materialWorkOrderList.value.pagesize = pageUIThree.value.rows;
-  const res = await api.reversetraceability.getMitemBaseInfo(materialWorkOrderList.value);
-  MoOnboardReportVOForm.value = res.moOnboardReportList;
-  WipKeypartReportVOForm.value = res.wipKeypartReportList;
+  commonParametersList.value.pageNum = pageUIThree.value.page;
+  commonParametersList.value.pageSize = pageUIThree.value.rows;
+  const res = await api.reversetraceability.getMitemBaseInfo(commonParametersList.value);
+  console.log('🚀 ~ file: tabs.vue:917 ~ onMaterialWorkOrder ~ res:', res);
+  // MoOnboardReportVOForm.value = res.wipKeypartReportList;
+  // WipKeypartReportVOForm.value = res.moOnboardReportList;
+};
+
+// 获取 不良维修信息 7️⃣7️⃣7️⃣7️⃣7️⃣7️⃣  数据
+const badMaintenanceData = reactive({ list: [] });
+const badMaintenanceTotal = ref(0);
+const onBadMaintenance = async () => {
+  const res = await api.reversetraceability.getWipRepairList(commonParametersList.value);
+  badMaintenanceData.list = res.list;
+  badMaintenanceTotal.value = res.total;
+};
+// 不良维修信息 上表格点击事件
+const badMaintenanceId = ref('');
+const onGenerateChange = async (context: any) => {
+  [badMaintenanceId.value] = context;
+  await onBadMaintenanceTwo();
+};
+
+// 不良维修信息 下表格数据请求
+const badMaintenanceDataTwo = reactive({ list: [] });
+const onBadMaintenanceTwo = async () => {
+  const res = await api.reversetraceability.getListByWipRepairId({ wipRepairId: badMaintenanceId.value });
+  badMaintenanceDataTwo.list = res;
+};
+
+// 获取 出入库信息 8️⃣8️⃣8️⃣8️⃣8️⃣8️⃣  数据
+const inventoryInOutData = reactive({ list: [] as TransferHeadVO[] });
+const inventoryInOutTotal = ref<number>(0);
+const onInventoryInOut = async () => {
+  const res = await api.reversetraceability.getTransferHeadList(commonParametersList.value);
+  inventoryInOutData.list = res.list;
+  inventoryInOutTotal.value = res.total;
 };
 </script>
 
