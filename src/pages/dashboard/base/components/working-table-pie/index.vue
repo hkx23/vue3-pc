@@ -93,7 +93,7 @@ const getPieData = async () => {
         {
           // name: 'Access From',
           type: 'pie',
-          radius: '50%',
+          radius: '90%',
           label: {
             show: true,
             formatter: (param) => `${param.name} (${param.percent}%)`,
