@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import { PieChart } from 'echarts/charts';
-import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
+import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { debounce } from 'lodash';
@@ -16,12 +16,12 @@ import { api } from '@/api/control';
 import { useSettingStore } from '@/store';
 import { changeChartsTheme } from '@/utils/color';
 
-echarts.use([TooltipComponent, LegendComponent, GridComponent, PieChart, CanvasRenderer]);
+echarts.use([TooltipComponent, LegendComponent, GridComponent, PieChart, CanvasRenderer, TitleComponent]);
 
 const store = useSettingStore();
 const optionChart = ref({});
 
-// monitorChart
+// 监听图表
 let top5Chart: HTMLElement;
 const countContainerParentRef = ref<HTMLElement>();
 let countChart: echarts.ECharts;
@@ -69,12 +69,15 @@ const getPieData = async () => {
   try {
     const data = await api.wipRepair.getRepairTop5();
 
-    if (data.length === 0) {
+    // 过滤前5条数据
+    const top5Data = data.slice(0, 5);
+
+    if (top5Data.length === 0) {
       return;
     }
 
-    const first = data[0];
-    const echarData = data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
+    const first = top5Data[0];
+    const echarData = top5Data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
 
     optionChart.value = {
       title: {
@@ -82,15 +85,19 @@ const getPieData = async () => {
           'YYYY-MM-DD',
         )})`,
         left: 'left',
+        textStyle: {
+          fontSize: 15,
+        },
       },
+
       tooltip: {
         trigger: 'item',
       },
+
       series: [
         {
-          name: 'Access From',
           type: 'pie',
-          radius: '100%',
+          radius: '90%',
           label: {
             show: true,
             formatter: (param) => `${param.name} (${param.percent}%)`,
