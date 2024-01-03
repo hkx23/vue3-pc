@@ -1635,7 +1635,6 @@ export interface ProductReworkVO {
   workshopName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
 }
@@ -1680,9 +1679,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -2793,7 +2792,6 @@ export interface BarcodeWipCollectVO {
   stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   isState?: boolean;
@@ -3149,8 +3147,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
