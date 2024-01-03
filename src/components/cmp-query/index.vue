@@ -264,7 +264,7 @@ const emits = defineEmits(['handleEvent', 'submit', 'reset']);
 // 重置
 const resetHandle = () => {
   state.form = initForm(props.opts);
-  emits('reset', state.form);
+  emits('reset', _.cloneDeep(state.form));
   if (props.isResetQuery) {
     checkHandle('reset');
   }
