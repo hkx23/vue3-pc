@@ -377,6 +377,7 @@
 <script setup lang="ts">
 import { Icon, manifest } from 'tdesign-icons-vue-next';
 import {
+  CustomValidateResolveType,
   Data,
   FormInstanceFunctions,
   FormRules,
@@ -715,8 +716,23 @@ const rules: FormRules<Data> = {
   oneselfClickTree: [{ required: true, type: 'error', trigger: 'blur' }],
   moduleName: [{ required: true, type: 'error', trigger: 'blur' }],
   moduleCode: [{ required: true, type: 'error', trigger: 'blur' }],
-  behaviorPath: [{ required: true, type: 'error', trigger: 'blur' }],
+  behaviorPath: [
+    { required: true, type: 'error', trigger: 'blur' },
+    { validator: validateBehaviorPath, trigger: 'blur' },
+  ],
 };
+
+function validateBehaviorPath(value: any): boolean | CustomValidateResolveType {
+  const pattern = /^(http:\/\/|https:\/\/|\/[a-zA-Z]+#\/[a-zA-Z]+)$/;
+  if (!pattern.test(value)) {
+    return {
+      result: false,
+      message: '菜单地址必须以 http://, https://开头, 或使用 /mian#/example 格式！',
+      type: 'error',
+    };
+  }
+  return true;
+}
 
 // 表格刷新按钮
 const fetchData = () => {
@@ -995,6 +1011,7 @@ onMounted(async () => {
 // 获取树组件数据
 const onGetTreeData = async () => {
   const res = await api.module.getTree({ clientType: 1 }); // 获取节点数据
+  console.log('🚀 ~ file: index.vue:1026 ~ onGetTreeData ~ res:', res);
   treeData.list = res;
 };
 

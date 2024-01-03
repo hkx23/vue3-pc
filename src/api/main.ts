@@ -1729,8 +1729,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3362,15 +3362,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
   isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
-  stateName?: string;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -3532,8 +3532,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3952,8 +3952,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4708,7 +4708,13 @@ export type CurrentUserVO = {
   defaultOrgId?: string;
   /** 授权组织 */
   orgList?: OrgVO[];
+  /** 关联角色 */
+  roleList?: UserRoleVO[];
   personId?: string;
+  /** 邮箱 */
+  email?: string;
+  /** 手机号 */
+  mobilePhone?: string;
   /**
    * 上次更新成员资格用户的密码的日期和时间
    * @format date-time
@@ -4742,6 +4748,15 @@ export interface ResultCurrentUserVO {
   message?: string;
   /** 当前用户实体 */
   data?: CurrentUserVO;
+}
+
+/**  用户角色实体 */
+export interface UserRoleVO {
+  id?: string;
+  /** 角色编码 */
+  code?: string;
+  /** 角色名称 */
+  name?: string;
 }
 
 /** 响应数据 */
