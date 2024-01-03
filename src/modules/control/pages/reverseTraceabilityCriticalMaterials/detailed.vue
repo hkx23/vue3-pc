@@ -1,48 +1,49 @@
 <template>
   <div class="detailed-box">
     <!-- from -->
+    <div style="font-size: 18px; margin-bottom: 10px">{{ `工单信息(工单号：${row?.moCode ? row?.moCode : ''})` }}</div>
     <t-card class="list-card-container" :bordered="true">
       <t-row>
         <t-col :span="4">
-          <t-tag shape="round" size="large">{{ row.moCode }}</t-tag>
+          <t-tag shape="round" size="large">{{ row?.moCode }}</t-tag>
         </t-col>
         <t-col :span="1">
           <t-space class="tag-block-light">
-            <t-tag shape="round" theme="primary" size="large">{{ row.moClassName }}</t-tag>
+            <t-tag shape="round" theme="primary" size="large">{{ row?.moClassName }}</t-tag>
           </t-space>
         </t-col>
         <t-col :span="1">
-          <t-tag shape="round" size="large">{{ row.statusName }}</t-tag>
+          <t-tag shape="round" size="large">{{ row?.statusName }}</t-tag>
         </t-col>
       </t-row>
     </t-card>
     <t-card :bordered="false">
       <div class="form-item-box">
         <t-form-item label="生产车间">
-          {{ row.workshopName }}
+          {{ row?.workshopName }}
         </t-form-item>
-        <t-form-item label="工作中心"> {{ row.workCenterName }}</t-form-item>
-        <t-form-item label="产品编码"> {{ row.mitemCode }}</t-form-item>
+        <t-form-item label="工作中心"> {{ row?.workCenterName }}</t-form-item>
+        <t-form-item label="产品编码"> {{ row?.mitemCode }}</t-form-item>
       </div>
       <div class="form-item-box">
-        <t-form-item label="产品名称"> {{ row.mitemDesc }}</t-form-item>
+        <t-form-item label="产品名称"> {{ row?.mitemDesc }}</t-form-item>
         <t-form-item label="计划数量">
-          {{ row.planQty }}
+          {{ row?.planQty }}
         </t-form-item>
-        <t-form-item label="完工数量"> {{ row.completedQty }}</t-form-item>
+        <t-form-item label="完工数量"> {{ row?.completedQty }}</t-form-item>
       </div>
       <div class="form-item-box">
-        <t-form-item label="计划开始时间"> {{ row.datetimePlanStart }}</t-form-item>
-        <t-form-item label="计划完成时间"> {{ row.datetimePlanEnd }}</t-form-item>
-        <t-form-item label="入库仓库"> {{ row.warehouseName }}</t-form-item>
+        <t-form-item label="计划开始时间"> {{ row?.datetimePlanStart }}</t-form-item>
+        <t-form-item label="计划完成时间"> {{ row?.datetimePlanEnd }}</t-form-item>
+        <t-form-item label="入库仓库"> {{ row?.warehouseName }}</t-form-item>
       </div>
       <div class="form-item-box">
-        <t-form-item label="销售订单"> {{ row.soNo }}</t-form-item>
-        <t-form-item label="工艺路线版本"> {{ row.routingName }}</t-form-item>
+        <t-form-item label="销售订单"> {{ row?.soNo }}</t-form-item>
+        <t-form-item label="工艺路线版本"> {{ row?.routingName }}</t-form-item>
         <t-form-item label=""> </t-form-item>
       </div>
       <div class="form-item-box">
-        <t-form-item label="备注"> {{ row.memo }}</t-form-item>
+        <t-form-item label="备注"> {{ row?.memo }}</t-form-item>
       </div>
     </t-card>
     <t-row justify="space-between">

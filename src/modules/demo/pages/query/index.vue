@@ -211,7 +211,7 @@ const getQueryData = computed(() => {
 });
 // 查询条件change事件
 const handleEvent = (type, val) => {
-  // console.log(111, type, val)
+  console.log(111, type, val);
   switch (type) {
     case 'input':
       console.log('获取event==input的数据', val);
