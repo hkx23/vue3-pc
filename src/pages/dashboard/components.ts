@@ -7,8 +7,8 @@ import LineChart from './base/components/demo/LineChart.vue';
 import PieChart from './base/components/demo/PieChart.vue';
 // 功能组件
 import oftenUseMenu from './base/components/often-use-menu/index.vue';
-import WorkingTablePie from './base/components/working-table-pie/index.vue';
-import WorksheetAchievementRate from './base/components/worksheet-achievement-rate/index.vue';
+import PoductionAchievementRateRanking from './base/components/poduction-achievement rate-ranking/index.vue';
+import PoorProcessTop5 from './base/components/poor-process-top5/index.vue';
 
 export const components = [
   {
@@ -21,22 +21,22 @@ export const components = [
     h: 1,
   },
   {
-    code: 'working-table-pie',
+    code: 'poor-process-top5',
     title: '过程不良TOP5',
     showTitle: true,
     description: '过程不良TOP5 按周',
     category: '生产',
-    component: WorkingTablePie,
+    component: PoorProcessTop5,
     w: 4,
     h: 3,
   },
   {
-    code: 'worksheet-achievement-rate',
+    code: 'poduction-achievement rate-ranking',
     title: '当天生产达成率排行',
     showTitle: true,
     description: '当天生产达成率排行',
     category: '生产',
-    component: WorksheetAchievementRate,
+    component: PoductionAchievementRateRanking,
     w: 4,
     h: 3,
   },
