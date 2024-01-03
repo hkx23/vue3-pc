@@ -610,7 +610,6 @@ export interface WipRepairVO {
   wipRepairIdList?: WipRepairIds[];
   outTimeShowColor?: string;
   retentionTime?: string;
-  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1064,8 +1063,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -1679,7 +1678,6 @@ export interface ProductReworkVO {
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
