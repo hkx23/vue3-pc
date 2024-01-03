@@ -21,7 +21,7 @@ echarts.use([TooltipComponent, LegendComponent, GridComponent, PieChart, CanvasR
 const store = useSettingStore();
 const optionChart = ref({});
 
-// monitorChart
+// 监听图表
 let top5Chart: HTMLElement;
 const countContainerParentRef = ref<HTMLElement>();
 let countChart: echarts.ECharts;
@@ -68,11 +68,16 @@ onDeactivated(() => {
 const getPieData = async () => {
   try {
     const data = await api.wipRepair.getRepairTop5();
-    if (data.length === 0) {
+
+    // 过滤前5条数据
+    const top5Data = data.slice(0, 5);
+
+    if (top5Data.length === 0) {
       return;
     }
-    const first = data[0];
-    const echarData = data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
+
+    const first = top5Data[0];
+    const echarData = top5Data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
 
     optionChart.value = {
       title: {
@@ -91,7 +96,6 @@ const getPieData = async () => {
 
       series: [
         {
-          // name: 'Access From',
           type: 'pie',
           radius: '90%',
           label: {
