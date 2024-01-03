@@ -67,6 +67,7 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
       const layoutFound = LayoutMap.get(componentName);
       if (layoutFound) {
         if (componentName === 'IFRAME' || item.meta?.frameSrc) {
+          item.meta.sourcePath = item.meta?.frameSrc;
           const cmp = dynamicModules[item.meta.frameSrc.toLowerCase()];
           if (cmp?.component) {
             item.meta.frameSrc = null;

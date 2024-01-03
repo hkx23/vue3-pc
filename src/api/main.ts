@@ -659,6 +659,48 @@ export interface WorkcenterVO {
   children?: WorkcenterVO[];
 }
 
+export interface WorkbenchTodoVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 标题 */
+  titleName?: string;
+  /** 待办URL */
+  todoUrl?: string;
+  dataId?: string;
+  /** 状态 */
+  status?: string;
+  todoUserId?: string;
+  todoId?: string;
+  userId?: string;
+  /**
+   * 是否处理
+   * @format int32
+   */
+  isRead?: number;
+  statusName?: string;
+  isReadName?: string;
+}
+
 /** 工作台布局表 */
 export interface WorkbenchLayout {
   id?: string;
@@ -3363,14 +3405,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isProductChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
   isState?: boolean;
   isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3532,8 +3574,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5189,6 +5231,9 @@ export interface ResultListModulePermissionDTO {
 export type KeyValuePairStringString = {
   value?: string;
   label?: string;
+  /** @format int32 */
+  num?: number;
+  res?: string[];
 } | null;
 
 /** 通用响应类 */
@@ -5475,6 +5520,19 @@ export interface ResultPagingDataModule {
 }
 
 /** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
+}
+
+/** 通用响应类 */
 export interface ResultListFavorite {
   /**
    * 响应代码
@@ -5544,19 +5602,6 @@ export interface ResultListBusinessUnit {
   message?: string;
   /** 响应数据 */
   data?: BusinessUnit[] | null;
-}
-
-/** 通用响应类 */
-export interface ResultBoolean {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
 }
 
 /** 条码段 */
@@ -6412,6 +6457,85 @@ export const api = {
      */
     getCategory: () =>
       http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getCategory`, {
+        method: 'GET',
+      }),
+  },
+  workbenchTodo: {
+    /**
+     * No description
+     *
+     * @tags 个人工作台待办表
+     * @name UpdateStatus
+     * @summary 设置待办已处理
+     * @request POST:/workbenchTodo/updateStatus
+     * @secure
+     */
+    updateStatus: (data: WorkbenchTodoVO) =>
+      http.request<ResultObject['data']>(`/api/main/workbenchTodo/updateStatus`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 个人工作台待办表
+     * @name UpdateIsRead
+     * @summary 设置待办已读
+     * @request POST:/workbenchTodo/updateIsRead
+     * @secure
+     */
+    updateIsRead: (data: WorkbenchTodoVO) =>
+      http.request<ResultObject['data']>(`/api/main/workbenchTodo/updateIsRead`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 个人工作台待办表
+     * @name List
+     * @summary 获取待办
+     * @request GET:/workbenchTodo/list
+     * @secure
+     */
+    list: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pagenum?: number;
+      /**
+       * @format int32
+       * @default 20
+       */
+      pagesize?: number;
+      /** @default "" */
+      title?: string;
+      /** @default "" */
+      status?: string;
+      /** @default "" */
+      datetimeStart?: string;
+      /** @default "" */
+      datetimeEnd?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/workbenchTodo/list`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 个人工作台待办表
+     * @name ListCount
+     * @summary 获取待办数量
+     * @request GET:/workbenchTodo/listCount
+     * @secure
+     */
+    listCount: () =>
+      http.request<ResultObject['data']>(`/api/main/workbenchTodo/listCount`, {
         method: 'GET',
       }),
   },
@@ -8238,6 +8362,21 @@ export const api = {
      */
     findChild: (query: { id: string }) =>
       http.request<ResultPagingDataLong['data']>(`/api/main/module/findChild`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 菜单
+     * @name CheckBehaviorPath
+     * @summary 判断三级菜单的菜单地址是否重复
+     * @request GET:/module/checkBehaviorPath
+     * @secure
+     */
+    checkBehaviorPath: (query: { isAdd: boolean; id: string; behaviorPath: string }) =>
+      http.request<ResultBoolean['data']>(`/api/main/module/checkBehaviorPath`, {
         method: 'GET',
         params: query,
       }),

@@ -53,11 +53,11 @@
                   {{ $t('layout.tagTabs.closeOther') }}
                 </t-dropdown-item>
                 <t-dropdown-item v-if="isMenuFavorite(routeItem)" @click="() => handleRemovefavorite(routeItem, index)">
-                  <t-icon name="link-unlink" />
+                  <t-icon name="star" />
                   {{ $t('layout.tagTabs.remveFavority') }}
                 </t-dropdown-item>
                 <t-dropdown-item v-else @click="() => handleAddfavorite(routeItem, index)">
-                  <t-icon name="link-unlink" />
+                  <t-icon name="star" />
                   {{ $t('layout.tagTabs.addFavority') }}
                 </t-dropdown-item>
               </t-dropdown-menu>

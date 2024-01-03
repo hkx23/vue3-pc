@@ -1,11 +1,14 @@
 import { LayoutItem } from 'grid-layout-plus';
 
+import Todo from '@/modules/main/pages/todo/componentTodo.vue';
+
 // demo
 import LineChart from './base/components/demo/LineChart.vue';
 import PieChart from './base/components/demo/PieChart.vue';
 // 功能组件
 import oftenUseMenu from './base/components/often-use-menu/index.vue';
 import WorkingTablePie from './base/components/working-table-pie/index.vue';
+import WorksheetAchievementRate from './base/components/worksheet-achievement-rate/index.vue';
 
 export const components = [
   {
@@ -28,6 +31,16 @@ export const components = [
     h: 3,
   },
   {
+    code: 'worksheet-achievement-rate',
+    title: '当天生产达成率排行',
+    showTitle: true,
+    description: '当天生产达成率排行',
+    category: '生产',
+    component: WorksheetAchievementRate,
+    w: 4,
+    h: 3,
+  },
+  {
     code: 'LineChartDemo',
     ghost: true,
     title: '折线图',
@@ -44,6 +57,17 @@ export const components = [
     description: '饼图示例',
     category: '示例',
     component: PieChart,
+    w: 2,
+    h: 5,
+  },
+  {
+    code: 'todo',
+    title: '我的待办',
+    showTitle: false,
+    ghost: true,
+    description: '我的待办',
+    category: '示例',
+    component: Todo,
     w: 2,
     h: 5,
   },

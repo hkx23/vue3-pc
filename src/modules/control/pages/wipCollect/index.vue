@@ -246,6 +246,9 @@ const serialNumberEnter = async (value) => {
     if (!checkBarcodeRepeat(mainform.value.serialNumber)) {
       return;
     }
+
+    const currentScanType = scanType.value;
+
     LoadingPlugin(true);
     // 原子校验
     // TODO 校验成功
@@ -264,7 +267,7 @@ const serialNumberEnter = async (value) => {
       .then((reData) => {
         if (reData.scanSuccess) {
           mainform.value.isCommit = reData.isCommit;
-          if (scanType.value === 'SCANTEXT') {
+          if (currentScanType === 'SCANTEXT') {
             productInfo.value.scheCode = reData.scheCode;
             productInfo.value.moCode = reData.moCode;
             productInfo.value.moMitemCode = reData.mitemCode;
