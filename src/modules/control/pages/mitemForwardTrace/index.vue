@@ -4,7 +4,7 @@
       <!-- ################# 工单 表格数据 ###################### -->
       <!-- 查询组件  -->
       <cmp-card>
-        <cmp-query :opts="opts" @submit="conditionEnter" @reset="onRestCondition">
+        <cmp-query :opts="opts" :is-reset-query="false" @submit="conditionEnter" @reset="onRestCondition">
           <template #searchType="{ param }">
             <t-radio-group v-model="param.searchType" @change="onRestCondition">
               <t-radio value="mintemBatch">物料批次</t-radio>
@@ -58,7 +58,7 @@
           </t-col>
         </t-space> -->
       <t-row style="margin-top: 15px"></t-row>
-      <t-tabs v-model="tagValue">
+      <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="物料基础信息" :destroy-on-hide="false">
           <cmp-card class="padding-top-noline-16 no-h-padding-card">
             <t-row>
@@ -511,7 +511,7 @@ const opts = computed(() => {
   };
 });
 
-// 打印界面点击查询按钮
+// 界面点击查询按钮
 const conditionEnter = (data: any) => {
   queryCondition.value = data;
 
@@ -524,12 +524,16 @@ const conditionEnter = (data: any) => {
 
   fetchMoTable();
 };
+// 界面点击查询按钮
+const switchTab = () => {
+  fetchMoTable();
+};
 // 加载工单数据表格
 const fetchMoTable = async () => {
   setLoading(true);
   try {
     if (queryCondition.value.searchType === 'mintemBatch') {
-      if (!queryCondition.value.mitemId) {
+      if (queryCondition.value.mitemLotNo && !queryCondition.value.mitemId) {
         MessagePlugin.warning('请选择物料');
         return;
       }

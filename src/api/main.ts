@@ -3414,14 +3414,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
+  isState?: boolean;
+  isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isBatchName?: string;
+  isProductName?: string;
+  isInProcessName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isState?: boolean;
 }
 
 /** 响应数据 */

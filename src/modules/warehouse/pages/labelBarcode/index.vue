@@ -278,8 +278,11 @@ const onPrint = async () => {
     return;
   }
   await apiMain.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
-  onRefreshBelow();
   MessagePlugin.success('打印成功');
+  setTimeout(() => {
+    onRefreshBelow();
+    onRefresh();
+  }, 1000); // 300毫秒延时示例，根据需要调整延时时间
 };
 // 补打，作废确定
 const onConfirm = async () => {
@@ -298,8 +301,10 @@ const onConfirm = async () => {
     });
     selectedManageRowKeys.value = [];
     isEnable.value = true;
-    onRefreshManage();
     MessagePlugin.success('补打成功');
+    setTimeout(() => {
+      onRefreshManage();
+    }, 2000); // 300毫秒延时示例，根据需要调整延时时间
   } else if (isReprintCancellation.value === 3) {
     const intValue = parseInt(reprintDialog.value.splitNum, 10);
     if (!Number.isInteger(intValue) || intValue === 0 || intValue > reprintDialog.value.qty) {
@@ -314,8 +319,10 @@ const onConfirm = async () => {
     });
     selectedManageRowKeys.value = [];
     isEnable.value = true;
-    onRefreshManage();
     MessagePlugin.success('拆分成功');
+    setTimeout(() => {
+      onRefreshManage();
+    }, 2000); // 300毫秒延时示例，根据需要调整延时时间
   } else {
     await apiMain.label.cancellationBarcode({
       ids: selectedManageRowKeys.value,
@@ -323,8 +330,10 @@ const onConfirm = async () => {
     });
     selectedManageRowKeys.value = [];
     isEnable.value = true;
-    onRefreshManage();
     MessagePlugin.success('作废成功');
+    setTimeout(() => {
+      onRefreshManage();
+    }, 2000); // 300毫秒延时示例，根据需要调整延时时间
   }
 
   await fetchBracodeManageTable(); // 刷新表格数据
@@ -332,8 +341,15 @@ const onConfirm = async () => {
 };
 
 // 打印选择 框 行 事件
-const onPrintChange = (value: any) => {
+const onPrintChange = (value: any, context: any) => {
+  console.log(value);
   selectedRowKeys.value = value;
+  barcodeStatusNameArr.value = context.selectedRowData.map((item: any) => item.barcodeStatusName);
+  const specificStatus = barcodeStatusNameArr.value.some((item) => item === '已打印');
+  if (specificStatus) {
+    printButtonOp.value = true;
+    return;
+  }
   printButtonOp.value = !(selectedRowKeys?.value?.length > 0);
 };
 
@@ -667,20 +683,16 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
           width: '130px', // 调整宽度的样式属性
         },
       },
-      rules: [{ required: true, message: '不能为空' }],
+      rules: [
+        {
+          required: true,
+          message: '不能为空',
+          trigger: 'change',
+        },
+      ],
       // keepEditMode: true,
       showEditIcon: true,
       validateTrigger: 'change',
-      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
-      // on: (editContext) => ({
-      //   onBlur: () => {
-      //     console.log('🚀 ~ file: index.vue:291 ~ editContext:', editContext);
-      //   },
-      // onEnter: (ctx) => {
-      //   ctx?.e?.preventDefault();
-      //   console.log('🚀 ~ file: index.vue:295 ~ ctx:', ctx);
-      // },
-      // }),
       abortEditOnEvent: ['onBlur'],
       // 编辑完成，退出编辑态后触发
       onEdited: (context) => {
