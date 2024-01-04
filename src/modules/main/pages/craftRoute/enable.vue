@@ -46,6 +46,7 @@
           <t-form-item :label="t('craftRoute.version')" name="routingVersion">
             <t-input-number
               v-model="formData.routingVersion"
+              :min="1"
               :decimal-places="0"
               :placeholder="t('common.placeholder.input', [t('craftRoute.version')])"
               theme="column"
@@ -102,7 +103,10 @@ const routingRules: FormRules<Data> = {
   routingCode: [{ required: true, message: t('common.validation.required'), type: 'error' }],
   routingName: [{ required: true, message: t('common.validation.required'), type: 'error' }],
   routingType: [{ required: true, message: t('common.validation.required'), type: 'error' }],
-  routingVersion: [{ required: true, message: t('common.validation.required'), type: 'error' }],
+  routingVersion: [
+    { required: true, message: t('common.validation.required'), type: 'error' },
+    { min: 1, message: t('craftRoute.versionBelowOne'), type: 'error' },
+  ],
   enableDate: [{ required: true, message: t('common.validation.required'), type: 'error' }],
 };
 const save = () => {

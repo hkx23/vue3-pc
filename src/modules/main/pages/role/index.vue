@@ -12,7 +12,7 @@
         :table-data="tableData"
         :loading="loading"
         :total="dataTotal"
-        fixed-height="true"
+        :fixed-height="true"
         @refresh="conditionEnter"
       >
         <template #op="{ row }">

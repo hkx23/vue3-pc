@@ -43,6 +43,7 @@
       <t-form-item :label="t('craftRoute.version')" name="version">
         <t-input-number
           v-model="formData.version"
+          :min="1"
           :decimal-places="0"
           :placeholder="t('common.placeholder.input', [t('craftRoute.version')])"
           theme="column"
@@ -286,9 +287,8 @@ watch(visible, (value: boolean) => {
         formData.invailDate = data.invailDate;
         formData.desc = data.routingDesc;
       }
-      if (data.routingGraph) {
-        console.log(JSON.parse(data.routingGraph));
-        lf.renderRawData(JSON.parse(data.routingGraph));
+      if (data.routingGraphStr) {
+        lf.renderRawData(JSON.parse(data.routingGraphStr));
       }
     });
   }
@@ -303,7 +303,10 @@ const routingRules: FormRules<Data> = {
   routingCode: [{ required: true, message: t('common.validation.required'), type: 'error' }],
   routingName: [{ required: true, message: t('common.validation.required'), type: 'error' }],
   routingType: [{ required: true, message: t('common.validation.required'), type: 'error' }],
-  version: [{ required: true, message: t('common.validation.required'), type: 'error' }],
+  version: [
+    { required: true, message: t('common.validation.required'), type: 'error' },
+    { min: 1, message: t('craftRoute.versionBelowOne'), type: 'error' },
+  ],
   enableDate: [{ required: true, message: t('common.validation.required'), type: 'error' }],
 };
 const formData = reactive({
@@ -376,6 +379,16 @@ const save = () => {
           MessagePlugin.error(t('craftRoute.processNodeNotNext', [process.properties.processName]));
           return;
         }
+        // 判断是否有重复工序
+        if (
+          findIndex(
+            allProcessNodes,
+            (o) => o.id !== process.id && o.properties.processId === process.properties.processId,
+          ) > -1
+        ) {
+          MessagePlugin.error(t('craftRoute.repeatProcess', [process.properties.processName]));
+          return;
+        }
       }
       loading.value = true;
       const postData = {
@@ -386,7 +399,7 @@ const save = () => {
         routingVersion: formData.version,
         enableDate: formData.enableDate,
         invailDate: formData.invailDate,
-        routingGraph: JSON.stringify(rawData),
+        routingGraph: rawData,
       };
       // 复制走新增逻辑
       if (props.id && !props.isCopy) {
@@ -478,16 +491,17 @@ const toolAction = (type: string) => {
   }
 };
 const dragInNode = (type: string, text: string) => {
-  let properties = {};
+  let properties = {
+    id: null,
+    processStep: 0,
+    processId: null,
+    processName: text,
+    processType: type === 'start' ? 'S' : type === 'end' ? 'E' : 'P',
+    backgroundColor: '#ffffff',
+    boomList: [],
+  };
   if (type === 'process') {
-    properties = {
-      processStep: globalProcessStep,
-      processId: null,
-      processName: text,
-      processType: 'P',
-      backgroundColor: '#ffffff',
-      boomList: [],
-    };
+    properties.processStep = globalProcessStep;
     globalProcessStep += 20;
   }
   lf.dnd.startDrag({
@@ -514,7 +528,10 @@ const propertiesRules: FormRules<Data> = {
     { required: true, message: t('common.validation.required'), type: 'error' },
     { validator: (val: any) => isStepNotRepeat(val), message: t('craftRoute.stepNotRepeat') },
   ],
-  processId: [{ required: true, message: t('common.validation.required'), type: 'error' }],
+  processId: [
+    { required: true, message: t('common.validation.required'), type: 'error' },
+    { validator: (val: any) => isProcessNotRepeat(val), message: t('craftRoute.processNotRepeat') },
+  ],
 };
 let propertiesForm = reactive({
   processStep: 0,
@@ -527,12 +544,22 @@ let propertiesForm = reactive({
 const isStepNotRepeat = (val: any) => {
   const { nodes } = lf.getGraphRawData();
   const steps = [];
-  nodes.forEach((val) => {
-    if (val.id !== selectedProcess.id) {
-      steps.push(val.properties.processStep);
+  nodes.forEach((value) => {
+    if (value.id !== selectedProcess.id) {
+      steps.push(value.properties.processStep);
     }
   });
   return steps.indexOf(val) === -1;
+};
+const isProcessNotRepeat = (val: any) => {
+  const { nodes } = lf.getGraphRawData();
+  const processIds = [];
+  nodes.forEach((value) => {
+    if (value.id !== selectedProcess.id) {
+      processIds.push(value.properties.processId);
+    }
+  });
+  return processIds.indexOf(val) === -1;
 };
 const processChange = (val: any) => {
   propertiesForm.processId = val.id;

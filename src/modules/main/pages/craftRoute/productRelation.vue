@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { isEmpty } from 'lodash';
 import { Data, FormRules } from 'tdesign-vue-next';
-import { computed, reactive, ref, toRefs } from 'vue';
+import { computed, reactive, ref, toRefs, watch } from 'vue';
 
 import { api } from '@/api/main';
 import BcmpSelectBusiness from '@/components/bcmp-select-business/index.vue';
@@ -67,6 +67,14 @@ const visible = computed({
     emit('update:modelValue', val);
   },
 });
+watch(
+  () => visible.value,
+  (val) => {
+    if (val) {
+      formRef.value.reset();
+    }
+  },
+);
 const loading = ref(false);
 const formRef = ref();
 const formData = reactive({
@@ -76,13 +84,12 @@ const formData = reactive({
   isDefault: false,
 });
 const routingRules: FormRules<Data> = {
-  mitemCategoryId: [
-    { validator: () => validateMitemOrCategory(), message: t('craftRoute.mitemOrCategoryMustSelectOne') },
-  ],
-  mitemId: [{ validator: () => validateMitemOrCategory(), message: t('craftRoute.mitemOrCategoryMustSelectOne') }],
+  mitemCategoryId: [{ validator: () => validateRelation(), message: t('craftRoute.mustSelectOne') }],
+  mitemId: [{ validator: () => validateRelation(), message: t('craftRoute.mustSelectOne') }],
+  workcenterId: [{ validator: () => validateRelation(), message: t('craftRoute.mustSelectOne') }],
 };
-const validateMitemOrCategory = () => {
-  if (isEmpty(formData.mitemId) && isEmpty(formData.mitemCategoryId)) {
+const validateRelation = () => {
+  if (isEmpty(formData.mitemId) && isEmpty(formData.mitemCategoryId) && isEmpty(formData.workcenterId)) {
     return false;
   }
   return true;
