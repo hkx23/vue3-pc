@@ -16,6 +16,7 @@
         :fixed-height="true"
         @refresh="fetchTable"
       >
+        <template #title> 物料列表 </template>
         <template #op="slotProps">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>

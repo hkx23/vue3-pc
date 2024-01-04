@@ -45,7 +45,15 @@
       <!-- 缺陷信息 -->
       <cmp-card flex="auto">
         <cmp-container :full="true" :full-sub-index="[1]">
-          <div style="border-bottom: 1px solid var(--td-component-border); padding: 0 0 4px; font-weight: bold">
+          <div
+            style="
+              border-bottom: 1px solid var(--td-component-border);
+              padding: 0 0 4px;
+              font-weight: bold;
+              color: var(--td-gray-color-8);
+              font-size: 16px;
+            "
+          >
             缺陷信息
           </div>
           <cmp-row ref="refDefectRow">

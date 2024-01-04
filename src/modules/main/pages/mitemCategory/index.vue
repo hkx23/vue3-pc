@@ -19,6 +19,7 @@
         @refresh="fetchTable"
         @select-change="onSelectMitemCategoryChange"
       >
+        <template #title> 物料类别列表 </template>
         <template #button> <t-button theme="primary" @click="onImport">导入</t-button></template>
         <template #op="slotProps">
           <t-space :size="8">

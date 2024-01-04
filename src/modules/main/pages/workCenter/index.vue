@@ -34,6 +34,7 @@
     </cmp-card>
     <cmp-card ref="tableCardRef" :span="12">
       <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
+        <div class="table-title">工站列表</div>
         <t-space size="small" :align="'end'">
           <t-button theme="primary" variant="base" @click="onHandelAdded">新增</t-button>
           <t-button theme="default" variant="base">导出</t-button>

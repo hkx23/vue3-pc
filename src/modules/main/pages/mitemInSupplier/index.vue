@@ -17,6 +17,7 @@
         :selected-row-keys="selectedMitemInSupplierRowKeys"
         @refresh="fetchTable"
       >
+        <template #title> 物料与供应商列表 </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
           <t-button theme="default">导入</t-button>
