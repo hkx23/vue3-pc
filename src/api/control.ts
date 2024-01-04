@@ -1099,6 +1099,11 @@ export interface ResultPagingDataWipKeypartReportVO {
 
 /** 关键物料追溯（反向）-关键件信息 */
 export interface WipKeypartReportVO {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
   /** 产品条码 */
   serialNumber?: string;
   /** 工单号 */
@@ -1432,6 +1437,15 @@ export interface MoOnboardReportVO {
   status?: string;
   /** 投料状态 */
   statusName?: string;
+  /** 工作中心 */
+  workcenterCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /**
+   * 投料时间
+   * @format date-time
+   */
+  datetimeOnboard?: string;
 }
 
 /** 响应数据 */
@@ -1646,11 +1660,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2802,11 +2816,11 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -2916,16 +2930,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   stateName?: string;
-  defectCodeStr?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */

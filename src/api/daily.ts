@@ -296,7 +296,7 @@ export interface FileVO {
   fileContent?: string;
 }
 
-/** 领域对象扩展属性分类 */
+/** 异常处理输出 */
 export interface IncidentDealVO {
   id?: string;
   /**
@@ -402,6 +402,23 @@ export interface IncidentDealVO {
   submitUploadFiles?: FileVO[];
   /** 处理后图片 */
   processedUploadFiles?: FileVO[];
+  /** 异常模块名称 */
+  incidentModuleName?: string;
+  /**
+   * 异常模块数量
+   * @format int32
+   */
+  incidentModuleNum?: number;
+  /**
+   * 异常总数
+   * @format int32
+   */
+  incidentModuleTotal?: number;
+  /**
+   * 异常模块占比
+   * @format double
+   */
+  incidentModuleProportion?: number;
 }
 
 export interface IncidentDealSearch {
@@ -475,7 +492,7 @@ export interface ResultIncidentDealVO {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 领域对象扩展属性分类 */
+  /** 异常处理输出 */
   data?: IncidentDealVO;
 }
 
@@ -754,6 +771,19 @@ export interface ResultPagingDataParam {
   message?: string;
   /** 响应数据 */
   data?: PagingDataParam;
+}
+
+/** 通用响应类 */
+export interface ResultListIncidentDealVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: IncidentDealVO[] | null;
 }
 
 /** 响应数据 */
@@ -1175,6 +1205,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/daily/incidentDeal/addIncidentDeal`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name GetIncidentModuleProportion
+     * @summary 工作台指标安灯单据状态
+     * @request GET:/incidentDeal/getIncidentModuleProportion
+     * @secure
+     */
+    getIncidentModuleProportion: () =>
+      http.request<ResultListIncidentDealVO['data']>(`/api/daily/incidentDeal/getIncidentModuleProportion`, {
+        method: 'GET',
       }),
   },
   incidentCfg: {

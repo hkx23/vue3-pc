@@ -16,6 +16,7 @@
         @refresh="fetchData"
         @select-change="rehandleSelectChange"
       >
+        <template #title> 计量单位列表 </template>
         <template #button>
           <t-button theme="primary" @click="onAddMeasuring">{{ t('common.button.add') }}</t-button>
           <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirms">

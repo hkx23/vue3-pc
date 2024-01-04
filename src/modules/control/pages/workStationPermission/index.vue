@@ -19,6 +19,7 @@
         @refresh="onfetchData"
         @select-change="rehandleSelectChange"
       >
+        <template #title> 工站权限列表 </template>
         <template #button>
           <t-button @click="onHandelPermission">权限分配</t-button>
           <t-popconfirm content="确认删除吗" @confirm="onDeleteAll">

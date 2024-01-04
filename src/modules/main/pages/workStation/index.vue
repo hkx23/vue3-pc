@@ -16,6 +16,7 @@
         :loading="loading"
         @refresh="onHandelList"
       >
+        <template #title> 工站列表 </template>
         <template #stateSwitch="{ row }">
           <t-switch
             :custom-value="[1, 0]"

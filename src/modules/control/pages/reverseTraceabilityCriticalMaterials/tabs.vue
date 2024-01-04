@@ -22,7 +22,7 @@
             <div class="table-work-header">
               <cmp-table
                 ref="tableRefCardAD"
-                v-model:pagination="pageUIOne"
+                v-model:pagination="pageUI"
                 empty="没有符合条件的数据"
                 row-key="deliveryCardId"
                 :table-column="productBasicInformation"
@@ -58,13 +58,16 @@
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
-                ref="tableRefCard"
+                ref="tableRefThree"
                 v-model:pagination="pageUI"
                 empty="没有符合条件的数据"
                 :table-column="materialkey"
-                row-key="deliveryCardId"
-                :table-data="jiashuju"
-                :total="2"
+                row-key="moCode"
+                select-on-row-click
+                :table-data="WipKeypartReportVOForm"
+                :total="WorkOrderTotal"
+                @select-change="onMaterialWorkOrderChange"
+                @refresh="onMaterialWorkOrderRefresh"
               >
                 <template #title>
                   {{ '产品信息-关键件信息' }}
@@ -73,13 +76,14 @@
             </div>
             <div class="table-work-header">
               <cmp-table
-                ref="tableRefCard"
-                v-model:pagination="pageUI"
+                ref="tableRefThreeDown"
+                v-model:pagination="pageUITwo"
                 empty="没有符合条件的数据"
                 :table-column="materialWorkOrder"
-                row-key="deliveryCardId"
-                :table-data="jiashuju"
-                :total="2"
+                row-key="moCode"
+                :table-data="workOrderFeedData"
+                :total="workOrderFeedTotal"
+                @refresh="onWorkOrderFeedRefresh"
               >
                 <template #title>
                   {{ '产品信息-工单投料信息' }}
@@ -90,34 +94,30 @@
         </cmp-container>
         <!-- # 4️⃣ 包装信息 -->
         <cmp-container v-show="tabKey === 3" :full="true">
-          <cmp-card :full="false">
-            <t-form>
-              <t-row>
-                <t-col :span="3"
-                  ><t-form-item label="工序">{{ 'FMVP' }}</t-form-item></t-col
-                >
-                <t-col :span="3"><t-form-item label="工站"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="工作中心"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="车间"> </t-form-item></t-col>
-              </t-row>
-              <t-row>
-                <t-col :span="3"><t-form-item label="产品编码"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="排产单号"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="创建时间"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="最后更新时间"> </t-form-item></t-col>
-              </t-row>
-            </t-form>
-          </cmp-card>
-          <cmp-card :full="false">
-            <cmp-table
-              ref="tableRefCard"
-              v-model:pagination="pageUI"
-              row-key="deliveryCardId"
-              :table-data="jiashuju"
-              :total="2"
-            >
-            </cmp-table>
-          </cmp-card>
+          <footer class="detailed-work-center">
+            <div class="table-work-header">
+              <t-enhanced-table
+                ref="tableRef"
+                row-key="id"
+                :columns="columns"
+                :data="anomalyTypeData"
+                resizable
+                :tree="treeConfig"
+                lazy-load
+                @expanded-tree-nodes-change="onExpandedTreeNodesChange"
+              ></t-enhanced-table>
+              <t-pagination
+                v-model:current="commonParametersList.pageNum"
+                v-model:page-size="commonParametersList.pageSize"
+                style="margin-top: 8px"
+                show-jumper
+                :show-page-size="true"
+                :total="anomalyTotal"
+                @page-size-change="onPaginationChange"
+                @current-change="onCurrentChange"
+              />
+            </div>
+          </footer>
         </cmp-container>
         <!-- # 5️⃣ 品质信息 -->
         <cmp-container v-show="tabKey === 4" :full="true">
@@ -234,15 +234,16 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { defineEmits, defineProps, reactive, ref, watch } from 'vue';
+import { computed, defineProps, reactive, ref, watch } from 'vue';
 
-import { api, ProductBaseReportVO, TransferHeadVO } from '@/api/control';
+import { api, MoOnboardReportVO, ProductBaseReportVO, TransferHeadVO, WipKeypartReportVO } from '@/api/control';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 import detailed from './detailed.vue';
 
-const { pageUI, pageUI: pageUIOne, pageUI: pageUIThree } = usePage();
+const { pageUI } = usePage();
+const { pageUI: pageUITwo } = usePage(); // 分页工具
 
 const tabPanel = [
   '产品基础信息',
@@ -255,9 +256,9 @@ const tabPanel = [
   '出入库信息',
 ];
 const tableRefCardAD = ref();
+const tableRefThree = ref();
 const tableRefSeven = ref();
 const tableRefba = ref();
-const Emit = defineEmits(['updateBasicsNum']);
 
 const jiashuju = ref([
   { deliveryCardStatuName: 'nihao1', timeCreate: '2000-11-11' },
@@ -336,49 +337,54 @@ const productBasicInformation: PrimaryTableCol<TableRowData>[] = [
 // // 3️⃣ - 1️⃣物料信息 关键信息 表格列数据
 const materialkey: PrimaryTableCol<TableRowData>[] = [
   {
+    colKey: 'row-select',
+    type: 'single',
+    width: 46,
+  },
+  {
     colKey: 'serial-number',
     title: '序号',
     align: 'center',
     width: '60',
   },
   {
-    colKey: 'deliveryCardStatuName',
+    colKey: 'moCode',
     title: '工单号',
     align: 'center',
     width: '130',
   },
   {
-    colKey: 'qty',
+    colKey: 'serialNumber',
     title: '关键件条码',
     align: 'center',
     width: '60',
   },
   {
-    colKey: 'operateType',
+    colKey: 'processName ',
     title: '工序',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'reason',
+    colKey: 'workstationName',
     title: '工站',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'creator',
+    colKey: 'status',
     title: '状态',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'qty	',
     title: '数量',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'userName',
     title: '员工',
     align: 'center',
     width: '100',
@@ -412,61 +418,61 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'qty',
+    colKey: 'moCode',
     title: '工单号',
     align: 'center',
     width: '60',
   },
   {
-    colKey: 'operateType',
+    colKey: 'moMitemCode',
     title: '产品编码',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'reason',
+    colKey: 'serialNumber',
     title: '物料条码',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'creator',
+    colKey: 'mitemCode',
     title: '物料编码',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'mitemLotNo',
     title: '物料批次',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'supplierCode',
     title: '供应商编码',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'mitemDesc',
     title: '物料描述',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'processName',
     title: '绑定工序',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'workstationName',
     title: '绑定工站',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'displayName',
     title: '作业员',
     align: 'center',
     width: '100',
@@ -538,40 +544,52 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
 // ];
 
 // // 5️⃣ 品质信息 表格列数据
-const qualityInformation: PrimaryTableCol<TableRowData>[] = [
+const columns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'serial-number',
-    title: '序号',
+    colKey: 'pkgBarcode',
+    title: '条码',
     align: 'center',
-    width: '60',
+    width: '110',
   },
   {
-    colKey: 'deliveryCardStatuName',
-    title: '检验单号',
+    colKey: 'pkgBarcodeType',
+    title: '条码类型',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'scheCode',
+    title: '排产单号',
     align: 'center',
     width: '130',
   },
   {
-    colKey: 'qty',
-    title: '检验类型',
-    align: 'center',
-    width: '60',
-  },
-  {
-    colKey: 'operateType',
-    title: '检验人',
+    colKey: 'mitemCode',
+    title: '产品编码',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'reason',
-    title: '质检结果',
+    colKey: 'mitemDesc',
+    title: '产品描述',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'moStatusName',
+    title: '工单状态',
     align: 'center',
     width: '100',
   },
   {
     colKey: 'creator',
-    title: '质检时间',
+    title: '操作人',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '操作时间',
     align: 'center',
     width: '100',
   },
@@ -830,6 +848,7 @@ const props = defineProps({
   resetData: Object,
 });
 
+// 监听重置事件
 watch(
   () => props.resetData,
   async (newVal: any) => {
@@ -840,8 +859,18 @@ watch(
     if (tabKey.value === 1) {
       workOrderData.list = [];
     }
+    if (tabKey.value === 2) {
+      await onMaterialWorkOrder();
+      tableRefThree.value[tabKey.value].setSelectedRowKeys([]);
+      workOrderFeedData.value = [];
+      materialCode.value = '';
+      workOrderFeedTotal.value = 0;
+    }
+    if (tabKey.value === 3) {
+      await onGetAnomalyTypeData();
+    }
     if (tabKey.value === 6) {
-      await tableRefSeven.value[tabKey.value].setSelectedRowKeys([]);
+      tableRefSeven.value[tabKey.value].setSelectedRowKeys([]);
       await onBadMaintenance();
       badMaintenanceDataTwo.list = [];
       badMaintenanceId.value = '';
@@ -855,29 +884,28 @@ watch(
   },
 );
 
+// 监听搜索事件
 watch(
   () => props.onInputData,
   async (newVal: any) => {
     // 当 onInputData 改变时，更新 productBasicInformationList 的值
     commonParametersList.value = { ...newVal, pageNum: 1, pageSize: 10 };
     if (tabKey.value === 0) {
-      pageUIThree.value.page = 1;
       await onGetProductBasicInformation();
     }
     if (tabKey.value === 1) {
-      pageUIThree.value.page = 1;
       await onGetWorkOrder();
     }
     if (tabKey.value === 2) {
-      pageUIThree.value.page = 1;
       await onMaterialWorkOrder();
     }
+    if (tabKey.value === 3) {
+      await onGetAnomalyTypeData();
+    }
     if (tabKey.value === 6) {
-      pageUIThree.value.page = 1;
       await onBadMaintenance();
     }
     if (tabKey.value === 7) {
-      pageUIThree.value.page = 1;
       await onInventoryInOut();
     }
   },
@@ -888,33 +916,20 @@ watch(
 
 // 🌈 tab 切换事件
 const tabKey = ref(0);
-const tabChange = (context: any) => {
+const tabChange = async (context: any) => {
   pageUI.value.page = 1;
+  pageUITwo.value.page = 1;
   tabKey.value = context;
-  if (context === 0) {
-    Emit('updateBasicsNum', 0);
-  }
-  if (context === 1) {
-    Emit('updateBasicsNum', 1);
-  }
   if (context === 2) {
-    Emit('updateBasicsNum', 2);
+    await onMaterialWorkOrder();
   }
   if (context === 3) {
-    Emit('updateBasicsNum', 3);
-  }
-  if (context === 4) {
-    Emit('updateBasicsNum', 4);
-  }
-  if (context === 5) {
-    Emit('updateBasicsNum', 5);
+    await onGetAnomalyTypeData();
   }
   if (context === 6) {
-    Emit('updateBasicsNum', 6);
     onBadMaintenance();
   }
   if (context === 7) {
-    Emit('updateBasicsNum', 7);
     onInventoryInOut();
   }
 };
@@ -942,23 +957,121 @@ const onGetWorkOrder = async () => {
   [workOrderData.list] = res.list;
 };
 // 获取 物料信息 3️⃣3️⃣3️⃣3️⃣3️⃣3️⃣  数据
-// const WipKeypartReportVOForm = ref<PagingDataWipKeypartReportVO[]>([]);
-// const MoOnboardReportVOForm = ref<PagingDataMoOnboardReportVO[]>([]);
+const WipKeypartReportVOForm = ref<WipKeypartReportVO[]>([]);
+const WorkOrderTotal = ref<number>(0);
 // 物料信息 请求
 const onMaterialWorkOrder = async () => {
-  commonParametersList.value.pageNum = pageUIThree.value.page;
-  commonParametersList.value.pageSize = pageUIThree.value.rows;
-  // const res = await api.reversetraceability.getMitemBaseInfo(commonParametersList.value);
-  // MoOnboardReportVOForm.value = res.wipKeypartReportList;
-  // WipKeypartReportVOForm.value = res.moOnboardReportList;
+  commonParametersList.value.pageNum = pageUI.value.page;
+  commonParametersList.value.pageSize = pageUI.value.rows;
+  const res = await api.reversetraceability.getWipKeypartInfo(commonParametersList.value);
+  WipKeypartReportVOForm.value = res.list;
+  WorkOrderTotal.value = res.total;
+};
+
+// 上表格点击事件
+const materialCode = ref('');
+const onMaterialWorkOrderChange = async (context: any) => {
+  [materialCode.value] = context;
+  await onWorkOrderFeed();
+};
+
+// 获取 物料下表格数据
+const workOrderFeedList = computed(() => ({
+  pageNum: pageUITwo.value.page,
+  pageSize: pageUITwo.value.rows,
+  moCode: materialCode.value,
+}));
+const workOrderFeedData = ref<MoOnboardReportVO[]>([]);
+const workOrderFeedTotal = ref<number>(0);
+const onWorkOrderFeed = async () => {
+  workOrderFeedList.value.pageNum = pageUITwo.value.page;
+  workOrderFeedList.value.pageSize = pageUITwo.value.rows;
+  const res = await api.reversetraceability.getMoOnboardInfo(workOrderFeedList.value);
+  workOrderFeedData.value = res.list;
+  workOrderFeedTotal.value = res.total;
+};
+
+// 上表格刷新事件
+const onMaterialWorkOrderRefresh = async () => {
+  pageUI.value.page = 1;
+  await onMaterialWorkOrder();
+  materialCode.value = '';
+  workOrderFeedData.value = [];
+  workOrderFeedTotal.value = 0;
+};
+// 下表格刷新事件
+const onWorkOrderFeedRefresh = async () => {
+  if (!materialCode.value) {
+    return;
+  }
+  await onWorkOrderFeed();
+};
+
+// 包装信息 4️⃣4️⃣4️⃣4️⃣4️⃣4️⃣ 数据
+// 表格列表数据
+const treeConfig = reactive({
+  childrenKey: 'children',
+});
+// 表格实例
+const tableRef = ref();
+const anomalyTypeData = ref([]);
+const anomalyTotal = ref<number>(0);
+const onGetAnomalyTypeData = async () => {
+  const res = await api.pkgRelation.getPkgRelationReportList(commonParametersList.value);
+  const newData = res.list.map((item) => {
+    if (item.existPkgRelationReportcChildren) {
+      if (item.children && item.children.length === 0) {
+        return {
+          ...item,
+          children: true, // 在 children 中添加一个新对象，包含一个唯一ID
+        };
+      }
+    }
+    return item;
+  });
+  anomalyTypeData.value = newData;
+  anomalyTotal.value = res.total;
+};
+
+// 点击节点获取子节点数据
+const onExpandedTreeNodesChange = async (expandedTreeNodes: any, options: any) => {
+  expandedTreeNodes = [];
+  const res = await api.pkgRelation.getPkgRelationReportList({
+    parentPkgBarcode: options.row.pkgBarcode,
+    pageNum: 1,
+    pageSize: 9999,
+  });
+  const newData = res.list.map((item) => {
+    if (item.existPkgRelationReportcChildren) {
+      if (item.children && item.children.length === 0) {
+        return {
+          ...item,
+          children: true, // 在 children 中添加一个新对象，包含一个唯一ID
+        };
+      }
+    }
+    return item;
+  });
+  if (options.row.children === true) {
+    tableRef.value[tabKey.value].appendTo(options.rowState.row.id, [...newData]);
+  }
+};
+
+const onPaginationChange = async () => {
+  commonParametersList.value.pageNum = 1;
+  await onGetAnomalyTypeData();
+};
+
+const onCurrentChange = async () => {
+  await onGetAnomalyTypeData();
 };
 
 // 获取 不良维修信息 7️⃣7️⃣7️⃣7️⃣7️⃣7️⃣  数据
 const badMaintenanceData = reactive({ list: [] });
 const badMaintenanceTotal = ref(0);
 const onBadMaintenance = async () => {
-  commonParametersList.value.pageNum = pageUIThree.value.page;
-  commonParametersList.value.pageSize = pageUIThree.value.rows;
+  commonParametersList.value.pageNum = pageUI.value.page;
+  commonParametersList.value.pageSize = pageUI.value.rows;
   const res = await api.reversetraceability.getWipRepairList(commonParametersList.value);
   badMaintenanceData.list = res.list;
   badMaintenanceTotal.value = res.total;
@@ -969,8 +1082,9 @@ const onGenerateChange = async (context: any) => {
   [badMaintenanceId.value] = context;
   await onBadMaintenanceTwo();
 };
-
+// 刷新事件
 const onBadMaintenanceRefresh = async () => {
+  pageUI.value.page = 1;
   await onBadMaintenance();
   badMaintenanceDataTwo.list = [];
 };

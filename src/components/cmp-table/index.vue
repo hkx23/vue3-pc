@@ -54,7 +54,7 @@
           :data="finalTableData"
           :loading="loading"
           :max-height="maxHeightValue"
-          :selected-row-keys="selectedRowKeys"
+          :default-selected-row-keys="selectedRowKeys"
           v-bind="$attrs"
           @select-change="onSelectKeysChange"
           @filter-change="onFilterChange"
@@ -531,7 +531,8 @@ onDeactivated(() => {
 @import './common/index.less';
 
 .table-title {
-  font-weight: 400;
-  font-size: 18px;
+  font-weight: bold;
+  color: var(--td-gray-color-8);
+  font-size: 16px;
 }
 </style>

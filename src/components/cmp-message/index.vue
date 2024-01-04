@@ -1,6 +1,14 @@
 <template>
   <cmp-container :full="true" :full-sub-index="[1]" :gutter="[8, 8]">
-    <div style="border-bottom: 1px solid var(--td-component-border); padding: 0 0 4px; font-weight: bold">
+    <div
+      style="
+        border-bottom: 1px solid var(--td-component-border);
+        padding: 0 0 4px;
+        font-weight: bold;
+        color: var(--td-gray-color-8);
+        font-size: 16px;
+      "
+    >
       {{ showTitle }}
     </div>
     <cmp-card ref="refMsgCard" :ghost="true">

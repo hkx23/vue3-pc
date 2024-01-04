@@ -30,6 +30,7 @@
               :total="dataTotal"
               @refresh="onRefresh"
             >
+              <template #title> 员工列表 </template>
               <template #op="slotProps">
                 <t-space :size="8">
                   <t-link theme="primary" @click="handleClickDetail(slotProps)">{{ t('common.button.edit') }}</t-link>
