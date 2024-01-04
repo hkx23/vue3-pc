@@ -1,5 +1,5 @@
 <template>
-  <cmp-card title="安灯异常模块分布" :subtitle="currentMonth">
+  <cmp-card title="安灯异常模块分布" :subtitle="currentMonth" :bordered="false" :full="true" height="100%">
     <div id="andeng" :style="{ width: '100%', height: '100%' }" />
   </cmp-card>
 </template>
