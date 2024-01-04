@@ -773,9 +773,9 @@ class hn {
     const m = new en();
     m.append(n.method || ""), m.append(d.url), n.body && (d.requestBody = n.body, d.requestBody instanceof FormData || m.append(JSON.stringify(d.requestBody))), d.key = m.end();
     const g = this.pendingMap.get(d.key);
-    return g ? (d = g, console.info(
+    return g ? (console.info(
       "[WebCore Http]: The same request is being executed, and this request has been cancelled. url: " + d.url
-    )) : this.pendingMap.set(d.key, d), d;
+    ), d = g) : this.pendingMap.set(d.key, d), d;
   }
   createRequest(o, n = {}, f = []) {
     const u = this.createContext(o, n), y = this.options;
