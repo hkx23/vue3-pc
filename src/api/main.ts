@@ -22,6 +22,65 @@ export interface ResultObject {
   data?: object | null;
 }
 
+/** 工艺路线图形化 */
+export interface Graph {
+  nodes?: GraphNode[];
+  edges?: GraphEdge[];
+}
+
+export interface GraphBoom {
+  id?: string;
+  keyPart?: boolean;
+}
+
+export interface GraphEdge {
+  id?: string;
+  sourceNodeId?: string;
+  targetNodeId?: string;
+  endPoint?: GraphPoint;
+  startPoint?: GraphPoint;
+  pointsList?: GraphPoint[];
+  text?: GraphText;
+  type?: string;
+}
+
+export interface GraphNode {
+  id?: string;
+  properties?: GraphProperties;
+  text?: GraphText;
+  type?: string;
+  /** @format int32 */
+  x?: number;
+  /** @format int32 */
+  y?: number;
+}
+
+export interface GraphPoint {
+  /** @format int32 */
+  x?: number;
+  /** @format int32 */
+  y?: number;
+}
+
+export interface GraphProperties {
+  id?: string;
+  processId?: string;
+  processName?: string;
+  /** @format int32 */
+  processStep?: number;
+  processType?: string;
+  boomList?: GraphBoom[];
+  backgroundColor?: string;
+}
+
+export interface GraphText {
+  value?: string;
+  /** @format int32 */
+  x?: number;
+  /** @format int32 */
+  y?: number;
+}
+
 /** 工艺路线实体 */
 export interface RoutingDTO {
   /** 工艺路线编码 */
@@ -47,8 +106,10 @@ export interface RoutingDTO {
    * @format date-time
    */
   invailDate?: string;
+  /** 工艺路线图形化 */
+  routingGraph?: Graph;
   /** 工艺路线图形化JSON */
-  routingGraph?: string;
+  routingGraphStr?: string;
   /**
    * 工艺路线状态
    * @format int32
@@ -2628,6 +2689,8 @@ export interface Module {
   sortIndex?: number;
   behaviorPath?: string;
   iconPath?: string;
+  /** 图标颜色 */
+  iconColor?: string;
   moduleType?: string;
   /** 模块版本号 */
   moduleVersion?: number;
@@ -2641,6 +2704,8 @@ export interface ModuleMetaVO {
   title?: Record<string, string>;
   /** 图标路径 */
   icon?: string;
+  /** 图标颜色 */
+  iconColor?: string;
   /** frame路径 */
   frameSrc?: string;
 }
@@ -3411,13 +3476,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
+  isRawName?: string;
+  isBatchName?: string;
   isProductName?: string;
   isProductChecked?: boolean;
-  isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
-  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -5177,6 +5242,8 @@ export type ModulePermissionDTO = {
   sortIndex?: number;
   behaviorPath?: string;
   iconPath?: string;
+  /** 图标颜色 */
+  iconColor?: string;
   moduleType?: string;
   /** 模块版本号 */
   moduleVersion?: number;
@@ -5213,10 +5280,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */

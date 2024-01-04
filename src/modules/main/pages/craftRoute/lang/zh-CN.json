@@ -34,6 +34,7 @@
     "requiredProcess": "必选工序",
     "optionalProcess": "可选工序",
     "stepNotRepeat": "步骤不能和其他节点重复",
+    "processNotRepeat": "工序不能和其他节点重复",
     "notStartNode": "没有开始节点",
     "notMoreStartNode": "不允许有多个开始节点",
     "notMoreEndNode": "不允许有多个结束节点",
@@ -47,8 +48,10 @@
     "processNodeNotSelect": "有工序节点没有选择工序",
     "processNodeNotPre": "工序节点[{0}]没有入口",
     "processNodeNotNext": "工序节点[{0}]没有出口",
-    "mitemOrCategoryMustSelectOne": "产品或产品类别必须选一个",
     "startNodeNotEdge": "开始节点没有连线",
-    "endNodeNotEdge": "结束节点没有连线"
+    "endNodeNotEdge": "结束节点没有连线",
+    "mustSelectOne": "产品、产品类别、工作中心必须选一个",
+    "repeatProcess": "工序[{0}]重复",
+    "versionBelowOne": "版本不能小于1"
   }
 }
