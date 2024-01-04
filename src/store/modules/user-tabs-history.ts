@@ -15,7 +15,7 @@ const homeRoute: Array<TRouterInfo> = [
   },
 ];
 
-const limitCount = 3;
+const limitCount = 10;
 
 const stateData = {
   userTabRouterList: {} as {

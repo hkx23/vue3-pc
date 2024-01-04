@@ -171,8 +171,8 @@
                 />
               </t-form-item>
               <t-row>
-                <t-col flex="120px"><t-button>条码规则预览</t-button></t-col>
-                <t-col flex="auto"><t-input placeholder=""></t-input></t-col>
+                <t-col flex="120px"><t-button @click="onRulePreview">条码规则预览</t-button></t-col>
+                <t-col flex="auto"><t-input v-model="previewResults"></t-input></t-col>
               </t-row> </t-space
           ></cmp-card>
         </cmp-row>
@@ -509,6 +509,7 @@ const onGenerateChange = async (value: any) => {
 // #添加按钮点击事件
 const onAddRuleData = () => {
   formRef.value.reset({ type: 'empty' });
+  previewResults.value = '';
   ruleTabData.value.state = 1;
   groupDisabled.value = false; // 关闭表单禁用
   submitFalg.value = true; // true为新增
@@ -527,6 +528,7 @@ const onAddrule = async () => {
 
 // #编码规则 编辑 按钮点击
 const onEditRow = (row: any) => {
+  previewResults.value = '';
   ruleTabData.value.ruleCode = row.ruleCode;
   ruleTabData.value.ruleName = row.ruleName;
   ruleTabData.value.barcodeType = row.barcodeType;
@@ -567,6 +569,25 @@ const onConfirm = async () => {
   MessagePlugin.success('关联成功');
   materialVisible.value = false;
 };
+
+// 条码规则预览点击事件
+const previewResults = ref('');
+const onRulePreview = async () => {
+  if (!ruleTabData.value.ruleExpression) {
+    MessagePlugin.warning('请输入条码规则！');
+    return;
+  }
+  if (!ruleTabData.value.barcodeType) {
+    MessagePlugin.warning('请选择规则类型！');
+    return;
+  }
+  const res = await api.barcodeRuleInMitem.previewBarcode({
+    expression: ruleTabData.value.ruleExpression,
+    barcodeType: ruleTabData.value.barcodeType,
+  });
+  previewResults.value = res;
+};
+
 // // @表单提交事件
 const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
   if (context.validateResult === true) {
