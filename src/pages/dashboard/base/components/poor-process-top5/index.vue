@@ -76,12 +76,25 @@ const getPieData = async () => {
       return;
     }
 
-    const first = top5Data[0];
+    // const first = top5Data[0];
     const echarData = top5Data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
+
+    // 获取当前时间
+    const currentDate = new Date();
+
+    // 获取 7 天前的时间
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(currentDate.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0); // 设置为 0 点
+
+    // 获取今天的时间
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // 设置为 23:59:59.999
 
     optionChart.value = {
       title: {
-        text: `(周 ${dayjs(first.beginDate).format('YYYY-MM-DD')} ~ ${dayjs(first.endDate).format('YYYY-MM-DD')})`,
+        // text: `(周 ${dayjs(first.beginDate).format('YYYY-MM-DD')} ~ ${dayjs(first.endDate).format('YYYY-MM-DD')})`,
+        text: `(周 ${dayjs(sevenDaysAgo).format('YYYY-MM-DD')} ~ ${dayjs(today).format('YYYY-MM-DD')})`,
         left: 'left',
         top: '-3',
         textStyle: {
