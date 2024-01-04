@@ -388,10 +388,10 @@ const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', scanLabel: 
   let content: string;
   if (type === 'success') {
     content = `[${scanLabel}]${t('wipCollect.scanSuccess')} , ${msg}`;
-    NotifyPlugin.success({ title: t('wipCollect.scanSuccess'), content, duration: 2000 });
+    NotifyPlugin.success({ title: t('wipCollect.scanSuccess'), content, duration: 2000, closeBtn: true });
   } else if (type === 'error') {
     content = `[${scanLabel}]${t('wipCollect.scanFailed')} , ${msg}`;
-    NotifyPlugin.error({ title: t('wipCollect.scanFailed'), content, duration: 2000 });
+    NotifyPlugin.error({ title: t('wipCollect.scanFailed'), content, duration: 2000, closeBtn: true });
   } else {
     content = msg;
   }

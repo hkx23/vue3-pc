@@ -10,8 +10,6 @@
     <rank-list class="row-container" />
     <!-- 出入库概览 -->
     <output-overview class="row-container" />
-    <!-- 不良TOP5 -->
-    <top-pie class="row-container" />
   </div>
 </template>
 
@@ -27,7 +25,6 @@ import oftenUseMenu from './components/often-use-menu/index.vue';
 import OutputOverview from './components/OutputOverview.vue';
 import RankList from './components/RankList.vue';
 import TopPanel from './components/TopPanel.vue';
-import TopPie from './components/working-table-pie/index.vue';
 </script>
 
 <style scoped>

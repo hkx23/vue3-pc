@@ -84,15 +84,15 @@ const getPieData = async () => {
         text: `过程不良TOP5 (周 ${dayjs(first.beginDate).format('YYYY-MM-DD')} ~ ${dayjs(first.endDate).format(
           'YYYY-MM-DD',
         )})`,
-        left: 'left',
+        left: 'center',
         textStyle: {
           fontSize: 15,
         },
       },
       legend: {
         orient: 'vertical',
-        right: 200,
-        top: 100,
+        right: 20,
+        top: 150,
         bottom: 20,
       },
       tooltip: {
@@ -103,6 +103,7 @@ const getPieData = async () => {
         {
           type: 'pie',
           radius: '90%',
+          top: '30',
           label: {
             show: true,
             formatter: (param) => `${param.name} (${param.percent}%)`,
