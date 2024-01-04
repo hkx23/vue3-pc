@@ -11,6 +11,8 @@ import { debounce } from 'lodash';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
+import { api } from '@/api/control';
+
 echarts.use([
   TooltipComponent,
   LegendComponent,
@@ -77,38 +79,19 @@ onUnmounted(() => {
 });
 
 const getBarData = async () => {
-  // const data = await api.wipRepair.getRepairTop5();
-  // const echarData = data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
-  // 模拟 API 数据
-  const echarData = [
-    ['Hannah Krause', 48, 'Engineer', 94, '2011-02-12'],
-    ['Zhao Qian', 20, 'Teacher', 68, '2011-03-01'],
-    ['Jasmin Krause ', 52, 'Musician', 87, '2011-02-14'],
-    ['Li Lei', 37, 'Teacher', 65, '2011-02-18'],
-    ['Karle Neumann', 25, 'Engineer', 77, '2011-04-02'],
-    ['Adrian Groß', 19, 'Teacher', 69, '2011-01-16'],
-    ['Mia Neumann', 71, 'Engineer', 65, '2011-03-19'],
-    ['Böhm Fuchs', 36, 'Musician', 88, '2011-02-24'],
-    ['Han Meimei', 67, 'Engineer', 66, '2011-03-12'],
-  ];
+  const data = await api.wip.getAchievingRate();
+  const echarData = data.map((n) => ({ value: n.achievingRateOfToday * 100, name: n.mitemName }));
 
   optionChart.value = {
-    title: {
-      text: '当天生产达成率排行',
-      left: 'center',
-      textStyle: {
-        fontSize: 15,
-      },
-    },
     dataset: [
       {
-        dimensions: ['name', 'age', 'profession', 'score', 'date'],
+        dimensions: ['name', 'value'],
         source: echarData,
       },
       {
         transform: {
           type: 'sort',
-          config: { dimension: 'score', order: 'desc' },
+          config: { dimension: 'value', order: 'desc' },
         },
       },
     ],
@@ -128,15 +111,15 @@ const getBarData = async () => {
     series: [
       {
         type: 'bar',
-        encode: { x: 'name', y: 'score' },
+        barWidth: 20,
+        encode: { x: 'name', y: 'value' },
         itemStyle: {
-          color: '#92d050',
+          color() {
+            return `rgba(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(
+              Math.random() * 255,
+            )}, 0.7)`;
+          },
         },
-        // tooltip: {
-        //   formatter: function (params) {
-        //     return params.name + '<br/>' + '达成率: ' + params.value + '%';
-        //   },
-        // },
       },
     ],
   };
