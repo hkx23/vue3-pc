@@ -526,7 +526,11 @@ const conditionEnter = (data: any) => {
 };
 // 界面点击查询按钮
 const switchTab = () => {
-  fetchMoTable();
+  if (queryCondition.value.mitemLotNo && queryCondition.value.mitemId) {
+    fetchMoTable();
+  } else if (queryCondition.value.mitemLabelNo) {
+    fetchMoTable();
+  }
 };
 // 加载工单数据表格
 const fetchMoTable = async () => {

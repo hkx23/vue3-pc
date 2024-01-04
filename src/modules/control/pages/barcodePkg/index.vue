@@ -365,6 +365,7 @@ const printMode = ref({
   createNum: 0,
   packQty: 0,
   createPDNum: 0,
+  maxCreate: 0,
   packQtyShow: '',
   packType: '',
   moScheduleId: '',
@@ -376,6 +377,10 @@ const printMode = ref({
 const generateBracode = async () => {
   const residueQty = printMode.value.planQty - printMode.value.generateQty;
   console.log(residueQty);
+  if (printMode.value.maxCreate <= 0) {
+    MessagePlugin.warning('剩余生成数量为0');
+    return;
+  }
 
   if (!Number.isInteger(printMode.value.createPDNum) || printMode.value.createPDNum > residueQty) {
     // 提示错误信息
@@ -1057,7 +1062,8 @@ const handleTabClick = (selectedTabIndex: any) => {
     printMode.value.planQty = selectedTab.planQty;
     printMode.value.packQty = selectedTab.packQty;
     calculateButtonOffset();
-    printMode.value.createPDNum = selectedTab.planQty - selectedTab.generateQty;
+    printMode.value.maxCreate = selectedTab.planQty - selectedTab.generateQty;
+    printMode.value.createPDNum = printMode.value.maxCreate > 0 ? printMode.value.maxCreate : 0;
     printMode.value.packQtyShow = selectedTab.packQtyShow;
     dataSummary.value = `${selectedTab.planQty} (${selectedTab.planSheet}) / ${selectedTab.generateQty} (${selectedTab.generateSheet}) / ${selectedTab.displayQty} (${selectedTab.displaySheet}) `;
     api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {
