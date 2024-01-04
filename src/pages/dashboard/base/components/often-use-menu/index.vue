@@ -1,18 +1,34 @@
 <template>
-  <div v-show="cRecommendList && cRecommendList.length > 0">
+  <!-- todo:由于多语言语法校验未通过 无法提交 -->
+  <!-- <cmp-card v-model:pagination="pageUI" :full="true" height="100%" > -->
+  <cmp-card v-model:pagination="pageUI" :full="true" height="100%" title="我的收藏">
     <div class="recommend">
-      <div class="recommend-body">
-        <div v-for="(item, index) in cRecommendList" :key="index" class="recommend-item" @click="onModuleClick(item)">
-          <div :class="randomNumber()">
-            <t-icon :name="item.meta && item.meta.iconName" />
-          </div>
-          <div class="recomend-text">
-            <t-button class="recomend-btn" variant="text">{{ renderMenuTitle(item.meta.title) }}</t-button>
-          </div>
+      <div v-for="(item, index) in favList" :key="index" class="recommend-item" @click="onModuleClick(item)">
+        <div :class="randomNumber()">
+          <t-icon :name="item.meta && item.meta.iconName" />
+        </div>
+        <div class="recomend-text">
+          <div>{{ renderMenuTitle(item.meta.title) }}</div>
         </div>
       </div>
     </div>
-  </div>
+    <t-divider></t-divider>
+    <div class="recommend">
+      <!-- todo:由于多语言语法校验未通过 无法提交 -->
+      <!-- <span class="recommend-history-title"></span> -->
+      <span class="recommend-history-title">为您推荐</span>
+      <div
+        v-for="(item, index) in historyList"
+        :key="index"
+        class="recommend-history-item"
+        @click="onModuleClick(item)"
+      >
+        <div class="recomend-history-text">
+          <div>{{ renderMenuTitle(item.meta.title) }} <t-icon name="add-circle" /></div>
+        </div>
+      </div>
+    </div>
+  </cmp-card>
 </template>
 
 <script setup lang="ts">
@@ -20,30 +36,41 @@ import {} from 'tdesign-icons-vue-next';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { usePage } from '@/hooks/modules/page';
 import { renderMenuTitle } from '@/router/locale';
 import { getUserTabsHistoryStore, useUserStore } from '@/store';
 import type { TRouterInfo } from '@/types/interface';
 
+// import { useLang } from './lang';
+
+// const { t } = useLang();
+const { pageUI } = usePage();
 const userStore = useUserStore();
 const router = useRouter();
 const recommendList = ref<TRouterInfo[]>([]);
 const userTabsHistoryStore = getUserTabsHistoryStore();
 
-const cRecommendList = computed(() => {
-  return Init();
+const favList = computed(() => {
+  return getFavList();
 });
 
-const Init = () => {
+const historyList = computed(() => {
+  return getHistoryList();
+});
+
+const getHistoryList = () => {
   recommendList.value = userTabsHistoryStore.userTabsHistory;
   // 排除为空路径的菜单
   if (recommendList.value && recommendList.value.length > 0) {
     recommendList.value = recommendList.value.filter((item) => item.path !== '');
   }
+  return recommendList.value;
+};
 
+const getFavList = () => {
   // 查询已收藏菜单的信息
   const router = useRouter();
-  let totalList = [] as TRouterInfo[];
-  totalList = recommendList.value;
+  const totalList = [] as TRouterInfo[];
   const tabRouters = router.getRoutes();
   if (tabRouters) {
     userStore.userInfo.favorites.forEach((item2) => {
@@ -52,21 +79,8 @@ const Init = () => {
         totalList.push(routeInfo);
       }
     });
-    if (totalList) {
-      totalList = recommendList.value.concat(...totalList);
-    }
   }
-
-  // 历史菜单与收藏菜单去重
-  recommendList.value = totalList.reduce((acc, cur) => {
-    const index = acc.findIndex((item) => item.meta.id === cur.meta.id);
-    if (index === -1) {
-      acc.push(cur);
-    }
-    return acc;
-  }, []);
-
-  return recommendList.value;
+  return totalList;
 };
 
 const randomNumber = () => {
@@ -83,33 +97,23 @@ const onModuleClick = (item: TRouterInfo) => {
 /* 可添加组件样式 */
 .recommend {
   width: 100%;
-  height: 48px;
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   overflow: hidden;
-  padding: var(--td-comp-paddingTB-l) 0;
+  height: 65px;
 
   .t-icon {
     height: 1.5em;
   }
 }
 
-.cmp-card {
-  font: var(--td-font-body-medium);
-  margin: 0;
-  padding: var(--td-comp-paddingTB-l);
-  list-style: none;
-  position: relative;
-  box-sizing: border-box;
-  border-radius: var(--td-radius-medium);
-  background-color: var(--td-bg-color-container);
-  color: var(--td-text-color-primary);
-  transition: box-shadow 0.2s cubic-bezier(0.38, 0, 0.24, 1);
-  border: 1px solid var(--td-component-border);
+:deep(.t-card__body) {
+  overflow: hidden !important;
+  padding: 0 var(--td-comp-paddingLR-xl) !important;
 }
 
-.recommend-body {
-  display: flow-root;
+:deep(.t-divider) {
+  margin: 5px 0;
 }
 
 .recommend-item {
@@ -118,17 +122,82 @@ const onModuleClick = (item: TRouterInfo) => {
   cursor: pointer;
   color: #161c24;
   display: inline-flex;
-  margin-right: 16px;
-  margin-bottom: 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 8px 20px;
 }
 
-/deep/ .t-card__body {
-  flex: 1;
+.recommend-item:hover {
+  background-color: var(--td-bg-color-page);
+  border-radius: 4px;
 }
 
-/deep/ .t-card__footer {
+.recomend-text {
+  margin-top: 4px;
+
+  /** 文本1 */
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 17.38px;
+  text-align: center;
+  vertical-align: middle;
+
+  :deep(.t-button) {
+    height: 24px;
+  }
+}
+
+.recommend-history-title {
+  width: fit-content;
+  border-radius: 4px;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.recommend-history-item {
+  background-color: var(--td-bg-color-page);
+  width: fit-content;
+  border-radius: 4px;
   cursor: pointer;
-  flex: 0;
+  color: #161c24;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  margin: 8px;
+}
+
+.recommend-history-item:hover {
+  background: linear-gradient(180deg, rgb(70 92 229 / 100%) 0%, rgb(85 167 250 / 100%) 100%);
+  border-radius: 4px;
+  color: white;
+}
+
+.recomend-history-text {
+  /** 文本1 */
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 17.38px;
+  text-align: center;
+  vertical-align: middle;
+
+  :deep(.t-button) {
+    height: 24px;
+  }
+}
+
+.recomend-text:hover {
+  background-color: var(--td-bg-color-page);
+  border-radius: 4px;
 }
 
 .recommend-icon {
@@ -154,18 +223,5 @@ const onModuleClick = (item: TRouterInfo) => {
 
 .recommend-icon-color3 {
   background: linear-gradient(180deg, rgb(240 146 54 / 100%) 0%, rgb(240 193 53 / 100%) 100%);
-}
-
-.recomend-text:hover {
-  background-color: var(--td-bg-color-page);
-  border-radius: 4px;
-
-  /deep/ .t-button {
-    height: 24px;
-  }
-}
-
-.recomend-btn {
-  height: 24px;
 }
 </style>

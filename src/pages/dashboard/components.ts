@@ -14,11 +14,13 @@ export const components = [
   {
     code: 'often-use-menu',
     title: '常用&收藏',
+    showTitle: true,
+    ghost: true,
     description: '显示常用&收藏功能',
     category: '系统',
     component: oftenUseMenu,
     w: 8,
-    h: 1,
+    h: 2,
   },
   {
     code: 'todo',
