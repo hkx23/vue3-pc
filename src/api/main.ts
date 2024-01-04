@@ -1837,8 +1837,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3474,15 +3474,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isProductName?: string;
+  stateName?: string;
+  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isProductName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -4064,8 +4064,8 @@ export interface DefectCodeVO {
   themeButton?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -9675,6 +9675,21 @@ export const api = {
     getRuleSegment: () =>
       http.request<ResultPagingDataBarcodeSegmentDTO['data']>(`/api/main/barcodeRuleInMitem/getRuleSegment`, {
         method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name CheckExpression
+     * @summary 检查规则表达式是否合法
+     * @request GET:/barcodeRuleInMitem/checkExpression
+     * @secure
+     */
+    checkExpression: (query: { expression: string }) =>
+      http.request<ResultBoolean['data']>(`/api/main/barcodeRuleInMitem/checkExpression`, {
+        method: 'GET',
+        params: query,
       }),
   },
   attendanceMode: {

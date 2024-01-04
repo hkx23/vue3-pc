@@ -224,7 +224,14 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { FormInstanceFunctions, Input, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import {
+  CustomValidator,
+  FormInstanceFunctions,
+  Input,
+  MessagePlugin,
+  PrimaryTableCol,
+  TableRowData,
+} from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
@@ -278,11 +285,11 @@ const onPrint = async () => {
     return;
   }
   await apiMain.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
-  MessagePlugin.success('打印成功');
   setTimeout(() => {
     onRefreshBelow();
     onRefresh();
   }, 1000); // 300毫秒延时示例，根据需要调整延时时间
+  MessagePlugin.success('打印成功');
 };
 // 补打，作废确定
 const onConfirm = async () => {
@@ -378,6 +385,10 @@ const printMode = ref({
   generalQty: 0,
   planQty: 0,
   lotNo: '',
+});
+// 打印/生成按钮模型初始化
+const ruleMode = ref({
+  deliveryDtlId: '',
 });
 
 // 生成按钮模型初始化
@@ -565,7 +576,22 @@ const onPrintTemplateData = async () => {
   const res = await apiWarehouse.label.getLabelPrintTmplList();
   onPrintTemplateList.list = res;
 };
-
+const ruleValidator: CustomValidator = async (val) => {
+  const index = delivertRowKeys.value[0];
+  if (index !== ruleMode.value.deliveryDtlId) {
+    return true;
+  }
+  // 判断当前行是否被选中且与保存的ID匹配
+  if (val) {
+    // 在选中的行中进行非空校验
+    return true; // 或者您可以返回一个 CustomValidateObj，具体根据需要调整
+  }
+  return {
+    result: false,
+    message: '不能为空',
+    type: 'error',
+  };
+};
 // 日志界面 表格数据
 const logInterface: PrimaryTableCol<TableRowData>[] = [
   {
@@ -685,9 +711,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
       },
       rules: [
         {
-          required: true,
-          message: '不能为空',
-          trigger: 'change',
+          validator: ruleValidator,
         },
       ],
       // keepEditMode: true,
@@ -696,6 +720,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
       abortEditOnEvent: ['onBlur'],
       // 编辑完成，退出编辑态后触发
       onEdited: (context) => {
+        ruleMode.value.deliveryDtlId = deliveryList.list[context?.rowIndex].deliveryDtlId; // 变化后的数字
         deliveryList.list[context?.rowIndex] = context?.newRowData;
         printMode.value.lotNo = deliveryList.list[context?.rowIndex].lotNo; // 变化后的数字
       },
