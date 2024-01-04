@@ -1,7 +1,5 @@
 <template>
-  <!-- todo:由于多语言语法校验未通过 无法提交 -->
-  <!-- <cmp-card v-model:pagination="pageUI" :full="true" height="100%" > -->
-  <cmp-card v-model:pagination="pageUI" :full="true" height="100%" title="我的收藏">
+  <cmp-card v-model:pagination="pageUI" :full="true" height="100%" :title="t('often-use-menu.title')">
     <div class="recommend">
       <div v-for="(item, index) in favList" :key="index" class="recommend-item" @click="onModuleClick(item)">
         <div :class="randomNumber()">
@@ -14,9 +12,7 @@
     </div>
     <t-divider></t-divider>
     <div class="recommend">
-      <!-- todo:由于多语言语法校验未通过 无法提交 -->
-      <!-- <span class="recommend-history-title"></span> -->
-      <span class="recommend-history-title">为您推荐</span>
+      <span class="recommend-history-title">{{ t('often-use-menu.subTitle') }}</span>
       <div
         v-for="(item, index) in historyList"
         :key="index"
@@ -41,9 +37,9 @@ import { renderMenuTitle } from '@/router/locale';
 import { getUserTabsHistoryStore, useUserStore } from '@/store';
 import type { TRouterInfo } from '@/types/interface';
 
-// import { useLang } from './lang';
+import { useLang } from './lang';
 
-// const { t } = useLang();
+const { t } = useLang();
 const { pageUI } = usePage();
 const userStore = useUserStore();
 const router = useRouter();
