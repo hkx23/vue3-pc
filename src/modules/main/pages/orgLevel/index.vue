@@ -2,6 +2,7 @@
   <cmp-container :full="true">
     <cmp-card>
       <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
+        <div class="table-title">组织层级列表</div>
         <t-space size="small" :align="'end'">
           <t-button @click="onClickAdd">
             {{ t('common.button.add') }}

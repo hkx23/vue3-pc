@@ -15,6 +15,7 @@
         :fixed-height="true"
         @refresh="featCustomer"
       >
+        <template #title> 客户列表 </template>
         <template #op="{ row }">
           <t-link theme="primary" @click="onHandleEdit(row.customerCode)">{{ t('common.button.edit') }}</t-link>
           <!-- <icon name="edit-1" style="cursor: pointer" @click="onHandleEdit(row.customerCode)"></icon> -->

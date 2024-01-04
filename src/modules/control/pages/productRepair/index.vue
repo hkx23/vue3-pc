@@ -37,7 +37,7 @@
                   </template>
                 </cmp-table>
               </cmp-card>
-              <cmp-card :ghost="true" class="padding-top-noline-16">
+              <cmp-card :ghost="true" class="padding-top-noline-16" style="padding-bottom: 16px">
                 <cmp-table
                   :show-pagination="false"
                   row-key="id"

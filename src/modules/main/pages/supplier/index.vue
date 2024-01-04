@@ -17,6 +17,7 @@
         :selected-row-keys="selectedSupplierRowKeys"
         @refresh="fetchTable"
       >
+        <template #title> 供应商列表 </template>
         <!-- <template #op="slotProps">
               <t-space>
                 <t-icon name="edit" @click="onEditRowClick(slotProps)" />
