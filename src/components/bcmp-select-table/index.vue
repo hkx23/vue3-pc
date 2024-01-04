@@ -44,8 +44,8 @@
             lazy-load
             :active-row-type="activeRowType"
             highlight-current-row
-            :active-row-keys="activeRowKeys"
-            :selected-row-keys="selectedRowKeys"
+            :default-active-row-keys="activeRowKeys"
+            :default-selected-row-keys="selectedRowKeys"
             select-on-row-click
             :row-key="rowKey"
             v-bind="$attrs"
@@ -499,6 +499,7 @@ const remoteLoad = async (val: any) => {
     pagination.value.total = Number(total);
   } catch (e) {
     console.log(e);
+    state.tableData = [];
   } finally {
     // 单选-如果完全匹配，直接选中
     radioCSelectRedirct(val);
