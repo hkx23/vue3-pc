@@ -1,31 +1,34 @@
 <template>
-  <div class="main-page">
-    <cmp-table
-      ref="tableRef"
-      v-model:pagination="pageUI"
-      :table-column="tableColumn"
-      :table-data="data.list"
-      :enable-export="enableExport"
-      :is-fixed-height="isFixedHeight"
-      :loading="loading"
-      :total="data.total"
-      :export-function="exportFunction"
-      @refresh="fetchData"
-    >
-      <template #op="{ row }">
-        <icon name="edit-1" @click="onHandleEdit(row)"></icon>
-      </template>
+  <cmp-container :full="true">
+    <cmp-card>
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        :table-column="tableColumn"
+        :table-data="data.list"
+        :enable-export="enableExport"
+        :is-fixed-height="isFixedHeight"
+        :loading="loading"
+        :total="data.total"
+        :export-function="exportFunction"
+        @refresh="fetchData"
+      >
+        <template #op="{ row }">
+          <icon name="edit-1" @click="onHandleEdit(row)"></icon>
+        </template>
 
-      <template #button>
-        <t-button theme="success" @click="onExportEnable">插槽例子-是否显示导入</t-button>
-        <!-- <t-button theme="success" @click="onFixHeight">插槽例子-是否固定高度</t-button> -->
-        <t-button theme="success" @click="onViewKeys">插槽例子-已选中行</t-button>
-      </template>
-      <template #operate>
-        <!-- <t-button shape="circle" theme="primary" ghost> 插槽 </t-button> -->
-      </template>
-    </cmp-table>
-  </div>
+        <template #button>
+          <t-button theme="success" @click="onExportEnable">插槽例子-是否显示导入</t-button>
+          <t-button theme="primary" @click="onChangeColumn">插槽例子-动态列处理</t-button>
+          <!-- <t-button theme="success" @click="onFixHeight">插槽例子-是否固定高度</t-button> -->
+          <t-button theme="success" @click="onViewKeys">插槽例子-已选中行</t-button>
+        </template>
+        <template #operate>
+          <!-- <t-button shape="circle" theme="primary" ghost> 插槽 </t-button> -->
+        </template>
+      </cmp-table>
+    </cmp-card>
+  </cmp-container>
 </template>
 
 <script setup lang="tsx" name="TablePreview">
@@ -91,8 +94,39 @@ const onViewKeys = () => {
   });
 };
 
+// 表格配置
+const tableColumn = ref([
+  { colKey: 'row-select', type: 'multiple', width: 64, fixed: 'left' },
+  { colKey: 'id', title: '用户ID', width: 120, align: 'center' },
+  { colKey: 'avatar', title: '用户头像', width: 120, align: 'center' },
+  { colKey: 'age', title: '用户年龄', width: 120, align: 'center' },
+  { colKey: 'phone', title: '联系方式', width: 150, align: 'center' },
+  { colKey: 'email', title: '邮箱地址', width: 200, align: 'center', ellipsis: true },
+  { colKey: 'company', title: '公司名称', width: 200, align: 'center' },
+  {
+    colKey: 'remark',
+    title: '用户备注',
+    width: 120,
+    align: 'center',
+    attrs: { style: { background: 'var(--td-brand-color-1)' } },
+  },
+  { colKey: 'inviteNum', title: '邀请数量', width: 120, align: 'center' },
+  { colKey: 'inviteCode', title: '邀请码', width: 120, align: 'center' },
+  { colKey: 'createTime', title: '创建时间', width: 200, align: 'center' },
+  { colKey: 'updateTime', title: '更新时间', width: 200, align: 'center' },
+  { colKey: 'op', title: '操作', width: 100, align: 'center', fixed: 'right' },
+]);
 const onHandleEdit = (row: any) => {
   console.log(row);
+};
+const onChangeColumn = () => {
+  tableColumn.value.push({
+    colKey: Math.random().toString(),
+    title: Math.random().toString(),
+    width: 120,
+    align: 'center',
+  });
+  console.error(tableColumn.value);
 };
 
 // 模拟数据
@@ -115,29 +149,6 @@ const apiMockData = (length: number) => {
     };
   });
 };
-
-// 表格配置
-const tableColumn = [
-  { colKey: 'row-select', type: 'multiple', width: 64, fixed: 'left' },
-  { colKey: 'id', title: '用户ID', width: 120, align: 'center' },
-  { colKey: 'avatar', title: '用户头像', width: 120, align: 'center' },
-  { colKey: 'age', title: '用户年龄', width: 120, align: 'center' },
-  { colKey: 'phone', title: '联系方式', width: 150, align: 'center' },
-  { colKey: 'email', title: '邮箱地址', width: 200, align: 'center', ellipsis: true },
-  { colKey: 'company', title: '公司名称', width: 200, align: 'center' },
-  {
-    colKey: 'remark',
-    title: '用户备注',
-    width: 120,
-    align: 'center',
-    attrs: { style: { background: 'var(--td-brand-color-1)' } },
-  },
-  { colKey: 'inviteNum', title: '邀请数量', width: 120, align: 'center' },
-  { colKey: 'inviteCode', title: '邀请码', width: 120, align: 'center' },
-  { colKey: 'createTime', title: '创建时间', width: 200, align: 'center' },
-  { colKey: 'updateTime', title: '更新时间', width: 200, align: 'center' },
-  { colKey: 'op', title: '操作', width: 100, align: 'center', fixed: 'right' },
-];
 </script>
 
 <style lang="less" scoped></style>
