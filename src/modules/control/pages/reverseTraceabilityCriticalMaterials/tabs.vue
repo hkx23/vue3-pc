@@ -22,7 +22,7 @@
             <div class="table-work-header">
               <cmp-table
                 ref="tableRefCardAD"
-                v-model:pagination="pageUIOne"
+                v-model:pagination="pageUI"
                 empty="没有符合条件的数据"
                 row-key="deliveryCardId"
                 :table-column="productBasicInformation"
@@ -58,13 +58,16 @@
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
-                ref="tableRefCard"
+                ref="tableRefThree"
                 v-model:pagination="pageUI"
                 empty="没有符合条件的数据"
                 :table-column="materialkey"
-                row-key="deliveryCardId"
-                :table-data="jiashuju"
-                :total="2"
+                row-key="moCode"
+                select-on-row-click
+                :table-data="WipKeypartReportVOForm"
+                :total="WorkOrderTotal"
+                @select-change="onMaterialWorkOrderChange"
+                @refresh="onMaterialWorkOrder"
               >
                 <template #title>
                   {{ '产品信息-关键件信息' }}
@@ -73,13 +76,14 @@
             </div>
             <div class="table-work-header">
               <cmp-table
-                ref="tableRefCard"
-                v-model:pagination="pageUI"
+                ref="tableRefThreeDown"
+                v-model:pagination="pageUITwo"
                 empty="没有符合条件的数据"
                 :table-column="materialWorkOrder"
-                row-key="deliveryCardId"
-                :table-data="jiashuju"
-                :total="2"
+                row-key="moCode"
+                :table-data="workOrderFeedData"
+                :total="workOrderFeedTotal"
+                @refresh="onWorkOrderFeed"
               >
                 <template #title>
                   {{ '产品信息-工单投料信息' }}
@@ -236,13 +240,14 @@ import _ from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { defineEmits, defineProps, reactive, ref, watch } from 'vue';
 
-import { api, ProductBaseReportVO, TransferHeadVO } from '@/api/control';
+import { api, MoOnboardReportVO, ProductBaseReportVO, TransferHeadVO, WipKeypartReportVO } from '@/api/control';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 import detailed from './detailed.vue';
 
-const { pageUI, pageUI: pageUIOne, pageUI: pageUIThree } = usePage();
+const { pageUI } = usePage();
+const { pageUI: pageUITwo } = usePage(); // 分页工具
 
 const tabPanel = [
   '产品基础信息',
@@ -255,6 +260,7 @@ const tabPanel = [
   '出入库信息',
 ];
 const tableRefCardAD = ref();
+const tableRefThree = ref();
 const tableRefSeven = ref();
 const tableRefba = ref();
 const Emit = defineEmits(['updateBasicsNum']);
@@ -336,49 +342,54 @@ const productBasicInformation: PrimaryTableCol<TableRowData>[] = [
 // // 3️⃣ - 1️⃣物料信息 关键信息 表格列数据
 const materialkey: PrimaryTableCol<TableRowData>[] = [
   {
+    colKey: 'row-select',
+    type: 'single',
+    width: 46,
+  },
+  {
     colKey: 'serial-number',
     title: '序号',
     align: 'center',
     width: '60',
   },
   {
-    colKey: 'deliveryCardStatuName',
+    colKey: 'moCode',
     title: '工单号',
     align: 'center',
     width: '130',
   },
   {
-    colKey: 'qty',
+    colKey: 'serialNumber',
     title: '关键件条码',
     align: 'center',
     width: '60',
   },
   {
-    colKey: 'operateType',
+    colKey: 'processName ',
     title: '工序',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'reason',
+    colKey: 'workstationName',
     title: '工站',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'creator',
+    colKey: 'status',
     title: '状态',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'qty	',
     title: '数量',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'userName',
     title: '员工',
     align: 'center',
     width: '100',
@@ -412,61 +423,61 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'qty',
+    colKey: 'moCode',
     title: '工单号',
     align: 'center',
     width: '60',
   },
   {
-    colKey: 'operateType',
+    colKey: 'moMitemCode',
     title: '产品编码',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'reason',
+    colKey: 'serialNumber',
     title: '物料条码',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'creator',
+    colKey: 'mitemCode',
     title: '物料编码',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'mitemLotNo',
     title: '物料批次',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'supplierCode',
     title: '供应商编码',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'mitemDesc',
     title: '物料描述',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'processName',
     title: '绑定工序',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'workstationName',
     title: '绑定工站',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'displayName',
     title: '作业员',
     align: 'center',
     width: '100',
@@ -830,6 +841,7 @@ const props = defineProps({
   resetData: Object,
 });
 
+// 监听重置事件
 watch(
   () => props.resetData,
   async (newVal: any) => {
@@ -840,8 +852,15 @@ watch(
     if (tabKey.value === 1) {
       workOrderData.list = [];
     }
+    if (tabKey.value === 2) {
+      tableRefThree.value[tabKey.value].setSelectedRowKeys([]);
+      WipKeypartReportVOForm.value = [];
+      WorkOrderTotal.value = 0;
+      workOrderFeedData.value = [];
+      workOrderFeedTotal.value = 0;
+    }
     if (tabKey.value === 6) {
-      await tableRefSeven.value[tabKey.value].setSelectedRowKeys([]);
+      tableRefSeven.value[tabKey.value].setSelectedRowKeys([]);
       await onBadMaintenance();
       badMaintenanceDataTwo.list = [];
       badMaintenanceId.value = '';
@@ -855,29 +874,30 @@ watch(
   },
 );
 
+// 监听搜索事件
 watch(
   () => props.onInputData,
   async (newVal: any) => {
     // 当 onInputData 改变时，更新 productBasicInformationList 的值
     commonParametersList.value = { ...newVal, pageNum: 1, pageSize: 10 };
     if (tabKey.value === 0) {
-      pageUIThree.value.page = 1;
+      pageUI.value.page = 1;
       await onGetProductBasicInformation();
     }
     if (tabKey.value === 1) {
-      pageUIThree.value.page = 1;
+      pageUI.value.page = 1;
       await onGetWorkOrder();
     }
     if (tabKey.value === 2) {
-      pageUIThree.value.page = 1;
+      pageUI.value.page = 1;
       await onMaterialWorkOrder();
     }
     if (tabKey.value === 6) {
-      pageUIThree.value.page = 1;
+      pageUI.value.page = 1;
       await onBadMaintenance();
     }
     if (tabKey.value === 7) {
-      pageUIThree.value.page = 1;
+      pageUI.value.page = 1;
       await onInventoryInOut();
     }
   },
@@ -888,8 +908,9 @@ watch(
 
 // 🌈 tab 切换事件
 const tabKey = ref(0);
-const tabChange = (context: any) => {
+const tabChange = async (context: any) => {
   pageUI.value.page = 1;
+  pageUITwo.value.page = 1;
   tabKey.value = context;
   if (context === 0) {
     Emit('updateBasicsNum', 0);
@@ -898,6 +919,7 @@ const tabChange = (context: any) => {
     Emit('updateBasicsNum', 1);
   }
   if (context === 2) {
+    await onMaterialWorkOrder();
     Emit('updateBasicsNum', 2);
   }
   if (context === 3) {
@@ -942,23 +964,46 @@ const onGetWorkOrder = async () => {
   [workOrderData.list] = res.list;
 };
 // 获取 物料信息 3️⃣3️⃣3️⃣3️⃣3️⃣3️⃣  数据
-// const WipKeypartReportVOForm = ref<PagingDataWipKeypartReportVO[]>([]);
-// const MoOnboardReportVOForm = ref<PagingDataMoOnboardReportVO[]>([]);
+const WipKeypartReportVOForm = ref<WipKeypartReportVO[]>([]);
+const WorkOrderTotal = ref<number>(0);
 // 物料信息 请求
 const onMaterialWorkOrder = async () => {
-  commonParametersList.value.pageNum = pageUIThree.value.page;
-  commonParametersList.value.pageSize = pageUIThree.value.rows;
-  // const res = await api.reversetraceability.getMitemBaseInfo(commonParametersList.value);
-  // MoOnboardReportVOForm.value = res.wipKeypartReportList;
-  // WipKeypartReportVOForm.value = res.moOnboardReportList;
+  commonParametersList.value.pageNum = pageUI.value.page;
+  commonParametersList.value.pageSize = pageUI.value.rows;
+  const res = await api.reversetraceability.getWipKeypartInfo(commonParametersList.value);
+  WipKeypartReportVOForm.value = res.list;
+  WorkOrderTotal.value = res.total;
+};
+
+// 上表格点击事件
+const materialCode = ref('');
+const onMaterialWorkOrderChange = async (context: any) => {
+  [materialCode.value] = context;
+  await onWorkOrderFeed();
+};
+
+// 获取 物料下表格数据
+const workOrderFeedList = ref({
+  pageNum: 1,
+  pageSize: 10,
+  moCode: materialCode.value, // 工单号
+});
+const workOrderFeedData = ref<MoOnboardReportVO[]>([]);
+const workOrderFeedTotal = ref<number>(0);
+const onWorkOrderFeed = async () => {
+  workOrderFeedList.value.pageNum = pageUITwo.value.page;
+  workOrderFeedList.value.pageSize = pageUITwo.value.rows;
+  const res = await api.reversetraceability.getMoOnboardInfo(workOrderFeedList.value);
+  workOrderFeedData.value = res.list;
+  workOrderFeedTotal.value = res.total;
 };
 
 // 获取 不良维修信息 7️⃣7️⃣7️⃣7️⃣7️⃣7️⃣  数据
 const badMaintenanceData = reactive({ list: [] });
 const badMaintenanceTotal = ref(0);
 const onBadMaintenance = async () => {
-  commonParametersList.value.pageNum = pageUIThree.value.page;
-  commonParametersList.value.pageSize = pageUIThree.value.rows;
+  commonParametersList.value.pageNum = pageUI.value.page;
+  commonParametersList.value.pageSize = pageUI.value.rows;
   const res = await api.reversetraceability.getWipRepairList(commonParametersList.value);
   badMaintenanceData.list = res.list;
   badMaintenanceTotal.value = res.total;
