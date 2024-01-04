@@ -54,7 +54,7 @@
           :data="finalTableData"
           :loading="loading"
           :max-height="maxHeightValue"
-          :selected-row-keys="selectedRowKeys"
+          :default-selected-row-keys="selectedRowKeys"
           v-bind="$attrs"
           @select-change="onSelectKeysChange"
           @filter-change="onFilterChange"
