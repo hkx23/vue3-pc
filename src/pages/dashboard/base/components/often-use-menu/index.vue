@@ -11,7 +11,7 @@
       </div>
     </div>
     <t-divider></t-divider>
-    <div class="recommend">
+    <div class="recommend-history">
       <span class="recommend-history-title">{{ t('often-use-menu.subTitle') }}</span>
       <div
         v-for="(item, index) in historyList"
@@ -97,6 +97,18 @@ const onModuleClick = (item: TRouterInfo) => {
   flex-wrap: wrap;
   overflow: hidden;
   height: 65px;
+
+  .t-icon {
+    height: 1.5em;
+  }
+}
+
+.recommend-history {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  height: 40px;
 
   .t-icon {
     height: 1.5em;
