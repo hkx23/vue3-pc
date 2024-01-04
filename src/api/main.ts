@@ -22,6 +22,65 @@ export interface ResultObject {
   data?: object | null;
 }
 
+/** 工艺路线图形化 */
+export interface Graph {
+  nodes?: GraphNode[];
+  edges?: GraphEdge[];
+}
+
+export interface GraphBoom {
+  id?: string;
+  keyPart?: boolean;
+}
+
+export interface GraphEdge {
+  id?: string;
+  sourceNodeId?: string;
+  targetNodeId?: string;
+  endPoint?: GraphPoint;
+  startPoint?: GraphPoint;
+  pointsList?: GraphPoint[];
+  text?: GraphText;
+  type?: string;
+}
+
+export interface GraphNode {
+  id?: string;
+  properties?: GraphProperties;
+  text?: GraphText;
+  type?: string;
+  /** @format int32 */
+  x?: number;
+  /** @format int32 */
+  y?: number;
+}
+
+export interface GraphPoint {
+  /** @format int32 */
+  x?: number;
+  /** @format int32 */
+  y?: number;
+}
+
+export interface GraphProperties {
+  id?: string;
+  processId?: string;
+  processName?: string;
+  /** @format int32 */
+  processStep?: number;
+  processType?: string;
+  boomList?: GraphBoom[];
+  backgroundColor?: string;
+}
+
+export interface GraphText {
+  value?: string;
+  /** @format int32 */
+  x?: number;
+  /** @format int32 */
+  y?: number;
+}
+
 /** 工艺路线实体 */
 export interface RoutingDTO {
   /** 工艺路线编码 */
@@ -47,8 +106,10 @@ export interface RoutingDTO {
    * @format date-time
    */
   invailDate?: string;
+  /** 工艺路线图形化 */
+  routingGraph?: Graph;
   /** 工艺路线图形化JSON */
-  routingGraph?: string;
+  routingGraphStr?: string;
   /**
    * 工艺路线状态
    * @format int32
@@ -3414,14 +3475,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductChecked?: boolean;
+  isState?: boolean;
   isRawName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  isProductChecked?: boolean;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
-  isBatchName?: string;
-  isState?: boolean;
-  isProductName?: string;
 }
 
 /** 响应数据 */
