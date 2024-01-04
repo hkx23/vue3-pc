@@ -293,9 +293,9 @@ const onPrint = async () => {
   }
   await api.barcodePkg.printBarcode({ ids: selectedRowKeys.value });
   handleTabClick(tabValue.value); // 刷新数据
-  MessagePlugin.success('打印成功');
   onRefreshBelow();
   onRefreshTag();
+  MessagePlugin.success('打印成功');
 };
 // 补打，作废确定
 const onConfirm = async () => {
@@ -400,9 +400,9 @@ const generateBracode = async () => {
     createNum: printMode.value.createNum,
   });
   handleTabClick(tabValue.value);
-  MessagePlugin.success('生成成功');
   onRefreshBelow();
   onRefreshTag();
+  MessagePlugin.success('生成成功');
 };
 
 // 打印上方查询初始化
@@ -834,6 +834,7 @@ const fetchBracodeManageTable = async () => {
     const { list } = data;
     pkgManageDataList.list = list;
     pkgManageTabTotal.value = data.total;
+    selectedManageRowKeys.value = [];
   } catch (e) {
     console.log(e);
   } finally {
