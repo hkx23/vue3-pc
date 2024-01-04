@@ -595,6 +595,46 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
+// 5️⃣ 品质信息 表格列数据
+const qualityInformation: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'serial-number',
+    title: '序号',
+    align: 'center',
+    width: '60',
+  },
+  {
+    colKey: 'pkgBarcode',
+    title: '检验单号',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'pkgBarcode',
+    title: '检验类型',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'pkgBarcode',
+    title: '检验人',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'pkgBarcode',
+    title: '质检结果',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'pkgBarcode',
+    title: '质检时间',
+    align: 'center',
+    width: '110',
+  },
+];
+
 // // 6️⃣ 工艺文件信息 表格列数据
 const processDocument: PrimaryTableCol<TableRowData>[] = [
   {
