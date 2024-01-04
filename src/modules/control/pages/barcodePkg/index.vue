@@ -110,7 +110,9 @@
                     @refresh="onRefreshBelow"
                   >
                     <template #title>
-                      <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck>仅显示已生成</t-radio>
+                      <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck @change="onRefreshBelow"
+                        >仅显示已生成</t-radio
+                      >
                     </template>
                     <template #button>
                       <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
@@ -292,7 +294,6 @@ const onPrint = async () => {
     return;
   }
   await api.barcodePkg.printBarcode({ ids: selectedRowKeys.value });
-  handleTabClick(tabValue.value); // 刷新数据
   onRefreshBelow();
   onRefreshTag();
   MessagePlugin.success('打印成功');
@@ -399,7 +400,6 @@ const generateBracode = async () => {
     ...printMode.value,
     createNum: printMode.value.createNum,
   });
-  handleTabClick(tabValue.value);
   onRefreshBelow();
   onRefreshTag();
   MessagePlugin.success('生成成功');
@@ -1042,6 +1042,8 @@ const handleTabClick = (selectedTabIndex: any) => {
   // 清空 条件模板 和 打印模板
   printMode.value.barcodeRuleId = '';
   printMode.value.printTempId = '';
+  selectedRowKeys.value = [];
+  console.log(`selectedTabIndex${selectedTabIndex}`);
   if (tabList.list.length > selectedTabIndex - 1 && selectedTabIndex > 0) {
     const selectedTab = tabList.list[selectedTabIndex - 1];
     printRuCondition.value.packType = selectedTab.packType;
@@ -1072,15 +1074,12 @@ const onRefreshBelow = () => {
     moBelowList.list = data.list;
     barcodeTotal.value = data.total;
   });
-  onPrintRulesData();
-  onPrintTemplateData();
 };
-const onRefreshTag = () => {
-  api.barcodePkg.getTagList(queryCondition.value).then((data) => {
+const onRefreshTag = async () => {
+  await api.barcodePkg.getTagList(queryCondition.value).then((data) => {
     tabList.list = data.list;
   });
-  onPrintRulesData();
-  onPrintTemplateData();
+  handleTabClick(1); // 刷新数据
 };
 
 const onRowClick = ({ row }) => {
