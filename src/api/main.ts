@@ -2628,6 +2628,8 @@ export interface Module {
   sortIndex?: number;
   behaviorPath?: string;
   iconPath?: string;
+  /** 图标颜色 */
+  iconColor?: string;
   moduleType?: string;
   /** 模块版本号 */
   moduleVersion?: number;
@@ -2641,6 +2643,8 @@ export interface ModuleMetaVO {
   title?: Record<string, string>;
   /** 图标路径 */
   icon?: string;
+  /** 图标颜色 */
+  iconColor?: string;
   /** frame路径 */
   frameSrc?: string;
 }
@@ -3411,13 +3415,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductName?: string;
-  isProductChecked?: boolean;
+  isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
+  isProductName?: string;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
-  isBatchName?: string;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3579,8 +3583,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5177,6 +5181,8 @@ export type ModulePermissionDTO = {
   sortIndex?: number;
   behaviorPath?: string;
   iconPath?: string;
+  /** 图标颜色 */
+  iconColor?: string;
   moduleType?: string;
   /** 模块版本号 */
   moduleVersion?: number;
