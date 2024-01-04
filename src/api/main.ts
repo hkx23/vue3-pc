@@ -22,6 +22,65 @@ export interface ResultObject {
   data?: object | null;
 }
 
+/** 工艺路线图形化 */
+export interface Graph {
+  nodes?: GraphNode[];
+  edges?: GraphEdge[];
+}
+
+export interface GraphBoom {
+  id?: string;
+  keyPart?: boolean;
+}
+
+export interface GraphEdge {
+  id?: string;
+  sourceNodeId?: string;
+  targetNodeId?: string;
+  endPoint?: GraphPoint;
+  startPoint?: GraphPoint;
+  pointsList?: GraphPoint[];
+  text?: GraphText;
+  type?: string;
+}
+
+export interface GraphNode {
+  id?: string;
+  properties?: GraphProperties;
+  text?: GraphText;
+  type?: string;
+  /** @format int32 */
+  x?: number;
+  /** @format int32 */
+  y?: number;
+}
+
+export interface GraphPoint {
+  /** @format int32 */
+  x?: number;
+  /** @format int32 */
+  y?: number;
+}
+
+export interface GraphProperties {
+  id?: string;
+  processId?: string;
+  processName?: string;
+  /** @format int32 */
+  processStep?: number;
+  processType?: string;
+  boomList?: GraphBoom[];
+  backgroundColor?: string;
+}
+
+export interface GraphText {
+  value?: string;
+  /** @format int32 */
+  x?: number;
+  /** @format int32 */
+  y?: number;
+}
+
 /** 工艺路线实体 */
 export interface RoutingDTO {
   /** 工艺路线编码 */
@@ -47,8 +106,10 @@ export interface RoutingDTO {
    * @format date-time
    */
   invailDate?: string;
+  /** 工艺路线图形化 */
+  routingGraph?: Graph;
   /** 工艺路线图形化JSON */
-  routingGraph?: string;
+  routingGraphStr?: string;
   /**
    * 工艺路线状态
    * @format int32
@@ -3417,11 +3478,11 @@ export interface MitemVO {
   isState?: boolean;
   isBatchName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
   isProductName?: string;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
+  isRawChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5217,12 +5278,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9614,6 +9675,21 @@ export const api = {
     getRuleSegment: () =>
       http.request<ResultPagingDataBarcodeSegmentDTO['data']>(`/api/main/barcodeRuleInMitem/getRuleSegment`, {
         method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品条码生成规则表
+     * @name CheckExpression
+     * @summary 检查规则表达式是否合法
+     * @request GET:/barcodeRuleInMitem/checkExpression
+     * @secure
+     */
+    checkExpression: (query: { expression: string }) =>
+      http.request<ResultBoolean['data']>(`/api/main/barcodeRuleInMitem/checkExpression`, {
+        method: 'GET',
+        params: query,
       }),
   },
   attendanceMode: {

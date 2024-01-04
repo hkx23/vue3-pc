@@ -65,10 +65,11 @@ export const useUserStore = defineStore('user', {
       });
       this.token = res.access_token;
       fw.setToken(res.access_token);
+      this.getUserInfo();
     },
     async getUserInfo() {
       const res = await api.user.currentUserInfo();
-      const resfavorites = await api.favorite.list();
+      const resFavorites = await api.favorite.list();
       // const mockRemoteUserInfo = async () => {
       //   return {
       //     name: '管理员',
@@ -93,7 +94,7 @@ export const useUserStore = defineStore('user', {
         timeLastPasswordChanged: res.timeLastPasswordChanged,
         orgId,
         orgs: res.orgList,
-        favorites: resfavorites,
+        favorites: resFavorites,
       } as OrgUser;
 
       const userOrgInfo = this.currUserOrgInfo;

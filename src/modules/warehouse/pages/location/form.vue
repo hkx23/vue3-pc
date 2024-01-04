@@ -1,84 +1,82 @@
 <template>
   <t-form
     ref="formRef"
-    layout="inline"
-    label-width="125px"
-    label-align="right"
     :rules="rules"
     :data="formData"
     :show-cancel="true"
-    :show-error-message="true"
+    label-width="110px"
+    :show-error-message="false"
     @submit="submit"
   >
-    <t-space direction="vertical">
-      <t-row :gutter="[32, 20]">
-        <t-col :span="6">
-          <t-form-item v-if="formData.operateTpye === 'add'" label="选择仓库" name="warehouseId">
-            <bcmp-select-business
-              v-model="formData.warehouseId"
-              :is-multiple="false"
-              type="warehouse"
-              label-field="warehouseName"
-              value-field="warehouseCode"
-              @selection-change="onMaterialTabData"
-            ></bcmp-select-business>
-          </t-form-item>
-          <t-form-item v-else label="选择仓库" required-mark>
-            <t-input v-model="formData.warehouseId" disabled></t-input>
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="仓库名称" required-mark>
-            <t-input v-model="formData.warehouseName" disabled placeholder="请输入仓库名称" />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item v-if="formData.operateTpye === 'add'" label="选择货区" name="districtId">
-            <bcmp-select-business
-              v-model="formData.districtId"
-              :is-multiple="false"
-              type="district"
-              label-field="districtName"
-              value-field="districtCode"
-              :disabled="formData.operateTpye !== 'add'"
-              @selection-change="onMaterialTabDatas"
-            ></bcmp-select-business>
-          </t-form-item>
-          <t-form-item v-else label="选择货区" required-mark>
-            <t-input v-model="formData.districtId" disabled></t-input>
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="货区名称" required-mark>
-            <t-input v-model="formData.districtName" placeholder="手动输入...." disabled />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="货位编码" name="locationCode">
-            <t-input
-              v-model="formData.locationCode"
-              placeholder="手动输入...."
-              :disabled="formData.operateTpye !== 'add'"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="货位名称" name="locationName">
-            <t-input v-model="formData.locationName" placeholder="手动输入...." />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="货位描述" name="locationDesc">
-            <t-textarea v-model="formData.locationDesc" placeholder="手动输入...." />
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="启用">
-            <t-switch v-model="formData.state" :custom-value="[1, 0]" />
-          </t-form-item>
-        </t-col>
-      </t-row>
-    </t-space>
+    <t-row :gutter="[32, 16]">
+      <t-col :span="6">
+        <t-form-item v-if="formData.operateTpye === 'add'" label="选择仓库" name="warehouseId">
+          <bcmp-select-business
+            v-model="formData.warehouseId"
+            :show-title="false"
+            :is-multiple="false"
+            type="warehouse"
+            label-field="warehouseName"
+            value-field="warehouseCode"
+            @selection-change="onMaterialTabData"
+          ></bcmp-select-business>
+        </t-form-item>
+        <t-form-item v-else label="选择仓库" required-mark>
+          <t-input v-model="formData.warehouseId" disabled></t-input>
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="仓库名称" required-mark>
+          <t-input v-model="formData.warehouseName" disabled placeholder="请输入仓库名称" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item v-if="formData.operateTpye === 'add'" label="选择货区" name="districtId">
+          <bcmp-select-business
+            v-model="formData.districtId"
+            :show-title="false"
+            :is-multiple="false"
+            type="district"
+            label-field="districtName"
+            value-field="districtCode"
+            :disabled="formData.operateTpye !== 'add'"
+            @selection-change="onMaterialTabDatas"
+          ></bcmp-select-business>
+        </t-form-item>
+        <t-form-item v-else label="选择货区" required-mark>
+          <t-input v-model="formData.districtId" disabled></t-input>
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="货区名称" required-mark>
+          <t-input v-model="formData.districtName" placeholder="手动输入...." disabled />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="货位编码" name="locationCode">
+          <t-input
+            v-model="formData.locationCode"
+            placeholder="手动输入...."
+            :disabled="formData.operateTpye !== 'add'"
+          />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="货位名称" name="locationName">
+          <t-input v-model="formData.locationName" placeholder="手动输入...." />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="货位描述" name="locationDesc">
+          <t-textarea v-model="formData.locationDesc" placeholder="手动输入...." />
+        </t-form-item>
+      </t-col>
+      <t-col :span="6">
+        <t-form-item label="启用">
+          <t-switch v-model="formData.state" :custom-value="[1, 0]" />
+        </t-form-item>
+      </t-col>
+    </t-row>
   </t-form>
 </template>
 <script setup lang="ts">
@@ -228,12 +226,3 @@ defineExpose({
   formData,
 });
 </script>
-
-<style scoped>
-/* 添加样式设置输入框宽度 */
-.t-input,
-.bcmp-select-business,
-.t-textarea {
-  width: 100%;
-}
-</style>

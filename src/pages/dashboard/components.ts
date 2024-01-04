@@ -2,6 +2,7 @@ import { LayoutItem } from 'grid-layout-plus';
 
 import Todo from '@/modules/main/pages/todo/componentTodo.vue';
 
+import AbnormalSafetyLamp from './base/components/abnormal-safety-lamp/index.vue';
 // demo
 import LineChart from './base/components/demo/LineChart.vue';
 import PieChart from './base/components/demo/PieChart.vue';
@@ -37,6 +38,7 @@ export const components = [
     code: 'poor-process-top5',
     title: '过程不良TOP5',
     showTitle: true,
+    ghost: true,
     description: '过程不良TOP5 按周',
     category: '生产',
     component: PoorProcessTop5,
@@ -50,6 +52,17 @@ export const components = [
     description: '当天生产达成率排行',
     category: '生产',
     component: PoductionAchievementRateRanking,
+    w: 4,
+    h: 3,
+  },
+  {
+    code: 'abnormal-safety-lamp',
+    title: '安灯异常模块分布',
+    showTitle: true,
+    ghost: true,
+    description: '安灯异常模块分布',
+    category: '生产',
+    component: AbnormalSafetyLamp,
     w: 4,
     h: 3,
   },

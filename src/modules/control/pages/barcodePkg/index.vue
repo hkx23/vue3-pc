@@ -110,7 +110,9 @@
                     @refresh="onRefreshBelow"
                   >
                     <template #title>
-                      <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck>仅显示已生成</t-radio>
+                      <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck @change="onRefreshBelow"
+                        >仅显示已生成</t-radio
+                      >
                     </template>
                     <template #button>
                       <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
@@ -292,10 +294,9 @@ const onPrint = async () => {
     return;
   }
   await api.barcodePkg.printBarcode({ ids: selectedRowKeys.value });
-  handleTabClick(tabValue.value); // 刷新数据
-  MessagePlugin.success('打印成功');
   onRefreshBelow();
   onRefreshTag();
+  MessagePlugin.success('打印成功');
 };
 // 补打，作废确定
 const onConfirm = async () => {
@@ -364,6 +365,7 @@ const printMode = ref({
   createNum: 0,
   packQty: 0,
   createPDNum: 0,
+  maxCreate: 0,
   packQtyShow: '',
   packType: '',
   moScheduleId: '',
@@ -375,6 +377,10 @@ const printMode = ref({
 const generateBracode = async () => {
   const residueQty = printMode.value.planQty - printMode.value.generateQty;
   console.log(residueQty);
+  if (printMode.value.maxCreate <= 0) {
+    MessagePlugin.warning('剩余生成数量为0');
+    return;
+  }
 
   if (!Number.isInteger(printMode.value.createPDNum) || printMode.value.createPDNum > residueQty) {
     // 提示错误信息
@@ -399,10 +405,9 @@ const generateBracode = async () => {
     ...printMode.value,
     createNum: printMode.value.createNum,
   });
-  handleTabClick(tabValue.value);
-  MessagePlugin.success('生成成功');
   onRefreshBelow();
   onRefreshTag();
+  MessagePlugin.success('生成成功');
 };
 
 // 打印上方查询初始化
@@ -834,6 +839,7 @@ const fetchBracodeManageTable = async () => {
     const { list } = data;
     pkgManageDataList.list = list;
     pkgManageTabTotal.value = data.total;
+    selectedManageRowKeys.value = [];
   } catch (e) {
     console.log(e);
   } finally {
@@ -1041,6 +1047,8 @@ const handleTabClick = (selectedTabIndex: any) => {
   // 清空 条件模板 和 打印模板
   printMode.value.barcodeRuleId = '';
   printMode.value.printTempId = '';
+  selectedRowKeys.value = [];
+  console.log(`selectedTabIndex${selectedTabIndex}`);
   if (tabList.list.length > selectedTabIndex - 1 && selectedTabIndex > 0) {
     const selectedTab = tabList.list[selectedTabIndex - 1];
     printRuCondition.value.packType = selectedTab.packType;
@@ -1054,7 +1062,8 @@ const handleTabClick = (selectedTabIndex: any) => {
     printMode.value.planQty = selectedTab.planQty;
     printMode.value.packQty = selectedTab.packQty;
     calculateButtonOffset();
-    printMode.value.createPDNum = selectedTab.planQty - selectedTab.generateQty;
+    printMode.value.maxCreate = selectedTab.planQty - selectedTab.generateQty;
+    printMode.value.createPDNum = printMode.value.maxCreate > 0 ? printMode.value.maxCreate : 0;
     printMode.value.packQtyShow = selectedTab.packQtyShow;
     dataSummary.value = `${selectedTab.planQty} (${selectedTab.planSheet}) / ${selectedTab.generateQty} (${selectedTab.generateSheet}) / ${selectedTab.displayQty} (${selectedTab.displaySheet}) `;
     api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {
@@ -1071,15 +1080,12 @@ const onRefreshBelow = () => {
     moBelowList.list = data.list;
     barcodeTotal.value = data.total;
   });
-  onPrintRulesData();
-  onPrintTemplateData();
 };
-const onRefreshTag = () => {
-  api.barcodePkg.getTagList(queryCondition.value).then((data) => {
+const onRefreshTag = async () => {
+  await api.barcodePkg.getTagList(queryCondition.value).then((data) => {
     tabList.list = data.list;
   });
-  onPrintRulesData();
-  onPrintTemplateData();
+  handleTabClick(1); // 刷新数据
 };
 
 const onRowClick = ({ row }) => {

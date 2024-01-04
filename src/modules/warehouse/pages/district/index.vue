@@ -1,10 +1,10 @@
 <!-- 货区 -->
 <template>
-  <div class="main-page">
-    <div class="main-page-content">
+  <cmp-container :full="true">
+    <cmp-card>
       <cmp-query :opts="opts" @submit="onInput"></cmp-query>
-    </div>
-    <div class="main-page-content">
+    </cmp-card>
+    <cmp-card>
       <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
@@ -16,7 +16,9 @@
       >
         <!-- 状态 -->
         <template #state="{ row }">
-          <div>{{ row.state === 1 ? '启用' : '禁用' }}</div>
+          <!-- <div>{{ row.state == 1 ? '启用' : '禁用' }}</div> -->
+          <span v-if="row.state == 1">启用</span>
+          <span v-else>禁用</span>
         </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
@@ -31,26 +33,22 @@
           </t-space>
         </template>
       </cmp-table>
-    </div>
-  </div>
+    </cmp-card>
+  </cmp-container>
   <!-- 弹窗 -->
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="formTitle"
-      :on-confirm="onConfirmForm"
-      width="49%"
-      :close-on-overlay-click="false"
-    >
-      <template #header>
-        {{ formTitle }}
-      </template>
-      <t-space direction="vertical" style="width: 98%">
-        <!-- 传递 formData 给子组件 -->
-        <district-form ref="formRef" :form-title="formTitle"></district-form>
-      </t-space>
-    </t-dialog>
-  </div>
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="formTitle"
+    :on-confirm="onConfirmForm"
+    width="750px"
+    :close-on-overlay-click="false"
+  >
+    <template #header>
+      {{ formTitle }}
+    </template>
+    <!-- 传递 formData 给子组件 -->
+    <district-form ref="formRef" :form-title="formTitle"></district-form>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -105,7 +103,7 @@ const opts = computed(() => {
   };
 });
 
-//* 表格标题~
+//* 表格标题
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '货区编码', colKey: 'districtCode', width: 85 },

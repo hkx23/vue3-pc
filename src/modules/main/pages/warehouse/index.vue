@@ -101,6 +101,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '启用交易上传时间', width: 170, colKey: 'datetimeUpload' },
   { title: '状态', width: 74, colKey: 'stateName' },
   { title: '货位管理', width: 100, colKey: 'enableLocationName' },
+  { title: '先进先出', width: 100, colKey: 'fifoName' },
   { title: '最后更新人', width: 120, colKey: 'modifier' },
   { title: '最后更新时间', width: 170, colKey: 'timeModified' },
   { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
@@ -171,6 +172,7 @@ const onEditRowClick = (value: any) => {
   formRef.value.formData.isState = value.row.state === 1;
   formRef.value.formData.enableLocation = value.row.isEnableLocation === 1;
   formRef.value.formData.enableUpload = value.row.isEnableUpload === 1;
+  formRef.value.formData.fifo = value.row.isFifo === 1;
   formRef.value.formData.operateTpye = 'edit';
   formVisible.value = true;
 };

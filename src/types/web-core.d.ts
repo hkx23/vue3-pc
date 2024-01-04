@@ -164,7 +164,6 @@ export declare class Http {
     middlewares: HttpMiddleware[];
     options: HttpOptions;
     pendingMap: Map<string, HttpContext>;
-    cacheMap: Map<string, Promise<Response>>;
     constructor(options?: HttpOptions | string);
     /**
      * 新增中间件
@@ -190,6 +189,8 @@ export declare class Http {
  * HTTP上下文
  */
 declare class HttpContext {
+    key: string;
+    fetchPromise: Promise<any> | undefined;
     /**
      * 服务基础路径
      */
