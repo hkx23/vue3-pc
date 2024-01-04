@@ -67,7 +67,7 @@
                 :table-data="WipKeypartReportVOForm"
                 :total="WorkOrderTotal"
                 @select-change="onMaterialWorkOrderChange"
-                @refresh="onMaterialWorkOrder"
+                @refresh="onMaterialWorkOrderRefresh"
               >
                 <template #title>
                   {{ '产品信息-关键件信息' }}
@@ -83,7 +83,7 @@
                 row-key="moCode"
                 :table-data="workOrderFeedData"
                 :total="workOrderFeedTotal"
-                @refresh="onWorkOrderFeed"
+                @refresh="onWorkOrderFeedRefresh"
               >
                 <template #title>
                   {{ '产品信息-工单投料信息' }}
@@ -238,7 +238,7 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { defineEmits, defineProps, reactive, ref, watch } from 'vue';
+import { computed, defineEmits, defineProps, reactive, ref, watch } from 'vue';
 
 import { api, MoOnboardReportVO, ProductBaseReportVO, TransferHeadVO, WipKeypartReportVO } from '@/api/control';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -857,6 +857,7 @@ watch(
       WipKeypartReportVOForm.value = [];
       WorkOrderTotal.value = 0;
       workOrderFeedData.value = [];
+      materialCode.value = '';
       workOrderFeedTotal.value = 0;
     }
     if (tabKey.value === 6) {
@@ -912,15 +913,8 @@ const tabChange = async (context: any) => {
   pageUI.value.page = 1;
   pageUITwo.value.page = 1;
   tabKey.value = context;
-  if (context === 0) {
-    Emit('updateBasicsNum', 0);
-  }
-  if (context === 1) {
-    Emit('updateBasicsNum', 1);
-  }
   if (context === 2) {
     await onMaterialWorkOrder();
-    Emit('updateBasicsNum', 2);
   }
   if (context === 3) {
     Emit('updateBasicsNum', 3);
@@ -983,11 +977,11 @@ const onMaterialWorkOrderChange = async (context: any) => {
 };
 
 // 获取 物料下表格数据
-const workOrderFeedList = ref({
-  pageNum: 1,
-  pageSize: 10,
-  moCode: materialCode.value, // 工单号
-});
+const workOrderFeedList = computed(() => ({
+  pageNum: pageUITwo.value.page,
+  pageSize: pageUITwo.value.rows,
+  moCode: materialCode.value,
+}));
 const workOrderFeedData = ref<MoOnboardReportVO[]>([]);
 const workOrderFeedTotal = ref<number>(0);
 const onWorkOrderFeed = async () => {
@@ -996,6 +990,22 @@ const onWorkOrderFeed = async () => {
   const res = await api.reversetraceability.getMoOnboardInfo(workOrderFeedList.value);
   workOrderFeedData.value = res.list;
   workOrderFeedTotal.value = res.total;
+};
+
+// 上表格刷新事件
+const onMaterialWorkOrderRefresh = async () => {
+  pageUI.value.page = 1;
+  await onMaterialWorkOrder();
+  materialCode.value = '';
+  workOrderFeedData.value = [];
+  workOrderFeedTotal.value = 0;
+};
+// 下表格刷新事件
+const onWorkOrderFeedRefresh = async () => {
+  if (!materialCode.value) {
+    return;
+  }
+  await onWorkOrderFeed();
 };
 
 // 获取 不良维修信息 7️⃣7️⃣7️⃣7️⃣7️⃣7️⃣  数据
@@ -1014,8 +1024,9 @@ const onGenerateChange = async (context: any) => {
   [badMaintenanceId.value] = context;
   await onBadMaintenanceTwo();
 };
-
+// 刷新事件
 const onBadMaintenanceRefresh = async () => {
+  pageUI.value.page = 1;
   await onBadMaintenance();
   badMaintenanceDataTwo.list = [];
 };
