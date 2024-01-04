@@ -786,10 +786,6 @@ const onReprint = () => {
 // 作废 点击事件
 const onCancellation = () => {
   formRef.value.reset({ type: 'empty' });
-  if (!printTemplate.value) {
-    MessagePlugin.warning('请选择打印模板！');
-    return;
-  }
   const specificStatus = barcodeWipStatusNameArr.value.every((item) => item === '已生成' || item === '已打印');
   if (!specificStatus) {
     MessagePlugin.warning('存在条码状态不为已生成、已打印状态，不允许作废！');

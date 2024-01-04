@@ -1,18 +1,18 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card v-if="BasicsShow !== 0 && BasicsShow !== 1" :full="false">
-      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
-    </cmp-card>
-    <cmp-card v-if="BasicsShow === 0 || BasicsShow === 1" :full="false">
-      <cmp-query :opts="optsBasics" :bool-enter="false" @submit="onInputBasics" @reset="onReset"> </cmp-query>
+    <cmp-card :full="false">
+      <cmp-query
+        ref="queryComponent"
+        :opts="opts"
+        :bool-enter="false"
+        :is-reset-query="false"
+        @submit="onInput"
+        @reset="onReset"
+      >
+      </cmp-query>
     </cmp-card>
     <cmp-card class="not-full-tab">
-      <tabs
-        ref="tabsRef"
-        :on-input-data="onInputData"
-        :on-input-basics-data="onInputBasicsData"
-        @update-basics-num="handleUpdateBasicsNum"
-      ></tabs>
+      <tabs ref="tabsRef" :on-input-data="onInputData" :reset-data="resetData"></tabs>
     </cmp-card>
   </cmp-container>
 </template>
@@ -67,44 +67,15 @@ const onInput = async (data: any) => {
   onInputData.value = JSON.parse(JSON.stringify(data));
 };
 
-// ############### 产品基础信息 #########
-const optsBasics = computed(() => {
-  return {
-    serialNumber: {
-      label: '基础产品条码',
-      comp: 't-input',
-      event: 'input',
-      defaultVal: ' ',
-    },
-    moCode: {
-      label: '基础工单号',
-      comp: 't-input',
-      event: 'input',
-      defaultVal: ' ',
-    },
-    packingBoxCode: {
-      label: '基础包装箱码',
-      comp: 't-input',
-      event: 'input',
-      defaultVal: ' ',
-    },
-  };
-});
-
-const onInputBasicsData = ref({});
-const onInputBasics = async (data: any) => {
-  fillEmptyValuesWithEmptyString(data);
-  onInputBasicsData.value = JSON.parse(JSON.stringify(data));
-};
-
+const resetData = ref({});
 const onReset = async () => {
-  console.log('🚀 ~ file: index.vue:103 ~ onReset ~ onReset:', 'onReset');
-};
-
-// 判断是产品基础信息还是其他
-const BasicsShow = ref(0);
-const handleUpdateBasicsNum = (BasicsNum: number) => {
-  BasicsShow.value = BasicsNum;
+  resetData.value = {
+    pageNum: 1,
+    pageSize: 10,
+    serialNumber: '', // 产品条码
+    moCode: '', // 工单号
+    parentPkgBarcode: '', // 包装箱码,
+  };
 };
 </script>
 

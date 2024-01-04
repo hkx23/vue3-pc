@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/control';
@@ -228,6 +228,10 @@ const endOfToday = dayjs().endOf('day');
 const onInput = async (context) => {
   bagsSuitcasesData.value.pageNum = 1;
   const [beginDate, endDate] = context.operationTime;
+  if (!beginDate || !endDate) {
+    MessagePlugin.warning('请正确输入日期！');
+    return;
+  }
   bagsSuitcasesData.value.barcode = context?.productCode ? context?.productCode : ''; // 每条数据的code
   bagsSuitcasesData.value.mitemCode = context?.productNo ? context?.productNo : ''; // 产品编码 物料接口
   bagsSuitcasesData.value.moScheCode = context?.workOrder ? context?.workOrder : ''; // 排产单号

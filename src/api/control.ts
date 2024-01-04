@@ -916,6 +916,23 @@ export interface WipVO {
   completeedNum?: number;
   /** 工序列表 */
   processList?: WipProcessDTO[];
+  /** 产品名称 */
+  mitemName?: string;
+  /**
+   * 当日计划完成数量
+   * @format int32
+   */
+  planOfToday?: number;
+  /**
+   * 当日已完成数量
+   * @format int32
+   */
+  completeOfToday?: number;
+  /**
+   * 当日产品达成率
+   * @format double
+   */
+  achievingRateOfToday?: number;
   /** @format int32 */
   sumwip?: number;
 }
@@ -926,10 +943,6 @@ export interface ReverseTraceabilityReportSearch {
   pageNum?: number;
   /** @format int32 */
   pageSize?: number;
-  /** @format int32 */
-  page2Num?: number;
-  /** @format int32 */
-  page2Size?: number;
   /** 产品条码 */
   serialNumber?: string;
   /** 工单号 */
@@ -1062,6 +1075,59 @@ export interface ResultPagingDataProductWipRepairVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataProductWipRepairVO;
+}
+
+/** 响应数据 */
+export type PagingDataWipKeypartReportVO = {
+  list?: WipKeypartReportVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWipKeypartReportVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWipKeypartReportVO;
+}
+
+/** 关键物料追溯（反向）-关键件信息 */
+export interface WipKeypartReportVO {
+  /** 产品条码 */
+  serialNumber?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 排产单号 */
+  moScheCode?: string;
+  /** 包装箱码 */
+  parentPkgBarcode?: string;
+  /** 工序编码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 工站编码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 状态 */
+  status?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /**
+   * 数量
+   * @format double
+   */
+  qty?: number;
+  /** 员工 */
+  userName?: string;
+  /** 员工名称 */
+  displayName?: string;
 }
 
 /** 响应数据 */
@@ -1326,14 +1392,6 @@ export interface WipLog {
   terminal?: string;
 }
 
-/** 关键物料追溯（反向）-物料信息 */
-export type MitemBaseReportVO = {
-  /** 关键件列表 */
-  wipKeypartReportList?: PagingDataWipKeypartReportVO;
-  /** 物料投料列表 */
-  moOnboardReportList?: PagingDataMoOnboardReportVO;
-} | null;
-
 /** 关键物料追溯（反向）-关键件信息 */
 export interface MoOnboardReportVO {
   /** 物料条码 */
@@ -1376,22 +1434,15 @@ export interface MoOnboardReportVO {
   statusName?: string;
 }
 
-/** 物料投料列表 */
-export interface PagingDataMoOnboardReportVO {
+/** 响应数据 */
+export type PagingDataMoOnboardReportVO = {
   list?: MoOnboardReportVO[];
   /** @format int32 */
   total?: number;
-}
-
-/** 关键件列表 */
-export interface PagingDataWipKeypartReportVO {
-  list?: WipKeypartReportVO[];
-  /** @format int32 */
-  total?: number;
-}
+} | null;
 
 /** 通用响应类 */
-export interface ResultMitemBaseReportVO {
+export interface ResultPagingDataMoOnboardReportVO {
   /**
    * 响应代码
    * @format int32
@@ -1399,41 +1450,8 @@ export interface ResultMitemBaseReportVO {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 关键物料追溯（反向）-物料信息 */
-  data?: MitemBaseReportVO;
-}
-
-/** 关键物料追溯（反向）-关键件信息 */
-export interface WipKeypartReportVO {
-  /** 产品条码 */
-  serialNumber?: string;
-  /** 工单号 */
-  moCode?: string;
-  /** 排产单号 */
-  moScheCode?: string;
-  /** 包装箱码 */
-  parentPkgBarcode?: string;
-  /** 工序编码 */
-  processCode?: string;
-  /** 工序名称 */
-  processName?: string;
-  /** 工站编码 */
-  workstationCode?: string;
-  /** 工站名称 */
-  workstationName?: string;
-  /** 状态 */
-  status?: string;
-  /** 状态名称 */
-  statusName?: string;
-  /**
-   * 数量
-   * @format double
-   */
-  qty?: number;
-  /** 员工 */
-  userName?: string;
-  /** 员工名称 */
-  displayName?: string;
+  /** 响应数据 */
+  data?: PagingDataMoOnboardReportVO;
 }
 
 /** 维修单 */
@@ -1628,11 +1646,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -1679,9 +1697,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
+  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -2784,17 +2802,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   stateName?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2898,16 +2916,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   stateName?: string;
+  defectCodeStr?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
-  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3147,8 +3165,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -3370,6 +3388,19 @@ export interface WipProcessDtlVO {
    * @format int32
    */
   timeStay?: number;
+}
+
+/** 通用响应类 */
+export interface ResultListWipVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WipVO[] | null;
 }
 
 /** 显示包装规则明细列表 */
@@ -4144,6 +4175,20 @@ export const api = {
         method: 'GET',
         params: query,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品表
+     * @name GetAchievingRate
+     * @summary 工作台指标计划达成率
+     * @request GET:/wip/getAchievingRate
+     * @secure
+     */
+    getAchievingRate: () =>
+      http.request<ResultListWipVO['data']>(`/api/control/wip/getAchievingRate`, {
+        method: 'GET',
+      }),
   },
   reversetraceability: {
     /**
@@ -4157,6 +4202,21 @@ export const api = {
      */
     getWipRepairList: (data: ReverseTraceabilityReportSearch) =>
       http.request<ResultPagingDataProductWipRepairVO['data']>(`/api/control/reversetraceability/getWipRepairList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料追溯（反向）
+     * @name GetWipKeypartInfo
+     * @summary 获取关键件物料信息
+     * @request POST:/reversetraceability/getWipKeypartInfo
+     * @secure
+     */
+    getWipKeypartInfo: (data: ReverseTraceabilityReportSearch) =>
+      http.request<ResultPagingDataWipKeypartReportVO['data']>(`/api/control/reversetraceability/getWipKeypartInfo`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4195,13 +4255,13 @@ export const api = {
      * No description
      *
      * @tags 关键物料追溯（反向）
-     * @name GetMoBaseInfo
-     * @summary 获取工单信息
-     * @request POST:/reversetraceability/getMoBaseInfo
+     * @name GetMoOnboardInfo
+     * @summary 获取物料投料信息
+     * @request POST:/reversetraceability/getMoOnboardInfo
      * @secure
      */
-    getMoBaseInfo: (data: ReverseTraceabilityReportSearch) =>
-      http.request<ResultObject['data']>(`/api/control/reversetraceability/getMoBaseInfo`, {
+    getMoOnboardInfo: (data: ReverseTraceabilityReportSearch) =>
+      http.request<ResultPagingDataMoOnboardReportVO['data']>(`/api/control/reversetraceability/getMoOnboardInfo`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4210,13 +4270,13 @@ export const api = {
      * No description
      *
      * @tags 关键物料追溯（反向）
-     * @name GetMitemBaseInfo
-     * @summary 获取物料信息
-     * @request POST:/reversetraceability/getMitemBaseInfo
+     * @name GetMoBaseInfo
+     * @summary 获取工单信息
+     * @request POST:/reversetraceability/getMoBaseInfo
      * @secure
      */
-    getMitemBaseInfo: (data: ReverseTraceabilityReportSearch) =>
-      http.request<ResultMitemBaseReportVO['data']>(`/api/control/reversetraceability/getMitemBaseInfo`, {
+    getMoBaseInfo: (data: ReverseTraceabilityReportSearch) =>
+      http.request<ResultObject['data']>(`/api/control/reversetraceability/getMoBaseInfo`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4636,7 +4696,10 @@ export const api = {
      */
     moSchelist: (query?: {
       /** @default "" */
+      lineId?: string;
+      /** @default "" */
       scheCode?: string;
+      mitemId?: string;
     }) =>
       http.request<ResultObject['data']>(`/api/control/mitemOnboard/moSchelist`, {
         method: 'GET',
@@ -5225,6 +5288,22 @@ export const api = {
      */
     excuteAtomic: (data: AtomicContext) =>
       http.request<ResultAtomicContext['data']>(`/api/control/atomicCheckBarcodeRepeat/excuteAtomic`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  atomicBarcodeComplete: {
+    /**
+     * No description
+     *
+     * @tags 原子相关方法-完工原子
+     * @name ExcuteAtomic
+     * @summary 完工原子
+     * @request POST:/atomicBarcodeComplete/excuteAtomic
+     * @secure
+     */
+    excuteAtomic: (data: AtomicContext) =>
+      http.request<ResultAtomicContext['data']>(`/api/control/atomicBarcodeComplete/excuteAtomic`, {
         method: 'POST',
         body: data as any,
       }),

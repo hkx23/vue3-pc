@@ -3,7 +3,7 @@
     <t-tab-panel v-for="(item, index) in tabPanel" :key="item" :value="index" :label="item" :destroy-on-hide="false">
       <template #panel>
         <!-- # 1️⃣ 产品基础信息 -->
-        <cmp-container v-if="tabKey === 0" :full="true">
+        <cmp-container v-show="tabKey === 0" :full="true">
           <t-card :bordered="false">
             <div class="form-item-box">
               <t-form-item label="工序">{{ productBasicInformationForm?.curProcessName }}</t-form-item>
@@ -21,7 +21,7 @@
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
-                ref="tableRefCard"
+                ref="tableRefCardAD"
                 v-model:pagination="pageUIOne"
                 empty="没有符合条件的数据"
                 row-key="deliveryCardId"
@@ -41,7 +41,7 @@
                 <template #title>
                   {{
                     `工单信息( 工单号：${
-                      productBasicInformationForm.moCode ? productBasicInformationForm.moCode : ''
+                      productBasicInformationForm?.moCode ? productBasicInformationForm?.moCode : ''
                     } )`
                   }}
                 </template>
@@ -50,11 +50,11 @@
           </footer>
         </cmp-container>
         <!-- # 2️⃣ 工单信息 -->
-        <cmp-container v-if="tabKey === 1" :full="true">
+        <cmp-container v-show="tabKey === 1" :full="true">
           <detailed :row="workOrderData.list"></detailed>
         </cmp-container>
         <!-- # 3️⃣ 物料信息 -->
-        <cmp-container v-if="tabKey === 2" :full="true">
+        <cmp-container v-show="tabKey === 2" :full="true">
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
@@ -89,7 +89,7 @@
           </footer>
         </cmp-container>
         <!-- # 4️⃣ 包装信息 -->
-        <cmp-container v-if="tabKey === 3" :full="true">
+        <cmp-container v-show="tabKey === 3" :full="true">
           <cmp-card :full="false">
             <t-form>
               <t-row>
@@ -120,7 +120,7 @@
           </cmp-card>
         </cmp-container>
         <!-- # 5️⃣ 品质信息 -->
-        <cmp-container v-if="tabKey === 4" :full="true">
+        <cmp-container v-show="tabKey === 4" :full="true">
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
@@ -139,7 +139,7 @@
           </footer>
         </cmp-container>
         <!-- # 6️⃣ 工艺信息 -->
-        <cmp-container v-if="tabKey === 5" :full="true">
+        <cmp-container v-show="tabKey === 5" :full="true">
           <cmp-card :full="false">
             <t-form>
               <t-row>
@@ -170,11 +170,11 @@
           </footer>
         </cmp-container>
         <!-- # 7️⃣ 不良维修信息 -->
-        <cmp-container v-if="tabKey === 6" :full="true">
+        <cmp-container v-show="tabKey === 6" :full="true">
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
-                ref="tableRefCard"
+                ref="tableRefSeven"
                 v-model:pagination="pageUI"
                 row-key="id"
                 select-on-row-click
@@ -206,11 +206,11 @@
           </footer>
         </cmp-container>
         <!-- # 8️⃣ 出入库信息 -->
-        <cmp-container v-if="tabKey === 7" :full="true">
+        <cmp-container v-show="tabKey === 7" :full="true">
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
-                ref="tableRefCard"
+                ref="tableRefba"
                 v-model:pagination="pageUI"
                 row-key="id"
                 select-on-row-click
@@ -232,8 +232,9 @@
 </template>
 
 <script setup lang="ts">
+import _ from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { defineEmits, defineProps, onMounted, reactive, ref, watch } from 'vue';
+import { defineEmits, defineProps, reactive, ref, watch } from 'vue';
 
 import { api, ProductBaseReportVO, TransferHeadVO } from '@/api/control';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -253,7 +254,9 @@ const tabPanel = [
   '不良维修信息',
   '出入库信息',
 ];
-
+const tableRefCardAD = ref();
+const tableRefSeven = ref();
+const tableRefba = ref();
 const Emit = defineEmits(['updateBasicsNum']);
 
 const jiashuju = ref([
@@ -824,29 +827,27 @@ const props = defineProps({
       }; // 返回一个对象作为默认值
     },
   },
-  onInputBasicsData: {
-    type: Object, // 或者其他适合数据的类型
-    default: () => {
-      return {
-        pageNum: 1,
-        pageSize: 10,
-        serialNumber: ' ', // 产品条码
-        moCode: ' ', // 工单号
-        parentPkgBarcode: ' ', // 包装箱码
-      }; // 返回一个对象作为默认值
-    },
-  },
+  resetData: Object,
 });
 
 watch(
-  () => props.onInputBasicsData,
+  () => props.resetData,
   async (newVal: any) => {
-    ProductBasicInformationList.value = { ...newVal, pageNum: 1, pageSize: 10 };
+    commonParametersList.value = { ...newVal, pageNum: 1, pageSize: 10 };
     if (tabKey.value === 0) {
-      await onGetProductBasicInformation();
+      productBasicInformationForm.value = {};
     }
     if (tabKey.value === 1) {
-      await onGetWorkOrder();
+      workOrderData.list = [];
+    }
+    if (tabKey.value === 6) {
+      await tableRefSeven.value[tabKey.value].setSelectedRowKeys([]);
+      await onBadMaintenance();
+      badMaintenanceDataTwo.list = [];
+      badMaintenanceId.value = '';
+    }
+    if (tabKey.value === 7) {
+      await onInventoryInOut();
     }
   },
   {
@@ -859,9 +860,21 @@ watch(
   async (newVal: any) => {
     // 当 onInputData 改变时，更新 productBasicInformationList 的值
     commonParametersList.value = { ...newVal, pageNum: 1, pageSize: 10 };
+    if (tabKey.value === 0) {
+      pageUIThree.value.page = 1;
+      await onGetProductBasicInformation();
+    }
+    if (tabKey.value === 1) {
+      pageUIThree.value.page = 1;
+      await onGetWorkOrder();
+    }
     if (tabKey.value === 2) {
       pageUIThree.value.page = 1;
       await onMaterialWorkOrder();
+    }
+    if (tabKey.value === 6) {
+      pageUIThree.value.page = 1;
+      await onBadMaintenance();
     }
     if (tabKey.value === 7) {
       pageUIThree.value.page = 1;
@@ -873,11 +886,6 @@ watch(
   },
 );
 
-// 🌈 页面初始化
-onMounted(async () => {
-  await onGetProductBasicInformation(); // 产品基础信息 数据获取
-});
-
 // 🌈 tab 切换事件
 const tabKey = ref(0);
 const tabChange = (context: any) => {
@@ -885,11 +893,9 @@ const tabChange = (context: any) => {
   tabKey.value = context;
   if (context === 0) {
     Emit('updateBasicsNum', 0);
-    onGetProductBasicInformation();
   }
   if (context === 1) {
     Emit('updateBasicsNum', 1);
-    onGetWorkOrder();
   }
   if (context === 2) {
     Emit('updateBasicsNum', 2);
@@ -913,15 +919,6 @@ const tabChange = (context: any) => {
   }
 };
 
-// 产品基础信息 专用参数
-const ProductBasicInformationList = ref({
-  pageNum: 1,
-  pageSize: 10,
-  serialNumber: ' ', // 产品条码
-  moCode: '11', // 工单号
-  parentPkgBarcode: ' ', // 包装箱码
-});
-
 // 🌈🌈🌈 公共参数
 const commonParametersList = ref({
   pageNum: 1,
@@ -934,16 +931,14 @@ const commonParametersList = ref({
 const productBasicInformationForm = ref<ProductBaseReportVO>({});
 // 产品基础信息 请求
 const onGetProductBasicInformation = async () => {
-  const res = await api.reversetraceability.getProductBaseInfo(ProductBasicInformationList.value);
-  productBasicInformationForm.value = res;
+  const res = await api.reversetraceability.getProductBaseInfo(commonParametersList.value);
+  productBasicInformationForm.value = _.cloneDeep(res);
 };
 
 // 获取 工单信息 2️⃣2️⃣2️⃣2️⃣2️⃣2️⃣  数据
 const workOrderData = reactive({ list: [] });
 const onGetWorkOrder = async () => {
-  ProductBasicInformationList.value.pageNum = pageUIThree.value.page;
-  ProductBasicInformationList.value.pageSize = pageUIThree.value.rows;
-  const res = (await api.reversetraceability.getMoBaseInfo(ProductBasicInformationList.value)) as any;
+  const res = (await api.reversetraceability.getMoBaseInfo(commonParametersList.value)) as any;
   [workOrderData.list] = res.list;
 };
 // 获取 物料信息 3️⃣3️⃣3️⃣3️⃣3️⃣3️⃣  数据

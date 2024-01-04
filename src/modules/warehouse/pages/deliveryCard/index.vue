@@ -494,6 +494,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     colKey: 'specificationQuantity',
     title: '规格数量',
     align: 'center',
+    width: '150',
   },
   {
     colKey: 'thisAmountSheets',
