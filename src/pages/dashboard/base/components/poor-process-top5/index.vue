@@ -81,12 +81,14 @@ const getPieData = async () => {
 
     optionChart.value = {
       title: {
-        text: `过程不良TOP5 (周 ${dayjs(first.beginDate).format('YYYY-MM-DD')} ~ ${dayjs(first.endDate).format(
-          'YYYY-MM-DD',
-        )})`,
-        left: 'center',
+        text: `(周 ${dayjs(first.beginDate).format('YYYY-MM-DD')} ~ ${dayjs(first.endDate).format('YYYY-MM-DD')})`,
+        left: 'left',
+        top: '-3',
         textStyle: {
-          fontSize: 15,
+          fontSize: 11.5,
+          fontWite: 400,
+          color: '#666666',
+          fontWeight: 'normal',
         },
       },
       legend: {
