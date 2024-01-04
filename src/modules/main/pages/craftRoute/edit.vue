@@ -491,12 +491,12 @@ const toolAction = (type: string) => {
   }
 };
 const dragInNode = (type: string, text: string) => {
-  let properties = {
+  const properties = {
     id: null,
     processStep: 0,
     processId: null,
     processName: text,
-    processType: type === 'start' ? 'S' : type === 'end' ? 'E' : 'P',
+    // processType: type === 'start' ? 'S' : type === 'end' ? 'E' : 'P',
     backgroundColor: '#ffffff',
     boomList: [],
   };

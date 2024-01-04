@@ -1,5 +1,7 @@
 <template>
-  <div id="top5Chart" :style="{ width: '100%', height: '100%' }" />
+  <cmp-card title="过程不良TOP5" :subtitle="currentMonth" :bordered="false" :full="true" height="100%">
+    <div id="top5Chart" :style="{ width: '100%', height: '100%' }" />
+  </cmp-card>
 </template>
 
 <script setup lang="ts">
@@ -20,7 +22,7 @@ echarts.use([TooltipComponent, LegendComponent, GridComponent, PieChart, CanvasR
 
 const store = useSettingStore();
 const optionChart = ref({});
-
+const currentMonth = ref('');
 // 监听图表
 let top5Chart: HTMLElement;
 const countContainerParentRef = ref<HTMLElement>();
@@ -34,6 +36,20 @@ const renderCountChart = async () => {
 
   await getPieData();
   countChart.setOption(optionChart.value);
+
+  // 获取当前时间
+  const currentDate = new Date();
+
+  // 获取 7 天前的时间
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(currentDate.getDate() - 6);
+  sevenDaysAgo.setHours(0, 0, 0, 0); // 设置为 0 点
+
+  // 获取今天的时间
+  const today = new Date();
+  today.setHours(23, 59, 59, 999); // 设置为 23:59:59.999
+
+  currentMonth.value = `(周 ${dayjs(sevenDaysAgo).format('YYYY-MM-DD')} ~ ${dayjs(today).format('YYYY-MM-DD')})`;
 };
 
 useResizeObserver(
@@ -76,21 +92,9 @@ const getPieData = async () => {
       return;
     }
 
-    const first = top5Data[0];
     const echarData = top5Data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
 
     optionChart.value = {
-      title: {
-        text: `(周 ${dayjs(first.beginDate).format('YYYY-MM-DD')} ~ ${dayjs(first.endDate).format('YYYY-MM-DD')})`,
-        left: 'left',
-        top: '-3',
-        textStyle: {
-          fontSize: 11.5,
-          fontWite: 400,
-          color: '#666666',
-          fontWeight: 'normal',
-        },
-      },
       legend: {
         orient: 'vertical',
         right: 20,

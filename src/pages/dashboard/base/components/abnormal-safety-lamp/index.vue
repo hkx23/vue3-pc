@@ -1,5 +1,7 @@
 <template>
-  <div id="andeng" :style="{ width: '100%', height: '100%' }" />
+  <cmp-card title="安灯异常模块分布" :subtitle="currentMonth" :bordered="false" :full="true" height="100%">
+    <div id="andeng" :style="{ width: '100%', height: '100%' }" />
+  </cmp-card>
 </template>
 
 <script setup lang="ts">
@@ -17,6 +19,8 @@ import { changeChartsTheme } from '@/utils/color';
 
 echarts.use([TooltipComponent, LegendComponent, GridComponent, PieChart, CanvasRenderer, TitleComponent]);
 
+const currentMonth = ref('');
+
 const store = useSettingStore();
 const optionChart = ref({});
 
@@ -33,6 +37,7 @@ const renderCountChart = async () => {
 
   await getPieData();
   countChart.setOption(optionChart.value);
+  currentMonth.value = '本月';
 };
 
 useResizeObserver(
@@ -70,17 +75,6 @@ const getPieData = async () => {
     const echarData = data.map((n) => ({ value: n.incidentModuleProportion * 100, name: n.incidentModuleName }));
 
     optionChart.value = {
-      title: {
-        text: '本月',
-        left: 'left',
-        top: '-3',
-        textStyle: {
-          fontSize: 11.5,
-          fontWite: 400,
-          color: '#666666',
-          fontWeight: 'normal',
-        },
-      },
       legend: {
         orient: 'vertical',
         right: 20,
