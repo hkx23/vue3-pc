@@ -21,6 +21,7 @@
         v-model:current="bagsSuitcasesData.pageNum"
         v-model:page-size="bagsSuitcasesData.pageSize"
         style="margin-top: 8px"
+        show-jumper
         :show-page-size="true"
         :total="anomalyTotal"
         @page-size-change="onPaginationChange"
@@ -114,8 +115,8 @@ const bagsSuitcasesData = ref({
   mitemCode: '', // 产品编码 物料接口
   moScheCode: '', // 排产单号
   pkgBarcode: '', // 箱条码
-  beginDate: '', // 开始日期
-  endDate: '', // 结束日期
+  beginDate: dayjs().subtract(7, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss'), // 开始日期
+  endDate: dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss'), // 结束日期
   parentPkgBarcode: '', // 获取子节点数据的 CODE
 });
 
@@ -211,7 +212,7 @@ const opts = computed(() => {
       label: '操作时间',
       comp: 't-date-range-picker',
       event: 'daterangetime',
-      defaultVal: [startOfToday.format('YYYY-MM-DD'), endOfToday.format('YYYY-MM-DD HH:mm:ss')], // 初始化日期控件
+      defaultVal: [startOfToday.format('YYYY-MM-DD HH:mm:ss'), endOfToday.format('YYYY-MM-DD HH:mm:ss')], // 初始化日期控件
       bind: {
         enableTimePicker: true,
         // format: 'YYYY-MM-DD',
@@ -221,7 +222,7 @@ const opts = computed(() => {
 });
 
 // 获取当前日期的 00:00:00
-const startOfToday = dayjs().startOf('day');
+const startOfToday = dayjs().subtract(7, 'days').startOf('day');
 // 获取当前日期的 23:59:59
 const endOfToday = dayjs().endOf('day');
 

@@ -1099,6 +1099,11 @@ export interface ResultPagingDataWipKeypartReportVO {
 
 /** 关键物料追溯（反向）-关键件信息 */
 export interface WipKeypartReportVO {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
   /** 产品条码 */
   serialNumber?: string;
   /** 工单号 */
@@ -1432,6 +1437,15 @@ export interface MoOnboardReportVO {
   status?: string;
   /** 投料状态 */
   statusName?: string;
+  /** 工作中心 */
+  workcenterCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /**
+   * 投料时间
+   * @format date-time
+   */
+  datetimeOnboard?: string;
 }
 
 /** 响应数据 */
@@ -1697,9 +1711,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -1823,8 +1837,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2807,8 +2821,8 @@ export interface BarcodeWipCollectVO {
   workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2921,11 +2935,11 @@ export interface BarcodeWipVO {
   workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
-  defectCodeStr?: string;
   isState?: boolean;
+  stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
