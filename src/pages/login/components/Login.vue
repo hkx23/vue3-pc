@@ -9,23 +9,31 @@
   >
     <template v-if="type == 'password'">
       <t-form-item name="account">
-        <t-input v-model="formData.account" :placeholder="`${$t('pages.login.input.account')}`">
-          <template #prefix-icon>
+        <div class="form-label">
+          <username-icon class="icon"></username-icon>
+          {{ `${$t('pages.login.input.account')}` }}
+        </div>
+        <t-input v-model="formData.account" :placeholder="`${$t('pages.login.input.accountPlaceholder')}`">
+          <!-- <template #prefix-icon>
             <t-icon name="user" />
-          </template>
+          </template> -->
         </t-input>
       </t-form-item>
 
       <t-form-item name="password">
+        <div class="form-label">
+          <password-icon class="icon"></password-icon>
+          {{ `${$t('pages.login.input.password')}` }}
+        </div>
         <t-input
           v-model="formData.password"
           :type="showPsw ? 'text' : 'password'"
           clearable
-          :placeholder="`${$t('pages.login.input.password')}`"
+          :placeholder="`${$t('pages.login.input.passwordPlaceholder')}`"
         >
-          <template #prefix-icon>
+          <!-- <template #prefix-icon>
             <t-icon name="lock-on" />
-          </template>
+          </template> -->
           <template #suffix-icon>
             <t-icon :name="showPsw ? 'browse' : 'browse-off'" @click="showPsw = !showPsw" />
           </template>
@@ -50,6 +58,8 @@ import { MessagePlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+import PasswordIcon from '@/assets/assets-login-password.svg?component';
+import UsernameIcon from '@/assets/assets-login-username.svg?component';
 import { t } from '@/locales';
 import { useUserStore } from '@/store';
 
@@ -93,7 +103,54 @@ const onSubmit = async (ctx: SubmitContext) => {
 
 <style lang="less" scoped>
 // @import '../index.less';
+.item-container {
+  :deep(.t-input) {
+    height: 42px;
+    border-color: transparent;
+    background-color: #f7f7f7;
+    padding: 0 12px;
+
+    input {
+      background-color: transparent !important;
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+      transition: background-color 5000s ease-in-out 0s;
+    }
+  }
+
+  :deep(.t-form__controls-content) {
+    flex-flow: column;
+  }
+
+  :deep(.t-form__item) {
+    margin-top: 18px !important;
+  }
+
+  .form-label {
+    display: block;
+    width: 100%;
+    color: #888e9e;
+    font-size: 13px;
+    margin-bottom: 8px;
+    position: relative;
+
+    .icon {
+      position: relative;
+      top: 2px;
+      margin-right: 5px;
+    }
+  }
+}
+
 .btn-container {
-  margin-top: 40px !important;
+  margin-top: 24px !important;
+
+  :deep(.t-button) {
+    height: 42px;
+  }
 }
 </style>
