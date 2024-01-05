@@ -26,34 +26,6 @@
       </cmp-table>
     </cmp-card>
   </cmp-container>
-
-  <!-- <div class="main-page">
-    <div class="main-page-content">
-      <t-row justify="space-between">
-        <t-col>
-          <div>
-            <t-input v-model="keyword" label="工序：" placeholder="请输入工序编码/名称" clearable />
-          </div>
-        </t-col>
-        <t-col flex="10px" />
-        <t-col>
-          <div>
-            <t-select v-model="processState" label="状态" :options="stateOptions" clearable />
-          </div>
-        </t-col>
-        <t-col flex="auto" />
-        <t-col flex="170px">
-          <div>
-            <t-button @click="onRefresh">查询</t-button>
-            <t-button theme="default" @click="onReset">重置</t-button>
-          </div>
-        </t-col>
-      </t-row>
-    </div>
-    <div class="main-page-content">
-     
-    </div>
-  </div> -->
   <t-dialog
     v-model:visible="formVisible"
     :header="formTitle"
@@ -99,6 +71,7 @@ const tableProcessColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '工序代码', width: 160, colKey: 'processCode' },
   { title: '工序名称', width: 160, colKey: 'processName' },
   { title: '工序描述', width: 160, colKey: 'processDesc' },
+  { title: '工序别名', width: 160, colKey: 'processAlias' },
   { title: '状态', width: 160, colKey: 'stateName' },
   { title: '创建人', width: 160, colKey: 'creatorName' },
   { title: '创建时间', width: 160, colKey: 'timeCreate' },
