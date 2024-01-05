@@ -88,7 +88,7 @@
                         </t-row>
                         <t-row class="item-row" :gutter="[8, 8]" style="width: 100%; margin-top: 8px">
                           <t-col flex="0 1 230px" style="text-align: start">
-                            <t-button @click="generateBracode">生成</t-button>
+                            <t-button :disabled="generateButtonOp" @click="generateBracode">生成</t-button>
                           </t-col>
                         </t-row>
                       </t-col>
@@ -273,6 +273,7 @@ const diaLogTitle = ref(''); // 弹窗标题
 const buttonSwitch = ref(''); // 确认按钮title
 const logInterfaceVisible = ref(false); // 控制日志 Dialog 显示隐藏
 const printButtonOp = ref(true); // 控制打印按钮禁用
+const generateButtonOp = ref(true); // 控制打印按钮禁用
 const isEnable = ref(true); // 控制打印按钮禁用
 // 日志界面 表格数据
 const dayTabData = reactive({ list: [] });
@@ -1048,9 +1049,9 @@ const handleTabClick = (selectedTabIndex: any) => {
   printMode.value.barcodeRuleId = '';
   printMode.value.printTempId = '';
   selectedRowKeys.value = [];
-  console.log(`selectedTabIndex${selectedTabIndex}`);
   if (tabList.list.length > selectedTabIndex - 1 && selectedTabIndex > 0) {
     const selectedTab = tabList.list[selectedTabIndex - 1];
+    generateButtonOp.value = selectedTab.planSheet <= 0;
     printRuCondition.value.packType = selectedTab.packType;
     queryBelowCondition.value.moScheduleId = queryCondition.value.moScheduleId
       ? queryCondition.value.moScheduleId
@@ -1063,6 +1064,7 @@ const handleTabClick = (selectedTabIndex: any) => {
     printMode.value.packQty = selectedTab.packQty;
     calculateButtonOffset();
     printMode.value.maxCreate = selectedTab.planQty - selectedTab.generateQty;
+    generateButtonOp.value = printMode.value.maxCreate <= 0;
     printMode.value.createPDNum = printMode.value.maxCreate > 0 ? printMode.value.maxCreate : 0;
     printMode.value.packQtyShow = selectedTab.packQtyShow;
     dataSummary.value = `${selectedTab.planQty} (${selectedTab.planSheet}) / ${selectedTab.generateQty} (${selectedTab.generateSheet}) / ${selectedTab.displayQty} (${selectedTab.displaySheet}) `;

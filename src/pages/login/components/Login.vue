@@ -13,7 +13,7 @@
           <username-icon class="icon"></username-icon>
           {{ `${$t('pages.login.input.account')}` }}
         </div>
-        <t-input v-model="formData.account" :placeholder="`${$t('pages.login.input.accountPlaceholder')}`">
+        <t-input v-model="formData.account" autofocus :placeholder="`${$t('pages.login.input.accountPlaceholder')}`">
           <!-- <template #prefix-icon>
             <t-icon name="user" />
           </template> -->
@@ -110,6 +110,10 @@ const onSubmit = async (ctx: SubmitContext) => {
     background-color: #f7f7f7;
     padding: 0 12px;
 
+    &.t-input--focused {
+      border-color: var(--td-brand-color);
+    }
+
     input {
       background-color: transparent !important;
     }
@@ -122,12 +126,16 @@ const onSubmit = async (ctx: SubmitContext) => {
     }
   }
 
-  :deep(.t-form__controls-content) {
-    flex-flow: column;
-  }
+  :deep(.t-form__controls) {
+    &.t-is-error {
+      svg {
+        color: var(--td-text-color-placeholder);
+      }
+    }
 
-  :deep(.t-form__item) {
-    margin-bottom: 18px !important;
+    .t-form__controls-content {
+      flex-flow: column;
+    }
   }
 
   .form-label {
