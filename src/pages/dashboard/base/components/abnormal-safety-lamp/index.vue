@@ -5,6 +5,7 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import { PieChart } from 'echarts/charts';
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
@@ -37,7 +38,14 @@ const renderCountChart = async () => {
 
   await getPieData();
   countChart.setOption(optionChart.value);
-  currentMonth.value = '本月';
+
+  // 获取当前日期
+  const currentDate = dayjs();
+
+  // 获取当前月的1日时间
+  const firstDayOfMonth = currentDate.startOf('month');
+
+  currentMonth.value = `${dayjs(firstDayOfMonth).format('YYYY-MM-DD')} ~ ${dayjs(currentDate).format('YYYY-MM-DD')}`;
 };
 
 useResizeObserver(
@@ -71,15 +79,20 @@ onDeactivated(() => {
 //* 接口数据
 const getPieData = async () => {
   try {
+    // 获取饼图数据
     const data = await api.incidentDeal.getIncidentModuleProportion();
-    const echarData = data.map((n) => ({ value: n.incidentModuleProportion * 100, name: n.incidentModuleName }));
 
+    // 转换数据格式
+    const echarData = data.map(({ incidentModuleProportion, incidentModuleName }) => ({
+      value: incidentModuleProportion * 100,
+      name: incidentModuleName,
+    }));
+
+    // 更新图表选项
     optionChart.value = {
       legend: {
-        orient: 'vertical',
-        right: 20,
-        top: 150,
-        bottom: 20,
+        orient: 'horizontal',
+        bottom: 5,
       },
       tooltip: {
         trigger: 'item',
@@ -87,8 +100,7 @@ const getPieData = async () => {
       series: [
         {
           type: 'pie',
-          radius: '90%',
-          top: '30',
+          radius: '50%',
           label: {
             show: true,
             formatter: (param) => `${param.name} (${param.percent}%)`,
@@ -105,6 +117,7 @@ const getPieData = async () => {
       ],
     };
   } catch (error) {
+    // 处理错误
     console.error('获取饼图数据时出错', error);
   }
 };

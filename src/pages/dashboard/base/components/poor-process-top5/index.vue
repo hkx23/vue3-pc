@@ -49,7 +49,7 @@ const renderCountChart = async () => {
   const today = new Date();
   today.setHours(23, 59, 59, 999); // 设置为 23:59:59.999
 
-  currentMonth.value = `(周 ${dayjs(sevenDaysAgo).format('YYYY-MM-DD')} ~ ${dayjs(today).format('YYYY-MM-DD')})`;
+  currentMonth.value = `${dayjs(sevenDaysAgo).format('YYYY-MM-DD')} ~ ${dayjs(today).format('YYYY-MM-DD')}`;
 };
 
 useResizeObserver(
@@ -91,25 +91,24 @@ const getPieData = async () => {
     if (top5Data.length === 0) {
       return;
     }
-
-    const echarData = top5Data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
+    // const echarData = top5Data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
+    const echarData = top5Data.map(({ defectCodePercent, defectName }) => ({
+      value: defectCodePercent * 100,
+      name: defectName,
+    }));
 
     optionChart.value = {
       legend: {
-        orient: 'vertical',
-        right: 20,
-        top: 150,
-        bottom: 20,
+        orient: 'horizontal',
+        bottom: 5,
       },
       tooltip: {
         trigger: 'item',
       },
-
       series: [
         {
           type: 'pie',
-          radius: '90%',
-          top: '30',
+          radius: '50%',
           label: {
             show: true,
             formatter: (param) => `${param.name} (${param.percent}%)`,
