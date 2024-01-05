@@ -130,10 +130,6 @@ const onSubmit = async (ctx: SubmitContext) => {
     flex-flow: column;
   }
 
-  :deep(.t-form__item) {
-    margin-bottom: 18px !important;
-  }
-
   .form-label {
     display: block;
     width: 100%;
