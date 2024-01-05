@@ -1547,15 +1547,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  /** @format date-time */
+  datetimeSche?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1598,10 +1598,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -1724,8 +1724,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2703,17 +2703,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  isState?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   stateName?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 通用响应类 */
@@ -2817,13 +2817,13 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   stateName?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   defectCodeStr?: string;
@@ -3592,6 +3592,63 @@ export interface ResultPagingDataBarcodeRule {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeRule;
+}
+
+/** 显示缺陷代码实体 */
+export type DefectCodeVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  defectCode?: string;
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  classification?: string;
+  /** 前端按钮样式 */
+  themeButton?: string;
+  /** 工序id */
+  processId?: string;
+  /** 子元素 */
+  child?: DefectCodeVO[];
+  stateName?: string;
+  isState?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListDefectCodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DefectCodeVO[] | null;
 }
 
 /** 箱包关系外箱信息 */
@@ -5336,6 +5393,22 @@ export const api = {
      */
     getMoBomListByMoCode: (query: { moId: string }) =>
       http.request<ResultObject['data']>(`/api/control/moBom/getMoBomListByMoCode`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  defectCode: {
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name Tree
+     * @summary 获取缺陷树
+     * @request GET:/defectCode/tree
+     * @secure
+     */
+    tree: (query: { processId: string }) =>
+      http.request<ResultListDefectCodeVO['data']>(`/api/control/defectCode/tree`, {
         method: 'GET',
         params: query,
       }),

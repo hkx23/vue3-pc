@@ -142,8 +142,7 @@ import { NotifyPlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
-import { api } from '@/api/control';
-import { api as apiMain, DefectCodeVO } from '@/api/main';
+import { api, DefectCodeVO } from '@/api/control';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
 
 import { scanInfoModel } from '../../api/processInspection';
@@ -271,7 +270,7 @@ const serialNumberEnter = async (value) => {
 
 const getDefectCodeTree = async () => {
   try {
-    const data = await apiMain.defectCode.tree();
+    const data = await api.defectCode.tree({ processId: mainform.value.processId });
 
     data.forEach((first) => {
       if (!isEmpty(first.child)) {
