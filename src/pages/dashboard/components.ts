@@ -39,11 +39,11 @@ export const components = [
     title: '过程不良TOP5',
     showTitle: true,
     ghost: true,
-    description: '过程不良TOP5 按周',
+    description: '过程不良TOP5',
     category: '生产',
     component: PoorProcessTop5,
     w: 4,
-    h: 3,
+    h: 6,
   },
   {
     code: 'poduction-achievement rate-ranking',
@@ -53,7 +53,7 @@ export const components = [
     category: '生产',
     component: PoductionAchievementRateRanking,
     w: 4,
-    h: 3,
+    h: 6,
   },
   {
     code: 'abnormal-safety-lamp',
@@ -64,7 +64,7 @@ export const components = [
     category: '日常',
     component: AbnormalSafetyLamp,
     w: 4,
-    h: 3,
+    h: 6,
   },
   {
     code: 'LineChartDemo',

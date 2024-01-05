@@ -100,7 +100,7 @@ const getPieData = async () => {
     optionChart.value = {
       legend: {
         orient: 'horizontal',
-        bottom: 5,
+        bottom: 35,
       },
       tooltip: {
         trigger: 'item',
@@ -109,6 +109,7 @@ const getPieData = async () => {
         {
           type: 'pie',
           radius: '50%',
+          center: ['50%', '35%'],
           label: {
             show: true,
             formatter: (param) => `${param.name} (${param.percent}%)`,
