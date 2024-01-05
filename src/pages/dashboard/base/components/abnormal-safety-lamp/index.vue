@@ -45,7 +45,7 @@ const renderCountChart = async () => {
   // 获取当前月的1日时间
   const firstDayOfMonth = currentDate.startOf('month');
 
-  currentMonth.value = `${dayjs(firstDayOfMonth).format('YYYY-MM-DD')}~${dayjs(currentDate).format('YYYY-MM-DD')}`;
+  currentMonth.value = `${dayjs(firstDayOfMonth).format('YYYY-MM-DD')} ~ ${dayjs(currentDate).format('YYYY-MM-DD')}`;
 };
 
 useResizeObserver(
