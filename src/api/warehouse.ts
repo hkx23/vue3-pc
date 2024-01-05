@@ -917,6 +917,27 @@ export interface ResultPagingDataDistrictVO {
   data?: PagingDataDistrictVO;
 }
 
+/** 送货单扫描 */
+export interface DeliverySearch {
+  /** 送货单明细ID */
+  deliveryDtlId?: string;
+  /** 物料标签 */
+  labelNo?: string;
+}
+
+/** 通用响应类 */
+export interface ResultTransferHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 交易事务头表 */
+  data?: TransferHeadVO;
+}
+
 /** 查询条码信息 */
 export type BarcodeDTO = {
   id?: string;
@@ -1010,7 +1031,7 @@ export interface DeliveryCardSearch {
   splitNum?: number;
 }
 
-/** 公共方法输出类 */
+/** 配送卡输出类 */
 export interface DeliveryCardVO {
   moScheduleId?: string;
   /** 排产单编码 */
@@ -1251,6 +1272,7 @@ export type DeliveryDtlVO = {
   mitemDesc?: string;
   /** 单位 */
   uom?: string;
+  supplierId?: string;
   /** 供应商编码 */
   supplierCode?: string;
   /** 供应商名称 */
@@ -1794,6 +1816,37 @@ export const api = {
         body: data as any,
       }),
   },
+  deliveryDtl: {
+    /**
+     * No description
+     *
+     * @tags 送货单明细表
+     * @name ScanMitemLabel
+     * @summary 扫描物料标签
+     * @request POST:/deliveryDtl/scanMitemLabel
+     * @secure
+     */
+    scanMitemLabel: (data: DeliverySearch) =>
+      http.request<ResultTransferHeadVO['data']>(`/api/warehouse/deliveryDtl/scanMitemLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 送货单明细表
+     * @name GetDeliveryDtlByBillNo
+     * @summary 根据送货的号获取送货单的明细
+     * @request GET:/deliveryDtl/getDeliveryDtlByBillNo
+     * @secure
+     */
+    getDeliveryDtlByBillNo: (query: { billNo: string }) =>
+      http.request<ResultListDeliveryDtlVO['data']>(`/api/warehouse/deliveryDtl/getDeliveryDtlByBillNo`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
   deliveryCard: {
     /**
      * No description
@@ -1971,22 +2024,6 @@ export const api = {
     getBarcodeRuleList: () =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/warehouse/deliveryCard/getBarcodeRuleList`, {
         method: 'GET',
-      }),
-  },
-  deliveryDtl: {
-    /**
-     * No description
-     *
-     * @tags 送货单明细表
-     * @name GetDeliveryDtlByBillNo
-     * @summary 根据送货的号获取送货单的明细
-     * @request GET:/deliveryDtl/getDeliveryDtlByBillNo
-     * @secure
-     */
-    getDeliveryDtlByBillNo: (query: { billNo: string }) =>
-      http.request<ResultListDeliveryDtlVO['data']>(`/api/warehouse/deliveryDtl/getDeliveryDtlByBillNo`, {
-        method: 'GET',
-        params: query,
       }),
   },
 };
