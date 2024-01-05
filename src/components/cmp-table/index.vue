@@ -229,34 +229,16 @@ const data: {
 //   colConfigs: {}, // 列配置
 // });
 // 列配置相关
-props.tableColumn.forEach((item) => {
-  if (item.colKey !== 'row-select' && item.colKey !== 'op' && item.colKey !== 'serial-number') {
-    // if (item.sorter !== false) {
-    //   item.sorter = true;
-    // }
-    // if (!item.filter) {
-    //   // 输入框过滤配置
-    //   item.filter = {
-    //     type: 'input',
 
-    //     // 文本域搜索
-    //     // component: Textarea,
-
-    //     resetValue: '',
-    //     // 按下 Enter 键时也触发确认搜索
-    //     confirmEvents: ['onEnter'],
-    //     props: {
-    //       placeholder: '输入关键词过滤',
-    //     },
-    //     // 是否显示重置取消按钮，一般情况不需要显示
-    //     showConfirmAndReset: true,
-    //   };
-    // }
-    data.colConfigs[item.title] = true;
-  }
-});
 // 表格内展示的列
 const columns = computed(() => {
+  props.tableColumn.forEach((item) => {
+    if (item.colKey !== 'row-select' && item.colKey !== 'op' && item.colKey !== 'serial-number') {
+      if (data.colConfigs[item.title] === undefined) {
+        data.colConfigs[item.title] = true;
+      }
+    }
+  });
   let tableColumn = props.tableColumn
     .filter((item) => {
       return (
@@ -443,6 +425,16 @@ const onExportAll = async () => {
 };
 watch(
   () => props.tableData,
+  (val) => {
+    console.log('watch:props.tableData', val);
+    nextTick(() => {
+      finalTableData.value = _.cloneDeep(props.tableData);
+    });
+  },
+  { deep: true },
+);
+watch(
+  () => props.tableColumn,
   (val) => {
     console.log('watch:props.tableData', val);
     nextTick(() => {

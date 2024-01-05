@@ -79,6 +79,11 @@
         </t-form-item>
       </t-col>
     </t-row>
+    <t-col :span="6">
+      <t-form-item label-align="left">
+        <t-checkbox v-model="formData.fifo">启用先进先出</t-checkbox>
+      </t-form-item>
+    </t-col>
   </t-form>
 </template>
 
@@ -107,7 +112,9 @@ export default {
       enableUpload: false,
       datetimeUpload: '',
       enableLocation: false,
+      fifo: false,
       isEnableLocation: 0,
+      isFifo: 0,
     });
     const warehousePropertyOption = ref([]);
     api.param.getListByGroupCode({ parmGroupCode: 'W_WAREHOUSE_PROPERTY' }).then((data) => {
@@ -132,6 +139,7 @@ export default {
           return false;
         }
         formData.value.isEnableLocation = formData.value.enableLocation === true ? 1 : 0;
+        formData.value.isFifo = formData.value.fifo === true ? 1 : 0;
         formData.value.isEnableUpload = formData.value.enableUpload === true ? 1 : 0;
         formData.value.state = formData.value.isState === true ? 1 : 0;
 
@@ -155,7 +163,13 @@ export default {
       formData.value.warehouseName = '';
       formData.value.warehouseDesc = '';
       formData.value.erpWarehouse = '';
+      formData.value.datetimeUpload = '';
       formData.value.isState = true;
+      formData.value.enableLocation = false;
+      formData.value.enableUpload = false;
+      formData.value.fifo = false;
+      formData.value.warehouseAttribute = '';
+      formData.value.warehouseCategory = '';
     };
     return {
       init,
