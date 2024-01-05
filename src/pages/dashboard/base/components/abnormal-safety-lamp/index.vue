@@ -5,6 +5,7 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import { PieChart } from 'echarts/charts';
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
@@ -37,7 +38,14 @@ const renderCountChart = async () => {
 
   await getPieData();
   countChart.setOption(optionChart.value);
-  currentMonth.value = '本月';
+
+  // 获取当前日期
+  const currentDate = dayjs();
+
+  // 获取当前月的1日时间
+  const firstDayOfMonth = currentDate.startOf('month');
+
+  currentMonth.value = `${dayjs(firstDayOfMonth).format('YYYY-MM-DD')} ~ ${dayjs(currentDate).format('YYYY-MM-DD')}`;
 };
 
 useResizeObserver(

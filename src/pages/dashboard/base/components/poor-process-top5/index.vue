@@ -49,7 +49,7 @@ const renderCountChart = async () => {
   const today = new Date();
   today.setHours(23, 59, 59, 999); // 设置为 23:59:59.999
 
-  currentMonth.value = `(周 ${dayjs(sevenDaysAgo).format('YYYY-MM-DD')} ~ ${dayjs(today).format('YYYY-MM-DD')})`;
+  currentMonth.value = `${dayjs(sevenDaysAgo).format('YYYY-MM-DD')} ~ ${dayjs(today).format('YYYY-MM-DD')}`;
 };
 
 useResizeObserver(
