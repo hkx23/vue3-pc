@@ -127,7 +127,7 @@ const onSubmit = async (ctx: SubmitContext) => {
   }
 
   :deep(.t-form__item) {
-    margin-top: 18px !important;
+    margin-bottom: 18px !important;
   }
 
   .form-label {
