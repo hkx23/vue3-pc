@@ -126,4 +126,8 @@ export interface componentItem extends LayoutItem {
    * 透明组件，用于自定义样式
    */
   ghost?: boolean;
+  /**
+   * 跳转路径（显示其他按钮）
+   */
+  redirect?: string;
 }

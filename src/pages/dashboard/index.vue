@@ -61,6 +61,14 @@
               <t-button shape="square" variant="text"><more-icon /></t-button>
             </t-dropdown>
           </template>
+          <template v-if="!comp.ghost" #footer>
+            <div style="float: right">
+              <t-link v-if="comp?.redirect" size="small" @click="onClickRedirect(comp?.redirect)">
+                更多
+                <template #suffix-icon><t-icon name="chevron-right"></t-icon></template>
+              </t-link>
+            </div>
+          </template>
         </cmp-card>
       </template>
     </grid-layout>
@@ -72,6 +80,7 @@ import { MoreIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
+import { openPage } from '@/router';
 import { useSettingStore } from '@/store';
 
 import { componentItem, components, groupedComponentItem } from './components';
@@ -96,6 +105,10 @@ const onClickMore = (data, id) => {
     default:
       break;
   }
+};
+
+const onClickRedirect = (path) => {
+  openPage(path);
 };
 
 onMounted(() => {
