@@ -39,7 +39,7 @@ export const components = [
     title: '过程不良TOP5',
     showTitle: true,
     ghost: true,
-    description: '过程不良TOP5 按周',
+    description: '过程不良TOP5',
     category: '生产',
     component: PoorProcessTop5,
     w: 4,
