@@ -1,5 +1,5 @@
 export default {
-  loginTitle: '欢迎使用MES',
+  loginTitle: '登录到 MES',
   noAccount: '没有账号吗?',
   existAccount: '已有账号?',
   createAccount: '注册新账号',
@@ -11,14 +11,17 @@ export default {
   wechatLogin: '使用微信扫一扫登录',
   accountLogin: '使用账号登录',
   phoneLogin: '使用手机号登录',
+  slogan: '让工业更加智慧！',
   input: {
-    account: '请输入账号',
-    password: '请输入登录密码',
+    account: '用户名',
+    accountPlaceholder: '请输入用户名',
+    password: '密码',
+    passwordPlaceholder: '请输入登录密码',
     phone: '请输入手机号',
     verification: '请输入验证码',
   },
   required: {
-    account: '账号必填',
+    account: '用户名必填',
     phone: '手机号必填',
     password: '密码必填',
     verification: '验证码必填',
