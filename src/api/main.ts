@@ -3474,14 +3474,14 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   stateName?: string;
   isState?: boolean;
-  isProductName?: string;
-  isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
+  isProductName?: string;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
 }
 
@@ -3644,8 +3644,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4062,6 +4062,8 @@ export interface DefectCodeVO {
   classification?: string;
   /** 前端按钮样式 */
   themeButton?: string;
+  /** 工序id */
+  processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
   stateName?: string;
@@ -5278,12 +5280,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -5615,19 +5617,6 @@ export interface ResultListFavorite {
   message?: string;
   /** 响应数据 */
   data?: Favorite[] | null;
-}
-
-/** 通用响应类 */
-export interface ResultListDefectCodeVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: DefectCodeVO[] | null;
 }
 
 /** 业务执行单元表 */
@@ -9312,20 +9301,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/defectCode/addDefectCode`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷代码
-     * @name Tree
-     * @summary 获取缺陷树
-     * @request GET:/defectCode/tree
-     * @secure
-     */
-    tree: () =>
-      http.request<ResultListDefectCodeVO['data']>(`/api/main/defectCode/tree`, {
-        method: 'GET',
       }),
   },
   customer: {
