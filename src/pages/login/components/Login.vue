@@ -126,8 +126,16 @@ const onSubmit = async (ctx: SubmitContext) => {
     }
   }
 
-  :deep(.t-form__controls-content) {
-    flex-flow: column;
+  :deep(.t-form__controls) {
+    &.t-is-error {
+      svg {
+        color: var(--td-text-color-placeholder);
+      }
+    }
+
+    .t-form__controls-content {
+      flex-flow: column;
+    }
   }
 
   .form-label {
