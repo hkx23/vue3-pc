@@ -130,6 +130,7 @@ const switchType = (val: string) => {
         top: 120px;
         font-weight: 700;
         font-size: 28px;
+        letter-spacing: 1px;
       }
     }
 
