@@ -91,13 +91,16 @@ const getPieData = async () => {
     if (top5Data.length === 0) {
       return;
     }
-
-    const echarData = top5Data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
+    // const echarData = top5Data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
+    const echarData = top5Data.map(({ defectCodePercent, defectName }) => ({
+      value: defectCodePercent * 100,
+      name: defectName,
+    }));
 
     optionChart.value = {
       legend: {
         orient: 'horizontal',
-        bottom: -6,
+        bottom: 5,
       },
       tooltip: {
         trigger: 'item',
