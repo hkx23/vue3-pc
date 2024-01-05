@@ -598,8 +598,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -805,14 +805,14 @@ export interface WipSearch {
 }
 
 /** 响应数据 */
-export type PagingDataWipVO = {
-  list?: WipVO[];
+export type PagingDataMapStringObject = {
+  list?: Record<string, object>[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataWipVO {
+export interface ResultPagingDataMapStringObject {
   /**
    * 响应代码
    * @format int32
@@ -821,120 +821,7 @@ export interface ResultPagingDataWipVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataWipVO;
-}
-
-/** WIP报表工序列表 */
-export interface WipProcessDTO {
-  curProcessId?: string;
-  /** 工序别名 */
-  processAlias?: string;
-  /**
-   * 工序在制品数量
-   * @format int32
-   */
-  processNum?: number;
-}
-
-/** 维修单 */
-export interface WipVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  serialNumber?: string;
-  runCard?: string;
-  moScheId?: string;
-  moId?: string;
-  workcenterId?: string;
-  mitemId?: string;
-  preProcessId?: string;
-  preWorkstationId?: string;
-  curProcessId?: string;
-  curWorkstationId?: string;
-  /** 在制品数量 */
-  qty?: number;
-  /** 结余数量 */
-  balanceQty?: number;
-  /**
-   * 缺陷次数
-   * @format int32
-   */
-  ngTimes?: number;
-  /**
-   * 是否完工
-   * @format int32
-   */
-  isCompleted?: number;
-  /**
-   * 是否合格
-   * @format int32
-   */
-  isNg?: number;
-  /**
-   * 是否暂停
-   * @format int32
-   */
-  isHold?: number;
-  terminal?: string;
-  /** 工单号 */
-  moCode?: string;
-  /** 产品编码 */
-  mitemCode?: string;
-  /** 工单类型 */
-  moClass?: string;
-  /** 车间名称 */
-  workshopName?: string;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /**
-   * 完工数量
-   * @format int32
-   */
-  completeedNum?: number;
-  /** 工序列表 */
-  processList?: WipProcessDTO[];
-  /** 产品名称 */
-  mitemName?: string;
-  /**
-   * 当日计划完成数量
-   * @format int32
-   */
-  planOfToday?: number;
-  /**
-   * 当日已完成数量
-   * @format int32
-   */
-  completeOfToday?: number;
-  /**
-   * 当日产品达成率
-   * @format double
-   */
-  achievingRateOfToday?: number;
-  /** @format int32 */
-  sumwip?: number;
+  data?: PagingDataMapStringObject;
 }
 
 /** 关键物料追溯（反向）-查询 */
@@ -1060,8 +947,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -1660,11 +1547,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2816,11 +2703,11 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -2930,11 +2817,11 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopName?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -3179,8 +3066,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3417,6 +3304,105 @@ export interface ResultListWipVO {
   data?: WipVO[] | null;
 }
 
+/** 维修单 */
+export type WipVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  serialNumber?: string;
+  runCard?: string;
+  moScheId?: string;
+  moId?: string;
+  workcenterId?: string;
+  mitemId?: string;
+  preProcessId?: string;
+  preWorkstationId?: string;
+  curProcessId?: string;
+  curWorkstationId?: string;
+  /** 在制品数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /**
+   * 缺陷次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /**
+   * 是否完工
+   * @format int32
+   */
+  isCompleted?: number;
+  /**
+   * 是否合格
+   * @format int32
+   */
+  isNg?: number;
+  /**
+   * 是否暂停
+   * @format int32
+   */
+  isHold?: number;
+  terminal?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completeedNum?: number;
+  /** 产品名称 */
+  mitemName?: string;
+  /**
+   * 当日计划完成数量
+   * @format int32
+   */
+  planOfToday?: number;
+  /**
+   * 当日已完成数量
+   * @format int32
+   */
+  completeOfToday?: number;
+  /**
+   * 当日产品达成率
+   * @format double
+   */
+  achievingRateOfToday?: number;
+  /** @format int32 */
+  sumwip?: number;
+} | null;
+
 /** 显示包装规则明细列表 */
 export type ProductPackRuleDtlVO = {
   id?: string;
@@ -3606,6 +3592,63 @@ export interface ResultPagingDataBarcodeRule {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeRule;
+}
+
+/** 显示缺陷代码实体 */
+export type DefectCodeVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  defectCode?: string;
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  classification?: string;
+  /** 前端按钮样式 */
+  themeButton?: string;
+  /** 工序id */
+  processId?: string;
+  /** 子元素 */
+  child?: DefectCodeVO[];
+  stateName?: string;
+  isState?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListDefectCodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DefectCodeVO[] | null;
 }
 
 /** 箱包关系外箱信息 */
@@ -4163,7 +4206,7 @@ export const api = {
      * @secure
      */
     getList: (data: WipSearch) =>
-      http.request<ResultPagingDataWipVO['data']>(`/api/control/wip/getList`, {
+      http.request<ResultPagingDataMapStringObject['data']>(`/api/control/wip/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -5350,6 +5393,22 @@ export const api = {
      */
     getMoBomListByMoCode: (query: { moId: string }) =>
       http.request<ResultObject['data']>(`/api/control/moBom/getMoBomListByMoCode`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  defectCode: {
+    /**
+     * No description
+     *
+     * @tags 缺陷代码
+     * @name Tree
+     * @summary 获取缺陷树
+     * @request GET:/defectCode/tree
+     * @secure
+     */
+    tree: (query: { processId: string }) =>
+      http.request<ResultListDefectCodeVO['data']>(`/api/control/defectCode/tree`, {
         method: 'GET',
         params: query,
       }),
