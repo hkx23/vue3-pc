@@ -139,37 +139,14 @@ const onMaterialTabData = async (event) => {
 };
 
 const submit = async () => {
-  // // // 在提交之前验证表单数据
-  // const formValidation = await validateForm();
-  // // 检查是否有验证错误
-  // if (!formValidation) {
-  //   return;
-  // }
   try {
+    // *提交时校验
     const fieldsToValidate = [
       { field: formData.value.warehouseId, message: '请选择仓库' },
       { field: formData.value.districtCode, message: '请输入货区编码' },
       { field: formData.value.districtName, message: '请输入货区名称' },
       { field: formData.value.districtDesc, message: '请输入货区描述' },
     ];
-    // if (isEmpty(formData.value.warehouseId)) {
-    //   MessagePlugin.error('请选择仓库');
-    //   return false;
-    // }
-
-    // if (isEmpty(formData.value.districtCode)) {
-    //   MessagePlugin.error('请输入货区编码');
-    //   return false;
-    // }
-    // if (isEmpty(formData.value.districtName)) {
-    //   MessagePlugin.error('请输入货区名称');
-    //   return false;
-    // }
-    // if (isEmpty(formData.value.districtDesc)) {
-    //   MessagePlugin.error('请输入货区描述');
-    //   return false;
-    // }
-
     for (const field of fieldsToValidate) {
       if (isEmpty(field.field)) {
         MessagePlugin.error(field.message);
@@ -191,13 +168,6 @@ const submit = async () => {
     return false;
   }
 };
-
-// const validateForm = async () => {
-//   // 在提交之前验证表单数据
-//   const formValidation = await formRef.value.validate();
-//   // 返回验证结果
-//   return formValidation;
-// };
 
 //* 暴露 init 方法
 defineExpose({

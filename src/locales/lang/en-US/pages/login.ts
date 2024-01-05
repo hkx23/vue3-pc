@@ -1,5 +1,5 @@
 export default {
-  loginTitle: 'Welcome to MES',
+  loginTitle: 'Login to MES',
   noAccount: 'No Account?',
   createAccount: 'Create Account',
   remember: 'Remember Account',
@@ -10,14 +10,17 @@ export default {
   wechatLogin: 'Login with WeChat',
   accountLogin: 'Login with Account',
   phoneLogin: 'Login with Mobile Phone',
+  slogan: 'Making industry smarter!',
   input: {
-    account: 'please enter account',
-    password: 'please enter password',
+    account: 'Username',
+    password: 'Password',
+    accountPlaceholder: 'please enter username',
+    passwordPlaceholder: 'please enter password',
     phone: 'please enter phone',
     verification: 'please enter verification code',
   },
   required: {
-    account: 'account is required',
+    account: 'username is required',
     phone: 'phone is required',
     password: 'password is required',
     verification: 'verification code is require',

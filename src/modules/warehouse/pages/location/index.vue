@@ -211,47 +211,4 @@ const onAdd = () => {
 };
 </script>
 
-<style lang="less" scoped>
-.table-tree-container {
-  background-color: var(--td-bg-color-container);
-  border-radius: var(--td-radius-medium);
-
-  .t-tree {
-    margin-top: var(--td-comp-margin-xxl);
-  }
-}
-
-.list-tree-wrapper {
-  overflow-y: hidden;
-  float: left;
-}
-
-.list-tree-operator {
-  width: 280px;
-  float: left;
-  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
-}
-
-.list-tree-content {
-  border-left: 1px solid var(--td-border-level-1-color);
-  overflow: auto;
-}
-
-.search-input {
-  width: 180px;
-}
-
-.list-common-table {
-  background-color: var(--td-bg-color-container);
-  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
-  border-radius: var(--td-radius-medium);
-
-  .table-container {
-    margin-top: var(--td-comp-margin-xxl);
-  }
-}
-
-.form-container-row {
-  margin-top: 20px;
-}
-</style>
+<style lang="less" scoped></style>

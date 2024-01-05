@@ -61,7 +61,7 @@ export const components = [
     showTitle: true,
     ghost: true,
     description: '安灯异常模块分布',
-    category: '生产',
+    category: '日常',
     component: AbnormalSafetyLamp,
     w: 4,
     h: 3,

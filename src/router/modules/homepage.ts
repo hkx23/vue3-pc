@@ -11,7 +11,7 @@ export default [
     name: 'dashboard',
     meta: {
       title: {
-        'zh-CN': '仪表盘',
+        'zh-CN': '工作台',
         'en-US': 'Dashboard',
       },
       icon: shallowRef(DashboardIcon),
@@ -24,22 +24,22 @@ export default [
         component: () => import('@/pages/dashboard/index.vue'),
         meta: {
           title: {
-            'zh-CN': '概览仪表盘',
-            'en-US': 'Overview',
+            'zh-CN': '工作台',
+            'en-US': 'Workbenches',
           },
         },
       },
-      {
-        path: 'detail',
-        name: 'DashboardDetail',
-        component: () => import('@/pages/dashboard/detail/index.vue'),
-        meta: {
-          title: {
-            'zh-CN': '统计报表',
-            'en-US': 'Dashboard Detail',
-          },
-        },
-      },
+      // {
+      //   path: 'detail',
+      //   name: 'DashboardDetail',
+      //   component: () => import('@/pages/dashboard/detail/index.vue'),
+      //   meta: {
+      //     title: {
+      //       'zh-CN': '统计报表',
+      //       'en-US': 'Dashboard Detail',
+      //     },
+      //   },
+      // },
       // {
       //   path: 'table',
       //   name: 'table',

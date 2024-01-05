@@ -9,6 +9,9 @@
     <t-form-item label="工序描述">
       <t-input v-model="formData.processDesc" />
     </t-form-item>
+    <t-form-item label="工序别名">
+      <t-input v-model="formData.processAlias" />
+    </t-form-item>
     <t-form-item label="状态">
       <t-switch v-model="formData.isState" />
     </t-form-item>
@@ -32,6 +35,7 @@ export default {
       processCode: '',
       processName: '',
       processDesc: '',
+      processAlias: '',
       state: 0,
     });
 
@@ -66,6 +70,7 @@ export default {
       formData.value.processCode = '';
       formData.value.processName = '';
       formData.value.processDesc = '';
+      formData.value.processAlias = '';
       formData.value.isState = true;
     };
     return {
