@@ -85,6 +85,7 @@ const getPieData = async () => {
     optionChart.value = {
       legend: {
         orient: 'horizontal',
+        bottom: -6,
       },
       tooltip: {
         trigger: 'item',
