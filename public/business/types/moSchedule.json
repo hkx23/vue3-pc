@@ -10,7 +10,9 @@
       "title": "工单代码",
       "key": "moCode",
       "width": "150",
-      "align": "center"
+      "align": "center",
+      "sorter": false,
+      "filter": false
     },
     {
       "title": "排产单",
@@ -46,13 +48,17 @@
       "title": "工艺路线编码",
       "key": "routingCode",
       "width": "150",
-      "align": "center"
+      "align": "center",
+      "sorter": false,
+      "filter": false
     },
     {
       "title": "工艺路线名称",
       "key": "routingName",
       "width": "150",
-      "align": "center"
+      "align": "center",
+      "sorter": false,
+      "filter": false
     }
   ],
   "rowKey": "id",
