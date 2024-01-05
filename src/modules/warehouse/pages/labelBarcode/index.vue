@@ -25,6 +25,13 @@
                   @row-click="onRowClick"
                   @refresh="onRefresh"
                 >
+                  <template #lotNoOp="slotProps">
+                    <t-input
+                      v-if="slotProps.row.deliveryDtlId === printMode.deliveryDtlId"
+                      v-model="printMode.lotNo"
+                      :rules="[{ required: true, message: '不能为空', trigger: 'blur' }]"
+                    ></t-input>
+                  </template>
                   <template #title>
                     <t-radio v-model="queryCondition.isFinishDisplay" allow-uncheck @change="fetchMoTable"
                       >仅显示未打印完成</t-radio
@@ -224,14 +231,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import {
-  CustomValidator,
-  FormInstanceFunctions,
-  Input,
-  MessagePlugin,
-  PrimaryTableCol,
-  TableRowData,
-} from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
@@ -352,7 +352,7 @@ const onPrintChange = (value: any, context: any) => {
   console.log(value);
   selectedRowKeys.value = value;
   barcodeStatusNameArr.value = context.selectedRowData.map((item: any) => item.barcodeStatusName);
-  const specificStatus = barcodeStatusNameArr.value.some((item) => item === '已打印');
+  const specificStatus = barcodeStatusNameArr.value.some((item) => item !== '已生成');
   if (specificStatus) {
     printButtonOp.value = true;
     return;
@@ -386,22 +386,16 @@ const printMode = ref({
   planQty: 0,
   lotNo: '',
 });
-// 打印/生成按钮模型初始化
-const ruleMode = ref({
-  deliveryDtlId: '',
-});
 
 // 生成按钮模型初始化
 const generateBracode = async () => {
-  const index = printMode.value.deliveryDtlId;
-  const item = deliveryList.list.find((element) => element.deliveryDtlId === index);
   if (!printMode.value.deliveryDtlId) {
     // 提示错误信息
     MessagePlugin.warning('请选择送货单！');
     return;
   }
   // 校验是否已经选择条码规则
-  if (!item.lotNo) {
+  if (!printMode.value.lotNo) {
     // 提示错误信息
     MessagePlugin.warning('请输入批次号');
     return;
@@ -576,22 +570,6 @@ const onPrintTemplateData = async () => {
   const res = await apiWarehouse.label.getLabelPrintTmplList();
   onPrintTemplateList.list = res;
 };
-const ruleValidator: CustomValidator = async (val) => {
-  const index = delivertRowKeys.value[0];
-  if (index !== ruleMode.value.deliveryDtlId) {
-    return true;
-  }
-  // 判断当前行是否被选中且与保存的ID匹配
-  if (val) {
-    // 在选中的行中进行非空校验
-    return true; // 或者您可以返回一个 CustomValidateObj，具体根据需要调整
-  }
-  return {
-    result: false,
-    message: '不能为空',
-    type: 'error',
-  };
-};
 // 日志界面 表格数据
 const logInterface: PrimaryTableCol<TableRowData>[] = [
   {
@@ -695,36 +673,31 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'lotNo',
+    colKey: 'lotNoOp',
     title: '批次号',
     align: 'center',
     width: '160',
-    edit: {
-      component: Input,
-      props: {
-        clearable: true,
-        autofocus: true,
-        autoWidth: true,
-        style: {
-          width: '130px', // 调整宽度的样式属性
-        },
-      },
-      rules: [
-        {
-          validator: ruleValidator,
-        },
-      ],
-      // keepEditMode: true,
-      showEditIcon: true,
-      validateTrigger: 'change',
-      abortEditOnEvent: ['onBlur'],
-      // 编辑完成，退出编辑态后触发
-      onEdited: (context) => {
-        ruleMode.value.deliveryDtlId = deliveryList.list[context?.rowIndex].deliveryDtlId; // 变化后的数字
-        deliveryList.list[context?.rowIndex] = context?.newRowData;
-        printMode.value.lotNo = deliveryList.list[context?.rowIndex].lotNo; // 变化后的数字
-      },
-    },
+    // edit: {
+    //   component: Input,
+    //   props: {
+    //     clearable: true,
+    //     autofocus: true,
+    //     autoWidth: true,
+    //     style: {
+    //       width: '130px', // 调整宽度的样式属性
+    //     },
+    //   },
+    //   rules: [{ required: true, message: '不能为空' }],
+    //   // keepEditMode: true,
+    //   showEditIcon: true,
+    //   validateTrigger: 'change',
+    //   abortEditOnEvent: ['onBlur'],
+    //   // 编辑完成，退出编辑态后触发
+    //   onEdited: (context) => {
+    //     deliveryList.list[context?.rowIndex] = context?.newRowData;
+    //     printMode.value.lotNo = deliveryList.list[context?.rowIndex].lotNo; // 变化后的数字
+    //   },
+    // },
   },
   {
     colKey: 'qty',
@@ -1152,6 +1125,9 @@ onMounted(async () => {
 });
 
 const onRowClick = ({ row }) => {
+  if (row.deliveryDtlId !== printMode.value.deliveryDtlId) {
+    printMode.value.lotNo = '';
+  }
   queryBelowCondition.value.pageNum = pageUIBracode.value.page;
   queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
   queryBelowCondition.value.deliveryDtlId = row.deliveryDtlId;
