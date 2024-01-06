@@ -368,4 +368,8 @@ const onDragEnd = (dragItem) => {
     }
   }
 }
+
+:deep(.t-card__footer) {
+  padding: 8px var(--td-comp-paddingLR-xl) !important;
+}
 </style>
