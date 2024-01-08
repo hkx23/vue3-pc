@@ -50,7 +50,13 @@
                   @refresh="onTopRefresh"
                 >
                   <template #specificationQuantity="{ row }">
-                    <t-input-number v-model="row.specificationQuantity" :auto-width="true" theme="column" :min="0" />
+                    <t-input-number
+                      v-model="row.specificationQuantity"
+                      :auto-width="true"
+                      theme="column"
+                      :min="0"
+                      @change="inputNumberChange"
+                    />
                   </template>
                   <template #thisAmountSheets="{ row }">
                     {{
@@ -357,7 +363,7 @@ const cardPrintData = ref({
   pageNum: 1,
   pageSize: 10,
   isFinishDisplay: true,
-  planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+  planDateStart: dayjs().subtract(30, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
   planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
   moId: '', // 工单ID
   workshopId: '', // 车间 ID
@@ -742,6 +748,11 @@ const onRightFetchData = async () => {
   await onLabelManageTabData();
 };
 
+// 规格数量change事件
+const inputNumberChange = (value: any) => {
+  generateData.value.createSize = value; // 获取规格数量
+};
+
 // 获取 打印规则 下拉数据
 const generateData = ref({
   barcodeRuleId: '', // select ID
@@ -974,7 +985,6 @@ const onGenerateChange = async (value: any, context: any) => {
   generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
   generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
   generateData.value.mitemId = context.currentRowData.mitemId; // 物料 Id
-  generateData.value.createSize = context.selectedRowData[0].specificationQuantity; // 获取规格数量
   [topPrintID.value] = value;
   await onGetPrintDownTabData();
 };

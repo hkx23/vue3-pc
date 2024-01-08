@@ -31,6 +31,8 @@
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches()">
               <t-button theme="default">批量删除</t-button>
             </t-popconfirm>
+            <t-button theme="default">导入</t-button>
+            <t-button theme="default">导出</t-button>
           </t-space>
         </template>
       </cmp-table>
@@ -115,39 +117,21 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'categoryCode',
-    title: '业务类型代码',
+    title: '业务类型',
     align: 'center',
     width: '110',
   },
   {
     colKey: 'categoryName',
-    title: '业务类型名称',
+    title: '源组织与仓库',
     align: 'center',
     width: '110',
   },
   {
     colKey: 'businessDirection',
-    title: '业务交易方向',
+    title: '目标组织与仓库',
     align: 'center',
     width: '130',
-  },
-  {
-    colKey: 'transferOutTypeName',
-    title: '转出库存的类型',
-    align: 'center',
-    width: '150',
-  },
-  {
-    colKey: 'transferInTypeName',
-    title: '转入库存的类型',
-    align: 'center',
-    width: '150',
-  },
-  {
-    colKey: 'perfix',
-    title: '业务单据前缀',
-    align: 'center',
-    width: '120',
   },
   {
     colKey: 'creatorName',
@@ -247,7 +231,7 @@ const onAddBusinessType = async () => {
 const opts = computed(() => {
   return {
     keyword: {
-      label: '业务类型代码/名称',
+      label: '仓库',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
