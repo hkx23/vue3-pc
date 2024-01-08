@@ -598,8 +598,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -947,8 +947,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -1547,11 +1547,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -1598,9 +1598,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -2094,6 +2094,165 @@ export interface ResultPagingDataPkgRelationReportVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataPkgRelationReportVO;
+}
+
+export interface ProductionProgressSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 计划开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 计划结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  moScheId?: string;
+  mitemId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataProductionProgressVO = {
+  list?: ProductionProgressVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 生产进度报表 */
+export interface ProductionProgressVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moId?: string;
+  mitemId?: string;
+  moClass?: string;
+  soNo?: string;
+  /**
+   * 销售订单行号
+   * @format int32
+   */
+  soSeq?: number;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 下线数量
+   * @format int32
+   */
+  offlineQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 入库数量
+   * @format int32
+   */
+  stockinQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
+   * 工单关闭时间
+   * @format date-time
+   */
+  datetimeMoClose?: string;
+  warehouseId?: string;
+  parentMoId?: string;
+  workshopId?: string;
+  memo?: string;
+  status?: string;
+  moSource?: string;
+  workcenterId?: string;
+  /**
+   * 排产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  routingRevisionId?: string;
+  scheCode?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uomName?: string;
+  statusName?: string;
+  moCode?: string;
+  routingCode?: string;
+  routingName?: string;
+  completionProgress?: number;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProductionProgressVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProductionProgressVO;
 }
 
 export interface MoOnboardSearch {
@@ -2703,11 +2862,11 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -2817,11 +2976,11 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  /** @format date-time */
-  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -4657,6 +4816,22 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/pkgRelation/releaseAll`, {
         method: 'DELETE',
         params: query,
+      }),
+  },
+  moSchedule: {
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name GetProductionProgress
+     * @summary 生产进度报表
+     * @request POST:/moSchedule/getProductionProgress
+     * @secure
+     */
+    getProductionProgress: (data: ProductionProgressSearch) =>
+      http.request<ResultPagingDataProductionProgressVO['data']>(`/api/control/moSchedule/getProductionProgress`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   moOnboard: {

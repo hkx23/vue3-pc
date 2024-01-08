@@ -917,6 +917,27 @@ export interface ResultPagingDataDistrictVO {
   data?: PagingDataDistrictVO;
 }
 
+/** 送货单扫描 */
+export interface DeliverySearch {
+  /** 送货单明细ID */
+  deliveryDtlId?: string;
+  /** 物料标签 */
+  labelNo?: string;
+}
+
+/** 通用响应类 */
+export interface ResultTransferHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 交易事务头表 */
+  data?: TransferHeadVO;
+}
+
 /** 查询条码信息 */
 export type BarcodeDTO = {
   id?: string;
@@ -1010,7 +1031,7 @@ export interface DeliveryCardSearch {
   splitNum?: number;
 }
 
-/** 公共方法输出类 */
+/** 配送卡输出类 */
 export interface DeliveryCardVO {
   moScheduleId?: string;
   /** 排产单编码 */
@@ -1091,6 +1112,129 @@ export interface ResultPagingDataDeliveryCardVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataDeliveryCardVO;
+}
+
+export interface BusinessCategorySearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 仓库业务类型模糊 */
+  keyword?: string;
+  /** 多个ID */
+  ids?: string[];
+}
+
+export interface BusinessCategoryVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  /**
+   * 业务交易方向
+   * @format int32
+   */
+  businessDirection?: number;
+  transferOutType?: string;
+  transferInType?: string;
+  perfix?: string;
+  /** 业务交易方向名称 */
+  businessDirectionName?: string;
+  /** 转出库存地类型名称 */
+  transferOutTypeName?: string;
+  /** 转入库存地类型名称 */
+  transferInTypeName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+}
+
+/** 响应数据 */
+export type PagingDataBusinessCategoryVO = {
+  list?: BusinessCategoryVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBusinessCategoryVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBusinessCategoryVO;
+}
+
+/** 仓库业务类型 */
+export interface BusinessCategory {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  /**
+   * 业务交易方向
+   * @format int32
+   */
+  businessDirection?: number;
+  transferOutType?: string;
+  transferInType?: string;
+  perfix?: string;
 }
 
 /** 通用响应类 */
@@ -1251,6 +1395,7 @@ export type DeliveryDtlVO = {
   mitemDesc?: string;
   /** 单位 */
   uom?: string;
+  supplierId?: string;
   /** 供应商编码 */
   supplierCode?: string;
   /** 供应商名称 */
@@ -1794,6 +1939,37 @@ export const api = {
         body: data as any,
       }),
   },
+  deliveryDtl: {
+    /**
+     * No description
+     *
+     * @tags 送货单明细表
+     * @name ScanMitemLabel
+     * @summary 扫描物料标签
+     * @request POST:/deliveryDtl/scanMitemLabel
+     * @secure
+     */
+    scanMitemLabel: (data: DeliverySearch) =>
+      http.request<ResultTransferHeadVO['data']>(`/api/warehouse/deliveryDtl/scanMitemLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 送货单明细表
+     * @name GetDeliveryDtlByBillNo
+     * @summary 根据送货的号获取送货单的明细
+     * @request GET:/deliveryDtl/getDeliveryDtlByBillNo
+     * @secure
+     */
+    getDeliveryDtlByBillNo: (query: { billNo: string }) =>
+      http.request<ResultListDeliveryDtlVO['data']>(`/api/warehouse/deliveryDtl/getDeliveryDtlByBillNo`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
   deliveryCard: {
     /**
      * No description
@@ -1973,20 +2149,50 @@ export const api = {
         method: 'GET',
       }),
   },
-  deliveryDtl: {
+  businessCategory: {
     /**
      * No description
      *
-     * @tags 送货单明细表
-     * @name GetDeliveryDtlByBillNo
-     * @summary 根据送货的号获取送货单的明细
-     * @request GET:/deliveryDtl/getDeliveryDtlByBillNo
+     * @tags 仓库业务类型
+     * @name RemoveBatch
+     * @summary 删除仓库业务类型
+     * @request POST:/businessCategory/removeBatch
      * @secure
      */
-    getDeliveryDtlByBillNo: (query: { billNo: string }) =>
-      http.request<ResultListDeliveryDtlVO['data']>(`/api/warehouse/deliveryDtl/getDeliveryDtlByBillNo`, {
-        method: 'GET',
-        params: query,
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/warehouse/businessCategory/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库业务类型
+     * @name GetList
+     * @summary 获取主界面数据
+     * @request POST:/businessCategory/getList
+     * @secure
+     */
+    getList: (data: BusinessCategorySearch) =>
+      http.request<ResultPagingDataBusinessCategoryVO['data']>(`/api/warehouse/businessCategory/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库业务类型
+     * @name AddBusinessCategory
+     * @summary 新增仓库业务类型
+     * @request POST:/businessCategory/addBusinessCategory
+     * @secure
+     */
+    addBusinessCategory: (data: BusinessCategory) =>
+      http.request<ResultObject['data']>(`/api/warehouse/businessCategory/addBusinessCategory`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
 };
