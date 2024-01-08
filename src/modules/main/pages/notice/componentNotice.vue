@@ -201,6 +201,7 @@ const onHandelNoticeMenu = async (item: any) => {
 
     .msg-content {
       margin-bottom: 4px;
+      font-size: 12px;
     }
 
     .msg-type {
@@ -241,6 +242,7 @@ const onHandelNoticeMenu = async (item: any) => {
       position: absolute;
       right: var(--td-comp-margin-xxl);
       bottom: 4px;
+      font-size: 12px;
     }
   }
 }
