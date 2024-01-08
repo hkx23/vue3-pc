@@ -295,7 +295,6 @@ const onPrint = async () => {
     return;
   }
   await api.barcodePkg.printBarcode({ ids: selectedRowKeys.value });
-  onRefreshBelow();
   onRefreshTag();
   MessagePlugin.success('打印成功');
 };
@@ -406,7 +405,6 @@ const generateBracode = async () => {
     ...printMode.value,
     createNum: printMode.value.createNum,
   });
-  onRefreshBelow();
   onRefreshTag();
   MessagePlugin.success('生成成功');
 };
@@ -1087,7 +1085,7 @@ const onRefreshTag = async () => {
   await api.barcodePkg.getTagList(queryCondition.value).then((data) => {
     tabList.list = data.list;
   });
-  handleTabClick(1); // 刷新数据
+  handleTabClick(tabValue.value); // 刷新数据
 };
 
 const onRowClick = ({ row }) => {
