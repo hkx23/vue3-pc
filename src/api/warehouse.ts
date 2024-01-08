@@ -1114,6 +1114,129 @@ export interface ResultPagingDataDeliveryCardVO {
   data?: PagingDataDeliveryCardVO;
 }
 
+export interface BusinessCategorySearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 仓库业务类型模糊 */
+  keyword?: string;
+  /** 多个ID */
+  ids?: string[];
+}
+
+export interface BusinessCategoryVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  /**
+   * 业务交易方向
+   * @format int32
+   */
+  businessDirection?: number;
+  transferOutType?: string;
+  transferInType?: string;
+  perfix?: string;
+  /** 业务交易方向名称 */
+  businessDirectionName?: string;
+  /** 转出库存地类型名称 */
+  transferOutTypeName?: string;
+  /** 转入库存地类型名称 */
+  transferInTypeName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+}
+
+/** 响应数据 */
+export type PagingDataBusinessCategoryVO = {
+  list?: BusinessCategoryVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBusinessCategoryVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBusinessCategoryVO;
+}
+
+/** 仓库业务类型 */
+export interface BusinessCategory {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  /**
+   * 业务交易方向
+   * @format int32
+   */
+  businessDirection?: number;
+  transferOutType?: string;
+  transferInType?: string;
+  perfix?: string;
+}
+
 /** 通用响应类 */
 export interface ResultLong {
   /**
@@ -2024,6 +2147,52 @@ export const api = {
     getBarcodeRuleList: () =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/warehouse/deliveryCard/getBarcodeRuleList`, {
         method: 'GET',
+      }),
+  },
+  businessCategory: {
+    /**
+     * No description
+     *
+     * @tags 仓库业务类型
+     * @name RemoveBatch
+     * @summary 删除仓库业务类型
+     * @request POST:/businessCategory/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/warehouse/businessCategory/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库业务类型
+     * @name GetList
+     * @summary 获取主界面数据
+     * @request POST:/businessCategory/getList
+     * @secure
+     */
+    getList: (data: BusinessCategorySearch) =>
+      http.request<ResultPagingDataBusinessCategoryVO['data']>(`/api/warehouse/businessCategory/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库业务类型
+     * @name AddBusinessCategory
+     * @summary 新增仓库业务类型
+     * @request POST:/businessCategory/addBusinessCategory
+     * @secure
+     */
+    addBusinessCategory: (data: BusinessCategory) =>
+      http.request<ResultObject['data']>(`/api/warehouse/businessCategory/addBusinessCategory`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
 };

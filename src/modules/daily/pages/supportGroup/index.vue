@@ -555,7 +555,6 @@ const onGroupSelectChange = async (value: any, context: any) => {
   if (context.currentRowKey === 'CHECK_ALL_BOX') {
     return;
   }
-  console.log('🚀index.vue555: ', rowGroupId.value);
   await supportPersonInUserTabData(); // 获取 人员表格 数据
 };
 

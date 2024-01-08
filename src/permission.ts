@@ -56,7 +56,7 @@ router.beforeEach(async (to, from, next) => {
       }
       next({
         path: '/login',
-        query: { redirect: encodeURIComponent(to.fullPath) },
+        query: { redirect: to.path === '/login' ? to.query.redirect : encodeURIComponent(to.fullPath) },
       });
       NProgress.done();
     }
@@ -67,7 +67,7 @@ router.beforeEach(async (to, from, next) => {
     } else {
       next({
         path: '/login',
-        query: { redirect: encodeURIComponent(to.fullPath) },
+        query: { redirect: to.path === '/login' ? to.query.redirect : encodeURIComponent(to.fullPath) },
       });
     }
     NProgress.done();
