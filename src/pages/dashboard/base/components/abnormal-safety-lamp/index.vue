@@ -79,13 +79,20 @@ onDeactivated(() => {
 //* 接口数据
 const getPieData = async () => {
   try {
+    // 获取饼图数据
     const data = await api.incidentDeal.getIncidentModuleProportion();
-    const echarData = data.map((n) => ({ value: n.incidentModuleProportion * 100, name: n.incidentModuleName }));
 
+    // 转换数据格式
+    const echarData = data.map(({ incidentModuleProportion, incidentModuleName }) => ({
+      value: incidentModuleProportion * 100,
+      name: incidentModuleName,
+    }));
+
+    // 更新图表选项
     optionChart.value = {
       legend: {
         orient: 'horizontal',
-        bottom: -6,
+        bottom: 35,
       },
       tooltip: {
         trigger: 'item',
@@ -94,6 +101,7 @@ const getPieData = async () => {
         {
           type: 'pie',
           radius: '50%',
+          center: ['50%', '35%'],
           label: {
             show: true,
             formatter: (param) => `${param.name} (${param.percent}%)`,
@@ -110,6 +118,7 @@ const getPieData = async () => {
       ],
     };
   } catch (error) {
+    // 处理错误
     console.error('获取饼图数据时出错', error);
   }
 };

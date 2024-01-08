@@ -84,4 +84,12 @@ const router = createRouter({
   },
 });
 
+export const openPage = (modulePath: string) => {
+  const routers = router.getRoutes();
+  const route = routers.find((t) => t.meta.sourcePath === modulePath || t.meta.id === modulePath);
+  if (route) {
+    router.push(route.path);
+  }
+};
+
 export default router;

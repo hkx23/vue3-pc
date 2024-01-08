@@ -35,15 +35,27 @@
       </template>
     </cmp-table>
 
-    <div class="recommend-more" @click="onHandelTodoMenu">
+    <!-- <div class="recommend-more" @click="onHandelTodoMenu">
       <span>{{ t('common.button.more') }}</span>
+
       <t-icon name="chevron-right"></t-icon>
-    </div>
+    </div> -->
 
     <template #title>
       <t-badge :show-zero="true" :count="unProcessCount" class="list-item" :offset="[-10, 11]">
         <div class="t-card__title">{{ t('todo.title') }}</div>
       </t-badge>
+    </template>
+
+    <template #footer>
+      <div style="float: right">
+        <t-link theme="primary" size="small" @click="onHandelTodoMenu">
+          {{ t('common.button.more') }}
+          <template #suffix-icon>
+            <t-icon name="chevron-right"></t-icon>
+          </template>
+        </t-link>
+      </div>
     </template>
   </cmp-card>
 </template>
@@ -57,6 +69,7 @@ import { useRouter } from 'vue-router';
 import { api as apiMain } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import { openPage } from '@/router';
 
 import { useLang } from './lang';
 
@@ -89,10 +102,10 @@ const column = ref([
     colKey: 'isReadName',
     title: t('todo.isReadName'),
     align: 'center',
-    width: '80',
+    width: '70',
     cell: 'stateSwitch',
   },
-  { title: t('todo.timeCreate'), colKey: 'timeCreate', align: 'center', width: 120 },
+  { title: t('todo.timeCreate'), colKey: 'timeCreate', align: 'center', width: 140 },
 ]);
 // table数据
 const todoData = ref([]);
@@ -156,12 +169,7 @@ const onHandelUrl = async (row: any) => {
 // 跳转到我的待办
 const onHandelTodoMenu = async () => {
   const toDoUrl = '/main#/todo';
-  const tabRouters = router.getRoutes();
-  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === toDoUrl);
-  if (routeInfo) {
-    const url = `${routeInfo.path}`;
-    router.push(url);
-  }
+  openPage(toDoUrl);
 };
 </script>
 
@@ -234,15 +242,14 @@ const onHandelTodoMenu = async () => {
 }
 
 .recommend-more {
-  margin-top: 20px;
   cursor: pointer;
   font-size: 12px;
-  font-weight: 400;
   letter-spacing: 0;
   line-height: 17.38px;
-  color: rgb(69 69 69 / 100%);
-  text-align: right;
-  vertical-align: middle;
+  color: #454545;
+  position: absolute;
+  bottom: 20px;
+  right: 24px;
 }
 
 .component-table {

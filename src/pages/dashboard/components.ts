@@ -1,5 +1,6 @@
 import { LayoutItem } from 'grid-layout-plus';
 
+import Notice from '@/modules/main/pages/notice/componentNotice.vue';
 import Todo from '@/modules/main/pages/todo/componentTodo.vue';
 
 import AbnormalSafetyLamp from './base/components/abnormal-safety-lamp/index.vue';
@@ -21,7 +22,7 @@ export const components = [
     category: '系统',
     component: oftenUseMenu,
     w: 8,
-    h: 2,
+    h: 3,
   },
   {
     code: 'todo',
@@ -31,19 +32,30 @@ export const components = [
     description: '我的待办',
     category: '系统',
     component: Todo,
-    w: 2,
-    h: 5,
+    w: 4,
+    h: 6,
+  },
+  {
+    code: 'notice',
+    title: '通告',
+    showTitle: false,
+    ghost: true,
+    description: '通告',
+    category: '系统',
+    component: Notice,
+    w: 4,
+    h: 6,
   },
   {
     code: 'poor-process-top5',
     title: '过程不良TOP5',
     showTitle: true,
     ghost: true,
-    description: '过程不良TOP5 按周',
+    description: '过程不良TOP5',
     category: '生产',
     component: PoorProcessTop5,
     w: 4,
-    h: 3,
+    h: 6,
   },
   {
     code: 'poduction-achievement rate-ranking',
@@ -53,7 +65,7 @@ export const components = [
     category: '生产',
     component: PoductionAchievementRateRanking,
     w: 4,
-    h: 3,
+    h: 6,
   },
   {
     code: 'abnormal-safety-lamp',
@@ -64,7 +76,7 @@ export const components = [
     category: '日常',
     component: AbnormalSafetyLamp,
     w: 4,
-    h: 3,
+    h: 6,
   },
   {
     code: 'LineChartDemo',
@@ -126,4 +138,8 @@ export interface componentItem extends LayoutItem {
    * 透明组件，用于自定义样式
    */
   ghost?: boolean;
+  /**
+   * 跳转路径（显示其他按钮）
+   */
+  redirect?: string;
 }

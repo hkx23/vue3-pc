@@ -2869,10 +2869,6 @@ export interface BarcodeWipCollectVO {
   datetimeSche?: string;
   stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
 }
 
 /** 通用响应类 */
@@ -2983,8 +2979,6 @@ export interface BarcodeWipVO {
   datetimeSche?: string;
   stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -3225,8 +3219,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */

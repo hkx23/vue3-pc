@@ -3474,15 +3474,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
   stateName?: string;
   isState?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
   isProductName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
+  isRawName?: string;
   isBatchName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4418,6 +4418,43 @@ export interface ResultPagingDataBarcodeVaildateRuleVO {
   data?: PagingDataBarcodeVaildateRuleVO;
 }
 
+export interface BarcodeSequenceDTO {
+  currentNum?: string;
+  barcodeType?: string;
+  prefix?: string;
+}
+
+/** 条码生成序列号表 */
+export interface BarcodeSequence {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  barcodeType?: string;
+  prefix?: string;
+  currentValue?: string;
+  barcodeRuleId?: string;
+}
+
 export interface BarcodeRuleInMitemSearch {
   /**
    * 页码
@@ -5280,12 +5317,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9532,6 +9569,37 @@ export const api = {
         params: query,
       }),
   },
+  barcodeSequence: {
+    /**
+     * No description
+     *
+     * @tags 条码生成序列号表
+     * @name UpdateSeq
+     * @summary 生成条码时更新条码seq表
+     * @request POST:/barcodeSequence/updateSeq
+     * @secure
+     */
+    updateSeq: (data: BarcodeSequenceDTO) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeSequence/updateSeq`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码生成序列号表
+     * @name InsertSeq
+     * @summary 生成条码时插条码seq表
+     * @request POST:/barcodeSequence/insertSeq
+     * @secure
+     */
+    insertSeq: (data: BarcodeSequence) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeSequence/insertSeq`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   barcodeRuleInMitem: {
     /**
      * No description
@@ -9803,6 +9871,41 @@ export const api = {
      */
     getObjectValueList: (query: { objectId: string; objectCode: string; propertyCode: string }) =>
       http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  notice: {
+    /**
+     * No description
+     *
+     * @tags 系统通知表
+     * @name List
+     * @summary 获取系统通知
+     * @request GET:/notice/list
+     * @secure
+     */
+    list: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pageNum?: number;
+      /**
+       * @format int32
+       * @default 20
+       */
+      pageSize?: number;
+      /** @default "" */
+      title?: string;
+      /** @default "" */
+      datetimeStart?: string;
+      /** @default "" */
+      datetimeEnd?: string;
+      /** @default "" */
+      id?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/notice/list`, {
         method: 'GET',
         params: query,
       }),
