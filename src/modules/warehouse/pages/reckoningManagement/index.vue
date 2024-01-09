@@ -45,24 +45,25 @@
           </template> -->
         </cmp-table>
       </cmp-card>
+
+      <!-- 新增弹窗组件 -->
+      <newIM
+        :id="editId"
+        v-model:visible="eidtRoutingVisible"
+        :is-copy="isCopy"
+        :form-title="formTitle"
+        @submit="getRouting"
+      />
+      <!-- 盘点单维护组件 -->
+      <i-s-m
+        :id="editId"
+        v-model:visible="ISMRoutingVisible"
+        :is-copy="isCopy"
+        :form-title="formTitle"
+        @submit="getRouting"
+      />
     </cmp-container>
   </cmp-container>
-  <!-- 新增弹窗组件 -->
-  <newIM
-    :id="editId"
-    v-model:visible="eidtRoutingVisible"
-    :is-copy="isCopy"
-    :form-title="formTitle"
-    @submit="getRouting"
-  />
-  <!-- 盘点单维护组件 -->
-  <i-s-m
-    :id="editId"
-    v-model:visible="ISMRoutingVisible"
-    :is-copy="isCopy"
-    :form-title="formTitle"
-    @submit="getRouting"
-  />
 </template>
 
 <script setup lang="ts">
