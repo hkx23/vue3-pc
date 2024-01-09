@@ -1027,12 +1027,20 @@ const onGenerate = debounce(async () => {
     MessagePlugin.warning('请选择条码规则！');
     return;
   }
+  if (generateData?.value?.createNum < 0) {
+    MessagePlugin.warning('本次生成数量不能为负数！');
+    return;
+  }
   if (!generateData?.value?.createNum) {
     MessagePlugin.warning('请正确填写本次生成数量！');
     return;
   }
   if (generateData?.value?.createNum > numInput.value) {
     MessagePlugin.warning(`本次生成数量不得大于 ${numInput.value}！`);
+    return;
+  }
+  if (generateData?.value?.createSize < 0) {
+    MessagePlugin.warning('规格数量不得小于0！');
     return;
   }
   if (!generateData?.value?.createSize) {

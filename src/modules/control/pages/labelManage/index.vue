@@ -820,6 +820,10 @@ const onGenerate = debounce(async () => {
     MessagePlugin.warning(`本次生成数量不得大于 ${numInput.value}！`);
     return;
   }
+  if (generateData?.value?.createNum < 0) {
+    MessagePlugin.warning('本次生成数量不得小于0！');
+    return;
+  }
   if (!generateData?.value?.createNum) {
     MessagePlugin.warning('请正确填写本次生成数量！');
     return;

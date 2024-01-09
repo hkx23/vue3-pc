@@ -43,7 +43,7 @@ const opts = computed(() => {
       event: 'input',
       defaultVal: '',
     },
-    packingBoxCode: {
+    parentPkgBarcode: {
       label: '包装箱码',
       comp: 't-input',
       event: 'input',

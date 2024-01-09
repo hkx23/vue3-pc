@@ -11,8 +11,8 @@
         empty="没有符合条件的数据"
         :table-column="columns"
         :fixed-height="true"
-        :table-data="businessData.list"
-        :total="businessTotal"
+        :table-data="transferData.list"
+        :total="transferTotal"
         select-on-row-click
         :selected-row-keys="selectedRowKeys"
         @select-change="rehandleSelectChange"
@@ -20,6 +20,7 @@
       >
         <template #actionSlot>
           <t-space :size="8">
+            <t-link theme="primary" @click="onDeleteRow">{{ '编辑' }}</t-link>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
               <t-link theme="primary" @click="onDeleteRow">{{ '删除' }}</t-link>
             </t-popconfirm>
@@ -35,6 +36,12 @@
             <t-button theme="default">导出</t-button>
           </t-space>
         </template>
+        <template #oidOrgName="{ row }">
+          {{ `${row.oidOrgName} — ${row.oidWarehouseName}` }}
+        </template>
+        <template #businessDirection="{ row }">
+          {{ `${row.toOid} — ${row.oidWarehouseName}` }}
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
@@ -42,33 +49,30 @@
   <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
     <t-form ref="formRef" :rules="rules" :data="businessTabData" label-width="120px" @submit="onBusinessSubmit">
       <!-- 第 1️⃣ 行数据 -->
-      <t-form-item label="业务类型代码" name="categoryCode">
-        <t-input v-model="businessTabData.categoryCode"></t-input>
+      <t-form-item label="业务类型" name="mitemCategoryId">
+        <bcmp-select-business
+          v-model="businessTabData.categoryName"
+          :is-multiple="false"
+          type="businessCategory"
+          label=""
+        ></bcmp-select-business>
       </t-form-item>
       <!-- 第 2️⃣ 行数据 -->
-      <t-form-item label="业务类型名称" name="categoryName">
-        <t-input v-model="businessTabData.categoryName"></t-input>
-      </t-form-item>
-      <!-- 第 3️⃣ 行数据 -->
-      <t-form-item label="业务交易方向" name="businessDirection">
+      <t-form-item label="源仓库" name="categoryName">
+        <t-select v-model="businessTabData.businessDirection">
+          <t-option v-for="item in transactionDropDownList" :key="item.value" :label="item.label" :value="item.value" />
+        </t-select>
         <t-select v-model="businessTabData.businessDirection">
           <t-option v-for="item in transactionDropDownList" :key="item.value" :label="item.label" :value="item.value" />
         </t-select>
       </t-form-item>
-      <!-- 第 4️⃣ 行数据 -->
-      <t-form-item label="业务单据前缀" name="perfix">
-        <t-input v-model="businessTabData.perfix"></t-input>
-      </t-form-item>
-      <!-- 第 5️⃣ 行数据 -->
-      <t-form-item label="转出仓库的类型" name="transferOutType">
-        <t-select v-model="businessTabData.transferOutType">
-          <t-option v-for="item in outFlowDropDownList" :key="item.value" :label="item.label" :value="item.value" />
+      <!-- 第 3️⃣ 行数据 -->
+      <t-form-item label="目标仓库" name="businessDirection">
+        <t-select v-model="businessTabData.businessDirection">
+          <t-option v-for="item in transactionDropDownList" :key="item.value" :label="item.label" :value="item.value" />
         </t-select>
-      </t-form-item>
-      <!-- 第 6️⃣ 行数据 -->
-      <t-form-item label="转入仓库的类型" name="transferInType">
-        <t-select v-model="businessTabData.transferInType">
-          <t-option v-for="item in inFlowDropDownList" :key="item.value" :label="item.label" :value="item.value" />
+        <t-select v-model="businessTabData.businessDirection">
+          <t-option v-for="item in transactionDropDownList" :key="item.value" :label="item.label" :value="item.value" />
         </t-select>
       </t-form-item>
     </t-form>
@@ -96,9 +100,9 @@ const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys = ref([]); // 删除计量单位 id
 
 // 表格数据总条数
-const businessTotal = ref(0);
+const transferTotal = ref(0);
 // 表格数据
-const businessData = reactive({ list: [] });
+const transferData = reactive({ list: [] });
 // dialog 弹框数据
 const businessTabData = ref({
   categoryCode: '', // 业务类型代码
@@ -116,31 +120,31 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'categoryCode',
+    colKey: 'categoryName',
     title: '业务类型',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'categoryName',
+    colKey: 'oidOrgName',
     title: '源组织与仓库',
     align: 'center',
-    width: '110',
+    width: '250',
   },
   {
     colKey: 'businessDirection',
     title: '目标组织与仓库',
     align: 'center',
-    width: '130',
+    width: '250',
   },
   {
-    colKey: 'creatorName',
+    colKey: 'creator',
     title: '创建人',
     align: 'center',
-    width: '100',
+    width: '120',
   },
   {
-    colKey: 'createTime',
+    colKey: 'timeCreate',
     title: '创建时间',
     align: 'center',
     width: '150',
@@ -165,7 +169,7 @@ const rules: FormRules = {
 };
 // 初始渲染
 onMounted(async () => {
-  await onGetAnomalyTypeData(); // 获取 表格 数据
+  await onGetTransferData(); // 获取 表格 数据
   await transactionDropDownData(); // 业务交易方向下拉
   await outFlowDropDownData(); // 转出库存的类型
   await inFlowDropDownData(); // 转入库存的类型
@@ -192,38 +196,40 @@ const inFlowDropDownData = async () => {
 
 // 刷新按钮
 const onFetchData = () => {
-  onGetAnomalyTypeData();
+  onGetTransferData();
   selectedRowKeys.value = [];
 };
 
-const businessParam = ref({
+const transferParam = ref({
   pageNum: 1,
   pageSize: 10,
-  keyword: '',
+  warehouseCode: '', // 仓库
+  businessCategoryId: '', // 仓库类型
 });
 
 // 获取 表格 数据
-const onGetAnomalyTypeData = async () => {
+const onGetTransferData = async () => {
   // tableRef.value.setSelectedRowKeys([]);
   selectedRowKeys.value = [];
-  businessParam.value.pageNum = pageUI.value.page;
-  businessParam.value.pageSize = pageUI.value.rows;
-  const res = await api.businessCategory.getList(businessParam.value);
-  businessData.list = res.list;
-  businessTotal.value = res.total;
+  transferParam.value.pageNum = pageUI.value.page;
+  transferParam.value.pageSize = pageUI.value.rows;
+  const res = await api.transferConstraint.getList(transferParam.value);
+  console.log('🚀 ~ onGetTransferData ~ res:', res);
+  transferData.list = res.list;
+  transferTotal.value = res.total;
 };
 
 // 新增按钮点击事件
 const onAddClick = () => {
   formRef.value.reset({ type: 'empty' });
   formVisible.value = true;
-  diaLogTitle.value = '新增仓库业务类型';
+  diaLogTitle.value = '仓库转移规则新增';
 };
 
 // 新增请求
 const onAddBusinessType = async () => {
   await api.businessCategory.addBusinessCategory(businessTabData.value);
-  await onGetAnomalyTypeData(); // 获取 表格 数据
+  await onGetTransferData(); // 获取 表格 数据
   MessagePlugin.success('新增成功');
 };
 
@@ -236,13 +242,24 @@ const opts = computed(() => {
       event: 'input',
       defaultVal: '',
     },
+    workOrder: {
+      label: '业务类型',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        // valueField: 'scheCode',
+        type: 'businessCategory',
+        showTitle: false,
+      },
+    },
   };
 });
 
 const onInput = async (data: any) => {
+  console.log('🚀 ~ onInput ~ data:', data);
   pageUI.value.page = 1;
-  businessParam.value.keyword = data.keyword;
-  await onGetAnomalyTypeData();
+  await onGetTransferData();
 };
 
 const onSecondarySubmit = () => {
@@ -262,10 +279,10 @@ const onDeleteRow = () => {
 // 右侧表格删除确认按钮
 const onDelConfirm = async () => {
   await api.businessCategory.removeBatch(selectedRowKeys.value);
-  if (businessData.list.length <= 1 && pageUI.value.page > 1) {
+  if (transferData.list.length <= 1 && pageUI.value.page > 1) {
     pageUI.value.page--;
   }
-  await onGetAnomalyTypeData(); // 重新渲染数组
+  await onGetTransferData(); // 重新渲染数组
   selectedRowKeys.value = [];
   MessagePlugin.success('删除成功');
 };
@@ -273,14 +290,14 @@ const onDelConfirm = async () => {
 // 批量删除
 const onDeleteBatches = async () => {
   // 步骤 1: 检查删除前的数据总量
-  const initialLength = businessData.list.length;
+  const initialLength = transferData.list.length;
   // 步骤 2: 执行删除操作
   await api.businessCategory.removeBatch(selectedRowKeys.value);
   // 步骤 3: 检查当前页是否还有数据
-  if (initialLength === businessData.list.length && pageUI.value.page > 1) {
+  if (initialLength === transferData.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
-    await onGetAnomalyTypeData(); // 重新渲染数组
+    await onGetTransferData(); // 重新渲染数组
     selectedRowKeys.value = [];
     MessagePlugin.success('批量删除成功');
   }
