@@ -42,6 +42,7 @@
       <div ref="tableContentRef" class="table-box__table">
         <t-table
           ref="tableRef"
+          v-model:selected-row-keys="selectedRowKeys"
           :vertical-align="'middle'"
           :hover="hover"
           multiple-sort
@@ -54,7 +55,6 @@
           :data="finalTableData"
           :loading="loading"
           :max-height="maxHeightValue"
-          :default-selected-row-keys="selectedRowKeys"
           v-bind="$attrs"
           @select-change="onSelectKeysChange"
           @filter-change="onFilterChange"
