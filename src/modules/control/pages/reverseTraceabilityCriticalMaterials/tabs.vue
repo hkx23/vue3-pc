@@ -5,6 +5,11 @@
         <!-- # 1️⃣ 产品基础信息 -->
         <cmp-container v-show="tabKey === 0" :full="true">
           <t-card :bordered="false">
+            <template #title>
+              {{
+                `工单信息( 工单号：${productBasicInformationForm?.moCode ? productBasicInformationForm?.moCode : ''} )`
+              }}
+            </template>
             <div class="form-item-box">
               <t-form-item label="工序">{{ productBasicInformationForm?.curProcessName }}</t-form-item>
               <t-form-item label="工站"> {{ productBasicInformationForm?.curWorkstationName }}</t-form-item>
@@ -40,8 +45,8 @@
                 </template>
                 <template #title>
                   {{
-                    `工单信息( 工单号：${
-                      productBasicInformationForm?.moCode ? productBasicInformationForm?.moCode : ''
+                    `生产历史信息( 产品：${
+                      productBasicInformationForm?.serialNumber ? productBasicInformationForm?.serialNumber : ''
                     } )`
                   }}
                 </template>
@@ -105,7 +110,8 @@
                 :tree="treeConfig"
                 lazy-load
                 @expanded-tree-nodes-change="onExpandedTreeNodesChange"
-              ></t-enhanced-table>
+              >
+              </t-enhanced-table>
               <t-pagination
                 v-model:current="commonParametersList.pageNum"
                 v-model:page-size="commonParametersList.pageSize"
@@ -595,7 +601,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// 5️⃣ 品质信息 表格列数据
+// // 5️⃣ 品质信息 表格列数据
 const qualityInformation: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
@@ -675,7 +681,7 @@ const processDocument: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// 其7️⃣ - 1️⃣ 产品不良 表格列数据
+// // 7️⃣ - 1️⃣ 产品不良 表格列数据
 const productDefect: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
@@ -756,7 +762,7 @@ const productDefect: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// // 其7️⃣ - 2️⃣ 维修明细 表格列数据
+// // 7️⃣ - 2️⃣ 维修明细 表格列数据
 const maintenanceDetail: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'scanBarcode',
@@ -820,7 +826,7 @@ const maintenanceDetail: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// // 其8️⃣ 出入库信息 表格列数据
+// // 8️⃣ 出入库信息 表格列数据
 const inventoryInOut: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
