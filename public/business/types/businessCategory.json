@@ -1,0 +1,23 @@
+{
+  "title": "业务类型：",
+  "placeholder": "请选择业务类型：",
+  "url": "/api/warehouse/businessCategory/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "类型编码",
+      "key": "categoryCode",
+      "align": "center"
+    },
+    {
+      "title": "类型名称",
+      "key": "categoryName",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "categoryName"
+  }
+}

@@ -99,7 +99,7 @@ const fetchdefectData = async () => {
     // 按用户获取用户与组织关系数据
     const res = (await api.processInDefectCode.getNotRelateList({
       processId: props.id,
-      keyWord: '',
+      keyWord: keyWord.value,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
     })) as any;

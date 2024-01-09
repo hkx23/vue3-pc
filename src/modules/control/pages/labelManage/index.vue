@@ -48,6 +48,15 @@
                   @select-change="onGenerateChange"
                   @refresh="onTopRefresh"
                 >
+                  <template #thisTimeQty="{ row }">
+                    <t-input-number
+                      v-model="row.thisTimeQty"
+                      :auto-width="true"
+                      theme="column"
+                      :min="0"
+                      @change="(value) => inputTimeQtyChange(value, row)"
+                    />
+                  </template>
                   <template #button>
                     <t-space :size="8">
                       <t-select v-model="generateData.barcodeRuleId" style="width: 240px" label="条码规则">
@@ -260,7 +269,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
-import { FormInstanceFunctions, Input, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
@@ -369,39 +378,6 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     title: '本次生成数量',
     align: 'center',
     width: '130',
-    edit: {
-      component: Input,
-      props: {
-        clearable: true,
-        autofocus: true,
-        autoWidth: true,
-      },
-      rules: [{ required: true, message: '不能为空' }],
-      keepEditMode: true,
-      showEditIcon: true,
-      validateTrigger: 'change',
-      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
-      // on: (editContext) => ({
-      //   onBlur: () => {
-      //     console.log('🚀 ~ file: index.vue:291 ~ editContext:', editContext);
-      //   },
-      // onEnter: (ctx) => {
-      //   ctx?.e?.preventDefault();
-      //   console.log('🚀 ~ file: index.vue:295 ~ ctx:', ctx);
-      // },
-      // }),
-      abortEditOnEvent: ['onEnter'],
-      // 编辑完成，退出编辑态后触发
-      onEdited: (context) => {
-        const num = context.newRowData.planQty - context.newRowData.generateQty;
-        if (context.newRowData.thisTimeQty > num) {
-          MessagePlugin.warning(`本次生成数量需要为小于等于${num}的正整数`);
-          return;
-        }
-        printTopTabData.list[context?.rowIndex] = context?.newRowData;
-        generateData.value.createNum = printTopTabData.list[context?.rowIndex].thisTimeQty; // 变化后的数字
-      },
-    },
   },
   {
     colKey: 'uomName',
@@ -729,7 +705,6 @@ const onGetPrintDownTabData = async () => {
 const workStateDataList = reactive({ list: [] });
 const onWorkStatus = async () => {
   const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' });
-  console.log('🚀 ~ file: index.vue:722 ~ onWorkStatus ~ res:', res);
   workStateDataList.list = res;
 };
 
@@ -812,10 +787,19 @@ const onLogInterface = async (row: any) => {
 
 // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
+  numInput.value = context.currentRowData.planQty - context.currentRowData.generateQty;
+  generateData.value.createNum = context.currentRowData.thisTimeQty;
   generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
   generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
   [topPrintID.value] = value;
   await onGetPrintDownTabData();
+};
+
+// 本次生成数量change事件
+const numInput = ref(null);
+const inputTimeQtyChange = (value: any, row: any) => {
+  generateData.value.createNum = value; // 本次生成数量
+  numInput.value = row.planQty - row.generateQty;
 };
 
 // 生成点击事件
@@ -832,14 +816,24 @@ const onGenerate = debounce(async () => {
     MessagePlugin.warning('请选择条码规则！');
     return;
   }
+  if (generateData?.value?.createNum > numInput.value) {
+    MessagePlugin.warning(`本次生成数量不得大于 ${numInput.value}！`);
+    return;
+  }
+  if (generateData?.value?.createNum < 0) {
+    MessagePlugin.warning('本次生成数量不得小于0！');
+    return;
+  }
   if (!generateData?.value?.createNum) {
-    MessagePlugin.warning('请正确填写数量后回车！');
+    MessagePlugin.warning('请正确填写本次生成数量！');
     return;
   }
   await api.labelManage.generateBarcode(generateData.value); // 生成请求
   await onGetPrintTopTabData(); // 刷新数据
   await onGetPrintDownTabData();
   MessagePlugin.success('生成成功');
+  tableRefTop.value.setSelectedRowKeys([]);
+  generateData.value.moScheduleId = null;
 }, 1000);
 // 点击 打印事件
 const onPrint = debounce(async () => {

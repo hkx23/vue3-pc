@@ -9,7 +9,7 @@
     @close="close"
   >
     <t-loading :loading="loading" text="加载中..." fullscreen />
-    <t-tabs v-model="tabValue">
+    <t-tabs v-model="tabValue" @change="tabChange">
       <t-tab-panel :value="1" label="用户权限/隶属角色" :destroy-on-hide="false">
         <!-- #region 角色选择框 -->
         <cmp-container :full="true">
@@ -678,6 +678,14 @@ const originPermissionTreeData = computed(() => {
   });
   return resultData;
 });
+
+const tabChange = (newValue) => {
+  if (newValue === 1) {
+    fetchRoleTable();
+  } else {
+    fetchPermissionData();
+  }
+};
 watch(visible, (value: boolean) => {
   if (value && props.id) {
     // @ts-ignore

@@ -18,7 +18,7 @@
             </t-form-item>
             <t-form-item label="角色">
               <t-space v-if="roles && roles.length > 0">
-                <t-tooltip v-for="item in roles" :key="item.id" :content="item.roleDesc">
+                <t-tooltip v-for="item in userRoles" :key="item.id" :content="item.roleDesc">
                   <t-tag>{{ item.roleName }}</t-tag>
                 </t-tooltip>
               </t-space>
@@ -167,6 +167,7 @@ const onClickShowEditPwd = () => {
 };
 
 const roles = ref<UserInRoleVO[]>([]);
+const userRoles = computed(() => roles.value.filter((t) => t.relate && t.eid === userInfo.value.eid));
 const personInfo = ref<Person>({});
 onMounted(async () => {
   roles.value = await api.userInRole.getUserInRoleListByUserId({

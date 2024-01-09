@@ -620,6 +620,118 @@ export interface PurchaseOrderSearch {
   labelNo?: string;
 }
 
+/** 仓库移转约束表 */
+export interface TransferConstraint {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  businessCategoryId?: string;
+  warehouseId?: string;
+  toOid?: string;
+  toWWarehouseId?: string;
+}
+
+export interface TransferConstraintSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 仓库ID */
+  warehouseCode?: string;
+  businessCategoryId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataTransferConstraintVO = {
+  list?: TransferConstraintVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataTransferConstraintVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataTransferConstraintVO;
+}
+
+export interface TransferConstraintVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  businessCategoryId?: string;
+  warehouseId?: string;
+  toOid?: string;
+  toWWarehouseId?: string;
+  /** 业务类型名称 */
+  categoryName?: string;
+  /** 原组织名称 */
+  oidOrgName?: string;
+  /** 原仓库名称 */
+  oidWarehouseName?: string;
+  /** 转入库存地类型名称 */
+  transferInTypeName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+}
+
 /** 货位 */
 export interface Location {
   id?: string;
@@ -2023,6 +2135,7 @@ export type DeliveryDtlVO = {
   waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  check?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -2442,6 +2555,67 @@ export const api = {
      */
     scanMitemLabel: (data: PurchaseOrderSearch) =>
       http.request<ResultBoolean['data']>(`/api/warehouse/purchaseOrder/scanMitemLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  transferConstraint: {
+    /**
+     * No description
+     *
+     * @tags 仓库移转约束表
+     * @name RemoveBatch
+     * @summary 编辑仓库转移规则
+     * @request POST:/transferConstraint/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/warehouse/transferConstraint/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库移转约束表
+     * @name ModifyTransferConstraint
+     * @summary 编辑仓库转移规则
+     * @request POST:/transferConstraint/modifyTransferConstraint
+     * @secure
+     */
+    modifyTransferConstraint: (data: TransferConstraint) =>
+      http.request<ResultObject['data']>(`/api/warehouse/transferConstraint/modifyTransferConstraint`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库移转约束表
+     * @name GetList
+     * @summary 获取主界面数据
+     * @request POST:/transferConstraint/getList
+     * @secure
+     */
+    getList: (data: TransferConstraintSearch) =>
+      http.request<ResultPagingDataTransferConstraintVO['data']>(`/api/warehouse/transferConstraint/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库移转约束表
+     * @name AddTransferConstraint
+     * @summary 新增仓库转移规则
+     * @request POST:/transferConstraint/addTransferConstraint
+     * @secure
+     */
+    addTransferConstraint: (data: TransferConstraint) =>
+      http.request<ResultObject['data']>(`/api/warehouse/transferConstraint/addTransferConstraint`, {
         method: 'POST',
         body: data as any,
       }),
