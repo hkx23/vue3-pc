@@ -2,11 +2,57 @@
 <template>
   <cmp-container :full="true">
     <cmp-container>
-      <cmp-card>
-        <cmp-card :ghost="true">
-          <cmp-query ref="queryComponent" :opts="optsReceipt" :bool-enter="false" @submit="onInput"> </cmp-query>
-        </cmp-card>
-      </cmp-card>
+      <t-card :ghost="true">
+        <!-- <cmp-query ref="queryComponent" :opts="optsReceipt" :bool-enter="false" @submit="onInput"> </cmp-query> -->
+        <t-form ref="formRef" label-width="100px" @submit="onInput">
+          <!-- 第一行表单项 -->
+          <t-row :gutter="[32, 16]">
+            <t-col :span="6">
+              <t-form-item label="事物类型">
+                <t-select v-model="resSelect" placeholder="请选择事物类型" multiple clearable>
+                  <t-option
+                    v-for="item in formData.transactionType"
+                    :key="item.value"
+                    :value="item.value"
+                    :label="item.label"
+                  ></t-option>
+                  ></t-select
+                >
+              </t-form-item>
+            </t-col>
+            <t-col :span="6">
+              <t-form-item label="物料代码">
+                <t-select v-model="formData.materialCode" placeholder="请选择物料代码"></t-select>
+              </t-form-item>
+            </t-col>
+            <t-col :span="6">
+              <t-form-item label="供应商">
+                <t-select v-model="formData.supplier" placeholder="请选择供应商"></t-select>
+              </t-form-item>
+            </t-col>
+            <t-col :span="6">
+              <t-form-item label="单据号">
+                <t-input v-model="formData.documentNumber" placeholder="请输入单据号"></t-input>
+              </t-form-item>
+            </t-col>
+            <t-col :span="24">
+              <t-form-item label="创建时间">
+                <t-date-range-picker v-model="formData.creationTime"></t-date-range-picker>
+              </t-form-item>
+            </t-col>
+            <t-col :span="6">
+              <t-form-item>
+                <t-space size="10px">
+                  <t-button theme="primary" type="submit">查询</t-button>
+                  <t-button theme="default" variant="base" type="reset">重置</t-button>
+                  <t-button theme="default" variant="base" @click="handleClear">清空校验结果</t-button>
+                </t-space>
+              </t-form-item>
+            </t-col>
+          </t-row>
+          <!-- 第二行表单项 -->
+        </t-form>
+      </t-card>
       <!-- cmp-table 表格组件  -->
       <cmp-card>
         <cmp-table
@@ -16,6 +62,7 @@
           :fixed-height="false"
           :total="dataTotal"
           empty="没有符合条件的数据"
+          :show-toolbar="false"
           @refresh="tabRefresh"
         >
           <!-- 状态 -->
@@ -26,12 +73,6 @@
             <span v-if="row.state == 4">已关闭</span>
             <span v-else>已作废</span>
           </template> -->
-          <template #button>
-            <t-button theme="primary" @click="onAdd">新增</t-button>
-            <t-button theme="default">作废</t-button>
-            <t-button theme="primary">打印</t-button>
-            <t-button theme="primary">导出</t-button>
-          </template>
           <!-- <template #op="row">
             <t-space>
               <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(row)">编辑</t-link>
@@ -44,66 +85,86 @@
       </cmp-card>
 
       <!-- 单据详情组件 -->
-      <!-- <RDS v-model:visible="ISMRoutingVisible" :is-copy="isCopy" :form-title="formTitle" @submit="getRouting" /> -->
+      <receipt-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" />
     </cmp-container>
   </cmp-container>
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, ref } from 'vue';
-// import RDS from './receiptDetails.vue';
+import { ref } from 'vue';
 
-const tableDataLocation = ref([]); //* 表格数据
-const eidtRoutingVisible = ref(false); //* 弹窗默认关闭
-const formTitle = ref('');
-const dataTotal = ref(0);
-// const formRef = ref(null); //* formRef defult nulls
+import ReceiptDetails from './receiptDetails.vue';
 
-//* 初始渲染
-
-//* 组件配置  --查询界面选择
-const optsReceipt = computed(() => {
-  return {
-    mitemId: {
-      label: '事物类型',
-      comp: 't-input',
-      event: 'business',
-      defaultVal: '',
-      bind: {
-        type: 'mitem',
-        showTitle: false,
-      },
-    },
-    datetimePlanRange: {
-      label: '物料编码',
-      comp: 't-select',
-      defaultVal: '',
-    },
-    supplierId: {
-      label: '供应商',
-      comp: 'bcmp-select-business',
-      event: 'business',
-      defaultVal: '',
-      bind: {
-        type: 'supplier',
-        showTitle: false,
-      },
-    },
-    billNo: {
-      label: '单据号',
-      comp: 't-select',
-      defaultVal: '',
-    },
-    datetimePlanRange1: {
-      label: '创建时间',
-      comp: 't-date-range-picker',
-      defaultVal: [dayjs().subtract(+3, 'day').format('YYYYMMDD'), dayjs().format('YYYYMMDD')], // 初始化日期控件
-    },
-  };
+const resSelect = ref([1, 2, 3, 4, 5]);
+// 表单数据模型
+const formData = ref({
+  transactionType: [
+    { label: '云服务器', value: '1' },
+    { label: '云数据库', value: '2' },
+    { label: '域名注册', value: '3' },
+    { label: '网站备案', value: '4' },
+    { label: '对象存储', value: '5' },
+    { label: '低代码平台', value: '6' },
+  ], // 事物类型
+  materialCode: null, // 物料代码
+  supplier: null, // 供应商
+  documentNumber: '', // 单据号
+  creationTime: [], // 创建时间
 });
 
+const formRef = ref(null);
+
+const tableDataLocation = ref([]); //* 表格数据
+const formTitle = ref('');
+const dataTotal = ref(0);
+const RPDRoutingVisible = ref(false); //* 弹窗默认关闭
+// const formRef = ref(null); //* formRef defult nulls
+
+//* 组件配置  --查询界面选择
+// const optsReceipt = computed(() => {
+//   return {
+//     mitemId: {
+//       label: '事物类型',
+//       comp: 't-select',
+//       event: 'business',
+//       defaultVal: '',
+//       multiple: true,
+//       bind: {
+//         type: 'mitem',
+//         showTitle: false,
+//       },
+//     },
+//     datetimePlanRange: {
+//       label: '物料编码',
+//       comp: 't-select',
+//       defaultVal: '',
+//     },
+//     supplierId: {
+//       label: '供应商',
+//       comp: 'bcmp-select-business',
+//       event: 'business',
+//       defaultVal: '',
+//       bind: {
+//         type: 'supplier',
+//         showTitle: false,
+//       },
+//    ,
+//       default   },
+//     datetimePlanRange1: {
+//       label: '创建时间',
+//       comp: 't-date-range-picker',
+//       defaultVal: [dayjs().subtract(+3, 'day').format('YYYYMMDD'), dayjs().format('YYYYMMDD')], // 初始化日期控件
+//     },
+//   };
+// });
+//
+
+const handleClear = (e) => {
+  console.log('🚀 ~ handleClear ~ e:', e);
+  return {};
+};
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '序号', colKey: 'inventoryNumber', width: 85 },
@@ -200,10 +261,10 @@ const onInput = async (data: any) => {
 //   MessagePlugin.success('删除成功');
 // };
 
-const onAdd = () => {
-  formTitle.value = '单据号详情';
-  eidtRoutingVisible.value = true;
-};
+// const onAdd = () => {
+//   formTitle.value = '单据号详情';
+//   RPDRoutingVisible.value = true;
+// };
 </script>
 
 <style lang="less" scoped></style>
