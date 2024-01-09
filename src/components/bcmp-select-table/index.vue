@@ -576,9 +576,14 @@ onMounted(() => {
       align: 'center',
       colKey: element.key,
       width: element.width,
-      sorter: true,
-      // 输入框过滤配置
-      filter: {
+      sorter: false,
+      filter: null,
+    };
+    if (element.sorter !== false) {
+      addColumn.sorter = true;
+    }
+    if (element.filter !== false) {
+      addColumn.filter = {
         type: 'input',
         resetValue: '',
         // 按下 Enter 键时也触发确认搜索
@@ -588,8 +593,8 @@ onMounted(() => {
         },
         // 是否显示重置取消按钮，一般情况不需要显示
         showConfirmAndReset: true,
-      },
-    };
+      };
+    }
     // 使用addColumn与element合并,element如果有一样的属性，以element为准
     addColumn = Object.assign(addColumn, element);
 
