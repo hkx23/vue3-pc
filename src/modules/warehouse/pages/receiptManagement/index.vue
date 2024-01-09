@@ -1,17 +1,15 @@
-<!-- 盘点管理  -->
+<!-- 单据管理  -->
 <template>
   <cmp-container :full="true">
     <cmp-container>
-      <!-- cmp-query 查询组件 -->
       <cmp-card>
         <cmp-card :ghost="true">
-          <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
+          <cmp-query ref="queryComponent" :opts="optsReceipt" :bool-enter="false" @submit="onInput"> </cmp-query>
         </cmp-card>
       </cmp-card>
       <!-- cmp-table 表格组件  -->
       <cmp-card>
         <cmp-table
-          v-model:pagination="pageUI"
           row-key="id"
           :table-column="tableReckoningManagementColumns"
           :table-data="tableDataLocation"
@@ -31,7 +29,7 @@
           <template #button>
             <t-button theme="primary" @click="onAdd">新增</t-button>
             <t-button theme="default">作废</t-button>
-            <t-button theme="primary" @click="result">打印</t-button>
+            <t-button theme="primary">打印</t-button>
             <t-button theme="primary">导出</t-button>
           </template>
           <!-- <template #op="row">
@@ -45,10 +43,8 @@
         </cmp-table>
       </cmp-card>
 
-      <!-- 新增弹窗组件 -->
-      <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" />
-      <!-- 盘点单维护组件 -->
-      <inventory-sheet-maintenance v-model:visible="ISMRoutingVisible" :form-title="formTitle" />
+      <!-- 单据详情组件 -->
+      <!-- <RDS v-model:visible="ISMRoutingVisible" :is-copy="isCopy" :form-title="formTitle" @submit="getRouting" /> -->
     </cmp-container>
   </cmp-container>
 </template>
@@ -56,39 +52,22 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
+// import RDS from './receiptDetails.vue';
 
-// import { api, LocationSearch } from '@/api/warehouse';
-import CmpQuery from '@/components/cmp-query/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
-// import { useLoading } from '@/hooks/modules/loading';
-import { usePage } from '@/hooks/modules/page';
-
-import InventorySheetMaintenance from './inventory-sheet-maintenance.vue';
-import newInventoryManagemment from './new-inventory-managemment.vue';
-// import { useLang } from './lang';
-
-// const { t } = useLang();
-const { pageUI } = usePage();
-// const { loading, setLoading } = useLoading();
-// const selectedWarehouseRowKeys = ref([]);
 const tableDataLocation = ref([]); //* 表格数据
 const eidtRoutingVisible = ref(false); //* 弹窗默认关闭
-const ISMRoutingVisible = ref(false); //* 弹窗默认关闭
 const formTitle = ref('');
 const dataTotal = ref(0);
 // const formRef = ref(null); //* formRef defult nulls
 
 //* 初始渲染
-onMounted(async () => {
-  // await fetchTable();
-});
 
-//* 组件配置  business --查询界面选择
-const opts = computed(() => {
+//* 组件配置  --查询界面选择
+const optsReceipt = computed(() => {
   return {
     mitemId: {
-      label: '盘点单号',
+      label: '事物类型',
       comp: 't-input',
       event: 'business',
       defaultVal: '',
@@ -98,12 +77,12 @@ const opts = computed(() => {
       },
     },
     datetimePlanRange: {
-      label: '创建时间',
-      comp: 't-date-range-picker',
-      defaultVal: [dayjs().subtract(+3, 'day').format('YYYYMMDD'), dayjs().format('YYYYMMDD')], // 初始化日期控件
+      label: '物料编码',
+      comp: 't-select',
+      defaultVal: '',
     },
     supplierId: {
-      label: '仓库',
+      label: '供应商',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -112,21 +91,41 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-
     billNo: {
-      label: '单据状态',
+      label: '单据号',
       comp: 't-select',
       defaultVal: '',
+    },
+    datetimePlanRange1: {
+      label: '创建时间',
+      comp: 't-date-range-picker',
+      defaultVal: [dayjs().subtract(+3, 'day').format('YYYYMMDD'), dayjs().format('YYYYMMDD')], // 初始化日期控件
     },
   };
 });
 
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '盘点单号', colKey: 'inventoryNumber', width: 85 },
-  { title: '仓库', width: 85, colKey: 'warehouse' },
-  { title: '盘点类型', width: 85, colKey: 'countingtype' },
-  { title: '状态', width: 85, colKey: 'state' },
+  { title: '序号', colKey: 'inventoryNumber', width: 85 },
+  { title: '事物类型', colKey: 'inventoryNumber', width: 85 },
+  { title: '单据号', width: 85, colKey: 'warehouse' },
+  { title: '关联单号', width: 85, colKey: 'countingtype' },
+  { title: '物料编码', width: 85, colKey: 'state' },
+  { title: '物料描述', width: 85, colKey: 'state' },
+  { title: '需求数量', width: 85, colKey: 'state' },
+  { title: '交易数量', width: 85, colKey: 'state' },
+  { title: '单位', width: 85, colKey: 'state' },
+  { title: 'ERP行号', width: 85, colKey: 'state' },
+  { title: '上传状态', width: 85, colKey: 'state' },
+  { title: '备注', width: 85, colKey: 'state' },
+  { title: '供应商', width: 85, colKey: 'state' },
+  { title: '源仓库', width: 85, colKey: 'state' },
+  { title: '源货区', width: 85, colKey: 'state' },
+  { title: '源货位', width: 85, colKey: 'state' },
+  { title: '目标仓库', width: 85, colKey: 'state' },
+  { title: '目标货区', width: 85, colKey: 'state' },
+  { title: '目标货位', width: 85, colKey: 'state' },
+  { title: '单据状态', width: 85, colKey: 'state' },
   { title: '创建人', width: 85, colKey: 'founder' },
   {
     title: '创建时间',
@@ -177,14 +176,33 @@ const onInput = async (data: any) => {
   }
 };
 
-const onAdd = () => {
-  formTitle.value = '新增盘点管理';
-  eidtRoutingVisible.value = true;
-};
+// const onEditRowClick = async (value: any) => {
+//   formTitle.value = '编辑';
+//   // await api.location.getItemById(value.row.id);
+//   // await api.xxx.xxx(value.row.id);
+//   // const editedData = {
+//   //   ...value.row,
+//   //   state: value.row.state ? 1 : 0,
+//   // };
+//   formRef.value.formData = JSON.parse(JSON.stringify(editedData));
+//   // formRef.value.formData = clone2(editedData);
+//   eidtRoutingVisible.value = true;
+// };
 
-const result = () => {
-  formTitle.value = '盘点单维护';
-  ISMRoutingVisible.value = true;
+//* 删除
+// const onStateRowClick = async (row: { row: any }) => {
+//   // await api.location.removeLocation({ id: row.row.id });
+//   // await api.xxx.xxx({ id: row.row.id });
+//   if (tableDataLocation.value.length <= 1 && pageUI.value.page > 1) {
+//     pageUI.value.page--;
+//   }
+//   await fetchTable(); // *获取数据
+//   MessagePlugin.success('删除成功');
+// };
+
+const onAdd = () => {
+  formTitle.value = '单据号详情';
+  eidtRoutingVisible.value = true;
 };
 </script>
 
