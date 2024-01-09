@@ -169,6 +169,16 @@ const fetchTable = async () => {
     const data = (await api.moOnboard.getMoOnboardList(queryCondition.value)) as any;
     tableDataSupplier.value = data.list;
     dataTotal.value = data.total;
+    if (
+      data.total !== 0 &&
+      dataTotal.value < pageUI.value.page * pageUI.value.rows &&
+      data.list &&
+      data.list.length === 0
+    ) {
+      pageUI.value.page = 1;
+      pageUI.value.rows = 10;
+      onRefresh();
+    }
     // tableSupplierPagination.value = { ...tableSupplierPagination.value, total: data.total };
   } catch (e) {
     console.log(e);
