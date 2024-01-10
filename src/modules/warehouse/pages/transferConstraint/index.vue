@@ -281,7 +281,7 @@ const onFetchData = () => {
 const transferParam = ref({
   pageNum: 1,
   pageSize: 10,
-  warehouseCode: '', // 仓库
+  warehouseKeyword: '', // 仓库
   businessCategoryId: '', // 仓库类型
 });
 
@@ -338,7 +338,7 @@ const onEadit = async () => {
 // #query 查询参数
 const opts = computed(() => {
   return {
-    warehouseCode: {
+    warehouseKeyword: {
       label: '仓库',
       comp: 't-input',
       event: 'input',
@@ -360,7 +360,7 @@ const opts = computed(() => {
 
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
-  transferParam.value.warehouseCode = data.warehouseCode;
+  transferParam.value.warehouseKeyword = data.warehouseKeyword;
   transferParam.value.businessCategoryId = data.businessCategoryId;
   await onGetTransferData();
 };
