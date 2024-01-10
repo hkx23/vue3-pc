@@ -2,12 +2,12 @@
 <template>
   <cmp-container :full="true">
     <cmp-container>
+      <!-- query -->
       <t-card :ghost="true">
         <!-- <cmp-query ref="queryComponent" :opts="optsReceipt" :bool-enter="false" @submit="onInput"> </cmp-query> -->
-        <t-form ref="formRef" label-width="100px" @submit="onInput">
-          <!-- 第一行表单项 -->
+        <t-form ref="formRef" label-width="80px" @submit="onInput">
           <t-row :gutter="[32, 16]">
-            <t-col :span="6">
+            <t-col :span="3">
               <t-form-item label="事物类型">
                 <t-select v-model="resSelect" placeholder="请选择事物类型" multiple clearable>
                   <t-option
@@ -20,37 +20,50 @@
                 >
               </t-form-item>
             </t-col>
-            <t-col :span="6">
-              <t-form-item label="物料代码">
-                <t-select v-model="formData.materialCode" placeholder="请选择物料代码"></t-select>
+            <t-col :span="3">
+              <t-form-item label="物料编码">
+                <!-- 选择框 -->
+                <t-select v-model="formData.materialCode">
+                  <!-- <icon name="browse" slot="prefixIcon" style="margin-right: 8px" /> -->
+                </t-select>
               </t-form-item>
             </t-col>
-            <t-col :span="6">
+            <t-col :span="3">
               <t-form-item label="供应商">
                 <t-select v-model="formData.supplier" placeholder="请选择供应商"></t-select>
               </t-form-item>
             </t-col>
-            <t-col :span="6">
-              <t-form-item label="单据号">
-                <t-input v-model="formData.documentNumber" placeholder="请输入单据号"></t-input>
-              </t-form-item>
-            </t-col>
-            <t-col :span="24">
-              <t-form-item label="创建时间">
-                <t-date-range-picker v-model="formData.creationTime"></t-date-range-picker>
-              </t-form-item>
-            </t-col>
-            <t-col :span="6">
+            <t-col :span="3">
               <t-form-item>
                 <t-space size="10px">
                   <t-button theme="primary" type="submit">查询</t-button>
                   <t-button theme="default" variant="base" type="reset">重置</t-button>
-                  <t-button theme="default" variant="base" @click="handleClear">清空校验结果</t-button>
+                  <t-button theme="default" variant="base" @click="handleToggleExpand">
+                    <div>
+                      展开
+                      <ChevronDownIcon />
+                    </div>
+                    <div>
+                      收起
+                      <ChevronUpIcon />
+                    </div>
+                  </t-button>
                 </t-space>
               </t-form-item>
             </t-col>
+
+            <t-col v-show="isExpanded" :span="3" class="expandable-content">
+              <t-form-item label="单据号">
+                <t-input v-model="formData.documentNumber" placeholder="请输入单据号"></t-input>
+              </t-form-item>
+            </t-col>
+
+            <t-col v-show="isExpanded" :span="3" class="expandable-content">
+              <t-form-item label="创建时间">
+                <t-date-range-picker v-model="formData.creationTime"></t-date-range-picker>
+              </t-form-item>
+            </t-col>
           </t-row>
-          <!-- 第二行表单项 -->
         </t-form>
       </t-card>
       <!-- cmp-table 表格组件  -->
@@ -96,8 +109,11 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import ReceiptDetails from './receiptDetails.vue';
+// import { Icon } from 'tdesign-icons-vue';
 
-const resSelect = ref([1, 2, 3, 4, 5]);
+const isExpanded = ref(false); // 用来控制展开和收起
+
+const resSelect = ref([]);
 // 表单数据模型
 const formData = ref({
   transactionType: [
@@ -108,19 +124,17 @@ const formData = ref({
     { label: '对象存储', value: '5' },
     { label: '低代码平台', value: '6' },
   ], // 事物类型
-  materialCode: null, // 物料代码
+  materialCode: '', // 物料编码
   supplier: null, // 供应商
   documentNumber: '', // 单据号
   creationTime: [], // 创建时间
 });
 
 const formRef = ref(null);
-
 const tableDataLocation = ref([]); //* 表格数据
 const formTitle = ref('');
 const dataTotal = ref(0);
 const RPDRoutingVisible = ref(false); //* 弹窗默认关闭
-// const formRef = ref(null); //* formRef defult nulls
 
 //* 组件配置  --查询界面选择
 // const optsReceipt = computed(() => {
@@ -161,9 +175,8 @@ const RPDRoutingVisible = ref(false); //* 弹窗默认关闭
 // });
 //
 
-const handleClear = (e) => {
-  console.log('🚀 ~ handleClear ~ e:', e);
-  return {};
+const handleToggleExpand = () => {
+  isExpanded.value = !isExpanded.value;
 };
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
@@ -236,35 +249,28 @@ const onInput = async (data: any) => {
     // dataTotal.value = result.total;
   }
 };
-
-// const onEditRowClick = async (value: any) => {
-//   formTitle.value = '编辑';
-//   // await api.location.getItemById(value.row.id);
-//   // await api.xxx.xxx(value.row.id);
-//   // const editedData = {
-//   //   ...value.row,
-//   //   state: value.row.state ? 1 : 0,
-//   // };
-//   formRef.value.formData = JSON.parse(JSON.stringify(editedData));
-//   // formRef.value.formData = clone2(editedData);
-//   eidtRoutingVisible.value = true;
-// };
-
-//* 删除
-// const onStateRowClick = async (row: { row: any }) => {
-//   // await api.location.removeLocation({ id: row.row.id });
-//   // await api.xxx.xxx({ id: row.row.id });
-//   if (tableDataLocation.value.length <= 1 && pageUI.value.page > 1) {
-//     pageUI.value.page--;
-//   }
-//   await fetchTable(); // *获取数据
-//   MessagePlugin.success('删除成功');
-// };
-
-// const onAdd = () => {
-//   formTitle.value = '单据号详情';
-//   RPDRoutingVisible.value = true;
-// };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.expandable-content-enter-active,
+.expandable-content-leave-active {
+  transition: opacity 0.5s;
+}
+
+.expandable-content-enter,
+.expandable-content-leave-to {
+  opacity: 0;
+}
+
+.search-input-container {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+</style>
