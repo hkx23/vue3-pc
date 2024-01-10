@@ -1837,8 +1837,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3516,15 +3516,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isRawName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isInProcessChecked?: boolean;
+  isState?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -4156,8 +4156,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -9077,8 +9077,7 @@ export const api = {
      */
     getListByMitemCategory: (query: {
       keyword: string;
-      /** @format int32 */
-      mitemcategoryid: number;
+      mitemcategoryid: string;
       /** @format int32 */
       pagenum: number;
       /** @format int32 */
