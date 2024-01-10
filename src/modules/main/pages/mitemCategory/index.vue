@@ -20,7 +20,9 @@
         @select-change="onSelectMitemCategoryChange"
       >
         <template #title> 物料类别列表 </template>
-        <template #button> <t-button theme="primary" @click="onImport">导入</t-button></template>
+        <template #button>
+          <bcmp-import-button theme="primary" type="mitemCategory" @close="fetchTable"></bcmp-import-button>
+        </template>
         <template #op="slotProps">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
@@ -129,11 +131,6 @@ const onRefresh = () => {
 // const onReset = () => {
 //   keyword.value = '';
 // };
-
-// 导入按钮
-const onImport = () => {
-  console.log('导入功能待完成');
-};
 
 const onEditRowClick = (value: any) => {
   formRef.value.formData = JSON.parse(JSON.stringify(value.row));

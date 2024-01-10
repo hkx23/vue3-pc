@@ -1837,8 +1837,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3421,6 +3421,48 @@ export interface ResultMitemCategory {
   data?: MitemCategory;
 }
 
+export interface CommonImportMitemCategory {
+  title?: string;
+  tableName?: string;
+  data?: MitemCategory[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
+}
+
+export interface ImportColumn {
+  field?: string;
+  title?: string;
+  isRequired?: boolean;
+  isValidateRepeat?: boolean;
+  validateExpression?: string;
+  required?: boolean;
+  validateRepeat?: boolean;
+}
+
+/** 响应数据 */
+export type ImportSummary = {
+  /** @format int32 */
+  successCount?: number;
+  /** @format int32 */
+  failCount?: number;
+  errorListFilePath?: string;
+  allSuccess?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultImportSummary {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ImportSummary;
+}
+
 /** 显示物料实体 */
 export interface MitemVO {
   id?: string;
@@ -3474,15 +3516,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
+  stateName?: string;
   isRawName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
   isBatchName?: string;
-  isProductChecked?: boolean;
+  isRawChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3644,8 +3686,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3659,6 +3701,54 @@ export interface ResultListMitemFeignDTO {
   message?: string;
   /** 响应数据 */
   data?: MitemFeignDTO[] | null;
+}
+
+/** 标签表 */
+export interface Label {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  labelNo?: string;
+  labelCategory?: string;
+  mitemId?: string;
+  lotNo?: string;
+  batchLot?: string;
+  supplierId?: string;
+  /** 标签初始化数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  onhandId?: string;
+  moScheId?: string;
+  printTmplId?: string;
+  /**
+   * 标签顺序号
+   * @format int32
+   */
+  printSeq?: number;
+  deliveryDtlId?: string;
+  receiveNo?: string;
+  status?: string;
 }
 
 export interface LabelSearch {
@@ -4066,8 +4156,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4422,6 +4512,10 @@ export interface BarcodeSequenceDTO {
   currentNum?: string;
   barcodeType?: string;
   prefix?: string;
+  /** @format date-time */
+  startDate?: string;
+  /** @format date-time */
+  endDate?: string;
 }
 
 /** 条码生成序列号表 */
@@ -5643,6 +5737,8 @@ export interface ResultBoolean {
   data?: boolean | null;
 }
 
+export type StreamingResponseBody = object;
+
 /** 通用响应类 */
 export interface ResultListFavorite {
   /**
@@ -5680,7 +5776,6 @@ export type BusinessUnit = {
    */
   state?: number;
   eid?: string;
-  oid?: string;
   apiName?: string;
   apiDesc?: string;
   apiPath?: string;
@@ -8772,6 +8867,21 @@ export const api = {
      * No description
      *
      * @tags 物料分类
+     * @name ImportData
+     * @summary 导入物料分类
+     * @request POST:/mitemCategory/import
+     * @secure
+     */
+    importData: (data: CommonImportMitemCategory) =>
+      http.request<ResultImportSummary['data']>(`/api/main/mitemCategory/import`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料分类
      * @name Edit
      * @summary 编辑物料分类
      * @request POST:/mitemCategory/edit
@@ -8980,6 +9090,21 @@ export const api = {
       }),
   },
   label: {
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name UpdateBarcodeStatus
+     * @summary 更新条码状态和库存现有量ID
+     * @request POST:/label/updateBarcodeStatus
+     * @secure
+     */
+    updateBarcodeStatus: (data: Label[]) =>
+      http.request<ResultObject['data']>(`/api/main/label/updateBarcodeStatus`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
@@ -9589,6 +9714,21 @@ export const api = {
      * No description
      *
      * @tags 条码生成序列号表
+     * @name SearchSeq
+     * @summary 查询指定seq是否有记录
+     * @request POST:/barcodeSequence/searchSeq
+     * @secure
+     */
+    searchSeq: (data: BarcodeSequenceDTO) =>
+      http.request<boolean['data']>(`/api/main/barcodeSequence/searchSeq`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码生成序列号表
      * @name InsertSeq
      * @summary 生成条码时插条码seq表
      * @request POST:/barcodeSequence/insertSeq
@@ -9596,6 +9736,21 @@ export const api = {
      */
     insertSeq: (data: BarcodeSequence) =>
       http.request<ResultObject['data']>(`/api/main/barcodeSequence/insertSeq`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 条码生成序列号表
+     * @name GetCurrentValue
+     * @summary 获取seq当前的最大值
+     * @request POST:/barcodeSequence/getCurrentValue
+     * @secure
+     */
+    getCurrentValue: (data: BarcodeSequenceDTO) =>
+      http.request<string['data']>(`/api/main/barcodeSequence/getCurrentValue`, {
         method: 'POST',
         body: data as any,
       }),
@@ -9906,6 +10061,21 @@ export const api = {
       id?: string;
     }) =>
       http.request<ResultObject['data']>(`/api/main/notice/list`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  file: {
+    /**
+     * No description
+     *
+     * @tags 文件通用接口
+     * @name DownloadFile
+     * @request GET:/file/downloadFile
+     * @secure
+     */
+    downloadFile: (query: { path: string }) =>
+      http.request<StreamingResponseBody['data']>(`/api/main/file/downloadFile`, {
         method: 'GET',
         params: query,
       }),
