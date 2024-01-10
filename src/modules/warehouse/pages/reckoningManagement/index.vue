@@ -16,7 +16,6 @@
           :table-column="tableReckoningManagementColumns"
           :table-data="tableDataLocation"
           :fixed-height="false"
-          :loading="loading"
           :total="dataTotal"
           empty="没有符合条件的数据"
           @refresh="tabRefresh"
@@ -47,21 +46,9 @@
       </cmp-card>
 
       <!-- 新增弹窗组件 -->
-      <newIM
-        :id="editId"
-        v-model:visible="eidtRoutingVisible"
-        :is-copy="isCopy"
-        :form-title="formTitle"
-        @submit="getRouting"
-      />
+      <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" />
       <!-- 盘点单维护组件 -->
-      <i-s-m
-        :id="editId"
-        v-model:visible="ISMRoutingVisible"
-        :is-copy="isCopy"
-        :form-title="formTitle"
-        @submit="getRouting"
-      />
+      <inventory-sheet-maintenance v-model:visible="ISMRoutingVisible" :form-title="formTitle" />
     </cmp-container>
   </cmp-container>
 </template>
@@ -77,8 +64,8 @@ import CmpTable from '@/components/cmp-table/index.vue';
 // import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import ISM from './inventory-sheet-maintenance.vue';
-import newIM from './new-inventory-managemment.vue';
+import InventorySheetMaintenance from './inventory-sheet-maintenance.vue';
+import newInventoryManagemment from './new-inventory-managemment.vue';
 // import { useLang } from './lang';
 
 // const { t } = useLang();
@@ -177,7 +164,7 @@ const tabRefresh = async () => {
 const onInput = async (data: any) => {
   if (!data.value) {
     // const { warehouseId, districtKeyword, locationKeyword } = data;
-    pageUI.value.page = 1;
+    // pageUI.value.page = 1;
     // const result = await api.xx.xxx({
     //   pageNum: pageUI.value.page,
     //   pageSize: pageUI.value.rows,
@@ -185,34 +172,10 @@ const onInput = async (data: any) => {
     //   districtKeyword,
     //   locationKeyword,
     // } as LocationSearch);
-    tableDataLocation.value = result.list;
-    dataTotal.value = result.total;
+    // tableDataLocation.value = result.list;
+    // dataTotal.value = result.total;
   }
 };
-
-// const onEditRowClick = async (value: any) => {
-//   formTitle.value = '编辑';
-//   // await api.location.getItemById(value.row.id);
-//   // await api.xxx.xxx(value.row.id);
-//   // const editedData = {
-//   //   ...value.row,
-//   //   state: value.row.state ? 1 : 0,
-//   // };
-//   formRef.value.formData = JSON.parse(JSON.stringify(editedData));
-//   // formRef.value.formData = clone2(editedData);
-//   eidtRoutingVisible.value = true;
-// };
-
-//* 删除
-// const onStateRowClick = async (row: { row: any }) => {
-//   // await api.location.removeLocation({ id: row.row.id });
-//   // await api.xxx.xxx({ id: row.row.id });
-//   if (tableDataLocation.value.length <= 1 && pageUI.value.page > 1) {
-//     pageUI.value.page--;
-//   }
-//   await fetchTable(); // *获取数据
-//   MessagePlugin.success('删除成功');
-// };
 
 const onAdd = () => {
   formTitle.value = '新增盘点管理';

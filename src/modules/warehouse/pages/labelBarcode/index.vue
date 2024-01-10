@@ -90,7 +90,20 @@
           <template #panel>
             <cmp-container :gutter="[0, 0]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
-                <cmp-query :opts="mitemBarcodeManageOp" label-width="100" @submit="managePageSearchClick" />
+                <cmp-query :opts="mitemBarcodeManageOp" label-width="100" @submit="managePageSearchClick">
+                  <template #querySelect="{ param }">
+                    <!-- <t-select v-model="ruleTabData.barcodeType" label="条码类型" clearable>
+            <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
+          </t-select> -->
+                    <t-select v-model="param.barcodeStatus" label="条码类型" clearable>
+                      <t-option
+                        v-for="item in bracodeStatusOption"
+                        :key="item.id"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </t-select> </template
+                ></cmp-query>
               </cmp-card>
               <cmp-card :ghost="true" class="padding-top-noline-16">
                 <cmp-table
@@ -1059,12 +1072,9 @@ const mitemBarcodeManageOp = computed(() => {
     },
     barcodeStatus: {
       label: '条码状态',
-      comp: 't-select',
-      event: 'single',
+      event: 'input',
       defaultVal: '',
-      bind: {
-        options: bracodeStatusOption.value,
-      },
+      slotName: 'querySelect',
     },
     barcode: {
       label: '条码',
