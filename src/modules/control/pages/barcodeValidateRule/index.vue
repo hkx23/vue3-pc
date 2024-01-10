@@ -120,7 +120,7 @@
         </t-col>
         <t-col :span="6">
           <t-form-item label="优先级" name="pri">
-            <t-input-number v-model="barcodeData.pri" theme="column" style="width: 100%"></t-input-number>
+            <t-input-number v-model="barcodeData.pri" theme="column" style="width: 100%" min="0"></t-input-number>
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -191,12 +191,12 @@
         <!-- 第 7️⃣ 行数据 -->
         <t-col :span="6">
           <t-form-item label="最小长度" name="minLength">
-            <t-input-number v-model="barcodeData.minLength" theme="column" style="width: 100%"></t-input-number>
+            <t-input-number v-model="barcodeData.minLength" theme="column" style="width: 100%" min="0"></t-input-number>
           </t-form-item>
         </t-col>
         <t-col :span="6">
           <t-form-item label="最大长度" name="maxLength">
-            <t-input-number v-model="barcodeData.maxLength" theme="column" style="width: 100%"></t-input-number>
+            <t-input-number v-model="barcodeData.maxLength" theme="column" style="width: 100%" min="0"></t-input-number>
           </t-form-item>
         </t-col>
         <!-- 第 8️⃣ 行数据 -->
