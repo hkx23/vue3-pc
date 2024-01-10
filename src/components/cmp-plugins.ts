@@ -1,5 +1,6 @@
 import BcmpExtend from './bcmp-extend/index.vue';
 import BcmpImportButton from './bcmp-import-button/index.vue';
+import BcmpImportDialog from './bcmp-import-dialog/index.vue';
 import BcmpSelectBusiness from './bcmp-select-business/index.vue';
 import BcmpSelectList from './bcmp-select-list/index.vue';
 import BcmpSelectTable from './bcmp-select-table/index.vue';
@@ -17,11 +18,13 @@ export default {
     app.component('BcmpSelectBusiness', BcmpSelectBusiness);
     app.component('BcmpSelectTable', BcmpSelectTable);
     app.component('BcmpSelectList', BcmpSelectList);
+    app.component('BcmpImportButton', BcmpImportButton);
+    app.component('BcmpImportDialog', BcmpImportDialog);
+
     app.component('CmpQuery', CmpQuery);
     app.component('BcmpExtend', BcmpExtend);
     app.component('CmpTable', CmpTable);
     app.component('CmpMessage', CmpMessage);
-    app.component('BcmpImportButton', BcmpImportButton);
 
     // 布局
     app.component('CmpContainer', CmpContainer);

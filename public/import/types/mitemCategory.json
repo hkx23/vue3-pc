@@ -1,0 +1,31 @@
+{
+  "importTitle": "物料分类",
+  "templateFileName": "导入模板_物料分类",
+  "remoteUrl": "/api/main/mitemCategory/import",
+  "importColumns": [
+    {
+      "title": "分类编码",
+      "field": "categoryCode"
+    },
+    {
+      "title": "分类名称",
+      "field": "categoryName"
+    },
+    {
+      "title": "分类描述",
+      "field": "categoryDesc"
+    },
+    {
+      "title": "计算类型",
+      "field": "reqCalcRule"
+    },
+    {
+      "title": "投料规则",
+      "field": "onboardRuleCode"
+    }
+  ],
+  "importFileSizeLimit": 5,
+  "importRowCountLimit": 50000,
+  "importColumnCountLimit": 100,
+  "importBatchSize": 10
+}

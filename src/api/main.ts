@@ -758,8 +758,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -1857,8 +1857,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4176,8 +4176,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5429,14 +5429,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否可用 */
-  enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否可用 */
+  enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9092,19 +9092,18 @@ export const api = {
      * @tags 物料
      * @name GetListByMitemCategory
      * @summary 根据物料分类获取物料
-     * @request GET:/mitem/getlistbymitemcategory
+     * @request GET:/mitem/
      * @secure
      */
     getListByMitemCategory: (query: {
       keyword: string;
-      /** @format int32 */
-      mitemcategoryid: number;
+      mitemcategoryid: string;
       /** @format int32 */
       pagenum: number;
       /** @format int32 */
       pagesize: number;
     }) =>
-      http.request<ResultObject['data']>(`/api/main/mitem/getlistbymitemcategory`, {
+      http.request<ResultObject['data']>(`/api/main/mitem/`, {
         method: 'GET',
         params: query,
       }),

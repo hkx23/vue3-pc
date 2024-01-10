@@ -95,7 +95,7 @@
                     <!-- <t-select v-model="ruleTabData.barcodeType" label="条码类型" clearable>
             <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
           </t-select> -->
-                    <t-select v-model="param.barcodeStatus" label="条码类型" clearable>
+                    <t-select v-model="param.barcodeStatus" label="条码状态" clearable>
                       <t-option
                         v-for="item in bracodeStatusOption"
                         :key="item.id"

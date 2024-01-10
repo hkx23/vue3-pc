@@ -20,7 +20,9 @@
         @select-change="onSelectMitemCategoryChange"
       >
         <template #title> 物料类别列表 </template>
-        <template #button> <t-button theme="primary" @click="onImport">导入</t-button></template>
+        <template #button>
+          <bcmp-import-button theme="primary" type="mitemCategory" @close="fetchTable"></bcmp-import-button>
+        </template>
         <template #op="slotProps">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
@@ -100,7 +102,7 @@ const dataTotal = ref(0);
 const mitemTotal = ref(0);
 const keyword = ref('');
 const tableRef = ref();
-const selectCategoryID = ref(0);
+const selectCategoryID = ref('');
 
 // 查询组件
 const opts = computed(() => {
@@ -130,11 +132,6 @@ const onRefresh = () => {
 //   keyword.value = '';
 // };
 
-// 导入按钮
-const onImport = () => {
-  console.log('导入功能待完成');
-};
-
 const onEditRowClick = (value: any) => {
   formRef.value.formData = JSON.parse(JSON.stringify(value.row));
   formVisible.value = true;
@@ -155,14 +152,14 @@ const fetchTable = async () => {
     console.log(e);
   } finally {
     setLoading(false);
-    selectCategoryID.value = -1;
+    selectCategoryID.value = '';
     fetchMitemTable();
   }
 };
 
 const fetchMitemTable = async () => {
   setLoadingMitem(true);
-  if (selectCategoryID.value === -1) {
+  if (selectCategoryID.value === '') {
     tableDataMitem.value = [];
     mitemTotal.value = 0;
     setLoadingMitem(false);
