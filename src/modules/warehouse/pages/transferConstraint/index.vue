@@ -314,8 +314,10 @@ const onAddBusinessType = async () => {
 };
 
 // 编辑按钮点击
+const rowId = ref('');
 const onEditRow = async (row: any) => {
   selectedRowKeys.value = [];
+  rowId.value = row.id;
   businessTabData.value.sourceTissueId = row.oid;
   businessTabData.value.businessCategoryId = row.businessCategoryId;
   businessTabData.value.warehouseId = row.warehouseId;
@@ -330,7 +332,7 @@ const onEditRow = async (row: any) => {
 
 // 编辑请求
 const onEadit = async () => {
-  await api.transferConstraint.modifyTransferConstraint(businessTabData.value);
+  await api.transferConstraint.modifyTransferConstraint({ ...businessTabData.value, id: rowId.value });
   await onGetTransferData(); // 获取 表格 数据
   MessagePlugin.success('编辑成功');
 };
