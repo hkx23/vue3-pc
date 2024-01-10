@@ -882,6 +882,19 @@ export interface ResultLocation {
   data?: Location;
 }
 
+/** 通用响应类 */
+export interface ResultListLocation {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Location[] | null;
+}
+
 export interface LocationSearch {
   /**
    * 页码
@@ -1479,7 +1492,10 @@ export interface ResultPagingDataDeliveryCardVO {
 
 /** 送货单扫描 */
 export interface DeliverySearch {
-  /** 送货单明细ID */
+  /** 交易事务单号 */
+  billNo?: string;
+  /** 送货单号 */
+  deliveryNo?: string;
   deliveryDtlId?: string;
   /** 物料标签 */
   labelNo?: string;
@@ -1877,11 +1893,11 @@ export type PurchaseOrderDtlVO = {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -2054,11 +2070,11 @@ export type DeliveryDtlVO = {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -2112,6 +2128,19 @@ export interface ResultPagingDataBarcodeRule {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeRule;
+}
+
+/** 通用响应类 */
+export interface ResultListBusinessCategory {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessCategory[] | null;
 }
 
 /** 响应数据 */
@@ -2569,6 +2598,21 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultLocation['data']>(`/api/warehouse/location/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name GetLocationByWarehouse
+     * @summary 根据仓库获取货位
+     * @request POST:/location/getLocationByWarehouse
+     * @secure
+     */
+    getLocationByWarehouse: (data: string) =>
+      http.request<ResultListLocation['data']>(`/api/warehouse/location/getLocationByWarehouse`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
@@ -3056,10 +3100,10 @@ export const api = {
      * @request POST:/delivery/submitMitemReceipt
      * @secure
      */
-    submitMitemReceipt: (query: { billNo: string }) =>
+    submitMitemReceipt: (data: DeliverySearch) =>
       http.request<ResultBoolean['data']>(`/api/warehouse/delivery/submitMitemReceipt`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -3135,6 +3179,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/businessCategory/addBusinessCategory`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库业务类型
+     * @name GetBusinessCategory
+     * @summary 杂项管理获取交易事务
+     * @request GET:/businessCategory/getBusinessCategory
+     * @secure
+     */
+    getBusinessCategory: () =>
+      http.request<ResultListBusinessCategory['data']>(`/api/warehouse/businessCategory/getBusinessCategory`, {
+        method: 'GET',
       }),
   },
   purchaseOrderDtl: {

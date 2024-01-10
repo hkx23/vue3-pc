@@ -1,16 +1,29 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <t-row justify="space-between">
-        <t-col><h2>权限分配</h2></t-col>
-        <t-col><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
+      <t-row justify="space-between" align="center">
+        <t-col :span="1"><icon name="rollback" size="25px" style="cursor: pointer" @click="onClose"></icon></t-col>
+        <t-col :span="8">
+          <cmp-query :opts="opts" @submit="onInput">
+            <template #productCode="{ param }">
+              <t-select v-model="param.productCode" label="条码状态">
+                <t-option key="apple" label="禁用" value="0" />
+                <t-option key="orange" label="启用" value="1" />
+                <t-option key="orange" label="全部" value="-1" />
+              </t-select>
+            </template>
+            <template #boxCode="{ param }">
+              <t-input v-model="param.boxCode" placeholder="请输入仓库编码/仓库名称"></t-input>
+            </template>
+          </cmp-query>
+        </t-col>
       </t-row>
     </cmp-card>
     <cmp-row>
       <cmp-card ref="treeCard" flex="350px">
         <t-space direction="vertical" :size="8">
           <h3>用户列表</h3>
-          <t-input v-model="permission.user" placeholder="admin" style="width: 250px" :on-enter="onInputSearchUser">
+          <t-input v-model="AuthList.keyword" placeholder="admin" style="width: 250px" :on-enter="onInputSearchUser">
             <template #suffixIcon>
               <icon name="search"></icon>
             </template>
@@ -26,42 +39,22 @@
             @click="onClickTree"
           >
           </t-tree>
+          <!-- <t-pagination-mini layout="horizontal" size="medium" /> -->
           <t-pagination
-            v-model="current"
-            v-model:pageSize="pageSize"
-            :show-page-size="false"
+            v-model:current="AuthList.pageNum"
+            v-model:pageSize="AuthList.pageSize"
+            :show-page-size="true"
             :show-previous-and-next-btn="false"
-            :show-page-number="false"
-            :show-jumper="true"
-            :total="total"
+            :show-page-number="true"
+            :show-jumper="false"
+            :total="totals"
+            @page-size-change="onPaginationChange"
+            @current-change="onCurrentChange"
           />
         </t-space>
       </cmp-card>
       <cmp-card flex="auto">
         <t-space direction="vertical" :size="8" style="padding: 0">
-          <cmp-card :span="12" :ghost="true">
-            <t-row justify="space-between" :gutter="8">
-              <t-col style="display: flex">
-                <t-select
-                  v-model="selectValue"
-                  :options="options1"
-                  placeholder="请选择状态"
-                  @change="onchange1"
-                ></t-select>
-                <t-input
-                  v-model="permission.work"
-                  placeholder="请输入工站/工作中心/工序"
-                  :on-enter="onInputSearchWork"
-                  style="margin-left: 10px"
-                >
-                  <template #prefix-icon>
-                    <icon name="search"></icon>
-                  </template>
-                </t-input>
-              </t-col>
-              <t-col> <t-button :loading="saveLoading" @click="onBtnSave">保存</t-button></t-col>
-            </t-row></cmp-card
-          >
           <cmp-card :span="12" :ghost="true">
             <cmp-table
               v-model:pagination="pageUI"
@@ -73,82 +66,37 @@
               :total="tableTotal"
               :selected-row-keys="selectedRowKeys"
               @select-change="rehandleSelectChange"
-              @refresh="onFetchData"
+              @refresh="onGetRefresh"
             >
-              <template #title> {{ permission.label }} 工站列表 </template>
+              <template #operate
+                ><t-button :loading="saveLoading" theme="default" @click="onBtnSave">保存</t-button></template
+              >
             </cmp-table>
           </cmp-card>
         </t-space>
       </cmp-card>
     </cmp-row>
   </cmp-container>
-  <!-- <div>
-    <t-card :bordered="false" style="margin-bottom: 10px">
-    
-    </t-card>
-    <t-card :bordered="false">
-      <t-row>
-        <t-col :span="4">
-          <t-card :bordered="false">
-            <div>
-            
-            </div>
-          </t-card>
-        </t-col>
-        <t-col :span="8">
-          <t-card :bordered="false">
-           
-          </t-card>
-          <cmp-table
-            v-model:pagination="pageUI"
-            row-key="id"
-            :table-column="columns"
-            :loading="loading"
-            :table-data="data"
-            :total="tableTotal"
-            :selected-row-keys="selectedRowKeys"
-            @select-change="rehandleSelectChange"
-            @refresh="onFetchData"
-          ></cmp-table>
-        </t-col>
-      </t-row>
-    </t-card>
-  </div> -->
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash';
 import { Icon, MessagePlugin } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
-import { api } from '@/api/control';
+import { api, WorkstationAuthVO } from '@/api/control';
 import { api as apiMain } from '@/api/main';
+import { api as apiWare } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-const current = ref(1); // 用户当前页
-const pageSize = ref(20); // 用户请求数
-const total = ref(10); // 用户分页总数
 const tableTotal = ref(10); // table分页总数
 const selectedRowKeys = ref([]); // 选择的
 const saveLoading = ref(false); // 选择的
-const { loading, setLoading } = useLoading(); // loading
-const selectValue = ref(1);
-const options1 = ref([
-  { label: '生效', value: 1 },
-  { label: '未生效', value: 0 },
-]);
+const { loading } = useLoading(); // loading
 const value = ref([]);
-const permission = ref({
-  user: '', // 用户
-  work: '',
-  userId: '', // 用户id
-  label: '',
-  state: [],
-});
-const permissionName = ref(0);
 onMounted(() => {
   onFetchData();
 });
@@ -159,20 +107,11 @@ const rehandleSelectChange = (value: any) => {
 };
 // 保存
 const onBtnSave = async () => {
-  // Emit('permissionShow', false);
-  if (permission.value.userId === '') {
-    MessagePlugin.error('请选择用户');
-    return;
-  }
-  saveLoading.value = true;
-  // console.log('保存', permission.value.userId);
-  await api.workstationAuth.save({ userId: permission.value.userId, ids: selectedRowKeys.value });
-  saveLoading.value = false;
-  MessagePlugin.success('保存成功');
+  MessagePlugin.success('操作成功');
+  console.log('🚀 ~ onBtnSave ~ selectedRowKeys.value:', selectedRowKeys.value);
 };
 
 // 数控件
-const dataTree = ref([]);
 const { pageUI } = usePage();
 
 // 父方法
@@ -181,136 +120,123 @@ const Emit = defineEmits(['permissionShow']);
 const onClose = () => {
   Emit('permissionShow', false); // 回到父
 };
-const data = ref([]); // table 存储
 const columns = [
   {
-    colKey: 'select',
+    colKey: 'row-select',
     type: 'multiple',
   },
   {
-    colKey: 'workstationCode',
-    title: '工站编码',
+    colKey: 'warehouseCode',
+    title: '仓库编码',
     align: 'center',
   },
   {
-    colKey: 'workstationName',
-    title: '工站名称',
+    colKey: 'warehouseName',
+    title: '仓库名称',
     align: 'center',
-  },
-  {
-    colKey: 'workstationDesc',
-    title: '工站描述',
-    align: 'center',
-  },
-  {
-    colKey: 'workcenterName',
-    title: '工站中心',
-    align: 'center',
-  },
-  {
-    colKey: 'processName',
-    title: '工序',
-    align: 'center',
-    fix: 'left',
   },
 ];
-// 首次请求
+// 获取左侧表格数据
+interface WorkstationAuth extends WorkstationAuthVO {
+  label?: string;
+}
+const dataTree = ref<WorkstationAuthVO[]>([]);
+const totals = ref<number>(0); // 用户分页总数
+const AuthList = ref({
+  pageNum: 1,
+  pageSize: 10,
+  keyword: '',
+});
 const onFetchData = async () => {
-  // 用户为0 则全部渲染  1代表用户   2代表列表
-  if (permissionName.value === 0 || permissionName.value === 1) {
-    // 左侧
-    try {
-      const useList = await api.workstationAuth.getUserList({
-        pageNum: current.value,
-        pageSize: pageSize.value,
-        keyword: permission.value.user,
-      });
-      dataTree.value = useList.list;
-      dataTree.value.forEach((item) => {
-        item.label = `${item.userDisplayName}[${item.userName}]`;
-        item.value = item.userId;
-        item.show = false;
-        value.value.push(item.value);
-      });
-      total.value = useList.total;
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  // 右边列表
-  if (permissionName.value === 0 || permissionName.value === 2) {
-    console.log(selectValue.value);
-
-    setLoading(true);
-    try {
-      const list = await apiMain.workstation.getlist({
-        pageNum: pageUI.value.page,
-        pageSize: pageUI.value.rows,
-        keyword: permission.value.work.trim(),
-        state: permission.value.state,
-      });
-      data.value = list.list;
-      tableTotal.value = list.total;
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
-  }
-  // 初始化
-  permissionName.value = 0;
-  // permission.value.label = '';
+  const { list, total } = await api.workstationAuth.getUserList(AuthList.value);
+  dataTree.value = (list as WorkstationAuth[]).map((item) => {
+    item.label = `${item.userDisplayName}[${item.userName}]`;
+    return item;
+  });
+  totals.value = total;
 };
-const onchange1 = () => {
-  if (selectValue.value === 1) {
-    permission.value.state = [1];
-  } else {
-    permission.value.state = [0];
-  }
-  onFetchData();
+
+// 获取右侧表格数据
+const data = ref([]); // table 存储
+const searchList = ref({
+  pageNum: 1,
+  pageSize: 10,
+  state: -1,
+  keyword: '',
+});
+const onGetAllPermission = async () => {
+  searchList.value.pageNum = pageUI.value.page;
+  searchList.value.pageSize = pageUI.value.rows;
+  const res = await apiMain.warehouse.search(searchList.value);
+  data.value = res.list;
+  tableTotal.value = res.total;
 };
+// 获取选中权限数组
+const onGetTickPermission = async () => {
+  const res = await apiWare.userWarehouseAuthority.getUserAuthority({ userId: userId.value });
+  selectedRowKeys.value = res;
+};
+
+// 表格刷新按钮事件
+const onGetRefresh = async () => {
+  await onGetAllPermission();
+  await onGetTickPermission();
+};
+
 // 点击用户拿数据
-const onClickTree = async (e: any) => {
+const userId = ref('');
+const onClickTree = async ({ node }) => {
+  userId.value = node.data.userId;
   selectedRowKeys.value = [];
-  permission.value.userId = e.node.value;
-  permission.value.label = e.node.label;
-  const res = await api.workstationAuth.getUserAuth({
-    pageNum: current.value,
-    pageSize: pageSize.value,
-    userId: e.node.value,
-  });
-  // console.log(res);
-  console.log(res.list);
+  await onGetAllPermission();
+  await onGetTickPermission();
+};
+// 左侧表格分页 事件 1
+const onPaginationChange = async () => {
+  AuthList.value.pageNum = 1;
+  await onFetchData();
+};
+// 左侧表格分页 事件 2
+const onCurrentChange = async () => {
+  await onFetchData();
+};
 
-  res.list.forEach((item) => {
-    selectedRowKeys.value.push(item);
-  });
-  // selectedRowKeys.value.push(res.list);
-  console.log(selectedRowKeys.value);
-  // data.value = res.list;
-  // tableTotal.value = res.total;
-};
-// 用户
-const onInputSearchUser = () => {
-  permissionName.value = 1;
-  onFetchData();
-};
-// 列表
-const onInputSearchWork = () => {
-  permissionName.value = 2;
-  onFetchData();
+// # 左侧搜索事件
+const onInputSearchUser = async () => {
+  AuthList.value.pageNum = 1;
+  await onFetchData();
 };
 
 const treeCard = ref(null);
 const treeHeight = ref('300px');
 useResizeObserver(treeCard, (entries) => {
   const entry = entries[0];
-
   const { height } = entry.contentRect;
   treeHeight.value = `${height - 180}px`;
   console.error('treeHeight', treeHeight.value);
 });
+
+// #query 查询参数
+const opts = computed(() => {
+  return {
+    productCode: {
+      label: '',
+      defaultVal: '-1',
+      slotName: 'productCode',
+    },
+    boxCode: {
+      label: '',
+      slotName: 'boxCode',
+    },
+  };
+});
+
+const onInput = async (data: any) => {
+  pageUI.value.page = 1;
+  searchList.value.state = data.productCode;
+  searchList.value.keyword = data.boxCode;
+  await onGetAllPermission();
+};
 </script>
 
 <style lang="less" scoped>

@@ -9,7 +9,7 @@
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
                   <template #workState="{ param }">
-                    <t-select v-model="param.workState" label="工单状态">
+                    <t-select v-model="param.workState" :clearable="true" label="工单状态">
                       <t-option
                         v-for="item in workStateDataList.list"
                         :key="item.id"
@@ -218,12 +218,12 @@
   >
     <t-form ref="formRef" :data="reprintDialog">
       <t-form-item v-if="reprintVoidSwitch" label-width="80px" label="补打原因" name="reprintData">
-        <t-select v-model="reprintDialog.reprintData">
+        <t-select v-model="reprintDialog.reprintData" :clearable="true">
           <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
         </t-select>
       </t-form-item>
       <t-form-item v-if="!reprintVoidSwitch" label-width="80px" label="作废" name="reprintData">
-        <t-select v-model="reprintDialog.reprintData">
+        <t-select v-model="reprintDialog.reprintData" :clearable="true">
           <t-option
             v-for="item in cancellationDataList.list"
             :key="item.label"
