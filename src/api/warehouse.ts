@@ -620,11 +620,18 @@ export interface PurchaseOrderSearch {
   labelNo?: string;
 }
 
-/** 仓库移转约束表 */
-export interface TransferConstraint {
+export interface MitemPutVO {
+  /** 货位 */
+  locationCode?: string;
+  /** 标签 */
+  label?: string;
+}
+
+/** 显示产品条码管理 */
+export type LabelVO = {
   id?: string;
   /**
-   * 创建时间
+   * 收货时间
    * @format date-time
    */
   timeCreate?: string;
@@ -645,37 +652,98 @@ export interface TransferConstraint {
   state?: number;
   eid?: string;
   oid?: string;
-  businessCategoryId?: string;
-  warehouseId?: string;
-  toOid?: string;
-  toWWarehouseId?: string;
-}
-
-export interface TransferConstraintSearch {
+  /** 标签号 */
+  labelNo?: string;
+  labelCategory?: string;
+  mitemId?: string;
+  /** 生产批次号 */
+  lotNo?: string;
+  /** 到货批次号 */
+  batchLot?: string;
+  supplierId?: string;
+  /** 数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  onhandId?: string;
+  moScheId?: string;
+  printTmplId?: string;
   /**
-   * 页码
+   * 标签顺序号
    * @format int32
    */
-  pageNum?: number;
+  printSeq?: number;
+  deliveryDtlId?: string;
+  receiveNo?: string;
+  status?: string;
+  /** 送货单 */
+  billNo?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 接收数量 */
+  receivedQty?: number;
   /**
-   * 页最大记录条数
+   * 已打印数量
    * @format int32
    */
-  pageSize?: number;
-  /** 仓库ID */
+  printedQty?: number;
+  /**
+   * 已生成数量
+   * @format int32
+   */
+  createdQty?: number;
+  /**
+   * 最小包装数
+   * @format int32
+   */
+  minPkgQty?: number;
+  /** 条码规则 */
+  barcodeRule?: string;
+  /** 打印模板 */
+  printTmpl?: string;
+  /** 计量单位名称 */
+  uomName?: string;
+  /** 计量单位 */
+  uom?: string;
+  deliveryId?: string;
+  /** 条码状态 */
+  barcodeStatusName?: string;
+  /** 收货人名称 */
+  creatorName?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 货区名称 */
+  districtName?: string;
+  /** 货位名称 */
+  locationName?: string;
+  /** 仓库编码 */
   warehouseCode?: string;
-  businessCategoryId?: string;
-}
-
-/** 响应数据 */
-export type PagingDataTransferConstraintVO = {
-  list?: TransferConstraintVO[];
-  /** @format int32 */
-  total?: number;
+  /** 货区编码 */
+  districtCode?: string;
+  /** 货位编码 */
+  locationCode?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /** 原因 */
+  reason?: string;
+  /**
+   * 送货时间
+   * @format date-time
+   */
+  dataDelivery?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataTransferConstraintVO {
+export interface ResultLabelVO {
   /**
    * 响应代码
    * @format int32
@@ -683,11 +751,12 @@ export interface ResultPagingDataTransferConstraintVO {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
-  data?: PagingDataTransferConstraintVO;
+  /** 显示产品条码管理 */
+  data?: LabelVO;
 }
 
-export interface TransferConstraintVO {
+/** 显示产品条码管理 */
+export type LocationVO = {
   id?: string;
   /**
    * 创建时间
@@ -711,25 +780,34 @@ export interface TransferConstraintVO {
   state?: number;
   eid?: string;
   oid?: string;
-  businessCategoryId?: string;
+  locationCode?: string;
+  locationName?: string;
+  locationDesc?: string;
   warehouseId?: string;
-  toOid?: string;
-  toWWarehouseId?: string;
-  /** 业务类型名称 */
-  categoryName?: string;
-  /** 原组织名称 */
-  oidOrgName?: string;
-  /** 原仓库名称 */
-  oidWarehouseName?: string;
-  /** 转入库存地类型名称 */
-  transferInTypeName?: string;
-  /** 创建人名称 */
-  creatorName?: string;
+  districtId?: string;
+  /** 货位代码 */
+  districtCode?: string;
+  /** 货位名称 */
+  districtName?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 修改人 */
+  modifierName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultLocationVO {
   /**
-   * 创建时间
-   * @format date-time
+   * 响应代码
+   * @format int32
    */
-  createTime?: string;
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示产品条码管理 */
+  data?: LocationVO;
 }
 
 /** 货位 */
@@ -820,48 +898,6 @@ export interface LocationSearch {
   districtKeyword?: string;
   /** 货位搜索关键字 */
   locationKeyword?: string;
-}
-
-/** 显示产品条码管理 */
-export interface LocationVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  locationCode?: string;
-  locationName?: string;
-  locationDesc?: string;
-  warehouseId?: string;
-  districtId?: string;
-  /** 货位代码 */
-  districtCode?: string;
-  /** 货位名称 */
-  districtName?: string;
-  /** 仓库代码 */
-  warehouseCode?: string;
-  /** 仓库名称 */
-  warehouseName?: string;
-  /** 修改人 */
-  modifierName?: string;
 }
 
 /** 响应数据 */
@@ -1114,118 +1150,6 @@ export interface LabelSearch {
   reason?: string;
   /** 批量ID */
   ids?: string[];
-}
-
-/** 显示产品条码管理 */
-export interface LabelVO {
-  id?: string;
-  /**
-   * 收货时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 标签号 */
-  labelNo?: string;
-  labelCategory?: string;
-  mitemId?: string;
-  /** 生产批次号 */
-  lotNo?: string;
-  /** 到货批次号 */
-  batchLot?: string;
-  supplierId?: string;
-  /** 数量 */
-  qty?: number;
-  /** 结余数量 */
-  balanceQty?: number;
-  onhandId?: string;
-  moScheId?: string;
-  printTmplId?: string;
-  /**
-   * 标签顺序号
-   * @format int32
-   */
-  printSeq?: number;
-  deliveryDtlId?: string;
-  receiveNo?: string;
-  status?: string;
-  /** 送货单 */
-  billNo?: string;
-  /** 供应商编码 */
-  supplierCode?: string;
-  /** 供应商名称 */
-  supplierName?: string;
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 物料名称 */
-  mitemName?: string;
-  /** 接收数量 */
-  receivedQty?: number;
-  /**
-   * 已打印数量
-   * @format int32
-   */
-  printedQty?: number;
-  /**
-   * 已生成数量
-   * @format int32
-   */
-  createdQty?: number;
-  /**
-   * 最小包装数
-   * @format int32
-   */
-  minPkgQty?: number;
-  /** 条码规则 */
-  barcodeRule?: string;
-  /** 打印模板 */
-  printTmpl?: string;
-  /** 计量单位名称 */
-  uomName?: string;
-  /** 计量单位 */
-  uom?: string;
-  deliveryId?: string;
-  /** 条码状态 */
-  barcodeStatusName?: string;
-  /** 收货人名称 */
-  creatorName?: string;
-  /** 仓库名称 */
-  warehouseName?: string;
-  /** 货区名称 */
-  districtName?: string;
-  /** 货位名称 */
-  locationName?: string;
-  /** 仓库编码 */
-  warehouseCode?: string;
-  /** 货区编码 */
-  districtCode?: string;
-  /** 货位编码 */
-  locationCode?: string;
-  /** 操作类型 */
-  operateType?: string;
-  /** 原因 */
-  reason?: string;
-  /**
-   * 送货时间
-   * @format date-time
-   */
-  dataDelivery?: string;
 }
 
 /** 响应数据 */
@@ -2135,7 +2059,6 @@ export type DeliveryDtlVO = {
   waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
-  check?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -2519,7 +2442,7 @@ export const api = {
      *
      * @tags 仓库移转约束表
      * @name GetOrgs
-     * @summary 获取所有组织（新增编辑界面下拉）
+     * @summary 获取该用户有权限的所有组织（新增编辑界面下拉）
      * @request GET:/transferConstraint/getOrgs
      * @secure
      */
@@ -2559,18 +2482,18 @@ export const api = {
         body: data as any,
       }),
   },
-  transferConstraint: {
+  mitemPut: {
     /**
      * No description
      *
-     * @tags 仓库移转约束表
-     * @name RemoveBatch
-     * @summary 编辑仓库转移规则
-     * @request POST:/transferConstraint/removeBatch
+     * @tags 收货上架
+     * @name ScanMitemLabel
+     * @summary 扫描物料标签
+     * @request POST:/mitemPut/scanMitemLabel
      * @secure
      */
-    removeBatch: (data: string[]) =>
-      http.request<ResultObject['data']>(`/api/warehouse/transferConstraint/removeBatch`, {
+    scanMitemLabel: (data: MitemPutVO) =>
+      http.request<ResultLabelVO['data']>(`/api/warehouse/mitemPut/scanMitemLabel`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2578,44 +2501,14 @@ export const api = {
     /**
      * No description
      *
-     * @tags 仓库移转约束表
-     * @name ModifyTransferConstraint
-     * @summary 编辑仓库转移规则
-     * @request POST:/transferConstraint/modifyTransferConstraint
+     * @tags 收货上架
+     * @name ScanLocationLabel
+     * @summary 扫描货位
+     * @request POST:/mitemPut/scanLocationLabel
      * @secure
      */
-    modifyTransferConstraint: (data: TransferConstraint) =>
-      http.request<ResultObject['data']>(`/api/warehouse/transferConstraint/modifyTransferConstraint`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 仓库移转约束表
-     * @name GetList
-     * @summary 获取主界面数据
-     * @request POST:/transferConstraint/getList
-     * @secure
-     */
-    getList: (data: TransferConstraintSearch) =>
-      http.request<ResultPagingDataTransferConstraintVO['data']>(`/api/warehouse/transferConstraint/getList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 仓库移转约束表
-     * @name AddTransferConstraint
-     * @summary 新增仓库转移规则
-     * @request POST:/transferConstraint/addTransferConstraint
-     * @secure
-     */
-    addTransferConstraint: (data: TransferConstraint) =>
-      http.request<ResultObject['data']>(`/api/warehouse/transferConstraint/addTransferConstraint`, {
+    scanLocationLabel: (data: MitemPutVO) =>
+      http.request<ResultLocationVO['data']>(`/api/warehouse/mitemPut/scanLocationLabel`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2676,6 +2569,20 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultLocation['data']>(`/api/warehouse/location/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name GetLocationByCode
+     * @request POST:/location/getLocationByCode
+     * @secure
+     */
+    getLocationByCode: (query: { code: string }) =>
+      http.request<ResultLocationVO['data']>(`/api/warehouse/location/getLocationByCode`, {
+        method: 'POST',
+        params: query,
       }),
 
     /**
@@ -2759,7 +2666,7 @@ export const api = {
      *
      * @tags 标签表
      * @name GetLabelManageList
-     * @summary 获取打印页送货单数据
+     * @summary 获取管理页标签数据
      * @request POST:/label/getLabelManageList
      * @secure
      */
