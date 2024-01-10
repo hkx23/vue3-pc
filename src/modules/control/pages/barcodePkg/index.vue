@@ -1065,6 +1065,10 @@ const handleTabClick = (selectedTabIndex: any) => {
     generateButtonOp.value = printMode.value.maxCreate <= 0;
     printMode.value.createPDNum = printMode.value.maxCreate > 0 ? printMode.value.maxCreate : 0;
     printMode.value.packQtyShow = selectedTab.packQtyShow;
+    pageUIBracode.value.page = 1;
+    pageUIBracode.value.rows = 10;
+    queryBelowCondition.value.pageNum = pageUIBracode.value.page;
+    queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
     dataSummary.value = `${selectedTab.planQty} (${selectedTab.planSheet}) / ${selectedTab.generateQty} (${selectedTab.generateSheet}) / ${selectedTab.displayQty} (${selectedTab.displaySheet}) `;
     api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {
       moBelowList.list = data.list;
@@ -1076,6 +1080,8 @@ const handleTabClick = (selectedTabIndex: any) => {
   }
 };
 const onRefreshBelow = () => {
+  queryBelowCondition.value.pageNum = pageUIBracode.value.page;
+  queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
   api.barcodePkg.getBarcodePkgList(queryBelowCondition.value).then((data) => {
     moBelowList.list = data.list;
     barcodeTotal.value = data.total;

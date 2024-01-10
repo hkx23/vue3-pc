@@ -1118,6 +1118,10 @@ export interface PagingDataWipLog {
 
 /** 关键物料追溯（反向）-产品基础信息 */
 export type ProductBaseReportVO = {
+  /** 用户名 */
+  userName?: string;
+  /** 姓名 */
+  displayName?: string;
   /** 产品条码 */
   serialNumber?: string;
   /** 工单号 */
@@ -1724,8 +1728,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2862,17 +2866,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2976,15 +2980,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  stateName?: string;
   defectCodeStr?: string;
 }
 
@@ -3793,8 +3797,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
