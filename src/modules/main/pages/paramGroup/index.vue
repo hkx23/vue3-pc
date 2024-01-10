@@ -457,21 +457,15 @@ const onSave = async () => {
     } else {
       sortTable();
       dataLoading.value = true;
-      try {
-        let postData: ParamInfoDTO = {};
-        postData = {
-          details: totaldataTable.value,
-          paramGroupId: SelectNode.value.id,
-        };
-        (await api.param.save(postData)) as any;
-        MessagePlugin.success('保存成功');
-        fetchTable();
-      } catch (e) {
-        // console.log(e);
-        MessagePlugin.error(`保存失败:${e}`);
-      } finally {
-        dataLoading.value = false;
-      }
+      let postData: ParamInfoDTO = {};
+      postData = {
+        details: totaldataTable.value,
+        paramGroupId: SelectNode.value.id,
+      };
+      (await api.param.save(postData)) as any;
+      MessagePlugin.success('保存成功');
+      fetchTable();
+      dataLoading.value = false;
     }
   }
 };
