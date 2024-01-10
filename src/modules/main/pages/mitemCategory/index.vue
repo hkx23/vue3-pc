@@ -102,7 +102,7 @@ const dataTotal = ref(0);
 const mitemTotal = ref(0);
 const keyword = ref('');
 const tableRef = ref();
-const selectCategoryID = ref(0);
+const selectCategoryID = ref('');
 
 // 查询组件
 const opts = computed(() => {
@@ -152,14 +152,14 @@ const fetchTable = async () => {
     console.log(e);
   } finally {
     setLoading(false);
-    selectCategoryID.value = -1;
+    selectCategoryID.value = '';
     fetchMitemTable();
   }
 };
 
 const fetchMitemTable = async () => {
   setLoadingMitem(true);
-  if (selectCategoryID.value === -1) {
+  if (selectCategoryID.value === '') {
     tableDataMitem.value = [];
     mitemTotal.value = 0;
     setLoadingMitem(false);

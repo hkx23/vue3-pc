@@ -758,8 +758,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -791,8 +791,15 @@ export interface WorkbenchLayout {
   layout?: string;
 }
 
+/** 响应数据 */
+export type PagingDataWarehouse = {
+  list?: Warehouse[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
 /** 通用响应类 */
-export interface ResultWarehouse {
+export interface ResultPagingDataWarehouse {
   /**
    * 响应代码
    * @format int32
@@ -800,12 +807,12 @@ export interface ResultWarehouse {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 仓库 */
-  data?: Warehouse;
+  /** 响应数据 */
+  data?: PagingDataWarehouse;
 }
 
 /** 仓库 */
-export type Warehouse = {
+export interface Warehouse {
   id?: string;
   /**
    * 创建时间
@@ -855,7 +862,20 @@ export type Warehouse = {
    * @format int32
    */
   isFifo?: number;
-} | null;
+}
+
+/** 通用响应类 */
+export interface ResultWarehouse {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 仓库 */
+  data?: Warehouse;
+}
 
 /** 通用响应类 */
 export interface Result {
@@ -1837,8 +1857,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3436,8 +3456,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -3516,15 +3536,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
   isProductName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -3686,8 +3706,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4156,8 +4176,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5409,14 +5429,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否可用 */
-  enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否可用 */
+  enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -5736,8 +5756,6 @@ export interface ResultBoolean {
   /** 响应数据 */
   data?: boolean | null;
 }
-
-export type StreamingResponseBody = object;
 
 /** 通用响应类 */
 export interface ResultListFavorite {
@@ -6772,7 +6790,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/main/warehouse/items`, {
+      http.request<ResultPagingDataWarehouse['data']>(`/api/main/warehouse/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -9072,7 +9090,7 @@ export const api = {
      * @tags 物料
      * @name GetListByMitemCategory
      * @summary 根据物料分类获取物料
-     * @request GET:/mitem/getlistbymitemcategory
+     * @request GET:/mitem/
      * @secure
      */
     getListByMitemCategory: (query: {
@@ -9083,7 +9101,7 @@ export const api = {
       /** @format int32 */
       pagesize: number;
     }) =>
-      http.request<ResultObject['data']>(`/api/main/mitem/getlistbymitemcategory`, {
+      http.request<ResultObject['data']>(`/api/main/mitem/`, {
         method: 'GET',
         params: query,
       }),
@@ -10060,21 +10078,6 @@ export const api = {
       id?: string;
     }) =>
       http.request<ResultObject['data']>(`/api/main/notice/list`, {
-        method: 'GET',
-        params: query,
-      }),
-  },
-  file: {
-    /**
-     * No description
-     *
-     * @tags 文件通用接口
-     * @name DownloadFile
-     * @request GET:/file/downloadFile
-     * @secure
-     */
-    downloadFile: (query: { path: string }) =>
-      http.request<StreamingResponseBody['data']>(`/api/main/file/downloadFile`, {
         method: 'GET',
         params: query,
       }),
