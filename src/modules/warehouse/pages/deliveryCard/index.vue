@@ -9,7 +9,7 @@
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
                   <template #workState="{ param }">
-                    <t-select v-model="param.workState" label="工单状态">
+                    <t-select v-model="param.workState" label="工单状态" :clearable="true">
                       <t-option
                         v-for="item in workStateDataList.list"
                         :key="item.id"
@@ -19,12 +19,10 @@
                     </t-select>
                   </template>
                   <template #showState="{ param }">
-                    <t-radio-group v-model="param.showState">
-                      <t-radio allow-uncheck :value="1">仅显示未打印完成</t-radio>
-                    </t-radio-group>
+                    <t-checkbox v-model="param.showState">仅显示未打印完成</t-checkbox>
                   </template>
                   <template #barCodeState="{ param }">
-                    <t-select v-model="param.barCodeState" label="条码状态">
+                    <t-select v-model="param.barCodeState" :clearable="true" label="条码状态">
                       <t-option
                         v-for="item in barCodeStateList.list"
                         :key="item.id"
@@ -49,6 +47,15 @@
                   @select-change="onGenerateChange"
                   @refresh="onTopRefresh"
                 >
+                  <template #thisTimeQty="{ row }">
+                    <t-input-number
+                      v-model="row.thisTimeQty"
+                      :auto-width="true"
+                      theme="column"
+                      :min="0"
+                      @change="(value) => inputTimeQtyChange(value, row)"
+                    />
+                  </template>
                   <template #specificationQuantity="{ row }">
                     <t-input-number
                       v-model="row.specificationQuantity"
@@ -66,7 +73,12 @@
                     }}
                   </template>
                   <template #button>
-                    <t-select v-model="generateData.barcodeRuleId" label="条码规则" style="width: 240px">
+                    <t-select
+                      v-model="generateData.barcodeRuleId"
+                      :clearable="true"
+                      label="条码规则"
+                      style="width: 240px"
+                    >
                       <t-option
                         v-for="item in onPrintRulesList?.list"
                         :key="item.id"
@@ -104,6 +116,7 @@
                   <template #button>
                     <t-select
                       v-model="printTemplateName"
+                      :clearable="true"
                       style="width: 240px"
                       label="打印模板"
                       :options="onPrintTemplateList"
@@ -124,7 +137,7 @@
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
                   <template #workState="{ param }">
-                    <t-select v-model="param.workState" label="工单状态">
+                    <t-select v-model="param.workState" label="工单状态" :clearable="true">
                       <t-option
                         v-for="item in workStateDataList.list"
                         :key="item.id"
@@ -139,7 +152,7 @@
                     </t-radio-group>
                   </template>
                   <template #barCodeState="{ param }">
-                    <t-select v-model="param.barCodeState" label="条码状态">
+                    <t-select v-model="param.barCodeState" :clearable="true" label="条码状态">
                       <t-option
                         v-for="item in barCodeStateList.list"
                         :key="item.id"
@@ -176,6 +189,7 @@
                   <template #button>
                     <t-select
                       v-model="printTemplateName"
+                      :clearable="true"
                       style="width: 240px"
                       label="打印模板"
                       :options="onPrintTemplateList"
@@ -321,7 +335,6 @@ import {
   Data,
   FormInstanceFunctions,
   FormRules,
-  Input,
   MessagePlugin,
   PrimaryTableCol,
   TableRowData,
@@ -363,7 +376,7 @@ const cardPrintData = ref({
   pageNum: 1,
   pageSize: 10,
   isFinishDisplay: true,
-  planDateStart: dayjs().subtract(30, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+  planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
   planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
   moId: '', // 工单ID
   workshopId: '', // 车间 ID
@@ -417,7 +430,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'scheCode',
-    title: '工单',
+    title: '排产单',
     align: 'center',
     width: '130',
   },
@@ -448,7 +461,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'planQty',
-    title: '计划数量',
+    title: '排产单数量',
     align: 'center',
     width: '100',
   },
@@ -468,34 +481,40 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     colKey: 'thisTimeQty',
     title: '本次生成数量',
     align: 'center',
-    width: '100',
-    edit: {
-      component: Input,
-      props: {
-        clearable: true,
-        autofocus: true,
-        autoWidth: false,
-      },
-      rules: [
-        { required: true, message: '不能为空' },
-        { validator: validateNumber, trigger: 'blur' },
-      ],
-      keepEditMode: true,
-      showEditIcon: true,
-      validateTrigger: 'change',
-      abortEditOnEvent: ['onEnter'],
-      // 编辑完成，退出编辑态后触发
-      onEdited: (context) => {
-        const num = context.newRowData.planQty - context.newRowData.generateQty;
-        if (context.newRowData.thisTimeQty > num) {
-          MessagePlugin.warning(`本次生成数量需要为小于等于${num}的正整数`);
-          return;
-        }
-        printTopTabData.list[context?.rowIndex] = context?.newRowData;
-        generateData.value.createNum = +printTopTabData.list[context?.rowIndex].thisTimeQty; // 变化后的数字
-      },
-    },
+    width: '150',
   },
+  // {
+  //   colKey: 'thisTimeQty',
+  //   title: '本次生成数量',
+  //   align: 'center',
+  //   width: '100',
+  //   edit: {
+  //     component: Input,
+  //     props: {
+  //       clearable: true,
+  //       autofocus: true,
+  //       autoWidth: false,
+  //     },
+  //     rules: [
+  //       { required: true, message: '不能为空' },
+  //       { validator: validateNumber, trigger: 'blur' },
+  //     ],
+  //     keepEditMode: true,
+  //     showEditIcon: true,
+  //     validateTrigger: 'change',
+  //     abortEditOnEvent: ['onEnter'],
+  //     // 编辑完成，退出编辑态后触发
+  //     onEdited: (context) => {
+  //       const num = context.newRowData.planQty - context.newRowData.generateQty;
+  //       if (context.newRowData.thisTimeQty > num) {
+  //         MessagePlugin.warning(`本次生成数量需要为小于等于${num}的正整数`);
+  //         return;
+  //       }
+  //       printTopTabData.list[context?.rowIndex] = context?.newRowData;
+  //       generateData.value.createNum = +printTopTabData.list[context?.rowIndex].thisTimeQty; // 变化后的数字
+  //     },
+  //   },
+  // },
   {
     colKey: 'specificationQuantity',
     title: '规格数量',
@@ -539,18 +558,19 @@ const labelPrintDown: PrimaryTableCol<TableRowData>[] = [
     colKey: 'deliveryCardNo',
     title: '条码',
     align: 'center',
-    width: '250',
+    width: '150',
   },
   {
     colKey: 'deliveryCardStatuName',
     title: '条码状态',
     align: 'center',
-    width: '130',
+    width: '100',
   },
   {
     colKey: 'qty',
     title: '数量',
     align: 'center',
+    width: '80',
     cell: 'stateSwitch',
   },
   {
@@ -737,6 +757,7 @@ onMounted(async () => {
 // 上表格数据刷新
 const onTopRefresh = async () => {
   await onGetPrintTopTabData();
+  tableRefs.value.setSelectedRowKeys([]);
 };
 // 下表格数据刷新
 const onDownRefresh = async () => {
@@ -746,6 +767,13 @@ const onDownRefresh = async () => {
 // 右表格数据刷新
 const onRightFetchData = async () => {
   await onLabelManageTabData();
+};
+
+// 本次生成数量change事件
+const numInput = ref(null);
+const inputTimeQtyChange = (value: any, row: any) => {
+  generateData.value.createNum = value; // 本次生成数量
+  numInput.value = row.planQty - row.generateQty;
 };
 
 // 规格数量change事件
@@ -982,6 +1010,8 @@ const onSecondarySubmit = async (context: { validateResult: boolean }) => {
 
 // // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
+  numInput.value = context.currentRowData.planQty - context.currentRowData.generateQty;
+  generateData.value.createNum = context.currentRowData.thisTimeQty;
   generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
   generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
   generateData.value.mitemId = context.currentRowData.mitemId; // 物料 Id
@@ -992,29 +1022,43 @@ const onGenerateChange = async (value: any, context: any) => {
 // // 生成点击事件
 const onGenerate = debounce(async () => {
   if (!generateData?.value?.workcenterId) {
-    MessagePlugin.warning('参数有误，请联系管理员');
+    MessagePlugin.warning('参数有误，请联系管理员！');
     return;
   }
   if (!generateData?.value?.moScheduleId) {
-    MessagePlugin.warning('请选择需打印的数据');
+    MessagePlugin.warning('请选择需打印的数据！');
     return;
   }
   if (!generateData?.value?.barcodeRuleId) {
-    MessagePlugin.warning('请选择条码规则');
+    MessagePlugin.warning('请选择条码规则！');
+    return;
+  }
+  if (generateData?.value?.createNum < 0) {
+    MessagePlugin.warning('本次生成数量不能为负数！');
     return;
   }
   if (!generateData?.value?.createNum) {
-    MessagePlugin.warning('请正确填写数量后回车');
+    MessagePlugin.warning('请正确填写本次生成数量！');
+    return;
+  }
+  if (generateData?.value?.createNum > numInput.value) {
+    MessagePlugin.warning(`本次生成数量不得大于 ${numInput.value}！`);
+    return;
+  }
+  if (generateData?.value?.createSize < 0) {
+    MessagePlugin.warning('规格数量不得小于0！');
     return;
   }
   if (!generateData?.value?.createSize) {
-    MessagePlugin.warning('请正确填写规格数量');
+    MessagePlugin.warning('请正确填写规格数量！');
     return;
   }
   await api.deliveryCard.generateBarcode(generateData.value); // 生成请求
   await onGetPrintTopTabData(); // 刷新数据
   await onGetPrintDownTabData(); // 下表格数据
   MessagePlugin.success('生成成功');
+  tableRefs.value.setSelectedRowKeys([]);
+  generateData.value.moScheduleId = null;
 }, 500);
 
 // // 点击 打印事件
@@ -1029,6 +1073,7 @@ const onPrint = debounce(async () => {
   }
   await api.deliveryCard.printBarcode({ ids: selectedRowKeys.value });
   await onGetPrintDownTabData(); // 刷新数据
+  await onGetPrintTopTabData();
   MessagePlugin.success('打印成功');
   selectedRowKeys.value = [];
 }, 500);
@@ -1136,7 +1181,7 @@ const opts = computed(() => {
       label: '',
       labelWidth: '10',
       event: 'radio',
-      defaultVal: '',
+      defaultVal: 'true',
       slotName: 'showState',
     },
     barCodeState: {

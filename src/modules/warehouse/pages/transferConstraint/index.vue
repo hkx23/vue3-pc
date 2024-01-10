@@ -11,15 +11,16 @@
         empty="没有符合条件的数据"
         :table-column="columns"
         :fixed-height="true"
-        :table-data="businessData.list"
-        :total="businessTotal"
+        :table-data="transferData.list"
+        :total="transferTotal"
         select-on-row-click
         :selected-row-keys="selectedRowKeys"
         @select-change="rehandleSelectChange"
         @refresh="onFetchData"
       >
-        <template #actionSlot>
+        <template #actionSlot="{ row }">
           <t-space :size="8">
+            <t-link theme="primary" @click="onEditRow(row)">{{ '编辑' }}</t-link>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
               <t-link theme="primary" @click="onDeleteRow">{{ '删除' }}</t-link>
             </t-popconfirm>
@@ -35,6 +36,12 @@
             <t-button theme="default">导出</t-button>
           </t-space>
         </template>
+        <template #oidOrgName="{ row }">
+          {{ `${row.oidOrgName} — ${row.oidWarehouseName}` }}
+        </template>
+        <template #businessDirection="{ row }">
+          {{ `${row.toOrgName} — ${row.toWarehouseName}` }}
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
@@ -42,35 +49,72 @@
   <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
     <t-form ref="formRef" :rules="rules" :data="businessTabData" label-width="120px" @submit="onBusinessSubmit">
       <!-- 第 1️⃣ 行数据 -->
-      <t-form-item label="业务类型代码" name="categoryCode">
-        <t-input v-model="businessTabData.categoryCode"></t-input>
+      <t-form-item label="业务类型" name="businessCategoryId">
+        <bcmp-select-business
+          v-model="businessTabData.businessCategoryId"
+          :is-multiple="false"
+          type="businessCategory"
+          label=""
+        ></bcmp-select-business>
       </t-form-item>
       <!-- 第 2️⃣ 行数据 -->
-      <t-form-item label="业务类型名称" name="categoryName">
-        <t-input v-model="businessTabData.categoryName"></t-input>
-      </t-form-item>
+      <t-row>
+        <t-col :span="6">
+          <t-form-item label="源仓库" name="sourceTissueId">
+            <t-select v-model="businessTabData.sourceTissueId" @popup-visible-change="onSourceTissueChange">
+              <t-option
+                v-for="item in onSourceTissueDropDownList"
+                :key="item.id"
+                :label="item.orgName"
+                :value="item.id"
+              />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="" name="warehouseId" label-width="10px">
+            <t-select v-model="businessTabData.warehouseId" @popup-visible-change="onSourceRepositoryFocus">
+              <t-option
+                v-for="item in onSourceRepositoryDropDownList"
+                :key="item.id"
+                :label="item.warehouseName"
+                :value="item.id"
+              />
+            </t-select>
+          </t-form-item>
+        </t-col>
+      </t-row>
+      <t-row>
+        <t-col></t-col>
+        <t-col></t-col>
+      </t-row>
       <!-- 第 3️⃣ 行数据 -->
-      <t-form-item label="业务交易方向" name="businessDirection">
-        <t-select v-model="businessTabData.businessDirection">
-          <t-option v-for="item in transactionDropDownList" :key="item.value" :label="item.label" :value="item.value" />
-        </t-select>
-      </t-form-item>
-      <!-- 第 4️⃣ 行数据 -->
-      <t-form-item label="业务单据前缀" name="perfix">
-        <t-input v-model="businessTabData.perfix"></t-input>
-      </t-form-item>
-      <!-- 第 5️⃣ 行数据 -->
-      <t-form-item label="转出仓库的类型" name="transferOutType">
-        <t-select v-model="businessTabData.transferOutType">
-          <t-option v-for="item in outFlowDropDownList" :key="item.value" :label="item.label" :value="item.value" />
-        </t-select>
-      </t-form-item>
-      <!-- 第 6️⃣ 行数据 -->
-      <t-form-item label="转入仓库的类型" name="transferInType">
-        <t-select v-model="businessTabData.transferInType">
-          <t-option v-for="item in inFlowDropDownList" :key="item.value" :label="item.label" :value="item.value" />
-        </t-select>
-      </t-form-item>
+      <t-row>
+        <t-col :span="6">
+          <t-form-item label="目标仓库" name="toOid">
+            <t-select v-model="businessTabData.toOid" @popup-visible-change="onTargetOrgChange">
+              <t-option
+                v-for="item in onSourceTissueDropDownList"
+                :key="item.id"
+                :label="item.orgName"
+                :value="item.id"
+              />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="" name="toWWarehouseId" label-width="10px">
+            <t-select v-model="businessTabData.toWWarehouseId" @popup-visible-change="onTargetWarehouseFocus">
+              <t-option
+                v-for="item in onTargetWarehouseDropDownList"
+                :key="item.id"
+                :label="item.warehouseName"
+                :value="item.id"
+              />
+            </t-select>
+          </t-form-item>
+        </t-col>
+      </t-row>
     </t-form>
     <template #footer>
       <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
@@ -96,17 +140,16 @@ const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys = ref([]); // 删除计量单位 id
 
 // 表格数据总条数
-const businessTotal = ref(0);
+const transferTotal = ref(0);
 // 表格数据
-const businessData = reactive({ list: [] });
+const transferData = reactive({ list: [] });
 // dialog 弹框数据
 const businessTabData = ref({
-  categoryCode: '', // 业务类型代码
-  categoryName: '', // 业务类型名称
-  businessDirection: null, // 业务交易方向
-  perfix: '', // 业务单位前缀
-  transferOutType: '', // 转出仓库的类型
-  transferInType: '', // 转入仓库的类型
+  sourceTissueId: '', // 源组织
+  businessCategoryId: '', // 业务类型
+  warehouseId: '', // 源仓库id
+  toOid: '', // 目标组织
+  toWWarehouseId: '', // 目标仓库id
 });
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
@@ -116,31 +159,31 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'categoryCode',
+    colKey: 'categoryName',
     title: '业务类型',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'categoryName',
+    colKey: 'oidOrgName',
     title: '源组织与仓库',
     align: 'center',
-    width: '110',
+    width: '250',
   },
   {
     colKey: 'businessDirection',
     title: '目标组织与仓库',
     align: 'center',
-    width: '130',
+    width: '250',
   },
   {
-    colKey: 'creatorName',
+    colKey: 'creator',
     title: '创建人',
     align: 'center',
-    width: '100',
+    width: '120',
   },
   {
-    colKey: 'createTime',
+    colKey: 'timeCreate',
     title: '创建时间',
     align: 'center',
     width: '150',
@@ -156,18 +199,16 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 ];
 // 表单验证规则
 const rules: FormRules = {
-  categoryCode: [{ required: true, message: '异常模块不能为空', trigger: 'blur' }],
-  categoryName: [{ required: true, message: '异常类型名称不能为空', trigger: 'blur' }],
-  businessDirection: [{ required: true, message: '异常类型编码不能为空', trigger: 'change' }],
-  perfix: [{ required: true, message: '是否启用不能为空', trigger: 'blur' }],
-  transferOutType: [{ required: true, message: '是否启用不能为空', trigger: 'change' }],
-  transferInType: [{ required: true, message: '是否启用不能为空', trigger: 'change' }],
+  sourceTissueId: [{ required: true, message: '业务类型不能为空', trigger: 'change' }],
+  businessCategoryId: [{ required: true, message: '源组织不能为空', trigger: 'change' }],
+  warehouseId: [{ required: true, message: '源仓库不能为空', trigger: 'change' }],
+  toOid: [{ required: true, message: '目标组织不能为空', trigger: 'change' }],
+  toWWarehouseId: [{ required: true, message: '目标仓库不能为空', trigger: 'change' }],
 };
 // 初始渲染
 onMounted(async () => {
-  await onGetAnomalyTypeData(); // 获取 表格 数据
+  await onGetTransferData(); // 获取 表格 数据
   await transactionDropDownData(); // 业务交易方向下拉
-  await outFlowDropDownData(); // 转出库存的类型
   await inFlowDropDownData(); // 转入库存的类型
 });
 
@@ -177,12 +218,7 @@ const transactionDropDownData = async () => {
   const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'W_BUSINESS_DIRECTION' });
   transactionDropDownList.value = res;
 };
-// 转出库存的类型
-const outFlowDropDownList = ref([]);
-const outFlowDropDownData = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'W_TRANSFER_OUT_TYPE' });
-  outFlowDropDownList.value = res;
-};
+
 // 转入库存的类型
 const inFlowDropDownList = ref([]);
 const inFlowDropDownData = async () => {
@@ -190,59 +226,145 @@ const inFlowDropDownData = async () => {
   inFlowDropDownList.value = res;
 };
 
+// 组织数据获取
+const onSourceTissueDropDownList = ref([]);
+const onSourceTissue = async () => {
+  const res = await api.transferConstraint.getOrgs();
+  onSourceTissueDropDownList.value = res;
+};
+
+// 仓库数据获取
+const onSourceRepository = async () => {
+  const res = await api.transferConstraint.getWarehouses({ id: businessTabData.value.sourceTissueId });
+  const resource = await api.transferConstraint.getWarehouses({ id: businessTabData.value.toOid });
+  onSourceRepositoryDropDownList.value = res;
+  onTargetWarehouseDropDownList.value = resource;
+};
+
+// 源组织下拉事件
+const onSourceTissueChange = async (visible: boolean) => {
+  if (visible) {
+    businessTabData.value.warehouseId = '';
+  }
+};
+
+const onSourceRepositoryDropDownList = ref([]);
+const onSourceRepositoryFocus = async (visible: boolean) => {
+  if (visible) {
+    const res = await api.transferConstraint.getWarehouses({ id: businessTabData.value.sourceTissueId });
+    onSourceRepositoryDropDownList.value = res;
+  }
+};
+
+// 目标组织下拉
+const onTargetOrgChange = async (visible: boolean) => {
+  if (visible) {
+    businessTabData.value.toWWarehouseId = '';
+  }
+};
+
+// 目标仓库下拉
+const onTargetWarehouseDropDownList = ref([]);
+const onTargetWarehouseFocus = async (visible: boolean) => {
+  if (visible) {
+    const res = await api.transferConstraint.getWarehouses({ id: businessTabData.value.toOid });
+    onTargetWarehouseDropDownList.value = res;
+  }
+};
+
 // 刷新按钮
 const onFetchData = () => {
-  onGetAnomalyTypeData();
+  onGetTransferData();
   selectedRowKeys.value = [];
 };
 
-const businessParam = ref({
+const transferParam = ref({
   pageNum: 1,
   pageSize: 10,
-  keyword: '',
+  warehouseKeyword: '', // 仓库
+  businessCategoryId: '', // 仓库类型
 });
 
 // 获取 表格 数据
-const onGetAnomalyTypeData = async () => {
+const onGetTransferData = async () => {
   // tableRef.value.setSelectedRowKeys([]);
   selectedRowKeys.value = [];
-  businessParam.value.pageNum = pageUI.value.page;
-  businessParam.value.pageSize = pageUI.value.rows;
-  const res = await api.businessCategory.getList(businessParam.value);
-  businessData.list = res.list;
-  businessTotal.value = res.total;
+  transferParam.value.pageNum = pageUI.value.page;
+  transferParam.value.pageSize = pageUI.value.rows;
+  const res = await api.transferConstraint.getList(transferParam.value);
+  transferData.list = res.list;
+  transferTotal.value = res.total;
 };
 
 // 新增按钮点击事件
-const onAddClick = () => {
+const submitFlag = ref(true); // 控制新增编辑
+const onAddClick = async () => {
   formRef.value.reset({ type: 'empty' });
+  await onSourceTissue();
   formVisible.value = true;
-  diaLogTitle.value = '新增仓库业务类型';
+  submitFlag.value = true;
+  diaLogTitle.value = '仓库转移规则新增';
 };
 
 // 新增请求
 const onAddBusinessType = async () => {
-  await api.businessCategory.addBusinessCategory(businessTabData.value);
-  await onGetAnomalyTypeData(); // 获取 表格 数据
+  await api.transferConstraint.addTransferConstraint(businessTabData.value);
+  await onGetTransferData(); // 获取 表格 数据
   MessagePlugin.success('新增成功');
+};
+
+// 编辑按钮点击
+const rowId = ref('');
+const onEditRow = async (row: any) => {
+  selectedRowKeys.value = [];
+  rowId.value = row.id;
+  businessTabData.value.sourceTissueId = row.oid;
+  businessTabData.value.businessCategoryId = row.businessCategoryId;
+  businessTabData.value.warehouseId = row.warehouseId;
+  businessTabData.value.toOid = row.toOid;
+  businessTabData.value.toWWarehouseId = row.toWWarehouseId;
+  await onSourceTissue();
+  await onSourceRepository();
+  formVisible.value = true;
+  submitFlag.value = false;
+  diaLogTitle.value = '仓库转移规则编辑';
+};
+
+// 编辑请求
+const onEadit = async () => {
+  await api.transferConstraint.modifyTransferConstraint({ ...businessTabData.value, id: rowId.value });
+  await onGetTransferData(); // 获取 表格 数据
+  MessagePlugin.success('编辑成功');
 };
 
 // #query 查询参数
 const opts = computed(() => {
   return {
-    keyword: {
+    warehouseKeyword: {
       label: '仓库',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
+    },
+    businessCategoryId: {
+      label: '业务类型',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        // valueField: 'scheCode',
+        type: 'businessCategory',
+        showTitle: false,
+      },
     },
   };
 });
 
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
-  businessParam.value.keyword = data.keyword;
-  await onGetAnomalyTypeData();
+  transferParam.value.warehouseKeyword = data.warehouseKeyword;
+  transferParam.value.businessCategoryId = data.businessCategoryId;
+  await onGetTransferData();
 };
 
 const onSecondarySubmit = () => {
@@ -261,11 +383,11 @@ const onDeleteRow = () => {
 
 // 右侧表格删除确认按钮
 const onDelConfirm = async () => {
-  await api.businessCategory.removeBatch(selectedRowKeys.value);
-  if (businessData.list.length <= 1 && pageUI.value.page > 1) {
+  await api.transferConstraint.removeBatch(selectedRowKeys.value);
+  if (transferData.list.length <= 1 && pageUI.value.page > 1) {
     pageUI.value.page--;
   }
-  await onGetAnomalyTypeData(); // 重新渲染数组
+  await onGetTransferData(); // 重新渲染数组
   selectedRowKeys.value = [];
   MessagePlugin.success('删除成功');
 };
@@ -273,23 +395,27 @@ const onDelConfirm = async () => {
 // 批量删除
 const onDeleteBatches = async () => {
   // 步骤 1: 检查删除前的数据总量
-  const initialLength = businessData.list.length;
+  const initialLength = transferData.list.length;
   // 步骤 2: 执行删除操作
-  await api.businessCategory.removeBatch(selectedRowKeys.value);
+  await api.transferConstraint.removeBatch(selectedRowKeys.value);
   // 步骤 3: 检查当前页是否还有数据
-  if (initialLength === businessData.list.length && pageUI.value.page > 1) {
+  if (initialLength === transferData.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
-    await onGetAnomalyTypeData(); // 重新渲染数组
-    selectedRowKeys.value = [];
-    MessagePlugin.success('批量删除成功');
   }
+  await onGetTransferData(); // 重新渲染数组
+  selectedRowKeys.value = [];
+  MessagePlugin.success('批量删除成功');
 };
 
 // 表单提交事件
 const onBusinessSubmit = async (context: { validateResult: boolean }) => {
   if (context.validateResult === true) {
-    await onAddBusinessType();
+    if (submitFlag.value) {
+      await onAddBusinessType();
+    } else {
+      await onEadit();
+    }
     formVisible.value = false;
   }
 };
