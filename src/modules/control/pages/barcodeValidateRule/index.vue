@@ -616,7 +616,7 @@ const onInput = async (data: any) => {
       pageNum: pageUITwo.value.page,
       pageSize: pageUITwo.value.rows,
       ruleKeyword: data.code,
-      barcodeTypeCode: barcodeData.value.barcodeType,
+      barcodeTypeCode: data.type,
       barcodeValidateGroup: 'SCANTEXT',
     });
     textTabData.list = res.list;
