@@ -527,7 +527,7 @@ export interface TransferConstraintSearch {
    */
   pageSize?: number;
   /** 仓库ID */
-  warehouseCode?: string;
+  warehouseKeyword?: string;
   businessCategoryId?: string;
 }
 

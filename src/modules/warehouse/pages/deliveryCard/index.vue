@@ -1067,6 +1067,7 @@ const onPrint = debounce(async () => {
   }
   await api.deliveryCard.printBarcode({ ids: selectedRowKeys.value });
   await onGetPrintDownTabData(); // 刷新数据
+  await onGetPrintTopTabData();
   MessagePlugin.success('打印成功');
   selectedRowKeys.value = [];
 }, 500);
