@@ -19,9 +19,7 @@
                     </t-select>
                   </template>
                   <template #showState="{ param }">
-                    <t-radio-group v-model="param.showState">
-                      <t-radio allow-uncheck :value="1">仅显示未打印完成</t-radio>
-                    </t-radio-group>
+                    <t-checkbox v-model="param.showState">仅显示未打印完成</t-checkbox>
                   </template>
                   <template #barCodeState="{ param }">
                     <t-select v-model="param.barCodeState" label="条码状态">
@@ -1175,7 +1173,7 @@ const opts = computed(() => {
       label: '',
       labelWidth: '10',
       event: 'radio',
-      defaultVal: '',
+      defaultVal: 'true',
       slotName: 'showState',
     },
     barCodeState: {
