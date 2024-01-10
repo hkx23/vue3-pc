@@ -44,7 +44,6 @@
           </template> -->
         </cmp-table>
       </cmp-card>
-
       <!-- 新增弹窗组件 -->
       <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" />
       <!-- 盘点单维护组件 -->
