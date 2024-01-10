@@ -27,7 +27,7 @@
                     </t-radio-group>
                   </template> -->
                   <template #barCodeState="{ param }">
-                    <t-select v-model="param.barCodeState" label="条码状态">
+                    <t-select v-model="param.barCodeState" :clearable="true" label="条码状态">
                       <t-option
                         v-for="item in barCodeStateList.list"
                         :key="item.id"
@@ -62,7 +62,12 @@
                   </template>
                   <template #button>
                     <t-space :size="8">
-                      <t-select v-model="generateData.barcodeRuleId" style="width: 240px" label="条码规则">
+                      <t-select
+                        v-model="generateData.barcodeRuleId"
+                        :clearable="true"
+                        style="width: 240px"
+                        label="条码规则"
+                      >
                         <t-option
                           v-for="item in onPrintRulesList.list"
                           :key="item.id"
@@ -99,7 +104,7 @@
                     </t-radio-group>
                   </template>
                   <template #button>
-                    <t-select v-model="printTemplate" label="打印模板" style="width: 240px">
+                    <t-select v-model="printTemplate" label="打印模板" :clearable="true" style="width: 240px">
                       <t-option
                         v-for="item in onPrintTemplateList.list"
                         :key="item.id"
@@ -121,7 +126,7 @@
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
                   <template #workState="{ param }">
-                    <t-select v-model="param.workState" label="工单状态">
+                    <t-select v-model="param.workState" :clearable="true" label="工单状态">
                       <t-option
                         v-for="item in workStateDataList.list"
                         :key="item.id"
@@ -136,7 +141,7 @@
                     </t-radio-group>
                   </template>
                   <template #barCodeState="{ param }">
-                    <t-select v-model="param.barCodeState" label="条码状态">
+                    <t-select v-model="param.barCodeState" :clearable="true" label="条码状态">
                       <t-option
                         v-for="item in barCodeStateList.list"
                         :key="item.id"
@@ -167,7 +172,7 @@
                     </t-popconfirm>
                   </template>
                   <template #button>
-                    <t-select v-model="printTemplate" label="打印模板" style="width: 240px">
+                    <t-select v-model="printTemplate" label="打印模板" :clearable="true" style="width: 240px">
                       <t-option
                         v-for="item in onPrintTemplateList.list"
                         :key="item.id"
@@ -329,7 +334,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'scheCode',
-    title: '工单',
+    title: '排产单',
     align: 'center',
     width: '130',
   },
@@ -360,7 +365,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'planQty',
-    title: '计划数量',
+    title: '排产单数量',
     align: 'center',
     width: '100',
   },
