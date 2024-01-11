@@ -590,6 +590,9 @@ onMounted(async () => {
 // 上表格数据刷新
 const onTopRefresh = async () => {
   await onGetPrintTopTabData();
+  printDownTabData.list = [];
+  topPrintID.value = null;
+  totalPrintDown.value = 0;
 };
 // 下表格数据刷新
 const onDownRefresh = async () => {

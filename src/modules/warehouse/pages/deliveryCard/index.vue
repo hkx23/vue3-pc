@@ -760,6 +760,9 @@ onMounted(async () => {
 const onTopRefresh = async () => {
   await onGetPrintTopTabData();
   tableRefs.value.setSelectedRowKeys([]);
+  printDownTabData.list = [];
+  totalPrintDown.value = 0;
+  topPrintID.value = null;
 };
 // 下表格数据刷新
 const onDownRefresh = async () => {
