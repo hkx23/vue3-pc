@@ -111,8 +111,8 @@
               </t-space>
             </cmp-card>
           </cmp-row>
-          <t-space>
-            <t-tooltip v-for="(item, index) in scanInfoList.slice(0, 5)" :key="index" :content="item.serialNumber">
+          <t-space style="overflow: auto" :size="8">
+            <t-tooltip v-for="(item, index) in scanInfoSplicList" :key="index" :content="item.serialNumber">
               <t-button theme="default" shape="rectangle" variant="base" @click="clickHistoryDefectCode(item)"
                 ><t-space :size="8"
                   ><span class="cardno">{{ item.serialNumber }} </span
@@ -139,7 +139,7 @@
 import dayjs from 'dayjs';
 import _, { isEmpty, isNil } from 'lodash';
 import { NotifyPlugin } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api, DefectCodeVO } from '@/api/control';
@@ -151,7 +151,9 @@ import { useLang } from './lang';
 const scanInfoList = ref<scanInfoModel[]>([]);
 // const { ctx } = getCurrentInstance();
 // const path = computed(() => _.get(ctx, '$route.path', ''));
-
+const scanInfoSplicList = computed(() => {
+  return scanInfoList.value.slice(0, 5);
+});
 import { useUserStore } from '@/store';
 
 const { t } = useLang();
@@ -254,13 +256,14 @@ const serialNumberEnter = async (value) => {
             writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.defectCodeStr);
           }
         } else {
+          writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
           throw new Error(reData.scanMessage);
           // writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
-          // writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
         }
       })
       .catch((e) => {
         pushMessage('error', value, e.message);
+        writeScanInfoError(value, 0, e.message);
         // writeMessageListError(e.message, dayjs().format('YYYY-MM-DD HH:mm:ss'));
       });
 
@@ -562,7 +565,7 @@ onMounted(() => {
 
 .cardno {
   display: block;
-  width: 80px;
+  width: 50px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

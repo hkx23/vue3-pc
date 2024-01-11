@@ -15,7 +15,7 @@
         :loading="loading"
         :selected-row-keys="selectedRowKeys"
         @select-change="rehandleSelectChange"
-        @refresh="onfetchData"
+        @refresh="onRefresh"
       >
         <template #button>
           <t-button theme="primary" @click="onHandelAdd">新增</t-button>
@@ -99,6 +99,12 @@ const opts = computed(() => {
 
 const isDisabled = ref(true);
 
+// 表格刷新
+const onRefresh = async () => {
+  await onfetchData();
+  selectedRowKeys.value = [];
+};
+
 // ######下拉框 列表数据
 const onDefectDealMethodData = reactive({ list: [] });
 const onGetDefectDealMethodType = async () => {
@@ -119,6 +125,7 @@ const onInput = (data) => {
   formData.value.categoryName = data.categoryName;
   formData.value.methodCodeName = data.methodCodeName;
   onfetchData();
+  selectedRowKeys.value = [];
 };
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const defectVisible = ref(false); // 新增编辑窗口

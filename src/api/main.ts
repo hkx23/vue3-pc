@@ -3536,14 +3536,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isState?: boolean;
+  isProductName?: string;
+  isProductChecked?: boolean;
+  isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isProductName?: string;
-  isBatchName?: string;
-  isRawName?: string;
   isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isState?: boolean;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -5489,12 +5489,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */

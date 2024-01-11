@@ -195,15 +195,10 @@ const opts = computed(() => {
   };
 });
 
-const onInput = async (data: any) => {
-  console.log('🚀 ~ onInput ~ data:', data);
+const onInput = async () => {
   pageUI.value.page = 1;
   await onGetTransferData();
 };
-
-// const onSecondarySubmit = () => {
-//   formRef.value.submit();
-// };
 
 // 获取批量删除数组
 const rehandleSelectChange = async (value: any[]) => {
@@ -217,7 +212,7 @@ const onDeleteRow = () => {
 
 // 右侧表格删除确认按钮
 const onDelConfirm = async () => {
-  await api.transferConstraint.removeBatch(selectedRowKeys.value);
+  await api.userWarehouseAuthority.removeBatch(selectedRowKeys.value);
   if (transferData.list.length <= 1 && pageUI.value.page > 1) {
     pageUI.value.page--;
   }
@@ -231,7 +226,7 @@ const onDeleteBatches = async () => {
   // 步骤 1: 检查删除前的数据总量
   const initialLength = transferData.list.length;
   // 步骤 2: 执行删除操作
-  await api.transferConstraint.removeBatch(selectedRowKeys.value);
+  await api.userWarehouseAuthority.removeBatch(selectedRowKeys.value);
   // 步骤 3: 检查当前页是否还有数据
   if (initialLength === transferData.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
