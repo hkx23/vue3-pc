@@ -698,22 +698,22 @@ export interface WorkcenterVO {
   state?: number;
   /**
    * 工作中心-工作区总记录数
-   * @format int32
+   * @format int64
    */
   area?: number;
   /**
    * 工作中心-生产线总记录数
-   * @format int32
+   * @format int64
    */
   line?: number;
   /**
    * 工作中心-工段总记录数
-   * @format int32
+   * @format int64
    */
   section?: number;
   /**
    * 工作中心-设备总记录数
-   * @format int32
+   * @format int64
    */
   device?: number;
   /** 子工作中心 */
@@ -3285,7 +3285,6 @@ export interface MitemUom {
    */
   state?: number;
   eid?: string;
-  oid?: string;
   uom?: string;
   uomName?: string;
 }
@@ -3538,13 +3537,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
   isBatchName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isInProcessName?: string;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -3594,35 +3593,12 @@ export type Mitem = {
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
-  mitemCategoryId?: string;
-  supplyCategory?: string;
   uom?: string;
-  /**
-   * 是否成品，1：是；0：否
-   * @format int32
-   */
-  isProduct?: number;
-  /**
-   * 是否原材料，1：是；0：否
-   * @format int32
-   */
-  isRaw?: number;
-  /**
-   * 是否半成品,1：是；0：否
-   * @format int32
-   */
-  isInProcess?: number;
-  warehouseId?: string;
   /**
    * 保质期天数
    * @format int32
    */
   shelfLifeDays?: number;
-  /**
-   * 是否启用批次,1：是；0：否
-   * @format int32
-   */
-  isBatchNo?: number;
 } | null;
 
 /** 通用响应类 */
@@ -3723,11 +3699,11 @@ export interface ResultListMitemFeignDTO {
   data?: MitemFeignDTO[] | null;
 }
 
-/** 标签表 */
-export interface Label {
+/** 显示产品条码管理 */
+export interface LabelVO {
   id?: string;
   /**
-   * 创建时间
+   * 收货时间
    * @format date-time
    */
   timeCreate?: string;
@@ -3748,13 +3724,16 @@ export interface Label {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 标签号 */
   labelNo?: string;
   labelCategory?: string;
   mitemId?: string;
+  /** 生产批次号 */
   lotNo?: string;
+  /** 到货批次号 */
   batchLot?: string;
   supplierId?: string;
-  /** 标签初始化数量 */
+  /** 数量 */
   qty?: number;
   /** 结余数量 */
   balanceQty?: number;
@@ -3769,6 +3748,72 @@ export interface Label {
   deliveryDtlId?: string;
   receiveNo?: string;
   status?: string;
+  /** 送货单 */
+  billNo?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 接收数量 */
+  receivedQty?: number;
+  /**
+   * 已打印数量
+   * @format int32
+   */
+  printedQty?: number;
+  /**
+   * 已生成数量
+   * @format int32
+   */
+  createdQty?: number;
+  /**
+   * 最小包装数
+   * @format int32
+   */
+  minPkgQty?: number;
+  /** 条码规则 */
+  barcodeRule?: string;
+  /** 打印模板 */
+  printTmpl?: string;
+  /** 计量单位名称 */
+  uomName?: string;
+  /** 计量单位 */
+  uom?: string;
+  /** 条码状态 */
+  barcodeStatusName?: string;
+  /** 收货人名称 */
+  creatorName?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 货区名称 */
+  districtName?: string;
+  /** 货位名称 */
+  locationName?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  /** 货区编码 */
+  districtCode?: string;
+  /** 货位编码 */
+  locationCode?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /** 原因 */
+  reason?: string;
+  /**
+   * 送货时间
+   * @format date-time
+   */
+  dataDelivery?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  newOnhandId?: string;
+  /** 标签新状态 */
+  newStatus?: string;
 }
 
 export interface LabelSearch {
@@ -9111,13 +9156,13 @@ export const api = {
      * No description
      *
      * @tags 标签表
-     * @name UpdateBarcodeStatus
+     * @name UpdateLabelStatusAndOnhandId
      * @summary 更新条码状态和库存现有量ID
-     * @request POST:/label/updateBarcodeStatus
+     * @request POST:/label/updateLabelStatusAndOnhandId
      * @secure
      */
-    updateBarcodeStatus: (data: Label[]) =>
-      http.request<ResultObject['data']>(`/api/main/label/updateBarcodeStatus`, {
+    updateLabelStatusAndOnhandId: (data: LabelVO[]) =>
+      http.request<ResultObject['data']>(`/api/main/label/updateLabelStatusAndOnhandId`, {
         method: 'POST',
         body: data as any,
       }),
