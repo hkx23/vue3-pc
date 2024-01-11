@@ -161,8 +161,10 @@ export interface WorkstationAuthSearch {
   pageSize?: number;
   id?: string;
   userId?: string;
-  /** 当前页所有工站ID */
-  allIds?: string[];
+  /** 需要新增的关系 */
+  inseartList?: string[];
+  /** 需要删除的关系 */
+  removeList?: string[];
   /** 多个工站权限id */
   ids?: string[];
   /** 模糊关键词 */
@@ -1560,8 +1562,8 @@ export interface ProductReworkVO {
   workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1604,10 +1606,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
-  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -2874,11 +2876,11 @@ export interface BarcodeWipCollectVO {
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2988,10 +2990,10 @@ export interface BarcodeWipVO {
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  defectCodeStr?: string;
-  isState?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3231,8 +3233,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
