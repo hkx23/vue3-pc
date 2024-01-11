@@ -325,6 +325,7 @@
       @refresh="onRightFetchData"
     ></cmp-table>
   </t-dialog>
+  <t-loading :loading="loading" text="加载中..." fullscreen />
 </template>
 
 <script setup lang="ts">
@@ -348,6 +349,7 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const radioValue = ref(1);
+const loading = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const selectedRowKeys: Ref<any[]> = ref([]); // 打印数组
 const productSelectedRowKeys: Ref<any[]> = ref([]); // 补打 打印数组
@@ -758,6 +760,9 @@ onMounted(async () => {
 const onTopRefresh = async () => {
   await onGetPrintTopTabData();
   tableRefs.value.setSelectedRowKeys([]);
+  printDownTabData.list = [];
+  totalPrintDown.value = 0;
+  topPrintID.value = null;
 };
 // 下表格数据刷新
 const onDownRefresh = async () => {
@@ -981,26 +986,47 @@ const onSecondarySubmit = async (context: { validateResult: boolean }) => {
   }
   if (context.validateResult === true) {
     if (reprintVoidSwitch.value === 1) {
-      await api.deliveryCard.reprintBarcode({
-        ids: productSelectedRowKeys.value,
-        reason,
-      });
-      productSelectedRowKeys.value = [];
-      MessagePlugin.success('补打成功');
+      try {
+        loading.value = true;
+        await api.deliveryCard.reprintBarcode({
+          ids: productSelectedRowKeys.value,
+          reason,
+        });
+        productSelectedRowKeys.value = [];
+        MessagePlugin.success('补打成功');
+      } catch (e) {
+        console.log(e);
+      } finally {
+        loading.value = false;
+      }
     } else if (reprintVoidSwitch.value === 2) {
-      await api.deliveryCard.cancellationBarcode({
-        ids: productSelectedRowKeys.value,
-        reason,
-      });
-      await onLabelManageTabData(); // 刷新表格数据
-      MessagePlugin.success('作废成功');
+      try {
+        loading.value = true;
+        await api.deliveryCard.cancellationBarcode({
+          ids: productSelectedRowKeys.value,
+          reason,
+        });
+        await onLabelManageTabData(); // 刷新表格数据
+        MessagePlugin.success('作废成功');
+      } catch (e) {
+        console.log(e);
+      } finally {
+        loading.value = false;
+      }
     } else {
-      await api.deliveryCard.splitBarcode({
-        deliveryCardId: productSelectedRowKeys.value[0],
-        splitNum: reprintDialog.value.resolutionNum,
-        reason: resolution,
-      });
-      MessagePlugin.success('拆分成功');
+      try {
+        loading.value = true;
+        await api.deliveryCard.splitBarcode({
+          deliveryCardId: productSelectedRowKeys.value[0],
+          splitNum: reprintDialog.value.resolutionNum,
+          reason: resolution,
+        });
+        MessagePlugin.success('拆分成功');
+      } catch (e) {
+        console.log(e);
+      } finally {
+        loading.value = false;
+      }
     }
     await onLabelManageTabData(); // 刷新表格数据
     productSelectedRowKeys.value = [];
@@ -1053,12 +1079,19 @@ const onGenerate = debounce(async () => {
     MessagePlugin.warning('请正确填写规格数量！');
     return;
   }
-  await api.deliveryCard.generateBarcode(generateData.value); // 生成请求
-  await onGetPrintTopTabData(); // 刷新数据
-  await onGetPrintDownTabData(); // 下表格数据
-  MessagePlugin.success('生成成功');
-  tableRefs.value.setSelectedRowKeys([]);
-  generateData.value.moScheduleId = null;
+  try {
+    loading.value = true;
+    await api.deliveryCard.generateBarcode(generateData.value); // 生成请求
+    await onGetPrintTopTabData(); // 刷新数据
+    await onGetPrintDownTabData(); // 下表格数据
+    MessagePlugin.success('生成成功');
+    tableRefs.value.setSelectedRowKeys([]);
+    generateData.value.moScheduleId = null;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    loading.value = false;
+  }
 }, 500);
 
 // // 点击 打印事件
@@ -1071,11 +1104,18 @@ const onPrint = debounce(async () => {
     MessagePlugin.warning('至少选择一条需要打印的记录！');
     return;
   }
-  await api.deliveryCard.printBarcode({ ids: selectedRowKeys.value });
-  await onGetPrintDownTabData(); // 刷新数据
-  await onGetPrintTopTabData();
-  MessagePlugin.success('打印成功');
-  selectedRowKeys.value = [];
+  try {
+    loading.value = true;
+    await api.deliveryCard.printBarcode({ ids: selectedRowKeys.value });
+    await onGetPrintDownTabData(); // 刷新数据
+    await onGetPrintTopTabData();
+    MessagePlugin.success('打印成功');
+    selectedRowKeys.value = [];
+  } catch (e) {
+    console.log(e);
+  } finally {
+    loading.value = false;
+  }
 }, 500);
 
 // // 打印选择 框 行 事件

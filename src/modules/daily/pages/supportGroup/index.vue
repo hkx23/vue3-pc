@@ -217,6 +217,10 @@ const supportGroupTabData = reactive({
 // # 处理组刷新按钮
 const onFetchGroupData = async () => {
   await supportGroupInUserTabData(); // 获取 处理组表格 数据
+  selectedRowKeys.value = [];
+  supportPersonInUserList.list = [];
+  supportPersonTotal.value = 0;
+  rowGroupId.value = '';
 };
 // # 人员刷新按钮
 const onFetchPersonData = async () => {
@@ -448,6 +452,9 @@ const onInput = async (data: any) => {
   supportGroupInUserList.list = res.list;
   supportGroupTotal.value = res.total;
   selectedRowKeys.value = [];
+  supportPersonInUserList.list = [];
+  supportPersonTotal.value = 0;
+  rowGroupId.value = '';
 };
 
 // ## 添加             员工                    搜索
