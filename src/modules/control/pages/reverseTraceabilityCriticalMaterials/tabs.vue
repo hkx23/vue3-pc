@@ -360,13 +360,13 @@ const materialkey: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'serialNumber',
+    colKey: 'keypartBarcode',
     title: '关键件条码',
     align: 'center',
     width: '60',
   },
   {
-    colKey: 'processName ',
+    colKey: 'processName',
     title: '工序',
     align: 'center',
     width: '100',
@@ -378,19 +378,13 @@ const materialkey: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'status',
-    title: '状态',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'qty	',
+    colKey: 'qty',
     title: '数量',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'userName',
+    colKey: 'displayName',
     title: '员工',
     align: 'center',
     width: '100',
@@ -418,7 +412,7 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
     width: '60',
   },
   {
-    colKey: 'deliveryCardStatuName',
+    colKey: 'workcenterName',
     title: '工作中心',
     align: 'center',
     width: '130',
@@ -448,7 +442,7 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'mitemLotNo',
+    colKey: 'lotNo',
     title: '物料批次',
     align: 'center',
     width: '100',
@@ -484,7 +478,7 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'datetimeOnboard',
     title: '加工时间',
     align: 'center',
     width: '100',
@@ -1063,7 +1057,7 @@ const tableRef = ref();
 const anomalyTypeData = ref([]);
 const anomalyTotal = ref<number>(0);
 const onGetAnomalyTypeData = async () => {
-  const res = await api.pkgRelation.getPkgRelationReportList(commonParametersList.value);
+  const res = await api.reversetraceability.getPkgRelationReportList(commonParametersList.value);
   const newData = res.list.map((item) => {
     if (item.existPkgRelationReportcChildren) {
       if (item.children && item.children.length === 0) {
@@ -1082,7 +1076,7 @@ const onGetAnomalyTypeData = async () => {
 // 点击节点获取子节点数据
 const onExpandedTreeNodesChange = async (expandedTreeNodes: any, options: any) => {
   expandedTreeNodes = [];
-  const res = await api.pkgRelation.getPkgRelationReportList({
+  const res = await api.reversetraceability.getPkgRelationReportList({
     parentPkgBarcode: options.row.pkgBarcode,
     pageNum: 1,
     pageSize: 9999,
