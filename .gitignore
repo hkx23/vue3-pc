@@ -10,7 +10,6 @@ typings/
 _site
 package
 tmp*
-temp*
 coverage
 test-report.html
 .idea/

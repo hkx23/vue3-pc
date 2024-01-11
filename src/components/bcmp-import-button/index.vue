@@ -151,16 +151,6 @@ const emit = defineEmits(['close']);
 const handleClose = () => {
   emit('close');
 };
-// watch(
-//   () => visible.value,
-//   (val) => {
-//     if (!val) {
-//       console.error('关闭');
-//       emit('close');
-//     }
-//   },
-//   { deep: true },
-// );
 </script>
 
 <style scoped lang="less">

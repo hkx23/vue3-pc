@@ -42,6 +42,7 @@
             :pagination="pagination"
             :data="state.tableData"
             lazy-load
+            :row-selection-allow-uncheck="false"
             :active-row-type="activeRowType"
             highlight-current-row
             :default-active-row-keys="activeRowKeys"
