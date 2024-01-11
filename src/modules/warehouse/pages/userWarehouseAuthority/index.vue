@@ -139,11 +139,8 @@ const onFetchData = () => {
 const transferParam = ref({
   pageNum: 1,
   pageSize: 10,
-  userId: '', // 单个用户ID
   warehouseId: '', // 单个仓库ID
   userIds: [], // 多个用户ID
-  allWarehouseIds: [], // 当前页全部的仓库ID
-  warehouseIds: [], // 当前页勾选了的仓库ID
 });
 
 // 获取 表格 数据
@@ -185,7 +182,7 @@ const opts = computed(() => {
       label: '用户',
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: '',
+      defaultVal: [],
       bind: {
         type: 'user',
         showTitle: false,
@@ -195,7 +192,10 @@ const opts = computed(() => {
   };
 });
 
-const onInput = async () => {
+const onInput = async (data) => {
+  const newArr = data.user.map((item) => item.value);
+  transferParam.value.userIds = newArr;
+  transferParam.value.warehouseId = data.warehouse;
   pageUI.value.page = 1;
   await onGetTransferData();
 };

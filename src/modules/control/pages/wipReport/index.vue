@@ -141,6 +141,12 @@ const columnsWip = computed(() => {
       width: '100',
     },
     ...columnsData.value,
+    {
+      colKey: 'completeedNum',
+      title: '完工数量',
+      align: 'center',
+      width: '100',
+    },
   ];
 });
 // 工单数据
