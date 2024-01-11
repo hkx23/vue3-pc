@@ -758,8 +758,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -1857,8 +1857,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3456,8 +3456,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 /** 响应数据 */
@@ -3536,15 +3536,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
   isState?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isProductName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  stateName?: string;
+  isRawChecked?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -3706,8 +3706,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4176,8 +4176,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4536,6 +4536,19 @@ export interface BarcodeSequenceDTO {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
 }
 
 /** 条码生成序列号表 */
@@ -5429,14 +5442,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -5742,19 +5755,6 @@ export interface ResultPagingDataModule {
   message?: string;
   /** 响应数据 */
   data?: PagingDataModule;
-}
-
-/** 通用响应类 */
-export interface ResultBoolean {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
 }
 
 /** 通用响应类 */
@@ -9737,7 +9737,7 @@ export const api = {
      * @secure
      */
     searchSeq: (data: BarcodeSequenceDTO) =>
-      http.request<boolean['data']>(`/api/main/barcodeSequence/searchSeq`, {
+      http.request<ResultBoolean['data']>(`/api/main/barcodeSequence/searchSeq`, {
         method: 'POST',
         body: data as any,
       }),
@@ -9767,7 +9767,7 @@ export const api = {
      * @secure
      */
     getCurrentValue: (data: BarcodeSequenceDTO) =>
-      http.request<string['data']>(`/api/main/barcodeSequence/getCurrentValue`, {
+      http.request<ResultLong['data']>(`/api/main/barcodeSequence/getCurrentValue`, {
         method: 'POST',
         body: data as any,
       }),
