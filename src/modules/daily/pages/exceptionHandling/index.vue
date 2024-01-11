@@ -202,6 +202,7 @@ const column = ref([
 // #刷新按钮
 const onFetchData = async () => {
   await onFetchTabData(); // 渲染表格
+  selectedRowKeys.value = [];
 };
 
 // #初始化请求

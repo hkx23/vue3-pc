@@ -1,40 +1,39 @@
 <!-- 盘点管理  -->
 <template>
   <cmp-container :full="true">
-    <cmp-container>
-      <!-- cmp-query 查询组件 -->
-      <cmp-card>
-        <cmp-card :ghost="true">
-          <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
-        </cmp-card>
+    <!-- cmp-query 查询组件 -->
+    <cmp-card>
+      <cmp-card :ghost="true">
+        <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
       </cmp-card>
-      <!-- cmp-table 表格组件  -->
-      <cmp-card>
-        <cmp-table
-          v-model:pagination="pageUI"
-          row-key="id"
-          :table-column="tableReckoningManagementColumns"
-          :table-data="tableDataLocation"
-          :fixed-height="false"
-          :total="dataTotal"
-          empty="没有符合条件的数据"
-          @refresh="tabRefresh"
-        >
-          <!-- 状态 -->
-          <!-- <template #state="{ row }">
+    </cmp-card>
+    <!-- cmp-table 表格组件  -->
+    <cmp-card>
+      <cmp-table
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="tableReckoningManagementColumns"
+        :table-data="tableDataLocation"
+        :fixed-height="false"
+        :total="dataTotal"
+        empty="没有符合条件的数据"
+        @refresh="tabRefresh"
+      >
+        <!-- 状态 -->
+        <!-- <template #state="{ row }">
             <span v-if="row.state == 1">已创建</span>
             <span v-if="row.state == 2">盘点中</span>
             <span v-if="row.state == 3">已完成</span>
             <span v-if="row.state == 4">已关闭</span>
             <span v-else>已作废</span>
           </template> -->
-          <template #button>
-            <t-button theme="primary" @click="onAdd">新增</t-button>
-            <t-button theme="default">作废</t-button>
-            <t-button theme="primary" @click="result">打印</t-button>
-            <t-button theme="primary">导出</t-button>
-          </template>
-          <!-- <template #op="row">
+        <template #button>
+          <t-button theme="primary" @click="onAdd">新增</t-button>
+          <t-button theme="default">作废</t-button>
+          <t-button theme="primary" @click="result">打印</t-button>
+          <t-button theme="primary">导出</t-button>
+        </template>
+        <!-- <template #op="row">
             <t-space>
               <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(row)">编辑</t-link>
               <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onStateRowClick(row)">
@@ -42,14 +41,13 @@
               </t-popconfirm>
             </t-space>
           </template> -->
-        </cmp-table>
-      </cmp-card>
-      <!-- 新增弹窗组件 -->
-      <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" />
-      <!-- 盘点单维护组件 -->
-      <inventory-sheet-maintenance v-model:visible="ISMRoutingVisible" :form-title="formTitle" />
-    </cmp-container>
+      </cmp-table>
+    </cmp-card>
   </cmp-container>
+  <!-- 新增弹窗组件 -->
+  <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" />
+  <!-- 盘点单维护组件 -->
+  <inventory-sheet-maintenance v-model:visible="ISMRoutingVisible" :form-title="formTitle" />
 </template>
 
 <script setup lang="ts">

@@ -220,6 +220,7 @@ onMounted(async () => {
 // 刷新按钮
 const onFetchData = () => {
   onGetAnomalyTypeData();
+  selectedRowKeys.value = [];
 };
 
 // 获取 表格 数据

@@ -195,15 +195,10 @@ const opts = computed(() => {
   };
 });
 
-const onInput = async (data: any) => {
-  console.log('🚀 ~ onInput ~ data:', data);
+const onInput = async () => {
   pageUI.value.page = 1;
   await onGetTransferData();
 };
-
-// const onSecondarySubmit = () => {
-//   formRef.value.submit();
-// };
 
 // 获取批量删除数组
 const rehandleSelectChange = async (value: any[]) => {

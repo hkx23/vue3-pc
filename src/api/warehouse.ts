@@ -2088,6 +2088,11 @@ export type MaterialRequisitionDtlVO = {
   memo?: string;
   /** 子层级 */
   children?: MaterialRequisitionDtlVO[];
+  /**
+   * 树状表格需要，否则展开有问题
+   * @format int32
+   */
+  index?: number;
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
