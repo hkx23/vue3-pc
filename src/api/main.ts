@@ -758,8 +758,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -1857,8 +1857,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3537,14 +3537,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isState?: boolean;
+  isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  isState?: boolean;
-  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -4176,8 +4176,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4536,6 +4536,19 @@ export interface BarcodeSequenceDTO {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
 }
 
 /** 条码生成序列号表 */
@@ -5429,14 +5442,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -5743,21 +5756,6 @@ export interface ResultPagingDataModule {
   /** 响应数据 */
   data?: PagingDataModule;
 }
-
-/** 通用响应类 */
-export interface ResultBoolean {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
-}
-
-export type StreamingResponseBody = object;
 
 /** 通用响应类 */
 export interface ResultListFavorite {
@@ -9739,7 +9737,7 @@ export const api = {
      * @secure
      */
     searchSeq: (data: BarcodeSequenceDTO) =>
-      http.request<boolean['data']>(`/api/main/barcodeSequence/searchSeq`, {
+      http.request<ResultBoolean['data']>(`/api/main/barcodeSequence/searchSeq`, {
         method: 'POST',
         body: data as any,
       }),
@@ -9769,7 +9767,7 @@ export const api = {
      * @secure
      */
     getCurrentValue: (data: BarcodeSequenceDTO) =>
-      http.request<string['data']>(`/api/main/barcodeSequence/getCurrentValue`, {
+      http.request<ResultLong['data']>(`/api/main/barcodeSequence/getCurrentValue`, {
         method: 'POST',
         body: data as any,
       }),
@@ -10080,21 +10078,6 @@ export const api = {
       id?: string;
     }) =>
       http.request<ResultObject['data']>(`/api/main/notice/list`, {
-        method: 'GET',
-        params: query,
-      }),
-  },
-  file: {
-    /**
-     * No description
-     *
-     * @tags 文件通用接口
-     * @name DownloadFile
-     * @request GET:/file/downloadFile
-     * @secure
-     */
-    downloadFile: (query: { path: string }) =>
-      http.request<StreamingResponseBody['data']>(`/api/main/file/downloadFile`, {
         method: 'GET',
         params: query,
       }),

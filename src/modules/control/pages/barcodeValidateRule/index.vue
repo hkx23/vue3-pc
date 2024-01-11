@@ -10,7 +10,7 @@
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query :opts="opts" @submit="onInput">
                   <template #cellType="{ param }">
-                    <t-select v-model="param.type" label="条码类型">
+                    <t-select v-model="param.type" label="条码类型" :clearable="true">
                       <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
                     </t-select>
                   </template>
@@ -50,7 +50,7 @@
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query :opts="opts" @submit="onInput">
                   <template #cellType="{ param }">
-                    <t-select v-model="param.type" label="条码类型">
+                    <t-select v-model="param.type" label="条码类型" :clearable="true">
                       <t-option v-for="item in BarcodeTypeArr" :key="item.id" :label="item.label" :value="item.value" />
                     </t-select>
                   </template>

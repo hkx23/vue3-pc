@@ -460,16 +460,12 @@ const onWorkStationSubmit = async (context: RootObject) => {
 };
 // 校验
 const rules: FormRules<Data> = {
-  PWorkcenterId: [
-    {
-      required: true,
-      type: 'error',
-    },
-  ],
+  PWorkcenterId: [{ required: true, type: 'error', trigger: 'change' }],
   PProcessId: [
     {
       required: true,
       type: 'error',
+      trigger: 'change',
     },
   ],
   workstationCode: [
