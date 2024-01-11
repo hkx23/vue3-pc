@@ -272,6 +272,7 @@
       @refresh="onRightFetchData"
     ></cmp-table>
   </t-dialog>
+  <t-loading :loading="loading" text="加载中..." fullscreen />
 </template>
 
 <script setup lang="ts">
@@ -303,6 +304,7 @@ const tableRefTop = ref(); // 上表格实例
 const tableRefRight = ref(); // 右表格实例
 const isReprintCancellation = ref(false);
 const printTemplate = ref(''); // 打印模板数据
+const loading = ref(false);
 // 补打，作废 DiaLog 数据
 const reprintDialog = ref({
   reprintData: '',
@@ -651,19 +653,33 @@ const onConfirm = async () => {
     reason = reprintDialog.value.reprintData;
   }
   if (isReprintCancellation.value) {
-    await api.labelManage.reprintBarcode({
-      ids: productSelectedRowKeys.value,
-      reason,
-    });
-    productSelectedRowKeys.value = [];
-    MessagePlugin.success('补打成功');
+    try {
+      loading.value = true;
+      await api.labelManage.reprintBarcode({
+        ids: productSelectedRowKeys.value,
+        reason,
+      });
+      productSelectedRowKeys.value = [];
+      MessagePlugin.success('补打成功');
+    } catch (e) {
+      console.log(e);
+    } finally {
+      loading.value = false;
+    }
   } else {
-    await api.labelManage.cancellationBarcode({
-      ids: productSelectedRowKeys.value,
-      reason,
-    });
-    await onLabelManageTabData(); // 刷新表格数据
-    MessagePlugin.success('作废成功');
+    try {
+      loading.value = true;
+      await api.labelManage.cancellationBarcode({
+        ids: productSelectedRowKeys.value,
+        reason,
+      });
+      await onLabelManageTabData(); // 刷新表格数据
+      MessagePlugin.success('作废成功');
+    } catch (e) {
+      console.log(e);
+    } finally {
+      loading.value = false;
+    }
   }
   await onLabelManageTabData(); // 刷新表格数据
   formVisible.value = false;
@@ -836,12 +852,21 @@ const onGenerate = debounce(async () => {
     MessagePlugin.warning('请正确填写本次生成数量！');
     return;
   }
-  await api.labelManage.generateBarcode(generateData.value); // 生成请求
-  await onGetPrintTopTabData(); // 刷新数据
-  await onGetPrintDownTabData();
-  MessagePlugin.success('生成成功');
-  tableRefTop.value.setSelectedRowKeys([]);
-  generateData.value.moScheduleId = null;
+  try {
+    loading.value = true;
+    await api.labelManage.generateBarcode(generateData.value); // 生成请求
+    await onGetPrintTopTabData(); // 刷新数据
+    await onGetPrintDownTabData();
+    MessagePlugin.success('生成成功');
+    tableRefTop.value.setSelectedRowKeys([]);
+    printDownTabData.list = [];
+    totalPrintDown.value = 0;
+    generateData.value.moScheduleId = null;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    loading.value = false;
+  }
 }, 1000);
 // 点击 打印事件
 const onPrint = debounce(async () => {
@@ -853,10 +878,17 @@ const onPrint = debounce(async () => {
     MessagePlugin.warning('请选择打印模板！');
     return;
   }
-  await api.labelManage.printBarcode({ ids: selectedRowKeys.value });
-  await onGetPrintDownTabData(); // 刷新数据
-  MessagePlugin.success('打印成功');
-  selectedRowKeys.value = [];
+  try {
+    loading.value = true;
+    await api.labelManage.printBarcode({ ids: selectedRowKeys.value });
+    await onGetPrintDownTabData(); // 刷新数据
+    MessagePlugin.success('打印成功');
+    selectedRowKeys.value = [];
+  } catch (e) {
+    console.log(e);
+  } finally {
+    loading.value = false;
+  }
 }, 1000);
 
 // 打印选择 框 行 事件
