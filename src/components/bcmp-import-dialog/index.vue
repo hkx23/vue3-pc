@@ -2,7 +2,7 @@
   <t-dialog
     v-model:visible="formImportVisible"
     :close-on-overlay-click="false"
-    top="25px"
+    top="50px"
     width="800px"
     :cancel-btn="null"
     :confirm-btn="null"

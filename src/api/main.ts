@@ -3541,12 +3541,12 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductName?: string;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isRawName?: string;
+  isProductName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
 }
 
