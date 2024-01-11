@@ -78,12 +78,12 @@ export interface UserWarehouseAuthoritySearch {
   pageSize?: number;
   userId?: string;
   warehouseId?: string;
-  /** 用户ID */
+  /** 多个用户ID */
   userIds?: string[];
-  /** 当前页全部的仓库ID */
-  allWarehouseIds?: string[];
-  /** 当前页勾选了的仓库ID */
-  warehouseIds?: string[];
+  /** 需要新增的关系 */
+  inseartList?: string[];
+  /** 需要删除的关系 */
+  removeList?: string[];
 }
 
 /** 通用响应类 */
@@ -620,15 +620,8 @@ export interface PurchaseOrderSearch {
   labelNo?: string;
 }
 
-export interface MitemPutVO {
-  /** 货位 */
-  locationCode?: string;
-  /** 标签 */
-  label?: string;
-}
-
 /** 显示产品条码管理 */
-export type LabelVO = {
+export interface LabelVO {
   id?: string;
   /**
    * 收货时间
@@ -740,7 +733,28 @@ export type LabelVO = {
   warehouseId?: string;
   districtId?: string;
   locId?: string;
-} | null;
+  newOnhandId?: string;
+  /** 标签新状态 */
+  newStatus?: string;
+}
+
+export interface MitemPutVO {
+  warehouseId?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  districtId?: string;
+  /** 货区名称 */
+  districtName?: string;
+  locationId?: string;
+  /** 货位 */
+  locationCode?: string;
+  /** 货位名称 */
+  locationName?: string;
+  /** 标签 */
+  label?: string;
+  /** 上架标签 */
+  putList?: LabelVO[];
+}
 
 /** 通用响应类 */
 export interface ResultLabelVO {
@@ -808,6 +822,11 @@ export interface ResultLocationVO {
   message?: string;
   /** 显示产品条码管理 */
   data?: LocationVO;
+}
+
+/** 领料制单提交模型 */
+export interface MaterialRequisitionDTO {
+  cancelledIds?: string[];
 }
 
 /** 货位 */
@@ -1644,6 +1663,112 @@ export interface ResultPagingDataBusinessCategoryVO {
   data?: PagingDataBusinessCategoryVO;
 }
 
+export interface BillManagementSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 仓库业务类型ID */
+  businessCategoryIds?: string[];
+  mitemId?: string;
+  supplierId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /**
+   * 计划开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 计划结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+}
+
+export interface BillManagementVO {
+  /** 事务类型 */
+  categoryName?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 关联单号 */
+  sourceBillNo?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 交易数量 */
+  pickQty?: number;
+  /** 单位 */
+  uomName?: string;
+  /** ERP单号 */
+  erpBillNo?: string;
+  /** ERP行号 */
+  erpLineNo?: string;
+  /** 上传状态名称 */
+  uploadStatusName?: string;
+  /** 备注 */
+  memo?: string;
+  /** 供应商 */
+  supplierName?: string;
+  /** 源仓库名称 */
+  warehouseName?: string;
+  /** 源货区名称 */
+  districtName?: string;
+  /** 源货位名称 */
+  locationName?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
+  /** 目标货区名称 */
+  toDistrictName?: string;
+  /** 目标货位名称 */
+  toLocationName?: string;
+  /** 单据状态 */
+  billStatusName?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 修改人名称 */
+  modifier?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+}
+
+/** 响应数据 */
+export type PagingDataBillManagementVO = {
+  list?: BillManagementVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBillManagementVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBillManagementVO;
+}
+
 /** 通用响应类 */
 export interface ResultLong {
   /**
@@ -1893,11 +2018,11 @@ export type PurchaseOrderDtlVO = {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -1911,6 +2036,221 @@ export interface ResultListPurchaseOrderDtlVO {
   message?: string;
   /** 响应数据 */
   data?: PurchaseOrderDtlVO[] | null;
+}
+
+/** 响应数据 */
+export type MaterialRequisitionDtlVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  billNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  moScheId?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 实际拣料数量 */
+  pickQty?: number;
+  reason?: string;
+  voucherLineNo?: string;
+  noticeVoucherLineNo?: string;
+  batchNo?: string;
+  poNum?: string;
+  /** ERP单据明细号 */
+  erpLineNo?: string;
+  memo?: string;
+  /** 子层级 */
+  children?: MaterialRequisitionDtlVO[];
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uom?: string;
+  uomName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  districtCode?: string;
+  districtName?: string;
+  locationCode?: string;
+  locationName?: string;
+  toWarehouseCode?: string;
+  toWarehouseName?: string;
+  /**
+   * 分子用量
+   * @format int32
+   */
+  numeratorQty?: number;
+  /**
+   * 分母用量
+   * @format int32
+   */
+  denomainatorQty?: number;
+  scheCode?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListMaterialRequisitionDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MaterialRequisitionDtlVO[] | null;
+}
+
+export interface MaterialRequisitionVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  billNo?: string;
+  businessCategoryId?: string;
+  status?: string;
+  /**
+   * 打印次数
+   * @format int32
+   */
+  printCount?: number;
+  /**
+   * 最后打印时间
+   * @format date-time
+   */
+  datetimeLastPrint?: string;
+  userLastPrintId?: string;
+  /**
+   * 批准时间
+   * @format date-time
+   */
+  datetimeApproved?: string;
+  userApprovedId?: string;
+  /**
+   * 驳回时间
+   * @format date-time
+   */
+  datetimeRejected?: string;
+  userRejectedId?: string;
+  /**
+   * 取消时间
+   * @format date-time
+   */
+  datetimeCanceled?: string;
+  userCanceledId?: string;
+  /**
+   * 过帐时间
+   * @format date-time
+   */
+  datetimeTransfer?: string;
+  userTransferId?: string;
+  /**
+   * 作业完成时间
+   * @format date-time
+   */
+  datetimePicked?: string;
+  userPickedId?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  userReceiptedId?: string;
+  /** 车间代码 */
+  workshopCode?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  /**
+   * 修改人时间
+   * @format date-time
+   */
+  modifiedTime?: string;
+  /** 单据状态名称 */
+  statusName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMaterialRequisitionVO = {
+  list?: MaterialRequisitionVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMaterialRequisitionVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMaterialRequisitionVO;
 }
 
 /** 标签模板 */
@@ -2070,11 +2410,11 @@ export type DeliveryDtlVO = {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -2274,7 +2614,7 @@ export const api = {
      *
      * @tags 用户仓库权限表
      * @name SaveAuthority
-     * @summary 分配用户仓库权限
+     * @summary 保存用户仓库权限
      * @request POST:/userWarehouseAuthority/saveAuthority
      * @secure
      */
@@ -2516,6 +2856,21 @@ export const api = {
      * No description
      *
      * @tags 收货上架
+     * @name SubmitMitemPut
+     * @summary 物料上架
+     * @request POST:/mitemPut/submitMitemPut
+     * @secure
+     */
+    submitMitemPut: (data: MitemPutVO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/mitemPut/submitMitemPut`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 收货上架
      * @name ScanMitemLabel
      * @summary 扫描物料标签
      * @request POST:/mitemPut/scanMitemLabel
@@ -2541,6 +2896,68 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+  },
+  materialRequisition: {
+    /**
+     * No description
+     *
+     * @tags 领料制单
+     * @name MaterialRequisitionCanceled
+     * @summary 领料单作废
+     * @request POST:/materialRequisition/materialRequisitionCanceled
+     * @secure
+     */
+    materialRequisitionCanceled: (data: MaterialRequisitionDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/materialRequisition/materialRequisitionCanceled`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料制单
+     * @name Tree
+     * @summary 获取领料单明细
+     * @request GET:/materialRequisition/tree
+     * @secure
+     */
+    tree: (query: { billNo: string }) =>
+      http.request<ResultListMaterialRequisitionDtlVO['data']>(`/api/warehouse/materialRequisition/tree`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料制单
+     * @name GetMaterialRequisitionList
+     * @summary 获取领料制单列表
+     * @request GET:/materialRequisition/getMaterialRequisitionList
+     * @secure
+     */
+    getMaterialRequisitionList: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      billNo: string;
+      workshopCode: string;
+      statusList: string;
+      /** @default "" */
+      datetimeStart?: string;
+      /** @default "" */
+      datetimeEnd?: string;
+      moCodeList: string;
+    }) =>
+      http.request<ResultPagingDataMaterialRequisitionVO['data']>(
+        `/api/warehouse/materialRequisition/getMaterialRequisitionList`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
   },
   location: {
     /**
@@ -3193,6 +3610,22 @@ export const api = {
     getBusinessCategory: () =>
       http.request<ResultListBusinessCategory['data']>(`/api/warehouse/businessCategory/getBusinessCategory`, {
         method: 'GET',
+      }),
+  },
+  billManagement: {
+    /**
+     * No description
+     *
+     * @tags 单据管理
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/billManagement/getList
+     * @secure
+     */
+    getList: (data: BillManagementSearch) =>
+      http.request<ResultPagingDataBillManagementVO['data']>(`/api/warehouse/billManagement/getList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   purchaseOrderDtl: {

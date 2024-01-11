@@ -2,21 +2,8 @@
   <cmp-container :full="true">
     <cmp-card :span="12">
       <t-row justify="space-between" align="center">
-        <t-col :span="1"><icon name="rollback" size="25px" style="cursor: pointer" @click="onClose"></icon></t-col>
-        <t-col :span="8">
-          <cmp-query :opts="opts" @submit="onInput">
-            <template #productCode="{ param }">
-              <t-select v-model="param.productCode" label="条码状态">
-                <t-option key="apple" label="禁用" value="0" />
-                <t-option key="orange" label="启用" value="1" />
-                <t-option key="orange" label="全部" value="-1" />
-              </t-select>
-            </template>
-            <template #boxCode="{ param }">
-              <t-input v-model="param.boxCode" placeholder="请输入仓库编码/仓库名称"></t-input>
-            </template>
-          </cmp-query>
-        </t-col>
+        <t-col><h3>用户仓库权限分配</h3></t-col>
+        <t-col><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
       </t-row>
     </cmp-card>
     <cmp-row>
@@ -31,7 +18,6 @@
           <t-tree
             class="scorllTree"
             :data="dataTree"
-            :value="value"
             :height="treeHeight"
             :expand-parent="false"
             :transition="false"
@@ -68,9 +54,19 @@
               @select-change="rehandleSelectChange"
               @refresh="onGetRefresh"
             >
-              <template #operate
-                ><t-button :loading="saveLoading" theme="default" @click="onBtnSave">保存</t-button></template
-              >
+              <template #operate>
+                <t-select v-model="param.productCode" label="状态" @change="onSelectChange">
+                  <t-option key="apple" label="禁用" :value="0" />
+                  <t-option key="orange" label="启用" :value="1" />
+                  <t-option key="orange" label="全部" :value="-1" />
+                </t-select>
+                <t-input
+                  v-model="param.boxCode"
+                  placeholder="请输入仓库编码/仓库名称"
+                  :on-enter="onInputEnter"
+                ></t-input>
+                <t-button :loading="saveLoading" theme="default" @click="onBtnSave">保存仓库权限</t-button>
+              </template>
             </cmp-table>
           </cmp-card>
         </t-space>
@@ -82,7 +78,7 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { Icon, MessagePlugin } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api, WorkstationAuthVO } from '@/api/control';
@@ -96,23 +92,46 @@ const tableTotal = ref(10); // table分页总数
 const selectedRowKeys = ref([]); // 选择的
 const saveLoading = ref(false); // 选择的
 const { loading } = useLoading(); // loading
-const value = ref([]);
-onMounted(() => {
-  onFetchData();
+const { pageUI } = usePage();
+onMounted(async () => {
+  await onFetchData();
+  await onGetAllPermission();
 });
 // 选择中的
 const rehandleSelectChange = (value: any) => {
   selectedRowKeys.value = value;
   console.log(selectedRowKeys.value);
 };
+// 筛选删除数组
+function findElementsNotInA(a, b) {
+  // 创建集合 setA 包含数组 a 的所有元素
+  const setA = new Set(a);
+  // 使用 filter 方法过滤数组 b，只保留不在集合 setA 中的元素
+  return b.filter((item) => !setA.has(item));
+}
+// 筛选新增数组
+function findElementsNotInB(a, b) {
+  // 创建集合 setB 包含数组 b 的所有元素
+  const setB = new Set(b);
+  // 使用 filter 方法过滤数组 a，只保留不在集合 setB 中的元素
+  return a.filter((item) => !setB.has(item));
+}
 // 保存
 const onBtnSave = async () => {
-  MessagePlugin.success('操作成功');
-  console.log('🚀 ~ onBtnSave ~ selectedRowKeys.value:', selectedRowKeys.value);
-};
+  if (!userId.value) {
+    MessagePlugin.warning('请先选择一个用户！');
+    return;
+  }
+  const delArr = findElementsNotInA(selectedRowKeys.value, rawArray.value);
+  const addArr = findElementsNotInB(selectedRowKeys.value, rawArray.value);
+  await apiWare.userWarehouseAuthority.saveAuthority({
+    userId: userId.value,
+    inseartList: addArr,
+    removeList: delArr,
+  });
 
-// 数控件
-const { pageUI } = usePage();
+  MessagePlugin.success('操作成功');
+};
 
 // 父方法
 const Emit = defineEmits(['permissionShow']);
@@ -120,6 +139,11 @@ const Emit = defineEmits(['permissionShow']);
 const onClose = () => {
   Emit('permissionShow', false); // 回到父
 };
+// 搜索数据
+const param = ref({
+  productCode: -1,
+  boxCode: '',
+});
 const columns = [
   {
     colKey: 'row-select',
@@ -172,9 +196,11 @@ const onGetAllPermission = async () => {
   tableTotal.value = res.total;
 };
 // 获取选中权限数组
+const rawArray = ref([]);
 const onGetTickPermission = async () => {
   const res = await apiWare.userWarehouseAuthority.getUserAuthority({ userId: userId.value });
   selectedRowKeys.value = res;
+  rawArray.value = res;
 };
 
 // 表格刷新按钮事件
@@ -217,25 +243,19 @@ useResizeObserver(treeCard, (entries) => {
 });
 
 // #query 查询参数
-const opts = computed(() => {
-  return {
-    productCode: {
-      label: '',
-      defaultVal: '-1',
-      slotName: 'productCode',
-    },
-    boxCode: {
-      label: '',
-      slotName: 'boxCode',
-    },
-  };
-});
-
-const onInput = async (data: any) => {
+const onPublicQuery = async () => {
   pageUI.value.page = 1;
-  searchList.value.state = data.productCode;
-  searchList.value.keyword = data.boxCode;
+  searchList.value.state = param.value.productCode;
+  searchList.value.keyword = param.value.boxCode;
   await onGetAllPermission();
+};
+
+const onSelectChange = async () => {
+  await onPublicQuery();
+};
+
+const onInputEnter = async () => {
+  await onPublicQuery();
 };
 </script>
 

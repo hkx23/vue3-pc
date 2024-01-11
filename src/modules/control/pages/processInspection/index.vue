@@ -273,23 +273,10 @@ const serialNumberEnter = async (value) => {
 
 const getDefectCodeTree = async () => {
   try {
-    const data = await api.defectCode.tree({ processId: mainform.value.processId });
+    const data = await api.processInDefectCode.getDefectCodeByProcessId({ processId: mainform.value.processId });
 
     data.forEach((first) => {
-      if (!isEmpty(first.child)) {
-        first.child.forEach((second) => {
-          // 3级为空，加1和2级
-          // 3级不为空，加2和3级
-          if (isEmpty(second.child)) {
-            defectCodeList.value.push(first);
-          } else {
-            defectCodeList.value.push(second);
-          }
-        });
-      } else {
-        // 2级为空
-        defectCodeList.value.push(first);
-      }
+      defectCodeList.value.push(first);
     });
   } catch (error) {
     console.log(error);
