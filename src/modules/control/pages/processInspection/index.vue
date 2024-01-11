@@ -60,7 +60,7 @@
             <t-space class="anchor-defect" flex="120px">
               <t-anchor
                 container="#anchor-container"
-                :bounds="150"
+                :bounds="10"
                 size="small"
                 :style="{ height: `${anchorHeight}` }"
                 @click="handleClick"
@@ -79,24 +79,40 @@
             <cmp-card :bordered="false" flex="auto" class="defect-card">
               <t-space
                 id="anchor-container"
+                class="defect-card-content"
                 direction="vertical"
                 :style="{ height: `${anchorHeight}` }"
                 style="overflow-y: auto"
               >
-                <t-space
+                <t-tabs
+                  v-for="(item, index) in defectCodeList.filter((sourceItem) => sourceItem.child.length > 0)"
+                  :id="`${item.defectName}`"
+                  :key="index"
+                  :default-value="1"
+                  style="width: 100%"
+                >
+                  <t-tab-panel :value="1" :label="item.defectName">
+                    <t-space break-line class="defect-buttons" :size="12">
+                      <t-button
+                        v-for="(item_child, index_child) in item.child"
+                        :key="index_child"
+                        :content="item_child.defectName"
+                        style="width: 120px"
+                        :theme="getThemeButton(item_child.themeButton)"
+                        @click="clickDefectCode(item_child)"
+                      />
+                    </t-space>
+                  </t-tab-panel>
+                </t-tabs>
+
+                <!-- <t-space
                   v-for="(item, index) in defectCodeList.filter((sourceItem) => sourceItem.child.length > 0)"
                   :id="`${item.defectName}`"
                   :key="index"
                   style="width: 100%"
                   direction="vertical"
                 >
-                  <!-- <t-button
-                    theme="default"
-                    style="width: 70px; min-height: 80px; max-height: 80px; white-space: normal"
-                    :v-model="item"
-                    :content="item.defectName"
-                  /> -->
-                  <t-divider style="width: 100%">{{ item.defectName }}</t-divider>
+                  <t-divider align="left" style="width: 100%">{{ item.defectName }}</t-divider>
                   <t-space break-line class="defect-buttons">
                     <t-button
                       v-for="(item_child, index_child) in item.child"
@@ -107,11 +123,11 @@
                       @click="clickDefectCode(item_child)"
                     />
                   </t-space>
-                </t-space>
+                </t-space> -->
               </t-space>
             </cmp-card>
           </cmp-row>
-          <t-space style="overflow: auto" :size="8">
+          <t-space style="overflow: auto" :size="12">
             <t-tooltip v-for="(item, index) in scanInfoSplicList" :key="index" :content="item.serialNumber">
               <t-button theme="default" shape="rectangle" variant="base" @click="clickHistoryDefectCode(item)"
                 ><t-space :size="8"
@@ -569,5 +585,15 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.defect-card-content {
+  :deep(.t-tabs) {
+    background-color: transparent;
+  }
+
+  :deep(.t-tabs__content) {
+    padding: 12px 0 0;
+  }
 }
 </style>

@@ -5,7 +5,7 @@
         shape="square"
         variant="text"
         style="height: 24px; width: 24px; float: right"
-        @click="handleNav('/user/index')"
+        @click="formImportVisible = true"
         ><t-icon size="16px" name="system-setting"
       /></t-button>
       <t-breadcrumb :max-item-width="'150'">
@@ -16,17 +16,99 @@
       </t-breadcrumb>
     </t-space>
   </cmp-card>
+
+  <t-dialog
+    v-model:visible="formImportVisible"
+    :close-on-overlay-click="false"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    header="导入数据"
+  >
+    <t-form>
+      <t-form-item label="组织">
+        {{ orgInfo.orgName || '-' }}
+      </t-form-item>
+      <t-form-item label="车间">
+        <bcmp-select-business
+          v-model="orgInfo.workShopId"
+          :parent-id="orgInfo.orgId"
+          type="workshop"
+          :show-title="false"
+          @selection-change="
+            (val) => {
+              orgInfo.workShopCode = val.orgCode;
+              orgInfo.workShopName = val.orgName;
+            }
+          "
+        ></bcmp-select-business>
+      </t-form-item>
+
+      <t-form-item label="工作中心">
+        <bcmp-select-business
+          v-model="orgInfo.workCenterId"
+          :parent-id="orgInfo.workShopId"
+          type="workcenter"
+          :show-title="false"
+          @selection-change="
+            (val) => {
+              orgInfo.workCenterCode = val.wcCode;
+              orgInfo.workCenterName = val.wcName;
+            }
+          "
+        ></bcmp-select-business>
+      </t-form-item>
+
+      <t-form-item label="工站">
+        <bcmp-select-business
+          v-model="orgInfo.workStationId"
+          :parent-id="orgInfo.workCenterId"
+          type="workstationAuth"
+          :show-title="false"
+          @selection-change="
+            (val) => {
+              orgInfo.processId = val.processId;
+              orgInfo.processCode = '';
+              orgInfo.processName = '';
+              orgInfo.workStationCode = val.workstationCode;
+              orgInfo.workStationName = val.workstationName;
+            }
+          "
+        ></bcmp-select-business>
+      </t-form-item>
+    </t-form>
+
+    <template #footer>
+      <t-button theme="default" variant="base" @click="cancelSave">取消</t-button>
+      <t-button theme="primary" @click="onClickSaveOrg">保存</t-button>
+    </template>
+  </t-dialog>
 </template>
 
 <script setup lang="tsx" name="BcmpWorkstationInfo">
-import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 
+import { api } from '@/api/main';
 import { useUserStore } from '@/store';
 
-const router = useRouter();
-const { currUserOrgInfo } = useUserStore();
-const handleNav = (url: string) => {
-  router.push(url);
+const userStore = useUserStore();
+const currUserOrgInfo = ref(userStore.currUserOrgInfo);
+// 导入表单是否显示
+const formImportVisible = ref(false);
+const orgInfo = ref({ ...userStore.currUserOrgInfo });
+
+const onClickSaveOrg = async () => {
+  if (orgInfo.value.processId) {
+    const processInfo = await api.process.getItemById(orgInfo.value.processId);
+    orgInfo.value.processCode = processInfo.processCode;
+    orgInfo.value.processName = processInfo.processName;
+  }
+  userStore.updateOrg(orgInfo.value);
+  currUserOrgInfo.value = userStore.currUserOrgInfo;
+  formImportVisible.value = false;
+};
+// 关闭模态框事件
+const cancelSave = () => {
+  formImportVisible.value = false;
 };
 </script>
 
