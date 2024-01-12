@@ -64,7 +64,7 @@
           </t-row>
         </t-form>
       </cmp-card>
-      <!-- table 物料明细 -->
+      <!-- table 单据明细 -->
       <cmp-card>
         <template #title> 单据明细 </template>
         <cmp-table
@@ -75,6 +75,9 @@
           :show-toolbar="false"
           :table-data="tableDocumentDetails"
         >
+          <template #indexSlot="{ rowIndex }">
+            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+          </template>
         </cmp-table>
       </cmp-card>
       <!-- table 标签明细 -->
@@ -88,6 +91,10 @@
           :show-toolbar="false"
           :table-data="tableLabelDetail"
         >
+          <!-- 定义序号列的插槽 -->
+          <template #indexSlot="{ rowIndex }">
+            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+          </template>
         </cmp-table>
       </cmp-card>
     </cmp-container>
@@ -99,10 +106,13 @@
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, ref, watch } from 'vue';
 
+import { usePage } from '@/hooks/modules/page';
+
+const { pageUI } = usePage();
 //* 表格标题--单据明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 85 },
+  { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
   { title: '物料编码', colKey: 'mitemCode', width: 85 },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
   { title: '单位', width: 85, colKey: 'uomName' },
@@ -120,7 +130,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 //* 表格标题--标签明细
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 85 },
+  { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
   { title: '标签条码', colKey: 'scanBarcode', width: 85 },
   { title: '物料编码', width: 85, colKey: 'mitemCode' },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
