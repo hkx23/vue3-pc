@@ -7,58 +7,59 @@
       </t-space>
     </template>
     <cmp-container :full="true">
-      <!-- 盘点单相关详细信息 -->
+      <!-- 单据相关详细信息 -->
       <cmp-card v-if="safeSomeData && safeSomeData.billNo">
         <template #title> 单据号{{ safeSomeData.billNo }}相关详细信息 </template>
-        <t-form ref="formRef1" label-width="180px">
+        <t-form ref="formRef1" label-width="200px">
           <t-row :gutter="[32, 16]">
             <t-col :span="3">
-              <t-form-item label="单据号" name="billNo">
+              <t-form-item label="单据号：" name="billNo">
                 <span>{{ safeSomeData.billNo }}</span>
               </t-form-item>
             </t-col>
             <t-col :span="3">
-              <t-form-item label="关联单号" name="relatedBillNo">
-                <span>:{{ safeSomeData.relatedBillNo }}</span>
+              <t-form-item label="关联单号：" name="relatedBillNo">
+                <span>{{ safeSomeData.relatedBillNo }}</span>
               </t-form-item>
             </t-col>
             <t-col :span="3">
-              <t-form-item label="供应商" name="supplierName">
+              <t-form-item label="供应商：" name="supplierName">
                 <span>{{ safeSomeData.supplierName }}</span>
               </t-form-item>
             </t-col>
             <t-col :span="3">
-              <t-form-item label="创建人" name="creator">
+              <t-form-item label="创建人：" name="creator">
                 <span>{{ safeSomeData.creator }}</span>
               </t-form-item>
             </t-col>
           </t-row>
-          <t-row>
+          <t-row :gutter="[32, 16]">
             <t-col :span="3">
-              <t-form-item label="创建时间" name="timeCreate">
-                <span>{{ safeSomeData.timeCreate }}</span>
-              </t-form-item>
-            </t-col>
-            <t-col :span="3">
-              <t-form-item label="事物类型" name="categoryName">
+              <t-form-item label="事物类型：" name="categoryName">
                 <span>{{ safeSomeData.categoryName }}</span>
               </t-form-item>
             </t-col>
             <t-col :span="3">
-              <t-form-item label="原因" name="reason">
+              <t-form-item label="费用部门：" name="costDepartment">
+                <span>{{ safeSomeData.costDepartment }}</span>
+              </t-form-item>
+            </t-col>
+
+            <t-col :span="3">
+              <t-form-item label="原因：" name="reason">
                 <span>{{ safeSomeData.reason }}</span>
               </t-form-item>
             </t-col>
             <t-col :span="3">
-              <t-form-item label="科目" name="account">
+              <t-form-item label="科目：" name="account">
                 <span>{{ safeSomeData.account }}</span>
               </t-form-item>
             </t-col>
           </t-row>
-          <t-row>
+          <t-row :gutter="[32, 16]">
             <t-col :span="3">
-              <t-form-item label="费用部门" name="costDepartment">
-                <span>{{ safeSomeData.costDepartment }}</span>
+              <t-form-item label="创建时间：" name="timeCreate">
+                <span>{{ safeSomeData.timeCreate }}</span>
               </t-form-item>
             </t-col>
           </t-row>
