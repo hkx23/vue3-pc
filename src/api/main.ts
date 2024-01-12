@@ -3556,14 +3556,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isRawName?: string;
+  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isState?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isProductName?: string;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -3702,8 +3702,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3900,6 +3900,26 @@ export interface LabelSearch {
   reason?: string;
   /** 批量ID */
   ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataLabelVO = {
+  list?: LabelVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLabelVO;
 }
 
 /** 菜单收藏夹表 */
@@ -5558,10 +5578,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
 } | null;
@@ -9319,6 +9339,21 @@ export const api = {
      */
     printBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/main/label/printBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelList
+     * @summary 获取打印页标签数据
+     * @request POST:/label/getLabelList
+     * @secure
+     */
+    getLabelList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/main/label/getLabelList`, {
         method: 'POST',
         body: data as any,
       }),

@@ -240,6 +240,7 @@
       @refresh="onRightFetchData"
     ></cmp-table>
   </t-dialog>
+  <t-loading :loading="pageLoading" text="加载中..." fullscreen />
 </template>
 
 <script setup lang="ts">
@@ -253,6 +254,7 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+const pageLoading = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { loading, setLoading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
@@ -297,12 +299,17 @@ const onPrint = async () => {
     MessagePlugin.warning('请选择打印模板！');
     return;
   }
-  await apiMain.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
-  setTimeout(() => {
+  try {
+    pageLoading.value = true;
+    await apiMain.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
     onRefreshBelow();
     onRefresh();
-  }, 1000); // 300毫秒延时示例，根据需要调整延时时间
-  MessagePlugin.success('打印成功');
+    MessagePlugin.success('打印成功');
+  } catch (e) {
+    console.log(e);
+  } finally {
+    pageLoading.value = false;
+  }
 };
 // 补打，作废确定
 const onConfirm = async () => {
@@ -313,51 +320,52 @@ const onConfirm = async () => {
     reason = reprintDialog.value.reprintData;
   }
 
-  if (isReprintCancellation.value === 1) {
-    await apiMain.label.reprintBarcode({
-      ids: selectedManageRowKeys.value,
-      reason,
-      printTempId: printMode.value.printTempId,
-    });
-    selectedManageRowKeys.value = [];
-    isEnable.value = true;
-    MessagePlugin.success('补打成功');
-    setTimeout(() => {
+  try {
+    if (isReprintCancellation.value === 1) {
+      pageLoading.value = true;
+      await apiMain.label.reprintBarcode({
+        ids: selectedManageRowKeys.value,
+        reason,
+        printTempId: printMode.value.printTempId,
+      });
+      selectedManageRowKeys.value = [];
+      isEnable.value = true;
+      MessagePlugin.success('补打成功');
       onRefreshManage();
-    }, 2000); // 300毫秒延时示例，根据需要调整延时时间
-  } else if (isReprintCancellation.value === 3) {
-    const intValue = parseInt(reprintDialog.value.splitNum, 10);
-    if (!Number.isInteger(intValue) || intValue === 0 || intValue > reprintDialog.value.qty) {
-      MessagePlugin.warning(`拆分数量需为小于${reprintDialog.value.qty}的正整数`);
-      return;
+    } else if (isReprintCancellation.value === 3) {
+      const intValue = parseInt(reprintDialog.value.splitNum, 10);
+      if (!Number.isInteger(intValue) || intValue === 0 || intValue > reprintDialog.value.qty) {
+        MessagePlugin.warning(`拆分数量需为小于${reprintDialog.value.qty}的正整数`);
+        return;
+      }
+      await apiMain.label.splitBarcode({
+        labelId: reprintDialog.value.labelId,
+        splitNum: intValue,
+        printTempId: printMode.value.printTempId,
+        reason,
+      });
+      selectedManageRowKeys.value = [];
+      isEnable.value = true;
+      MessagePlugin.success('拆分成功');
+      onRefreshManage();
+    } else {
+      await apiMain.label.cancellationBarcode({
+        ids: selectedManageRowKeys.value,
+        reason,
+      });
+      selectedManageRowKeys.value = [];
+      isEnable.value = true;
+      MessagePlugin.success('作废成功');
+      onRefreshManage();
     }
-    await apiMain.label.splitBarcode({
-      labelId: reprintDialog.value.labelId,
-      splitNum: intValue,
-      printTempId: printMode.value.printTempId,
-      reason,
-    });
-    selectedManageRowKeys.value = [];
-    isEnable.value = true;
-    MessagePlugin.success('拆分成功');
-    setTimeout(() => {
-      onRefreshManage();
-    }, 2000); // 300毫秒延时示例，根据需要调整延时时间
-  } else {
-    await apiMain.label.cancellationBarcode({
-      ids: selectedManageRowKeys.value,
-      reason,
-    });
-    selectedManageRowKeys.value = [];
-    isEnable.value = true;
-    MessagePlugin.success('作废成功');
-    setTimeout(() => {
-      onRefreshManage();
-    }, 2000); // 300毫秒延时示例，根据需要调整延时时间
-  }
 
-  await fetchBracodeManageTable(); // 刷新表格数据
-  formVisible.value = false;
+    await fetchBracodeManageTable(); // 刷新表格数据
+    formVisible.value = false;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    pageLoading.value = false;
+  }
 };
 
 // 打印选择 框 行 事件
@@ -381,7 +389,7 @@ const onSelectionChange = (selectedRows) => {
   const [firstItem] = selectedRows;
   printMode.value.deliveryDtlId = firstItem;
   queryBelowCondition.value.deliveryDtlId = firstItem;
-  apiWarehouse.label.getLabelList(queryBelowCondition.value).then((data) => {
+  apiMain.label.getLabelList(queryBelowCondition.value).then((data) => {
     labelBelowList.list = data.list;
     barcodeTotal.value = data.total;
   });
@@ -419,13 +427,18 @@ const generateBracode = async () => {
     MessagePlugin.warning('请选择条码规则！');
     return;
   }
-  await apiMain.label.generateBarcode(printMode.value);
-  MessagePlugin.success('生成成功');
-  // 延时几百毫秒后执行刷新操作
-  setTimeout(() => {
+  try {
+    pageLoading.value = true;
+    await apiMain.label.generateBarcode(printMode.value);
+    MessagePlugin.success('生成成功');
+    // 延时几百毫秒后执行刷新操作
     onRefreshBelow();
     onRefresh();
-  }, 2000); // 300毫秒延时示例，根据需要调整延时时间
+  } catch (e) {
+    console.log(e);
+  } finally {
+    pageLoading.value = false;
+  }
 };
 
 // 打印上方查询初始化
@@ -539,7 +552,7 @@ const onRefreshBelow = async () => {
   queryBelowCondition.value.pageNum = pageUIBracode.value.page;
   console.log(pageUIBracode.value);
   queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
-  apiWarehouse.label.getLabelList(queryBelowCondition.value).then((data) => {
+  apiMain.label.getLabelList(queryBelowCondition.value).then((data) => {
     labelBelowList.list = data.list;
     barcodeTotal.value = data.total;
   });
@@ -975,6 +988,16 @@ const fetchMoTable = async () => {
     const { list } = data;
     deliveryList.list = list;
     moTabTotal.value = data.total;
+    if (
+      data.total !== 0 &&
+      moTabTotal.value < pageUI.value.page * pageUI.value.rows &&
+      data.list &&
+      data.list.length === 0
+    ) {
+      pageUI.value.page = 1;
+      pageUI.value.rows = 10;
+      onRefresh();
+    }
   } catch (e) {
     console.log(e);
   } finally {
@@ -992,6 +1015,16 @@ const fetchBracodeManageTable = async () => {
     const { list } = data;
     pkgManageDataList.list = list;
     pkgManageTabTotal.value = data.total;
+    if (
+      data.total !== 0 &&
+      pkgManageTabTotal.value < pageUIMannage.value.page * pageUIMannage.value.rows &&
+      data.list &&
+      data.list.length === 0
+    ) {
+      pageUIMannage.value.page = 1;
+      pageUIMannage.value.rows = 10;
+      onRefreshManage();
+    }
   } catch (e) {
     console.log(e);
   } finally {
@@ -1144,7 +1177,7 @@ const onRowClick = ({ row }) => {
   printMode.value.deliveryDtlId = row.deliveryDtlId;
   delivertRowKeys.value = [];
   delivertRowKeys.value.push(row.deliveryDtlId);
-  apiWarehouse.label.getLabelList(queryBelowCondition.value).then((data) => {
+  apiMain.label.getLabelList(queryBelowCondition.value).then((data) => {
     labelBelowList.list = data.list;
     barcodeTotal.value = data.total;
   });
