@@ -25,14 +25,7 @@
       </cmp-table>
     </cmp-card>
   </cmp-container>
-  <t-dialog
-    v-model:visible="formVisible"
-    :cancel-btn="null"
-    :confirm-btn="null"
-    :header="diaLogTitle"
-    width="750px"
-    @close="onDialogClose"
-  >
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" width="750px">
     <cmp-table
       ref="tableRef"
       v-model:pagination="pageUI"
@@ -215,6 +208,10 @@ const transferParam = ref({
   warehouseId: '', // 单个仓库ID
   userIds: [], // 多个用户ID
 });
+
+const rehandleSelectChange = () => {
+  console.log('🚀 ~ file: index.vue:215 ~ rehandleSelectChange ~ rehandleSelectChange:', 'rehandleSelectChange');
+};
 
 // 获取 表格 数据
 const onGetTransferData = async () => {

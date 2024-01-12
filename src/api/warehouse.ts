@@ -625,6 +625,101 @@ export interface PurchaseOrderSearch {
   labelNo?: string;
 }
 
+export interface MitemShelflifeReportSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  warehouseId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 批次号 */
+  lotNo?: string;
+  /** 是否仅显示已过期 */
+  isExpired?: boolean;
+  /**
+   * 接收开始日期
+   * @format date-time
+   */
+  receiveDateStart?: string;
+  /**
+   * 接收结束日期
+   * @format date-time
+   */
+  receiveDateEnd?: string;
+}
+
+export interface MitemShelflifeReportVO {
+  /** 批次号 */
+  lotNo?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 货区名称 */
+  districtName?: string;
+  /** 货位名称 */
+  locationName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料类型编码 */
+  categoryCode?: string;
+  /** 物料类型名称 */
+  categoryName?: string;
+  /** 单位 */
+  uomName?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  /**
+   * 保质期天数
+   * @format int32
+   */
+  shelfLifeDays?: number;
+  /**
+   * 库存量
+   * @format int32
+   */
+  stockNum?: number;
+  /** 标签条码 */
+  labelNo?: string;
+  /** 标签数量 */
+  qty?: number;
+  expiredDays?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemShelflifeReportVO = {
+  list?: MitemShelflifeReportVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemShelflifeReportVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemShelflifeReportVO;
+}
+
 /** 显示产品条码管理 */
 export interface LabelVO {
   id?: string;
@@ -2229,6 +2324,19 @@ export interface ResultListPurchaseOrderDtlVO {
   data?: PurchaseOrderDtlVO[] | null;
 }
 
+/** 通用响应类 */
+export interface ResultListMitemShelflifeReportVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MitemShelflifeReportVO[] | null;
+}
+
 export interface MaterialRequisitionVO {
   id?: string;
   /**
@@ -2969,6 +3077,37 @@ export const api = {
       http.request<ResultBoolean['data']>(`/api/warehouse/purchaseOrder/scanMitemLabel`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  mitemShelflifeReport: {
+    /**
+     * No description
+     *
+     * @tags 物料保质期报表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/mitemShelflifeReport/getList
+     * @secure
+     */
+    getList: (data: MitemShelflifeReportSearch) =>
+      http.request<ResultPagingDataMitemShelflifeReportVO['data']>(`/api/warehouse/mitemShelflifeReport/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料保质期报表
+     * @name GetDtl
+     * @summary 查询标签明细数据
+     * @request GET:/mitemShelflifeReport/getDtl
+     * @secure
+     */
+    getDtl: (query: { billNo: string }) =>
+      http.request<ResultListMitemShelflifeReportVO['data']>(`/api/warehouse/mitemShelflifeReport/getDtl`, {
+        method: 'GET',
+        params: query,
       }),
   },
   mitemPut: {
