@@ -353,6 +353,11 @@ export interface TransferHeadVO {
   userTransferId?: string;
   userTransferName?: string;
   displayTransferName?: string;
+  /**
+   * 过帐时间
+   * @format date-time
+   */
+  datetimeTransfer?: string;
   /** 数量 */
   qty?: number;
   /** 工单 */

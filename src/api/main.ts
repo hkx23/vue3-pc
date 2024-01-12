@@ -1339,8 +1339,21 @@ export interface ResultSupplier {
   data?: Supplier;
 }
 
+/** 通用响应类 */
+export interface ResultMapStringObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Record<string, object | null>;
+}
+
 /** 消息发送日志表 */
-export type MsgSendLog = {
+export interface MsgSendLog {
   id?: string;
   /**
    * 创建时间
@@ -1368,19 +1381,6 @@ export type MsgSendLog = {
   sendType?: string;
   sendAddress?: string;
   sendResult?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultMsgSendLog {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 消息发送日志表 */
-  data?: MsgSendLog;
 }
 
 /** 响应数据 */
@@ -3542,11 +3542,11 @@ export interface MitemVO {
   isState?: boolean;
   stateName?: string;
   isProductName?: string;
-  isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
   isBatchName?: string;
 }
 
@@ -3686,8 +3686,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7463,7 +7463,7 @@ export const api = {
      * @secure
      */
     selectAndInsertWipLog: () =>
-      http.request<ResultMsgSendLog['data']>(`/api/main/stressTest/selectAndInsertWipLog`, {
+      http.request<ResultMapStringObject['data']>(`/api/main/stressTest/selectAndInsertWipLog`, {
         method: 'POST',
       }),
 
@@ -7861,6 +7861,20 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultProcess['data']>(`/api/main/process/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序
+     * @name GetProcessAll
+     * @request POST:/process/getProcessAll
+     * @secure
+     */
+    getProcessAll: (data: CommonSearch) =>
+      http.request<ResultPagingDataProcessVO['data']>(`/api/main/process/getProcessAll`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
