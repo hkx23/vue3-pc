@@ -758,8 +758,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -789,6 +789,35 @@ export interface WorkbenchLayout {
   userId?: string;
   /** 布局内容 */
   layout?: string;
+}
+
+export interface WarehouseSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+}
+
+/** 通用响应类 */
+export interface ResultMapStringObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Record<string, object | null>;
 }
 
 /** 响应数据 */
@@ -1337,19 +1366,6 @@ export interface ResultSupplier {
   message?: string;
   /** 供应商 */
   data?: Supplier;
-}
-
-/** 通用响应类 */
-export interface ResultMapStringObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: Record<string, object | null>;
 }
 
 /** 消息发送日志表 */
@@ -3459,8 +3475,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -3540,14 +3556,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isProductName?: string;
   isBatchName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3904,6 +3920,19 @@ export interface ResultPagingDataLabelVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataLabelVO;
+}
+
+/** 通用响应类 */
+export interface ResultListLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: LabelVO[] | null;
 }
 
 /** 菜单收藏夹表 */
@@ -6918,6 +6947,20 @@ export const api = {
      * No description
      *
      * @tags 仓库
+     * @name SearchList
+     * @request POST:/warehouse/searchList
+     * @secure
+     */
+    searchList: (data: WarehouseSearch) =>
+      http.request<ResultMapStringObject['data']>(`/api/main/warehouse/searchList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
      * @name Search
      * @request POST:/warehouse/items
      * @secure
@@ -9324,6 +9367,20 @@ export const api = {
      */
     getLabelList: (data: LabelSearch) =>
       http.request<ResultPagingDataLabelVO['data']>(`/api/main/label/getLabelList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetCount
+     * @request POST:/label/getCount
+     * @secure
+     */
+    getCount: (data: string[]) =>
+      http.request<ResultListLabelVO['data']>(`/api/main/label/getCount`, {
         method: 'POST',
         body: data as any,
       }),
