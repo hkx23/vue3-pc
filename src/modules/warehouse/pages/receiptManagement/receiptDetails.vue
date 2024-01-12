@@ -116,8 +116,6 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '目标货位', width: 100, colKey: 'toLocationName' },
   { title: '交易数量', width: 100, colKey: 'pickQty' },
   { title: '需求数量', width: 100, colKey: 'reqQty' },
-
-  { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
 ];
 //* 表格标题--标签明细
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
@@ -135,7 +133,7 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { title: '目标仓库', width: 100, colKey: 'toWarehouseName' },
   { title: '目标货位', width: 100, colKey: 'toDistrictName' },
   { title: '单位', width: 100, colKey: 'uomName' },
-  { title: 'reqQty', width: 100, colKey: 'warehouseName' },
+  { title: '需求数量', width: 100, colKey: 'reqQty' },
 ];
 const tableDocumentDetails = ref([]);
 const tableLabelDetail = ref([]);
