@@ -84,6 +84,7 @@ router.afterEach((to) => {
   }
   const userTabsHistoryStore = getUserTabsHistoryStore();
 
+  if ((to.meta as any).sourcePath) localStorage.setItem('sourcePath', (to.meta as any).sourcePath);
   userTabsHistoryStore.appendTabHistoryList({
     path: to.path,
     title: to.name as string,

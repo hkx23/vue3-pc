@@ -24,7 +24,7 @@
           </t-popconfirm>
           <t-button theme="default">{{ t('common.button.import') }}</t-button>
         </template>
-        <template #actionSlot="{ row }">
+        <template #op="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
 
@@ -216,11 +216,10 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    colKey: 'action',
+    colKey: 'op',
     title: t('mitemuom.operation'), // 操作
     width: 180,
     align: 'center',
-    cell: 'actionSlot', // 引用具名插槽
   },
 ];
 

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
 import * as XLSX from 'xlsx';
 
@@ -22,7 +23,7 @@ const randomString = (length = 6) => {
  * @param {columns} 表格列
  * @param {list} 表格数据
  */
-const exportExcel = ({ columns, tableData }) => {
+const exportExcel = ({ title, columns, tableData }) => {
   // if (selectedRowKeys.length > 0) {
   //   tableData = cloneDeep(tableData.filter((item) => selectedRowKeys.includes(item[rowKey])));
   // } else {
@@ -47,7 +48,8 @@ const exportExcel = ({ columns, tableData }) => {
     return { wch: item.width ? item.width / 8 : 15 };
   });
   XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet1');
-  XLSX.writeFile(workbook, `表格数据${randomString()}.xlsx`);
+  const now = `_${dayjs(new Date()).format('YYYYMMDDHHmm')}`;
+  XLSX.writeFile(workbook, `${title || '表格数据'}${now}.xlsx`);
 };
 
 export default {

@@ -3542,11 +3542,11 @@ export interface MitemVO {
   stateName?: string;
   isState?: boolean;
   isRawName?: string;
-  isBatchName?: string;
   isProductName?: string;
-  isProductChecked?: boolean;
-  isRawChecked?: boolean;
   isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
 }
 
@@ -3686,8 +3686,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4033,6 +4033,57 @@ export interface ResultPagingDataEnterprise {
   message?: string;
   /** 响应数据 */
   data?: PagingDataEnterprise;
+}
+
+/** 系统下载任务表 */
+export type DlTask = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  userId?: string;
+  /** 功能路径 */
+  behaviorPath?: string;
+  /** 表格唯一键 */
+  tableKeyCode?: string;
+  /** 下载配置 */
+  jsonConfig?: string;
+  /** excel路径 */
+  excelPath?: string;
+  /** 状态 */
+  status?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListDlTask {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DlTask[] | null;
 }
 
 export interface DefectDealMethodSearch {
@@ -5493,10 +5544,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9357,6 +9408,67 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataEnterprise['data']>(`/api/main/enterprise/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  dlTask: {
+    /**
+     * No description
+     *
+     * @tags 系统下载任务表
+     * @name GetCurrentUserFile
+     * @summary 获取当前用户对应表格文件下载历史
+     * @request POST:/dlTask/getCurrentUserFile
+     * @secure
+     */
+    getCurrentUserFile: (query: { tableKey: string; behaviorPath: string }) =>
+      http.request<ResultListDlTask['data']>(`/api/main/dlTask/getCurrentUserFile`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统下载任务表
+     * @name DownloadFile
+     * @summary 下载文件
+     * @request POST:/dlTask/downloadFile
+     * @secure
+     */
+    downloadFile: (data: DlTask) =>
+      http.request<ResultString['data']>(`/api/main/dlTask/downloadFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统下载任务表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/dlTask/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/dlTask/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统下载任务表
+     * @name Add
+     * @summary 新增任务
+     * @request POST:/dlTask/add
+     * @secure
+     */
+    add: (data: DlTask) =>
+      http.request<ResultObject['data']>(`/api/main/dlTask/add`, {
         method: 'POST',
         body: data as any,
       }),
