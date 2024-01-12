@@ -684,8 +684,6 @@ export interface LabelVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  /** 接收数量 */
-  receivedQty?: number;
   /**
    * 已打印数量
    * @format int32
