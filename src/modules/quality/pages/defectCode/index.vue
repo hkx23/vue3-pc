@@ -5,7 +5,7 @@
       <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
         <t-space size="small" :align="'end'">
           <t-button @click="onAdd">新增</t-button>
-          <t-button theme="default" @click="onDeletes">删除</t-button>
+          <t-button theme="default" @click="onDeletes">批量删除</t-button>
         </t-space>
       </t-space>
       <t-enhanced-table
@@ -21,6 +21,7 @@
         <!-- <t-button>导入</t-button> -->
         <template #op="{ row }">
           <t-space :size="8">
+            <t-link v-if="row.levelSeq !== 2" theme="primary" @click="onAddSon(row)">新增</t-link>
             <t-link theme="primary" @click="onSeparateEdit(row)">编辑</t-link>
             <!-- <icon name="edit-1" style="cursor: pointer" @click="onSeparateEdit(row)"></icon> -->
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
@@ -35,7 +36,7 @@
 
   <t-dialog v-model:visible="formVisible" :header="defectTitle" :cancel-btn="null" :confirm-btn="null">
     <t-form ref="formRef" :data="formItem" :rules="rules" @submit="onBtn">
-      <t-form-item :label="t('defectCode.parentLevel')" name="parentLevel">
+      <t-form-item v-if="!showHideFlag" :label="t('defectCode.parentLevel')" name="parentLevel">
         <t-input v-model="formItem.parentLevel" placeholder="请输入" :disabled="true"></t-input>
       </t-form-item>
       <t-form-item :label="t('defectCode.defectCode')" name="defectCode">
@@ -95,7 +96,7 @@ onMounted(() => {
 const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 // 表单
-const formItem = reactive({
+const formItem = ref({
   parentLevel: '', // 上级节点
   defectCode: '', // 缺陷代码
   defectName: '', // 缺陷名称
@@ -127,9 +128,9 @@ const onIsAddAndEdit = async () => {
   if (isAddAndEdit.value === 1) {
     try {
       await api.defectCode.addDefectCode({
-        defectCode: formItem.defectCode,
-        defectName: formItem.defectName,
-        parentDefectId: selectedRowKeys.value[0],
+        defectCode: formItem.value.defectCode,
+        defectName: formItem.value.defectName,
+        parentDefectId: `${formItem.value.ParentId}`,
       });
       formVisible.value = false;
       onFetchData();
@@ -139,10 +140,10 @@ const onIsAddAndEdit = async () => {
   } else {
     try {
       await api.defectCode.modifyDefectCode({
-        defectCode: formItem.defectCode,
-        defectName: formItem.defectName,
-        parentDefectId: formItem.ParentId.toString(),
-        id: formItem.id,
+        defectCode: formItem.value.defectCode,
+        defectName: formItem.value.defectName,
+        parentDefectId: formItem.value.ParentId.toString(),
+        id: formItem.value.id,
       });
       formVisible.value = false;
       MessagePlugin.success('编辑成功');
@@ -154,27 +155,26 @@ const onIsAddAndEdit = async () => {
   }
 };
 // 添加 按钮点击事件
+const showHideFlag = ref(false);
 const onAdd = async () => {
+  formRef.value.reset({ type: 'initial' });
+  defectTitle.value = '缺陷代码新增';
+  formItem.value.ParentId = 0;
+  formVisible.value = true;
+  showHideFlag.value = true; // 控制 上一层级 显示隐藏
+  disabledShow.value = false;
+};
+
+// 子级新增
+const onAddSon = async (row: any) => {
+  formRef.value.reset({ type: 'initial' });
+  console.log('🚀 ~ onAddSon ~ row:', row);
   disabledShow.value = false;
   defectTitle.value = '缺陷代码新增';
-  formItem.ParentId = 0;
-  isAddAndEdit.value = 1;
-  if (selectedRowKeys.value.length > 1) {
-    MessagePlugin.error('只能新增一个');
-    return;
-  }
-  console.log(formItem.ParentId);
-  const id = selectedRowKeys.value.join();
-  const list = await api.defectCode.getParent({ id });
-  list.list.forEach((item) => {
-    formItem.parentLevel = item.defectName;
-    formItem.ParentId = +item.id;
-  });
-  if (formItem.ParentId === 0) {
-    formItem.parentLevel = '全部';
-  }
+  formItem.value.ParentId = row.id;
+  formItem.value.parentLevel = row.defectName;
   formVisible.value = true;
-  // onIsAddAndEdit();
+  showHideFlag.value = false; // 控制 上一层级 显示隐藏
 };
 // 点击保存
 const onBtn = (context) => {
@@ -216,20 +216,19 @@ const onSeparateEdit = async (row) => {
   isAddAndEdit.value = 0;
   try {
     const list = await api.defectCode.getParent({ id: row.parentDefectId });
-    // console.log(list);
     if (list.list.length < 1) {
-      formItem.parentLevel = '全部';
-      formItem.ParentId = 0;
+      formItem.value.parentLevel = '全部';
+      formItem.value.ParentId = 0;
     } else {
       listDataShow.value = 2;
       list.list.forEach((item) => {
-        formItem.parentLevel = item.defectName;
+        formItem.value.parentLevel = item.defectName;
       });
-      formItem.ParentId = row.parentDefectId; //
+      formItem.value.ParentId = row.parentDefectId; //
     }
-    formItem.id = row.id;
-    formItem.defectName = row.defectName;
-    formItem.defectCode = row.defectCode;
+    formItem.value.id = row.id;
+    formItem.value.defectName = row.defectName;
+    formItem.value.defectCode = row.defectCode;
     disabledShow.value = true;
     formVisible.value = true;
   } catch (e) {
