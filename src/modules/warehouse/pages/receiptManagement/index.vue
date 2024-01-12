@@ -44,7 +44,6 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
@@ -115,7 +114,7 @@ const optsReceipt = computed(() => {
     timeCreate: {
       label: '创建时间',
       comp: 't-date-range-picker',
-      defaultVal: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
+      defaultVal: [],
       bind: {
         enableTimePicker: false,
         format: 'YYYY-MM-DD',
@@ -128,9 +127,9 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
   { title: '事物类型', colKey: 'categoryName', width: 85 },
-  { title: '单据号', width: 85, colKey: 'billNo' },
-  { title: '关联单号', width: 85, colKey: 'sourceBillNo' },
-  { title: '物料编码', width: 85, colKey: 'mitemCode' },
+  { title: '单据号', width: 150, colKey: 'billNo' },
+  { title: '关联单号', width: 120, colKey: 'sourceBillNo' },
+  { title: '物料编码', width: 120, colKey: 'mitemCode' },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
   { title: '需求数量', width: 85, colKey: 'reqQty' },
   { title: '交易数量', width: 85, colKey: 'pickQty' },
@@ -169,9 +168,9 @@ const onEditRowClick = async (value: any) => {
 
   const result2 = await api.billManagement.getDtl({ billNo });
   someData2.value = result2;
+
   const result3 = await api.billManagement.getLabel({ billNo });
-  console.log('🚀 ~ onEditRowClick ~ result3:', result3);
-  someData2.value = result3;
+  someData3.value = result3;
 };
 
 //* 初始渲染

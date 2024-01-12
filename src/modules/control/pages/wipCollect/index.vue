@@ -248,14 +248,16 @@ const serialNumberEnter = async (value) => {
     }
 
     const currentScanType = scanType.value;
+    const { serialNumber } = mainform.value;
+    const { keypartCode } = mainform.value;
 
     LoadingPlugin(true);
     // 原子校验
     // TODO 校验成功
     await api.barcodeWipCollect
       .scanBarcodeWipCollect({
-        serialNumber: mainform.value.serialNumber,
-        keypartCode: mainform.value.keypartCode,
+        serialNumber,
+        keypartCode,
         workcenterId: mainform.value.workCenterId,
         workCenterCode: mainform.value.workCenterCode,
         workCenterName: mainform.value.workCenterName,
@@ -387,7 +389,7 @@ const checkBarcodeRepeat = (lbNo) => {
 const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', scanLabel: string, msg: string) => {
   let content: string;
   if (type === 'success') {
-    content = `[${scanLabel}]${t('wipCollect.scanSuccess')} , ${msg}`;
+    content = `[${scanLabel}]${t('wipCollect.scanSuccess')}`;
     NotifyPlugin.success({ title: t('wipCollect.scanSuccess'), content, duration: 2000, closeBtn: true });
   } else if (type === 'error') {
     content = `[${scanLabel}]${t('wipCollect.scanFailed')} , ${msg}`;
