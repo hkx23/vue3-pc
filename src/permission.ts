@@ -6,7 +6,7 @@ import { RouteRecordRaw } from 'vue-router';
 
 import { CustomError } from '@/assets/libs/web-core';
 import router from '@/router';
-import { getPermissionStore, getUserTabsHistoryStore, useUserStore } from '@/store';
+import { getPermissionStore, getTabsRouterStore, getUserTabsHistoryStore, useUserStore } from '@/store';
 import { PAGE_NOT_FOUND_ROUTE } from '@/utils/route/constant';
 
 NProgress.configure({ showSpinner: false });
@@ -84,7 +84,10 @@ router.afterEach((to) => {
   }
   const userTabsHistoryStore = getUserTabsHistoryStore();
 
-  if ((to.meta as any).sourcePath) localStorage.setItem('sourcePath', (to.meta as any).sourcePath);
+  if ((to.meta as any).sourcePath) {
+    const useTabsRouterStore = getTabsRouterStore();
+    useTabsRouterStore.setCurrentRouterPath((to.meta as any).sourcePath as string);
+  }
   userTabsHistoryStore.appendTabHistoryList({
     path: to.path,
     title: to.name as string,
