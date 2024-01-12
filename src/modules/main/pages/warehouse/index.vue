@@ -72,7 +72,6 @@ const { loading, setLoading } = useLoading();
 const keyword = ref('');
 const selectedWarehouseRowKeys = ref([]);
 const tableDataWarehouse = ref([]);
-const filterlist = ref([]);
 const formVisible = ref(false);
 const formRef = ref(null);
 const formTitle = ref('');
@@ -150,12 +149,11 @@ const fetchTable = async () => {
   try {
     selectedWarehouseRowKeys.value = [];
     tableDataWarehouse.value = [];
-    const data = (await api.warehouse.search({
+    const data = (await api.warehouse.searchList({
       keyword: keyword.value,
       state: warehouseState.value,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      filters: filterlist.value,
     })) as any;
     tableDataWarehouse.value = data.list;
     dataTotal.value = data.total;

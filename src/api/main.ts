@@ -791,6 +791,35 @@ export interface WorkbenchLayout {
   layout?: string;
 }
 
+export interface WarehouseSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+}
+
+/** 通用响应类 */
+export interface ResultMapStringObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Record<string, object | null>;
+}
+
 /** 响应数据 */
 export type PagingDataWarehouse = {
   list?: Warehouse[];
@@ -1337,19 +1366,6 @@ export interface ResultSupplier {
   message?: string;
   /** 供应商 */
   data?: Supplier;
-}
-
-/** 通用响应类 */
-export interface ResultMapStringObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: Record<string, object | null>;
 }
 
 /** 消息发送日志表 */
@@ -3686,8 +3702,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6894,6 +6910,20 @@ export const api = {
       }),
   },
   warehouse: {
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name SearchList
+     * @request POST:/warehouse/searchList
+     * @secure
+     */
+    searchList: (data: WarehouseSearch) =>
+      http.request<ResultMapStringObject['data']>(`/api/main/warehouse/searchList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

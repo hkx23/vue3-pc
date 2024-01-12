@@ -22,7 +22,7 @@
     :close-on-overlay-click="false"
     :cancel-btn="null"
     :confirm-btn="null"
-    header="导入数据"
+    header="设置工站"
   >
     <t-form>
       <t-form-item label="组织">

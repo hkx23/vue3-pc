@@ -522,7 +522,6 @@ const captureRefresh = () => {
   http.openOnceCapture(async (item) => {
     jsonConfig = {
       ...item,
-      fileName: downloadFilename.value,
       page: (() => {
         const params = item.data as string;
         const pageValue = props.pagination.page;
@@ -550,7 +549,7 @@ const captureRefresh = () => {
 const fetchHistoryDownloadList = async () => {
   historyDownloadList.value = await api.dlTask.getCurrentUserFile({
     tableKey: new URL(jsonConfig.api).pathname,
-    behaviorPath: localStorage.getItem('sourcePath') || '',
+    behaviorPath: JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath,
   });
 };
 
@@ -563,8 +562,6 @@ const onClickRemoveHistoryFile = async (ids?: string[]) => {
 const onClickDownloadHistoryFile = (task: DlTask) => {
   if (task.status === 'DOWNLOADED') {
     window.open(task.jsonConfig);
-  } else {
-    api.dlTask.downloadFile(task);
   }
 };
 
@@ -573,8 +570,13 @@ const onDownloadTableDragSort = (params) => {
 };
 
 const onConfirmDownload = async () => {
+  if (!downloadFilename.value) {
+    MessagePlugin.warning('请维护文件名');
+    return;
+  }
   jsonConfig = {
     ...jsonConfig,
+    fileName: downloadFilename.value,
     columns: downloadTableData.value
       .filter((t) => {
         return downloadTableSelectedRowKeys.value.includes(t.attrName);
@@ -588,23 +590,27 @@ const onConfirmDownload = async () => {
   };
 
   const task = {
-    behaviorPath: localStorage.getItem('sourcePath') || '',
+    behaviorPath: JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath,
     tableKeyCode: new URL(jsonConfig.api).pathname,
     jsonConfig: JSON.stringify(jsonConfig),
   } as DlTask;
 
   const loadTask = MessagePlugin.loading({ content: '数据导出中...', duration: 0 });
+  try {
+    if (props.total > 50000) {
+      await api.dlTask.add(task);
 
-  if (props.total > 50000) {
-    await api.dlTask.add(task);
-
-    fetchHistoryDownloadList();
-  } else {
-    downloadDialogVisible.value = false;
-    const filePath = await api.dlTask.downloadFile(task);
-    window.open(filePath);
+      fetchHistoryDownloadList();
+    } else {
+      downloadDialogVisible.value = false;
+      const filePath = await api.dlTask.downloadFile(task);
+      window.open(filePath);
+    }
+  } catch (error) {
+    console.error('数据导出失败', error);
+  } finally {
+    MessagePlugin.close(loadTask);
   }
-  MessagePlugin.close(loadTask);
 };
 
 // 导出表格数据
