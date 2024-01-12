@@ -1339,8 +1339,21 @@ export interface ResultSupplier {
   data?: Supplier;
 }
 
+/** 通用响应类 */
+export interface ResultMapStringObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Record<string, object | null>;
+}
+
 /** 消息发送日志表 */
-export type MsgSendLog = {
+export interface MsgSendLog {
   id?: string;
   /**
    * 创建时间
@@ -1368,19 +1381,6 @@ export type MsgSendLog = {
   sendType?: string;
   sendAddress?: string;
   sendResult?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultMsgSendLog {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 消息发送日志表 */
-  data?: MsgSendLog;
 }
 
 /** 响应数据 */
@@ -1859,8 +1859,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3539,15 +3539,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
+  stateName?: string;
   isProductName?: string;
-  isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
   isBatchName?: string;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3686,8 +3686,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4225,8 +4225,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5495,10 +5495,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -7463,7 +7463,7 @@ export const api = {
      * @secure
      */
     selectAndInsertWipLog: () =>
-      http.request<ResultMsgSendLog['data']>(`/api/main/stressTest/selectAndInsertWipLog`, {
+      http.request<ResultMapStringObject['data']>(`/api/main/stressTest/selectAndInsertWipLog`, {
         method: 'POST',
       }),
 
@@ -7861,6 +7861,20 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultProcess['data']>(`/api/main/process/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序
+     * @name GetProcessAll
+     * @request POST:/process/getProcessAll
+     * @secure
+     */
+    getProcessAll: (data: CommonSearch) =>
+      http.request<ResultPagingDataProcessVO['data']>(`/api/main/process/getProcessAll`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**

@@ -527,7 +527,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
     colKey: 'thisAmountSheets',
     title: '本次生成张数',
     align: 'center',
-    width: '100',
+    width: '120',
   },
   {
     colKey: 'uomName',
@@ -544,7 +544,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'workcenterName',
     align: 'center',
-    width: '180',
+    width: '120',
     title: '工作中心',
     fixed: 'right',
   },
@@ -1073,6 +1073,10 @@ const onGenerate = debounce(async () => {
   }
   if (generateData?.value?.createSize < 0) {
     MessagePlugin.warning('规格数量不得小于0！');
+    return;
+  }
+  if (Math.ceil(generateData.value.createNum / generateData.value.createSize) > 5000) {
+    MessagePlugin.warning(`本次生成张数不得大于5000！`);
     return;
   }
   if (!generateData?.value?.createSize) {
