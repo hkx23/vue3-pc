@@ -618,7 +618,6 @@ export interface StockCheckBillSearch {
   pageSize?: number;
   /** 单据号 */
   billNo?: string;
-  /** 仓库ID */
   warehouseId?: string;
   /** 状态 */
   status?: string;
@@ -655,47 +654,28 @@ export interface ResultPagingDataStockCheckBillVO {
 }
 
 export interface StockCheckBillVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人名称 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
   /** 单据号 */
   billNo?: string;
-  /** 盘点类型 */
-  stockCheckType?: string;
-  /**
-   * 盘点日期
-   * @format date-time
-   */
-  datetimeStockCheck?: string;
-  warehouseId?: string;
-  /** 状态 */
-  status?: string;
   /** 仓库名称 */
   warehouseName?: string;
   /** 盘点类型名称 */
   stockCheckBillTypeName?: string;
   /** 盘点状态名称 */
   stockCheckBillStatusName?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 修改人名称 */
+  modifier?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
 }
 
 /** 通用响应类 */
