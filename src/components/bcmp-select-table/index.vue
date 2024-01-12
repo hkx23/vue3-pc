@@ -253,14 +253,14 @@ const onFilterChange = (filters: Filters, ctx: any) => {
       });
     }
   }
-  remoteLoad(selectSearch.value);
+  remoteLoad(selectSearch.value, false);
 };
 const onPageChange = (PageInfo: any) => {
   pagination.value.current = PageInfo.current;
   pagination.value.pageSize = PageInfo.pageSize;
   console.log(PageInfo);
   console.log('remoteLoad-分页切换');
-  remoteLoad(selectSearch.value);
+  remoteLoad(selectSearch.value, false);
 };
 // total强制转化成int
 const pagination = props.isShowPagination
@@ -352,7 +352,10 @@ const radioSelect = (keyValues: any[], rowData: any[], isOpen = false) => {
     const [defaultValue] = rowData;
     state.defaultValue = defaultValue;
     // 释放-关闭窗口
-    closeTable();
+    // :todo 重新加载数据时选中行设置
+    if (!isOpen) {
+      closeTable();
+    }
   } else {
     state.defaultValue = [];
   }
@@ -482,13 +485,13 @@ const closeTable = () => {
 
 const tempCondition = ref({});
 
-const remoteLoad = async (val: any) => {
+const remoteLoad = async (val: any, isSetDefaultVal) => {
   loading.value = true;
   const searchCondition = {
     pageNum: pagination.value.current,
     pageSize: pagination.value.pageSize,
     selectedField: props.keywords.value,
-    selectedValue: defaultValue.value,
+    selectedValue: isSetDefaultVal ? defaultValue.value : '',
     keyword: selectSearch.value,
     category: props.category,
     parentId: props.parentId,
@@ -527,7 +530,7 @@ const fetchData = debounce((val) => {
   if (!props.filterable) return;
   if (props.isRemote) {
     console.log('fetchData-远程加载');
-    remoteLoad(val);
+    remoteLoad(val, false);
   } else {
     const tableData = JSON.parse(JSON.stringify(props.table?.data));
     console.log('表格数据', tableData);
@@ -566,6 +569,16 @@ const radioCSelectRedirct = (val: string) => {
   if (!props.multiple) {
     if (state.tableData && state.tableData.length === 1 && val === state.tableData[0][props.keywords.value]) {
       rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: [state.tableData[0]] });
+    } else if (
+      state.tableData &&
+      state.tableData.length > 1 &&
+      state.tableData.some((p) => p[props.keywords.value].includes(val))
+    ) {
+      // 设置匹配行（找到并选中第一条包含搜索值的数据）
+      const matchedRow = state.tableData.find((p) => p[props.keywords.value].includes(props.value));
+      if (matchedRow) {
+        radioSelect([matchedRow[props.rowKey]], [matchedRow], true);
+      }
     } else {
       rehandleSelectChange([], { selectedRowData: [] });
     }
@@ -642,7 +655,7 @@ onMounted(() => {
       state.defaultValue = props.value ? { [props.keywords.value]: props.value } : '';
       if (state.defaultValue) {
         console.log('remoteLoad-按默认值查询');
-        remoteLoad(props.value);
+        remoteLoad(props.value, true);
       }
     }
   });
@@ -653,7 +666,7 @@ const sortChange = (val: any) => {
   sortList.value = val;
   console.log(sortList.value);
   console.log('remoteLoad-排序');
-  remoteLoad(selectSearch.value);
+  remoteLoad(selectSearch.value, false);
 };
 
 watch(
@@ -681,7 +694,7 @@ watch(
           console.log('remoteLoad-按默认值查询');
           // selectSearch.value = props.value.toString();
           defaultValue.value = props.value.toString();
-          remoteLoad(props.value);
+          remoteLoad(props.value, true);
         } else {
           state.defaultValue = [];
           selectedRowKeys.value = [];
@@ -698,7 +711,7 @@ watch(
   (val) => {
     console.log('watch:props.parentId', `${props.parentId} ss ${val}`);
     isHandleSelectionChange.value = false;
-    remoteLoad('');
+    remoteLoad('', false);
   },
   { deep: true },
 );
