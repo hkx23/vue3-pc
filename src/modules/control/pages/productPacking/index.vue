@@ -35,7 +35,10 @@
                   <t-space>
                     <qrcode-icon />
                     <div>{{ pkgInfo && pkgInfo.barcode }}</div>
-                    <t-tag theme="success" variant="outline">{{ t('productPacking.productLabel') }}</t-tag>
+                    <t-tag v-if="pkgInfo.barcodeType === 'SN'" theme="success" variant="outline">{{
+                      t('productPacking.productLabel')
+                    }}</t-tag>
+                    <t-tag v-else theme="success" variant="outline">{{ t('productPacking.packLabel') }}</t-tag>
                   </t-space>
                 </t-col>
                 <t-col flex="210px"
@@ -65,7 +68,8 @@
             </t-row>
             <div class="label-footer">
               <t-button theme="primary" @click="tailPkg">{{ t('productPacking.tailPacking') }}</t-button>
-              <t-button theme="default">{{ t('productPacking.packingLog') }}</t-button>
+              <!-- 后续扩展 -->
+              <!-- <t-button theme="default">{{ t('productPacking.packingLog') }}</t-button> -->
             </div>
           </cmp-card>
         </cmp-container>
@@ -88,7 +92,7 @@ import { CloseIcon, QrcodeIcon } from 'tdesign-icons-vue-next';
 import { DialogPlugin } from 'tdesign-vue-next';
 import { computed, ref } from 'vue';
 
-import { api as apiControl, BarcodePkg, WipPkgInfoVO } from '@/api/control';
+import { api as apiControl, PkgExtendVO, WipPkgInfoVO } from '@/api/control';
 import { api as apiMain } from '@/api/main';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
 import { useUserStore } from '@/store';
@@ -100,6 +104,8 @@ const { t } = useLang();
 const { currUserOrgInfo } = useUserStore();
 const scanType = ref('normal');
 const isOnlinePrint = ref(false);
+const isProcessConsistent = ref(false);
+const processCategory = ref();
 // 获取是否在线打印配置
 apiMain.profileValue
   .getValueByProfileCode({
@@ -109,6 +115,19 @@ apiMain.profileValue
   .then((val) => {
     if (val === '1' || val === 'Y') {
       isOnlinePrint.value = true;
+    }
+  });
+// 判断工站对应的工序是否正确
+apiMain.workstation
+  .getProcessCategory({
+    workstationId: currUserOrgInfo.workStationId,
+  })
+  .then((val) => {
+    processCategory.value = val;
+    if (val !== 'PACK') {
+      pushMessage('error', t('productPacking.tipsProcessCategoryInconsistent', [val]));
+    } else {
+      isProcessConsistent.value = true;
     }
   });
 
@@ -124,7 +143,7 @@ const scanPlaceholder = computed(() => {
 });
 const isScanPkg = ref(false);
 const scanLabel = ref();
-const pkgLabel = ref<BarcodePkg>();
+const pkgLabel = ref<PkgExtendVO>();
 const allQty = computed(() => {
   if (labelList.value.length === 0) {
     return 0;
@@ -142,6 +161,10 @@ const scanTypeChange = (val: any) => {
   isScanPkg.value = false;
 };
 const scan = () => {
+  if (!isProcessConsistent.value) {
+    pushMessage('error', t('productPacking.tipsProcessCategoryInconsistent', [processCategory.value]));
+    return;
+  }
   if (isScanPkg.value) {
     apiControl.barcodePkg
       .getByBarcode({
@@ -150,6 +173,14 @@ const scan = () => {
       .then((data) => {
         if (data.packRuleId !== labelList.value[0].packRuleId) {
           pushMessage('error', t('productPacking.tipsPkgRuleInconsistent'));
+          return;
+        }
+        if (data.moCode !== labelList.value[0].moCode) {
+          pushMessage('error', t('productPacking.tipsMoInconsistent'));
+          return;
+        }
+        if (data.subPkgBarcodeType !== labelList.value[0].barcodeType) {
+          pushMessage('error', t('productPacking.tipsPkgTypeInconsistent'));
           return;
         }
         if (allQty.value > data.qty) {
@@ -187,6 +218,15 @@ const scan = () => {
           // 判断包装规则是否一致
           if (data.packRuleId !== labelList.value[0].packRuleId) {
             pushMessage('error', t('productPacking.tipsPkgRuleInconsistent'));
+            return;
+          }
+          // 判断条码类型是否一致
+          if (data.barcodeType !== labelList.value[0].barcodeType) {
+            pushMessage('error', t('productPacking.tipsBarcodeTypeInconsistent'));
+            return;
+          }
+          if (data.moCode !== labelList.value[0].moCode) {
+            pushMessage('error', t('productPacking.tipsMoInconsistent'));
             return;
           }
           // 判断累加的数量是否超出规格
@@ -284,9 +324,9 @@ const msgList = ref<
 ]);
 const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', msg: string) => {
   let content: string;
-  if (type === 'success') {
+  if (scanLabel.value && type === 'success') {
     content = `[${scanLabel.value}]${t('productPacking.scanSuccess')},${msg}`;
-  } else if (type === 'error') {
+  } else if (scanLabel.value && type === 'error') {
     content = `[${scanLabel.value}]${t('productPacking.scanFailed')},${msg}`;
   } else {
     content = msg;

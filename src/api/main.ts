@@ -1859,8 +1859,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3539,15 +3539,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isProductName?: string;
+  isState?: boolean;
   isRawName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  isProductChecked?: boolean;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -3762,8 +3762,6 @@ export interface LabelVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  /** 接收数量 */
-  receivedQty?: number;
   /**
    * 已打印数量
    * @format int32
@@ -4225,8 +4223,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5495,10 +5493,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6544,6 +6542,21 @@ export const api = {
       http.request<ResultPagingDataWorkstationVO['data']>(`/api/main/workstation/getlist`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name GetProcessCategory
+     * @summary 获取当前工站的工序类型
+     * @request GET:/workstation/getProcessCategory
+     * @secure
+     */
+    getProcessCategory: (query: { workstationId: string }) =>
+      http.request<ResultString['data']>(`/api/main/workstation/getProcessCategory`, {
+        method: 'GET',
+        params: query,
       }),
   },
   workgroup: {
