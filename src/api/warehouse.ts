@@ -836,6 +836,110 @@ export interface MaterialRequisitionDTO {
   remark?: string;
 }
 
+/** 响应数据 */
+export type MaterialRequisitionDtlVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  billNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  moScheId?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 实际拣料数量 */
+  pickQty?: number;
+  reason?: string;
+  voucherLineNo?: string;
+  noticeVoucherLineNo?: string;
+  batchNo?: string;
+  poNum?: string;
+  /** ERP单据明细号 */
+  erpLineNo?: string;
+  memo?: string;
+  /** 子层级 */
+  children?: MaterialRequisitionDtlVO[];
+  /**
+   * 树状表格需要，否则展开有问题
+   * @format int32
+   */
+  index?: number;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uom?: string;
+  uomName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  districtCode?: string;
+  districtName?: string;
+  locationCode?: string;
+  locationName?: string;
+  toWarehouseCode?: string;
+  toWarehouseName?: string;
+  /**
+   * 分子用量
+   * @format int32
+   */
+  numeratorQty?: number;
+  /**
+   * 分母用量
+   * @format int32
+   */
+  denomainatorQty?: number;
+  scheCode?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListMaterialRequisitionDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MaterialRequisitionDtlVO[] | null;
+}
+
 /** 货位 */
 export interface Location {
   id?: string;
@@ -2122,110 +2226,6 @@ export interface ResultListPurchaseOrderDtlVO {
   data?: PurchaseOrderDtlVO[] | null;
 }
 
-/** 响应数据 */
-export type MaterialRequisitionDtlVO = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  billNo?: string;
-  warehouseId?: string;
-  districtId?: string;
-  locId?: string;
-  toOid?: string;
-  toWarehouseId?: string;
-  toDistrictId?: string;
-  toLocId?: string;
-  mitemId?: string;
-  mitemCategoryId?: string;
-  moScheId?: string;
-  /** 需求数量 */
-  reqQty?: number;
-  /** 实际拣料数量 */
-  pickQty?: number;
-  reason?: string;
-  voucherLineNo?: string;
-  noticeVoucherLineNo?: string;
-  batchNo?: string;
-  poNum?: string;
-  /** ERP单据明细号 */
-  erpLineNo?: string;
-  memo?: string;
-  /** 子层级 */
-  children?: MaterialRequisitionDtlVO[];
-  /**
-   * 树状表格需要，否则展开有问题
-   * @format int32
-   */
-  index?: number;
-  mitemCode?: string;
-  mitemName?: string;
-  mitemDesc?: string;
-  uom?: string;
-  uomName?: string;
-  warehouseCode?: string;
-  warehouseName?: string;
-  districtCode?: string;
-  districtName?: string;
-  locationCode?: string;
-  locationName?: string;
-  toWarehouseCode?: string;
-  toWarehouseName?: string;
-  /**
-   * 分子用量
-   * @format int32
-   */
-  numeratorQty?: number;
-  /**
-   * 分母用量
-   * @format int32
-   */
-  denomainatorQty?: number;
-  scheCode?: string;
-  /**
-   * 排产数量
-   * @format int32
-   */
-  scheQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultListMaterialRequisitionDtlVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: MaterialRequisitionDtlVO[] | null;
-}
-
 export interface MaterialRequisitionVO {
   id?: string;
   /**
@@ -3034,6 +3034,21 @@ export const api = {
      * No description
      *
      * @tags 领料制单
+     * @name GetReqDtls
+     * @summary 新增领料单界面-获取领料明细
+     * @request POST:/materialRequisition/getReqDtls
+     * @secure
+     */
+    getReqDtls: (data: MaterialRequisitionDTO) =>
+      http.request<ResultListMaterialRequisitionDtlVO['data']>(`/api/warehouse/materialRequisition/getReqDtls`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料制单
      * @name Tree
      * @summary 主界面-获取领料单明细
      * @request GET:/materialRequisition/tree
@@ -3041,24 +3056,6 @@ export const api = {
      */
     tree: (query: { billNo: string }) =>
       http.request<ResultListMaterialRequisitionDtlVO['data']>(`/api/warehouse/materialRequisition/tree`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 领料制单
-     * @name GetReqDtls
-     * @summary 新增领料单界面-获取领料明细
-     * @request GET:/materialRequisition/getReqDtls
-     * @secure
-     */
-    getReqDtls: (query: {
-      /** 领料制单提交模型 */
-      model: MaterialRequisitionDTO;
-    }) =>
-      http.request<ResultListMaterialRequisitionDtlVO['data']>(`/api/warehouse/materialRequisition/getReqDtls`, {
         method: 'GET',
         params: query,
       }),

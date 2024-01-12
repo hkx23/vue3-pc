@@ -1659,9 +1659,9 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -1708,10 +1708,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
-  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -2889,9 +2889,9 @@ export interface BarcodeWipCollectVO {
   isCommit?: boolean;
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -3003,9 +3003,9 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -3250,8 +3250,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
