@@ -6,9 +6,13 @@
         <cmp-container v-show="tabKey === 0" :full="true">
           <t-card :bordered="false">
             <template #title>
-              {{
-                `工单信息( 工单号：${productBasicInformationForm?.moCode ? productBasicInformationForm?.moCode : ''} )`
-              }}
+              <span v-if="!productBasicInformationForm?.moCode">工单信息( )</span>
+              <span
+                v-if="productBasicInformationForm?.moCode"
+                v-html="
+                  `工单信息(工单号：${productBasicInformationForm?.moCode ? productBasicInformationForm?.moCode : ''} )`
+                "
+              ></span>
             </template>
             <div class="form-item-box">
               <t-form-item label="工序">{{ productBasicInformationForm?.curProcessName }}</t-form-item>
@@ -44,11 +48,14 @@
                   {{ row.isHold ? '是' : '否' }}
                 </template>
                 <template #title>
-                  {{
-                    `生产历史信息( 产品：${
-                      productBasicInformationForm?.serialNumber ? productBasicInformationForm?.serialNumber : ''
-                    } )`
-                  }}
+                  <span v-if="!productBasicInformationForm?.serialNumber">{{ '生产历史信息( )' }}</span>
+                  <span v-if="productBasicInformationForm?.serialNumber">
+                    {{
+                      `生产历史信息( 产品：${
+                        productBasicInformationForm?.serialNumber ? productBasicInformationForm?.serialNumber : ''
+                      } )`
+                    }}</span
+                  >
                 </template>
               </cmp-table>
             </div>
@@ -357,16 +364,16 @@ const materialkey: PrimaryTableCol<TableRowData>[] = [
     colKey: 'moCode',
     title: '工单号',
     align: 'center',
-    width: '130',
+    width: '120',
   },
   {
-    colKey: 'serialNumber',
+    colKey: 'keypartBarcode',
     title: '关键件条码',
     align: 'center',
-    width: '60',
+    width: '120',
   },
   {
-    colKey: 'processName ',
+    colKey: 'processName',
     title: '工序',
     align: 'center',
     width: '100',
@@ -378,19 +385,19 @@ const materialkey: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'status',
+    colKey: 'statusName',
     title: '状态',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'qty	',
+    colKey: 'qty',
     title: '数量',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'userName',
+    colKey: 'displayName',
     title: '员工',
     align: 'center',
     width: '100',
@@ -405,7 +412,7 @@ const materialkey: PrimaryTableCol<TableRowData>[] = [
     colKey: 'timeCreate',
     title: '加工时间',
     align: 'center',
-    width: '100',
+    width: '150',
   },
 ];
 
@@ -418,28 +425,28 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
     width: '60',
   },
   {
-    colKey: 'deliveryCardStatuName',
+    colKey: 'workcenterCode',
     title: '工作中心',
     align: 'center',
-    width: '130',
+    width: '120',
   },
   {
     colKey: 'moCode',
     title: '工单号',
     align: 'center',
-    width: '60',
+    width: '120',
   },
   {
     colKey: 'moMitemCode',
     title: '产品编码',
     align: 'center',
-    width: '100',
+    width: '120',
   },
   {
     colKey: 'serialNumber',
     title: '物料条码',
     align: 'center',
-    width: '100',
+    width: '120',
   },
   {
     colKey: 'mitemCode',
@@ -448,7 +455,7 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'mitemLotNo',
+    colKey: 'lotNo',
     title: '物料批次',
     align: 'center',
     width: '100',
@@ -484,10 +491,11 @@ const materialWorkOrder: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'datetimeOnboard',
     title: '加工时间',
     align: 'center',
-    width: '100',
+    width: '150',
+    fixed: 'right',
   },
 ];
 
@@ -698,13 +706,13 @@ const productDefect: PrimaryTableCol<TableRowData>[] = [
     colKey: 'scanBarcode',
     title: '产品条码',
     align: 'center',
-    width: '130',
+    width: '120',
   },
   {
     colKey: 'moScheCode',
     title: '排产工单',
     align: 'center',
-    width: '60',
+    width: '120',
   },
   {
     colKey: 'mitemCode',
@@ -734,7 +742,7 @@ const productDefect: PrimaryTableCol<TableRowData>[] = [
     colKey: 'timeScanBarcode',
     title: '采集时间',
     align: 'center',
-    width: '100',
+    width: '150',
   },
   {
     colKey: 'retentionTime',
@@ -759,6 +767,7 @@ const productDefect: PrimaryTableCol<TableRowData>[] = [
     title: '返修状态',
     align: 'center',
     width: '100',
+    fixed: 'right',
   },
 ];
 
@@ -780,7 +789,7 @@ const maintenanceDetail: PrimaryTableCol<TableRowData>[] = [
     colKey: 'defectReason',
     title: '缺陷原因',
     align: 'center',
-    width: '60',
+    width: '100',
   },
   {
     colKey: 'userNameRepair',
@@ -792,7 +801,7 @@ const maintenanceDetail: PrimaryTableCol<TableRowData>[] = [
     colKey: 'datetimeRepaired',
     title: '维修结束时间',
     align: 'center',
-    width: '100',
+    width: '150',
   },
   {
     colKey: 'creator',
@@ -865,13 +874,13 @@ const inventoryInOut: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'displayTransferName',
     title: '交易人',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'timeCreate',
+    colKey: 'datetimeTransfer',
     title: '交易日期',
     align: 'center',
     width: '100',
@@ -1063,7 +1072,7 @@ const tableRef = ref();
 const anomalyTypeData = ref([]);
 const anomalyTotal = ref<number>(0);
 const onGetAnomalyTypeData = async () => {
-  const res = await api.pkgRelation.getPkgRelationReportList(commonParametersList.value);
+  const res = await api.reversetraceability.getPkgRelationReportList(commonParametersList.value);
   const newData = res.list.map((item) => {
     if (item.existPkgRelationReportcChildren) {
       if (item.children && item.children.length === 0) {
@@ -1082,7 +1091,7 @@ const onGetAnomalyTypeData = async () => {
 // 点击节点获取子节点数据
 const onExpandedTreeNodesChange = async (expandedTreeNodes: any, options: any) => {
   expandedTreeNodes = [];
-  const res = await api.pkgRelation.getPkgRelationReportList({
+  const res = await api.reversetraceability.getPkgRelationReportList({
     parentPkgBarcode: options.row.pkgBarcode,
     pageNum: 1,
     pageSize: 9999,

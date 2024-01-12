@@ -26,31 +26,24 @@
           </t-space>
         </template>
 
-        <!-- 状态 -->
-        <!-- <template #state="{ row }">
-            <span v-if="row.state == 1">已创建</span>
-            <span v-if="row.state == 2">盘点中</span>
-            <span v-if="row.state == 3">已完成</span>
-            <span v-if="row.state == 4">已关闭</span>
-            <span v-else>已作废</span>
-          </template> -->
-        <!-- <template #op="row">
-            <t-space>
-              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(row)">编辑</t-link>
-              <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onStateRowClick(row)">
-                <t-link theme="primary"> 删除 </t-link>
-              </t-popconfirm>
-            </t-space>
-          </template> -->
+        <!-- 定义序号列的插槽 -->
+        <template #indexSlot="{ rowIndex }">
+          {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
   <!-- 单据详情组件 -->
-  <receipt-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" />
+  <receipt-details
+    v-model:visible="RPDRoutingVisible"
+    :form-title="formTitle"
+    :some-data1="someData1"
+    :some-data2="someData2"
+    :some-data3="someData3"
+  />
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
@@ -59,16 +52,18 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import ReceiptDetails from './receiptDetails.vue';
-// import { Icon } from 'tdesign-icons-vue';
+
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
-// const formRef = ref(null);
 const formTitle = ref('');
 const dataTotal = ref(0);
 const tabValue = ref('');
 const RPDRoutingVisible = ref(false); //* 弹窗默认关闭
 const selectedReceiptRowKeys = ref([]);
 const tableDataReceipt = ref([]); //* 表格数据
+const someData1 = ref({}); // 用来存储接口调用结果
+const someData2 = ref([]);
+const someData3 = ref([]);
 
 //* 组件配置  --查询界面选择
 const optsReceipt = computed(() => {
@@ -116,7 +111,7 @@ const optsReceipt = computed(() => {
     timeCreate: {
       label: '创建时间',
       comp: 't-date-range-picker',
-      defaultVal: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+      defaultVal: [],
       bind: {
         enableTimePicker: false,
         format: 'YYYY-MM-DD',
@@ -127,11 +122,11 @@ const optsReceipt = computed(() => {
 
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 85 },
+  { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
   { title: '事物类型', colKey: 'categoryName', width: 85 },
-  { title: '单据号', width: 85, colKey: 'billNo' },
-  { title: '关联单号', width: 85, colKey: 'sourceBillNo' },
-  { title: '物料编码', width: 85, colKey: 'mitemCode' },
+  { title: '单据号', width: 150, colKey: 'billNo' },
+  { title: '关联单号', width: 120, colKey: 'sourceBillNo' },
+  { title: '物料编码', width: 120, colKey: 'mitemCode' },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
   { title: '需求数量', width: 85, colKey: 'reqQty' },
   { title: '交易数量', width: 85, colKey: 'pickQty' },
@@ -162,12 +157,25 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const onEditRowClick = async (value: any) => {
-  console.log('🚀 ~ onEditRowClick ~ value:', value);
-  formTitle.value = '查看单据管理';
+  formTitle.value = '查看单据';
   RPDRoutingVisible.value = true;
   const { billNo } = value.row;
-  const result = await api.billManagement.getList({ billNo });
-  console.log('🚀 ~ onEditRowClick ~ result:', result);
+
+  try {
+    // 同时发送三个异步请求
+    const [headerResult, dtlResult, labelResult] = await Promise.all([
+      api.billManagement.getHeader({ billNo }),
+      api.billManagement.getDtl({ billNo }),
+      api.billManagement.getLabel({ billNo }),
+    ]);
+
+    // 更新响应式数据
+    someData1.value = headerResult;
+    someData2.value = dtlResult;
+    someData3.value = labelResult;
+  } catch (error) {
+    console.error('获取单据数据失败:', error);
+  }
 };
 
 //* 初始渲染
@@ -184,7 +192,6 @@ const fetchTable = async () => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
-  console.log('🚀 ~ fetchTable ~ data:', data);
   tableDataReceipt.value = data.list;
   dataTotal.value = data.total;
   setLoading(false);
@@ -198,8 +205,8 @@ const tabRefresh = async () => {
 //* 查询
 const onInput = async (data: any) => {
   const { categoryName, mitemCode, supplierName, billNo, timeCreate } = data;
-  // 提取categoryName数组中每个元素的label，不再合并成一个字符串
-  const businessCategoryIds = Array.isArray(categoryName) ? categoryName.map((item) => item.label) : [];
+  // 提取categoryName数组中每个元素的label，合并成一个数组
+  const businessCategoryIds = Array.isArray(categoryName) ? categoryName.map((item) => item.value) : [];
   if (!data.value) {
     const result = await api.billManagement.getList({
       pageNum: pageUI.value.page,

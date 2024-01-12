@@ -12,6 +12,11 @@
     <t-form-item label="工序别名">
       <t-input v-model="formData.processAlias" />
     </t-form-item>
+
+    <t-form-item label="工序采集类别">
+      <t-select v-model="formData.processCategory" :options="processCategoryOptions" clearable />
+    </t-form-item>
+
     <t-form-item label="状态">
       <t-switch v-model="formData.isState" />
     </t-form-item>
@@ -28,6 +33,7 @@ import { api } from '@/api/main';
 export default {
   name: 'MitemForm',
   setup() {
+    const processCategoryOptions = ref([]);
     const formData = ref({
       operateTpye: 'add',
       id: '',
@@ -36,11 +42,12 @@ export default {
       processName: '',
       processDesc: '',
       processAlias: '',
+      processCategory: '',
       state: 0,
     });
 
     onMounted(() => {
-      console.log('123123');
+      getProcessCategory();
     });
     const submit = async () => {
       try {
@@ -64,6 +71,17 @@ export default {
       }
       return true;
     };
+    const getProcessCategory = async () => {
+      try {
+        processCategoryOptions.value = [];
+        const data = await api.param.getListByGroupCode({ parmGroupCode: 'PROCESS_CATEGORY' });
+        data.forEach((n) => {
+          processCategoryOptions.value.push({ label: n.label, value: n.value });
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    };
     const init = () => {
       formData.value.operateTpye = 'add';
       formData.value.id = '';
@@ -71,12 +89,14 @@ export default {
       formData.value.processName = '';
       formData.value.processDesc = '';
       formData.value.processAlias = '';
+      formData.value.processCategory = '';
       formData.value.isState = true;
     };
     return {
       init,
       submit,
       formData,
+      processCategoryOptions,
     };
   },
 };

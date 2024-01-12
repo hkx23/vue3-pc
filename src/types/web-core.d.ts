@@ -164,6 +164,14 @@ export declare class Http {
     middlewares: HttpMiddleware[];
     options: HttpOptions;
     pendingMap: Map<string, HttpContext>;
+    private capture?;
+    private onceCapture?;
+    history: {
+        api: string;
+        method?: string;
+        data?: any;
+        header?: any;
+    }[];
     constructor(options?: HttpOptions | string);
     /**
      * 新增中间件
@@ -183,6 +191,14 @@ export declare class Http {
     setMockData: (data: MockMethod[]) => void;
     openMock: () => void;
     closeMock: () => void;
+    openCapture(): void;
+    openOnceCapture(func: (item: {
+        api: string;
+        method?: string;
+        data?: any;
+        header?: any;
+    }) => any): void;
+    closeCapture(): void;
 }
 
 /**
@@ -203,6 +219,7 @@ declare class HttpContext {
      * 请求全路径
      */
     url: string;
+    originUrl: string;
     /**
      * 请求结果
      */

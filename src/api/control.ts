@@ -602,8 +602,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -951,8 +951,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -990,6 +990,7 @@ export interface ResultPagingDataWipKeypartReportVO {
 
 /** 关键物料追溯（反向）-关键件信息 */
 export interface WipKeypartReportVO {
+  id?: string;
   /**
    * 创建时间
    * @format date-time
@@ -1024,6 +1025,18 @@ export interface WipKeypartReportVO {
   userName?: string;
   /** 员工名称 */
   displayName?: string;
+  /** 关键件条码 */
+  keypartBarcode?: string;
+  /** 关键件条码类型 */
+  keypartBarcodeType?: string;
+  moScheId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  supplierId?: string;
+  /** 批次号 */
+  lotNo?: string;
+  workstationId?: string;
+  processId?: string;
 }
 
 /** 响应数据 */
@@ -1292,8 +1305,97 @@ export interface WipLog {
   terminal?: string;
 }
 
+/** 响应数据 */
+export type PagingDataPkgRelationReportVO = {
+  list?: PkgRelationReportVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 箱包关系报表前端显示 */
+export interface PkgRelationReportVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moScheId?: string;
+  pkgBarcode?: string;
+  pkgBarcodeType?: string;
+  parentPkgBarcode?: string;
+  parentPkgType?: string;
+  /**
+   * 包装序号
+   * @format int32
+   */
+  seq?: number;
+  workstationId?: string;
+  workcenterId?: string;
+  workshopId?: string;
+  status?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** 工单状态 */
+  moStatusName?: string;
+  /** 排产单号 */
+  scheCode?: string;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 产品名称 */
+  mitemName?: string;
+  /** 产品描述 */
+  mitemDesc?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 包装条码类型名称 */
+  pkgBarcodeTypeName?: string;
+  /** 父级包装条码类型名称 */
+  parentPkgTypeName?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /** 父级包装条码的上级条码（如果为空说明是顶级） */
+  topParentPkgBarcode?: string;
+  /** 是否存在子集 */
+  existPkgRelationReportcChildren?: boolean;
+  /** 报表子集 */
+  children?: PkgRelationReportVO[];
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPkgRelationReportVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPkgRelationReportVO;
+}
+
 /** 关键物料追溯（反向）-关键件信息 */
 export interface MoOnboardReportVO {
+  /** 生产批次 */
+  lotNo?: string;
   /** 物料条码 */
   serialNumber?: string;
   /** 物料编码 */
@@ -1322,8 +1424,6 @@ export interface MoOnboardReportVO {
   displayName?: string;
   /** 产品编码 */
   moMitemCode?: string;
-  /** 物料批次 */
-  mitemLotNo?: string;
   /** 供应商编码 */
   supplierCode?: string;
   /** 供应商名称 */
@@ -1341,6 +1441,8 @@ export interface MoOnboardReportVO {
    * @format date-time
    */
   datetimeOnboard?: string;
+  /** 物料投料条码 */
+  scanBarcode?: string;
 }
 
 /** 响应数据 */
@@ -1555,15 +1657,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1606,10 +1708,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -1728,6 +1830,8 @@ export interface ProcessVO {
   processDesc?: string;
   /** 工序别名 */
   processAlias?: string;
+  /** 工序类型 */
+  processCategory?: string;
   /** 创建人名称 */
   creatorName?: string;
   /** 修改人名称 */
@@ -2015,93 +2119,6 @@ export interface PkgRelationSearch {
   endDate?: string;
   /** 父级包装条码 */
   parentPkgBarcode?: string;
-}
-
-/** 响应数据 */
-export type PagingDataPkgRelationReportVO = {
-  list?: PkgRelationReportVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 箱包关系报表前端显示 */
-export interface PkgRelationReportVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  moScheId?: string;
-  pkgBarcode?: string;
-  pkgBarcodeType?: string;
-  parentPkgBarcode?: string;
-  parentPkgType?: string;
-  /**
-   * 包装序号
-   * @format int32
-   */
-  seq?: number;
-  workstationId?: string;
-  workcenterId?: string;
-  workshopId?: string;
-  status?: string;
-  /** 工单号 */
-  moCode?: string;
-  /** 工单状态 */
-  moStatusName?: string;
-  /** 排产单号 */
-  scheCode?: string;
-  /** 产品编码 */
-  mitemCode?: string;
-  /** 产品名称 */
-  mitemName?: string;
-  /** 产品描述 */
-  mitemDesc?: string;
-  /** 用户名 */
-  userName?: string;
-  /** 包装条码类型名称 */
-  pkgBarcodeTypeName?: string;
-  /** 父级包装条码类型名称 */
-  parentPkgTypeName?: string;
-  /** 状态名称 */
-  statusName?: string;
-  /** 父级包装条码的上级条码（如果为空说明是顶级） */
-  topParentPkgBarcode?: string;
-  /** 是否存在子集 */
-  existPkgRelationReportcChildren?: boolean;
-  /** 报表子集 */
-  children?: PkgRelationReportVO[];
-}
-
-/** 通用响应类 */
-export interface ResultPagingDataPkgRelationReportVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataPkgRelationReportVO;
 }
 
 export interface ProductionProgressSearch {
@@ -2870,17 +2887,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  stateName?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 通用响应类 */
@@ -2984,15 +3001,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
+  stateName?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
   defectCodeStr?: string;
 }
 
@@ -3257,8 +3274,8 @@ export interface ResultPagingDataBarcodePkgVO {
   data?: PagingDataBarcodePkgVO;
 }
 
-/** 包装条码表 */
-export type BarcodePkg = {
+/** 响应数据 */
+export type PkgExtendVO = {
   id?: string;
   /**
    * 创建时间
@@ -3290,10 +3307,11 @@ export type BarcodePkg = {
   /** 数量 */
   qty?: number;
   status?: string;
+  moCode?: string;
 } | null;
 
 /** 通用响应类 */
-export interface ResultBarcodePkg {
+export interface ResultPkgExtendVO {
   /**
    * 响应代码
    * @format int32
@@ -3301,8 +3319,8 @@ export interface ResultBarcodePkg {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 包装条码表 */
-  data?: BarcodePkg;
+  /** 响应数据 */
+  data?: PkgExtendVO;
 }
 
 /** 原子模型定义-Context上下文定义 */
@@ -3566,8 +3584,6 @@ export type WipVO = {
    * @format double
    */
   achievingRateOfToday?: number;
-  /** @format int32 */
-  sumwip?: number;
 } | null;
 
 /** 显示包装规则明细列表 */
@@ -4479,6 +4495,24 @@ export const api = {
      * No description
      *
      * @tags 关键物料追溯（反向）
+     * @name GetPkgRelationReportList
+     * @summary 获取箱包关系报表
+     * @request POST:/reversetraceability/getPkgRelationReportList
+     * @secure
+     */
+    getPkgRelationReportList: (data: ReverseTraceabilityReportSearch) =>
+      http.request<ResultPagingDataPkgRelationReportVO['data']>(
+        `/api/control/reversetraceability/getPkgRelationReportList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料追溯（反向）
      * @name GetMoOnboardInfo
      * @summary 获取物料投料信息
      * @request POST:/reversetraceability/getMoOnboardInfo
@@ -5342,7 +5376,7 @@ export const api = {
      * @secure
      */
     getByBarcode: (query: { barcode: string }) =>
-      http.request<ResultBarcodePkg['data']>(`/api/control/barcodePkg/getByBarcode`, {
+      http.request<ResultPkgExtendVO['data']>(`/api/control/barcodePkg/getByBarcode`, {
         method: 'POST',
         params: query,
       }),

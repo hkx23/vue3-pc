@@ -135,10 +135,11 @@ const tableTotal = ref(10); // table分页总数
 const selectedRowKeys = ref([]); // 选择的
 const saveLoading = ref(false); // 选择的
 const { loading, setLoading } = useLoading(); // loading
-const selectValue = ref(1);
+const selectValue = ref('01');
 const options1 = ref([
-  { label: '生效', value: 1 },
-  { label: '未生效', value: 0 },
+  { label: '生效', value: '1' },
+  { label: '未生效', value: '0' },
+  { label: '全部', value: '01' },
 ]);
 const value = ref([]);
 const permission = ref({
@@ -157,6 +158,22 @@ const rehandleSelectChange = (value: any) => {
   selectedRowKeys.value = value;
   console.log(selectedRowKeys.value);
 };
+
+// 筛选删除数组
+function findElementsNotInA(a, b) {
+  // 创建集合 setA 包含数组 a 的所有元素
+  const setA = new Set(a);
+  // 使用 filter 方法过滤数组 b，只保留不在集合 setA 中的元素
+  return b.filter((item) => !setA.has(item));
+}
+// 筛选新增数组
+function findElementsNotInB(a, b) {
+  // 创建集合 setB 包含数组 b 的所有元素
+  const setB = new Set(b);
+  // 使用 filter 方法过滤数组 a，只保留不在集合 setB 中的元素
+  return a.filter((item) => !setB.has(item));
+}
+
 // 保存
 const onBtnSave = async () => {
   // Emit('permissionShow', false);
@@ -164,9 +181,11 @@ const onBtnSave = async () => {
     MessagePlugin.error('请选择用户');
     return;
   }
+  const delArr = findElementsNotInA(selectedRowKeys.value, rawArray.value);
+  const addArr = findElementsNotInB(selectedRowKeys.value, rawArray.value);
   saveLoading.value = true;
   // console.log('保存', permission.value.userId);
-  await api.workstationAuth.save({ userId: permission.value.userId, ids: selectedRowKeys.value });
+  await api.workstationAuth.save({ userId: permission.value.userId, inseartList: addArr, removeList: delArr });
   saveLoading.value = false;
   MessagePlugin.success('保存成功');
 };
@@ -263,14 +282,17 @@ const onFetchData = async () => {
   // permission.value.label = '';
 };
 const onchange1 = () => {
-  if (selectValue.value === 1) {
+  if (selectValue.value === '1') {
     permission.value.state = [1];
-  } else {
+  } else if (selectValue.value === '0') {
     permission.value.state = [0];
+  } else if (selectValue.value === '01') {
+    permission.value.state = [0, 1];
   }
   onFetchData();
 };
 // 点击用户拿数据
+const rawArray = ref([]);
 const onClickTree = async (e: any) => {
   selectedRowKeys.value = [];
   permission.value.userId = e.node.value;
@@ -280,16 +302,8 @@ const onClickTree = async (e: any) => {
     pageSize: pageSize.value,
     userId: e.node.value,
   });
-  // console.log(res);
-  console.log(res.list);
-
-  res.list.forEach((item) => {
-    selectedRowKeys.value.push(item);
-  });
-  // selectedRowKeys.value.push(res.list);
-  console.log(selectedRowKeys.value);
-  // data.value = res.list;
-  // tableTotal.value = res.total;
+  selectedRowKeys.value = res.list;
+  rawArray.value = res.list;
 };
 // 用户
 const onInputSearchUser = () => {

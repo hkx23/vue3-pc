@@ -855,6 +855,10 @@ const onGenerate = debounce(async () => {
     MessagePlugin.warning('请正确填写本次生成数量！');
     return;
   }
+  if (generateData?.value?.createNum > 50000) {
+    MessagePlugin.warning('本次生成数量不能大于50000！');
+    return;
+  }
   try {
     loading.value = true;
     await api.labelManage.generateBarcode(generateData.value); // 生成请求
