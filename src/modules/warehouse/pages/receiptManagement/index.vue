@@ -170,7 +170,6 @@ const onEditRowClick = async (value: any) => {
   someData2.value = result2;
 
   const result3 = await api.billManagement.getLabel({ billNo });
-  console.log('🚀 ~ onEditRowClick ~ result3:', result3);
   someData3.value = result3;
 };
 
