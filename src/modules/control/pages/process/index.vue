@@ -57,11 +57,11 @@ const filterlist = ref([]);
 const formVisible = ref(false);
 const formRef = ref(null);
 const formTitle = ref('');
-const processState = ref(-1);
+const processState = ref(null);
 
 // 下拉初始数据
 const stateOptions = [
-  { label: '全部', value: -1 },
+  { label: '全部', value: null },
   { label: '启用', value: 1 },
   { label: '禁用', value: 0 },
 ];
@@ -112,18 +112,20 @@ const onRefresh = () => {
 // 重置按钮
 const onReset = () => {
   keyword.value = '';
-  processState.value = -1;
+  processState.value = null;
 };
 const dataTotal = ref(0);
 
 const fetchTable = async () => {
+  // await api.stressTest.selectAndInsertWipLog();
+  // return;
   setLoading(true);
   try {
     selectedProcessRowKeys.value = [];
     tableDataProcess.value = [];
-    const data = (await api.process.search({
+    const data = (await api.process.getProcessAll({
       keyword: keyword.value,
-      state: processState.value === null ? -1 : processState.value,
+      state: processState.value,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       sorts: sortlist.value,

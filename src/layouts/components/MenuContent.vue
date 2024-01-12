@@ -4,20 +4,30 @@
       <template v-if="!item.children || !item.children.length || item.meta?.single">
         <t-menu-item v-if="getHref(item)" :name="item.path" :value="getPath(item)" @click="openHref(getHref(item)[0])">
           <template #icon>
-            <component :is="menuIcon(item)" class="t-icon"></component>
+            <component :is="menuIcon(item)" v-if="item.icon" class="t-icon"></component>
+            <template v-else>
+              <div v-if="showAutoIcon" class="menu-title-icon">
+                <t-avatar size="small" shape="round">{{ renderMenuTitle(item.title) }}</t-avatar>
+              </div>
+            </template>
           </template>
           {{ renderMenuTitle(item.title) }}
         </t-menu-item>
         <t-menu-item v-else :name="item.path" :value="getPath(item)" :to="item.path">
           <template #icon>
-            <component :is="menuIcon(item)" class="t-icon"></component>
+            <component :is="menuIcon(item)" v-if="item.icon" class="t-icon"></component>
           </template>
           {{ renderMenuTitle(item.title) }}
         </t-menu-item>
       </template>
       <t-submenu v-else :name="item.path" :value="item.path" :title="renderMenuTitle(item.title)">
         <template #icon>
-          <component :is="menuIcon(item)" class="t-icon"></component>
+          <component :is="menuIcon(item)" v-if="item.icon" class="t-icon"></component>
+          <template v-else>
+            <div v-if="showAutoIcon" class="menu-title-icon">
+              <t-avatar size="small" shape="round">{{ renderMenuTitle(item.title) }}</t-avatar>
+            </div>
+          </template>
         </template>
         <menu-content v-if="item.children" :nav-data="item.children" />
       </t-submenu>
@@ -31,7 +41,13 @@ import { computed } from 'vue';
 
 import { getActive } from '@/router';
 import { renderMenuTitle } from '@/router/locale';
+import { useSettingStore } from '@/store';
 import type { MenuRoute } from '@/types/interface';
+
+const showAutoIcon = computed(() => {
+  const setting = useSettingStore();
+  return setting.isSidebarCompact && setting.splitMenu && setting.layout === 'mix';
+});
 
 type ListItemType = MenuRoute & { icon?: string };
 
@@ -107,13 +123,35 @@ const openHref = (url: string) => {
 </script>
 
 <style lang="less" scoped>
+.menu-title-icon {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  :deep(.t-avatar) {
+    width: 100%;
+    height: 100%;
+    color: var(--td-text-color-secondary);
+    background: transparent;
+
+    span {
+      display: block !important;
+    }
+  }
+}
+
 // .t-menu__item {
 //   color: white;
 // }
-
+// :deep(.header-menu) {
+//   .t-menu__item.t-is-active {
+//     background-color: var(--td-brand-color-7) !important;
+//     color: white !important;
+//   }
+// }
 :deep(.t-menu__item.t-is-active) {
-  background-color: var(--td-brand-color-7);
-  color: white;
+  color: var(--td-brand-color);
+  background-color: var(--td-brand-color-light);
 }
 
 .t-default-menu .t-menu__item .t-icon {
@@ -122,9 +160,9 @@ const openHref = (url: string) => {
 // .t-default-menu .t-menu__item.t-is-opened:hover .t-icon {
 //   color: var(--td-text-color-primary);
 // }
-.t-default-menu .t-menu__item.t-is-active .t-icon {
-  color: white;
-}
+// .t-default-menu .t-menu__item.t-is-active .t-icon {
+//   color: white;
+// }
 
 // .t-menu__item:hover:not(.t-is-active, .t-is-opened, .t-is-disabled) {
 //   background-color: var(--td-brand-color-3);;

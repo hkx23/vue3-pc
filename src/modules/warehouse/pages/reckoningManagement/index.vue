@@ -51,7 +51,6 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
@@ -94,10 +93,14 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    datetimePlanRange: {
+    timeCreate: {
       label: '创建时间',
       comp: 't-date-range-picker',
-      defaultVal: [dayjs().subtract(+3, 'day').format('YYYYMMDD'), dayjs().format('YYYYMMDD')], // 初始化日期控件
+      defaultVal: [],
+      bind: {
+        enableTimePicker: false,
+        format: 'YYYY-MM-DD',
+      },
     },
     supplierId: {
       label: '仓库',
@@ -109,11 +112,15 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-
-    billNo: {
+    documentStatus: {
       label: '单据状态',
       comp: 't-select',
-      defaultVal: '',
+      defaultVal: documentStatusOptions.map((option) => option.value), // 默认全选
+      bind: {
+        options: documentStatusOptions,
+        multiple: true, // 开启多选模式
+        clearable: true,
+      },
     },
   };
 });
@@ -151,6 +158,13 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
 //   // dataTotal.value = data.total;
 //   setLoading(false);
 // };
+const documentStatusOptions = [
+  { label: '已创建', value: 'created' },
+  { label: '盘点中', value: 'counting' },
+  { label: '已完成', value: 'completed' },
+  { label: '已关闭', value: 'closed' },
+  { label: '已作废', value: 'voided' },
+];
 
 //* 表格刷新
 const tabRefresh = async () => {

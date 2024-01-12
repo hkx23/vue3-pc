@@ -1,5 +1,5 @@
 <template>
-  <t-config-provider :global-config="getComponentsLocale">
+  <t-config-provider :global-config="globalConfig">
     <custom-error-message />
     <router-view :key="locale" :class="[mode]"
   /></t-config-provider>
@@ -18,6 +18,15 @@ const mode = computed(() => {
 });
 
 const { getComponentsLocale, locale } = useLocale();
+
+const globalConfig = computed(() => {
+  return {
+    dialog: {
+      closeOnOverlayClick: false,
+    },
+    ...getComponentsLocale,
+  };
+});
 </script>
 <style lang="less" scoped>
 #nprogress .bar {

@@ -9,7 +9,7 @@
     <cmp-container :full="true">
       <cmp-container>
         <cmp-card>
-          <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false"> </cmp-query>
+          <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
           <div class="buttonSty">
             <t-button>批量导入</t-button>
             <t-button>确定</t-button>
@@ -47,19 +47,19 @@ const tablenewIMColumns: PrimaryTableCol<TableRowData>[] = [
 //* 组件配置--查询界面选择
 const opts = computed(() => {
   return {
-    mitemId: {
-      // todo
+    countingType: {
       label: '盘点类型',
       comp: 't-select',
       event: 'business',
       defaultVal: '',
+      required: true, // 设置为必填
       bind: {
         type: 'mitem',
         showTitle: false,
       },
     },
 
-    supplierId: {
+    warehouse: {
       label: '仓库',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -69,8 +69,6 @@ const opts = computed(() => {
         type: 'supplier',
         showTitle: false,
       },
-      // 添加一个用于显示星号的样式类
-      labelClass: 'required-label',
     },
     materialcode: {
       // todo
@@ -113,6 +111,16 @@ const props = defineProps({
     type: String,
   },
 });
+
+const onInput = async () => {
+  // const isValid = await validateQuery();
+  // if (isValid) {
+  //   // 如果校验通过，继续处理数据
+  // } else {
+  //   console.log('校验失败');
+  // }
+};
+// const validateQuery = () => {};
 </script>
 
 <style scoped>

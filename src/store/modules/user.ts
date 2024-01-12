@@ -78,7 +78,7 @@ export const useUserStore = defineStore('user', {
       // };
       // const res = await mockRemoteUserInfo();
       let orgId = fw.getOrgId();
-      if (!orgId || !res.orgList.some((org) => org.id === orgId)) {
+      if (!orgId || !res.orgList?.some((org) => org.id === orgId)) {
         fw.setOrgId(res.defaultOrgId);
         orgId = res.defaultOrgId;
       }
@@ -93,7 +93,7 @@ export const useUserStore = defineStore('user', {
         timeModified: res.timeModified,
         timeLastPasswordChanged: res.timeLastPasswordChanged,
         orgId,
-        orgs: res.orgList,
+        orgs: res.orgList || [],
         favorites: resFavorites,
       } as OrgUser;
 

@@ -52,21 +52,18 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import ReceiptDetails from './receiptDetails.vue';
-// import { Icon } from 'tdesign-icons-vue';
+
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
-// const formRef = ref(null);
 const formTitle = ref('');
 const dataTotal = ref(0);
 const tabValue = ref('');
 const RPDRoutingVisible = ref(false); //* 弹窗默认关闭
 const selectedReceiptRowKeys = ref([]);
 const tableDataReceipt = ref([]); //* 表格数据
-// const formRef1 = ref(null);
-
 const someData1 = ref({}); // 用来存储接口调用结果
-const someData2 = ref([]); // 用来存储接口调用结果
-const someData3 = ref([]); // 用来存储接口调用结果
+const someData2 = ref([]);
+const someData3 = ref([]);
 
 //* 组件配置  --查询界面选择
 const optsReceipt = computed(() => {
@@ -160,17 +157,25 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const onEditRowClick = async (value: any) => {
-  formTitle.value = '查看单据管理';
+  formTitle.value = '查看单据';
   RPDRoutingVisible.value = true;
   const { billNo } = value.row;
-  const result1 = await api.billManagement.getHeader({ billNo });
-  someData1.value = result1;
 
-  const result2 = await api.billManagement.getDtl({ billNo });
-  someData2.value = result2;
+  try {
+    // 同时发送三个异步请求
+    const [headerResult, dtlResult, labelResult] = await Promise.all([
+      api.billManagement.getHeader({ billNo }),
+      api.billManagement.getDtl({ billNo }),
+      api.billManagement.getLabel({ billNo }),
+    ]);
 
-  const result3 = await api.billManagement.getLabel({ billNo });
-  someData3.value = result3;
+    // 更新响应式数据
+    someData1.value = headerResult;
+    someData2.value = dtlResult;
+    someData3.value = labelResult;
+  } catch (error) {
+    console.error('获取单据数据失败:', error);
+  }
 };
 
 //* 初始渲染

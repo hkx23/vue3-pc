@@ -11,9 +11,18 @@
         <t-button v-if="showCollapsedButton" variant="text" shape="square" @click="onChangeCollapsed">
           <template #icon><t-icon name="view-list" /></template>
         </t-button>
-        <t-dropdown :options="orgOptions" :max-column-width="250" @click="onClickOrg">
-          <t-button variant="text"> {{ !collapsed ? orgName : '' }}</t-button>
-        </t-dropdown>
+        <template v-if="!collapsed">
+          <t-dropdown :options="orgOptions" :max-column-width="250" @click="onClickOrg">
+            <t-button variant="text" shape="square">
+              <template #icon><img width="16" src="/images/assets-factory.svg" /></template>
+            </t-button>
+          </t-dropdown>
+          <t-tooltip :content="orgName" theme="light">
+            <div class="org-down">
+              {{ orgName }}
+            </div>
+          </t-tooltip>
+        </template>
       </template>
     </t-menu>
     <div :class="`${prefix}-side-nav-placeholder${collapsed ? '-hidden' : ''}`"></div>
@@ -173,7 +182,20 @@ const onChangeCollapsed = () => {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.org-down {
+  width: 130px;
+  display: inline-block;
+  position: relative;
+  left: 8px;
+  top: 7px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  color: var(--td-text-color-secondary);
+}
+</style>
 <!-- eslint-disable-next-line vue-scoped-css/enforce-style-type -->
 <style lang="less">
 .@{starter-prefix}-sidebar-layout{
