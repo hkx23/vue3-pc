@@ -533,8 +533,9 @@ const onGetAllTabData = async () => {
 // 左侧列表点击事件
 const selectedListItemIndex = ref(0);
 const onClickList = async (row: any, index?: any) => {
+  console.log('🚀 ~ file: index.vue:536 ~ onClickList ~ row:', row);
   selectedListItemIndex.value = index;
-  paramTabCode.value = row.paramCode; // 用于发获取全部数据请求
+  paramTabCode.value = row.objectCode; // 用于发获取全部数据请求
   const resData = await api.objectPropertyCategory.getCategory({ objectCode: row.objectCode }); // 获取表单下拉框数据
   selsectData.list = resData.list; // 上面下拉框数据赋值
   const resultData = await api.objectPropertyCategory.getParamGroup();
@@ -543,7 +544,7 @@ const onClickList = async (row: any, index?: any) => {
   tabValue.value = 0;
   listParamCode.value = row.paramCode; // 保存当前点击的 code
   listParamID.value = row.id; // 保存当前点击的 ID
-  const rules = await api.objectPropertyCategory.getObjectCategory({ objectCode: row.paramCode });
+  const rules = await api.objectPropertyCategory.getObjectCategory({ objectCode: row.objectCode });
   edabTopDataArr.value = rules.list; // 获取顶部列表
 };
 

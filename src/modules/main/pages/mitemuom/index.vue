@@ -1,3 +1,4 @@
+<!-- 计量单位 -->
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
@@ -13,6 +14,8 @@
         row-key="id"
         :fixed-height="true"
         :total="total"
+        select-on-row-click
+        :selected-row-keys="selectedRowKeys"
         @refresh="fetchData"
         @select-change="rehandleSelectChange"
       >
@@ -29,7 +32,7 @@
             <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
 
             <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirm">
-              <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
+              <t-link theme="primary" @click="onDeleteRow">{{ t('common.button.delete') }}</t-link>
             </t-popconfirm>
           </t-space>
         </template>
@@ -97,29 +100,30 @@ const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清�
 const showDialog = ref(false); // 控制新增模态框开关
 const total = ref(null); // 总页数
 const tableData = ref([]); // 表格渲染数据
-const selectedRowKeys = ref([]); // 删除计量单位 id
 const formData = ref({ uomName: '', uom: '', id: null }); // 新增表单数据绑定
 const queryData = ref(''); // 精确查询数据
 const diaTitle = ref(''); // 模态框文字
 const isPage = ref({ pageNum: null, pageSize: null });
 const isdisables = ref(false);
+const selectedRowKeys = ref([]); // 删除计量单位 id
 // 渲染函数
 onMounted(() => {
   onGetMiteMuom();
 });
 
 // 查询按钮
-const onRefresh = () => {
+const onRefresh = async () => {
   if (queryData.value) {
     pageUI.value.page = 1;
-    onGetMiteMuom();
+    await onGetMiteMuom();
   }
 };
 
 // 点击查询按钮
-const conditionEnter = (data: any) => {
+const conditionEnter = async (data: any) => {
   queryData.value = data.queryData;
-  onRefresh();
+  await onRefresh();
+  selectedRowKeys.value = [];
 };
 const opts = computed(() => {
   return {
@@ -141,11 +145,11 @@ const onReset = () => {
 // 表单刷新按钮
 const fetchData = () => {
   onGetMiteMuom();
+  selectedRowKeys.value = [];
 };
 
 // 表单清除
 const onDialogClose = () => {
-  isdisables.value = false;
   formRef.value.reset({ type: 'empty' });
 };
 
@@ -171,7 +175,6 @@ const onSubmit = async ({ validateResult, firstError }) => {
 const onSecondaryReset = () => {
   MessagePlugin.success('取消编辑');
   showDialog.value = false;
-  isdisables.value = false; // 取消编辑符号禁用
   formRef.value.reset({ type: 'empty' });
 };
 
@@ -269,6 +272,7 @@ const onAddMiteMuom = async () => {
 
 // 点击新增逻辑
 const onAddMeasuring = () => {
+  isdisables.value = false;
   queryData.value = '';
   diaTitle.value = '计量单位新增';
   showDialog.value = true;
@@ -302,8 +306,8 @@ const onDeleteMiteMuom = async () => {
 };
 
 // 单个数据实现删除逻辑
-const onDeleteRow = async (row: TableRow) => {
-  selectedRowKeys.value.push(row.id);
+const onDeleteRow = async () => {
+  selectedRowKeys.value = [];
 };
 const submitForm = () => {
   formRef.value.submit();
@@ -329,7 +333,7 @@ const rehandleSelectChange = async (value: any[]) => {
 const onDelConfirms = async () => {
   if (selectedRowKeys.value.length >= 1) {
     await onDeleteMiteMuom();
-    if (tableData.value.length <= 1 && isPage.value.pageNum > 1) {
+    if (selectedRowKeys.value.length >= tableData.value.length && isPage.value.pageNum > 1) {
       pageUI.value.page--;
     }
     await onGetMiteMuom();
