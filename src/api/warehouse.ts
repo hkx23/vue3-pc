@@ -826,7 +826,14 @@ export interface ResultLocationVO {
 
 /** 领料制单提交模型 */
 export interface MaterialRequisitionDTO {
+  /** 作废的单据id集合 */
   cancelledIds?: string[];
+  /** 新增界面-获取明细 */
+  moScheCodeLit?: string[];
+  warehouseId?: string;
+  toWarehouseId?: string;
+  /** 新增界面-备注 */
+  remark?: string;
 }
 
 /** 货位 */
@@ -1008,6 +1015,62 @@ export interface Result {
   message?: string;
   /** 响应数据 */
   data?: object | null;
+}
+
+export interface OMBillNoCreate {
+  businessCategoryId?: string;
+  /** 物料标签 */
+  labelNo?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+}
+
+/** 物料 */
+export type Mitem = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uom?: string;
+  /**
+   * 保质期天数
+   * @format int32
+   */
+  shelfLifeDays?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMitem {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 物料 */
+  data?: Mitem;
 }
 
 export interface MitemForwardTraceSearch {
@@ -1747,6 +1810,14 @@ export interface BillManagementVO {
    * @format date-time
    */
   timeModified?: string;
+  /** 原因 */
+  reason?: string;
+  /** 科目 */
+  account?: string;
+  /** 费用部门 */
+  costDepartment?: string;
+  /** 标签条码 */
+  scanBarcode?: string;
 }
 
 /** 响应数据 */
@@ -1779,6 +1850,19 @@ export interface ResultLong {
   /** 提示信息 */
   message?: string;
   data?: string;
+}
+
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
 }
 
 /** 通用响应类 */
@@ -2019,10 +2103,10 @@ export type PurchaseOrderDtlVO = {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量 */
+  waitScanQty?: number;
 } | null;
 
 /** 通用响应类 */
@@ -2416,10 +2500,10 @@ export type DeliveryDtlVO = {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量 */
+  waitScanQty?: number;
 } | null;
 
 /** 通用响应类 */
@@ -2488,6 +2572,19 @@ export interface ResultListBusinessCategory {
   data?: BusinessCategory[] | null;
 }
 
+/** 通用响应类 */
+export interface ResultListBillManagementVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BillManagementVO[] | null;
+}
+
 /** 响应数据 */
 export type PagingDataWipCompletionBillVO = {
   list?: WipCompletionBillVO[];
@@ -2554,6 +2651,21 @@ export const api = {
      */
     saveByWipCompletionLabel: (data: WipCompletionLabelDTO) =>
       http.request<ResultLong['data']>(`/api/warehouse/billInfo/saveByWipCompletionLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 单据信息表
+     * @name GetOmBillNo
+     * @summary 根据类型获取或生成单据号
+     * @request POST:/billInfo/getOMBillNo
+     * @secure
+     */
+    getOmBillNo: (data: OMBillNoCreate) =>
+      http.request<ResultString['data']>(`/api/warehouse/billInfo/getOMBillNo`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2908,7 +3020,7 @@ export const api = {
      *
      * @tags 领料制单
      * @name MaterialRequisitionCanceled
-     * @summary 领料单作废
+     * @summary 主界面-领料单作废
      * @request POST:/materialRequisition/materialRequisitionCanceled
      * @secure
      */
@@ -2923,7 +3035,7 @@ export const api = {
      *
      * @tags 领料制单
      * @name Tree
-     * @summary 获取领料单明细
+     * @summary 主界面-获取领料单明细
      * @request GET:/materialRequisition/tree
      * @secure
      */
@@ -2937,8 +3049,26 @@ export const api = {
      * No description
      *
      * @tags 领料制单
+     * @name GetReqDtls
+     * @summary 新增领料单界面-获取领料明细
+     * @request GET:/materialRequisition/getReqDtls
+     * @secure
+     */
+    getReqDtls: (query: {
+      /** 领料制单提交模型 */
+      model: MaterialRequisitionDTO;
+    }) =>
+      http.request<ResultListMaterialRequisitionDtlVO['data']>(`/api/warehouse/materialRequisition/getReqDtls`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料制单
      * @name GetMaterialRequisitionList
-     * @summary 获取领料制单列表
+     * @summary 主界面-获取领料制单列表
      * @request GET:/materialRequisition/getMaterialRequisitionList
      * @secure
      */
@@ -3097,6 +3227,21 @@ export const api = {
       }),
   },
   label: {
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetMitemOmInfo
+     * @summary 物料基础信息
+     * @request POST:/label/getMitemOMInfo
+     * @secure
+     */
+    getMitemOmInfo: (data: OMBillNoCreate) =>
+      http.request<ResultMitem['data']>(`/api/warehouse/label/getMitemOMInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
@@ -3631,6 +3776,51 @@ export const api = {
       http.request<ResultPagingDataBillManagementVO['data']>(`/api/warehouse/billManagement/getList`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 单据管理
+     * @name GetLabel
+     * @summary 查询标签明细数据
+     * @request GET:/billManagement/getLabel
+     * @secure
+     */
+    getLabel: (query: { billNo: string }) =>
+      http.request<ResultListBillManagementVO['data']>(`/api/warehouse/billManagement/getLabel`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 单据管理
+     * @name GetHeader
+     * @summary 查询明细界面头部数据
+     * @request GET:/billManagement/getHeader
+     * @secure
+     */
+    getHeader: (query: { billNo: string }) =>
+      http.request<ResultListBillManagementVO['data']>(`/api/warehouse/billManagement/getHeader`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 单据管理
+     * @name GetDtl
+     * @summary 查询单据明细数据
+     * @request GET:/billManagement/getDtl
+     * @secure
+     */
+    getDtl: (query: { billNo: string }) =>
+      http.request<ResultListBillManagementVO['data']>(`/api/warehouse/billManagement/getDtl`, {
+        method: 'GET',
+        params: query,
       }),
   },
   purchaseOrderDtl: {

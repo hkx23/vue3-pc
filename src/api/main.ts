@@ -1853,6 +1853,8 @@ export interface ProcessVO {
   processDesc?: string;
   /** 工序别名 */
   processAlias?: string;
+  /** 工序类型 */
+  processCategory?: string;
   /** 创建人名称 */
   creatorName?: string;
   /** 修改人名称 */
@@ -1904,6 +1906,8 @@ export type Process = {
   processDesc?: string;
   /** 工序别名 */
   processAlias?: string;
+  /** 工序类型 */
+  processCategory?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3537,12 +3541,12 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductName?: string;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isRawName?: string;
+  isProductName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
 }
 
@@ -3682,8 +3686,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7458,10 +7462,9 @@ export const api = {
      * @request POST:/stressTest/selectAndInsertWipLog
      * @secure
      */
-    selectAndInsertWipLog: (data: string[]) =>
+    selectAndInsertWipLog: () =>
       http.request<ResultMsgSendLog['data']>(`/api/main/stressTest/selectAndInsertWipLog`, {
         method: 'POST',
-        body: data as any,
       }),
 
     /**
@@ -9135,7 +9138,7 @@ export const api = {
      * @tags 物料
      * @name GetListByMitemCategory
      * @summary 根据物料分类获取物料
-     * @request GET:/mitem/
+     * @request GET:/mitem/getListByMitemCategory
      * @secure
      */
     getListByMitemCategory: (query: {
@@ -9146,7 +9149,7 @@ export const api = {
       /** @format int32 */
       pagesize: number;
     }) =>
-      http.request<ResultObject['data']>(`/api/main/mitem/`, {
+      http.request<ResultObject['data']>(`/api/main/mitem/getListByMitemCategory`, {
         method: 'GET',
         params: query,
       }),

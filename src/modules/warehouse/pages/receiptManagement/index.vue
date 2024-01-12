@@ -26,27 +26,21 @@
           </t-space>
         </template>
 
-        <!-- 状态 -->
-        <!-- <template #state="{ row }">
-            <span v-if="row.state == 1">已创建</span>
-            <span v-if="row.state == 2">盘点中</span>
-            <span v-if="row.state == 3">已完成</span>
-            <span v-if="row.state == 4">已关闭</span>
-            <span v-else>已作废</span>
-          </template> -->
-        <!-- <template #op="row">
-            <t-space>
-              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(row)">编辑</t-link>
-              <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onStateRowClick(row)">
-                <t-link theme="primary"> 删除 </t-link>
-              </t-popconfirm>
-            </t-space>
-          </template> -->
+        <!-- 定义序号列的插槽 -->
+        <template #indexSlot="{ rowIndex }">
+          {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
   <!-- 单据详情组件 -->
-  <receipt-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" />
+  <receipt-details
+    v-model:visible="RPDRoutingVisible"
+    :form-title="formTitle"
+    :some-data1="someData1"
+    :some-data2="someData2"
+    :some-data3="someData3"
+  />
 </template>
 
 <script setup lang="ts">
@@ -69,6 +63,11 @@ const tabValue = ref('');
 const RPDRoutingVisible = ref(false); //* 弹窗默认关闭
 const selectedReceiptRowKeys = ref([]);
 const tableDataReceipt = ref([]); //* 表格数据
+// const formRef1 = ref(null);
+
+const someData1 = ref({}); // 用来存储接口调用结果
+const someData2 = ref([]); // 用来存储接口调用结果
+const someData3 = ref([]); // 用来存储接口调用结果
 
 //* 组件配置  --查询界面选择
 const optsReceipt = computed(() => {
@@ -116,7 +115,7 @@ const optsReceipt = computed(() => {
     timeCreate: {
       label: '创建时间',
       comp: 't-date-range-picker',
-      defaultVal: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+      defaultVal: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
       bind: {
         enableTimePicker: false,
         format: 'YYYY-MM-DD',
@@ -127,7 +126,7 @@ const optsReceipt = computed(() => {
 
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 85 },
+  { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
   { title: '事物类型', colKey: 'categoryName', width: 85 },
   { title: '单据号', width: 85, colKey: 'billNo' },
   { title: '关联单号', width: 85, colKey: 'sourceBillNo' },
@@ -162,12 +161,17 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const onEditRowClick = async (value: any) => {
-  console.log('🚀 ~ onEditRowClick ~ value:', value);
   formTitle.value = '查看单据管理';
   RPDRoutingVisible.value = true;
   const { billNo } = value.row;
-  const result = await api.billManagement.getList({ billNo });
-  console.log('🚀 ~ onEditRowClick ~ result:', result);
+  const result1 = await api.billManagement.getHeader({ billNo });
+  someData1.value = result1;
+
+  const result2 = await api.billManagement.getDtl({ billNo });
+  someData2.value = result2;
+  const result3 = await api.billManagement.getLabel({ billNo });
+  console.log('🚀 ~ onEditRowClick ~ result3:', result3);
+  someData2.value = result3;
 };
 
 //* 初始渲染
@@ -184,7 +188,6 @@ const fetchTable = async () => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
-  console.log('🚀 ~ fetchTable ~ data:', data);
   tableDataReceipt.value = data.list;
   dataTotal.value = data.total;
   setLoading(false);
@@ -198,8 +201,8 @@ const tabRefresh = async () => {
 //* 查询
 const onInput = async (data: any) => {
   const { categoryName, mitemCode, supplierName, billNo, timeCreate } = data;
-  // 提取categoryName数组中每个元素的label，不再合并成一个字符串
-  const businessCategoryIds = Array.isArray(categoryName) ? categoryName.map((item) => item.label) : [];
+  // 提取categoryName数组中每个元素的label，合并成一个数组
+  const businessCategoryIds = Array.isArray(categoryName) ? categoryName.map((item) => item.value) : [];
   if (!data.value) {
     const result = await api.billManagement.getList({
       pageNum: pageUI.value.page,

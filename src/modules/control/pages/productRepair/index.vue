@@ -1,5 +1,6 @@
 <template>
   <cmp-container :full="true">
+    <bcmp-workstation-info />
     <cmp-card class="not-full-tab">
       <t-tabs :model-value="selectTabValue" @change="tabsChange">
         <t-tab-panel value="tab1" label="产品维修台账" :destroy-on-hide="false">
@@ -163,6 +164,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api as apiControl, WipRepairDtlVO, WipRepairIds, WipRepairVO } from '@/api/control';
 import { api as apiMain } from '@/api/main';
+import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
 // import { api as apiMain } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';

@@ -21,12 +21,9 @@
       ></t-col>
       <t-col :span="6">
         <t-form-item :label="t('business.main.mitemCategoryCode')">
-          <bcmp-select-business
-            v-model="formData.mitemCategoryId"
-            type="mitemCategory"
-            :show-title="false"
-          /> </t-form-item
-      ></t-col>
+          <bcmp-select-business v-model="formData.mitemCategoryId" type="mitemCategory" :show-title="false" />
+        </t-form-item>
+      </t-col>
       <t-col :span="6">
         <t-form-item :label="t('business.main.uom')">
           <t-select v-model="formData.uom" :options="uomOptions" clearable /> </t-form-item
@@ -41,22 +38,18 @@
       ></t-col>
       <t-col :span="6">
         <t-form-item :label="t('business.main.defaultWarehouse')">
-          <bcmp-select-business
-            v-model="formData.warehouseId"
-            label-field="warehouseCode"
-            type="warehouse"
-            :show-title="false"
-            @selection-change="onWarehouseChange"
-          /> </t-form-item
+          <bcmp-select-business v-model="formData.warehouseId" type="warehouse" :show-title="false" /> </t-form-item
       ></t-col>
       <t-col :span="6">
         <t-form-item :label="t('business.main.warehouseName')">
-          <t-input v-model="formData.warehouseName" disabled placeholder="" /> </t-form-item
-      ></t-col>
+          <t-input v-model="formData.warehouseName" disabled placeholder="" />
+        </t-form-item>
+      </t-col>
       <t-col :span="6">
         <t-form-item :label="t('business.main.shelfLifeDays')">
-          <t-input-number v-model="formData.shelfLifeDays" /> </t-form-item
-      ></t-col>
+          <t-input-number v-model="formData.shelfLifeDays" />
+        </t-form-item>
+      </t-col>
       <t-col :span="6">
         <t-form-item>
           <t-space :size="16">
@@ -70,6 +63,7 @@
 </template>
 
 <script lang="ts">
+import _ from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
@@ -145,9 +139,11 @@ export default {
     };
 
     const onWarehouseChange = (value: any) => {
-      formData.value.warehouseId = value.id;
-      formData.value.warehouseCode = value.warehouseCode;
-      formData.value.warehouseName = value.warehouseName;
+      if (!_.isEmpty(value)) {
+        formData.value.warehouseId = value.id;
+        formData.value.warehouseCode = value.warehouseCode;
+        formData.value.warehouseName = value.warehouseName;
+      }
     };
 
     const getUom = async () => {
@@ -158,8 +154,6 @@ export default {
         dataUom.list.forEach((n) => uomOptions.value.push({ label: n.uomName, value: n.uom }));
       } catch (e) {
         console.log(e);
-      } finally {
-        console.log('11111');
       }
     };
 
