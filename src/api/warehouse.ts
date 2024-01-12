@@ -353,6 +353,11 @@ export interface TransferHeadVO {
   userTransferId?: string;
   userTransferName?: string;
   displayTransferName?: string;
+  /**
+   * 过帐时间
+   * @format date-time
+   */
+  datetimeTransfer?: string;
   /** 数量 */
   qty?: number;
   /** 工单 */
@@ -679,8 +684,6 @@ export interface LabelVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  /** 接收数量 */
-  receivedQty?: number;
   /**
    * 已打印数量
    * @format int32
@@ -2207,10 +2210,10 @@ export type PurchaseOrderDtlVO = {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量 */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -2500,10 +2503,10 @@ export type DeliveryDtlVO = {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量 */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 } | null;
 
 /** 通用响应类 */

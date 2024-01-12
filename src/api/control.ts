@@ -602,8 +602,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -951,8 +951,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -1657,9 +1657,9 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   datetimeScheStr?: string;
@@ -1708,10 +1708,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -2887,9 +2887,9 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   stateName?: string;
@@ -3001,9 +3001,9 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   stateName?: string;
@@ -3274,8 +3274,8 @@ export interface ResultPagingDataBarcodePkgVO {
   data?: PagingDataBarcodePkgVO;
 }
 
-/** 包装条码表 */
-export type BarcodePkg = {
+/** 响应数据 */
+export type PkgExtendVO = {
   id?: string;
   /**
    * 创建时间
@@ -3307,10 +3307,11 @@ export type BarcodePkg = {
   /** 数量 */
   qty?: number;
   status?: string;
+  moCode?: string;
 } | null;
 
 /** 通用响应类 */
-export interface ResultBarcodePkg {
+export interface ResultPkgExtendVO {
   /**
    * 响应代码
    * @format int32
@@ -3318,8 +3319,8 @@ export interface ResultBarcodePkg {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 包装条码表 */
-  data?: BarcodePkg;
+  /** 响应数据 */
+  data?: PkgExtendVO;
 }
 
 /** 原子模型定义-Context上下文定义 */
@@ -3583,8 +3584,6 @@ export type WipVO = {
    * @format double
    */
   achievingRateOfToday?: number;
-  /** @format int32 */
-  sumwip?: number;
 } | null;
 
 /** 显示包装规则明细列表 */
@@ -5377,7 +5376,7 @@ export const api = {
      * @secure
      */
     getByBarcode: (query: { barcode: string }) =>
-      http.request<ResultBarcodePkg['data']>(`/api/control/barcodePkg/getByBarcode`, {
+      http.request<ResultPkgExtendVO['data']>(`/api/control/barcodePkg/getByBarcode`, {
         method: 'POST',
         params: query,
       }),
