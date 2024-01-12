@@ -562,8 +562,6 @@ const onClickRemoveHistoryFile = async (ids?: string[]) => {
 const onClickDownloadHistoryFile = (task: DlTask) => {
   if (task.status === 'DOWNLOADED') {
     window.open(task.jsonConfig);
-  } else {
-    api.dlTask.downloadFile(task);
   }
 };
 
