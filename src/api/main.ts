@@ -28,8 +28,11 @@ export interface Graph {
   edges?: GraphEdge[];
 }
 
-export interface GraphBoom {
+export interface GraphBom {
   id?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  categoryDesc?: string;
   keyPart?: boolean;
 }
 
@@ -69,7 +72,7 @@ export interface GraphProperties {
   /** @format int32 */
   processStep?: number;
   processType?: string;
-  boomList?: GraphBoom[];
+  bomList?: GraphBom[];
   backgroundColor?: string;
 }
 
@@ -3556,14 +3559,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
-  isBatchName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
   isRawName?: string;
-  isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isState?: boolean;
+  isProductName?: string;
   isProductChecked?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3702,8 +3705,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8809,6 +8812,21 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultMoSchedule['data']>(`/api/main/moSchedule/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddStockInQty
+     * @summary 加入入库数量
+     * @request POST:/moSchedule/addStockInQty
+     * @secure
+     */
+    addStockInQty: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addStockInQty`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   mo: {

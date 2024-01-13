@@ -144,26 +144,22 @@
               :input-props="{ autoWidth: false, readonly: true }"
             />
           </t-form-item>
-          <t-form-item :label="t('craftRoute.processBoom')" name="processBoom">
-            <t-button theme="primary" variant="text" @click="showBoom">{{ t('common.button.edit') }}</t-button>
+          <t-form-item :label="t('craftRoute.processBom')" name="processBom">
+            <t-button theme="primary" variant="text" @click="showBom">{{ t('common.button.edit') }}</t-button>
           </t-form-item>
         </t-form>
       </t-drawer>
-      <t-dialog v-model:visible="boomVisible" :header="t('craftRoute.processBoom')" width="60%" @confirm="confirmBoom">
+      <t-dialog v-model:visible="bomVisible" :header="t('craftRoute.processBom')" width="60%" @confirm="confirmBom">
         <t-row>
           <t-col :span="3" style="padding-right: 5px">
-            <t-input
-              v-model="boomSearchKeyword"
-              :placeholder="t('common.placeholder.search')"
-              @enter="getMitemCategory"
-            >
+            <t-input v-model="bomSearchKeyword" :placeholder="t('common.placeholder.search')" @enter="getMitemCategory">
               <template #suffixIcon>
                 <search-icon :style="{ cursor: 'pointer' }" @click="getMitemCategory" />
               </template>
             </t-input>
             <t-table
               row-key="id"
-              :data="boomData.list"
+              :data="bomData.list"
               :columns="categoryColumn"
               :bordered="false"
               :show-header="false"
@@ -173,26 +169,26 @@
               table-layout="fixed"
             >
               <template #op="{ row }">
-                <t-button variant="text" shape="square" @click="addBoom(row)"><add-icon /></t-button>
+                <t-button variant="text" shape="square" @click="addBom(row)"><add-icon /></t-button>
               </template>
             </t-table>
           </t-col>
           <t-col :span="9">
             <cmp-table
-              v-model:selected-row-keys="boomSelectKeys"
+              v-model:selected-row-keys="bomSelectKeys"
               row-key="id"
-              :table-column="boomColumn"
-              :table-data="boomList"
+              :table-column="bomColumn"
+              :table-data="bomList"
               :show-pagination="false"
             >
               <template #button>
-                <t-button theme="default" @click="batchDeleteBoom">{{ t('common.button.batchDelete') }}</t-button>
+                <t-button theme="default" @click="batchDeleteBom">{{ t('common.button.batchDelete') }}</t-button>
               </template>
               <template #isKeyPart="{ row }">
                 <t-switch :value="row.isKeyPart" @change="keyPartChange($event, row.id)" />
               </template>
               <template #op="{ row }">
-                <t-button variant="text" theme="primary" @click="deleteBoom(row)">{{
+                <t-button variant="text" theme="primary" @click="deleteBom(row)">{{
                   t('common.button.delete')
                 }}</t-button>
               </template>
@@ -468,7 +464,12 @@ onMounted(() => {
   lf.on('node:click', ({ data }) => {
     if (data.type === 'process') {
       selectedProcess = data;
-      propertiesForm = reactive(data.properties);
+      propertiesForm.processStep = data.properties.processStep;
+      propertiesForm.processId = data.properties.processId;
+      propertiesForm.processName = data.properties.processName;
+      propertiesForm.processType = data.properties.processType;
+      propertiesForm.backgroundColor = data.properties.backgroundColor;
+      propertiesForm.bomList = data.properties.bomList ? data.properties.bomList : [];
       propertiesVisible.value = true;
     }
   });
@@ -498,7 +499,7 @@ const dragInNode = (type: string, text: string) => {
     processName: text,
     // processType: type === 'start' ? 'S' : type === 'end' ? 'E' : 'P',
     backgroundColor: '#ffffff',
-    boomList: [],
+    bomList: [],
   };
   if (type === 'process') {
     properties.processStep = globalProcessStep;
@@ -533,13 +534,13 @@ const propertiesRules: FormRules<Data> = {
     { validator: (val: any) => isProcessNotRepeat(val), message: t('craftRoute.processNotRepeat') },
   ],
 };
-let propertiesForm = reactive({
+const propertiesForm = reactive({
   processStep: 0,
   processId: null,
   processName: null,
   processType: 'P',
   backgroundColor: '#ffffff',
-  boomList: [],
+  bomList: [],
 });
 const isStepNotRepeat = (val: any) => {
   const { nodes } = lf.getGraphRawData();
@@ -575,8 +576,8 @@ const processConfirm = () => {
   });
 };
 // #endregion
-// #region 工序boom
-const boomVisible = ref(false);
+// #region 工序bom
+const bomVisible = ref(false);
 const categoryColumn: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'categoryCode', align: 'left', width: 40 },
   { colKey: 'categoryName', align: 'left', width: 40 },
@@ -594,65 +595,65 @@ const categoryPagination = reactive({
     getMitemCategory();
   },
 });
-const boomColumn = [
+const bomColumn = [
   { colKey: 'row-select', type: 'multiple' },
   { colKey: 'categoryCode', title: t('craftRoute.categoryCode'), align: 'center' },
   { colKey: 'categoryName', title: t('craftRoute.categoryName'), align: 'center' },
   { colKey: 'isKeyPart', title: t('craftRoute.isKeyPart'), align: 'center', width: 140 },
   { colKey: 'op', title: t('common.button.operation'), align: 'center' },
 ];
-const boomSearchKeyword = ref();
-const boomData = reactive({
+const bomSearchKeyword = ref();
+const bomData = reactive({
   list: [],
   total: 0,
 });
-const boomList = ref([]);
+const bomList = ref([]);
 const getMitemCategory = () => {
   apiMain.mitemCategory
     .search({
       pageNum: categoryPagination.current,
       pageSize: categoryPagination.pageSize,
-      keyword: boomSearchKeyword.value,
+      keyword: bomSearchKeyword.value,
     })
     .then((data) => {
-      boomData.list = data.list;
-      boomData.total = data.total;
+      bomData.list = data.list;
+      bomData.total = data.total;
       categoryPagination.total = data.total;
     });
 };
-const boomSelectKeys = ref([]);
-const showBoom = () => {
+const bomSelectKeys = ref([]);
+const showBom = () => {
   getMitemCategory();
   // 要用clone，直接复制会把对象路径赋值过去
-  boomList.value = clone(propertiesForm.boomList);
-  boomVisible.value = true;
+  bomList.value = clone(propertiesForm.bomList);
+  bomVisible.value = true;
 };
-const addBoom = (row: any) => {
-  const index = findIndex(boomList.value, ['id', row.id]);
+const addBom = (row: any) => {
+  const index = findIndex(bomList.value, ['id', row.id]);
   if (index > -1) {
     MessagePlugin.error(t('craftRoute.typeNotRepeat'));
   } else {
     row.isKeyPart = true;
-    boomList.value.push(row);
+    bomList.value.push(row);
   }
 };
-const deleteBoom = (row: any) => {
-  remove(boomList.value, (o) => o.id === row.id);
+const deleteBom = (row: any) => {
+  remove(bomList.value, (o) => o.id === row.id);
 };
-const batchDeleteBoom = () => {
-  remove(boomList.value, (o) => boomSelectKeys.value.indexOf(o.id) > -1);
-  boomSelectKeys.value = [];
+const batchDeleteBom = () => {
+  remove(bomList.value, (o) => bomSelectKeys.value.indexOf(o.id) > -1);
+  bomSelectKeys.value = [];
 };
 // 数组是动态获取的，直接v-model不会改变源数据，需要用change的方法处理源数据
 const keyPartChange = ($event: any, id: any) => {
-  const row = find(boomList.value, (o) => o.id === id);
+  const row = find(bomList.value, (o) => o.id === id);
   if (row) {
     row.isKeyPart = $event;
   }
 };
-const confirmBoom = () => {
-  propertiesForm.boomList = clone(boomList.value);
-  boomVisible.value = false;
+const confirmBom = () => {
+  propertiesForm.bomList = clone(bomList.value);
+  bomVisible.value = false;
 };
 // #endregion
 </script>
