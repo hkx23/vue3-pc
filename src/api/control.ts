@@ -26,6 +26,7 @@ export interface WipCompletionLabelDTO {
   warehouseId?: string;
   /** 仓库编码 */
   warehouseCode?: string;
+  moScheId?: string;
   /** 工单编码 */
   moCode?: string;
   workshopId?: string;
@@ -602,8 +603,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -951,8 +952,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -1657,15 +1658,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopName?: string;
-  workshopCode?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1708,9 +1709,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -2887,16 +2888,16 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   isState?: boolean;
 }
 
@@ -3001,14 +3002,14 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopCode?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   isState?: boolean;
   defectCodeStr?: string;
 }
@@ -3250,8 +3251,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3274,8 +3275,8 @@ export interface ResultPagingDataBarcodePkgVO {
   data?: PagingDataBarcodePkgVO;
 }
 
-/** 包装条码表 */
-export type BarcodePkg = {
+/** 响应数据 */
+export type PkgExtendVO = {
   id?: string;
   /**
    * 创建时间
@@ -3307,10 +3308,11 @@ export type BarcodePkg = {
   /** 数量 */
   qty?: number;
   status?: string;
+  moCode?: string;
 } | null;
 
 /** 通用响应类 */
-export interface ResultBarcodePkg {
+export interface ResultPkgExtendVO {
   /**
    * 响应代码
    * @format int32
@@ -3318,8 +3320,8 @@ export interface ResultBarcodePkg {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 包装条码表 */
-  data?: BarcodePkg;
+  /** 响应数据 */
+  data?: PkgExtendVO;
 }
 
 /** 原子模型定义-Context上下文定义 */
@@ -3583,8 +3585,6 @@ export type WipVO = {
    * @format double
    */
   achievingRateOfToday?: number;
-  /** @format int32 */
-  sumwip?: number;
 } | null;
 
 /** 显示包装规则明细列表 */
@@ -5377,7 +5377,7 @@ export const api = {
      * @secure
      */
     getByBarcode: (query: { barcode: string }) =>
-      http.request<ResultBarcodePkg['data']>(`/api/control/barcodePkg/getByBarcode`, {
+      http.request<ResultPkgExtendVO['data']>(`/api/control/barcodePkg/getByBarcode`, {
         method: 'POST',
         params: query,
       }),

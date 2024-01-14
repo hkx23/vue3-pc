@@ -28,8 +28,11 @@ export interface Graph {
   edges?: GraphEdge[];
 }
 
-export interface GraphBoom {
+export interface GraphBom {
   id?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  categoryDesc?: string;
   keyPart?: boolean;
 }
 
@@ -69,7 +72,7 @@ export interface GraphProperties {
   /** @format int32 */
   processStep?: number;
   processType?: string;
-  boomList?: GraphBoom[];
+  bomList?: GraphBom[];
   backgroundColor?: string;
 }
 
@@ -685,7 +688,7 @@ export interface WorkcenterVO {
   /** 关联设备编码 */
   wcObjectCode?: string;
   /** 关联设备名称 */
-  wcObjectCodeName?: string;
+  wcObjectName?: string;
   /**
    * 顺序号
    * @format int32
@@ -789,6 +792,35 @@ export interface WorkbenchLayout {
   userId?: string;
   /** 布局内容 */
   layout?: string;
+}
+
+export interface WarehouseSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+}
+
+/** 通用响应类 */
+export interface ResultMapStringObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Record<string, object | null>;
 }
 
 /** 响应数据 */
@@ -1339,19 +1371,6 @@ export interface ResultSupplier {
   data?: Supplier;
 }
 
-/** 通用响应类 */
-export interface ResultMapStringObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: Record<string, object | null>;
-}
-
 /** 消息发送日志表 */
 export interface MsgSendLog {
   id?: string;
@@ -1859,8 +1878,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3539,14 +3558,14 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
   isProductName?: string;
+  isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   isBatchName?: string;
 }
 
@@ -3762,8 +3781,6 @@ export interface LabelVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  /** 接收数量 */
-  receivedQty?: number;
   /**
    * 已打印数量
    * @format int32
@@ -3886,6 +3903,39 @@ export interface LabelSearch {
   reason?: string;
   /** 批量ID */
   ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataLabelVO = {
+  list?: LabelVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLabelVO;
+}
+
+/** 通用响应类 */
+export interface ResultListLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: LabelVO[] | null;
 }
 
 /** 菜单收藏夹表 */
@@ -4035,6 +4085,57 @@ export interface ResultPagingDataEnterprise {
   message?: string;
   /** 响应数据 */
   data?: PagingDataEnterprise;
+}
+
+/** 系统下载任务表 */
+export type DlTask = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  userId?: string;
+  /** 功能路径 */
+  behaviorPath?: string;
+  /** 表格唯一键 */
+  tableKeyCode?: string;
+  /** 下载配置 */
+  jsonConfig?: string;
+  /** excel路径 */
+  excelPath?: string;
+  /** 状态 */
+  status?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListDlTask {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DlTask[] | null;
 }
 
 export interface DefectDealMethodSearch {
@@ -4225,8 +4326,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5495,10 +5596,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6545,6 +6646,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name GetProcessCategory
+     * @summary 获取当前工站的工序类型
+     * @request GET:/workstation/getProcessCategory
+     * @secure
+     */
+    getProcessCategory: (query: { workstationId: string }) =>
+      http.request<ResultString['data']>(`/api/main/workstation/getProcessCategory`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   workgroup: {
     /**
@@ -6830,6 +6946,20 @@ export const api = {
       }),
   },
   warehouse: {
+    /**
+     * No description
+     *
+     * @tags 仓库
+     * @name SearchList
+     * @request POST:/warehouse/searchList
+     * @secure
+     */
+    searchList: (data: WarehouseSearch) =>
+      http.request<ResultMapStringObject['data']>(`/api/main/warehouse/searchList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
@@ -8683,6 +8813,21 @@ export const api = {
       http.request<ResultMoSchedule['data']>(`/api/main/moSchedule/items/${id}`, {
         method: 'POST',
       }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddStockInQty
+     * @summary 加入入库数量
+     * @request POST:/moSchedule/addStockInQty
+     * @secure
+     */
+    addStockInQty: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addStockInQty`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   mo: {
     /**
@@ -9233,6 +9378,50 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name GetLabelManageList
+     * @summary 获取管理页标签数据
+     * @request POST:/label/getLabelManageList
+     * @secure
+     */
+    getLabelManageList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/main/label/getLabelManageList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelList
+     * @summary 获取打印页标签数据
+     * @request POST:/label/getLabelList
+     * @secure
+     */
+    getLabelList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/main/label/getLabelList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetCount
+     * @request POST:/label/getCount
+     * @secure
+     */
+    getCount: (data: string[]) =>
+      http.request<ResultListLabelVO['data']>(`/api/main/label/getCount`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name GenerateBarcode
      * @summary 生成条码
      * @request POST:/label/generateBarcode
@@ -9344,6 +9533,67 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataEnterprise['data']>(`/api/main/enterprise/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  dlTask: {
+    /**
+     * No description
+     *
+     * @tags 系统下载任务表
+     * @name GetCurrentUserFile
+     * @summary 获取当前用户对应表格文件下载历史
+     * @request POST:/dlTask/getCurrentUserFile
+     * @secure
+     */
+    getCurrentUserFile: (query: { tableKey: string; behaviorPath: string }) =>
+      http.request<ResultListDlTask['data']>(`/api/main/dlTask/getCurrentUserFile`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统下载任务表
+     * @name DownloadFile
+     * @summary 下载文件
+     * @request POST:/dlTask/downloadFile
+     * @secure
+     */
+    downloadFile: (data: DlTask) =>
+      http.request<ResultString['data']>(`/api/main/dlTask/downloadFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统下载任务表
+     * @name BatchDelete
+     * @summary 批量删除
+     * @request POST:/dlTask/batchDelete
+     * @secure
+     */
+    batchDelete: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/dlTask/batchDelete`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统下载任务表
+     * @name Add
+     * @summary 新增任务
+     * @request POST:/dlTask/add
+     * @secure
+     */
+    add: (data: DlTask) =>
+      http.request<ResultObject['data']>(`/api/main/dlTask/add`, {
         method: 'POST',
         body: data as any,
       }),

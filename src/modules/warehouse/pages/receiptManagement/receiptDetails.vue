@@ -1,6 +1,6 @@
-<!-- 盘点单维护 -->
+<!-- 单据详细维护 -->
 <template>
-  <t-dialog mode="full-screen" :footer="false">
+  <t-dialog width="80%" :footer="false" :close-on-overlay-click="false">
     <template #header>
       <t-space align="center" style="width: 100%">
         <span>{{ props.formTitle }}</span>
@@ -57,7 +57,7 @@
             </t-col>
           </t-row>
           <t-row :gutter="[32, 16]">
-            <t-col :span="3">
+            <t-col :span="6">
               <t-form-item label="创建时间：" name="timeCreate">
                 <span>{{ safeSomeData.timeCreate }}</span>
               </t-form-item>
