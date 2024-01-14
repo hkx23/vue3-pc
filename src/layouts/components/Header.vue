@@ -267,6 +267,10 @@ const onConfirmForm = () => {
   :deep(.t-menu__item) {
     min-width: unset;
     color: white;
+
+    &.t-is-active {
+      background-color: var(--td-brand-color-7) !important;
+    }
   }
 
   font-size: 15px; // add by Neo

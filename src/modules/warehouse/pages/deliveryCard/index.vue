@@ -1075,8 +1075,8 @@ const onGenerate = debounce(async () => {
     MessagePlugin.warning('规格数量不得小于0！');
     return;
   }
-  if (Math.ceil(generateData.value.createNum / generateData.value.createSize) > 5000) {
-    MessagePlugin.warning(`本次生成张数不得大于5000！`);
+  if (Math.ceil(generateData.value.createNum / generateData.value.createSize) > 50000) {
+    MessagePlugin.warning(`本次生成张数不得大于50000！`);
     return;
   }
   if (!generateData?.value?.createSize) {

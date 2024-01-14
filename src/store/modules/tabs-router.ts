@@ -20,6 +20,7 @@ const stateData = {
   userTabRouterList: {} as {
     [key: string]: Array<TRouterInfo>;
   },
+  currentRouterPath: 'default',
   isRefreshing: false,
 };
 
@@ -102,6 +103,9 @@ export const useTabsRouterStore = defineStore('tabsRouter', {
     },
     initTabRouterList(newRoutes: TRouterInfo[]) {
       newRoutes?.forEach((route: TRouterInfo) => this.appendTabRouterList(route));
+    },
+    setCurrentRouterPath(path: string) {
+      this.currentRouterPath = path;
     },
   },
   persist: true,

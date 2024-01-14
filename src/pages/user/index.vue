@@ -38,90 +38,6 @@
         <t-col :xs="0" :sm="0" :lg="3"> </t-col>
       </t-row>
     </cmp-card>
-    <cmp-card title="组织信息" header-bordered>
-      <template #actions>
-        <t-space v-if="orgIsEdit">
-          <t-link theme="primary" @click="onClickSaveOrg">保存</t-link>
-          <t-link @click="onClickCancelOrg">取消</t-link>
-        </t-space>
-        <t-link v-else theme="primary" @click="orgIsEdit = true">修改</t-link>
-      </template>
-      <t-row align="middle" justify="space-around">
-        <t-col :xs="0" :sm="3" :lg="3"> </t-col>
-        <t-col :xs="12" :sm="9" :lg="5">
-          <t-form :label-width="180" label-align="left">
-            <t-form-item label="组织">
-              <bcmp-select-business
-                v-if="orgIsEdit"
-                v-model="orgInfo.orgId"
-                component-type="list"
-                type="plant"
-                :show-title="false"
-                @selection-change="
-                  (val) => {
-                    orgInfo.orgCode = val.orgCode;
-                    orgInfo.orgName = val.orgName;
-                  }
-                "
-              ></bcmp-select-business>
-              <div v-else>{{ orgInfo.orgName || '-' }}</div>
-            </t-form-item>
-            <t-form-item label="车间"
-              ><bcmp-select-business
-                v-if="orgIsEdit"
-                v-model="orgInfo.workShopId"
-                :parent-id="orgInfo.orgId"
-                type="workshop"
-                :show-title="false"
-                @selection-change="
-                  (val) => {
-                    orgInfo.workShopCode = val.orgCode;
-                    orgInfo.workShopName = val.orgName;
-                  }
-                "
-              ></bcmp-select-business>
-              <div v-else>{{ orgInfo.workShopName || '-' }}</div>
-            </t-form-item>
-            <t-form-item label="工作中心"
-              ><bcmp-select-business
-                v-if="orgIsEdit"
-                v-model="orgInfo.workCenterId"
-                :parent-id="orgInfo.workShopId"
-                type="workcenter"
-                :show-title="false"
-                @selection-change="
-                  (val) => {
-                    orgInfo.workCenterCode = val.wcCode;
-                    orgInfo.workCenterName = val.wcName;
-                  }
-                "
-              ></bcmp-select-business>
-              <div v-else>{{ orgInfo.workCenterName || '-' }}</div>
-            </t-form-item>
-            <t-form-item label="工站"
-              ><bcmp-select-business
-                v-if="orgIsEdit"
-                v-model="orgInfo.workStationId"
-                :parent-id="orgInfo.workCenterId"
-                type="workstationAuth"
-                :show-title="false"
-                @selection-change="
-                  (val) => {
-                    orgInfo.processId = val.processId;
-                    orgInfo.processCode = '';
-                    orgInfo.processName = '';
-                    orgInfo.workStationCode = val.workstationCode;
-                    orgInfo.workStationName = val.workstationName;
-                  }
-                "
-              ></bcmp-select-business>
-              <div v-else>{{ (orgInfo?.processName || '') + ' - ' + (orgInfo.workStationName || '') }}</div>
-            </t-form-item>
-          </t-form>
-        </t-col>
-        <t-col :xs="0" :sm="0" :lg="3"> </t-col>
-      </t-row>
-    </cmp-card>
     <cmp-card title="密码信息" header-bordered>
       <template #actions>
         <t-link theme="primary" @click="onClickShowEditPwd">修改</t-link>
@@ -177,22 +93,6 @@ onMounted(async () => {
     personInfo.value = await api.person.getItemById(userInfo.value.personId);
   }
 });
-
-const orgInfo = ref({ ...userStore.currUserOrgInfo });
-const orgIsEdit = ref(false);
-const onClickSaveOrg = async () => {
-  if (orgInfo.value.processId) {
-    const processInfo = await api.process.getItemById(orgInfo.value.processId);
-    orgInfo.value.processCode = processInfo.processCode;
-    orgInfo.value.processName = processInfo.processName;
-  }
-  userStore.updateOrg(orgInfo.value);
-  orgIsEdit.value = false;
-};
-const onClickCancelOrg = async () => {
-  orgInfo.value = { ...userStore.currUserOrgInfo };
-  orgIsEdit.value = false;
-};
 </script>
 <style lang="less" scoped>
 .user-image {

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 import { api, Favorite, OrgVO } from '@/api/main';
 import { getToken } from '@/api/portal';
-import { usePermissionStore } from '@/store';
+import { getTabsRouterStore, usePermissionStore } from '@/store';
 import type { UserInfo } from '@/types/interface';
 
 interface OrgUser extends UserInfo {
@@ -54,7 +54,13 @@ export const useUserStore = defineStore('user', {
       return state.userInfo?.roles;
     },
     currUserOrgInfo: (state) => {
-      return state.userOrgInfo[state.userInfo.id];
+      const userOrg = state.userOrgInfo[state.userInfo.id];
+      if (!userOrg) {
+        return {};
+      }
+      const useTabsRouterStore = getTabsRouterStore();
+
+      return userOrg[useTabsRouterStore.currentRouterPath] || {};
     },
   },
   actions: {
@@ -78,7 +84,7 @@ export const useUserStore = defineStore('user', {
       // };
       // const res = await mockRemoteUserInfo();
       let orgId = fw.getOrgId();
-      if (!orgId || !res.orgList.some((org) => org.id === orgId)) {
+      if (!orgId || !res.orgList?.some((org) => org.id === orgId)) {
         fw.setOrgId(res.defaultOrgId);
         orgId = res.defaultOrgId;
       }
@@ -93,7 +99,7 @@ export const useUserStore = defineStore('user', {
         timeModified: res.timeModified,
         timeLastPasswordChanged: res.timeLastPasswordChanged,
         orgId,
-        orgs: res.orgList,
+        orgs: res.orgList || [],
         favorites: resFavorites,
       } as OrgUser;
 
@@ -104,7 +110,9 @@ export const useUserStore = defineStore('user', {
       return this.userInfo;
     },
     updateOrg(orgInfo?: orgInfo) {
-      this.userOrgInfo[this.userInfo.id] = orgInfo || {
+      if (!this.userOrgInfo[this.userInfo.id]) this.userOrgInfo[this.userInfo.id] = {};
+      const useTabsRouterStore = getTabsRouterStore();
+      this.userOrgInfo[this.userInfo.id][useTabsRouterStore.currentRouterPath] = orgInfo || {
         orgId: '',
         orgCode: '',
         orgName: '',

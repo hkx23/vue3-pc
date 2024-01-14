@@ -25,7 +25,11 @@
           <div
             v-for="item in state.tableData"
             :key="item[keywords.value]"
-            class="custom-option"
+            :class="{
+              'custom-option': true,
+              'actived-option':
+                state.defaultValue && state.defaultValue[listSetting.codeField] == item[listSetting.codeField],
+            }"
             @click="() => onOptionClick(item)"
           >
             <div class="item-title">
@@ -215,15 +219,14 @@ const state: any = reactive({
 const selectedRowKeys = ref([]);
 
 const onPopupVisibleChange = (val: boolean, context: any) => {
-  selectSearch.value = '';
-  onInputChange('');
-  popupVisible.value = val;
-  console.log(val, context);
   if (val) {
-    state.defaultValue = '';
+    selectSearch.value = '';
+    onInputChange('');
     selectedRowKeys.value = [];
+    console.log(val, context);
     emits('selectionChange', state.defaultValue, selectedRowKeys.value);
   }
+  popupVisible.value = val;
 };
 const onClear = () => {
   if (props.multiple) {
@@ -355,13 +358,12 @@ const onInputChange = (val: string) => {
   loading.value = true;
 
   fetchData(val);
-  if (val === '' && !props.multiple) {
-    state.defaultValue = '';
-    state.selectedRowData = [];
-    // const value = [];
-    // const selectedRowData = [];
-    // radioSelect(value, selectedRowData);
-  }
+  // if (val === '' && !props.multiple) {
+  //   state.defaultValue = '';
+  //   state.selectedRowData = [];
+  //   // const value = [];
+  //   // const selectedRowData = [];
+  // }
 };
 // 设置默认值
 onMounted(() => {
@@ -496,9 +498,16 @@ defineExpose({ closeTable, onClear });
   // border-bottom: 1px solid #f6f6f6;
 }
 
+.cmp-selector .custom-option.actived-option {
+  background-color: var(--td-bg-color-container-hover);
+  border-radius: 6px;
+  color: var(--brand-main);
+}
+
 .cmp-selector .custom-option:hover {
   background-color: var(--td-bg-color-container-hover);
   border-radius: 6px;
+  color: var(--brand-main);
 }
 
 .cmp-selector .custom-option > img {

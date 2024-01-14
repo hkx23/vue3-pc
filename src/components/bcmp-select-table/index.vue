@@ -32,6 +32,8 @@
         <div class="t-table-select__table" :style="{ width: `${tableWidth}px` }">
           <t-table
             ref="selectTable"
+            v-model:active-row-keys="activeRowKeys"
+            v-model:selected-row-keys="selectedRowKeys"
             multiple-sort
             hover
             resizable
@@ -42,11 +44,10 @@
             :pagination="pagination"
             :data="state.tableData"
             lazy-load
-            :row-selection-allow-uncheck="false"
+            :row-selection-allow-unchselect-tableeck="false"
             :active-row-type="activeRowType"
+            :row-selection-type="activeRowType"
             highlight-current-row
-            :default-active-row-keys="activeRowKeys"
-            :default-selected-row-keys="selectedRowKeys"
             select-on-row-click
             :row-key="rowKey"
             v-bind="$attrs"
@@ -184,6 +185,8 @@ const props = defineProps({
 });
 
 type Filters = { [key: string]: any };
+
+const selectTable = ref();
 // 选择下拉属性集成
 const selectAttr = computed(() => {
   return {
@@ -210,13 +213,14 @@ const defaultValue = ref('');
 
 const filterList = ref([]);
 
+// 表格第一列设置，单选或多选
 const tableColumns = ref([
   {
     title: props.selectTxt,
     align: 'center',
     colKey: 'row-select',
     type: props.multiple ? 'multiple' : 'single',
-    checkProps: { allowUncheck: true },
+    checkProps: { allowUncheck: !!props.multiple },
     width: 50,
   },
 ] as unknown as any[]);
@@ -228,7 +232,7 @@ const state: any = reactive({
   defaultSelectValue: props.defaultSelectVal, // 默认选中
   tableData: props.table.data, // table数据
   selectedRowData: [], // 选中行数据
-  defaultValue: props.value, // 选中值
+  defaultValue: props.value === '' ? [] : props.value, // 选中值
   ids: [], // 多选id集合
   tabularMap: {}, // 存储下拉tale的所有name
 });
@@ -249,14 +253,14 @@ const onFilterChange = (filters: Filters, ctx: any) => {
       });
     }
   }
-  remoteLoad(selectSearch.value);
+  remoteLoad(selectSearch.value, false);
 };
 const onPageChange = (PageInfo: any) => {
   pagination.value.current = PageInfo.current;
   pagination.value.pageSize = PageInfo.pageSize;
   console.log(PageInfo);
   console.log('remoteLoad-分页切换');
-  remoteLoad(selectSearch.value);
+  remoteLoad(selectSearch.value, false);
 };
 // total强制转化成int
 const pagination = props.isShowPagination
@@ -279,7 +283,6 @@ const selectedRowKeys = ref([]);
 const activeRowKeys = ref([]);
 // 选中事件
 const rehandleSelectChange = (value: any[], { selectedRowData }: any) => {
-  activeRowKeys.value = value;
   if (props.multiple) {
     checkSelect(value, selectedRowData);
   } else {
@@ -288,7 +291,7 @@ const rehandleSelectChange = (value: any[], { selectedRowData }: any) => {
 };
 // 可以根据触发来源，自由定制标签变化时的筛选器行为
 const onTagChange = (currentTags: any, context: { trigger: any; index: any; item: any }) => {
-  if (state.defaultValue === '') {
+  if (state.defaultValue) {
     state.defaultValue = [];
     state.selectedRowData = [];
   }
@@ -317,21 +320,22 @@ const onTagChange = (currentTags: any, context: { trigger: any; index: any; item
 
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
-const checkSelect = (value: any[], selectedRowData: any) => {
-  selectedRowKeys.value = value;
+const checkSelect = (keyValues: any[], rowData: any[]) => {
+  activeRowKeys.value = keyValues;
+  selectedRowKeys.value = keyValues;
   // console.log(selectedRowData);
-  if (selectedRowData && selectedRowData.length > 0) {
-    state.defaultValue = selectedRowData;
-    state.selectedRowData = selectedRowData;
+  if (rowData && rowData.length > 0) {
+    state.defaultValue = rowData;
+    state.selectedRowData = rowData;
 
     // 释放-关闭窗口
     // closeTable();
   } else {
-    state.defaultValue = '';
+    state.defaultValue = [];
     state.selectedRowData = [];
   }
   console.log('checkSelect');
-  if (value.length === 0) {
+  if (rowData.length === 0) {
     isHandleSelectionChange.value = false;
   } else {
     isHandleSelectionChange.value = true;
@@ -340,51 +344,62 @@ const checkSelect = (value: any[], selectedRowData: any) => {
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
 
-const radioSelect = (value: any[], selectedRowData: any) => {
-  selectedRowKeys.value = value;
+const radioSelect = (keyValues: any[], rowData: any[], isOpen = false) => {
+  activeRowKeys.value = keyValues;
+  selectedRowKeys.value = keyValues;
   // console.log(selectedRowData);
-  if (selectedRowData && selectedRowData.length > 0) {
-    const [defaultValue] = selectedRowData;
+  if (rowData && rowData.length > 0) {
+    const [defaultValue] = rowData;
     state.defaultValue = defaultValue;
-
     // 释放-关闭窗口
-    closeTable();
+    // :todo 重新加载数据时选中行设置
+    if (!isOpen) {
+      closeTable();
+    }
   } else {
-    state.defaultValue = '';
+    state.defaultValue = [];
   }
-  if (value.length === 0) {
+  if (rowData.length === 0) {
     isHandleSelectionChange.value = false;
   } else {
     isHandleSelectionChange.value = true;
   }
-  emits('selectionChange', state.defaultValue, selectedRowKeys.value);
+  if (!isOpen) {
+    emits('selectionChange', state.defaultValue, selectedRowKeys.value);
+  }
 };
 const onPopupVisibleChange = (val: boolean, context: any) => {
-  selectSearch.value = '';
-  onInputChange('');
+  if (val) {
+    selectSearch.value = '';
+    onInputChange('');
+    console.log(val, context);
+  } else if (!props.multiple) {
+    emits('selectionChange', state.defaultValue, selectedRowKeys.value);
+  }
   popupVisible.value = val;
-  console.log(val, context);
 };
 const onClear = () => {
   if (props.multiple) {
     state.defaultValue = [];
     state.selectedRowData = [];
   } else {
-    state.defaultValue = '';
+    state.defaultValue = [];
   }
 
   selectSearch.value = '';
   selectedRowKeys.value = [];
   activeRowKeys.value = [];
+  emits('selectionChange', state.defaultValue, selectedRowKeys.value);
   popupVisible.value = false;
 };
 // 初始化远程数据
 onMounted(() => {
-  if (props.isRemote && !props.value) {
-    setTimeout(() => {
-      remoteLoad('');
-    }, 500);
-  }
+  // 点击才加载数据吧
+  // if (props.isRemote && !props.value) {
+  //   setTimeout(() => {
+  //     remoteLoad('');
+  //   }, 500);
+  // }
 });
 // 设置默认值
 onMounted(() => {
@@ -451,7 +466,7 @@ const onSelectKeyup = (e: any) => {
       //   break;
       case 13: // 回车
         if (!props.multiple) {
-          radioSelect(activeRowKeys.value, [state.tableData[currentIndex]]);
+          radioSelect([state.tableData[currentIndex][props.rowKey]], [state.tableData[currentIndex]]);
         }
 
         break;
@@ -470,13 +485,13 @@ const closeTable = () => {
 
 const tempCondition = ref({});
 
-const remoteLoad = async (val: any) => {
+const remoteLoad = async (val: any, isSetDefaultVal) => {
   loading.value = true;
   const searchCondition = {
     pageNum: pagination.value.current,
     pageSize: pagination.value.pageSize,
     selectedField: props.keywords.value,
-    selectedValue: defaultValue.value,
+    selectedValue: isSetDefaultVal ? defaultValue.value : '',
     keyword: selectSearch.value,
     category: props.category,
     parentId: props.parentId,
@@ -505,7 +520,7 @@ const remoteLoad = async (val: any) => {
     // 单选-如果完全匹配，直接选中
     radioCSelectRedirct(val);
     loading.value = false;
-    defaultValue.value = '';
+    /// defaultValue.value = '';
     isHandleSelectionChange.value = false;
     tempCondition.value = searchCondition;
   }
@@ -515,7 +530,7 @@ const fetchData = debounce((val) => {
   if (!props.filterable) return;
   if (props.isRemote) {
     console.log('fetchData-远程加载');
-    remoteLoad(val);
+    remoteLoad(val, false);
   } else {
     const tableData = JSON.parse(JSON.stringify(props.table?.data));
     console.log('表格数据', tableData);
@@ -542,11 +557,11 @@ const onInputChange = (val: string) => {
 
   fetchData(val);
   if (val === '' && !props.multiple) {
-    state.defaultValue = '';
-    state.selectedRowData = [];
-    const value = [];
-    const selectedRowData = [];
-    radioSelect(value, selectedRowData);
+    // state.defaultValue = '';
+    // state.selectedRowData = [];
+    // const value = [];
+    // const selectedRowData = [];
+    radioSelect([state.defaultValue[props.keywords.value]], [state.defaultValue], true);
   }
 };
 // 搜索完全匹配，直接选中
@@ -554,6 +569,16 @@ const radioCSelectRedirct = (val: string) => {
   if (!props.multiple) {
     if (state.tableData && state.tableData.length === 1 && val === state.tableData[0][props.keywords.value]) {
       rehandleSelectChange([state.tableData[0][props.rowKey]], { selectedRowData: [state.tableData[0]] });
+    } else if (
+      state.tableData &&
+      state.tableData.length > 1 &&
+      state.tableData.some((p) => p[props.keywords.value].includes(val))
+    ) {
+      // 设置匹配行（找到并选中第一条包含搜索值的数据）
+      const matchedRow = state.tableData.find((p) => p[props.keywords.value].includes(props.value));
+      if (matchedRow) {
+        radioSelect([matchedRow[props.rowKey]], [matchedRow], true);
+      }
     } else {
       rehandleSelectChange([], { selectedRowData: [] });
     }
@@ -602,7 +627,7 @@ onMounted(() => {
     tableColumns.value.push(addColumn);
   });
 
-  state.tableData = props.value;
+  state.tableData = [];
   nextTick(() => {
     // 多选
     if (props.multiple) {
@@ -620,16 +645,18 @@ onMounted(() => {
       });
     } else {
       // state.selectSearch = props.value;
-      console.log('remoteLoad-按默认值查询');
+
       if (typeof props.value === 'string') {
         defaultValue.value = props.value.toString();
       } else {
         selectSearch.value = '';
       }
-      remoteLoad(props.value);
-      // state.defaultValue = props.value ? { [props.keywords.value]: props.value } : '';
-      // if (state.defaultValue) {
-      // }
+
+      state.defaultValue = props.value ? { [props.keywords.value]: props.value } : '';
+      if (state.defaultValue) {
+        console.log('remoteLoad-按默认值查询');
+        remoteLoad(props.value, true);
+      }
     }
   });
 });
@@ -639,7 +666,7 @@ const sortChange = (val: any) => {
   sortList.value = val;
   console.log(sortList.value);
   console.log('remoteLoad-排序');
-  remoteLoad(selectSearch.value);
+  remoteLoad(selectSearch.value, false);
 };
 
 watch(
@@ -667,9 +694,9 @@ watch(
           console.log('remoteLoad-按默认值查询');
           // selectSearch.value = props.value.toString();
           defaultValue.value = props.value.toString();
-          remoteLoad(props.value);
+          remoteLoad(props.value, true);
         } else {
-          state.defaultValue = '';
+          state.defaultValue = [];
           selectedRowKeys.value = [];
           emits('selectionChange', state.defaultValue, selectedRowKeys.value);
         }
@@ -684,7 +711,7 @@ watch(
   (val) => {
     console.log('watch:props.parentId', `${props.parentId} ss ${val}`);
     isHandleSelectionChange.value = false;
-    remoteLoad('');
+    remoteLoad('', false);
   },
   { deep: true },
 );

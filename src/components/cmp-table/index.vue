@@ -3,6 +3,7 @@
     <div class="table-box">
       <div v-if="showToolbar" class="table-box_header">
         <div class="table-title">
+          {{ title }}
           <slot name="title"></slot>
         </div>
         <t-space size="small" :align="'center'">
@@ -12,11 +13,6 @@
           </t-space>
           <t-space v-if="showSetting" size="small" :align="'center'">
             <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
-              <template #icon>
-                <t-icon name="file-export" />
-              </template>
-            </t-button>
-            <t-button v-if="props.enableExport && exportFunction" shape="square" variant="outline" @click="onExportAll">
               <template #icon>
                 <t-icon name="file-export" />
               </template>
@@ -60,8 +56,8 @@
           @filter-change="onFilterChange"
           @sort-change="sortChange"
         >
-          <template v-for="(value, key) in slots" :key="key" #[key]="{ col, colIndex, row, rowIndex }">
-            <slot :name="key" :col="col" :col-index="colIndex" :row="row" :row-index="rowIndex"></slot>
+          <template v-for="(value, slotKey) in slots" :key="slotKey" #[slotKey]="{ col, colIndex, row, rowIndex }">
+            <slot :name="slotKey" :col="col" :col-index="colIndex" :row="row" :row-index="rowIndex"></slot>
           </template>
         </t-table>
       </div>
@@ -79,7 +75,7 @@
     </div>
     <t-drawer v-model:visible="data.visible" size="320px" close-btn :footer="false" header="列配置">
       <t-row :gutter="[0, 15]">
-        <template v-for="(value, key) in data.colConfigs" :key="key">
+        <template v-for="(value, colKey) in data.colConfigs" :key="colKey">
           <t-col :span="12">
             <t-row>
               <t-col :span="10">{{ key }}</t-col>
@@ -96,11 +92,84 @@
       </t-row>
     </t-drawer>
   </div>
+
+  <t-dialog v-model:visible="downloadDialogVisible" header="自定义导出" width="600px" :footer="false">
+    <t-table
+      v-model:selectedRowKeys="downloadTableSelectedRowKeys"
+      size="small"
+      row-key="attrName"
+      :columns="downloadTableColumn"
+      :data="downloadTableData"
+      drag-sort="row-handler"
+      @drag-sort="onDownloadTableDragSort"
+    >
+    </t-table>
+    <t-form style="margin-top: 16px" layout="inline">
+      <t-form-item required-mark label="文件名称" name="filename">
+        <t-space>
+          <t-input-adornment append=".xlsx">
+            <t-input v-model="downloadFilename" style="width: 220px"></t-input>
+          </t-input-adornment>
+        </t-space>
+      </t-form-item>
+      <t-form-item>
+        <t-space>
+          <t-button theme="primary" @click="onConfirmDownload">导出</t-button>
+        </t-space>
+      </t-form-item>
+    </t-form>
+    <t-card v-if="historyDownloadList.length > 0" title="导出历史" style="margin-top: 16px">
+      <template #actions>
+        <t-space>
+          <t-link theme="primary" @click="fetchHistoryDownloadList">刷新</t-link>
+          <t-link theme="primary" @click="onClickRemoveHistoryFile()">清空</t-link>
+        </t-space>
+      </template>
+      <t-space break-line>
+        <t-tag
+          v-for="item in historyDownloadList"
+          :key="item.id"
+          variant="outline"
+          closable
+          @close="onClickRemoveHistoryFile([item.id])"
+        >
+          <template #icon>
+            <t-icon
+              v-if="item.status === 'DOWNLOADED'"
+              title="下载成功"
+              name="check-circle-filled"
+              style="color: var(--td-success-color)"
+            />
+            <t-icon
+              v-else-if="item.status === 'UNDOWNLOAD'"
+              title="待下载"
+              name="time-filled"
+              style="color: var(--td-text-color-placeholder)"
+            />
+            <t-loading
+              v-else-if="item.status === 'DOWNLOADING'"
+              size="small"
+              title="下载中"
+              style="margin-right: 5px"
+            ></t-loading>
+          </template>
+          <div
+            :style="{ cursor: item.status === 'DOWNLOADED' ? 'pointer' : 'default' }"
+            @click="onClickDownloadHistoryFile(item)"
+          >
+            {{ item.excelPath.split('/')[3] }}
+          </div>
+        </t-tag>
+      </t-space>
+    </t-card>
+  </t-dialog>
 </template>
 
 <script lang="tsx" setup name="CmpTable">
+import dayjs from 'dayjs';
 import _ from 'lodash';
-import { DialogPlugin, MessagePlugin, TableRowData } from 'tdesign-vue-next';
+import { MoveIcon } from 'tdesign-icons-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import {
   computed,
   getCurrentInstance,
@@ -110,10 +179,12 @@ import {
   onMounted,
   reactive,
   ref,
+  useSlots,
   watch,
 } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
+import { api, DlTask } from '@/api/main';
 // import { useSettingStore } from '@/store';
 import excelUtils from '@/utils/excel';
 
@@ -142,6 +213,14 @@ const boxHeight = ref(0);
 const boxWidth = ref(0);
 
 const props = defineProps({
+  key: {
+    type: String,
+    default: '',
+  },
+  title: {
+    type: String,
+    default: '',
+  },
   searchVisible: { type: Boolean, default: true },
   params: {
     type: Object,
@@ -387,42 +466,204 @@ const onRefresh = () => {
   emit('refresh');
 };
 
+const downloadDialogVisible = ref(false);
+const downloadTableColumn: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'drag', // 列拖拽排序必要参数
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cell: (_h) => (
+      <span>
+        <MoveIcon />
+      </span>
+    ),
+    width: 46,
+  },
+  {
+    colKey: 'row-select',
+    type: 'multiple',
+  },
+  { colKey: 'columnName', title: '表格列名' },
+  { colKey: 'attrName', title: '属性名' },
+];
+const downloadTableData = ref([]);
+const historyDownloadList = ref<DlTask[]>([]);
+const downloadTableSelectedRowKeys = ref([]);
+const downloadFilename = ref('');
+if (props.title) {
+  const now = `_${dayjs(new Date()).format('YYYYMMDDHHmm')}`;
+  downloadFilename.value = props.title + now;
+} else {
+  const selfSlots = useSlots();
+  const titleContent = selfSlots.title ? selfSlots.title() : null;
+  if (titleContent && titleContent.length > 0) {
+    const now = `_${dayjs(new Date()).format('YYYYMMDDHHmm')}`;
+    downloadFilename.value = (titleContent[0].children?.toString().trim() || '') + now;
+  }
+}
+
+let jsonConfig: any = null;
+const captureRefresh = () => {
+  const defaultSelectedRowKeys = [];
+  downloadTableData.value = props.tableColumn
+    .filter((t) => {
+      return t.colKey !== 'row-select' && t.colKey !== 'op' && t.colKey !== 'serial-number';
+    })
+    .map((t) => {
+      if (data.colConfigs[t.title]) {
+        defaultSelectedRowKeys.push(t.colKey);
+      }
+      return {
+        attrName: t.colKey,
+        columnName: t.title,
+      };
+    });
+  downloadTableSelectedRowKeys.value = defaultSelectedRowKeys;
+
+  http.openOnceCapture(async (item) => {
+    jsonConfig = {
+      ...item,
+      page: (() => {
+        const params = item.data as string;
+        const pageValue = props.pagination.page;
+        const rowsValue = props.pagination.rows;
+
+        const pageIndexPattern = new RegExp(`"(\\w+)"\\s*:\\s*${pageValue}(,|})`);
+        const pageSizePattern = new RegExp(`"(\\w+)"\\s*:\\s*${rowsValue}(,|})`);
+
+        const pageIndexNameMatch = params.match(pageIndexPattern);
+        const pageSizeNameMatch = params.match(pageSizePattern);
+
+        const pageIndexName = pageIndexNameMatch ? pageIndexNameMatch[1] : '';
+        const pageSizeName = pageSizeNameMatch ? pageSizeNameMatch[1] : '';
+
+        return {
+          pageIndexName,
+          pageSizeName,
+        };
+      })(),
+    };
+    fetchHistoryDownloadList();
+  });
+};
+
+const fetchHistoryDownloadList = async () => {
+  historyDownloadList.value = await api.dlTask.getCurrentUserFile({
+    tableKey: new URL(jsonConfig.api).pathname,
+    behaviorPath: JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath,
+  });
+};
+
+const onClickRemoveHistoryFile = async (ids?: string[]) => {
+  await api.dlTask.batchDelete(ids || historyDownloadList.value.map((t) => t.id));
+  MessagePlugin.success('删除成功');
+  fetchHistoryDownloadList();
+};
+
+const onClickDownloadHistoryFile = (task: DlTask) => {
+  if (task.status === 'DOWNLOADED') {
+    window.open(task.jsonConfig);
+  }
+};
+
+const onDownloadTableDragSort = (params) => {
+  downloadTableData.value = params.newData;
+};
+
+const onConfirmDownload = async () => {
+  if (!downloadFilename.value) {
+    MessagePlugin.warning('请维护文件名');
+    return;
+  }
+  jsonConfig = {
+    ...jsonConfig,
+    fileName: downloadFilename.value,
+    columns: downloadTableData.value
+      .filter((t) => {
+        return downloadTableSelectedRowKeys.value.includes(t.attrName);
+      })
+      .map((t) => {
+        return {
+          colKey: t.attrName,
+          title: t.columnName,
+        };
+      }),
+  };
+
+  const task = {
+    behaviorPath: JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath,
+    tableKeyCode: new URL(jsonConfig.api).pathname,
+    jsonConfig: JSON.stringify(jsonConfig),
+  } as DlTask;
+
+  const loadTask = MessagePlugin.loading({ content: '数据导出中...', duration: 0 });
+  try {
+    if (props.total > 50000) {
+      await api.dlTask.add(task);
+
+      fetchHistoryDownloadList();
+    } else {
+      downloadDialogVisible.value = false;
+      const filePath = await api.dlTask.downloadFile(task);
+      window.open(filePath);
+    }
+  } catch (error) {
+    console.error('数据导出失败', error);
+  } finally {
+    MessagePlugin.close(loadTask);
+  }
+};
+
 // 导出表格数据
-const onExport = () => {
+const onExport = async () => {
   if (!props.tableData.length) return MessagePlugin.warning('当前无数据可导出');
+
+  if (props.showPagination) {
+    downloadDialogVisible.value = true;
+    captureRefresh();
+    emit('refresh');
+    return null;
+  }
+
   // if (!selectedRowKeys.value.length) return MessagePlugin.warning(t(`CmpTable.pleaseSelectExportData`));
   //
-  excelUtils.exportExcel({
-    columns: exportColumns.value,
-    tableData: props.tableData,
-  });
+  if (props.exportFunction) {
+    props.exportFunction();
+  } else {
+    excelUtils.exportExcel({
+      title: downloadFilename.value,
+      columns: exportColumns.value,
+      tableData: props.tableData,
+    });
+  }
+
   return null;
 };
 
-// 导出全部数据
-const onExportAll = async () => {
-  const dialogTask = DialogPlugin.confirm({
-    header: '提示',
-    body: '确定要导出全部数据吗？',
-    placement: 'center',
-    onConfirm: async () => {
-      dialogTask.destroy();
-      const loadTask = MessagePlugin.loading({ content: '数据导出中...', duration: 0 });
-      try {
-        const result = await props.exportFunction();
-        excelUtils.exportExcel({
-          columns: exportColumns.value,
-          tableData: result,
-        });
-      } catch (error) {
-        console.log('error', error);
-        MessagePlugin.error('导出失败');
-      } finally {
-        MessagePlugin.close(loadTask);
-      }
-    },
-  });
-};
+// // 导出全部数据
+// const onExportAll = async () => {
+//   const dialogTask = DialogPlugin.confirm({
+//     header: '提示',
+//     body: '确定要导出全部数据吗？',
+//     placement: 'center',
+//     onConfirm: async () => {
+//       dialogTask.destroy();
+//       const loadTask = MessagePlugin.loading({ content: '数据导出中...', duration: 0 });
+//       try {
+//         const result = await props.exportFunction();
+//         excelUtils.exportExcel({
+//           title: downloadFilename.value,
+//           columns: exportColumns.value,
+//           tableData: result,
+//         });
+//       } catch (error) {
+//         console.log('error', error);
+//         MessagePlugin.error('导出失败');
+//       } finally {
+//         MessagePlugin.close(loadTask);
+//       }
+//     },
+//   });
+// };
 watch(
   () => props.tableData,
   (val) => {
