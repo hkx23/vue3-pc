@@ -321,8 +321,8 @@ const onConfirm = async () => {
   }
 
   try {
+    pageLoading.value = true;
     if (isReprintCancellation.value === 1) {
-      pageLoading.value = true;
       await apiMain.label.reprintBarcode({
         ids: selectedManageRowKeys.value,
         reason,

@@ -316,6 +316,7 @@ const onConfirm = async () => {
     reason = reprintDialog.value.reprintData;
   }
   try {
+    pageLoading.value = true;
     if (isReprintCancellation.value) {
       await api.barcodePkg.reprintBarcode({
         ids: selectedManageRowKeys.value,
@@ -418,6 +419,7 @@ const generateBracode = async () => {
     return;
   }
   try {
+    pageLoading.value = true;
     await api.barcodePkg.generateBarcode({
       ...printMode.value,
       createNum: printMode.value.createNum,
