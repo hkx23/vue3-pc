@@ -97,7 +97,7 @@ const currUserOrgInfo = ref(userStore.currUserOrgInfo);
 const formImportVisible = ref(false);
 const orgInfo = ref({ ...userStore.currUserOrgInfo });
 onMounted(() => {
-  if (!userStore.userInfo.processId) {
+  if (!orgInfo.value.workStationId) {
     formImportVisible.value = true;
   }
 });
