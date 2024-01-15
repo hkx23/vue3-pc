@@ -97,6 +97,11 @@ const currUserOrgInfo = ref(userStore.currUserOrgInfo);
 const formImportVisible = ref(false);
 const orgInfo = ref({ ...userStore.currUserOrgInfo });
 
+const emit = defineEmits(['change']);
+const handleChange = (orgInfo) => {
+  emit('change', orgInfo);
+};
+
 const onClickSaveOrg = async () => {
   if (orgInfo.value.processId) {
     const processInfo = await api.process.getItemById(orgInfo.value.processId);
@@ -105,6 +110,7 @@ const onClickSaveOrg = async () => {
   }
   userStore.updateOrg(orgInfo.value);
   currUserOrgInfo.value = userStore.currUserOrgInfo;
+  handleChange(orgInfo.value);
   formImportVisible.value = false;
 };
 

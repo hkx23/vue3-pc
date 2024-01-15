@@ -4,6 +4,7 @@ import BcmpImportDialog from './bcmp-import-dialog/index.vue';
 import BcmpSelectBusiness from './bcmp-select-business/index.vue';
 import BcmpSelectList from './bcmp-select-list/index.vue';
 import BcmpSelectTable from './bcmp-select-table/index.vue';
+import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import CmpButton from './cmp-button/index.vue';
 import CmpCard from './cmp-layout/CmpCard.vue';
 import CmpContainer from './cmp-layout/CmpContainer.vue';
@@ -20,6 +21,7 @@ export default {
     app.component('BcmpSelectList', BcmpSelectList);
     app.component('BcmpImportButton', BcmpImportButton);
     app.component('BcmpImportDialog', BcmpImportDialog);
+    app.component('BcmpUploadContent', BcmpUploadContent);
 
     app.component('CmpQuery', CmpQuery);
     app.component('BcmpExtend', BcmpExtend);
