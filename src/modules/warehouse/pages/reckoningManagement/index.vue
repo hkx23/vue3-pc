@@ -193,8 +193,8 @@ const tableMaterialDetailsColumns: PrimaryTableCol<TableRowData>[] = [
 //* 表格数据 1
 const fetchTable = async () => {
   setLoading(false);
-  inventoryManagement.value = []; // ?
-  tableDataReckoning.value = []; // ?
+  inventoryManagement.value = [];
+  tableDataReckoning.value = [];
   const data = await api.stockCheckBill.getPdList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
@@ -206,6 +206,7 @@ const fetchTable = async () => {
 };
 
 const handleRowSelectChange = (value: any[]) => {
+  console.log('🚀 ~ handleRowSelectChange ~ value:', value); // todo
   // value 是每一列的id 我希望 每次点击都保证赋值 最后一个给 selectedBillId.value
   // 检查value数组是否非空
   if (value.length > 0) {
@@ -291,7 +292,7 @@ const onAdd = () => {
 const onEditRowClick = (item) => {
   formTitle.value = '盘点单维护';
   ISMRoutingVisible.value = true;
-  propsdtlId.value = item.billNo;
+  propsdtlId.value = item.billId;
   stockCheckBillStatusName.value = item.stockCheckBillStatusName;
   stockCheckBillTypeName.value = item.stockCheckBillTypeName;
 };

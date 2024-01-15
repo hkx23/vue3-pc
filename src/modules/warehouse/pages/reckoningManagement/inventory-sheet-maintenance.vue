@@ -9,7 +9,7 @@
     <cmp-container :full="true">
       <cmp-card>
         <!-- 按钮操作逻辑
-          
+
           盘点状态为 已创建或者 盘点中     不允许 差异调整 关闭单据
 
           盘点状态为 已完成                不允许保存 和 盘点完成
@@ -148,7 +148,7 @@ const dataTotal = ref(0);
 //* 初始渲染
 onMounted(async () => {
   await fetchTable();
-  await getBarcodesData(props.propsdtlId);
+  // await getBarcodesData(props.propsdtlId);
   await gitMaterialDetails(props.propsdtlId);
 });
 
@@ -193,7 +193,7 @@ const props = defineProps({
 
 // 获取物料明细
 const gitMaterialDetails = async (billId) => {
-  const result = await api.stockCheckBill.getDtlList({
+  const result = await api.stockCheckBill.getPdList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     billId,
@@ -202,22 +202,23 @@ const gitMaterialDetails = async (billId) => {
 };
 
 // 获取标签明细
-const getBarcodesData = async (dtlId) => {
-  const result = await api.stockCheckBill.getBarcodes({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    dtlId,
-  });
-  console.log('🚀 ~ getBarcodesData ~ result:', result);
-};
+// const getBarcodesData = async (billId) => {
+//   const result = await api.stockCheckBill.getBarcodes({
+//     pageNum: pageUI.value.page,
+//     pageSize: pageUI.value.rows,
+//     billId,
+//   });
+//   console.log('🚀 ~ getBarcodesData ~ result:', result);
+// };
 
 watch(
   () => props.propsdtlId,
   (newVal) => {
+    console.log('🚀 ~ newVal:', newVal);
     if (newVal) {
       // 当 propsdtlId 变化时，重新获取数据
       gitMaterialDetails(newVal);
-      getBarcodesData(newVal);
+      // getBarcodesData(newVal);
     }
   },
 );
