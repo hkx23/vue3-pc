@@ -199,7 +199,7 @@ const fetchData = async () => {
     // 子节点请求
     const res = await api.workcenter.getChildCenter({
       id: props.wordCenterId.id,
-      category: formData.category,
+      // category: formData.category,
     });
     workData.value = res.list;
     if (props.typeDetailed === 3) {

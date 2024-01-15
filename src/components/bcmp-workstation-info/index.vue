@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="tsx" name="BcmpWorkstationInfo">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import { useUserStore } from '@/store';
@@ -96,6 +96,11 @@ const currUserOrgInfo = ref(userStore.currUserOrgInfo);
 // 导入表单是否显示
 const formImportVisible = ref(false);
 const orgInfo = ref({ ...userStore.currUserOrgInfo });
+onMounted(() => {
+  if (!orgInfo.value.workStationId) {
+    formImportVisible.value = true;
+  }
+});
 
 const emit = defineEmits(['change']);
 const handleChange = (orgInfo) => {

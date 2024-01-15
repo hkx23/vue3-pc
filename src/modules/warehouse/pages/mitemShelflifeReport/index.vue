@@ -27,6 +27,15 @@
     </cmp-card>
   </cmp-container>
   <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" width="750px">
+    <t-card :bordered="false">
+      <div class="form-item-box">
+        <t-form-item label="生产车间">
+          {{ '生产车间' }}
+        </t-form-item>
+        <t-form-item label="工作中心"> {{ '工作中心' }}</t-form-item>
+        <t-form-item label="产品编码"> {{ '产品编码' }}</t-form-item>
+      </div>
+    </t-card>
     <cmp-table
       ref="tableRef"
       v-model:pagination="pageUITwo"
@@ -310,7 +319,7 @@ const opts = computed(() => {
   };
 });
 
-const onInput = async (data) => {
+const onInput = async (data: any) => {
   pageUI.value.page = 1;
   const [receiveDateStart, receiveDateEnd] = data.datePproduced;
   expirationDateParam.value.mitemCategoryId = data.mitemCategory; // 物料类型 ID
@@ -324,4 +333,15 @@ const onInput = async (data) => {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.form-item-box {
+  margin: 0;
+  display: flex;
+
+  .t-form__item {
+    display: flex;
+    margin: 0;
+    flex: 1;
+  }
+}
+</style>
