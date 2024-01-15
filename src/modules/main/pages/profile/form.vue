@@ -208,6 +208,14 @@ export default {
     const submit = async () => {
       try {
         formData.value.state = formData.value.isState === true ? 1 : 0;
+        if (!formData.value.profileCategoryValue) {
+          MessagePlugin.warning('配置项维度值必填');
+          return false;
+        }
+        if (formData.value.profileValue === '') {
+          MessagePlugin.warning('配置值必填');
+          return false;
+        }
 
         if (formData.value.operateTpye === 'add') {
           formData.value.id = '';

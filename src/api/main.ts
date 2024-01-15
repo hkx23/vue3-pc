@@ -28,8 +28,11 @@ export interface Graph {
   edges?: GraphEdge[];
 }
 
-export interface GraphBoom {
+export interface GraphBom {
   id?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  categoryDesc?: string;
   keyPart?: boolean;
 }
 
@@ -69,7 +72,7 @@ export interface GraphProperties {
   /** @format int32 */
   processStep?: number;
   processType?: string;
-  boomList?: GraphBoom[];
+  bomList?: GraphBom[];
   backgroundColor?: string;
 }
 
@@ -685,7 +688,7 @@ export interface WorkcenterVO {
   /** 关联设备编码 */
   wcObjectCode?: string;
   /** 关联设备名称 */
-  wcObjectCodeName?: string;
+  wcObjectName?: string;
   /**
    * 顺序号
    * @format int32
@@ -789,6 +792,35 @@ export interface WorkbenchLayout {
   userId?: string;
   /** 布局内容 */
   layout?: string;
+}
+
+export interface WarehouseSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+}
+
+/** 通用响应类 */
+export interface ResultMapStringObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Record<string, object | null>;
 }
 
 /** 响应数据 */
@@ -1337,19 +1369,6 @@ export interface ResultSupplier {
   message?: string;
   /** 供应商 */
   data?: Supplier;
-}
-
-/** 通用响应类 */
-export interface ResultMapStringObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: Record<string, object | null>;
 }
 
 /** 消息发送日志表 */
@@ -3539,15 +3558,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
-  stateName?: string;
-  isState?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -3884,6 +3903,39 @@ export interface LabelSearch {
   reason?: string;
   /** 批量ID */
   ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataLabelVO = {
+  list?: LabelVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLabelVO;
+}
+
+/** 通用响应类 */
+export interface ResultListLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: LabelVO[] | null;
 }
 
 /** 菜单收藏夹表 */
@@ -6898,6 +6950,20 @@ export const api = {
      * No description
      *
      * @tags 仓库
+     * @name SearchList
+     * @request POST:/warehouse/searchList
+     * @secure
+     */
+    searchList: (data: WarehouseSearch) =>
+      http.request<ResultMapStringObject['data']>(`/api/main/warehouse/searchList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库
      * @name Search
      * @request POST:/warehouse/items
      * @secure
@@ -8747,6 +8813,21 @@ export const api = {
       http.request<ResultMoSchedule['data']>(`/api/main/moSchedule/items/${id}`, {
         method: 'POST',
       }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddStockInQty
+     * @summary 加入入库数量
+     * @request POST:/moSchedule/addStockInQty
+     * @secure
+     */
+    addStockInQty: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addStockInQty`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   mo: {
     /**
@@ -9289,6 +9370,50 @@ export const api = {
      */
     printBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/main/label/printBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelManageList
+     * @summary 获取管理页标签数据
+     * @request POST:/label/getLabelManageList
+     * @secure
+     */
+    getLabelManageList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/main/label/getLabelManageList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelList
+     * @summary 获取打印页标签数据
+     * @request POST:/label/getLabelList
+     * @secure
+     */
+    getLabelList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/main/label/getLabelList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetCount
+     * @request POST:/label/getCount
+     * @secure
+     */
+    getCount: (data: string[]) =>
+      http.request<ResultListLabelVO['data']>(`/api/main/label/getCount`, {
         method: 'POST',
         body: data as any,
       }),

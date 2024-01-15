@@ -27,7 +27,7 @@
     "processStep": "工序步骤",
     "processName": "工序名称",
     "processType": "工序类型",
-    "processBoom": "工序BOOM",
+    "processBom": "工序BOM",
     "backgroundColor": "背景颜色",
     "start": "开始",
     "end": "结束",

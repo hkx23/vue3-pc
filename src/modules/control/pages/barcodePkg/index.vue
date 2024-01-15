@@ -238,6 +238,7 @@
       @refresh="onRightFetchData"
     ></cmp-table>
   </t-dialog>
+  <t-loading :loading="pageLoading" text="加载中..." fullscreen />
 </template>
 
 <script setup lang="ts">
@@ -253,6 +254,7 @@ import { usePage } from '@/hooks/modules/page';
 
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { loading, setLoading } = useLoading();
+const pageLoading = ref(false);
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: pageUIBracode } = usePage(); // 分页工具
 const { pageUI: pageUIMannage } = usePage(); // 分页工具
@@ -294,9 +296,16 @@ const onPrint = async () => {
     MessagePlugin.warning('请选择打印模板！');
     return;
   }
-  await api.barcodePkg.printBarcode({ ids: selectedRowKeys.value });
-  onRefreshTag();
-  MessagePlugin.success('打印成功');
+  try {
+    pageLoading.value = true;
+    await api.barcodePkg.printBarcode({ ids: selectedRowKeys.value });
+    onRefreshTag();
+    MessagePlugin.success('打印成功');
+  } catch (e) {
+    console.log(e);
+  } finally {
+    pageLoading.value = false;
+  }
 };
 // 补打，作废确定
 const onConfirm = async () => {
@@ -306,21 +315,29 @@ const onConfirm = async () => {
   } else {
     reason = reprintDialog.value.reprintData;
   }
-  if (isReprintCancellation.value) {
-    await api.barcodePkg.reprintBarcode({
-      ids: selectedManageRowKeys.value,
-      reason,
-    });
-    selectedManageRowKeys.value = [];
-    MessagePlugin.success('补打成功');
-  } else {
-    await api.barcodePkg.cancellationBarcode({
-      ids: selectedManageRowKeys.value,
-      reason,
-    });
-    await fetchBracodeManageTable(); // 刷新表格数据
-    MessagePlugin.success('作废成功');
+  try {
+    pageLoading.value = true;
+    if (isReprintCancellation.value) {
+      await api.barcodePkg.reprintBarcode({
+        ids: selectedManageRowKeys.value,
+        reason,
+      });
+      selectedManageRowKeys.value = [];
+      MessagePlugin.success('补打成功');
+    } else {
+      await api.barcodePkg.cancellationBarcode({
+        ids: selectedManageRowKeys.value,
+        reason,
+      });
+      await fetchBracodeManageTable(); // 刷新表格数据
+      MessagePlugin.success('作废成功');
+    }
+  } catch (e) {
+    console.log(e);
+  } finally {
+    pageLoading.value = false;
   }
+
   await fetchBracodeManageTable(); // 刷新表格数据
   formVisible.value = false;
 };
@@ -401,10 +418,17 @@ const generateBracode = async () => {
     MessagePlugin.warning('请选择条码规则！');
     return;
   }
-  await api.barcodePkg.generateBarcode({
-    ...printMode.value,
-    createNum: printMode.value.createNum,
-  });
+  try {
+    pageLoading.value = true;
+    await api.barcodePkg.generateBarcode({
+      ...printMode.value,
+      createNum: printMode.value.createNum,
+    });
+  } catch (e) {
+    console.log(e);
+  } finally {
+    pageLoading.value = false;
+  }
   onRefreshTag();
   MessagePlugin.success('生成成功');
 };
