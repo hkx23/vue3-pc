@@ -9,7 +9,7 @@
         <cmp-container :full="true" header>
           <!-- 扫描区 -->
           <cmp-card>
-            <bcmp-workstation-info />
+            <bcmp-workstation-info @change="handleonChange" />
             <t-row class="padding-top-line-8" style="padding-bottom: 8px">
               <t-col flex="auto">
                 <cmp-scan-input
@@ -406,6 +406,11 @@ const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', scanLabel: 
 const getRowClassName = ({ rowIndex }) => {
   if (rowIndex === 0) return 'custom-third-class-name';
   return '';
+};
+
+// 切换工站
+const handleonChange = () => {
+  Init();
 };
 
 onMounted(() => {

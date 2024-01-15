@@ -77,7 +77,7 @@
             <cmp-container :full="true" header>
               <!-- 扫描区 -->
               <cmp-card>
-                <bcmp-workstation-info />
+                <bcmp-workstation-info @change="handleonChange" />
                 <t-row class="padding-top-line-8" style="padding-bottom: 8px">
                   <t-col flex="auto">
                     <cmp-scan-input
@@ -612,6 +612,11 @@ const resetHandle = () => {
   Object.keys(productInfo.value).forEach((key) => {
     delete productInfo.value[key];
   });
+};
+
+// 切换工站
+const handleonChange = () => {
+  Init();
 };
 
 onMounted(() => {
