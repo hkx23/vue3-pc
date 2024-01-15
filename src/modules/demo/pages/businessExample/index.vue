@@ -201,7 +201,10 @@ import { computed, onMounted, ref } from 'vue';
 
 import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 
-const mitemValue = ref([]);
+const mitemValue = ref([
+  { value: '2', label: '螺母M10' },
+  { value: '1', label: '螺栓M10×1.51' },
+]);
 const mitemCategoryValue = ref('13');
 const personValue = ref('');
 const customerValue = ref('');
@@ -229,7 +232,10 @@ const onMitemChange = (selectRows: any) => {
   console.log(selectRows);
 };
 onMounted(() => {
-  mitemValue.value = [];
+  mitemValue.value = [
+    { value: '2', label: '螺母M10' },
+    { value: '1', label: '螺栓M10×1.51' },
+  ];
   mitemCategoryValue.value = '13';
   personValue.value = '';
   customerValue.value = '';

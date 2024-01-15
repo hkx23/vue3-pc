@@ -1,0 +1,28 @@
+{
+  "title": "仓库：",
+  "placeholder": "请选择仓库",
+  "url": "/api/warehouse/userWarehouseAuthority/itemsAuth",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "仓库代码",
+      "key": "warehouseCode",
+      "align": "center"
+    },
+    {
+      "title": "仓库名称",
+      "key": "warehouseName",
+      "align": "center"
+    },
+    {
+      "title": "仓库类型",
+      "key": "warehouseCategory",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "warehouseName"
+  }
+}

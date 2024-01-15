@@ -40,7 +40,7 @@
           </template>
           <template #billNo="slotProps">
             <t-space :size="8">
-              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps.row.billNo)">{{
+              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps.row)">{{
                 slotProps.row.billNo
               }}</t-link>
             </t-space>
@@ -73,7 +73,13 @@
   <!-- 新增弹窗组件 -->
   <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" />
   <!-- 盘点单维护组件 -->
-  <inventory-sheet-maintenance v-model:visible="ISMRoutingVisible" :form-title="formTitle" :propsdtl-id="propsdtlId" />
+  <inventory-sheet-maintenance
+    v-model:visible="ISMRoutingVisible"
+    :form-title="formTitle"
+    :propsdtl-id="propsdtlId"
+    :stock-check-bill-status-name="stockCheckBillStatusName"
+    :stock-check-bill-type-name="stockCheckBillTypeName"
+  />
 </template>
 
 <script setup lang="ts">
@@ -102,7 +108,10 @@ const dataTotal = ref(0);
 const dataTotals = ref(0);
 const documentStatusOptions = ref([]);
 const selectedBillId = ref([]); // 选中的序号
-const propsdtlId = ref(''); // 传递给详情组件的id
+// 传递给详情组件的数据   todo
+const propsdtlId = ref('');
+const stockCheckBillStatusName = ref('');
+const stockCheckBillTypeName = ref('');
 
 //* 组件配置--查询界面
 const opts = computed(() => {
@@ -198,7 +207,8 @@ const fetchTable = async () => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
-  tableDataReckoning.value = data.list;
+  // tableDataReckoning.value = data.list;
+  tableDataReckoning.value = [...data.list];
   dataTotal.value = data.total;
   setLoading(false);
 };
@@ -209,9 +219,6 @@ const handleRowSelectChange = (value: any[]) => {
   if (value.length > 0) {
     // 只取数组中的最后一个元素（即最后一个选中的ID）
     selectedBillId.value = value[value.length - 1];
-  } else {
-    // 如果没有选中的项，可以设定一个默认值或处理为空的情况
-    selectedBillId.value = null;
   }
 };
 
@@ -262,9 +269,10 @@ const documentStatusData = async () => {
 
 //* 查询
 const onInput = async (data: any) => {
+  const { billNo, status, warehouseId, timeCreate } = data;
   if (!data.value) {
-    const { billNo, status, warehouseId, timeCreate } = data;
-    const result = await api.stockCheckBill.getPdList({
+    pageUI.value.page = 1;
+    const data = await api.stockCheckBill.getPdList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       dateStart: timeCreate[0],
@@ -273,8 +281,10 @@ const onInput = async (data: any) => {
       billNo,
       status,
     });
-    tableDataReckoning.value = result.list;
-    dataTotal.value = result.total;
+    console.log('🚀 ~ onInput ~ result:', data);
+    // tableDataReckoning.value = data.list;
+    tableDataReckoning.value = [...data.list];
+    dataTotal.value = data.total;
   }
 };
 
@@ -286,7 +296,9 @@ const onAdd = () => {
 const onEditRowClick = (item) => {
   formTitle.value = '盘点单维护';
   ISMRoutingVisible.value = true;
-  propsdtlId.value = item;
+  propsdtlId.value = item.billNo;
+  stockCheckBillStatusName.value = item.stockCheckBillStatusName;
+  stockCheckBillTypeName.value = item.stockCheckBillTypeName;
 };
 </script>
 

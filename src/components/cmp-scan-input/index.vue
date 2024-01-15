@@ -28,4 +28,8 @@ const selectAll = () => {
 :deep(.t-input) {
   background: #ff8c004d;
 }
+
+:deep(.t-input__inner) {
+  font-size: 18px;
+}
 </style>

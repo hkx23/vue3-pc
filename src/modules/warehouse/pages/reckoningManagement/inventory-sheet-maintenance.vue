@@ -27,10 +27,10 @@
               <p>{{ props.propsdtlId }}</p>
             </t-form-item>
             <t-form-item label="盘点类型：" name="description">
-              <p>月盘</p>
+              <p>{{ props.stockCheckBillStatusName }}</p>
             </t-form-item>
             <t-form-item label="状态：" name="description">
-              <p>盘点中</p>
+              <p>{{ props.stockCheckBillTypeName }}</p>
             </t-form-item>
           </t-row>
         </t-form>
@@ -140,6 +140,7 @@ const dataTotal = ref(0);
 onMounted(async () => {
   await fetchTable();
   await getBarcodesData(props.propsdtlId);
+  await gitMaterialDetails(props.propsdtlId);
 });
 
 //* 表格数据
@@ -173,21 +174,41 @@ const props = defineProps({
   propsdtlId: {
     type: String,
   },
+  stockCheckBillStatusName: {
+    type: String,
+  },
+  stockCheckBillTypeName: {
+    type: String,
+  },
 });
 
-const getBarcodesData = (dtlId) => {
-  api.stockCheckBill.getBarcodes({
+// 获取物料明细
+const gitMaterialDetails = async (billId) => {
+  const result = await api.stockCheckBill.getDtlList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    billId,
+  });
+  console.log('🚀 ~ gitMaterialDetails ~ result:', result);
+};
+
+// 获取标签明细
+const getBarcodesData = async (dtlId) => {
+  const result = await api.stockCheckBill.getBarcodes({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     dtlId,
   });
+  console.log('🚀 ~ getBarcodesData ~ result:', result);
 };
 
 watch(
   () => props.propsdtlId,
   (newVal) => {
     if (newVal) {
-      getBarcodesData(newVal); // 当 propsdtlId 变化时，重新获取数据
+      // 当 propsdtlId 变化时，重新获取数据
+      gitMaterialDetails(newVal);
+      getBarcodesData(newVal);
     }
   },
 );
