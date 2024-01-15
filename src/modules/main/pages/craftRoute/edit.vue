@@ -497,13 +497,17 @@ const dragInNode = (type: string, text: string) => {
     processStep: 0,
     processId: null,
     processName: text,
-    // processType: type === 'start' ? 'S' : type === 'end' ? 'E' : 'P',
+    processType: 'P',
     backgroundColor: '#ffffff',
     bomList: [],
   };
   if (type === 'process') {
     properties.processStep = globalProcessStep;
     globalProcessStep += 20;
+  } else if (type === 'start') {
+    properties.processType = 'S';
+  } else if (type === 'end') {
+    properties.processType = 'E';
   }
   lf.dnd.startDrag({
     type,
