@@ -100,6 +100,106 @@ export interface ResultObject {
   data?: object | null;
 }
 
+export interface CommonSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+export interface Filter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  value?: string;
+}
+
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataWarehouse = {
+  list?: Warehouse[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWarehouse {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWarehouse;
+}
+
+/** 仓库 */
+export interface Warehouse {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  warehouseDesc?: string;
+  warehouseCategory?: string;
+  warehouseAttribute?: string;
+  /**
+   * 是否启用交易上传
+   * @format int32
+   */
+  isEnableUpload?: number;
+  /**
+   * 交易上传时间
+   * @format date-time
+   */
+  datetimeUpload?: string;
+  /**
+   * 是否启用货位管理
+   * @format int32
+   */
+  isEnableLocation?: number;
+  erpWarehouse?: string;
+  /**
+   * 是否先进先出
+   * @format int32
+   */
+  isFifo?: number;
+}
+
 /** 响应数据 */
 export type PagingDataUserWarehouseAuthorityVO = {
   list?: UserWarehouseAuthorityVO[];
@@ -706,6 +806,7 @@ export interface StockCheckBillVO {
   diffReason?: string;
   /** 扫描的标签号 */
   scanBarcode?: string;
+  onhandId?: string;
 }
 
 /** 通用响应类 */
@@ -1025,16 +1126,36 @@ export interface ResultLocationVO {
   data?: LocationVO;
 }
 
+/** 查询排产单BOM物料的已领料数量信息 */
+export interface AlreadyRequisitionVO {
+  moScheId?: string;
+  mitemId?: string;
+  /** 已领料数量 */
+  pickQty?: number;
+}
+
 /** 领料制单提交模型 */
 export interface MaterialRequisitionDTO {
   /** 作废的单据id集合 */
   cancelledIds?: string[];
   /** 新增界面-获取明细 */
-  moScheCodeLit?: string[];
+  moScheCodeList?: string[];
   warehouseId?: string;
   toWarehouseId?: string;
   /** 新增界面-备注 */
   remark?: string;
+  /** 查询库存模型 */
+  onHandInfo?: OnHandVO;
+  /** 查询排产单BOM物料的已领料数量信息 */
+  alreadyRequisitionVO?: AlreadyRequisitionVO;
+}
+
+/** 查询库存模型 */
+export interface OnHandVO {
+  warehouseId?: string;
+  mitemId?: string;
+  /** 库存现有量 */
+  qty?: number;
 }
 
 /** 响应数据 */
@@ -1121,11 +1242,17 @@ export type MaterialRequisitionDtlVO = {
    * @format int32
    */
   scheQty?: number;
+  /** 库存可用量 */
+  handQty?: number;
+  /** 已领用量 */
+  alreadyPickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1139,6 +1266,32 @@ export interface ResultListMaterialRequisitionDtlVO {
   message?: string;
   /** 响应数据 */
   data?: MaterialRequisitionDtlVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListOnHandVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: OnHandVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListAlreadyRequisitionVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AlreadyRequisitionVO[] | null;
 }
 
 /** 货位 */
@@ -1171,33 +1324,6 @@ export interface Location {
   locationDesc?: string;
   warehouseId?: string;
   districtId?: string;
-}
-
-export interface CommonSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
-  keyword?: string;
-  /** @format int32 */
-  state?: number;
-  parentId?: string;
-  category?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
-
-export interface Filter {
-  field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
-  value?: string;
-}
-
-export interface SortParam {
-  sortBy?: string;
-  descending?: boolean;
 }
 
 /** 通用响应类 */
@@ -2253,59 +2379,6 @@ export interface ResultListWarehouse {
   data?: Warehouse[] | null;
 }
 
-/** 仓库 */
-export type Warehouse = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  warehouseCode?: string;
-  warehouseName?: string;
-  warehouseDesc?: string;
-  warehouseCategory?: string;
-  warehouseAttribute?: string;
-  /**
-   * 是否启用交易上传
-   * @format int32
-   */
-  isEnableUpload?: number;
-  /**
-   * 交易上传时间
-   * @format date-time
-   */
-  datetimeUpload?: string;
-  /**
-   * 是否启用货位管理
-   * @format int32
-   */
-  isEnableLocation?: number;
-  erpWarehouse?: string;
-  /**
-   * 是否先进先出
-   * @format int32
-   */
-  isFifo?: number;
-} | null;
-
 /** 组织架构表 */
 export type Org = {
   id?: string;
@@ -3001,6 +3074,20 @@ export const api = {
      * No description
      *
      * @tags 用户仓库权限表
+     * @name SearchAuth
+     * @request POST:/userWarehouseAuthority/itemsAuth
+     * @secure
+     */
+    searchAuth: (data: CommonSearch) =>
+      http.request<ResultPagingDataWarehouse['data']>(`/api/warehouse/userWarehouseAuthority/itemsAuth`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户仓库权限表
      * @name GetList
      * @summary 获得页面数据
      * @request POST:/userWarehouseAuthority/getList
@@ -3183,6 +3270,36 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
+     * @name StockCheckFinish
+     * @summary 盘点完成操作
+     * @request POST:/stockCheckBill/stockCheckFinish
+     * @secure
+     */
+    stockCheckFinish: (query: { billId: string }) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/stockCheckFinish`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
+     * @name StockCheckClose
+     * @summary 关闭单据操作
+     * @request POST:/stockCheckBill/stockCheckClose
+     * @secure
+     */
+    stockCheckClose: (query: { billId: string }) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/stockCheckClose`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
      * @name RemoveBatch
      * @summary 删除库存记录
      * @request POST:/stockCheckBill/removeBatch
@@ -3220,6 +3337,21 @@ export const api = {
      */
     getOnHand: (data: StockCheckBillSearch) =>
       http.request<ResultPagingDataStockCheckBillVO['data']>(`/api/warehouse/stockCheckBill/getOnHand`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
+     * @name Adjustment
+     * @summary 差异调整操作
+     * @request POST:/stockCheckBill/adjustment
+     * @secure
+     */
+    adjustment: (data: StockCheckBillSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/adjustment`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3466,6 +3598,36 @@ export const api = {
      */
     getReqDtls: (data: MaterialRequisitionDTO) =>
       http.request<ResultListMaterialRequisitionDtlVO['data']>(`/api/warehouse/materialRequisition/getReqDtls`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料制单
+     * @name GetOnHandList
+     * @summary 新增领料单界面-获取领料明细
+     * @request POST:/materialRequisition/getOnHandList
+     * @secure
+     */
+    getOnHandList: (data: MaterialRequisitionDTO) =>
+      http.request<ResultListOnHandVO['data']>(`/api/warehouse/materialRequisition/getOnHandList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料制单
+     * @name GetAlreadyReqInfo
+     * @summary 新增领料单界面-获取领料明细
+     * @request POST:/materialRequisition/getAlreadyReqInfo
+     * @secure
+     */
+    getAlreadyReqInfo: (data: MaterialRequisitionDTO) =>
+      http.request<ResultListAlreadyRequisitionVO['data']>(`/api/warehouse/materialRequisition/getAlreadyReqInfo`, {
         method: 'POST',
         body: data as any,
       }),
