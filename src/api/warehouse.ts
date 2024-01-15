@@ -3350,9 +3350,10 @@ export const api = {
      * @request POST:/stockCheckBill/adjustment
      * @secure
      */
-    adjustment: () =>
+    adjustment: (data: StockCheckBillSearch) =>
       http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/adjustment`, {
         method: 'POST',
+        body: data as any,
       }),
 
     /**
