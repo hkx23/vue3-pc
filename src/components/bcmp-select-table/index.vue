@@ -291,7 +291,7 @@ const rehandleSelectChange = (value: any[], { selectedRowData }: any) => {
 };
 // 可以根据触发来源，自由定制标签变化时的筛选器行为
 const onTagChange = (currentTags: any, context: { trigger: any; index: any; item: any }) => {
-  if (state.defaultValue) {
+  if (!(state.defaultValue && state.defaultValue.length > 0)) {
     state.defaultValue = [];
     state.selectedRowData = [];
   }
@@ -643,6 +643,13 @@ onMounted(() => {
       state.defaultValue = (state.defaultValue || []).map((item: any) => {
         return item;
       });
+      if (!(state.defaultValue && state.defaultValue.length > 0)) {
+        selectedRowKeys.value = [];
+        activeRowKeys.value = [];
+      } else {
+        selectedRowKeys.value = state.defaultValue.map((item: { [x: string]: any }) => item.value);
+        activeRowKeys.value = selectedRowKeys.value;
+      }
     } else {
       // state.selectSearch = props.value;
 
@@ -689,6 +696,13 @@ watch(
         state.defaultValue = (state.defaultValue || []).map((item: any) => {
           return item;
         });
+        if (!(state.defaultValue && state.defaultValue.length > 0)) {
+          selectedRowKeys.value = [];
+          activeRowKeys.value = [];
+        } else {
+          selectedRowKeys.value = state.defaultValue.map((item: { [x: string]: any }) => item.value);
+          activeRowKeys.value = selectedRowKeys.value;
+        }
       } else if (!isHandleSelectionChange.value) {
         if (props.value) {
           console.log('remoteLoad-按默认值查询');
