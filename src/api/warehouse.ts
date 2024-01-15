@@ -706,6 +706,7 @@ export interface StockCheckBillVO {
   diffReason?: string;
   /** 扫描的标签号 */
   scanBarcode?: string;
+  onhandId?: string;
 }
 
 /** 通用响应类 */
@@ -3183,6 +3184,36 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
+     * @name StockCheckFinish
+     * @summary 盘点完成操作
+     * @request POST:/stockCheckBill/stockCheckFinish
+     * @secure
+     */
+    stockCheckFinish: (query: { billId: string }) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/stockCheckFinish`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
+     * @name StockCheckClose
+     * @summary 关闭单据操作
+     * @request POST:/stockCheckBill/stockCheckClose
+     * @secure
+     */
+    stockCheckClose: (query: { billId: string }) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/stockCheckClose`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
      * @name RemoveBatch
      * @summary 删除库存记录
      * @request POST:/stockCheckBill/removeBatch
@@ -3222,6 +3253,20 @@ export const api = {
       http.request<ResultPagingDataStockCheckBillVO['data']>(`/api/warehouse/stockCheckBill/getOnHand`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
+     * @name Adjustment
+     * @summary 差异调整操作
+     * @request POST:/stockCheckBill/adjustment
+     * @secure
+     */
+    adjustment: () =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/adjustment`, {
+        method: 'POST',
       }),
 
     /**

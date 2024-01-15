@@ -575,10 +575,6 @@ export interface WorkcenterSearch {
   workshopId?: string;
   /** 工作中心-状态 */
   state?: number[];
-  /** 排序字段 */
-  sorts?: SortParam[];
-  /** 筛选字段 */
-  filters?: Filter[];
 }
 
 /** 响应数据 */
@@ -719,8 +715,8 @@ export interface WorkcenterVO {
    * @format int64
    */
   device?: number;
-  /** 子工作中心 */
-  children?: WorkcenterVO[];
+  /** 是否有子工作中心 */
+  haveChildren?: boolean;
 }
 
 export interface WorkbenchTodoVO {
@@ -3560,13 +3556,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -5596,10 +5592,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6782,21 +6778,6 @@ export const api = {
      * No description
      *
      * @tags 工作中心
-     * @name GetChildCenter
-     * @summary 查询子工作中心
-     * @request POST:/workcenter/getChildCenter
-     * @secure
-     */
-    getChildCenter: (data: WorkcenterSearch) =>
-      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getChildCenter`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工作中心
      * @name Add
      * @summary 新增工作中心
      * @request POST:/workcenter/add
@@ -6820,6 +6801,21 @@ export const api = {
     getTagCount: () =>
       http.request<ResultWorkcenterVO['data']>(`/api/main/workcenter/getTagCount`, {
         method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作中心
+     * @name GetChildCenter
+     * @summary 查询子工作中心
+     * @request GET:/workcenter/getChildCenter
+     * @secure
+     */
+    getChildCenter: (query: { id: string }) =>
+      http.request<ResultPagingDataWorkcenterVO['data']>(`/api/main/workcenter/getChildCenter`, {
+        method: 'GET',
+        params: query,
       }),
 
     /**
