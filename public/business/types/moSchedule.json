@@ -1,6 +1,6 @@
 {
   "title": "排产单：",
-  "placeholder": "请选择排产单：",
+  "placeholder": "请选择排产单",
   "url": "/api/main/moSchedule/items",
   "httptype": "POST",
   "category": "",

@@ -292,7 +292,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    colKey: 'wcObjectCodeName',
+    colKey: 'wcObjectName',
     title: '关联设备',
     align: 'center',
   },
