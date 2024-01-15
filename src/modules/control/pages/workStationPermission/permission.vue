@@ -149,7 +149,7 @@ const onBtnSave = async () => {
   saveLoading.value = true;
   // console.log('保存', permission.value.userId);
   await api.workstationAuth.save({ userId: permission.value.userId, inseartList: addArr, removeList: delArr });
-  await onTable();
+  await onCheckArr();
   saveLoading.value = false;
   MessagePlugin.success('保存成功');
 };
@@ -239,20 +239,28 @@ const onTable = async () => {
     setLoading(false);
   }
 };
-// 点击用户拿数据
+
+// 获取选中的数组
 const rawArray = ref([]);
+const userId = ref(''); // id
+const onCheckArr = async () => {
+  const res = await api.workstationAuth.getUserAuth({
+    userId: userId.value,
+  });
+  selectedRowKeys.value = res.list;
+  rawArray.value = res.list;
+};
+
+// 点击用户拿数据
 const selectedListItemIndex = ref(0);
 const onClickList = async (item, index) => {
   selectedRowKeys.value = [];
   permission.value.userId = item.userId;
   permission.value.label = item.label;
   selectedListItemIndex.value = index;
+  userId.value = item.userId;
   await onTable();
-  const res = await api.workstationAuth.getUserAuth({
-    userId: item.userId,
-  });
-  selectedRowKeys.value = res.list;
-  rawArray.value = res.list;
+  await onCheckArr();
 };
 // 用户
 const onInputSearchUser = async () => {
