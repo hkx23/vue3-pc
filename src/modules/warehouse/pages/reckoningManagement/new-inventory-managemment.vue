@@ -46,8 +46,8 @@
                 <t-option
                   v-for="item in authorizedLocation"
                   :key="item.id"
-                  :label="item.locationtName"
-                  :value="item.id"
+                  :label="item.locationName"
+                  :value="item.locationId"
                 ></t-option>
               </t-select>
             </template>
@@ -84,6 +84,11 @@
         </cmp-card>
       </cmp-container>
     </cmp-container>
+    <!-- 自定义底部按钮 -->
+    <template #footer>
+      <t-button :disabled="selectedRowKeys.length === 0" @click="onConfirmAnother">确认</t-button>
+      <!-- <t-button @click="onClose">取消</t-button> -->
+    </template>
   </t-dialog>
 </template>
 
@@ -101,7 +106,7 @@ const { loading } = useLoading();
 const tableDataInventory = ref([]);
 const { pageUI } = usePage();
 const dataTotal = ref(0);
-const selectedRowKeys = ref([]); // 删除
+const selectedRowKeys = ref([]); // 勾选条数
 const countingTypeDataOptions = ref([]); // 盘点类型
 const resultWarehouseData = ref([]); // 仓库
 const authorizedDistrict = ref([]); // 货区
@@ -218,29 +223,29 @@ onMounted(async () => {
   await getWarehouseData();
 });
 
-const onConfirmAnother = async () => {
-  const { stockCheckType, warehouseId, districtId, locationId, mitemId } = inputParams.value;
-  console.log('🚀 ~ onConfirmAnother ~ inputParams.value:', inputParams.value);
+const emit = defineEmits(['update-data']);
 
+const onConfirmAnother = async () => {
+  const { stockCheckType, warehouseId } = inputParams.value;
   const onHandIds = selectedRowKeys.value;
-  console.log('🚀 ~ onConfirmAnother ~ onHandIds:', onHandIds);
-  const reslut = await api.stockCheckBill.addPd({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    onHandIds,
+  await api.stockCheckBill.addPd({
     stockCheckType,
     warehouseId,
-    districtId,
-    locationId,
-    mitemId,
+    onHandIds,
   });
-  console.log('🚀 ~ onConfirmAnother ~ reslut:', reslut);
+  // 需求：
+  // 关闭弹窗
+  // 关闭弹窗
+  emit('update-data');
+  MessagePlugin.success('新增成功');
+  // 刷新表格数据
 };
+
+// 自定义事件传数据给父组件
 
 // 获取有权限的仓库
 const getWarehouseData = async () => {
   resultWarehouseData.value = await api.stockCheckBill.getWarehouse();
-  console.log('🚀 ~ getWarehouseData ~ resultWarehouseData.value:', resultWarehouseData.value);
 };
 
 // 获取货区

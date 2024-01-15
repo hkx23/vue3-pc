@@ -24,14 +24,6 @@
           @select-change="handleRowSelectChange"
           @refresh="tabRefresh"
         >
-          <!-- 状态 -->
-          <template #status="{ row }">
-            <span v-if="row.state == 'CREATED'">已创建</span>
-            <span v-if="row.state == 'PRINTED'">已打印</span>
-            <span v-if="row.state == 'CHECKING'">盘点中</span>
-            <span v-if="row.state == 'CLOSED'">已关闭</span>
-            <span v-else>已取消</span>
-          </template>
           <template #button>
             <t-button theme="primary" @click="onAdd">新增</t-button>
             <t-button theme="default">作废</t-button>
@@ -71,7 +63,7 @@
   </cmp-container>
 
   <!-- 新增弹窗组件 -->
-  <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" />
+  <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" @update-data="closeDialog" />
   <!-- 盘点单维护组件 -->
   <inventory-sheet-maintenance
     v-model:visible="ISMRoutingVisible"
@@ -108,7 +100,7 @@ const dataTotal = ref(0);
 const dataTotals = ref(0);
 const documentStatusOptions = ref([]);
 const selectedBillId = ref([]); // 选中的序号
-// 传递给详情组件的数据   todo
+// 传递给详情组件的数据 给接口入参
 const propsdtlId = ref('');
 const stockCheckBillStatusName = ref('');
 const stockCheckBillTypeName = ref('');
@@ -148,7 +140,7 @@ const opts = computed(() => {
     status: {
       label: '单据状态',
       comp: 't-select',
-      defaultVal: '', // 默认全选
+      defaultVal: '',
       bind: {
         options: documentStatusOptions.value,
         clearable: true,
@@ -163,8 +155,8 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '序号', colKey: 'index', width: 40, cell: 'indexSlot' },
   { title: '盘点单号', colKey: 'billNo', width: 120 },
   { title: '仓库', width: 85, colKey: 'warehouseName' },
-  { title: '盘点类型', width: 85, colKey: 'stockCheckType' },
-  { title: '状态', width: 85, colKey: 'status' },
+  { title: '盘点类型', width: 85, colKey: 'stockCheckBillTypeName' },
+  { title: '状态', width: 85, colKey: 'stockCheckBillStatusName' },
   { title: '创建人', width: 85, colKey: 'creator' },
   {
     title: '创建时间',
@@ -271,7 +263,6 @@ const documentStatusData = async () => {
 const onInput = async (data: any) => {
   const { billNo, status, warehouseId, timeCreate } = data;
   if (!data.value) {
-    pageUI.value.page = 1;
     const data = await api.stockCheckBill.getPdList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -281,11 +272,15 @@ const onInput = async (data: any) => {
       billNo,
       status,
     });
-    console.log('🚀 ~ onInput ~ result:', data);
-    // tableDataReckoning.value = data.list;
     tableDataReckoning.value = [...data.list];
     dataTotal.value = data.total;
   }
+};
+
+const closeDialog = async () => {
+  // 处理关闭弹窗的逻辑
+  eidtRoutingVisible.value = false;
+  await fetchTable();
 };
 
 const onAdd = () => {

@@ -8,6 +8,14 @@
     </template>
     <cmp-container :full="true">
       <cmp-card>
+        <!-- 按钮操作逻辑
+          
+          盘点状态为 已创建或者 盘点中     不允许 差异调整 关闭单据
+
+          盘点状态为 已完成                不允许保存 和 盘点完成
+
+          盘点状态为 已关闭或者 已作废     只允许刷新  导出 打印
+         -->
         <div class="buttonSty">
           <t-button>刷新</t-button>
           <t-button>导出</t-button>
@@ -91,6 +99,7 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 const { loading, setLoading } = useLoading();
+
 //* 表格标题--物料明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },

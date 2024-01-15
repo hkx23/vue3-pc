@@ -3934,6 +3934,54 @@ export interface ResultListLabelVO {
   data?: LabelVO[] | null;
 }
 
+/** 标签表 */
+export interface Label {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  labelNo?: string;
+  labelCategory?: string;
+  mitemId?: string;
+  lotNo?: string;
+  batchLot?: string;
+  supplierId?: string;
+  /** 标签初始化数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  onhandId?: string;
+  moScheId?: string;
+  printTmplId?: string;
+  /**
+   * 标签顺序号
+   * @format int32
+   */
+  printSeq?: number;
+  deliveryDtlId?: string;
+  receiveNo?: string;
+  status?: string;
+}
+
 /** 菜单收藏夹表 */
 export interface Favorite {
   id?: string;
@@ -5590,12 +5638,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9344,6 +9392,21 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name SplitBarcodeCommon
+     * @summary 拆分条码
+     * @request POST:/label/splitBarcodeCommon
+     * @secure
+     */
+    splitBarcodeCommon: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/main/label/splitBarcodeCommon`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name ReprintBarcode
      * @summary 补打条码
      * @request POST:/label/reprintBarcode
@@ -9440,6 +9503,21 @@ export const api = {
      */
     cancellationBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/main/label/cancellationBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name BatchChange
+     * @summary 批量修改状态
+     * @request POST:/label/batchChangeStatus
+     * @secure
+     */
+    batchChange: (data: Label[]) =>
+      http.request<ResultObject['data']>(`/api/main/label/batchChangeStatus`, {
         method: 'POST',
         body: data as any,
       }),
