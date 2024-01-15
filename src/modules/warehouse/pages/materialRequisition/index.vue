@@ -53,16 +53,7 @@
   </cmp-container>
 
   <!--领料制单主表弹框-->
-  <t-dialog
-    v-model:visible="formVisible"
-    :header="formHeader"
-    width="95%"
-    top="20"
-    :on-confirm="onConfirmForm"
-    :close-on-overlay-click="false"
-  >
-    <formMaterialRequisition ref="formRef" :is-add="isAdd" :row="selectMaterialRow"></formMaterialRequisition>
-  </t-dialog>
+  <formMaterialRequisition ref="formRef" :is-add="isAdd" :row="selectMaterialRow"></formMaterialRequisition>
 </template>
 
 <script setup lang="ts">
@@ -184,7 +175,6 @@ const dataTotal = ref(0);
 const tableRef = ref();
 const tableDtlRef = ref();
 const selectMaterialRow = ref({}) as any; // 选中领料制单行
-const formHeader = ref('');
 
 const selectRowKeys = computed(() => {
   return tableRef.value?.getSelectedRowKeys();
@@ -298,20 +288,10 @@ const clearMaterialDtlTable = async () => {
 const onClickAddMaterialRule = () => {
   const { reset } = formRef.value;
   reset();
+  const { showPopform } = formRef.value;
+  showPopform();
   formVisible.value = true;
-  formHeader.value = t('materialRequisition.add');
   isAdd.value = true;
-};
-
-// 领料制单界面提交
-const onConfirmForm = async () => {
-  formRef.value.submit().then((data) => {
-    if (data) {
-      formVisible.value = false;
-      selectMaterialRow.value = {};
-      fetchTable();
-    }
-  });
 };
 
 onMounted(() => {
@@ -375,5 +355,15 @@ onMounted(() => {
 
 :deep(t-table__affixed-header-elm) {
   width: 0 !important;
+}
+
+.add-form {
+  :deep(.t-dialog__body) {
+    padding: 0 !important;
+  }
+
+  :deep(.t-dialog) {
+    background: var(--td-bg-color-page) !important;
+  }
 }
 </style>

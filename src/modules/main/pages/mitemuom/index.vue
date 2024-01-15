@@ -30,7 +30,6 @@
         <template #op="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
-
             <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirm">
               <t-link theme="primary" @click="onDeleteRow">{{ t('common.button.delete') }}</t-link>
             </t-popconfirm>
@@ -63,7 +62,6 @@
       <t-form-item :label="t('mitemuom.unitName')" name="uomName">
         <t-input v-model="formData.uomName" :placeholder="t('common.placeholder.input')"></t-input>
       </t-form-item>
-
       <t-form-item :label="t('mitemuom.unitSymbol')" name="uom">
         <t-input v-model="formData.uom" :placeholder="t('common.placeholder.input')" :disabled="isdisables"></t-input>
       </t-form-item>

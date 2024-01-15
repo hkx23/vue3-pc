@@ -533,7 +533,6 @@ const onGetAllTabData = async () => {
 // 左侧列表点击事件
 const selectedListItemIndex = ref(0);
 const onClickList = async (row: any, index?: any) => {
-  console.log('🚀 ~ file: index.vue:536 ~ onClickList ~ row:', row);
   selectedListItemIndex.value = index;
   paramTabCode.value = row.objectCode; // 用于发获取全部数据请求
   const resData = await api.objectPropertyCategory.getCategory({ objectCode: row.objectCode }); // 获取表单下拉框数据
