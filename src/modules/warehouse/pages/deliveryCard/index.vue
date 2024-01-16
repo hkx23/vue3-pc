@@ -777,6 +777,7 @@ const onRightFetchData = async () => {
 // 本次生成数量change事件
 const numInput = ref(null);
 const inputTimeQtyChange = (value: any, row: any) => {
+  console.log('🚀 ~ file: index.vue:780 ~ inputTimeQtyChange ~ row:', row);
   generateData.value.createNum = value; // 本次生成数量
   numInput.value = row.planQty - row.generateQty;
 };
@@ -1089,8 +1090,8 @@ const onGenerate = debounce(async () => {
     await onGetPrintTopTabData(); // 刷新数据
     await onGetPrintDownTabData(); // 下表格数据
     MessagePlugin.success('生成成功');
-    tableRefs.value.setSelectedRowKeys([]);
-    generateData.value.moScheduleId = null;
+    // tableRefs.value.setSelectedRowKeys([]);
+    // generateData.value.moScheduleId = null;
   } catch (e) {
     console.log(e);
   } finally {
