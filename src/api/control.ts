@@ -1658,15 +1658,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  datetimeScheStr?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1709,10 +1709,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  isScanFinish?: boolean;
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
-  keyPartCodeStr?: string;
+  isScanFinish?: boolean;
 }
 
 /** 在制品关键件采集表 */
@@ -2887,17 +2887,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3001,16 +3001,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   defectCodeStr?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3247,8 +3247,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
