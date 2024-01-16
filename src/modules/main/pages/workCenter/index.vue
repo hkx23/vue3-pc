@@ -29,7 +29,7 @@
         </t-tab-panel>
       </t-tabs>
     </cmp-card>
-    <cmp-card :span="12">
+    <cmp-card v-if="valueItem !== 0" :span="12">
       <cmp-query :opts="opts" @submit="onInput"></cmp-query>
     </cmp-card>
     <cmp-card ref="tableCardRef" :span="12">
@@ -52,6 +52,7 @@
         :max-height="boxHeight"
         :loading="loading"
         lazy-load
+        @expanded-tree-nodes-change="onExpandedTreeNodesChange"
       >
         <template #wcCode="{ row }">
           <div>
@@ -130,7 +131,7 @@ const btnShowDisable = ref({
 const typeDetailed = ref(0); // 默认为0  1代表编辑 2代表父进子 3代表新增 4代表进入为添加到父级
 const disabledWord = ref(false); // 工作中心编号控制禁用默认为不禁用
 const disabledParent = ref(false); // 父
-const valueItem = ref('全部'); // space类型
+const valueItem = ref(0); // space类型
 const tableRef = ref(); // 实例table
 const tableCardRef = ref(null);
 const allType = ref([
@@ -168,86 +169,9 @@ const allType = ref([
 const workCenterId = ref(); // 工作中心的obj
 const arr = ref(); // 类型存储数组
 const newArr = ref('');
-const id = ref(0);
 const detailedShow = ref(false); // 控制子工作中心显示隐藏
 
 const showWcType = ref(false); // 控制关联设备是否显示隐藏
-// const columns: any = computed(() => {
-//   const wcObjectCode = showWcType.value
-//     ? [
-//         {
-//           colKey: 'wcObjectCode',
-//           title: '关联设备',
-//           align: 'center',
-//           width: '150px',
-//         },
-//       ]
-//     : [];
-//   const cols = [
-//     {
-//       colKey: 'wcCode',
-//       title: '工作中心编号',
-//       align: 'left',
-//       width: '200px',
-//     },
-//     {
-//       colKey: 'wcName',
-//       title: '名称',
-//       align: 'center',
-//       width: '150px',
-//     },
-//     {
-//       colKey: 'wcType',
-//       title: '类型',
-//       align: 'center',
-//       width: '150px',
-//     },
-//     {
-//       colKey: 'workshopName',
-//       title: '所属车间',
-//       align: 'center',
-//       width: '150px',
-//     },
-//     {
-//       colKey: 'wcLocation',
-//       title: '地点',
-//       align: 'center',
-//       width: '150px',
-//     },
-//     {
-//       colKey: 'parentWcCode',
-//       title: '父工作中心',
-//       align: 'center',
-//       width: '150px',
-//     },
-//     {
-//       colKey: 'wcOwner',
-//       title: '负责人',
-//       align: 'center',
-//       width: '150px',
-//     },
-//     ...wcObjectCode,
-//     {
-//       colKey: 'wcSeq',
-//       title: '顺序号',
-//       align: 'center',
-//       width: '150px',
-//     },
-//     {
-//       colKey: 'state',
-//       title: '状态',
-//       align: 'center',
-//     },
-//     {
-//       colKey: 'op',
-//       title: '操作',
-//       width: '150px',
-//       align: 'center',
-//       fixed: 'right',
-//     },
-//   ];
-//   return cols;
-// });
 
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
@@ -508,27 +432,34 @@ const onFetchData = async () => {
     data.value = res.list; // 新增页面
     page.value.total = res.total;
     // 只有第一次进来的时候才拿
-    if (id.value === 0) {
-      // 类型请求
-      // const list = await api.workcenter.getCategory();
-      // id.value = 1;
-      // allType.value = list.list; // 标签列类型
-      // allType.value.forEach((item) => {
-      //   item.code = 0;
-      // });
-
-      const typeData = await api.workcenter.getTagCount();
-      allType.value[1].code = typeData.area;
-      allType.value[2].code = typeData.line;
-      allType.value[3].code = typeData.section;
-      allType.value[4].code = typeData.device;
-    }
+    await onGetTabNum(); // 获取 tab 选项卡数据
     // 标签页计数
   } catch (e) {
     console.log(e);
   } finally {
     loading.value = false;
   }
+};
+
+// 子节点点击事件
+const onExpandedTreeNodesChange = async (expandedTreeNodes: any, options: any) => {
+  console.log('🚀 ~ file: index.vue:446 ~ onExpandedTreeNodesChange ~ expandedTreeNodes:', expandedTreeNodes);
+  expandedTreeNodes = [];
+  if (options.row.children === true) {
+    const res = await api.workcenter.getChildCenter({
+      id: options.row.id,
+    });
+    tableRef.value.appendTo(options.rowState.row.id, [...res.list]);
+  }
+};
+
+// 获取 tab 选项卡数据
+const onGetTabNum = async () => {
+  const typeData = await api.workcenter.getTagCount();
+  allType.value[1].code = typeData.area;
+  allType.value[2].code = typeData.line;
+  allType.value[3].code = typeData.section;
+  allType.value[4].code = typeData.device;
 };
 // 工作中心center跳转到form
 const onHandelCenter = (row: any) => {
