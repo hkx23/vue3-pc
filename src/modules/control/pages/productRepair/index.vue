@@ -345,6 +345,7 @@ const repairingColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('business.control.productName'), width: 160, colKey: 'mitemName' },
   { title: t('business.control.fromRoutingProcessName'), width: 160, colKey: 'fromRoutingProcessName' },
   { title: t('business.control.fromWorkstationName'), width: 160, colKey: 'fromWorkstationName' },
+  { title: t('business.control.defectName'), width: 160, colKey: 'defectName' },
   { title: t('business.control.scanTime'), width: 200, colKey: 'timeCreate' },
   { title: t('business.control.retentionTime'), width: 160, colKey: 'retentionTime' },
   { title: t('business.control.ngTimes'), width: 160, colKey: 'ngTimes' },
