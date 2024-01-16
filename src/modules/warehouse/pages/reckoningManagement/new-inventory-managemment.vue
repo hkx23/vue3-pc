@@ -9,7 +9,7 @@
     <cmp-container :full="true">
       <cmp-container>
         <t-card :ghost="true">
-          <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
+          <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput" @reset="onReset">
             <template #soltStockCheckType="{ param }">
               <t-select v-model="param.stockCheckType" label="盘点类型" clearable>
                 <template #label> <span style="color: red">*</span> 盘点类型</template>
@@ -46,8 +46,8 @@
                 <t-option
                   v-for="item in authorizedLocation"
                   :key="item.id"
-                  :label="item.locationtName"
-                  :value="item.id"
+                  :label="item.locationName"
+                  :value="item.locationId"
                 ></t-option>
               </t-select>
             </template>
@@ -67,7 +67,7 @@
             empty="没有符合条件的数据"
           >
             <template #button>
-              <t-space :size="8">
+              <t-space v-if="selectedRowKeys.length !== 0" :size="8">
                 <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches()">
                   <t-button theme="default">批量删除</t-button>
                 </t-popconfirm>
@@ -84,6 +84,11 @@
         </cmp-card>
       </cmp-container>
     </cmp-container>
+    <!-- 自定义底部按钮 -->
+    <template #footer>
+      <t-button :disabled="selectedRowKeys.length === 0" @click="onConfirmAnother">确认</t-button>
+      <!-- <t-button @click="onClose">取消</t-button> -->
+    </template>
   </t-dialog>
 </template>
 
@@ -96,12 +101,12 @@ import { api } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-const { loading } = useLoading();
-// const newInventoryManagement = ref([]);
+const { loading, setLoading } = useLoading();
+const newInventoryManagement = ref([]);
 const tableDataInventory = ref([]);
 const { pageUI } = usePage();
 const dataTotal = ref(0);
-const selectedRowKeys = ref([]); // 删除
+const selectedRowKeys = ref([]); // 勾选条数
 const countingTypeDataOptions = ref([]); // 盘点类型
 const resultWarehouseData = ref([]); // 仓库
 const authorizedDistrict = ref([]); // 货区
@@ -194,18 +199,6 @@ const handleDistrictChange = async (param) => {
   }
 };
 
-// 批量删除
-const onDeleteBatches = async () => {
-  if (selectedRowKeys.value.length === 0) {
-    // 没有选中任何行时的处理
-    MessagePlugin.warning('请先选择要删除的行');
-  }
-  // 删除成功后的处理   todo
-  // MessagePlugin.success('批量删除成功');
-  // 重新加载或更新表格数据
-  // fetchTable();
-};
-
 // 批量导入
 const onClickBatchImport = async () => {
   return {};
@@ -218,29 +211,39 @@ onMounted(async () => {
   await getWarehouseData();
 });
 
-const onConfirmAnother = async () => {
-  const { stockCheckType, warehouseId, districtId, locationId, mitemId } = inputParams.value;
-  console.log('🚀 ~ onConfirmAnother ~ inputParams.value:', inputParams.value);
+// 自定义事件传数据给父组件
+const emit = defineEmits(['update-data']);
 
+// 确定提交
+const onConfirmAnother = async () => {
+  const { stockCheckType, warehouseId } = inputParams.value;
   const onHandIds = selectedRowKeys.value;
-  console.log('🚀 ~ onConfirmAnother ~ onHandIds:', onHandIds);
-  const reslut = await api.stockCheckBill.addPd({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    onHandIds,
+  await api.stockCheckBill.addPd({
     stockCheckType,
     warehouseId,
-    districtId,
-    locationId,
-    mitemId,
+    onHandIds,
   });
-  console.log('🚀 ~ onConfirmAnother ~ reslut:', reslut);
+  emit('update-data');
+  MessagePlugin.success('新增成功!');
+};
+
+// 批量删除
+const onDeleteBatches = () => {
+  const onHandIds = selectedRowKeys.value;
+  if (selectedRowKeys.value.length === 0) {
+    MessagePlugin.warning('请先选择要删除的行!');
+    return;
+  }
+  api.stockCheckBill.removeBatch({
+    onHandIds,
+  });
+  MessagePlugin.error('批量删除成功!');
+  fetchTable();
 };
 
 // 获取有权限的仓库
 const getWarehouseData = async () => {
   resultWarehouseData.value = await api.stockCheckBill.getWarehouse();
-  console.log('🚀 ~ getWarehouseData ~ resultWarehouseData.value:', resultWarehouseData.value);
 };
 
 // 获取货区
@@ -271,17 +274,33 @@ const countingTypeData = async () => {
     console.error(e);
   }
 };
+
+//* 重置
+const onReset = () => {
+  inputParams.value = {
+    stockCheckType: '',
+    warehouseId: '',
+    districtId: '',
+    locationId: '',
+    mitemId: '',
+  };
+  // 可能还需要清除查询结果等
+  tableDataInventory.value = [];
+  selectedRowKeys.value = [];
+  selectedRowKeys.value = []; // 重置清空选中的数据
+};
+
 // 查询
 const onInput = async (data: any) => {
   // todo
-  // if (!data.stockCheckType) {
-  //   MessagePlugin.error('盘点类型为必填项');
-  //   return;
-  // }
-  // if (!data.warehouseId) {
-  //   MessagePlugin.error('仓库为必填项');
-  //   return;
-  // }
+  if (!data.stockCheckType) {
+    MessagePlugin.error('盘点类型为必填项');
+    return;
+  }
+  if (!data.warehouseId) {
+    MessagePlugin.error('仓库为必填项');
+    return;
+  }
   if (!data.value) {
     // 更新 inputParams 的值
     inputParams.value = {
@@ -310,25 +329,18 @@ const onInput = async (data: any) => {
 };
 
 //* 表格数据
-// const fetchTable = async () => {
-//   setLoading(false);
-//   newInventoryManagement.value = [];
-//   tableDataInventory.value = [];
-//   const data = await api.stockCheckBill.getOnHand({
-//     pageNum: pageUI.value.page,
-//     pageSize: pageUI.value.rows,
-//   });
-//   tableDataInventory.value = data.list;
-//   dataTotal.value = data.total;
-//   setLoading(false);
-// };
-
-// 失去焦点
-// const blur = ({ value }) => {
-//   if (!value) {
-//     MessagePlugin.error('请选择必填项');
-//   }
-// };
+const fetchTable = async () => {
+  setLoading(false);
+  newInventoryManagement.value = [];
+  tableDataInventory.value = [];
+  const data = await api.stockCheckBill.getOnHand({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+  });
+  tableDataInventory.value = data.list;
+  dataTotal.value = data.total;
+  setLoading(false);
+};
 </script>
 
 <style scoped></style>

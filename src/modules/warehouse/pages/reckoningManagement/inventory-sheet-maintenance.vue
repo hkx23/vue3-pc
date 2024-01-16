@@ -8,6 +8,14 @@
     </template>
     <cmp-container :full="true">
       <cmp-card>
+        <!-- 按钮操作逻辑
+
+          盘点状态为 已创建或者 盘点中     不允许 差异调整 关闭单据
+
+          盘点状态为 已完成                不允许保存 和 盘点完成
+
+          盘点状态为 已关闭或者 已作废     只允许刷新  导出 打印
+         -->
         <div class="buttonSty">
           <t-button>刷新</t-button>
           <t-button>导出</t-button>
@@ -27,10 +35,10 @@
               <p>{{ props.propsdtlId }}</p>
             </t-form-item>
             <t-form-item label="盘点类型：" name="description">
-              <p>{{ props.stockCheckBillStatusName }}</p>
+              <p>{{ props.stockCheckBillTypeName }}</p>
             </t-form-item>
             <t-form-item label="状态：" name="description">
-              <p>{{ props.stockCheckBillTypeName }}</p>
+              <p>{{ props.stockCheckBillStatusName }}</p>
             </t-form-item>
           </t-row>
         </t-form>
@@ -47,18 +55,19 @@
           empty="没有符合条件的数据"
           :show-toolbar="false"
           :total="dataTotal"
+          @select-change="handleRowSelectChange"
         >
           <!-- 实盘数的插槽 -->
           <template #firmOfferNumberSlot="{ row }">
             <div class="operation-buttons">
               <t-button variant="outline" theme="default" size="small" @click="increment(row)">+</t-button>
-              <t-input v-model.number="row.firmOfferNumber" placeholder="输入实盘数"></t-input>
+              <t-input v-model.number="row.checkQty" placeholder="输入实盘数"></t-input>
               <t-button variant="outline" theme="default" size="small" @click="decrement(row)">-</t-button>
             </div>
           </template>
           <!-- 差异数的插槽 -->
           <template #differenceNumberSlot="{ row }">
-            <t-input v-model="row.differenceNumber" placeholder="输入差异数"></t-input>
+            <t-input v-model="row.differenceQty" placeholder="输入差异数"></t-input>
           </template>
           <!-- 差异原因的插槽 -->
           <template #differenceReasonSlot="{ row }">
@@ -91,26 +100,26 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 const { loading, setLoading } = useLoading();
+
 //* 表格标题--物料明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '序号', colKey: 'index', width: 65 },
-  { title: '物料编码', colKey: 'districtCode', width: 85 },
-  { title: '物料描述', width: 85, colKey: 'districtName' },
-  { title: '单位', width: 85, colKey: 'districtDesc' },
+  { title: '物料编码', colKey: 'mitemCode', width: 85 },
+  { title: '物料描述', width: 85, colKey: 'mitemName' },
+  { title: '单位', width: 85, colKey: 'uomName' },
   {
     title: '仓库',
     width: 85,
-    colKey: 'warehouseCode',
+    colKey: 'warehouseName',
   },
-  { title: '货区', width: 100, colKey: 'warehouseName' },
-  { title: '货位', width: 100, colKey: 'warehouseName1' },
+  { title: '货区', width: 100, colKey: 'districtName' },
+  { title: '货位', width: 100, colKey: 'locationName' },
   { title: '最小包装', width: 100, colKey: 'warehouseName2' },
-  { title: '账面数', width: 100, colKey: 'warehouseName3' },
-  { title: '实盘数', width: 300, colKey: 'firmOfferNumber', cell: 'firmOfferNumberSlot' },
-  { title: '差异数', width: 100, colKey: 'differenceNumber', cell: 'differenceNumberSlot' },
-  { title: '差异原因', width: 100, colKey: 'differenceReason', cell: 'differenceReasonSlot' },
-  { title: '差异调整原因', width: 100, colKey: 'warehouseName7' },
+  { title: '账面数', width: 100, colKey: 'onhandQty' },
+  { title: '实盘数', width: 300, colKey: 'checkQty', cell: 'firmOfferNumberSlot' },
+  { title: '差异数', width: 100, colKey: 'differenceQty', cell: 'differenceNumberSlot' },
+  { title: '差异原因', width: 100, colKey: 'diffReason', cell: 'differenceReasonSlot' },
 ];
 //* 表格标题--标签明细
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
@@ -136,35 +145,35 @@ const tableDataInventory1 = ref([]);
 const { pageUI } = usePage();
 const dataTotal = ref(0);
 
+const sonId = ref(''); // getBarcodes 接口入参
+
 //* 初始渲染
 onMounted(async () => {
-  await fetchTable();
-  await getBarcodesData(props.propsdtlId);
-  await gitMaterialDetails(props.propsdtlId);
+  await getMaterialDetails(props.propsdtlId);
 });
 
-//* 表格数据
-const fetchTable = async () => {
-  setLoading(false);
-  newInventoryManagement1.value = [];
-  tableDataInventory1.value = [];
-  // const data = await api.billManagement.getList({
-  //   pageNum: pageUI.value.page,
-  //   pageSize: pageUI.value.rows,
-  // });
-  // tableDataInventory1.value = data.list;
-  // dataTotal.value = data.total;
-  setLoading(false);
+const handleRowSelectChange = (value: any[]) => {
+  if (value.length > 0) {
+    sonId.value = value[value.length - 1];
+  }
 };
+
+watch(sonId, (newBillId) => {
+  console.log('🚀 ~ watch ~ newBillId:', newBillId);
+  if (newBillId) {
+    getBarcodesData(newBillId);
+  }
+});
+
 // 加
 const increment = (row) => {
-  if (!row.firmOfferNumber) row.firmOfferNumber = 0;
-  row.firmOfferNumber++;
+  if (!row.checkQty) row.checkQty = 0;
+  row.checkQty++;
 };
 // 减
 const decrement = (row) => {
-  if (!row.firmOfferNumber) row.firmOfferNumber = 0;
-  if (row.firmOfferNumber > 0) row.firmOfferNumber--;
+  if (!row.checkQty) row.checkQty = 0;
+  if (row.checkQty > 0) row.checkQty--;
 };
 // 接收父组件的参数
 const props = defineProps({
@@ -183,17 +192,24 @@ const props = defineProps({
 });
 
 // 获取物料明细
-const gitMaterialDetails = async (billId) => {
+const getMaterialDetails = async (billId) => {
+  setLoading(true);
+  newInventoryManagement1.value = [];
+  tableDataInventory1.value = [];
+  // pageUI.value.page = 1;
   const result = await api.stockCheckBill.getDtlList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     billId,
   });
-  console.log('🚀 ~ gitMaterialDetails ~ result:', result);
+  tableDataInventory1.value = result.list;
+  dataTotal.value = result.total;
+  setLoading(false);
 };
 
 // 获取标签明细
 const getBarcodesData = async (dtlId) => {
+  console.log('🚀 ~ getBarcodesData ~ dtlId:', dtlId);
   const result = await api.stockCheckBill.getBarcodes({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
@@ -203,12 +219,12 @@ const getBarcodesData = async (dtlId) => {
 };
 
 watch(
-  () => props.propsdtlId,
-  (newVal) => {
-    if (newVal) {
+  () => sonId.value,
+  (dtlId) => {
+    console.log('🚀 ~ dtlId:', dtlId);
+    if (dtlId) {
       // 当 propsdtlId 变化时，重新获取数据
-      gitMaterialDetails(newVal);
-      getBarcodesData(newVal);
+      getBarcodesData(dtlId);
     }
   },
 );

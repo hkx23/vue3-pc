@@ -9,14 +9,13 @@
         </cmp-card>
       </cmp-container>
 
-      <!-- cmp-table 表格组件   :row-select="{ type: 'single' }"  -->
+      <!-- cmp-table 表格组件   :row-select="{ type: 'single' }"    :selected-row-keys="selectedBillId" -->
       <cmp-card>
         <cmp-table
           v-model:pagination="pageUI"
           :loading="loading"
-          row-key="billNo"
+          row-key="billId"
           :table-column="tableReckoningManagementColumns"
-          :selected-row-keys="selectedBillId"
           :table-data="tableDataReckoning"
           :fixed-height="false"
           :total="dataTotal"
@@ -24,14 +23,6 @@
           @select-change="handleRowSelectChange"
           @refresh="tabRefresh"
         >
-          <!-- 状态 -->
-          <template #status="{ row }">
-            <span v-if="row.state == 'CREATED'">已创建</span>
-            <span v-if="row.state == 'PRINTED'">已打印</span>
-            <span v-if="row.state == 'CHECKING'">盘点中</span>
-            <span v-if="row.state == 'CLOSED'">已关闭</span>
-            <span v-else>已取消</span>
-          </template>
           <template #button>
             <t-button theme="primary" @click="onAdd">新增</t-button>
             <t-button theme="default">作废</t-button>
@@ -65,13 +56,16 @@
           :show-toolbar="false"
           :total="dataTotals"
         >
+          <template #indexSlot="{ rowIndex }">
+            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+          </template>
         </cmp-table>
       </cmp-card>
     </cmp-container>
   </cmp-container>
 
   <!-- 新增弹窗组件 -->
-  <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" />
+  <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" @update-data="closeDialog" />
   <!-- 盘点单维护组件 -->
   <inventory-sheet-maintenance
     v-model:visible="ISMRoutingVisible"
@@ -107,8 +101,8 @@ const formTitle = ref('');
 const dataTotal = ref(0);
 const dataTotals = ref(0);
 const documentStatusOptions = ref([]);
-const selectedBillId = ref([]); // 选中的序号
-// 传递给详情组件的数据   todo
+// const selectedBillId = ref([]); // 选中的序号
+// 传递给详情组件的数据 给接口入参
 const propsdtlId = ref('');
 const stockCheckBillStatusName = ref('');
 const stockCheckBillTypeName = ref('');
@@ -148,7 +142,7 @@ const opts = computed(() => {
     status: {
       label: '单据状态',
       comp: 't-select',
-      defaultVal: '', // 默认全选
+      defaultVal: '',
       bind: {
         options: documentStatusOptions.value,
         clearable: true,
@@ -163,8 +157,8 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '序号', colKey: 'index', width: 40, cell: 'indexSlot' },
   { title: '盘点单号', colKey: 'billNo', width: 120 },
   { title: '仓库', width: 85, colKey: 'warehouseName' },
-  { title: '盘点类型', width: 85, colKey: 'stockCheckType' },
-  { title: '状态', width: 85, colKey: 'status' },
+  { title: '盘点类型', width: 85, colKey: 'stockCheckBillTypeName' },
+  { title: '状态', width: 85, colKey: 'stockCheckBillStatusName' },
   { title: '创建人', width: 85, colKey: 'creator' },
   {
     title: '创建时间',
@@ -182,27 +176,27 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
 // 表格主位栏 2 物料明细
 const tableMaterialDetailsColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 40 },
+  { title: '序号', colKey: 'index', width: 40, cell: 'indexSlot' },
   { title: '物料编码', colKey: 'mitemCode', width: 85 },
   { title: '物料描述', width: 85, colKey: 'districtName' },
-  { title: '单位', width: 85, colKey: 'districtDesc' },
+  { title: '单位', width: 85, colKey: 'uomName' },
   {
     title: '仓库',
     width: 85,
-    colKey: 'warehouseCode',
+    colKey: 'warehouseName',
   },
-  { title: '货区', width: 100, colKey: 'warehouseName' },
-  { title: '货位', width: 100, colKey: 'warehouseName1' },
-  { title: '账面数', width: 100, colKey: 'warehouseName3' },
-  { title: '实盘数', width: 100, colKey: 'firmOfferNumber', cell: 'firmOfferNumberSlot' },
-  { title: '差异数', width: 100, colKey: 'differenceNumber', cell: 'differenceNumberSlot' },
+  { title: '货区', width: 100, colKey: 'districtName' },
+  { title: '货位', width: 100, colKey: 'locationName' },
+  { title: '账面数', width: 100, colKey: 'onhandQty' },
+  { title: '实盘数', width: 100, colKey: 'checkQty' },
+  { title: '差异数', width: 100, colKey: 'differenceQty' },
 ];
 
 //* 表格数据 1
 const fetchTable = async () => {
   setLoading(false);
-  inventoryManagement.value = []; // ?
-  tableDataReckoning.value = []; // ?
+  inventoryManagement.value = [];
+  tableDataReckoning.value = [];
   const data = await api.stockCheckBill.getPdList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
@@ -214,15 +208,14 @@ const fetchTable = async () => {
 };
 
 const handleRowSelectChange = (value: any[]) => {
-  // value 是每一列的id 我希望 每次点击都保证赋值 最后一个给 selectedBillId.value
-  // 检查value数组是否非空
+  //   //点击当前行取这行的  billId 不是  billon
   if (value.length > 0) {
     // 只取数组中的最后一个元素（即最后一个选中的ID）
-    selectedBillId.value = value[value.length - 1];
+    propsdtlId.value = value[value.length - 1];
   }
 };
 
-watch(selectedBillId, (newBillId) => {
+watch(propsdtlId, (newBillId) => {
   if (newBillId) {
     fetchTables(newBillId); // 使用新的 billId 调用 fetchTables
   }
@@ -231,7 +224,10 @@ watch(selectedBillId, (newBillId) => {
 //* 表格数据 2
 const fetchTables = async (billId) => {
   setLoading(false);
+  pageUI.value.page = 1;
   const data = await api.stockCheckBill.getDtlList({
+    // pageNum: 1,
+    // pageSize: 10,
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     billId, // 使用传递的 billId
@@ -245,6 +241,7 @@ const fetchTables = async (billId) => {
 onMounted(async () => {
   await fetchTable();
   await documentStatusData(); // 单据状态
+  // await fetchTables(propsdtlId.value); //详情表格
 });
 
 //* 表格刷新
@@ -271,7 +268,6 @@ const documentStatusData = async () => {
 const onInput = async (data: any) => {
   const { billNo, status, warehouseId, timeCreate } = data;
   if (!data.value) {
-    pageUI.value.page = 1;
     const data = await api.stockCheckBill.getPdList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
@@ -281,11 +277,15 @@ const onInput = async (data: any) => {
       billNo,
       status,
     });
-    console.log('🚀 ~ onInput ~ result:', data);
-    // tableDataReckoning.value = data.list;
     tableDataReckoning.value = [...data.list];
     dataTotal.value = data.total;
   }
+};
+
+const closeDialog = async () => {
+  // 处理关闭弹窗的逻辑
+  eidtRoutingVisible.value = false;
+  await fetchTable();
 };
 
 const onAdd = () => {
@@ -296,7 +296,7 @@ const onAdd = () => {
 const onEditRowClick = (item) => {
   formTitle.value = '盘点单维护';
   ISMRoutingVisible.value = true;
-  propsdtlId.value = item.billNo;
+  propsdtlId.value = item.billId;
   stockCheckBillStatusName.value = item.stockCheckBillStatusName;
   stockCheckBillTypeName.value = item.stockCheckBillTypeName;
 };

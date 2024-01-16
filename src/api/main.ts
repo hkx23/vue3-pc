@@ -757,8 +757,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -3560,12 +3560,12 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductName?: string;
   isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
   isBatchName?: string;
 }
 

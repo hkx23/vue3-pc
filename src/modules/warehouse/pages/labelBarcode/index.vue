@@ -563,7 +563,7 @@ const onRefreshManage = async () => {
   manageQueryCondition.value.pageNum = pageUIMannage.value.page;
   console.log(pageUIBracode.value);
   manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
-  apiMain.label.getLabelManageList(manageQueryCondition.value).then((data) => {
+  apiWarehouse.label.getLabelManageList(manageQueryCondition.value).then((data) => {
     pkgManageDataList.list = data.list;
     barcodeTotal.value = data.total;
   });
@@ -1011,7 +1011,7 @@ const fetchBracodeManageTable = async () => {
   try {
     manageQueryCondition.value.pageNum = pageUIMannage.value.page;
     manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
-    const data = (await apiMain.label.getLabelManageList(manageQueryCondition.value)) as any;
+    const data = (await apiWarehouse.label.getLabelManageList(manageQueryCondition.value)) as any;
     const { list } = data;
     pkgManageDataList.list = list;
     pkgManageTabTotal.value = data.total;
