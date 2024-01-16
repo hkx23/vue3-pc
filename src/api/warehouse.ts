@@ -974,6 +974,45 @@ export interface TransferConstraintVO {
   createTime?: string;
 }
 
+/** 盘点单据明细表 */
+export interface StockCheckBillDtl {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  stockCheckBillId?: string;
+  districtId?: string;
+  locId?: string;
+  mitemId?: string;
+  /** 帐面数 */
+  onhandQty?: number;
+  /** 实盘数 */
+  checkQty?: number;
+  /** 差异原因 */
+  diffReason?: string;
+  /** 差异调整原因 */
+  diffAdjustReason?: string;
+}
+
 export interface StockCheckBillSearch {
   /**
    * 页码
@@ -1075,6 +1114,7 @@ export interface StockCheckBillVO {
   /** 扫描的标签号 */
   scanBarcode?: string;
   onhandId?: string;
+  pdDtlId?: string;
 }
 
 /** 通用响应类 */
@@ -1300,18 +1340,12 @@ export interface MaterialRequisitionDTO {
   onHandInfo?: OnHandVO;
   /** 查询排产单BOM物料的已领料数量信息 */
   alreadyRequisitionVO?: AlreadyRequisitionVO;
+  /** 新增界面-提交的模型-明细信息 */
+  submitList?: MaterialRequisitionDtlVO[];
 }
 
-/** 查询库存模型 */
-export interface OnHandVO {
-  warehouseId?: string;
-  mitemId?: string;
-  /** 库存现有量 */
-  qty?: number;
-}
-
-/** 响应数据 */
-export type MaterialRequisitionDtlVO = {
+/** 新增界面-提交的模型-明细信息 */
+export interface MaterialRequisitionDtlVO {
   id?: string;
   /**
    * 创建时间
@@ -1405,7 +1439,15 @@ export type MaterialRequisitionDtlVO = {
   moRequestQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
-} | null;
+}
+
+/** 查询库存模型 */
+export interface OnHandVO {
+  warehouseId?: string;
+  mitemId?: string;
+  /** 库存现有量 */
+  qty?: number;
+}
 
 /** 通用响应类 */
 export interface ResultListMaterialRequisitionDtlVO {
@@ -2042,7 +2084,6 @@ export interface DeliveryCardSearch {
    * @format date-time
    */
   planDateEnd?: string;
-  moId?: string;
   workshopId?: string;
   workcenterId?: string;
   mitemId?: string;
@@ -3529,6 +3570,21 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
+     * @name Save
+     * @summary 保存操作
+     * @request POST:/stockCheckBill/save
+     * @secure
+     */
+    save: (data: StockCheckBillDtl) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/save`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
      * @name RemoveBatch
      * @summary 删除库存记录
      * @request POST:/stockCheckBill/removeBatch
@@ -3805,6 +3861,21 @@ export const api = {
      * No description
      *
      * @tags 领料制单
+     * @name SaveData
+     * @summary 新增领料单界面-提交
+     * @request POST:/materialRequisition/saveData
+     * @secure
+     */
+    saveData: (data: MaterialRequisitionDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/materialRequisition/saveData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料制单
      * @name MaterialRequisitionCanceled
      * @summary 主界面-领料单作废
      * @request POST:/materialRequisition/materialRequisitionCanceled
@@ -3840,7 +3911,7 @@ export const api = {
      * @request POST:/materialRequisition/getOnHandList
      * @secure
      */
-    getOnHandList: (data: MaterialRequisitionDTO) =>
+    getOnHandList: (data: OnHandVO) =>
       http.request<ResultListOnHandVO['data']>(`/api/warehouse/materialRequisition/getOnHandList`, {
         method: 'POST',
         body: data as any,
@@ -4096,6 +4167,21 @@ export const api = {
      */
     getLabelVo: (data: string[]) =>
       http.request<ResultListLabelVO['data']>(`/api/warehouse/label/getLabelVO`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetLabelManageList
+     * @summary 获取管理页标签数据
+     * @request POST:/label/getLabelManageList
+     * @secure
+     */
+    getLabelManageList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/warehouse/label/getLabelManageList`, {
         method: 'POST',
         body: data as any,
       }),

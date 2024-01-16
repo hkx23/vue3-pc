@@ -1874,6 +1874,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
+  /** 工序类型 */
+  processCategoryName?: string;
   stateName?: string;
   isState?: boolean;
 }
@@ -2806,6 +2808,8 @@ export type ShowModuleVO = {
   behaviorPath?: string;
   /** 模块包名称 */
   packageName?: string;
+  /** 下载地址 */
+  downloadUrl?: string;
   /**
    * 是否PC端
    * @format int32
@@ -4792,7 +4796,7 @@ export interface BarcodeRuleInMitemSearch {
   /** 规则模糊查询关键词 */
   mitemKeyword?: string;
   /** 下拉模糊查询关键词 */
-  selectKeyword?: string[];
+  selectKeyword?: string;
   ruleId?: string;
   mitemCategoryId?: string;
   mitemId?: string;
@@ -9429,21 +9433,6 @@ export const api = {
      */
     printBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/main/label/printBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name GetLabelManageList
-     * @summary 获取管理页标签数据
-     * @request POST:/label/getLabelManageList
-     * @secure
-     */
-    getLabelManageList: (data: LabelSearch) =>
-      http.request<ResultPagingDataLabelVO['data']>(`/api/main/label/getLabelManageList`, {
         method: 'POST',
         body: data as any,
       }),
