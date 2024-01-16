@@ -21,11 +21,6 @@
                   <template #showState="{ param }">
                     <t-checkbox v-model="param.showState">仅显示未打印完成</t-checkbox>
                   </template>
-                  <!-- <template #showState="{ param }">
-                    <t-radio-group v-model="param.showState">
-                      <t-radio allow-uncheck :checked="true" :value="1">仅显示未打印完成</t-radio>
-                    </t-radio-group>
-                  </template> -->
                   <template #barCodeState="{ param }">
                     <t-select v-model="param.barCodeState" :clearable="true" label="条码状态">
                       <t-option
@@ -865,10 +860,10 @@ const onGenerate = debounce(async () => {
     await onGetPrintTopTabData(); // 刷新数据
     await onGetPrintDownTabData();
     MessagePlugin.success('生成成功');
-    tableRefTop.value.setSelectedRowKeys([]);
-    printDownTabData.list = [];
-    totalPrintDown.value = 0;
-    generateData.value.moScheduleId = null;
+    // tableRefTop.value.setSelectedRowKeys([]);
+    // printDownTabData.list = [];
+    // totalPrintDown.value = 0;
+    // generateData.value.moScheduleId = null;
   } catch (e) {
     console.log(e);
   } finally {
