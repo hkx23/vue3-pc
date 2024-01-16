@@ -1658,13 +1658,13 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  workshopId?: string;
-  workshopCode?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
 }
@@ -1709,9 +1709,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -1837,6 +1837,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
+  /** 工序类型 */
+  processCategoryName?: string;
   stateName?: string;
   isState?: boolean;
 }
@@ -2608,7 +2610,6 @@ export interface LabelManageSearch {
    * @format date-time
    */
   planDateEnd?: string;
-  moId?: string;
   workshopId?: string;
   workcenterId?: string;
   mitemId?: string;
@@ -2757,8 +2758,6 @@ export interface LabelManageVO {
   /** 创建人名称 */
   creatorName?: string;
   moScheduleId?: string;
-  /** 工单编码 */
-  moCode?: string;
   /** 操作类型 */
   operateType?: string;
   /** 原因 */
@@ -2888,15 +2887,15 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  workshopId?: string;
-  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
 }
@@ -3002,15 +3001,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  workshopId?: string;
-  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -3138,7 +3137,6 @@ export interface BarcodePkgSearch {
   ids?: string[];
   /** 原因 */
   reason?: string;
-  moId?: string;
 }
 
 /** 显示包装条码管理 */
@@ -3237,8 +3235,6 @@ export interface BarcodePkgVO {
   packRuleCode?: string;
   /** 包装规则名称 */
   packRuleName?: string;
-  /** 工单编码 */
-  moCode?: string;
   /** 包装条码类型 */
   pkgBarcodeType?: string;
   /** 包装条码类型名称 */
@@ -3251,8 +3247,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */

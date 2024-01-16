@@ -9,7 +9,7 @@
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
                   <template #workState="{ param }">
-                    <t-select v-model="param.workState" :clearable="true" label="工单状态">
+                    <t-select v-model="param.workState" :clearable="true" label="排产单状态">
                       <t-option
                         v-for="item in workStateDataList.list"
                         :key="item.id"
@@ -126,7 +126,7 @@
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
                   <template #workState="{ param }">
-                    <t-select v-model="param.workState" :clearable="true" label="工单状态">
+                    <t-select v-model="param.workState" :clearable="true" label="排产单状态">
                       <t-option
                         v-for="item in workStateDataList.list"
                         :key="item.id"
@@ -342,7 +342,7 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'scheStatusName',
-    title: '工单状态',
+    title: '排产单状态',
     align: 'center',
     width: '110',
   },
@@ -486,8 +486,8 @@ const labelManage: PrimaryTableCol<TableRowData>[] = [
     width: '180',
   },
   {
-    colKey: 'moCode',
-    title: '工单',
+    colKey: 'scheCode',
+    title: '排产单',
     align: 'center',
     width: '130',
   },
@@ -695,7 +695,7 @@ const topPrintData = ref({
   pageSize: 10,
   planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
   planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
-  moId: '', // 工单ID
+  moScheduleId: '', // 工单ID
   workshopId: '', // 车间 ID
   workcenterId: '', // 工作中心ID
   mitemId: '', // 物料 ID
@@ -750,7 +750,7 @@ const ManageTabData = ref({
   planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
   createDateStart: dayjs().subtract(3, 'day').format('YYYY-MM-DD'), // 生产开始日期
   createDateEnd: dayjs().format('YYYY-MM-DD'), // 生产结束日期
-  moId: '', // 工单ID
+  moScheduleId: '', // 工单ID
   workshopId: '', // 车间 ID
   workcenterId: '', // 工作中心ID
   mitemId: '', // 物料 ID
@@ -936,12 +936,12 @@ const opts = computed(() => {
       },
     },
     mo: {
-      label: '工单',
+      label: '排产单',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'mo',
+        type: 'moSchedule',
         showTitle: false,
       },
     },
@@ -990,7 +990,7 @@ const opts = computed(() => {
 
     workState: {
       isHide: tabValue.value,
-      label: '工单状态',
+      label: '排产单状态',
       labelWidth: '60',
       event: 'select',
       defaultVal: '',
@@ -1033,7 +1033,7 @@ const onInput = async (data: any) => {
     const [planDateStart, planDateEnd] = data.scheduledProductionDate;
     topPrintData.value.planDateStart = planDateStart; // 计划生产开始日期
     topPrintData.value.planDateEnd = planDateEnd; // 计划生产结束日期
-    topPrintData.value.moId = data.mo; // 工单ID
+    topPrintData.value.moScheduleId = data.mo; // 工单ID
     topPrintData.value.workshopId = data.workshop; // 车间 ID
     topPrintData.value.workcenterId = data.workcenter; // 工作中心ID
     topPrintData.value.mitemId = data.mitem; // 物料 ID
@@ -1050,7 +1050,7 @@ const onInput = async (data: any) => {
     ManageTabData.value.planDateEnd = planDateEnd; // 计划生产结束日期
     ManageTabData.value.createDateStart = createDateStart; // 生产开始日期
     ManageTabData.value.createDateEnd = createDateEnd; // 生产结束日期
-    ManageTabData.value.moId = data.mo; // 工单ID
+    ManageTabData.value.moScheduleId = data.mo; // 工单ID
     ManageTabData.value.workshopId = data.workshop; // 车间 ID
     ManageTabData.value.workcenterId = data.workcenter; // 工作中心ID
     ManageTabData.value.mitemId = data.mitem; // 物料 ID
