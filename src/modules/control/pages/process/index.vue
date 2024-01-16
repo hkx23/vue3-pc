@@ -73,6 +73,7 @@ const tableProcessColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '工序描述', width: 160, colKey: 'processDesc' },
   { title: '工序别名', width: 160, colKey: 'processAlias' },
   { title: '状态', width: 160, colKey: 'stateName' },
+  { title: '工序采集类别', width: 160, colKey: 'processCategoryName' },
   { title: '创建人', width: 160, colKey: 'creatorName' },
   { title: '创建时间', width: 160, colKey: 'timeCreate' },
   { title: '更新人', width: 160, colKey: 'modifierName' },

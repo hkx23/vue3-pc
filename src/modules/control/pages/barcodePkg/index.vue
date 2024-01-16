@@ -606,13 +606,13 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'scheCode',
-    title: '工单',
+    title: '排产单',
     align: 'center',
     width: '110',
   },
   {
     colKey: 'scheStatusName',
-    title: '工单状态',
+    title: '排产单状态',
     align: 'center',
     width: '110',
   },
@@ -740,8 +740,8 @@ const pkgBarcodeManageColumns: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'moCode',
-    title: '工单',
+    colKey: 'scheCode',
+    title: '排产单',
     align: 'center',
     width: '130',
   },
@@ -885,13 +885,13 @@ const opts = computed(() => {
       comp: 't-date-range-picker',
       defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
     },
-    moId: {
-      label: '工单',
+    moScheduleId: {
+      label: '排产单',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'mo',
+        type: 'moSchedule',
         showTitle: false,
       },
     },
@@ -926,7 +926,7 @@ const opts = computed(() => {
       },
     },
     scheStatus: {
-      label: '工单状态',
+      label: '排产单状态',
       comp: 't-select',
       event: 'single',
       defaultVal: '',
@@ -980,13 +980,13 @@ const pkgBarcodeManageOp = computed(() => {
       comp: 't-date-range-picker',
       defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
     },
-    MoId: {
-      label: '工单',
+    moScheduleId: {
+      label: '排产单',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'mo',
+        type: 'moSchedule',
         showTitle: false,
       },
     },

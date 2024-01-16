@@ -12,7 +12,7 @@
       </cmp-query>
     </cmp-card>
     <cmp-card class="not-full-tab">
-      <tabs ref="tabsRef" :on-input-data="onInputData" :reset-data="resetData"></tabs>
+      <tabs ref="tabsRef" :on-input-data="onInputData" :reset-data="resetData" @tab-changed="handleTabChange"></tabs>
     </cmp-card>
   </cmp-container>
 </template>
@@ -76,6 +76,17 @@ const onReset = async () => {
     moCode: '', // 工单号
     parentPkgBarcode: '', // 包装箱码,
   };
+};
+
+const handleTabChange = async () => {
+  if (
+    !queryComponent.value.state.form.serialNumber &&
+    !queryComponent.value.state.form.moCode &&
+    !queryComponent.value.state.form.parentPkgBarcode
+  ) {
+    return;
+  }
+  onInput(queryComponent.value.state.form);
 };
 </script>
 

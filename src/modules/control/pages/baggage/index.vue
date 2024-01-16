@@ -123,6 +123,7 @@ const bagsSuitcasesData = ref({
 // 获取 表格 数据
 const onGetAnomalyTypeData = async () => {
   const res = await api.pkgRelation.getPkgRelationReportList(bagsSuitcasesData.value);
+  console.log('🚀 ~ file: index.vue:126 ~ onGetAnomalyTypeData ~ res:', res);
   const newData = res.list.map((item) => {
     if (item.existPkgRelationReportcChildren) {
       if (item.children && item.children.length === 0) {
@@ -138,11 +139,12 @@ const onGetAnomalyTypeData = async () => {
   anomalyTotal.value = res.total;
 };
 
+// 分页事件 1
 const onPaginationChange = async () => {
   bagsSuitcasesData.value.pageNum = 1;
   await onGetAnomalyTypeData();
 };
-
+// 分页事件 2
 const onCurrentChange = async () => {
   await onGetAnomalyTypeData();
 };

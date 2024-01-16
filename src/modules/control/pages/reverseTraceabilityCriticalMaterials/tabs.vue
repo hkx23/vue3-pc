@@ -1,9 +1,9 @@
 <template>
   <t-tabs v-model="tabKey" @change="tabChange">
-    <t-tab-panel v-for="(item, index) in tabPanel" :key="item" :value="index" :label="item" :destroy-on-hide="false">
+    <!-- # 1️⃣ 产品基础信息 -->
+    <t-tab-panel :value="0" label="产品基础信息" :destroy-on-hide="false">
       <template #panel>
-        <!-- # 1️⃣ 产品基础信息 -->
-        <cmp-container v-show="tabKey === 0" :full="true">
+        <cmp-container :full="true">
           <t-card :bordered="false">
             <template #title>
               <span v-if="!productBasicInformationForm?.moCode">工单信息( )</span>
@@ -61,12 +61,20 @@
             </div>
           </footer>
         </cmp-container>
-        <!-- # 2️⃣ 工单信息 -->
-        <cmp-container v-show="tabKey === 1" :full="true">
+      </template>
+    </t-tab-panel>
+    <!-- # 2️⃣ 工单信息 -->
+    <t-tab-panel :value="1" label="工单信息" :destroy-on-hide="false">
+      <template #panel>
+        <cmp-container :full="true">
           <detailed :row="workOrderData.list"></detailed>
         </cmp-container>
-        <!-- # 3️⃣ 物料信息 -->
-        <cmp-container v-show="tabKey === 2" :full="true">
+      </template>
+    </t-tab-panel>
+    <!-- # 3️⃣ 物料信息 -->
+    <t-tab-panel :value="2" label="物料信息" :destroy-on-hide="false">
+      <template #panel>
+        <cmp-container :full="true">
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
@@ -104,8 +112,12 @@
             </div>
           </footer>
         </cmp-container>
-        <!-- # 4️⃣ 包装信息 -->
-        <cmp-container v-show="tabKey === 3" :full="true">
+      </template>
+    </t-tab-panel>
+    <!-- # 4️⃣ 包装信息 -->
+    <t-tab-panel :value="3" label="包装信息" :destroy-on-hide="false">
+      <template #panel>
+        <cmp-container :full="true">
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <t-enhanced-table
@@ -132,8 +144,12 @@
             </div>
           </footer>
         </cmp-container>
-        <!-- # 5️⃣ 品质信息 -->
-        <cmp-container v-show="tabKey === 4" :full="true">
+      </template>
+    </t-tab-panel>
+    <!-- # 5️⃣ 品质信息 -->
+    <t-tab-panel :value="4" label="品质信息" :destroy-on-hide="false">
+      <template #panel>
+        <cmp-container :full="true">
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
@@ -151,8 +167,12 @@
             </div>
           </footer>
         </cmp-container>
-        <!-- # 6️⃣ 工艺信息 -->
-        <cmp-container v-show="tabKey === 5" :full="true">
+      </template>
+    </t-tab-panel>
+    <!-- # 6️⃣ 工艺信息 -->
+    <t-tab-panel :value="5" label="工艺信息" :destroy-on-hide="false">
+      <template #panel>
+        <cmp-container :full="true">
           <cmp-card :full="false">
             <t-form>
               <t-row>
@@ -182,8 +202,12 @@
             </div>
           </footer>
         </cmp-container>
-        <!-- # 7️⃣ 不良维修信息 -->
-        <cmp-container v-show="tabKey === 6" :full="true">
+      </template>
+    </t-tab-panel>
+    <!-- # 7️⃣ 不良维修信息 -->
+    <t-tab-panel :value="6" label="不良维修信息" :destroy-on-hide="false">
+      <template #panel>
+        <cmp-container :full="true">
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
@@ -218,8 +242,12 @@
             </div>
           </footer>
         </cmp-container>
-        <!-- # 8️⃣ 出入库信息 -->
-        <cmp-container v-show="tabKey === 7" :full="true">
+      </template>
+    </t-tab-panel>
+    <!-- # 8️⃣ 出入库信息 -->
+    <t-tab-panel :value="7" label="出入库信息" :destroy-on-hide="false">
+      <template #panel>
+        <cmp-container :full="true">
           <footer class="detailed-work-center">
             <div class="table-work-header">
               <cmp-table
@@ -247,7 +275,7 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, defineProps, reactive, ref, watch } from 'vue';
+import { computed, defineEmits, defineProps, reactive, ref, watch } from 'vue';
 
 import { api, MoOnboardReportVO, ProductBaseReportVO, TransferHeadVO, WipKeypartReportVO } from '@/api/control';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -257,17 +285,6 @@ import detailed from './detailed.vue';
 
 const { pageUI } = usePage();
 const { pageUI: pageUITwo } = usePage(); // 分页工具
-
-const tabPanel = [
-  '产品基础信息',
-  '工单信息',
-  '物料信息',
-  '包装信息',
-  '品质信息',
-  '工艺信息',
-  '不良维修信息',
-  '出入库信息',
-];
 const tableRefCardAD = ref();
 const tableRefThree = ref();
 const tableRefSeven = ref();
@@ -903,6 +920,9 @@ const props = defineProps({
   resetData: Object,
 });
 
+// 子组件传递给父组件的事件
+const emit = defineEmits(['tab-changed']);
+
 // 监听重置事件
 watch(
   () => props.resetData,
@@ -916,7 +936,7 @@ watch(
     }
     if (tabKey.value === 2) {
       await onMaterialWorkOrder();
-      tableRefThree.value[tabKey.value].setSelectedRowKeys([]);
+      tableRefThree.value.setSelectedRowKeys([]);
       workOrderFeedData.value = [];
       materialCode.value = '';
       workOrderFeedTotal.value = 0;
@@ -925,7 +945,7 @@ watch(
       await onGetAnomalyTypeData();
     }
     if (tabKey.value === 6) {
-      tableRefSeven.value[tabKey.value].setSelectedRowKeys([]);
+      tableRefSeven.value.setSelectedRowKeys([]);
       await onBadMaintenance();
       badMaintenanceDataTwo.list = [];
       badMaintenanceId.value = '';
@@ -975,18 +995,32 @@ const tabChange = async (context: any) => {
   pageUI.value.page = 1;
   pageUITwo.value.page = 1;
   tabKey.value = context;
-  if (context === 2) {
-    await onMaterialWorkOrder();
-  }
-  if (context === 3) {
-    await onGetAnomalyTypeData();
-  }
-  if (context === 6) {
-    onBadMaintenance();
-  }
-  if (context === 7) {
-    onInventoryInOut();
-  }
+  emit('tab-changed', context);
+  // if (
+  //   !commonParametersList.value.serialNumber &&
+  //   !commonParametersList.value.moCode &&
+  //   !commonParametersList.value.parentPkgBarcode
+  // ) {
+  //   return;
+  // }
+  // if (context === 0) {
+  //   await onGetProductBasicInformation();
+  // }
+  // if (context === 1) {
+  //   await onGetWorkOrder();
+  // }
+  // if (context === 2) {
+  //   await onMaterialWorkOrder();
+  // }
+  // if (context === 3) {
+  //   await onGetAnomalyTypeData();
+  // }
+  // if (context === 6) {
+  //   onBadMaintenance();
+  // }
+  // if (context === 7) {
+  //   onInventoryInOut();
+  // }
 };
 
 // 🌈🌈🌈 公共参数
