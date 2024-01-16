@@ -3559,14 +3559,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isState?: boolean;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isState?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
   isProductName?: string;
-  isRawChecked?: boolean;
   isRawName?: string;
+  isRawChecked?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -5642,12 +5642,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9411,21 +9411,6 @@ export const api = {
      * No description
      *
      * @tags 标签表
-     * @name ReprintBarcode
-     * @summary 补打条码
-     * @request POST:/label/reprintBarcode
-     * @secure
-     */
-    reprintBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/main/label/reprintBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
      * @name PrintBarcode
      * @summary 打印条码
      * @request POST:/label/printBarcode
@@ -9477,21 +9462,6 @@ export const api = {
      */
     generateBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/main/label/generateBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name CancellationBarcode
-     * @summary 作废条码
-     * @request POST:/label/cancellationBarcode
-     * @secure
-     */
-    cancellationBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/main/label/cancellationBarcode`, {
         method: 'POST',
         body: data as any,
       }),
