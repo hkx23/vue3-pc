@@ -90,14 +90,14 @@
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <!-- ################# 明细表格数据 ###################### -->
-        <cmp-table
+        <t-table
           ref="tableRef"
           row-key="id"
           :show-pagination="false"
           :show-toolbar="false"
           :loading="loadingMaterialDtl"
-          :table-column="tableMaterialDtlColumns"
-          :table-data="tableDataMaterialRequisition"
+          :columns="tableMaterialDtlColumns"
+          :data="tableDataMaterialRequisition"
           :header-affixed-top="true"
           @row-click="onRowClick"
         >
@@ -111,9 +111,9 @@
             <!--   v-if="row.id === formData.selectRowId"  <span v-else>{{ row.toWarehouseName }}</span> -->
           </template>
           <template #reqQty="{ row }">
-            <t-input v-model="row.reqQty" theme="normal" :decimal-places="6"></t-input>
+            <t-input-number v-model="row.reqQty" theme="normal"></t-input-number>
           </template>
-        </cmp-table>
+        </t-table>
       </cmp-card>
     </cmp-container>
   </t-dialog>
@@ -181,11 +181,19 @@ const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('materialRequisition.mitemCode')}`, width: 120, colKey: 'mitemCode' },
   { title: `${t('materialRequisition.mitemName')}`, width: 120, colKey: 'mitemName' },
   { title: `${t('materialRequisition.uomName')}`, width: 120, colKey: 'uomName' },
-  { title: `${t('materialRequisition.warehouseName')}`, width: 120, colKey: 'warehouseName' },
+  {
+    title: `${t('materialRequisition.warehouseName')}`,
+    width: 120,
+    colKey: 'warehouseName',
+  },
   { title: `${t('materialRequisition.onHandQty')}`, width: 120, colKey: 'handQty' },
   { title: `${t('materialRequisition.toWarehouseName')}`, width: 120, colKey: 'toWarehouseName' },
-  { title: `${t('materialRequisition.moRequestQty')}`, width: 120, colKey: 'moRequestQty' },
-  { title: `${t('materialRequisition.reqQty')}`, width: 140, colKey: 'reqQty' },
+  {
+    title: `${t('materialRequisition.moRequestQty')}`,
+    width: 120,
+    colKey: 'moRequestQty',
+  },
+  { title: `${t('materialRequisition.reqQty')}`, width: 200, colKey: 'reqQty' },
   { title: `${t('materialRequisition.pickQty')}`, width: 120, colKey: 'alreadyPickQty' },
 ];
 
@@ -193,8 +201,10 @@ const onRowClick = ({ row }) => {
   formData.selectRowId = row.id;
 };
 // 表单明细-仓库修改
-const warehouseSubChange = (va: any, row: MaterialRequisitionDtlVO) => {
-  getWarehouseHandInfo(row).then((handInfo) => {
+const warehouseSubChange = (val: any, row: MaterialRequisitionDtlVO) => {
+  row.warehouseCode = val.warehouseCode;
+  row.warehouseName = val.warehouseName;
+  getWarehouseHandInfo(val, row).then((handInfo) => {
     if (handInfo) {
       row.handQty = handInfo.qty;
     } else {
@@ -204,12 +214,12 @@ const warehouseSubChange = (va: any, row: MaterialRequisitionDtlVO) => {
 };
 
 // 表单明细-仓库修改-获取库存信息
-const getWarehouseHandInfo = async (row: MaterialRequisitionDtlVO) => {
+const getWarehouseHandInfo = async (val: any, row: MaterialRequisitionDtlVO) => {
   const data = await apiWarehouse.materialRequisition.getOnHandList({
-    warehouseId: row.warehouseId,
+    warehouseId: val.id,
     mitemId: row.mitemId,
   });
-  let handInfo: OnHandVO = {};
+  let handInfo: OnHandVO = null;
   if (data && data.length > 0) {
     handInfo = data[0] as OnHandVO;
   }
@@ -294,7 +304,8 @@ const onConfirmForm = async () => {
       ...formData,
       submitList: tableDataMaterialRequisition.value,
     });
-
+    MessagePlugin.success(t('common.message.saveSuccess'));
+    formVisible.value = false;
     Emit('showCloseEvent', false);
   } catch (e) {
     console.log(e);
@@ -307,7 +318,6 @@ const onConfirmForm = async () => {
 const checkSubmit = () => {
   let isSuccess = true;
   if (tableDataMaterialRequisition.value && tableDataMaterialRequisition.value.length > 0) {
-    isSuccess = false;
     let isEmptyWarehouse = false;
     let isEmptyQty = false;
     tableDataMaterialRequisition.value.forEach((item) => {

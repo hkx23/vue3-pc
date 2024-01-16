@@ -156,7 +156,7 @@ const tableMaterialRequisitionColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: `${t('materialRequisition.moScheCode')}`, width: 150, colKey: 'scheCode' },
+  { title: `${t('materialRequisition.moScheCode')}`, width: 200, colKey: 'scheCode' },
   { title: `${t('materialRequisition.mitemCode')}`, width: 120, colKey: 'mitemCode' },
   { title: `${t('materialRequisition.mitemName')}`, width: 120, colKey: 'mitemName' },
   { title: `${t('materialRequisition.uomName')}`, width: 120, colKey: 'uomName' },
