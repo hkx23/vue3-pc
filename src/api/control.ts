@@ -586,6 +586,8 @@ export interface WipRepairVO {
   curWorkstationId?: string;
   loginProcessId?: string;
   loginWorkstationId?: string;
+  /** 缺陷编码 */
+  defectCode?: string;
   /** 缺陷名称 */
   defectName?: string;
   /** 缺陷原因 */
@@ -3007,10 +3009,10 @@ export interface BarcodeWipVO {
   workshopName?: string;
   workshopCode?: string;
   stateName?: string;
-  defectCodeStr?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3247,8 +3249,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */

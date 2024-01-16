@@ -1432,13 +1432,13 @@ export interface MaterialRequisitionDtlVO {
   handQty?: number;
   /** 已领用量 */
   alreadyPickQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -2703,10 +2703,10 @@ export type PurchaseOrderDtlVO = {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量 */
+  waitScanQty?: number;
 } | null;
 
 /** 通用响应类 */
@@ -3009,10 +3009,10 @@ export type DeliveryDtlVO = {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量 */
+  waitScanQty?: number;
 } | null;
 
 /** 通用响应类 */
@@ -3867,7 +3867,7 @@ export const api = {
      * @secure
      */
     saveData: (data: MaterialRequisitionDTO) =>
-      http.request<ResultObject['data']>(`/api/warehouse/materialRequisition/saveData`, {
+      http.request<void['data']>(`/api/warehouse/materialRequisition/saveData`, {
         method: 'POST',
         body: data as any,
       }),
