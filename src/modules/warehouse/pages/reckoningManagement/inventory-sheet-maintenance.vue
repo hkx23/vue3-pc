@@ -209,8 +209,6 @@ const saveData = () => {
   });
   console.log('🚀 ~ modifiedData ~ modifiedData:', modifiedData);
 
-  console.log('newInventoryManagement1====', newInventoryManagement1);
-
   // 步骤1 获取 修改的数据 可能是修改多条数据 动态的获取 table 插槽 绑定的数据
   // 调用保存接口，传递 dataToSave
   // 当获取数据时，将数组的每个对象转换为响应式
