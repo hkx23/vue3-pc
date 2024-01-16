@@ -1114,6 +1114,7 @@ export interface StockCheckBillVO {
   /** 扫描的标签号 */
   scanBarcode?: string;
   onhandId?: string;
+  pdDtlId?: string;
 }
 
 /** 通用响应类 */
@@ -1339,18 +1340,12 @@ export interface MaterialRequisitionDTO {
   onHandInfo?: OnHandVO;
   /** 查询排产单BOM物料的已领料数量信息 */
   alreadyRequisitionVO?: AlreadyRequisitionVO;
+  /** 新增界面-提交的模型-明细信息 */
+  submitList?: MaterialRequisitionDtlVO[];
 }
 
-/** 查询库存模型 */
-export interface OnHandVO {
-  warehouseId?: string;
-  mitemId?: string;
-  /** 库存现有量 */
-  qty?: number;
-}
-
-/** 响应数据 */
-export type MaterialRequisitionDtlVO = {
+/** 新增界面-提交的模型-明细信息 */
+export interface MaterialRequisitionDtlVO {
   id?: string;
   /**
    * 创建时间
@@ -1444,9 +1439,15 @@ export type MaterialRequisitionDtlVO = {
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
-} | null;
+}
+
+/** 查询库存模型 */
+export interface OnHandVO {
+  warehouseId?: string;
+  mitemId?: string;
+  /** 库存现有量 */
+  qty?: number;
+}
 
 /** 通用响应类 */
 export interface ResultListMaterialRequisitionDtlVO {
@@ -2083,7 +2084,6 @@ export interface DeliveryCardSearch {
    * @format date-time
    */
   planDateEnd?: string;
-  moId?: string;
   workshopId?: string;
   workcenterId?: string;
   mitemId?: string;
@@ -3861,6 +3861,21 @@ export const api = {
      * No description
      *
      * @tags 领料制单
+     * @name SaveData
+     * @summary 新增领料单界面-提交
+     * @request POST:/materialRequisition/saveData
+     * @secure
+     */
+    saveData: (data: MaterialRequisitionDTO) =>
+      http.request<void['data']>(`/api/warehouse/materialRequisition/saveData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料制单
      * @name MaterialRequisitionCanceled
      * @summary 主界面-领料单作废
      * @request POST:/materialRequisition/materialRequisitionCanceled
@@ -3896,7 +3911,7 @@ export const api = {
      * @request POST:/materialRequisition/getOnHandList
      * @secure
      */
-    getOnHandList: (data: MaterialRequisitionDTO) =>
+    getOnHandList: (data: OnHandVO) =>
       http.request<ResultListOnHandVO['data']>(`/api/warehouse/materialRequisition/getOnHandList`, {
         method: 'POST',
         body: data as any,

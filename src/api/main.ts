@@ -2806,6 +2806,8 @@ export type ShowModuleVO = {
   behaviorPath?: string;
   /** 模块包名称 */
   packageName?: string;
+  /** 下载地址 */
+  downloadUrl?: string;
   /**
    * 是否PC端
    * @format int32
@@ -3554,15 +3556,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   stateName?: string;
+  isBatchName?: string;
   isProductName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
   isState?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3701,8 +3703,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4792,7 +4794,7 @@ export interface BarcodeRuleInMitemSearch {
   /** 规则模糊查询关键词 */
   mitemKeyword?: string;
   /** 下拉模糊查询关键词 */
-  selectKeyword?: string[];
+  selectKeyword?: string;
   ruleId?: string;
   mitemCategoryId?: string;
   mitemId?: string;
@@ -5640,12 +5642,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
