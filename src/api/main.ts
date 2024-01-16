@@ -716,7 +716,7 @@ export interface WorkcenterVO {
    */
   device?: number;
   /** 是否有子工作中心 */
-  haveChildren?: boolean;
+  children?: boolean;
 }
 
 export interface WorkbenchTodoVO {
@@ -5638,12 +5638,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
