@@ -1511,7 +1511,7 @@ const Hn = async (e, o) => {
 ie.baseURL = () => {
   switch (P.platform) {
     case Ve.Mobile:
-      return window._app.getURL();
+      return window._app.getUrl();
     default:
       return P.config.baseUrl || location.origin;
   }
