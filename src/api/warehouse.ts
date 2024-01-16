@@ -3867,7 +3867,7 @@ export const api = {
      * @secure
      */
     saveData: (data: MaterialRequisitionDTO) =>
-      http.request<void['data']>(`/api/warehouse/materialRequisition/saveData`, {
+      http.request<ResultObject['data']>(`/api/warehouse/materialRequisition/saveData`, {
         method: 'POST',
         body: data as any,
       }),
