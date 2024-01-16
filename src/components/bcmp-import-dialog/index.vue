@@ -12,10 +12,10 @@
     <cmp-container v-show="processing">
       <!-- 导入过程步骤 -->
       <t-steps :current="current" readonly>
-        <t-step-item title="选择EXCEL" content="选择EXCEL" />
-        <t-step-item title="预览数据" content="预览数据" />
-        <t-step-item title="配置表单" content="配置表单" />
-        <t-step-item title="导入数据" content="导入数据" />
+        <t-step-item title="选择EXCEL" content="" />
+        <t-step-item title="预览数据" content="" />
+        <t-step-item title="配置表单" content="" />
+        <t-step-item title="导入数据" content="" />
       </t-steps>
       <!-- #region 第一步：选择导入EXCEL与下载模板 -->
       <div v-if="current == 0">

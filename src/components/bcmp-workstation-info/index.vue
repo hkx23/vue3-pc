@@ -1,19 +1,20 @@
 <template>
   <cmp-card :ghost="true">
     <t-space :size="8">
-      <t-button
+      <!-- <t-button
         shape="square"
         variant="text"
         style="height: 24px; width: 24px; float: right"
         @click="formImportVisible = true"
         ><t-icon size="16px" name="system-setting"
-      /></t-button>
+      /></t-button> -->
       <t-breadcrumb :max-item-width="'150'">
-        <t-breadcrumbItem> {{ currUserOrgInfo.orgName }} </t-breadcrumbItem>
+        <t-breadcrumbItem> {{ orgName || '-' }} </t-breadcrumbItem>
         <t-breadcrumbItem> {{ currUserOrgInfo.workShopName ?? '车间未设置' }} </t-breadcrumbItem>
         <t-breadcrumbItem>{{ currUserOrgInfo.workCenterName ?? '产线未设置' }}</t-breadcrumbItem>
         <t-breadcrumbItem :max-width="'160'"> {{ currUserOrgInfo.workStationName ?? '工站未设置' }} </t-breadcrumbItem>
       </t-breadcrumb>
+      <t-link theme="primary" @click="formImportVisible = true">切换工站</t-link>
     </t-space>
   </cmp-card>
 
@@ -26,7 +27,7 @@
   >
     <t-form>
       <t-form-item label="组织">
-        {{ orgInfo.orgName || '-' }}
+        {{ orgName || '-' }}
       </t-form-item>
       <t-form-item label="车间">
         <bcmp-select-business
@@ -85,7 +86,7 @@
 </template>
 
 <script setup lang="tsx" name="BcmpWorkstationInfo">
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import { useUserStore } from '@/store';
@@ -95,6 +96,16 @@ const currUserOrgInfo = ref(userStore.currUserOrgInfo);
 // 导入表单是否显示
 const formImportVisible = ref(false);
 const orgInfo = ref({ ...userStore.currUserOrgInfo });
+onMounted(() => {
+  if (!orgInfo.value.workStationId) {
+    formImportVisible.value = true;
+  }
+});
+
+const emit = defineEmits(['change']);
+const handleChange = (orgInfo) => {
+  emit('change', orgInfo);
+};
 
 const onClickSaveOrg = async () => {
   if (orgInfo.value.processId) {
@@ -104,8 +115,21 @@ const onClickSaveOrg = async () => {
   }
   userStore.updateOrg(orgInfo.value);
   currUserOrgInfo.value = userStore.currUserOrgInfo;
+  handleChange(orgInfo.value);
   formImportVisible.value = false;
 };
+
+const orgName = computed(() => {
+  const { orgs } = userStore.userInfo;
+  let name = userStore.userInfo.orgId;
+  for (const item of orgs) {
+    if (item.id === name) {
+      name = `${item.name}`;
+      break;
+    }
+  }
+  return name;
+});
 // 关闭模态框事件
 const cancelSave = () => {
   formImportVisible.value = false;

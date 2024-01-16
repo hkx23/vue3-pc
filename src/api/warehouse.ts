@@ -1444,6 +1444,8 @@ export type MaterialRequisitionDtlVO = {
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 } | null;
 
 /** 通用响应类 */

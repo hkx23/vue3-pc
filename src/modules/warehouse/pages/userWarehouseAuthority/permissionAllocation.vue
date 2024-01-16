@@ -15,28 +15,15 @@
               <icon name="search"></icon>
             </template>
           </t-input>
-          <t-tree
-            class="scorllTree"
-            :data="dataTree"
-            :height="treeHeight"
-            :expand-parent="false"
-            :transition="false"
-            :activable="true"
-            @click="onClickTree"
-          >
-          </t-tree>
-          <!-- <t-pagination-mini layout="horizontal" size="medium" /> -->
-          <t-pagination
-            v-model:current="AuthList.pageNum"
-            v-model:pageSize="AuthList.pageSize"
-            :show-page-size="true"
-            :show-previous-and-next-btn="false"
-            :show-page-number="true"
-            :show-jumper="false"
-            :total="totals"
-            @page-size-change="onPaginationChange"
-            @current-change="onCurrentChange"
-          />
+          <t-list :style="{ 'max-height': treeHeight }" :async-loading="asyncLoading" split @load-more="scrollHandler">
+            <t-list-item
+              v-for="(item, index) in dataTree"
+              :key="item.id"
+              :class="{ 'selected-background': selectedListItemIndex === index }"
+              @click="onClickList(item, index)"
+              >{{ item.label }}</t-list-item
+            >
+          </t-list>
         </t-space>
       </cmp-card>
       <cmp-card flex="auto">
@@ -55,11 +42,6 @@
               @refresh="onGetRefresh"
             >
               <template #operate>
-                <t-select v-model="param.productCode" label="状态" @change="onSelectChange">
-                  <t-option key="apple" label="禁用" :value="0" />
-                  <t-option key="orange" label="启用" :value="1" />
-                  <t-option key="orange" label="全部" :value="-1" />
-                </t-select>
                 <t-input
                   v-model="param.boxCode"
                   placeholder="请输入仓库编码/仓库名称"
@@ -76,9 +58,9 @@
 </template>
 
 <script setup lang="ts">
-import _ from 'lodash';
+import { debounce } from 'lodash';
 import { Icon, MessagePlugin } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api, WorkstationAuthVO } from '@/api/control';
@@ -88,36 +70,45 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+const asyncLoadingRadio = ref('load-more');
 const tableTotal = ref(10); // table分页总数
 const selectedRowKeys = ref([]); // 选择的
 const saveLoading = ref(false); // 选择的
 const { loading } = useLoading(); // loading
 const { pageUI } = usePage();
+const asyncLoading = computed(() => {
+  if (asyncLoadingRadio.value === 'loading-custom') {
+    return '没有更多数据了~';
+  }
+  return asyncLoadingRadio.value;
+});
 onMounted(async () => {
   await onFetchData();
   await onGetAllPermission();
+  if (dataTree.value.length > 0) {
+    onClickList(dataTree.value[0], 0);
+  }
 });
 // 选择中的
 const rehandleSelectChange = (value: any) => {
   selectedRowKeys.value = value;
-  console.log(selectedRowKeys.value);
 };
 // 筛选删除数组
 function findElementsNotInA(a, b) {
-  // 创建集合 setA 包含数组 a 的所有元素
-  const setA = new Set(a);
-  // 使用 filter 方法过滤数组 b，只保留不在集合 setA 中的元素
-  return b.filter((item) => !setA.has(item));
+  // 创建集合 delNewArr 包含数组 a 的所有元素
+  const delNewArr = new Set(a);
+  // 使用 filter 方法过滤数组 b，只保留不在集合 delNewArr 中的元素
+  return b.filter((item) => !delNewArr.has(item));
 }
 // 筛选新增数组
 function findElementsNotInB(a, b) {
-  // 创建集合 setB 包含数组 b 的所有元素
-  const setB = new Set(b);
-  // 使用 filter 方法过滤数组 a，只保留不在集合 setB 中的元素
-  return a.filter((item) => !setB.has(item));
+  // 创建集合 addNewArr 包含数组 b 的所有元素
+  const addNewArr = new Set(b);
+  // 使用 filter 方法过滤数组 a，只保留不在集合 addNewArr 中的元素
+  return a.filter((item) => !addNewArr.has(item));
 }
 // 保存
-const onBtnSave = async () => {
+const onBtnSave = debounce(async () => {
   if (!userId.value) {
     MessagePlugin.warning('请先选择一个用户！');
     return;
@@ -129,9 +120,9 @@ const onBtnSave = async () => {
     inseartList: addArr,
     removeList: delArr,
   });
-
+  await onGetTickPermission();
   MessagePlugin.success('操作成功');
-};
+}, 1000);
 
 // 父方法
 const Emit = defineEmits(['permissionShow']);
@@ -141,7 +132,7 @@ const onClose = () => {
 };
 // 搜索数据
 const param = ref({
-  productCode: -1,
+  productCode: 1,
   boxCode: '',
 });
 const columns = [
@@ -164,7 +155,7 @@ const columns = [
 interface WorkstationAuth extends WorkstationAuthVO {
   label?: string;
 }
-const dataTree = ref<WorkstationAuthVO[]>([]);
+const dataTree = ref<WorkstationAuth[]>([]);
 const totals = ref<number>(0); // 用户分页总数
 const AuthList = ref({
   pageNum: 1,
@@ -173,10 +164,11 @@ const AuthList = ref({
 });
 const onFetchData = async () => {
   const { list, total } = await api.workstationAuth.getUserList(AuthList.value);
-  dataTree.value = (list as WorkstationAuth[]).map((item) => {
+  const newArr = (list as WorkstationAuth[]).map((item) => {
     item.label = `${item.userDisplayName}[${item.userName}]`;
     return item;
   });
+  dataTree.value = [...dataTree.value, ...newArr];
   totals.value = total;
 };
 
@@ -185,7 +177,7 @@ const data = ref([]); // table 存储
 const searchList = ref({
   pageNum: 1,
   pageSize: 10,
-  state: -1,
+  state: 1,
   keyword: '',
 });
 const onGetAllPermission = async () => {
@@ -209,28 +201,35 @@ const onGetRefresh = async () => {
   await onGetTickPermission();
 };
 
+// 点击加载更多
+const scrollHandler = debounce(async () => {
+  asyncLoadingRadio.value = 'loading';
+  AuthList.value.pageNum++;
+  await onFetchData();
+  asyncLoadingRadio.value = 'load-more';
+  if (dataTree.value.length >= totals.value) {
+    asyncLoadingRadio.value = 'loading-custom';
+  }
+}, 1000);
+
 // 点击用户拿数据
 const userId = ref('');
-const onClickTree = async ({ node }) => {
-  userId.value = node.data.userId;
+const selectedListItemIndex = ref(0);
+const onClickList = async (item, index) => {
+  selectedListItemIndex.value = index;
+  userId.value = item.userId;
   selectedRowKeys.value = [];
   await onGetAllPermission();
   await onGetTickPermission();
 };
-// 左侧表格分页 事件 1
-const onPaginationChange = async () => {
-  AuthList.value.pageNum = 1;
-  await onFetchData();
-};
-// 左侧表格分页 事件 2
-const onCurrentChange = async () => {
-  await onFetchData();
-};
-
 // # 左侧搜索事件
 const onInputSearchUser = async () => {
+  dataTree.value = [];
   AuthList.value.pageNum = 1;
   await onFetchData();
+  if (dataTree.value.length > 0) {
+    onClickList(dataTree.value[0], 0);
+  }
 };
 
 const treeCard = ref(null);
@@ -250,10 +249,6 @@ const onPublicQuery = async () => {
   await onGetAllPermission();
 };
 
-const onSelectChange = async () => {
-  await onPublicQuery();
-};
-
 const onInputEnter = async () => {
   await onPublicQuery();
 };
@@ -266,5 +261,10 @@ const onInputEnter = async () => {
 
 .scorllTree {
   overflow-y: auto;
+}
+
+.selected-background {
+  color: #fff;
+  background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
 }
 </style>

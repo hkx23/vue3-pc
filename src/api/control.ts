@@ -26,6 +26,7 @@ export interface WipCompletionLabelDTO {
   warehouseId?: string;
   /** 仓库编码 */
   warehouseCode?: string;
+  moScheId?: string;
   /** 工单编码 */
   moCode?: string;
   workshopId?: string;
@@ -1657,15 +1658,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  workshopId?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1708,9 +1709,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -1836,8 +1837,8 @@ export interface ProcessVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2756,8 +2757,6 @@ export interface LabelManageVO {
   /** 创建人名称 */
   creatorName?: string;
   moScheduleId?: string;
-  /** 工单编码 */
-  moCode?: string;
   /** 操作类型 */
   operateType?: string;
   /** 原因 */
@@ -2887,17 +2886,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3001,16 +3000,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  stateName?: string;
-  defectCodeStr?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3236,8 +3235,6 @@ export interface BarcodePkgVO {
   packRuleCode?: string;
   /** 包装规则名称 */
   packRuleName?: string;
-  /** 工单编码 */
-  moCode?: string;
   /** 包装条码类型 */
   pkgBarcodeType?: string;
   /** 包装条码类型名称 */
@@ -3250,8 +3247,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -3685,8 +3682,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
