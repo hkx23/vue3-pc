@@ -5,7 +5,7 @@
         <cmp-container :full="true" header :full-sub-index="labelList.length > 0 ? [1] : [0]">
           <!-- 扫描区 -->
           <cmp-card>
-            <bcmp-workstation-info />
+            <bcmp-workstation-info @change="workChange" />
             <t-row class="padding-top-line-8" style="padding-bottom: 8px">
               <t-col flex="auto">
                 <cmp-scan-input v-model="scanLabel" :placeholder="scanPlaceholder" @enter="scan"></cmp-scan-input>
@@ -101,7 +101,7 @@ import { useLang } from './lang';
 // 使用多语言
 const { t } = useLang();
 
-const { currUserOrgInfo } = useUserStore();
+const userStore = useUserStore();
 const scanType = ref('normal');
 const isOnlinePrint = ref(false);
 const isProcessConsistent = ref(false);
@@ -117,19 +117,26 @@ apiMain.profileValue
       isOnlinePrint.value = true;
     }
   });
-// 判断工站对应的工序是否正确
-apiMain.workstation
-  .getProcessCategory({
-    workstationId: currUserOrgInfo.workStationId,
-  })
-  .then((val) => {
-    processCategory.value = val;
-    if (val !== 'PACK') {
-      pushMessage('error', t('productPacking.tipsProcessCategoryInconsistent', [val]));
-    } else {
-      isProcessConsistent.value = true;
-    }
-  });
+const init = () => {
+  // 判断工站对应的工序是否正确
+  apiMain.workstation
+    .getProcessCategory({
+      workstationId: userStore.currUserOrgInfo.workStationId,
+    })
+    .then((val) => {
+      processCategory.value = val;
+      if (val !== 'PACK') {
+        pushMessage('error', t('productPacking.tipsProcessCategoryInconsistent', [val]));
+      } else {
+        isProcessConsistent.value = true;
+        pushMessage('info', t('productPacking.plsScanLabel'));
+      }
+    });
+};
+init();
+const workChange = () => {
+  init();
+};
 
 // 扫描页
 const scanPlaceholder = computed(() => {
@@ -289,9 +296,9 @@ const packing = () => {
       pkgBarcodeType: val.barcodeType,
       parentPkgBarcode: pkgLabel.value ? pkgLabel.value.pkgBarcode : null,
       parentPkgType: pkgLabel.value ? pkgLabel.value.pkgBarcodeType : null,
-      workshopId: currUserOrgInfo.workShopId,
-      workcenterId: currUserOrgInfo.workCenterId,
-      workstationId: currUserOrgInfo.workStationId,
+      workshopId: userStore.currUserOrgInfo.workShopId,
+      workcenterId: userStore.currUserOrgInfo.workCenterId,
+      workstationId: userStore.currUserOrgInfo.workStationId,
     });
   });
   apiControl.pkgRelation
