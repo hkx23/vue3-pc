@@ -101,14 +101,18 @@
           :header-affixed-top="true"
           @row-click="onRowClick"
         >
-          <template #warehouseName="slotProps">
+          <template #warehouseName="{ row }">
             <bcmp-select-business
-              v-if="slotProps.row.id === formData.selectRowId"
-              v-model="slotProps.warehouseId"
+              v-model="row.warehouseId"
               type="warehouseAuth"
               :show-title="false"
-            ></bcmp-select-business
-          ></template>
+              @selection-change="(value) => warehouseSubChange(value, row)"
+            ></bcmp-select-business>
+            <!--   v-if="row.id === formData.selectRowId"  <span v-else>{{ row.toWarehouseName }}</span> -->
+          </template>
+          <template #reqQty="{ row }">
+            <t-input v-model="row.reqQty" theme="normal" :decimal-places="6"></t-input>
+          </template>
         </cmp-table>
       </cmp-card>
     </cmp-container>
@@ -124,11 +128,12 @@ import _ from 'lodash';
 import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, reactive, Ref, ref } from 'vue';
 
-import { api as apiWarehouse, MaterialRequisitionDTO } from '@/api/warehouse';
+import { api as apiWarehouse, MaterialRequisitionDtlVO, MaterialRequisitionDTO, OnHandVO } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 
 import { useLang } from './lang';
 
+const Emit = defineEmits(['showCloseEvent']);
 const { loading: loadingMaterialDtl, setLoading: setLoadingMaterialDtl } = useLoading();
 
 const { t } = useLang();
@@ -187,7 +192,31 @@ const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
 const onRowClick = ({ row }) => {
   formData.selectRowId = row.id;
 };
+// 表单明细-仓库修改
+const warehouseSubChange = (va: any, row: MaterialRequisitionDtlVO) => {
+  getWarehouseHandInfo(row).then((handInfo) => {
+    if (handInfo) {
+      row.handQty = handInfo.qty;
+    } else {
+      row.handQty = 0;
+    }
+  });
+};
 
+// 表单明细-仓库修改-获取库存信息
+const getWarehouseHandInfo = async (row: MaterialRequisitionDtlVO) => {
+  const data = await apiWarehouse.materialRequisition.getOnHandList({
+    warehouseId: row.warehouseId,
+    mitemId: row.mitemId,
+  });
+  let handInfo: OnHandVO = {};
+  if (data && data.length > 0) {
+    handInfo = data[0] as OnHandVO;
+  }
+  return handInfo;
+};
+
+// 接收仓库修改
 const toWarehouseChange = (val: any) => {
   if (tableDataMaterialRequisition.value && tableDataMaterialRequisition.value.length > 0) {
     tableDataMaterialRequisition.value.forEach((item) => {
@@ -255,12 +284,52 @@ const fetchMaterialDtlTable = async () => {
 };
 
 // 领料制单界面提交
-const onConfirmForm = () => {
-  formRef.value.reset({ type: 'empty' });
-  tableDataMaterialRequisition.value = [];
-  for (const key in formData) {
-    formData[key] = null;
+const onConfirmForm = async () => {
+  try {
+    if (!checkSubmit()) {
+      return;
+    }
+    setLoadingMaterialDtl(true);
+    const data = await apiWarehouse.materialRequisition.saveData({
+      ...formData,
+      submitList: tableDataMaterialRequisition.value,
+    });
+
+    Emit('showCloseEvent', false);
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoadingMaterialDtl(false);
   }
+};
+
+// 提交的校验
+const checkSubmit = () => {
+  let isSuccess = true;
+  if (tableDataMaterialRequisition.value && tableDataMaterialRequisition.value.length > 0) {
+    isSuccess = false;
+    let isEmptyWarehouse = false;
+    let isEmptyQty = false;
+    tableDataMaterialRequisition.value.forEach((item) => {
+      if (!item.warehouseId) {
+        isEmptyWarehouse = true;
+      }
+      if (!item.reqQty) {
+        isEmptyQty = true;
+      }
+    });
+    if (isEmptyWarehouse) {
+      isSuccess = false;
+      MessagePlugin.warning(t('materialRequisition.checkSubmitDtls'));
+    } else if (isEmptyQty) {
+      isSuccess = false;
+      MessagePlugin.warning(t('materialRequisition.checkReqQtyEmpty'));
+    }
+  } else {
+    isSuccess = false;
+    MessagePlugin.warning(t('materialRequisition.checkSubmitDtls'));
+  }
+  return isSuccess;
 };
 
 const reset = () => {

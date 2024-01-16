@@ -102,7 +102,7 @@
               </t-step-item>
             </t-steps>
             <div style="margin-top: 24px; text-align: center">
-              <t-button @click="onClickSaveData(item?.detailList)">保存</t-button>
+              <t-button v-if="item?.detailList?.length > 0" @click="onClickSaveData(item?.detailList)">保存</t-button>
               <t-button
                 v-if="item?.detailList?.length > 0"
                 theme="default"

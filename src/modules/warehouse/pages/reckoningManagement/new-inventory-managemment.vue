@@ -292,7 +292,6 @@ const onReset = () => {
 
 // 查询
 const onInput = async (data: any) => {
-  // todo
   if (!data.stockCheckType) {
     MessagePlugin.error('盘点类型为必填项');
     return;
