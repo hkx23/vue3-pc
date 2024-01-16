@@ -323,7 +323,7 @@ const onConfirm = async () => {
   try {
     pageLoading.value = true;
     if (isReprintCancellation.value === 1) {
-      await apiMain.label.reprintBarcode({
+      await apiWarehouse.label.reprintBarcode({
         ids: selectedManageRowKeys.value,
         reason,
         printTempId: printMode.value.printTempId,
@@ -349,7 +349,7 @@ const onConfirm = async () => {
       MessagePlugin.success('拆分成功');
       onRefreshManage();
     } else {
-      await apiMain.label.cancellationBarcode({
+      await apiWarehouse.label.cancellationBarcode({
         ids: selectedManageRowKeys.value,
         reason,
       });
