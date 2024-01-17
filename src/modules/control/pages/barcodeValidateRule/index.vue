@@ -652,11 +652,8 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
     } else {
       await onEditRuleCode(); // 编辑请求
     }
-    if (barcodeData.value.barcodeValidateGroup === 'SCANTEXT') {
-      await onGetTextDataList(); // 获取 文本 数据
-    } else {
-      await onGetKeyDataList(); // 获取 关键件 数据
-    }
+    await onGetTextDataList(); // 获取 文本 数据
+    await onGetKeyDataList(); // 获取 关键件 数据
     // if (!tabValue.value) {
     //   await onGetValidationGroups(); // 获取验证分组 下列 数组
     // } else {
