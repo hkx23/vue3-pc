@@ -3692,14 +3692,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductName?: string;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
+  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isState?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3842,8 +3842,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4132,12 +4132,9 @@ export interface Label {
   status?: string;
 }
 
-export interface Resource {
-  stream?: object;
-  name?: string;
-  /** @format url */
-  url?: string;
-  modified?: boolean;
+export interface FileVO {
+  path?: string;
+  fileNames?: string[];
 }
 
 /** 菜单收藏夹表 */
@@ -4771,6 +4768,7 @@ export interface BarcodeVaildateRuleSearch {
   /** 条码类型 */
   barcodeTypeCode?: string;
   mitemId?: string;
+  mitemCategoryId?: string;
   /** 条码验证分组 */
   barcodeValidateGroup?: string;
   id?: string;
@@ -5876,10 +5874,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9778,21 +9776,6 @@ export const api = {
      * No description
      *
      * @tags 文件上传操作
-     * @name DownloadSelectedFilesAsZip
-     * @summary 批量下载文件-暂不可用
-     * @request POST:/file/downloadZip
-     * @secure
-     */
-    downloadSelectedFilesAsZip: (query: { path: string; fileNames: string[] }) =>
-      http.request<Resource['data']>(`/api/main/file/downloadZip`, {
-        method: 'POST',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 文件上传操作
      * @name DeleteFile
      * @summary 文件删除
      * @request POST:/file/deleteFile
@@ -9813,10 +9796,10 @@ export const api = {
      * @request POST:/file/batchDeleteFile
      * @secure
      */
-    batchDeleteFile: (query: { path: string; fileNames: string[] }) =>
+    batchDeleteFile: (data: FileVO) =>
       http.request<ResultObject['data']>(`/api/main/file/batchDeleteFile`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
   },
   favorite: {
