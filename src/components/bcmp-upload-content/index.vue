@@ -1,6 +1,6 @@
 <template>
   <!-- #region 上传附件主界面 -->
-  <cmp-card :ghost="true">
+  <cmp-card :ghost="props.ghost">
     <cmp-table
       ref="tableRef"
       :row-key="rowKey"
@@ -89,13 +89,10 @@ const props = defineProps({
     type: Array as PropType<AddFileType[]>,
     default: () => [] as AddFileType[],
   },
-  // 上传文件类型限制
-  // uploadFileTypeLimit: {
-  //   type: Array,
-  //   default: () => {
-  //     return [];
-  //   },
-  // },
+  ghost: {
+    type: Boolean,
+    default: false,
+  },
 });
 // const previewType = 'doc,docx,jpg,jpeg,png,xlsx';
 const previewType = 'jpg,jpeg,png';
