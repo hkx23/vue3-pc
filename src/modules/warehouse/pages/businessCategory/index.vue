@@ -126,7 +126,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
-    colKey: 'businessDirection',
+    colKey: 'businessDirectionName',
     title: '业务交易方向',
     align: 'center',
     width: '130',
