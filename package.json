@@ -20,7 +20,6 @@
     "@logicflow/core": "^1.2.18",
     "@logicflow/extension": "^1.2.19",
     "dayjs": "^1.11.10",
-    "docx-preview": "^0.3.0",
     "echarts": "^5.4.3",
     "grid-layout-plus": "^1.0.3",
     "lodash": "^4.17.21",
@@ -37,7 +36,6 @@
     "vue-draggable-plus": "^0.3.2",
     "vue-hooks-plus": "^1.8.6",
     "vue-i18n": "^9.6.2",
-    "vue-pdf-embed": "1",
     "vue-router": "^4.2.5",
     "xlsx": "^0.18.5"
   },
