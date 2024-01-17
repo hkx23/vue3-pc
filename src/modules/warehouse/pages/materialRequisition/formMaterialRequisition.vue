@@ -84,7 +84,6 @@
           :table-data="tableDataMaterialSum"
           :hover="false"
           :stripe="false"
-          :header-affixed-top="true"
         >
         </cmp-table>
       </cmp-card>
@@ -98,7 +97,6 @@
           :loading="loadingMaterialDtl"
           :columns="tableMaterialDtlColumns"
           :data="tableDataMaterialRequisition"
-          :header-affixed-top="true"
           @row-click="onRowClick"
         >
           <template #warehouseName="{ row }">
