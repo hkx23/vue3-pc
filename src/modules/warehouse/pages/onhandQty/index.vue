@@ -27,13 +27,12 @@
     </cmp-card>
   </cmp-container>
   <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" width="750px">
-    <t-card :bordered="false">
+    <t-card :bordered="true">
       <div class="form-item-box">
-        <t-form-item label="生产车间">
-          {{ '生产车间' }}
-        </t-form-item>
-        <t-form-item label="工作中心"> {{ '工作中心' }}</t-form-item>
-        <t-form-item label="产品编码"> {{ '产品编码' }}</t-form-item>
+        <t-form-item label="仓库">{{ '生产车间' }}</t-form-item>
+        <t-form-item label="货区"> {{ '工作中心' }}</t-form-item>
+        <t-form-item label="货位"> {{ '产品编码' }}</t-form-item>
+        <t-form-item label="物料"> {{ '产品编码' }}</t-form-item>
       </div>
     </t-card>
     <cmp-table
@@ -95,61 +94,25 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'mitemCode',
-    title: '物料编码',
+    title: 'ERP仓库',
     align: 'center',
     width: '120',
   },
   {
     colKey: 'mitemName',
-    title: '物料名称',
+    title: '物料编码',
     align: 'center',
     width: '150',
   },
   {
     colKey: 'categoryCode',
-    title: '物料类别编码',
+    title: '物料名称',
     align: 'center',
     width: '150',
   },
   {
     colKey: 'categoryName',
-    title: '物料类别名称',
-    align: 'center',
-    width: '150',
-  },
-  {
-    colKey: 'supplierName',
-    title: '供应商名称',
-    align: 'center',
-    width: '150',
-  },
-  {
-    colKey: 'lotNo',
-    title: '批次号',
-    align: 'center',
-    width: '150',
-  },
-  {
-    colKey: 'datetimeReceipted',
-    title: '接收日期',
-    align: 'center',
-    width: '150',
-  },
-  {
-    colKey: 'stockNum',
-    title: '库存量',
-    align: 'center',
-    width: '150',
-  },
-  {
-    colKey: 'shelfLifeDays',
-    title: '保质期(天)',
-    align: 'center',
-    width: '150',
-  },
-  {
-    colKey: 'expiredDays',
-    title: '过期天数',
+    title: '库存现有量',
     align: 'center',
     width: '150',
   },
