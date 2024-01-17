@@ -56,6 +56,10 @@ export default {
           return false;
         }
 
+        if (isEmpty(formData.value.processCategory)) {
+          MessagePlugin.error('请选择工序采集类型');
+          return false;
+        }
         formData.value.state = formData.value.isState ? 1 : 0;
 
         if (formData.value.operateTpye === 'add') {

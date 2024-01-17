@@ -14,6 +14,9 @@
         :total="total"
         @refresh="onRefresh"
       >
+        <template #completedNum="{ row }">
+          <div>{{ row.completedNum }}</div>
+        </template>
         <template #moCode="{ row }">
           <t-link theme="primary" @click="moCodeClick(row)">{{ row.moCode }}</t-link>
         </template>
@@ -65,6 +68,7 @@
         <cmp-table
           ref="tableRef"
           v-model:pagination="pageUI"
+          empty="没有符合条件的数据"
           row-key="deliveryCardId"
           :table-column="columnsDetail"
           :table-data="getDtlData.list"
@@ -83,7 +87,7 @@
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 import { api } from '@/api/control';
 import CmpQuery from '@/components/cmp-query/index.vue';
@@ -142,10 +146,11 @@ const columnsWip = computed(() => {
     },
     ...columnsData.value,
     {
-      colKey: 'completeedNum',
+      colKey: 'completedNum',
       title: '完工数量',
       align: 'center',
       width: '100',
+      fixed: 'right',
     },
   ];
 });
@@ -191,7 +196,7 @@ const columnsDetail: PrimaryTableCol<TableRowData>[] = [
     width: '90',
   },
   {
-    colKey: 'mitemCode',
+    colKey: 'serialNumber',
     title: '产品条码',
     align: 'center',
     width: '110',
@@ -228,9 +233,9 @@ const columnsDetail: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 // 初始渲染
-onMounted(async () => {
-  await onGetProductMaintenanceReport(); // 获取 表格 数据
-});
+// onMounted(async () => {
+//   await onGetProductMaintenanceReport(); // 获取 表格 数据
+// });
 
 // 表格数据 字段
 const WipRepairVOData = ref([]);
@@ -241,8 +246,10 @@ const WipReportData = ref({
   mitemId: '', // 产品编码
   workshopId: '', // 车间
   moId: '', // 工单
-  processingDateStart: dayjs().subtract(7, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss'), // 开始时间
-  processingDateEnd: dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss'), // 结束时间
+  // processingDateStart: dayjs().subtract(7, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss'), // 开始时间
+  // processingDateEnd: dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss'), // 结束时间
+  processingDateStart: '', // 开始时间
+  processingDateEnd: '', // 结束时间
 });
 
 // 工单点击
@@ -310,7 +317,7 @@ const onGetProductMaintenanceReport = async () => {
       return (
         <div>
           {row[col.colKey] === 0 ? (
-            <div>0</div>
+            <div></div>
           ) : (
             <t-link theme="primary" onClick={() => onDetailClick(row, col)}>
               {row[col.colKey]}
@@ -375,7 +382,7 @@ const opts = computed(() => {
 });
 
 // 获取七天前的 00:00:00
-const startOfSevenDaysAgo = dayjs().subtract(7, 'days').startOf('day');
+const startOfSevenDaysAgo = dayjs().subtract(31, 'days').startOf('day');
 // 获取当前日期的 23:59:59
 const endOfToday = dayjs().endOf('day');
 

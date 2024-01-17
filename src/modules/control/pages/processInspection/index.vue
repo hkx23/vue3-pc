@@ -174,13 +174,6 @@ import { useUserStore } from '@/store';
 
 const { t } = useLang();
 const userStore = useUserStore();
-// 扫描信息
-// const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
-//   { title: '产品条码', width: 'auto', colKey: 'serialNumber' },
-//   { title: '数量', width: 'auto', colKey: 'qty' },
-//   { title: '状态', width: 'auto', colKey: 'status' },
-//   { title: '缺陷信息', width: 'auto', colKey: 'errorinfo' },
-// ];
 // 消息
 const msgList = ref<
   {
@@ -195,16 +188,6 @@ const handleClick = ({ e, href, title }) => {
 };
 const mainform = ref({
   serialNumber: '',
-  workShopId: userStore.currUserOrgInfo.workShopId,
-  workShopCode: userStore.currUserOrgInfo.workShopCode,
-  workShopName: userStore.currUserOrgInfo.workShopName,
-  workCenterId: userStore.currUserOrgInfo.workCenterId,
-  workCenterCode: userStore.currUserOrgInfo.workCenterCode,
-  workCenterName: userStore.currUserOrgInfo.workCenterName,
-  workStationId: userStore.currUserOrgInfo.workStationId,
-  workStationCode: userStore.currUserOrgInfo.workStationCode,
-  workStationName: userStore.currUserOrgInfo.workStationName,
-  processId: userStore.currUserOrgInfo.processId,
 });
 
 // 全局缺陷列表
@@ -223,28 +206,20 @@ const productInfo = ref({
   moCompletedQty: '',
 });
 
-// 界面消息列表
-// const messageList = ref<messageModel[]>([]);
-
 const Init = async () => {
   getDefectCodeTree();
 };
 
 const serialNumberEnter = async (value) => {
   if (!isEmpty(value)) {
-    // 原子校验
-    // TODO 校验成功
-
     await api.barcodeWip
       .scanBarcodeWip({
         serialNumber: mainform.value.serialNumber,
-        workcenterId: mainform.value.workCenterId,
-        workCenterCode: mainform.value.workCenterCode,
-        workCenterName: mainform.value.workCenterName,
-        workstationId: mainform.value.workStationId,
-        // workStationCode: mainform.value.workStationCode,
-        // workStationCode: mainform.value.workStationCode,
-        processId: mainform.value.processId,
+        workcenterId: userStore.currUserOrgInfo.workCenterId,
+        workCenterCode: userStore.currUserOrgInfo.workCenterCode,
+        workCenterName: userStore.currUserOrgInfo.workCenterName,
+        workstationId: userStore.currUserOrgInfo.workStationId,
+        processId: userStore.currUserOrgInfo.processId,
         defectCodeList: selectDefectCodeList.value,
       })
       .then((reData) => {
@@ -282,14 +257,14 @@ const serialNumberEnter = async (value) => {
         writeScanInfoError(value, 0, e.message);
         // writeMessageListError(e.message, dayjs().format('YYYY-MM-DD HH:mm:ss'));
       });
-
-    // TODO 校验失败，写日志到右侧表
   }
 };
 
 const getDefectCodeTree = async () => {
   try {
-    const data = await api.processInDefectCode.getDefectCodeByProcessId({ processId: mainform.value.processId });
+    const data = await api.processInDefectCode.getDefectCodeByProcessId({
+      processId: userStore.currUserOrgInfo.processId,
+    });
 
     data.forEach((first) => {
       defectCodeList.value.push(first);

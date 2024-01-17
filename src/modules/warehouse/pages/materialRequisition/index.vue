@@ -53,7 +53,12 @@
   </cmp-container>
 
   <!--领料制单主表弹框-->
-  <formMaterialRequisition ref="formRef" :is-add="isAdd" :row="selectMaterialRow"></formMaterialRequisition>
+  <formMaterialRequisition
+    ref="formRef"
+    :is-add="isAdd"
+    :row="selectMaterialRow"
+    @show-close-event="onHandleShowClose"
+  ></formMaterialRequisition>
 </template>
 
 <script setup lang="ts">
@@ -151,7 +156,7 @@ const tableMaterialRequisitionColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: `${t('materialRequisition.moScheCode')}`, width: 150, colKey: 'scheCode' },
+  { title: `${t('materialRequisition.moScheCode')}`, width: 200, colKey: 'scheCode' },
   { title: `${t('materialRequisition.mitemCode')}`, width: 120, colKey: 'mitemCode' },
   { title: `${t('materialRequisition.mitemName')}`, width: 120, colKey: 'mitemName' },
   { title: `${t('materialRequisition.uomName')}`, width: 120, colKey: 'uomName' },
@@ -292,6 +297,11 @@ const onClickAddMaterialRule = () => {
   showPopform();
   formVisible.value = true;
   isAdd.value = true;
+};
+
+// 新增界面-提交后调用
+const onHandleShowClose = () => {
+  fetchTable();
 };
 
 onMounted(() => {

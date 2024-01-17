@@ -323,7 +323,7 @@ const onConfirm = async () => {
   try {
     pageLoading.value = true;
     if (isReprintCancellation.value === 1) {
-      await apiMain.label.reprintBarcode({
+      await apiWarehouse.label.reprintBarcode({
         ids: selectedManageRowKeys.value,
         reason,
         printTempId: printMode.value.printTempId,
@@ -349,7 +349,7 @@ const onConfirm = async () => {
       MessagePlugin.success('拆分成功');
       onRefreshManage();
     } else {
-      await apiMain.label.cancellationBarcode({
+      await apiWarehouse.label.cancellationBarcode({
         ids: selectedManageRowKeys.value,
         reason,
       });
@@ -563,7 +563,7 @@ const onRefreshManage = async () => {
   manageQueryCondition.value.pageNum = pageUIMannage.value.page;
   console.log(pageUIBracode.value);
   manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
-  apiMain.label.getLabelManageList(manageQueryCondition.value).then((data) => {
+  apiWarehouse.label.getLabelManageList(manageQueryCondition.value).then((data) => {
     pkgManageDataList.list = data.list;
     barcodeTotal.value = data.total;
   });
@@ -1011,7 +1011,7 @@ const fetchBracodeManageTable = async () => {
   try {
     manageQueryCondition.value.pageNum = pageUIMannage.value.page;
     manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
-    const data = (await apiMain.label.getLabelManageList(manageQueryCondition.value)) as any;
+    const data = (await apiWarehouse.label.getLabelManageList(manageQueryCondition.value)) as any;
     const { list } = data;
     pkgManageDataList.list = list;
     pkgManageTabTotal.value = data.total;

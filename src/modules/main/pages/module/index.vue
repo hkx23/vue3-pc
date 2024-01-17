@@ -723,7 +723,7 @@ const rules: FormRules<Data> = {
 };
 
 function validateBehaviorPath(value: any): boolean | CustomValidateResolveType {
-  const pattern = /^(https?:\/\/.+|\/[a-zA-Z]+#\/[a-zA-Z]+)$/;
+  const pattern = /^(https?:\/\/.+|.+#\/[a-zA-Z]+)$/;
   if (!pattern.test(value)) {
     return {
       result: false,

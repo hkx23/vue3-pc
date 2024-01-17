@@ -56,6 +56,12 @@ const submit = async () => {
         return;
       }
 
+      if (!formData.mitemId && !formData.mitemCategoryId) {
+        MessagePlugin.warning(t('printTemplate.pleaseSelectMitemOrCategory'));
+        reject();
+        return;
+      }
+
       if (isFormEditing) {
         api.printTmplMap.update(formData.id, formData).then(() => {
           MessagePlugin.success(t('common.message.saveSuccess'));
