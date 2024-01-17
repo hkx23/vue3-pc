@@ -687,6 +687,12 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
+    colKey: 'lineSeq',
+    title: '行号',
+    align: 'center',
+    width: '60',
+  },
+  {
     colKey: 'mitemCode',
     title: '物料编码',
     align: 'center',
