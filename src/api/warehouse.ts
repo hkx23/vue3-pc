@@ -172,10 +172,15 @@ export interface Warehouse {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 仓库代码 */
   warehouseCode?: string;
+  /** 仓库名称 */
   warehouseName?: string;
+  /** 仓库描述 */
   warehouseDesc?: string;
+  /** 仓库类型 */
   warehouseCategory?: string;
+  /** 仓库属性 */
   warehouseAttribute?: string;
   /**
    * 是否启用交易上传
@@ -192,6 +197,7 @@ export interface Warehouse {
    * @format int32
    */
   isEnableLocation?: number;
+  /** ERP仓库 */
   erpWarehouse?: string;
   /**
    * 是否先进先出
@@ -594,9 +600,13 @@ export interface BillInfoMMVO {
    */
   state?: number;
   eid?: string;
+  /** 物料代码 */
   mitemCode?: string;
+  /** 物料名称 */
   mitemName?: string;
+  /** 物料描述 */
   mitemDesc?: string;
+  /** 单位 */
   uom?: string;
   /**
    * 保质期天数
@@ -680,6 +690,7 @@ export type LabelVO = {
   oid?: string;
   /** 标签号 */
   labelNo?: string;
+  /** 标签类别 */
   labelCategory?: string;
   mitemId?: string;
   /** 生产批次号 */
@@ -700,7 +711,9 @@ export type LabelVO = {
    */
   printSeq?: number;
   deliveryDtlId?: string;
+  /** 接收单号 */
   receiveNo?: string;
+  /** 状态 */
   status?: string;
   /** 送货单 */
   billNo?: string;
@@ -1394,11 +1407,7 @@ export interface MaterialRequisitionDtlVO {
   memo?: string;
   /** 子层级 */
   children?: MaterialRequisitionDtlVO[];
-  /**
-   * 树状表格需要，否则展开有问题
-   * @format int32
-   */
-  index?: number;
+  index?: string;
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
@@ -1412,6 +1421,7 @@ export interface MaterialRequisitionDtlVO {
   locationName?: string;
   toWarehouseCode?: string;
   toWarehouseName?: string;
+  workshopId?: string;
   /**
    * 分子用量
    * @format int32
@@ -1759,9 +1769,13 @@ export type Mitem = {
    */
   state?: number;
   eid?: string;
+  /** 物料代码 */
   mitemCode?: string;
+  /** 物料名称 */
   mitemName?: string;
+  /** 物料描述 */
   mitemDesc?: string;
+  /** 单位 */
   uom?: string;
   /**
    * 保质期天数
@@ -2599,10 +2613,14 @@ export type Org = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 组织编号 */
   orgCode?: string;
+  /** 组织名称 */
   orgName?: string;
+  /** 组织描述 */
   orgDesc?: string;
   parentOrgId?: string;
+  /** 组织层级代码 */
   levelCode?: string;
   /**
    * 是否生效，1是，0否
@@ -2922,10 +2940,15 @@ export type BarcodeRule = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 条码规则代码 */
   ruleCode?: string;
+  /** 条码规则名称 */
   ruleName?: string;
+  /** 条码规则描述 */
   ruleDesc?: string;
+  /** 条码类型 */
   barcodeType?: string;
+  /** 条码规则表达式 */
   ruleExpression?: string;
 } | null;
 

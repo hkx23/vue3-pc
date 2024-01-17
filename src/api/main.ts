@@ -211,7 +211,9 @@ export interface OrgLevel {
    */
   state?: number;
   eid?: string;
+  /** 层级编号 */
   levelCode?: string;
+  /** 层级名称 */
   levelName?: string;
   parentLevelId?: string;
   /**
@@ -251,10 +253,14 @@ export interface Org {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 组织编号 */
   orgCode?: string;
+  /** 组织名称 */
   orgName?: string;
+  /** 组织描述 */
   orgDesc?: string;
   parentOrgId?: string;
+  /** 组织层级代码 */
   levelCode?: string;
   /**
    * 是否生效，1是，0否
@@ -335,8 +341,11 @@ export interface Workstation {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工站代码 */
   workstationCode?: string;
+  /** 工站名称 */
   workstationName?: string;
+  /** 工站描述 */
   workstationDesc?: string;
   processId?: string;
   workcenterId?: string;
@@ -485,8 +494,11 @@ export interface Workgroup {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 班组代码 */
   workgroupCode?: string;
+  /** 班组名称 */
   workgroupName?: string;
+  /** 班组描述 */
   workgroupDesc?: string;
   workshopId?: string;
 }
@@ -529,8 +541,11 @@ export interface Workcenter {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工站代码 */
   wcCode?: string;
+  /** 工站名称 */
   wcName?: string;
+  /** 工站描述 */
   wcDesc?: string;
   workshopId?: string;
   parentWcId?: string;
@@ -545,7 +560,9 @@ export interface Workcenter {
    */
   wcObjectType?: number;
   wcObjectId?: string;
+  /** 地点 */
   wcLocation?: string;
+  /** 负责人 */
   wcOwner?: string;
 }
 
@@ -864,10 +881,15 @@ export interface Warehouse {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 仓库代码 */
   warehouseCode?: string;
+  /** 仓库名称 */
   warehouseName?: string;
+  /** 仓库描述 */
   warehouseDesc?: string;
+  /** 仓库类型 */
   warehouseCategory?: string;
+  /** 仓库属性 */
   warehouseAttribute?: string;
   /**
    * 是否启用交易上传
@@ -884,6 +906,7 @@ export interface Warehouse {
    * @format int32
    */
   isEnableLocation?: number;
+  /** ERP仓库 */
   erpWarehouse?: string;
   /**
    * 是否先进先出
@@ -1019,8 +1042,11 @@ export interface User {
    */
   state?: number;
   eid?: string;
+  /** 用户名 */
   userName?: string;
+  /** 显示名 */
   displayName?: string;
+  /** 密码 */
   password?: string;
   /**
    * 用户上次进行身份验证时间
@@ -1120,8 +1146,11 @@ export interface UserVO {
    */
   state?: number;
   eid?: string;
+  /** 用户名 */
   userName?: string;
+  /** 显示名 */
   displayName?: string;
+  /** 密码 */
   password?: string;
   /**
    * 用户上次进行身份验证时间
@@ -1244,8 +1273,11 @@ export interface SupportGroup {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 处理组代码 */
   supportGroupCode?: string;
+  /** 处理组名称 */
   supportGroupName?: string;
+  /** 处理组类型 */
   supportGroupType?: string;
 }
 
@@ -1348,9 +1380,13 @@ export interface Supplier {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 供应商代码 */
   supplierCode?: string;
+  /** 供应商名称 */
   supplierName?: string;
+  /** 供应商联系人 */
   contactPerson?: string;
+  /** 供应商联系电话 */
   contactTel?: string;
 }
 
@@ -1391,10 +1427,15 @@ export interface MsgSendLog {
    */
   state?: number;
   eid?: string;
+  /** 标题 */
   title?: string;
+  /** 内容 */
   content?: string;
+  /** 发送方式 */
   sendType?: string;
+  /** 发送地址 */
   sendAddress?: string;
+  /** 发送结果 */
   sendResult?: string;
 }
 
@@ -1443,6 +1484,7 @@ export interface RoutingMap {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工艺路线代码 */
   routingCode?: string;
   mitemId?: string;
   mitemCategoryId?: string;
@@ -1499,9 +1541,13 @@ export interface Routing {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工艺路线代码 */
   routingCode?: string;
+  /** 工艺路线名称 */
   routingName?: string;
+  /** 工艺路线描述 */
   routingDesc?: string;
+  /** 工艺路线类型 */
   routingType?: string;
 }
 
@@ -1556,8 +1602,11 @@ export interface RoleVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 角色代码 */
   roleCode?: string;
+  /** 角色名称 */
   roleName?: string;
+  /** 角色描述 */
   roleDesc?: string;
   /** 企业名称 */
   enName?: string;
@@ -1609,8 +1658,11 @@ export type Role = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 角色代码 */
   roleCode?: string;
+  /** 角色名称 */
   roleName?: string;
+  /** 角色描述 */
   roleDesc?: string;
 } | null;
 
@@ -1666,10 +1718,15 @@ export interface ProfileValueSearchVO {
   state?: number;
   eid?: string;
   moduleId?: string;
+  /** 配置项编码 */
   profileCode?: string;
+  /** 配置项名称 */
   profileName?: string;
+  /** 配置项描述 */
   profileDesc?: string;
+  /** 配置项值类型 */
   valueType?: string;
+  /** 配置项值范围 */
   valueRange?: string;
   /** 模块名称 */
   moduleName?: string;
@@ -1722,8 +1779,11 @@ export interface ProfileValue {
   state?: number;
   eid?: string;
   profileId?: string;
+  /** 配置项分类 */
   profileCategory?: string;
+  /** 配置项分类值 */
   profileCategoryValue?: string;
+  /** 配置项值 */
   profileValue?: string;
 }
 
@@ -1788,6 +1848,7 @@ export type ProcessBusinessLib = {
   oid?: string;
   routingProcessId?: string;
   processId?: string;
+  /** 条码类型 */
   barcodeCategory?: string;
 } | null;
 
@@ -1868,7 +1929,7 @@ export interface ProcessVO {
   processDesc?: string;
   /** 工序别名 */
   processAlias?: string;
-  /** 工序类型 */
+  /** 工序类别 */
   processCategory?: string;
   /** 创建人名称 */
   creatorName?: string;
@@ -1918,12 +1979,15 @@ export type Process = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工序代码 */
   processCode?: string;
+  /** 工序名称 */
   processName?: string;
+  /** 工序描述 */
   processDesc?: string;
   /** 工序别名 */
   processAlias?: string;
-  /** 工序类型 */
+  /** 工序类别 */
   processCategory?: string;
 } | null;
 
@@ -2088,8 +2152,11 @@ export interface Post {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 岗位代码 */
   postCode?: string;
+  /** 岗位名称 */
   postName?: string;
+  /** 岗位描述 */
   postDesc?: string;
 }
 
@@ -2192,14 +2259,18 @@ export type Person = {
    */
   state?: number;
   eid?: string;
+  /** 人员编号 */
   personCode?: string;
+  /** 姓名 */
   personName?: string;
   /**
    * 性别，1男，0女
    * @format int32
    */
   gender?: number;
+  /** 邮箱 */
   email?: string;
+  /** 手机号 */
   mobilePhone?: string;
   adminOrgId?: string;
 } | null;
@@ -2241,15 +2312,20 @@ export type ParamGroup = {
    */
   state?: number;
   eid?: string;
+  /** 业务领域 */
   paramDomain?: string;
+  /** 字典组代码 */
   paramGroupCode?: string;
+  /** 字典组名称 */
   paramGroupName?: string;
+  /** 字典组描述 */
   paramGroupDesc?: string;
   /**
    * 是否系统字典
    * @format int32
    */
   isSys?: number;
+  /** 字典数据类型 */
   paramDataType?: string;
 } | null;
 
@@ -2292,9 +2368,13 @@ export interface Param {
   eid?: string;
   oid?: string;
   paramGroupId?: string;
+  /** 字典名称 */
   paramName?: string;
+  /** 字典代码 */
   paramCode?: string;
+  /** 字典值 */
   paramValue?: string;
+  /** 字典描述 */
   paramDesc?: string;
   /**
    * 字典序号
@@ -2328,9 +2408,13 @@ export interface ParamInfoDTO {
   eid?: string;
   oid?: string;
   paramGroupId?: string;
+  /** 字典名称 */
   paramName?: string;
+  /** 字典代码 */
   paramCode?: string;
+  /** 字典值 */
   paramValue?: string;
+  /** 字典描述 */
   paramDesc?: string;
   /**
    * 字典序号
@@ -2513,10 +2597,14 @@ export interface ObjectProperty {
    */
   state?: number;
   eid?: string;
+  /** 领域对象编码 */
   objectCode?: string;
   categoryId?: string;
+  /** 属性代码 */
   propertyCode?: string;
+  /** 属性值类型 */
   propertyValueType?: string;
+  /** 显示在界面上的名词 */
   displayName?: string;
   /**
    * 属性中的显示顺序
@@ -2538,9 +2626,13 @@ export interface ObjectProperty {
    * @format int32
    */
   needValidation?: number;
+  /** 校验的正则表达式 */
   validExpression?: string;
+  /** 扩展属性数据来源 */
   dataSource?: string;
+  /** 数据取值路径 */
   dataSourcePath?: string;
+  /** 备注 */
   memo?: string;
   /**
    * 是否数据源多选
@@ -2573,10 +2665,14 @@ export interface MsgDTO {
    */
   state?: number;
   eid?: string;
+  /** 消息来源表 */
   sourceTableName?: string;
   sourceRowId?: string;
+  /** 标题 */
   title?: string;
+  /** 内容 */
   content?: string;
+  /** 备注 */
   remark?: string;
   /** 子层级 */
   msgDtlList?: MsgDtlDTO[];
@@ -2607,7 +2703,9 @@ export interface MsgDtlDTO {
   state?: number;
   eid?: string;
   msgId?: string;
+  /** 消息推送类型 */
   pushType?: string;
+  /** 消息推送目标 */
   pushTarget?: string;
   /**
    * 预计发送时间
@@ -2718,9 +2816,13 @@ export interface Module {
    * @format int32
    */
   clientType?: number;
+  /** 模块层次代码 */
   moduleLevel?: string;
+  /** 模块编码 */
   moduleCode?: string;
+  /** 模块名称 */
   moduleName?: string;
+  /** 模块描述 */
   moduleDesc?: string;
   parentModuleId?: string;
   /**
@@ -2728,14 +2830,19 @@ export interface Module {
    * @format int32
    */
   sortIndex?: number;
+  /** 模块访问地址 */
   behaviorPath?: string;
+  /** 图标地址 */
   iconPath?: string;
   /** 图标颜色 */
   iconColor?: string;
+  /** 模块类型 */
   moduleType?: string;
   /** 模块版本号 */
   moduleVersion?: number;
+  /** 模块包标识 */
   modulePackageIdentify?: string;
+  /** 模块包名称 */
   packageName?: string;
 }
 
@@ -2907,7 +3014,9 @@ export interface MoScheduleVO {
   oid?: string;
   moId?: string;
   mitemId?: string;
+  /** 工单类型 */
   moClass?: string;
+  /** 销售订单 */
   soNo?: string;
   /**
    * 销售订单行号
@@ -2967,8 +3076,11 @@ export interface MoScheduleVO {
   warehouseId?: string;
   parentMoId?: string;
   workshopId?: string;
+  /** 备注 */
   memo?: string;
+  /** 状态 */
   status?: string;
+  /** 工单来源 */
   moSource?: string;
   workcenterId?: string;
   /**
@@ -2982,6 +3094,7 @@ export interface MoScheduleVO {
    */
   scheQty?: number;
   routingRevisionId?: string;
+  /** 排产工单 */
   scheCode?: string;
   mitemCode?: string;
   mitemName?: string;
@@ -3040,7 +3153,9 @@ export type MoSchedule = {
   oid?: string;
   moId?: string;
   mitemId?: string;
+  /** 工单类型 */
   moClass?: string;
+  /** 销售订单 */
   soNo?: string;
   /**
    * 销售订单行号
@@ -3100,8 +3215,11 @@ export type MoSchedule = {
   warehouseId?: string;
   parentMoId?: string;
   workshopId?: string;
+  /** 备注 */
   memo?: string;
+  /** 状态 */
   status?: string;
+  /** 工单来源 */
   moSource?: string;
   workcenterId?: string;
   /**
@@ -3115,6 +3233,7 @@ export type MoSchedule = {
    */
   scheQty?: number;
   routingRevisionId?: string;
+  /** 排产工单 */
   scheCode?: string;
 } | null;
 
@@ -3156,9 +3275,12 @@ export interface Mo {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工单名称 */
   moCode?: string;
   mitemId?: string;
+  /** 工单类型 */
   moClass?: string;
+  /** 销售订单 */
   soNo?: string;
   /**
    * 销售订单行号
@@ -3218,8 +3340,11 @@ export interface Mo {
   warehouseId?: string;
   parentMoId?: string;
   workshopId?: string;
+  /** 备注 */
   memo?: string;
+  /** 状态 */
   status?: string;
+  /** 工单来源 */
   moSource?: string;
 }
 
@@ -3308,7 +3433,9 @@ export interface MitemUom {
    */
   state?: number;
   eid?: string;
+  /** 计量单位符号 */
   uom?: string;
+  /** 计量单位符号 */
   uomName?: string;
 }
 
@@ -3375,6 +3502,7 @@ export interface MitemInSupplier {
    * @format int32
    */
   qty?: number;
+  /** 检验严格度 */
   inspectionStringency?: string;
   /**
    * 是否免检
@@ -3418,10 +3546,15 @@ export interface MitemCategory {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 物料分类代码 */
   categoryCode?: string;
+  /** 物料分类名称 */
   categoryName?: string;
+  /** 物料分类描述 */
   categoryDesc?: string;
+  /** 小数位计算类型 */
   reqCalcRule?: string;
+  /** 物料投料规则 */
   onboardRuleCode?: string;
   /**
    * 是否手工创建
@@ -3560,13 +3693,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isProductName?: string;
+  isInProcessChecked?: boolean;
   isRawName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
   isInProcessName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3613,9 +3746,13 @@ export type Mitem = {
    */
   state?: number;
   eid?: string;
+  /** 物料代码 */
   mitemCode?: string;
+  /** 物料名称 */
   mitemName?: string;
+  /** 物料描述 */
   mitemDesc?: string;
+  /** 单位 */
   uom?: string;
   /**
    * 保质期天数
@@ -3749,6 +3886,7 @@ export interface LabelVO {
   oid?: string;
   /** 标签号 */
   labelNo?: string;
+  /** 标签类别 */
   labelCategory?: string;
   mitemId?: string;
   /** 生产批次号 */
@@ -3769,7 +3907,9 @@ export interface LabelVO {
    */
   printSeq?: number;
   deliveryDtlId?: string;
+  /** 接收单号 */
   receiveNo?: string;
+  /** 状态 */
   status?: string;
   /** 送货单 */
   billNo?: string;
@@ -3963,10 +4103,14 @@ export interface Label {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 标签号 */
   labelNo?: string;
+  /** 标签类别 */
   labelCategory?: string;
   mitemId?: string;
+  /** 批次号 */
   lotNo?: string;
+  /** 到货批次 */
   batchLot?: string;
   supplierId?: string;
   /** 标签初始化数量 */
@@ -3982,8 +4126,15 @@ export interface Label {
    */
   printSeq?: number;
   deliveryDtlId?: string;
+  /** 接收单号 */
   receiveNo?: string;
+  /** 状态 */
   status?: string;
+}
+
+export interface FileVO {
+  path?: string;
+  fileNames?: string[];
 }
 
 /** 菜单收藏夹表 */
@@ -4044,9 +4195,13 @@ export interface Equipment {
    * @format int32
    */
   assetModelId?: number;
+  /** 设备编码 */
   equipmentCode?: string;
+  /** 设备名称 */
   equipmentName?: string;
+  /** 设备描述 */
   equipmentDesc?: string;
+  /** 资产编码 */
   assetCode?: string;
   /**
    * 生效时间
@@ -4058,11 +4213,17 @@ export interface Equipment {
    * @format date-time
    */
   dateInvalid?: string;
+  /** 存放位置 */
   position?: string;
+  /** 保管部门 */
   departmentOwner?: string;
+  /** 保管人 */
   userOwner?: string;
+  /** 设备供应商 */
   equipmentSupplier?: string;
+  /** 维保供应商 */
   maintenanceOwner?: string;
+  /** 维保联系方式 */
   maintenanceOwnerContact?: string;
 }
 
@@ -4109,9 +4270,13 @@ export interface Enterprise {
    * @default 1
    */
   state?: number;
+  /** 企业编号 */
   epCode?: string;
+  /** 企业简称 */
   epName?: string;
+  /** 企业全称 */
   epFullName?: string;
+  /** 企业地址 */
   epAddress?: string;
 }
 
@@ -4230,8 +4395,11 @@ export interface DefectDealMethod {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 处理方法代码 */
   methodCode?: string;
+  /** 处理方法名称 */
   methodName?: string;
+  /** 处理方法类别 */
   dealMethodType?: string;
 }
 
@@ -4323,7 +4491,9 @@ export interface DefectCode {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 缺陷代码 */
   defectCode?: string;
+  /** 缺陷名称 */
   defectName?: string;
   parentDefectId?: string;
   /**
@@ -4331,6 +4501,7 @@ export interface DefectCode {
    * @format int32
    */
   levelSeq?: number;
+  /** 不合格分类 */
   classification?: string;
 }
 
@@ -4359,7 +4530,9 @@ export interface DefectCodeVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 缺陷代码 */
   defectCode?: string;
+  /** 缺陷名称 */
   defectName?: string;
   parentDefectId?: string;
   /**
@@ -4367,6 +4540,7 @@ export interface DefectCodeVO {
    * @format int32
    */
   levelSeq?: number;
+  /** 不合格分类 */
   classification?: string;
   /** 前端按钮样式 */
   themeButton?: string;
@@ -4443,8 +4617,11 @@ export interface Customer {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 客户代码 */
   customerCode?: string;
+  /** 客户名称 */
   customerName?: string;
+  /** 客户简称 */
   shortName?: string;
 }
 
@@ -4545,6 +4722,7 @@ export interface BusinessTmplLib {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 模板名称 */
   tmplName?: string;
 }
 
@@ -4590,6 +4768,7 @@ export interface BarcodeVaildateRuleSearch {
   /** 条码类型 */
   barcodeTypeCode?: string;
   mitemId?: string;
+  mitemCategoryId?: string;
   /** 条码验证分组 */
   barcodeValidateGroup?: string;
   id?: string;
@@ -4624,15 +4803,20 @@ export interface BarcodeValidateRule {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 规则代码 */
   ruleCode?: string;
+  /** 规则名称 */
   ruleName?: string;
   /**
    * 优先级
    * @format int32
    */
   pri?: number;
+  /** 条码类型 */
   barcodeType?: string;
+  /** 条码验证分组 */
   barcodeValidateGroup?: string;
+  /** 条码规则 */
   barcodeExpression?: string;
   /**
    * 最小
@@ -4644,6 +4828,7 @@ export interface BarcodeValidateRule {
    * @format int32
    */
   maxLength?: number;
+  /** 备注 */
   memo?: string;
   mitemCategoryId?: string;
   mitemId?: string;
@@ -4673,15 +4858,20 @@ export interface BarcodeVaildateRuleVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 规则代码 */
   ruleCode?: string;
+  /** 规则名称 */
   ruleName?: string;
   /**
    * 优先级
    * @format int32
    */
   pri?: number;
+  /** 条码类型 */
   barcodeType?: string;
+  /** 条码验证分组 */
   barcodeValidateGroup?: string;
+  /** 条码规则 */
   barcodeExpression?: string;
   /**
    * 最小
@@ -4693,6 +4883,7 @@ export interface BarcodeVaildateRuleVO {
    * @format int32
    */
   maxLength?: number;
+  /** 备注 */
   memo?: string;
   mitemCategoryId?: string;
   mitemId?: string;
@@ -4774,7 +4965,9 @@ export interface BarcodeSequence {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 条码类别 */
   barcodeType?: string;
+  /** 前辍 */
   prefix?: string;
   currentValue?: string;
   barcodeRuleId?: string;
@@ -4831,10 +5024,15 @@ export interface BarcodeRule {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 条码规则代码 */
   ruleCode?: string;
+  /** 条码规则名称 */
   ruleName?: string;
+  /** 条码规则描述 */
   ruleDesc?: string;
+  /** 条码类型 */
   barcodeType?: string;
+  /** 条码规则表达式 */
   ruleExpression?: string;
 }
 
@@ -4948,11 +5146,17 @@ export type AttendanceMode = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 出勤模式代码 */
   modeCode?: string;
+  /** 出勤模式名称 */
   modeName?: string;
+  /** 出勤模式描述 */
   modeDesc?: string;
+  /** 出勤模式表达式 */
   expression?: string;
+  /** 班次 */
   shiftCode?: string;
+  /** 备注 */
   memo?: string;
 } | null;
 
@@ -5094,8 +5298,11 @@ export type UserInRoleVO = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 角色代码 */
   roleCode?: string;
+  /** 角色名称 */
   roleName?: string;
+  /** 角色描述 */
   roleDesc?: string;
   /** 用户名 */
   userName?: string;
@@ -5142,10 +5349,14 @@ export type UserInOrgVO = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 组织编号 */
   orgCode?: string;
+  /** 组织名称 */
   orgName?: string;
+  /** 组织描述 */
   orgDesc?: string;
   parentOrgId?: string;
+  /** 组织层级代码 */
   levelCode?: string;
   /**
    * 是否生效，1是，0否
@@ -5444,9 +5655,13 @@ export type RoutingProcessTreeVO = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 工艺路线代码 */
   routingCode?: string;
+  /** 工艺路线名称 */
   routingName?: string;
+  /** 工艺路线描述 */
   routingDesc?: string;
+  /** 工艺路线类型 */
   routingType?: string;
   routingRevisionId?: string;
   /**
@@ -5487,6 +5702,7 @@ export interface RoutingProcessVO {
   oid?: string;
   routingRevisionId?: string;
   processId?: string;
+  /** 工序类型 */
   processType?: string;
   /** 工序显示名称 */
   title?: string;
@@ -5517,10 +5733,15 @@ export type Profile = {
   state?: number;
   eid?: string;
   moduleId?: string;
+  /** 配置项编码 */
   profileCode?: string;
+  /** 配置项名称 */
   profileName?: string;
+  /** 配置项描述 */
   profileDesc?: string;
+  /** 配置项值类型 */
   valueType?: string;
+  /** 配置项值范围 */
   valueRange?: string;
 } | null;
 
@@ -5594,9 +5815,13 @@ export type ModulePermissionDTO = {
    * @format int32
    */
   clientType?: number;
+  /** 模块层次代码 */
   moduleLevel?: string;
+  /** 模块编码 */
   moduleCode?: string;
+  /** 模块名称 */
   moduleName?: string;
+  /** 模块描述 */
   moduleDesc?: string;
   parentModuleId?: string;
   /**
@@ -5604,14 +5829,19 @@ export type ModulePermissionDTO = {
    * @format int32
    */
   sortIndex?: number;
+  /** 模块访问地址 */
   behaviorPath?: string;
+  /** 图标地址 */
   iconPath?: string;
   /** 图标颜色 */
   iconColor?: string;
+  /** 模块类型 */
   moduleType?: string;
   /** 模块版本号 */
   moduleVersion?: number;
+  /** 模块包标识 */
   modulePackageIdentify?: string;
+  /** 模块包名称 */
   packageName?: string;
   permissionId?: string;
   /** 权限名称 */
@@ -5642,10 +5872,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
 } | null;
@@ -5816,8 +6046,11 @@ export type ObjectPropertyCategory = {
    */
   state?: number;
   eid?: string;
+  /** 领域名称编码 */
   objectCode?: string;
+  /** 类别编码 */
   categoryCode?: string;
+  /** 类别名称 */
   categoryName?: string;
 } | null;
 
@@ -5878,10 +6111,14 @@ export type ObjectPropertyValueVO = {
    */
   state?: number;
   eid?: string;
+  /** 领域对象编码 */
   objectCode?: string;
   categoryId?: string;
+  /** 属性代码 */
   propertyCode?: string;
+  /** 属性值类型 */
   propertyValueType?: string;
+  /** 显示在界面上的名词 */
   displayName?: string;
   /**
    * 属性中的显示顺序
@@ -5903,9 +6140,13 @@ export type ObjectPropertyValueVO = {
    * @format int32
    */
   needValidation?: number;
+  /** 校验的正则表达式 */
   validExpression?: string;
+  /** 扩展属性数据来源 */
   dataSource?: string;
+  /** 数据取值路径 */
   dataSourcePath?: string;
+  /** 备注 */
   memo?: string;
   /**
    * 是否数据源多选
@@ -5992,11 +6233,17 @@ export type BusinessUnit = {
    */
   state?: number;
   eid?: string;
+  /** 服务名称 */
   apiName?: string;
+  /** 服务描述 */
   apiDesc?: string;
+  /** 服务路径 */
   apiPath?: string;
+  /** 入参列表 */
   paramInput?: string;
+  /** 出参列表 */
   paramOutput?: string;
+  /** 服务分类 */
   paramCategory?: string;
 } | null;
 
@@ -6038,9 +6285,13 @@ export interface BarcodeSegment {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 条码段名称 */
   segmentName?: string;
+  /** 条码段类型 */
   segmentType?: string;
+  /** 条码段格式值 */
   segmentFormat?: string;
+  /** 备注 */
   memo?: string;
 }
 
@@ -9481,6 +9732,76 @@ export const api = {
         body: data as any,
       }),
   },
+  file: {
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name UploadFile
+     * @summary 文件上传
+     * @request POST:/file/uploadFile
+     * @secure
+     */
+    uploadFile: (
+      query: {
+        path: string;
+      },
+      data: {
+        /** @format binary */
+        file: File;
+      },
+    ) =>
+      http.request<ResultString['data']>(`/api/main/file/uploadFile`, {
+        method: 'POST',
+        params: query,
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name GetSignedUrl
+     * @summary 获取文件下载路径
+     * @request POST:/file/getSignedUrl
+     * @secure
+     */
+    getSignedUrl: (query: { file: string; path: string }) =>
+      http.request<ResultString['data']>(`/api/main/file/getSignedUrl`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name DeleteFile
+     * @summary 文件删除
+     * @request POST:/file/deleteFile
+     * @secure
+     */
+    deleteFile: (query: { path: string; fileName: string }) =>
+      http.request<ResultObject['data']>(`/api/main/file/deleteFile`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name BatchDeleteFile
+     * @summary 文件批量删除
+     * @request POST:/file/batchDeleteFile
+     * @secure
+     */
+    batchDeleteFile: (data: FileVO) =>
+      http.request<ResultObject['data']>(`/api/main/file/batchDeleteFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   favorite: {
     /**
      * No description
@@ -10168,7 +10489,7 @@ export const api = {
      *
      * @tags 产品条码生成规则表
      * @name GetBarcodeRuleList
-     * @summary 查询条码类型
+     * @summary 查询条码规则
      * @request POST:/barcodeRuleInMitem/getBarcodeRuleList
      * @secure
      */

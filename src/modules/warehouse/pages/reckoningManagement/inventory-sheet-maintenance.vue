@@ -188,7 +188,7 @@ const sonId = ref(''); // getBarcodes 接口入参
 const inputTimeQtyChange = (value: any, row: any) => {
   console.log('🚀 ~ inputTimeQtyChange ~ value:', value);
   console.log('🚀 ~ inputTimeQtyChange ~ row:', row);
-
+  // 修改表格的数据 前端收集 数组多个对象 每个对象里 有 billId  onhandQty diffReason diffAdjustReason
   // generateData.value.createNum = value; // 本次生成数量
   // numInput.value = row.planQty - row.generateQty;
 };
@@ -200,23 +200,44 @@ const renovate = () => {
 };
 
 // 保存
-const saveData = () => {
-  const originalData = [];
-  const modifiedData = tableDataInventory1.value.filter((row) => {
-    // 假设原始数据存储在 originalData 中，这里比较原始数据和当前数据
-    // 返回条件根据实际情况调整
-    return originalData.find((originalRow) => originalRow.id === row.id && originalRow.checkQty !== row.checkQty);
-  });
-  console.log('🚀 ~ modifiedData ~ modifiedData:', modifiedData);
+// const saveData = () => {
+//   const originalData = [];
+//   const modifiedData = tableDataInventory1.value.filter((row) => {
+//     // 假设原始数据存储在 originalData 中，这里比较原始数据和当前数据
+//     // 返回条件根据实际情况调整
+//     return originalData.find((originalRow) => originalRow.id === row.id && originalRow.checkQty !== row.checkQty);
+//   });
+//   console.log('🚀 ~ modifiedData ~ modifiedData:', modifiedData);
 
-  // 步骤1 获取 修改的数据 可能是修改多条数据 动态的获取 table 插槽 绑定的数据
-  // 调用保存接口，传递 dataToSave
-  // 当获取数据时，将数组的每个对象转换为响应式
+//   // 步骤1 获取 修改的数据 可能是修改多条数据 动态的获取 table 插槽 绑定的数据
+//   // 调用保存接口，传递 dataToSave
+//   // 当获取数据时，将数组的每个对象转换为响应式
+// };
+
+// 保存
+const saveData = () => {
+  const modifiedData = tableDataInventory1.value
+    .filter((row) => {
+      // 检查每行数据是否有变化，例如检查 onhandQty 或其他字段
+      // 这里的条件根据你的具体需求调整
+      return row.checkQty !== row.originalcheckQty || row.diffReason !== row.originalDiffReason;
+    })
+    .map((row) => {
+      return {
+        billId: row.billId,
+        checkQty: row.checkQty,
+        diffReason: row.diffReason,
+        diffAdjustReason: row.diffAdjustReason,
+      };
+    });
+
+  console.log('Modified Data:', modifiedData);
+  // 此处可以调用 API 发送 modifiedData 到后端
 };
 
 // 盘点完成
 const finish = async (billId) => {
-  // 调用保存接口 传递需要的参数
+  // 调用盘点完成接口 传递需要的参数
   const result = await api.stockCheckBill.stockCheckFinish({
     billId,
   });
