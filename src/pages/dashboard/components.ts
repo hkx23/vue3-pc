@@ -5,8 +5,8 @@ import Todo from '@/modules/main/pages/todo/componentTodo.vue';
 
 import AbnormalSafetyLamp from './base/components/abnormal-safety-lamp/index.vue';
 // demo
-import LineChart from './base/components/demo/LineChart.vue';
-import PieChart from './base/components/demo/PieChart.vue';
+// import LineChart from './base/components/demo/LineChart.vue';
+// import PieChart from './base/components/demo/PieChart.vue';
 // 功能组件
 import oftenUseMenu from './base/components/often-use-menu/index.vue';
 import PoductionAchievementRateRanking from './base/components/poduction-achievement rate-ranking/index.vue';
@@ -78,26 +78,26 @@ export const components = [
     w: 4,
     h: 6,
   },
-  {
-    code: 'LineChartDemo',
-    ghost: true,
-    title: '折线图',
-    description: '折线图示例',
-    category: '示例',
-    component: LineChart,
-    w: 6,
-    h: 5,
-  },
-  {
-    code: 'PieChartDemo',
-    title: '饼图',
-    showTitle: true,
-    description: '饼图示例',
-    category: '示例',
-    component: PieChart,
-    w: 2,
-    h: 5,
-  },
+  // {
+  //   code: 'LineChartDemo',
+  //   ghost: true,
+  //   title: '折线图',
+  //   description: '折线图示例',
+  //   category: '示例',
+  //   component: LineChart,
+  //   w: 6,
+  //   h: 5,
+  // },
+  // {
+  //   code: 'PieChartDemo',
+  //   title: '饼图',
+  //   showTitle: true,
+  //   description: '饼图示例',
+  //   category: '示例',
+  //   component: PieChart,
+  //   w: 2,
+  //   h: 5,
+  // },
 ] as componentItem[];
 
 export interface groupedComponentItem {

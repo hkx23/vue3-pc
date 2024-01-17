@@ -322,7 +322,7 @@ const panelData = ref<{ label: string; value: string; mainId?: string; detailLis
 const onClickAddTab = () => {
   newTabSelectedVisible.value = true;
 };
-const onChangeTab = async (val) => {
+const onChangeTab = async (val: string) => {
   await fetchDetail(currProcessId.value, val);
 };
 const onChangeNewTab = (option) => {
@@ -404,10 +404,26 @@ const newTemplateVisible = ref(false);
 const templateDetailList = ref<ProcessBusinessLibDtl[]>([]);
 
 const onConfirmNewTemplate = async () => {
-  await addTemplate(templateName.value, templateDetailList.value);
-  fetchTemplate();
-  newTemplateVisible.value = false;
-  MessagePlugin.success(t('common.message.saveSuccess'));
+  if (!templateName.value) {
+    MessagePlugin.warning('请输入模板名称');
+    return;
+  }
+  await fetchTemplate();
+  if (templateList.value.findIndex((t) => t.tmplName === templateName.value) >= 0) {
+    const confirmDia = DialogPlugin.confirm({
+      header: '警告',
+      body: '模版名称已存在，是否覆盖',
+      onConfirm: async () => {
+        await addTemplate(templateName.value, templateDetailList.value);
+        confirmDia.hide();
+      },
+      onClose: () => {
+        confirmDia.hide();
+      },
+    });
+  } else {
+    await addTemplate(templateName.value, templateDetailList.value);
+  }
 };
 const addTemplate = async (tmplName: string, list: ProcessBusinessLibDtl[]) => {
   const mainId = await api.businessTmplLib.add({
@@ -421,7 +437,10 @@ const addTemplate = async (tmplName: string, list: ProcessBusinessLibDtl[]) => {
       } as BusinessTmplLibDtl;
     }),
   );
+  fetchTemplate();
   templateName.value = '';
+  newTemplateVisible.value = false;
+  MessagePlugin.success(t('common.message.saveSuccess'));
 };
 
 const onClickTemplate = async (item: BusinessTmplLib) => {
@@ -453,7 +472,7 @@ const onClickDeleteTemplate = async (item: BusinessTmplLib) => {
   MessagePlugin.success(t('common.message.deleteSuccess'));
 };
 
-const onClickDeleteHeader = async (mainId) => {
+const onClickDeleteHeader = async (mainId: string) => {
   if (!mainId) return;
   await api.processBusinessLib.batchDelete([mainId]);
   panelData.value = panelData.value.filter((t) => t.value !== barcodeCategoryTab.value);

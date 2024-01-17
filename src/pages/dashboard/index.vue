@@ -126,15 +126,18 @@ const fetchCurrentUserLayout = async () => {
   const layoutInfo = await api.workbenchLayout.getByCurrentUser();
   if (layoutInfo && layoutInfo.layout) {
     layout.value = JSON.parse(layoutInfo.layout);
+  } else {
+    layout.value = defaultLayout;
   }
 };
 const onClickSaveLayout = async () => {
-  if (layout.value && layout.value.length > 0) {
-    await api.workbenchLayout.saveByCurrentUser({
-      layout: JSON.stringify(layout.value),
-    });
-    onClickCancelLayout();
+  if (!(layout.value && layout.value.length > 0)) {
+    layout.value = defaultLayout;
   }
+  await api.workbenchLayout.saveByCurrentUser({
+    layout: JSON.stringify(layout.value),
+  });
+  onClickCancelLayout();
 };
 
 const onClickCancelLayout = () => {
@@ -149,6 +152,11 @@ const syncMousePosition = (event: MouseEvent) => {
   mouseAt.y = event.clientY;
 };
 
+const defaultLayout = [
+  { x: 0, y: 0, w: 8, h: 3, i: 'often-use-menu', moved: false },
+  { x: 0, y: 3, w: 4, h: 5, i: 'todo', moved: false },
+  { x: 4, y: 3, w: 4, h: 5, i: 'notice', moved: false },
+];
 const layout = ref<LayoutItem[]>([]);
 const filterText = ref('');
 const comps = computed(() => {

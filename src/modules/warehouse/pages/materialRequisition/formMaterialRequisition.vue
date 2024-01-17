@@ -84,32 +84,34 @@
           :table-data="tableDataMaterialSum"
           :hover="false"
           :stripe="false"
-          :header-affixed-top="true"
         >
         </cmp-table>
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <!-- ################# 明细表格数据 ###################### -->
-        <cmp-table
+        <t-table
           ref="tableRef"
           row-key="id"
           :show-pagination="false"
           :show-toolbar="false"
           :loading="loadingMaterialDtl"
-          :table-column="tableMaterialDtlColumns"
-          :table-data="tableDataMaterialRequisition"
-          :header-affixed-top="true"
+          :columns="tableMaterialDtlColumns"
+          :data="tableDataMaterialRequisition"
           @row-click="onRowClick"
         >
-          <template #warehouseName="slotProps">
+          <template #warehouseName="{ row }">
             <bcmp-select-business
-              v-if="slotProps.row.id === formData.selectRowId"
-              v-model="slotProps.warehouseId"
+              v-model="row.warehouseId"
               type="warehouseAuth"
               :show-title="false"
-            ></bcmp-select-business
-          ></template>
-        </cmp-table>
+              @selection-change="(value) => warehouseSubChange(value, row)"
+            ></bcmp-select-business>
+            <!--   v-if="row.id === formData.selectRowId"  <span v-else>{{ row.toWarehouseName }}</span> -->
+          </template>
+          <template #reqQty="{ row }">
+            <t-input-number v-model="row.reqQty" theme="normal"></t-input-number>
+          </template>
+        </t-table>
       </cmp-card>
     </cmp-container>
   </t-dialog>
@@ -124,11 +126,12 @@ import _ from 'lodash';
 import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, reactive, Ref, ref } from 'vue';
 
-import { api as apiWarehouse, MaterialRequisitionDTO } from '@/api/warehouse';
+import { api as apiWarehouse, MaterialRequisitionDtlVO, MaterialRequisitionDTO, OnHandVO } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 
 import { useLang } from './lang';
 
+const Emit = defineEmits(['showCloseEvent']);
 const { loading: loadingMaterialDtl, setLoading: setLoadingMaterialDtl } = useLoading();
 
 const { t } = useLang();
@@ -176,18 +179,52 @@ const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('materialRequisition.mitemCode')}`, width: 120, colKey: 'mitemCode' },
   { title: `${t('materialRequisition.mitemName')}`, width: 120, colKey: 'mitemName' },
   { title: `${t('materialRequisition.uomName')}`, width: 120, colKey: 'uomName' },
-  { title: `${t('materialRequisition.warehouseName')}`, width: 120, colKey: 'warehouseName' },
+  {
+    title: `${t('materialRequisition.warehouseName')}`,
+    width: 120,
+    colKey: 'warehouseName',
+  },
   { title: `${t('materialRequisition.onHandQty')}`, width: 120, colKey: 'handQty' },
   { title: `${t('materialRequisition.toWarehouseName')}`, width: 120, colKey: 'toWarehouseName' },
-  { title: `${t('materialRequisition.moRequestQty')}`, width: 120, colKey: 'moRequestQty' },
-  { title: `${t('materialRequisition.reqQty')}`, width: 140, colKey: 'reqQty' },
+  {
+    title: `${t('materialRequisition.moRequestQty')}`,
+    width: 120,
+    colKey: 'moRequestQty',
+  },
+  { title: `${t('materialRequisition.reqQty')}`, width: 200, colKey: 'reqQty' },
   { title: `${t('materialRequisition.pickQty')}`, width: 120, colKey: 'alreadyPickQty' },
 ];
 
 const onRowClick = ({ row }) => {
   formData.selectRowId = row.id;
 };
+// 表单明细-仓库修改
+const warehouseSubChange = (val: any, row: MaterialRequisitionDtlVO) => {
+  row.warehouseCode = val.warehouseCode;
+  row.warehouseName = val.warehouseName;
+  getWarehouseHandInfo(val, row).then((handInfo) => {
+    if (handInfo) {
+      row.handQty = handInfo.qty;
+    } else {
+      row.handQty = 0;
+    }
+  });
+};
 
+// 表单明细-仓库修改-获取库存信息
+const getWarehouseHandInfo = async (val: any, row: MaterialRequisitionDtlVO) => {
+  const data = await apiWarehouse.materialRequisition.getOnHandList({
+    warehouseId: val.id,
+    mitemId: row.mitemId,
+  });
+  let handInfo: OnHandVO = null;
+  if (data && data.length > 0) {
+    handInfo = data[0] as OnHandVO;
+  }
+  return handInfo;
+};
+
+// 接收仓库修改
 const toWarehouseChange = (val: any) => {
   if (tableDataMaterialRequisition.value && tableDataMaterialRequisition.value.length > 0) {
     tableDataMaterialRequisition.value.forEach((item) => {
@@ -255,12 +292,52 @@ const fetchMaterialDtlTable = async () => {
 };
 
 // 领料制单界面提交
-const onConfirmForm = () => {
-  formRef.value.reset({ type: 'empty' });
-  tableDataMaterialRequisition.value = [];
-  for (const key in formData) {
-    formData[key] = null;
+const onConfirmForm = async () => {
+  try {
+    if (!checkSubmit()) {
+      return;
+    }
+    setLoadingMaterialDtl(true);
+    const data = await apiWarehouse.materialRequisition.saveData({
+      ...formData,
+      submitList: tableDataMaterialRequisition.value,
+    });
+    MessagePlugin.success(t('common.message.saveSuccess'));
+    formVisible.value = false;
+    Emit('showCloseEvent', false);
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoadingMaterialDtl(false);
   }
+};
+
+// 提交的校验
+const checkSubmit = () => {
+  let isSuccess = true;
+  if (tableDataMaterialRequisition.value && tableDataMaterialRequisition.value.length > 0) {
+    let isEmptyWarehouse = false;
+    let isEmptyQty = false;
+    tableDataMaterialRequisition.value.forEach((item) => {
+      if (!item.warehouseId) {
+        isEmptyWarehouse = true;
+      }
+      if (!item.reqQty) {
+        isEmptyQty = true;
+      }
+    });
+    if (isEmptyWarehouse) {
+      isSuccess = false;
+      MessagePlugin.warning(t('materialRequisition.checkSubmitDtls'));
+    } else if (isEmptyQty) {
+      isSuccess = false;
+      MessagePlugin.warning(t('materialRequisition.checkReqQtyEmpty'));
+    }
+  } else {
+    isSuccess = false;
+    MessagePlugin.warning(t('materialRequisition.checkSubmitDtls'));
+  }
+  return isSuccess;
 };
 
 const reset = () => {
