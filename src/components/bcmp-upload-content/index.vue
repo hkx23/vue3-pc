@@ -26,7 +26,7 @@
       <template #op="{ row }">
         <t-space :size="8">
           <t-link theme="primary" @click="downAtta(row)">{{ '下载' }}</t-link>
-          <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm(row)">
+          <t-popconfirm v-if="!$props.readonly" theme="default" content="确认删除吗" @confirm="onDelConfirm(row)">
             <t-link theme="primary">{{ '删除' }}</t-link>
           </t-popconfirm>
         </t-space>
@@ -34,6 +34,7 @@
       <template #button>
         <t-space :size="8">
           <t-upload
+            v-if="!$props.readonly"
             ref="uploadRef"
             v-model="files"
             :request-method="requestMethod"
@@ -43,7 +44,7 @@
           >
             <t-button theme="primary">上传</t-button>
           </t-upload>
-          <t-button theme="default" @click="batchDelete">批量删除</t-button>
+          <t-button v-if="!$props.readonly" theme="default" @click="batchDelete">批量删除</t-button>
           <t-button theme="default" @click="batchDownload">批量下载</t-button>
         </t-space>
       </template>
@@ -90,6 +91,10 @@ const props = defineProps({
     default: () => [] as AddFileType[],
   },
   ghost: {
+    type: Boolean,
+    default: false,
+  },
+  readonly: {
     type: Boolean,
     default: false,
   },

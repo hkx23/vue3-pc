@@ -17,14 +17,25 @@
           状态为 已关闭或者 已作废     只允许刷新  导出 打印
          -->
         <div class="buttonSty">
-          <t-button :disabled="enableOnlyRefreshExportPrint" @click="renovate">刷新</t-button>
-          <t-button :disabled="enableOnlyRefreshExportPrint">导出</t-button>
-          <t-button :disabled="enableOnlyRefreshExportPrint">打印</t-button>
-          <t-button :disabled="disableSaveAndCompletion" @click="saveData">保存</t-button>
-          <t-button :disabled="disableSaveAndCompletion" @click="finish(props.propsdtlId)">盘点完成</t-button>
-          <t-button :disabled="disableAdjustmentAndClosure">调整差异</t-button>
-          <!-- <t-button :disabled="disableAdjustmentAndClosure">关闭单据</t-button> -->
-          <t-button @click="closedocument">关闭单据</t-button>
+          <t-button @click="getMaterialDetails(props.propsdtlId)">刷新</t-button>
+          <t-button>导出</t-button>
+          <t-button>打印</t-button>
+          <t-button :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint" @click="saveData"
+            >保存</t-button
+          >
+          <t-button
+            :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint"
+            @click="finish(props.propsdtlId)"
+            >盘点完成</t-button
+          >
+          <t-button :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint" @click="getAdjustment"
+            >差异调整</t-button
+          >
+          <t-button
+            :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint"
+            @click="closedocument(props.propsdtlId)"
+            >关闭单据</t-button
+          >
         </div>
       </cmp-card>
       <!-- 盘点单相关详细信息 -->
@@ -61,16 +72,29 @@
           <!-- 实盘数的插槽 -->
           <template #firmOfferNumberSlot="{ row }">
             <div class="operation-buttons">
-              <t-button variant="outline" theme="default" size="small" @click="increment(row)">+</t-button>
+              <t-button
+                :disabled="enableOnlyRefreshExportPrint"
+                variant="outline"
+                theme="default"
+                size="small"
+                @click="increment(row)"
+                >+</t-button
+              >
               <t-input
                 v-model.number="row.checkQty"
+                :disabled="enableOnlyRefreshExportPrint"
                 placeholder="输入实盘数"
-                @change="(value) => inputTimeQtyChange(value, row)"
               ></t-input>
-              <t-button variant="outline" theme="default" size="small" @click="decrement(row)">-</t-button>
+              <t-button
+                :disabled="enableOnlyRefreshExportPrint"
+                variant="outline"
+                theme="default"
+                size="small"
+                @click="decrement(row)"
+                >-</t-button
+              >
             </div>
           </template>
-
           <!-- 差异数的插槽 -->
           <template #differenceNumberSlot="{ row }">
             <span :style="{ color: getDifference(row.checkQty, row.onhandQty) < 0 ? 'red' : 'black' }">
@@ -80,13 +104,19 @@
 
           <!-- 差异原因的插槽 -->
           <template #differenceReasonSlot="{ row }">
-            <t-input v-model="row.diffReason" placeholder="输入差异原因" :disabled="disableAdjustmentAndClosure">
+            <!-- 差异原因 已创建，盘点中 才能输入 -->
+            <t-input v-model="row.diffReason" placeholder="输入差异原因" :disabled="!disableAdjustmentAndClosure">
             </t-input>
           </template>
 
           <!-- 差异调整原因的插槽 -->
           <template #diffAdjustReasonSlot="{ row }">
-            <t-input v-model="row.differenceReason" placeholder="输入差异调整原因" :disabled="disableSaveAndCompletion">
+            <!-- 差异调整原因 已完成 才能输入-->
+            <t-input
+              v-model="row.differenceReason"
+              placeholder="输入差异调整原因"
+              :disabled="!disableSaveAndCompletion"
+            >
             </t-input>
           </template>
         </t-table>
@@ -110,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref, watch } from 'vue';
 
 import { api } from '@/api/warehouse';
@@ -137,9 +167,10 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { title: '账面数', width: 100, colKey: 'onhandQty' },
   { title: '实盘数', width: 240, colKey: 'checkQty', cell: 'firmOfferNumberSlot' },
   { title: '差异数', width: 100, colKey: 'differenceQty', cell: 'differenceNumberSlot' },
-  { title: '差异原因', width: 100, colKey: 'diffReason', cell: 'differenceReasonSlot' },
-  { title: '差异调整原因', width: 100, colKey: 'diffAdjustReason', cell: 'diffAdjustReasonSlot' },
+  { title: '差异原因', width: 150, colKey: 'diffReason', cell: 'differenceReasonSlot' },
+  { title: '差异调整原因', width: 150, colKey: 'diffAdjustReason', cell: 'diffAdjustReasonSlot' },
 ];
+
 //* 表格标题--标签明细
 const tableWarehouseColumns2: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
@@ -158,6 +189,7 @@ const tableWarehouseColumns2: PrimaryTableCol<TableRowData>[] = [
   { title: '盘点数量', width: 100, colKey: 'warehouseName3' },
   { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
 ];
+
 //* 计算属性控制按钮
 const disableAdjustmentAndClosure = computed(() => {
   return props.stockCheckBillStatusName === '已创建' || props.stockCheckBillStatusName === '盘点中';
@@ -169,13 +201,13 @@ const enableOnlyRefreshExportPrint = computed(() => {
   return props.stockCheckBillStatusName === '已关闭' || props.stockCheckBillStatusName === '已作废';
 });
 
+// 差异数 color 控制
 const getDifference = (checkQty, onhandQty) => {
   return checkQty - onhandQty;
 };
 
 const newInventoryManagement1 = ref([]);
 const tableDataInventory1 = ref([]);
-
 const newInventoryManagement2 = ref([]);
 const tableDataInventory2 = ref([]);
 const { pageUI } = usePage();
@@ -183,72 +215,72 @@ const dataTotal = ref(0);
 const dataTotals = ref(0);
 const sonId = ref(''); // getBarcodes 接口入参
 
-// 本次生成数量change事件
-// const numInput = ref(null);
-const inputTimeQtyChange = (value: any, row: any) => {
-  console.log('🚀 ~ inputTimeQtyChange ~ value:', value);
-  console.log('🚀 ~ inputTimeQtyChange ~ row:', row);
-  // 修改表格的数据 前端收集 数组多个对象 每个对象里 有 billId  onhandQty diffReason diffAdjustReason
-  // generateData.value.createNum = value; // 本次生成数量
-  // numInput.value = row.planQty - row.generateQty;
-};
-
-// 刷新
-const renovate = () => {
-  // 调用两个表格数据接口  todo
-  getMaterialDetails(props.propsdtlId);
-};
-
 // 保存
-// const saveData = () => {
-//   const originalData = [];
-//   const modifiedData = tableDataInventory1.value.filter((row) => {
-//     // 假设原始数据存储在 originalData 中，这里比较原始数据和当前数据
-//     // 返回条件根据实际情况调整
-//     return originalData.find((originalRow) => originalRow.id === row.id && originalRow.checkQty !== row.checkQty);
-//   });
-//   console.log('🚀 ~ modifiedData ~ modifiedData:', modifiedData);
-
-//   // 步骤1 获取 修改的数据 可能是修改多条数据 动态的获取 table 插槽 绑定的数据
-//   // 调用保存接口，传递 dataToSave
-//   // 当获取数据时，将数组的每个对象转换为响应式
-// };
-
-// 保存
-const saveData = () => {
+const saveData = async () => {
+  // 处理参数
   const modifiedData = tableDataInventory1.value
     .filter((row) => {
-      // 检查每行数据是否有变化，例如检查 onhandQty 或其他字段
-      // 这里的条件根据你的具体需求调整
-      return row.checkQty !== row.originalcheckQty || row.diffReason !== row.originalDiffReason;
+      return row.checkQty || row.diffReason || row.pdDtlId;
     })
     .map((row) => {
       return {
-        billId: row.billId,
         checkQty: row.checkQty,
         diffReason: row.diffReason,
-        diffAdjustReason: row.diffAdjustReason,
+        id: row.pdDtlId,
       };
     });
 
-  console.log('Modified Data:', modifiedData);
-  // 此处可以调用 API 发送 modifiedData 到后端
+  /// 保存接口
+  await api.stockCheckBill.save({ dtls: modifiedData });
+  await getMaterialDetails(props.propsdtlId);
+  await MessagePlugin.success('保存成功!');
 };
 
 // 盘点完成
 const finish = async (billId) => {
   // 调用盘点完成接口 传递需要的参数
-  const result = await api.stockCheckBill.stockCheckFinish({
+  await api.stockCheckBill.stockCheckFinish({
     billId,
   });
-  console.log('🚀 ~ finish ~ result:', result);
-  // 提示保存成功
-  // 关闭弹窗?
+  await getMaterialDetails(props.propsdtlId);
+  emit('updateStatus', '已完成'); // 发射事件，可以携带新状态作为参数
+  // 提示盘点完成
+  await MessagePlugin.success('盘点完成!');
+};
+
+// 差异调整
+const getAdjustment = async () => {
+  // 处理参数
+  const desData = tableDataInventory1.value
+    .filter((row) => {
+      return row.checkQty || row.differenceReason || row.pdDtlId;
+    })
+    .map((row) => {
+      return {
+        checkQty: row.checkQty,
+        differenceReason: row.differenceReason,
+        id: row.pdDtlId,
+      };
+    });
+  const billId = props.propsdtlId;
+  const billNo = props.propsbillNo;
+  const warehouseId = props.propswarehouseId;
+  await api.stockCheckBill.adjustment({
+    billId,
+    billNo,
+    warehouseId,
+    dtls: desData,
+  });
 };
 
 // 关闭单据
-const closedocument = () => {
-  // api.stockCheckBill
+const emit = defineEmits(['updateStatus']);
+const closedocument = async (billId) => {
+  await api.stockCheckBill.stockCheckClose({
+    billId,
+  });
+  emit('updateStatus', '已关闭'); // 发射事件，可以携带新状态作为参数
+  MessagePlugin.success('已关闭单据！');
 };
 
 //* 初始渲染
@@ -257,14 +289,12 @@ onMounted(async () => {
 });
 
 const handleRowSelectChange = (value: any[]) => {
-  console.log('🚀 ~ handleRowSelectChange ~ value:', value);
   if (value.length > 0) {
     sonId.value = value[value.length - 1];
   }
 };
 
 watch(sonId, (newBillId) => {
-  console.log('🚀 ~ watch ~ newBillId:', newBillId);
   if (newBillId) {
     getBarcodesData(newBillId);
   }
@@ -288,6 +318,12 @@ const props = defineProps({
   propsdtlId: {
     type: String,
   },
+  propsbillNo: {
+    type: String,
+  },
+  propswarehouseId: {
+    type: String,
+  },
   stockCheckBillStatusName: {
     type: String,
   },
@@ -307,7 +343,6 @@ const getMaterialDetails = async (billId) => {
     pageSize: pageUI.value.rows,
     billId,
   });
-  console.log('🚀 ~ getMaterialDetails ~ result:', data);
   tableDataInventory1.value = data.list;
   dataTotal.value = data.total;
   setLoading(false);
@@ -315,7 +350,6 @@ const getMaterialDetails = async (billId) => {
 
 // 获取标签明细
 const getBarcodesData = async (dtlId) => {
-  console.log('🚀 ~ getBarcodesData ~ dtlId:', dtlId);
   newInventoryManagement2.value = [];
   tableDataInventory2.value = [];
   pageUI.value.page = 1;
@@ -332,12 +366,15 @@ watch(
   () => sonId.value,
   (dtlId) => {
     if (dtlId) {
-      console.log('🚀 ~ dtlId:', dtlId);
       // 当 propsdtlId 变化时，重新获取数据
       getBarcodesData(dtlId);
     }
   },
 );
+// 暴露方法
+defineExpose({
+  getMaterialDetails,
+});
 </script>
 
 <style scoped>
@@ -354,6 +391,8 @@ watch(
 .operation-buttons {
   display: flex;
   justify-content: space-between; /* 两端对齐 */
+  align-items: center;
+  height: 40px !important;
 }
 
 .operation-buttons > t-button {

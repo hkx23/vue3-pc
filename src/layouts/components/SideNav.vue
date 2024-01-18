@@ -198,11 +198,10 @@ const onChangeCollapsed = () => {
 </style>
 <!-- eslint-disable-next-line vue-scoped-css/enforce-style-type -->
 <style lang="less">
-.@{starter-prefix}-sidebar-layout{
-  .@{starter-prefix}-side-nav-mix-fixed{
+.@{starter-prefix}-sidebar-layout {
+  .@{starter-prefix}-side-nav-mix-fixed {
     .t-default-menu__inner {
       height: calc(100vh - var(--td-comp-size-xxxl));
-
     }
   }
 }

@@ -25,7 +25,7 @@
         >
           <template #button>
             <t-button theme="primary" @click="onAdd">新增</t-button>
-            <t-button theme="default">作废</t-button>
+            <t-button theme="default" @click="scrappedBill(propsdtlId)">作废</t-button>
             <t-button theme="primary">打印</t-button>
             <t-button theme="primary">导出</t-button>
           </template>
@@ -68,17 +68,21 @@
   <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" @update-data="closeDialog" />
   <!-- 盘点单维护组件 -->
   <inventory-sheet-maintenance
+    ref="refreshTable"
     v-model:visible="ISMRoutingVisible"
     :form-title="formTitle"
     :propsdtl-id="propsdtlId"
+    :propsbill-no="propsbillNo"
+    :propswarehouse-id="propswarehouseId"
     :stock-check-bill-status-name="stockCheckBillStatusName"
     :stock-check-bill-type-name="stockCheckBillTypeName"
+    @update-status="handleUpdateStatus"
   />
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref, watch } from 'vue';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api } from '@/api/warehouse';
@@ -104,8 +108,12 @@ const documentStatusOptions = ref([]);
 // const selectedBillId = ref([]); // 选中的序号
 // 传递给详情组件的数据 给接口入参
 const propsdtlId = ref('');
+const propsbillNo = ref('');
+const propswarehouseId = ref(''); // 差异调整入参
 const stockCheckBillStatusName = ref('');
 const stockCheckBillTypeName = ref('');
+
+const refreshTable = ref(null);
 
 //* 组件配置--查询界面
 const opts = computed(() => {
@@ -236,6 +244,11 @@ const fetchTables = async (billId) => {
   dataTotals.value = data.total;
   setLoading(false);
 };
+const handleUpdateStatus = async (e) => {
+  // 刷新表格数据
+  stockCheckBillStatusName.value = e;
+  await fetchTable();
+};
 
 //* 初始渲染
 onMounted(async () => {
@@ -266,6 +279,7 @@ const documentStatusData = async () => {
 
 //* 查询
 const onInput = async (data: any) => {
+  setLoading(true);
   const { billNo, status, warehouseId, timeCreate } = data;
   if (!data.value) {
     const data = await api.stockCheckBill.getPdList({
@@ -280,6 +294,7 @@ const onInput = async (data: any) => {
     tableDataReckoning.value = [...data.list];
     dataTotal.value = data.total;
   }
+  setLoading(false);
 };
 
 const closeDialog = async () => {
@@ -292,11 +307,42 @@ const onAdd = () => {
   formTitle.value = '新增盘点管理';
   eidtRoutingVisible.value = true;
 };
+// 作废
+// const scrappedBill = async (billId) => {
+//   await api.stockCheckBill.scrappedBill({
+//     billId,
+//   });
+//   await fetchTable();
+//   await MessagePlugin.success('作废成功!');
+// };
+const scrappedBill = async () => {
+  // 检查是否选择了一行
+  if (propsdtlId.value) {
+    // 执行作废操作
+    await api.stockCheckBill.scrappedBill({
+      billId: propsdtlId.value,
+    });
+    await fetchTable();
+    MessagePlugin.success('作废成功!');
+  } else {
+    // 如果没有选择任何行，显示错误消息
+    MessagePlugin.error('请选择一行进行作废操作');
+  }
+};
 
-const onEditRowClick = (item) => {
+const onEditRowClick = async (item) => {
   formTitle.value = '盘点单维护';
   ISMRoutingVisible.value = true;
   propsdtlId.value = item.billId;
+  propsbillNo.value = item.billNo;
+  propswarehouseId.value = item.warehouseId;
+
+  // 等待弹窗完全显示后再调用子组件方法
+  await nextTick();
+  if (refreshTable.value && refreshTable.value.getMaterialDetails) {
+    refreshTable.value.getMaterialDetails(propsdtlId.value);
+  }
+
   stockCheckBillStatusName.value = item.stockCheckBillStatusName;
   stockCheckBillTypeName.value = item.stockCheckBillTypeName;
 };

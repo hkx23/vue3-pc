@@ -29,12 +29,12 @@
         </t-tab-panel>
       </t-tabs>
     </cmp-card>
-    <cmp-card v-if="valueItem !== 0" :span="12">
+    <cmp-card :span="12">
       <cmp-query :opts="opts" @submit="onInput"></cmp-query>
     </cmp-card>
     <cmp-card ref="tableCardRef" :span="12">
       <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
-        <div class="table-title">工站列表</div>
+        <div class="table-title">工作中心列表</div>
         <t-space size="small" :align="'end'">
           <t-button theme="primary" variant="base" @click="onHandelAdded">新增</t-button>
           <t-button theme="default" variant="base">导出</t-button>
@@ -177,7 +177,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'wcCode',
     title: '工作中心编号',
-    align: 'left',
+    align: 'center',
     width: '150px',
   },
   {
@@ -209,6 +209,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     title: '父工作中心',
     align: 'center',
     ellipsis: true,
+    width: '100',
   },
   {
     colKey: 'wcOwner',
