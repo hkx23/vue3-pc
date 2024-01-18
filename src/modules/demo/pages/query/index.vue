@@ -1,12 +1,16 @@
 <template>
-  <cmp-query :opts="opts" is-expansion @submit="conditionEnter" @handle-event="handleEvent" @change="change">
-    <template #querybar>
-      <t-button theme="default">querybar插槽</t-button>
-    </template>
-    <template #soltDemo="{ param }">
-      <t-tag-input v-model="param.soltDemo" clearable @paste="onPaste" @enter="onTagInputEnter" />
-    </template>
-  </cmp-query>
+  <cmp-container>
+    <cmp-card>
+      <cmp-query :opts="opts" is-expansion @submit="conditionEnter" @handle-event="handleEvent" @change="change">
+        <template #querybar>
+          <!-- <t-button theme="default">querybar插槽</t-button> -->
+        </template>
+        <template #soltDemo="{ param }">
+          <t-tag-input v-model="param.soltDemo" clearable @paste="onPaste" @enter="onTagInputEnter" />
+        </template>
+      </cmp-query>
+    </cmp-card>
+  </cmp-container>
 </template>
 
 <script setup lang="tsx">
