@@ -1,0 +1,184 @@
+<!-- 容器  -->
+<template>
+  <cmp-container :full="true">
+    <cmp-container>
+      <div class="cards-container">
+        <!-- card 1 -->
+        <cmp-card class="card">
+          <t-card>
+            <cmp-query ref="queryComponent" :opts="optsContainer1" :bool-enter="false"> </cmp-query>
+          </t-card>
+          <!-- cmp-table 表格组件  -->
+          <cmp-table
+            v-model:pagination="pageUI"
+            row-key="billNo"
+            :table-column="tableContainerColumns1"
+            :total="dataTotal"
+            :loading="loading"
+            empty="没有符合条件的数据"
+          >
+            <template #button>
+              <t-button theme="primary" @click="onAdd">新增</t-button>
+            </template>
+            <template #billNo="slotProps">
+              <t-space :size="8">
+                <t-link variant="text" theme="primary" name="edit">{{ slotProps.row.billNo }}</t-link>
+              </t-space>
+            </template>
+
+            <!-- 定义序号列的插槽 -->
+            <template #indexSlot="{ rowIndex }">
+              {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+            </template>
+          </cmp-table>
+        </cmp-card>
+        <!--  card 2 -->
+        <cmp-card class="card">
+          <t-card>
+            <cmp-query ref="queryComponent" :opts="optsContainer2" :bool-enter="false"> </cmp-query>
+          </t-card>
+          <!-- cmp-table 表格组件  -->
+          <cmp-table
+            v-model:pagination="pageUI"
+            row-key="billNo"
+            :table-column="tableContainerColumns2"
+            :total="dataTotal"
+            :loading="loading"
+            empty="没有符合条件的数据"
+          >
+            <template #button>
+              <t-button theme="primary">生成</t-button>
+              <t-button theme="primary">打印</t-button>
+              <t-button theme="primary">删除</t-button>
+            </template>
+
+            <!-- 定义序号列的插槽 -->
+            <template #indexSlot="{ rowIndex }">
+              {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+            </template>
+          </cmp-table>
+        </cmp-card>
+      </div>
+    </cmp-container>
+    <!-- 弹窗 -->
+    <t-dialog v-model:visible="containerVisible" :footer="true" :close-on-overlay-click="false" header="新增内容类型">
+      <t-form>
+        <t-form-item label="容器类型编码">
+          <t-input></t-input>
+        </t-form-item>
+        <t-form-item label="容器类型名称">
+          <t-input></t-input>
+        </t-form-item>
+        <t-form-item label="容器类型描述">
+          <t-input></t-input>
+        </t-form-item>
+        <t-form-item label="启用">
+          <t-switch />
+        </t-form-item>
+      </t-form>
+    </t-dialog>
+  </cmp-container>
+</template>
+
+<script setup lang="ts">
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed } from 'vue';
+
+// import { api } from '@/api/warehouse';
+import { usePage } from '@/hooks/modules/page';
+
+const { pageUI } = usePage();
+const dataTotal = ref(0);
+const tabValue = ref('');
+const containerVisible = ref(false); //* 弹窗默认关闭
+// const selectedReceiptRowKeys = ref([]);
+
+//* 组件配置  --查询界面选择
+const optsContainer1 = computed(() => {
+  return {
+    containerTypeCoding: {
+      label: '容器类型编码',
+      labelWidth: '300',
+      isHide: tabValue.value,
+      event: 'input',
+      comp: 't-input',
+      defaultVal: '',
+    },
+  };
+});
+
+const optsContainer2 = computed(() => {
+  return {
+    containerState: {
+      label: '容器状态',
+      labelWidth: '50',
+      isHide: tabValue.value,
+      event: 'select',
+      comp: 't-select',
+      defaultVal: '',
+    },
+    containerBarCode: {
+      label: '容器条码',
+      labelWidth: '50',
+      isHide: tabValue.value,
+      event: 'input',
+      comp: 't-input',
+      defaultVal: '',
+    },
+    printTemplate: {
+      label: '打印模板',
+      labelWidth: '50',
+      isHide: tabValue.value,
+      event: 'select',
+      comp: 't-select',
+      defaultVal: '',
+    },
+  };
+});
+// card 1
+const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
+  { title: '容器类型编码', colKey: 'categoryName', width: 120 },
+  { title: '容器类型名称', width: 120, colKey: 'billNo' },
+  { title: '容器类型描述', width: 120, colKey: 'sourceBillNo' },
+  { title: '状态', width: 85, colKey: 'billStatusName' },
+  { title: '操作', align: 'left', fixed: 'right', width: 100, colKey: 'op' },
+];
+
+// card 2
+const tableContainerColumns2: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
+  { title: '物料类别', colKey: 'categoryName', width: 120 },
+  { title: '物料类别名称', width: 120, colKey: 'billNo' },
+  { title: '物料编码', width: 120, colKey: 'sourceBillNo' },
+  { title: '物料名称', width: 85, colKey: 'billStatusName' },
+  { title: '物料描述', width: 85, colKey: 'billStatusName' },
+  { title: '标题数量', width: 85, colKey: 'billStatusName' },
+  { title: '操作', align: 'left', fixed: 'right', width: 100, colKey: 'op' },
+];
+
+const onAdd = async () => {
+  containerVisible.value = true;
+};
+
+//* 初始渲染
+
+//* 表格数据
+//* 表格刷新
+
+//* 查询
+</script>
+
+<style lang="less" scoped>
+.cards-container {
+  display: flex;
+  justify-content: space-between; /* 在卡片之间添加空间 */
+}
+
+.card {
+  flex: 1; /* 让卡片平均分配空间 */
+  margin: 0 10px; /* 可选：添加一些间隔 */
+}
+</style>

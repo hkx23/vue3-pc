@@ -3693,12 +3693,12 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isInProcessChecked?: boolean;
+  isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
   isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
   isBatchName?: string;
 }
 
@@ -5872,12 +5872,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9632,21 +9632,6 @@ export const api = {
      * No description
      *
      * @tags 标签表
-     * @name SplitBarcode
-     * @summary 拆分条码
-     * @request POST:/label/splitBarcode
-     * @secure
-     */
-    splitBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/main/label/splitBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
      * @name SplitBarcodeCommon
      * @summary 拆分条码
      * @request POST:/label/splitBarcodeCommon
@@ -9713,6 +9698,21 @@ export const api = {
      */
     generateBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/main/label/generateBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name BatchInsertLabel
+     * @summary 批量插入条码
+     * @request POST:/label/batchInsertLabel
+     * @secure
+     */
+    batchInsertLabel: (data: Label[]) =>
+      http.request<ResultObject['data']>(`/api/main/label/batchInsertLabel`, {
         method: 'POST',
         body: data as any,
       }),
