@@ -626,7 +626,7 @@ const labelManage: PrimaryTableCol<TableRowData>[] = [
     width: '180',
   },
   {
-    colKey: 'moCode',
+    colKey: 'scheCode',
     title: '排产单',
     align: 'center',
     width: '130',
