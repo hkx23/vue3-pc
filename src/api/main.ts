@@ -1937,8 +1937,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3691,15 +3691,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  isProductName?: string;
+  stateName?: string;
+  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isState?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
-  stateName?: string;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -4132,12 +4132,9 @@ export interface Label {
   status?: string;
 }
 
-export interface Resource {
-  name?: string;
-  /** @format url */
-  url?: string;
-  stream?: object;
-  modified?: boolean;
+export interface FileVO {
+  path?: string;
+  fileNames?: string[];
 }
 
 /** 菜单收藏夹表 */
@@ -4551,8 +4548,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -9779,21 +9776,6 @@ export const api = {
      * No description
      *
      * @tags 文件上传操作
-     * @name DownloadSelectedFilesAsZip
-     * @summary 批量下载文件-暂不可用
-     * @request POST:/file/downloadZip
-     * @secure
-     */
-    downloadSelectedFilesAsZip: (query: { path: string; fileNames: string[] }) =>
-      http.request<Resource['data']>(`/api/main/file/downloadZip`, {
-        method: 'POST',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 文件上传操作
      * @name DeleteFile
      * @summary 文件删除
      * @request POST:/file/deleteFile
@@ -9814,10 +9796,10 @@ export const api = {
      * @request POST:/file/batchDeleteFile
      * @secure
      */
-    batchDeleteFile: (query: { path: string; fileNames: string[] }) =>
+    batchDeleteFile: (data: FileVO) =>
       http.request<ResultObject['data']>(`/api/main/file/batchDeleteFile`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
   },
   favorite: {
