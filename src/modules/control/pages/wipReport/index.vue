@@ -14,6 +14,9 @@
         :total="total"
         @refresh="onRefresh"
       >
+        <template #completedNum="{ row }">
+          <div>{{ row.completedNum }}</div>
+        </template>
         <template #moCode="{ row }">
           <t-link theme="primary" @click="moCodeClick(row)">{{ row.moCode }}</t-link>
         </template>
@@ -147,6 +150,7 @@ const columnsWip = computed(() => {
       title: '完工数量',
       align: 'center',
       width: '100',
+      fixed: 'right',
     },
   ];
 });
