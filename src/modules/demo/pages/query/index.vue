@@ -1,5 +1,5 @@
 <template>
-  <cmp-query :opts="opts" is-expansion @submit="conditionEnter" @handle-event="handleEvent">
+  <cmp-query :opts="opts" is-expansion @submit="conditionEnter" @handle-event="handleEvent" @change="change">
     <template #querybar>
       <t-button theme="default">querybar插槽</t-button>
     </template>
@@ -211,6 +211,9 @@ const getQueryData = computed(() => {
     soltDemo,
   };
 });
+const change = (val) => {
+  MessagePlugin.info(`值变化:val:${JSON.stringify(val)}`);
+};
 // 查询条件change事件
 const handleEvent = (type, val) => {
   console.log(111, type, val);
