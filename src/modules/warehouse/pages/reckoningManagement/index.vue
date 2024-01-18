@@ -308,12 +308,26 @@ const onAdd = () => {
   eidtRoutingVisible.value = true;
 };
 // 作废
-const scrappedBill = async (billId) => {
-  await api.stockCheckBill.scrappedBill({
-    billId,
-  });
-  await fetchTable();
-  await MessagePlugin.success('作废成功!');
+// const scrappedBill = async (billId) => {
+//   await api.stockCheckBill.scrappedBill({
+//     billId,
+//   });
+//   await fetchTable();
+//   await MessagePlugin.success('作废成功!');
+// };
+const scrappedBill = async () => {
+  // 检查是否选择了一行
+  if (propsdtlId.value) {
+    // 执行作废操作
+    await api.stockCheckBill.scrappedBill({
+      billId: propsdtlId.value,
+    });
+    await fetchTable();
+    MessagePlugin.success('作废成功!');
+  } else {
+    // 如果没有选择任何行，显示错误消息
+    MessagePlugin.error('请选择一行进行作废操作');
+  }
 };
 
 const onEditRowClick = async (item) => {
