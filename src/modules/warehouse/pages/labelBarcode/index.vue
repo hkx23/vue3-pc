@@ -947,6 +947,7 @@ const switchTab = (selectedTabIndex: any) => {
     fetchBracodeManageTable();
   } else {
     fetchMoTable();
+    onRefreshBelow();
   }
 };
 // 打印界面点击查询按钮
