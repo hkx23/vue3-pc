@@ -1,7 +1,7 @@
 <template>
   <div class="main-page">
     <t-button @click="getExtend"> 校验与获取数据 </t-button>
-    <bcmp-extend ref="demoExtend" object-id="1725462129694920705" object-code="ORG"></bcmp-extend>"
+    <bcmp-extend ref="demoExtend" object-id="1725462129694920705" object-code="org"></bcmp-extend>"
   </div>
 </template>
 
