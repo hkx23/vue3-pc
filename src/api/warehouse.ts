@@ -404,6 +404,11 @@ export interface TransferDtlVO {
   memo?: string;
   /** 交易单身标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  mitemCode?: string;
+  mitemName?: string;
+  locationName?: string;
+  mitemDesc?: string;
+  uomName?: string;
 }
 
 /** 交易事务头表 */
@@ -631,6 +636,7 @@ export interface BillInfoMMVO {
 
 export interface TransferHeadConfirmSubmit {
   billNo?: string;
+  mitemCode?: string;
   warehouseId?: string;
   businessCategoryId?: string;
   locationId?: string;
@@ -647,7 +653,6 @@ export interface TransferDtlBarcodeSearch {
   /** 单号 */
   billNo?: string;
   transferDtlId?: string;
-  mitemId?: string;
 }
 
 /** 通用响应类 */
@@ -765,6 +770,11 @@ export type LabelVO = {
   districtCode?: string;
   /** 货位编码 */
   locationCode?: string;
+  /**
+   * 送货单行号
+   * @format int32
+   */
+  lineSeq?: number;
   /** 操作类型 */
   operateType?: string;
   /** 原因 */
@@ -869,6 +879,19 @@ export interface Result {
   message?: string;
   /** 响应数据 */
   data?: object | null;
+}
+
+/** 通用响应类 */
+export interface ResultTransferHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 交易事务头表 */
+  data?: TransferHeadVO;
 }
 
 /** 仓库移转约束表 */
@@ -1060,6 +1083,8 @@ export interface StockCheckBillSearch {
   stockCheckType?: string;
   /** 新增勾选的库存现有量记录ID */
   onHandIds?: string[];
+  /** 盘点保存的明细记录修改 */
+  dtls?: StockCheckBillDtl[];
 }
 
 /** 响应数据 */
@@ -1086,6 +1111,7 @@ export interface StockCheckBillVO {
   billId?: string;
   /** 单据号 */
   billNo?: string;
+  warehouseId?: string;
   /** 仓库名称 */
   warehouseName?: string;
   /** 盘点类型名称 */
@@ -1148,6 +1174,149 @@ export interface PurchaseOrderSearch {
   purchaseOrderDtlId?: string;
   /** 物料标签 */
   labelNo?: string;
+}
+
+/** 响应数据 */
+export type PagingDataPurchaseOrderVO = {
+  list?: PurchaseOrderVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 采购单 */
+export interface PurchaseOrderVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 采购单号 */
+  billNo?: string;
+  /** ERP行号 */
+  erpNo?: string;
+  supplierId?: string;
+  /** 交货地址 */
+  deliverAddress?: string;
+  /** 备注 */
+  memo?: string;
+  /** 供应商代码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPurchaseOrderVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPurchaseOrderVO;
+}
+
+export interface OnhandQtySearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  warehouseId?: string;
+  districtId?: string;
+  locationId?: string;
+  mitemId?: string;
+}
+
+export interface OnhandQtyVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  mitemId?: string;
+  /** 库存现有量 */
+  qty?: number;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 货区名称 */
+  districtName?: string;
+  /** 货位名称 */
+  locationName?: string;
+  /** ERP仓库编码 */
+  erpWarehouseCode?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 计量单位 */
+  uomName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataOnhandQtyVO = {
+  list?: OnhandQtyVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataOnhandQtyVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataOnhandQtyVO;
 }
 
 export interface MitemShelflifeReportSearch {
@@ -1442,13 +1611,13 @@ export interface MaterialRequisitionDtlVO {
   handQty?: number;
   /** 已领用量 */
   alreadyPickQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -1656,19 +1825,6 @@ export interface LabelMMSearch {
   costDepartmentValue?: string;
 }
 
-/** 通用响应类 */
-export interface ResultBillInfoMMVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 杂项管理生成单据后返回对象 */
-  data?: BillInfoMMVO;
-}
-
 export interface LabelSearch {
   /**
    * 页码
@@ -1735,66 +1891,6 @@ export interface LabelSearch {
   reason?: string;
   /** 批量ID */
   ids?: string[];
-}
-
-export interface OMBillNoCreate {
-  businessCategoryId?: string;
-  /** 物料标签 */
-  labelNo?: string;
-  /** 物料编码 */
-  mitemCode?: string;
-}
-
-/** 物料 */
-export type Mitem = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  /** 物料代码 */
-  mitemCode?: string;
-  /** 物料名称 */
-  mitemName?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  /** 单位 */
-  uom?: string;
-  /**
-   * 保质期天数
-   * @format int32
-   */
-  shelfLifeDays?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultMitem {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 物料 */
-  data?: Mitem;
 }
 
 export interface MitemForwardTraceSearch {
@@ -2237,6 +2333,68 @@ export interface DeliverySearch {
   labelNo?: string;
 }
 
+/** 送货单 */
+export interface DeliveryVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  billNo?: string;
+  /**
+   * 送货日期
+   * @format date-time
+   */
+  dateDelivery?: string;
+  supplierId?: string;
+  memo?: string;
+  status?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 送货单状态 */
+  statusName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataDeliveryVO = {
+  list?: DeliveryVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDeliveryVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDeliveryVO;
+}
+
 /** 仓库业务类型 */
 export interface BusinessCategory {
   id?: string;
@@ -2507,19 +2665,6 @@ export interface ResultLong {
 }
 
 /** 通用响应类 */
-export interface ResultString {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: string | null;
-}
-
-/** 通用响应类 */
 export interface ResultListUserWarehouseVO {
   /**
    * 响应代码
@@ -2655,8 +2800,15 @@ export interface ResultListDistrict {
   data?: District[] | null;
 }
 
+/** 响应数据 */
+export type PagingDataPurchaseOrderDtlVO = {
+  list?: PurchaseOrderDtlVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
 /** 采购单明细 */
-export type PurchaseOrderDtlVO = {
+export interface PurchaseOrderDtlVO {
   id?: string;
   /**
    * 创建时间
@@ -2725,7 +2877,20 @@ export type PurchaseOrderDtlVO = {
   waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
-} | null;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPurchaseOrderDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPurchaseOrderDtlVO;
+}
 
 /** 通用响应类 */
 export interface ResultListPurchaseOrderDtlVO {
@@ -2751,6 +2916,39 @@ export interface ResultBigDecimal {
   message?: string;
   /** 响应数据 */
   data?: number | null;
+}
+
+export interface OnhandQtyDtlVO {
+  /** 条码 */
+  serialNumber?: string;
+  /** 批次号 */
+  lotNo?: string;
+  /** 数量 */
+  balanceQty?: number;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataOnhandQtyDtlVO = {
+  list?: OnhandQtyDtlVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataOnhandQtyDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataOnhandQtyDtlVO;
 }
 
 export interface MaterialRequisitionVO {
@@ -2966,7 +3164,7 @@ export interface ResultListBarcodeRule {
 }
 
 /** 送货单明细 */
-export type DeliveryDtlVO = {
+export interface DeliveryDtlVO {
   id?: string;
   /**
    * 创建时间
@@ -3036,7 +3234,27 @@ export type DeliveryDtlVO = {
   waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataDeliveryDtlVO = {
+  list?: DeliveryDtlVO[];
+  /** @format int32 */
+  total?: number;
 } | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDeliveryDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDeliveryDtlVO;
+}
 
 /** 通用响应类 */
 export interface ResultListDeliveryDtlVO {
@@ -3183,21 +3401,6 @@ export const api = {
      */
     saveByWipCompletionLabel: (data: WipCompletionLabelDTO) =>
       http.request<ResultLong['data']>(`/api/warehouse/billInfo/saveByWipCompletionLabel`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 单据信息表
-     * @name GetOmBillNo
-     * @summary 根据类型获取或生成单据号
-     * @request POST:/billInfo/getOMBillNo
-     * @secure
-     */
-    getOmBillNo: (data: OMBillNoCreate) =>
-      http.request<ResultString['data']>(`/api/warehouse/billInfo/getOMBillNo`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3432,10 +3635,25 @@ export const api = {
      * @request POST:/transferDtlBarcode/getTransferDtlBarcodeByMM
      * @secure
      */
-    getTransferDtlBarcodeByMm: (data: TransferDtlBarcodeSearch) =>
+    getTransferDtlBarcodeByMm: (data: string) =>
       http.request<ResultListLabelVO['data']>(`/api/warehouse/transferDtlBarcode/getTransferDtlBarcodeByMM`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 交易明细标签表
+     * @name SelectByLabelNo
+     * @summary 物料标签扫描获取单据信息
+     * @request GET:/transferDtlBarcode/selectByLabelNo
+     * @secure
+     */
+    selectByLabelNo: (query: { labelNo: string }) =>
+      http.request<ResultTransferHeadVO['data']>(`/api/warehouse/transferDtlBarcode/selectByLabelNo`, {
+        method: 'GET',
+        params: query,
       }),
   },
   transferDtl: {
@@ -3464,6 +3682,20 @@ export const api = {
      */
     batchDelDtlByMm: (data: string[]) =>
       http.request<Result['data']>(`/api/warehouse/transferDtl/batchDelDtlByMM`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 交易单身表
+     * @name AddDtlByMitem
+     * @request POST:/transferDtl/addDtlByMitem
+     * @secure
+     */
+    addDtlByMitem: (data: TransferHeadConfirmSubmit) =>
+      http.request<ResultTransferHeadVO['data']>(`/api/warehouse/transferDtl/addDtlByMitem`, {
         method: 'POST',
         body: data as any,
       }),
@@ -3593,12 +3825,27 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
+     * @name ScrappedBill
+     * @summary 作废单据操作
+     * @request POST:/stockCheckBill/scrappedBill
+     * @secure
+     */
+    scrappedBill: (query: { billId: string }) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/scrappedBill`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
      * @name Save
      * @summary 保存操作
      * @request POST:/stockCheckBill/save
      * @secure
      */
-    save: (data: StockCheckBillDtl) =>
+    save: (data: StockCheckBillSearch) =>
       http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/save`, {
         method: 'POST',
         body: data as any,
@@ -3794,6 +4041,117 @@ export const api = {
       http.request<ResultBoolean['data']>(`/api/warehouse/purchaseOrder/scanMitemLabel`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 采购单表
+     * @name Search
+     * @summary 获取采购单(业务组件)
+     * @request POST:/purchaseOrder/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataPurchaseOrderVO['data']>(`/api/warehouse/purchaseOrder/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  onhandQty: {
+    /**
+     * No description
+     *
+     * @tags 库存现有量表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/onhandQty/getList
+     * @secure
+     */
+    getList: (data: OnhandQtySearch) =>
+      http.request<ResultPagingDataOnhandQtyVO['data']>(`/api/warehouse/onhandQty/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 库存现有量表
+     * @name GetWarehouse
+     * @summary 获取有权限的仓库（下拉）
+     * @request GET:/onhandQty/getWarehouse
+     * @secure
+     */
+    getWarehouse: () =>
+      http.request<ResultListWarehouse['data']>(`/api/warehouse/onhandQty/getWarehouse`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 库存现有量表
+     * @name GetMitemOnhandQty
+     * @summary 获取物料库存数量
+     * @request GET:/onhandQty/getMitemOnhandQty
+     * @secure
+     */
+    getMitemOnhandQty: (query: { warehouseId: string; locationId: string; mitemId: string }) =>
+      http.request<ResultBigDecimal['data']>(`/api/warehouse/onhandQty/getMitemOnhandQty`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 库存现有量表
+     * @name GetLocation
+     * @summary 获取所选货区的货位（下拉）
+     * @request GET:/onhandQty/getLocation
+     * @secure
+     */
+    getLocation: (query: { districtId: string }) =>
+      http.request<ResultListLocation['data']>(`/api/warehouse/onhandQty/getLocation`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 库存现有量表
+     * @name GetDtl
+     * @summary 查询明细数据
+     * @request GET:/onhandQty/getDtl
+     * @secure
+     */
+    getDtl: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      id: string;
+    }) =>
+      http.request<ResultPagingDataOnhandQtyDtlVO['data']>(`/api/warehouse/onhandQty/getDtl`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 库存现有量表
+     * @name GetDistrict
+     * @summary 获取所选仓库的货区（下拉）
+     * @request GET:/onhandQty/getDistrict
+     * @secure
+     */
+    getDistrict: (query: { warehouseId: string }) =>
+      http.request<ResultListDistrict['data']>(`/api/warehouse/onhandQty/getDistrict`, {
+        method: 'GET',
+        params: query,
       }),
   },
   mitemShelflifeReport: {
@@ -4144,7 +4502,7 @@ export const api = {
      * @secure
      */
     scanLabelByMm: (data: LabelMMSearch) =>
-      http.request<ResultBillInfoMMVO['data']>(`/api/warehouse/label/scanLabelByMM`, {
+      http.request<ResultTransferHeadVO['data']>(`/api/warehouse/label/scanLabelByMM`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4160,21 +4518,6 @@ export const api = {
      */
     reprintBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/warehouse/label/reprintBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name GetMitemOmInfo
-     * @summary 物料基础信息
-     * @request POST:/label/getMitemOMInfo
-     * @secure
-     */
-    getMitemOmInfo: (data: OMBillNoCreate) =>
-      http.request<ResultMitem['data']>(`/api/warehouse/label/getMitemOMInfo`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4624,6 +4967,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 送货单表
+     * @name Search
+     * @summary 获取送货单(业务组件)
+     * @request POST:/delivery/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataDeliveryVO['data']>(`/api/warehouse/delivery/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   businessCategory: {
     /**
@@ -4765,6 +5123,21 @@ export const api = {
      * No description
      *
      * @tags 采购单明细表
+     * @name GetReturnPurchaseDtl
+     * @summary 根据送货的号获取送货单的明细
+     * @request GET:/purchaseOrderDtl/getReturnPurchaseDtl
+     * @secure
+     */
+    getReturnPurchaseDtl: (query: { billNo: string }) =>
+      http.request<ResultPagingDataPurchaseOrderDtlVO['data']>(`/api/warehouse/purchaseOrderDtl/getReturnPurchaseDtl`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 采购单明细表
      * @name GetPurchaseDtlByPurchaseNo
      * @summary 根据送货的号获取送货单的明细
      * @request GET:/purchaseOrderDtl/getPurchaseDtlByPurchaseNo
@@ -4776,29 +5149,28 @@ export const api = {
         params: query,
       }),
   },
-  onhandQty: {
-    /**
-     * No description
-     *
-     * @tags 库存现有量表
-     * @name GetMitemOnhandQty
-     * @summary 获取物料库存数量
-     * @request GET:/onhandQty/getMitemOnhandQty
-     * @secure
-     */
-    getMitemOnhandQty: (query: { warehouseId: string; locationId: string; mitemId: string }) =>
-      http.request<ResultBigDecimal['data']>(`/api/warehouse/onhandQty/getMitemOnhandQty`, {
-        method: 'GET',
-        params: query,
-      }),
-  },
   deliveryDtl: {
     /**
      * No description
      *
      * @tags 送货单明细表
+     * @name GetReturnDeliveryDtl
+     * @summary 获取需要退货的送货单明细
+     * @request GET:/deliveryDtl/getReturnDeliveryDtl
+     * @secure
+     */
+    getReturnDeliveryDtl: (query: { billNo: string }) =>
+      http.request<ResultPagingDataDeliveryDtlVO['data']>(`/api/warehouse/deliveryDtl/getReturnDeliveryDtl`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 送货单明细表
      * @name GetDeliveryDtlByDeliveryNo
-     * @summary 根据送货的号获取送货单的明细
+     * @summary 根据送货单号获取送货单的明细
      * @request GET:/deliveryDtl/getDeliveryDtlByDeliveryNo
      * @secure
      */
