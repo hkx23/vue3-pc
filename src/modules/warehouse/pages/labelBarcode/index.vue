@@ -338,7 +338,7 @@ const onConfirm = async () => {
         MessagePlugin.warning(`拆分数量需为小于${reprintDialog.value.qty}的正整数`);
         return;
       }
-      await apiMain.label.splitBarcode({
+      await apiWarehouse.label.splitBarcode({
         labelId: reprintDialog.value.labelId,
         splitNum: intValue,
         printTempId: printMode.value.printTempId,
