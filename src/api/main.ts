@@ -3694,12 +3694,12 @@ export interface MitemVO {
   stateName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isState?: boolean;
-  isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
   isBatchName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
   isProductName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3842,8 +3842,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4132,12 +4132,9 @@ export interface Label {
   status?: string;
 }
 
-export interface Resource {
-  stream?: object;
-  name?: string;
-  /** @format url */
-  url?: string;
-  modified?: boolean;
+export interface FileVO {
+  path?: string;
+  fileNames?: string[];
 }
 
 /** 菜单收藏夹表 */
@@ -5875,14 +5872,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9637,21 +9632,6 @@ export const api = {
      * No description
      *
      * @tags 标签表
-     * @name SplitBarcode
-     * @summary 拆分条码
-     * @request POST:/label/splitBarcode
-     * @secure
-     */
-    splitBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/main/label/splitBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
      * @name SplitBarcodeCommon
      * @summary 拆分条码
      * @request POST:/label/splitBarcodeCommon
@@ -9726,6 +9706,21 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name BatchInsertLabel
+     * @summary 批量插入条码
+     * @request POST:/label/batchInsertLabel
+     * @secure
+     */
+    batchInsertLabel: (data: Label[]) =>
+      http.request<ResultObject['data']>(`/api/main/label/batchInsertLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name BatchChange
      * @summary 批量修改状态
      * @request POST:/label/batchChangeStatus
@@ -9781,21 +9776,6 @@ export const api = {
      * No description
      *
      * @tags 文件上传操作
-     * @name DownloadSelectedFilesAsZip
-     * @summary 批量下载文件-暂不可用
-     * @request POST:/file/downloadZip
-     * @secure
-     */
-    downloadSelectedFilesAsZip: (query: { path: string; fileNames: string[] }) =>
-      http.request<Resource['data']>(`/api/main/file/downloadZip`, {
-        method: 'POST',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 文件上传操作
      * @name DeleteFile
      * @summary 文件删除
      * @request POST:/file/deleteFile
@@ -9816,10 +9796,10 @@ export const api = {
      * @request POST:/file/batchDeleteFile
      * @secure
      */
-    batchDeleteFile: (query: { path: string; fileNames: string[] }) =>
+    batchDeleteFile: (data: FileVO) =>
       http.request<ResultObject['data']>(`/api/main/file/batchDeleteFile`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
   },
   favorite: {
