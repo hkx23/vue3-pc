@@ -158,6 +158,11 @@ const fetchData = () => {
   setTimeout(() => {
     isLoading.value = false;
     tableData.value = _.cloneDeep(props.fileList);
+    tableData.value.forEach((item) => {
+      item.fileSizeShow = formatBytes(item.fileSize);
+      item.percent = 100;
+    });
+
     // tableData.value = mockAttachments.map((attachment, index) => ({
     //   id: attachment.id.toString(),
     //   serialNumber: index + 1,
@@ -182,7 +187,7 @@ const rehandleSelectChange = (value, ctx) => {
 };
 
 // 上传前校验
-const beforeUpload = (file: { size: number; name: any }) => {
+const beforeUpload = (file: UploadFile) => {
   if (file.size / 1024 / 1024 > props.uploadFileSizeLimit) {
     MessagePlugin.error(`只能上传小于${props.uploadFileSizeLimit}M的文件`);
     return false;
@@ -196,10 +201,12 @@ const beforeUpload = (file: { size: number; name: any }) => {
     id: Math.floor(Math.random() * 1999990),
     serialNumber: tableData.value.length + 1,
     fileName: file.name,
-    fileSize: formatBytes(file.size),
+    fileSize: file.size,
+    fileSizeShow: formatBytes(file.size),
     timeUpload: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     signedUrl: '',
-    percent: 0, // 上传进度
+    percent: 0,
+    fileType: file.type,
   };
   tableData.value.push(addFile);
   return true;
@@ -214,7 +221,7 @@ const requestMethod: RequestMethod = async (file: UploadFile) => {
     lastItem.signedUrl = res;
     lastItem.percent = 100;
     console.log(lastItem);
-    emits('uploadSuccess', file);
+    emits('uploadSuccess', lastItem);
     return { status: 'success', response: { url: 'none' } };
   } catch (error) {
     MessagePlugin.error(error.message);
@@ -384,6 +391,13 @@ const previewFun = (file: any) => {
   //   fileViewerRef.value?.viewPdf(data);
   // }
 };
+
+const getFileList = () => {
+  return tableData.value;
+};
+defineExpose({
+  getFileList,
+});
 </script>
 
 <style scoped lang="less"></style>

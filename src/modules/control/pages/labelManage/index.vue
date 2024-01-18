@@ -597,6 +597,7 @@ const onDownRefresh = async () => {
 // 右表格数据刷新
 const onRightFetchData = async () => {
   await onLabelManageTabData();
+  productSelectedRowKeys.value = [];
 };
 
 const onRadioChange = async (checked: any) => {
@@ -657,7 +658,6 @@ const onConfirm = async () => {
         ids: productSelectedRowKeys.value,
         reason,
       });
-      productSelectedRowKeys.value = [];
       MessagePlugin.success('补打成功');
     } catch (e) {
       console.log(e);
@@ -680,6 +680,7 @@ const onConfirm = async () => {
     }
   }
   await onLabelManageTabData(); // 刷新表格数据
+  productSelectedRowKeys.value = [];
   formVisible.value = false;
 };
 
@@ -1052,7 +1053,7 @@ const onInput = async (data: any) => {
     ManageTabData.value.barcodeStatus = data.barCodeState; // 条码状态
     ManageTabData.value.barcode = data.barCode; // 条码
     await onLabelManageTabData(); // 产品标签管理 表格数据
-    tableRefRight.value.setSelectedRowKeys([]);
+    productSelectedRowKeys.value = [];
   }
   MessagePlugin.success('查询成功');
 };
