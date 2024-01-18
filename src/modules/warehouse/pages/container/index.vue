@@ -84,14 +84,12 @@
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, ref } from 'vue';
 
-// import { api } from '@/api/warehouse';
 import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage();
 const dataTotal = ref(0);
 const tabValue = ref('');
 const containerVisible = ref(false); //* 弹窗默认关闭
-// const selectedReceiptRowKeys = ref([]);
 
 //* 组件配置  --查询界面选择
 const optsContainer1 = computed(() => {
