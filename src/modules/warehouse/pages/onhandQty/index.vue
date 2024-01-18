@@ -1,10 +1,28 @@
-<!-- 用户仓库权限 -->
+<!-- 库存现有量 -->
 <template>
   <cmp-container v-show="!pageShow" :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" @submit="onInput">
-        <template #showState="{ param }">
-          <t-checkbox v-model="param.showState">仅显示过期</t-checkbox>
+      <cmp-query ref="queryRef" :opts="opts" @submit="onInput">
+        <template #warehouseId="{ param }">
+          <t-select v-model="param.warehouseId" :clearable="true" label="仓库" @change="onWarehouseChange">
+            <t-option v-for="item in warehouseData" :key="item.id" :label="item.warehouseName" :value="item.id" />
+          </t-select>
+        </template>
+        <template #districtId="{ param }">
+          <t-select
+            v-model="param.districtId"
+            :clearable="true"
+            label="货区"
+            @popup-visible-change="onDistrictChange"
+            @change="onDistrictInputChange"
+          >
+            <t-option v-for="item in districtData" :key="item.id" :label="item.districtName" :value="item.id" />
+          </t-select>
+        </template>
+        <template #locationId="{ param }">
+          <t-select v-model="param.locationId" :clearable="true" label="货位" @popup-visible-change="onLocationChange">
+            <t-option v-for="item in locationData" :key="item.id" :label="item.locationName" :value="item.id" />
+          </t-select>
         </template>
       </cmp-query>
     </cmp-card>
@@ -16,8 +34,8 @@
         empty="没有符合条件的数据"
         :table-column="columns"
         :fixed-height="true"
-        :table-data="transferData.list"
-        :total="transferTotal"
+        :table-data="handQtyData.list"
+        :total="handQtyTotal"
         @refresh="onFetchData"
       >
         <template #labelDetails="{ row }">
@@ -29,10 +47,10 @@
   <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" width="750px">
     <t-card :bordered="true">
       <div class="form-item-box">
-        <t-form-item label="仓库">{{ '生产车间' }}</t-form-item>
-        <t-form-item label="货区"> {{ '工作中心' }}</t-form-item>
-        <t-form-item label="货位"> {{ '产品编码' }}</t-form-item>
-        <t-form-item label="物料"> {{ '产品编码' }}</t-form-item>
+        <t-form-item label="仓库">{{ lotNo.warehouseName }}</t-form-item>
+        <t-form-item label="货区"> {{ lotNo.districtName }}</t-form-item>
+        <t-form-item label="货位"> {{ lotNo.locationName }}</t-form-item>
+        <t-form-item label="物料"> {{ lotNo.mitemName }}</t-form-item>
       </div>
     </t-card>
     <cmp-table
@@ -52,15 +70,15 @@
   </t-dialog>
 </template>
 <script setup lang="ts">
-import dayjs from 'dayjs';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api } from '@/api/warehouse';
+import { api, District, Location, OnhandQtyDtlVO, OnhandQtyVO, Warehouse } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
+const queryRef = ref();
 const tableRef = ref(); // 表格实例
 const { pageUI } = usePage(); // 分页工具
 const { pageUI: pageUITwo } = usePage(); // 分页工具
@@ -69,9 +87,9 @@ const pageShow = ref(false);
 const formVisible = ref(false);
 
 // 表格数据总条数
-const transferTotal = ref(0);
+const handQtyTotal = ref(0);
 // 表格数据
-const transferData = reactive({ list: [] });
+const handQtyData = reactive({ list: [] });
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
@@ -93,25 +111,25 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '120',
   },
   {
-    colKey: 'mitemCode',
+    colKey: 'erpWarehouseCode',
     title: 'ERP仓库',
     align: 'center',
     width: '120',
   },
   {
-    colKey: 'mitemName',
+    colKey: 'mitemCode',
     title: '物料编码',
     align: 'center',
     width: '150',
   },
   {
-    colKey: 'categoryCode',
+    colKey: 'mitemName',
     title: '物料名称',
     align: 'center',
     width: '150',
   },
   {
-    colKey: 'categoryName',
+    colKey: 'qty',
     title: '库存现有量',
     align: 'center',
     width: '150',
@@ -132,7 +150,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 ];
 const columnsDetail: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'labelNo',
+    colKey: 'serialNumber',
     title: '条码',
     align: 'center',
     width: '110',
@@ -144,7 +162,7 @@ const columnsDetail: PrimaryTableCol<TableRowData>[] = [
     width: '150',
   },
   {
-    colKey: 'qty',
+    colKey: 'balanceQty',
     title: '数量',
     align: 'center',
     width: '120',
@@ -164,24 +182,25 @@ const columnsDetail: PrimaryTableCol<TableRowData>[] = [
 ];
 // 初始渲染
 onMounted(async () => {
-  await onGetExpirationData(); // 获取 表格 数据
+  // await onGetHandQtyData(); // 获取 表格 数据
+  await onGetWarehouseId(); // 获取仓库下拉数据
 });
 const pageNum = computed(() => pageUITwo.value.page);
 const pageSize = computed(() => pageUITwo.value.rows);
-const mitemShelflifeData = ref([]);
+const mitemShelflifeData = ref<OnhandQtyDtlVO[]>([]);
 const mitemShelflifeTotal = ref(0);
-const lotNo = ref('');
+const lotNo = ref<OnhandQtyVO>({});
 const onEditRow = async (row: any) => {
   formVisible.value = true;
-  lotNo.value = row.lotNo;
+  lotNo.value = row;
   await onShelfLifeDetails();
 };
 
 const onShelfLifeDetails = async () => {
-  const res = await api.mitemShelflifeReport.getDtl({
+  const res = await api.onhandQty.getDtl({
     pageNum: pageNum.value,
     pageSize: pageSize.value,
-    billNo: lotNo.value,
+    id: lotNo.value.id,
   });
   mitemShelflifeData.value = res.list;
   mitemShelflifeTotal.value = res.total;
@@ -189,86 +208,113 @@ const onShelfLifeDetails = async () => {
 
 // 刷新按钮
 const onFetchData = () => {
-  onGetExpirationData();
+  onGetHandQtyData();
   selectedRowKeys.value = [];
 };
 
-// 保质期报表 字段\
-// 获取七天前的 00:00:00
-const startOfSevenDaysAgo = dayjs().subtract(7, 'days').startOf('day');
-// 获取当前日期的 23:59:59
-const endOfToday = dayjs().endOf('day');
-const expirationDateParam = ref({
+// 主界面数据
+const handQtyParam = ref({
   pageNum: 1,
   pageSize: 10,
-  warehouseId: '', // 仓库 ID
-  mitemCategoryId: '', // 物料类型 ID
-  mitemId: '', // 物料 ID
-  lotNo: '', // 批次
-  isExpired: true, // 过期显示
-  receiveDateStart: startOfSevenDaysAgo.format('YYYY-MM-DD HH:mm:ss'), // 开始日期
-  receiveDateEnd: endOfToday.format('YYYY-MM-DD HH:mm:ss'), // 结束日期
+  warehouseId: '', // 仓库
+  districtId: '', // 货区
+  locationId: '', // 货位
+  mitemIds: [], // 物料
 });
 
 // 获取 表格 数据
-const onGetExpirationData = async () => {
-  // tableRef.value.setSelectedRowKeys([]);
+const onGetHandQtyData = async () => {
   selectedRowKeys.value = [];
-  expirationDateParam.value.pageNum = pageUI.value.page;
-  expirationDateParam.value.pageSize = pageUI.value.rows;
-  const res = await api.mitemShelflifeReport.getList(expirationDateParam.value);
-  transferData.list = res.list;
-  transferTotal.value = res.total;
+  handQtyParam.value.pageNum = pageUI.value.page;
+  handQtyParam.value.pageSize = pageUI.value.rows;
+  const res = await api.onhandQty.getList(handQtyParam.value);
+  handQtyData.list = res.list;
+  handQtyTotal.value = res.total;
+};
+
+// 仓库下拉数据获取
+const warehouseData = ref<Warehouse[]>([]);
+const onGetWarehouseId = async () => {
+  const res = await api.onhandQty.getWarehouse();
+  warehouseData.value = res;
 };
 
 // #query 查询参数
 const opts = computed(() => {
   return {
-    warehouse: {
+    warehouseId: {
       label: '仓库',
-      comp: 'bcmp-select-business',
-      event: 'business',
       defaultVal: '',
-      bind: {
-        // valueField: 'scheCode',
-        type: 'warehouse',
-        showTitle: false,
-      },
+      slotName: 'warehouseId',
     },
-    mitemCategory: {
-      label: '物料类型',
-      comp: 'bcmp-select-business',
-      event: 'business',
+    districtId: {
+      label: '货区',
       defaultVal: '',
-      bind: {
-        type: 'mitemCategory',
-        showTitle: false,
-      },
+      slotName: 'districtId',
     },
-    mitem: {
+    locationId: {
+      label: '货位',
+      defaultVal: '',
+      slotName: 'locationId',
+    },
+    mitemIds: {
       label: '物料',
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: '',
+      defaultVal: [],
       bind: {
         type: 'mitem',
         showTitle: false,
+        isMultiple: true,
       },
     },
   };
 });
 
+// 仓库下拉事件-
+const onWarehouseChange = () => {
+  queryRef.value.state.form.districtId = '';
+  queryRef.value.state.form.locationId = '';
+};
+
+// 货区下拉事件
+const districtData = ref<District[]>([]);
+const onDistrictChange = async (visible: boolean) => {
+  if (visible) {
+    if (!queryRef.value.state.form.warehouseId) {
+      MessagePlugin.warning('请先选择仓库！');
+      return;
+    }
+    const res = await api.onhandQty.getDistrict({ warehouseId: queryRef.value.state.form.warehouseId });
+    districtData.value = res;
+  }
+};
+const onDistrictInputChange = () => {
+  queryRef.value.state.form.locationId = '';
+};
+// 货位下拉事件
+const locationData = ref<Location[]>([]);
+const onLocationChange = async (visible: boolean) => {
+  if (visible) {
+    if (!queryRef.value.state.form.districtId) {
+      MessagePlugin.warning('请先选择货区！');
+      return;
+    }
+    const res = await api.onhandQty.getLocation({ districtId: queryRef.value.state.form.districtId });
+    locationData.value = res;
+  }
+};
+
 const onInput = async (data: any) => {
+  console.log('🚀 ~ file: index.vue:309 ~ onInput ~ data:', data);
   pageUI.value.page = 1;
-  const [receiveDateStart, receiveDateEnd] = data.datePproduced;
-  expirationDateParam.value.mitemCategoryId = data.mitemCategory; // 物料类型 ID
-  expirationDateParam.value.mitemId = data.mitem; // 物料 ID
-  expirationDateParam.value.lotNo = data.batch ? data.batch : ''; // 批次
-  expirationDateParam.value.isExpired = data.showState; // 过期显示
-  expirationDateParam.value.warehouseId = data.warehouse; // 仓库
-  expirationDateParam.value.receiveDateStart = receiveDateStart; // 开始日期
-  expirationDateParam.value.receiveDateEnd = receiveDateEnd; // 结束日期
-  await onGetExpirationData();
+  Object.keys(handQtyParam.value).forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      handQtyParam.value[key] = data[key];
+    }
+  });
+  handQtyParam.value.mitemIds = data.mitemIds.map((item) => item.value);
+  await onGetHandQtyData();
 };
 </script>
 

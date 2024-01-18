@@ -838,10 +838,10 @@ const onGenerate = debounce(async () => {
     MessagePlugin.warning('请选择条码规则！');
     return;
   }
-  if (generateData?.value?.createNum > numInput.value) {
-    MessagePlugin.warning(`本次生成数量不得大于 ${numInput.value}！`);
-    return;
-  }
+  // if (generateData?.value?.createNum > numInput.value) {
+  //   MessagePlugin.warning(`本次生成数量不得大于 ${numInput.value}！`);
+  //   return;
+  // }
   if (generateData?.value?.createNum < 0) {
     MessagePlugin.warning('本次生成数量不得小于0！');
     return;

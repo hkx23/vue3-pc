@@ -3692,6 +3692,7 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
@@ -3699,7 +3700,6 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4130,6 +4130,14 @@ export interface Label {
   receiveNo?: string;
   /** 状态 */
   status?: string;
+}
+
+export interface Resource {
+  name?: string;
+  /** @format url */
+  url?: string;
+  stream?: object;
+  modified?: boolean;
 }
 
 /** 菜单收藏夹表 */
@@ -4763,6 +4771,7 @@ export interface BarcodeVaildateRuleSearch {
   /** 条码类型 */
   barcodeTypeCode?: string;
   mitemId?: string;
+  mitemCategoryId?: string;
   /** 条码验证分组 */
   barcodeValidateGroup?: string;
   id?: string;
@@ -5866,12 +5875,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9724,6 +9733,91 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/label/batchChangeStatus`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  file: {
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name UploadFile
+     * @summary 文件上传
+     * @request POST:/file/uploadFile
+     * @secure
+     */
+    uploadFile: (
+      query: {
+        path: string;
+      },
+      data: {
+        /** @format binary */
+        file: File;
+      },
+    ) =>
+      http.request<ResultString['data']>(`/api/main/file/uploadFile`, {
+        method: 'POST',
+        params: query,
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name GetSignedUrl
+     * @summary 获取文件下载路径
+     * @request POST:/file/getSignedUrl
+     * @secure
+     */
+    getSignedUrl: (query: { file: string; path: string }) =>
+      http.request<ResultString['data']>(`/api/main/file/getSignedUrl`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name DownloadSelectedFilesAsZip
+     * @summary 批量下载文件-暂不可用
+     * @request POST:/file/downloadZip
+     * @secure
+     */
+    downloadSelectedFilesAsZip: (query: { path: string; fileNames: string[] }) =>
+      http.request<Resource['data']>(`/api/main/file/downloadZip`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name DeleteFile
+     * @summary 文件删除
+     * @request POST:/file/deleteFile
+     * @secure
+     */
+    deleteFile: (query: { path: string; fileName: string }) =>
+      http.request<ResultObject['data']>(`/api/main/file/deleteFile`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name BatchDeleteFile
+     * @summary 文件批量删除
+     * @request POST:/file/batchDeleteFile
+     * @secure
+     */
+    batchDeleteFile: (query: { path: string; fileNames: string[] }) =>
+      http.request<ResultObject['data']>(`/api/main/file/batchDeleteFile`, {
+        method: 'POST',
+        params: query,
       }),
   },
   favorite: {

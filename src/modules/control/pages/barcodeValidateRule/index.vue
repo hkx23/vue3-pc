@@ -596,13 +596,24 @@ const opts = computed(() => {
       slotName: 'cellType',
     },
     material: {
-      label: '物料名称',
+      label: '物料',
       isHide: !tabValue.value,
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'mitemCategory',
+        type: 'mitem',
+        showTitle: false,
+      },
+    },
+    mitemCategory: {
+      label: '物料类别',
+      isHide: !tabValue.value,
+      comp: 'bcmp-select-business',
+      event: 'mitemCategory',
+      defaultVal: '',
+      bind: {
+        type: 'mitem',
         showTitle: false,
       },
     },
@@ -628,6 +639,7 @@ const onInput = async (data: any) => {
       pageSize: pageUI.value.rows,
       ruleKeyword: data.code,
       mitemId: data.material,
+      mitemCategoryId: data.mitemCategory,
       barcodeValidateGroup: 'KEYPART',
     });
     keyTabData.list = res.list;
