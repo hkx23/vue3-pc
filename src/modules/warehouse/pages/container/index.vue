@@ -14,7 +14,6 @@
             row-key="billNo"
             :table-column="tableContainerColumns1"
             :total="dataTotal"
-            :loading="loading"
             empty="没有符合条件的数据"
           >
             <template #button>
@@ -43,7 +42,6 @@
             row-key="billNo"
             :table-column="tableContainerColumns2"
             :total="dataTotal"
-            :loading="loading"
             empty="没有符合条件的数据"
           >
             <template #button>
