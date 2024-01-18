@@ -60,29 +60,29 @@
         </cmp-card>
       </div>
     </cmp-container>
-    <!-- 弹窗 -->
-    <t-dialog v-model:visible="containerVisible" :footer="true" :close-on-overlay-click="false" header="新增内容类型">
-      <t-form>
-        <t-form-item label="容器类型编码">
-          <t-input></t-input>
-        </t-form-item>
-        <t-form-item label="容器类型名称">
-          <t-input></t-input>
-        </t-form-item>
-        <t-form-item label="容器类型描述">
-          <t-input></t-input>
-        </t-form-item>
-        <t-form-item label="启用">
-          <t-switch />
-        </t-form-item>
-      </t-form>
-    </t-dialog>
   </cmp-container>
+  <!-- 弹窗 -->
+  <t-dialog v-model:visible="containerVisible" :footer="true" :close-on-overlay-click="false" header="新增内容类型">
+    <t-form>
+      <t-form-item label="容器类型编码">
+        <t-input></t-input>
+      </t-form-item>
+      <t-form-item label="容器类型名称">
+        <t-input></t-input>
+      </t-form-item>
+      <t-form-item label="容器类型描述">
+        <t-input></t-input>
+      </t-form-item>
+      <t-form-item label="启用">
+        <t-switch />
+      </t-form-item>
+    </t-form>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 // import { api } from '@/api/warehouse';
 import { usePage } from '@/hooks/modules/page';
@@ -111,7 +111,7 @@ const optsContainer2 = computed(() => {
   return {
     containerState: {
       label: '容器状态',
-      labelWidth: '50',
+      labelWidth: '20',
       isHide: tabValue.value,
       event: 'select',
       comp: 't-select',
@@ -119,7 +119,7 @@ const optsContainer2 = computed(() => {
     },
     containerBarCode: {
       label: '容器条码',
-      labelWidth: '50',
+      labelWidth: '20',
       isHide: tabValue.value,
       event: 'input',
       comp: 't-input',
@@ -127,7 +127,7 @@ const optsContainer2 = computed(() => {
     },
     printTemplate: {
       label: '打印模板',
-      labelWidth: '50',
+      labelWidth: '20',
       isHide: tabValue.value,
       event: 'select',
       comp: 't-select',
@@ -162,13 +162,6 @@ const tableContainerColumns2: PrimaryTableCol<TableRowData>[] = [
 const onAdd = async () => {
   containerVisible.value = true;
 };
-
-//* 初始渲染
-
-//* 表格数据
-//* 表格刷新
-
-//* 查询
 </script>
 
 <style lang="less" scoped>
