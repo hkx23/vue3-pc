@@ -11,8 +11,10 @@
         <t-card :ghost="true">
           <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput" @reset="onReset">
             <template #soltStockCheckType="{ param }">
-              <t-select v-model="param.stockCheckType" label="盘点类型" clearable>
-                <template #label> <span style="color: red">*</span> 盘点类型</template>
+              <t-select v-model="param.stockCheckType" clearable>
+                <template #label>
+                  <span style="color: red">*</span> {{ t('reckoningManagement.stockCheckType') }}</template
+                >
                 <t-option
                   v-for="item in countingTypeDataOptions"
                   :key="item.id"
@@ -23,8 +25,8 @@
             </template>
 
             <template #soltWarehouse="{ param }">
-              <t-select v-model="param.warehouseId" label="仓库" clearable @change="handleWarehouseChange">
-                <template #label> <span style="color: red">*</span> 仓库</template>
+              <t-select v-model="param.warehouseId" clearable @change="handleWarehouseChange">
+                <template #label> <span style="color: red">*</span>{{ t('reckoningManagement.warehouse') }}</template>
                 <t-option
                   v-for="item in resultWarehouseData"
                   :key="item.id"
@@ -35,19 +37,24 @@
             </template>
 
             <template #soltDistrict="{ param }">
-              <t-select v-model="param.districtId" label="货区" clearable @change="handleDistrictChange">
+              <t-select
+                v-model="param.districtId"
+                :label="t('reckoningManagement.district')"
+                clearable
+                @change="handleDistrictChange"
+              >
                 <t-option v-for="item in authorizedDistrict" :key="item.id" :label="item.districtName" :value="item.id">
                 </t-option>
               </t-select>
             </template>
 
             <template #soltLocation="{ param }">
-              <t-select v-model="param.locationId" label="货位" clearable>
+              <t-select v-model="param.locationId" :label="t('reckoningManagement.location')" clearable>
                 <t-option
                   v-for="item in authorizedLocation"
                   :key="item.id"
                   :label="item.locationName"
-                  :value="item.locationId"
+                  :value="item.locationCode"
                 ></t-option>
               </t-select>
             </template>
@@ -61,10 +68,10 @@
             row-key="onhandId"
             :loading="loading"
             :table-column="tablenewIMColumns"
-            :show-pagination="false"
+            :show-pagination="true"
             :total="dataTotal"
             :table-data="tableDataInventory"
-            empty="没有符合条件的数据"
+            :empty="t('reckoningManagement.table-empty')"
           >
             <template #button>
               <t-space v-if="selectedRowKeys.length !== 0" :size="8">
@@ -87,7 +94,6 @@
     <!-- 自定义底部按钮 -->
     <template #footer>
       <t-button :disabled="selectedRowKeys.length === 0" @click="onConfirmAnother">确认</t-button>
-      <!-- <t-button @click="onClose">取消</t-button> -->
     </template>
   </t-dialog>
 </template>
@@ -101,8 +107,11 @@ import { api } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+import { useLang } from './lang';
+
+// 使用多语言
+const { t } = useLang();
 const { loading, setLoading } = useLoading();
-const newInventoryManagement = ref([]);
 const tableDataInventory = ref([]);
 const { pageUI } = usePage();
 const dataTotal = ref(0);
@@ -113,13 +122,8 @@ const authorizedDistrict = ref([]); // 货区
 const authorizedLocation = ref([]); // 货位
 
 // 添加所需字段
-const inputParams = ref({
-  stockCheckType: '',
-  warehouseId: '',
-  districtId: '',
-  locationId: '',
-  mitemId: '',
-});
+const newstockCheckType = ref('');
+const newWarehouseId = ref('');
 
 //* 表格标题
 const tablenewIMColumns: PrimaryTableCol<TableRowData>[] = [
@@ -139,20 +143,18 @@ const tablenewIMColumns: PrimaryTableCol<TableRowData>[] = [
 const opts = computed(() => {
   return {
     stockCheckType: {
-      label: '盘点类型',
       comp: 't-select',
       slotName: 'soltStockCheckType',
     },
 
     // 有权限的仓库
     warehouseId: {
-      label: '仓库',
       comp: 't-select',
       slotName: 'soltWarehouse',
     },
 
     mitemId: {
-      label: '物料编码',
+      label: t('reckoningManagement.mitemCode'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -161,15 +163,14 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
+
     // 有权限的仓库=>货区
     districtId: {
-      label: '货区',
       comp: 't-select',
       slotName: 'soltDistrict',
     },
     // 货区=>货位
     locationId: {
-      label: '货位',
       comp: 't-select',
       slotName: 'soltLocation',
     },
@@ -206,7 +207,7 @@ const onClickBatchImport = async () => {
 
 //* 初始渲染
 onMounted(async () => {
-  // await fetchTable();  //需要查询之后匹配最新的数据才能添加
+  // await fetchTable({})
   await countingTypeData();
   await getWarehouseData();
 });
@@ -216,8 +217,9 @@ const emit = defineEmits(['update-data']);
 
 // 确定提交
 const onConfirmAnother = async () => {
-  const { stockCheckType, warehouseId } = inputParams.value;
   const onHandIds = selectedRowKeys.value;
+  const stockCheckType = newstockCheckType.value; // 盘点类型
+  const warehouseId = newWarehouseId.value; // 仓库ID
   await api.stockCheckBill.addPd({
     stockCheckType,
     warehouseId,
@@ -225,20 +227,6 @@ const onConfirmAnother = async () => {
   });
   emit('update-data');
   MessagePlugin.success('新增成功!');
-};
-
-// 批量删除
-const onDeleteBatches = () => {
-  const onHandIds = selectedRowKeys.value;
-  if (selectedRowKeys.value.length === 0) {
-    MessagePlugin.warning('请先选择要删除的行!');
-    return;
-  }
-  api.stockCheckBill.removeBatch({
-    onHandIds,
-  });
-  MessagePlugin.error('批量删除成功!');
-  fetchTable();
 };
 
 // 获取有权限的仓库
@@ -277,21 +265,12 @@ const countingTypeData = async () => {
 
 //* 重置
 const onReset = () => {
-  inputParams.value = {
-    stockCheckType: '',
-    warehouseId: '',
-    districtId: '',
-    locationId: '',
-    mitemId: '',
-  };
-  // 可能还需要清除查询结果等
-  tableDataInventory.value = [];
-  selectedRowKeys.value = [];
   selectedRowKeys.value = []; // 重置清空选中的数据
 };
 
 // 查询
 const onInput = async (data: any) => {
+  // setLoading(true);
   if (!data.stockCheckType) {
     MessagePlugin.error('盘点类型为必填项');
     return;
@@ -302,43 +281,95 @@ const onInput = async (data: any) => {
   }
   if (!data.value) {
     // 更新 inputParams 的值
-    inputParams.value = {
-      stockCheckType: data.stockCheckType,
-      warehouseId: data.warehouseId,
-      districtId: data.districtId,
-      locationId: data.locationId,
-      mitemId: data.mitemId,
-    };
+    // inputParams.value = {
+    //   stockCheckType: data.stockCheckType,
+    //   warehouseId: data.warehouseId,
+    //   districtId: data.districtId,
+    //   locationId: data.locationId,
+    //   mitemId: data.mitemId,
+    // };
 
-    // const { stockCheckType, warehouseId, districtId, locationId, mitemId } = data;
-
+    const { stockCheckType, warehouseId, districtId, locationId, mitemId } = data;
     const result = await api.stockCheckBill.getOnHand({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      stockCheckType: inputParams.value.stockCheckType,
-      warehouseId: inputParams.value.warehouseId,
-      districtId: inputParams.value.locationId,
-      locationId: inputParams.value.locationId,
-      mitemId: inputParams.value.mitemId,
+      stockCheckType,
+      warehouseId,
+      districtId,
+      locationId,
+      mitemId,
     });
     tableDataInventory.value = result.list;
     dataTotal.value = result.total;
     selectedRowKeys.value = []; // 重置清空选中的数据
+    // 存添加需要的数据
+    newstockCheckType.value = stockCheckType;
+    newWarehouseId.value = warehouseId;
+    // 删除后的查询
+  }
+  // setLoading(false);
+};
+
+// 批量删除
+// const onDeleteBatches =  () => {
+//   const onHandIds = selectedRowKeys.value;
+//   try {
+//   api.stockCheckBill.removeBatch({
+//     onHandIds,
+//   });
+//   MessagePlugin.success('批量删除成功!');
+//   fetchTable({})
+// } catch (error) {
+//   console.error('删除失败:', error);
+//   }
+// };
+const onDeleteBatches = async () => {
+  const onHandIds = selectedRowKeys.value;
+  try {
+    // 等待删除操作完成
+    await api.stockCheckBill.removeBatch({ onHandIds });
+    // 删除操作成功，现在调用 fetchTable
+    await fetchTable({});
+    MessagePlugin.success('批量删除成功!');
+  } catch (error) {
+    console.error('删除失败:', error);
   }
 };
 
 //* 表格数据
-const fetchTable = async () => {
-  setLoading(false);
-  newInventoryManagement.value = [];
-  tableDataInventory.value = [];
-  const data = await api.stockCheckBill.getOnHand({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-  });
-  tableDataInventory.value = data.list;
-  dataTotal.value = data.total;
-  setLoading(false);
+// const fetchTable = async () => {
+//   setLoading(true);
+//   const data = await api.stockCheckBill.getOnHand({
+//     pageNum: pageUI.value.page,
+//     pageSize: pageUI.value.rows,
+//   });
+//   tableDataInventory.value = data.list;
+//   dataTotal.value = data.total;
+//   setLoading(false);
+// };
+
+const fetchTable = async (data: any) => {
+  const { districtId, locationId, mitemId } = data;
+  try {
+    setLoading(true);
+    // 使用存储在组件状态中的默认参数
+    const data = await api.stockCheckBill.getOnHand({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+      stockCheckType: newstockCheckType.value,
+      warehouseId: newWarehouseId.value,
+      districtId,
+      locationId,
+      mitemId,
+    });
+    // 更新表格数据
+    tableDataInventory.value = data.list;
+    dataTotal.value = data.total;
+    setLoading(false);
+  } catch (error) {
+    console.error('获取数据失败:', error);
+    setLoading(false);
+  }
 };
 </script>
 

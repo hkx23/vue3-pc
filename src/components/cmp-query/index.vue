@@ -260,7 +260,7 @@ const initForm = (opts: any, keepVal = false) => {
     return acc;
   }, {});
 };
-const emits = defineEmits(['handleEvent', 'submit', 'reset']);
+const emits = defineEmits(['handleEvent', 'submit', 'reset', 'change']);
 // 重置
 const resetHandle = () => {
   state.form = initForm(props.opts);
@@ -272,6 +272,7 @@ const resetHandle = () => {
 // 查询条件change事件
 const handleEvent = (type, val) => {
   emits('handleEvent', type, val, state.form);
+  emits('change', state.form);
 };
 // 查询
 const checkHandle = (flagText: any = false) => {
