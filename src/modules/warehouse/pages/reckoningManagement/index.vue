@@ -308,19 +308,12 @@ const onAdd = () => {
   eidtRoutingVisible.value = true;
 };
 // 作废
-// const scrappedBill = async (billId) => {
-//   await api.stockCheckBill.scrappedBill({
-//     billId,
-//   });
-//   await fetchTable();
-//   await MessagePlugin.success('作废成功!');
-// };
-const scrappedBill = async () => {
+const scrappedBill = async (billId) => {
   // 检查是否选择了一行
   if (propsdtlId.value) {
     // 执行作废操作
     await api.stockCheckBill.scrappedBill({
-      billId: propsdtlId.value,
+      billId,
     });
     await fetchTable();
     MessagePlugin.success('作废成功!');
