@@ -3693,13 +3693,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isRawName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
   isProductName?: string;
+  isProductChecked?: boolean;
+  isRawName?: string;
   isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -4132,9 +4132,12 @@ export interface Label {
   status?: string;
 }
 
-export interface FileVO {
-  path?: string;
-  fileNames?: string[];
+export interface Resource {
+  name?: string;
+  /** @format url */
+  url?: string;
+  stream?: object;
+  modified?: boolean;
 }
 
 /** 菜单收藏夹表 */
@@ -5874,10 +5877,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9776,6 +9779,21 @@ export const api = {
      * No description
      *
      * @tags 文件上传操作
+     * @name DownloadSelectedFilesAsZip
+     * @summary 批量下载文件-暂不可用
+     * @request POST:/file/downloadZip
+     * @secure
+     */
+    downloadSelectedFilesAsZip: (query: { path: string; fileNames: string[] }) =>
+      http.request<Resource['data']>(`/api/main/file/downloadZip`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
      * @name DeleteFile
      * @summary 文件删除
      * @request POST:/file/deleteFile
@@ -9796,10 +9814,10 @@ export const api = {
      * @request POST:/file/batchDeleteFile
      * @secure
      */
-    batchDeleteFile: (data: FileVO) =>
+    batchDeleteFile: (query: { path: string; fileNames: string[] }) =>
       http.request<ResultObject['data']>(`/api/main/file/batchDeleteFile`, {
         method: 'POST',
-        body: data as any,
+        params: query,
       }),
   },
   favorite: {

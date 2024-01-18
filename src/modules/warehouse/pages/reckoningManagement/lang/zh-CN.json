@@ -1,7 +1,13 @@
 {
   "reckoningManagement":{
-    "reckoningManagement": "盘点管理",
-    "common.dialog.header.add": "新增盘点管理",
-    "common.dialog.header.edit": "编辑盘点管理"
+    "common-dialog-header-add": "新增盘点管理",
+    "common-dialog-header-edit": "编辑盘点管理",
+    "stockCheckType": "盘点类型",
+    "warehouse":"仓库",
+    "mitemCode":"物料编码",
+    "location":"货位",
+    "district":"货区",
+    "table-empty":"没有符合条件的数据"
+
   }
 }
