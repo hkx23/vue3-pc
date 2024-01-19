@@ -30,9 +30,9 @@
               {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
             </template>
             <!-- 编辑 -->
-            <template #op1="{ row }">
+            <template #op1>
               <t-space>
-                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick1(row)">编辑</t-link>
+                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick1()">编辑</t-link>
               </t-space>
             </template>
           </cmp-table>
@@ -62,9 +62,9 @@
               {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
             </template>
             <!-- 编辑 -->
-            <template #op2="{ row }">
+            <template #op2>
               <t-space>
-                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2(row)">编辑</t-link>
+                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2()">编辑</t-link>
                 <!-- <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onStateRowClick(row)">
                   <t-link theme="primary"> 删除 </t-link>
                 </t-popconfirm> -->
