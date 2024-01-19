@@ -230,11 +230,14 @@ const requestMethod: RequestMethod = async (file: UploadFile) => {
     lastItem.percent = 100;
     console.log(lastItem);
     emits('uploadSuccess', lastItem);
+
     return { status: 'success', response: { url: 'none' } };
   } catch (error) {
     MessagePlugin.error(error.message);
     // 在这里可以根据错误类型返回失败状态
     return { status: 'fail', response: {} };
+  } finally {
+    files.value = [];
   }
 };
 
