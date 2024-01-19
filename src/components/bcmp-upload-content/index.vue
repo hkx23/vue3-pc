@@ -177,7 +177,7 @@ const fetchData = () => {
 
 // 上传失败后，表格对应行需要删除
 const handleFail = ({ file }) => {
-  tableData.value = tableData.value.filter((item) => item.id !== file.id);
+  tableData.value = tableData.value.filter((item) => item.fileName !== file.name);
   MessagePlugin.error(`文件 ${file.name} 上传失败`);
   emits('uploadfail', file);
 };
@@ -194,7 +194,13 @@ const beforeUpload = (file: UploadFile) => {
     MessagePlugin.error(`只能上传小于${props.uploadFileSizeLimit}M的文件`);
     return false;
   }
-
+  // 判断选择文件是否已存在于列表中
+  for (let i = 0; i < tableData.value.length; i++) {
+    if (tableData.value[i].fileName === file.name) {
+      MessagePlugin.error(`文件 ${file.name} 已经存在`);
+      return false;
+    }
+  }
   console.log(file);
   // 将file复制成tableData的一个项目，加入到tableData中
   // todo:ID问题
