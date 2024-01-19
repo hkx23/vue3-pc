@@ -1,7 +1,7 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" label-width="100" @submit="conditionEnter" />
+      <cmp-query :opts="opts" label-width="100" :loading="loading" @submit="conditionEnter" />
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
@@ -18,18 +18,22 @@
         <template #op="{ row }">
           <t-space :size="8">
             <t-link hover="color" theme="primary" @click="onRowEdit(row)">
-              <t-tag theme="primary" variant="light">{{ t('common.button.edit') }}</t-tag>
+              {{ t('common.button.edit') }}
+              <!-- <t-tag theme="primary" variant="light">{{ t('common.button.edit') }}</t-tag> -->
             </t-link>
             <t-link hover="color" theme="primary" @click="onRowPermission(row)">
-              <t-tag theme="primary" variant="light">{{ t('role.authority') }}</t-tag>
+              {{ t('role.authority') }}
+              <!-- <t-tag theme="primary" variant="light">{{ t('role.authority') }}</t-tag> -->
             </t-link>
             <t-link hover="color" theme="primary" @click="onRowPerson(row)">
-              <t-tag theme="primary" variant="light">{{ t('role.member') }}</t-tag>
+              {{ t('role.member') }}
+              <!-- <t-tag theme="primary" variant="light">{{ t('role.member') }}</t-tag> -->
             </t-link>
             <!-- 删除 -->
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onRowDelete(row)">
               <t-link hover="color" theme="primary">
-                <t-tag theme="primary" variant="light">{{ t('common.button.delete') }}</t-tag>
+                {{ t('common.button.delete') }}
+                <!-- <t-tag theme="primary" variant="light">{{ t('common.button.delete') }}</t-tag> -->
               </t-link>
             </t-popconfirm>
           </t-space>

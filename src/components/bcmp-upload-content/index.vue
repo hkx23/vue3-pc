@@ -9,7 +9,6 @@
       :is-fixed-height="true"
       :loading="isLoading"
       :selected-row-keys="selectedRowKeys"
-      :active-row-type="'multiple'"
       :select-on-row-click="false"
       :show-setting="false"
       :show-pagination="false"
@@ -20,7 +19,10 @@
         <t-link v-show="row.percent === 100" theme="primary" @click="previewFun(row)"
           ><t-icon :name="getFileIcon(row.fileName)"></t-icon>{{ row.fileName }}</t-link
         >
-        <span v-show="row.percent !== 100"> 上传中<t-progress :percentage="50" :label="false" /></span>
+        <t-space v-show="row.percent !== 100" direction="vertical" :size="8">
+          <span> 上传中</span>
+          <t-progress :percentage="50" :label="false" />
+        </t-space>
       </template>
 
       <template #op="{ row }">
@@ -114,30 +116,30 @@ const columns = computed(() => {
       colKey: 'serial-number',
       title: '序号',
       width: 60,
-      align: 'center',
+      align: 'left',
     },
     {
       colKey: 'fileName',
       title: '附件名称',
       ellipsis: true,
-      align: 'center',
+      align: 'left',
     },
     {
-      colKey: 'fileSize',
+      colKey: 'fileSizeShow',
       title: '文件大小',
       ellipsis: true,
-      align: 'center',
+      align: 'left',
     },
     {
       colKey: 'timeUpload',
       title: '上传时间',
       ellipsis: true,
-      align: 'center',
+      align: 'left',
     },
     {
       colKey: 'op',
       title: '操作',
-      align: 'center',
+      align: 'left',
       ellipsis: true,
     },
   ];
@@ -280,6 +282,10 @@ const onDelConfirm = async (row: any) => {
   }
 };
 const batchDelete = async () => {
+  if (!(selectedRowKeys?.value?.length > 0)) {
+    MessagePlugin.warning('请选择一行数据！');
+    return;
+  }
   console.log('批量删除附件：', selectedRowKeys.value);
 
   if (selectedRowKeys.value.length > 0) {
@@ -292,6 +298,10 @@ const batchDelete = async () => {
   }
 };
 const batchDownload = () => {
+  if (!(selectedRowKeys?.value?.length > 0)) {
+    MessagePlugin.warning('请选择一行数据！');
+    return;
+  }
   console.log('批量下载附件：', selectedRowKeys.value);
   if (selectedRowKeys.value.length > 0) {
     const downRows = tableData.value.filter((item) => selectedRowKeys.value.includes(item.id));
