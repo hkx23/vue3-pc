@@ -1,6 +1,6 @@
 <!-- 库龄查询-条码明细详细维护 -->
 <template>
-  <t-dialog width="80%" :footer="false" :close-on-overlay-click="false">
+  <t-dialog width="80%" :footer="false" :close-on-overlay-click="true">
     <template #header>
       <t-space align="center" style="width: 100%">
         <span>{{ props.formTitle }}</span>
@@ -8,11 +8,12 @@
     </template>
     <cmp-container :full="true">
       <cmp-card>
-        <template #title> 库龄查询-条码明细 </template>
+        <!-- <template #title> 库龄查询-条码明细 </template> -->
         <cmp-table
-          row-key="id"
+          row-key="props.sunData.onhandId"
           :table-column="tableWarehouseColumns"
           :show-pagination="false"
+          :loading="loading"
           empty="没有符合条件的数据"
           :show-toolbar="false"
           :table-data="tableDocumentDetails"
@@ -23,68 +24,59 @@
         </cmp-table>
       </cmp-card>
     </cmp-container>
+    <!-- 自定义底部按钮 -->
+    <template #footer>
+      <t-button>取消</t-button>
+    </template>
   </t-dialog>
 </template>
 
 <script setup lang="ts">
-// import { api } from '@/api/warehouse';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref, watch } from 'vue';
 
+import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage();
+const { loading, setLoading } = useLoading();
 //* 表格标题--单据明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
-  { title: '条码号', colKey: 'mitemCode', width: 85 },
-  { title: '物料编码', width: 85, colKey: 'mitemDesc' },
-  { title: '物料描述', width: 85, colKey: 'mitemDesc' },
-  { title: '仓库编码', width: 85, colKey: 'uomName' },
-  { title: '仓库名称', width: 85, colKey: 'uomName2' },
-  { title: '货区编码', width: 100, colKey: 'locationName' },
-  { title: '货区名称', width: 100, colKey: 'toWarehouseName' },
-  { title: '货位编码', width: 100, colKey: 'toLocationName' },
-  { title: '货位名称', width: 100, colKey: 'toLocationName2' },
-  { title: '单位', width: 100, colKey: 'pickQty' },
-  { title: '数量', width: 100, colKey: 'reqQty' },
-  { title: '入库日期', width: 100, colKey: 'reqQty2' },
-  { title: '库龄（天）', width: 100, colKey: 'reqQty3' },
+  { title: '条码号', colKey: 'labelNo', width: 200 },
+  { title: '物料编码', width: 120, colKey: 'mitemCode' },
+  { title: '物料描述', width: 120, colKey: 'mitemDesc' },
+  { title: '仓库编码', width: 85, colKey: 'warehouseCode' },
+  { title: '仓库名称', width: 120, colKey: 'warehouseName' },
+  { title: '货区编码', width: 100, colKey: 'districtCode' },
+  { title: '货区名称', width: 100, colKey: 'districtName' },
+  { title: '货位编码', width: 100, colKey: 'locationCode' },
+  { title: '货位名称', width: 100, colKey: 'locationName' },
+  { title: '单位', width: 100, colKey: 'uomName' },
+  { title: '数量', width: 100, colKey: 'balanceQty' },
+  { title: '入库日期', width: 200, colKey: 'datetimeReceipted' },
+  { title: '库龄（天）', width: 100, colKey: 'expiredDays' },
 ];
 
 const tableDocumentDetails = ref([]);
-const tableLabelDetail = ref([]);
 
 // 接收父组件的参数
 const props = defineProps({
   formTitle: {
     type: String,
   },
-  someData1: Object,
-  someData2: Array,
-  someData3: Array,
+  sunData: Array,
 });
 
+// 监听 sunData 的变化
 watch(
-  () => props.someData2,
+  () => props.sunData,
   (newVal) => {
-    tableDocumentDetails.value = newVal || [];
-  },
-  { immediate: true },
-);
-watch(
-  () => props.someData3,
-  (newVal) => {
-    tableLabelDetail.value = newVal || [];
+    setLoading(true);
+    tableDocumentDetails.value = newVal;
+    setLoading(false);
   },
   { immediate: true },
 );
 </script>
-
-<style scoped>
-.buttonSty {
-  display: flex;
-  justify-content: flex-start;
-}
-</style>

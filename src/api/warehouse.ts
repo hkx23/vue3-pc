@@ -1061,6 +1061,99 @@ export interface TransferConstraintVO {
   createTime?: string;
 }
 
+export interface StorageAgeQuerySearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  warehouseId?: string;
+  districtId?: string;
+  locationId?: string;
+  mitemId?: string;
+  /**
+   * 入库开始日期
+   * @format date-time
+   */
+  stockInDateStart?: string;
+  /**
+   * 入库结束日期
+   * @format date-time
+   */
+  stockInDateEnd?: string;
+}
+
+/** 响应数据 */
+export type PagingDataStorageAgeQueryVO = {
+  list?: StorageAgeQueryVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataStorageAgeQueryVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataStorageAgeQueryVO;
+}
+
+export interface StorageAgeQueryVO {
+  onhandId?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 货区编码 */
+  districtCode?: string;
+  /** 货区名称 */
+  districtName?: string;
+  /** 货位编码 */
+  locationCode?: string;
+  /** 货位名称 */
+  locationName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 单位 */
+  uomName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  /**
+   * 库存量
+   * @format int32
+   */
+  stockNum?: number;
+  threeYears?: string;
+  twoToThreeYears?: string;
+  oneToTwoYears?: string;
+  sixToTwelveMonths?: string;
+  threeToSixMonths?: string;
+  onwToThreeMonths?: string;
+  thirtyDays?: string;
+  /** 标签条码 */
+  labelNo?: string;
+  /** 标签数量 */
+  balanceQty?: number;
+  expiredDays?: string;
+}
+
 /** 盘点单据明细表 */
 export interface StockCheckBillDtl {
   id?: string;
@@ -3814,6 +3907,43 @@ export const api = {
     getOrgs: () =>
       http.request<ResultListOrg['data']>(`/api/warehouse/transferConstraint/getOrgs`, {
         method: 'GET',
+      }),
+  },
+  storageAgeQuery: {
+    /**
+     * No description
+     *
+     * @tags 库龄查询
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/storageAgeQuery/getList
+     * @secure
+     */
+    getList: (data: StorageAgeQuerySearch) =>
+      http.request<ResultPagingDataStorageAgeQueryVO['data']>(`/api/warehouse/storageAgeQuery/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 库龄查询
+     * @name GetDtl
+     * @summary 查询标签明细数据
+     * @request GET:/storageAgeQuery/getDtl
+     * @secure
+     */
+    getDtl: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      onhandId: string;
+    }) =>
+      http.request<ResultPagingDataStorageAgeQueryVO['data']>(`/api/warehouse/storageAgeQuery/getDtl`, {
+        method: 'GET',
+        params: query,
       }),
   },
   stockCheckBill: {

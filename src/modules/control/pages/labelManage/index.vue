@@ -70,7 +70,6 @@
                           :value="item.id"
                         />
                       </t-select>
-
                       <t-button theme="primary" :disabled="!generateData.moScheduleId" @click="onGenerate">
                         生成
                       </t-button>
@@ -204,14 +203,8 @@
   </cmp-container>
 
   <!-- % 补打， 作废 dialog 弹窗 -->
-  <t-dialog
-    v-model:visible="formVisible"
-    :confirm-btn="buttonSwitch"
-    :header="diaLogTitle"
-    width="40%"
-    @confirm="onConfirm"
-  >
-    <t-form ref="formRef" :data="reprintDialog">
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="40%">
+    <t-form ref="formRef" :data="reprintDialog" :rules="rules" @submit="onAnomalyTypeSubmit">
       <t-form-item v-if="reprintVoidSwitch" label-width="80px" label="补打原因" name="reprintData">
         <t-select v-model="reprintDialog.reprintData" :clearable="true">
           <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
@@ -254,11 +247,15 @@
         />
       </t-form-item>
     </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base">取消</t-button>
+      <t-button theme="primary" @click="onSecondarySubmit">{{ buttonSwitch }}</t-button>
+    </template>
   </t-dialog>
   <!---%日志 dialog 弹窗  -->
   <t-dialog v-model:visible="logInterfaceVisible" :cancel-btn="null" :confirm-btn="null" header="日志" width="60%">
     <cmp-table
-      ref="tableRef"
+      ref="DialogTableRef"
       v-model:pagination="pageUIDay"
       row-key="id"
       :table-column="logInterface"
@@ -273,8 +270,8 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
-import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, Ref, ref } from 'vue';
+import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
 import { api as apiMain } from '@/api/main';
@@ -571,6 +568,18 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
+const onSecondarySubmit = () => {
+  formRef.value.submit();
+};
+
+// 表单校验
+const rules: ComputedRef<FormRules> = computed(() => {
+  return {
+    reprintData: [{ required: true, trigger: 'change' }],
+    restsData: [{ required: true, trigger: 'blur' }],
+  };
+});
+
 // 初始渲染
 onMounted(async () => {
   await onGetPrintTopTabData(); // 产品标签打印 上 请求
@@ -794,6 +803,13 @@ const onCancellation = () => {
   reprintVoidSwitch.value = false;
   diaLogTitle.value = '作废';
   buttonSwitch.value = '作废';
+};
+
+// 表单提交事件
+const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
+  if (context.validateResult === true) {
+    await onConfirm();
+  }
 };
 
 // 日志 点击 事件
