@@ -60,7 +60,7 @@
     </cmp-container>
   </cmp-container>
   <!-- 弹窗 -->
-  <t-dialog v-model:visible="containerVisible" :footer="true" :close-on-overlay-click="false" header="新增内容类型">
+  <t-dialog v-model:visible="containerVisible" :footer="true" :close-on-overlay-click="false" header="新增容器类型">
     <t-form>
       <t-form-item label="容器类型编码">
         <t-input></t-input>

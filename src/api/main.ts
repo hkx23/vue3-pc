@@ -385,10 +385,6 @@ export interface WorkstationSearch {
   process?: string;
   /** 模糊关键词 */
   keyword?: string;
-  /** 排序字段 */
-  sorts?: SortParam[];
-  /** 筛选字段 */
-  filters?: Filter[];
 }
 
 /** 响应数据 */
@@ -3695,10 +3691,10 @@ export interface MitemVO {
   isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
 }
 
