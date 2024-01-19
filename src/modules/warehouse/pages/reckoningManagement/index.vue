@@ -306,6 +306,7 @@ const closeDialog = async () => {
 const onAdd = () => {
   formTitle.value = '新增盘点管理';
   eidtRoutingVisible.value = true;
+  // 再次新增清空数据
 };
 // 作废
 const scrappedBill = async (billId) => {

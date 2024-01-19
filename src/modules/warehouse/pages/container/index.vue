@@ -17,7 +17,7 @@
             empty="没有符合条件的数据"
           >
             <template #button>
-              <t-button theme="primary" @click="onAdd">新增</t-button>
+              <t-button theme="primary" @click="onAddContainer">新增</t-button>
             </template>
             <template #billNo="slotProps">
               <t-space :size="8">
@@ -28,6 +28,12 @@
             <!-- 定义序号列的插槽 -->
             <template #indexSlot="{ rowIndex }">
               {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+            </template>
+            <!-- 编辑 -->
+            <template #op1="{ row }">
+              <t-space>
+                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick1(row)">编辑</t-link>
+              </t-space>
             </template>
           </cmp-table>
         </cmp-card>
@@ -45,6 +51,7 @@
             empty="没有符合条件的数据"
           >
             <template #button>
+              <t-button theme="primary">新增</t-button>
               <t-button theme="primary">生成</t-button>
               <t-button theme="primary">打印</t-button>
               <t-button theme="primary">删除</t-button>
@@ -53,6 +60,15 @@
             <!-- 定义序号列的插槽 -->
             <template #indexSlot="{ rowIndex }">
               {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+            </template>
+            <!-- 编辑 -->
+            <template #op2="{ row }">
+              <t-space>
+                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2(row)">编辑</t-link>
+                <!-- <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onStateRowClick(row)">
+                  <t-link theme="primary"> 删除 </t-link>
+                </t-popconfirm> -->
+              </t-space>
             </template>
           </cmp-table>
         </cmp-card>
@@ -86,7 +102,6 @@ import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage();
 const dataTotal = ref(0);
-const tabValue = ref('');
 const containerVisible = ref(false); //* 弹窗默认关闭
 
 //* 组件配置  --查询界面选择
@@ -94,10 +109,30 @@ const optsContainer1 = computed(() => {
   return {
     containerTypeCoding: {
       label: '容器类型编码',
-      labelWidth: '300',
-      isHide: tabValue.value,
+      labelWidth: '100',
       event: 'input',
       comp: 't-input',
+      defaultVal: '',
+    },
+    containerType: {
+      label: '容器状态',
+      labelWidth: '100',
+      event: 'select',
+      comp: 't-select',
+      defaultVal: '',
+    },
+    containerB: {
+      label: '容器条码',
+      labelWidth: '100',
+      event: 'input',
+      comp: 't-input',
+      defaultVal: '',
+    },
+    containerCode: {
+      label: '物料编码',
+      labelWidth: '100',
+      event: 'select',
+      comp: 't-select',
       defaultVal: '',
     },
   };
@@ -108,7 +143,6 @@ const optsContainer2 = computed(() => {
     containerState: {
       label: '容器状态',
       labelWidth: '20',
-      isHide: tabValue.value,
       event: 'select',
       comp: 't-select',
       defaultVal: '',
@@ -116,7 +150,6 @@ const optsContainer2 = computed(() => {
     containerBarCode: {
       label: '容器条码',
       labelWidth: '20',
-      isHide: tabValue.value,
       event: 'input',
       comp: 't-input',
       defaultVal: '',
@@ -124,13 +157,13 @@ const optsContainer2 = computed(() => {
     printTemplate: {
       label: '打印模板',
       labelWidth: '20',
-      isHide: tabValue.value,
       event: 'select',
       comp: 't-select',
       defaultVal: '',
     },
   };
 });
+
 // card 1
 const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
@@ -139,7 +172,7 @@ const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { title: '容器类型名称', width: 120, colKey: 'billNo' },
   { title: '容器类型描述', width: 120, colKey: 'sourceBillNo' },
   { title: '状态', width: 85, colKey: 'billStatusName' },
-  { title: '操作', align: 'left', fixed: 'right', width: 100, colKey: 'op' },
+  { title: '操作', align: 'left', fixed: 'right', width: 100, colKey: 'op1' },
 ];
 
 // card 2
@@ -152,10 +185,18 @@ const tableContainerColumns2: PrimaryTableCol<TableRowData>[] = [
   { title: '物料名称', width: 85, colKey: 'billStatusName' },
   { title: '物料描述', width: 85, colKey: 'billStatusName' },
   { title: '标题数量', width: 85, colKey: 'billStatusName' },
-  { title: '操作', align: 'left', fixed: 'right', width: 100, colKey: 'op' },
+  { title: '操作', align: 'left', fixed: 'right', width: 100, colKey: 'op2' },
 ];
-
-const onAdd = async () => {
+// 新增容器
+const onAddContainer = async () => {
+  containerVisible.value = true;
+};
+// 容器编辑
+const onEditRowClick1 = async () => {
+  containerVisible.value = true;
+};
+// 编辑
+const onEditRowClick2 = async () => {
   containerVisible.value = true;
 };
 </script>

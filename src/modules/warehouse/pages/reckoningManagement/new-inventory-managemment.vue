@@ -120,7 +120,6 @@ const countingTypeDataOptions = ref([]); // 盘点类型
 const resultWarehouseData = ref([]); // 仓库
 const authorizedDistrict = ref([]); // 货区
 const authorizedLocation = ref([]); // 货位
-
 // 添加所需字段
 const newstockCheckType = ref('');
 const newWarehouseId = ref('');
@@ -215,20 +214,6 @@ onMounted(async () => {
 // 自定义事件传数据给父组件
 const emit = defineEmits(['update-data']);
 
-// 确定提交
-const onConfirmAnother = async () => {
-  const onHandIds = selectedRowKeys.value;
-  const stockCheckType = newstockCheckType.value; // 盘点类型
-  const warehouseId = newWarehouseId.value; // 仓库ID
-  await api.stockCheckBill.addPd({
-    stockCheckType,
-    warehouseId,
-    onHandIds,
-  });
-  emit('update-data');
-  MessagePlugin.success('新增成功!');
-};
-
 // 获取有权限的仓库
 const getWarehouseData = async () => {
   resultWarehouseData.value = await api.stockCheckBill.getWarehouse();
@@ -270,7 +255,7 @@ const onReset = () => {
 
 // 查询
 const onInput = async (data: any) => {
-  // setLoading(true);
+  setLoading(true);
   if (!data.stockCheckType) {
     MessagePlugin.error('盘点类型为必填项');
     return;
@@ -280,15 +265,6 @@ const onInput = async (data: any) => {
     return;
   }
   if (!data.value) {
-    // 更新 inputParams 的值
-    // inputParams.value = {
-    //   stockCheckType: data.stockCheckType,
-    //   warehouseId: data.warehouseId,
-    //   districtId: data.districtId,
-    //   locationId: data.locationId,
-    //   mitemId: data.mitemId,
-    // };
-
     const { stockCheckType, warehouseId, districtId, locationId, mitemId } = data;
     const result = await api.stockCheckBill.getOnHand({
       pageNum: pageUI.value.page,
@@ -305,24 +281,32 @@ const onInput = async (data: any) => {
     // 存添加需要的数据
     newstockCheckType.value = stockCheckType;
     newWarehouseId.value = warehouseId;
-    // 删除后的查询
   }
-  // setLoading(false);
+  setLoading(false);
+};
+
+// 确定提交
+const onConfirmAnother = async () => {
+  const onHandIds = selectedRowKeys.value;
+  const stockCheckType = newstockCheckType.value; // 盘点类型
+  const warehouseId = newWarehouseId.value; // 仓库ID
+  await api.stockCheckBill.addPd({
+    stockCheckType,
+    warehouseId,
+    onHandIds,
+  });
+  emit('update-data');
+  MessagePlugin.success('新增成功!');
+  // 清空表格数据和分页信息
+  tableDataInventory.value = [];
+  dataTotal.value = 0;
+  pageUI.value.page = 1;
+  pageUI.value.rows = 10;
+  selectedRowKeys.value = []; // 清空选中行
+  // newstockCheckType.value = ''; //todo
 };
 
 // 批量删除
-// const onDeleteBatches =  () => {
-//   const onHandIds = selectedRowKeys.value;
-//   try {
-//   api.stockCheckBill.removeBatch({
-//     onHandIds,
-//   });
-//   MessagePlugin.success('批量删除成功!');
-//   fetchTable({})
-// } catch (error) {
-//   console.error('删除失败:', error);
-//   }
-// };
 const onDeleteBatches = async () => {
   const onHandIds = selectedRowKeys.value;
   try {
@@ -337,17 +321,6 @@ const onDeleteBatches = async () => {
 };
 
 //* 表格数据
-// const fetchTable = async () => {
-//   setLoading(true);
-//   const data = await api.stockCheckBill.getOnHand({
-//     pageNum: pageUI.value.page,
-//     pageSize: pageUI.value.rows,
-//   });
-//   tableDataInventory.value = data.list;
-//   dataTotal.value = data.total;
-//   setLoading(false);
-// };
-
 const fetchTable = async (data: any) => {
   const { districtId, locationId, mitemId } = data;
   try {
