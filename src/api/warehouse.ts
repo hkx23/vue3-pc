@@ -905,7 +905,6 @@ export interface BillInfoMMVO {
   billNo?: string;
   labelNo?: string;
   labelId?: string;
-  type?: string;
   reqQty?: number;
   transferDtlId?: string;
   warehouseId?: string;
@@ -921,12 +920,14 @@ export interface BillInfoMMVO {
   costDepartmentName?: string;
   /** 备注 */
   memo?: string;
+  labelIdList?: string[];
 }
 
 export interface TransferHeadConfirmSubmit {
   billNo?: string;
   labelNo?: string;
   mitemCode?: string;
+  transferTypeValue?: string;
   warehouseId?: string;
   toWarehouseId?: string;
   businessCategoryId?: string;
@@ -938,6 +939,19 @@ export interface TransferHeadConfirmSubmit {
   /** 费用部门 */
   reasonValue?: string;
   list?: BillInfoMMVO[];
+}
+
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
 }
 
 /** 通用响应类 */
@@ -1321,6 +1335,19 @@ export interface StockCheckBillVO {
   pdDtlId?: string;
 }
 
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
+}
+
 /** 送货单明细 */
 export interface DeliveryDtlVO {
   id?: string;
@@ -1420,9 +1447,9 @@ export interface PurchaseOrderDtlVO {
   eid?: string;
   oid?: string;
   purchaseOrderId?: string;
-  /** 订单行号 */
+  /** 采购订单行号 */
   billLineNo?: string;
-  /** erp数据源行号 */
+  /** erp行号 */
   erpLineNo?: string;
   /**
    * 要求到货时间
@@ -1474,23 +1501,12 @@ export interface ReturnManagementVO {
   billNoDesc?: string;
   /** 备注 */
   memo?: string;
+  /** 交易事务头表 */
+  billTransferHeadVO?: TransferHeadVO;
   /** 送货单 */
   deliveryDtlList?: DeliveryDtlVO[];
   /** 采购单 */
   purchaseOrderDtlList?: PurchaseOrderDtlVO[];
-}
-
-/** 通用响应类 */
-export interface ResultBoolean {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
 }
 
 /** 退货管理VO */
@@ -1520,6 +1536,19 @@ export interface ReturnManagementSearch {
   returnType?: string;
   /** 单据状态 */
   billStatus?: string;
+}
+
+/** 通用响应类 */
+export interface ResultReturnManagementVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 退货管理VO */
+  data?: ReturnManagementVO;
 }
 
 export interface PurchaseOrderSearch {
@@ -1567,7 +1596,7 @@ export interface PurchaseOrderVO {
   oid?: string;
   /** 采购单号 */
   billNo?: string;
-  /** ERP行号 */
+  /** ERP订单号 */
   erpNo?: string;
   supplierId?: string;
   /** 交货地址 */
@@ -3979,6 +4008,21 @@ export const api = {
      * No description
      *
      * @tags 交易单身表
+     * @name ConfirmBillNoOnhandTransfer
+     * @summary 库存转移单据确认
+     * @request POST:/transferDtl/confirmBillNoOnhandTransfer
+     * @secure
+     */
+    confirmBillNoOnhandTransfer: (data: TransferHeadConfirmSubmit) =>
+      http.request<ResultString['data']>(`/api/warehouse/transferDtl/confirmBillNoOnhandTransfer`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 交易单身表
      * @name ConfirmBillNoMm
      * @summary 杂项管理单据确认
      * @request POST:/transferDtl/confirmBillNoMM
@@ -4373,6 +4417,21 @@ export const api = {
      * No description
      *
      * @tags 退货管理
+     * @name UpdateBillStatusByCanceled
+     * @summary 查询退货单
+     * @request POST:/returnManagement/updateBillStatusByCanceled
+     * @secure
+     */
+    updateBillStatusByCanceled: (data: string[]) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/returnManagement/updateBillStatusByCanceled`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
      * @name SubmitBillNoByPurchaseOrder
      * @summary 退货单提交（采购单）
      * @request POST:/returnManagement/submitBillNoByPurchaseOrder
@@ -4413,6 +4472,42 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
+     * @name GetPurchaseOrderReturnManagementByBillNo
+     * @summary 获取已勾选的采购单
+     * @request POST:/returnManagement/getPurchaseOrderReturnManagementByBillNo
+     * @secure
+     */
+    getPurchaseOrderReturnManagementByBillNo: (query: { billNo: string }) =>
+      http.request<ResultReturnManagementVO['data']>(
+        `/api/warehouse/returnManagement/getPurchaseOrderReturnManagementByBillNo`,
+        {
+          method: 'POST',
+          params: query,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
+     * @name GetDeliveryReturnManagementByBillNo
+     * @summary 获取已勾选的送货单
+     * @request POST:/returnManagement/getDeliveryReturnManagementByBillNo
+     * @secure
+     */
+    getDeliveryReturnManagementByBillNo: (query: { billNo: string }) =>
+      http.request<ResultReturnManagementVO['data']>(
+        `/api/warehouse/returnManagement/getDeliveryReturnManagementByBillNo`,
+        {
+          method: 'POST',
+          params: query,
+        },
+      ),
   },
   purchaseOrder: {
     /**

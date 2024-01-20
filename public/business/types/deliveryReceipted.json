@@ -1,0 +1,34 @@
+{
+  "title": "送货单：",
+  "placeholder": "请选择送货单",
+  "url": "/api/warehouse/delivery/items",
+  "httptype": "POST",
+  "category": "RECEIPTED",
+  "columns": [
+    {
+      "title": "送货单",
+      "key": "billNo",
+      "align": "center"
+    },
+    {
+      "title": "送货日期",
+      "key": "dateDelivery",
+      "align": "center"
+    },
+    {
+      "title": "供应商",
+      "key": "supplierName",
+      "align": "center"
+    },
+    {
+      "title": "状态",
+      "key": "statusName",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "billNo",
+    "label": "billNo"
+  }
+}
