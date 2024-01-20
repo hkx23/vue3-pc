@@ -1671,10 +1671,10 @@ export interface ProductReworkVO {
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2917,10 +2917,10 @@ export interface BarcodeWipCollectVO {
   workshopCode?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3030,10 +3030,10 @@ export interface BarcodeWipVO {
   workshopName?: string;
   workshopCode?: string;
   stateName?: string;
-  isState?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   defectCodeStr?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -4298,6 +4298,21 @@ export const api = {
      */
     search: (data: WipRepairSearch) =>
       http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepair/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品维修表
+     * @name GetVerifyProcessCategory
+     * @summary 检验是否维修工序
+     * @request POST:/wipRepair/getVerifyProcessCategory
+     * @secure
+     */
+    getVerifyProcessCategory: (data: WipRepairSearch) =>
+      http.request<ResultObject['data']>(`/api/control/wipRepair/getVerifyProcessCategory`, {
         method: 'POST',
         body: data as any,
       }),
