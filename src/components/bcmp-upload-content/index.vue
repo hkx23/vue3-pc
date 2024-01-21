@@ -9,7 +9,6 @@
       :is-fixed-height="true"
       :loading="isLoading"
       :selected-row-keys="selectedRowKeys"
-      :active-row-type="'multiple'"
       :select-on-row-click="false"
       :show-setting="false"
       :show-pagination="false"
@@ -20,7 +19,10 @@
         <t-link v-show="row.percent === 100" theme="primary" @click="previewFun(row)"
           ><t-icon :name="getFileIcon(row.fileName)"></t-icon>{{ row.fileName }}</t-link
         >
-        <span v-show="row.percent !== 100"> 上传中<t-progress :percentage="50" :label="false" /></span>
+        <t-space v-show="row.percent !== 100" direction="vertical" :size="8">
+          <span> 上传中</span>
+          <t-progress :percentage="50" :label="false" />
+        </t-space>
       </template>
 
       <template #op="{ row }">
@@ -114,30 +116,30 @@ const columns = computed(() => {
       colKey: 'serial-number',
       title: '序号',
       width: 60,
-      align: 'center',
+      align: 'left',
     },
     {
       colKey: 'fileName',
       title: '附件名称',
       ellipsis: true,
-      align: 'center',
+      align: 'left',
     },
     {
-      colKey: 'fileSize',
+      colKey: 'fileSizeShow',
       title: '文件大小',
       ellipsis: true,
-      align: 'center',
+      align: 'left',
     },
     {
       colKey: 'timeUpload',
       title: '上传时间',
       ellipsis: true,
-      align: 'center',
+      align: 'left',
     },
     {
       colKey: 'op',
       title: '操作',
-      align: 'center',
+      align: 'left',
       ellipsis: true,
     },
   ];
@@ -175,7 +177,7 @@ const fetchData = () => {
 
 // 上传失败后，表格对应行需要删除
 const handleFail = ({ file }) => {
-  tableData.value = tableData.value.filter((item) => item.id !== file.id);
+  tableData.value = tableData.value.filter((item) => item.fileName !== file.name);
   MessagePlugin.error(`文件 ${file.name} 上传失败`);
   emits('uploadfail', file);
 };
@@ -192,7 +194,13 @@ const beforeUpload = (file: UploadFile) => {
     MessagePlugin.error(`只能上传小于${props.uploadFileSizeLimit}M的文件`);
     return false;
   }
-
+  // 判断选择文件是否已存在于列表中
+  for (let i = 0; i < tableData.value.length; i++) {
+    if (tableData.value[i].fileName === file.name) {
+      MessagePlugin.error(`文件 ${file.name} 已经存在`);
+      return false;
+    }
+  }
   console.log(file);
   // 将file复制成tableData的一个项目，加入到tableData中
   // todo:ID问题
@@ -222,11 +230,14 @@ const requestMethod: RequestMethod = async (file: UploadFile) => {
     lastItem.percent = 100;
     console.log(lastItem);
     emits('uploadSuccess', lastItem);
+
     return { status: 'success', response: { url: 'none' } };
   } catch (error) {
     MessagePlugin.error(error.message);
     // 在这里可以根据错误类型返回失败状态
     return { status: 'fail', response: {} };
+  } finally {
+    files.value = [];
   }
 };
 
@@ -280,6 +291,10 @@ const onDelConfirm = async (row: any) => {
   }
 };
 const batchDelete = async () => {
+  if (!(selectedRowKeys?.value?.length > 0)) {
+    MessagePlugin.warning('请选择一行数据！');
+    return;
+  }
   console.log('批量删除附件：', selectedRowKeys.value);
 
   if (selectedRowKeys.value.length > 0) {
@@ -292,6 +307,10 @@ const batchDelete = async () => {
   }
 };
 const batchDownload = () => {
+  if (!(selectedRowKeys?.value?.length > 0)) {
+    MessagePlugin.warning('请选择一行数据！');
+    return;
+  }
   console.log('批量下载附件：', selectedRowKeys.value);
   if (selectedRowKeys.value.length > 0) {
     const downRows = tableData.value.filter((item) => selectedRowKeys.value.includes(item.id));

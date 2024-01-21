@@ -68,6 +68,7 @@
           :page-size="pagination.rows"
           :total="total"
           :disabled="loading"
+          :page-size-options="[20, 50, 100, 200, 500]"
           show-jumper
           @change="onPaginationChange"
         />
@@ -239,7 +240,7 @@ const props = defineProps({
   pagination: {
     type: Object,
     default: () => {
-      return { page: 1, rows: 10 };
+      return { page: 1, rows: 20 };
     },
   },
   showPagination: {
@@ -256,7 +257,7 @@ const props = defineProps({
   },
   stripe: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   loading: { type: Boolean, default: false },
   rowKey: { type: String, default: 'id' },
@@ -335,7 +336,7 @@ const columns = computed(() => {
     });
   tableColumn = tableColumn.map((item) => {
     return {
-      align: 'center',
+      align: 'left',
       ...item,
     };
   });
