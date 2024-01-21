@@ -40,12 +40,12 @@
       <footer class="detailed-work-center">
         <cmp-table
           ref="tableRef"
-          v-model:pagination="pageUI"
+          v-model:pagination="workPageUI"
           row-key="id"
           :table-column="columns"
           :table-data="moCodeData.list"
           :total="moCodeData?.list?.length"
-          @refresh="onRefresh"
+          @refresh="onOorkOIrder"
         >
           <template #moCode="{ row }">
             <t-link theme="primary">{{ row.moCode }}</t-link>
@@ -67,13 +67,13 @@
       <footer class="detailed-work-center">
         <cmp-table
           ref="tableRef"
-          v-model:pagination="pageUI"
+          v-model:pagination="productPageUI"
           empty="没有符合条件的数据"
           row-key="deliveryCardId"
           :table-column="columnsDetail"
           :table-data="getDtlData.list"
           :total="total"
-          @refresh="onRefresh"
+          @refresh="onGetProductDetails"
         >
           <template #moCode="{ row }">
             <t-link theme="primary">{{ row.moCode }}</t-link>
@@ -94,6 +94,8 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage();
+const { pageUI: workPageUI } = usePage();
+const { pageUI: productPageUI } = usePage();
 const formVisible = ref(false);
 const detailVisible = ref(false);
 // 表格实例
@@ -255,15 +257,20 @@ const WipReportData = ref({
 // 工单点击
 const workOrderData = reactive({ list: [] });
 const moCodeData = reactive({ list: [] });
-const moCodeClick = async (row: any) => {
-  formVisible.value = true;
+const workMoCode = ref('');
+// 获取工单上部分明细
+const onOorkOIrder = async () => {
   const res = (await api.reversetraceability.getMoBaseInfo({
     pageNum: 1,
     pageSize: 10,
-    moCode: row.moCode, // 工单号
+    moCode: workMoCode.value, // 工单号
   })) as any;
   workOrderData.list = res.list;
-
+};
+const moCodeClick = async (row: any) => {
+  formVisible.value = true;
+  workMoCode.value = row.moCode;
+  await onOorkOIrder();
   const result = (await api.moBom.getMoBomListByMoCode({
     moId: row.moId,
   })) as any;
@@ -285,16 +292,24 @@ function findCurProcessId(row, colKey) {
 }
 const getDtlData = reactive({ list: [] });
 const getDtlTotal = ref(0);
-const onDetailClick = async (row, col) => {
-  const curProcessId = findCurProcessId(row, col.colKey);
+const curProcessId = ref();
+const moId = ref('');
+const pageNum = computed(() => productPageUI.value.page);
+const pageSize = computed(() => productPageUI.value.rows);
+const onGetProductDetails = async () => {
   const res = await api.wip.getDtlList({
-    pageNum: 1,
-    pageSize: 10,
-    moId: row.moId,
-    curProcessId,
+    pageNum: pageNum.value,
+    pageSize: pageSize.value,
+    moId: moId.value,
+    curProcessId: curProcessId.value,
   });
   getDtlData.list = res.list;
   getDtlTotal.value = res.total;
+};
+const onDetailClick = async (row, col) => {
+  moId.value = row.moId;
+  curProcessId.value = findCurProcessId(row, col.colKey);
+  await onGetProductDetails();
   detailVisible.value = true;
 };
 

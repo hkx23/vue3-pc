@@ -306,7 +306,6 @@ const onLocationChange = async (visible: boolean) => {
 };
 
 const onInput = async (data: any) => {
-  console.log('🚀 ~ file: index.vue:309 ~ onInput ~ data:', data);
   pageUI.value.page = 1;
   Object.keys(handQtyParam.value).forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(data, key)) {
