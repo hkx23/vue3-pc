@@ -743,8 +743,8 @@ export interface WipLogSearchVO {
   serialNumber?: string;
   /** 工单号 */
   moCode?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
+  /** 工作中心编码 */
+  workcenterCode?: string;
   /** 车间名称 */
   workshopName?: string;
   /** 上一个工站名称 */
@@ -752,7 +752,7 @@ export interface WipLogSearchVO {
   /** 当前工站名称 */
   curWorkstationrName?: string;
   /** 工作中心描述 */
-  workcenterDesc?: string;
+  workcenterName?: string;
   /** 产品描述 */
   pdDesc?: string;
   /** 过站人 */
@@ -1666,15 +1666,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2572,40 +2572,6 @@ export interface ResultPagingDataMFTSubVO {
   data?: PagingDataMFTSubVO;
 }
 
-/** 关键物料正向追溯VO */
-export type MFTVO = {
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  /** 批次 */
-  lotNo?: string;
-  /** 数量 */
-  qty?: number;
-  /** 当前状态 */
-  statusName?: string;
-  /**
-   * 接收时间
-   * @format date-time
-   */
-  receiveTime?: string;
-  /** 响应数据 */
-  tableData?: PagingDataMFTSubVO;
-} | null;
-
-/** 通用响应类 */
-export interface ResultMFTVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 关键物料正向追溯VO */
-  data?: MFTVO;
-}
-
 export interface LabelManageSearch {
   /**
    * 页码
@@ -2915,7 +2881,6 @@ export interface BarcodeWipCollectVO {
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -3029,7 +2994,6 @@ export interface BarcodeWipVO {
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   stateName?: string;
@@ -5118,36 +5082,6 @@ export const api = {
      */
     getMitemQualityInfo: (data: MitemForwardTraceSearch) =>
       http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getMitemQualityInfo`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 关键物料正向追溯
-     * @name GetMitemBasicInfo
-     * @summary 物料基础信息
-     * @request POST:/mitemForwardTrace/getMitemBasicInfo
-     * @secure
-     */
-    getMitemBasicInfo: (data: MitemForwardTraceSearch) =>
-      http.request<ResultMFTVO['data']>(`/api/control/mitemForwardTrace/getMitemBasicInfo`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 关键物料正向追溯
-     * @name GetIoInfo
-     * @summary 物料使用信息
-     * @request POST:/mitemForwardTrace/getIOInfo
-     * @secure
-     */
-    getIoInfo: (data: MitemForwardTraceSearch) =>
-      http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getIOInfo`, {
         method: 'POST',
         body: data as any,
       }),

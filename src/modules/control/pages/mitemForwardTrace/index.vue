@@ -195,6 +195,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, reactive, ref } from 'vue';
 
 import { api } from '@/api/control';
+import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -546,7 +547,7 @@ const fetchMoTable = async () => {
     if (tagValue.value === 0) {
       queryCondition.value.pageNum = pageUI.value.page;
       queryCondition.value.pageSize = pageUI.value.rows;
-      const data = (await api.mitemForwardTrace.getMitemBasicInfo(queryCondition.value)) as any;
+      const data = (await apiWarehouse.label.getMitemBasicInfo(queryCondition.value)) as any;
       if (data) {
         mitemInfo.value = data;
         mitemBaseInfoList.list = data.tableData.list;
@@ -592,7 +593,7 @@ const fetchMoTable = async () => {
     if (tagValue.value === 4) {
       queryCondition.value.pageNum = pageUIIOInfo.value.page;
       queryCondition.value.pageSize = pageUIIOInfo.value.rows;
-      const data = (await api.mitemForwardTrace.getIoInfo(queryCondition.value)) as any;
+      const data = (await apiWarehouse.label.getIoInfo(queryCondition.value)) as any;
       if (data) {
         IOInfoList.list = data.list;
         IOInfoTabTotal.value = data.total;
