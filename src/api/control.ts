@@ -1666,11 +1666,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
-  workshopName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2910,14 +2910,14 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
-  workshopName?: string;
   stateName?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
+  isState?: boolean;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
@@ -3024,16 +3024,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
-  workshopName?: string;
   stateName?: string;
-  defectCodeStr?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
+  isState?: boolean;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -4298,6 +4298,21 @@ export const api = {
      */
     search: (data: WipRepairSearch) =>
       http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepair/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品维修表
+     * @name GetVerifyProcessCategory
+     * @summary 检验是否维修工序
+     * @request POST:/wipRepair/getVerifyProcessCategory
+     * @secure
+     */
+    getVerifyProcessCategory: (data: WipRepairSearch) =>
+      http.request<ResultObject['data']>(`/api/control/wipRepair/getVerifyProcessCategory`, {
         method: 'POST',
         body: data as any,
       }),
