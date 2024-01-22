@@ -6,7 +6,7 @@
         v-model:pagination="pageUI"
         :table-column="tableColumn"
         :table-data="data.list"
-        :enable-export="enableExport"
+        :show-export="enableExport"
         :is-fixed-height="isFixedHeight"
         :loading="loading"
         :total="data.total"

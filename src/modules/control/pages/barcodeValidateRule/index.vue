@@ -502,13 +502,13 @@ const onTextEditRow = (row: { id: any }) => {
     }
     return acc;
   }, barcodeData.value);
+  diaLogTitle.value = '编辑规则';
   formVisible.value = true;
   submitFalg.value = false;
 };
 
 // 关键件 编辑事件
 const onKeyEditRow = (row: any) => {
-  diaLogTitle.value = '编辑规则';
   if (!+row.mitemCategoryId) {
     radioValue.value = 1;
   } else {
@@ -535,6 +535,7 @@ const onKeyEditRow = (row: any) => {
   barcodeData.value.minLength = row.minLength; // 最小长度
   barcodeData.value.maxLength = row.maxLength; // 最大长度
   barcodeData.value.memo = row.memo; // 备注
+  diaLogTitle.value = '编辑规则';
   formVisible.value = true;
   submitFalg.value = false;
 };
