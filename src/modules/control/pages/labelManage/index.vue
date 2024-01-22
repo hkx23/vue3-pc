@@ -70,7 +70,6 @@
                           :value="item.id"
                         />
                       </t-select>
-
                       <t-button theme="primary" :disabled="!generateData.moScheduleId" @click="onGenerate">
                         生成
                       </t-button>
@@ -204,14 +203,8 @@
   </cmp-container>
 
   <!-- % 补打， 作废 dialog 弹窗 -->
-  <t-dialog
-    v-model:visible="formVisible"
-    :confirm-btn="buttonSwitch"
-    :header="diaLogTitle"
-    width="40%"
-    @confirm="onConfirm"
-  >
-    <t-form ref="formRef" :data="reprintDialog">
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="40%">
+    <t-form ref="formRef" :data="reprintDialog" :rules="rules" @submit="onAnomalyTypeSubmit">
       <t-form-item v-if="reprintVoidSwitch" label-width="80px" label="补打原因" name="reprintData">
         <t-select v-model="reprintDialog.reprintData" :clearable="true">
           <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
@@ -254,11 +247,15 @@
         />
       </t-form-item>
     </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base">取消</t-button>
+      <t-button theme="primary" @click="onSecondarySubmit">{{ buttonSwitch }}</t-button>
+    </template>
   </t-dialog>
   <!---%日志 dialog 弹窗  -->
   <t-dialog v-model:visible="logInterfaceVisible" :cancel-btn="null" :confirm-btn="null" header="日志" width="60%">
     <cmp-table
-      ref="tableRef"
+      ref="DialogTableRef"
       v-model:pagination="pageUIDay"
       row-key="id"
       :table-column="logInterface"
@@ -273,8 +270,8 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
-import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, Ref, ref } from 'vue';
+import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
 import { api as apiMain } from '@/api/main';
@@ -571,13 +568,23 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
+const onSecondarySubmit = () => {
+  formRef.value.submit();
+};
+
+// 表单校验
+const rules: ComputedRef<FormRules> = computed(() => {
+  return {
+    reprintData: [{ required: true, trigger: 'change' }],
+    restsData: [{ required: true, trigger: 'blur' }],
+  };
+});
+
 // 初始渲染
 onMounted(async () => {
   await onGetPrintTopTabData(); // 产品标签打印 上 请求
   await onWorkStatus(); // 工单状态下拉数据
   await onBarCodeState(); // 获取条码状态数据
-  await onPrintRulesData(); // 获取 打印规则下拉数据
-  await onPrintTemplateData(); // 获取 打印模板下拉数据
   await onReprintSelextData(); // 获取补打原因列表
   await onCancellationSelextData(); // 获取作废原因列表
 });
@@ -617,18 +624,6 @@ const generateData = ref({
   moScheduleId: null, // 行 Id
   createNum: null, // 本次生成数量
 });
-const onPrintRulesList = reactive({ list: [] });
-const onPrintRulesData = async () => {
-  const res = await api.labelManage.getBarcodeRuleList();
-  onPrintRulesList.list = res?.list;
-};
-
-// 获取 打印模板 下拉数据
-const onPrintTemplateList = reactive({ list: [] });
-const onPrintTemplateData = async () => {
-  const res = await api.labelManage.getPrintTmplList();
-  onPrintTemplateList.list = res?.list;
-};
 
 // 获取 补打原因 下拉数据
 const reprintDataList = reactive({ list: [] });
@@ -796,6 +791,13 @@ const onCancellation = () => {
   buttonSwitch.value = '作废';
 };
 
+// 表单提交事件
+const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
+  if (context.validateResult === true) {
+    await onConfirm();
+  }
+};
+
 // 日志 点击 事件
 const onLogInterface = async (row: any) => {
   logInterfaceVisible.value = true; // 控制界面显示隐藏
@@ -810,12 +812,29 @@ const onLogInterface = async (row: any) => {
 
 // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
+  const { moScheduleId } = context.currentRowData;
   numInput.value = context.currentRowData.planQty - context.currentRowData.generateQty;
   generateData.value.createNum = context.currentRowData.thisTimeQty;
   generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
   generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
   [topPrintID.value] = value;
   await onGetPrintDownTabData();
+  await onPrintRulesData(moScheduleId); // 条码规则下拉数据
+  await onPrintTemplateData(moScheduleId); // 打印模板下拉数据
+};
+
+// 获取条码规则下拉数据
+const onPrintRulesList = reactive({ list: [] });
+const onPrintRulesData = async (moScheId) => {
+  const res = await api.labelManage.getBarcodeRuleList({ moScheId });
+  onPrintRulesList.list = res?.list;
+};
+
+// 获取 打印模板 下拉数据
+const onPrintTemplateList = reactive({ list: [] });
+const onPrintTemplateData = async (moScheId) => {
+  const res = await api.labelManage.getPrintTmplList({ moScheId });
+  onPrintTemplateList.list = res?.list;
 };
 
 // 本次生成数量change事件

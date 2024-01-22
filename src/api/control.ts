@@ -1669,7 +1669,6 @@ export interface ProductReworkVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
@@ -1719,8 +1718,8 @@ export interface WipKeyPartCollectVO {
   keyPartList?: WipKeypart[];
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
+  isScanFinish?: boolean;
 }
 
 /** 在制品关键件采集表 */
@@ -2880,7 +2879,6 @@ export interface BarcodeWipCollectVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
@@ -2994,7 +2992,6 @@ export interface BarcodeWipVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;

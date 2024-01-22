@@ -10,11 +10,11 @@
       <cmp-card>
         <!-- 按钮操作逻辑
 
-          状态为 已创建或者 盘点中     不允许 差异调整 关闭单据
+          状态为 已创建或者 盘点中             不允许 差异调整 关闭单据
 
-          状态为 已完成                不允许保存 和 盘点完成
+          状态为 已完成                        不允许保存 和 盘点完成
 
-          状态为 已关闭或者 已作废     只允许刷新  导出 打印
+          状态为 已关闭或者 已作废 == 已取消    只允许刷新  导出 打印
          -->
         <div class="buttonSty">
           <t-button @click="getMaterialDetails(props.propsdtlId)">刷新</t-button>
@@ -198,7 +198,7 @@ const disableSaveAndCompletion = computed(() => {
   return props.stockCheckBillStatusName === '已完成';
 });
 const enableOnlyRefreshExportPrint = computed(() => {
-  return props.stockCheckBillStatusName === '已关闭' || props.stockCheckBillStatusName === '已作废';
+  return props.stockCheckBillStatusName === '已关闭' || props.stockCheckBillStatusName === '已取消';
 });
 
 // 差异数 color 控制

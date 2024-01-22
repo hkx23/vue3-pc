@@ -199,12 +199,12 @@ const formData = reactive({
     barcode: '',
     isRepair: '',
     routingRevisionId: '',
-    processId: userStore.currUserOrgInfo.processId,
-    processCode: userStore.currUserOrgInfo.processCode,
-    processName: userStore.currUserOrgInfo.processName,
-    workCenterId: userStore.currUserOrgInfo.workCenterId,
-    workCenterCode: userStore.currUserOrgInfo.workCenterCode,
-    workCenterName: userStore.currUserOrgInfo.workCenterName,
+    // processId: userStore.currUserOrgInfo.processId,
+    // processCode: userStore.currUserOrgInfo.processCode,
+    // processName: userStore.currUserOrgInfo.processName,
+    // workCenterId: userStore.currUserOrgInfo.workCenterId,
+    // workCenterCode: userStore.currUserOrgInfo.workCenterCode,
+    // workCenterName: userStore.currUserOrgInfo.workCenterName,
     isRepairOptions: [{ value: 'REPAIRED', label: '已返修' }],
     checkedDefectDealMethod: [],
     defectDealMethodOptions: [],
@@ -474,7 +474,7 @@ const fetchTable = async () => {
       isRepair: formData.queryData.isRepair[0],
       pageNum: pageTab1.value.page,
       pageSize: pageTab1.value.rows,
-      processId: formData.queryData.processId,
+      processId: userStore.currUserOrgInfo.processId,
       statusList: ['UNREPAIR', 'REPAIRED'],
       sorts: [],
       filters: [],
@@ -502,6 +502,7 @@ const fetchRepairingTable = async () => {
     const data = await apiControl.wipRepairDtl.getListByRepairing({
       pageNum: pageTab2.value.page,
       pageSize: pageTab2.value.rows,
+      processId: userStore.currUserOrgInfo.processId,
     });
     repairingData.value = data.list;
     repairingDataTotal.value = data.total;
@@ -624,12 +625,18 @@ const tabsChange = async (tabValue) => {
   selectTabValue.value = tabValue;
 };
 
+const getVerifyProcessCategory = async () => {
+  await apiControl.wipRepair.getVerifyProcessCategory({ processId: userStore.currUserOrgInfo.processId });
+};
+
 onMounted(() => {
-  fetchTable();
-  fetchRepairingTable();
-  getDefectDealMethod();
-  getDefectReason();
-  getDefectBlame();
+  getVerifyProcessCategory().then(() => {
+    fetchTable();
+    fetchRepairingTable();
+    getDefectDealMethod();
+    getDefectReason();
+    getDefectBlame();
+  });
 });
 </script>
 

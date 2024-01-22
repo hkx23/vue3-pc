@@ -18,11 +18,9 @@
           empty="没有符合条件的数据"
           @refresh="tabRefresh"
         >
-          <template #billNo="slotProps">
+          <template #labelNo="slotProps">
             <t-space :size="8">
-              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">{{
-                slotProps.row.billNo
-              }}</t-link>
+              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">明细 </t-link>
             </t-space>
           </template>
 
@@ -33,13 +31,7 @@
         </cmp-table>
       </cmp-card>
       <!-- 库龄详情组件 -->
-      <kuling-details
-        v-model:visible="RPDRoutingVisible"
-        :form-title="formTitle"
-        :some-data1="someData1"
-        :some-data2="someData2"
-        :some-data3="someData3"
-      />
+      <kuling-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" :sun-data="sunData" />
     </cmp-container>
   </cmp-container>
 </template>
@@ -58,30 +50,17 @@ const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const formTitle = ref('');
 const dataTotal = ref(0);
-const tabValue = ref('');
 const RPDRoutingVisible = ref(false); //* 弹窗默认关闭
 const selectedReceiptRowKeys = ref([]);
 const tableDataReceipt = ref([]); //* 表格数据
-const someData1 = ref({}); // 用来存储接口调用结果
-const someData2 = ref([]);
-const someData3 = ref([]);
+const sunData = ref([]); // 用来存储接口调用结果
 
 //* 组件配置  --查询界面选择
 const optsKuling = computed(() => {
   return {
-    categoryName: {
+    mitemId: {
       label: '物料编码',
-      comp: 'bcmp-select-business',
-      event: 'business',
-      defaultVal: '',
-      bind: {
-        type: 'businessCategory',
-        showTitle: false,
-        isMultiple: true, // 多选
-      },
-    },
-    mitemCode: {
-      label: '仓库',
+      labelWidth: '200',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -90,28 +69,41 @@ const optsKuling = computed(() => {
         showTitle: false,
       },
     },
-    supplierName: {
+    warehouseId: {
+      label: '仓库',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'warehouse',
+        showTitle: false,
+      },
+    },
+    districtId: {
       label: '货区',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'supplier',
+        type: 'district',
         showTitle: false,
       },
     },
-    billNo: {
+    locationId: {
       label: '货位',
-      labelWidth: '300',
-      isHide: tabValue.value,
-      event: 'input',
-      comp: 't-input',
+      labelWidth: '200',
+      event: 'business',
+      comp: 'bcmp-select-business',
       defaultVal: '',
+      bind: {
+        type: 'location',
+        showTitle: false,
+      },
     },
-    timeCreate: {
+    stockInDate: {
       label: '入库日期',
       comp: 't-date-range-picker',
-      defaultVal: [],
+      defaultVal: [], // 初始化日期控件
       bind: {
         enableTimePicker: false,
         format: 'YYYY-MM-DD',
@@ -123,46 +115,37 @@ const optsKuling = computed(() => {
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
-  { title: '物料编码', colKey: 'categoryName', width: 85 },
-  { title: '物料描述', width: 150, colKey: 'billNo' },
-  { title: '仓库编码', width: 120, colKey: 'sourceBillNo' },
+  { title: '物料编码', colKey: 'mitemCode', width: 150 },
+  { title: '物料描述', width: 150, colKey: 'mitemDesc' },
+  { title: '仓库编码', width: 120, colKey: 'warehouseCode' },
   { title: '仓库名称', width: 120, colKey: 'mitemCode' },
-  { title: '货区编码', width: 85, colKey: 'mitemDesc' },
-  { title: '货区名称', width: 85, colKey: 'reqQty' },
-  { title: '货位编码', width: 85, colKey: 'pickQty' },
-  { title: '货位名称', width: 85, colKey: 'uomName' },
-  { title: '单位', width: 85, colKey: 'erpLineNo' },
-  { title: '库存总量', width: 85, colKey: 'uploadStatusName' },
-  { title: '3年以上', width: 85, colKey: 'memo' },
-  { title: '2-3年', width: 85, colKey: 'supplierName' },
-  { title: '1-2年', width: 85, colKey: 'warehouseName' },
-  { title: '6-12个月', width: 85, colKey: 'districtName' },
-  { title: '3-6个月', width: 85, colKey: 'locationName' },
-  { title: '1-3个月', width: 85, colKey: 'toWarehouseName' },
-  { title: '30天内', width: 85, colKey: 'toDistrictName' },
-  { title: '条码明细', width: 85, colKey: 'toLocationName' },
+  { title: '货区编码', width: 120, colKey: 'districtCode' },
+  { title: '货区名称', width: 150, colKey: 'districtName' },
+  { title: '货位编码', width: 150, colKey: 'locationCode' },
+  { title: '货位名称', width: 85, colKey: 'locationName' },
+  { title: '单位', width: 85, colKey: 'uomName' },
+  { title: '库存总量', width: 85, colKey: 'stockNum' },
+  { title: '3年以上', width: 85, colKey: 'threeYears' },
+  { title: '2-3年', width: 85, colKey: 'twoToThreeYears' },
+  { title: '1-2年', width: 85, colKey: 'oneToTwoYears' },
+  { title: '6-12个月', width: 85, colKey: 'sixToTwelveMonths' },
+  { title: '3-6个月', width: 85, colKey: 'threeToSixMonths' },
+  { title: '1-3个月', width: 85, colKey: 'onwToThreeMonths' },
+  { title: '30天内', width: 85, colKey: 'thirtyDays' },
+  { title: '条码明细', align: 'left', fixed: 'right', width: 85, colKey: 'labelNo' },
 ];
 
+// 明细
 const onEditRowClick = async (value: any) => {
-  formTitle.value = '查看单据';
+  formTitle.value = '库龄详情-条码明细';
   RPDRoutingVisible.value = true;
-  const { billNo } = value.row;
-
-  try {
-    // 同时发送三个异步请求
-    const [headerResult, dtlResult, labelResult] = await Promise.all([
-      api.billManagement.getHeader({ billNo }),
-      api.billManagement.getDtl({ billNo }),
-      api.billManagement.getLabel({ billNo }),
-    ]);
-
-    // 更新响应式数据
-    someData1.value = headerResult;
-    someData2.value = dtlResult;
-    someData3.value = labelResult;
-  } catch (error) {
-    console.error('获取单据数据失败:', error);
-  }
+  const { onhandId } = value.row;
+  const result = await api.storageAgeQuery.getDtl({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    onhandId,
+  });
+  sunData.value = result.list;
 };
 
 //* 初始渲染
@@ -175,7 +158,7 @@ const fetchTable = async () => {
   setLoading(false);
   selectedReceiptRowKeys.value = [];
   tableDataReceipt.value = [];
-  const data = await api.billManagement.getList({
+  const data = await api.storageAgeQuery.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
@@ -191,23 +174,24 @@ const tabRefresh = async () => {
 
 //* 查询
 const onInput = async (data: any) => {
-  const { categoryName, mitemCode, supplierName, billNo, timeCreate } = data;
-  // 提取categoryName数组中每个元素的label，合并成一个数组
-  const businessCategoryIds = Array.isArray(categoryName) ? categoryName.map((item) => item.value) : [];
+  setLoading(true);
+  const { mitemId, warehouseId, districtId, locationId } = data;
+  const [stockInDateStart, stockInDateEnd] = data.stockInDate;
   if (!data.value) {
-    const result = await api.billManagement.getList({
+    const result = await api.storageAgeQuery.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      billNo,
-      mitemId: mitemCode,
-      businessCategoryIds,
-      dateEnd: timeCreate[1],
-      dateStart: timeCreate[0],
-      supplierId: supplierName,
+      mitemId,
+      warehouseId,
+      districtId,
+      locationId,
+      stockInDateStart,
+      stockInDateEnd,
     });
     tableDataReceipt.value = result.list;
     dataTotal.value = result.total;
   }
+  setLoading(false);
 };
 </script>
 

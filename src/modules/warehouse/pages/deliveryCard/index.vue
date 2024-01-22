@@ -750,8 +750,6 @@ onMounted(async () => {
   await onGetPrintTopTabData(); // 产品标签打印 上 请求
   await onWorkStatus(); // 工单状态下拉数据
   await onBarCodeState(); // 获取条码状态数据
-  await onPrintRulesData(); // 获取 打印规则下拉数据
-  await onPrintTemplateData(); // 获取 打印模板下拉数据
   await onReprintSelectData(); // 获取补打原因列表
   await onCancellationSelectData(); // 获取作废原因列表
   await onResolutionSelectData(); // 获取拆分原因列表
@@ -796,26 +794,6 @@ const generateData = ref({
   createSize: 0, // 生成规格
   mitemId: null, // 物料ID
 });
-
-// 提条码规则下拉数据
-const onPrintRulesList = reactive({ list: [] });
-const onPrintRulesData = async () => {
-  const res = await api.deliveryCard.getBarcodeRuleList();
-  onPrintRulesList.list = res?.list;
-};
-
-// // 获取 打印模板 下拉数据
-const onPrintTemplateList = ref([]);
-const onPrintTemplateData = async () => {
-  const res = await api.deliveryCard.getPrintTmplList();
-  const transformedArray = res.list.map((item) => {
-    return {
-      value: item.id,
-      label: item.tmplName,
-    };
-  });
-  onPrintTemplateList.value = transformedArray;
-};
 
 // // 获取 补打原因 下拉数据
 const reprintDataList = reactive({ list: [] });
@@ -1037,6 +1015,7 @@ const onSecondarySubmit = async (context: { validateResult: boolean }) => {
 
 // // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
+  const { moScheduleId } = context.currentRowData;
   numInput.value = context.currentRowData.planQty - context.currentRowData.generateQty;
   generateData.value.createNum = context.currentRowData.thisTimeQty;
   generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
@@ -1044,6 +1023,28 @@ const onGenerateChange = async (value: any, context: any) => {
   generateData.value.mitemId = context.currentRowData.mitemId; // 物料 Id
   [topPrintID.value] = value;
   await onGetPrintDownTabData();
+  await onPrintRulesData(moScheduleId);
+  await onPrintTemplateData(moScheduleId);
+};
+
+// 提条码规则下拉数据
+const onPrintRulesList = reactive({ list: [] });
+const onPrintRulesData = async (moScheId) => {
+  const res = await api.deliveryCard.getBarcodeRuleList({ moScheId });
+  onPrintRulesList.list = res?.list;
+};
+
+// 获取 打印模板 下拉数据
+const onPrintTemplateList = ref([]);
+const onPrintTemplateData = async (moScheId) => {
+  const res = await api.deliveryCard.getPrintTmplList({ moScheId });
+  const transformedArray = res.list.map((item) => {
+    return {
+      value: item.id,
+      label: item.tmplName,
+    };
+  });
+  onPrintTemplateList.value = transformedArray;
 };
 
 // // 生成点击事件
