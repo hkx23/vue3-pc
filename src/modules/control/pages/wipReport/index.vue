@@ -42,6 +42,7 @@
           ref="tableRef"
           v-model:pagination="workPageUI"
           row-key="id"
+          :show-pagination="false"
           :table-column="columns"
           :table-data="moCodeData.list"
           :total="moCodeData?.list?.length"
