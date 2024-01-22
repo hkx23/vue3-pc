@@ -285,15 +285,15 @@ onMounted(async () => {
   console.log('Received from parent:', props.selectedRowData);
   await getBarcodeRuleList();
   await getcontainerType();
-  await getPrintTmplList(); // 打印模板
+  // await getPrintTmplList(); // 打印模板
   await fetchTable2({});
 });
 
 // 打印模板
-const getPrintTmplList = async () => {
-  const PrintTmpReslut = await api.container.getPrintTmplList();
-  console.log('🚀 ~ getPrintTmplList ~ PrintTmpReslut:', PrintTmpReslut); // [] todo
-};
+// const getPrintTmplList = async () => {
+//   const PrintTmpReslut = await api.container.getPrintTmplList();
+//   console.log('🚀 ~ getPrintTmplList ~ PrintTmpReslut:', PrintTmpReslut); // [] todo
+// };
 
 // 获得条码规则下拉数据
 const getBarcodeRuleList = async () => {
