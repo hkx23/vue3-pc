@@ -1778,6 +1778,7 @@ export interface MitemShelflifeReportVO {
   labelNo?: string;
   /** 标签数量 */
   qty?: number;
+  onhandId?: string;
   expiredDays?: string;
 }
 
@@ -2558,10 +2559,12 @@ export interface MFTSubVO {
   qty?: number;
   /** 操作员 */
   operatorName?: string;
-  /** 仓库名称 */
+  /** 产品编码 */
   pdCode?: string;
-  /** 仓库名称 */
+  /** 来源仓库名称 */
   warehouseName?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
   /** 工作中心 */
   workcenterName?: string;
   /** 工单号 */
@@ -4801,7 +4804,7 @@ export const api = {
       pageNum: number;
       /** @format int32 */
       pageSize: number;
-      billNo: string;
+      onhandId: string;
     }) =>
       http.request<ResultPagingDataMitemShelflifeReportVO['data']>(`/api/warehouse/mitemShelflifeReport/getDtl`, {
         method: 'GET',

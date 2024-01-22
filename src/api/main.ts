@@ -1241,6 +1241,10 @@ export interface SupportGroupSearch {
   groupKeyword?: string;
   /** 模糊关键词 */
   userKeyword?: string;
+  /** 新增的 */
+  insertList?: string[];
+  /** 删除的 */
+  deleteList?: string[];
   supportGroupId?: string;
 }
 
@@ -1933,8 +1937,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3687,6 +3691,7 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
   isProductName?: string;
   isProductChecked?: boolean;
@@ -3695,7 +3700,6 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3838,8 +3842,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4544,8 +4548,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4896,7 +4900,7 @@ export interface ContainerSearch {
    */
   pageSize?: number;
   /** 状态 */
-  state?: number[];
+  status?: string;
   containerTypeId?: string;
   /** 模糊关键词 */
   keyword?: string;
@@ -10593,10 +10597,10 @@ export const api = {
      * @request POST:/containerInMitem/removeBatch
      * @secure
      */
-    removeBatch: (query: { ids: string[] }) =>
+    removeBatch: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/containerInMitem/removeBatch`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -10654,10 +10658,10 @@ export const api = {
      * @request POST:/container/removeBatch
      * @secure
      */
-    removeBatch: (query: { ids: string[] }) =>
+    removeBatch: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/container/removeBatch`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -10669,10 +10673,10 @@ export const api = {
      * @request POST:/container/printBarcode
      * @secure
      */
-    printBarcode: (query: { ids: string[] }) =>
+    printBarcode: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/container/printBarcode`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
