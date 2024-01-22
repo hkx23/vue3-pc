@@ -743,8 +743,8 @@ export interface WipLogSearchVO {
   serialNumber?: string;
   /** 工单号 */
   moCode?: string;
-  /** 工作中心编码 */
-  workcenterCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
   /** 车间名称 */
   workshopName?: string;
   /** 上一个工站名称 */
@@ -752,7 +752,7 @@ export interface WipLogSearchVO {
   /** 当前工站名称 */
   curWorkstationrName?: string;
   /** 工作中心描述 */
-  workcenterName?: string;
+  workcenterDesc?: string;
   /** 产品描述 */
   pdDesc?: string;
   /** 过站人 */
@@ -1666,15 +1666,14 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopId?: string;
+  workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2516,12 +2515,10 @@ export type MFTSubVO = {
   qty?: number;
   /** 操作员 */
   operatorName?: string;
-  /** 产品编码 */
+  /** 仓库名称 */
   pdCode?: string;
-  /** 来源仓库名称 */
+  /** 仓库名称 */
   warehouseName?: string;
-  /** 目标仓库名称 */
-  toWarehouseName?: string;
   /** 工作中心 */
   workcenterName?: string;
   /** 工单号 */
@@ -2572,6 +2569,40 @@ export interface ResultPagingDataMFTSubVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataMFTSubVO;
+}
+
+/** 关键物料正向追溯VO */
+export type MFTVO = {
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 批次 */
+  lotNo?: string;
+  /** 数量 */
+  qty?: number;
+  /** 当前状态 */
+  statusName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  receiveTime?: string;
+  /** 响应数据 */
+  tableData?: PagingDataMFTSubVO;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMFTVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 关键物料正向追溯VO */
+  data?: MFTVO;
 }
 
 export interface LabelManageSearch {
@@ -2686,11 +2717,6 @@ export interface LabelManageVO {
   deliveryDtlId?: string;
   /** 接收单号 */
   receiveNo?: string;
-  /**
-   * 入库时间
-   * @format date-time
-   */
-  datetimeStockin?: string;
   /** 状态 */
   status?: string;
   /** 排产单编码 */
@@ -2883,17 +2909,16 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  workshopCode?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopId?: string;
+  workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2997,15 +3022,14 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
-  workshopCode?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
+  workshopId?: string;
+  workshopCode?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
   defectCodeStr?: string;
 }
 
@@ -5094,6 +5118,36 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetMitemBasicInfo
+     * @summary 物料基础信息
+     * @request POST:/mitemForwardTrace/getMitemBasicInfo
+     * @secure
+     */
+    getMitemBasicInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultMFTVO['data']>(`/api/control/mitemForwardTrace/getMitemBasicInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 关键物料正向追溯
+     * @name GetIoInfo
+     * @summary 物料使用信息
+     * @request POST:/mitemForwardTrace/getIOInfo
+     * @secure
+     */
+    getIoInfo: (data: MitemForwardTraceSearch) =>
+      http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getIOInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   labelManage: {
     /**
@@ -5225,10 +5279,9 @@ export const api = {
      * @request GET:/labelManage/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: (query: { moScheId: string }) =>
+    getPrintTmplList: () =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/labelManage/getPrintTmplList`, {
         method: 'GET',
-        params: query,
       }),
 
     /**
@@ -5240,10 +5293,9 @@ export const api = {
      * @request GET:/labelManage/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: (query: { moScheId: string }) =>
+    getBarcodeRuleList: () =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/labelManage/getBarcodeRuleList`, {
         method: 'GET',
-        params: query,
       }),
   },
   barcodeWipCollect: {
@@ -5453,7 +5505,7 @@ export const api = {
      * @request GET:/barcodePkg/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: (query: { moScheId: string; packType: string }) =>
+    getPrintTmplList: (query: { packType: string }) =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/barcodePkg/getPrintTmplList`, {
         method: 'GET',
         params: query,
@@ -5483,7 +5535,7 @@ export const api = {
      * @request GET:/barcodePkg/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: (query: { moScheId: string; packType: string }) =>
+    getBarcodeRuleList: (query: { packType: string }) =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/barcodePkg/getBarcodeRuleList`, {
         method: 'GET',
         params: query,
