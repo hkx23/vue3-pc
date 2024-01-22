@@ -3688,7 +3688,6 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
@@ -3696,6 +3695,7 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -8282,6 +8282,20 @@ export const api = {
      * No description
      *
      * @tags 压力测试
+     * @name Test
+     * @summary 本地测试
+     * @request GET:/stressTest/test
+     * @secure
+     */
+    test: () =>
+      http.request<ResultObject['data']>(`/api/main/stressTest/test`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
      * @name CountLog
      * @summary 查询日志表总数
      * @request GET:/stressTest/countLog
@@ -10579,12 +10593,11 @@ export const api = {
      * @request POST:/containerInMitem/removeBatch
      * @secure
      */
-    // removeBatch: (query: { ids: string[] }) =>
-    //   http.request<ResultObject['data']>(`/api/main/containerInMitem/removeBatch`, {
-    //     method: 'POST',
-    //     params: query,
-    //   }),
-    //todos
+    removeBatch: (query: { ids: string[] }) =>
+      http.request<ResultObject['data']>(`/api/main/containerInMitem/removeBatch`, {
+        method: 'POST',
+        params: query,
+      }),
 
     /**
      * No description
@@ -10641,12 +10654,11 @@ export const api = {
      * @request POST:/container/removeBatch
      * @secure
      */
-    // removeBatch: (query: { ids: string[] }) =>
-    //   http.request<ResultObject['data']>(`/api/main/container/removeBatch`, {
-    //     method: 'POST',
-    //     params: query,
-    //   }),
-    //todos
+    removeBatch: (query: { ids: string[] }) =>
+      http.request<ResultObject['data']>(`/api/main/container/removeBatch`, {
+        method: 'POST',
+        params: query,
+      }),
 
     /**
      * No description
@@ -10657,12 +10669,11 @@ export const api = {
      * @request POST:/container/printBarcode
      * @secure
      */
-    // printBarcode: (query: { ids: string[] }) =>
-    //   http.request<ResultObject['data']>(`/api/main/container/printBarcode`, {
-    //     method: 'POST',
-    //     params: query,
-    //   }),
-    //todos
+    printBarcode: (query: { ids: string[] }) =>
+      http.request<ResultObject['data']>(`/api/main/container/printBarcode`, {
+        method: 'POST',
+        params: query,
+      }),
 
     /**
      * No description
