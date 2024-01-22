@@ -1,12 +1,5 @@
 <template>
-  <t-form
-    ref="formRef"
-    :data="formData"
-    :rules="FORM_RULES"
-    :show-cancel="true"
-    :show-error-message="true"
-    @submit="submit"
-  >
+  <t-form ref="formRef" :data="formData" :show-cancel="true" :show-error-message="true" @submit="submit">
     <t-row :gutter="[32, 16]">
       <t-col :span="6">
         <t-form-item :label="t('business.main.mitemCode')" required-mark name="mitemCode">
@@ -115,27 +108,22 @@ export default {
       isBatchNo: 0, // 是否启用批次
     });
     const formRef = ref(null);
-    const FORM_RULES = ref({
-      mitemCode: [{ required: true, message: t('common.placeholder.input', [t('mitem.mitemCode')]) }],
-      mitemName: [{ required: true, message: t('common.placeholder.input', [t('mitem.mitemName')]) }],
-    });
 
     onMounted(() => {
       console.log('打开dialog');
     });
     const submit = async () => {
-      formRef.value.validate().then((result) => {
-        if (result !== true) {
-          MessagePlugin.warning(Object.values(result)[0][0].message);
-          return;
-        }
-        formData.value.isRaw = formData.value.isRawChecked ? 1 : 0;
-        formData.value.isProduct = formData.value.isProductChecked ? 1 : 0;
-        formData.value.isInProcess = formData.value.isInProcessChecked ? 1 : 0;
+      if (_.isEmpty(formData.value.mitemName)) {
+        MessagePlugin.warning(t('common.placeholder.input', [t('mitem.mitemName')]));
+        return;
+      }
 
-        api.mitem.edit(formData.value);
-        MessagePlugin.success(t('common.message.success'));
-      });
+      formData.value.isRaw = formData.value.isRawChecked ? 1 : 0;
+      formData.value.isProduct = formData.value.isProductChecked ? 1 : 0;
+      formData.value.isInProcess = formData.value.isInProcessChecked ? 1 : 0;
+
+      await api.mitem.edit(formData.value);
+      MessagePlugin.success(t('common.message.success'));
     };
 
     const onWarehouseChange = (value: any) => {
@@ -167,7 +155,6 @@ export default {
       supplyCategoryOptions,
       isBatchNoOptions,
       mitemTypeOptions,
-      FORM_RULES,
       formRef,
     };
   },

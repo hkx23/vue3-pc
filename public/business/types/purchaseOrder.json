@@ -1,0 +1,28 @@
+{
+  "title": "采购单：",
+  "placeholder": "请选择采购单",
+  "url": "/api/warehouse/purchaseOrder/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "采购单",
+      "key": "billNo",
+      "align": "center"
+    },
+    {
+      "title": "供应商",
+      "key": "supplierName",
+      "align": "center"
+    },
+    {
+      "title": "交货地址",
+      "key": "deliverAddress",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "billNo",
+    "label": "billNo"
+  }
+}

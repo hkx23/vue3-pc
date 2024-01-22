@@ -608,8 +608,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -743,8 +743,8 @@ export interface WipLogSearchVO {
   serialNumber?: string;
   /** 工单号 */
   moCode?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
+  /** 工作中心编码 */
+  workcenterCode?: string;
   /** 车间名称 */
   workshopName?: string;
   /** 上一个工站名称 */
@@ -752,7 +752,7 @@ export interface WipLogSearchVO {
   /** 当前工站名称 */
   curWorkstationrName?: string;
   /** 工作中心描述 */
-  workcenterDesc?: string;
+  workcenterName?: string;
   /** 产品描述 */
   pdDesc?: string;
   /** 过站人 */
@@ -960,8 +960,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -1666,11 +1666,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -1717,9 +1717,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
+  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -1847,8 +1847,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2516,10 +2516,12 @@ export type MFTSubVO = {
   qty?: number;
   /** 操作员 */
   operatorName?: string;
-  /** 仓库名称 */
+  /** 产品编码 */
   pdCode?: string;
-  /** 仓库名称 */
+  /** 来源仓库名称 */
   warehouseName?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
   /** 工作中心 */
   workcenterName?: string;
   /** 工单号 */
@@ -2570,40 +2572,6 @@ export interface ResultPagingDataMFTSubVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataMFTSubVO;
-}
-
-/** 关键物料正向追溯VO */
-export type MFTVO = {
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  /** 批次 */
-  lotNo?: string;
-  /** 数量 */
-  qty?: number;
-  /** 当前状态 */
-  statusName?: string;
-  /**
-   * 接收时间
-   * @format date-time
-   */
-  receiveTime?: string;
-  /** 响应数据 */
-  tableData?: PagingDataMFTSubVO;
-} | null;
-
-/** 通用响应类 */
-export interface ResultMFTVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 关键物料正向追溯VO */
-  data?: MFTVO;
 }
 
 export interface LabelManageSearch {
@@ -2910,17 +2878,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
+  stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3024,16 +2992,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  defectCodeStr?: string;
+  stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  stateName?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3270,8 +3238,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3708,8 +3676,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -4298,6 +4266,21 @@ export const api = {
      */
     search: (data: WipRepairSearch) =>
       http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepair/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品维修表
+     * @name GetVerifyProcessCategory
+     * @summary 检验是否维修工序
+     * @request POST:/wipRepair/getVerifyProcessCategory
+     * @secure
+     */
+    getVerifyProcessCategory: (data: WipRepairSearch) =>
+      http.request<ResultObject['data']>(`/api/control/wipRepair/getVerifyProcessCategory`, {
         method: 'POST',
         body: data as any,
       }),
@@ -5106,36 +5089,6 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
-
-    /**
-     * No description
-     *
-     * @tags 关键物料正向追溯
-     * @name GetMitemBasicInfo
-     * @summary 物料基础信息
-     * @request POST:/mitemForwardTrace/getMitemBasicInfo
-     * @secure
-     */
-    getMitemBasicInfo: (data: MitemForwardTraceSearch) =>
-      http.request<ResultMFTVO['data']>(`/api/control/mitemForwardTrace/getMitemBasicInfo`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 关键物料正向追溯
-     * @name GetIoInfo
-     * @summary 物料使用信息
-     * @request POST:/mitemForwardTrace/getIOInfo
-     * @secure
-     */
-    getIoInfo: (data: MitemForwardTraceSearch) =>
-      http.request<ResultPagingDataMFTSubVO['data']>(`/api/control/mitemForwardTrace/getIOInfo`, {
-        method: 'POST',
-        body: data as any,
-      }),
   },
   labelManage: {
     /**
@@ -5267,9 +5220,10 @@ export const api = {
      * @request GET:/labelManage/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: () =>
+    getPrintTmplList: (query: { moScheId: string }) =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/labelManage/getPrintTmplList`, {
         method: 'GET',
+        params: query,
       }),
 
     /**
@@ -5281,9 +5235,10 @@ export const api = {
      * @request GET:/labelManage/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: () =>
+    getBarcodeRuleList: (query: { moScheId: string }) =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/labelManage/getBarcodeRuleList`, {
         method: 'GET',
+        params: query,
       }),
   },
   barcodeWipCollect: {
@@ -5493,7 +5448,7 @@ export const api = {
      * @request GET:/barcodePkg/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: (query: { packType: string }) =>
+    getPrintTmplList: (query: { moScheId: string; packType: string }) =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/barcodePkg/getPrintTmplList`, {
         method: 'GET',
         params: query,
@@ -5523,7 +5478,7 @@ export const api = {
      * @request GET:/barcodePkg/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: (query: { packType: string }) =>
+    getBarcodeRuleList: (query: { moScheId: string; packType: string }) =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/barcodePkg/getBarcodeRuleList`, {
         method: 'GET',
         params: query,

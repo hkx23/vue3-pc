@@ -1933,8 +1933,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3607,8 +3607,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -3687,15 +3687,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
   isProductName?: string;
+  isBatchName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -3838,8 +3838,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4544,8 +4544,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4657,6 +4657,315 @@ export interface ResultCustomer {
 export interface JSONObject {
   empty?: boolean;
   [key: string]: any;
+}
+
+/** 容器类型表 */
+export interface ContainerType {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 容器类型代码 */
+  containerTypeCode?: string;
+  /** 容器类型名称 */
+  containerTypeName?: string;
+  /** 容器类型描述 */
+  containerTypeDesc?: string;
+}
+
+export interface ContainerTypeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 状态 */
+  state?: number[];
+  /** 模糊关键词 */
+  keyword?: string;
+}
+
+/** 显示工站 */
+export interface ContainerTypeVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 容器类型代码 */
+  containerTypeCode?: string;
+  /** 容器类型名称 */
+  containerTypeName?: string;
+  /** 容器类型描述 */
+  containerTypeDesc?: string;
+  /** 状态 */
+  stateName?: string;
+  /** 创建人 */
+  creatorName?: string;
+  /** 修改人 */
+  modifierName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataContainerTypeVO = {
+  list?: ContainerTypeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataContainerTypeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataContainerTypeVO;
+}
+
+/** 容器与物料表 */
+export interface ContainerInMitem {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  containerTypeId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 标准数量 */
+  qty?: number;
+}
+
+export interface ContainerInMitemSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 状态 */
+  state?: number[];
+  containerTypeId?: string;
+  /** 模糊关键词 */
+  keyword?: string;
+}
+
+/** 显示工站 */
+export interface ContainerInMitemVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  containerTypeId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 标准数量 */
+  qty?: number;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 物料分类代码 */
+  categoryCode?: string;
+  /** 物料分类名称 */
+  categoryName?: string;
+  /** 创建人 */
+  creatorName?: string;
+  /** 修改人 */
+  modifierName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataContainerInMitemVO = {
+  list?: ContainerInMitemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataContainerInMitemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataContainerInMitemVO;
+}
+
+export interface ContainerSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 状态 */
+  state?: number[];
+  containerTypeId?: string;
+  /** 模糊关键词 */
+  keyword?: string;
+  barcodeRuleId?: string;
+  /**
+   * 生成数量
+   * @format int32
+   */
+  createNum?: number;
+}
+
+/** 显示工站 */
+export interface ContainerVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 容器类型代码 */
+  containerCode?: string;
+  /** 容器类型名称 */
+  containerName?: string;
+  containerTypeId?: string;
+  /** 状态 */
+  status?: string;
+  /** 状态 */
+  statusName?: string;
+  /** 创建人 */
+  creatorName?: string;
+  /** 修改人 */
+  modifierName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataContainerVO = {
+  list?: ContainerVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataContainerVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataContainerVO;
 }
 
 /** 业务单元模板库明细表 */
@@ -5868,12 +6177,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6203,6 +6512,32 @@ export interface ResultListFavorite {
   message?: string;
   /** 响应数据 */
   data?: Favorite[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListPrintTmpl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PrintTmpl[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListBarcodeRule {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BarcodeRule[] | null;
 }
 
 /** 业务执行单元表 */
@@ -7947,6 +8282,20 @@ export const api = {
      * No description
      *
      * @tags 压力测试
+     * @name Test
+     * @summary 本地测试
+     * @request GET:/stressTest/test
+     * @secure
+     */
+    test: () =>
+      http.request<ResultObject['data']>(`/api/main/stressTest/test`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
      * @name CountLog
      * @summary 查询日志表总数
      * @request GET:/stressTest/countLog
@@ -9628,21 +9977,6 @@ export const api = {
      * No description
      *
      * @tags 标签表
-     * @name SplitBarcodeCommon
-     * @summary 拆分条码
-     * @request POST:/label/splitBarcodeCommon
-     * @secure
-     */
-    splitBarcodeCommon: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/main/label/splitBarcodeCommon`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
      * @name PrintBarcode
      * @summary 打印条码
      * @request POST:/label/printBarcode
@@ -10201,6 +10535,202 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/customer/items/modify`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  containerType: {
+    /**
+     * No description
+     *
+     * @tags 容器类型表
+     * @name Modify
+     * @summary 编辑容器类型
+     * @request POST:/containerType/modify
+     * @secure
+     */
+    modify: (data: ContainerType) =>
+      http.request<ResultObject['data']>(`/api/main/containerType/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 容器类型表
+     * @name GetList
+     * @summary 查询容器类型
+     * @request POST:/containerType/getlist
+     * @secure
+     */
+    getList: (data: ContainerTypeSearch) =>
+      http.request<ResultPagingDataContainerTypeVO['data']>(`/api/main/containerType/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 容器类型表
+     * @name Add
+     * @summary 新增容器类型
+     * @request POST:/containerType/add
+     * @secure
+     */
+    add: (data: ContainerType) =>
+      http.request<ResultObject['data']>(`/api/main/containerType/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  containerInMitem: {
+    /**
+     * No description
+     *
+     * @tags 容器与物料表
+     * @name RemoveBatch
+     * @summary 删除容器类型关联物料
+     * @request POST:/containerInMitem/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/containerInMitem/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 容器与物料表
+     * @name Modify
+     * @summary 编辑容器类型关联物料
+     * @request POST:/containerInMitem/modify
+     * @secure
+     */
+    modify: (data: ContainerInMitem) =>
+      http.request<ResultObject['data']>(`/api/main/containerInMitem/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 容器与物料表
+     * @name GetList
+     * @summary 查询容器类型与物料
+     * @request POST:/containerInMitem/getlist
+     * @secure
+     */
+    getList: (data: ContainerInMitemSearch) =>
+      http.request<ResultPagingDataContainerInMitemVO['data']>(`/api/main/containerInMitem/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 容器与物料表
+     * @name Add
+     * @summary 新增容器类型关联物料
+     * @request POST:/containerInMitem/add
+     * @secure
+     */
+    add: (data: ContainerInMitem) =>
+      http.request<ResultObject['data']>(`/api/main/containerInMitem/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  container: {
+    /**
+     * No description
+     *
+     * @tags 容器表
+     * @name RemoveBatch
+     * @summary 删除容器
+     * @request POST:/container/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/container/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 容器表
+     * @name PrintBarcode
+     * @summary 打印条码
+     * @request POST:/container/printBarcode
+     * @secure
+     */
+    printBarcode: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/container/printBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 容器表
+     * @name GetList
+     * @summary 查询容器
+     * @request POST:/container/getlist
+     * @secure
+     */
+    getList: (data: ContainerSearch) =>
+      http.request<ResultPagingDataContainerVO['data']>(`/api/main/container/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 容器表
+     * @name GenerateBarcode
+     * @summary 生成条码
+     * @request POST:/container/generateBarcode
+     * @secure
+     */
+    generateBarcode: (data: ContainerSearch) =>
+      http.request<ResultObject['data']>(`/api/main/container/generateBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 容器表
+     * @name GetPrintTmplList
+     * @summary 获得打印模板下拉数据
+     * @request GET:/container/getPrintTmplList
+     * @secure
+     */
+    getPrintTmplList: () =>
+      http.request<ResultListPrintTmpl['data']>(`/api/main/container/getPrintTmplList`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 容器表
+     * @name GetBarcodeRuleList
+     * @summary 获得条码规则下拉数据
+     * @request GET:/container/getBarcodeRuleList
+     * @secure
+     */
+    getBarcodeRuleList: () =>
+      http.request<ResultListBarcodeRule['data']>(`/api/main/container/getBarcodeRuleList`, {
+        method: 'GET',
       }),
   },
   businessTmplLibDtl: {
