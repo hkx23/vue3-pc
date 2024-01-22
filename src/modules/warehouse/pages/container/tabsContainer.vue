@@ -65,11 +65,11 @@
           {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
         </template>
         <!-- 编辑 -->
-        <template #op2>
+        <!-- <template #op2>
           <t-space>
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2()">编辑</t-link>
           </t-space>
-        </template>
+        </template> -->
       </cmp-table>
     </t-tab-panel>
   </t-tabs>
@@ -119,7 +119,7 @@
     header="新增容器类型与物料关系"
   >
     <!-- :rules="rules1" -->
-    <t-form :data="formData2" label-width="110px" :rules="rules" @submit="submit2" @reset="cancel">
+    <t-form :data="formData2" label-width="110px" :rules="rules" @reset="cancel">
       <t-form-item label="容器类型" name="containerType">
         <t-input v-model="formData2.containerType"></t-input>
       </t-form-item>
@@ -210,7 +210,7 @@ const rules: FormRules<Data> = {
 
 const optsContainer1 = computed(() => {
   return {
-    containerTypeId: {
+    state: {
       label: '容器状态',
       labelWidth: '20',
       event: 'select',
@@ -228,7 +228,8 @@ const optsContainer1 = computed(() => {
       comp: 't-input',
       defaultVal: '',
     },
-    printTemplate: {
+    // todo
+    containerTypeId: {
       label: '打印模板',
       labelWidth: '20',
       event: 'select',
@@ -318,19 +319,21 @@ const getcontainerType = async () => {
 
 //* 查询
 const onInput = async (data: any) => {
+  console.log('🚀 ~ onInput ~ data:', data);
   setLoading(true);
   const { containerTypeId, state, keyword } = data;
   if (!data.value) {
     const result = await api.container.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      keyword,
-      state,
       containerTypeId,
+      state,
+      keyword,
     });
     tableContainerData1.value = result.list;
     dataTotal1.value = result.total;
   }
+  setLoading(false);
 };
 //* 查询2
 const onInput2 = async (data: any) => {
@@ -412,7 +415,6 @@ const submit1 = async () => {
 // };
 
 //
-// const submit2 = () => {};
 // 编辑
 const onEditRowClick2 = async () => {
   // containerVisible.value = true;
