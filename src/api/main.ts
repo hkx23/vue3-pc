@@ -1241,10 +1241,6 @@ export interface SupportGroupSearch {
   groupKeyword?: string;
   /** 模糊关键词 */
   userKeyword?: string;
-  /** 新增的 */
-  insertList?: string[];
-  /** 删除的 */
-  deleteList?: string[];
   supportGroupId?: string;
 }
 
@@ -1937,8 +1933,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3611,8 +3607,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 /** 响应数据 */
@@ -3691,15 +3687,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
   isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
+  isRawName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3909,11 +3905,6 @@ export interface LabelVO {
   deliveryDtlId?: string;
   /** 接收单号 */
   receiveNo?: string;
-  /**
-   * 入库时间
-   * @format date-time
-   */
-  datetimeStockin?: string;
   /** 状态 */
   status?: string;
   /** 送货单 */
@@ -4133,11 +4124,6 @@ export interface Label {
   deliveryDtlId?: string;
   /** 接收单号 */
   receiveNo?: string;
-  /**
-   * 入库时间
-   * @format date-time
-   */
-  datetimeStockin?: string;
   /** 状态 */
   status?: string;
 }
@@ -4558,8 +4544,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4910,7 +4896,7 @@ export interface ContainerSearch {
    */
   pageSize?: number;
   /** 状态 */
-  status?: string;
+  state?: number[];
   containerTypeId?: string;
   /** 模糊关键词 */
   keyword?: string;
@@ -6191,12 +6177,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -8290,20 +8276,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/stressTest/MemoryUsageLog`, {
         method: 'POST',
         params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 压力测试
-     * @name Test
-     * @summary 本地测试
-     * @request GET:/stressTest/test
-     * @secure
-     */
-    test: () =>
-      http.request<ResultObject['data']>(`/api/main/stressTest/test`, {
-        method: 'GET',
       }),
 
     /**
@@ -10607,10 +10579,10 @@ export const api = {
      * @request POST:/containerInMitem/removeBatch
      * @secure
      */
-    removeBatch: (data: string[]) =>
+    removeBatch: (query: { ids: string[] }) =>
       http.request<ResultObject['data']>(`/api/main/containerInMitem/removeBatch`, {
         method: 'POST',
-        body: data as any,
+        params: query,
       }),
 
     /**
@@ -10668,10 +10640,10 @@ export const api = {
      * @request POST:/container/removeBatch
      * @secure
      */
-    removeBatch: (data: string[]) =>
+    removeBatch: (query: { ids: string[] }) =>
       http.request<ResultObject['data']>(`/api/main/container/removeBatch`, {
         method: 'POST',
-        body: data as any,
+        params: query,
       }),
 
     /**
@@ -10683,10 +10655,10 @@ export const api = {
      * @request POST:/container/printBarcode
      * @secure
      */
-    printBarcode: (data: string[]) =>
+    printBarcode: (query: { ids: string[] }) =>
       http.request<ResultObject['data']>(`/api/main/container/printBarcode`, {
         method: 'POST',
-        body: data as any,
+        params: query,
       }),
 
     /**
