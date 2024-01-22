@@ -84,12 +84,12 @@
                 <t-space>{{ mitemInfo.qty }}</t-space>
               </t-col>
               <t-col :span="3">
-                <t-space>当前状态：</t-space>
-                <t-space>{{ mitemInfo.status }}</t-space>
+                <t-space v-if="queryCondition.searchType === 'mintemLabel'">当前状态：</t-space>
+                <t-space v-if="queryCondition.searchType === 'mintemLabel'">{{ mitemInfo.statusName }}</t-space>
               </t-col>
               <t-col :span="3">
-                <t-space>接收时间：</t-space>
-                <t-space>{{ mitemInfo.receiveTime }}</t-space>
+                <t-space v-if="queryCondition.searchType === 'mintemLabel'">接收时间：</t-space>
+                <t-space v-if="queryCondition.searchType === 'mintemLabel'">{{ mitemInfo.receiveTime }}</t-space>
               </t-col>
             </t-row>
             <t-row style="margin-top: 15px"></t-row>
@@ -218,7 +218,7 @@ const mitemInfo = ref({
   mitemCode: '',
   mitemDesc: '',
   receiveTime: '',
-  status: '',
+  statusName: '',
   qty: '',
 });
 const supplierInfo = ref({
@@ -305,7 +305,13 @@ const IOColumns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'warehouseName',
-    title: '仓库',
+    title: '来源仓库',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'toWarehouseName',
+    title: '目标仓库',
     align: 'center',
     width: '130',
   },
