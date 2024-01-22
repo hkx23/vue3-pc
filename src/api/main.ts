@@ -1933,8 +1933,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3607,8 +3607,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -3687,15 +3687,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
   isState?: boolean;
+  stateName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isProductName?: string;
+  isBatchName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3838,8 +3838,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4544,8 +4544,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -6177,12 +6177,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -10593,10 +10593,10 @@ export const api = {
      * @request POST:/containerInMitem/removeBatch
      * @secure
      */
-    removeBatch: (query: { ids: string[] }) =>
+    removeBatch: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/containerInMitem/removeBatch`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -10654,10 +10654,10 @@ export const api = {
      * @request POST:/container/removeBatch
      * @secure
      */
-    removeBatch: (query: { ids: string[] }) =>
+    removeBatch: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/container/removeBatch`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -10669,10 +10669,10 @@ export const api = {
      * @request POST:/container/printBarcode
      * @secure
      */
-    printBarcode: (query: { ids: string[] }) =>
+    printBarcode: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/container/printBarcode`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
