@@ -545,6 +545,7 @@ const onPrintRulesList = reactive({ list: [] });
 // 打印规则查询条件
 const printRuCondition = ref({
   packType: '',
+  moScheId: '',
 });
 const onPrintRulesData = async () => {
   const res = await api.barcodePkg.getBarcodeRuleList(printRuCondition.value);
@@ -1121,6 +1122,7 @@ const onRefreshTag = async () => {
 const onRowClick = ({ row }) => {
   tabValue.value = 1;
   queryCondition.value.moScheduleId = row.moScheduleId;
+  printRuCondition.value.moScheId = row.moScheduleId;
   printMode.value.moScheduleId = row.moScheduleId;
   moscheRowKeys.value = [];
   moscheRowKeys.value.push(row.moScheduleId);
