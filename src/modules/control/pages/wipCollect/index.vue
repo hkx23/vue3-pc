@@ -14,6 +14,7 @@
               <t-col flex="auto">
                 <cmp-scan-input
                   v-if="scanType == 'SCANTEXT'"
+                  ref="scanBarcodeInstance"
                   v-model="mainform.serialNumber"
                   label="产品条码"
                   :placeholder="scanDesc"
@@ -21,6 +22,7 @@
                 ></cmp-scan-input>
                 <cmp-scan-input
                   v-else
+                  ref="scanKeypartInstance"
                   v-model="mainform.keypartCode"
                   label="关键件条码"
                   :placeholder="scanDesc"
@@ -131,6 +133,8 @@ import { scanCollectInfoModel } from '../../api/processInspection';
 import { useLang } from './lang';
 
 const userStore = useUserStore();
+const scanBarcodeInstance = ref(null);
+const scanKeypartInstance = ref(null);
 // 全局信息
 const scanInfoList = ref<scanCollectInfoModel[]>([]);
 const { t } = useLang();
@@ -303,14 +307,14 @@ const serialNumberEnter = async (value) => {
           }
         } else {
           pushMessage('error', value, reData.scanMessage);
-          // writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
-          if (scanType.value === 'SCANTEXT') {
+          if (currentScanType === 'SCANTEXT') {
             resetBarcode();
+          } else {
+            resetKeypartCode();
           }
           if (reData.isCommit) {
             resetKeypartCode();
           }
-          // writeScanInfoError(reData.serialNumber, reData.qty, reData.scanMessage); // 扫描失败
         }
         LoadingPlugin(false);
       })
@@ -337,10 +341,12 @@ const resetHandle = () => {
 
 const resetBarcode = () => {
   mainform.value.serialNumber = '';
+  scanBarcodeInstance.value.ref.focus();
 };
 
 const resetKeypartCode = () => {
   mainform.value.keypartCode = '';
+  scanKeypartInstance.value.ref.focus();
 };
 
 const resetKeyPartList = () => {
@@ -410,6 +416,7 @@ const getRowClassName = ({ rowIndex }) => {
 
 // 切换工站
 const handleonChange = () => {
+  resetHandle();
   Init();
 };
 
