@@ -1241,6 +1241,10 @@ export interface SupportGroupSearch {
   groupKeyword?: string;
   /** 模糊关键词 */
   userKeyword?: string;
+  /** 新增的 */
+  insertList?: string[];
+  /** 删除的 */
+  deleteList?: string[];
   supportGroupId?: string;
 }
 
@@ -3689,13 +3693,13 @@ export interface MitemVO {
   isBatchNo?: number;
   isState?: boolean;
   stateName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
   isProductName?: string;
-  isBatchName?: string;
   isProductChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -4896,7 +4900,7 @@ export interface ContainerSearch {
    */
   pageSize?: number;
   /** 状态 */
-  state?: number[];
+  status?: string;
   containerTypeId?: string;
   /** 模糊关键词 */
   keyword?: string;

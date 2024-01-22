@@ -1667,8 +1667,8 @@ export interface ProductReworkVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
   datetimeScheStr?: string;
@@ -1847,8 +1847,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2879,12 +2879,12 @@ export interface BarcodeWipCollectVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2993,15 +2993,15 @@ export interface BarcodeWipVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
   isState?: boolean;
+  defectCodeStr?: string;
+  stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3238,8 +3238,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -3676,8 +3676,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */

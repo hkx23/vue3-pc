@@ -1778,6 +1778,7 @@ export interface MitemShelflifeReportVO {
   labelNo?: string;
   /** 标签数量 */
   qty?: number;
+  onhandId?: string;
   expiredDays?: string;
 }
 
@@ -4803,7 +4804,7 @@ export const api = {
       pageNum: number;
       /** @format int32 */
       pageSize: number;
-      billNo: string;
+      onhandId: string;
     }) =>
       http.request<ResultPagingDataMitemShelflifeReportVO['data']>(`/api/warehouse/mitemShelflifeReport/getDtl`, {
         method: 'GET',
