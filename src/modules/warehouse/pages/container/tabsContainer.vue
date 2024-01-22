@@ -412,7 +412,9 @@ const submit1 = async () => {
 // };
 
 //
-const submit2 = () => {};
+const submit2 = () => {
+  console.log('🚀 ~ file: tabsContainer.vue:418 ~ submit2 ~ submit2:', 'submit2');
+};
 // 编辑
 const onEditRowClick2 = async () => {
   // containerVisible.value = true;
