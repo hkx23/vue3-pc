@@ -715,6 +715,11 @@ export type LabelVO = {
   deliveryDtlId?: string;
   /** 接收单号 */
   receiveNo?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
   /** 状态 */
   status?: string;
   /** 送货单 */
@@ -1888,6 +1893,16 @@ export interface ResultLocationVO {
   data?: LocationVO;
 }
 
+/** 领料执行提交模型 */
+export interface MaterialRequisitionExcuteDTO {
+  /** 领料单号 */
+  billNo?: string;
+  toWarehouseId?: string;
+  /** 提交的模型-明细信息 */
+  submitList?: MaterialRequisitionExcuteDtlVO[];
+}
+
+/** 提交的模型-明细信息 */
 export interface MaterialRequisitionExcuteDtlVO {
   id?: string;
   /**
@@ -1947,6 +1962,11 @@ export interface MaterialRequisitionExcuteDtlVO {
    * @format int32
    */
   isEnableLocation?: number;
+  /**
+   * 是否来源仓库先进先出
+   * @format int32
+   */
+  isFifo?: number;
   districtCode?: string;
   districtName?: string;
   locationCode?: string;
@@ -1958,6 +1978,11 @@ export interface MaterialRequisitionExcuteDtlVO {
    * @format int32
    */
   isToEnableLocation?: number;
+  /**
+   * 是否目标仓库先进先出
+   * @format int32
+   */
+  isToFifo?: number;
   workshopId?: string;
   /**
    * 是否启用批次,1：是；0：否
@@ -1994,103 +2019,6 @@ export interface MaterialRequisitionExcuteDtlVO {
    * @format double
    */
   scanQty?: number;
-}
-
-export interface MaterialRequisitionVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  billNo?: string;
-  businessCategoryId?: string;
-  status?: string;
-  /**
-   * 打印次数
-   * @format int32
-   */
-  printCount?: number;
-  /**
-   * 最后打印时间
-   * @format date-time
-   */
-  datetimeLastPrint?: string;
-  userLastPrintId?: string;
-  /**
-   * 批准时间
-   * @format date-time
-   */
-  datetimeApproved?: string;
-  userApprovedId?: string;
-  /**
-   * 驳回时间
-   * @format date-time
-   */
-  datetimeRejected?: string;
-  userRejectedId?: string;
-  /**
-   * 取消时间
-   * @format date-time
-   */
-  datetimeCanceled?: string;
-  userCanceledId?: string;
-  /**
-   * 过帐时间
-   * @format date-time
-   */
-  datetimeTransfer?: string;
-  userTransferId?: string;
-  /**
-   * 作业完成时间
-   * @format date-time
-   */
-  datetimePicked?: string;
-  userPickedId?: string;
-  /**
-   * 接收时间
-   * @format date-time
-   */
-  datetimeReceipted?: string;
-  userReceiptedId?: string;
-  /** 车间代码 */
-  workshopCode?: string;
-  /** 车间名称 */
-  workshopName?: string;
-  /** 创建人名称 */
-  creatorName?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  createTime?: string;
-  /** 修改人名称 */
-  modifierName?: string;
-  /**
-   * 修改人时间
-   * @format date-time
-   */
-  modifiedTime?: string;
-  dtls?: MaterialRequisitionExcuteDtlVO[];
-  /** 单据状态名称 */
-  statusName?: string;
 }
 
 /** 查询排产单BOM物料的已领料数量信息 */
@@ -2218,7 +2146,7 @@ export interface MaterialRequisitionDtlVO {
 export interface OnHandVO {
   warehouseId?: string;
   districtId?: string;
-  locationId?: string;
+  locId?: string;
   mitemId?: string;
   /** 库存现有量 */
   qty?: number;
@@ -3553,6 +3481,104 @@ export interface ResultPagingDataOnhandQtyDtlVO {
   data?: PagingDataOnhandQtyDtlVO;
 }
 
+/** 响应数据 */
+export type MaterialRequisitionVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  billNo?: string;
+  businessCategoryId?: string;
+  status?: string;
+  /**
+   * 打印次数
+   * @format int32
+   */
+  printCount?: number;
+  /**
+   * 最后打印时间
+   * @format date-time
+   */
+  datetimeLastPrint?: string;
+  userLastPrintId?: string;
+  /**
+   * 批准时间
+   * @format date-time
+   */
+  datetimeApproved?: string;
+  userApprovedId?: string;
+  /**
+   * 驳回时间
+   * @format date-time
+   */
+  datetimeRejected?: string;
+  userRejectedId?: string;
+  /**
+   * 取消时间
+   * @format date-time
+   */
+  datetimeCanceled?: string;
+  userCanceledId?: string;
+  /**
+   * 过帐时间
+   * @format date-time
+   */
+  datetimeTransfer?: string;
+  userTransferId?: string;
+  /**
+   * 作业完成时间
+   * @format date-time
+   */
+  datetimePicked?: string;
+  userPickedId?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  userReceiptedId?: string;
+  /** 车间代码 */
+  workshopCode?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  /**
+   * 修改人时间
+   * @format date-time
+   */
+  modifiedTime?: string;
+  dtls?: MaterialRequisitionExcuteDtlVO[];
+  /** 单据状态名称 */
+  statusName?: string;
+} | null;
+
 /** 通用响应类 */
 export interface ResultListMaterialRequisitionVO {
   /**
@@ -3575,6 +3601,7 @@ export interface ResultMaterialRequisitionExcuteDtlVO {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 提交的模型-明细信息 */
   data?: MaterialRequisitionExcuteDtlVO;
 }
 
@@ -3587,6 +3614,7 @@ export interface ResultMaterialRequisitionVO {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 响应数据 */
   data?: MaterialRequisitionVO;
 }
 
@@ -4867,7 +4895,7 @@ export const api = {
      * @request POST:/materialRequisitionExcute/submit
      * @secure
      */
-    submit: (data: MaterialRequisitionVO) =>
+    submit: (data: MaterialRequisitionExcuteDTO) =>
       http.request<ResultBoolean['data']>(`/api/warehouse/materialRequisitionExcute/submit`, {
         method: 'POST',
         body: data as any,
@@ -4882,8 +4910,14 @@ export const api = {
      * @request GET:/materialRequisitionExcute/scanMitemLabel
      * @secure
      */
-    scanMitemLabel: (query: { billNo: string; tranDtlId: string; labelNo: string }) =>
-      http.request<ResultBoolean['data']>(`/api/warehouse/materialRequisitionExcute/scanMitemLabel`, {
+    scanMitemLabel: (query: {
+      billNo: string;
+      tranDtlId: string;
+      labelNo: string;
+      /** @format int32 */
+      isFifo: number;
+    }) =>
+      http.request<ResultString['data']>(`/api/warehouse/materialRequisitionExcute/scanMitemLabel`, {
         method: 'GET',
         params: query,
       }),
