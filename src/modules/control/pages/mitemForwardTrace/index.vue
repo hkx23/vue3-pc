@@ -563,7 +563,7 @@ const fetchMoTable = async () => {
         mitemInfo.value.mitemCode = '无数据';
         mitemInfo.value.mitemDesc = '无数据';
         mitemInfo.value.qty = '无数据';
-        mitemInfo.value.status = '无数据';
+        mitemInfo.value.statusName = '无数据';
         mitemInfo.value.receiveTime = '无数据';
         mitemBaseInfoList.list = [];
         mitemBaseInfoTabTotal.value = 0;
