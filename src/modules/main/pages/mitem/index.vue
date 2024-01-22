@@ -7,6 +7,8 @@
     <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
+        v-model:filters="filterList"
+        v-model:sorters="sortList"
         row-key="id"
         :table-column="tableMitemColumns"
         :table-data="tableDataMitem"
@@ -65,14 +67,14 @@ const selectedMitemRowKeys = ref([]);
 const tableDataMitem = ref([]);
 const mitemTypeOptions = ref([t('business.main.raw'), t('business.main.inProduct'), t('business.main.product')]);
 const mitemTypeSelect = ref([]);
-const sortlist = ref([]);
-const filterlist = ref([]);
+const sortList = ref({ sorters: [] });
+const filterList = ref({ filters: [] });
 const formVisible = ref(false);
 const formRef = ref(null);
 
 const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('business.main.serialNumber'), colKey: 'serial-number', width: 74 },
-  { title: t('business.main.mitemCode'), width: 160, colKey: 'mitemCode' },
+  { title: t('business.main.mitemCode'), width: 160, colKey: 'mitemCode', sorter: true, filter: { type: 'input' } },
   { title: t('business.main.mitemName'), width: 160, colKey: 'mitemName' },
   { title: t('business.main.mitemDesc'), width: 160, colKey: 'mitemDesc' },
   { title: t('business.main.mitemCategoryCode'), width: 160, colKey: 'mitemCategoryCode' },
@@ -143,8 +145,8 @@ const fetchTable = async () => {
       isProduct: mitemTypeSelect.value.find((n) => n === t('business.main.product')) != null ? 1 : 0,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      sorts: sortlist.value,
-      filters: filterlist.value,
+      sorts: sortList.value.sorters,
+      filters: filterList.value.filters,
     })) as any;
     tableDataMitem.value = data.list;
     dataTotal.value = data.total;
