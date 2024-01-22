@@ -10579,11 +10579,12 @@ export const api = {
      * @request POST:/containerInMitem/removeBatch
      * @secure
      */
-    removeBatch: (query: { ids: string[] }) =>
-      http.request<ResultObject['data']>(`/api/main/containerInMitem/removeBatch`, {
-        method: 'POST',
-        params: query,
-      }),
+    // removeBatch: (query: { ids: string[] }) =>
+    //   http.request<ResultObject['data']>(`/api/main/containerInMitem/removeBatch`, {
+    //     method: 'POST',
+    //     params: query,
+    //   }),
+    //todos
 
     /**
      * No description
@@ -10640,11 +10641,12 @@ export const api = {
      * @request POST:/container/removeBatch
      * @secure
      */
-    removeBatch: (query: { ids: string[] }) =>
-      http.request<ResultObject['data']>(`/api/main/container/removeBatch`, {
-        method: 'POST',
-        params: query,
-      }),
+    // removeBatch: (query: { ids: string[] }) =>
+    //   http.request<ResultObject['data']>(`/api/main/container/removeBatch`, {
+    //     method: 'POST',
+    //     params: query,
+    //   }),
+    //todos
 
     /**
      * No description
@@ -10655,11 +10657,12 @@ export const api = {
      * @request POST:/container/printBarcode
      * @secure
      */
-    printBarcode: (query: { ids: string[] }) =>
-      http.request<ResultObject['data']>(`/api/main/container/printBarcode`, {
-        method: 'POST',
-        params: query,
-      }),
+    // printBarcode: (query: { ids: string[] }) =>
+    //   http.request<ResultObject['data']>(`/api/main/container/printBarcode`, {
+    //     method: 'POST',
+    //     params: query,
+    //   }),
+    //todos
 
     /**
      * No description
