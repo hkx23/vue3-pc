@@ -11,52 +11,60 @@
           <t-space size="small" :align="'center'">
             <slot name="button"></slot>
           </t-space>
-          <t-space v-if="showSetting" size="small" :align="'center'">
-            <!-- <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
+          <t-popup v-if="showSetting" trigger="click" placement="bottom-right" :z-index="300">
+            <t-button shape="square" variant="text"> <t-icon name="more" /></t-button>
+            <template #content>
+              <t-space direction="vertical" size="small" :align="'center'">
+                <t-button v-if="props.showExport" variant="text" @click="onExport"> 导出 </t-button>
+                <t-button v-if="props.showRefresh" variant="text" :disabled="loading" @click="onRefresh">
+                  刷新
+                </t-button>
+                <t-popup trigger="click" placement="left-top" @visible-change="columnPopChange">
+                  <t-button variant="text">列配置</t-button>
+                  <!-- <div slot="content">触发元素是指触发浮层内容显示的元素</div> -->
+                  <template #content>
+                    <div style="padding: 8px; width: 200px">
+                      <!-- 查询框 -->
+                      <!-- <div class="table-box__search">
+                    <t-input placeholder="请输入" v-model="searchValue" />
+                  </div> -->
+                      <!-- checkbox列表 -->
+                      <div class="table-box__checkbox">
+                        <t-space ref="settingRef" direction="vertical" :size="8" style="width: 100%">
+                          <t-row v-for="(item, index) in colConfigs" :key="index" :gutter="[0, 8]">
+                            <t-col flex="30px" class="handle cursor-move"> <move-icon /></t-col>
+                            <t-col flex="auto">{{ item.title }}</t-col>
+                            <t-col flex="30px"><t-switch v-model="item.isShow" /></t-col>
+                          </t-row>
+                        </t-space>
+                      </div>
+                      <div class="flxsc" style="width: 100%">
+                        <t-button style="flex: 1" ghost @click="onAllColConfig('hide')">全部隐藏</t-button>
+                        <div style="width: 20px"></div>
+                        <t-button style="flex: 1" @click="onAllColConfig('show')">全部显示</t-button>
+                      </div>
+                    </div>
+                  </template>
+                </t-popup>
+              </t-space>
+            </template>
+          </t-popup>
+
+          <!-- <t-button v-if="props.showExport" shape="square" variant="outline" @click="onExport">
               <template #icon>
                 <t-icon name="file-export" />
               </template>
             </t-button> -->
-            <!-- <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
+          <!-- <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
               <template #icon>
                 <t-icon name="refresh" />
               </template>
             </t-button> -->
-            <!-- <t-button shape="square" variant="outline" @click="data.visible = true">
+          <!-- <t-button shape="square" variant="outline" @click="data.visible = true">
               <template #icon>
                 <t-icon name="adjustment" />
               </template>
             </t-button> -->
-            <t-button v-if="props.enableExport" variant="outline" @click="onExport"> 导出 </t-button>
-            <t-button variant="outline" :disabled="loading" @click="onRefresh"> 刷新 </t-button>
-            <t-popup trigger="click" placement="bottom-right" @visible-change="columnPopChange">
-              <t-button variant="outline">列配置</t-button>
-              <!-- <div slot="content">触发元素是指触发浮层内容显示的元素</div> -->
-              <template #content>
-                <div style="padding: 8px; width: 200px">
-                  <!-- 查询框 -->
-                  <!-- <div class="table-box__search">
-                    <t-input placeholder="请输入" v-model="searchValue" />
-                  </div> -->
-                  <!-- checkbox列表 -->
-                  <div class="table-box__checkbox">
-                    <t-space ref="settingRef" direction="vertical" :size="8" style="width: 100%">
-                      <t-row v-for="(item, index) in colConfigs" :key="index" :gutter="[0, 8]">
-                        <t-col flex="30px" class="handle cursor-move"> <move-icon /></t-col>
-                        <t-col flex="auto">{{ item.title }}</t-col>
-                        <t-col flex="30px"><t-switch v-model="item.isShow" /></t-col>
-                      </t-row>
-                    </t-space>
-                  </div>
-                  <div class="flxsc" style="width: 100%">
-                    <t-button style="flex: 1" ghost @click="onAllColConfig('hide')">全部隐藏</t-button>
-                    <div style="width: 20px"></div>
-                    <t-button style="flex: 1" @click="onAllColConfig('show')">全部显示</t-button>
-                  </div>
-                </div>
-              </template>
-            </t-popup>
-          </t-space>
         </t-space>
       </div>
       <!-- 表格属性备份
@@ -247,7 +255,8 @@ const props = defineProps({
   },
   showToolbar: { type: Boolean, default: true },
   showSetting: { type: Boolean, default: true },
-  enableExport: { type: Boolean, default: true },
+  showRefresh: { type: Boolean, default: false },
+  showExport: { type: Boolean, default: true },
   remoteFilter: { type: Boolean, default: true },
   remoteSorter: { type: Boolean, default: true },
   tableColumn: {
