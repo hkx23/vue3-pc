@@ -2516,10 +2516,12 @@ export type MFTSubVO = {
   qty?: number;
   /** 操作员 */
   operatorName?: string;
-  /** 仓库名称 */
+  /** 产品编码 */
   pdCode?: string;
-  /** 仓库名称 */
+  /** 来源仓库名称 */
   warehouseName?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
   /** 工作中心 */
   workcenterName?: string;
   /** 工单号 */

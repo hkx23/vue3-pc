@@ -225,7 +225,6 @@ const handleRowClick = (row, event) => {
   const { containerTypeName, id } = event.currentRowData;
   propsId.value = id; // 父调子入参
   selectedRowData.value = { containerTypeName, id };
-  console.log('🚀 ~ handleRowClick ~ selectedRowData.value:', selectedRowData.value);
 };
 // 新增提交
 const submit1 = async () => {
@@ -250,6 +249,7 @@ const submit1 = async () => {
   }
   containerVisible.value = false;
   onInput({}); // 重新获取数据
+  // refreshTable.value.fetchTable(propsId.value);
 };
 
 // 取消
@@ -269,6 +269,7 @@ watch(propsId, (propsId) => {
   if (propsId) {
     // fetchTables(propsId);  调用子组件的 查询方法
     refreshTable.value.fetchTable(propsId);
+    refreshTable.value.fetchTable2(propsId);
   }
 });
 </script>
