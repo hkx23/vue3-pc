@@ -1,6 +1,6 @@
 <template>
   <t-tabs v-model="activeTab">
-    <!-- 默认插槽 和 具名插槽（panel）都是用来渲染面板内容 -->
+    <!-- 默认插槽 和 具名插槽（panel）用来渲染面板内容 -->
     <t-tab-panel value="tab1" label="容器" :destroy-on-hide="false">
       <t-card>
         <cmp-query ref="queryComponent" :opts="optsContainer1" :bool-enter="false" @submit="onInput"> </cmp-query>
@@ -17,7 +17,14 @@
       >
         <template #button>
           <!-- <t-button theme="primary">新增</t-button> -->
-          <t-button theme="primary" @click="generate">生成</t-button>
+          <!-- <t-button v-if="props.selectedRowData" theme="primary" @click="generate">生成</t-button> -->
+          <t-button
+            v-if="props.selectedRowData && Object.keys(props.selectedRowData).length > 0"
+            theme="primary"
+            @click="generate"
+            >生成</t-button
+          >
+
           <t-button theme="primary">打印</t-button>
           <t-button theme="primary">删除</t-button>
         </template>
@@ -38,7 +45,8 @@
         </template>
       </cmp-table>
     </t-tab-panel>
-    <!-- 物料关联 -->
+
+    <!-- ######### 物料关联 ######## -->
     <t-tab-panel value="tab2" label="物料关联" :destroy-on-hide="false">
       <t-card>
         <cmp-query ref="queryComponent" :opts="optsContainer2" :bool-enter="false" @submit="onInput2"> </cmp-query>
@@ -118,25 +126,43 @@
     :close-on-overlay-click="false"
     header="新增容器类型与物料关系"
   >
-    <!-- :rules="rules1" -->
-    <t-form :data="formData2" label-width="110px" :rules="rules" @reset="cancel">
+    <t-form :data="formData2" label-width="110px" :rules="rules2" @submit="submit2" @reset="cancel2">
       <t-form-item label="容器类型" name="containerType">
         <t-input v-model="formData2.containerType"></t-input>
       </t-form-item>
+
       <t-form-item label="物料类别" name="mitemCategoryId">
-        <t-select v-model="formData2.mitemCategoryId"></t-select>
+        <!--label-field="mitemCategoryName"
+          value-field="mitemCategoryId" -->
+        <bcmp-select-business
+          v-model="formData2.mitemCategoryId"
+          :show-title="false"
+          type="mitemCategory"
+          :label-field="formData2.mitemCategoryId"
+          :value-field="formData2.mitemCategoryCode"
+        ></bcmp-select-business>
       </t-form-item>
-      <t-form-item label="物料类别编码" name="containerTypeId">
-        <t-select v-model="formData2.containerTypeId"></t-select>
+
+      <t-form-item label="物料类别编码" name="mitemCategoryId">
+        <!-- <t-select v-model="formData2.containerTypeId"></t-select> -->
+        <t-input v-model="formData2.mitemCategoryId"></t-input>
       </t-form-item>
+
       <t-form-item label="物料名称" name="mitemId">
-        <t-select v-model="formData2.mitemId"></t-select>
+        <bcmp-select-business
+          v-model="formData2.mitemId"
+          :is-multiple="false"
+          :show-title="false"
+          type="mitem"
+        ></bcmp-select-business>
       </t-form-item>
+
       <!-- <t-form-item label="物料编码" name="mitemCategoryId">
         <t-select v-model="formData2.mitemCategoryId"></t-select>
       </t-form-item> -->
+
       <t-form-item label="标准数量" name="qty">
-        <t-input v-model="formData2.qty"></t-input>
+        <t-input v-model="formData2.qty" :min="1" :max="100"></t-input>
       </t-form-item>
 
       <t-form-item>
@@ -176,14 +202,15 @@ const formData1 = ref({
 });
 
 const formData2 = ref({
-  containerType: '',
-  mitemCategoryId: '',
-  containerTypeId: [],
-  mitemId: '',
-  qty: '',
+  containerType: '', // 容器类型
+  containerTypeId: '', // 容器类型ID
+  mitemCategoryId: '', // 物料类别编码
+  mitemId: '', // 物料ID
+  qty: 1,
+  mitemCategoryCode: '',
 });
 
-// 校验规则
+// 校验规则1
 const rules: FormRules<Data> = {
   containerType: [
     {
@@ -206,6 +233,44 @@ const rules: FormRules<Data> = {
   //     trigger: 'blur',
   //   },
   // ],
+};
+// 校验规则2
+const rules2: FormRules<Data> = {
+  containerType: [
+    {
+      required: true,
+      message: '请输入容器类型',
+      trigger: 'blur',
+    },
+  ],
+  // mitemCategoryId: [
+  //   {
+  //     required: true,
+  //     message: '请输入物料类别',
+  //     trigger: 'blur',
+  //   },
+  // ],
+  // containerTypeId: [
+  //   {
+  //     required: true,
+  //     message: '请输入物料类别编码',
+  //     trigger: 'blur',
+  //   },
+  // ],
+  mitemId: [
+    {
+      required: true,
+      message: '请输入物料名称',
+      trigger: 'blur',
+    },
+  ],
+  qty: [
+    {
+      required: true,
+      message: '请输入标准数量',
+      trigger: 'blur',
+    },
+  ],
 };
 
 const optsContainer1 = computed(() => {
@@ -261,7 +326,7 @@ const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
 
 const tableContainerColumns2: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 30, cell: 'indexSlot' },
+  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '物料类别', colKey: 'mitemCategory', width: 80 },
   { title: '物料类别名称', width: 80, colKey: 'mitemCategoryName' },
   { title: '物料编码', width: 80, colKey: 'mitemCode' },
@@ -283,7 +348,6 @@ const props = defineProps({
 
 //* 初始渲染
 onMounted(async () => {
-  console.log('Received from parent:', props.selectedRowData);
   await getBarcodeRuleList();
   await getcontainerType();
   // await getPrintTmplList(); // 打印模板
@@ -319,7 +383,6 @@ const getcontainerType = async () => {
 
 //* 查询
 const onInput = async (data: any) => {
-  console.log('🚀 ~ onInput ~ data:', data);
   setLoading(true);
   const { containerTypeId, state, keyword } = data;
   if (!data.value) {
@@ -340,15 +403,15 @@ const onInput2 = async (data: any) => {
   setLoading(true);
   const { containerTypeId, state, keyword } = data;
   if (!data.value) {
-    const result = await api.container.getList({
+    const result = await api.containerInMitem.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       keyword,
       state,
       containerTypeId,
     });
-    tableContainerData1.value = result.list;
-    dataTotal1.value = result.total;
+    tableContainerData2.value = result.list;
+    dataTotal2.value = result.total;
   }
 };
 
@@ -364,16 +427,17 @@ const fetchTable = async (data: any) => {
     tableContainerData1.value = result.list;
     dataTotal1.value = result.total;
   }
-
   setLoading(false);
 };
 // fetchTable 物料关联
 const fetchTable2 = async (data: any) => {
+  console.log('🚀 ~ fetchTable2 ~ data:', data);
   setLoading(true);
   if (!data.value) {
     const result = await api.containerInMitem.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
+      containerTypeId: data,
     });
     tableContainerData2.value = result.list;
     dataTotal2.value = result.total;
@@ -391,7 +455,6 @@ const submit1 = async () => {
   for (const field of fieldsToValidate) {
     if (isEmpty(field.field)) {
       MessagePlugin.error(field.message);
-      return;
     }
   }
 
@@ -403,7 +466,7 @@ const submit1 = async () => {
   };
   await api.container.generateBarcode(submitData);
   containerVisible1.value = false;
-  MessagePlugin.success('提交成功');
+  MessagePlugin.success('生成成功');
   fetchTable({});
 };
 
@@ -444,39 +507,35 @@ const cancel = () => {
   containerVisible1.value = false;
   MessagePlugin.success('已取消');
 };
-
+// 取消
+const cancel2 = () => {
+  // 清空数据
+  // formData1.value = {
+  //   containerType: '',
+  //   barcodeRuleId: '',
+  //   createNum: 1,
+  // };
+  containerVisible2.value = false;
+  MessagePlugin.success('已取消');
+};
 const activeTab = ref('tab1');
 
 defineExpose({
   fetchTable,
+  fetchTable2,
 });
 
-// watch(
-//   () => props.selectedRowData,
-//   (newValue, oldValue) => {
-//     console.log('selectedRowData changed from', oldValue, 'to', newValue);
-//     // 在这里可以执行任何基于 selectedRowData 变化的操作
-//     // 检查 newValue 是否有效并包含所需的属性
-//     if (newValue && newValue.containerType) {
-//       // 更新 formData1.containerType
-//       formData1.value.containerType = newValue.containerType;
-//     }
-//   },
-// );
-
+/**
+ * preserveId.value = id 传递入参id
+ * 绑定新增时获取的默认值
+ */
 watch(
   () => props.selectedRowData,
   (newValue) => {
-    // console.log('selectedRowData changed to', newValue);
-    // const { containerTypeName, id } = newValue;
-    // formData1.value.containerType = containerTypeName;
-    // preserveId.value = id; //传递入参id
     if (newValue) {
       formData1.value.containerType = newValue.containerTypeName;
       preserveId.value = newValue.id;
-
       formData2.value.containerType = newValue.containerTypeName;
-      // preserveId.value = newValue.id;
     }
   },
 );
@@ -484,5 +543,29 @@ watch(
 // ################### 物料关联 function ####################
 const add = () => {
   containerVisible2.value = true;
+  // 重置表单项，但保留 containerType 字段的值
+  formData2.value = {
+    ...formData2.value,
+    mitemCategoryId: '', // 物料类别编码
+    mitemId: '', // 物料ID
+    qty: 1, // 标准数量
+    mitemCategoryCode: '', // 物料类别编码
+  };
+};
+
+const submit2 = async () => {
+  // 创建提交的数据对象  todo
+  const submitData2 = {
+    containerTypeId: preserveId.value, // 这个传 containerType 的 id   与 submit1 一样
+    mitemCategoryId: formData2.value.mitemCategoryId,
+    containerType: formData2.value.containerType, // todo
+    mitemId: formData2.value.mitemId,
+    qty: formData2.value.qty,
+  };
+  console.log('🚀 ~ submit2 ~ submitData2:', submitData2);
+  await api.containerInMitem.add(submitData2);
+  containerVisible2.value = false;
+  MessagePlugin.success('新增成功');
+  fetchTable2({});
 };
 </script>

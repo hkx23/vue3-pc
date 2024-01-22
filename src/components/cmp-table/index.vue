@@ -12,21 +12,50 @@
             <slot name="button"></slot>
           </t-space>
           <t-space v-if="showSetting" size="small" :align="'center'">
-            <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
+            <!-- <t-button v-if="props.enableExport" shape="square" variant="outline" @click="onExport">
               <template #icon>
                 <t-icon name="file-export" />
               </template>
-            </t-button>
-            <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
+            </t-button> -->
+            <!-- <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
               <template #icon>
                 <t-icon name="refresh" />
               </template>
-            </t-button>
-            <t-button shape="square" variant="outline" @click="data.visible = true">
+            </t-button> -->
+            <!-- <t-button shape="square" variant="outline" @click="data.visible = true">
               <template #icon>
                 <t-icon name="adjustment" />
               </template>
-            </t-button>
+            </t-button> -->
+            <t-button v-if="props.enableExport" variant="outline" @click="onExport"> 导出 </t-button>
+            <t-button variant="outline" :disabled="loading" @click="onRefresh"> 刷新 </t-button>
+            <t-popup trigger="click" placement="bottom-right" @visible-change="columnPopChange">
+              <t-button variant="outline">列配置</t-button>
+              <!-- <div slot="content">触发元素是指触发浮层内容显示的元素</div> -->
+              <template #content>
+                <div style="padding: 8px; width: 200px">
+                  <!-- 查询框 -->
+                  <!-- <div class="table-box__search">
+                    <t-input placeholder="请输入" v-model="searchValue" />
+                  </div> -->
+                  <!-- checkbox列表 -->
+                  <div class="table-box__checkbox">
+                    <t-space ref="settingRef" direction="vertical" :size="8" style="width: 100%">
+                      <t-row v-for="(item, index) in colConfigs" :key="index" :gutter="[0, 8]">
+                        <t-col flex="30px" class="handle cursor-move"> <move-icon /></t-col>
+                        <t-col flex="auto">{{ item.title }}</t-col>
+                        <t-col flex="30px"><t-switch v-model="item.isShow" /></t-col>
+                      </t-row>
+                    </t-space>
+                  </div>
+                  <div class="flxsc" style="width: 100%">
+                    <t-button style="flex: 1" ghost @click="onAllColConfig('hide')">全部隐藏</t-button>
+                    <div style="width: 20px"></div>
+                    <t-button style="flex: 1" @click="onAllColConfig('show')">全部显示</t-button>
+                  </div>
+                </div>
+              </template>
+            </t-popup>
           </t-space>
         </t-space>
       </div>
@@ -74,24 +103,6 @@
         />
       </div>
     </div>
-    <t-drawer v-model:visible="data.visible" size="320px" close-btn :footer="false" header="列配置">
-      <t-row :gutter="[0, 15]">
-        <template v-for="(value, colKey) in data.colConfigs" :key="colKey">
-          <t-col :span="12">
-            <t-row>
-              <t-col :span="10">{{ key }}</t-col>
-              <t-col :span="2"><t-switch v-model="data.colConfigs[key]" /></t-col>
-            </t-row>
-          </t-col>
-        </template>
-        <t-col :span="12"></t-col>
-        <div class="flxsc" style="width: 100%">
-          <t-button style="flex: 1" ghost @click="onAllColConfig('hide')">全部隐藏</t-button>
-          <div style="width: 20px"></div>
-          <t-button style="flex: 1" @click="onAllColConfig('show')">全部显示</t-button>
-        </div>
-      </t-row>
-    </t-drawer>
   </div>
 
   <t-dialog v-model:visible="downloadDialogVisible" header="自定义导出" width="600px" :footer="false">
@@ -170,7 +181,7 @@
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MoveIcon } from 'tdesign-icons-vue-next';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { DateRangePickerPanel, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import {
   computed,
   getCurrentInstance,
@@ -178,11 +189,11 @@ import {
   onActivated,
   onDeactivated,
   onMounted,
-  reactive,
   ref,
   useSlots,
   watch,
 } from 'vue';
+import { useDraggable } from 'vue-draggable-plus';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api, DlTask } from '@/api/main';
@@ -200,6 +211,14 @@ interface FilterListElement {
   field: string;
   operator: keyof typeof Operators;
   value: string;
+}
+
+interface columnSetting {
+  field: string;
+  title: string;
+  isShow: boolean;
+  width: number;
+  index: number;
 }
 
 enum Operators {
@@ -229,8 +248,8 @@ const props = defineProps({
   showToolbar: { type: Boolean, default: true },
   showSetting: { type: Boolean, default: true },
   enableExport: { type: Boolean, default: true },
-  remoteFilter: { type: Boolean, default: false },
-  remoteSorter: { type: Boolean, default: false },
+  remoteFilter: { type: Boolean, default: true },
+  remoteSorter: { type: Boolean, default: true },
   tableColumn: {
     type: Array<TableRowData>,
     default: () => [],
@@ -241,6 +260,18 @@ const props = defineProps({
     type: Object,
     default: () => {
       return { page: 1, rows: 20 };
+    },
+  },
+  filters: {
+    type: Object,
+    default: () => {
+      return { filters: [] };
+    },
+  },
+  sorters: {
+    type: Object,
+    default: () => {
+      return { sorters: [] };
     },
   },
   showPagination: {
@@ -267,7 +298,7 @@ const props = defineProps({
   exportFunction: { type: Function },
 });
 
-const emit = defineEmits(['refresh', 'update:pagination', 'select-change']);
+const emit = defineEmits(['refresh', 'update:pagination', 'update:sorters', 'select-change', 'update:filters']);
 
 // const settingStore = useSettingStore();
 const selectedRowKeys = ref<number[]>([]);
@@ -279,8 +310,10 @@ function onSelectKeysChange(val: number[]): void {
 
 const formRef = ref();
 // 远程条件
-const filterList = ref<FilterListElement[]>([]);
-const sortList = ref<SortListElement[]>([]);
+const filterList = ref([]);
+filterList.value = props.filters.filters;
+const sortList = ref([]);
+sortList.value = props.sorters.sorters;
 defineExpose({
   getSelectedRowKeys: () => selectedRowKeys.value,
   setSelectedRowKeys: (keys: any) => {
@@ -294,35 +327,85 @@ const slots = ref({});
 
 // 表格结果数据集
 const finalTableData = ref([]);
-// 组件内响应式数据
-const data: {
-  visible: boolean;
-  showSearchForm: boolean;
-  openSearchForm: boolean;
-  colConfigs: Record<string, boolean>;
-} = reactive({ visible: false, showSearchForm: true, openSearchForm: false, colConfigs: {} });
 
-// const data = reactive({
-//   visible: false, // 展示列配置抽屉
-//   showSearchForm: true, // 是否显示搜索表单
-//   openSearchForm: false, // 是否展开搜索表单
-//   colConfigs: {}, // 列配置
-// });
-// 列配置相关
+// 表格列配置
+const colConfigs = ref<columnSetting[]>([]);
 
 // 表格内展示的列
 const columns = computed(() => {
+  let indexCount = 0;
+  console.log(colConfigs.value);
   props.tableColumn.forEach((item) => {
     if (item.colKey !== 'row-select' && item.colKey !== 'op' && item.colKey !== 'serial-number') {
-      if (data.colConfigs[item.title] === undefined) {
-        data.colConfigs[item.title] = true;
+      // data.colConfigs （Array） 查询是否包含该列，使用title匹配，如果不包含，则新增]
+
+      if (item.filter && item.filter.type === 'input') {
+        // 输入框过滤配置
+        item.filter = {
+          type: 'input',
+          resetValue: '',
+          // 按下 Enter 键时也触发确认搜索
+          confirmEvents: ['onEnter'],
+          props: {
+            placeholder: '输入关键词过滤',
+          },
+          // 是否显示重置取消按钮，一般情况不需要显示
+          showConfirmAndReset: true,
+        };
+      }
+      if (item.filter && item.filter.type === 'single' && item.filter.list && item.filter.list.length > 0) {
+        // 输入框过滤配置
+        item.filter.confirmEvents = ['onChange'];
+      }
+      if (item.filter && item.filter.type === 'multiple' && item.filter.list && item.filter.list.length > 0) {
+        // 输入框过滤配置
+        item.filter.confirmEvents = ['onChange'];
+        item.filter.showConfirmAndReset = true;
+      }
+      if (item.filter && item.filter.type === 'datetime') {
+        // 输入框过滤配置
+        item.filter = {
+          component: DateRangePickerPanel,
+          props: {
+            firstDayOfWeek: 7,
+          },
+          style: { fontSize: '14px' },
+          classNames: 'custom-class-name',
+          attrs: { 'data-type': 'date-range-picker' },
+          // 是否显示重置取消按钮，一般情况不需要显示
+          showConfirmAndReset: true,
+          // 日期范围是一个组件，重置时需赋值为 []
+          resetValue: [],
+        };
+      }
+
+      const existIndex = colConfigs.value.findIndex((itemC) => {
+        return itemC.title === item.title;
+      });
+      if (existIndex < 0) {
+        const columnObject: columnSetting = {
+          field: item.colKey,
+          title: item.title,
+          isShow: true,
+          width: item.width,
+          index: indexCount,
+        };
+        indexCount++;
+        colConfigs.value.push(columnObject);
+        item.index = indexCount;
+      } else {
+        colConfigs.value[existIndex].index = existIndex;
+        item.index = existIndex;
       }
     }
   });
+
   let tableColumn = props.tableColumn
     .filter((item) => {
       return (
-        data.colConfigs[item.title] ||
+        colConfigs.value.find((itemC) => {
+          return itemC.title === item.title;
+        })?.isShow ||
         item.colKey === 'row-select' ||
         item.colKey === 'op' ||
         item.colKey === 'serial-number'
@@ -331,8 +414,12 @@ const columns = computed(() => {
     .map((item) => {
       return {
         ellipsis: true,
+        index: item.index,
         ...item,
       };
+    })
+    .sort((a, b) => {
+      return a.index - b.index;
     });
   tableColumn = tableColumn.map((item) => {
     return {
@@ -340,7 +427,6 @@ const columns = computed(() => {
       ...item,
     };
   });
-  console.log(tableColumn);
   return tableColumn;
 });
 // 表格要导出的列
@@ -351,10 +437,12 @@ const exportColumns = computed(() => {
 });
 // 全选切换列展示状态
 const onAllColConfig = (type: string) => {
-  Object.keys(data.colConfigs).forEach((key) => {
-    data.colConfigs[key] = type === 'show';
+  colConfigs.value.forEach((item) => {
+    item.isShow = type === 'show';
+    // data.colConfigs[key] = type === 'show';
   });
 };
+const settingRef = ref();
 
 // 页码相关
 const onPaginationChange = (e: { pageSize: any; current: number }) => {
@@ -385,7 +473,9 @@ const onFilterChange = (filters: Filters, ctx: any) => {
     handleSortAndFilter();
   } else {
     // 服务端筛选
-    // remoteLoad(selectSearch.value);
+    console.log(filterList);
+    emit('update:filters', { filters: filterList });
+    emit('refresh');
   }
 };
 
@@ -399,7 +489,9 @@ const sortChange = (val: any) => {
   } else {
     // 服务端筛选
     console.log('remoteLoad-排序');
-    // remoteLoad(selectSearch.value);
+    console.log(sortList);
+    emit('update:sorters', { sorters: sortList });
+    emit('refresh');
   }
 };
 
@@ -428,7 +520,7 @@ const handleSortAndFilter = () => {
   }
   if (!_.isEmpty(sortList)) {
     const sortFields = _.map(sortList.value, 'sortBy');
-    const sortDeration = _.map(sortList.value, (item) => {
+    const sortDeration = _.map(sortList.value, (item: SortListElement) => {
       return item.descending ? 'desc' : 'asc';
     });
     handleTableData = _.orderBy(handleTableData, sortFields, sortDeration);
@@ -510,7 +602,7 @@ const captureRefresh = () => {
       return t.colKey !== 'row-select' && t.colKey !== 'op' && t.colKey !== 'serial-number';
     })
     .map((t) => {
-      if (data.colConfigs[t.title]) {
+      if (colConfigs.value.filter((c) => c.title === t.title)) {
         defaultSelectedRowKeys.push(t.colKey);
       }
       return {
@@ -678,7 +770,7 @@ watch(
 watch(
   () => props.tableColumn,
   (val) => {
-    console.log('watch:props.tableData', val);
+    console.log('watch:props.tableColumn', val);
     nextTick(() => {
       finalTableData.value = _.cloneDeep(props.tableData);
     });
@@ -741,11 +833,16 @@ const maxHeightValue = computed(() => {
 //     }, 200);
 //   },
 // );
-
+const columnPopChange = (val) => {
+  if (val) {
+    nextTick(() => {
+      useDraggable(settingRef, colConfigs, { animation: 100, handle: '.handle' });
+    });
+  }
+};
 onMounted(() => {
   const instance = getCurrentInstance();
   slots.value = instance?.slots;
-  // debugger;
   // const elements = tableBoxRef.value.$el.querySelectorAll(':scope > .t-space-item') as HTMLInputElement[];
   // if (elements.length > 0) {
   //   elements[props.flexIndex || elements.length - 1].style.flex = '1';
@@ -768,5 +865,18 @@ onDeactivated(() => {
   font-weight: bold;
   color: var(--td-gray-color-8);
   font-size: 16px;
+}
+
+.cursor-move {
+  cursor: move;
+}
+
+.flxsc {
+  margin-top: 12px;
+}
+
+.table-box__checkbox {
+  max-height: 400px;
+  overflow: auto;
 }
 </style>
