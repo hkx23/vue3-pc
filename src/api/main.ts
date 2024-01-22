@@ -770,8 +770,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -1241,6 +1241,10 @@ export interface SupportGroupSearch {
   groupKeyword?: string;
   /** 模糊关键词 */
   userKeyword?: string;
+  /** 新增的 */
+  insertList?: string[];
+  /** 删除的 */
+  deleteList?: string[];
   supportGroupId?: string;
 }
 
@@ -3905,6 +3909,11 @@ export interface LabelVO {
   deliveryDtlId?: string;
   /** 接收单号 */
   receiveNo?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
   /** 状态 */
   status?: string;
   /** 送货单 */
@@ -4124,6 +4133,11 @@ export interface Label {
   deliveryDtlId?: string;
   /** 接收单号 */
   receiveNo?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
   /** 状态 */
   status?: string;
 }
@@ -4896,7 +4910,7 @@ export interface ContainerSearch {
    */
   pageSize?: number;
   /** 状态 */
-  state?: number[];
+  status?: string;
   containerTypeId?: string;
   /** 模糊关键词 */
   keyword?: string;
@@ -10593,10 +10607,10 @@ export const api = {
      * @request POST:/containerInMitem/removeBatch
      * @secure
      */
-    removeBatch: (query: { ids: string[] }) =>
+    removeBatch: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/containerInMitem/removeBatch`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -10654,10 +10668,10 @@ export const api = {
      * @request POST:/container/removeBatch
      * @secure
      */
-    removeBatch: (query: { ids: string[] }) =>
+    removeBatch: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/container/removeBatch`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -10669,10 +10683,10 @@ export const api = {
      * @request POST:/container/printBarcode
      * @secure
      */
-    printBarcode: (query: { ids: string[] }) =>
+    printBarcode: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/container/printBarcode`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**

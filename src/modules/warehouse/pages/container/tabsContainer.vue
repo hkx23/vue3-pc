@@ -8,7 +8,7 @@
       <!-- cmp-table 表格组件  -->
       <cmp-table
         v-model:pagination="pageUI"
-        row-key="billNo"
+        row-key="id"
         :table-column="tableContainerColumns1"
         :table-data="tableContainerData1"
         :total="dataTotal1"
@@ -26,22 +26,13 @@
           >
 
           <t-button theme="primary">打印</t-button>
+          <!-- @click="onStateRowClick1" -->
           <t-button theme="primary">删除</t-button>
         </template>
 
         <!-- 定义序号列的插槽 -->
         <template #indexSlot="{ rowIndex }">
           {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-        </template>
-        <!-- 编辑 -->
-        <template #op2>
-          <t-space>
-            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2()">编辑</t-link>
-            <!-- @confirm="() => onStateRowClick2(row)" -->
-            <t-popconfirm theme="default" content="确认删除吗">
-              <t-link theme="primary"> 删除 </t-link>
-            </t-popconfirm>
-          </t-space>
         </template>
       </cmp-table>
     </t-tab-panel>
@@ -54,11 +45,13 @@
       <!-- cmp-table 表格组件  -->
       <cmp-table
         v-model:pagination="pageUI"
+        v-model:selected-row-keys="selectedRowKeys"
         row-key="id"
         :table-column="tableContainerColumns2"
         :table-data="tableContainerData2"
         :total="dataTotal2"
         empty="没有符合条件的数据"
+        @select-change="rehandleSelectChange"
       >
         <template #button>
           <t-button theme="primary" @click="add">新增</t-button>
@@ -72,12 +65,16 @@
         <template #indexSlot="{ rowIndex }">
           {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
         </template>
-        <!-- 编辑 -->
-        <!-- <template #op2>
+        <!-- 编辑2 -->
+        <template #op2="row">
           <t-space>
-            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2()">编辑</t-link>
+            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2(row)">编辑</t-link>
+            <!-- @confirm="() => onStateRowClick2(row)" -->
+            <t-popconfirm theme="default" content="确认删除吗">
+              <t-link theme="primary"> 删除 </t-link>
+            </t-popconfirm>
           </t-space>
-        </template> -->
+        </template>
       </cmp-table>
     </t-tab-panel>
   </t-tabs>
@@ -120,12 +117,7 @@
   </t-dialog>
 
   <!-- 弹窗2 -->
-  <t-dialog
-    v-model:visible="containerVisible2"
-    :footer="false"
-    :close-on-overlay-click="false"
-    header="新增容器类型与物料关系"
-  >
+  <t-dialog v-model:visible="containerVisible2" :footer="false" :close-on-overlay-click="false" :header="diaTilte">
     <t-form :data="formData2" label-width="110px" :rules="rules2" @submit="submit2" @reset="cancel2">
       <t-form-item label="容器类型" name="containerType">
         <t-input v-model="formData2.containerType"></t-input>
@@ -194,12 +186,15 @@ const dataTotal1 = ref(0);
 const dataTotal2 = ref(0);
 const documentStatusOptions = ref([]);
 const barcodeRuleDataOptions = ref([]); // 条码规则下拉数据
+const PrintTmpReslutDataOptions = ref([]); // 打印规则下拉数据
 const preserveId = ref(''); // 入参id
+const selectedRowKeys = ref([]); // 批量删除
 const formData1 = ref({
   containerType: preserveId.value, // 传递id
   barcodeRuleId: '',
   createNum: 1,
 });
+const diaTilte = ref('');
 
 const formData2 = ref({
   containerType: '', // 容器类型
@@ -275,7 +270,7 @@ const rules2: FormRules<Data> = {
 
 const optsContainer1 = computed(() => {
   return {
-    state: {
+    status: {
       label: '容器状态',
       labelWidth: '20',
       event: 'select',
@@ -300,6 +295,10 @@ const optsContainer1 = computed(() => {
       event: 'select',
       comp: 't-select',
       defaultVal: '',
+      bind: {
+        options: PrintTmpReslutDataOptions.value,
+        clearable: true,
+      },
     },
   };
 });
@@ -350,15 +349,16 @@ const props = defineProps({
 onMounted(async () => {
   await getBarcodeRuleList();
   await getcontainerType();
-  // await getPrintTmplList(); // 打印模板
+  await getPrintTmplList(); // 打印模板
   await fetchTable2({});
 });
 
 // 打印模板
-// const getPrintTmplList = async () => {
-//   const PrintTmpReslut = await api.container.getPrintTmplList();
-//   console.log('🚀 ~ getPrintTmplList ~ PrintTmpReslut:', PrintTmpReslut); // [] todo
-// };
+const getPrintTmplList = async () => {
+  const PrintTmpReslut = await api.container.getPrintTmplList();
+  console.log('🚀 ~ getPrintTmplList ~ PrintTmpReslut:', PrintTmpReslut); // [] todo
+  PrintTmpReslutDataOptions.value = PrintTmpReslut;
+};
 
 // 获得条码规则下拉数据
 const getBarcodeRuleList = async () => {
@@ -384,13 +384,14 @@ const getcontainerType = async () => {
 //* 查询
 const onInput = async (data: any) => {
   setLoading(true);
-  const { containerTypeId, state, keyword } = data;
+  const { containerTypeId, status, keyword } = data;
+  // let status = Array.isArray(state) ? state : [state];
   if (!data.value) {
     const result = await api.container.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       containerTypeId,
-      state,
+      status,
       keyword,
     });
     tableContainerData1.value = result.list;
@@ -477,18 +478,35 @@ const submit1 = async () => {
 //  })  //todo
 // };
 
-//
 // 编辑
-const onEditRowClick2 = async () => {
-  // containerVisible.value = true;
+const onEditRowClick2 = async (row: any) => {
+  diaTilte.value = '编辑容器类型与物料关系';
+  containerVisible2.value = true;
+  const partialRow = JSON.parse(
+    JSON.stringify(row, ['categoryName', 'mitemCode', 'mitemDesc', 'mitemName', 'qty', 'id']),
+  );
+  console.log('🚀 ~ onEditRowClick2 ~ partialRow:', partialRow);
+  // formData2.value = partialRow;
 };
-//* 删除
-// const onStateRowClick2 = async () => {
+
+// 选择行变化
+const rehandleSelectChange = (value, ctx) => {
+  selectedRowKeys.value = value;
+  console.log(value, ctx);
+};
+
+// 删除 1
+// const onStateRowClick1 = () => {
+//   console.log('onStateRowClick1===', selectedRowKeys.value);
+// };
+
+//* 删除   async (row: { row: any }) => {
+// const onStateRowClick2 = async (row: { row: any }) => {
 // await api.district.removeDistrict({ id: row.row.id });
 // if (tableDataWarehouse.value.length <= 1 && pageUI.value.page > 1) {
 //   pageUI.value.page--;
 // }
-// await fetchTable(); // *获取 货区 数据
+// await fetchTable();
 // MessagePlugin.success('删除成功');
 // };
 // 生成
@@ -542,6 +560,7 @@ watch(
 
 // ################### 物料关联 function ####################
 const add = () => {
+  diaTilte.value = '新增容器类型与物料关系';
   containerVisible2.value = true;
   // 重置表单项，但保留 containerType 字段的值
   formData2.value = {
