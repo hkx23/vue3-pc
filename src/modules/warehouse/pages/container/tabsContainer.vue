@@ -8,6 +8,7 @@
       <!-- cmp-table 表格组件  -->
       <cmp-table
         v-model:pagination="pageUI"
+        v-model:selected-row-keys="selectedRowKeys"
         row-key="id"
         :table-column="tableContainerColumns1"
         :table-data="tableContainerData1"
@@ -26,8 +27,7 @@
           >
 
           <t-button theme="primary">打印</t-button>
-          <!-- @click="onStateRowClick1" -->
-          <t-button theme="primary">删除</t-button>
+          <t-button theme="primary" @click="onStateRowClick1">作废</t-button>
         </template>
 
         <!-- 定义序号列的插槽 -->
@@ -45,20 +45,19 @@
       <!-- cmp-table 表格组件  -->
       <cmp-table
         v-model:pagination="pageUI"
-        v-model:selected-row-keys="selectedRowKeys"
+        v-model:selected-row-keys="selectedRowKeys2"
         row-key="id"
         :table-column="tableContainerColumns2"
         :table-data="tableContainerData2"
         :total="dataTotal2"
         empty="没有符合条件的数据"
-        @select-change="rehandleSelectChange"
       >
         <template #button>
           <t-button theme="primary" @click="add">新增</t-button>
           <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
           <!--  @click="print" -->
           <t-button theme="primary">打印</t-button>
-          <t-button theme="primary">删除</t-button>
+          <t-button theme="primary" @click="onStateRowClick2">删除</t-button>
         </template>
 
         <!-- 定义序号列的插槽 -->
@@ -188,7 +187,8 @@ const documentStatusOptions = ref([]);
 const barcodeRuleDataOptions = ref([]); // 条码规则下拉数据
 const PrintTmpReslutDataOptions = ref([]); // 打印规则下拉数据
 const preserveId = ref(''); // 入参id
-const selectedRowKeys = ref([]); // 批量删除
+const selectedRowKeys = ref([]); // 批量作废
+const selectedRowKeys2 = ref([]); // 批量删除
 const formData1 = ref({
   containerType: preserveId.value, // 传递id
   barcodeRuleId: '',
@@ -489,26 +489,31 @@ const onEditRowClick2 = async (row: any) => {
   // formData2.value = partialRow;
 };
 
-// 选择行变化
-const rehandleSelectChange = (value, ctx) => {
-  selectedRowKeys.value = value;
-  console.log(value, ctx);
+// 批量作废
+const onStateRowClick1 = async () => {
+  try {
+    // 等待删除操作完成
+    await api.container.removeBatch(selectedRowKeys.value);
+    // 删除操作成功，现在调用 fetchTable
+    await MessagePlugin.success('批量作废成功!');
+    await fetchTable({}); // 刷新表格数据
+  } catch (error) {
+    console.error('作废失败:', error);
+  }
+};
+// 批量删除
+const onStateRowClick2 = async () => {
+  try {
+    // 等待删除操作完成
+    await api.containerInMitem.removeBatch(selectedRowKeys2.value);
+    // 删除操作成功，现在调用 fetchTable
+    await MessagePlugin.success('批量删除成功!');
+    await fetchTable2({}); // 刷新表格数据
+  } catch (error) {
+    console.error('删除失败:', error);
+  }
 };
 
-// 删除 1
-// const onStateRowClick1 = () => {
-//   console.log('onStateRowClick1===', selectedRowKeys.value);
-// };
-
-//* 删除   async (row: { row: any }) => {
-// const onStateRowClick2 = async (row: { row: any }) => {
-// await api.district.removeDistrict({ id: row.row.id });
-// if (tableDataWarehouse.value.length <= 1 && pageUI.value.page > 1) {
-//   pageUI.value.page--;
-// }
-// await fetchTable();
-// MessagePlugin.success('删除成功');
-// };
 // 生成
 const generate = () => {
   containerVisible1.value = true;
