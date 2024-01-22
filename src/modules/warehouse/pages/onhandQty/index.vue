@@ -4,7 +4,13 @@
     <cmp-card :span="12">
       <cmp-query ref="queryRef" :opts="opts" @submit="onInput">
         <template #warehouseId="{ param }">
-          <t-select v-model="param.warehouseId" :clearable="true" label="仓库" @change="onWarehouseChange">
+          <t-select
+            v-model="param.warehouseId"
+            :clearable="true"
+            label="仓库"
+            @change="onWarehouseChange"
+            @popup-visible-change="onGetWarehouseId"
+          >
             <t-option v-for="item in warehouseData" :key="item.id" :label="item.warehouseName" :value="item.id" />
           </t-select>
         </template>
@@ -71,7 +77,7 @@
 </template>
 <script setup lang="ts">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 import { api, District, Location, OnhandQtyDtlVO, OnhandQtyVO, Warehouse } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
@@ -180,11 +186,11 @@ const columnsDetail: PrimaryTableCol<TableRowData>[] = [
     width: '120',
   },
 ];
-// 初始渲染
-onMounted(async () => {
-  // await onGetHandQtyData(); // 获取 表格 数据
-  await onGetWarehouseId(); // 获取仓库下拉数据
-});
+// // 初始渲染
+// onMounted(async () => {
+//   // await onGetHandQtyData(); // 获取 表格 数据
+//   await onGetWarehouseId(); // 获取仓库下拉数据
+// });
 const pageNum = computed(() => pageUITwo.value.page);
 const pageSize = computed(() => pageUITwo.value.rows);
 const mitemShelflifeData = ref<OnhandQtyDtlVO[]>([]);
@@ -234,9 +240,11 @@ const onGetHandQtyData = async () => {
 
 // 仓库下拉数据获取
 const warehouseData = ref<Warehouse[]>([]);
-const onGetWarehouseId = async () => {
-  const res = await api.onhandQty.getWarehouse();
-  warehouseData.value = res;
+const onGetWarehouseId = async (visible) => {
+  if (visible) {
+    const res = await api.onhandQty.getWarehouse();
+    warehouseData.value = res;
+  }
 };
 
 // #query 查询参数
