@@ -268,6 +268,7 @@ const onOorkOIrder = async () => {
   })) as any;
   workOrderData.list = res.list;
 };
+// 备注： 工单明细表格没有做分页
 const moCodeClick = async (row: any) => {
   formVisible.value = true;
   workMoCode.value = row.moCode;
