@@ -1241,6 +1241,10 @@ export interface SupportGroupSearch {
   groupKeyword?: string;
   /** 模糊关键词 */
   userKeyword?: string;
+  /** 新增的 */
+  insertList?: string[];
+  /** 删除的 */
+  deleteList?: string[];
   supportGroupId?: string;
 }
 
@@ -3688,8 +3692,11 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   isProductName?: string;
-  isInProcessName?: string;
+  isProductChecked?: boolean;
   isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
   isBatchName?: string;
   stateName?: string;
   isState?: boolean;
@@ -3902,6 +3909,11 @@ export interface LabelVO {
   deliveryDtlId?: string;
   /** 接收单号 */
   receiveNo?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
   /** 状态 */
   status?: string;
   /** 送货单 */
@@ -4121,6 +4133,11 @@ export interface Label {
   deliveryDtlId?: string;
   /** 接收单号 */
   receiveNo?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
   /** 状态 */
   status?: string;
 }
@@ -4893,7 +4910,7 @@ export interface ContainerSearch {
    */
   pageSize?: number;
   /** 状态 */
-  state?: number[];
+  status?: string;
   containerTypeId?: string;
   /** 模糊关键词 */
   keyword?: string;
@@ -8279,6 +8296,20 @@ export const api = {
      * No description
      *
      * @tags 压力测试
+     * @name Test
+     * @summary 本地测试
+     * @request GET:/stressTest/test
+     * @secure
+     */
+    test: () =>
+      http.request<ResultObject['data']>(`/api/main/stressTest/test`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 压力测试
      * @name CountLog
      * @summary 查询日志表总数
      * @request GET:/stressTest/countLog
@@ -10576,10 +10607,10 @@ export const api = {
      * @request POST:/containerInMitem/removeBatch
      * @secure
      */
-    removeBatch: (query: { ids: string[] }) =>
+    removeBatch: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/containerInMitem/removeBatch`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -10637,10 +10668,10 @@ export const api = {
      * @request POST:/container/removeBatch
      * @secure
      */
-    removeBatch: (query: { ids: string[] }) =>
+    removeBatch: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/container/removeBatch`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -10652,10 +10683,10 @@ export const api = {
      * @request POST:/container/printBarcode
      * @secure
      */
-    printBarcode: (query: { ids: string[] }) =>
+    printBarcode: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/main/container/printBarcode`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
