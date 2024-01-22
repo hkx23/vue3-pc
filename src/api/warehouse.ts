@@ -1984,15 +1984,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 export interface MaterialRequisitionVO {
@@ -5671,9 +5671,10 @@ export const api = {
      * @request GET:/deliveryCard/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: () =>
+    getPrintTmplList: (query: { moScheId: string }) =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/warehouse/deliveryCard/getPrintTmplList`, {
         method: 'GET',
+        params: query,
       }),
 
     /**
@@ -5685,9 +5686,10 @@ export const api = {
      * @request GET:/deliveryCard/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: () =>
+    getBarcodeRuleList: (query: { moScheId: string }) =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/warehouse/deliveryCard/getBarcodeRuleList`, {
         method: 'GET',
+        params: query,
       }),
   },
   delivery: {

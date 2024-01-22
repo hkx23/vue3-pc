@@ -585,8 +585,6 @@ onMounted(async () => {
   await onGetPrintTopTabData(); // 产品标签打印 上 请求
   await onWorkStatus(); // 工单状态下拉数据
   await onBarCodeState(); // 获取条码状态数据
-  await onPrintRulesData(); // 获取 打印规则下拉数据
-  await onPrintTemplateData(); // 获取 打印模板下拉数据
   await onReprintSelextData(); // 获取补打原因列表
   await onCancellationSelextData(); // 获取作废原因列表
 });
@@ -626,18 +624,6 @@ const generateData = ref({
   moScheduleId: null, // 行 Id
   createNum: null, // 本次生成数量
 });
-const onPrintRulesList = reactive({ list: [] });
-const onPrintRulesData = async () => {
-  const res = await api.labelManage.getBarcodeRuleList();
-  onPrintRulesList.list = res?.list;
-};
-
-// 获取 打印模板 下拉数据
-const onPrintTemplateList = reactive({ list: [] });
-const onPrintTemplateData = async () => {
-  const res = await api.labelManage.getPrintTmplList();
-  onPrintTemplateList.list = res?.list;
-};
 
 // 获取 补打原因 下拉数据
 const reprintDataList = reactive({ list: [] });
@@ -826,12 +812,29 @@ const onLogInterface = async (row: any) => {
 
 // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
+  const { moScheduleId } = context.currentRowData;
   numInput.value = context.currentRowData.planQty - context.currentRowData.generateQty;
   generateData.value.createNum = context.currentRowData.thisTimeQty;
   generateData.value.workcenterId = context.currentRowData.workcenterId; // 工作中心 Id
   generateData.value.moScheduleId = context.currentRowData.moScheduleId; // 行 Id
   [topPrintID.value] = value;
   await onGetPrintDownTabData();
+  await onPrintRulesData(moScheduleId); // 条码规则下拉数据
+  await onPrintTemplateData(moScheduleId); // 打印模板下拉数据
+};
+
+// 获取条码规则下拉数据
+const onPrintRulesList = reactive({ list: [] });
+const onPrintRulesData = async (moScheId) => {
+  const res = await api.labelManage.getBarcodeRuleList({ moScheId });
+  onPrintRulesList.list = res?.list;
+};
+
+// 获取 打印模板 下拉数据
+const onPrintTemplateList = reactive({ list: [] });
+const onPrintTemplateData = async (moScheId) => {
+  const res = await api.labelManage.getPrintTmplList({ moScheId });
+  onPrintTemplateList.list = res?.list;
 };
 
 // 本次生成数量change事件

@@ -1666,11 +1666,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
+  workshopCode?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -1719,8 +1719,8 @@ export interface WipKeyPartCollectVO {
   keyPartList?: WipKeypart[];
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
+  isScanFinish?: boolean;
 }
 
 /** 在制品关键件采集表 */
@@ -2910,14 +2910,14 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  stateName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  stateName?: string;
-  datetimeScheStr?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
@@ -3024,14 +3024,14 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  stateName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  stateName?: string;
-  datetimeScheStr?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
@@ -3270,8 +3270,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -5282,9 +5282,10 @@ export const api = {
      * @request GET:/labelManage/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: () =>
+    getPrintTmplList: (query: { moScheId: string }) =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/labelManage/getPrintTmplList`, {
         method: 'GET',
+        params: query,
       }),
 
     /**
@@ -5296,9 +5297,10 @@ export const api = {
      * @request GET:/labelManage/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: () =>
+    getBarcodeRuleList: (query: { moScheId: string }) =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/labelManage/getBarcodeRuleList`, {
         method: 'GET',
+        params: query,
       }),
   },
   barcodeWipCollect: {
@@ -5508,7 +5510,7 @@ export const api = {
      * @request GET:/barcodePkg/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: (query: { packType: string }) =>
+    getPrintTmplList: (query: { moScheId: string; packType: string }) =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/barcodePkg/getPrintTmplList`, {
         method: 'GET',
         params: query,
@@ -5538,7 +5540,7 @@ export const api = {
      * @request GET:/barcodePkg/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: (query: { packType: string }) =>
+    getBarcodeRuleList: (query: { moScheId: string; packType: string }) =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/barcodePkg/getBarcodeRuleList`, {
         method: 'GET',
         params: query,
