@@ -163,10 +163,10 @@ const onEditRowClick = (value: any) => {
 };
 
 const onConfirmForm = async () => {
-  formRef.value.submit().then(() => {
+  await formRef.value.submit().then(() => {
     formVisible.value = false;
-    fetchTable();
   });
+  await fetchTable();
 };
 
 onMounted(() => {
