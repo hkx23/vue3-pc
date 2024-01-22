@@ -1,5 +1,6 @@
 <template>
   <cmp-container :full="true">
+    <bcmp-workstation-info @change="handleonChange" />
     <cmp-card>
       <t-tabs v-model="selectModule" @change="onchangeTab">
         <t-tab-panel
@@ -77,7 +78,6 @@
             <cmp-container :full="true" header>
               <!-- 扫描区 -->
               <cmp-card>
-                <bcmp-workstation-info @change="handleonChange" />
                 <t-row class="padding-top-line-8" style="padding-bottom: 8px">
                   <t-col flex="auto">
                     <cmp-scan-input
