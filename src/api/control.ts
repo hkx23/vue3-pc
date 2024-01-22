@@ -1666,14 +1666,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopId?: string;
   workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  workshopName?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1718,8 +1719,8 @@ export interface WipKeyPartCollectVO {
   keyPartList?: WipKeypart[];
   /** @format int32 */
   requestQty?: number;
-  keyPartCodeStr?: string;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -2515,10 +2516,12 @@ export type MFTSubVO = {
   qty?: number;
   /** 操作员 */
   operatorName?: string;
-  /** 仓库名称 */
+  /** 产品编码 */
   pdCode?: string;
-  /** 仓库名称 */
+  /** 来源仓库名称 */
   warehouseName?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
   /** 工作中心 */
   workcenterName?: string;
   /** 工单号 */
@@ -2875,15 +2878,16 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopId?: string;
   workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  workshopName?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   isState?: boolean;
 }
 
@@ -2988,11 +2992,12 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopId?: string;
   workshopCode?: string;
+  workshopName?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   isState?: boolean;
@@ -3233,8 +3238,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
