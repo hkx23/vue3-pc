@@ -8,15 +8,17 @@
           <t-card>
             <cmp-query ref="queryComponent" :opts="optsContainer1" :bool-enter="false" @submit="onInput"> </cmp-query>
           </t-card>
-          <!-- cmp-table 表格组件  -->
+          <!-- cmp-table 表格组件   select-on-row-click 一行选中  -->
           <cmp-table
             v-model:pagination="pageUI"
             row-key="id"
-            :table-data="tableContainerData1"
-            :total="dataTotal1"
             :loading="loading"
+            :table-data="tableContainerData1"
             :table-column="tableContainerColumns1"
+            select-on-row-click
+            type="single"
             empty="没有符合条件的数据"
+            @select-change="handleRowClick"
           >
             <template #button>
               <t-button theme="primary" @click="onAddContainer">新增</t-button>
@@ -43,7 +45,7 @@
         <cmp-card class="card">
           <t-space direction="vertical">
             <!-- tabs组件 -->
-            <tabs-container />
+            <tabs-container ref="refreshTable" :props-id="propsId" :selected-row-data="selectedRowData" />
           </t-space>
         </cmp-card>
       </div>
@@ -51,14 +53,14 @@
   </cmp-container>
   <!-- 弹窗 -->
   <t-dialog v-model:visible="containerVisible" :footer="false" :close-on-overlay-click="false" :header="formTitle">
-    <t-form :data="formData" @submit="submit1" @reset="cancel">
-      <t-form-item label="容器类型编码">
+    <t-form :data="formData" :rules="rules" label-width="110px" @submit="submit1" @reset="cancel">
+      <t-form-item label="容器类型编码" name="containerTypeCode">
         <t-input v-model="formData.containerTypeCode"></t-input>
       </t-form-item>
-      <t-form-item label="容器类型名称">
+      <t-form-item label="容器类型名称" name="containerTypeName">
         <t-input v-model="formData.containerTypeName"></t-input>
       </t-form-item>
-      <t-form-item label="容器类型描述">
+      <t-form-item label="容器类型描述" name="containerTypeDesc">
         <t-input v-model="formData.containerTypeDesc"></t-input>
       </t-form-item>
       <t-form-item label="启用">
@@ -75,8 +77,9 @@
 </template>
 
 <script setup lang="ts">
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, ref } from 'vue';
+import { isEmpty } from 'lodash';
+import { Data, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
@@ -96,6 +99,10 @@ const formData = ref({
   containerTypeDesc: '',
   state: 1,
 });
+const refreshTable = ref(null);
+const selectedRowData = ref({}); // 用于存储选中行的数据
+
+const propsId = ref(''); // 接口入参
 
 //* 组件配置  --查询界面选择
 const optsContainer1 = computed(() => {
@@ -131,9 +138,9 @@ const optsContainer1 = computed(() => {
   };
 });
 
-// card 1
+// card 1  single 设置单项选中
 const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  { colKey: 'row-select', width: 40, type: 'single', fixed: 'left' },
   { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '容器类型编码', colKey: 'containerTypeCode', width: 120 },
   { title: '容器类型名称', width: 120, colKey: 'containerTypeName' },
@@ -180,8 +187,59 @@ const onInput = async (data: any) => {
   setLoading(false);
 };
 
+// 校验规则
+const rules: FormRules<Data> = {
+  containerTypeCode: [
+    {
+      required: true,
+      message: '请输入容器类型编码',
+      trigger: 'blur',
+    },
+  ],
+  containerTypeName: [
+    {
+      required: true,
+      message: '请输入容器类型名称',
+      trigger: 'blur',
+    },
+  ],
+  containerTypeDesc: [
+    {
+      required: true,
+      message: '请输入容器类型描述',
+      trigger: 'blur',
+    },
+  ],
+};
+
+// const handleRowSelectChange = (value: any[]) => {
+//   // 在这里，value 是选中行的数据
+//   if (value.length > 0) {
+//     propsId.value = value[value.length - 1];
+//   }
+// };
+
+// 当点击表格的某一行时
+const handleRowClick = (row, event) => {
+  console.log('🚀 ~ handleRowClick ~ row:', row);
+  const { containerTypeName, id } = event.currentRowData;
+  propsId.value = id; // 父调子入参
+  selectedRowData.value = { containerTypeName, id };
+};
 // 新增提交
 const submit1 = async () => {
+  // *提交时校验
+  const fieldsToValidate = [
+    { field: formData.value.containerTypeCode, message: '请输入容器类型编码' },
+    { field: formData.value.containerTypeName, message: '请输入容器类型名称' },
+    { field: formData.value.containerTypeDesc, message: '请输入容器类型描述' },
+  ];
+  for (const field of fieldsToValidate) {
+    if (isEmpty(field.field)) {
+      MessagePlugin.error(field.message);
+      return;
+    }
+  }
   if (formTitle.value === '新增容器类型') {
     await api.containerType.add(formData.value);
     await MessagePlugin.success('新增成功');
@@ -191,6 +249,7 @@ const submit1 = async () => {
   }
   containerVisible.value = false;
   onInput({}); // 重新获取数据
+  // refreshTable.value.fetchTable(propsId.value);
 };
 
 // 取消
@@ -205,6 +264,14 @@ const cancel = () => {
   containerVisible.value = false;
   MessagePlugin.success('已取消');
 };
+
+watch(propsId, (propsId) => {
+  if (propsId) {
+    // fetchTables(propsId);  调用子组件的 查询方法
+    refreshTable.value.fetchTable(propsId);
+    refreshTable.value.fetchTable2(propsId);
+  }
+});
 </script>
 
 <style lang="less" scoped>
@@ -220,6 +287,6 @@ const cancel = () => {
 
 .dialog-footer {
   display: flex;
-  justify-content: flex-end !important; /* 使内容靠右对齐 */
+  justify-content: flex-end; /* 使内容靠右对齐 */
 }
 </style>

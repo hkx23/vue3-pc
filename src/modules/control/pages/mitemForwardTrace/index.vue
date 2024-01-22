@@ -84,12 +84,12 @@
                 <t-space>{{ mitemInfo.qty }}</t-space>
               </t-col>
               <t-col :span="3">
-                <t-space>当前状态：</t-space>
-                <t-space>{{ mitemInfo.status }}</t-space>
+                <t-space v-if="queryCondition.searchType === 'mintemLabel'">当前状态：</t-space>
+                <t-space v-if="queryCondition.searchType === 'mintemLabel'">{{ mitemInfo.statusName }}</t-space>
               </t-col>
               <t-col :span="3">
-                <t-space>接收时间：</t-space>
-                <t-space>{{ mitemInfo.receiveTime }}</t-space>
+                <t-space v-if="queryCondition.searchType === 'mintemLabel'">接收时间：</t-space>
+                <t-space v-if="queryCondition.searchType === 'mintemLabel'">{{ mitemInfo.receiveTime }}</t-space>
               </t-col>
             </t-row>
             <t-row style="margin-top: 15px"></t-row>
@@ -195,6 +195,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, reactive, ref } from 'vue';
 
 import { api } from '@/api/control';
+import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -217,7 +218,7 @@ const mitemInfo = ref({
   mitemCode: '',
   mitemDesc: '',
   receiveTime: '',
-  status: '',
+  statusName: '',
   qty: '',
 });
 const supplierInfo = ref({
@@ -304,7 +305,13 @@ const IOColumns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'warehouseName',
-    title: '仓库',
+    title: '来源仓库',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'toWarehouseName',
+    title: '目标仓库',
     align: 'center',
     width: '130',
   },
@@ -546,7 +553,7 @@ const fetchMoTable = async () => {
     if (tagValue.value === 0) {
       queryCondition.value.pageNum = pageUI.value.page;
       queryCondition.value.pageSize = pageUI.value.rows;
-      const data = (await api.mitemForwardTrace.getMitemBasicInfo(queryCondition.value)) as any;
+      const data = (await apiWarehouse.label.getMitemBasicInfo(queryCondition.value)) as any;
       if (data) {
         mitemInfo.value = data;
         mitemBaseInfoList.list = data.tableData.list;
@@ -556,7 +563,7 @@ const fetchMoTable = async () => {
         mitemInfo.value.mitemCode = '无数据';
         mitemInfo.value.mitemDesc = '无数据';
         mitemInfo.value.qty = '无数据';
-        mitemInfo.value.status = '无数据';
+        mitemInfo.value.statusName = '无数据';
         mitemInfo.value.receiveTime = '无数据';
         mitemBaseInfoList.list = [];
         mitemBaseInfoTabTotal.value = 0;
@@ -592,7 +599,7 @@ const fetchMoTable = async () => {
     if (tagValue.value === 4) {
       queryCondition.value.pageNum = pageUIIOInfo.value.page;
       queryCondition.value.pageSize = pageUIIOInfo.value.rows;
-      const data = (await api.mitemForwardTrace.getIoInfo(queryCondition.value)) as any;
+      const data = (await apiWarehouse.label.getIoInfo(queryCondition.value)) as any;
       if (data) {
         IOInfoList.list = data.list;
         IOInfoTabTotal.value = data.total;

@@ -87,7 +87,10 @@ const currentrow = ref({}); // 当前行工单信息
 const keyword = ref(''); // 控制模糊搜索
 // const formVisible = ref(false); // 控制弹窗显示
 // const selectMoStatus = ref([]); // 选中的工单状态
-const datePlanRangeDefault = ref([dayjs().format('YYYY-MM-DD'), dayjs().subtract(-31, 'day').format('YYYY-MM-DD')]); // 初始化日期控件
+const datePlanRangeDefault = ref([
+  dayjs().format('YYYY-MM-DD 00:00:00'),
+  dayjs().subtract(-31, 'day').format('YYYY-MM-DD 23:59:59'),
+]); // 初始化日期控件
 // 工单类型下拉初始数据
 const moClassOption = ref([]);
 // 工单状态下拉初始数据
@@ -115,7 +118,7 @@ const columns = ref([
   {
     colKey: 'moCode',
     title: '工单号',
-    width: '100',
+    width: '150',
   },
   { colKey: 'moClassName', title: '工单类型' },
   {
@@ -283,6 +286,9 @@ const opts = computed(() => {
       comp: 't-date-range-picker',
       defaultVal: datePlanRangeDefault.value,
       placeholder: '请选择计划开始时间',
+      bind: {
+        enableTimePicker: true,
+      },
     },
     moStatus: {
       label: '工单状态',
