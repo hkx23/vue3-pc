@@ -2085,8 +2085,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3839,13 +3839,13 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
   isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  stateName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
 }
@@ -4706,8 +4706,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -7531,6 +7531,21 @@ export const api = {
      * No description
      *
      * @tags 班组
+     * @name GetPersonList
+     * @summary 查询班组人员
+     * @request POST:/workgroup/getPersonList
+     * @secure
+     */
+    getPersonList: (data: WorkgroupSearch) =>
+      http.request<ResultPagingDataPersonOfWorkgroupVO['data']>(`/api/main/workgroup/getPersonList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
      * @name GetOutPerson
      * @summary 查询未进组人员
      * @request POST:/workgroup/getOutPerson
@@ -7585,21 +7600,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/workgroup/addWorkgroupPerson`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 班组
-     * @name GetPersonList
-     * @summary 查询班组人员
-     * @request GET:/workgroup/getPersonList
-     * @secure
-     */
-    getPersonList: (query: { search: WorkgroupSearch }) =>
-      http.request<ResultPagingDataPersonOfWorkgroupVO['data']>(`/api/main/workgroup/getPersonList`, {
-        method: 'GET',
-        params: query,
       }),
   },
   workcenter: {
