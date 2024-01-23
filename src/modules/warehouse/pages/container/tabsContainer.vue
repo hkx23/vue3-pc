@@ -57,7 +57,7 @@
           <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
           <!--  @click="print" -->
           <t-button theme="primary">打印</t-button>
-          <t-button theme="primary" @click="onStateRowClick2">删除</t-button>
+          <t-button theme="primary" @click="onRemoveRowClick2">删除</t-button>
         </template>
 
         <!-- 定义序号列的插槽 -->
@@ -68,8 +68,8 @@
         <template #op2="row">
           <t-space>
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2(row)">编辑</t-link>
-            <!-- @confirm="() => onStateRowClick2(row)" -->
-            <t-popconfirm theme="default" content="确认删除吗">
+            <!-- -->
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onRowClick(row)">
               <t-link theme="primary"> 删除 </t-link>
             </t-popconfirm>
           </t-space>
@@ -123,14 +123,12 @@
       </t-form-item>
 
       <t-form-item label="物料类别" name="mitemCategoryId">
-        <!--label-field="mitemCategoryName"
-          value-field="mitemCategoryId" -->
         <bcmp-select-business
           v-model="formData2.mitemCategoryId"
           :show-title="false"
           type="mitemCategory"
-          :label-field="formData2.mitemCategoryId"
-          :value-field="formData2.mitemCategoryCode"
+          label-field="categoryName"
+          value-field="categoryCode"
         ></bcmp-select-business>
       </t-form-item>
 
@@ -145,12 +143,15 @@
           :is-multiple="false"
           :show-title="false"
           type="mitem"
+          label-field="mitemName"
+          value-field="mitemCode"
         ></bcmp-select-business>
       </t-form-item>
 
-      <!-- <t-form-item label="物料编码" name="mitemCategoryId">
-        <t-select v-model="formData2.mitemCategoryId"></t-select>
-      </t-form-item> -->
+      <t-form-item label="物料编码" name="mitemCategoryId">
+        <!-- <t-select v-model="formData2.mitemCategoryId"></t-select> -->
+        <t-input v-model="formData2.mitemId"></t-input>
+      </t-form-item>
 
       <t-form-item label="标准数量" name="qty">
         <t-input v-model="formData2.qty" :min="1" :max="100"></t-input>
@@ -480,13 +481,42 @@ const submit1 = async () => {
 
 // 编辑
 const onEditRowClick2 = async (row: any) => {
+  console.log('🚀 ~ onEditRowClick2 ~ row:', row);
   diaTilte.value = '编辑容器类型与物料关系';
   containerVisible2.value = true;
-  const partialRow = JSON.parse(
-    JSON.stringify(row, ['categoryName', 'mitemCode', 'mitemDesc', 'mitemName', 'qty', 'id']),
-  );
+  /* mitemName 物料名称
+    qty   标准数量
+    mitemCode 物料编码
+  
+  */
+  const partialRow = JSON.parse(JSON.stringify(row.row, ['mitemCode', 'mitemDesc', 'mitemName', 'qty', 'id']));
   console.log('🚀 ~ onEditRowClick2 ~ partialRow:', partialRow);
-  // formData2.value = partialRow;
+  // formData2.value = partialRow; // 赋值
+  formData2.value = {
+    ...formData2.value,
+    mitemCategoryId: partialRow.mitemCategoryId,
+    mitemId: partialRow.mitemId,
+    qty: partialRow.qty,
+    mitemCategoryCode: partialRow.mitemCategoryCode,
+    // 其他需要赋值的字段
+  };
+};
+
+// 单个删除
+const onRowClick = async (row: { row: any }) => {
+  console.log('🚀 ~ onRowClick ~ id:', row.row.id);
+  try {
+    // 等待删除操作完成
+    await api.containerInMitem.removeBatch(row.row.id);
+    if (tableContainerData2.value.length <= 1 && pageUI.value.page > 1) {
+      pageUI.value.page--;
+    }
+    // 删除操作成功，现在调用 fetchTable
+    await MessagePlugin.success('删除成功!');
+    await fetchTable2({}); // 刷新表格数据
+  } catch (error) {
+    console.error('删除失败:', error);
+  }
 };
 
 // 批量作废
@@ -502,13 +532,46 @@ const onStateRowClick1 = async () => {
   }
 };
 // 批量删除
-const onStateRowClick2 = async () => {
+// const onRemoveRowClick2 = async () => {
+//   try {
+//     // 等待删除操作完成
+//     await api.containerInMitem.removeBatch(selectedRowKeys2.value);
+//     // 删除操作成功，现在调用 fetchTable
+//     await MessagePlugin.success('批量删除成功!');
+//     await fetchTable2({}); // 刷新表格数据
+//   } catch (error) {
+//     console.error('删除失败:', error);
+//   }
+// };
+
+// 批量删除
+const onRemoveRowClick2 = async () => {
+  // 检查是否所有选中的容器都可以删除
+  const canDelete = selectedRowKeys2.value.every((key) => {
+    const container = tableContainerData2.value.find((c) => c.id === key);
+    return container && container.status !== '使用中' && container.status !== '已入库' && container.status !== '已出库';
+  });
+
+  if (!canDelete) {
+    MessagePlugin.error('选中的容器中存在不允许删除的状态（使用中、已入库、已出库），请重新选择！');
+    return;
+  }
+
   try {
     // 等待删除操作完成
     await api.containerInMitem.removeBatch(selectedRowKeys2.value);
-    // 删除操作成功，现在调用 fetchTable
+
+    // 更新状态为“作废”
+    selectedRowKeys2.value.forEach((key) => {
+      const container = tableContainerData2.value.find((c) => c.id === key);
+      if (container) {
+        container.status = '作废'; // 或其他表示作废的状态
+      }
+    });
+
+    // 删除操作成功，刷新表格数据
     await MessagePlugin.success('批量删除成功!');
-    await fetchTable2({}); // 刷新表格数据
+    await fetchTable2({});
   } catch (error) {
     console.error('删除失败:', error);
   }
@@ -580,9 +643,9 @@ const add = () => {
 const submit2 = async () => {
   // 创建提交的数据对象  todo
   const submitData2 = {
+    // containerType: formData2.value.containerType, // todo  不传 主表带过来
     containerTypeId: preserveId.value, // 这个传 containerType 的 id   与 submit1 一样
     mitemCategoryId: formData2.value.mitemCategoryId,
-    containerType: formData2.value.containerType, // todo
     mitemId: formData2.value.mitemId,
     qty: formData2.value.qty,
   };

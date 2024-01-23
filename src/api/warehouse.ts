@@ -1463,9 +1463,9 @@ export interface ReturnStockOutDtlVO {
   transferBillNo?: string;
   /** 交易事务单号 */
   transferBillNoStatus?: string;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
 }
 
 /** 退货单扫描 */
@@ -1548,11 +1548,11 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
-  transferDtlId?: string;
 }
 
 /** 采购单明细 */
@@ -1620,11 +1620,11 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
-  transferDtlId?: string;
 }
 
 /** 退货管理VO */
@@ -4523,6 +4523,20 @@ export const api = {
      */
     getOrgs: () =>
       http.request<ResultListOrg['data']>(`/api/warehouse/transferConstraint/getOrgs`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库移转约束表
+     * @name GetCurrentOrg
+     * @summary 获取该用户当前组织
+     * @request GET:/transferConstraint/getCurrentOrg
+     * @secure
+     */
+    getCurrentOrg: () =>
+      http.request<ResultListOrg['data']>(`/api/warehouse/transferConstraint/getCurrentOrg`, {
         method: 'GET',
       }),
   },

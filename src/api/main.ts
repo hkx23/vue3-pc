@@ -470,26 +470,6 @@ export interface WorkgroupSearch {
   deleteList?: string[];
 }
 
-/** 响应数据 */
-export type PagingDataWorkgroup = {
-  list?: Workgroup[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkgroup {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkgroup;
-}
-
 /** 班组 */
 export interface Workgroup {
   id?: string;
@@ -524,6 +504,26 @@ export interface Workgroup {
   workshopId?: string;
 }
 
+/** 响应数据 */
+export type PagingDataWorkgroup = {
+  list?: Workgroup[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkgroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkgroup;
+}
+
 /** 通用响应类 */
 export interface ResultWorkgroup {
   /**
@@ -535,67 +535,6 @@ export interface ResultWorkgroup {
   message?: string;
   /** 班组 */
   data?: Workgroup;
-}
-
-/** 响应数据 */
-export type PagingDataWorkgroupVO = {
-  list?: WorkgroupVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkgroupVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkgroupVO;
-}
-
-/** 显示工站 */
-export interface WorkgroupVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 班组代码 */
-  workgroupCode?: string;
-  /** 班组名称 */
-  workgroupName?: string;
-  /** 班组描述 */
-  workgroupDesc?: string;
-  workshopId?: string;
-  /** 所属车间名称 */
-  workshopName?: string;
-  /**
-   * 班组人员数
-   * @format int32
-   */
-  personCount?: number;
 }
 
 /** 响应数据 */
@@ -658,6 +597,67 @@ export interface ResultPagingDataPersonOfWorkgroupVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataPersonOfWorkgroupVO;
+}
+
+/** 响应数据 */
+export type PagingDataWorkgroupVO = {
+  list?: WorkgroupVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkgroupVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkgroupVO;
+}
+
+/** 显示工站 */
+export interface WorkgroupVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 班组代码 */
+  workgroupCode?: string;
+  /** 班组名称 */
+  workgroupName?: string;
+  /** 班组描述 */
+  workgroupDesc?: string;
+  workshopId?: string;
+  /** 所属车间名称 */
+  workshopName?: string;
+  /**
+   * 班组人员数
+   * @format int32
+   */
+  personCount?: number;
 }
 
 /** 工作中心 */
@@ -3840,7 +3840,6 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
@@ -3848,6 +3847,7 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -7489,6 +7489,21 @@ export const api = {
      * No description
      *
      * @tags 班组
+     * @name ModifyWorkgroup
+     * @summary 编辑班组
+     * @request POST:/workgroup/modifyWorkgroup
+     * @secure
+     */
+    modifyWorkgroup: (data: Workgroup) =>
+      http.request<ResultObject['data']>(`/api/main/workgroup/modifyWorkgroup`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
      * @name Search
      * @request POST:/workgroup/items
      * @secure
@@ -7510,21 +7525,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkgroup['data']>(`/api/main/workgroup/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 班组
-     * @name GetList
-     * @summary 查询班组
-     * @request POST:/workgroup/getlist
-     * @secure
-     */
-    getList: (data: WorkgroupSearch) =>
-      http.request<ResultPagingDataWorkgroupVO['data']>(`/api/main/workgroup/getlist`, {
-        method: 'POST',
-        body: data as any,
       }),
 
     /**
@@ -7553,6 +7553,21 @@ export const api = {
      */
     getOutPerson: (data: WorkgroupSearch) =>
       http.request<ResultPagingDataPersonOfWorkgroupVO['data']>(`/api/main/workgroup/getOutPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetList
+     * @summary 查询班组
+     * @request POST:/workgroup/getList
+     * @secure
+     */
+    getList: (data: WorkgroupSearch) =>
+      http.request<ResultPagingDataWorkgroupVO['data']>(`/api/main/workgroup/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -10841,11 +10856,11 @@ export const api = {
      * @tags 容器类型表
      * @name GetList
      * @summary 查询容器类型
-     * @request POST:/containerType/getlist
+     * @request POST:/containerType/getList
      * @secure
      */
     getList: (data: ContainerTypeSearch) =>
-      http.request<ResultPagingDataContainerTypeVO['data']>(`/api/main/containerType/getlist`, {
+      http.request<ResultPagingDataContainerTypeVO['data']>(`/api/main/containerType/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -10902,11 +10917,11 @@ export const api = {
      * @tags 容器与物料表
      * @name GetList
      * @summary 查询容器类型与物料
-     * @request POST:/containerInMitem/getlist
+     * @request POST:/containerInMitem/getList
      * @secure
      */
     getList: (data: ContainerInMitemSearch) =>
-      http.request<ResultPagingDataContainerInMitemVO['data']>(`/api/main/containerInMitem/getlist`, {
+      http.request<ResultPagingDataContainerInMitemVO['data']>(`/api/main/containerInMitem/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -10963,11 +10978,11 @@ export const api = {
      * @tags 容器表
      * @name GetList
      * @summary 查询容器
-     * @request POST:/container/getlist
+     * @request POST:/container/getList
      * @secure
      */
     getList: (data: ContainerSearch) =>
-      http.request<ResultPagingDataContainerVO['data']>(`/api/main/container/getlist`, {
+      http.request<ResultPagingDataContainerVO['data']>(`/api/main/container/getList`, {
         method: 'POST',
         body: data as any,
       }),
