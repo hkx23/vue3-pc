@@ -470,26 +470,6 @@ export interface WorkgroupSearch {
   deleteList?: string[];
 }
 
-/** 响应数据 */
-export type PagingDataWorkgroup = {
-  list?: Workgroup[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkgroup {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkgroup;
-}
-
 /** 班组 */
 export interface Workgroup {
   id?: string;
@@ -524,6 +504,26 @@ export interface Workgroup {
   workshopId?: string;
 }
 
+/** 响应数据 */
+export type PagingDataWorkgroup = {
+  list?: Workgroup[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkgroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkgroup;
+}
+
 /** 通用响应类 */
 export interface ResultWorkgroup {
   /**
@@ -535,67 +535,6 @@ export interface ResultWorkgroup {
   message?: string;
   /** 班组 */
   data?: Workgroup;
-}
-
-/** 响应数据 */
-export type PagingDataWorkgroupVO = {
-  list?: WorkgroupVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkgroupVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkgroupVO;
-}
-
-/** 显示工站 */
-export interface WorkgroupVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 班组代码 */
-  workgroupCode?: string;
-  /** 班组名称 */
-  workgroupName?: string;
-  /** 班组描述 */
-  workgroupDesc?: string;
-  workshopId?: string;
-  /** 所属车间名称 */
-  workshopName?: string;
-  /**
-   * 班组人员数
-   * @format int32
-   */
-  personCount?: number;
 }
 
 /** 响应数据 */
@@ -658,6 +597,67 @@ export interface ResultPagingDataPersonOfWorkgroupVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataPersonOfWorkgroupVO;
+}
+
+/** 响应数据 */
+export type PagingDataWorkgroupVO = {
+  list?: WorkgroupVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkgroupVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkgroupVO;
+}
+
+/** 显示工站 */
+export interface WorkgroupVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 班组代码 */
+  workgroupCode?: string;
+  /** 班组名称 */
+  workgroupName?: string;
+  /** 班组描述 */
+  workgroupDesc?: string;
+  workshopId?: string;
+  /** 所属车间名称 */
+  workshopName?: string;
+  /**
+   * 班组人员数
+   * @format int32
+   */
+  personCount?: number;
 }
 
 /** 工作中心 */
@@ -1369,6 +1369,59 @@ export interface ResultUser {
   message?: string;
   /** 用户 */
   data?: User;
+}
+
+/** 自定义表格配置 */
+export interface TableSetting {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  userId?: string;
+  /** 功能路径 */
+  behaviorPath?: string;
+  /** 表格唯一键 */
+  tableKeyCode?: string;
+  /** 表格配置 */
+  jsonConfig?: string;
+  /** 视图标签 */
+  viewLable?: string;
+  /**
+   * 是否默认显示
+   * @format int32
+   */
+  isDefault?: number;
+}
+
+/** 通用响应类 */
+export interface ResultListTableSetting {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: TableSetting[] | null;
 }
 
 export interface SupportGroupSearch {
@@ -5640,6 +5693,93 @@ export interface ResultAttendanceMode {
   data?: AttendanceMode;
 }
 
+export interface AttendanceModeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 状态 */
+  status?: string;
+  containerTypeId?: string;
+  /** 模糊关键词 */
+  keyword?: string;
+  barcodeRuleId?: string;
+  /**
+   * 生成数量
+   * @format int32
+   */
+  createNum?: number;
+}
+
+/** 显示工站 */
+export interface AttendanceModeVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 出勤模式代码 */
+  modeCode?: string;
+  /** 出勤模式名称 */
+  modeName?: string;
+  /** 出勤模式描述 */
+  modeDesc?: string;
+  /** 出勤模式表达式 */
+  expression?: string;
+  /** 班次 */
+  shiftCode?: string;
+  /** 备注 */
+  memo?: string;
+  /** 班次名称 */
+  shiftName?: string;
+  /** 时间段拆分 */
+  expressionSpilt?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataAttendanceModeVO = {
+  list?: AttendanceModeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAttendanceModeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAttendanceModeVO;
+}
+
 /** 通用响应类 */
 export interface ResultWorkcenterVO {
   /**
@@ -7489,6 +7629,21 @@ export const api = {
      * No description
      *
      * @tags 班组
+     * @name ModifyWorkgroup
+     * @summary 编辑班组
+     * @request POST:/workgroup/modifyWorkgroup
+     * @secure
+     */
+    modifyWorkgroup: (data: Workgroup) =>
+      http.request<ResultObject['data']>(`/api/main/workgroup/modifyWorkgroup`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
      * @name Search
      * @request POST:/workgroup/items
      * @secure
@@ -7510,21 +7665,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkgroup['data']>(`/api/main/workgroup/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 班组
-     * @name GetList
-     * @summary 查询班组
-     * @request POST:/workgroup/getlist
-     * @secure
-     */
-    getList: (data: WorkgroupSearch) =>
-      http.request<ResultPagingDataWorkgroupVO['data']>(`/api/main/workgroup/getlist`, {
-        method: 'POST',
-        body: data as any,
       }),
 
     /**
@@ -7553,6 +7693,21 @@ export const api = {
      */
     getOutPerson: (data: WorkgroupSearch) =>
       http.request<ResultPagingDataPersonOfWorkgroupVO['data']>(`/api/main/workgroup/getOutPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetList
+     * @summary 查询班组
+     * @request POST:/workgroup/getList
+     * @secure
+     */
+    getList: (data: WorkgroupSearch) =>
+      http.request<ResultPagingDataWorkgroupVO['data']>(`/api/main/workgroup/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -8205,6 +8360,21 @@ export const api = {
      * No description
      *
      * @tags 用户
+     * @name GetUserList
+     * @summary 获取用户信息
+     * @request POST:/user/getUserList
+     * @secure
+     */
+    getUserList: (data: CommonSearch) =>
+      http.request<ResultPagingDataUserVO['data']>(`/api/main/user/getUserList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
      * @name Edit
      * @summary 编辑用户信息
      * @request POST:/user/edit
@@ -8299,6 +8469,37 @@ export const api = {
     currentUserInfo: () =>
       http.request<ResultCurrentUserVO['data']>(`/api/main/user/currentUserInfo`, {
         method: 'GET',
+      }),
+  },
+  tableSetting: {
+    /**
+     * No description
+     *
+     * @tags 用户自定义表格设置表
+     * @name SaveSingle
+     * @summary 保存单个表格设置
+     * @request POST:/tableSetting/saveSingle
+     * @secure
+     */
+    saveSingle: (data: TableSetting) =>
+      http.request<ResultObject['data']>(`/api/main/tableSetting/saveSingle`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户自定义表格设置表
+     * @name GetCurrentUserTable
+     * @summary 获取当前用户对应表格的设置
+     * @request POST:/tableSetting/getCurrentUserTable
+     * @secure
+     */
+    getCurrentUserTable: (query: { tableKey: string; behaviorPath: string }) =>
+      http.request<ResultListTableSetting['data']>(`/api/main/tableSetting/getCurrentUserTable`, {
+        method: 'POST',
+        params: query,
       }),
   },
   supportGroup: {
@@ -8477,6 +8678,21 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultSupplier['data']>(`/api/main/supplier/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商
+     * @name GetSupplierList
+     * @summary 获取供应商列表
+     * @request POST:/supplier/getSupplierList
+     * @secure
+     */
+    getSupplierList: (data: CommonSearch) =>
+      http.request<ResultPagingDataSupplier['data']>(`/api/main/supplier/getSupplierList`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
@@ -10841,11 +11057,11 @@ export const api = {
      * @tags 容器类型表
      * @name GetList
      * @summary 查询容器类型
-     * @request POST:/containerType/getlist
+     * @request POST:/containerType/getList
      * @secure
      */
     getList: (data: ContainerTypeSearch) =>
-      http.request<ResultPagingDataContainerTypeVO['data']>(`/api/main/containerType/getlist`, {
+      http.request<ResultPagingDataContainerTypeVO['data']>(`/api/main/containerType/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -10902,11 +11118,11 @@ export const api = {
      * @tags 容器与物料表
      * @name GetList
      * @summary 查询容器类型与物料
-     * @request POST:/containerInMitem/getlist
+     * @request POST:/containerInMitem/getList
      * @secure
      */
     getList: (data: ContainerInMitemSearch) =>
-      http.request<ResultPagingDataContainerInMitemVO['data']>(`/api/main/containerInMitem/getlist`, {
+      http.request<ResultPagingDataContainerInMitemVO['data']>(`/api/main/containerInMitem/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -10963,11 +11179,11 @@ export const api = {
      * @tags 容器表
      * @name GetList
      * @summary 查询容器
-     * @request POST:/container/getlist
+     * @request POST:/container/getList
      * @secure
      */
     getList: (data: ContainerSearch) =>
-      http.request<ResultPagingDataContainerVO['data']>(`/api/main/container/getlist`, {
+      http.request<ResultPagingDataContainerVO['data']>(`/api/main/container/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -11407,6 +11623,36 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 出勤模式
+     * @name GetList
+     * @summary 查询出勤
+     * @request POST:/attendanceMode/getList
+     * @secure
+     */
+    getList: (data: AttendanceModeSearch) =>
+      http.request<ResultPagingDataAttendanceModeVO['data']>(`/api/main/attendanceMode/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 出勤模式
+     * @name AddAttendanceMode
+     * @summary 新增出勤
+     * @request POST:/attendanceMode/addAttendanceMode
+     * @secure
+     */
+    addAttendanceMode: (data: AttendanceMode) =>
+      http.request<ResultObject['data']>(`/api/main/attendanceMode/addAttendanceMode`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   workbenchIndex: {
