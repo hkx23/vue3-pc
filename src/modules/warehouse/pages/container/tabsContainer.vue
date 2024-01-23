@@ -473,8 +473,8 @@ const submit1 = async () => {
   };
   await api.container.generateBarcode(submitData);
   containerVisible1.value = false;
-  MessagePlugin.success('生成成功');
   fetchTable({});
+  MessagePlugin.success('生成成功');
 };
 
 // 打印
@@ -486,7 +486,6 @@ const submit1 = async () => {
 
 // 编辑
 const onEditRowClick2 = async ({ row }) => {
-  console.log('🚀 ~ onEditRowClick2 ~ row:', row);
   diaTilte.value = '编辑容器类型与物料关系';
   containerVisible2.value = true;
   formData2.value = {
@@ -499,17 +498,14 @@ const onEditRowClick2 = async ({ row }) => {
 
 // 单个删除
 const onRowClick = async (row: { row: any }) => {
-  console.log('🚀 ~ onRowClick ~ id:', row.row.id);
   try {
-    // 等待删除操作完成  将单个ID包装成数组
     const idsToDelete = [row.row.id];
     await api.containerInMitem.removeBatch(idsToDelete);
     if (tableContainerData2.value.length <= 1 && pageUI.value.page > 1) {
       pageUI.value.page--;
     }
-    // 删除操作成功，现在调用 fetchTable
+    await fetchTable2({});
     await MessagePlugin.success('删除成功!');
-    await fetchTable2({}); // 刷新表格数据
   } catch (error) {
     console.error('删除失败:', error);
   }
@@ -520,9 +516,8 @@ const onStateRowClick1 = async () => {
   try {
     // 等待删除操作完成
     await api.container.removeBatch(selectedRowKeys.value);
-    // 删除操作成功，现在调用 fetchTable
+    await fetchTable({});
     await MessagePlugin.success('批量作废成功!');
-    await fetchTable({}); // 刷新表格数据
   } catch (error) {
     console.error('作废失败:', error);
   }
@@ -566,8 +561,8 @@ const onRemoveRowClick2 = async () => {
     });
 
     // 删除操作成功，刷新表格数据
-    await MessagePlugin.success('批量删除成功!');
     await fetchTable2({});
+    await MessagePlugin.success('批量删除成功!');
   } catch (error) {
     console.error('删除失败:', error);
   }
@@ -662,7 +657,7 @@ const submit2 = async () => {
   };
   await api.containerInMitem.add(submitData2);
   containerVisible2.value = false;
-  MessagePlugin.success('新增成功');
   fetchTable2({});
+  MessagePlugin.success('新增成功');
 };
 </script>
