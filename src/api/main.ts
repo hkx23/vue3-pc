@@ -445,6 +445,31 @@ export interface WorkstationVO {
   workcenterId?: string;
 }
 
+export interface WorkgroupSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workshopId?: string;
+  /** 班组模糊关键词 */
+  workgroupKeyword?: string;
+  /** 员工模糊关键词 */
+  personKeyword?: string;
+  workgroupId?: string;
+  /** 多个ID */
+  personIds?: string[];
+  /** 新增的 */
+  insertList?: string[];
+  /** 删除的 */
+  deleteList?: string[];
+}
+
 /** 响应数据 */
 export type PagingDataWorkgroup = {
   list?: Workgroup[];
@@ -510,6 +535,129 @@ export interface ResultWorkgroup {
   message?: string;
   /** 班组 */
   data?: Workgroup;
+}
+
+/** 响应数据 */
+export type PagingDataWorkgroupVO = {
+  list?: WorkgroupVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkgroupVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkgroupVO;
+}
+
+/** 显示工站 */
+export interface WorkgroupVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 班组代码 */
+  workgroupCode?: string;
+  /** 班组名称 */
+  workgroupName?: string;
+  /** 班组描述 */
+  workgroupDesc?: string;
+  workshopId?: string;
+  /** 所属车间名称 */
+  workshopName?: string;
+  /**
+   * 班组人员数
+   * @format int32
+   */
+  personCount?: number;
+}
+
+/** 响应数据 */
+export type PagingDataPersonOfWorkgroupVO = {
+  list?: PersonOfWorkgroupVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 显示工站 */
+export interface PersonOfWorkgroupVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 人员编号 */
+  personCode?: string;
+  /** 姓名 */
+  personName?: string;
+  /**
+   * 性别，1男，0女
+   * @format int32
+   */
+  gender?: number;
+  /** 邮箱 */
+  email?: string;
+  /** 手机号 */
+  mobilePhone?: string;
+  adminOrgId?: string;
+  /** 性别，1男，0女 */
+  genderName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPersonOfWorkgroupVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPersonOfWorkgroupVO;
 }
 
 /** 工作中心 */
@@ -1937,8 +2085,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3691,15 +3839,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
+  stateName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4558,8 +4706,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -6191,12 +6339,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -7311,6 +7459,36 @@ export const api = {
      * No description
      *
      * @tags 班组
+     * @name RemoveWorkgroupBatch
+     * @summary 删除班组
+     * @request POST:/workgroup/removeWorkgroupBatch
+     * @secure
+     */
+    removeWorkgroupBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/workgroup/removeWorkgroupBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name RemovePersonBatch
+     * @summary 删除员工
+     * @request POST:/workgroup/removePersonBatch
+     * @secure
+     */
+    removePersonBatch: (data: WorkgroupSearch) =>
+      http.request<ResultObject['data']>(`/api/main/workgroup/removePersonBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
      * @name Search
      * @request POST:/workgroup/items
      * @secure
@@ -7332,6 +7510,96 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkgroup['data']>(`/api/main/workgroup/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetList
+     * @summary 查询班组
+     * @request POST:/workgroup/getlist
+     * @secure
+     */
+    getList: (data: WorkgroupSearch) =>
+      http.request<ResultPagingDataWorkgroupVO['data']>(`/api/main/workgroup/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetOutPerson
+     * @summary 查询未进组人员
+     * @request POST:/workgroup/getOutPerson
+     * @secure
+     */
+    getOutPerson: (data: WorkgroupSearch) =>
+      http.request<ResultPagingDataPersonOfWorkgroupVO['data']>(`/api/main/workgroup/getOutPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetInnerPerson
+     * @summary 查询已进组人员
+     * @request POST:/workgroup/getInnerPerson
+     * @secure
+     */
+    getInnerPerson: (data: WorkgroupSearch) =>
+      http.request<ResultPagingDataPersonOfWorkgroupVO['data']>(`/api/main/workgroup/getInnerPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name AddWorkgroup
+     * @summary 新增班组
+     * @request POST:/workgroup/addWorkgroup
+     * @secure
+     */
+    addWorkgroup: (data: Workgroup) =>
+      http.request<ResultObject['data']>(`/api/main/workgroup/addWorkgroup`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name AddWorkgroupPerson
+     * @summary 新增处理组人员
+     * @request POST:/workgroup/addWorkgroupPerson
+     * @secure
+     */
+    addWorkgroupPerson: (data: WorkgroupSearch) =>
+      http.request<ResultObject['data']>(`/api/main/workgroup/addWorkgroupPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetPersonList
+     * @summary 查询班组人员
+     * @request GET:/workgroup/getPersonList
+     * @secure
+     */
+    getPersonList: (query: { search: WorkgroupSearch }) =>
+      http.request<ResultPagingDataPersonOfWorkgroupVO['data']>(`/api/main/workgroup/getPersonList`, {
+        method: 'GET',
+        params: query,
       }),
   },
   workcenter: {
