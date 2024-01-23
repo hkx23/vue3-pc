@@ -611,10 +611,10 @@ const opts = computed(() => {
       label: '物料类别',
       isHide: !tabValue.value,
       comp: 'bcmp-select-business',
-      event: 'mitemCategory',
+      event: 'business',
       defaultVal: '',
       bind: {
-        type: 'mitem',
+        type: 'mitemCategory',
         showTitle: false,
       },
     },
