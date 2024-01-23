@@ -1420,10 +1420,10 @@ export interface DeliveryDtlVO {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量 */
+  waitScanQty?: number;
 }
 
 /** 采购单明细 */
@@ -1492,10 +1492,10 @@ export interface PurchaseOrderDtlVO {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量 */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -1783,7 +1783,6 @@ export interface MitemShelflifeReportVO {
   labelNo?: string;
   /** 标签数量 */
   qty?: number;
-  onhandId?: string;
   expiredDays?: string;
 }
 
@@ -2487,12 +2486,10 @@ export interface MFTSubVO {
   qty?: number;
   /** 操作员 */
   operatorName?: string;
-  /** 产品编码 */
+  /** 仓库名称 */
   pdCode?: string;
-  /** 来源仓库名称 */
+  /** 仓库名称 */
   warehouseName?: string;
-  /** 目标仓库名称 */
-  toWarehouseName?: string;
   /** 工作中心 */
   workcenterName?: string;
   /** 工单号 */
@@ -4832,7 +4829,7 @@ export const api = {
       pageNum: number;
       /** @format int32 */
       pageSize: number;
-      onhandId: string;
+      billNo: string;
     }) =>
       http.request<ResultPagingDataMitemShelflifeReportVO['data']>(`/api/warehouse/mitemShelflifeReport/getDtl`, {
         method: 'GET',
@@ -5708,10 +5705,9 @@ export const api = {
      * @request GET:/deliveryCard/getPrintTmplList
      * @secure
      */
-    getPrintTmplList: (query: { moScheId: string }) =>
+    getPrintTmplList: () =>
       http.request<ResultPagingDataPrintTmpl['data']>(`/api/warehouse/deliveryCard/getPrintTmplList`, {
         method: 'GET',
-        params: query,
       }),
 
     /**
@@ -5723,10 +5719,9 @@ export const api = {
      * @request GET:/deliveryCard/getBarcodeRuleList
      * @secure
      */
-    getBarcodeRuleList: (query: { moScheId: string }) =>
+    getBarcodeRuleList: () =>
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/warehouse/deliveryCard/getBarcodeRuleList`, {
         method: 'GET',
-        params: query,
       }),
   },
   delivery: {

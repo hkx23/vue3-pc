@@ -1,5 +1,5 @@
 <template>
-  <t-input v-bind="$attrs" ref="input" :autofocus="true" @click="selectAll">
+  <t-input v-bind="$attrs" ref="input" :autofocus="true" :clearable="true" @click="selectAll">
     <template #suffixIcon>
       <qrcode-icon />
     </template>
