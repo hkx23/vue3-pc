@@ -13,7 +13,7 @@
             <t-row class="padding-top-line-8" style="padding-bottom: 8px">
               <t-col flex="auto">
                 <cmp-scan-input
-                  v-if="scanType == 'SCANTEXT'"
+                  v-show="scanType == 'SCANTEXT'"
                   ref="scanBarcodeInstance"
                   v-model="mainform.serialNumber"
                   label="产品条码"
@@ -21,7 +21,7 @@
                   @enter="serialNumberEnter"
                 ></cmp-scan-input>
                 <cmp-scan-input
-                  v-else
+                  v-show="scanType == 'KEYPART'"
                   ref="scanKeypartInstance"
                   v-model="mainform.keypartCode"
                   label="关键件条码"
@@ -123,7 +123,7 @@
 import dayjs from 'dayjs';
 import _, { isEmpty } from 'lodash';
 import { LoadingPlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 
 import { api, WipKeyPartCollectVO } from '@/api/control';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
@@ -271,6 +271,7 @@ const serialNumberEnter = async (value) => {
         moScheId: productInfo.value.moScheId,
       })
       .then((reData) => {
+        console.log(`currentScanType:${currentScanType}`);
         if (reData.scanSuccess) {
           mainform.value.isCommit = reData.isCommit;
           if (currentScanType === 'SCANTEXT') {
@@ -341,12 +342,20 @@ const resetHandle = () => {
 
 const resetBarcode = () => {
   mainform.value.serialNumber = '';
-  scanBarcodeInstance.value.ref.focus();
+  if (scanBarcodeInstance.value) {
+    const { customerFocus } = scanBarcodeInstance.value;
+    customerFocus();
+  }
 };
 
 const resetKeypartCode = () => {
   mainform.value.keypartCode = '';
-  scanKeypartInstance.value.ref.focus();
+  nextTick(() => {
+    if (scanKeypartInstance.value) {
+      const { customerFocus } = scanKeypartInstance.value;
+      customerFocus();
+    }
+  });
 };
 
 const resetKeyPartList = () => {

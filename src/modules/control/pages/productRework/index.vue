@@ -428,7 +428,10 @@ const setKeypartList = (keypartList: WipKeyPartCollectVO[]) => {
 
 const resetBarcode = () => {
   mainform.value.serialNumber = '';
-  scanBarcodeInstance.value.ref.focus();
+  if (scanBarcodeInstance.value) {
+    const { customerFocus } = scanBarcodeInstance.value;
+    customerFocus();
+  }
 };
 
 const resetKeyPartList = () => {

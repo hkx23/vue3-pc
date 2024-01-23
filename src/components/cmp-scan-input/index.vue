@@ -22,6 +22,19 @@ const selectAll = () => {
     }
   }
 };
+
+const customerFocus = () => {
+  if (input.value && input.value.$el) {
+    const nativeInput = input.value.$el.querySelector('input');
+    if (nativeInput) {
+      nativeInput.focus();
+    }
+  }
+};
+
+defineExpose({
+  customerFocus,
+});
 </script>
 
 <style lang="less" scoped>
