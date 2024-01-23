@@ -2527,6 +2527,201 @@ export interface ResultPagingDataLocationVO {
   data?: PagingDataLocationVO;
 }
 
+/** 线边仓水位表 */
+export interface LineWarehouseWaterLevel {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  warehouseId?: string;
+  mitemId?: string;
+  /** 安全库存量 */
+  safeStockVolume?: number;
+  /** 经济批量 */
+  lotQty?: number;
+}
+
+export interface LineWarehouseWaterLevelSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  id?: string;
+  warehouseId?: string;
+  mitemId?: string;
+  /** 多个工作中心ID */
+  workcenterIds?: string[];
+}
+
+/** 显示产品条码管理 */
+export interface LineWarehouseWaterLevelVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  warehouseId?: string;
+  mitemId?: string;
+  /** 安全库存量 */
+  safeStockVolume?: number;
+  /** 经济批量 */
+  lotQty?: number;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 计量单位符号名称 */
+  uomName?: string;
+  /** 组织名称 */
+  orgName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLineWarehouseWaterLevelVO = {
+  list?: LineWarehouseWaterLevelVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLineWarehouseWaterLevelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLineWarehouseWaterLevelVO;
+}
+
+export interface LineWarehouseSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  id?: string;
+  warehouseId?: string;
+  workcenterId?: string;
+  /** 多个工作中心ID */
+  workcenterIds?: string[];
+}
+
+/** 显示产品条码管理 */
+export interface LineWarehouseVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workcenterId?: string;
+  warehouseId?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 仓库描述 */
+  warehouseDesc?: string;
+  /** 组织名称 */
+  orgName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLineWarehouseVO = {
+  list?: LineWarehouseVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLineWarehouseVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLineWarehouseVO;
+}
+
 /** 标签日志表 */
 export interface LabelLog {
   id?: string;
@@ -5523,6 +5718,146 @@ export const api = {
      */
     addLocation: (data: Location) =>
       http.request<ResultObject['data']>(`/api/warehouse/location/addLocation`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name GetDistrict
+     * @summary 获取所选仓库的货区（下拉）
+     * @request GET:/location/getDistrict
+     * @secure
+     */
+    getDistrict: (query: { warehouseId: string }) =>
+      http.request<ResultListDistrict['data']>(`/api/warehouse/location/getDistrict`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  lineWarehouseWaterLevel: {
+    /**
+     * No description
+     *
+     * @tags 线边仓水位表
+     * @name RemoveBatch
+     * @summary 删除线边仓水位
+     * @request POST:/lineWarehouseWaterLevel/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/warehouse/lineWarehouseWaterLevel/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 线边仓水位表
+     * @name ModifyLineWarehouseWaterLevel
+     * @summary 编辑线边仓水位
+     * @request POST:/lineWarehouseWaterLevel/modifyLineWarehouseWaterLevel
+     * @secure
+     */
+    modifyLineWarehouseWaterLevel: (data: LineWarehouseWaterLevel) =>
+      http.request<ResultObject['data']>(`/api/warehouse/lineWarehouseWaterLevel/modifyLineWarehouseWaterLevel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 线边仓水位表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/lineWarehouseWaterLevel/getList
+     * @secure
+     */
+    getList: (data: LineWarehouseWaterLevelSearch) =>
+      http.request<ResultPagingDataLineWarehouseWaterLevelVO['data']>(
+        `/api/warehouse/lineWarehouseWaterLevel/getList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 线边仓水位表
+     * @name AddLineWarehouseWaterLevel
+     * @summary 新增线边仓水位
+     * @request POST:/lineWarehouseWaterLevel/addLineWarehouseWaterLevel
+     * @secure
+     */
+    addLineWarehouseWaterLevel: (data: LineWarehouseWaterLevel) =>
+      http.request<ResultObject['data']>(`/api/warehouse/lineWarehouseWaterLevel/addLineWarehouseWaterLevel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  lineWarehouse: {
+    /**
+     * No description
+     *
+     * @tags 线边仓表
+     * @name RemoveBatch
+     * @summary 删除线边仓
+     * @request POST:/lineWarehouse/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/warehouse/lineWarehouse/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 线边仓表
+     * @name ModifyLineWarehouse
+     * @summary 编辑线边仓
+     * @request POST:/lineWarehouse/modifyLineWarehouse
+     * @secure
+     */
+    modifyLineWarehouse: (data: LineWarehouseSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/lineWarehouse/modifyLineWarehouse`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 线边仓表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/lineWarehouse/getList
+     * @secure
+     */
+    getList: (data: LineWarehouseSearch) =>
+      http.request<ResultPagingDataLineWarehouseVO['data']>(`/api/warehouse/lineWarehouse/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 线边仓表
+     * @name AddLineWarehouse
+     * @summary 新增线边仓
+     * @request POST:/lineWarehouse/addLineWarehouse
+     * @secure
+     */
+    addLineWarehouse: (data: LineWarehouseSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/lineWarehouse/addLineWarehouse`, {
         method: 'POST',
         body: data as any,
       }),

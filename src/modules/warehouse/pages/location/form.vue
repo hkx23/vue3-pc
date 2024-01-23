@@ -299,7 +299,8 @@ const getLocationByWarehouse = async (warehouseId) => {
   }
 
   try {
-    const result = await api.location.getLocationByWarehouse(warehouseId);
+    const result = await api.location.getDistrict({ warehouseId });
+    console.log('🚀 ~ getLocationByWarehouse ~ result:', result);
     districtOptions.value = result.map((item) => ({
       label: item.districtName,
       value: item.id,
