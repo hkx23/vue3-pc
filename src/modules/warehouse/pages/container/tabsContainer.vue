@@ -121,19 +121,22 @@
       <t-form-item label="容器类型" name="containerType">
         <t-input v-model="formData2.containerType"></t-input>
       </t-form-item>
-
+      <!-- v-if="diaTilte === '新增容器类型与物料关系'"  -->
       <t-form-item label="物料类别" name="mitemCategoryId">
         <bcmp-select-business
           v-model="formData2.mitemCategoryId"
+          :is-multiple="false"
           :show-title="false"
           type="mitemCategory"
           label-field="categoryName"
-          value-field="categoryCode"
         ></bcmp-select-business>
       </t-form-item>
+      <!-- 
+      <t-form-item label="物料类别" name="mitemCategoryId">
+        <t-input v-model="formData2.mitemCategoryId"></t-input>
+      </t-form-item> -->
 
       <t-form-item label="物料类别编码" name="mitemCategoryId">
-        <!-- <t-select v-model="formData2.containerTypeId"></t-select> -->
         <t-input v-model="formData2.mitemCategoryId"></t-input>
       </t-form-item>
 
@@ -148,8 +151,7 @@
         ></bcmp-select-business>
       </t-form-item>
 
-      <t-form-item label="物料编码" name="mitemCategoryId">
-        <!-- <t-select v-model="formData2.mitemCategoryId"></t-select> -->
+      <t-form-item label="物料编码" name="mitemId">
         <t-input v-model="formData2.mitemId"></t-input>
       </t-form-item>
 
@@ -480,34 +482,37 @@ const submit1 = async () => {
 // };
 
 // 编辑
-const onEditRowClick2 = async (row: any) => {
+const onEditRowClick2 = async ({ row }) => {
   console.log('🚀 ~ onEditRowClick2 ~ row:', row);
+
   diaTilte.value = '编辑容器类型与物料关系';
   containerVisible2.value = true;
   /* mitemName 物料名称
     qty   标准数量
     mitemCode 物料编码
-  
+
   */
-  const partialRow = JSON.parse(JSON.stringify(row.row, ['mitemCode', 'mitemDesc', 'mitemName', 'qty', 'id']));
-  console.log('🚀 ~ onEditRowClick2 ~ partialRow:', partialRow);
-  // formData2.value = partialRow; // 赋值
-  formData2.value = {
-    ...formData2.value,
-    mitemCategoryId: partialRow.mitemCategoryId,
-    mitemId: partialRow.mitemId,
-    qty: partialRow.qty,
-    mitemCategoryCode: partialRow.mitemCategoryCode,
-    // 其他需要赋值的字段
-  };
+  // const partialRow = JSON.parse(JSON.stringify(row.row, ['mitemCategoryId', 'mitemId', 'mitemName', 'qty', 'id']));
+  // console.log('🚀 ~ onEditRowClick2 ~ partialRow:', partialRow);
+
+  // formData2.value = {
+  // ...formData2.value,
+  // containerType:''
+  // containerTypeId:''
+  formData2.value.mitemCategoryId = row.mitemCategoryId; // 编辑不需要修改  todo
+  formData2.value.mitemId = row.mitemId;
+  formData2.value.qty = row.qty;
+  // };
+  console.log('🚀 ~ onEditRowClick2 ~ partialRow88888888:', formData2.value);
 };
 
 // 单个删除
 const onRowClick = async (row: { row: any }) => {
   console.log('🚀 ~ onRowClick ~ id:', row.row.id);
   try {
-    // 等待删除操作完成
-    await api.containerInMitem.removeBatch(row.row.id);
+    // 等待删除操作完成  将单个ID包装成数组
+    const idsToDelete = [row.row.id];
+    await api.containerInMitem.removeBatch(idsToDelete);
     if (tableContainerData2.value.length <= 1 && pageUI.value.page > 1) {
       pageUI.value.page--;
     }
