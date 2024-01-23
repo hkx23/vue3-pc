@@ -1,3 +1,4 @@
+<!-- 货位 新增 -->
 <template>
   <t-form
     ref="formRef"
@@ -11,13 +12,13 @@
     <t-row :gutter="[32, 16]">
       <t-col :span="6">
         <t-form-item v-if="formData.operateTpye === 'add'" label="选择仓库" name="warehouseId">
+          <!--  label-field="warehouseName"
+            value-field="warehouseCode"  -->
           <bcmp-select-business
             v-model="formData.warehouseId"
             :show-title="false"
             :is-multiple="false"
-            type="warehouse"
-            label-field="warehouseName"
-            value-field="warehouseCode"
+            type="warehouseAuth"
             @selection-change="onMaterialTabData"
           ></bcmp-select-business>
         </t-form-item>
@@ -32,7 +33,7 @@
       </t-col>
       <t-col :span="6">
         <t-form-item v-if="formData.operateTpye === 'add'" label="选择货区" name="districtId">
-          <bcmp-select-business
+          <!-- <bcmp-select-business
             v-model="formData.districtId"
             :show-title="false"
             :is-multiple="false"
@@ -41,7 +42,23 @@
             value-field="districtCode"
             :disabled="formData.operateTpye !== 'add'"
             @selection-change="onMaterialTabDatas"
-          ></bcmp-select-business>
+          ></bcmp-select-business> -->
+
+          <t-select
+            v-model="formData.districtId"
+            :show-title="false"
+            :is-multiple="false"
+            type="district"
+            :disabled="formData.operateTpye !== 'add'"
+            @change="onMaterialTabDatas"
+          >
+            <t-option
+              v-for="option in districtOptions"
+              :key="option.value"
+              :value="option.value"
+              :label="option.label"
+            ></t-option>
+          </t-select>
         </t-form-item>
         <t-form-item v-else label="选择货区" required-mark>
           <t-input v-model="formData.districtId" disabled></t-input>
@@ -49,7 +66,15 @@
       </t-col>
       <t-col :span="6">
         <t-form-item label="货区名称" required-mark>
-          <t-input v-model="formData.districtName" placeholder="手动输入...." disabled />
+          <!-- <t-input v-model="formData.districtName" placeholder="手动输入...." disabled /> -->
+          <t-select v-model="formData.districtId" :show-title="false" :is-multiple="false" disabled>
+            <t-option
+              v-for="option in districtOptions"
+              :key="option.value"
+              :value="option.value"
+              :label="option.label"
+            ></t-option>
+          </t-select>
         </t-form-item>
       </t-col>
       <t-col :span="6">
@@ -82,7 +107,7 @@
 <script setup lang="ts">
 import { isEmpty } from 'lodash';
 import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { api, District } from '@/api/warehouse';
 
@@ -98,6 +123,7 @@ interface LocationForm extends District {
 }
 
 const formRef = ref(null);
+const districtOptions = ref([]); // 货区
 const formData = ref<LocationForm>({
   id: '',
   operateTpye: 'add',
@@ -140,11 +166,32 @@ const onMaterialTabData = async (event) => {
   const { warehouseName, id } = event;
   formData.value.warehouseName = warehouseName;
   formData.value.warehouseId = id;
+  getLocationByWarehouse(id); // 获取仓库下的货区
 };
+// const onMaterialTabDatas = async (event) => {
+//   const { districtName, id } = event;
+//   formData.value.districtName = districtName;
+//   formData.value.districtId = id;
+// };
+
+// const onMaterialTabDatas = async (event) => {
+//   const selectedDistrict = districtOptions.value.find((option) => option.value === event);
+//   if (selectedDistrict) {
+//     formData.value.districtName = selectedDistrict.label;
+//     formData.value.districtId = selectedDistrict.value;
+//     formData.value.districtCode = selectedDistrict.districtCode;
+//   }
+// };
+
 const onMaterialTabDatas = async (event) => {
-  const { districtName, id } = event;
-  formData.value.districtName = districtName;
-  formData.value.districtId = id;
+  const selectedDistrict = districtOptions.value.find((option) => {
+    return option.value === event;
+  });
+  if (selectedDistrict) {
+    formData.value.districtName = selectedDistrict.districtName;
+    formData.value.districtId = selectedDistrict.value;
+    formData.value.districtCode = selectedDistrict.districtCode;
+  }
 };
 
 const submit = async () => {
@@ -216,6 +263,54 @@ const rules: FormRules<Data> = {
       trigger: 'blur',
     },
   ],
+};
+
+// 监听仓库ID的变化
+watch(
+  () => formData.value.warehouseId,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      // 当仓库变化时，重置货区信息
+      formData.value.districtId = '';
+      formData.value.districtName = '';
+    }
+  },
+);
+
+// 根据仓库获取货位
+// const getLocationByWarehouse = async (warehouseId) => {
+//   // try {
+//   const result = await api.location.getLocationByWarehouse(warehouseId);
+//   districtOptions.value = result.map((item) => ({
+//     label: item.districtName,
+//     value: item.id,
+//   }));
+//   // } catch (error) {
+//   //   console.error('获取货区数据失败:', error);
+//   //   districtOptions.value = []; // 出错时重置选项
+//   // }
+// };
+
+const getLocationByWarehouse = async (warehouseId) => {
+  if (!warehouseId) {
+    console.log('未选择仓库，无法获取货区数据');
+    districtOptions.value = []; // 清空货区选项
+    return;
+  }
+
+  try {
+    const result = await api.location.getLocationByWarehouse(warehouseId);
+    districtOptions.value = result.map((item) => ({
+      label: item.districtName,
+      value: item.id,
+      //  包含了选中的货区的详细信息
+      districtName: item.districtName,
+      districtCode: item.districtCode,
+    }));
+  } catch (error) {
+    console.error('获取货区数据失败:', error);
+    districtOptions.value = []; // 出错时重置选项
+  }
 };
 
 //* 暴露 init 方法

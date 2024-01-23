@@ -15,7 +15,7 @@
             v-model="formData.warehouseId"
             :is-multiple="false"
             :show-title="false"
-            type="warehouse"
+            type="warehouseAuth"
             label-field="warehouseName"
             value-field="warehouseCode"
             @selection-change="onMaterialTabData"

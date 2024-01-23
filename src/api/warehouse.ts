@@ -550,6 +550,11 @@ export interface TransferHeadVO {
   supplierCode?: string;
   /** 供应商名称 */
   supplierName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
   /** 交易单身表 */
   transferDtlList?: TransferDtlVO[];
 }
@@ -914,14 +919,15 @@ export interface BillInfoMMVO {
   billNo?: string;
   labelNo?: string;
   labelId?: string;
+  mitemId?: string;
   reqQty?: number;
   transferDtlId?: string;
   warehouseId?: string;
   toWarehouseId?: string;
   warehouseName?: string;
   toWarehouseName?: string;
-  locationId?: string;
-  toLocationId?: string;
+  locId?: string;
+  toLocId?: string;
   locationName?: string;
   toLocationName?: string;
   /** 费用部门 */
@@ -940,27 +946,14 @@ export interface TransferHeadConfirmSubmit {
   warehouseId?: string;
   toWarehouseId?: string;
   businessCategoryId?: string;
-  locationId?: string;
-  toLocationId?: string;
+  locId?: string;
+  toLocId?: string;
   /** 费用部门 */
   costDepartmentValue?: string;
   accountValue?: string;
   /** 费用部门 */
   reasonValue?: string;
   list?: BillInfoMMVO[];
-}
-
-/** 通用响应类 */
-export interface ResultString {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: string | null;
 }
 
 /** 通用响应类 */
@@ -1670,6 +1663,18 @@ export interface ReturnManagementSearch {
   returnType?: string;
   /** 单据状态 */
   billStatus?: string;
+  /** 用户信息 */
+  userName?: string;
+  /**
+   * 开始时间
+   * @format date-time
+   */
+  beginTime?: string;
+  /**
+   * 结束时间
+   * @format date-time
+   */
+  endTime?: string;
 }
 
 /** 通用响应类 */
@@ -2643,6 +2648,8 @@ export interface LabelMMSearch {
   billNo?: string;
   businessCategoryId?: string;
   warehouseId?: string;
+  toWarehouseId?: string;
+  toLocId?: string;
   locId?: string;
   /** 科目 */
   accountValue?: string;
@@ -2650,19 +2657,6 @@ export interface LabelMMSearch {
   reasonValue?: string;
   /** 费用部门 */
   costDepartmentValue?: string;
-}
-
-/** 通用响应类 */
-export interface ResultBillInfoMMVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 杂项管理生成单据后返回对象 */
-  data?: BillInfoMMVO;
 }
 
 export interface MitemForwardTraceSearch {
@@ -3312,6 +3306,19 @@ export interface ResultPagingDataBusinessCategoryVO {
   data?: PagingDataBusinessCategoryVO;
 }
 
+/** 通用响应类 */
+export interface ResultListBusinessCategory {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: BusinessCategory[] | null;
+}
+
 export interface BillManagementSearch {
   /**
    * 页码
@@ -3703,6 +3710,19 @@ export interface ResultPagingDataOnhandQtyDtlVO {
   data?: PagingDataOnhandQtyDtlVO;
 }
 
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
+}
+
 /** 响应数据 */
 export type MaterialRequisitionVO = {
   id?: string;
@@ -4027,19 +4047,6 @@ export interface ResultPagingDataBarcodeRule {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeRule;
-}
-
-/** 通用响应类 */
-export interface ResultListBusinessCategory {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: BusinessCategory[] | null;
 }
 
 /** 通用响应类 */
@@ -4373,21 +4380,6 @@ export const api = {
      */
     getById: (data: string) =>
       http.request<ResultTransferDtl['data']>(`/api/warehouse/transferDtl/getById`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 交易单身表
-     * @name ConfirmBillNoOnhandTransfer
-     * @summary 库存转移单据确认
-     * @request POST:/transferDtl/confirmBillNoOnhandTransfer
-     * @secure
-     */
-    confirmBillNoOnhandTransfer: (data: TransferHeadConfirmSubmit) =>
-      http.request<ResultString['data']>(`/api/warehouse/transferDtl/confirmBillNoOnhandTransfer`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4874,6 +4866,24 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
+     * @name GetReturnStockOutBillList
+     * @summary 查询退货单接收日志
+     * @request POST:/returnManagement/getReturnStockOutBillList
+     * @secure
+     */
+    getReturnStockOutBillList: (data: ReturnManagementSearch) =>
+      http.request<ResultPagingDataTransferHeadVO['data']>(
+        `/api/warehouse/returnManagement/getReturnStockOutBillList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
 
     /**
      * No description
@@ -5582,21 +5592,6 @@ export const api = {
      * No description
      *
      * @tags 标签表
-     * @name GetMitemOmInfo
-     * @summary 根据物料编码或标签获取基础信息
-     * @request POST:/label/getMitemOMInfo
-     * @secure
-     */
-    getMitemOmInfo: (data: TransferHeadConfirmSubmit) =>
-      http.request<ResultBillInfoMMVO['data']>(`/api/warehouse/label/getMitemOMInfo`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
      * @name GetMitemBasicInfo
      * @summary 物料基础信息
      * @request POST:/label/getMitemBasicInfo
@@ -6105,6 +6100,21 @@ export const api = {
      * No description
      *
      * @tags 仓库业务类型
+     * @name GetBusinessCategory
+     * @summary 获取交易事务
+     * @request POST:/businessCategory/getBusinessCategory
+     * @secure
+     */
+    getBusinessCategory: (data: string[]) =>
+      http.request<ResultListBusinessCategory['data']>(`/api/warehouse/businessCategory/getBusinessCategory`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库业务类型
      * @name AddBusinessCategory
      * @summary 新增仓库业务类型
      * @request POST:/businessCategory/addBusinessCategory
@@ -6114,20 +6124,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/businessCategory/addBusinessCategory`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 仓库业务类型
-     * @name GetBusinessCategory
-     * @summary 杂项管理获取交易事务
-     * @request GET:/businessCategory/getBusinessCategory
-     * @secure
-     */
-    getBusinessCategory: () =>
-      http.request<ResultListBusinessCategory['data']>(`/api/warehouse/businessCategory/getBusinessCategory`, {
-        method: 'GET',
       }),
   },
   billManagement: {

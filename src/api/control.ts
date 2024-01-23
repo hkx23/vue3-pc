@@ -1666,11 +1666,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopCode?: string;
   workshopId?: string;
-  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
+  workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2883,11 +2883,11 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopCode?: string;
   workshopId?: string;
-  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -2997,11 +2997,11 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopCode?: string;
   workshopId?: string;
-  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
