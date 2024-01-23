@@ -536,7 +536,7 @@ const onEditRow = (row: any) => {
   incidentID.value = row.id; // 编辑回填 ID
   submitFalg.value = false; // 编辑为 false
   formVisible.value = true;
-  diaLogTitle.value = '编辑异常类型';
+  diaLogTitle.value = '编辑处理组';
 };
 
 // #编辑 处理组 表格数据 请求
