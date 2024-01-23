@@ -115,7 +115,7 @@
     </t-form>
   </t-dialog>
 
-  <!-- 弹窗2 -->
+  <!-- 弹窗2  :footer="false"  todo-->
   <t-dialog v-model:visible="containerVisible2" :footer="false" :close-on-overlay-click="false" :header="diaTilte">
     <t-form :data="formData2" label-width="110px" :rules="rules2" @submit="submit2" @reset="cancel2">
       <t-form-item label="容器类型" name="containerType">
@@ -129,6 +129,7 @@
           :show-title="false"
           type="mitemCategory"
           label-field="categoryName"
+          @on-selection-change="SelectionChange1"
         ></bcmp-select-business>
       </t-form-item>
       <!-- 
@@ -137,7 +138,7 @@
       </t-form-item> -->
 
       <t-form-item label="物料类别编码" name="mitemCategoryId">
-        <t-input v-model="formData2.mitemCategoryId"></t-input>
+        <t-input v-model="formData2.categoryCode"></t-input>
       </t-form-item>
 
       <t-form-item label="物料名称" name="mitemId">
@@ -146,13 +147,12 @@
           :is-multiple="false"
           :show-title="false"
           type="mitem"
-          label-field="mitemName"
-          value-field="mitemCode"
+          @on-selection-change="SelectionChange2"
         ></bcmp-select-business>
       </t-form-item>
 
       <t-form-item label="物料编码" name="mitemId">
-        <t-input v-model="formData2.mitemId"></t-input>
+        <t-input v-model="formData2.mitemCode"></t-input>
       </t-form-item>
 
       <t-form-item label="标准数量" name="qty">
@@ -192,8 +192,9 @@ const PrintTmpReslutDataOptions = ref([]); // 打印规则下拉数据
 const preserveId = ref(''); // 入参id
 const selectedRowKeys = ref([]); // 批量作废
 const selectedRowKeys2 = ref([]); // 批量删除
+
 const formData1 = ref({
-  containerType: preserveId.value, // 传递id
+  containerType: '',
   barcodeRuleId: '',
   createNum: 1,
 });
@@ -201,9 +202,11 @@ const diaTilte = ref('');
 
 const formData2 = ref({
   containerType: '', // 容器类型
-  containerTypeId: '', // 容器类型ID
+  containerTypeId: '',
   mitemCategoryId: '', // 物料类别编码
+  categoryCode: '',
   mitemId: '', // 物料ID
+  mitemCode: '',
   qty: 1,
   mitemCategoryCode: '',
 });
@@ -484,26 +487,14 @@ const submit1 = async () => {
 // 编辑
 const onEditRowClick2 = async ({ row }) => {
   console.log('🚀 ~ onEditRowClick2 ~ row:', row);
-
   diaTilte.value = '编辑容器类型与物料关系';
   containerVisible2.value = true;
-  /* mitemName 物料名称
-    qty   标准数量
-    mitemCode 物料编码
-
-  */
-  // const partialRow = JSON.parse(JSON.stringify(row.row, ['mitemCategoryId', 'mitemId', 'mitemName', 'qty', 'id']));
-  // console.log('🚀 ~ onEditRowClick2 ~ partialRow:', partialRow);
-
-  // formData2.value = {
-  // ...formData2.value,
-  // containerType:''
-  // containerTypeId:''
-  formData2.value.mitemCategoryId = row.mitemCategoryId; // 编辑不需要修改  todo
-  formData2.value.mitemId = row.mitemId;
-  formData2.value.qty = row.qty;
-  // };
-  console.log('🚀 ~ onEditRowClick2 ~ partialRow88888888:', formData2.value);
+  formData2.value = {
+    ...formData2.value,
+    mitemCategoryId: row.mitemCategoryId, // 编辑不需要修改  todo
+    mitemId: row.mitemId,
+    qty: row.qty,
+  };
 };
 
 // 单个删除
@@ -536,7 +527,7 @@ const onStateRowClick1 = async () => {
     console.error('作废失败:', error);
   }
 };
-// 批量删除
+// 批量删除  todo
 // const onRemoveRowClick2 = async () => {
 //   try {
 //     // 等待删除操作完成
@@ -600,12 +591,17 @@ const cancel = () => {
 };
 // 取消
 const cancel2 = () => {
-  // 清空数据
-  // formData1.value = {
-  //   containerType: '',
-  //   barcodeRuleId: '',
-  //   createNum: 1,
+  // 重置表单项，但保留 containerType 字段的值
+  // formData2.value = {
+  // ...formData2.value, // 保留当前表单的值
+  //   mitemCategoryId: '', // 清空物料类别编码
+  //   mitemId: '', // 清空物料ID
+  //   qty: 1, // 重置标准数量为1
+  //   mitemCategoryCode: '', // 清空物料类别编码
+  //   categoryCode: '', // 清空物料类别编码
+  //   mitemCode: '', // 清空物料编码
   // };
+
   containerVisible2.value = false;
   MessagePlugin.success('已取消');
 };
@@ -624,20 +620,30 @@ watch(
   () => props.selectedRowData,
   (newValue) => {
     if (newValue) {
-      formData1.value.containerType = newValue.containerTypeName;
+      const result = newValue.containerTypeName;
+      formData1.value.containerType = result;
       preserveId.value = newValue.id;
-      formData2.value.containerType = newValue.containerTypeName;
+      formData2.value.containerType = result;
     }
   },
 );
 
 // ################### 物料关联 function ####################
+
+// 显示  code
+const SelectionChange1 = (item) => {
+  formData2.value.categoryCode = item.categoryCode;
+};
+
+const SelectionChange2 = (item) => {
+  formData2.value.mitemCode = item.mitemCode;
+};
 const add = () => {
   diaTilte.value = '新增容器类型与物料关系';
   containerVisible2.value = true;
   // 重置表单项，但保留 containerType 字段的值
   formData2.value = {
-    ...formData2.value,
+    ...formData2.value, // 展开左侧表传来的值
     mitemCategoryId: '', // 物料类别编码
     mitemId: '', // 物料ID
     qty: 1, // 标准数量
@@ -649,12 +655,11 @@ const submit2 = async () => {
   // 创建提交的数据对象  todo
   const submitData2 = {
     // containerType: formData2.value.containerType, // todo  不传 主表带过来
-    containerTypeId: preserveId.value, // 这个传 containerType 的 id   与 submit1 一样
+    containerTypeId: preserveId.value,
     mitemCategoryId: formData2.value.mitemCategoryId,
     mitemId: formData2.value.mitemId,
     qty: formData2.value.qty,
   };
-  console.log('🚀 ~ submit2 ~ submitData2:', submitData2);
   await api.containerInMitem.add(submitData2);
   containerVisible2.value = false;
   MessagePlugin.success('新增成功');
