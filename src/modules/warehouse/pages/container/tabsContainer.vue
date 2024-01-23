@@ -129,7 +129,7 @@
           :show-title="false"
           type="mitemCategory"
           label-field="categoryName"
-          @on-selection-change="SelectionChange1"
+          @selection-change="SelectionChange1"
         ></bcmp-select-business>
       </t-form-item>
       <!-- 
@@ -147,7 +147,7 @@
           :is-multiple="false"
           :show-title="false"
           type="mitem"
-          @on-selection-change="SelectionChange2"
+          @selection-change="SelectionChange2"
         ></bcmp-select-business>
       </t-form-item>
 
