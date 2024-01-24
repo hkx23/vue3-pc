@@ -34,9 +34,12 @@
         <template #op="slotProps">
           <t-space :size="8">
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">编辑</t-link>
-            <t-link variant="text" theme="primary" @click="onStateRowClick(slotProps)">{{
-              slotProps.row.state == 1 ? '禁用' : '启用'
-            }}</t-link>
+            <t-popconfirm
+              :content="slotProps.row.state == 0 ? '是否启用仓库' : '是否禁用仓库'"
+              @confirm="onStateRowClick(slotProps)"
+            >
+              <t-link theme="primary">{{ slotProps.row.state == 0 ? '启用' : '禁用' }}</t-link>
+            </t-popconfirm>
           </t-space>
         </template>
       </cmp-table>
@@ -52,23 +55,6 @@
       :close-on-overlay-click="false"
     >
       <warehouse-form ref="formRef"></warehouse-form>
-    </t-dialog>
-    <t-dialog
-      v-model:visible="stateVisible"
-      width="30%"
-      :on-cancel="closeCon"
-      :on-close-btn-click="closeCon"
-      :on-close="closeCon"
-      :on-confirm="onConfirmAnother"
-    >
-      <t-space direction="horizontal" style="width: 100%">
-        <div v-if="indexId.state === 1">
-          <p>请再次确认是否禁用</p>
-        </div>
-        <div v-if="indexId.state === 0">
-          <p>请再次确认是否启用</p>
-        </div>
-      </t-space>
     </t-dialog>
   </div>
 </template>
@@ -90,7 +76,6 @@ const keyword = ref('');
 const selectedWarehouseRowKeys = ref([]);
 const tableDataWarehouse = ref([]);
 const formVisible = ref(false);
-const stateVisible = ref(false);
 const formRef = ref(null);
 const formTitle = ref('');
 const warehouseState = ref(-1);
@@ -144,13 +129,7 @@ const opts = computed(() => {
     },
   };
 });
-const onConfirmAnother = () => {
-  stateChange();
-  stateVisible.value = false;
-};
-const closeCon = () => {
-  stateVisible.value = false;
-};
+
 // 点击查询按钮
 const conditionEnter = (data: any) => {
   keyword.value = data.keyword;
@@ -216,15 +195,8 @@ const getWarehouseCategory = (id: any) => {
   }
   return '';
 };
-const indexId = ref({ id: '', state: 0 });
 const onStateRowClick = async (value: any) => {
-  console.log(value);
-  indexId.value.id = value.row.id;
-  indexId.value.state = value.row.state;
-  stateVisible.value = true;
-};
-const stateChange = async () => {
-  await api.warehouse.stateChange(indexId.value.id);
+  await api.warehouse.stateChange(value.row.id);
   MessagePlugin.success('修改成功');
   fetchTable();
 };
