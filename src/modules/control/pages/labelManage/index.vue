@@ -812,6 +812,8 @@ const onLogInterface = async (row: any) => {
 
 // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
+  generateData.value.barcodeRuleId = '';
+  printTemplate.value = '';
   const { moScheduleId } = context.currentRowData;
   numInput.value = context.currentRowData.planQty - context.currentRowData.generateQty;
   generateData.value.createNum = context.currentRowData.thisTimeQty;

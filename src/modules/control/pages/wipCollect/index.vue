@@ -13,14 +13,16 @@
             <t-row class="padding-top-line-8" style="padding-bottom: 8px">
               <t-col flex="auto">
                 <cmp-scan-input
-                  v-if="scanType == 'SCANTEXT'"
+                  v-show="scanType == 'SCANTEXT'"
+                  ref="scanBarcodeInstance"
                   v-model="mainform.serialNumber"
                   label="产品条码"
                   :placeholder="scanDesc"
                   @enter="serialNumberEnter"
                 ></cmp-scan-input>
                 <cmp-scan-input
-                  v-else
+                  v-show="scanType == 'KEYPART'"
+                  ref="scanKeypartInstance"
                   v-model="mainform.keypartCode"
                   label="关键件条码"
                   :placeholder="scanDesc"
@@ -121,7 +123,7 @@
 import dayjs from 'dayjs';
 import _, { isEmpty } from 'lodash';
 import { LoadingPlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 
 import { api, WipKeyPartCollectVO } from '@/api/control';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
@@ -131,6 +133,8 @@ import { scanCollectInfoModel } from '../../api/processInspection';
 import { useLang } from './lang';
 
 const userStore = useUserStore();
+const scanBarcodeInstance = ref(null);
+const scanKeypartInstance = ref(null);
 // 全局信息
 const scanInfoList = ref<scanCollectInfoModel[]>([]);
 const { t } = useLang();
@@ -267,6 +271,7 @@ const serialNumberEnter = async (value) => {
         moScheId: productInfo.value.moScheId,
       })
       .then((reData) => {
+        console.log(`currentScanType:${currentScanType}`);
         if (reData.scanSuccess) {
           mainform.value.isCommit = reData.isCommit;
           if (currentScanType === 'SCANTEXT') {
@@ -303,14 +308,14 @@ const serialNumberEnter = async (value) => {
           }
         } else {
           pushMessage('error', value, reData.scanMessage);
-          // writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
-          if (scanType.value === 'SCANTEXT') {
+          if (currentScanType === 'SCANTEXT') {
             resetBarcode();
+          } else {
+            resetKeypartCode();
           }
           if (reData.isCommit) {
             resetKeypartCode();
           }
-          // writeScanInfoError(reData.serialNumber, reData.qty, reData.scanMessage); // 扫描失败
         }
         LoadingPlugin(false);
       })
@@ -337,10 +342,20 @@ const resetHandle = () => {
 
 const resetBarcode = () => {
   mainform.value.serialNumber = '';
+  if (scanBarcodeInstance.value) {
+    const { customerFocus } = scanBarcodeInstance.value;
+    customerFocus();
+  }
 };
 
 const resetKeypartCode = () => {
   mainform.value.keypartCode = '';
+  nextTick(() => {
+    if (scanKeypartInstance.value) {
+      const { customerFocus } = scanKeypartInstance.value;
+      customerFocus();
+    }
+  });
 };
 
 const resetKeyPartList = () => {
@@ -410,6 +425,7 @@ const getRowClassName = ({ rowIndex }) => {
 
 // 切换工站
 const handleonChange = () => {
+  resetHandle();
   Init();
 };
 

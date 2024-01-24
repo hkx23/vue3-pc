@@ -178,7 +178,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
-    colKey: 'pickQty',
+    colKey: 'moRequestQty',
     title: '工单需求数量',
     align: 'center',
     width: '130',

@@ -1666,11 +1666,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  /** @format date-time */
+  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  /** @format date-time */
-  datetimeSche?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -1717,9 +1717,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -1847,8 +1847,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -1862,6 +1862,23 @@ export interface ResultPagingDataProcessVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataProcessVO;
+}
+
+/** 维修回流工序 */
+export interface ProcessSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
 }
 
 /** 包装关联物料提交的模型 */
@@ -2883,17 +2900,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  /** @format date-time */
+  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  isState?: boolean;
   stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2997,16 +3014,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  /** @format date-time */
+  datetimeSche?: string;
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  isState?: boolean;
-  defectCodeStr?: string;
   stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  isState?: boolean;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3681,8 +3698,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -4611,6 +4628,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataProcessVO['data']>(`/api/control/productRework/itemsProcess`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品返工
+     * @name GetReturnProcessByBarcode
+     * @summary 根据排产工单和扫描条码，获取历史已扫的工序信息
+     * @request POST:/productRework/getReturnProcessByBarcode
+     * @secure
+     */
+    getReturnProcessByBarcode: (data: ProcessSearch) =>
+      http.request<ResultPagingDataProcessVO['data']>(`/api/control/productRework/getReturnProcessByBarcode`, {
         method: 'POST',
         body: data as any,
       }),

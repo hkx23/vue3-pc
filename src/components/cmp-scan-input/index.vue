@@ -1,5 +1,5 @@
 <template>
-  <t-input v-bind="$attrs" ref="input" :autofocus="true" @click="selectAll">
+  <t-input v-bind="$attrs" ref="input" :autofocus="true" :clearable="true" @click="selectAll">
     <template #suffixIcon>
       <qrcode-icon />
     </template>
@@ -22,6 +22,20 @@ const selectAll = () => {
     }
   }
 };
+
+const customerFocus = () => {
+  if (input.value && input.value.$el) {
+    const nativeInput = input.value.$el.querySelector('input');
+    if (nativeInput) {
+      nativeInput.focus();
+    }
+  }
+};
+
+defineExpose({
+  customerFocus,
+  selectAll,
+});
 </script>
 
 <style lang="less" scoped>

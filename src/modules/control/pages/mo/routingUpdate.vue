@@ -29,6 +29,7 @@
             :loading="loadingRouting"
             :show-pagination="false"
             select-on-row-click
+            :selected-row-keys="selectedRowKeys"
             @refresh="fetchTableRouting"
             @select-change="onSelectChange"
           >
@@ -62,7 +63,12 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  routingVersionId: {
+    type: String,
+    default: '',
+  },
 });
+const selectedRowKeys = ref([]);
 const { loading: loadingRouting, setLoading: setLoadingRouting } = useLoading();
 const Emit = defineEmits(['routingShow', 'refreshTable', 'update:modelValue', 'submit']);
 const currentrow = ref({}) as any; // 当前行工单信息
@@ -159,6 +165,7 @@ const onHandleParentTableRefresh = () => {
 // 选中行
 const onSelectChange = (value: any) => {
   selectRoutingVerisonID.value = value;
+  selectedRowKeys.value = value;
 };
 
 // 查询工艺路线编码
@@ -171,6 +178,8 @@ watch(
   (value) => {
     nextTick(() => {
       currentrow.value = value;
+      selectedRowKeys.value = [];
+      selectedRowKeys.value.push(currentrow.value.routingRevisionId);
       fetchTableRouting();
     });
   },

@@ -8,6 +8,7 @@
       <!-- cmp-table 表格组件  -->
       <cmp-table
         v-model:pagination="pageUI"
+        v-model:selected-row-keys="selectedRowKeys"
         row-key="id"
         :table-column="tableContainerColumns1"
         :table-data="tableContainerData1"
@@ -26,8 +27,7 @@
           >
 
           <t-button theme="primary">打印</t-button>
-          <!-- @click="onStateRowClick1" -->
-          <t-button theme="primary">删除</t-button>
+          <t-button theme="primary" @click="onStateRowClick1">作废</t-button>
         </template>
 
         <!-- 定义序号列的插槽 -->
@@ -45,20 +45,19 @@
       <!-- cmp-table 表格组件  -->
       <cmp-table
         v-model:pagination="pageUI"
-        v-model:selected-row-keys="selectedRowKeys"
+        v-model:selected-row-keys="selectedRowKeys2"
         row-key="id"
         :table-column="tableContainerColumns2"
         :table-data="tableContainerData2"
         :total="dataTotal2"
         empty="没有符合条件的数据"
-        @select-change="rehandleSelectChange"
       >
         <template #button>
           <t-button theme="primary" @click="add">新增</t-button>
           <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
           <!--  @click="print" -->
           <t-button theme="primary">打印</t-button>
-          <t-button theme="primary">删除</t-button>
+          <t-button theme="primary" @click="onRemoveRowClick2">删除</t-button>
         </template>
 
         <!-- 定义序号列的插槽 -->
@@ -69,8 +68,8 @@
         <template #op2="row">
           <t-space>
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2(row)">编辑</t-link>
-            <!-- @confirm="() => onStateRowClick2(row)" -->
-            <t-popconfirm theme="default" content="确认删除吗">
+            <!-- -->
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onRowClick(row)">
               <t-link theme="primary"> 删除 </t-link>
             </t-popconfirm>
           </t-space>
@@ -116,28 +115,30 @@
     </t-form>
   </t-dialog>
 
-  <!-- 弹窗2 -->
+  <!-- 弹窗2  :footer="false"  todo-->
   <t-dialog v-model:visible="containerVisible2" :footer="false" :close-on-overlay-click="false" :header="diaTilte">
     <t-form :data="formData2" label-width="110px" :rules="rules2" @submit="submit2" @reset="cancel2">
       <t-form-item label="容器类型" name="containerType">
         <t-input v-model="formData2.containerType"></t-input>
       </t-form-item>
-
+      <!-- v-if="diaTilte === '新增容器类型与物料关系'"  -->
       <t-form-item label="物料类别" name="mitemCategoryId">
-        <!--label-field="mitemCategoryName"
-          value-field="mitemCategoryId" -->
         <bcmp-select-business
           v-model="formData2.mitemCategoryId"
+          :is-multiple="false"
           :show-title="false"
           type="mitemCategory"
-          :label-field="formData2.mitemCategoryId"
-          :value-field="formData2.mitemCategoryCode"
+          label-field="categoryName"
+          @selection-change="SelectionChange1"
         ></bcmp-select-business>
       </t-form-item>
+      <!-- 
+      <t-form-item label="物料类别" name="mitemCategoryId">
+        <t-input v-model="formData2.mitemCategoryId"></t-input>
+      </t-form-item> -->
 
       <t-form-item label="物料类别编码" name="mitemCategoryId">
-        <!-- <t-select v-model="formData2.containerTypeId"></t-select> -->
-        <t-input v-model="formData2.mitemCategoryId"></t-input>
+        <t-input v-model="formData2.categoryCode"></t-input>
       </t-form-item>
 
       <t-form-item label="物料名称" name="mitemId">
@@ -146,12 +147,13 @@
           :is-multiple="false"
           :show-title="false"
           type="mitem"
+          @selection-change="SelectionChange2"
         ></bcmp-select-business>
       </t-form-item>
 
-      <!-- <t-form-item label="物料编码" name="mitemCategoryId">
-        <t-select v-model="formData2.mitemCategoryId"></t-select>
-      </t-form-item> -->
+      <t-form-item label="物料编码" name="mitemId">
+        <t-input v-model="formData2.mitemCode"></t-input>
+      </t-form-item>
 
       <t-form-item label="标准数量" name="qty">
         <t-input v-model="formData2.qty" :min="1" :max="100"></t-input>
@@ -188,9 +190,11 @@ const documentStatusOptions = ref([]);
 const barcodeRuleDataOptions = ref([]); // 条码规则下拉数据
 const PrintTmpReslutDataOptions = ref([]); // 打印规则下拉数据
 const preserveId = ref(''); // 入参id
-const selectedRowKeys = ref([]); // 批量删除
+const selectedRowKeys = ref([]); // 批量作废
+const selectedRowKeys2 = ref([]); // 批量删除
+
 const formData1 = ref({
-  containerType: preserveId.value, // 传递id
+  containerType: '',
   barcodeRuleId: '',
   createNum: 1,
 });
@@ -198,9 +202,11 @@ const diaTilte = ref('');
 
 const formData2 = ref({
   containerType: '', // 容器类型
-  containerTypeId: '', // 容器类型ID
+  containerTypeId: '',
   mitemCategoryId: '', // 物料类别编码
+  categoryCode: '',
   mitemId: '', // 物料ID
+  mitemCode: '',
   qty: 1,
   mitemCategoryCode: '',
 });
@@ -467,8 +473,8 @@ const submit1 = async () => {
   };
   await api.container.generateBarcode(submitData);
   containerVisible1.value = false;
-  MessagePlugin.success('生成成功');
   fetchTable({});
+  MessagePlugin.success('生成成功');
 };
 
 // 打印
@@ -479,36 +485,89 @@ const submit1 = async () => {
 // };
 
 // 编辑
-const onEditRowClick2 = async (row: any) => {
+const onEditRowClick2 = async ({ row }) => {
   diaTilte.value = '编辑容器类型与物料关系';
   containerVisible2.value = true;
-  const partialRow = JSON.parse(
-    JSON.stringify(row, ['categoryName', 'mitemCode', 'mitemDesc', 'mitemName', 'qty', 'id']),
-  );
-  console.log('🚀 ~ onEditRowClick2 ~ partialRow:', partialRow);
-  // formData2.value = partialRow;
+  formData2.value = {
+    ...formData2.value,
+    mitemCategoryId: row.mitemCategoryId, // 编辑不需要修改  todo
+    mitemId: row.mitemId,
+    qty: row.qty,
+  };
 };
 
-// 选择行变化
-const rehandleSelectChange = (value, ctx) => {
-  selectedRowKeys.value = value;
-  console.log(value, ctx);
+// 单个删除
+const onRowClick = async (row: { row: any }) => {
+  try {
+    const idsToDelete = [row.row.id];
+    await api.containerInMitem.removeBatch(idsToDelete);
+    if (tableContainerData2.value.length <= 1 && pageUI.value.page > 1) {
+      pageUI.value.page--;
+    }
+    await fetchTable2({});
+    await MessagePlugin.success('删除成功!');
+  } catch (error) {
+    console.error('删除失败:', error);
+  }
 };
 
-// 删除 1
-// const onStateRowClick1 = () => {
-//   console.log('onStateRowClick1===', selectedRowKeys.value);
+// 批量作废
+const onStateRowClick1 = async () => {
+  try {
+    // 等待删除操作完成
+    await api.container.removeBatch(selectedRowKeys.value);
+    await fetchTable({});
+    await MessagePlugin.success('批量作废成功!');
+  } catch (error) {
+    console.error('作废失败:', error);
+  }
+};
+// 批量删除  todo
+// const onRemoveRowClick2 = async () => {
+//   try {
+//     // 等待删除操作完成
+//     await api.containerInMitem.removeBatch(selectedRowKeys2.value);
+//     // 删除操作成功，现在调用 fetchTable
+//     await MessagePlugin.success('批量删除成功!');
+//     await fetchTable2({}); // 刷新表格数据
+//   } catch (error) {
+//     console.error('删除失败:', error);
+//   }
 // };
 
-//* 删除   async (row: { row: any }) => {
-// const onStateRowClick2 = async (row: { row: any }) => {
-// await api.district.removeDistrict({ id: row.row.id });
-// if (tableDataWarehouse.value.length <= 1 && pageUI.value.page > 1) {
-//   pageUI.value.page--;
-// }
-// await fetchTable();
-// MessagePlugin.success('删除成功');
-// };
+// 批量删除
+const onRemoveRowClick2 = async () => {
+  // 检查是否所有选中的容器都可以删除
+  const canDelete = selectedRowKeys2.value.every((key) => {
+    const container = tableContainerData2.value.find((c) => c.id === key);
+    return container && container.status !== '使用中' && container.status !== '已入库' && container.status !== '已出库';
+  });
+
+  if (!canDelete) {
+    MessagePlugin.error('选中的容器中存在不允许删除的状态（使用中、已入库、已出库），请重新选择！');
+    return;
+  }
+
+  try {
+    // 等待删除操作完成
+    await api.containerInMitem.removeBatch(selectedRowKeys2.value);
+
+    // 更新状态为“作废”
+    selectedRowKeys2.value.forEach((key) => {
+      const container = tableContainerData2.value.find((c) => c.id === key);
+      if (container) {
+        container.status = '作废'; // 或其他表示作废的状态
+      }
+    });
+
+    // 删除操作成功，刷新表格数据
+    await fetchTable2({});
+    await MessagePlugin.success('批量删除成功!');
+  } catch (error) {
+    console.error('删除失败:', error);
+  }
+};
+
 // 生成
 const generate = () => {
   containerVisible1.value = true;
@@ -527,12 +586,17 @@ const cancel = () => {
 };
 // 取消
 const cancel2 = () => {
-  // 清空数据
-  // formData1.value = {
-  //   containerType: '',
-  //   barcodeRuleId: '',
-  //   createNum: 1,
+  // 重置表单项，但保留 containerType 字段的值
+  // formData2.value = {
+  // ...formData2.value, // 保留当前表单的值
+  //   mitemCategoryId: '', // 清空物料类别编码
+  //   mitemId: '', // 清空物料ID
+  //   qty: 1, // 重置标准数量为1
+  //   mitemCategoryCode: '', // 清空物料类别编码
+  //   categoryCode: '', // 清空物料类别编码
+  //   mitemCode: '', // 清空物料编码
   // };
+
   containerVisible2.value = false;
   MessagePlugin.success('已取消');
 };
@@ -551,20 +615,30 @@ watch(
   () => props.selectedRowData,
   (newValue) => {
     if (newValue) {
-      formData1.value.containerType = newValue.containerTypeName;
+      const result = newValue.containerTypeName;
+      formData1.value.containerType = result;
       preserveId.value = newValue.id;
-      formData2.value.containerType = newValue.containerTypeName;
+      formData2.value.containerType = result;
     }
   },
 );
 
 // ################### 物料关联 function ####################
+
+// 显示  code
+const SelectionChange1 = (item) => {
+  formData2.value.categoryCode = item.categoryCode;
+};
+
+const SelectionChange2 = (item) => {
+  formData2.value.mitemCode = item.mitemCode;
+};
 const add = () => {
   diaTilte.value = '新增容器类型与物料关系';
   containerVisible2.value = true;
   // 重置表单项，但保留 containerType 字段的值
   formData2.value = {
-    ...formData2.value,
+    ...formData2.value, // 展开左侧表传来的值
     mitemCategoryId: '', // 物料类别编码
     mitemId: '', // 物料ID
     qty: 1, // 标准数量
@@ -575,16 +649,15 @@ const add = () => {
 const submit2 = async () => {
   // 创建提交的数据对象  todo
   const submitData2 = {
-    containerTypeId: preserveId.value, // 这个传 containerType 的 id   与 submit1 一样
+    // containerType: formData2.value.containerType, // todo  不传 主表带过来
+    containerTypeId: preserveId.value,
     mitemCategoryId: formData2.value.mitemCategoryId,
-    containerType: formData2.value.containerType, // todo
     mitemId: formData2.value.mitemId,
     qty: formData2.value.qty,
   };
-  console.log('🚀 ~ submit2 ~ submitData2:', submitData2);
   await api.containerInMitem.add(submitData2);
   containerVisible2.value = false;
-  MessagePlugin.success('新增成功');
   fetchTable2({});
+  MessagePlugin.success('新增成功');
 };
 </script>

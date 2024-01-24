@@ -7,6 +7,7 @@
         :table-column="tableColumn"
         :table-data="data.list"
         :show-export="enableExport"
+        :show-refresh="true"
         :is-fixed-height="isFixedHeight"
         :loading="loading"
         :total="data.total"
@@ -18,7 +19,7 @@
         </template>
 
         <template #button>
-          <t-button theme="success" @click="onExportEnable">插槽例子-是否显示导入</t-button>
+          <t-button theme="success" @click="onExportEnable">插槽例子-是否显示导出</t-button>
           <t-button theme="primary" @click="onChangeColumn">插槽例子-动态列处理</t-button>
           <!-- <t-button theme="success" @click="onFixHeight">插槽例子-是否固定高度</t-button> -->
           <t-button theme="success" @click="onViewKeys">插槽例子-已选中行</t-button>
