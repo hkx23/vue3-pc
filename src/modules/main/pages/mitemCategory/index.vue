@@ -7,6 +7,7 @@
         <cmp-query :opts="opts" @submit="conditionEnter" />
         <cmp-card :ghost="true">
           <cmp-table
+            key="mainTable"
             ref="tableRef"
             v-model:pagination="pageUI"
             row-key="id"
@@ -38,6 +39,7 @@
 
     <cmp-card>
       <cmp-table
+        key="detailTable"
         v-model:pagination="pageMitem"
         class="son-table"
         row-key="id"

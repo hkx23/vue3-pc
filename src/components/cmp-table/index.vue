@@ -109,7 +109,7 @@
           :total="total"
           :disabled="loading"
           :page-size-options="[20, 50, 100, 200, 500]"
-          show-jumper
+          :show-jumper="false"
           @change="onPaginationChange"
         />
       </div>
@@ -878,15 +878,19 @@ const debounceFunction = _.debounce((entry) => {
 const computedTableContentSize = (entry) => {
   // 组件处于不可见状态时将不进行计算
   if (!comVisible.value) return;
+
   const { width: _w, height: _h } = entry.contentRect;
   boxWidth.value = 0;
   boxHeight.value = 0;
   nextTick(() => {
-    boxHeight.value =
-      tableBoxRef.value.parentElement.clientHeight -
-      118 -
-      (props.showToolbar ? 0 : 40) -
-      (props.showPagination ? 0 : -50);
+    // 获取不包括padding的高度
+    const element = tableBoxRef.value.parentElement;
+    const styles = window.getComputedStyle(element);
+    const paddingTop = parseInt(styles.paddingTop, 10);
+    const paddingBottom = parseInt(styles.paddingBottom, 10);
+
+    const contentHeight = element.clientHeight - paddingTop - paddingBottom;
+    boxHeight.value = contentHeight - (props.showToolbar ? 40 : 0) - (props.showPagination ? 50 : 0);
     boxWidth.value = tableBoxRef.value.parentElement.clientWidth;
   });
 };
