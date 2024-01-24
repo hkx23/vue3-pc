@@ -6,6 +6,7 @@
       <t-row class="padding-top-line-8" style="padding-bottom: 8px">
         <t-col flex="auto">
           <cmp-scan-input
+            ref="scanInput"
             v-model="mainform.serialNumber"
             label="产品条码"
             placeholder="请扫描或输入产品条码"
@@ -190,6 +191,8 @@ const mainform = ref({
   serialNumber: '',
 });
 
+const scanInput = ref(null);
+
 // 全局缺陷列表
 const defectCodeList = ref<DefectCodeVO[]>([]);
 
@@ -244,9 +247,11 @@ const serialNumberEnter = async (value) => {
           if (reData.defectCodeStr.length > 0) {
             writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
           } else {
+            scanInput.value.selectAll();
             writeScanInfoSuccess(reData.serialNumber, reData.qty, reData.defectCodeStr);
           }
         } else {
+          scanInput.value.selectAll();
           writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
           throw new Error(reData.scanMessage);
           // writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);

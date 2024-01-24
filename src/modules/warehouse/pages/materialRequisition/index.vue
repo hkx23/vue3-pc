@@ -138,9 +138,8 @@ const opts = computed(() => {
 // 状态下拉初始数据
 const statusOption = ref([
   { label: '全选', value: '', checkAll: true },
-  { value: 'CREATED', label: '已创建' },
-  { value: 'PREPARING', label: '备料中' },
-  { value: 'COMPLETED', label: '已完成' },
+  { value: 'CREATE', label: '已创建' },
+  { value: 'TRANSFERRED', label: '已完成' },
   { value: 'CANCELED', label: '已取消' },
 ]);
 
