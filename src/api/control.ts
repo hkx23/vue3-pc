@@ -1667,14 +1667,14 @@ export interface ProductReworkVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1717,9 +1717,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -1862,6 +1862,23 @@ export interface ResultPagingDataProcessVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataProcessVO;
+}
+
+/** 维修回流工序 */
+export interface ProcessSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
 }
 
 /** 包装关联物料提交的模型 */
@@ -2884,16 +2901,16 @@ export interface BarcodeWipCollectVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 通用响应类 */
@@ -2998,10 +3015,10 @@ export interface BarcodeWipVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -4611,6 +4628,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataProcessVO['data']>(`/api/control/productRework/itemsProcess`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品返工
+     * @name GetReturnProcessByBarcode
+     * @summary 根据排产工单和扫描条码，获取历史已扫的工序信息
+     * @request POST:/productRework/getReturnProcessByBarcode
+     * @secure
+     */
+    getReturnProcessByBarcode: (data: ProcessSearch) =>
+      http.request<ResultPagingDataProcessVO['data']>(`/api/control/productRework/getReturnProcessByBarcode`, {
         method: 'POST',
         body: data as any,
       }),

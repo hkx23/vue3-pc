@@ -3893,13 +3893,13 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductName?: string;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
+  isProductName?: string;
   isState?: boolean;
 }
 
@@ -5642,7 +5642,7 @@ export interface BarcodeRuleInMitem {
 }
 
 /** 出勤模式 */
-export type AttendanceMode = {
+export interface AttendanceMode {
   id?: string;
   /**
    * 创建时间
@@ -5678,7 +5678,7 @@ export type AttendanceMode = {
   shiftCode?: string;
   /** 备注 */
   memo?: string;
-} | null;
+}
 
 /** 通用响应类 */
 export interface ResultAttendanceMode {
@@ -5704,17 +5704,10 @@ export interface AttendanceModeSearch {
    * @format int32
    */
   pageSize?: number;
-  /** 状态 */
-  status?: string;
-  containerTypeId?: string;
   /** 模糊关键词 */
   keyword?: string;
-  barcodeRuleId?: string;
-  /**
-   * 生成数量
-   * @format int32
-   */
-  createNum?: number;
+  /** 班次 */
+  shiftCode?: string;
 }
 
 /** 显示工站 */
@@ -11598,6 +11591,36 @@ export const api = {
       }),
   },
   attendanceMode: {
+    /**
+     * No description
+     *
+     * @tags 出勤模式
+     * @name RemoveBatch
+     * @summary 删除出勤模式
+     * @request POST:/attendanceMode/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/attendanceMode/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 出勤模式
+     * @name ModifyAttendanceMode
+     * @summary 编辑出勤
+     * @request POST:/attendanceMode/modifyAttendanceMode
+     * @secure
+     */
+    modifyAttendanceMode: (data: AttendanceMode) =>
+      http.request<ResultObject['data']>(`/api/main/attendanceMode/modifyAttendanceMode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
