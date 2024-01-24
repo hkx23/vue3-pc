@@ -1371,6 +1371,59 @@ export interface ResultUser {
   data?: User;
 }
 
+/** 自定义表格配置 */
+export interface TableSetting {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  userId?: string;
+  /** 功能路径 */
+  behaviorPath?: string;
+  /** 表格唯一键 */
+  tableKeyCode?: string;
+  /** 表格配置 */
+  jsonConfig?: string;
+  /** 视图标签 */
+  viewLable?: string;
+  /**
+   * 是否默认显示
+   * @format int32
+   */
+  isDefault?: number;
+}
+
+/** 通用响应类 */
+export interface ResultListTableSetting {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: TableSetting[] | null;
+}
+
 export interface SupportGroupSearch {
   /**
    * 页码
@@ -3840,14 +3893,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
   isState?: boolean;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -3990,8 +4043,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5589,7 +5642,7 @@ export interface BarcodeRuleInMitem {
 }
 
 /** 出勤模式 */
-export type AttendanceMode = {
+export interface AttendanceMode {
   id?: string;
   /**
    * 创建时间
@@ -5625,7 +5678,7 @@ export type AttendanceMode = {
   shiftCode?: string;
   /** 备注 */
   memo?: string;
-} | null;
+}
 
 /** 通用响应类 */
 export interface ResultAttendanceMode {
@@ -5638,6 +5691,86 @@ export interface ResultAttendanceMode {
   message?: string;
   /** 出勤模式 */
   data?: AttendanceMode;
+}
+
+export interface AttendanceModeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  /** 班次 */
+  shiftCode?: string;
+}
+
+/** 显示工站 */
+export interface AttendanceModeVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 出勤模式代码 */
+  modeCode?: string;
+  /** 出勤模式名称 */
+  modeName?: string;
+  /** 出勤模式描述 */
+  modeDesc?: string;
+  /** 出勤模式表达式 */
+  expression?: string;
+  /** 班次 */
+  shiftCode?: string;
+  /** 备注 */
+  memo?: string;
+  /** 班次名称 */
+  shiftName?: string;
+  /** 时间段拆分 */
+  expressionSpilt?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataAttendanceModeVO = {
+  list?: AttendanceModeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAttendanceModeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAttendanceModeVO;
 }
 
 /** 通用响应类 */
@@ -6341,10 +6474,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -8220,6 +8353,21 @@ export const api = {
      * No description
      *
      * @tags 用户
+     * @name GetUserList
+     * @summary 获取用户信息
+     * @request POST:/user/getUserList
+     * @secure
+     */
+    getUserList: (data: CommonSearch) =>
+      http.request<ResultPagingDataUserVO['data']>(`/api/main/user/getUserList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
      * @name Edit
      * @summary 编辑用户信息
      * @request POST:/user/edit
@@ -8314,6 +8462,37 @@ export const api = {
     currentUserInfo: () =>
       http.request<ResultCurrentUserVO['data']>(`/api/main/user/currentUserInfo`, {
         method: 'GET',
+      }),
+  },
+  tableSetting: {
+    /**
+     * No description
+     *
+     * @tags 用户自定义表格设置表
+     * @name SaveSingle
+     * @summary 保存单个表格设置
+     * @request POST:/tableSetting/saveSingle
+     * @secure
+     */
+    saveSingle: (data: TableSetting) =>
+      http.request<ResultObject['data']>(`/api/main/tableSetting/saveSingle`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户自定义表格设置表
+     * @name GetCurrentUserTable
+     * @summary 获取当前用户对应表格的设置
+     * @request POST:/tableSetting/getCurrentUserTable
+     * @secure
+     */
+    getCurrentUserTable: (query: { tableKey: string; behaviorPath: string }) =>
+      http.request<ResultListTableSetting['data']>(`/api/main/tableSetting/getCurrentUserTable`, {
+        method: 'POST',
+        params: query,
       }),
   },
   supportGroup: {
@@ -8492,6 +8671,21 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultSupplier['data']>(`/api/main/supplier/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 供应商
+     * @name GetSupplierList
+     * @summary 获取供应商列表
+     * @request POST:/supplier/getSupplierList
+     * @secure
+     */
+    getSupplierList: (data: CommonSearch) =>
+      http.request<ResultPagingDataSupplier['data']>(`/api/main/supplier/getSupplierList`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
@@ -11401,6 +11595,36 @@ export const api = {
      * No description
      *
      * @tags 出勤模式
+     * @name RemoveBatch
+     * @summary 删除出勤模式
+     * @request POST:/attendanceMode/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/attendanceMode/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 出勤模式
+     * @name ModifyAttendanceMode
+     * @summary 编辑出勤
+     * @request POST:/attendanceMode/modifyAttendanceMode
+     * @secure
+     */
+    modifyAttendanceMode: (data: AttendanceMode) =>
+      http.request<ResultObject['data']>(`/api/main/attendanceMode/modifyAttendanceMode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 出勤模式
      * @name Search
      * @request POST:/attendanceMode/items
      * @secure
@@ -11422,6 +11646,36 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultAttendanceMode['data']>(`/api/main/attendanceMode/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 出勤模式
+     * @name GetList
+     * @summary 查询出勤
+     * @request POST:/attendanceMode/getList
+     * @secure
+     */
+    getList: (data: AttendanceModeSearch) =>
+      http.request<ResultPagingDataAttendanceModeVO['data']>(`/api/main/attendanceMode/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 出勤模式
+     * @name AddAttendanceMode
+     * @summary 新增出勤
+     * @request POST:/attendanceMode/addAttendanceMode
+     * @secure
+     */
+    addAttendanceMode: (data: AttendanceMode) =>
+      http.request<ResultObject['data']>(`/api/main/attendanceMode/addAttendanceMode`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   workbenchIndex: {

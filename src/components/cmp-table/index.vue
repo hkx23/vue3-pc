@@ -46,6 +46,8 @@
                     </div>
                   </template>
                 </t-popup>
+                <t-button variant="text" @click="saveTableSetting"> 保存表格设置 </t-button>
+                <t-button variant="text" @click="resetTableSetting"> 重置表格设置 </t-button>
               </t-space>
             </template>
           </t-popup>
@@ -89,6 +91,7 @@
           :loading="loading"
           :max-height="maxHeightValue"
           v-bind="$attrs"
+          :on-column-resize-change="onColumnResizeChange"
           @select-change="onSelectKeysChange"
           @filter-change="onFilterChange"
           @sort-change="sortChange"
@@ -204,7 +207,7 @@ import {
 import { useDraggable } from 'vue-draggable-plus';
 import { useResizeObserver } from 'vue-hooks-plus';
 
-import { api, DlTask } from '@/api/main';
+import { api, DlTask, TableSetting } from '@/api/main';
 // import { useSettingStore } from '@/store';
 import excelUtils from '@/utils/excel';
 
@@ -306,7 +309,8 @@ const props = defineProps({
   // expandedRow: { type: Function },
   exportFunction: { type: Function },
 });
-
+const tableKeyCode = ref('');
+tableKeyCode.value = props.key + props.title;
 const emit = defineEmits(['refresh', 'update:pagination', 'update:sorters', 'select-change', 'update:filters']);
 
 // const settingStore = useSettingStore();
@@ -344,7 +348,8 @@ const colConfigs = ref<columnSetting[]>([]);
 const columns = computed(() => {
   let indexCount = 0;
   console.log(colConfigs.value);
-  props.tableColumn.forEach((item) => {
+  const propdCloumnsData = _.cloneDeep(props.tableColumn);
+  propdCloumnsData.forEach((item) => {
     if (item.colKey !== 'row-select' && item.colKey !== 'op' && item.colKey !== 'serial-number') {
       // data.colConfigs （Array） 查询是否包含该列，使用title匹配，如果不包含，则新增]
 
@@ -405,11 +410,12 @@ const columns = computed(() => {
       } else {
         colConfigs.value[existIndex].index = existIndex;
         item.index = existIndex;
+        item.width = colConfigs.value[existIndex].width;
       }
     }
   });
 
-  let tableColumn = props.tableColumn
+  let tableColumn = propdCloumnsData
     .filter((item) => {
       return (
         colConfigs.value.find((itemC) => {
@@ -589,6 +595,7 @@ const downloadTableColumn: PrimaryTableCol<TableRowData>[] = [
 ];
 const downloadTableData = ref([]);
 const historyDownloadList = ref<DlTask[]>([]);
+const tableSettingList = ref<TableSetting[]>([]);
 const downloadTableSelectedRowKeys = ref([]);
 const downloadFilename = ref('');
 if (props.title) {
@@ -787,6 +794,70 @@ watch(
   { deep: true },
 );
 
+// 保存表格设置
+const saveTableSetting = async () => {
+  console.log('saveTableSetting');
+  const loadTask = MessagePlugin.loading({ content: '表格自定义保存中...', duration: 0 });
+  try {
+    const settingModel: TableSetting = {
+      tableKeyCode: tableKeyCode.value,
+      behaviorPath: getRouterPath(),
+      jsonConfig: JSON.stringify(colConfigs.value),
+      viewLable: 'DEFAULT',
+      isDefault: 1,
+    };
+    await api.tableSetting.saveSingle(settingModel);
+  } catch (error) {
+    console.error('表格自定义保存失败', error);
+  } finally {
+    MessagePlugin.close(loadTask);
+  }
+};
+
+// 重置表格设置
+const resetTableSetting = () => {
+  console.log('resetTableSetting');
+  colConfigs.value = [];
+};
+
+// 加载表格设置
+const loadTableSetting = () => {
+  console.log('loadTableSetting');
+  fetchTableSettingList();
+};
+
+const fetchTableSettingList = async () => {
+  // console.log(JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath);
+  const path = getRouterPath();
+  console.log(path);
+  tableSettingList.value = await api.tableSetting.getCurrentUserTable({
+    tableKey: tableKeyCode.value,
+    behaviorPath: path,
+  });
+  console.log(tableSettingList.value);
+  if (tableSettingList.value && tableSettingList.value.length > 0) {
+    const savedSetting = JSON.parse(tableSettingList.value[0].jsonConfig);
+    colConfigs.value = savedSetting;
+  }
+};
+const getRouterPath = () => {
+  // localStorage.getItem('tabsRouter') 是有窗口包住的情况下会保存
+  // 但是还存在页面没有在tab里面使用的
+  // 判断思路：抓取当前浏览器的URL
+  const url = window.location.pathname + window.location.hash;
+  const routerPath = JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath;
+  console.log(url);
+  if (url.includes('/#/')) {
+    return routerPath;
+  }
+  return url;
+};
+const onColumnResizeChange = ({ columnsWidth }) => {
+  // 注意：宽度可能存在小数点，根据实际需求处理保存数值
+  colConfigs.value.forEach((t) => {
+    t.width = columnsWidth[t.field];
+  });
+};
 // ------------------------------------------------适配区------------------------------------------------
 
 // const formContentRef = ref();
@@ -856,6 +927,7 @@ onMounted(() => {
   // if (elements.length > 0) {
   //   elements[props.flexIndex || elements.length - 1].style.flex = '1';
   // }
+  loadTableSetting();
 });
 
 onActivated(() => {
