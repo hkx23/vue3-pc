@@ -488,10 +488,12 @@ const fetchTable = async () => {
 };
 const fetchDtlTable = async () => {
   try {
-    const data = await apiControl.wipRepairDtl.getListByWipRepairId({
-      wipRepairId: selectRepairRowId.value,
-    });
-    repairDtlData.value = data;
+    if (_.isNil(selectRepairRowId.value)) {
+      const data = await apiControl.wipRepairDtl.getListByWipRepairId({
+        wipRepairId: selectRepairRowId.value,
+      });
+      repairDtlData.value = data;
+    }
   } catch (e) {
     console.log(e);
   }

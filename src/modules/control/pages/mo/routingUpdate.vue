@@ -178,6 +178,7 @@ watch(
   (value) => {
     nextTick(() => {
       currentrow.value = value;
+      selectedRowKeys.value = [];
       selectedRowKeys.value.push(currentrow.value.routingRevisionId);
       fetchTableRouting();
     });

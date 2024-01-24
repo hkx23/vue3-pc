@@ -64,7 +64,7 @@ export const useSettingStore = defineStore('setting', {
         const [{ colors: newPalette, primary: brandColorIndex }] = Color.getColorGradations({
           colors: [brandTheme],
           step: 10,
-          remainInput: false, // 是否保留输入 不保留会矫正不合适的主题色
+          remainInput: true, // 是否保留输入 不保留会矫正不合适的主题色
         });
         colorMap = generateColorMap(brandTheme, newPalette, mode as 'light' | 'dark', brandColorIndex);
         this.colorList[colorKey] = colorMap;
