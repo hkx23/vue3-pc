@@ -13,7 +13,7 @@
       </t-tabs>
     </cmp-card>
     <cmp-card :ghost="true">
-      <cmp-card v-if="selectModule == 'SETTING'" :span="12">
+      <cmp-card v-show="selectModule == 'SETTING'" :span="12">
         <t-form
           ref="formRef"
           :disabled="preSetting.isLock"
@@ -72,7 +72,7 @@
           <t-button :disabled="preSetting.isLock" @click="onClickSetting">确定 </t-button>
         </t-space>
       </cmp-card>
-      <cmp-card v-if="selectModule == 'REWORK'" :ghost="true" :span="12" :disabled="!preSetting.isLock">
+      <cmp-card v-show="selectModule == 'REWORK'" :ghost="true" :span="12" :disabled="!preSetting.isLock">
         <cmp-row>
           <cmp-card flex="auto" :ghost="true">
             <cmp-container :full="true" header>
@@ -123,7 +123,7 @@
               </cmp-card>
               <!-- 信息区 -->
 
-              <cmp-card v-if="keyPartSumList && keyPartSumList.length > 0">
+              <cmp-card v-show="keyPartSumList && keyPartSumList.length > 0">
                 <t-row class="custom-row">
                   <t-col class="custom-col">
                     <div class="groupbox">
