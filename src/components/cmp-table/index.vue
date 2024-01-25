@@ -173,11 +173,11 @@
 </template>
 
 <script lang="tsx" setup name="CmpTable">
+import MD5 from 'crypto-js/md5';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MoveIcon } from 'tdesign-icons-vue-next';
 import { DateRangePickerPanel, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { Md5 } from 'ts-md5';
 import {
   computed,
   getCurrentInstance,
@@ -940,14 +940,9 @@ onMounted(() => {
   if (!tableKeyCode.value) {
     // 定义MD5对象
     const columnStr = JSON.stringify(props.tableColumn);
-    const md5: any = new Md5();
-    md5.appendAsciiStr(columnStr);
-    tableKeyCode.value = md5.end();
+    const md5Result = MD5(columnStr).toString();
+    tableKeyCode.value = md5Result;
   }
-  // const elements = tableBoxRef.value.$el.querySelectorAll(':scope > .t-space-item') as HTMLInputElement[];
-  // if (elements.length > 0) {
-  //   elements[props.flexIndex || elements.length - 1].style.flex = '1';
-  // }
   loadTableSetting();
 });
 
