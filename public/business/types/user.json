@@ -7,17 +7,17 @@
     {
       "title": "用户名",
       "key": "userName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "显示名",
       "key": "displayName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "用户上次登录时间",
       "key": "timeLastLogin",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

@@ -33,10 +33,13 @@
         </template>
         <template #op="slotProps">
           <t-space :size="8">
-            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">修改</t-link>
-            <t-link variant="text" theme="primary" @click="onStateRowClick(slotProps)">{{
-              slotProps.row.state == 1 ? '失效' : '生效'
-            }}</t-link>
+            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">编辑</t-link>
+            <t-popconfirm
+              :content="slotProps.row.state == 0 ? '是否启用仓库' : '是否禁用仓库'"
+              @confirm="onStateRowClick(slotProps)"
+            >
+              <t-link theme="primary">{{ slotProps.row.state == 0 ? '启用' : '禁用' }}</t-link>
+            </t-popconfirm>
           </t-space>
         </template>
       </cmp-table>
@@ -48,7 +51,7 @@
       v-model:visible="formVisible"
       :header="formTitle"
       :on-confirm="onConfirmForm"
-      width="750px"
+      width="850px"
       :close-on-overlay-click="false"
     >
       <warehouse-form ref="formRef"></warehouse-form>
@@ -126,6 +129,7 @@ const opts = computed(() => {
     },
   };
 });
+
 // 点击查询按钮
 const conditionEnter = (data: any) => {
   keyword.value = data.keyword;
@@ -191,7 +195,6 @@ const getWarehouseCategory = (id: any) => {
   }
   return '';
 };
-
 const onStateRowClick = async (value: any) => {
   await api.warehouse.stateChange(value.row.id);
   MessagePlugin.success('修改成功');

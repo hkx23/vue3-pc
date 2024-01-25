@@ -34,6 +34,7 @@ const customerFocus = () => {
 
 defineExpose({
   customerFocus,
+  selectAll,
 });
 </script>
 

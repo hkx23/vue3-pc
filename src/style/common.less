@@ -124,9 +124,9 @@
 }
 
 .t-button--variant-base {
-  padding-left: calc(var(--td-comp-paddingLR-l) - 1px);
-  padding-right: calc(var(--td-comp-paddingLR-l) - 1px);
-  min-width: 64px;
+  padding-left: 12px;
+  padding-right: 12px;
+  // min-width: 64px;
 }
 
 .t-table--striped.t-table--hoverable > .t-table__content > table > tbody tr {
@@ -247,9 +247,11 @@ a .t-tag:hover {
 }
 
 .son-table {
-  thead td,
-  th {
-    background: #ebeefd;
+  .t-table__content {
+    thead td,
+    th {
+      background: var(--td-brand-color-light) !important;
+    }
   }
 }
 
@@ -353,14 +355,19 @@ a .t-tag:hover {
   color: #454545;
 }
 
-// .t-form__controls-content {
-//   width: 270px;
-// }
+.t-dialog__body .t-form .t-form__controls-content .t-form__controls-content {
+  width: 270px;
+}
 
 .t-popconfirm__body > .t-icon {
   margin-right: 4px;
 }
 
+.t-table__filter-pop .t-table__filter-pop-content .t-table__filter-pop-content-inner {
+  padding: 8px;
+}
+
 .t-button.t-size-s {
-  margin-left: 4px;
+  padding-left: 12px;
+  padding-right: 12px;
 }

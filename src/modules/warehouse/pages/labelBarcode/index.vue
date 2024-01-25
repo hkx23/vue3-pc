@@ -1149,7 +1149,7 @@ const onCancellationSelextData = async () => {
 };
 
 const bracodeStatusOption = ref([]);
-apiMain.param.getListByGroupCode({ parmGroupCode: 'W_MITEM_LABEL_STATUS' }).then((data) => {
+apiMain.param.getListByGroupCode({ parmGroupCode: 'LABEL_STATUS' }).then((data) => {
   bracodeStatusOption.value = data;
 });
 // ################ 初始渲染

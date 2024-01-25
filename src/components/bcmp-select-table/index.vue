@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="tsx" name="BcmpSelectTable">
-import { debounce } from 'lodash';
+import _, { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
 // 抛出事件
@@ -166,6 +166,13 @@ const props = defineProps({
   tableWidth: {
     type: Number,
     default: 800,
+  },
+  // 自定义查询条件
+  customConditions: {
+    type: Array as unknown as any[],
+    default: () => {
+      return [];
+    },
   },
   // 下拉数据指向的label/value
   keywords: {
@@ -487,6 +494,12 @@ const tempCondition = ref({});
 
 const remoteLoad = async (val: any, isSetDefaultVal) => {
   loading.value = true;
+  const finalFilterList = _.cloneDeep(filterList.value);
+  if (props.customConditions && props.customConditions.length > 0) {
+    props.customConditions.forEach((element) => {
+      finalFilterList.push(element);
+    });
+  }
   const searchCondition = {
     pageNum: pagination.value.current,
     pageSize: pagination.value.pageSize,
@@ -496,7 +509,7 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
     category: props.category,
     parentId: props.parentId,
     sorts: sortList.value,
-    filters: filterList.value,
+    filters: finalFilterList,
   };
 
   // 判断两次查询条件是否一样，一样的话，不获取数据
@@ -599,7 +612,7 @@ onMounted(() => {
   props.columns.forEach((element: any) => {
     let addColumn = {
       title: element.title,
-      align: 'center',
+      align: 'left',
       colKey: element.key,
       width: element.width,
       sorter: false,
@@ -729,7 +742,15 @@ watch(
   },
   { deep: true },
 );
-
+watch(
+  () => props.customConditions,
+  (val) => {
+    console.log('watch:props.customConditions', `${props.customConditions} ss ${val}`);
+    isHandleSelectionChange.value = false;
+    remoteLoad('', false);
+  },
+  { deep: true },
+);
 // 暴露方法出去
 defineExpose({ closeTable, onClear });
 </script>

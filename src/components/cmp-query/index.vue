@@ -13,8 +13,9 @@
           @submit.prevent
         >
           <div ref="formRowRef" style="width: 100%">
-            <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[16, 16]"
-              ><t-col v-for="(opt, i) in optRow" v-show="!opt.isHide" :key="i" :flex="opt.flex"
+            <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[8, 8]">
+              <!--  :span="opt.span" -->
+              <t-col v-for="(opt, i) in optRow" v-show="!opt.isHide" :key="i" :flex="opt.flex"
                 ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">
                   <!-- 自定义label -->
                   <template v-if="opt.labelRender" #label>
@@ -221,6 +222,13 @@ const cOpts = computed(() => {
     } else if (opt.flex === undefined) {
       opt.flex = '240px';
     }
+
+    if (opt.span === undefined && opt.comp && opt.comp.includes('range')) {
+      opt.span = '6';
+    } else if (opt.span === undefined) {
+      opt.span = '3';
+    }
+
     if (opt.row === undefined) {
       opt.row = 999;
     }

@@ -7,17 +7,17 @@
     {
       "title": "客户代码",
       "key": "customerCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "客户名称",
       "key": "customerName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "客户简写",
       "key": "shortName",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

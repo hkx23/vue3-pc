@@ -7,17 +7,17 @@
     {
       "title": "岗位代码",
       "key": "postCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "岗位名称",
       "key": "postName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "岗位描述",
       "key": "postDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

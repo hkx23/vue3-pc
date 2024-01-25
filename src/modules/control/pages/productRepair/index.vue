@@ -129,11 +129,11 @@
                   <cmp-card :span="4" :ghost="true" style="padding: 8px">
                     <bcmp-select-business
                       v-model="formData.queryData.returnRoutingProcessId"
-                      type="routingProcess"
+                      type="processReturn"
                       placeholder="请选择回流工序"
                       :show-title="false"
                       label="回流工序"
-                      :parent-id="formData.queryData.routingRevisionId"
+                      :custom-conditions="formData.queryData.conditions"
                     />
                   </cmp-card>
                   <cmp-card :span="4" :ghost="true" style="padding: 8px">
@@ -215,6 +215,7 @@ const formData = reactive({
     returnRoutingProcessId: '',
     isScrapped: false,
     wipRepairIds: [],
+    conditions: [],
   },
 });
 
@@ -405,21 +406,6 @@ const onSubmit = async () => {
     return;
   }
 
-  // if (_.isEmpty(formData.queryData.checkedDefectReason)) {
-  //   MessagePlugin.error('请选择缺陷原因');
-  //   return;
-  // }
-
-  // if (_.isEmpty(formData.queryData.checkedDefectDealMethod)) {
-  //   MessagePlugin.error('请选择处理方法');
-  //   return;
-  // }
-
-  // if (_.isEmpty(formData.queryData.checkedDefectBlame)) {
-  //   MessagePlugin.error('请选择责任别');
-  //   return;
-  // }
-
   const listSelectWipRepairing = repairingData.value.filter((value) => selectRepairingIds.value.indexOf(value.id) > -1);
 
   listSelectWipRepairing.forEach((item) => {
@@ -488,10 +474,12 @@ const fetchTable = async () => {
 };
 const fetchDtlTable = async () => {
   try {
-    const data = await apiControl.wipRepairDtl.getListByWipRepairId({
-      wipRepairId: selectRepairRowId.value,
-    });
-    repairDtlData.value = data;
+    if (_.isNil(selectRepairRowId.value)) {
+      const data = await apiControl.wipRepairDtl.getListByWipRepairId({
+        wipRepairId: selectRepairRowId.value,
+      });
+      repairDtlData.value = data;
+    }
   } catch (e) {
     console.log(e);
   }
@@ -567,8 +555,18 @@ const onSelectRepairingChange = (value: any, { selectedRowData }) => {
     formData.queryData.mitemId = firstRow.mitemId;
     formData.queryData.mitemCode = firstRow.mitemCode;
     formData.queryData.mitemName = firstRow.mitemName;
+    formData.queryData.moScheId = firstRow.moScheId;
+    formData.queryData.barcode = firstRow.scanBarcode;
+    formData.queryData.conditions.push({ field: 'moScheId', operator: 'EQ', value: firstRow.moScheId });
+    formData.queryData.conditions.push({ field: 'serialNumber', operator: 'EQ', value: firstRow.scanBarcode });
   } else {
     formData.queryData.routingRevisionId = '';
+    formData.queryData.mitemId = '';
+    formData.queryData.mitemCode = '';
+    formData.queryData.mitemName = '';
+    formData.queryData.moScheId = '';
+    formData.queryData.barcode = '';
+    formData.queryData.conditions = [];
   }
 };
 const onRepairRowClick = async ({ row }) => {

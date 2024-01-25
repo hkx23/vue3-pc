@@ -1,50 +1,59 @@
 <template>
   <!-- :full-sub-index="[1, 2]" -->
-  <cmp-container :full="false">
+  <cmp-container :full="true" :full-sub-index="[0, 1]">
     <cmp-card>
-      <!-- 查询组件  -->
-      <cmp-query :opts="opts" @submit="conditionEnter" />
-    </cmp-card>
-    <cmp-card>
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="pageUI"
-        row-key="id"
-        :table-column="tableMitemCategoryColumns"
-        :table-data="tableDataMitemCategory"
-        :loading="loading"
-        :total="dataTotal"
-        :fixed-height="false"
-        select-on-row-click
-        @refresh="fetchTable"
-        @select-change="onSelectMitemCategoryChange"
-      >
-        <template #title> 物料类别列表 </template>
-        <template #button>
-          <bcmp-import-button theme="primary" type="mitemCategory" @close="fetchTable"></bcmp-import-button>
-        </template>
-        <template #op="slotProps">
-          <t-space :size="8">
-            <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
-            <t-link theme="primary" @click="onDeleteRowClick(slotProps)">{{ t('common.button.delete') }}</t-link>
-            <!-- <t-icon name="edit" @click="onEditRowClick(slotProps)" />
+      <cmp-container :full="true">
+        <!-- 查询组件  -->
+        <cmp-query :opts="opts" @submit="conditionEnter" />
+        <cmp-card :ghost="true">
+          <cmp-table
+            key="mainTable"
+            ref="tableRef"
+            v-model:pagination="pageUI"
+            v-model:activeRowKeys="activeRowKeys"
+            row-key="id"
+            :table-column="tableMitemCategoryColumns"
+            :table-data="tableDataMitemCategory"
+            :loading="loading"
+            :total="dataTotal"
+            :active-row-type="'single'"
+            :hover="true"
+            :fixed-height="true"
+            select-on-row-click
+            @refresh="fetchTable"
+            @select-change="onSelectMitemCategoryChange"
+          >
+            <template #title> 物料类别列表 </template>
+            <template #button>
+              <bcmp-import-button theme="primary" type="mitemCategory" @close="fetchTable"></bcmp-import-button>
+            </template>
+            <template #op="slotProps">
+              <t-space :size="8">
+                <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
+                <t-link theme="primary" @click="onDeleteRowClick(slotProps)">{{ t('common.button.delete') }}</t-link>
+                <!-- <t-icon name="edit" @click="onEditRowClick(slotProps)" />
             <t-icon name="delete" @click="onDeleteRowClick(slotProps)" /> -->
-          </t-space>
-        </template>
-      </cmp-table>
+              </t-space>
+            </template>
+          </cmp-table>
+        </cmp-card>
+      </cmp-container>
     </cmp-card>
+
     <cmp-card>
       <cmp-table
+        key="detailTable"
         v-model:pagination="pageMitem"
         class="son-table"
         row-key="id"
-        :fixed-height="false"
+        :fixed-height="true"
         :total="mitemTotal"
         :table-column="tableMitemColumns"
         :table-data="tableDataMitem"
         :loading="loadingMitem"
         @refresh="fetchMitemTable"
       >
+        <template #title> 关联物料列表 </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
@@ -103,6 +112,7 @@ const mitemTotal = ref(0);
 const keyword = ref('');
 const tableRef = ref();
 const selectCategoryID = ref('');
+const activeRowKeys = ref([]);
 
 // 查询组件
 const opts = computed(() => {
@@ -183,6 +193,7 @@ const fetchMitemTable = async () => {
 
 // 选中行
 const onSelectMitemCategoryChange = (value: any) => {
+  activeRowKeys.value = value;
   selectCategoryID.value = value;
   fetchMitemTable();
 };

@@ -13,6 +13,7 @@
             v-model="mitemValue"
             :is-multiple="true"
             type="mitem"
+            :custom-conditions="mitemCustom"
             @selection-change="onMitemChange"
           ></bcmp-select-business
         ></t-col>
@@ -224,6 +225,8 @@ const processValue = ref('');
 const workstationValue = ref('');
 const workcenterValue = ref('');
 const lineValue = ref('');
+
+const mitemCustom = [{ field: 'mitemCode', operator: 'LIKE', value: '12' }];
 // 使用mitemValue的结果，拼接成字符串，mitemValue结构为[{value:'',label:''}]
 
 const mitemValueSplit = computed(() => mitemValue.value.map((item) => item.value).join(','));
