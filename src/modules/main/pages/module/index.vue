@@ -112,7 +112,7 @@
     :cancel-btn="null"
     :confirm-btn="null"
     top="60px"
-    :width="showFormData ? '750px' : '400px'"
+    :width="showFormData ? '850px' : '400px'"
     @close="onSecondaryReset"
   >
     <!-- #一级菜单 dialog -->
@@ -275,7 +275,7 @@
         <t-col :span="12">
           <!-- 第 5️⃣ 行数据 -->
           <t-form-item label="菜单地址" name="behaviorPath">
-            <t-input v-model="formDataTwo.behaviorPath"></t-input>
+            <t-input v-model="formDataTwo.behaviorPath" style="width: 100%"></t-input>
           </t-form-item>
         </t-col>
         <t-col v-if="dialogListData !== 1" :span="6">

@@ -133,7 +133,7 @@
     :cancel-btn="null"
     :confirm-btn="null"
     :header="diaLogTitle"
-    width="750px"
+    width="850px"
     @close="onDialogClose"
   >
     <!-- 扩展属性添加表单 -->
