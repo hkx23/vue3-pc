@@ -77,7 +77,7 @@
               @end="ondragEnd"
             >
               <t-row v-for="(item, index) in dataTable" :key="index" class="table-row" justify="space-between">
-                <t-col :span="0.5">
+                <t-col :span="0.5" class="table-row-checkbox">
                   <t-checkbox v-model="item.isGlobal" :disabled="SelectNode.isSys == '1'"> </t-checkbox>
                 </t-col>
                 <t-col :span="2">
@@ -528,6 +528,7 @@ onMounted(() => {
 
 .table-row {
   margin: 8px;
+  align-items: flex-end;
 
   .t-col {
     margin: 1px;
@@ -546,5 +547,9 @@ onMounted(() => {
   /deep/ .t-input-number {
     width: 54px !important;
   }
+}
+
+.table-row-checkbox {
+  padding-bottom: 2px;
 }
 </style>
