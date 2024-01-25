@@ -12,6 +12,7 @@
     :readonly="readonly"
     :title="finalTitle"
     :placeholder="finalPlaceholder"
+    :custom-conditions="finalCustomConditions"
     :keywords="finalKeywords"
     :table-width="finaltableWidth"
     v-bind="selectAttr"
@@ -29,6 +30,7 @@
     :category="finalCategory"
     :multiple="isMultiple"
     :parent-id="finalParentId"
+    :custom-conditions="finalCustomConditions"
     :readonly="readonly"
     :title="finalTitle"
     :placeholder="finalPlaceholder"
@@ -153,6 +155,19 @@ const props = defineProps({
     type: Array as unknown as any[],
     default: () => [],
   },
+  // 自定义查询条件-数组
+  // 数组里面的元素例子
+  // {
+  //     field: 'key',
+  //     operator: 'EQ',
+  //     value: 'value',
+  //   }
+  customConditions: {
+    type: Array,
+    default: () => {
+      return [];
+    },
+  },
   // table宽度
   tableWidth: {
     type: Number,
@@ -204,6 +219,7 @@ const finalParentId = ref(props.parentId);
 const finaltableWidth = ref(props.tableWidth);
 const finalComponentType = ref(props.componentType);
 const finalListSetting = ref(props.listSetting);
+const finalCustomConditions = ref(props.customConditions);
 
 const onSelectionChange = (val: any, valuKeys: any) => {
   if (!props.isMultiple) {
@@ -325,6 +341,13 @@ watch(
   () => props.parentId,
   (val) => {
     finalParentId.value = val;
+  },
+  { deep: true },
+);
+watch(
+  () => props.customConditions,
+  (val) => {
+    finalCustomConditions.value = val;
   },
   { deep: true },
 );

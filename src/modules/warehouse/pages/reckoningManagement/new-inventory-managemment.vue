@@ -54,7 +54,7 @@
                   v-for="item in authorizedLocation"
                   :key="item.id"
                   :label="item.locationName"
-                  :value="item.locationCode"
+                  :value="item.id"
                 ></t-option>
               </t-select>
             </template>
@@ -166,11 +166,13 @@ const opts = computed(() => {
     // 有权限的仓库=>货区
     districtId: {
       comp: 't-select',
+      defaultVal: '',
       slotName: 'soltDistrict',
     },
     // 货区=>货位
     locationId: {
       comp: 't-select',
+      defaultVal: '',
       slotName: 'soltLocation',
     },
   };

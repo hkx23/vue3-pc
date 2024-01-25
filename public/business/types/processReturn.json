@@ -1,0 +1,29 @@
+{
+  "title": "工序：",
+  "placeholder": "请选择工序",
+  "url": "/api/control/productRework/getReturnProcessByBarcode",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "工序代码",
+      "key": "processCode",
+      "align": "center"
+    },
+    {
+      "title": "工序名称",
+      "key": "processName",
+      "align": "center"
+    },
+    {
+      "title": "工序描述",
+      "key": "processDesc",
+      "align": "center"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "processName"
+  }
+}
