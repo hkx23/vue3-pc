@@ -363,6 +363,168 @@ export interface Workstation {
   workcenterId?: string;
 }
 
+/** 班组排班表 */
+export interface WorkgroupArrange {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workcenterId?: string;
+  workgroupId?: string;
+  /**
+   * 排班日期
+   * @format date-time
+   */
+  datetimeArrange?: string;
+  attendanceModeId?: string;
+  /** 班次 */
+  shiftCode?: string;
+  /** 出勤模式表达式 */
+  attendanceExpression?: string;
+}
+
+export interface WorkgroupArrangeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workshopId?: string;
+  workgroupId?: string;
+  /** 班组模糊关键词 */
+  workgroupKeyword?: string;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListWorkgroupArrangeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WorkgroupArrangeVO[] | null;
+}
+
+/** 班组排班输出类 */
+export interface WorkgroupArrangeDTO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workcenterId?: string;
+  workgroupId?: string;
+  /**
+   * 排班日期
+   * @format date-time
+   */
+  datetimeArrange?: string;
+  attendanceModeId?: string;
+  /** 班次 */
+  shiftCode?: string;
+  /** 出勤模式表达式 */
+  attendanceExpression?: string;
+  /** 班组名称 */
+  workgroupName?: string;
+  /** 工作中心名称 */
+  wcName?: string;
+  /** 班次名称 */
+  shiftName?: string;
+  /** 出勤模式表达式 */
+  expression?: string;
+  /** 时间段拆分 */
+  expressionSpilt?: string[];
+}
+
+/** 班组排班输出类 */
+export type WorkgroupArrangeVO = {
+  /**
+   * 排班日期
+   * @format date-time
+   */
+  datetimeArrange?: string;
+  /** 当日排班数据 */
+  data?: WorkgroupArrangeDTO[];
+} | null;
+
+/** 响应数据 */
+export type KeyValuePairLongInteger = {
+  value?: string;
+  label?: string;
+  /** @format int32 */
+  num?: number;
+  id?: string;
+  res?: number[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultListKeyValuePairLongInteger {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: KeyValuePairLongInteger[] | null;
+}
+
 /** 通用响应类 */
 export interface ResultListWipRepairDtlVO {
   /**
@@ -1666,11 +1828,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopId?: string;
+  workshopName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -1847,8 +2009,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -1862,6 +2024,23 @@ export interface ResultPagingDataProcessVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataProcessVO;
+}
+
+/** 维修回流工序 */
+export interface ProcessSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
 }
 
 /** 包装关联物料提交的模型 */
@@ -2883,17 +3062,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
+  workshopId?: string;
+  workshopName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -2997,15 +3176,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
-  stateName?: string;
+  workshopId?: string;
+  workshopName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  stateName?: string;
   defectCodeStr?: string;
 }
 
@@ -3243,8 +3422,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -3681,8 +3860,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4228,6 +4407,82 @@ export const api = {
         body: data as any,
       }),
   },
+  workgroupArrange: {
+    /**
+     * No description
+     *
+     * @tags 班组排班表
+     * @name RemoveWorkgroupArrange
+     * @summary 删除班组排班
+     * @request POST:/workgroupArrange/removeWorkgroupArrange
+     * @secure
+     */
+    removeWorkgroupArrange: (data: string) =>
+      http.request<ResultObject['data']>(`/api/control/workgroupArrange/removeWorkgroupArrange`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组排班表
+     * @name ModifyWorkgroupArrange
+     * @summary 编辑班组排班
+     * @request POST:/workgroupArrange/modifyWorkgroupArrange
+     * @secure
+     */
+    modifyWorkgroupArrange: (data: WorkgroupArrange) =>
+      http.request<ResultObject['data']>(`/api/control/workgroupArrange/modifyWorkgroupArrange`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组排班表
+     * @name GetList
+     * @summary 查询班组排班数据
+     * @request POST:/workgroupArrange/getList
+     * @secure
+     */
+    getList: (data: WorkgroupArrangeSearch) =>
+      http.request<ResultListWorkgroupArrangeVO['data']>(`/api/control/workgroupArrange/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组排班表
+     * @name GetArrangeCount
+     * @summary 查询班组排班技术
+     * @request POST:/workgroupArrange/getArrangeCount
+     * @secure
+     */
+    getArrangeCount: (data: WorkgroupArrangeSearch) =>
+      http.request<ResultListKeyValuePairLongInteger['data']>(`/api/control/workgroupArrange/getArrangeCount`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组排班表
+     * @name AddWorkgroupArrange
+     * @summary 新增班组排班
+     * @request POST:/workgroupArrange/addWorkgroupArrange
+     * @secure
+     */
+    addWorkgroupArrange: (data: WorkgroupArrange) =>
+      http.request<ResultObject['data']>(`/api/control/workgroupArrange/addWorkgroupArrange`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   wipRepairDtl: {
     /**
      * No description
@@ -4611,6 +4866,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataProcessVO['data']>(`/api/control/productRework/itemsProcess`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品返工
+     * @name GetReturnProcessByBarcode
+     * @summary 根据排产工单和扫描条码，获取历史已扫的工序信息
+     * @request POST:/productRework/getReturnProcessByBarcode
+     * @secure
+     */
+    getReturnProcessByBarcode: (data: ProcessSearch) =>
+      http.request<ResultPagingDataProcessVO['data']>(`/api/control/productRework/getReturnProcessByBarcode`, {
         method: 'POST',
         body: data as any,
       }),
