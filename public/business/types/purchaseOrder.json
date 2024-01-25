@@ -7,17 +7,17 @@
     {
       "title": "采购单",
       "key": "billNo",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "供应商",
       "key": "supplierName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "交货地址",
       "key": "deliverAddress",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

@@ -9,12 +9,12 @@
     {
       "title": "计量单位",
       "key": "uom",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "计量单位名称",
       "key": "uomName",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

@@ -8,17 +8,17 @@
     {
       "title": "领域名称编码",
       "key": "objectCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "类别编码",
       "key": "categoryCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "类别名称",
       "key": "categoryName",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

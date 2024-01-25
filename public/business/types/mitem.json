@@ -7,17 +7,17 @@
     {
       "title": "物料编码",
       "key": "mitemCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "物料名称",
       "key": "mitemName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "物料描述",
       "key": "mitemDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

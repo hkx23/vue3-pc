@@ -8,17 +8,17 @@
     {
       "title": "工作中心代码",
       "key": "wcCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "工作中心名称",
       "key": "wcName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "工作中心描述",
       "key": "wcDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

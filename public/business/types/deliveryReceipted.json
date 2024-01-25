@@ -8,22 +8,22 @@
     {
       "title": "送货单",
       "key": "billNo",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "送货日期",
       "key": "dateDelivery",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "供应商",
       "key": "supplierName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "状态",
       "key": "statusName",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

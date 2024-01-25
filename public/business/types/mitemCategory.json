@@ -7,17 +7,17 @@
     {
       "title": "分类编码",
       "key": "categoryCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "分类名称",
       "key": "categoryName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "分类描述",
       "key": "categoryDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",
