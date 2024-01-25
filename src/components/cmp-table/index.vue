@@ -296,7 +296,14 @@ const props = defineProps({
 });
 const tableKeyCode = ref('');
 
-const emit = defineEmits(['refresh', 'update:pagination', 'update:sorters', 'select-change', 'update:filters']);
+const emit = defineEmits([
+  'refresh',
+  'update:pagination',
+  'update:tableData',
+  'update:sorters',
+  'select-change',
+  'update:filters',
+]);
 
 // const settingStore = useSettingStore();
 const selectedRowKeys = ref<number[]>([]);
@@ -771,11 +778,20 @@ watch(
   (val) => {
     console.log('watch:props.tableData', val);
     nextTick(() => {
-      finalTableData.value = _.cloneDeep(props.tableData);
+      finalTableData.value = props.tableData;
+      emit('update:tableData', val);
     });
   },
   { deep: true },
 );
+// watch(
+//   () => finalTableData.value,
+//   (val) => {
+//     console.log('watch:finalTableData.value ', val);
+//     emit('update:tableData', val);
+//   },
+//   { deep: true },
+// );
 watch(
   () => props.tableColumn,
   (val) => {
