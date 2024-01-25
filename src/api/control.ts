@@ -615,8 +615,6 @@ export interface WipRepairSearch {
   endDate?: string;
   /** 已返修 */
   isRepair?: string;
-  /** 登录工序 */
-  processId?: string;
   /** 批量维修ID */
   wipRepairIds?: string[];
   /** 维修状态 */
@@ -1831,12 +1829,12 @@ export interface ProductReworkVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3065,14 +3063,14 @@ export interface BarcodeWipCollectVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
-  scanDatetimeStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 通用响应类 */
@@ -3179,13 +3177,13 @@ export interface BarcodeWipVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
-  scanDatetimeStr?: string;
+  workshopCode?: string;
   stateName?: string;
-  defectCodeStr?: string;
   isState?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3422,8 +3420,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -4519,12 +4517,12 @@ export const api = {
      * No description
      *
      * @tags 产品维修表
-     * @name Search
+     * @name List
      * @summary 获取维修工单
      * @request POST:/wipRepair/items
      * @secure
      */
-    search: (data: WipRepairSearch) =>
+    list: (data: WipRepairSearch) =>
       http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepair/items`, {
         method: 'POST',
         body: data as any,
