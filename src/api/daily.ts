@@ -69,8 +69,11 @@ export interface IncidentType {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 异常代码 */
   incidentCode?: string;
+  /** 异常名称 */
   incidentName?: string;
+  /** 异常模块 */
   incidentModule?: string;
 }
 
@@ -264,6 +267,7 @@ export interface AlertCfgVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 警报类型 */
   alertType?: string;
   /**
    * 响应时间
@@ -324,6 +328,7 @@ export interface IncidentDealVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   incidentTypeId?: string;
   orgId?: string;
@@ -338,9 +343,13 @@ export interface IncidentDealVO {
   isSolveOvertime?: number;
   /** 异常备注 */
   memo?: string;
+  /** 状态 */
   status?: string;
+  /** 异常原因 */
   incidentReason?: string;
+  /** 处理方法 */
   dealMethod?: string;
+  /** 处理详情 */
   dealDetail?: string;
   /** 用户名 */
   userName?: string;
@@ -545,6 +554,7 @@ export interface IncidentCfg {
   eid?: string;
   oid?: string;
   orgId?: string;
+  /** 异常模块 */
   incidentModule?: string;
   supportGroupId?: string;
   /**
@@ -646,6 +656,7 @@ export interface AlertCfg {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 警报类型 */
   alertType?: string;
   /**
    * 响应时间

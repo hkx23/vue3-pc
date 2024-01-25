@@ -58,18 +58,18 @@
       <t-row :gutter="[32, 16]">
         <t-col :span="6">
           <t-form-item label="出勤模式编码" name="modeCode">
-            <t-input v-model="teamFormData.modeCode" :disabled="groupDisabled"></t-input>
+            <t-input v-model="teamFormData.modeCode"></t-input>
           </t-form-item>
         </t-col>
         <t-col :span="6">
           <t-form-item label="出勤模式名称" name="modeName">
-            <t-input v-model="teamFormData.modeName" :disabled="groupDisabled"></t-input>
+            <t-input v-model="teamFormData.modeName"></t-input>
           </t-form-item>
         </t-col>
         <!-- 第 2️⃣ 行数据 -->
         <t-col :span="6">
           <t-form-item label="出勤模式描述" name="modeDesc">
-            <t-input v-model="teamFormData.modeDesc" :disabled="groupDisabled"></t-input>
+            <t-input v-model="teamFormData.modeDesc"></t-input>
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -120,6 +120,7 @@
 </template>
 
 <script setup lang="ts">
+import _ from 'lodash';
 import { Icon } from 'tdesign-icons-vue-next';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
@@ -150,33 +151,96 @@ function convertAndFlattenTimeIntervals(timeIntervals) {
 }
 
 // 判断时间是否超过了24小时
-function processTimeArray(timeArray) {
-  console.log('🚀 ~ file: index.vue:154 ~ processTimeArray ~ timeArray:', timeArray);
-  // for (let i = 0; i < timeArray.length - 1; i++) {
-  //   if (timeArray[i] + 1440 <= timeArray[j]) {
-  //     return false; // 跳出循环，但不结束整个函数
-  //   }
-  // }
-  return true; // 没有超过24小时则返回 true
+function checkArray(arr) {
+  let decreaseCount = 0;
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < arr[i - 1]) {
+      decreaseCount++;
+      // 如果出现两次及以上递减，直接返回false
+      if (decreaseCount >= 2) {
+        return false;
+      }
+      // 检查从第一次递减点到数组结束，是否有值大于数组的第一个值
+      for (let j = i; j < arr.length; j++) {
+        if (arr[j] > arr[0]) {
+          return false;
+        }
+      }
+    }
+  }
+  // 如果数组没有递减的部分，返回true
+  return true;
+}
+
+// 过了午夜，后面的数组加 N
+function appendNFromFirstDecrease(arr) {
+  // 查找第一个递减的位置
+  let decreaseIndex = -1;
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < arr[i - 1]) {
+      decreaseIndex = i;
+      break;
+    }
+  }
+  // 如果找到了递减的位置，从那个位置开始修改数组
+  if (decreaseIndex !== -1) {
+    for (let i = decreaseIndex; i < arr.length; i++) {
+      arr[i] = `${arr[i]}N`;
+    }
+  }
+  return arr;
+}
+
+// 拼接成后端需要的格式 函数
+function convertToTimeRange(arr) {
+  // 将分钟数转换为24小时制时间格式，例如 90 => '01:30'
+  function minutesToTime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  }
+  const timeRanges = [];
+  for (let i = 0; i < arr.length; i += 2) {
+    // 检查数组长度是否为偶数
+    if (i + 1 >= arr.length) {
+      throw new Error('Array length must be even');
+    }
+    // 处理带'N'的情况
+    let start = arr[i].toString();
+    let end = arr[i + 1].toString();
+    const startN = start.includes('N');
+    const endN = end.includes('N');
+    // 转换为时间格式
+    start = minutesToTime(parseInt(start, 10)); // 指定基数为10
+    end = minutesToTime(parseInt(end, 10)); // 指定基数为10
+    // 拼接结果
+    timeRanges.push(`${start + (startN ? 'N' : '')}-${end}${endN ? 'N' : ''}`);
+  }
+  return timeRanges;
+}
+// 判断最后一个时间是否等于第一个时间段
+function isFirstEqualToLast(arr) {
+  return arr[0] !== arr[arr.length - 1];
 }
 
 // 添加时间组件
 const addFormSubmit = () => {
   const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
-  const AAA = flattenedConvertedIntervals.every((element) => Boolean(element));
-  if (!AAA) {
+  const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
+  if (!isValid) {
     MessagePlugin.warning('时间段不能为空！');
     return;
   }
-  const flag = processTimeArray(flattenedConvertedIntervals);
+  const flag = checkArray(flattenedConvertedIntervals);
   if (!flag) {
     MessagePlugin.warning('时间间隔不能超过24小时，请重新输入！');
     return;
   }
-  // if (flattenedConvertedIntervals[0] > flattenedConvertedIntervals[flattenedConvertedIntervals.length - 1]) {
-  //   MessagePlugin.warning('请正确填写时间！');
-  //   return; // 如果第一个元素大于最后一个元素，则直接返回
-  // }
+  const isFirst = isFirstEqualToLast(flattenedConvertedIntervals);
+  if (!isFirst) {
+    MessagePlugin.warning('时间段已经累计了24小时，不能继续添加时间段！');
+    return;
+  }
   teamFormData.value.expression.push([...defaultTimeRange]); // 添加新的时间范围
 };
 
@@ -188,13 +252,10 @@ const delFormSubmit = (index: number) => {
 // const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { pageUI } = usePage(); // 分页工具
-const { pageUI: personPage } = usePage();
 const formVisible = ref(false); // 控制 班组dialog 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys: Ref<any[]> = ref([]); // 删除计量单位 id
-const groupDisabled = ref(false); // 班组表单禁用开关
 const submitFalg = ref(false);
-
 // $班组 表格数据
 const teamList = reactive({ list: [] });
 // 班组表格数据总条数
@@ -206,6 +267,7 @@ const supportPersonTotal = ref(0);
 // dialog 弹框数据
 // 初始渲染
 onMounted(async () => {
+  await onShiftTabData(); // 获取 班组表格 数据
   await onShiftSelectData(); // 班次下拉数据获取
 });
 
@@ -277,10 +339,6 @@ const rules: FormRules = {
   modeName: [{ required: true, trigger: 'blur' }],
   shiftCode: [{ required: true, trigger: 'change' }],
 };
-// # 初始渲染
-onMounted(async () => {
-  await onShiftTabData(); // 获取 班组表格 数据
-});
 
 // #班组搜索
 const opts = computed(() => {
@@ -292,7 +350,6 @@ const opts = computed(() => {
 // 上侧搜索提交事件
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
-  personPage.value.page = 1;
   teamParam.value.keyword = data.keyword;
   teamParam.value.shiftCode = data.shiftCode;
   await onShiftTabData();
@@ -323,63 +380,32 @@ const onShiftTabData = async () => {
   teamTotal.value = res.total;
 };
 
-// function processExpression(expression) {
-//   let addN = false;
-//   const formattedRanges = [];
-//   let lastEndTime = 0;
-//   let suffixN = false;
-//   let previousEndTime = convertToMinutes(expression[0][0]); // 开始时间
-//   console.log('🚀 ~ file: index.vue:300 ~ processExpression ~ previousEndTime:', previousEndTime);
-
-//   // // 首先检查是否有时间段超过24小时
-//   for (let i = 0; i < expression.length; i++) {
-//     const [startTime, endTime] = expression[i].map(convertToMinutes);
-//     console.log('🚀 ~ file: index.vue:304 ~ processExpression ~ startTime:', startTime);
-//     console.log('🚀 ~ file: index.vue:304 ~ processExpression ~ endTime:', endTime);
-//     if (endTime - startTime > 24 * 60) {
-//       throw new Error('A time span exceeds 24 hours');
-//     }
-//     if (i > 0 && convertToMinutes(expression[i - 1][1]) > startTime) {
-//       suffixN = true;
-//     }
-//     lastEndTime = suffixN ? endTime + 24 * 60 : endTime;
-//   }
-//   // 检查总时间跨度是否超过24小时
-//   if (lastEndTime - convertToMinutes(expression[0][0]) > 24 * 60) {
-//     throw new Error("Total span with 'n' exceeds 24 hours");
-//   }
-
-//   for (let i = 0; i < expression.length; i++) {
-//     const [startTimeStr, endTimeStr] = expression[i];
-//     const startTime = convertToMinutes(startTimeStr);
-//     const endTime = convertToMinutes(endTimeStr);
-//     // 如果当前开始时间大于结束时间或者小于上一组结束时间
-//     if (startTime > endTime || startTime < previousEndTime) {
-//       addN = true;
-//     }
-//     // 格式化时间范围
-//     const formattedStartTime = `${startTimeStr}${addN ? 'N' : ''}`;
-//     const formattedEndTime = `${endTimeStr}${addN ? 'N' : ''}`;
-//     formattedRanges.push(`${formattedStartTime}-${formattedEndTime}`);
-//     // 更新上一组的结束时间
-//     previousEndTime = endTime;
-//   }
-//   return formattedRanges;
-// }
-
 // #添加 班组 数据请求
 const onAddSupportGroup = async () => {
   const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
-  console.log('🚀 ~ file: index.vue:322 ~ onAddSupportGroup ~ replacement_times :', flattenedConvertedIntervals);
-  // await api.attendanceMode.addAttendanceMode(teamFormData.value);
-  // await onShiftTabData(); // 获取 班组表格 数据
-  // MessagePlugin.success('新增成功');
+  const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
+  if (!isValid) {
+    MessagePlugin.warning('时间段不能为空！');
+    return;
+  }
+  const flag = checkArray(flattenedConvertedIntervals);
+  if (!flag) {
+    MessagePlugin.warning('时间间隔不能超过24小时，请重新输入！');
+    return;
+  }
+  const newArr = appendNFromFirstDecrease(flattenedConvertedIntervals);
+  const convert = convertToTimeRange(newArr).join(';');
+  delete teamFormData.value.expression;
+  await api.attendanceMode.addAttendanceMode({ ...teamFormData.value, expression: convert });
+  await onShiftTabData(); // 获取 班组表格 数据
+  formVisible.value = false;
+  MessagePlugin.success('新增成功');
 };
 
 // #添加按钮点击事件
 const onAddTypeData = async () => {
   formRef.value.reset({ type: 'empty' });
-  groupDisabled.value = false; // 关闭表单禁用
+  teamFormData.value.expression = [['', '']];
   submitFalg.value = true; // true为新增
   formVisible.value = true;
   diaLogTitle.value = '出勤模式新增';
@@ -388,11 +414,11 @@ const onAddTypeData = async () => {
 // #编辑 点击 班组右侧表格编辑按钮
 const workGroupRowId = ref('');
 const onEditRow = (row: any) => {
-  groupDisabled.value = true; // 启用表单禁用
   teamFormData.value.modeCode = row.modeCode; // 班组代码
   teamFormData.value.modeName = row.modeName; // 班组名称
   teamFormData.value.modeDesc = row.modeDesc; // 班组描述
   teamFormData.value.shiftCode = row.shiftCode; // 车间 ID
+  teamFormData.value.expression = _.cloneDeep(row.expressionSpilt); // 车间 ID
   workGroupRowId.value = row.id;
   submitFalg.value = false; // 编辑为 false
   formVisible.value = true;
@@ -401,8 +427,28 @@ const onEditRow = (row: any) => {
 
 // #编辑 班组 表格数据 请求
 const onGroupRequest = async () => {
-  await api.workgroup.modifyWorkgroup({ ...teamFormData.value, id: workGroupRowId.value });
+  const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
+  console.log('🚀 ~ file: index.vue:438 ~ onGroupRequest ~ flattenedConvertedIntervals:', flattenedConvertedIntervals);
+  const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
+  if (!isValid) {
+    MessagePlugin.warning('时间段不能为空！');
+    return;
+  }
+  const flag = checkArray(flattenedConvertedIntervals);
+  if (!flag) {
+    MessagePlugin.warning('时间间隔不能超过24小时，请重新输入！');
+    return;
+  }
+  const newArr = appendNFromFirstDecrease(flattenedConvertedIntervals);
+  const convert = convertToTimeRange(newArr).join(';');
+  delete teamFormData.value.expression;
+  await api.attendanceMode.modifyAttendanceMode({
+    ...teamFormData.value,
+    expression: convert,
+    id: workGroupRowId.value,
+  });
   await onShiftTabData(); // 获取 班组表格 数据
+  formVisible.value = false;
   MessagePlugin.success('编辑成功');
 };
 
@@ -424,7 +470,7 @@ const onGroupDelect = (row: any) => {
 
 // ！班组表格删除确认按钮
 const onDelConfirm = async () => {
-  await api.workgroup.removeWorkgroupBatch([rowGroupId.value]);
+  await api.attendanceMode.removeBatch([rowGroupId.value]);
   if (teamList.list.length <= 1 && pageUI.value.page > 1) {
     pageUI.value.page--;
   }
@@ -438,7 +484,7 @@ const onTeamDeleteBatches = async () => {
   // 步骤 1: 检查删除前的数据总量
   const initialLength = teamList.list.length;
   // 步骤 2: 执行删除操作
-  await api.workgroup.removeWorkgroupBatch(selectedRowKeys.value);
+  await api.attendanceMode.removeBatch(selectedRowKeys.value);
   // 步骤 3: 检查当前页是否还有数据
   if (initialLength === teamList.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
@@ -451,15 +497,12 @@ const onTeamDeleteBatches = async () => {
 
 // @表单提交事件
 const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
-  console.log('🚀 ~ file: index.vue:374 ~ onAnomalyTypeSubmit ~ teamFormData.value:', teamFormData.value);
-
   if (context.validateResult === true) {
     if (submitFalg.value) {
       await onAddSupportGroup(); // 新增请求
     } else {
       await onGroupRequest(); // 编辑请求
     }
-    formVisible.value = false;
   }
 };
 </script>

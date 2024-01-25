@@ -349,6 +349,11 @@ export interface Workstation {
   workstationDesc?: string;
   processId?: string;
   workcenterId?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
 }
 
 /** 通用响应类 */
@@ -3893,14 +3898,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isRawName?: string;
   isRawChecked?: boolean;
+  isInProcessName?: string;
   isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  isBatchName?: string;
   isState?: boolean;
   isProductName?: string;
+  isProductChecked?: boolean;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -4043,8 +4048,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4117,6 +4122,11 @@ export interface LabelVO {
   datetimeStockin?: string;
   /** 状态 */
   status?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
   /** 送货单 */
   billNo?: string;
   /** 供应商编码 */
@@ -4341,6 +4351,11 @@ export interface Label {
   datetimeStockin?: string;
   /** 状态 */
   status?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
 }
 
 export interface FileVO {
@@ -5750,7 +5765,7 @@ export interface AttendanceModeVO {
   /** 班次名称 */
   shiftName?: string;
   /** 时间段拆分 */
-  expressionSpilt?: string[];
+  expressionSpilt?: string[][];
 }
 
 /** 响应数据 */
@@ -6472,12 +6487,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9925,6 +9940,21 @@ export const api = {
      * No description
      *
      * @tags 工单排产表
+     * @name SearchRunningMoSche
+     * @summary 弹出框公共方法-查询有效的排产单信息-已排产，已备料，已上线
+     * @request POST:/moSchedule/searchRunningMoSche
+     * @secure
+     */
+    searchRunningMoSche: (data: CommonSearch) =>
+      http.request<ResultPagingDataMoScheduleVO['data']>(`/api/main/moSchedule/searchRunningMoSche`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
      * @name Search
      * @summary 弹出框公共方法
      * @request POST:/moSchedule/items
@@ -10008,6 +10038,21 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultMo['data']>(`/api/main/mo/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单表
+     * @name SearchRunningMo
+     * @summary 弹出框公共方法-查询有效的工单信息-已排产，已备料，已上线
+     * @request POST:/mo/itemRunningMo
+     * @secure
+     */
+    searchRunningMo: (data: CommonSearch) =>
+      http.request<ResultPagingDataMo['data']>(`/api/main/mo/itemRunningMo`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**

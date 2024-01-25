@@ -92,12 +92,14 @@ export interface ProductPackRuleDtl {
   eid?: string;
   oid?: string;
   packRuleId?: string;
+  /** 包装类型 */
   packType?: string;
   /**
    * 包装数量
    * @format int32
    */
   packQty?: number;
+  /** 单位 */
   uom?: string;
   parentPackId?: string;
   /**
@@ -132,7 +134,9 @@ export interface ProductPackRule {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 包装规则代码 */
   packRuleCode?: string;
+  /** 包装规则名称 */
   packRuleName?: string;
 }
 
@@ -361,6 +365,11 @@ export interface Workstation {
   workstationDesc?: string;
   processId?: string;
   workcenterId?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
 }
 
 /** 班组排班表 */
@@ -565,7 +574,9 @@ export type WipRepairDtlVO = {
   oid?: string;
   wipRepairId?: string;
   defectCodeId?: string;
+  /** 缺陷原因 */
   defectReason?: string;
+  /** 缺陷责任别 */
   defectBlame?: string;
   /**
    * 维修次数
@@ -613,16 +624,15 @@ export interface WipRepairSearch {
   beginDate?: string;
   /** 结束时间 */
   endDate?: string;
-  /** 已返修 */
-  isRepair?: string;
-  /** 登录工序 */
-  processId?: string;
+  /** 维修状态 */
+  repairStatus?: string[];
   /** 批量维修ID */
   wipRepairIds?: string[];
   /** 维修状态 */
   statusList?: string[];
   loginProcessId?: string;
   loginWorkstationId?: string;
+  loginWorkCenterId?: string;
   /** 是否报废 */
   isScrapped?: boolean;
   /** 产品条码 */
@@ -694,7 +704,9 @@ export interface WipRepairVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 流程卡号 */
   runCard?: string;
+  /** 产品条形码 */
   scanBarcode?: string;
   moScheId?: string;
   /**
@@ -711,11 +723,19 @@ export interface WipRepairVO {
   fromWorkstationId?: string;
   userRepairId?: string;
   returnRoutingProcessId?: string;
+  /** 维修结果 */
   repairResult?: string;
+  /** 状态 */
   status?: string;
-  /** @format date-time */
+  /**
+   * 维修开始时间
+   * @format date-time
+   */
   datetimeRepairing?: string;
-  /** @format date-time */
+  /**
+   * 维修结束时间
+   * @format date-time
+   */
   datetimeRepaired?: string;
   mitemId?: string;
   /** 物料代码 */
@@ -770,8 +790,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1045,7 +1065,9 @@ export interface ProductWipRepairVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 流程卡号 */
   runCard?: string;
+  /** 产品条形码 */
   scanBarcode?: string;
   moScheId?: string;
   /**
@@ -1062,11 +1084,19 @@ export interface ProductWipRepairVO {
   fromWorkstationId?: string;
   userRepairId?: string;
   returnRoutingProcessId?: string;
+  /** 维修结果 */
   repairResult?: string;
+  /** 状态 */
   status?: string;
-  /** @format date-time */
+  /**
+   * 维修开始时间
+   * @format date-time
+   */
   datetimeRepairing?: string;
-  /** @format date-time */
+  /**
+   * 维修结束时间
+   * @format date-time
+   */
   datetimeRepaired?: string;
   /**
    * 采集时间
@@ -1122,8 +1152,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -1386,33 +1416,53 @@ export interface WipLog {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 条码序列号 */
   serialNumber?: string;
+  /** 流程卡号 */
   runCard?: string;
   moScheId?: string;
   moId?: string;
+  /** 工单号 */
   moCode?: string;
   mitemId?: string;
+  /** 物料编码 */
   mitemCode?: string;
+  /** 物料名称 */
   mitemName?: string;
   workcenterId?: string;
+  /** 工作中心编码 */
   workcenterCode?: string;
+  /** 工作中心名称 */
   workcenterName?: string;
   preProcessId?: string;
+  /** 来源工序编码 */
   preProcessCode?: string;
+  /** 来源工序名称 */
   preProcessName?: string;
   preWorkstationId?: string;
+  /** 来源工站编码 */
   preWorkstationCode?: string;
+  /** 来源工站名称 */
   preWorkstationName?: string;
   curProcessId?: string;
+  /** 当前工序编码 */
   curProcessCode?: string;
+  /** 当前工序名称 */
   curProcessName?: string;
   curWorkstationId?: string;
+  /** 当前工站编码 */
   curWorkstationCode?: string;
+  /** 当前工站名称 */
   curWorkstationName?: string;
+  /** 车间编码 */
   workshopCode?: string;
+  /** 车间名称 */
   workshopName?: string;
+  /** 班组编码 */
   workgroupCode?: string;
+  /** 班组名称 */
   workgroupName?: string;
+  /** 班次编码 */
   shiftCode?: string;
   /**
    * 排班日期
@@ -1464,7 +1514,7 @@ export interface WipLog {
    */
   isCompleted?: number;
   /**
-   * 是否合格
+   * 是否合格 0：合格；1：不合格
    * @format int32
    */
   dcResult?: number;
@@ -1473,6 +1523,7 @@ export interface WipLog {
    * @format int32
    */
   isHold?: number;
+  /** 终端计算机名 */
   terminal?: string;
 }
 
@@ -1509,9 +1560,13 @@ export interface PkgRelationReportVO {
   eid?: string;
   oid?: string;
   moScheId?: string;
+  /** 包装条码 */
   pkgBarcode?: string;
+  /** 包装条码类型 */
   pkgBarcodeType?: string;
+  /** 父级包装条码 */
   parentPkgBarcode?: string;
+  /** 父级包装条码类型 */
   parentPkgType?: string;
   /**
    * 包装序号
@@ -1521,6 +1576,7 @@ export interface PkgRelationReportVO {
   workstationId?: string;
   workcenterId?: string;
   workshopId?: string;
+  /** 状态 */
   status?: string;
   /** 工单号 */
   moCode?: string;
@@ -1663,7 +1719,9 @@ export type ProductWipRepairDtlVO = {
   oid?: string;
   wipRepairId?: string;
   defectCodeId?: string;
+  /** 缺陷原因 */
   defectReason?: string;
+  /** 缺陷责任别 */
   defectBlame?: string;
   /**
    * 维修次数
@@ -1748,6 +1806,7 @@ export interface ProductReworkVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 条码序列号 */
   serialNumber?: string;
   moScheId?: string;
   workcenterId?: string;
@@ -1772,8 +1831,9 @@ export interface ProductReworkVO {
    * @format int32
    */
   isCompleted?: number;
-  onhandId?: string;
+  /** 状态 */
   status?: string;
+  onhandId?: string;
   uom?: string;
   uomName?: string;
   keypartCode?: string;
@@ -1828,11 +1888,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  workshopName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -1910,13 +1970,17 @@ export interface WipKeypart {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 流程卡号 */
   runCard?: string;
+  /** 关键件条码 */
   keypartBarcode?: string;
+  /** 关键件条码类型 */
   keypartBarcodeType?: string;
   moScheId?: string;
   mitemId?: string;
   mitemCategoryId?: string;
   supplierId?: string;
+  /** 生产批次 */
   lotNo?: string;
   /** 使用数量 */
   qty?: number;
@@ -2009,8 +2073,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -2583,7 +2647,9 @@ export interface MitemOnboardDTO {
   mitemId?: string;
   workcenterId?: string;
   supplierId?: string;
+  /** 扫描条码 */
   scanBarcode?: string;
+  /** 条码类型 */
   barcodeType?: string;
   /**
    * 顺序
@@ -2594,13 +2660,16 @@ export interface MitemOnboardDTO {
   qty?: number;
   /** 结余数量 */
   balanceQty?: number;
+  /** 单位 */
   uom?: string;
   /**
    * 投料时间
    * @format date-time
    */
   datetimeOnboard?: string;
+  /** 投料器 */
   feeder?: string;
+  /** 状态 */
   status?: string;
   workstationId?: string;
   bomMitemId?: string;
@@ -2872,6 +2941,11 @@ export interface LabelManageVO {
   datetimeStockin?: string;
   /** 状态 */
   status?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
   /** 排产单编码 */
   scheCode?: string;
   /** 排产单状态 */
@@ -2984,6 +3058,7 @@ export interface BarcodeWipCollectVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 条码序列号 */
   serialNumber?: string;
   moScheId?: string;
   workcenterId?: string;
@@ -3008,8 +3083,9 @@ export interface BarcodeWipCollectVO {
    * @format int32
    */
   isCompleted?: number;
-  onhandId?: string;
+  /** 状态 */
   status?: string;
+  onhandId?: string;
   /** 扫码类型(SCANTEXT,KEYPART) */
   uom?: string;
   uomName?: string;
@@ -3062,17 +3138,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  workshopName?: string;
+  stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3113,6 +3189,7 @@ export interface BarcodeWipVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 条码序列号 */
   serialNumber?: string;
   moScheId?: string;
   workcenterId?: string;
@@ -3137,8 +3214,9 @@ export interface BarcodeWipVO {
    * @format int32
    */
   isCompleted?: number;
-  onhandId?: string;
+  /** 状态 */
   status?: string;
+  onhandId?: string;
   /** 排产工单 */
   scheCode?: string;
   /** 工单排产状态 */
@@ -3176,15 +3254,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopCode?: string;
+  workshopName?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  workshopName?: string;
+  stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  stateName?: string;
   defectCodeStr?: string;
 }
 
@@ -3471,13 +3549,17 @@ export type PkgExtendVO = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 包装条码 */
   pkgBarcode?: string;
+  /** 包装条码类型 */
   pkgBarcodeType?: string;
+  /** 子包装条码类型 */
   subPkgBarcodeType?: string;
   moScheId?: string;
   packRuleId?: string;
   /** 数量 */
   qty?: number;
+  /** 状态 */
   status?: string;
   moCode?: string;
 } | null;
@@ -3686,14 +3768,16 @@ export type WipVO = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 条码序列号 */
   serialNumber?: string;
+  /** 流程卡号 */
   runCard?: string;
   moScheId?: string;
   moId?: string;
   workcenterId?: string;
-  mitemId?: string;
   preProcessId?: string;
   preWorkstationId?: string;
+  mitemId?: string;
   curProcessId?: string;
   curWorkstationId?: string;
   /** 在制品数量 */
@@ -3711,7 +3795,7 @@ export type WipVO = {
    */
   isCompleted?: number;
   /**
-   * 是否合格
+   * 是否合格 0：合格；1：不合格
    * @format int32
    */
   isNg?: number;
@@ -3720,6 +3804,7 @@ export type WipVO = {
    * @format int32
    */
   isHold?: number;
+  /** 终端计算机名 */
   terminal?: string;
   /** 工单号 */
   moCode?: string;
@@ -3756,6 +3841,11 @@ export type WipVO = {
    * @format double
    */
   achievingRateOfToday?: number;
+  /**
+   * 排产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
 } | null;
 
 /** 显示包装规则明细列表 */
@@ -3784,12 +3874,14 @@ export type ProductPackRuleDtlVO = {
   eid?: string;
   oid?: string;
   packRuleId?: string;
+  /** 包装类型 */
   packType?: string;
   /**
    * 包装数量
    * @format int32
    */
   packQty?: number;
+  /** 单位 */
   uom?: string;
   parentPackId?: string;
   /**
@@ -3860,8 +3952,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -4519,12 +4611,12 @@ export const api = {
      * No description
      *
      * @tags 产品维修表
-     * @name Search
+     * @name List
      * @summary 获取维修工单
      * @request POST:/wipRepair/items
      * @secure
      */
-    search: (data: WipRepairSearch) =>
+    list: (data: WipRepairSearch) =>
       http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepair/items`, {
         method: 'POST',
         body: data as any,
