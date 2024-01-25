@@ -149,7 +149,7 @@
     v-model:visible="formVisible"
     :confirm-btn="buttonSwitch"
     :header="diaLogTitle"
-    width="750px"
+    width="850px"
     @confirm="onConfirm"
   >
     <t-form ref="formRef" :data="reprintDialog">

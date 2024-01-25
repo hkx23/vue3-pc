@@ -2,7 +2,7 @@
   <t-dialog
     v-model:visible="visible"
     :header="t('user.org')"
-    width="750px"
+    width="850px"
     :confirm-btn="{
       content: '保存',
       theme: 'primary',

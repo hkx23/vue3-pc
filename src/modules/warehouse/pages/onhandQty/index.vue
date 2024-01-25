@@ -50,7 +50,7 @@
       </cmp-table>
     </cmp-card>
   </cmp-container>
-  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" width="750px">
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" width="850px">
     <t-card :bordered="true">
       <div class="form-item-box">
         <t-form-item label="仓库">{{ lotNo.warehouseName }}</t-form-item>
