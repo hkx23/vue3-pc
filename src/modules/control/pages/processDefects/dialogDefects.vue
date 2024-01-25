@@ -20,7 +20,7 @@
         :table-data="defectData"
         :loading="loading"
         :total="total"
-        :max-height="300"
+        max-height="300"
         :selected-row-keys="selectedRowKeys"
         @refresh="fetchdefectData"
         @select-change="rehandleSelectChange"
