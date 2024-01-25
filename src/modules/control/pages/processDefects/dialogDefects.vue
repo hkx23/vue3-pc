@@ -3,7 +3,7 @@
     v-model:visible="visible"
     :header="t('processDefects.defectList')"
     top="60px"
-    width="750px"
+    width="850px"
     :confirm-btn="{
       content: '添加',
       theme: 'primary',

@@ -16,12 +16,13 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@vueuse/core": "^10.6.1",
     "@logicflow/core": "^1.2.18",
     "@logicflow/extension": "^1.2.19",
     "@vue-office/docx": "^1.6.0",
     "@vue-office/excel": "^1.6.0",
     "@vue-office/pdf": "^1.6.0",
+    "@vueuse/core": "^10.6.1",
+    "crypto-js": "^4.2.0",
     "dayjs": "^1.11.10",
     "docx-preview": "^0.3.0",
     "echarts": "^5.4.3",
