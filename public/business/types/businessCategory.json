@@ -7,12 +7,12 @@
     {
       "title": "类型编码",
       "key": "categoryCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "类型名称",
       "key": "categoryName",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

@@ -612,7 +612,7 @@ onMounted(() => {
   props.columns.forEach((element: any) => {
     let addColumn = {
       title: element.title,
-      align: 'center',
+      align: 'left',
       colKey: element.key,
       width: element.width,
       sorter: false,

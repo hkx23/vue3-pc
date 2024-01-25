@@ -8,17 +8,17 @@
     {
       "title": "工站代码",
       "key": "workstationCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "工站名称",
       "key": "workstationName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "工站描述",
       "key": "workstationDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

@@ -7,17 +7,17 @@
     {
       "title": "设备代码",
       "key": "equipmentCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "设备名称",
       "key": "equipmentName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "设备描述",
       "key": "equipmentDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

@@ -7,7 +7,7 @@
     :show-error-message="false"
     @submit="submit"
   >
-    <t-row :gutter="[32, 16]">
+    <t-row :gutter="[12, 12]">
       <t-col :span="6">
         <t-form-item label="仓库编码" required-mark>
           <t-input v-model="formData.warehouseCode" :disabled="!(formData.operateTpye === 'add')" />

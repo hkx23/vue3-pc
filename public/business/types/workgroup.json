@@ -7,17 +7,17 @@
     {
       "title": "班组代码",
       "key": "workgroupCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "班组名称",
       "key": "workgroupName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "班组描述",
       "key": "workgroupDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

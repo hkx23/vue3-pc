@@ -43,5 +43,6 @@ declare module '@vue/runtime-core' {
     CmpRow: typeof CmpRow;
     CmpCard: typeof CmpCard;
     CmpButton: typeof CmpButton;
+    CmpTable: typeof CmpTable;
   }
 }

@@ -10,11 +10,14 @@
             key="mainTable"
             ref="tableRef"
             v-model:pagination="pageUI"
+            v-model:activeRowKeys="activeRowKeys"
             row-key="id"
             :table-column="tableMitemCategoryColumns"
             :table-data="tableDataMitemCategory"
             :loading="loading"
             :total="dataTotal"
+            :active-row-type="'single'"
+            :hover="true"
             :fixed-height="true"
             select-on-row-click
             @refresh="fetchTable"
@@ -109,6 +112,7 @@ const mitemTotal = ref(0);
 const keyword = ref('');
 const tableRef = ref();
 const selectCategoryID = ref('');
+const activeRowKeys = ref([]);
 
 // 查询组件
 const opts = computed(() => {
@@ -189,6 +193,7 @@ const fetchMitemTable = async () => {
 
 // 选中行
 const onSelectMitemCategoryChange = (value: any) => {
+  activeRowKeys.value = value;
   selectCategoryID.value = value;
   fetchMitemTable();
 };
