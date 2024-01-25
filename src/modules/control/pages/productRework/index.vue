@@ -386,6 +386,7 @@ const serialNumberEnter = async (value) => {
               productInfo.value.moMitemName
             })`;
             setKeypartList(reData.keyPartSumList);
+            resetBarcode();
           } else {
             // 没有关键件时，则清空以下信息
             resetBarcode();
