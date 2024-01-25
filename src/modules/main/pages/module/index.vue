@@ -130,7 +130,7 @@
       <t-form-item label="模块名称" name="moduleName">
         <t-input v-model="formData.moduleName" :disabled="disableFlag"></t-input>
       </t-form-item>
-      <t-form-item label="模块描述" name="moduleDesc">
+      <t-form-item label="模块描述" name="moduleDesc" class="full-form-item">
         <t-input v-model="formData.moduleDesc"></t-input>
       </t-form-item>
       <t-form-item label="菜单图标">
@@ -176,7 +176,7 @@
       <t-form-item label="子模块名称" name="moduleName">
         <t-input v-model="formDataOne.moduleName"></t-input>
       </t-form-item>
-      <t-form-item label="子模块描述" name="moduleDesc">
+      <t-form-item label="子模块描述" name="moduleDesc" class="full-form-item">
         <t-textarea
           v-model="formDataOne.moduleDesc"
           placeholder="请输入"
@@ -218,7 +218,7 @@
       <t-row :gutter="[12, 16]">
         <t-col :span="12">
           <!-- 第 3️⃣ 行数据 -->
-          <t-form-item label="终端类型">
+          <t-form-item label="终端类型" class="full-form-item">
             <t-space direction="vertical">
               <custom-tabs-two
                 v-model="dialogTabs"
@@ -263,7 +263,7 @@
         </t-col>
         <t-col :span="12">
           <!-- 第 6️⃣ 行数据 -->
-          <t-form-item label="菜单描述" name="moduleDesc">
+          <t-form-item label="菜单描述" name="moduleDesc" class="full-form-item">
             <t-textarea
               v-model="formDataTwo.moduleDesc"
               placeholder="请输入"
@@ -274,8 +274,8 @@
         </t-col>
         <t-col :span="12">
           <!-- 第 5️⃣ 行数据 -->
-          <t-form-item label="菜单地址" name="behaviorPath">
-            <t-input v-model="formDataTwo.behaviorPath" style="width: 100%"></t-input>
+          <t-form-item label="菜单地址" name="behaviorPath" class="full-form-item">
+            <t-input v-model="formDataTwo.behaviorPath"></t-input>
           </t-form-item>
         </t-col>
         <t-col v-if="dialogListData !== 1" :span="6">
