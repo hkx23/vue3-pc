@@ -615,8 +615,6 @@ export interface WipRepairSearch {
   endDate?: string;
   /** 已返修 */
   isRepair?: string;
-  /** 登录工序 */
-  processId?: string;
   /** 批量维修ID */
   wipRepairIds?: string[];
   /** 维修状态 */
@@ -1830,9 +1828,9 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopId?: string;
   workshopName?: string;
+  workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2009,8 +2007,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3064,15 +3062,15 @@ export interface BarcodeWipCollectVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopId?: string;
   workshopName?: string;
+  workshopCode?: string;
+  stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3178,13 +3176,13 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopId?: string;
   workshopName?: string;
+  workshopCode?: string;
+  stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  stateName?: string;
   defectCodeStr?: string;
 }
 
@@ -3860,8 +3858,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -4519,12 +4517,12 @@ export const api = {
      * No description
      *
      * @tags 产品维修表
-     * @name Search
+     * @name List
      * @summary 获取维修工单
      * @request POST:/wipRepair/items
      * @secure
      */
-    search: (data: WipRepairSearch) =>
+    list: (data: WipRepairSearch) =>
       http.request<ResultPagingDataWipRepairVO['data']>(`/api/control/wipRepair/items`, {
         method: 'POST',
         body: data as any,
