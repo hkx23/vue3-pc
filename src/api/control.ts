@@ -1837,7 +1837,6 @@ export interface ProductReworkVO {
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
