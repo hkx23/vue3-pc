@@ -215,7 +215,7 @@
       label-width="120px"
       @submit="onWorkStationSubmit"
     >
-      <t-row :gutter="[32, 16]">
+      <t-row :gutter="[12, 16]">
         <t-col :span="12">
           <!-- 第 3️⃣ 行数据 -->
           <t-form-item label="终端类型">
