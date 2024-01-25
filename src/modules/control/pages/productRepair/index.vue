@@ -199,7 +199,7 @@ const formData = reactive({
     mitemCode: '',
     mitemName: '',
     barcode: '',
-    isRepair: '',
+    isRepair: [],
     routingRevisionId: '',
     // processId: userStore.currUserOrgInfo.processId,
     // processCode: userStore.currUserOrgInfo.processCode,
@@ -207,7 +207,11 @@ const formData = reactive({
     // workCenterId: userStore.currUserOrgInfo.workCenterId,
     // workCenterCode: userStore.currUserOrgInfo.workCenterCode,
     // workCenterName: userStore.currUserOrgInfo.workCenterName,
-    isRepairOptions: [{ value: 'REPAIRED', label: '已返修' }],
+    isRepairOptions: [
+      { value: 'UNREPAIR', label: '待维修' },
+      { value: 'REPAIRING', label: '维修中' },
+      { value: 'REPAIRED', label: '已维修' },
+    ],
     checkedDefectDealMethod: [],
     defectDealMethodOptions: [],
     checkedDefectReason: '',
@@ -255,9 +259,9 @@ const opts = computed(() => {
       row: 2,
     },
     isRepair: {
-      label: '已返修',
+      label: '',
       comp: 't-checkbox-group',
-      defaultVal: [],
+      defaultVal: ['UNREPAIR'],
       bind: {
         options: formData.queryData.isRepairOptions,
         lazyLoad: true,
@@ -373,7 +377,7 @@ const conditionEnter = (query: any) => {
 const onReset = () => {
   formData.queryData.barcode = '';
   formData.queryData.moScheId = '';
-  formData.queryData.isRepair = '';
+  formData.queryData.isRepair = [];
   formData.queryData.beginDate = dayjs().subtract(+initialDate.value, 'day').format('YYYY-MM-DD');
   formData.queryData.endDate = dayjs().format('YYYY-MM-DD');
   formData.queryData.routingRevisionId = '';
@@ -459,7 +463,7 @@ const fetchTable = async () => {
       moScheId: formData.queryData.moScheId,
       beginDate: formData.queryData.beginDate,
       endDate: dayjs(formData.queryData.endDate).add(1, 'day').format('YYYY-MM-DD'),
-      isRepair: formData.queryData.isRepair[0],
+      repairStatus: formData.queryData.isRepair,
       pageNum: pageTab1.value.page,
       pageSize: pageTab1.value.rows,
       loginWorkstationId: userStore.currUserOrgInfo.workCenterId,

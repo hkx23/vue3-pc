@@ -613,14 +613,15 @@ export interface WipRepairSearch {
   beginDate?: string;
   /** 结束时间 */
   endDate?: string;
-  /** 已返修 */
-  isRepair?: string;
+  /** 维修状态 */
+  repairStatus?: string[];
   /** 批量维修ID */
   wipRepairIds?: string[];
   /** 维修状态 */
   statusList?: string[];
   loginProcessId?: string;
   loginWorkstationId?: string;
+  loginWorkCenterId?: string;
   /** 是否报废 */
   isScrapped?: boolean;
   /** 产品条码 */
@@ -768,8 +769,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1120,8 +1121,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -1826,15 +1827,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  datetimeScheStr?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1877,10 +1878,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
-  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -2007,8 +2008,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3060,17 +3061,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  datetimeScheStr?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3174,15 +3175,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
-  scanDatetimeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  datetimeScheStr?: string;
   workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   stateName?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -3420,8 +3421,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3754,6 +3755,11 @@ export type WipVO = {
    * @format double
    */
   achievingRateOfToday?: number;
+  /**
+   * 排产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
 } | null;
 
 /** 显示包装规则明细列表 */
@@ -3858,8 +3864,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
