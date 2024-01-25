@@ -24,7 +24,21 @@
                 </bcmp-select-business>
                 <t-input v-memo="workgroupKeyword" class="demo-select-base" placeholder="搜索班组" />
                 <!-- table -->
-                <t-table row-key="id" :columns="tableColumns" :data="tableData" empty="请先选择车间"></t-table>
+                <t-table row-key="id" :columns="tableColumns" :data="tableData" empty="请先选择车间">
+                  <!-- 取时间段排了多少天  差值 或者  不等于0 就是已排天数      num等于差值就是已排满 -->
+                  <template #num="{ row }">
+                    <span v-if="row.num == '0'">待排</span>
+                    <!-- <span v-if="row.num !== 0 && 差值">已排班{天}</span> -->
+                    <span v-if="row.num == 'numTim'">排满</span>
+                  </template>
+
+                  <!-- + 号 solt -->
+                  <template #num3>
+                    <t-space>
+                      <t-link theme="primary" @click="addTeamScheduling"> ＋ </t-link>
+                    </t-space>
+                  </template>
+                </t-table>
               </t-space>
               <!-- <t-calendar :value="currentDate" class="right-aligned-calendar"></t-calendar> -->
               <!-- <div class="right-aligned-calendar">
@@ -39,14 +53,26 @@
               </div> -->
 
               <div class="right-aligned-calendar">
+                <!-- <div class="date-picker-container">
+                  <t-date-range-picker class="mode-selector" allow-input clearable @pick="onPick" @change="onChange" />
+                  <t-select v-model="calendarMode" class="mode-selector">
+                    <t-option value="week" label="周视图"></t-option>
+                    <t-option value="month" label="月视图"></t-option>
+                  </t-select>
+                </div> -->
+
+                <!-- 在日期选择器下方添加前一周和后一周按钮 -->
                 <div class="date-picker-container">
                   <t-date-range-picker class="mode-selector" allow-input clearable @pick="onPick" @change="onChange" />
                   <t-select v-model="calendarMode" class="mode-selector">
                     <t-option value="week" label="周视图"></t-option>
                     <t-option value="month" label="月视图"></t-option>
                   </t-select>
+                  <!-- <t-button @click="previousWeek()">前一周</t-button>
+                  <t-button @click="nextWeek">后一周</t-button> -->
                 </div>
-                <t-calendar :mode="calendarMode" :value="currentDate"></t-calendar>
+
+                <t-calendar type="week" :mode="calendarMode" :value="currentDate"></t-calendar>
               </div>
             </div>
           </t-tab-panel>
@@ -98,12 +124,14 @@ const formTitle = ref('');
 const tableData = ref([]);
 const workgroupKeyword = ref('');
 const calendarMode = ref<'month' | 'year'>('month'); // 默认为月视图
+const resValue1 = ref([]);
+const resValue2 = ref([]);
 
 // 表格主位栏
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '1', width: 85, colKey: 'workgroupName' },
-  { title: '2', width: 85, colKey: 'num' },
-  { title: '3', width: 85, colKey: 'num3' },
+  { title: '', width: 85, colKey: 'workgroupName' },
+  { title: '', width: 85, colKey: 'num' },
+  { title: '', width: 20, colKey: 'num3' },
 ];
 
 // 模拟数据
@@ -120,6 +148,14 @@ const SelectionChange = async (item) => {
 
   await getArrangeCount(item); // 在接口中处理数据
 };
+
+// const previousWeek = () => {
+//   currentDate.value.setDate(currentDate.value.getDate() - 7); // 减去7天
+// };
+
+// const nextWeek = () => {
+//   currentDate.value.setDate(currentDate.value.getDate() + 7); // 加上7天
+// };
 
 // ?
 const onChange = (value, context) => {
@@ -139,7 +175,22 @@ const onPick = (value, context) => {
   console.log('onPick:', value, context);
 };
 
-// 获取班组信息
+// 将 resValue1 和 resValue2 中的数据合并到 tableData
+const mergeData = () => {
+  const mergedData = [];
+
+  for (let i = 0; i < resValue1.value.length; i++) {
+    const rowData = {
+      workgroupName: resValue1.value[i].workgroupName,
+      num: resValue2.value[i].num,
+    };
+    mergedData.push(rowData);
+  }
+
+  tableData.value = mergedData;
+};
+
+// 获取班组信息 在 getWorkgroupInfo 函数中将 resValue1 添加到 tableData
 const getWorkgroupInfo = async (id) => {
   if (!id) {
     tableData.value = []; // 如果 id 为空，清空表格数据
@@ -156,18 +207,20 @@ const getWorkgroupInfo = async (id) => {
     const formattedData1 = result.list.map((item) => {
       return { workgroupName: item.workgroupName };
     });
-    tableData.value = formattedData1; // 设置表格数据
+    resValue1.value = formattedData1;
+
+    // 合并数据
+    mergeData();
   } catch (error) {
     console.error('获取班组信息失败:', error);
     tableData.value = []; // 出错时重置表格数据
   }
 };
 
-// 获取已排天数
+// 获取已排天数 在 getArrangeCount 函数中将 resValue2 添加到 tableData
 const getArrangeCount = async (data) => {
   const { timeCreate, timeModified, id } = data;
   console.log('🚀 ~ getArrangeCount ~ timeCreate, timeModified, id:', timeCreate, timeModified, id);
-
   const result = await apiMin.workgroupArrange.getArrangeCount({
     workshopId: id,
     workgroupKeyword: workgroupKeyword.value, // 模糊关键字
@@ -179,7 +232,10 @@ const getArrangeCount = async (data) => {
   const formattedData2 = result.map((item) => {
     return { num: item.num };
   });
-  tableData.value = formattedData2; // 设置表格数据
+  resValue2.value = formattedData2;
+
+  // 合并数据
+  mergeData();
 
   /**
    * 0 未排班
@@ -189,10 +245,10 @@ const getArrangeCount = async (data) => {
 };
 
 // add
-// const addTeamScheduling = () => {
-//   formTitle.value = '班组排班';
-//   formVisible.value = true;
-// };
+const addTeamScheduling = () => {
+  formTitle.value = '班组排班';
+  formVisible.value = true;
+};
 const handleTabChange = (newValue) => {
   activeTab.value = newValue;
 };
@@ -219,7 +275,7 @@ const handleTabChange = (newValue) => {
 
 .inputs-container {
   margin-top: 20px;
-  width: 300px; /* 控制输入区域宽度 */
+  width: 450px; /* 控制输入区域宽度 */
 }
 
 .right-aligned-calendar {
