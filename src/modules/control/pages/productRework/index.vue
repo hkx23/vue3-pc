@@ -389,7 +389,9 @@ const serialNumberEnter = async (value) => {
           } else {
             // 没有关键件时，则清空以下信息
             resetBarcode();
-            resetKeyPartList();
+            if (keyPartSumList.value && keyPartSumList.value.length === 0) {
+              resetKeyPartList();
+            }
           }
 
           if (reData.isCommit) {
