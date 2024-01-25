@@ -8,17 +8,17 @@
     {
       "title": "车间代码",
       "key": "orgCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "车间名称",
       "key": "orgName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "车间描述",
       "key": "orgDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

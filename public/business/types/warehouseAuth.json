@@ -7,17 +7,17 @@
     {
       "title": "仓库代码",
       "key": "warehouseCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "仓库名称",
       "key": "warehouseName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "仓库类型",
       "key": "warehouseCategory",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

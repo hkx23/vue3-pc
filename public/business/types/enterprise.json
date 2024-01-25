@@ -7,17 +7,17 @@
     {
       "title": "企业代码",
       "key": "epCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "企业名称",
       "key": "epName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "企业全称",
       "key": "epFullName",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

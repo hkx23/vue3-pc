@@ -7,22 +7,22 @@
     {
       "title": "供应商代码",
       "key": "supplierCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "供应商名称",
       "key": "supplierName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "供应商联系人",
       "key": "contactPerson",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "供应商联系电话",
       "key": "contactTel",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

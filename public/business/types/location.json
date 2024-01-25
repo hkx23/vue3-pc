@@ -7,17 +7,17 @@
     {
       "title": "货位代码",
       "key": "locationCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "货位名称",
       "key": "locationName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "货位描述",
       "key": "locationDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",
