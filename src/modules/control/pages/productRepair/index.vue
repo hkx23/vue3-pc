@@ -452,7 +452,7 @@ const fetchTable = async () => {
       return;
     }
 
-    const data = (await apiControl.wipRepair.search({
+    const data = (await apiControl.wipRepair.list({
       keyword: formData.queryData.barcode,
       moScheId: formData.queryData.moScheId,
       beginDate: formData.queryData.beginDate,
@@ -460,7 +460,8 @@ const fetchTable = async () => {
       isRepair: formData.queryData.isRepair[0],
       pageNum: pageTab1.value.page,
       pageSize: pageTab1.value.rows,
-      processId: userStore.currUserOrgInfo.processId,
+      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginProcessId: userStore.currUserOrgInfo.processId,
       statusList: ['UNREPAIR', 'REPAIRED'],
       sorts: [],
       filters: [],
@@ -490,7 +491,8 @@ const fetchRepairingTable = async () => {
     const data = await apiControl.wipRepairDtl.getListByRepairing({
       pageNum: pageTab2.value.page,
       pageSize: pageTab2.value.rows,
-      processId: userStore.currUserOrgInfo.processId,
+      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginProcessId: userStore.currUserOrgInfo.processId,
     });
     repairingData.value = data.list;
     repairingDataTotal.value = data.total;
@@ -624,7 +626,10 @@ const tabsChange = async (tabValue) => {
 };
 
 const getVerifyProcessCategory = async () => {
-  await apiControl.wipRepair.getVerifyProcessCategory({ processId: userStore.currUserOrgInfo.processId });
+  await apiControl.wipRepair.getVerifyProcessCategory({
+    loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+    loginProcessId: userStore.currUserOrgInfo.processId,
+  });
 };
 
 onMounted(() => {
