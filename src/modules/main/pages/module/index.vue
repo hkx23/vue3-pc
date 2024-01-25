@@ -112,7 +112,7 @@
     :cancel-btn="null"
     :confirm-btn="null"
     top="60px"
-    :width="showFormData ? '850px' : '400px'"
+    :width="showFormData ? '850px' : '450px'"
     @close="onSecondaryReset"
   >
     <!-- #一级菜单 dialog -->
@@ -130,7 +130,7 @@
       <t-form-item label="模块名称" name="moduleName">
         <t-input v-model="formData.moduleName" :disabled="disableFlag"></t-input>
       </t-form-item>
-      <t-form-item label="模块描述" name="moduleDesc" class="full-form-item">
+      <t-form-item label="模块描述" name="moduleDesc">
         <t-input v-model="formData.moduleDesc"></t-input>
       </t-form-item>
       <t-form-item label="菜单图标">
