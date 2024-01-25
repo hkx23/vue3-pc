@@ -21,6 +21,7 @@
                   :total="repairDataTotal"
                   :loading="loading"
                   :resizable="true"
+                  :selected-row-keys="selectRepairId"
                   @select-change="onSelectRepairChange"
                   @active-change="onActiveChange"
                   @refresh="fetchTable"
@@ -69,6 +70,7 @@
                   :table-data="repairingData"
                   :total="repairingDataTotal"
                   :loading="loading"
+                  :show-refresh="true"
                   :resizable="true"
                   :selected-row-keys="selectRepairingIds"
                   @select-change="onSelectRepairingChange"
@@ -451,7 +453,7 @@ const fetchTable = async () => {
       MessagePlugin.error('日期跨度最大不超过31天');
       return;
     }
-
+    selectRepairId.value = [];
     const data = (await apiControl.wipRepair.list({
       keyword: formData.queryData.barcode,
       moScheId: formData.queryData.moScheId,
@@ -468,7 +470,6 @@ const fetchTable = async () => {
     })) as any;
     repairData.value = data.list;
     repairDataTotal.value = data.total;
-    selectRepairId.value = [];
   } catch (e) {
     console.log(e);
   }
@@ -584,6 +585,8 @@ const onRepairRowClick = async ({ row }) => {
   await apiControl.wipRepair
     .updateWipRepairStatus({
       wipRepairIds: [row.id],
+      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginProcessId: userStore.currUserOrgInfo.processId,
     })
     .then(() => {
       repairDtlData.value = [];
@@ -609,6 +612,8 @@ const onBatchRepairing = async () => {
 
     await apiControl.wipRepair.updateWipRepairStatus({
       wipRepairIds: selectRepairId.value,
+      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginProcessId: userStore.currUserOrgInfo.processId,
     });
     repairDtlData.value = [];
     fetchTable();
