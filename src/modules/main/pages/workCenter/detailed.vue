@@ -1,5 +1,5 @@
 <template>
-  <t-dialog v-model:visible="visible" header="工作中心维护" width="750px" @close="onHandleCancellation">
+  <t-dialog v-model:visible="visible" header="工作中心维护" width="850px" @close="onHandleCancellation">
     <t-form
       ref="formRef"
       :data="formData"

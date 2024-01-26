@@ -102,7 +102,7 @@
     :confirm-btn="null"
     :header="diaLogTitle"
     top="60px"
-    width="750px"
+    width="850px"
     @close="onSecondaryReset"
   >
     <t-form ref="formRef" :rules="rules" :data="barcodeData" @submit="onAnomalyTypeSubmit">

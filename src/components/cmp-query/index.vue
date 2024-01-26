@@ -13,7 +13,7 @@
           @submit.prevent
         >
           <div ref="formRowRef" style="width: 100%">
-            <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[16, 16]">
+            <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[8, 8]">
               <!--  :span="opt.span" -->
               <t-col v-for="(opt, i) in optRow" v-show="!opt.isHide" :key="i" :flex="opt.flex"
                 ><t-form-item v-bind="$attrs" :class="[opt.className, { render_label: opt.labelRender }]">

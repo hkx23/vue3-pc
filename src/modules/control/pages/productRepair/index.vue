@@ -21,6 +21,7 @@
                   :total="repairDataTotal"
                   :loading="loading"
                   :resizable="true"
+                  :selected-row-keys="selectRepairId"
                   @select-change="onSelectRepairChange"
                   @active-change="onActiveChange"
                   @refresh="fetchTable"
@@ -69,6 +70,7 @@
                   :table-data="repairingData"
                   :total="repairingDataTotal"
                   :loading="loading"
+                  :show-refresh="true"
                   :resizable="true"
                   :selected-row-keys="selectRepairingIds"
                   @select-change="onSelectRepairingChange"
@@ -197,7 +199,7 @@ const formData = reactive({
     mitemCode: '',
     mitemName: '',
     barcode: '',
-    isRepair: '',
+    isRepair: [],
     routingRevisionId: '',
     // processId: userStore.currUserOrgInfo.processId,
     // processCode: userStore.currUserOrgInfo.processCode,
@@ -205,7 +207,11 @@ const formData = reactive({
     // workCenterId: userStore.currUserOrgInfo.workCenterId,
     // workCenterCode: userStore.currUserOrgInfo.workCenterCode,
     // workCenterName: userStore.currUserOrgInfo.workCenterName,
-    isRepairOptions: [{ value: 'REPAIRED', label: '已返修' }],
+    isRepairOptions: [
+      { value: 'UNREPAIR', label: '待维修' },
+      { value: 'REPAIRING', label: '维修中' },
+      { value: 'REPAIRED', label: '已维修' },
+    ],
     checkedDefectDealMethod: [],
     defectDealMethodOptions: [],
     checkedDefectReason: '',
@@ -253,9 +259,9 @@ const opts = computed(() => {
       row: 2,
     },
     isRepair: {
-      label: '已返修',
+      label: '',
       comp: 't-checkbox-group',
-      defaultVal: [],
+      defaultVal: ['UNREPAIR'],
       bind: {
         options: formData.queryData.isRepairOptions,
         lazyLoad: true,
@@ -371,7 +377,7 @@ const conditionEnter = (query: any) => {
 const onReset = () => {
   formData.queryData.barcode = '';
   formData.queryData.moScheId = '';
-  formData.queryData.isRepair = '';
+  formData.queryData.isRepair = [];
   formData.queryData.beginDate = dayjs().subtract(+initialDate.value, 'day').format('YYYY-MM-DD');
   formData.queryData.endDate = dayjs().format('YYYY-MM-DD');
   formData.queryData.routingRevisionId = '';
@@ -451,23 +457,23 @@ const fetchTable = async () => {
       MessagePlugin.error('日期跨度最大不超过31天');
       return;
     }
-
-    const data = (await apiControl.wipRepair.search({
+    selectRepairId.value = [];
+    const data = (await apiControl.wipRepair.list({
       keyword: formData.queryData.barcode,
       moScheId: formData.queryData.moScheId,
       beginDate: formData.queryData.beginDate,
       endDate: dayjs(formData.queryData.endDate).add(1, 'day').format('YYYY-MM-DD'),
-      isRepair: formData.queryData.isRepair[0],
+      repairStatus: formData.queryData.isRepair,
       pageNum: pageTab1.value.page,
       pageSize: pageTab1.value.rows,
-      processId: userStore.currUserOrgInfo.processId,
+      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginProcessId: userStore.currUserOrgInfo.processId,
       statusList: ['UNREPAIR', 'REPAIRED'],
       sorts: [],
       filters: [],
     })) as any;
     repairData.value = data.list;
     repairDataTotal.value = data.total;
-    selectRepairId.value = [];
   } catch (e) {
     console.log(e);
   }
@@ -490,7 +496,8 @@ const fetchRepairingTable = async () => {
     const data = await apiControl.wipRepairDtl.getListByRepairing({
       pageNum: pageTab2.value.page,
       pageSize: pageTab2.value.rows,
-      processId: userStore.currUserOrgInfo.processId,
+      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginProcessId: userStore.currUserOrgInfo.processId,
     });
     repairingData.value = data.list;
     repairingDataTotal.value = data.total;
@@ -582,6 +589,8 @@ const onRepairRowClick = async ({ row }) => {
   await apiControl.wipRepair
     .updateWipRepairStatus({
       wipRepairIds: [row.id],
+      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginProcessId: userStore.currUserOrgInfo.processId,
     })
     .then(() => {
       repairDtlData.value = [];
@@ -607,6 +616,8 @@ const onBatchRepairing = async () => {
 
     await apiControl.wipRepair.updateWipRepairStatus({
       wipRepairIds: selectRepairId.value,
+      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginProcessId: userStore.currUserOrgInfo.processId,
     });
     repairDtlData.value = [];
     fetchTable();
@@ -624,7 +635,10 @@ const tabsChange = async (tabValue) => {
 };
 
 const getVerifyProcessCategory = async () => {
-  await apiControl.wipRepair.getVerifyProcessCategory({ processId: userStore.currUserOrgInfo.processId });
+  await apiControl.wipRepair.getVerifyProcessCategory({
+    loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+    loginProcessId: userStore.currUserOrgInfo.processId,
+  });
 };
 
 onMounted(() => {

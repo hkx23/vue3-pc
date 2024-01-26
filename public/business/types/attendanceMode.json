@@ -8,17 +8,17 @@
     {
       "title": "模式代码",
       "key": "modeCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "模式名称",
       "key": "modeName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "模式描述",
       "key": "modeDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

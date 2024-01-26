@@ -315,7 +315,7 @@
     </template>
   </t-dialog>
   <!---%日志 dialog 弹窗  -->
-  <t-dialog v-model:visible="logInterfaceVisible" width="750px" :cancel-btn="null" :confirm-btn="null" header="日志">
+  <t-dialog v-model:visible="logInterfaceVisible" width="850px" :cancel-btn="null" :confirm-btn="null" header="日志">
     <cmp-table
       v-model:pagination="pageUIDay"
       row-key="id"
