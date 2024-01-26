@@ -349,6 +349,11 @@ export interface Workstation {
   workstationDesc?: string;
   processId?: string;
   workcenterId?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
 }
 
 /** 通用响应类 */
@@ -918,8 +923,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -3812,8 +3817,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 /** 响应数据 */
@@ -3892,15 +3897,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isState?: boolean;
+  isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
-  isInProcessName?: string;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4043,8 +4048,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4117,6 +4122,11 @@ export interface LabelVO {
   datetimeStockin?: string;
   /** 状态 */
   status?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
   /** 送货单 */
   billNo?: string;
   /** 供应商编码 */
@@ -4341,6 +4351,11 @@ export interface Label {
   datetimeStockin?: string;
   /** 状态 */
   status?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
 }
 
 export interface FileVO {
@@ -6472,12 +6487,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */

@@ -17,7 +17,6 @@
             :show-title="false"
             type="warehouseAuth"
             label-field="warehouseName"
-            value-field="warehouseCode"
             @selection-change="onMaterialTabData"
           ></bcmp-select-business>
         </t-form-item>
