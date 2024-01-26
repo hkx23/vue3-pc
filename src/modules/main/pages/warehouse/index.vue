@@ -200,8 +200,8 @@ const getWarehouseCategory = (id: any) => {
 };
 const onStateRowClick = async (value: any) => {
   await api.warehouse.stateChange(value.id);
+  await fetchTable();
   MessagePlugin.success('操作成功');
-  fetchTable();
 };
 
 const onConfirmForm = async () => {
