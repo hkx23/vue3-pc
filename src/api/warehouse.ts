@@ -385,6 +385,7 @@ export interface TransferDtlBarcodeVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   transferDtlId?: string;
   mitemId?: string;
@@ -392,10 +393,15 @@ export interface TransferDtlBarcodeVO {
   supplierId?: string;
   /** 数量 */
   qty?: number;
+  /** 单位 */
   uom?: string;
+  /** 到货批次 */
   batchNo?: string;
+  /** 扫描的条形码 */
   scanBarcode?: string;
+  /** 条码类型 */
   barcodeType?: string;
+  /** 工单号 */
   moCode?: string;
   workshopId?: string;
   workcenterId?: string;
@@ -430,6 +436,7 @@ export interface TransferDtlVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   warehouseId?: string;
   districtId?: string;
@@ -445,13 +452,19 @@ export interface TransferDtlVO {
   reqQty?: number;
   /** 实际拣料数量 */
   pickQty?: number;
+  /** 原因 */
   reason?: string;
+  /** 相关凭证号 */
   voucherLineNo?: string;
+  /** 通知凭证 */
   noticeVoucherLineNo?: string;
+  /** 到货批次 */
   batchNo?: string;
+  /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
   erpLineNo?: string;
+  /** 备注 */
   memo?: string;
   /** 来源单据行号 */
   sourceBillLineNo?: string;
@@ -489,19 +502,25 @@ export interface TransferHeadVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   /**
    * 单身行数
    * @format int32
    */
   lineCount?: number;
+  /** ERP单据号 */
   erpBillNo?: string;
   /** 来源单据号 */
   sourceBillNo?: string;
+  /** 用途 */
   purpose?: string;
+  /** 相关凭证 */
   voucherNo?: string;
+  /** 通知凭证 */
   noticeVoucherNo?: string;
   supplierId?: string;
+  /** 备注 */
   memo?: string;
   /** 原因 */
   reason?: string;
@@ -605,13 +624,18 @@ export interface MiscellaneousManageVO {
    * @format int32
    */
   lineCount?: number;
+  /** ERP单据号 */
   erpBillNo?: string;
   /** 来源单据号 */
   sourceBillNo?: string;
+  /** 用途 */
   purpose?: string;
+  /** 相关凭证 */
   voucherNo?: string;
+  /** 通知凭证 */
   noticeVoucherNo?: string;
   supplierId?: string;
+  /** 备注 */
   memo?: string;
   /** 原因 */
   reason?: string;
@@ -729,6 +753,11 @@ export type LabelVO = {
   datetimeStockin?: string;
   /** 状态 */
   status?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
   /** 送货单 */
   billNo?: string;
   /** 供应商编码 */
@@ -852,6 +881,7 @@ export type TransferDtl = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   warehouseId?: string;
   districtId?: string;
@@ -867,13 +897,19 @@ export type TransferDtl = {
   reqQty?: number;
   /** 实际拣料数量 */
   pickQty?: number;
+  /** 原因 */
   reason?: string;
+  /** 相关凭证号 */
   voucherLineNo?: string;
+  /** 通知凭证 */
   noticeVoucherLineNo?: string;
+  /** 到货批次 */
   batchNo?: string;
+  /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
   erpLineNo?: string;
+  /** 备注 */
   memo?: string;
   /** 来源单据行号 */
   sourceBillLineNo?: string;
@@ -1375,6 +1411,7 @@ export interface ReturnStockOutDtlBarcodeVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   transferDtlId?: string;
   mitemId?: string;
@@ -1382,10 +1419,15 @@ export interface ReturnStockOutDtlBarcodeVO {
   supplierId?: string;
   /** 数量 */
   qty?: number;
+  /** 单位 */
   uom?: string;
+  /** 到货批次 */
   batchNo?: string;
+  /** 扫描的条形码 */
   scanBarcode?: string;
+  /** 条码类型 */
   barcodeType?: string;
+  /** 工单号 */
   moCode?: string;
   workshopId?: string;
   workcenterId?: string;
@@ -1416,6 +1458,7 @@ export interface ReturnStockOutDtlVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   warehouseId?: string;
   districtId?: string;
@@ -1431,13 +1474,19 @@ export interface ReturnStockOutDtlVO {
   reqQty?: number;
   /** 实际拣料数量 */
   pickQty?: number;
+  /** 原因 */
   reason?: string;
+  /** 相关凭证号 */
   voucherLineNo?: string;
+  /** 通知凭证 */
   noticeVoucherLineNo?: string;
+  /** 到货批次 */
   batchNo?: string;
+  /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
   erpLineNo?: string;
+  /** 备注 */
   memo?: string;
   /** 来源单据行号 */
   sourceBillLineNo?: string;
@@ -1511,12 +1560,14 @@ export interface DeliveryDtlVO {
   qty?: number;
   /** 接收数量 */
   receivedQty?: number;
+  /** 采购订单号 */
   poNo?: string;
   /**
    * 采购日期
    * @format date-time
    */
   datePo?: string;
+  /** 备注 */
   memo?: string;
   /** 交易事务单号 */
   transferBillNo?: string;
@@ -1574,9 +1625,9 @@ export interface PurchaseOrderDtlVO {
   eid?: string;
   oid?: string;
   purchaseOrderId?: string;
-  /** 采购订单行号 */
+  /** 订单行号 */
   billLineNo?: string;
-  /** erp行号 */
+  /** erp数据源行号 */
   erpLineNo?: string;
   /**
    * 要求到货时间
@@ -1715,19 +1766,25 @@ export type ReturnStockOutHeadVO = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   /**
    * 单身行数
    * @format int32
    */
   lineCount?: number;
+  /** ERP单据号 */
   erpBillNo?: string;
   /** 来源单据号 */
   sourceBillNo?: string;
+  /** 用途 */
   purpose?: string;
+  /** 相关凭证 */
   voucherNo?: string;
+  /** 通知凭证 */
   noticeVoucherNo?: string;
   supplierId?: string;
+  /** 备注 */
   memo?: string;
   /** 原因 */
   reason?: string;
@@ -1824,7 +1881,7 @@ export interface PurchaseOrderVO {
   oid?: string;
   /** 采购单号 */
   billNo?: string;
-  /** ERP订单号 */
+  /** ERP行号 */
   erpNo?: string;
   supplierId?: string;
   /** 交货地址 */
@@ -1932,6 +1989,167 @@ export interface ResultPagingDataOnhandQtyVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataOnhandQtyVO;
+}
+
+/** 工单发料提交模型 */
+export interface MoIssuanceDTO {
+  /** 排产单号 */
+  moScheCode?: string;
+  moScheId?: string;
+  /** 发料单号 */
+  billNo?: string;
+  /** 发料原因 */
+  reason?: string;
+  /** 提交的模型-明细信息 */
+  submitList?: MoIssuanceDtlVO[];
+}
+
+/** 提交的模型-明细信息 */
+export interface MoIssuanceDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  moScheId?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 实际拣料数量 */
+  pickQty?: number;
+  /** 原因 */
+  reason?: string;
+  /** 相关凭证号 */
+  voucherLineNo?: string;
+  /** 通知凭证 */
+  noticeVoucherLineNo?: string;
+  /** 到货批次 */
+  batchNo?: string;
+  /** 采购订单号 */
+  poNum?: string;
+  /** ERP单据明细号 */
+  erpLineNo?: string;
+  /** 备注 */
+  memo?: string;
+  /** 来源单据行号 */
+  sourceBillLineNo?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uom?: string;
+  uomName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  /**
+   * 是否来源仓库启用货位管理
+   * @format int32
+   */
+  isEnableLocation?: number;
+  /**
+   * 是否来源仓库先进先出
+   * @format int32
+   */
+  isFifo?: number;
+  districtCode?: string;
+  districtName?: string;
+  locationCode?: string;
+  locationName?: string;
+  toWarehouseCode?: string;
+  toWarehouseName?: string;
+  /**
+   * 是否目标仓库启用货位管理
+   * @format int32
+   */
+  isToEnableLocation?: number;
+  /**
+   * 是否目标仓库先进先出
+   * @format int32
+   */
+  isToFifo?: number;
+  workshopId?: string;
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
+  isBatchNo?: number;
+  /**
+   * 分子用量
+   * @format int32
+   */
+  numeratorQty?: number;
+  /**
+   * 分母用量
+   * @format int32
+   */
+  denomainatorQty?: number;
+  scheCode?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  /** 库存可用量 */
+  handQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  /** 交易单标签表 */
+  transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+}
+
+/** 通用响应类 */
+export interface ResultListMoIssuanceDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MoIssuanceDtlVO[] | null;
 }
 
 export interface MitemShelflifeReportSearch {
@@ -2086,8 +2304,11 @@ export type LocationVO = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 货位代码 */
   locationCode?: string;
+  /** 货位名称 */
   locationName?: string;
+  /** 货位描述 */
   locationDesc?: string;
   warehouseId?: string;
   districtId?: string;
@@ -2150,6 +2371,7 @@ export interface MaterialRequisitionExcuteDtlVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   warehouseId?: string;
   districtId?: string;
@@ -2165,13 +2387,19 @@ export interface MaterialRequisitionExcuteDtlVO {
   reqQty?: number;
   /** 实际拣料数量 */
   pickQty?: number;
+  /** 原因 */
   reason?: string;
+  /** 相关凭证号 */
   voucherLineNo?: string;
+  /** 通知凭证 */
   noticeVoucherLineNo?: string;
+  /** 到货批次 */
   batchNo?: string;
+  /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
   erpLineNo?: string;
+  /** 备注 */
   memo?: string;
   /** 来源单据行号 */
   sourceBillLineNo?: string;
@@ -2246,7 +2474,7 @@ export interface MaterialRequisitionExcuteDtlVO {
   waitingScanQty?: number;
 }
 
-/** 查询排产单BOM物料的已领料数量信息 */
+/** 查询排产单维度，BOM物料的单据执行数量信息 */
 export interface AlreadyRequisitionVO {
   moScheId?: string;
   mitemId?: string;
@@ -2266,7 +2494,7 @@ export interface MaterialRequisitionDTO {
   remark?: string;
   /** 查询库存模型 */
   onHandInfo?: OnHandVO;
-  /** 查询排产单BOM物料的已领料数量信息 */
+  /** 查询排产单维度，BOM物料的单据执行数量信息 */
   alreadyRequisitionVO?: AlreadyRequisitionVO;
   /** 新增界面-提交的模型-明细信息 */
   submitList?: MaterialRequisitionDtlVO[];
@@ -2297,6 +2525,7 @@ export interface MaterialRequisitionDtlVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   warehouseId?: string;
   districtId?: string;
@@ -2312,13 +2541,19 @@ export interface MaterialRequisitionDtlVO {
   reqQty?: number;
   /** 实际拣料数量 */
   pickQty?: number;
+  /** 原因 */
   reason?: string;
+  /** 相关凭证号 */
   voucherLineNo?: string;
+  /** 通知凭证 */
   noticeVoucherLineNo?: string;
+  /** 到货批次 */
   batchNo?: string;
+  /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
   erpLineNo?: string;
+  /** 备注 */
   memo?: string;
   /** 来源单据行号 */
   sourceBillLineNo?: string;
@@ -2456,8 +2691,11 @@ export interface Location {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 货位代码 */
   locationCode?: string;
+  /** 货位名称 */
   locationName?: string;
+  /** 货位描述 */
   locationDesc?: string;
   warehouseId?: string;
   districtId?: string;
@@ -2747,23 +2985,39 @@ export interface LabelLog {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 标签号 */
   labelNo?: string;
+  /** 原因 */
   reason?: string;
+  /** 条码模板代码 */
   tmplCode?: string;
+  /** 条码模板名称 */
   tmplName?: string;
+  /** 条码模板类别 */
   tmplCategory?: string;
+  /** 仓库代码 */
   warehouseCode?: string;
+  /** 仓库名称 */
   warehouseName?: string;
+  /** 货区代码 */
   districtCode?: string;
+  /** 货区名称 */
   districtName?: string;
+  /** 货位代码 */
   locationCode?: string;
+  /** 货位名称 */
   locationName?: string;
   /** 数量 */
   qty?: number;
+  /** 客户端机器名 */
   hostname?: string;
+  /** 客户端IP */
   ipaddress?: string;
+  /** 备注 */
   memo?: string;
+  /** 操作类型 */
   operateType?: string;
+  /** 状态 */
   status?: string;
 }
 
@@ -3019,8 +3273,11 @@ export interface District {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 货位代码 */
   districtCode?: string;
+  /** 货位名称 */
   districtName?: string;
+  /** 货位描述 */
   districtDesc?: string;
   warehouseId?: string;
 }
@@ -3079,8 +3336,11 @@ export interface DistrictVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 货位代码 */
   districtCode?: string;
+  /** 货位名称 */
   districtName?: string;
+  /** 货位描述 */
   districtDesc?: string;
   warehouseId?: string;
   /** 仓库代码 */
@@ -3321,6 +3581,7 @@ export interface DeliveryVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 送货单号码 */
   billNo?: string;
   /**
    * 送货日期
@@ -3328,7 +3589,9 @@ export interface DeliveryVO {
    */
   dateDelivery?: string;
   supplierId?: string;
+  /** 备注 */
   memo?: string;
+  /** 状态 */
   status?: string;
   /** 供应商编码 */
   supplierCode?: string;
@@ -3383,15 +3646,20 @@ export interface BusinessCategory {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 业务类型代码 */
   categoryCode?: string;
+  /** 业务类型名称 */
   categoryName?: string;
   /**
    * 业务交易方向
    * @format int32
    */
   businessDirection?: number;
+  /** 转出库存地类型 */
   transferOutType?: string;
+  /** 转入库存地类型 */
   transferInType?: string;
+  /** 业务单据前辍 */
   perfix?: string;
 }
 
@@ -3456,15 +3724,20 @@ export interface BusinessCategoryVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 业务类型代码 */
   categoryCode?: string;
+  /** 业务类型名称 */
   categoryName?: string;
   /**
    * 业务交易方向
    * @format int32
    */
   businessDirection?: number;
+  /** 转出库存地类型 */
   transferOutType?: string;
+  /** 转入库存地类型 */
   transferInType?: string;
+  /** 业务单据前辍 */
   perfix?: string;
   /** 业务交易方向名称 */
   businessDirectionName?: string;
@@ -3919,6 +4192,145 @@ export interface ResultString {
 }
 
 /** 响应数据 */
+export type MoIssuanceVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  businessCategoryId?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 打印次数
+   * @format int32
+   */
+  printCount?: number;
+  /**
+   * 最后打印时间
+   * @format date-time
+   */
+  datetimeLastPrint?: string;
+  userLastPrintId?: string;
+  /**
+   * 批准时间
+   * @format date-time
+   */
+  datetimeApproved?: string;
+  userApprovedId?: string;
+  /**
+   * 驳回时间
+   * @format date-time
+   */
+  datetimeRejected?: string;
+  userRejectedId?: string;
+  /**
+   * 取消时间
+   * @format date-time
+   */
+  datetimeCanceled?: string;
+  userCanceledId?: string;
+  /**
+   * 过帐时间
+   * @format date-time
+   */
+  datetimeTransfer?: string;
+  userTransferId?: string;
+  /**
+   * 作业完成时间
+   * @format date-time
+   */
+  datetimePicked?: string;
+  userPickedId?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  userReceiptedId?: string;
+  /** 车间代码 */
+  workshopCode?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  /**
+   * 修改人时间
+   * @format date-time
+   */
+  modifiedTime?: string;
+  dtls?: MoIssuanceDtlVO[];
+  /** 单据状态名称 */
+  statusName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListMoIssuanceVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MoIssuanceVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultMoIssuanceDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 提交的模型-明细信息 */
+  data?: MoIssuanceDtlVO;
+}
+
+/** 通用响应类 */
+export interface ResultMoIssuanceVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MoIssuanceVO;
+}
+
+/** 响应数据 */
 export type MaterialRequisitionVO = {
   id?: string;
   /**
@@ -3943,8 +4355,10 @@ export type MaterialRequisitionVO = {
   state?: number;
   eid?: string;
   oid?: string;
+  /** 单据号 */
   billNo?: string;
   businessCategoryId?: string;
+  /** 状态 */
   status?: string;
   /**
    * 打印次数
@@ -5284,6 +5698,109 @@ export const api = {
      */
     getDistrict: (query: { warehouseId: string }) =>
       http.request<ResultListDistrict['data']>(`/api/warehouse/onhandQty/getDistrict`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  moIssuance: {
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name Submit
+     * @summary 工单发料-提交
+     * @request POST:/moIssuance/submit
+     * @secure
+     */
+    submit: (data: MoIssuanceDTO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/moIssuance/submit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name GetBomDtlsByMoScheId
+     * @summary 根据工单号获取发料明细
+     * @request POST:/moIssuance/getBomDtlsByMoScheId
+     * @secure
+     */
+    getBomDtlsByMoScheId: (data: MoIssuanceDTO) =>
+      http.request<ResultListMoIssuanceDtlVO['data']>(`/api/warehouse/moIssuance/getBomDtlsByMoScheId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name ScanMitemLabel
+     * @summary 扫描物料标签
+     * @request GET:/moIssuance/scanMitemLabel
+     * @secure
+     */
+    scanMitemLabel: (query: {
+      billNo: string;
+      tranDtlId: string;
+      labelNo: string;
+      /** @format int32 */
+      isFifo: number;
+    }) =>
+      http.request<ResultString['data']>(`/api/warehouse/moIssuance/scanMitemLabel`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name GetMoIssuanceList
+     * @summary 工单发料-获取领料制单列表
+     * @request GET:/moIssuance/getMoIssuanceList
+     * @secure
+     */
+    getMoIssuanceList: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      billNo: string;
+    }) =>
+      http.request<ResultListMoIssuanceVO['data']>(`/api/warehouse/moIssuance/getMoIssuanceList`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name GetMoIssuanceDtl
+     * @summary 工单发料-获取领料单明细列表行信息
+     * @request GET:/moIssuance/getMoIssuanceDtl
+     * @secure
+     */
+    getMoIssuanceDtl: (query: { billNo: string; trandtlId: string }) =>
+      http.request<ResultMoIssuanceDtlVO['data']>(`/api/warehouse/moIssuance/getMoIssuanceDtl`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单发料
+     * @name GetMoIssuanceByBillNo
+     * @summary 工单发料-根据单据号获取领料单
+     * @request GET:/moIssuance/getMoIssuanceByBillNo
+     * @secure
+     */
+    getMoIssuanceByBillNo: (query: { billNo: string }) =>
+      http.request<ResultMoIssuanceVO['data']>(`/api/warehouse/moIssuance/getMoIssuanceByBillNo`, {
         method: 'GET',
         params: query,
       }),
