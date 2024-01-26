@@ -329,6 +329,7 @@ const initDateRange = () => {
 // 使用数组解构
 const handleDateChange = (newRange) => {
   [qTimeCreate.value, qTimeModified.value] = newRange; // 初始化入参
+
   if (newRange && newRange.length === 2) {
     const [start, end] = newRange;
     const daysDiff = differenceInCalendarDays(end, start);

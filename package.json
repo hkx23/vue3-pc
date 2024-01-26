@@ -23,6 +23,7 @@
     "@vue-office/pdf": "^1.6.0",
     "@vueuse/core": "^10.6.1",
     "crypto-js": "^4.2.0",
+    "date-fns": "^3.3.1",
     "dayjs": "^1.11.10",
     "docx-preview": "^0.3.0",
     "echarts": "^5.4.3",
