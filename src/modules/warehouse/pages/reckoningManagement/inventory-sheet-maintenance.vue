@@ -72,6 +72,7 @@
           <!-- 实盘数的插槽 -->
           <template #firmOfferNumberSlot="{ row }">
             <div class="operation-buttons">
+              <!-- todo input-number -->
               <t-button
                 :disabled="enableOnlyRefreshExportPrint"
                 variant="outline"
@@ -163,7 +164,7 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   },
   { title: '货区', width: 100, colKey: 'districtName' },
   { title: '货位', width: 100, colKey: 'locationName' },
-  { title: '最小包装', width: 100, colKey: 'warehouseName2' },
+  // { title: '最小包装', width: 100, colKey: 'warehouseName2' },
   { title: '账面数', width: 100, colKey: 'onhandQty' },
   { title: '实盘数', width: 240, colKey: 'checkQty', cell: 'firmOfferNumberSlot' },
   { title: '差异数', width: 100, colKey: 'differenceQty', cell: 'differenceNumberSlot' },
