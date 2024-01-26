@@ -73,7 +73,7 @@
           row-key="deliveryCardId"
           :table-column="columnsDetail"
           :table-data="getDtlData.list"
-          :total="total"
+          :total="getDtlTotal"
           @refresh="onGetProductDetails"
         >
           <template #moCode="{ row }">
@@ -294,23 +294,22 @@ function findCurProcessId(row, colKey) {
 }
 const getDtlData = reactive({ list: [] });
 const getDtlTotal = ref(0);
-const curProcessId = ref();
-const moId = ref('');
-const pageNum = computed(() => productPageUI.value.page);
-const pageSize = computed(() => productPageUI.value.rows);
+const productParam = ref({
+  pageNum: 1,
+  pageSize: 20,
+  moId: '',
+  curProcessId: '',
+});
 const onGetProductDetails = async () => {
-  const res = await api.wip.getDtlList({
-    pageNum: pageNum.value,
-    pageSize: pageSize.value,
-    moId: moId.value,
-    curProcessId: curProcessId.value,
-  });
+  productParam.value.pageNum = productPageUI.value.page;
+  productParam.value.pageSize = productPageUI.value.rows;
+  const res = await api.wip.getDtlList(productParam.value);
   getDtlData.list = res.list;
   getDtlTotal.value = res.total;
 };
 const onDetailClick = async (row, col) => {
-  moId.value = row.moId;
-  curProcessId.value = findCurProcessId(row, col.colKey);
+  productParam.value.moId = row.moId;
+  productParam.value.curProcessId = findCurProcessId(row, col.colKey);
   await onGetProductDetails();
   detailVisible.value = true;
 };
