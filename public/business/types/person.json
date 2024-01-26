@@ -8,28 +8,28 @@
       "title": "人员编号",
       "width": "120px",
       "key": "personCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "姓名",
       "key": "personName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "性别",
       "key": "genderName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "联系方式",
       "width": "120px",
       "key": "mobilePhone",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "邮箱",
       "key": "email",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

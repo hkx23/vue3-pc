@@ -7,12 +7,12 @@
     {
       "title": "工艺路线代码",
       "key": "routingCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "工艺路线名称",
       "key": "routingName",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

@@ -1,7 +1,8 @@
 <template>
   <router-view v-if="!isRefreshing" v-slot="{ Component }">
     <transition name="fade">
-      <keep-alive :include="aliveViews">
+      <!-- :include="aliveViews" -->
+      <keep-alive>
         <component :is="Component" v-show="activeRouteIsNotIframe" />
       </keep-alive>
     </transition>
@@ -10,9 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import isBoolean from 'lodash/isBoolean';
-import isUndefined from 'lodash/isUndefined';
-import type { ComputedRef } from 'vue';
+// import isBoolean from 'lodash/isBoolean';
+// import isUndefined from 'lodash/isUndefined';
+// import type { ComputedRef } from 'vue';
 import { computed } from 'vue';
 // <suspense>标签属于实验性功能，请谨慎使用
 // 如果存在需解决/page/1=> /page/2 刷新数据问题 请修改代码 使用activeRouteFullPath 作为key
@@ -31,17 +32,17 @@ const activeRouteIsNotIframe = computed(() => {
   return !currentRoute.value.meta.frameSrc;
 });
 
-const aliveViews = computed(() => {
-  const tabsRouterStore = useTabsRouterStore();
-  const { tabRouters } = tabsRouterStore;
-  return tabRouters
-    .filter((route) => {
-      const keepAliveConfig = route.meta?.keepAlive;
-      const isRouteKeepAlive = isUndefined(keepAliveConfig) || (isBoolean(keepAliveConfig) && keepAliveConfig); // 默认开启keepalive
-      return route.isAlive && isRouteKeepAlive;
-    })
-    .map((route) => route.name);
-}) as ComputedRef<string[]>;
+// const aliveViews = computed(() => {
+//   const tabsRouterStore = useTabsRouterStore();
+//   const { tabRouters } = tabsRouterStore;
+//   return tabRouters
+//     .filter((route) => {
+//       const keepAliveConfig = route.meta?.keepAlive;
+//       const isRouteKeepAlive = isUndefined(keepAliveConfig) || (isBoolean(keepAliveConfig) && keepAliveConfig); // 默认开启keepalive
+//       return route.isAlive && isRouteKeepAlive;
+//     })
+//     .map((route) => route.name);
+// }) as ComputedRef<string[]>;
 
 const isRefreshing = computed(() => {
   const tabsRouterStore = useTabsRouterStore();

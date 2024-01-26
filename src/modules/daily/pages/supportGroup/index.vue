@@ -1,3 +1,4 @@
+<!-- 处理组 -->
 <template>
   <!-- :full-sub-index="[1, 2]" -->
   <cmp-container :full="false">

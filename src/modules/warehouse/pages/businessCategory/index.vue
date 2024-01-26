@@ -296,10 +296,10 @@ const onDeleteBatches = async () => {
   if (initialLength === businessData.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
-    await onGetAnomalyTypeData(); // 重新渲染数组
-    selectedRowKeys.value = [];
-    MessagePlugin.success('批量删除成功');
   }
+  await onGetAnomalyTypeData(); // 重新渲染数组
+  selectedRowKeys.value = [];
+  MessagePlugin.success('批量删除成功');
 };
 
 // 表单提交事件

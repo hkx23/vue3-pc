@@ -3,7 +3,7 @@
     v-model:visible="visible"
     :header="t('processDefects.defectList')"
     top="60px"
-    width="750px"
+    width="850px"
     :confirm-btn="{
       content: '添加',
       theme: 'primary',
@@ -20,7 +20,7 @@
         :table-data="defectData"
         :loading="loading"
         :total="total"
-        :max-height="300"
+        max-height="300"
         :selected-row-keys="selectedRowKeys"
         @refresh="fetchdefectData"
         @select-change="rehandleSelectChange"

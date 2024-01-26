@@ -272,6 +272,7 @@ const serialNumberEnter = async (value) => {
       })
       .then((reData) => {
         console.log(`currentScanType:${currentScanType}`);
+        let isNeedClear = true;
         if (reData.scanSuccess) {
           mainform.value.isCommit = reData.isCommit;
           if (currentScanType === 'SCANTEXT') {
@@ -294,27 +295,28 @@ const serialNumberEnter = async (value) => {
               productInfo.value.moMitemName
             })`;
             keyPartSumList.value = reData.keyPartSumList;
-            resetKeypartCode();
+            resetKeypartCode(isNeedClear);
           } else {
             // 没有关键件时，则清空以下信息
-            resetBarcode();
+            resetBarcode(isNeedClear);
             resetKeyPartList();
           }
 
           if (reData.isCommit) {
             // 提交时,清空扫描框即可
-            resetBarcode();
-            resetKeypartCode();
+            resetBarcode(isNeedClear);
+            resetKeypartCode(isNeedClear);
           }
         } else {
           pushMessage('error', value, reData.scanMessage);
+          isNeedClear = false;
           if (currentScanType === 'SCANTEXT') {
-            resetBarcode();
+            resetBarcode(isNeedClear);
           } else {
-            resetKeypartCode();
+            resetKeypartCode(isNeedClear);
           }
           if (reData.isCommit) {
-            resetKeypartCode();
+            resetKeypartCode(isNeedClear);
           }
         }
         LoadingPlugin(false);
@@ -340,16 +342,21 @@ const resetHandle = () => {
   });
 };
 
-const resetBarcode = () => {
-  mainform.value.serialNumber = '';
+const resetBarcode = (isNeedClear: boolean) => {
+  if (isNeedClear) {
+    mainform.value.serialNumber = '';
+  }
   if (scanBarcodeInstance.value) {
     const { customerFocus } = scanBarcodeInstance.value;
     customerFocus();
   }
 };
 
-const resetKeypartCode = () => {
-  mainform.value.keypartCode = '';
+const resetKeypartCode = (isNeedClear: boolean) => {
+  if (isNeedClear) {
+    mainform.value.keypartCode = '';
+  }
+
   nextTick(() => {
     if (scanKeypartInstance.value) {
       const { customerFocus } = scanKeypartInstance.value;

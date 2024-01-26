@@ -8,12 +8,12 @@
     {
       "title": "缺陷代码库代码",
       "key": "defectCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "缺陷代码库名称",
       "key": "defectName",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

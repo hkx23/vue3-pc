@@ -7,17 +7,17 @@
     {
       "title": "货区编码",
       "key": "districtCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "货区名称",
       "key": "districtName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "货区描述",
       "key": "districtDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

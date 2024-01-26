@@ -8,17 +8,17 @@
     {
       "title": "工厂代码",
       "key": "orgCode",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "工厂名称",
       "key": "orgName",
-      "align": "center"
+      "align": "left"
     },
     {
       "title": "工厂描述",
       "key": "orgDesc",
-      "align": "center"
+      "align": "left"
     }
   ],
   "rowKey": "id",

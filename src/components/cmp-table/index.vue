@@ -51,22 +51,6 @@
               </t-space>
             </template>
           </t-popup>
-
-          <!-- <t-button v-if="props.showExport" shape="square" variant="outline" @click="onExport">
-              <template #icon>
-                <t-icon name="file-export" />
-              </template>
-            </t-button> -->
-          <!-- <t-button shape="square" variant="outline" :disabled="loading" @click="onRefresh">
-              <template #icon>
-                <t-icon name="refresh" />
-              </template>
-            </t-button> -->
-          <!-- <t-button shape="square" variant="outline" @click="data.visible = true">
-              <template #icon>
-                <t-icon name="adjustment" />
-              </template>
-            </t-button> -->
         </t-space>
       </div>
       <!-- 表格属性备份
@@ -189,6 +173,7 @@
 </template>
 
 <script lang="tsx" setup name="CmpTable">
+import MD5 from 'crypto-js/md5';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MoveIcon } from 'tdesign-icons-vue-next';
@@ -310,8 +295,15 @@ const props = defineProps({
   exportFunction: { type: Function },
 });
 const tableKeyCode = ref('');
-tableKeyCode.value = props.key + props.title;
-const emit = defineEmits(['refresh', 'update:pagination', 'update:sorters', 'select-change', 'update:filters']);
+
+const emit = defineEmits([
+  'refresh',
+  'update:pagination',
+  'update:tableData',
+  'update:sorters',
+  'select-change',
+  'update:filters',
+]);
 
 // const settingStore = useSettingStore();
 const selectedRowKeys = ref<number[]>([]);
@@ -658,7 +650,7 @@ const captureRefresh = () => {
 const fetchHistoryDownloadList = async () => {
   historyDownloadList.value = await api.dlTask.getCurrentUserFile({
     tableKey: new URL(jsonConfig.api).pathname,
-    behaviorPath: JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath,
+    behaviorPath: getRouterPath(),
   });
 };
 
@@ -697,28 +689,36 @@ const onConfirmDownload = async () => {
         };
       }),
   };
+  // 判断是否有API，如果没有，走前端导出
+  if (jsonConfig.api) {
+    const task = {
+      behaviorPath: getRouterPath(),
+      tableKeyCode: new URL(jsonConfig.api).pathname,
+      jsonConfig: JSON.stringify(jsonConfig),
+    } as DlTask;
 
-  const task = {
-    behaviorPath: JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath,
-    tableKeyCode: new URL(jsonConfig.api).pathname,
-    jsonConfig: JSON.stringify(jsonConfig),
-  } as DlTask;
+    const loadTask = MessagePlugin.loading({ content: '数据导出中...', duration: 0 });
+    try {
+      if (props.total > 50000) {
+        await api.dlTask.add(task);
 
-  const loadTask = MessagePlugin.loading({ content: '数据导出中...', duration: 0 });
-  try {
-    if (props.total > 50000) {
-      await api.dlTask.add(task);
-
-      fetchHistoryDownloadList();
-    } else {
-      downloadDialogVisible.value = false;
-      const filePath = await api.dlTask.downloadFile(task);
-      window.open(filePath);
+        fetchHistoryDownloadList();
+      } else {
+        downloadDialogVisible.value = false;
+        const filePath = await api.dlTask.downloadFile(task);
+        window.open(filePath);
+      }
+    } catch (error) {
+      console.error('数据导出失败', error);
+    } finally {
+      MessagePlugin.close(loadTask);
     }
-  } catch (error) {
-    console.error('数据导出失败', error);
-  } finally {
-    MessagePlugin.close(loadTask);
+  } else {
+    excelUtils.exportExcel({
+      title: downloadFilename.value,
+      columns: exportColumns.value,
+      tableData: props.tableData,
+    });
   }
 };
 
@@ -778,11 +778,20 @@ watch(
   (val) => {
     console.log('watch:props.tableData', val);
     nextTick(() => {
-      finalTableData.value = _.cloneDeep(props.tableData);
+      finalTableData.value = props.tableData;
+      emit('update:tableData', val);
     });
   },
   { deep: true },
 );
+// watch(
+//   () => finalTableData.value,
+//   (val) => {
+//     console.log('watch:finalTableData.value ', val);
+//     emit('update:tableData', val);
+//   },
+//   { deep: true },
+// );
 watch(
   () => props.tableColumn,
   (val) => {
@@ -927,10 +936,13 @@ const columnPopChange = (val) => {
 onMounted(() => {
   const instance = getCurrentInstance();
   slots.value = instance?.slots;
-  // const elements = tableBoxRef.value.$el.querySelectorAll(':scope > .t-space-item') as HTMLInputElement[];
-  // if (elements.length > 0) {
-  //   elements[props.flexIndex || elements.length - 1].style.flex = '1';
-  // }
+  tableKeyCode.value = props.key + props.title;
+  if (!tableKeyCode.value) {
+    // 定义MD5对象
+    const columnStr = JSON.stringify(props.tableColumn);
+    const md5Result = MD5(columnStr).toString();
+    tableKeyCode.value = md5Result;
+  }
   loadTableSetting();
 });
 
