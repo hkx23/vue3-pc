@@ -47,7 +47,7 @@
   </cmp-container>
 
   <!-- #班组 dialog 弹窗 -->
-  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="850px">
     <t-form ref="formRef" :rules="rules" :data="teamFormData" @submit="onAnomalyTypeSubmit">
       <t-row :gutter="[32, 16]">
         <!-- 第 1️⃣ 行数据 -->
