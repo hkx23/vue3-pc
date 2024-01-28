@@ -44,6 +44,9 @@
         :total="handQtyTotal"
         @refresh="onFetchData"
       >
+        <template #title>
+          {{ '库存现有量列表' }}
+        </template>
         <template #labelDetails="{ row }">
           <t-link theme="primary" @click="onEditRow(row)"> 标签明细 </t-link>
         </template>

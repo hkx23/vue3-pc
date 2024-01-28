@@ -14,6 +14,9 @@
         :total="total"
         @refresh="onRefresh"
       >
+        <template #title>
+          {{ 'WIP列表' }}
+        </template>
         <template #completedNum="{ row }">
           <div>{{ row.completedNum }}</div>
         </template>
@@ -48,6 +51,9 @@
           :total="moCodeData?.list?.length"
           @refresh="onOorkOIrder"
         >
+          <template #title>
+            {{ '物料列表' }}
+          </template>
           <template #moCode="{ row }">
             <t-link theme="primary">{{ row.moCode }}</t-link>
           </template>
@@ -76,6 +82,9 @@
           :total="getDtlTotal"
           @refresh="onGetProductDetails"
         >
+          <template #title>
+            {{ '产品明细列表' }}
+          </template>
           <template #moCode="{ row }">
             <t-link theme="primary">{{ row.moCode }}</t-link>
           </template>

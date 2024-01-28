@@ -20,6 +20,9 @@
         :total="transferTotal"
         @refresh="onFetchData"
       >
+        <template #title>
+          {{ '物料保质期列表' }}
+        </template>
         <template #labelDetails="{ row }">
           <t-link theme="primary" @click="onEditRow(row)"> 标签明细 </t-link>
         </template>

@@ -47,6 +47,9 @@
                   @select-change="onGenerateChange"
                   @refresh="onTopRefresh"
                 >
+                  <template #title>
+                    {{ '配送卡列表' }}
+                  </template>
                   <template #thisTimeQty="{ row }">
                     <t-input-number
                       v-model="row.thisTimeQty"
@@ -109,11 +112,12 @@
                   @refresh="onDownRefresh"
                 >
                   <template #title>
+                    {{ '配送卡打印状态列表' }}
+                  </template>
+                  <template #button>
                     <t-radio-group v-model="radioValue" @change="onRadioChange">
                       <t-radio allow-uncheck :value="1"> 仅显示已生成</t-radio>
                     </t-radio-group>
-                  </template>
-                  <template #button>
                     <t-select
                       v-model="printTemplateName"
                       :clearable="true"
@@ -176,6 +180,9 @@
                   @select-change="onProductRightFetchData"
                   @refresh="onRightFetchData"
                 >
+                  <template #title>
+                    {{ '配送卡管理列表' }}
+                  </template>
                   <template #actionSlot>
                     <t-link theme="primary" style="margin-right: 10px"> 编辑 </t-link>
                     <t-popconfirm theme="default" content="确认删除吗">
@@ -323,7 +330,11 @@
       :table-data="dayTabData.list"
       :total="totalDay"
       @refresh="onRightFetchData"
-    ></cmp-table>
+    >
+      <template #title>
+        {{ '日志列表' }}
+      </template>
+    </cmp-table>
   </t-dialog>
   <t-loading :loading="loading" text="加载中..." fullscreen />
 </template>

@@ -13,13 +13,14 @@
         @select-change="rehandleSelectChange"
         @refresh="onFetchData"
       >
+        <template #title>
+          {{ '异常处理配置列表' }}
+        </template>
         <template #isAllowTransfer="{ row }">
           {{ row.isAllowTransfer ? '是' : '否' }}
         </template>
-        <template #title>
-          <cmp-query :opts="opts" :show-button="false" @submit="onInput"> </cmp-query>
-        </template>
         <template #button>
+          <cmp-query :opts="opts" :show-button="false" @submit="onInput"> </cmp-query>
           <t-button @click="onAdd">新增</t-button>
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="ondeleteBatches">
             <t-button variant="outline">批量删除</t-button>

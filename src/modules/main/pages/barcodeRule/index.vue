@@ -25,6 +25,9 @@
         @select-change="onGenerateChange"
         @refresh="onRefresh"
       >
+        <template #title>
+          {{ '条码规则列表' }}
+        </template>
         <template #stateSwitch="{ row }">
           <t-switch
             :custom-value="[1, 0]"
@@ -60,6 +63,9 @@
         @refresh="onTwoRefresh"
       >
         <template #title>
+          {{ '编码分类列表' }}
+        </template>
+        <template #button>
           <t-space>
             <div class="left-operation-container">
               <bcmp-select-business
@@ -78,8 +84,6 @@
               ></bcmp-select-business>
             </div>
           </t-space>
-        </template>
-        <template #button>
           <div>
             <t-button theme="primary" :disabled="!personID" @click="onformData"> 关联物料 </t-button>
           </div>

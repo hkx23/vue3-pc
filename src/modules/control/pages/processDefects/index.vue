@@ -43,6 +43,9 @@
           @refresh="onFetchData"
           @select-change="processChange"
         >
+          <template #title>
+            {{ '工序缺陷列表' }}
+          </template>
           <template #stateSwitch="{ row }">
             <t-switch
               :custom-value="[1, 0]"
@@ -51,10 +54,8 @@
               @change="(value) => onSwitchChange(row, value)"
             ></t-switch>
           </template>
-          <template #title>
-            <cmp-query :opts="opts" :show-button="false" @submit="onInput"> </cmp-query>
-          </template>
           <template #button>
+            <cmp-query :opts="opts" :show-button="false" @submit="onInput"> </cmp-query>
             <t-button @click="onHandelAdd">新增</t-button>
             <t-popconfirm content="确认删除吗" @confirm="onHandelDelete">
               <t-button theme="default" variant="base">删除</t-button>
