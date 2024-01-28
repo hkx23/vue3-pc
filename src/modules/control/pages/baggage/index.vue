@@ -14,20 +14,22 @@
         :tree="treeConfig"
         lazy-load
         @expanded-tree-nodes-change="onExpandedTreeNodesChange"
-      ></t-enhanced-table>
+      >
+        <template #footerSummary>
+          <t-pagination
+            v-model:current="bagsSuitcasesData.pageNum"
+            v-model:page-size="bagsSuitcasesData.pageSize"
+            style="margin-top: 8px"
+            show-jumper
+            :show-page-size="true"
+            :total="anomalyTotal"
+            @page-size-change="onPaginationChange"
+            @current-change="onCurrentChange"
+          />
+        </template>
+      </t-enhanced-table>
     </cmp-card>
-    <cmp-card :ghost="true" :span="12">
-      <t-pagination
-        v-model:current="bagsSuitcasesData.pageNum"
-        v-model:page-size="bagsSuitcasesData.pageSize"
-        style="margin-top: 8px"
-        show-jumper
-        :show-page-size="true"
-        :total="anomalyTotal"
-        @page-size-change="onPaginationChange"
-        @current-change="onCurrentChange"
-      />
-    </cmp-card>
+    <cmp-card :ghost="true" :span="12"> </cmp-card>
   </cmp-container>
 </template>
 <script setup lang="ts">

@@ -24,6 +24,9 @@
         @select-change="onSelectChange"
         @refresh="onFetchGroupData"
       >
+        <template #title>
+          {{ '班组列表' }}
+        </template>
         <template #actionSlot="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ '编辑' }}</t-link>
@@ -44,7 +47,7 @@
       </cmp-table>
     </cmp-card>
     <cmp-card>
-      <!-- ################# 人员表格数据 ###################### -->
+      <!-- ################# 班组表格数据 ###################### -->
 
       <cmp-table
         ref="tableRef"
@@ -63,6 +66,9 @@
         @select-change="onPersonSelectChange"
         @refresh="onFetchPersonData"
       >
+        <template #title>
+          {{ '班组人员列表' }}
+        </template>
         <template #actionSlot="{ row }">
           <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelPersonConfirm()">
             <t-link theme="primary" @click="onDelPersonRow(row)">{{ '删除' }}</t-link>

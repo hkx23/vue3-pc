@@ -17,6 +17,9 @@
         @select-change="rehandleSelectChange"
         @refresh="onRefresh"
       >
+        <template #title>
+          {{ '缺陷处理方法列表' }}
+        </template>
         <template #button>
           <t-button theme="primary" @click="onHandelAdd">新增</t-button>
           <t-button theme="default" @click="onWholeAdd">删除</t-button>

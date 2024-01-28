@@ -46,6 +46,9 @@
                   @select-change="onGenerateChange"
                   @refresh="onTopRefresh"
                 >
+                  <template #title>
+                    {{ '产品标签打印列表' }}
+                  </template>
                   <template #thisTimeQty="{ row }">
                     <t-input-number
                       v-model="row.thisTimeQty"
@@ -77,7 +80,7 @@
                   </template>
                 </cmp-table>
               </cmp-card>
-              <cmp-card header="条码列表" header-bordered class="padding-top-noline-16 no-h-padding-card">
+              <cmp-card header="" header-bordered class="padding-top-noline-16 no-h-padding-card">
                 <!-- ################# 产品标签打印 下2️⃣下 表格数据 ###################### -->
                 <cmp-table
                   ref="tableRef"
@@ -93,11 +96,12 @@
                   @refresh="onDownRefresh"
                 >
                   <template #title>
+                    {{ '条码状态列表' }}
+                  </template>
+                  <template #button>
                     <t-radio-group v-model="radioValue" @change="onRadioChange">
                       <t-radio allow-uncheck :value="1"> 仅显示已生成</t-radio>
                     </t-radio-group>
-                  </template>
-                  <template #button>
                     <t-select v-model="printTemplate" label="打印模板" :clearable="true" style="width: 240px">
                       <t-option
                         v-for="item in onPrintTemplateList.list"
@@ -159,6 +163,9 @@
                   @select-change="onProductRightFetchData"
                   @refresh="onRightFetchData"
                 >
+                  <template #title>
+                    {{ '产品标签管理列表' }}
+                  </template>
                   <template #actionSlot>
                     <t-link theme="primary" style="margin-right: 10px"> 编辑 </t-link>
                     <t-popconfirm theme="default" content="确认删除吗">

@@ -27,6 +27,9 @@
         @refresh="onFetchData"
         @select-change="rehandleSelectChange"
       >
+        <template #title>
+          {{ '异常类型列表' }}
+        </template>
         <template #stateSwitch="{ row }">
           <t-switch
             :custom-value="[1, 0]"

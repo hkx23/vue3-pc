@@ -23,6 +23,9 @@
         @select-change="onSelectChange"
         @refresh="onFetchGroupData"
       >
+        <template #title>
+          {{ '处理组列表' }}
+        </template>
         <template #actionSlot="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
@@ -63,6 +66,9 @@
         @select-change="onPersonSelectChange"
         @refresh="onFetchPersonData"
       >
+        <template #title>
+          {{ '人员列表' }}
+        </template>
         <template #actionSlot>
           <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelPersonConfirm()">
             <t-link theme="primary" @click="onDelPersonRow">{{ t('common.button.delete') }}</t-link>

@@ -264,7 +264,7 @@ const onInputEnter = async () => {
 }
 
 .selected-background {
-  color: #fff;
-  background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
+  color: var(--td-brand-color);
+  background-color: var(--td-brand-color-light) !important; /* 替换为你希望的颜色 */
 }
 </style>

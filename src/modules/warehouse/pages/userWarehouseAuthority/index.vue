@@ -20,6 +20,9 @@
         @select-change="rehandleSelectChange"
         @refresh="onFetchData"
       >
+        <template #title>
+          {{ '用户仓库权限列表' }}
+        </template>
         <template #actionSlot>
           <t-space :size="8">
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
@@ -29,7 +32,7 @@
         </template>
         <template #button>
           <t-space :size="8">
-            <t-button theme="default" @click="onAddClick">新增</t-button>
+            <t-button theme="primary" @click="onAddClick">新增</t-button>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches()">
               <t-button theme="default">批量删除</t-button>
             </t-popconfirm>
