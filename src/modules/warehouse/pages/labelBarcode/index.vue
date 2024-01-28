@@ -2,7 +2,6 @@
   <cmp-container :full="true">
     <cmp-card class="not-full-tab">
       <!-- ################# 工单 表格数据 ###################### -->
-
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="来料标签打印" :destroy-on-hide="false">
           <template #panel>
@@ -25,6 +24,7 @@
                   @row-click="onRowClick"
                   @refresh="onRefresh"
                 >
+                  <template #title> 送货单列表 </template>
                   <template #lotNoOp="slotProps">
                     <t-input
                       v-if="slotProps.row.deliveryDtlId === printMode.deliveryDtlId"
@@ -32,12 +32,10 @@
                       :rules="[{ required: true, message: '不能为空', trigger: 'blur' }]"
                     ></t-input>
                   </template>
-                  <template #title>
+                  <template #button>
                     <t-radio v-model="queryCondition.isFinishDisplay" allow-uncheck @change="fetchMoTable"
                       >仅显示未打印完成</t-radio
-                    ></template
-                  >
-                  <template #button>
+                    >
                     <t-select v-model="printMode.barcodeRuleId" label="条码规则" style="width: 240px">
                       <t-option
                         v-for="item in onBracodeRulesList?.list"
@@ -51,7 +49,7 @@
                 </cmp-table>
               </cmp-card>
 
-              <cmp-card header="条码列表" header-bordered class="padding-top-noline-16 no-h-padding-card">
+              <cmp-card header-bordered class="padding-top-noline-16 no-h-padding-card">
                 <cmp-table
                   v-model:pagination="pageUIBracode"
                   row-key="id"
@@ -65,12 +63,11 @@
                   @select-change="onPrintChange"
                   @refresh="onRefreshBelow"
                 >
-                  <template #title>
+                  <template #title> 条码列表 </template>
+                  <template #button>
                     <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck @change="onRefreshBelow"
                       >仅显示已生成</t-radio
                     >
-                  </template>
-                  <template #button>
                     <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
                       <t-option
                         v-for="item in onPrintTemplateList.list"
@@ -118,6 +115,7 @@
                   @select-change="onProductRightFetchData"
                   @refresh="onRefreshManage"
                 >
+                  <template #title> 条码列表 </template>
                   <template #button>
                     <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
                       <t-option
@@ -249,6 +247,7 @@ import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } f
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
+// import { GetPrinters, GetPrintFile, PrintByTemplate } from '@/api/print';
 import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
