@@ -412,6 +412,41 @@ export interface WorkgroupArrange {
 }
 
 export interface WorkgroupArrangeSearch {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workcenterId?: string;
+  workgroupId?: string;
+  /**
+   * 排班日期
+   * @format date-time
+   */
+  datetimeArrange?: string;
+  attendanceModeId?: string;
+  /** 班次 */
+  shiftCode?: string;
+  /** 出勤模式表达式 */
+  attendanceExpression?: string;
   /**
    * 页码
    * @format int32
@@ -423,7 +458,6 @@ export interface WorkgroupArrangeSearch {
    */
   pageSize?: number;
   workshopId?: string;
-  workgroupId?: string;
   /** 班组模糊关键词 */
   workgroupKeyword?: string;
   /**
@@ -790,8 +824,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1152,8 +1186,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -1241,14 +1275,14 @@ export interface WipKeypartReportVO {
 }
 
 /** 响应数据 */
-export type PagingDataTransferHeadVO = {
-  list?: TransferHeadVO[];
+export type PagingDataTransferStockInOutVO = {
+  list?: TransferStockInOutVO[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataTransferHeadVO {
+export interface ResultPagingDataTransferStockInOutVO {
   /**
    * 响应代码
    * @format int32
@@ -1257,74 +1291,67 @@ export interface ResultPagingDataTransferHeadVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataTransferHeadVO;
+  data?: PagingDataTransferStockInOutVO;
 }
 
-/** 交易事务头表 */
-export interface TransferHeadVO {
-  id?: string;
+/** 关键物料追溯（反向）-出入库查询 */
+export interface TransferStockInOutVO {
+  /** 用户名 */
+  userTransferName?: string;
+  /** 显示名 */
+  displayTransferName?: string;
+  /** 业务类型代码 */
+  businessCategoryCode?: string;
+  /** 业务类型名称 */
+  businessCategoryName?: string;
+  businessCategoryId?: string;
   /**
-   * 创建时间
+   * 过帐时间
    * @format date-time
    */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
+  datetimeTransfer?: string;
   eid?: string;
   oid?: string;
-  /** 单据 */
+  /** 单据号 */
   billNo?: string;
-  /**
-   * 单身行数
-   * @format int32
-   */
-  lineCount?: number;
-  /** erp单据 */
-  erpBillNo?: string;
-  /** 用途 */
-  purpose?: string;
-  /** 相关凭证 */
-  voucherNo?: string;
+  warehouseId?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  /** 仓库代码 */
+  toWarehouseCode?: string;
+  /** 仓库名称 */
+  toWarehouseName?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  moScheId?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 实际拣料数量 */
+  pickQty?: number;
+  /** 原因 */
+  reason?: string;
+  /** 相关凭证号 */
+  voucherLineNo?: string;
   /** 通知凭证 */
-  noticeVoucherNo?: string;
-  supplierId?: string;
+  noticeVoucherLineNo?: string;
+  /** 到货批次 */
+  batchNo?: string;
+  /** 采购订单号 */
+  poNum?: string;
+  /** ERP单据明细号 */
+  erpLineNo?: string;
   /** 备注 */
   memo?: string;
-  businessCategoryId?: string;
-  /** 单据业务类型编码 */
-  businessCategoryCode?: string;
-  /** 单据业务类型名称 */
-  businessCategoryName?: string;
-  userTransferId?: string;
-  userTransferName?: string;
-  displayTransferName?: string;
-  /** 数量 */
-  qty?: number;
-  /** 工单 */
-  moCode?: string;
-  warehouseId?: string;
-  /** 来源仓库编码 */
-  warehouseCode?: string;
-  /** 来源仓库名称 */
-  warehouseName?: string;
-  toWarehouseId?: string;
-  /** 目标仓库编码 */
-  toWarehouseCode?: string;
-  /** 目标仓库名称 */
-  toWarehouseName?: string;
+  /** 来源单据行号 */
+  sourceBillLineNo?: string;
 }
 
 /** 生产历史信息 */
@@ -1888,11 +1915,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopCode?: string;
-  workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -1939,9 +1966,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -3138,11 +3165,11 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopCode?: string;
-  workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -3254,11 +3281,11 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopCode?: string;
-  workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -4569,7 +4596,7 @@ export const api = {
      * @request POST:/workgroupArrange/addWorkgroupArrange
      * @secure
      */
-    addWorkgroupArrange: (data: WorkgroupArrange) =>
+    addWorkgroupArrange: (data: WorkgroupArrangeSearch) =>
       http.request<ResultObject['data']>(`/api/control/workgroupArrange/addWorkgroupArrange`, {
         method: 'POST',
         body: data as any,
@@ -4828,16 +4855,19 @@ export const api = {
      * No description
      *
      * @tags 关键物料追溯（反向）
-     * @name GetTransferHeadList
+     * @name GetTransferStockInOutList
      * @summary 获取出入库数据
-     * @request POST:/reversetraceability/getTransferHeadList
+     * @request POST:/reversetraceability/getTransferStockInOutList
      * @secure
      */
-    getTransferHeadList: (data: ReverseTraceabilityReportSearch) =>
-      http.request<ResultPagingDataTransferHeadVO['data']>(`/api/control/reversetraceability/getTransferHeadList`, {
-        method: 'POST',
-        body: data as any,
-      }),
+    getTransferStockInOutList: (data: ReverseTraceabilityReportSearch) =>
+      http.request<ResultPagingDataTransferStockInOutVO['data']>(
+        `/api/control/reversetraceability/getTransferStockInOutList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
 
     /**
      * No description

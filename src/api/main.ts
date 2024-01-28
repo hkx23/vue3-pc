@@ -3898,14 +3898,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
   isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -4048,8 +4048,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5695,36 +5695,6 @@ export interface AttendanceMode {
   memo?: string;
 }
 
-/** 通用响应类 */
-export interface ResultAttendanceMode {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 出勤模式 */
-  data?: AttendanceMode;
-}
-
-export interface AttendanceModeSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 模糊关键词 */
-  keyword?: string;
-  /** 班次 */
-  shiftCode?: string;
-}
-
 /** 显示工站 */
 export interface AttendanceModeVO {
   id?: string;
@@ -5786,6 +5756,36 @@ export interface ResultPagingDataAttendanceModeVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataAttendanceModeVO;
+}
+
+/** 通用响应类 */
+export interface ResultAttendanceMode {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 出勤模式 */
+  data?: AttendanceMode;
+}
+
+export interface AttendanceModeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  /** 班次 */
+  shiftCode?: string;
 }
 
 /** 通用响应类 */
@@ -6487,12 +6487,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11676,7 +11676,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/main/attendanceMode/items`, {
+      http.request<ResultPagingDataAttendanceModeVO['data']>(`/api/main/attendanceMode/items`, {
         method: 'POST',
         body: data as any,
       }),

@@ -22,16 +22,16 @@
                 <t-table row-key="id" :columns="tableColumns" :data="tableData" empty="请先选择车间">
                   <!-- 取时间段排了多少天  差值 或者  不等于0 就是已排天数      num等于差值就是已排满 -->
                   <template #num="{ row }">
-                    <span v-if="row.num == '0'">待排</span>
+                    <span v-if="row.num == '0'" class="status-label">待排</span>
                     <!-- num < 0 && < dayDatas -->
-                    <span v-if="row.num > 0 && row.num > dayDatas">已排班{天}</span>
-                    <span v-if="row.num == dayDatas">排满</span>
+                    <span v-if="row.num > 0 && row.num > dayDatas" class="status-label">已排班{{ dayDatas }}</span>
+                    <span v-if="row.num == dayDatas" class="status-label status-full">排满</span>
                   </template>
 
                   <!-- + 号 solt -->
-                  <template #num3="{ row }">
+                  <template #num1="{ row }">
                     <t-space v-if="row.num !== dayDatas">
-                      <t-link theme="primary" @click="addTeamScheduling(row)"> ＋ </t-link>
+                      <t-link theme="primary" style="font-weight: 700" @click="addTeamScheduling(row)"> ＋ </t-link>
                     </t-space>
                   </template>
                 </t-table>
@@ -43,17 +43,20 @@
                   <!--  week 日期选择 -->
                   <!-- <t-date-range-picker mode="week" clearable allow-input /> -->
                   <t-date-range-picker v-model="range1" allow-input clearable @change="handleDateChange" />
-                  <t-tabs theme="card" :value="tabPanelValue" class="mode-selector">
+                  <t-tabs theme="card" :value="tabPanelValue">
                     <t-tab-panel value="week" label="周"></t-tab-panel>
                     <t-tab-panel value="month" label="月"></t-tab-panel>
                   </t-tabs>
                 </div>
-                <t-calendar
-                  :controller-config="false"
-                  type="month"
-                  :mode="calendarMode"
-                  :value="currentDate"
-                ></t-calendar>
+                <t-calendar :controller-config="false" type="month" :mode="calendarMode" :value="currentDate">
+                  <template #cellAppend="{ data }">
+                    <div v-if="getShow(data)" class="cell-append-demo-outer">
+                      <t-tag theme="success" variant="light" size="small" class="activeTag" style="width: 100%">
+                        {{ data.mode == 'month' ? '我们的纪念日' : '我们的纪念月' }}
+                      </t-tag>
+                    </div>
+                  </template>
+                </t-calendar>
               </div>
             </div>
           </t-tab-panel>
@@ -68,7 +71,7 @@
 
   <!-- 弹窗 -->
   <t-dialog v-model:visible="formVisible" :on-confirm="onConfirmForm" :header="formTitle">
-    <t-form ref="formRef" :data="FormData">
+    <t-form ref="formRef" :data="teamFormData">
       <t-row :gutter="[32, 16]">
         <t-col :span="10">
           <!--  <t-row :gutter="[32, 16]"> -->
@@ -78,13 +81,18 @@
         </t-col>
         <t-col :span="10">
           <t-form-item label="日期">
-            <t-date-range-picker v-model="FormData.datetimeArrange" allow-input clearable />
+            <t-date-range-picker
+              v-model="teamFormData.attendanceExpression"
+              allow-input
+              clearable
+              @change="handleDateChange1"
+            />
           </t-form-item>
         </t-col>
         <t-col :span="10">
           <t-form-item label="工作中心">
             <bcmp-select-business
-              v-model="FormData.workcenterId"
+              v-model="teamFormData.workcenterId"
               class="demo-select-base"
               :is-multiple="false"
               :show-title="false"
@@ -102,24 +110,19 @@
         <t-col :span="10">
           <t-form-item label="出勤模式" name="modeName">
             <bcmp-select-business
-              v-model="FormData.attendanceExpression"
+              v-model="teamFormData.attendanceModeId"
               class="demo-select-base"
               :is-multiple="false"
               :show-title="false"
               type="attendanceMode"
               label-field="modeName"
+              @selection-change="SelectionChangeAttendanceMode"
             >
             </bcmp-select-business>
           </t-form-item>
         </t-col>
-        <t-row
-          v-for="(timeRange, index) in teamFormData.expression"
-          :key="index"
-          :gutter="[32, 16]"
-          justify="space-between"
-          align="center"
-        >
-          <t-col :span="10">
+        <t-row v-for="(timeRange, index) in teamFormData.expression" :key="index" :gutter="[32, 16]">
+          <t-col>
             <t-form-item :label="'时间段' + (index + 1)" :name="'expression' + index">
               <t-time-range-picker
                 v-model="teamFormData.expression[index]"
@@ -149,15 +152,7 @@ import { onMounted, ref, watch } from 'vue';
 
 import { api as apiMin } from '@/api/control';
 import { api } from '@/api/main';
-
-// 提交的数据
-const FormData = ref({
-  id: '',
-  workcenterId: '', // 工作中心
-  modeName: '', // 出勤模式
-  datetimeArrange: [], // 排班日期
-  attendanceExpression: [],
-});
+// import dayjs from 'dayjs';
 
 const formVisible = ref(false);
 const activeTab = ref('first'); // 默认激活的选项卡
@@ -175,22 +170,18 @@ const qTimeModified = ref(''); // 查询结束时间
 const resValue1 = ref([]);
 const resValue2 = ref([]);
 const dayDatas = ref(0); // 天数
-const defaultTimeRange = ['', '']; // 默认时间范围
 const resOrgName = ref('');
-
-const teamFormData = ref({
-  expression: [defaultTimeRange], // 初始时包含一个默认时间范围
-});
+const teamId = ref('');
+const workgroupArranges = ref([]); // 日历数据
 
 // 表格主位栏
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '', width: 85, colKey: 'workgroupName' },
-  { title: '', width: 85, colKey: 'num' },
-  { title: '', width: 20, colKey: 'num3' },
+  { title: '', width: 120, colKey: 'workgroupName' },
+  { title: '', width: 80, colKey: 'num' },
+  { title: '', width: 0, colKey: 'num1' },
 ];
 
 const eidtFormSubmit = () => {
-  // formRef.value.submit();
   formVisible.value = false;
 };
 
@@ -198,13 +189,113 @@ const eidtFormSubmit = () => {
 const SelectionChange = async (item) => {
   await getWorkgroupInfo(item.id); // 入参车间id
   await getArrangeCount(item); // 在接口中处理数据
+  await getWorkgroupArrangeList(item.id);
 };
+
+// 选择出勤模式事件
+const SelectionChangeAttendanceMode = async (item) => {
+  const { expressionSpilt, shiftCode } = item; // 给到时间段
+  teamFormData.value.expression = expressionSpilt;
+  teamFormData.value.shiftCode = shiftCode;
+};
+
+const defaultTimeRange = ['', '']; // 默认时间范围
+// 提交的数据
+const teamFormData = ref({
+  workcenterId: '', // 工作中心
+  attendanceModeId: '', // 出勤模式
+  attendanceExpression: [], // 排班日期
+  expression: [defaultTimeRange], // 初始时包含一个默认时间范围
+  dateStart: '',
+  dateEnd: '',
+  shiftCode: '',
+});
 
 // 挂载
 onMounted(async () => {
   await initDateRange();
   await TimeStampCalculation();
 });
+
+const onConfirmForm = async () => {
+  // console.log('submitData===', submitData);
+  const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
+  const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
+  if (!isValid) {
+    MessagePlugin.warning('时间段不能为空！');
+    return;
+  }
+  const flag = checkArray(flattenedConvertedIntervals);
+  if (!flag) {
+    MessagePlugin.warning('时间间隔不能超过24小时，请重新输入！');
+    return;
+  }
+
+  // 设置 expression 字段为 convert 的值
+  delete teamFormData.value.expression;
+  // delete teamFormData.value.attendanceExpression; //日期分化 删除
+  const newArr = appendNFromFirstDecrease(flattenedConvertedIntervals);
+  const convert = convertToTimeRange(newArr).join(';');
+  // 提交数据到后端
+  const reslut = apiMin.workgroupArrange.addWorkgroupArrange({
+    ...teamFormData.value,
+    attendanceExpression: convert,
+    workgroupId: teamId.value, // 选中的班组id  todo 不拿全局
+  });
+  console.log('🚀 ~ onConfirmForm ~ reslut:', reslut);
+  // 关闭弹窗
+  formVisible.value = false;
+  getWorkgroupInfo({});
+  getArrangeCount({});
+  getWorkgroupArrangeList({});
+};
+
+// 过了午夜，后面的数组加 N
+function appendNFromFirstDecrease(arr) {
+  // 查找第一个递减的位置
+  let decreaseIndex = -1;
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < arr[i - 1]) {
+      decreaseIndex = i;
+      break;
+    }
+  }
+  // 如果找到了递减的位置，从那个位置开始修改数组
+  if (decreaseIndex !== -1) {
+    for (let i = decreaseIndex; i < arr.length; i++) {
+      arr[i] = `${arr[i]}N`;
+    }
+  }
+  return arr;
+}
+
+// 拼接成后端需要的格式 函数
+function convertToTimeRange(arr) {
+  // 将分钟数转换为24小时制时间格式，例如 90 => '01:30'
+  function minutesToTime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  }
+  const timeRanges = [];
+  for (let i = 0; i < arr.length; i += 2) {
+    // 检查数组长度是否为偶数
+    if (i + 1 >= arr.length) {
+      throw new Error('Array length must be even');
+    }
+    // 处理带'N'的情况
+    let start = arr[i].toString();
+    let end = arr[i + 1].toString();
+    const startN = start.includes('N');
+    const endN = end.includes('N');
+    // 转换为时间格式
+    start = minutesToTime(parseInt(start, 10)); // 指定基数为10
+    end = minutesToTime(parseInt(end, 10)); // 指定基数为10
+    // 拼接结果
+    timeRanges.push(`${start + (startN ? 'N' : '')}-${end}${endN ? 'N' : ''}`);
+  }
+  return timeRanges;
+}
 
 // 添加时间组件
 const addFormSubmit = () => {
@@ -231,6 +322,7 @@ const addFormSubmit = () => {
 function convertAndFlattenTimeIntervals(timeIntervals) {
   return timeIntervals.flatMap((interval) => interval.map(timeToMinutes));
 }
+
 // 转化成分钟
 function timeToMinutes(time) {
   const [hours, minutes] = time.split(':').map(Number);
@@ -263,11 +355,6 @@ function checkArray(arr) {
   // 如果数组没有递减的部分，返回true
   return true;
 }
-
-const onConfirmForm = async () => {
-  console.log('FormData.value', FormData.value);
-  // formVisible.value = false;
-};
 
 // 时间戳计算
 const TimeStampCalculation = () => {
@@ -309,27 +396,22 @@ const initDateRange = () => {
   handleDateChange(formattedDates); // 初始化 formattedDates 当前月的时间
 };
 
-// 判断选中日期不超过31天
-// const handleDateChange = (newRange) => {
-//   qnewRange.value = newRange; //初始化入参
-//   //将数组取出时间字符串
-//   qTimeCreate.value = newRange[0];
-//   qTimeModified.value = newRange[1];
-//   if (newRange && newRange.length === 2) {
-//     const [start, end] = newRange;
-//     const daysDiff = differenceInCalendarDays(end, start);
-//     if (daysDiff > 31) {
-//       MessagePlugin.error('选择的日期范围不能超过31天！');
-//       const now = new Date();
-//       range1.value = [startOfMonth(now), endOfMonth(now)];
-//     }
-//   }
-// };
-
 // 使用数组解构
 const handleDateChange = (newRange) => {
   [qTimeCreate.value, qTimeModified.value] = newRange; // 初始化入参
-
+  if (newRange && newRange.length === 2) {
+    const [start, end] = newRange;
+    const daysDiff = differenceInCalendarDays(end, start);
+    if (daysDiff > 31) {
+      MessagePlugin.error('选择的日期范围不能超过31天！');
+      const now = new Date();
+      range1.value = [startOfMonth(now), endOfMonth(now)];
+    }
+  }
+};
+// 弹窗里的日期
+const handleDateChange1 = (newRange) => {
+  [qTimeCreate.value, qTimeModified.value] = newRange;
   if (newRange && newRange.length === 2) {
     const [start, end] = newRange;
     const daysDiff = differenceInCalendarDays(end, start);
@@ -369,10 +451,10 @@ const getWorkgroupInfo = async (id) => {
     });
     // 将班组名转换为表格所需的对象数组格式
     const formattedData1 = result.list.map((item) => {
-      console.log('🚀 ~ formattedData1 ~ item:', item);
       return { workgroupName: item.workgroupName, id: item.id };
     });
     resValue1.value = formattedData1;
+    teamId.value = id;
     // 合并数据
     mergeData();
   } catch (error) {
@@ -391,12 +473,48 @@ const getArrangeCount = async (data) => {
     dateStart: qTimeCreate.value, // 查询开始时间
     dateEnd: qTimeModified.value, // 查询结束时间
   });
+  console.log('🚀 ~ getArrangeCount ~ result:', result);
   const formattedData2 = result.map((item) => {
     return { num: item.num };
   });
   resValue2.value = formattedData2;
   // 合并数据
   mergeData();
+};
+
+// 查询班组
+const getWorkgroupArrangeList = async (id) => {
+  const reslut = await apiMin.workgroupArrange.getList({
+    dateStart: qTimeCreate.value,
+    dateEnd: qTimeModified.value,
+    workgroupId: id,
+  });
+  console.log('🚀 ~ getWorkgroupArrangeList ~ reslut:', reslut);
+  // 存数据
+  workgroupArranges.value = reslut;
+};
+
+// const getShow = (data) => {
+//   return workgroupArranges.value.some((arrange) => {
+//     const arrangeDate = new Date(arrange.datetimeArrange).toISOString().split('T')[0];
+//     console.log('🚀 ~ returnworkgroupArranges.value.some ~ arrangeDate:', arrangeDate);
+//     return arrangeDate === data.formattedDate;
+//   });
+// };
+
+const getShow = (data) => {
+  if (!data || !data.formattedDate) {
+    return false;
+  }
+
+  // 将接口返回的日期格式转换为 'YYYY-MM-DD' 格式
+  const arrangedDates = workgroupArranges.value.map((arrange) => {
+    const arrangeDate = new Date(arrange.datetimeArrange);
+    return `${arrangeDate.getFullYear()}-${(arrangeDate.getMonth() + 1).toString().padStart(2, '0')}-${arrangeDate.getDate().toString().padStart(2, '0')}`;
+  });
+
+  // 检查日历中的日期是否在 arrangedDates 数组中
+  return arrangedDates.includes(data.formattedDate);
 };
 
 // add
@@ -429,15 +547,10 @@ watch(range1, (newValue) => {
 </script>
 <style lang="less" scoped>
 .date-picker-container {
-  display: flex; /* 应用 Flexbox 布局 */
-  align-items: center; /* 垂直居中对齐 */
-  text-align: center;
-  margin-bottom: 10px; /* 添加一些底部外边距 */
-}
-
-.date-picker-container > * {
-  flex: 1; /* 使子元素平均分配空间 */
-  margin-right: 10px; /* 添加右边距 */
+  display: flex;
+  flex-direction: row; /* 子元素水平排列 */
+  justify-content: flex-end; /* 子元素靠右对齐 */
+  align-items: flex-start;
 }
 
 .calendar-container {
@@ -458,8 +571,15 @@ watch(range1, (newValue) => {
   margin-left: 20px; /* 增加左边距 */
 }
 
-.mode-selector {
-  margin-top: 20px;
-  margin-bottom: 10px;
+.status-label {
+  border: 1px solid red; /* Add a red border */
+  color: red; /* Change text color to red */
+  padding: 2px 5px; /* Optional: Add padding for better appearance */
+  border-radius: 4px; /* Optional: Add border radius for rounded corners */
+}
+
+.status-full {
+  border: 1px solid green;
+  color: green;
 }
 </style>
