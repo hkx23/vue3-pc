@@ -6,6 +6,7 @@
     <cmp-card :span="12" :header="t('craftRoute.craftRoute')" header-bordered>
       <cmp-table
         v-model:pagination="pageUI"
+        active-row-type="single"
         :table-column="craftRouteColumn"
         :table-data="craftRouteData.list"
         :loading="loading"
@@ -17,8 +18,10 @@
           <t-button @click="addRouting">{{ t('common.button.add') }}</t-button>
         </template>
         <template #state="{ row }">
-          <t-tag v-if="row.state === 1" theme="success" variant="outline">{{ t('craftRoute.effective') }}</t-tag>
-          <t-tag v-else theme="danger" variant="outline">{{ t('craftRoute.invalid') }}</t-tag>
+          <t-popconfirm v-if="row.state === 1" :content="t('craftRoute.disableNotCount')" @confirm="disable(row.id)">
+            <t-switch :custom-value="[1, 0]" :value="row.state" />
+          </t-popconfirm>
+          <t-switch v-else :custom-value="[1, 0]" :value="row.state" @change="statusChange($event, row)" />
         </template>
         <template #op="{ row }">
           <t-space size="small">
@@ -55,20 +58,19 @@
         <template #button>
           <t-button :disabled="!isSelectRouting" @click="productVisible = true">{{ t('common.button.add') }}</t-button>
           <t-button :disabled="!isSelectRouting" theme="default">{{ t('common.button.import') }}</t-button>
-          <t-button
-            :disabled="!isSelectRouting || routingMapKeys.length === 0"
-            theme="default"
-            @click="deleteProductRelationBatch"
-            >{{ t('common.button.batchDelete') }}</t-button
-          >
+          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="deleteProductRelationBatch">
+            <t-button :disabled="!isSelectRouting || routingMapKeys.length === 0" theme="default">{{
+              t('common.button.batchDelete')
+            }}</t-button>
+          </t-popconfirm>
         </template>
         <template #isDefault="{ row }">
           <t-switch :value="row.isDefault === 1" @change="setProductRelationDefault($event, row.id)"></t-switch>
         </template>
         <template #op="{ row }">
-          <t-link theme="primary" size="small" @click="deleteProductRelation(row.id)">{{
-            t('common.button.delete')
-          }}</t-link>
+          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="deleteProductRelation(row.id)">
+            <t-link theme="primary" size="small">{{ t('common.button.delete') }}</t-link>
+          </t-popconfirm>
         </template>
       </cmp-table>
     </cmp-card>
@@ -102,7 +104,6 @@
 // #region import
 import dayjs from 'dayjs';
 import { find } from 'lodash';
-import { DialogPlugin } from 'tdesign-vue-next';
 import { computed, reactive, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
@@ -282,24 +283,16 @@ const copyRouting = (id: string) => {
   isCopy.value = true;
   eidtRoutingVisible.value = true;
 };
+const statusChange = ($event: any, raw: any) => {
+  if ($event === 1) {
+    enableClick(raw);
+  } else {
+    disable(raw.id);
+  }
+};
 const disable = (id: string) => {
-  const confirmDia = DialogPlugin.confirm({
-    header: t('common.button.disable'),
-    body: t('craftRoute.disableNotCount'),
-    confirmBtn: {
-      loading: false,
-    },
-    onConfirm: () => {
-      confirmDia.update({ confirmBtn: { loading: true } });
-      apiMain.routing.disable(id).then(() => {
-        confirmDia.update({ confirmBtn: { loading: false } });
-        confirmDia.hide();
-        getRouting();
-      });
-    },
-    onClose: () => {
-      confirmDia.hide();
-    },
+  apiMain.routing.disable(id).then(() => {
+    getRouting();
   });
 };
 const enableClick = (row: any) => {
@@ -366,44 +359,14 @@ const getProductRelation = () => {
     });
 };
 const deleteProductRelation = (id: string) => {
-  const confirmDia = DialogPlugin.confirm({
-    header: t('common.dialog.header.tip'),
-    body: t('common.message.confirmDelete'),
-    confirmBtn: {
-      loading: false,
-    },
-    onConfirm: () => {
-      confirmDia.update({ confirmBtn: { loading: true } });
-      apiMain.routingMap.deleteBatch([id]).then(() => {
-        confirmDia.update({ confirmBtn: { loading: false } });
-        confirmDia.hide();
-        getProductRelation();
-      });
-    },
-    onClose: () => {
-      confirmDia.hide();
-    },
+  apiMain.routingMap.deleteBatch([id]).then(() => {
+    getProductRelation();
   });
 };
 const deleteProductRelationBatch = () => {
-  const confirmDia = DialogPlugin.confirm({
-    header: t('common.dialog.header.tip'),
-    body: t('common.message.confirmDelete'),
-    confirmBtn: {
-      loading: false,
-    },
-    onConfirm: () => {
-      confirmDia.update({ confirmBtn: { loading: true } });
-      apiMain.routingMap.deleteBatch(routingMapKeys.value).then(() => {
-        confirmDia.update({ confirmBtn: { loading: false } });
-        confirmDia.hide();
-        getProductRelation();
-        routingMapKeys.value = [];
-      });
-    },
-    onClose: () => {
-      confirmDia.hide();
-    },
+  apiMain.routingMap.deleteBatch(routingMapKeys.value).then(() => {
+    getProductRelation();
+    routingMapKeys.value = [];
   });
 };
 const setProductRelationDefault = ($event: any, id: string) => {
@@ -415,25 +378,3 @@ const setProductRelationDefault = ($event: any, id: string) => {
 };
 // #endregion
 </script>
-
-<style lang="less" scoped>
-// .container {
-//   margin: 20px;
-
-//   .card {
-//     background-color: var(--td-bg-color-container);
-//     border-radius: var(--td-radius-medium);
-//     margin-bottom: 5px;
-
-//     :deep(.t-form__controls-content) {
-//       width: 200px;
-
-//       .t-date-picker,
-//       .t-input-number,
-//       .t-color-picker__trigger {
-//         width: 200px;
-//       }
-//     }
-//   }
-// }
-</style>

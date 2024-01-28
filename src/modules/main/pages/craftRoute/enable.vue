@@ -3,7 +3,7 @@
     v-model:visible="visible"
     :header="t('common.button.enable')"
     :confirm-btn="{ loading }"
-    width="50%"
+    width="60%"
     @confirm="save"
   >
     <t-form ref="routingFormRef" :data="formData" :rules="routingRules" label-width="100px">

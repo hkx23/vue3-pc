@@ -31,15 +31,18 @@
             {{ getWarehouseCategory(slotProps.row.warehouseCategory) }}
           </t-space>
         </template>
+        <template #stateSwitch="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            size="large"
+            @change="onStateRowClick(row)"
+          ></t-switch>
+        </template>
         <template #op="slotProps">
           <t-space :size="8">
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">编辑</t-link>
-            <t-popconfirm
-              :content="slotProps.row.state == 0 ? '是否启用仓库' : '是否禁用仓库'"
-              @confirm="onStateRowClick(slotProps)"
-            >
-              <t-link theme="primary">{{ slotProps.row.state == 0 ? '启用' : '禁用' }}</t-link>
-            </t-popconfirm>
           </t-space>
         </template>
       </cmp-table>
@@ -101,12 +104,12 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { title: 'ERP仓库', width: 85, colKey: 'erpWarehouse' },
   { title: '启用交易上传', width: 120, colKey: 'enableUploadName' },
   { title: '启用交易上传时间', width: 170, colKey: 'datetimeUpload' },
-  { title: '状态', width: 74, colKey: 'stateName' },
+  { title: '状态', width: 86, colKey: 'stateSwitch' },
   { title: '货位管理', width: 100, colKey: 'enableLocationName' },
   { title: '先进先出', width: 100, colKey: 'fifoName' },
   { title: '最后更新人', width: 120, colKey: 'modifier' },
   { title: '最后更新时间', width: 170, colKey: 'timeModified' },
-  { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
+  { title: '操作', align: 'left', fixed: 'right', width: 90, colKey: 'op' },
 ];
 
 // 查询组件
@@ -196,9 +199,9 @@ const getWarehouseCategory = (id: any) => {
   return '';
 };
 const onStateRowClick = async (value: any) => {
-  await api.warehouse.stateChange(value.row.id);
-  MessagePlugin.success('修改成功');
-  fetchTable();
+  await api.warehouse.stateChange(value.id);
+  await fetchTable();
+  MessagePlugin.success('操作成功');
 };
 
 const onConfirmForm = async () => {
