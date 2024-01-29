@@ -75,8 +75,8 @@ const formRef = ref(null);
 const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('business.main.serialNumber'), colKey: 'serial-number', width: 74 },
   { title: t('business.main.mitemCode'), width: 160, colKey: 'mitemCode', sorter: true, filter: { type: 'input' } },
-  { title: t('business.main.mitemName'), width: 160, colKey: 'mitemName' },
-  { title: t('business.main.mitemDesc'), width: 160, colKey: 'mitemDesc' },
+  { title: t('business.main.mitemName'), width: 160, colKey: 'mitemName', sorter: true },
+  { title: t('business.main.mitemDesc'), width: 160, colKey: 'mitemDesc', filter: { type: 'input' } },
   { title: t('business.main.mitemCategoryCode'), width: 160, colKey: 'mitemCategoryCode' },
   { title: t('business.main.mitemCategoryName'), width: 160, colKey: 'mitemCategoryName' },
   { title: t('business.main.uom'), width: 160, colKey: 'uom' },

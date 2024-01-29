@@ -403,6 +403,7 @@ const columns = computed(() => {
         colConfigs.value[existIndex].index = existIndex;
         item.index = existIndex;
         item.width = colConfigs.value[existIndex].width;
+        indexCount = existIndex + 1;
       }
     }
   });
