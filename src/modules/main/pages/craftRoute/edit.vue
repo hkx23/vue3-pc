@@ -716,9 +716,11 @@ const confirmBom = () => {
 .t-form-inline {
   row-gap: var(--td-comp-margin-m);
 }
+
 .drawer-footer {
   text-align: right;
 }
+
 .bom-catory {
   margin-top: 40px;
   padding-right: 5px !important;
