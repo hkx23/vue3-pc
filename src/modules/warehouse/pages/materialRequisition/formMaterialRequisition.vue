@@ -12,7 +12,7 @@
     :close-on-overlay-click="false"
     class="add-form"
   >
-    <cmp-container :full="true" :ghost="true">
+    <cmp-container class="add-form-box" :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-form
           ref="formRef"
@@ -20,9 +20,9 @@
           :show-cancel="true"
           :show-error-message="false"
           :rules="FORM_RULES"
-          label-width="120px"
+          label-width="80px"
         >
-          <t-row :gutter="[32, 16]">
+          <t-row :gutter="[0, 12]">
             <t-col :span="4">
               <t-form-item :label="t('materialRequisition.moScheCodes')" name="moScheCodes">
                 <bcmp-select-business
@@ -73,46 +73,42 @@
           <!-- table表格 -->
         </t-form>
       </cmp-card>
-      <cmp-card :span="12" :ghost="false" :bordered="true">
-        <!-- ################# 汇总表格数据 ###################### -->
-        <cmp-table
-          ref="tableRef"
-          row-key="id"
-          :show-pagination="false"
-          :show-toolbar="false"
-          :table-column="tableMaterialSumColumns"
-          :table-data="tableDataMaterialSum"
-          :hover="false"
-          :stripe="false"
-        >
-        </cmp-table>
-      </cmp-card>
-      <cmp-card :span="12" :ghost="false" :bordered="true">
-        <!-- ################# 明细表格数据 ###################### -->
-        <t-table
-          ref="tableRef"
-          row-key="id"
-          :show-pagination="false"
-          :show-toolbar="false"
-          :loading="loadingMaterialDtl"
-          :columns="tableMaterialDtlColumns"
-          :data="tableDataMaterialRequisition"
-          @row-click="onRowClick"
-        >
-          <template #warehouseName="{ row }">
-            <bcmp-select-business
-              v-model="row.warehouseId"
-              type="warehouseAuth"
-              :show-title="false"
-              @selection-change="(value) => warehouseSubChange(value, row)"
-            ></bcmp-select-business>
-            <!--   v-if="row.id === formData.selectRowId"  <span v-else>{{ row.toWarehouseName }}</span> -->
-          </template>
-          <template #reqQty="{ row }">
-            <t-input-number v-model="row.reqQty" theme="normal"></t-input-number>
-          </template>
-        </t-table>
-      </cmp-card>
+      <!-- ################# 汇总表格数据 ###################### -->
+      <cmp-table
+        ref="tableRef"
+        row-key="id"
+        :show-pagination="false"
+        :show-toolbar="false"
+        :table-column="tableMaterialSumColumns"
+        :table-data="tableDataMaterialSum"
+        :hover="false"
+        :stripe="false"
+      >
+      </cmp-table>
+      <!-- ################# 明细表格数据 ###################### -->
+      <t-table
+        ref="tableRef"
+        row-key="id"
+        :show-pagination="false"
+        :show-toolbar="false"
+        :loading="loadingMaterialDtl"
+        :columns="tableMaterialDtlColumns"
+        :data="tableDataMaterialRequisition"
+        @row-click="onRowClick"
+      >
+        <template #warehouseName="{ row }">
+          <bcmp-select-business
+            v-model="row.warehouseId"
+            type="warehouseAuth"
+            :show-title="false"
+            @selection-change="(value) => warehouseSubChange(value, row)"
+          ></bcmp-select-business>
+          <!--   v-if="row.id === formData.selectRowId"  <span v-else>{{ row.toWarehouseName }}</span> -->
+        </template>
+        <template #reqQty="{ row }">
+          <t-input-number v-model="row.reqQty" theme="normal"></t-input-number>
+        </template>
+      </t-table>
     </cmp-container>
   </t-dialog>
 </template>
@@ -359,12 +355,8 @@ defineExpose({
 });
 </script>
 <style lang="less" scoped>
-:deep(.t-dialog__body) {
+.add-form-box {
   padding: 0 !important;
-}
-
-:deep(.t-dialog) {
-  background: var(--td-bg-color-page) !important;
 }
 </style>
 `
