@@ -13,7 +13,6 @@
         :table-data="moData"
         :fixed-height="true"
         :total="dataTotal"
-        :header-affixed-top="true"
         @refresh="fetchTable"
       >
         <template #moCode="{ row }">
