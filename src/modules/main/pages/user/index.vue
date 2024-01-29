@@ -16,16 +16,20 @@
         :fixed-height="true"
         @refresh="conditionEnter"
       >
+        <template #state="{ row }">
+          <t-popconfirm
+            :content="row.state == 0 ? t('user.confirmEnable') : t('user.confirmDisable')"
+            @confirm="onRowStateChange(row)"
+          >
+            <t-switch :custom-value="[1, 0]" :value="row.state" :default-value="row.state" size="large"></t-switch>
+            <!-- <t-link theme="primary">{{ row.state == 0 ? t('user.enable') : t('user.disable') }}</t-link> -->
+          </t-popconfirm>
+        </template>
         <template #op="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onRowEdit(row)">{{ t('common.button.edit') }}</t-link>
             <t-link theme="primary" @click="onRowPermission(row)">{{ t('user.authority') }}</t-link>
-            <t-popconfirm
-              :content="row.state == 0 ? t('user.confirmEnable') : t('user.confirmDisable')"
-              @confirm="onRowStateChange(row)"
-            >
-              <t-link theme="primary">{{ row.state == 0 ? t('user.enable') : t('user.disable') }}</t-link>
-            </t-popconfirm>
+
             <t-link theme="primary" @click="onRowOrgSetting(row)">{{ t('user.org') }}</t-link>
             <t-link theme="primary" @click="onRowResetPassword(row)">重置密码</t-link>
             <!-- 启用/禁用 -->
@@ -116,6 +120,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('user.displayName')}`, width: 120, colKey: 'displayName' },
   { title: `${t('user.eId')}`, width: 120, colKey: 'epName' },
   { title: `${t('user.defalutOrg')}`, width: 120, colKey: 'orgName' },
+  { title: `${t('user.userStatus')}`, width: 100, colKey: 'state' },
   { title: `${t('user.createTime')}`, width: 120, colKey: 'timeCreate' },
   { title: `${t('user.lastLoginTime')}`, width: 120, colKey: 'timeLastLogin' },
   {
