@@ -24,6 +24,9 @@
         @select-change="onSelectChange"
         @refresh="onFetchGroupData"
       >
+        <template #title>
+          {{ '线边仓列表' }}
+        </template>
         <template #actionSlot="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ '编辑' }}</t-link>

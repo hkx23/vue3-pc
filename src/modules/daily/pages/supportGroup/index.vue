@@ -1,89 +1,87 @@
 <!-- 处理组 -->
 <template>
   <!-- :full-sub-index="[1, 2]" -->
-  <cmp-container :full="false">
+  <cmp-container :full="true" :full-sub-index="[0, 1]">
     <cmp-card>
-      <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
-    </cmp-card>
-    <cmp-card>
-      <!-- ################# 处理组表格数据 ###################### -->
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="pageUI"
-        row-key="id"
-        :hover="false"
-        :stripe="false"
-        :fixed-height="false"
-        :table-column="groupColumns"
-        active-row-type="single"
-        :table-data="supportGroupInUserList.list"
-        :total="supportGroupTotal"
-        :selected-row-keys="selectedRowKeys"
-        @row-click="onGroupSelectChange"
-        @select-change="onSelectChange"
-        @refresh="onFetchGroupData"
-      >
-        <template #title>
-          {{ '处理组列表' }}
-        </template>
-        <template #actionSlot="{ row }">
-          <t-space :size="8">
-            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
-
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
-              <t-link theme="primary" @click="onGroupDelect">{{ t('common.button.delete') }}</t-link>
-            </t-popconfirm>
-          </t-space>
-        </template>
-        <template #button>
-          <t-space :size="8">
-            <t-button theme="primary" @click="onAddTypeData"> 新增处理组 </t-button>
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onGroupDeleteBatches()">
-              <t-button theme="default"> 处理组批量删除 </t-button>
-            </t-popconfirm>
-            <t-button theme="default"> 处理组导入 </t-button>
-          </t-space>
-        </template>
-      </cmp-table>
-    </cmp-card>
-    <cmp-card>
-      <!-- ################# 人员表格数据 ###################### -->
-
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="personPage"
-        row-key="userId"
-        class="son-table"
-        :hover="false"
-        :stripe="false"
-        :fixed-height="false"
-        :table-column="personColumns"
-        active-row-type="single"
-        :table-data="supportPersonInUserList.list"
-        :total="supportPersonTotal"
-        select-on-row-click
-        :selected-row-keys="delPersonRowKeys"
-        @select-change="onPersonSelectChange"
-        @refresh="onFetchPersonData"
-      >
-        <template #title>
-          {{ '人员列表' }}
-        </template>
-        <template #actionSlot>
-          <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelPersonConfirm()">
-            <t-link theme="primary" @click="onDelPersonRow">{{ t('common.button.delete') }}</t-link>
-          </t-popconfirm>
-        </template>
-        <template #button>
-          <t-space :size="8">
-            <t-button theme="primary" @click="onAddPersonData"> 新增用户 </t-button>
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onPersondeleteBatches()">
-              <t-button theme="default"> 用户批量删除 </t-button>
-            </t-popconfirm>
-            <t-button theme="default"> 处理组用户导入 </t-button>
-          </t-space>
-        </template>
-      </cmp-table>
+      <cmp-container :full="false">
+        <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
+        <cmp-card>
+          <!-- ################# 处理组表格数据 ###################### -->
+          <cmp-table
+            ref="tableRef"
+            v-model:pagination="pageUI"
+            :ghost="true"
+            row-key="id"
+            :hover="false"
+            :stripe="false"
+            :table-column="groupColumns"
+            active-row-type="single"
+            :table-data="supportGroupInUserList.list"
+            :total="supportGroupTotal"
+            :selected-row-keys="selectedRowKeys"
+            @row-click="onGroupSelectChange"
+            @select-change="onSelectChange"
+            @refresh="onFetchGroupData"
+          >
+            <template #title>
+              {{ '处理组列表' }}
+            </template>
+            <template #actionSlot="{ row }">
+              <t-space :size="8">
+                <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+                <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
+                  <t-link theme="primary" @click="onGroupDelect(row)">{{ t('common.button.delete') }}</t-link>
+                </t-popconfirm>
+              </t-space>
+            </template>
+            <template #button>
+              <t-space :size="8">
+                <t-button theme="primary" @click="onAddTypeData"> 新增处理组 </t-button>
+                <t-popconfirm theme="default" content="确认删除吗" @confirm="onGroupDeleteBatches()">
+                  <t-button theme="default"> 处理组批量删除 </t-button>
+                </t-popconfirm>
+                <t-button theme="default"> 处理组导入 </t-button>
+              </t-space>
+            </template>
+          </cmp-table>
+        </cmp-card>
+        <cmp-card>
+          <!-- ################# 人员表格数据 ###################### -->
+          <cmp-table
+            ref="tableRef"
+            v-model:pagination="personPage"
+            row-key="userId"
+            :hover="false"
+            :stripe="false"
+            :table-column="personColumns"
+            active-row-type="single"
+            :table-data="supportPersonInUserList.list"
+            :total="supportPersonTotal"
+            select-on-row-click
+            :selected-row-keys="delPersonRowKeys"
+            @select-change="onPersonSelectChange"
+            @refresh="onFetchPersonData"
+          >
+            <template #title>
+              {{ '人员列表' }}
+            </template>
+            <template #actionSlot>
+              <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelPersonConfirm()">
+                <t-link theme="primary" @click="onDelPersonRow">{{ t('common.button.delete') }}</t-link>
+              </t-popconfirm>
+            </template>
+            <template #button>
+              <t-space :size="8">
+                <t-button theme="primary" @click="onAddPersonData"> 新增用户 </t-button>
+                <t-popconfirm theme="default" content="确认删除吗" @confirm="onPersondeleteBatches()">
+                  <t-button theme="default"> 用户批量删除 </t-button>
+                </t-popconfirm>
+                <t-button theme="default"> 处理组用户导入 </t-button>
+              </t-space>
+            </template>
+          </cmp-table>
+        </cmp-card>
+      </cmp-container>
     </cmp-card>
   </cmp-container>
 
@@ -580,8 +578,9 @@ const supportPersonInUserTabData = async () => {
 };
 
 // ！ 删除 单项删除 处理组 点击
-const onGroupDelect = () => {
+const onGroupDelect = (row) => {
   selectedRowKeys.value = [];
+  selectedRowKeys.value.push(row.id);
 };
 
 // ！处理组表格删除确认按钮
@@ -605,9 +604,9 @@ const onGroupDeleteBatches = async () => {
   if (initialLength === supportGroupInUserList.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
-    selectedRowKeys.value = [];
-    MessagePlugin.success('批量删除成功');
   }
+  selectedRowKeys.value = [];
+  MessagePlugin.success('批量删除成功');
   await supportGroupInUserTabData(); // 获取 处理组表格 数据
   selectedRowKeys.value = []; // 置空
 };
@@ -626,7 +625,7 @@ const onDelPersonRow = () => {
 };
 // ！删除 员工 单个 气泡框
 const onDelPersonConfirm = async () => {
-  await api.supportGroup.removePersonBatch({ supportGroupId: selectedRowKeys.value[0], ids: delPersonRowKeys.value });
+  await api.supportGroup.removePersonBatch({ supportGroupId: rowGroupId.value, ids: delPersonRowKeys.value });
   if (supportPersonInUserList.list.length <= 1 && personPage.value.page > 1) {
     personPage.value.page--;
   }
@@ -641,17 +640,17 @@ const onPersondeleteBatches = async () => {
   // 步骤 1: 检查删除前的数据总量
   const initialLength = supportPersonInUserList.list.length;
   // 步骤 2: 执行删除操作
-  await api.supportGroup.removePersonBatch({ supportGroupId: selectedRowKeys.value[0], ids: delPersonRowKeys.value });
+  await api.supportGroup.removePersonBatch({ supportGroupId: rowGroupId.value, ids: delPersonRowKeys.value });
   // 步骤 3: 检查当前页是否还有数据
   if (initialLength === supportPersonInUserList.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
-    MessagePlugin.success('批量删除成功');
   }
-  delPersonRowKeys.value = [];
   await supportPersonInUserTabData(); // 获取 人员表格 数据
   await onAddPersonTabData(); // 获取 添加 表格人员数据
   await onDelPersonTabData(); // 获取 删除 表格人员数据
+  MessagePlugin.success('批量删除成功');
+  delPersonRowKeys.value = [];
 };
 
 // #添加 人员点击 按钮

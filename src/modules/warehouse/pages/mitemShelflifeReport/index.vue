@@ -29,7 +29,7 @@
       </cmp-table>
     </cmp-card>
   </cmp-container>
-  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" width="850px">
+  <t-dialog v-model:visible="formVisible" width="850px" :footer="false">
     <t-card :bordered="true">
       <div class="form-item-box">
         <t-form-item label="仓库">{{ detailRow?.warehouseName }}</t-form-item>
@@ -51,6 +51,9 @@
       style="height: 300px"
       @refresh="onShelfLifeDetails"
     >
+      <template #title>
+        {{ '物料保质期标签明细' }}
+      </template>
     </cmp-table>
   </t-dialog>
 </template>
