@@ -3904,8 +3904,8 @@ export interface MitemVO {
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */

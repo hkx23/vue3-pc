@@ -2189,7 +2189,6 @@ export interface Label {
 export interface MoIssuanceDTO {
   /** 排产单号 */
   moScheCode?: string;
-  /** 排产单Id */
   moScheId?: string;
   /** 发料单号 */
   billNo?: string;
@@ -2273,6 +2272,11 @@ export interface MoIssuanceDtlVO {
   memo?: string;
   /** 来源单据行号 */
   sourceBillLineNo?: string;
+  /**
+   * 行号
+   * @format int32
+   */
+  index?: number;
   moBomId?: string;
   mitemCode?: string;
   mitemName?: string;
@@ -4469,6 +4473,8 @@ export type MoIssuanceVO = {
   datetimeReceipted?: string;
   userReceiptedId?: string;
   moScheId?: string;
+  /** 排产工单 */
+  scheCode?: string;
   /** 车间代码 */
   workshopCode?: string;
   /** 车间名称 */
