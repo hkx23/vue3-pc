@@ -30,7 +30,7 @@
               <t-space :size="8">
                 <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
                 <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
-                  <t-link theme="primary" @click="onGroupDelect">{{ t('common.button.delete') }}</t-link>
+                  <t-link theme="primary" @click="onGroupDelect(row)">{{ t('common.button.delete') }}</t-link>
                 </t-popconfirm>
               </t-space>
             </template>
@@ -579,8 +579,9 @@ const supportPersonInUserTabData = async () => {
 };
 
 // ！ 删除 单项删除 处理组 点击
-const onGroupDelect = () => {
+const onGroupDelect = (row) => {
   selectedRowKeys.value = [];
+  selectedRowKeys.value.push(row.id);
 };
 
 // ！处理组表格删除确认按钮
@@ -604,9 +605,9 @@ const onGroupDeleteBatches = async () => {
   if (initialLength === supportGroupInUserList.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
-    selectedRowKeys.value = [];
-    MessagePlugin.success('批量删除成功');
   }
+  selectedRowKeys.value = [];
+  MessagePlugin.success('批量删除成功');
   await supportGroupInUserTabData(); // 获取 处理组表格 数据
   selectedRowKeys.value = []; // 置空
 };
@@ -625,7 +626,7 @@ const onDelPersonRow = () => {
 };
 // ！删除 员工 单个 气泡框
 const onDelPersonConfirm = async () => {
-  await api.supportGroup.removePersonBatch({ supportGroupId: selectedRowKeys.value[0], ids: delPersonRowKeys.value });
+  await api.supportGroup.removePersonBatch({ supportGroupId: rowGroupId.value, ids: delPersonRowKeys.value });
   if (supportPersonInUserList.list.length <= 1 && personPage.value.page > 1) {
     personPage.value.page--;
   }
@@ -640,17 +641,17 @@ const onPersondeleteBatches = async () => {
   // 步骤 1: 检查删除前的数据总量
   const initialLength = supportPersonInUserList.list.length;
   // 步骤 2: 执行删除操作
-  await api.supportGroup.removePersonBatch({ supportGroupId: selectedRowKeys.value[0], ids: delPersonRowKeys.value });
+  await api.supportGroup.removePersonBatch({ supportGroupId: rowGroupId.value, ids: delPersonRowKeys.value });
   // 步骤 3: 检查当前页是否还有数据
   if (initialLength === supportPersonInUserList.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
     pageUI.value.page--;
-    MessagePlugin.success('批量删除成功');
   }
-  delPersonRowKeys.value = [];
   await supportPersonInUserTabData(); // 获取 人员表格 数据
   await onAddPersonTabData(); // 获取 添加 表格人员数据
   await onDelPersonTabData(); // 获取 删除 表格人员数据
+  MessagePlugin.success('批量删除成功');
+  delPersonRowKeys.value = [];
 };
 
 // #添加 人员点击 按钮
