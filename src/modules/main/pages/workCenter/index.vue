@@ -20,15 +20,13 @@
     @delete="onDelete"
   ></detailed>
   <cmp-container :full="true">
-    <cmp-card :span="12">
-      <t-tabs v-model="valueItem" @change="onHandelArr">
-        <t-tab-panel v-for="item in allType" :key="item.wcType" :value="item.id" :label="item.wcType">
-          <template #label>
-            <div>{{ item.wcType }}{{ item.code !== 0 ? `(${item.code})` : '' }}</div>
-          </template>
-        </t-tab-panel>
-      </t-tabs>
-    </cmp-card>
+    <t-tabs v-model="valueItem" @change="onHandelArr">
+      <t-tab-panel v-for="item in allType" :key="item.wcType" :value="item.id" :label="item.wcType">
+        <template #label>
+          <div>{{ item.wcType }}{{ item.code !== 0 ? `(${item.code})` : '' }}</div>
+        </template>
+      </t-tab-panel>
+    </t-tabs>
     <cmp-card :span="12">
       <cmp-query :opts="opts" @submit="onInput"></cmp-query>
     </cmp-card>
@@ -55,9 +53,7 @@
         @expanded-tree-nodes-change="onExpandedTreeNodesChange"
       >
         <template #wcCode="{ row }">
-          <div>
-            <t-link theme="primary" underline @click="onHandelCenter(row)">{{ row.wcCode }} </t-link>
-          </div>
+          <t-link theme="primary" underline @click="onHandelCenter(row)">{{ row.wcCode }} </t-link>
         </template>
         <template #workshopName="{ row }">
           <div>{{ row.workshopCode }}-{{ row.workshopName }}</div>
@@ -66,7 +62,13 @@
           <div>{{ row.parentWcName ? row.parentWcName : '-' }}</div>
         </template>
         <template #state="{ row }">
-          <div>{{ row.state ? '启用' : '禁用' }}</div>
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            size="large"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
         </template>
         <template #op="{ row }">
           <t-space :size="8">
@@ -74,9 +76,9 @@
             <t-link theme="primary" @click="onAddChilde(row)">新增</t-link>
             <t-link theme="primary" @click="onClickEdit(row)">编辑</t-link>
             <!-- 启用禁用 -->
-            <t-popconfirm :content="row.state ? '确认禁用吗' : '确认启用吗'" @confirm="onDefult(row)">
+            <!-- <t-popconfirm :content="row.state ? '确认禁用吗' : '确认启用吗'" @confirm="onDefult(row)">
               <t-link theme="primary">{{ row.state == 1 ? '禁用' : '启用' }}</t-link>
-            </t-popconfirm>
+            </t-popconfirm> -->
           </t-space>
         </template>
       </t-enhanced-table>
@@ -84,7 +86,7 @@
         v-model="page.current"
         v-model:pageSize="page.pageSize"
         :total="page.total"
-        show-jumper
+        :show-jumper="false"
         style="margin: 20px 0"
         @page-size-change="onPageSizeChange"
         @current-change="onCurrentChange"
@@ -177,65 +179,54 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'wcCode',
     title: '工作中心编号',
-    align: 'center',
     width: '150px',
   },
   {
     colKey: 'wcName',
     title: '名称',
-    align: 'center',
     ellipsis: true,
   },
   {
     colKey: 'wcType',
     title: '类型',
-    align: 'center',
     ellipsis: true,
   },
   {
     colKey: 'workshopName',
     title: '所属车间',
-    align: 'center',
     ellipsis: true,
   },
   {
     colKey: 'wcLocation',
     title: '地点',
-    align: 'center',
     ellipsis: true,
   },
   {
     colKey: 'parentWcName',
     title: '父工作中心',
-    align: 'center',
     ellipsis: true,
     width: '100',
   },
   {
     colKey: 'wcOwner',
     title: '负责人',
-    align: 'center',
   },
   {
     colKey: 'wcObjectName',
     title: '关联设备',
-    align: 'center',
   },
   {
     colKey: 'wcSeq',
     title: '顺序号',
-    align: 'center',
   },
   {
     colKey: 'state',
     title: '状态',
-    align: 'center',
   },
   {
     colKey: 'op',
     title: '操作',
     width: '150px',
-    align: 'center',
     fixed: 'right',
   },
 ];
@@ -276,6 +267,14 @@ const selectValue = ref();
 onMounted(() => {
   onFetchData();
 });
+
+// ############### ￥######################################￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥状态按钮点击事件
+const onSwitchChange = async (row: any, value: any) => {
+  const isValue = value ? 1 : 0;
+  await api.workcenter.modify({ id: row.id, parentWcId: row.parentWcId, state: isValue });
+  await onFetchData();
+  MessagePlugin.success('操作成功');
+};
 
 // // 下拉事件
 // const onOptionClick = (value: any) => {
@@ -490,25 +489,25 @@ const onHandelAdded = () => {
 };
 
 // 禁用或者启用
-const onDefult = async (row) => {
-  if (row.state === 0) {
-    row.state = 1;
-  } else {
-    const list = row.children.every((item) => {
-      return item.state === 0;
-    });
-    if (!list) {
-      MessagePlugin.error('子级是启用转态,无法禁用');
-      return;
-    }
-    row.state = 0;
-  }
-  try {
-    await api.workcenter.modify({ id: row.id, parentWcId: row.parentWcId, state: row.state });
-  } catch (e) {
-    console.log(e);
-  }
-};
+// const onDefult = async (row) => {
+//   if (row.state === 0) {
+//     row.state = 1;
+//   } else {
+//     const list = row.children.every((item) => {
+//       return item.state === 0;
+//     });
+//     if (!list) {
+//       MessagePlugin.error('子级是启用转态,无法禁用');
+//       return;
+//     }
+//     row.state = 0;
+//   }
+//   try {
+//     await api.workcenter.modify({ id: row.id, parentWcId: row.parentWcId, state: row.state });
+//   } catch (e) {
+//     console.log(e);
+//   }
+// };
 // 保存时子组件控制
 const onHandleSave = (i: boolean) => {
   detailedShow.value = i; // 子窗口

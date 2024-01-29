@@ -20,8 +20,8 @@
       <t-pagination
         v-model:current="bagsSuitcasesData.pageNum"
         v-model:page-size="bagsSuitcasesData.pageSize"
+        :show-jumper="false"
         style="margin-top: 8px"
-        show-jumper
         :show-page-size="true"
         :total="anomalyTotal"
         @page-size-change="onPaginationChange"
