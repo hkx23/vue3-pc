@@ -1,104 +1,102 @@
 <template>
-  <cmp-container>
-    <cmp-card :span="12">
-      <cmp-query :opts="opts" :bool-enter="true" label-width="110px" @submit="onSelsectInput">
-        <template #querySelect="{ param }">
-          <!-- <t-select v-model="ruleTabData.barcodeType" label="条码类型" clearable>
-            <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select> -->
-          <t-select v-model="param.barCodeType" label="条码类型" clearable>
-            <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </template>
-      </cmp-query>
-    </cmp-card>
-    <cmp-card :span="12">
-      <!-- ################# 条码规则 表格数据 ###################### -->
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="pageUI"
-        active-row-type="single"
-        row-key="id"
-        :table-column="groupColumns"
-        :table-data="ruleTabDataList.list"
-        :total="ruleTabTotal"
-        select-on-row-click
-        @select-change="onGenerateChange"
-        @refresh="onRefresh"
-      >
-        <template #title>
-          {{ '条码规则列表' }}
-        </template>
-        <template #stateSwitch="{ row }">
-          <t-switch
-            :custom-value="[1, 0]"
-            :value="row.state"
-            :default-value="row.state"
-            size="large"
-            @change="(value) => onSwitchChange(row, value)"
-          ></t-switch>
-        </template>
-        <template #button>
-          <t-space :size="8">
-            <t-button theme="primary" @click="onAddRuleData"> 新增 </t-button>
-            <t-button theme="default"> 导入关联物料 </t-button>
-          </t-space>
-        </template>
-        <template #op="{ row }">
-          <t-link theme="primary" @click="onEditRow(row)"> 编辑 </t-link>
-        </template>
-      </cmp-table>
-    </cmp-card>
-    <cmp-card :span="12">
-      <!-- ################# 物料分类 表格数据 ###################### -->
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="materialPage"
-        active-row-type="single"
-        class="son-table"
-        row-key="id"
-        :table-column="personColumns"
-        :table-data="materialTabDataList.list"
-        :total="materialTotal"
-        :selected-row-keys="selectedRowKeys"
-        @select-change="rehandleSelectChange"
-        @refresh="onTwoRefresh"
-      >
-        <template #title>
-          {{ '编码分类列表' }}
-        </template>
-        <template #button>
-          <t-space>
-            <div class="left-operation-container">
-              <bcmp-select-business
-                v-model="mitemData.mitemCategoryId"
-                :is-multiple="false"
-                type="mitemCategory"
-                @change="onMaterialTabData"
-              ></bcmp-select-business>
-            </div>
-            <div class="left-operation-container">
-              <bcmp-select-business
-                v-model="mitemData.mitemId"
-                :is-multiple="false"
-                type="mitem"
-                @change="onMaterialTabData"
-              ></bcmp-select-business>
-            </div>
-          </t-space>
-          <div>
-            <t-button theme="primary" :disabled="!personID" @click="onformData"> 关联物料 </t-button>
-          </div>
-          <div>
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches">
-              <t-button theme="default"> 删除 </t-button>
-            </t-popconfirm>
-          </div>
-        </template>
-      </cmp-table>
+  <cmp-container :full="true" :full-sub-index="[0, 1]">
+    <cmp-card>
+      <cmp-container :full="false">
+        <cmp-query :opts="opts" :bool-enter="true" label-width="110px" @submit="onSelsectInput">
+          <template #querySelect="{ param }">
+            <t-select v-model="param.barCodeType" label="条码类型" clearable>
+              <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
+            </t-select>
+          </template>
+        </cmp-query>
+        <!-- ################# 条码规则 表格数据 ###################### -->
+        <cmp-card>
+          <cmp-table
+            ref="tableRef"
+            v-model:pagination="pageUI"
+            active-row-type="single"
+            row-key="id"
+            :table-column="groupColumns"
+            :table-data="ruleTabDataList.list"
+            :total="ruleTabTotal"
+            select-on-row-click
+            @select-change="onGenerateChange"
+            @refresh="onRefresh"
+          >
+            <template #title>
+              {{ '条码规则列表' }}
+            </template>
+            <template #stateSwitch="{ row }">
+              <t-switch
+                :custom-value="[1, 0]"
+                :value="row.state"
+                :default-value="row.state"
+                size="large"
+                @change="(value) => onSwitchChange(row, value)"
+              ></t-switch>
+            </template>
+            <template #button>
+              <t-space :size="8">
+                <t-button theme="primary" @click="onAddRuleData"> 新增 </t-button>
+                <t-button theme="default"> 导入关联物料 </t-button>
+              </t-space>
+            </template>
+            <template #op="{ row }">
+              <t-link theme="primary" @click="onEditRow(row)"> 编辑 </t-link>
+            </template>
+          </cmp-table>
+        </cmp-card>
+        <!-- ################# 物料分类 表格数据 ###################### -->
+        <cmp-card>
+          <cmp-table
+            ref="tableRef"
+            v-model:pagination="materialPage"
+            active-row-type="single"
+            class="son-table"
+            row-key="id"
+            :table-column="personColumns"
+            :table-data="materialTabDataList.list"
+            :total="materialTotal"
+            :selected-row-keys="selectedRowKeys"
+            @select-change="rehandleSelectChange"
+            @refresh="onTwoRefresh"
+          >
+            <template #title>
+              {{ '编码分类列表' }}
+            </template>
+            <template #button>
+              <t-space>
+                <div class="left-operation-container">
+                  <bcmp-select-business
+                    v-model="mitemData.mitemCategoryId"
+                    :is-multiple="false"
+                    type="mitemCategory"
+                    @change="onMaterialTabData"
+                  ></bcmp-select-business>
+                </div>
+                <div class="left-operation-container">
+                  <bcmp-select-business
+                    v-model="mitemData.mitemId"
+                    :is-multiple="false"
+                    type="mitem"
+                    @change="onMaterialTabData"
+                  ></bcmp-select-business>
+                </div>
+              </t-space>
+              <div>
+                <t-button theme="primary" :disabled="!personID" @click="onformData"> 关联物料 </t-button>
+              </div>
+              <div>
+                <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches">
+                  <t-button theme="default"> 删除 </t-button>
+                </t-popconfirm>
+              </div>
+            </template>
+          </cmp-table>
+        </cmp-card>
+      </cmp-container>
     </cmp-card>
   </cmp-container>
-
   <!-- #处理组 dialog 弹窗 -->
   <t-dialog
     v-model:visible="formVisible"
