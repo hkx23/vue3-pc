@@ -47,7 +47,7 @@
       </cmp-table>
     </cmp-card>
     <cmp-card>
-      <!-- ################# 班组表格数据 ###################### -->
+      <!-- ################# 班组人员表格数据 ###################### -->
 
       <cmp-table
         ref="tableRef"
@@ -66,6 +66,9 @@
         @select-change="onPersonSelectChange"
         @refresh="onFetchPersonData"
       >
+        <template #gender="{ row }">
+          {{ row.gender ? '男' : '女' }}
+        </template>
         <template #title>
           {{ '班组人员列表' }}
         </template>
@@ -128,6 +131,9 @@
           :total="addPersonTotal"
           @refresh="onFetchAddData"
         >
+          <template #gender="{ row }">
+            {{ row.gender ? '男' : '女' }}
+          </template>
           <template #addPerson="{ row }">
             <t-button v-if="!commonPersonId.includes(row.id)" size="small" variant="text" @click="addPerson(row)">
               <icon name="add" class="black-icon" />
@@ -156,6 +162,9 @@
           :show-pagination="false"
           @refresh="onFetchDelData"
         >
+          <template #gender="{ row }">
+            {{ row.gender ? '男' : '女' }}
+          </template>
           <template #delPerson="{ row }">
             <t-button size="small" variant="text" @click="delPerson(row)">
               <icon name="remove" class="black-icon" />
