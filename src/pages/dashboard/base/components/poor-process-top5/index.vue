@@ -102,9 +102,9 @@ const getPieData = async () => {
         orient: 'horizontal',
         bottom: 35,
       },
-      tooltip: {
-        trigger: 'item',
-      },
+      // tooltip: {
+      //   trigger: 'item',
+      // },
       series: [
         {
           type: 'pie',
@@ -112,7 +112,7 @@ const getPieData = async () => {
           center: ['50%', '35%'],
           label: {
             show: true,
-            formatter: (param) => `${param.name} (${param.percent}%)`,
+            formatter: (param) => `${param.name} ${param.value} (${param.percent}%)`,
           },
           data: echarData,
           emphasis: {
