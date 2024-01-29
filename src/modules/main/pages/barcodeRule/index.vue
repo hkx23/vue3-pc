@@ -17,6 +17,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
+        active-row-type="single"
         row-key="id"
         :table-column="groupColumns"
         :table-data="ruleTabDataList.list"
@@ -53,6 +54,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="materialPage"
+        active-row-type="single"
         class="son-table"
         row-key="id"
         :table-column="personColumns"
