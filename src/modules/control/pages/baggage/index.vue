@@ -1,10 +1,10 @@
 <!-- 箱包关系报表 -->
 <template>
   <cmp-container :full="true">
-    <cmp-card :span="12">
+    <cmp-card>
       <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
     </cmp-card>
-    <cmp-card :span="12">
+    <cmp-card>
       <t-enhanced-table
         ref="tableRef"
         row-key="id"
@@ -13,23 +13,21 @@
         resizable
         :tree="treeConfig"
         lazy-load
+        class="enhanced-table-baggage"
         @expanded-tree-nodes-change="onExpandedTreeNodesChange"
       >
-        <template #footerSummary>
-          <t-pagination
-            v-model:current="bagsSuitcasesData.pageNum"
-            v-model:page-size="bagsSuitcasesData.pageSize"
-            style="margin-top: 8px"
-            show-jumper
-            :show-page-size="true"
-            :total="anomalyTotal"
-            @page-size-change="onPaginationChange"
-            @current-change="onCurrentChange"
-          />
-        </template>
       </t-enhanced-table>
+      <t-pagination
+        v-model:current="bagsSuitcasesData.pageNum"
+        v-model:page-size="bagsSuitcasesData.pageSize"
+        style="margin-top: 8px"
+        show-jumper
+        :show-page-size="true"
+        :total="anomalyTotal"
+        @page-size-change="onPaginationChange"
+        @current-change="onCurrentChange"
+      />
     </cmp-card>
-    <cmp-card :ghost="true" :span="12"> </cmp-card>
   </cmp-container>
 </template>
 <script setup lang="ts">
@@ -247,4 +245,8 @@ const onInput = async (context) => {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.enhanced-table-baggage {
+  height: 100%;
+}
+</style>
