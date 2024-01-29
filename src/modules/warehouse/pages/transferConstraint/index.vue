@@ -77,7 +77,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="" name="warehouseId" label-width="10px">
+          <t-form-item label="" name="warehouseId">
             <t-select v-model="businessTabData.warehouseId" @popup-visible-change="onSourceRepositoryFocus">
               <t-option
                 v-for="item in onSourceRepositoryDropDownList"
@@ -102,7 +102,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="" name="toWWarehouseId" label-width="10px">
+          <t-form-item label="" name="toWWarehouseId">
             <t-select v-model="businessTabData.toWWarehouseId" @popup-visible-change="onTargetWarehouseFocus">
               <t-option
                 v-for="item in onTargetWarehouseDropDownList"
