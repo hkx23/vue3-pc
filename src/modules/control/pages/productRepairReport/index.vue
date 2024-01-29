@@ -14,6 +14,9 @@
         :total="total"
         @refresh="onRefresh"
       >
+        <template #title>
+          {{ '产品维修列表' }}
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
