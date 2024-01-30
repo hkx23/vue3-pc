@@ -53,6 +53,43 @@
   </cmp-container>
   <!-- 弹窗 -->
   <t-dialog v-model:visible="containerVisible" :footer="false" :close-on-overlay-click="false" :header="formTitle">
+    <!--    <t-form :data="formData" :rules="rules" label-width="110px" @submit="submit1" @reset="cancel">
+      <t-row :gutter="[32, 16]">
+        <t-col :span="6">
+          <t-form-item label="容器类型编码" name="containerTypeCode">
+            <t-input v-model="formData.containerTypeCode"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="容器类型编码" name="containerTypeCode">
+            <t-input v-model="formData.containerTypeCode"></t-input>
+          </t-form-item>
+        </t-col>
+      </t-row>
+      <t-row>
+        <t-col :span="6">
+          <t-form-item label="容器类型名称" name="containerTypeName">
+            <t-input v-model="formData.containerTypeName"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="容器类型描述" name="containerTypeDesc">
+            <t-input v-model="formData.containerTypeDesc"></t-input>
+          </t-form-item>
+        </t-col>
+      </t-row>
+      <t-row>
+        <t-col :span="6">
+          <t-form-item label="启用">
+            <t-switch v-model="formData.state" :custom-value="[1, 0]" />
+          </t-form-item>
+        </t-col>
+      </t-row>
+      <div class="dialog-footer">
+        <t-button theme="primary" type="reset">取消</t-button>
+        <t-button theme="primary" type="submit">提交</t-button>
+      </div>
+    </t-form> -->
     <t-form :data="formData" :rules="rules" label-width="110px" @submit="submit1" @reset="cancel">
       <t-form-item label="容器类型编码" name="containerTypeCode">
         <t-input v-model="formData.containerTypeCode"></t-input>
@@ -66,12 +103,10 @@
       <t-form-item label="启用">
         <t-switch v-model="formData.state" :custom-value="[1, 0]" />
       </t-form-item>
-      <t-form-item>
-        <div class="dialog-footer">
-          <t-button theme="primary" type="reset">取消</t-button>
-          <t-button theme="primary" type="submit">提交</t-button>
-        </div>
-      </t-form-item>
+      <div class="dialog-footer">
+        <t-button theme="primary" type="reset">取消</t-button>
+        <t-button theme="primary" type="submit">提交</t-button>
+      </div>
     </t-form>
   </t-dialog>
 </template>

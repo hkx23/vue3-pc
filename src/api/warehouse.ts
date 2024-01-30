@@ -2340,15 +2340,15 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3118,6 +3118,55 @@ export interface LineWarehouseSearch {
   workcenterId?: string;
   /** 多个工作中心ID */
   workcenterIds?: string[];
+}
+
+/** 线边仓表 */
+export interface LineWarehouse {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workcenterId?: string;
+  warehouseId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLineWarehouse = {
+  list?: LineWarehouse[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLineWarehouse {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLineWarehouse;
 }
 
 /** 显示产品条码管理 */
@@ -6506,6 +6555,21 @@ export const api = {
      */
     modifyLineWarehouse: (data: LineWarehouseSearch) =>
       http.request<ResultObject['data']>(`/api/warehouse/lineWarehouse/modifyLineWarehouse`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 线边仓表
+     * @name Search
+     * @summary 业务组件接口
+     * @request POST:/lineWarehouse/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataLineWarehouse['data']>(`/api/warehouse/lineWarehouse/items`, {
         method: 'POST',
         body: data as any,
       }),

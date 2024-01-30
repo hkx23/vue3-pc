@@ -3900,12 +3900,12 @@ export interface MitemVO {
   stateName?: string;
   isState?: boolean;
   isProductName?: string;
-  isProductChecked?: boolean;
   isRawName?: string;
+  isProductChecked?: boolean;
+  isBatchName?: string;
+  isInProcessChecked?: boolean;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
 }
 
 /** 响应数据 */

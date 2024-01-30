@@ -24,14 +24,15 @@
                   :columns="tableColumns"
                   :data="tableData"
                   :row-class-name="getRowClassName"
+                  active-row-type="single"
                   empty="请先选择车间"
                   @row-click="onRowClick"
                   >>
                   <!-- 取时间段排了多少天  差值 或者  不等于0 就是已排天数      num等于差值就是已排满 -->
                   <template #num="{ row }">
-                    <span v-if="row.num == '0'" class="status-label">待排</span>
+                    <span v-if="row.num == 0" class="status-label">待排</span>
                     <!-- num < 0 && < dayDatas -->
-                    <span v-if="row.num > '0' && row.num < dayDatas" class="status-label">已排班{{ dayDatas }}天</span>
+                    <span v-if="row.num > 0 && row.num < dayDatas" class="status-label">已排班{{ dayDatas }}天</span>
                     <span v-if="row.num == dayDatas" class="status-label status-full">排满</span>
                   </template>
 
@@ -225,9 +226,6 @@ import { onMounted, ref, watch } from 'vue';
 
 import { api as apiMin } from '@/api/control';
 import { api } from '@/api/main';
-// import { daysDiffCalendar, daysDiff, end, start } from 'dayjs';
-
-// import dayjs from 'dayjs';
 
 const formVisible = ref(false);
 const activeTab = ref('first'); // 默认激活的选项卡
@@ -256,7 +254,7 @@ const selectedShift = ref(''); // 绑定到 t-select 的 v-model
 
 // 表格主位栏
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '', width: 120, colKey: 'workgroupName' },
+  { title: '', width: 110, colKey: 'workgroupName' },
   { title: '', width: 100, colKey: 'num' },
   { title: '', width: 0, colKey: 'num1' },
 ];
@@ -347,6 +345,7 @@ onMounted(async () => {
   await TimeStampCalculation();
   await getShiftCode();
   await getWorkgroupInfo({});
+  await getArrangeCount({});
   await getWorkgroupArrangeList({});
 });
 const updateDateRange = (direction) => {
@@ -565,11 +564,19 @@ function checkArray(arr) {
   return true;
 }
 
+// const newGetTimeCreate = new Date(qTimeCreate.value).getTime();
+// const newGetTimeModified = new Date(qTimeModified.value).getTime(); // 结束时间
+// //  一天的毫秒数 86,400,000
+// // 日期转时间戳，相减，除以一天的毫秒数，就可以的到天数
+// const result = (newGetTimeModified - newGetTimeCreate) / 86400000;
+// dayDatas.value = result; // 存天数
+
 // 时间戳计算
 const TimeStampCalculation = () => {
   const start = dayjs(qTimeCreate.value);
   const end = dayjs(qTimeModified.value);
-  const result = end.diff(start, 'day');
+  const diffInMilliseconds = end - start; // 获取两个日期之间的差异（毫秒）
+  const result = diffInMilliseconds / 86400000; // 将毫秒转换为天数
   console.log('🚀 ~ TimeStampCalculation ~ result:', result);
   dayDatas.value = result;
 };
@@ -624,14 +631,18 @@ const handleDateChange1 = (newRange) => {
 const mergeData = () => {
   const mergedData = resValue1.value.map((item1) => {
     // 查找与 item1.id 相匹配的 resValue2 元素
-    const item2 = resValue2.value.find((item2) => item2.id === item1.id);
+    const item2 = resValue2.value.find((item2) => {
+      return item2.id === item1.id;
+    });
     // 如果找到匹配的元素，则使用其 num 值；否则，提供默认值（如 '0' 或 '未知'）
-    const num = item2 ? item2.num : '0';
+    // const num = item2 ? item2.num : '0';
+    const num = item2 ? Number(item2.num) : 0;
     return {
       ...item1,
       num,
     };
   });
+  console.log('🚀 ~ mergedData ~ mergedData:todo', mergedData);
   tableData.value = mergedData;
 };
 
@@ -684,6 +695,7 @@ const getWorkgroupArrangeList = async (id) => {
     dateStart: qTimeCreate.value,
     dateEnd: qTimeModified.value,
     workgroupId: id,
+    workgroupKeyword: '', // todo
   });
   console.log('🚀 ~ getWorkgroupArrangeList ~ result数据源:', result);
 
@@ -799,6 +811,7 @@ watch(selectedShift, (newValue) => {
 
 /* 标签样式 */
 .t-tag {
+  height: 100%;
   display: flex; /* 使用flex布局 */
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
