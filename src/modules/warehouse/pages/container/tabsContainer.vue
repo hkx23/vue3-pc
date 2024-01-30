@@ -21,13 +21,13 @@
           <!-- <t-button v-if="props.selectedRowData" theme="primary" @click="generate">生成</t-button> -->
           <t-button
             v-if="props.selectedRowData && Object.keys(props.selectedRowData).length > 0"
-            theme="primary"
+            theme="default"
             @click="generate"
             >生成</t-button
           >
 
-          <t-button theme="primary">打印</t-button>
-          <t-button theme="primary" @click="onStateRowClick1">作废</t-button>
+          <t-button theme="default">打印</t-button>
+          <t-button theme="default" @click="onStateRowClick1">作废</t-button>
         </template>
 
         <!-- 定义序号列的插槽 -->

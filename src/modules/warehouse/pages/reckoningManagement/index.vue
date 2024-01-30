@@ -2,64 +2,70 @@
 <template>
   <cmp-container :full="true">
     <cmp-container>
-      <!-- cmp-query 查询组件 -->
-      <cmp-container>
+      <cmp-card>
+        <!-- cmp-query 查询组件 -->
+        <cmp-container>
+          <cmp-card>
+            <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
+          </cmp-card>
+        </cmp-container>
+
+        <!-- cmp-table 表格组件   :row-select="{ type: 'single' }"    :selected-row-keys="selectedBillId" -->
         <cmp-card>
-          <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
+          <cmp-table
+            v-model:pagination="pageUI"
+            :loading="loading"
+            row-key="billId"
+            :table-column="tableReckoningManagementColumns"
+            :table-data="tableDataReckoning"
+            :fixed-height="false"
+            :total="dataTotal"
+            empty="没有符合条件的数据"
+            @select-change="handleRowSelectChange"
+            @refresh="tabRefresh"
+          >
+            <template #title>
+              {{ '盘点管理列表' }}
+            </template>
+            <template #button>
+              <t-button theme="primary" @click="onAdd">新增</t-button>
+              <t-button theme="default" @click="scrappedBill(propsdtlId)">作废</t-button>
+              <t-button theme="default">打印</t-button>
+              <t-button theme="default">导出</t-button>
+            </template>
+
+            <template #billNo="slotProps">
+              <t-space :size="8">
+                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps.row)">{{
+                  slotProps.row.billNo
+                }}</t-link>
+              </t-space>
+            </template>
+
+            <!-- 定义序号列的插槽 -->
+            <template #indexSlot="{ rowIndex }">
+              {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+            </template>
+          </cmp-table>
         </cmp-card>
-      </cmp-container>
 
-      <!-- cmp-table 表格组件   :row-select="{ type: 'single' }"    :selected-row-keys="selectedBillId" -->
-      <cmp-card>
-        <cmp-table
-          v-model:pagination="pageUI"
-          :loading="loading"
-          row-key="billId"
-          :table-column="tableReckoningManagementColumns"
-          :table-data="tableDataReckoning"
-          :fixed-height="false"
-          :total="dataTotal"
-          empty="没有符合条件的数据"
-          @select-change="handleRowSelectChange"
-          @refresh="tabRefresh"
-        >
-          <template #button>
-            <t-button theme="primary" @click="onAdd">新增</t-button>
-            <t-button theme="default" @click="scrappedBill(propsdtlId)">作废</t-button>
-            <t-button theme="primary">打印</t-button>
-            <t-button theme="primary">导出</t-button>
-          </template>
-          <template #billNo="slotProps">
-            <t-space :size="8">
-              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps.row)">{{
-                slotProps.row.billNo
-              }}</t-link>
-            </t-space>
-          </template>
-
-          <!-- 定义序号列的插槽 -->
-          <template #indexSlot="{ rowIndex }">
-            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-          </template>
-        </cmp-table>
-      </cmp-card>
-
-      <!-- 物料明细 -->
-      <cmp-card>
-        <cmp-table
-          row-key="id"
-          :loading="loading"
-          :table-column="tableMaterialDetailsColumns"
-          :table-data="tableMaterialDetails"
-          :show-pagination="false"
-          empty="没有符合条件的数据"
-          :show-toolbar="false"
-          :total="dataTotals"
-        >
-          <template #indexSlot="{ rowIndex }">
-            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-          </template>
-        </cmp-table>
+        <!-- 物料明细 -->
+        <cmp-card>
+          <cmp-table
+            row-key="id"
+            :loading="loading"
+            :table-column="tableMaterialDetailsColumns"
+            :table-data="tableMaterialDetails"
+            :show-pagination="false"
+            empty="没有符合条件的数据"
+            :show-toolbar="false"
+            :total="dataTotals"
+          >
+            <template #indexSlot="{ rowIndex }">
+              {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+            </template>
+          </cmp-table>
+        </cmp-card>
       </cmp-card>
     </cmp-container>
   </cmp-container>

@@ -73,19 +73,23 @@
           <template #firmOfferNumberSlot="{ row }">
             <div class="operation-buttons">
               <!-- todo input-number -->
-              <t-button
+              <!-- <t-button
                 :disabled="enableOnlyRefreshExportPrint"
                 variant="outline"
                 theme="default"
                 size="small"
                 @click="increment(row)"
                 >+</t-button
-              >
-              <t-input
+              > -->
+              <!-- <t-input-number v-model="formData1.createNum" :min="1" :max="100"></t-input-number> -->
+
+              <t-input-number
                 v-model.number="row.checkQty"
                 :disabled="enableOnlyRefreshExportPrint"
                 placeholder="输入实盘数"
-              ></t-input>
+                :min="0"
+              ></t-input-number>
+              <!--               
               <t-button
                 :disabled="enableOnlyRefreshExportPrint"
                 variant="outline"
@@ -93,7 +97,7 @@
                 size="small"
                 @click="decrement(row)"
                 >-</t-button
-              >
+              > -->
             </div>
           </template>
           <!-- 差异数的插槽 -->
@@ -155,7 +159,7 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '序号', colKey: 'index', width: 65 },
   { title: '物料编码', colKey: 'mitemCode', width: 85 },
-  { title: '物料描述', width: 85, colKey: 'mitemName' },
+  { title: '物料描述', width: 150, colKey: 'mitemName' },
   { title: '单位', width: 85, colKey: 'uomName' },
   {
     title: '仓库',
@@ -166,7 +170,7 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { title: '货位', width: 100, colKey: 'locationName' },
   // { title: '最小包装', width: 100, colKey: 'warehouseName2' },
   { title: '账面数', width: 100, colKey: 'onhandQty' },
-  { title: '实盘数', width: 240, colKey: 'checkQty', cell: 'firmOfferNumberSlot' },
+  { title: '实盘数', width: 150, colKey: 'checkQty', cell: 'firmOfferNumberSlot' },
   { title: '差异数', width: 100, colKey: 'differenceQty', cell: 'differenceNumberSlot' },
   { title: '差异原因', width: 150, colKey: 'diffReason', cell: 'differenceReasonSlot' },
   { title: '差异调整原因', width: 150, colKey: 'diffAdjustReason', cell: 'diffAdjustReasonSlot' },
@@ -301,16 +305,16 @@ watch(sonId, (newBillId) => {
   }
 });
 
-// 加
-const increment = (row) => {
-  if (!row.checkQty) row.checkQty = 0;
-  row.checkQty++;
-};
-// 减
-const decrement = (row) => {
-  if (!row.checkQty) row.checkQty = 0;
-  if (row.checkQty > 0) row.checkQty--;
-};
+// // 加
+// const increment = (row) => {
+//   if (!row.checkQty) row.checkQty = 0;
+//   row.checkQty++;
+// };
+// // 减
+// const decrement = (row) => {
+//   if (!row.checkQty) row.checkQty = 0;
+//   if (row.checkQty > 0) row.checkQty--;
+// };
 // 接收父组件的参数
 const props = defineProps({
   formTitle: {

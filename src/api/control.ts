@@ -1968,9 +1968,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 

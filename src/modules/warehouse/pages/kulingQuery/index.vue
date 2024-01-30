@@ -10,7 +10,7 @@
       <cmp-card>
         <cmp-table
           v-model:pagination="pageUI"
-          row-key="billNo"
+          row-key="onhandId"
           :table-column="tableReckoningManagementColumns"
           :table-data="tableDataReceipt"
           :total="dataTotal"
@@ -162,6 +162,7 @@ const fetchTable = async () => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
+  console.log('🚀 ~ fetchTable ~ data:', data);
   tableDataReceipt.value = data.list;
   dataTotal.value = data.total;
   setLoading(false);

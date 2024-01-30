@@ -19,12 +19,20 @@
                 </bcmp-select-business>
                 <t-input v-memo="workgroupKeyword" class="demo-select-base" placeholder="搜索班组" />
                 <!-- table -->
-                <t-table row-key="id" :columns="tableColumns" :data="tableData" empty="请先选择车间">
+                <t-table
+                  row-key="id"
+                  :columns="tableColumns"
+                  :data="tableData"
+                  :row-class-name="getRowClassName"
+                  active-row-type="single"
+                  empty="请先选择车间"
+                  @row-click="onRowClick"
+                  >>
                   <!-- 取时间段排了多少天  差值 或者  不等于0 就是已排天数      num等于差值就是已排满 -->
                   <template #num="{ row }">
-                    <span v-if="row.num == '0'" class="status-label">待排</span>
+                    <span v-if="row.num == 0" class="status-label">待排</span>
                     <!-- num < 0 && < dayDatas -->
-                    <span v-if="row.num > 0 && row.num > dayDatas" class="status-label">已排班{{ dayDatas }}</span>
+                    <span v-if="row.num > 0 && row.num < dayDatas" class="status-label">已排班{{ dayDatas }}天</span>
                     <span v-if="row.num == dayDatas" class="status-label status-full">排满</span>
                   </template>
 
@@ -42,12 +50,30 @@
                 <div class="date-picker-container">
                   <!--  week 日期选择 -->
                   <!-- 左箭头 -->
-                  <t-button class="btn-last" title="上月" theme="default" variant="outline">
+                  <!-- <t-button class="btn-last" title="上月" theme="default" variant="outline">
+                    <t-icon name="chevron-left" /> </t-button>-->
+                  <t-button
+                    class="btn-last"
+                    title="上月"
+                    theme="default"
+                    variant="outline"
+                    @click="updateDateRange('last')"
+                  >
                     <t-icon name="chevron-left" />
                   </t-button>
+
                   <t-date-range-picker v-model="range1" allow-input clearable @change="handleDateChange" />
                   <!-- 右箭头 -->
-                  <t-button class="btn-next" title="下月" theme="default" variant="outline">
+                  <!-- <t-button class="btn-next" title="下月" theme="default" variant="outline">
+                    <t-icon name="chevron-right" />
+                  </t-button> -->
+                  <t-button
+                    class="btn-next"
+                    title="下月"
+                    theme="default"
+                    variant="outline"
+                    @click="updateDateRange('next')"
+                  >
                     <t-icon name="chevron-right" />
                   </t-button>
 
@@ -56,23 +82,28 @@
                     <t-tab-panel value="month" label="月"></t-tab-panel>
                   </t-tabs>
                 </div>
-                <t-calendar :controller-config="false" type="month" :mode="calendarMode" :value="currentDate">
+                <t-calendar
+                  :controller-config="false"
+                  type="month"
+                  :mode="calendarMode"
+                  :value="currentDate"
+                  :fill-with-zero="false"
+                >
                   <template #cellAppend="data">
-                    <!-- 取所有数据的时间段 -->
                     <div>
-                      <!-- 添加匹配逻辑 -->
                       <div v-for="arrange in workgroupArranges" :key="arrange.id">
                         <div v-if="isMatch(data.formattedDate, arrange.datetimeArrange)">
-                          <!-- 显示匹配到的数据 -->
+                          <!-- :title="`${item.workgroupName} | ${item.shiftName} | ${item.wcName}`" -->
                           <t-tag
-                            v-for="(tag, index) in tags"
-                            :key="index"
-                            :closable="tag.showClose"
+                            v-for="item in arrange.details"
+                            :key="item.id"
+                            :closable="true"
                             :title="'点击修改'"
+                            class="custom-tag"
+                            @click="editData(item)"
+                            @close="deleteData(item)"
                           >
-                            <div v-for="item in arrange" :key="item.id" @click="editData(item[0].id)">
-                              {{ item[0].wcName }} {{ item[0].shiftName }}
-                            </div>
+                            {{ item.workgroupName }} | {{ item.shiftName }} |{{ item.wcName }}
                           </t-tag>
                         </div>
                       </div>
@@ -101,15 +132,18 @@
             <t-input v-model="resOrgName" disabled></t-input>
           </t-form-item>
         </t-col>
-
         <t-col :span="10">
-          <t-form-item label="日期">
+          <t-form-item v-if="formTitle !== '编辑'" label="日期">
             <t-date-range-picker
               v-model="teamFormData.attendanceExpression"
               allow-input
               clearable
               @change="handleDateChange1"
             />
+          </t-form-item>
+
+          <t-form-item v-else label="日期">
+            <t-input v-model="datetimeArrange" disabled />
           </t-form-item>
         </t-col>
 
@@ -127,6 +161,7 @@
           </t-form-item>
         </t-col>
       </t-row>
+
       <t-row :gutter="[32, 16]" style="margin-top: 16px">
         <t-col :span="10">
           <t-form-item label="出勤模式" name="modeName">
@@ -145,8 +180,14 @@
 
         <t-col :span="10">
           <t-form-item label="班次">
-            <t-select v-model="teamFormData.shiftName" clearable></t-select>
-            <!-- <t-option v-for="item in shiftData" key="id" :label="item.shiftName" :value="item.shiftCode"></t-option> -->
+            <t-select v-model="selectedShift" clearable>
+              <t-option
+                v-for="shift in shiftData"
+                :key="shift.value"
+                :label="shift.label"
+                :value="shift.value"
+              ></t-option>
+            </t-select>
           </t-form-item>
         </t-col>
       </t-row>
@@ -185,9 +226,6 @@ import { onMounted, ref, watch } from 'vue';
 
 import { api as apiMin } from '@/api/control';
 import { api } from '@/api/main';
-// import { daysDiffCalendar, daysDiff, end, start } from 'dayjs';
-
-// import dayjs from 'dayjs';
 
 const formVisible = ref(false);
 const activeTab = ref('first'); // 默认激活的选项卡
@@ -201,30 +239,23 @@ const range1 = ref([new Date(), new Date()]); // 初始日期范围
 const tabPanelValue = ref('week'); // 控制 tab panel 的值
 const qTimeCreate = ref(''); // 查询开始时间
 const qTimeModified = ref(''); // 查询结束时间
-// const qnewRange = ref([]); //查询结束时间
 const resValue1 = ref([]);
 const resValue2 = ref([]);
 const dayDatas = ref(0); // 天数
 const resOrgName = ref('');
 const teamId = ref('');
+const itemId = ref(''); // 编辑id
 const workgroupArranges = ref([]); // 日历数据
-const datetimeArrangeDate = ref([]);
 const shiftData = ref([]); // 班次
 const shiftCodeData = ref(''); // 班次编码
-
-const tags = ref([
-  {
-    name: '可删除标签可删除标签',
-    type: 'default',
-    showClose: true,
-    maxWidth: 100,
-  },
-]);
+const selectedRowId = ref(null);
+const datetimeArrange = ref(''); // 编辑日期
+const selectedShift = ref(''); // 绑定到 t-select 的 v-model
 
 // 表格主位栏
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '', width: 120, colKey: 'workgroupName' },
-  { title: '', width: 80, colKey: 'num' },
+  { title: '', width: 110, colKey: 'workgroupName' },
+  { title: '', width: 100, colKey: 'num' },
   { title: '', width: 0, colKey: 'num1' },
 ];
 
@@ -232,18 +263,32 @@ const eidtFormSubmit = () => {
   formVisible.value = false;
 };
 
-const editData = (e) => {
-  formVisible.value = true;
-  formTitle.value = '编辑班组排班';
-  const reslut = apiMin.workgroupArrange.modifyWorkgroupArrange({ id: e });
-  console.log('🚀 ~ editData ~ reslut:', reslut);
+const onRowClick = (row) => {
+  selectedRowId.value = row.row.id;
+  console.log('点击的行数据：', row); // 打印整个行对象
+  const { id } = row.row;
+  getWorkgroupArrangeList(id);
+};
+
+const getRowClassName = ({ row }) => {
+  return row.id === selectedRowId.value ? 'highlight-row' : '';
+};
+// 点击修改
+const editData = (arrangeData) => {
+  formVisible.value = true; // 打开对话框
+  formTitle.value = '编辑';
+  resOrgName.value = arrangeData.workgroupName;
+  // 设置 teamFormData 的值
+  teamId.value = arrangeData.workgroupId; // 编辑时再次存id
+  itemId.value = arrangeData.id; // 编辑时的id
+  teamFormData.value = {
+    ...arrangeData,
+  };
+  datetimeArrange.value = arrangeData.datetimeArrange;
 };
 
 // 检查日历单元格的日期与后端数据的日期是否匹配
 const isMatch = (calendarDate, arrangeDate) => {
-  // 日历时间段 calendarDate
-  // 数据时间段 arrangeDate
-  // 格式化日期为 YYYY-MM-DD 形式以进行比较
   const formatCalendarDate = formatDate(calendarDate);
   const formatArrangeDate = formatDate(new Date(arrangeDate)); // 假设 arrangeDate 是日期字符串
   return formatCalendarDate === formatArrangeDate;
@@ -255,11 +300,11 @@ const getShiftCode = async () => {
     const res = await api.param.getListByGroupCode({
       parmGroupCode: 'SHIFT_CODE',
     });
-    console.log('🚀 ~ getShiftCode ~ res:', res);
     shiftData.value = res.map((status) => ({
       label: status.label,
       value: status.value,
     }));
+    console.log('🚀 ~ shiftData.value=res.map ~ shiftData.value:', shiftData.value);
   } catch (e) {
     console.error(e);
   }
@@ -278,6 +323,7 @@ const SelectionChangeAttendanceMode = async (item) => {
   teamFormData.value.expression = expressionSpilt;
   teamFormData.value.shiftName = shiftName;
   shiftCodeData.value = shiftCode; // 传code todo
+  selectedShift.value = shiftName; // 更新选中的班次名称（显示班次名称）
 };
 
 const defaultTimeRange = ['', '']; // 默认时间范围
@@ -290,6 +336,7 @@ const teamFormData = ref({
   dateStart: '',
   dateEnd: '',
   shiftName: '', // 班次
+  shiftCode: '',
 });
 
 // 挂载
@@ -297,10 +344,59 @@ onMounted(async () => {
   await initDateRange();
   await TimeStampCalculation();
   await getShiftCode();
+  await getWorkgroupInfo({});
+  await getArrangeCount({});
+  await getWorkgroupArrangeList({});
 });
+const updateDateRange = (direction) => {
+  const amount = tabPanelValue.value === 'week' ? 7 : 1; // 一周或一个月
+  const unit = tabPanelValue.value === 'week' ? 'day' : 'month';
 
+  if (direction === 'next') {
+    range1.value = [
+      dayjs(range1.value[0]).add(amount, unit).toDate(),
+      dayjs(range1.value[1]).add(amount, unit).toDate(),
+    ];
+  } else if (direction === 'last') {
+    range1.value = [
+      dayjs(range1.value[0]).subtract(amount, unit).toDate(),
+      dayjs(range1.value[1]).subtract(amount, unit).toDate(),
+    ];
+  }
+  handleDateChange(range1.value.map((date) => formatDate(date)));
+};
+
+// 删除数据的方法
+const deleteData = async (item) => {
+  console.log('🚀 ~ deleteData ~ item:', item);
+  try {
+    // 调用 API 接口删除数据
+    await apiMin.workgroupArrange.removeWorkgroupArrange(item.id);
+    MessagePlugin.success('删除成功');
+    getWorkgroupArrangeList(selectedRowId.value);
+  } catch (error) {
+    console.error('删除失败：', error);
+    MessagePlugin.error('删除失败');
+  }
+};
+// 重置表单
+const resetFormData = () => {
+  teamFormData.value = {
+    workcenterId: '', // 工作中心
+    attendanceModeId: '', // 出勤模式
+    attendanceExpression: [new Date(), new Date()], // 排班日期，设置为当前日期范围
+    expression: [defaultTimeRange], // 时间段
+    dateStart: '',
+    dateEnd: '',
+    shiftName: '', // 班次
+    shiftCode: '',
+  };
+  resOrgName.value = ''; // 清空班组名称
+  selectedShift.value = ''; // 清空班次选择
+};
+
+// 提交
 const onConfirmForm = async () => {
-  // console.log('submitData===', submitData);
   const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
   const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
   if (!isValid) {
@@ -325,19 +421,41 @@ const onConfirmForm = async () => {
   teamFormData.value.dateStart = formatDate(startDate);
   teamFormData.value.dateEnd = formatDate(endDate);
 
-  // 提交数据到后端
-  await apiMin.workgroupArrange.addWorkgroupArrange({
-    ...teamFormData.value,
-    attendanceExpression: convert,
-    workgroupId: teamId.value, // 选中的班组id  todo 不拿全局
-    shiftCode: shiftCodeData.value, // 班次code
-  });
+  if (formTitle.value === '编辑') {
+    // 调用编辑接口
+    await apiMin.workgroupArrange.modifyWorkgroupArrange({
+      id: itemId.value, // 当前数据id
+      datetimeArrange: datetimeArrange.value,
+      shiftCode: teamFormData.value.shiftCode, // 班次code
+      // timeCreate: teamFormData.value.dateStart,
+      // timeModified: teamFormData.value.dateEnd,
+      workcenterId: teamFormData.value.workcenterId,
+      workgroupId: teamId.value,
+      attendanceModeId: teamFormData.value.attendanceModeId,
+      attendanceExpression: convert,
+    });
+    MessagePlugin.success('编辑成功');
+    // 调用清空表单方法
+    resetFormData(); // 重置表单数据
+  } else {
+    // 调用新增接口
+    await apiMin.workgroupArrange.addWorkgroupArrange({
+      // ... 新增所需的参数 ...
+      ...teamFormData.value,
+      attendanceExpression: convert,
+      workgroupId: teamId.value, // 选中的班组id 不拿全局
+      shiftCode: shiftCodeData.value, // 班次code 出勤模式带出
+    });
+    MessagePlugin.success('新增成功');
+    // 调用清空表单方法
+    resetFormData(); // 重置表单数据
+  }
   // 关闭弹窗
   formVisible.value = false;
+  // 重新获取数据
   getWorkgroupInfo({});
   getArrangeCount({});
   getWorkgroupArrangeList({});
-  MessagePlugin.success('新增成功');
 };
 
 // 过了午夜，后面的数组加 N
@@ -446,17 +564,21 @@ function checkArray(arr) {
   return true;
 }
 
+// const newGetTimeCreate = new Date(qTimeCreate.value).getTime();
+// const newGetTimeModified = new Date(qTimeModified.value).getTime(); // 结束时间
+// //  一天的毫秒数 86,400,000
+// // 日期转时间戳，相减，除以一天的毫秒数，就可以的到天数
+// const result = (newGetTimeModified - newGetTimeCreate) / 86400000;
+// dayDatas.value = result; // 存天数
+
 // 时间戳计算
 const TimeStampCalculation = () => {
-  // const newGetTimeCreate = new Date(qTimeCreate.value).getTime();
-  // const newGetTimeModified = new Date(qTimeModified.value).getTime(); // 结束时间
-  // //  一天的毫秒数 86,400,000
-  // // 日期转时间戳，相减，除以一天的毫秒数，就可以的到天数
-  // const result = (newGetTimeModified - newGetTimeCreate) / 86400000;
-  // dayDatas.value = result; // 存天数
   const start = dayjs(qTimeCreate.value);
   const end = dayjs(qTimeModified.value);
-  const result = end.diff(start, 'day');
+  // const diffInMilliseconds = end - start; // 获取两个日期之间的差异（毫秒）
+  const diffInMilliseconds = end.diff(start, 'day');
+  const result = diffInMilliseconds / 86400000; // 将毫秒转换为天数
+  console.log('🚀 ~ TimeStampCalculation ~ result:', result);
   dayDatas.value = result;
 };
 
@@ -480,9 +602,8 @@ const initDateRange = () => {
   handleDateChange(formattedDates); // 初始化 formattedDates 当前月的时间
 };
 
-// 使用数组解构
 const handleDateChange = (newRange) => {
-  [qTimeCreate.value, qTimeModified.value] = newRange; // 初始化入参
+  [qTimeCreate.value, qTimeModified.value] = newRange; // 初始化入参 使用数组解构
   if (newRange && newRange.length === 2) {
     const [start, end] = newRange;
     const daysDiff = dayjs(end).diff(dayjs(start), 'day');
@@ -507,44 +628,47 @@ const handleDateChange1 = (newRange) => {
   }
 };
 
-// 将 resValue1 和 resValue2 中的数据合并到 tableData
 const mergeData = () => {
-  const mergedData = [];
-  for (let i = 0; i < resValue1.value.length; i++) {
-    const rowData = {
-      id: resValue1.value[i].id,
-      workgroupName: resValue1.value[i].workgroupName,
-      num: resValue2.value[i].num,
+  const mergedData = resValue1.value.map((item1) => {
+    // 查找与 item1.id 相匹配的 resValue2 元素
+    const item2 = resValue2.value.find((item2) => {
+      return item2.id === item1.id;
+    });
+    // 如果找到匹配的元素，则使用其 num 值；否则，提供默认值（如 '0' 或 '未知'）
+    // const num = item2 ? item2.num : '0';
+    const num = item2 ? Number(item2.num) : 0;
+    return {
+      ...item1,
+      num,
     };
-    mergedData.push(rowData);
-  }
+  });
+  console.log('🚀 ~ mergedData ~ mergedData:todo', mergedData);
   tableData.value = mergedData;
 };
 
 // 获取班组信息 在 getWorkgroupInfo 函数中将 resValue1 添加到 tableData
 const getWorkgroupInfo = async (id) => {
-  if (!id) {
-    tableData.value = []; // 如果 id 为空，清空表格数据
-    return;
-  }
-  try {
-    const result = await api.workgroup.getList({
+  let result;
+  if (id) {
+    // 如果提供了id，根据id获取信息
+    result = await api.workgroup.getList({
       pageNum: 1,
       pageSize: 999999,
       workshopId: id,
     });
-    // 将班组名转换为表格所需的对象数组格式
-    const formattedData1 = result.list.map((item) => {
-      return { workgroupName: item.workgroupName, id: item.id };
+  } else {
+    // 如果没有提供id，执行默认逻辑
+    result = await api.workgroup.getList({
+      pageNum: 1,
+      pageSize: 999999,
     });
-    resValue1.value = formattedData1;
-    teamId.value = id;
-    // 合并数据
-    mergeData();
-  } catch (error) {
-    console.error('获取班组信息失败:', error);
-    tableData.value = []; // 出错时重置表格数据
   }
+  // 将班组名转换为表格所需的对象数组格式
+  resValue1.value = result.list.map((item) => {
+    return { workgroupName: item.workgroupName, id: item.id };
+  });
+  // 合并数据
+  mergeData();
 };
 
 // 获取已排天数 在 getArrangeCount 函数中将 resValue2 添加到 tableData
@@ -557,36 +681,36 @@ const getArrangeCount = async (data) => {
     dateStart: qTimeCreate.value, // 查询开始时间
     dateEnd: qTimeModified.value, // 查询结束时间
   });
-  console.log('🚀 ~ getArrangeCount ~ result:', result);
-  const formattedData2 = result.map((item) => {
+  resValue2.value = result.map((item) => {
     return { num: item.num };
   });
-  resValue2.value = formattedData2;
   // 合并数据
-  mergeData();
+  // mergeData();
 };
 
 // 查询班组
 const getWorkgroupArrangeList = async (id) => {
-  const reslut = await apiMin.workgroupArrange.getList({
+  // 调用 API 获取数据
+  const result = await apiMin.workgroupArrange.getList({
     dateStart: qTimeCreate.value,
     dateEnd: qTimeModified.value,
     workgroupId: id,
+    workgroupKeyword: '', // todo
   });
-  // 存所有时间
-  datetimeArrangeDate.value = reslut.map((item) => {
-    return item.datetimeArrange;
-  });
-  // 存数据
-  workgroupArranges.value = reslut;
+  console.log('🚀 ~ getWorkgroupArrangeList ~ result数据源:', result);
 
-  // 取每个时段的时间 datetimeArrange
+  //  result 是一个包含排班信息的数组
+  workgroupArranges.value = result.map((arrange) => ({
+    ...arrange,
+    details: arrange.data,
+  }));
 };
 
 // add
 const addTeamScheduling = (row) => {
-  console.log('🚀 ~ addTeamScheduling ~ row:', row);
+  resetFormData(); // 重置表单数据
   resOrgName.value = row.workgroupName;
+  teamId.value = row.id; // 取班组id 存
   formTitle.value = '班组排班';
   formVisible.value = true;
 };
@@ -594,9 +718,23 @@ const addTeamScheduling = (row) => {
 // 切换选项卡
 const handleTabChange = (newValue) => {
   activeTab.value = newValue;
+  // tabPanelValue.value = newValue;
+  // // 根据选中的标签调整日期范围
+  // if (newValue === 'week') {
+  //   // 设置日期范围为当前日期所在周的开始和结束
+  //   const startOfWeek = dayjs().startOf('week');
+  //   const endOfWeek = dayjs().endOf('week');
+  //   range1.value = [startOfWeek.toDate(), endOfWeek.toDate()];
+  // } else if (newValue === 'month') {
+  //   // 设置日期范围为当前月份的开始和结束
+  //   const startOfMonth = dayjs().startOf('month');
+  //   const endOfMonth = dayjs().endOf('month');
+  //   range1.value = [startOfMonth.toDate(), endOfMonth.toDate()];
+  // }
+  // // 调用 handleDateChange 来更新日期并获取相关数据
+  // handleDateChange(range1.value.map((date) => formatDate(date)));
 };
 
-// 监听 range1 的变化
 watch(range1, (newValue) => {
   if (newValue && newValue.length === 2) {
     const [start, end] = newValue;
@@ -608,6 +746,28 @@ watch(range1, (newValue) => {
       // 否则保持周视图
       tabPanelValue.value = 'week';
     }
+  }
+});
+
+// 监听 range1 的变化
+watch(range1, (newRange) => {
+  if (newRange && newRange.length === 2) {
+    // 日期范围发生变化时的处理逻辑
+    // 调用接口重新获取排班数据
+    const selectedWorkgroupId = selectedRowId.value; // 假设 selectedRowId 保存了当前选中的班组 ID
+    if (selectedWorkgroupId) {
+      getWorkgroupArrangeList(selectedWorkgroupId);
+    }
+  }
+});
+
+// 当选择的班次变化时
+watch(selectedShift, (newValue) => {
+  // 查找班次代码
+  const selectedShiftData = shiftData.value.find((shift) => shift.value === newValue);
+  if (selectedShiftData) {
+    // 更新班次代码
+    teamFormData.value.shiftCode = selectedShiftData.value;
   }
 });
 </script>
@@ -647,5 +807,21 @@ watch(range1, (newValue) => {
 .status-full {
   border: 1px solid green;
   color: green;
+}
+
+/* 标签样式 */
+.t-tag {
+  height: 100%;
+  display: flex; /* 使用flex布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  text-align: center; /* 文本居中 */
+  white-space: normal; /* 允许文本换行 */
+  overflow: hidden; /* 超出部分隐藏 */
+}
+
+/* 调整日历中标签的样式 */
+.custom-tag {
+  margin-bottom: 5px;
 }
 </style>

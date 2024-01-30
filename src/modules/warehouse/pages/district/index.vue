@@ -20,10 +20,14 @@
           <span v-if="row.state == 1">启用</span>
           <span v-else>禁用</span>
         </template>
+        <template #title>
+          {{ '货区维护列表' }}
+        </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
           <t-button theme="default">导入</t-button>
         </template>
+
         <template #op="row">
           <t-space>
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(row)">编辑</t-link>
