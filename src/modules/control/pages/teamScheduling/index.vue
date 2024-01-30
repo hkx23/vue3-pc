@@ -602,9 +602,8 @@ const initDateRange = () => {
   handleDateChange(formattedDates); // 初始化 formattedDates 当前月的时间
 };
 
-// 使用数组解构
 const handleDateChange = (newRange) => {
-  [qTimeCreate.value, qTimeModified.value] = newRange; // 初始化入参
+  [qTimeCreate.value, qTimeModified.value] = newRange; // 初始化入参 使用数组解构
   if (newRange && newRange.length === 2) {
     const [start, end] = newRange;
     const daysDiff = dayjs(end).diff(dayjs(start), 'day');
