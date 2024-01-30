@@ -21,6 +21,9 @@
           <span v-if="row.state == 1">启用</span>
           <span v-else>禁用</span>
         </template>
+        <template #title>
+          {{ '货位维护列表' }}
+        </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
           <t-button theme="default">导入</t-button>

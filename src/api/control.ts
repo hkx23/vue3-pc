@@ -1918,10 +1918,10 @@ export interface ProductReworkVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -1968,9 +1968,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -3168,10 +3168,10 @@ export interface BarcodeWipCollectVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -3284,10 +3284,10 @@ export interface BarcodeWipVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
   workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
   stateName?: string;
   defectCodeStr?: string;
   isState?: boolean;
@@ -4579,7 +4579,7 @@ export const api = {
      *
      * @tags 班组排班表
      * @name GetArrangeCount
-     * @summary 查询班组排班技术
+     * @summary 查询班组排班计数
      * @request POST:/workgroupArrange/getArrangeCount
      * @secure
      */
