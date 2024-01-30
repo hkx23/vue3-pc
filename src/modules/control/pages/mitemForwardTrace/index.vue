@@ -1,37 +1,37 @@
 <template>
-  <cmp-container :full="true">
+  <cmp-container :full="false">
+    <cmp-card :full="false">
+      <cmp-query :opts="opts" :is-reset-query="false" @submit="conditionEnter" @reset="onRestCondition">
+        <template #searchType="{ param }">
+          <t-radio-group v-model="param.searchType" @change="onRestCondition">
+            <t-radio value="mintemBatch">物料批次</t-radio>
+            <t-radio value="mintemLabel">物料标签</t-radio>
+          </t-radio-group>
+        </template>
+        <template #mitemLotNo="{ param }">
+          <t-input
+            v-if="param.searchType === 'mintemBatch'"
+            v-model="param.mitemLotNo"
+            placeholder="请输入批次信息"
+          ></t-input>
+          <t-input
+            v-if="param.searchType === 'mintemLabel'"
+            v-model="param.mitemLabelNo"
+            placeholder="请输入物料标签"
+          ></t-input>
+        </template>
+        <template #mitemId="{ param }">
+          <bcmp-select-business
+            v-if="param.searchType === 'mintemBatch'"
+            v-model="param.mitemId"
+            type="mitem"
+          ></bcmp-select-business>
+        </template>
+      </cmp-query>
+    </cmp-card>
     <cmp-card class="not-full-tab">
       <!-- ################# 工单 表格数据 ###################### -->
       <!-- 查询组件  -->
-      <cmp-card>
-        <cmp-query :opts="opts" :is-reset-query="false" @submit="conditionEnter" @reset="onRestCondition">
-          <template #searchType="{ param }">
-            <t-radio-group v-model="param.searchType" @change="onRestCondition">
-              <t-radio value="mintemBatch">物料批次</t-radio>
-              <t-radio value="mintemLabel">物料标签</t-radio>
-            </t-radio-group>
-          </template>
-          <template #mitemLotNo="{ param }">
-            <t-input
-              v-if="param.searchType === 'mintemBatch'"
-              v-model="param.mitemLotNo"
-              placeholder="请输入批次信息"
-            ></t-input>
-            <t-input
-              v-if="param.searchType === 'mintemLabel'"
-              v-model="param.mitemLabelNo"
-              placeholder="请输入物料标签"
-            ></t-input>
-          </template>
-          <template #mitemId="{ param }">
-            <bcmp-select-business
-              v-if="param.searchType === 'mintemBatch'"
-              v-model="param.mitemId"
-              type="mitem"
-            ></bcmp-select-business>
-          </template>
-        </cmp-query>
-      </cmp-card>
       <!-- <t-space>
           <t-radio-group v-model="queryCondition.searchType" @change="onRestCondition">
             <t-radio value="mintemBatch">物料批次</t-radio>
@@ -57,43 +57,43 @@
             <t-button theme="default" @click="onRestCondition">重置</t-button>
           </t-col>
         </t-space> -->
-      <t-row style="margin-top: 15px"></t-row>
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="物料基础信息" :destroy-on-hide="false">
-          <cmp-card class="padding-top-noline-16 no-h-padding-card">
-            <t-row>
-              <t-space style="font-weight: bold; font-size: larger; margin-left: 10px">物料信息</t-space>
-            </t-row>
-            <t-row style="margin-top: 15px; margin-left: 50px">
-              <t-col :span="3">
-                <t-space>批次：</t-space>
-                <t-space>{{ mitemInfo.lotNo }}</t-space>
-              </t-col>
-              <t-col :span="3">
-                <t-space>物料编码：</t-space>
-                <t-space>{{ mitemInfo.mitemCode }}</t-space>
-              </t-col>
-              <t-col :span="3">
-                <t-space>物料描述：</t-space>
-                <t-space>{{ mitemInfo.mitemDesc }}</t-space>
-              </t-col>
-            </t-row>
-            <t-row style="margin-top: 15px; margin-left: 50px">
-              <t-col :span="3">
-                <t-space>数量：</t-space>
-                <t-space>{{ mitemInfo.qty }}</t-space>
-              </t-col>
-              <t-col :span="3">
-                <t-space v-if="queryCondition.searchType === 'mintemLabel'">当前状态：</t-space>
-                <t-space v-if="queryCondition.searchType === 'mintemLabel'">{{ mitemInfo.statusName }}</t-space>
-              </t-col>
-              <t-col :span="3">
-                <t-space v-if="queryCondition.searchType === 'mintemLabel'">接收时间：</t-space>
-                <t-space v-if="queryCondition.searchType === 'mintemLabel'">{{ mitemInfo.receiveTime }}</t-space>
-              </t-col>
-            </t-row>
-            <t-row style="margin-top: 15px"></t-row>
-          </cmp-card>
+          <div class="material-info-container">
+            <t-card :bordered="false">
+              <t-row>
+                <t-space style="font-weight: bold; font-size: larger">物料信息</t-space>
+              </t-row>
+              <t-row style="margin-top: 15px; margin-left: 30px">
+                <t-col :span="3">
+                  <t-space>批次：</t-space>
+                  <t-space>{{ mitemInfo.lotNo }}</t-space>
+                </t-col>
+                <t-col :span="3">
+                  <t-space>物料编码：</t-space>
+                  <t-space>{{ mitemInfo.mitemCode }}</t-space>
+                </t-col>
+                <t-col :span="3">
+                  <t-space>物料描述：</t-space>
+                  <t-space>{{ mitemInfo.mitemDesc }}</t-space>
+                </t-col>
+                <t-col :span="3">
+                  <t-space>数量：</t-space>
+                  <t-space>{{ mitemInfo.qty }}</t-space>
+                </t-col>
+              </t-row>
+              <t-row style="margin-top: 15px; margin-left: 30px">
+                <t-col :span="3">
+                  <t-space v-if="queryCondition.searchType === 'mintemLabel'">当前状态：</t-space>
+                  <t-space v-if="queryCondition.searchType === 'mintemLabel'">{{ mitemInfo.statusName }}</t-space>
+                </t-col>
+                <t-col :span="3">
+                  <t-space v-if="queryCondition.searchType === 'mintemLabel'">接收时间：</t-space>
+                  <t-space v-if="queryCondition.searchType === 'mintemLabel'">{{ mitemInfo.receiveTime }}</t-space>
+                </t-col>
+              </t-row>
+            </t-card>
+          </div>
           <t-col :span="12" flex="auto">
             <cmp-table
               v-model:pagination="pageUI"
@@ -126,32 +126,34 @@
           </t-col>
         </t-tab-panel>
         <t-tab-panel :value="2" label="供应商信息" :destroy-on-hide="false">
-          <cmp-card class="padding-top-noline-16 no-h-padding-card">
-            <t-row>
-              <t-space style="font-weight: bold; font-size: larger; margin-left: 10px">物料信息</t-space>
-            </t-row>
-            <t-row style="margin-top: 15px; margin-left: 50px">
-              <t-col :span="3">
-                <t-space>供应商编码：</t-space>
-                <t-space>{{ supplierInfo.supplierCode }}</t-space>
-              </t-col>
-              <t-col :span="3">
-                <t-space>供应商名称：</t-space>
-                <t-space>{{ supplierInfo.supplierName }}</t-space>
-              </t-col>
-              <t-col :span="3">
-                <t-space>供应商联系人：</t-space>
-                <t-space>{{ supplierInfo.contactPerson }}</t-space>
-              </t-col>
-            </t-row>
-            <t-row style="margin-top: 15px; margin-left: 50px">
-              <t-col :span="3">
-                <t-space>供应商联系电话：</t-space>
-                <t-space>{{ supplierInfo.contactTel }}</t-space>
-              </t-col>
-            </t-row>
-            <t-row style="margin-top: 15px"></t-row>
-          </cmp-card>
+          <div class="material-info-container">
+            <t-card :bordered="false">
+              <t-row>
+                <t-space style="font-weight: bold; font-size: larger">物料信息</t-space>
+              </t-row>
+              <t-row style="margin-top: 15px; margin-left: 30px">
+                <t-col :span="3">
+                  <t-space>供应商编码：</t-space>
+                  <t-space>{{ supplierInfo.supplierCode }}</t-space>
+                </t-col>
+                <t-col :span="3">
+                  <t-space>供应商名称：</t-space>
+                  <t-space>{{ supplierInfo.supplierName }}</t-space>
+                </t-col>
+                <t-col :span="3">
+                  <t-space>供应商联系人：</t-space>
+                  <t-space>{{ supplierInfo.contactPerson }}</t-space>
+                </t-col>
+              </t-row>
+              <t-row style="margin-top: 15px; margin-left: 30px">
+                <t-col :span="3">
+                  <t-space>供应商联系电话：</t-space>
+                  <t-space>{{ supplierInfo.contactTel }}</t-space>
+                </t-col>
+              </t-row>
+              <t-row style="margin-top: 15px"></t-row>
+            </t-card>
+          </div>
         </t-tab-panel>
         <t-tab-panel :value="3" label="物料质量信息" :destroy-on-hide="false">
           <t-col :span="12" flex="auto">
@@ -614,6 +616,13 @@ const fetchMoTable = async () => {
 </script>
 
 <style lang="less" scoped>
+.material-info-container {
+  border: 1px solid var(--td-border-level-2-color) !important;
+  margin-bottom: 24px;
+  padding: var(--td-comp-paddingTB-xl) var(--td-comp-paddingLR-xl);
+  border-radius: 10px; /* 调整这个值以改变边角的圆滑度 */
+}
+
 .align-right {
   display: flex;
   justify-content: flex-end;
