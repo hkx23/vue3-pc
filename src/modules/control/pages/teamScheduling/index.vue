@@ -575,7 +575,8 @@ function checkArray(arr) {
 const TimeStampCalculation = () => {
   const start = dayjs(qTimeCreate.value);
   const end = dayjs(qTimeModified.value);
-  const diffInMilliseconds = end - start; // 获取两个日期之间的差异（毫秒）
+  // const diffInMilliseconds = end - start; // 获取两个日期之间的差异（毫秒）
+  const diffInMilliseconds = end.diff(start, 'day');
   const result = diffInMilliseconds / 86400000; // 将毫秒转换为天数
   console.log('🚀 ~ TimeStampCalculation ~ result:', result);
   dayDatas.value = result;
