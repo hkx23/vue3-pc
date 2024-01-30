@@ -16,11 +16,7 @@
         :hover="true"
         @refresh="onRefresh"
       >
-        <!-- <template #op="slotProps">
-              <t-space>
-                <t-icon name="edit" @click="onEditRowClick(slotProps)" />
-              </t-space>
-            </template> -->
+        <template #title>工单投料列表 </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
