@@ -11,7 +11,7 @@
             </t-input>
           </cmp-card>
           <cmp-card :ghost="true" :span="12">
-            <t-list stripe :split="true" class="listOll">
+            <t-list stripe :split="false" class="listOll">
               <t-list-item
                 v-for="(item, index) in edabDataArr"
                 :key="index"
@@ -54,6 +54,9 @@
                   :total="edabTotal"
                   @refresh="fetchData"
                 >
+                  <template #title>
+                    {{ '扩展属性列表' }}
+                  </template>
                   <template #required="{ row }">
                     <t-checkbox v-model="row.isRequire"></t-checkbox>
                   </template>
@@ -653,7 +656,7 @@ const onWorkStationSubmit = async (context: { validateResult: boolean }) => {
 }
 
 // .selected-background {
-//   background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
+//   background-color: var(--td-brand-color-light); /* 替换为你希望的颜色 */
 // }
 .full-tab {
   :deep(.t-tabs) {
@@ -670,15 +673,15 @@ const onWorkStationSubmit = async (context: { validateResult: boolean }) => {
 }
 
 .selected-background {
-  color: #fff;
-  background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
+  color: var(--td-brand-color);
+  background-color: var(--td-brand-color-light); /* 替换为你希望的颜色 */
 }
 
 .listOll {
   .selected-background {
-    background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
+    background-color: var(--td-brand-color-light); /* 替换为你希望的颜色 */
     .black-icon {
-      color: #fff;
+      color: var(--td-brand-color);
     }
   }
 }

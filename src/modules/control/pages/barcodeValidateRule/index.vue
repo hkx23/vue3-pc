@@ -27,6 +27,9 @@
                   :total="totalText"
                   @refresh="onLeftFetchData"
                 >
+                  <template #title>
+                    {{ '文件验证列表' }}
+                  </template>
                   <template #actionSlot="{ row }">
                     <t-link theme="primary" style="margin-right: 10px" @click="onTextEditRow(row)"> 编辑 </t-link>
                     <t-popconfirm theme="default" content="确认删除吗" @confirm="onTextDelConfirm(row)">
@@ -76,6 +79,9 @@
                   :total="totalKey"
                   @refresh="onRightFetchData"
                 >
+                  <template #title>
+                    {{ '关键件验证列表' }}
+                  </template>
                   <template #actionSlot="{ row }">
                     <t-link theme="primary" style="margin-right: 10px" @click="onKeyEditRow(row)"> 编辑 </t-link>
                     <t-popconfirm theme="default" content="确认删除吗" @confirm="onKeyDelConfirm(row)">

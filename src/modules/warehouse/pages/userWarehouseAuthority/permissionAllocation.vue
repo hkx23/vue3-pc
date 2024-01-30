@@ -42,12 +42,12 @@
               @refresh="onGetRefresh"
             >
               <template #operate>
-                <t-input
-                  v-model="param.boxCode"
-                  placeholder="请输入仓库编码/仓库名称"
-                  :on-enter="onInputEnter"
-                ></t-input>
-                <t-button :loading="saveLoading" theme="default" @click="onBtnSave">保存仓库权限</t-button>
+                <t-input v-model="param.boxCode" placeholder="请输入仓库编码/仓库名称" :on-enter="onInputEnter">
+                  <template #prefix-icon>
+                    <icon name="search"></icon>
+                  </template>
+                </t-input>
+                <t-button :loading="saveLoading" theme="primary" @click="onBtnSave">保存仓库权限</t-button>
               </template>
             </cmp-table>
           </cmp-card>
@@ -264,7 +264,7 @@ const onInputEnter = async () => {
 }
 
 .selected-background {
-  color: #fff;
-  background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
+  color: var(--td-brand-color);
+  background-color: var(--td-brand-color-light) !important; /* 替换为你希望的颜色 */
 }
 </style>

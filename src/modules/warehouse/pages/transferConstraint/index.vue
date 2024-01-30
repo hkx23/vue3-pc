@@ -18,6 +18,9 @@
         @select-change="rehandleSelectChange"
         @refresh="onFetchData"
       >
+        <template #title>
+          {{ '仓库转移规则列表' }}
+        </template>
         <template #actionSlot="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ '编辑' }}</t-link>
@@ -28,7 +31,7 @@
         </template>
         <template #button>
           <t-space :size="8">
-            <t-button theme="default" @click="onAddClick">新增</t-button>
+            <t-button theme="primary" @click="onAddClick">新增</t-button>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches()">
               <t-button theme="default">批量删除</t-button>
             </t-popconfirm>
@@ -46,19 +49,21 @@
     </cmp-card>
   </cmp-container>
   <!-- dialog 弹窗 -->
-  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="850">
     <t-form ref="formRef" :rules="rules" :data="businessTabData" label-width="120px" @submit="onBusinessSubmit">
-      <!-- 第 1️⃣ 行数据 -->
-      <t-form-item label="业务类型" name="businessCategoryId">
-        <bcmp-select-business
-          v-model="businessTabData.businessCategoryId"
-          :is-multiple="false"
-          type="businessCategory"
-          label=""
-        ></bcmp-select-business>
-      </t-form-item>
-      <!-- 第 2️⃣ 行数据 -->
-      <t-row>
+      <t-row :gutter="[32, 16]">
+        <!-- 第 1️⃣ 行数据 -->
+        <t-col :span="12">
+          <t-form-item label="业务类型" name="businessCategoryId">
+            <bcmp-select-business
+              v-model="businessTabData.businessCategoryId"
+              :is-multiple="false"
+              type="businessCategory"
+              label=""
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
+        <!-- 第 2️⃣ 行数据 -->
         <t-col :span="6">
           <t-form-item label="源仓库" name="sourceTissueId">
             <t-select v-model="businessTabData.sourceTissueId" @popup-visible-change="onSourceTissueChange">
@@ -72,7 +77,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="" name="warehouseId" label-width="10px">
+          <t-form-item label="" name="warehouseId">
             <t-select v-model="businessTabData.warehouseId" @popup-visible-change="onSourceRepositoryFocus">
               <t-option
                 v-for="item in onSourceRepositoryDropDownList"
@@ -83,13 +88,7 @@
             </t-select>
           </t-form-item>
         </t-col>
-      </t-row>
-      <t-row>
-        <t-col></t-col>
-        <t-col></t-col>
-      </t-row>
-      <!-- 第 3️⃣ 行数据 -->
-      <t-row>
+        <!-- 第 3️⃣ 行数据 -->
         <t-col :span="6">
           <t-form-item label="目标仓库" name="toOid">
             <t-select v-model="businessTabData.toOid" @popup-visible-change="onTargetOrgChange">
@@ -103,7 +102,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="" name="toWWarehouseId" label-width="10px">
+          <t-form-item label="" name="toWWarehouseId">
             <t-select v-model="businessTabData.toWWarehouseId" @popup-visible-change="onTargetWarehouseFocus">
               <t-option
                 v-for="item in onTargetWarehouseDropDownList"
@@ -199,11 +198,11 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 ];
 // 表单验证规则
 const rules: FormRules = {
-  sourceTissueId: [{ required: true, message: '业务类型不能为空', trigger: 'change' }],
-  businessCategoryId: [{ required: true, message: '源组织不能为空', trigger: 'change' }],
-  warehouseId: [{ required: true, message: '源仓库不能为空', trigger: 'change' }],
-  toOid: [{ required: true, message: '目标组织不能为空', trigger: 'change' }],
-  toWWarehouseId: [{ required: true, message: '目标仓库不能为空', trigger: 'change' }],
+  businessCategoryId: [{ required: true, trigger: 'change' }],
+  sourceTissueId: [{ required: false, trigger: 'change' }],
+  warehouseId: [{ required: false, trigger: 'change' }],
+  toOid: [{ required: true, trigger: 'change' }],
+  toWWarehouseId: [{ required: true, trigger: 'change' }],
 };
 // 初始渲染
 onMounted(async () => {

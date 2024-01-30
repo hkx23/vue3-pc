@@ -24,6 +24,9 @@
         @select-change="onSelectChange"
         @refresh="onFetchGroupData"
       >
+        <template #title>
+          {{ '线边仓列表' }}
+        </template>
         <template #actionSlot="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ '编辑' }}</t-link>
@@ -38,7 +41,7 @@
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onTeamDeleteBatches()">
               <t-button theme="default"> 批量删除 </t-button>
             </t-popconfirm>
-            <t-button theme="default"> 导入 </t-button>
+            <bcmp-import-button theme="default" type="mitemCategory"></bcmp-import-button>
           </t-space>
         </template>
       </cmp-table>

@@ -12,6 +12,9 @@
         @select-change="rehandleSelectChange"
         @refresh="onFetchData"
       >
+        <template #title>
+          {{ '预警机制列表' }}
+        </template>
         <template #stateSwitch="{ row }">
           <t-switch
             :custom-value="[1, 0]"
@@ -32,10 +35,8 @@
             </t-popconfirm>
           </t-space>
         </template>
-        <template #title>
-          <cmp-query :opts="opts" :bool-enter="true" :show-button="false" @submit="onInput"></cmp-query>
-        </template>
         <template #button>
+          <cmp-query :opts="opts" :bool-enter="true" :show-button="false" @submit="onInput"></cmp-query>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddCfgData"> 新增 </t-button>
             <t-button theme="default"> 导入 </t-button>

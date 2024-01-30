@@ -56,23 +56,23 @@
     <t-form ref="formRef" :rules="rules" :data="teamFormData" @submit="onAnomalyTypeSubmit">
       <!-- 第 1️⃣ 行数据 -->
       <t-row :gutter="[32, 16]">
-        <t-col :span="6">
+        <t-col :span="12">
           <t-form-item label="出勤模式编码" name="modeCode">
             <t-input v-model="teamFormData.modeCode"></t-input>
           </t-form-item>
         </t-col>
-        <t-col :span="6">
+        <t-col :span="12">
           <t-form-item label="出勤模式名称" name="modeName">
             <t-input v-model="teamFormData.modeName"></t-input>
           </t-form-item>
         </t-col>
         <!-- 第 2️⃣ 行数据 -->
-        <t-col :span="6">
+        <t-col :span="12">
           <t-form-item label="出勤模式描述" name="modeDesc">
             <t-input v-model="teamFormData.modeDesc"></t-input>
           </t-form-item>
         </t-col>
-        <t-col :span="6">
+        <t-col :span="12">
           <t-form-item label="班次" name="shiftCode">
             <t-select v-model="teamFormData.shiftCode" :clearable="true">
               <t-option v-for="item in shiftDataList" :key="item.value" :label="item.label" :value="item.value" />
@@ -86,7 +86,7 @@
           justify="space-between"
           align="center"
         >
-          <t-col :span="10">
+          <t-col :span="12">
             <t-form-item :label="'时间段' + (index + 1)" :name="'expression' + index">
               <t-time-range-picker
                 v-model="teamFormData.expression[index]"
@@ -288,37 +288,31 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'modeCode',
     title: '出勤模式编码',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'modeName',
     title: '出勤模式名称',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'modeDesc',
     title: '出勤模式描述',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'shiftName',
     title: '班次',
-    align: 'center',
     width: '80',
   },
   {
     colKey: 'expression',
     title: '工作时间',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'actionSlot',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
   },

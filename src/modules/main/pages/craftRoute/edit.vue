@@ -104,12 +104,7 @@
           <t-option value="NG" />
         </t-select>
       </t-dialog>
-      <t-drawer
-        v-model:visible="propertiesVisible"
-        :header="t('craftRoute.processProperties')"
-        destroy-on-close
-        @confirm="processConfirm"
-      >
+      <t-drawer v-model:visible="propertiesVisible" :header="t('craftRoute.processProperties')" destroy-on-close>
         <t-form ref="propertiesFormRef" :data="propertiesForm" :rules="propertiesRules" label-width="80px">
           <t-form-item :label="t('craftRoute.processStep')" name="processStep">
             <t-input-number
@@ -148,10 +143,16 @@
             <t-button theme="primary" variant="text" @click="showBom">{{ t('common.button.edit') }}</t-button>
           </t-form-item>
         </t-form>
+        <template #footer>
+          <div class="drawer-footer">
+            <t-button variant="outline" @click="propertiesVisible = false">{{ t('common.button.cancel') }}</t-button>
+            <t-button @click="processConfirm">{{ t('common.button.confirm') }}</t-button>
+          </div>
+        </template>
       </t-drawer>
-      <t-dialog v-model:visible="bomVisible" :header="t('craftRoute.processBom')" width="60%" @confirm="confirmBom">
+      <t-dialog v-model:visible="bomVisible" :header="t('craftRoute.processBom')" width="80%" @confirm="confirmBom">
         <t-row>
-          <t-col :span="3" style="padding-right: 5px">
+          <t-col :span="3" class="bom-catory">
             <t-input v-model="bomSearchKeyword" :placeholder="t('common.placeholder.search')" @enter="getMitemCategory">
               <template #suffixIcon>
                 <search-icon :style="{ cursor: 'pointer' }" @click="getMitemCategory" />
@@ -167,6 +168,7 @@
               hover
               size="small"
               table-layout="fixed"
+              class="table"
             >
               <template #op="{ row }">
                 <t-button variant="text" shape="square" @click="addBom(row)"><add-icon /></t-button>
@@ -670,7 +672,7 @@ const confirmBom = () => {
   position: relative;
 
   :deep(.t-form__controls-content) {
-    width: 200px;
+    width: 200px !important;
 
     .t-date-picker,
     .t-input-number,
@@ -713,5 +715,18 @@ const confirmBom = () => {
 
 .t-form-inline {
   row-gap: var(--td-comp-margin-m);
+}
+
+.drawer-footer {
+  text-align: right;
+}
+
+.bom-catory {
+  margin-top: 40px;
+  padding-right: 5px !important;
+
+  .table {
+    margin-top: 8px;
+  }
 }
 </style>

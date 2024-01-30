@@ -105,7 +105,7 @@ const activeTabPath = ref('');
 const handleChangeCurrentTab = (path: string) => {
   const { tabRouters } = tabsRouterStore;
   const route = tabRouters.find((i) => i.path === path);
-  router.push({ path, query: route.query });
+  router.push({ path, query: route?.query });
 };
 
 const handleRemove = (options: TTabRemoveOptions) => {

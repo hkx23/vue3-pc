@@ -20,6 +20,9 @@
         :total="handQtyTotal"
         @refresh="onFetchData"
       >
+        <template #title>
+          {{ '收发存列表' }}
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>

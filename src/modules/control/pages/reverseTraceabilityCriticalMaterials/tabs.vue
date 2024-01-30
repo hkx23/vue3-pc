@@ -277,7 +277,7 @@ import _ from 'lodash';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, defineEmits, defineProps, reactive, ref, watch } from 'vue';
 
-import { api, MoOnboardReportVO, ProductBaseReportVO, TransferHeadVO, WipKeypartReportVO } from '@/api/control';
+import { api, MoOnboardReportVO, ProductBaseReportVO, TransferStockInOutVO, WipKeypartReportVO } from '@/api/control';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
@@ -861,19 +861,19 @@ const inventoryInOut: PrimaryTableCol<TableRowData>[] = [
     width: '60',
   },
   {
-    colKey: 'businessCategoryCode',
+    colKey: 'billNo',
     title: '业务单据号',
     align: 'center',
     width: '130',
   },
   {
-    colKey: 'qty',
+    colKey: 'businessCategoryName',
     title: '交易类型',
     align: 'center',
     width: '120',
   },
   {
-    colKey: 'qty',
+    colKey: 'pickQty',
     title: '数量',
     align: 'center',
     width: '100',
@@ -1186,12 +1186,12 @@ const onBadMaintenanceTwo = async () => {
 };
 
 // 获取 出入库信息 8️⃣8️⃣8️⃣8️⃣8️⃣8️⃣  数据
-const inventoryInOutData = reactive({ list: [] as TransferHeadVO[] });
+const inventoryInOutData = reactive({ list: [] as TransferStockInOutVO[] });
 const inventoryInOutTotal = ref<number>(0);
 const onInventoryInOut = async () => {
   commonParametersList.value.pageNum = pageUI.value.page;
   commonParametersList.value.pageSize = pageUI.value.rows;
-  const res = await api.reversetraceability.getTransferHeadList(commonParametersList.value);
+  const res = await api.reversetraceability.getTransferStockInOutList(commonParametersList.value);
   inventoryInOutData.list = res.list;
   inventoryInOutTotal.value = res.total;
 };
