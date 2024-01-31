@@ -16,6 +16,7 @@
         :hover="true"
         @refresh="onRefresh"
       >
+        <template #title> 过站记录列表 </template>
         <!-- <template #op="slotProps">
               <t-space>
                 <t-icon name="edit" @click="onEditRowClick(slotProps)" />

@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full="true">
+  <cmp-container :full="true" :full-sub-index="[0, 1]">
     <cmp-card class="not-full-tab">
       <!-- ################# 工单 表格数据 ###################### -->
       <t-tabs v-model="tagValue" @change="switchTab">
@@ -12,13 +12,14 @@
               </cmp-card>
               <cmp-card :ghost="true" class="padding-top-noline-16">
                 <cmp-table
+                  key="mainTable"
                   v-model:pagination="pageUI"
                   row-key="deliveryDtlId"
                   :table-column="groupColumns"
                   :table-data="deliveryList.list"
                   :loading="loading"
                   :total="moTabTotal"
-                  style="margin-top: 10px"
+                  :hover="true"
                   :selected-row-keys="delivertRowKeys"
                   @select-change="onSelectionChange"
                   @row-click="onRowClick"
@@ -48,7 +49,6 @@
                   </template>
                 </cmp-table>
               </cmp-card>
-
               <cmp-card header-bordered class="padding-top-noline-16 no-h-padding-card">
                 <cmp-table
                   v-model:pagination="pageUIBracode"

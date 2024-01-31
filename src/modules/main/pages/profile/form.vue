@@ -36,57 +36,59 @@
         </t-form-item>
       </t-col>
       <t-col :span="6">
-        <t-form-item name="profileCategoryValue" :label="profileCategoryValueLabel">
-          <template v-if="formData.profileCategory === 'plant'">
-            <bcmp-select-business
-              v-model="formData.profileCategoryValue"
-              type="plant"
-              :show-title="false"
-            ></bcmp-select-business>
-          </template>
-          <template v-if="formData.profileCategory === 'workshop'">
-            <bcmp-select-business
-              v-model="formData.profileCategoryValue"
-              :show-title="false"
-              type="workshop"
-            ></bcmp-select-business>
-          </template>
-          <template v-if="formData.profileCategory === 'workcenter'">
-            <bcmp-select-business
-              v-model="formData.profileCategoryValue"
-              type="workcenter"
-              :show-title="false"
-            ></bcmp-select-business>
-          </template>
-          <template v-if="formData.profileCategory === 'process'">
-            <bcmp-select-business
-              v-model="formData.profileCategoryValue"
-              type="process"
-              :show-title="false"
-            ></bcmp-select-business>
-          </template>
-          <template v-if="formData.profileCategory === 'workstation'">
-            <bcmp-select-business
-              v-model="formData.profileCategoryValue"
-              type="workstation"
-              :show-title="false"
-            ></bcmp-select-business>
-          </template>
-          <template v-if="formData.profileCategory === 'role'">
-            <bcmp-select-business
-              v-model="formData.profileCategoryValue"
-              type="role"
-              :show-title="false"
-            ></bcmp-select-business>
-          </template>
-          <template v-if="formData.profileCategory === 'user'">
-            <bcmp-select-business
-              v-model="formData.profileCategoryValue"
-              type="user"
-              :show-title="false"
-            ></bcmp-select-business>
-          </template>
-        </t-form-item>
+        <template v-if="formData.profileCategory">
+          <t-form-item name="profileCategoryValue" :label="profileCategoryValueLabel">
+            <template v-if="formData.profileCategory === 'plant'">
+              <bcmp-select-business
+                v-model="formData.profileCategoryValue"
+                type="plant"
+                :show-title="false"
+              ></bcmp-select-business>
+            </template>
+            <template v-if="formData.profileCategory === 'workshop'">
+              <bcmp-select-business
+                v-model="formData.profileCategoryValue"
+                :show-title="false"
+                type="workshop"
+              ></bcmp-select-business>
+            </template>
+            <template v-if="formData.profileCategory === 'workcenter'">
+              <bcmp-select-business
+                v-model="formData.profileCategoryValue"
+                type="workcenter"
+                :show-title="false"
+              ></bcmp-select-business>
+            </template>
+            <template v-if="formData.profileCategory === 'process'">
+              <bcmp-select-business
+                v-model="formData.profileCategoryValue"
+                type="process"
+                :show-title="false"
+              ></bcmp-select-business>
+            </template>
+            <template v-if="formData.profileCategory === 'workstation'">
+              <bcmp-select-business
+                v-model="formData.profileCategoryValue"
+                type="workstation"
+                :show-title="false"
+              ></bcmp-select-business>
+            </template>
+            <template v-if="formData.profileCategory === 'role'">
+              <bcmp-select-business
+                v-model="formData.profileCategoryValue"
+                type="role"
+                :show-title="false"
+              ></bcmp-select-business>
+            </template>
+            <template v-if="formData.profileCategory === 'user'">
+              <bcmp-select-business
+                v-model="formData.profileCategoryValue"
+                type="user"
+                :show-title="false"
+              ></bcmp-select-business>
+            </template>
+          </t-form-item>
+        </template>
       </t-col>
       <t-col :span="6">
         <t-form-item label="配置项值" name="profileValue">

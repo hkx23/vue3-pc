@@ -1,49 +1,54 @@
 <template>
   <cmp-container :full="false">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
-    </cmp-card>
-    <cmp-card :span="12">
       <!-- ################# 处理组表格数据 ###################### -->
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="pageUI"
-        row-key="id"
-        :table-column="tableProductPackRuleColumns"
-        :table-data="tableDataProductPackRule"
-        :loading="loading"
-        :total="dataTotal"
-        :hover="false"
-        :stripe="false"
-        active-row-type="single"
-        select-on-row-click
-        :header-affixed-top="true"
-        @refresh="fetchTable"
-        @cell-click="onEditPackRowClick"
-      >
-        <template #op="{ row }">
-          <t-space :size="8">
-            <t-link theme="primary" @click="onClickEditPackRule(row)">{{ t('common.button.edit') }}</t-link>
-            <t-link theme="primary" :disabled="loading" @click="onDeletePackRowClick(row)">{{
-              t('common.button.delete')
-            }}</t-link>
-          </t-space>
-        </template>
-        <template #button>
-          <t-button @click="onClickAddPackRule">
-            {{ t('common.button.add') }}
-          </t-button>
-        </template>
-      </cmp-table>
+      <cmp-container :full="true" :ghost="true">
+        <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
+        <cmp-table
+          ref="tableRef"
+          v-model:pagination="pageUI"
+          row-key="id"
+          :table-column="tableProductPackRuleColumns"
+          :table-data="tableDataProductPackRule"
+          :loading="loading"
+          :total="dataTotal"
+          :hover="false"
+          :stripe="false"
+          active-row-type="single"
+          select-on-row-click
+          :header-affixed-top="true"
+          @refresh="fetchTable"
+          @cell-click="onEditPackRowClick"
+        >
+          <template #title> {{ t('productRule.tableSubTitle') }} </template>
+          <template #op="{ row }">
+            <t-space :size="8">
+              <t-link theme="primary" @click="onClickEditPackRule(row)">{{ t('common.button.edit') }}</t-link>
+              <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeletePackRowClick(row)">
+                <t-link theme="primary" :disabled="loading">{{ t('common.button.delete') }}</t-link>
+              </t-popconfirm>
+            </t-space>
+          </template>
+          <template #button>
+            <t-button @click="onClickAddPackRule">
+              {{ t('common.button.add') }}
+            </t-button>
+          </template>
+        </cmp-table>
+      </cmp-container>
     </cmp-card>
+
     <cmp-row>
       <!-- ################# 子数据数据 ###################### -->
       <cmp-card :span="6">
         <div class="pack-dtl-table">
-          <t-space size="small" :align="'end'" class="pack-dtl-button">
-            <t-button :disabled="!isShowPackRuleDtlAddBtn" @click="onClickAddPackRuleDtl">
-              {{ t('common.button.add') }}
-            </t-button>
+          <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
+            <div class="table-title">{{ t('productRule.tableSubLeftTitle') }}</div>
+            <t-space size="small" :align="'end'">
+              <t-button :disabled="!isShowPackRuleDtlAddBtn" @click="onClickAddPackRuleDtl">
+                {{ t('common.button.add') }}</t-button
+              >
+            </t-space>
           </t-space>
           <!-- 规则明细表格-->
           <t-enhanced-table
@@ -63,9 +68,9 @@
             <template #op="{ row }">
               <t-space :size="8">
                 <t-link theme="primary" @click="onClickEditPackRuleDtl(row)">{{ t('common.button.edit') }}</t-link>
-                <t-link theme="primary" :disabled="loadingPackDtl" @click="onDeletePackDtlRowClick(row)">{{
-                  t('common.button.delete')
-                }}</t-link>
+                <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeletePackDtlRowClick(row)">
+                  <t-link theme="primary" :disabled="loading">{{ t('common.button.delete') }}</t-link>
+                </t-popconfirm>
               </t-space>
             </template></t-enhanced-table
           >
@@ -85,20 +90,23 @@
           class="son-table"
           @refresh="fetchMitemTable"
         >
+          <template #title> {{ t('productRule.tableSubRightTitle') }} </template>
           <template #op="{ row }">
             <t-space>
-              <t-link theme="primary" :disabled="loadingMitem" @click="onDeleteMitemRowClick(row)">{{
-                t('common.button.delete')
-              }}</t-link>
+              <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteMitemRowClick(row)">
+                <t-link theme="primary" :disabled="loadingMitem">{{ t('common.button.delete') }}</t-link>
+              </t-popconfirm>
             </t-space>
           </template>
           <template #button>
             <t-button v-if="selectPackRuleRow.id" :disabled="loadingMitem" @click="onClickAddPackRuleMitem">
               {{ t('common.button.add') }}
             </t-button>
-            <t-button :disabled="selectMitemRowKeys?.length == 0" theme="default" @click="onBatchDeleteMitemRowClick">
-              {{ t('common.button.batchDelete') }}
-            </t-button>
+            <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onBatchDeleteMitemRowClick">
+              <t-button theme="default" :disabled="selectMitemRowKeys?.length == 0">
+                {{ t('common.button.batchDelete') }}</t-button
+              >
+            </t-popconfirm>
           </template>
         </cmp-table>
       </cmp-card>
@@ -615,7 +623,7 @@ onMounted(() => {
 
   .pack-dtl-button {
     display: flex;
-    justify-content: flex-start;
+    justify-content: flex-end;
     margin-bottom: 8px;
   }
 }
