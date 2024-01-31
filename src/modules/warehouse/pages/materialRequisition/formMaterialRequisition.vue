@@ -167,7 +167,7 @@ const tableMaterialSumColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('materialRequisition.warehouseId')}`, width: 120, colKey: 'warehouseName' },
   { title: `${t('materialRequisition.onHandQty')}`, width: 120, colKey: 'handQty' },
   { title: `${t('materialRequisition.toWarehouseId')}`, width: 120, colKey: 'toWarehouseName' },
-  { title: `${t('materialRequisition.reqQty')}`, width: 140, colKey: 'alreadyPickQty' },
+  { title: `${t('materialRequisition.reqQty')}`, width: 100, colKey: 'reqQty' },
 ];
 
 const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
@@ -198,6 +198,7 @@ const onRowClick = ({ row }) => {
 const warehouseSubChange = (val: any, row: MaterialRequisitionDtlVO) => {
   row.warehouseCode = val.warehouseCode;
   row.warehouseName = val.warehouseName;
+  row.sumKey = `${row.mitemId}-${row.warehouseId}`;
   getWarehouseHandInfo(val, row).then((handInfo) => {
     if (handInfo) {
       row.handQty = handInfo.qty;
@@ -242,8 +243,8 @@ const tableDataMaterialSum = computed(() => {
         const groupedData = groupedDatas[groupKey];
         if (groupedData && groupedData.length > 0) {
           Object.assign(model, groupedData[0]);
-          const alreadyPickQtySum = _.sumBy(groupedData, (o: any) => o.alreadyPickQty);
-          model.alreadyPickQty = alreadyPickQtySum;
+          const reqQtySum = _.sumBy(groupedData, (o: any) => o.reqQty);
+          model.reqQty = reqQtySum;
           list.push(model);
         }
       });
