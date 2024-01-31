@@ -15,6 +15,7 @@
             :loading="loading"
             :table-data="tableContainerData1"
             :table-column="tableContainerColumns1"
+            :total="dataTotal1"
             select-on-row-click
             type="single"
             empty="没有符合条件的数据"

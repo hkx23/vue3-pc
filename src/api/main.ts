@@ -283,6 +283,7 @@ export interface CommonSearch {
   category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
+  customerConditions?: Filter[];
 }
 
 export interface Filter {
@@ -4048,8 +4049,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4682,6 +4683,7 @@ export interface DefectCodeSearch {
   category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
+  customerConditions?: Filter[];
   id?: string;
   /** 多个ID */
   ids?: string[];
