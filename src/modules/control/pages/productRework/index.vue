@@ -462,7 +462,7 @@ const checkBarcodeRepeat = (lbNo) => {
 const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', msg: string) => {
   let content: string;
   if (type === 'success') {
-    content = `${t('productRework.scanSuccess')} , ${msg}`;
+    content = `${t('productRework.scanSuccess')} `;
     // NotifyPlugin.success({ title: t('productRework.scanSuccess'), content, duration: 2000 });
   } else if (type === 'error') {
     content = `${t('productRework.scanFailed')} , ${msg}`;
@@ -770,10 +770,6 @@ onMounted(() => {
 
 .main-page-content-sub {
   margin-top: 8px;
-}
-
-/deep/ .t-form__controls-content {
-  width: 40%;
 }
 
 .text-align-rgiht {
