@@ -32,14 +32,14 @@
                   <template #num="{ row }">
                     <span v-if="row.num == 0" class="status-label">待排</span>
                     <!-- num < 0 && < dayDatas -->
-                    <span v-if="row.num > 0 && row.num < dayDatas" class="status-label">已排班{{ dayDatas }}天</span>
+                    <span v-if="row.num > 0 && row.num < dayDatas" class="status-label">已排班{{ row.num }}天</span>
                     <span v-if="row.num == dayDatas" class="status-label status-full">排满</span>
                   </template>
 
                   <!-- + 号 solt -->
                   <template #num1="{ row }">
                     <t-space v-if="row.num !== dayDatas">
-                      <t-link theme="primary" style="font-weight: 700" @click="addTeamScheduling(row)"> ＋ </t-link>
+                      <t-link theme="primary" style="font-weight: 700" @click="addTeamScheduling(row)">＋</t-link>
                     </t-space>
                   </template>
                 </t-table>
@@ -124,10 +124,9 @@
 
   <!-- 弹窗 -->
   <t-dialog v-model:visible="formVisible" :on-confirm="onConfirmForm" :header="formTitle">
-    <t-form ref="formRef" :data="teamFormData">
+    <t-form :data="teamFormData">
       <t-row :gutter="[32, 16]">
         <t-col :span="10">
-          <!--  <t-row :gutter="[32, 16]"> -->
           <t-form-item label="班组">
             <t-input v-model="resOrgName" disabled></t-input>
           </t-form-item>
@@ -255,7 +254,7 @@ const selectedShift = ref(''); // 绑定到 t-select 的 v-model
 // 表格主位栏
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '', width: 110, colKey: 'workgroupName' },
-  { title: '', width: 100, colKey: 'num' },
+  { title: '', width: 110, colKey: 'num' },
   { title: '', width: 0, colKey: 'num1' },
 ];
 
@@ -290,7 +289,7 @@ const editData = (arrangeData) => {
 // 检查日历单元格的日期与后端数据的日期是否匹配
 const isMatch = (calendarDate, arrangeDate) => {
   const formatCalendarDate = formatDate(calendarDate);
-  const formatArrangeDate = formatDate(new Date(arrangeDate)); // 假设 arrangeDate 是日期字符串
+  const formatArrangeDate = formatDate(new Date(arrangeDate)); // arrangeDate 是日期字符串
   return formatCalendarDate === formatArrangeDate;
 };
 
@@ -304,7 +303,6 @@ const getShiftCode = async () => {
       label: status.label,
       value: status.value,
     }));
-    console.log('🚀 ~ shiftData.value=res.map ~ shiftData.value:', shiftData.value);
   } catch (e) {
     console.error(e);
   }
@@ -312,8 +310,8 @@ const getShiftCode = async () => {
 
 // 选择车间change事件
 const SelectionChange = async (item) => {
-  await getWorkgroupInfo(item.id); // 入参车间id
   await getArrangeCount(item); // 在接口中处理数据
+  await getWorkgroupInfo(item.id); // 入参车间id
   await getWorkgroupArrangeList(item.id);
 };
 
@@ -344,8 +342,8 @@ onMounted(async () => {
   await initDateRange();
   await TimeStampCalculation();
   await getShiftCode();
+  await getArrangeCount({}); // 需要 在 getWorkgroupInfo 之前调用
   await getWorkgroupInfo({});
-  await getArrangeCount({});
   await getWorkgroupArrangeList({});
 });
 const updateDateRange = (direction) => {
@@ -374,6 +372,8 @@ const deleteData = async (item) => {
     await apiMin.workgroupArrange.removeWorkgroupArrange(item.id);
     MessagePlugin.success('删除成功');
     getWorkgroupArrangeList(selectedRowId.value);
+    getWorkgroupInfo({});
+    getArrangeCount({});
   } catch (error) {
     console.error('删除失败：', error);
     MessagePlugin.error('删除失败');
@@ -449,6 +449,10 @@ const onConfirmForm = async () => {
     MessagePlugin.success('新增成功');
     // 调用清空表单方法
     resetFormData(); // 重置表单数据
+
+    getWorkgroupArrangeList(selectedRowId.value);
+    getWorkgroupInfo({});
+    getArrangeCount({});
   }
   // 关闭弹窗
   formVisible.value = false;
@@ -458,7 +462,7 @@ const onConfirmForm = async () => {
   getWorkgroupArrangeList({});
 };
 
-// 过了午夜，后面的数组加 N
+// 过了当天0点，后面的数组加 N
 function appendNFromFirstDecrease(arr) {
   // 查找第一个递减的位置
   let decreaseIndex = -1;
@@ -563,23 +567,17 @@ function checkArray(arr) {
   // 如果数组没有递减的部分，返回true
   return true;
 }
-
-// const newGetTimeCreate = new Date(qTimeCreate.value).getTime();
-// const newGetTimeModified = new Date(qTimeModified.value).getTime(); // 结束时间
-// //  一天的毫秒数 86,400,000
-// // 日期转时间戳，相减，除以一天的毫秒数，就可以的到天数
-// const result = (newGetTimeModified - newGetTimeCreate) / 86400000;
-// dayDatas.value = result; // 存天数
-
-// 时间戳计算
+// 时间戳转换
 const TimeStampCalculation = () => {
   const start = dayjs(qTimeCreate.value);
+  // 获取时间戳
+  const startTimeStamp = start.valueOf();
   const end = dayjs(qTimeModified.value);
-  // const diffInMilliseconds = end - start; // 获取两个日期之间的差异（毫秒）
-  const diffInMilliseconds = end.diff(start, 'day');
-  const result = diffInMilliseconds / 86400000; // 将毫秒转换为天数
-  console.log('🚀 ~ TimeStampCalculation ~ result:', result);
-  dayDatas.value = result;
+  const endTimeStamp = end.valueOf();
+
+  // 计算两个时间戳之间的差值，并转换为天数
+  const diffInDays = (endTimeStamp - startTimeStamp) / 86400000;
+  dayDatas.value = diffInDays;
 };
 
 // 辅助函数，将 Date 转换为 YYYY-MM-DD 格式
@@ -628,24 +626,6 @@ const handleDateChange1 = (newRange) => {
   }
 };
 
-const mergeData = () => {
-  const mergedData = resValue1.value.map((item1) => {
-    // 查找与 item1.id 相匹配的 resValue2 元素
-    const item2 = resValue2.value.find((item2) => {
-      return item2.id === item1.id;
-    });
-    // 如果找到匹配的元素，则使用其 num 值；否则，提供默认值（如 '0' 或 '未知'）
-    // const num = item2 ? item2.num : '0';
-    const num = item2 ? Number(item2.num) : 0;
-    return {
-      ...item1,
-      num,
-    };
-  });
-  console.log('🚀 ~ mergedData ~ mergedData:todo', mergedData);
-  tableData.value = mergedData;
-};
-
 // 获取班组信息 在 getWorkgroupInfo 函数中将 resValue1 添加到 tableData
 const getWorkgroupInfo = async (id) => {
   let result;
@@ -667,8 +647,8 @@ const getWorkgroupInfo = async (id) => {
   resValue1.value = result.list.map((item) => {
     return { workgroupName: item.workgroupName, id: item.id };
   });
-  // 合并数据
-  mergeData();
+  // 调用合并
+  await mergeData();
 };
 
 // 获取已排天数 在 getArrangeCount 函数中将 resValue2 添加到 tableData
@@ -684,8 +664,20 @@ const getArrangeCount = async (data) => {
   resValue2.value = result.map((item) => {
     return { num: item.num };
   });
-  // 合并数据
-  // mergeData();
+};
+
+// 合并数据
+const mergeData = () => {
+  const mergedData = resValue1.value.map((item, index) => {
+    // 获取对应索引位置的 num 值
+    const numValue = resValue2.value[index] ? resValue2.value[index].num : '0';
+    return {
+      ...item,
+      num: numValue,
+    };
+  });
+  console.log('Merged Data:todo', mergedData);
+  tableData.value = mergedData;
 };
 
 // 查询班组
@@ -788,7 +780,7 @@ watch(selectedShift, (newValue) => {
 
 .inputs-container {
   margin-top: 20px;
-  width: 300px; /* 控制输入区域宽度 */
+  width: 304px; /* 控制输入区域宽度 */
 }
 
 .right-aligned-calendar {
@@ -798,10 +790,10 @@ watch(selectedShift, (newValue) => {
 }
 
 .status-label {
-  border: 1px solid red; /* Add a red border */
-  color: red; /* Change text color to red */
-  padding: 2px 5px; /* Optional: Add padding for better appearance */
-  border-radius: 4px; /* Optional: Add border radius for rounded corners */
+  border: 1px solid red;
+  color: red;
+  padding: 2px 5px;
+  border-radius: 4px;
 }
 
 .status-full {
