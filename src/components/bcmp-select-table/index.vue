@@ -6,6 +6,7 @@
       placeholder="Please Select"
       :popup-visible="popupVisible"
       :popup-props="{ overlayInnerStyle: { padding: '5px', width: 'auto' } }"
+      :tag-input-props="{ excessTagsDisplayType: 'scroll' }"
       allow-input
       :label="title"
       :multiple="multiple"

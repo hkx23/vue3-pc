@@ -2340,15 +2340,15 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3745,8 +3745,8 @@ export interface DeliveryCommandVO {
   scheCode?: string;
   /** 物料代码 */
   mitemCode?: string;
-  /** 物料名称 */
-  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
   /** 计量单位名称 */
   uomName?: string;
   /** 状态名称 */
@@ -7040,6 +7040,21 @@ export const api = {
       }),
   },
   deliveryCommand: {
+    /**
+     * No description
+     *
+     * @tags 配送指令表
+     * @name RemoveBatch
+     * @summary 删除配送指令
+     * @request POST:/deliveryCommand/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/warehouse/deliveryCommand/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
