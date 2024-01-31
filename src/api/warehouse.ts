@@ -3119,7 +3119,8 @@ export interface MaterialRequisitionDTO {
   cancelledIds?: string[];
   /** 新增界面-获取明细 */
   moScheCodeList?: string[];
-  mitemId?: string;
+  /** 新增界面-多个物料ID */
+  mitemIds?: string[];
   warehouseId?: string;
   toWarehouseId?: string;
   /** 新增界面-备注 */
@@ -6962,7 +6963,7 @@ export const api = {
      *
      * @tags 领料制单
      * @name GetCommandReqDtls
-     * @summary 新增领料单界面-获取领料明细
+     * @summary 配送指令新增领料单界面-获取领料明细
      * @request POST:/materialRequisition/getCommandReqDtls
      * @secure
      */
@@ -7963,6 +7964,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/businessCategory/addBusinessCategory`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 仓库业务类型
+     * @name GetBusinessCategoryById
+     * @summary 根据ID获得仓库业务规则名称
+     * @request GET:/businessCategory/getBusinessCategoryById
+     * @secure
+     */
+    getBusinessCategoryById: (query: { id: string }) =>
+      http.request<ResultString['data']>(`/api/warehouse/businessCategory/getBusinessCategoryById`, {
+        method: 'GET',
+        params: query,
       }),
   },
   billManagement: {

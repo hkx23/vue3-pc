@@ -59,11 +59,15 @@
         empty="没有符合条件的数据"
       >
         <template #button>
-          <t-button theme="primary" @click="add">新增</t-button>
-          <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
-          <!--   -->
-          <!-- <t-button theme="primary">打印</t-button> -->
-          <t-button theme="default" @click="onRemoveRowClick2">删除</t-button>
+          <t-space :size="8">
+            <t-button theme="primary" @click="add">新增</t-button>
+            <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
+            <!--   -->
+            <!-- <t-button theme="primary">打印</t-button> -->
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onRemoveRowClick2()">
+              <t-button theme="default"> 批量删除 </t-button>
+            </t-popconfirm>
+          </t-space>
         </template>
 
         <!-- 定义序号列的插槽 -->
@@ -118,7 +122,7 @@
     </div>
   </t-dialog>
 
-  <!-- 弹窗2  :footer="false"  todo-->
+  <!-- 弹窗2  容器类型 :footer="false"  todo-->
   <t-dialog v-model:visible="containerVisible2" :footer="false" :close-on-overlay-click="false" :header="diaTilte">
     <t-form :data="formData2" label-width="110px" :rules="rules2">
       <t-form-item label="容器类型" name="containerType">
@@ -303,8 +307,8 @@ const optsContainer2 = computed(() => {
 const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
-  { title: '容器编码', colKey: 'containerCode', width: 80 },
-  { title: '容器名称', width: 80, colKey: 'containerName' },
+  { title: '容器编码', colKey: 'containerCode', width: 100 },
+  { title: '容器名称', width: 100, colKey: 'containerName' },
   { title: '状态', width: 80, colKey: 'statusName' },
 ];
 
@@ -421,7 +425,9 @@ const onInput2 = async (data: any) => {
 };
 
 // 父调子fn
+/* * data 主表接口 的id 查右侧的数据 */
 const fetchTable = async (data: any) => {
+  console.log('🚀 ~ fetchTable ~ data:todo', data);
   setLoading(true);
   inventoryManagement1.value = [];
   tableContainerData1.value = [];
@@ -429,8 +435,9 @@ const fetchTable = async (data: any) => {
     const result = await api.container.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      barcodeRuleId: data,
+      containerTypeId: data, // containerTypeId 必传
     });
+    console.log('🚀 ~ fetchTable ~ result:', result);
     tableContainerData1.value = result.list;
     dataTotal1.value = result.total;
   }
@@ -546,20 +553,8 @@ const onStateRowClick1 = async () => {
     console.error('作废失败:', error);
   }
 };
-// 批量删除  todo
-// const onRemoveRowClick2 = async () => {
-//   try {
-//     // 等待删除操作完成
-//     await api.containerInMitem.removeBatch(selectedRowKeys2.value);
-//     // 删除操作成功，现在调用 fetchTable
-//     await MessagePlugin.success('批量删除成功!');
-//     await fetchTable2({}); // 刷新表格数据
-//   } catch (error) {
-//     console.error('删除失败:', error);
-//   }
-// };
 
-// 批量删除
+// 批量删除 todo
 const onRemoveRowClick2 = async () => {
   // 检查是否所有选中的容器都可以删除
   const canDelete = selectedRowKeys2.value.every((key) => {

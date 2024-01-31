@@ -93,10 +93,10 @@
     </t-form> -->
     <t-form :data="formData" :rules="rules" label-width="110px" @submit="submit1" @reset="cancel">
       <t-form-item label="容器类型编码" name="containerTypeCode">
-        <t-input v-model="formData.containerTypeCode"></t-input>
+        <t-input v-model="formData.containerTypeCode" :disabled="formTitle === '编辑'"></t-input>
       </t-form-item>
       <t-form-item label="容器类型名称" name="containerTypeName">
-        <t-input v-model="formData.containerTypeName"></t-input>
+        <t-input v-model="formData.containerTypeName" :disabled="formTitle === '编辑'"></t-input>
       </t-form-item>
       <t-form-item label="容器类型描述" name="containerTypeDesc">
         <t-input v-model="formData.containerTypeDesc"></t-input>
@@ -199,7 +199,7 @@ const onAddContainer = async () => {
 };
 // 容器编辑
 const onEditRowClick1 = async (row) => {
-  formTitle.value = '编辑容器类型';
+  formTitle.value = '编辑';
   containerVisible.value = true;
   const partialRow = JSON.parse(
     JSON.stringify(row, ['containerTypeCode', 'containerTypeName', 'containerTypeDesc', 'state', 'id']),
@@ -301,9 +301,9 @@ const cancel = () => {
   MessagePlugin.success('已取消');
 };
 
+/* 如果 propsId变化了  调用子组件的 查询方法 fetchTables(propsId) */
 watch(propsId, (propsId) => {
   if (propsId) {
-    // fetchTables(propsId);  调用子组件的 查询方法
     refreshTable.value.fetchTable(propsId);
     refreshTable.value.fetchTable2(propsId);
   }
