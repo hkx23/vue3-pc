@@ -28,16 +28,17 @@
               {{ '集成控制台列表' }}
             </template>
             <template #button>
-              <t-button theme="primary" @click="retransmission">重传</t-button>
+              <!--  @click="retransmissionAll" -->
+              <t-button theme="primary">重传</t-button>
               <t-button theme="default">导出</t-button>
             </template>
 
-            <template #op="row">
+            <template #op>
               <t-space>
-                <t-link variant="text" theme="primary" name="check" @click="onCheckRowClick(row)">查看</t-link>
-                <t-link variant="text" theme="primary" name="retransmission" @click="onRetransmissionRowClick(row)"
-                  >重传</t-link
-                >
+                <!-- @click="onCheckRowClick(row)" -->
+                <t-link variant="text" theme="primary" name="check">查看</t-link>
+                <!-- @click="onRetransmissionRowClick(row)" -->
+                <t-link variant="text" theme="primary" name="retransmission">重传</t-link>
               </t-space>
             </template>
 
@@ -57,7 +58,7 @@
 
 <script setup lang="ts">
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api } from '@/api/warehouse';
@@ -202,11 +203,11 @@ const handleRowSelectChange = (value: any[]) => {
   }
 };
 
-watch(propsdtlId, (newBillId) => {
-  if (newBillId) {
-    fetchTables(newBillId); // 使用新的 billId 调用 fetchTables
-  }
-});
+// watch(propsdtlId, (newBillId) => {
+//   if (newBillId) {
+//     fetchTables(newBillId); // 使用新的 billId 调用 fetchTables
+//   }
+// });
 
 //* 初始渲染
 onMounted(async () => {
@@ -255,10 +256,11 @@ const onInput = async (data: any) => {
   setLoading(false);
 };
 
-const onCheckRowClick = () => {
-  formTitle.value = '事务交易明细';
-  eidtTransactionVisible.value = true;
-};
+// 查看 todo
+// const onCheckRowClick = () => {
+//   formTitle.value = '事务交易明细';
+//   eidtTransactionVisible.value = true;
+// };
 
 // 作废
 // const scrappedBill = async (billId) => {
