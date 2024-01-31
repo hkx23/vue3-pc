@@ -69,7 +69,7 @@
         </t-row>
       </t-form>
       <div class="dialog-footer">
-        <t-button theme="default" type="reset">取消</t-button>
+        <t-button theme="default" type="reset" @click="handleCancel">取消</t-button>
       </div>
       <!-- </cmp-card> -->
     </cmp-container>
@@ -82,6 +82,12 @@ const props = defineProps({
     type: String,
   },
 });
+
+// 定义关闭弹窗的方法
+const emit = defineEmits(['update-data']);
+const handleCancel = () => {
+  emit('update-data');
+};
 </script>
 
 <style scoped>

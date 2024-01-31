@@ -36,7 +36,7 @@
             <template #op>
               <t-space>
                 <!-- @click="onCheckRowClick(row)" -->
-                <t-link variant="text" theme="primary" name="check">查看</t-link>
+                <t-link variant="text" theme="primary" name="check" @click="onCheckRowClick">查看</t-link>
                 <!-- @click="onRetransmissionRowClick(row)" -->
                 <t-link variant="text" theme="primary" name="retransmission">重传</t-link>
               </t-space>
@@ -53,7 +53,7 @@
   </cmp-container>
 
   <!-- 弹窗组件 -->>
-  <transactionDetails v-model:visible="eidtTransactionVisible" :form-title="formTitle" />
+  <transactionDetails v-model:visible="eidtTransactionVisible" :form-title="formTitle" @update-data="closeDialog" />
 </template>
 
 <script setup lang="ts">
@@ -203,6 +203,9 @@ const handleRowSelectChange = (value: any[]) => {
   }
 };
 
+const closeDialog = () => {
+  eidtTransactionVisible.value = false;
+};
 // watch(propsdtlId, (newBillId) => {
 //   if (newBillId) {
 //     fetchTables(newBillId); // 使用新的 billId 调用 fetchTables
@@ -257,10 +260,10 @@ const onInput = async (data: any) => {
 };
 
 // 查看 todo
-// const onCheckRowClick = () => {
-//   formTitle.value = '事务交易明细';
-//   eidtTransactionVisible.value = true;
-// };
+const onCheckRowClick = () => {
+  formTitle.value = '事务交易明细';
+  eidtTransactionVisible.value = true;
+};
 
 // 作废
 // const scrappedBill = async (billId) => {
