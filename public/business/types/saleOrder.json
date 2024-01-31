@@ -1,0 +1,39 @@
+{
+  "title": "销售订单：",
+  "placeholder": "请选择销售订单",
+  "url": "/api/warehouse/saleOrder/items",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "销售订单",
+      "key": "billNo",
+      "align": "left"
+    },
+    {
+      "title": "客户名称",
+      "key": "customerName",
+      "align": "left"
+    },
+    {
+      "title": "发货地址",
+      "key": "deliveryAddress",
+      "align": "left"
+    },
+    {
+      "title": "备注",
+      "key": "memo",
+      "align": "left"
+    },
+    {
+      "title": "状态",
+      "key": "statusName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "billNo"
+  }
+}

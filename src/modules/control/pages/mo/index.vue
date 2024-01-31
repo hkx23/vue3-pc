@@ -17,7 +17,7 @@
       >
         <template #moCode="{ row }">
           <a
-            style="color: #4d6af9"
+            style="color: #3f5ded; cursor: pointer"
             @click="
               {
                 onHandelDetail(row);
