@@ -29,23 +29,6 @@
       <cmp-card flex="auto">
         <t-space direction="vertical" :size="8" style="padding: 0">
           <cmp-card :span="12" :ghost="true">
-            <t-row justify="space-between" :gutter="8">
-              <t-col style="display: flex">
-                <t-input
-                  v-model="permission.work"
-                  placeholder="请输入工站/工作中心/工序"
-                  :on-enter="onInputSearchWork"
-                  style="margin-left: 10px"
-                >
-                  <template #prefix-icon>
-                    <icon name="search"></icon>
-                  </template>
-                </t-input>
-              </t-col>
-              <t-col> <t-button :loading="saveLoading" @click="onBtnSave">保存</t-button></t-col>
-            </t-row></cmp-card
-          >
-          <cmp-card :span="12" :ghost="true">
             <cmp-table
               v-model:pagination="pageUI"
               row-key="id"
@@ -58,6 +41,14 @@
               @select-change="rehandleSelectChange"
               @refresh="onTable"
             >
+              <template #operate>
+                <t-input v-model="permission.work" placeholder="请输入工站/工作中心/工序" :on-enter="onInputSearchWork">
+                  <template #prefix-icon>
+                    <icon name="search"></icon>
+                  </template>
+                </t-input>
+                <t-button :loading="saveLoading" @click="onBtnSave">保存</t-button>
+              </template>
               <template #title> {{ permission.label }} 工站列表 </template>
             </cmp-table>
           </cmp-card>
@@ -295,7 +286,7 @@ useResizeObserver(treeCard, (entries) => {
 }
 
 .selected-background {
-  color: #fff;
-  background-color: var(--td-brand-color) !important; /* 替换为你希望的颜色 */
+  color: var(--td-brand-color);
+  background-color: var(--td-brand-color-light) !important; /* 替换为你希望的颜色 */
 }
 </style>

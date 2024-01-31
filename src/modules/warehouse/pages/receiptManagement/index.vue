@@ -26,6 +26,10 @@
             </t-space>
           </template>
 
+          <template #title>
+            {{ '单据管理列表' }}
+          </template>
+
           <!-- 定义序号列的插槽 -->
           <template #indexSlot="{ rowIndex }">
             {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}

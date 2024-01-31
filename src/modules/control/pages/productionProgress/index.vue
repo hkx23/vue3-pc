@@ -21,6 +21,7 @@
             <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
           </div>
         </template>
+        <template #title>生成进度列表 </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>

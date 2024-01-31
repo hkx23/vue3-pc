@@ -2189,7 +2189,6 @@ export interface Label {
 export interface MoIssuanceDTO {
   /** 排产单号 */
   moScheCode?: string;
-  /** 排产单Id */
   moScheId?: string;
   /** 发料单号 */
   billNo?: string;
@@ -2273,6 +2272,11 @@ export interface MoIssuanceDtlVO {
   memo?: string;
   /** 来源单据行号 */
   sourceBillLineNo?: string;
+  /**
+   * 行号
+   * @format int32
+   */
+  index?: number;
   moBomId?: string;
   mitemCode?: string;
   mitemName?: string;
@@ -2336,15 +2340,15 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3116,6 +3120,55 @@ export interface LineWarehouseSearch {
   workcenterIds?: string[];
 }
 
+/** 线边仓表 */
+export interface LineWarehouse {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workcenterId?: string;
+  warehouseId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLineWarehouse = {
+  list?: LineWarehouse[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLineWarehouse {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLineWarehouse;
+}
+
 /** 显示产品条码管理 */
 export interface LineWarehouseVO {
   id?: string;
@@ -3582,6 +3635,144 @@ export interface ResultPagingDataDistrictVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataDistrictVO;
+}
+
+/** 配送指令表 */
+export interface DeliveryCommand {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  warehouseId?: string;
+  mitemId?: string;
+  moScheId?: string;
+  /** 配送数量 */
+  deliveryQty?: number;
+  /** 配送单据号 */
+  deliveryBillNo?: string;
+  /** 状态 */
+  status?: string;
+}
+
+export interface DeliveryCommandSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  warehouseId?: string;
+  /** 物料Id */
+  mitemId?: string;
+  /** 配送单据号 */
+  deliveryBillNo?: string;
+  /** 状态 */
+  status?: string[];
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+}
+
+/** 显示产品条码管理 */
+export interface DeliveryCommandVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  warehouseId?: string;
+  mitemId?: string;
+  moScheId?: string;
+  /** 配送数量 */
+  deliveryQty?: number;
+  /** 配送单据号 */
+  deliveryBillNo?: string;
+  /** 状态 */
+  status?: string;
+  /** 线边仓编码 */
+  warehouseCode?: string;
+  /** 线边仓名称 */
+  warehouseName?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 计量单位名称 */
+  uomName?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /** 修改人 */
+  modifierName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataDeliveryCommandVO = {
+  list?: DeliveryCommandVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDeliveryCommandVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDeliveryCommandVO;
 }
 
 /** 查询条码信息 */
@@ -4469,6 +4660,8 @@ export type MoIssuanceVO = {
   datetimeReceipted?: string;
   userReceiptedId?: string;
   moScheId?: string;
+  /** 排产工单 */
+  scheCode?: string;
   /** 车间代码 */
   workshopCode?: string;
   /** 车间名称 */
@@ -6508,6 +6701,21 @@ export const api = {
      * No description
      *
      * @tags 线边仓表
+     * @name Search
+     * @summary 业务组件接口
+     * @request POST:/lineWarehouse/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataLineWarehouse['data']>(`/api/warehouse/lineWarehouse/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 线边仓表
      * @name GetList
      * @summary 查询主界面数据
      * @request POST:/lineWarehouse/getList
@@ -6827,6 +7035,67 @@ export const api = {
      */
     addDistrict: (data: District) =>
       http.request<ResultObject['data']>(`/api/warehouse/district/addDistrict`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  deliveryCommand: {
+    /**
+     * No description
+     *
+     * @tags 配送指令表
+     * @name RemoveBatch
+     * @summary 删除配送指令
+     * @request POST:/deliveryCommand/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/warehouse/deliveryCommand/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送指令表
+     * @name Modify
+     * @summary 修改配送指令
+     * @request POST:/deliveryCommand/modify
+     * @secure
+     */
+    modify: (data: DeliveryCommand) =>
+      http.request<ResultObject['data']>(`/api/warehouse/deliveryCommand/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送指令表
+     * @name GetList
+     * @summary 查询主页数据
+     * @request POST:/deliveryCommand/getList
+     * @secure
+     */
+    getList: (data: DeliveryCommandSearch) =>
+      http.request<ResultPagingDataDeliveryCommandVO['data']>(`/api/warehouse/deliveryCommand/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送指令表
+     * @name Add
+     * @summary 新增配送指令
+     * @request POST:/deliveryCommand/add
+     * @secure
+     */
+    add: (data: DeliveryCommand) =>
+      http.request<ResultObject['data']>(`/api/warehouse/deliveryCommand/add`, {
         method: 'POST',
         body: data as any,
       }),
