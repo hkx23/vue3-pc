@@ -357,6 +357,7 @@ const serialNumberEnter = async (value) => {
         preSetting: preSetting.value,
       })
       .then((reData) => {
+        let isNeedClear = true;
         if (reData.scanSuccess) {
           mainform.value.isCommit = reData.isCommit;
           productInfo.value.scheCode = reData.scheCode;
@@ -386,10 +387,10 @@ const serialNumberEnter = async (value) => {
               productInfo.value.moMitemName
             })`;
             setKeypartList(reData.keyPartSumList);
-            resetBarcode();
+            resetBarcode(isNeedClear);
           } else {
             // 没有关键件时，则清空以下信息
-            resetBarcode();
+            resetBarcode(isNeedClear);
             if (keyPartSumList.value && keyPartSumList.value.length === 0) {
               resetKeyPartList();
             }
@@ -397,9 +398,11 @@ const serialNumberEnter = async (value) => {
 
           if (reData.isCommit) {
             // 提交时,清空扫描框即可
-            resetBarcode();
+            resetBarcode(isNeedClear);
           }
         } else {
+          isNeedClear = false;
+          resetBarcode(isNeedClear);
           writeMessageListError(reData.scanMessage);
         }
         LoadingPlugin(false);
@@ -429,8 +432,12 @@ const setKeypartList = (keypartList: WipKeyPartCollectVO[]) => {
   keyPartSumList.value = [...keyPartSumList.value, ...partList];
 };
 
-const resetBarcode = () => {
-  mainform.value.serialNumber = '';
+const resetBarcode = (isNeedClear: boolean) => {
+  if (isNeedClear) {
+    mainform.value.serialNumber = '';
+  } else {
+    scanBarcodeInstance.value.selectAll();
+  }
   if (scanBarcodeInstance.value) {
     const { customerFocus } = scanBarcodeInstance.value;
     customerFocus();
