@@ -303,7 +303,7 @@ const deliveryParam = ref({
   pageSize: 10,
   warehouseId: '', // 线边仓
   mitemId: '', // 物料
-  memo: '', // 配送单号
+  deliveryBillNo: '', // 配送单号
   status: [], // 状态
   dateStart: startOfSevenDaysAgo.format('YYYY-MM-DD HH:mm:ss'), // 开始时间
   dateEnd: endOfToday.format('YYYY-MM-DD HH:mm:ss'), // 结束时间
@@ -395,7 +395,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    memo: {
+    deliveryBillNo: {
       label: t('materialRequisition.deliveryOrderNumber'),
       comp: 't-input',
       event: 'business',
