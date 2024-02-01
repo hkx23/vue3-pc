@@ -10,7 +10,7 @@
     @close="onHandleCancel"
   >
     <div class="detailed-box">
-      <t-card :bordered="false">
+      <t-card :bordered="true">
         <div class="form-item-box">
           <t-form-item label="工艺路线类型"> <t-input v-model="currentrow.moClassName" :disabled="true" /></t-form-item>
           <t-form-item label="工艺路线">
@@ -190,7 +190,6 @@ watch(
 
 <style lang="less" scoped>
 .t-card {
-  border: 1px solid var(--td-border-level-2-color) !important;
   margin-bottom: 16px;
 }
 
