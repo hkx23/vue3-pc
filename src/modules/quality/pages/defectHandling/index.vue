@@ -43,8 +43,13 @@
   <t-dialog v-model:visible="defectVisible" header="新增/编辑" :cancel-btn="null" :confirm-btn="null">
     <t-form ref="formRef" :data="formData" layout="vertical" :rules="rules" @submit="onSubmit">
       <t-form-item :label="t('defectHandling.dealMethodType')" label-width="120px" name="dealMethodType">
-        <t-select v-model="defectCode" :disabled="isDisabled" @change="onOrgIdChange">
-          <t-option v-for="item in onDefectDealMethodData.list" :key="item.id" :label="item.paramValue" :value="item" />
+        <t-select v-model="formData.dealMethodType" :disabled="isDisabled">
+          <t-option
+            v-for="item in onDefectDealMethodData.list"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
         </t-select>
       </t-form-item>
       <t-form-item :label="t('defectHandling.methodCode')" label-width="120px" name="methodCode">
@@ -111,15 +116,11 @@ const onRefresh = async () => {
 // ######下拉框 列表数据
 const onDefectDealMethodData = reactive({ list: [] });
 const onGetDefectDealMethodType = async () => {
-  const res = await api.defectDealMethod.getIncidentType();
-  onDefectDealMethodData.list = res.list;
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'Q_DEFECT_DEAL_METHOD_TYPE' });
+  onDefectDealMethodData.list = res;
 };
 
 // ###### 下拉框 change 事件
-const defectCode = ref('');
-const onOrgIdChange = (value: { paramCode: string }) => {
-  formData.value.dealMethodType = value.paramCode;
-};
 
 const disabledCode = ref(false); // 处理编码默认为启用
 const disabledType = ref(false); // 处理类别默认为启用
@@ -243,7 +244,6 @@ const onAddAnyEdit = async () => {
 const onHandelAdd = () => {
   disabledCode.value = false;
   isDisabled.value = false;
-  defectCode.value = '';
   formData.value.id = '';
   formRef.value.reset({ type: 'initial' });
   AddAnyEdit.value = 1;
@@ -255,7 +255,6 @@ const onEdit = (row) => {
   isDisabled.value = true;
   disabledCode.value = true;
   disabledType.value = true;
-  defectCode.value = row.dealMethodTypeName;
   formData.value.dealMethodType = row.dealMethodType;
   formData.value.methodCode = row.methodCode;
   formData.value.methodName = row.methodName;
@@ -290,8 +289,8 @@ const onSubmit = (context: any) => {
 // 校验条件
 const rules: FormRules<Data> = {
   dealMethodType: [{ required: true, type: 'error', trigger: 'change' }],
-  methodCode: [{ required: true, type: 'error', trigger: 'change' }],
-  methodName: [{ required: true, type: 'error', trigger: 'change' }],
+  methodCode: [{ required: true, type: 'error', trigger: 'blur' }],
+  methodName: [{ required: true, type: 'error', trigger: 'blur' }],
 };
 </script>
 
