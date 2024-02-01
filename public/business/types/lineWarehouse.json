@@ -1,0 +1,24 @@
+{
+  "title": "线边仓：",
+  "placeholder": "请选择线边仓",
+  "url": "/api/warehouse/lineWarehouse/items",
+  "httptype": "POST",
+  "category": "workshop",
+  "columns": [
+    {
+      "title": "线边仓代码",
+      "key": "warehouseCode",
+      "align": "left"
+    },
+    {
+      "title": "线边仓名称",
+      "key": "warehouseName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "warehouseId",
+  "keywords": {
+    "value": "warehouseId",
+    "label": "warehouseName"
+  }
+}

@@ -13,12 +13,12 @@
             </t-tab-panel>
           </t-tabs>
         </t-col>
-        <t-col style="text-align: end; line-height: 32px" flex="340px"
+        <t-col style="text-align: end; line-height: 32px; white-space: nowrap" flex="340px"
           >{{ SelectNode.label }}:{{ SelectNode.paramGroupDesc }}</t-col
         >
       </cmp-row>
     </cmp-card>
-    <cmp-row>
+    <cmp-row class="customer-row-tree">
       <cmp-card flex="300px">
         <t-space direction="vertical" :size="8">
           <t-space>
@@ -557,5 +557,9 @@ onMounted(() => {
 
 .sub-button {
   padding-bottom: 6px;
+}
+
+.customer-row-tree {
+  height: 80% !important;
 }
 </style>

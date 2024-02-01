@@ -3,9 +3,9 @@
   <!-- :full-sub-index="[1, 2]" -->
   <cmp-container :full="true" :full-sub-index="[0, 1]">
     <cmp-card>
-      <cmp-container :full="false">
+      <cmp-container :full="true">
         <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
-        <cmp-card>
+        <cmp-card :ghost="true">
           <!-- ################# 处理组表格数据 ###################### -->
           <cmp-table
             ref="tableRef"
@@ -16,6 +16,7 @@
             :stripe="false"
             :table-column="groupColumns"
             active-row-type="single"
+            :fixed-height="true"
             :table-data="supportGroupInUserList.list"
             :total="supportGroupTotal"
             :selected-row-keys="selectedRowKeys"
@@ -45,43 +46,44 @@
             </template>
           </cmp-table>
         </cmp-card>
-        <cmp-card>
-          <!-- ################# 人员表格数据 ###################### -->
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="personPage"
-            row-key="userId"
-            :hover="false"
-            :stripe="false"
-            :table-column="personColumns"
-            active-row-type="single"
-            :table-data="supportPersonInUserList.list"
-            :total="supportPersonTotal"
-            select-on-row-click
-            :selected-row-keys="delPersonRowKeys"
-            @select-change="onPersonSelectChange"
-            @refresh="onFetchPersonData"
-          >
-            <template #title>
-              {{ '人员列表' }}
-            </template>
-            <template #actionSlot>
-              <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelPersonConfirm()">
-                <t-link theme="primary" @click="onDelPersonRow">{{ t('common.button.delete') }}</t-link>
-              </t-popconfirm>
-            </template>
-            <template #button>
-              <t-space :size="8">
-                <t-button theme="primary" @click="onAddPersonData"> 新增用户 </t-button>
-                <t-popconfirm theme="default" content="确认删除吗" @confirm="onPersondeleteBatches()">
-                  <t-button theme="default"> 用户批量删除 </t-button>
-                </t-popconfirm>
-                <t-button theme="default"> 处理组用户导入 </t-button>
-              </t-space>
-            </template>
-          </cmp-table>
-        </cmp-card>
       </cmp-container>
+    </cmp-card>
+    <cmp-card>
+      <!-- ################# 人员表格数据 ###################### -->
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="personPage"
+        :fixed-height="true"
+        row-key="userId"
+        :hover="false"
+        :stripe="false"
+        :table-column="personColumns"
+        active-row-type="single"
+        :table-data="supportPersonInUserList.list"
+        :total="supportPersonTotal"
+        select-on-row-click
+        :selected-row-keys="delPersonRowKeys"
+        @select-change="onPersonSelectChange"
+        @refresh="onFetchPersonData"
+      >
+        <template #title>
+          {{ '人员列表' }}
+        </template>
+        <template #actionSlot>
+          <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelPersonConfirm()">
+            <t-link theme="primary" @click="onDelPersonRow">{{ t('common.button.delete') }}</t-link>
+          </t-popconfirm>
+        </template>
+        <template #button>
+          <t-space :size="8">
+            <t-button theme="primary" @click="onAddPersonData"> 新增用户 </t-button>
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onPersondeleteBatches()">
+              <t-button theme="default"> 用户批量删除 </t-button>
+            </t-popconfirm>
+            <t-button theme="default"> 处理组用户导入 </t-button>
+          </t-space>
+        </template>
+      </cmp-table>
     </cmp-card>
   </cmp-container>
 

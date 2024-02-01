@@ -1,5 +1,4 @@
 <!-- 线边仓水位 -->
-<!-- 线边仓 -->
 <template>
   <!-- :full-sub-index="[1, 2]" -->
   <cmp-container :full="false">

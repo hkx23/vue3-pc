@@ -141,7 +141,39 @@
                   <cmp-card :span="4" :ghost="true" style="padding: 8px">
                     <t-checkbox v-model="formData.queryData.isScrapped" label="是否报废" />
                   </cmp-card>
-                  <cmp-card :span="3" :ghost="true" style="padding: 8px">
+                </t-row>
+              </cmp-card>
+              <cmp-card :ghost="true" class="padding-top-line-0">
+                <t-row>
+                  <cmp-card :span="8" :ghost="true" style="padding: 8px">
+                    <cmp-table
+                      row-key="id"
+                      :hover="false"
+                      :stript="false"
+                      :table-column="keyPartColumns"
+                      active-row-type="single"
+                      :table-data="keyPartData"
+                      :total="keyPartDataTotal"
+                      :loading="loading"
+                      :show-refresh="true"
+                      :resizable="true"
+                      :show-toolbar="false"
+                      :show-pagination="false"
+                      @refresh="fetchKeyPartTable"
+                    >
+                      <template #newKeypartBarcode="{ row }">
+                        <t-space>
+                          <t-input placeholder="请输入关键件信息" :value="row.newKeypartBarcode" />
+                        </t-space>
+                      </template>
+                      <template #op="{ row }">
+                        <t-space>
+                          <t-link theme="primary" @click="onKeyPartReplace(row)">替换</t-link>
+                        </t-space>
+                      </template>
+                    </cmp-table>
+                  </cmp-card>
+                  <cmp-card :span="4" :ghost="true" style="padding: 8px">
                     <t-space :size="8" style="float: right">
                       <t-button content="维修完成" @click="onSubmit" />
                       <t-button theme="default" content="重置" @click="onReset" />
@@ -162,7 +194,7 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 // import { DialogPlugin } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { api as apiControl, WipRepairDtlVO, WipRepairIds, WipRepairVO } from '@/api/control';
 import { api as apiMain } from '@/api/main';
@@ -183,6 +215,7 @@ const { pageUI: pageTab1 } = usePage();
 const { pageUI: pageTab2 } = usePage();
 const repairDataTotal = ref(0);
 const repairingDataTotal = ref(0);
+const keyPartDataTotal = ref(0);
 const initialDate = ref(1);
 const selectTabValue = ref('tab1');
 const selectRepairId = ref([]); // 待维修的主表数据
@@ -225,8 +258,6 @@ const formData = reactive({
   },
 });
 
-// const defectDealMethodOptions = ref([]);
-// const checkedDefectDealMethodOptions = ref([]);
 // 查询组件
 const opts = computed(() => {
   return {
@@ -360,6 +391,26 @@ const repairingColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('business.control.repairStatus'), width: 160, colKey: 'repairStatusName' },
   { title: t('common.button.operation'), align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
+
+const keyPartData = ref([]);
+const keyPartColumns: PrimaryTableCol<TableRowData>[] = [
+  { title: '序号', colKey: 'serial-number', width: 74 },
+  { title: '产品条码', width: 160, colKey: 'runCard' },
+  { title: '关键件条码', width: 160, colKey: 'keypartBarcode' },
+  { title: '物料编码', width: 160, colKey: 'mitemCode' },
+  { title: '物料名称', width: 160, colKey: 'mitemName' },
+  { title: '新关键件信息', width: 160, colKey: 'newKeypartBarcode' },
+  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+];
+
+watch(
+  () => selectRepairingIds.value,
+  (newval) => {
+    console.log(newval);
+    fetchKeyPartTable();
+  },
+  { deep: true },
+);
 
 // 点击查询按钮
 const conditionEnter = (query: any) => {
@@ -505,6 +556,24 @@ const fetchRepairingTable = async () => {
     console.log(e);
   }
 };
+const fetchKeyPartTable = async () => {
+  try {
+    const distinctScanBarcode = repairingData.value
+      .filter((n) => selectRepairingIds.value.indexOf(n.id) !== -1)
+      .map((n) => n.scanBarcode)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    if (!_.isEmpty(distinctScanBarcode) && distinctScanBarcode.length > 0) {
+      const data = await apiControl.wipKeypart.getWipKeypartByRunCard({
+        pageNum: 1,
+        pageSize: 99999,
+        scanBarcodeList: distinctScanBarcode,
+      });
+      keyPartData.value = data.list;
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
 const getDefectDealMethod = async () => {
   formData.queryData.defectDealMethodOptions = [];
   const data = await apiControl.wipRepair.getDefectDealMethodList({
@@ -630,10 +699,12 @@ const onActiveChange = async (highlightRowKeys) => {
   selectRepairRowId.value = `${highlightRowKeys[0]}`;
   await fetchDtlTable();
 };
+const onKeyPartReplace = async (row: any) => {
+  console.log(row);
+};
 const tabsChange = async (tabValue) => {
   selectTabValue.value = tabValue;
 };
-
 const getVerifyProcessCategory = async () => {
   await apiControl.wipRepair.getVerifyProcessCategory({
     loginWorkstationId: userStore.currUserOrgInfo.workCenterId,

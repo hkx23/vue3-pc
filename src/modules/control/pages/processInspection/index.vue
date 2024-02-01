@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <!-- 扫描区 -->
     <cmp-card>
-      <bcmp-workstation-info />
+      <bcmp-workstation-info @change="onWorkstationChange" />
       <t-row class="padding-top-line-8" style="padding-bottom: 8px">
         <t-col flex="auto">
           <cmp-scan-input
@@ -267,6 +267,7 @@ const serialNumberEnter = async (value) => {
 
 const getDefectCodeTree = async () => {
   try {
+    defectCodeList.value = [];
     const data = await api.processInDefectCode.getDefectCodeByProcessId({
       processId: userStore.currUserOrgInfo.processId,
     });
@@ -296,6 +297,10 @@ const clickHistoryDefectCode = (item) => {
   mainform.value.serialNumber = item.serialNumber;
 };
 
+const onWorkstationChange = async () => {
+  Init();
+};
+
 const writeScanInfoSuccess = async (lbNo, lbQty, lbError) => {
   scanInfoList.value.unshift({
     serialNumber: lbNo,
@@ -322,24 +327,6 @@ useResizeObserver(refDefectRow, (entries) => {
   const { height } = entry.contentRect;
   anchorHeight.value = `${height - 30}px`;
 });
-
-// const writeMessageListSuccess = async (content, datatime) => {
-//   messageList.value.unshift({
-//     title: '扫描成功',
-//     content,
-//     datatime,
-//     status: 'OK',
-//   });
-// };
-
-// const writeMessageListError = async (content, datatime) => {
-//   messageList.value.unshift({
-//     title: '扫描失败',
-//     content,
-//     datatime,
-//     status: 'NG',
-//   });
-// };
 
 const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', scanLabel: string, msg: string) => {
   let content: string;
