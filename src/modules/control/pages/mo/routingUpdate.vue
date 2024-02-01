@@ -30,6 +30,7 @@
             :show-pagination="false"
             select-on-row-click
             :selected-row-keys="selectedRowKeys"
+            :show-toolbar="false"
             @refresh="fetchTableRouting"
             @select-change="onSelectChange"
           >
@@ -190,7 +191,7 @@ watch(
 <style lang="less" scoped>
 .t-card {
   border: 1px solid var(--td-border-level-2-color) !important;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .detailed-box {
