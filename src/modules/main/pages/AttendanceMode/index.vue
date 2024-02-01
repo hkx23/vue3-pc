@@ -111,9 +111,11 @@
         </t-col>
       </t-row>
       <!--# 🌈添加按钮 -->
-      <t-row justify="center" style="margin-top: 16px">
-        <t-button block variant="outline" style="width: 90%" @click="addFormSubmit">添加</t-button>
-      </t-row>
+      <t-col :span="12">
+        <t-form-item label="">
+          <t-button block variant="outline" @click="addFormSubmit">添加</t-button>
+        </t-form-item>
+      </t-col>
     </t-form>
     <template #footer>
       <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
@@ -379,24 +381,29 @@ const onShiftTabData = async () => {
 
 // #添加 出勤模式 数据请求
 const onAddSupportGroup = async () => {
-  const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
-  const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
-  if (!isValid) {
-    MessagePlugin.warning('时间段不能为空！');
-    return;
+  try {
+    const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
+    const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
+    if (!isValid) {
+      MessagePlugin.warning('时间段不能为空！');
+      return;
+    }
+    const flag = checkArray(flattenedConvertedIntervals);
+    if (!flag) {
+      MessagePlugin.warning('时间间隔不能超过24小时，请重新输入！');
+      return;
+    }
+    const newArr = appendNFromFirstDecrease(flattenedConvertedIntervals);
+    const convert = convertToTimeRange(newArr).join(';');
+    const teamFormDataCloneDeep = _.cloneDeep(teamFormData.value);
+    delete teamFormDataCloneDeep.expression;
+    await api.attendanceMode.addAttendanceMode({ ...teamFormDataCloneDeep, expression: convert });
+    await onShiftTabData(); // 获取 出勤模式表格 数据
+    formVisible.value = false;
+    MessagePlugin.success('新增成功');
+  } catch (error) {
+    teamFormData.value.expression = [defaultTimeRange];
   }
-  const flag = checkArray(flattenedConvertedIntervals);
-  if (!flag) {
-    MessagePlugin.warning('时间间隔不能超过24小时，请重新输入！');
-    return;
-  }
-  const newArr = appendNFromFirstDecrease(flattenedConvertedIntervals);
-  const convert = convertToTimeRange(newArr).join(';');
-  delete teamFormData.value.expression;
-  await api.attendanceMode.addAttendanceMode({ ...teamFormData.value, expression: convert });
-  await onShiftTabData(); // 获取 出勤模式表格 数据
-  formVisible.value = false;
-  MessagePlugin.success('新增成功');
 };
 
 // #添加按钮点击事件
@@ -425,7 +432,6 @@ const onEditRow = (row: any) => {
 // #编辑 出勤模式 表格数据 请求
 const onGroupRequest = async () => {
   const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
-  console.log('🚀 ~ file: index.vue:438 ~ onGroupRequest ~ flattenedConvertedIntervals:', flattenedConvertedIntervals);
   const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
   if (!isValid) {
     MessagePlugin.warning('时间段不能为空！');
