@@ -1,5 +1,8 @@
 {
   "productRule": {
+    "tableSubRightTitle": "关联物料列表",
+    "tableSubLeftTitle": "包装类型列表",
+    "tableSubTitle": "包装规则列表",
     "packRule": "包装规则",
     "packRuleCode": "包装规则代码",
     "packRuleName": "包装规则名称",

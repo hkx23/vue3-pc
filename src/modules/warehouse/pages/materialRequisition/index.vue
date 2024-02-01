@@ -1,32 +1,33 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
-    </cmp-card>
-    <cmp-card :span="12">
-      <!-- ################# 处理组表格数据 ###################### -->
-      <cmp-table
-        ref="tableRef"
-        row-key="id"
-        :table-column="tableMaterialRequisitionColumns"
-        :table-data="tableDataMaterialRequisition"
-        :loading="loading"
-        :total="dataTotal"
-        :hover="false"
-        :stripe="false"
-        :header-affixed-top="true"
-        @refresh="fetchTable"
-        @cell-click="onEditMaterialRowClick"
-      >
-        <template #button>
-          <t-button theme="primary" @click="onClickAddMaterialRule">
-            {{ t('common.button.add') }}
-          </t-button>
-          <t-button theme="default" :disabled="selectRowKeys?.length == 0" @click="onBatchCancelledClick">
-            {{ t('materialRequisition.cancel') }}
-          </t-button>
-        </template>
-      </cmp-table>
+      <cmp-container :full="true" :ghost="true">
+        <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
+        <!-- ################# 处理组表格数据 ###################### -->
+        <cmp-table
+          ref="tableRef"
+          row-key="id"
+          :table-column="tableMaterialRequisitionColumns"
+          :table-data="tableDataMaterialRequisition"
+          :loading="loading"
+          :total="dataTotal"
+          :hover="false"
+          :stripe="false"
+          :header-affixed-top="true"
+          @refresh="fetchTable"
+          @cell-click="onEditMaterialRowClick"
+        >
+          <template #button>
+            <t-button theme="primary" @click="onClickAddMaterialRule">
+              {{ t('common.button.add') }}
+            </t-button>
+            <t-button theme="default" :disabled="selectRowKeys?.length == 0" @click="onBatchCancelledClick">
+              {{ t('materialRequisition.cancel') }}
+            </t-button>
+          </template>
+          <template #title> {{ t('materialRequisition.tableSubTilte') }} </template>
+        </cmp-table>
+      </cmp-container>
     </cmp-card>
     <cmp-row>
       <!-- ################# 子数据数据 ###################### -->

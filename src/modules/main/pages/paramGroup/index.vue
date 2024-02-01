@@ -13,12 +13,12 @@
             </t-tab-panel>
           </t-tabs>
         </t-col>
-        <t-col style="text-align: end; line-height: 32px" flex="340px"
+        <t-col style="text-align: end; line-height: 32px; white-space: nowrap" flex="340px"
           >{{ SelectNode.label }}:{{ SelectNode.paramGroupDesc }}</t-col
         >
       </cmp-row>
     </cmp-card>
-    <cmp-row>
+    <cmp-row class="customer-row-tree">
       <cmp-card flex="300px">
         <t-space direction="vertical" :size="8">
           <t-space>
@@ -68,15 +68,8 @@
                 <div></div>
               </t-col>
             </t-row>
-            <vue-draggable
-              ref="el"
-              v-model="dataTable"
-              :handle="'.table-row'"
-              :disabled="false"
-              @start="ondragStart"
-              @end="ondragEnd"
-            >
-              <t-row v-for="(item, index) in dataTable" :key="index" class="table-row" justify="space-between">
+            <div>
+              <t-row v-for="(item, index) in dataTable" :key="item.rowKey" class="table-row" justify="space-between">
                 <t-col :span="0.5" class="table-row-checkbox">
                   <t-checkbox v-model="item.isGlobal" :disabled="SelectNode.isSys == '1'"> </t-checkbox>
                 </t-col>
@@ -128,7 +121,7 @@
                   <t-input-number v-model="item.seq" :decimal-places="0" theme="normal" placeholder="请输入" />
                 </t-col>
                 <t-col :span="1">
-                  <div>
+                  <div class="sub-button">
                     <t-space>
                       <t-icon v-if="SelectNode.isSys == '0'" name="add" @click="onAddParam(item)" />
                       <t-icon v-if="SelectNode.isSys == '0'" name="delete" @click="handleClickDelete(item, index)" />
@@ -136,7 +129,7 @@
                   </div>
                 </t-col>
               </t-row>
-            </vue-draggable>
+            </div>
           </div>
           <t-row v-show="totaldataTable && totaldataTable.length > 0" class="button-save" justify="space-between">
             <t-button theme="primary" @click="onSave">保存</t-button>
@@ -159,10 +152,11 @@
 </template>
 
 <script setup lang="ts">
+import _ from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
-import { VueDraggable } from 'vue-draggable-plus';
 
+// import { useDraggable, type UseDraggableReturn } from 'vue-draggable-plus';
 import { api, Param, ParamInfoDTO } from '@/api/main';
 
 // 页签
@@ -191,6 +185,19 @@ const boolList = ref([
   { label: '是', value: 'true' },
   { label: '否', value: 'false' },
 ]);
+
+// const el = ref();
+// 返回值是一个对象，包含了一些方法，比如 start、destroy、pause 等
+// useDraggable<UseDraggableReturn>(el, dataTable, {
+//   animation: 150,
+//   sort: true,
+//   onStart() {
+//     console.log('start');
+//   },
+//   onUpdate() {
+//     console.log('update');
+//   },
+// });
 
 // 查询业务领域
 const fetchDomain = () => {
@@ -373,20 +380,14 @@ const handleClickDelete = (value: any, index: any) => {
   onShowDeleteConfirmVisible.value = true;
 };
 
-const ondragStart = () => {
-  console.log(`开始拖拽`);
-};
-
-const ondragEnd = () => {
-  console.log(`拖拽结束`);
-  sortTable();
-};
-
 const sortTable = () => {
   const rowIndex = ref(1);
   if (dataTable.value) {
     dataTable.value.forEach((element) => {
-      // element.seq = rowIndex.value; 暂时采用手动输入顺序的方式，因此代码先注释
+      if (!element.key) {
+        element.rowKey = _.uniqueId();
+      }
+      // element.seq = rowIndex.value; // 暂时采用手动输入顺序的方式，因此代码先注释
       element.oid = element.isGlobal === true ? '0' : ''; // 0表示全局
       rowIndex.value++;
     });
@@ -437,6 +438,7 @@ const clearTable = () => {
 
 // 保存
 const onSave = async () => {
+  console.log(`data:`, dataTable.value);
   const isEmpty = ref(false);
   if (totaldataTable.value.length === 0) {
     MessagePlugin.error('无数据可保存，请检查');
@@ -551,5 +553,13 @@ onMounted(() => {
 
 .table-row-checkbox {
   padding-bottom: 2px;
+}
+
+.sub-button {
+  padding-bottom: 6px;
+}
+
+.customer-row-tree {
+  height: 80% !important;
 }
 </style>

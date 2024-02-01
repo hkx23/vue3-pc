@@ -345,6 +345,8 @@ const resetHandle = () => {
 const resetBarcode = (isNeedClear: boolean) => {
   if (isNeedClear) {
     mainform.value.serialNumber = '';
+  } else {
+    scanBarcodeInstance.value.selectAll();
   }
   if (scanBarcodeInstance.value) {
     const { customerFocus } = scanBarcodeInstance.value;
@@ -355,8 +357,9 @@ const resetBarcode = (isNeedClear: boolean) => {
 const resetKeypartCode = (isNeedClear: boolean) => {
   if (isNeedClear) {
     mainform.value.keypartCode = '';
+  } else {
+    scanKeypartInstance.value.selectAll();
   }
-
   nextTick(() => {
     if (scanKeypartInstance.value) {
       const { customerFocus } = scanKeypartInstance.value;

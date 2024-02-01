@@ -15,6 +15,7 @@
             :loading="loading"
             :table-data="tableContainerData1"
             :table-column="tableContainerColumns1"
+            :total="dataTotal1"
             select-on-row-click
             type="single"
             empty="没有符合条件的数据"
@@ -92,10 +93,10 @@
     </t-form> -->
     <t-form :data="formData" :rules="rules" label-width="110px" @submit="submit1" @reset="cancel">
       <t-form-item label="容器类型编码" name="containerTypeCode">
-        <t-input v-model="formData.containerTypeCode"></t-input>
+        <t-input v-model="formData.containerTypeCode" :disabled="formTitle === '编辑'"></t-input>
       </t-form-item>
       <t-form-item label="容器类型名称" name="containerTypeName">
-        <t-input v-model="formData.containerTypeName"></t-input>
+        <t-input v-model="formData.containerTypeName" :disabled="formTitle === '编辑'"></t-input>
       </t-form-item>
       <t-form-item label="容器类型描述" name="containerTypeDesc">
         <t-input v-model="formData.containerTypeDesc"></t-input>
@@ -181,7 +182,7 @@ const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { title: '容器类型名称', width: 120, colKey: 'containerTypeName' },
   { title: '容器类型描述', width: 120, colKey: 'containerTypeDesc' },
   { title: '状态', width: 85, colKey: 'stateName' },
-  { title: '操作', align: 'left', fixed: 'right', width: 100, colKey: 'op1' },
+  { title: '操作', align: 'left', fixed: 'right', width: 85, colKey: 'op1' },
 ];
 
 // 新增容器
@@ -198,7 +199,7 @@ const onAddContainer = async () => {
 };
 // 容器编辑
 const onEditRowClick1 = async (row) => {
-  formTitle.value = '编辑容器类型';
+  formTitle.value = '编辑';
   containerVisible.value = true;
   const partialRow = JSON.parse(
     JSON.stringify(row, ['containerTypeCode', 'containerTypeName', 'containerTypeDesc', 'state', 'id']),
@@ -216,6 +217,7 @@ const onInput = async (data: any) => {
       pageSize: pageUI.value.rows,
       keyword,
     });
+    console.log('🚀 ~ onInput ~ result:', result);
     tableContainerData1.value = result.list;
     dataTotal1.value = result.total;
   }
@@ -300,9 +302,9 @@ const cancel = () => {
   MessagePlugin.success('已取消');
 };
 
+/* 如果 propsId变化了  调用子组件的 查询方法 fetchTables(propsId) */
 watch(propsId, (propsId) => {
   if (propsId) {
-    // fetchTables(propsId);  调用子组件的 查询方法
     refreshTable.value.fetchTable(propsId);
     refreshTable.value.fetchTable2(propsId);
   }

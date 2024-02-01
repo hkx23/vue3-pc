@@ -15,19 +15,35 @@
         :total="dataTotal1"
         :loading="loading"
         empty="没有符合条件的数据"
+        @select-change="handleRowSelectChange"
       >
         <template #button>
-          <!-- <t-button theme="primary">新增</t-button> -->
-          <!-- <t-button v-if="props.selectedRowData" theme="primary" @click="generate">生成</t-button> -->
-          <t-button
-            v-if="props.selectedRowData && Object.keys(props.selectedRowData).length > 0"
-            theme="default"
-            @click="generate"
-            >生成</t-button
-          >
-
-          <t-button theme="default">打印</t-button>
-          <t-button theme="default" @click="onStateRowClick1">作废</t-button>
+          <t-space :size="8">
+            <t-select label="打印模板" clearable>
+              <t-option
+                v-for="item in PrintTmpReslutDataOptions"
+                :key="item.id"
+                :label="item.label"
+                :value="item.value"
+              >
+              </t-option>
+            </t-select>
+            <!-- 选中数据再显示生成 -->
+            <t-button
+              v-if="props.selectedRowData && Object.keys(props.selectedRowData).length > 0"
+              theme="default"
+              @click="generate"
+              >生成</t-button
+            >
+            <!-- 批量打印 -->
+            <t-popconfirm theme="default" content="确认批量打印吗" @confirm="print()">
+              <t-button theme="default"> 批量打印 </t-button>
+            </t-popconfirm>
+            <!-- 批量作废 -->
+            <t-popconfirm theme="default" content="确认批量作废吗" @confirm="onStateRowClick1()">
+              <t-button theme="default"> 批量作废 </t-button>
+            </t-popconfirm>
+          </t-space>
         </template>
 
         <!-- 定义序号列的插槽 -->
@@ -53,11 +69,15 @@
         empty="没有符合条件的数据"
       >
         <template #button>
-          <t-button theme="primary" @click="add">新增</t-button>
-          <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
-          <!--  @click="print" -->
-          <t-button theme="primary">打印</t-button>
-          <t-button theme="primary" @click="onRemoveRowClick2">删除</t-button>
+          <t-space :size="8">
+            <t-button theme="primary" @click="add">新增</t-button>
+            <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
+            <!--   -->
+            <!-- <t-button theme="primary">打印</t-button> -->
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onRemoveRowClick2()">
+              <t-button theme="default"> 批量删除 </t-button>
+            </t-popconfirm>
+          </t-space>
         </template>
 
         <!-- 定义序号列的插槽 -->
@@ -70,7 +90,7 @@
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2(row)">编辑</t-link>
             <!-- -->
             <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onRowClick(row)">
-              <t-link theme="primary"> 删除 </t-link>
+              <t-link theme="default"> 删除 </t-link>
             </t-popconfirm>
           </t-space>
         </template>
@@ -80,7 +100,7 @@
 
   <!-- 弹窗1 -->
   <t-dialog v-model:visible="containerVisible1" :footer="false" :close-on-overlay-click="false" header="容器条码生成">
-    <t-form :data="formData1" label-width="110px" :rules="rules" @submit="submit1" @reset="cancel">
+    <t-form :data="formData1" label-width="110px" :rules="rules">
       <t-form-item label="容器类型" name="containerType">
         <t-input v-model="formData1.containerType" disabled></t-input>
         <!-- <t-select v-model="formData1.containerType">
@@ -105,21 +125,18 @@
       <t-form-item label="生成数量" name="createNum">
         <t-input-number v-model="formData1.createNum" :min="1" :max="100"></t-input-number>
       </t-form-item>
-
-      <t-form-item>
-        <div class="dialog-footer">
-          <t-button theme="primary" type="reset">取消</t-button>
-          <t-button theme="primary" type="submit">确认</t-button>
-        </div>
-      </t-form-item>
     </t-form>
+    <div class="dialog-footer1">
+      <t-button theme="primary" @click="cancel">取消</t-button>
+      <t-button theme="primary" @click="submit1">确认</t-button>
+    </div>
   </t-dialog>
 
-  <!-- 弹窗2  :footer="false"  todo-->
+  <!-- 弹窗2  容器类型 :footer="false"  todo-->
   <t-dialog v-model:visible="containerVisible2" :footer="false" :close-on-overlay-click="false" :header="diaTilte">
-    <t-form :data="formData2" label-width="110px" :rules="rules2" @submit="submit2" @reset="cancel2">
+    <t-form :data="formData2" label-width="110px" :rules="rules2">
       <t-form-item label="容器类型" name="containerType">
-        <t-input v-model="formData2.containerType"></t-input>
+        <t-input v-model="formData2.containerType" disabled></t-input>
       </t-form-item>
       <!-- v-if="diaTilte === '新增容器类型与物料关系'"  -->
       <t-form-item label="物料类别" name="mitemCategoryId">
@@ -156,16 +173,13 @@
       </t-form-item>
 
       <t-form-item label="标准数量" name="qty">
-        <t-input v-model="formData2.qty" :min="1" :max="100"></t-input>
-      </t-form-item>
-
-      <t-form-item>
-        <div class="dialog-footer">
-          <t-button theme="primary" type="reset">取消</t-button>
-          <t-button theme="primary" type="submit">确认</t-button>
-        </div>
+        <t-input-number v-model="formData2.qty" :min="1" :max="100"></t-input-number>
       </t-form-item>
     </t-form>
+    <div class="dialog-footer1">
+      <t-button theme="primary" @click="cancel2">取消</t-button>
+      <t-button theme="default" @click="submit2">确认</t-button>
+    </div>
   </t-dialog>
 </template>
 
@@ -227,13 +241,6 @@ const rules: FormRules<Data> = {
       trigger: 'blur',
     },
   ],
-  // createNum: [
-  //   {
-  //     required: true,
-  //     message: '请输入生成数量',
-  //     trigger: 'blur',
-  //   },
-  // ],
 };
 // 校验规则2
 const rules2: FormRules<Data> = {
@@ -244,20 +251,6 @@ const rules2: FormRules<Data> = {
       trigger: 'blur',
     },
   ],
-  // mitemCategoryId: [
-  //   {
-  //     required: true,
-  //     message: '请输入物料类别',
-  //     trigger: 'blur',
-  //   },
-  // ],
-  // containerTypeId: [
-  //   {
-  //     required: true,
-  //     message: '请输入物料类别编码',
-  //     trigger: 'blur',
-  //   },
-  // ],
   mitemId: [
     {
       required: true,
@@ -295,17 +288,17 @@ const optsContainer1 = computed(() => {
       defaultVal: '',
     },
     // todo
-    containerTypeId: {
-      label: '打印模板',
-      labelWidth: '20',
-      event: 'select',
-      comp: 't-select',
-      defaultVal: '',
-      bind: {
-        options: PrintTmpReslutDataOptions.value,
-        clearable: true,
-      },
-    },
+    // containerTypeId: {
+    //   label: '打印模板',
+    //   labelWidth: '20',
+    //   event: 'select',
+    //   comp: 't-select',
+    //   defaultVal: '',
+    //   bind: {
+    //     options: PrintTmpReslutDataOptions.value,
+    //     clearable: true,
+    //   },
+    // },
   };
 });
 
@@ -314,8 +307,8 @@ const optsContainer2 = computed(() => {
     keyword: {
       label: '物料编码/名称',
       labelWidth: '20',
-      event: 'select',
-      comp: 't-select',
+      event: 'input',
+      comp: 't-input',
       defaultVal: '',
     },
   };
@@ -324,8 +317,8 @@ const optsContainer2 = computed(() => {
 const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
-  { title: '容器编码', colKey: 'containerCode', width: 80 },
-  { title: '容器名称', width: 80, colKey: 'containerName' },
+  { title: '容器编码', colKey: 'containerCode', width: 100 },
+  { title: '容器名称', width: 100, colKey: 'containerName' },
   { title: '状态', width: 80, colKey: 'statusName' },
 ];
 
@@ -362,8 +355,19 @@ onMounted(async () => {
 // 打印模板
 const getPrintTmplList = async () => {
   const PrintTmpReslut = await api.container.getPrintTmplList();
-  console.log('🚀 ~ getPrintTmplList ~ PrintTmpReslut:', PrintTmpReslut); // [] todo
-  PrintTmpReslutDataOptions.value = PrintTmpReslut;
+  PrintTmpReslutDataOptions.value = PrintTmpReslut.map((item) => ({
+    label: item.tmplName,
+    value: item.id,
+  }));
+  console.log('🚀 ~ getPrintTmplList ~ PrintTmpReslut:打印模板', PrintTmpReslutDataOptions.value); // [] todo
+};
+
+const multipleId = ref([]); // 接口入参
+const handleRowSelectChange = (value: any[]) => {
+  if (value.length > 0) {
+    multipleId.value = value;
+    console.log('🚀 ~ handleRowSelectChange ~ multipleId.value:', multipleId.value);
+  }
 };
 
 // 获得条码规则下拉数据
@@ -388,10 +392,14 @@ const getcontainerType = async () => {
 };
 
 //* 查询
+const inventoryManagement1 = ref([]);
 const onInput = async (data: any) => {
   setLoading(true);
+  inventoryManagement1.value = [];
+  tableContainerData1.value = [];
   const { containerTypeId, status, keyword } = data;
   // let status = Array.isArray(state) ? state : [state];
+
   if (!data.value) {
     const result = await api.container.getList({
       pageNum: pageUI.value.page,
@@ -406,8 +414,11 @@ const onInput = async (data: any) => {
   setLoading(false);
 };
 //* 查询2
+const inventoryManagement2 = ref([]);
 const onInput2 = async (data: any) => {
   setLoading(true);
+  inventoryManagement2.value = [];
+  tableContainerData2.value = [];
   const { containerTypeId, state, keyword } = data;
   if (!data.value) {
     const result = await api.containerInMitem.getList({
@@ -423,22 +434,30 @@ const onInput2 = async (data: any) => {
 };
 
 // 父调子fn
+/* * data 主表接口 的id 查右侧的数据 */
 const fetchTable = async (data: any) => {
+  console.log('🚀 ~ fetchTable ~ data:todo', data);
   setLoading(true);
+  inventoryManagement1.value = [];
+  tableContainerData1.value = [];
   if (!data.value) {
     const result = await api.container.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      barcodeRuleId: data,
+      containerTypeId: data, // containerTypeId 必传
     });
+    console.log('🚀 ~ fetchTable ~ result:', result);
     tableContainerData1.value = result.list;
     dataTotal1.value = result.total;
   }
   setLoading(false);
 };
+
 // fetchTable 物料关联
 const fetchTable2 = async (data: any) => {
   console.log('🚀 ~ fetchTable2 ~ data:', data);
+  inventoryManagement2.value = [];
+  tableContainerData2.value = [];
   setLoading(true);
   if (!data.value) {
     const result = await api.containerInMitem.getList({
@@ -477,12 +496,26 @@ const submit1 = async () => {
   MessagePlugin.success('生成成功');
 };
 
-// 打印
-// const print = () => {
-//  const reslutPrin =  api.container.printBarcode({
-//   ids:'',
-//  })  //todo
-// };
+/** 打印
+ * 检查所选行中是否有任何行处于“作废”状态
+ * 如果所有选中行均为非作废状态，执行打印逻辑
+ */
+const print = async () => {
+  selectedRowKeys.value.some(async (key) => {
+    const rowData = tableContainerData1.value.find((row) => row.id === key);
+    if (rowData.statusName === '已作废') {
+      MessagePlugin.error('无法打印，选中行中包含作废状态的数据！');
+      return;
+    }
+    try {
+      await api.container.printBarcode(multipleId.value);
+      await MessagePlugin.success('打印成功');
+      await fetchTable({});
+    } catch (error) {
+      console.error('打印失败:', error);
+    }
+  });
+};
 
 // 编辑
 const onEditRowClick2 = async ({ row }) => {
@@ -511,31 +544,41 @@ const onRowClick = async (row: { row: any }) => {
   }
 };
 
-// 批量作废
+/** 批量作废
+ *
+ */
 const onStateRowClick1 = async () => {
-  try {
-    // 等待删除操作完成
-    await api.container.removeBatch(selectedRowKeys.value);
-    await fetchTable({});
-    await MessagePlugin.success('批量作废成功!');
-  } catch (error) {
-    console.error('作废失败:', error);
-  }
-};
-// 批量删除  todo
-// const onRemoveRowClick2 = async () => {
-//   try {
-//     // 等待删除操作完成
-//     await api.containerInMitem.removeBatch(selectedRowKeys2.value);
-//     // 删除操作成功，现在调用 fetchTable
-//     await MessagePlugin.success('批量删除成功!');
-//     await fetchTable2({}); // 刷新表格数据
-//   } catch (error) {
-//     console.error('删除失败:', error);
-//   }
-// };
+  selectedRowKeys.value.some(async (key) => {
+    const rowData = tableContainerData1.value.find((row) => row.id === key);
+    if (
+      rowData.statusName === '使用中' ||
+      rowData.statusName === '已入库' ||
+      rowData.statusName === '已出库' ||
+      rowData.statusName === '已作废'
+    ) {
+      MessagePlugin.error('无法作废，选中行中包含使用中、已入库、已出库的状态的数据！');
+      return;
+    }
+    try {
+      await api.container.removeBatch(selectedRowKeys.value);
+      await MessagePlugin.success('作废成功!');
+      await fetchTable({});
+    } catch (error) {
+      console.error('作废失败:', error);
+    }
+  });
 
-// 批量删除
+  // try {
+  //   // 等待删除操作完成
+  //   await api.container.removeBatch(selectedRowKeys.value);
+  //   await fetchTable({});
+  //   await MessagePlugin.success('批量作废成功!');
+  // } catch (error) {
+  //   console.error('作废失败:', error);
+  // }
+};
+
+// 批量删除 todo
 const onRemoveRowClick2 = async () => {
   // 检查是否所有选中的容器都可以删除
   const canDelete = selectedRowKeys2.value.every((key) => {
@@ -661,3 +704,16 @@ const submit2 = async () => {
   MessagePlugin.success('新增成功');
 };
 </script>
+
+<style scoped lang="less">
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end; /* 使内容靠右对齐 */
+}
+
+.dialog-footer1 {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end; /* 使内容靠右对齐 */
+}
+</style>
