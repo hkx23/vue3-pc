@@ -726,7 +726,7 @@ watch(
   (newList) => {
     // 提取 newList 中每个元素的 id 并更新 arrPersonID
     arrPersonID.value = newList.map((item) => item.id);
-    addPersonTotal.value = onAddPersonTabList.list.length; // 页数变化
+    // addPersonTotal.value = onAddPersonTabList.list.length; // 页数变化
     delPersonTotal.value = onDelPersonTabList.list.length; // 页数变化
     // 获取新增和添加数组公共的 ID,用来判断图标样式
     commonPersonId.value = onAddPersonTabList.list

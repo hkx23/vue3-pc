@@ -924,8 +924,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -3899,14 +3899,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
-  isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isInProcessName?: string;
   isBatchName?: string;
+  isState?: boolean;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -4049,8 +4049,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -10158,6 +10158,21 @@ export const api = {
      */
     addStockInQty: (data: MoSchedule[]) =>
       http.request<ResultObject['data']>(`/api/main/moSchedule/addStockInQty`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddCompleteQty
+     * @summary 增加完工数量
+     * @request POST:/moSchedule/addCompleteQty
+     * @secure
+     */
+    addCompleteQty: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addCompleteQty`, {
         method: 'POST',
         body: data as any,
       }),
