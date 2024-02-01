@@ -985,46 +985,6 @@ export interface WipLogSearchVO {
 }
 
 /** 关键件查询 */
-export interface WipKeypartSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
-  keyword?: string;
-  /** @format int32 */
-  state?: number;
-  parentId?: string;
-  category?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-  customerConditions?: Filter[];
-  /** 产品条码 */
-  scanBarcodeList?: string[];
-}
-
-/** 响应数据 */
-export type PagingDataWipKeypartVO = {
-  list?: WipKeypartVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWipKeypartVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWipKeypartVO;
-}
-
-/** 关键件查询 */
 export interface WipKeypartVO {
   id?: string;
   /**
@@ -1071,6 +1031,63 @@ export interface WipKeypartVO {
   mitemName?: string;
   /** 新关键件条码 */
   newKeypartBarcode?: string;
+  /** 启用编辑 */
+  isEdit?: boolean;
+  curWorkstationId?: string;
+  curProcessId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
+}
+
+/** 关键件查询 */
+export interface WipKeypartSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  /** 产品条码 */
+  scanBarcodeList?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataWipKeypartVO = {
+  list?: WipKeypartVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWipKeypartVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWipKeypartVO;
 }
 
 /** 完工入库单据实体 */
@@ -2008,11 +2025,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopCode?: string;
-  workshopName?: string;
+  workshopId?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2059,9 +2076,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
+  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -3260,12 +3277,12 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
   workshopId?: string;
   stateName?: string;
-  workshopCode?: string;
-  workshopName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
@@ -3376,12 +3393,12 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
   workshopId?: string;
   stateName?: string;
-  workshopCode?: string;
-  workshopName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
@@ -3622,8 +3639,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -4864,6 +4881,36 @@ export const api = {
       }),
   },
   wipKeypart: {
+    /**
+     * No description
+     *
+     * @tags 在制品关键件采集表
+     * @name ReplaceWipKeypart
+     * @summary 关键件替换
+     * @request POST:/wipKeypart/replaceWipKeypart
+     * @secure
+     */
+    replaceWipKeypart: (data: WipKeypartVO) =>
+      http.request<ResultBoolean['data']>(`/api/control/wipKeypart/replaceWipKeypart`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品关键件采集表
+     * @name RemoveWipKeypart
+     * @summary 关键件移除
+     * @request POST:/wipKeypart/removeWipKeypart
+     * @secure
+     */
+    removeWipKeypart: (data: WipKeypartVO) =>
+      http.request<ResultBoolean['data']>(`/api/control/wipKeypart/removeWipKeypart`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
