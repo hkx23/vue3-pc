@@ -107,7 +107,7 @@
       </t-form-item>
       <!-- 第 4️⃣ 行数据 -->
       <t-form-item label="所属车间" name="workshopId">
-        <bcmp-select-business v-model="teamFormData.workshopId" type="workshop"></bcmp-select-business>
+        <bcmp-select-business v-model="teamFormData.workshopId" label="" type="workshop"></bcmp-select-business>
       </t-form-item>
     </t-form>
     <template #footer>
