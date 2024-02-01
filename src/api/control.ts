@@ -828,8 +828,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -982,6 +982,95 @@ export interface WipLogSearchVO {
    * @format date-time
    */
   timeCreate?: string;
+}
+
+/** 关键件查询 */
+export interface WipKeypartSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  /** 产品条码 */
+  scanBarcodeList?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataWipKeypartVO = {
+  list?: WipKeypartVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWipKeypartVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWipKeypartVO;
+}
+
+/** 关键件查询 */
+export interface WipKeypartVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  /** 关键件条码 */
+  keypartBarcode?: string;
+  /** 关键件条码类型 */
+  keypartBarcodeType?: string;
+  moScheId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  supplierId?: string;
+  /** 生产批次 */
+  lotNo?: string;
+  /** 使用数量 */
+  qty?: number;
+  workstationId?: string;
+  processId?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 新关键件条码 */
+  newKeypartBarcode?: string;
 }
 
 /** 完工入库单据实体 */
@@ -1190,8 +1279,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -1921,13 +2010,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  workshopName?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -1970,9 +2059,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -3173,15 +3262,15 @@ export interface BarcodeWipCollectVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  stateName?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  workshopName?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -3289,14 +3378,14 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  scanDatetimeStr?: string;
-  workshopName?: string;
-  workshopCode?: string;
   workshopId?: string;
-  defectCodeStr?: string;
   stateName?: string;
+  workshopCode?: string;
+  workshopName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -4770,6 +4859,22 @@ export const api = {
      */
     search: (data: WipLogSearch) =>
       http.request<ResultPagingDataWipLogSearchVO['data']>(`/api/control/wipLog/search`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  wipKeypart: {
+    /**
+     * No description
+     *
+     * @tags 在制品关键件采集表
+     * @name GetWipKeypartByRunCard
+     * @summary 关键件查询
+     * @request POST:/wipKeypart/getWipKeypartByRunCard
+     * @secure
+     */
+    getWipKeypartByRunCard: (data: WipKeypartSearch) =>
+      http.request<ResultPagingDataWipKeypartVO['data']>(`/api/control/wipKeypart/getWipKeypartByRunCard`, {
         method: 'POST',
         body: data as any,
       }),
