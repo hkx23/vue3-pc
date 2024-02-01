@@ -54,7 +54,7 @@
       :data="formData"
       scroll-to-first-error="smooth"
       label-align="right"
-      label-width="150px"
+      label-width="130px"
       label-placement="left"
       @submit="onSubmit"
     >

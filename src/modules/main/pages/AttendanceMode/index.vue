@@ -12,7 +12,7 @@
       </cmp-query>
     </cmp-card>
     <cmp-card>
-      <!-- ################# 班组表格数据 ###################### -->
+      <!-- ################# 出勤模式表格数据 ###################### -->
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -40,20 +40,19 @@
         </template>
         <template #button>
           <t-space :size="8">
-            <t-button theme="primary" @click="onAddTypeData"> 新增班组 </t-button>
+            <t-button theme="primary" @click="onAddTypeData"> 新增 </t-button>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onTeamDeleteBatches()">
-              <t-button theme="default"> 班组批量删除 </t-button>
+              <t-button theme="default"> 批量删除 </t-button>
             </t-popconfirm>
-            <t-button theme="default"> 班组导入 </t-button>
           </t-space>
         </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
 
-  <!-- #班组 dialog 弹窗 -->
+  <!-- #出勤模式 dialog 弹窗 -->
   <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
-    <t-form ref="formRef" :rules="rules" :data="teamFormData" @submit="onAnomalyTypeSubmit">
+    <t-form ref="formRef" :rules="rules" :data="teamFormData" label-width="120px" @submit="onAnomalyTypeSubmit">
       <!-- 第 1️⃣ 行数据 -->
       <t-row :gutter="[32, 16]">
         <t-col :span="12">
@@ -80,37 +79,42 @@
           </t-form-item>
         </t-col>
         <!-- 第 3️⃣ 行数据 -->
-        <t-row
-          v-for="(timeRange, index) in teamFormData.expression"
-          :key="index"
-          justify="space-between"
-          align="center"
-        >
-          <t-col :span="12">
-            <t-form-item :label="'时间段' + (index + 1)" :name="'expression' + index">
-              <t-time-range-picker
-                v-model="teamFormData.expression[index]"
-                class="demos"
-                clearable
-                format="HH:mm"
-                allow-input
+        <t-col :span="12">
+          <t-row
+            v-for="(timeRange, index) in teamFormData.expression"
+            :key="index"
+            justify="space-between"
+            align="center"
+            style="margin-bottom: 16px"
+          >
+            <t-col :span="10">
+              <t-form-item :label="'时间段' + (index + 1)" :name="'expression' + index">
+                <t-time-range-picker
+                  v-model="teamFormData.expression[index]"
+                  class="demos"
+                  clearable
+                  format="HH:mm"
+                  allow-input
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="2" style="text-align: center">
+              <icon
+                v-if="teamFormData.expression.length > 1"
+                name="minus-circle"
+                size="1.5em"
+                @click="() => delFormSubmit(index)"
               />
-            </t-form-item>
-          </t-col>
-          <t-col :span="2" style="text-align: center">
-            <icon
-              v-if="teamFormData.expression.length > 1"
-              name="minus-circle"
-              size="1.5em"
-              @click="() => delFormSubmit(index)"
-            />
-          </t-col>
-        </t-row>
+            </t-col>
+          </t-row>
+        </t-col>
       </t-row>
       <!--# 🌈添加按钮 -->
-      <t-row justify="center" style="margin-top: 16px">
-        <t-button block variant="outline" style="width: 90%" @click="addFormSubmit">添加</t-button>
-      </t-row>
+      <t-col :span="12">
+        <t-form-item label="">
+          <t-button block variant="outline" @click="addFormSubmit">添加</t-button>
+        </t-form-item>
+      </t-col>
     </t-form>
     <template #footer>
       <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
@@ -252,13 +256,13 @@ const delFormSubmit = (index: number) => {
 // const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { pageUI } = usePage(); // 分页工具
-const formVisible = ref(false); // 控制 班组dialog 弹窗显示隐藏
+const formVisible = ref(false); // 控制 出勤模式dialog 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys: Ref<any[]> = ref([]); // 删除计量单位 id
 const submitFalg = ref(false);
-// $班组 表格数据
+// $出勤模式 表格数据
 const teamList = reactive({ list: [] });
-// 班组表格数据总条数
+// 出勤模式表格数据总条数
 const teamTotal = ref(0);
 // $人员 表格数据
 const supportPersonInUserList = reactive({ list: [] });
@@ -267,7 +271,7 @@ const supportPersonTotal = ref(0);
 // dialog 弹框数据
 // 初始渲染
 onMounted(async () => {
-  await onShiftTabData(); // 获取 班组表格 数据
+  await onShiftTabData(); // 获取 出勤模式表格 数据
   await onShiftSelectData(); // 班次下拉数据获取
 });
 
@@ -318,9 +322,9 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// # 班组刷新按钮
+// # 出勤模式刷新按钮
 const onFetchGroupData = async () => {
-  await onShiftTabData(); // 获取 班组表格 数据
+  await onShiftTabData(); // 获取 出勤模式表格 数据
   selectedRowKeys.value = [];
   supportPersonInUserList.list = [];
   supportPersonTotal.value = 0;
@@ -334,7 +338,7 @@ const rules: FormRules = {
   shiftCode: [{ required: true, trigger: 'change' }],
 };
 
-// #班组搜索
+// #出勤模式搜索
 const opts = computed(() => {
   return {
     keyword: { label: '出勤模式名称', comp: 't-input', event: 'input', defaultval: '' },
@@ -374,26 +378,31 @@ const onShiftTabData = async () => {
   teamTotal.value = res.total;
 };
 
-// #添加 班组 数据请求
+// #添加 出勤模式 数据请求
 const onAddSupportGroup = async () => {
-  const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
-  const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
-  if (!isValid) {
-    MessagePlugin.warning('时间段不能为空！');
-    return;
+  try {
+    const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
+    const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
+    if (!isValid) {
+      MessagePlugin.warning('时间段不能为空！');
+      return;
+    }
+    const flag = checkArray(flattenedConvertedIntervals);
+    if (!flag) {
+      MessagePlugin.warning('时间间隔不能超过24小时，请重新输入！');
+      return;
+    }
+    const newArr = appendNFromFirstDecrease(flattenedConvertedIntervals);
+    const convert = convertToTimeRange(newArr).join(';');
+    const teamFormDataCloneDeep = _.cloneDeep(teamFormData.value);
+    delete teamFormDataCloneDeep.expression;
+    await api.attendanceMode.addAttendanceMode({ ...teamFormDataCloneDeep, expression: convert });
+    await onShiftTabData(); // 获取 出勤模式表格 数据
+    formVisible.value = false;
+    MessagePlugin.success('新增成功');
+  } catch (error) {
+    teamFormData.value.expression = [defaultTimeRange];
   }
-  const flag = checkArray(flattenedConvertedIntervals);
-  if (!flag) {
-    MessagePlugin.warning('时间间隔不能超过24小时，请重新输入！');
-    return;
-  }
-  const newArr = appendNFromFirstDecrease(flattenedConvertedIntervals);
-  const convert = convertToTimeRange(newArr).join(';');
-  delete teamFormData.value.expression;
-  await api.attendanceMode.addAttendanceMode({ ...teamFormData.value, expression: convert });
-  await onShiftTabData(); // 获取 班组表格 数据
-  formVisible.value = false;
-  MessagePlugin.success('新增成功');
 };
 
 // #添加按钮点击事件
@@ -405,24 +414,23 @@ const onAddTypeData = async () => {
   diaLogTitle.value = '出勤模式新增';
 };
 
-// #编辑 点击 班组右侧表格编辑按钮
+// #编辑 点击 出勤模式右侧表格编辑按钮
 const workGroupRowId = ref('');
 const onEditRow = (row: any) => {
-  teamFormData.value.modeCode = row.modeCode; // 班组代码
-  teamFormData.value.modeName = row.modeName; // 班组名称
-  teamFormData.value.modeDesc = row.modeDesc; // 班组描述
+  teamFormData.value.modeCode = row.modeCode; // 出勤模式代码
+  teamFormData.value.modeName = row.modeName; // 出勤模式名称
+  teamFormData.value.modeDesc = row.modeDesc; // 出勤模式描述
   teamFormData.value.shiftCode = row.shiftCode; // 车间 ID
   teamFormData.value.expression = _.cloneDeep(row.expressionSpilt); // 车间 ID
   workGroupRowId.value = row.id;
   submitFalg.value = false; // 编辑为 false
   formVisible.value = true;
-  diaLogTitle.value = '编辑班组';
+  diaLogTitle.value = '编辑出勤模式';
 };
 
-// #编辑 班组 表格数据 请求
+// #编辑 出勤模式 表格数据 请求
 const onGroupRequest = async () => {
   const flattenedConvertedIntervals = convertAndFlattenTimeIntervals(teamFormData.value.expression);
-  console.log('🚀 ~ file: index.vue:438 ~ onGroupRequest ~ flattenedConvertedIntervals:', flattenedConvertedIntervals);
   const isValid = flattenedConvertedIntervals.every((element) => !Number.isNaN(element));
   if (!isValid) {
     MessagePlugin.warning('时间段不能为空！');
@@ -441,12 +449,12 @@ const onGroupRequest = async () => {
     expression: convert,
     id: workGroupRowId.value,
   });
-  await onShiftTabData(); // 获取 班组表格 数据
+  await onShiftTabData(); // 获取 出勤模式表格 数据
   formVisible.value = false;
   MessagePlugin.success('编辑成功');
 };
 
-// ！删除 获取 班组 批量删除数组
+// ！删除 获取 出勤模式 批量删除数组
 const onSelectChange = (value) => {
   selectedRowKeys.value = value;
 };
@@ -456,24 +464,24 @@ const onGroupSelectChange = async ({ row }) => {
   rowGroupId.value = row.id;
 };
 
-// ！ 删除 单项删除 班组 点击
+// ！ 删除 单项删除 出勤模式 点击
 const onGroupDelect = (row: any) => {
   selectedRowKeys.value = [];
   selectedRowKeys.value.push(row.id);
 };
 
-// ！班组表格删除确认按钮
+// ！出勤模式表格删除确认按钮
 const onDelConfirm = async () => {
   await api.attendanceMode.removeBatch([rowGroupId.value]);
   if (teamList.list.length <= 1 && pageUI.value.page > 1) {
     pageUI.value.page--;
   }
-  await onShiftTabData(); // 获取 班组表格 数据
+  await onShiftTabData(); // 获取 出勤模式表格 数据
   MessagePlugin.success('删除成功');
   selectedRowKeys.value = []; // 置空
 };
 
-// ！班组表格批量删除按钮
+// ！出勤模式表格批量删除按钮
 const onTeamDeleteBatches = async () => {
   // 步骤 1: 检查删除前的数据总量
   const initialLength = teamList.list.length;
@@ -485,7 +493,7 @@ const onTeamDeleteBatches = async () => {
     pageUI.value.page--;
   }
   MessagePlugin.success('批量删除成功');
-  await onShiftTabData(); // 获取 班组表格 数据
+  await onShiftTabData(); // 获取 出勤模式表格 数据
   selectedRowKeys.value = []; // 置空
 };
 

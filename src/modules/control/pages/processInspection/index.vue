@@ -245,6 +245,7 @@ const serialNumberEnter = async (value) => {
           // writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
 
           if (reData.defectCodeStr.length > 0) {
+            scanInput.value.selectAll();
             writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
           } else {
             scanInput.value.selectAll();
@@ -258,6 +259,7 @@ const serialNumberEnter = async (value) => {
         }
       })
       .catch((e) => {
+        scanInput.value.selectAll();
         pushMessage('error', value, e.message);
         writeScanInfoError(value, 0, e.message);
         // writeMessageListError(e.message, dayjs().format('YYYY-MM-DD HH:mm:ss'));
