@@ -53,7 +53,7 @@
 
   <!-- #班组 dialog 弹窗 -->
   <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
-    <t-form ref="formRef" :rules="rules" :data="teamFormData" @submit="onAnomalyTypeSubmit">
+    <t-form ref="formRef" :rules="rules" :data="teamFormData" label-width="120px" @submit="onAnomalyTypeSubmit">
       <!-- 第 1️⃣ 行数据 -->
       <t-row :gutter="[32, 16]">
         <t-col :span="12">
@@ -80,32 +80,35 @@
           </t-form-item>
         </t-col>
         <!-- 第 3️⃣ 行数据 -->
-        <t-row
-          v-for="(timeRange, index) in teamFormData.expression"
-          :key="index"
-          justify="space-between"
-          align="center"
-        >
-          <t-col :span="12">
-            <t-form-item :label="'时间段' + (index + 1)" :name="'expression' + index">
-              <t-time-range-picker
-                v-model="teamFormData.expression[index]"
-                class="demos"
-                clearable
-                format="HH:mm"
-                allow-input
+        <t-col :span="12">
+          <t-row
+            v-for="(timeRange, index) in teamFormData.expression"
+            :key="index"
+            justify="space-between"
+            align="center"
+            style="margin-bottom: 16px"
+          >
+            <t-col :span="10">
+              <t-form-item :label="'时间段' + (index + 1)" :name="'expression' + index">
+                <t-time-range-picker
+                  v-model="teamFormData.expression[index]"
+                  class="demos"
+                  clearable
+                  format="HH:mm"
+                  allow-input
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="2" style="text-align: center">
+              <icon
+                v-if="teamFormData.expression.length > 1"
+                name="minus-circle"
+                size="1.5em"
+                @click="() => delFormSubmit(index)"
               />
-            </t-form-item>
-          </t-col>
-          <t-col :span="2" style="text-align: center">
-            <icon
-              v-if="teamFormData.expression.length > 1"
-              name="minus-circle"
-              size="1.5em"
-              @click="() => delFormSubmit(index)"
-            />
-          </t-col>
-        </t-row>
+            </t-col>
+          </t-row>
+        </t-col>
       </t-row>
       <!--# 🌈添加按钮 -->
       <t-row justify="center" style="margin-top: 16px">
