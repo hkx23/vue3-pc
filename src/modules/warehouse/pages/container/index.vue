@@ -182,7 +182,7 @@ const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { title: '容器类型名称', width: 120, colKey: 'containerTypeName' },
   { title: '容器类型描述', width: 120, colKey: 'containerTypeDesc' },
   { title: '状态', width: 85, colKey: 'stateName' },
-  { title: '操作', align: 'left', fixed: 'right', width: 100, colKey: 'op1' },
+  { title: '操作', align: 'left', fixed: 'right', width: 85, colKey: 'op1' },
 ];
 
 // 新增容器
@@ -217,6 +217,7 @@ const onInput = async (data: any) => {
       pageSize: pageUI.value.rows,
       keyword,
     });
+    console.log('🚀 ~ onInput ~ result:', result);
     tableContainerData1.value = result.list;
     dataTotal1.value = result.total;
   }

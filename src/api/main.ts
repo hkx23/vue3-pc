@@ -3905,8 +3905,8 @@ export interface MitemVO {
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isBatchName?: string;
   isInProcessChecked?: boolean;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -4493,6 +4493,11 @@ export interface IntegratedConsoleVO {
   status?: string;
   /** 状态名称 */
   statusName?: string;
+  /**
+   * 执行次数
+   * @format int32
+   */
+  executionTimes?: number;
 }
 
 /** 响应数据 */
@@ -6645,12 +6650,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
