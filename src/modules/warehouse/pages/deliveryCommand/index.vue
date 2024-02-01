@@ -9,7 +9,7 @@
         ref="tableRef"
         v-model:pagination="pageUI"
         row-key="id"
-        empty="t('common.table.noMatchingData')"
+        :empty="t('common.table.noMatchingData')"
         :table-column="columns"
         :fixed-height="true"
         :table-data="deliveryData"
