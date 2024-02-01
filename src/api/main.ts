@@ -2144,8 +2144,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3818,8 +3818,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -3898,15 +3898,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isProductName?: string;
   isProductChecked?: boolean;
-  isRawName?: string;
+  isInProcessChecked?: boolean;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
+  isProductName?: string;
+  isRawName?: string;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4385,9 +4385,9 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
+  imsgqueueStatus?: string;
   mesbillNo?: string;
   erpbillNo?: string;
-  imsgqueueStatus?: string;
 }
 
 /** 显示工站 */
@@ -4489,15 +4489,19 @@ export interface IntegratedConsoleVO {
    * @format date-time
    */
   datetimeExecuteEnd?: string;
-  /** 状态 */
+  /** 执行结果 */
   status?: string;
-  /** 状态名称 */
+  /** 执行结果名称 */
   statusName?: string;
   /**
    * 执行次数
    * @format int32
    */
   executionTimes?: number;
+  /** 上次失败请求参数 */
+  paramIn?: string;
+  /** 上次失败错误信息 */
+  failContent?: string;
 }
 
 /** 响应数据 */
@@ -4937,8 +4941,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -6650,10 +6654,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
 } | null;
