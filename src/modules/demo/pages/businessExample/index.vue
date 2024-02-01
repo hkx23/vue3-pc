@@ -193,6 +193,13 @@
           <t-input v-model="lineValue" label="产线值" disabled />
         </t-col>
       </t-row>
+      <!-- 线边仓 -->
+      <t-row :gutter="[10, 10]">
+        <t-col flex="300px"> <bcmp-select-business type="lineWarehouse"></bcmp-select-business></t-col>
+        <t-col flex="300px">
+          <t-input label="线边仓" disabled />
+        </t-col>
+      </t-row>
     </cmp-card>
   </cmp-container>
 </template>

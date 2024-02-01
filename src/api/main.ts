@@ -283,6 +283,7 @@ export interface CommonSearch {
   category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
+  customerConditions?: Filter[];
 }
 
 export interface Filter {
@@ -3897,15 +3898,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
-  isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
+  stateName?: string;
+  isState?: boolean;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -4358,6 +4359,171 @@ export interface Label {
   isHold?: number;
 }
 
+export interface IntegratedConsoleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 接口分类 */
+  msgCategory?: string;
+  /** 接口领域分类 */
+  msgDomainCategory?: string;
+  businessCategoryId?: string;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  mesbillNo?: string;
+  erpbillNo?: string;
+  imsgqueueStatus?: string;
+}
+
+/** 显示工站 */
+export interface IntegratedConsoleVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  businessCategoryId?: string;
+  /** ERP业务类型ID */
+  erpBusinessCategoryId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** ERP单据号 */
+  erpBillNo?: string;
+  /** 采购订单号 */
+  purchaseNo?: string;
+  /** 送货单号 */
+  deliveryNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  /** ERP来源仓库ID */
+  erpWarehouseId?: string;
+  /** ERP来源货区ID */
+  erpDistrictId?: string;
+  /** ERP来源货区ID */
+  erpLocId?: string;
+  /** ERP目标组织ID */
+  toErpOid?: string;
+  /** ERP目标仓库ID */
+  toErpWarehouseId?: string;
+  /** ERP目标货区ID */
+  toErpDistrictId?: string;
+  /** ERP目标货区ID */
+  toErpLocId?: string;
+  mitemId?: string;
+  /** ERP物料ID */
+  erpMitemId?: string;
+  supplierId?: string;
+  /** 供应商ID */
+  erpSupplierId?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** ERP工单号 */
+  erpMoId?: string;
+  moScheId?: string;
+  /**
+   * 交易时间
+   * @format date-time
+   */
+  datetimeTrans?: string;
+  /** 交易数量 */
+  transQty?: number;
+  /**
+   * 上传顺序
+   * @format int32
+   */
+  ulSeq?: number;
+  /** ERP单据头表 */
+  erpBillId?: string;
+  /** ERP单据明细表 */
+  erpBillDtlId?: string;
+  /** 消息分类名称 */
+  msgCategoryName?: string;
+  /** 消息领域分类名称 */
+  msgDomainCategoryName?: string;
+  /** 业务类型名称 */
+  categoryName?: string;
+  /**
+   * 交易开始时间
+   * @format date-time
+   */
+  datetimeExecuteStart?: string;
+  /**
+   * 交易结束时间
+   * @format date-time
+   */
+  datetimeExecuteEnd?: string;
+  /** 执行结果 */
+  status?: string;
+  /** 执行结果名称 */
+  statusName?: string;
+  /**
+   * 执行次数
+   * @format int32
+   */
+  executionTimes?: number;
+  /** 上次失败请求参数 */
+  paramIn?: string;
+  /** 上次失败错误信息 */
+  failContent?: string;
+}
+
+/** 响应数据 */
+export type PagingDataIntegratedConsoleVO = {
+  list?: IntegratedConsoleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataIntegratedConsoleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataIntegratedConsoleVO;
+}
+
 export interface FileVO {
   path?: string;
   fileNames?: string[];
@@ -4682,6 +4848,7 @@ export interface DefectCodeSearch {
   category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
+  customerConditions?: Filter[];
   id?: string;
   /** 多个ID */
   ids?: string[];
@@ -6487,12 +6654,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -10595,6 +10762,22 @@ export const api = {
      */
     batchChange: (data: Label[]) =>
       http.request<ResultObject['data']>(`/api/main/label/batchChangeStatus`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  integratedConsole: {
+    /**
+     * No description
+     *
+     * @tags 集成控制台
+     * @name GetList
+     * @summary 查询主页数据
+     * @request POST:/integratedConsole/getList
+     * @secure
+     */
+    getList: (data: IntegratedConsoleSearch) =>
+      http.request<ResultPagingDataIntegratedConsoleVO['data']>(`/api/main/integratedConsole/getList`, {
         method: 'POST',
         body: data as any,
       }),
