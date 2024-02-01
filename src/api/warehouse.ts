@@ -2748,11 +2748,6 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
@@ -2761,6 +2756,11 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
   /**
@@ -4781,6 +4781,19 @@ export interface ResultListLong {
 }
 
 /** 通用响应类 */
+export interface ResultBigDecimal {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: number | null;
+}
+
+/** 通用响应类 */
 export interface ResultListWarehouse {
   /**
    * 响应代码
@@ -4904,19 +4917,6 @@ export interface ResultListPurchaseOrderDtlVO {
   message?: string;
   /** 响应数据 */
   data?: PurchaseOrderDtlVO[] | null;
-}
-
-/** 通用响应类 */
-export interface ResultBigDecimal {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: number | null;
 }
 
 export interface OnhandQtyDtlVO {
@@ -5710,6 +5710,36 @@ export const api = {
      */
     selectByLabelNo: (query: { labelNo: string }) =>
       http.request<ResultTransferHeadVO['data']>(`/api/warehouse/transferDtlBarcode/selectByLabelNo`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 交易明细标签表
+     * @name GetQtyByBillNo
+     * @summary 根据单据号获取标签数量
+     * @request GET:/transferDtlBarcode/getQtyByBillNo
+     * @secure
+     */
+    getQtyByBillNo: (query: { BillNo: string }) =>
+      http.request<ResultBigDecimal['data']>(`/api/warehouse/transferDtlBarcode/getQtyByBillNo`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 交易明细标签表
+     * @name GetNameByBillNo
+     * @summary 根据单据号获取标签名称
+     * @request GET:/transferDtlBarcode/getNameByBillNo
+     * @secure
+     */
+    getNameByBillNo: (query: { BillNo: string }) =>
+      http.request<ResultString['data']>(`/api/warehouse/transferDtlBarcode/getNameByBillNo`, {
         method: 'GET',
         params: query,
       }),
@@ -7155,6 +7185,21 @@ export const api = {
      * No description
      *
      * @tags 货位
+     * @name GetNameById
+     * @summary 根据ID获得名称
+     * @request GET:/location/getNameById
+     * @secure
+     */
+    getNameById: (query: { id: string }) =>
+      http.request<ResultString['data']>(`/api/warehouse/location/getNameById`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
      * @name GetDistrict
      * @summary 获取所选仓库的货区（下拉）
      * @request GET:/location/getDistrict
@@ -7601,6 +7646,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/district/addDistrict`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name GetNameById
+     * @summary 根据ID获得名称
+     * @request GET:/district/getNameById
+     * @secure
+     */
+    getNameById: (query: { id: string }) =>
+      http.request<ResultString['data']>(`/api/warehouse/district/getNameById`, {
+        method: 'GET',
+        params: query,
       }),
   },
   deliveryCommand: {

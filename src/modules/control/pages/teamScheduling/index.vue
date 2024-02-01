@@ -575,8 +575,9 @@ const TimeStampCalculation = () => {
   const end = dayjs(qTimeModified.value);
   const endTimeStamp = end.valueOf();
 
-  // 计算两个时间戳之间的差值，并转换为天数
-  const diffInDays = (endTimeStamp - startTimeStamp) / 86400000;
+  // 计算两个时间戳之间的差值，并转换为天数  todo
+  const diffInDays = (endTimeStamp - startTimeStamp) / 86400000 + 1;
+  console.log('🚀 ~ TimeStampCalculation ~ diffInDays:todo', diffInDays);
   dayDatas.value = diffInDays;
 };
 
