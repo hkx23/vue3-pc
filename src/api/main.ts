@@ -1524,8 +1524,8 @@ export interface TransactionDetailVO {
   barcodeQty?: number;
   /** 物料代码 */
   mitemCode?: string;
-  /** 物料名称 */
-  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
   /** 计量单位符号名称 */
   uomName?: string;
   /** 源仓库名称 */
@@ -1546,6 +1546,11 @@ export interface TransactionDetailVO {
   supplierName?: string;
   /** 操作人 */
   creatorName?: string;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
   /** 执行结果 */
   status?: string;
   /** 执行结果名称 */
@@ -2319,8 +2324,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4073,15 +4078,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
+  isState?: boolean;
+  isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  isState?: boolean;
-  isProductName?: string;
-  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4560,9 +4565,9 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
+  imsgqueueStatus?: string;
   mesbillNo?: string;
   erpbillNo?: string;
-  imsgqueueStatus?: string;
 }
 
 /** 显示工站 */
@@ -5116,8 +5121,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -11282,20 +11287,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/defectDealMethod/addDefectDealMethod`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷处理方法
-     * @name GetIncidentType
-     * @summary 获取下拉列表(缺陷处理方法类别)
-     * @request GET:/defectDealMethod/getDefectDealMethodType
-     * @secure
-     */
-    getIncidentType: () =>
-      http.request<ResultPagingDataParam['data']>(`/api/main/defectDealMethod/getDefectDealMethodType`, {
-        method: 'GET',
       }),
   },
   defectCode: {

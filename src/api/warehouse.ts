@@ -564,6 +564,8 @@ export type LabelVO = {
   supplierName?: string;
   /** 物料编码 */
   mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
   /** 物料名称 */
   mitemName?: string;
   /**
@@ -1289,6 +1291,81 @@ export interface StorageAgeQueryVO {
   balanceQty?: number;
   expiredDays?: string;
 }
+
+export interface StockCheckBillExecuteSearch {
+  locId?: string;
+  /** 货区ID */
+  locCode?: string;
+  /** 单据号 */
+  billNo?: string;
+  stockCheckBillId?: string;
+  warehouseId?: string;
+  /** 物料标签 */
+  labelNo?: string;
+  mitemId?: string;
+  dtlId?: string;
+  /** 实盘数 */
+  checkQty?: number;
+}
+
+/** 通用响应类 */
+export interface ResultListStockCheckBillExecuteSubVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: StockCheckBillExecuteSubVO[] | null;
+}
+
+/** 响应数据 */
+export type StockCheckBillExecuteSubVO = {
+  billId?: string;
+  /** 单据号 */
+  billNo?: string;
+  warehouseId?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 盘点类型名称 */
+  stockCheckBillTypeName?: string;
+  /** 盘点状态名称 */
+  stockCheckBillStatusName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 最小包装数 */
+  minPkgQty?: number;
+  /** 计量单位 */
+  uomName?: string;
+  /** 货区名称 */
+  districtName?: string;
+  /** 货位名称 */
+  locationName?: string;
+  /** 帐面数 */
+  onhandQty?: number;
+  /** 实盘数 */
+  checkQty?: number;
+  labelCount?: string;
+  /** 差异数 */
+  differenceQty?: number;
+  /** 差异原因 */
+  diffReason?: string;
+  /** 扫描的标签号 */
+  scanBarcode?: string;
+  onhandId?: string;
+  pdDtlId?: string;
+  /**
+   * 是否启用批次
+   * @format int32
+   */
+  isBatchNo?: number;
+} | null;
 
 /** 盘点单据明细表 */
 export interface StockCheckBillDtl {
@@ -2748,9 +2825,6 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
@@ -2763,6 +2837,9 @@ export interface MoIssuanceDtlVO {
   moRequestQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4861,6 +4938,77 @@ export interface ResultListOrg {
 }
 
 /** 通用响应类 */
+export interface ResultListStockCheckBillExecuteBarcodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: StockCheckBillExecuteBarcodeVO[] | null;
+}
+
+/** 响应数据 */
+export type StockCheckBillExecuteBarcodeVO = {
+  id?: string;
+  /** 物料标签 */
+  labelNo?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 帐面数 */
+  onhandQty?: number;
+  /** 实盘数 */
+  checkQty?: number;
+} | null;
+
+/** 响应数据 */
+export type PagingDataStockCheckBillExecuteVO = {
+  list?: StockCheckBillExecuteVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataStockCheckBillExecuteVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataStockCheckBillExecuteVO;
+}
+
+export interface StockCheckBillExecuteVO {
+  billId?: string;
+  /** 单据号 */
+  billNo?: string;
+  warehouseId?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 仓库类型 */
+  warehouseCategoryName?: string;
+  /** 盘点类型名称 */
+  stockCheckBillTypeName?: string;
+  stockCheckBillTypeCode?: string;
+  /** 盘点状态名称 */
+  stockCheckBillStatusName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 详情集合 */
+  list?: StockCheckBillExecuteSubVO[];
+}
+
+/** 通用响应类 */
 export interface ResultListLocation {
   /**
    * 响应代码
@@ -5962,6 +6110,89 @@ export const api = {
         params: query,
       }),
   },
+  stockCheckBillDtl: {
+    /**
+     * No description
+     *
+     * @tags 盘点单据明细表
+     * @name SacnLocCode
+     * @summary 盘点执行扫描货位编码
+     * @request POST:/stockCheckBillDtl/sacnLocCode
+     * @secure
+     */
+    sacnLocCode: (data: StockCheckBillExecuteSearch) =>
+      http.request<ResultListStockCheckBillExecuteSubVO['data']>(`/api/warehouse/stockCheckBillDtl/sacnLocCode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据明细表
+     * @name GetStockCheckBillDtlByBillNo
+     * @summary 根据盘点单号获取详情信息
+     * @request POST:/stockCheckBillDtl/getStockCheckBillDtlByBillNo
+     * @secure
+     */
+    getStockCheckBillDtlByBillNo: (data: StockCheckBillExecuteSearch) =>
+      http.request<ResultListStockCheckBillExecuteSubVO['data']>(
+        `/api/warehouse/stockCheckBillDtl/getStockCheckBillDtlByBillNo`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据明细表
+     * @name ChangeCheckQtyByDtlId
+     * @summary 根据盘点单号获取详情信息
+     * @request POST:/stockCheckBillDtl/changeCheckQtyByDtlId
+     * @secure
+     */
+    changeCheckQtyByDtlId: (data: StockCheckBillExecuteSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBillDtl/changeCheckQtyByDtlId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  stockCheckBillBarcode: {
+    /**
+     * No description
+     *
+     * @tags 盘点单据标签表
+     * @name SetStateToDown
+     * @summary 禁用盘点执行物料标签
+     * @request POST:/stockCheckBillBarcode/setStateToDown
+     * @secure
+     */
+    setStateToDown: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBillBarcode/setStateToDown`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据标签表
+     * @name GetBarcodeByBillDtlId
+     * @summary 根据详情id获取标签
+     * @request GET:/stockCheckBillBarcode/getBarcodeByBillDtlId
+     * @secure
+     */
+    getBarcodeByBillDtlId: (query: { dtlId: string }) =>
+      http.request<ResultListStockCheckBillExecuteBarcodeVO['data']>(
+        `/api/warehouse/stockCheckBillBarcode/getBarcodeByBillDtlId`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
+  },
   stockCheckBill: {
     /**
      * No description
@@ -6111,6 +6342,29 @@ export const api = {
       http.request<ResultListWarehouse['data']>(`/api/warehouse/stockCheckBill/getWarehouse`, {
         method: 'GET',
       }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
+     * @name GetStockCheckByUser
+     * @summary 根据用户获取盘点单信息
+     * @request GET:/stockCheckBill/getStockCheckByUser
+     * @secure
+     */
+    getStockCheckByUser: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+    }) =>
+      http.request<ResultPagingDataStockCheckBillExecuteVO['data']>(
+        `/api/warehouse/stockCheckBill/getStockCheckByUser`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
 
     /**
      * No description
@@ -7537,7 +7791,7 @@ export const api = {
      *
      * @tags 标签表
      * @name GetLabelPrintTmplList
-     * @summary 获取条码规则数据
+     * @summary 获取条码打印模板
      * @request GET:/label/getLabelPrintTmplList
      * @secure
      */
