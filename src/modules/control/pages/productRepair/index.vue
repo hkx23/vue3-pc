@@ -163,12 +163,24 @@
                     >
                       <template #newKeypartBarcode="{ row }">
                         <t-space>
-                          <t-input placeholder="请输入关键件信息" :value="row.newKeypartBarcode" />
+                          <t-input
+                            v-model="row.newKeypartBarcode"
+                            placeholder="请输入关键件信息"
+                            :disabled="!row.isEdit"
+                            :autofocus="row.isEdit"
+                          />
                         </t-space>
                       </template>
                       <template #op="{ row }">
                         <t-space>
-                          <t-link theme="primary" @click="onKeyPartReplace(row)">替换</t-link>
+                          <t-link v-if="!row.isEdit" theme="primary" @click="onKeyPartIsEdit(row)">替换</t-link>
+                          <t-link v-else theme="primary" @click="onKeyPartReplace(row)">提交</t-link>
+                          <t-popup>
+                            <t-link theme="primary">更多...</t-link>
+                            <template #content>
+                              <t-link theme="primary" style="margin: 5px" @click="onKeyPartReMove(row)">移除</t-link>
+                            </template>
+                          </t-popup>
                         </t-space>
                       </template>
                     </cmp-table>
@@ -192,11 +204,10 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-// import { DialogPlugin } from 'tdesign-vue-next';
+import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
-import { api as apiControl, WipRepairDtlVO, WipRepairIds, WipRepairVO } from '@/api/control';
+import { api as apiControl, WipKeypartVO, WipRepairDtlVO, WipRepairIds, WipRepairVO } from '@/api/control';
 import { api as apiMain } from '@/api/main';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
 // import { api as apiMain } from '@/api/main';
@@ -394,13 +405,13 @@ const repairingColumns: PrimaryTableCol<TableRowData>[] = [
 
 const keyPartData = ref([]);
 const keyPartColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '序号', colKey: 'serial-number', width: 74 },
-  { title: '产品条码', width: 160, colKey: 'runCard' },
-  { title: '关键件条码', width: 160, colKey: 'keypartBarcode' },
-  { title: '物料编码', width: 160, colKey: 'mitemCode' },
-  { title: '物料名称', width: 160, colKey: 'mitemName' },
+  { title: '序号', colKey: 'serial-number', width: 40 },
+  { title: '产品条码', width: 80, colKey: 'runCard' },
+  { title: '关键件条码', width: 80, colKey: 'keypartBarcode' },
+  { title: '物料编码', width: 80, colKey: 'mitemCode' },
+  { title: '物料名称', width: 80, colKey: 'mitemName' },
   { title: '新关键件信息', width: 160, colKey: 'newKeypartBarcode' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  { title: '操作', align: 'left', fixed: 'right', width: 80, colKey: 'op' },
 ];
 
 watch(
@@ -450,7 +461,6 @@ const onDeleteClick = async ({ row }) => {
 
   await fetchRepairingTable();
 };
-
 // 维修完成按钮
 const onSubmit = async () => {
   if (selectRepairingIds.value.length === 0) {
@@ -500,7 +510,6 @@ const onSubmit = async () => {
   fetchTable();
   fetchRepairingTable();
 };
-
 const fetchTable = async () => {
   try {
     const rangDays = dayjs(formData.queryData.endDate).diff(dayjs(formData.queryData.beginDate), 'days');
@@ -699,9 +708,61 @@ const onActiveChange = async (highlightRowKeys) => {
   selectRepairRowId.value = `${highlightRowKeys[0]}`;
   await fetchDtlTable();
 };
-const onKeyPartReplace = async (row: any) => {
+const onKeyPartIsEdit = async (row: any) => {
+  row.isEdit = true;
   console.log(row);
 };
+const onKeyPartReplace = async (row: WipKeypartVO) => {
+  const confirmCanceled = DialogPlugin({
+    header: '替换',
+    body: '确认替换关键件吗',
+    theme: 'warning',
+    confirmBtn: '确认',
+    cancelBtn: '取消',
+    onConfirm: async () => {
+      try {
+        row.curProcessId = userStore.currUserOrgInfo.processId;
+        row.curWorkstationId = userStore.currUserOrgInfo.workStationId;
+        await apiControl.wipKeypart.replaceWipKeypart({ ...row });
+        fetchKeyPartTable();
+        MessagePlugin.success('替换成功');
+      } catch (error) {
+        console.log(error);
+      } finally {
+        confirmCanceled.hide();
+      }
+    },
+    onClose: () => {
+      confirmCanceled.hide();
+    },
+  });
+};
+const onKeyPartReMove = async (row: WipKeypartVO) => {
+  const confirmCanceled = DialogPlugin({
+    header: '移除',
+    body: '确认移除关键件吗',
+    theme: 'warning',
+    confirmBtn: '确认',
+    cancelBtn: '取消',
+    onConfirm: async () => {
+      try {
+        row.curProcessId = userStore.currUserOrgInfo.processId;
+        row.curWorkstationId = userStore.currUserOrgInfo.workStationId;
+        await apiControl.wipKeypart.removeWipKeypart({ ...row });
+        fetchKeyPartTable();
+        MessagePlugin.success('移除成功');
+      } catch (error) {
+        console.log(error);
+      } finally {
+        confirmCanceled.hide();
+      }
+    },
+    onClose: () => {
+      confirmCanceled.hide();
+    },
+  });
+};
+
 const tabsChange = async (tabValue) => {
   selectTabValue.value = tabValue;
 };

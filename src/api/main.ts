@@ -3899,14 +3899,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
-  isProductName?: string;
-  isProductChecked?: boolean;
   isRawName?: string;
+  isBatchName?: string;
+  isProductName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
+  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isBatchName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4049,8 +4049,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6654,12 +6654,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -10158,6 +10158,21 @@ export const api = {
      */
     addStockInQty: (data: MoSchedule[]) =>
       http.request<ResultObject['data']>(`/api/main/moSchedule/addStockInQty`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddCompleteQty
+     * @summary 增加完工数量
+     * @request POST:/moSchedule/addCompleteQty
+     * @secure
+     */
+    addCompleteQty: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addCompleteQty`, {
         method: 'POST',
         body: data as any,
       }),
