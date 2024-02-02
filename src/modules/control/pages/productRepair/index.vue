@@ -468,7 +468,7 @@ const onSubmit = async () => {
     return;
   }
 
-  if (_.isEmpty(formData.queryData.returnRoutingProcessId)) {
+  if (_.isEmpty(formData.queryData.returnRoutingProcessId) && !formData.queryData.isScrapped) {
     MessagePlugin.error('请选择回流工序');
     return;
   }

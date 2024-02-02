@@ -2025,14 +2025,14 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
 }
 
@@ -2210,8 +2210,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3277,17 +3277,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3393,16 +3393,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
-  defectCodeStr?: string;
   stateName?: string;
+  isState?: boolean;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3639,8 +3639,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -4091,8 +4091,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
