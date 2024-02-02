@@ -18,22 +18,32 @@
         @select-change="handleRowSelectChange"
       >
         <template #button>
-          <!-- <t-button theme="primary">新增</t-button> -->
-          <!-- <t-button v-if="props.selectedRowData" theme="primary" @click="generate">生成</t-button> -->
-          <t-select label="打印模板" clearable>
-            <t-option v-for="item in PrintTmpReslutDataOptions" :key="item.id" :label="item.label" :value="item.value">
-            </t-option>
-          </t-select>
-
-          <t-button
-            v-if="props.selectedRowData && Object.keys(props.selectedRowData).length > 0"
-            theme="default"
-            @click="generate"
-            >生成</t-button
-          >
-
-          <t-button theme="default" @click="print">打印</t-button>
-          <t-button theme="default" @click="onStateRowClick1">作废</t-button>
+          <t-space :size="8">
+            <t-select label="打印模板" clearable>
+              <t-option
+                v-for="item in PrintTmpReslutDataOptions"
+                :key="item.id"
+                :label="item.label"
+                :value="item.value"
+              >
+              </t-option>
+            </t-select>
+            <!-- 选中数据再显示生成 -->
+            <t-button
+              v-if="props.selectedRowData && Object.keys(props.selectedRowData).length > 0"
+              theme="default"
+              @click="generate"
+              >生成</t-button
+            >
+            <!-- 批量打印 -->
+            <t-popconfirm theme="default" content="确认批量打印吗" @confirm="print()">
+              <t-button theme="default"> 批量打印 </t-button>
+            </t-popconfirm>
+            <!-- 批量作废 -->
+            <t-popconfirm theme="default" content="确认批量作废吗" @confirm="onStateRowClick1()">
+              <t-button theme="default"> 批量作废 </t-button>
+            </t-popconfirm>
+          </t-space>
         </template>
 
         <!-- 定义序号列的插槽 -->
@@ -163,7 +173,7 @@
       </t-form-item>
 
       <t-form-item label="标准数量" name="qty">
-        <t-input v-model="formData2.qty" :min="1" :max="100"></t-input>
+        <t-input-number v-model="formData2.qty" :min="1" :max="100"></t-input-number>
       </t-form-item>
     </t-form>
     <div class="dialog-footer1">
@@ -297,8 +307,8 @@ const optsContainer2 = computed(() => {
     keyword: {
       label: '物料编码/名称',
       labelWidth: '20',
-      event: 'select',
-      comp: 't-select',
+      event: 'input',
+      comp: 't-input',
       defaultVal: '',
     },
   };
@@ -355,7 +365,6 @@ const getPrintTmplList = async () => {
 const multipleId = ref([]); // 接口入参
 const handleRowSelectChange = (value: any[]) => {
   if (value.length > 0) {
-    // 只取数组中的最后一个元素（即最后一个选中的ID）
     multipleId.value = value;
     console.log('🚀 ~ handleRowSelectChange ~ multipleId.value:', multipleId.value);
   }
@@ -487,32 +496,25 @@ const submit1 = async () => {
   MessagePlugin.success('生成成功');
 };
 
-// 打印
-// const print = () => {
-//   const reslutPrin = api.container.printBarcode(multipleId.value); //todo
-//   console.log('🚀 ~ print ~ reslutPrin:', reslutPrin);
-// };
+/** 打印
+ * 检查所选行中是否有任何行处于“作废”状态
+ * 如果所有选中行均为非作废状态，执行打印逻辑
+ */
 const print = async () => {
-  console.log('🚀 ~ hasInvalidRows ~ selectedRowKeys.value:', selectedRowKeys.value);
-
-  // 检查所选行中是否有任何行处于“作废”状态
-  const hasInvalidRows = selectedRowKeys.value.some((key) => {
+  selectedRowKeys.value.some(async (key) => {
     const rowData = tableContainerData1.value.find((row) => row.id === key);
-    console.log('🚀 ~ hasInvalidRows ~ rowData:作废?????', rowData);
-    return rowData.statusName === '作废';
+    if (rowData.statusName === '已作废') {
+      MessagePlugin.error('无法打印，选中行中包含作废状态的数据！');
+      return;
+    }
+    try {
+      await api.container.printBarcode(multipleId.value);
+      await MessagePlugin.success('打印成功');
+      await fetchTable({});
+    } catch (error) {
+      console.error('打印失败:', error);
+    }
   });
-  console.log('🚀 ~ hasInvalidRows ~ hasInvalidRows:作废 外层', hasInvalidRows);
-
-  if (hasInvalidRows) {
-    MessagePlugin.error('无法打印，选中行中包含作废状态的数据。');
-    return;
-  }
-
-  // 如果所有选中行均非作废状态，执行打印逻辑
-  const reslutPrin = await api.container.printBarcode(multipleId.value);
-  console.log('🚀 ~ print ~ reslutPrin:', reslutPrin);
-  await fetchTable({});
-  await MessagePlugin.success('打印成功');
 };
 
 // 编辑
@@ -542,16 +544,38 @@ const onRowClick = async (row: { row: any }) => {
   }
 };
 
-// 批量作废
+/** 批量作废
+ *
+ */
 const onStateRowClick1 = async () => {
-  try {
-    // 等待删除操作完成
-    await api.container.removeBatch(selectedRowKeys.value);
-    await fetchTable({});
-    await MessagePlugin.success('批量作废成功!');
-  } catch (error) {
-    console.error('作废失败:', error);
-  }
+  selectedRowKeys.value.some(async (key) => {
+    const rowData = tableContainerData1.value.find((row) => row.id === key);
+    if (
+      rowData.statusName === '使用中' ||
+      rowData.statusName === '已入库' ||
+      rowData.statusName === '已出库' ||
+      rowData.statusName === '已作废'
+    ) {
+      MessagePlugin.error('无法作废，选中行中包含使用中、已入库、已出库的状态的数据！');
+      return;
+    }
+    try {
+      await api.container.removeBatch(selectedRowKeys.value);
+      await MessagePlugin.success('作废成功!');
+      await fetchTable({});
+    } catch (error) {
+      console.error('作废失败:', error);
+    }
+  });
+
+  // try {
+  //   // 等待删除操作完成
+  //   await api.container.removeBatch(selectedRowKeys.value);
+  //   await fetchTable({});
+  //   await MessagePlugin.success('批量作废成功!');
+  // } catch (error) {
+  //   console.error('作废失败:', error);
+  // }
 };
 
 // 批量删除 todo

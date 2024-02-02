@@ -43,7 +43,7 @@
   <t-dialog
     v-model:visible="detailedShow"
     :row="currentrow"
-    header="工单BOM"
+    header="工单明细"
     :cancel-btn="null"
     :confirm-btn="null"
     top="60px"

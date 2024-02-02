@@ -29,16 +29,16 @@
             </template>
             <template #button>
               <!--  @click="retransmissionAll" -->
-              <t-button theme="primary">重传</t-button>
+              <t-button theme="primary" disabled>重传</t-button>
               <t-button theme="default">导出</t-button>
             </template>
 
-            <template #op>
+            <template #op="{ row }">
               <t-space>
                 <!-- @click="onCheckRowClick(row)" -->
-                <t-link variant="text" theme="primary" name="check" @click="onCheckRowClick">查看</t-link>
+                <t-link variant="text" theme="primary" name="check" @click="onCheckRowClick(row)">查看</t-link>
                 <!-- @click="onRetransmissionRowClick(row)" -->
-                <t-link variant="text" theme="primary" name="retransmission">重传</t-link>
+                <t-link variant="text" theme="primary" name="retransmission" disabled>重传</t-link>
               </t-space>
             </template>
 
@@ -52,8 +52,13 @@
     </cmp-container>
   </cmp-container>
 
-  <!-- 弹窗组件 -->>
-  <transactionDetails v-model:visible="eidtTransactionVisible" :form-title="formTitle" @update-data="closeDialog" />
+  <!-- 弹窗组件 -->
+  <transactionDetails
+    v-model:visible="eidtTransactionVisible"
+    :row-data="rowData"
+    :form-title="formTitle"
+    @update-data="closeDialog"
+  />
 </template>
 
 <script setup lang="ts">
@@ -61,7 +66,7 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
-import { api } from '@/api/warehouse';
+// import { api } from '@/api/warehouse'; //todo
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -84,26 +89,27 @@ const propsdtlId = ref('');
 //* 组件配置--查询界面
 const opts = computed(() => {
   return {
-    billNo: {
+    msgCategory: {
       label: '接口分类',
-      comp: 't-input',
-      event: 'business',
+      labelWidth: '20',
+      event: 'select',
+      comp: 't-select',
       defaultVal: '',
       bind: {
-        type: 'mitem',
-        showTitle: false,
+        options: InterfaceOption.value,
+        clearable: true,
       },
     },
-    timeCreate: {
-      label: '接口领域分类',
-      comp: 't-date-range-picker',
+    msgDomainCategory: {
+      label: 'MES领域分类',
+      comp: 't-select',
       defaultVal: [],
       bind: {
-        enableTimePicker: false,
-        format: 'YYYY-MM-DD',
+        options: ClassificationOption.value,
+        clearable: true,
       },
     },
-    warehouseId: {
+    businessCategoryId: {
       label: '事务类型',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -113,86 +119,145 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    status: {
+    erpbillNo: {
+      label: 'ERP凭据单号',
+      comp: 't-input',
+      defaultVal: '',
+      bind: {
+        clearable: true,
+      },
+    },
+    mesbillNo: {
       label: 'MES/业务单据号',
-      comp: 't-select',
+      comp: 't-input',
       defaultVal: '',
       bind: {
-        options: documentStatusOptions.value,
         clearable: true,
       },
     },
-    status2: {
-      label: '第三方单据号',
-      comp: 't-select',
-      defaultVal: '',
-      bind: {
-        options: documentStatusOptions.value,
-        clearable: true,
-      },
-    },
-    status3: {
+
+    imsgqueueStatus: {
       label: '执行结果',
       comp: 't-select',
-      defaultVal: '',
+      defaultVal: [],
       bind: {
-        options: documentStatusOptions.value,
+        options: statusOption.value,
         clearable: true,
       },
     },
-    status4: {
+    datetimeExecute: {
+      // todo 拆分2个 datetimeExecuteStart  datetimeExecuteEnd
       label: '事务开始时间',
-      comp: 't-select',
-      defaultVal: '',
+      comp: 't-date-range-picker',
+      defaultVal: [defaultStartDateTime, defaultEndDateTime], // 设置默认的起始和结束日期
       bind: {
-        options: documentStatusOptions.value,
-        clearable: true,
+        enableTimePicker: true,
+        format: 'YYYY-MM-DD HH:mm:ss',
       },
     },
   };
 });
 
+// 定义执行结果的选项
+const statusOption = ref([
+  { label: '待处理', value: 'WAITING' },
+  { label: '处理中', value: 'PROCESSING' },
+  { label: '处理成功', value: 'SUCCESS' },
+  { label: '处理失败', value: 'FAIL' },
+  { label: '取消', value: 'ABORT' },
+]);
 // 表格主位栏 1
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 40, cell: 'indexSlot' },
-  { title: '接口分类', colKey: 'billNo', width: 120 },
-  { title: 'MES领域分类', width: 85, colKey: 'warehouseName' },
-  { title: 'MES业务单号', width: 85, colKey: 'stockCheckBillTypeName' },
-  { title: '事务类型', width: 85, colKey: 'stockCheckBillStatusName' },
-  { title: 'ERP凭据单号', width: 85, colKey: 'creator' },
+  { title: '序号', colKey: 'index', width: 60, cell: 'indexSlot' },
+  { title: '接口分类', colKey: 'msgCategoryName', width: 110 },
+  { title: 'MES领域分类', width: 130, colKey: 'msgDomainCategoryName' },
+  { title: 'MES业务单号', width: 120, colKey: 'billNo' },
+  { title: '事务类型', width: 85, colKey: 'categoryName' },
+  { title: 'ERP凭据单号', width: 110, colKey: 'erpbillNo' },
   {
     title: '交易开始时间',
-    width: 85,
-    colKey: 'timeCreate',
+    width: 150,
+    colKey: 'datetimeExecuteStart',
   },
-  { title: '交易结束时间', width: 100, colKey: 'modifier' },
+  { title: '交易结束时间', width: 150, colKey: 'datetimeExecuteEnd' },
   {
     title: '执行次数',
     width: 85,
-    colKey: 'timeModified',
+    colKey: 'executionTimes',
   },
   {
     title: '执行结果',
-    width: 85,
-    colKey: 'timeModified',
+    width: 120,
+    colKey: 'status',
   },
   { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
 ];
 
-//* 表格数据 1
+/** 辅助函数
+ * 获取当前日期和时间
+ * 获取第二天的日期和时间
+ */
+const getCurrentDateTime = () => {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // 设置时间为当天的0点0分0秒
+  return now;
+};
+const getNextDayDateTime = () => {
+  const nextDay = new Date();
+  nextDay.setDate(nextDay.getDate() + 1); // 将日期加1天
+  nextDay.setHours(0, 0, 0, 0); // 设置时间为0点0分0秒
+  return nextDay;
+};
+
+// 默认起始日期和结束日期
+const defaultStartDateTime = getCurrentDateTime();
+const defaultEndDateTime = getNextDayDateTime();
+
+//* 表格数据
 const fetchTable = async () => {
   setLoading(false);
   inventoryManagement.value = [];
   tableDataReckoning.value = [];
-  const data = await api.stockCheckBill.getPdList({
+  const data = await apiMain.integratedConsole.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
-  // tableDataReckoning.value = data.list;
   tableDataReckoning.value = [...data.list];
   dataTotal.value = data.total;
   setLoading(false);
+};
+
+const InterfaceOption = ref([]);
+// 获取 数据字典 接口分类
+const getInterfaceClassification = async () => {
+  try {
+    const res = await apiMain.param.getListByGroupCode({
+      parmGroupCode: 'MSG_CATEGORY',
+    });
+    InterfaceOption.value = res.map((status) => ({
+      label: status.label,
+      value: status.value,
+    }));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const ClassificationOption = ref([]);
+// 获取 数据字典 mes领域分类
+const getDomainClassification = async () => {
+  try {
+    const res = await apiMain.param.getListByGroupCode({
+      parmGroupCode: 'MSG_DOMAIN_CATEGORY',
+    });
+    ClassificationOption.value = res.map((status) => ({
+      label: status.label,
+      value: status.value,
+    }));
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const handleRowSelectChange = (value: any[]) => {
@@ -214,8 +279,10 @@ const closeDialog = () => {
 
 //* 初始渲染
 onMounted(async () => {
-  await fetchTable();
+  await getInterfaceClassification(); // 接口分类
+  await getDomainClassification(); // mes领域分类
   await documentStatusData(); // 单据状态
+  await fetchTable();
   // await fetchTables(propsdtlId.value); //详情表格
 });
 
@@ -242,16 +309,27 @@ const documentStatusData = async () => {
 //* 查询
 const onInput = async (data: any) => {
   setLoading(true);
-  const { billNo, status, warehouseId, timeCreate } = data;
+  const {
+    msgCategory, // 接口分类
+    msgDomainCategory, // mes领域分类
+    businessCategoryId, // 事务类型
+    imsgqueueStatus, // 执行结果
+    erpbillNo, // ERP凭据单号
+    datetimeExecute, // 事务开始时间
+    mesbillNo, // MES/业务单据号
+  } = data;
   if (!data.value) {
-    const data = await api.stockCheckBill.getPdList({
+    const data = await apiMain.integratedConsole.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      dateStart: timeCreate[0],
-      dateEnd: timeCreate[1],
-      warehouseId,
-      billNo,
-      status,
+      msgCategory,
+      msgDomainCategory,
+      businessCategoryId,
+      imsgqueueStatus,
+      erpbillNo,
+      mesbillNo,
+      dateStart: datetimeExecute[0],
+      dateEnd: datetimeExecute[1],
     });
     tableDataReckoning.value = [...data.list];
     dataTotal.value = data.total;
@@ -259,8 +337,10 @@ const onInput = async (data: any) => {
   setLoading(false);
 };
 
+const rowData = ref({});
 // 查看 todo
-const onCheckRowClick = () => {
+const onCheckRowClick = (row) => {
+  rowData.value = JSON.parse(JSON.stringify(row));
   formTitle.value = '事务交易明细';
   eidtTransactionVisible.value = true;
 };

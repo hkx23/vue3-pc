@@ -210,49 +210,62 @@
   </cmp-container>
 
   <!-- % 补打， 作废 dialog 弹窗 -->
-  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="40%">
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
     <t-form ref="formRef" :data="reprintDialog" :rules="rules" @submit="onAnomalyTypeSubmit">
-      <t-form-item v-if="reprintVoidSwitch" label-width="80px" label="补打原因" name="reprintData">
-        <t-select v-model="reprintDialog.reprintData" :clearable="true">
-          <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
-        </t-select>
-      </t-form-item>
-      <t-form-item v-if="!reprintVoidSwitch" label-width="80px" label="作废" name="reprintData">
-        <t-select v-model="reprintDialog.reprintData" :clearable="true">
-          <t-option
-            v-for="item in cancellationDataList.list"
-            :key="item.label"
-            :label="item.label"
-            :value="item.value"
-          />
-        </t-select>
-      </t-form-item>
-      <t-form-item
-        v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-        label="补打原因"
-        label-width="80px"
-        name="restsData"
-      >
-        <t-textarea
-          v-model="reprintDialog.restsData"
-          placeholder="请输入补打原因"
-          name="description"
-          :autosize="{ minRows: 3, maxRows: 5 }"
-        />
-      </t-form-item>
-      <t-form-item
-        v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-        label="作废原因"
-        label-width="80px"
-        name="restsData"
-      >
-        <t-textarea
-          v-model="reprintDialog.restsData"
-          placeholder="请输入作废原因"
-          name="description"
-          :autosize="{ minRows: 3, maxRows: 5 }"
-        />
-      </t-form-item>
+      <t-row :gutter="[32, 16]">
+        <t-col :span="12">
+          <t-form-item v-if="reprintVoidSwitch" label="补打原因" name="reprintData">
+            <t-select v-model="reprintDialog.reprintData" :clearable="true">
+              <t-option
+                v-for="item in reprintDataList.list"
+                :key="item.label"
+                :label="item.label"
+                :value="item.value"
+              />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col :span="12">
+          <t-form-item v-if="!reprintVoidSwitch" label="作废" name="reprintData">
+            <t-select v-model="reprintDialog.reprintData" :clearable="true">
+              <t-option
+                v-for="item in cancellationDataList.list"
+                :key="item.label"
+                :label="item.label"
+                :value="item.value"
+              />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col :span="10">
+          <t-form-item
+            v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+            label="补打原因"
+            name="restsData"
+          >
+            <t-textarea
+              v-model="reprintDialog.restsData"
+              placeholder="请输入补打原因"
+              name="description"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+            />
+          </t-form-item>
+        </t-col>
+        <t-col :span="10">
+          <t-form-item
+            v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+            label="作废原因"
+            name="restsData"
+          >
+            <t-textarea
+              v-model="reprintDialog.restsData"
+              placeholder="请输入作废原因"
+              name="description"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+            />
+          </t-form-item>
+        </t-col>
+      </t-row>
     </t-form>
     <template #footer>
       <t-button theme="default" variant="base">取消</t-button>

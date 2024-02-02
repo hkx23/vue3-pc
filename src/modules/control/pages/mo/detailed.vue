@@ -1,49 +1,36 @@
 <template>
   <div class="detailed-box">
     <!-- from -->
-    <t-card class="list-card-container" :bordered="true">
+    <t-card class="customer-card">
       <t-row>
-        <t-col :span="4">
+        <t-col :span="3" class="button-mo">
           <t-tag shape="round" size="large">{{ row.moCode }}</t-tag>
         </t-col>
-        <t-col :span="1">
-          <t-space class="tag-block-light">
-            <t-tag shape="round" theme="primary" size="large">{{ row.moClassName }}</t-tag>
+        <t-col :span="2">
+          <t-space class="col-moClass">
+            <t-tag shape="round" size="large" class="button-moClass">{{ row.moClassName }}</t-tag>
           </t-space>
         </t-col>
-        <t-col :span="1">
-          <t-tag shape="round" size="large">{{ row.statusName }}</t-tag>
+        <t-col :span="2">
+          <t-tag shape="round" size="large" class="button-statusName">{{ row.statusName }}</t-tag>
         </t-col>
       </t-row>
     </t-card>
-    <t-card :bordered="false">
-      <div class="form-item-box">
-        <t-form-item label="生产车间">
-          {{ row.workshopName }}
-        </t-form-item>
-        <t-form-item label="工作中心"> {{ row.workCenterName }}</t-form-item>
-        <t-form-item label="产品编码"> {{ row.mitemCode }}</t-form-item>
-      </div>
-      <div class="form-item-box">
-        <t-form-item label="产品名称"> {{ row.mitemDesc }}</t-form-item>
-        <t-form-item label="计划数量">
-          {{ row.planQty }}
-        </t-form-item>
-        <t-form-item label="完工数量"> {{ row.completedQty }}</t-form-item>
-      </div>
-      <div class="form-item-box">
-        <t-form-item label="计划开始时间"> {{ row.datetimePlanStart }}</t-form-item>
-        <t-form-item label="计划完成时间"> {{ row.datetimePlanEnd }}</t-form-item>
-        <t-form-item label="入库仓库"> {{ row.warehouseName }}</t-form-item>
-      </div>
-      <div class="form-item-box">
-        <t-form-item label="销售订单"> {{ row.soNo }}</t-form-item>
-        <t-form-item label="工艺路线版本"> {{ row.routingName }}</t-form-item>
-        <t-form-item label=""> </t-form-item>
-      </div>
-      <div class="form-item-box">
-        <t-form-item label="备注"> {{ row.memo }}</t-form-item>
-      </div>
+    <t-card :bordered="false" class="customer-card">
+      <t-descriptions :column="3" bordered>
+        <t-descriptions-item label="生产车间"> {{ row.workshopName }}</t-descriptions-item>
+        <t-descriptions-item label="工作中心">{{ row.workCenterName }}</t-descriptions-item>
+        <t-descriptions-item label="产品编码">{{ row.mitemCode }}</t-descriptions-item>
+        <t-descriptions-item label="产品名称">{{ row.mitemDesc }}</t-descriptions-item>
+        <t-descriptions-item label="计划数量">{{ row.planQty }}</t-descriptions-item>
+        <t-descriptions-item label="完工数量">{{ row.completedQty }}</t-descriptions-item>
+        <t-descriptions-item label="计划开始时间">{{ row.datetimePlanStart }}</t-descriptions-item>
+        <t-descriptions-item label="计划完成时间">{{ row.datetimePlanEnd }}</t-descriptions-item>
+        <t-descriptions-item label="入库仓库">{{ row.warehouseName }}</t-descriptions-item>
+        <t-descriptions-item label="销售订单">{{ row.soNo }}</t-descriptions-item>
+        <t-descriptions-item label="工艺路线版本">{{ row.routingName }}</t-descriptions-item>
+        <t-descriptions-item label="备注">{{ row.memo }}</t-descriptions-item>
+      </t-descriptions>
     </t-card>
     <t-row justify="space-between">
       <t-col>
@@ -65,6 +52,7 @@
           :table-column="columnsBom"
           :table-data="moBomData"
           :loading="loadingBom"
+          :show-toolbar="false"
           :show-pagination="false"
           @refresh="fetchTableBom"
         >
@@ -78,6 +66,7 @@
           :table-column="columnsLog"
           :table-data="moLogData"
           :loading="loadingLog"
+          :show-toolbar="false"
           :show-pagination="false"
           @refresh="fetchTableLog"
         >
@@ -267,11 +256,6 @@ defineExpose({
 </script>
 
 <style lang="less" scoped>
-.t-card {
-  border: 1px solid var(--td-border-level-2-color) !important;
-  margin-bottom: 24px;
-}
-
 .detailed-box {
   // padding: var(--td-comp-paddingTB-xl) var(--td-comp-paddingLR-xl);
 
@@ -321,13 +305,39 @@ defineExpose({
   }
 }
 
-// .tag-block-light {
-//   /deep/ .t-tag--primary {
-//     background-color: #548df3;
-//   }
-// }
-
 .form-checkbox {
   margin: 10px 100px;
+}
+
+:deep(.t-tag.t-tag--round) {
+  border-radius: 4px !important;
+}
+
+.button-mo {
+  padding-left: 10px !important;
+}
+
+.button-moClass {
+  background-color: #ebeefd;
+}
+
+.col-moClass {
+  margin-left: 110px;
+}
+
+.button-statusName {
+  margin-left: 35px;
+}
+
+.customer-card {
+  margin-bottom: 8px;
+
+  :deep(.t-descriptions__body) {
+    width: 100%;
+  }
+
+  :deep(.t-card__body) {
+    padding: 8px 0;
+  }
 }
 </style>

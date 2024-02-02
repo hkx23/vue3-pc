@@ -141,7 +141,51 @@
                   <cmp-card :span="4" :ghost="true" style="padding: 8px">
                     <t-checkbox v-model="formData.queryData.isScrapped" label="是否报废" />
                   </cmp-card>
-                  <cmp-card :span="3" :ghost="true" style="padding: 8px">
+                </t-row>
+              </cmp-card>
+              <cmp-card :ghost="true" class="padding-top-line-0">
+                <t-row>
+                  <cmp-card :span="8" :ghost="true" style="padding: 8px">
+                    <cmp-table
+                      row-key="id"
+                      :hover="false"
+                      :stript="false"
+                      :table-column="keyPartColumns"
+                      active-row-type="single"
+                      :table-data="keyPartData"
+                      :total="keyPartDataTotal"
+                      :loading="loading"
+                      :show-refresh="true"
+                      :resizable="true"
+                      :show-toolbar="false"
+                      :show-pagination="false"
+                      @refresh="fetchKeyPartTable"
+                    >
+                      <template #newKeypartBarcode="{ row }">
+                        <t-space>
+                          <t-input
+                            v-model="row.newKeypartBarcode"
+                            placeholder="请输入关键件信息"
+                            :disabled="!row.isEdit"
+                            :autofocus="row.isEdit"
+                          />
+                        </t-space>
+                      </template>
+                      <template #op="{ row }">
+                        <t-space>
+                          <t-link v-if="!row.isEdit" theme="primary" @click="onKeyPartIsEdit(row)">替换</t-link>
+                          <t-link v-else theme="primary" @click="onKeyPartReplace(row)">提交</t-link>
+                          <t-popup>
+                            <t-link theme="primary">更多...</t-link>
+                            <template #content>
+                              <t-link theme="primary" style="margin: 5px" @click="onKeyPartReMove(row)">移除</t-link>
+                            </template>
+                          </t-popup>
+                        </t-space>
+                      </template>
+                    </cmp-table>
+                  </cmp-card>
+                  <cmp-card :span="4" :ghost="true" style="padding: 8px">
                     <t-space :size="8" style="float: right">
                       <t-button content="维修完成" @click="onSubmit" />
                       <t-button theme="default" content="重置" @click="onReset" />
@@ -160,11 +204,10 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-// import { DialogPlugin } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 
-import { api as apiControl, WipRepairDtlVO, WipRepairIds, WipRepairVO } from '@/api/control';
+import { api as apiControl, WipKeypartVO, WipRepairDtlVO, WipRepairIds, WipRepairVO } from '@/api/control';
 import { api as apiMain } from '@/api/main';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
 // import { api as apiMain } from '@/api/main';
@@ -183,6 +226,7 @@ const { pageUI: pageTab1 } = usePage();
 const { pageUI: pageTab2 } = usePage();
 const repairDataTotal = ref(0);
 const repairingDataTotal = ref(0);
+const keyPartDataTotal = ref(0);
 const initialDate = ref(1);
 const selectTabValue = ref('tab1');
 const selectRepairId = ref([]); // 待维修的主表数据
@@ -225,8 +269,6 @@ const formData = reactive({
   },
 });
 
-// const defectDealMethodOptions = ref([]);
-// const checkedDefectDealMethodOptions = ref([]);
 // 查询组件
 const opts = computed(() => {
   return {
@@ -361,6 +403,26 @@ const repairingColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('common.button.operation'), align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 
+const keyPartData = ref([]);
+const keyPartColumns: PrimaryTableCol<TableRowData>[] = [
+  { title: '序号', colKey: 'serial-number', width: 40 },
+  { title: '产品条码', width: 80, colKey: 'runCard' },
+  { title: '关键件条码', width: 80, colKey: 'keypartBarcode' },
+  { title: '物料编码', width: 80, colKey: 'mitemCode' },
+  { title: '物料名称', width: 80, colKey: 'mitemName' },
+  { title: '新关键件信息', width: 160, colKey: 'newKeypartBarcode' },
+  { title: '操作', align: 'left', fixed: 'right', width: 80, colKey: 'op' },
+];
+
+watch(
+  () => selectRepairingIds.value,
+  (newval) => {
+    console.log(newval);
+    fetchKeyPartTable();
+  },
+  { deep: true },
+);
+
 // 点击查询按钮
 const conditionEnter = (query: any) => {
   formData.queryData.barcode = query.barcode;
@@ -399,7 +461,6 @@ const onDeleteClick = async ({ row }) => {
 
   await fetchRepairingTable();
 };
-
 // 维修完成按钮
 const onSubmit = async () => {
   if (selectRepairingIds.value.length === 0) {
@@ -449,7 +510,6 @@ const onSubmit = async () => {
   fetchTable();
   fetchRepairingTable();
 };
-
 const fetchTable = async () => {
   try {
     const rangDays = dayjs(formData.queryData.endDate).diff(dayjs(formData.queryData.beginDate), 'days');
@@ -501,6 +561,24 @@ const fetchRepairingTable = async () => {
     });
     repairingData.value = data.list;
     repairingDataTotal.value = data.total;
+  } catch (e) {
+    console.log(e);
+  }
+};
+const fetchKeyPartTable = async () => {
+  try {
+    const distinctScanBarcode = repairingData.value
+      .filter((n) => selectRepairingIds.value.indexOf(n.id) !== -1)
+      .map((n) => n.scanBarcode)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    if (!_.isEmpty(distinctScanBarcode) && distinctScanBarcode.length > 0) {
+      const data = await apiControl.wipKeypart.getWipKeypartByRunCard({
+        pageNum: 1,
+        pageSize: 99999,
+        scanBarcodeList: distinctScanBarcode,
+      });
+      keyPartData.value = data.list;
+    }
   } catch (e) {
     console.log(e);
   }
@@ -630,10 +708,64 @@ const onActiveChange = async (highlightRowKeys) => {
   selectRepairRowId.value = `${highlightRowKeys[0]}`;
   await fetchDtlTable();
 };
+const onKeyPartIsEdit = async (row: any) => {
+  row.isEdit = true;
+  console.log(row);
+};
+const onKeyPartReplace = async (row: WipKeypartVO) => {
+  const confirmCanceled = DialogPlugin({
+    header: '替换',
+    body: '确认替换关键件吗',
+    theme: 'warning',
+    confirmBtn: '确认',
+    cancelBtn: '取消',
+    onConfirm: async () => {
+      try {
+        row.curProcessId = userStore.currUserOrgInfo.processId;
+        row.curWorkstationId = userStore.currUserOrgInfo.workStationId;
+        await apiControl.wipKeypart.replaceWipKeypart({ ...row });
+        fetchKeyPartTable();
+        MessagePlugin.success('替换成功');
+      } catch (error) {
+        console.log(error);
+      } finally {
+        confirmCanceled.hide();
+      }
+    },
+    onClose: () => {
+      confirmCanceled.hide();
+    },
+  });
+};
+const onKeyPartReMove = async (row: WipKeypartVO) => {
+  const confirmCanceled = DialogPlugin({
+    header: '移除',
+    body: '确认移除关键件吗',
+    theme: 'warning',
+    confirmBtn: '确认',
+    cancelBtn: '取消',
+    onConfirm: async () => {
+      try {
+        row.curProcessId = userStore.currUserOrgInfo.processId;
+        row.curWorkstationId = userStore.currUserOrgInfo.workStationId;
+        await apiControl.wipKeypart.removeWipKeypart({ ...row });
+        fetchKeyPartTable();
+        MessagePlugin.success('移除成功');
+      } catch (error) {
+        console.log(error);
+      } finally {
+        confirmCanceled.hide();
+      }
+    },
+    onClose: () => {
+      confirmCanceled.hide();
+    },
+  });
+};
+
 const tabsChange = async (tabValue) => {
   selectTabValue.value = tabValue;
 };
-
 const getVerifyProcessCategory = async () => {
   await apiControl.wipRepair.getVerifyProcessCategory({
     loginWorkstationId: userStore.currUserOrgInfo.workCenterId,

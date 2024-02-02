@@ -157,8 +157,8 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'orgName',
-    title: '组织架构',
+    colKey: 'wcName',
+    title: '工作中心',
     align: 'center',
     width: '80',
   },

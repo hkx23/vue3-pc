@@ -15,13 +15,13 @@
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-form ref="formRef" :data="formData" :show-cancel="true" :show-error-message="false" label-width="120px">
-          <t-row :gutter="[32, 16]" style="margin-bottom: 10px">
-            <t-col :span="4">
+          <t-row style="margin-bottom: 10px">
+            <t-col :span="5">
               <t-form-item :label="t('returnManagement.billNo')" name="billNo" required-mark>
                 <t-input v-model="formData.billNo" disabled :placeholder="t('returnManagement.billNo_placeholder')" />
               </t-form-item>
             </t-col>
-            <t-col :span="4">
+            <t-col :span="5">
               <t-form-item :label="t('returnManagement.billNoDesc')" name="billNoDesc" required-mark>
                 <t-input v-model="formData.billNoDesc" />
               </t-form-item>

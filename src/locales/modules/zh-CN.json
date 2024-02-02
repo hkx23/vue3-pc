@@ -1,5 +1,8 @@
 {
   "common": {
+    "table":{
+      "noMatchingData": "没有符合条件的数据"
+    },
     "button": {
       "confirm": "确认",
       "cancel": "取消",
@@ -25,7 +28,9 @@
       "collapse": "收起",
       "expandAll": "展开全部",
       "more": "更多",
-      "selectAll": "全选"
+      "selectAll": "全选",
+      "print": "打印",
+      "cancellation": "作废"
     },
     "dialog": {
       "header": {
@@ -42,7 +47,9 @@
       "confirmDelete": "确认删除吗？",
       "deleteSuccess": "删除成功",
       "addSuccess": "新增成功",
+      "editSuccess": "编辑成功",
       "saveSuccess": "保存成功",
+      "invalidationSuccess": "作废成功",
       "uploadSuccess": "上传成功",
       "downloadSuccess": "下载成功",
       "loading": "加载中..."

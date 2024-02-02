@@ -237,49 +237,62 @@
   <!-- % 补打， 作废 dialog 弹窗 -->
   <t-dialog v-model:visible="formVisible" :header="diaLogTitle" :cancel-btn="null" :confirm-btn="null">
     <t-form ref="formRef" :data="reprintDialog" :rules="rules" @submit="onSecondarySubmit">
-      <!-- #1️⃣补打原因 -->
-      <t-form-item v-if="reprintVoidSwitch === 1" label-width="80px" label="补打原因" name="reprintData">
-        <t-select v-model="reprintDialog.reprintData">
-          <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
-        </t-select>
-      </t-form-item>
-      <t-form-item
-        v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-        label="补打原因"
-        label-width="80px"
-        name="restsData"
-      >
-        <t-textarea
-          v-model="reprintDialog.restsData"
-          placeholder="请输入补打原因"
-          name="restsData"
-          :autosize="{ minRows: 3, maxRows: 5 }"
-        />
-      </t-form-item>
-      <!-- #2️⃣作废原因 -->
-      <t-form-item v-if="reprintVoidSwitch === 2" label-width="80px" label="作废" name="reprintData">
-        <t-select v-model="reprintDialog.reprintData">
-          <t-option
-            v-for="item in cancellationDataList.list"
-            :key="item.label"
-            :label="item.label"
-            :value="item.value"
-          />
-        </t-select>
-      </t-form-item>
-      <t-form-item
-        v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-        label="作废原因"
-        label-width="80px"
-        name="restsData"
-      >
-        <t-textarea
-          v-model="reprintDialog.restsData"
-          placeholder="请输入作废原因"
-          name="description"
-          :autosize="{ minRows: 3, maxRows: 5 }"
-        />
-      </t-form-item>
+      <t-row :gutter="[32, 16]">
+        <t-col :span="12">
+          <!-- #1️⃣补打原因 -->
+          <t-form-item v-if="reprintVoidSwitch === 1" label="补打原因" name="reprintData">
+            <t-select v-model="reprintDialog.reprintData">
+              <t-option
+                v-for="item in reprintDataList.list"
+                :key="item.label"
+                :label="item.label"
+                :value="item.value"
+              />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col :span="12">
+          <t-form-item
+            v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+            label="补打原因"
+            name="restsData"
+          >
+            <t-textarea
+              v-model="reprintDialog.restsData"
+              placeholder="请输入补打原因"
+              name="restsData"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+            />
+          </t-form-item>
+        </t-col>
+        <t-col :span="12">
+          <!-- #2️⃣作废原因 -->
+          <t-form-item v-if="reprintVoidSwitch === 2" label="作废" name="reprintData">
+            <t-select v-model="reprintDialog.reprintData">
+              <t-option
+                v-for="item in cancellationDataList.list"
+                :key="item.label"
+                :label="item.label"
+                :value="item.value"
+              />
+            </t-select>
+          </t-form-item>
+        </t-col>
+        <t-col :span="12">
+          <t-form-item
+            v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
+            label="作废原因"
+            name="restsData"
+          >
+            <t-textarea
+              v-model="reprintDialog.restsData"
+              placeholder="请输入作废原因"
+              name="description"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+            />
+          </t-form-item>
+        </t-col>
+      </t-row>
       <!-- #3️⃣拆分原因 -->
       <t-row v-if="reprintVoidSwitch === 3">
         <t-col :span="12" style="margin-bottom: 30px">

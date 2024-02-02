@@ -197,7 +197,7 @@ const handleLogout = () => {
   });
 };
 
-const [, { enterFullscreen }] = useFullscreen(() => document.querySelector('main.t-layout__content'));
+const [, { enterFullscreen }] = useFullscreen();
 const onClickFullScreen = () => {
   enterFullscreen();
 };

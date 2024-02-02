@@ -924,8 +924,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -1375,6 +1375,186 @@ export interface ResultUser {
   message?: string;
   /** 用户 */
   data?: User;
+}
+
+export interface TransactionDetailSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  businessCategoryId?: string;
+  moScheId?: string;
+  mitemId?: string;
+  /** 操作人 */
+  creator?: string;
+  /** 采购订单号 */
+  purchaseNo?: string;
+  /** 送货单号 */
+  deliveryNo?: string;
+  warehouseId?: string;
+  toWarehouseId?: string;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  mesbillNo?: string;
+  erpbillNo?: string;
+}
+
+/** 响应数据 */
+export type PagingDataTransactionDetailVO = {
+  list?: TransactionDetailVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataTransactionDetailVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataTransactionDetailVO;
+}
+
+/** 显示工站 */
+export interface TransactionDetailVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  businessCategoryId?: string;
+  /** ERP业务类型ID */
+  erpBusinessCategoryId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** ERP单据号 */
+  erpBillNo?: string;
+  /** 采购订单号 */
+  purchaseNo?: string;
+  /** 送货单号 */
+  deliveryNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  /** ERP来源仓库ID */
+  erpWarehouseId?: string;
+  /** ERP来源货区ID */
+  erpDistrictId?: string;
+  /** ERP来源货区ID */
+  erpLocId?: string;
+  /** ERP目标组织ID */
+  toErpOid?: string;
+  /** ERP目标仓库ID */
+  toErpWarehouseId?: string;
+  /** ERP目标货区ID */
+  toErpDistrictId?: string;
+  /** ERP目标货区ID */
+  toErpLocId?: string;
+  mitemId?: string;
+  /** ERP物料ID */
+  erpMitemId?: string;
+  supplierId?: string;
+  /** 供应商ID */
+  erpSupplierId?: string;
+  /** 工单号 */
+  moCode?: string;
+  /** ERP工单号 */
+  erpMoId?: string;
+  moScheId?: string;
+  /**
+   * 交易时间
+   * @format date-time
+   */
+  datetimeTrans?: string;
+  /** 交易数量 */
+  transQty?: number;
+  /**
+   * 上传顺序
+   * @format int32
+   */
+  ulSeq?: number;
+  /** ERP单据头表 */
+  erpBillId?: string;
+  /** ERP单据明细表 */
+  erpBillDtlId?: string;
+  /** 业务类型名称 */
+  categoryName?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 标签数量 */
+  barcodeQty?: number;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 计量单位符号名称 */
+  uomName?: string;
+  /** 源仓库名称 */
+  warehouseName?: string;
+  /** 源货区名称 */
+  districtName?: string;
+  /** 源货位名称 */
+  locationName?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
+  /** 目标货区名称 */
+  toDistrictName?: string;
+  /** 目标货位名称 */
+  toLocationName?: string;
+  /** 供应商代码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 操作人 */
+  creatorName?: string;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /** 执行结果 */
+  status?: string;
+  /** 执行结果名称 */
+  statusName?: string;
 }
 
 /** 自定义表格配置 */
@@ -2144,8 +2324,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3818,8 +3998,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -3898,15 +4078,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isProductName?: string;
-  isProductChecked?: boolean;
+  stateName?: string;
+  isInProcessName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
+  isProductName?: string;
   isBatchName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4049,8 +4229,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4489,10 +4669,19 @@ export interface IntegratedConsoleVO {
    * @format date-time
    */
   datetimeExecuteEnd?: string;
-  /** 状态 */
+  /** 执行结果 */
   status?: string;
-  /** 状态名称 */
+  /** 执行结果名称 */
   statusName?: string;
+  /**
+   * 执行次数
+   * @format int32
+   */
+  executionTimes?: number;
+  /** 上次失败请求参数 */
+  paramIn?: string;
+  /** 上次失败错误信息 */
+  failContent?: string;
 }
 
 /** 响应数据 */
@@ -4932,8 +5121,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -6647,10 +6836,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -7507,6 +7696,21 @@ export const api = {
      */
     getTmplByPath: (query: { path: string }) =>
       http.request<ResultString['data']>(`/api/main/printTmpl/getTmplByPath`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签模板
+     * @name GetTmplByIdOrCode
+     * @summary 获取模板根据Id或Code
+     * @request GET:/printTmpl/getTmplByIdOrCode
+     * @secure
+     */
+    getTmplByIdOrCode: (query: { id: string; code: string }) =>
+      http.request<ResultString['data']>(`/api/main/printTmpl/getTmplByIdOrCode`, {
         method: 'GET',
         params: query,
       }),
@@ -8636,6 +8840,22 @@ export const api = {
     currentUserInfo: () =>
       http.request<ResultCurrentUserVO['data']>(`/api/main/user/currentUserInfo`, {
         method: 'GET',
+      }),
+  },
+  transactionDetail: {
+    /**
+     * No description
+     *
+     * @tags 事务明细查询
+     * @name GetList
+     * @summary 查询主页数据
+     * @request POST:/transactionDetail/getList
+     * @secure
+     */
+    getList: (data: TransactionDetailSearch) =>
+      http.request<ResultPagingDataTransactionDetailVO['data']>(`/api/main/transactionDetail/getList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   tableSetting: {
@@ -10152,6 +10372,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddCompleteQty
+     * @summary 增加完工数量
+     * @request POST:/moSchedule/addCompleteQty
+     * @secure
+     */
+    addCompleteQty: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addCompleteQty`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   mo: {
     /**
@@ -11067,20 +11302,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/defectDealMethod/addDefectDealMethod`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 缺陷处理方法
-     * @name GetIncidentType
-     * @summary 获取下拉列表(缺陷处理方法类别)
-     * @request GET:/defectDealMethod/getDefectDealMethodType
-     * @secure
-     */
-    getIncidentType: () =>
-      http.request<ResultPagingDataParam['data']>(`/api/main/defectDealMethod/getDefectDealMethodType`, {
-        method: 'GET',
       }),
   },
   defectCode: {
