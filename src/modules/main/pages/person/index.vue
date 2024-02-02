@@ -34,13 +34,18 @@
               <template #op="slotProps">
                 <t-space :size="8">
                   <t-link theme="primary" @click="handleClickDetail(slotProps)">{{ t('common.button.edit') }}</t-link>
-                  <t-link theme="primary" @click="handleClickDelete(slotProps)">{{
-                    slotProps.row.state === 1 ? t('common.button.disable') : t('common.button.enable')
-                  }}</t-link>
                 </t-space>
               </template>
               <template #button>
                 <t-button theme="primary" @click="onImport">导入</t-button>
+              </template>
+              <template #stateSwitch="{ row }">
+                <t-switch
+                  v-model="row.state"
+                  :custom-value="[1, 0]"
+                  size="large"
+                  @change="(value) => onSwitchChange(row, value)"
+                ></t-switch>
               </template>
             </cmp-table>
           </cmp-card>
@@ -49,17 +54,6 @@
     </cmp-row>
   </cmp-container>
 
-  <t-dialog
-    v-model:visible="onShowDeleteConfirmVisible"
-    header="确认"
-    mode="modal"
-    draggable
-    :body="onDeleteConfirmBody"
-    :on-cancel="onDeleteCancel"
-    :close-on-overlay-click="false"
-    @confirm="onDeleteConfirm"
-  >
-  </t-dialog>
   <t-dialog
     v-model:visible="onShowEditVisible"
     header="编辑"
@@ -131,7 +125,7 @@ import { usePage } from '@/hooks/modules/page';
 import { useLang } from './lang';
 
 const { pageUI } = usePage();
-const { loading, setLoading } = useLoading();
+const { loading } = useLoading();
 const personCode = ref(''); // 查询
 const personState = ref(-1); //
 const adminOrgId = ref(-1); //
@@ -163,7 +157,6 @@ const treeData = ref([]);
 const filterByText = ref();
 // 显示控制
 const dataLoading = ref(false); // 是否显示数据加载图标
-const onShowDeleteConfirmVisible = ref(false); // 是否显示对话框
 const onShowEditVisible = ref(false); // 是否显示编辑窗口
 const onShowImportVisible = ref(false); // 是否显示导入窗口
 // 表格列设置
@@ -174,7 +167,13 @@ const columnsParam: PrimaryTableCol<TableRowData>[] = [
   { title: '性别', colKey: 'genderName' },
   { title: '手机号', colKey: 'mobilePhone' },
   { title: '邮箱', colKey: 'email' },
-  { title: '状态', colKey: 'stateName' },
+  {
+    colKey: 'state',
+    title: '状态',
+    align: 'center',
+    width: '100',
+    cell: 'stateSwitch',
+  },
   { title: '操作', align: 'left', fixed: 'right', colKey: 'op', width: 120 },
 ];
 
@@ -277,7 +276,6 @@ const onReset = () => {
 // #region 刷新表格
 
 const fetchTable = async () => {
-  setLoading(true);
   try {
     const data = (await api.person.getlist({
       personcode: personCode.value,
@@ -296,8 +294,6 @@ const fetchTable = async () => {
     dataTotal.value = data.total;
   } catch (e) {
     console.log(e);
-  } finally {
-    setLoading(false);
   }
 };
 
@@ -328,38 +324,41 @@ const fetchTree = async () => {
 
 // #endregion
 
-// #region 表格删除
-const deleteIdx = ref(-1);
+// // #region 表格删除
+// const deleteIdx = ref(-1);
 
-const onDeleteConfirm = async (e: any) => {
-  dataLoading.value = true;
-  try {
-    const rowModel = dataTable.value[deleteIdx.value];
-    const data = await api.person.delete({
-      id: rowModel.id,
-      state: rowModel.state === 0 ? 1 : 0,
+// const onDeleteConfirm = async (e: any) => {
+//   dataLoading.value = true;
+//   try {
+//     const rowModel = dataTable.value[deleteIdx.value];
+//     const data = await api.person.delete({
+//       id: rowModel.id,
+//       state: rowModel.state === 0 ? 1 : 0,
+//     });
+
+//     onShowDeleteConfirmVisible.value = false;
+//     fetchTable();
+//   } catch (e) {
+//     // console.log(e);
+//   } finally {
+//     dataLoading.value = false;
+//   }
+// };
+// const onDeleteCancel = () => {
+//   deleteIdx.value = -1;
+// };
+
+// # Switch 状态获取
+const onSwitchChange = async (row: any, value: any) => {
+  row.state = value;
+  await api.person
+    .delete({
+      id: row.id,
+      state: row.state,
+    })
+    .then(() => {
+      MessagePlugin.success('操作成功');
     });
-
-    onShowDeleteConfirmVisible.value = false;
-    fetchTable();
-  } catch (e) {
-    // console.log(e);
-  } finally {
-    dataLoading.value = false;
-  }
-};
-const onDeleteConfirmBody = () => {
-  if (deleteIdx.value > -1) {
-    const { personName, state } = dataTable.value[deleteIdx.value];
-    if (state === 0) {
-      return `是否启用当前行的员工【${personName}】的信息？`;
-    }
-    return `是否禁用当前行的员工【${personName}】的信息？`;
-  }
-  return '';
-};
-const onDeleteCancel = () => {
-  deleteIdx.value = -1;
 };
 
 // #endregion
@@ -379,10 +378,6 @@ const handleClickDetail = (value: any) => {
   onShowEditVisible.value = true;
 };
 
-const handleClickDelete = (value: any) => {
-  deleteIdx.value = value.rowIndex;
-  onShowDeleteConfirmVisible.value = true;
-};
 onMounted(() => {
   fetchTable();
   fetchTree();

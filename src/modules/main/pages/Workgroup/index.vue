@@ -1,50 +1,52 @@
 <!-- 班组信息 -->
 <template>
   <!-- :full-sub-index="[1, 2]" -->
-  <cmp-container :full="false">
+  <cmp-container :full="true" :full-sub-index="[0, 1]">
     <cmp-card>
-      <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
-    </cmp-card>
-    <cmp-card>
-      <!-- ################# 班组表格数据 ###################### -->
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="pageUI"
-        empty="没有符合条件的数据"
-        row-key="id"
-        :hover="false"
-        :stripe="false"
-        :fixed-height="false"
-        :table-column="teamColumns"
-        active-row-type="single"
-        :table-data="teamList.list"
-        :total="teamTotal"
-        :selected-row-keys="selectedRowKeys"
-        @row-click="onGroupSelectChange"
-        @select-change="onSelectChange"
-        @refresh="onFetchGroupData"
-      >
-        <template #title>
-          {{ '班组列表' }}
-        </template>
-        <template #actionSlot="{ row }">
-          <t-space :size="8">
-            <t-link theme="primary" @click="onEditRow(row)">{{ '编辑' }}</t-link>
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
-              <t-link theme="primary" @click="onGroupDelect(row)">{{ '删除' }}</t-link>
-            </t-popconfirm>
-          </t-space>
-        </template>
-        <template #button>
-          <t-space :size="8">
-            <t-button theme="primary" @click="onAddTypeData"> 新增班组 </t-button>
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onTeamDeleteBatches()">
-              <t-button theme="default"> 班组批量删除 </t-button>
-            </t-popconfirm>
-            <t-button theme="default"> 班组导入 </t-button>
-          </t-space>
-        </template>
-      </cmp-table>
+      <cmp-container :full="true">
+        <cmp-query :opts="opts" :bool-enter="true" @submit="onInput"></cmp-query>
+        <!-- ################# 班组表格数据 ###################### -->
+        <cmp-card :ghost="true">
+          <cmp-table
+            ref="tableRef"
+            v-model:pagination="pageUI"
+            empty="没有符合条件的数据"
+            row-key="id"
+            :hover="false"
+            :stripe="false"
+            :fixed-height="false"
+            :table-column="teamColumns"
+            active-row-type="single"
+            :table-data="teamList.list"
+            :total="teamTotal"
+            :selected-row-keys="selectedRowKeys"
+            @row-click="onGroupSelectChange"
+            @select-change="onSelectChange"
+            @refresh="onFetchGroupData"
+          >
+            <template #title>
+              {{ '班组列表' }}
+            </template>
+            <template #actionSlot="{ row }">
+              <t-space :size="8">
+                <t-link theme="primary" @click="onEditRow(row)">{{ '编辑' }}</t-link>
+                <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
+                  <t-link theme="primary" @click="onGroupDelect(row)">{{ '删除' }}</t-link>
+                </t-popconfirm>
+              </t-space>
+            </template>
+            <template #button>
+              <t-space :size="8">
+                <t-button theme="primary" @click="onAddTypeData"> 新增班组 </t-button>
+                <t-popconfirm theme="default" content="确认删除吗" @confirm="onTeamDeleteBatches()">
+                  <t-button theme="default"> 班组批量删除 </t-button>
+                </t-popconfirm>
+                <t-button theme="default"> 班组导入 </t-button>
+              </t-space>
+            </template>
+          </cmp-table>
+        </cmp-card>
+      </cmp-container>
     </cmp-card>
     <cmp-card>
       <!-- ################# 班组人员表格数据 ###################### -->
