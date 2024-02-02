@@ -302,11 +302,13 @@ const onPrint = async () => {
     const delivery = deliveryList.list.find((item) => item.deliveryDtlId === printMode.value.deliveryDtlId);
     selectedRowKeys.value.forEach((id) => {
       const foundItem = labelBelowList.list.find((item) => item.id === id);
+      console.log(foundItem);
       PrintByIdOrCode(
         {
+          dataName: 'LabelPrintSource',
           data: {
             LABEL_NO: foundItem.labelNo,
-            BALANCE_QTY: foundItem.qty,
+            BALANCE_QTY: foundItem.balanceQty,
             LOT_NO: foundItem.lotNo,
             SUPPLIER_NAME: delivery.supplierName,
             MITEM_CODE: delivery.mitemCode,
