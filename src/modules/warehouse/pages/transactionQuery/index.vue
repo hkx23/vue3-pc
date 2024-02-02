@@ -24,13 +24,13 @@
             @select-change="handleRowSelectChange"
             @refresh="tabRefresh"
           >
-            <!-- <template #billNo="slotProps">  todo
+            <template #billNo="slotProps">
               <t-space :size="8">
-                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps.row)">{{
+                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick()">{{
                   slotProps.row.billNo
                 }}</t-link>
               </t-space>
-            </template> -->
+            </template>
             <template #title>
               {{ '事务明细列表' }}
             </template>
@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
@@ -64,6 +64,7 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import { openPage } from '@/router';
 
 // import transactionDetails from './transaction-details.vue';
 
@@ -82,11 +83,15 @@ const opts = computed(() => {
     businessCategoryId: {
       label: '事务类型',
       labelWidth: '20',
-      event: 'input',
-      comp: 't-input',
+      comp: 'bcmp-select-business',
+      event: 'business',
       defaultVal: '',
       bind: {
-        clearable: true,
+        type: 'businessCategory',
+        showTitle: false,
+      },
+      eventHandle: {
+        blur: dateChange,
       },
     },
     timeCreate: {
@@ -119,17 +124,17 @@ const opts = computed(() => {
       label: '排产单号',
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: [],
+      defaultVal: '',
       bind: {
         type: 'moSchedule',
         showTitle: false,
       },
     },
-    mitemCode: {
+    mitemId: {
       label: '物料编码',
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: [],
+      defaultVal: '',
       bind: {
         type: 'mitem',
         showTitle: false,
@@ -374,6 +379,22 @@ const tabRefresh = async () => {
   await fetchTable();
 };
 
+const dateChange = (data: any) => {
+  // 获取当前选择的日期范围
+  const selectedDateRange = data.value;
+  // 将日期字符串转换为dayjs对象
+  const startDate = dayjs(selectedDateRange[0]);
+  const endDate = dayjs(selectedDateRange[1]);
+
+  // 计算日期范围的天数差异
+  const daysDifference = endDate.diff(startDate, 'day');
+  // 如果选择的天数超过31天，则调整日期范围
+  if (daysDifference > 31) {
+    // 将结束日期调整为开始日期的后31天
+    MessagePlugin.warning('日期跨度不得超过31天');
+  }
+};
+
 // 初始化系统字典单据状态
 const documentStatusData = async () => {
   try {
@@ -407,18 +428,19 @@ const onInput = async (data: any) => {
     // scanBarcode, //标签  /
     // warehouseName, // 源仓库 /
     // toWarehouseName,   // 目标仓库 /
+    mitemId,
   } = data;
   if (!data.value) {
     const data = await apiMain.transactionDetail.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       businessCategoryId,
+      mitemId,
       // billNo,
       moScheId,
       dateStart: timeCreate[0],
       dateEnd: timeCreate[1],
       // erpBillNo,
-      // mitemCode,
       // creatorName,
       // erpbillNoxx
       // deliveryNo,
@@ -433,12 +455,11 @@ const onInput = async (data: any) => {
   setLoading(false);
 };
 
-// 查看 todo
-// const onEditRowClick = (row) => {
-//   // rowData.value = JSON.parse(JSON.stringify(row));
-//   // formTitle.value = '事务明细详情';
-//   eidtTransactionVisible.value = true;
-// };
+// 跳转到单据管理
+const onEditRowClick = () => {
+  const toDoUrl = '/warehouse#/receiptManagement';
+  openPage(toDoUrl);
+};
 </script>
 
 <style lang="less" scoped></style>
