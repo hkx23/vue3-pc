@@ -169,7 +169,7 @@ const statusOption = ref([
 // 表格主位栏 1
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 40, cell: 'indexSlot' },
+  { title: '序号', colKey: 'index', width: 60, cell: 'indexSlot' },
   { title: '接口分类', colKey: 'msgCategoryName', width: 110 },
   { title: 'MES领域分类', width: 130, colKey: 'msgDomainCategoryName' },
   { title: 'MES业务单号', width: 120, colKey: 'billNo' },
