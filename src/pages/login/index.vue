@@ -85,10 +85,10 @@ const switchType = (val: string) => {
   overflow: hidden;
 }
 
-.t-dropdown__item-text {
-  color: #454545;
-  font-size: 12px;
-}
+// .t-dropdown__item-text {
+//   color: #454545;
+//   font-size: 12px;
+// }
 </style>
 <style lang="less" scoped>
 .login-bg {
