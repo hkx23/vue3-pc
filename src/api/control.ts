@@ -2027,8 +2027,8 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
@@ -3279,8 +3279,8 @@ export interface BarcodeWipCollectVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   stateName?: string;
   isState?: boolean;
@@ -3395,14 +3395,14 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   stateName?: string;
+  defectCodeStr?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  defectCodeStr?: string;
 }
 
 /** 通用响应类 */

@@ -99,7 +99,7 @@
   </t-tabs>
 
   <!-- 弹窗1 -->
-  <t-dialog v-model:visible="containerVisible1" :footer="false" :close-on-overlay-click="false" header="容器条码生成">
+  <t-dialog v-model:visible="containerVisible1" :close-on-overlay-click="false" header="容器条码生成">
     <t-form :data="formData1" label-width="110px" :rules="rules">
       <t-form-item label="容器类型" name="containerType">
         <t-input v-model="formData1.containerType" disabled></t-input>
@@ -126,14 +126,18 @@
         <t-input-number v-model="formData1.createNum" :min="1" :max="100"></t-input-number>
       </t-form-item>
     </t-form>
-    <div class="dialog-footer1">
+    <!-- <div class="dialog-footer1">
       <t-button theme="primary" @click="cancel">取消</t-button>
       <t-button theme="primary" @click="submit1">确认</t-button>
-    </div>
+    </div> -->
+    <template #footer>
+      <t-button theme="default" variant="base" @click="cancel">取消</t-button>
+      <t-button theme="primary" @click="submit1">提交</t-button>
+    </template>
   </t-dialog>
 
   <!-- 弹窗2  容器类型 :footer="false"  todo-->
-  <t-dialog v-model:visible="containerVisible2" :footer="false" :close-on-overlay-click="false" :header="diaTilte">
+  <t-dialog v-model:visible="containerVisible2" :close-on-overlay-click="false" :header="diaTilte">
     <t-form :data="formData2" label-width="110px" :rules="rules2">
       <t-form-item label="容器类型" name="containerType">
         <t-input v-model="formData2.containerType" disabled></t-input>
@@ -176,10 +180,10 @@
         <t-input-number v-model="formData2.qty" :min="1" :max="100"></t-input-number>
       </t-form-item>
     </t-form>
-    <div class="dialog-footer1">
-      <t-button theme="primary" @click="cancel2">取消</t-button>
-      <t-button theme="default" @click="submit2">确认</t-button>
-    </div>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="cancel2">取消</t-button>
+      <t-button theme="primary" @click="submit2">提交</t-button>
+    </template>
   </t-dialog>
 </template>
 
@@ -349,7 +353,7 @@ onMounted(async () => {
   await getBarcodeRuleList();
   await getcontainerType();
   await getPrintTmplList(); // 打印模板
-  await fetchTable2({});
+  // await fetchTable2(props.propsId);
 });
 
 // 打印模板
@@ -394,17 +398,21 @@ const getcontainerType = async () => {
 //* 查询
 const inventoryManagement1 = ref([]);
 const onInput = async (data: any) => {
+  // 检查是否选中了主表的某一项
+  if (!props.propsId || props.propsId === '') {
+    MessagePlugin.warning('请先选中主表数据');
+    return; // 如果没有选中，则终止函数执行
+  }
+
   setLoading(true);
   inventoryManagement1.value = [];
   tableContainerData1.value = [];
-  const { containerTypeId, status, keyword } = data;
-  // let status = Array.isArray(state) ? state : [state];
-
+  const { status, keyword } = data;
   if (!data.value) {
     const result = await api.container.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      containerTypeId,
+      containerTypeId: props.propsId, // 查询时必须传左侧主表选中的id
       status,
       keyword,
     });
@@ -416,17 +424,22 @@ const onInput = async (data: any) => {
 //* 查询2
 const inventoryManagement2 = ref([]);
 const onInput2 = async (data: any) => {
+  // 检查是否选中了主表的某一项
+  if (!props.propsId || props.propsId === '') {
+    MessagePlugin.warning('请先选中主表数据');
+    return; // 如果没有选中，则终止函数执行
+  }
   setLoading(true);
   inventoryManagement2.value = [];
   tableContainerData2.value = [];
-  const { containerTypeId, state, keyword } = data;
+  const { state, keyword } = data;
   if (!data.value) {
     const result = await api.containerInMitem.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       keyword,
       state,
-      containerTypeId,
+      containerTypeId: props.propsId, // 查询时必须传左侧主表选中的id
     });
     tableContainerData2.value = result.list;
     dataTotal2.value = result.total;
@@ -492,7 +505,7 @@ const submit1 = async () => {
   };
   await api.container.generateBarcode(submitData);
   containerVisible1.value = false;
-  fetchTable({});
+  fetchTable(props.propsId); // 传主表id 防呆
   MessagePlugin.success('生成成功');
 };
 
@@ -510,7 +523,7 @@ const print = async () => {
     try {
       await api.container.printBarcode(multipleId.value);
       await MessagePlugin.success('打印成功');
-      await fetchTable({});
+      await fetchTable(props.propsId); // 传主表id 防呆
     } catch (error) {
       console.error('打印失败:', error);
     }
@@ -537,7 +550,7 @@ const onRowClick = async (row: { row: any }) => {
     if (tableContainerData2.value.length <= 1 && pageUI.value.page > 1) {
       pageUI.value.page--;
     }
-    await fetchTable2({});
+    await fetchTable2(props.propsId);
     await MessagePlugin.success('删除成功!');
   } catch (error) {
     console.error('删除失败:', error);
@@ -550,32 +563,23 @@ const onRowClick = async (row: { row: any }) => {
 const onStateRowClick1 = async () => {
   selectedRowKeys.value.some(async (key) => {
     const rowData = tableContainerData1.value.find((row) => row.id === key);
-    if (
-      rowData.statusName === '使用中' ||
-      rowData.statusName === '已入库' ||
-      rowData.statusName === '已出库' ||
-      rowData.statusName === '已作废'
-    ) {
-      MessagePlugin.error('无法作废，选中行中包含使用中、已入库、已出库的状态的数据！');
-      return;
-    }
     try {
+      if (
+        rowData.statusName === '使用中' ||
+        rowData.statusName === '已入库' ||
+        rowData.statusName === '已出库' ||
+        rowData.statusName === '已作废'
+      ) {
+        MessagePlugin.error('无法作废，选中行中包含使用中、已入库、已出库的状态的数据！');
+        return;
+      }
       await api.container.removeBatch(selectedRowKeys.value);
       await MessagePlugin.success('作废成功!');
-      await fetchTable({});
+      await fetchTable(props.propsId); // 传主表id 防呆
     } catch (error) {
       console.error('作废失败:', error);
     }
   });
-
-  // try {
-  //   // 等待删除操作完成
-  //   await api.container.removeBatch(selectedRowKeys.value);
-  //   await fetchTable({});
-  //   await MessagePlugin.success('批量作废成功!');
-  // } catch (error) {
-  //   console.error('作废失败:', error);
-  // }
 };
 
 // 批量删除 todo
@@ -604,7 +608,7 @@ const onRemoveRowClick2 = async () => {
     });
 
     // 删除操作成功，刷新表格数据
-    await fetchTable2({});
+    await fetchTable2(props.propsId);
     await MessagePlugin.success('批量删除成功!');
   } catch (error) {
     console.error('删除失败:', error);
@@ -614,6 +618,12 @@ const onRemoveRowClick2 = async () => {
 // 生成
 const generate = () => {
   containerVisible1.value = true;
+  // 清空数据
+  formData1.value = {
+    containerType: formData1.value.containerType,
+    barcodeRuleId: '',
+    createNum: 1,
+  };
 };
 
 // 取消
@@ -700,20 +710,9 @@ const submit2 = async () => {
   };
   await api.containerInMitem.add(submitData2);
   containerVisible2.value = false;
-  fetchTable2({});
+  fetchTable2(props.propsId);
   MessagePlugin.success('新增成功');
 };
 </script>
 
-<style scoped lang="less">
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end; /* 使内容靠右对齐 */
-}
-
-.dialog-footer1 {
-  margin-top: 15px;
-  display: flex;
-  justify-content: flex-end; /* 使内容靠右对齐 */
-}
-</style>
+<style scoped lang="less"></style>
