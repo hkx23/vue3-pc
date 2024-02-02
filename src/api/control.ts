@@ -2025,15 +2025,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopCode?: string;
-  workshopId?: string;
   datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  /** @format date-time */
+  datetimeSche?: string;
+  scanDatetimeStr?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2210,8 +2210,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3277,17 +3277,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  stateName?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  /** @format date-time */
+  datetimeSche?: string;
+  scanDatetimeStr?: string;
+  isState?: boolean;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3393,16 +3393,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopName?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  isState?: boolean;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   defectCodeStr?: string;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4091,8 +4091,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
