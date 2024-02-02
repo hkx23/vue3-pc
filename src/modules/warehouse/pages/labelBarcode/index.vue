@@ -129,7 +129,6 @@
                     <t-button theme="primary" :disabled="isEnable" @click="onReprint"> 补打 </t-button>
                     <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 作废 </t-button>
                     <t-button theme="default" :disabled="isEnable" @click="onSplit"> 拆分 </t-button>
-                    <t-button theme="default"> 导出 </t-button>
                   </template>
                   <template #operations="{ row }">
                     <t-link theme="primary" @click.stop="openLog(row)"> 日志 </t-link>
