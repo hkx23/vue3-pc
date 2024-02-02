@@ -32,15 +32,21 @@ export interface CmpPrintButtonProps extends Omit<ButtonProps, 'options'> {
 
 const props = withDefaults(defineProps<CmpPrintButtonProps>(), {
   showPreview: false,
-  shape: 'circle',
+  // shape: 'circle',
   variant: 'outline',
   showIcon: true,
 });
 const attrs: Partial<CmpPrintButtonProps> = useAttrs();
 const targetAttrs = computed<CmpPrintButtonProps>(() => {
-  const onClick = (e: MouseEvent) => {
-    if (props.onBeforePrint) props.onBeforePrint(e);
-    onClickPrint(e);
+  const onClick = async (e: MouseEvent) => {
+    if (props.onBeforePrint) {
+      if (props.onBeforePrint.constructor.name === 'AsyncFunction') {
+        await props.onBeforePrint(e);
+      } else {
+        props.onBeforePrint(e);
+      }
+    }
+    await onClickPrint(e);
   };
   return { ...attrs, ...props, onClick };
 });
