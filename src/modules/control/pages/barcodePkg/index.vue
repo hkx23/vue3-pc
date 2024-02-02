@@ -479,8 +479,10 @@ const barcodeWipStatusNameArr = ref([]);
 const moScheduleIdArr = ref([]);
 const pkgBarcodeTypeArr = ref([]);
 const onProductRightFetchData = (value: any, context: any) => {
-  printRuCondition.value.packType = context.currentRowData.pkgBarcodeType;
-  printRuCondition.value.moScheId = context.currentRowData.moScheduleId;
+  if (context.selectedRowData[0]) {
+    printRuCondition.value.packType = context.selectedRowData[0].pkgBarcodeType;
+    printRuCondition.value.moScheId = context.selectedRowData[0].moScheduleId;
+  }
   onPrintTemplateData();
   barcodeWipStatusNameArr.value = context.selectedRowData.map((item: any) => item.pkgBarcodeStatusName);
   moScheduleIdArr.value = context.selectedRowData.map((item: any) => item.moScheduleId);
