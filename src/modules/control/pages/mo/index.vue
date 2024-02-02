@@ -7,7 +7,8 @@
     <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
-        row-key="index"
+        row-key="id"
+        active-row-type="single"
         :loading="loading"
         :table-column="columns"
         :table-data="moData"
@@ -36,6 +37,7 @@
             编辑
           </t-link>
         </template>
+        <template #title> 工单列表</template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
