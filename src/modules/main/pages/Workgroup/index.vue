@@ -765,6 +765,7 @@ const onAddPersons = async () => {
     });
     MessagePlugin.success('变更成功');
     await supportPersonInUserTabData(); // 获取 人员表格 数据
+    await onTeamTabData();
     personVisible.value = false;
   } catch (error) {
     console.error('Error occurred:', error);

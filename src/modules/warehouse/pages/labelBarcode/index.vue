@@ -247,7 +247,7 @@ import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } f
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
-// import { GetPrinters, GetPrintFile, PrintByTemplate } from '@/api/print';
+import { PrintByIdOrCode } from '@/api/print';
 import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -300,7 +300,25 @@ const onPrint = async () => {
   }
   try {
     pageLoading.value = true;
+    const delivery = deliveryList.list.find((item) => item.deliveryDtlId === printMode.value.deliveryDtlId);
+    selectedRowKeys.value.forEach((id) => {
+      const foundItem = labelBelowList.list.find((item) => item.id === id);
+      PrintByIdOrCode(
+        {
+          data: {
+            LABEL_NO: foundItem.labelNo,
+            BALANCE_QTY: foundItem.qty,
+            LOT_NO: foundItem.lotNo,
+            SUPPLIER_NAME: delivery.supplierName,
+            MITEM_CODE: delivery.mitemCode,
+            MITEM_DESC: delivery.mitemDesc,
+          },
+        },
+        printMode.value.printTempId,
+      );
+    });
     await apiMain.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
+
     onRefreshBelow();
     onRefresh();
     MessagePlugin.success('打印成功');
