@@ -1367,8 +1367,21 @@ export type StockCheckBillExecuteSubVO = {
   isBatchNo?: number;
 } | null;
 
+/** 通用响应类 */
+export interface ResultStockCheckBillDtl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 盘点单据明细表 */
+  data?: StockCheckBillDtl;
+}
+
 /** 盘点单据明细表 */
-export interface StockCheckBillDtl {
+export type StockCheckBillDtl = {
   id?: string;
   /**
    * 创建时间
@@ -1404,7 +1417,7 @@ export interface StockCheckBillDtl {
   diffReason?: string;
   /** 差异调整原因 */
   diffAdjustReason?: string;
-}
+} | null;
 
 export interface StockCheckBillSearch {
   /**
@@ -2830,10 +2843,10 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   bfpickQty?: number;
   /**
    * 已扫描数量
@@ -4820,8 +4833,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -6143,6 +6156,20 @@ export const api = {
           body: data as any,
         },
       ),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据明细表
+     * @name GetById
+     * @request POST:/stockCheckBillDtl/getById
+     * @secure
+     */
+    getById: (data: string) =>
+      http.request<ResultStockCheckBillDtl['data']>(`/api/warehouse/stockCheckBillDtl/getById`, {
+        method: 'POST',
+        body: data as any,
+      }),
 
     /**
      * No description
