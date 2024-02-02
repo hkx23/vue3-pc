@@ -17,7 +17,7 @@
       </t-row>
     </t-card>
     <t-card :bordered="false" class="customer-card">
-      <t-descriptions column="3" bordered>
+      <t-descriptions :column="3" bordered>
         <t-descriptions-item label="生产车间"> {{ row.workshopName }}</t-descriptions-item>
         <t-descriptions-item label="工作中心">{{ row.workCenterName }}</t-descriptions-item>
         <t-descriptions-item label="产品编码">{{ row.mitemCode }}</t-descriptions-item>

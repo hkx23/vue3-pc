@@ -10,6 +10,7 @@ import CmpCard from './cmp-layout/CmpCard.vue';
 import CmpContainer from './cmp-layout/CmpContainer.vue';
 import CmpRow from './cmp-layout/CmpRow.vue';
 import CmpMessage from './cmp-message/index.vue';
+import CmpPrintButton from './cmp-print-button/index.vue';
 import CmpQuery from './cmp-query/index.vue';
 import CmpScanInput from './cmp-scan-input/index.vue';
 import CmpTable from './cmp-table/index.vue';
@@ -34,6 +35,8 @@ export default {
     app.component('CmpCard', CmpCard);
     app.component('CmpButton', CmpButton);
     app.component('CmpScanInput', CmpScanInput);
+
+    app.component('CmpPrintButton', CmpPrintButton);
   },
 };
 
@@ -43,6 +46,7 @@ declare module '@vue/runtime-core' {
     CmpRow: typeof CmpRow;
     CmpCard: typeof CmpCard;
     CmpButton: typeof CmpButton;
+    CmpPrintButton: typeof CmpPrintButton;
     CmpTable: typeof CmpTable;
   }
 }
