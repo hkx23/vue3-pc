@@ -1,6 +1,6 @@
 export interface stimulsoftTemplate {
   /** 模板内容 */
-  templateBody: string;
+  templateBody?: string;
   /** 模板中数据节点名称 (默认DataBase) */
   dataName?: string;
   /** 模板需要的数据 */

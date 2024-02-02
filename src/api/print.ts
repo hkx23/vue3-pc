@@ -10,7 +10,7 @@ const Api = {
   GetPrintFile: '/printer/getPrintFile',
 };
 
-const printHttp: HttpType = new Http(http.options);
+const printHttp: HttpType = new Http(JSON.parse(JSON.stringify(http.options)));
 printHttp.options.baseURL = () => {
   return 'http://localhost:6310';
 };
