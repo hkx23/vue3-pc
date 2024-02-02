@@ -70,7 +70,7 @@ import { openPage } from '@/router';
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
-const inventoryManagement = ref([]);
+// const inventoryManagement = ref([]);
 const tableDataReckoning = ref([]); //* 表格数据1
 // const eidtTransactionVisible = ref(false); //* 弹窗默认关闭
 const dataTotal = ref(0);
@@ -307,15 +307,15 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
 //* 表格数据
 const fetchTable = async () => {
   setLoading(false);
-  inventoryManagement.value = [];
-  tableDataReckoning.value = [];
-  const data = await apiMain.transactionDetail.getList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-  });
-  console.log('🚀 ~ fetchTable ~ data:todo', data);
-  tableDataReckoning.value = [...data.list];
-  dataTotal.value = data.total;
+  // inventoryManagement.value = [];
+  // tableDataReckoning.value = [];
+  // const data = await apiMain.transactionDetail.getList({
+  //   pageNum: pageUI.value.page,
+  //   pageSize: pageUI.value.rows,
+  // });
+  // console.log('🚀 ~ fetchTable ~ data:todo', data);
+  // tableDataReckoning.value = [...data.list];
+  // dataTotal.value = data.total;
   setLoading(false);
 };
 
@@ -414,44 +414,44 @@ const documentStatusData = async () => {
 const onInput = async (data: any) => {
   console.log('🚀 ~ onInput ~ data:todo2222222222', data);
   setLoading(true);
-  const {
-    businessCategoryId, // 事务类型
-    timeCreate, // 时间
-    // billNo, //MES业务单号 /
-    // erpBillNo, //ERP单据号 /
-    moScheId, // 排产单号
-    // mitemCode,//物料编码 /
-    // creatorName //操作人 /
-    // erpbillNoxx  //交接人  todo
-    // deliveryNo, //送货单
-    // purchaseNo, // 采购单
-    // scanBarcode, //标签  /
-    // warehouseName, // 源仓库 /
-    // toWarehouseName,   // 目标仓库 /
-    mitemId,
-  } = data;
-  if (!data.value) {
-    const data = await apiMain.transactionDetail.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      businessCategoryId,
-      mitemId,
-      // billNo,
-      moScheId,
-      dateStart: timeCreate[0],
-      dateEnd: timeCreate[1],
-      // erpBillNo,
-      // creatorName,
-      // erpbillNoxx
-      // deliveryNo,
-      // purchaseNo,
-      // scanBarcode,
-      // warehouseName,
-      // toWarehouseName,
-    });
-    tableDataReckoning.value = [...data.list];
-    dataTotal.value = data.total;
-  }
+  // const {
+  // businessCategoryId, // 事务类型
+  // timeCreate, // 时间
+  // billNo, //MES业务单号 /
+  // erpBillNo, //ERP单据号 /
+  // moScheId, // 排产单号
+  // mitemCode,//物料编码 /
+  // creatorName //操作人 /
+  // erpbillNoxx  //交接人  todo
+  // deliveryNo, //送货单
+  // purchaseNo, // 采购单
+  // scanBarcode, //标签  /
+  // warehouseName, // 源仓库 /
+  // toWarehouseName,   // 目标仓库 /
+  // mitemId,
+  // } = data;
+  // if (!data.value) {
+  // const data = await apiMain.transactionDetail.getList({
+  //   pageNum: pageUI.value.page,
+  //   pageSize: pageUI.value.rows,
+  //   businessCategoryId,
+  //   mitemId,
+  //   // billNo,
+  //   moScheId,
+  //   dateStart: timeCreate[0],
+  //   dateEnd: timeCreate[1],
+  //   // erpBillNo,
+  //   // creatorName,
+  //   // erpbillNoxx
+  //   // deliveryNo,
+  //   // purchaseNo,
+  //   // scanBarcode,
+  //   // warehouseName,
+  //   // toWarehouseName,
+  // });
+  // tableDataReckoning.value = [...data.list];
+  // dataTotal.value = data.total;
+  // }
   setLoading(false);
 };
 
