@@ -3904,8 +3904,7 @@ export interface MitemVO {
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
+  isProductName?: string;
   isBatchName?: string;
 }
 
@@ -4385,8 +4384,8 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
   imsgqueueStatus?: string;
 }
 
@@ -6670,6 +6669,8 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */

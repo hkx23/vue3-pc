@@ -142,12 +142,12 @@
                 <cmp-table
                   v-model:pagination="pageUIMannage"
                   row-key="barcodePkgId"
-                  select-on-row-click
                   :selected-row-keys="selectedManageRowKeys"
                   :loading="loading"
                   :table-column="pkgBarcodeManageColumns"
                   :table-data="pkgManageDataList.list"
                   :total="pkgManageTabTotal"
+                  select-on-row-click
                   @select-change="onProductRightFetchData"
                   @refresh="onRefresh"
                 >
@@ -476,10 +476,23 @@ const manageQueryCondition = ref({
 const tabValue = ref(0);
 const tagValue = ref(0);
 const barcodeWipStatusNameArr = ref([]);
+const moScheduleIdArr = ref([]);
+const pkgBarcodeTypeArr = ref([]);
 const onProductRightFetchData = (value: any, context: any) => {
+  if (context.selectedRowData[0]) {
+    printRuCondition.value.packType = context.selectedRowData[0].pkgBarcodeType;
+    printRuCondition.value.moScheId = context.selectedRowData[0].moScheduleId;
+  }
+  onPrintTemplateData();
   barcodeWipStatusNameArr.value = context.selectedRowData.map((item: any) => item.pkgBarcodeStatusName);
+  moScheduleIdArr.value = context.selectedRowData.map((item: any) => item.moScheduleId);
+  pkgBarcodeTypeArr.value = context.selectedRowData.map((item: any) => item.pkgBarcodeType);
   selectedManageRowKeys.value = value;
   isEnable.value = !(selectedManageRowKeys.value.length > 0);
+};
+const areAllElementsSame = (arr) => {
+  // 使用 every 方法检查数组中的每个元素是否与第一个元素相同
+  return arr.every((element, index, array) => element === array[0]);
 };
 // 补打 点击事件
 const reprintVoidSwitch = ref(false); // 控制
@@ -493,6 +506,19 @@ const onReprint = () => {
   const specificStatus = barcodeWipStatusNameArr.value.some((item) => item === '已生成' || item === '已报废');
   if (specificStatus) {
     MessagePlugin.warning('存在条码状态为已生成、已报废状态，不允许补打');
+    return;
+  }
+  // 调用 areAllElementsSame 函数检查数组中的所有元素是否相同
+  const isAllElementsSameId = areAllElementsSame(moScheduleIdArr.value);
+  const isAllElementsSameType = areAllElementsSame(pkgBarcodeTypeArr.value);
+
+  if (!isAllElementsSameId) {
+    MessagePlugin.warning('已选中的条码排产单不一致，不允许补打');
+    return;
+  }
+
+  if (!isAllElementsSameType) {
+    MessagePlugin.warning('已选中的条码包装类型不一致，不允许补打');
     return;
   }
   isReprintCancellation.value = true;
