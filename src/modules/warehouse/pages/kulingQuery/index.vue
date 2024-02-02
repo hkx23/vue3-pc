@@ -18,6 +18,9 @@
           empty="没有符合条件的数据"
           @refresh="tabRefresh"
         >
+          <template #title>
+            {{ '库龄查询列表' }}
+          </template>
           <template #labelNo="slotProps">
             <t-space :size="8">
               <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">明细 </t-link>
