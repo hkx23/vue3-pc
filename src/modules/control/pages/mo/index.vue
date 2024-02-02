@@ -17,7 +17,7 @@
       >
         <template #moCode="{ row }">
           <a
-            style="color: #3f5ded; cursor: pointer"
+            class="cell-mo"
             @click="
               {
                 onHandelDetail(row);
@@ -414,7 +414,12 @@ onMounted(() => {
   padding-left: 118px !important ;
 }
 
-/deep/ .t-dialog__ctx .t-dialog__position.t-dialog--top {
+:deep(.t-dialog__ctx .t-dialog__position.t-dialog--top) {
   padding-top: 5vh !important;
+}
+
+.cell-mo {
+  color: var(--td-brand-color);
+  cursor: pointer;
 }
 </style>
