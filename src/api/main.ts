@@ -924,8 +924,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -3900,13 +3900,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
+  isProductChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -4049,8 +4049,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */

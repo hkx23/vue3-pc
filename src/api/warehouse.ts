@@ -1215,10 +1215,14 @@ export interface TransactionDetailSearch {
   mitemId?: string;
   /** 操作人 */
   creator?: string;
+  /** 交接人ID */
+  transferId?: string;
   /** 采购订单号 */
   purchaseNo?: string;
   /** 送货单号 */
   deliveryNo?: string;
+  /** 标签 */
+  scanBarcode?: string;
   warehouseId?: string;
   toWarehouseId?: string;
   /**
@@ -1279,95 +1283,79 @@ export interface TransactionDetailVO {
    */
   state?: number;
   eid?: string;
-  businessCategoryId?: string;
-  /** 业务类型编码 */
-  businessCategoryCode?: string;
-  /** 业务类型名称 */
-  businessCategoryName?: string;
-  /** ERP业务类型ID */
-  erpBusinessCategoryId?: string;
+  oid?: string;
   /** 单据号 */
   billNo?: string;
-  /** ERP单据号 */
-  erpBillNo?: string;
-  /** 采购订单号 */
-  purchaseNo?: string;
-  /** 送货单号 */
-  deliveryNo?: string;
-  warehouseId?: string;
-  /** 仓库编码 */
-  warehouseCode?: string;
-  /** 源仓库名称 */
-  warehouseName?: string;
-  districtId?: string;
-  locId?: string;
-  toOid?: string;
-  toWarehouseId?: string;
-  /** 目标仓库编码 */
-  toWarehouseCode?: string;
-  /** 目标仓库名称 */
-  toWarehouseName?: string;
-  toDistrictId?: string;
-  toLocId?: string;
-  /** ERP来源仓库ID */
-  erpWarehouseId?: string;
-  /** ERP来源货区ID */
-  erpDistrictId?: string;
-  /** ERP来源货区ID */
-  erpLocId?: string;
-  /** ERP目标组织ID */
-  toErpOid?: string;
-  /** ERP目标仓库ID */
-  toErpWarehouseId?: string;
-  /** ERP目标货区ID */
-  toErpDistrictId?: string;
-  /** ERP目标货区ID */
-  toErpLocId?: string;
-  mitemId?: string;
-  /** 物料代码 */
-  mitemCode?: string;
-  /** 物料名称 */
-  mitemName?: string;
-  /** ERP物料ID */
-  erpMitemId?: string;
-  supplierId?: string;
-  /** 供应商ID */
-  erpSupplierId?: string;
-  /** 工单号 */
-  moCode?: string;
-  /** ERP工单号 */
-  erpMoId?: string;
-  moScheId?: string;
+  businessCategoryId?: string;
+  /** 状态 */
+  status?: string;
   /**
-   * 交易时间
-   * @format date-time
-   */
-  datetimeTrans?: string;
-  /** 交易数量 */
-  transQty?: number;
-  /**
-   * 上传顺序
+   * 打印次数
    * @format int32
    */
-  ulSeq?: number;
-  /** ERP单据头表 */
-  erpBillId?: string;
-  /** ERP单据明细表 */
-  erpBillDtlId?: string;
+  printCount?: number;
+  /**
+   * 最后打印时间
+   * @format date-time
+   */
+  datetimeLastPrint?: string;
+  userLastPrintId?: string;
+  /**
+   * 批准时间
+   * @format date-time
+   */
+  datetimeApproved?: string;
+  userApprovedId?: string;
+  /**
+   * 驳回时间
+   * @format date-time
+   */
+  datetimeRejected?: string;
+  userRejectedId?: string;
+  /**
+   * 取消时间
+   * @format date-time
+   */
+  datetimeCanceled?: string;
+  userCanceledId?: string;
+  /**
+   * 过帐时间
+   * @format date-time
+   */
+  datetimeTransfer?: string;
+  userTransferId?: string;
+  /**
+   * 作业完成时间
+   * @format date-time
+   */
+  datetimePicked?: string;
+  userPickedId?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  userReceiptedId?: string;
   /** 业务类型名称 */
   categoryName?: string;
-  /** 扫描的条形码 */
+  /** 标签 */
   scanBarcode?: string;
   /** 标签数量 */
   barcodeQty?: number;
+  /** 物料代码 */
+  mitemCode?: string;
   /** 物料描述 */
   mitemDesc?: string;
   /** 计量单位符号名称 */
   uomName?: string;
+  /** 源仓库名称 */
+  warehouseName?: string;
   /** 源货区名称 */
   districtName?: string;
   /** 源货位名称 */
   locationName?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
   /** 目标货区名称 */
   toDistrictName?: string;
   /** 目标货位名称 */
@@ -1378,15 +1366,17 @@ export interface TransactionDetailVO {
   supplierName?: string;
   /** 操作人 */
   creatorName?: string;
+  /** 排产工单 */
+  scheCode?: string;
   /**
    * 计划数量
    * @format int32
    */
   planQty?: number;
-  /** 执行结果 */
-  status?: string;
-  /** 执行结果名称 */
-  statusName?: string;
+  /** 交易数量 */
+  transQty?: number;
+  /** 送货单号 */
+  lineSeq?: string;
 }
 
 export interface StorageAgeQuerySearch {
@@ -3031,13 +3021,6 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
@@ -3046,6 +3029,13 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   /**
    * 待扫数量
    * @format double

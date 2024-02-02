@@ -828,8 +828,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1296,8 +1296,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2025,11 +2025,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -3277,11 +3277,11 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -3393,11 +3393,11 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
   defectCodeStr?: string;
   isState?: boolean;
@@ -3639,8 +3639,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -4133,6 +4133,81 @@ export interface ResultListPkgRelationVO {
   message?: string;
   /** 响应数据 */
   data?: PkgRelationVO[] | null;
+}
+
+/** 显示排产工单BOM */
+export type MoScheBomVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moId?: string;
+  mitemId?: string;
+  /** 工单需求量 */
+  moRequestQty?: number;
+  /**
+   * 用量分子
+   * @format int32
+   */
+  numeratorQty?: number;
+  /**
+   * 用量分母
+   * @format int32
+   */
+  denomainatorQty?: number;
+  parentMitemId?: string;
+  /** 单位 */
+  uom?: string;
+  /** ERP BOM对应ID */
+  erpBomId?: string;
+  /** BOM版本 */
+  bomVersion?: string;
+  /** 实发数量 */
+  pickQty?: number;
+  /** 损耗率 */
+  lossRate?: number;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  /** @format int32 */
+  moScheRequestQty?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListMoScheBomVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MoScheBomVO[] | null;
 }
 
 /** 响应数据 */
@@ -5595,6 +5670,24 @@ export const api = {
       workStationId?: string;
     }) =>
       http.request<ResultObject['data']>(`/api/control/mitemOnboard/getProccesByWorkStationId`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 投料表
+     * @name GetMoBom
+     * @summary 根据排产单ID获取工单BOM信息
+     * @request GET:/mitemOnboard/getMoBomByMoScheId
+     * @secure
+     */
+    getMoBom: (query?: {
+      /** @default "" */
+      scheId?: string;
+    }) =>
+      http.request<ResultListMoScheBomVO['data']>(`/api/control/mitemOnboard/getMoBomByMoScheId`, {
         method: 'GET',
         params: query,
       }),

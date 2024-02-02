@@ -30,10 +30,10 @@
                   >>
                   <!-- 取时间段排了多少天  差值 或者  不等于0 就是已排天数      num等于差值就是已排满 -->
                   <template #num="{ row }">
-                    <span v-if="row.num == 0" class="status-label">待排</span>
+                    <span v-if="row.num === 0" class="status-label">待排</span>
                     <!-- num < 0 && < dayDatas -->
                     <span v-if="row.num > 0 && row.num < dayDatas" class="status-label">已排班{{ row.num }}天</span>
-                    <span v-if="row.num == dayDatas" class="status-label status-full">排满</span>
+                    <span v-if="row.num === dayDatas" class="status-label status-full">排满</span>
                   </template>
 
                   <!-- + 号 solt -->
@@ -231,7 +231,6 @@ const activeTab = ref('first'); // 默认激活的选项卡
 const selectedOption = ref('');
 const formTitle = ref('');
 const tableData = ref([]);
-const workgroupKeyword = ref('');
 const calendarMode = ref<'month'>('month'); // 默认为月视图
 const currentDate = ref(new Date());
 const range1 = ref([new Date(), new Date()]); // 初始日期范围
@@ -650,6 +649,8 @@ const getWorkgroupInfo = async (id) => {
   });
   // 调用合并
   await mergeData();
+  // const arrWorkgroupName = []; // 搜索数据源
+  // 取到所有的 workgroupName 根据用户输入 模糊匹配 搜索班组 -- workgroupKeyword
 };
 
 // 获取已排天数 在 getArrangeCount 函数中将 resValue2 添加到 tableData
@@ -727,6 +728,11 @@ const handleTabChange = (newValue) => {
   // // 调用 handleDateChange 来更新日期并获取相关数据
   // handleDateChange(range1.value.map((date) => formatDate(date)));
 };
+// todos 更新表格数据以显示匹配的班组
+async function filterOrSearchWorkgroups(keyword: string) {
+  const filteredWorkgroups = resValue1.value.filter((item) => item.workgroupName.includes(keyword));
+  tableData.value = filteredWorkgroups;
+}
 
 watch(range1, (newValue) => {
   if (newValue && newValue.length === 2) {
@@ -762,6 +768,12 @@ watch(selectedShift, (newValue) => {
     // 更新班次代码
     teamFormData.value.shiftCode = selectedShiftData.value;
   }
+});
+
+const workgroupKeyword = ref('');
+// 监视用户输入，触发搜索
+watch(workgroupKeyword, async (newKeyword) => {
+  await filterOrSearchWorkgroups(newKeyword); // 根据关键词过滤或搜索班组
 });
 </script>
 <style lang="less" scoped>
