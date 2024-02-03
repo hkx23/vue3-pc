@@ -45,7 +45,6 @@ import dayjs from 'dayjs';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
-import { api as apiMain } from '@/api/main';
 import { api } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -58,7 +57,6 @@ const { loading, setLoading } = useLoading();
 const inventoryManagement = ref([]);
 const tableDataReckoning = ref([]); //* 表格数据
 const dataTotal = ref(0);
-const documentStatusOptions = ref([]);
 
 //* 组件配置--查询界面
 const opts = computed(() => {
@@ -274,7 +272,6 @@ const fetchTable = async () => {
 
 //* 初始渲染
 onMounted(async () => {
-  await documentStatusData(); // 单据状态
   await fetchTable();
 });
 
@@ -302,21 +299,6 @@ const dateChange = (data: any) => {
   if (daysDifference > 31) {
     // 将结束日期调整为开始日期的后31天
     MessagePlugin.warning('日期跨度不得超过31天');
-  }
-};
-
-// 初始化系统字典单据状态
-const documentStatusData = async () => {
-  try {
-    const res = await apiMain.param.getListByGroupCode({
-      parmGroupCode: 'W_STOCK_CHECK_BILL_STATUS',
-    });
-    documentStatusOptions.value = res.map((status) => ({
-      label: status.label,
-      value: status.value,
-    }));
-  } catch (e) {
-    console.error(e);
   }
 };
 

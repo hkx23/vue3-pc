@@ -924,8 +924,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -3194,6 +3194,117 @@ export interface ResultPagingDataShowModuleVO {
   data?: PagingDataShowModuleVO;
 }
 
+/** 工单排产表 */
+export interface MoSchedule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moId?: string;
+  mitemId?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 销售订单 */
+  soNo?: string;
+  /**
+   * 销售订单行号
+   * @format int32
+   */
+  soSeq?: number;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 下线数量
+   * @format int32
+   */
+  offlineQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 入库数量
+   * @format int32
+   */
+  stockinQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
+   * 工单关闭时间
+   * @format date-time
+   */
+  datetimeMoClose?: string;
+  warehouseId?: string;
+  parentMoId?: string;
+  workshopId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 状态 */
+  status?: string;
+  /** 工单来源 */
+  moSource?: string;
+  workcenterId?: string;
+  /**
+   * 排产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  routingRevisionId?: string;
+  /** 排产工单 */
+  scheCode?: string;
+}
+
 /** 显示工单投料的视图 */
 export interface MoScheduleVO {
   id?: string;
@@ -3332,117 +3443,6 @@ export interface ResultPagingDataMoScheduleVO {
   /** 响应数据 */
   data?: PagingDataMoScheduleVO;
 }
-
-/** 工单排产表 */
-export type MoSchedule = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  moId?: string;
-  mitemId?: string;
-  /** 工单类型 */
-  moClass?: string;
-  /** 销售订单 */
-  soNo?: string;
-  /**
-   * 销售订单行号
-   * @format int32
-   */
-  soSeq?: number;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /**
-   * 下线数量
-   * @format int32
-   */
-  offlineQty?: number;
-  /**
-   * 完工数量
-   * @format int32
-   */
-  completedQty?: number;
-  /**
-   * 入库数量
-   * @format int32
-   */
-  stockinQty?: number;
-  /**
-   * 计划开始时间
-   * @format date-time
-   */
-  datetimePlanStart?: string;
-  /**
-   * 计划完成时间
-   * @format date-time
-   */
-  datetimePlanEnd?: string;
-  /**
-   * 实际开始时间
-   * @format date-time
-   */
-  datetimeActualStart?: string;
-  /**
-   * 实际完成时间
-   * @format date-time
-   */
-  datetimeActualEnd?: string;
-  /**
-   * 工单关闭时间
-   * @format date-time
-   */
-  datetimeMoClose?: string;
-  warehouseId?: string;
-  parentMoId?: string;
-  workshopId?: string;
-  /** 备注 */
-  memo?: string;
-  /** 状态 */
-  status?: string;
-  /** 工单来源 */
-  moSource?: string;
-  workcenterId?: string;
-  /**
-   * 排产日期
-   * @format date-time
-   */
-  datetimeSche?: string;
-  /**
-   * 排产数量
-   * @format int32
-   */
-  scheQty?: number;
-  routingRevisionId?: string;
-  /** 排产工单 */
-  scheCode?: string;
-} | null;
 
 /** 通用响应类 */
 export interface ResultMoSchedule {
@@ -3900,13 +3900,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
+  isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
-  isProductName?: string;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -4049,8 +4049,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -10138,6 +10138,21 @@ export const api = {
      * No description
      *
      * @tags 工单排产表
+     * @name UpdateMoScheInfo
+     * @summary 更新排产单信息-完成数量，状态等信息
+     * @request POST:/moSchedule/updateMoScheInfo
+     * @secure
+     */
+    updateMoScheInfo: (data: MoSchedule) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/updateMoScheInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
      * @name SearchRunningMoSche
      * @summary 弹出框公共方法-查询有效的排产单信息-已排产，已备料，已上线
      * @request POST:/moSchedule/searchRunningMoSche
@@ -10220,6 +10235,21 @@ export const api = {
      */
     updateMoRouting: (data: MoSchedule) =>
       http.request<ResultObject['data']>(`/api/main/mo/updateMoRouting`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单表
+     * @name UpdateMoInfo
+     * @summary 更新工单信息-完成数量，状态等信息
+     * @request POST:/mo/updateMoInfo
+     * @secure
+     */
+    updateMoInfo: (data: Mo) =>
+      http.request<ResultObject['data']>(`/api/main/mo/updateMoInfo`, {
         method: 'POST',
         body: data as any,
       }),
