@@ -61,7 +61,7 @@ const columns = [
   }),
   columnHelper.accessor('delivered', {
     header: '已配送/需求',
-    cell: (info) => info.getValue(),
+    // 使用 cell 函数自定义渲染逻辑
   }),
   columnHelper.accessor('starving', {
     header: '缺料数',
