@@ -890,6 +890,26 @@ export interface TransferHeadConfirmSubmit {
   list?: BillInfoMMVO[];
 }
 
+/** 杂项管理物料标签检验 */
+export interface LabelMMSearch {
+  /** 物料标签 */
+  labelNo?: string;
+  /** 单据号 */
+  billNo?: string;
+  businessCategoryId?: string;
+  warehouseId?: string;
+  toWarehouseId?: string;
+  toLocId?: string;
+  locId?: string;
+  dtlId?: string;
+  /** 科目 */
+  accountValue?: string;
+  /** 原因 */
+  reasonValue?: string;
+  /** 费用部门 */
+  costDepartmentValue?: string;
+}
+
 /** 通用响应类 */
 export interface Result {
   /**
@@ -979,6 +999,7 @@ export interface TransferDtlVO {
   mitemName?: string;
   mitemDesc?: string;
   locationName?: string;
+  toLocationName?: string;
   uomName?: string;
 }
 
@@ -3063,21 +3084,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /** 已发料量 */
-  alreadyPickQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4040,25 +4061,6 @@ export interface LabelSearch {
   reason?: string;
   /** 批量ID */
   ids?: string[];
-}
-
-/** 杂项管理物料标签检验 */
-export interface LabelMMSearch {
-  /** 物料标签 */
-  labelNo?: string;
-  /** 单据号 */
-  billNo?: string;
-  businessCategoryId?: string;
-  warehouseId?: string;
-  toWarehouseId?: string;
-  toLocId?: string;
-  locId?: string;
-  /** 科目 */
-  accountValue?: string;
-  /** 原因 */
-  reasonValue?: string;
-  /** 费用部门 */
-  costDepartmentValue?: string;
 }
 
 export interface MitemForwardTraceSearch {
@@ -6163,6 +6165,20 @@ export const api = {
      */
     confirmBillNoMm: (data: TransferHeadConfirmSubmit) =>
       http.request<ResultObject['data']>(`/api/warehouse/transferDtl/confirmBillNoMM`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 交易单身表
+     * @name ChangLocIdByDtl
+     * @request POST:/transferDtl/changLocIdByDtl
+     * @secure
+     */
+    changLocIdByDtl: (data: LabelMMSearch) =>
+      http.request<Result['data']>(`/api/warehouse/transferDtl/changLocIdByDtl`, {
         method: 'POST',
         body: data as any,
       }),

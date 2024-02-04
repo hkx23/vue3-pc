@@ -1,42 +1,37 @@
 <!-- 事务明细查询  -->
 <template>
   <cmp-container :full="true">
-    <cmp-container>
-      <cmp-card>
-        <!-- cmp-query 查询组件 -->
-        <cmp-container>
-          <cmp-card>
-            <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
-          </cmp-card>
-        </cmp-container>
+    <!-- cmp-query 查询组件 -->
+    <cmp-card>
+      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
+    </cmp-card>
 
-        <!-- cmp-table 表格组件   :row-select="{ type: 'single' }"    :selected-row-keys="selectedBillId" -->
-        <cmp-card>
-          <cmp-table
-            v-model:pagination="pageUI"
-            :loading="loading"
-            row-key="billId"
-            :table-column="tableReckoningManagementColumns"
-            :table-data="tableDataReckoning"
-            :fixed-height="false"
-            :total="dataTotal"
-            empty="没有符合条件的数据"
-            @refresh="tabRefresh"
-          >
-            <template #billNo="slotProps">
-              <t-space :size="8">
-                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick()">{{
-                  slotProps.row.billNo
-                }}</t-link>
-              </t-space>
-            </template>
-            <template #title>
-              {{ '事务明细列表' }}
-            </template>
-          </cmp-table>
-        </cmp-card>
-      </cmp-card>
-    </cmp-container>
+    <!-- cmp-table 表格组件   :row-select="{ type: 'single' }"    :selected-row-keys="selectedBillId" -->
+    <cmp-card :span="12">
+      <cmp-table
+        v-model:pagination="pageUI"
+        :loading="loading"
+        row-key="billId"
+        :table-column="tableReckoningManagementColumns"
+        :table-data="tableDataReckoning"
+        :fixed-height="true"
+        max-height="380px"
+        :total="dataTotal"
+        empty="没有符合条件的数据"
+        @refresh="tabRefresh"
+      >
+        <template #billNo="slotProps">
+          <t-space :size="8">
+            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick()">{{
+              slotProps.row.billNo
+            }}</t-link>
+          </t-space>
+        </template>
+        <template #title>
+          {{ '事务明细列表' }}
+        </template>
+      </cmp-table>
+    </cmp-card>
   </cmp-container>
 </template>
 
