@@ -1,6 +1,7 @@
 {
   "user": {
     "user": "用户",
+    "userList": "用户列表",
     "userCode": "用户代码",
     "userName": "用户名称",
     "displayName": "姓名",
