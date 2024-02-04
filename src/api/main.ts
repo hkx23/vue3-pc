@@ -3898,15 +3898,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isRawName?: string;
+  stateName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  stateName?: string;
   isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
+  isRawName?: string;
 }
 
 /** 响应数据 */
