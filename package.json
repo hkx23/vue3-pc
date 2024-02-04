@@ -17,8 +17,10 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.0",
     "@logicflow/core": "^1.2.18",
     "@logicflow/extension": "^1.2.19",
+    "@tanstack/vue-table": "^8.11.8",
     "@vue-office/docx": "^1.6.0",
     "@vue-office/excel": "^1.6.0",
     "@vue-office/pdf": "^1.6.0",

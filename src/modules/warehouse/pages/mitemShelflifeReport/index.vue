@@ -214,11 +214,14 @@ const mitemShelflifeData = ref([]);
 const mitemShelflifeTotal = ref(0);
 const detailRow = ref<any>({});
 const onhandId = ref('');
+const lotNo = ref('');
+const receiveNo = ref('');
 const onEditRow = async (row: any) => {
-  console.log('🚀 ~ file: index.vue:212 ~ onEditRow ~ row:', row);
   detailRow.value = row;
   formVisible.value = true;
   onhandId.value = row.onhandId;
+  lotNo.value = row.lotNo;
+  receiveNo.value = row.receiveNo;
   await onShelfLifeDetails();
 };
 
@@ -227,6 +230,8 @@ const onShelfLifeDetails = async () => {
     pageNum: pageNum.value,
     pageSize: pageSize.value,
     onhandId: onhandId.value,
+    lotNo: lotNo.value,
+    receiveNo: receiveNo.value,
   });
   mitemShelflifeData.value = res.list;
   mitemShelflifeTotal.value = res.total;

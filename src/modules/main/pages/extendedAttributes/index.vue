@@ -319,12 +319,6 @@ const dialogFormDataCopy = reactive({
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'serial-number',
-    title: '序号',
-    align: 'center',
-    width: '90',
-  },
-  {
     colKey: 'propertyCode',
     title: '属性代码',
     align: 'center',
