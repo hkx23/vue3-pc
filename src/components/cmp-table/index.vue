@@ -277,7 +277,7 @@ const props = defineProps({
   },
   activeRowType: {
     type: String as () => 'multiple' | 'single',
-    default: '',
+    default: 'single',
   },
   hover: {
     type: Boolean,
