@@ -94,9 +94,10 @@ const getPieData = async () => {
       return;
     }
     // const echarData = top5Data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
-    const echarData = top5Data.map(({ defectCodePercent, defectName }) => ({
-      value: defectCodePercent * 100,
+    const echarData = top5Data.map(({ defectCodePercent, defectName, defectCodeTotal }) => ({
       name: defectName,
+      total: defectCodeTotal,
+      value: defectCodePercent * 100,
     }));
 
     optionChart.value = {
@@ -114,7 +115,7 @@ const getPieData = async () => {
           center: ['50%', '35%'],
           label: {
             show: true,
-            formatter: (param) => `${param.name} ${param.value} (${param.percent}%)`,
+            formatter: (param) => `${param.name} ${param.data.total} (${param.value}%)`,
           },
           data: echarData,
           emphasis: {

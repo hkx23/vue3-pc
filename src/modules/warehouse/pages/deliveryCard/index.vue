@@ -249,9 +249,9 @@
   <t-dialog v-model:visible="formVisible" :header="diaLogTitle" :cancel-btn="null" :confirm-btn="null">
     <t-form ref="formRef" :data="reprintDialog" :rules="rules" @submit="onSecondarySubmit">
       <t-row :gutter="[32, 16]">
-        <t-col :span="12">
+        <t-col v-if="reprintVoidSwitch === 1" :span="12">
           <!-- #1️⃣补打原因 -->
-          <t-form-item v-if="reprintVoidSwitch === 1" label="补打原因" name="reprintData">
+          <t-form-item label="补打原因" name="reprintData">
             <t-select v-model="reprintDialog.reprintData">
               <t-option
                 v-for="item in reprintDataList.list"
@@ -262,12 +262,8 @@
             </t-select>
           </t-form-item>
         </t-col>
-        <t-col :span="12">
-          <t-form-item
-            v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-            label="补打原因"
-            name="restsData"
-          >
+        <t-col v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'" :span="12">
+          <t-form-item label="补打原因" name="restsData">
             <t-textarea
               v-model="reprintDialog.restsData"
               placeholder="请输入补打原因"
@@ -276,9 +272,9 @@
             />
           </t-form-item>
         </t-col>
-        <t-col :span="12">
+        <t-col v-if="reprintVoidSwitch === 2" :span="12">
           <!-- #2️⃣作废原因 -->
-          <t-form-item v-if="reprintVoidSwitch === 2" label="作废" name="reprintData">
+          <t-form-item label="作废" name="reprintData">
             <t-select v-model="reprintDialog.reprintData">
               <t-option
                 v-for="item in cancellationDataList.list"
@@ -289,12 +285,8 @@
             </t-select>
           </t-form-item>
         </t-col>
-        <t-col :span="12">
-          <t-form-item
-            v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-            label="作废原因"
-            name="restsData"
-          >
+        <t-col v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'" :span="12">
+          <t-form-item label="作废原因" name="restsData">
             <t-textarea
               v-model="reprintDialog.restsData"
               placeholder="请输入作废原因"
@@ -328,8 +320,8 @@
             </t-select>
           </t-form-item>
         </t-col>
-        <t-col :span="12">
-          <t-form-item v-if="reprintDialog.resolutionCause === '其他原因'" label="拆分原因" name="restsData">
+        <t-col v-if="reprintDialog.resolutionCause === '其他原因'" :span="12">
+          <t-form-item label="拆分原因" name="restsData">
             <t-textarea
               v-model="reprintDialog.restsData"
               placeholder="请输入拆分原因"
@@ -341,7 +333,7 @@
       </t-row>
     </t-form>
     <template #footer>
-      <t-button theme="default" variant="base">取消</t-button>
+      <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
       <t-button theme="primary" @click="onSecondaryClick">{{ buttonSwitch }}</t-button>
     </template>
   </t-dialog>
