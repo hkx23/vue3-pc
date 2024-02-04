@@ -828,8 +828,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1139,8 +1139,6 @@ export interface WipSearch {
    * @format date-time
    */
   processingDateEnd?: string;
-  /** @format date-time */
-  repairDateEnd?: string;
 }
 
 /** 响应数据 */
@@ -1296,8 +1294,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -3235,6 +3233,11 @@ export interface BarcodeWipCollectVO {
   /** 工单排产状态 */
   scheStatus?: string;
   /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
    * 排产数量
    * @format int32
    */
@@ -3398,11 +3401,11 @@ export interface BarcodeWipVO {
   workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  defectCodeStr?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3639,8 +3642,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -3882,7 +3885,7 @@ export interface ResultListWipVO {
   data?: WipVO[] | null;
 }
 
-/** 维修单 */
+/** 产品维修单 */
 export type WipVO = {
   id?: string;
   /**
@@ -4210,15 +4213,8 @@ export interface ResultListMoScheBomVO {
   data?: MoScheBomVO[] | null;
 }
 
-/** 响应数据 */
-export type PagingDataPrintTmpl = {
-  list?: PrintTmpl[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
 /** 标签模板 */
-export interface PrintTmpl {
+export type PrintTmpl = {
   id?: string;
   /**
    * 创建时间
@@ -4248,10 +4244,10 @@ export interface PrintTmpl {
   tmplBodyPath?: string;
   tmplCategory?: string;
   tmplType?: string;
-}
+} | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataPrintTmpl {
+export interface ResultListPrintTmpl {
   /**
    * 响应代码
    * @format int32
@@ -4260,11 +4256,11 @@ export interface ResultPagingDataPrintTmpl {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataPrintTmpl;
+  data?: PrintTmpl[] | null;
 }
 
 /** 条码生成规则 */
-export interface BarcodeRule {
+export type BarcodeRule = {
   id?: string;
   /**
    * 创建时间
@@ -4298,17 +4294,10 @@ export interface BarcodeRule {
   barcodeType?: string;
   /** 条码规则表达式 */
   ruleExpression?: string;
-}
-
-/** 响应数据 */
-export type PagingDataBarcodeRule = {
-  list?: BarcodeRule[];
-  /** @format int32 */
-  total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataBarcodeRule {
+export interface ResultListBarcodeRule {
   /**
    * 响应代码
    * @format int32
@@ -4317,7 +4306,27 @@ export interface ResultPagingDataBarcodeRule {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataBarcodeRule;
+  data?: BarcodeRule[] | null;
+}
+
+/** 响应数据 */
+export type PagingDataPrintTmpl = {
+  list?: PrintTmpl[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataPrintTmpl {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPrintTmpl;
 }
 
 /** 箱包关系外箱信息 */
@@ -4357,6 +4366,26 @@ export interface ResultPkgInfoRelationVO {
   message?: string;
   /** 箱包关系外箱信息 */
   data?: PkgInfoRelationVO;
+}
+
+/** 响应数据 */
+export type PagingDataBarcodeRule = {
+  list?: BarcodeRule[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataBarcodeRule {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataBarcodeRule;
 }
 
 /**
@@ -5869,7 +5898,7 @@ export const api = {
      * @secure
      */
     getPrintTmplList: (query: { moScheId: string }) =>
-      http.request<ResultPagingDataPrintTmpl['data']>(`/api/control/labelManage/getPrintTmplList`, {
+      http.request<ResultListPrintTmpl['data']>(`/api/control/labelManage/getPrintTmplList`, {
         method: 'GET',
         params: query,
       }),
@@ -5884,7 +5913,7 @@ export const api = {
      * @secure
      */
     getBarcodeRuleList: (query: { moScheId: string }) =>
-      http.request<ResultPagingDataBarcodeRule['data']>(`/api/control/labelManage/getBarcodeRuleList`, {
+      http.request<ResultListBarcodeRule['data']>(`/api/control/labelManage/getBarcodeRuleList`, {
         method: 'GET',
         params: query,
       }),

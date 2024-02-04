@@ -2,55 +2,59 @@
   <t-tabs v-model="activeTab">
     <!-- 默认插槽 和 具名插槽（panel）用来渲染面板内容 -->
     <t-tab-panel value="tab1" label="容器" :destroy-on-hide="false">
-      <t-card>
-        <cmp-query ref="queryComponent" :opts="optsContainer1" :bool-enter="false" @submit="onInput"> </cmp-query>
-      </t-card>
-      <!-- cmp-table 表格组件  -->
-      <cmp-table
-        v-model:pagination="pageUI"
-        v-model:selected-row-keys="selectedRowKeys"
-        row-key="id"
-        :table-column="tableContainerColumns1"
-        :table-data="tableContainerData1"
-        :total="dataTotal1"
-        :loading="loading"
-        empty="没有符合条件的数据"
-        @select-change="handleRowSelectChange"
-      >
-        <template #button>
-          <t-space :size="8">
-            <t-select label="打印模板" clearable>
-              <t-option
-                v-for="item in PrintTmpReslutDataOptions"
-                :key="item.id"
-                :label="item.label"
-                :value="item.value"
+      <cmp-container :full="true">
+        <t-card>
+          <cmp-query ref="queryComponent" :opts="optsContainer1" :bool-enter="false" @submit="onInput"> </cmp-query>
+        </t-card>
+        <!-- cmp-table 表格组件  -->
+        <cmp-table
+          v-model:pagination="pageUI"
+          v-model:selected-row-keys="selectedRowKeys"
+          row-key="id"
+          :table-column="tableContainerColumns1"
+          :table-data="tableContainerData1"
+          :fixed-height="true"
+          :total="dataTotal1"
+          :loading="loading"
+          style="height: 400px"
+          empty="没有符合条件的数据"
+          @select-change="handleRowSelectChange"
+        >
+          <template #button>
+            <t-space :size="8">
+              <t-select label="打印模板" clearable>
+                <t-option
+                  v-for="item in PrintTmpReslutDataOptions"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </t-option>
+              </t-select>
+              <!-- 选中数据再显示生成 -->
+              <t-button
+                v-if="props.selectedRowData && Object.keys(props.selectedRowData).length > 0"
+                theme="primary"
+                @click="generate"
+                >生成</t-button
               >
-              </t-option>
-            </t-select>
-            <!-- 选中数据再显示生成 -->
-            <t-button
-              v-if="props.selectedRowData && Object.keys(props.selectedRowData).length > 0"
-              theme="default"
-              @click="generate"
-              >生成</t-button
-            >
-            <!-- 批量打印 -->
-            <t-popconfirm theme="default" content="确认批量打印吗" @confirm="print()">
-              <t-button theme="default"> 批量打印 </t-button>
-            </t-popconfirm>
-            <!-- 批量作废 -->
-            <t-popconfirm theme="default" content="确认批量作废吗" @confirm="onStateRowClick1()">
-              <t-button theme="default"> 批量作废 </t-button>
-            </t-popconfirm>
-          </t-space>
-        </template>
+              <!-- 批量打印 -->
+              <t-popconfirm theme="default" content="确认批量打印吗" @confirm="print()">
+                <t-button theme="default"> 批量打印 </t-button>
+              </t-popconfirm>
+              <!-- 批量作废 -->
+              <t-popconfirm theme="default" content="确认批量作废吗" @confirm="onStateRowClick1()">
+                <t-button theme="default"> 批量作废 </t-button>
+              </t-popconfirm>
+            </t-space>
+          </template>
 
-        <!-- 定义序号列的插槽 -->
-        <template #indexSlot="{ rowIndex }">
-          {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-        </template>
-      </cmp-table>
+          <!-- 定义序号列的插槽 -->
+          <template #indexSlot="{ rowIndex }">
+            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+          </template>
+        </cmp-table>
+      </cmp-container>
     </t-tab-panel>
 
     <!-- ######### 物料关联 ######## -->
@@ -58,43 +62,46 @@
       <t-card>
         <cmp-query ref="queryComponent" :opts="optsContainer2" :bool-enter="false" @submit="onInput2"> </cmp-query>
       </t-card>
-      <!-- cmp-table 表格组件  -->
-      <cmp-table
-        v-model:pagination="pageUI"
-        v-model:selected-row-keys="selectedRowKeys2"
-        row-key="id"
-        :table-column="tableContainerColumns2"
-        :table-data="tableContainerData2"
-        :total="dataTotal2"
-        empty="没有符合条件的数据"
-      >
-        <template #button>
-          <t-space :size="8">
-            <t-button theme="primary" @click="add">新增</t-button>
-            <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
-            <!--   -->
-            <!-- <t-button theme="primary">打印</t-button> -->
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onRemoveRowClick2()">
-              <t-button theme="default"> 批量删除 </t-button>
-            </t-popconfirm>
-          </t-space>
-        </template>
+      <div class="tableSytle">
+        <!-- cmp-table 表格组件  -->
+        <cmp-table
+          v-model:pagination="pageUI"
+          v-model:selected-row-keys="selectedRowKeys2"
+          row-key="id"
+          :table-column="tableContainerColumns2"
+          :table-data="tableContainerData2"
+          :total="dataTotal2"
+          empty="没有符合条件的数据"
+          style="height: 400px"
+        >
+          <template #button>
+            <t-space :size="8">
+              <t-button theme="primary" @click="add">新增</t-button>
+              <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
+              <!--   -->
+              <!-- <t-button theme="primary">打印</t-button> -->
+              <t-popconfirm theme="default" content="确认删除吗" @confirm="onRemoveRowClick2()">
+                <t-button theme="default"> 批量删除 </t-button>
+              </t-popconfirm>
+            </t-space>
+          </template>
 
-        <!-- 定义序号列的插槽 -->
-        <template #indexSlot="{ rowIndex }">
-          {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-        </template>
-        <!-- 编辑2 -->
-        <template #op2="row">
-          <t-space>
-            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2(row)">编辑</t-link>
-            <!-- -->
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onRowClick(row)">
-              <t-link theme="default"> 删除 </t-link>
-            </t-popconfirm>
-          </t-space>
-        </template>
-      </cmp-table>
+          <!-- 定义序号列的插槽 -->
+          <template #indexSlot="{ rowIndex }">
+            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+          </template>
+          <!-- 编辑2 -->
+          <template #op2="row">
+            <t-space>
+              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2(row)">编辑</t-link>
+              <!-- -->
+              <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onRowClick(row)">
+                <t-link theme="default"> 删除 </t-link>
+              </t-popconfirm>
+            </t-space>
+          </template>
+        </cmp-table>
+      </div>
     </t-tab-panel>
   </t-tabs>
 
@@ -715,4 +722,8 @@ const submit2 = async () => {
 };
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.tableSytle {
+  width: 557px;
+}
+</style>

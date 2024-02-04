@@ -19,7 +19,7 @@
         @refresh="tabRefresh"
       >
         <template #title>
-          {{ '库龄查询列表' }}
+          {{ '库龄查询' }}
         </template>
         <template #labelNo="slotProps">
           <t-space :size="8">
