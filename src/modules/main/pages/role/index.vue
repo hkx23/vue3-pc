@@ -7,6 +7,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
+        :title="t('role.roleList')"
         row-key="id"
         :table-column="tableColumns"
         :table-data="tableData"

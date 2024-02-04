@@ -13,6 +13,7 @@
         :table-data="tableData"
         :loading="loading"
         :total="dataTotal"
+        :title="t('user.userList')"
         :fixed-height="true"
         @refresh="conditionEnter"
       >
