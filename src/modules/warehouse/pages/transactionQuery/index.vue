@@ -28,7 +28,7 @@
           </t-space>
         </template>
         <template #title>
-          {{ '事务明细列表' }}
+          {{ '事务明细' }}
         </template>
       </cmp-table>
     </cmp-card>

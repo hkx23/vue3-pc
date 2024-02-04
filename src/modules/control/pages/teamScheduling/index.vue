@@ -105,37 +105,29 @@
                   </div>
                 </div>
                 <!-- 日历组件 -->
-                <t-calendar
-                  :controller-config="false"
-                  type="month"
-                  :mode="calendarMode"
-                  :value="currentDate"
-                  :fill-with-zero="false"
-                >
-                  <!-- 日历插槽 -->
-                  <template #cellAppend="data">
-                    <!-- <div v-for="arrange in workgroupArranges" :key="arrange.id">
-                      <div v-if="isMatch(data.formattedDate, arrange.datetimeArrange)">
-                        <div v-for="item in arrange.details" :key="item.id" class="tag-wrapper">
-                          <button size="small" @click="requestDeleteItem(item)">X</button>
-                          <t-tag :title="'点击修改'" class="custom-tag" @click="editData(item)">
-                            {{ item.workgroupName }} | {{ item.shiftName }} | {{ item.wcName }}
-                          </t-tag>
+                <div class="custom-calendar">
+                  <t-calendar
+                    :controller-config="false"
+                    type="month"
+                    :mode="calendarMode"
+                    :value="currentDate"
+                    :fill-with-zero="false"
+                  >
+                    <!-- 日历插槽 -->
+                    <template #cellAppend="data">
+                      <div v-for="arrange in workgroupArranges" :key="arrange.id">
+                        <div v-if="isMatch(data.formattedDate, arrange.datetimeArrange)">
+                          <div v-for="item in arrange.details" :key="item.id" class="tag-wrapper">
+                            <t-tag :title="'点击修改'" class="custom-tag" @click="editData(item)">
+                              {{ item.workgroupName }} | {{ item.shiftName }} | {{ item.wcName }}
+                              <button class="tag-close-btn" @click.stop="requestDeleteItem(item)">×</button>
+                            </t-tag>
+                          </div>
                         </div>
                       </div>
-                    </div> -->
-                    <div v-for="arrange in workgroupArranges" :key="arrange.id">
-                      <div v-if="isMatch(data.formattedDate, arrange.datetimeArrange)">
-                        <div v-for="item in arrange.details" :key="item.id" class="tag-wrapper">
-                          <t-tag :title="'点击修改'" class="custom-tag" @click="editData(item)">
-                            {{ item.workgroupName }} | {{ item.shiftName }} | {{ item.wcName }}
-                            <button class="tag-close-btn" @click.stop="requestDeleteItem(item)">×</button>
-                          </t-tag>
-                        </div>
-                      </div>
-                    </div>
-                  </template>
-                </t-calendar>
+                    </template>
+                  </t-calendar>
+                </div>
               </div>
             </div>
           </t-tab-panel>
@@ -931,4 +923,50 @@ watch(workgroupKeyword, async (newKeyword) => {
 
   /* 进一步的样式调整 */
 }
+
+.custom-calendar {
+  height: 80%; /* 根据需要调整 */
+  width: 100%; /* 或者是你希望的宽度 */
+}
+
+.t-calendar {
+  /* 完全填充其父容器 */
+  width: 100%;
+
+  /* 高度自适应 */
+  height: auto;
+}
+
+/* 去除日历容器的内边距 */
+.custom-calendar .t-calendar {
+  padding: 0;
+}
+
+/* 假设日历的每个单元格（天）使用了特定的类名 */
+.custom-calendar .t-calendar-cell {
+  padding: 0;
+}
+
+/* 可能还需要覆盖其他内部元素的padding，如日历的头部、周末行等 */
+.custom-calendar .t-calendar-header,
+.custom-calendar .t-calendar-week {
+  padding: 0;
+}
+
+/* 调整日历单元格的高度 */
+// .custom-calendar .t-calendar-cell {
+//   position: relative; /* 设置为相对定位，以便内部的伪元素可以基于它进行绝对定位 */
+//   padding-top: 100%; /* 使用padding-top来基于宽度设置等比高度 */
+// }
+
+// .custom-calendar .t-calendar-cell .cell-wrapper {
+//   position: absolute; /* 使内容能够完全填充单元格 */
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   display: flex; /* 使用flex布局来居中内容 */
+//   justify-content: center; /* 水平居中 */
+//   align-items: center; /* 垂直居中 */
+// }
 </style>
