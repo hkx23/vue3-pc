@@ -1,9 +1,22 @@
-<script setup lang="ts">
-import { createColumnHelper, getCoreRowModel, getPaginationRowModel, useVueTable } from '@tanstack/vue-table';
+<script setup lang="tsx">
+import { createColumnHelper, FlexRender, getCoreRowModel, useVueTable } from '@tanstack/vue-table';
 import { ref } from 'vue';
 
-// 假定的 res 数据
-const res = ref([
+import ProgressBar from './progress.vue';
+
+type Person = {
+  materCode: string;
+  materDocs: string;
+  safeStock: number;
+  economicQuantity: number;
+  delivered: string;
+  starving: number;
+  suggestedDelivery: number;
+  KNum: number;
+  MNum: number;
+};
+
+const defaultData: Person[] = [
   {
     materCode: 'administrator',
     materDocs: '1',
@@ -19,28 +32,18 @@ const res = ref([
     materCode: 'administrator',
     materDocs: '1',
     safeStock: 175052,
-    economicQuantity: 444444,
+    economicQuantity: 4446576444,
     delivered: '1',
     starving: 1,
     suggestedDelivery: 666666,
     KNum: 777777,
     MNum: 88888888,
   },
-]);
+];
 
-type User = {
-  materCode: string;
-  materDocs: string;
-  safeStock: number;
-  economicQuantity: number;
-  delivered: string;
-  starving: number;
-  suggestedDelivery: number;
-  KNum: number;
-  MNum: number;
-};
-
-const columnHelper = createColumnHelper<User>();
+const columnHelper = createColumnHelper<Person>();
+const currentProgress = ref(100);
+const maxProgress = ref(420);
 
 const columns = [
   columnHelper.accessor('materCode', {
@@ -61,6 +64,9 @@ const columns = [
   }),
   columnHelper.accessor('delivered', {
     header: '已配送/需求',
+    cell: () => {
+      return <ProgressBar currentValue={currentProgress.value} maxValue={maxProgress.value} />;
+    },
     // 使用 cell 函数自定义渲染逻辑
   }),
   columnHelper.accessor('starving', {
@@ -81,34 +87,39 @@ const columns = [
   }),
 ];
 
+const data = ref(defaultData);
+
+// const rerender = () => {
+//   data.value = defaultData;
+// };
+
 const table = useVueTable({
   get data() {
-    return res.value;
+    return data.value;
   },
   columns,
   getCoreRowModel: getCoreRowModel(),
-  getPaginationRowModel: getPaginationRowModel(),
 });
 </script>
 
 <template>
-  <div class="p-2">
+  <div class="outer_box">
     <table>
       <thead>
-        <!-- 明确添加序号列的表头 -->
         <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-          <th>序号</th>
           <th v-for="header in headerGroup.headers" :key="header.id" :colSpan="header.colSpan">
-            {{ header.column.columnDef.header }}
+            <flex-render
+              v-if="!header.isPlaceholder"
+              :render="header.column.columnDef.header"
+              :props="header.getContext()"
+            />
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(row, rowIndex) in table.getRowModel().rows" :key="row.id">
-          <td>{{ rowIndex + 1 }}</td>
-          <!-- 在每行的开始添加序号 -->
+        <tr v-for="row in table.getRowModel().rows" :key="row.id">
           <td v-for="cell in row.getVisibleCells()" :key="cell.id">
-            {{ cell.getValue() }}
+            <flex-render :render="cell.column.columnDef.cell" :props="cell.getContext()" />
           </td>
         </tr>
       </tbody>

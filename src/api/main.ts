@@ -3899,14 +3899,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isProductName?: string;
+  isProductChecked?: boolean;
+  isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
   isState?: boolean;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -4706,6 +4706,75 @@ export interface ResultPagingDataEnterprise {
   message?: string;
   /** 响应数据 */
   data?: PagingDataEnterprise;
+}
+
+/** 维修单查询 */
+export interface EnterpriseSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+}
+
+/** 企业信息表 */
+export interface EnterpriseVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  /** 企业编号 */
+  epCode?: string;
+  /** 企业简称 */
+  epName?: string;
+  /** 企业全称 */
+  epFullName?: string;
+  /** 企业地址 */
+  epAddress?: string;
+}
+
+/** 响应数据 */
+export type PagingDataEnterpriseVO = {
+  list?: EnterpriseVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataEnterpriseVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataEnterpriseVO;
 }
 
 /** 系统下载任务表 */
@@ -11007,12 +11076,42 @@ export const api = {
      * No description
      *
      * @tags 企业表
+     * @name Modify
+     * @summary 编辑企业信息
+     * @request POST:/enterprise/modify
+     * @secure
+     */
+    modify: (data: Enterprise) =>
+      http.request<ResultObject['data']>(`/api/main/enterprise/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 企业表
      * @name Search
      * @request POST:/enterprise/items
      * @secure
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataEnterprise['data']>(`/api/main/enterprise/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 企业表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/enterprise/getList
+     * @secure
+     */
+    getList: (data: EnterpriseSearch) =>
+      http.request<ResultPagingDataEnterpriseVO['data']>(`/api/main/enterprise/getList`, {
         method: 'POST',
         body: data as any,
       }),
