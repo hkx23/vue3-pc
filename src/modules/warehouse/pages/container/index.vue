@@ -52,8 +52,8 @@
       </div>
     </cmp-container>
   </cmp-container>
-  <!-- 弹窗 -->
-  <t-dialog v-model:visible="containerVisible" :footer="false" :close-on-overlay-click="false" :header="formTitle">
+  <!-- 弹窗  :footer="false" 不需要底部 -->
+  <t-dialog v-model:visible="containerVisible" :close-on-overlay-click="false" :header="formTitle">
     <!--    <t-form :data="formData" :rules="rules" label-width="110px" @submit="submit1" @reset="cancel">
       <t-row :gutter="[32, 16]">
         <t-col :span="6">
@@ -104,11 +104,12 @@
       <t-form-item label="启用">
         <t-switch v-model="formData.state" :custom-value="[1, 0]" />
       </t-form-item>
-      <div class="dialog-footer">
-        <t-button theme="primary" type="reset">取消</t-button>
-        <t-button theme="primary" type="submit">提交</t-button>
-      </div>
     </t-form>
+
+    <template #footer>
+      <t-button theme="default" variant="base" @click="cancel">取消</t-button>
+      <t-button theme="primary" @click="submit1">提交</t-button>
+    </template>
   </t-dialog>
 </template>
 

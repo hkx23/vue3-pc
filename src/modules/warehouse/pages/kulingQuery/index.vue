@@ -1,41 +1,40 @@
 <!-- 库龄查询  -->
 <template>
   <cmp-container :full="true">
-    <cmp-container>
-      <!-- query -->
-      <t-card :ghost="true">
-        <cmp-query ref="queryComponent" :opts="optsKuling" :bool-enter="false" @submit="onInput"> </cmp-query>
-      </t-card>
-      <!-- cmp-table 表格组件  -->
-      <cmp-card>
-        <cmp-table
-          v-model:pagination="pageUI"
-          row-key="onhandId"
-          :table-column="tableReckoningManagementColumns"
-          :table-data="tableDataReceipt"
-          :total="dataTotal"
-          :loading="loading"
-          empty="没有符合条件的数据"
-          @refresh="tabRefresh"
-        >
-          <template #title>
-            {{ '库龄查询列表' }}
-          </template>
-          <template #labelNo="slotProps">
-            <t-space :size="8">
-              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">明细 </t-link>
-            </t-space>
-          </template>
+    <cmp-card :span="12">
+      <cmp-query ref="queryComponent" :opts="optsKuling" :bool-enter="false" @submit="onInput"> </cmp-query>
+    </cmp-card>
+    <!-- cmp-table 表格组件  -->
+    <cmp-card :full="true">
+      <cmp-table
+        v-model:pagination="pageUI"
+        row-key="onhandId"
+        :table-column="tableReckoningManagementColumns"
+        :table-data="tableDataReceipt"
+        :total="dataTotal"
+        :loading="loading"
+        :fixed-height="true"
+        empty="没有符合条件的数据"
+        style="height: 400px"
+        @refresh="tabRefresh"
+      >
+        <template #title>
+          {{ '库龄查询列表' }}
+        </template>
+        <template #labelNo="slotProps">
+          <t-space :size="8">
+            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">明细 </t-link>
+          </t-space>
+        </template>
 
-          <!-- 定义序号列的插槽 -->
-          <template #indexSlot="{ rowIndex }">
-            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-          </template>
-        </cmp-table>
-      </cmp-card>
-      <!-- 库龄详情组件 -->
-      <kuling-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" :sun-data="sunData" />
-    </cmp-container>
+        <!-- 定义序号列的插槽 -->
+        <template #indexSlot="{ rowIndex }">
+          {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+        </template>
+      </cmp-table>
+    </cmp-card>
+    <!-- 库龄详情组件 -->
+    <kuling-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" :sun-data="sunData" />
   </cmp-container>
 </template>
 

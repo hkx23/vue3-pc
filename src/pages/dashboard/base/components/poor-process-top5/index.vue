@@ -84,9 +84,11 @@ onDeactivated(() => {
 const getPieData = async () => {
   try {
     const data = await api.wipRepair.getRepairTop5();
+    console.log('🚀 ~ getPieData ~ dataTOP5:', data);
 
     // 过滤前5条数据
     const top5Data = data.slice(0, 5);
+    console.log('🚀 ~ getPieData ~ top5Data:过滤前5条数据', top5Data);
 
     if (top5Data.length === 0) {
       return;
