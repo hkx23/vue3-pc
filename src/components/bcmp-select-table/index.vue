@@ -7,6 +7,7 @@
       :popup-visible="popupVisible"
       :popup-props="{ overlayInnerStyle: { padding: '5px', width: 'auto' } }"
       :tag-input-props="{ excessTagsDisplayType: 'scroll' }"
+      :min-collapsed-num="1"
       allow-input
       :label="title"
       :multiple="multiple"

@@ -35,12 +35,7 @@
           :parent-id="orgInfo.orgId"
           type="workshop"
           :show-title="false"
-          @selection-change="
-            (val) => {
-              orgInfo.workShopCode = val.orgCode;
-              orgInfo.workShopName = val.orgName;
-            }
-          "
+          @selection-change="workshopChange"
         ></bcmp-select-business>
       </t-form-item>
 
@@ -50,12 +45,7 @@
           :parent-id="orgInfo.workShopId"
           type="workcenter"
           :show-title="false"
-          @selection-change="
-            (val) => {
-              orgInfo.workCenterCode = val.wcCode;
-              orgInfo.workCenterName = val.wcName;
-            }
-          "
+          @selection-change="workcenterChange"
         ></bcmp-select-business>
       </t-form-item>
 
@@ -65,15 +55,7 @@
           :parent-id="orgInfo.workCenterId"
           type="workstationAuth"
           :show-title="false"
-          @selection-change="
-            (val) => {
-              orgInfo.processId = val.processId;
-              orgInfo.processCode = '';
-              orgInfo.processName = '';
-              orgInfo.workStationCode = val.workstationCode;
-              orgInfo.workStationName = val.workstationName;
-            }
-          "
+          @selection-change="workstationChange"
         ></bcmp-select-business>
       </t-form-item>
     </t-form>
@@ -117,6 +99,29 @@ const onClickSaveOrg = async () => {
   currUserOrgInfo.value = userStore.currUserOrgInfo;
   handleChange(orgInfo.value);
   formImportVisible.value = false;
+};
+const workshopChange = (val) => {
+  orgInfo.value.workShopCode = val.orgCode;
+  orgInfo.value.workShopName = val.orgName;
+  orgInfo.value.workCenterId = '';
+  orgInfo.value.workCenterCode = '';
+  orgInfo.value.workCenterName = '';
+  orgInfo.value.workStationId = '';
+  orgInfo.value.workStationCode = '';
+  orgInfo.value.workStationName = '';
+};
+
+const workcenterChange = (val) => {
+  orgInfo.value.workCenterCode = val.wcCode;
+  orgInfo.value.workCenterName = val.wcName;
+};
+
+const workstationChange = (val) => {
+  orgInfo.value.processId = val.processId;
+  orgInfo.value.processCode = '';
+  orgInfo.value.processName = '';
+  orgInfo.value.workStationCode = val.workstationCode;
+  orgInfo.value.workStationName = val.workstationName;
 };
 
 const orgName = computed(() => {

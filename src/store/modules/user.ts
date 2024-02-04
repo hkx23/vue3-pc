@@ -54,7 +54,7 @@ export const useUserStore = defineStore('user', {
       return state.userInfo?.roles;
     },
     currUserOrgInfo: (state) => {
-      const userOrg = state.userOrgInfo[state.userInfo.id];
+      const userOrg = state.userOrgInfo[state.userInfo.id]?.[state.userInfo.orgId];
       if (!userOrg) {
         return {};
       }
@@ -111,8 +111,10 @@ export const useUserStore = defineStore('user', {
     },
     updateOrg(orgInfo?: orgInfo) {
       if (!this.userOrgInfo[this.userInfo.id]) this.userOrgInfo[this.userInfo.id] = {};
+      if (!this.userOrgInfo[this.userInfo.id][this.userInfo.orgId])
+        this.userOrgInfo[this.userInfo.id][this.userInfo.orgId] = {};
       const useTabsRouterStore = getTabsRouterStore();
-      this.userOrgInfo[this.userInfo.id][useTabsRouterStore.currentRouterPath] = orgInfo || {
+      this.userOrgInfo[this.userInfo.id][this.userInfo.orgId][useTabsRouterStore.currentRouterPath] = orgInfo || {
         orgId: '',
         orgCode: '',
         orgName: '',

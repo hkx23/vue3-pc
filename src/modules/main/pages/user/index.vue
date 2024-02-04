@@ -110,7 +110,7 @@ const tableData = ref([]);
 const selectuserId = ref('');
 // 表格列配置
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
+  // { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
   {
     colKey: 'serial-number',
     width: 60,
