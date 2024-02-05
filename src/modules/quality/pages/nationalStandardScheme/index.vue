@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol } from 'tdesign-vue';
+import { PrimaryTableCol } from 'tdesign-vue-next';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
