@@ -4049,8 +4049,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4708,7 +4708,7 @@ export interface ResultPagingDataEnterprise {
   data?: PagingDataEnterprise;
 }
 
-/** 维修单查询 */
+/** 企业信息表 */
 export interface EnterpriseSearch {
   /**
    * 页码

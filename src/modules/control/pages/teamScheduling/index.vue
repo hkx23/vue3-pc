@@ -622,13 +622,15 @@ function checkArray(arr) {
 // 时间戳转换
 const TimeStampCalculation = () => {
   const start = dayjs(qTimeCreate.value);
+  console.log('🚀 ~ TimeStampCalculation ~ start开始时间:', start);
   // 获取时间戳
   const startTimeStamp = start.valueOf();
   const end = dayjs(qTimeModified.value);
+  console.log('🚀 ~ TimeStampCalculation ~ end:结束时间', end);
   const endTimeStamp = end.valueOf();
 
   // 计算两个时间戳之间的差值，并转换为天数  todo
-  const diffInDays = (endTimeStamp - startTimeStamp) / 86400000 + 1;
+  const diffInDays = (endTimeStamp - startTimeStamp) / 86400000;
   console.log('🚀 ~ TimeStampCalculation ~ diffInDays:todo', diffInDays);
   dayDatas.value = diffInDays;
 };

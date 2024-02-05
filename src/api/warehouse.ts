@@ -211,6 +211,7 @@ export interface Warehouse {
 export interface UserWarehouseSearch {
   categoryCodes?: string[];
   warehouseId?: string;
+  toWarehouseId?: string;
 }
 
 /** 通用响应类 */
@@ -1001,6 +1002,8 @@ export interface TransferDtlVO {
   locationName?: string;
   toLocationName?: string;
   uomName?: string;
+  /** @format int32 */
+  isBatchNo?: number;
 }
 
 /** 交易事务头表 */
@@ -3084,13 +3087,6 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
@@ -3099,6 +3095,13 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3574,13 +3577,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5981,6 +5984,70 @@ export interface WipCompletionBillVO {
 }
 
 /** 响应数据 */
+export type AcceptSendSaveReportDTO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  mitemId?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  /** 期末数量 */
+  qty?: number;
+  /**
+   * 年
+   * @format int32
+   */
+  year?: number;
+  /**
+   * 月
+   * @format int32
+   */
+  month?: number;
+  /** 入库 */
+  searchOut?: number;
+  /** 出库 */
+  searchIn?: number;
+  /** 上月库存 */
+  beforeMonth?: number;
+  /** 期末库存 */
+  lastNum?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListAcceptSendSaveReportDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AcceptSendSaveReportDTO[] | null;
+}
+
+/** 响应数据 */
 export type GoodsSentOutVO = {
   id?: string;
   /**
@@ -6274,6 +6341,24 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 用户仓库权限表
+     * @name GetOdiUserWarehouseByUser
+     * @summary 获取登录用户仓库权限-满足仓库转移规则入库
+     * @request POST:/userWarehouseAuthority/getODIUserWarehouseByUser
+     * @secure
+     */
+    getOdiUserWarehouseByUser: (data: UserWarehouseSearch) =>
+      http.request<ResultListUserWarehouseVO['data']>(
+        `/api/warehouse/userWarehouseAuthority/getODIUserWarehouseByUser`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
 
     /**
      * No description
@@ -8999,6 +9084,20 @@ export const api = {
       http.request<ResultPagingDataAcceptSendSaveReportVO['data']>(`/api/warehouse/acceptSendSaveReport/getList`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 收发存报表
+     * @name Test
+     * @summary 测试
+     * @request GET:/acceptSendSaveReport/test
+     * @secure
+     */
+    test: () =>
+      http.request<ResultListAcceptSendSaveReportDTO['data']>(`/api/warehouse/acceptSendSaveReport/test`, {
+        method: 'GET',
       }),
   },
   goodsSentOut: {
