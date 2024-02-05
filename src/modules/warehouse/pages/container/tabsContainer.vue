@@ -166,7 +166,7 @@
       </t-form-item> -->
 
       <t-form-item label="物料类别编码" name="mitemCategoryId">
-        <t-input v-model="formData2.categoryCode"></t-input>
+        <t-input v-model="formData2.categoryCode" disabled></t-input>
       </t-form-item>
 
       <t-form-item label="物料名称" name="mitemId">
@@ -180,7 +180,7 @@
       </t-form-item>
 
       <t-form-item label="物料编码" name="mitemId">
-        <t-input v-model="formData2.mitemCode"></t-input>
+        <t-input v-model="formData2.mitemCode" disabled></t-input>
       </t-form-item>
 
       <t-form-item label="标准数量" name="qty">
@@ -262,17 +262,17 @@ const rules2: FormRules<Data> = {
       trigger: 'blur',
     },
   ],
+  mitemCategoryId: [
+    {
+      required: true,
+      message: '请输入物料类别',
+      trigger: 'blur',
+    },
+  ],
   mitemId: [
     {
       required: true,
       message: '请输入物料名称',
-      trigger: 'blur',
-    },
-  ],
-  qty: [
-    {
-      required: true,
-      message: '请输入标准数量',
       trigger: 'blur',
     },
   ],
@@ -537,8 +537,11 @@ const print = async () => {
   });
 };
 
+const rowId = ref('');
 // 编辑
 const onEditRowClick2 = async ({ row }) => {
+  console.log('🚀 ~ onEditRowClick2 ~ row编辑容器类型与物料关系拿行id:', row);
+  rowId.value = row.id; // 编辑时传行id
   diaTilte.value = '编辑容器类型与物料关系';
   containerVisible2.value = true;
   formData2.value = {
@@ -707,18 +710,47 @@ const add = () => {
 };
 
 const submit2 = async () => {
-  // 创建提交的数据对象  todo
+  // *提交时校验
+  const fieldsToValidate = [
+    { field: formData2.value.containerType, message: '请选择容器类型' },
+    { field: formData2.value.mitemCategoryId, message: '请选择容器类别' },
+    { field: formData2.value.mitemId, message: '请选择物料名称' },
+  ];
+  for (const field of fieldsToValidate) {
+    if (isEmpty(field.field)) {
+      MessagePlugin.error(field.message);
+      return;
+    }
+  }
+  // 创建提交的数据对象
   const submitData2 = {
-    // containerType: formData2.value.containerType, // todo  不传 主表带过来
     containerTypeId: preserveId.value,
     mitemCategoryId: formData2.value.mitemCategoryId,
     mitemId: formData2.value.mitemId,
     qty: formData2.value.qty,
   };
-  await api.containerInMitem.add(submitData2);
-  containerVisible2.value = false;
-  fetchTable2(props.propsId);
-  MessagePlugin.success('新增成功');
+  if (diaTilte.value === '新增容器类型与物料关系') {
+    await api.containerInMitem.add(submitData2);
+    containerVisible2.value = false;
+    fetchTable2(props.propsId);
+    MessagePlugin.success('新增成功');
+  } else {
+    await api.containerInMitem.modify({
+      ...submitData2,
+      id: rowId.value,
+    });
+    containerVisible2.value = false;
+    fetchTable2(props.propsId);
+    MessagePlugin.success('编辑成功');
+  }
+  // 清空数据  todo
+  formData2.value = {
+    ...formData2.value, // 展开左侧表传来的值
+    mitemCategoryId: '', // 物料类别编码
+    mitemId: '', // 物料ID
+    qty: 1, // 标准数量
+    mitemCategoryCode: '', // 物料类别编码
+  };
 };
 </script>
 

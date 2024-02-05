@@ -1,4 +1,4 @@
-<!-- <h3>国标抽样方案</h3> -->
+<!-- 国标抽样方案 -->
 <template>
   <cmp-container :full="true">
     <cmp-card ref="tableCardRef" :span="12">
@@ -6,10 +6,10 @@
       <t-form>
         <t-row :gutter="[32, 12]" style="margin-top: 10px">
           <t-form-item label="检验水平">
-            <!-- @select-change="onSelectChange" -->
-            <t-select v-model="selectedShift1">
+            <!-- @select-change="onSelectChange"  todo-->
+            <t-select v-model="TestLevel">
               <t-option
-                v-for="shift in TestLevel"
+                v-for="shift in TestLevelOption"
                 :key="shift.value"
                 :label="shift.label"
                 :value="shift.value"
@@ -17,9 +17,9 @@
             </t-select>
           </t-form-item>
           <t-form-item label="严格度">
-            <t-select v-model="selectedShift2">
+            <t-select v-model="Rigidity">
               <t-option
-                v-for="shift in TestLevel"
+                v-for="shift in RigidityOption"
                 :key="shift.value"
                 :label="shift.label"
                 :value="shift.value"
@@ -28,11 +28,14 @@
           </t-form-item>
         </t-row>
       </t-form>
-      <t-table :data="tableData" :columns="columns" :bordered="true">
+      <cmp-table :data="tableData" :columns="columns" :bordered="true" :show-pagination="false">
         <template #range="{ row }">
           <div v-for="(item, index) in row.range" :key="index" style="margin-bottom: 6px">{{ item }}</div>
         </template>
-      </t-table>
+        <template #title>
+          {{ '国标抽样方案' }}
+        </template>
+      </cmp-table>
     </cmp-card>
   </cmp-container>
 </template>
@@ -43,22 +46,22 @@ import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 
-const selectedShift1 = ref([]);
-const selectedShift2 = ref([]);
+const TestLevel = ref([]);
+const Rigidity = ref([]);
 
 onMounted(async () => {
   getTestLevel();
+  getRigidity();
 });
 
-const TestLevel = ref([]); // 检验水平
+const TestLevelOption = ref([]); // 检验水平
 // 获取 数据字典 检验水平
 const getTestLevel = async () => {
   try {
     const res = await api.param.getListByGroupCode({
       parmGroupCode: 'Q_INSPECTION_STD_LEVEL',
     });
-    console.log('🚀 ~ getTestLevel ~ res:检验水平', res);
-    TestLevel.value = res.map((status) => ({
+    TestLevelOption.value = res.map((status) => ({
       label: status.label,
       value: status.value,
     }));
@@ -66,6 +69,25 @@ const getTestLevel = async () => {
     console.error(e);
   }
 };
+
+/** 获取 数据字典 严格度
+ *  严格度  取 value 调用接口
+ */
+const RigidityOption = ref([]);
+const getRigidity = async () => {
+  try {
+    const res = await api.param.getListByGroupCode({
+      parmGroupCode: 'Q_INSPECTION_STRINGENCY',
+    });
+    RigidityOption.value = res.map((status) => ({
+      label: status.label,
+      value: status.value,
+    }));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 // 左侧数据结构
 const tableData = ref([
   {
@@ -149,7 +171,6 @@ const columns = ref(generateColumns());
 interface TableRowData {
   range: string[];
   sampleNumber: string;
-  // 确保包含所有其他可能的键
 }
 
 // const onSelectChange = (value: string, option: any) => {
