@@ -211,6 +211,7 @@ export interface Warehouse {
 export interface UserWarehouseSearch {
   categoryCodes?: string[];
   warehouseId?: string;
+  toWarehouseId?: string;
 }
 
 /** 通用响应类 */
@@ -1001,6 +1002,8 @@ export interface TransferDtlVO {
   locationName?: string;
   toLocationName?: string;
   uomName?: string;
+  /** @format int32 */
+  isBatchNo?: number;
 }
 
 /** 交易事务头表 */
@@ -3086,11 +3089,6 @@ export interface MoIssuanceDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 已发料量 */
   alreadyPickQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
@@ -3099,6 +3097,11 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3574,13 +3577,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -6274,6 +6277,24 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 用户仓库权限表
+     * @name GetOdiUserWarehouseByUser
+     * @summary 获取登录用户仓库权限-满足仓库转移规则入库
+     * @request POST:/userWarehouseAuthority/getODIUserWarehouseByUser
+     * @secure
+     */
+    getOdiUserWarehouseByUser: (data: UserWarehouseSearch) =>
+      http.request<ResultListUserWarehouseVO['data']>(
+        `/api/warehouse/userWarehouseAuthority/getODIUserWarehouseByUser`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
 
     /**
      * No description

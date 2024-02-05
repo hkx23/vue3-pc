@@ -26,10 +26,9 @@
         <template #actionSlot="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
-
             <!-- <t-button size="small" variant="text" @click="onEditRow(row)">
-            <icon name="edit-1" class="black-icon" />
-          </t-button> -->
+              <icon name="edit-1" class="black-icon" />
+            </t-button> -->
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
               <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
             </t-popconfirm>

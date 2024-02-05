@@ -21,6 +21,14 @@
         <template #title>
           {{ '严格度转移规则列表' }}
         </template>
+        <template #stateSwitch="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
+        </template>
         <template #actionSlot="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ '编辑' }}</t-link>
@@ -126,7 +134,7 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
     width: '80',
   },
   {
-    colKey: 'epAddress',
+    colKey: 'stateSwitch',
     title: '状态',
     width: '80',
   },
@@ -196,6 +204,11 @@ const onGroupRequest = async () => {
   await onFirmTabData(); // 获取 严格度转移规则信息表格 数据
   formVisible.value = false;
   MessagePlugin.success('编辑成功');
+};
+
+const onSwitchChange = (row, value) => {
+  console.log('🚀 ~ file: index.vue:210 ~ onSwitchChange ~ value:', value);
+  console.log('🚀 ~ file: index.vue:210 ~ onSwitchChange ~ row:', row);
 };
 
 // // @表单提交事件
