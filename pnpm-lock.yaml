@@ -68,9 +68,6 @@ dependencies:
   tdesign-icons-vue-next:
     specifier: ^0.2.2
     version: 0.2.2(vue@3.3.13)
-  tdesign-vue:
-    specifier: ^1.9.0
-    version: 1.9.0(vue@3.3.13)
   tdesign-vue-next:
     specifier: ^1.8.1
     version: 1.8.1(vue@3.3.13)
@@ -2086,13 +2083,6 @@ packages:
       '@babel/types': 7.23.0
     dev: false
 
-  /@types/clipboard@2.0.7:
-    resolution: {integrity: sha512-VwVFUHlneOsWfv/GaaY7Kwk4XasDqkAlyFQtsHxnOw0yyBYWTrlEXtmb9RtC+VFBCdtuOeIXECmELNd5RrKp/g==}
-    deprecated: This is a stub types definition. clipboard provides its own type definitions, so you do not need this installed.
-    dependencies:
-      clipboard: 2.0.11
-    dev: false
-
   /@types/concat-stream@1.6.1:
     resolution: {integrity: sha512-eHE4cQPoj6ngxBZMvVf6Hw7Mh4jMW4U9lpGmS5GBPB9RYxlFg+CHaVN7ErNY4W9XfLIEn20b4VDYaIrbq0q4uA==}
     dependencies:
@@ -2227,10 +2217,6 @@ packages:
 
   /@types/qs@6.9.9:
     resolution: {integrity: sha512-wYLxw35euwqGvTDx6zfY1vokBFnsK0HNrzc6xNHchxfO2hpuRg74GbkEW7e3sSmPvj0TjCDT1VCa6OtHXnubsg==}
-
-  /@types/raf@3.4.3:
-    resolution: {integrity: sha512-c4YAvMedbPZ5tEyxzQdMoOhhJ4RD3rngZIdwC2/qDN3d7JpEhB6fiBRKVY1lg5B7Wk+uPBjn5f39j1/2MY1oOw==}
-    dev: false
 
   /@types/range-parser@1.2.7:
     resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
@@ -2746,14 +2732,6 @@ packages:
     dependencies:
       '@vue/compiler-dom': 3.3.13
       '@vue/shared': 3.3.13
-
-  /@vue/composition-api@1.7.2(vue@3.3.13):
-    resolution: {integrity: sha512-M8jm9J/laYrYT02665HkZ5l2fWTK4dcVg3BsDHm/pfz+MjDYwX+9FUaZyGwEyXEDonQYRCo0H7aLgdklcIELjw==}
-    peerDependencies:
-      vue: '>= 2.5 < 2.7'
-    dependencies:
-      vue: 3.3.13(typescript@5.3.3)
-    dev: false
 
   /@vue/devtools-api@6.5.1:
     resolution: {integrity: sha512-+KpckaAQyfbvshdDW5xQylLni1asvNSGme1JFs8I1+/H5pHEhqUKMEQD/qn3Nx5+/nycBq11qAEi8lk+LXI2dA==}
@@ -3447,10 +3425,6 @@ packages:
 
   /cjs-module-lexer@1.2.3:
     resolution: {integrity: sha512-0TNiGstbQmCFwt4akjjBg5pLRTSyj/PkWQ1ZoO2zntmg9yLqSRxwEa4iCfQLGjqhiqBfOJa7W/E8wfGrTDmlZQ==}
-    dev: false
-
-  /classnames@2.5.1:
-    resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
     dev: false
 
   /cli-cursor@3.1.0:
@@ -7303,10 +7277,6 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
-  /performance-now@2.1.0:
-    resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
-    dev: false
-
   /pg-cloudflare@1.1.1:
     resolution: {integrity: sha512-xWPagP/4B6BgFO+EKz3JONXv3YDgvkbVrGw2mTo3D6tVDQRh1e7cqVGvyR3BE+eQgAvx1XhW/iEASj4/jCWl3Q==}
     requiresBuild: true
@@ -7683,12 +7653,6 @@ packages:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
     dev: true
-
-  /raf@3.4.1:
-    resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
-    dependencies:
-      performance-now: 2.1.0
-    dev: false
 
   /react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
@@ -8666,16 +8630,6 @@ packages:
       vue: 3.3.13(typescript@5.3.3)
     dev: false
 
-  /tdesign-icons-vue@0.2.2(vue@3.3.13):
-    resolution: {integrity: sha512-aAHrd5K2O9pQSUZb09A58qIH9b6fOP9pUapvxzvByuc5Ri3YLLgoz+6/XZcRu5S8insx7OzfhH951qjKxfzLtg==}
-    peerDependencies:
-      vue: ^2.6.12
-    dependencies:
-      '@babel/runtime': 7.23.2
-      classnames: 2.5.1
-      vue: 3.3.13(typescript@5.3.3)
-    dev: false
-
   /tdesign-vue-next@1.8.1(vue@3.3.13):
     resolution: {integrity: sha512-L8aP89pRV1nr3Tjedr6DqEtSGZghrzNx75En/owkUSjjiyU5oqeVIq/9JPvArNeJQCnmxcDwxYxBf+mRfjmrHg==}
     peerDependencies:
@@ -8692,32 +8646,6 @@ packages:
       mitt: 3.0.1
       sortablejs: 1.15.0
       tdesign-icons-vue-next: 0.2.2(vue@3.3.13)
-      tinycolor2: 1.6.0
-      validator: 13.11.0
-      vue: 3.3.13(typescript@5.3.3)
-    dev: false
-
-  /tdesign-vue@1.9.0(vue@3.3.13):
-    resolution: {integrity: sha512-s/U3cPRwuXbyQUPYnvgBBWL2lUGY+ZFbGiZzq07TIOsE5QFVmCbvy4AfS3WTb4N9T8UeR40cyYIZeohPIlUMYg==}
-    peerDependencies:
-      vue: ~2.6.10
-    dependencies:
-      '@babel/runtime': 7.23.2
-      '@popperjs/core': 2.11.8
-      '@types/clipboard': 2.0.7
-      '@types/lodash': 4.14.182
-      '@types/raf': 3.4.3
-      '@types/sortablejs': 1.15.4
-      '@types/tinycolor2': 1.4.5
-      '@types/validator': 13.11.5
-      '@vue/composition-api': 1.7.2(vue@3.3.13)
-      clipboard: 2.0.11
-      dayjs: 1.11.10
-      lodash: 4.17.21
-      mitt: 3.0.1
-      raf: 3.4.1
-      sortablejs: 1.15.0
-      tdesign-icons-vue: 0.2.2(vue@3.3.13)
       tinycolor2: 1.6.0
       validator: 13.11.0
       vue: 3.3.13(typescript@5.3.3)

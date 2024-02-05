@@ -89,6 +89,10 @@ const tableData = ref([
     range: ['35001~150000', '150001~500000', '500001及基以上'],
     sampleNumber: '81320',
   },
+  {
+    range: [''],
+    sampleNumber: '81320',
+  },
 ]);
 
 // 生成列数据结构
