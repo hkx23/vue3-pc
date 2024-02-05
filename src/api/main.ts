@@ -3899,6 +3899,7 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
@@ -3906,7 +3907,6 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4049,8 +4049,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */

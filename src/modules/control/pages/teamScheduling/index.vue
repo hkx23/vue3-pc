@@ -620,19 +620,33 @@ function checkArray(arr) {
   return true;
 }
 // 时间戳转换
-const TimeStampCalculation = () => {
-  const start = dayjs(qTimeCreate.value);
-  console.log('🚀 ~ TimeStampCalculation ~ start开始时间:', start);
-  // 获取时间戳
-  const startTimeStamp = start.valueOf();
-  const end = dayjs(qTimeModified.value);
-  console.log('🚀 ~ TimeStampCalculation ~ end:结束时间', end);
-  const endTimeStamp = end.valueOf();
+// const TimeStampCalculation = () => {
+//   const start = dayjs(qTimeCreate.value);
+//   console.log('🚀 ~ TimeStampCalculation ~ start开始时间:', start);
+//   // 获取时间戳
+//   const startTimeStamp = start.valueOf();
+//   //TODO
+//   const end = dayjs(qTimeModified.value);
+//   console.log('🚀 ~ TimeStampCalculation ~ end:结束时间', end);
+//   const endTimeStamp = end.valueOf();
 
-  // 计算两个时间戳之间的差值，并转换为天数  todo
+//   // 计算两个时间戳之间的差值，并转换为天数  todo
+//   const diffInDays = (endTimeStamp - startTimeStamp) / 86400000 + 1; // TODO
+//   console.log('🚀 ~ TimeStampCalculation ~ diffInDays:todo', diffInDays);
+//   dayDatas.value = diffInDays;
+// };
+const TimeStampCalculation = () => {
+  // 开始时间仍然是用户选择或默认的开始时间
+  const start = dayjs(qTimeCreate.value);
+  const startTimeStamp = start.valueOf();
+  // 结束时间调整为当月最后一天的23:59:59
+  const end = dayjs(qTimeModified.value).endOf('month').endOf('day'); // 调整为月末最后一秒
+  const endTimeStamp = end.valueOf();
+  // 计算两个时间戳之间的差值，并转换为天数
   const diffInDays = (endTimeStamp - startTimeStamp) / 86400000;
-  console.log('🚀 ~ TimeStampCalculation ~ diffInDays:todo', diffInDays);
-  dayDatas.value = diffInDays;
+  console.log('🚀 ~ TimeStampCalculation ~ diffInDays:商', diffInDays);
+  dayDatas.value = Math.round(diffInDays); // 确保天数是整数，对结果四舍五入
+  console.log('🚀 ~ TimeStampCalculation ~ dayDatas.value:整数', dayDatas.value);
 };
 
 // 周维度

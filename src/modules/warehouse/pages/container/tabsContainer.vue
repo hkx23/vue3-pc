@@ -13,6 +13,7 @@
           row-key="id"
           :table-column="tableContainerColumns1"
           :table-data="tableContainerData1"
+          select-on-row-click
           :fixed-height="true"
           :total="dataTotal1"
           :loading="loading"
@@ -70,6 +71,7 @@
           row-key="id"
           :table-column="tableContainerColumns2"
           :table-data="tableContainerData2"
+          select-on-row-click
           :total="dataTotal2"
           empty="没有符合条件的数据"
           style="height: 400px"
@@ -217,7 +219,6 @@ const PrintTmpReslutDataOptions = ref([]); // 打印规则下拉数据
 const preserveId = ref(''); // 入参id
 const selectedRowKeys = ref([]); // 批量作废
 const selectedRowKeys2 = ref([]); // 批量删除
-
 const formData1 = ref({
   containerType: '',
   barcodeRuleId: '',

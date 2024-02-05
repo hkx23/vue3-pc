@@ -26,10 +26,15 @@
             {{ '盘点管理' }}
           </template>
           <template #button>
-            <t-button theme="primary" @click="onAdd">新增</t-button>
-            <t-button theme="default" @click="scrappedBill(propsdtlId)">作废</t-button>
-            <t-button theme="default">打印</t-button>
-            <!-- <t-button theme="default">导出</t-button> -->
+            <t-space :size="8">
+              <t-button theme="primary" @click="onAdd">新增</t-button>
+              <!-- <t-button theme="default" @click="scrappedBill(propsdtlId)">作废</t-button> -->
+              <t-popconfirm theme="default" content="确认作废吗" @confirm="scrappedBill(propsdtlId)">
+                <t-button theme="default"> 作废 </t-button>
+              </t-popconfirm>
+              <t-button theme="default">打印</t-button>
+              <!-- <t-button theme="default">导出</t-button> -->
+            </t-space>
           </template>
 
           <template #billNo="slotProps">
