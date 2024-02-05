@@ -4,12 +4,12 @@
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <cmp-table
         ref="tableRefTop"
-        row-key="moScheduleId"
+        row-key="batch"
         :fixed-height="true"
         :active-row-type="'single'"
         :hover="true"
         :table-column="logInterface"
-        :table-data="printTopTabData"
+        :table-data="ruleTabData"
         :total="0"
         select-on-row-click
         :show-pagination="false"
@@ -27,64 +27,74 @@
 <script setup lang="ts">
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 // import { onMounted, Ref, ref } from 'vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
-// import { api } from '@/api/warehouse';
+import { api } from '@/api/quality';
 import CmpTable from '@/components/cmp-table/index.vue';
 
-const printTopTabData = ref([]);
-
+onMounted(async () => {
+  await onGetRuleData();
+});
+const ruleTabData = ref([]);
+const onGetRuleData = async () => {
+  const res = await api.sampleCode.getList();
+  const updatedData = res.map((item) => {
+    const { batchStart, batchEnd, ...rest } = item;
+    return {
+      ...rest,
+      batch: `${batchStart}-${batchEnd}`,
+    };
+  });
+  ruleTabData.value = updatedData;
+};
 const logInterface: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'deliveryCardNo',
+    colKey: 'batch',
     title: '批量',
-    align: 'center',
     width: '100',
   },
   {
-    colKey: 'deliveryCardStatuName',
     title: '特殊检验水平',
     align: 'center',
     children: [
       {
-        colKey: 'channel',
+        colKey: 's1',
         title: 'S-1',
         width: 90,
       },
       {
-        colKey: 'time',
+        colKey: 's2',
         title: 'S-2',
         width: 90,
       },
       {
-        colKey: 'time',
+        colKey: 's3',
         title: 'S-3',
         width: 90,
       },
       {
-        colKey: 'time',
+        colKey: 's4',
         title: 'S-4',
         width: 90,
       },
     ],
   },
   {
-    colKey: 'qty',
     title: '一般检验水品',
     align: 'center',
     children: [
       {
-        colKey: 'channel',
+        colKey: 'I',
         title: 'Ⅰ',
         width: 90,
       },
       {
-        colKey: 'time',
+        colKey: 'II',
         title: 'Ⅱ',
         width: 90,
       },
       {
-        colKey: 'time',
+        colKey: 'III',
         title: 'Ⅲ',
         width: 90,
       },

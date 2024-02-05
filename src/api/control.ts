@@ -1139,6 +1139,7 @@ export interface WipSearch {
    * @format date-time
    */
   processingDateEnd?: string;
+  processId?: string;
 }
 
 /** 响应数据 */
@@ -1159,6 +1160,64 @@ export interface ResultPagingDataMapStringObject {
   message?: string;
   /** 响应数据 */
   data?: PagingDataMapStringObject;
+}
+
+/** 响应数据 */
+export type PagingDataWipProcessDtlVO = {
+  list?: WipProcessDtlVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWipProcessDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWipProcessDtlVO;
+}
+
+/** WIP报表产品明细 */
+export interface WipProcessDtlVO {
+  /** 工单号 */
+  moCode?: string;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 产品条码 */
+  serialNumber?: string;
+  /** 当前工作中心名称 */
+  workcenterName?: string;
+  /** 当前工站名称 */
+  workstationName?: string;
+  /**
+   * 是否合格
+   * @format int32
+   */
+  isNg?: number;
+  /** 产品状态名称 */
+  status?: string;
+  /**
+   * 加工时间
+   * @format date-time
+   */
+  timeProcessing?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /**
+   * 停留时间
+   * @format int32
+   */
+  timeStay?: number;
 }
 
 /** 关键物料追溯（反向）-查询 */
@@ -2023,12 +2082,12 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopCode?: string;
+  datetimeScheStr?: string;
   workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  datetimeScheStr?: string;
+  workshopId?: string;
+  workshopCode?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
@@ -2074,9 +2133,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -3280,14 +3339,14 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopCode?: string;
+  datetimeScheStr?: string;
   workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
@@ -3396,16 +3455,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopCode?: string;
+  datetimeScheStr?: string;
   workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  defectCodeStr?: string;
   stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3642,8 +3701,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3812,64 +3871,6 @@ export interface WipCompletionBillVO {
   warehouse?: string;
   /** 创建人 */
   creator?: string;
-}
-
-/** 响应数据 */
-export type PagingDataWipProcessDtlVO = {
-  list?: WipProcessDtlVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWipProcessDtlVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWipProcessDtlVO;
-}
-
-/** WIP报表产品明细 */
-export interface WipProcessDtlVO {
-  /** 工单号 */
-  moCode?: string;
-  /** 产品编码 */
-  mitemCode?: string;
-  /** 车间名称 */
-  workshopName?: string;
-  /** 产品条码 */
-  serialNumber?: string;
-  /** 当前工作中心名称 */
-  workcenterName?: string;
-  /** 当前工站名称 */
-  workstationName?: string;
-  /**
-   * 是否合格
-   * @format int32
-   */
-  isNg?: number;
-  /** 产品状态名称 */
-  status?: string;
-  /**
-   * 加工时间
-   * @format date-time
-   */
-  timeProcessing?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /**
-   * 停留时间
-   * @format int32
-   */
-  timeStay?: number;
 }
 
 /** 通用响应类 */
@@ -5052,20 +5053,13 @@ export const api = {
      * @tags 在制品表
      * @name GetDtlList
      * @summary 获取产品明细界面数据
-     * @request GET:/wip/getDtlList
+     * @request POST:/wip/getDtlList
      * @secure
      */
-    getDtlList: (query: {
-      /** @format int32 */
-      pageNum: number;
-      /** @format int32 */
-      pageSize: number;
-      moId: string;
-      curProcessId: string;
-    }) =>
+    getDtlList: (data: WipSearch) =>
       http.request<ResultPagingDataWipProcessDtlVO['data']>(`/api/control/wip/getDtlList`, {
-        method: 'GET',
-        params: query,
+        method: 'POST',
+        body: data as any,
       }),
 
     /**

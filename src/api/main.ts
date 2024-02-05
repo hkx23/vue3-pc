@@ -3899,6 +3899,7 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
@@ -3906,7 +3907,6 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -12016,6 +12016,7 @@ export const api = {
      *
      * @tags 出勤模式
      * @name Search
+     * @summary 出勤模式业务组件接口
      * @request POST:/attendanceMode/items
      * @secure
      */
@@ -12030,6 +12031,7 @@ export const api = {
      *
      * @tags 出勤模式
      * @name GetItemById
+     * @summary 根据ID查找出勤模式
      * @request POST:/attendanceMode/items/{id}
      * @secure
      */
