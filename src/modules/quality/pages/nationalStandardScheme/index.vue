@@ -6,7 +6,8 @@
       <t-form>
         <t-row :gutter="[32, 12]" style="margin-top: 10px">
           <t-form-item label="检验水平">
-            <t-select v-model="selectedShift">
+            <!-- @select-change="onSelectChange" -->
+            <t-select v-model="selectedShift1">
               <t-option
                 v-for="shift in TestLevel"
                 :key="shift.value"
@@ -16,7 +17,7 @@
             </t-select>
           </t-form-item>
           <t-form-item label="严格度">
-            <t-select v-model="selectedShift">
+            <t-select v-model="selectedShift2">
               <t-option
                 v-for="shift in TestLevel"
                 :key="shift.value"
@@ -27,7 +28,7 @@
           </t-form-item>
         </t-row>
       </t-form>
-      <t-table :data="tableData" :columns="columns" :row-key="(record) => record.range" :bordered="bordered">
+      <t-table :data="tableData" :columns="columns" :bordered="true">
         <template #range="{ row }">
           <div v-for="(item, index) in row.range" :key="index" style="margin-bottom: 6px">{{ item }}</div>
         </template>
@@ -37,11 +38,13 @@
 </template>
 
 <script setup lang="ts">
+import { PrimaryTableCol } from 'tdesign-vue';
 import { onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 
-const bordered = ref(true);
+const selectedShift1 = ref([]);
+const selectedShift2 = ref([]);
 
 onMounted(async () => {
   getTestLevel();
@@ -118,9 +121,9 @@ const generateColumns = () => {
     '650',
     '1000',
   ];
-  const columns = [
+  const columns: PrimaryTableCol<TableRowData>[] = [
     {
-      title: '',
+      // title: '',
       children: [
         {
           title: '样本大小',
@@ -138,6 +141,16 @@ const generateColumns = () => {
   return columns;
 };
 const columns = ref(generateColumns());
+
+interface TableRowData {
+  range: string[];
+  sampleNumber: string;
+  // 确保包含所有其他可能的键
+}
+
+// const onSelectChange = (value: string, option: any) => {
+//   // 处理选择变更的逻辑
+// };
 </script>
 
 <style scoped></style>
