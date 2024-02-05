@@ -29,11 +29,6 @@
         <template #title>
           {{ '单据管理' }}
         </template>
-
-        <!-- 定义序号列的插槽 -->
-        <template #indexSlot="{ rowIndex }">
-          {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-        </template>
       </cmp-table>
     </cmp-card>
     <!-- 单据详情组件 -->
@@ -125,7 +120,6 @@ const optsReceipt = computed(() => {
 
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '事物类型', colKey: 'categoryName', width: 85 },
   { title: '单据号', width: 150, colKey: 'billNo' },
   { title: '关联单号', width: 120, colKey: 'sourceBillNo' },
