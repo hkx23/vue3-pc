@@ -50,9 +50,9 @@
           </template>
 
           <!-- 定义序号列的插槽 -->
-          <template #indexSlot="{ rowIndex }">
+          <!-- <template #indexSlot="{ rowIndex }">
             {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-          </template>
+          </template> -->
         </cmp-table>
       </cmp-container>
     </t-tab-panel>
@@ -87,9 +87,9 @@
           </template>
 
           <!-- 定义序号列的插槽 -->
-          <template #indexSlot="{ rowIndex }">
+          <!-- <template #indexSlot="{ rowIndex }">
             {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-          </template>
+          </template> -->
           <!-- 编辑2 -->
           <template #op2="row">
             <t-space>
@@ -327,7 +327,7 @@ const optsContainer2 = computed(() => {
 
 const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
+  // { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '容器编码', colKey: 'containerCode', width: 100 },
   { title: '容器名称', width: 100, colKey: 'containerName' },
   { title: '状态', width: 80, colKey: 'statusName' },
@@ -335,7 +335,7 @@ const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
 
 const tableContainerColumns2: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
+  // { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '物料类别', colKey: 'mitemCategory', width: 80 },
   { title: '物料类别名称', width: 80, colKey: 'mitemCategoryName' },
   { title: '物料编码', width: 80, colKey: 'mitemCode' },

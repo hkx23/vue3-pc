@@ -31,9 +31,9 @@
             </template>
 
             <!-- 定义序号列的插槽 -->
-            <template #indexSlot="{ rowIndex }">
+            <!-- <template #indexSlot="{ rowIndex }">
               {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-            </template>
+            </template> -->
             <!-- 编辑 -->
             <template #op1="{ row }">
               <t-space>
@@ -178,7 +178,7 @@ const optsContainer1 = computed(() => {
 // card 1  single 设置单项选中
 const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'single', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
+  // { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '容器类型编码', colKey: 'containerTypeCode', width: 120 },
   { title: '容器类型名称', width: 120, colKey: 'containerTypeName' },
   { title: '容器类型描述', width: 120, colKey: 'containerTypeDesc' },

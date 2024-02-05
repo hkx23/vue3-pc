@@ -26,11 +26,6 @@
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">明细 </t-link>
           </t-space>
         </template>
-
-        <!-- 定义序号列的插槽 -->
-        <template #indexSlot="{ rowIndex }">
-          {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-        </template>
       </cmp-table>
     </cmp-card>
     <!-- 库龄详情组件 -->
@@ -116,7 +111,6 @@ const optsKuling = computed(() => {
 
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '物料编码', colKey: 'mitemCode', width: 150 },
   { title: '物料描述', width: 150, colKey: 'mitemDesc' },
   { title: '仓库编码', width: 120, colKey: 'warehouseCode' },

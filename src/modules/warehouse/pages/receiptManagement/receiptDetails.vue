@@ -10,15 +10,36 @@
       <!-- 单据相关详细信息 -->
       <cmp-card v-if="safeSomeData && safeSomeData.billNo">
         <template #title> 单据号{{ safeSomeData.billNo }}相关详细信息 </template>
-        <t-form ref="formRef1" label-width="200px">
+        <t-descriptions>
+          <t-descriptions-item label="单据号：" name="billNo">{{ safeSomeData.billNo }}</t-descriptions-item>
+          <t-descriptions-item label="关联单号：" name="relatedBillNo">{{
+            safeSomeData.relatedBillNo
+          }}</t-descriptions-item>
+          <t-descriptions-item label="供应商：" name="supplierName">{{
+            safeSomeData.supplierName
+          }}</t-descriptions-item>
+
+          <t-descriptions-item label="创建人：" name="creator">{{ safeSomeData.creator }}</t-descriptions-item>
+          <t-descriptions-item label="事物类型：" name="categoryName">{{
+            safeSomeData.categoryName
+          }}</t-descriptions-item>
+          <t-descriptions-item label="费用部门：" name="costDepartment">{{
+            safeSomeData.costDepartment
+          }}</t-descriptions-item>
+          <t-descriptions-item label="原因：" name="reason">{{ safeSomeData.reason }}</t-descriptions-item>
+          <t-descriptions-item label="科目：" name="account">{{ safeSomeData.account }}</t-descriptions-item>
+          <t-descriptions-item label="创建时间：" name="timeCreate">{{ safeSomeData.timeCreate }}</t-descriptions-item>
+        </t-descriptions>
+
+        <!-- <t-form ref="formRef1" label-width="200px">
           <t-row :gutter="[32, 16]">
             <t-col :span="3">
               <t-form-item label="单据号：" name="billNo">
-                <span>{{ safeSomeData.billNo }}</span>
+                <span>{{  }}</span>
               </t-form-item>
             </t-col>
             <t-col :span="3">
-              <t-form-item label="关联单号：" name="relatedBillNo">
+              <t-form-item label="关联单号：" name="关联单号：">
                 <span>{{ safeSomeData.relatedBillNo }}</span>
               </t-form-item>
             </t-col>
@@ -63,7 +84,24 @@
               </t-form-item>
             </t-col>
           </t-row>
-        </t-form>
+        </t-form> -->
+
+        <!-- <t-descriptions>
+        <t-descriptions-item label="接口领域分类">{{ rowData.msgDomainCategoryName }}</t-descriptions-item>
+        <t-descriptions-item label="MES业务单号">{{ rowData.billNo }}</t-descriptions-item>
+        <t-descriptions-item label="ERP凭据单号">{{ rowData.erpbillNo }}</t-descriptions-item>
+        <t-descriptions-item label="交易开始时间">{{ rowData.datetimeExecuteStart }}</t-descriptions-item>
+        <t-descriptions-item label="至">{{ rowData.datetimeExecuteEnd }}</t-descriptions-item>
+        <t-descriptions-item label="执行结果">{{ rowData.status }}</t-descriptions-item>
+        <t-descriptions-item label="错误信息" :span="3">
+        </t-descriptions-item>
+        <t-descriptions-item label="请求参数" :span="3">
+        </t-descriptions-item>
+      </t-descriptions> -->
+
+        <!-- <div class="dialog-footer">
+            <t-button theme="default" type="reset" @click="handleCancel">取消</t-button>
+          </div> -->
       </cmp-card>
       <!-- table 单据明细 -->
       <cmp-card>
@@ -76,9 +114,9 @@
           :show-toolbar="false"
           :table-data="tableDocumentDetails"
         >
-          <template #indexSlot="{ rowIndex }">
+          <!-- <template #indexSlot="{ rowIndex }">
             {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-          </template>
+          </template> -->
         </cmp-table>
       </cmp-card>
       <!-- table 标签明细 -->
@@ -93,9 +131,9 @@
           :table-data="tableLabelDetail"
         >
           <!-- 定义序号列的插槽 -->
-          <template #indexSlot="{ rowIndex }">
+          <!-- <template #indexSlot="{ rowIndex }">
             {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-          </template>
+          </template> -->
         </cmp-table>
       </cmp-card>
     </cmp-container>
@@ -107,13 +145,13 @@
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, ref, watch } from 'vue';
 
-import { usePage } from '@/hooks/modules/page';
+// import { usePage } from '@/hooks/modules/page';
 
-const { pageUI } = usePage();
+// const { pageUI } = usePage();
 //* 表格标题--单据明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
+  // { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
   { title: '物料编码', colKey: 'mitemCode', width: 85 },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
   { title: '单位', width: 85, colKey: 'uomName' },
@@ -131,7 +169,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 //* 表格标题--标签明细
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
+  // { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
   { title: '标签条码', colKey: 'scanBarcode', width: 85 },
   { title: '物料编码', width: 85, colKey: 'mitemCode' },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },

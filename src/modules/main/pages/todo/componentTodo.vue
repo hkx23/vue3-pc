@@ -229,7 +229,7 @@ const onHandelTodoMenu = async () => {
 }
 
 .table-cell-href {
-  color: rgb(63 93 237 / 100%);
+  color: var(--td-brand-color);
   cursor: pointer;
 }
 
