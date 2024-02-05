@@ -712,7 +712,7 @@ const topPrintID = ref(null);
 const topPrintData = ref({
   pageNum: 1,
   pageSize: 10,
-  planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+  planDateStart: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
   planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
   moScheduleId: '', // 工单ID
   workshopId: '', // 车间 ID
