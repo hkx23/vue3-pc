@@ -7055,6 +7055,21 @@ export const api = {
         method: 'GET',
         params: query,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
+     * @name ConfirmBillNo
+     * @summary 盘点单据确认
+     * @request GET:/stockCheckBill/confirmBillNo
+     * @secure
+     */
+    confirmBillNo: (query: { billNo: string }) =>
+      http.request<ResultPagingDataStockCheckBillExecuteVO['data']>(`/api/warehouse/stockCheckBill/confirmBillNo`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   saleOrderDtl: {
     /**
@@ -9020,6 +9035,20 @@ export const api = {
       http.request<ResultPagingDataAcceptSendSaveReportVO['data']>(`/api/warehouse/acceptSendSaveReport/getList`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 收发存报表
+     * @name Test
+     * @summary JOB方法测试
+     * @request GET:/acceptSendSaveReport/test
+     * @secure
+     */
+    test: () =>
+      http.request<ResultObject['data']>(`/api/warehouse/acceptSendSaveReport/test`, {
+        method: 'GET',
       }),
   },
   goodsSentOut: {

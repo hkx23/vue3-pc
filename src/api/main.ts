@@ -3899,6 +3899,7 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
@@ -3906,7 +3907,6 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4708,7 +4708,7 @@ export interface ResultPagingDataEnterprise {
   data?: PagingDataEnterprise;
 }
 
-/** 维修单查询 */
+/** 企业信息表 */
 export interface EnterpriseSearch {
   /**
    * 页码
@@ -6739,12 +6739,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */

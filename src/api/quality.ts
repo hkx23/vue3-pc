@@ -9,6 +9,143 @@
  * ---------------------------------------------------------------
  */
 
+/** 严格度转移规则表 */
+export interface StringencyTransferRule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 源检验严格度 */
+  sourceInspectStringency?: string;
+  /** 目标检验严格度 */
+  targetInspectStringency?: string;
+  /**
+   * 连续检验批次数
+   * @format int32
+   */
+  inspectBatchTimes?: number;
+  /**
+   * 不合格次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /** 备注 */
+  memo?: string;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 严格度转移规则表 */
+export interface StringencyTransferRuleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+}
+
+/** 响应数据 */
+export type PagingDataStringencyTransferRuleVO = {
+  list?: StringencyTransferRuleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataStringencyTransferRuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataStringencyTransferRuleVO;
+}
+
+/** 严格度转移规则表 */
+export interface StringencyTransferRuleVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 源检验严格度 */
+  sourceInspectStringency?: string;
+  /** 目标检验严格度 */
+  targetInspectStringency?: string;
+  /**
+   * 连续检验批次数
+   * @format int32
+   */
+  inspectBatchTimes?: number;
+  /**
+   * 不合格次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /** 备注 */
+  memo?: string;
+  /** 源检验严格度 */
+  sourceInspectStringencyName?: string;
+  /** 目标检验严格度 */
+  targetInspectStringencyName?: string;
+}
+
 export interface Filter {
   field?: string;
   operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
@@ -28,19 +165,6 @@ export interface SamplingStdDtlSearch {
 export interface SortParam {
   sortBy?: string;
   descending?: boolean;
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 export interface SamplingStdSearch {
@@ -302,6 +426,37 @@ export type SampleCodeVO = {
  */
 
 export const api = {
+  stringencyTransferRule: {
+    /**
+     * No description
+     *
+     * @tags 严格度转移规则表
+     * @name Modify
+     * @summary 编辑严格度转移规则
+     * @request POST:/stringencyTransferRule/modify
+     * @secure
+     */
+    modify: (data: StringencyTransferRule) =>
+      http.request<ResultObject['data']>(`/api/quality/stringencyTransferRule/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 严格度转移规则表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/stringencyTransferRule/getList
+     * @secure
+     */
+    getList: (data: StringencyTransferRuleSearch) =>
+      http.request<ResultPagingDataStringencyTransferRuleVO['data']>(`/api/quality/stringencyTransferRule/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   samplingStdDtl: {
     /**
      * No description

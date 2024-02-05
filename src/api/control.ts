@@ -3460,11 +3460,11 @@ export interface BarcodeWipVO {
   datetimeSche?: string;
   workshopCode?: string;
   workshopId?: string;
-  defectCodeStr?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
