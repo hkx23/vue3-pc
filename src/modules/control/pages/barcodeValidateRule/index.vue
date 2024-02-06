@@ -283,38 +283,32 @@ const columnsText: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'ruleCode',
     title: '编码规则',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'ruleName',
     title: '编码名称',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'pri',
     title: '优先级',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'barcodeValidateGroupName',
     title: '验证分组名称',
-    align: 'center',
     width: '100',
     cell: 'stateSwitch',
   },
   {
     colKey: 'barcodeTypeName',
     title: '验证类型名称',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'operations',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
     cell: 'actionSlot', // 引用具名插槽
@@ -325,38 +319,32 @@ const columnsKey: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'ruleCode',
     title: '编码规则',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'ruleName',
     title: '规则名称',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'barcodeValidateGroupName',
     title: '验证分组名称',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'categoryName',
     title: '物料类别名称',
-    align: 'center',
     width: '100',
     cell: 'stateSwitch',
   },
   {
     colKey: 'mitemName',
     title: '物料名称',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'Operations',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
     cell: 'actionSlot', // 引用具名插槽
