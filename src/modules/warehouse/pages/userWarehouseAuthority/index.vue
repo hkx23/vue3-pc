@@ -80,51 +80,43 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'orgName',
     title: '库存组织',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'userName',
     title: '用户编号',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'userDisplayName',
     title: '用户姓名',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'warehouseCode',
     title: '仓库编码',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'warehouseName',
     title: '仓库名称',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'creatorName',
     title: '创建人',
-    align: 'center',
-    width: '150',
+    width: '100',
   },
   {
     colKey: 'createTime',
     title: '创建时间',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'op',
     title: '操作',
-    align: 'center',
     fixed: 'right',
-    width: '130',
+    width: '100',
     cell: 'actionSlot', // 引用具名插槽
   },
 ];

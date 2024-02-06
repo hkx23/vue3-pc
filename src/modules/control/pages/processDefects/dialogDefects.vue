@@ -65,14 +65,11 @@ const total = ref(10);
 const { pageUI } = usePage();
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
-    // title: '单选',
-    // align: 'center',
     colKey: 'row-select',
     type: 'multiple',
-    width: 50,
     checkProps: ({ row }) => ({ disabled: row.default }),
   },
-  { colKey: 'defectCode', title: '缺陷代码', width: '120' },
+  { colKey: 'defectCode', title: '缺陷代码' },
   { colKey: 'defectName', title: '缺陷名称', ellipsis: true },
 ];
 

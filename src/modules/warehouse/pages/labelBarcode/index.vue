@@ -89,9 +89,6 @@
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query :opts="mitemBarcodeManageOp" label-width="100" @submit="managePageSearchClick">
                   <template #querySelect="{ param }">
-                    <!-- <t-select v-model="ruleTabData.barcodeType" label="条码类型" clearable>
-            <t-option v-for="item in diaSelsect.list" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select> -->
                     <t-select v-model="param.barcodeStatus" label="条码状态" clearable>
                       <t-option
                         v-for="item in bracodeStatusOption"
@@ -299,25 +296,27 @@ const onPrint = async () => {
   }
   try {
     pageLoading.value = true;
+    const DataBaseArr = [];
     const delivery = deliveryList.list.find((item) => item.deliveryDtlId === printMode.value.deliveryDtlId);
     selectedRowKeys.value.forEach((id) => {
       const foundItem = labelBelowList.list.find((item) => item.id === id);
       console.log(foundItem);
-      PrintByIdOrCode(
-        {
-          dataName: 'LabelPrintSource',
-          data: {
-            LABEL_NO: foundItem.labelNo,
-            BALANCE_QTY: foundItem.balanceQty,
-            LOT_NO: foundItem.lotNo,
-            SUPPLIER_NAME: delivery.supplierName,
-            MITEM_CODE: delivery.mitemCode,
-            MITEM_DESC: delivery.mitemDesc,
-          },
-        },
-        printMode.value.printTempId,
-      );
+      const DataBase = {
+        LABEL_NO: foundItem.labelNo,
+        BALANCE_QTY: foundItem.balanceQty,
+        LOT_NO: foundItem.lotNo,
+        SUPPLIER_NAME: delivery.supplierName,
+        MITEM_CODE: delivery.mitemCode,
+        MITEM_DESC: delivery.mitemDesc,
+      };
+      DataBaseArr.push(DataBase);
     });
+    PrintByIdOrCode(
+      {
+        data: DataBaseArr,
+      },
+      printMode.value.printTempId,
+    );
     await apiMain.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
 
     onRefreshBelow();

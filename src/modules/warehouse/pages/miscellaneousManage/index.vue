@@ -8,6 +8,7 @@
       <cmp-table
         v-model:pagination="pageUI"
         row-key="id"
+        active-row-type="single"
         :table-column="tableWarehouseColumns"
         :table-data="tableDataWarehouse"
         :loading="loading"

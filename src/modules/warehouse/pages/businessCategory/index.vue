@@ -119,55 +119,46 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'categoryCode',
     title: '业务类型代码',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'categoryName',
     title: '业务类型名称',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'businessDirectionName',
     title: '业务交易方向',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'transferOutTypeName',
     title: '转出库存的类型',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'transferInTypeName',
     title: '转入库存的类型',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'perfix',
     title: '业务单据前缀',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'creatorName',
     title: '创建人',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'createTime',
     title: '创建时间',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'op',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
     cell: 'actionSlot', // 引用具名插槽

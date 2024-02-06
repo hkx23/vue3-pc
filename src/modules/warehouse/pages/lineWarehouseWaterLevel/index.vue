@@ -60,6 +60,7 @@
               label=""
               type="warehouseAuth"
               :clearable="true"
+              :disabled="!submitFalg"
               @selection-change="onWarehouseSelect"
             ></bcmp-select-business>
           </t-form-item>
@@ -77,6 +78,7 @@
               label=""
               type="mitem"
               :clearable="true"
+              :disabled="!submitFalg"
               @selection-change="onMiteSelect"
             ></bcmp-select-business>
           </t-form-item>
@@ -164,49 +166,41 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'warehouseCode',
     title: '仓库编码',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'warehouseName',
     title: '仓库名称',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'mitemCode',
     title: '物料编码',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'mitemName',
     title: '物料名称',
-    align: 'center',
     width: '80',
   },
   {
     colKey: 'uomName',
     title: '单位',
-    align: 'center',
     width: '80',
   },
   {
     colKey: 'safeStockVolume',
     title: '安全库存',
-    align: 'center',
     width: '80',
   },
   {
     colKey: 'lotQty',
     title: '经济批量',
-    align: 'center',
     width: '80',
   },
   {
     colKey: 'actionSlot',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
   },
@@ -344,7 +338,7 @@ const onEditRow = (row: any) => {
   teamFormData.value.lotQty = row.lotQty;
   submitFalg.value = false; // 编辑为 false
   formVisible.value = true;
-  diaLogTitle.value = '编辑班组';
+  diaLogTitle.value = '编辑线边仓水位';
 };
 
 // #编辑 班组 表格数据 请求

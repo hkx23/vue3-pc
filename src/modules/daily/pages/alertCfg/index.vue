@@ -1,5 +1,8 @@
 <template>
   <cmp-container :full="true">
+    <cmp-card>
+      <cmp-query ref="queryRef" :opts="opts" is-expansion @submit="onInput" @reset="selectedRowKeys = []"> </cmp-query>
+    </cmp-card>
     <cmp-card :span="12">
       <cmp-table
         ref="tableRef"
@@ -35,7 +38,6 @@
           </t-space>
         </template>
         <template #button>
-          <cmp-query :opts="opts" :bool-enter="true" :show-button="false" @submit="onInput"></cmp-query>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddCfgData"> 新增 </t-button>
             <t-button theme="default"> 导入 </t-button>
@@ -126,37 +128,32 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
     type: 'multiple',
-    width: 46,
+    width: '50',
   },
   {
     colKey: 'alertType',
     title: '预警机制',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'sla',
     title: '响应时间',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'ola',
     title: '处理时间',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'state',
     title: '状态',
-    align: 'center',
     width: '100',
     cell: 'stateSwitch',
   },
   {
     colKey: 'ope',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
     cell: 'actionSlot', // 引用具名插槽

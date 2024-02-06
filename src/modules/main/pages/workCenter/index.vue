@@ -46,6 +46,8 @@
         :columns="columns"
         :data="workData"
         resizable
+        :hover="true"
+        :active-row-type="'single'"
         :tree="treeConfig"
         :max-height="boxHeight"
         :loading="loading"
