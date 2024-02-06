@@ -336,52 +336,45 @@ const treeClick = ({ node }) => {
 const ruleTreeDataList = reactive({ list: [] });
 // #### 条码规则 表头
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'row-select',
-    type: 'single',
-    width: 46,
-  },
+  // {
+  //   colKey: 'row-select',
+  //   type: 'single',
+  //   width: 46,
+  // },
   {
     colKey: 'serial-number',
     title: '序号',
-    align: 'center',
     width: '90',
   },
   {
     colKey: 'ruleCode',
     title: '规则编码',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'ruleName',
     title: '规则名称',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'ruleDesc',
     title: '规则描述',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'barcodeTypeName',
     title: '条码类型',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'state',
     title: '状态',
-    align: 'center',
     width: '100',
     cell: 'stateSwitch',
   },
   {
     colKey: 'op',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
   },
@@ -396,31 +389,26 @@ const personColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'categoryCode',
     title: '分类编码',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'categoryName',
     title: '分类名称',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'mitemCode',
     title: '物料编码',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'mitemName',
     title: '物料名称',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'mitemDesc',
     title: '物料描述',
-    align: 'center',
     width: '130',
   },
 ];
