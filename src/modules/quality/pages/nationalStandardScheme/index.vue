@@ -91,24 +91,64 @@ const getRigidity = async () => {
 // 左侧数据结构
 const tableData = ref([
   {
-    range: ['2~8', '9~15', '16~25'],
+    range: ['2~8'],
     sampleNumber: '235',
   },
   {
-    range: ['26~50', '51~90', '91~150'],
+    range: ['9~15'],
+    sampleNumber: '235',
+  },
+  {
+    range: ['16~25'],
+    sampleNumber: '235',
+  },
+  {
+    range: ['26~50'],
     sampleNumber: '81320',
   },
   {
-    range: ['151~280', '281~500', '501~1200'],
+    range: ['51~90'],
     sampleNumber: '81320',
   },
   {
-    range: ['1201~3200', '3201~10000', '10001~35000'],
+    range: ['91~150'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['151~280'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['281~500'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['501~1200'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['1201~3200'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['3201~10000'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['10001~35000'],
     sampleNumber: '81320',
   },
 
   {
-    range: ['35001~150000', '150001~500000', '500001及基以上'],
+    range: ['35001~150000'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['150001~500000'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['500001及基以上'],
     sampleNumber: '81320',
   },
   {

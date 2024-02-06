@@ -11,6 +11,7 @@
         :table-column="tableWarehouseColumns"
         :table-data="tableDataWarehouse"
         :fixed-height="true"
+        :hover="true"
         select-on-row-click
         :loading="loading"
         :total="dataTotal"
