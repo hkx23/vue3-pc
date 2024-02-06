@@ -167,6 +167,48 @@ export interface SortParam {
   descending?: boolean;
 }
 
+export interface SamplingStdDtlDTO {
+  id?: string;
+  sampingStdId: string;
+  /** 批量范围起始值 */
+  lotFrom: number;
+  /** 批量范围结束值 */
+  lotTo: number;
+  /** 抽样比例 */
+  samplingPer: number;
+  /** 抽样数量 */
+  samplingNum: number;
+  /** A类允收数 */
+  acceptQtyClassA: number;
+  /** A类拒收数 */
+  rejectQtyClassA: number;
+  /** B类允收数 */
+  acceptQtyClassB: number;
+  /** B类拒收数 */
+  rejectQtyClassB: number;
+  /** C类允收数 */
+  acceptQtyClassC: number;
+  /** C类拒收数 */
+  rejectQtyClassC: number;
+  /** D类允收数 */
+  acceptQtyClassD: number;
+  /** D类拒收数 */
+  rejectQtyClassD: number;
+}
+
+/** 通用响应类 */
+export interface Result {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
 export interface SamplingStdSearch {
   sampingStdCode?: string;
   /** @format int32 */
@@ -240,6 +282,91 @@ export interface SamplingStdVO {
   creatorName?: string;
   samplingStdVO?: SamplingStdVO;
 }
+
+export interface SamplingAqlSearch {
+  /** 检验水平 */
+  checkLevel?: string;
+  /** 抽样严格度 */
+  inspectionStringency?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListSamplingAqlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: SamplingAqlVO[] | null;
+}
+
+/** 国标抽样方案装aql的容器 */
+export interface SamplingAqlDTO {
+  /** 接收质量限 */
+  aql?: number;
+  /** 允收数 */
+  acceptQty?: number;
+  /** 拒收数 */
+  rejectQty?: number;
+}
+
+/** 国标抽样方案渲染 */
+export type SamplingAqlVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标准编号 */
+  sampingStdCode?: string;
+  /** 严格度 */
+  stringency?: string;
+  /** 样本量简码 */
+  simpleCode?: string;
+  /** 接收质量限 */
+  aql?: number;
+  /** 抽样样本数 */
+  sampleQty?: number;
+  /** 抽样比例 */
+  samplingPersent?: number;
+  /** 允收数 */
+  acceptQty?: number;
+  /** 拒收数 */
+  rejectQty?: number;
+  /**
+   * 批量-star
+   * @format int32
+   */
+  batchStart?: number;
+  /**
+   * 批量-end
+   * @format int32
+   */
+  batchEnd?: number;
+  /** 允收拒收数 */
+  arguments?: SamplingAqlDTO[];
+} | null;
 
 export interface MitemForwardTraceSearch {
   /**
@@ -331,6 +458,18 @@ export interface ResultPagingDataMFTSubVO {
 }
 
 /** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
+}
+
+/** 通用响应类 */
 export interface ResultListSamplingStd {
   /**
    * 响应代码
@@ -409,13 +548,48 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s1?: string;
-  s2?: string;
   s3?: string;
   s4?: string;
   i?: string;
   ii?: string;
   iii?: string;
+  s1?: string;
+  s2?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListDataTableVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DataTableVO[] | null;
+}
+
+/** 数据表列对象 */
+export interface DataTableColumnVO {
+  /** 列名 */
+  columnName?: string;
+  /** 列描述 */
+  columnDesc?: string;
+  /** 列类型 */
+  columnType?: string;
+}
+
+/** 数据表对象 */
+export type DataTableVO = {
+  /** 表名 */
+  tableName?: string;
+  /** 表模型名称 */
+  tableModelName?: string;
+  /** 表描述 */
+  tableDescription?: string;
+  /** 文件最后修改时间戳 */
+  columns?: DataTableColumnVO[];
 } | null;
 
 /**
@@ -472,6 +646,35 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案明细表
+     * @name ChangeOrAddDtl
+     * @summary 修改或新增明细
+     * @request POST:/samplingStdDtl/changeOrAddDtl
+     * @secure
+     */
+    changeOrAddDtl: (data: SamplingStdDtlDTO) =>
+      http.request<Result['data']>(`/api/quality/samplingStdDtl/changeOrAddDtl`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案明细表
+     * @name DeleteById
+     * @summary 删除明细
+     * @request DELETE:/samplingStdDtl/deleteById/{id}
+     * @secure
+     */
+    deleteById: (id: string) =>
+      http.request<Result['data']>(`/api/quality/samplingStdDtl/deleteById/${id}`, {
+        method: 'DELETE',
+      }),
   },
   samplingStd: {
     /**
@@ -493,13 +696,27 @@ export const api = {
      * No description
      *
      * @tags 企业抽样方案表
+     * @name StateChangeBefore
+     * @summary 修改状态前校验引用数量
+     * @request GET:/samplingStd/stateChangeBefore/{id}
+     * @secure
+     */
+    stateChangeBefore: (id: string) =>
+      http.request<ResultLong['data']>(`/api/quality/samplingStd/stateChangeBefore/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案表
      * @name StateChange
      * @summary 修改状态
-     * @request GET:/samplingStd/items/{id}
+     * @request GET:/samplingStd/stateChange/{id}
      * @secure
      */
     stateChange: (id: string) =>
-      http.request<ResultObject['data']>(`/api/quality/samplingStd/items/${id}`, {
+      http.request<ResultObject['data']>(`/api/quality/samplingStd/stateChange/${id}`, {
         method: 'GET',
       }),
 
@@ -516,6 +733,22 @@ export const api = {
       http.request<ResultListSamplingStd['data']>(`/api/quality/samplingStd/getSampingStdCode`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  samplingAql: {
+    /**
+     * No description
+     *
+     * @tags 国标抽样方案表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/samplingAql/getList
+     * @secure
+     */
+    getList: (data: SamplingAqlSearch) =>
+      http.request<ResultListSamplingAqlVO['data']>(`/api/quality/samplingAql/getList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   iqcInspectBill: {
@@ -545,6 +778,21 @@ export const api = {
      */
     getList: () =>
       http.request<ResultListSampleCodeVO['data']>(`/api/quality/sampleCode/getList`, {
+        method: 'GET',
+      }),
+  },
+  importManage: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Tables
+     * @summary 根据领域获取数据表列表
+     * @request GET:/importManage/tables
+     * @secure
+     */
+    tables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/quality/importManage/tables`, {
         method: 'GET',
       }),
   },
