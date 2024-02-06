@@ -255,6 +255,9 @@ const onHandelUrl = async (row: any) => {
 .list-item {
   width: 100%;
   // margin-top: 10px;
+  :deep(.t-badge--circle) {
+    top: 19px !important;
+  }
 }
 
 .cpm-box {

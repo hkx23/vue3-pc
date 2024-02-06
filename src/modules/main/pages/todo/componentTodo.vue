@@ -221,6 +221,9 @@ const onHandelTodoMenu = async () => {
 .list-item {
   width: 100%;
   // margin-top: 10px;
+  :deep(.t-badge--circle) {
+    top: 12px !important;
+  }
 }
 
 .cpm-box {
