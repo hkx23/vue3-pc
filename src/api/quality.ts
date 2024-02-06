@@ -167,6 +167,48 @@ export interface SortParam {
   descending?: boolean;
 }
 
+export interface SamplingStdDtlDTO {
+  id?: string;
+  sampingStdId: string;
+  /** 批量范围起始值 */
+  lotFrom: number;
+  /** 批量范围结束值 */
+  lotTo: number;
+  /** 抽样比例 */
+  samplingPer: number;
+  /** 抽样数量 */
+  samplingNum: number;
+  /** A类允收数 */
+  acceptQtyClassA: number;
+  /** A类拒收数 */
+  rejectQtyClassA: number;
+  /** B类允收数 */
+  acceptQtyClassB: number;
+  /** B类拒收数 */
+  rejectQtyClassB: number;
+  /** C类允收数 */
+  acceptQtyClassC: number;
+  /** C类拒收数 */
+  rejectQtyClassC: number;
+  /** D类允收数 */
+  acceptQtyClassD: number;
+  /** D类拒收数 */
+  rejectQtyClassD: number;
+}
+
+/** 通用响应类 */
+export interface Result {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
 export interface SamplingStdSearch {
   sampingStdCode?: string;
   /** @format int32 */
@@ -273,8 +315,45 @@ export interface SamplingAqlDTO {
 
 /** 国标抽样方案渲染 */
 export type SamplingAqlVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标准编号 */
+  sampingStdCode?: string;
+  /** 严格度 */
+  stringency?: string;
   /** 样本量简码 */
   simpleCode?: string;
+  /** 接收质量限 */
+  aql?: number;
+  /** 抽样样本数 */
+  sampleQty?: number;
+  /** 抽样比例 */
+  samplingPersent?: number;
+  /** 允收数 */
+  acceptQty?: number;
+  /** 拒收数 */
+  rejectQty?: number;
   /**
    * 批量-star
    * @format int32
@@ -285,8 +364,6 @@ export type SamplingAqlVO = {
    * @format int32
    */
   batchEnd?: number;
-  /** 抽样样本数 */
-  sampleQty?: number;
   /** 允收拒收数 */
   arguments?: SamplingAqlDTO[];
 } | null;
@@ -378,6 +455,18 @@ export interface ResultPagingDataMFTSubVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataMFTSubVO;
+}
+
+/** 通用响应类 */
+export interface ResultLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: string;
 }
 
 /** 通用响应类 */
@@ -557,6 +646,35 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案明细表
+     * @name ChangeOrAddDtl
+     * @summary 修改或新增明细
+     * @request POST:/samplingStdDtl/changeOrAddDtl
+     * @secure
+     */
+    changeOrAddDtl: (data: SamplingStdDtlDTO) =>
+      http.request<Result['data']>(`/api/quality/samplingStdDtl/changeOrAddDtl`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案明细表
+     * @name DeleteById
+     * @summary 删除明细
+     * @request DELETE:/samplingStdDtl/deleteById/{id}
+     * @secure
+     */
+    deleteById: (id: string) =>
+      http.request<Result['data']>(`/api/quality/samplingStdDtl/deleteById/${id}`, {
+        method: 'DELETE',
+      }),
   },
   samplingStd: {
     /**
@@ -578,13 +696,27 @@ export const api = {
      * No description
      *
      * @tags 企业抽样方案表
+     * @name StateChangeBefore
+     * @summary 修改状态前校验引用数量
+     * @request GET:/samplingStd/stateChangeBefore/{id}
+     * @secure
+     */
+    stateChangeBefore: (id: string) =>
+      http.request<ResultLong['data']>(`/api/quality/samplingStd/stateChangeBefore/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案表
      * @name StateChange
      * @summary 修改状态
-     * @request GET:/samplingStd/items/{id}
+     * @request GET:/samplingStd/stateChange/{id}
      * @secure
      */
     stateChange: (id: string) =>
-      http.request<ResultObject['data']>(`/api/quality/samplingStd/items/${id}`, {
+      http.request<ResultObject['data']>(`/api/quality/samplingStd/stateChange/${id}`, {
         method: 'GET',
       }),
 

@@ -3087,21 +3087,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4334,6 +4334,82 @@ export interface ResultPagingDataDistrictVO {
   data?: PagingDataDistrictVO;
 }
 
+export interface DeliveryCommandSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  warehouseId?: string;
+  mitemId?: string;
+  /** 配送单据号 */
+  deliveryBillNo?: string;
+  /** 状态 */
+  status?: string[];
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+}
+
+/** 显示产品条码管理 */
+export interface DeliveryCommandJobDTO {
+  moscheId?: string;
+  warehouseId?: string;
+  mitemId?: string;
+  /** Bom物料需求 */
+  bomRequirement?: number;
+  /** 经济批量 */
+  lotQty?: number;
+  /** 安全库存量 */
+  safeStockVolume?: number;
+  /** 已配数量 */
+  pickQty?: number;
+  /** 库存现有量 */
+  qty?: number;
+  /** 缺料数 */
+  deliveryQty?: number;
+  /** 建议配送数 */
+  suggest?: number;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 已配/需求 */
+  show?: number[];
+}
+
+/** 响应数据 */
+export type PagingDataDeliveryCommandJobDTO = {
+  list?: DeliveryCommandJobDTO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDeliveryCommandJobDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDeliveryCommandJobDTO;
+}
+
 /** 配送指令表 */
 export interface DeliveryCommand {
   id?: string;
@@ -4370,35 +4446,11 @@ export interface DeliveryCommand {
   memo?: string;
   /** 状态 */
   status?: string;
-}
-
-export interface DeliveryCommandSearch {
   /**
-   * 页码
+   * 是否自动(1是，0否)
    * @format int32
    */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  warehouseId?: string;
-  mitemId?: string;
-  /** 配送单据号 */
-  deliveryBillNo?: string;
-  /** 状态 */
-  status?: string[];
-  /**
-   * 开始日期
-   * @format date-time
-   */
-  dateStart?: string;
-  /**
-   * 结束日期
-   * @format date-time
-   */
-  dateEnd?: string;
+  isAuto?: number;
 }
 
 /** 显示产品条码管理 */
@@ -4437,6 +4489,11 @@ export interface DeliveryCommandVO {
   memo?: string;
   /** 状态 */
   status?: string;
+  /**
+   * 是否自动(1是，0否)
+   * @format int32
+   */
+  isAuto?: number;
   /** 线边仓编码 */
   warehouseCode?: string;
   /** 线边仓名称 */
@@ -8570,6 +8627,21 @@ export const api = {
      * No description
      *
      * @tags 配送指令表
+     * @name WatchBoard
+     * @summary 配送指令水位看板接口
+     * @request POST:/deliveryCommand/watchBoard
+     * @secure
+     */
+    watchBoard: (data: DeliveryCommandSearch) =>
+      http.request<ResultPagingDataDeliveryCommandJobDTO['data']>(`/api/warehouse/deliveryCommand/watchBoard`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送指令表
      * @name RemoveBatch
      * @summary 删除配送指令
      * @request POST:/deliveryCommand/removeBatch
@@ -8624,6 +8696,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/deliveryCommand/add`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送指令表
+     * @name Test
+     * @summary JOB方法测试
+     * @request GET:/deliveryCommand/test
+     * @secure
+     */
+    test: () =>
+      http.request<ResultObject['data']>(`/api/warehouse/deliveryCommand/test`, {
+        method: 'GET',
       }),
   },
   deliveryCard: {
