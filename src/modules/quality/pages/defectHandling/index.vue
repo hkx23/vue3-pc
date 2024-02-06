@@ -23,7 +23,7 @@
         <template #button>
           <t-button theme="primary" @click="onHandelAdd">新增</t-button>
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onWholeAdd">
-            <t-button theme="default">删除</t-button>
+            <t-button theme="default">批量删除</t-button>
           </t-popconfirm>
         </template>
         <template #op="{ row }">

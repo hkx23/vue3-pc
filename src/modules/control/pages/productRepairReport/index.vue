@@ -8,7 +8,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="moScheCode"
+        row-key="onlyId"
         :table-column="columns"
         :table-data="WipRepairVOData"
         :total="total"
@@ -125,7 +125,7 @@ onMounted(async () => {
 });
 
 // 表格数据 字段
-const WipRepairVOData = ref<WipRepairVO[]>([]);
+const WipRepairVOData = ref<WipRepairData[]>([]);
 const total = ref<number>(0);
 const ProductMaintenanceReportData = ref({
   pageNum: 1,
@@ -137,11 +137,16 @@ const ProductMaintenanceReportData = ref({
   repairDateStart: '', // 维修开始时间
   repairDateEnd: '', // 维修结束时间
 });
+interface WipRepairData extends WipRepairVO {
+  onlyId?: string;
+}
 const onGetProductMaintenanceReport = async () => {
   ProductMaintenanceReportData.value.pageNum = pageUI.value.page;
   ProductMaintenanceReportData.value.pageSize = pageUI.value.rows;
   const res = await api.wipRepair.getReportData(ProductMaintenanceReportData.value);
-  console.log('🚀 ~ file: index.vue:144 ~ onGetProductMaintenanceReport ~ res:', res);
+  (res.list as WipRepairData[]).forEach((item) => {
+    item.onlyId = Date.now().toString() + Math.random().toString(16).substring(2);
+  });
   WipRepairVOData.value = res.list;
   total.value = res.total;
 };
