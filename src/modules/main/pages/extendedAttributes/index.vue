@@ -319,67 +319,52 @@ const dialogFormDataCopy = reactive({
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'serial-number',
-    title: '序号',
-    align: 'center',
-    width: '90',
-  },
-  {
     colKey: 'propertyCode',
     title: '属性代码',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'propertyValueType',
     title: '属性值类型',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'displayName',
     title: '显示名称',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'displaySequence',
     title: '显示顺序',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'isRequire',
     title: '必填项',
-    align: 'center',
     width: '100',
     cell: 'required',
   },
   {
     colKey: 'isMultiple',
     title: '多项',
-    align: 'center',
     width: '100',
     cell: 'multiterm',
   },
   {
     colKey: 'needValidation',
     title: '校验',
-    align: 'center',
     width: '100',
     cell: 'verify',
   },
   {
     colKey: 'disableSwitch',
     title: '状态',
-    align: 'center',
     width: '100',
     cell: 'disableSwitch',
   },
   {
     colKey: 'operate',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
     cell: 'actionSlot', // 引用具名插槽

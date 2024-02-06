@@ -143,12 +143,10 @@ const columns = [
   {
     colKey: 'warehouseCode',
     title: '仓库编码',
-    align: 'center',
   },
   {
     colKey: 'warehouseName',
     title: '仓库名称',
-    align: 'center',
   },
 ];
 // 获取左侧表格数据

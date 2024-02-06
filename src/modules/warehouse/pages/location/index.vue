@@ -10,7 +10,9 @@
         row-key="id"
         :table-column="tableWarehouseColumns"
         :table-data="tableDataLocation"
+        select-on-row-click
         :fixed-height="true"
+        :hover="true"
         :loading="loading"
         :total="dataTotal"
         @refresh="tabRefresh"
@@ -22,7 +24,7 @@
           <span v-else>禁用</span>
         </template>
         <template #title>
-          {{ '货位维护列表' }}
+          {{ '货位维护' }}
         </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
@@ -118,7 +120,7 @@ const opts = computed(() => {
 
 //* 表格标题
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '货位编码', colKey: 'locationCode', width: 85 },
   { title: '货位名称', width: 85, colKey: 'locationName' },
   { title: '货位描述', width: 85, colKey: 'locationDesc' },

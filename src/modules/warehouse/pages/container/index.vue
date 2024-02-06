@@ -1,14 +1,15 @@
 <!-- 容器  -->
 <template>
   <cmp-container :full="true">
-    <cmp-container>
-      <div class="cards-container">
-        <!-- card 1 -->
-        <cmp-card class="card">
-          <t-card>
-            <cmp-query ref="queryComponent" :opts="optsContainer1" :bool-enter="false" @submit="onInput"> </cmp-query>
-          </t-card>
-          <!-- cmp-table 表格组件   select-on-row-click 一行选中  -->
+    <div class="cards-container">
+      <!-- card 1 -->
+      <cmp-card class="card">
+        <cmp-card>
+          <cmp-query ref="queryComponent" :opts="optsContainer1" :bool-enter="false" @submit="onInput"> </cmp-query>
+        </cmp-card>
+
+        <!-- cmp-table 表格组件   select-on-row-click 一行选中  -->
+        <cmp-card>
           <cmp-table
             v-model:pagination="pageUI"
             row-key="id"
@@ -17,10 +18,16 @@
             :table-column="tableContainerColumns1"
             :total="dataTotal1"
             select-on-row-click
+            :hover="true"
+            :fixed-height="true"
+            style="height: 460px"
             type="single"
             empty="没有符合条件的数据"
             @select-change="handleRowClick"
           >
+            <template #title>
+              {{ '容器类型' }}
+            </template>
             <template #button>
               <t-button theme="primary" @click="onAddContainer">新增</t-button>
             </template>
@@ -31,9 +38,9 @@
             </template>
 
             <!-- 定义序号列的插槽 -->
-            <template #indexSlot="{ rowIndex }">
+            <!-- <template #indexSlot="{ rowIndex }">
               {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-            </template>
+            </template> -->
             <!-- 编辑 -->
             <template #op1="{ row }">
               <t-space>
@@ -42,55 +49,18 @@
             </template>
           </cmp-table>
         </cmp-card>
-        <!--  card 2 -->
-        <cmp-card class="card">
-          <t-space direction="vertical">
-            <!-- tabs组件 -->
-            <tabs-container ref="refreshTable" :props-id="propsId" :selected-row-data="selectedRowData" />
-          </t-space>
-        </cmp-card>
-      </div>
-    </cmp-container>
+      </cmp-card>
+      <!--  card 2 -->
+      <cmp-card class="card">
+        <t-space direction="vertical">
+          <!-- tabs组件 -->
+          <tabs-container ref="refreshTable" :props-id="propsId" :selected-row-data="selectedRowData" />
+        </t-space>
+      </cmp-card>
+    </div>
   </cmp-container>
-  <!-- 弹窗 -->
-  <t-dialog v-model:visible="containerVisible" :footer="false" :close-on-overlay-click="false" :header="formTitle">
-    <!--    <t-form :data="formData" :rules="rules" label-width="110px" @submit="submit1" @reset="cancel">
-      <t-row :gutter="[32, 16]">
-        <t-col :span="6">
-          <t-form-item label="容器类型编码" name="containerTypeCode">
-            <t-input v-model="formData.containerTypeCode"></t-input>
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="容器类型编码" name="containerTypeCode">
-            <t-input v-model="formData.containerTypeCode"></t-input>
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <t-row>
-        <t-col :span="6">
-          <t-form-item label="容器类型名称" name="containerTypeName">
-            <t-input v-model="formData.containerTypeName"></t-input>
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
-          <t-form-item label="容器类型描述" name="containerTypeDesc">
-            <t-input v-model="formData.containerTypeDesc"></t-input>
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <t-row>
-        <t-col :span="6">
-          <t-form-item label="启用">
-            <t-switch v-model="formData.state" :custom-value="[1, 0]" />
-          </t-form-item>
-        </t-col>
-      </t-row>
-      <div class="dialog-footer">
-        <t-button theme="primary" type="reset">取消</t-button>
-        <t-button theme="primary" type="submit">提交</t-button>
-      </div>
-    </t-form> -->
+  <!-- 弹窗  :footer="false" 不需要底部 -->
+  <t-dialog v-model:visible="containerVisible" :close-on-overlay-click="false" :header="formTitle">
     <t-form :data="formData" :rules="rules" label-width="110px" @submit="submit1" @reset="cancel">
       <t-form-item label="容器类型编码" name="containerTypeCode">
         <t-input v-model="formData.containerTypeCode" :disabled="formTitle === '编辑'"></t-input>
@@ -104,11 +74,12 @@
       <t-form-item label="启用">
         <t-switch v-model="formData.state" :custom-value="[1, 0]" />
       </t-form-item>
-      <div class="dialog-footer">
-        <t-button theme="primary" type="reset">取消</t-button>
-        <t-button theme="primary" type="submit">提交</t-button>
-      </div>
     </t-form>
+
+    <template #footer>
+      <t-button theme="default" variant="base" @click="cancel">取消</t-button>
+      <t-button theme="primary" @click="submit1">提交</t-button>
+    </template>
   </t-dialog>
 </template>
 
@@ -177,7 +148,7 @@ const optsContainer1 = computed(() => {
 // card 1  single 设置单项选中
 const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'single', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
+  // { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '容器类型编码', colKey: 'containerTypeCode', width: 120 },
   { title: '容器类型名称', width: 120, colKey: 'containerTypeName' },
   { title: '容器类型描述', width: 120, colKey: 'containerTypeDesc' },
@@ -319,11 +290,6 @@ watch(propsId, (propsId) => {
 
 .card {
   flex: 1; /* 让卡片平均分配空间 */
-  margin: 0 10px; /* 可选：添加一些间隔 */
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end; /* 使内容靠右对齐 */
+  margin: 0 6px; /* 可选：添加一些间隔 */
 }
 </style>

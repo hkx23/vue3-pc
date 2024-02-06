@@ -7,6 +7,7 @@
         <cmp-table
           ref="tableRef"
           row-key="id"
+          active-row-type="single"
           :table-column="tableMaterialRequisitionColumns"
           :table-data="tableDataMaterialRequisition"
           :loading="loading"
@@ -24,6 +25,13 @@
             <t-button theme="default" :disabled="selectRowKeys?.length == 0" @click="onBatchCancelledClick">
               {{ t('materialRequisition.cancel') }}
             </t-button>
+            <!-- :disabled="!(selectRowKeys?.length == 1)" -->
+            <cmp-print-button
+              template-code="LL"
+              :disabled="selectRowKeys?.length == 0"
+              :data="printData"
+              @before-print="onPrintClick"
+            />
           </template>
           <template #title> {{ t('materialRequisition.tableSubTilte') }} </template>
         </cmp-table>
@@ -37,7 +45,7 @@
           <t-enhanced-table
             ref="tableDtlRef"
             lazy-load
-            row-key="index"
+            row-key="id"
             :columns="tableMaterialDtlColumns"
             :data="tableDataMaterialRequisitionDtl"
             :tree="treeConfig"
@@ -171,6 +179,7 @@ const treeConfig = reactive({
   childrenKey: 'children',
   treeNodeColumnIndex: 0,
 });
+const printData = ref([]);
 const tableDataMaterialRequisition = ref([]);
 const tableDataMaterialRequisitionDtl = ref([]);
 
@@ -258,6 +267,53 @@ const onBatchCancelledClick = async (row: any) => {
     onClose: () => {
       confirmDia.hide();
     },
+  });
+};
+
+// 打印, 目前只支持单笔打印
+const onPrintClick = async () => {
+  let isSuccess = true;
+  printData.value = [];
+  const promiseAll = [];
+  setLoading(true);
+  try {
+    selectRowKeys.value.forEach((element) => {
+      const billInfo = tableDataMaterialRequisition.value.find((item: any) => item.id === element);
+      if (billInfo) {
+        const promiseQuery = getPrintBillInfo(billInfo.billNo).then((billInfoData: any) => {
+          if (billInfoData) {
+            const billDtls = billInfoData.dtls;
+            // printData.value.push([{ datasource: billInfoData, datasource1: billDtls }]);
+            printData.value.push({
+              variable: billInfoData,
+              datasource: { BillInfoList: billInfoData, BillDetailInfoList: billDtls },
+            });
+          }
+        });
+        promiseAll.push(promiseQuery);
+      }
+    });
+    await Promise.all(promiseAll);
+  } catch (e) {
+    console.log(e);
+    isSuccess = false;
+  } finally {
+    setLoading(false);
+  }
+  return isSuccess;
+};
+
+const getPrintBillInfo = (billNo) => {
+  return new Promise((resolve, reject) => {
+    const billInfoData = apiWarehouse.materialRequisitionExcute.getMaterialRequisitionByBillNo({
+      billNo,
+      isNeedCheck: false,
+    }) as any;
+    if (billInfoData) {
+      resolve(billInfoData);
+    } else {
+      reject();
+    }
   });
 };
 

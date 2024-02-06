@@ -1,13 +1,13 @@
 <!-- 条码验证规则 -->
 <template>
-  <cmp-container :full="true">
-    <cmp-card class="not-full-tab">
+  <cmp-container :full="!!tabValue">
+    <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tabValue" @change="tabChange">
         <t-tab-panel :value="0" label="产品标签打印" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :full="true" :full-sub-index="[0, 1]">
-              <cmp-card>
-                <cmp-container :full="true">
+            <cmp-container :full="false" :full-sub-index="[0, 1]">
+              <cmp-card :hover-shadow="false">
+                <cmp-container :full="false">
                   <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput">
                     <template #workState="{ param }">
                       <t-select v-model="param.workState" :clearable="true" label="排产单状态">
@@ -33,56 +33,55 @@
                       </t-select>
                     </template>
                   </cmp-query>
-                  <cmp-card :ghost="true">
-                    <!-- ################# 产品标签打印 上1️⃣上 表格数据 ###################### -->
-                    <cmp-table
-                      ref="tableRefTop"
-                      v-model:pagination="pageUITop"
-                      row-key="moScheduleId"
-                      :fixed-height="true"
-                      :active-row-type="'single'"
-                      :hover="true"
-                      :table-column="labelPrintTop"
-                      :table-data="printTopTabData.list"
-                      :total="totalPrintTop"
-                      select-on-row-click
-                      @select-change="onGenerateChange"
-                      @refresh="onTopRefresh"
-                    >
-                      <template #title>
-                        {{ '产品标签打印列表' }}
-                      </template>
-                      <template #thisTimeQty="{ row }">
-                        <t-input-number
-                          v-model="row.thisTimeQty"
-                          :auto-width="true"
-                          theme="column"
-                          :min="0"
-                          @change="(value) => inputTimeQtyChange(value, row)"
-                        />
-                      </template>
-                      <template #button>
-                        <t-space :size="8">
-                          <t-select
-                            v-model="generateData.barcodeRuleId"
-                            :clearable="true"
-                            style="width: 240px"
-                            label="条码规则"
-                          >
-                            <t-option
-                              v-for="item in onPrintRulesList.list"
-                              :key="item.id"
-                              :label="item.ruleName"
-                              :value="item.id"
-                            />
-                          </t-select>
-                          <t-button theme="primary" :disabled="!generateData.moScheduleId" @click="onGenerate">
-                            生成
-                          </t-button>
-                        </t-space>
-                      </template>
-                    </cmp-table>
-                  </cmp-card>
+                  <!-- ################# 产品标签打印 上1️⃣上 表格数据 ###################### -->
+                  <cmp-table
+                    ref="tableRefTop"
+                    v-model:pagination="pageUITop"
+                    row-key="moScheduleId"
+                    :fixed-height="true"
+                    :active-row-type="'single'"
+                    :hover="true"
+                    :table-column="labelPrintTop"
+                    :table-data="printTopTabData.list"
+                    :total="totalPrintTop"
+                    select-on-row-click
+                    style="height: 300px"
+                    @select-change="onGenerateChange"
+                    @refresh="onTopRefresh"
+                  >
+                    <template #title>
+                      {{ '产品标签打印列表' }}
+                    </template>
+                    <template #thisTimeQty="{ row }">
+                      <t-input-number
+                        v-model="row.thisTimeQty"
+                        :auto-width="true"
+                        theme="column"
+                        :min="0"
+                        @change="(value) => inputTimeQtyChange(value, row)"
+                      />
+                    </template>
+                    <template #button>
+                      <t-space :size="8">
+                        <t-select
+                          v-model="generateData.barcodeRuleId"
+                          :clearable="true"
+                          style="width: 240px"
+                          label="条码规则"
+                        >
+                          <t-option
+                            v-for="item in onPrintRulesList.list"
+                            :key="item.id"
+                            :label="item.ruleName"
+                            :value="item.id"
+                          />
+                        </t-select>
+                        <t-button theme="primary" :disabled="!generateData.moScheduleId" @click="onGenerate">
+                          生成
+                        </t-button>
+                      </t-space>
+                    </template>
+                  </cmp-table>
                 </cmp-container>
               </cmp-card>
               <cmp-card>
@@ -99,6 +98,7 @@
                   :total="totalPrintDown"
                   select-on-row-click
                   :selected-row-keys="selectedRowKeys"
+                  style="height: 300px"
                   @select-change="onPrintChange"
                   @refresh="onDownRefresh"
                 >
@@ -161,6 +161,9 @@
                     ref="tableRefRight"
                     v-model:pagination="pageUI"
                     row-key="barcodeWipId"
+                    :fixed-height="true"
+                    :active-row-type="'single'"
+                    :hover="true"
                     :table-column="labelManage"
                     :table-data="manageTabData.list"
                     :total="totalManage"
@@ -179,9 +182,15 @@
                       </t-popconfirm>
                     </template>
                     <template #button>
-                      <t-select v-model="printTemplate" label="打印模板" :clearable="true" style="width: 240px">
+                      <t-select
+                        v-model="printTemplate"
+                        label="打印模板"
+                        :clearable="true"
+                        style="width: 240px"
+                        :on-popup-visible-change="onPopupVisibleChange"
+                      >
                         <t-option
-                          v-for="item in onPrintTemplateList.list"
+                          v-for="item in onPrintManagementList.list"
                           :key="item.id"
                           :label="item.tmplName"
                           :value="item.id"
@@ -220,8 +229,8 @@
   <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
     <t-form ref="formRef" :data="reprintDialog" :rules="rules" @submit="onAnomalyTypeSubmit">
       <t-row :gutter="[32, 16]">
-        <t-col :span="12">
-          <t-form-item v-if="reprintVoidSwitch" label="补打原因" name="reprintData">
+        <t-col v-if="reprintVoidSwitch" :span="12">
+          <t-form-item label="补打原因" name="reprintData">
             <t-select v-model="reprintDialog.reprintData" :clearable="true">
               <t-option
                 v-for="item in reprintDataList.list"
@@ -232,8 +241,8 @@
             </t-select>
           </t-form-item>
         </t-col>
-        <t-col :span="12">
-          <t-form-item v-if="!reprintVoidSwitch" label="作废" name="reprintData">
+        <t-col v-if="!reprintVoidSwitch" :span="12">
+          <t-form-item label="作废" name="reprintData">
             <t-select v-model="reprintDialog.reprintData" :clearable="true">
               <t-option
                 v-for="item in cancellationDataList.list"
@@ -244,12 +253,8 @@
             </t-select>
           </t-form-item>
         </t-col>
-        <t-col :span="10">
-          <t-form-item
-            v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-            label="补打原因"
-            name="restsData"
-          >
+        <t-col v-if="isReprintCancellation && reprintDialog.reprintData === '其他原因'" :span="10">
+          <t-form-item label="补打原因" name="restsData">
             <t-textarea
               v-model="reprintDialog.restsData"
               placeholder="请输入补打原因"
@@ -258,12 +263,8 @@
             />
           </t-form-item>
         </t-col>
-        <t-col :span="10">
-          <t-form-item
-            v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'"
-            label="作废原因"
-            name="restsData"
-          >
+        <t-col v-if="!isReprintCancellation && reprintDialog.reprintData === '其他原因'" :span="10">
+          <t-form-item label="作废原因" name="restsData">
             <t-textarea
               v-model="reprintDialog.restsData"
               placeholder="请输入作废原因"
@@ -275,7 +276,7 @@
       </t-row>
     </t-form>
     <template #footer>
-      <t-button theme="default" variant="base">取消</t-button>
+      <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
       <t-button theme="primary" @click="onSecondarySubmit">{{ buttonSwitch }}</t-button>
     </template>
   </t-dialog>
@@ -711,7 +712,7 @@ const topPrintID = ref(null);
 const topPrintData = ref({
   pageNum: 1,
   pageSize: 10,
-  planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+  planDateStart: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
   planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
   moScheduleId: '', // 工单ID
   workshopId: '', // 车间 ID
@@ -783,6 +784,21 @@ const onLabelManageTabData = async () => {
   totalManage.value = res.total;
 };
 
+// 管理界面打印模板 事件
+const onPopupVisibleChange = async (visible) => {
+  if (visible) {
+    if (moScheduleIdSole.value.length < 1) {
+      MessagePlugin.warning('请至少选择一条数据！');
+      return;
+    }
+    if (moScheduleIdSole.value.length > 1) {
+      MessagePlugin.warning('存在排产单不一致，请重新选择！');
+      return;
+    }
+    await onPrintManagementData(moScheduleIdSole.value[0]);
+  }
+};
+
 // 补打 点击事件
 const reprintVoidSwitch = ref(false); // 控制
 const onReprint = () => {
@@ -793,7 +809,7 @@ const onReprint = () => {
   }
   const specificStatus = barcodeWipStatusNameArr.value.some((item) => item === '已生成' || item === '已报废');
   if (specificStatus) {
-    MessagePlugin.warning('存在条码状态为已生成、已报废状态，不允许补打');
+    MessagePlugin.warning('存在条码状态为已生成、已报废状态，不允许补打！');
     return;
   }
   isReprintCancellation.value = true;
@@ -856,14 +872,21 @@ const onGenerateChange = async (value: any, context: any) => {
 const onPrintRulesList = reactive({ list: [] });
 const onPrintRulesData = async (moScheId) => {
   const res = await api.labelManage.getBarcodeRuleList({ moScheId });
-  onPrintRulesList.list = res?.list;
+  onPrintRulesList.list = res;
 };
 
 // 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async (moScheId) => {
   const res = await api.labelManage.getPrintTmplList({ moScheId });
-  onPrintTemplateList.list = res?.list;
+  onPrintTemplateList.list = res;
+};
+
+// 管理界面打印模板 下拉数据
+const onPrintManagementList = reactive({ list: [] });
+const onPrintManagementData = async (moScheId) => {
+  const res = await api.labelManage.getPrintTmplList({ moScheId });
+  onPrintManagementList.list = res;
 };
 
 // 本次生成数量change事件
@@ -954,9 +977,17 @@ const onPrintChange = (value: any, context) => {
   selectedRowKeys.value = value;
 };
 
+function removeDuplicates(array) {
+  return [...new Set(array)];
+}
+
 const barcodeWipStatusNameArr = ref([]);
+const moScheduleIdSole = ref([]); // 获取唯一的排产单id，用来获取 打印模板
 const onProductRightFetchData = (value: any, context: any) => {
+  onPrintManagementList.list = [];
   barcodeWipStatusNameArr.value = context.selectedRowData.map((item: any) => item.barcodeWipStatusName);
+  const newArr = context.selectedRowData.map((item) => item.moScheduleId);
+  moScheduleIdSole.value = removeDuplicates(newArr);
   productSelectedRowKeys.value = value;
 };
 

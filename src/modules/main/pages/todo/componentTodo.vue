@@ -221,6 +221,9 @@ const onHandelTodoMenu = async () => {
 .list-item {
   width: 100%;
   // margin-top: 10px;
+  :deep(.t-badge--circle) {
+    top: 12px !important;
+  }
 }
 
 .cpm-box {
@@ -229,7 +232,7 @@ const onHandelTodoMenu = async () => {
 }
 
 .table-cell-href {
-  color: rgb(63 93 237 / 100%);
+  color: var(--td-brand-color);
   cursor: pointer;
 }
 

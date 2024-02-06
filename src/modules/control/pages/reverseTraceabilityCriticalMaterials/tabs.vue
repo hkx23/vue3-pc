@@ -310,13 +310,13 @@ const productBasicInformation: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
   {
-    colKey: 'preProcessName',
+    colKey: 'curProcessName',
     title: '工序',
     align: 'center',
     width: '60',
   },
   {
-    colKey: 'preWorkstationName',
+    colKey: 'curWorkstationName',
     title: '工站',
     align: 'center',
     width: '100',

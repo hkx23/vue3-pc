@@ -1,4 +1,4 @@
-<!-- 箱包关系报表 -->
+<!-- wip报表 -->
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
@@ -8,7 +8,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="deliveryCardId"
+        row-key="moId"
         :table-column="columnsWip"
         :table-data="WipRepairVOData"
         :total="total"
@@ -117,50 +117,42 @@ const columnsWip = computed(() => {
     {
       colKey: 'serial-number',
       title: '序号',
-      align: 'center',
       width: '60',
     },
     {
       colKey: 'moCode',
       title: '工单号',
-      align: 'center',
       width: '110',
     },
     {
       colKey: 'mitemCode',
       title: '产品编码',
-      align: 'center',
       width: '110',
     },
     {
       colKey: 'moClass',
       title: '工单类型',
-      align: 'center',
       width: '130',
     },
     {
       colKey: 'workshopName',
       title: '车间',
-      align: 'center',
       width: '100',
     },
     {
       colKey: 'planQty',
       title: '计划数量',
-      align: 'center',
       width: '100',
     },
     {
       colKey: 'SUMWip',
       title: 'WIP合计',
-      align: 'center',
       width: '100',
     },
     ...columnsData.value,
     {
       colKey: 'completedNum',
       title: '完工数量',
-      align: 'center',
       width: '100',
       fixed: 'right',
     },
@@ -171,31 +163,26 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
     title: '序号',
-    align: 'center',
     width: '90',
   },
   {
     colKey: 'mitemCode',
     title: '物料编码',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'mitemDesc',
     title: '物料描述',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'moRequestQty',
     title: '工单需求数量',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'uom',
     title: '单位',
-    align: 'center',
     width: '100',
   },
 ];
@@ -204,43 +191,36 @@ const columnsDetail: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
     title: '序号',
-    align: 'center',
     width: '90',
   },
   {
     colKey: 'serialNumber',
     title: '产品条码',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'workcenterName',
     title: '当前工作中心',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'workstationName',
     title: '当前工站',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'status',
     title: '产品状态',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'timeProcessing',
     title: '加工时间',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'timeStay',
     title: '停留时间(M)',
-    align: 'center',
     width: '130',
   },
 ];
@@ -336,7 +316,6 @@ const onGetProductMaintenanceReport = async () => {
   const columns = uniqueProcessAliases.map((processAlias) => ({
     colKey: processAlias, // 例如，将 processAlias 转换为适合作为 key 的格式
     title: processAlias,
-    align: 'center',
     width: '100',
     cell: (h, { row, col }) => {
       return (
@@ -354,6 +333,10 @@ const onGetProductMaintenanceReport = async () => {
   }));
   columnsData.value = columns;
   WipRepairVOData.value = res.list;
+  console.log(
+    '🚀 ~ file: index.vue:357 ~ onGetProductMaintenanceReport ~ WipRepairVOData.value:',
+    WipRepairVOData.value,
+  );
   total.value = res.total;
 };
 const onRefresh = async () => {

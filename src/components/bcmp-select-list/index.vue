@@ -12,6 +12,7 @@
       :readonly="readonly"
       table-layout="auto"
       v-bind="selectAttr"
+      :min-collapsed-num="1"
       :value-key="keywords.value"
       :input-value="selectSearch"
       :filterable="filterable"
