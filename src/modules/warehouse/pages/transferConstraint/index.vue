@@ -160,37 +160,31 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'categoryName',
     title: '业务类型',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'oidOrgName',
     title: '源组织与仓库',
-    align: 'center',
     width: '250',
   },
   {
     colKey: 'businessDirection',
     title: '目标组织与仓库',
-    align: 'center',
     width: '250',
   },
   {
     colKey: 'creator',
     title: '创建人',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'timeCreate',
     title: '创建时间',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'op',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
     cell: 'actionSlot', // 引用具名插槽
