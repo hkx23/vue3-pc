@@ -157,12 +157,12 @@ onMounted(() => {
 });
 // 装入数组
 const column = ref([
-  { type: 'multiple', align: 'center', colKey: 'checkbox' },
-  { title: '序号', colKey: 'serial-number', align: 'center', width: 120 },
-  { title: t('defectHandling.dealMethodType'), colKey: 'dealMethodType', align: 'center', width: 120 },
-  { title: t('defectHandling.methodCode'), colKey: 'methodCode', align: 'center', width: 120 },
-  { title: t('defectHandling.methodName'), colKey: 'methodName', align: 'center', width: 120 },
-  { title: '操作', colKey: 'op', align: 'left', fixed: 'right', width: 120 },
+  { type: 'multiple', colKey: 'checkbox' },
+  { title: '序号', colKey: 'serial-number', width: 120 },
+  { title: t('defectHandling.dealMethodType'), colKey: 'dealMethodType', width: 120 },
+  { title: t('defectHandling.methodCode'), colKey: 'methodCode', width: 120 },
+  { title: t('defectHandling.methodName'), colKey: 'methodName', width: 120 },
+  { title: '操作', colKey: 'op', fixed: 'right', width: 120 },
 ]);
 // table数组
 const defectHandlingData = ref([]);
