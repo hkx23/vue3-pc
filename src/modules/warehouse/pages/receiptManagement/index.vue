@@ -13,6 +13,8 @@
         :table-column="tableReckoningManagementColumns"
         :table-data="tableDataReceipt"
         :total="dataTotal"
+        :hover="true"
+        :fixed-height="true"
         :loading="loading"
         max-height="400px"
         empty="没有符合条件的数据"

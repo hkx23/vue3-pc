@@ -7,7 +7,7 @@
         <t-row :gutter="[32, 12]" style="margin-top: 10px">
           <t-form-item label="检验水平">
             <!-- @select-change="onSelectChange"  todo-->
-            <t-select v-model="TestLevel">
+            <t-select v-model="TestLevel" clearable>
               <t-option
                 v-for="shift in TestLevelOption"
                 :key="shift.value"
@@ -17,7 +17,7 @@
             </t-select>
           </t-form-item>
           <t-form-item label="严格度">
-            <t-select v-model="Rigidity">
+            <t-select v-model="Rigidity" clearable>
               <t-option
                 v-for="shift in RigidityOption"
                 :key="shift.value"
@@ -28,7 +28,14 @@
           </t-form-item>
         </t-row>
       </t-form>
-      <cmp-table :data="tableData" :columns="columns" :bordered="true" :show-pagination="false">
+      <cmp-table
+        :data="tableData"
+        :columns="columns"
+        :bordered="true"
+        :show-pagination="false"
+        :hover="true"
+        :fixed-height="true"
+      >
         <template #range="{ row }">
           <div v-for="(item, index) in row.range" :key="index" style="margin-bottom: 6px">{{ item }}</div>
         </template>
@@ -42,7 +49,7 @@
 
 <script setup lang="ts">
 import { PrimaryTableCol } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 
@@ -91,24 +98,64 @@ const getRigidity = async () => {
 // 左侧数据结构
 const tableData = ref([
   {
-    range: ['2~8', '9~15', '16~25'],
+    range: ['2~8'],
     sampleNumber: '235',
   },
   {
-    range: ['26~50', '51~90', '91~150'],
+    range: ['9~15'],
+    sampleNumber: '235',
+  },
+  {
+    range: ['16~25'],
+    sampleNumber: '235',
+  },
+  {
+    range: ['26~50'],
     sampleNumber: '81320',
   },
   {
-    range: ['151~280', '281~500', '501~1200'],
+    range: ['51~90'],
     sampleNumber: '81320',
   },
   {
-    range: ['1201~3200', '3201~10000', '10001~35000'],
+    range: ['91~150'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['151~280'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['281~500'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['501~1200'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['1201~3200'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['3201~10000'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['10001~35000'],
     sampleNumber: '81320',
   },
 
   {
-    range: ['35001~150000', '150001~500000', '500001及基以上'],
+    range: ['35001~150000'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['150001~500000'],
+    sampleNumber: '81320',
+  },
+  {
+    range: ['500001及基以上'],
     sampleNumber: '81320',
   },
   {
@@ -172,6 +219,25 @@ interface TableRowData {
   range: string[];
   sampleNumber: string;
 }
+
+// Method to fetch updated table data
+const updateTableData = async () => {
+  // Your API call logic here, using TestLevel.value and Rigidity.value
+  // For demonstration, let's say we're fetching data based on these selections
+  try {
+    // const updatedData = await api.fetchUpdatedData({
+    //   testLevel: TestLevel.value,
+    //   rigidity: Rigidity.value,
+    // });
+    // tableData.value = updatedData; // Assuming the API returns the data in the correct format
+  } catch (error) {
+    console.error('Error fetching updated table data:', error);
+  }
+};
+
+// Watchers for TestLevel and Rigidity to update table data
+watch(TestLevel, updateTableData);
+watch(Rigidity, updateTableData);
 
 // const onSelectChange = (value: string, option: any) => {
 //   // 处理选择变更的逻辑

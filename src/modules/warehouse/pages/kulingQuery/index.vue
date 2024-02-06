@@ -14,6 +14,7 @@
         :total="dataTotal"
         :loading="loading"
         :fixed-height="true"
+        :hover="true"
         empty="没有符合条件的数据"
         style="height: 400px"
         @refresh="tabRefresh"
@@ -110,7 +111,7 @@ const optsKuling = computed(() => {
 });
 
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '物料编码', colKey: 'mitemCode', width: 150 },
   { title: '物料描述', width: 150, colKey: 'mitemDesc' },
   { title: '仓库编码', width: 120, colKey: 'warehouseCode' },

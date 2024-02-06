@@ -12,6 +12,7 @@
         :table-data="tableDataLocation"
         select-on-row-click
         :fixed-height="true"
+        :hover="true"
         :loading="loading"
         :total="dataTotal"
         @refresh="tabRefresh"

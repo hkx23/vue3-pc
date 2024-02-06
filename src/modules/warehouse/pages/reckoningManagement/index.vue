@@ -14,6 +14,7 @@
           :table-data="tableDataReckoning"
           select-on-row-click
           :fixed-height="true"
+          :hover="true"
           style="height: 200px"
           :total="dataTotal"
           :loading="loading"

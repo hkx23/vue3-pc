@@ -21,6 +21,9 @@
           empty="没有符合条件的数据"
           @select-change="handleRowSelectChange"
         >
+          <!-- <template #title>
+            {{ '容器' }}
+          </template> -->
           <template #button>
             <t-space :size="8">
               <t-select label="打印模板" clearable>
@@ -73,9 +76,14 @@
           :table-data="tableContainerData2"
           select-on-row-click
           :total="dataTotal2"
+          :fixed-height="true"
           empty="没有符合条件的数据"
           style="height: 400px"
         >
+          <template #title>
+            {{ '物料关联' }}
+          </template>
+
           <template #button>
             <t-space :size="8">
               <t-button theme="primary" @click="add">新增</t-button>
