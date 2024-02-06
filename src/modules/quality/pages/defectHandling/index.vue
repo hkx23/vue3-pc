@@ -22,7 +22,9 @@
         </template>
         <template #button>
           <t-button theme="primary" @click="onHandelAdd">新增</t-button>
-          <t-button theme="default" @click="onWholeAdd">删除</t-button>
+          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onWholeAdd">
+            <t-button theme="default">删除</t-button>
+          </t-popconfirm>
         </template>
         <template #op="{ row }">
           <t-space :size="8">
@@ -64,9 +66,6 @@
       <t-button theme="default" variant="base" @click="onSecondaryDelete">取消</t-button>
       <t-button theme="primary" @click="onSecondarySubmit">确认</t-button>
     </template>
-  </t-dialog>
-  <t-dialog v-model:visible="deleteVisible" :header="t('common.message.confirmDelete')" :on-confirm="onSave">
-    <h3 class="list-save">选中{{ selectedRowKeys.length }}条</h3>
   </t-dialog>
 </template>
 
@@ -141,7 +140,6 @@ const rehandleSelectChange = (value: any) => {
   console.log(selectedRowKeys.value);
 };
 
-const deleteVisible = ref(false);
 // form表单
 const formData = ref({
   dealMethodType: '', // 处理方法类别名称
@@ -203,7 +201,6 @@ const onSave = async () => {
       pageUI.value.page--;
     }
     onfetchData();
-    deleteVisible.value = false;
   } catch (e) {
     console.log(e);
   }
@@ -212,9 +209,8 @@ const onSave = async () => {
 const onWholeAdd = async () => {
   if (selectedRowKeys.value.length === 0) {
     MessagePlugin.error('未选择');
-    return;
   }
-  deleteVisible.value = true;
+  await onSave();
 };
 const AddAnyEdit = ref(1); // 1表示新增  0表示编辑
 const onAddAnyEdit = async () => {
