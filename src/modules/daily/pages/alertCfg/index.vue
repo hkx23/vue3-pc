@@ -128,7 +128,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
     type: 'multiple',
-    width: 46,
+    width: '50',
   },
   {
     colKey: 'alertType',

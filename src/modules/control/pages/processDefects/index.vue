@@ -58,7 +58,7 @@
             <cmp-query :opts="opts" :show-button="false" @submit="onInput"> </cmp-query>
             <t-button @click="onHandelAdd">新增</t-button>
             <t-popconfirm content="确认删除吗" @confirm="onHandelDelete">
-              <t-button theme="default" variant="base">删除</t-button>
+              <t-button theme="default" variant="base">批量删除</t-button>
             </t-popconfirm>
           </template>
           <template #op="{ row }">
@@ -162,18 +162,17 @@ const { t } = useLang();
 // const dialogShow = ref(1);
 // table定义
 const column = ref([
-  { colKey: 'multiple', type: 'multiple', align: 'center' },
-  { title: t('processDefects.displaySeq'), colKey: 'displaySeq', align: 'center', width: 120 },
-  { title: t('processDefects.defectCode'), colKey: 'defectCode', align: 'center', width: 120 },
-  { title: t('processDefects.defectName'), colKey: 'defectName', align: 'center', width: 120 },
+  { colKey: 'multiple', type: 'multiple', width: 100 },
+  { title: t('processDefects.displaySeq'), colKey: 'displaySeq', width: 100 },
+  { title: t('processDefects.defectCode'), colKey: 'defectCode', width: 120 },
+  { title: t('processDefects.defectName'), colKey: 'defectName', width: 120 },
   {
     colKey: 'state',
     title: '状态',
-    align: 'center',
     width: '100',
     cell: 'stateSwitch',
   },
-  { title: '操作', colKey: 'op', align: 'center', fixed: 'right', width: 120 },
+  { title: '操作', colKey: 'op', fixed: 'right', width: 120 },
 ]);
 // table数据
 const processData = ref([]);
