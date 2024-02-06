@@ -12,7 +12,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="onhandId"
+        row-key="onlyId"
         empty="没有符合条件的数据"
         :table-column="columns"
         :fixed-height="true"
@@ -41,7 +41,7 @@
     <cmp-table
       ref="tableRef"
       v-model:pagination="pageUITwo"
-      row-key="id"
+      row-key="labelNo"
       empty="没有符合条件的数据"
       :table-column="columnsDetail"
       :fixed-height="true"
@@ -62,7 +62,7 @@ import dayjs from 'dayjs';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api } from '@/api/warehouse';
+import { api, MitemShelflifeReportVO } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -240,6 +240,9 @@ const expirationDateParam = ref({
   receiveDateEnd: endOfToday.format('YYYY-MM-DD HH:mm:ss'), // 结束日期
 });
 
+interface MitemShelflifeReportVOWithId extends MitemShelflifeReportVO {
+  onlyId: string;
+}
 // 获取 表格 数据
 const onGetExpirationData = async () => {
   // tableRef.value.setSelectedRowKeys([]);
@@ -247,7 +250,11 @@ const onGetExpirationData = async () => {
   expirationDateParam.value.pageNum = pageUI.value.page;
   expirationDateParam.value.pageSize = pageUI.value.rows;
   const res = await api.mitemShelflifeReport.getList(expirationDateParam.value);
+  (res.list as MitemShelflifeReportVOWithId[]).forEach((item) => {
+    item.onlyId = Date.now() + Math.random().toString(16).substring(2); // 生成唯一标识符
+  });
   transferData.list = res.list;
+  console.log('🚀 ~ file: index.vue:257 ~ onGetExpirationData ~ transferData.list:', transferData.list);
   transferTotal.value = res.total;
 };
 
