@@ -8,7 +8,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="deliveryCardId"
+        row-key="moScheCode"
         :table-column="columns"
         :table-data="WipRepairVOData"
         :total="total"
@@ -141,6 +141,7 @@ const onGetProductMaintenanceReport = async () => {
   ProductMaintenanceReportData.value.pageNum = pageUI.value.page;
   ProductMaintenanceReportData.value.pageSize = pageUI.value.rows;
   const res = await api.wipRepair.getReportData(ProductMaintenanceReportData.value);
+  console.log('🚀 ~ file: index.vue:144 ~ onGetProductMaintenanceReport ~ res:', res);
   WipRepairVOData.value = res.list;
   total.value = res.total;
 };
