@@ -2083,14 +2083,14 @@ export interface ProductReworkVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3340,16 +3340,16 @@ export interface BarcodeWipCollectVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
   stateName?: string;
-  datetimeScheStr?: string;
+  isState?: boolean;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  isState?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -3456,15 +3456,15 @@ export interface BarcodeWipVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
   workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
   stateName?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  defectCodeStr?: string;
   isState?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3701,8 +3701,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -4309,6 +4309,41 @@ export interface ResultListBarcodeRule {
   /** 响应数据 */
   data?: BarcodeRule[] | null;
 }
+
+/** 通用响应类 */
+export interface ResultListDataTableVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DataTableVO[] | null;
+}
+
+/** 数据表列对象 */
+export interface DataTableColumnVO {
+  /** 列名 */
+  columnName?: string;
+  /** 列描述 */
+  columnDesc?: string;
+  /** 列类型 */
+  columnType?: string;
+}
+
+/** 数据表对象 */
+export type DataTableVO = {
+  /** 表名 */
+  tableName?: string;
+  /** 表模型名称 */
+  tableModelName?: string;
+  /** 表描述 */
+  tableDescription?: string;
+  /** 文件最后修改时间戳 */
+  columns?: DataTableColumnVO[];
+} | null;
 
 /** 响应数据 */
 export type PagingDataPrintTmpl = {
@@ -6281,6 +6316,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/moBom/getMoBomListByMoCode`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  importManage: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Tables
+     * @summary 根据领域获取数据表列表
+     * @request GET:/importManage/tables
+     * @secure
+     */
+    tables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/control/importManage/tables`, {
+        method: 'GET',
       }),
   },
   defectCode: {

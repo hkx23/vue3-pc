@@ -7,7 +7,7 @@
         <t-row :gutter="[32, 12]" style="margin-top: 10px">
           <t-form-item label="检验水平">
             <!-- @select-change="onSelectChange"  todo-->
-            <t-select v-model="TestLevel">
+            <t-select v-model="TestLevel" clearable>
               <t-option
                 v-for="shift in TestLevelOption"
                 :key="shift.value"
@@ -17,7 +17,7 @@
             </t-select>
           </t-form-item>
           <t-form-item label="严格度">
-            <t-select v-model="Rigidity">
+            <t-select v-model="Rigidity" clearable>
               <t-option
                 v-for="shift in RigidityOption"
                 :key="shift.value"
@@ -28,7 +28,14 @@
           </t-form-item>
         </t-row>
       </t-form>
-      <cmp-table :data="tableData" :columns="columns" :bordered="true" :show-pagination="false">
+      <cmp-table
+        :data="tableData"
+        :columns="columns"
+        :bordered="true"
+        :show-pagination="false"
+        :hover="true"
+        :fixed-height="true"
+      >
         <template #range="{ row }">
           <div v-for="(item, index) in row.range" :key="index" style="margin-bottom: 6px">{{ item }}</div>
         </template>
@@ -42,7 +49,7 @@
 
 <script setup lang="ts">
 import { PrimaryTableCol } from 'tdesign-vue-next';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 
@@ -212,6 +219,25 @@ interface TableRowData {
   range: string[];
   sampleNumber: string;
 }
+
+// Method to fetch updated table data
+const updateTableData = async () => {
+  // Your API call logic here, using TestLevel.value and Rigidity.value
+  // For demonstration, let's say we're fetching data based on these selections
+  try {
+    // const updatedData = await api.fetchUpdatedData({
+    //   testLevel: TestLevel.value,
+    //   rigidity: Rigidity.value,
+    // });
+    // tableData.value = updatedData; // Assuming the API returns the data in the correct format
+  } catch (error) {
+    console.error('Error fetching updated table data:', error);
+  }
+};
+
+// Watchers for TestLevel and Rigidity to update table data
+watch(TestLevel, updateTableData);
+watch(Rigidity, updateTableData);
 
 // const onSelectChange = (value: string, option: any) => {
 //   // 处理选择变更的逻辑

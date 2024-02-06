@@ -3898,6 +3898,8 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
+  isState?: boolean;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
@@ -3905,8 +3907,6 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4538,6 +4538,82 @@ export interface ResultPagingDataIntegratedConsoleVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIntegratedConsoleVO;
+}
+
+/** 导入配置表 */
+export interface ImportSetting {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 导入关键编码 */
+  importKeyCode?: string;
+  /** 业务领域 */
+  businessDomain?: string;
+  /** 数据表名 */
+  tableName?: string;
+  /** 导入说明 */
+  importDesc?: string;
+  /** 导入模板地址 */
+  importTemplateUrl?: string;
+  /**
+   * 导入数据条数
+   * @format int32
+   */
+  batchCount?: number;
+  /** 数据表名 */
+  sourceType?: string;
+}
+
+/** 响应数据 */
+export type PagingDataImportSetting = {
+  list?: ImportSetting[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataImportSetting {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataImportSetting;
+}
+
+/** 通用响应类 */
+export interface ResultImportSetting {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 导入配置表 */
+  data?: ImportSetting;
 }
 
 export interface FileVO {
@@ -7063,6 +7139,41 @@ export interface ResultPagingDataModule {
   /** 响应数据 */
   data?: PagingDataModule;
 }
+
+/** 通用响应类 */
+export interface ResultListDataTableVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DataTableVO[] | null;
+}
+
+/** 数据表列对象 */
+export interface DataTableColumnVO {
+  /** 列名 */
+  columnName?: string;
+  /** 列描述 */
+  columnDesc?: string;
+  /** 列类型 */
+  columnType?: string;
+}
+
+/** 数据表对象 */
+export type DataTableVO = {
+  /** 表名 */
+  tableName?: string;
+  /** 表模型名称 */
+  tableModelName?: string;
+  /** 表描述 */
+  tableDescription?: string;
+  /** 文件最后修改时间戳 */
+  columns?: DataTableColumnVO[];
+} | null;
 
 /** 通用响应类 */
 export interface ResultListFavorite {
@@ -10925,6 +11036,81 @@ export const api = {
       http.request<ResultPagingDataIntegratedConsoleVO['data']>(`/api/main/integratedConsole/getList`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  importManage: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Search
+     * @summary 获取用户信息列表
+     * @request POST:/importManage/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataImportSetting['data']>(`/api/main/importManage/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetItemById
+     * @summary 根据ID获取导入配置信息
+     * @request POST:/importManage/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultImportSetting['data']>(`/api/main/importManage/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Edit
+     * @summary 编辑导入配置信息
+     * @request POST:/importManage/edit
+     * @secure
+     */
+    edit: (data: ImportSetting) =>
+      http.request<ResultObject['data']>(`/api/main/importManage/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Add
+     * @summary 新增导入配置信息
+     * @request POST:/importManage/add
+     * @secure
+     */
+    add: (data: ImportSetting) =>
+      http.request<ResultObject['data']>(`/api/main/importManage/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Tables
+     * @summary 根据领域获取数据表列表
+     * @request GET:/importManage/tables
+     * @secure
+     */
+    tables: (query: { businessCode: string }) =>
+      http.request<ResultListDataTableVO['data']>(`/api/main/importManage/tables`, {
+        method: 'GET',
+        params: query,
       }),
   },
   file: {
