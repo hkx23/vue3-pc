@@ -9,6 +9,238 @@
  * ---------------------------------------------------------------
  */
 
+/** 严格度转移规则表 */
+export interface StringencyTransferRule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 源检验严格度 */
+  sourceInspectStringency?: string;
+  /** 目标检验严格度 */
+  targetInspectStringency?: string;
+  /**
+   * 连续检验批次数
+   * @format int32
+   */
+  inspectBatchTimes?: number;
+  /**
+   * 不合格次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /** 备注 */
+  memo?: string;
+}
+
+/** 通用响应类 */
+export interface ResultObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: object | null;
+}
+
+/** 严格度转移规则表 */
+export interface StringencyTransferRuleSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+}
+
+/** 响应数据 */
+export type PagingDataStringencyTransferRuleVO = {
+  list?: StringencyTransferRuleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataStringencyTransferRuleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataStringencyTransferRuleVO;
+}
+
+/** 严格度转移规则表 */
+export interface StringencyTransferRuleVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 源检验严格度 */
+  sourceInspectStringency?: string;
+  /** 目标检验严格度 */
+  targetInspectStringency?: string;
+  /**
+   * 连续检验批次数
+   * @format int32
+   */
+  inspectBatchTimes?: number;
+  /**
+   * 不合格次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /** 备注 */
+  memo?: string;
+  /** 源检验严格度 */
+  sourceInspectStringencyName?: string;
+  /** 目标检验严格度 */
+  targetInspectStringencyName?: string;
+}
+
+export interface Filter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  value?: string;
+}
+
+export interface SamplingStdDtlSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  sampingStdId?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
+}
+
+export interface SamplingStdSearch {
+  sampingStdCode?: string;
+  /** @format int32 */
+  operationScope?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int32 */
+  pageNum?: number;
+}
+
+/** 响应数据 */
+export type PagingDataSamplingStdVO = {
+  list?: SamplingStdVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSamplingStdVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSamplingStdVO;
+}
+
+export interface SamplingStdVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标准编号 */
+  sampingStdCode?: string;
+  /**
+   * 应用范围，1：物注，2：产品，3：物料+产品
+   * @format int32
+   */
+  operationScope?: number;
+  /**
+   * 检验方法，0：按样品量抽样，1：按比例抽样
+   * @format int32
+   */
+  operationMethod?: number;
+  /** 备注 */
+  memo?: string;
+  operationScopeName?: string;
+  operationMethodName?: string;
+  creatorName?: string;
+  samplingStdVO?: SamplingStdVO;
+}
+
 export interface MitemForwardTraceSearch {
   /**
    * 页码
@@ -99,6 +331,60 @@ export interface ResultPagingDataMFTSubVO {
 }
 
 /** 通用响应类 */
+export interface ResultListSamplingStd {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: SamplingStd[] | null;
+}
+
+/** 企业抽样方案表 */
+export type SamplingStd = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标准编号 */
+  sampingStdCode?: string;
+  /**
+   * 应用范围，1：物注，2：产品，3：物料+产品
+   * @format int32
+   */
+  operationScope?: number;
+  /**
+   * 检验方法，0：按样品量抽样，1：按比例抽样
+   * @format int32
+   */
+  operationMethod?: number;
+  /** 备注 */
+  memo?: string;
+} | null;
+
+/** 通用响应类 */
 export interface ResultListSampleCodeVO {
   /**
    * 响应代码
@@ -126,10 +412,10 @@ export type SampleCodeVO = {
   s1?: string;
   s2?: string;
   s3?: string;
-  iii?: string;
+  s4?: string;
   i?: string;
   ii?: string;
-  s4?: string;
+  iii?: string;
 } | null;
 
 /**
@@ -140,6 +426,98 @@ export type SampleCodeVO = {
  */
 
 export const api = {
+  stringencyTransferRule: {
+    /**
+     * No description
+     *
+     * @tags 严格度转移规则表
+     * @name Modify
+     * @summary 编辑严格度转移规则
+     * @request POST:/stringencyTransferRule/modify
+     * @secure
+     */
+    modify: (data: StringencyTransferRule) =>
+      http.request<ResultObject['data']>(`/api/quality/stringencyTransferRule/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 严格度转移规则表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/stringencyTransferRule/getList
+     * @secure
+     */
+    getList: (data: StringencyTransferRuleSearch) =>
+      http.request<ResultPagingDataStringencyTransferRuleVO['data']>(`/api/quality/stringencyTransferRule/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  samplingStdDtl: {
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案明细表
+     * @name GetList
+     * @summary 根据抽样标准Id
+     * @request POST:/samplingStdDtl/getlist
+     * @secure
+     */
+    getList: (data: SamplingStdDtlSearch) =>
+      http.request<ResultObject['data']>(`/api/quality/samplingStdDtl/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  samplingStd: {
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案表
+     * @name GetList
+     * @summary 获取抽样标准列表
+     * @request POST:/samplingStd/getList
+     * @secure
+     */
+    getList: (data: SamplingStdSearch) =>
+      http.request<ResultPagingDataSamplingStdVO['data']>(`/api/quality/samplingStd/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案表
+     * @name StateChange
+     * @summary 修改状态
+     * @request GET:/samplingStd/items/{id}
+     * @secure
+     */
+    stateChange: (id: string) =>
+      http.request<ResultObject['data']>(`/api/quality/samplingStd/items/${id}`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案表
+     * @name GetSampingStdCode
+     * @summary 获取标准编码下拉数据
+     * @request GET:/samplingStd/getSampingStdCode
+     * @secure
+     */
+    getSampingStdCode: (query?: { key?: string }) =>
+      http.request<ResultListSamplingStd['data']>(`/api/quality/samplingStd/getSampingStdCode`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
   iqcInspectBill: {
     /**
      * No description

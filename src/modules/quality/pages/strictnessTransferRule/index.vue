@@ -21,10 +21,10 @@
         <template #title>
           {{ '严格度转移规则列表' }}
         </template>
-        <template #stateSwitch="{ row }">
+        <template #state="{ row }">
           <t-switch
+            v-model="row.state"
             :custom-value="[1, 0]"
-            :value="row.state"
             :default-value="row.state"
             @change="(value) => onSwitchChange(row, value)"
           ></t-switch>
@@ -40,26 +40,35 @@
 
   <!-- #严格度转移规则信息 dialog 弹窗 -->
   <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
-    <t-form ref="formRef" :rules="rules" :data="firmFormData" @submit="onAnomalyTypeSubmit">
+    <t-form ref="formRef" :rules="rules" :data="firmFormData" :label-width="120" @submit="onAnomalyTypeSubmit">
       <!-- 第 1️⃣ 行数据 -->
-      <t-form-item label="转移前严格度" name="epCode">
-        <t-input v-model="firmFormData.epCode" disabled></t-input>
+      <t-form-item label="转移前严格度" name="sourceInspectStringency">
+        <t-input v-model="firmFormData.sourceInspectStringency" disabled></t-input>
       </t-form-item>
       <!-- 第 2️⃣ 行数据 -->
-      <t-form-item label="转移后严格度" name="epName">
-        <t-input v-model="firmFormData.epName"></t-input>
+      <t-form-item label="转移后严格度" name="targetInspectStringency">
+        <t-input v-model="firmFormData.targetInspectStringency" disabled></t-input>
       </t-form-item>
       <!-- 第 3️⃣ 行数据 -->
-      <t-form-item label="连续检验批次数" name="epFullName">
-        <t-input v-model="firmFormData.epFullName"></t-input>
+      <t-form-item label="连续检验批次数" name="inspectBatchTimes">
+        <t-input-number
+          v-model="firmFormData.inspectBatchTimes"
+          theme="column"
+          style="width: 100%"
+          min="0"
+        ></t-input-number>
       </t-form-item>
       <!-- 第 4️⃣ 行数据 -->
-      <t-form-item label="不合格次数" name="epAddress">
-        <t-input v-model="firmFormData.epAddress"></t-input>
+      <t-form-item label="不合格次数" name="ngTimes">
+        <t-input-number v-model="firmFormData.ngTimes" theme="column" style="width: 100%" min="0"></t-input-number>
       </t-form-item>
       <!-- 第 5️⃣ 行数据 -->
-      <t-form-item label="满足条件" name="epAddress">
-        <t-input v-model="firmFormData.epAddress"></t-input>
+      <t-form-item label="满足条件" name="memo">
+        <t-input v-model="firmFormData.memo"></t-input>
+      </t-form-item>
+      <!-- 第 4️⃣ 行数据 -->
+      <t-form-item label="状态" name="state">
+        <t-radio-group v-model="firmFormData.state" name="city" :options="itemOptions" size="small"></t-radio-group>
       </t-form-item>
     </t-form>
     <template #footer>
@@ -71,21 +80,34 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import {
+  CustomValidateResolveType,
+  FormInstanceFunctions,
+  FormRules,
+  MessagePlugin,
+  PrimaryTableCol,
+  TableRowData,
+} from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
-import { api } from '@/api/main';
+import { api } from '@/api/quality';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const firmFormData = ref({
   id: '', // 行 ID
-  epCode: '', // 严格度转移规则代码
-  epName: '', // 严格度转移规则简介
-  epFullName: '', // 严格度转移规则全称
-  epAddress: '', // 严格度转移规则地址
+  sourceInspectStringency: '', // 转移前严格度
+  targetInspectStringency: '', // 转移后严格度
+  inspectBatchTimes: 0, // 连续检验批次数
+  ngTimes: 0, // 不合格次数
+  memo: '', // 满足条件
+  state: null, // 状态
 });
 
+const itemOptions = [
+  { label: '禁用', value: 0 },
+  { label: '启用', value: 1 },
+];
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 严格度转移规则信息dialog 弹窗显示隐藏
@@ -109,32 +131,32 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
     width: 64,
   },
   {
-    colKey: 'epCode',
+    colKey: 'sourceInspectStringency',
     title: '转移前严格度',
     width: '100',
   },
   {
-    colKey: 'epName',
+    colKey: 'targetInspectStringency',
     title: '转移后严格度',
     width: '100',
   },
   {
-    colKey: 'epFullName',
+    colKey: 'inspectBatchTimes',
     title: '连续检验批次数',
     width: '130',
   },
   {
-    colKey: 'epAddress',
+    colKey: 'ngTimes',
     title: '不合格批次数',
     width: '80',
   },
   {
-    colKey: 'epAddress',
+    colKey: 'memo',
     title: '满足条件',
     width: '80',
   },
   {
-    colKey: 'stateSwitch',
+    colKey: 'state',
     title: '状态',
     width: '80',
   },
@@ -156,11 +178,29 @@ const onFetchGroupData = async () => {
 
 // 表单定义规则
 const rules: FormRules = {
-  epCode: [{ required: true, trigger: 'blur' }],
-  epName: [{ required: true, trigger: 'blur' }],
-  epFullName: [{ required: true, trigger: 'blur' }],
-  epAddress: [{ required: true, trigger: 'blur' }],
+  inspectBatchTimes: [
+    { required: true, trigger: 'blur' },
+    { validator: validateNumber, trigger: 'blur' },
+  ],
+  ngTimes: [
+    { required: true, trigger: 'blur' },
+    { validator: validateNumber, trigger: 'blur' },
+  ],
+  state: [{ required: true, trigger: 'blur' }],
 };
+
+function validateNumber(value: any): boolean | CustomValidateResolveType {
+  if (Number.isNaN(Number(value))) {
+    return { result: false, message: '该字段必须是数字！', type: 'error' };
+  }
+  if (Number(value) < 0) {
+    return { result: false, message: '该字段不能为负数！', type: 'error' };
+  }
+  if (Number(value) > 2147483647) {
+    return { result: false, message: '数值过大请重新输入！', type: 'error' };
+  }
+  return true;
+}
 // # 初始渲染
 onMounted(async () => {
   await onFirmTabData(); // 获取 严格度转移规则信息表格 数据
@@ -174,14 +214,13 @@ const eidtFormSubmit = () => {
 const enterpriseParam = ref({
   pageNum: 1,
   pageSize: 20,
-  keyword: '', // 仓库编码/名称
 });
 
 // #获取 严格度转移规则信息 数据
 const onFirmTabData = async () => {
   enterpriseParam.value.pageNum = pageUI.value.page;
   enterpriseParam.value.pageSize = pageUI.value.rows;
-  const res = await api.enterprise.getList(enterpriseParam.value);
+  const res = await api.stringencyTransferRule.getList(enterpriseParam.value);
   teamList.list = res.list;
   teamTotal.value = res.total;
 };
@@ -200,15 +239,21 @@ const onEditRow = (row: any) => {
 
 // #编辑严格度转移规则信息请求
 const onGroupRequest = async () => {
-  await api.enterprise.modify(firmFormData.value);
+  await api.stringencyTransferRule.modify(firmFormData.value);
   await onFirmTabData(); // 获取 严格度转移规则信息表格 数据
   formVisible.value = false;
   MessagePlugin.success('编辑成功');
 };
 
-const onSwitchChange = (row, value) => {
-  console.log('🚀 ~ file: index.vue:210 ~ onSwitchChange ~ value:', value);
-  console.log('🚀 ~ file: index.vue:210 ~ onSwitchChange ~ row:', row);
+// 开关点击事件
+const onSwitchChange = async (row, value) => {
+  Object.keys(row).forEach((key) => {
+    if (key in firmFormData.value) {
+      firmFormData.value[key] = row[key];
+    }
+  });
+  firmFormData.value.state = value;
+  await onGroupRequest();
 };
 
 // // @表单提交事件
