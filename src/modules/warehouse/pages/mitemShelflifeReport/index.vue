@@ -12,7 +12,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="id"
+        row-key="onhandId"
         empty="没有符合条件的数据"
         :table-column="columns"
         :fixed-height="true"

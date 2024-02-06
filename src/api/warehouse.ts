@@ -1259,8 +1259,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 响应数据 */
@@ -3087,7 +3087,13 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  flpickQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
   /**
@@ -3095,18 +3101,12 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  flpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
 }
 
 /** 通用响应类 */
@@ -3443,15 +3443,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -5236,15 +5236,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -5981,6 +5981,70 @@ export interface WipCompletionBillVO {
   warehouse?: string;
   /** 创建人 */
   creator?: string;
+}
+
+/** 响应数据 */
+export type AcceptSendSaveReportDTO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  mitemId?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  /** 期末数量 */
+  qty?: number;
+  /**
+   * 年
+   * @format int32
+   */
+  year?: number;
+  /**
+   * 月
+   * @format int32
+   */
+  month?: number;
+  /** 入库 */
+  searchOut?: number;
+  /** 出库 */
+  searchIn?: number;
+  /** 上月库存 */
+  beforeMonth?: number;
+  /** 期末库存 */
+  lastNum?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListAcceptSendSaveReportDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AcceptSendSaveReportDTO[] | null;
 }
 
 /** 响应数据 */
@@ -7052,21 +7116,6 @@ export const api = {
       dtlId: string;
     }) =>
       http.request<ResultPagingDataStockCheckBillVO['data']>(`/api/warehouse/stockCheckBill/getBarcodes`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 盘点单据表
-     * @name ConfirmBillNo
-     * @summary 盘点单据确认
-     * @request GET:/stockCheckBill/confirmBillNo
-     * @secure
-     */
-    confirmBillNo: (query: { billNo: string }) =>
-      http.request<ResultPagingDataStockCheckBillExecuteVO['data']>(`/api/warehouse/stockCheckBill/confirmBillNo`, {
         method: 'GET',
         params: query,
       }),
@@ -9042,12 +9091,12 @@ export const api = {
      *
      * @tags 收发存报表
      * @name Test
-     * @summary JOB方法测试
+     * @summary 测试
      * @request GET:/acceptSendSaveReport/test
      * @secure
      */
     test: () =>
-      http.request<ResultObject['data']>(`/api/warehouse/acceptSendSaveReport/test`, {
+      http.request<ResultListAcceptSendSaveReportDTO['data']>(`/api/warehouse/acceptSendSaveReport/test`, {
         method: 'GET',
       }),
   },
