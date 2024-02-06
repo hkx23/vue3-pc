@@ -169,7 +169,6 @@
             <t-form-item>
               <h4>编码规则</h4>
             </t-form-item>
-
             <t-form-item name="ruleExpression">
               <t-textarea
                 v-model="ruleTabData.ruleExpression"

@@ -2028,6 +2028,11 @@ export interface ProductReworkVO {
   /** 状态 */
   status?: string;
   onhandId?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
   uom?: string;
   uomName?: string;
   keypartCode?: string;
@@ -2082,9 +2087,9 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   datetimeScheStr?: string;
@@ -3282,6 +3287,11 @@ export interface BarcodeWipCollectVO {
   /** 状态 */
   status?: string;
   onhandId?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
   /** 扫码类型(SCANTEXT,KEYPART) */
   uom?: string;
   uomName?: string;
@@ -3339,9 +3349,9 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   stateName?: string;
@@ -3418,6 +3428,11 @@ export interface BarcodeWipVO {
   /** 状态 */
   status?: string;
   onhandId?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
   /** 排产工单 */
   scheCode?: string;
   /** 工单排产状态 */
@@ -3455,16 +3470,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   stateName?: string;
-  defectCodeStr?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -4309,6 +4324,41 @@ export interface ResultListBarcodeRule {
   /** 响应数据 */
   data?: BarcodeRule[] | null;
 }
+
+/** 通用响应类 */
+export interface ResultListDataTableVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DataTableVO[] | null;
+}
+
+/** 数据表列对象 */
+export interface DataTableColumnVO {
+  /** 列名 */
+  columnName?: string;
+  /** 列描述 */
+  columnDesc?: string;
+  /** 列类型 */
+  columnType?: string;
+}
+
+/** 数据表对象 */
+export type DataTableVO = {
+  /** 表名 */
+  tableName?: string;
+  /** 表模型名称 */
+  tableModelName?: string;
+  /** 表描述 */
+  tableDescription?: string;
+  /** 文件最后修改时间戳 */
+  columns?: DataTableColumnVO[];
+} | null;
 
 /** 响应数据 */
 export type PagingDataPrintTmpl = {
@@ -6281,6 +6331,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/moBom/getMoBomListByMoCode`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  importManage: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Tables
+     * @summary 根据领域获取数据表列表
+     * @request GET:/importManage/tables
+     * @secure
+     */
+    tables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/control/importManage/tables`, {
+        method: 'GET',
       }),
   },
   defectCode: {
