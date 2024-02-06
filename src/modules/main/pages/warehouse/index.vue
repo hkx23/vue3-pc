@@ -33,13 +33,9 @@
           </t-space>
         </template>
         <template #stateSwitch="{ row }">
-          <t-switch
-            :custom-value="[1, 0]"
-            :value="row.state"
-            :default-value="row.state"
-            size="large"
-            @change="onStateRowClick(row)"
-          ></t-switch>
+          <t-popconfirm :content="row.state == 0 ? '是否启用仓库' : '是否禁用仓库'" @confirm="onStateRowClick(row)">
+            <t-switch v-model="row.state" :custom-value="[1, 0]" :default-value="row.state" size="large"></t-switch>
+          </t-popconfirm>
         </template>
         <template #op="slotProps">
           <t-space :size="8">

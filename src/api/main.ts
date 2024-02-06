@@ -1409,8 +1409,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
   mesbillNo?: string;
+  erpbillNo?: string;
 }
 
 /** 响应数据 */
@@ -4078,15 +4078,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
   isProductName?: string;
-  isBatchName?: string;
   isInProcessName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4229,8 +4229,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4565,9 +4565,9 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
   mesbillNo?: string;
   imsgqueueStatus?: string;
+  erpbillNo?: string;
 }
 
 /** 显示工站 */
@@ -6834,12 +6834,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
