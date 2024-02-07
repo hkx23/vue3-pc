@@ -3,7 +3,7 @@
     <cmp-card :span="12">
       <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
     </cmp-card>
-    <cmp-card :span="12" :header="t('craftRoute.craftRoute')" header-bordered>
+    <cmp-card :span="12" header-bordered>
       <cmp-table
         v-model:pagination="pageUI"
         active-row-type="single"
@@ -14,6 +14,9 @@
         @refresh="getRouting"
         @row-click="selectRouting"
       >
+        <template #title>
+          <div>{{ t('craftRoute.craftRoute') }}</div>
+        </template>
         <template #button>
           <t-button @click="addRouting">{{ t('common.button.add') }}</t-button>
         </template>
