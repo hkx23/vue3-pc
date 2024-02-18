@@ -180,10 +180,10 @@
     v-model:visible="formVisible"
     :confirm-btn="buttonSwitch"
     :header="diaLogTitle"
-    width="40%"
+    :autosize="{ minRows: 3, maxRows: 5 }"
     @confirm="onConfirm"
   >
-    <t-form ref="formRef" :data="reprintDialog">
+    <t-form ref="formRef" :data="reprintDialog" :rules="rules">
       <t-form-item v-if="reprintVoidSwitch" label-width="80px" label="补打原因" name="reprintData">
         <t-select v-model="reprintDialog.reprintData">
           <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
@@ -243,8 +243,8 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, Ref, ref } from 'vue';
+import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
 import { api as apiMain } from '@/api/main';
@@ -283,6 +283,13 @@ const selectedRowKeys: Ref<any[]> = ref([]); // 打印数组
 const moscheRowKeys: Ref<any[]> = ref([]); // 工单表数组
 const selectedManageRowKeys: Ref<any[]> = ref([]); // 打印数组
 const isReprintCancellation = ref(false);
+// 表单校验
+const rules: ComputedRef<FormRules> = computed(() => {
+  return {
+    reprintData: [{ required: true, trigger: 'change' }],
+    restsData: [{ required: true, trigger: 'blur' }],
+  };
+});
 // 补打，作废 DiaLog 数据
 const reprintDialog = ref({
   reprintData: '',
@@ -309,11 +316,19 @@ const onPrint = async () => {
 };
 // 补打，作废确定
 const onConfirm = async () => {
+  if (reprintDialog.value.reprintData === '其他原因' && !reprintDialog.value.restsData) {
+    MessagePlugin.warning('请补充必填信息！');
+    return;
+  }
   let reason = '';
   if (reprintDialog.value.restsData) {
     reason = reprintDialog.value.restsData;
   } else {
     reason = reprintDialog.value.reprintData;
+  }
+  if (!reason) {
+    MessagePlugin.warning('请补充必填信息！');
+    return;
   }
   try {
     pageLoading.value = true;
