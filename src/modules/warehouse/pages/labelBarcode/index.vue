@@ -76,7 +76,12 @@
                         :value="item.id"
                       />
                     </t-select>
-                    <t-button theme="primary" :disabled="printButtonOp" @click="onPrint">打印</t-button>
+                    <cmp-print-button
+                      :template-id="printMode.printTempId"
+                      :disabled="printButtonOp"
+                      :data="printData"
+                      @before-print="onPrint"
+                    />
                   </template>
                 </cmp-table>
               </cmp-card>
@@ -243,7 +248,6 @@ import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, Table
 import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
-import { PrintByIdOrCode } from '@/api/print';
 import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -256,6 +260,7 @@ const rules: ComputedRef<FormRules> = computed(() => {
     restsData: [{ required: true, trigger: 'blur' }],
   };
 });
+const printData = ref([]);
 const pageLoading = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { loading, setLoading } = useLoading();
@@ -293,21 +298,26 @@ const reprintDialog = ref({
   splitNum: '',
   qty: 0,
 });
+// 定义外部变量 isSuccess
+let isSuccess = true;
+
 // 点击 打印事件
 const onPrint = async () => {
-  // 校验是否已经选择条码规则
-  if (!printMode.value.printTempId) {
-    // 提示错误信息
-    MessagePlugin.warning('请选择打印模板！');
-    return;
-  }
   try {
+    // 打印模板校验
+    if (!printMode.value.printTempId) {
+      // 提示错误信息
+      MessagePlugin.warning('请选择打印模板！');
+      isSuccess = false; // 设置失败标志
+      return isSuccess; // 返回失败标志
+    }
+
+    printData.value = [];
     pageLoading.value = true;
-    const DataBaseArr = [];
+
     const delivery = deliveryList.list.find((item) => item.deliveryDtlId === printMode.value.deliveryDtlId);
     selectedRowKeys.value.forEach((id) => {
       const foundItem = labelBelowList.list.find((item) => item.id === id);
-      console.log(foundItem);
       const DataBase = {
         LABEL_NO: foundItem.labelNo,
         BALANCE_QTY: foundItem.balanceQty,
@@ -316,21 +326,22 @@ const onPrint = async () => {
         MITEM_CODE: delivery.mitemCode,
         MITEM_DESC: delivery.mitemDesc,
       };
-      DataBaseArr.push(DataBase);
+      printData.value.push({
+        variable: DataBase,
+        datasource: { DataBase },
+      });
     });
-    PrintByIdOrCode(
-      {
-        data: DataBaseArr,
-      },
-      printMode.value.printTempId,
-    );
+
     await apiMain.label.printBarcode({ ids: selectedRowKeys.value, printTempId: printMode.value.printTempId });
 
     onRefreshBelow();
     onRefresh();
     MessagePlugin.success('打印成功');
+    return true; // 打印成功时返回 true
   } catch (e) {
     console.log(e);
+    isSuccess = false;
+    return false; // 打印失败时返回 false
   } finally {
     pageLoading.value = false;
   }

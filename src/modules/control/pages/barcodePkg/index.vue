@@ -424,13 +424,13 @@ const generateBracode = async () => {
       ...printMode.value,
       createNum: printMode.value.createNum,
     });
+    MessagePlugin.success('生成成功');
   } catch (e) {
     console.log(e);
   } finally {
     pageLoading.value = false;
   }
   onRefreshTag();
-  MessagePlugin.success('生成成功');
 };
 
 // 打印上方查询初始化
