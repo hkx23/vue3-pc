@@ -46,7 +46,6 @@ const dataTotal = ref(0);
 const tableDataSupplier = ref([]);
 
 const tableSupplierColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '序号', colKey: 'serial-number', width: 64 },
   { title: '排产单', width: 160, colKey: 'scheCode' },
   { title: '产品编码', width: 120, colKey: 'mitemCode' },
   { title: '产品名称', width: 120, colKey: 'mitemName' },
