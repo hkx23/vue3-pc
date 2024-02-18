@@ -88,7 +88,6 @@ const stateOptions = [
 ];
 
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '仓库编码', colKey: 'warehouseCode', width: 85 },
   { title: '仓库名称', width: 85, colKey: 'warehouseName' },
   { title: '仓库描述', width: 85, colKey: 'warehouseDesc' },

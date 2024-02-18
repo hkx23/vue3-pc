@@ -143,10 +143,10 @@
     v-model:visible="formVisible"
     :confirm-btn="buttonSwitch"
     :header="diaLogTitle"
-    width="850px"
+    :autosize="{ minRows: 3, maxRows: 5 }"
     @confirm="onConfirm"
   >
-    <t-form ref="formRef" :data="reprintDialog">
+    <t-form ref="formRef" :data="reprintDialog" :rules="rules">
       <t-form-item v-if="reprintVoidSwitch === 1" label-width="80px" label="补打原因" name="reprintData">
         <t-select v-model="reprintDialog.reprintData">
           <t-option v-for="item in reprintDataList.list" :key="item.label" :label="item.label" :value="item.value" />
@@ -239,8 +239,8 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, Ref, ref } from 'vue';
+import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { PrintByIdOrCode } from '@/api/print';
@@ -249,6 +249,13 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+// 表单校验
+const rules: ComputedRef<FormRules> = computed(() => {
+  return {
+    reprintData: [{ required: true, trigger: 'change' }],
+    restsData: [{ required: true, trigger: 'blur' }],
+  };
+});
 const pageLoading = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { loading, setLoading } = useLoading();
@@ -330,11 +337,20 @@ const onPrint = async () => {
 };
 // 补打，作废确定
 const onConfirm = async () => {
+  if (reprintDialog.value.reprintData === '其他原因' && !reprintDialog.value.restsData) {
+    MessagePlugin.warning('请补充必填信息！');
+    return;
+  }
   let reason = '';
   if (reprintDialog.value.restsData) {
     reason = reprintDialog.value.restsData;
   } else {
     reason = reprintDialog.value.reprintData;
+  }
+
+  if (!reason) {
+    MessagePlugin.warning('请补充必填信息！');
+    return;
   }
 
   try {
