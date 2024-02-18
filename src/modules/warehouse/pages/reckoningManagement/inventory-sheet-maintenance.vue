@@ -55,6 +55,7 @@
           </t-row>
         </t-form>
       </cmp-card>
+
       <!-- table 物料明细 -->
       <cmp-card>
         <template #title> 物料明细 </template>
@@ -71,6 +72,9 @@
           :total="dataTotal"
           @select-change="handleRowSelectChange"
         >
+          <template #indexSlot="{ rowIndex }">
+            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+          </template>
           <!-- 实盘数的插槽 -->
           <template #firmOfferNumberSlot="{ row }">
             <div class="operation-buttons">
@@ -128,6 +132,7 @@
           </template>
         </t-table>
       </cmp-card>
+
       <!-- table 标签明细 -->
       <cmp-card>
         <template #title> 标签明细 </template>
@@ -138,6 +143,7 @@
           :show-pagination="false"
           :hover="true"
           :fixed-height="true"
+          style="height: 200px"
           empty="没有符合条件的数据"
           :show-toolbar="false"
           :total="dataTotals"
@@ -161,9 +167,9 @@ const { loading, setLoading } = useLoading();
 //* 表格标题--物料明细
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 65 },
+  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '物料编码', colKey: 'mitemCode', width: 85 },
-  { title: '物料描述', width: 150, colKey: 'mitemName' },
+  { title: '物料描述', width: 150, colKey: 'mitemDesc' },
   { title: '单位', width: 85, colKey: 'uomName' },
   {
     title: '仓库',
@@ -182,21 +188,17 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
 
 //* 表格标题--标签明细
 const tableWarehouseColumns2: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 65 },
-  { title: '标签条码', colKey: 'districtCode', width: 85 },
-  { title: '物料编码', width: 85, colKey: 'districtName' },
-  { title: '物料描述', width: 85, colKey: 'districtDesc' },
-  {
-    title: '发出仓库',
-    width: 85,
-    colKey: 'warehouseCode',
-  },
-  { title: '货区', width: 100, colKey: 'warehouseName' },
-  { title: '发出货位', width: 100, colKey: 'warehouseName1' },
-  { title: '单位', width: 100, colKey: 'warehouseName2' },
-  { title: '盘点数量', width: 100, colKey: 'warehouseName3' },
-  { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  // { title: '序号', colKey: 'index', width: 65 },
+  { title: '标签条码', colKey: 'scanBarcode', width: 85 },
+  { title: '物料编码', width: 85, colKey: 'mitemCode' },
+  { title: '物料描述', width: 85, colKey: 'mitemDesc' },
+  { title: '发出仓库', width: 85, colKey: 'warehouseName' },
+  { title: '货区', width: 100, colKey: 'districtName' },
+  { title: '发出货位', width: 100, colKey: 'locationName' },
+  { title: '单位', width: 100, colKey: 'uomName' },
+  { title: '盘点数量', width: 100, colKey: 'checkQty' },
+  // { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
 ];
 
 //* 计算属性控制按钮

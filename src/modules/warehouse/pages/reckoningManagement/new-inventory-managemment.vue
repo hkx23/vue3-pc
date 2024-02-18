@@ -137,7 +137,7 @@ const tablenewIMColumns: PrimaryTableCol<TableRowData>[] = [
     width: 85,
     colKey: 'mitemCode',
   },
-  { title: '物料描述', width: 85, colKey: 'mitemdesc' }, // todo
+  { title: '物料描述', width: 85, colKey: 'mitemDesc' }, // todo
 ];
 //* 组件配置--查询界面选择
 const opts = computed(() => {
