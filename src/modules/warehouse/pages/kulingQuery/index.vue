@@ -5,7 +5,7 @@
       <cmp-query ref="queryComponent" :opts="optsKuling" :bool-enter="false" @submit="onInput"> </cmp-query>
     </cmp-card>
     <!-- cmp-table 表格组件  -->
-    <cmp-card :full="true">
+    <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="onhandId"
@@ -13,10 +13,9 @@
         :table-data="tableDataReceipt"
         :total="dataTotal"
         :loading="loading"
-        :fixed-height="true"
         :hover="true"
+        :fixed-height="true"
         empty="没有符合条件的数据"
-        style="height: 400px"
         @refresh="tabRefresh"
       >
         <template #title>
@@ -29,9 +28,9 @@
         </template>
       </cmp-table>
     </cmp-card>
-    <!-- 库龄详情组件 -->
-    <kuling-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" :sun-data="sunData" />
   </cmp-container>
+  <!-- 库龄详情组件 -->
+  <kuling-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" :sun-data="sunData" />
 </template>
 
 <script setup lang="ts">

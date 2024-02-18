@@ -2,7 +2,7 @@
 <template>
   <cmp-container :full="true">
     <!-- cmp-query 查询组件 -->
-    <cmp-card :span="24">
+    <cmp-card :span="12">
       <cmp-container :full="true">
         <!-- <cmp-card :span="12"> -->
         <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput" @reset="onReset">
@@ -53,23 +53,21 @@
 
     <!-- 物料明细 -->
     <cmp-card :span="12">
-      <cmp-container :full="true">
-        <cmp-table
-          row-key="mitemCode"
-          :loading="loading"
-          :table-column="tableMaterialDetailsColumns"
-          :table-data="tableMaterialDetails"
-          select-on-row-click
-          :show-pagination="false"
-          empty="没有符合条件的数据"
-          :show-toolbar="false"
-          :total="dataTotals"
-        >
-          <!-- <template #indexSlot="{ rowIndex }">
+      <cmp-table
+        row-key="mitemCode"
+        :loading="loading"
+        :table-column="tableMaterialDetailsColumns"
+        :table-data="tableMaterialDetails"
+        select-on-row-click
+        :show-pagination="false"
+        empty="没有符合条件的数据"
+        :show-toolbar="false"
+        :total="dataTotals"
+      >
+        <!-- <template #indexSlot="{ rowIndex }">
               {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
             </template> -->
-        </cmp-table>
-      </cmp-container>
+      </cmp-table>
     </cmp-card>
   </cmp-container>
 
@@ -237,6 +235,7 @@ const handleRowSelectChange = (value: any[]) => {
     // 只取数组中的最后一个元素（即最后一个选中的ID）
     propsdtlId.value = value[value.length - 1];
   }
+  // fetchTables({}); // 改变时从新请求数据TODO
 };
 
 watch(propsdtlId, (newBillId) => {
