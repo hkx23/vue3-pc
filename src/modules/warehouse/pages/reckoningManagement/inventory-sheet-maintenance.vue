@@ -64,6 +64,7 @@
           :loading="loading"
           :columns="tableWarehouseColumns1"
           :data="tableDataInventory1"
+          select-on-row-click
           :show-pagination="false"
           :hover="true"
           :fixed-height="true"
@@ -137,7 +138,7 @@
       <cmp-card>
         <template #title> 标签明细 </template>
         <cmp-table
-          row-key="id"
+          row-key="scanBarcode"
           :table-column="tableWarehouseColumns2"
           :table-data="tableDataInventory2"
           :show-pagination="false"
