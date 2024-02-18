@@ -206,7 +206,7 @@ const tableReckoningManagementColumns = ref([
 // 表格主位栏 2 物料明细
 const tableMaterialDetailsColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'mitemCode', title: '物料编码', width: 100 },
-  { colKey: 'districtName', title: '物料描述', width: 100 },
+  { colKey: 'mitemDesc', title: '物料描述', width: 100 },
   { colKey: 'uomName', title: '单位', width: 85 },
   { colKey: 'warehouseName', title: '仓库', width: 85 },
   { colKey: 'districtName', title: '货区', width: 100 },

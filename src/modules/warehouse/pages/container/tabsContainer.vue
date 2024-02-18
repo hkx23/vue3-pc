@@ -589,7 +589,7 @@ const onStateRowClick1 = async () => {
         rowData.statusName === '已出库' ||
         rowData.statusName === '已作废'
       ) {
-        MessagePlugin.error('无法作废，选中行中包含使用中、已入库、已出库的状态的数据！');
+        MessagePlugin.error('无法作废，选中行中包含已入库、使用中、已出库、已作废的数据！');
         return;
       }
       await api.container.removeBatch(selectedRowKeys.value);
