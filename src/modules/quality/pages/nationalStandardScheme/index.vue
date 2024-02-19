@@ -1,34 +1,32 @@
 <!-- 国标抽样方案 -->
 <template>
   <cmp-container :full="true">
-    <cmp-card :hover-shadow="false">
-      <cmp-card :span="12">
-        <cmp-query :opts="opts" @submit="onInput" @reset="onReset"></cmp-query>
-        <cmp-table
-          v-model:pagination="pageUI"
-          :table-data="tableData"
-          active-row-type="single"
-          :columns="columns"
-          :bordered="true"
-          :show-pagination="false"
-          style="height: 450px"
-          :fixed-height="true"
-          :hover="true"
-        >
-          <template #batch="{ row }">
-            <div class="no-wrap">{{ row.batch }}</div>
-          </template>
-          <template #title>
-            {{ '国标抽样方案' }}
-          </template>
-        </cmp-table>
-      </cmp-card>
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" @submit="onInput" @reset="onReset"></cmp-query>
+      <!-- 表格 -->
+      <cmp-table
+        v-model:pagination="pageUI"
+        :table-data="tableData"
+        active-row-type="single"
+        :columns="columns"
+        :bordered="true"
+        :show-pagination="false"
+        :fixed-height="true"
+        :hover="true"
+      >
+        <template #batch="{ row }">
+          <div class="no-wrap">{{ row.batch }}</div>
+        </template>
+        <template #title>
+          {{ '国标抽样方案' }}
+        </template>
+      </cmp-table>
     </cmp-card>
   </cmp-container>
 </template>
 
 <script setup lang="ts">
-// import { PrimaryTableCol } from 'tdesign-vue-next';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -59,7 +57,9 @@ const onReset = () => {
       sampleQty: '',
       acRe: '',
     }));
+    isResetting.value = false;
   });
+  MessagePlugin.success('重置成功');
 };
 
 const opts = computed(() => {
@@ -107,7 +107,7 @@ const onInput = async (data: any) => {
     }));
     tableData.value = data;
   } catch (error) {
-    console.error('Error fetching updated table data:', error);
+    console.error('必填项未填写:', error);
   }
 };
 
