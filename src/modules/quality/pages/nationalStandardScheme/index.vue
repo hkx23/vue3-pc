@@ -1,7 +1,7 @@
 <!-- 国标抽样方案 -->
 <template>
   <cmp-container :full="true">
-    <cmp-card class="not-full-tab" :hover-shadow="false">
+    <cmp-card :hover-shadow="false">
       <cmp-card :span="12">
         <cmp-query :opts="opts" @submit="onInput" @reset="onReset"></cmp-query>
         <cmp-table
@@ -11,7 +11,7 @@
           :columns="columns"
           :bordered="true"
           :show-pagination="false"
-          style="height: 550px"
+          style="height: 450px"
           :fixed-height="true"
           :hover="true"
         >
@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol } from 'tdesign-vue-next';
+// import { PrimaryTableCol } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -49,9 +49,16 @@ const onReset = () => {
   // 阻止调用接口
   isResetting.value = true;
   // 重置完成后，将isResetting标记回false
+  // nextTick(() => {
+  //   tableData.value = []; // 清空数据
+  //   isResetting.value = false;
+  // });
   nextTick(() => {
-    tableData.value = []; // 清空数据
-    isResetting.value = false;
+    tableData.value = batch.value.map((batchItem) => ({
+      batch: batchItem,
+      sampleQty: '',
+      acRe: '',
+    }));
   });
 };
 
@@ -192,7 +199,7 @@ const generateColumns = () => {
     '650',
     '1000',
   ];
-  const columns: PrimaryTableCol<TableRowData>[] = [
+  const columns = ref([
     {
       children: [
         {
@@ -208,27 +215,27 @@ const generateColumns = () => {
         })),
       ],
     },
-  ];
+  ]);
   return columns;
 };
 const columns = ref(generateColumns());
 
 onMounted(() => {
   // TODO
-  // tableData.value = batch.value.map((batch) => ({
-  //   batch: batch,
-  //   sampleQty: '',
-  //   acRe: '', // 没有初始Ac/Re值
-  // }));
+  tableData.value = batch.value.map((batch) => ({
+    batch,
+    sampleQty: '',
+    acRe: '', // 没有初始Ac/Re值
+  }));
   getcheckLevel();
   getinspectionStringency();
 });
 
-interface TableRowData {
-  batch: string[];
-  sampleQty: string;
-  acRe: string;
-}
+// interface TableRowData {
+//   batch: string[];
+//   sampleQty: string;
+//   acRe: string;
+// }
 
 // watch(checkLevel, updateTableData);
 // watch(inspectionStringency, updateTableData);
