@@ -277,7 +277,7 @@ const props = defineProps({
   },
   activeRowType: {
     type: String as () => 'multiple' | 'single',
-    default: '',
+    default: 'single',
   },
   hover: {
     type: Boolean,
@@ -408,6 +408,24 @@ const columns = computed(() => {
     }
   });
 
+  // 判断propdCloumnsData是否已存在serial-number列，如果没有则在propdCloumnsData第一项插入
+  if (!propdCloumnsData.find((item) => item.colKey === 'serial-number')) {
+    // 如果有'row-select'列，插入到第一项后面，如果没有则插入到第一项
+    if (propdCloumnsData.find((item) => item.colKey === 'row-select')) {
+      propdCloumnsData.splice(1, 0, {
+        colKey: 'serial-number',
+        title: '序号',
+        width: 60,
+      });
+    } else {
+      propdCloumnsData.unshift({
+        colKey: 'serial-number',
+        title: '序号',
+        width: 60,
+      });
+    }
+  }
+
   let tableColumn = propdCloumnsData
     .filter((item) => {
       return (
@@ -435,6 +453,7 @@ const columns = computed(() => {
       ...item,
     };
   });
+
   return tableColumn;
 });
 // 表格要导出的列

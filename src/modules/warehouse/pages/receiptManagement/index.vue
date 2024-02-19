@@ -1,51 +1,46 @@
 <!-- 单据管理  -->
 <template>
   <cmp-container :full="true">
-    <cmp-container>
-      <!-- query -->
-      <t-card :ghost="true">
-        <cmp-query ref="queryComponent" :opts="optsReceipt" :bool-enter="false" @submit="onInput"> </cmp-query>
-      </t-card>
-      <!-- cmp-table 表格组件  -->
-      <cmp-card>
-        <cmp-table
-          v-model:pagination="pageUI"
-          row-key="billNo"
-          :table-column="tableReckoningManagementColumns"
-          :table-data="tableDataReceipt"
-          :total="dataTotal"
-          :loading="loading"
-          empty="没有符合条件的数据"
-          @refresh="tabRefresh"
-        >
-          <template #billNo="slotProps">
-            <t-space :size="8">
-              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">{{
-                slotProps.row.billNo
-              }}</t-link>
-            </t-space>
-          </template>
+    <!-- query -->
+    <t-card :span="12">
+      <cmp-query ref="queryComponent" :opts="optsReceipt" :bool-enter="false" @submit="onInput"> </cmp-query>
+    </t-card>
+    <!-- cmp-table 表格组件  -->
+    <cmp-card :span="12">
+      <cmp-table
+        v-model:pagination="pageUI"
+        row-key="billNo"
+        :table-column="tableReckoningManagementColumns"
+        :table-data="tableDataReceipt"
+        :total="dataTotal"
+        :hover="true"
+        :fixed-height="true"
+        :loading="loading"
+        empty="没有符合条件的数据"
+        @refresh="tabRefresh"
+      >
+        <template #billNo="slotProps">
+          <t-space :size="8">
+            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">{{
+              slotProps.row.billNo
+            }}</t-link>
+          </t-space>
+        </template>
 
-          <template #title>
-            {{ '单据管理列表' }}
-          </template>
-
-          <!-- 定义序号列的插槽 -->
-          <template #indexSlot="{ rowIndex }">
-            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-          </template>
-        </cmp-table>
-      </cmp-card>
-      <!-- 单据详情组件 -->
-      <receipt-details
-        v-model:visible="RPDRoutingVisible"
-        :form-title="formTitle"
-        :some-data1="someData1"
-        :some-data2="someData2"
-        :some-data3="someData3"
-      />
-    </cmp-container>
+        <template #title>
+          {{ '单据管理' }}
+        </template>
+      </cmp-table>
+    </cmp-card>
   </cmp-container>
+  <!-- 单据详情组件 -->
+  <receipt-details
+    v-model:visible="RPDRoutingVisible"
+    :form-title="formTitle"
+    :some-data1="someData1"
+    :some-data2="someData2"
+    :some-data3="someData3"
+  />
 </template>
 
 <script setup lang="ts">
@@ -125,8 +120,7 @@ const optsReceipt = computed(() => {
 });
 
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '事物类型', colKey: 'categoryName', width: 85 },
   { title: '单据号', width: 150, colKey: 'billNo' },
   { title: '关联单号', width: 120, colKey: 'sourceBillNo' },

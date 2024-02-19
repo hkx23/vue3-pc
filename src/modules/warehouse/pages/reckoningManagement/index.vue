@@ -1,73 +1,74 @@
 <!-- 盘点管理  -->
 <template>
   <cmp-container :full="true">
-    <cmp-container>
-      <cmp-card>
-        <!-- cmp-query 查询组件 -->
-        <cmp-container>
-          <cmp-card>
-            <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
-          </cmp-card>
-        </cmp-container>
-
-        <!-- cmp-table 表格组件   :row-select="{ type: 'single' }"    :selected-row-keys="selectedBillId" -->
-        <cmp-card>
-          <cmp-table
-            v-model:pagination="pageUI"
-            :loading="loading"
-            row-key="billId"
-            :table-column="tableReckoningManagementColumns"
-            :table-data="tableDataReckoning"
-            :fixed-height="false"
-            :total="dataTotal"
-            empty="没有符合条件的数据"
-            @select-change="handleRowSelectChange"
-            @refresh="tabRefresh"
-          >
-            <template #title>
-              {{ '盘点管理列表' }}
-            </template>
-            <template #button>
+    <!-- cmp-query 查询组件 -->
+    <cmp-card :span="12">
+      <cmp-container :full="true">
+        <!-- <cmp-card :span="12"> -->
+        <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput" @reset="onReset">
+        </cmp-query>
+        <!-- cmp-table 表格组件 -->
+        <cmp-table
+          v-model:pagination="pageUI"
+          v-model:selected-row-keys="selectedRowKeys"
+          row-key="billId"
+          active-row-type="single"
+          :loading="loading"
+          :table-column="tableReckoningManagementColumns"
+          :table-data="tableDataReckoning"
+          select-on-row-click
+          :fixed-height="true"
+          :hover="true"
+          :total="dataTotal"
+          max-height="200px"
+          empty="没有符合条件的数据"
+          @select-change="handleRowSelectChange"
+          @refresh="tabRefresh"
+        >
+          <template #title>
+            {{ '盘点管理' }}
+          </template>
+          <template #button>
+            <t-space :size="8">
               <t-button theme="primary" @click="onAdd">新增</t-button>
-              <t-button theme="default" @click="scrappedBill(propsdtlId)">作废</t-button>
+              <!-- <t-button theme="default" @click="scrappedBill(propsdtlId)">作废</t-button> -->
+              <t-popconfirm theme="default" content="确认作废吗" @confirm="scrappedBill(propsdtlId)">
+                <t-button theme="default"> 作废 </t-button>
+              </t-popconfirm>
               <t-button theme="default">打印</t-button>
-              <t-button theme="default">导出</t-button>
-            </template>
+              <!-- <t-button theme="default">导出</t-button> -->
+            </t-space>
+          </template>
 
-            <template #billNo="slotProps">
-              <t-space :size="8">
-                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps.row)">{{
-                  slotProps.row.billNo
-                }}</t-link>
-              </t-space>
-            </template>
+          <template #billNo="slotProps">
+            <t-space :size="8">
+              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps.row)">{{
+                slotProps.row.billNo
+              }}</t-link>
+            </t-space>
+          </template>
+        </cmp-table>
+      </cmp-container>
+    </cmp-card>
 
-            <!-- 定义序号列的插槽 -->
-            <template #indexSlot="{ rowIndex }">
+    <!-- 物料明细 -->
+    <cmp-card :span="12">
+      <cmp-table
+        row-key="mitemCode"
+        :loading="loading"
+        :table-column="tableMaterialDetailsColumns"
+        :table-data="tableMaterialDetails"
+        select-on-row-click
+        :show-pagination="false"
+        empty="没有符合条件的数据"
+        :show-toolbar="false"
+        :total="dataTotals"
+      >
+        <!-- <template #indexSlot="{ rowIndex }">
               {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-            </template>
-          </cmp-table>
-        </cmp-card>
-
-        <!-- 物料明细 -->
-        <cmp-card>
-          <cmp-table
-            row-key="id"
-            :loading="loading"
-            :table-column="tableMaterialDetailsColumns"
-            :table-data="tableMaterialDetails"
-            :show-pagination="false"
-            empty="没有符合条件的数据"
-            :show-toolbar="false"
-            :total="dataTotals"
-          >
-            <template #indexSlot="{ rowIndex }">
-              {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-            </template>
-          </cmp-table>
-        </cmp-card>
-      </cmp-card>
-    </cmp-container>
+            </template> -->
+      </cmp-table>
+    </cmp-card>
   </cmp-container>
 
   <!-- 新增弹窗组件 -->
@@ -107,6 +108,8 @@ const tableDataReckoning = ref([]); //* 表格数据1
 const tableMaterialDetails = ref([]); //* 表格数据2
 const eidtRoutingVisible = ref(false); //* 弹窗默认关闭
 const ISMRoutingVisible = ref(false); //* 弹窗默认关闭
+const selectedRowKeys = ref([]); // 勾选
+
 const formTitle = ref('');
 const dataTotal = ref(0);
 const dataTotals = ref(0);
@@ -166,44 +169,49 @@ const opts = computed(() => {
 });
 
 // 表格主位栏 1
-const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 40, cell: 'indexSlot' },
-  { title: '盘点单号', colKey: 'billNo', width: 120 },
-  { title: '仓库', width: 85, colKey: 'warehouseName' },
-  { title: '盘点类型', width: 85, colKey: 'stockCheckBillTypeName' },
-  { title: '状态', width: 85, colKey: 'stockCheckBillStatusName' },
-  { title: '创建人', width: 85, colKey: 'creator' },
-  {
-    title: '创建时间',
-    width: 85,
-    colKey: 'timeCreate',
-  },
-  { title: '最后更新人', width: 100, colKey: 'modifier' },
-  {
-    title: '最后更新时间',
-    width: 85,
-    colKey: 'timeModified',
-  },
-];
+// const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
+//   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+//   // { title: '序号', colKey: 'index', width: 40, cell: 'indexSlot' },
+//   { title: '盘点单号', colKey: 'billNo', width: 120 },
+//   { title: '仓库', width: 85, colKey: 'warehouseName' },
+//   { title: '盘点类型', width: 85, colKey: 'stockCheckBillTypeName' },
+//   { title: '状态', width: 85, colKey: 'stockCheckBillStatusName' },
+//   { title: '创建人', width: 85, colKey: 'creator' },
+//   {
+//     title: '创建时间',
+//     width: 85,
+//     colKey: 'timeCreate',
+//   },
+//   { title: '最后更新人', width: 100, colKey: 'modifier' },
+//   {
+//     title: '最后更新时间',
+//     width: 85,
+//     colKey: 'timeModified',
+//   },
+// ];
 
+const tableReckoningManagementColumns = ref([
+  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  { colKey: 'billNo', title: '盘点单号', width: 120 },
+  { colKey: 'warehouseName', title: '仓库', width: 85 },
+  { colKey: 'stockCheckBillTypeName', title: '盘点类型', width: 85 },
+  { colKey: 'stockCheckBillStatusName', title: '状态', width: 85 },
+  { colKey: 'creator', title: '创建人', width: 85 },
+  { colKey: 'timeCreate', title: '创建时间', width: 85 },
+  { colKey: 'modifier', title: '最后更新人', width: 100 },
+  { colKey: 'timeModified', title: '最后更新时间', width: 85 },
+]);
 // 表格主位栏 2 物料明细
 const tableMaterialDetailsColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 40, cell: 'indexSlot' },
-  { title: '物料编码', colKey: 'mitemCode', width: 85 },
-  { title: '物料描述', width: 85, colKey: 'districtName' },
-  { title: '单位', width: 85, colKey: 'uomName' },
-  {
-    title: '仓库',
-    width: 85,
-    colKey: 'warehouseName',
-  },
-  { title: '货区', width: 100, colKey: 'districtName' },
-  { title: '货位', width: 100, colKey: 'locationName' },
-  { title: '账面数', width: 100, colKey: 'onhandQty' },
-  { title: '实盘数', width: 100, colKey: 'checkQty' },
-  { title: '差异数', width: 100, colKey: 'differenceQty' },
+  { colKey: 'mitemCode', title: '物料编码', width: 100 },
+  { colKey: 'mitemDesc', title: '物料描述', width: 100 },
+  { colKey: 'uomName', title: '单位', width: 85 },
+  { colKey: 'warehouseName', title: '仓库', width: 85 },
+  { colKey: 'districtName', title: '货区', width: 100 },
+  { colKey: 'locationName', title: '货位', width: 100 },
+  { colKey: 'onhandQty', title: '账面数', width: 100 },
+  { colKey: 'checkQty', title: '实盘数', width: 100 },
+  { colKey: 'differenceQty', title: '差异数', width: 100 },
 ];
 
 //* 表格数据 1
@@ -227,6 +235,7 @@ const handleRowSelectChange = (value: any[]) => {
     // 只取数组中的最后一个元素（即最后一个选中的ID）
     propsdtlId.value = value[value.length - 1];
   }
+  // fetchTables({}); // 改变时从新请求数据TODO
 };
 
 watch(propsdtlId, (newBillId) => {
@@ -303,6 +312,17 @@ const onInput = async (data: any) => {
   setLoading(false);
 };
 
+//* 重置
+const onReset = () => {
+  selectedRowKeys.value = []; // 重置清空选中的数据
+  // isResetting.value = true;
+  // 重置完成后，将isResetting标记回false
+  // nextTick(() => {
+  // isResetting.value = false;
+  tableMaterialDetails.value = []; // 清空数据
+  // });
+};
+
 const closeDialog = async () => {
   // 处理关闭弹窗的逻辑
   eidtRoutingVisible.value = false;
@@ -348,4 +368,12 @@ const onEditRowClick = async (item) => {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+// /deep/ .t-table__content {
+//   overflow: scroll;
+// }
+
+// :deep(.t-dialog__ctx .t-dialog__position.t-dialog--top) {
+//   padding-top: 5vh !important;
+// }
+</style>

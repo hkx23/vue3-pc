@@ -9,8 +9,9 @@
     <cmp-container :full="true">
       <cmp-card>
         <!-- <template #title> 库龄查询-条码明细 </template> -->
+        <!-- row-key="props.sunData.onhandId" todo -->
         <cmp-table
-          row-key="props.sunData.onhandId"
+          row-key="labelNo"
           :table-column="tableWarehouseColumns"
           :show-pagination="false"
           :loading="loading"
@@ -18,9 +19,9 @@
           :show-toolbar="false"
           :table-data="tableDocumentDetails"
         >
-          <template #indexSlot="{ rowIndex }">
+          <!-- <template #indexSlot="{ rowIndex }">
             {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-          </template>
+          </template> -->
         </cmp-table>
       </cmp-card>
     </cmp-container>
@@ -36,14 +37,14 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref, watch } from 'vue';
 
 import { useLoading } from '@/hooks/modules/loading';
-import { usePage } from '@/hooks/modules/page';
+// import { usePage } from '@/hooks/modules/page';
 
-const { pageUI } = usePage();
+// const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 //* 表格标题--单据明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  // { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
   { title: '条码号', colKey: 'labelNo', width: 200 },
   { title: '物料编码', width: 120, colKey: 'mitemCode' },
   { title: '物料描述', width: 120, colKey: 'mitemDesc' },

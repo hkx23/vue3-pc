@@ -210,7 +210,7 @@ const onHandelNoticeMenu = async (item: any) => {
       font-weight: 700;
       letter-spacing: 0;
       line-height: 17.38px;
-      color: rgb(63 93 237 / 100%);
+      color: var(--td-brand-color);
       text-align: left;
       vertical-align: middle;
       left: 0;
@@ -236,7 +236,7 @@ const onHandelNoticeMenu = async (item: any) => {
     }
 
     .msg-time {
-      color: rgb(63 93 237 / 100%);
+      color: var(--td-brand-color);
       transition: all 0.2s ease;
       opacity: 1;
       position: absolute;

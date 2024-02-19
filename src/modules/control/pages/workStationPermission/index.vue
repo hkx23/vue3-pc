@@ -14,6 +14,8 @@
         :total="total"
         :table-column="column"
         :fixed-height="true"
+        :active-row-type="'single'"
+        :hover="true"
         :table-data="permissionData"
         :selected-row-keys="selectedRowKeys"
         @refresh="onfetchData"
@@ -85,67 +87,56 @@ const column = ref([
     colKey: 'checked',
     width: '90px',
     type: 'multiple',
-    align: 'center',
   },
   {
     colKey: 'userName',
     title: '用户',
     width: '160px',
-    align: 'center',
   },
   {
     colKey: 'userDisplayName',
     title: '姓名',
     width: '160px',
-    align: 'center',
   },
   {
     colKey: 'workstationCode',
     title: '工站代码',
     width: '160px',
-    align: 'center',
   },
   {
     colKey: 'workstationName',
     title: '工站名称',
     width: '160px',
-    align: 'center',
   },
   {
     colKey: 'workstationDesc',
     title: '工站描述',
     width: '160px',
-    align: 'center',
   },
   {
     colKey: 'workcenterName',
     title: '工作中心',
     width: '160px',
-    align: 'center',
   },
   {
     colKey: 'processName',
     title: '工序',
     width: '160px',
-    align: 'center',
   },
   {
     colKey: 'creatorName',
     title: '创建人',
     width: '160px',
-    align: 'center',
   },
   {
     colKey: 'timeCreate',
     title: '创建时间',
     width: '160px',
-    align: 'center',
   },
   {
     colKey: 'op',
     title: '操作',
     width: '90px',
-    align: 'center',
     fixed: 'right',
   },
 ]);

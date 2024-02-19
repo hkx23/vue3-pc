@@ -7,7 +7,8 @@
     <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
-        row-key="index"
+        row-key="id"
+        active-row-type="single"
         :loading="loading"
         :table-column="columns"
         :table-data="moData"
@@ -17,7 +18,7 @@
       >
         <template #moCode="{ row }">
           <a
-            style="color: #3f5ded; cursor: pointer"
+            class="cell-mo"
             @click="
               {
                 onHandelDetail(row);
@@ -36,6 +37,7 @@
             编辑
           </t-link>
         </template>
+        <template #title> 工单列表</template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
@@ -414,7 +416,12 @@ onMounted(() => {
   padding-left: 118px !important ;
 }
 
-/deep/ .t-dialog__ctx .t-dialog__position.t-dialog--top {
+:deep(.t-dialog__ctx .t-dialog__position.t-dialog--top) {
   padding-top: 5vh !important;
+}
+
+.cell-mo {
+  color: var(--td-brand-color);
+  cursor: pointer;
 }
 </style>

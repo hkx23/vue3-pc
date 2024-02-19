@@ -1,6 +1,6 @@
 {
   "materialRequisition": {
-    "deliveryCardCommandList": "配送卡指令列表",
+    "deliveryCardCommandList": "配送指令列表",
     "deliveryOrderCreation": "配送制单",
     "lineSideWarehouseCode": "线边仓编码",
     "deliveryQuantity": "配送数量",

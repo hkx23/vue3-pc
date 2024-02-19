@@ -3194,6 +3194,117 @@ export interface ResultPagingDataShowModuleVO {
   data?: PagingDataShowModuleVO;
 }
 
+/** 工单排产表 */
+export interface MoSchedule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moId?: string;
+  mitemId?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 销售订单 */
+  soNo?: string;
+  /**
+   * 销售订单行号
+   * @format int32
+   */
+  soSeq?: number;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 下线数量
+   * @format int32
+   */
+  offlineQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 入库数量
+   * @format int32
+   */
+  stockinQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
+   * 工单关闭时间
+   * @format date-time
+   */
+  datetimeMoClose?: string;
+  warehouseId?: string;
+  parentMoId?: string;
+  workshopId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 状态 */
+  status?: string;
+  /** 工单来源 */
+  moSource?: string;
+  workcenterId?: string;
+  /**
+   * 排产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  routingRevisionId?: string;
+  /** 排产工单 */
+  scheCode?: string;
+}
+
 /** 显示工单投料的视图 */
 export interface MoScheduleVO {
   id?: string;
@@ -3332,117 +3443,6 @@ export interface ResultPagingDataMoScheduleVO {
   /** 响应数据 */
   data?: PagingDataMoScheduleVO;
 }
-
-/** 工单排产表 */
-export type MoSchedule = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  moId?: string;
-  mitemId?: string;
-  /** 工单类型 */
-  moClass?: string;
-  /** 销售订单 */
-  soNo?: string;
-  /**
-   * 销售订单行号
-   * @format int32
-   */
-  soSeq?: number;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /**
-   * 下线数量
-   * @format int32
-   */
-  offlineQty?: number;
-  /**
-   * 完工数量
-   * @format int32
-   */
-  completedQty?: number;
-  /**
-   * 入库数量
-   * @format int32
-   */
-  stockinQty?: number;
-  /**
-   * 计划开始时间
-   * @format date-time
-   */
-  datetimePlanStart?: string;
-  /**
-   * 计划完成时间
-   * @format date-time
-   */
-  datetimePlanEnd?: string;
-  /**
-   * 实际开始时间
-   * @format date-time
-   */
-  datetimeActualStart?: string;
-  /**
-   * 实际完成时间
-   * @format date-time
-   */
-  datetimeActualEnd?: string;
-  /**
-   * 工单关闭时间
-   * @format date-time
-   */
-  datetimeMoClose?: string;
-  warehouseId?: string;
-  parentMoId?: string;
-  workshopId?: string;
-  /** 备注 */
-  memo?: string;
-  /** 状态 */
-  status?: string;
-  /** 工单来源 */
-  moSource?: string;
-  workcenterId?: string;
-  /**
-   * 排产日期
-   * @format date-time
-   */
-  datetimeSche?: string;
-  /**
-   * 排产数量
-   * @format int32
-   */
-  scheQty?: number;
-  routingRevisionId?: string;
-  /** 排产工单 */
-  scheCode?: string;
-} | null;
 
 /** 通用响应类 */
 export interface ResultMoSchedule {
@@ -3904,7 +3904,8 @@ export interface MitemVO {
   isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
-  isProductName?: string;
+  isInProcessName?: string;
+  isInProcessChecked?: boolean;
   isBatchName?: string;
 }
 
@@ -4384,8 +4385,8 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
   mesbillNo?: string;
+  erpbillNo?: string;
   imsgqueueStatus?: string;
 }
 
@@ -4537,6 +4538,82 @@ export interface ResultPagingDataIntegratedConsoleVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIntegratedConsoleVO;
+}
+
+/** 导入配置表 */
+export interface ImportSetting {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 导入关键编码 */
+  importKeyCode?: string;
+  /** 业务领域 */
+  businessDomain?: string;
+  /** 数据表名 */
+  tableName?: string;
+  /** 导入说明 */
+  importDesc?: string;
+  /** 导入模板地址 */
+  importTemplateUrl?: string;
+  /**
+   * 导入数据条数
+   * @format int32
+   */
+  batchCount?: number;
+  /** 数据表名 */
+  sourceType?: string;
+}
+
+/** 响应数据 */
+export type PagingDataImportSetting = {
+  list?: ImportSetting[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataImportSetting {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataImportSetting;
+}
+
+/** 通用响应类 */
+export interface ResultImportSetting {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 导入配置表 */
+  data?: ImportSetting;
 }
 
 export interface FileVO {
@@ -4705,6 +4782,75 @@ export interface ResultPagingDataEnterprise {
   message?: string;
   /** 响应数据 */
   data?: PagingDataEnterprise;
+}
+
+/** 企业信息表 */
+export interface EnterpriseSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+}
+
+/** 企业信息表 */
+export interface EnterpriseVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  /** 企业编号 */
+  epCode?: string;
+  /** 企业简称 */
+  epName?: string;
+  /** 企业全称 */
+  epFullName?: string;
+  /** 企业地址 */
+  epAddress?: string;
+}
+
+/** 响应数据 */
+export type PagingDataEnterpriseVO = {
+  list?: EnterpriseVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataEnterpriseVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataEnterpriseVO;
 }
 
 /** 系统下载任务表 */
@@ -6669,8 +6815,6 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
@@ -6995,6 +7139,41 @@ export interface ResultPagingDataModule {
   /** 响应数据 */
   data?: PagingDataModule;
 }
+
+/** 通用响应类 */
+export interface ResultListDataTableVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: DataTableVO[] | null;
+}
+
+/** 数据表列对象 */
+export interface DataTableColumnVO {
+  /** 列名 */
+  columnName?: string;
+  /** 列描述 */
+  columnDesc?: string;
+  /** 列类型 */
+  columnType?: string;
+}
+
+/** 数据表对象 */
+export type DataTableVO = {
+  /** 表名 */
+  tableName?: string;
+  /** 表模型名称 */
+  tableModelName?: string;
+  /** 表描述 */
+  tableDescription?: string;
+  /** 文件最后修改时间戳 */
+  columns?: DataTableColumnVO[];
+} | null;
 
 /** 通用响应类 */
 export interface ResultListFavorite {
@@ -10139,6 +10318,21 @@ export const api = {
      * No description
      *
      * @tags 工单排产表
+     * @name UpdateMoScheInfo
+     * @summary 更新排产单信息-完成数量，状态等信息
+     * @request POST:/moSchedule/updateMoScheInfo
+     * @secure
+     */
+    updateMoScheInfo: (data: MoSchedule) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/updateMoScheInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
      * @name SearchRunningMoSche
      * @summary 弹出框公共方法-查询有效的排产单信息-已排产，已备料，已上线
      * @request POST:/moSchedule/searchRunningMoSche
@@ -10221,6 +10415,21 @@ export const api = {
      */
     updateMoRouting: (data: MoSchedule) =>
       http.request<ResultObject['data']>(`/api/main/mo/updateMoRouting`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单表
+     * @name UpdateMoInfo
+     * @summary 更新工单信息-完成数量，状态等信息
+     * @request POST:/mo/updateMoInfo
+     * @secure
+     */
+    updateMoInfo: (data: Mo) =>
+      http.request<ResultObject['data']>(`/api/main/mo/updateMoInfo`, {
         method: 'POST',
         body: data as any,
       }),
@@ -10829,6 +11038,81 @@ export const api = {
         body: data as any,
       }),
   },
+  importManage: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Search
+     * @summary 获取用户信息列表
+     * @request POST:/importManage/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataImportSetting['data']>(`/api/main/importManage/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetItemById
+     * @summary 根据ID获取导入配置信息
+     * @request POST:/importManage/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultImportSetting['data']>(`/api/main/importManage/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Edit
+     * @summary 编辑导入配置信息
+     * @request POST:/importManage/edit
+     * @secure
+     */
+    edit: (data: ImportSetting) =>
+      http.request<ResultObject['data']>(`/api/main/importManage/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Add
+     * @summary 新增导入配置信息
+     * @request POST:/importManage/add
+     * @secure
+     */
+    add: (data: ImportSetting) =>
+      http.request<ResultObject['data']>(`/api/main/importManage/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Tables
+     * @summary 根据领域获取数据表列表
+     * @request GET:/importManage/tables
+     * @secure
+     */
+    tables: (query: { businessCode: string }) =>
+      http.request<ResultListDataTableVO['data']>(`/api/main/importManage/tables`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
   file: {
     /**
      * No description
@@ -10978,12 +11262,42 @@ export const api = {
      * No description
      *
      * @tags 企业表
+     * @name Modify
+     * @summary 编辑企业信息
+     * @request POST:/enterprise/modify
+     * @secure
+     */
+    modify: (data: Enterprise) =>
+      http.request<ResultObject['data']>(`/api/main/enterprise/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 企业表
      * @name Search
      * @request POST:/enterprise/items
      * @secure
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataEnterprise['data']>(`/api/main/enterprise/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 企业表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/enterprise/getList
+     * @secure
+     */
+    getList: (data: EnterpriseSearch) =>
+      http.request<ResultPagingDataEnterpriseVO['data']>(`/api/main/enterprise/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -11888,6 +12202,7 @@ export const api = {
      *
      * @tags 出勤模式
      * @name Search
+     * @summary 出勤模式业务组件接口
      * @request POST:/attendanceMode/items
      * @secure
      */
@@ -11902,6 +12217,7 @@ export const api = {
      *
      * @tags 出勤模式
      * @name GetItemById
+     * @summary 根据ID查找出勤模式
      * @request POST:/attendanceMode/items/{id}
      * @secure
      */

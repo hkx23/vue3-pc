@@ -65,7 +65,7 @@
     <cmp-table
       ref="tableRef"
       v-model:pagination="pageUITwo"
-      row-key="id"
+      row-key="serialNumber"
       empty="没有符合条件的数据"
       :table-column="columnsDetail"
       :fixed-height="true"
@@ -107,55 +107,46 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'warehouseName',
     title: '仓库',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'districtName',
     title: '货区',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'locationName',
     title: '货位',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'erpWarehouseCode',
     title: 'ERP仓库',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'mitemCode',
     title: '物料编码',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'mitemName',
     title: '物料名称',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'qty',
     title: '库存现有量',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'uomName',
     title: '单位',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'labelDetails',
     title: '标签明细',
-    align: 'center',
     width: '150',
     fixed: 'right',
   },
@@ -164,31 +155,26 @@ const columnsDetail: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serialNumber',
     title: '条码',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'lotNo',
     title: '批次',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'balanceQty',
     title: '数量',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'supplierCode',
     title: '供应商编码',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'supplierName',
     title: '供应商名称',
-    align: 'center',
     width: '120',
   },
 ];
@@ -215,6 +201,7 @@ const onShelfLifeDetails = async () => {
     id: lotNo.value.id,
   });
   mitemShelflifeData.value = res.list;
+  console.log('🚀 ~ file: index.vue:204 ~ onShelfLifeDetails ~ mitemShelflifeData.value:', mitemShelflifeData.value);
   mitemShelflifeTotal.value = res.total;
 };
 

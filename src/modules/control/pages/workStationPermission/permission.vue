@@ -32,6 +32,8 @@
             <cmp-table
               v-model:pagination="pageUI"
               row-key="id"
+              :active-row-type="'single'"
+              :hover="true"
               :table-column="columns"
               :loading="loading"
               :max-height="treeHeight"
@@ -164,27 +166,22 @@ const columns = [
   {
     colKey: 'workstationCode',
     title: '工站编码',
-    align: 'center',
   },
   {
     colKey: 'workstationName',
     title: '工站名称',
-    align: 'center',
   },
   {
     colKey: 'workstationDesc',
     title: '工站描述',
-    align: 'center',
   },
   {
     colKey: 'workcenterName',
     title: '工站中心',
-    align: 'center',
   },
   {
     colKey: 'processName',
     title: '工序',
-    align: 'center',
     fix: 'left',
   },
 ];

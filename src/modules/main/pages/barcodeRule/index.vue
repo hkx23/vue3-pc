@@ -166,21 +166,28 @@
             </t-space>
           </cmp-card>
           <cmp-card :span="7" :ghost="true">
-            <t-space direction="vertical" :size="8" style="padding-left: 75px">
+            <t-form-item>
               <h4>编码规则</h4>
-              <t-form-item name="ruleExpression" label-width="10px" style="margin-left: -30px">
-                <t-textarea
-                  v-model="ruleTabData.ruleExpression"
-                  placeholder="请添加规则"
-                  name="description"
-                  :autosize="{ minRows: 3, maxRows: 5 }"
-                />
-              </t-form-item>
-              <t-row>
-                <t-col flex="120px"><t-button @click="onRulePreview">条码规则预览</t-button></t-col>
-                <t-col flex="auto"><t-input v-model="previewResults"></t-input></t-col>
-              </t-row> </t-space
-          ></cmp-card>
+            </t-form-item>
+            <t-form-item name="ruleExpression">
+              <t-textarea
+                v-model="ruleTabData.ruleExpression"
+                placeholder="请添加规则"
+                name="description"
+                :autosize="{ minRows: 3, maxRows: 5 }"
+              />
+            </t-form-item>
+            <t-form-item>
+              <t-row justify="space-between">
+                <t-col :span="4">
+                  <t-button @click="onRulePreview">条码规则预览</t-button>
+                </t-col>
+                <t-col :span="7">
+                  <t-input v-model="previewResults"></t-input>
+                </t-col>
+              </t-row>
+            </t-form-item>
+          </cmp-card>
         </cmp-row>
       </cmp-card>
     </t-form>
@@ -336,52 +343,45 @@ const treeClick = ({ node }) => {
 const ruleTreeDataList = reactive({ list: [] });
 // #### 条码规则 表头
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'row-select',
-    type: 'single',
-    width: 46,
-  },
+  // {
+  //   colKey: 'row-select',
+  //   type: 'single',
+  //   width: 46,
+  // },
   {
     colKey: 'serial-number',
     title: '序号',
-    align: 'center',
     width: '90',
   },
   {
     colKey: 'ruleCode',
     title: '规则编码',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'ruleName',
     title: '规则名称',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'ruleDesc',
     title: '规则描述',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'barcodeTypeName',
     title: '条码类型',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'state',
     title: '状态',
-    align: 'center',
     width: '100',
     cell: 'stateSwitch',
   },
   {
     colKey: 'op',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
   },
@@ -396,31 +396,26 @@ const personColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'categoryCode',
     title: '分类编码',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'categoryName',
     title: '分类名称',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'mitemCode',
     title: '物料编码',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'mitemName',
     title: '物料名称',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'mitemDesc',
     title: '物料描述',
-    align: 'center',
     width: '130',
   },
 ];

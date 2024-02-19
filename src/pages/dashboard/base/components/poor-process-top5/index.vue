@@ -84,17 +84,20 @@ onDeactivated(() => {
 const getPieData = async () => {
   try {
     const data = await api.wipRepair.getRepairTop5();
+    console.log('🚀 ~ getPieData ~ dataTOP5:', data);
 
     // 过滤前5条数据
     const top5Data = data.slice(0, 5);
+    console.log('🚀 ~ getPieData ~ top5Data:过滤前5条数据', top5Data);
 
     if (top5Data.length === 0) {
       return;
     }
     // const echarData = top5Data.map((n) => ({ value: n.defectCodePercent * 100, name: n.defectName }));
-    const echarData = top5Data.map(({ defectCodePercent, defectName }) => ({
-      value: defectCodePercent * 100,
+    const echarData = top5Data.map(({ defectCodePercent, defectName, defectCodeTotal }) => ({
       name: defectName,
+      total: defectCodeTotal,
+      value: defectCodePercent * 100,
     }));
 
     optionChart.value = {
@@ -112,7 +115,7 @@ const getPieData = async () => {
           center: ['50%', '35%'],
           label: {
             show: true,
-            formatter: (param) => `${param.name} ${param.value} (${param.percent}%)`,
+            formatter: (param) => `${param.name} ${param.data.total} (${param.value}%)`,
           },
           data: echarData,
           emphasis: {

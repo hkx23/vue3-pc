@@ -323,6 +323,7 @@ const loadTypeSetting = () => {
         if (props.labelField) {
           finalKeywords.value.label = props.labelField;
         }
+        finalRowKey.value = finalKeywords.value.value;
         finalUrl.value = res.url;
       })
       .catch((err) => {
