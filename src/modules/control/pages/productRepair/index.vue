@@ -526,7 +526,7 @@ const fetchTable = async () => {
       repairStatus: formData.queryData.isRepair,
       pageNum: pageTab1.value.page,
       pageSize: pageTab1.value.rows,
-      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginWorkstationId: userStore.currUserOrgInfo.workStationId,
       loginProcessId: userStore.currUserOrgInfo.processId,
       statusList: ['UNREPAIR', 'REPAIRED'],
       sorts: [],
