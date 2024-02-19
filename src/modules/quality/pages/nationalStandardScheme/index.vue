@@ -86,12 +86,42 @@ const opts = computed(() => {
 });
 
 //* 查询
+// const onInput = async (data: any) => {
+//   // 如果是在执行重置操作，直接返回不执行校验
+//   if (isResetting.value) {
+//     return;
+//   }
+//   const { checkLevel, inspectionStringency } = data;
+//   try {
+//     const updatedData = await apiMain.samplingAql.getList({
+//       checkLevel,
+//       inspectionStringency,
+//     });
+//     const data = updatedData.map((item, index) => ({
+//       batch: batch.value[index], // 从预定义的batch数组获取对应的值
+//       sampleQty: item.sampleQty,
+//       // 创建一个新字段来存储合并的Ac和Re值
+//       acRe: `${item.acceptQty}  ${item.rejectQty}`,
+//       // // 将aql值用作唯一标识符，确保它与`sizes`数组中的项目相匹配
+//       aql: item.aql,
+//     }));
+//     tableData.value = data;
+//   } catch (error) {
+//     console.error('必填项未填写:', error);
+//   }
+// };
 const onInput = async (data: any) => {
-  // 如果是在执行重置操作，直接返回不执行校验
   if (isResetting.value) {
     return;
   }
   const { checkLevel, inspectionStringency } = data;
+
+  // 检查是否选择了必要的选项
+  if (!checkLevel || !inspectionStringency) {
+    MessagePlugin.warning('请先选择检验水平和严格度');
+    return;
+  }
+
   try {
     const updatedData = await apiMain.samplingAql.getList({
       checkLevel,
@@ -100,14 +130,13 @@ const onInput = async (data: any) => {
     const data = updatedData.map((item, index) => ({
       batch: batch.value[index], // 从预定义的batch数组获取对应的值
       sampleQty: item.sampleQty,
-      // 创建一个新字段来存储合并的Ac和Re值
-      acRe: `${item.acceptQty}  ${item.rejectQty}`,
-      // // 将aql值用作唯一标识符，确保它与`sizes`数组中的项目相匹配
+      acRe: `${item.acceptQty} ${item.rejectQty}`,
       aql: item.aql,
     }));
     tableData.value = data;
   } catch (error) {
-    console.error('必填项未填写:', error);
+    console.error('查询出错:', error);
+    MessagePlugin.error('查询失败，请稍后重试');
   }
 };
 

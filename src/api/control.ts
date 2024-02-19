@@ -775,6 +775,8 @@ export interface WipRepairVO {
    * @format date-time
    */
   datetimeRepaired?: string;
+  /** 不合格数据 */
+  ngQty?: number;
   mitemId?: string;
   /** 物料代码 */
   mitemCode?: string;
@@ -828,8 +830,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1299,6 +1301,8 @@ export interface ProductWipRepairVO {
    * @format date-time
    */
   datetimeRepaired?: string;
+  /** 不合格数据 */
+  ngQty?: number;
   /**
    * 采集时间
    * @format date-time
@@ -1353,8 +1357,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2087,11 +2091,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopCode?: string;
-  workshopName?: string;
+  workshopId?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2138,9 +2142,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -3349,11 +3353,11 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopCode?: string;
-  workshopName?: string;
+  workshopId?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -3470,16 +3474,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  defectCodeStr?: string;
-  workshopId?: string;
   workshopCode?: string;
-  workshopName?: string;
+  workshopId?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */

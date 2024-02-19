@@ -548,13 +548,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  i?: string;
+  ii?: string;
   iii?: string;
   s1?: string;
   s2?: string;
   s3?: string;
   s4?: string;
-  i?: string;
-  ii?: string;
 } | null;
 
 /** 通用响应类 */
