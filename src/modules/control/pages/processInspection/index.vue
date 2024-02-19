@@ -332,6 +332,7 @@ useResizeObserver(refDefectRow, (entries) => {
 
 const pushMessage = (type: 'success' | 'info' | 'error' | 'warning', scanLabel: string, msg: string) => {
   let content: string;
+
   if (type === 'success') {
     content = `[${scanLabel}]${t('processInspection.scanSuccess')}`;
     NotifyPlugin.success({ title: t('processInspection.scanSuccess'), content, duration: 2000 });
