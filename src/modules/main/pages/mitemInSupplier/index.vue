@@ -97,6 +97,7 @@ const onRefresh = () => {
 const conditionEnter = (data: any) => {
   mitemKeyword.value = data.mitemKeyword;
   supplierKeyword.value = data.supplierKeyword;
+  pageUI.value.page = 1;
   onRefresh();
 };
 

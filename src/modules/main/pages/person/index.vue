@@ -207,6 +207,7 @@ const opts = computed(() => {
 const conditionEnter = (data: any) => {
   personCode.value = data.personCode;
   personState.value = data.personState;
+  pageUI.value.page = 1;
   onRefresh();
 };
 // 表格分页设置

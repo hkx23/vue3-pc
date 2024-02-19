@@ -130,6 +130,7 @@ const opts = computed(() => {
 // 点击查询按钮
 const conditionEnter = (data: any) => {
   keyword.value = data.keyword;
+  pageUI.value.page = 1;
   onRefresh();
 };
 
