@@ -219,7 +219,7 @@ const onHandelUrl = async (row: any) => {
 }
 
 .t-list .is-selected {
-  background: #366ef49c;
+  background: var(--td-brand-color);
   color: white;
 }
 
