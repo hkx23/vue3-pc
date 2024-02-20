@@ -100,6 +100,7 @@ const conditionEnter = (data: any) => {
   keyword.value = data.keyword;
   mitemCategoryKeyword.value = data.mitemCategory;
   mitemTypeSelect.value = data.mitemType;
+  pageUI.value.page = 1;
   onRefresh();
 };
 const opts = computed(() => {

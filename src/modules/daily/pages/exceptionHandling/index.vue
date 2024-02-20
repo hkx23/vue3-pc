@@ -2,6 +2,9 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
+      <cmp-query :opts="opts" @submit="onInput" @reset="selectedRowKeys = []"> </cmp-query>
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
@@ -20,7 +23,6 @@
           {{ row.isAllowTransfer ? '是' : '否' }}
         </template>
         <template #button>
-          <cmp-query :opts="opts" :show-button="false" @submit="onInput"> </cmp-query>
           <t-button @click="onAdd">新增</t-button>
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="ondeleteBatches">
             <t-button variant="outline">批量删除</t-button>
@@ -169,33 +171,27 @@ const column = ref([
   {
     colKey: 'orgName',
     title: t('exceptionHandling.OrganizationName'),
-    align: 'center',
   },
   {
     colKey: 'incidentModuleName',
     title: t('exceptionHandling.abnormalModule'),
-    align: 'center',
   },
   {
     colKey: 'supportGroupName',
     title: t('exceptionHandling.treatmentGroup'),
-    align: 'center',
   },
   {
     colKey: 'levelSeq',
     title: t('exceptionHandling.processOrder'),
-    align: 'center',
   },
   {
     colKey: 'isAllowTransfer',
     title: t('exceptionHandling.transferOrders'),
-    align: 'center',
     cell: 'isAllowTransfer',
   },
   {
     colKey: 'op',
     title: t('exceptionHandling.operate'),
-    align: 'center',
     fixed: 'right',
   },
 ]);

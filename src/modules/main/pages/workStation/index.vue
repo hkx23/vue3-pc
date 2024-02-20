@@ -7,7 +7,7 @@
     <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
-        row-key="index"
+        row-key="id"
         :table-column="columns"
         :table-data="workData"
         lazy-load

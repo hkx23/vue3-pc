@@ -65,12 +65,13 @@
           <cmp-table
             v-model:pagination="pageUI"
             v-model:selected-row-keys="selectedRowKeys"
+            :table-column="tablenewIMColumns"
+            :table-data="tableDataInventory"
+            select-on-row-click
             row-key="onhandId"
             :loading="loading"
-            :table-column="tablenewIMColumns"
-            :show-pagination="true"
+            :show-pagination="false"
             :total="dataTotal"
-            :table-data="tableDataInventory"
             :empty="t('reckoningManagement.table-empty')"
           >
             <template #button>
@@ -84,9 +85,9 @@
               </t-space>
             </template>
             <!-- 定义序号列的插槽 -->
-            <template #indexSlot="{ rowIndex }">
+            <!-- <template #indexSlot="{ rowIndex }">
               {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-            </template>
+            </template> -->
           </cmp-table>
         </cmp-card>
       </cmp-container>
@@ -100,7 +101,7 @@
 
 <script setup lang="ts">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api } from '@/api/warehouse';
@@ -127,7 +128,7 @@ const newWarehouseId = ref('');
 //* 表格标题
 const tablenewIMColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 30, cell: 'indexSlot' },
+  // { title: '序号', colKey: 'index', width: 30, cell: 'indexSlot' },
   { title: '仓库', colKey: 'warehouseName', width: 85 },
   { title: '货区', width: 85, colKey: 'districtName' },
   { title: '货位', width: 85, colKey: 'locationName' },
@@ -136,7 +137,7 @@ const tablenewIMColumns: PrimaryTableCol<TableRowData>[] = [
     width: 85,
     colKey: 'mitemCode',
   },
-  { title: '物料描述', width: 85, colKey: 'mitemdesc' },
+  { title: '物料描述', width: 85, colKey: 'mitemDesc' }, // todo
 ];
 //* 组件配置--查询界面选择
 const opts = computed(() => {
@@ -158,7 +159,7 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'mitemCategory',
+        type: 'mitem', // mitemCategory 变更 mitem
         showTitle: false,
       },
     },
@@ -250,14 +251,26 @@ const countingTypeData = async () => {
   }
 };
 
+const isResetting = ref(false);
 //* 重置
 const onReset = () => {
   selectedRowKeys.value = []; // 重置清空选中的数据
+  isResetting.value = true;
+  // 重置完成后，将isResetting标记回false
+  nextTick(() => {
+    isResetting.value = false;
+    tableDataInventory.value = []; // 清空数据
+  });
 };
 
 // 查询
 const onInput = async (data: any) => {
+  // 如果是在执行重置操作，直接返回不执行校验
+  if (isResetting.value) {
+    return;
+  }
   setLoading(true);
+
   if (!data.stockCheckType) {
     MessagePlugin.error('盘点类型为必填项');
     return;
@@ -279,7 +292,9 @@ const onInput = async (data: any) => {
     });
     tableDataInventory.value = result.list;
     dataTotal.value = result.total;
-    selectedRowKeys.value = []; // 重置清空选中的数据
+    // selectedRowKeys.value = []; // 重置清空选中的数据
+    // 全选逻辑：提取所有记录的onhandId作为selectedRowKeys的值
+    selectedRowKeys.value = result.list.map((item) => item.onhandId);
     // 存添加需要的数据
     newstockCheckType.value = stockCheckType;
     newWarehouseId.value = warehouseId;
@@ -343,7 +358,6 @@ const fetchTable = async (data: any) => {
     setLoading(false);
   } catch (error) {
     console.error('获取数据失败:', error);
-    setLoading(false);
   }
 };
 </script>

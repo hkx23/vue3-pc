@@ -84,6 +84,7 @@ const tableProcessColumns: PrimaryTableCol<TableRowData>[] = [
 const conditionEnter = (data: any) => {
   keyword.value = data.keyword;
   processState.value = data.processState;
+  pageUI.value.page = 1;
   onRefresh();
 };
 const opts = computed(() => {

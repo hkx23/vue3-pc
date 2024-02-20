@@ -1,4 +1,4 @@
-<!-- 箱包关系报表 -->
+<!-- 产品维修报表 -->
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
@@ -8,7 +8,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="deliveryCardId"
+        row-key="onlyId"
         :table-column="columns"
         :table-data="WipRepairVOData"
         :total="total"
@@ -83,7 +83,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'defectBlame',
-    title: '责任人',
+    title: '责任别',
     width: '100',
   },
   {
@@ -125,7 +125,7 @@ onMounted(async () => {
 });
 
 // 表格数据 字段
-const WipRepairVOData = ref<WipRepairVO[]>([]);
+const WipRepairVOData = ref<WipRepairData[]>([]);
 const total = ref<number>(0);
 const ProductMaintenanceReportData = ref({
   pageNum: 1,
@@ -137,10 +137,16 @@ const ProductMaintenanceReportData = ref({
   repairDateStart: '', // 维修开始时间
   repairDateEnd: '', // 维修结束时间
 });
+interface WipRepairData extends WipRepairVO {
+  onlyId?: string;
+}
 const onGetProductMaintenanceReport = async () => {
   ProductMaintenanceReportData.value.pageNum = pageUI.value.page;
   ProductMaintenanceReportData.value.pageSize = pageUI.value.rows;
   const res = await api.wipRepair.getReportData(ProductMaintenanceReportData.value);
+  (res.list as WipRepairData[]).forEach((item) => {
+    item.onlyId = Date.now().toString() + Math.random().toString(16).substring(2);
+  });
   WipRepairVOData.value = res.list;
   total.value = res.total;
 };

@@ -10,19 +10,29 @@
         row-key="id"
         :table-column="tableWarehouseColumns"
         :table-data="tableDataLocation"
+        select-on-row-click
         :fixed-height="true"
+        :hover="true"
         :loading="loading"
         :total="dataTotal"
         @refresh="tabRefresh"
       >
         <!-- 状态 -->
-        <template #state="{ row }">
-          <!-- <div>{{ row.state == 1 ? '启用' : '禁用' }}</div> -->
+        <!-- <template #state="{ row }">
           <span v-if="row.state == 1">启用</span>
           <span v-else>禁用</span>
+        </template> -->
+        <template #state="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            size="large"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
         </template>
         <template #title>
-          {{ '货位维护列表' }}
+          {{ '货位维护' }}
         </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
@@ -118,7 +128,7 @@ const opts = computed(() => {
 
 //* 表格标题
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '货位编码', colKey: 'locationCode', width: 85 },
   { title: '货位名称', width: 85, colKey: 'locationName' },
   { title: '货位描述', width: 85, colKey: 'locationDesc' },
@@ -139,6 +149,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '修改时间', width: 170, colKey: 'timeModified' },
   { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
 ];
+
 //* 表格数据
 const fetchTable = async () => {
   setLoading(true);
@@ -205,12 +216,27 @@ const onConfirmForm = async () => {
     }
   });
 };
+
 const onAdd = () => {
   formTitle.value = '新增';
   controlShow.value = true;
   formRef.value.init();
   formVisible.value = true;
   controlShow.value = true;
+};
+
+/* 操作状态 */
+const onSwitchChange = async (row: any, value: any) => {
+  const isValue = value ? 1 : 0;
+  const { id, warehouseId, districtId } = row;
+  await api.location.modifyLocation({
+    id,
+    districtId,
+    warehouseId,
+    state: isValue,
+  });
+  await fetchTable();
+  MessagePlugin.success('操作成功');
 };
 </script>
 

@@ -220,12 +220,6 @@ watch(tabListData, (newValue) => {
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'serial-number',
-    title: '序号',
-    align: 'center',
-    width: '60',
-  },
-  {
     colKey: 'moduleName',
     title: '功能名称',
     align: 'center',

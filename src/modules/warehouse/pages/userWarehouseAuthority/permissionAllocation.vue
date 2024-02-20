@@ -83,6 +83,7 @@ const asyncLoading = computed(() => {
   return asyncLoadingRadio.value;
 });
 onMounted(async () => {
+  console.log('🚀 ~ file: permissionAllocation.vue:86 ~ onMounted ~ async:', 'async');
   await onFetchData();
   await onGetAllPermission();
   if (dataTree.value.length > 0) {
@@ -143,12 +144,10 @@ const columns = [
   {
     colKey: 'warehouseCode',
     title: '仓库编码',
-    align: 'center',
   },
   {
     colKey: 'warehouseName',
     title: '仓库名称',
-    align: 'center',
   },
 ];
 // 获取左侧表格数据

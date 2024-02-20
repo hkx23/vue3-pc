@@ -460,62 +460,53 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'scheCode',
     title: '排产单',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'scheStatusName',
     title: '排产单状态',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'datetimeSche',
     title: '计划生产日期',
-    align: 'center',
     width: '180',
   },
   {
     colKey: 'mitemCode',
     title: '物料编码',
-    align: 'center',
     width: '100',
     cell: 'stateSwitch',
   },
   {
     colKey: 'mitemName',
     title: '物料名称',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'planQty',
     title: '排产单数量',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'generateQty',
     title: '已生成数量',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'displayQty',
     title: '已打印数量',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'thisTimeQty',
     title: '本次生成数量',
-    align: 'center',
     width: '150',
   },
   // {
   //   colKey: 'thisTimeQty',
   //   title: '本次生成数量',
-  //   align: 'center',
+  //
   //   width: '100',
   //   edit: {
   //     component: Input,
@@ -547,30 +538,25 @@ const labelPrintTop: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'specificationQuantity',
     title: '规格数量',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'thisAmountSheets',
     title: '本次生成张数',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'uomName',
     title: '单位',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'workshopName',
     title: '车间',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'workcenterName',
-    align: 'center',
     width: '120',
     title: '工作中心',
     fixed: 'right',
@@ -586,32 +572,27 @@ const labelPrintDown: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'deliveryCardNo',
     title: '条码',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'deliveryCardStatuName',
     title: '条码状态',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'qty',
     title: '数量',
-    align: 'center',
     width: '80',
     cell: 'stateSwitch',
   },
   {
     colKey: 'creatorName',
     title: '生成人',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'timeCreate',
     title: '生成时间',
-    align: 'center',
     width: '100',
   },
 ];
@@ -625,79 +606,66 @@ const labelManage: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'deliveryCardNo',
     title: '条码',
-    align: 'center',
     width: '250',
   },
   {
     colKey: 'deliveryCardStatuName',
     title: '条码状态',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'datetimeSche',
     title: '计划生产日期',
-    align: 'center',
     width: '180',
   },
   {
     colKey: 'workshopName',
     title: '车间',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'workcenterName',
     title: '工作中心',
-    align: 'center',
     width: '180',
   },
   {
     colKey: 'scheCode',
     title: '排产单',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'mitemCode',
     title: '物料编码',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'mitemName',
     title: '物料名称',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'qty',
     title: '数量',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'uomName',
     title: '单位',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'creatorName',
     title: '生成人',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'timeCreate',
     title: '生成时间',
-    align: 'center',
     width: '180',
   },
   {
     colKey: 'operations',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
     cell: 'actionSlot', // 引用具名插槽
@@ -708,43 +676,36 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'deliveryCardNo',
     title: '条码',
-    align: 'center',
     width: '250',
   },
   {
     colKey: 'deliveryCardStatuName',
     title: '条码状态',
-    align: 'center',
     width: '130',
   },
   {
     colKey: 'qty',
     title: '数量',
-    align: 'center',
     width: '60',
   },
   {
     colKey: 'operateType',
     title: '操作类型',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'reason',
     title: '原因',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'creatorName',
     title: '操作人',
-    align: 'center',
     width: '100',
   },
   {
     colKey: 'timeCreate',
     title: '操作时间',
-    align: 'center',
     width: '200',
   },
 ];

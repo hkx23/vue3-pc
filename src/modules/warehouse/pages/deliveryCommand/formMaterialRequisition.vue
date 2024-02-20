@@ -351,8 +351,11 @@ const reset = () => {
   formCardRef.value.reset({ type: 'empty' });
   tableDataMaterialRequisition.value = [];
   for (const key in formData) {
-    formData[key] = null;
+    if (key !== 'toWarehouseId') {
+      formData[key] = null;
+    }
   }
+  [formData.toWarehouseId] = props.idCollection.warehouseId;
 };
 
 const showPopform = () => {

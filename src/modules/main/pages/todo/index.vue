@@ -219,7 +219,7 @@ const onHandelUrl = async (row: any) => {
 }
 
 .t-list .is-selected {
-  background: #366ef49c;
+  background: var(--td-brand-color);
   color: white;
 }
 
@@ -255,6 +255,9 @@ const onHandelUrl = async (row: any) => {
 .list-item {
   width: 100%;
   // margin-top: 10px;
+  :deep(.t-badge--circle) {
+    top: 19px !important;
+  }
 }
 
 .cpm-box {
@@ -263,7 +266,7 @@ const onHandelUrl = async (row: any) => {
 }
 
 .table-cell-href {
-  color: rgb(63 93 237 / 100%);
+  color: var(--td-brand-color);
   cursor: pointer;
 }
 

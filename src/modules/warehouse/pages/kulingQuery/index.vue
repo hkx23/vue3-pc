@@ -5,7 +5,7 @@
       <cmp-query ref="queryComponent" :opts="optsKuling" :bool-enter="false" @submit="onInput"> </cmp-query>
     </cmp-card>
     <!-- cmp-table 表格组件  -->
-    <cmp-card :full="true">
+    <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageUI"
         row-key="onhandId"
@@ -13,29 +13,24 @@
         :table-data="tableDataReceipt"
         :total="dataTotal"
         :loading="loading"
+        :hover="true"
         :fixed-height="true"
         empty="没有符合条件的数据"
-        style="height: 400px"
         @refresh="tabRefresh"
       >
         <template #title>
-          {{ '库龄查询列表' }}
+          {{ '库龄查询' }}
         </template>
         <template #labelNo="slotProps">
           <t-space :size="8">
             <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps)">明细 </t-link>
           </t-space>
         </template>
-
-        <!-- 定义序号列的插槽 -->
-        <template #indexSlot="{ rowIndex }">
-          {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-        </template>
       </cmp-table>
     </cmp-card>
-    <!-- 库龄详情组件 -->
-    <kuling-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" :sun-data="sunData" />
   </cmp-container>
+  <!-- 库龄详情组件 -->
+  <kuling-details v-model:visible="RPDRoutingVisible" :form-title="formTitle" :sun-data="sunData" />
 </template>
 
 <script setup lang="ts">
@@ -115,8 +110,7 @@ const optsKuling = computed(() => {
 });
 
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '物料编码', colKey: 'mitemCode', width: 150 },
   { title: '物料描述', width: 150, colKey: 'mitemDesc' },
   { title: '仓库编码', width: 120, colKey: 'warehouseCode' },

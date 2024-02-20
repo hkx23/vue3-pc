@@ -12,7 +12,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="id"
+        row-key="onlyId"
         empty="没有符合条件的数据"
         :table-column="columns"
         :fixed-height="true"
@@ -41,7 +41,7 @@
     <cmp-table
       ref="tableRef"
       v-model:pagination="pageUITwo"
-      row-key="id"
+      row-key="labelNo"
       empty="没有符合条件的数据"
       :table-column="columnsDetail"
       :fixed-height="true"
@@ -62,7 +62,7 @@ import dayjs from 'dayjs';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api } from '@/api/warehouse';
+import { api, MitemShelflifeReportVO } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -83,91 +83,76 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'warehouseName',
     title: '仓库',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'districtName',
     title: '货区',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'locationName',
     title: '货位',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'mitemCode',
     title: '物料编码',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'mitemName',
     title: '物料名称',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'categoryCode',
     title: '物料类别编码',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'categoryName',
     title: '物料类别名称',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'supplierName',
     title: '供应商名称',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'lotNo',
     title: '批次号',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'datetimeReceipted',
     title: '接收日期',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'stockNum',
     title: '库存量',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'shelfLifeDays',
     title: '保质期(天)',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'expiredDays',
     title: '过期天数',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'uomName',
     title: '单位',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'labelDetails',
     title: '标签明细',
-    align: 'center',
     width: '150',
     fixed: 'right',
   },
@@ -176,31 +161,26 @@ const columnsDetail: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'labelNo',
     title: '条码',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'lotNo',
     title: '批次',
-    align: 'center',
     width: '150',
   },
   {
     colKey: 'qty',
     title: '数量',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'supplierCode',
     title: '供应商编码',
-    align: 'center',
     width: '120',
   },
   {
     colKey: 'supplierName',
     title: '供应商名称',
-    align: 'center',
     width: '120',
   },
 ];
@@ -260,6 +240,9 @@ const expirationDateParam = ref({
   receiveDateEnd: endOfToday.format('YYYY-MM-DD HH:mm:ss'), // 结束日期
 });
 
+interface MitemShelflifeReportVOWithId extends MitemShelflifeReportVO {
+  onlyId: string;
+}
 // 获取 表格 数据
 const onGetExpirationData = async () => {
   // tableRef.value.setSelectedRowKeys([]);
@@ -267,6 +250,9 @@ const onGetExpirationData = async () => {
   expirationDateParam.value.pageNum = pageUI.value.page;
   expirationDateParam.value.pageSize = pageUI.value.rows;
   const res = await api.mitemShelflifeReport.getList(expirationDateParam.value);
+  (res.list as MitemShelflifeReportVOWithId[]).forEach((item) => {
+    item.onlyId = Date.now() + Math.random().toString(16).substring(2); // 生成唯一标识符
+  });
   transferData.list = res.list;
   transferTotal.value = res.total;
 };

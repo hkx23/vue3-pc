@@ -622,75 +622,64 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'serial-number',
     title: '序号',
-    align: 'center',
     width: '60',
     fixed: 'left',
   },
   {
     colKey: 'name',
     title: '模块名称',
-    align: 'center',
     width: '110',
     fixed: 'left',
   },
   {
     colKey: 'moduleDesc',
     title: '模块描述',
-    align: 'center',
     width: '110',
   },
   {
     colKey: 'state',
     title: '状态',
-    align: 'center',
     width: '100',
     cell: 'stateSwitch',
   },
   {
     colKey: 'isPC',
     title: 'pc端',
-    align: 'center',
     width: '100',
     cell: 'pc', // 指定插槽名称
   },
   {
     colKey: 'isMobile',
     title: '移动端',
-    align: 'center',
     width: '100',
     cell: 'mobile', // 指定插槽名称
   },
   {
     colKey: 'isTV',
     title: '电视端',
-    align: 'center',
     width: '100',
     cell: 'tv', // 指定插槽名称
   },
   {
     colKey: 'isWeChat',
     title: '手表端',
-    align: 'center',
     width: '100',
     cell: 'Watches', // 指定插槽名称
   },
   {
     colKey: 'WeChat',
     title: '微信端',
-    align: 'center',
     width: '100',
     cell: 'wx', // 指定插槽名称
   },
   {
     colKey: 'path',
     title: '模块地址',
-    align: 'center',
     width: '160',
   },
   {
     colKey: 'operate',
     title: '操作',
-    align: 'center',
     fixed: 'right',
     width: '130',
     cell: 'actionSlot', // 引用具名插槽

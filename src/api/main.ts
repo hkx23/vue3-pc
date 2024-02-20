@@ -2144,8 +2144,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3898,13 +3898,13 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isProductName?: string;
-  isRawName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
   isState?: boolean;
+  stateName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
 }
@@ -4049,8 +4049,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4385,9 +4385,9 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   imsgqueueStatus?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 显示工站 */
@@ -5205,8 +5205,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -11345,6 +11345,21 @@ export const api = {
      */
     getItemById: (query: { id: string }) =>
       http.request<ResultImportSettingDTO['data']>(`/api/main/importManage/itemByID`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name DeleteById
+     * @summary 根据ID获取导入配置信息
+     * @request GET:/importManage/deleteByID
+     * @secure
+     */
+    deleteById: (query: { id: string }) =>
+      http.request<ResultImportSettingDTO['data']>(`/api/main/importManage/deleteByID`, {
         method: 'GET',
         params: query,
       }),

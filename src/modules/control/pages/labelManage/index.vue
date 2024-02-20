@@ -712,7 +712,7 @@ const topPrintID = ref(null);
 const topPrintData = ref({
   pageNum: 1,
   pageSize: 10,
-  planDateStart: dayjs().subtract(1, 'day').format('YYYY-MM-DD'), // 计划生产开始日期
+  planDateStart: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
   planDateEnd: dayjs().format('YYYY-MM-DD'), // 计划生产结束日期
   moScheduleId: '', // 工单ID
   workshopId: '', // 车间 ID
@@ -872,21 +872,21 @@ const onGenerateChange = async (value: any, context: any) => {
 const onPrintRulesList = reactive({ list: [] });
 const onPrintRulesData = async (moScheId) => {
   const res = await api.labelManage.getBarcodeRuleList({ moScheId });
-  onPrintRulesList.list = res?.list;
+  onPrintRulesList.list = res;
 };
 
 // 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async (moScheId) => {
   const res = await api.labelManage.getPrintTmplList({ moScheId });
-  onPrintTemplateList.list = res?.list;
+  onPrintTemplateList.list = res;
 };
 
 // 管理界面打印模板 下拉数据
 const onPrintManagementList = reactive({ list: [] });
 const onPrintManagementData = async (moScheId) => {
   const res = await api.labelManage.getPrintTmplList({ moScheId });
-  onPrintManagementList.list = res?.list;
+  onPrintManagementList.list = res;
 };
 
 // 本次生成数量change事件

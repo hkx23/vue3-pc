@@ -5,11 +5,15 @@
       <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
         <t-space size="small" :align="'end'">
           <t-button @click="onAdd">新增</t-button>
-          <t-button theme="default" @click="onDeletes">批量删除</t-button>
+          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeletes">
+            <t-button theme="default">批量删除</t-button>
+          </t-popconfirm>
         </t-space>
       </t-space>
       <t-enhanced-table
         row-key="id"
+        :active-row-type="'single'"
+        :hover="true"
         :data="data"
         :columns="column"
         :tree="treeConfig"
@@ -51,9 +55,6 @@
       <t-button theme="primary" @click="onSecondarySubmit">保存</t-button>
     </template>
   </t-dialog>
-  <t-dialog v-model:visible="deleteVisible" :header="t('common.message.confirmDelete')" :on-confirm="onSave1">
-    <h3 class="list-save">选中{{ selectedRowKeys.length }}条</h3>
-  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -67,7 +68,6 @@ import { api } from '@/api/main';
 import { useLang } from './lang';
 
 const disabledShow = ref(false); // 缺陷代码
-const deleteVisible = ref(false);
 const defectTitle = ref('');
 // 装数控的
 const treeConfig = reactive({
@@ -187,9 +187,8 @@ const onBtn = (context) => {
 const onDeletes = async () => {
   if (selectedRowKeys.value.length === 0) {
     MessagePlugin.error('未选择');
-    return;
   }
-  deleteVisible.value = true;
+  await onSave1();
 };
 // 批量删除确定
 const onSave1 = async () => {
@@ -197,7 +196,6 @@ const onSave1 = async () => {
     await api.defectCode.removeDefectCodeBatch({
       ids: selectedRowKeys.value,
     });
-    deleteVisible.value = false;
     await onFetchData();
     selectedRowKeys.value = [];
   } catch (e) {

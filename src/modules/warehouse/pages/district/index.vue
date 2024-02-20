@@ -10,18 +10,15 @@
         row-key="id"
         :table-column="tableWarehouseColumns"
         :table-data="tableDataWarehouse"
+        :fixed-height="true"
+        :hover="true"
+        select-on-row-click
         :loading="loading"
         :total="dataTotal"
         @refresh="tabRefresh"
       >
-        <!-- 状态 -->
-        <template #state="{ row }">
-          <!-- <div>{{ row.state == 1 ? '启用' : '禁用' }}</div> -->
-          <span v-if="row.state == 1">启用</span>
-          <span v-else>禁用</span>
-        </template>
         <template #title>
-          {{ '货区维护列表' }}
+          {{ '货区维护' }}
         </template>
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
@@ -35,6 +32,20 @@
               <t-link theme="primary"> 删除 </t-link>
             </t-popconfirm>
           </t-space>
+        </template>
+        <!-- 状态 -->
+        <!-- <template #state="{ row }">
+          <span v-if="row.state == 1">启用</span>
+          <span v-else>禁用</span>
+        </template> -->
+        <template #state="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            size="large"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
         </template>
       </cmp-table>
     </cmp-card>
@@ -109,7 +120,7 @@ const opts = computed(() => {
 
 //* 表格标题
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   { title: '货区编码', colKey: 'districtCode', width: 85 },
   { title: '货区名称', width: 85, colKey: 'districtName' },
   { title: '货区描述', width: 85, colKey: 'districtDesc' },
@@ -199,6 +210,15 @@ const onAdd = () => {
   formRef.value.init();
   formVisible.value = true;
   controlShow.value = true;
+};
+
+/* 操作状态 */
+const onSwitchChange = async (row: any, value: any) => {
+  const isValue = value ? 1 : 0;
+  const { id, warehouseId } = row;
+  await api.district.modifyDistrict({ id, state: isValue, warehouseId });
+  await fetchTable();
+  MessagePlugin.success('操作成功');
 };
 </script>
 
