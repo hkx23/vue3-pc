@@ -1,4 +1,4 @@
-<!-- 箱包关系报表 -->
+<!-- 产品维修报表 -->
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
@@ -83,7 +83,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'defectBlame',
-    title: '责任人',
+    title: '责任别',
     width: '100',
   },
   {

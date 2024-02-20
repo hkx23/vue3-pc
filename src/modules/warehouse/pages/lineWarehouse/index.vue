@@ -182,7 +182,7 @@ const onFetchGroupData = async () => {
 // 表单定义规则
 const rules: FormRules = {
   warehouseCode: [{ required: true, trigger: 'blur' }],
-  warehouseDesc: [{ required: true, trigger: 'blur' }],
+  warehouseDesc: [{ required: false, trigger: 'blur' }],
   warehouseId: [{ required: true, trigger: 'change' }],
   workcenterId: [{ required: true, trigger: 'change' }],
   workcenterIds: [{ required: true, trigger: 'change' }],
