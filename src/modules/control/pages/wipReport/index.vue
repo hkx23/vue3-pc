@@ -8,7 +8,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="moId"
+        row-key="onlyId"
         :table-column="columnsWip"
         :table-data="WipRepairVOData"
         :total="total"
@@ -332,11 +332,10 @@ const onGetProductMaintenanceReport = async () => {
     },
   }));
   columnsData.value = columns;
+  res.list.forEach((item) => {
+    (item as any).onlyId = Date.now().toString() + Math.random().toString(16).substring(2);
+  });
   WipRepairVOData.value = res.list;
-  console.log(
-    '🚀 ~ file: index.vue:357 ~ onGetProductMaintenanceReport ~ WipRepairVOData.value:',
-    WipRepairVOData.value,
-  );
   total.value = res.total;
 };
 const onRefresh = async () => {
