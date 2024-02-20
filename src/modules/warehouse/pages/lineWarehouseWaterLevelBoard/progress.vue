@@ -33,7 +33,7 @@ const progressStyle = computed(() => {
 <style scoped>
 .progress-container {
   width: 100%;
-  background-color: #c42d2d;
+  background-color: #217760;
   border-radius: 8px;
   overflow: hidden;
   position: relative; /* 为了绝对定位的子元素 */
@@ -41,23 +41,23 @@ const progressStyle = computed(() => {
 
 .progress-bar {
   height: 15px;
-  background-color: #574caf;
+  background-color: #21b86c;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px 0 0 8px;
   width: 0;
+  font-size: 18px;
   transition: width 0.5s ease;
 }
 
 .progress-text {
-  color: rgb(39 245 24);
+  color: #fff;
   font-weight: bold;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%); /* 使用 transform 来精确居中 */
-  font-size: 12px;
   white-space: nowrap; /* 防止文本换行 */
 }
 </style>
