@@ -83,6 +83,7 @@ const asyncLoading = computed(() => {
   return asyncLoadingRadio.value;
 });
 onMounted(async () => {
+  console.log('🚀 ~ file: permissionAllocation.vue:86 ~ onMounted ~ async:', 'async');
   await onFetchData();
   await onGetAllPermission();
   if (dataTree.value.length > 0) {

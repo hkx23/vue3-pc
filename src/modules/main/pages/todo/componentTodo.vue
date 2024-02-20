@@ -185,7 +185,7 @@ const onHandelTodoMenu = async () => {
 }
 
 .t-list .is-selected {
-  background: #366ef49c;
+  background: var(--td-brand-color);
   color: white;
 }
 

@@ -254,7 +254,6 @@ const onGetExpirationData = async () => {
     item.onlyId = Date.now() + Math.random().toString(16).substring(2); // 生成唯一标识符
   });
   transferData.list = res.list;
-  console.log('🚀 ~ file: index.vue:257 ~ onGetExpirationData ~ transferData.list:', transferData.list);
   transferTotal.value = res.total;
 };
 

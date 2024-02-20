@@ -1,6 +1,6 @@
 <!-- 用户仓库权限 -->
 <template>
-  <permissionAllocation v-show="pageShow" @permission-show="onPermission"></permissionAllocation>
+  <permissionAllocation v-if="pageShow" @permission-show="onPermission"></permissionAllocation>
   <cmp-container v-show="!pageShow" :full="true">
     <cmp-card :span="12">
       <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
