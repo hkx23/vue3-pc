@@ -1,0 +1,10 @@
+{
+  "import": {
+    "importKeyCode": "导入Key",
+    "businessDomain": "业务领域",
+    "tableName": "导入表名",
+    "importDesc": "导入说明",
+    "importTemplateUrl": "导入模板",
+    "batchCount": "批量提交量"
+  }
+}

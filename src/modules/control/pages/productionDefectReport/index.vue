@@ -559,7 +559,7 @@ const opts = computed(() => {
       },
     },
     workOrderOM: {
-      label: '产品条码/OM',
+      label: '产品条码/配送卡',
       event: 'input',
       comp: 't-input',
       defaultVal: '',
@@ -596,19 +596,44 @@ const opts = computed(() => {
     },
   };
 });
+const queryCondition = ref({
+  // moScheId: '',
+  // mitemId: '',
+  dateStart: '',
+  dateEnd: '',
+  pageNum: 1,
+  pageSize: 10,
+});
+
 // 查询
-const onInput = async () => {
-  firstPageUI.value.page = 1;
+const onInput = async (data: any) => {
+  queryCondition.value = data;
+  const [dateStart, dateEnd] = data.datetimeRange;
+  // 计算日期范围的天数差异
+  const startDate = dayjs(dateStart);
+  const endDate = dayjs(dateEnd);
+  const daysDifference = endDate.diff(startDate, 'day');
+  if (daysDifference > 31) {
+    // 将结束日期调整为开始日期的后31天
+    MessagePlugin.warning('日期跨度不得超过31天');
+    return;
+  }
+  queryCondition.value.dateStart = dateStart;
+  queryCondition.value.dateEnd = dateEnd;
+  // fetchTable();
 };
+
+// const fetchTable = () => {};
 
 const onReset = async () => {
   columnsData.value = [];
   total1.value = 0;
-  MessagePlugin.success('重置成功');
+  // MessagePlugin.success('重置成功');
 };
+
 /** 日期范围 辅助函数
  */
-const dateChange = (data: any) => {
+const dateChange = async (data: any) => {
   // 获取当前选择的日期范围
   const selectedDateRange = data.value;
   // 将日期字符串转换为dayjs对象
@@ -619,7 +644,7 @@ const dateChange = (data: any) => {
   // 如果选择的天数超过31天，则调整日期范围
   if (daysDifference > 31) {
     // 将结束日期调整为开始日期的后31天
-    MessagePlugin.warning('日期跨度不得超过31天');
+    await MessagePlugin.warning('日期跨度不得超过31天');
   }
 };
 </script>
