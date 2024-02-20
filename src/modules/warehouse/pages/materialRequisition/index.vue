@@ -45,7 +45,7 @@
           <t-enhanced-table
             ref="tableDtlRef"
             lazy-load
-            row-key="id"
+            row-key="index"
             :columns="tableMaterialDtlColumns"
             :data="tableDataMaterialRequisitionDtl"
             :tree="treeConfig"
