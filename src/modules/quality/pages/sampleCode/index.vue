@@ -4,12 +4,12 @@
     <cmp-card>
       <table>
         <thead>
-          <tr>
+          <tr class="red-bg">
             <th rowspan="2" style="width: 250px">批量</th>
             <th colspan="4">特殊检验水平</th>
             <th colspan="3">一般检验水平</th>
           </tr>
-          <tr>
+          <tr class="red-bg">
             <th>S-1</th>
             <th>S-2</th>
             <th>S-3</th>
