@@ -12,7 +12,7 @@
         <t-tab-panel value="tab1" label="不良明细" :destroy-on-hide="true">
           <cmp-table
             ref="tableRef"
-            v-model:pagination="pageUI"
+            v-model:pagination="firstPageUI"
             row-key="moId"
             :table-column="columnsProduceReport1"
             :table-data="Data1"
@@ -38,7 +38,7 @@
           <cmp-container :full="true">
             <cmp-table
               ref="tableRef"
-              v-model:pagination="pageUI"
+              v-model:pagination="towPageUI"
               row-key="moId"
               :table-column="columnsProduceReport2"
               :table-data="Data2"
@@ -59,7 +59,7 @@
           <cmp-container :full="true">
             <cmp-table
               ref="tableRef"
-              v-model:pagination="pageUI"
+              v-model:pagination="threePageUI"
               row-key="moId"
               :table-column="columnsProduceReport3"
               :table-data="Data3"
@@ -80,7 +80,7 @@
           <cmp-container :full="true">
             <cmp-table
               ref="tableRef"
-              v-model:pagination="pageUI"
+              v-model:pagination="fourPageUI"
               row-key="moId"
               :table-column="columnsProduceReport4"
               :table-data="Data4"
@@ -101,7 +101,7 @@
           <cmp-container :full="true">
             <cmp-table
               ref="tableRef"
-              v-model:pagination="pageUI"
+              v-model:pagination="fivePageUI"
               row-key="moId"
               :table-column="columnsProduceReport5"
               :table-data="Data5"
@@ -131,9 +131,11 @@ import { computed, ref } from 'vue';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
-const { pageUI } = usePage();
-// const { pageUI: workPageUI } = usePage();
-// const { pageUI: productPageUI } = usePage();
+const { pageUI: firstPageUI } = usePage();
+const { pageUI: towPageUI } = usePage();
+const { pageUI: threePageUI } = usePage();
+const { pageUI: fourPageUI } = usePage();
+const { pageUI: fivePageUI } = usePage();
 const activeTab = ref('tab1');
 
 // 表格实例
@@ -596,7 +598,7 @@ const opts = computed(() => {
 });
 // 查询
 const onInput = async () => {
-  pageUI.value.page = 1;
+  firstPageUI.value.page = 1;
 };
 
 const onReset = async () => {
