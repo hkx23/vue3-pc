@@ -34,7 +34,7 @@ const props = withDefaults(defineProps<CmpWrapperProps>(), {
 });
 const attrs: Partial<CmpWrapperProps> = useAttrs();
 const targetAttrs = computed<CmpWrapperProps>(() => {
-  return { ...attrs, ...props };
+  return { ...attrs };
 });
 const styleAttrs = computed(() => {
   let bgStyle = {};
@@ -44,8 +44,8 @@ const styleAttrs = computed(() => {
     };
   }
   return {
-    width: `${props.designWidth}px`,
-    height: `${props.designHeight}px`,
+    'min-width': `${props.designWidth}px`,
+    'min-height': `${props.designHeight}px`,
     transform: `scale(${scaleInfo.value.x}, ${scaleInfo.value.y})`,
     'transform-origin': '0 0',
     ...bgStyle,
@@ -66,13 +66,14 @@ const updateScale = (width, height) => {
 };
 
 onMounted(() => {
+  el.value.parentElement.style.overflow = 'hidden';
   useResizeObserver(
     el.value.parentElement,
     debounce((entries) => {
       const entry = entries[0];
       const { width, height } = entry.contentRect;
       updateScale(width, height);
-    }, 150),
+    }, 300),
   );
 });
 
@@ -80,12 +81,9 @@ const currentTime = useDateFormat(useNow(), 'YYYY-MM-DD HH:mm:ss');
 </script>
 <style lang="less" scoped>
 .cmp-wrapper {
-  width: 100%;
-  height: 100%;
   background-repeat: no-repeat;
   background-position: center top;
   background-size: 100% 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: all 0.5s;
@@ -108,8 +106,10 @@ const currentTime = useDateFormat(useNow(), 'YYYY-MM-DD HH:mm:ss');
   }
 
   > .body {
-    padding: 12px;
-    font-size: 16px;
+    padding: 16px;
+    font-size: 20px;
+    display: flex;
+    flex: 1;
   }
 }
 </style>
