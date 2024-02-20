@@ -161,7 +161,7 @@ td {
 } */
 
 .outer_box {
-  height: 100vh;
+  flex: 1;
   display: flex;
   flex-direction: column; /* 使得子元素垂直排列 */
   justify-content: space-between;
