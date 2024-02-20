@@ -80,7 +80,7 @@ const asyncLoading = computed(() => {
   return asyncLoadingRadio.value;
 });
 const current = ref(1); // 用户当前页
-const pageSize = ref(5); // 用户请求数
+const pageSize = ref(20); // 用户请求数
 const total = ref(10); // 用户分页总数
 const tableTotal = ref(10); // table分页总数
 const selectedRowKeys = ref([]); // 选择的

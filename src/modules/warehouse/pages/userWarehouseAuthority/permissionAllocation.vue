@@ -158,7 +158,7 @@ const dataTree = ref<WorkstationAuth[]>([]);
 const totals = ref<number>(0); // 用户分页总数
 const AuthList = ref({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 20,
   keyword: '',
 });
 const onFetchData = async () => {
