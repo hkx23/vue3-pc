@@ -1259,8 +1259,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 响应数据 */
@@ -3089,8 +3089,6 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /** 已发料量 */
-  alreadyPickQty?: number;
   /**
    * 需求用量
    * @format int32
@@ -3104,6 +3102,8 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -5920,6 +5920,7 @@ export interface DataTableColumnVO {
   columnDesc?: string;
   /** 列类型 */
   columnType?: string;
+  default?: boolean;
 }
 
 /** 数据表对象 */
@@ -5930,7 +5931,7 @@ export type DataTableVO = {
   tableModelName?: string;
   /** 表描述 */
   tableDescription?: string;
-  /** 文件最后修改时间戳 */
+  /** 列设置 */
   columns?: DataTableColumnVO[];
 } | null;
 
