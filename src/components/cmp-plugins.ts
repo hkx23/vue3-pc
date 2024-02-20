@@ -6,6 +6,7 @@ import BcmpSelectList from './bcmp-select-list/index.vue';
 import BcmpSelectTable from './bcmp-select-table/index.vue';
 import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import CmpButton from './cmp-button/index.vue';
+import CmpWrapper from './cmp-kanban/CmpWrapper.vue';
 import CmpCard from './cmp-layout/CmpCard.vue';
 import CmpContainer from './cmp-layout/CmpContainer.vue';
 import CmpRow from './cmp-layout/CmpRow.vue';
@@ -37,6 +38,7 @@ export default {
     app.component('CmpScanInput', CmpScanInput);
 
     app.component('CmpPrintButton', CmpPrintButton);
+    app.component('CmpWrapper', CmpWrapper);
   },
 };
 
@@ -48,5 +50,6 @@ declare module '@vue/runtime-core' {
     CmpButton: typeof CmpButton;
     CmpPrintButton: typeof CmpPrintButton;
     CmpTable: typeof CmpTable;
+    CmpWrapper: typeof CmpWrapper;
   }
 }
