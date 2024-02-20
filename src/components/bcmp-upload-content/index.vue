@@ -44,10 +44,16 @@
             :before-upload="beforeUpload"
             @fail="handleFail"
           >
-            <t-button theme="primary">上传</t-button>
+            <t-button theme="primary" :disabled="tableData?.length >= props.uploadCountLimit">上传</t-button>
           </t-upload>
-          <t-button v-if="!$props.readonly" theme="default" @click="batchDelete">批量删除</t-button>
-          <t-button theme="default" @click="batchDownload">批量下载</t-button>
+          <t-button
+            v-if="!$props.readonly"
+            theme="default"
+            :disabled="selectedRowKeys?.length <= 0"
+            @click="batchDelete"
+            >批量删除</t-button
+          >
+          <t-button theme="default" :disabled="selectedRowKeys?.length <= 0" @click="batchDownload">批量下载</t-button>
         </t-space>
       </template>
     </cmp-table>
@@ -61,7 +67,7 @@
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MessagePlugin, RequestMethodResponse, TableRowData, UploadFile } from 'tdesign-vue-next';
-import { computed, onMounted, PropType, ref } from 'vue';
+import { computed, onMounted, PropType, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 
@@ -81,6 +87,14 @@ const props = defineProps({
   uploadFileSizeLimit: {
     type: Number,
     default: 5,
+  },
+  uploadTypeLimit: {
+    type: String,
+    default: '',
+  },
+  uploadCountLimit: {
+    type: Number,
+    default: 999,
   },
   // 上传文件夹路径
   uploadPath: {
@@ -194,6 +208,22 @@ const beforeUpload = (file: UploadFile) => {
     MessagePlugin.error(`只能上传小于${props.uploadFileSizeLimit}M的文件`);
     return false;
   }
+  const fileCount = tableData.value.length;
+  if (fileCount >= props.uploadCountLimit) {
+    MessagePlugin.error(`只能上传${props.uploadCountLimit}个文件`);
+    return false;
+  }
+
+  if (props.uploadTypeLimit) {
+    // 判断上传文件是否在限制文件类型里面
+    // 文件类型使用文件名截取最后一部分
+    const fileType = file.name.split('.').pop();
+    if (!props.uploadTypeLimit.includes(fileType)) {
+      MessagePlugin.error(`只能上传[${props.uploadTypeLimit}]类型的文件`);
+      return false;
+    }
+  }
+
   // 判断选择文件是否已存在于列表中
   for (let i = 0; i < tableData.value.length; i++) {
     if (tableData.value[i].fileName === file.name) {
@@ -410,6 +440,14 @@ const previewFun = (file: any) => {
   //   fileViewerRef.value?.viewPdf(data);
   // }
 };
+
+watch(
+  () => props.fileList,
+  () => {
+    fetchData();
+  },
+  { deep: true },
+);
 
 const getFileList = () => {
   return tableData.value;
