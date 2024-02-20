@@ -2144,8 +2144,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3898,15 +3898,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4049,8 +4049,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4385,9 +4385,9 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
-  erpbillNo?: string;
   imsgqueueStatus?: string;
+  erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 显示工站 */
@@ -4603,8 +4603,111 @@ export interface ResultPagingDataImportSetting {
   data?: PagingDataImportSetting;
 }
 
+/** 导入列配置表 */
+export interface ImportSettingColumn {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  importId?: string;
+  /**
+   * 列排序
+   * @format int32
+   */
+  seq?: number;
+  /** 列来源（数据表/手动添加） */
+  fromTable?: string;
+  /** 导入字段 */
+  columnField?: string;
+  /** 导入字段描述 */
+  columnDesc?: string;
+  /** 列数据类型 */
+  columnDatetype?: string;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequired?: number;
+  /**
+   * 是否导入列
+   * @format int32
+   */
+  isImport?: number;
+  /**
+   * 是否模块列
+   * @format int32
+   */
+  isTemplate?: number;
+  /** 默认值 */
+  defaultValue?: string;
+  /** 数据转换配置 */
+  datatransferJson?: string;
+  /** 正则表达式 */
+  regularExpression?: string;
+}
+
+export interface ImportSettingDTO {
+  /** 导入配置表 */
+  settingModel?: ImportSetting;
+  columnList?: ImportSettingColumn[];
+  ruleList?: ImportSettingRule[];
+}
+
+/** 导入校验表 */
+export interface ImportSettingRule {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  importId?: string;
+  /** 校验类型 */
+  validateType?: string;
+  /** 校验名称 */
+  validateName?: string;
+  /** 唯一键字段列表 */
+  uniqueColumns?: string;
+  /** 数据转换配置 */
+  datatransferJson?: string;
+}
+
 /** 通用响应类 */
-export interface ResultImportSetting {
+export interface ResultBoolean {
   /**
    * 响应代码
    * @format int32
@@ -4612,8 +4715,8 @@ export interface ResultImportSetting {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 导入配置表 */
-  data?: ImportSetting;
+  /** 响应数据 */
+  data?: boolean | null;
 }
 
 export interface FileVO {
@@ -5102,8 +5205,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5788,19 +5891,6 @@ export interface BarcodeSequenceDTO {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
-}
-
-/** 通用响应类 */
-export interface ResultBoolean {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
 }
 
 /** 条码生成序列号表 */
@@ -6817,10 +6907,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6834,6 +6924,71 @@ export interface ResultListModulePermissionDTO {
   message?: string;
   /** 响应数据 */
   data?: ModulePermissionDTO[] | null;
+}
+
+/** 显示系统字典组 */
+export type ParamGroupTreeVO = {
+  domain?: string;
+  value?: string;
+  label?: string;
+  children?: ParamGroupVO[];
+} | null;
+
+/** 显示系统字典组 */
+export interface ParamGroupVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 业务领域 */
+  paramDomain?: string;
+  /** 字典组代码 */
+  paramGroupCode?: string;
+  /** 字典组名称 */
+  paramGroupName?: string;
+  /** 字典组描述 */
+  paramGroupDesc?: string;
+  /**
+   * 是否系统字典
+   * @format int32
+   */
+  isSys?: number;
+  /** 字典数据类型 */
+  paramDataType?: string;
+  value?: string;
+  label?: string;
+  isState?: boolean;
+}
+
+/** 通用响应类 */
+export interface ResultListParamGroupTreeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ParamGroupTreeVO[] | null;
 }
 
 /** 响应数据 */
@@ -7161,6 +7316,7 @@ export interface DataTableColumnVO {
   columnDesc?: string;
   /** 列类型 */
   columnType?: string;
+  default?: boolean;
 }
 
 /** 数据表对象 */
@@ -7171,9 +7327,40 @@ export type DataTableVO = {
   tableModelName?: string;
   /** 表描述 */
   tableDescription?: string;
-  /** 文件最后修改时间戳 */
+  /** 列设置 */
   columns?: DataTableColumnVO[];
 } | null;
+
+/** 通用响应类 */
+export interface ResultImportSettingDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: ImportSettingDTO;
+}
+
+/** 响应数据 */
+export type Dropdown = {
+  value?: string;
+  label?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListDropdown {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Dropdown[] | null;
+}
 
 /** 通用响应类 */
 export interface ResultListFavorite {
@@ -9785,6 +9972,24 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/paramGroup/getdomainlist`, {
         method: 'GET',
       }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典组
+     * @name GetTreeList
+     * @summary 系统字典功能-按领域分组获取所有系统参数组
+     * @request GET:/paramGroup/getTreeList
+     * @secure
+     */
+    getTreeList: (query?: {
+      /** @default "" */
+      keyword?: string;
+    }) =>
+      http.request<ResultListParamGroupTreeVO['data']>(`/api/main/paramGroup/getTreeList`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   param: {
     /**
@@ -11044,7 +11249,7 @@ export const api = {
      *
      * @tags 用户
      * @name Search
-     * @summary 获取用户信息列表
+     * @summary 获取导入配置信息列表
      * @request POST:/importManage/items
      * @secure
      */
@@ -11058,27 +11263,28 @@ export const api = {
      * No description
      *
      * @tags 用户
-     * @name GetItemById
-     * @summary 根据ID获取导入配置信息
-     * @request POST:/importManage/items/{id}
+     * @name Edit
+     * @summary 编辑导入配置信息
+     * @request POST:/importManage/edit
      * @secure
      */
-    getItemById: (id: string) =>
-      http.request<ResultImportSetting['data']>(`/api/main/importManage/items/${id}`, {
+    edit: (data: ImportSettingDTO) =>
+      http.request<ResultObject['data']>(`/api/main/importManage/edit`, {
         method: 'POST',
+        body: data as any,
       }),
 
     /**
      * No description
      *
      * @tags 用户
-     * @name Edit
-     * @summary 编辑导入配置信息
-     * @request POST:/importManage/edit
+     * @name CheckExist
+     * @summary 检查是否有重复Key
+     * @request POST:/importManage/checkExist
      * @secure
      */
-    edit: (data: ImportSetting) =>
-      http.request<ResultObject['data']>(`/api/main/importManage/edit`, {
+    checkExist: (data: ImportSetting) =>
+      http.request<ResultBoolean['data']>(`/api/main/importManage/checkExist`, {
         method: 'POST',
         body: data as any,
       }),
@@ -11092,7 +11298,7 @@ export const api = {
      * @request POST:/importManage/add
      * @secure
      */
-    add: (data: ImportSetting) =>
+    add: (data: ImportSettingDTO) =>
       http.request<ResultObject['data']>(`/api/main/importManage/add`, {
         method: 'POST',
         body: data as any,
@@ -11110,6 +11316,80 @@ export const api = {
     tables: (query: { businessCode: string }) =>
       http.request<ResultListDataTableVO['data']>(`/api/main/importManage/tables`, {
         method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetItemByKey
+     * @summary 根据key获取导入配置信息
+     * @request GET:/importManage/itemByKey
+     * @secure
+     */
+    getItemByKey: (query: { key: string }) =>
+      http.request<ResultImportSettingDTO['data']>(`/api/main/importManage/itemByKey`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetItemById
+     * @summary 根据ID获取导入配置信息
+     * @request GET:/importManage/itemByID
+     * @secure
+     */
+    getItemById: (query: { id: string }) =>
+      http.request<ResultImportSettingDTO['data']>(`/api/main/importManage/itemByID`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name DeleteById
+     * @summary 根据ID获取导入配置信息
+     * @request GET:/importManage/deleteByID
+     * @secure
+     */
+    deleteById: (query: { id: string }) =>
+      http.request<ResultImportSettingDTO['data']>(`/api/main/importManage/deleteByID`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name BusinessDomain
+     * @summary 业务领域
+     * @request GET:/importManage/businessDomain
+     * @secure
+     */
+    businessDomain: () =>
+      http.request<ResultListDropdown['data']>(`/api/main/importManage/businessDomain`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Delete
+     * @summary 删除导入配置，包括子表
+     * @request DELETE:/importManage/delete
+     * @secure
+     */
+    delete: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/main/importManage/delete`, {
+        method: 'DELETE',
         params: query,
       }),
   },
