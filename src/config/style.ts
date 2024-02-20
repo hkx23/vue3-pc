@@ -5,6 +5,7 @@ export default {
   mode: 'light',
   layout: 'mix',
   splitMenu: true,
+  sideMode: 'light',
   isFooterAside: false,
   isSidebarFixed: true,
   isHeaderFixed: true,

@@ -1,8 +1,6 @@
 import type { TabValue } from 'tdesign-vue-next';
 import { LocationQueryRaw, RouteRecordName } from 'vue-router';
 
-import STYLE_CONFIG from '@/config/style';
-
 export interface RouteMeta {
   id?: string;
   title?: string | Record<string, string>;
@@ -34,14 +32,6 @@ export interface MenuRoute {
 }
 
 export type ModeType = 'dark' | 'light';
-
-export type SettingType = typeof STYLE_CONFIG;
-
-export type ClassName = { [className: string]: any } | ClassName[] | string;
-
-export type CommonObjType = {
-  [key: string]: string | number;
-};
 
 export interface UserInfo {
   id: string;

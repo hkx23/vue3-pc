@@ -49,10 +49,19 @@ onMounted(async () => {
 const ruleTabData = ref([]);
 const onGetRuleData = async () => {
   const res = await api.sampleCode.getList();
-  const updatedData = res.map((item) => {
-    const { batchStart, batchEnd, ...rest } = item;
+  const updatedData = res.map((item, index, array) => {
+    const { batchStart, batchEnd, ...res } = item;
+    // 检查当前元素是否为数组的最后一个元素
+    if (index === array.length - 1) {
+      // 对于最后一个元素，使用特殊的格式
+      return {
+        ...res,
+        batch: `${batchStart}及以上`,
+      };
+    }
+    // 对于其他元素，使用原始格式
     return {
-      ...rest,
+      ...res,
       batch: `${batchStart}-${batchEnd}`,
     };
   });
