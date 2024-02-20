@@ -10,6 +10,9 @@
       <t-tabs v-model="activeTab">
         <!-- 页签栏1 不良明细 -->
         <t-tab-panel value="tab1" label="不良明细" :destroy-on-hide="true">
+          <!--  select-on-row-click
+            :fixed-height="true"
+            :hover="true" -->
           <cmp-table
             ref="tableRef"
             v-model:pagination="firstPageUI"
@@ -17,9 +20,6 @@
             :table-column="columnsProduceReport1"
             :table-data="Data1"
             :total="total1"
-            select-on-row-click
-            :fixed-height="true"
-            :hover="true"
             @refresh="onRefresh"
           >
             <template #title>
