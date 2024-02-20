@@ -1,8 +1,10 @@
 <!-- 国标抽样方案 -->
 <template>
   <cmp-container :full="true">
-    <cmp-card :span="12">
+    <cmp-card>
       <cmp-query :opts="opts" @submit="onInput" @reset="onReset"></cmp-query>
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
         ref="tableRefTop"
         v-model:pagination="pageUI"
