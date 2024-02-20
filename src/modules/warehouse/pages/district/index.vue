@@ -17,12 +17,6 @@
         :total="dataTotal"
         @refresh="tabRefresh"
       >
-        <!-- 状态 -->
-        <template #state="{ row }">
-          <!-- <div>{{ row.state == 1 ? '启用' : '禁用' }}</div> -->
-          <span v-if="row.state == 1">启用</span>
-          <span v-else>禁用</span>
-        </template>
         <template #title>
           {{ '货区维护' }}
         </template>
@@ -38,6 +32,20 @@
               <t-link theme="primary"> 删除 </t-link>
             </t-popconfirm>
           </t-space>
+        </template>
+        <!-- 状态 -->
+        <!-- <template #state="{ row }">
+          <span v-if="row.state == 1">启用</span>
+          <span v-else>禁用</span>
+        </template> -->
+        <template #state="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            size="large"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
         </template>
       </cmp-table>
     </cmp-card>
@@ -202,6 +210,15 @@ const onAdd = () => {
   formRef.value.init();
   formVisible.value = true;
   controlShow.value = true;
+};
+
+/* 操作状态 */
+const onSwitchChange = async (row: any, value: any) => {
+  const isValue = value ? 1 : 0;
+  const { id, warehouseId } = row;
+  await api.district.modifyDistrict({ id, state: isValue, warehouseId });
+  await fetchTable();
+  MessagePlugin.success('操作成功');
 };
 </script>
 

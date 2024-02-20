@@ -192,14 +192,14 @@ const opts = computed(() => {
 
 const tableReckoningManagementColumns = ref([
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { colKey: 'billNo', title: '盘点单号', width: 120 },
+  { colKey: 'billNo', title: '盘点单号', width: 100 },
   { colKey: 'warehouseName', title: '仓库', width: 85 },
-  { colKey: 'stockCheckBillTypeName', title: '盘点类型', width: 85 },
-  { colKey: 'stockCheckBillStatusName', title: '状态', width: 85 },
-  { colKey: 'creator', title: '创建人', width: 85 },
-  { colKey: 'timeCreate', title: '创建时间', width: 85 },
-  { colKey: 'modifier', title: '最后更新人', width: 100 },
-  { colKey: 'timeModified', title: '最后更新时间', width: 85 },
+  { colKey: 'stockCheckBillTypeName', title: '盘点类型', width: 65 },
+  { colKey: 'stockCheckBillStatusName', title: '状态', width: 65 },
+  { colKey: 'creator', title: '创建人', width: 65 },
+  { colKey: 'timeCreate', title: '创建时间', width: 100 },
+  { colKey: 'modifier', title: '最后更新人', width: 65 },
+  { colKey: 'timeModified', title: '最后更新时间', width: 100 },
 ]);
 // 表格主位栏 2 物料明细
 const tableMaterialDetailsColumns: PrimaryTableCol<TableRowData>[] = [

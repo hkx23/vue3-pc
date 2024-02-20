@@ -368,6 +368,89 @@ export type SamplingAqlVO = {
   arguments?: SamplingAqlDTO[];
 } | null;
 
+export interface OqcInspectStdSearch {
+  inspectStdCode?: string;
+  status?: string;
+  creator?: string;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int32 */
+  pageNum?: number;
+}
+
+export interface OqcInspectStdVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标准编码 */
+  inspectStdCode?: string;
+  /** 标准名称 */
+  inspectStdName?: string;
+  groupInspectStdId?: string;
+  /** 版本号 */
+  revision?: number;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  timeEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  timeInvalid?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 检验类型
+   * @format int32
+   */
+  inspectType?: number;
+  creatorName?: string;
+  statusName?: string;
+  isGroupName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataOqcInspectStdVO = {
+  list?: OqcInspectStdVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataOqcInspectStdVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataOqcInspectStdVO;
+}
+
 export interface MitemForwardTraceSearch {
   /**
    * 页码
@@ -747,6 +830,22 @@ export const api = {
      */
     getList: (data: SamplingAqlSearch) =>
       http.request<ResultListSamplingAqlVO['data']>(`/api/quality/samplingAql/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  oqcInspectStd: {
+    /**
+     * No description
+     *
+     * @tags 产品检验标准头表
+     * @name GetOqcInspectList
+     * @summary 产品检验标准头表数据
+     * @request POST:/oqcInspectStd/getOqcInspectList
+     * @secure
+     */
+    getOqcInspectList: (data: OqcInspectStdSearch) =>
+      http.request<ResultPagingDataOqcInspectStdVO['data']>(`/api/quality/oqcInspectStd/getOqcInspectList`, {
         method: 'POST',
         body: data as any,
       }),

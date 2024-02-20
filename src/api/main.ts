@@ -3901,12 +3901,12 @@ export interface MitemVO {
   stateName?: string;
   isState?: boolean;
   isProductName?: string;
-  isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4049,8 +4049,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6817,10 +6817,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
