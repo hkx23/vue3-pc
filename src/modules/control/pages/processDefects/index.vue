@@ -303,8 +303,8 @@ const onDeleteConfirm = async () => {
 }
 
 .t-list .is-selected {
-  background: #366ef49c;
-  color: white;
+  color: var(--td-brand-color);
+  background-color: var(--td-brand-color-light); /* 替换为你希望的颜色 */
 }
 
 .t-list .t-list-item {
