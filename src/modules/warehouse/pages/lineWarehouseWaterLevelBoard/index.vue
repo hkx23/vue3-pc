@@ -111,37 +111,38 @@ const table = useVueTable({
 </script>
 
 <template>
-  <div class="outer_box">
-    <table>
-      <thead>
-        <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-          <th v-for="header in headerGroup.headers" :key="header.id" :colSpan="header.colSpan">
-            <flex-render
-              v-if="!header.isPlaceholder"
-              :render="header.column.columnDef.header"
-              :props="header.getContext()"
-            />
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="row in table.getRowModel().rows" :key="row.id">
-          <td v-for="cell in row.getVisibleCells()" :key="cell.id">
-            <flex-render :render="cell.column.columnDef.cell" :props="cell.getContext()" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="table_page">
-      <div class="pageSize">
-        <div>{{ `每页${pageUI.rows}条/` }}</div>
-        <div>{{ `共${Math.ceil(total / pageUI.rows)}页/` }}</div>
-        <div>{{ `当前第${pageUI.page}页` }}</div>
+  <cmp-wrapper>
+    <div class="outer_box">
+      <table>
+        <thead>
+          <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+            <th v-for="header in headerGroup.headers" :key="header.id" :colSpan="header.colSpan">
+              <flex-render
+                v-if="!header.isPlaceholder"
+                :render="header.column.columnDef.header"
+                :props="header.getContext()"
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="row in table.getRowModel().rows" :key="row.id">
+            <td v-for="cell in row.getVisibleCells()" :key="cell.id">
+              <flex-render :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="table_page">
+        <div class="pageSize">
+          <div>{{ `每页${pageUI.rows}条/` }}</div>
+          <div>{{ `共${Math.ceil(total / pageUI.rows)}页/` }}</div>
+          <div>{{ `当前第${pageUI.page}页` }}</div>
+        </div>
       </div>
     </div>
-  </div>
+  </cmp-wrapper>
 </template>
-
 <style scoped>
 table {
   width: 100%;
@@ -155,8 +156,15 @@ td {
   text-align: left;
 }
 
-thead {
-  background-color: #f2f2f2;
+/* thead {
+  background-color: #e01e1e;
+} */
+
+.outer_box {
+  height: 100vh;
+  display: flex;
+  flex-direction: column; /* 使得子元素垂直排列 */
+  justify-content: space-between;
 }
 
 .table_page {
