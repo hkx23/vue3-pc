@@ -830,8 +830,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1358,8 +1358,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -2048,20 +2048,70 @@ export interface ProductionDefectStatisticsVO {
   /** 工序名称 */
   processName?: string;
   /**
+   * 缺陷总数
+   * @format int32
+   */
+  defectTotal?: number;
+  /**
+   * 实际产量
+   * @format int32
+   */
+  actualOutput?: number;
+  /**
+   * 合格数量
+   * @format int32
+   */
+  qualifiedQuantity?: number;
+  /**
+   * 良率
+   * @format double
+   */
+  passRate?: number;
+  /**
    * 缺陷原因数量
    * @format int32
    */
-  defectReasonNum?: number;
+  defectReasonQuantity?: number;
   /**
    * 缺陷原因总数量
    * @format int32
    */
-  defectReasonAllNum?: number;
+  defectReasonTotal?: number;
   /**
-   * 占比
+   * 缺陷占比
    * @format double
    */
-  proportion?: number;
+  defectProportion?: number;
+  /**
+   * 维修数量
+   * @format int32
+   */
+  repairQuantity?: number;
+  /**
+   * 维修总数量
+   * @format int32
+   */
+  repairTotal?: number;
+  /**
+   * 维修占比
+   * @format double
+   */
+  repairProportion?: number;
+  /**
+   * 责任数量
+   * @format int32
+   */
+  dutyQuantity?: number;
+  /**
+   * 责任总数量
+   * @format int32
+   */
+  dutyTotal?: number;
+  /**
+   * 责任占比
+   * @format double
+   */
+  dutyProportion?: number;
 }
 
 /** 通用响应类 */
@@ -2208,11 +2258,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -3471,11 +3521,11 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
@@ -3592,11 +3642,11 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
@@ -3838,8 +3888,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -5377,6 +5427,42 @@ export const api = {
       }),
   },
   productionDefectStatistics: {
+    /**
+     * No description
+     *
+     * @tags 生产缺陷不良统计报表
+     * @name GetRepairMethodCollect
+     * @summary 维修方法汇总
+     * @request POST:/productionDefectStatistics/getRepairMethodCollect
+     * @secure
+     */
+    getRepairMethodCollect: (data: ProductionDefectStatisticsSearch) =>
+      http.request<ResultPagingDataProductionDefectStatisticsVO['data']>(
+        `/api/control/productionDefectStatistics/getRepairMethodCollect`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 生产缺陷不良统计报表
+     * @name GetDutyCollect
+     * @summary 责任汇总
+     * @request POST:/productionDefectStatistics/getDutyCollect
+     * @secure
+     */
+    getDutyCollect: (data: ProductionDefectStatisticsSearch) =>
+      http.request<ResultPagingDataProductionDefectStatisticsVO['data']>(
+        `/api/control/productionDefectStatistics/getDutyCollect`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
     /**
      * No description
      *

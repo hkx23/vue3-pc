@@ -95,6 +95,12 @@
               <template #title>
                 {{ '维修方法汇总' }}
               </template>
+              <template #dutyProportion="slotProps">
+                <div style="width: 200px">
+                  <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
+                </div>
+              </template>
+
               <template #completedNum="{ row }">
                 <div>{{ row.completedNum }}</div>
               </template>
@@ -115,6 +121,11 @@
             >
               <template #title>
                 {{ '责任汇总' }}
+              </template>
+              <template #dutyProportion="slotProps">
+                <div style="width: 200px">
+                  <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
+                </div>
               </template>
               <template #completedNum="{ row }">
                 <div>{{ row.completedNum }}</div>
@@ -293,12 +304,12 @@ const columnsProduceReport2 = computed(() => {
       width: 100,
     },
     {
-      colKey: 'actualOutput', // todo
+      colKey: 'actualOutput',
       title: '实际产量',
       width: 100,
     },
     {
-      colKey: 'qualifiedQuantity', // todo
+      colKey: 'qualifiedQuantity',
       title: '合格数量',
       width: 100,
     },
@@ -377,58 +388,58 @@ const columnsProduceReport3 = computed(() => {
 const columnsProduceReport4 = computed(() => {
   return [
     {
-      colKey: 'moCode',
+      colKey: 'datetimeSche',
       title: '时间',
       width: 100,
     },
     {
-      colKey: 'mitemCode',
+      colKey: 'workshopName',
       title: '车间',
       width: 100,
     },
     {
-      colKey: 'moClass',
+      colKey: 'workcenterName',
       title: '工作中心',
       width: 130,
     },
     {
-      colKey: 'workshopName',
+      colKey: 'scheCode',
       title: '工单号',
       width: 100,
     },
     {
-      colKey: 'planQty',
+      colKey: 'mitemCode',
       title: '产品编码',
       width: 100,
     },
     {
-      colKey: 'SUMWip',
+      colKey: 'mitemName',
       title: '产品名称',
       width: 100,
     },
 
     {
-      colKey: 'completedNum',
+      colKey: 'mitemDesc',
       title: '产品描述',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'methodName',
       title: '维修方法',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'repairQuantity',
       title: '维修数量',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'repairTotal',
       title: '维修总数量',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'dutyProportion',
       title: '占比',
       width: 100,
     },
@@ -438,43 +449,43 @@ const columnsProduceReport4 = computed(() => {
 const columnsProduceReport5 = computed(() => {
   return [
     {
-      colKey: 'moCode',
+      colKey: 'datetimeSche',
       title: '时间',
       width: 100,
     },
     {
-      colKey: 'mitemCode',
+      colKey: 'workshopName',
       title: '车间',
       width: 100,
     },
     {
-      colKey: 'moClass',
+      colKey: 'workcenterName',
       title: '工作中心',
       width: 130,
     },
     {
-      colKey: 'workshopName',
+      colKey: 'scheCode',
       title: '工单号',
       width: 100,
     },
     {
-      colKey: 'planQty',
+      colKey: 'mitemCode',
       title: '产品编码',
       width: 100,
     },
     {
-      colKey: 'SUMWip',
+      colKey: 'mitemName',
       title: '产品名称',
       width: 100,
     },
 
     {
-      colKey: 'completedNum',
+      colKey: 'mitemDesc',
       title: '产品描述',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'defectBlame',
       title: '责任',
       width: 100,
     },
@@ -484,12 +495,12 @@ const columnsProduceReport5 = computed(() => {
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'dutyTotal',
       title: '总数量',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'dutyProportion',
       title: '占比',
       width: 100,
     },
@@ -500,6 +511,8 @@ onMounted(async () => {
   await fetchTable1({});
   await fetchTable2({});
   await fetchTable3({});
+  await fetchTable4({});
+  await fetchTable5({});
 });
 
 // 表格1-5数据 字段
@@ -530,6 +543,8 @@ const onRefresh = async () => {
   await fetchTable1({});
   await fetchTable2({});
   await fetchTable3({});
+  await fetchTable4({});
+  await fetchTable5({});
 };
 
 // #query 查询参数
@@ -628,6 +643,12 @@ const onInput = async (data) => {
     case 'tab3':
       await fetchTable3({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
       break;
+    case 'tab4':
+      await fetchTable4({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      break;
+    case 'tab5':
+      await fetchTable5({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      break;
     // 添加其他页签的case处理
     default:
       // 错误处理或日志
@@ -666,6 +687,26 @@ const fetchTable3 = async (params) => {
   });
   Data3.value = [...data.list];
   total3.value = data.total;
+};
+// 更新fetchTable4方法以接受参数
+const fetchTable4 = async (params) => {
+  const data = await api.productionDefectStatistics.getRepairMethodCollect({
+    pageNum: fourPageUI.value.page,
+    pageSize: fourPageUI.value.rows,
+    ...params,
+  });
+  Data4.value = [...data.list];
+  total4.value = data.total;
+};
+// 更新fetchTable5方法以接受参数
+const fetchTable5 = async (params) => {
+  const data = await api.productionDefectStatistics.getDutyCollect({
+    pageNum: fivePageUI.value.page,
+    pageSize: fivePageUI.value.rows,
+    ...params,
+  });
+  Data5.value = [...data.list];
+  total5.value = data.total;
 };
 
 // TODO
