@@ -1,11 +1,10 @@
 <template>
-  <cmp-container :full="true" :full-sub-index="[0, 1]">
-    <cmp-card class="not-full-tab">
-      <!-- ################# 工单 表格数据 ###################### -->
+  <cmp-container :full="!!tagValue">
+    <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="来料标签打印" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :gutter="[0, 0]">
+            <cmp-container :full="false" :full-sub-index="[0, 1]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <!-- 查询组件  -->
                 <cmp-query :opts="opts" label-width="100" @submit="conditionEnter"></cmp-query>
@@ -19,6 +18,8 @@
                   :table-data="deliveryList.list"
                   :loading="loading"
                   :total="moTabTotal"
+                  :fixed-height="true"
+                  style="height: 300px"
                   :hover="true"
                   :selected-row-keys="delivertRowKeys"
                   @select-change="onSelectionChange"
@@ -49,6 +50,7 @@
                   </template>
                 </cmp-table>
               </cmp-card>
+
               <cmp-card header-bordered class="padding-top-noline-16 no-h-padding-card">
                 <cmp-table
                   v-model:pagination="pageUIBracode"
@@ -60,6 +62,8 @@
                   :table-column="barcodeColumns"
                   :table-data="labelBelowList.list"
                   :total="barcodeTotal"
+                  :fixed-height="true"
+                  style="height: 300px"
                   @select-change="onPrintChange"
                   @refresh="onRefreshBelow"
                 >
@@ -114,6 +118,8 @@
                   :table-column="pkgBarcodeManageColumns"
                   :table-data="pkgManageDataList.list"
                   :total="pkgManageTabTotal"
+                  :fixed-height="true"
+                  style="height: 300px"
                   @select-change="onProductRightFetchData"
                   @refresh="onRefreshManage"
                 >

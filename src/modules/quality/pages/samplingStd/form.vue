@@ -569,87 +569,83 @@ export default {
       MessagePlugin.success('删除成功');
     };
 
-    const onRowClick = (rowIndex) => {
+    const onRowClick = () => {
       // 设置一个延迟操作，延迟时间为500ms
       setTimeout(() => {
-        if (rowIndex.index !== curIndex.value) {
-          const item = tableDataWarehouse.value[curIndex.value];
-          if (item.flag) {
-            changeOrAddDtl(item, curIndex.value);
-          }
-          console.log(curIndex.value);
-          item.flag = false;
+        const item = tableDataWarehouse.value[curIndex.value];
+        if (item && item.flag) {
+          changeOrAddDtl(item, curIndex.value);
         }
       }, 500);
     };
 
     const changeOrAddDtl = async (item, rowIndex) => {
       if (!Number(item.lotFrom) || item.lotFrom <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：批量下限必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：批量下限必须为正整数且不得为空`);
         return;
       }
-      if (!Number(item.samplingPer) || item.samplingPer <= 0 || item.samplingPer > 100) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：批量下限必须为小于或等于100的正整数且不得为空`);
+      if (!Number(item.samplingPer) || item.samplingPer > 100) {
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：抽样比例必须为小于或等于100的正整数且不得为空`);
         return;
       }
       if (!Number(item.lotTo) || item.lotTo <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：批量上限必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：批量上限必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.samplingNum) || item.samplingNum <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：抽样数量必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：抽样数量必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.acceptQtyClassA) || item.acceptQtyClassA <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：A类允收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：A类允收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.rejectQtyClassA) || item.rejectQtyClassA <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：A类拒收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：A类拒收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.acceptQtyClassB) || item.acceptQtyClassB <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：B类允收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：B类允收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.rejectQtyClassB) || item.rejectQtyClassB <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：B类拒收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：B类拒收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.acceptQtyClassC) || item.acceptQtyClassC <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：C类允收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：C类允收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.rejectQtyClassC) || item.rejectQtyClassC <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：C类拒收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：C类拒收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.acceptQtyClassD) || item.acceptQtyClassD <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：D类允收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：D类允收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.rejectQtyClassD) || item.rejectQtyClassD <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：D类拒收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：D类拒收数必须为正整数且不得为空`);
         return;
       }
-      if (item.lotTo <= item.lotFrom) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：批量上限不得低于下限`);
+      if (Number(item.lotTo) <= Number(item.lotFrom)) {
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：批量上限不得低于下限`);
         return;
       }
       await api.samplingStdDtl.changeOrAddDtl(item);
       MessagePlugin.success('操作成功');
+      item.flag = false;
+      if (!item.id) {
+        onRefresh();
+      }
     };
-    const onEdit = (slotProps) => {
+    const onEdit = async (slotProps) => {
       const item = tableDataWarehouse.value[curIndex.value];
-      if (item) {
-        if (item.flag) {
-          onRowClick(slotProps.rowIndex);
-        }
-        item.flag = false;
+      if (item && item.flag) {
+        return;
       }
       slotProps.row.flag = true;
       curIndex.value = slotProps.rowIndex;
-      console.log(curIndex.value);
     };
     const onRefresh = async () => {
       const data = (await api.samplingStdDtl.getList({
@@ -666,6 +662,13 @@ export default {
       dataTotal.value = data.total;
     };
     const onAdd = () => {
+      if (tableDataWarehouse.value) {
+        const flag = tableDataWarehouse.value.some((item) => !item.id);
+        if (flag) {
+          MessagePlugin.warning('请先提交先前的空白行数据');
+          return;
+        }
+      }
       tableDataWarehouse.value.push({
         ...CmpTable,
         sampingStdCode: formData.value.sampingStdCode,

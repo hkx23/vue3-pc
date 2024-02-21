@@ -20,6 +20,8 @@
                   :loading="loading"
                   :total="moTabTotal"
                   :selected-row-keys="moscheRowKeys"
+                  :fixed-height="true"
+                  style="height: 300px"
                   @select-change="onSelectionChange"
                   @row-click="onRowClick"
                   @refresh="onRefresh"
@@ -106,6 +108,8 @@
                     :table-column="barcodeColumns"
                     :table-data="moBelowList.list"
                     :total="barcodeTotal"
+                    :fixed-height="true"
+                    style="height: 300px"
                     @select-change="onPrintChange"
                     @refresh="onRefreshBelow"
                   >
@@ -148,6 +152,8 @@
                   :table-data="pkgManageDataList.list"
                   :total="pkgManageTabTotal"
                   select-on-row-click
+                  :fixed-height="true"
+                  style="height: 300px"
                   @select-change="onProductRightFetchData"
                   @refresh="onRefresh"
                 >
