@@ -123,6 +123,7 @@
                 {{ '责任汇总' }}
               </template>
               <template #dutyProportion="slotProps">
+                <!-- {{ slotProps }} -->
                 <div style="width: 200px">
                   <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
                 </div>
@@ -508,11 +509,14 @@ const columnsProduceReport5 = computed(() => {
 });
 // 初始渲染
 onMounted(async () => {
-  await fetchTable1({});
-  await fetchTable2({});
-  await fetchTable3({});
-  await fetchTable4({});
-  await fetchTable5({});
+  /** TODO
+   * 时间必传 初始化不调用
+   */
+  // await fetchTable1({});
+  // await fetchTable2({});
+  // await fetchTable3({});
+  // await fetchTable4({});
+  // await fetchTable5({});
 });
 
 // 表格1-5数据 字段
