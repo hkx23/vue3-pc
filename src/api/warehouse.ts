@@ -3089,21 +3089,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /** 已发料量 */
-  alreadyPickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -6217,6 +6217,21 @@ export const api = {
      */
     saveByWipCompletionLabel: (data: WipCompletionLabelDTO) =>
       http.request<ResultLong['data']>(`/api/warehouse/billInfo/saveByWipCompletionLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 单据信息表
+     * @name Search
+     * @summary 获取单据信息（通用控件使用）
+     * @request POST:/billInfo/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/billInfo/items`, {
         method: 'POST',
         body: data as any,
       }),

@@ -640,6 +640,52 @@ export type SampleCodeVO = {
   s4?: string;
 } | null;
 
+/** 配置项值 */
+export type ProfileValue = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  profileId?: string;
+  /** 配置项分类 */
+  profileCategory?: string;
+  /** 配置项分类值 */
+  profileCategoryValue?: string;
+  /** 配置项值 */
+  profileValue?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListProfileValue {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ProfileValue[] | null;
+}
+
 /** 通用响应类 */
 export interface ResultListDataTableVO {
   /**
@@ -879,6 +925,22 @@ export const api = {
     getList: () =>
       http.request<ResultListSampleCodeVO['data']>(`/api/quality/sampleCode/getList`, {
         method: 'GET',
+      }),
+  },
+  oqcInspectStdDtl: {
+    /**
+     * No description
+     *
+     * @tags 产品检验标准明细表
+     * @name GetProfileGbDropList
+     * @summary 获取当前配置项设置的国标方案
+     * @request GET:/oqcInspectStdDtl/getProfileGBDropList
+     * @secure
+     */
+    getProfileGbDropList: (query?: { key?: string }) =>
+      http.request<ResultListProfileValue['data']>(`/api/quality/oqcInspectStdDtl/getProfileGBDropList`, {
+        method: 'GET',
+        params: query,
       }),
   },
   importManage: {
