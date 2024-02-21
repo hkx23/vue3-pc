@@ -1752,6 +1752,8 @@ export interface StockCheckBillVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
   /** 计量单位 */
   uomName?: string;
   /** 货区名称 */
@@ -3088,20 +3090,20 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
-  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -5918,6 +5920,7 @@ export interface DataTableColumnVO {
   columnDesc?: string;
   /** 列类型 */
   columnType?: string;
+  default?: boolean;
 }
 
 /** 数据表对象 */
@@ -5928,7 +5931,7 @@ export type DataTableVO = {
   tableModelName?: string;
   /** 表描述 */
   tableDescription?: string;
-  /** 文件最后修改时间戳 */
+  /** 列设置 */
   columns?: DataTableColumnVO[];
 } | null;
 
@@ -6222,6 +6225,21 @@ export const api = {
      * No description
      *
      * @tags 单据信息表
+     * @name Search
+     * @summary 获取单据信息（通用控件使用）
+     * @request POST:/billInfo/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/billInfo/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 单据信息表
      * @name GetWipCompletionLabelList
      * @summary 根据单据ID获取已扫入的完工入库条码
      * @request GET:/billInfo/getWipCompletionLabelList
@@ -6447,12 +6465,12 @@ export const api = {
      * No description
      *
      * @tags 交易明细标签表
-     * @name SelectByLabelNo
-     * @summary 物料标签扫描获取单据信息
+     * @name SelectByLabelNoOrBillNo
+     * @summary 物料标签或杂项单据扫描获取单据信息
      * @request GET:/transferDtlBarcode/selectByLabelNo
      * @secure
      */
-    selectByLabelNo: (query: { labelNo: string }) =>
+    selectByLabelNoOrBillNo: (query: { key: string }) =>
       http.request<ResultTransferHeadVO['data']>(`/api/warehouse/transferDtlBarcode/selectByLabelNo`, {
         method: 'GET',
         params: query,

@@ -38,7 +38,7 @@
       <cmp-card>
         <template #title> 单据明细 </template>
         <cmp-table
-          row-key="id"
+          row-key="mitemCode"
           :table-column="tableWarehouseColumns"
           :show-pagination="false"
           empty="没有符合条件的数据"
@@ -54,7 +54,7 @@
       <cmp-card>
         <template #title> 标签明细 </template>
         <cmp-table
-          row-key="id"
+          row-key="scanBarcode"
           :table-column="tableWarehouseColumns1"
           :show-pagination="false"
           empty="没有符合条件的数据"
@@ -81,7 +81,7 @@ import { computed, ref, watch } from 'vue';
 // const { pageUI } = usePage();
 //* 表格标题--单据明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   // { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
   { title: '物料编码', colKey: 'mitemCode', width: 85 },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
@@ -99,7 +99,7 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 //* 表格标题--标签明细
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   // { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
   { title: '标签条码', colKey: 'scanBarcode', width: 85 },
   { title: '物料编码', width: 85, colKey: 'mitemCode' },

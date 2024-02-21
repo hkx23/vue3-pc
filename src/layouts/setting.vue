@@ -63,15 +63,25 @@
           </div>
         </t-radio-group>
 
-        <t-form-item v-show="formData.layout === 'mix'" label="分割菜单（混合模式下有效）" name="splitMenu">
+        <t-form-item v-show="formData.layout === 'mix'" :label="$t('layout.setting.splitMenu')" name="splitMenu">
           <t-switch v-model="formData.splitMenu" />
         </t-form-item>
 
-        <t-form-item v-show="formData.layout === 'mix'" label="固定 Sidebar" name="isSidebarFixed">
+        <t-form-item
+          v-show="formData.layout === 'mix'"
+          :label="$t('layout.setting.fixedSidebar')"
+          name="isSidebarFixed"
+        >
           <t-switch v-model="formData.isSidebarFixed" />
         </t-form-item>
 
         <div class="setting-group-title">{{ $t('layout.setting.element.title') }}</div>
+        <!-- <t-form-item :label="$t('layout.setting.sideMode')" name="sideMode">
+          <t-radio-group v-model="formData.sideMode" class="side-mode-radio">
+            <t-radio-button key="light" value="light" :label="$t('layout.setting.theme.options.light')" />
+            <t-radio-button key="dark" value="dark" :label="$t('layout.setting.theme.options.dark')" />
+          </t-radio-group>
+        </t-form-item> -->
         <t-form-item
           v-show="formData.layout === 'side'"
           :label="$t('layout.setting.element.showHeader')"
@@ -275,6 +285,10 @@ watchEffect(() => {
     width: 100%;
     justify-content: space-between;
     align-items: center;
+
+    &.side-mode-radio {
+      justify-content: end;
+    }
   }
 
   .t-radio-group.t-size-m .t-radio-button {

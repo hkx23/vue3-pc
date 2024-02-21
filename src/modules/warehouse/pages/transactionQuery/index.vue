@@ -2,10 +2,9 @@
 <template>
   <cmp-container :full="true">
     <!-- cmp-query 查询组件 -->
-    <cmp-card>
-      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
+    <cmp-card :span="12">
+      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput" @reset="onReset"> </cmp-query>
     </cmp-card>
-
     <!-- cmp-table 表格组件   :row-select="{ type: 'single' }"    :selected-row-keys="selectedBillId" -->
     <cmp-card :span="12">
       <cmp-table
@@ -15,7 +14,7 @@
         :table-column="tableReckoningManagementColumns"
         :table-data="tableDataReckoning"
         :fixed-height="true"
-        max-height="380px"
+        :hover="true"
         :total="dataTotal"
         empty="没有符合条件的数据"
         @refresh="tabRefresh"
@@ -192,7 +191,7 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '事务类型', colKey: 'categoryName', width: 110 },
   { title: 'MES业务单号', width: 130, colKey: 'billNo' },
   { title: '排产单号', width: 120, colKey: 'moScheId' },
-  { title: '排产计划数', width: 85, colKey: 'planQty' },
+  { title: '排产计划数', width: 100, colKey: 'planQty' },
   { title: '标签', width: 110, colKey: 'scanBarcode' },
   {
     title: '标签数量',
@@ -338,6 +337,11 @@ const onInput = async (data: any) => {
     dataTotal.value = data.total;
   }
   setLoading(false);
+};
+
+//* 重置
+const onReset = async () => {
+  await fetchTable();
 };
 </script>
 

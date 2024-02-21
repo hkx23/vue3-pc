@@ -1,34 +1,36 @@
 <!-- 国标抽样方案 -->
 <template>
   <cmp-container :full="true">
-    <cmp-card class="not-full-tab" :hover-shadow="false">
-      <cmp-card :span="12">
-        <cmp-query :opts="opts" @submit="onInput" @reset="onReset"></cmp-query>
-        <cmp-table
-          v-model:pagination="pageUI"
-          :table-data="tableData"
-          active-row-type="single"
-          :columns="columns"
-          :bordered="true"
-          :show-pagination="false"
-          style="height: 550px"
-          :fixed-height="true"
-          :hover="true"
-        >
-          <template #batch="{ row }">
-            <div class="no-wrap">{{ row.batch }}</div>
-          </template>
-          <template #title>
-            {{ '国标抽样方案' }}
-          </template>
-        </cmp-table>
-      </cmp-card>
+    <cmp-card>
+      <cmp-query :opts="opts" @submit="onInput" @reset="onReset"></cmp-query>
+    </cmp-card>
+    <cmp-card :span="12">
+      <cmp-table
+        ref="tableRefTop"
+        v-model:pagination="pageUI"
+        row-key="batch"
+        :table-data="tableData"
+        active-row-type="single"
+        :total="0"
+        :hover="true"
+        :columns="columns"
+        :bordered="true"
+        :show-pagination="false"
+        :fixed-height="true"
+      >
+        <template #batch="{ row }">
+          <div class="no-wrap">{{ row.batch }}</div>
+        </template>
+        <template #title>
+          {{ '国标抽样方案' }}
+        </template>
+      </cmp-table>
     </cmp-card>
   </cmp-container>
 </template>
 
 <script setup lang="ts">
-import { PrimaryTableCol } from 'tdesign-vue-next';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -40,7 +42,6 @@ const { pageUI } = usePage();
 onMounted(async () => {
   await getcheckLevel();
   await getinspectionStringency();
-  // await updateTableData();
 });
 
 //* 重置
@@ -48,11 +49,15 @@ const isResetting = ref(false);
 const onReset = () => {
   // 阻止调用接口
   isResetting.value = true;
-  // 重置完成后，将isResetting标记回false
   nextTick(() => {
-    tableData.value = []; // 清空数据
+    tableData.value = batch.value.map((batchItem) => ({
+      batch: batchItem,
+      sampleQty: '',
+      acRe: '',
+    }));
     isResetting.value = false;
   });
+  MessagePlugin.success('重置成功');
 };
 
 const opts = computed(() => {
@@ -80,11 +85,15 @@ const opts = computed(() => {
 
 //* 查询
 const onInput = async (data: any) => {
-  // 如果是在执行重置操作，直接返回不执行校验
   if (isResetting.value) {
     return;
   }
   const { checkLevel, inspectionStringency } = data;
+  // 检查是否选择了必要的选项
+  if (!checkLevel || !inspectionStringency) {
+    MessagePlugin.warning('请先选择检验水平和严格度');
+    return;
+  }
   try {
     const updatedData = await apiMain.samplingAql.getList({
       checkLevel,
@@ -93,14 +102,13 @@ const onInput = async (data: any) => {
     const data = updatedData.map((item, index) => ({
       batch: batch.value[index], // 从预定义的batch数组获取对应的值
       sampleQty: item.sampleQty,
-      // 创建一个新字段来存储合并的Ac和Re值
-      acRe: `${item.acceptQty}  ${item.rejectQty}`,
-      // // 将aql值用作唯一标识符，确保它与`sizes`数组中的项目相匹配
+      acRe: `${item.acceptQty} ${item.rejectQty}`,
       aql: item.aql,
     }));
     tableData.value = data;
   } catch (error) {
-    console.error('Error fetching updated table data:', error);
+    console.error('查询出错:', error);
+    MessagePlugin.error('查询失败，请稍后重试');
   }
 };
 
@@ -192,7 +200,7 @@ const generateColumns = () => {
     '650',
     '1000',
   ];
-  const columns: PrimaryTableCol<TableRowData>[] = [
+  const columns = ref([
     {
       children: [
         {
@@ -208,34 +216,20 @@ const generateColumns = () => {
         })),
       ],
     },
-  ];
+  ]);
   return columns;
 };
 const columns = ref(generateColumns());
 
 onMounted(() => {
-  // TODO
-  // tableData.value = batch.value.map((batch) => ({
-  //   batch: batch,
-  //   sampleQty: '',
-  //   acRe: '', // 没有初始Ac/Re值
-  // }));
+  tableData.value = batch.value.map((batch) => ({
+    batch,
+    sampleQty: '',
+    acRe: '', // 没有初始Ac/Re值
+  }));
   getcheckLevel();
   getinspectionStringency();
 });
-
-interface TableRowData {
-  batch: string[];
-  sampleQty: string;
-  acRe: string;
-}
-
-// watch(checkLevel, updateTableData);
-// watch(inspectionStringency, updateTableData);
-
-// const onSelectChange = (value: string, option: any) => {
-//   // 处理选择变更的逻辑
-// };
 </script>
 
 <style scoped>

@@ -121,6 +121,14 @@
                             <t-tag :title="'点击修改'" class="custom-tag" @click="editData(item)">
                               {{ item.workgroupName }} | {{ item.shiftName }} | {{ item.wcName }}
                               <button class="tag-close-btn" @click.stop="requestDeleteItem(item)">×</button>
+                              <!-- <t-popconfirm
+                                :visible="isConfirmDialogVisible"
+                                theme="default"
+                                content="是否删除该排班？"
+                                @visible-change.stop="onVisibleChange"
+                              >
+                                <button>x</button>
+                              </t-popconfirm> -->
                             </t-tag>
                           </div>
                         </div>
@@ -271,6 +279,13 @@ const shiftCodeData = ref(''); // 班次编码
 const selectedRowId = ref(null);
 const datetimeArrange = ref(''); // 编辑日期
 const selectedShift = ref(''); // 绑定到 t-select 的 v-model
+
+// 删除气泡
+// const onVisibleChange = (val = {}) => {
+//   if (val) {
+//   } else {
+//   }
+// };
 
 // 表格主位栏
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
@@ -753,15 +768,21 @@ const getArrangeCount = async (data) => {
     dateEnd: qTimeModified.value, // 查询结束时间
   });
   resValue2.value = result.map((item) => {
-    return { num: item.num };
+    return { num: item.num, id: item.id };
   });
 };
 
 // 合并数据
 const mergeData = () => {
-  const mergedData = resValue1.value.map((item, index) => {
+  const mergedData = resValue1.value.map((item) => {
     // 获取对应索引位置的 num 值
-    const numValue = resValue2.value[index] ? resValue2.value[index].num : '0';
+    // const numValue = resValue2.value[index] ? resValue2.value[index].num : '0';
+
+    // 在 resValue2.value 数组中查找相同 id 的项
+    const match = resValue2.value.find((entry) => entry.id === item.id); // 应为id  不能获取对应索引来
+    // 如果找到匹配项，将其 num 值合并到当前项
+    // 否则，将 num 设置为 '0'
+    const numValue = match ? match.num : '0';
     return {
       ...item,
       num: numValue,
@@ -778,7 +799,7 @@ const getWorkgroupArrangeList = async (id) => {
     dateStart: qTimeCreate.value,
     dateEnd: qTimeModified.value,
     workgroupId: id,
-    workgroupKeyword: '', // todo
+    workgroupKeyword: '',
   });
   console.log('🚀 ~ getWorkgroupArrangeList ~ result数据源:', result);
   //  result 是一个包含排班信息的数组

@@ -5,18 +5,21 @@
       <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
     </cmp-card>
     <cmp-card>
-      <t-enhanced-table
-        ref="tableRef"
-        row-key="id"
-        :columns="columns"
-        :data="anomalyTypeData.list"
-        resizable
-        :tree="treeConfig"
-        lazy-load
-        class="enhanced-table-baggage"
-        @expanded-tree-nodes-change="onExpandedTreeNodesChange"
-      >
-      </t-enhanced-table>
+      <cmp-container :full="false">
+        <t-enhanced-table
+          ref="tableRef"
+          row-key="id"
+          :columns="columns"
+          :data="anomalyTypeData.list"
+          resizable
+          :tree="treeConfig"
+          lazy-load
+          class="enhanced-table-baggage"
+          :height="500"
+          @expanded-tree-nodes-change="onExpandedTreeNodesChange"
+        >
+        </t-enhanced-table>
+      </cmp-container>
       <t-pagination
         v-model:current="bagsSuitcasesData.pageNum"
         v-model:page-size="bagsSuitcasesData.pageSize"
@@ -24,6 +27,7 @@
         style="margin-top: 8px"
         :show-page-size="true"
         :total="anomalyTotal"
+        :page-size-options="pageSizeOptions"
         @page-size-change="onPaginationChange"
         @current-change="onCurrentChange"
       />
@@ -41,7 +45,7 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 
 // 表格实例
 const tableRef = ref(null);
-
+const pageSizeOptions = [20, 50, 100, 200, 500];
 // 表格数据
 const anomalyTypeData = reactive({ list: [] });
 // 表格数据总条数
@@ -110,7 +114,7 @@ onMounted(async () => {
 // 表格数据 字段
 const bagsSuitcasesData = ref({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 20,
   barcode: '', // 每条数据的code
   mitemCode: '', // 产品编码 物料接口
   moScheCode: '', // 排产单号

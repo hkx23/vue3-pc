@@ -775,6 +775,8 @@ export interface WipRepairVO {
    * @format date-time
    */
   datetimeRepaired?: string;
+  /** 不合格数据 */
+  ngQty?: number;
   mitemId?: string;
   /** 物料代码 */
   mitemCode?: string;
@@ -828,8 +830,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -955,6 +957,7 @@ export interface ResultPagingDataWipLogSearchVO {
 }
 
 export interface WipLogSearchVO {
+  id?: string;
   /** 排产单号 */
   moScheCode?: string;
   /** 产品编码 */
@@ -1299,6 +1302,8 @@ export interface ProductWipRepairVO {
    * @format date-time
    */
   datetimeRepaired?: string;
+  /** 不合格数据 */
+  ngQty?: number;
   /**
    * 采集时间
    * @format date-time
@@ -1353,8 +1358,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -1956,6 +1961,172 @@ export interface ResultListProductWipRepairDtlVO {
   data?: ProductWipRepairDtlVO[] | null;
 }
 
+export interface ProductionDefectStatisticsSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workshopId?: string;
+  workcenterId?: string;
+  moscheduleId?: string;
+  /** 条码模糊 */
+  barcode?: string;
+  mitemId?: string;
+  defectId?: string;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+}
+
+/** 响应数据 */
+export type PagingDataProductionDefectStatisticsVO = {
+  list?: ProductionDefectStatisticsVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 产品缺陷不良统计报表 */
+export interface ProductionDefectStatisticsVO {
+  /** 车间名称 */
+  workshopName?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 条码 */
+  scanBarcode?: string;
+  /** 排产单号 */
+  scheCode?: string;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 产品名称 */
+  mitemName?: string;
+  /** 产品描述 */
+  mitemDesc?: string;
+  /** 缺陷描述 */
+  defectName?: string;
+  /** 不合格数量 */
+  ngQty?: number;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 缺陷原因 */
+  defectReason?: string;
+  /** 处理方法名称 */
+  methodName?: string;
+  /** 缺陷责任别 */
+  defectBlame?: string;
+  /** 录入人 */
+  creatorName?: string;
+  /**
+   * 录入时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 维修用户名称 */
+  userRepairName?: string;
+  /**
+   * 维修时间
+   * @format date-time
+   */
+  datetimeRepaired?: string;
+  /**
+   * 排产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
+  /** 工序名称 */
+  processName?: string;
+  /**
+   * 缺陷总数
+   * @format int32
+   */
+  defectTotal?: number;
+  /**
+   * 实际产量
+   * @format int32
+   */
+  actualOutput?: number;
+  /**
+   * 合格数量
+   * @format int32
+   */
+  qualifiedQuantity?: number;
+  /**
+   * 良率
+   * @format double
+   */
+  passRate?: number;
+  /**
+   * 缺陷原因数量
+   * @format int32
+   */
+  defectReasonQuantity?: number;
+  /**
+   * 缺陷原因总数量
+   * @format int32
+   */
+  defectReasonTotal?: number;
+  /**
+   * 缺陷占比
+   * @format double
+   */
+  defectProportion?: number;
+  /**
+   * 维修数量
+   * @format int32
+   */
+  repairQuantity?: number;
+  /**
+   * 维修总数量
+   * @format int32
+   */
+  repairTotal?: number;
+  /**
+   * 维修占比
+   * @format double
+   */
+  repairProportion?: number;
+  /**
+   * 责任数量
+   * @format int32
+   */
+  dutyQuantity?: number;
+  /**
+   * 责任总数量
+   * @format int32
+   */
+  dutyTotal?: number;
+  /**
+   * 责任占比
+   * @format double
+   */
+  dutyProportion?: number;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProductionDefectStatisticsVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProductionDefectStatisticsVO;
+}
+
 /** 产品返工返工前配置信息 */
 export interface ProductReworkPreSettingDTO {
   isSameProcess?: boolean;
@@ -2087,11 +2258,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2138,9 +2309,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -2773,6 +2944,7 @@ export interface MoOnboardSearch {
 }
 
 export interface MoOnboardSearchVO {
+  id?: string;
   /** 物料编码 */
   mitemCode?: string;
   /** 产品编码 */
@@ -3349,17 +3521,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3470,16 +3642,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
-  isState?: boolean;
+  defectCodeStr?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  defectCodeStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3716,8 +3888,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -4346,6 +4518,7 @@ export interface DataTableColumnVO {
   columnDesc?: string;
   /** 列类型 */
   columnType?: string;
+  default?: boolean;
 }
 
 /** 数据表对象 */
@@ -4356,7 +4529,7 @@ export type DataTableVO = {
   tableModelName?: string;
   /** 表描述 */
   tableDescription?: string;
-  /** 文件最后修改时间戳 */
+  /** 列设置 */
   columns?: DataTableColumnVO[];
 } | null;
 
@@ -5252,6 +5425,97 @@ export const api = {
         method: 'POST',
         params: query,
       }),
+  },
+  productionDefectStatistics: {
+    /**
+     * No description
+     *
+     * @tags 生产缺陷不良统计报表
+     * @name GetRepairMethodCollect
+     * @summary 维修方法汇总
+     * @request POST:/productionDefectStatistics/getRepairMethodCollect
+     * @secure
+     */
+    getRepairMethodCollect: (data: ProductionDefectStatisticsSearch) =>
+      http.request<ResultPagingDataProductionDefectStatisticsVO['data']>(
+        `/api/control/productionDefectStatistics/getRepairMethodCollect`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 生产缺陷不良统计报表
+     * @name GetDutyCollect
+     * @summary 责任汇总
+     * @request POST:/productionDefectStatistics/getDutyCollect
+     * @secure
+     */
+    getDutyCollect: (data: ProductionDefectStatisticsSearch) =>
+      http.request<ResultPagingDataProductionDefectStatisticsVO['data']>(
+        `/api/control/productionDefectStatistics/getDutyCollect`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 生产缺陷不良统计报表
+     * @name GetDefectReasonCollect
+     * @summary 缺陷原因汇总
+     * @request POST:/productionDefectStatistics/getDefectReasonCollect
+     * @secure
+     */
+    getDefectReasonCollect: (data: ProductionDefectStatisticsSearch) =>
+      http.request<ResultPagingDataProductionDefectStatisticsVO['data']>(
+        `/api/control/productionDefectStatistics/getDefectReasonCollect`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 生产缺陷不良统计报表
+     * @name GetDefectDetail
+     * @summary 查询不良明细
+     * @request POST:/productionDefectStatistics/getDefectDetail
+     * @secure
+     */
+    getDefectDetail: (data: ProductionDefectStatisticsSearch) =>
+      http.request<ResultPagingDataProductionDefectStatisticsVO['data']>(
+        `/api/control/productionDefectStatistics/getDefectDetail`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 生产缺陷不良统计报表
+     * @name GetDefectCollect
+     * @summary 查询不良汇总
+     * @request POST:/productionDefectStatistics/getDefectCollect
+     * @secure
+     */
+    getDefectCollect: (data: ProductionDefectStatisticsSearch) =>
+      http.request<ResultPagingDataProductionDefectStatisticsVO['data']>(
+        `/api/control/productionDefectStatistics/getDefectCollect`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
   },
   productRework: {
     /**

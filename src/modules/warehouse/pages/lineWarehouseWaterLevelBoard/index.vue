@@ -24,9 +24,17 @@ const columnHelper = createColumnHelper<DeliveryCommandJobDTO>();
 const { pageUI } = usePage(); // 分页工具
 
 const columns = [
-  columnHelper.accessor('mitemCode', {
-    header: '物料编码',
-    cell: (info) => info.getValue(),
+  columnHelper.accessor((row, rowIndex) => rowIndex, {
+    id: '序号', // 提供一个唯一ID
+    header: () => '序号',
+    cell: (info) => {
+      // 直接使用cell里提供的rowIndex参数来计算序号
+      const rowIndex = info.row.index;
+      const pageNumber = pageUI.value.page; // 假设这是当前页码
+      const pageSize = pageUI.value.rows; // 假设这是每页的行数
+      const serialNumber = (pageNumber - 1) * pageSize + rowIndex + 1;
+      return <span>{serialNumber}</span>;
+    },
   }),
   columnHelper.accessor('mitemDesc', {
     header: '物料描述',
@@ -79,7 +87,7 @@ const lineParam = ref({
 const total = ref(0);
 const onDeleteBatches = async () => {
   lineParam.value.pageNum = pageUI.value.page;
-  pageUI.value.rows = 1;
+  pageUI.value.rows = 9;
   lineParam.value.pageSize = pageUI.value.rows;
   const res = await api.deliveryCommand.watchBoard(lineParam.value);
   defaultData.value = res.list;
@@ -111,37 +119,38 @@ const table = useVueTable({
 </script>
 
 <template>
-  <div class="outer_box">
-    <table>
-      <thead>
-        <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-          <th v-for="header in headerGroup.headers" :key="header.id" :colSpan="header.colSpan">
-            <flex-render
-              v-if="!header.isPlaceholder"
-              :render="header.column.columnDef.header"
-              :props="header.getContext()"
-            />
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="row in table.getRowModel().rows" :key="row.id">
-          <td v-for="cell in row.getVisibleCells()" :key="cell.id">
-            <flex-render :render="cell.column.columnDef.cell" :props="cell.getContext()" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="table_page">
-      <div class="pageSize">
-        <div>{{ `每页${pageUI.rows}条/` }}</div>
-        <div>{{ `共${Math.ceil(total / pageUI.rows)}页/` }}</div>
-        <div>{{ `当前第${pageUI.page}页` }}</div>
+  <cmp-wrapper title="线边仓水位看板">
+    <div class="outer_box">
+      <table>
+        <thead>
+          <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+            <th v-for="header in headerGroup.headers" :key="header.id" :colSpan="header.colSpan">
+              <flex-render
+                v-if="!header.isPlaceholder"
+                :render="header.column.columnDef.header"
+                :props="header.getContext()"
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="row in table.getRowModel().rows" :key="row.id">
+            <td v-for="cell in row.getVisibleCells()" :key="cell.id">
+              <flex-render :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="table_page">
+        <div class="pageSize">
+          <div>{{ `每页${pageUI.rows}条/` }}</div>
+          <div>{{ `共${Math.ceil(total / pageUI.rows)}页/` }}</div>
+          <div>{{ `当前第${pageUI.page}页` }}</div>
+        </div>
       </div>
     </div>
-  </div>
+  </cmp-wrapper>
 </template>
-
 <style scoped>
 table {
   width: 100%;
@@ -155,8 +164,15 @@ td {
   text-align: left;
 }
 
-thead {
-  background-color: #f2f2f2;
+/* thead {
+  background-color: #e01e1e;
+} */
+
+.outer_box {
+  flex: 1;
+  display: flex;
+  flex-direction: column; /* 使得子元素垂直排列 */
+  justify-content: space-between;
 }
 
 .table_page {
