@@ -34,7 +34,7 @@ const props = withDefaults(defineProps<CmpWrapperProps>(), {
 });
 const attrs: Partial<CmpWrapperProps> = useAttrs();
 const targetAttrs = computed<CmpWrapperProps>(() => {
-  return { ...attrs };
+  return { ...attrs, ...props, title: undefined };
 });
 const styleAttrs = computed(() => {
   let bgStyle = {};

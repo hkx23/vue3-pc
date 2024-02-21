@@ -38,6 +38,7 @@ export default {
       },
     },
     navigationLayout: 'Navigation Layout',
+    sideMode: 'Side Menu Mode',
     splitMenu: 'Split Menu（Only Mix mode）',
     fixedSidebar: 'Fixed Sidebar',
     element: {
