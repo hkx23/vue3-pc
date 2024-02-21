@@ -3029,6 +3029,7 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   index?: number;
+  tranDtlId?: string;
   moBomId?: string;
   mitemCode?: string;
   mitemName?: string;
@@ -3089,6 +3090,11 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
@@ -3099,11 +3105,6 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4211,6 +4212,110 @@ export interface ResultPagingDataMFTSubVO {
   /** 提示信息 */
   message?: string;
   data?: PagingDataMFTSubVO;
+}
+
+/** 交易单身表 */
+export interface MitemReceiveBillVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  moScheId?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 实际拣料数量 */
+  pickQty?: number;
+  /** 原因 */
+  reason?: string;
+  /** 相关凭证号 */
+  voucherLineNo?: string;
+  /** 通知凭证 */
+  noticeVoucherLineNo?: string;
+  /** 到货批次 */
+  batchNo?: string;
+  /** 采购订单号 */
+  poNum?: string;
+  /** ERP单据明细号 */
+  erpLineNo?: string;
+  /** 备注 */
+  memo?: string;
+  /** 来源单据行号 */
+  sourceBillLineNo?: string;
+  businessCategoryId?: string;
+  businessCategoryCode?: string;
+  businessCategoryName?: string;
+  status?: string;
+  statusName?: string;
+  supplierId?: string;
+  supplierCode?: string;
+  supplierName?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  mitemCategoryCode?: string;
+  mitemCategoryName?: string;
+  locationName?: string;
+  toLocationName?: string;
+  userReceiptedId?: string;
+  userReceiptedDisplayName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  uomName?: string;
+  /** @format int32 */
+  isBatchNo?: number;
+}
+
+/** 响应数据 */
+export type PagingDataMitemReceiveBillVO = {
+  list?: MitemReceiveBillVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemReceiveBillVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemReceiveBillVO;
 }
 
 /** 货区 */
@@ -8535,6 +8640,28 @@ export const api = {
     getLabelBarcodeRuleList: () =>
       http.request<ResultListBarcodeRule['data']>(`/api/warehouse/label/getLabelBarcodeRuleList`, {
         method: 'GET',
+      }),
+  },
+  iqcInspect: {
+    /**
+     * No description
+     *
+     * @tags 品质检验接口
+     * @name GetMitemReceiveBillVo
+     * @request POST:/iqcInspect/getMitemReceiveBillVO
+     * @secure
+     */
+    getMitemReceiveBillVo: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      prefix: string;
+      billNo: string;
+    }) =>
+      http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/warehouse/iqcInspect/getMitemReceiveBillVO`, {
+        method: 'POST',
+        params: query,
       }),
   },
   district: {

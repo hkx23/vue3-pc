@@ -730,12 +730,12 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   i?: string;
-  s2?: string;
+  ii?: string;
   iii?: string;
   s1?: string;
-  s4?: string;
-  ii?: string;
+  s2?: string;
   s3?: string;
+  s4?: string;
 } | null;
 
 /** 计量单位 */
