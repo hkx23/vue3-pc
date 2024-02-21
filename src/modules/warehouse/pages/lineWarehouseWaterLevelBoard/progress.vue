@@ -33,7 +33,7 @@ const progressStyle = computed(() => {
 <style scoped>
 .progress-container {
   width: 100%;
-  background-color: #217760;
+  background-color: #797979;
   border-radius: 8px;
   overflow: hidden;
   position: relative; /* 为了绝对定位的子元素 */
