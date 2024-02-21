@@ -626,6 +626,7 @@ export default {
         status: '',
         inspectTypeList: [],
       };
+      tableData.value = [];
     };
     return {
       init,

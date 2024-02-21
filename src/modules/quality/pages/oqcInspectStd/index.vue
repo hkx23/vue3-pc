@@ -189,7 +189,7 @@ const onRefresh = async () => {
 
 const onAdd = () => {
   console.log(formRef.value);
-  // formRef.value.init();
+  formRef.value.init();
   formTitle.value = '新增产品检验标准';
   formVisible.value = true;
 };

@@ -23,8 +23,10 @@
             <t-button theme="default">导入</t-button>
           </template>
           <template #op="slotProps">
-            <t-button :icon="editIcon" size="small" theme="primary" variant="text" @click="onEdit(slotProps)" />
-            <t-button :icon="deleIcon" size="small" theme="primary" variant="text" @click="onDel(slotProps)" />
+            <div @click.stop>
+              <t-button :icon="editIcon" size="small" theme="primary" variant="text" @click="onEdit(slotProps)" />
+              <t-button :icon="deleIcon" size="small" theme="primary" variant="text" @click="onDel(slotProps)" />
+            </div>
           </template>
         </cmp-table>
       </t-space>
@@ -56,7 +58,7 @@ export default {
     const { pageUI } = usePage();
     const tableDataWarehouse = ref([]);
     const dataTotal = ref(0);
-    const curIndex = ref();
+    const curIndex = ref(-1);
     const sortList = ref({ sorters: [] });
     const filterList = ref({ filters: [] });
 
@@ -94,7 +96,7 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
             const newData = [...tableDataWarehouse.value];
@@ -134,10 +136,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -175,10 +176,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -216,10 +216,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: async (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -258,7 +257,7 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
             console.log(context.newRowData, '1111111111');
@@ -299,10 +298,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -340,10 +338,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -381,10 +378,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -422,10 +418,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -463,10 +458,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -504,10 +498,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -536,10 +529,9 @@ export default {
           validateTrigger: 'change',
           // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -568,15 +560,40 @@ export default {
       }
       MessagePlugin.success('删除成功');
     };
+    const onEdit = async (slotProps) => {
+      // 定义一个 Promise 包装的 onRowClick 函数
+      const onRowClickPromise = new Promise((resolve) => {
+        onRowClick({ index: slotProps.rowIndex }, resolve);
+      });
 
-    const onRowClick = () => {
-      // 设置一个延迟操作，延迟时间为500ms
-      setTimeout(() => {
+      // 等待 onRowClickPromise 的完成
+      await onRowClickPromise;
+
+      console.log('00000000000000');
+      const item = tableDataWarehouse.value[curIndex.value];
+      if (!item || !item.flag) {
+        slotProps.row.flag = true;
+        curIndex.value = slotProps.rowIndex;
+      }
+    };
+
+    const onRowClick = async (rowIndex, callback) => {
+      console.log(rowIndex);
+      console.log(curIndex.value);
+      if (curIndex.value !== -1 && rowIndex.index !== curIndex.value) {
+        // 设置一个延迟操作，延迟时间为500ms
         const item = tableDataWarehouse.value[curIndex.value];
         if (item && item.flag) {
-          changeOrAddDtl(item, curIndex.value);
+          await changeOrAddDtl(item, curIndex.value);
         }
-      }, 500);
+        // 延迟操作完成后执行回调
+        if (callback) {
+          callback();
+        }
+      } else {
+        // 如果不需要延迟操作，则直接执行回调
+        callback();
+      }
     };
 
     const changeOrAddDtl = async (item, rowIndex) => {
@@ -639,14 +656,11 @@ export default {
         onRefresh();
       }
     };
-    const onEdit = async (slotProps) => {
-      const item = tableDataWarehouse.value[curIndex.value];
-      if (item && item.flag) {
-        return;
-      }
-      slotProps.row.flag = true;
-      curIndex.value = slotProps.rowIndex;
-    };
+    // const onEdit = async (slotProps) => {
+    //   const item = tableDataWarehouse.value[curIndex.value];
+    //   slotProps.row.flag = true;
+    //   curIndex.value = slotProps.rowIndex;
+    // };
     const onRefresh = async () => {
       const data = (await api.samplingStdDtl.getList({
         sampingStdId: formData.value.sampingStdId,
