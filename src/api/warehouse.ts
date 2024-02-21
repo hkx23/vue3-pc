@@ -3089,6 +3089,13 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
@@ -3097,13 +3104,6 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
