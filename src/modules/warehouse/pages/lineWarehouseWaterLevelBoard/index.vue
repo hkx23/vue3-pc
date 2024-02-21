@@ -24,9 +24,17 @@ const columnHelper = createColumnHelper<DeliveryCommandJobDTO>();
 const { pageUI } = usePage(); // 分页工具
 
 const columns = [
-  columnHelper.accessor('mitemCode', {
-    header: '物料编码',
-    cell: (info) => info.getValue(),
+  columnHelper.accessor((row, rowIndex) => rowIndex, {
+    id: '序号', // 提供一个唯一ID
+    header: () => '序号',
+    cell: (info) => {
+      // 直接使用cell里提供的rowIndex参数来计算序号
+      const rowIndex = info.row.index;
+      const pageNumber = pageUI.value.page; // 假设这是当前页码
+      const pageSize = pageUI.value.rows; // 假设这是每页的行数
+      const serialNumber = (pageNumber - 1) * pageSize + rowIndex + 1;
+      return <span>{serialNumber}</span>;
+    },
   }),
   columnHelper.accessor('mitemDesc', {
     header: '物料描述',
@@ -79,7 +87,7 @@ const lineParam = ref({
 const total = ref(0);
 const onDeleteBatches = async () => {
   lineParam.value.pageNum = pageUI.value.page;
-  pageUI.value.rows = 1;
+  pageUI.value.rows = 9;
   lineParam.value.pageSize = pageUI.value.rows;
   const res = await api.deliveryCommand.watchBoard(lineParam.value);
   defaultData.value = res.list;
@@ -111,7 +119,7 @@ const table = useVueTable({
 </script>
 
 <template>
-  <cmp-wrapper>
+  <cmp-wrapper title="线边仓水位看板">
     <div class="outer_box">
       <table>
         <thead>
@@ -161,7 +169,7 @@ td {
 } */
 
 .outer_box {
-  height: 100vh;
+  flex: 1;
   display: flex;
   flex-direction: column; /* 使得子元素垂直排列 */
   justify-content: space-between;

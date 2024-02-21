@@ -1,18 +1,22 @@
 <!-- 国标抽样方案 -->
 <template>
   <cmp-container :full="true">
-    <cmp-card :span="12">
+    <cmp-card>
       <cmp-query :opts="opts" @submit="onInput" @reset="onReset"></cmp-query>
-      <!-- 表格 -->
+    </cmp-card>
+    <cmp-card :span="12">
       <cmp-table
+        ref="tableRefTop"
         v-model:pagination="pageUI"
+        row-key="batch"
         :table-data="tableData"
         active-row-type="single"
+        :total="0"
+        :hover="true"
         :columns="columns"
         :bordered="true"
         :show-pagination="false"
         :fixed-height="true"
-        :hover="true"
       >
         <template #batch="{ row }">
           <div class="no-wrap">{{ row.batch }}</div>
@@ -38,7 +42,6 @@ const { pageUI } = usePage();
 onMounted(async () => {
   await getcheckLevel();
   await getinspectionStringency();
-  // await updateTableData();
 });
 
 //* 重置
@@ -46,11 +49,6 @@ const isResetting = ref(false);
 const onReset = () => {
   // 阻止调用接口
   isResetting.value = true;
-  // 重置完成后，将isResetting标记回false
-  // nextTick(() => {
-  //   tableData.value = []; // 清空数据
-  //   isResetting.value = false;
-  // });
   nextTick(() => {
     tableData.value = batch.value.map((batchItem) => ({
       batch: batchItem,
@@ -86,42 +84,16 @@ const opts = computed(() => {
 });
 
 //* 查询
-// const onInput = async (data: any) => {
-//   // 如果是在执行重置操作，直接返回不执行校验
-//   if (isResetting.value) {
-//     return;
-//   }
-//   const { checkLevel, inspectionStringency } = data;
-//   try {
-//     const updatedData = await apiMain.samplingAql.getList({
-//       checkLevel,
-//       inspectionStringency,
-//     });
-//     const data = updatedData.map((item, index) => ({
-//       batch: batch.value[index], // 从预定义的batch数组获取对应的值
-//       sampleQty: item.sampleQty,
-//       // 创建一个新字段来存储合并的Ac和Re值
-//       acRe: `${item.acceptQty}  ${item.rejectQty}`,
-//       // // 将aql值用作唯一标识符，确保它与`sizes`数组中的项目相匹配
-//       aql: item.aql,
-//     }));
-//     tableData.value = data;
-//   } catch (error) {
-//     console.error('必填项未填写:', error);
-//   }
-// };
 const onInput = async (data: any) => {
   if (isResetting.value) {
     return;
   }
   const { checkLevel, inspectionStringency } = data;
-
   // 检查是否选择了必要的选项
   if (!checkLevel || !inspectionStringency) {
     MessagePlugin.warning('请先选择检验水平和严格度');
     return;
   }
-
   try {
     const updatedData = await apiMain.samplingAql.getList({
       checkLevel,
@@ -250,7 +222,6 @@ const generateColumns = () => {
 const columns = ref(generateColumns());
 
 onMounted(() => {
-  // TODO
   tableData.value = batch.value.map((batch) => ({
     batch,
     sampleQty: '',
@@ -259,19 +230,6 @@ onMounted(() => {
   getcheckLevel();
   getinspectionStringency();
 });
-
-// interface TableRowData {
-//   batch: string[];
-//   sampleQty: string;
-//   acRe: string;
-// }
-
-// watch(checkLevel, updateTableData);
-// watch(inspectionStringency, updateTableData);
-
-// const onSelectChange = (value: string, option: any) => {
-//   // 处理选择变更的逻辑
-// };
 </script>
 
 <style scoped>

@@ -279,7 +279,7 @@ function findCurProcessId(row, colKey) {
   processData.value.mitemCode = row.mitemCode;
   processData.value.workshopName = row.workshopName;
   const process = row.processList.find((p) => p.processAlias === colKey);
-  return process ? process.curProcessId : null;
+  return process ? process.processId : null;
 }
 const getDtlData = reactive({ list: [] });
 const getDtlTotal = ref(0);
@@ -287,7 +287,7 @@ const productParam = ref({
   pageNum: 1,
   pageSize: 20,
   moId: '',
-  curProcessId: '',
+  processId: '',
 });
 const onGetProductDetails = async () => {
   productParam.value.pageNum = productPageUI.value.page;
@@ -296,13 +296,15 @@ const onGetProductDetails = async () => {
   getDtlData.list = res.list;
   getDtlTotal.value = res.total;
 };
+// 烦人的动态数据 点击事件
 const onDetailClick = async (row, col) => {
   productParam.value.moId = row.moId;
-  productParam.value.curProcessId = findCurProcessId(row, col.colKey);
+  productParam.value.processId = findCurProcessId(row, col.colKey);
   await onGetProductDetails();
   detailVisible.value = true;
 };
 
+// 初始化表格数据
 const onGetProductMaintenanceReport = async () => {
   WipReportData.value.pageNum = pageUI.value.page;
   WipReportData.value.pageSize = pageUI.value.rows;

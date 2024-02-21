@@ -8,8 +8,11 @@
     <!-- 页签栏 -->
     <cmp-card :span="12">
       <t-tabs v-model="activeTab">
-        <!-- 页签栏1 -->
+        <!-- 页签栏1 不良明细 -->
         <t-tab-panel value="tab1" label="不良明细" :destroy-on-hide="true">
+          <!--  select-on-row-click
+            :fixed-height="true"
+            :hover="true" -->
           <cmp-table
             ref="tableRef"
             v-model:pagination="firstPageUI"
@@ -22,24 +25,18 @@
             <template #title>
               {{ '不良明细' }}
             </template>
-            <!-- TODO -->
-            <template #op="slotProps">
-              <div style="width: 200px">
-                <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
-              </div>
-            </template>
             <template #completedNum="{ row }">
               <div>{{ row.completedNum }}</div>
             </template>
           </cmp-table>
         </t-tab-panel>
-        <!-- 页签栏2 -->
+        <!-- 页签栏2 不良汇总 -->
         <t-tab-panel value="tab2" label="不良汇总" :destroy-on-hide="false">
           <cmp-container :full="true">
             <cmp-table
               ref="tableRef"
               v-model:pagination="towPageUI"
-              row-key="moId"
+              row-key="id"
               :table-column="columnsProduceReport2"
               :table-data="Data2"
               :total="total2"
@@ -48,13 +45,19 @@
               <template #title>
                 {{ '不良汇总' }}
               </template>
+              <!-- TODO -->
+              <template #op="slotProps">
+                <div style="width: 200px">
+                  <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
+                </div>
+              </template>
               <template #completedNum="{ row }">
                 <div>{{ row.completedNum }}</div>
               </template>
             </cmp-table>
           </cmp-container>
         </t-tab-panel>
-        <!-- 页签栏3 -->
+        <!-- 页签栏3 缺陷原因汇总-->
         <t-tab-panel value="tab3" label="缺陷原因汇总" :destroy-on-hide="false">
           <cmp-container :full="true">
             <cmp-table
@@ -69,13 +72,15 @@
               <template #title>
                 {{ '缺陷原因汇总' }}
               </template>
-              <template #completedNum="{ row }">
-                <div>{{ row.completedNum }}</div>
+              <template #proportion="slotProps">
+                <div style="width: 200px">
+                  <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
+                </div>
               </template>
             </cmp-table>
           </cmp-container>
         </t-tab-panel>
-        <!-- 页签栏4 -->
+        <!-- 页签栏4 维修方法汇总 -->
         <t-tab-panel value="tab4" label="维修方法汇总" :destroy-on-hide="false">
           <cmp-container :full="true">
             <cmp-table
@@ -90,13 +95,19 @@
               <template #title>
                 {{ '维修方法汇总' }}
               </template>
+              <template #dutyProportion="slotProps">
+                <div style="width: 200px">
+                  <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
+                </div>
+              </template>
+
               <template #completedNum="{ row }">
                 <div>{{ row.completedNum }}</div>
               </template>
             </cmp-table>
           </cmp-container>
         </t-tab-panel>
-        <!-- 页签栏5 -->
+        <!-- 页签栏5 责任汇总-->
         <t-tab-panel value="tab5" label="责任汇总" :destroy-on-hide="false">
           <cmp-container :full="true">
             <cmp-table
@@ -110,6 +121,12 @@
             >
               <template #title>
                 {{ '责任汇总' }}
+              </template>
+              <template #dutyProportion="slotProps">
+                <!-- {{ slotProps }} -->
+                <div style="width: 200px">
+                  <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
+                </div>
               </template>
               <template #completedNum="{ row }">
                 <div>{{ row.completedNum }}</div>
@@ -125,9 +142,9 @@
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
-// import { api } from '@/api/control';
+import { api } from '@/api/control';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
@@ -140,94 +157,94 @@ const activeTab = ref('tab1');
 
 // 表格实例
 const tableRef = ref(null);
-const columnsData = ref([]);
+// const columnsData = ref([]);
 // 页面1数据
 const columnsProduceReport1 = computed(() => {
   return [
     {
-      colKey: 'moCode',
+      colKey: 'workshopName',
       title: '车间',
       width: 110,
     },
     {
       colKey: 'mitemCode',
-      title: '产线',
+      title: '工作中心',
       width: 110,
     },
     {
-      colKey: 'moClass',
-      title: '产品条码',
+      colKey: 'scanBarcode',
+      title: '条码',
       width: 130,
     },
 
     {
-      colKey: 'planQty',
+      colKey: 'scheCode',
       title: '排产单',
       width: 100,
     },
     {
-      colKey: 'SUMWip',
+      colKey: 'mitemCode',
       title: '产品编码',
       width: 100,
     },
 
     {
-      colKey: 'completedNum',
+      colKey: 'mitemName',
       title: '产品名称',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'mitemDesc',
       title: '产品描述',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'defectName',
       title: '缺陷描述',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'ngQty',
       title: '不合格数量',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'creatorName',
       title: '录入人',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'timeCreate',
       title: '录入时间',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'workstationName',
       title: '工站',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'methodName',
       title: '缺陷原因',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'methodName',
       title: '维修方法',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'defectBlame',
       title: '责任',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'userRepairName',
       title: '维修人',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'datetimeRepaired',
       title: '维修时间',
       width: 100,
     },
@@ -237,70 +254,70 @@ const columnsProduceReport1 = computed(() => {
 const columnsProduceReport2 = computed(() => {
   return [
     {
-      colKey: 'moCode',
+      colKey: 'datetimeSche',
       title: '时间',
       width: 100,
     },
     {
-      colKey: 'mitemCode',
+      colKey: 'workshopName',
       title: '车间',
       width: 100,
     },
     {
-      colKey: 'moClass',
+      colKey: 'workcenterName',
       title: '工作中心',
       width: 130,
     },
     {
-      colKey: 'workshopName',
+      colKey: 'scheCode',
       title: '工单号',
       width: 100,
     },
     {
-      colKey: 'planQty',
+      colKey: 'mitemCode',
       title: '产品编码',
       width: 100,
     },
     {
-      colKey: 'SUMWip',
+      colKey: 'mitemName',
       title: '产品名称',
       width: 100,
     },
 
     {
-      colKey: 'completedNum',
+      colKey: 'mitemDesc',
       title: '产品描述',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'processName',
       title: '工序',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'defectName',
       title: '缺陷描述',
       width: 100,
     },
     {
-      colKey: 'completedNum',
-      title: '缺陷总数量',
+      colKey: 'defectTotal',
+      title: '缺陷总数',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'actualOutput',
       title: '实际产量',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'qualifiedQuantity',
       title: '合格数量',
       width: 100,
     },
     {
       colKey: 'op',
       title: '良率',
-      width: 100,
+      width: 130,
     },
   ];
 });
@@ -309,64 +326,59 @@ const columnsProduceReport2 = computed(() => {
 const columnsProduceReport3 = computed(() => {
   return [
     {
-      colKey: 'moCode',
+      colKey: 'datetimeSche',
       title: '时间',
       width: 100,
     },
     {
-      colKey: 'mitemCode',
+      colKey: 'workshopName',
       title: '车间',
       width: 100,
     },
     {
-      colKey: 'moClass',
-      title: '产线',
+      colKey: 'workcenterName',
+      title: '工作中心',
       width: 130,
     },
     {
-      colKey: 'workshopName',
+      colKey: 'scheCode',
       title: '工单号',
       width: 100,
     },
     {
-      colKey: 'planQty',
+      colKey: 'mitemCode',
       title: '产品编码',
       width: 100,
     },
     {
-      colKey: 'SUMWip',
+      colKey: 'mitemName',
       title: '产品名称',
       width: 100,
     },
 
     {
-      colKey: 'completedNum',
+      colKey: 'mitemDesc',
       title: '产品描述',
       width: 100,
     },
 
     {
-      colKey: 'completedNum',
+      colKey: 'defectReason',
       title: '缺陷原因',
       width: 100,
     },
     {
-      colKey: 'completedNum',
-      title: '缺陷总数量',
-      width: 100,
-    },
-    {
-      colKey: 'completedNum',
+      colKey: 'defectReasonQuantity',
       title: '缺陷原因数量',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'defectReasonTotal',
       title: '缺陷原因总数量',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'proportion',
       title: '占比',
       width: 100,
     },
@@ -377,58 +389,58 @@ const columnsProduceReport3 = computed(() => {
 const columnsProduceReport4 = computed(() => {
   return [
     {
-      colKey: 'moCode',
+      colKey: 'datetimeSche',
       title: '时间',
       width: 100,
     },
     {
-      colKey: 'mitemCode',
+      colKey: 'workshopName',
       title: '车间',
       width: 100,
     },
     {
-      colKey: 'moClass',
+      colKey: 'workcenterName',
       title: '工作中心',
       width: 130,
     },
     {
-      colKey: 'workshopName',
+      colKey: 'scheCode',
       title: '工单号',
       width: 100,
     },
     {
-      colKey: 'planQty',
+      colKey: 'mitemCode',
       title: '产品编码',
       width: 100,
     },
     {
-      colKey: 'SUMWip',
+      colKey: 'mitemName',
       title: '产品名称',
       width: 100,
     },
 
     {
-      colKey: 'completedNum',
+      colKey: 'mitemDesc',
       title: '产品描述',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'methodName',
       title: '维修方法',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'repairQuantity',
       title: '维修数量',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'repairTotal',
       title: '维修总数量',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'dutyProportion',
       title: '占比',
       width: 100,
     },
@@ -438,43 +450,43 @@ const columnsProduceReport4 = computed(() => {
 const columnsProduceReport5 = computed(() => {
   return [
     {
-      colKey: 'moCode',
+      colKey: 'datetimeSche',
       title: '时间',
       width: 100,
     },
     {
-      colKey: 'mitemCode',
+      colKey: 'workshopName',
       title: '车间',
       width: 100,
     },
     {
-      colKey: 'moClass',
+      colKey: 'workcenterName',
       title: '工作中心',
       width: 130,
     },
     {
-      colKey: 'workshopName',
+      colKey: 'scheCode',
       title: '工单号',
       width: 100,
     },
     {
-      colKey: 'planQty',
+      colKey: 'mitemCode',
       title: '产品编码',
       width: 100,
     },
     {
-      colKey: 'SUMWip',
+      colKey: 'mitemName',
       title: '产品名称',
       width: 100,
     },
 
     {
-      colKey: 'completedNum',
+      colKey: 'mitemDesc',
       title: '产品描述',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'defectBlame',
       title: '责任',
       width: 100,
     },
@@ -484,20 +496,28 @@ const columnsProduceReport5 = computed(() => {
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'dutyTotal',
       title: '总数量',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'dutyProportion',
       title: '占比',
       width: 100,
     },
   ];
 });
 // 初始渲染
-// onMounted(async () => {
-// });
+onMounted(async () => {
+  /** TODO
+   * 时间必传 初始化不调用
+   */
+  // await fetchTable1({});
+  // await fetchTable2({});
+  // await fetchTable3({});
+  // await fetchTable4({});
+  // await fetchTable5({});
+});
 
 // 表格1-5数据 字段
 const Data1 = ref([]);
@@ -511,6 +531,7 @@ const total2 = ref(0);
 const total3 = ref(0);
 const total4 = ref(0);
 const total5 = ref(0);
+
 // const Data = ref({
 //   pageNum: 1,
 //   pageSize: 10,
@@ -522,13 +543,18 @@ const total5 = ref(0);
 // });
 
 const onRefresh = async () => {
-  MessagePlugin.success('重置成功');
+  // MessagePlugin.success('重置成功');
+  await fetchTable1({});
+  await fetchTable2({});
+  await fetchTable3({});
+  await fetchTable4({});
+  await fetchTable5({});
 };
 
 // #query 查询参数
 const opts = computed(() => {
   return {
-    workshop: {
+    workshopId: {
       label: '车间',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -538,17 +564,17 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    productCode: {
-      label: '产线',
+    workcenterId: {
+      label: '工作中心',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'line',
+        type: 'workcenter',
         showTitle: false,
       },
     },
-    workOrder: {
+    moscheduleId: {
       label: '排产单',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -558,29 +584,29 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    workOrderOM: {
-      label: '产品条码/OM',
+    barcode: {
+      label: '产品条码/配送卡',
       event: 'input',
       comp: 't-input',
       defaultVal: '',
     },
-    workOrderwl: {
+    mitemId: {
       label: '物料',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'mo',
+        type: 'mitem',
         showTitle: false,
       },
     },
-    workOrderqx: {
+    defectId: {
       label: '缺陷名称',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'mo',
+        type: 'defectCode',
         showTitle: false,
       },
     },
@@ -596,19 +622,106 @@ const opts = computed(() => {
     },
   };
 });
+
 // 查询
-const onInput = async () => {
-  firstPageUI.value.page = 1;
+const onInput = async (data) => {
+  // 提取查询参数
+  const { workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId } = data;
+  const [dateStart, dateEnd] = data.servicingTime;
+  // 校验日期跨度不得超过31天
+  const startDate = dayjs(dateStart);
+  const endDate = dayjs(dateEnd);
+  const daysDifference = endDate.diff(startDate, 'day');
+  if (daysDifference > 31) {
+    MessagePlugin.warning('日期跨度不得超过31天');
+    return;
+  }
+  // 根据当前选中的页签来加载相应的数据
+  switch (activeTab.value) {
+    case 'tab1':
+      await fetchTable1({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      break;
+    case 'tab2':
+      await fetchTable2({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      break;
+    case 'tab3':
+      await fetchTable3({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      break;
+    case 'tab4':
+      await fetchTable4({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      break;
+    case 'tab5':
+      await fetchTable5({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      break;
+    // 添加其他页签的case处理
+    default:
+      // 错误处理或日志
+      console.warn('未知的页签');
+  }
 };
 
-const onReset = async () => {
-  columnsData.value = [];
-  total1.value = 0;
-  MessagePlugin.success('重置成功');
+// 更新fetchTable1方法以接受参数
+const fetchTable1 = async (params) => {
+  const data = await api.productionDefectStatistics.getDefectDetail({
+    pageNum: firstPageUI.value.page,
+    pageSize: firstPageUI.value.rows,
+    ...params,
+  });
+  Data1.value = [...data.list];
+  total1.value = data.total;
 };
+
+// 更新fetchTable2方法以接受参数
+const fetchTable2 = async (params) => {
+  const data = await api.productionDefectStatistics.getDefectCollect({
+    pageNum: towPageUI.value.page,
+    pageSize: towPageUI.value.rows,
+    ...params,
+  });
+  Data2.value = [...data.list];
+  total2.value = data.total;
+};
+
+// 更新fetchTable3方法以接受参数
+const fetchTable3 = async (params) => {
+  const data = await api.productionDefectStatistics.getDefectReasonCollect({
+    pageNum: threePageUI.value.page,
+    pageSize: threePageUI.value.rows,
+    ...params,
+  });
+  Data3.value = [...data.list];
+  total3.value = data.total;
+};
+// 更新fetchTable4方法以接受参数
+const fetchTable4 = async (params) => {
+  const data = await api.productionDefectStatistics.getRepairMethodCollect({
+    pageNum: fourPageUI.value.page,
+    pageSize: fourPageUI.value.rows,
+    ...params,
+  });
+  Data4.value = [...data.list];
+  total4.value = data.total;
+};
+// 更新fetchTable5方法以接受参数
+const fetchTable5 = async (params) => {
+  const data = await api.productionDefectStatistics.getDutyCollect({
+    pageNum: fivePageUI.value.page,
+    pageSize: fivePageUI.value.rows,
+    ...params,
+  });
+  Data5.value = [...data.list];
+  total5.value = data.total;
+};
+
+// TODO
+const onReset = async () => {
+  // total1.value = 0;
+  // MessagePlugin.success('重置成功');
+};
+
 /** 日期范围 辅助函数
  */
-const dateChange = (data: any) => {
+const dateChange = async (data: any) => {
   // 获取当前选择的日期范围
   const selectedDateRange = data.value;
   // 将日期字符串转换为dayjs对象
@@ -619,7 +732,7 @@ const dateChange = (data: any) => {
   // 如果选择的天数超过31天，则调整日期范围
   if (daysDifference > 31) {
     // 将结束日期调整为开始日期的后31天
-    MessagePlugin.warning('日期跨度不得超过31天');
+    await MessagePlugin.warning('日期跨度不得超过31天');
   }
 };
 </script>
