@@ -601,8 +601,10 @@ export default {
         MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：批量下限必须为正整数且不得为空`);
         return;
       }
-      if (!Number(item.samplingPer) || item.samplingPer > 100) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：抽样比例必须为小于或等于100的正整数且不得为空`);
+      if (Number.isNaN(item.samplingPer) || item.samplingPer <= 0 || item.samplingPer > 100) {
+        MessagePlugin.warning(
+          `第${rowIndex + 1}行数据操作失败，原因：抽样比例必须为大于0且小于或等于100的数值且不得为空`,
+        );
         return;
       }
       if (!Number(item.lotTo) || item.lotTo <= 0) {
