@@ -102,7 +102,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { FormInstanceFunctions, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
@@ -114,7 +114,7 @@ import { usePage } from '@/hooks/modules/page';
 import StdForm from './form.vue';
 
 const formVisible = ref(false);
-const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
+const formRef = ref(null); // 新增表单数据清除，获取表单实例
 const formTitle = ref('');
 const pageLoading = ref(false);
 const { loading, setLoading } = useLoading();
@@ -189,7 +189,7 @@ const onRefresh = async () => {
 
 const onAdd = () => {
   console.log(formRef.value);
-  formRef.value.init();
+  // formRef.value.init();
   formTitle.value = '新增产品检验标准';
   formVisible.value = true;
 };
