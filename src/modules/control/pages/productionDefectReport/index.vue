@@ -16,7 +16,7 @@
           <cmp-table
             ref="tableRef"
             v-model:pagination="firstPageUI"
-            row-key="moId"
+            row-key="_timestamp"
             :table-column="columnsProduceReport1"
             :table-data="Data1"
             :total="total1"
@@ -36,7 +36,7 @@
             <cmp-table
               ref="tableRef"
               v-model:pagination="towPageUI"
-              row-key="id"
+              row-key="_timestamp"
               :table-column="columnsProduceReport2"
               :table-data="Data2"
               :total="total2"
@@ -48,7 +48,7 @@
               <!-- TODO -->
               <template #op="slotProps">
                 <div style="width: 200px">
-                  <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
+                  <t-progress theme="plump" :percentage="slotProps.row.dutyProportion" />
                 </div>
               </template>
               <template #completedNum="{ row }">
@@ -63,7 +63,7 @@
             <cmp-table
               ref="tableRef"
               v-model:pagination="threePageUI"
-              row-key="moId"
+              row-key="_timestamp"
               :table-column="columnsProduceReport3"
               :table-data="Data3"
               :total="total3"
@@ -74,7 +74,7 @@
               </template>
               <template #proportion="slotProps">
                 <div style="width: 200px">
-                  <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
+                  <t-progress theme="plump" :percentage="slotProps.row.dutyProportion" />
                 </div>
               </template>
             </cmp-table>
@@ -86,7 +86,7 @@
             <cmp-table
               ref="tableRef"
               v-model:pagination="fourPageUI"
-              row-key="moId"
+              row-key="_timestamp"
               :table-column="columnsProduceReport4"
               :table-data="Data4"
               :total="total4"
@@ -97,7 +97,7 @@
               </template>
               <template #dutyProportion="slotProps">
                 <div style="width: 200px">
-                  <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
+                  <t-progress theme="plump" :percentage="slotProps.row.dutyProportion" />
                 </div>
               </template>
 
@@ -113,7 +113,7 @@
             <cmp-table
               ref="tableRef"
               v-model:pagination="fivePageUI"
-              row-key="moId"
+              row-key="_timestamp"
               :table-column="columnsProduceReport5"
               :table-data="Data5"
               :total="total5"
@@ -122,9 +122,10 @@
               <template #title>
                 {{ '责任汇总' }}
               </template>
-              <template #dutyProportion="slotProps">
+              <template #dutyProportion2="slotProps">
+                <!-- {{ slotProps.row.dutyProportion }}  text -->
                 <div style="width: 200px">
-                  <t-progress theme="plump" :percentage="slotProps.row.completionProgress" />
+                  <t-progress theme="plump" :percentage="slotProps.row.dutyProportion" />
                 </div>
               </template>
               <template #completedNum="{ row }">
@@ -141,7 +142,7 @@
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { api } from '@/api/control';
 import CmpQuery from '@/components/cmp-query/index.vue';
@@ -152,7 +153,8 @@ const { pageUI: towPageUI } = usePage();
 const { pageUI: threePageUI } = usePage();
 const { pageUI: fourPageUI } = usePage();
 const { pageUI: fivePageUI } = usePage();
-const activeTab = ref('tab1');
+const activeTab = ref('tab1'); // 默认页签
+const queryParams = ref({}); // 查询参数，默认为空
 
 // 表格实例
 const tableRef = ref(null);
@@ -500,7 +502,7 @@ const columnsProduceReport5 = computed(() => {
       width: 100,
     },
     {
-      colKey: 'dutyProportion',
+      colKey: 'dutyProportion2',
       title: '占比',
       width: 100,
     },
@@ -508,11 +510,41 @@ const columnsProduceReport5 = computed(() => {
 });
 // 初始渲染
 onMounted(async () => {
-  await fetchTable1({});
-  await fetchTable2({});
-  await fetchTable3({});
-  await fetchTable4({});
-  await fetchTable5({});
+  /** TODO
+   * 时间必传 初始化不调用
+   */
+  // await fetchTable1({});
+  // await fetchTable2({});
+  // await fetchTable3({});
+  // await fetchTable4({});
+  // await fetchTable5({});
+});
+
+// 监听 activeTab 的变化
+watch(activeTab, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    // 根据当前选中的页签调用相应的数据加载函数
+    switch (newValue) {
+      case 'tab1':
+        fetchTable1(queryParams.value); // 将查询条件的参数传给 fetchTable1 接口查询数据
+        break;
+      case 'tab2':
+        fetchTable2(queryParams.value);
+        break;
+      case 'tab3':
+        fetchTable3(queryParams.value);
+        break;
+      case 'tab4':
+        fetchTable4(queryParams.value);
+        break;
+      case 'tab5':
+        fetchTable5(queryParams.value);
+        break;
+      // 添加其他页签的case处理
+      default:
+        console.warn('未知的页签');
+    }
+  }
 });
 
 // 表格1-5数据 字段
@@ -619,11 +651,34 @@ const opts = computed(() => {
   };
 });
 
+// const newDateStart = ref('');
+// const newDateEnd = ref('');
 // 查询
 const onInput = async (data) => {
-  // 提取查询参数
-  const { workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId } = data;
-  const [dateStart, dateEnd] = data.servicingTime;
+  // //展开前处理时间格式 切换tabs 将查询参数 关联 watch 调用查询方法
+  // newDateStart.value = data.servicingTime[0];
+  // newDateEnd.value = data.servicingTime[1];
+  // queryParams.value = { ...data, dateStart: newDateStart.value, dateEnd: newDateEnd.value };
+  // // 提取查询参数
+  // const { workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId } = data;
+  // const [dateStart, dateEnd] = data.servicingTime;
+  // // 校验日期跨度不得超过31天
+  // const startDate = dayjs(dateStart);
+  // const endDate = dayjs(dateEnd);
+  // const daysDifference = endDate.diff(startDate, 'day');
+  // if (daysDifference > 31) {
+  //   MessagePlugin.warning('日期跨度不得超过31天');
+  //   return;
+  // }
+  const [dateStart, dateEnd] = data.servicingTime.map((date) => dayjs(date).format('YYYY-MM-DD'));
+
+  // 更新查询参数状态
+  queryParams.value = {
+    ...data,
+    dateStart,
+    dateEnd,
+  };
+
   // 校验日期跨度不得超过31天
   const startDate = dayjs(dateStart);
   const endDate = dayjs(dateEnd);
@@ -632,22 +687,23 @@ const onInput = async (data) => {
     MessagePlugin.warning('日期跨度不得超过31天');
     return;
   }
-  // 根据当前选中的页签来加载相应的数据
+
+  // 根据当前选中的页签来加载相应的数据 获取查询条件的参数进行程查询
   switch (activeTab.value) {
     case 'tab1':
-      await fetchTable1({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      await fetchTable1(queryParams.value);
       break;
     case 'tab2':
-      await fetchTable2({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      await fetchTable2(queryParams.value);
       break;
     case 'tab3':
-      await fetchTable3({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      await fetchTable3(queryParams.value);
       break;
     case 'tab4':
-      await fetchTable4({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      await fetchTable4(queryParams.value);
       break;
     case 'tab5':
-      await fetchTable5({ workshopId, workcenterId, moscheduleId, barcode, mitemId, defectId, dateStart, dateEnd });
+      await fetchTable5(queryParams.value);
       break;
     // 添加其他页签的case处理
     default:
@@ -663,7 +719,12 @@ const fetchTable1 = async (params) => {
     pageSize: firstPageUI.value.rows,
     ...params,
   });
-  Data1.value = [...data.list];
+  // 响应数据在response.list中
+  const dataWithTimestamps = data.list.map((item) => ({
+    ...item,
+    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+  }));
+  Data1.value = dataWithTimestamps;
   total1.value = data.total;
 };
 
@@ -674,7 +735,12 @@ const fetchTable2 = async (params) => {
     pageSize: towPageUI.value.rows,
     ...params,
   });
-  Data2.value = [...data.list];
+  // 响应数据在response.list中
+  const dataWithTimestamps = data.list.map((item) => ({
+    ...item,
+    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+  }));
+  Data2.value = dataWithTimestamps;
   total2.value = data.total;
 };
 
@@ -685,7 +751,12 @@ const fetchTable3 = async (params) => {
     pageSize: threePageUI.value.rows,
     ...params,
   });
-  Data3.value = [...data.list];
+  // 响应数据在response.list中
+  const dataWithTimestamps = data.list.map((item) => ({
+    ...item,
+    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+  }));
+  Data3.value = dataWithTimestamps;
   total3.value = data.total;
 };
 // 更新fetchTable4方法以接受参数
@@ -695,7 +766,12 @@ const fetchTable4 = async (params) => {
     pageSize: fourPageUI.value.rows,
     ...params,
   });
-  Data4.value = [...data.list];
+  // 响应数据在response.list中
+  const dataWithTimestamps = data.list.map((item) => ({
+    ...item,
+    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+  }));
+  Data4.value = dataWithTimestamps;
   total4.value = data.total;
 };
 // 更新fetchTable5方法以接受参数
@@ -705,7 +781,12 @@ const fetchTable5 = async (params) => {
     pageSize: fivePageUI.value.rows,
     ...params,
   });
-  Data5.value = [...data.list];
+  // 响应数据在response.list中
+  const dataWithTimestamps = data.list.map((item) => ({
+    ...item,
+    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+  }));
+  Data5.value = dataWithTimestamps;
   total5.value = data.total;
 };
 

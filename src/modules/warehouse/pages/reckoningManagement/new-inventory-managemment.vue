@@ -75,11 +75,11 @@
             :empty="t('reckoningManagement.table-empty')"
           >
             <template #button>
-              <t-space v-if="selectedRowKeys.length !== 0" :size="8">
+              <!-- <t-space v-if="selectedRowKeys.length !== 0" :size="8">
                 <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches()">
                   <t-button theme="default">批量删除</t-button>
                 </t-popconfirm>
-              </t-space>
+              </t-space> -->
               <t-space :size="8">
                 <t-button theme="primary" @click="onClickBatchImport">批量导入</t-button>
               </t-space>
@@ -324,42 +324,42 @@ const onConfirmAnother = async () => {
 };
 
 // 批量删除
-const onDeleteBatches = async () => {
-  const onHandIds = selectedRowKeys.value;
-  try {
-    // 等待删除操作完成
-    await api.stockCheckBill.removeBatch({ onHandIds });
-    // 删除操作成功，现在调用 fetchTable
-    await fetchTable({});
-    MessagePlugin.success('批量删除成功!');
-  } catch (error) {
-    console.error('删除失败:', error);
-  }
-};
+// const onDeleteBatches = async () => {
+//   const onHandIds = selectedRowKeys.value;
+//   try {
+//     // 等待删除操作完成
+//     await api.stockCheckBill.removeBatch({ onHandIds });
+//     // 删除操作成功，现在调用 fetchTable
+//     await fetchTable({});
+//     MessagePlugin.success('批量删除成功!');
+//   } catch (error) {
+//     console.error('删除失败:', error);
+//   }
+// };
 
 //* 表格数据
-const fetchTable = async (data: any) => {
-  const { districtId, locationId, mitemId } = data;
-  try {
-    setLoading(true);
-    // 使用存储在组件状态中的默认参数
-    const data = await api.stockCheckBill.getOnHand({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      stockCheckType: newstockCheckType.value,
-      warehouseId: newWarehouseId.value,
-      districtId,
-      locationId,
-      mitemId,
-    });
-    // 更新表格数据
-    tableDataInventory.value = data.list;
-    dataTotal.value = data.total;
-    setLoading(false);
-  } catch (error) {
-    console.error('获取数据失败:', error);
-  }
-};
+// const fetchTable = async (data: any) => {
+//   const { districtId, locationId, mitemId } = data;
+//   try {
+//     setLoading(true);
+//     // 使用存储在组件状态中的默认参数
+//     const data = await api.stockCheckBill.getOnHand({
+//       pageNum: pageUI.value.page,
+//       pageSize: pageUI.value.rows,
+//       stockCheckType: newstockCheckType.value,
+//       warehouseId: newWarehouseId.value,
+//       districtId,
+//       locationId,
+//       mitemId,
+//     });
+//     // 更新表格数据
+//     tableDataInventory.value = data.list;
+//     dataTotal.value = data.total;
+//     setLoading(false);
+//   } catch (error) {
+//     console.error('获取数据失败:', error);
+//   }
+// };
 </script>
 
 <style scoped></style>

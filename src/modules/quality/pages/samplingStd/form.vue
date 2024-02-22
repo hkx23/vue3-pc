@@ -23,8 +23,10 @@
             <t-button theme="default">导入</t-button>
           </template>
           <template #op="slotProps">
-            <t-button :icon="editIcon" size="small" theme="primary" variant="text" @click="onEdit(slotProps)" />
-            <t-button :icon="deleIcon" size="small" theme="primary" variant="text" @click="onDel(slotProps)" />
+            <div @click.stop>
+              <t-button :icon="editIcon" size="small" theme="primary" variant="text" @click="onEdit(slotProps)" />
+              <t-button :icon="deleIcon" size="small" theme="primary" variant="text" @click="onDel(slotProps)" />
+            </div>
           </template>
         </cmp-table>
       </t-space>
@@ -56,7 +58,7 @@ export default {
     const { pageUI } = usePage();
     const tableDataWarehouse = ref([]);
     const dataTotal = ref(0);
-    const curIndex = ref();
+    const curIndex = ref(-1);
     const sortList = ref({ sorters: [] });
     const filterList = ref({ filters: [] });
 
@@ -94,7 +96,7 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
             const newData = [...tableDataWarehouse.value];
@@ -134,10 +136,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -175,10 +176,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -216,10 +216,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: async (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -258,7 +257,7 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
             console.log(context.newRowData, '1111111111');
@@ -299,10 +298,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -340,10 +338,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -381,10 +378,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -422,10 +418,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -463,10 +458,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -504,10 +498,9 @@ export default {
             },
           }),
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -536,10 +529,9 @@ export default {
           validateTrigger: 'change',
           // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
           // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
-          abortEditOnEvent: ['onEnter'],
+          abortEditOnEvent: ['onBlur'],
           // 编辑完成，退出编辑态后触发
           onEdited: (context) => {
-            console.log(context);
             const newData = [...tableDataWarehouse.value];
             newData.splice(context.rowIndex, 1, context.newRowData);
             tableDataWarehouse.value = newData;
@@ -568,89 +560,109 @@ export default {
       }
       MessagePlugin.success('删除成功');
     };
+    const onEdit = async (slotProps) => {
+      // 定义一个 Promise 包装的 onRowClick 函数
+      const onRowClickPromise = new Promise((resolve) => {
+        onRowClick({ index: slotProps.rowIndex }, resolve);
+      });
 
-    const onRowClick = (rowIndex) => {
-      // 设置一个延迟操作，延迟时间为500ms
-      setTimeout(() => {
-        if (rowIndex.index !== curIndex.value) {
-          const item = tableDataWarehouse.value[curIndex.value];
-          if (item.flag) {
-            changeOrAddDtl(item, curIndex.value);
-          }
-          console.log(curIndex.value);
-          item.flag = false;
+      // 等待 onRowClickPromise 的完成
+      await onRowClickPromise;
+
+      console.log('00000000000000');
+      const item = tableDataWarehouse.value[curIndex.value];
+      if (!item || !item.flag) {
+        slotProps.row.flag = true;
+        curIndex.value = slotProps.rowIndex;
+      }
+    };
+
+    const onRowClick = async (rowIndex, callback) => {
+      console.log(rowIndex);
+      console.log(curIndex.value);
+      if (curIndex.value !== -1 && rowIndex.index !== curIndex.value) {
+        // 设置一个延迟操作，延迟时间为500ms
+        const item = tableDataWarehouse.value[curIndex.value];
+        if (item && item.flag) {
+          await changeOrAddDtl(item, curIndex.value);
         }
-      }, 500);
+        // 延迟操作完成后执行回调
+        if (callback) {
+          callback();
+        }
+      } else {
+        // 如果不需要延迟操作，则直接执行回调
+        callback();
+      }
     };
 
     const changeOrAddDtl = async (item, rowIndex) => {
       if (!Number(item.lotFrom) || item.lotFrom <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：批量下限必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：批量下限必须为正整数且不得为空`);
         return;
       }
-      if (!Number(item.samplingPer) || item.samplingPer <= 0 || item.samplingPer > 100) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：批量下限必须为小于或等于100的正整数且不得为空`);
+      if (Number.isNaN(item.samplingPer) || item.samplingPer <= 0 || item.samplingPer > 100) {
+        MessagePlugin.warning(
+          `第${rowIndex + 1}行数据操作失败，原因：抽样比例必须为大于0且小于或等于100的数值且不得为空`,
+        );
         return;
       }
       if (!Number(item.lotTo) || item.lotTo <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：批量上限必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：批量上限必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.samplingNum) || item.samplingNum <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：抽样数量必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：抽样数量必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.acceptQtyClassA) || item.acceptQtyClassA <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：A类允收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：A类允收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.rejectQtyClassA) || item.rejectQtyClassA <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：A类拒收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：A类拒收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.acceptQtyClassB) || item.acceptQtyClassB <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：B类允收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：B类允收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.rejectQtyClassB) || item.rejectQtyClassB <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：B类拒收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：B类拒收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.acceptQtyClassC) || item.acceptQtyClassC <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：C类允收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：C类允收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.rejectQtyClassC) || item.rejectQtyClassC <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：C类拒收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：C类拒收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.acceptQtyClassD) || item.acceptQtyClassD <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：D类允收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：D类允收数必须为正整数且不得为空`);
         return;
       }
       if (!Number(item.rejectQtyClassD) || item.rejectQtyClassD <= 0) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：D类拒收数必须为正整数且不得为空`);
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：D类拒收数必须为正整数且不得为空`);
         return;
       }
-      if (item.lotTo <= item.lotFrom) {
-        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败原因：批量上限不得低于下限`);
+      if (Number(item.lotTo) <= Number(item.lotFrom)) {
+        MessagePlugin.warning(`第${rowIndex + 1}行数据操作失败，原因：批量上限不得低于下限`);
         return;
       }
       await api.samplingStdDtl.changeOrAddDtl(item);
       MessagePlugin.success('操作成功');
-    };
-    const onEdit = (slotProps) => {
-      const item = tableDataWarehouse.value[curIndex.value];
-      if (item) {
-        if (item.flag) {
-          onRowClick(slotProps.rowIndex);
-        }
-        item.flag = false;
+      item.flag = false;
+      if (!item.id) {
+        onRefresh();
       }
-      slotProps.row.flag = true;
-      curIndex.value = slotProps.rowIndex;
-      console.log(curIndex.value);
     };
+    // const onEdit = async (slotProps) => {
+    //   const item = tableDataWarehouse.value[curIndex.value];
+    //   slotProps.row.flag = true;
+    //   curIndex.value = slotProps.rowIndex;
+    // };
     const onRefresh = async () => {
       const data = (await api.samplingStdDtl.getList({
         sampingStdId: formData.value.sampingStdId,
@@ -666,6 +678,13 @@ export default {
       dataTotal.value = data.total;
     };
     const onAdd = () => {
+      if (tableDataWarehouse.value) {
+        const flag = tableDataWarehouse.value.some((item) => !item.id);
+        if (flag) {
+          MessagePlugin.warning('请先提交先前的空白行数据');
+          return;
+        }
+      }
       tableDataWarehouse.value.push({
         ...CmpTable,
         sampingStdCode: formData.value.sampingStdCode,

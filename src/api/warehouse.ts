@@ -3223,6 +3223,13 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
@@ -3231,13 +3238,6 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4347,6 +4347,25 @@ export interface ResultPagingDataMFTSubVO {
   data?: PagingDataMFTSubVO;
 }
 
+/** 入厂检验搜索条件 */
+export interface MitemReceiveBillSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  billNo?: string;
+  /** @format date-time */
+  beginDatetimeReceipted?: string;
+  /** @format date-time */
+  endDatetimeReceipted?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  iqcBillNo?: string;
+  prefix?: string;
+  inspectGroupId?: string;
+  inspectGroupMitemCategoryId?: string[];
+}
+
 /** 交易单身表 */
 export interface MitemReceiveBillVO {
   id?: string;
@@ -4420,6 +4439,7 @@ export interface MitemReceiveBillVO {
   locationName?: string;
   toLocationName?: string;
   userReceiptedId?: string;
+  /** 接收人姓名 */
   userReceiptedDisplayName?: string;
   /**
    * 接收时间
@@ -4429,6 +4449,9 @@ export interface MitemReceiveBillVO {
   uomName?: string;
   /** @format int32 */
   isBatchNo?: number;
+  /** 检验严格度 */
+  inspectionStringency?: string;
+  waitTime?: string;
 }
 
 /** 响应数据 */
@@ -8799,17 +8822,10 @@ export const api = {
      * @request POST:/iqcInspect/getMitemReceiveBillVO
      * @secure
      */
-    getMitemReceiveBillVo: (query: {
-      /** @format int32 */
-      pageNum: number;
-      /** @format int32 */
-      pageSize: number;
-      prefix: string;
-      billNo: string;
-    }) =>
+    getMitemReceiveBillVo: (data: MitemReceiveBillSearch) =>
       http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/warehouse/iqcInspect/getMitemReceiveBillVO`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
   },
   district: {
