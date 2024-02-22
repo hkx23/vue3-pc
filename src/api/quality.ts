@@ -638,6 +638,133 @@ export interface ResultPagingDataMFTSubVO {
   data?: PagingDataMFTSubVO;
 }
 
+/** 入厂检验搜索条件 */
+export interface MitemReceiveBillSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  billNo?: string;
+  /** @format date-time */
+  beginDatetimeReceipted?: string;
+  /** @format date-time */
+  endDatetimeReceipted?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  iqcBillNo?: string;
+  prefix?: string;
+  inspectGroupId?: string;
+  inspectGroupMitemCategoryId?: string[];
+}
+
+/** 交易单身表 */
+export interface MitemReceiveBillVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  moScheId?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 实际拣料数量 */
+  pickQty?: number;
+  /** 原因 */
+  reason?: string;
+  /** 相关凭证号 */
+  voucherLineNo?: string;
+  /** 通知凭证 */
+  noticeVoucherLineNo?: string;
+  /** 到货批次 */
+  batchNo?: string;
+  /** 采购订单号 */
+  poNum?: string;
+  /** ERP单据明细号 */
+  erpLineNo?: string;
+  /** 备注 */
+  memo?: string;
+  /** 来源单据行号 */
+  sourceBillLineNo?: string;
+  userReceiptedId?: string;
+  /** 接收人姓名 */
+  userReceiptedDisplayName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  businessCategoryId?: string;
+  businessCategoryCode?: string;
+  businessCategoryName?: string;
+  status?: string;
+  statusName?: string;
+  supplierId?: string;
+  supplierCode?: string;
+  supplierName?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  mitemCategoryCode?: string;
+  mitemCategoryName?: string;
+  locationName?: string;
+  toLocationName?: string;
+  uomName?: string;
+  /** @format int32 */
+  isBatchNo?: number;
+  waitTime?: string;
+  /** 检验严格度 */
+  inspectionStringency?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemReceiveBillVO = {
+  list?: MitemReceiveBillVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemReceiveBillVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemReceiveBillVO;
+}
+
 /** 通用响应类 */
 export interface ResultLong {
   /**
@@ -1106,6 +1233,22 @@ export const api = {
      */
     getMitemQualityInfo: (data: MitemForwardTraceSearch) =>
       http.request<ResultPagingDataMFTSubVO['data']>(`/api/quality/iqcInspectBill/getMitemQualityInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  iqcInspect: {
+    /**
+     * No description
+     *
+     * @tags 物料检验头表
+     * @name GetMitemReceiveBillVo
+     * @summary 获取仓库接收单数据
+     * @request POST:/iqcInspect/getMitemReceiveBillVO
+     * @secure
+     */
+    getMitemReceiveBillVo: (data: MitemReceiveBillSearch) =>
+      http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/quality/iqcInspect/getMitemReceiveBillVO`, {
         method: 'POST',
         body: data as any,
       }),
