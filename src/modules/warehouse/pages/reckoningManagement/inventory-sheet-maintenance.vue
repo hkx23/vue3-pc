@@ -40,11 +40,13 @@
       </cmp-card>
       <!-- 盘点单相关详细信息 -->
       <cmp-card>
-        <template #title> 盘点单{{ props.propsdtlId }}相关详细信息 </template>
+        <!-- <template #title> 盘点单{{ props.propsdtlId }}相关详细信息 </template> -->
+        <template #title> 盘点单{{ props.propsbillNo }}相关详细信息 </template>
         <t-form>
           <t-row>
             <t-form-item label="盘点单号：" name="description">
-              <p>{{ props.propsdtlId }}</p>
+              <!-- <p>{{ props.propsdtlId }}</p> -->
+              <p>{{ props.propsbillNo }}</p>
             </t-form-item>
             <t-form-item label="盘点类型：" name="description">
               <p>{{ props.stockCheckBillTypeName }}</p>
@@ -167,7 +169,7 @@ const { loading, setLoading } = useLoading();
 
 //* 表格标题--物料明细
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  { colKey: 'row-select', width: 40, type: 'single', fixed: 'left' },
   { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '物料编码', colKey: 'mitemCode', width: 85 },
   { title: '物料描述', width: 150, colKey: 'mitemDesc' },

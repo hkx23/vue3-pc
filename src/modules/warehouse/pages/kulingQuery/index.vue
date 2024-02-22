@@ -114,7 +114,7 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '物料编码', colKey: 'mitemCode', width: 150 },
   { title: '物料描述', width: 150, colKey: 'mitemDesc' },
   { title: '仓库编码', width: 120, colKey: 'warehouseCode' },
-  { title: '仓库名称', width: 120, colKey: 'mitemCode' },
+  { title: '仓库名称', width: 120, colKey: 'warehouseName' },
   { title: '货区编码', width: 120, colKey: 'districtCode' },
   { title: '货区名称', width: 150, colKey: 'districtName' },
   { title: '货位编码', width: 150, colKey: 'locationCode' },

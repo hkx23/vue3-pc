@@ -107,8 +107,9 @@ const opts = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'workcenter', // todo
+        type: 'processReturn', // todo
         showTitle: false,
+        isMultiple: true, // 多选
       },
     },
 
@@ -120,6 +121,7 @@ const opts = computed(() => {
       bind: {
         type: 'mitem',
         showTitle: false,
+        isMultiple: true, // 多选
       },
     },
   };
