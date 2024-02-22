@@ -387,7 +387,7 @@ const sortTable = () => {
       if (!element.key) {
         element.rowKey = _.uniqueId();
       }
-      // element.seq = rowIndex.value; // 暂时采用手动输入顺序的方式，因此代码先注释
+      element.seq = rowIndex.value; // 自动生成排序
       element.oid = element.isGlobal === true ? '0' : ''; // 0表示全局
       rowIndex.value++;
     });
