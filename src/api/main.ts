@@ -4002,15 +4002,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
   isProductName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isBatchName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4490,8 +4488,8 @@ export interface IntegratedConsoleSearch {
    */
   dateEnd?: string;
   mesbillNo?: string;
-  erpbillNo?: string;
   imsgqueueStatus?: string;
+  erpbillNo?: string;
 }
 
 /** 显示工站 */
@@ -7019,10 +7017,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
