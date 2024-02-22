@@ -8,7 +8,7 @@
         <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput" @reset="onReset">
         </cmp-query>
 
-        <!-- cmp-table 表格组件 -->
+        <!-- cmp-table 表格组件  select-on-row-click  TODO  -->
         <cmp-table
           v-model:pagination="firstPageUI"
           v-model:selected-row-keys="selectedRowKeys"
@@ -16,14 +16,15 @@
           :loading="loading"
           :table-column="tableReckoningManagementColumns"
           :table-data="tableDataReckoning"
-          select-on-row-click
           :fixed-height="true"
           :hover="true"
           :total="dataTotal"
           max-height="200px"
           type="single"
           empty="没有符合条件的数据"
+          select-on-row-click
           @select-change="handleRowSelectChange"
+          @row-mouseup="handleRowClick"
           @refresh="tabRefresh"
         >
           <template #title>
@@ -212,12 +213,20 @@ const fetchTable = async () => {
 };
 
 const handleRowSelectChange = async (billId) => {
+  propsdtlId.value = billId; // 选中后将数据传给作废接口作为参数
   if (billId.length > 0) {
     setLoading(true);
-    fetchTables(billId); // 改变复选框时从新请求数据
+    fetchTables(billId); // 改变选框时从新请求数据
     setLoading(false);
   }
-  //
+};
+/** 辅助函数
+ *  newState 状态用来判断是否可以作废
+ */
+const newState = ref('');
+const handleRowClick = async (row) => {
+  const { stockCheckBillStatusName } = row.row;
+  newState.value = stockCheckBillStatusName;
 };
 
 watch(propsdtlId, (newBillId) => {
@@ -277,6 +286,7 @@ const documentStatusData = async () => {
 const onInput = async (data: any) => {
   setLoading(true);
   const { billNo, status, warehouseId, timeCreate } = data;
+  firstPageUI.value.page = 1; // 条件过滤时必须赋值为1
   if (!data.value) {
     const data = await api.stockCheckBill.getPdList({
       pageNum: firstPageUI.value.page,
@@ -311,22 +321,25 @@ const onAdd = () => {
   eidtRoutingVisible.value = true;
 };
 
-// 作废
+// 作废 TODO
 const scrappedBill = async (billId) => {
-  // 检查是否选择了一行
-  if (propsdtlId.value) {
-    // 执行作废操作
-    await api.stockCheckBill.scrappedBill({
-      billId,
-    });
-    await fetchTable();
-    MessagePlugin.success('作废成功!');
+  console.log('🚀 ~ scrappedBill ~ newState.value:', newState.value);
+  if (newState.value === '已创建' || newState.value === '盘点中') {
+    if (propsdtlId.value) {
+      // 执行作废操作
+      await api.stockCheckBill.scrappedBill({
+        billId,
+      });
+      await fetchTable();
+      MessagePlugin.success('作废成功!');
+    } else {
+      //  检查是否选择了一行 如果没有选择任何行，显示错误消息
+      MessagePlugin.error('请选择一行进行作废操作!');
+    }
   } else {
-    // 如果没有选择任何行，显示错误消息
-    MessagePlugin.error('请选择一行进行作废操作');
+    MessagePlugin.error('状态为已创建,盘点中的单据才能进行作废操作!');
   }
 };
-
 const onEditRowClick = async (item) => {
   formTitle.value = '盘点单维护';
   ISMRoutingVisible.value = true;

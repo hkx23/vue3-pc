@@ -70,7 +70,8 @@ const onGetRuleData = async () => {
 </script>
 <style scoped>
 .table-container {
-  max-height: 500px;
+  /* max-height: 500px; */
+  height: 100%;
   overflow-y: scroll; /* 确保滚动条仅在需要时显示 */
 }
 

@@ -18,6 +18,7 @@
               :key="item.id"
               :label="item.sampingStdCode"
               :value="item.sampingStdCode"
+              :lazy-load="true"
             />
           </t-select>
         </template>
@@ -64,8 +65,8 @@
     <t-dialog v-model:visible="stateVisible" width="30%" :header="false" @confirm="onStateChange" @close="fetchTable">
       <div v-if="countMessage">
         <span
-          >该抽样方案共有 {{ countMessage }} 个标准检验项目在使用，如果禁用将对这些标
-          准检验项目产生影响。请确认是否继续禁用？</span
+          >该抽样方案共有
+          {{ countMessage }} 个标准检验项目在使用，如果禁用将对这些标准检验项目产生影响。请确认是否继续禁用？</span
         >
       </div>
       <div v-if="!countMessage">
@@ -148,11 +149,8 @@ const onEditRowClick = (value: any) => {
 };
 
 const querySelectChange = async (event) => {
-  console.log(event);
-  if (event && event.length >= 2) {
-    const res = (await api.samplingStd.getSampingStdCode({ key: event })) as any;
-    sampingStdCodesOption.value = res;
-  }
+  const res = (await api.samplingStd.getSampingStdCode({ key: event.length >= 2 ? event : '' })) as any;
+  sampingStdCodesOption.value = res;
 };
 // 点击查询按钮
 const conditionEnter = (data: any) => {
