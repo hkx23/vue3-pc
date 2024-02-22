@@ -16,6 +16,9 @@
         :fixed-height="true"
         @refresh="conditionEnter"
       >
+        <template #businessDomain="{ row }">
+          <span>{{ getBusinessDomainName(row.businessDomain) }}</span>
+        </template>
         <template #importTemplateUrl="{ row }">
           <t-link theme="primary" @click="downAtta(row)">{{ getFileName(row.importTemplateUrl) }}</t-link>
         </template>
@@ -202,9 +205,21 @@ const handleEditClose = () => {
   // 关闭窗口事件
   editDialogVisable.value = false;
 };
+const businessDomainList = ref([]);
+const loadBusinessDomainList = async () => {
+  const res = await api.importManage.businessDomain();
+  businessDomainList.value = res;
+};
 
+const getBusinessDomainName = (businessDomainValue) => {
+  const businessDomain = businessDomainList.value.find((item) => {
+    return item.value === businessDomainValue;
+  });
+  return businessDomain?.label;
+};
 // 渲染函数
-onMounted(() => {
+onMounted(async () => {
+  loadBusinessDomainList(); // 业务领域 上 请求
   fetchTable();
   // getDataTables();
 });
