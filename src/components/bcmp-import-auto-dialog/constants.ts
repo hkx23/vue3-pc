@@ -5,6 +5,7 @@ export interface CommonImportMoodel {
   columns?: ImportColumn[];
   /** @format int32 */
   batchSize?: number;
+  importKey?: string;
 }
 
 export interface ImportColumn {
