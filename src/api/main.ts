@@ -4000,7 +4000,6 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
@@ -4008,6 +4007,7 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
+  stateName?: string;
   isState?: boolean;
 }
 
@@ -4151,8 +4151,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4703,6 +4703,16 @@ export interface ResultPagingDataImportSetting {
   message?: string;
   /** 响应数据 */
   data?: PagingDataImportSetting;
+}
+
+export interface CommonImportAuto {
+  importKey?: string;
+  title?: string;
+  tableName?: string;
+  data?: Record<string, object>[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
 }
 
 /** 导入列配置表 */
@@ -11420,6 +11430,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataImportSetting['data']>(`/api/main/importManage/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name ImportData
+     * @summary 通用导入接口
+     * @request POST:/importManage/import
+     * @secure
+     */
+    importData: (data: CommonImportAuto) =>
+      http.request<ResultImportSummary['data']>(`/api/main/importManage/import`, {
         method: 'POST',
         body: data as any,
       }),
