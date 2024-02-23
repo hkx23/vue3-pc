@@ -1002,6 +1002,137 @@ export interface ResultPagingDataMitemReceiveBillVO {
   data?: PagingDataMitemReceiveBillVO;
 }
 
+/** 品质控制提交模型 */
+export interface QcHoldDTO {
+  /** 保存类型-LOCK(冻结) & UNLOCK(解冻) */
+  saveType?: 'LOCK' | 'UNLOCK';
+  /** 主表信息 */
+  qcHoldInfo?: QcHoldVO;
+  /** 明细信息 */
+  qcHoldDtls?: QcHoldDtlVO[];
+  /** 明细信息唯一Key */
+  keyList?: string[];
+}
+
+/** 明细信息 */
+export interface QcHoldDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  holdId?: string;
+  moScheId?: string;
+  /** 产品条码 */
+  serialNumber?: string;
+  workstationId?: string;
+  /** 标签号 */
+  labelNo?: string;
+}
+
+/** 主表信息 */
+export interface QcHoldVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 原因类别 */
+  reasonCategory?: string;
+  /**
+   * 计划处理时间
+   * @format date-time
+   */
+  datetimePlanHandle?: string;
+  customerId?: string;
+  personResponsibilityId?: string;
+  personHandleId?: string;
+  personFollowUpId?: string;
+  /**
+   * 锁定时间
+   * @format date-time
+   */
+  datetimeLock?: string;
+  /**
+   * 解锁时间
+   * @format date-time
+   */
+  datetimeUnlock?: string;
+  /** 备注或说明 */
+  memo?: string;
+  /** 品质控制类别 */
+  holdCategory?: string;
+  /** 状态 */
+  status?: string;
+  workCenterId?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  holdCategoryName?: string;
+  customerCode?: string;
+  customerName?: string;
+  /** 创建人名称-操作人 */
+  creatorName?: string;
+  /** 责任人 */
+  personResponsibilityName?: string;
+  /** 处理人 */
+  personHandleName?: string;
+  /** 跟进人 */
+  personFollowUpName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  /**
+   * 修改人时间
+   * @format date-time
+   */
+  modifiedTime?: string;
+  dtls?: QcHoldDtlVO[];
+  /** 单据状态名称 */
+  statusName?: string;
+}
+
 /** 通用响应类 */
 export interface ResultLong {
   /**
@@ -1093,13 +1224,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  iii?: string;
   s1?: string;
-  ii?: string;
-  s3?: string;
+  iii?: string;
+  i?: string;
   s2?: string;
   s4?: string;
+  ii?: string;
+  s3?: string;
 } | null;
 
 /** 计量单位 */
@@ -1268,6 +1399,51 @@ export type DataTableVO = {
   /** 列设置 */
   columns?: DataTableColumnVO[];
 } | null;
+
+/** 品质控制 */
+export interface QcHoldSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workCenterId?: string;
+  reasonCategory?: string;
+  /** hold开始时间 */
+  datetimeLockStart?: string;
+  /** hold结束 */
+  datetimeLockEnd?: string;
+  /** 操作人 */
+  creator?: string;
+  personResponsibilityId?: string;
+  personHandleId?: string;
+  personFollowUpId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataQcHoldVO = {
+  list?: QcHoldVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataQcHoldVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataQcHoldVO;
+}
 
 /** 通用响应类 */
 export interface ResultString {
@@ -1527,10 +1703,10 @@ export const api = {
      * @request POST:/oqcInspectStd/delById
      * @secure
      */
-    delById: (data: string[]) =>
+    delById: (query: { ids: string[] }) =>
       http.request<ResultObject['data']>(`/api/quality/oqcInspectStd/delById`, {
         method: 'POST',
-        body: data as any,
+        params: query,
       }),
 
     /**
@@ -1557,10 +1733,10 @@ export const api = {
      * @request POST:/oqcInspectStd/changStatus
      * @secure
      */
-    changStatus: (data: string[]) =>
+    changStatus: (query: { ids: string[] }) =>
       http.request<ResultObject['data']>(`/api/quality/oqcInspectStd/changStatus`, {
         method: 'POST',
-        body: data as any,
+        params: query,
       }),
 
     /**
@@ -1639,6 +1815,40 @@ export const api = {
       http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/quality/iqcInspect/getMitemReceiveBillVO`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  hold: {
+    /**
+     * No description
+     *
+     * @tags 品质控制头表
+     * @name SaveData
+     * @summary 品质控制-冻结与解冻保存
+     * @request POST:/hold/saveData
+     * @secure
+     */
+    saveData: (data: QcHoldDTO) =>
+      http.request<ResultObject['data']>(`/api/quality/hold/saveData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质控制头表
+     * @name GetQcHoldList
+     * @summary 获取解锁列表列表
+     * @request GET:/hold/getQcHoldList
+     * @secure
+     */
+    getQcHoldList: (query: {
+      /** 品质控制 */
+      search: QcHoldSearch;
+    }) =>
+      http.request<ResultPagingDataQcHoldVO['data']>(`/api/quality/hold/getQcHoldList`, {
+        method: 'GET',
+        params: query,
       }),
   },
   sampleCode: {
