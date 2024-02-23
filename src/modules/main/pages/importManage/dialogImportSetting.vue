@@ -3,7 +3,7 @@
     v-model:visible="formImportVisible"
     :close-on-overlay-click="false"
     top="50px"
-    width="850px"
+    width="950px"
     :cancel-btn="null"
     :confirm-btn="null"
     header="导入配置"
@@ -312,7 +312,7 @@
         <t-form-item label="数据源列">
           <t-select v-model="sourceColumn" placeholder="选择数据源列">
             <t-option
-              v-for="column in columnsData"
+              v-for="column in columnsDataWithoutDefault"
               :key="column.columnName"
               :value="column.columnName"
               :label="column.columnDesc"
@@ -555,6 +555,7 @@ const changeTable = (value, context) => {
       dataTable: {
         mapTable: '',
         conditionData: [],
+        tableQueryField: '',
       },
     };
     if (item.columnName === 'eid') {
@@ -879,6 +880,7 @@ const onClickConfirm = () => {
     dataTable: {
       mapTable: mapTable.value,
       conditionData: conditionData.value,
+      tableQueryField: tableQueryField.value,
     },
   };
   // 根据currentRelateRow的index 查询columnsDataWithoutDefault中匹配的行，使用find或者filter方法，将relateData赋值到对应行的datatransferJson字段
@@ -923,6 +925,7 @@ const initRelatedData = () => {
     dicData.value = [];
     mapTable.value = '';
     conditionData.value = [];
+    tableQueryField.value = '';
     switch (selectedType.value) {
       case 'systemParams':
         selectedParamGroup.value = relatedData.systemParams.selectedParamGroup;
@@ -937,7 +940,9 @@ const initRelatedData = () => {
         break;
       case 'dataTable':
         mapTable.value = relatedData.dataTable.mapTable;
+        changeTableMatch(mapTable.value);
         conditionData.value = relatedData.dataTable.conditionData;
+        tableQueryField.value = relatedData.dataTable.tableQueryField;
         break;
       default:
         break;
@@ -1083,6 +1088,16 @@ const changeTableMatch = (value) => {
   }));
   console.log(selectMapColumns.value);
 };
+
+const initEditColumns = (value) => {
+  const editTable = tableList.value.find((item) => item.tableName === value);
+  columnsData.value = editTable?.columns.map((item) => ({
+    ...item,
+    value: item.columnName,
+    label: item.columnDesc,
+  }));
+};
+
 onMounted(async () => {
   await loadParamGroup(); // 加载系统参数 上 请求
 });
@@ -1303,6 +1318,7 @@ const initEditData = (insetModel) => {
   uploadFiles.value.push(addFile);
   templatePath.value = addFile.signedUrl;
   templateFileName.value = addFile.fileName;
+  initEditColumns(formData.tableName);
 };
 
 // 新增-初始化新增的数据
