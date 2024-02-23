@@ -2233,8 +2233,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4000,15 +4000,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
   isProductName?: string;
+  isProductChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
   isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  isBatchName?: string;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4488,8 +4488,8 @@ export interface IntegratedConsoleSearch {
    */
   dateEnd?: string;
   mesbillNo?: string;
-  imsgqueueStatus?: string;
   erpbillNo?: string;
+  imsgqueueStatus?: string;
 }
 
 /** 显示工站 */
@@ -4703,6 +4703,16 @@ export interface ResultPagingDataImportSetting {
   message?: string;
   /** 响应数据 */
   data?: PagingDataImportSetting;
+}
+
+export interface CommonImportAuto {
+  importKey?: string;
+  title?: string;
+  tableName?: string;
+  data?: Record<string, object>[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
 }
 
 /** 导入列配置表 */
@@ -5307,8 +5317,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -11420,6 +11430,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataImportSetting['data']>(`/api/main/importManage/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name ImportData
+     * @summary 通用导入接口
+     * @request POST:/importManage/import
+     * @secure
+     */
+    importData: (data: CommonImportAuto) =>
+      http.request<ResultImportSummary['data']>(`/api/main/importManage/import`, {
         method: 'POST',
         body: data as any,
       }),

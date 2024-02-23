@@ -1392,8 +1392,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
   mesbillNo?: string;
+  erpbillNo?: string;
 }
 
 /** 响应数据 */
@@ -2534,10 +2534,10 @@ export interface DeliveryDtlVO {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量 */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 采购单明细 */
@@ -2606,10 +2606,10 @@ export interface PurchaseOrderDtlVO {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量 */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3223,11 +3223,6 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
   flpickQty?: number;
@@ -3238,6 +3233,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4347,6 +4347,25 @@ export interface ResultPagingDataMFTSubVO {
   data?: PagingDataMFTSubVO;
 }
 
+/** 入厂检验搜索条件 */
+export interface MitemReceiveBillSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  billNo?: string;
+  /** @format date-time */
+  beginDatetimeReceipted?: string;
+  /** @format date-time */
+  endDatetimeReceipted?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  iqcBillNo?: string;
+  prefix?: string;
+  inspectGroupId?: string;
+  inspectGroupMitemCategoryId?: string[];
+}
+
 /** 交易单身表 */
 export interface MitemReceiveBillVO {
   id?: string;
@@ -4420,6 +4439,7 @@ export interface MitemReceiveBillVO {
   locationName?: string;
   toLocationName?: string;
   userReceiptedId?: string;
+  /** 接收人姓名 */
   userReceiptedDisplayName?: string;
   /**
    * 接收时间
@@ -4429,6 +4449,11 @@ export interface MitemReceiveBillVO {
   uomName?: string;
   /** @format int32 */
   isBatchNo?: number;
+  /** 检验严格度 */
+  inspectionStringency?: string;
+  /** 检验严格度 */
+  inspectionStringencyName?: string;
+  waitTime?: string;
 }
 
 /** 响应数据 */
@@ -8799,17 +8824,10 @@ export const api = {
      * @request POST:/iqcInspect/getMitemReceiveBillVO
      * @secure
      */
-    getMitemReceiveBillVo: (query: {
-      /** @format int32 */
-      pageNum: number;
-      /** @format int32 */
-      pageSize: number;
-      prefix: string;
-      billNo: string;
-    }) =>
+    getMitemReceiveBillVo: (data: MitemReceiveBillSearch) =>
       http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/warehouse/iqcInspect/getMitemReceiveBillVO`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
   },
   district: {
@@ -9568,6 +9586,22 @@ export const api = {
      */
     getDeliveryDtlByDeliveryNo: (query: { billNo: string }) =>
       http.request<ResultListDeliveryDtlVO['data']>(`/api/warehouse/deliveryDtl/getDeliveryDtlByDeliveryNo`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  billSeq: {
+    /**
+     * No description
+     *
+     * @tags 单据流程水号表
+     * @name GetBillNo
+     * @summary 根据前缀获取流水单号
+     * @request GET:/billSeq/getBillNo
+     * @secure
+     */
+    getBillNo: (query: { prefix: string }) =>
+      http.request<ResultString['data']>(`/api/warehouse/billSeq/getBillNo`, {
         method: 'GET',
         params: query,
       }),

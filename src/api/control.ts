@@ -1378,6 +1378,96 @@ export interface WipProcessDtlVO {
   timeStay?: number;
 }
 
+export interface StraightThroughRateReportSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 工序ID */
+  processIds?: string[];
+  /** 物料ID */
+  mitemIds?: string[];
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListStraightThroughRateReportVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: StraightThroughRateReportVO[] | null;
+}
+
+/** 直通率报表 */
+export type StraightThroughRateReportVO = {
+  processId?: string;
+  /** 工序名称 */
+  processName?: string;
+  mitemId?: string;
+  /** 产品名称 */
+  mitemName?: string;
+  /**
+   * 合格品数量
+   * @format int32
+   */
+  passQuantity?: number;
+  /**
+   * 投入总量
+   * @format int32
+   */
+  putTotal?: number;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /**
+   * 当日结束时间
+   * @format date-time
+   */
+  dayFinish?: string;
+  /**
+   * 两位日数
+   * @format int32
+   */
+  days?: number;
+  /**
+   * 是否合格 0：合格；1：不合格
+   * @format int32
+   */
+  dcResult?: number;
+  /**
+   * 工序直通率
+   * @format double
+   */
+  processRate?: number;
+  /**
+   * 产品直通率
+   * @format double
+   */
+  mitemRate?: number;
+} | null;
+
 /** 关键物料追溯（反向）-查询 */
 export interface ReverseTraceabilityReportSearch {
   /** @format int32 */
@@ -2413,15 +2503,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopName?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopId?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2464,9 +2554,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -3689,17 +3779,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopName?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopId?: string;
+  stateName?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3810,16 +3900,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
   defectCodeStr?: string;
   stateName?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -5481,6 +5571,58 @@ export const api = {
       http.request<ResultListWipVO['data']>(`/api/control/wip/getAchievingRate`, {
         method: 'GET',
       }),
+  },
+  straightThroughRateReport: {
+    /**
+     * No description
+     *
+     * @tags 直通率报表
+     * @name GetSingle
+     * @summary 单工序单产品查询
+     * @request POST:/straightThroughRateReport/getSingle
+     * @secure
+     */
+    getSingle: (data: StraightThroughRateReportSearch) =>
+      http.request<ResultListStraightThroughRateReportVO['data']>(`/api/control/straightThroughRateReport/getSingle`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 直通率报表
+     * @name GetProducts
+     * @summary 多选产品查询
+     * @request POST:/straightThroughRateReport/getProducts
+     * @secure
+     */
+    getProducts: (data: StraightThroughRateReportSearch) =>
+      http.request<ResultListStraightThroughRateReportVO['data']>(
+        `/api/control/straightThroughRateReport/getProducts`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 直通率报表
+     * @name GetProcesses
+     * @summary 多选工序查询
+     * @request POST:/straightThroughRateReport/getProcesses
+     * @secure
+     */
+    getProcesses: (data: StraightThroughRateReportSearch) =>
+      http.request<ResultListStraightThroughRateReportVO['data']>(
+        `/api/control/straightThroughRateReport/getProcesses`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
   },
   reversetraceability: {
     /**
