@@ -256,8 +256,8 @@ const columnsProduceReport2 = computed(() => {
   return [
     {
       colKey: 'datetimeSche',
-      title: '时间',
-      width: 100,
+      title: '计划生产日期',
+      width: 120,
     },
     {
       colKey: 'workshopName',
@@ -328,8 +328,8 @@ const columnsProduceReport3 = computed(() => {
   return [
     {
       colKey: 'datetimeSche',
-      title: '时间',
-      width: 100,
+      title: '计划生产日期',
+      width: 120,
     },
     {
       colKey: 'workshopName',
@@ -391,8 +391,8 @@ const columnsProduceReport4 = computed(() => {
   return [
     {
       colKey: 'datetimeSche',
-      title: '时间',
-      width: 100,
+      title: '计划生产日期',
+      width: 120,
     },
     {
       colKey: 'workshopName',
@@ -452,8 +452,8 @@ const columnsProduceReport5 = computed(() => {
   return [
     {
       colKey: 'datetimeSche',
-      title: '时间',
-      width: 100,
+      title: '计划生产日期',
+      width: 120,
     },
     {
       colKey: 'workshopName',
