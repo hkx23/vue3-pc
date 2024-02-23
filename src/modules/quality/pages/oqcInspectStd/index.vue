@@ -1,5 +1,6 @@
 <template>
-  <cmp-container :full="!!tagValue">
+  <materialStandardAdd v-if="pageShow" @permission-show="onPermission"></materialStandardAdd>
+  <cmp-container v-show="!pageShow" :full="!!tagValue">
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">
@@ -33,7 +34,7 @@
                   <template #title> 产品检验标准列表 </template>
                   <template #op="{ row }">
                     <t-space :size="8">
-                      <t-link theme="primary">{{ '分配' }}</t-link>
+                      <t-link theme="primary" @click="onAssign(row)">{{ '分配' }}</t-link>
                       <t-link theme="primary" @click="onEdit(row)">{{ '编辑' }}</t-link>
                       <t-link theme="primary" @click="onDelData(row)">{{ '删除' }}</t-link>
                       <t-link theme="primary">{{ '复制' }}</t-link>
@@ -87,19 +88,15 @@
     </cmp-card>
   </cmp-container>
   <t-loading :loading="pageLoading" text="加载中..." fullscreen />
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="formTitle"
-      :on-confirm="onConfirmForm"
-      cancel-btn="暂存"
-      width="90%"
-      :close-on-overlay-click="false"
-      :on-cancel="onStaging"
-    >
-      <std-form ref="formRef"></std-form>
-    </t-dialog>
-  </div>
+  <t-dialog
+    v-model:visible="formVisible"
+    :close-on-overlay-click="false"
+    header="附件上传"
+    :cancel-btn="null"
+    :confirm-btn="null"
+  >
+    <materialAllotForm ref="formRef"></materialAllotForm>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -113,10 +110,11 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import StdForm from './form.vue';
+import materialAllotForm from './form.vue';
+import materialStandardAdd from './materialStandardAdd.vue';
 
-const formVisible = ref(false);
 const formRef = ref(null); // 新增表单数据清除，获取表单实例
+const formVisible = ref(false); // 新增表单数据清除，获取表单实例
 const formTitle = ref('');
 const pageLoading = ref(false);
 const { loading, setLoading } = useLoading();
@@ -142,23 +140,10 @@ const reprintDialog = ref({
   splitNum: '',
   qty: 0,
 });
-const onConfirmForm = () => {
-  formRef.value.formData.saveTpye = 'add';
-  formRef.value.submit().then((data) => {
-    if (data) {
-      formVisible.value = false;
-      fetchMoTable();
-    }
-  });
-};
-const onStaging = () => {
-  formRef.value.formData.saveTpye = 'staging';
-  formRef.value.submit().then((data) => {
-    if (data) {
-      formVisible.value = false;
-      fetchMoTable();
-    }
-  });
+const pageShow = ref(false);
+const onPermission = (value) => {
+  pageShow.value = value;
+  onRefresh();
 };
 
 // 标准头表查询初始化
@@ -200,12 +185,7 @@ const onRefresh = async () => {
 };
 
 const onAdd = () => {
-  formRef.value.init();
-  formRef.value.formData.status = 'DRAFT';
-  formRef.value.formData.statusnAME = '起草中';
-  formRef.value.formData.revision = '1.0';
-  formTitle.value = '新增产品检验标准';
-  formVisible.value = true;
+  pageShow.value = true;
 };
 const enableButton = ref(false);
 const closeButton = ref(false);
@@ -240,20 +220,26 @@ const onSelectedChange = (value: any) => {
   }
 };
 const onEdit = (row) => {
-  console.log(row);
   formRef.value.dtlRowKeys = [];
   formRef.value.ids = [];
   formRef.value.formData = row;
   formRef.value.formData.operateTpye = 'edit';
   formRef.value.formData.revision = row.revisionName;
+  pageShow.value = true;
   formTitle.value = '编辑产品检验标准';
   formRef.value.getDtlByStdId();
-  formVisible.value = true;
 };
 const onDelData = async (row) => {
   await apiQuality.oqcInspectStd.delById({ ids: [row.id] });
   MessagePlugin.success('删除成功');
   onRefresh();
+};
+const onAssign = async (row) => {
+  formRef.value.formData.type = '01';
+  formRef.value.formData.id = row.id;
+  formRef.value.formData.inspectStdName = row.inspectStdName;
+
+  formVisible.value = true;
 };
 const onDelDataBatch = async () => {
   await apiQuality.oqcInspectStd.delById({ ids: stdRowKeys.value });
