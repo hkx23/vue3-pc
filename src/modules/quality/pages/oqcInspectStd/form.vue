@@ -29,7 +29,7 @@
           </t-col>
           <t-col :span="4">
             <t-form-item label="状态" label-align="right" name="status">
-              <t-select v-model="formData.status" clearable style="width: 200px">
+              <t-select v-model="formData.status" clearable style="width: 200px" :disabled="true">
                 <t-option v-for="item in statusOption" :key="item.id" :label="item.label" :value="item.value" />
               </t-select>
             </t-form-item>
@@ -72,11 +72,17 @@
         :table-data="tableData"
         :loading="loading"
         :total="dataTotal"
+        :selected-row-keys="dtlRowKeys"
+        select-on-row-click
+        :fixed-height="true"
+        style="height: 200px"
+        @select-change="onDtlSelectedChange"
+        @refresh="onRefresh"
       >
         <template #title>标准明细</template>
         <template #button>
-          <t-button theme="primary" :disabled="formData.operateTpye !== 'add'" @click="onAdd">新增</t-button>
-          <t-button theme="default" :disabled="formData.operateTpye !== 'add'">删除</t-button>
+          <t-button theme="primary" @click="onAdd">新增</t-button>
+          <t-button theme="default" :disabled="dtlRowKeys.length < 1" @click="onDelDtlData">删除</t-button>
         </template>
         <template #inspectTypeListOp="{ row }">
           <t-row>
@@ -236,7 +242,6 @@
               type="uom"
               :show-title="false"
               value-field="uom"
-              @change="onChangeUom"
             ></bcmp-select-business>
           </t-form-item>
         </t-col>
@@ -265,6 +270,7 @@ export default {
   setup() {
     const formData = ref({
       operateTpye: 'add',
+      saveTpye: 'add',
       id: '',
       inspectStdCode: '',
       inspectStdName: '',
@@ -297,6 +303,7 @@ export default {
       inspectProperty: '',
       processId: '',
     });
+    const dtlRowKeys: Ref<any[]> = ref([]);
     const codesOption = ref([]);
     const { loading } = useLoading();
     const { pageUI } = usePage();
@@ -306,9 +313,6 @@ export default {
     const diaLogTitle = ref(''); // 弹窗标题
     const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 
-    const onChangeUom = (context) => {
-      console.log(`${context}11111111111`);
-    };
     const fetchSampingStdCodes = async () => {
       try {
         if (dtlData.value.samplingStandardType === '2') {
@@ -446,6 +450,7 @@ export default {
     // #表单定义规则
     const rules: FormRules = {
       inspectStdCode: [{ required: true, message: '不能为空', trigger: 'change' }],
+      itemSeq: [{ required: true, message: '不能为空', trigger: 'change' }],
       inspectStdName: [{ required: true, message: '不能为空', trigger: 'change' }],
       timeEffective: [{ required: true, message: '不能为空', trigger: 'change' }],
       timeInvalid: [{ required: true, message: '不能为空', trigger: 'change' }],
@@ -492,6 +497,7 @@ export default {
       const requiredFields = [
         'itemCategory',
         'itemName',
+        'itemSeq',
         'characteristics',
         'samplingStandardType',
         'samplingStandardCode',
@@ -522,6 +528,10 @@ export default {
           return;
         }
       }
+      if (!Number(dtlData.value.itemSeq)) {
+        MessagePlugin.error('项目行号须为整数');
+        return;
+      }
       const item = tableData.value.find((item) => item.itemName === dtlData.value.itemName);
       if (item) {
         MessagePlugin.warning('不允许添加相同项目名称的检验项目');
@@ -539,14 +549,40 @@ export default {
       }
       tableData.value.push({
         ...dtlData.value,
-        index: tableData.value.length + 1,
+        index: tableData.value.length,
         samplingStandardTypeName: dtlData.value.samplingStandardType === '1' ? '国标' : '企标',
         itemCategoryName: categoryOption.value.find((item) => item.value === dtlData.value.itemCategory)?.label,
         unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)
           ?.label,
         characteristicsName: characteristicsOptions[Number(dtlData.value.characteristics) - 1].label,
       });
+      dataTotal.value += 1;
       formVisible.value = false;
+    };
+    const ids = ref([]);
+    const onDelDtlData = async () => {
+      const idsDel = [];
+      const noId = [];
+      await dtlRowKeys.value.forEach((number) => {
+        const item = tableData.value[number];
+        if (item.id) {
+          ids.value.push(item.id);
+          idsDel.push(item);
+        } else {
+          noId.push(item);
+        }
+      });
+      // 筛选出 tableData.value 中不在 noId 数组中的元素
+      if (noId.length > 0) {
+        tableData.value = tableData.value.filter((item) => !noId.includes(item));
+      }
+      if (ids.value.length > 0) {
+        // await apiQuality.oqcInspectStdDtl.delByIds(ids);
+        tableData.value = tableData.value.filter((item) => !idsDel.includes(item));
+      }
+      MessagePlugin.success('删除成功');
+      dataTotal.value -= dtlRowKeys.value.length;
+      dtlRowKeys.value = [];
     };
     const submit = async () => {
       try {
@@ -570,23 +606,6 @@ export default {
           MessagePlugin.error('请选择检验类型');
           return false;
         }
-        if (isEmpty(formData.value.revision)) {
-          MessagePlugin.error('请输入版本号');
-          return false;
-        }
-        const revision = formData.value.revision.trim();
-        const regex = /^\d+(\.\d+)?$/; // 匹配数字和小数点的正则表达式
-
-        if (!regex.test(revision)) {
-          MessagePlugin.error('版本号必须为数字');
-          return false;
-        }
-
-        const revisionNumber = parseFloat(revision);
-        if (Number.isNaN(revisionNumber) || revisionNumber <= 0) {
-          MessagePlugin.error('版本号必须为正数');
-          return false;
-        }
 
         const timeEffective = new Date(formData.value.timeEffective);
         const timeInvalid = new Date(formData.value.timeInvalid);
@@ -600,11 +619,17 @@ export default {
           return false;
         }
 
+        formData.value.status = formData.value.saveTpye === 'add' ? 'EFFECTIVE' : 'DRAFT';
         if (formData.value.operateTpye === 'add') {
           await apiQuality.oqcInspectStd.addOqcInspectStd({ ...formData.value, list: tableData.value });
           MessagePlugin.success('新增成功');
         } else if (formData.value.operateTpye === 'edit') {
-          await api.warehouse.modifyWareHouse(formData.value);
+          await apiQuality.oqcInspectStd.changeStd({
+            ...formData.value,
+            ids: ids.value,
+            list: tableData.value,
+            total: dataTotal.value,
+          });
           MessagePlugin.success('编辑成功');
         }
       } catch (e) {
@@ -614,8 +639,10 @@ export default {
       return true;
     };
     const init = () => {
+      dtlRowKeys.value = [];
       formData.value = {
         operateTpye: 'add',
+        saveTpye: 'add',
         id: '',
         inspectStdCode: '',
         inspectStdName: '',
@@ -628,6 +655,21 @@ export default {
       };
       tableData.value = [];
     };
+    const onRefresh = () => {
+      getDtlByStdId();
+    };
+    const getDtlByStdId = async () => {
+      const res = await apiQuality.oqcInspectStdDtl.getAllDtlByStdId({
+        stdId: formData.value.id,
+        pageNum: pageUI.value.page,
+        pageSize: pageUI.value.rows,
+      });
+      tableData.value = res.list.map((item, index) => ({ ...item, index }));
+      dataTotal.value = res.total;
+    };
+    const onDtlSelectedChange = (value: any) => {
+      dtlRowKeys.value = value;
+    };
     return {
       init,
       submit,
@@ -637,9 +679,14 @@ export default {
       propertyOption,
       unCategoryOption,
       levelOption,
+      getDtlByStdId,
+      onRefresh,
+      onDtlSelectedChange,
+      dtlRowKeys,
       diaLogTitle,
       categoryOption,
       onAdd,
+      onDelDtlData,
       querySelectChange,
       dtlData,
       formVisible,
@@ -656,7 +703,6 @@ export default {
       onConfirmDtl,
       pageUI,
       loading,
-      onChangeUom,
     };
   },
 };

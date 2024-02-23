@@ -369,6 +369,7 @@ export type SamplingAqlVO = {
 } | null;
 
 export interface OqcInspectStdSearch {
+  stdId?: string;
   inspectStdCode?: string;
   status?: string;
   creator?: string;
@@ -376,79 +377,6 @@ export interface OqcInspectStdSearch {
   pageSize?: number;
   /** @format int32 */
   pageNum?: number;
-}
-
-export interface OqcInspectStdVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 标准编码 */
-  inspectStdCode?: string;
-  /** 标准名称 */
-  inspectStdName?: string;
-  groupInspectStdId?: string;
-  /** 版本号 */
-  revision?: number;
-  /**
-   * 生效时间
-   * @format date-time
-   */
-  timeEffective?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  timeInvalid?: string;
-  /** 状态 */
-  status?: string;
-  /**
-   * 检验类型
-   * @format int32
-   */
-  inspectType?: number;
-  creatorName?: string;
-  statusName?: string;
-  isGroupName?: string;
-}
-
-/** 响应数据 */
-export type PagingDataOqcInspectStdVO = {
-  list?: OqcInspectStdVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataOqcInspectStdVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataOqcInspectStdVO;
 }
 
 export interface OqcInspectStdDtlDTO {
@@ -518,9 +446,93 @@ export interface OqcInspectStdDtlDTO {
   firstInspectLevel?: string;
   processId?: string;
   inspectTypeList: number[];
+  itemCategoryName?: string;
+  unqualifyCategoryName?: string;
+  inspectLevelName?: string;
+  uomName?: string;
+  characteristicsName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataOqcInspectStdDtlDTO = {
+  list?: OqcInspectStdDtlDTO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataOqcInspectStdDtlDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataOqcInspectStdDtlDTO;
+}
+
+export interface OqcInspectStdVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 标准编码 */
+  inspectStdCode?: string;
+  /** 标准名称 */
+  inspectStdName?: string;
+  groupInspectStdId?: string;
+  /** 版本号 */
+  revision?: number;
+  revisionName?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  timeEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  timeInvalid?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 检验类型
+   * @format int32
+   */
+  inspectType?: number;
+  creatorName?: string;
+  statusName?: string;
+  isGroupName?: string;
+  inspectTypeList?: number[];
+}
+
+/** 响应数据 */
+export type PagingDataOqcInspectStdVO = {
+  list?: OqcInspectStdVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataOqcInspectStdVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataOqcInspectStdVO;
 }
 
 export interface OqcInspectStdFullDTO {
+  id?: string;
   /** 标准编码 */
   inspectStdCode: string;
   /** 标准名称 */
@@ -547,6 +559,9 @@ export interface OqcInspectStdFullDTO {
    * @minItems 1
    */
   list: OqcInspectStdDtlDTO[];
+  /** @format int32 */
+  total?: number;
+  ids?: string[];
 }
 
 export interface MitemForwardTraceSearch {
@@ -729,13 +744,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  ii?: string;
   iii?: string;
+  ii?: string;
   s1?: string;
-  s2?: string;
   s3?: string;
+  s2?: string;
   s4?: string;
+  i?: string;
 } | null;
 
 /** 计量单位 */
@@ -1064,6 +1079,67 @@ export const api = {
         body: data as any,
       }),
   },
+  oqcInspectStdDtl: {
+    /**
+     * No description
+     *
+     * @tags 产品检验标准明细表
+     * @name GetAllDtlByStdId
+     * @summary 根据标准id获取明细数据
+     * @request POST:/oqcInspectStdDtl/getAllDtlByStdId
+     * @secure
+     */
+    getAllDtlByStdId: (data: OqcInspectStdSearch) =>
+      http.request<ResultPagingDataOqcInspectStdDtlDTO['data']>(`/api/quality/oqcInspectStdDtl/getAllDtlByStdId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准明细表
+     * @name DelByIds
+     * @summary 删除明细
+     * @request POST:/oqcInspectStdDtl/delByIds
+     * @secure
+     */
+    delByIds: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/quality/oqcInspectStdDtl/delByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准明细表
+     * @name GetUom
+     * @summary 获取单位信息
+     * @request GET:/oqcInspectStdDtl/getUom
+     * @secure
+     */
+    getUom: (query: { uom: string }) =>
+      http.request<ResultMitemUom['data']>(`/api/quality/oqcInspectStdDtl/getUom`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准明细表
+     * @name GetProfileGbDropList
+     * @summary 获取当前配置项设置的国标方案
+     * @request GET:/oqcInspectStdDtl/getProfileGBDropList
+     * @secure
+     */
+    getProfileGbDropList: (query?: { key?: string }) =>
+      http.request<ResultListProfileValue['data']>(`/api/quality/oqcInspectStdDtl/getProfileGBDropList`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
   oqcInspectStd: {
     /**
      * No description
@@ -1076,6 +1152,36 @@ export const api = {
      */
     getOqcInspectList: (data: OqcInspectStdSearch) =>
       http.request<ResultPagingDataOqcInspectStdVO['data']>(`/api/quality/oqcInspectStd/getOqcInspectList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准头表
+     * @name DelById
+     * @summary 删除产品检验标准
+     * @request POST:/oqcInspectStd/delById
+     * @secure
+     */
+    delById: (query: { ids: string[] }) =>
+      http.request<ResultObject['data']>(`/api/quality/oqcInspectStd/delById`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准头表
+     * @name ChangeStd
+     * @summary 更改产品检验标准
+     * @request POST:/oqcInspectStd/changeStd
+     * @secure
+     */
+    changeStd: (data: OqcInspectStdFullDTO) =>
+      http.request<ResultObject['data']>(`/api/quality/oqcInspectStd/changeStd`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1123,37 +1229,6 @@ export const api = {
     getList: () =>
       http.request<ResultListSampleCodeVO['data']>(`/api/quality/sampleCode/getList`, {
         method: 'GET',
-      }),
-  },
-  oqcInspectStdDtl: {
-    /**
-     * No description
-     *
-     * @tags 产品检验标准明细表
-     * @name GetUom
-     * @summary 获取单位信息
-     * @request GET:/oqcInspectStdDtl/getUom
-     * @secure
-     */
-    getUom: (query: { uom: string }) =>
-      http.request<ResultMitemUom['data']>(`/api/quality/oqcInspectStdDtl/getUom`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 产品检验标准明细表
-     * @name GetProfileGbDropList
-     * @summary 获取当前配置项设置的国标方案
-     * @request GET:/oqcInspectStdDtl/getProfileGBDropList
-     * @secure
-     */
-    getProfileGbDropList: (query?: { key?: string }) =>
-      http.request<ResultListProfileValue['data']>(`/api/quality/oqcInspectStdDtl/getProfileGBDropList`, {
-        method: 'GET',
-        params: query,
       }),
   },
   inspectGroup: {
