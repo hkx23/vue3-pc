@@ -1093,13 +1093,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  iii?: string;
-  s2?: string;
-  s4?: string;
   i?: string;
+  iii?: string;
   s1?: string;
   ii?: string;
   s3?: string;
+  s2?: string;
+  s4?: string;
 } | null;
 
 /** 计量单位 */
@@ -1527,10 +1527,10 @@ export const api = {
      * @request POST:/oqcInspectStd/delById
      * @secure
      */
-    delById: (query: { ids: string[] }) =>
+    delById: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/quality/oqcInspectStd/delById`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
@@ -1557,10 +1557,10 @@ export const api = {
      * @request POST:/oqcInspectStd/changStatus
      * @secure
      */
-    changStatus: (query: { ids: string[] }) =>
+    changStatus: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/quality/oqcInspectStd/changStatus`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**

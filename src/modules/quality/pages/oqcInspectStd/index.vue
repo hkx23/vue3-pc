@@ -230,7 +230,7 @@ const onEdit = (row) => {
   formRef.value.getDtlByStdId();
 };
 const onDelData = async (row) => {
-  await apiQuality.oqcInspectStd.delById({ ids: [row.id] });
+  await apiQuality.oqcInspectStd.delById([row.id]);
   MessagePlugin.success('删除成功');
   onRefresh();
 };
@@ -242,7 +242,7 @@ const onAssign = async (row) => {
   formVisible.value = true;
 };
 const onDelDataBatch = async () => {
-  await apiQuality.oqcInspectStd.delById({ ids: stdRowKeys.value });
+  await apiQuality.oqcInspectStd.delById(stdRowKeys.value);
   MessagePlugin.success('删除成功');
   onRefresh();
 };
