@@ -1,4 +1,6 @@
 import BcmpExtend from './bcmp-extend/index.vue';
+import BcmpImportAutoButton from './bcmp-import-auto-button/index.vue';
+import BcmpImportAutoDialog from './bcmp-import-auto-dialog/index.vue';
 import BcmpImportButton from './bcmp-import-button/index.vue';
 import BcmpImportDialog from './bcmp-import-dialog/index.vue';
 import BcmpSelectBusiness from './bcmp-select-business/index.vue';
@@ -23,6 +25,8 @@ export default {
     app.component('BcmpSelectList', BcmpSelectList);
     app.component('BcmpImportButton', BcmpImportButton);
     app.component('BcmpImportDialog', BcmpImportDialog);
+    app.component('BcmpImportAutoButton', BcmpImportAutoButton);
+    app.component('BcmpImportAutoDialog', BcmpImportAutoDialog);
     app.component('BcmpUploadContent', BcmpUploadContent);
 
     app.component('CmpQuery', CmpQuery);

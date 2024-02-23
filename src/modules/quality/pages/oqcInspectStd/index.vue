@@ -1,5 +1,6 @@
 <template>
-  <cmp-container :full="!!tagValue">
+  <materialStandardAdd v-if="pageShow" @permission-show="onPermission"></materialStandardAdd>
+  <cmp-container v-show="!pageShow" :full="!!tagValue">
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">
@@ -27,23 +28,24 @@
                   style="height: 300px"
                   :hover="true"
                   :selected-row-keys="stdRowKeys"
+                  @select-change="onSelectedChange"
                   @refresh="onRefresh"
                 >
                   <template #title> 产品检验标准列表 </template>
-                  <template #op>
+                  <template #op="{ row }">
                     <t-space :size="8">
-                      <t-link theme="primary">{{ '分配' }}</t-link>
-                      <t-link theme="primary">{{ '编辑' }}</t-link>
-                      <t-link theme="primary">{{ '删除' }}</t-link>
+                      <t-link theme="primary" @click="onAssign(row)">{{ '分配' }}</t-link>
+                      <t-link theme="primary" @click="onEdit(row)">{{ '编辑' }}</t-link>
+                      <t-link theme="primary" @click="onDelData(row)">{{ '删除' }}</t-link>
                       <t-link theme="primary">{{ '复制' }}</t-link>
                     </t-space>
                   </template>
                   <template #button>
                     <t-space :size="8">
                       <t-button theme="primary" @click="onAdd">新增</t-button>
-                      <t-button theme="default">删除</t-button>
-                      <t-button theme="primary" @click="onAdd">生效</t-button>
-                      <t-button theme="primary" @click="onAdd">失效</t-button>
+                      <t-button v-if="delButton" theme="default" @click="onDelDataBatch">删除</t-button>
+                      <t-button v-if="enableButton" theme="primary" @click="onAdd">生效</t-button>
+                      <t-button v-if="closeButton" theme="primary" @click="onAdd">失效</t-button>
                     </t-space>
                   </template>
                 </cmp-table>
@@ -86,23 +88,20 @@
     </cmp-card>
   </cmp-container>
   <t-loading :loading="pageLoading" text="加载中..." fullscreen />
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="formTitle"
-      :on-confirm="onConfirmForm"
-      cancel-btn="暂存"
-      width="90%"
-      :close-on-overlay-click="false"
-    >
-      <std-form ref="formRef"></std-form>
-    </t-dialog>
-  </div>
+  <t-dialog
+    v-model:visible="formVisible"
+    :close-on-overlay-click="false"
+    header="附件上传"
+    :cancel-btn="null"
+    :confirm-btn="null"
+  >
+    <materialAllotForm ref="formRef"></materialAllotForm>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
@@ -111,10 +110,11 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import StdForm from './form.vue';
+import materialAllotForm from './form.vue';
+import materialStandardAdd from './materialStandardAdd.vue';
 
-const formVisible = ref(false);
 const formRef = ref(null); // 新增表单数据清除，获取表单实例
+const formVisible = ref(false); // 新增表单数据清除，获取表单实例
 const formTitle = ref('');
 const pageLoading = ref(false);
 const { loading, setLoading } = useLoading();
@@ -129,7 +129,7 @@ const pkgManageDataList = reactive({ list: [] });
 const pkgManageTabTotal = ref(0);
 const isEnable = ref(true); // 控制打印按钮禁用
 // 日志界面 表格数据
-const stdRowKeys: Ref<any[]> = ref([]); // 工单表数组
+const stdRowKeys: Ref<any[]> = ref([]); //
 const selectedManageRowKeys: Ref<any[]> = ref([]); // 打印数组
 // 补打，作废 DiaLog 数据
 const reprintDialog = ref({
@@ -140,13 +140,10 @@ const reprintDialog = ref({
   splitNum: '',
   qty: 0,
 });
-const onConfirmForm = async () => {
-  formRef.value.submit().then((data) => {
-    if (data) {
-      formVisible.value = false;
-      fetchMoTable();
-    }
-  });
+const pageShow = ref(false);
+const onPermission = (value) => {
+  pageShow.value = value;
+  onRefresh();
 };
 
 // 标准头表查询初始化
@@ -188,10 +185,66 @@ const onRefresh = async () => {
 };
 
 const onAdd = () => {
-  console.log(formRef.value);
-  formRef.value.init();
-  formTitle.value = '新增产品检验标准';
+  pageShow.value = true;
+};
+const enableButton = ref(false);
+const closeButton = ref(false);
+const delButton = ref(false);
+const onSelectedChange = (value: any) => {
+  stdRowKeys.value = value;
+  const selectedItems = stdList.list.filter((item: any) => stdRowKeys.value.includes(item.id));
+  if (selectedItems.length > 0) {
+    const firstStatusName = selectedItems[0].statusName;
+    const allSameStatusName = selectedItems.every((item: any) => item.statusName === firstStatusName);
+    if (allSameStatusName) {
+      if (firstStatusName === '已生效') {
+        enableButton.value = false;
+        closeButton.value = true;
+      } else if (firstStatusName === '已失效') {
+        enableButton.value = true;
+        closeButton.value = false;
+      } else if (firstStatusName === '起草中') {
+        enableButton.value = false;
+        closeButton.value = false;
+        delButton.value = true;
+      }
+    } else {
+      enableButton.value = false;
+      closeButton.value = false;
+      delButton.value = false;
+    }
+  } else {
+    enableButton.value = false;
+    closeButton.value = false;
+    delButton.value = false;
+  }
+};
+const onEdit = (row) => {
+  formRef.value.dtlRowKeys = [];
+  formRef.value.ids = [];
+  formRef.value.formData = row;
+  formRef.value.formData.operateTpye = 'edit';
+  formRef.value.formData.revision = row.revisionName;
+  pageShow.value = true;
+  formTitle.value = '编辑产品检验标准';
+  formRef.value.getDtlByStdId();
+};
+const onDelData = async (row) => {
+  await apiQuality.oqcInspectStd.delById([row.id]);
+  MessagePlugin.success('删除成功');
+  onRefresh();
+};
+const onAssign = async (row) => {
+  formRef.value.formData.type = '01';
+  formRef.value.formData.id = row.id;
+  formRef.value.formData.inspectStdName = row.inspectStdName;
+
   formVisible.value = true;
+};
+const onDelDataBatch = async () => {
+  await apiQuality.oqcInspectStd.delById(stdRowKeys.value);
+  MessagePlugin.success('删除成功');
+  onRefresh();
 };
 
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
@@ -214,7 +267,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'revision',
+    colKey: 'revisionName',
     title: '版本号',
     align: 'left',
     width: '90',

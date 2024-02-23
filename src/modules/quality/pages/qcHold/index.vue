@@ -11,6 +11,7 @@
     </cmp-card>
     <cmp-card :full="true"
       ><cmp-table
+        ref="tableMoRef"
         v-model:pagination="pageUI"
         :fixed-height="true"
         row-key="id"
@@ -21,6 +22,17 @@
         @refresh="onRefresh"
       >
         <template #title>{{ t('qcHold.tableSubName1') }}</template>
+        <template #button>
+          <t-button :disabled="selectMoRowKeys?.length == 0" @click="onHandelLock(OperatorType.MO)">
+            {{ t('qcHold.btnLock') }}
+          </t-button>
+          <t-button theme="default" @click="onHandelUnLock(OperatorType.MO)">
+            {{ t('qcHold.btnUnlock') }}
+          </t-button>
+          <t-button theme="default" @click="onHandelLog(OperatorType.MO)">
+            {{ t('qcHold.btnLog') }}
+          </t-button>
+        </template>
       </cmp-table></cmp-card
     >
   </cmp-container>
@@ -30,9 +42,10 @@
     </cmp-card>
     <cmp-card :full="true"
       ><cmp-table
+        ref="tableProductRef"
         v-model:pagination="pageUIProduct"
         :fixed-height="true"
-        row-key="id"
+        row-key="serialNumber"
         :table-column="productColumns"
         :table-data="productInfoList.list"
         :loading="loading"
@@ -40,6 +53,17 @@
         @refresh="onRefresh"
       >
         <template #title>{{ t('qcHold.tableSubName2') }}</template>
+        <template #button>
+          <t-button :disabled="selectProductRowKeys?.length == 0" @click="onHandelLock(OperatorType.PRODUCT)">
+            {{ t('qcHold.btnLock') }}
+          </t-button>
+          <t-button theme="default" @click="onHandelUnLock(OperatorType.PRODUCT)">
+            {{ t('qcHold.btnUnlock') }}
+          </t-button>
+          <t-button theme="default" @click="onHandelLog(OperatorType.PRODUCT)">
+            {{ t('qcHold.btnLog') }}
+          </t-button>
+        </template>
       </cmp-table></cmp-card
     >
   </cmp-container>
@@ -49,6 +73,7 @@
     </cmp-card>
     <cmp-card :full="true"
       ><cmp-table
+        ref="tableWorkstationRef"
         v-model:pagination="pageUIWorkStation"
         :fixed-height="true"
         row-key="id"
@@ -59,6 +84,17 @@
         @refresh="onRefresh"
       >
         <template #title>{{ t('qcHold.tableSubName3') }}</template>
+        <template #button>
+          <t-button :disabled="selectWorkstationRowKeys?.length == 0" @click="onHandelLock(OperatorType.WORKSTATION)">
+            {{ t('qcHold.btnLock') }}
+          </t-button>
+          <t-button theme="default" @click="onHandelUnLock(OperatorType.WORKSTATION)">
+            {{ t('qcHold.btnUnlock') }}
+          </t-button>
+          <t-button theme="default" @click="onHandelLog(OperatorType.WORKSTATION)">
+            {{ t('qcHold.btnLog') }}
+          </t-button>
+        </template>
       </cmp-table></cmp-card
     >
   </cmp-container>
@@ -68,9 +104,10 @@
     </cmp-card>
     <cmp-card :full="true"
       ><cmp-table
+        ref="tableMitemRef"
         v-model:pagination="pageUIMitem"
         :fixed-height="true"
-        row-key="id"
+        row-key="labelNo"
         :table-column="mitemColumns"
         :table-data="mitemInfoList.list"
         :loading="loading"
@@ -78,9 +115,22 @@
         @refresh="onRefresh"
       >
         <template #title>{{ t('qcHold.tableSubName4') }}</template>
+        <template #button>
+          <t-button :disabled="selectMitemRowKeys?.length == 0" @click="onHandelLock(OperatorType.MITEM)">
+            {{ t('qcHold.btnLock') }}
+          </t-button>
+          <t-button theme="default" @click="onHandelUnLock(OperatorType.MITEM)">
+            {{ t('qcHold.btnUnlock') }}
+          </t-button>
+          <t-button theme="default" @click="onHandelLog(OperatorType.MITEM)">
+            {{ t('qcHold.btnLog') }}
+          </t-button>
+        </template>
       </cmp-table></cmp-card
     >
   </cmp-container>
+  <!-- 子from  -->
+  <detailed ref="detailFormRef" @show-close-event="onHandleLockShow"></detailed>
 </template>
 
 <script setup lang="ts">
@@ -95,8 +145,17 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+import detailed from './detailed.vue';
 import { useLang } from './lang';
 
+const selectRows = ref([]);
+const curOperatorType = ref('');
+enum OperatorType {
+  MO = 'MO', // 工单
+  PRODUCT = 'PRODUCT', // 产品
+  WORKSTATION = 'WORKSTATION', // 工站
+  MITEM = 'MITEM', // 物料
+}
 const { t } = useLang();
 // 工单类型下拉初始数据
 const moClassOption = ref([]);
@@ -114,6 +173,37 @@ const initMoClass = async () => {
     setLoading(false);
   }
 };
+const detailedShow = ref(false); // 控制执行界面显示隐藏
+const detailFormRef = ref(null);
+const tableMoRef = ref();
+const tableProductRef = ref();
+const tableWorkstationRef = ref();
+const tableMitemRef = ref();
+const selectMoRowKeys = computed(() => {
+  return tableMoRef.value?.getSelectedRowKeys();
+});
+const selectProductRowKeys = computed(() => {
+  return tableProductRef.value?.getSelectedRowKeys();
+});
+const selectWorkstationRowKeys = computed(() => {
+  return tableWorkstationRef.value?.getSelectedRowKeys();
+});
+const selectMitemRowKeys = computed(() => {
+  return tableMitemRef.value?.getSelectedRowKeys();
+});
+
+const { loading, setLoading } = useLoading();
+const { pageUI } = usePage(); // 分页工具
+const { pageUI: pageUIProduct } = usePage(); // 分页工具
+const { pageUI: pageUIWorkStation } = usePage(); // 分页工具
+const { pageUI: pageUIMitem } = usePage(); // 分页工具
+const moInfoList = reactive({ list: [], total: 0 });
+const productInfoList = reactive({ list: [], total: 0 });
+const workStationInfoList = reactive({ list: [], total: 0 });
+const mitemInfoList = reactive({ list: [], total: 0 });
+
+// tab 表格
+const tagValue = ref(0);
 // 查询组件值
 const datePlanRangeDefault = ref([
   dayjs().format('YYYY-MM-DD 00:00:00'),
@@ -126,6 +216,15 @@ const optsMitemValue = ref({ datePlanRange: datePlanRangeDefault.value }) as any
 // 查询组件-工单
 const optsMo = computed(() => {
   return {
+    datePlanRange: {
+      label: t('qcHold.datePlanRange'),
+      comp: 't-date-range-picker',
+      defaultVal: datePlanRangeDefault.value,
+      placeholder: t('common.placeholder.input', [`${t('qcHold.datePlanRange')}`]),
+      bind: {
+        enableTimePicker: true,
+      },
+    },
     moClass: {
       label: t('qcHold.moClass'),
       comp: 't-select',
@@ -141,15 +240,7 @@ const optsMo = computed(() => {
       defaultVal: '',
       placeholder: t('common.placeholder.input', [`${t('qcHold.moCode')}`]),
     },
-    datePlanRange: {
-      label: t('qcHold.datePlanRange'),
-      comp: 't-date-range-picker',
-      defaultVal: datePlanRangeDefault.value,
-      placeholder: t('common.placeholder.input', [`${t('qcHold.datePlanRange')}`]),
-      bind: {
-        enableTimePicker: true,
-      },
-    },
+
     categoryCode: {
       label: t('qcHold.mitemCategroyCode'),
       comp: 'bcmp-select-business',
@@ -196,6 +287,15 @@ const optsMo = computed(() => {
 // 查询组件-产品
 const optsProduct = computed(() => {
   return {
+    datePlanRange: {
+      label: t('qcHold.processTime'),
+      comp: 't-date-range-picker',
+      defaultVal: datePlanRangeDefault.value,
+      placeholder: t('common.placeholder.input', [`${t('qcHold.processTime')}`]),
+      bind: {
+        enableTimePicker: true,
+      },
+    },
     moCode: {
       label: t('qcHold.moCode'),
       comp: 't-input',
@@ -212,15 +312,7 @@ const optsProduct = computed(() => {
         valueField: 'categoryCode',
       },
     },
-    datePlanRange: {
-      label: t('qcHold.processTime'),
-      comp: 't-date-range-picker',
-      defaultVal: datePlanRangeDefault.value,
-      placeholder: t('common.placeholder.input', [`${t('qcHold.processTime')}`]),
-      bind: {
-        enableTimePicker: true,
-      },
-    },
+
     mitemId: {
       label: t('qcHold.mitemCode'),
       comp: 'bcmp-select-business',
@@ -411,28 +503,16 @@ const conditionEnter = (data: any) => {
   fetchTable();
 };
 
-const { loading, setLoading } = useLoading();
-const { pageUI } = usePage(); // 分页工具
-const { pageUI: pageUIProduct } = usePage(); // 分页工具
-const { pageUI: pageUIWorkStation } = usePage(); // 分页工具
-const { pageUI: pageUIMitem } = usePage(); // 分页工具
-const moInfoList = reactive({ list: [], total: 0 });
-const productInfoList = reactive({ list: [], total: 0 });
-const workStationInfoList = reactive({ list: [], total: 0 });
-const mitemInfoList = reactive({ list: [], total: 0 });
-
-// tab 表格
-const tagValue = ref(0);
-
 // # 送货刷新按钮
 const onRefresh = async () => {
   await fetchTable();
 };
 // #### 工单 表头
 const MoColumns: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
   {
     colKey: 'serial-number',
-    title: '序号',
+    title: `${t('business.main.serialNumber')}`,
     align: 'center',
     width: '60',
   },
@@ -512,6 +592,13 @@ const MoColumns: PrimaryTableCol<TableRowData>[] = [
 
 // #### 产品 表头
 const productColumns: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
+  {
+    colKey: 'serial-number',
+    title: `${t('business.main.serialNumber')}`,
+    align: 'center',
+    width: '60',
+  },
   {
     colKey: 'barcode',
     title: `${t('qcHold.barcode')}`,
@@ -593,6 +680,13 @@ const productColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 // ####机台工站 表头
 const workStationColumns: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
+  {
+    colKey: 'serial-number',
+    title: `${t('business.main.serialNumber')}`,
+    align: 'center',
+    width: '60',
+  },
   {
     colKey: 'workstationCode',
     title: `${t('qcHold.workstationCode')}`,
@@ -638,6 +732,13 @@ const workStationColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 // ####W物料 表头
 const mitemColumns: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
+  {
+    colKey: 'serial-number',
+    title: `${t('business.main.serialNumber')}`,
+    align: 'center',
+    width: '60',
+  },
   {
     colKey: 'workshopName',
     title: `${t('qcHold.workshopName')}`,
@@ -795,8 +896,8 @@ const getProductList = async () => {
   const search = {
     ...optsProductValue.value,
     isHold: 0,
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
+    pageNum: pageUIProduct.value.page,
+    pageSize: pageUIProduct.value.rows,
   };
   const res = (await apiControl.wip.getQcHoldWipList(search)) as any;
   productInfoList.list = res.list;
@@ -816,8 +917,8 @@ const getWorkStationList = async () => {
   const search = {
     ...optsWorkStationValue.value,
     isHold: 0,
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
+    pageNum: pageUIWorkStation.value.page,
+    pageSize: pageUIWorkStation.value.rows,
   };
   const res = (await apimain.workstation.getQcHoldWorkStationList(search)) as any;
   workStationInfoList.list = res.list;
@@ -837,12 +938,67 @@ const getMitemList = async () => {
   const search = {
     ...optsMitemValue.value,
     isHold: 0,
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
+    pageNum: pageUIMitem.value.page,
+    pageSize: pageUIMitem.value.rows,
   };
   const res = (await apiWarehouse.transferDtlBarcode.getQcHoldLabelList(search)) as any;
   mitemInfoList.list = res.list;
   mitemInfoList.total = Number(res.total);
+};
+
+// 执行
+const onHandelLock = (operatorType: OperatorType) => {
+  detailedShow.value = true;
+  curOperatorType.value = operatorType.toString();
+  let keys = [];
+  switch (tagValue.value) {
+    case 0: // 工单
+      if (selectMoRowKeys.value) {
+        selectRows.value = moInfoList.list.filter((item) => selectMoRowKeys.value.includes(item.id));
+        keys = selectMoRowKeys.value;
+      }
+      break;
+    case 1: // 产品
+      if (selectProductRowKeys.value) {
+        selectRows.value = productInfoList.list.filter((item) => selectProductRowKeys.value.includes(item.id));
+        keys = selectProductRowKeys.value;
+      }
+      break;
+    case 2: // 机台工站
+      if (selectWorkstationRowKeys.value) {
+        selectRows.value = workStationInfoList.list.filter((item) => selectWorkstationRowKeys.value.includes(item.id));
+        keys = selectWorkstationRowKeys.value;
+      }
+      break;
+    case 3: // 物料
+      if (selectMitemRowKeys.value) {
+        keys = selectMitemRowKeys.value;
+        selectRows.value = mitemInfoList.list.filter((item) => selectMitemRowKeys.value.includes(item.id));
+      }
+      break;
+    default:
+      break;
+  }
+
+  const { initLockDetailForm, showPopform } = detailFormRef.value;
+  showPopform();
+  initLockDetailForm(selectRows.value, keys, curOperatorType.value);
+};
+
+// 解锁
+const onHandelUnLock = (operatorType: OperatorType) => {
+  console.log(operatorType);
+};
+
+// 日志
+const onHandelLog = (operatorType: OperatorType) => {
+  console.log(operatorType);
+};
+
+// 子组件控制执行窗口
+const onHandleLockShow = (value: any) => {
+  detailedShow.value = value;
+  fetchTable();
 };
 
 onMounted(() => {
