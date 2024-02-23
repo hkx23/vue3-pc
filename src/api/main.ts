@@ -451,6 +451,95 @@ export interface WorkstationVO {
   workcenterId?: string;
 }
 
+/** 品质控制-工站 */
+export interface WorkstationQcHoldSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workshopId?: string;
+  processId?: string;
+  workCenterId?: string;
+  workstationId?: string;
+  equipmentId?: string;
+  /** @format int32 */
+  isHold?: number;
+}
+
+/** 响应数据 */
+export type PagingDataWorkstationQcHoldVO = {
+  list?: WorkstationQcHoldVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkstationQcHoldVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkstationQcHoldVO;
+}
+
+/** 品质控制-工站 */
+export interface WorkstationQcHoldVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工站代码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 工站描述 */
+  workstationDesc?: string;
+  processId?: string;
+  workcenterId?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /** 车间编码 */
+  workshopCode?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  processCode?: string;
+  processName?: string;
+}
+
 export interface WorkgroupSearch {
   /**
    * 页码
@@ -3422,6 +3511,19 @@ export interface MoScheduleVO {
   moCode?: string;
   routingCode?: string;
   routingName?: string;
+  uom?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  routingId?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  uomSymbol?: string;
+  categoryId?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  moClassName?: string;
 }
 
 /** 响应数据 */
@@ -3899,13 +4001,13 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isBatchName?: string;
   isState?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
   isProductName?: string;
-  isProductChecked?: boolean;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
+  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
 }
 
@@ -4049,8 +4151,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4386,8 +4488,8 @@ export interface IntegratedConsoleSearch {
    */
   dateEnd?: string;
   mesbillNo?: string;
-  erpbillNo?: string;
   imsgqueueStatus?: string;
+  erpbillNo?: string;
 }
 
 /** 显示工站 */
@@ -4601,6 +4703,16 @@ export interface ResultPagingDataImportSetting {
   message?: string;
   /** 响应数据 */
   data?: PagingDataImportSetting;
+}
+
+export interface CommonImportAuto {
+  importKey?: string;
+  title?: string;
+  tableName?: string;
+  data?: Record<string, object>[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
 }
 
 /** 导入列配置表 */
@@ -6907,10 +7019,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -8149,6 +8261,21 @@ export const api = {
      */
     getlist: (data: WorkstationSearch) =>
       http.request<ResultPagingDataWorkstationVO['data']>(`/api/main/workstation/getlist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站
+     * @name GetQcHoldWorkStationList
+     * @summary 机台列表-应用于品质控制查询
+     * @request POST:/workstation/getQcHoldWorkStationList
+     * @secure
+     */
+    getQcHoldWorkStationList: (data: WorkstationQcHoldSearch) =>
+      http.request<ResultPagingDataWorkstationQcHoldVO['data']>(`/api/main/workstation/getQcHoldWorkStationList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -10607,6 +10734,54 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name GetMoScheduleList
+     * @summary 获取排产工单管理列表-应用于品质控制查询
+     * @request GET:/moSchedule/getMoScheduleList
+     * @secure
+     */
+    getMoScheduleList: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pageNum?: number;
+      /**
+       * @format int32
+       * @default 20
+       */
+      pageSize?: number;
+      /** @default "" */
+      moCode?: string;
+      /** @default "" */
+      moClass?: string;
+      /** @default "" */
+      status?: string;
+      /** @default "" */
+      datetimePlanStart?: string;
+      /** @default "" */
+      datetimePlanEnd?: string;
+      /** @default "" */
+      workshopCode?: string;
+      /** @default "" */
+      workCenterCode?: string;
+      /** @default "" */
+      rootingCode?: string;
+      /** @default "" */
+      categoryCode?: string;
+      /** @default "" */
+      mitemCode?: string;
+      /** @format int32 */
+      isHold?: number;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/getMoScheduleList`, {
+        method: 'GET',
+        params: query,
+      }),
   },
   mo: {
     /**
@@ -11255,6 +11430,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataImportSetting['data']>(`/api/main/importManage/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name ImportData
+     * @summary 通用导入接口
+     * @request POST:/importManage/import
+     * @secure
+     */
+    importData: (data: CommonImportAuto) =>
+      http.request<ResultImportSummary['data']>(`/api/main/importManage/import`, {
         method: 'POST',
         body: data as any,
       }),

@@ -830,8 +830,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1117,6 +1117,161 @@ export interface ResultLong {
   data?: string;
 }
 
+/** 品质控制-产品 */
+export interface WipQcHoldSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  mitemCategroyId?: string;
+  mitemId?: string;
+  workshopId?: string;
+  /** 排产单编码 */
+  moCode?: string;
+  processId?: string;
+  workCenterId?: string;
+  workstationId?: string;
+  /** 产品条码 */
+  barcode?: string;
+  /** 物料标签 */
+  label?: string;
+  /** 关键件条码 */
+  keyPart?: string;
+  /** 加工开始时间 */
+  datetimeStart?: string;
+  /** 加工结束时间 */
+  datetimeEnd?: string;
+  /** @format int32 */
+  isHold?: number;
+}
+
+/** 响应数据 */
+export type PagingDataWipQcHoldVO = {
+  list?: WipQcHoldVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWipQcHoldVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWipQcHoldVO;
+}
+
+/** 品质控制-产品 */
+export interface WipQcHoldVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  moScheId?: string;
+  moId?: string;
+  workcenterId?: string;
+  preProcessId?: string;
+  preWorkstationId?: string;
+  mitemId?: string;
+  curProcessId?: string;
+  curWorkstationId?: string;
+  /** 在制品数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /**
+   * 缺陷次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /**
+   * 是否完工
+   * @format int32
+   */
+  isCompleted?: number;
+  /**
+   * 是否合格 0：合格；1：不合格
+   * @format int32
+   */
+  isNg?: number;
+  /**
+   * 是否暂停
+   * @format int32
+   */
+  isHold?: number;
+  /** 终端计算机名 */
+  terminal?: string;
+  /** 工单号 */
+  scheCode?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  moClass?: string;
+  /** 车间编码 */
+  workshopCode?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedNum?: number;
+  barcode?: string;
+  barcodeStatus?: string;
+  barcodeStatusName?: string;
+  uom?: string;
+  uomName?: string;
+  curProcessCode?: string;
+  curProcessName?: string;
+  curWorkStationCode?: string;
+  curWorkStationName?: string;
+  /** 产品加工时间 */
+  processTime?: string;
+  /** 计划结束时间 */
+  datetimePlanEnd?: string;
+  productStatus?: string;
+}
+
 /** 维修单查询 */
 export interface WipSearch {
   /**
@@ -1222,6 +1377,96 @@ export interface WipProcessDtlVO {
    */
   timeStay?: number;
 }
+
+export interface StraightThroughRateReportSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 工序ID */
+  processIds?: string[];
+  /** 物料ID */
+  mitemIds?: string[];
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListStraightThroughRateReportVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: StraightThroughRateReportVO[] | null;
+}
+
+/** 直通率报表 */
+export type StraightThroughRateReportVO = {
+  processId?: string;
+  /** 工序名称 */
+  processName?: string;
+  mitemId?: string;
+  /** 产品名称 */
+  mitemName?: string;
+  /**
+   * 合格品数量
+   * @format int32
+   */
+  passQuantity?: number;
+  /**
+   * 投入总量
+   * @format int32
+   */
+  putTotal?: number;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /**
+   * 当日开始时间
+   * @format date-time
+   */
+  dayStart?: string;
+  /**
+   * 两位日数
+   * @format int32
+   */
+  days?: number;
+  /**
+   * 是否合格 0：合格；1：不合格
+   * @format int32
+   */
+  dcResult?: number;
+  /**
+   * 工序直通率
+   * @format double
+   */
+  processRate?: number;
+  /**
+   * 产品直通率
+   * @format double
+   */
+  mitemRate?: number;
+} | null;
 
 /** 关键物料追溯（反向）-查询 */
 export interface ReverseTraceabilityReportSearch {
@@ -1358,8 +1603,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -2259,10 +2504,10 @@ export interface ProductReworkVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopName?: string;
-  workshopId?: string;
   workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2309,9 +2554,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -2899,6 +3144,19 @@ export interface ProductionProgressVO {
   moCode?: string;
   routingCode?: string;
   routingName?: string;
+  uom?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  routingId?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  uomSymbol?: string;
+  categoryId?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  moClassName?: string;
   completionProgress?: number;
 }
 
@@ -3522,10 +3780,10 @@ export interface BarcodeWipCollectVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   workshopName?: string;
-  workshopId?: string;
   workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -3643,10 +3901,10 @@ export interface BarcodeWipVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
   workshopName?: string;
-  workshopId?: string;
   workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -5259,6 +5517,21 @@ export const api = {
      * No description
      *
      * @tags 在制品表
+     * @name GetQcHoldWipList
+     * @summary 产品在制品条码列表-应用于品质控制查询
+     * @request POST:/wip/getQcHoldWipList
+     * @secure
+     */
+    getQcHoldWipList: (data: WipQcHoldSearch) =>
+      http.request<ResultPagingDataWipQcHoldVO['data']>(`/api/control/wip/getQcHoldWipList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品表
      * @name GetList
      * @summary 获取主界面数据
      * @request POST:/wip/getList
@@ -5298,6 +5571,58 @@ export const api = {
       http.request<ResultListWipVO['data']>(`/api/control/wip/getAchievingRate`, {
         method: 'GET',
       }),
+  },
+  straightThroughRateReport: {
+    /**
+     * No description
+     *
+     * @tags 直通率报表
+     * @name GetSingle
+     * @summary 单工序单产品查询
+     * @request POST:/straightThroughRateReport/getSingle
+     * @secure
+     */
+    getSingle: (data: StraightThroughRateReportSearch) =>
+      http.request<ResultListStraightThroughRateReportVO['data']>(`/api/control/straightThroughRateReport/getSingle`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 直通率报表
+     * @name GetProducts
+     * @summary 多选产品查询
+     * @request POST:/straightThroughRateReport/getProducts
+     * @secure
+     */
+    getProducts: (data: StraightThroughRateReportSearch) =>
+      http.request<ResultListStraightThroughRateReportVO['data']>(
+        `/api/control/straightThroughRateReport/getProducts`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 直通率报表
+     * @name GetProcesses
+     * @summary 多选工序查询
+     * @request POST:/straightThroughRateReport/getProcesses
+     * @secure
+     */
+    getProcesses: (data: StraightThroughRateReportSearch) =>
+      http.request<ResultListStraightThroughRateReportVO['data']>(
+        `/api/control/straightThroughRateReport/getProcesses`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
   },
   reversetraceability: {
     /**

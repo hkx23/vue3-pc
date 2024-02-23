@@ -644,6 +644,139 @@ export interface ResultListLabelVO {
   data?: LabelVO[] | null;
 }
 
+/** 品质控制-物料标签 */
+export interface LabelQcHoldSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  mitemId?: string;
+  supplierId?: string;
+  workCenterId?: string;
+  /** 排产单编码 */
+  moCode?: string;
+  /** 批次号 */
+  batchNo?: string;
+  /** 标签号 */
+  label?: string;
+  /** @format int32 */
+  isHold?: number;
+}
+
+/** 品质控制-产品 */
+export interface LabelQcHoldVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标签号 */
+  labelNo?: string;
+  /** 标签类别 */
+  labelCategory?: string;
+  mitemId?: string;
+  /** 批次号 */
+  lotNo?: string;
+  /** 到货批次 */
+  batchLot?: string;
+  supplierId?: string;
+  /** 标签初始化数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  onhandId?: string;
+  moScheId?: string;
+  printTmplId?: string;
+  /**
+   * 标签顺序号
+   * @format int32
+   */
+  printSeq?: number;
+  deliveryDtlId?: string;
+  /** 接收单号 */
+  receiveNo?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /** 工单号 */
+  scheCode?: string;
+  /** 产品编码 */
+  mitemCode?: string;
+  /** 产品名称 */
+  mitemName?: string;
+  /** 产品描述 */
+  mitemDesc?: string;
+  /** 物料编码 */
+  mitemCodeLabel?: string;
+  /** 物料名称 */
+  mitemNameLabel?: string;
+  /** 物料述 */
+  mitemDescLabel?: string;
+  labelStatus?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  uom?: string;
+  uomName?: string;
+  supplierCode?: string;
+  supplierName?: string;
+  batchNo?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLabelQcHoldVO = {
+  list?: LabelQcHoldVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLabelQcHoldVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLabelQcHoldVO;
+}
+
 /** 关键物料追溯（反向）-查询 */
 export interface ReverseTraceabilityReportSearch {
   /** @format int32 */
@@ -3092,6 +3225,11 @@ export interface MoIssuanceDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 已发料量 */
   alreadyPickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
@@ -3100,11 +3238,6 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4214,6 +4347,25 @@ export interface ResultPagingDataMFTSubVO {
   data?: PagingDataMFTSubVO;
 }
 
+/** 入厂检验搜索条件 */
+export interface MitemReceiveBillSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  billNo?: string;
+  /** @format date-time */
+  beginDatetimeReceipted?: string;
+  /** @format date-time */
+  endDatetimeReceipted?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  iqcBillNo?: string;
+  prefix?: string;
+  inspectGroupId?: string;
+  inspectGroupMitemCategoryId?: string[];
+}
+
 /** 交易单身表 */
 export interface MitemReceiveBillVO {
   id?: string;
@@ -4287,6 +4439,7 @@ export interface MitemReceiveBillVO {
   locationName?: string;
   toLocationName?: string;
   userReceiptedId?: string;
+  /** 接收人姓名 */
   userReceiptedDisplayName?: string;
   /**
    * 接收时间
@@ -4296,6 +4449,9 @@ export interface MitemReceiveBillVO {
   uomName?: string;
   /** @format int32 */
   isBatchNo?: number;
+  /** 检验严格度 */
+  inspectionStringency?: string;
+  waitTime?: string;
 }
 
 /** 响应数据 */
@@ -6570,6 +6726,21 @@ export const api = {
      * No description
      *
      * @tags 交易明细标签表
+     * @name GetQcHoldLabelList
+     * @summary 标签列表-应用于品质控制查询-仅工单领料类型
+     * @request POST:/transferDtlBarcode/getQcHoldLabelList
+     * @secure
+     */
+    getQcHoldLabelList: (data: LabelQcHoldSearch) =>
+      http.request<ResultPagingDataLabelQcHoldVO['data']>(`/api/warehouse/transferDtlBarcode/getQcHoldLabelList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 交易明细标签表
      * @name SelectByLabelNoOrBillNo
      * @summary 物料标签或杂项单据扫描获取单据信息
      * @request GET:/transferDtlBarcode/selectByLabelNo
@@ -8651,17 +8822,10 @@ export const api = {
      * @request POST:/iqcInspect/getMitemReceiveBillVO
      * @secure
      */
-    getMitemReceiveBillVo: (query: {
-      /** @format int32 */
-      pageNum: number;
-      /** @format int32 */
-      pageSize: number;
-      prefix: string;
-      billNo: string;
-    }) =>
+    getMitemReceiveBillVo: (data: MitemReceiveBillSearch) =>
       http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/warehouse/iqcInspect/getMitemReceiveBillVO`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
   },
   district: {

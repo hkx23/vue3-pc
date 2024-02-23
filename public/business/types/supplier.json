@@ -7,20 +7,24 @@
     {
       "title": "供应商代码",
       "key": "supplierCode",
+      "width":150,
       "align": "left"
     },
     {
       "title": "供应商名称",
       "key": "supplierName",
+      "width":150,
       "align": "left"
     },
     {
       "title": "供应商联系人",
       "key": "contactPerson",
+      "width":150,
       "align": "left"
     },
     {
       "title": "供应商联系电话",
+      "width":150,
       "key": "contactTel",
       "align": "left"
     }
