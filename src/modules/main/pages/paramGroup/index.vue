@@ -14,7 +14,7 @@
           </t-tabs>
         </t-col>
         <t-col style="text-align: end; line-height: 32px; white-space: nowrap" flex="340px"
-          >{{ SelectNode.label }}:{{ SelectNode.paramGroupDesc }}</t-col
+          >{{ SelectNode.paramGroupCode }} : {{ SelectNode.paramGroupDesc }}</t-col
         >
       </cmp-row>
     </cmp-card>
@@ -131,7 +131,7 @@
               </t-row>
             </div>
           </div>
-          <t-row v-show="totaldataTable && totaldataTable.length > 0" class="button-save" justify="space-between">
+          <t-row class="button-save" justify="space-between">
             <t-button theme="primary" @click="onSave">保存</t-button>
           </t-row></t-space
         >
@@ -165,7 +165,15 @@ const tabModuleList = ref([]);
 // 树
 const selectModule = ref('');
 const dataTree = ref([]);
-const SelectNode = ref({ value: '', label: '', paramGroupDesc: '', id: '', isSys: '', paramDataType: '' }); // 选中的树节点
+const SelectNode = ref({
+  value: '',
+  label: '',
+  paramGroupCode: '',
+  paramGroupDesc: '',
+  id: '',
+  isSys: '',
+  paramDataType: '',
+}); // 选中的树节点
 const filterText = ref('');
 const filterByText = ref(null);
 
@@ -243,6 +251,7 @@ const fetchTree = async () => {
         id: item.id,
         isSys: item.isSys,
         paramDataType: item.paramDataType,
+        paramGroupCode: item.paramGroupCode,
         paramGroupDesc: item.paramGroupDesc,
         paramGroupName: item.paramGroupName,
         actived: false,
@@ -289,6 +298,7 @@ const setFirstSelcectNode = (treeData: any) => {
     SelectNode.value.isSys = treeData[0].isSys.toString();
     SelectNode.value.id = treeData[0].id;
     SelectNode.value.paramDataType = treeData[0].paramDataType;
+    SelectNode.value.paramGroupCode = treeData[0].paramGroupCode;
     SelectNode.value.paramGroupDesc = treeData[0].paramGroupDesc;
   }
 };
@@ -439,36 +449,34 @@ const clearTable = () => {
 // 保存
 const onSave = async () => {
   console.log(`data:`, dataTable.value);
-  const isEmpty = ref(false);
-  if (totaldataTable.value.length === 0) {
-    MessagePlugin.error('无数据可保存，请检查');
-  } else {
+  let isEmpty = false;
+  if (totaldataTable.value) {
     totaldataTable.value.forEach((item) => {
       if (item.paramCode === '' || item.paramCode === null) {
-        isEmpty.value = true;
+        isEmpty = true;
       }
       if (item.paramName === '' || item.paramName === null) {
-        isEmpty.value = true;
+        isEmpty = true;
       }
       if (item.paramValue === '' || item.paramValue === null) {
-        isEmpty.value = true;
+        isEmpty = true;
       }
     });
-    if (isEmpty.value) {
-      MessagePlugin.error('存在参数编码或参数名称或参数值为空的数据，请检查');
-    } else {
-      sortTable();
-      dataLoading.value = true;
-      let postData: ParamInfoDTO = {};
-      postData = {
-        details: totaldataTable.value,
-        paramGroupId: SelectNode.value.id,
-      };
-      (await api.param.save(postData)) as any;
-      MessagePlugin.success('保存成功');
-      fetchTable();
-      dataLoading.value = false;
-    }
+  }
+  if (isEmpty) {
+    MessagePlugin.error('存在参数编码或参数名称或参数值为空的数据，请检查');
+  } else {
+    sortTable();
+    dataLoading.value = true;
+    let postData: ParamInfoDTO = {};
+    postData = {
+      details: totaldataTable.value,
+      paramGroupId: SelectNode.value.id,
+    };
+    (await api.param.save(postData)) as any;
+    MessagePlugin.success('保存成功');
+    fetchTable();
+    dataLoading.value = false;
   }
 };
 

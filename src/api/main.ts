@@ -4000,15 +4000,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isProductChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
   stateName?: string;
   isState?: boolean;
+  isBatchName?: string;
+  isInProcessChecked?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isProductChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
 }
 
 /** 响应数据 */
