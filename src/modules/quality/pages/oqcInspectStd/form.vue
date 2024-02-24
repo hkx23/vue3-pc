@@ -1,14 +1,31 @@
 <template>
-  <t-form ref="formRef">
+  <t-form ref="assignFormRef" :rules="rules">
     <t-row :gutter="[32, 16]">
       <!-- 第 1️⃣ 行数据 -->
       <t-col :span="12">
-        <t-form-item label="检验标准" name="mitemCode">
-          <t-input v-model="formData.inspectStdName" :disabled="formData.type === '01'"></t-input>
+        <t-form-item label="检验标准" name="name">
+          <t-select
+            v-model="formData.inspectStdName"
+            clearable
+            filterable
+            input-props
+            :disabled="formData.type !== 'add'"
+            @change="onChange"
+            @clear="fetchSampingStdCodes"
+            @input-change="querySelectChange($event)"
+          >
+            <t-option
+              v-for="item in namesOption"
+              :key="item.id"
+              :label="item.label"
+              :value="item.value"
+              :lazy-load="true"
+            />
+          </t-select>
         </t-form-item>
       </t-col>
       <t-col :span="12">
-        <t-form-item label="物料类别" name="mitemCode">
+        <t-form-item label="物料类别" name="mitemCategory">
           <bcmp-select-business
             v-model="formData.mitemCategortArr"
             type="mitemCategory"
@@ -19,7 +36,7 @@
         </t-form-item>
       </t-col>
       <t-col :span="12">
-        <t-form-item label="物料" name="mitemCode">
+        <t-form-item label="物料" name="mitemId">
           <bcmp-select-business
             v-model="formData.mitemId"
             type="mitem"
@@ -32,15 +49,112 @@
   </t-form>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { isEmpty } from 'lodash';
+import { FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
-const formData = ref({
-  type: '',
-  id: '',
-  inspectStdCode: '',
-  inspectStdName: '',
-  mitemCategortArr: [],
-  mitemId: '',
-});
+import { api } from '@/api/quality';
+
+export default {
+  name: 'MitemForm',
+  setup() {
+    const formData = ref({
+      type: '',
+      id: '',
+      inspectStdCode: '',
+      inspectStdName: '',
+      mitemCategortArr: [],
+      mitemId: '',
+    });
+    // #表单定义规则
+    const rules: FormRules = {
+      mitemCategory: [{ required: true, message: '不能为空', trigger: 'change' }],
+      mitemId: [{ required: true, message: '不能为空', trigger: 'change' }],
+      name: [{ required: formData.value.type === 'add', message: '不能为空', trigger: 'change' }],
+    };
+
+    const submit = async () => {
+      if (isEmpty(formData.value.mitemId)) {
+        MessagePlugin.warning('请选择物料');
+        return false;
+      }
+      if (formData.value.type === 'add' && isEmpty(formData.value.inspectStdName)) {
+        MessagePlugin.warning('请选择产品检验标准');
+        return false;
+      }
+      if (formData.value.mitemCategortArr.length < 1) {
+        MessagePlugin.warning('请选择物料类别');
+        return false;
+      }
+      const categotyList = formData.value.mitemCategortArr.map((item) => item.value);
+      await api.oqcInspectStdMitem.assignOqcInspectStdMitem({
+        stdId: formData.value.id,
+        mitemId: formData.value.mitemId,
+        mitemCategoryIds: categotyList,
+      });
+      MessagePlugin.success('操作成功');
+      return true;
+    };
+    const getOqcInspectStdMitem = async () => {
+      const res = await api.oqcInspectStdMitem.getOqcInspectStdMitem({ stdId: formData.value.id });
+      if (res) {
+        formData.value.mitemId = res[0]?.mitemId;
+        const newData = res.map((item) => {
+          return {
+            label: item.categoryName, // 提取 categoryName 字段并将其赋值给 label
+            value: item.mitemCategoryId, // 提取 mitemCategoryId 字段并将其赋值给 value
+          };
+        });
+        formData.value.mitemCategortArr = newData;
+      } else {
+        formData.value.mitemId = '';
+        formData.value.mitemCategortArr = [];
+      }
+    };
+    const namesOption = ref([]);
+    const onChange = (value: any) => {
+      formData.value.id = value;
+    };
+    const fetchSampingStdCodes = async () => {
+      try {
+        const data = (await api.oqcInspectStd.getOqcInspectList({
+          status: 'EFFECTIVE',
+          pageNum: 1,
+          pageSize: 10,
+        })) as any;
+        namesOption.value = data.list.map((item: { inspectStdName: any; id: any }) => ({
+          label: item.inspectStdName,
+          value: item.id,
+        }));
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    const querySelectChange = async (event) => {
+      const res = (await api.oqcInspectStd.getOqcInspectList({
+        inspectStdCode: event.length >= 1 ? event : '',
+        status: 'EFFECTIVE',
+        pageNum: 1,
+        pageSize: 10,
+      })) as any;
+      namesOption.value = res.list.map((item: { inspectStdName: any; id: any }) => ({
+        label: item.inspectStdName,
+        value: item.id,
+      }));
+    };
+
+    return {
+      fetchSampingStdCodes,
+      querySelectChange,
+      namesOption,
+      submit,
+      getOqcInspectStdMitem,
+      rules,
+      onChange,
+      formData,
+    };
+  },
+};
 </script>

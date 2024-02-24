@@ -4,7 +4,7 @@
     <cmp-card :span="12">
       <t-row justify="space-between" align="center">
         <t-col
-          ><span class="span_title">{{ '新增产品检验标准' }}</span></t-col
+          ><span class="span_title">{{ getTitle(formData.operateTpye) }}</span></t-col
         >
         <t-col>
           <t-button @click="submit">提交</t-button>
@@ -15,7 +15,7 @@
     </cmp-card>
     <!-- !基础信息模块 -->
     <cmp-card :span="12" title="基础信息" class="cards_title">
-      <t-form ref="formRef" :rules="rules">
+      <t-form ref="formRef" :rules="rules" :data="formData" :show-error-message="false">
         <t-row :gutter="[32, 16]">
           <t-col :span="4">
             <t-form-item label="标准编码" label-align="right" name="inspectStdCode">
@@ -77,19 +77,22 @@
         ref="tableRefCard"
         v-model:pagination="pageUI"
         row-key="index"
-        :fixed-height="true"
         :active-row-type="'single'"
         :hover="true"
         :table-column="tableStdDtlColumns"
         :table-data="tableData"
         :total="dataTotal"
-        select-on-row-click
         :selected-row-keys="dtlRowKeys"
         @select-change="onDtlSelectedChange"
         @refresh="onRefresh"
       >
         <template #title>
           {{ '检验项目' }}
+        </template>
+        <template #op="{ row }">
+          <t-space :size="8">
+            <t-link theme="primary" @click="onEdit(row)">{{ '编辑' }}</t-link>
+          </t-space>
         </template>
         <template #button>
           <!-- <t-input placeholder="请输入搜索关键字">
@@ -99,6 +102,13 @@
           </t-input> -->
           <t-button @click="onAdd"> 新增 </t-button>
           <t-button theme="default" :disabled="dtlRowKeys.length < 1" @click="onDelDtlData">删除</t-button>
+        </template>
+        <template #inspectTypeListOp="{ row }">
+          <t-row>
+            <div v-for="(type, index) in row.inspectTypeList" :key="index" class="tag-item">
+              <t-tag theme="primary">{{ getLabelByValue(type) }}</t-tag>
+            </div>
+          </t-row>
         </template>
       </cmp-table>
     </cmp-card>
@@ -129,6 +139,7 @@
     :header="formTitle"
     confirm-btn="保存"
     width="85%"
+    @confirm="onConfirmDtl"
   >
     <touchstoneForm ref="dtlFormRef"></touchstoneForm>
   </t-dialog>
@@ -149,19 +160,37 @@ import { usePage } from '@/hooks/modules/page';
 import touchstoneForm from './touchstoneForm.vue';
 
 const { pageUI } = usePage(); // 分页工具
+const formRef = ref(null);
 const formVisible = ref(false);
 const touchstoneFormVisible = ref(false);
 const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
 const formTitle = ref('');
 const ids = ref([]);
+const perId = ref('');
 const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const onAdd = () => {
   console.log(dtlFormRef.value.dtlData);
   formTitle.value = '检验项目新增';
+  opType.value = 'add';
+  dtlFormRef.value.init();
   touchstoneFormVisible.value = true;
   dtlFormRef.value.dtlData.samplingStandardType = '1';
 };
+const onEdit = async (row) => {
+  formTitle.value = '检验项目编辑';
+  await dtlFormRef.value.init();
+  opType.value = 'edit';
+  dtlFormRef.value.dtlData.id = row.id;
+  await dtlFormRef.value.getDtlById();
+  dtlFormRef.value.dtlData.samplingStandardType = '1';
+  touchstoneFormVisible.value = true;
+};
+const getLabelByValue = (value) => {
+  const option = stdTypeOption.find((item) => item.value === value);
+  return option ? option.label : '';
+};
+
 const onRefresh = () => {
   getDtlByStdId();
 };
@@ -173,6 +202,18 @@ const getDtlByStdId = async () => {
   });
   tableData.value = res.list.map((item, index) => ({ ...item, index }));
   dataTotal.value = res.total;
+};
+const getTitle = (type) => {
+  switch (type) {
+    case 'add':
+      return '新增产品检验标准';
+    case 'edit':
+      return '编辑产品检验标准';
+    case 'copy':
+      return '复制产品检验标准';
+    default:
+      return '';
+  }
 };
 const onDtlSelectedChange = (value: any) => {
   dtlRowKeys.value = value;
@@ -191,6 +232,25 @@ const formData = ref({
   statusName: '起草中',
   inspectTypeList: [],
 });
+const init = () => {
+  fileList.value = [];
+  formData.value = {
+    operateTpye: 'add',
+    saveTpye: 'add',
+    id: '',
+    inspectStdCode: '',
+    inspectStdName: '',
+    groupInspectStdId: '',
+    revision: null,
+    timeEffective: '',
+    timeInvalid: '',
+    status: 'DRAFT',
+    statusName: '起草中',
+    inspectTypeList: [],
+  };
+  tableData.value = [];
+  dataTotal.value = 0;
+};
 const statusOption = ref([]);
 api.param.getListByGroupCode({ parmGroupCode: 'OQC_INSPECT_STD_STATUS' }).then((data) => {
   statusOption.value = data;
@@ -240,22 +300,47 @@ const submit = async () => {
 
     formData.value.status = formData.value.saveTpye === 'add' ? 'EFFECTIVE' : 'DRAFT';
     if (formData.value.operateTpye === 'add') {
-      await apiQuality.oqcInspectStd.addOqcInspectStd({ ...formData.value, list: tableData.value });
+      await apiQuality.oqcInspectStd.addOqcInspectStd({
+        ...formData.value,
+        list: tableData.value,
+        fileList: fileList.value,
+      });
       MessagePlugin.success('新增成功');
+      Emit('permissionShow', false); // 回到父
     } else if (formData.value.operateTpye === 'edit') {
       await apiQuality.oqcInspectStd.changeStd({
         ...formData.value,
-        ids: ids.value,
-        list: tableData.value,
-        total: dataTotal.value,
+        perId: perId.value,
+        fileList: fileList.value,
       });
       MessagePlugin.success('编辑成功');
+      Emit('permissionShow', false); // 回到父
+    } else if (formData.value.operateTpye === 'copy') {
+      await apiQuality.oqcInspectStd.changeStd({
+        ...formData.value,
+        fileList: fileList.value,
+      });
+      MessagePlugin.success('复制成功');
+      Emit('permissionShow', false); // 回到父
     }
   } catch (e) {
     console.log(e);
     return false;
   }
   return true;
+};
+const opType = ref('add');
+const onConfirmDtl = async () => {
+  const data = await dtlFormRef.value.onConfirmDtl();
+  if (data) {
+    if (opType.value === 'add') {
+      tableData.value.push(dtlFormRef.value.rowData);
+    } else if (opType.value === 'edit') {
+      await apiQuality.oqcInspectStdDtl.updateDtlById(dtlFormRef.value.rowData);
+      onRefresh();
+    }
+    touchstoneFormVisible.value = false;
+  }
 };
 const onDelDtlData = async () => {
   const idsDel = [];
@@ -293,6 +378,9 @@ const onStaging = async () => {
   }
 };
 const onClose = async () => {
+  if (formData.value.operateTpye !== 'add') {
+    await apiQuality.oqcInspectStd.delById([formData.value.id]);
+  }
   Emit('permissionShow', false); // 回到父
 };
 
@@ -404,6 +492,13 @@ const tableStdDtlColumns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
     width: '110',
   },
+  {
+    colKey: 'op',
+    title: '操作',
+    fixed: 'right',
+    align: 'left',
+    width: '60',
+  },
 ];
 // #表单定义规则
 const rules: FormRules = {
@@ -425,6 +520,16 @@ const rules: FormRules = {
   inspectTypeList: [{ required: true, message: '不能为空', trigger: 'change' }],
   inspectProperty: [{ required: true, message: '不能为空', trigger: 'change' }],
 };
+
+defineExpose({
+  form: formRef,
+  dtlRowKeys,
+  formData,
+  getDtlByStdId,
+  init,
+  perId,
+  fileList,
+});
 </script>
 
 <style lang="less" scoped>
@@ -434,6 +539,11 @@ const rules: FormRules = {
     color: var(--td-gray-color-8);
     font-size: 16px;
   }
+}
+
+.tag-item {
+  margin-right: 8px; /* 控制标签之间的间距 */
+  align-items: center; /* 垂直居中 */
 }
 
 .span_title {

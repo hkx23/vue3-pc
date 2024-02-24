@@ -50,12 +50,7 @@
       <t-col :span="4">
         <t-form-item label="项目特性" label-align="right" name="characteristics">
           <t-select v-model="dtlData.characteristics" clearable style="width: 280px">
-            <t-option
-              v-for="(item, index) in characteristicsOptions"
-              :key="index"
-              :label="item.label"
-              :value="item.value"
-            />
+            <t-option v-for="item in characteristicsOptions" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </t-form-item>
       </t-col>
@@ -156,27 +151,34 @@
     width="50%"
   >
     <cmp-container :full="true">
-      <bcmp-upload-content :file-list="fileList"></bcmp-upload-content>
+      <bcmp-upload-content
+        :file-list="fileList"
+        @upload-success="uploadSuccess"
+        @uploadfail="uploadfail"
+        @delete-success="deleteSuccess"
+        @batch-delete-success="batchDeleteSuccess"
+      ></bcmp-upload-content>
     </cmp-container>
   </t-dialog>
 </template>
 
 <script setup lang="tsx">
-// import { isEmpty } from 'lodash';
-import { FormRules } from 'tdesign-vue-next';
+import { isEmpty } from 'lodash';
+import { FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import { api } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
+import { AddFileType } from '@/components/bcmp-upload-content/constants';
 
 // 父方法
-// const Emit = defineEmits(['permissionShow']);
 const fileList = ref([]);
 const formVisible = ref(false);
 
 const dtlData = ref({
   itemSeq: '',
   itemCategory: '',
+  id: '',
   itemName: '',
   characteristics: '',
   baseValue: '',
@@ -197,6 +199,31 @@ const dtlData = ref({
   processId: '',
 });
 const codesOption = ref([]);
+const init = () => {
+  dtlData.value = {
+    itemSeq: '',
+    id: '',
+    itemCategory: '',
+    itemName: '',
+    characteristics: '',
+    baseValue: '',
+    maxValue: '',
+    minValue: '',
+    technicalRequest: '',
+    uom: '',
+    uomName: '',
+    samplingStandardType: '1',
+    samplingStandardCode: '',
+    inspectLevel: '',
+    inspectLevelName: '',
+    inspectTool: '',
+    unqualifyCategory: '',
+    inspectBasis: '',
+    inspectTypeList: [],
+    inspectProperty: '',
+    processId: '',
+  };
+};
 
 const fetchSampingStdCodes = async () => {
   try {
@@ -237,8 +264,8 @@ const querySelectChange = async (event) => {
 
 // 下拉初始数据
 const characteristicsOptions = [
-  { label: '计数', value: 1 },
-  { label: '计量', value: 2 },
+  { label: '计数', value: 1, id: 1 },
+  { label: '计量', value: 2, id: 2 },
 ];
 
 // 下拉初始数据
@@ -263,6 +290,34 @@ const rules: FormRules = {
   inspectTypeList: [{ required: true, message: '不能为空', trigger: 'change' }],
   inspectProperty: [{ required: true, message: '不能为空', trigger: 'change' }],
 };
+const uploadSuccess = (file: AddFileType) => {
+  MessagePlugin.info(
+    `上传一个文件成功,如果是需要实时更新业务数据，可使用对应FILE的路径，文件名，文件大小等信息自行写逻辑上传到后端`,
+  );
+  fileList.value.push(file);
+  console.log('🚀 ~ file: materialStandardAdd.vue:149 ~ uploadSuccess ~ files.value:', fileList.value);
+
+  console.log('🚀 ~ file: materialStandardAdd.vue:150 ~ uploadSuccess ~ file:', file);
+};
+
+const uploadfail = (file: AddFileType) => {
+  MessagePlugin.info(`上传一个文件失败,这个暂时没想到场景`);
+  console.log('uploadSuccess', file);
+};
+
+const deleteSuccess = (file: AddFileType) => {
+  MessagePlugin.info(
+    `删除一个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
+  );
+  console.log('deleteSuccess', file);
+};
+
+const batchDeleteSuccess = (files: AddFileType[]) => {
+  MessagePlugin.info(
+    `删除多个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
+  );
+  console.log('batchDeleteSuccess', files);
+};
 
 const categoryOption = ref([]);
 api.param.getListByGroupCode({ parmGroupCode: 'Q_ITEM_CATEGORY' }).then((data) => {
@@ -273,74 +328,97 @@ api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_LEVEL' }).then((data
   levelOption.value = data;
 });
 const unCategoryOption = ref([]);
-api.param.getListByGroupCode({ parmGroupCode: 'Q_UNQUALIFY_CATEGORY' }).then((data) => {
+api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_NONCONFORMANCE_CLASSIFICATION' }).then((data) => {
   unCategoryOption.value = data;
 });
 const propertyOption = ref([]);
 api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_PROPERTY' }).then((data) => {
   propertyOption.value = data;
 });
+const rowData = ref();
+const getDtlById = async () => {
+  const res = (await apiQuality.oqcInspectStdDtl.getDtlById({ id: dtlData.value.id })) as any;
+  if (res) {
+    dtlData.value = res;
+    if (res.fileListVo) {
+      res.fileListVo.forEach((file) => {
+        file.timeUpload = file.timeCreate;
+        file.signedUrl = file.filePath;
+      });
+    }
+    fileList.value = res.fileListVo;
+    dtlData.value.characteristics = res.characteristicsName;
+  }
+};
+const onConfirmDtl = async () => {
+  // 首先创建一个数组来存储需要检查非空的属性
+  const requiredFields = [
+    'itemCategory',
+    'itemName',
+    'itemSeq',
+    'characteristics',
+    'samplingStandardType',
+    'samplingStandardCode',
+    'inspectTool',
+    'unqualifyCategory',
+    'inspectBasis',
+    'inspectTypeList',
+    'inspectProperty',
+  ];
 
-// const onConfirmDtl = async () => {
-//   // 首先创建一个数组来存储需要检查非空的属性
-//   const requiredFields = [
-//     'itemCategory',
-//     'itemName',
-//     'itemSeq',
-//     'characteristics',
-//     'samplingStandardType',
-//     'samplingStandardCode',
-//     'inspectTool',
-//     'unqualifyCategory',
-//     'inspectBasis',
-//     'inspectTypeList',
-//     'inspectProperty',
-//   ];
+  // 遍历 requiredFields 数组，检查每个属性是否为空
+  const emptyFields = [];
+  requiredFields.forEach((field) => {
+    if (!dtlData.value[field]) {
+      emptyFields.push(field);
+      console.log(emptyFields);
+    }
+  });
+  console.log(dtlData.value);
+  // 如果存在空值属性，则输出提示信息并阻止添加操作
+  if (emptyFields.length > 0) {
+    MessagePlugin.warning('请补充表单信息');
+    return false;
+  }
+  if (dtlData.value.samplingStandardType === '1') {
+    if (isEmpty(dtlData.value.inspectLevel)) {
+      MessagePlugin.error('请补充表单信息');
+      return false;
+    }
+  }
+  if (!Number(dtlData.value.itemSeq)) {
+    MessagePlugin.error('项目行号须为整数');
+    return false;
+  }
+  // const item = tableData.value.find((item) => item.itemName === dtlData.value.itemName);
+  // if (item) {
+  //   MessagePlugin.warning('不允许添加相同项目名称的检验项目');
+  //   return;
+  // }
 
-//   // 遍历 requiredFields 数组，检查每个属性是否为空
-//   const emptyFields = [];
-//   requiredFields.forEach((field) => {
-//     if (!dtlData.value[field]) {
-//       emptyFields.push(field);
-//       console.log(emptyFields);
-//     }
-//   });
-//   console.log(dtlData.value);
-//   // 如果存在空值属性，则输出提示信息并阻止添加操作
-//   if (emptyFields.length > 0) {
-//     MessagePlugin.warning('请补充表单信息');
-//     return;
-//   }
-//   if (dtlData.value.samplingStandardType === '1') {
-//     if (isEmpty(dtlData.value.inspectLevel)) {
-//       MessagePlugin.error('请补充表单信息');
-//       return;
-//     }
-//   }
-//   if (!Number(dtlData.value.itemSeq)) {
-//     MessagePlugin.error('项目行号须为整数');
-//     return;
-//   }
-//   // const item = tableData.value.find((item) => item.itemName === dtlData.value.itemName);
-//   // if (item) {
-//   //   MessagePlugin.warning('不允许添加相同项目名称的检验项目');
-//   //   return;
-//   // }
+  if (dtlData.value.uom) {
+    const res = await apiQuality.oqcInspectStdDtl.getUom({ uom: dtlData.value.uom });
+    dtlData.value.uomName = res.uomName;
+  }
+  if (dtlData.value.inspectLevel) {
+    dtlData.value.inspectLevelName = levelOption.value.find((item) => item.value === dtlData.value.inspectLevel)?.label;
+  }
+  rowData.value = {
+    ...dtlData.value,
+    fileList,
+    // samplingStandardTypeName: dtlData.value.samplingStandardType === '1' ? '国标' : '企标',
+    // itemCategoryName: categoryOption.value.find((item) => item.value === dtlData.value.itemCategory)?.label,
+    // unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,
+    // characteristicsName: characteristicsOptions[Number(dtlData.value.characteristics) - 1].label,
+  };
+  return true;
+};
 
-//   if (dtlData.value.uom) {
-//     const res = await apiQuality.oqcInspectStdDtl.getUom({ uom: dtlData.value.uom });
-//     dtlData.value.uomName = res.uomName;
-//   }
-//   if (dtlData.value.inspectLevel) {
-//     dtlData.value.inspectLevelName = levelOption.value.find((item) => item.value === dtlData.value.inspectLevel)?.label;
-//   }
-//   const rowData = {
-//     ...dtlData.value,
-//     samplingStandardTypeName: dtlData.value.samplingStandardType === '1' ? '国标' : '企标',
-//     itemCategoryName: categoryOption.value.find((item) => item.value === dtlData.value.itemCategory)?.label,
-//     unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,
-//     characteristicsName: characteristicsOptions[Number(dtlData.value.characteristics) - 1].label,
-//   };
-//   Emit('permissionShow', false, rowData); // 回到父
-// };
+defineExpose({
+  onConfirmDtl,
+  dtlData,
+  rowData,
+  init,
+  getDtlById,
+});
 </script>
