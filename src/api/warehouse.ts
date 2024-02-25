@@ -3225,6 +3225,11 @@ export interface MoIssuanceDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 已发料量 */
   alreadyPickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
@@ -3233,11 +3238,6 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
   /**
    * 待扫数量
    * @format double

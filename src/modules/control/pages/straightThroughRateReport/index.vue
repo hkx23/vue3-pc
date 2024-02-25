@@ -4,14 +4,31 @@
     <!-- 查询 -->
     <cmp-card :span="12">
       <!-- @reset="onReset" -->
-      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
+      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @reset="onReset" @submit="onInput"> </cmp-query>
     </cmp-card>
     <!-- 折线图 -->
     <cmp-card :span="12">
-      <cmp-container :full="true">
-        <div id="straightThroughRateReportChart" :style="{ width: '100%', height: '100%' }" />
-        <!-- 表格数据 -->
-      </cmp-container>
+      <div id="straightThroughRateReportChart" :style="{ width: '100%', height: '100%' }" />
+      <!-- 表格数据 -->
+      <div v-if="apiData.length > 0" class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>产品名称</th>
+              <!-- 直接访问 optionChart.xAxis.data，无需 .value -->
+              <th v-for="date in optionChart.xAxis.data" :key="date">{{ date }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 同理，直接访问 optionChart.series -->
+            <tr v-for="series in optionChart.series" :key="series.name">
+              <td>{{ series.name }}</td>
+              <!-- 在这里使用 formatPercentage 方法来格式化值 -->
+              <td v-for="(value, index) in series.data" :key="index">{{ formatPercentage(value) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </cmp-card>
   </cmp-container>
 </template>
@@ -130,23 +147,38 @@ const isMitemDisabled = ref(false);
 
 /** 辅助函数 控制单选多选
  */
-// 处理工序选择变化的函数
-function handleWorkcenterChange(selectedOptions) {
-  // 如果选择了多于一个的工序，则禁用产品选择器
-  // isMitemDisabled.value = selected.length > 1; //TODO
-  processIds.value = selectedOptions.map((option) => option.value);
-}
-
 // 处理产品选择变化的函数
-function handleMitemChange(selectedOptions) {
-  // 如果选择了多于一个的产品，则禁用工序选择器
-  // isWorkcenterDisabled.value = selected.length > 1; //TODO
-  mitemIds.value = selectedOptions.map((option) => option.value);
-}
+// function handleMitemChange(selectedOptions) {
+//   // 如果选择了多于一个的产品，则禁用工序选择器
+//   isWorkcenterDisabled.value = selectedOptions.length > 1;
+// }
+// // 处理工序选择变化的函数
+// function handleWorkcenterChange(selectedOptions) {
+//   // 如果选择了多于一个的工序，则禁用产品选择器
+//   isMitemDisabled.value = selectedOptions.length > 1;
+// }
+
+const mitemIds = ref([]); // dis1
+const processIds = ref([]); // dis2
+// const processNames = ref([]); // 假设这是工序名称数组，与IDs对应
+// const mitemNames = ref([]); // 假设这是产品名称数组，与IDs对应
+
+// 计算属性来确定标题
+const chartTitle = computed(() => {
+  if (processIds.value.length >= 2) {
+    console.log('🚀 ~ chartTitle ~ processIds.value.length:', processIds.value.length);
+    return '工序直通率';
+  }
+  if (mitemIds.value.length >= 2) {
+    return '产品直通率';
+  }
+  return '直通率'; // 默认标题或其他逻辑
+});
+
 // 初始数据
 const optionChart: Ref<EChartsOption> = ref({
   title: {
-    text: '工序直通率',
+    text: chartTitle.value,
     left: 'center',
   },
   tooltip: {
@@ -216,7 +248,7 @@ const opts = computed(() => {
         type: 'process', // processReturn
         showTitle: false,
         isMultiple: true,
-        onChange: handleWorkcenterChange,
+        // onChange: handleWorkcenterChange,
         disabled: isWorkcenterDisabled.value, // 根据响应式引用动态设置禁用状态
       },
     },
@@ -229,29 +261,18 @@ const opts = computed(() => {
         type: 'mitem',
         showTitle: false,
         isMultiple: true, // 多选
-        onChange: handleMitemChange,
+        // onChange: handleMitemChange,
         disabled: isMitemDisabled.value, // 同上
       },
     },
-
-    // mitemIds: {
-    //   label: '产品',
-    //   comp: 'bcmp-select-business',
-    //   event: 'business',
-    //   defaultVal: '',
-    //   bind: {
-    //     type: 'mitem',
-    //     showTitle: false,
-    //     isMultiple: true,
-    //     onChange: handleMitemChange,
-    //     disabled: isMitemDisabled.value, // 同上
-    //   },
-    // },
   };
 });
 
-const mitemIds = ref([]); // dis1
-const processIds = ref([]); // dis2
+// 从 API 获取的数据
+const apiData = ref([]);
+
+// 存储日期范围，用于表格列头
+const selectedDates = ref([]);
 
 let straightThroughRateReportChart: HTMLElement;
 const countContainerParentRef = ref<HTMLElement>();
@@ -274,8 +295,14 @@ onMounted(() => {
   getlineData(); // todo
 });
 
+/** 辅助函数 格式化百分比值，保留两位小数
+ */
+const formatPercentage = (value: number) => {
+  // return `${value.toFixed(2)}%`;
+  return `${value.toFixed(0)}%`; // todo
+};
+
 /** 辅助函数 动态生成X轴数据
- *
  */
 const generateDateRange = (startDate, endDate) => {
   const start = dayjs(startDate);
@@ -296,8 +323,7 @@ const updateChartWithDateRange = (startDate, endDate) => {
   const xAxisData = generateDateRange(startDate, endDate);
   optionChart.value.xAxis.data = xAxisData.map((date) => dayjs(date).format('D')); // 格式化为 M-D 的形式
 
-  // 接口返回的数据结构如下：[{date: '2023-03-03', value: 10}, {...}]
-  const apiResponse = []; // 这里是调用API获取的数据
+  const apiResponse = []; // API获取的数据
 
   // 初始化一个与xAxisData等长的数组，所有元素初值为0（或其他代表无数据的值）
   const seriesData = new Array(xAxisData.length).fill(0);
@@ -317,45 +343,58 @@ const updateChartWithDateRange = (startDate, endDate) => {
 
 // 查询
 const onInput = async (data: any) => {
-  // const { servicingTime = [], processIds, mitemIds } = data;
-  // if (servicingTime.length < 2) return;
-
-  // const [startDate, endDate] = servicingTime;
-  // updateChartWithDateRange(startDate, endDate); //辅助函数 根据选择的日期范围更新图表
-  // // const { mitemIds, processIds } = data; //解构数据
-
-  // //存储数据
-  // mitemIds.value = mitemIds;
-  // processIds.value = processIds;
-  console.log('🚀 ~ onInput ~ data:', data);
   const { servicingTime = [], mitemIds: incomingMitemIds = [], processIds: incomingProcessIds = [] } = data;
-  // const { servicingTime = [], mitemIds,processIds } = data;
-
   const [startDate, endDate] = servicingTime;
-  updateChartWithDateRange(startDate, endDate); // 辅助函数 根据选择的日期范围更新图表
-  // 在设置之前，确保 refs 不为 null 且传入数据符合预期
+  selectedDates.value = generateDateRange(servicingTime[0], servicingTime[1]);
 
-  // 更新 refs
+  updateChartWithDateRange(startDate, endDate); // 辅助函数 根据选择的日期范围更新图表
+
+  // 更新
   mitemIds.value = incomingMitemIds;
   processIds.value = incomingProcessIds;
+  console.log('🚀 ~ onInput ~ processIds.value:', processIds.value.length);
 
-  const reset: ProcessData[] = await api.straightThroughRateReport.getProcesses({
-    pageNum: 1,
-    pageSize: 20,
-    dateStart: servicingTime[0],
-    dateEnd: servicingTime[1],
-    mitemIds: incomingMitemIds,
-    processIds: incomingProcessIds,
-  });
+  // 查询参数处理id []
+  const resMitemIds = incomingMitemIds ? incomingMitemIds.map((e) => e.value) : [];
+  const resProcessIDs = incomingProcessIds ? incomingProcessIds.map((e) => e.value) : [];
+
+  let reset: ProcessData[] = [];
+  // 根据不同条件调用不同API
+  if (processIds.value.length > 1) {
+    // 工序长度大于1，调用getProcesses接口
+    reset = await api.straightThroughRateReport.getProcesses({
+      pageNum: 1,
+      pageSize: 20,
+      dateStart: servicingTime[0],
+      dateEnd: servicingTime[1],
+      mitemIds: resMitemIds,
+      processIds: resProcessIDs,
+    });
+  } else if (mitemIds.value.length > 1) {
+    // 产品长度大于1，调用另一个接口（示例：getProducts）
+    reset = await api.straightThroughRateReport.getProducts({
+      pageNum: 1,
+      pageSize: 20,
+      dateStart: servicingTime[0],
+      dateEnd: servicingTime[1],
+      mitemIds: resMitemIds,
+      processIds: resProcessIDs,
+    });
+  } else if (processIds.value.length === 1 && mitemIds.value.length === 1) {
+    // 工序和产品长度都为0，调用另一个接口
+    reset = await api.straightThroughRateReport.getSingle({
+      pageNum: 1,
+      pageSize: 20,
+      dateStart: servicingTime[0],
+      dateEnd: servicingTime[1],
+      mitemIds: resMitemIds,
+      processIds: resProcessIDs,
+    });
+  }
+  // 存数据
+  apiData.value = reset;
+
   console.log('🚀 ~ onInput ~ reset:工序数据源', reset);
-  // TODO....
-
-  // 根据选择更新图表标题
-  // 选择工序多条 就叫 工序直通率
-  // 选择产品多条 就叫 产品直通率
-  // 选择工序单条 且 产品单条 就叫工序名称 加 直通率
-
-  updateChartTitle(mitemIds, processIds); // TODO
 
   // 处理数据：按日期和工序组织数据
   const processedData = reset.reduce(
@@ -369,10 +408,10 @@ const onInput = async (data: any) => {
     },
     { dates: [], processNames: [], data: {} },
   );
+
   // 生成ECharts配置
   const updateChartConfig = () => {
     const { processNames, data } = processedData;
-
     // 更新legend.data以包含所有的processNames
     optionChart.value.legend.data = processNames;
 
@@ -399,22 +438,32 @@ const onInput = async (data: any) => {
       countChart.setOption(optionChart.value as any, true);
     }
   };
-  // 更新图表标题
-
   updateChartConfig();
+
+  // 更新图表标题
+  updateChartTitle(processIds.value, mitemIds.value);
+};
+
+//* 重置
+const onReset = () => {
+  apiData.value = [];
+  MessagePlugin.success('重置成功');
 };
 
 /* 辅助函数 直通率标题  */
-function updateChartTitle(mitemIds, processIds) {
-  console.log('🚀 ~ updateChartTitle ~ workcenterId222:', processIds);
-  console.log('🚀 ~ updateChartTitle ~ mitemIds:111', mitemIds);
+function updateChartTitle(processIds, mitemIds) {
+  console.log('🚀 ~ updateChartTitle ~ workcenterId111:', processIds);
+  console.log('🚀 ~ updateChartTitle ~ mitemIds:222', mitemIds);
+  // processIds 的值的长度 > 1 那么 title 就是 工序直通率
+  // mitemIds 的值的长度 > 1 那么 title 就是 产品直通率
+  // processIds 的值的长度 =  0 且  mitemIds的值的长度 = 0  那么 title 就是 工序 + 选中的第一条数据名称 + 直通率
 }
 
 //* 接口数据
 const getlineData = async () => {
   // 初始化日期
   const servicingTime = [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')];
-  const reset = await api.straightThroughRateReport.getProcesses({
+  await api.straightThroughRateReport.getProcesses({
     pageNum: 1,
     pageSize: 20,
     dateStart: servicingTime[0],
@@ -422,18 +471,43 @@ const getlineData = async () => {
     mitemIds: mitemIds.value,
     processIds: processIds.value,
   });
-  console.log('🚀 ~ getlineData ~ reset:', reset);
 };
 </script>
 
 <style scoped>
+.table-container {
+  /* 固定高度，确保容器高度固定 */
+
+  /* 启用垂直滚动条 */
+
+  /* overflow-y: auto; */
+
+  /* 水平居中 */
+  margin: 0 auto;
+
+  /* 最小宽度，确保在小屏幕上也能正确显示 */
+  max-width: 90%;
+}
+
 table {
+  /* 宽度调整为100%以填充容器 */
+  width: 90%;
   border-collapse: collapse;
 }
 
-table,
 th,
 td {
-  border: 1px solid black;
+  border: 1px solid #ccc;
+
+  /* 文本居中对齐 */
+  text-align: center;
+
+  /* 垂直居中 */
+  vertical-align: middle;
+  font-size: 12.5px;
+}
+
+thead {
+  background-color: #f9f9f9;
 }
 </style>
