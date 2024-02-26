@@ -239,7 +239,7 @@
     1.3 自定义字典 -->
     <t-form>
       <t-form-item label="转换类型">
-        <t-radio-group v-model="selectedType" variant="primary-filled">
+        <t-radio-group v-model="selectedType" variant="primary-filled" @change="selectedTypeChange">
           <t-radio-button v-if="currentRelateRow.columnName === 'eid'" value="currentEid"
             >导入用户的企业</t-radio-button
           >
@@ -358,10 +358,16 @@
       2.3 数据转换字段/固定值
     3.取值字段 -->
       <div v-if="selectedType === 'dataTable'">
+        <t-form-item :label="t('import.businessDomain')" name="businessDomain">
+          <!-- 下拉选择框 -->
+          <t-select v-model="mapBusinessDomain" :clearable="true" filterable @change="changeMapDomain">
+            <t-option v-for="item in businessDomainList" :key="item.value" :label="item.label" :value="item.value" />
+          </t-select>
+        </t-form-item>
         <t-form-item label="数据表">
           <t-select v-model="mapTable" :clearable="true" filterable @change="changeTableMatch">
             <t-option
-              v-for="item in tableList"
+              v-for="item in mapTableList"
               :key="item.tableName"
               :label="item.tableDescription"
               :value="item.tableName"
@@ -553,6 +559,7 @@ const changeTable = (value, context) => {
         dicData: [],
       },
       dataTable: {
+        mapBusinessDomain: 'MAIN',
         mapTable: '',
         conditionData: [],
         tableQueryField: '',
@@ -830,6 +837,10 @@ const onClickConfirm = () => {
   // mapTable不可为空
   // conditionData至少大于一行
   if (selectedType.value === 'dataTable') {
+    if (!mapBusinessDomain.value) {
+      MessagePlugin.warning('数据表匹配时，业务领域不可为空');
+      checkResult = false;
+    }
     if (!mapTable.value) {
       MessagePlugin.warning('数据表匹配时，数据表不可为空');
       checkResult = false;
@@ -878,6 +889,7 @@ const onClickConfirm = () => {
       dicData: dicData.value,
     },
     dataTable: {
+      mapBusinessDomain: mapBusinessDomain.value,
       mapTable: mapTable.value,
       conditionData: conditionData.value,
       tableQueryField: tableQueryField.value,
@@ -910,7 +922,16 @@ const onClickRelate = (row) => {
   initRelatedData();
   relateVisible.value = true;
 };
+
+const selectedTypeChange = (value) => {
+  if (value === 'dataTable') {
+    mapBusinessDomain.value = 'MAIN';
+    changeMapDomain();
+  }
+};
+const IsinitRelate = ref(false);
 const initRelatedData = () => {
+  IsinitRelate.value = true;
   console.log(currentRelateRow.value);
   if (currentRelateRow.value.datatransferJson) {
     // 如果没设置关关联的，给设置默认值
@@ -923,6 +944,7 @@ const initRelatedData = () => {
     selectedType.value = relatedData.relateType;
     sourceColumn.value = '';
     dicData.value = [];
+    mapBusinessDomain.value = 'MAIN';
     mapTable.value = '';
     conditionData.value = [];
     tableQueryField.value = '';
@@ -939,8 +961,12 @@ const initRelatedData = () => {
         dicData.value = relatedData.customDict.dicData;
         break;
       case 'dataTable':
-        mapTable.value = relatedData.dataTable.mapTable;
-        changeTableMatch(mapTable.value);
+        mapBusinessDomain.value = relatedData.dataTable.mapBusinessDomain;
+        changeMapDomain().then(() => {
+          mapTable.value = relatedData.dataTable.mapTable;
+          changeTableMatch(mapTable.value);
+          IsinitRelate.value = false;
+        });
         conditionData.value = relatedData.dataTable.conditionData;
         tableQueryField.value = relatedData.dataTable.tableQueryField;
         break;
@@ -1039,12 +1065,12 @@ const loadParamGroup = async () => {
     systemParamGroups.value = data;
   });
 };
-
+const mapBusinessDomain = ref('');
 const mapTable = ref('');
 const tableQueryField = ref('');
 const selectMapTable: any = ref({});
 const selectMapColumns: any = ref({});
-
+const mapTableList = ref([]);
 const columnsMapTable: any = computed(() => [
   {
     title: '字段',
@@ -1078,24 +1104,40 @@ const valueTypes = [
   { value: 'VALUE', label: '固定值' },
   { value: 'COLUMN', label: '引用列' },
 ];
+
+// #映射业务领域变化
+const changeMapDomain = async () => {
+  mapTable.value = '';
+  selectMapTable.value = null;
+  return loadMapTableList();
+};
+const loadMapTableList = async () => {
+  const params = { businessCode: mapBusinessDomain.value };
+  const res = await api.importManage.tables(params);
+  mapTableList.value = res;
+};
 const changeTableMatch = (value) => {
-  selectMapTable.value = tableList.value.find((item) => item.tableName === value);
+  selectMapTable.value = mapTableList.value.find((item) => item.tableName === value);
   console.log(selectMapTable.value);
   selectMapColumns.value = selectMapTable.value?.columns.map((item) => ({
     ...item,
     value: item.columnName,
     label: item.columnDesc,
   }));
-  console.log(selectMapColumns.value);
+  if (!IsinitRelate.value) {
+    conditionData.value = [];
+  }
 };
 
 const initEditColumns = (value) => {
-  const editTable = tableList.value.find((item) => item.tableName === value);
-  columnsData.value = editTable?.columns.map((item) => ({
-    ...item,
-    value: item.columnName,
-    label: item.columnDesc,
-  }));
+  loadTableList().then(() => {
+    const editTable = tableList.value.find((item) => item.tableName === value);
+    columnsData.value = editTable?.columns.map((item) => ({
+      ...item,
+      value: item.columnName,
+      label: item.columnDesc,
+    }));
+  });
 };
 
 onMounted(async () => {
@@ -1324,8 +1366,11 @@ const initEditData = (insetModel) => {
 // 新增-初始化新增的数据
 const initAddData = () => {
   isEdit.value = false;
-  formRef.value.clearValidate();
   current.value = 0;
+  if (formRef.value) {
+    formRef.value.clearValidate();
+  }
+
   // 将settingModel属性的值赋回formData
   formData.importKeyCode = '';
   formData.businessDomain = 'MAIN';

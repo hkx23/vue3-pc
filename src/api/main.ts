@@ -4001,14 +4001,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
   isProductName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4151,8 +4151,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7017,12 +7017,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -10651,12 +10651,27 @@ export const api = {
      *
      * @tags 工单排产表
      * @name UpdateMoScheInfo
-     * @summary 更新排产单信息-完成数量，状态等信息
+     * @summary 更新排产单信息-完成数量，状态等字段信息
      * @request POST:/moSchedule/updateMoScheInfo
      * @secure
      */
     updateMoScheInfo: (data: MoSchedule) =>
       http.request<ResultObject['data']>(`/api/main/moSchedule/updateMoScheInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name UpdateIsHoldMoScheList
+     * @summary 批量更新排产单暂挂信息
+     * @request POST:/moSchedule/updateIsHoldMoScheList
+     * @secure
+     */
+    updateIsHoldMoScheList: (data: MoSchedule) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/updateIsHoldMoScheList`, {
         method: 'POST',
         body: data as any,
       }),
