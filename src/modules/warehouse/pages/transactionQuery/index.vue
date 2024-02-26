@@ -113,6 +113,7 @@ const opts = computed(() => {
       bind: {
         type: 'mitem',
         showTitle: false,
+        labelField: 'mitemCode',
       },
     },
     creator: {
