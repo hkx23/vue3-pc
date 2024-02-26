@@ -257,9 +257,9 @@ const statusOption = ref([]);
 api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_STD_STATUS' }).then((data) => {
   // 过滤满足特定条件的元素
   const filteredData = data.filter((item) => {
-    const { label } = item;
+    const { value } = item;
     // 只保留 label 为 '起草中'、'已生效'、'已失效' 的元素
-    return label === '起草中' || label === '已生效' || label === '已失效';
+    return value === 'DRAFT' || value === 'EFFECTIVE' || value === 'EXPIRED';
   });
 
   // 将过滤后的结果赋值给 statusOption.value
