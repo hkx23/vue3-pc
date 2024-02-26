@@ -24,8 +24,9 @@
         </template>
         <template #button>
           <t-button @click="onAdd">新增</t-button>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="a_incident_cfg"></bcmp-import-auto-button>
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="ondeleteBatches">
-            <t-button variant="outline">批量删除</t-button>
+            <t-button theme="default">批量删除</t-button>
           </t-popconfirm>
         </template>
         <template #op="{ row }">
