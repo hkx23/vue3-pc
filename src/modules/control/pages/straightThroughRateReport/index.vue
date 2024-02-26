@@ -4,7 +4,15 @@
     <!-- 查询 -->
     <cmp-card :span="12">
       <!-- @reset="onReset" -->
-      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @reset="onReset" @submit="onInput"> </cmp-query>
+      <cmp-query
+        :key="queryKey"
+        ref="queryComponent"
+        :opts="opts"
+        :bool-enter="false"
+        @reset="onReset"
+        @submit="onInput"
+      >
+      </cmp-query>
     </cmp-card>
     <!-- 折线图 -->
     <cmp-card :span="12">
@@ -43,7 +51,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 echarts.use([CanvasRenderer]);
 import dayjs from 'dayjs';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { computed, onMounted, Ref, ref, watch } from 'vue';
+import { computed, onMounted, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
 
@@ -124,6 +132,9 @@ interface ProcessData {
   dayFinish?: string; // 添加了缺失的属性
 }
 
+// 假设queryKey是一个响应式数据，初始化为0
+const queryKey = ref(0);
+
 /** 日期范围 辅助函数
  */
 const dateChange = async (data: any) => {
@@ -142,48 +153,42 @@ const dateChange = async (data: any) => {
 };
 
 // 定义响应式引用来跟踪禁用状态
-const isWorkcenterDisabled = ref(false);
-const isMitemDisabled = ref(false);
+// const isWorkcenterDisabled = ref(false);
+// const isMitemDisabled = ref(false);
 
 /** 辅助函数 控制单选多选
  */
 // 处理产品选择变化的函数
-// function handleMitemChange(selectedOptions) {
-//   console.log('🚀 ~ handleMitemChange ~ selectedOptions:产品', selectedOptions);
-//   // 如果选择了多于一个的产品，则禁用工序选择器
-//   isWorkcenterDisabled.value = selectedOptions.length > 1;
-// }
-// // 处理工序选择变化的函数
-// function handleWorkcenterChange(selectedOptions) {
-//   console.log('🚀 ~ handleWorkcenterChange ~ selectedOptions:工序', selectedOptions);
-//   // 如果选择了多于一个的工序，则禁用产品选择器
-//   isMitemDisabled.value = selectedOptions.length > 1;
-// }
+const handleMitemChange = (selectedOptions) => {
+  console.log('🚀 ~ handleMitemChange ~ selectedOptions:产品', selectedOptions);
+  if (selectedOptions.length > 1) {
+    MessagePlugin.warning('多选产品不能选择工序！'); // 大于1 提示一次就可以
+    // 然后置空工序
+    selectedOptions = null;
+    console.log('🚀 ~ handleMitemChange ~ selectedOptions:', selectedOptions);
+  }
+};
+// 处理工序选择变化的函数
+const handleWorkcenterChange = (selectedOptions) => {
+  console.log('🚀 ~ handleWorkcenterChange ~ selectedOptions:工序', selectedOptions);
+  if (selectedOptions.length > 1) {
+    MessagePlugin.warning('多选工序不能选择产品！'); // 大于1 提示一次就可以
+    // 然后置空产品
+    selectedOptions = null;
+    console.log('🚀 ~ handleWorkcenterChange ~ selectedOptions:', selectedOptions);
+  }
+};
 
 const mitemIds = ref([]); // dis1
 const processIds = ref([]); // dis2
-// const processNames = ref([]); // 假设这是工序名称数组，与IDs对应
-// const mitemNames = ref([]); // 假设这是产品名称数组，与IDs对应
-
-watch(mitemIds, (newVal) => {
-  console.log('🚀 ~ watch ~ newVal1111:', newVal);
-  // 当mitemIds变化时，如果其长度大于1，则禁用工序选择器
-  isWorkcenterDisabled.value = newVal.length > 1;
-});
-
-watch(processIds, (newVal) => {
-  console.log('🚀 ~ watch ~ newVal2222:', newVal);
-  // 当processIds变化时，如果其长度大于1，则禁用产品选择器
-  isMitemDisabled.value = newVal.length > 1;
-});
 
 // 计算属性来确定标题
 const chartTitle = computed(() => {
-  if (processIds.value.length >= 2) {
+  if (processIds.value.length > 1) {
     console.log('🚀 ~ chartTitle ~ processIds.value.length:', processIds.value.length);
     return '工序直通率';
   }
-  if (mitemIds.value.length >= 2) {
+  if (mitemIds.value.length > 1) {
     return '产品直通率';
   }
   return '直通率'; // 默认标题或其他逻辑
@@ -262,8 +267,8 @@ const opts = computed(() => {
         type: 'process', // processReturn
         showTitle: false,
         isMultiple: true,
-        // onChange: handleWorkcenterChange,
-        disabled: isWorkcenterDisabled.value, // 根据响应式引用动态设置禁用状态
+        onChange: handleWorkcenterChange,
+        // disabled: isWorkcenterDisabled.value, // 同上
       },
     },
     mitemIds: {
@@ -275,8 +280,8 @@ const opts = computed(() => {
         type: 'mitem',
         showTitle: false,
         isMultiple: true, // 多选
-        // onChange: handleMitemChange,
-        disabled: isMitemDisabled.value, // 同上
+        onChange: handleMitemChange,
+        // disabled: isMitemDisabled.value, // 根据响应式引用动态设置禁用状态
       },
     },
   };
@@ -357,6 +362,7 @@ const updateChartWithDateRange = (startDate, endDate) => {
 
 // 查询
 const onInput = async (data: any) => {
+  console.log('🚀 ~ onInput ~ data111:', data);
   const { servicingTime = [], mitemIds: incomingMitemIds = [], processIds: incomingProcessIds = [] } = data;
   const [startDate, endDate] = servicingTime;
   selectedDates.value = generateDateRange(servicingTime[0], servicingTime[1]);
@@ -364,15 +370,16 @@ const onInput = async (data: any) => {
   updateChartWithDateRange(startDate, endDate); // 辅助函数 根据选择的日期范围更新图表
 
   // 更新
-  mitemIds.value = incomingMitemIds;
   processIds.value = incomingProcessIds;
-  console.log('🚀 ~ onInput ~ processIds.value:', processIds.value.length);
+  console.log('🚀 ~ onInput ~ processIds.value :', processIds.value);
+  mitemIds.value = incomingMitemIds;
 
   // 查询参数处理id []
   const resMitemIds = incomingMitemIds ? incomingMitemIds.map((e) => e.value) : [];
   const resProcessIDs = incomingProcessIds ? incomingProcessIds.map((e) => e.value) : [];
 
   let reset: ProcessData[] = [];
+
   // 根据不同条件调用不同API
   if (processIds.value.length > 1) {
     // 工序长度大于1，调用getProcesses接口
