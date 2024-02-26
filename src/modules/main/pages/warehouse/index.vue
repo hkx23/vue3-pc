@@ -114,7 +114,7 @@ const opts = computed(() => {
     keyword: {
       label: '仓库',
       comp: 't-input',
-      placeholder: '请输入仓库编码/名称/描述',
+      placeholder: '请输入仓库编码/名称',
       defaultVal: '',
     },
     warehouseState: {

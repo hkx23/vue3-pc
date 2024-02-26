@@ -190,7 +190,7 @@ const opts = computed(() => {
       defaultVal: '',
     },
     servicingTime: {
-      label: '维修时间',
+      label: '维修开始时间',
       comp: 't-date-range-picker',
       event: 'daterangetime',
       defaultVal: [startOfSevenDaysAgo.format('YYYY-MM-DD HH:mm:ss'), endOfToday.format('YYYY-MM-DD HH:mm:ss')], // 初始化日期控件

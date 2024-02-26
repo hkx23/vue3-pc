@@ -24,7 +24,22 @@
           </template>
           <template #op="slotProps">
             <div @click.stop>
-              <t-button :icon="editIcon" size="small" theme="primary" variant="text" @click="onEdit(slotProps)" />
+              <t-button
+                v-if="!slotProps.row.flag"
+                :icon="editIcon"
+                size="small"
+                theme="primary"
+                variant="text"
+                @click="onEdit(slotProps)"
+              />
+              <t-button
+                v-if="slotProps.row.flag"
+                :icon="saveIcon"
+                size="small"
+                theme="primary"
+                variant="text"
+                @click="onSave(slotProps)"
+              />
               <t-button :icon="deleIcon" size="small" theme="primary" variant="text" @click="onDel(slotProps)" />
             </div>
           </template>
@@ -34,7 +49,7 @@
   </cmp-container>
 </template>
 <script lang="ts">
-import { DeleteIcon, EditIcon } from 'tdesign-icons-vue-next';
+import { DeleteIcon, EditIcon, SaveIcon } from 'tdesign-icons-vue-next';
 import { Input, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { h, onMounted, ref } from 'vue';
 
@@ -52,6 +67,7 @@ export default {
     });
     const editIcon = () => h(EditIcon, { size: '18px' });
     const deleIcon = () => h(DeleteIcon, { size: '18px' });
+    const saveIcon = () => h(SaveIcon, { size: '18px' });
     const reasonOption = ref([]);
     const businessTypeOption = ref([]);
     const { loading, setLoading } = useLoading();
@@ -67,15 +83,15 @@ export default {
         colKey: 'sampingStdCode',
         title: '抽样编码',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
       },
       {
         colKey: 'samplingNum',
         title: '抽样数量',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -114,8 +130,8 @@ export default {
         colKey: 'samplingPer',
         title: '抽样比例(%)',
         width: '130',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -154,8 +170,8 @@ export default {
         colKey: 'lotFrom',
         title: '批量下限',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -194,8 +210,8 @@ export default {
         colKey: 'lotTo',
         title: '批量上限',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -235,8 +251,8 @@ export default {
         colKey: 'acceptQtyClassA',
         title: 'A类AC',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -276,8 +292,8 @@ export default {
         colKey: 'rejectQtyClassA',
         title: 'A类RE',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -316,8 +332,8 @@ export default {
         colKey: 'acceptQtyClassB',
         title: 'B类AC',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -356,8 +372,8 @@ export default {
         colKey: 'rejectQtyClassB',
         title: 'B类RE',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -396,8 +412,8 @@ export default {
         colKey: 'acceptQtyClassC',
         title: 'C类AC',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -436,8 +452,8 @@ export default {
         colKey: 'rejectQtyClassC',
         title: 'C类RE',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -476,8 +492,8 @@ export default {
         colKey: 'acceptQtyClassD',
         title: 'D类AC',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -516,8 +532,8 @@ export default {
         colKey: 'rejectQtyClassD',
         title: 'D类RE',
         width: '110',
-        sorter: true,
-        filter: { type: 'input' },
+        // sorter: true,
+        // filter: { type: 'input' },
         edit: {
           component: Input,
           // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
@@ -576,7 +592,12 @@ export default {
         curIndex.value = slotProps.rowIndex;
       }
     };
-
+    const onSave = async (slotProps) => {
+      if (slotProps.row.flag) {
+        const item = tableDataWarehouse.value[curIndex.value];
+        await changeOrAddDtl(item, curIndex.value);
+      }
+    };
     const onRowClick = async (rowIndex, callback) => {
       console.log(rowIndex);
       console.log(curIndex.value);
@@ -728,6 +749,7 @@ export default {
       onRowClick,
       formData,
       editIcon,
+      saveIcon,
       dataTotal,
       tableColumns,
       tableDataWarehouse,
@@ -743,6 +765,7 @@ export default {
       editableCellState,
       onEdit,
       onDel,
+      onSave,
     };
   },
 };

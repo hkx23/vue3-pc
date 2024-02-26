@@ -4488,8 +4488,8 @@ export interface IntegratedConsoleSearch {
    */
   dateEnd?: string;
   mesbillNo?: string;
-  imsgqueueStatus?: string;
   erpbillNo?: string;
+  imsgqueueStatus?: string;
 }
 
 /** 显示工站 */

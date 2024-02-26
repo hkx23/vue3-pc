@@ -3223,8 +3223,11 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /** 已发料量 */
-  alreadyPickQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   /**
    * 已扫描数量
    * @format double
@@ -3233,11 +3236,8 @@ export interface MoIssuanceDtlVO {
   flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4451,6 +4451,8 @@ export interface MitemReceiveBillVO {
   isBatchNo?: number;
   /** 检验严格度 */
   inspectionStringency?: string;
+  /** 检验严格度 */
+  inspectionStringencyName?: string;
   waitTime?: string;
 }
 
@@ -9584,6 +9586,22 @@ export const api = {
      */
     getDeliveryDtlByDeliveryNo: (query: { billNo: string }) =>
       http.request<ResultListDeliveryDtlVO['data']>(`/api/warehouse/deliveryDtl/getDeliveryDtlByDeliveryNo`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  billSeq: {
+    /**
+     * No description
+     *
+     * @tags 单据流程水号表
+     * @name GetBillNo
+     * @summary 根据前缀获取流水单号
+     * @request GET:/billSeq/getBillNo
+     * @secure
+     */
+    getBillNo: (query: { prefix: string }) =>
+      http.request<ResultString['data']>(`/api/warehouse/billSeq/getBillNo`, {
         method: 'GET',
         params: query,
       }),

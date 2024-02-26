@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full="!!tagValue">
+  <cmp-container v-show="!pageShow" :full="!!tagValue">
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">
@@ -27,23 +27,34 @@
                   style="height: 300px"
                   :hover="true"
                   :selected-row-keys="stdRowKeys"
+                  @select-change="onSelectedChange"
                   @refresh="onRefresh"
                 >
                   <template #title> 产品检验标准列表 </template>
-                  <template #op>
+                  <template #op="{ row }">
                     <t-space :size="8">
-                      <t-link theme="primary">{{ '分配' }}</t-link>
-                      <t-link theme="primary">{{ '编辑' }}</t-link>
-                      <t-link theme="primary">{{ '删除' }}</t-link>
-                      <t-link theme="primary">{{ '复制' }}</t-link>
+                      <t-link theme="primary" @click="onAssign(row)">{{ '分配' }}</t-link>
+                      <t-link theme="primary" :disabled="row.status !== 'DRAFT'" @click="onEdit(row)">{{
+                        '编辑'
+                      }}</t-link>
+                      <t-popconfirm content="是否确认删除" @confirm="onDelData(row)">
+                        <t-link theme="primary" :disabled="row.status !== 'DRAFT'">{{ '删除' }}</t-link>
+                      </t-popconfirm>
+                      <t-link theme="primary" @click="onCopy(row)">{{ '复制' }}</t-link>
                     </t-space>
                   </template>
                   <template #button>
                     <t-space :size="8">
                       <t-button theme="primary" @click="onAdd">新增</t-button>
-                      <t-button theme="default">删除</t-button>
-                      <t-button theme="primary" @click="onAdd">生效</t-button>
-                      <t-button theme="primary" @click="onAdd">失效</t-button>
+                      <t-popconfirm content="是否确认删除" @confirm="onDelDataBatch">
+                        <t-button v-if="delButton" theme="default">删除</t-button>
+                      </t-popconfirm>
+                      <t-popconfirm content="是否确认生效" @confirm="onChangeStatus">
+                        <t-button v-if="enableButton" theme="primary">生效</t-button>
+                      </t-popconfirm>
+                      <t-popconfirm content="是否确认失效" @confirm="onChangeStatus">
+                        <t-button v-if="closeButton" theme="primary">失效</t-button>
+                      </t-popconfirm>
                     </t-space>
                   </template>
                 </cmp-table>
@@ -55,7 +66,7 @@
           <template #panel>
             <cmp-container :gutter="[0, 0]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
-                <cmp-query :opts="mitemBarcodeManageOp" label-width="100" @submit="managePageSearchClick">
+                <cmp-query :opts="assignOpts" label-width="100" @submit="subSearchClick">
                   <template #querySelect="{ param }">
                     <t-select v-model="param.status" label="条码状态" clearable>
                       <t-option v-for="item in statusOption" :key="item.id" :label="item.label" :value="item.value" />
@@ -67,16 +78,25 @@
                   v-model:pagination="pageUIMannage"
                   row-key="id"
                   select-on-row-click
-                  :selected-row-keys="selectedManageRowKeys"
+                  :selected-row-keys="selectedAssignRowKeys"
                   :loading="loading"
                   :table-column="assignColumns"
-                  :table-data="pkgManageDataList.list"
-                  :total="pkgManageTabTotal"
+                  :table-data="assignDataList.list"
+                  :total="assignDataTabTotal"
                   :fixed-height="true"
                   style="height: 300px"
                   @select-change="onProductRightFetchData"
+                  @refresh="onRefreshTwo"
                 >
-                  <template #title> 条码列表 </template>
+                  <template #title> 标准分配列表 </template>
+                  <template #button>
+                    <t-space :size="8">
+                      <t-button theme="primary" @click="onAddAssign">新增</t-button>
+                      <t-popconfirm content="是否确认删除" @confirm="onDelAssignDataBatch">
+                        <t-button theme="default">删除</t-button>
+                      </t-popconfirm>
+                    </t-space>
+                  </template>
                 </cmp-table>
               </cmp-card>
             </cmp-container>
@@ -86,23 +106,16 @@
     </cmp-card>
   </cmp-container>
   <t-loading :loading="pageLoading" text="加载中..." fullscreen />
-  <div>
-    <t-dialog
-      v-model:visible="formVisible"
-      :header="formTitle"
-      :on-confirm="onConfirmForm"
-      cancel-btn="暂存"
-      width="90%"
-      :close-on-overlay-click="false"
-    >
-      <std-form ref="formRef"></std-form>
-    </t-dialog>
-  </div>
+  <t-dialog v-model:visible="formVisible" :close-on-overlay-click="false" header="标准分配" @confirm="onAssignConfirm">
+    <materialAllotForm ref="assignFormRef"></materialAllotForm>
+  </t-dialog>
+  <cmp-container v-show="pageShow">
+    <materialStandardAdd ref="formRef" @permission-show="onPermission"></materialStandardAdd>
+  </cmp-container>
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
@@ -111,11 +124,12 @@ import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
-import StdForm from './form.vue';
+import materialAllotForm from './form.vue';
+import materialStandardAdd from './materialStandardAdd.vue';
 
-const formVisible = ref(false);
 const formRef = ref(null); // 新增表单数据清除，获取表单实例
-const formTitle = ref('');
+const assignFormRef = ref(null); // 新增表单数据清除，获取表单实例
+const formVisible = ref(false); // 新增表单数据清除，获取表单实例
 const pageLoading = ref(false);
 const { loading, setLoading } = useLoading();
 const { pageUI } = usePage(); // 分页工具
@@ -125,28 +139,23 @@ const stdList = reactive({ list: [] });
 // $打印上 表格数据
 const stdTableTotal = ref(0);
 // $管理上 表格数据
-const pkgManageDataList = reactive({ list: [] });
-const pkgManageTabTotal = ref(0);
-const isEnable = ref(true); // 控制打印按钮禁用
+const assignDataList = reactive({ list: [] });
+const assignDataTabTotal = ref(0);
 // 日志界面 表格数据
-const stdRowKeys: Ref<any[]> = ref([]); // 工单表数组
-const selectedManageRowKeys: Ref<any[]> = ref([]); // 打印数组
+const stdRowKeys: Ref<any[]> = ref([]); //
+const selectedAssignRowKeys: Ref<any[]> = ref([]); // 打印数组
 // 补打，作废 DiaLog 数据
-const reprintDialog = ref({
-  reprintData: '',
-  restsData: '',
-  labelNo: '',
-  labelId: '',
-  splitNum: '',
-  qty: 0,
-});
-const onConfirmForm = async () => {
-  formRef.value.submit().then((data) => {
-    if (data) {
-      formVisible.value = false;
-      fetchMoTable();
-    }
-  });
+const pageShow = ref(false);
+const onPermission = (value) => {
+  pageShow.value = value;
+  onRefresh();
+};
+
+const onAssignConfirm = async () => {
+  const data = await assignFormRef.value.submit();
+  if (data) {
+    formVisible.value = false;
+  }
 };
 
 // 标准头表查询初始化
@@ -157,41 +166,139 @@ const queryCondition = ref({
   pageNum: 1,
   pageSize: 20,
 });
-// 管理上方查询初始化
-const manageQueryCondition = ref({
+const subQueryCondition = ref({
   mitemId: '',
-  supplierId: '',
-  status: '',
-  timeCreatedStart: '',
-  timeCreatedEnd: '',
-  barcode: '',
-  billNo: '',
+  mitemCategoryId: '',
+  inspectStdCode: '',
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 20,
 });
 // 包装规则查询初始化
 // tab 表格?
 const tagValue = ref(0);
-const statusNameArr = ref([]);
-const onProductRightFetchData = (value: any, context: any) => {
-  selectedManageRowKeys.value = value;
-  isEnable.value = !(selectedManageRowKeys?.value?.length > 0);
-  reprintDialog.value.labelNo = context.selectedRowData[0].labelNo;
-  reprintDialog.value.qty = context.selectedRowData[0].qty;
-  reprintDialog.value.labelId = context.selectedRowData[0].id;
-  statusNameArr.value = context.selectedRowData.map((item: any) => item.statusName);
+const onProductRightFetchData = (value: any) => {
+  selectedAssignRowKeys.value = value;
 };
 
-// # 送货刷新按钮
+// 刷新按钮
 const onRefresh = async () => {
-  await fetchMoTable(); // 获取 条码规则表格 数据
+  await fetchMainTable();
+};
+// 刷新按钮
+const onRefreshTwo = async () => {
+  await fetchSubTable();
+};
+// 刷新按钮
+const onChangeStatus = async () => {
+  await apiQuality.oqcInspectStd.changStatus(stdRowKeys.value);
+  MessagePlugin.success('操作成功');
+  stdRowKeys.value = [];
+  enableButton.value = false;
+  closeButton.value = false;
+  delButton.value = false;
+  onRefresh();
 };
 
 const onAdd = () => {
-  console.log(formRef.value);
   formRef.value.init();
-  formTitle.value = '新增产品检验标准';
+  pageShow.value = true;
+};
+const enableButton = ref(false);
+const closeButton = ref(false);
+const delButton = ref(false);
+const onSelectedChange = (value: any) => {
+  stdRowKeys.value = value;
+  const selectedItems = stdList.list.filter((item: any) => stdRowKeys.value.includes(item.id));
+  if (selectedItems.length > 0) {
+    const firstStatusName = selectedItems[0].statusName;
+    const allSameStatusName = selectedItems.every((item: any) => item.statusName === firstStatusName);
+    if (allSameStatusName) {
+      if (firstStatusName === '已生效') {
+        enableButton.value = false;
+        closeButton.value = true;
+      } else if (firstStatusName === '已失效') {
+        enableButton.value = true;
+        closeButton.value = false;
+      } else if (firstStatusName === '起草中') {
+        enableButton.value = false;
+        closeButton.value = false;
+        delButton.value = true;
+      }
+    } else {
+      enableButton.value = false;
+      closeButton.value = false;
+      delButton.value = false;
+    }
+  } else {
+    enableButton.value = false;
+    closeButton.value = false;
+    delButton.value = false;
+  }
+};
+const onEdit = async (row) => {
+  const res = (await apiQuality.oqcInspectStd.copyOqcInspectStd({ id: row.id })) as any;
+  console.log(formRef);
+  formRef.value.dtlRowKeys = [];
+  formRef.value.ids = [];
+  formRef.value.formData = row;
+  formRef.value.perId = row.id;
+  if (row.fileList) {
+    row.fileList.forEach((file) => {
+      file.timeUpload = file.timeCreate;
+      file.signedUrl = file.filePath;
+    });
+  }
+  formRef.value.fileList = row.fileList;
+  formRef.value.formData.id = res;
+  formRef.value.formData.operateTpye = 'edit';
+  formRef.value.formData.revision = row.revisionName;
+  formRef.value.getDtlByStdId();
+  pageShow.value = true;
+};
+const onCopy = async (row) => {
+  const res = (await apiQuality.oqcInspectStd.copyOqcInspectStd({ id: row.id })) as any;
+  if (res) {
+    formRef.value.dtlRowKeys = [];
+    formRef.value.ids = [];
+    formRef.value.formData = row;
+    formRef.value.formData.id = res;
+    formRef.value.formData.inspectStdCode = '';
+    formRef.value.formData.inspectStdName = '';
+    formRef.value.formData.operateTpye = 'copy';
+    formRef.value.formData.revision = '1.0';
+    pageShow.value = true;
+    formRef.value.getDtlByStdId();
+  }
+};
+const onDelData = async (row) => {
+  await apiQuality.oqcInspectStd.delById([row.id]);
+  MessagePlugin.success('删除成功');
+  onRefresh();
+};
+const onAssign = async (row) => {
+  assignFormRef.value.formData.type = '01';
+  assignFormRef.value.formData.id = row.id;
+  assignFormRef.value.formData.inspectStdName = row.inspectStdName;
+  await assignFormRef.value.getOqcInspectStdMitem();
   formVisible.value = true;
+};
+const onAddAssign = async () => {
+  assignFormRef.value.formData.type = 'add';
+  assignFormRef.value.formData.inspectStdName = '';
+  assignFormRef.value.formData.id = '';
+  assignFormRef.value.formData.mitemId = '';
+  assignFormRef.value.formData.mitemCategortArr = [];
+  formVisible.value = true;
+};
+const onDelDataBatch = async () => {
+  await apiQuality.oqcInspectStd.delById(stdRowKeys.value);
+  MessagePlugin.success('删除成功');
+  onRefresh();
+};
+const onDelAssignDataBatch = async () => {
+  await apiQuality.oqcInspectStdMitem.delByIds(selectedAssignRowKeys.value);
+  MessagePlugin.success('删除成功');
+  onRefresh();
 };
 
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
@@ -214,7 +321,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'revision',
+    colKey: 'revisionName',
     title: '版本号',
     align: 'left',
     width: '90',
@@ -283,72 +390,40 @@ const assignColumns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'revision',
+    colKey: 'revisionName',
     title: '版本号',
     align: 'left',
     width: '90',
   },
   {
-    colKey: 'isGroupName',
-    title: '是否集团标准',
+    colKey: 'categoryCode',
+    title: '产品类别编码',
     align: 'left',
-    width: '150',
+    width: '90',
   },
   {
-    colKey: 'statusName',
-    title: '状态',
+    colKey: 'categoryName',
+    title: '产品类别名称',
     align: 'left',
-    width: '70',
+    width: '110',
   },
   {
-    colKey: 'timeEffective',
-    title: '生效时间',
+    colKey: 'mitemCode',
+    title: '产品编码',
     align: 'left',
-    width: '180',
+    width: '90',
   },
   {
-    colKey: 'timeInvalid',
-    title: '失效时间',
+    colKey: 'mitemName',
+    title: '产品名称',
     align: 'left',
-    width: '180',
-  },
-  {
-    colKey: 'creatorName',
-    title: '创建人',
-    align: 'left',
-    width: '100',
-  },
-  {
-    colKey: 'timeCreate',
-    title: '创建时间',
-    align: 'left',
-    width: '180',
-  },
-  {
-    colKey: 'op',
-    title: '操作',
-    fixed: 'right',
-    align: 'left',
-    width: '160',
+    width: '110',
   },
 ];
 
 const switchTab = (selectedTabIndex: any) => {
-  if (selectedTabIndex === 1) {
-    // 获取当前日期
-    const today = new Date();
-
-    // 计算三天前的日期
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(today.getDate() - 3);
-
-    // 将日期转换为字符串，格式可以根据需要进行调整
-    const timeCreatedStart = threeDaysAgo.toISOString().split('T')[0];
-    const timeCreatedEnd = today.toISOString().split('T')[0];
-    manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
-    manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
-  } else {
-    fetchMoTable();
+  if (selectedTabIndex === 0) {
+    fetchMainTable();
   }
 };
 // 打印界面点击查询按钮
@@ -356,23 +431,23 @@ const conditionEnter = (data: any) => {
   queryCondition.value.inspectStdCode = data.inspectStdCode;
   queryCondition.value.status = data.status;
   queryCondition.value.creator = data.creator;
-  fetchMoTable();
+  fetchMainTable();
 };
 // 管理界面点击查询按钮
-const managePageSearchClick = (data: any) => {
-  const [timeCreatedStart, timeCreatedEnd] = data.timeCreatedRange;
-  manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
-  manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
-  manageQueryCondition.value.barcode = data.barcode;
-  manageQueryCondition.value.status = data.status;
-  manageQueryCondition.value.billNo = data.billNo;
-  manageQueryCondition.value.mitemId = data.mitemId;
-  manageQueryCondition.value.supplierId = data.supplierId;
-  selectedManageRowKeys.value = [];
-  isEnable.value = true;
+const subSearchClick = (data: any) => {
+  if (!data.mitemId && !data.mitemCategoryId && !data.inspectStdCode) {
+    MessagePlugin.warning('请至少选择一个查询条件');
+    return;
+  }
+  subQueryCondition.value.mitemId = data.mitemId;
+  subQueryCondition.value.mitemCategoryId = data.mitemCategoryId;
+  subQueryCondition.value.inspectStdCode = data.inspectStdCode;
+  selectedAssignRowKeys.value = [];
+  fetchSubTable();
 };
-// 加载工单数据表格
-const fetchMoTable = async () => {
+
+// 加载数据表格
+const fetchMainTable = async () => {
   setLoading(true);
   try {
     queryCondition.value.pageNum = pageUI.value.page;
@@ -389,6 +464,32 @@ const fetchMoTable = async () => {
     ) {
       pageUI.value.page = 1;
       pageUI.value.rows = 20;
+      onRefresh();
+    }
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoading(false);
+  }
+};
+// 加载数据表格
+const fetchSubTable = async () => {
+  setLoading(true);
+  try {
+    subQueryCondition.value.pageNum = pageUI.value.page;
+    subQueryCondition.value.pageSize = pageUI.value.rows;
+    const data = (await apiQuality.oqcInspectStdMitem.getOqcInspectStdMitemList(subQueryCondition.value)) as any;
+    const { list } = data;
+    assignDataList.list = list;
+    assignDataTabTotal.value = data.total;
+    if (
+      data.total !== 0 &&
+      assignDataTabTotal.value < pageUI.value.page * pageUI.value.rows &&
+      data.list &&
+      data.list.length === 0
+    ) {
+      pageUIMannage.value.page = 1;
+      pageUIMannage.value.rows = 20;
       onRefresh();
     }
   } catch (e) {
@@ -426,25 +527,25 @@ const opts = computed(() => {
 });
 
 // 查询组件
-const mitemBarcodeManageOp = computed(() => {
+const assignOpts = computed(() => {
   return {
-    timeCreatedRange: {
-      label: '生成日期',
-      comp: 't-date-range-picker',
-      defaultVal: [dayjs().subtract(+3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+    inspectStdCode: {
+      label: '标准编码/名称',
+      comp: 't-input',
+      defaultVal: '',
     },
-    supplierId: {
-      label: '供应商',
+    mitemCategory: {
+      label: '产品类别',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'supplier',
+        type: 'mitemCategory',
         showTitle: false,
       },
     },
     mitemId: {
-      label: '物料',
+      label: '产品',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -453,40 +554,24 @@ const mitemBarcodeManageOp = computed(() => {
         showTitle: false,
       },
     },
-    status: {
-      label: '条码状态',
-      event: 'input',
-      defaultVal: '',
-      slotName: 'querySelect',
-    },
-    barcode: {
-      label: '条码',
-      comp: 't-input',
-      defaultVal: '',
-    },
-    billNo: {
-      label: '送货单',
-      comp: 't-input',
-      defaultVal: '',
-    },
   };
 });
-
-// 获取 作废原因 下拉数据
-const cancellationDataList = reactive({ list: [] });
-const onCancellationSelextData = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'SCRAP_REASON' });
-  cancellationDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
-};
-
 const statusOption = ref([]);
-apiMain.param.getListByGroupCode({ parmGroupCode: 'OQC_INSPECT_STD_STATUS' }).then((data) => {
-  statusOption.value = data;
+apiMain.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_STD_STATUS' }).then((data) => {
+  // 过滤满足特定条件的元素
+  const filteredData = data.filter((item) => {
+    const { value } = item;
+    // 只保留 label 为 '起草中'、'已生效'、'已失效' 的元素
+    return value === 'DRAFT' || value === 'EFFECTIVE' || value === 'EXPIRED';
+  });
+
+  // 将过滤后的结果赋值给 statusOption.value
+  statusOption.value = filteredData;
 });
+
 // ################ 初始渲染
 onMounted(async () => {
-  await fetchMoTable(); // 获取 物料编码 表格数据
-  await onCancellationSelextData(); // 获取作废原因列表
+  await fetchMainTable(); // 获取 物料编码 表格数据
 });
 </script>
 
