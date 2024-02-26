@@ -34,11 +34,11 @@
                   <template #op="{ row }">
                     <t-space :size="8">
                       <t-link theme="primary" @click="onAssign(row)">{{ '分配' }}</t-link>
-                      <t-link theme="primary" :disabled="row.statusName !== '起草中'" @click="onEdit(row)">{{
+                      <t-link theme="primary" :disabled="row.status !== 'DRAFT'" @click="onEdit(row)">{{
                         '编辑'
                       }}</t-link>
                       <t-popconfirm content="是否确认删除" @confirm="onDelData(row)">
-                        <t-link theme="primary" :disabled="row.statusName !== '起草中'">{{ '删除' }}</t-link>
+                        <t-link theme="primary" :disabled="row.status !== 'DRAFT'">{{ '删除' }}</t-link>
                       </t-popconfirm>
                       <t-link theme="primary" @click="onCopy(row)">{{ '复制' }}</t-link>
                     </t-space>
@@ -560,9 +560,9 @@ const statusOption = ref([]);
 apiMain.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_STD_STATUS' }).then((data) => {
   // 过滤满足特定条件的元素
   const filteredData = data.filter((item) => {
-    const { label } = item;
+    const { value } = item;
     // 只保留 label 为 '起草中'、'已生效'、'已失效' 的元素
-    return label === '起草中' || label === '已生效' || label === '已失效';
+    return value === 'DRAFT' || value === 'EFFECTIVE' || value === 'EXPIRED';
   });
 
   // 将过滤后的结果赋值给 statusOption.value

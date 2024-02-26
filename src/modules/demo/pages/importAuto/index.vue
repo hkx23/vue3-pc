@@ -12,6 +12,12 @@
       type="m_mitem_category"
       @close="fetchTable"
     ></bcmp-import-auto-button>
+    <bcmp-import-auto-button
+      theme="primary"
+      button-text="导入工站权限"
+      type="c_workstation_auth"
+      @close="fetchTable"
+    ></bcmp-import-auto-button>
   </cmp-container>
 </template>
 <script setup lang="tsx">
