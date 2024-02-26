@@ -1501,51 +1501,6 @@ export interface QcHoldVO {
   statusName?: string;
 }
 
-/** 品质控制 */
-export interface QcHoldSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  workCenterId?: string;
-  reasonCategory?: string;
-  /** hold开始时间 */
-  datetimeLockStart?: string;
-  /** hold结束 */
-  datetimeLockEnd?: string;
-  /** 操作人 */
-  creator?: string;
-  personResponsibilityId?: string;
-  personHandleId?: string;
-  personFollowUpId?: string;
-}
-
-/** 响应数据 */
-export type PagingDataQcHoldVO = {
-  list?: QcHoldVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataQcHoldVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataQcHoldVO;
-}
-
 /** 通用响应类 */
 export interface ResultLong {
   /**
@@ -1639,11 +1594,11 @@ export type SampleCodeVO = {
   batchEnd?: number;
   i?: string;
   ii?: string;
-  s4?: string;
-  s2?: string;
   iii?: string;
   s1?: string;
+  s2?: string;
   s3?: string;
+  s4?: string;
 } | null;
 
 /** 计量单位 */
@@ -1824,6 +1779,51 @@ export type DataTableVO = {
   /** 列设置 */
   columns?: DataTableColumnVO[];
 } | null;
+
+/** 品质控制 */
+export interface QcHoldSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workCenterId?: string;
+  reasonCategory?: string;
+  /** hold开始时间 */
+  datetimeLockStart?: string;
+  /** hold结束 */
+  datetimeLockEnd?: string;
+  /** 操作人 */
+  creator?: string;
+  personResponsibilityId?: string;
+  personHandleId?: string;
+  personFollowUpId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataQcHoldVO = {
+  list?: QcHoldVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataQcHoldVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataQcHoldVO;
+}
 
 /** 通用响应类 */
 export interface ResultString {
@@ -2404,13 +2404,16 @@ export const api = {
      * @tags 品质控制头表
      * @name GetQcHoldList
      * @summary 获取解锁列表列表
-     * @request POST:/hold/getQcHoldList
+     * @request GET:/hold/getQcHoldList
      * @secure
      */
-    getQcHoldList: (data: QcHoldSearch) =>
+    getQcHoldList: (query: {
+      /** 品质控制 */
+      search: QcHoldSearch;
+    }) =>
       http.request<ResultPagingDataQcHoldVO['data']>(`/api/quality/hold/getQcHoldList`, {
-        method: 'POST',
-        body: data as any,
+        method: 'GET',
+        params: query,
       }),
   },
   sampleCode: {
