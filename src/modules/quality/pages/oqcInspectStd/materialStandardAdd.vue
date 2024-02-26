@@ -254,7 +254,7 @@ const init = () => {
   dataTotal.value = 0;
 };
 const statusOption = ref([]);
-api.param.getListByGroupCode({ parmGroupCode: 'OQC_INSPECT_STD_STATUS' }).then((data) => {
+api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_STD_STATUS' }).then((data) => {
   statusOption.value = data;
 });
 // 下拉初始数据

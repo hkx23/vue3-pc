@@ -557,7 +557,7 @@ const assignOpts = computed(() => {
   };
 });
 const statusOption = ref([]);
-apiMain.param.getListByGroupCode({ parmGroupCode: 'OQC_INSPECT_STD_STATUS' }).then((data) => {
+apiMain.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_STD_STATUS' }).then((data) => {
   statusOption.value = data;
 });
 
