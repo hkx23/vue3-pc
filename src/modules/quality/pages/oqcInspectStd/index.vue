@@ -34,17 +34,27 @@
                   <template #op="{ row }">
                     <t-space :size="8">
                       <t-link theme="primary" @click="onAssign(row)">{{ '分配' }}</t-link>
-                      <t-link theme="primary" @click="onEdit(row)">{{ '编辑' }}</t-link>
-                      <t-link theme="primary" @click="onDelData(row)">{{ '删除' }}</t-link>
+                      <t-link theme="primary" :disabled="row.statusName !== '起草中'" @click="onEdit(row)">{{
+                        '编辑'
+                      }}</t-link>
+                      <t-popconfirm content="是否确认删除" @confirm="onDelData(row)">
+                        <t-link theme="primary" :disabled="row.statusName !== '起草中'">{{ '删除' }}</t-link>
+                      </t-popconfirm>
                       <t-link theme="primary" @click="onCopy(row)">{{ '复制' }}</t-link>
                     </t-space>
                   </template>
                   <template #button>
                     <t-space :size="8">
                       <t-button theme="primary" @click="onAdd">新增</t-button>
-                      <t-button v-if="delButton" theme="default" @click="onDelDataBatch">删除</t-button>
-                      <t-button v-if="enableButton" theme="primary" @click="onChangeStatus">生效</t-button>
-                      <t-button v-if="closeButton" theme="primary" @click="onChangeStatus">失效</t-button>
+                      <t-popconfirm content="是否确认删除" @confirm="onDelDataBatch">
+                        <t-button v-if="delButton" theme="default">删除</t-button>
+                      </t-popconfirm>
+                      <t-popconfirm content="是否确认生效" @confirm="onChangeStatus">
+                        <t-button v-if="enableButton" theme="primary">生效</t-button>
+                      </t-popconfirm>
+                      <t-popconfirm content="是否确认失效" @confirm="onChangeStatus">
+                        <t-button v-if="closeButton" theme="primary">失效</t-button>
+                      </t-popconfirm>
                     </t-space>
                   </template>
                 </cmp-table>
@@ -82,7 +92,9 @@
                   <template #button>
                     <t-space :size="8">
                       <t-button theme="primary" @click="onAddAssign">新增</t-button>
-                      <t-button theme="default" @click="onDelAssignDataBatch">删除</t-button>
+                      <t-popconfirm content="是否确认删除" @confirm="onDelAssignDataBatch">
+                        <t-button theme="default">删除</t-button>
+                      </t-popconfirm>
                     </t-space>
                   </template>
                 </cmp-table>

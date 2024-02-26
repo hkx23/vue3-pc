@@ -101,7 +101,9 @@
             </template>
           </t-input> -->
           <t-button @click="onAdd"> 新增 </t-button>
-          <t-button theme="default" :disabled="dtlRowKeys.length < 1" @click="onDelDtlData">删除</t-button>
+          <t-popconfirm content="是否确认删除" @confirm="onDelDtlData">
+            <t-button theme="default" :disabled="dtlRowKeys.length < 1">删除</t-button>
+          </t-popconfirm>
         </template>
         <template #inspectTypeListOp="{ row }">
           <t-row>
@@ -319,6 +321,7 @@ const submit = async () => {
       await apiQuality.oqcInspectStd.changeStd({
         ...formData.value,
         fileList: fileList.value,
+        perId: formData.value.id,
       });
       MessagePlugin.success('复制成功');
       Emit('permissionShow', false); // 回到父
