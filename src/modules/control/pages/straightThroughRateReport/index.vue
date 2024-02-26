@@ -5,10 +5,10 @@
     <cmp-card :span="12">
       <!-- @reset="onReset" -->
       <cmp-query
-        :key="queryKey"
         ref="queryComponent"
         :opts="opts"
         :bool-enter="false"
+        @change="change"
         @reset="onReset"
         @submit="onInput"
       >
@@ -16,22 +16,19 @@
     </cmp-card>
     <!-- 折线图 -->
     <cmp-card :span="12">
-      <div id="straightThroughRateReportChart" :style="{ width: '100%', height: '60%' }" />
+      <div id="straightThroughRateReportChart" :style="{ width: '100%', height: '60%' }"></div>
       <!-- 表格数据 -->
       <div v-if="apiData.length > 0" class="table-container">
         <table>
           <thead>
             <tr>
               <th>产品名称</th>
-              <!-- 直接访问 optionChart.xAxis.data，无需 .value -->
               <th v-for="date in optionChart.xAxis.data" :key="date">{{ date }}</th>
             </tr>
           </thead>
           <tbody>
-            <!-- 同理，直接访问 optionChart.series -->
             <tr v-for="series in optionChart.series" :key="series.name">
               <td>{{ series.name }}</td>
-              <!-- 在这里使用 formatPercentage 方法来格式化值 -->
               <td v-for="(value, index) in series.data" :key="index">{{ formatPercentage(value) }}</td>
             </tr>
           </tbody>
@@ -117,23 +114,10 @@ interface EChartsOption {
 }
 
 interface ProcessData {
-  // processId?: string;
   processName?: string;
-  // mitemIds?: string;
-  // mitemName?: string;
-  // passQuantity?: number;
-  // putTotal?: number;
-  // timeCreate?: string;
-  // dayStart?: string;
-  // days?: number;
-  // dcResult?: number;
   processRate?: number;
-  // mitemRate?: number;
   dayFinish?: string; // 添加了缺失的属性
 }
-
-// 假设queryKey是一个响应式数据，初始化为0
-const queryKey = ref(0);
 
 /** 日期范围 辅助函数
  */
@@ -158,24 +142,24 @@ const dateChange = async (data: any) => {
 
 /** 辅助函数 控制单选多选
  */
-// 处理产品选择变化的函数
-const handleMitemChange = (selectedOptions) => {
-  console.log('🚀 ~ handleMitemChange ~ selectedOptions:产品', selectedOptions);
-  if (selectedOptions.length > 1) {
-    MessagePlugin.warning('多选产品不能选择工序！'); // 大于1 提示一次就可以
-    // 然后置空工序
-    selectedOptions = null;
-    console.log('🚀 ~ handleMitemChange ~ selectedOptions:', selectedOptions);
+// const selectedProcessIds = ref([]);
+// const selectedMitemIds = ref([]);
+
+const change = (val) => {
+  const { mitemIds, processIds } = val;
+  if (processIds.length > 1) {
+    MessagePlugin.warning('多选工序不能选择产品！');
+    // selectedMitemIds.value = []; // 清空产品选择
+    // isMitemDisabled.value = true;
+  } else {
+    isMitemDisabled.value = false;
   }
-};
-// 处理工序选择变化的函数
-const handleWorkcenterChange = (selectedOptions) => {
-  console.log('🚀 ~ handleWorkcenterChange ~ selectedOptions:工序', selectedOptions);
-  if (selectedOptions.length > 1) {
-    MessagePlugin.warning('多选工序不能选择产品！'); // 大于1 提示一次就可以
-    // 然后置空产品
-    selectedOptions = null;
-    console.log('🚀 ~ handleWorkcenterChange ~ selectedOptions:', selectedOptions);
+  if (mitemIds.length > 1) {
+    MessagePlugin.warning('多选产品不能选择工序！');
+    // selectedProcessIds.value = []; // 清空工序选择
+    // isWorkcenterDisabled.value = true;
+  } else {
+    isWorkcenterDisabled.value = false;
   }
 };
 
@@ -252,9 +236,9 @@ const opts = computed(() => {
       comp: 't-date-range-picker',
       event: 'daterangetime',
       blur: dateChange,
-      defaultVal: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
+      defaultVal: [dayjs(), dayjs()],
       bind: {
-        enableTimePicker: false,
+        format: 'YYYY-MM-DD',
       },
     },
 
@@ -262,26 +246,26 @@ const opts = computed(() => {
       label: '工序',
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: '',
+      // defaultVal: selectedProcessIds.value,
       bind: {
         type: 'process', // processReturn
         showTitle: false,
         isMultiple: true,
-        onChange: handleWorkcenterChange,
-        // disabled: isWorkcenterDisabled.value, // 同上
+        // onChange: handleWorkcenterChange,
+        disabled: isWorkcenterDisabled.value,
       },
     },
     mitemIds: {
       label: '产品',
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: '',
+      // defaultVal: selectedMitemIds.value,
       bind: {
         type: 'mitem',
         showTitle: false,
         isMultiple: true, // 多选
-        onChange: handleMitemChange,
-        // disabled: isMitemDisabled.value, // 根据响应式引用动态设置禁用状态
+        // onChange: handleMitemChange,
+        disabled: isMitemDisabled.value, // 根据响应式引用动态设置禁用状态
       },
     },
   };
@@ -289,6 +273,9 @@ const opts = computed(() => {
 
 // 从 API 获取的数据
 const apiData = ref([]);
+
+const isMitemDisabled = ref(false);
+const isWorkcenterDisabled = ref(false);
 
 // 存储日期范围，用于表格列头
 const selectedDates = ref([]);
@@ -362,8 +349,15 @@ const updateChartWithDateRange = (startDate, endDate) => {
 
 // 查询
 const onInput = async (data: any) => {
-  console.log('🚀 ~ onInput ~ data111:', data);
+  console.log('🚀 ~ onInput ~ data:', data);
   const { servicingTime = [], mitemIds: incomingMitemIds = [], processIds: incomingProcessIds = [] } = data;
+
+  // 检查是否选择了时间范围和产品工序--2选1
+  // if (servicingTime.length === 0 || (incomingMitemIds.length === 0 && incomingProcessIds.length === 0)) {
+  //   MessagePlugin.warning('请选择产品或工序!');
+  //   return;
+  // }
+
   const [startDate, endDate] = servicingTime;
   selectedDates.value = generateDateRange(servicingTime[0], servicingTime[1]);
 
@@ -371,7 +365,6 @@ const onInput = async (data: any) => {
 
   // 更新
   processIds.value = incomingProcessIds;
-  console.log('🚀 ~ onInput ~ processIds.value :', processIds.value);
   mitemIds.value = incomingMitemIds;
 
   // 查询参数处理id []
@@ -392,7 +385,7 @@ const onInput = async (data: any) => {
       processIds: resProcessIDs,
     });
   } else if (mitemIds.value.length > 1) {
-    // 产品长度大于1，调用另一个接口（示例：getProducts）
+    // 产品长度大于1，调用另一个接口(getProducts)
     reset = await api.straightThroughRateReport.getProducts({
       pageNum: 1,
       pageSize: 20,
@@ -402,7 +395,7 @@ const onInput = async (data: any) => {
       processIds: resProcessIDs,
     });
   } else if (processIds.value.length === 1 && mitemIds.value.length === 1) {
-    // 工序和产品长度都为0，调用另一个接口
+    // 工序和产品长度都为0，调用(getSingle)
     reset = await api.straightThroughRateReport.getSingle({
       pageNum: 1,
       pageSize: 20,
@@ -412,6 +405,7 @@ const onInput = async (data: any) => {
       processIds: resProcessIDs,
     });
   }
+
   // 存数据
   apiData.value = reset;
 
@@ -468,7 +462,6 @@ const onInput = async (data: any) => {
 //* 重置
 const onReset = () => {
   apiData.value = [];
-  MessagePlugin.success('重置成功');
 };
 
 /* 辅助函数 直通率标题  */
