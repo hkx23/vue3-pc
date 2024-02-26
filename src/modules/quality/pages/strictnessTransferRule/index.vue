@@ -43,11 +43,13 @@
     <t-form ref="formRef" :rules="rules" :data="firmFormData" :label-width="120" @submit="onAnomalyTypeSubmit">
       <!-- 第 1️⃣ 行数据 -->
       <t-form-item label="转移前严格度" name="sourceInspectStringency">
-        <t-input v-model="firmFormData.sourceInspectStringency" disabled></t-input>
+        <t-input v-if="false" v-model="firmFormData.sourceInspectStringency"></t-input>
+        <t-input v-model="firmFormData.sourceInspectStringencyName" disabled></t-input>
       </t-form-item>
       <!-- 第 2️⃣ 行数据 -->
       <t-form-item label="转移后严格度" name="targetInspectStringency">
-        <t-input v-model="firmFormData.targetInspectStringency" disabled></t-input>
+        <t-input v-if="false" v-model="firmFormData.targetInspectStringency" disabled></t-input>
+        <t-input v-model="firmFormData.targetInspectStringencyName" disabled></t-input>
       </t-form-item>
       <!-- 第 3️⃣ 行数据 -->
       <t-form-item label="连续检验批次数" name="inspectBatchTimes">
@@ -98,6 +100,8 @@ const firmFormData = ref({
   id: '', // 行 ID
   sourceInspectStringency: '', // 转移前严格度
   targetInspectStringency: '', // 转移后严格度
+  sourceInspectStringencyName: '', // 转移前严格度名称
+  targetInspectStringencyName: '', // 转移后严格度名称
   inspectBatchTimes: 0, // 连续检验批次数
   ngTimes: 0, // 不合格次数
   memo: '', // 满足条件
@@ -131,12 +135,12 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
     width: 64,
   },
   {
-    colKey: 'sourceInspectStringency',
+    colKey: 'sourceInspectStringencyName',
     title: '转移前严格度',
     width: '100',
   },
   {
-    colKey: 'targetInspectStringency',
+    colKey: 'targetInspectStringencyName',
     title: '转移后严格度',
     width: '100',
   },
