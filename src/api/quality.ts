@@ -1051,6 +1051,35 @@ export interface ResultPagingDataIqcInspectStdDtlVO {
   data?: PagingDataIqcInspectStdDtlVO;
 }
 
+export interface IqcInspectStdSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 标准编码名称模糊 */
+  keyword?: string;
+  /** 标准状态 */
+  status?: string[];
+  /** 创建人名称 */
+  userNames?: string[];
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+}
+
 /** 物料检验标准头表 */
 export interface IqcInspectStdVO {
   id?: string;
@@ -1121,35 +1150,6 @@ export interface ResultPagingDataIqcInspectStdVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIqcInspectStdVO;
-}
-
-export interface IqcInspectStdSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 标准编码名称模糊 */
-  keyword?: string;
-  /** 标准状态 */
-  status?: string[];
-  /** 创建人名称 */
-  userNames?: string[];
-  /**
-   * 开始日期
-   * @format date-time
-   */
-  dateStart?: string;
-  /**
-   * 结束日期
-   * @format date-time
-   */
-  dateEnd?: string;
 }
 
 export interface MitemForwardTraceSearch {
@@ -1637,13 +1637,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  s3?: string;
+  s1?: string;
+  s4?: string;
   i?: string;
   ii?: string;
-  iii?: string;
-  s1?: string;
   s2?: string;
-  s3?: string;
-  s4?: string;
+  iii?: string;
 } | null;
 
 /** 计量单位 */
@@ -2340,21 +2340,6 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准头表
-     * @name RemoveBatch
-     * @summary 删除操作
-     * @request POST:/iqcInspectStd/removeBatch
-     * @secure
-     */
-    removeBatch: (data: string[]) =>
-      http.request<ResultPagingDataIqcInspectStdVO['data']>(`/api/quality/iqcInspectStd/removeBatch`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 物料检验标准头表
      * @name GetList
      * @summary 查询检验标准主界面数据
      * @request POST:/iqcInspectStd/getList
@@ -2362,21 +2347,6 @@ export const api = {
      */
     getList: (data: IqcInspectStdSearch) =>
       http.request<ResultPagingDataIqcInspectStdVO['data']>(`/api/quality/iqcInspectStd/getList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 物料检验标准头表
-     * @name LoseEffectiveness
-     * @summary 失效操作
-     * @request POST:/iqcInspectStd/LoseEffectiveness
-     * @secure
-     */
-    loseEffectiveness: (data: string[]) =>
-      http.request<ResultPagingDataIqcInspectStdVO['data']>(`/api/quality/iqcInspectStd/LoseEffectiveness`, {
         method: 'POST',
         body: data as any,
       }),
