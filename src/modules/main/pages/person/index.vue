@@ -37,7 +37,7 @@
                 </t-space>
               </template>
               <template #button>
-                <t-button theme="primary" @click="onImport">导入</t-button>
+                <bcmp-import-auto-button theme="primary" button-text="导入" type="m_person"></bcmp-import-auto-button>
               </template>
               <template #stateSwitch="{ row }">
                 <t-switch
@@ -250,9 +250,9 @@ const onEditConfirm = async () => {
 };
 
 // 导入按钮
-const onImport = () => {
-  onShowImportVisible.value = true;
-};
+// const onImport = () => {
+//   onShowImportVisible.value = true;
+// };
 const onImportCancel = () => {
   console.log('111');
 };
