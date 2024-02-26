@@ -1051,35 +1051,6 @@ export interface ResultPagingDataIqcInspectStdDtlVO {
   data?: PagingDataIqcInspectStdDtlVO;
 }
 
-export interface IqcInspectStdSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 标准编码名称模糊 */
-  keyword?: string;
-  /** 标准状态 */
-  status?: string[];
-  /** 创建人名称 */
-  userNames?: string[];
-  /**
-   * 开始日期
-   * @format date-time
-   */
-  dateStart?: string;
-  /**
-   * 结束日期
-   * @format date-time
-   */
-  dateEnd?: string;
-}
-
 /** 物料检验标准头表 */
 export interface IqcInspectStdVO {
   id?: string;
@@ -1150,6 +1121,35 @@ export interface ResultPagingDataIqcInspectStdVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIqcInspectStdVO;
+}
+
+export interface IqcInspectStdSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 标准编码名称模糊 */
+  keyword?: string;
+  /** 标准状态 */
+  status?: string[];
+  /** 创建人名称 */
+  userNames?: string[];
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
 }
 
 export interface MitemForwardTraceSearch {
@@ -1501,6 +1501,51 @@ export interface QcHoldVO {
   statusName?: string;
 }
 
+/** 品质控制 */
+export interface QcHoldSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workCenterId?: string;
+  reasonCategory?: string;
+  /** hold开始时间 */
+  datetimeLockStart?: string;
+  /** hold结束 */
+  datetimeLockEnd?: string;
+  /** 操作人 */
+  creator?: string;
+  personResponsibilityId?: string;
+  personHandleId?: string;
+  personFollowUpId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataQcHoldVO = {
+  list?: QcHoldVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataQcHoldVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataQcHoldVO;
+}
+
 /** 通用响应类 */
 export interface ResultLong {
   /**
@@ -1779,51 +1824,6 @@ export type DataTableVO = {
   /** 列设置 */
   columns?: DataTableColumnVO[];
 } | null;
-
-/** 品质控制 */
-export interface QcHoldSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  workCenterId?: string;
-  reasonCategory?: string;
-  /** hold开始时间 */
-  datetimeLockStart?: string;
-  /** hold结束 */
-  datetimeLockEnd?: string;
-  /** 操作人 */
-  creator?: string;
-  personResponsibilityId?: string;
-  personHandleId?: string;
-  personFollowUpId?: string;
-}
-
-/** 响应数据 */
-export type PagingDataQcHoldVO = {
-  list?: QcHoldVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataQcHoldVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataQcHoldVO;
-}
 
 /** 通用响应类 */
 export interface ResultString {
@@ -2340,6 +2340,21 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准头表
+     * @name RemoveBatch
+     * @summary 删除操作
+     * @request POST:/iqcInspectStd/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultPagingDataIqcInspectStdVO['data']>(`/api/quality/iqcInspectStd/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准头表
      * @name GetList
      * @summary 查询检验标准主界面数据
      * @request POST:/iqcInspectStd/getList
@@ -2347,6 +2362,21 @@ export const api = {
      */
     getList: (data: IqcInspectStdSearch) =>
       http.request<ResultPagingDataIqcInspectStdVO['data']>(`/api/quality/iqcInspectStd/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准头表
+     * @name LoseEffectiveness
+     * @summary 失效操作
+     * @request POST:/iqcInspectStd/LoseEffectiveness
+     * @secure
+     */
+    loseEffectiveness: (data: string[]) =>
+      http.request<ResultPagingDataIqcInspectStdVO['data']>(`/api/quality/iqcInspectStd/LoseEffectiveness`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2404,16 +2434,13 @@ export const api = {
      * @tags 品质控制头表
      * @name GetQcHoldList
      * @summary 获取解锁列表列表
-     * @request GET:/hold/getQcHoldList
+     * @request POST:/hold/getQcHoldList
      * @secure
      */
-    getQcHoldList: (query: {
-      /** 品质控制 */
-      search: QcHoldSearch;
-    }) =>
+    getQcHoldList: (data: QcHoldSearch) =>
       http.request<ResultPagingDataQcHoldVO['data']>(`/api/quality/hold/getQcHoldList`, {
-        method: 'GET',
-        params: query,
+        method: 'POST',
+        body: data as any,
       }),
   },
   sampleCode: {
