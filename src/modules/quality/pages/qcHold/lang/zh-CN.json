@@ -6,7 +6,7 @@
     "personResponsibilityId":"责任人",
     "customerId":"客户",
     "datetimePlanHandle":"预计处理时间",
-    "holdCategory":"原因类别",
+    "reasonCategory":"原因类别",
     "formtitle":"Q-Hold执行",
     "btnLock":"执行",
     "btnUnlock":"解锁",

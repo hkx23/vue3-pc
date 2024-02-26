@@ -32,20 +32,20 @@
               <t-form-item :label="t('qcHold.creatorName')" name="creatorName"> {{ formData.creatorName }}</t-form-item>
             </t-col>
             <t-col :span="6">
-              <t-form-item :label="t('qcHold.holdCategory')" name="holdCategory">
-                <t-select v-model="formData.holdCategory">
-                  <t-option v-for="item in holdCategoryOption" :key="item.id" :label="item.label" :value="item.value" />
+              <t-form-item :label="t('qcHold.reasonCategory')" name="reasonCategory">
+                <t-select v-model="formData.reasonCategory">
+                  <t-option
+                    v-for="item in reasonCategoryOption"
+                    :key="item.id"
+                    :label="item.label"
+                    :value="item.value"
+                  />
                 </t-select>
               </t-form-item>
             </t-col>
             <t-col :span="6">
               <t-form-item :label="t('qcHold.datetimePlanHandle')" name="datetimePlanHandle">
-                <t-date-picker
-                  v-model="formData.datetimePlanHandle"
-                  enable-time-picker
-                  allow-input
-                  clearable
-                  format="YYYY-MM-DD hh:mm:ss"
+                <t-date-picker v-model="formData.datetimePlanHandle" allow-input clearable format="YYYY-MM-DD"
               /></t-form-item>
             </t-col>
             <t-col :span="6">
@@ -160,8 +160,8 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { onMounted, reactive, ref } from 'vue';
+import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apimain } from '@/api/main';
 import { api as apiQuality, QcHoldVO } from '@/api/quality';
@@ -173,8 +173,9 @@ import { useLang } from './lang';
 
 const userStore = useUserStore();
 const { t } = useLang();
+const formRefDetail: Ref<FormInstanceFunctions> = ref(null);
 // 原因类别下拉初始数据
-const holdCategoryOption = ref([]);
+const reasonCategoryOption = ref([]);
 const selectRows = ref([]); // 冻结执行，所选择的行信息
 const keyList = ref([]); // 冻结的唯一key列表信息
 const operatorType = ref('');
@@ -202,9 +203,9 @@ const formData: FormQcHold = reactive({
   viewType: ViewType.VIEW,
 });
 const FORM_RULES = {
-  holdCategory: [{ required: true, message: t('common.placeholder.input', [t('qcHold.holdCategory')]) }],
+  reasonCategory: [{ required: true, message: t('common.placeholder.input', [t('qcHold.reasonCategory')]) }],
   datetimePlanHandle: [{ required: true, message: t('common.placeholder.input', [t('qcHold.datetimePlanHandle')]) }],
-  customerId: [{ required: true, message: t('common.placeholder.input', [t('qcHold.customerId')]) }],
+  customerId: [{ required: false, message: t('common.placeholder.input', [t('qcHold.customerId')]) }],
   personResponsibilityId: [
     { required: true, message: t('common.placeholder.input', [t('qcHold.personResponsibilityId')]) },
   ],
@@ -543,31 +544,42 @@ const mitemColumns: PrimaryTableCol<TableRowData>[] = [
   },
 ];
 
-// 初始化冻结信息
+// 初始化冻结界面信息
 const initLockDetailForm = (rowDatas: any, keys: String[], type: OperatorType) => {
   selectRows.value = rowDatas;
   keyList.value = keys;
   operatorType.value = type.toString();
   formData.viewType = ViewType.LOCK;
   formData.creatorName = userStore.userInfo.name;
+  formData.holdCategory = operatorType.value;
 };
 
 // 冻结解冻提交
 const onConfirmForm = async () => {
   try {
-    setLoadingDetail(true);
+    LoadingPlugin(true);
     await apiQuality.hold.saveData({
-      ...formData,
+      qcHoldInfo: formData,
       keyList: keyList.value,
+      saveType: formData.viewType === ViewType.LOCK ? ViewType.LOCK : ViewType.UNLOCK,
     });
-    // saveType: formData.viewType as ViewType,
+
     MessagePlugin.success(t('common.message.saveSuccess'));
     formVisible.value = false;
     Emit('showCloseEvent', false);
   } catch (e) {
     console.log(e);
   } finally {
-    setLoadingDetail(false);
+    LoadingPlugin(false);
+  }
+};
+
+const reset = () => {
+  formRefDetail.value.reset({ type: 'empty' });
+  keyList.value = [];
+  selectRows.value = [];
+  for (const key in formData) {
+    formData[key] = null;
   }
 };
 
@@ -580,12 +592,13 @@ const initOptions = async () => {
   const res = (await apimain.param.getListByGroupCode({
     parmGroupCode: 'Q_HOLD_CATEGORY',
   })) as any;
-  holdCategoryOption.value = res;
+  reasonCategoryOption.value = res;
 };
 
 defineExpose({
   initLockDetailForm,
   showPopform,
+  reset,
 });
 
 onMounted(() => {
