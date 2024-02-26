@@ -8,7 +8,7 @@
     </cmp-card>
     <!-- 折线图 -->
     <cmp-card :span="12">
-      <div id="straightThroughRateReportChart" :style="{ width: '100%', height: '100%' }" />
+      <div id="straightThroughRateReportChart" :style="{ width: '100%', height: '60%' }" />
       <!-- 表格数据 -->
       <div v-if="apiData.length > 0" class="table-container">
         <table>
@@ -43,7 +43,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 echarts.use([CanvasRenderer]);
 import dayjs from 'dayjs';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { computed, onMounted, Ref, ref } from 'vue';
+import { computed, onMounted, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/control';
 
@@ -149,11 +149,13 @@ const isMitemDisabled = ref(false);
  */
 // 处理产品选择变化的函数
 // function handleMitemChange(selectedOptions) {
+//   console.log('🚀 ~ handleMitemChange ~ selectedOptions:产品', selectedOptions);
 //   // 如果选择了多于一个的产品，则禁用工序选择器
 //   isWorkcenterDisabled.value = selectedOptions.length > 1;
 // }
 // // 处理工序选择变化的函数
 // function handleWorkcenterChange(selectedOptions) {
+//   console.log('🚀 ~ handleWorkcenterChange ~ selectedOptions:工序', selectedOptions);
 //   // 如果选择了多于一个的工序，则禁用产品选择器
 //   isMitemDisabled.value = selectedOptions.length > 1;
 // }
@@ -162,6 +164,18 @@ const mitemIds = ref([]); // dis1
 const processIds = ref([]); // dis2
 // const processNames = ref([]); // 假设这是工序名称数组，与IDs对应
 // const mitemNames = ref([]); // 假设这是产品名称数组，与IDs对应
+
+watch(mitemIds, (newVal) => {
+  console.log('🚀 ~ watch ~ newVal1111:', newVal);
+  // 当mitemIds变化时，如果其长度大于1，则禁用工序选择器
+  isWorkcenterDisabled.value = newVal.length > 1;
+});
+
+watch(processIds, (newVal) => {
+  console.log('🚀 ~ watch ~ newVal2222:', newVal);
+  // 当processIds变化时，如果其长度大于1，则禁用产品选择器
+  isMitemDisabled.value = newVal.length > 1;
+});
 
 // 计算属性来确定标题
 const chartTitle = computed(() => {
@@ -194,7 +208,7 @@ const optionChart: Ref<EChartsOption> = ref({
     top: '40',
     left: '5%',
     right: '5%',
-    bottom: '10%',
+    bottom: '15%',
     containLabel: true,
   },
   toolbox: {
@@ -476,22 +490,20 @@ const getlineData = async () => {
 
 <style scoped>
 .table-container {
-  /* 固定高度，确保容器高度固定 */
-
-  /* 启用垂直滚动条 */
-
-  /* overflow-y: auto; */
-
-  /* 水平居中 */
+  /* overflow-y: scroll; */
+  overflow-y: auto; /* 改为 auto，仅在需要时显示滚动条 */
   margin: 0 auto;
-
-  /* 最小宽度，确保在小屏幕上也能正确显示 */
-  max-width: 90%;
+  max-width: 100%; /* 如果需要，可以调整为 100% 以充分利用可用空间 */
+  max-height: 40vh; /* 使用 vh 单位来基于视口高度设置最大高度 */
+  display: flex; /* 启用 Flexbox 布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
 }
 
 table {
   /* 宽度调整为100%以填充容器 */
-  width: 90%;
+  width: auto; /* 根据内容自动调整宽度 */
+  margin: 0 auto; /* 确保表格在容器中水平居中 */
   border-collapse: collapse;
 }
 
@@ -502,9 +514,11 @@ td {
   /* 文本居中对齐 */
   text-align: center;
 
+  /* padding: 8px; 增加内边距以改善可读性 */
+
   /* 垂直居中 */
   vertical-align: middle;
-  font-size: 12.5px;
+  font-size: 13px;
 }
 
 thead {
