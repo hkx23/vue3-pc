@@ -22,7 +22,7 @@
               {{ formData.mitemName }}
             </div>
           </t-descriptions-item>
-          <t-descriptions-item label="检验严格度">{{ formData.inspectionStringency }}</t-descriptions-item>
+          <t-descriptions-item label="检验严格度">{{ formData.inspectionStringencyName }}</t-descriptions-item>
           <t-descriptions-item label="报批数量">{{ formData.pickQty }}</t-descriptions-item>
           <t-descriptions-item label="检验标准">{{ formData.inspectStdName }}</t-descriptions-item>
           <t-descriptions-item label="接收单号">{{ formData.billNoStr }}</t-descriptions-item>
@@ -32,7 +32,12 @@
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :column="3" size="large">
           <t-descriptions-item label="缺陷类型">
-            <bcmp-select-business v-model="formNgData.defectCode" type="defectCode" :show-title="false">
+            <bcmp-select-business
+              v-model="formNgData.defectCodeList"
+              type="defectCode"
+              :show-title="false"
+              :is-multiple="true"
+            >
             </bcmp-select-business>
           </t-descriptions-item>
           <t-descriptions-item label="缺陷等级"
@@ -101,6 +106,7 @@ const formData = reactive({
   supplierCode: '',
   supplierName: '',
   inspectionStringency: '',
+  inspectionStringencyName: '',
   inspectStdName: '',
 });
 
@@ -111,7 +117,7 @@ const formNgData = reactive({
   iqcHandleMethodCode: '',
   iqcResponsibilityCode: '',
   iqcCorrectCode: '',
-  defectCode: '',
+  defectCodeList: [],
   memo: '',
   isPdca: false,
   isStartImprove: 0,
@@ -119,7 +125,7 @@ const formNgData = reactive({
 
 const onConfirmForm = async () => {
   try {
-    if (_.isEmpty(formNgData.defectCode)) {
+    if (formNgData.defectCodeList.length === 0) {
       MessagePlugin.error('缺陷类型不能为空');
       return;
     }
@@ -194,8 +200,8 @@ const reset = () => {
 const showForm = async (edit, row, tableData) => {
   formVisible.value = true;
   reset();
-  formData.billNoList.push({ billNo: row.billNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
-  formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
+  formData.billNoList = row.billNoList;
+  formData.billNoStr = row.billNoStr;
   formData.iqcBillNo = row.iqcBillNo;
   formData.mitemId = row.mitemId;
   formData.mitemCode = row.mitemCode;
@@ -209,6 +215,7 @@ const showForm = async (edit, row, tableData) => {
   formData.supplierCode = row.supplierCode;
   formData.supplierName = row.supplierName;
   formData.inspectionStringency = row.inspectionStringency;
+  formData.inspectionStringencyName = row.inspectionStringencyName;
   formData.inspectStdName = row.inspectStdName;
   mainTableData.value = tableData.value;
 };
