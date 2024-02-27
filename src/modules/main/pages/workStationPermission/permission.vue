@@ -66,8 +66,7 @@ import { Icon, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
-import { api, WorkstationAuthVO } from '@/api/control';
-import { api as apiMain } from '@/api/main';
+import { api, WorkstationAuthVO } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -213,7 +212,7 @@ const onTable = async () => {
   // 右边列表
   setLoading(true);
   try {
-    const list = await apiMain.workstation.getlist({
+    const list = await api.workstation.getlist({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       keyword: permission.value.work.trim(),

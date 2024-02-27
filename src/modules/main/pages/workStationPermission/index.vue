@@ -48,7 +48,7 @@ import _ from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
-import { api } from '@/api/control';
+import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -188,7 +188,7 @@ const opts = computed(() => {
 const onfetchData = async () => {
   try {
     setLoading(true);
-    const list = await api.workstationAuth.getlist({
+    const list = await api.workstationAuth.getList({
       workcenterWord: inputValue.value.workcenterWord,
       userWord: inputValue.value.userWord,
       workstationWord: inputValue.value.workstationWord,
@@ -240,7 +240,7 @@ const onHandelPermission = () => {
 // 查询
 const onSearch = async () => {
   pageUI.value.page = 1;
-  const res = await api.workstationAuth.getlist({
+  const res = await api.workstationAuth.getList({
     workcenterWord: inputValue.value.workcenterWord,
     userWord: inputValue.value.userWord,
     workstationWord: inputValue.value.workstationWord,
