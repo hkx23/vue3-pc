@@ -25,7 +25,11 @@
           >
             <template #title> 物料类别列表 </template>
             <template #button>
-              <bcmp-import-button theme="primary" type="mitemCategory" @close="fetchTable"></bcmp-import-button>
+              <bcmp-import-auto-button
+                theme="primary"
+                button-text="导入"
+                type="m_mitem_category"
+              ></bcmp-import-auto-button>
             </template>
             <template #op="slotProps">
               <t-space :size="8">
