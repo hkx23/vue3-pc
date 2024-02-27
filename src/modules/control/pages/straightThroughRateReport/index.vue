@@ -144,20 +144,22 @@ const dateChange = async (data: any) => {
  */
 // const selectedProcessIds = ref([]);
 // const selectedMitemIds = ref([]);
-
+const queryComponent = ref();
 const change = (val) => {
   const { mitemIds, processIds } = val;
   if (processIds.length > 1) {
-    MessagePlugin.warning('多选工序不能选择产品！');
+    // MessagePlugin.warning('多选工序不能选择产品！');
     // selectedMitemIds.value = []; // 清空产品选择
-    // isMitemDisabled.value = true;
+    queryComponent.value.setFromValue('mitemIds', []);
+    isMitemDisabled.value = true;
   } else {
     isMitemDisabled.value = false;
   }
   if (mitemIds.length > 1) {
-    MessagePlugin.warning('多选产品不能选择工序！');
+    // MessagePlugin.warning('多选产品不能选择工序！');
     // selectedProcessIds.value = []; // 清空工序选择
-    // isWorkcenterDisabled.value = true;
+    queryComponent.value.setFromValue('processIds', []);
+    isWorkcenterDisabled.value = true;
   } else {
     isWorkcenterDisabled.value = false;
   }

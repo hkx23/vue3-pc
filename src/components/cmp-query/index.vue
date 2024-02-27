@@ -413,7 +413,7 @@ watch(
   () => props.opts,
   (opts, oldValue) => {
     console.log('query change', opts, oldValue);
-    state.form = initForm(opts, false);
+    state.form = initForm(opts, true);
   },
   { deep: true },
 );
@@ -454,8 +454,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
   // window.removeEventListener('resize', debounceFunction);
 });
+
+const setFromValue = (fromKey, fromValue) => {
+  state.form[fromKey] = fromValue;
+};
 // 暴露方法出去
-defineExpose({ state, props });
+defineExpose({ state, props, setFromValue });
 </script>
 
 <style lang="less" scoped>
