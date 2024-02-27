@@ -30,7 +30,8 @@
                     :table-column="standardColumn"
                     :table-data="materialStandardList"
                     :total="materialStandardTotal"
-                    select-on-row-click
+                    :selected-row-keys="stdRowKeys"
+                    @select-change="onSelectedChange"
                   >
                     <template #title>
                       {{ '物料检验标准列表' }}
@@ -41,8 +42,8 @@
                     <template #button>
                       <t-button @click="onAddClick">新增</t-button>
                       <t-button theme="default">导入</t-button>
-                      <t-popconfirm content="确认删除吗">
-                        <t-button theme="default" variant="base">批量删除</t-button>
+                      <t-popconfirm content="确认删除吗" @confirm="delStdByIdBatch">
+                        <t-button v-if="stdRowKeys.length > 1" theme="default" variant="base">批量删除</t-button>
                       </t-popconfirm>
                     </template>
                     <template #operation="{ row }">
@@ -54,7 +55,10 @@
                         @click="onEdit(row)"
                         >编辑</t-link
                       >
-                      <t-popconfirm content="继续将删除该标准对应的检验项目、物料关系、附件等，是否继续？">
+                      <t-popconfirm
+                        content="继续将删除该标准对应的检验项目、物料关系、附件等，是否继续？"
+                        @confirm="delStdById(row)"
+                      >
                         <t-link v-if="row.status === 'DRAFT'" theme="primary" style="padding-right: 8px">删除</t-link>
                       </t-popconfirm>
                       <t-popconfirm content="失效后该标准将被禁用，同时解除物料及物料类对该标准的引用，是否继续？">
@@ -102,7 +106,7 @@
                     </template>
                     <template #operations>
                       <t-link theme="primary"> 编辑 </t-link>
-                      <t-popconfirm theme="default" content="确认删除吗">
+                      <t-popconfirm theme="default" content="确认删除吗" @confirm="delStdById">
                         <t-link theme="primary"> 删除 </t-link>
                       </t-popconfirm>
                       <t-link theme="primary"> 复制 </t-link>
@@ -144,6 +148,7 @@ const onPermission = (value) => {
   pageShow.value = value;
 };
 const formVisible = ref(false);
+const batchDelOp = ref(false);
 const formRef = ref(null);
 const productSelectedRowKeys: Ref<any[]> = ref([]); // 补打 打印数组
 const { pageUI } = usePage(); // 物料标准 分页工具
@@ -151,11 +156,16 @@ const { pageUI: pageUINorm } = usePage(); // 物料标准分配 分页工具
 const tabValue = ref(0);
 const tableRefs = ref(); // 物料检验标准 表格 实例
 const tableRefCard = ref(); // 物料标准分配 表格 实例
-
+const stdRowKeys: Ref<any[]> = ref([]); //
 // 产品标签管理 表格数据
 const manageTabData = reactive({ list: [] });
 const totalManage = ref(0);
-
+const onSelectedChange = (value: any) => {
+  stdRowKeys.value = value;
+  if (stdRowKeys.value.length > 1) {
+    batchDelOp.value = true;
+  }
+};
 // 标准表格列表数据
 const standardColumn: PrimaryTableCol<TableRowData>[] = [
   {
@@ -308,6 +318,7 @@ const onGetMaterialStandardData = async () => {
   const res = await api.iqcInspectStd.getList(materialStandardParam.value);
   materialStandardList.value = res.list;
   materialStandardTotal.value = res.total;
+  stdRowKeys.value = [];
 };
 
 // #################   新增按钮点击事件  ##########################
@@ -419,6 +430,20 @@ const onInput = async (data: any) => {
     MessagePlugin.success('标准分配');
   }
   MessagePlugin.success('查询成功');
+};
+const delStdById = async (row) => {
+  await api.iqcInspectStd.removeBatch([row.id]);
+  MessagePlugin.success('删除成功');
+  onRefresh();
+};
+const delStdByIdBatch = async () => {
+  await api.iqcInspectStd.removeBatch(stdRowKeys.value);
+  MessagePlugin.success('删除成功');
+  onRefresh();
+};
+// 刷新按钮
+const onRefresh = async () => {
+  await onGetMaterialStandardData();
 };
 </script>
 
