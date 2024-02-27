@@ -269,6 +269,162 @@ export interface Org {
   isActive?: number;
 }
 
+/** 筛选字段 */
+export interface Filter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  value?: string;
+}
+
+/** 排序字段 */
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
+}
+
+export interface WorkstationAuthSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  id?: string;
+  userId?: string;
+  /** 需要新增的关系 */
+  inseartList?: string[];
+  /** 需要删除的关系 */
+  removeList?: string[];
+  /** 多个工站权限id */
+  ids?: string[];
+  /** 模糊关键词 */
+  keyword?: string;
+  /** 工站编码名称模糊查询 */
+  workstationWord?: string;
+  /** 用户编码名称模糊查询 */
+  userWord?: string;
+  /** 工作中心编码名称模糊 */
+  workcenterWord?: string;
+  /** 工序编码名称模糊 */
+  processWord?: string;
+  /** 排序字段 */
+  sorts?: SortParam[];
+  /** 筛选字段 */
+  filters?: Filter[];
+}
+
+/** 工站权限 */
+export interface WorkstationAuth {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  userId?: string;
+  workstationId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataWorkstationAuthVO = {
+  list?: WorkstationAuthVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkstationAuthVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkstationAuthVO;
+}
+
+/** 工站权限显示 */
+export interface WorkstationAuthVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  userId?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 用户显示名 */
+  userDisplayName?: string;
+  workstationId?: string;
+  /** 工站编码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 工站描述 */
+  workstationDesc?: string;
+  /** 工作中心编码 */
+  workcenterCode?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 工序编码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /**
+   * 状态
+   * @format int32
+   */
+  state?: number;
+  /** 创建人 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+}
+
+/** 响应数据 */
+export type PagingDataLong = {
+  list?: string[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLong;
+}
+
 export interface CommonSearch {
   /** @format int32 */
   pageNum?: number;
@@ -284,17 +440,6 @@ export interface CommonSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
-}
-
-export interface Filter {
-  field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
-  value?: string;
-}
-
-export interface SortParam {
-  sortBy?: string;
-  descending?: boolean;
 }
 
 /** 响应数据 */
@@ -453,6 +598,8 @@ export interface WorkstationVO {
 
 /** 品质控制-工站 */
 export interface WorkstationQcHoldSearch {
+  /** 按唯一键集合查询 */
+  keyList?: string[];
   /**
    * 页码
    * @format int32
@@ -649,26 +796,6 @@ export interface ResultWorkcenter {
   message?: string;
   /** 工作中心 */
   data?: Workcenter;
-}
-
-/** 响应数据 */
-export type PagingDataLong = {
-  list?: string[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataLong {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataLong;
 }
 
 /** 响应数据 */
@@ -3344,6 +3471,17 @@ export interface ResultMoSchedule {
   data?: MoSchedule;
 }
 
+/** 排产单 */
+export interface MoScheduleDTO {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int32 */
+  isHold?: number;
+  keyList?: string[];
+}
+
 /** 工单表 */
 export interface Mo {
   id?: string;
@@ -3785,6 +3923,7 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
   isProductName?: string;
   isProductChecked?: boolean;
   isRawName?: string;
@@ -3792,7 +3931,6 @@ export interface MitemVO {
   isInProcessName?: string;
   isInProcessChecked?: boolean;
   isBatchName?: string;
-  stateName?: string;
   isState?: boolean;
 }
 
@@ -3936,8 +4074,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6854,12 +6992,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -8040,6 +8178,127 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/org/delete`, {
         method: 'DELETE',
         params: query,
+      }),
+  },
+  workstationAuth: {
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name Save
+     * @summary 保存工站权限
+     * @request POST:/workstationAuth/save
+     * @secure
+     */
+    save: (data: WorkstationAuthSearch) =>
+      http.request<ResultObject['data']>(`/api/main/workstationAuth/save`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name Remove
+     * @summary 删除工站权限
+     * @request POST:/workstationAuth/remove
+     * @secure
+     */
+    remove: (data: WorkstationAuthSearch) =>
+      http.request<ResultObject['data']>(`/api/main/workstationAuth/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name RemoveBatch
+     * @summary 批量删除工站权限
+     * @request POST:/workstationAuth/removeBatch
+     * @secure
+     */
+    removeBatch: (data: WorkstationAuthSearch) =>
+      http.request<ResultObject['data']>(`/api/main/workstationAuth/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name Input
+     * @summary 导入工站权限
+     * @request POST:/workstationAuth/input
+     * @secure
+     */
+    input: (data: WorkstationAuth) =>
+      http.request<ResultObject['data']>(`/api/main/workstationAuth/input`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name GetUserList
+     * @summary 获得用户列表
+     * @request POST:/workstationAuth/getUserList
+     * @secure
+     */
+    getUserList: (data: WorkstationAuthSearch) =>
+      http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/main/workstationAuth/getUserList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name GetUserAuth
+     * @summary 获得选中用户所拥有的工站权限
+     * @request POST:/workstationAuth/getUserAuth
+     * @secure
+     */
+    getUserAuth: (data: WorkstationAuthSearch) =>
+      http.request<ResultPagingDataLong['data']>(`/api/main/workstationAuth/getUserAuth`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name GetList
+     * @summary 查询主界面信息
+     * @request POST:/workstationAuth/getList
+     * @secure
+     */
+    getList: (data: WorkstationAuthSearch) =>
+      http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/main/workstationAuth/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工站权限
+     * @name CurrentUserWorkstation
+     * @summary 获得当前用户所拥有权限的工站
+     * @request POST:/workstationAuth/currentUserWorkstation
+     * @secure
+     */
+    currentUserWorkstation: (data: CommonSearch) =>
+      http.request<ResultPagingDataWorkstation['data']>(`/api/main/workstationAuth/currentUserWorkstation`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   workstation: {
@@ -10370,21 +10629,6 @@ export const api = {
      * No description
      *
      * @tags 工单排产表
-     * @name UpdateIsHoldMoScheList
-     * @summary 批量更新排产单暂挂信息
-     * @request POST:/moSchedule/updateIsHoldMoScheList
-     * @secure
-     */
-    updateIsHoldMoScheList: (data: MoSchedule) =>
-      http.request<ResultObject['data']>(`/api/main/moSchedule/updateIsHoldMoScheList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单排产表
      * @name SearchRunningMoSche
      * @summary 弹出框公共方法-查询有效的排产单信息-已排产，已备料，已上线
      * @request POST:/moSchedule/searchRunningMoSche
@@ -10423,36 +10667,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultMoSchedule['data']>(`/api/main/moSchedule/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单排产表
-     * @name AddStockInQty
-     * @summary 加入入库数量
-     * @request POST:/moSchedule/addStockInQty
-     * @secure
-     */
-    addStockInQty: (data: MoSchedule[]) =>
-      http.request<ResultObject['data']>(`/api/main/moSchedule/addStockInQty`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单排产表
-     * @name AddCompleteQty
-     * @summary 增加完工数量
-     * @request POST:/moSchedule/addCompleteQty
-     * @secure
-     */
-    addCompleteQty: (data: MoSchedule[]) =>
-      http.request<ResultObject['data']>(`/api/main/moSchedule/addCompleteQty`, {
-        method: 'POST',
-        body: data as any,
       }),
 
     /**
@@ -10501,6 +10715,51 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/moSchedule/getMoScheduleList`, {
         method: 'GET',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name GetMoScheduleListByIds
+     * @summary 获取排产工单管理列表-应用于品质控制查询-按id集合查询
+     * @request POST:/moSchedule/getMoScheduleList
+     * @secure
+     */
+    getMoScheduleListByIds: (data: MoScheduleDTO) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/getMoScheduleList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddStockInQty
+     * @summary 加入入库数量
+     * @request POST:/moSchedule/addStockInQty
+     * @secure
+     */
+    addStockInQty: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addStockInQty`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddCompleteQty
+     * @summary 增加完工数量
+     * @request POST:/moSchedule/addCompleteQty
+     * @secure
+     */
+    addCompleteQty: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addCompleteQty`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   mo: {

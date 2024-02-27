@@ -646,6 +646,8 @@ export interface ResultListLabelVO {
 
 /** 品质控制-物料标签 */
 export interface LabelQcHoldSearch {
+  /** 按唯一键集合查询 */
+  keyList?: string[];
   /**
    * 页码
    * @format int32
@@ -3223,8 +3225,6 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /** 已发料量 */
-  alreadyPickQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
@@ -3238,6 +3238,8 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
