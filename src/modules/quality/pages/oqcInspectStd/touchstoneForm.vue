@@ -328,7 +328,7 @@ api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_LEVEL' }).then((data
   levelOption.value = data;
 });
 const unCategoryOption = ref([]);
-api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_NONCONFORMANCE_CLASSIFICATION' }).then((data) => {
+api.param.getListByGroupCode({ parmGroupCode: 'Q_IQC_UNQUALIFY_CATEGORY' }).then((data) => {
   unCategoryOption.value = data;
 });
 const propertyOption = ref([]);

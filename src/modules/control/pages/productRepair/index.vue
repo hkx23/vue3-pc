@@ -785,7 +785,7 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-/deep/ .t-table__row--active {
+:deep .t-table__row--active {
   background-color: var(--td-brand-color-light) !important;
 }
 </style>

@@ -188,7 +188,7 @@ defineExpose({
 </script>
 <style lang="less" scoped>
 .form-pack-rule-dtl {
-  /deep/ .t-input-number {
+  :deep .t-input-number {
     width: 100%;
   }
 }

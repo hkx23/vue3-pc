@@ -240,11 +240,11 @@ watch(
     margin: 0;
   }
 
-  /deep/ .t-form__label {
+  :deep .t-form__label {
     display: inline-block !important;
   }
 
-  /deep/ .t-form__controls {
+  :deep .t-form__controls {
     display: inline-block !important;
   }
 }

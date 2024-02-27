@@ -571,6 +571,221 @@ export interface ResultListKeyValuePairLongInteger {
   data?: KeyValuePairLongInteger[] | null;
 }
 
+export interface WorkgroupSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workshopId?: string;
+  /** 班组模糊关键词 */
+  workgroupKeyword?: string;
+  /** 员工模糊关键词 */
+  personKeyword?: string;
+  workgroupId?: string;
+  /** 多个ID */
+  personIds?: string[];
+  /** 新增的 */
+  insertList?: string[];
+  /** 删除的 */
+  deleteList?: string[];
+}
+
+/** 班组 */
+export interface Workgroup {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 班组代码 */
+  workgroupCode?: string;
+  /** 班组名称 */
+  workgroupName?: string;
+  /** 班组描述 */
+  workgroupDesc?: string;
+  workshopId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataWorkgroup = {
+  list?: Workgroup[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkgroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkgroup;
+}
+
+/** 通用响应类 */
+export interface ResultWorkgroup {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 班组 */
+  data?: Workgroup;
+}
+
+/** 响应数据 */
+export type PagingDataPersonOfWorkgroupVO = {
+  list?: PersonOfWorkgroupVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 显示工站 */
+export interface PersonOfWorkgroupVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 人员编号 */
+  personCode?: string;
+  /** 姓名 */
+  personName?: string;
+  /**
+   * 性别，1男，0女
+   * @format int32
+   */
+  gender?: number;
+  /** 邮箱 */
+  email?: string;
+  /** 手机号 */
+  mobilePhone?: string;
+  adminOrgId?: string;
+  /** 性别，1男，0女 */
+  genderName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPersonOfWorkgroupVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPersonOfWorkgroupVO;
+}
+
+/** 响应数据 */
+export type PagingDataWorkgroupVO = {
+  list?: WorkgroupVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkgroupVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkgroupVO;
+}
+
+/** 显示工站 */
+export interface WorkgroupVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 班组代码 */
+  workgroupCode?: string;
+  /** 班组名称 */
+  workgroupName?: string;
+  /** 班组描述 */
+  workgroupDesc?: string;
+  workshopId?: string;
+  /** 所属车间名称 */
+  workshopName?: string;
+  /**
+   * 班组人员数
+   * @format int32
+   */
+  personCount?: number;
+}
+
 /** 通用响应类 */
 export interface ResultListWipRepairDtlVO {
   /**
@@ -2503,11 +2718,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
-  workshopCode?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -3774,6 +3989,58 @@ export interface DynamicCheckUniqueDTO {
   checkRow?: Record<string, object>;
 }
 
+export interface BatchDynamicUpdateDTO {
+  /** 表唯一主键 */
+  primaryKey?: string;
+  /** 领域名称 */
+  businessDomain?: string;
+  /** 表名 */
+  tableName?: string;
+  /** 更新的字段列表 */
+  columnList?: DynamicColumn[];
+  /** 更新的数据信息 */
+  rows?: Record<string, object>[];
+}
+
+/** 动态列字段 */
+export interface DynamicColumn {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 字段名称 */
+  columnField?: string;
+  /** 字段描述 */
+  columnDesc?: string;
+  /** 列数据类型 */
+  columnDateType?: string;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequired?: number;
+  /** 默认值 */
+  defaultValue?: string;
+}
+
 /** 显示过站采集实体 */
 export interface BarcodeWipCollectVO {
   id?: string;
@@ -3889,11 +4156,11 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopName?: string;
-  workshopCode?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -4010,11 +4277,11 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopName?: string;
-  workshopCode?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
@@ -4256,8 +4523,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -5406,6 +5673,169 @@ export const api = {
      */
     addWorkgroupArrange: (data: WorkgroupArrangeSearch) =>
       http.request<ResultObject['data']>(`/api/control/workgroupArrange/addWorkgroupArrange`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  workgroup: {
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name RemoveWorkgroupBatch
+     * @summary 删除班组
+     * @request POST:/workgroup/removeWorkgroupBatch
+     * @secure
+     */
+    removeWorkgroupBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/control/workgroup/removeWorkgroupBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name RemovePersonBatch
+     * @summary 删除员工
+     * @request POST:/workgroup/removePersonBatch
+     * @secure
+     */
+    removePersonBatch: (data: WorkgroupSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workgroup/removePersonBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name ModifyWorkgroup
+     * @summary 编辑班组
+     * @request POST:/workgroup/modifyWorkgroup
+     * @secure
+     */
+    modifyWorkgroup: (data: Workgroup) =>
+      http.request<ResultObject['data']>(`/api/control/workgroup/modifyWorkgroup`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name Search
+     * @request POST:/workgroup/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataWorkgroup['data']>(`/api/control/workgroup/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetItemById
+     * @request POST:/workgroup/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultWorkgroup['data']>(`/api/control/workgroup/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetPersonList
+     * @summary 查询班组人员
+     * @request POST:/workgroup/getPersonList
+     * @secure
+     */
+    getPersonList: (data: WorkgroupSearch) =>
+      http.request<ResultPagingDataPersonOfWorkgroupVO['data']>(`/api/control/workgroup/getPersonList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetOutPerson
+     * @summary 查询未进组人员
+     * @request POST:/workgroup/getOutPerson
+     * @secure
+     */
+    getOutPerson: (data: WorkgroupSearch) =>
+      http.request<ResultPagingDataPersonOfWorkgroupVO['data']>(`/api/control/workgroup/getOutPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetList
+     * @summary 查询班组
+     * @request POST:/workgroup/getList
+     * @secure
+     */
+    getList: (data: WorkgroupSearch) =>
+      http.request<ResultPagingDataWorkgroupVO['data']>(`/api/control/workgroup/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetInnerPerson
+     * @summary 查询已进组人员
+     * @request POST:/workgroup/getInnerPerson
+     * @secure
+     */
+    getInnerPerson: (data: WorkgroupSearch) =>
+      http.request<ResultPagingDataPersonOfWorkgroupVO['data']>(`/api/control/workgroup/getInnerPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name AddWorkgroup
+     * @summary 新增班组
+     * @request POST:/workgroup/addWorkgroup
+     * @secure
+     */
+    addWorkgroup: (data: Workgroup) =>
+      http.request<ResultObject['data']>(`/api/control/workgroup/addWorkgroup`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name AddWorkgroupPerson
+     * @summary 新增处理组人员
+     * @request POST:/workgroup/addWorkgroupPerson
+     * @secure
+     */
+    addWorkgroupPerson: (data: WorkgroupSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workgroup/addWorkgroupPerson`, {
         method: 'POST',
         body: data as any,
       }),
@@ -6719,6 +7149,22 @@ export const api = {
     tables: () =>
       http.request<ResultListDataTableVO['data']>(`/api/control/importManage/tables`, {
         method: 'GET',
+      }),
+  },
+  dynamicManage: {
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name BatchUpdateData
+     * @summary 根据领域进行动态表字段更新
+     * @request POST:/dynamicManage/batchUpdateData
+     * @secure
+     */
+    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
+      http.request<ResultObject['data']>(`/api/control/dynamicManage/batchUpdateData`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   barcodeWipCollect: {

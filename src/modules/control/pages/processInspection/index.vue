@@ -442,19 +442,19 @@ onMounted(() => {
   border: 1px solid transparent;
 }
 
-/deep/ .t-list-item__meta-description {
+:deep .t-list-item__meta-description {
   width: 100%;
 }
 
-/deep/.t-table--layout-fixed {
+:deep.t-table--layout-fixed {
   border-width: 0;
 }
 
-/deep/ .t-collapse-panel__content {
+:deep .t-collapse-panel__content {
   padding-right: 50px;
 }
 
-/deep/ .t-collapse {
+:deep .t-collapse {
   border: none;
 }
 
