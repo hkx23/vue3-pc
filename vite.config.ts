@@ -3,7 +3,7 @@ import path from 'node:path';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { glob } from 'glob';
-// import { visualizer } from 'rollup-plugin-visualizer';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { ConfigEnv, loadEnv, UserConfig } from 'vite';
 // import viteCompression from 'vite-plugin-compression';
 import svgLoader from 'vite-svg-loader';
@@ -105,6 +105,12 @@ export default ({ mode, command }: ConfigEnv): UserConfig => {
           //   if (id.includes('echarts')) return 'echarts';
           // },
         },
+        plugins: [
+          visualizer({
+            filename: './dist/stats.html', // 生成的报告文件名和路径
+            template: 'sunburst', // 可选的报告模板，例如 sunburst、network、treemap 等
+          }),
+        ],
       },
     },
   };

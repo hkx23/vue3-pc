@@ -41,6 +41,27 @@
     @selection-change="onSelectionChange"
   >
   </bcmp-select-list>
+  <bcmp-select-list2
+    v-if="finalComponentType === 'list2' && targetIsVisible"
+    :value="modelValue"
+    :columns="finalColumns"
+    :row-key="finalRowKey"
+    :select-txt="selectTxt"
+    :remote-url="finalUrl"
+    :category="finalCategory"
+    :multiple="isMultiple"
+    :parent-id="finalParentId"
+    :custom-conditions="finalCustomConditions"
+    :readonly="readonly"
+    :title="finalTitle"
+    :placeholder="finalPlaceholder"
+    :keywords="finalKeywords"
+    :table-width="finaltableWidth"
+    :list-setting="finalListSetting"
+    v-bind="selectAttr"
+    @selection-change="onSelectionChange"
+  >
+  </bcmp-select-list2>
 </template>
 
 <script setup lang="tsx" name="BcmpSelectBusiness">
