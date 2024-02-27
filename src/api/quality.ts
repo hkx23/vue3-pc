@@ -2086,13 +2086,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  iii?: string;
+  s4?: string;
   s3?: string;
   i?: string;
-  s2?: string;
-  s4?: string;
-  iii?: string;
-  s1?: string;
   ii?: string;
+  s1?: string;
+  s2?: string;
 } | null;
 
 /** 计量单位 */

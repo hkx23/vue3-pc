@@ -798,8 +798,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -3786,14 +3786,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isProductName?: string;
   isProductChecked?: boolean;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isProductName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -3936,8 +3936,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4272,8 +4272,8 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
   imsgqueueStatus?: string;
 }
 
@@ -6854,10 +6854,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -6938,6 +6938,19 @@ export interface ResultListParamGroupTreeVO {
   message?: string;
   /** 响应数据 */
   data?: ParamGroupTreeVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListParam {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Param[] | null;
 }
 
 /** 响应数据 */
@@ -9891,6 +9904,24 @@ export const api = {
       parmGroupId?: string;
     }) =>
       http.request<ResultObject['data']>(`/api/main/param/getlist`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
+     * @name GetParamListByGroupCode
+     * @summary 根据系统参数组获取参数明细
+     * @request GET:/param/getParamListByGroupCode
+     * @secure
+     */
+    getParamListByGroupCode: (query?: {
+      /** @default "" */
+      parmGroupCode?: string;
+    }) =>
+      http.request<ResultListParam['data']>(`/api/main/param/getParamListByGroupCode`, {
         method: 'GET',
         params: query,
       }),
