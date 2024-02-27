@@ -1,44 +1,44 @@
 <template>
   <cmp-container :full="false">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
-    </cmp-card>
-    <cmp-card :span="12" header-bordered>
-      <cmp-table
-        v-model:pagination="pageUI"
-        active-row-type="single"
-        :table-column="craftRouteColumn"
-        :table-data="craftRouteData.list"
-        :loading="loading"
-        :total="craftRouteData.total"
-        @refresh="getRouting"
-        @row-click="selectRouting"
-      >
-        <template #title>
-          <div>{{ t('craftRoute.craftRoute') }}</div>
-        </template>
-        <template #button>
-          <t-button @click="addRouting">{{ t('common.button.add') }}</t-button>
-        </template>
-        <template #state="{ row }">
-          <t-popconfirm v-if="row.state === 1" :content="t('craftRoute.disableNotCount')" @confirm="disable(row.id)">
-            <t-switch :custom-value="[1, 0]" :value="row.state" />
-          </t-popconfirm>
-          <t-switch v-else :custom-value="[1, 0]" :value="row.state" @change="statusChange($event, row)" />
-        </template>
-        <template #op="{ row }">
-          <t-space size="small">
-            <t-link v-if="row.state === 1" theme="primary" size="small" @click="disable(row.id)">{{
-              t('common.button.disable')
-            }}</t-link>
-            <t-link v-else theme="primary" size="small" @click="enableClick(row)">{{
-              t('common.button.enable')
-            }}</t-link>
-            <t-link theme="primary" size="small" @click="editRouting(row.id)">{{ t('common.button.edit') }}</t-link>
-            <t-link theme="primary" size="small" @click="copyRouting(row.id)">{{ t('common.button.copy') }}</t-link>
-          </t-space>
-        </template>
-      </cmp-table>
+      <cmp-container :full="true" :ghost="true">
+        <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
+        <cmp-table
+          v-model:pagination="pageUI"
+          active-row-type="single"
+          :table-column="craftRouteColumn"
+          :table-data="craftRouteData.list"
+          :loading="loading"
+          :total="craftRouteData.total"
+          @refresh="getRouting"
+          @row-click="selectRouting"
+        >
+          <template #title>
+            <div>{{ t('craftRoute.craftRoute') }}</div>
+          </template>
+          <template #button>
+            <t-button @click="addRouting">{{ t('common.button.add') }}</t-button>
+          </template>
+          <template #state="{ row }">
+            <t-popconfirm v-if="row.state === 1" :content="t('craftRoute.disableNotCount')" @confirm="disable(row.id)">
+              <t-switch :custom-value="[1, 0]" :value="row.state" />
+            </t-popconfirm>
+            <t-switch v-else :custom-value="[1, 0]" :value="row.state" @change="statusChange($event, row)" />
+          </template>
+          <template #op="{ row }">
+            <t-space size="small">
+              <t-link v-if="row.state === 1" theme="primary" size="small" @click="disable(row.id)">{{
+                t('common.button.disable')
+              }}</t-link>
+              <t-link v-else theme="primary" size="small" @click="enableClick(row)">{{
+                t('common.button.enable')
+              }}</t-link>
+              <t-link theme="primary" size="small" @click="editRouting(row.id)">{{ t('common.button.edit') }}</t-link>
+              <t-link theme="primary" size="small" @click="copyRouting(row.id)">{{ t('common.button.copy') }}</t-link>
+            </t-space>
+          </template>
+        </cmp-table>
+      </cmp-container>
     </cmp-card>
     <cmp-card :span="12" :header="t('craftRoute.productRelation')" header-bordered>
       <cmp-table

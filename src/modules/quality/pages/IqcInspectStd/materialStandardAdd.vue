@@ -3,57 +3,55 @@
     <!-- !提交暂存模块 -->
     <cmp-card :span="12">
       <t-row justify="space-between" align="center">
-        <t-col><span class="span_title">新增检验标准</span></t-col>
+        <t-col
+          ><span class="span_title">{{ getTitle(formData.operateTpye) }}</span></t-col
+        >
         <t-col>
-          <t-button>提交</t-button>
-          <t-button theme="default" @click="onClose">暂存</t-button>
+          <t-button :disabled="!submitButControl">提交</t-button>
+          <t-button theme="default" @click="onStaging">暂存</t-button>
         </t-col>
       </t-row>
     </cmp-card>
     <!-- !基础信息模块 -->
     <cmp-card :span="12" title="基础信息" class="cards_title">
-      <t-form ref="formRef">
+      <t-form ref="formRef" :rules="rules" :data="formData" :show-error-message="false">
         <t-row :gutter="[32, 16]">
           <!-- 第 1️⃣ 行数据 -->
           <t-col :span="4">
-            <t-form-item label="标准编码" name="mitemCode">
-              <t-input></t-input>
+            <t-form-item label="标准编码" name="inspectStdCode">
+              <t-input v-model="formData.inspectStdCode" style="width: 200px"></t-input>
             </t-form-item>
           </t-col>
           <t-col :span="4">
-            <t-form-item label="标准名称" name="mitemCode">
-              <t-input></t-input>
+            <t-form-item label="标准名称" name="inspectStdName">
+              <t-input v-model="formData.inspectStdName" style="width: 200px"></t-input>
             </t-form-item>
           </t-col>
           <t-col :span="4">
-            <t-form-item label="版本号" name="mitemCode">
-              <t-input></t-input>
+            <t-form-item label="版本号" name="revision">
+              <t-input v-model="formData.revision" style="width: 200px"></t-input>
             </t-form-item>
           </t-col>
           <!-- 第 2️⃣ 行数据 -->
           <t-col :span="4">
-            <t-form-item label="集团检验标准" name="mitemId">
-              <t-select>
-                <t-option key="apple" label="是" value="apple" />
-                <t-option key="orange" label="否" value="orange" />
-                <t-option key="banana" label="中立？" value="banana" />
-              </t-select>
+            <t-form-item label="集团检验标准" name="groupInspectStdId">
+              <t-input v-model="formData.groupInspectStdId" style="width: 200px" />
             </t-form-item>
           </t-col>
           <t-col :span="4">
-            <t-form-item label="生效时间" name="mitemCode" class="width: 100%">
-              <t-date-picker clearable style="width: 100%" />
+            <t-form-item label="生效时间" name="timeEffective" class="width: 100%">
+              <t-date-picker v-model="formData.timeEffective" clearable style="width: 200px" />
             </t-form-item>
           </t-col>
           <t-col :span="4">
-            <t-form-item label="失效时间" name="mitemCode">
-              <t-date-picker clearable style="width: 100%" />
+            <t-form-item label="失效时间" name="timeInvalid">
+              <t-date-picker v-model="formData.timeInvalid" clearable style="width: 200px" />
             </t-form-item>
           </t-col>
           <!-- 第 3️⃣ 行数据 -->
           <t-col :span="4">
-            <t-form-item label="附件：" name="mitemCode">
-              <t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
+            <t-form-item label="附件：" name="attachment">
+              <t-link :disabled="!butControl" theme="primary" @click="formVisible = true"> 附件上传 </t-link>
             </t-form-item>
           </t-col>
         </t-row>
@@ -65,26 +63,32 @@
         ref="tableRefCard"
         v-model:pagination="pageUI"
         row-key="deliveryCardId"
-        :fixed-height="true"
         :active-row-type="'single'"
         :hover="true"
         :table-column="columns"
-        :table-data="manageTabData"
-        :total="0"
-        select-on-row-click
+        :table-data="dtlTabData"
+        :total="dataTotal"
+        :selected-row-keys="dtlRowKeys"
+        @select-change="onDtlSelectedChange"
       >
         <template #title>
           {{ '检验项目' }}
         </template>
+        <template #qualifiedRangeOp="{ row }">
+          <span v-if="row.maxValue !== null && row.minValue !== null">{{ `${row.maxValue} ~ ${row.minValue}` }}</span>
+        </template>
+        <template #isCtqName="{ row }">
+          <span>{{ row.isCtq ? '是' : '否' }}</span>
+        </template>
         <template #button>
-          <t-input placeholder="请输入搜索关键字">
+          <t-input v-if="submitButControl" placeholder="请输入搜索关键字">
             <template #suffixIcon>
               <search-icon :style="{ cursor: 'pointer' }" />
             </template>
           </t-input>
-          <t-button @click="touchstoneFormVisible = true"> 新增 </t-button>
-          <t-button theme="default"> 导入 </t-button>
-          <t-button theme="default"> 批量删除 </t-button>
+          <t-button :disabled="!butControl" @click="onAdd"> 新增 </t-button>
+          <t-button :disabled="!butControl" theme="default"> 导入 </t-button>
+          <t-button :disabled="!delBtutControl" theme="default"> 批量删除 </t-button>
         </template>
       </cmp-table>
     </cmp-card>
@@ -109,24 +113,19 @@
     </cmp-container>
   </t-dialog>
   <!-- !检验项目新增 弹框 -->
-  <t-dialog
-    v-model:visible="touchstoneFormVisible"
-    :close-on-overlay-click="false"
-    header="附件上传"
-    :cancel-btn="null"
-    :confirm-btn="null"
-    width="75%"
-  >
+  <t-dialog v-model:visible="touchstoneFormVisible" :close-on-overlay-click="false" :header="formTitle" width="85%">
     <touchstoneForm></touchstoneForm>
   </t-dialog>
 </template>
 
 <script setup lang="ts">
 // import { debounce } from 'lodash';
+import { isEmpty } from 'lodash';
 import { SearchIcon } from 'tdesign-icons-vue-next';
-import { MessagePlugin } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { FormRules, MessagePlugin } from 'tdesign-vue-next';
+import { Ref, ref } from 'vue';
 
+import { api } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -135,12 +134,102 @@ import touchstoneForm from './touchstoneForm.vue';
 
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false);
+const butControl = ref(false);
+const submitButControl = ref(false);
+const delBtutControl = ref(false);
+const formTitle = ref('');
 const touchstoneFormVisible = ref(false);
+const dataTotal = ref(0);
+const dtlRowKeys: Ref<any[]> = ref([]);
+const formData = ref({
+  operateTpye: 'add',
+  saveTpye: 'add',
+  id: '',
+  inspectStdCode: '',
+  inspectStdName: '',
+  groupInspectStdId: '',
+  revision: null,
+  timeEffective: '',
+  timeInvalid: '',
+  status: 'DRAFT',
+  statusName: '起草中',
+  inspectTypeList: [],
+});
+const getTitle = (type) => {
+  switch (type) {
+    case 'add':
+      return '新增物料检验标准';
+    case 'edit':
+      return '编辑物料检验标准';
+    case 'copy':
+      return '复制物料检验标准';
+    default:
+      return '';
+  }
+};
+// #表单定义规则
+const rules: FormRules = {
+  inspectStdCode: [{ required: true, message: '不能为空', trigger: 'change' }],
+  inspectStdName: [{ required: true, message: '不能为空', trigger: 'change' }],
+  timeEffective: [{ required: true, message: '不能为空', trigger: 'change' }],
+  timeInvalid: [{ required: true, message: '不能为空', trigger: 'change' }],
+  revision: [{ required: true, message: '不能为空', trigger: 'change' }],
+};
+const onAdd = () => {
+  formTitle.value = '新增检验项目';
+  touchstoneFormVisible.value = true;
+};
+
 // 父方法
-const Emit = defineEmits(['permissionShow']);
-// 关闭窗口回到主页面
-const onClose = () => {
-  Emit('permissionShow', false); // 回到父
+// const Emit = defineEmits(['permissionShow']);
+// // 关闭窗口回到主页面
+// const onClose = () => {
+//   Emit('permissionShow', false); // 回到父
+// };
+const onDtlSelectedChange = (value: any) => {
+  dtlRowKeys.value = value;
+};
+const onStaging = async () => {
+  if (isEmpty(formData.value.inspectStdCode)) {
+    MessagePlugin.error('请输入标准编码');
+    return;
+  }
+  if (isEmpty(formData.value.inspectStdName)) {
+    MessagePlugin.error('请输入标准名称');
+    return;
+  }
+  if (isEmpty(formData.value.timeEffective)) {
+    MessagePlugin.error('请选择生效时间');
+    return;
+  }
+  if (isEmpty(formData.value.timeInvalid)) {
+    MessagePlugin.error('请选择失效时间');
+    return;
+  }
+  if (Number.isNaN(formData.value.groupInspectStdId)) {
+    MessagePlugin.error('集团检验标准须为数字（暂行）');
+    return;
+  }
+
+  const today = new Date();
+  const timeEffective = new Date(formData.value.timeEffective);
+  const timeInvalid = new Date(formData.value.timeInvalid);
+
+  if (timeEffective >= timeInvalid) {
+    MessagePlugin.error('失效时间必须大于生效时间');
+    return;
+  }
+
+  if (timeInvalid <= today) {
+    MessagePlugin.error('失效时间必须大于今天');
+    return;
+  }
+  const res = (await api.iqcInspectStd.add({ ...formData.value })) as any;
+  if (res) {
+    butControl.value = true;
+    formData.value.id = res;
+    MessagePlugin.success('暂存成功');
+  }
 };
 
 // // 上传文件
@@ -174,71 +263,77 @@ const batchDeleteSuccess = (files: AddFileType[]) => {
   );
   console.log('batchDeleteSuccess', files);
 };
-
-const manageTabData = ref([]);
+const dtlTabData = ref([]);
+const getDtlById = async () => {
+  const res = (await api.iqcInspectStdDtl.getDtl({
+    iqcInspectStdId: formData.value.id,
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+  })) as any;
+  if (res) {
+    dtlTabData.value = res.list;
+    dataTotal.value = res.total;
+  }
+};
 const columns = [
   {
     colKey: 'row-select',
     type: 'multiple',
   },
   {
-    colKey: 'warehouseCode',
-    title: '序号',
-  },
-  {
-    colKey: 'warehouseCode',
+    colKey: 'itemCategoryName',
     title: '项目类别',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'itemName',
     title: '检验内容',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'inspectTypeName',
     title: '检验类型',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'technicalRequest',
     title: '技术要求',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'unqualifyCategoryName',
     title: '不合格分类',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'characteristicsName',
     title: '项目特性',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'inspectTool',
     title: '检验工具',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'uom',
     title: '基准值',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'uomName',
     title: '单位',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'qualifiedRangeOp',
     title: '合格范围',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'samplingStandardCode',
     title: '抽样方案',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'inspectLevelName',
     title: '检验水平',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'isCtqName',
     title: '是否CTQ',
   },
   {
-    colKey: 'warehouseName',
+    colKey: 'inspectBasis',
     title: '检验依据',
   },
   {
@@ -247,6 +342,34 @@ const columns = [
     fixed: 'right',
   },
 ];
+const init = () => {
+  butControl.value = false;
+  submitButControl.value = false;
+  delBtutControl.value = false;
+  fileList.value = [];
+  formData.value = {
+    operateTpye: 'add',
+    saveTpye: 'add',
+    id: '',
+    inspectStdCode: '',
+    inspectStdName: '',
+    groupInspectStdId: '',
+    revision: '1.0',
+    timeEffective: '',
+    timeInvalid: '',
+    status: 'DRAFT',
+    statusName: '起草中',
+    inspectTypeList: [],
+  };
+  dtlTabData.value = [];
+  dataTotal.value = 0;
+};
+defineExpose({
+  formData,
+  init,
+  fileList,
+  getDtlById,
+});
 </script>
 
 <style lang="less" scoped>

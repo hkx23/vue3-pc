@@ -24,6 +24,11 @@
         <template #title> 工站权限列表 </template>
         <template #button>
           <t-button @click="onHandelPermission">权限分配</t-button>
+          <bcmp-import-auto-button
+            theme="default"
+            button-text="导入"
+            type="c_workstation_auth"
+          ></bcmp-import-auto-button>
           <t-popconfirm content="确认删除吗" @confirm="onDeleteAll">
             <t-button theme="default" variant="base">批量删除</t-button>
           </t-popconfirm>

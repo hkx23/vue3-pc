@@ -1,6 +1,8 @@
 <!-- 物料检验标准 -->
 <template>
-  <materialStandardAdd v-if="pageShow" @permission-show="onPermission"></materialStandardAdd>
+  <cmp-container v-show="pageShow">
+    <materialStandardAdd ref="formRef" @permission-show="onPermission"></materialStandardAdd>
+  </cmp-container>
   <cmp-container v-show="!pageShow" :full="true">
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tabValue" @change="tabChange">
@@ -33,6 +35,9 @@
                     <template #title>
                       {{ '物料检验标准列表' }}
                     </template>
+                    <template #inspectStdCodeOp="{ row }">
+                      <t-link theme="primary" @click="onEdit(row)">{{ row.inspectStdCode }}</t-link>
+                    </template>
                     <template #button>
                       <t-button @click="onAddClick">新增</t-button>
                       <t-button theme="default">导入</t-button>
@@ -40,14 +45,22 @@
                         <t-button theme="default" variant="base">批量删除</t-button>
                       </t-popconfirm>
                     </template>
-                    <template #operation>
-                      <t-link theme="primary" style="padding-right: 8px">分配</t-link>
-                      <t-link theme="primary" style="padding-right: 8px">编辑</t-link>
+                    <template #operation="{ row }">
+                      <t-link v-if="row.status !== 'EXPIRED'" theme="primary" style="padding-right: 8px">分配</t-link>
+                      <t-link
+                        v-if="row.status !== 'EXPIRED'"
+                        theme="primary"
+                        style="padding-right: 8px"
+                        @click="onEdit(row)"
+                        >编辑</t-link
+                      >
                       <t-popconfirm content="继续将删除该标准对应的检验项目、物料关系、附件等，是否继续？">
-                        <t-link theme="primary" style="padding-right: 8px">删除</t-link>
+                        <t-link v-if="row.status === 'DRAFT'" theme="primary" style="padding-right: 8px">删除</t-link>
                       </t-popconfirm>
                       <t-popconfirm content="失效后该标准将被禁用，同时解除物料及物料类对该标准的引用，是否继续？">
-                        <t-link theme="primary" style="padding-right: 8px">失效</t-link>
+                        <t-link v-if="row.status === 'EFFECTIVE'" theme="primary" style="padding-right: 8px"
+                          >失效</t-link
+                        >
                       </t-popconfirm>
                       <t-link theme="primary">复制</t-link>
                     </template>
@@ -131,7 +144,7 @@ const onPermission = (value) => {
   pageShow.value = value;
 };
 const formVisible = ref(false);
-
+const formRef = ref(null);
 const productSelectedRowKeys: Ref<any[]> = ref([]); // 补打 打印数组
 const { pageUI } = usePage(); // 物料标准 分页工具
 const { pageUI: pageUINorm } = usePage(); // 物料标准分配 分页工具
@@ -151,7 +164,7 @@ const standardColumn: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'inspectStdCode',
+    colKey: 'inspectStdCodeOp',
     title: '标准编码',
     width: '100',
   },
@@ -273,6 +286,7 @@ const standardAllotColumn: PrimaryTableCol<TableRowData>[] = [
 ];
 
 onMounted(async () => {
+  materialStandardParam.value.status = ['EFFECTIVE'];
   await onGetMaterialStandardData();
 });
 
@@ -298,9 +312,26 @@ const onGetMaterialStandardData = async () => {
 
 // #################   新增按钮点击事件  ##########################
 const onAddClick = async () => {
+  formRef.value.init();
   pageShow.value = true;
 };
 
+const onEdit = async (row) => {
+  formRef.value.dtlRowKeys = [];
+  formRef.value.ids = [];
+  formRef.value.formData = row;
+  if (row.fileList) {
+    row.fileList.forEach((file) => {
+      file.timeUpload = file.timeCreate;
+      file.signedUrl = file.filePath;
+    });
+  }
+  formRef.value.fileList = row.fileList;
+  formRef.value.formData.operateTpye = 'edit';
+  formRef.value.formData.revision = row.revisionName;
+  await formRef.value.getDtlById();
+  pageShow.value = true;
+};
 // // TAb 栏切换事件
 const tabChange = async (value: number) => {
   console.log('🚀 ~ file: index.vue:437 ~ tabChange ~ value:', value);
@@ -320,7 +351,7 @@ const opts = computed(() => {
       isHide: tabValue.value,
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: '',
+      defaultVal: [{ label: '已生效', value: 'EFFECTIVE' }],
       bind: {
         type: 'state',
         showTitle: false,
@@ -336,6 +367,7 @@ const opts = computed(() => {
       defaultVal: '',
       bind: {
         type: 'user',
+        valueField: 'userName',
         isMultiple: true,
         showTitle: false,
       },

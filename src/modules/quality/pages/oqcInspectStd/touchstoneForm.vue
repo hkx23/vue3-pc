@@ -113,6 +113,11 @@
         </t-form-item>
       </t-col>
       <t-col :span="4">
+        <t-form-item label="检验频率" label-align="right" name="inspectFrequency">
+          <t-input v-model="dtlData.inspectFrequency" style="width: 280px" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
         <t-form-item label="最小值" label-align="right" name="minValue">
           <t-input v-model="dtlData.minValue" style="width: 280px" />
         </t-form-item>
@@ -146,9 +151,9 @@
     v-model:visible="formVisible"
     :close-on-overlay-click="false"
     header="附件上传"
-    :cancel-btn="null"
-    :confirm-btn="null"
     width="50%"
+    :confirm-btn="fileList.length >= 1 ? '确认' : null"
+    @confirm="onConfirmFile"
   >
     <cmp-container :full="true">
       <bcmp-upload-content
@@ -184,6 +189,7 @@ const dtlData = ref({
   baseValue: '',
   maxValue: '',
   minValue: '',
+  inspectFrequency: '',
   technicalRequest: '',
   uom: '',
   uomName: '',
@@ -198,12 +204,12 @@ const dtlData = ref({
   inspectProperty: '',
   processId: '',
 });
-const codesOption = ref([]);
 const init = () => {
   dtlData.value = {
     itemSeq: '',
     id: '',
     itemCategory: '',
+    inspectFrequency: '',
     itemName: '',
     characteristics: '',
     baseValue: '',
@@ -224,6 +230,10 @@ const init = () => {
     processId: '',
   };
 };
+const onConfirmFile = () => {
+  formVisible.value = false;
+};
+const codesOption = ref([]);
 
 const fetchSampingStdCodes = async () => {
   try {

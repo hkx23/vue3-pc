@@ -253,8 +253,8 @@ import dayjs from 'dayjs';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 
-import { api as apiMin } from '@/api/control';
-import { api } from '@/api/main';
+import { api } from '@/api/control';
+import { api as apiMain } from '@/api/main';
 
 const formVisible = ref(false);
 const activeTab = ref('first'); // 默认激活的选项卡
@@ -321,7 +321,7 @@ const requestDeleteItem = (item) => {
 const confirmDelete = async () => {
   if (itemToDelete.value) {
     try {
-      await apiMin.workgroupArrange.removeWorkgroupArrange(itemToDelete.value.id);
+      await api.workgroupArrange.removeWorkgroupArrange(itemToDelete.value.id);
       await getArrangeCount({});
       await getWorkgroupInfo({});
       await getWorkgroupArrangeList(selectedRowId.value);
@@ -365,7 +365,7 @@ const isMatch = (calendarDate, arrangeDate) => {
 // 获取 数据字典 班次
 const getShiftCode = async () => {
   try {
-    const res = await api.param.getListByGroupCode({
+    const res = await apiMain.param.getListByGroupCode({
       parmGroupCode: 'SHIFT_CODE',
     });
     shiftData.value = res.map((status) => ({
@@ -439,7 +439,7 @@ const updateDateRange = (direction) => {
 //   console.log('🚀 ~ deleteData ~ item:', item);
 //   try {
 //     // 调用 API 接口删除数据
-//     await apiMin.workgroupArrange.removeWorkgroupArrange(item.id);
+//     await api.workgroupArrange.removeWorkgroupArrange(item.id);
 //     MessagePlugin.success('删除成功');
 //     getWorkgroupArrangeList(selectedRowId.value);
 //     getWorkgroupInfo({});
@@ -494,7 +494,7 @@ const onConfirmForm = async () => {
 
   if (formTitle.value === '编辑') {
     // 调用编辑接口
-    await apiMin.workgroupArrange.modifyWorkgroupArrange({
+    await api.workgroupArrange.modifyWorkgroupArrange({
       id: itemId.value, // 当前数据id
       datetimeArrange: datetimeArrange.value,
       shiftCode: teamFormData.value.shiftCode, // 班次code
@@ -510,7 +510,7 @@ const onConfirmForm = async () => {
     resetFormData(); // 重置表单数据
   } else {
     // 调用新增接口
-    await apiMin.workgroupArrange.addWorkgroupArrange({
+    await api.workgroupArrange.addWorkgroupArrange({
       // ... 新增所需的参数 ...
       ...teamFormData.value,
       attendanceExpression: convert,
@@ -761,7 +761,7 @@ const getWorkgroupInfo = async (id) => {
 const getArrangeCount = async (data) => {
   // getArrangeCount 所需参数
   const { id } = data;
-  const result = await apiMin.workgroupArrange.getArrangeCount({
+  const result = await api.workgroupArrange.getArrangeCount({
     workshopId: id,
     workgroupKeyword: workgroupKeyword.value, // 模糊关键字
     dateStart: qTimeCreate.value, // 查询开始时间
@@ -795,7 +795,7 @@ const mergeData = () => {
 // 查询班组
 const getWorkgroupArrangeList = async (id) => {
   // 调用 API 获取数据
-  const result = await apiMin.workgroupArrange.getList({
+  const result = await api.workgroupArrange.getList({
     dateStart: qTimeCreate.value,
     dateEnd: qTimeModified.value,
     workgroupId: id,

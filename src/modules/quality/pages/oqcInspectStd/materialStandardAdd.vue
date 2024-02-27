@@ -120,9 +120,9 @@
     v-model:visible="formVisible"
     :close-on-overlay-click="false"
     header="附件上传"
-    :cancel-btn="null"
-    :confirm-btn="null"
     width="50%"
+    :confirm-btn="fileList.length >= 1 ? '确认' : null"
+    @confirm="onConfirmFile"
   >
     <cmp-container :full="true">
       <bcmp-upload-content
@@ -243,7 +243,7 @@ const init = () => {
     inspectStdCode: '',
     inspectStdName: '',
     groupInspectStdId: '',
-    revision: null,
+    revision: '1.0',
     timeEffective: '',
     timeInvalid: '',
     status: 'DRAFT',
@@ -352,6 +352,9 @@ const onConfirmDtl = async () => {
     }
     touchstoneFormVisible.value = false;
   }
+};
+const onConfirmFile = () => {
+  formVisible.value = false;
 };
 const onDelDtlData = async () => {
   const idsDel = [];
@@ -482,6 +485,12 @@ const tableStdDtlColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'unqualifyCategoryName',
     title: '不合格分类',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'inspectFrequency',
+    title: '检验频率',
     align: 'center',
     width: '110',
   },
