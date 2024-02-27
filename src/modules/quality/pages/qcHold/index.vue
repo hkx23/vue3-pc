@@ -960,7 +960,9 @@ const onHandelLock = (operatorType: OperatorType) => {
       break;
     case 1: // 产品
       if (selectProductRowKeys.value) {
-        selectRows.value = productInfoList.list.filter((item) => selectProductRowKeys.value.includes(item.id));
+        selectRows.value = productInfoList.list.filter((item) =>
+          selectProductRowKeys.value.includes(item.serialNumber),
+        );
         keys = selectProductRowKeys.value;
       }
       break;
@@ -973,14 +975,15 @@ const onHandelLock = (operatorType: OperatorType) => {
     case 3: // 物料
       if (selectMitemRowKeys.value) {
         keys = selectMitemRowKeys.value;
-        selectRows.value = mitemInfoList.list.filter((item) => selectMitemRowKeys.value.includes(item.id));
+        selectRows.value = mitemInfoList.list.filter((item) => selectMitemRowKeys.value.includes(item.labelNo));
       }
       break;
     default:
       break;
   }
 
-  const { initLockDetailForm, showPopform } = detailFormRef.value;
+  const { initLockDetailForm, showPopform, reset } = detailFormRef.value;
+  reset();
   showPopform();
   initLockDetailForm(selectRows.value, keys, curOperatorType.value);
 };
@@ -998,7 +1001,28 @@ const onHandelLog = (operatorType: OperatorType) => {
 // 子组件控制执行窗口
 const onHandleLockShow = (value: any) => {
   detailedShow.value = value;
+  reset();
   fetchTable();
+};
+
+const reset = () => {
+  // 清空选择的信息
+  switch (tagValue.value) {
+    case 0: // 工单
+      tableMoRef.value?.setSelectedRowKeys([]);
+      break;
+    case 1: // 产品
+      tableProductRef.value?.setSelectedRowKeys([]);
+      break;
+    case 2: // 机台工站
+      tableWorkstationRef.value?.setSelectedRowKeys([]);
+      break;
+    case 3: // 物料
+      tableMitemRef.value?.setSelectedRowKeys([]);
+      break;
+    default:
+      break;
+  }
 };
 
 onMounted(() => {

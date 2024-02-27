@@ -60,7 +60,12 @@
         <template #button>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddTypeData">新建</t-button>
-            <t-button theme="default">导入</t-button>
+            <!-- <t-button theme="default">导入</t-button> -->
+            <bcmp-import-auto-button
+              theme="default"
+              button-text="导入"
+              type="a_incident_type"
+            ></bcmp-import-auto-button>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="deleteBatches()">
               <t-button theme="default">批量删除</t-button>
             </t-popconfirm>

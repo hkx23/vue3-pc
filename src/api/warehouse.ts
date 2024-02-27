@@ -3223,6 +3223,9 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
@@ -3233,9 +3236,6 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
   /**
@@ -4474,6 +4474,116 @@ export interface ResultPagingDataMitemReceiveBillVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataMitemReceiveBillVO;
+}
+
+export interface BatchDynamicInsertDTO {
+  businessDomain?: string;
+  tableName?: string;
+  columnList?: ImportSettingColumn[];
+  rows?: Record<string, object>[];
+}
+
+/** 导入列配置表 */
+export interface ImportSettingColumn {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  importId?: string;
+  /**
+   * 列排序
+   * @format int32
+   */
+  seq?: number;
+  /** 列来源（数据表/手动添加） */
+  fromTable?: string;
+  /** 导入字段 */
+  columnField?: string;
+  /** 导入字段描述 */
+  columnDesc?: string;
+  /** 列数据类型 */
+  columnDatetype?: string;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequired?: number;
+  /**
+   * 是否导入列
+   * @format int32
+   */
+  isImport?: number;
+  /**
+   * 是否模块列
+   * @format int32
+   */
+  isTemplate?: number;
+  /** 默认值 */
+  defaultValue?: string;
+  /** 数据转换配置 */
+  datatransferJson?: string;
+  /** 正则表达式 */
+  regularExpression?: string;
+}
+
+export interface BatchDynamicQueryDTO {
+  dataTable?: DataTable;
+  rows?: Record<string, object>[];
+}
+
+export interface ConditionData {
+  field?: string;
+  operator?: string;
+  valueType?: string;
+  value?: string;
+}
+
+export interface DataTable {
+  mapBusinessDomain?: string;
+  mapTable?: string;
+  conditionData?: ConditionData[];
+  tableQueryField?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListT {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: T[] | null;
+}
+
+/** 响应数据 */
+export type T = object | null;
+
+export interface DynamicCheckUniqueDTO {
+  mapTable?: string;
+  businessDomain?: string;
+  uniqueFields?: string[];
+  checkRow?: Record<string, object>;
 }
 
 /** 货区 */
@@ -8830,6 +8940,66 @@ export const api = {
         body: data as any,
       }),
   },
+  importManage: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name BatchImportData
+     * @summary 根据领域进行动态查询
+     * @request POST:/importManage/batchImportData
+     * @secure
+     */
+    batchImportData: (data: BatchDynamicInsertDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/importManage/batchImportData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name BatchDynamicQuery
+     * @summary 根据领域进行动态查询
+     * @request POST:/importManage/batchDynamicQuery
+     * @secure
+     */
+    batchDynamicQuery: (data: BatchDynamicQueryDTO) =>
+      http.request<ResultListT['data']>(`/api/warehouse/importManage/batchDynamicQuery`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name CheckUniqueExist
+     * @summary 根据领域进行动态查询
+     * @request POST:/importManage/CheckUniqueExist
+     * @secure
+     */
+    checkUniqueExist: (data: DynamicCheckUniqueDTO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/importManage/CheckUniqueExist`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name Tables
+     * @summary 根据领域获取数据表列表
+     * @request GET:/importManage/tables
+     * @secure
+     */
+    tables: () =>
+      http.request<ResultListDataTableVO['data']>(`/api/warehouse/importManage/tables`, {
+        method: 'GET',
+      }),
+  },
   district: {
     /**
      * No description
@@ -9542,21 +9712,6 @@ export const api = {
       http.request<ResultListPurchaseOrderDtlVO['data']>(`/api/warehouse/purchaseOrderDtl/getPurchaseDtlByPurchaseNo`, {
         method: 'GET',
         params: query,
-      }),
-  },
-  importManage: {
-    /**
-     * No description
-     *
-     * @tags 用户
-     * @name Tables
-     * @summary 根据领域获取数据表列表
-     * @request GET:/importManage/tables
-     * @secure
-     */
-    tables: () =>
-      http.request<ResultListDataTableVO['data']>(`/api/warehouse/importManage/tables`, {
-        method: 'GET',
       }),
   },
   deliveryDtl: {

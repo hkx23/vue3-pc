@@ -22,10 +22,10 @@
         <template #title> 计量单位列表 </template>
         <template #button>
           <t-button theme="primary" @click="onAddMeasuring">{{ t('common.button.add') }}</t-button>
+          <bcmp-import-auto-button theme="default" button-text="导入" type="m_mitem_uom"></bcmp-import-auto-button>
           <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDelConfirms">
             <t-button theme="default">{{ t('common.button.batchDelete') }}</t-button>
           </t-popconfirm>
-          <t-button theme="default">{{ t('common.button.import') }}</t-button>
         </template>
         <template #op="{ row }">
           <t-space :size="8">

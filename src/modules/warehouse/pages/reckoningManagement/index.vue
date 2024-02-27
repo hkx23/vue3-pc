@@ -282,10 +282,16 @@ const documentStatusData = async () => {
   }
 };
 
+// 定义一个响应式变量来保存查询条件
+const lastQueryParams = ref({});
 //* 查询
 const onInput = async (data: any) => {
   setLoading(true);
   const { billNo, status, warehouseId, timeCreate } = data;
+
+  // 保存当前的查询条件
+  lastQueryParams.value = { billNo, status, warehouseId, timeCreate };
+
   firstPageUI.value.page = 1; // 条件过滤时必须赋值为1
   if (!data.value) {
     const data = await api.stockCheckBill.getPdList({
@@ -313,7 +319,7 @@ const onReset = () => {
 // 处理关闭弹窗的逻辑
 const closeDialog = async () => {
   eidtRoutingVisible.value = false;
-  await fetchTable();
+  await onInput(lastQueryParams.value);
 };
 
 const onAdd = () => {
@@ -330,7 +336,8 @@ const scrappedBill = async (billId) => {
       await api.stockCheckBill.scrappedBill({
         billId,
       });
-      await fetchTable();
+      // await fetchTable();
+      await onInput(lastQueryParams.value);
       MessagePlugin.success('作废成功!');
     } else {
       //  检查是否选择了一行 如果没有选择任何行，显示错误消息

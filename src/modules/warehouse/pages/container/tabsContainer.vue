@@ -337,7 +337,7 @@ const optsContainer2 = computed(() => {
 const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   // { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
-  { title: '容器编码', colKey: 'containerCode', width: 100 },
+  { title: '容器条码', colKey: 'containerCode', width: 100 },
   { title: '容器名称', width: 100, colKey: 'containerName' },
   { title: '状态', width: 80, colKey: 'statusName' },
 ];

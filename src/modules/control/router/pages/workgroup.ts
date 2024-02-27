@@ -2,7 +2,7 @@ export default [
   {
     path: '/Workgroup',
     name: 'Workgroup',
-    component: () => import('../../pages/Workgroup/index.vue'),
+    component: () => import('../../pages/workgroup/index.vue'),
     meta: {
       title: {
         'zh-CN': '班组信息',
