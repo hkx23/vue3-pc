@@ -63,8 +63,7 @@ import { Icon, MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
-import { api, WorkstationAuthVO } from '@/api/control';
-import { api as apiMain } from '@/api/main';
+import { api, WorkstationAuthVO } from '@/api/main';
 import { api as apiWare } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -182,7 +181,7 @@ const searchList = ref({
 const onGetAllPermission = async () => {
   searchList.value.pageNum = pageUI.value.page;
   searchList.value.pageSize = pageUI.value.rows;
-  const res = await apiMain.warehouse.search(searchList.value);
+  const res = await api.warehouse.search(searchList.value);
   data.value = res.list;
   tableTotal.value = res.total;
 };

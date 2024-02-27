@@ -4,11 +4,8 @@
     :header="t('qcHold.formtitle')"
     width="75%"
     top="20"
-    :confirm-btn="{
-      content: t('common.button.save'),
-      theme: 'primary',
-    }"
-    :on-confirm="onConfirmForm"
+    :cancel-btn="null"
+    :confirm-btn="null"
     :close-on-overlay-click="false"
     class="add-form"
   >
@@ -150,11 +147,16 @@
           </cmp-table>
         </div>
       </footer>
-
-      <!-- <div class="popup-mo-foot-btn">
+    </div>
+    <!-- <div class="popup-mo-foot-btn">
       <t-button theme="default" @click="onHandleCancellation">取消</t-button>
     </div> -->
-    </div>
+    <template #footer>
+      <t-button v-if="formData.viewType != ViewType.VIEW" theme="primary" @click="onConfirmForm">{{
+        t('common.button.save')
+      }}</t-button>
+      <t-button theme="default" @click="formVisible = false">{{ t('common.button.cancel') }}</t-button>
+    </template>
   </t-dialog>
 </template>
 
@@ -163,8 +165,10 @@ import _ from 'lodash';
 import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
+import { api as apiControl } from '@/api/control';
 import { api as apimain } from '@/api/main';
 import { api as apiQuality, QcHoldVO } from '@/api/quality';
+import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { useUserStore } from '@/store';
@@ -554,6 +558,91 @@ const initLockDetailForm = (rowDatas: any, keys: String[], type: OperatorType) =
   formData.holdCategory = operatorType.value;
 };
 
+// 初始化解冻界面信息
+const initUnLockDetailForm = async (holdInfo: QcHoldVO, keys: String[], type: OperatorType) => {
+  keyList.value = keys;
+  setTableData(type);
+  operatorType.value = type.toString();
+  Object.assign(formData, holdInfo);
+  formData.viewType = ViewType.UNLOCK;
+};
+
+// 初始化详情查看界面信息
+const initViewkDetailForm = async (holdInfo: QcHoldVO, keys: String[], type: OperatorType) => {
+  keyList.value = keys;
+  setTableData(type);
+  operatorType.value = type.toString();
+  Object.assign(formData, holdInfo);
+  formData.viewType = ViewType.VIEW;
+};
+
+// 按照不同类型获取列表明细的数据
+const setTableData = (type: OperatorType) => {
+  switch (type) {
+    case OperatorType.MO: // 工单
+      getMoList();
+      break;
+    case OperatorType.PRODUCT: // 产品
+      getProductList();
+      break;
+    case OperatorType.WORKSTATION: // 机台工站
+      getWorkStationList();
+      break;
+    case OperatorType.MITEM: // 物料
+      getMitemList();
+      break;
+    default:
+      break;
+  }
+};
+// 获取工单数据
+const getMoList = async () => {
+  const res = (await apimain.moSchedule.getMoScheduleListByIds({
+    keyList: keyList.value,
+    pageNum: 1,
+    pageSize: 99999,
+  })) as any;
+  if (res) {
+    selectRows.value = res.list;
+  }
+};
+
+// 获取产品数据
+const getProductList = async () => {
+  const res = (await apiControl.wip.getQcHoldWipList({
+    keyList: keyList.value,
+    pageNum: 1,
+    pageSize: 99999,
+  })) as any;
+  if (res) {
+    selectRows.value = res.list;
+  }
+};
+
+// 获取机台工站数据
+const getWorkStationList = async () => {
+  const res = (await apimain.workstation.getQcHoldWorkStationList({
+    keyList: keyList.value,
+    pageNum: 1,
+    pageSize: 99999,
+  })) as any;
+  if (res) {
+    selectRows.value = res.list;
+  }
+};
+
+// 获取物料数据
+const getMitemList = async () => {
+  const res = (await apiWarehouse.transferDtlBarcode.getQcHoldLabelList({
+    keyList: keyList.value,
+    pageNum: 1,
+    pageSize: 99999,
+  })) as any;
+  if (res) {
+    selectRows.value = res.list;
+  }
+};
+
 // 冻结解冻提交
 const onConfirmForm = async () => {
   try {
@@ -597,6 +686,8 @@ const initOptions = async () => {
 
 defineExpose({
   initLockDetailForm,
+  initUnLockDetailForm,
+  initViewkDetailForm,
   showPopform,
   reset,
 });

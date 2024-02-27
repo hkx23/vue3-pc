@@ -7,7 +7,7 @@
           ><span class="span_title">{{ getTitle(formData.operateTpye) }}</span></t-col
         >
         <t-col>
-          <t-button @click="submit">提交</t-button>
+          <t-button @click="onSubmit">提交</t-button>
           <t-button theme="default" @click="onStaging">暂存</t-button>
           <t-button theme="default" @click="onClose">关闭</t-button>
         </t-col>
@@ -180,11 +180,17 @@ const onAdd = () => {
   dtlFormRef.value.dtlData.samplingStandardType = '1';
 };
 const onEdit = async (row) => {
+  const item = tableData.value[row.index];
+  console.log(item);
+  console.log(tableData.value);
   formTitle.value = '检验项目编辑';
-  await dtlFormRef.value.init();
   opType.value = 'edit';
   dtlFormRef.value.dtlData.id = row.id;
-  await dtlFormRef.value.getDtlById();
+  if (formData.value.operateTpye === 'add') {
+    dtlFormRef.value.dtlData = item;
+  } else {
+    await dtlFormRef.value.getDtlById();
+  }
   dtlFormRef.value.dtlData.samplingStandardType = '1';
   touchstoneFormVisible.value = true;
 };
@@ -309,6 +315,7 @@ const submit = async () => {
     }
 
     formData.value.status = formData.value.saveTpye === 'add' ? 'EFFECTIVE' : 'DRAFT';
+
     if (formData.value.operateTpye === 'add') {
       await apiQuality.oqcInspectStd.addOqcInspectStd({
         ...formData.value,
@@ -345,10 +352,21 @@ const onConfirmDtl = async () => {
   const data = await dtlFormRef.value.onConfirmDtl();
   if (data) {
     if (opType.value === 'add') {
-      tableData.value.push(dtlFormRef.value.rowData);
-    } else if (opType.value === 'edit') {
+      if (tableData.value.length > 0) {
+        const { itemNme } = dtlFormRef.value.rowData;
+        const item = tableData.value.map((item) => item.itemName === itemNme);
+        if (item) {
+          MessagePlugin.warning('项目名称重复');
+          return;
+        }
+      }
+      tableData.value.push({ ...dtlFormRef.value.rowData, index: tableData.value.length });
+      console.log(tableData.value);
+    } else if (opType.value === 'edit' && formData.value.operateTpye === 'edit') {
       await apiQuality.oqcInspectStdDtl.updateDtlById(dtlFormRef.value.rowData);
       onRefresh();
+    } else if (opType.value === 'edit' && formData.value.operateTpye === 'add') {
+      tableData.value.splice(dtlFormRef.value.rowData.index, 1, dtlFormRef.value.rowData);
     }
     touchstoneFormVisible.value = false;
   }
@@ -386,6 +404,13 @@ const Emit = defineEmits(['permissionShow']);
 // 关闭窗口回到主页面
 const onStaging = async () => {
   formData.value.saveTpye = 'onStaging';
+  const data = await submit();
+  if (data) {
+    Emit('permissionShow', false); // 回到父
+  }
+};
+const onSubmit = async () => {
+  formData.value.saveTpye = 'add';
   const data = await submit();
   if (data) {
     Emit('permissionShow', false); // 回到父
