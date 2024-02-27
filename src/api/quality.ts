@@ -2101,13 +2101,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
   ii?: string;
   iii?: string;
-  s1?: string;
+  i?: string;
   s2?: string;
-  s3?: string;
   s4?: string;
+  s3?: string;
+  s1?: string;
 } | null;
 
 /** 计量单位 */
