@@ -191,7 +191,7 @@ import { Icon } from 'tdesign-icons-vue-next';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
 
-import { api } from '@/api/main';
+import { api } from '@/api/control';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -461,7 +461,7 @@ const onInput = async (data: any) => {
   rowGroupId.value = '';
 };
 
-// ## 添加             员工                    搜索
+// ## 添加 员工 搜索
 const optsAdd = computed(() => {
   return {
     categoryName: { label: '查询员工', comp: 't-input', event: 'input', defaultval: '' },
@@ -480,7 +480,7 @@ const onInputAdd = async (data: any) => {
   addPersonTotal.value = res.total;
 };
 
-// ## 删除             员工                   搜索
+// ## 删除 员工 搜索
 const optsDel = computed(() => {
   return {
     categoryName: { label: '已选员工', comp: 't-input', event: 'input', defaultval: '' },
