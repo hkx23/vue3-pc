@@ -11,4 +11,16 @@ export default [
       orderNo: 0,
     },
   },
+  {
+    path: '/holdList',
+    name: 'holdList',
+    component: () => import('../../pages/qcHold/holdList.vue'),
+    meta: {
+      title: {
+        'zh-CN': 'Hold单据列表',
+        'en-US': 'holdList',
+      },
+      orderNo: 0,
+    },
+  },
 ];
