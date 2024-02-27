@@ -3,7 +3,7 @@
     <!-- 默认插槽 和 具名插槽（panel）用来渲染面板内容 -->
     <t-tab-panel value="tab1" label="容器" :destroy-on-hide="false">
       <cmp-container :full="true">
-        <t-card>
+        <t-card :span="12">
           <cmp-query ref="queryComponent" :opts="optsContainer1" :bool-enter="false" @submit="onInput"> </cmp-query>
         </t-card>
         <!-- cmp-table 表格组件  -->
@@ -63,55 +63,58 @@
 
     <!-- ######### 物料关联 ######## -->
     <t-tab-panel value="tab2" label="物料关联" :destroy-on-hide="false">
-      <t-card>
-        <cmp-query ref="queryComponent" :opts="optsContainer2" :bool-enter="false" @submit="onInput2"> </cmp-query>
-      </t-card>
-      <div class="tableSytle">
-        <!-- cmp-table 表格组件  -->
-        <cmp-table
-          v-model:pagination="pageUI"
-          v-model:selected-row-keys="selectedRowKeys2"
-          row-key="id"
-          :table-column="tableContainerColumns2"
-          :table-data="tableContainerData2"
-          select-on-row-click
-          :total="dataTotal2"
-          :fixed-height="true"
-          empty="没有符合条件的数据"
-          style="height: 400px"
-        >
-          <template #title>
-            {{ '物料关联' }}
-          </template>
+      <cmp-container :full="true">
+        <div class="tableSytle">
+          <t-card :span="12">
+            <cmp-query ref="queryComponent" :opts="optsContainer2" :bool-enter="false" @submit="onInput2"> </cmp-query>
+          </t-card>
 
-          <template #button>
-            <t-space :size="8">
-              <t-button theme="primary" @click="add">新增</t-button>
-              <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
-              <!--   -->
-              <!-- <t-button theme="primary">打印</t-button> -->
-              <t-popconfirm theme="default" content="确认删除吗" @confirm="onRemoveRowClick2()">
-                <t-button theme="default"> 批量删除 </t-button>
-              </t-popconfirm>
-            </t-space>
-          </template>
+          <!-- cmp-table 表格组件  -->
+          <cmp-table
+            v-model:pagination="pageUI"
+            v-model:selected-row-keys="selectedRowKeys2"
+            row-key="id"
+            :table-column="tableContainerColumns2"
+            :table-data="tableContainerData2"
+            select-on-row-click
+            :total="dataTotal2"
+            :fixed-height="true"
+            empty="没有符合条件的数据"
+            style="height: 400px"
+          >
+            <template #title>
+              {{ '物料关联' }}
+            </template>
 
-          <!-- 定义序号列的插槽 -->
-          <!-- <template #indexSlot="{ rowIndex }">
+            <template #button>
+              <t-space :size="8">
+                <t-button theme="primary" @click="add">新增</t-button>
+                <!-- <t-button theme="primary" @click="generate">生成</t-button> -->
+                <!--   -->
+                <!-- <t-button theme="primary">打印</t-button> -->
+                <t-popconfirm theme="default" content="确认删除吗" @confirm="onRemoveRowClick2()">
+                  <t-button theme="default"> 批量删除 </t-button>
+                </t-popconfirm>
+              </t-space>
+            </template>
+
+            <!-- 定义序号列的插槽 -->
+            <!-- <template #indexSlot="{ rowIndex }">
             {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
           </template> -->
-          <!-- 编辑2 -->
-          <template #op2="row">
-            <t-space>
-              <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2(row)">编辑</t-link>
-              <!-- -->
-              <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onRowClick(row)">
-                <t-link theme="default"> 删除 </t-link>
-              </t-popconfirm>
-            </t-space>
-          </template>
-        </cmp-table>
-      </div>
+            <!-- 编辑2 -->
+            <template #op2="row">
+              <t-space>
+                <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick2(row)">编辑</t-link>
+                <!-- -->
+                <t-popconfirm theme="default" content="确认删除吗" @confirm="() => onRowClick(row)">
+                  <t-link theme="primary"> 删除 </t-link>
+                </t-popconfirm>
+              </t-space>
+            </template>
+          </cmp-table>
+        </div>
+      </cmp-container>
     </t-tab-panel>
   </t-tabs>
 
@@ -176,7 +179,7 @@
       </t-form-item> -->
 
       <t-form-item label="物料类别编码" name="mitemCategoryId">
-        <t-input v-model="formData2.categoryCode" disabled></t-input>
+        <t-select v-model="formData2.categoryCode" disabled></t-select>
       </t-form-item>
 
       <t-form-item label="物料名称" name="mitemId">
@@ -190,7 +193,7 @@
       </t-form-item>
 
       <t-form-item label="物料编码" name="mitemId">
-        <t-input v-model="formData2.mitemCode" disabled></t-input>
+        <t-select v-model="formData2.mitemCode" disabled></t-select>
       </t-form-item>
 
       <t-form-item label="标准数量" name="qty">
@@ -258,7 +261,7 @@ const rules: FormRules<Data> = {
     {
       required: true,
       message: '请输入条码生成规则',
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
 };
@@ -274,15 +277,29 @@ const rules2: FormRules<Data> = {
   mitemCategoryId: [
     {
       required: true,
-      message: '请输入物料类别',
-      trigger: 'blur',
+      message: '请选择物料类别',
+      trigger: 'change',
+    },
+  ],
+  categoryCode: [
+    {
+      required: true,
+      message: '请输入物料类别编码',
+      trigger: 'change',
     },
   ],
   mitemId: [
     {
       required: true,
-      message: '请输入物料名称',
-      trigger: 'blur',
+      message: '请选择物料名称',
+      trigger: 'change',
+    },
+  ],
+  mitemCode: [
+    {
+      required: true,
+      message: '请输入物料编码',
+      trigger: 'change',
     },
   ],
 };
@@ -336,7 +353,6 @@ const optsContainer2 = computed(() => {
 
 const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  // { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '容器条码', colKey: 'containerCode', width: 100 },
   { title: '容器名称', width: 100, colKey: 'containerName' },
   { title: '状态', width: 80, colKey: 'statusName' },
@@ -344,9 +360,8 @@ const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
 
 const tableContainerColumns2: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  // { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
-  { title: '物料类别', colKey: 'mitemCategory', width: 80 },
-  { title: '物料类别名称', width: 80, colKey: 'mitemCategoryName' },
+  { title: '物料类别', colKey: 'categoryCode', width: 80 },
+  { title: '物料类别名称', width: 80, colKey: 'categoryName' },
   { title: '物料编码', width: 80, colKey: 'mitemCode' },
   { title: '物料名称', width: 85, colKey: 'mitemName' },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
@@ -379,14 +394,12 @@ const getPrintTmplList = async () => {
     label: item.tmplName,
     value: item.id,
   }));
-  console.log('🚀 ~ getPrintTmplList ~ PrintTmpReslut:打印模板', PrintTmpReslutDataOptions.value); // [] todo
 };
 
 const multipleId = ref([]); // 接口入参
 const handleRowSelectChange = (value: any[]) => {
   if (value.length > 0) {
     multipleId.value = value;
-    console.log('🚀 ~ handleRowSelectChange ~ multipleId.value:', multipleId.value);
   }
 };
 
@@ -465,7 +478,6 @@ const onInput2 = async (data: any) => {
 // 父调子fn
 /* * data 主表接口 的id 查右侧的数据 */
 const fetchTable = async (data: any) => {
-  console.log('🚀 ~ fetchTable ~ data:todo', data);
   setLoading(true);
   inventoryManagement1.value = [];
   tableContainerData1.value = [];
@@ -475,7 +487,6 @@ const fetchTable = async (data: any) => {
       pageSize: pageUI.value.rows,
       containerTypeId: data, // containerTypeId 必传
     });
-    console.log('🚀 ~ fetchTable ~ result:', result);
     tableContainerData1.value = result.list;
     dataTotal1.value = result.total;
   }
@@ -484,7 +495,6 @@ const fetchTable = async (data: any) => {
 
 // fetchTable 物料关联
 const fetchTable2 = async (data: any) => {
-  console.log('🚀 ~ fetchTable2 ~ data:', data);
   inventoryManagement2.value = [];
   tableContainerData2.value = [];
   setLoading(true);
@@ -549,7 +559,6 @@ const print = async () => {
 const rowId = ref('');
 // 编辑
 const onEditRowClick2 = async ({ row }) => {
-  console.log('🚀 ~ onEditRowClick2 ~ row编辑容器类型与物料关系拿行id:', row);
   rowId.value = row.id; // 编辑时传行id
   diaTilte.value = '编辑容器类型与物料关系';
   containerVisible2.value = true;
@@ -658,17 +667,6 @@ const cancel = () => {
 };
 // 取消
 const cancel2 = () => {
-  // 重置表单项，但保留 containerType 字段的值
-  // formData2.value = {
-  // ...formData2.value, // 保留当前表单的值
-  //   mitemCategoryId: '', // 清空物料类别编码
-  //   mitemId: '', // 清空物料ID
-  //   qty: 1, // 重置标准数量为1
-  //   mitemCategoryCode: '', // 清空物料类别编码
-  //   categoryCode: '', // 清空物料类别编码
-  //   mitemCode: '', // 清空物料编码
-  // };
-
   containerVisible2.value = false;
   MessagePlugin.success('已取消');
 };
@@ -765,6 +763,6 @@ const submit2 = async () => {
 
 <style scoped lang="less">
 .tableSytle {
-  width: 557px;
+  width: 81%;
 }
 </style>

@@ -7,6 +7,12 @@ import BcmpSelectBusiness from './bcmp-select-business/index.vue';
 import BcmpSelectList from './bcmp-select-list/index.vue';
 import BcmpSelectTable from './bcmp-select-table/index.vue';
 import BcmpUploadContent from './bcmp-upload-content/index.vue';
+import BCmpCustomer from './cmp-business/BCmpCustomer.vue';
+import BCmpMitem from './cmp-business/BCmpMitem.vue';
+import BCmpMitemCategory from './cmp-business/BCmpMitemCategory.vue';
+import BCmpPerson from './cmp-business/BCmpPerson.vue';
+import BCmpSupplier from './cmp-business/BCmpSupplier.vue';
+import BCmpUser from './cmp-business/BCmpUser.vue';
 import CmpButton from './cmp-button/index.vue';
 import CmpWrapper from './cmp-kanban/CmpWrapper.vue';
 import CmpCard from './cmp-layout/CmpCard.vue';
@@ -43,6 +49,13 @@ export default {
 
     app.component('CmpPrintButton', CmpPrintButton);
     app.component('CmpWrapper', CmpWrapper);
+
+    app.component('BCmpPerson', BCmpPerson);
+    app.component('BCmpUser', BCmpUser);
+    app.component('BCmpSupplier', BCmpSupplier);
+    app.component('BCmpCustomer', BCmpCustomer);
+    app.component('BCmpMitem', BCmpMitem);
+    app.component('BCmpMitemCategory', BCmpMitemCategory);
   },
 };
 
@@ -55,5 +68,12 @@ declare module '@vue/runtime-core' {
     CmpPrintButton: typeof CmpPrintButton;
     CmpTable: typeof CmpTable;
     CmpWrapper: typeof CmpWrapper;
+
+    BCmpPerson: typeof BCmpPerson;
+    BCmpUser: typeof BCmpUser;
+    BCmpSupplier: typeof BCmpSupplier;
+    BCmpCustomer: typeof BCmpCustomer;
+    BCmpMitem: typeof BCmpMitem;
+    BCmpMitemCategory: typeof BCmpMitemCategory;
   }
 }

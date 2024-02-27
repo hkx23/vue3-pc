@@ -37,15 +37,21 @@
               </t-space>
             </template>
 
-            <!-- 定义序号列的插槽 -->
-            <!-- <template #indexSlot="{ rowIndex }">
-              {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-            </template> -->
             <!-- 编辑 -->
             <template #op1="{ row }">
               <t-space>
                 <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick1(row)">编辑</t-link>
               </t-space>
+            </template>
+
+            <template #stateName="{ row }">
+              <t-switch
+                :custom-value="[1, 0]"
+                :value="row.state"
+                :default-value="row.state"
+                size="large"
+                @change="(value) => onSwitchChange(row, value)"
+              ></t-switch>
             </template>
           </cmp-table>
         </cmp-card>
@@ -114,20 +120,6 @@ const propsId = ref(''); // 接口入参
 //* 组件配置  --查询界面选择
 const optsContainer1 = computed(() => {
   return {
-    // containerCode: {
-    //   label: '容器类型编码',
-    //   labelWidth: '100',
-    //   event: 'input',
-    //   comp: 't-input',
-    //   defaultVal: '',
-    // },
-    // containerTypeId: {
-    //   label: '容器状态',
-    //   labelWidth: '100',
-    //   event: 'select',
-    //   comp: 't-select',
-    //   defaultVal: '',
-    // },
     keyword: {
       label: '容器编码/名称',
       labelWidth: '100',
@@ -135,20 +127,12 @@ const optsContainer1 = computed(() => {
       comp: 't-input',
       defaultVal: '',
     },
-    // mitemCode: {
-    //   label: '物料编码',
-    //   labelWidth: '100',
-    //   event: 'select',
-    //   comp: 't-select',
-    //   defaultVal: '',
-    // },
   };
 });
 
 // card 1  single 设置单项选中
 const tableContainerColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'single', fixed: 'left' },
-  // { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
   { title: '容器类型编码', colKey: 'containerTypeCode', width: 120 },
   { title: '容器类型名称', width: 120, colKey: 'containerTypeName' },
   { title: '容器类型描述', width: 120, colKey: 'containerTypeDesc' },
@@ -188,7 +172,6 @@ const onInput = async (data: any) => {
       pageSize: pageUI.value.rows,
       keyword,
     });
-    console.log('🚀 ~ onInput ~ result:', result);
     tableContainerData1.value = result.list;
     dataTotal1.value = result.total;
   }
@@ -219,13 +202,6 @@ const rules: FormRules<Data> = {
     },
   ],
 };
-
-// const handleRowSelectChange = (value: any[]) => {
-//   // 在这里，value 是选中行的数据
-//   if (value.length > 0) {
-//     propsId.value = value[value.length - 1];
-//   }
-// };
 
 // 当点击表格的某一行时
 const handleRowClick = (row, event) => {
@@ -258,6 +234,25 @@ const submit1 = async () => {
   containerVisible.value = false;
   onInput({}); // 重新获取数据
   // refreshTable.value.fetchTable(propsId.value);
+};
+
+/* 操作状态 */
+const onSwitchChange = async (row: any, value: any) => {
+  const isValue = value ? 1 : 0;
+  const { containerTypeCode, containerTypeDesc, containerTypeName, creator, eid, id, modifier, oid } = row;
+  await api.containerType.modify({
+    containerTypeCode,
+    containerTypeDesc,
+    containerTypeName,
+    creator,
+    eid,
+    id,
+    modifier,
+    oid,
+    state: isValue,
+  });
+  await onInput({});
+  await MessagePlugin.success('操作成功!');
 };
 
 // 取消
