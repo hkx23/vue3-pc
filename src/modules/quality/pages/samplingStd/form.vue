@@ -40,7 +40,9 @@
                 variant="text"
                 @click="onSave(slotProps)"
               />
-              <t-button :icon="deleIcon" size="small" theme="primary" variant="text" @click="onDel(slotProps)" />
+              <t-popconfirm content="是否确认删除" @confirm="onDel(slotProps)">
+                <t-button :icon="deleIcon" size="small" theme="primary" variant="text" />
+              </t-popconfirm>
             </div>
           </template>
         </cmp-table>

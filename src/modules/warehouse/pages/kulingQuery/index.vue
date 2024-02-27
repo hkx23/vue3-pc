@@ -64,6 +64,7 @@ const optsKuling = computed(() => {
       bind: {
         type: 'mitem',
         showTitle: false,
+        labelField: 'mitemCode',
       },
     },
     warehouseId: {

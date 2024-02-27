@@ -87,6 +87,7 @@ const optsReceipt = computed(() => {
       bind: {
         type: 'mitem',
         showTitle: false,
+        labelField: 'mitemCode',
       },
     },
     supplierName: {

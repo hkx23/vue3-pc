@@ -105,6 +105,7 @@ const opts = computed(() => {
       bind: {
         type: 'warehouse',
         showTitle: false,
+        labelField: 'warehouseCode',
       },
     },
     districtKeyword: {
