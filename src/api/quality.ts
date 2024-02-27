@@ -918,6 +918,8 @@ export interface IqcInspectStdDtlFile {
 
 /** 物料检验标准全信息搜索类 */
 export interface IqcInspectStdFullSearch {
+  /** IQC单据号 */
+  iqcBillNo?: string;
   mitemCategoryId?: string;
   mitemId?: string;
   pickQty?: string;
@@ -1471,10 +1473,16 @@ export interface ResultPagingDataMFTSubVO {
   data?: PagingDataMFTSubVO;
 }
 
+/** 缺陷类型 */
+export interface Dropdown {
+  value?: string;
+  label?: string;
+}
+
 /** 处理意见VO */
 export interface IqcInspectNgVO {
   /** 缺陷类型 */
-  defectCode?: string;
+  defectCodeList?: Dropdown[];
   /** 缺陷等级 */
   iqcDefectCategoryCode?: string;
   /** 物料处理意见 */
@@ -1583,6 +1591,8 @@ export interface MitemReceiveBillVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** IQC单据号 */
+  iqcBillNo?: string;
   /** 单据号 */
   billNo?: string;
   warehouseId?: string;
@@ -2101,13 +2111,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  ii?: string;
-  iii?: string;
   s1?: string;
   s2?: string;
   s3?: string;
   s4?: string;
+  i?: string;
+  iii?: string;
+  ii?: string;
 } | null;
 
 /** 计量单位 */

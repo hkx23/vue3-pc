@@ -26,11 +26,22 @@
                 >
                   <template #title> 工作台 </template>
                   <template #button>
-                    <t-button theme="primary">合并检验</t-button>
+                    <t-button theme="primary" @click="mergeInspection(true)">合并检验</t-button>
                   </template>
                   <template #op="rowData">
                     <t-space>
-                      <t-link theme="primary" @click="onShowDialog(rowData)">检验</t-link>
+                      <t-link
+                        v-if="rowData.row.inspectResult === 'UNINSPECT' || _.isEmpty(rowData.row.iqcBillNo)"
+                        theme="primary"
+                        @click="onShowDialog(true, rowData)"
+                        >检验</t-link
+                      >
+                    </t-space>
+                  </template>
+
+                  <template #iqcBillNo="rowData">
+                    <t-space>
+                      <t-link theme="primary" @click="onShowDialog(false, rowData)">{{ rowData.row.iqcBillNo }}</t-link>
                     </t-space>
                   </template>
                 </cmp-table>
@@ -80,8 +91,8 @@ const selectTabValue = ref('tab1');
 const selectWaitId = ref([]);
 const formData = reactive({
   queryData: {
-    beginDatetimeReceipted: dayjs().subtract(+initialDate.value, 'day').format('YYYY-MM-DD'),
-    endDatetimeReceipted: dayjs().format('YYYY-MM-DD'),
+    beginDatetimeReceipted: '',
+    endDatetimeReceipted: '',
     conditions: [{ field: 'perfix', operator: 'EQ', value: 'PA' }],
     mitemCategoryId: '',
     mitemId: '',
@@ -410,9 +421,56 @@ const pageInit = async () => {
 const onSelectRepairChange = (value: any) => {
   selectWaitId.value = value;
 };
-const onShowDialog = async (rowData) => {
+const onShowDialog = async (isEdit, rowData) => {
   const { showForm, loadTable } = formRef.value;
-  await showForm(false, rowData.row);
+  await showForm(isEdit, rowData.row);
+  await loadTable();
+};
+const mergeInspection = async (isEdit) => {
+  if (selectWaitId.value.length <= 0) {
+    MessagePlugin.error('请选择待检单.');
+    return;
+  }
+
+  const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
+
+  for (let index = 0; index < selectKeys.length; index++) {
+    const element = selectKeys[index];
+    if (!_.isEmpty(element.iqcBillNo)) {
+      MessagePlugin.error('单据不允许重复检验.');
+      return;
+    }
+  }
+
+  // 相同供应商
+  const distinctSupplierCode = selectKeys
+    .map((n) => n.supplierCode)
+    .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
+  if (!_.isEmpty(distinctSupplierCode) && distinctSupplierCode.length > 1) {
+    MessagePlugin.error('只能选择相同供应商的接收单');
+    return;
+  }
+
+  // 相同物料
+  const distinctMitemCode = selectKeys
+    .map((n) => n.mitemCode)
+    .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
+  if (!_.isEmpty(distinctMitemCode) && distinctMitemCode.length > 1) {
+    MessagePlugin.error('只能选择相同物料的接收单');
+    return;
+  }
+
+  // 相同接收时间
+  const distinctDatetimeReceipted = selectKeys
+    .map((n) => dayjs(n.datetimeReceipted).format('YYYY-MM-DD'))
+    .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
+  if (!_.isEmpty(distinctDatetimeReceipted) && distinctDatetimeReceipted.length > 1) {
+    MessagePlugin.error('只能选择相同日期的接收单');
+    return;
+  }
+
+  const { showMergeForm, loadTable } = formRef.value;
+  await showMergeForm(isEdit, selectKeys);
   await loadTable();
 };
 

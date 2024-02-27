@@ -5,10 +5,21 @@
     width="98%"
     placement="top"
     top="20"
-    :confirm-btn="{
-      content: '提交',
-      theme: 'primary',
-    }"
+    :cancel-btn="
+      isEdit
+        ? {
+            content: '取消',
+          }
+        : null
+    "
+    :confirm-btn="
+      isEdit
+        ? {
+            content: '提交',
+            theme: 'primary',
+          }
+        : null
+    "
     :on-confirm="onConfirmForm"
     :close-on-overlay-click="false"
   >
@@ -22,7 +33,7 @@
               {{ formData.mitemName }}
             </div>
           </t-descriptions-item>
-          <t-descriptions-item label="检验严格度">{{ formData.inspectionStringency }}</t-descriptions-item>
+          <t-descriptions-item label="检验严格度">{{ formData.inspectionStringencyName }}</t-descriptions-item>
           <t-descriptions-item label="报批数量">{{ formData.pickQty }}</t-descriptions-item>
           <t-descriptions-item label="检验标准">{{ formData.inspectStdName }}</t-descriptions-item>
           <t-descriptions-item label="接收单号">{{ formData.billNoStr }}</t-descriptions-item>
@@ -43,7 +54,7 @@
               :hover="false"
               :stript="false"
               :resizable="true"
-              :show-toolbar="true"
+              :show-toolbar="false"
               :show-pagination="false"
               :table-column="tableColumns"
               active-row-type="single"
@@ -65,16 +76,21 @@
                 </t-space>
               </template>
               <template #inspectResult="{ row }">
-                <t-switch v-model="row.inspectResult" size="large" />
+                <t-switch v-model="row.inspectResult" size="large" :disabled="!isEdit" />
               </template>
               <template #measureOp="{ row }">
-                <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">填写</t-link>
+                <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
+                  <div v-if="isEdit">填写</div>
+                  <div v-else>查看</div>
+                </t-link>
               </template>
               <template #ngQty="{ row }">
-                <t-input v-model="row.ngQty" />
+                <t-input v-if="isEdit" v-model="row.ngQty" />
+                <div v-else>{{ row.ngQty }}</div>
               </template>
               <template #ngReason="{ row }">
-                <t-input v-model="row.ngReason" />
+                <t-input v-if="isEdit" v-model="row.ngReason" />
+                <div v-else>{{ row.ngReason }}</div>
               </template>
             </cmp-table>
           </t-tab-panel>
@@ -84,7 +100,7 @@
               :hover="false"
               :stript="false"
               :resizable="true"
-              :show-toolbar="true"
+              :show-toolbar="false"
               :show-pagination="false"
               :table-column="tableColumns"
               active-row-type="single"
@@ -104,16 +120,21 @@
                 </t-space>
               </template>
               <template #inspectResult="{ row }">
-                <t-switch v-model="row.inspectResult" size="large" />
+                <t-switch v-model="row.inspectResult" size="large" :disabled="!isEdit" />
               </template>
               <template #measureOp="{ row }">
-                <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">填写</t-link>
+                <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
+                  <div v-if="isEdit">填写</div>
+                  <div v-else>查看</div>
+                </t-link>
               </template>
               <template #ngQty="{ row }">
-                <t-input v-model="row.ngQty" />
+                <t-input v-if="isEdit" v-model="row.ngQty" />
+                <div v-else>{{ row.ngQty }}</div>
               </template>
               <template #ngReason="{ row }">
-                <t-input v-model="row.ngReason" />
+                <t-input v-if="isEdit" v-model="row.ngReason" />
+                <div v-else>{{ row.ngReason }}</div>
               </template>
             </cmp-table>
           </t-tab-panel>
@@ -123,7 +144,7 @@
               :hover="false"
               :stript="false"
               :resizable="true"
-              :show-toolbar="true"
+              :show-toolbar="false"
               :show-pagination="false"
               :table-column="tableColumns"
               active-row-type="single"
@@ -143,16 +164,21 @@
                 </t-space>
               </template>
               <template #inspectResult="{ row }">
-                <t-switch v-model="row.inspectResult" size="large" />
+                <t-switch v-model="row.inspectResult" size="large" :disabled="!isEdit" />
               </template>
               <template #measureOp="{ row }">
-                <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">填写</t-link>
+                <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
+                  <div v-if="isEdit">填写</div>
+                  <div v-else>查看</div>
+                </t-link>
               </template>
               <template #ngQty="{ row }">
-                <t-input v-model="row.ngQty" />
+                <t-input v-if="isEdit" v-model="row.ngQty" />
+                <div v-else>{{ row.ngQty }}</div>
               </template>
               <template #ngReason="{ row }">
-                <t-input v-model="row.ngReason" />
+                <t-input v-if="isEdit" v-model="row.ngReason" />
+                <div v-else>{{ row.ngReason }}</div>
               </template>
             </cmp-table>
           </t-tab-panel>
@@ -193,6 +219,7 @@ const formNgRef = ref(null);
 
 const selectTabValue = ref('tab1');
 
+const isEdit = ref(true); // 是否可编辑
 const formData = reactive({
   iqcBillNo: '',
   billNoStr: '',
@@ -209,6 +236,7 @@ const formData = reactive({
   supplierCode: '',
   supplierName: '',
   inspectionStringency: '',
+  inspectionStringencyName: '',
   inspectStdName: '',
 });
 
@@ -298,6 +326,7 @@ const onConfirmForm = async () => {
         supplierName: formData.supplierName,
         inspectionStringency: formData.inspectionStringency,
         iqcInspectStdList: tableData.value,
+        // iqcInspectNg: null,
       });
 
       Emit('parent-refresh-event');
@@ -337,6 +366,7 @@ const onShowFiles = async (rowData) => {
 const loadTable = async () => {
   try {
     const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
+      iqcBillNo: formData.iqcBillNo,
       mitemCategoryId: formData.mitemCategoryId,
       mitemId: formData.mitemId,
       pickQty: formData.pickQty,
@@ -356,7 +386,9 @@ const loadTable = async () => {
   }
 };
 const reset = () => {
-  getBillNo();
+  if (isEdit.value) {
+    getBillNo();
+  }
 
   // 清除所有对象的值
   Object.keys(formData).forEach((key) => {
@@ -368,8 +400,11 @@ const reset = () => {
   });
 };
 const showForm = async (edit, row) => {
+  isEdit.value = edit;
   formVisible.value = true;
   reset();
+
+  formData.iqcBillNo = row.iqcBillNo;
   formData.billNoList.push({ billNo: row.billNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
   formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
   formData.mitemId = row.mitemId;
@@ -384,10 +419,36 @@ const showForm = async (edit, row) => {
   formData.supplierCode = row.supplierCode;
   formData.supplierName = row.supplierName;
   formData.inspectionStringency = row.inspectionStringency;
+  formData.inspectionStringencyName = row.inspectionStringencyName;
+};
+const showMergeForm = async (edit, reBillNoList) => {
+  isEdit.value = edit;
+  formVisible.value = true;
+  reset();
+
+  reBillNoList.forEach((n) => {
+    formData.billNoList.push({ billNo: n.billNo, erpLineNo: n.erpLineNo, billNoDtlId: n.id });
+  });
+  const row = reBillNoList[0];
+  formData.iqcBillNo = row.iqcBillNo;
+  formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
+  formData.mitemId = row.mitemId;
+  formData.mitemCode = row.mitemCode;
+  formData.mitemName = row.mitemName;
+  formData.mitemDesc = row.mitemDesc;
+  formData.mitemCategoryId = row.mitemCategoryId;
+  formData.mitemCategoryCode = row.mitemCategoryCode;
+  formData.mitemCategoryName = row.mitemCategoryName;
+  formData.pickQty = `${row.pickQty}`;
+  formData.supplierId = row.supplierId;
+  formData.supplierCode = row.supplierCode;
+  formData.supplierName = row.supplierName;
+  formData.inspectionStringency = row.inspectionStringency;
+  formData.inspectionStringencyName = row.inspectionStringencyName;
 };
 const onShowMeasureDialog = async (row) => {
   const { showForm } = formMeasureRef.value;
-  await showForm(false, row.measureList);
+  await showForm(isEdit.value, row.measureList);
 };
 const onFormCloseDialog = async () => {
   formVisible.value = false;
@@ -406,6 +467,7 @@ defineExpose({
   form: formRef,
   reset,
   showForm,
+  showMergeForm,
   loadTable,
 });
 </script>
