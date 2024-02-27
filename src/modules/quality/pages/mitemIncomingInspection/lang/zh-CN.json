@@ -1,0 +1,8 @@
+{
+  "mitemIncomingInspection": {
+    "tabName1":"待检验",
+    "tabName2":"检验完成",
+    "submit": "提交",        
+    "cancel": "作废"
+  }
+}

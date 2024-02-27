@@ -473,7 +473,7 @@ const onReset = async () => {
 }
 
 // .tag-block-light {
-//   /deep/ .t-tag--primary {
+//  :deep .t-tag--primary {
 //     background-color: #548df3;
 //   }
 // }

@@ -534,7 +534,7 @@ const assignOpts = computed(() => {
       comp: 't-input',
       defaultVal: '',
     },
-    mitemCategory: {
+    mitemCategoryId: {
       label: '产品类别',
       comp: 'bcmp-select-business',
       event: 'business',

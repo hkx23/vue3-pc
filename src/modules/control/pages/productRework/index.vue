@@ -733,7 +733,7 @@ onMounted(() => {
 .custom-row-item {
   align-items: center;
 
-  /deep/ .t-space-item {
+  :deep .t-space-item {
     width: 30%;
   }
 }
@@ -741,7 +741,7 @@ onMounted(() => {
 .custom-row-item-setting {
   align-items: center;
 
-  /deep/ .t-space-item {
+  :deep .t-space-item {
     width: 60%;
   }
 }
