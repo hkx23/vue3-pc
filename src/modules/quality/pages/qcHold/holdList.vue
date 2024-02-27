@@ -1,14 +1,13 @@
 <template>
-  <cmp-container :full="true" :ghost="true">
-    <cmp-card :full="false">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
       <cmp-query :opts="optsHold" :is-reset-query="false" @submit="conditionEnter"> </cmp-query>
     </cmp-card>
-    <cmp-card :full="true"
+    <cmp-card :span="12"
       ><cmp-table
         ref="tableHoldRef"
         v-model:pagination="pageUI"
         active-row-type="single"
-        :fixed-height="true"
         row-key="id"
         :table-column="HoldColumns"
         :table-data="holdInfoList.list"
@@ -122,6 +121,7 @@ const optsHold = computed(() => {
       placeholder: t('common.placeholder.input', [`${t('qcHold.reasonCategory')}`]),
       bind: {
         options: reasonCategoryOption.value,
+        lazyLoad: true,
       },
     },
     creator: {
@@ -414,19 +414,4 @@ onMounted(() => {
 });
 </script>
 
-<style lang="less" scoped>
-.full {
-  height: 100%;
-}
-
-.sub-tab {
-  padding: 8px 8px 0 12px;
-  background-color: var(--td-bg-color-page);
-}
-
-.align-right {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-</style>
+<style lang="less" scoped></style>
