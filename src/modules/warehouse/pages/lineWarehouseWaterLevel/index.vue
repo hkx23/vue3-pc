@@ -244,16 +244,18 @@ onMounted(async () => {
 });
 
 // #班组搜索
+/* 仓库名称 查询条件有歧义 改成 仓库编码 */
 const opts = computed(() => {
   return {
     warehouse: {
-      label: '仓库名称',
+      label: '仓库编码',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
         type: 'warehouseAuth',
         showTitle: false,
+        labelField: 'warehouseCode',
       },
     },
     mitem: {
