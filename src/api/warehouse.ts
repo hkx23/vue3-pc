@@ -1394,8 +1394,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
   mesbillNo?: string;
+  erpbillNo?: string;
 }
 
 /** 响应数据 */
@@ -3225,6 +3225,14 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   /**
    * 已扫描数量
    * @format double
@@ -3232,16 +3240,6 @@ export interface MoIssuanceDtlVO {
   scanQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  bfpickQty?: number;
-  flpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  tlpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -5566,8 +5564,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
