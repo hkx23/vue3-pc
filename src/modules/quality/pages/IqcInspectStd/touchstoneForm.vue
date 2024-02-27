@@ -1,5 +1,12 @@
 <template>
-  <t-form ref="formRef" :rules="rules">
+  <t-form
+    ref="formRef"
+    :rules="rules"
+    :data="dtlData"
+    label-align="right"
+    label-width="120px"
+    :show-error-message="false"
+  >
     <t-row :gutter="[32, 16]">
       <!-- 第 1️⃣ 行数据 -->
       <t-col :span="4">
@@ -19,6 +26,11 @@
       <t-col :span="4">
         <t-form-item label="检验内容" label-align="right" name="itemName">
           <t-input v-model="dtlData.itemName" style="width: 280px" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="项目行号" label-align="right" name="itemSeq">
+          <t-input v-model="dtlData.itemSeq" style="width: 280px" />
         </t-form-item>
       </t-col>
       <!-- 第 2️⃣ 行数据 -->
@@ -172,6 +184,7 @@ const formVisible = ref(false);
 const dtlData = ref({
   type: 'add',
   iqcInspectStdId: '',
+  itemSeq: '',
   itemCategory: '',
   id: '',
   itemName: '',
@@ -196,6 +209,7 @@ const dtlData = ref({
 // #表单定义规则
 const rules: FormRules = {
   itemCategory: [{ required: true, message: '不能为空', trigger: 'change' }],
+  itemSeq: [{ required: true, message: '不能为空', trigger: 'change' }],
   itemName: [{ required: true, message: '不能为空', trigger: 'change' }],
   characteristics: [{ required: true, message: '不能为空', trigger: 'change' }],
   samplingStandardType: [{ required: true, message: '不能为空', trigger: 'change' }],
@@ -247,6 +261,7 @@ const querySelectChange = async (event) => {
 const init = () => {
   dtlData.value = {
     type: 'add',
+    itemSeq: '',
     iqcInspectStdId: '',
     itemCategory: '',
     id: '',
@@ -309,6 +324,7 @@ const onConfirmDtl = async () => {
     'unqualifyCategory',
     'inspectBasis',
     'inspectType',
+    'itemSeq',
   ];
 
   // 遍历 requiredFields 数组，检查每个属性是否为空
@@ -331,16 +347,20 @@ const onConfirmDtl = async () => {
       return false;
     }
   }
-  if (!Number(dtlData.value.baseValue) || Number(dtlData.value.baseValue) < 0) {
+  if (dtlData.value.baseValue && (!Number(dtlData.value.baseValue) || Number(dtlData.value.baseValue) < 0)) {
     MessagePlugin.error('基准值须为正数');
     return false;
   }
-  if (!Number(dtlData.value.minValue) || Number(dtlData.value.minValue) < 0) {
+  if (dtlData.value.minValue && (!Number(dtlData.value.minValue) || Number(dtlData.value.minValue) < 0)) {
     MessagePlugin.error('最小值须为正数');
     return false;
   }
-  if (!Number(dtlData.value.minValue) || Number(dtlData.value.minValue) < 0) {
+  if (dtlData.value.maxValue && (!Number(dtlData.value.maxValue) || Number(dtlData.value.maxValue) < 0)) {
     MessagePlugin.error('最大值须为正数');
+    return false;
+  }
+  if (dtlData.value.itemSeq && (!Number(dtlData.value.itemSeq) || Number(dtlData.value.itemSeq) < 0)) {
+    MessagePlugin.error('项目行号须为正数');
     return false;
   }
   if (dtlData.value.uom) {

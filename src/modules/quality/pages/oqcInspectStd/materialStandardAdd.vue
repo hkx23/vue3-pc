@@ -181,8 +181,6 @@ const onAdd = () => {
 };
 const onEdit = async (row) => {
   const item = tableData.value[row.index];
-  console.log(item);
-  console.log(tableData.value);
   formTitle.value = '检验项目编辑';
   opType.value = 'edit';
   dtlFormRef.value.dtlData.id = row.id;
@@ -351,10 +349,11 @@ const opType = ref('add');
 const onConfirmDtl = async () => {
   const data = await dtlFormRef.value.onConfirmDtl();
   if (data) {
-    if (opType.value === 'add') {
+    if (opType.value === 'add' && formData.value.operateTpye === 'add') {
       if (tableData.value.length > 0) {
         const { itemNme } = dtlFormRef.value.rowData;
-        const item = tableData.value.map((item) => item.itemName === itemNme);
+        const item = tableData.value.find((item) => item.itemName === itemNme);
+        console.log(item);
         if (item) {
           MessagePlugin.warning('项目名称重复');
           return;
@@ -367,6 +366,9 @@ const onConfirmDtl = async () => {
       onRefresh();
     } else if (opType.value === 'edit' && formData.value.operateTpye === 'add') {
       tableData.value.splice(dtlFormRef.value.rowData.index, 1, dtlFormRef.value.rowData);
+    } else if (opType.value === 'add' && formData.value.operateTpye === 'edit') {
+      await apiQuality.oqcInspectStdDtl.addDtl({ ...dtlFormRef.value.rowData, oqcInspectStdId: formData.value.id });
+      onRefresh();
     }
     touchstoneFormVisible.value = false;
   }

@@ -80,7 +80,7 @@
           {{ '检验项目' }}
         </template>
         <template #qualifiedRangeOp="{ row }">
-          <span v-if="row.maxValue !== null && row.minValue !== null">{{ `${row.maxValue} ~ ${row.minValue}` }}</span>
+          <span v-if="row.maxValue !== null && row.minValue !== null">{{ `${row.minValue} ~ ${row.maxValue}` }}</span>
         </template>
         <template #isCtqName="{ row }">
           <span>{{ row.isCtq ? '是' : '否' }}</span>
@@ -94,6 +94,13 @@
           <t-button :disabled="!butControl" @click="onAdd"> 新增 </t-button>
           <t-button :disabled="!butControl" theme="default"> 导入 </t-button>
           <t-button :disabled="!delBtutControl" theme="default"> 批量删除 </t-button>
+        </template>
+        <template #operation="{ row }">
+          <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
+          <t-popconfirm content="继续将删除该标准该检验项目，是否继续？" @confirm="delDtlById(row)">
+            <t-link theme="primary" style="padding-right: 8px">删除</t-link>
+          </t-popconfirm>
+          <t-link theme="primary" @click="onCopy">复制</t-link>
         </template>
       </cmp-table>
     </cmp-card>
@@ -191,6 +198,7 @@ const rules: FormRules = {
 };
 const onAdd = () => {
   formTitle.value = '新增检验项目';
+  dtlFormRef.value.init();
   dtlFormRef.value.dtlData.iqcInspectStdId = formData.value.id;
   opType.value = 'add';
   touchstoneFormVisible.value = true;
@@ -249,6 +257,26 @@ const onStaging = async () => {
     butControl.value = true;
     formData.value.id = res;
     MessagePlugin.success('暂存成功');
+  }
+};
+const onEdit = (row) => {
+  formTitle.value = '检验项目编辑';
+  opType.value = 'edit';
+  dtlFormRef.value.dtlData = row;
+  dtlFormRef.value.dtlData.samplingStandardType = '1';
+  touchstoneFormVisible.value = true;
+};
+const onCopy = (row) => {
+  formTitle.value = '检验项目复制';
+  opType.value = 'add';
+  dtlFormRef.value.dtlData = row;
+  dtlFormRef.value.dtlData.itemName = '';
+  touchstoneFormVisible.value = true;
+};
+const delDtlById = async (row) => {
+  if (formData.value.operateTpye === 'add') {
+    await api.iqcInspectStdDtl.removeBatch([row.id]);
+    onRefresh();
   }
 };
 
@@ -360,6 +388,7 @@ const columns = [
     colKey: 'operation',
     title: '操作',
     fixed: 'right',
+    width: '130',
   },
 ];
 const init = () => {
@@ -396,7 +425,7 @@ const onConfirmDtl = async () => {
       }
       // 只允许新增标准直接更新数据库
     } else if (opType.value === 'edit' && formData.value.operateTpye === 'add') {
-      await api.oqcInspectStdDtl.updateDtlById(dtlFormRef.value.rowData);
+      await api.iqcInspectStdDtl.updateDtlById(dtlFormRef.value.rowData);
       onRefresh();
     }
     touchstoneFormVisible.value = false;
