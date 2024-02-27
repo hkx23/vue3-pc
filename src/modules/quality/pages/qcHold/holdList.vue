@@ -39,15 +39,13 @@
   <detailed ref="detailFormRef" @show-close-event="onHandleLockShow"></detailed>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api as apimain } from '@/api/main';
 import { api as apiQuality, QcHoldVO } from '@/api/quality';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -177,7 +175,7 @@ const onRefresh = async () => {
   await fetchTable();
 };
 // #### Hold单据列表 表头
-const HoldColumns: PrimaryTableCol<TableRowData>[] = [
+const HoldColumns = ref([
   {
     colKey: 'serial-number',
     title: `${t('business.main.serialNumber')}`,
@@ -260,7 +258,7 @@ const HoldColumns: PrimaryTableCol<TableRowData>[] = [
     width: '180',
   },
   { colKey: 'op', title: t('common.button.operation'), width: '100', fixed: 'right' },
-];
+]);
 
 // 加载数据表格
 const fetchTable = async () => {
