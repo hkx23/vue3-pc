@@ -524,7 +524,7 @@ onMounted(() => {
   width: 100%;
 }
 
-// /deep/ .t-table__content {
+//:deep .t-table__content {
 //   height: 100%;
 //   .t-table--layout-fixed {
 //     height: 100%;
@@ -548,7 +548,7 @@ onMounted(() => {
 .custom-row-item {
   align-items: center;
 
-  /deep/ .t-space-item {
+  :deep .t-space-item {
     width: 30%;
   }
 }

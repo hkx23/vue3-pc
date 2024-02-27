@@ -1881,7 +1881,6 @@ export interface QcHoldVO {
   workCenterId?: string;
   workCenterCode?: string;
   workCenterName?: string;
-  holdCategoryName?: string;
   customerCode?: string;
   customerName?: string;
   /** 创建人名称-操作人 */
@@ -1892,6 +1891,7 @@ export interface QcHoldVO {
   personHandleName?: string;
   /** 跟进人 */
   personFollowUpName?: string;
+  reasonCategoryName?: string;
   /**
    * 创建时间
    * @format date-time
@@ -1905,12 +1905,15 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 单据状态名称 */
+  /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
 export interface QcHoldSearch {
+  holdId?: string;
   /**
    * 页码
    * @format int32
@@ -1952,6 +1955,19 @@ export interface ResultPagingDataQcHoldVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataQcHoldVO;
+}
+
+/** 通用响应类 */
+export interface ResultListQcHoldDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: QcHoldDtlVO[] | null;
 }
 
 export interface BatchDynamicUpdateDTO {
@@ -2085,13 +2101,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s3?: string;
-  ii?: string;
-  s2?: string;
-  s4?: string;
-  s1?: string;
-  iii?: string;
   i?: string;
+  ii?: string;
+  iii?: string;
+  s1?: string;
+  s2?: string;
+  s3?: string;
+  s4?: string;
 } | null;
 
 /** 计量单位 */
@@ -3073,12 +3089,27 @@ export const api = {
      *
      * @tags 品质控制头表
      * @name GetQcHoldList
-     * @summary 获取解锁列表列表
+     * @summary 获取Hold单据列表
      * @request POST:/hold/getQcHoldList
      * @secure
      */
     getQcHoldList: (data: QcHoldSearch) =>
       http.request<ResultPagingDataQcHoldVO['data']>(`/api/quality/hold/getQcHoldList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质控制头表
+     * @name GetQcHoldDtlList
+     * @summary 获取单据明细列表
+     * @request POST:/hold/getQcHoldDtlList
+     * @secure
+     */
+    getQcHoldDtlList: (data: QcHoldSearch) =>
+      http.request<ResultListQcHoldDtlVO['data']>(`/api/quality/hold/getQcHoldDtlList`, {
         method: 'POST',
         body: data as any,
       }),

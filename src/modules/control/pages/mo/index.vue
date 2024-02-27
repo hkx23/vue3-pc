@@ -377,7 +377,7 @@ onMounted(() => {
     margin-bottom: 10px;
 
     .check-box-conditon {
-      /deep/ .t-checkbox {
+      :deep .t-checkbox {
         border: 1px solid var(--td-border-level-2-color) !important;
         height: 24px !important;
         padding: 6px !important;

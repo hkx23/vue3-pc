@@ -86,9 +86,9 @@ export default {
   components: { BcmpSelectBusiness },
   setup() {
     const inspectionStringencyOptions = ref([
-      { label: '正常', value: '正常', defaultChecked: true },
-      { label: '加严', value: '加严' },
-      { label: '放宽', value: '放宽' },
+      { label: '正常', value: 'NORMAL', defaultChecked: true },
+      { label: '加严', value: 'STRICT' },
+      { label: '放宽', value: 'RELAX' },
     ]);
     const uomOptions = ref([
       { label: 'Pcs', value: 'Pcs' },

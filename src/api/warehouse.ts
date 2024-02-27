@@ -646,6 +646,8 @@ export interface ResultListLabelVO {
 
 /** 品质控制-物料标签 */
 export interface LabelQcHoldSearch {
+  /** 按唯一键集合查询 */
+  keyList?: string[];
   /**
    * 页码
    * @format int32
@@ -1392,8 +1394,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 响应数据 */
@@ -3223,21 +3225,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  tlpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4586,6 +4588,58 @@ export interface DynamicCheckUniqueDTO {
   checkRow?: Record<string, object>;
 }
 
+export interface BatchDynamicUpdateDTO {
+  /** 表唯一主键 */
+  primaryKey?: string;
+  /** 领域名称 */
+  businessDomain?: string;
+  /** 表名 */
+  tableName?: string;
+  /** 更新的字段列表 */
+  columnList?: DynamicColumn[];
+  /** 更新的数据信息 */
+  rows?: Record<string, object>[];
+}
+
+/** 动态列字段 */
+export interface DynamicColumn {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 字段名称 */
+  columnField?: string;
+  /** 字段描述 */
+  columnDesc?: string;
+  /** 列数据类型 */
+  columnDateType?: string;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequired?: number;
+  /** 默认值 */
+  defaultValue?: string;
+}
+
 /** 货区 */
 export interface District {
   id?: string;
@@ -5510,8 +5564,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -8998,6 +9052,22 @@ export const api = {
     tables: () =>
       http.request<ResultListDataTableVO['data']>(`/api/warehouse/importManage/tables`, {
         method: 'GET',
+      }),
+  },
+  dynamicManage: {
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name BatchUpdateData
+     * @summary 根据领域进行动态表字段更新
+     * @request POST:/dynamicManage/batchUpdateData
+     * @secure
+     */
+    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/dynamicManage/batchUpdateData`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   district: {

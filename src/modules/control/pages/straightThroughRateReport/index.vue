@@ -142,22 +142,24 @@ const dateChange = async (data: any) => {
 
 /** 辅助函数 控制单选多选
  */
-// const selectedProcessIds = ref([]);
-// const selectedMitemIds = ref([]);
-
+const selectedProcessIds = ref([]);
+const selectedMitemIds = ref([]);
+const queryComponent = ref();
 const change = (val) => {
   const { mitemIds, processIds } = val;
   if (processIds.length > 1) {
-    MessagePlugin.warning('多选工序不能选择产品！');
-    // selectedMitemIds.value = []; // 清空产品选择
-    // isMitemDisabled.value = true;
+    // MessagePlugin.warning('多选工序不能选择产品！');
+    selectedMitemIds.value = []; // 清空产品选择
+    queryComponent.value.setFromValue('mitemIds', []);
+    isMitemDisabled.value = true;
   } else {
     isMitemDisabled.value = false;
   }
   if (mitemIds.length > 1) {
-    MessagePlugin.warning('多选产品不能选择工序！');
-    // selectedProcessIds.value = []; // 清空工序选择
-    // isWorkcenterDisabled.value = true;
+    // MessagePlugin.warning('多选产品不能选择工序！');
+    selectedProcessIds.value = []; // 清空工序选择
+    queryComponent.value.setFromValue('processIds', []);
+    isWorkcenterDisabled.value = true;
   } else {
     isWorkcenterDisabled.value = false;
   }
@@ -167,21 +169,20 @@ const mitemIds = ref([]); // dis1
 const processIds = ref([]); // dis2
 
 // 计算属性来确定标题
-const chartTitle = computed(() => {
-  if (processIds.value.length > 1) {
-    console.log('🚀 ~ chartTitle ~ processIds.value.length:', processIds.value.length);
-    return '工序直通率';
-  }
-  if (mitemIds.value.length > 1) {
-    return '产品直通率';
-  }
-  return '直通率'; // 默认标题或其他逻辑
-});
+// const chartTitle = computed(() => {
+//   if (processIds.value.length > 1) {
+//     return '工序直通率';
+//   }
+//   if (mitemIds.value.length > 1) {
+//     return '产品直通率';
+//   }
+//   return '直通率'; // 默认标题或其他逻辑
+// });
 
 // 初始数据
 const optionChart: Ref<EChartsOption> = ref({
   title: {
-    text: chartTitle.value,
+    text: '直通率报表',
     left: 'center',
   },
   tooltip: {
@@ -465,13 +466,21 @@ const onReset = () => {
 };
 
 /* 辅助函数 直通率标题  */
-function updateChartTitle(processIds, mitemIds) {
+const updateChartTitle = (processIds, mitemIds) => {
   console.log('🚀 ~ updateChartTitle ~ workcenterId111:', processIds);
   console.log('🚀 ~ updateChartTitle ~ mitemIds:222', mitemIds);
   // processIds 的值的长度 > 1 那么 title 就是 工序直通率
   // mitemIds 的值的长度 > 1 那么 title 就是 产品直通率
   // processIds 的值的长度 =  0 且  mitemIds的值的长度 = 0  那么 title 就是 工序 + 选中的第一条数据名称 + 直通率
-}
+
+  if (processIds.length > 1) {
+    return '工序直通率';
+  }
+  if (mitemIds.length > 1) {
+    return '产品直通率';
+  }
+  return '直通率'; // 默认标题或其他逻辑
+};
 
 //* 接口数据
 const getlineData = async () => {

@@ -453,6 +453,8 @@ export interface WorkstationVO {
 
 /** 品质控制-工站 */
 export interface WorkstationQcHoldSearch {
+  /** 按唯一键集合查询 */
+  keyList?: string[];
   /**
    * 页码
    * @format int32
@@ -798,8 +800,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -3344,6 +3346,17 @@ export interface ResultMoSchedule {
   data?: MoSchedule;
 }
 
+/** 排产单 */
+export interface MoScheduleDTO {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int32 */
+  isHold?: number;
+  keyList?: string[];
+}
+
 /** 工单表 */
 export interface Mo {
   id?: string;
@@ -3787,13 +3800,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isProductName?: string;
   isProductChecked?: boolean;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -4273,8 +4286,8 @@ export interface IntegratedConsoleSearch {
    */
   dateEnd?: string;
   mesbillNo?: string;
-  erpbillNo?: string;
   imsgqueueStatus?: string;
+  erpbillNo?: string;
 }
 
 /** 显示工站 */
@@ -6854,12 +6867,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6938,6 +6951,19 @@ export interface ResultListParamGroupTreeVO {
   message?: string;
   /** 响应数据 */
   data?: ParamGroupTreeVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListParam {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Param[] | null;
 }
 
 /** 响应数据 */
@@ -9899,6 +9925,24 @@ export const api = {
      * No description
      *
      * @tags 系统字典明细
+     * @name GetParamListByGroupCode
+     * @summary 根据系统参数组获取参数明细
+     * @request GET:/param/getParamListByGroupCode
+     * @secure
+     */
+    getParamListByGroupCode: (query?: {
+      /** @default "" */
+      parmGroupCode?: string;
+    }) =>
+      http.request<ResultListParam['data']>(`/api/main/param/getParamListByGroupCode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
      * @name GetListByGroupCode
      * @summary 根据系统参数组获取参数明细
      * @request GET:/param/getListByGroupCode
@@ -10339,21 +10383,6 @@ export const api = {
      * No description
      *
      * @tags 工单排产表
-     * @name UpdateIsHoldMoScheList
-     * @summary 批量更新排产单暂挂信息
-     * @request POST:/moSchedule/updateIsHoldMoScheList
-     * @secure
-     */
-    updateIsHoldMoScheList: (data: MoSchedule) =>
-      http.request<ResultObject['data']>(`/api/main/moSchedule/updateIsHoldMoScheList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单排产表
      * @name SearchRunningMoSche
      * @summary 弹出框公共方法-查询有效的排产单信息-已排产，已备料，已上线
      * @request POST:/moSchedule/searchRunningMoSche
@@ -10392,36 +10421,6 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultMoSchedule['data']>(`/api/main/moSchedule/items/${id}`, {
         method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单排产表
-     * @name AddStockInQty
-     * @summary 加入入库数量
-     * @request POST:/moSchedule/addStockInQty
-     * @secure
-     */
-    addStockInQty: (data: MoSchedule[]) =>
-      http.request<ResultObject['data']>(`/api/main/moSchedule/addStockInQty`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工单排产表
-     * @name AddCompleteQty
-     * @summary 增加完工数量
-     * @request POST:/moSchedule/addCompleteQty
-     * @secure
-     */
-    addCompleteQty: (data: MoSchedule[]) =>
-      http.request<ResultObject['data']>(`/api/main/moSchedule/addCompleteQty`, {
-        method: 'POST',
-        body: data as any,
       }),
 
     /**
@@ -10470,6 +10469,51 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/moSchedule/getMoScheduleList`, {
         method: 'GET',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name GetMoScheduleListByIds
+     * @summary 获取排产工单管理列表-应用于品质控制查询-按id集合查询
+     * @request POST:/moSchedule/getMoScheduleList
+     * @secure
+     */
+    getMoScheduleListByIds: (data: MoScheduleDTO) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/getMoScheduleList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddStockInQty
+     * @summary 加入入库数量
+     * @request POST:/moSchedule/addStockInQty
+     * @secure
+     */
+    addStockInQty: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addStockInQty`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name AddCompleteQty
+     * @summary 增加完工数量
+     * @request POST:/moSchedule/addCompleteQty
+     * @secure
+     */
+    addCompleteQty: (data: MoSchedule[]) =>
+      http.request<ResultObject['data']>(`/api/main/moSchedule/addCompleteQty`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   mo: {

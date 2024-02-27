@@ -754,6 +754,58 @@ export interface ResultBoolean {
   data?: boolean | null;
 }
 
+export interface BatchDynamicUpdateDTO {
+  /** 表唯一主键 */
+  primaryKey?: string;
+  /** 领域名称 */
+  businessDomain?: string;
+  /** 表名 */
+  tableName?: string;
+  /** 更新的字段列表 */
+  columnList?: DynamicColumn[];
+  /** 更新的数据信息 */
+  rows?: Record<string, object>[];
+}
+
+/** 动态列字段 */
+export interface DynamicColumn {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 字段名称 */
+  columnField?: string;
+  /** 字段描述 */
+  columnDesc?: string;
+  /** 列数据类型 */
+  columnDateType?: string;
+  /**
+   * 是否必填项
+   * @format int32
+   */
+  isRequired?: number;
+  /** 默认值 */
+  defaultValue?: string;
+}
+
 /** 安灯警报配置表 */
 export interface AlertCfg {
   id?: string;
@@ -1581,6 +1633,22 @@ export const api = {
     tables: () =>
       http.request<ResultListDataTableVO['data']>(`/api/daily/importManage/tables`, {
         method: 'GET',
+      }),
+  },
+  dynamicManage: {
+    /**
+     * No description
+     *
+     * @tags 动态服务
+     * @name BatchUpdateData
+     * @summary 根据领域进行动态表字段更新
+     * @request POST:/dynamicManage/batchUpdateData
+     * @secure
+     */
+    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/dynamicManage/batchUpdateData`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   alertCfg: {
