@@ -43,9 +43,8 @@
       <!-- 第 3️⃣ 行数据 -->
       <t-col :span="4">
         <t-form-item label="项目特性" name="characteristics">
-          <t-select v-model="dtlData.characteristics" :clearable="true">
-            <t-option key="apple" label="计数" value="apple" />
-            <t-option key="apple" label="非计数" value="apple" />
+          <t-select v-model="dtlData.characteristics" clearable style="width: 280px">
+            <t-option v-for="item in characteristicsOptions" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </t-form-item>
       </t-col>
@@ -171,6 +170,7 @@ import { AddFileType } from '@/components/bcmp-upload-content/constants';
 const fileList = ref([]);
 const formVisible = ref(false);
 const dtlData = ref({
+  type: 'add',
   iqcInspectStdId: '',
   itemCategory: '',
   id: '',
@@ -246,6 +246,7 @@ const querySelectChange = async (event) => {
 };
 const init = () => {
   dtlData.value = {
+    type: 'add',
     iqcInspectStdId: '',
     itemCategory: '',
     id: '',
@@ -294,6 +295,8 @@ api.param.getListByGroupCode({ parmGroupCode: 'Q_IQC_UNQUALIFY_CATEGORY' }).then
   unCategoryOption.value = data;
 });
 
+const rowData = ref();
+
 const onConfirmDtl = async () => {
   // 首先创建一个数组来存储需要检查非空的属性
   const requiredFields = [
@@ -306,7 +309,6 @@ const onConfirmDtl = async () => {
     'unqualifyCategory',
     'inspectBasis',
     'inspectType',
-    'inspectProperty',
   ];
 
   // 遍历 requiredFields 数组，检查每个属性是否为空
@@ -329,7 +331,29 @@ const onConfirmDtl = async () => {
       return false;
     }
   }
-
+  if (!Number(dtlData.value.baseValue) || Number(dtlData.value.baseValue) < 0) {
+    MessagePlugin.error('基准值须为正数');
+    return false;
+  }
+  if (!Number(dtlData.value.minValue) || Number(dtlData.value.minValue) < 0) {
+    MessagePlugin.error('最小值须为正数');
+    return false;
+  }
+  if (!Number(dtlData.value.minValue) || Number(dtlData.value.minValue) < 0) {
+    MessagePlugin.error('最大值须为正数');
+    return false;
+  }
+  if (dtlData.value.uom) {
+    const res = await apiQuality.oqcInspectStdDtl.getUom({ uom: dtlData.value.uom });
+    dtlData.value.uomName = res.uomName;
+  }
+  if (dtlData.value.inspectLevel) {
+    dtlData.value.inspectLevelName = levelOption.value.find((item) => item.value === dtlData.value.inspectLevel)?.label;
+  }
+  rowData.value = {
+    ...dtlData.value,
+    fileList,
+  };
   return true;
 };
 
@@ -366,5 +390,6 @@ defineExpose({
   onConfirmDtl,
   dtlData,
   init,
+  rowData,
 });
 </script>

@@ -19,7 +19,12 @@
           <!-- 第 1️⃣ 行数据 -->
           <t-col :span="4">
             <t-form-item label="标准编码" name="inspectStdCode">
-              <t-input v-model="formData.inspectStdCode" style="width: 200px"></t-input>
+              <t-input
+                v-model="formData.inspectStdCode"
+                style="width: 200px"
+                :readonly="formData.operateTpye === 'edit'"
+                @blur="onConfirmCode"
+              ></t-input>
             </t-form-item>
           </t-col>
           <t-col :span="4">
@@ -113,8 +118,15 @@
     </cmp-container>
   </t-dialog>
   <!-- !检验项目新增 弹框 -->
-  <t-dialog v-model:visible="touchstoneFormVisible" :close-on-overlay-click="false" :header="formTitle" width="85%">
-    <touchstoneForm></touchstoneForm>
+  <t-dialog
+    v-model:visible="touchstoneFormVisible"
+    :close-on-overlay-click="false"
+    :header="formTitle"
+    confirm-btn="保存"
+    width="85%"
+    @confirm="onConfirmDtl"
+  >
+    <touchstoneForm ref="dtlFormRef"></touchstoneForm>
   </t-dialog>
 </template>
 
@@ -141,6 +153,8 @@ const formTitle = ref('');
 const touchstoneFormVisible = ref(false);
 const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
+const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
+const opType = ref('add');
 const formData = ref({
   operateTpye: 'add',
   saveTpye: 'add',
@@ -177,6 +191,8 @@ const rules: FormRules = {
 };
 const onAdd = () => {
   formTitle.value = '新增检验项目';
+  dtlFormRef.value.dtlData.iqcInspectStdId = formData.value.id;
+  opType.value = 'add';
   touchstoneFormVisible.value = true;
 };
 
@@ -206,8 +222,12 @@ const onStaging = async () => {
     MessagePlugin.error('请选择失效时间');
     return;
   }
-  if (Number.isNaN(formData.value.groupInspectStdId)) {
+  if (!Number(formData.value.groupInspectStdId)) {
     MessagePlugin.error('集团检验标准须为数字（暂行）');
+    return;
+  }
+  if (!Number(formData.value.revision) || Number(formData.value.revision) < 0) {
+    MessagePlugin.error('版本号须为正数');
     return;
   }
 
@@ -363,6 +383,32 @@ const init = () => {
   };
   dtlTabData.value = [];
   dataTotal.value = 0;
+};
+const onConfirmDtl = async () => {
+  const data = await dtlFormRef.value.onConfirmDtl();
+  if (data) {
+    // 只允许新增标准直接插入数据库
+    if (opType.value === 'add' && formData.value.operateTpye === 'add') {
+      await api.iqcInspectStdDtl.addDtl(dtlFormRef.value.rowData);
+      onRefresh();
+      if (dtlTabData.value.length > 0) {
+        submitButControl.value = true;
+      }
+      // 只允许新增标准直接更新数据库
+    } else if (opType.value === 'edit' && formData.value.operateTpye === 'add') {
+      await api.oqcInspectStdDtl.updateDtlById(dtlFormRef.value.rowData);
+      onRefresh();
+    }
+    touchstoneFormVisible.value = false;
+  }
+};
+const onConfirmCode = async () => {
+  if (formData.value.operateTpye === 'add') {
+    console.log(formData.value.inspectStdCode);
+  }
+};
+const onRefresh = () => {
+  getDtlById();
 };
 defineExpose({
   formData,

@@ -181,6 +181,7 @@ const fileList = ref([]);
 const formVisible = ref(false);
 
 const dtlData = ref({
+  iqcInspectStdId: '',
   itemSeq: '',
   itemCategory: '',
   id: '',
@@ -206,6 +207,7 @@ const dtlData = ref({
 });
 const init = () => {
   dtlData.value = {
+    iqcInspectStdId: '',
     itemSeq: '',
     id: '',
     itemCategory: '',
@@ -216,7 +218,7 @@ const init = () => {
     maxValue: '',
     minValue: '',
     technicalRequest: '',
-    uom: '',
+    uom: null,
     uomName: '',
     samplingStandardType: '1',
     samplingStandardCode: '',
@@ -227,7 +229,7 @@ const init = () => {
     inspectBasis: '',
     inspectTypeList: [],
     inspectProperty: '',
-    processId: '',
+    processId: null,
   };
 };
 const onConfirmFile = () => {
@@ -400,12 +402,18 @@ const onConfirmDtl = async () => {
     MessagePlugin.error('项目行号须为整数');
     return false;
   }
-  // const item = tableData.value.find((item) => item.itemName === dtlData.value.itemName);
-  // if (item) {
-  //   MessagePlugin.warning('不允许添加相同项目名称的检验项目');
-  //   return;
-  // }
-
+  if (dtlData.value.baseValue && (!Number(dtlData.value.baseValue) || Number(dtlData.value.baseValue) < 0)) {
+    MessagePlugin.error('基准值须为正数');
+    return false;
+  }
+  if (dtlData.value.minValue && (!Number(dtlData.value.minValue) || Number(dtlData.value.minValue) < 0)) {
+    MessagePlugin.error('最小值须为正数');
+    return false;
+  }
+  if (dtlData.value.maxValue && (!Number(dtlData.value.maxValue) || Number(dtlData.value.maxValue) < 0)) {
+    MessagePlugin.error('最大值须为正数');
+    return false;
+  }
   if (dtlData.value.uom) {
     const res = await apiQuality.oqcInspectStdDtl.getUom({ uom: dtlData.value.uom });
     dtlData.value.uomName = res.uomName;
@@ -416,11 +424,12 @@ const onConfirmDtl = async () => {
   rowData.value = {
     ...dtlData.value,
     fileList,
-    // samplingStandardTypeName: dtlData.value.samplingStandardType === '1' ? '国标' : '企标',
-    // itemCategoryName: categoryOption.value.find((item) => item.value === dtlData.value.itemCategory)?.label,
-    // unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,
-    // characteristicsName: characteristicsOptions[Number(dtlData.value.characteristics) - 1].label,
+    samplingStandardTypeName: dtlData.value.samplingStandardType === '1' ? '国标' : '企标',
+    itemCategoryName: categoryOption.value.find((item) => item.value === dtlData.value.itemCategory)?.label,
+    unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,
+    characteristicsName: characteristicsOptions[Number(dtlData.value.characteristics) - 1].label,
   };
+  console.log(rowData);
   return true;
 };
 

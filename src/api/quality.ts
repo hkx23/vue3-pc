@@ -875,8 +875,7 @@ export interface IqcInspectStdDtlDTO {
    * @format int32
    */
   isCtq?: number;
-  inspectTypeList: number[];
-  itemCategoryName?: string;
+  itemCategoryName: string;
   unqualifyCategoryName?: string;
   inspectLevelName?: string;
   uomName?: string;
@@ -2954,11 +2953,11 @@ export const api = {
      * @tags 物料检验标准头表
      * @name CopyIqcInspectStd
      * @summary 复制操作
-     * @request GET:/iqcInspectStd/copyOqcInspectStd
+     * @request GET:/iqcInspectStd/copyIqcInspectStd
      * @secure
      */
     copyIqcInspectStd: (query: { id: string }) =>
-      http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/copyOqcInspectStd`, {
+      http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/copyIqcInspectStd`, {
         method: 'GET',
         params: query,
       }),
