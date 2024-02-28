@@ -1546,10 +1546,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 停留时长 */
-  waitTime?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
+  /** 停留时长 */
+  waitTime?: string;
 }
 
 /** 响应数据 */
@@ -2032,10 +2032,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -2229,10 +2229,10 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   i?: string;
-  ii?: string;
   iii?: string;
-  s1?: string;
+  ii?: string;
   s2?: string;
+  s1?: string;
   s3?: string;
   s4?: string;
 } | null;
