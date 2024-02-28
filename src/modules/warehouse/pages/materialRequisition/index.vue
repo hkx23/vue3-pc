@@ -76,6 +76,7 @@ import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdes
 import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 
 import { api as apiWarehouse, MaterialRequisitionDTO } from '@/api/warehouse';
+import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';

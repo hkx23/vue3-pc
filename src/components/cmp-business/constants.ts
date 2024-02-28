@@ -1,10 +1,12 @@
-export interface BusinessItem {
+import { TreeOptionData } from 'tdesign-vue-next';
+
+export interface BusinessItem extends TreeOptionData {
   /** 标签 */
   label: string;
   /** 标签值 */
   value: string;
   /** 行数据 */
-  row: any;
+  row?: any;
   cmp?: {
     /** 名称（优先级高于标签） */
     name?: string;

@@ -24,7 +24,7 @@ const formatListData = (list: UserVO[]): BusinessItem[] => {
 const fetchData = async (pageIndex?: number) => {
   const data = await mainApi.user.search({
     pageNum: pageIndex || 1,
-    pageSize: 1000,
+    pageSize: 20,
     filters: [],
   });
   return formatListData(data.list);
@@ -33,7 +33,7 @@ const fetchData = async (pageIndex?: number) => {
 const fetchSearchData = async (keyword: string, _listData: any[]) => {
   const data = (await mainApi.user.search({
     pageNum: 1,
-    pageSize: 20,
+    pageSize: 50,
     filters: [
       {
         field: 'displayName',
