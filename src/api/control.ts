@@ -840,8 +840,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1615,8 +1615,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2515,15 +2515,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  datetimeScheStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2700,8 +2700,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3953,17 +3953,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4074,16 +4074,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
   workshopId?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4715,8 +4715,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
