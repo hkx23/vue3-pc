@@ -169,7 +169,6 @@ const touchstoneFormVisible = ref(false);
 const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
 const formTitle = ref('');
-const ids = ref([]);
 const perId = ref('');
 const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const onAdd = () => {
@@ -209,6 +208,7 @@ const getDtlByStdId = async () => {
   });
   tableData.value = res.list.map((item, index) => ({ ...item, index }));
   dataTotal.value = res.total;
+  dtlRowKeys.value = [];
 };
 const getTitle = (type) => {
   switch (type) {
@@ -378,28 +378,19 @@ const onConfirmFile = () => {
   formVisible.value = false;
 };
 const onDelDtlData = async () => {
-  const idsDel = [];
-  const noId = [];
-  await dtlRowKeys.value.forEach((number) => {
-    const item = tableData.value[number];
-    if (item.id) {
-      ids.value.push(item.id);
-      idsDel.push(item);
-    } else {
-      noId.push(item);
+  const idsToDelete = [];
+
+  for (const index of dtlRowKeys.value) {
+    const rowData = tableData.value[index];
+    if (rowData && rowData.id) {
+      idsToDelete.push(rowData.id);
     }
-  });
-  // 筛选出 tableData.value 中不在 noId 数组中的元素
-  if (noId.length > 0) {
-    tableData.value = tableData.value.filter((item) => !noId.includes(item));
   }
-  if (ids.value.length > 0) {
-    // await apiQuality.oqcInspectStdDtl.delByIds(ids);
-    tableData.value = tableData.value.filter((item) => !idsDel.includes(item));
-  }
-  MessagePlugin.success('删除成功');
-  dataTotal.value -= dtlRowKeys.value.length;
-  dtlRowKeys.value = [];
+
+  // 调用删除 API，传入需要删除的 id 数组
+  await apiQuality.oqcInspectStdDtl.delByIds(idsToDelete);
+
+  onRefresh();
 };
 
 // 父方法

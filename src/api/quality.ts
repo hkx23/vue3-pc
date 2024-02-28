@@ -808,7 +808,40 @@ export interface ResultPagingDataIqcInspectStdMitemVO {
   data?: PagingDataIqcInspectStdMitemVO;
 }
 
-export interface IqcInspectStdDtlDTO {
+/** 物料检验标准明细附件表 */
+export interface IqcInspectStdDtlFile {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  iqcInspectStdDtlId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+}
+
+/** 物料检验标准头表 */
+export interface IqcInspectStdDtlVO {
   id?: string;
   /**
    * 创建时间
@@ -875,45 +908,22 @@ export interface IqcInspectStdDtlDTO {
    * @format int32
    */
   isCtq?: number;
-  itemCategoryName: string;
+  /** 项目分类名称 */
+  itemCategoryName?: string;
+  /** 检验类型名称 */
+  inspectTypeName?: string;
+  /** 不合格分类名称 */
   unqualifyCategoryName?: string;
-  inspectLevelName?: string;
-  uomName?: string;
+  /** 项目特性名称 */
   characteristicsName?: string;
-  fileList?: FileUpload[];
-  fileListVo?: IqcInspectStdDtlFile[];
-}
-
-/** 物料检验标准明细附件表 */
-export interface IqcInspectStdDtlFile {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  iqcInspectStdDtlId?: string;
-  /** 文件名称 */
-  fileName?: string;
-  /** 文件地址 */
-  filePath?: string;
+  /** 检验水平名称 */
+  inspectLevelName?: string;
+  /** 单位名称 */
+  uomName?: string;
+  /** 其附件记录列表 */
+  fileList?: IqcInspectStdDtlFile[];
+  /** 上传的附件信息列表 */
+  files?: FileUpload[];
 }
 
 /** 物料检验标准全信息搜索类 */
@@ -1100,89 +1110,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
+  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
-}
-
-/** 物料检验标准头表 */
-export interface IqcInspectStdDtlVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  iqcInspectStdId?: string;
-  /**
-   * 项目行号
-   * @format int32
-   */
-  itemSeq?: number;
-  /** 项目分类 */
-  itemCategory?: string;
-  /** 项目名称或内容 */
-  itemName?: string;
-  /** 项目特性 */
-  characteristics?: string;
-  /** 基准值 */
-  baseValue?: number;
-  /** 最大值 */
-  maxValue?: number;
-  /** 最小值 */
-  minValue?: number;
-  /** 技术要求 */
-  technicalRequest?: string;
-  /** 单位 */
-  uom?: string;
-  /** 抽样标准类型 */
-  samplingStandardType?: string;
-  /** 抽样标准编码 */
-  samplingStandardCode?: string;
-  /** 检验水平 */
-  inspectLevel?: string;
-  /** 检验工具 */
-  inspectTool?: string;
-  /** 不合格分类 */
-  unqualifyCategory?: string;
-  /** 检验依据 */
-  inspectBasis?: string;
-  /** 检验类型 */
-  inspectType?: string;
-  /** 检验属性 */
-  inspectProperty?: string;
-  /**
-   * 是否CTQ
-   * @format int32
-   */
-  isCtq?: number;
-  /** 项目分类名称 */
-  itemCategoryName?: string;
-  /** 检验类型名称 */
-  inspectTypeName?: string;
-  /** 不合格分类名称 */
-  unqualifyCategoryName?: string;
-  /** 项目特性名称 */
-  characteristicsName?: string;
-  /** 检验水平名称 */
-  inspectLevelName?: string;
-  /** 单位名称 */
-  uomName?: string;
 }
 
 /** 响应数据 */
@@ -1203,101 +1132,6 @@ export interface ResultPagingDataIqcInspectStdDtlVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIqcInspectStdDtlVO;
-}
-
-/** 响应数据 */
-export type PagingDataIqcInspectStdDtlDTO = {
-  list?: IqcInspectStdDtlDTO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataIqcInspectStdDtlDTO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataIqcInspectStdDtlDTO;
-}
-
-/** 物料检验标准头表 */
-export interface IqcInspectStd {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 标准编码 */
-  inspectStdCode?: string;
-  /** 标准名称 */
-  inspectStdName?: string;
-  groupInspectStdId?: string;
-  /** 版本号 */
-  revision?: number;
-  /**
-   * 生效时间
-   * @format date-time
-   */
-  timeEffective?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  timeInvalid?: string;
-  /** 状态 */
-  status?: string;
-}
-
-export interface IqcInspectStdSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 标准编码名称模糊 */
-  keyword?: string;
-  /** 标准状态 */
-  status?: string[];
-  /** 创建人名称 */
-  userNames?: string[];
-  /**
-   * 开始日期
-   * @format date-time
-   */
-  dateStart?: string;
-  /**
-   * 结束日期
-   * @format date-time
-   */
-  dateEnd?: string;
 }
 
 /** 物料检验标准头表 */
@@ -1350,6 +1184,27 @@ export interface IqcInspectStdVO {
   creatorName?: string;
   /** 最后修订人 */
   modifierName?: string;
+  files?: FileUpload[];
+  dtls?: IqcInspectStdDtlVO[];
+}
+
+export interface IqcInspectStdSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 标准编码名称模糊 */
+  keyword?: string;
+  /** 标准状态 */
+  status?: string[];
+  /** 创建人名称 */
+  userNames?: string[];
 }
 
 /** 响应数据 */
@@ -1382,6 +1237,52 @@ export interface ResultLong {
   /** 提示信息 */
   message?: string;
   data?: string;
+}
+
+/** 物料检验标准头表 */
+export interface IqcInspectStd {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标准编码 */
+  inspectStdCode?: string;
+  /** 标准名称 */
+  inspectStdName?: string;
+  groupInspectStdId?: string;
+  /** 版本号 */
+  revision?: number;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  timeEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  timeInvalid?: string;
+  /** 状态 */
+  status?: string;
 }
 
 export interface MitemForwardTraceSearch {
@@ -2111,13 +2012,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s4?: string;
-  s1?: string;
-  s2?: string;
   iii?: string;
-  ii?: string;
-  i?: string;
+  s1?: string;
   s3?: string;
+  ii?: string;
+  s2?: string;
+  s4?: string;
+  i?: string;
 } | null;
 
 /** 计量单位 */
@@ -2219,18 +2120,6 @@ export interface ResultOqcInspectStdDtlDTO {
   /** 提示信息 */
   message?: string;
   data?: OqcInspectStdDtlDTO;
-}
-
-/** 通用响应类 */
-export interface ResultIqcInspectStdDtlDTO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  data?: IqcInspectStdDtlDTO;
 }
 
 /** 品质检验组表 */
@@ -2785,7 +2674,7 @@ export const api = {
      * @request POST:/iqcInspectStdDtl/updateDtlById
      * @secure
      */
-    updateDtlById: (data: IqcInspectStdDtlDTO) =>
+    updateDtlById: (data: IqcInspectStdDtlVO) =>
       http.request<ResultObject['data']>(`/api/quality/iqcInspectStdDtl/updateDtlById`, {
         method: 'POST',
         body: data as any,
@@ -2840,48 +2729,33 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准明细表
-     * @name GetAllDtlByStdId
-     * @summary 根据标准id获取明细数据
-     * @request POST:/iqcInspectStdDtl/getAllDtlByStdId
-     * @secure
-     */
-    getAllDtlByStdId: (data: IqcInspectStdDtlSearch) =>
-      http.request<ResultPagingDataIqcInspectStdDtlDTO['data']>(`/api/quality/iqcInspectStdDtl/getAllDtlByStdId`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 物料检验标准明细表
      * @name AddDtl
      * @summary 新增明细
      * @request POST:/iqcInspectStdDtl/addDtl
      * @secure
      */
-    addDtl: (data: IqcInspectStdDtlDTO) =>
+    addDtl: (data: IqcInspectStdDtlVO) =>
       http.request<ResultObject['data']>(`/api/quality/iqcInspectStdDtl/addDtl`, {
         method: 'POST',
         body: data as any,
       }),
-
+  },
+  iqcInspectStd: {
     /**
      * No description
      *
-     * @tags 物料检验标准明细表
-     * @name GetDtlById
-     * @summary 根据id获取明细数据
-     * @request GET:/iqcInspectStdDtl/getDtlById
+     * @tags 物料检验标准头表
+     * @name UploadFile
+     * @summary 上传附件接口
+     * @request POST:/iqcInspectStd/uploadFile
      * @secure
      */
-    getDtlById: (query: { id: string }) =>
-      http.request<ResultIqcInspectStdDtlDTO['data']>(`/api/quality/iqcInspectStdDtl/getDtlById`, {
-        method: 'GET',
-        params: query,
+    uploadFile: (data: IqcInspectStdVO) =>
+      http.request<ResultObject['data']>(`/api/quality/iqcInspectStd/uploadFile`, {
+        method: 'POST',
+        body: data as any,
       }),
-  },
-  iqcInspectStd: {
+
     /**
      * No description
      *
@@ -2902,11 +2776,11 @@ export const api = {
      *
      * @tags 物料检验标准头表
      * @name Modify
-     * @summary 编辑标准
+     * @summary 编辑标准(提交)
      * @request POST:/iqcInspectStd/modify
      * @secure
      */
-    modify: (data: IqcInspectStd) =>
+    modify: (data: IqcInspectStdVO) =>
       http.request<ResultObject['data']>(`/api/quality/iqcInspectStd/modify`, {
         method: 'POST',
         body: data as any,
@@ -2970,21 +2844,6 @@ export const api = {
       http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/TemporaryStorage`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 物料检验标准头表
-     * @name CopyIqcInspectStd
-     * @summary 复制操作
-     * @request GET:/iqcInspectStd/copyIqcInspectStd
-     * @secure
-     */
-    copyIqcInspectStd: (query: { id: string }) =>
-      http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/copyIqcInspectStd`, {
-        method: 'GET',
-        params: query,
       }),
   },
   iqcInspectBill: {

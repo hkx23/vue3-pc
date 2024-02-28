@@ -144,8 +144,19 @@ export default {
         value: item.id,
       }));
     };
+    const init = () => {
+      formData.value = {
+        type: '',
+        id: '',
+        inspectStdCode: '',
+        inspectStdName: '',
+        mitemCategortArr: [],
+        mitemId: '',
+      };
+    };
 
     return {
+      init,
       fetchSampingStdCodes,
       querySelectChange,
       namesOption,

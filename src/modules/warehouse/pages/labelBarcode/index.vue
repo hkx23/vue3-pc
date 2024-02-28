@@ -154,7 +154,7 @@
     v-model:visible="formVisible"
     :confirm-btn="buttonSwitch"
     :header="diaLogTitle"
-    :autosize="{ minRows: 3, maxRows: 5 }"
+    width="auto"
     @confirm="onConfirm"
   >
     <t-form ref="formRef" :data="reprintDialog" :rules="rules">

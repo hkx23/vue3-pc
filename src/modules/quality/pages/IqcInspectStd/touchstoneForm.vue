@@ -405,10 +405,11 @@ const deleteSuccess = (file: AddFileType) => {
 };
 
 const batchDeleteSuccess = (files: AddFileType[]) => {
-  MessagePlugin.info(
-    `删除多个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
-  );
+  MessagePlugin.info(`删除多个文件成功`);
   console.log('batchDeleteSuccess', files);
+  files.forEach((item) => {
+    fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
+  });
 };
 
 defineExpose({

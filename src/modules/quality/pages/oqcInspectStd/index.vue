@@ -1,5 +1,5 @@
 <template>
-  <cmp-container v-show="!pageShow" :full="!!tagValue">
+  <cmp-container v-show="!pageShow" :full="false">
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">
@@ -62,7 +62,7 @@
         </t-tab-panel>
         <t-tab-panel :value="1" label="标准分配" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :gutter="[0, 0]">
+            <cmp-container :full="false" :full-sub-index="[0, 1]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query :opts="assignOpts" label-width="100" :is-reset-query="false" @submit="subSearchClick">
                   ></cmp-query
@@ -148,6 +148,14 @@ const onAssignConfirm = async () => {
   const data = await assignFormRef.value.submit();
   if (data) {
     formVisible.value = false;
+    if (assignFormRef.value.formData.type === 'add') {
+      if (!data.mitemId && !data.mitemCategoryId && !data.inspectStdCode) {
+        return;
+      }
+      onRefreshTwo();
+    } else {
+      onRefresh();
+    }
   }
 };
 
@@ -232,7 +240,6 @@ const onEdit = async (row) => {
   const res = (await apiQuality.oqcInspectStd.copyOqcInspectStd({ id: row.id })) as any;
   console.log(formRef);
   formRef.value.dtlRowKeys = [];
-  formRef.value.ids = [];
   formRef.value.formData = row;
   formRef.value.perId = row.id;
   if (row.fileList) {
@@ -277,7 +284,7 @@ const onAssign = async (row) => {
 };
 const onAddAssign = async () => {
   assignFormRef.value.formData.type = 'add';
-  assignFormRef.value.formData.inspectStdName = '';
+  assignFormRef.value.formData.inspectStdCode = '';
   assignFormRef.value.formData.id = '';
   assignFormRef.value.formData.mitemId = '';
   assignFormRef.value.formData.mitemCategortArr = [];
