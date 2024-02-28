@@ -158,6 +158,7 @@
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
+        :is-hand-delete="true"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
         @delete-success="deleteSuccess"
@@ -303,9 +304,7 @@ const rules: FormRules = {
   inspectProperty: [{ required: true, message: '不能为空', trigger: 'change' }],
 };
 const uploadSuccess = (file: AddFileType) => {
-  MessagePlugin.info(
-    `上传一个文件成功,如果是需要实时更新业务数据，可使用对应FILE的路径，文件名，文件大小等信息自行写逻辑上传到后端`,
-  );
+  MessagePlugin.info(`上传一个文件成功`);
   fileList.value.push(file);
   console.log('🚀 ~ file: materialStandardAdd.vue:149 ~ uploadSuccess ~ files.value:', fileList.value);
 
@@ -313,21 +312,18 @@ const uploadSuccess = (file: AddFileType) => {
 };
 
 const uploadfail = (file: AddFileType) => {
-  MessagePlugin.info(`上传一个文件失败,这个暂时没想到场景`);
+  MessagePlugin.info(`上传文件失败`);
   console.log('uploadSuccess', file);
 };
 
 const deleteSuccess = (file: AddFileType) => {
-  MessagePlugin.info(
-    `删除一个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
-  );
+  MessagePlugin.info(`删除文件成功`);
   console.log('deleteSuccess', file);
+  fileList.value = fileList.value.filter((item) => item.signedUrl !== file.signedUrl);
 };
 
 const batchDeleteSuccess = (files: AddFileType[]) => {
-  MessagePlugin.info(
-    `删除多个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
-  );
+  MessagePlugin.info(`删除文件成功`);
   console.log('batchDeleteSuccess', files);
 };
 

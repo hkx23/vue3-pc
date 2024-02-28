@@ -127,6 +127,7 @@
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
+        :is-hand-delete="true"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
         @delete-success="deleteSuccess"
@@ -444,11 +445,15 @@ const uploadfail = (file: AddFileType) => {
 const deleteSuccess = (file: AddFileType) => {
   MessagePlugin.info(`删除文件成功`);
   console.log('deleteSuccess', file);
+  fileList.value = fileList.value.filter((item) => item.signedUrl !== file.signedUrl);
 };
 
 const batchDeleteSuccess = (files: AddFileType[]) => {
   MessagePlugin.info(`删除多个文件成功`);
   console.log('batchDeleteSuccess', files);
+  files.forEach((item) => {
+    fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
+  });
 };
 
 const tableData = ref([]);

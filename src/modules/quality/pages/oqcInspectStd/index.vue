@@ -23,8 +23,6 @@
                   :table-data="stdList.list"
                   :loading="loading"
                   :total="stdTableTotal"
-                  :fixed-height="true"
-                  style="height: 300px"
                   :hover="true"
                   :selected-row-keys="stdRowKeys"
                   @select-change="onSelectedChange"
@@ -66,12 +64,9 @@
           <template #panel>
             <cmp-container :gutter="[0, 0]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
-                <cmp-query :opts="assignOpts" label-width="100" @submit="subSearchClick">
-                  <template #querySelect="{ param }">
-                    <t-select v-model="param.status" label="条码状态" clearable>
-                      <t-option v-for="item in statusOption" :key="item.id" :label="item.label" :value="item.value" />
-                    </t-select> </template
-                ></cmp-query>
+                <cmp-query :opts="assignOpts" label-width="100" :is-reset-query="false" @submit="subSearchClick">
+                  ></cmp-query
+                >
               </cmp-card>
               <cmp-card :ghost="true" class="padding-top-noline-16">
                 <cmp-table
@@ -83,8 +78,6 @@
                   :table-column="assignColumns"
                   :table-data="assignDataList.list"
                   :total="assignDataTabTotal"
-                  :fixed-height="true"
-                  style="height: 300px"
                   @select-change="onProductRightFetchData"
                   @refresh="onRefreshTwo"
                 >
@@ -199,8 +192,8 @@ const onChangeStatus = async () => {
   onRefresh();
 };
 
-const onAdd = () => {
-  formRef.value.init();
+const onAdd = async () => {
+  await formRef.value.init();
   pageShow.value = true;
 };
 const enableButton = ref(false);
@@ -476,8 +469,8 @@ const fetchMainTable = async () => {
 const fetchSubTable = async () => {
   setLoading(true);
   try {
-    subQueryCondition.value.pageNum = pageUI.value.page;
-    subQueryCondition.value.pageSize = pageUI.value.rows;
+    subQueryCondition.value.pageNum = pageUIMannage.value.page;
+    subQueryCondition.value.pageSize = pageUIMannage.value.rows;
     const data = (await apiQuality.oqcInspectStdMitem.getOqcInspectStdMitemList(subQueryCondition.value)) as any;
     const { list } = data;
     assignDataList.list = list;
