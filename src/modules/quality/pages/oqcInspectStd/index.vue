@@ -1,5 +1,5 @@
 <template>
-  <cmp-container v-show="!pageShow" :full="!!tagValue">
+  <cmp-container v-show="!pageShow" :full="false">
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">
@@ -23,8 +23,6 @@
                   :table-data="stdList.list"
                   :loading="loading"
                   :total="stdTableTotal"
-                  :fixed-height="true"
-                  style="height: 300px"
                   :hover="true"
                   :selected-row-keys="stdRowKeys"
                   @select-change="onSelectedChange"
@@ -64,14 +62,11 @@
         </t-tab-panel>
         <t-tab-panel :value="1" label="标准分配" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :gutter="[0, 0]">
+            <cmp-container :full="false" :full-sub-index="[0, 1]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
-                <cmp-query :opts="assignOpts" label-width="100" @submit="subSearchClick">
-                  <template #querySelect="{ param }">
-                    <t-select v-model="param.status" label="条码状态" clearable>
-                      <t-option v-for="item in statusOption" :key="item.id" :label="item.label" :value="item.value" />
-                    </t-select> </template
-                ></cmp-query>
+                <cmp-query :opts="assignOpts" label-width="100" :is-reset-query="false" @submit="subSearchClick">
+                  ></cmp-query
+                >
               </cmp-card>
               <cmp-card :ghost="true" class="padding-top-noline-16">
                 <cmp-table
@@ -83,8 +78,6 @@
                   :table-column="assignColumns"
                   :table-data="assignDataList.list"
                   :total="assignDataTabTotal"
-                  :fixed-height="true"
-                  style="height: 300px"
                   @select-change="onProductRightFetchData"
                   @refresh="onRefreshTwo"
                 >
@@ -155,6 +148,14 @@ const onAssignConfirm = async () => {
   const data = await assignFormRef.value.submit();
   if (data) {
     formVisible.value = false;
+    if (assignFormRef.value.formData.type === 'add') {
+      if (!data.mitemId && !data.mitemCategoryId && !data.inspectStdCode) {
+        return;
+      }
+      onRefreshTwo();
+    } else {
+      onRefresh();
+    }
   }
 };
 
@@ -199,8 +200,8 @@ const onChangeStatus = async () => {
   onRefresh();
 };
 
-const onAdd = () => {
-  formRef.value.init();
+const onAdd = async () => {
+  await formRef.value.init();
   pageShow.value = true;
 };
 const enableButton = ref(false);
@@ -239,7 +240,6 @@ const onEdit = async (row) => {
   const res = (await apiQuality.oqcInspectStd.copyOqcInspectStd({ id: row.id })) as any;
   console.log(formRef);
   formRef.value.dtlRowKeys = [];
-  formRef.value.ids = [];
   formRef.value.formData = row;
   formRef.value.perId = row.id;
   if (row.fileList) {
@@ -284,7 +284,7 @@ const onAssign = async (row) => {
 };
 const onAddAssign = async () => {
   assignFormRef.value.formData.type = 'add';
-  assignFormRef.value.formData.inspectStdName = '';
+  assignFormRef.value.formData.inspectStdCode = '';
   assignFormRef.value.formData.id = '';
   assignFormRef.value.formData.mitemId = '';
   assignFormRef.value.formData.mitemCategortArr = [];
@@ -476,8 +476,8 @@ const fetchMainTable = async () => {
 const fetchSubTable = async () => {
   setLoading(true);
   try {
-    subQueryCondition.value.pageNum = pageUI.value.page;
-    subQueryCondition.value.pageSize = pageUI.value.rows;
+    subQueryCondition.value.pageNum = pageUIMannage.value.page;
+    subQueryCondition.value.pageSize = pageUIMannage.value.rows;
     const data = (await apiQuality.oqcInspectStdMitem.getOqcInspectStdMitemList(subQueryCondition.value)) as any;
     const { list } = data;
     assignDataList.list = list;

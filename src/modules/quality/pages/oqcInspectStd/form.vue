@@ -1,11 +1,11 @@
 <template>
-  <t-form ref="assignFormRef" :rules="rules">
+  <t-form ref="assignFormRef" :rules="rules" :show-error-message="false">
     <t-row :gutter="[32, 16]">
       <!-- 第 1️⃣ 行数据 -->
       <t-col :span="12">
-        <t-form-item label="检验标准" name="name">
+        <t-form-item label="标准编码" name="inspectStdCode">
           <t-select
-            v-model="formData.inspectStdName"
+            v-model="formData.inspectStdCode"
             clearable
             filterable
             input-props
@@ -71,7 +71,7 @@ export default {
     const rules: FormRules = {
       mitemCategory: [{ required: true, message: '不能为空', trigger: 'change' }],
       mitemId: [{ required: true, message: '不能为空', trigger: 'change' }],
-      name: [{ required: formData.value.type === 'add', message: '不能为空', trigger: 'change' }],
+      name: [{ required: true, message: '不能为空', trigger: 'change' }],
     };
 
     const submit = async () => {
@@ -79,7 +79,7 @@ export default {
         MessagePlugin.warning('请选择物料');
         return false;
       }
-      if (formData.value.type === 'add' && isEmpty(formData.value.inspectStdName)) {
+      if (formData.value.type === 'add' && isEmpty(formData.value.inspectStdCode)) {
         MessagePlugin.warning('请选择产品检验标准');
         return false;
       }
@@ -123,8 +123,8 @@ export default {
           pageNum: 1,
           pageSize: 10,
         })) as any;
-        namesOption.value = data.list.map((item: { inspectStdName: any; id: any }) => ({
-          label: item.inspectStdName,
+        namesOption.value = data.list.map((item: { inspectStdCode: any; id: any }) => ({
+          label: item.inspectStdCode,
           value: item.id,
         }));
       } catch (e) {
@@ -139,13 +139,24 @@ export default {
         pageNum: 1,
         pageSize: 10,
       })) as any;
-      namesOption.value = res.list.map((item: { inspectStdName: any; id: any }) => ({
-        label: item.inspectStdName,
+      namesOption.value = res.list.map((item: { inspectStdCode: any; id: any }) => ({
+        label: item.inspectStdCode,
         value: item.id,
       }));
     };
+    const init = () => {
+      formData.value = {
+        type: '',
+        id: '',
+        inspectStdCode: '',
+        inspectStdName: '',
+        mitemCategortArr: [],
+        mitemId: '',
+      };
+    };
 
     return {
+      init,
       fetchSampingStdCodes,
       querySelectChange,
       namesOption,
