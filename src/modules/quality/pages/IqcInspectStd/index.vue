@@ -32,6 +32,7 @@
                     :total="materialStandardTotal"
                     :selected-row-keys="stdRowKeys"
                     @select-change="onSelectedChange"
+                    @refresh="onRefresh"
                   >
                     <template #title>
                       {{ '物料检验标准列表' }}
@@ -75,7 +76,7 @@
                           >失效</t-link
                         >
                       </t-popconfirm>
-                      <t-link theme="primary">复制</t-link>
+                      <t-link theme="primary" @click="onCopyStd(row)">复制</t-link>
                     </template>
                   </cmp-table>
                 </cmp-container>
@@ -89,7 +90,14 @@
             <cmp-container :full="true" :full-sub-index="[0, 1]">
               <cmp-card>
                 <cmp-container :full="true">
-                  <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput"> </cmp-query>
+                  <cmp-query
+                    ref="queryComponent"
+                    :opts="opts"
+                    :bool-enter="false"
+                    :is-reset-query="false"
+                    @submit="onInput"
+                  >
+                  </cmp-query>
                   <cmp-table
                     ref="tableRefCard"
                     v-model:pagination="pageUINorm"
@@ -323,10 +331,11 @@ const onChangStatus = async (row) => {
   if (res > 0) {
     message.value = `“目前共有${res}张待检单使用了该标准，请检验完成后再删除检验标准。`;
     visible1.value = true;
+  } else {
+    await api.iqcInspectStd.loseEffectiveness(row.id);
+    MessagePlugin.success('操作成功');
+    onRefresh();
   }
-
-  await api.iqcInspectStd.loseEffectiveness(row.id);
-  MessagePlugin.success('操作成功');
 };
 onMounted(async () => {
   materialStandardParam.value.status = ['EFFECTIVE'];
@@ -407,7 +416,27 @@ const onEdit = async (row) => {
   }
   formRef.value.fileList = row.fileList ? row.fileList : [];
   formRef.value.formData.operateTpye = 'edit';
+  await formRef.value.getAllDtlById();
+  await formRef.value.getAllDtlFormCache();
+  pageShow.value = true;
+};
+const onCopyStd = async (row) => {
+  formRef.value.dtlRowKeys = [];
   formRef.value.formData = row;
+  formRef.value.formData.inspectStdCode = '';
+  formRef.value.formData.inspectStdName = '';
+  formRef.value.formData.revision = '1.0';
+  formRef.value.butControl = true;
+  formRef.value.submitButControl = true;
+  formRef.value.delBtutControl = true;
+  if (row.fileList) {
+    row.fileList.forEach((file) => {
+      file.timeUpload = file.timeCreate;
+      file.signedUrl = file.filePath;
+    });
+  }
+  formRef.value.fileList = row.fileList ? row.fileList : [];
+  formRef.value.formData.operateTpye = 'copy';
   await formRef.value.getAllDtlById();
   await formRef.value.getAllDtlFormCache();
   pageShow.value = true;

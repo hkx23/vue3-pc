@@ -7,7 +7,7 @@
           ><span class="span_title">{{ getTitle(formData.operateTpye) }}</span></t-col
         >
         <t-col>
-          <t-button :disabled="!submitButControl">提交</t-button>
+          <t-button :disabled="!submitButControl" @click="onSubimit">提交</t-button>
           <t-button theme="default" @click="onStaging">暂存</t-button>
         </t-col>
       </t-row>
@@ -217,6 +217,65 @@ const onDtlSelectedChange = (value: any) => {
     delBtutControl.value = true;
   }
 };
+const onSubimit = async () => {
+  if (isEmpty(formData.value.inspectStdCode)) {
+    MessagePlugin.error('请输入标准编码');
+    return;
+  }
+  if (isEmpty(formData.value.inspectStdName)) {
+    MessagePlugin.error('请输入标准名称');
+    return;
+  }
+  if (isEmpty(formData.value.timeEffective)) {
+    MessagePlugin.error('请选择生效时间');
+    return;
+  }
+  if (isEmpty(formData.value.timeInvalid)) {
+    MessagePlugin.error('请选择失效时间');
+    return;
+  }
+  if (!Number(formData.value.groupInspectStdId)) {
+    MessagePlugin.error('集团检验标准须为数字（暂行）');
+    return;
+  }
+  if (!Number(formData.value.revision) || Number(formData.value.revision) < 0) {
+    MessagePlugin.error('版本号须为正数');
+    return;
+  }
+
+  const today = new Date();
+  const timeEffective = new Date(formData.value.timeEffective);
+  const timeInvalid = new Date(formData.value.timeInvalid);
+
+  if (timeEffective >= timeInvalid) {
+    MessagePlugin.error('失效时间必须大于生效时间');
+    return;
+  }
+
+  if (timeInvalid <= today) {
+    MessagePlugin.error('失效时间必须大于今天');
+    return;
+  }
+  if (formData.value.id && formData.value.operateTpye === 'add') {
+    await api.iqcInspectStd.modify({
+      ...formData.value,
+      files: fileList.value,
+      dtls: dtlTabData.value,
+      isTemporaryStorage: false,
+    });
+    MessagePlugin.success('提交成功');
+    Emit('permissionShow', false); // 回到父
+  } else {
+    await api.iqcInspectStd.modify({
+      ...formData.value,
+      files: fileList.value,
+      dtls: allDtl.value,
+      isTemporaryStorage: false,
+    });
+    MessagePlugin.success('提交成功');
+    Emit('permissionShow', false); // 回到父
+  }
+};
 const onStaging = async () => {
   if (isEmpty(formData.value.inspectStdCode)) {
     MessagePlugin.error('请输入标准编码');
@@ -268,6 +327,7 @@ const onStaging = async () => {
       ...formData.value,
       files: fileList.value,
       dtls: dtlTabData.value,
+      isTemporaryStorage: true,
     });
     MessagePlugin.success('暂存成功');
     Emit('permissionShow', false); // 回到父
@@ -276,6 +336,17 @@ const onStaging = async () => {
       ...formData.value,
       files: fileList.value,
       dtls: allDtl.value,
+      isTemporaryStorage: true,
+    });
+    MessagePlugin.success('暂存成功');
+    Emit('permissionShow', false); // 回到父
+  } else if (formData.value.id && formData.value.operateTpye === 'copy') {
+    formData.value.id = '';
+    await api.iqcInspectStd.modify({
+      ...formData.value,
+      files: fileList.value,
+      dtls: allDtl.value,
+      isTemporaryStorage: true,
     });
     MessagePlugin.success('暂存成功');
     Emit('permissionShow', false); // 回到父

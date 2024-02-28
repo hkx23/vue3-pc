@@ -1140,8 +1140,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -1216,6 +1216,7 @@ export interface IqcInspectStdVO {
   modifierName?: string;
   files?: FileUpload[];
   dtls?: IqcInspectStdDtlVO[];
+  isTemporaryStorage?: boolean;
 }
 
 export interface IqcInspectStdSearch {
@@ -1267,52 +1268,6 @@ export interface ResultLong {
   /** 提示信息 */
   message?: string;
   data?: string;
-}
-
-/** 物料检验标准头表 */
-export interface IqcInspectStd {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 标准编码 */
-  inspectStdCode?: string;
-  /** 标准名称 */
-  inspectStdName?: string;
-  groupInspectStdId?: string;
-  /** 版本号 */
-  revision?: number;
-  /**
-   * 生效时间
-   * @format date-time
-   */
-  timeEffective?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  timeInvalid?: string;
-  /** 状态 */
-  status?: string;
 }
 
 export interface MitemForwardTraceSearch {
@@ -2032,10 +1987,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -2228,13 +2183,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s4?: string;
-  s2?: string;
-  s3?: string;
-  i?: string;
   s1?: string;
   iii?: string;
+  s3?: string;
+  s2?: string;
+  s4?: string;
   ii?: string;
+  i?: string;
 } | null;
 
 /** 计量单位 */
@@ -3081,12 +3036,27 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准头表
+     * @name Copy
+     * @summary 复制操作
+     * @request POST:/iqcInspectStd/copy
+     * @secure
+     */
+    copy: (data: IqcInspectStdVO) =>
+      http.request<ResultObject['data']>(`/api/quality/iqcInspectStd/copy`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准头表
      * @name TemporaryStorage
      * @summary 暂存标准
      * @request POST:/iqcInspectStd/TemporaryStorage
      * @secure
      */
-    temporaryStorage: (data: IqcInspectStd) =>
+    temporaryStorage: (data: IqcInspectStdVO) =>
       http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/TemporaryStorage`, {
         method: 'POST',
         body: data as any,
