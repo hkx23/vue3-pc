@@ -130,13 +130,13 @@
           label="检验水平"
           label-align="right"
           name="inspectLevel"
-          :required-mark="dtlData.samplingStandardType === '1'"
+          :required-mark="dtlData.samplingStandardType === 'GB'"
         >
           <t-select
             v-model="dtlData.inspectLevel"
             clearable
             style="width: 280px"
-            :disabled="dtlData.samplingStandardType !== '1'"
+            :disabled="dtlData.samplingStandardType !== 'GB'"
           >
             <t-option v-for="item in levelOption" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
@@ -275,7 +275,7 @@ const init = () => {
     technicalRequest: '',
     uom: '',
     uomName: '',
-    samplingStandardType: '1',
+    samplingStandardType: 'GB',
     samplingStandardCode: '',
     inspectLevel: '',
     inspectLevelName: '',
