@@ -3,16 +3,18 @@
     <t-col v-if="props.showIcon" class="avatar">
       <t-avatar>{{ props.avatarLabel || props.name?.charAt(0)?.toUpperCase() }}</t-avatar>
     </t-col>
-    <t-col>
-      <p>
+    <t-col flex="auto">
+      <div>
         <b>{{ props.name }}</b> <sub>{{ props.code }}</sub>
-      </p>
+      </div>
       <!-- <div>
         {{ props.subName }}
       </div> -->
       <div class="desc">
         {{ (props.subName && props.subName !== props.description ? `(${props.subName}) ` : '') + props.description }}
+        <!-- {{ props.description }} -->
       </div>
+      <t-tag v-if="suffixTag" class="item-tag" theme="success" variant="outline" size="small">{{ suffixTag }}</t-tag>
     </t-col>
   </t-row>
 </template>
@@ -37,12 +39,16 @@ const props = defineProps({
   description: {
     type: String,
   },
+  suffixTag: {
+    type: String,
+  },
 });
 </script>
 <style scoped lang="less">
 .b-item {
   font-size: 12px;
   cursor: default;
+  width: 100%;
 
   .avatar {
     height: 45px;
@@ -56,14 +62,20 @@ const props = defineProps({
   }
 
   sub {
-    color: var(--td-text-color-placeholder);
+    color: var(--td-text-color-secondary);
     position: relative;
     top: -3px;
     font-size: 12px;
   }
 
   .desc {
-    color: var(--td-text-color-placeholder);
+    color: var(--td-text-color-secondary);
+  }
+
+  .item-tag {
+    position: absolute;
+    right: 0;
+    top: 0;
   }
 }
 </style>

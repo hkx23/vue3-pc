@@ -30,7 +30,7 @@
             </t-col>
             <t-col :span="6">
               <t-form-item :label="t('qcHold.reasonCategory')" name="reasonCategory">
-                <t-select v-model="formData.reasonCategory">
+                <t-select v-model="formData.reasonCategory" :disabled="formData.viewType == ViewType.UNLOCK">
                   <t-option
                     v-for="item in reasonCategoryOption"
                     :key="item.id"
@@ -42,13 +42,19 @@
             </t-col>
             <t-col :span="6">
               <t-form-item :label="t('qcHold.datetimePlanHandle')" name="datetimePlanHandle">
-                <t-date-picker v-model="formData.datetimePlanHandle" allow-input clearable format="YYYY-MM-DD"
+                <t-date-picker
+                  v-model="formData.datetimePlanHandle"
+                  :disabled="formData.viewType == ViewType.UNLOCK"
+                  allow-input
+                  clearable
+                  format="YYYY-MM-DD"
               /></t-form-item>
             </t-col>
             <t-col :span="6">
               <t-form-item :label="t('qcHold.customerId')" name="customerId">
                 <bcmp-select-business
                   v-model="formData.customerId"
+                  :disabled="formData.viewType == ViewType.UNLOCK"
                   type="customer"
                   :show-title="false"
                 ></bcmp-select-business
@@ -58,6 +64,7 @@
               <t-form-item :label="t('qcHold.personResponsibilityId')" name="personResponsibilityId">
                 <bcmp-select-business
                   v-model="formData.personResponsibilityId"
+                  :disabled="formData.viewType == ViewType.UNLOCK"
                   type="person"
                   :show-title="false"
                 ></bcmp-select-business
@@ -213,6 +220,8 @@ const FORM_RULES = {
   personResponsibilityId: [
     { required: true, message: t('common.placeholder.input', [t('qcHold.personResponsibilityId')]) },
   ],
+  personHandleId: [{ required: true, message: t('common.placeholder.input', [t('qcHold.personHandleId')]) }],
+  personFollowUpId: [{ required: true, message: t('common.placeholder.input', [t('qcHold.personFollowUpId')]) }],
   memo: [{ required: true, message: t('common.placeholder.input', [t('qcHold.memo')]) }],
 };
 

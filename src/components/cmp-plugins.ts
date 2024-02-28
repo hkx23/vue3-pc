@@ -50,7 +50,7 @@ export default {
     app.component('CmpButton', CmpButton);
     app.component('CmpScanInput', CmpScanInput);
 
-    app.component('CmpPrintButton', CmpPrintButton);
+    // app.component('CmpPrintButton', CmpPrintButton);
     app.component('CmpWrapper', CmpWrapper);
 
     app.component('BCmpPerson', BCmpPerson);

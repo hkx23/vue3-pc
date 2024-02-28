@@ -10,6 +10,7 @@
     :multiple="isMultiple"
     :parent-id="finalParentId"
     :readonly="readonly"
+    :disabled="disabled"
     :title="finalTitle"
     :placeholder="finalPlaceholder"
     :custom-conditions="finalCustomConditions"
@@ -32,6 +33,7 @@
     :parent-id="finalParentId"
     :custom-conditions="finalCustomConditions"
     :readonly="readonly"
+    :disabled="disabled"
     :title="finalTitle"
     :placeholder="finalPlaceholder"
     :keywords="finalKeywords"
@@ -52,6 +54,7 @@
     :multiple="isMultiple"
     :parent-id="finalParentId"
     :custom-conditions="finalCustomConditions"
+    :disabled="disabled"
     :readonly="readonly"
     :title="finalTitle"
     :placeholder="finalPlaceholder"
@@ -116,6 +119,10 @@ const props = defineProps({
   },
   // 是否只读
   readonly: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
     type: Boolean,
     default: false,
   },

@@ -24,9 +24,11 @@
           <t-button theme="default" @click="onClickEditReturnManagement">
             {{ t('common.button.edit') }}
           </t-button>
-          <t-button theme="default" @click="onBatchCancelledClick">
-            {{ t('returnManagement.cancel') }}
-          </t-button>
+          <t-popconfirm content="确认作废？" @confirm="onBatchCancelledClick">
+            <t-button theme="default">
+              {{ t('returnManagement.cancel') }}
+            </t-button>
+          </t-popconfirm>
         </template>
       </cmp-table>
     </cmp-card>
@@ -38,7 +40,7 @@
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
@@ -183,26 +185,13 @@ const onBatchCancelledClick = async () => {
     }
   }
 
-  const confirmDia = DialogPlugin({
-    header: t('returnManagement.cancel'),
-    body: t('returnManagement.confirmDelete'),
-    theme: 'warning',
-    confirmBtn: t('common.button.confirm'),
-    cancelBtn: t('common.button.cancel'),
-    onConfirm: async () => {
-      try {
-        await apiWarehouse.returnManagement.updateBillStatusByCanceled(billNoList);
-        fetchTable();
-        confirmDia.hide();
-        MessagePlugin.success(t('returnManagement.deleteSuccess'));
-      } catch (error) {
-        confirmDia.hide();
-      }
-    },
-    onClose: () => {
-      confirmDia.hide();
-    },
-  });
+  try {
+    await apiWarehouse.returnManagement.updateBillStatusByCanceled(billNoList);
+    fetchTable();
+    MessagePlugin.success(t('returnManagement.deleteSuccess'));
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // 弹出新增领料制单界面

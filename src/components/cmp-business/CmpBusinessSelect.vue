@@ -12,7 +12,13 @@
         <t-row class="body">
           <t-col flex="1" class="content left">
             <p class="header">{{ props.name }}列表</p>
-            <t-list style="flex: 1; overflow-y: auto">
+            <t-list
+              v-if="listAfterSearch"
+              :async-loading="asyncLoading"
+              style="flex: 1; overflow-y: auto"
+              @load-more="onLoadMore"
+              @scroll="onScrollList"
+            >
               <t-list-item
                 v-for="item in listAfterSearch"
                 :key="item?.row.id"
@@ -26,14 +32,31 @@
                   :code="item.cmp?.code"
                   :description="item.cmp?.description || item.value"
                   :show-icon="item.cmp?.showIcon"
+                  :suffix-tag="item.cmp?.suffixTag"
                 ></cmp-list-item-meta>
-                <template #action>
-                  <t-tag v-if="item.cmp?.suffixTag" class="item-tag" theme="success" variant="outline" size="small">{{
-                    item.cmp?.suffixTag
-                  }}</t-tag>
-                </template>
               </t-list-item>
             </t-list>
+            <div v-else style="flex: 1; overflow-y: auto">
+              <t-tree :data="listData" hover expand-on-click-node :load="onLoadTreeNodes" value-mode="all">
+                <template #label="{ node }">
+                  <div v-if="node.data?.row?.children">
+                    {{ node.label }}
+                  </div>
+                  <div v-else>
+                    <cmp-list-item-meta
+                      :avatar-label="node.data.cmp?.avatarLabel"
+                      :name="node.data.cmp?.name || node.data.label"
+                      :sub-name="node.data.cmp?.subName"
+                      :code="node.data.cmp?.code"
+                      :description="node.data.cmp?.description || node.data.value"
+                      :show-icon="node.data.cmp?.showIcon"
+                      :suffix-tag="node.data.cmp?.suffixTag"
+                      @click="onClickItem(node.data)"
+                    ></cmp-list-item-meta>
+                  </div>
+                </template>
+              </t-tree>
+            </div>
           </t-col>
           <t-col v-if="props.multiple" flex="1" class="content right">
             <p class="header">
@@ -58,6 +81,7 @@
                   :code="item.cmp?.code"
                   :description="item.cmp?.description || item.value"
                   :show-icon="item.cmp?.showIcon"
+                  :suffix-tag="item.cmp?.suffixTag"
                 ></cmp-list-item-meta>
                 <template #action>
                   <t-button variant="text" shape="square" class="close-btn" @click="onClickCloseItem(item.row.id)">
@@ -82,31 +106,39 @@
 <script setup lang="tsx">
 import { debounce, isEmpty } from 'lodash';
 import { ChevronDownIcon, CloseIcon } from 'tdesign-icons-vue-next';
-import { SelectInputProps } from 'tdesign-vue-next';
+import { ListProps, SelectInputProps, TreeNodeModel, TreeProps } from 'tdesign-vue-next';
+import { TypeTreeOptionData } from 'tdesign-vue-next/es/tree/adapt';
 import { computed, ref, useAttrs, watch } from 'vue';
 
 import CmpListItemMeta from './CmpListItemMeta.vue';
 import { BusinessItem } from './constants';
 
-export interface BCmpPersonProps extends Omit<SelectInputProps, 'options'> {
+export interface CmpBusinessSelectProps extends Omit<SelectInputProps, 'options'> {
   mode?: 'read' | 'edit';
+  type?: 'tree' | 'list';
   plain?: boolean;
   name: string;
   fetchData: (pageIndex?: number) => Promise<BusinessItem[]>;
   fetchSearchData: (keyword: string, listData: any[]) => Promise<BusinessItem[]>;
+  fetchTreeNodeData?: (
+    key: string | number,
+    children: BusinessItem[],
+    node?: TreeNodeModel<TypeTreeOptionData>,
+  ) => Promise<BusinessItem[]>;
 }
 
-const props = withDefaults(defineProps<BCmpPersonProps>(), {
+const props = withDefaults(defineProps<CmpBusinessSelectProps>(), {
   mode: 'edit',
+  type: 'list',
   inputValue: '',
   popupVisible: false,
   allowInput: true,
   clearable: true,
 });
 
-const attrs: Partial<BCmpPersonProps> = useAttrs();
-const targetAttrs = computed<BCmpPersonProps>(() => {
-  const newProps = {} as BCmpPersonProps;
+const attrs: Partial<CmpBusinessSelectProps> = useAttrs();
+const targetAttrs = computed<CmpBusinessSelectProps>(() => {
+  const newProps = {} as CmpBusinessSelectProps;
   const isRead = props.mode === 'read';
   newProps.borderless = isRead;
   newProps.readonly = isRead;
@@ -127,7 +159,6 @@ const targetAttrs = computed<BCmpPersonProps>(() => {
 const emit = defineEmits(['update:value', 'update:popupVisible']);
 const inputValue = ref(props.inputValue);
 const popupVisible = ref(props.popupVisible);
-
 const onPopupVisibleChange = (val: boolean) => {
   popupVisible.value = val;
 
@@ -138,6 +169,18 @@ const onPopupVisibleChange = (val: boolean) => {
     }
   }
 };
+const asyncLoading = ref<ListProps['asyncLoading']>('load-more');
+const onLoadMore: ListProps['onLoadMore'] = () => {
+  if (asyncLoading.value === '') return;
+  asyncLoading.value = 'loading';
+  pageIndex.value++;
+  fetchListData();
+};
+const onScrollList: ListProps['onScroll'] = debounce((e) => {
+  if (e.scrollBottom <= 1) {
+    onLoadMore(null);
+  }
+}, 200);
 
 watch(
   () => props.popupVisible,
@@ -167,9 +210,19 @@ watch(
 );
 
 const listData = ref<BusinessItem[]>([]);
+const pageIndex = ref(1);
 const fetchListData = async () => {
-  listData.value = await props.fetchData(1);
-  listAfterSearch.value = listData.value;
+  const result = await props.fetchData(pageIndex.value);
+  if (result.length === 0) {
+    asyncLoading.value = '';
+  } else {
+    asyncLoading.value = pageIndex.value === 1 && result.length < 10 ? '' : 'load-more';
+    listData.value = [...listData.value, ...result];
+  }
+
+  if (props.type === 'list') {
+    listAfterSearch.value = listData.value;
+  }
 };
 
 const selectValues = ref<BusinessItem | BusinessItem[]>(undefined);
@@ -210,15 +263,20 @@ const onTagChange: SelectInputProps['onTagChange'] = (_currentTags, context) => 
   emit('update:value', selectValues.value);
 };
 
-const listAfterSearch = ref<BusinessItem[]>([]);
+const listAfterSearch = ref<BusinessItem[]>(undefined);
 const onInputChange: SelectInputProps['onInputChange'] = debounce(async (val, _context) => {
   if (isEmpty(val)) {
-    listAfterSearch.value = listData.value;
+    listAfterSearch.value = props.type === 'list' ? listData.value : undefined;
     return;
   }
 
   listAfterSearch.value = await props.fetchSearchData(val, listData.value);
 }, 500);
+
+const onLoadTreeNodes: TreeProps['load'] = (node) => {
+  console.log('🚀 ~ node:', node);
+  return props?.fetchTreeNodeData(node.data.row?.id as string, node.data.row?.children as BusinessItem[], node);
+};
 </script>
 <style scoped lang="less">
 .container {
@@ -266,12 +324,6 @@ const onInputChange: SelectInputProps['onInputChange'] = debounce(async (val, _c
   &:hover {
     background-color: var(--td-bg-color-container-hover);
     border-radius: var(--td-radius-default);
-  }
-
-  .item-tag {
-    position: absolute;
-    right: 8px;
-    top: 10px;
   }
 }
 

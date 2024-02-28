@@ -426,8 +426,10 @@ const showMergeForm = async (edit, reBillNoList) => {
   formVisible.value = true;
   reset();
 
+  let totalPickQty = 0;
   reBillNoList.forEach((n) => {
     formData.billNoList.push({ billNo: n.billNo, erpLineNo: n.erpLineNo, billNoDtlId: n.id });
+    totalPickQty += n.pickQty;
   });
   const row = reBillNoList[0];
   formData.iqcBillNo = row.iqcBillNo;
@@ -439,7 +441,7 @@ const showMergeForm = async (edit, reBillNoList) => {
   formData.mitemCategoryId = row.mitemCategoryId;
   formData.mitemCategoryCode = row.mitemCategoryCode;
   formData.mitemCategoryName = row.mitemCategoryName;
-  formData.pickQty = `${row.pickQty}`;
+  formData.pickQty = `${totalPickQty}`;
   formData.supplierId = row.supplierId;
   formData.supplierCode = row.supplierCode;
   formData.supplierName = row.supplierName;

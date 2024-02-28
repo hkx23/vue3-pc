@@ -9,6 +9,7 @@
     :label="title"
     :multiple="multiple"
     :readonly="readonly"
+    :disabled="disabled"
     table-layout="auto"
     v-bind="selectAttr"
     :min-collapsed-num="1"
@@ -153,6 +154,10 @@ const props = defineProps({
     default: true,
   },
   readonly: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
     type: Boolean,
     default: false,
   },

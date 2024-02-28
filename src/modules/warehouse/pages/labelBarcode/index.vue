@@ -255,6 +255,7 @@ import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiWarehouse } from '@/api/warehouse';
+import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';

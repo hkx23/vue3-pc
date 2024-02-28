@@ -1394,8 +1394,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 响应数据 */
@@ -3235,11 +3235,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
   bfpickQty?: number;
   tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4202,6 +4202,11 @@ export interface LabelSearch {
    * @format int32
    */
   splitNum?: number;
+  /**
+   * 行号
+   * @format int32
+   */
+  lineSeq?: number;
   printTempId?: string;
   /** 原因 */
   reason?: string;

@@ -840,8 +840,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1615,8 +1615,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2515,14 +2515,14 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopName?: string;
+  workshopId?: string;
   workshopCode?: string;
 }
 
@@ -2566,10 +2566,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3954,16 +3954,16 @@ export interface BarcodeWipCollectVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopName?: string;
+  workshopId?: string;
   workshopCode?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4075,15 +4075,15 @@ export interface BarcodeWipVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
   stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  defectCodeStr?: string;
-  workshopId?: string;
   workshopName?: string;
+  workshopId?: string;
   workshopCode?: string;
+  isState?: boolean;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -6557,16 +6557,13 @@ export const api = {
      * No description
      *
      * @tags 投料表
-     * @name GetMoBom
+     * @name GetBoardMoBom
      * @summary 根据排产单ID获取工单BOM信息
-     * @request GET:/mitemOnboard/getMoBomByMoScheId
+     * @request GET:/mitemOnboard/getBoardMoBom
      * @secure
      */
-    getMoBom: (query?: {
-      /** @default "" */
-      scheId?: string;
-    }) =>
-      http.request<ResultListMoScheBomVO['data']>(`/api/control/mitemOnboard/getMoBomByMoScheId`, {
+    getBoardMoBom: (query: { processId: string; scheId: string }) =>
+      http.request<ResultListMoScheBomVO['data']>(`/api/control/mitemOnboard/getBoardMoBom`, {
         method: 'GET',
         params: query,
       }),
