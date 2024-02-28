@@ -2515,15 +2515,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2566,10 +2566,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3953,16 +3953,16 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   isState?: boolean;
 }
 
@@ -4074,16 +4074,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopCode?: string;
+  workshopName?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
   defectCodeStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */

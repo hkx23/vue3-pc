@@ -3843,8 +3843,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 /** 响应数据 */
@@ -3923,15 +3923,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
   stateName?: string;
-  isState?: boolean;
+  isBatchName?: string;
   isProductChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
   isInProcessChecked?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4411,8 +4411,8 @@ export interface IntegratedConsoleSearch {
    */
   dateEnd?: string;
   mesbillNo?: string;
-  imsgqueueStatus?: string;
   erpbillNo?: string;
+  imsgqueueStatus?: string;
 }
 
 /** 显示工站 */
@@ -6994,10 +6994,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */

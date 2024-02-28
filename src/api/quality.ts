@@ -2012,13 +2012,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  i?: string;
+  ii?: string;
   iii?: string;
   s1?: string;
-  s3?: string;
-  ii?: string;
   s2?: string;
+  s3?: string;
   s4?: string;
-  i?: string;
 } | null;
 
 /** 计量单位 */
