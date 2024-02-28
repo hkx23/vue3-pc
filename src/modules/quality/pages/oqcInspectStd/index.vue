@@ -149,7 +149,11 @@ const onAssignConfirm = async () => {
   if (data) {
     formVisible.value = false;
     if (assignFormRef.value.formData.type === 'add') {
-      if (!data.mitemId && !data.mitemCategoryId && !data.inspectStdCode) {
+      if (
+        !subQueryCondition.value.mitemId &&
+        !subQueryCondition.value.mitemCategoryId &&
+        !subQueryCondition.value.inspectStdCode
+      ) {
         return;
       }
       onRefreshTwo();

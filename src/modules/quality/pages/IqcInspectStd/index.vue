@@ -47,7 +47,13 @@
                       </t-popconfirm>
                     </template>
                     <template #operation="{ row }">
-                      <t-link v-if="row.status !== 'EXPIRED'" theme="primary" style="padding-right: 8px">分配</t-link>
+                      <t-link
+                        v-if="row.status !== 'EXPIRED'"
+                        theme="primary"
+                        style="padding-right: 8px"
+                        @click="onAssign(row)"
+                        >分配</t-link
+                      >
                       <t-link
                         v-if="row.status !== 'EXPIRED'"
                         theme="primary"
@@ -61,7 +67,10 @@
                       >
                         <t-link v-if="row.status === 'DRAFT'" theme="primary" style="padding-right: 8px">删除</t-link>
                       </t-popconfirm>
-                      <t-popconfirm content="失效后该标准将被禁用，同时解除物料及物料类对该标准的引用，是否继续？">
+                      <t-popconfirm
+                        content="失效后该标准将被禁用，同时解除物料及物料类对该标准的引用，是否继续？"
+                        @confirm="onChangStatus(row)"
+                      >
                         <t-link v-if="row.status === 'EFFECTIVE'" theme="primary" style="padding-right: 8px"
                           >失效</t-link
                         >
@@ -89,27 +98,27 @@
                     :active-row-type="'single'"
                     :hover="true"
                     :table-column="standardAllotColumn"
-                    :table-data="manageTabData.list"
-                    :total="totalManage"
-                    select-on-row-click
-                    :selected-row-keys="productSelectedRowKeys"
+                    :table-data="assignTabData.list"
+                    :total="totalAssign"
+                    :selected-row-keys="assignSelectedRowKeys"
+                    @select-change="onSelectedAssignChange"
                   >
                     <template #title>
                       {{ '物料检验标准分配列表' }}
                     </template>
                     <template #button>
-                      <t-button @click="formVisible = true">新增</t-button>
+                      <t-button @click="onAddAssign">新增</t-button>
                       <t-button theme="default">导入</t-button>
-                      <t-popconfirm content="确认删除吗">
-                        <t-button theme="default" variant="base">批量删除</t-button>
+                      <t-popconfirm content="确认删除吗" @confirm="delAssignBatch">
+                        <t-button theme="default" variant="base" :disabled="assignDelBtnOp">批量删除</t-button>
                       </t-popconfirm>
                     </template>
-                    <template #operations>
-                      <t-link theme="primary"> 编辑 </t-link>
-                      <t-popconfirm theme="default" content="确认删除吗" @confirm="delStdById">
-                        <t-link theme="primary"> 删除 </t-link>
+                    <template #operations="{ row }">
+                      <t-link theme="primary" style="padding-right: 8px" @click="onEditAssign(row)"> 编辑 </t-link>
+                      <t-popconfirm theme="default" content="确认删除吗" @confirm="delAssign(row)">
+                        <t-link theme="primary" style="padding-right: 8px"> 删除 </t-link>
                       </t-popconfirm>
-                      <t-link theme="primary"> 复制 </t-link>
+                      <t-link theme="primary" @click="onCopyAssign(row)"> 复制 </t-link>
                     </template>
                   </cmp-table>
                 </cmp-container>
@@ -120,15 +129,10 @@
       </t-tabs>
     </cmp-card>
   </cmp-container>
-  <t-dialog
-    v-model:visible="formVisible"
-    :close-on-overlay-click="false"
-    header="新增标准分配"
-    :cancel-btn="null"
-    :confirm-btn="null"
-  >
-    <materialAllotForm></materialAllotForm>
+  <t-dialog v-model:visible="formVisible" :close-on-overlay-click="false" header="标准分配" @confirm="onAssignConfirm">
+    <materialAllotForm ref="assignFormRef"></materialAllotForm>
   </t-dialog>
+  <t-dialog v-model:visible="visible1" theme="info" header="提示" :body="message" />
 </template>
 
 <script setup lang="ts">
@@ -143,14 +147,18 @@ import { usePage } from '@/hooks/modules/page';
 import materialAllotForm from './form.vue';
 import materialStandardAdd from './materialStandardAdd.vue';
 
+const assignFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const pageShow = ref(false);
 const onPermission = (value) => {
   pageShow.value = value;
 };
 const formVisible = ref(false);
+const visible1 = ref(false);
+const message = ref('');
+const assignDelBtnOp = ref(true);
 const batchDelOp = ref(false);
 const formRef = ref(null);
-const productSelectedRowKeys: Ref<any[]> = ref([]); // 补打 打印数组
+const assignSelectedRowKeys: Ref<any[]> = ref([]); // 补打 打印数组
 const { pageUI } = usePage(); // 物料标准 分页工具
 const { pageUI: pageUINorm } = usePage(); // 物料标准分配 分页工具
 const tabValue = ref(0);
@@ -158,12 +166,27 @@ const tableRefs = ref(); // 物料检验标准 表格 实例
 const tableRefCard = ref(); // 物料标准分配 表格 实例
 const stdRowKeys: Ref<any[]> = ref([]); //
 // 产品标签管理 表格数据
-const manageTabData = reactive({ list: [] });
-const totalManage = ref(0);
+const assignTabData = reactive({ list: [] });
+const totalAssign = ref(0);
 const onSelectedChange = (value: any) => {
   stdRowKeys.value = value;
   if (stdRowKeys.value.length > 1) {
     batchDelOp.value = true;
+  }
+};
+const onAssign = async (row) => {
+  assignFormRef.value.init();
+  assignFormRef.value.formData.type = 'assign';
+  assignFormRef.value.formData.iqcInspectStdId = row.id;
+  assignFormRef.value.formData.inspectStdName = row.inspectStdName;
+  formVisible.value = true;
+};
+const onSelectedAssignChange = (value: any) => {
+  assignSelectedRowKeys.value = value;
+  if (assignSelectedRowKeys.value.length > 1) {
+    assignDelBtnOp.value = false;
+  } else {
+    assignDelBtnOp.value = true;
   }
 };
 // 标准表格列表数据
@@ -243,47 +266,47 @@ const standardAllotColumn: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'deliveryCardNo',
+    colKey: 'inspectStdCode',
     title: '标准编码',
     width: '100',
   },
   {
-    colKey: 'deliveryCardStatuName',
+    colKey: 'inspectStdName',
     title: '标准名称',
     width: '100',
   },
   {
-    colKey: 'datetimeSche',
+    colKey: 'revision',
     title: '版本号',
     width: '100',
   },
   {
-    colKey: 'workshopName',
+    colKey: 'categoryCode',
     title: '物料类别编码',
     width: '100',
   },
   {
-    colKey: 'workcenterName',
+    colKey: 'categoryName',
     title: '物料类别名称',
     width: '100',
   },
   {
-    colKey: 'scheCode',
+    colKey: 'mitemCode',
     title: '物料编码',
     width: '100',
   },
   {
-    colKey: 'mitemCode',
+    colKey: 'mitemName',
     title: '物料名称',
     width: '100',
   },
   {
-    colKey: 'mitemName',
+    colKey: 'creatorName',
     title: '创建人',
     width: '100',
   },
   {
-    colKey: 'qty',
+    colKey: 'timeCreate',
     title: '创建时间',
     width: '150',
   },
@@ -294,7 +317,17 @@ const standardAllotColumn: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
 ];
+const onChangStatus = async (row) => {
+  const res = (await api.iqcInspectStd.countInspect(row.id)) as any;
 
+  if (res > 0) {
+    message.value = `“目前共有${res}张待检单使用了该标准，请检验完成后再删除检验标准。`;
+    visible1.value = true;
+  }
+
+  await api.iqcInspectStd.loseEffectiveness(row.id);
+  MessagePlugin.success('操作成功');
+};
 onMounted(async () => {
   materialStandardParam.value.status = ['EFFECTIVE'];
   await onGetMaterialStandardData();
@@ -307,6 +340,8 @@ const materialStandardParam = ref({
   keyword: '', // 标准编码,名称
   status: [], // 状态
   userNames: [], // 创建人
+  mitemId: '',
+  mitemCategoryId: '',
 });
 
 // 获取物料标准 主界面数据
@@ -320,6 +355,14 @@ const onGetMaterialStandardData = async () => {
   materialStandardTotal.value = res.total;
   stdRowKeys.value = [];
 };
+const onGetMaterialAssignData = async () => {
+  materialStandardParam.value.pageNum = pageUINorm.value.page;
+  materialStandardParam.value.pageSize = pageUINorm.value.rows;
+  const res = await api.iqcInspectStdMitem.getList(materialStandardParam.value);
+  assignTabData.list = res.list;
+  totalAssign.value = res.total;
+  assignSelectedRowKeys.value = [];
+};
 
 // #################   新增按钮点击事件  ##########################
 const onAddClick = async () => {
@@ -327,9 +370,31 @@ const onAddClick = async () => {
   pageShow.value = true;
 };
 
+const onAddAssign = async () => {
+  assignFormRef.value.formData.type = 'add';
+  assignFormRef.value.formData.inspectStdCode = '';
+  assignFormRef.value.formData.id = '';
+  assignFormRef.value.formData.iqcInspectStdId = '';
+  assignFormRef.value.formData.mitemId = '';
+  assignFormRef.value.formData.mitemCategoryId = '';
+  formVisible.value = true;
+};
+const onCopyAssign = async (row) => {
+  assignFormRef.value.formData.type = 'add';
+  assignFormRef.value.formData.mitemId = row.mitemId;
+  assignFormRef.value.formData.mitemCategoryId = row.mitemCategoryId;
+  formVisible.value = true;
+};
+const onEditAssign = async (row) => {
+  assignFormRef.value.formData.type = 'edit';
+  assignFormRef.value.formData.inspectStdName = row.inspectStdName;
+  assignFormRef.value.formData.id = row.id;
+  assignFormRef.value.formData.mitemCategoryId = row.mitemCategoryId;
+  assignFormRef.value.formData.mitemId = row.mitemId;
+  formVisible.value = true;
+};
 const onEdit = async (row) => {
   formRef.value.dtlRowKeys = [];
-  formRef.value.ids = [];
   formRef.value.formData = row;
   formRef.value.butControl = true;
   formRef.value.submitButControl = true;
@@ -340,8 +405,9 @@ const onEdit = async (row) => {
       file.signedUrl = file.filePath;
     });
   }
-  formRef.value.fileList = row.fileList;
+  formRef.value.fileList = row.fileList ? row.fileList : [];
   formRef.value.formData.operateTpye = 'edit';
+  formRef.value.formData = row;
   await formRef.value.getAllDtlById();
   await formRef.value.getAllDtlFormCache();
   pageShow.value = true;
@@ -349,6 +415,15 @@ const onEdit = async (row) => {
 // // TAb 栏切换事件
 const tabChange = async (value: number) => {
   console.log('🚀 ~ file: index.vue:437 ~ tabChange ~ value:', value);
+};
+
+const delAssignBatch = async () => {
+  await api.iqcInspectStdMitem.removeBatch(assignSelectedRowKeys.value);
+  MessagePlugin.success('删除成功');
+};
+const delAssign = async (row) => {
+  await api.iqcInspectStdMitem.removeBatch([row.id]);
+  MessagePlugin.success('删除成功');
 };
 
 // // #query 查询参数
@@ -386,7 +461,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    mitemCategory: {
+    mitemCategoryId: {
       label: '物料类别',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -397,7 +472,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    mitem: {
+    mitemId: {
       label: '物料',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -430,7 +505,15 @@ const onInput = async (data: any) => {
   if (!tabValue.value) {
     await onGetMaterialStandardData();
   } else {
-    MessagePlugin.success('标准分配');
+    if (
+      !materialStandardParam.value.mitemId &&
+      !materialStandardParam.value.mitemCategoryId &&
+      !materialStandardParam.value.keyword
+    ) {
+      MessagePlugin.warning('请至少选择一个查询条件');
+      return;
+    }
+    await onGetMaterialAssignData();
   }
   MessagePlugin.success('查询成功');
 };
@@ -443,6 +526,24 @@ const delStdByIdBatch = async () => {
   await api.iqcInspectStd.removeBatch(stdRowKeys.value);
   MessagePlugin.success('删除成功');
   onRefresh();
+};
+const onAssignConfirm = async () => {
+  const data = await assignFormRef.value.submit();
+  if (data) {
+    formVisible.value = false;
+    if (
+      materialStandardParam.value.mitemId ||
+      materialStandardParam.value.mitemCategoryId ||
+      materialStandardParam.value.keyword
+    ) {
+      onRefreshTwo();
+    }
+    onRefresh();
+  }
+};
+// 刷新按钮
+const onRefreshTwo = async () => {
+  await onGetMaterialAssignData();
 };
 // 刷新按钮
 const onRefresh = async () => {

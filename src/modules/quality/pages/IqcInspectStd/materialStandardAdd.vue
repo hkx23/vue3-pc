@@ -264,15 +264,21 @@ const onStaging = async () => {
       MessagePlugin.success('暂存成功');
     }
   } else if (formData.value.id && formData.value.operateTpye === 'add') {
-    const res = await api.iqcInspectStd.modify({
+    await api.iqcInspectStd.modify({
       ...formData.value,
       files: fileList.value,
       dtls: dtlTabData.value,
     });
-    if (res) {
-      MessagePlugin.success('暂存成功');
-      Emit('permissionShow', false); // 回到父
-    }
+    MessagePlugin.success('暂存成功');
+    Emit('permissionShow', false); // 回到父
+  } else if (formData.value.id && formData.value.operateTpye === 'edit') {
+    await api.iqcInspectStd.modify({
+      ...formData.value,
+      files: fileList.value,
+      dtls: allDtl.value,
+    });
+    MessagePlugin.success('暂存成功');
+    Emit('permissionShow', false); // 回到父
   }
 };
 const onEdit = (row) => {

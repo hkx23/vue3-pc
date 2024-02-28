@@ -1104,10 +1104,10 @@ export type IqcInspectStdFullVO = {
   reValue?: number;
   /** AC/RE */
   acRe?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2228,13 +2228,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  ii?: string;
-  s3?: string;
   s4?: string;
-  s1?: string;
   s2?: string;
+  s3?: string;
+  i?: string;
+  s1?: string;
   iii?: string;
+  ii?: string;
 } | null;
 
 /** 计量单位 */

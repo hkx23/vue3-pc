@@ -326,9 +326,10 @@ const onPrint = async () => {
       const foundItem = labelBelowList.list.find((item) => item.id === id);
       const DataBase = {
         LABEL_NO: foundItem.labelNo,
-        BALANCE_QTY: foundItem.balanceQty,
+        QTY: foundItem.balanceQty,
         LOT_NO: foundItem.lotNo,
         SUPPLIER_NAME: delivery.supplierName,
+        SUPPLIER_CODE: delivery.supplierCode,
         MITEM_CODE: delivery.mitemCode,
         MITEM_DESC: delivery.mitemDesc,
       };
@@ -612,7 +613,6 @@ const onRefreshBelow = async () => {
 // # 条码标签刷新按钮
 const onRefreshManage = async () => {
   manageQueryCondition.value.pageNum = pageUIMannage.value.page;
-  console.log(pageUIBracode.value);
   manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
   apiWarehouse.label.getLabelManageList(manageQueryCondition.value).then((data) => {
     pkgManageDataList.list = data.list;
