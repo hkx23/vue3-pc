@@ -473,6 +473,8 @@ const onSubmit = async () => {
     return;
   }
 
+  selectWipRepairIds.value = [];
+
   const listSelectWipRepairing = repairingData.value.filter((value) => selectRepairingIds.value.indexOf(value.id) > -1);
 
   listSelectWipRepairing.forEach((item) => {

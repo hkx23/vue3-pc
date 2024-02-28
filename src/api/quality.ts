@@ -1064,10 +1064,10 @@ export type IqcInspectStdFullVO = {
   reValue?: number;
   /** AC/RE */
   acRe?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1223,53 +1223,6 @@ export interface ResultPagingDataIqcInspectStdDtlDTO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataIqcInspectStdDtlDTO;
-}
-
-/** 物料检验标准头表 */
-export interface IqcInspectStdDTO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 标准编码 */
-  inspectStdCode?: string;
-  /** 标准名称 */
-  inspectStdName?: string;
-  groupInspectStdId?: string;
-  /** 版本号 */
-  revision?: number;
-  /**
-   * 生效时间
-   * @format date-time
-   */
-  timeEffective?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  timeInvalid?: string;
-  /** 状态 */
-  status?: string;
-  files?: FileUpload[];
 }
 
 /** 物料检验标准头表 */
@@ -1962,10 +1915,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -2158,13 +2111,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  iii?: string;
+  ii?: string;
+  i?: string;
   s1?: string;
   s2?: string;
   s3?: string;
-  i?: string;
   s4?: string;
-  ii?: string;
-  iii?: string;
 } | null;
 
 /** 计量单位 */
@@ -2929,21 +2882,6 @@ export const api = {
       }),
   },
   iqcInspectStd: {
-    /**
-     * No description
-     *
-     * @tags 物料检验标准头表
-     * @name UploadFile
-     * @summary 上传附件接口
-     * @request POST:/iqcInspectStd/uploadFile
-     * @secure
-     */
-    uploadFile: (data: IqcInspectStdDTO) =>
-      http.request<ResultObject['data']>(`/api/quality/iqcInspectStd/uploadFile`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
     /**
      * No description
      *
