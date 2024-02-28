@@ -194,7 +194,7 @@ const standardColumn: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'status',
+    colKey: 'statusName',
     title: '状态',
     width: '80',
   },
@@ -331,6 +331,9 @@ const onEdit = async (row) => {
   formRef.value.dtlRowKeys = [];
   formRef.value.ids = [];
   formRef.value.formData = row;
+  formRef.value.butControl = true;
+  formRef.value.submitButControl = true;
+  formRef.value.delBtutControl = true;
   if (row.fileList) {
     row.fileList.forEach((file) => {
       file.timeUpload = file.timeCreate;
@@ -339,8 +342,8 @@ const onEdit = async (row) => {
   }
   formRef.value.fileList = row.fileList;
   formRef.value.formData.operateTpye = 'edit';
-  formRef.value.formData.revision = row.revisionName;
-  await formRef.value.getDtlById();
+  await formRef.value.getAllDtlById();
+  await formRef.value.getAllDtlFormCache();
   pageShow.value = true;
 };
 // // TAb 栏切换事件

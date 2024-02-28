@@ -114,6 +114,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isHandDelete: {
+    type: Boolean,
+    default: false,
+  },
 });
 // const previewType = 'doc,docx,jpg,jpeg,png,xlsx';
 const previewType = 'jpg,jpeg,png';
@@ -313,9 +317,13 @@ const downAtta = (row: any) => {
 const onDelConfirm = async (row: any) => {
   console.log('删除附件：', row);
   try {
-    await api.file.deleteFile({ path: props.uploadPath, fileName: row.fileName });
-    tableData.value = tableData.value.filter((item) => item.id !== row.id);
-    emits('deleteSuccess', row);
+    if (!props.isHandDelete) {
+      await api.file.deleteFile({ path: props.uploadPath, fileName: row.fileName });
+      tableData.value = tableData.value.filter((item) => item.id !== row.id);
+      emits('deleteSuccess', row);
+    } else {
+      emits('deleteSuccess', row);
+    }
   } catch (error) {
     MessagePlugin.error(error.message);
   }
@@ -329,11 +337,15 @@ const batchDelete = async () => {
 
   if (selectedRowKeys.value.length > 0) {
     const deleteRows = tableData.value.filter((item) => selectedRowKeys.value.includes(item.id));
-    const deleteFileNames = deleteRows.map((item) => item.fileName);
-    // 批量删除
-    await api.file.batchDeleteFile({ path: props.uploadPath, fileNames: deleteFileNames });
-    tableData.value = tableData.value.filter((item) => !selectedRowKeys.value.includes(item.id));
-    emits('batchDeleteSuccess', deleteRows);
+    if (!props.isHandDelete) {
+      const deleteFileNames = deleteRows.map((item) => item.fileName);
+      // 批量删除
+      await api.file.batchDeleteFile({ path: props.uploadPath, fileNames: deleteFileNames });
+      tableData.value = tableData.value.filter((item) => !selectedRowKeys.value.includes(item.id));
+      emits('batchDeleteSuccess', deleteRows);
+    } else {
+      emits('batchDeleteSuccess', deleteRows);
+    }
   }
 };
 const batchDownload = () => {

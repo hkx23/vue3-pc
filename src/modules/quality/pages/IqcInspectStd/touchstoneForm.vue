@@ -100,8 +100,8 @@
       <t-col :span="4">
         <t-form-item label="抽样方案类型" name="samplingStandardType">
           <t-radio-group v-model="dtlData.samplingStandardType" default-value="1">
-            <t-radio value="1">国标</t-radio>
-            <t-radio value="2">企标</t-radio>
+            <t-radio value="GB">国标</t-radio>
+            <t-radio value="QB">企标</t-radio>
           </t-radio-group>
         </t-form-item>
       </t-col>
@@ -161,6 +161,8 @@
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
+        :is-hand-delete="true"
+        upload-path="inspectStd"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
         @delete-success="deleteSuccess"
@@ -373,14 +375,18 @@ const onConfirmDtl = async () => {
   rowData.value = {
     ...dtlData.value,
     fileList,
+    samplingStandardTypeName: dtlData.value.samplingStandardType === '1' ? '国标' : '企标',
+    itemCategoryName: categoryOption.value.find((item) => item.value === dtlData.value.itemCategory)?.label,
+    inspectTypeName: stdTypeOption.value.find((item) => item.value === dtlData.value.inspectType)?.label,
+    unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,
+    characteristicsName: characteristicsOptions.value.find((item) => item.value === dtlData.value.characteristics)
+      ?.label,
   };
   return true;
 };
 
 const uploadSuccess = (file: AddFileType) => {
-  MessagePlugin.info(
-    `上传一个文件成功,如果是需要实时更新业务数据，可使用对应FILE的路径，文件名，文件大小等信息自行写逻辑上传到后端`,
-  );
+  MessagePlugin.info(`上传文件成功`);
   fileList.value.push(file);
   console.log('🚀 ~ file: materialStandardAdd.vue:149 ~ uploadSuccess ~ files.value:', fileList.value);
 
@@ -388,15 +394,14 @@ const uploadSuccess = (file: AddFileType) => {
 };
 
 const uploadfail = (file: AddFileType) => {
-  MessagePlugin.info(`上传一个文件失败,这个暂时没想到场景`);
+  MessagePlugin.info(`上传文件失败`);
   console.log('uploadSuccess', file);
 };
 
 const deleteSuccess = (file: AddFileType) => {
-  MessagePlugin.info(
-    `删除一个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
-  );
+  MessagePlugin.info(`删除一个文件成功`);
   console.log('deleteSuccess', file);
+  fileList.value = fileList.value.filter((item) => item.signedUrl !== file.signedUrl);
 };
 
 const batchDeleteSuccess = (files: AddFileType[]) => {
@@ -409,6 +414,7 @@ const batchDeleteSuccess = (files: AddFileType[]) => {
 defineExpose({
   onConfirmDtl,
   dtlData,
+  fileList,
   init,
   rowData,
 });

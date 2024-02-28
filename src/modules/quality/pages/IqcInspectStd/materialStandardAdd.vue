@@ -67,7 +67,7 @@
       <cmp-table
         ref="tableRefCard"
         v-model:pagination="pageUI"
-        row-key="deliveryCardId"
+        row-key="index"
         :active-row-type="'single'"
         :hover="true"
         :table-column="columns"
@@ -100,7 +100,7 @@
           <t-popconfirm content="继续将删除该标准该检验项目，是否继续？" @confirm="delDtlById(row)">
             <t-link theme="primary" style="padding-right: 8px">删除</t-link>
           </t-popconfirm>
-          <t-link theme="primary" @click="onCopy">复制</t-link>
+          <t-link theme="primary" @click="onCopy(row)">复制</t-link>
         </template>
       </cmp-table>
     </cmp-card>
@@ -117,6 +117,7 @@
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
+        upload-path="inspectStd"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
         @delete-success="deleteSuccess"
@@ -204,12 +205,6 @@ const onAdd = () => {
   touchstoneFormVisible.value = true;
 };
 
-// 父方法
-// const Emit = defineEmits(['permissionShow']);
-// // 关闭窗口回到主页面
-// const onClose = () => {
-//   Emit('permissionShow', false); // 回到父
-// };
 const onDtlSelectedChange = (value: any) => {
   dtlRowKeys.value = value;
 };
@@ -252,7 +247,7 @@ const onStaging = async () => {
     MessagePlugin.error('失效时间必须大于今天');
     return;
   }
-  const res = (await api.iqcInspectStd.add({ ...formData.value })) as any;
+  const res = (await api.iqcInspectStd.temporaryStorage({ ...formData.value })) as any;
   if (res) {
     butControl.value = true;
     formData.value.id = res;
@@ -262,14 +257,17 @@ const onStaging = async () => {
 const onEdit = (row) => {
   formTitle.value = '检验项目编辑';
   opType.value = 'edit';
-  dtlFormRef.value.dtlData = row;
-  dtlFormRef.value.dtlData.samplingStandardType = '1';
+  const item = { ...row };
+  dtlFormRef.value.dtlData = item;
+  dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
   touchstoneFormVisible.value = true;
 };
 const onCopy = (row) => {
   formTitle.value = '检验项目复制';
   opType.value = 'add';
-  dtlFormRef.value.dtlData = row;
+  const item = { ...row };
+  dtlFormRef.value.dtlData = item;
+  dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
   dtlFormRef.value.dtlData.itemName = '';
   touchstoneFormVisible.value = true;
 };
@@ -321,6 +319,30 @@ const getDtlById = async () => {
   if (res) {
     dtlTabData.value = res.list;
     dataTotal.value = res.total;
+    addIndex();
+  }
+};
+const allDtl = ref([]);
+const getAllDtlById = async () => {
+  const res = (await api.iqcInspectStdDtl.getDtl({
+    iqcInspectStdId: formData.value.id,
+    pageNum: pageUI.value.page,
+    pageSize: 9999999,
+  })) as any;
+  if (res) {
+    allDtl.value = res.list;
+    addIndex();
+  }
+};
+const getAllDtlFormCache = async () => {
+  if (allDtl.value) {
+    let startIndex = 0;
+    if (pageUI.value.page !== 1) {
+      startIndex = (pageUI.value.page - 1) * pageUI.value.rows;
+    }
+
+    const firstTwentyElements = allDtl.value.slice(startIndex, startIndex + pageUI.value.rows);
+    dtlTabData.value = firstTwentyElements;
   }
 };
 const columns = [
@@ -357,7 +379,7 @@ const columns = [
     title: '检验工具',
   },
   {
-    colKey: 'uom',
+    colKey: 'baseValue',
     title: '基准值',
   },
   {
@@ -424,8 +446,25 @@ const onConfirmDtl = async () => {
         submitButControl.value = true;
       }
       // 只允许新增标准直接更新数据库
-    } else if (opType.value === 'edit' && formData.value.operateTpye === 'add') {
-      await api.iqcInspectStdDtl.updateDtlById(dtlFormRef.value.rowData);
+    } else if (opType.value === 'edit' && formData.value.operateTpye === 'edit') {
+      // 校验itemName
+      const result = confirmItemName();
+      if (!result) {
+        return;
+      }
+      // 替换总数据
+      const allIndex = allDtl.value.findIndex((item) => item.index === dtlFormRef.value.rowData.index);
+      if (allIndex !== -1) {
+        allDtl.value.splice(allIndex, 1, dtlFormRef.value.rowData);
+      }
+      onRefresh();
+    } else if (opType.value === 'add' && formData.value.operateTpye === 'edit') {
+      // 校验itemName
+      const result = confirmItemName();
+      if (!result) {
+        return;
+      }
+      allDtl.value.push({ ...dtlFormRef.value.rowData, index: allDtl.value.length });
       onRefresh();
     }
     touchstoneFormVisible.value = false;
@@ -437,13 +476,49 @@ const onConfirmCode = async () => {
   }
 };
 const onRefresh = () => {
-  getDtlById();
+  if (formData.value.operateTpye === 'add') {
+    getDtlById();
+  } else if (formData.value.operateTpye === 'edit') {
+    getAllDtlFormCache();
+  }
 };
+const confirmItemName = () => {
+  if (opType.value === 'add') {
+    // 校验itemName
+    const item = allDtl.value.find((item) => item.itemName === dtlFormRef.value.rowData.itemName);
+    if (item) {
+      MessagePlugin.warning('检验内容重复');
+      return false;
+    }
+  } else {
+    // 校验itemName
+    const item = allDtl.value.find(
+      (item) => item.itemName === dtlFormRef.value.rowData.itemName && item.index !== dtlFormRef.value.rowData.index,
+    );
+    if (item) {
+      MessagePlugin.warning('检验内容重复');
+      return false;
+    }
+  }
+  return true;
+};
+
+const addIndex = () => {
+  allDtl.value.forEach((item, index) => {
+    item.index = index;
+  });
+};
+
 defineExpose({
   formData,
   init,
   fileList,
   getDtlById,
+  getAllDtlById,
+  getAllDtlFormCache,
+  butControl,
+  submitButControl,
+  delBtutControl,
 });
 </script>
 

@@ -918,6 +918,8 @@ export interface IqcInspectStdDtlFile {
 
 /** 物料检验标准全信息搜索类 */
 export interface IqcInspectStdFullSearch {
+  /** IQC单据号 */
+  iqcBillNo?: string;
   mitemCategoryId?: string;
   mitemId?: string;
   pickQty?: string;
@@ -1223,6 +1225,52 @@ export interface ResultPagingDataIqcInspectStdDtlDTO {
   data?: PagingDataIqcInspectStdDtlDTO;
 }
 
+/** 物料检验标准头表 */
+export interface IqcInspectStd {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标准编码 */
+  inspectStdCode?: string;
+  /** 标准名称 */
+  inspectStdName?: string;
+  groupInspectStdId?: string;
+  /** 版本号 */
+  revision?: number;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  timeEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  timeInvalid?: string;
+  /** 状态 */
+  status?: string;
+}
+
 export interface IqcInspectStdSearch {
   /**
    * 页码
@@ -1336,52 +1384,6 @@ export interface ResultLong {
   data?: string;
 }
 
-/** 物料检验标准头表 */
-export interface IqcInspectStd {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 标准编码 */
-  inspectStdCode?: string;
-  /** 标准名称 */
-  inspectStdName?: string;
-  groupInspectStdId?: string;
-  /** 版本号 */
-  revision?: number;
-  /**
-   * 生效时间
-   * @format date-time
-   */
-  timeEffective?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  timeInvalid?: string;
-  /** 状态 */
-  status?: string;
-}
-
 export interface MitemForwardTraceSearch {
   /**
    * 页码
@@ -1471,10 +1473,16 @@ export interface ResultPagingDataMFTSubVO {
   data?: PagingDataMFTSubVO;
 }
 
+/** 缺陷类型 */
+export interface Dropdown {
+  value?: string;
+  label?: string;
+}
+
 /** 处理意见VO */
 export interface IqcInspectNgVO {
   /** 缺陷类型 */
-  defectCode?: string;
+  defectCodeList?: Dropdown[];
   /** 缺陷等级 */
   iqcDefectCategoryCode?: string;
   /** 物料处理意见 */
@@ -1583,6 +1591,8 @@ export interface MitemReceiveBillVO {
   state?: number;
   eid?: string;
   oid?: string;
+  /** IQC单据号 */
+  iqcBillNo?: string;
   /** 单据号 */
   billNo?: string;
   warehouseId?: string;
@@ -2101,13 +2111,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  s3?: string;
+  s2?: string;
+  i?: string;
   ii?: string;
   iii?: string;
-  i?: string;
-  s2?: string;
-  s4?: string;
-  s3?: string;
   s1?: string;
+  s4?: string;
 } | null;
 
 /** 计量单位 */
@@ -2891,6 +2901,21 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准头表
+     * @name Modify
+     * @summary 编辑标准
+     * @request POST:/iqcInspectStd/modify
+     * @secure
+     */
+    modify: (data: IqcInspectStd) =>
+      http.request<ResultObject['data']>(`/api/quality/iqcInspectStd/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准头表
      * @name LoseEffectiveness
      * @summary 失效操作
      * @request POST:/iqcInspectStd/loseEffectiveness
@@ -2936,13 +2961,13 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准头表
-     * @name Add
-     * @summary 新增标准
-     * @request POST:/iqcInspectStd/add
+     * @name TemporaryStorage
+     * @summary 暂存标准
+     * @request POST:/iqcInspectStd/TemporaryStorage
      * @secure
      */
-    add: (data: IqcInspectStd) =>
-      http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/add`, {
+    temporaryStorage: (data: IqcInspectStd) =>
+      http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/TemporaryStorage`, {
         method: 'POST',
         body: data as any,
       }),
