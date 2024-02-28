@@ -311,7 +311,7 @@ const batchDeleteSuccess = (files: AddFileType[]) => {
 };
 const dtlTabData = ref([]);
 const getDtlById = async () => {
-  const res = (await api.iqcInspectStdDtl.getDtl({
+  const res = (await api.iqcInspectStdDtl.getInspectStdDtlList({
     iqcInspectStdId: formData.value.id,
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
@@ -324,7 +324,7 @@ const getDtlById = async () => {
 };
 const allDtl = ref([]);
 const getAllDtlById = async () => {
-  const res = (await api.iqcInspectStdDtl.getDtl({
+  const res = (await api.iqcInspectStdDtl.getInspectStdDtlList({
     iqcInspectStdId: formData.value.id,
     pageNum: pageUI.value.page,
     pageSize: 9999999,
