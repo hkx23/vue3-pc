@@ -123,7 +123,7 @@
 import dayjs from 'dayjs';
 import _, { isEmpty } from 'lodash';
 import { LoadingPlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api, WipKeyPartCollectVO } from '@/api/control';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
@@ -304,8 +304,8 @@ const serialNumberEnter = async (value) => {
 
           if (reData.isCommit) {
             // 提交时,清空扫描框即可
-            resetBarcode(isNeedClear);
             resetKeypartCode(isNeedClear);
+            resetBarcode(isNeedClear);
           }
         } else {
           pushMessage('error', value, reData.scanMessage);
@@ -360,12 +360,10 @@ const resetKeypartCode = (isNeedClear: boolean) => {
   } else {
     scanKeypartInstance.value.selectAll();
   }
-  nextTick(() => {
-    if (scanKeypartInstance.value) {
-      const { customerFocus } = scanKeypartInstance.value;
-      customerFocus();
-    }
-  });
+  if (scanKeypartInstance.value) {
+    const { customerFocus } = scanKeypartInstance.value;
+    customerFocus();
+  }
 };
 
 const resetKeyPartList = () => {

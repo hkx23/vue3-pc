@@ -46,9 +46,9 @@
                 {{ '不良汇总' }}
               </template>
               <!-- TODO -->
-              <template #op="slotProps">
+              <template #passRate="slotProps">
                 <div style="width: 200px">
-                  <t-progress theme="plump" :percentage="slotProps.row.dutyProportion" />
+                  <t-progress theme="plump" :percentage="slotProps.row.passRate" />
                 </div>
               </template>
               <template #completedNum="{ row }">
@@ -72,9 +72,9 @@
               <template #title>
                 {{ '缺陷原因汇总' }}
               </template>
-              <template #proportion="slotProps">
+              <template #defectProportion="slotProps">
                 <div style="width: 200px">
-                  <t-progress theme="plump" :percentage="slotProps.row.dutyProportion" />
+                  <t-progress theme="plump" :percentage="slotProps.row.defectProportion" />
                 </div>
               </template>
             </cmp-table>
@@ -95,9 +95,9 @@
               <template #title>
                 {{ '维修方法汇总' }}
               </template>
-              <template #dutyProportion="slotProps">
+              <template #repairProportion="slotProps">
                 <div style="width: 200px">
-                  <t-progress theme="plump" :percentage="slotProps.row.dutyProportion" />
+                  <t-progress theme="plump" :percentage="slotProps.row.repairProportion" />
                 </div>
               </template>
 
@@ -168,7 +168,7 @@ const columnsProduceReport1 = computed(() => {
       width: 110,
     },
     {
-      colKey: 'mitemCode',
+      colKey: 'workcenterName',
       title: '工作中心',
       width: 110,
     },
@@ -225,7 +225,7 @@ const columnsProduceReport1 = computed(() => {
       width: 100,
     },
     {
-      colKey: 'methodName',
+      colKey: 'defectReasonName',
       title: '缺陷原因',
       width: 100,
     },
@@ -235,7 +235,7 @@ const columnsProduceReport1 = computed(() => {
       width: 100,
     },
     {
-      colKey: 'defectBlame',
+      colKey: 'defectBlameName',
       title: '责任',
       width: 100,
     },
@@ -316,7 +316,7 @@ const columnsProduceReport2 = computed(() => {
       width: 100,
     },
     {
-      colKey: 'op',
+      colKey: 'passRate',
       title: '良率',
       width: 130,
     },
@@ -364,7 +364,7 @@ const columnsProduceReport3 = computed(() => {
     },
 
     {
-      colKey: 'defectReason',
+      colKey: 'defectReasonName',
       title: '缺陷原因',
       width: 100,
     },
@@ -379,7 +379,7 @@ const columnsProduceReport3 = computed(() => {
       width: 100,
     },
     {
-      colKey: 'proportion',
+      colKey: 'defectProportion',
       title: '占比',
       width: 100,
     },
@@ -441,7 +441,7 @@ const columnsProduceReport4 = computed(() => {
       width: 100,
     },
     {
-      colKey: 'dutyProportion',
+      colKey: 'repairProportion',
       title: '占比',
       width: 100,
     },
@@ -487,12 +487,12 @@ const columnsProduceReport5 = computed(() => {
       width: 100,
     },
     {
-      colKey: 'defectBlame',
+      colKey: 'defectBlameName',
       title: '责任',
       width: 100,
     },
     {
-      colKey: 'completedNum',
+      colKey: 'dutyQuantity',
       title: '数量',
       width: 100,
     },

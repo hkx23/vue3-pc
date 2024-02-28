@@ -137,6 +137,7 @@
 import dayjs from 'dayjs';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { api as apiControl } from '@/api/control';
 import { api as apimain } from '@/api/main';
@@ -148,6 +149,7 @@ import { usePage } from '@/hooks/modules/page';
 import detailed from './detailed.vue';
 import { useLang } from './lang';
 
+const router = useRouter();
 const selectRows = ref([]);
 const curOperatorType = ref('');
 enum OperatorType {
@@ -991,11 +993,17 @@ const onHandelLock = (operatorType: OperatorType) => {
 // 解锁
 const onHandelUnLock = (operatorType: OperatorType) => {
   console.log(operatorType);
+  const tabRouters = router.getRoutes();
+  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === '/quality#/holdList?viewType=UNLOCK');
+  router.push(routeInfo);
 };
 
 // 日志
 const onHandelLog = (operatorType: OperatorType) => {
   console.log(operatorType);
+  const tabRouters = router.getRoutes();
+  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === '/quality#/holdList?viewType=VIEW');
+  router.push(routeInfo);
 };
 
 // 子组件控制执行窗口

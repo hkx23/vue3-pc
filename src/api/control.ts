@@ -140,239 +140,6 @@ export interface ProductPackRule {
   packRuleName?: string;
 }
 
-/** 筛选字段 */
-export interface Filter {
-  field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
-  value?: string;
-}
-
-/** 排序字段 */
-export interface SortParam {
-  sortBy?: string;
-  descending?: boolean;
-}
-
-export interface WorkstationAuthSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  id?: string;
-  userId?: string;
-  /** 需要新增的关系 */
-  inseartList?: string[];
-  /** 需要删除的关系 */
-  removeList?: string[];
-  /** 多个工站权限id */
-  ids?: string[];
-  /** 模糊关键词 */
-  keyword?: string;
-  /** 工站编码名称模糊查询 */
-  workstationWord?: string;
-  /** 用户编码名称模糊查询 */
-  userWord?: string;
-  /** 工作中心编码名称模糊 */
-  workcenterWord?: string;
-  /** 工序编码名称模糊 */
-  processWord?: string;
-  /** 排序字段 */
-  sorts?: SortParam[];
-  /** 筛选字段 */
-  filters?: Filter[];
-}
-
-/** 工站权限 */
-export interface WorkstationAuth {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  userId?: string;
-  workstationId?: string;
-}
-
-/** 响应数据 */
-export type PagingDataWorkstationAuthVO = {
-  list?: WorkstationAuthVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkstationAuthVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkstationAuthVO;
-}
-
-/** 工站权限显示 */
-export interface WorkstationAuthVO {
-  id?: string;
-  eid?: string;
-  oid?: string;
-  userId?: string;
-  /** 用户名 */
-  userName?: string;
-  /** 用户显示名 */
-  userDisplayName?: string;
-  workstationId?: string;
-  /** 工站编码 */
-  workstationCode?: string;
-  /** 工站名称 */
-  workstationName?: string;
-  /** 工站描述 */
-  workstationDesc?: string;
-  /** 工作中心编码 */
-  workcenterCode?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  /** 工序编码 */
-  processCode?: string;
-  /** 工序名称 */
-  processName?: string;
-  /**
-   * 状态
-   * @format int32
-   */
-  state?: number;
-  /** 创建人 */
-  creatorName?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-}
-
-/** 响应数据 */
-export type PagingDataLong = {
-  list?: string[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataLong {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataLong;
-}
-
-export interface CommonSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
-  keyword?: string;
-  /** @format int32 */
-  state?: number;
-  parentId?: string;
-  category?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-  customerConditions?: Filter[];
-}
-
-/** 响应数据 */
-export type PagingDataWorkstation = {
-  list?: Workstation[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataWorkstation {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataWorkstation;
-}
-
-/** 工站 */
-export interface Workstation {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工站代码 */
-  workstationCode?: string;
-  /** 工站名称 */
-  workstationName?: string;
-  /** 工站描述 */
-  workstationDesc?: string;
-  processId?: string;
-  workcenterId?: string;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
-}
-
 /** 班组排班表 */
 export interface WorkgroupArrange {
   id?: string;
@@ -628,6 +395,34 @@ export interface Workgroup {
   /** 班组描述 */
   workgroupDesc?: string;
   workshopId?: string;
+}
+
+export interface CommonSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+}
+
+export interface Filter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  value?: string;
+}
+
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
 }
 
 /** 响应数据 */
@@ -2482,12 +2277,12 @@ export interface ProductionDefectStatisticsVO {
   ngQty?: number;
   /** 工站名称 */
   workstationName?: string;
-  /** 缺陷原因 */
-  defectReason?: string;
+  /** 缺陷原因名称 */
+  defectReasonName?: string;
   /** 处理方法名称 */
   methodName?: string;
-  /** 缺陷责任别 */
-  defectBlame?: string;
+  /** 缺陷责任别名称 */
+  defectBlameName?: string;
   /** 录入人 */
   creatorName?: string;
   /**
@@ -2725,8 +2520,8 @@ export interface ProductReworkVO {
   workshopId?: string;
   workshopName?: string;
   workshopCode?: string;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
 }
@@ -2771,9 +2566,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -4165,8 +3960,8 @@ export interface BarcodeWipCollectVO {
   workshopCode?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
 }
@@ -4286,8 +4081,8 @@ export interface BarcodeWipVO {
   workshopCode?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -5480,127 +5275,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/productPackRule/delete`, {
         method: 'DELETE',
         params: query,
-      }),
-  },
-  workstationAuth: {
-    /**
-     * No description
-     *
-     * @tags 工站权限
-     * @name Save
-     * @summary 保存工站权限
-     * @request POST:/workstationAuth/save
-     * @secure
-     */
-    save: (data: WorkstationAuthSearch) =>
-      http.request<ResultObject['data']>(`/api/control/workstationAuth/save`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站权限
-     * @name Remove
-     * @summary 删除工站权限
-     * @request POST:/workstationAuth/remove
-     * @secure
-     */
-    remove: (data: WorkstationAuthSearch) =>
-      http.request<ResultObject['data']>(`/api/control/workstationAuth/remove`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站权限
-     * @name RemoveBatch
-     * @summary 批量删除工站权限
-     * @request POST:/workstationAuth/removeBatch
-     * @secure
-     */
-    removeBatch: (data: WorkstationAuthSearch) =>
-      http.request<ResultObject['data']>(`/api/control/workstationAuth/removeBatch`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站权限
-     * @name Input
-     * @summary 导入工站权限
-     * @request POST:/workstationAuth/input
-     * @secure
-     */
-    input: (data: WorkstationAuth) =>
-      http.request<ResultObject['data']>(`/api/control/workstationAuth/input`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站权限
-     * @name GetUserList
-     * @summary 获得用户列表
-     * @request POST:/workstationAuth/getUserList
-     * @secure
-     */
-    getUserList: (data: WorkstationAuthSearch) =>
-      http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getUserList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站权限
-     * @name GetUserAuth
-     * @summary 获得选中用户所拥有的工站权限
-     * @request POST:/workstationAuth/getUserAuth
-     * @secure
-     */
-    getUserAuth: (data: WorkstationAuthSearch) =>
-      http.request<ResultPagingDataLong['data']>(`/api/control/workstationAuth/getUserAuth`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站权限
-     * @name Getlist
-     * @summary 查询主界面信息
-     * @request POST:/workstationAuth/getList
-     * @secure
-     */
-    getlist: (data: WorkstationAuthSearch) =>
-      http.request<ResultPagingDataWorkstationAuthVO['data']>(`/api/control/workstationAuth/getList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 工站权限
-     * @name CurrentUserWorkstation
-     * @summary 获得当前用户所拥有权限的工站
-     * @request POST:/workstationAuth/currentUserWorkstation
-     * @secure
-     */
-    currentUserWorkstation: (data: CommonSearch) =>
-      http.request<ResultPagingDataWorkstation['data']>(`/api/control/workstationAuth/currentUserWorkstation`, {
-        method: 'POST',
-        body: data as any,
       }),
   },
   workgroupArrange: {

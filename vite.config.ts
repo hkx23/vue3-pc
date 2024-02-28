@@ -105,6 +105,12 @@ export default ({ mode, command }: ConfigEnv): UserConfig => {
           //   if (id.includes('echarts')) return 'echarts';
           // },
         },
+        // plugins: [
+        //   visualizer({
+        //     filename: './dist/stats.html', // 生成的报告文件名和路径
+        //     template: 'sunburst', // 可选的报告模板，例如 sunburst、network、treemap 等
+        //   }),
+        // ],
       },
     },
   };

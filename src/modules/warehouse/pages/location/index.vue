@@ -109,7 +109,7 @@ const opts = computed(() => {
       },
     },
     districtKeyword: {
-      label: '货区编码',
+      label: '货区编码/名称',
       labelWidth: '140',
       isHide: tabValue.value,
       event: 'input',
@@ -117,7 +117,7 @@ const opts = computed(() => {
       defaultVal: '',
     },
     locationKeyword: {
-      label: '货位编码',
+      label: '货位编码/名称',
       labelWidth: '140',
       isHide: tabValue.value,
       event: 'input',

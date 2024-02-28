@@ -1,14 +1,13 @@
 <template>
-  <cmp-container :full="true" :ghost="true">
-    <cmp-card :full="false">
+  <cmp-container :full="true">
+    <cmp-card :span="12">
       <cmp-query :opts="optsHold" :is-reset-query="false" @submit="conditionEnter"> </cmp-query>
     </cmp-card>
-    <cmp-card :full="true"
+    <cmp-card :span="12"
       ><cmp-table
         ref="tableHoldRef"
         v-model:pagination="pageUI"
         active-row-type="single"
-        :fixed-height="true"
         row-key="id"
         :table-column="HoldColumns"
         :table-data="holdInfoList.list"
@@ -40,15 +39,13 @@
   <detailed ref="detailFormRef" @show-close-event="onHandleLockShow"></detailed>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api as apimain } from '@/api/main';
 import { api as apiQuality, QcHoldVO } from '@/api/quality';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -122,6 +119,7 @@ const optsHold = computed(() => {
       placeholder: t('common.placeholder.input', [`${t('qcHold.reasonCategory')}`]),
       bind: {
         options: reasonCategoryOption.value,
+        lazyLoad: true,
       },
     },
     creator: {
@@ -177,7 +175,7 @@ const onRefresh = async () => {
   await fetchTable();
 };
 // #### Hold单据列表 表头
-const HoldColumns: PrimaryTableCol<TableRowData>[] = [
+const HoldColumns = ref([
   {
     colKey: 'serial-number',
     title: `${t('business.main.serialNumber')}`,
@@ -260,7 +258,7 @@ const HoldColumns: PrimaryTableCol<TableRowData>[] = [
     width: '180',
   },
   { colKey: 'op', title: t('common.button.operation'), width: '100', fixed: 'right' },
-];
+]);
 
 // 加载数据表格
 const fetchTable = async () => {
@@ -414,19 +412,4 @@ onMounted(() => {
 });
 </script>
 
-<style lang="less" scoped>
-.full {
-  height: 100%;
-}
-
-.sub-tab {
-  padding: 8px 8px 0 12px;
-  background-color: var(--td-bg-color-page);
-}
-
-.align-right {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-</style>
+<style lang="less" scoped></style>

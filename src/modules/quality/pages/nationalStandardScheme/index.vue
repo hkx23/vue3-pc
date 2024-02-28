@@ -84,12 +84,39 @@ const opts = computed(() => {
 });
 
 //* 查询
+// const onInput = async (data: any) => {
+//   if (isResetting.value) {
+//     return;
+//   }
+//   const { checkLevel, inspectionStringency } = data;
+//   // 检查是否选择了必要的选项
+//   if (!checkLevel || !inspectionStringency) {
+//     MessagePlugin.warning('请先选择检验水平和严格度');
+//     return;
+//   }
+//   try {
+//     const updatedData = await apiMain.samplingAql.getList({
+//       checkLevel,
+//       inspectionStringency,
+//     });
+//     const data = updatedData.map((item, index) => ({
+//       batch: batch.value[index], // 从预定义的batch数组获取对应的值
+//       sampleQty: item.sampleQty,
+//       acRe: `${item.acceptQty} ${item.rejectQty}`,
+//       aql: item.aql,
+//     }));
+//     tableData.value = data;
+//   } catch (error) {
+//     console.error('查询出错:', error);
+//     MessagePlugin.error('查询失败，请稍后重试');
+//   }
+// };
+
 const onInput = async (data: any) => {
   if (isResetting.value) {
     return;
   }
   const { checkLevel, inspectionStringency } = data;
-  // 检查是否选择了必要的选项
   if (!checkLevel || !inspectionStringency) {
     MessagePlugin.warning('请先选择检验水平和严格度');
     return;
@@ -99,13 +126,18 @@ const onInput = async (data: any) => {
       checkLevel,
       inspectionStringency,
     });
-    const data = updatedData.map((item, index) => ({
-      batch: batch.value[index], // 从预定义的batch数组获取对应的值
-      sampleQty: item.sampleQty,
-      acRe: `${item.acceptQty} ${item.rejectQty}`,
-      aql: item.aql,
-    }));
-    tableData.value = data;
+
+    tableData.value = batch.value.map((batchItem, index) => {
+      const item = updatedData[index] || {};
+      console.log('🚀 ~ tableData.value=batch.value.map ~ item:000', item);
+      return {
+        batch: batchItem,
+        sampleQty: item.sampleQty || '',
+        acRe: item.acceptQty ? `${item.acceptQty}/${item.rejectQty}` : '',
+        aql: item.aql ? `${item.aql}/${item.aql}` : '',
+      };
+    });
+    console.log('🚀 ~ tableData.value=batch.value.map ~ tableData.value111:', tableData.value);
   } catch (error) {
     console.error('查询出错:', error);
     MessagePlugin.error('查询失败，请稍后重试');
