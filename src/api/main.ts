@@ -3843,8 +3843,8 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -3923,15 +3923,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isProductName?: string;
-  isProductChecked?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isBatchName?: string;
+  isProductName?: string;
+  stateName?: string;
   isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4074,8 +4074,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4411,8 +4411,8 @@ export interface IntegratedConsoleSearch {
    */
   dateEnd?: string;
   mesbillNo?: string;
-  erpbillNo?: string;
   imsgqueueStatus?: string;
+  erpbillNo?: string;
 }
 
 /** 显示工站 */
