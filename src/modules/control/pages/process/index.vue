@@ -67,7 +67,6 @@ const stateOptions = [
 ];
 
 const tableProcessColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '序号', colKey: 'serial-number', width: 74 },
   { title: '工序代码', width: 160, colKey: 'processCode' },
   { title: '工序名称', width: 160, colKey: 'processName' },
   { title: '工序描述', width: 160, colKey: 'processDesc' },

@@ -26,7 +26,10 @@
         <template #op="slotProps">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
-            <t-link theme="primary" @click="onDeleteRowClick(slotProps)">{{ t('common.button.delete') }}</t-link>
+
+            <t-popconfirm content="是否要删除物料与供应商关系？" @confirm="onDeleteRowClick(slotProps)">
+              <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
           </t-space>
         </template>
       </cmp-table>
@@ -37,7 +40,7 @@
     v-model:visible="formVisible"
     :header="formTitle"
     :on-confirm="onConfirmForm"
-    width="850px"
+    width="950px"
     :close-on-overlay-click="false"
     :on-close="onCloseForm"
   >
@@ -46,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { DialogPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -171,20 +174,8 @@ const onCloseForm = async () => {
 };
 
 const onDeleteRowClick = async (value: any) => {
-  const confirmDia = DialogPlugin({
-    header: '删除',
-    body: '是否要删除物料与供应商关系？',
-    confirmBtn: '确认',
-    cancelBtn: '取消',
-    onConfirm: async () => {
-      await api.mitemInSupplier.delete(value.row).then(() => {
-        fetchTable();
-        confirmDia.hide();
-      });
-    },
-    onClose: () => {
-      confirmDia.hide();
-    },
+  await api.mitemInSupplier.delete(value.row).then(() => {
+    fetchTable();
   });
 };
 onMounted(() => {
