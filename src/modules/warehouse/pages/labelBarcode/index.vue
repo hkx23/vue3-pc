@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full="!!tagValue">
+  <cmp-container :full="false">
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="来料标签打印" :destroy-on-hide="false">
@@ -119,7 +119,7 @@
                   :table-data="pkgManageDataList.list"
                   :total="pkgManageTabTotal"
                   :fixed-height="true"
-                  style="height: 300px"
+                  style="height: 400px"
                   @select-change="onProductRightFetchData"
                   @refresh="onRefreshManage"
                 >
@@ -513,6 +513,7 @@ const queryBelowCondition = ref({
 const manageQueryCondition = ref({
   mitemId: '',
   supplierId: '',
+  lineSeq: '',
   barcodeStatus: '',
   timeCreatedStart: '',
   timeCreatedEnd: '',
@@ -1012,10 +1013,15 @@ const conditionEnter = (data: any) => {
 };
 // 管理界面点击查询按钮
 const managePageSearchClick = (data: any) => {
+  if (data.lineSeq && !Number(data.lineSeq)) {
+    MessagePlugin.warning('送货单行号须为正整数');
+    return;
+  }
   const [timeCreatedStart, timeCreatedEnd] = data.timeCreatedRange;
   manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
   manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
   manageQueryCondition.value.barcode = data.barcode;
+  manageQueryCondition.value.lineSeq = data.lineSeq;
   manageQueryCondition.value.barcodeStatus = data.barcodeStatus;
   manageQueryCondition.value.billNo = data.billNo;
   manageQueryCondition.value.mitemId = data.mitemId;
@@ -1173,6 +1179,11 @@ const mitemBarcodeManageOp = computed(() => {
     },
     billNo: {
       label: '送货单',
+      comp: 't-input',
+      defaultVal: '',
+    },
+    lineSeq: {
+      label: '送货单行号',
       comp: 't-input',
       defaultVal: '',
     },

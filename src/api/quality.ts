@@ -724,6 +724,36 @@ export interface OqcInspectStdFullDTO {
   fileList?: FileUpload[];
 }
 
+/** 物料检验标准分配表 */
+export interface IqcInspectStdMitem {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  iqcInspectStdId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+}
+
 export interface IqcInspectStdMitemSearch {
   /**
    * 页码
@@ -1110,8 +1140,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -1374,6 +1404,174 @@ export interface ResultPagingDataMFTSubVO {
   data?: PagingDataMFTSubVO;
 }
 
+/** 物料检验单全数据查询 */
+export interface IqcInspectBillSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  personResponsibilityId?: string;
+  inspectGroupId?: string;
+  /**
+   * 接收开始时间
+   * @format date-time
+   */
+  beginDatetimeReceipted?: string;
+  /**
+   * 接收结束时间
+   * @format date-time
+   */
+  endDatetimeReceipted?: string;
+  /**
+   * 检验开始日期
+   * @format date-time
+   */
+  beginDatetimeInspectTion?: string;
+  /**
+   * 检验结束日期
+   * @format date-time
+   */
+  endDatetimeInspectTion?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 检验状态 */
+  inspectStatus?: string;
+  /** 处理方式 */
+  handleMethod?: string;
+  /** 检验单号 */
+  iqcBillNo?: string;
+  /** 接收单号 */
+  billNo?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  supplierId?: string;
+  /** 检验标准 */
+  inspectStdCode?: string;
+}
+
+/** 物料检验单全数据 */
+export interface IqcInspectBillFullVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  iqcInspectId?: string;
+  /** 接收单号 */
+  deliveryNo?: string;
+  deliveryDtlId?: string;
+  /** IQC检验单 */
+  iqcBillNo?: string;
+  /** 接收单号 */
+  billNo?: string;
+  iqcInspectStdId?: string;
+  /** 标准编码 */
+  inspectStdCode?: string;
+  /** 标准名称 */
+  inspectStdName?: string;
+  /** 显示名 */
+  displayName?: string;
+  /** 单据状态 */
+  status?: string;
+  /** 单据状态名称 */
+  statusName?: string;
+  mitemCategoryId?: string;
+  /** 物料类别编码 */
+  mitemCategoryCode?: string;
+  /** 物料类别名称 */
+  mitemCategoryName?: string;
+  mitemId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  supplierId?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 检验数量 */
+  inspectQty?: number;
+  /** 检验严格度 */
+  inspectStringency?: string;
+  inspectStringencyName?: string;
+  /** 缺陷等级 */
+  defectCategory?: string;
+  defectCategoryName?: string;
+  /** 处理意见或方法 */
+  handleMethod?: string;
+  handleMethodName?: string;
+  /** 供方处理意见 */
+  supplyHandleMethod?: string;
+  supplyHandleMethodName?: string;
+  /** 责任方 */
+  responsibility?: string;
+  /** 整改意见 */
+  correctOpinion?: string;
+  correctOpinionName?: string;
+  personResponsibilityId?: string;
+  /**
+   * 是否启动品质改善
+   * @format int32
+   */
+  isStartImprove?: number;
+  /** 让步接收数量 */
+  concessQty?: number;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 计量单位符号 */
+  uomName?: string;
+  /**
+   * 是否免检
+   * @format int32
+   */
+  isExemptionInspection?: number;
+  /** 检验结果名称 */
+  inspectResultName?: string;
+  /** 停留时长 */
+  waitTime?: string;
+}
+
+/** 响应数据 */
+export type PagingDataIqcInspectBillFullVO = {
+  list?: IqcInspectBillFullVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataIqcInspectBillFullVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataIqcInspectBillFullVO;
+}
+
 /** 缺陷类型 */
 export interface Dropdown {
   value?: string;
@@ -1446,6 +1644,24 @@ export interface ResultBoolean {
   message?: string;
   /** 响应数据 */
   data?: boolean | null;
+}
+
+/** 物料检验单查询 */
+export interface IqcInspectSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
 }
 
 /** 入厂检验搜索条件 */
@@ -2012,13 +2228,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  s3?: string;
+  i?: string;
+  s2?: string;
+  ii?: string;
   iii?: string;
   s1?: string;
-  s3?: string;
-  ii?: string;
-  s2?: string;
   s4?: string;
-  i?: string;
 } | null;
 
 /** 计量单位 */
@@ -2653,6 +2869,21 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准分配表
+     * @name Modify
+     * @summary 新增标准物料关系
+     * @request POST:/iqcInspectStdMitem/modify
+     * @secure
+     */
+    modify: (data: IqcInspectStdMitem) =>
+      http.request<ResultObject['data']>(`/api/quality/iqcInspectStdMitem/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准分配表
      * @name GetList
      * @summary 查询标准物料关系
      * @request POST:/iqcInspectStdMitem/getList
@@ -2660,6 +2891,21 @@ export const api = {
      */
     getList: (data: IqcInspectStdMitemSearch) =>
       http.request<ResultPagingDataIqcInspectStdMitemVO['data']>(`/api/quality/iqcInspectStdMitem/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准分配表
+     * @name Add
+     * @summary 新增标准物料关系
+     * @request POST:/iqcInspectStdMitem/add
+     * @secure
+     */
+    add: (data: IqcInspectStdMitem) =>
+      http.request<ResultObject['data']>(`/api/quality/iqcInspectStdMitem/add`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2714,13 +2960,13 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准明细表
-     * @name GetDtl
+     * @name GetInspectStdDtlList
      * @summary 查询检验标准明细
-     * @request POST:/iqcInspectStdDtl/getDtl
+     * @request POST:/iqcInspectStdDtl/getInspectStdDtlList
      * @secure
      */
-    getDtl: (data: IqcInspectStdDtlSearch) =>
-      http.request<ResultPagingDataIqcInspectStdDtlVO['data']>(`/api/quality/iqcInspectStdDtl/getDtl`, {
+    getInspectStdDtlList: (data: IqcInspectStdDtlSearch) =>
+      http.request<ResultPagingDataIqcInspectStdDtlVO['data']>(`/api/quality/iqcInspectStdDtl/getInspectStdDtlList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -2860,6 +3106,23 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验关联单据表
+     * @name GetIqcInspectDtlFullBillList
+     * @request POST:/iqcInspectBill/getIqcInspectDtlFullBillList
+     * @secure
+     */
+    getIqcInspectDtlFullBillList: (data: IqcInspectBillSearch) =>
+      http.request<ResultPagingDataIqcInspectBillFullVO['data']>(
+        `/api/quality/iqcInspectBill/getIqcInspectDtlFullBillList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
   },
   iqcInspect: {
     /**
@@ -2873,6 +3136,21 @@ export const api = {
      */
     submitIqcInspect: (data: IqcInspectSubmitVO) =>
       http.request<ResultBoolean['data']>(`/api/quality/iqcInspect/submitIqcInspect`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验头表
+     * @name Search
+     * @summary 获取检验单信息（通用控件使用）
+     * @request POST:/iqcInspect/items
+     * @secure
+     */
+    search: (data: IqcInspectSearch) =>
+      http.request<ResultObject['data']>(`/api/quality/iqcInspect/items`, {
         method: 'POST',
         body: data as any,
       }),

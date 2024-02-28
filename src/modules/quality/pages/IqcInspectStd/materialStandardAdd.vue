@@ -164,6 +164,8 @@ const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
 const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const opType = ref('add');
+// 父方法
+const Emit = defineEmits(['permissionShow']);
 const onConfirmFile = () => {
   formVisible.value = false;
 };
@@ -254,11 +256,23 @@ const onStaging = async () => {
     MessagePlugin.error('失效时间必须大于今天');
     return;
   }
-  const res = (await api.iqcInspectStd.temporaryStorage({ ...formData.value })) as any;
-  if (res) {
-    butControl.value = true;
-    formData.value.id = res;
-    MessagePlugin.success('暂存成功');
+  if (!formData.value.id) {
+    const res = (await api.iqcInspectStd.temporaryStorage({ ...formData.value })) as any;
+    if (res) {
+      butControl.value = true;
+      formData.value.id = res;
+      MessagePlugin.success('暂存成功');
+    }
+  } else if (formData.value.id && formData.value.operateTpye === 'add') {
+    const res = await api.iqcInspectStd.modify({
+      ...formData.value,
+      files: fileList.value,
+      dtls: dtlTabData.value,
+    });
+    if (res) {
+      MessagePlugin.success('暂存成功');
+      Emit('permissionShow', false); // 回到父
+    }
   }
 };
 const onEdit = (row) => {
@@ -316,7 +330,7 @@ const batchDeleteSuccess = (files: AddFileType[]) => {
 };
 const dtlTabData = ref([]);
 const getDtlById = async () => {
-  const res = (await api.iqcInspectStdDtl.getDtl({
+  const res = (await api.iqcInspectStdDtl.getInspectStdDtlList({
     iqcInspectStdId: formData.value.id,
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
@@ -324,12 +338,14 @@ const getDtlById = async () => {
   if (res) {
     dtlTabData.value = res.list;
     dataTotal.value = res.total;
-    addIndex();
+    dtlTabData.value.forEach((item, index) => {
+      item.index = index;
+    });
   }
 };
 const allDtl = ref([]);
 const getAllDtlById = async () => {
-  const res = (await api.iqcInspectStdDtl.getDtl({
+  const res = (await api.iqcInspectStdDtl.getInspectStdDtlList({
     iqcInspectStdId: formData.value.id,
     pageNum: pageUI.value.page,
     pageSize: 9999999,
