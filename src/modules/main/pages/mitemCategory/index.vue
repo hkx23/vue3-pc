@@ -93,7 +93,6 @@ const { pageUI: pageMitem } = usePage();
 const { loading: loadingMitem, setLoading: setLoadingMitem } = useLoading();
 
 const tableMitemCategoryColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', type: 'single', width: 64, fixed: 'left' },
   { title: '分类编码', width: 160, colKey: 'categoryCode' },
   { title: '分类名称', width: 160, colKey: 'categoryName' },
   { title: '分类描述', width: 160, colKey: 'categoryDesc' },

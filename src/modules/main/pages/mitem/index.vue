@@ -73,7 +73,6 @@ const formVisible = ref(false);
 const formRef = ref(null);
 
 const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: t('business.main.serialNumber'), colKey: 'serial-number', width: 74 },
   { title: t('business.main.mitemCode'), width: 160, colKey: 'mitemCode', sorter: true, filter: { type: 'input' } },
   { title: t('business.main.mitemName'), width: 160, colKey: 'mitemName', sorter: true },
   { title: t('business.main.mitemDesc'), width: 160, colKey: 'mitemDesc', filter: { type: 'input' } },

@@ -61,7 +61,6 @@ const formVisible = ref(false);
 const formRef = ref(null);
 
 const tableSupplierColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '序号', colKey: 'serial-number', width: 64 },
   { title: '供应商代码', width: 160, colKey: 'supplierCode' },
   { title: '供应商名称', width: 160, colKey: 'supplierName' },
   { title: '供应商联系人', width: 160, colKey: 'contactPerson' },
