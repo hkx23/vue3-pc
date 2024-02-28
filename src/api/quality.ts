@@ -724,6 +724,36 @@ export interface OqcInspectStdFullDTO {
   fileList?: FileUpload[];
 }
 
+/** 物料检验标准分配表 */
+export interface IqcInspectStdMitem {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  iqcInspectStdId?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+}
+
 export interface IqcInspectStdMitemSearch {
   /**
    * 页码
@@ -1074,10 +1104,10 @@ export type IqcInspectStdFullVO = {
   reValue?: number;
   /** AC/RE */
   acRe?: string;
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2198,13 +2228,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  i?: string;
   ii?: string;
   s3?: string;
-  iii?: string;
-  i?: string;
   s4?: string;
   s1?: string;
   s2?: string;
+  iii?: string;
 } | null;
 
 /** 计量单位 */
@@ -2839,6 +2869,21 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准分配表
+     * @name Modify
+     * @summary 新增标准物料关系
+     * @request POST:/iqcInspectStdMitem/modify
+     * @secure
+     */
+    modify: (data: IqcInspectStdMitem) =>
+      http.request<ResultObject['data']>(`/api/quality/iqcInspectStdMitem/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准分配表
      * @name GetList
      * @summary 查询标准物料关系
      * @request POST:/iqcInspectStdMitem/getList
@@ -2846,6 +2891,21 @@ export const api = {
      */
     getList: (data: IqcInspectStdMitemSearch) =>
       http.request<ResultPagingDataIqcInspectStdMitemVO['data']>(`/api/quality/iqcInspectStdMitem/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准分配表
+     * @name Add
+     * @summary 新增标准物料关系
+     * @request POST:/iqcInspectStdMitem/add
+     * @secure
+     */
+    add: (data: IqcInspectStdMitem) =>
+      http.request<ResultObject['data']>(`/api/quality/iqcInspectStdMitem/add`, {
         method: 'POST',
         body: data as any,
       }),
