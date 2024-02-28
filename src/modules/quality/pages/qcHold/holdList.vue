@@ -43,6 +43,7 @@
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { computed, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { api as apimain } from '@/api/main';
 import { api as apiQuality, QcHoldVO } from '@/api/quality';
@@ -52,6 +53,7 @@ import { usePage } from '@/hooks/modules/page';
 import detailed from './detailed.vue';
 import { useLang } from './lang';
 
+const router = useRouter();
 const { t } = useLang();
 const curOperatorType = ref('');
 enum OperatorType {
@@ -377,27 +379,8 @@ const initOptions = async () => {
   reasonCategoryOption.value = res;
 };
 
-const getQueryString = (paramName: string) => {
-  const queryString = window.location.href.split('?')[1];
-  if (queryString) {
-    const paramsArray = queryString.split('&');
-    const paramsNameList = [{ name: '', value: '' }];
-    paramsArray.forEach((item: string) => {
-      const obj = { name: '', value: '' };
-      obj.name = item.split('=')[0].toString();
-      obj.value = item.split('=')[1].toString();
-      paramsNameList.push(obj);
-    });
-    const objInfo = _.find(paramsNameList, (item: any) => {
-      return item.name === paramName;
-    }) as any;
-    return objInfo?.value;
-  }
-  return '';
-};
-
 const initHoldList = () => {
-  const type = getQueryString('viewType');
+  const type = router.currentRoute.value.params.viewType;
   if (type) {
     formData.viewType = type === 'VIEW' ? ViewType.VIEW : ViewType.UNLOCK;
   } else {
