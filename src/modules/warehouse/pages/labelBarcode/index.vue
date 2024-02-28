@@ -515,7 +515,7 @@ const queryBelowCondition = ref({
 const manageQueryCondition = ref({
   mitemId: '',
   supplierId: '',
-  lineSeq: '',
+  lineSeq: null,
   barcodeStatus: '',
   timeCreatedStart: '',
   timeCreatedEnd: '',
