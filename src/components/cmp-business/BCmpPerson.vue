@@ -38,6 +38,7 @@ const formatPersonData = (list: any[]): BusinessItem[] => {
       row: t,
       cmp: {
         description: t.email,
+        suffixTag: t.personCode,
       },
     } as BusinessItem;
   });
@@ -63,7 +64,7 @@ const fetchSearchData = async (keyword: string, _listData: any[]) => {
     filter: '',
   })) as any;
 
-  return formatOrgData(data.list as any[]);
+  return formatPersonData(data.list as any[]);
 };
 
 const fetchTreeNodeData = (key: string | number, children: any[]) => {
