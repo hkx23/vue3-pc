@@ -32,7 +32,13 @@
         <t-row class="body">
           <t-col flex="1" :class="['content left', { bottom: !props.multiple }]">
             <p class="header">{{ props.name }}列表</p>
-            <t-list style="flex: 1; overflow-y: auto">
+            <t-list
+              v-if="state.tableData"
+              style="flex: 1; overflow-y: auto"
+              :async-loading="asyncLoading"
+              @load-more="onLoadMore"
+              @scroll="onScrollList"
+            >
               <t-list-item
                 v-for="item in state.tableData"
                 :key="item[keywords.value]"
@@ -46,17 +52,8 @@
                   :code="item[listSetting.codeField]"
                   :description="item[listSetting.descField] || ''"
                   :show-icon="item[listSetting.showIcon]"
+                  :suffix-tag="item[listSetting.categoryField]"
                 ></cmp-list-item-meta>
-                <template #action>
-                  <t-tag
-                    v-if="item[listSetting.categoryField]"
-                    class="item-tag"
-                    theme="success"
-                    variant="outline"
-                    size="small"
-                    >{{ item[listSetting.categoryField] }}</t-tag
-                  >
-                </template>
               </t-list-item>
             </t-list>
           </t-col>
@@ -134,6 +131,7 @@
 <script setup lang="tsx" name="BcmpSelectSelect2">
 import { debounce, isEmpty } from 'lodash';
 import { ChevronDownIcon, CloseIcon } from 'tdesign-icons-vue-next';
+import { ListProps } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
 
 import CmpListItemMeta from '../cmp-business/CmpListItemMeta.vue';
@@ -246,6 +244,7 @@ const props = defineProps({
         nameField: '',
         codeField: '',
         descField: '',
+        listType: 'list',
       };
     },
   },
@@ -298,6 +297,8 @@ const selectSearch = ref('');
 // 选中默认值
 const defaultValue = ref('');
 
+const pageIndex = ref(1);
+
 // const popupVisible = ref(false);
 
 // 获取选择控件的ref
@@ -320,7 +321,12 @@ const onPopupVisibleChange = (val: boolean, context: any) => {
     selectSearch.value = '';
     onInputChange('');
     console.log(val, context);
-  } else if (!props.multiple) {
+    if (props.multiple) {
+      if (!Array.isArray(state.selectedRowData)) {
+        state.selectedRowData = [];
+      }
+    }
+  } else if (!props.multiple && state.defaultValue) {
     emits('selectionChange', state.defaultValue, selectedRowKeys.value);
   }
   popupVisible.value = val;
@@ -386,7 +392,7 @@ const radioCSelectRedirct = (val: string) => {
     }
   }
 };
-const tempCondition = ref({});
+const tempCondition: any = ref({});
 
 const onClickCloseItem = (keyValue: string) => {
   if (Array.isArray(state.selectedRowData)) {
@@ -400,9 +406,12 @@ const onClickCloseAll = () => {
 
 const remoteLoad = async (val: any) => {
   loading.value = true;
+  if (tempCondition.value.keyword !== selectSearch.value) {
+    pageIndex.value = 1;
+  }
   const searchCondition = {
-    pageNum: 1, // pagination.value.current,
-    pageSize: 999, // pagination.value.pageSize,
+    pageNum: pageIndex?.value || 1, // pagination.value.current,
+    pageSize: 20, // pagination.value.pageSize,
     selectedField: props.keywords.value,
     selectedValue: defaultValue.value,
     keyword: selectSearch.value,
@@ -418,11 +427,19 @@ const remoteLoad = async (val: any) => {
   }
   try {
     const { list } = await http.post<any>(props.remoteUrl, searchCondition);
+    if (!list) {
+      asyncLoading.value = '';
+    }
     list.forEach((element: { [x: string]: any; label: any; value: any }) => {
       element.label = element[props.keywords.label];
       element.value = element[props.keywords.value];
     });
-    state.tableData = list;
+    if (searchCondition.pageNum === 1) {
+      state.tableData = list;
+    } else {
+      state.tableData = state.tableData.concat(list);
+    }
+    asyncLoading.value = list.length < searchCondition.pageSize ? '' : 'load-more';
   } catch (e) {
     console.log(e);
   } finally {
@@ -503,6 +520,19 @@ const onInputChange = (val: string) => {
   //   // const selectedRowData = [];
   // }
 };
+
+const asyncLoading = ref<ListProps['asyncLoading']>('load-more');
+const onLoadMore: ListProps['onLoadMore'] = () => {
+  if (asyncLoading.value === '') return;
+  asyncLoading.value = 'loading';
+  pageIndex.value++;
+  fetchData(selectSearch.value);
+};
+const onScrollList: ListProps['onScroll'] = debounce((e) => {
+  if (e.scrollBottom <= 1) {
+    onLoadMore(null);
+  }
+}, 200);
 // 设置默认值
 onMounted(() => {
   state.tableData = props.value;
