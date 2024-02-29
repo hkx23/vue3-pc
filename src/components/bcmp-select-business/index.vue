@@ -54,6 +54,7 @@
     :custom-conditions="finalCustomConditions"
     :readonly="readonly"
     :title="finalTitle"
+    :name="finalName"
     :placeholder="finalPlaceholder"
     :keywords="finalKeywords"
     :table-width="finaltableWidth"
@@ -101,6 +102,11 @@ const props = defineProps({
   },
   // 标题
   title: {
+    type: String,
+    default: '',
+  },
+  // 名称（用于列表展示）
+  name: {
     type: String,
     default: '',
   },
@@ -234,6 +240,7 @@ const finalColumns = ref(props.columns);
 const finalRowKey = ref(props.rowKey);
 const finalPlaceholder = ref(props.placeholder);
 const finalTitle = ref(props.title);
+const finalName = ref(props.name);
 const finalKeywords = ref(props.keywords);
 const finalCategory = ref(props.category);
 const finalParentId = ref(props.parentId);
@@ -343,6 +350,10 @@ const loadTypeSetting = () => {
         // 如果label字段不为空
         if (props.labelField) {
           finalKeywords.value.label = props.labelField;
+        }
+
+        if (!finalName.value) {
+          finalName.value = res.name;
         }
         finalRowKey.value = finalKeywords.value.value;
         finalUrl.value = res.url;

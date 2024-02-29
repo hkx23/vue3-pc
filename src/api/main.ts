@@ -3924,14 +3924,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
+  isBatchName?: string;
   isProductChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
   isInProcessChecked?: boolean;
   isRawChecked?: boolean;
-  isRawName?: string;
-  isProductName?: string;
   isInProcessName?: string;
-  isBatchName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4074,8 +4074,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4410,8 +4410,8 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
   mesbillNo?: string;
+  erpbillNo?: string;
   imsgqueueStatus?: string;
 }
 
@@ -6994,10 +6994,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */

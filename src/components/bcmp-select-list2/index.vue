@@ -1,61 +1,28 @@
 <template>
-  <t-select-input
-    ref="selectRef"
-    :value="state.defaultValue"
-    placeholder="Please Select"
-    :popup-visible="popupVisible"
-    :popup-props="{ overlayClassName: 'cmp-selector' }"
-    allow-input
-    :label="title"
-    :multiple="multiple"
-    :readonly="readonly"
-    table-layout="auto"
-    v-bind="selectAttr"
-    :min-collapsed-num="1"
-    :value-key="keywords.value"
-    :input-value="selectSearch"
-    :filterable="filterable"
-    :loading="loading"
-    @input-change="onInputChange"
-    @clear="onClear"
-    @popup-visible-change="onPopupVisibleChange"
-  >
-    <template #panel>
-      <div class="container">
-        <t-row class="body">
-          <t-col flex="1" class="content left">
-            <p class="header">{{ props.name }}列表</p>
-            <t-list style="flex: 1; overflow-y: auto">
-              <t-list-item
-                v-for="item in state.tableData"
-                :key="item[keywords.value]"
-                class="select-item"
-                @click="onOptionClick(item)"
-              >
-                <cmp-list-item-meta
-                  :avatar-label="item[listSetting.image]"
-                  :name="item[listSetting.nameField] || item[keywords.value]"
-                  :sub-name="item[listSetting.subNameField]"
-                  :code="item[listSetting.codeField]"
-                  :description="item[listSetting.descField] || item[keywords.value]"
-                  :show-icon="item[listSetting.showIcon]"
-                ></cmp-list-item-meta>
-                <template #action>
-                  <t-tag
-                    v-if="item[listSetting.categoryField]"
-                    class="item-tag"
-                    theme="success"
-                    variant="outline"
-                    size="small"
-                    >{{ item[listSetting.categoryField] }}</t-tag
-                  >
-                </template>
-              </t-list-item>
-            </t-list>
-          </t-col>
-        </t-row>
-      </div>
-      <!-- <div class="t-select__data" style="max-height: 300px">
+  <t-space direction="vertical" class="t-demo-auto-complete__base" style="width: 100%">
+    <t-select-input
+      ref="selectRef"
+      :value="state.defaultValue"
+      placeholder="Please Select"
+      :popup-visible="popupVisible"
+      :popup-props="{ overlayClassName: 'cmp-selector' }"
+      allow-input
+      :label="title"
+      :multiple="multiple"
+      :readonly="readonly"
+      table-layout="auto"
+      v-bind="selectAttr"
+      :min-collapsed-num="1"
+      :value-key="keywords.value"
+      :input-value="selectSearch"
+      :filterable="filterable"
+      :loading="loading"
+      @input-change="onInputChange"
+      @clear="onClear"
+      @popup-visible-change="onPopupVisibleChange"
+    >
+      <template #panel>
+        <div class="t-select__data" style="max-height: 300px">
           <div
             v-for="item in state.tableData"
             :key="item[keywords.value]"
@@ -72,22 +39,28 @@
               <div class="data_name">{{ item[listSetting.nameField] }}</div>
             </div>
             <div class="data_desc">{{ item[listSetting.descField] || '-' }}</div>
-
+            <!-- <t-icon :name="listSetting.icon" size="24" class="custom-option__icon"></t-icon>
+          <div class="custom-option__main">
+            <t-highlight-option
+              :content="item[listSetting.codeField]"
+              :keyword="state.defaultValue && state.defaultValue[listSetting.codeField]"
+            />
+            <small class="description">{{ item[listSetting.descField] || '-' }}</small>
+          </div> -->
           </div>
-        </div> -->
-    </template>
-    <template #suffixIcon>
-      <chevron-down-icon />
-    </template>
-  </t-select-input>
+        </div>
+      </template>
+      <template #suffixIcon>
+        <chevron-down-icon />
+      </template>
+    </t-select-input>
+  </t-space>
 </template>
 
-<script setup lang="tsx" name="BcmpSelectSelect2">
+<script setup lang="tsx" name="BcmpSelectTable">
 import { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
-
-import CmpListItemMeta from '../cmp-business/CmpListItemMeta.vue';
 // 抛出事件
 const emits = defineEmits(['selectionChange']);
 // / 00-组件属性定义
@@ -170,10 +143,6 @@ const props = defineProps({
   title: {
     type: String,
     default: '请选择',
-  },
-  name: {
-    type: String,
-    default: '物料分类',
   },
   // 下拉数据指向的label/value
   keywords: {
@@ -476,66 +445,108 @@ watch(
 // 暴露方法出去
 defineExpose({ closeTable, onClear });
 </script>
-<style scoped lang="less">
-.container {
-  > .body {
-    padding: 0 16px;
+<style lang="less" scoped>
+.t-autocomplete-option-list .t-select-option {
+  height: 50px;
+}
 
-    > .content {
-      height: 330px;
-      display: flex;
-      flex-direction: column;
+.t-autocomplete-option-list .custom-option .custom-option__icon {
+  max-height: 40px;
+  margin: 0 8px;
+  color: var(--td-gray-color-8);
+}
 
-      &.right {
-        margin: 10px 0;
-        padding-left: 10px !important;
-        border-left: 1px solid var(--td-border-level-1-color);
-      }
+.t-autocomplete-option-list .custom-option__main::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to top, rgb(0 0 0 / 0%), #ececec 50%, rgb(0 0 0 / 0%));
+}
 
-      &.left {
-        margin-top: 10px;
-        margin-right: 10px;
-      }
+.t-autocomplete-option-list .custom-option__main {
+  position: relative;
+  padding: 2px 2px 2px 16px;
+}
 
-      > .header {
-        margin-top: 0;
-        font-size: 12px;
-        color: #36434d;
-        line-height: 20px;
-        padding: 5px 0;
+.t-autocomplete-option-list .custom-option__main .t-select-option__highlight-item {
+  font-weight: 600;
+}
 
-        .clear-all {
-          float: right;
-        }
-      }
-    }
-  }
+.t-autocomplete-option-list .custom-option .description {
+  color: var(--td-gray-color-9);
+}
 
-  > .footer {
-    text-align: right;
-    padding: 10px 15px;
-    border-top: 1px solid var(--td-border-level-1-color);
+.cmp-selector {
+  min-width: 400px;
+  width: 400px;
+
+  .t-select__data {
+    min-width: 300px;
+    display: block;
+    overflow: auto;
   }
 }
 
-.select-item {
-  &:hover {
-    background-color: var(--td-bg-color-container-hover);
-    border-radius: var(--td-radius-default);
-  }
-
-  .item-tag {
-    position: absolute;
-    right: 8px;
-    top: 10px;
-  }
+.cmp-selector .custom-option {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 6px 6px 0;
+  align-items: center;
+  // border-bottom: 1px solid #f6f6f6;
 }
 
-.close-btn {
-  color: var(--td-text-color-placeholder);
+.cmp-selector .custom-option.actived-option {
+  background-color: var(--td-bg-color-container-hover);
+  border-radius: 6px;
+  color: var(--brand-main);
+}
 
-  &:hover {
-    color: var(--td-text-color-primary);
-  }
+.cmp-selector .custom-option:hover {
+  background-color: var(--td-bg-color-container-hover);
+  border-radius: 6px;
+  color: var(--brand-main);
+}
+
+.cmp-selector .custom-option > img {
+  max-height: 24px;
+  border-radius: 50%;
+}
+
+.item-title {
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  align-self: flex-start;
+}
+
+.item-title > img {
+  max-width: 16px;
+  max-height: 16px;
+  margin-right: 5px;
+}
+
+.data_code {
+  font-size: 14px;
+  text-decoration: underline;
+  color: rgb(70 70 70 / 94%);
+  margin-right: 5px;
+}
+
+.data_name {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.data_desc {
+  padding: 0 4px;
+  font-size: 12px;
+  white-space: normal;
+  color: var(--td-text-color-secondary);
+  align-self: flex-start;
 }
 </style>

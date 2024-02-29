@@ -1,28 +1,110 @@
 <template>
-  <t-space direction="vertical" class="t-demo-auto-complete__base" style="width: 100%">
-    <t-select-input
-      ref="selectRef"
-      :value="state.defaultValue"
-      placeholder="Please Select"
-      :popup-visible="popupVisible"
-      :popup-props="{ overlayClassName: 'cmp-selector' }"
-      allow-input
-      :label="title"
-      :multiple="multiple"
-      :readonly="readonly"
-      table-layout="auto"
-      v-bind="selectAttr"
-      :min-collapsed-num="1"
-      :value-key="keywords.value"
-      :input-value="selectSearch"
-      :filterable="filterable"
-      :loading="loading"
-      @input-change="onInputChange"
-      @clear="onClear"
-      @popup-visible-change="onPopupVisibleChange"
-    >
-      <template #panel>
-        <div class="t-select__data" style="max-height: 300px">
+  <t-select-input
+    ref="selectRef"
+    :value="state.defaultValue"
+    placeholder="Please Select"
+    :popup-visible="popupVisible"
+    :popup-props="{
+      overlayClassName: 'cmp-selector',
+      overlayInnerStyle: {
+        width: props.multiple ? '580px' : '350px',
+        padding: 0,
+      },
+    }"
+    allow-input
+    :label="title"
+    :multiple="multiple"
+    :readonly="readonly"
+    table-layout="auto"
+    v-bind="selectAttr"
+    :min-collapsed-num="1"
+    :value-key="keywords.value"
+    :input-value="selectSearch"
+    :filterable="filterable"
+    :loading="loading"
+    @input-change="onInputChange"
+    @clear="onClear"
+    @tag-change="onTagChange"
+    @popup-visible-change="onPopupVisibleChange"
+  >
+    <template #panel>
+      <div class="container">
+        <t-row class="body">
+          <t-col flex="1" :class="['content left', { bottom: !props.multiple }]">
+            <p class="header">{{ props.name }}列表</p>
+            <t-list style="flex: 1; overflow-y: auto">
+              <t-list-item
+                v-for="item in state.tableData"
+                :key="item[keywords.value]"
+                class="select-item"
+                @click="onOptionClick(item)"
+              >
+                <cmp-list-item-meta
+                  :avatar-label="item[listSetting.image]"
+                  :name="item[listSetting.nameField] || item[keywords.value]"
+                  :sub-name="item[listSetting.subNameField]"
+                  :code="item[listSetting.codeField]"
+                  :description="item[listSetting.descField] || ''"
+                  :show-icon="item[listSetting.showIcon]"
+                ></cmp-list-item-meta>
+                <template #action>
+                  <t-tag
+                    v-if="item[listSetting.categoryField]"
+                    class="item-tag"
+                    theme="success"
+                    variant="outline"
+                    size="small"
+                    >{{ item[listSetting.categoryField] }}</t-tag
+                  >
+                </template>
+              </t-list-item>
+            </t-list>
+          </t-col>
+
+          <t-col v-if="props.multiple" flex="1" class="content right">
+            <p class="header">
+              已选{{ props.name }}
+              <t-link
+                class="clear-all"
+                hover="color"
+                theme="primary"
+                size="small"
+                :disabled="isEmpty(state.selectedRowData)"
+                @click="onClickCloseAll"
+              >
+                清空已选
+              </t-link>
+            </p>
+            <t-list style="flex: 1; overflow-y: auto">
+              <t-list-item v-for="item in state.selectedRowData" :key="item[keywords.value]" class="select-item">
+                <cmp-list-item-meta
+                  :avatar-label="item[listSetting.image]"
+                  :name="item[listSetting.nameField] || item[keywords.value]"
+                  :sub-name="item[listSetting.subNameField]"
+                  :code="item[listSetting.codeField]"
+                  :description="item[listSetting.descField] || ''"
+                  :show-icon="item[listSetting.showIcon]"
+                ></cmp-list-item-meta>
+                <template #action>
+                  <t-button
+                    variant="text"
+                    shape="square"
+                    class="close-btn"
+                    @click="onClickCloseItem(item[keywords.value])"
+                  >
+                    <close-icon />
+                  </t-button>
+                </template>
+              </t-list-item>
+            </t-list>
+          </t-col>
+        </t-row>
+        <div v-if="props.multiple" class="footer">
+          <t-button theme="default" @click="popupVisible = false">取消</t-button>
+          <t-button theme="primary" @click="onClickConfirm">确定</t-button>
+        </div>
+      </div>
+      <!-- <div class="t-select__data" style="max-height: 300px">
           <div
             v-for="item in state.tableData"
             :key="item[keywords.value]"
@@ -39,28 +121,22 @@
               <div class="data_name">{{ item[listSetting.nameField] }}</div>
             </div>
             <div class="data_desc">{{ item[listSetting.descField] || '-' }}</div>
-            <!-- <t-icon :name="listSetting.icon" size="24" class="custom-option__icon"></t-icon>
-          <div class="custom-option__main">
-            <t-highlight-option
-              :content="item[listSetting.codeField]"
-              :keyword="state.defaultValue && state.defaultValue[listSetting.codeField]"
-            />
-            <small class="description">{{ item[listSetting.descField] || '-' }}</small>
-          </div> -->
+
           </div>
-        </div>
-      </template>
-      <template #suffixIcon>
-        <chevron-down-icon />
-      </template>
-    </t-select-input>
-  </t-space>
+        </div> -->
+    </template>
+    <template #suffixIcon>
+      <chevron-down-icon />
+    </template>
+  </t-select-input>
 </template>
 
-<script setup lang="tsx" name="BcmpSelectTable">
-import { debounce } from 'lodash';
-import { ChevronDownIcon } from 'tdesign-icons-vue-next';
+<script setup lang="tsx" name="BcmpSelectSelect2">
+import { debounce, isEmpty } from 'lodash';
+import { ChevronDownIcon, CloseIcon } from 'tdesign-icons-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
+
+import CmpListItemMeta from '../cmp-business/CmpListItemMeta.vue';
 // 抛出事件
 const emits = defineEmits(['selectionChange']);
 // / 00-组件属性定义
@@ -144,6 +220,10 @@ const props = defineProps({
     type: String,
     default: '请选择',
   },
+  name: {
+    type: String,
+    default: '物料分类',
+  },
   // 下拉数据指向的label/value
   keywords: {
     type: Object,
@@ -172,9 +252,24 @@ const props = defineProps({
   },
 });
 const onOptionClick = (item) => {
-  state.defaultValue = item;
+  if (props.multiple) {
+    if (!Array.isArray(state.selectedRowData)) {
+      state.selectedRowData = [];
+    }
+    if (state.selectedRowData.findIndex((t) => t[props.rowKey] === item[props.rowKey]) >= 0) return;
+    state.selectedRowData.push(item);
+    selectedRowKeys.value = state.selectedRowData.map((item: { [x: string]: any }) => item[props.rowKey]);
+  } else {
+    state.defaultValue = item;
+    state.selectedRowData = item;
+    selectedRowKeys.value = item[props.rowKey];
+    onClickConfirm();
+  }
+};
+
+const onClickConfirm = () => {
+  // emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
   popupVisible.value = false;
-  state.selectedRowData = item;
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
 // 选择下拉属性集成
@@ -213,9 +308,6 @@ const state: any = reactive({
   tabularMap: {}, // 存储下拉tale的所有name
 });
 
-// 是否多选-作用于表格
-// type RowKeyType = 'multiple' | 'single';
-// const activeRowType: RowKeyType = props.multiple ? 'multiple' : 'single';
 // 选中的行-值
 const selectedRowKeys = ref([]);
 
@@ -223,8 +315,8 @@ const onPopupVisibleChange = (val: boolean, context: any) => {
   if (val) {
     selectSearch.value = '';
     onInputChange('');
-    selectedRowKeys.value = [];
     console.log(val, context);
+  } else if (!props.multiple) {
     emits('selectionChange', state.defaultValue, selectedRowKeys.value);
   }
   popupVisible.value = val;
@@ -292,6 +384,16 @@ const radioCSelectRedirct = (val: string) => {
 };
 const tempCondition = ref({});
 
+const onClickCloseItem = (keyValue: string) => {
+  if (Array.isArray(state.selectedRowData)) {
+    state.selectedRowData = state.selectedRowData.filter((t) => t[props.keywords.value] !== keyValue);
+  }
+};
+
+const onClickCloseAll = () => {
+  state.selectedRowData = [];
+};
+
 const remoteLoad = async (val: any) => {
   loading.value = true;
   const searchCondition = {
@@ -327,6 +429,37 @@ const remoteLoad = async (val: any) => {
     isHandleSelectionChange.value = false;
     tempCondition.value = searchCondition;
   }
+};
+
+// 可以根据触发来源，自由定制标签变化时的筛选器行为
+const onTagChange = (currentTags: any, context: { trigger: any; index: any; item: any }) => {
+  if (!(state.defaultValue && state.defaultValue.length > 0)) {
+    state.defaultValue = [];
+    state.selectedRowData = [];
+  }
+
+  // state.defaultValue = [];
+  // console.log(currentTags, context);
+  const { trigger, index, item } = context;
+  console.log(trigger, index, item);
+  if (trigger === 'clear') {
+    state.defaultValue = [];
+    state.selectedRowData = [];
+  }
+  if (['tag-remove', 'backspace'].includes(trigger)) {
+    state.defaultValue = state.defaultValue.filter((element: any, i: any) => i !== index);
+    state.selectedRowData = state.selectedRowData.filter((element: any, i: any) => i !== index);
+    selectedRowKeys.value = state.selectedRowData.map((item: { [x: string]: any }) => item[props.rowKey]);
+  }
+  // if (trigger === 'enter') {
+  //   const current = { label: item, value: item };
+  //   value.value.push(current);
+  //   options.value = options.value.concat(current);
+  // }
+
+  isHandleSelectionChange.value = true;
+
+  emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
 
 const fetchData = debounce((val) => {
@@ -445,108 +578,75 @@ watch(
 // 暴露方法出去
 defineExpose({ closeTable, onClear });
 </script>
-<style lang="less" scoped>
-.t-autocomplete-option-list .t-select-option {
-  height: 50px;
+<style scoped lang="less">
+.cmp-selector .t-popup__content {
+  width: 580px;
+  padding: 0;
 }
 
-.t-autocomplete-option-list .custom-option .custom-option__icon {
-  max-height: 40px;
-  margin: 0 8px;
-  color: var(--td-gray-color-8);
-}
+.container {
+  > .body {
+    padding: 0 16px;
 
-.t-autocomplete-option-list .custom-option__main::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  background: linear-gradient(to top, rgb(0 0 0 / 0%), #ececec 50%, rgb(0 0 0 / 0%));
-}
+    > .content {
+      height: 330px;
+      display: flex;
+      flex-direction: column;
 
-.t-autocomplete-option-list .custom-option__main {
-  position: relative;
-  padding: 2px 2px 2px 16px;
-}
+      &.right {
+        margin: 10px 0;
+        padding-left: 10px !important;
+        border-left: 1px solid var(--td-border-level-1-color);
+      }
 
-.t-autocomplete-option-list .custom-option__main .t-select-option__highlight-item {
-  font-weight: 600;
-}
+      &.left {
+        margin-top: 10px;
+        margin-right: 10px;
+      }
 
-.t-autocomplete-option-list .custom-option .description {
-  color: var(--td-gray-color-9);
-}
+      &.bottom {
+        margin-bottom: 10px;
+      }
 
-.cmp-selector {
-  min-width: 400px;
-  width: 400px;
+      > .header {
+        margin-top: 0;
+        font-size: 12px;
+        color: #36434d;
+        line-height: 20px;
+        padding: 5px 0;
 
-  .t-select__data {
-    min-width: 300px;
-    display: block;
-    overflow: auto;
+        .clear-all {
+          float: right;
+        }
+      }
+    }
+  }
+
+  > .footer {
+    text-align: right;
+    padding: 10px 15px;
+    border-top: 1px solid var(--td-border-level-1-color);
   }
 }
 
-.cmp-selector .custom-option {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 6px 6px 0;
-  align-items: center;
-  // border-bottom: 1px solid #f6f6f6;
+.select-item {
+  &:hover {
+    background-color: var(--td-bg-color-container-hover);
+    border-radius: var(--td-radius-default);
+  }
+
+  .item-tag {
+    position: absolute;
+    right: 8px;
+    top: 10px;
+  }
 }
 
-.cmp-selector .custom-option.actived-option {
-  background-color: var(--td-bg-color-container-hover);
-  border-radius: 6px;
-  color: var(--brand-main);
-}
+.close-btn {
+  color: var(--td-text-color-placeholder);
 
-.cmp-selector .custom-option:hover {
-  background-color: var(--td-bg-color-container-hover);
-  border-radius: 6px;
-  color: var(--brand-main);
-}
-
-.cmp-selector .custom-option > img {
-  max-height: 24px;
-  border-radius: 50%;
-}
-
-.item-title {
-  padding: 0 4px;
-  display: flex;
-  align-items: center;
-  height: 32px;
-  align-self: flex-start;
-}
-
-.item-title > img {
-  max-width: 16px;
-  max-height: 16px;
-  margin-right: 5px;
-}
-
-.data_code {
-  font-size: 14px;
-  text-decoration: underline;
-  color: rgb(70 70 70 / 94%);
-  margin-right: 5px;
-}
-
-.data_name {
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.data_desc {
-  padding: 0 4px;
-  font-size: 12px;
-  white-space: normal;
-  color: var(--td-text-color-secondary);
-  align-self: flex-start;
+  &:hover {
+    color: var(--td-text-color-primary);
+  }
 }
 </style>
