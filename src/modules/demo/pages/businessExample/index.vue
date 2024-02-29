@@ -243,7 +243,7 @@
           </t-col>
         </t-row>
         <!-- 扩展属性分类-->
-        <t-row :gutter="[10, 10]">
+        <!-- <t-row :gutter="[10, 10]">
           <t-col flex="300px">
             <bcmp-select-business
               v-model="objectPropertyCategoryValue"
@@ -254,7 +254,7 @@
           <t-col flex="300px">
             <t-input v-model="objectPropertyCategoryValue" label="扩展属性分类值" disabled />
           </t-col>
-        </t-row>
+        </t-row> -->
         <!-- 岗位-->
         <t-row :gutter="[10, 10]">
           <t-col flex="300px">
@@ -384,7 +384,7 @@ const warehouseAuthValue = ref();
 const districtValue = ref();
 const locationValue = ref();
 const lineWarehouseValue = ref();
-const objectPropertyCategoryValue = ref();
+// const objectPropertyCategoryValue = ref();
 const postValue = ref();
 const processReturnValue = ref();
 const roleValue = ref();
