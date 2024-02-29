@@ -11,14 +11,20 @@
       <div class="container">
         <t-row class="body">
           <t-col flex="1" class="content left">
-            <p class="header">{{ props.name }}列表</p>
-            <t-list
-              v-if="listAfterSearch"
-              :async-loading="asyncLoading"
-              style="flex: 1; overflow-y: auto"
-              @load-more="onLoadMore"
-              @scroll="onScrollList"
-            >
+            <p class="header">
+              {{ props.name }}列表
+              <t-link
+                v-show="isSearch"
+                class="action-btn"
+                hover="color"
+                theme="primary"
+                size="small"
+                @click="onClickSelectAll"
+              >
+                全选
+              </t-link>
+            </p>
+            <t-list v-if="isSearch" class="full-list">
               <t-list-item
                 v-for="item in listAfterSearch"
                 :key="item?.row.id"
@@ -33,10 +39,31 @@
                   :description="item.cmp?.description || item.value"
                   :show-icon="item.cmp?.showIcon"
                   :suffix-tag="item.cmp?.suffixTag"
+                  :show-success="selectIds.indexOf(item.value) >= 0"
                 ></cmp-list-item-meta>
               </t-list-item>
             </t-list>
-            <div v-else style="flex: 1; overflow-y: auto">
+            <t-list
+              v-else-if="props.type === 'list'"
+              class="full-list"
+              :async-loading="asyncLoading"
+              @load-more="onLoadMore"
+              @scroll="onScrollList"
+            >
+              <t-list-item v-for="item in listData" :key="item?.row.id" class="select-item" @click="onClickItem(item)">
+                <cmp-list-item-meta
+                  :avatar-label="item.cmp?.avatarLabel"
+                  :name="item.cmp?.name || item.label"
+                  :sub-name="item.cmp?.subName"
+                  :code="item.cmp?.code"
+                  :description="item.cmp?.description || item.value"
+                  :show-icon="item.cmp?.showIcon"
+                  :suffix-tag="item.cmp?.suffixTag"
+                  :show-success="selectIds.indexOf(item.value) >= 0"
+                ></cmp-list-item-meta>
+              </t-list-item>
+            </t-list>
+            <div v-else class="full-list">
               <t-tree :data="listData" hover expand-on-click-node :load="onLoadTreeNodes" value-mode="all">
                 <template #label="{ node }">
                   <div v-if="node.data?.row?.children">
@@ -51,6 +78,7 @@
                       :description="node.data.cmp?.description || node.data.value"
                       :show-icon="node.data.cmp?.showIcon"
                       :suffix-tag="node.data.cmp?.suffixTag"
+                      :show-success="selectIds.indexOf(node.data.value) >= 0"
                       @click="onClickItem(node.data)"
                     ></cmp-list-item-meta>
                   </div>
@@ -62,18 +90,18 @@
             <p class="header">
               已选{{ props.name }}
               <t-link
-                class="clear-all"
+                class="action-btn"
                 hover="color"
                 theme="primary"
                 size="small"
-                :disabled="isEmpty(selectValues)"
+                :disabled="isEmpty(selectItems)"
                 @click="onClickCloseAll"
               >
                 清空已选
               </t-link>
             </p>
             <t-list style="flex: 1; overflow-y: auto">
-              <t-list-item v-for="item in selectValues as BusinessItem[]" :key="item?.row.id" class="select-item">
+              <t-list-item v-for="item in selectItems as BusinessItem[]" :key="item?.row.id" class="select-item">
                 <cmp-list-item-meta
                   :avatar-label="item.cmp?.avatarLabel"
                   :name="item.cmp?.name || item.label"
@@ -82,12 +110,9 @@
                   :description="item.cmp?.description || item.value"
                   :show-icon="item.cmp?.showIcon"
                   :suffix-tag="item.cmp?.suffixTag"
+                  show-close-button
+                  @close="onClickCloseItem(item.row.id)"
                 ></cmp-list-item-meta>
-                <template #action>
-                  <t-button variant="text" shape="square" class="close-btn" @click="onClickCloseItem(item.row.id)">
-                    <close-icon />
-                  </t-button>
-                </template>
               </t-list-item>
             </t-list>
           </t-col>
@@ -105,7 +130,7 @@
 </template>
 <script setup lang="tsx">
 import { debounce, isEmpty } from 'lodash';
-import { ChevronDownIcon, CloseIcon } from 'tdesign-icons-vue-next';
+import { ChevronDownIcon } from 'tdesign-icons-vue-next';
 import { ListProps, SelectInputProps, TreeNodeModel, TreeProps } from 'tdesign-vue-next';
 import { TypeTreeOptionData } from 'tdesign-vue-next/es/tree/adapt';
 import { computed, ref, useAttrs, watch } from 'vue';
@@ -199,11 +224,11 @@ watch(
 watch(
   () => props.multiple,
   (newVal) => {
-    if (selectValues.value) {
-      if (newVal && !Array.isArray(selectValues.value)) {
-        selectValues.value = [];
-      } else if (!newVal && Array.isArray(selectValues.value)) {
-        selectValues.value = undefined;
+    if (selectItems.value) {
+      if (newVal && !Array.isArray(selectItems.value)) {
+        selectItems.value = [];
+      } else if (!newVal && Array.isArray(selectItems.value)) {
+        selectItems.value = undefined;
       }
     }
   },
@@ -219,57 +244,75 @@ const fetchListData = async () => {
     asyncLoading.value = pageIndex.value === 1 && result.length < 10 ? '' : 'load-more';
     listData.value = [...listData.value, ...result];
   }
-
-  if (props.type === 'list') {
-    listAfterSearch.value = listData.value;
-  }
 };
 
-const selectValues = ref<BusinessItem | BusinessItem[]>(undefined);
-const onClickItem = (item: BusinessItem) => {
+const selectIds = computed<string[]>(() => {
   if (props.multiple) {
-    if (!Array.isArray(selectValues.value)) {
-      selectValues.value = [];
+    return (selectItems.value as BusinessItem[]).map((t) => t.value);
+  }
+  return [(selectItems.value as BusinessItem).value];
+});
+const selectItems = ref<BusinessItem | BusinessItem[]>(undefined);
+const onClickItem = (item: BusinessItem, openReverse: boolean = true) => {
+  if (props.multiple) {
+    if (!Array.isArray(selectItems.value)) {
+      selectItems.value = [];
     }
-    if (selectValues.value.findIndex((t) => t.row.id === item.row.id) >= 0) return;
-    selectValues.value.push(item);
+    if (selectItems.value.findIndex((t) => t.row.id === item.row.id) >= 0) {
+      if (openReverse) {
+        onClickCloseItem(item.row.id);
+      }
+      return;
+    }
+    selectItems.value.push(item);
   } else {
-    selectValues.value = item;
+    selectItems.value = item;
     onClickConfirm();
   }
 };
 const onClickCloseItem = (id: string) => {
-  if (Array.isArray(selectValues.value)) {
-    selectValues.value = selectValues.value.filter((t) => t.row.id !== id);
+  if (Array.isArray(selectItems.value)) {
+    selectItems.value = selectItems.value.filter((t) => t.row.id !== id);
   }
 };
 const onClickCloseAll = () => {
-  selectValues.value = [];
+  selectItems.value = [];
+};
+
+const onClickSelectAll = () => {
+  if (Array.isArray(selectItems.value) && listAfterSearch.value.length > 0) {
+    listAfterSearch.value.forEach((item) => {
+      onClickItem(item, false);
+    });
+  }
 };
 
 const onClickConfirm = () => {
-  emit('update:value', selectValues.value);
+  emit('update:value', selectItems.value);
   popupVisible.value = false;
 };
 
 const onTagChange: SelectInputProps['onTagChange'] = (_currentTags, context) => {
   const { trigger, index } = context;
   if (trigger === 'clear') {
-    selectValues.value = [];
+    selectItems.value = [];
   }
-  if (['tag-remove', 'backspace'].includes(trigger) && Array.isArray(selectValues.value)) {
-    selectValues.value.splice(index, 1);
+  if (['tag-remove', 'backspace'].includes(trigger) && Array.isArray(selectItems.value)) {
+    selectItems.value.splice(index, 1);
   }
-  emit('update:value', selectValues.value);
+  emit('update:value', selectItems.value);
 };
 
 const listAfterSearch = ref<BusinessItem[]>(undefined);
+const isSearch = ref(false);
 const onInputChange: SelectInputProps['onInputChange'] = debounce(async (val, _context) => {
   if (isEmpty(val)) {
-    listAfterSearch.value = props.type === 'list' ? listData.value : undefined;
+    // listAfterSearch.value = props.type === 'list' ? listData.value : undefined;
+    listAfterSearch.value = undefined;
+    isSearch.value = false;
     return;
   }
-
+  isSearch.value = true;
   listAfterSearch.value = await props.fetchSearchData(val, listData.value);
 }, 500);
 
@@ -280,6 +323,7 @@ const onLoadTreeNodes: TreeProps['load'] = (node) => {
 <style scoped lang="less">
 .container {
   > .body {
+    flex-flow: row nowrap;
     padding: 0 16px;
 
     > .content {
@@ -305,9 +349,14 @@ const onLoadTreeNodes: TreeProps['load'] = (node) => {
         line-height: 20px;
         padding: 5px 0;
 
-        .clear-all {
+        .action-btn {
           float: right;
         }
+      }
+
+      > .full-list {
+        flex: 1;
+        overflow-y: auto;
       }
     }
   }
@@ -320,17 +369,11 @@ const onLoadTreeNodes: TreeProps['load'] = (node) => {
 }
 
 .select-item {
+  padding: 0;
+
   &:hover {
     background-color: var(--td-bg-color-container-hover);
     border-radius: var(--td-radius-default);
-  }
-}
-
-.close-btn {
-  color: var(--td-text-color-placeholder);
-
-  &:hover {
-    color: var(--td-text-color-primary);
   }
 }
 </style>
