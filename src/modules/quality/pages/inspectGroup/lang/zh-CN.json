@@ -1,0 +1,19 @@
+{
+  "productRule": {
+    "tableSubRightTitle": "关联物料列表",
+    "tableSubLeftTitle": "包装类型列表",
+    "tableSubTitle": "包装规则列表",
+    "packRule": "包装规则",
+    "packRuleCode": "包装规则代码",
+    "packRuleName": "包装规则名称",
+    "packType": "包装类型",
+    "uom": "单位",
+    "packQty": "数量",
+    "mitemCategory": "物料类型",
+    "checkPackMitemSave": "请选择物料",
+    "checkPackMitemCategorySave": "请选择物料类型",
+    "packRelationType": "关联维度",
+    "parentLevelName": "层级",
+    "mitem": "物料"
+  }
+}

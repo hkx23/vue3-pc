@@ -140,7 +140,27 @@
   <t-dialog v-model:visible="formVisible" :close-on-overlay-click="false" header="标准分配" @confirm="onAssignConfirm">
     <materialAllotForm ref="assignFormRef"></materialAllotForm>
   </t-dialog>
-  <t-dialog v-model:visible="visible1" theme="info" header="提示" :body="message" />
+  <t-dialog
+    v-model:visible="visible1"
+    theme="info"
+    header="提示"
+    :body="message"
+    confirm-btn="查看待检单"
+    @confirm="onInfoConfirm"
+  />
+  <t-dialog v-model:visible="visible2" header="待检单" :close-on-overlay-click="false" :confirm-btn="null">
+    <cmp-table
+      v-model:pagination="pageUIBill"
+      row-key="id"
+      :fixed-height="true"
+      :active-row-type="'single'"
+      :hover="true"
+      :table-column="billNoColumn"
+      :table-data="billTabData.list"
+      :total="billAssign"
+    >
+    </cmp-table>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -162,6 +182,7 @@ const onPermission = (value) => {
 };
 const formVisible = ref(false);
 const visible1 = ref(false);
+const visible2 = ref(false);
 const message = ref('');
 const assignDelBtnOp = ref(true);
 const batchDelOp = ref(false);
@@ -169,13 +190,19 @@ const formRef = ref(null);
 const assignSelectedRowKeys: Ref<any[]> = ref([]); // 补打 打印数组
 const { pageUI } = usePage(); // 物料标准 分页工具
 const { pageUI: pageUINorm } = usePage(); // 物料标准分配 分页工具
+const { pageUI: pageUIBill } = usePage(); // 物料标准分配 分页工具
 const tabValue = ref(0);
 const tableRefs = ref(); // 物料检验标准 表格 实例
 const tableRefCard = ref(); // 物料标准分配 表格 实例
 const stdRowKeys: Ref<any[]> = ref([]); //
 // 产品标签管理 表格数据
 const assignTabData = reactive({ list: [] });
+const billTabData = reactive({ list: [] });
 const totalAssign = ref(0);
+const billAssign = ref(0);
+const onInfoConfirm = () => {
+  visible2.value = true;
+};
 const onSelectedChange = (value: any) => {
   stdRowKeys.value = value;
   if (stdRowKeys.value.length > 1) {
@@ -325,11 +352,41 @@ const standardAllotColumn: PrimaryTableCol<TableRowData>[] = [
     width: '130',
   },
 ];
+// 待检单列表数据
+const billNoColumn: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'inspectStdCode',
+    title: '待检单号',
+    width: '100',
+  },
+  {
+    colKey: 'inspectStdName',
+    title: '送货单号',
+    width: '100',
+  },
+  {
+    colKey: 'revision',
+    title: '接收时间',
+    width: '100',
+  },
+  {
+    colKey: 'categoryCode',
+    title: '物料',
+    width: '100',
+  },
+  {
+    colKey: 'categoryName',
+    title: '供应商',
+    width: '100',
+  },
+];
+const curRowId = ref('');
 const onChangStatus = async (row) => {
   const res = (await api.iqcInspectStd.countInspect(row.id)) as any;
 
   if (res > 0) {
     message.value = `“目前共有${res}张待检单使用了该标准，请检验完成后再删除检验标准。`;
+    curRowId.value = row.id;
     visible1.value = true;
   } else {
     await api.iqcInspectStd.loseEffectiveness(row.id);
