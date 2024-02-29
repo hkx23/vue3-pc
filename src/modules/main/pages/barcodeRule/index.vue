@@ -225,7 +225,7 @@ import { isEmpty } from 'lodash';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref, watch } from 'vue';
 
-import { api, api as apiMain } from '@/api/main';
+import { api } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -428,7 +428,7 @@ const rules: FormRules = {
 };
 // #dialog下拉框数据
 const onGetDialogSelect = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_TYPE' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'BARCODE_TYPE' });
   diaSelsect.list = res;
 };
 // ################ 初始渲染

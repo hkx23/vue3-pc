@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full="!!tagValue">
+  <cmp-container :full="false">
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="来料标签打印" :destroy-on-hide="false">
@@ -119,7 +119,7 @@
                   :table-data="pkgManageDataList.list"
                   :total="pkgManageTabTotal"
                   :fixed-height="true"
-                  style="height: 300px"
+                  style="height: 400px"
                   @select-change="onProductRightFetchData"
                   @refresh="onRefreshManage"
                 >
@@ -154,7 +154,7 @@
     v-model:visible="formVisible"
     :confirm-btn="buttonSwitch"
     :header="diaLogTitle"
-    :autosize="{ minRows: 3, maxRows: 5 }"
+    width="auto"
     @confirm="onConfirm"
   >
     <t-form ref="formRef" :data="reprintDialog" :rules="rules">
@@ -255,6 +255,7 @@ import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiWarehouse } from '@/api/warehouse';
+import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -326,9 +327,10 @@ const onPrint = async () => {
       const foundItem = labelBelowList.list.find((item) => item.id === id);
       const DataBase = {
         LABEL_NO: foundItem.labelNo,
-        BALANCE_QTY: foundItem.balanceQty,
+        QTY: foundItem.balanceQty,
         LOT_NO: foundItem.lotNo,
         SUPPLIER_NAME: delivery.supplierName,
+        SUPPLIER_CODE: delivery.supplierCode,
         MITEM_CODE: delivery.mitemCode,
         MITEM_DESC: delivery.mitemDesc,
       };
@@ -513,6 +515,7 @@ const queryBelowCondition = ref({
 const manageQueryCondition = ref({
   mitemId: '',
   supplierId: '',
+  lineSeq: null,
   barcodeStatus: '',
   timeCreatedStart: '',
   timeCreatedEnd: '',
@@ -611,7 +614,6 @@ const onRefreshBelow = async () => {
 // # 条码标签刷新按钮
 const onRefreshManage = async () => {
   manageQueryCondition.value.pageNum = pageUIMannage.value.page;
-  console.log(pageUIBracode.value);
   manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
   apiWarehouse.label.getLabelManageList(manageQueryCondition.value).then((data) => {
     pkgManageDataList.list = data.list;
@@ -1012,10 +1014,15 @@ const conditionEnter = (data: any) => {
 };
 // 管理界面点击查询按钮
 const managePageSearchClick = (data: any) => {
+  if (data.lineSeq && !Number(data.lineSeq)) {
+    MessagePlugin.warning('送货单行号须为正整数');
+    return;
+  }
   const [timeCreatedStart, timeCreatedEnd] = data.timeCreatedRange;
   manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
   manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;
   manageQueryCondition.value.barcode = data.barcode;
+  manageQueryCondition.value.lineSeq = data.lineSeq;
   manageQueryCondition.value.barcodeStatus = data.barcodeStatus;
   manageQueryCondition.value.billNo = data.billNo;
   manageQueryCondition.value.mitemId = data.mitemId;
@@ -1173,6 +1180,11 @@ const mitemBarcodeManageOp = computed(() => {
     },
     billNo: {
       label: '送货单',
+      comp: 't-input',
+      defaultVal: '',
+    },
+    lineSeq: {
+      label: '送货单行号',
       comp: 't-input',
       defaultVal: '',
     },

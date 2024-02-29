@@ -127,6 +127,7 @@
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
+        :is-hand-delete="true"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
         @delete-success="deleteSuccess"
@@ -168,7 +169,6 @@ const touchstoneFormVisible = ref(false);
 const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
 const formTitle = ref('');
-const ids = ref([]);
 const perId = ref('');
 const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const onAdd = () => {
@@ -181,8 +181,6 @@ const onAdd = () => {
 };
 const onEdit = async (row) => {
   const item = tableData.value[row.index];
-  console.log(item);
-  console.log(tableData.value);
   formTitle.value = '检验项目编辑';
   opType.value = 'edit';
   dtlFormRef.value.dtlData.id = row.id;
@@ -210,6 +208,7 @@ const getDtlByStdId = async () => {
   });
   tableData.value = res.list.map((item, index) => ({ ...item, index }));
   dataTotal.value = res.total;
+  dtlRowKeys.value = [];
 };
 const getTitle = (type) => {
   switch (type) {
@@ -351,10 +350,11 @@ const opType = ref('add');
 const onConfirmDtl = async () => {
   const data = await dtlFormRef.value.onConfirmDtl();
   if (data) {
-    if (opType.value === 'add') {
+    if (opType.value === 'add' && formData.value.operateTpye === 'add') {
       if (tableData.value.length > 0) {
         const { itemNme } = dtlFormRef.value.rowData;
-        const item = tableData.value.map((item) => item.itemName === itemNme);
+        const item = tableData.value.find((item) => item.itemName === itemNme);
+        console.log(item);
         if (item) {
           MessagePlugin.warning('项目名称重复');
           return;
@@ -367,6 +367,9 @@ const onConfirmDtl = async () => {
       onRefresh();
     } else if (opType.value === 'edit' && formData.value.operateTpye === 'add') {
       tableData.value.splice(dtlFormRef.value.rowData.index, 1, dtlFormRef.value.rowData);
+    } else if (opType.value === 'add' && formData.value.operateTpye === 'edit') {
+      await apiQuality.oqcInspectStdDtl.addDtl({ ...dtlFormRef.value.rowData, oqcInspectStdId: formData.value.id });
+      onRefresh();
     }
     touchstoneFormVisible.value = false;
   }
@@ -375,28 +378,19 @@ const onConfirmFile = () => {
   formVisible.value = false;
 };
 const onDelDtlData = async () => {
-  const idsDel = [];
-  const noId = [];
-  await dtlRowKeys.value.forEach((number) => {
-    const item = tableData.value[number];
-    if (item.id) {
-      ids.value.push(item.id);
-      idsDel.push(item);
-    } else {
-      noId.push(item);
+  const idsToDelete = [];
+
+  for (const index of dtlRowKeys.value) {
+    const rowData = tableData.value[index];
+    if (rowData && rowData.id) {
+      idsToDelete.push(rowData.id);
     }
-  });
-  // 筛选出 tableData.value 中不在 noId 数组中的元素
-  if (noId.length > 0) {
-    tableData.value = tableData.value.filter((item) => !noId.includes(item));
   }
-  if (ids.value.length > 0) {
-    // await apiQuality.oqcInspectStdDtl.delByIds(ids);
-    tableData.value = tableData.value.filter((item) => !idsDel.includes(item));
-  }
-  MessagePlugin.success('删除成功');
-  dataTotal.value -= dtlRowKeys.value.length;
-  dtlRowKeys.value = [];
+
+  // 调用删除 API，传入需要删除的 id 数组
+  await apiQuality.oqcInspectStdDtl.delByIds(idsToDelete);
+
+  onRefresh();
 };
 
 // 父方法
@@ -427,9 +421,7 @@ const onClose = async () => {
 const fileList = ref([]);
 
 const uploadSuccess = (file: AddFileType) => {
-  MessagePlugin.info(
-    `上传一个文件成功,如果是需要实时更新业务数据，可使用对应FILE的路径，文件名，文件大小等信息自行写逻辑上传到后端`,
-  );
+  MessagePlugin.info(`上文件成功`);
   fileList.value.push(file);
   console.log('🚀 ~ file: materialStandardAdd.vue:149 ~ uploadSuccess ~ files.value:', fileList.value);
 
@@ -437,22 +429,22 @@ const uploadSuccess = (file: AddFileType) => {
 };
 
 const uploadfail = (file: AddFileType) => {
-  MessagePlugin.info(`上传一个文件失败,这个暂时没想到场景`);
+  MessagePlugin.info(`上传文件失败`);
   console.log('uploadSuccess', file);
 };
 
 const deleteSuccess = (file: AddFileType) => {
-  MessagePlugin.info(
-    `删除一个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
-  );
+  MessagePlugin.info(`删除文件成功`);
   console.log('deleteSuccess', file);
+  fileList.value = fileList.value.filter((item) => item.signedUrl !== file.signedUrl);
 };
 
 const batchDeleteSuccess = (files: AddFileType[]) => {
-  MessagePlugin.info(
-    `删除多个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
-  );
+  MessagePlugin.info(`删除多个文件成功`);
   console.log('batchDeleteSuccess', files);
+  files.forEach((item) => {
+    fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
+  });
 };
 
 const tableData = ref([]);

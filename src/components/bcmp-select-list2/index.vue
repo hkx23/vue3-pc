@@ -129,6 +129,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
   // 是否过滤-一般情况默认过滤
   filterable: {
     type: Boolean,

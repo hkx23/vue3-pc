@@ -2515,15 +2515,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2566,9 +2566,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
+  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -3953,17 +3953,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   stateName?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4074,15 +4074,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  stateName?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopName?: string;
+  workshopId?: string;
   workshopCode?: string;
-  stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -4320,8 +4320,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -4608,6 +4608,7 @@ export type WipVO = {
    * @format date-time
    */
   datetimeSche?: string;
+  routingRevisionId?: string;
 } | null;
 
 /** 显示包装规则明细列表 */
@@ -6556,16 +6557,13 @@ export const api = {
      * No description
      *
      * @tags 投料表
-     * @name GetMoBom
+     * @name GetBoardMoBom
      * @summary 根据排产单ID获取工单BOM信息
-     * @request GET:/mitemOnboard/getMoBomByMoScheId
+     * @request GET:/mitemOnboard/getBoardMoBom
      * @secure
      */
-    getMoBom: (query?: {
-      /** @default "" */
-      scheId?: string;
-    }) =>
-      http.request<ResultListMoScheBomVO['data']>(`/api/control/mitemOnboard/getMoBomByMoScheId`, {
+    getBoardMoBom: (query: { processId: string; scheId: string }) =>
+      http.request<ResultListMoScheBomVO['data']>(`/api/control/mitemOnboard/getBoardMoBom`, {
         method: 'GET',
         params: query,
       }),

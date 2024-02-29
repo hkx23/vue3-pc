@@ -29,7 +29,7 @@
 </template>
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/warehouse';
@@ -222,7 +222,11 @@ const onInput = async (data: any) => {
   const [receiveDateStart, receiveDateEnd] = data.receiveDate;
   handQtyParam.value.receiveDateStart = receiveDateStart;
   handQtyParam.value.receiveDateEnd = receiveDateEnd;
-  await onGetHandQtyData();
+  if (data.receiveDate.length === 0) {
+    await MessagePlugin.error('时间为必填项');
+  } else {
+    await onGetHandQtyData();
+  }
 };
 </script>
 

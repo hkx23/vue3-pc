@@ -1,5 +1,12 @@
 <template>
-  <t-form ref="formRef" :rules="rules">
+  <t-form
+    ref="formRef"
+    :rules="rules"
+    :data="dtlData"
+    label-align="right"
+    label-width="120px"
+    :show-error-message="false"
+  >
     <t-row :gutter="[32, 16]">
       <!-- 第 1️⃣ 行数据 -->
       <t-col :span="4">
@@ -19,6 +26,11 @@
       <t-col :span="4">
         <t-form-item label="检验内容" label-align="right" name="itemName">
           <t-input v-model="dtlData.itemName" style="width: 280px" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="项目行号" label-align="right" name="itemSeq">
+          <t-input v-model="dtlData.itemSeq" style="width: 280px" />
         </t-form-item>
       </t-col>
       <!-- 第 2️⃣ 行数据 -->
@@ -88,8 +100,8 @@
       <t-col :span="4">
         <t-form-item label="抽样方案类型" name="samplingStandardType">
           <t-radio-group v-model="dtlData.samplingStandardType" default-value="1">
-            <t-radio value="1">国标</t-radio>
-            <t-radio value="2">企标</t-radio>
+            <t-radio value="GB">国标</t-radio>
+            <t-radio value="QB">企标</t-radio>
           </t-radio-group>
         </t-form-item>
       </t-col>
@@ -118,13 +130,13 @@
           label="检验水平"
           label-align="right"
           name="inspectLevel"
-          :required-mark="dtlData.samplingStandardType === '1'"
+          :required-mark="dtlData.samplingStandardType === 'GB'"
         >
           <t-select
             v-model="dtlData.inspectLevel"
             clearable
             style="width: 280px"
-            :disabled="dtlData.samplingStandardType !== '1'"
+            :disabled="dtlData.samplingStandardType !== 'GB'"
           >
             <t-option v-for="item in levelOption" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
@@ -149,6 +161,8 @@
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
+        :is-hand-delete="true"
+        upload-path="inspectStd"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
         @delete-success="deleteSuccess"
@@ -172,6 +186,7 @@ const formVisible = ref(false);
 const dtlData = ref({
   type: 'add',
   iqcInspectStdId: '',
+  itemSeq: '',
   itemCategory: '',
   id: '',
   itemName: '',
@@ -196,6 +211,7 @@ const dtlData = ref({
 // #表单定义规则
 const rules: FormRules = {
   itemCategory: [{ required: true, message: '不能为空', trigger: 'change' }],
+  itemSeq: [{ required: true, message: '不能为空', trigger: 'change' }],
   itemName: [{ required: true, message: '不能为空', trigger: 'change' }],
   characteristics: [{ required: true, message: '不能为空', trigger: 'change' }],
   samplingStandardType: [{ required: true, message: '不能为空', trigger: 'change' }],
@@ -247,6 +263,7 @@ const querySelectChange = async (event) => {
 const init = () => {
   dtlData.value = {
     type: 'add',
+    itemSeq: '',
     iqcInspectStdId: '',
     itemCategory: '',
     id: '',
@@ -258,7 +275,7 @@ const init = () => {
     technicalRequest: '',
     uom: '',
     uomName: '',
-    samplingStandardType: '1',
+    samplingStandardType: 'GB',
     samplingStandardCode: '',
     inspectLevel: '',
     inspectLevelName: '',
@@ -309,6 +326,7 @@ const onConfirmDtl = async () => {
     'unqualifyCategory',
     'inspectBasis',
     'inspectType',
+    'itemSeq',
   ];
 
   // 遍历 requiredFields 数组，检查每个属性是否为空
@@ -331,16 +349,20 @@ const onConfirmDtl = async () => {
       return false;
     }
   }
-  if (!Number(dtlData.value.baseValue) || Number(dtlData.value.baseValue) < 0) {
+  if (dtlData.value.baseValue && (!Number(dtlData.value.baseValue) || Number(dtlData.value.baseValue) < 0)) {
     MessagePlugin.error('基准值须为正数');
     return false;
   }
-  if (!Number(dtlData.value.minValue) || Number(dtlData.value.minValue) < 0) {
+  if (dtlData.value.minValue && (!Number(dtlData.value.minValue) || Number(dtlData.value.minValue) < 0)) {
     MessagePlugin.error('最小值须为正数');
     return false;
   }
-  if (!Number(dtlData.value.minValue) || Number(dtlData.value.minValue) < 0) {
+  if (dtlData.value.maxValue && (!Number(dtlData.value.maxValue) || Number(dtlData.value.maxValue) < 0)) {
     MessagePlugin.error('最大值须为正数');
+    return false;
+  }
+  if (dtlData.value.itemSeq && (!Number(dtlData.value.itemSeq) || Number(dtlData.value.itemSeq) < 0)) {
+    MessagePlugin.error('项目行号须为正数');
     return false;
   }
   if (dtlData.value.uom) {
@@ -353,14 +375,18 @@ const onConfirmDtl = async () => {
   rowData.value = {
     ...dtlData.value,
     fileList,
+    samplingStandardTypeName: dtlData.value.samplingStandardType === '1' ? '国标' : '企标',
+    itemCategoryName: categoryOption.value.find((item) => item.value === dtlData.value.itemCategory)?.label,
+    inspectTypeName: stdTypeOption.value.find((item) => item.value === dtlData.value.inspectType)?.label,
+    unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,
+    characteristicsName: characteristicsOptions.value.find((item) => item.value === dtlData.value.characteristics)
+      ?.label,
   };
   return true;
 };
 
 const uploadSuccess = (file: AddFileType) => {
-  MessagePlugin.info(
-    `上传一个文件成功,如果是需要实时更新业务数据，可使用对应FILE的路径，文件名，文件大小等信息自行写逻辑上传到后端`,
-  );
+  MessagePlugin.info(`上传文件成功`);
   fileList.value.push(file);
   console.log('🚀 ~ file: materialStandardAdd.vue:149 ~ uploadSuccess ~ files.value:', fileList.value);
 
@@ -368,27 +394,28 @@ const uploadSuccess = (file: AddFileType) => {
 };
 
 const uploadfail = (file: AddFileType) => {
-  MessagePlugin.info(`上传一个文件失败,这个暂时没想到场景`);
+  MessagePlugin.info(`上传文件失败`);
   console.log('uploadSuccess', file);
 };
 
 const deleteSuccess = (file: AddFileType) => {
-  MessagePlugin.info(
-    `删除一个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
-  );
+  MessagePlugin.info(`删除一个文件成功`);
   console.log('deleteSuccess', file);
+  fileList.value = fileList.value.filter((item) => item.signedUrl !== file.signedUrl);
 };
 
 const batchDeleteSuccess = (files: AddFileType[]) => {
-  MessagePlugin.info(
-    `删除多个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
-  );
+  MessagePlugin.info(`删除多个文件成功`);
   console.log('batchDeleteSuccess', files);
+  files.forEach((item) => {
+    fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
+  });
 };
 
 defineExpose({
   onConfirmDtl,
   dtlData,
+  fileList,
   init,
   rowData,
 });

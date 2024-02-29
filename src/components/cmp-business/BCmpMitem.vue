@@ -18,7 +18,7 @@ const formatListData = (list: MitemVO[]): BusinessItem[] => {
       value: t.mitemCode,
       row: t,
       cmp: {
-        avatarLabel: t.mitemCategoryCode.slice(0, 2),
+        // avatarLabel: t.mitemCategoryCode.slice(0, 2),
         name: t.mitemCode,
         subName: t.mitemName,
         description: t.mitemDesc || t.mitemName,
@@ -32,7 +32,7 @@ const formatListData = (list: MitemVO[]): BusinessItem[] => {
 const fetchData = async (pageIndex?: number) => {
   const data = await mainApi.mitem.search({
     pageNum: pageIndex || 1,
-    pageSize: 100,
+    pageSize: 20,
     filters: [],
   });
   return formatListData(data.list);
@@ -41,7 +41,7 @@ const fetchData = async (pageIndex?: number) => {
 const fetchSearchData = async (keyword: string, _listData: any[]) => {
   const data = await mainApi.mitem.search({
     pageNum: 1,
-    pageSize: 20,
+    pageSize: 50,
     keyword,
   });
   return formatListData(data.list);

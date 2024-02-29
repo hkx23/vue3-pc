@@ -5,10 +5,21 @@
     width="60%"
     placement="top"
     top="40"
-    :confirm-btn="{
-      content: '确认',
-      theme: 'primary',
-    }"
+    :cancel-btn="
+      isEdit
+        ? {
+            content: '取消',
+          }
+        : null
+    "
+    :confirm-btn="
+      isEdit
+        ? {
+            content: '提交',
+            theme: 'primary',
+          }
+        : null
+    "
     :on-confirm="onConfirmForm"
     :close-on-overlay-click="false"
   >
@@ -29,6 +40,7 @@
             v-for="(item, index) in formData.measureList"
             :key="index"
             v-model="item.measureValue"
+            :disabled="!isEdit"
             style="width: 135px"
             :suffix="item.uom"
           ></t-input>
@@ -49,6 +61,7 @@ import { reactive, Ref, ref } from 'vue';
 
 const Emit = defineEmits(['parent-confirm-event', 'form-close-event']);
 
+const isEdit = ref(true); // 是否可编辑
 const formVisible = ref(false);
 const formMeasureRef: Ref<FormInstanceFunctions> = ref(null);
 
@@ -106,6 +119,7 @@ const reset = () => {
 };
 
 const showForm = async (edit, row) => {
+  isEdit.value = edit;
   formVisible.value = true;
   reset();
   formData.measureList = _.cloneDeep(row);

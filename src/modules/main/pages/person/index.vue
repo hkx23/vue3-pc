@@ -161,7 +161,6 @@ const onShowEditVisible = ref(false); // 是否显示编辑窗口
 const onShowImportVisible = ref(false); // 是否显示导入窗口
 // 表格列设置
 const columnsParam: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', type: 'multiple', width: 64 },
   { title: '人员编码', colKey: 'personCode' },
   { title: '姓名', colKey: 'personName' },
   { title: '性别', colKey: 'genderName' },

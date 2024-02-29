@@ -1394,8 +1394,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 响应数据 */
@@ -2536,10 +2536,10 @@ export interface DeliveryDtlVO {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量 */
+  waitScanQty?: number;
 }
 
 /** 采购单明细 */
@@ -2608,10 +2608,10 @@ export interface PurchaseOrderDtlVO {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量 */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3225,21 +3225,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
+  bfpickQty?: number;
+  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4202,6 +4202,11 @@ export interface LabelSearch {
    * @format int32
    */
   splitNum?: number;
+  /**
+   * 行号
+   * @format int32
+   */
+  lineSeq?: number;
   printTempId?: string;
   /** 原因 */
   reason?: string;
@@ -4455,6 +4460,8 @@ export interface MitemReceiveBillVO {
   inspectionStringency?: string;
   /** 检验严格度 */
   inspectionStringencyName?: string;
+  /** IQC单据号 */
+  iqcBillNo?: string;
   waitTime?: string;
 }
 

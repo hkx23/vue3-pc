@@ -7,7 +7,7 @@
           ><span class="span_title">{{ getTitle(formData.operateTpye) }}</span></t-col
         >
         <t-col>
-          <t-button :disabled="!submitButControl">提交</t-button>
+          <t-button :disabled="!submitButControl" @click="onSubimit">提交</t-button>
           <t-button theme="default" @click="onStaging">暂存</t-button>
         </t-col>
       </t-row>
@@ -67,7 +67,7 @@
       <cmp-table
         ref="tableRefCard"
         v-model:pagination="pageUI"
-        row-key="deliveryCardId"
+        row-key="index"
         :active-row-type="'single'"
         :hover="true"
         :table-column="columns"
@@ -80,7 +80,7 @@
           {{ '检验项目' }}
         </template>
         <template #qualifiedRangeOp="{ row }">
-          <span v-if="row.maxValue !== null && row.minValue !== null">{{ `${row.maxValue} ~ ${row.minValue}` }}</span>
+          <span v-if="row.maxValue !== null && row.minValue !== null">{{ `${row.minValue} ~ ${row.maxValue}` }}</span>
         </template>
         <template #isCtqName="{ row }">
           <span>{{ row.isCtq ? '是' : '否' }}</span>
@@ -95,6 +95,13 @@
           <t-button :disabled="!butControl" theme="default"> 导入 </t-button>
           <t-button :disabled="!delBtutControl" theme="default"> 批量删除 </t-button>
         </template>
+        <template #operation="{ row }">
+          <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
+          <t-popconfirm content="继续将删除该标准该检验项目，是否继续？" @confirm="delDtlById(row)">
+            <t-link theme="primary" style="padding-right: 8px">删除</t-link>
+          </t-popconfirm>
+          <t-link theme="primary" @click="onCopy(row)">复制</t-link>
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
@@ -103,13 +110,15 @@
     v-model:visible="formVisible"
     :close-on-overlay-click="false"
     header="附件上传"
-    :cancel-btn="null"
-    :confirm-btn="null"
+    :confirm-btn="fileList.length >= 1 ? '确认' : null"
     width="50%"
+    @confirm="onConfirmFile"
   >
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
+        upload-path="inspectStd"
+        :is-hand-delete="true"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
         @delete-success="deleteSuccess"
@@ -155,6 +164,11 @@ const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
 const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const opType = ref('add');
+// 父方法
+const Emit = defineEmits(['permissionShow']);
+const onConfirmFile = () => {
+  formVisible.value = false;
+};
 const formData = ref({
   operateTpye: 'add',
   saveTpye: 'add',
@@ -191,19 +205,76 @@ const rules: FormRules = {
 };
 const onAdd = () => {
   formTitle.value = '新增检验项目';
+  dtlFormRef.value.init();
   dtlFormRef.value.dtlData.iqcInspectStdId = formData.value.id;
   opType.value = 'add';
   touchstoneFormVisible.value = true;
 };
 
-// 父方法
-// const Emit = defineEmits(['permissionShow']);
-// // 关闭窗口回到主页面
-// const onClose = () => {
-//   Emit('permissionShow', false); // 回到父
-// };
 const onDtlSelectedChange = (value: any) => {
   dtlRowKeys.value = value;
+  if (dtlRowKeys.value.length > 1) {
+    delBtutControl.value = true;
+  }
+};
+const onSubimit = async () => {
+  if (isEmpty(formData.value.inspectStdCode)) {
+    MessagePlugin.error('请输入标准编码');
+    return;
+  }
+  if (isEmpty(formData.value.inspectStdName)) {
+    MessagePlugin.error('请输入标准名称');
+    return;
+  }
+  if (isEmpty(formData.value.timeEffective)) {
+    MessagePlugin.error('请选择生效时间');
+    return;
+  }
+  if (isEmpty(formData.value.timeInvalid)) {
+    MessagePlugin.error('请选择失效时间');
+    return;
+  }
+  if (!Number(formData.value.groupInspectStdId)) {
+    MessagePlugin.error('集团检验标准须为数字（暂行）');
+    return;
+  }
+  if (!Number(formData.value.revision) || Number(formData.value.revision) < 0) {
+    MessagePlugin.error('版本号须为正数');
+    return;
+  }
+
+  const today = new Date();
+  const timeEffective = new Date(formData.value.timeEffective);
+  const timeInvalid = new Date(formData.value.timeInvalid);
+
+  if (timeEffective >= timeInvalid) {
+    MessagePlugin.error('失效时间必须大于生效时间');
+    return;
+  }
+
+  if (timeInvalid <= today) {
+    MessagePlugin.error('失效时间必须大于今天');
+    return;
+  }
+  if (formData.value.id && formData.value.operateTpye === 'add') {
+    await api.iqcInspectStd.modify({
+      ...formData.value,
+      files: fileList.value,
+      dtls: dtlTabData.value,
+      isTemporaryStorage: false,
+    });
+    MessagePlugin.success('提交成功');
+    Emit('permissionShow', false); // 回到父
+  } else {
+    await api.iqcInspectStd.modify({
+      ...formData.value,
+      files: fileList.value,
+      dtls: allDtl.value,
+      isTemporaryStorage: false,
+    });
+    MessagePlugin.success('提交成功');
+    Emit('permissionShow', false); // 回到父
+  }
 };
 const onStaging = async () => {
   if (isEmpty(formData.value.inspectStdCode)) {
@@ -244,11 +315,64 @@ const onStaging = async () => {
     MessagePlugin.error('失效时间必须大于今天');
     return;
   }
-  const res = (await api.iqcInspectStd.add({ ...formData.value })) as any;
-  if (res) {
-    butControl.value = true;
-    formData.value.id = res;
+  if (!formData.value.id) {
+    const res = (await api.iqcInspectStd.temporaryStorage({ ...formData.value })) as any;
+    if (res) {
+      butControl.value = true;
+      formData.value.id = res;
+      MessagePlugin.success('暂存成功');
+    }
+  } else if (formData.value.id && formData.value.operateTpye === 'add') {
+    await api.iqcInspectStd.modify({
+      ...formData.value,
+      files: fileList.value,
+      dtls: dtlTabData.value,
+      isTemporaryStorage: true,
+    });
     MessagePlugin.success('暂存成功');
+    Emit('permissionShow', false); // 回到父
+  } else if (formData.value.id && formData.value.operateTpye === 'edit') {
+    await api.iqcInspectStd.modify({
+      ...formData.value,
+      files: fileList.value,
+      dtls: allDtl.value,
+      isTemporaryStorage: true,
+    });
+    MessagePlugin.success('暂存成功');
+    Emit('permissionShow', false); // 回到父
+  } else if (formData.value.id && formData.value.operateTpye === 'copy') {
+    formData.value.id = '';
+    await api.iqcInspectStd.modify({
+      ...formData.value,
+      files: fileList.value,
+      dtls: allDtl.value,
+      isTemporaryStorage: true,
+    });
+    MessagePlugin.success('暂存成功');
+    Emit('permissionShow', false); // 回到父
+  }
+};
+const onEdit = (row) => {
+  formTitle.value = '检验项目编辑';
+  opType.value = 'edit';
+  const item = { ...row };
+  dtlFormRef.value.dtlData = item;
+  dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
+  touchstoneFormVisible.value = true;
+};
+const onCopy = (row) => {
+  formTitle.value = '检验项目复制';
+  opType.value = 'add';
+  const item = { ...row };
+  dtlFormRef.value.dtlData = item;
+  dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
+  dtlFormRef.value.dtlData.itemName = '';
+  touchstoneFormVisible.value = true;
+};
+const delDtlById = async (row) => {
+  if (formData.value.operateTpye === 'add') {
+    await api.iqcInspectStdDtl.removeBatch([row.id]);
+    onRefresh();
   }
 };
 
@@ -256,9 +380,7 @@ const onStaging = async () => {
 const fileList = ref([]);
 
 const uploadSuccess = (file: AddFileType) => {
-  MessagePlugin.info(
-    `上传一个文件成功,如果是需要实时更新业务数据，可使用对应FILE的路径，文件名，文件大小等信息自行写逻辑上传到后端`,
-  );
+  MessagePlugin.info(`上传文件成功`);
   fileList.value.push(file);
   console.log('🚀 ~ file: materialStandardAdd.vue:149 ~ uploadSuccess ~ files.value:', fileList.value);
 
@@ -266,26 +388,26 @@ const uploadSuccess = (file: AddFileType) => {
 };
 
 const uploadfail = (file: AddFileType) => {
-  MessagePlugin.info(`上传一个文件失败,这个暂时没想到场景`);
+  MessagePlugin.info(`上传文件失败`);
   console.log('uploadSuccess', file);
 };
 
 const deleteSuccess = (file: AddFileType) => {
-  MessagePlugin.info(
-    `删除一个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
-  );
+  MessagePlugin.info(`删除文件成功`);
   console.log('deleteSuccess', file);
+  fileList.value = fileList.value.filter((item) => item.signedUrl !== file.signedUrl);
 };
 
 const batchDeleteSuccess = (files: AddFileType[]) => {
-  MessagePlugin.info(
-    `删除多个文件成功,如果是需要实时更新业务数据，则可以使用参数里面的文件名,id等信息操作接口，进行关联数据删除`,
-  );
+  MessagePlugin.info(`删除文件成功`);
   console.log('batchDeleteSuccess', files);
+  files.forEach((item) => {
+    fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
+  });
 };
 const dtlTabData = ref([]);
 const getDtlById = async () => {
-  const res = (await api.iqcInspectStdDtl.getDtl({
+  const res = (await api.iqcInspectStdDtl.getInspectStdDtlList({
     iqcInspectStdId: formData.value.id,
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
@@ -293,6 +415,32 @@ const getDtlById = async () => {
   if (res) {
     dtlTabData.value = res.list;
     dataTotal.value = res.total;
+    dtlTabData.value.forEach((item, index) => {
+      item.index = index;
+    });
+  }
+};
+const allDtl = ref([]);
+const getAllDtlById = async () => {
+  const res = (await api.iqcInspectStdDtl.getInspectStdDtlList({
+    iqcInspectStdId: formData.value.id,
+    pageNum: pageUI.value.page,
+    pageSize: 9999999,
+  })) as any;
+  if (res) {
+    allDtl.value = res.list;
+    addIndex();
+  }
+};
+const getAllDtlFormCache = async () => {
+  if (allDtl.value) {
+    let startIndex = 0;
+    if (pageUI.value.page !== 1) {
+      startIndex = (pageUI.value.page - 1) * pageUI.value.rows;
+    }
+
+    const firstTwentyElements = allDtl.value.slice(startIndex, startIndex + pageUI.value.rows);
+    dtlTabData.value = firstTwentyElements;
   }
 };
 const columns = [
@@ -329,7 +477,7 @@ const columns = [
     title: '检验工具',
   },
   {
-    colKey: 'uom',
+    colKey: 'baseValue',
     title: '基准值',
   },
   {
@@ -360,6 +508,7 @@ const columns = [
     colKey: 'operation',
     title: '操作',
     fixed: 'right',
+    width: '130',
   },
 ];
 const init = () => {
@@ -395,8 +544,25 @@ const onConfirmDtl = async () => {
         submitButControl.value = true;
       }
       // 只允许新增标准直接更新数据库
-    } else if (opType.value === 'edit' && formData.value.operateTpye === 'add') {
-      await api.oqcInspectStdDtl.updateDtlById(dtlFormRef.value.rowData);
+    } else if (opType.value === 'edit' && formData.value.operateTpye === 'edit') {
+      // 校验itemName
+      const result = confirmItemName();
+      if (!result) {
+        return;
+      }
+      // 替换总数据
+      const allIndex = allDtl.value.findIndex((item) => item.index === dtlFormRef.value.rowData.index);
+      if (allIndex !== -1) {
+        allDtl.value.splice(allIndex, 1, dtlFormRef.value.rowData);
+      }
+      onRefresh();
+    } else if (opType.value === 'add' && formData.value.operateTpye === 'edit') {
+      // 校验itemName
+      const result = confirmItemName();
+      if (!result) {
+        return;
+      }
+      allDtl.value.push({ ...dtlFormRef.value.rowData, index: allDtl.value.length });
       onRefresh();
     }
     touchstoneFormVisible.value = false;
@@ -408,13 +574,49 @@ const onConfirmCode = async () => {
   }
 };
 const onRefresh = () => {
-  getDtlById();
+  if (formData.value.operateTpye === 'add') {
+    getDtlById();
+  } else if (formData.value.operateTpye === 'edit') {
+    getAllDtlFormCache();
+  }
 };
+const confirmItemName = () => {
+  if (opType.value === 'add') {
+    // 校验itemName
+    const item = allDtl.value.find((item) => item.itemName === dtlFormRef.value.rowData.itemName);
+    if (item) {
+      MessagePlugin.warning('检验内容重复');
+      return false;
+    }
+  } else {
+    // 校验itemName
+    const item = allDtl.value.find(
+      (item) => item.itemName === dtlFormRef.value.rowData.itemName && item.index !== dtlFormRef.value.rowData.index,
+    );
+    if (item) {
+      MessagePlugin.warning('检验内容重复');
+      return false;
+    }
+  }
+  return true;
+};
+
+const addIndex = () => {
+  allDtl.value.forEach((item, index) => {
+    item.index = index;
+  });
+};
+
 defineExpose({
   formData,
   init,
   fileList,
   getDtlById,
+  getAllDtlById,
+  getAllDtlFormCache,
+  butControl,
+  submitButControl,
+  delBtutControl,
 });
 </script>
 
