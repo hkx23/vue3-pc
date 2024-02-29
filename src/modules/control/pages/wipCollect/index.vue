@@ -123,7 +123,7 @@
 import dayjs from 'dayjs';
 import _, { isEmpty } from 'lodash';
 import { LoadingPlugin, NotifyPlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 
 import { api, WipKeyPartCollectVO } from '@/api/control';
 import BcmpWorkstationInfo from '@/components/bcmp-workstation-info/index.vue';
@@ -304,8 +304,8 @@ const serialNumberEnter = async (value) => {
 
           if (reData.isCommit) {
             // 提交时,清空扫描框即可
-            resetKeypartCode(isNeedClear);
             resetBarcode(isNeedClear);
+            resetKeypartCode(isNeedClear);
           }
         } else {
           pushMessage('error', value, reData.scanMessage);
@@ -345,24 +345,36 @@ const resetHandle = () => {
 const resetBarcode = (isNeedClear: boolean) => {
   if (isNeedClear) {
     mainform.value.serialNumber = '';
-  } else {
-    scanBarcodeInstance.value.selectAll();
   }
-  if (scanBarcodeInstance.value) {
-    const { customerFocus } = scanBarcodeInstance.value;
-    customerFocus();
-  }
+  resetFocus();
 };
 
 const resetKeypartCode = (isNeedClear: boolean) => {
   if (isNeedClear) {
     mainform.value.keypartCode = '';
-  } else {
-    scanKeypartInstance.value.selectAll();
   }
-  if (scanKeypartInstance.value) {
-    const { customerFocus } = scanKeypartInstance.value;
-    customerFocus();
+  resetFocus();
+};
+
+// 动态判断需要显示聚焦的扫描框
+const resetFocus = () => {
+  console.log('focus:', scanType.value);
+  if (scanType.value === 'SCANTEXT') {
+    if (scanBarcodeInstance.value) {
+      nextTick(() => {
+        scanBarcodeInstance.value.selectAll();
+        const { customerFocus } = scanBarcodeInstance.value;
+        customerFocus();
+      });
+    }
+  } else if (scanType.value === 'KEYPART') {
+    if (scanKeypartInstance.value) {
+      nextTick(() => {
+        scanKeypartInstance.value.selectAll();
+        const { customerFocus } = scanKeypartInstance.value;
+        customerFocus();
+      });
+    }
   }
 };
 
