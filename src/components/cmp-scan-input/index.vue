@@ -13,7 +13,7 @@ import { ref } from 'vue';
 const input = ref(null);
 
 const selectAll = () => {
-  console.error('click');
+  console.log('click');
   // 注意：这里需要确保输入框元素已经渲染完成并获取到DOM节点
   if (input.value && input.value.$el) {
     const nativeInput = input.value.$el.querySelector('input');
