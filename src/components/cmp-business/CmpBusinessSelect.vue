@@ -122,7 +122,7 @@ export interface CmpBusinessSelectProps extends Omit<SelectInputProps, 'options'
   fetchSearchData: (keyword: string, listData: any[]) => Promise<BusinessItem[]>;
   fetchTreeNodeData?: (
     key: string | number,
-    children: BusinessItem[],
+    children: any[],
     node?: TreeNodeModel<TypeTreeOptionData>,
   ) => Promise<BusinessItem[]>;
 }
@@ -274,8 +274,7 @@ const onInputChange: SelectInputProps['onInputChange'] = debounce(async (val, _c
 }, 500);
 
 const onLoadTreeNodes: TreeProps['load'] = (node) => {
-  console.log('🚀 ~ node:', node);
-  return props?.fetchTreeNodeData(node.data.row?.id as string, node.data.row?.children as BusinessItem[], node);
+  return props?.fetchTreeNodeData(node.data.row?.id as string, node.data.row?.children as any[], node);
 };
 </script>
 <style scoped lang="less">

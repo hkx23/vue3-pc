@@ -66,7 +66,7 @@ const fetchSearchData = async (keyword: string, _listData: any[]) => {
   return formatOrgData(data.list as any[]);
 };
 
-const fetchTreeNodeData = (key: string | number, children: BusinessItem[]) => {
+const fetchTreeNodeData = (key: string | number, children: any[]) => {
   return mainApi.person
     .getlist({
       state: -1,
