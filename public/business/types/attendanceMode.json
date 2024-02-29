@@ -25,5 +25,14 @@
   "keywords": {
     "value": "id",
     "label": "modeName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "modeName",
+    "codeField": "modeCode",
+    "descField": "modeDesc"
+  },
+  "name": "出勤模式",
+  "componentType": "list"
 }

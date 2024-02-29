@@ -137,6 +137,225 @@
             <t-input v-model="mitemValue" label="物料值" disabled />
           </t-col>
         </t-row>
+        <!-- 出勤模式 -->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="attendanceModeValue"
+              :is-multiple="isMultiple"
+              type="attendanceMode"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="attendanceModeValue" label="出勤模式值" disabled />
+          </t-col>
+        </t-row>
+
+        <!-- 业务类型 -->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="businessCategoryValue"
+              :is-multiple="isMultiple"
+              type="businessCategory"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="businessCategoryValue" label="业务类型值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 缺陷代码 -->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="defectCodeValue"
+              :is-multiple="isMultiple"
+              type="defectCode"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="defectCodeValue" label="缺陷代码值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 仓库 -->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="warehouseValue"
+              :is-multiple="isMultiple"
+              type="warehouse"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="warehouseValue" label="仓库值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 仓库 -->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="warehouseAuthValue"
+              :is-multiple="isMultiple"
+              type="warehouseAuth"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="warehouseAuthValue" label="仓库值-带权限" disabled />
+          </t-col>
+        </t-row>
+        <!-- 库区 -->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="districtValue"
+              :is-multiple="isMultiple"
+              type="district"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="districtValue" label="库区码值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 库位 -->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="locationValue"
+              :is-multiple="isMultiple"
+              type="location"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="locationValue" label="库位值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 线边仓 -->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="lineWarehouseValue"
+              :is-multiple="isMultiple"
+              type="lineWarehouse"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="lineWarehouseValue" label="线边仓值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 扩展属性分类-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="objectPropertyCategoryValue"
+              :is-multiple="isMultiple"
+              type="objectPropertyCategory"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="objectPropertyCategoryValue" label="扩展属性分类值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 岗位-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business v-model="postValue" :is-multiple="isMultiple" type="post"></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="postValue" label="岗位值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 工序值-return-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="processReturnValue"
+              :is-multiple="isMultiple"
+              type="processReturn"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="processReturnValue" label="工序值-return" disabled />
+          </t-col>
+        </t-row>
+        <!-- 角色-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business v-model="roleValue" :is-multiple="isMultiple" type="role"></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="roleValue" label="角色值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 工艺路线工序-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="routingProcessValue"
+              :is-multiple="isMultiple"
+              type="routingProcess"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="routingProcessValue" label="工艺路线工序值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 系统字典-状态-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business v-model="stateValue" :is-multiple="isMultiple" type="state"></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="stateValue" label="状态值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 计量单位-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business v-model="uomValue" :is-multiple="isMultiple" type="uom"></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="uomValue" label="计量单位值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 工作中心-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="workcenterValue"
+              :is-multiple="isMultiple"
+              type="workcenter"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="workcenterValue" label="工作中心值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 班组-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="workgroupValue"
+              :is-multiple="isMultiple"
+              type="workgroup"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="workgroupValue" label="班组值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 工站-带权限-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="workstationAuthValue"
+              :is-multiple="isMultiple"
+              type="workstationAuth"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="workstationAuthValue" label="工站权限值" disabled />
+          </t-col>
+        </t-row>
       </t-space>
     </cmp-card>
   </cmp-container>
@@ -157,6 +376,25 @@ const userValue = ref();
 const supplierValue = ref();
 const customerValue = ref();
 const mitemValue = ref();
+const attendanceModeValue = ref();
+const businessCategoryValue = ref();
+const defectCodeValue = ref();
+const warehouseValue = ref();
+const warehouseAuthValue = ref();
+const districtValue = ref();
+const locationValue = ref();
+const lineWarehouseValue = ref();
+const objectPropertyCategoryValue = ref();
+const postValue = ref();
+const processReturnValue = ref();
+const roleValue = ref();
+const routingProcessValue = ref();
+const stateValue = ref();
+const uomValue = ref();
+const workcenterValue = ref();
+const workgroupValue = ref();
+const workstationAuthValue = ref();
+
 onMounted(() => {});
 </script>
 

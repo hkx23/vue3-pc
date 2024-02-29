@@ -21,8 +21,8 @@
   >
   </bcmp-select-table>
 
-  <bcmp-select-list
-    v-if="finalComponentType === 'list' && targetIsVisible"
+  <bcmp-select-list2
+    v-if="finalComponentType === 'list2' && targetIsVisible"
     :value="modelValue"
     :columns="finalColumns"
     :row-key="finalRowKey"
@@ -42,9 +42,9 @@
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
-  </bcmp-select-list>
-  <bcmp-select-list2
-    v-if="finalComponentType === 'list2' && targetIsVisible"
+  </bcmp-select-list2>
+  <bcmp-select-list
+    v-if="finalComponentType === 'list' && targetIsVisible"
     :value="modelValue"
     :columns="finalColumns"
     :row-key="finalRowKey"
@@ -65,7 +65,7 @@
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
-  </bcmp-select-list2>
+  </bcmp-select-list>
 </template>
 
 <script setup lang="tsx" name="BcmpSelectBusiness">

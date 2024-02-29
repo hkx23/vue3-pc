@@ -20,5 +20,13 @@
   "keywords": {
     "value": "id",
     "label": "defectName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "defectName",
+    "codeField": "defectCode"
+  },
+  "name": "缺陷代码",
+  "componentType": "list"
 }

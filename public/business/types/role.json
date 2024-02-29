@@ -19,5 +19,13 @@
   "keywords": {
     "value": "id",
     "label": "roleName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "roleCode",
+    "nameField": "roleName"
+  },
+  "name": "角色",
+  "componentType": "list"
 }
