@@ -1,5 +1,6 @@
 {
   "title": "工厂：",
+  "name": "工厂",
   "placeholder": "请选择工厂",
   "url": "/api/main/org/items",
   "httptype": "POST",

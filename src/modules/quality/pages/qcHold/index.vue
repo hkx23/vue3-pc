@@ -994,7 +994,7 @@ const onHandelLock = (operatorType: OperatorType) => {
 const onHandelUnLock = (operatorType: OperatorType) => {
   console.log(operatorType);
   const tabRouters = router.getRoutes();
-  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === '/quality#/holdList?viewType=UNLOCK');
+  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === '/quality#/holdList/UNLOCK');
   router.push(routeInfo);
 };
 
@@ -1002,7 +1002,7 @@ const onHandelUnLock = (operatorType: OperatorType) => {
 const onHandelLog = (operatorType: OperatorType) => {
   console.log(operatorType);
   const tabRouters = router.getRoutes();
-  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === '/quality#/holdList?viewType=VIEW');
+  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === '/quality#/holdListView/VIEW');
   router.push(routeInfo);
 };
 

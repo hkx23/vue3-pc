@@ -21,5 +21,13 @@
   "keywords": {
     "value": "id",
     "label": "uomName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "uomName",
+    "codeField": "uom"
+  },
+  "name": "计量单位",
+  "componentType": "list"
 }

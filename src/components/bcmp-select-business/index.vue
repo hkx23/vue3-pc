@@ -21,28 +21,6 @@
   >
   </bcmp-select-table>
 
-  <bcmp-select-list
-    v-if="finalComponentType === 'list' && targetIsVisible"
-    :value="modelValue"
-    :columns="finalColumns"
-    :row-key="finalRowKey"
-    :select-txt="selectTxt"
-    :remote-url="finalUrl"
-    :category="finalCategory"
-    :multiple="isMultiple"
-    :parent-id="finalParentId"
-    :custom-conditions="finalCustomConditions"
-    :readonly="readonly"
-    :disabled="disabled"
-    :title="finalTitle"
-    :placeholder="finalPlaceholder"
-    :keywords="finalKeywords"
-    :table-width="finaltableWidth"
-    :list-setting="finalListSetting"
-    v-bind="selectAttr"
-    @selection-change="onSelectionChange"
-  >
-  </bcmp-select-list>
   <bcmp-select-list2
     v-if="finalComponentType === 'list2' && targetIsVisible"
     :value="modelValue"
@@ -54,8 +32,8 @@
     :multiple="isMultiple"
     :parent-id="finalParentId"
     :custom-conditions="finalCustomConditions"
-    :disabled="disabled"
     :readonly="readonly"
+    :disabled="disabled"
     :title="finalTitle"
     :placeholder="finalPlaceholder"
     :keywords="finalKeywords"
@@ -65,6 +43,29 @@
     @selection-change="onSelectionChange"
   >
   </bcmp-select-list2>
+  <bcmp-select-list
+    v-if="finalComponentType === 'list' && targetIsVisible"
+    :value="modelValue"
+    :columns="finalColumns"
+    :row-key="finalRowKey"
+    :select-txt="selectTxt"
+    :remote-url="finalUrl"
+    :category="finalCategory"
+    :multiple="isMultiple"
+    :parent-id="finalParentId"
+    :custom-conditions="finalCustomConditions"
+    :disabled="disabled"
+    :readonly="readonly"
+    :title="finalTitle"
+    :name="finalName"
+    :placeholder="finalPlaceholder"
+    :keywords="finalKeywords"
+    :table-width="finaltableWidth"
+    :list-setting="finalListSetting"
+    v-bind="selectAttr"
+    @selection-change="onSelectionChange"
+  >
+  </bcmp-select-list>
 </template>
 
 <script setup lang="tsx" name="BcmpSelectBusiness">
@@ -104,6 +105,11 @@ const props = defineProps({
   },
   // 标题
   title: {
+    type: String,
+    default: '',
+  },
+  // 名称（用于列表展示）
+  name: {
     type: String,
     default: '',
   },
@@ -241,6 +247,7 @@ const finalColumns = ref(props.columns);
 const finalRowKey = ref(props.rowKey);
 const finalPlaceholder = ref(props.placeholder);
 const finalTitle = ref(props.title);
+const finalName = ref(props.name);
 const finalKeywords = ref(props.keywords);
 const finalCategory = ref(props.category);
 const finalParentId = ref(props.parentId);
@@ -350,6 +357,10 @@ const loadTypeSetting = () => {
         // 如果label字段不为空
         if (props.labelField) {
           finalKeywords.value.label = props.labelField;
+        }
+
+        if (!finalName.value) {
+          finalName.value = res.name;
         }
         finalRowKey.value = finalKeywords.value.value;
         finalUrl.value = res.url;

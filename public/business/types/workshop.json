@@ -25,5 +25,14 @@
   "keywords": {
     "value": "id",
     "label": "orgName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "orgCode",
+    "nameField": "orgName",
+    "descField": "orgDesc"
+  },
+  "name": "车间",
+  "componentType": "list"
 }

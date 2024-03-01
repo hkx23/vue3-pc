@@ -25,5 +25,14 @@
   "keywords": {
     "value": "id",
     "label": "wcName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "wcCode",
+    "nameField": "wcName",
+    "descField": "wcDesc"
+  },
+  "name": "产线",
+  "componentType": "list"
 }
