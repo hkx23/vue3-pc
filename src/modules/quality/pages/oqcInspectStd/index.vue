@@ -1,5 +1,5 @@
 <template>
-  <cmp-container v-show="!pageShow" :full="false">
+  <cmp-container v-show="!pageShow" :full="true">
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">
@@ -25,6 +25,7 @@
                   :total="stdTableTotal"
                   :hover="true"
                   :selected-row-keys="stdRowKeys"
+                  style="height: 400px"
                   @select-change="onSelectedChange"
                   @refresh="onRefresh"
                 >
@@ -78,6 +79,7 @@
                   :table-column="assignColumns"
                   :table-data="assignDataList.list"
                   :total="assignDataTabTotal"
+                  style="height: 400px"
                   @select-change="onProductRightFetchData"
                   @refresh="onRefreshTwo"
                 >

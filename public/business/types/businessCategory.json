@@ -19,5 +19,13 @@
   "keywords": {
     "value": "id",
     "label": "categoryName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "categoryName",
+    "codeField": "categoryCode"
+  },
+  "name": "业务类型",
+  "componentType": "list"
 }

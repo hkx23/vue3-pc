@@ -2775,12 +2775,12 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s2?: string;
-  ii?: string;
-  i?: string;
-  iii?: string;
   s1?: string;
+  ii?: string;
+  iii?: string;
+  s2?: string;
   s4?: string;
+  i?: string;
   s3?: string;
 } | null;
 

@@ -25,5 +25,14 @@
   "keywords": {
     "value": "id",
     "label": "workstationName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "workstationCode",
+    "nameField": "workstationName",
+    "descField": "workstationDesc"
+  },
+  "name": "工站",
+  "componentType": "list"
 }
