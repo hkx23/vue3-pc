@@ -1394,8 +1394,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
   mesbillNo?: string;
+  erpbillNo?: string;
 }
 
 /** 响应数据 */
@@ -2448,9 +2448,9 @@ export interface ReturnStockOutDtlVO {
   transferBillNo?: string;
   /** 交易事务单号 */
   transferBillNoStatus?: string;
-  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  transferDtlId?: string;
 }
 
 /** 退货单扫描 */
@@ -2535,11 +2535,11 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
-  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  transferDtlId?: string;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 采购单明细 */
@@ -2607,11 +2607,11 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
-  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  transferDtlId?: string;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3225,21 +3225,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  tlpickQty?: number;
   bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  flpickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 待扫数量
    * @format double

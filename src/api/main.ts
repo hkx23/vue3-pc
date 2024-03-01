@@ -2145,8 +2145,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3923,15 +3923,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  stateName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isRawChecked?: boolean;
-  isBatchName?: string;
   isRawName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
+  isBatchName?: string;
   isProductName?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4411,8 +4411,8 @@ export interface IntegratedConsoleSearch {
    */
   dateEnd?: string;
   mesbillNo?: string;
-  erpbillNo?: string;
   imsgqueueStatus?: string;
+  erpbillNo?: string;
 }
 
 /** 显示工站 */
@@ -5292,8 +5292,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -6487,8 +6487,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  relate?: boolean;
   default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6990,14 +6990,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
