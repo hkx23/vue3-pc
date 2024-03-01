@@ -86,9 +86,10 @@
       >
       </cmp-table>
       <!-- ################# 明细表格数据 ###################### -->
-      <t-table
-        ref="tableRef"
+      <cmp-table
+        ref="tableDetailRef"
         row-key="id"
+        :selected-row-keys="selectedRowKeys"
         :show-pagination="false"
         :show-toolbar="false"
         :loading="loadingMaterialDtl"
@@ -108,7 +109,7 @@
         <template #reqQty="{ row }">
           <t-input-number v-model="row.reqQty" theme="normal"></t-input-number>
         </template>
-      </t-table>
+      </cmp-table>
     </cmp-container>
   </t-dialog>
 </template>
@@ -171,6 +172,7 @@ const tableMaterialSumColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
   { title: `${t('materialRequisition.moScheCode')}`, width: 150, colKey: 'scheCode' },
   { title: `${t('materialRequisition.mitemCode')}`, width: 120, colKey: 'mitemCode' },
   { title: `${t('materialRequisition.mitemName')}`, width: 120, colKey: 'mitemName' },
@@ -191,6 +193,14 @@ const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('materialRequisition.applyingQty')}`, width: 120, colKey: 'applyingQty' },
   { title: `${t('materialRequisition.pickQty')}`, width: 120, colKey: 'alreadyPickQty' },
 ];
+const tableDetailRef = ref();
+const selectedRowKeys = computed(() => {
+  return tableDetailRef.value?.getSelectedRowKeys();
+});
+
+const selectRowDatas = computed(() => {
+  return tableDataMaterialRequisition.value.filter((item) => selectedRowKeys.value.includes(item.id));
+});
 
 const onRowClick = ({ row }) => {
   formData.selectRowId = row.id;
@@ -298,7 +308,7 @@ const onConfirmForm = async () => {
     setLoadingMaterialDtl(true);
     const data = await apiWarehouse.materialRequisition.saveData({
       ...formData,
-      submitList: tableDataMaterialRequisition.value,
+      submitList: selectRowDatas.value,
     });
     MessagePlugin.success(t('common.message.saveSuccess'));
     formVisible.value = false;
@@ -313,10 +323,10 @@ const onConfirmForm = async () => {
 // 提交的校验
 const checkSubmit = () => {
   let isSuccess = true;
-  if (tableDataMaterialRequisition.value && tableDataMaterialRequisition.value.length > 0) {
+  if (selectRowDatas.value && selectRowDatas.value.length > 0) {
     let isEmptyWarehouse = false;
     let isEmptyQty = false;
-    tableDataMaterialRequisition.value.forEach((item) => {
+    selectRowDatas.value.forEach((item) => {
       if (!item.warehouseId) {
         isEmptyWarehouse = true;
       }

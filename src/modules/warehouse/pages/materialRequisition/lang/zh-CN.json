@@ -4,7 +4,7 @@
     "tableSubTilte": "领料制单列表",
     "checkReqQtyEmpty": "本次需领料数量不能为空，请检查",
     "checkWarehouseEmpty": "仓库信息不能为空，请检查",
-    "checkSubmitDtls": "无明细数据，无法提交，请检查",
+    "checkSubmitDtls": "请勾选数据再进行提交",
     "submit": "提交",
     "formtitle": "新增领料制单",
     "onHandQty": "库存现有量",
