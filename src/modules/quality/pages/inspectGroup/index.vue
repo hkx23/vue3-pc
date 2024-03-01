@@ -7,6 +7,7 @@
       <!-- ################# 处理组表格数据 ###################### -->
       <cmp-container :full="true" :ghost="true">
         <cmp-table
+          ref="tableRef"
           v-model:pagination="pageUI"
           row-key="id"
           :table-column="tableGroupColumns"
@@ -52,7 +53,6 @@
             row-key="id"
             :columns="tableUserColumns"
             :data="tableDataUserDtl"
-            :tree="treeConfig"
             active-row-type="single"
             :loading="loadingPackDtl"
             :total="dataUserTotal"
@@ -103,8 +103,6 @@
           class="son-table"
           :fixed-height="true"
           style="height: 180px"
-          :selected-row-keys="mitemRowKeys"
-          @select-change="onSelectedMitemChange"
           @refresh="fetchMitemTable"
         >
           <template #title> {{ t('inspectGroup.tableSubRightTitle') }} </template>
@@ -123,7 +121,7 @@
               {{ t('common.button.import') }}
             </t-button>
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onBatchDeleteMitemRowClick">
-              <t-button theme="default" :disabled="mitemRowKeys?.length < 2">
+              <t-button theme="default" :disabled="selectMitemRowKeys?.length < 2">
                 {{ t('common.button.batchDelete') }}</t-button
               >
             </t-popconfirm>
@@ -172,7 +170,7 @@
 
 <script setup lang="ts">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, Ref, ref } from 'vue';
+import { computed, onMounted, Ref, ref } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -248,10 +246,9 @@ const opts = computed(() => {
 const onSelectedChange = (value: any) => {
   userRowKeys.value = value;
 };
-const mitemRowKeys = ref({}) as any;
-const onSelectedMitemChange = (value: any) => {
-  mitemRowKeys.value = value;
-};
+const selectMitemRowKeys = computed(() => {
+  return tableMitemRef.value?.getSelectedRowKeys();
+});
 
 const tableGroupColumns: PrimaryTableCol<TableRowData>[] = [
   // { colKey: 'row-select', type: 'single', width: 40, fixed: 'left' },
@@ -280,10 +277,6 @@ const tableMitemColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 80, colKey: 'op' },
 ];
 
-const treeConfig = reactive({
-  childrenKey: 'children',
-  treeNodeColumnIndex: 0,
-});
 const tableDataMain = ref([]);
 const tableDataUserDtl = ref([]);
 const tableDataMitem = ref([]);
@@ -424,7 +417,11 @@ const onDeleteMitemRowClick = async (row: any) => {
 };
 // 批量删除关联物料
 const onBatchDeleteMitemRowClick = async () => {
-  await apiQuality.inspectGroupInMitem.delByIds(mitemRowKeys.value);
+  const ids = [];
+  selectMitemRowKeys.value.forEach((element) => {
+    ids.push(element);
+  });
+  await apiQuality.inspectGroupInMitem.delByIds(ids);
   MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchMitemTable();
 };
