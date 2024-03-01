@@ -276,7 +276,7 @@ const onSelectionChange = (val: any, valuKeys: any) => {
       });
     }
 
-    emits('update:modelValue', multipleValues);
+    emits('update:modelValue', valuKeys.join(','));
   }
   // 选择值
   emits('SelectionChange', val, valuKeys);

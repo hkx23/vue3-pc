@@ -31,7 +31,19 @@
       <div class="container">
         <t-row class="body">
           <t-col flex="1" :class="['content left', { bottom: !props.multiple }]">
-            <p class="header">{{ props.name }}列表</p>
+            <p class="header">
+              {{ props.name }}列表
+              <t-link
+                v-show="isSearch"
+                class="action-btn"
+                hover="color"
+                theme="primary"
+                size="small"
+                @click="onClickSelectAll"
+              >
+                全选
+              </t-link>
+            </p>
             <t-list
               v-if="state.tableData"
               style="flex: 1; overflow-y: auto"
@@ -53,6 +65,7 @@
                   :description="item[listSetting.descField] || ''"
                   :show-icon="item[listSetting.showIcon]"
                   :suffix-tag="item[listSetting.categoryField]"
+                  :show-success="selectedRowKeys.indexOf(item[keywords.value]) >= 0"
                 ></cmp-list-item-meta>
               </t-list-item>
             </t-list>
@@ -62,7 +75,7 @@
             <p class="header">
               已选{{ props.name }}
               <t-link
-                class="clear-all"
+                class="action-btn"
                 hover="color"
                 theme="primary"
                 size="small"
@@ -81,17 +94,9 @@
                   :code="item[listSetting.codeField]"
                   :description="item[listSetting.descField] || ''"
                   :show-icon="item[listSetting.showIcon]"
+                  show-close-button
+                  @close="onClickCloseItem(item[keywords.value])"
                 ></cmp-list-item-meta>
-                <template #action>
-                  <t-button
-                    variant="text"
-                    shape="square"
-                    class="close-btn"
-                    @click="onClickCloseItem(item[keywords.value])"
-                  >
-                    <close-icon />
-                  </t-button>
-                </template>
               </t-list-item>
             </t-list>
           </t-col>
@@ -129,8 +134,8 @@
 </template>
 
 <script setup lang="tsx" name="BcmpSelectSelect2">
-import { debounce, isEmpty } from 'lodash';
-import { ChevronDownIcon, CloseIcon } from 'tdesign-icons-vue-next';
+import _, { debounce, isEmpty } from 'lodash';
+import { ChevronDownIcon } from 'tdesign-icons-vue-next';
 import { ListProps } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
 
@@ -253,19 +258,31 @@ const props = defineProps({
     type: [String, Number, Array],
     default: '',
   },
+  // 自定义查询条件
+  customConditions: {
+    type: Array as unknown as any[],
+    default: () => {
+      return [];
+    },
+  },
 });
-const onOptionClick = (item) => {
+const onOptionClick = (item, openReverse: boolean = true) => {
   if (props.multiple) {
     if (!Array.isArray(state.selectedRowData)) {
       state.selectedRowData = [];
     }
-    if (state.selectedRowData.findIndex((t) => t[props.rowKey] === item[props.rowKey]) >= 0) return;
+    if (state.selectedRowData.findIndex((t) => t[props.rowKey] === item[props.rowKey]) >= 0) {
+      if (openReverse) {
+        onClickCloseItem(item[props.rowKey]);
+      }
+      return;
+    }
     state.selectedRowData.push(item);
-    selectedRowKeys.value = state.selectedRowData.map((item: { [x: string]: any }) => item[props.rowKey]);
+    // selectedRowKeys.value = state.selectedRowData.map((item: { [x: string]: any }) => item[props.rowKey]);
   } else {
     state.defaultValue = item;
     state.selectedRowData = item;
-    selectedRowKeys.value = item[props.rowKey];
+    // selectedRowKeys.value = item[props.rowKey];
     onClickConfirm();
   }
 };
@@ -282,6 +299,9 @@ const selectAttr = computed(() => {
     ...useAttrs(),
   };
 });
+
+const filterList = ref([]);
+
 // 是否在加载数据
 const loading = ref(false);
 
@@ -313,16 +333,35 @@ const state: any = reactive({
   tabularMap: {}, // 存储下拉tale的所有name
 });
 
+const isSearch = computed<Boolean>(() => {
+  return selectSearch.value !== '' && state.tableData.length > 0;
+});
+const onClickSelectAll = () => {
+  if (Array.isArray(state.selectedRowData) && state.tableData.length > 0) {
+    state.tableData.forEach((item) => {
+      onOptionClick(item, false);
+    });
+  }
+};
 // 选中的行-值
-const selectedRowKeys = ref([]);
-
+// const selectedRowKeys = ref([]);
+const selectedRowKeys = computed<string[]>(() => {
+  if (props.multiple) {
+    return state.selectedRowData.map((item: { [x: string]: any }) => item[props.rowKey]);
+  }
+  return [state.defaultValue];
+});
 const onPopupVisibleChange = (val: boolean, context: any) => {
   if (val) {
     selectSearch.value = '';
     onInputChange('');
     console.log(val, context);
     if (props.multiple) {
-      if (!Array.isArray(state.selectedRowData)) {
+      if (Array.isArray(state.defaultValue) && state.defaultValue.length > 0) {
+        // 去查接口获取已选择的数据
+        loadSelectedData();
+        // state.selectedRowData = state.defaultValue;
+      } else {
         state.selectedRowData = [];
       }
     }
@@ -340,7 +379,7 @@ const onClear = () => {
   }
 
   selectSearch.value = '';
-  selectedRowKeys.value = [];
+  // selectedRowKeys.value = [];
   popupVisible.value = false;
   emits('selectionChange', state.defaultValue, selectedRowKeys.value);
 };
@@ -404,8 +443,54 @@ const onClickCloseAll = () => {
   state.selectedRowData = [];
 };
 
+const loadSelectedData = async () => {
+  let selectValue = '';
+  if (Array.isArray(state.defaultValue) && state.defaultValue.length > 0) {
+    // 先判断state.defaultValue的数组结构有没有value属性
+    if (state.defaultValue[0].value) {
+      selectValue = state.defaultValue.map((item: { [x: string]: any }) => item.value).join(',');
+    } else {
+      selectValue = state.defaultValue.join(',');
+    }
+  } else if (typeof props.value === 'string') {
+    selectValue = state.defaultValue;
+  }
+  if (selectValue === '') return;
+  loading.value = true;
+  const searchCondition = {
+    pageNum: 1, // pagination.value.current,
+    pageSize: 99999, // pagination.value.pageSize,
+    selectedField: props.keywords.value,
+    selectedValue: selectValue,
+    keyword: '',
+    category: props.category,
+    parentId: props.parentId,
+  };
+  try {
+    const { list } = await http.post<any>(props.remoteUrl, searchCondition);
+
+    list.forEach((element: { [x: string]: any; label: any; value: any }) => {
+      element.label = element[props.keywords.label];
+      element.value = element[props.keywords.value];
+    });
+    state.selectedRowData = list;
+    state.defaultValue = _.cloneDeep(list);
+  } catch (e) {
+    console.log(e);
+  } finally {
+    loading.value = false;
+  }
+};
+
 const remoteLoad = async (val: any) => {
   loading.value = true;
+  const finalFilterList = _.cloneDeep(filterList.value);
+  if (props.customConditions && props.customConditions.length > 0) {
+    props.customConditions.forEach((element) => {
+      finalFilterList.push(element);
+    });
+  }
+
   if (tempCondition.value.keyword !== selectSearch.value) {
     pageIndex.value = 1;
   }
@@ -417,6 +502,7 @@ const remoteLoad = async (val: any) => {
     keyword: selectSearch.value,
     category: props.category,
     parentId: props.parentId,
+    filters: finalFilterList,
   };
 
   // 判断两次查询条件是否一样，一样的话，不获取数据
@@ -470,7 +556,7 @@ const onTagChange = (currentTags: any, context: { trigger: any; index: any; item
   if (['tag-remove', 'backspace'].includes(trigger)) {
     state.defaultValue = state.defaultValue.filter((element: any, i: any) => i !== index);
     state.selectedRowData = state.selectedRowData.filter((element: any, i: any) => i !== index);
-    selectedRowKeys.value = state.selectedRowData.map((item: { [x: string]: any }) => item[props.rowKey]);
+    // selectedRowKeys.value = state.selectedRowData.map((item: { [x: string]: any }) => item[props.rowKey]);
   }
   // if (trigger === 'enter') {
   //   const current = { label: item, value: item };
@@ -551,6 +637,9 @@ onMounted(() => {
       state.defaultValue = (state.defaultValue || []).map((item: any) => {
         return item;
       });
+      if (state.defaultValue.length > 0) {
+        loadSelectedData();
+      }
     } else {
       // state.selectSearch = props.value;
       console.log('remoteLoad-按默认值查询');
@@ -574,7 +663,7 @@ watch(
         let valueAsArray: unknown[];
         if (Array.isArray(props.value)) {
           valueAsArray = props.value;
-        } else if (typeof props.value === 'string') {
+        } else if (typeof props.value === 'string' && props.value !== '') {
           valueAsArray = props.value.split(',');
         } else {
           valueAsArray = [];
@@ -583,14 +672,16 @@ watch(
         state.defaultValue = (state.defaultValue || []).map((item: any) => {
           return item;
         });
+        loadSelectedData();
       } else if (!isHandleSelectionChange.value) {
         if (props.value) {
           console.log('remoteLoad-按默认值查询');
           defaultValue.value = props.value.toString();
+
           remoteLoad(props.value);
         } else {
           state.defaultValue = '';
-          selectedRowKeys.value = [];
+          // selectedRowKeys.value = [];
           emits('selectionChange', state.defaultValue, selectedRowKeys.value);
         }
       }
@@ -609,6 +700,19 @@ watch(
   { deep: true },
 );
 
+watch(
+  () => props.multiple,
+  (newVal) => {
+    if (state.selectedRowData.value) {
+      if (newVal && !Array.isArray(state.selectedRowData.value)) {
+        state.selectedRowData.value = [];
+      } else if (!newVal && Array.isArray(state.selectedRowData.value)) {
+        state.selectedRowData.value = undefined;
+      }
+    }
+  },
+);
+
 // 暴露方法出去
 defineExpose({ closeTable, onClear });
 </script>
@@ -620,6 +724,7 @@ defineExpose({ closeTable, onClear });
 
 .container {
   > .body {
+    flex-flow: row nowrap;
     padding: 0 16px;
 
     > .content {
@@ -638,10 +743,6 @@ defineExpose({ closeTable, onClear });
         margin-right: 10px;
       }
 
-      &.bottom {
-        margin-bottom: 10px;
-      }
-
       > .header {
         margin-top: 0;
         font-size: 12px;
@@ -649,9 +750,14 @@ defineExpose({ closeTable, onClear });
         line-height: 20px;
         padding: 5px 0;
 
-        .clear-all {
+        .action-btn {
           float: right;
         }
+      }
+
+      > .full-list {
+        flex: 1;
+        overflow-y: auto;
       }
     }
   }
@@ -664,23 +770,11 @@ defineExpose({ closeTable, onClear });
 }
 
 .select-item {
+  padding: 0;
+
   &:hover {
     background-color: var(--td-bg-color-container-hover);
     border-radius: var(--td-radius-default);
-  }
-
-  .item-tag {
-    position: absolute;
-    right: 8px;
-    top: 10px;
-  }
-}
-
-.close-btn {
-  color: var(--td-text-color-placeholder);
-
-  &:hover {
-    color: var(--td-text-color-primary);
   }
 }
 </style>

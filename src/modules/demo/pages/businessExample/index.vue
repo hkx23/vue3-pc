@@ -364,8 +364,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
-const isMultiple = ref(false);
-const plantValue = ref();
+const isMultiple = ref(true);
+const plantValue = ref('1744167886127157249,1725461564969635842');
 const stationValue = ref('1739886055668158465');
 const mitemCategoryValue = ref();
 const lineValue = ref();
