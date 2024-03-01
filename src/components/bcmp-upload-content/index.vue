@@ -464,8 +464,12 @@ watch(
 const getFileList = () => {
   return tableData.value;
 };
+const setFileList = (files) => {
+  tableData.value = files;
+};
 defineExpose({
   getFileList,
+  setFileList,
 });
 </script>
 
