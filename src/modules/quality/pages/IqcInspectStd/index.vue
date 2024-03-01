@@ -72,7 +72,10 @@
                         content="失效后该标准将被禁用，同时解除物料及物料类对该标准的引用，是否继续？"
                         @confirm="onChangStatus(row)"
                       >
-                        <t-link v-if="row.status === 'EFFECTIVE'" theme="primary" style="padding-right: 8px"
+                        <t-link
+                          v-if="row.status !== 'DRAFT' && row.status !== 'EXPIRED'"
+                          theme="primary"
+                          style="padding-right: 8px"
                           >失效</t-link
                         >
                       </t-popconfirm>
@@ -151,13 +154,13 @@
   <t-dialog v-model:visible="visible2" header="待检单" :close-on-overlay-click="false" :confirm-btn="null">
     <cmp-table
       v-model:pagination="pageUIBill"
-      row-key="id"
-      :fixed-height="true"
+      row-key="billNo"
       :active-row-type="'single'"
       :hover="true"
       :table-column="billNoColumn"
       :table-data="billTabData.list"
       :total="billAssign"
+      @refresh="onRefreshBill"
     >
     </cmp-table>
   </t-dialog>
@@ -200,8 +203,28 @@ const assignTabData = reactive({ list: [] });
 const billTabData = reactive({ list: [] });
 const totalAssign = ref(0);
 const billAssign = ref(0);
-const onInfoConfirm = () => {
+const onInfoConfirm = async () => {
+  if (curRowId.value) {
+    const res = (await api.iqcInspect.getList({ iqcInspectStdId: curRowId.value })) as any;
+    if (res) {
+      billTabData.list = res.list;
+      billAssign.value = res.total;
+    }
+  }
   visible2.value = true;
+};
+const onRefreshBill = async () => {
+  if (curRowId.value) {
+    const res = (await api.iqcInspect.getList({
+      pageNum: pageUIBill.value.page,
+      pageSize: pageUIBill.value.rows,
+      iqcInspectStdId: curRowId.value,
+    })) as any;
+    if (res) {
+      billTabData.list = res.list;
+      billAssign.value = res.total;
+    }
+  }
 };
 const onSelectedChange = (value: any) => {
   stdRowKeys.value = value;
@@ -355,12 +378,12 @@ const standardAllotColumn: PrimaryTableCol<TableRowData>[] = [
 // 待检单列表数据
 const billNoColumn: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'inspectStdCode',
+    colKey: 'billNo',
     title: '待检单号',
     width: '100',
   },
   {
-    colKey: 'inspectStdName',
+    colKey: 'deliveryNo',
     title: '送货单号',
     width: '100',
   },
@@ -370,12 +393,12 @@ const billNoColumn: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'categoryCode',
+    colKey: 'mitemName',
     title: '物料',
     width: '100',
   },
   {
-    colKey: 'categoryName',
+    colKey: 'supplierName',
     title: '供应商',
     width: '100',
   },
@@ -385,7 +408,7 @@ const onChangStatus = async (row) => {
   const res = (await api.iqcInspectStd.countInspect(row.id)) as any;
 
   if (res > 0) {
-    message.value = `“目前共有${res}张待检单使用了该标准，请检验完成后再删除检验标准。`;
+    message.value = `目前共有${res}张待检单使用了该标准，请检验完成后再删除检验标准。`;
     curRowId.value = row.id;
     visible1.value = true;
   } else {

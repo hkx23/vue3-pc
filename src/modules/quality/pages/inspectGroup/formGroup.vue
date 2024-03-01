@@ -7,11 +7,19 @@
     :show-cancel="true"
     :show-error-message="false"
   >
-    <t-form-item :label="t('productRule.packRuleCode')" name="packRuleCode">
-      <t-input v-model="formData.packRuleCode" :disabled="!isAdd" />
+    <t-form-item :label="t('inspectGroup.groupCode')" name="inspectGroupCode">
+      <t-input v-model="formData.inspectGroupCode" />
     </t-form-item>
-    <t-form-item :label="t('productRule.packRuleName')" name="packRuleName">
-      <t-input v-model="formData.packRuleName" clearable />
+    <t-form-item :label="t('inspectGroup.groupName')" name="inspectGroupName">
+      <t-input v-model="formData.inspectGroupName" clearable />
+    </t-form-item>
+    <t-form-item :label="t('business.main.desc')" name="desc">
+      <t-textarea
+        v-model="formData.inspectGroupDesc"
+        :placeholder="t('inspectGroup.placeholderDesc')"
+        name="description"
+        :autosize="{ minRows: 3, maxRows: 5 }"
+      />
     </t-form-item>
   </t-form>
 </template>
@@ -22,9 +30,9 @@ export default {
 </script>
 <script setup lang="ts">
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
-import { reactive, Ref, ref } from 'vue';
+import { Ref, ref } from 'vue';
 
-import { api as apiControl, ProductPackRule } from '@/api/control';
+import { api } from '@/api/quality';
 
 import { useLang } from './lang';
 
@@ -43,15 +51,15 @@ const props = defineProps({
 const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const FORM_RULES = {
-  packRuleCode: [{ required: true, message: t('common.placeholder.input', [t('productRule.packRuleCode')]) }],
-  packRuleName: [{ required: true, message: t('common.placeholder.input', [t('productRule.packRuleName')]) }],
+  inspectGroupCode: [{ required: true, message: t('common.placeholder.input', [t('inspectGroup.packRuleCode')]) }],
+  inspectGroupName: [{ required: true, message: t('common.placeholder.input', [t('inspectGroup.packRuleName')]) }],
 };
 
-type PackRuleForm = ProductPackRule;
-
-const formData: PackRuleForm = reactive({
-  packRuleCode: '',
-  packRuleName: '',
+const formData = ref({
+  id: '',
+  inspectGroupCode: '',
+  inspectGroupName: '',
+  inspectGroupDesc: '',
 });
 
 // onMounted(() => {});
@@ -65,12 +73,12 @@ const submit = async () => {
         return;
       }
       if (props.isAdd) {
-        apiControl.productPackRule.add(formData).then(() => {
+        api.inspectGroup.add(formData.value).then(() => {
           MessagePlugin.success(t('common.message.addSuccess'));
           resolve(formData);
         });
       } else {
-        apiControl.productPackRule.update(formData).then(() => {
+        api.inspectGroup.change(formData.value).then(() => {
           MessagePlugin.success(t('common.message.saveSuccess'));
           resolve(formData);
         });
@@ -80,17 +88,20 @@ const submit = async () => {
 };
 
 const reset = () => {
-  formRef.value.reset({ type: 'empty' });
-  for (const key in formData) {
-    delete formData[key];
-  }
+  formData.value = {
+    id: '',
+    inspectGroupCode: '',
+    inspectGroupName: '',
+    inspectGroupDesc: '',
+  };
 };
 
 const setRow = (row: any) => {
-  reset();
-  formData.id = row.id;
-  formData.packRuleCode = row.packRuleCode;
-  formData.packRuleName = row.packRuleName;
+  console.log(formData.value);
+  formData.value.id = row.id;
+  formData.value.inspectGroupCode = row.inspectGroupCode;
+  formData.value.inspectGroupName = row.inspectGroupName;
+  formData.value.inspectGroupDesc = row.inspectGroupDesc;
 };
 
 defineExpose({
@@ -98,6 +109,7 @@ defineExpose({
   submit,
   reset,
   setRow,
+  formData,
 });
 </script>
 <style lang="less" scoped></style>

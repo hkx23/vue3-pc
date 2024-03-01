@@ -1,19 +1,16 @@
 {
-  "productRule": {
-    "tableSubRightTitle": "关联物料列表",
-    "tableSubLeftTitle": "包装类型列表",
-    "tableSubTitle": "包装规则列表",
-    "packRule": "包装规则",
-    "packRuleCode": "包装规则代码",
-    "packRuleName": "包装规则名称",
-    "packType": "包装类型",
-    "uom": "单位",
-    "packQty": "数量",
-    "mitemCategory": "物料类型",
-    "checkPackMitemSave": "请选择物料",
-    "checkPackMitemCategorySave": "请选择物料类型",
-    "packRelationType": "关联维度",
-    "parentLevelName": "层级",
-    "mitem": "物料"
+  "inspectGroup": {
+    "tableSubRightTitle": "检验物料类",
+    "tableSubLeftTitle": "组内人员",
+    "tableSubTitle": "检验组列表",
+    "inspectGroup": "检验组",
+    "inspectUser": "检验人员",
+    "name": "姓名",
+    "jobNo": "工号",
+    "groupCode": "小组编码",
+    "groupName": "小组名称",
+    "placeholderDesc": "请输入描述",
+    "mitemCategoryName": "类别名称",
+    "mitemCategoryCode": "类别编码"
   }
 }
