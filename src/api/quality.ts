@@ -965,6 +965,18 @@ export interface IqcInspectStdFullSearch {
   pickQty?: string;
   /** 严格度 */
   inspectionStringency?: string;
+  supplierId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 接收单号信息 */
+  billNoList?: IqcInspectSubmitDeliveryNoVO[];
+}
+
+/** 物料检验头表 */
+export interface IqcInspectSubmitDeliveryNoVO {
+  /** 接收单号 */
+  billNo?: string;
+  billNoDtlId?: string;
 }
 
 /** 检验测量值 */
@@ -1104,10 +1116,10 @@ export type IqcInspectStdFullVO = {
   reValue?: number;
   /** AC/RE */
   acRe?: string;
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1140,8 +1152,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -1214,6 +1226,8 @@ export interface IqcInspectStdVO {
   creatorName?: string;
   /** 最后修订人 */
   modifierName?: string;
+  /** 标准状态名称 */
+  statusName?: string;
   files?: FileUpload[];
   dtls?: IqcInspectStdDtlVO[];
   isTemporaryStorage?: boolean;
@@ -1557,15 +1571,6 @@ export interface IqcInspectNgVO {
 }
 
 /** 物料检验头表 */
-export interface IqcInspectSubmitDeliveryNoVO {
-  /** 接收单号 */
-  billNo?: string;
-  /** 接收单号行号 */
-  erpLineNo?: string;
-  billNoDtlId?: string;
-}
-
-/** 物料检验头表 */
 export interface IqcInspectSubmitVO {
   /** IQC单号 */
   iqcBillNo?: string;
@@ -1617,6 +1622,7 @@ export interface IqcInspectSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+  iqcInspectStdId?: string;
 }
 
 /** 入厂检验搜索条件 */
@@ -1748,6 +1754,592 @@ export interface ResultPagingDataMitemReceiveBillVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataMitemReceiveBillVO;
+}
+
+/** 物料检验关联单据表 */
+export interface IqcInspectBillVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  iqcInspectId?: string;
+  /** 接收单号 */
+  deliveryNo?: string;
+  deliveryDtlId?: string;
+  /** 检验单号 */
+  iqcBillNo?: string;
+}
+
+/** 物料检验关联单据表 */
+export interface IqcInspectDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  iqcInspectId?: string;
+  /**
+   * 项目行号
+   * @format int32
+   */
+  itemSeq?: number;
+  /** 项目分类 */
+  itemCategory?: string;
+  /** 项目名称或内容 */
+  itemName?: string;
+  /** 项目特性 */
+  characteristics?: string;
+  /** 基准值 */
+  baseValue?: number;
+  /** 最大值 */
+  maxValue?: number;
+  /** 最小值 */
+  minValue?: number;
+  /** 技术要求 */
+  technicalRequest?: string;
+  /** 抽样标准类型 */
+  samplingStandardType?: string;
+  samplingStandardId?: string;
+  /** 检验水平 */
+  inspectLevel?: string;
+  /** 检验工具 */
+  inspectTool?: string;
+  /** 不合格分类 */
+  unqualifyCategory?: string;
+  /** 检验依据 */
+  inspectBasis?: string;
+  /** 检验类型 */
+  inspectType?: string;
+  /** 检验属性 */
+  inspectProperty?: string;
+  /**
+   * 是否CTQ
+   * @format int32
+   */
+  isCtq?: number;
+  /** 不良数 */
+  ngQty?: number;
+  /** 不良原因 */
+  ngReason?: string;
+  /** 样本数 */
+  sampleQty?: number;
+  /** AC值 */
+  acValue?: number;
+  /** RE值 */
+  reValue?: number;
+  /** 检验结果 */
+  inspectResult?: string;
+}
+
+/** 物料检验头表 */
+export interface IqcInspectVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 检验单号 */
+  billNo?: string;
+  iqcInspectStdId?: string;
+  mitemId?: string;
+  supplierId?: string;
+  /** 检验数量 */
+  inspectQty?: number;
+  /** 检验严格度 */
+  inspectStringency?: string;
+  /** 缺陷等级 */
+  defectCategory?: string;
+  /** 处理意见或方法 */
+  handleMethod?: string;
+  /** 供方处理意见 */
+  supplyHandleMethod?: string;
+  /** 责任方 */
+  responsibility?: string;
+  /** 整改意见 */
+  correctOpinion?: string;
+  personResponsibilityId?: string;
+  /**
+   * 是否启动品质改善
+   * @format int32
+   */
+  isStartImprove?: number;
+  /** 让步接收数量 */
+  concessQty?: number;
+  /** 备注 */
+  memo?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 单据状态 */
+  status?: string;
+  /** 显示名 */
+  displayName?: string;
+  /** 单据状态名称 */
+  statusName?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 送货单号 */
+  deliveryNo?: string;
+  /** 物料检验关联单据表 */
+  iqcInspectBillVOList?: IqcInspectBillVO[];
+  /** 物料检验明细表 */
+  iqcInspectDtlList?: IqcInspectDtlVO[];
+}
+
+/** 响应数据 */
+export type PagingDataIqcInspectVO = {
+  list?: IqcInspectVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataIqcInspectVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataIqcInspectVO;
+}
+
+export interface InspectGroupSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  keyword?: string;
+  userId?: string;
+  inspectGroupId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+}
+
+/** 响应数据 */
+export type PersonVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 人员编号 */
+  personCode?: string;
+  /** 姓名 */
+  personName?: string;
+  /**
+   * 性别，1男，0女
+   * @format int32
+   */
+  gender?: number;
+  /** 邮箱 */
+  email?: string;
+  /** 手机号 */
+  mobilePhone?: string;
+  adminOrgId?: string;
+  userId?: string;
+  /** @format int32 */
+  isAdd?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListPersonVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PersonVO[] | null;
+}
+
+/** 品质检验组用户表 */
+export interface InspectGroupInUserVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  inspectGroupId?: string;
+  userId?: string;
+  /** 检验组用户名 */
+  inspectGroupDisplayName?: string;
+  /** 检验组人员工号 */
+  personCode?: string;
+  /** 检验组人员姓名 */
+  personName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataInspectGroupInUserVO = {
+  list?: InspectGroupInUserVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectGroupInUserVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectGroupInUserVO;
+}
+
+/** 品质检验组用户表 */
+export interface InspectGroupInUser {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  inspectGroupId?: string;
+  userId?: string;
+}
+
+/** 响应数据 */
+export type MitemCategoryVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 物料分类代码 */
+  categoryCode?: string;
+  /** 物料分类名称 */
+  categoryName?: string;
+  /** 物料分类描述 */
+  categoryDesc?: string;
+  /** 小数位计算类型 */
+  reqCalcRule?: string;
+  /** 物料投料规则 */
+  onboardRuleCode?: string;
+  /**
+   * 是否手工创建
+   * @format int32
+   */
+  isManual?: number;
+  /** @format int32 */
+  isAdd?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListMitemCategoryVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MitemCategoryVO[] | null;
+}
+
+/** 品质检验组用户表 */
+export interface InspectGroupInMitemVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  inspectGroupId?: string;
+  mitemCategoryId?: string;
+  /** 检验组类别编码 */
+  categoryCode?: string;
+  /** 检验组类别名称 */
+  categoryName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataInspectGroupInMitemVO = {
+  list?: InspectGroupInMitemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectGroupInMitemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectGroupInMitemVO;
+}
+
+/** 品质检验组物料表 */
+export interface InspectGroupInMitem {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  inspectGroupId?: string;
+  mitemCategoryId?: string;
+}
+
+export interface InspectGroupVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 检验组编码 */
+  inspectGroupCode?: string;
+  /** 检验组名称 */
+  inspectGroupName?: string;
+  /** 检验组描述 */
+  inspectGroupDesc?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataInspectGroupVO = {
+  list?: InspectGroupVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectGroupVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectGroupVO;
+}
+
+/** 品质检验组表 */
+export interface InspectGroup {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 检验组编码 */
+  inspectGroupCode?: string;
+  /** 检验组名称 */
+  inspectGroupName?: string;
+  /** 检验组描述 */
+  inspectGroupDesc?: string;
 }
 
 export interface BatchDynamicInsertDTO {
@@ -1987,10 +2579,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -2183,13 +2775,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s1?: string;
-  iii?: string;
-  s3?: string;
   s2?: string;
-  s4?: string;
   ii?: string;
   i?: string;
+  iii?: string;
+  s1?: string;
+  s4?: string;
+  s3?: string;
 } | null;
 
 /** 计量单位 */
@@ -2292,35 +2884,6 @@ export interface ResultOqcInspectStdDtlDTO {
   message?: string;
   data?: OqcInspectStdDtlDTO;
 }
-
-/** 品质检验组表 */
-export type InspectGroup = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 检验组名称 */
-  inspectGroupName?: string;
-} | null;
 
 /** 通用响应类 */
 export interface ResultListInspectGroup {
@@ -3139,6 +3702,233 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验头表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/iqcInspect/getList
+     * @secure
+     */
+    getList: (data: IqcInspectSearch) =>
+      http.request<ResultPagingDataIqcInspectVO['data']>(`/api/quality/iqcInspect/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验头表
+     * @name CreatedIqcInspectByMitemReceipt
+     * @summary 根据来料接收生成检验单（跨库调用）
+     * @request POST:/iqcInspect/CreatedIqcInspectByMitemReceipt
+     * @secure
+     */
+    createdIqcInspectByMitemReceipt: (data: IqcInspectStdFullSearch) =>
+      http.request<ResultBoolean['data']>(`/api/quality/iqcInspect/CreatedIqcInspectByMitemReceipt`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectGroupInUser: {
+    /**
+     * No description
+     *
+     * @tags 品质检验组用户表
+     * @name GetPersonList
+     * @summary 品质检验新增获取人员列表
+     * @request POST:/inspectGroupInUser/getPersonList
+     * @secure
+     */
+    getPersonList: (data: InspectGroupSearch) =>
+      http.request<ResultListPersonVO['data']>(`/api/quality/inspectGroupInUser/getPersonList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验组用户表
+     * @name GetList
+     * @summary 品质检验组子表组内人员数据
+     * @request POST:/inspectGroupInUser/getList
+     * @secure
+     */
+    getList: (data: InspectGroupSearch) =>
+      http.request<ResultPagingDataInspectGroupInUserVO['data']>(`/api/quality/inspectGroupInUser/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验组用户表
+     * @name DelByIds
+     * @summary 删除品质检验组人员
+     * @request POST:/inspectGroupInUser/delByIds
+     * @secure
+     */
+    delByIds: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/quality/inspectGroupInUser/delByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验组用户表
+     * @name Add
+     * @summary 新增检验组
+     * @request POST:/inspectGroupInUser/add
+     * @secure
+     */
+    add: (data: InspectGroupInUser) =>
+      http.request<ResultObject['data']>(`/api/quality/inspectGroupInUser/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectGroupInMitem: {
+    /**
+     * No description
+     *
+     * @tags 品质检验组物料表
+     * @name GetCategoryList
+     * @summary 品质检验新增获取物料类别列表
+     * @request POST:/inspectGroupInMitem/getPersonList
+     * @secure
+     */
+    getCategoryList: (data: InspectGroupSearch) =>
+      http.request<ResultListMitemCategoryVO['data']>(`/api/quality/inspectGroupInMitem/getPersonList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验组物料表
+     * @name GetList
+     * @summary 品质检验组子表检验物料类数据
+     * @request POST:/inspectGroupInMitem/getList
+     * @secure
+     */
+    getList: (data: InspectGroupSearch) =>
+      http.request<ResultPagingDataInspectGroupInMitemVO['data']>(`/api/quality/inspectGroupInMitem/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验组物料表
+     * @name DelByIds
+     * @summary 删除品质检验组物料类别
+     * @request POST:/inspectGroupInMitem/delByIds
+     * @secure
+     */
+    delByIds: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/quality/inspectGroupInMitem/delByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验组物料表
+     * @name Add
+     * @summary 新增检验组物料类别
+     * @request POST:/inspectGroupInMitem/add
+     * @secure
+     */
+    add: (data: InspectGroupInMitem) =>
+      http.request<ResultObject['data']>(`/api/quality/inspectGroupInMitem/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  inspectGroup: {
+    /**
+     * No description
+     *
+     * @tags 品质检验组表
+     * @name GetList
+     * @summary 品质检验组主表数据
+     * @request POST:/inspectGroup/getList
+     * @secure
+     */
+    getList: (data: InspectGroupSearch) =>
+      http.request<ResultPagingDataInspectGroupVO['data']>(`/api/quality/inspectGroup/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验组表
+     * @name DelByIds
+     * @summary 删除品质检验组
+     * @request POST:/inspectGroup/delByIds
+     * @secure
+     */
+    delByIds: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/quality/inspectGroup/delByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验组表
+     * @name Change
+     * @summary 修改品质检验组
+     * @request POST:/inspectGroup/change
+     * @secure
+     */
+    change: (data: InspectGroup) =>
+      http.request<ResultObject['data']>(`/api/quality/inspectGroup/change`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验组表
+     * @name Add
+     * @summary 新增检验组
+     * @request POST:/inspectGroup/add
+     * @secure
+     */
+    add: (data: InspectGroup) =>
+      http.request<ResultObject['data']>(`/api/quality/inspectGroup/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验组表
+     * @name GetInspectGroupByUser
+     * @summary 根据登录用户获取检验组
+     * @request GET:/inspectGroup/tables
+     * @secure
+     */
+    getInspectGroupByUser: () =>
+      http.request<ResultListInspectGroup['data']>(`/api/quality/inspectGroup/tables`, {
+        method: 'GET',
+      }),
   },
   importManage: {
     /**
@@ -3274,21 +4064,6 @@ export const api = {
      */
     getList: () =>
       http.request<ResultListSampleCodeVO['data']>(`/api/quality/sampleCode/getList`, {
-        method: 'GET',
-      }),
-  },
-  inspectGroup: {
-    /**
-     * No description
-     *
-     * @tags 品质检验组表
-     * @name GetInspectGroupByUser
-     * @summary 根据登录用户获取检验组
-     * @request GET:/inspectGroup/tables
-     * @secure
-     */
-    getInspectGroupByUser: () =>
-      http.request<ResultListInspectGroup['data']>(`/api/quality/inspectGroup/tables`, {
         method: 'GET',
       }),
   },
