@@ -72,7 +72,7 @@
               </template>
               <template #op="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="onUplaodImg(rowData)">上传照片</t-link>
+                  <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
                 </t-space>
               </template>
               <template #inspectResult="{ row }">
@@ -116,7 +116,7 @@
               </template>
               <template #op="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="onUplaodImg(rowData)">上传照片</t-link>
+                  <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
                 </t-space>
               </template>
               <template #inspectResult="{ row }">
@@ -160,7 +160,7 @@
               </template>
               <template #op="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="onUplaodImg(rowData)">上传照片</t-link>
+                  <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
                 </t-space>
               </template>
               <template #inspectResult="{ row }">
@@ -188,8 +188,16 @@
   </t-dialog>
 
   <!--弹窗-->
-  <formMeasure ref="formMeasureRef" @parent-confirm-event="parentConfirm"></formMeasure>
-  <formNg ref="formNgRef" @form-close-event="onFormCloseDialog"></formNg>
+  <formMeasure ref="formMeasureRef" @parent-confirm-event="parentConfirm" />
+  <formNg ref="formNgRef" @form-close-event="onFormCloseDialog" />
+
+  <cmp-files-upload
+    ref="formFilesRef"
+    upload-path="IqcInspect"
+    @upload-success="uploadSuccess"
+    @delete-success="deleteSuccess"
+    @batch-delete-success="batchDeleteSuccess"
+  />
 </template>
 <script lang="ts">
 export default {
@@ -203,6 +211,8 @@ import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, T
 import { reactive, Ref, ref } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
+import { AddFileType } from '@/components/bcmp-upload-content/constants';
+import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
@@ -218,6 +228,7 @@ const formMeasureRef = ref(null);
 const formNgRef = ref(null);
 
 const selectTabValue = ref('tab1');
+const selectIqcInspectDtlId = ref(null);
 
 const isEdit = ref(true); // 是否可编辑
 const formData = reactive({
@@ -349,13 +360,7 @@ const getBillNo = async () => {
     console.log(e);
   }
 };
-const onUplaodImg = async (rowData) => {
-  try {
-    console.log(rowData);
-  } catch (e) {
-    console.log(e);
-  }
-};
+
 const onShowFiles = async (rowData) => {
   try {
     console.log(rowData);
@@ -455,7 +460,6 @@ const onShowMeasureDialog = async (row) => {
 const onFormCloseDialog = async () => {
   formVisible.value = false;
 };
-
 const parentConfirm = async (measureList, isAllOK) => {
   if (!_.isEmpty(measureList)) {
     const { stdDtlId } = measureList[0];
@@ -464,6 +468,60 @@ const parentConfirm = async (measureList, isAllOK) => {
     rowData.inspectResult = isAllOK;
   }
 };
+
+// begin 文件上传
+
+const formFilesRef = ref(null);
+const showUplaodImg = async (rowData) => {
+  selectIqcInspectDtlId.value = rowData.row.id;
+  const { showForm } = formFilesRef.value;
+  await showForm(false, rowData.row.fileList);
+};
+const uploadSuccess = async (file: AddFileType) => {
+  try {
+    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
+      const list = await apiQuality.iqcInspectDtlFile.addIqcInspectDtlFile({
+        iqcInspectDtlId: selectIqcInspectDtlId.value,
+        fileName: file.fileName,
+      });
+      MessagePlugin.success('文件上传成功');
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+const deleteSuccess = async (file: AddFileType) => {
+  try {
+    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
+      const list = await apiQuality.iqcInspectDtlFile.deleteIqcInspectDtlFile({
+        iqcInspectDtlId: selectIqcInspectDtlId.value,
+        fileName: file.fileName,
+      });
+      MessagePlugin.success('文件删除成功');
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+const batchDeleteSuccess = async (files: AddFileType[]) => {
+  try {
+    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
+      const deleteList = [];
+
+      files.forEach((n) =>
+        deleteList.push({
+          iqcInspectDtlId: selectIqcInspectDtlId.value,
+          fileName: n.fileName,
+        }),
+      );
+      const list = await apiQuality.iqcInspectDtlFile.deleteBatchIqcInspectDtlFile(deleteList);
+      MessagePlugin.success('文件删除成功');
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+// end 文件上传
 
 defineExpose({
   form: formRef,

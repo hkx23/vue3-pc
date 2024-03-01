@@ -1394,8 +1394,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
   mesbillNo?: string;
+  erpbillNo?: string;
 }
 
 /** 响应数据 */
@@ -2536,10 +2536,10 @@ export interface DeliveryDtlVO {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量 */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 采购单明细 */
@@ -2608,10 +2608,10 @@ export interface PurchaseOrderDtlVO {
   /** 已扫数量 */
   scanQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量 */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3235,11 +3235,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
   bfpickQty?: number;
   tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3596,6 +3596,8 @@ export interface MaterialRequisitionExcuteDtlVO {
 export interface AlreadyRequisitionVO {
   moScheId?: string;
   mitemId?: string;
+  /** 申请数量 */
+  reqQty?: number;
   /** 已领料数量 */
   pickQty?: number;
 }
@@ -3712,6 +3714,8 @@ export interface MaterialRequisitionDtlVO {
   scheQty?: number;
   /** 库存可用量 */
   handQty?: number;
+  /** 申请中数量 */
+  applyingQty?: number;
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;

@@ -2515,15 +2515,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  scanDatetimeStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
+  datetimeScheStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3954,16 +3954,16 @@ export interface BarcodeWipCollectVO {
   /** 是否提交事务 */
   isCommit?: boolean;
   stateName?: string;
-  scanDatetimeStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -4075,14 +4075,14 @@ export interface BarcodeWipVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
   stateName?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -7096,6 +7096,22 @@ export const api = {
      */
     excuteAtomic: (data: AtomicContext) =>
       http.request<ResultAtomicContext['data']>(`/api/control/atomicSaveKeypart/excuteAtomic`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  atomicOutputByHour: {
+    /**
+     * No description
+     *
+     * @tags 原子相关方法-产能数据收集
+     * @name ExcuteAtomic
+     * @summary 产能数据收集原子
+     * @request POST:/atomicOutputByHour/excuteAtomic
+     * @secure
+     */
+    excuteAtomic: (data: AtomicContext) =>
+      http.request<ResultAtomicContext['data']>(`/api/control/atomicOutputByHour/excuteAtomic`, {
         method: 'POST',
         body: data as any,
       }),
