@@ -1394,8 +1394,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 响应数据 */
@@ -2535,11 +2535,11 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 }
 
 /** 采购单明细 */
@@ -2607,11 +2607,11 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3230,16 +3230,16 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
-  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -9001,6 +9001,20 @@ export const api = {
      */
     getMitemReceiveBillVo: (data: MitemReceiveBillSearch) =>
       http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/warehouse/iqcInspect/getMitemReceiveBillVO`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质检验接口
+     * @name CreatedStockInBillByMitemReceipt
+     * @request POST:/iqcInspect/CreatedStockInBillByMitemReceipt
+     * @secure
+     */
+    createdStockInBillByMitemReceipt: (data: string) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/iqcInspect/CreatedStockInBillByMitemReceipt`, {
         method: 'POST',
         body: data as any,
       }),

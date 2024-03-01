@@ -979,6 +979,19 @@ export interface IqcInspectSubmitDeliveryNoVO {
   billNoDtlId?: string;
 }
 
+/** 上传控件文件VO */
+export interface AddFileTypeVO {
+  id?: string;
+  serialNumber?: string;
+  fileName?: string;
+  fileType?: string;
+  fileSizeShow?: string;
+  fileSize?: number;
+  timeUpload?: string;
+  signedUrl?: string;
+  percent?: number;
+}
+
 /** 检验测量值 */
 export interface IqcInspectMeasureVO {
   /**
@@ -1116,10 +1129,12 @@ export type IqcInspectStdFullVO = {
   reValue?: number;
   /** AC/RE */
   acRe?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
+  /** 文件列表 */
+  fileList?: AddFileTypeVO[];
   /** 项目特性 */
   characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1282,6 +1297,64 @@ export interface ResultLong {
   /** 提示信息 */
   message?: string;
   data?: string;
+}
+
+/** 检验单明细文件上传 */
+export interface IqcInspectDtlFileVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  iqcInspectDtlId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
+}
+
+/** 通用响应类 */
+export interface ResultListAddFileTypeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AddFileTypeVO[] | null;
 }
 
 export interface MitemForwardTraceSearch {
@@ -1591,19 +1664,6 @@ export interface IqcInspectSubmitVO {
   /** 处理意见VO */
   iqcInspectNg?: IqcInspectNgVO;
   iqcInspectStdList?: IqcInspectStdFullVO[];
-}
-
-/** 通用响应类 */
-export interface ResultBoolean {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
 }
 
 /** 物料检验单查询 */
@@ -2579,10 +2639,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -2775,13 +2835,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s1?: string;
-  ii?: string;
-  iii?: string;
   s2?: string;
   s4?: string;
-  i?: string;
+  s1?: string;
   s3?: string;
+  ii?: string;
+  i?: string;
+  iii?: string;
 } | null;
 
 /** 计量单位 */
@@ -3621,6 +3681,67 @@ export const api = {
      */
     temporaryStorage: (data: IqcInspectStdVO) =>
       http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/TemporaryStorage`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  iqcInspectDtlFile: {
+    /**
+     * No description
+     *
+     * @tags 物料检验明细附件表
+     * @name DeleteIqcInspectDtlFile
+     * @summary 删除文件
+     * @request POST:/iqcInspectDtlFile/deleteIqcInspectDtlFile
+     * @secure
+     */
+    deleteIqcInspectDtlFile: (data: IqcInspectDtlFileVO) =>
+      http.request<ResultBoolean['data']>(`/api/quality/iqcInspectDtlFile/deleteIqcInspectDtlFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验明细附件表
+     * @name DeleteBatchIqcInspectDtlFile
+     * @summary 批量删除文件
+     * @request POST:/iqcInspectDtlFile/deleteBatchIqcInspectDtlFile
+     * @secure
+     */
+    deleteBatchIqcInspectDtlFile: (data: IqcInspectDtlFileVO[]) =>
+      http.request<ResultBoolean['data']>(`/api/quality/iqcInspectDtlFile/deleteBatchIqcInspectDtlFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验明细附件表
+     * @name AddIqcInspectDtlFile
+     * @summary 新增文件
+     * @request POST:/iqcInspectDtlFile/addIqcInspectDtlFile
+     * @secure
+     */
+    addIqcInspectDtlFile: (data: IqcInspectDtlFileVO) =>
+      http.request<ResultBoolean['data']>(`/api/quality/iqcInspectDtlFile/addIqcInspectDtlFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验明细附件表
+     * @name GetIqcInspectDtlFileList
+     * @summary 根据ID获取文件信息
+     * @request POST:/iqcInspectDtlFile/GetIqcInspectDtlFileList
+     * @secure
+     */
+    getIqcInspectDtlFileList: (data: string) =>
+      http.request<ResultListAddFileTypeVO['data']>(`/api/quality/iqcInspectDtlFile/GetIqcInspectDtlFileList`, {
         method: 'POST',
         body: data as any,
       }),
