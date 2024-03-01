@@ -473,9 +473,19 @@ const parentConfirm = async (measureList, isAllOK) => {
 
 const formFilesRef = ref(null);
 const showUplaodImg = async (rowData) => {
-  selectIqcInspectDtlId.value = rowData.row.id;
-  const { showForm } = formFilesRef.value;
-  await showForm(false, rowData.row.fileList);
+  selectIqcInspectDtlId.value = rowData.row.iqcInspectDtlId;
+
+  try {
+    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
+      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectIqcInspectDtlId.value);
+      rowData.row.fileList = list;
+
+      const { showForm } = formFilesRef.value;
+      await showForm(false, rowData.row.fileList);
+    }
+  } catch (e) {
+    console.log(e);
+  }
 };
 const uploadSuccess = async (file: AddFileType) => {
   try {
