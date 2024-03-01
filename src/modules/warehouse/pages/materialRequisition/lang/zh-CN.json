@@ -1,5 +1,6 @@
 {
   "materialRequisition": {
+    "applyingQty":"申请中数量",
     "tableSubTilte": "领料制单列表",
     "checkReqQtyEmpty": "本次需领料数量不能为空，请检查",
     "checkWarehouseEmpty": "仓库信息不能为空，请检查",

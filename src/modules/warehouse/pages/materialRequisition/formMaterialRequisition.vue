@@ -188,6 +188,7 @@ const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
     colKey: 'moRequestQty',
   },
   { title: `${t('materialRequisition.reqQty')}`, width: 200, colKey: 'reqQty' },
+  { title: `${t('materialRequisition.applyingQty')}`, width: 120, colKey: 'applyingQty' },
   { title: `${t('materialRequisition.pickQty')}`, width: 120, colKey: 'alreadyPickQty' },
 ];
 
