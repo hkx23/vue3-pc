@@ -7,7 +7,6 @@
       <!-- ################# 处理组表格数据 ###################### -->
       <cmp-container :full="true" :ghost="true">
         <cmp-table
-          ref="tableRef"
           v-model:pagination="pageUI"
           row-key="id"
           :table-column="tableGroupColumns"
@@ -48,7 +47,6 @@
         <div class="pack-dtl-table">
           <!-- 规则明细表格-->
           <cmp-table
-            ref="tableDtlRef"
             v-model:pagination="pageUIUser"
             class="son-table"
             row-key="id"
@@ -105,6 +103,8 @@
           class="son-table"
           :fixed-height="true"
           style="height: 180px"
+          :selected-row-keys="mitemRowKeys"
+          @select-change="onSelectedMitemChange"
           @refresh="fetchMitemTable"
         >
           <template #title> {{ t('inspectGroup.tableSubRightTitle') }} </template>
@@ -123,7 +123,7 @@
               {{ t('common.button.import') }}
             </t-button>
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onBatchDeleteMitemRowClick">
-              <t-button theme="default" :disabled="selectMitemRowKeys?.length < 2">
+              <t-button theme="default" :disabled="mitemRowKeys?.length < 2">
                 {{ t('common.button.batchDelete') }}</t-button
               >
             </t-popconfirm>
@@ -248,9 +248,10 @@ const opts = computed(() => {
 const onSelectedChange = (value: any) => {
   userRowKeys.value = value;
 };
-const selectMitemRowKeys = computed(() => {
-  return tableMitemRef.value?.getSelectedRowKeys();
-});
+const mitemRowKeys = ref({}) as any;
+const onSelectedMitemChange = (value: any) => {
+  mitemRowKeys.value = value;
+};
 
 const tableGroupColumns: PrimaryTableCol<TableRowData>[] = [
   // { colKey: 'row-select', type: 'single', width: 40, fixed: 'left' },
@@ -296,8 +297,6 @@ const formMitemRef = ref(null); // 关联物料
 const dataTotal = ref(0);
 const dataUserTotal = ref(0);
 const dataMitemTotal = ref(0);
-const tableRef = ref();
-const tableDtlRef = ref();
 const tableMitemRef = ref();
 const selectRow = ref({}) as any; // 选中包装规则行
 const selectRowDtl = ref({}) as any; // 选中包装规则明细行
@@ -425,11 +424,7 @@ const onDeleteMitemRowClick = async (row: any) => {
 };
 // 批量删除关联物料
 const onBatchDeleteMitemRowClick = async () => {
-  const ids = [];
-  selectMitemRowKeys.value.forEach((element) => {
-    ids.push(element);
-  });
-  await apiQuality.inspectGroupInMitem.delByIds(ids);
+  await apiQuality.inspectGroupInMitem.delByIds(mitemRowKeys.value);
   MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchMitemTable();
 };
