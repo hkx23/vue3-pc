@@ -1012,9 +1012,10 @@ const sourceColumn = ref('');
 const matchField = ref('');
 const getValueField = ref('');
 const paramGroupFields = [
-  { value: 'PARAM_VALUE', label: '系统参数值' },
-  { value: 'PARAM_CODE', label: '系统参数编码' },
-  { value: 'PARAM_DESC', label: '系统参数描述' },
+  { value: 'paramValue', label: '系统参数值' },
+  { value: 'paramCode', label: '系统参数编码' },
+  { value: 'paramName', label: '系统参数名称' },
+  { value: 'paramDesc', label: '系统参数描述' },
 ];
 const columnsDic: any = computed(() => [
   {

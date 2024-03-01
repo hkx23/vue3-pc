@@ -25,5 +25,14 @@
   "keywords": {
     "value": "id",
     "label": "processName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "processCode",
+    "nameField": "processName",
+    "descField": "processDesc"
+  },
+  "name": "工艺路线工序",
+  "componentType": "list"
 }

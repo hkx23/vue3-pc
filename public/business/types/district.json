@@ -24,5 +24,14 @@
   "keywords": {
     "value": "id",
     "label": "districtName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "districtName",
+    "codeField": "districtCode",
+    "descField": "districtDesc"
+  },
+  "name": "货区",
+  "componentType": "list"
 }

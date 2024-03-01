@@ -24,5 +24,14 @@
   "keywords": {
     "value": "id",
     "label": "equipmentName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "equipmentCode",
+    "nameField": "equipmentName",
+    "descField": "equipmentDesc"
+  },
+  "name": "设备",
+  "componentType": "list"
 }

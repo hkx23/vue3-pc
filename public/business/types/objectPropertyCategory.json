@@ -25,5 +25,14 @@
   "keywords": {
     "value": "id",
     "label": "categoryName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "categoryCode",
+    "nameField": "categoryName",
+    "categoryField": "objectCode"
+  },
+  "name": "扩展属性分类",
+  "componentType": "list"
 }

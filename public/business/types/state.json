@@ -20,5 +20,13 @@
   "keywords": {
     "value": "paramCode",
     "label": "paramValue"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "paramCode",
+    "nameField": "paramValue"
+  },
+  "name": "状态",
+  "componentType": "list"
 }

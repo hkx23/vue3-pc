@@ -24,5 +24,14 @@
   "keywords": {
     "value": "id",
     "label": "postName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "postCode",
+    "nameField": "postName",
+    "descField": "postDesc"
+  },
+  "name": "岗位",
+  "componentType": "list"
 }
