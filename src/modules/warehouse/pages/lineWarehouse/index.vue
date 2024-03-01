@@ -72,7 +72,7 @@
       <!-- 第 4️⃣ - 1️⃣ 行数据 新增 ID-->
       <t-form-item v-if="submitFalg" label="工作中心" name="workcenterIds">
         <bcmp-select-business
-          v-model="teamFormData.workcenterIds"
+          v-model="teamFormData.workcenterIdsStr"
           label=""
           type="workcenter"
           :clearable="true"
@@ -113,6 +113,7 @@ const teamFormData = ref({
   warehouseId: '', // 仓库 ID
   workcenterId: '', // 编辑工作中心ID
   workcenterIds: [], // 新增工作中心ID
+  workcenterIdsStr: '',
 });
 
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
@@ -185,7 +186,7 @@ const rules: FormRules = {
   warehouseDesc: [{ required: false, trigger: 'blur' }],
   warehouseId: [{ required: true, trigger: 'change' }],
   workcenterId: [{ required: true, trigger: 'change' }],
-  workcenterIds: [{ required: true, trigger: 'change' }],
+  workcenterIdsStr: [{ required: true, trigger: 'change' }],
 };
 // # 初始渲染
 onMounted(async () => {
@@ -236,7 +237,7 @@ const onWareHouseSelect = (context) => {
 
 // // #添加 线边仓 数据请求
 const onAddSupportGroup = async () => {
-  teamFormData.value.workcenterIds = teamFormData.value.workcenterIds.map((item) => item.value);
+  teamFormData.value.workcenterIds = teamFormData.value.workcenterIdsStr.split(',');
   await api.lineWarehouse.addLineWarehouse(teamFormData.value);
   await onLinewarehouseTabData(); // 获取 班组表格 数据
   formVisible.value = false;
@@ -246,6 +247,7 @@ const onAddSupportGroup = async () => {
 // // #添加按钮点击事件
 const onAddTypeData = async () => {
   formRef.value.reset({ type: 'empty' });
+  teamFormData.value.workcenterIdsStr = '';
   submitFalg.value = true; // true为新增
   formVisible.value = true;
   diaLogTitle.value = '新增线边仓对应关系';

@@ -452,7 +452,7 @@ const loadSelectedData = async () => {
     } else {
       selectValue = state.defaultValue.join(',');
     }
-  } else if (typeof props.value === 'string') {
+  } else if (typeof state.defaultValue === 'string') {
     selectValue = state.defaultValue;
   }
   if (selectValue === '') return;
@@ -728,7 +728,7 @@ defineExpose({ closeTable, onClear });
     padding: 0 16px;
 
     > .content {
-      height: 330px;
+      max-height: 300px;
       display: flex;
       flex-direction: column;
 

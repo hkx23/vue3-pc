@@ -27,7 +27,7 @@
       <t-col :span="12">
         <t-form-item label="物料类别" name="mitemCategory">
           <bcmp-select-business
-            v-model="formData.mitemCategortArr"
+            v-model="formData.mitemCategoryIds"
             type="mitemCategory"
             is-multiple
             :clearable="true"
@@ -64,7 +64,7 @@ export default {
       id: '',
       inspectStdCode: '',
       inspectStdName: '',
-      mitemCategortArr: [],
+      mitemCategoryIds: '',
       mitemId: '',
     });
     // #表单定义规则
@@ -83,15 +83,15 @@ export default {
         MessagePlugin.warning('请选择产品检验标准');
         return false;
       }
-      if (formData.value.mitemCategortArr.length < 1) {
+      if (formData.value.mitemCategoryIds.length < 1) {
         MessagePlugin.warning('请选择物料类别');
         return false;
       }
-      const categotyList = formData.value.mitemCategortArr.map((item) => item.value);
+      // const categotyList = formData.value.mitemCategortArr.map((item) => item.value);
       await api.oqcInspectStdMitem.assignOqcInspectStdMitem({
         stdId: formData.value.id,
         mitemId: formData.value.mitemId,
-        mitemCategoryIds: categotyList,
+        mitemCategoryIds: formData.value.mitemCategoryIds.split(','),
       });
       MessagePlugin.success('操作成功');
       return true;
@@ -101,15 +101,12 @@ export default {
       if (res) {
         formData.value.mitemId = res[0]?.mitemId;
         const newData = res.map((item) => {
-          return {
-            label: item.categoryName, // 提取 categoryName 字段并将其赋值给 label
-            value: item.mitemCategoryId, // 提取 mitemCategoryId 字段并将其赋值给 value
-          };
+          return item.mitemCategoryId;
         });
-        formData.value.mitemCategortArr = newData;
+        formData.value.mitemCategoryIds = newData.join(',');
       } else {
         formData.value.mitemId = '';
-        formData.value.mitemCategortArr = [];
+        formData.value.mitemCategoryIds = '';
       }
     };
     const namesOption = ref([]);
@@ -150,7 +147,7 @@ export default {
         id: '',
         inspectStdCode: '',
         inspectStdName: '',
-        mitemCategortArr: [],
+        mitemCategoryIds: '',
         mitemId: '',
       };
     };

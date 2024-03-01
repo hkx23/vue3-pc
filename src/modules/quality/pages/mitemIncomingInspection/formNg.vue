@@ -33,7 +33,7 @@
         <t-descriptions :column="3" size="large">
           <t-descriptions-item label="缺陷类型">
             <bcmp-select-business
-              v-model="formNgData.defectCodeList"
+              v-model="formNgData.defectCodes"
               type="defectCode"
               :show-title="false"
               :is-multiple="true"
@@ -117,6 +117,7 @@ const formNgData = reactive({
   iqcHandleMethodCode: '',
   iqcResponsibilityCode: '',
   iqcCorrectCode: '',
+  defectCodes: '',
   defectCodeList: [],
   memo: '',
   isPdca: false,
@@ -125,7 +126,15 @@ const formNgData = reactive({
 
 const onConfirmForm = async () => {
   try {
-    if (formNgData.defectCodeList.length === 0) {
+    if (formNgData.defectCodes.length > 0) {
+      const defectCodeList = formNgData.defectCodes.split(',');
+      formNgData.defectCodeList = defectCodeList.map((item) => {
+        return {
+          value: item,
+          label: item,
+        };
+      });
+    } else {
       MessagePlugin.error('缺陷类型不能为空');
       return;
     }
