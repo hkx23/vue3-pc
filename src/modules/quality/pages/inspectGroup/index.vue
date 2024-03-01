@@ -138,7 +138,7 @@
     :on-confirm="onConfirmForm"
     :close-on-overlay-click="false"
   >
-    <formGroup ref="formRef" :is-add="isAdd" :row="selectRow"></formGroup>
+    <form-group ref="formRef" :is-add="isAdd" :row="selectRow"></form-group>
   </t-dialog>
 
   <!--包装规则主表弹框-->
@@ -151,7 +151,7 @@
     width="75%"
     @close="onRefreshAll"
   >
-    <formUserDtl ref="formDtlRef" :is-add="isAdd" :row="selectRowDtl"></formUserDtl>
+    <form-user-dtl ref="formDtlRef" :is-add="isAdd" :row="selectRowDtl"></form-user-dtl>
   </t-dialog>
 
   <!--物料弹框-->
@@ -164,7 +164,7 @@
     width="75%"
     @close="onRefreshAll"
   >
-    <formMitemDtl ref="formMitemRef" :is-add="isAdd"></formMitemDtl>
+    <form-mitem-dtl ref="formMitemRef" :is-add="isAdd"></form-mitem-dtl>
   </t-dialog>
 </template>
 
