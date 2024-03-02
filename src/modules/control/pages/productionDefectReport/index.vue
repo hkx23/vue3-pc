@@ -3,7 +3,7 @@
   <cmp-container :full="true">
     <!-- 查询 -->
     <cmp-card :span="12">
-      <cmp-query :opts="opts" :is-reset-query="false" @reset="onReset" @submit="onInput"> </cmp-query>
+      <cmp-query ref="queryRef" :opts="opts" :is-reset-query="false" @reset="onReset" @submit="onInput"> </cmp-query>
     </cmp-card>
     <!-- 页签栏 -->
     <cmp-card :span="12">
@@ -155,6 +155,7 @@ const { pageUI: fourPageUI } = usePage();
 const { pageUI: fivePageUI } = usePage();
 const activeTab = ref('tab1'); // 默认页签
 const queryParams = ref({}); // 查询参数，默认为空
+const queryRef = ref();
 
 // 表格实例
 const tableRef = ref(null);
@@ -510,6 +511,7 @@ const columnsProduceReport5 = computed(() => {
 });
 // 初始渲染
 onMounted(async () => {
+  queryRef.value.search();
   /** TODO
    * 时间必传 初始化不调用
    */
@@ -523,27 +525,7 @@ onMounted(async () => {
 // 监听 activeTab 的变化
 watch(activeTab, (newValue, oldValue) => {
   if (newValue !== oldValue) {
-    // 根据当前选中的页签调用相应的数据加载函数
-    switch (newValue) {
-      case 'tab1':
-        fetchTable1(queryParams.value); // 将查询条件的参数传给 fetchTable1 接口查询数据
-        break;
-      case 'tab2':
-        fetchTable2(queryParams.value);
-        break;
-      case 'tab3':
-        fetchTable3(queryParams.value);
-        break;
-      case 'tab4':
-        fetchTable4(queryParams.value);
-        break;
-      case 'tab5':
-        fetchTable5(queryParams.value);
-        break;
-      // 添加其他页签的case处理
-      default:
-        console.warn('未知的页签');
-    }
+    queryRef.value.search();
   }
 });
 

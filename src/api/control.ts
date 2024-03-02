@@ -2281,6 +2281,8 @@ export interface ProductionDefectStatisticsVO {
   defectReasonName?: string;
   /** 处理方法名称 */
   methodName?: string;
+  /** 缺陷责任别 */
+  defectBlame?: string;
   /** 缺陷责任别名称 */
   defectBlameName?: string;
   /** 录入人 */
@@ -2517,13 +2519,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2700,8 +2702,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3953,17 +3955,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
+  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  stateName?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
-  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4074,15 +4076,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
+  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
-  isState?: boolean;
+  workshopCode?: string;
+  stateName?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -4320,8 +4322,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -4715,8 +4717,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */

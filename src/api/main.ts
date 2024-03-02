@@ -3925,13 +3925,13 @@ export interface MitemVO {
   isBatchNo?: number;
   isState?: boolean;
   stateName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isProductName?: string;
-  isBatchName?: string;
-  isRawName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4411,8 +4411,8 @@ export interface IntegratedConsoleSearch {
    */
   dateEnd?: string;
   erpbillNo?: string;
-  imsgqueueStatus?: string;
   mesbillNo?: string;
+  imsgqueueStatus?: string;
 }
 
 /** 显示工站 */
