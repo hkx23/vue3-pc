@@ -362,8 +362,16 @@ const getBillNo = async () => {
 };
 
 const onShowFiles = async (rowData) => {
+  selectIqcInspectDtlId.value = rowData.row.iqcInspectDtlId;
+
   try {
-    console.log(rowData);
+    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
+      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectIqcInspectDtlId.value);
+      rowData.row.fileList = list;
+
+      const { showForm } = formFilesRef.value;
+      await showForm(true, rowData.row.fileList);
+    }
   } catch (e) {
     console.log(e);
   }

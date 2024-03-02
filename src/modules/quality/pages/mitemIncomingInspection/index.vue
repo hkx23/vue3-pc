@@ -27,6 +27,8 @@
                   <template #title> 工作台 </template>
                   <template #button>
                     <t-button theme="primary" @click="mergeInspection(true)">合并检验</t-button>
+                    <t-button theme="default">一键合格</t-button>
+                    <t-button theme="default">一键判退</t-button>
                   </template>
                   <template #op="rowData">
                     <t-space>
