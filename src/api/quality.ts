@@ -1167,8 +1167,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -2835,13 +2835,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  s4?: string;
+  i?: string;
+  s2?: string;
+  ii?: string;
   s3?: string;
   s1?: string;
-  i?: string;
   iii?: string;
-  s2?: string;
-  s4?: string;
-  ii?: string;
 } | null;
 
 /** 计量单位 */
