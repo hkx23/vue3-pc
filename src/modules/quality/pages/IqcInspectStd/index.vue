@@ -48,7 +48,6 @@
                         button-text="导入"
                         type="q_iqc_inspect_std"
                       ></bcmp-import-auto-button>
-
                       <t-popconfirm content="确认删除吗" @confirm="delStdByIdBatch">
                         <t-button v-if="stdRowKeys.length > 1" theme="default" variant="base">批量删除</t-button>
                       </t-popconfirm>
