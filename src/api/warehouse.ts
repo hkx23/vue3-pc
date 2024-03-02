@@ -2535,11 +2535,11 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 }
 
 /** 采购单明细 */
@@ -2607,11 +2607,11 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3225,21 +3225,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  tlpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -5575,8 +5575,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
