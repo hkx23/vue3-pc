@@ -27,8 +27,8 @@
                   <template #title> 工作台 </template>
                   <template #button>
                     <t-button theme="primary" @click="mergeInspection(true)">合并检验</t-button>
-                    <t-button theme="default">一键合格</t-button>
-                    <t-button theme="default">一键判退</t-button>
+                    <t-button theme="default" @click="directInspectOk">一键合格</t-button>
+                    <t-button theme="default" @click="directInspectNg">一键判退</t-button>
                   </template>
                   <template #op="rowData">
                     <t-space>
@@ -575,10 +575,79 @@ const onShowDialog = async (isEdit, rowData) => {
   await showForm(isEdit, rowData.row);
   await loadTable();
 };
+
+// 合并检验
 const mergeInspection = async (isEdit) => {
+  checkSelected().then(async (isRun) => {
+    if (isRun) {
+      const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
+      const { showMergeForm, loadTable } = formRef.value;
+      await showMergeForm(isEdit, selectKeys);
+      await loadTable();
+    }
+  });
+};
+// 一键合格
+const directInspectOk = async () => {
+  checkSelected().then(async (isRun) => {
+    if (isRun) {
+      const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
+      const sumPickQty = selectKeys.reduce((previousValue, currentValue) => previousValue + currentValue.pickQty, 0);
+
+      const bills = [];
+      selectKeys.forEach((item) => {
+        bills.push({ billNo: item.billNo, billNoDtlId: item.id });
+      });
+
+      await apiQuality.iqcInspect.createdIqcInspectAndStockIn({
+        inspectionStringency: selectKeys[0].inspectionStringency,
+        mitemId: selectKeys[0].mitemId,
+        mitemCode: selectKeys[0].mitemCode,
+        mitemCategoryId: selectKeys[0].mitemCategoryId,
+        supplierId: selectKeys[0].supplierId,
+        pickQty: sumPickQty,
+        billNoList: bills,
+        directInspectOk: true,
+      });
+
+      await fetchTable();
+      MessagePlugin.success('一键合格成功.');
+    }
+  });
+};
+// 一键判退
+const directInspectNg = async () => {
+  checkSelected().then(async (isRun) => {
+    if (isRun) {
+      const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
+      const sumPickQty = selectKeys.reduce((previousValue, currentValue) => previousValue + currentValue.pickQty, 0);
+
+      const bills = [];
+      selectKeys.forEach((item) => {
+        bills.push({ billNo: item.billNo, billNoDtlId: item.id });
+      });
+
+      await apiQuality.iqcInspect.createdIqcInspectAndStockIn({
+        inspectionStringency: selectKeys[0].inspectionStringency,
+        mitemId: selectKeys[0].mitemId,
+        mitemCode: selectKeys[0].mitemCode,
+        mitemCategoryId: selectKeys[0].mitemCategoryId,
+        supplierId: selectKeys[0].supplierId,
+        pickQty: sumPickQty,
+        billNoList: bills,
+        directInspectNg: true,
+      });
+
+      await fetchTable();
+      MessagePlugin.success('一键判退成功.');
+    }
+  });
+};
+
+const checkSelected = async () => {
   if (selectWaitId.value.length <= 0) {
     MessagePlugin.error('请选择待检单.');
-    return;
+    return false;
   }
 
   const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
@@ -587,7 +656,7 @@ const mergeInspection = async (isEdit) => {
     const element = selectKeys[index];
     if (!_.isEmpty(element.iqcBillNo)) {
       MessagePlugin.error('单据不允许重复检验.');
-      return;
+      return false;
     }
   }
 
@@ -597,7 +666,7 @@ const mergeInspection = async (isEdit) => {
     .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
   if (!_.isEmpty(distinctSupplierCode) && distinctSupplierCode.length > 1) {
     MessagePlugin.error('只能选择相同供应商的接收单');
-    return;
+    return false;
   }
 
   // 相同物料
@@ -606,7 +675,7 @@ const mergeInspection = async (isEdit) => {
     .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
   if (!_.isEmpty(distinctMitemCode) && distinctMitemCode.length > 1) {
     MessagePlugin.error('只能选择相同物料的接收单');
-    return;
+    return false;
   }
 
   // 相同接收时间
@@ -615,12 +684,10 @@ const mergeInspection = async (isEdit) => {
     .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
   if (!_.isEmpty(distinctDatetimeReceipted) && distinctDatetimeReceipted.length > 1) {
     MessagePlugin.error('只能选择相同日期的接收单');
-    return;
+    return false;
   }
 
-  const { showMergeForm, loadTable } = formRef.value;
-  await showMergeForm(isEdit, selectKeys);
-  await loadTable();
+  return true;
 };
 
 onMounted(() => {

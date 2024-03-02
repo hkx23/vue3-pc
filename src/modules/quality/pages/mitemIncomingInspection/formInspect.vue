@@ -75,8 +75,8 @@
                   <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
                 </t-space>
               </template>
-              <template #inspectResult="{ row }">
-                <t-switch v-model="row.inspectResult" size="large" :disabled="!isEdit" />
+              <template #inspectResultSwitch="{ row }">
+                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
               </template>
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
@@ -119,8 +119,8 @@
                   <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
                 </t-space>
               </template>
-              <template #inspectResult="{ row }">
-                <t-switch v-model="row.inspectResult" size="large" :disabled="!isEdit" />
+              <template #inspectResultSwitch="{ row }">
+                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
               </template>
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
@@ -163,8 +163,8 @@
                   <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
                 </t-space>
               </template>
-              <template #inspectResult="{ row }">
-                <t-switch v-model="row.inspectResult" size="large" :disabled="!isEdit" />
+              <template #inspectResultSwitch="{ row }">
+                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
               </template>
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
@@ -268,7 +268,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '检验工具', width: 100, colKey: 'inspectTool' },
   { title: '样本数', width: 100, colKey: 'sampleQty' },
   { title: 'AC/RE', width: 100, colKey: 'acRe' },
-  { title: '检验结果', width: 100, colKey: 'inspectResult' },
+  { title: '检验结果', width: 100, colKey: 'inspectResultSwitch' },
   { title: '测量值', width: 100, colKey: 'measureOp' },
   { title: '不良数', width: 120, colKey: 'ngQty' },
   { title: '不良描述', width: 200, colKey: 'ngReason' },
@@ -291,7 +291,10 @@ const onConfirmForm = async () => {
   try {
     for (let index = 0; index < tableData.value.length; index++) {
       const item = tableData.value[index];
-      if (!item.inspectResult) {
+      if (item.inspectResultSwitch) {
+        item.inspectResult = 'OK';
+      } else {
+        item.inspectResult = 'NG';
         if (item.characteristics === 'COUNT' && _.isEmpty(item.ngQty)) {
           MessagePlugin.error('检验结果不合格时,请填写不良数.');
           return;
@@ -314,7 +317,7 @@ const onConfirmForm = async () => {
       }
     }
 
-    const ngList = tableData.value.filter((n) => !n.inspectResult);
+    const ngList = tableData.value.filter((n) => !n.inspectResultSwitch);
     if (ngList.length > 0) {
       const { showForm } = formNgRef.value;
       showForm(false, formData, tableData);
@@ -473,7 +476,7 @@ const parentConfirm = async (measureList, isAllOK) => {
     const { stdDtlId } = measureList[0];
     const rowData = tableData.value.find((n) => n.id === stdDtlId);
     rowData.measureList = measureList;
-    rowData.inspectResult = isAllOK;
+    rowData.inspectResultSwitch = isAllOK;
   }
 };
 

@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full="true">
+  <cmp-container :full="false">
     <!-- !提交暂存模块 -->
     <cmp-card :span="12">
       <t-row justify="space-between" align="center">
@@ -9,6 +9,7 @@
         <t-col>
           <t-button :disabled="!submitButControl" @click="onSubimit">提交</t-button>
           <t-button theme="default" @click="onStaging">暂存</t-button>
+          <t-button theme="default" @click="onClose">关闭</t-button>
         </t-col>
       </t-row>
     </cmp-card>
@@ -73,6 +74,7 @@
         :table-column="columns"
         :table-data="dtlTabData"
         :total="dataTotal"
+        style="height: 280px"
         :selected-row-keys="dtlRowKeys"
         @select-change="onDtlSelectedChange"
       >
@@ -93,7 +95,9 @@
           </t-input>
           <t-button :disabled="!butControl" @click="onAdd"> 新增 </t-button>
           <t-button :disabled="!butControl" theme="default"> 导入 </t-button>
-          <t-button :disabled="!delBtutControl" theme="default"> 批量删除 </t-button>
+          <t-popconfirm content="是否确认删除？" @confirm="delBatch">
+            <t-button :disabled="!delBtutControl" theme="default"> 批量删除 </t-button>
+          </t-popconfirm>
         </template>
         <template #operation="{ row }">
           <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
@@ -213,9 +217,7 @@ const onAdd = () => {
 
 const onDtlSelectedChange = (value: any) => {
   dtlRowKeys.value = value;
-  if (dtlRowKeys.value.length > 1) {
-    delBtutControl.value = true;
-  }
+  delBtutControl.value = dtlRowKeys.value?.length > 1;
 };
 const onSubimit = async () => {
   if (isEmpty(formData.value.inspectStdCode)) {
@@ -352,6 +354,9 @@ const onStaging = async () => {
     Emit('permissionShow', false); // 回到父
   }
 };
+const onClose = () => {
+  Emit('permissionShow', false); // 回到父
+};
 const onEdit = (row) => {
   formTitle.value = '检验项目编辑';
   opType.value = 'edit';
@@ -372,8 +377,28 @@ const onCopy = (row) => {
 const delDtlById = async (row) => {
   if (formData.value.operateTpye === 'add') {
     await api.iqcInspectStdDtl.removeBatch([row.id]);
-    onRefresh();
+  } else {
+    allDtl.value.splice(row.index, 1);
   }
+  onRefresh();
+};
+const delBatch = async () => {
+  console.log('111111111111111111');
+  if (formData.value.operateTpye === 'add') {
+    // 找出所有对应索引的元素并将它们的ID收集到一个数组中
+    const idsToDelete = dtlRowKeys.value.map((index) => dtlTabData.value[index].id);
+
+    // 调用 removeBatch 方法删除对应的元素
+    await api.iqcInspectStdDtl.removeBatch(idsToDelete);
+  } else {
+    // 获取要删除的索引，并按从大到小的顺序排序
+    const indexesToDelete = dtlRowKeys.value.sort((a, b) => b - a);
+    // 逐个删除元素
+    indexesToDelete.forEach((index) => {
+      allDtl.value.splice(index, 1);
+    });
+  }
+  onRefresh();
 };
 
 // // 上传文件
@@ -540,9 +565,6 @@ const onConfirmDtl = async () => {
     if (opType.value === 'add' && formData.value.operateTpye === 'add') {
       await api.iqcInspectStdDtl.addDtl(dtlFormRef.value.rowData);
       onRefresh();
-      if (dtlTabData.value.length > 0) {
-        submitButControl.value = true;
-      }
       // 只允许新增标准直接更新数据库
     } else if (opType.value === 'edit' && formData.value.operateTpye === 'edit') {
       // 校验itemName
@@ -573,12 +595,15 @@ const onConfirmCode = async () => {
     console.log(formData.value.inspectStdCode);
   }
 };
-const onRefresh = () => {
+const onRefresh = async () => {
   if (formData.value.operateTpye === 'add') {
-    getDtlById();
-  } else if (formData.value.operateTpye === 'edit') {
-    getAllDtlFormCache();
+    await getDtlById();
+  } else {
+    await getAllDtlFormCache();
   }
+  dtlRowKeys.value = [];
+  submitButControl.value = !!dtlTabData.value;
+  console.log(submitButControl.value);
 };
 const confirmItemName = () => {
   if (opType.value === 'add') {

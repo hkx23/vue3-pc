@@ -3,13 +3,13 @@
     <t-row :gutter="[32, 16]">
       <!-- 第 1️⃣ 行数据 -->
       <t-col :span="12">
-        <t-form-item label="标准编码" name="inspectStdCode">
+        <t-form-item label="检验标准" name="inspectStdCode">
           <t-select
             v-model="formData.inspectStdName"
             clearable
             filterable
             input-props
-            :readonly="formData.type !== 'add'"
+            :disabled="formData.type !== 'add'"
             @change="onChange"
             @clear="fetchSampingStdCodes"
             @input-change="querySelectChange($event)"
@@ -144,7 +144,7 @@ export default {
       })) as any;
       // 过滤出 status 不等于 'EXPIRED' 的数据，并映射为 namesOption.value
       namesOption.value = res.list
-        .filter((item) => item.status !== 'EXPIRED')
+        .filter((item) => item.status !== 'EXPIRED' && item.status !== 'DISABLED')
         .map((item) => ({
           label: item.inspectStdName,
           value: item.id,

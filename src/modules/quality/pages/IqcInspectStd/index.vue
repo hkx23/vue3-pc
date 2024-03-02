@@ -3,7 +3,7 @@
   <cmp-container v-show="pageShow">
     <materialStandardAdd ref="formRef" @permission-show="onPermission"></materialStandardAdd>
   </cmp-container>
-  <cmp-container v-show="!pageShow" :full="true">
+  <cmp-container v-show="!pageShow" :full="false">
     <cmp-card class="not-full-tab" :hover-shadow="false">
       <t-tabs v-model="tabValue" @change="tabChange">
         <!-- ###############    标准 1️⃣ 表格数据   ######## -->
@@ -31,6 +31,7 @@
                     :table-data="materialStandardList"
                     :total="materialStandardTotal"
                     :selected-row-keys="stdRowKeys"
+                    style="height: 400px"
                     @select-change="onSelectedChange"
                     @refresh="onRefresh"
                   >
@@ -42,7 +43,11 @@
                     </template>
                     <template #button>
                       <t-button @click="onAddClick">新增</t-button>
-                      <t-button theme="default">导入</t-button>
+                      <bcmp-import-auto-button
+                        theme="default"
+                        button-text="导入"
+                        type="q_iqc_inspect_std"
+                      ></bcmp-import-auto-button>
                       <t-popconfirm content="确认删除吗" @confirm="delStdByIdBatch">
                         <t-button v-if="stdRowKeys.length > 1" theme="default" variant="base">批量删除</t-button>
                       </t-popconfirm>
@@ -111,8 +116,10 @@
                     :table-column="standardAllotColumn"
                     :table-data="assignTabData.list"
                     :total="totalAssign"
+                    style="height: 400px"
                     :selected-row-keys="assignSelectedRowKeys"
                     @select-change="onSelectedAssignChange"
+                    @refresh="onRefreshAssign"
                   >
                     <template #title>
                       {{ '物料检验标准分配列表' }}
@@ -182,6 +189,7 @@ const assignFormRef = ref(null); // 新增表单数据清除，获取表单实�
 const pageShow = ref(false);
 const onPermission = (value) => {
   pageShow.value = value;
+  onRefresh();
 };
 const formVisible = ref(false);
 const visible1 = ref(false);
@@ -224,6 +232,15 @@ const onRefreshBill = async () => {
       billTabData.list = res.list;
       billAssign.value = res.total;
     }
+  }
+};
+const onRefreshAssign = async () => {
+  if (
+    materialStandardParam.value.mitemId ||
+    materialStandardParam.value.mitemCategoryId ||
+    materialStandardParam.value.keyword
+  ) {
+    await onGetMaterialAssignData();
   }
 };
 const onSelectedChange = (value: any) => {
@@ -461,7 +478,7 @@ const onAddClick = async () => {
 
 const onAddAssign = async () => {
   assignFormRef.value.formData.type = 'add';
-  assignFormRef.value.formData.inspectStdCode = '';
+  assignFormRef.value.formData.inspectStdName = '';
   assignFormRef.value.formData.id = '';
   assignFormRef.value.formData.iqcInspectStdId = '';
   assignFormRef.value.formData.mitemId = '';
@@ -487,7 +504,7 @@ const onEdit = async (row) => {
   formRef.value.formData = row;
   formRef.value.butControl = true;
   formRef.value.submitButControl = true;
-  formRef.value.delBtutControl = true;
+  formRef.value.delBtutControl = false;
   if (row.fileList) {
     row.fileList.forEach((file) => {
       file.timeUpload = file.timeCreate;
@@ -523,16 +540,22 @@ const onCopyStd = async (row) => {
 };
 // // TAb 栏切换事件
 const tabChange = async (value: number) => {
-  console.log('🚀 ~ file: index.vue:437 ~ tabChange ~ value:', value);
+  if (value) {
+    onRefreshAssign();
+  } else {
+    onRefresh();
+  }
 };
 
 const delAssignBatch = async () => {
   await api.iqcInspectStdMitem.removeBatch(assignSelectedRowKeys.value);
   MessagePlugin.success('删除成功');
+  onRefreshAssign();
 };
 const delAssign = async (row) => {
   await api.iqcInspectStdMitem.removeBatch([row.id]);
   MessagePlugin.success('删除成功');
+  onRefreshAssign();
 };
 
 // // #query 查询参数
