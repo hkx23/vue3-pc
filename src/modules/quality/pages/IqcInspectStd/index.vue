@@ -235,7 +235,13 @@ const onRefreshBill = async () => {
   }
 };
 const onRefreshAssign = async () => {
-  await onGetMaterialAssignData();
+  if (
+    materialStandardParam.value.mitemId ||
+    materialStandardParam.value.mitemCategoryId ||
+    materialStandardParam.value.keyword
+  ) {
+    await onGetMaterialAssignData();
+  }
 };
 const onSelectedChange = (value: any) => {
   stdRowKeys.value = value;
@@ -534,7 +540,11 @@ const onCopyStd = async (row) => {
 };
 // // TAb 栏切换事件
 const tabChange = async (value: number) => {
-  console.log('🚀 ~ file: index.vue:437 ~ tabChange ~ value:', value);
+  if (value) {
+    onRefreshAssign();
+  } else {
+    onRefresh();
+  }
 };
 
 const delAssignBatch = async () => {

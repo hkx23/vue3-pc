@@ -1,7 +1,7 @@
 <template>
   <cmp-container :full="false">
     <cmp-card>
-      <cmp-query :ref="optsValue" :opts="opts" is-expansion @submit="conditionEnter" />
+      <cmp-query ref="optsValue" :opts="opts" is-expansion @submit="conditionEnter" />
     </cmp-card>
     <cmp-card :span="12">
       <!-- ################# 处理组表格数据 ###################### -->
@@ -170,7 +170,7 @@
 
 <script setup lang="ts">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, Ref, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -191,7 +191,7 @@ const { pageUI: pageMitem } = usePage();
 const { loading: loadingMitem, setLoading: setLoadingMitem } = useLoading();
 const { loading: loadingPackDtl, setLoading: setLoadingUser } = useLoading();
 const isAdd = ref(true);
-const userRowKeys: Ref<any[]> = ref([]);
+const userRowKeys = ref([]);
 
 // 查询组件值
 const optsValue = ref({}) as any;
