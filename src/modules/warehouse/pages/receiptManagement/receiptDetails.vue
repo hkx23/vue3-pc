@@ -113,7 +113,7 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { title: '目标仓库', width: 100, colKey: 'toWarehouseName' },
   { title: '目标货位', width: 100, colKey: 'toDistrictName' },
   { title: '单位', width: 100, colKey: 'uomName' },
-  { title: '需求数量', width: 100, colKey: 'reqQty' },
+  { title: '需求数量', width: 100, colKey: 'qty' },
 ];
 const tableDocumentDetails = ref([]);
 const tableLabelDetail = ref([]);
