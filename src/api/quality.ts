@@ -1131,10 +1131,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1167,8 +1167,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -2835,13 +2835,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s3?: string;
-  s1?: string;
-  i?: string;
   iii?: string;
-  s2?: string;
+  s1?: string;
   s4?: string;
+  i?: string;
+  s3?: string;
   ii?: string;
+  s2?: string;
 } | null;
 
 /** 计量单位 */
