@@ -2846,12 +2846,12 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   ii?: string;
-  iii?: string;
+  i?: string;
+  s1?: string;
   s2?: string;
   s4?: string;
-  i?: string;
   s3?: string;
-  s1?: string;
+  iii?: string;
 } | null;
 
 /** 计量单位 */
