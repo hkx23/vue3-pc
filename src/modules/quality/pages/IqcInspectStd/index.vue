@@ -1,6 +1,6 @@
 <!-- 物料检验标准 -->
 <template>
-  <cmp-container v-show="pageShow">
+  <cmp-container v-show="pageShow" :full="true">
     <materialStandardAdd ref="formRef" @permission-show="onPermission"></materialStandardAdd>
   </cmp-container>
   <cmp-container v-show="!pageShow" :full="true">
@@ -98,6 +98,7 @@
                   :bool-enter="false"
                   :is-reset-query="false"
                   @submit="onInput"
+                  @reset="onReset"
                 >
                 </cmp-query>
                 <cmp-table
@@ -190,6 +191,7 @@ const message = ref('');
 const assignDelBtnOp = ref(true);
 const batchDelOp = ref(false);
 const formRef = ref(null);
+const queryComponent = ref(null);
 const assignSelectedRowKeys: Ref<any[]> = ref([]); // 补打 打印数组
 const { pageUI } = usePage(); // 物料标准 分页工具
 const { pageUI: pageUINorm } = usePage(); // 物料标准分配 分页工具
@@ -226,6 +228,15 @@ const onRefreshBill = async () => {
     }
   }
 };
+
+const onReset = () => {
+  // const { resetSearch } = queryComponent.value;
+  // resetSearch();
+  assignTabData.list = [];
+  totalAssign.value = 0;
+  assignSelectedRowKeys.value = [];
+};
+
 const onRefreshAssign = async () => {
   if (
     materialStandardParam.value.mitemId ||
@@ -566,7 +577,7 @@ const opts = computed(() => {
       isHide: tabValue.value,
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: [{ label: '已生效', value: 'EFFECTIVE' }],
+      defaultVal: 'EFFECTIVE',
       bind: {
         type: 'state',
         showTitle: false,

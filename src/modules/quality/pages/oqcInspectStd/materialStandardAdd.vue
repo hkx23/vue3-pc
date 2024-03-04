@@ -79,6 +79,7 @@
         row-key="index"
         :active-row-type="'single'"
         :hover="true"
+        :fixed-height="true"
         :table-column="tableStdDtlColumns"
         :table-data="tableData"
         :total="dataTotal"

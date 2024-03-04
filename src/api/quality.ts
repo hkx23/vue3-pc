@@ -574,8 +574,8 @@ export interface OqcInspectStdDtlFile {
 export interface OqcInspectStdSearch {
   stdId?: string;
   inspectStdCode?: string;
-  status?: string;
-  creator?: string;
+  status?: string[];
+  userNames?: string[];
   /** @format int32 */
   pageSize?: number;
   /** @format int32 */
@@ -1131,10 +1131,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 是否CTQ */
-  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1167,8 +1167,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -2639,10 +2639,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -2835,13 +2835,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s1?: string;
-  s2?: string;
-  i?: string;
   s4?: string;
   ii?: string;
+  i?: string;
   s3?: string;
   iii?: string;
+  s1?: string;
+  s2?: string;
 } | null;
 
 /** 计量单位 */
