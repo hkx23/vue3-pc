@@ -25,13 +25,18 @@
         </template>
         <template #op="rowData">
           <t-space>
-            <t-link theme="primary" @click="onShowDialog(true, rowData)">检验</t-link>
+            <t-link
+              v-if="rowData.row.inspectResult === 'UNINSPECT' || _.isEmpty(rowData.row.recheckBillNo)"
+              theme="primary"
+              @click="onShowDialog(true, rowData)"
+              >检验</t-link
+            >
           </t-space>
         </template>
 
-        <template #iqcBillNo="rowData">
+        <template #recheckBillNo="rowData">
           <t-space>
-            <t-link theme="primary" @click="onShowDialog(false, rowData)">{{ rowData.row.iqcBillNo }}</t-link>
+            <t-link theme="primary" @click="onShowDialog(false, rowData)">{{ rowData.row.recheckBillNo }}</t-link>
           </t-space>
         </template>
       </cmp-table>
@@ -72,7 +77,7 @@ const formData = reactive({
     mitemId: '',
     supplierId: '',
     iqcBillNo: '',
-    reCheckBillNo: '',
+    recheckBillNo: '',
   },
 });
 
@@ -89,7 +94,7 @@ const optsTab1 = computed(() => {
       },
       row: 1,
     },
-    reCheckBillNo: {
+    recheckBillNo: {
       label: '复检单号',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -157,7 +162,7 @@ const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
     type: 'multiple',
     width: 50,
   },
-  { title: '复检单号', width: 160, colKey: 'reCheckBillNo' },
+  { title: '复检单号', width: 160, colKey: 'recheckBillNo' },
   { title: '复检类型', width: 100, colKey: 'reCheckTypeName' },
   { title: '来源检验单', width: 160, colKey: 'iqcBillNo' },
   { title: '物料类别', width: 160, colKey: 'mitemCategoryName' },
@@ -210,7 +215,7 @@ const conditionEnter = (query: any) => {
   formData.queryData.personResponsibilityId = query.personResponsibilityId;
   formData.queryData.mitemId = query.mitemId;
   formData.queryData.supplierId = query.supplierId;
-  formData.queryData.reCheckBillNo = query.reCheckBillNo;
+  formData.queryData.recheckBillNo = query.recheckBillNo;
   formData.queryData.iqcBillNo = query.iqcBillNo;
 
   fetchTable();
@@ -236,7 +241,7 @@ const fetchTable = async () => {
     const list = await apiQuality.iqcInspectRecheck.getIqcInspectBillVoByRecheck({
       pageNum: pageTab1.value.page,
       pageSize: pageTab1.value.rows,
-      reCheckBillNo: formData.queryData.reCheckBillNo,
+      recheckBillNo: formData.queryData.recheckBillNo,
       iqcBillNo: formData.queryData.iqcBillNo,
       beginDatetimeRecheck: formData.queryData.beginDatetimeRecheck,
       endDatetimeRecheck: formData.queryData.endDatetimeRecheck,
