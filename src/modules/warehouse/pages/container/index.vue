@@ -24,6 +24,7 @@
             type="single"
             empty="没有符合条件的数据"
             @select-change="handleRowClick"
+            @refresh="fetchTable"
           >
             <template #title>
               {{ '容器类型' }}
@@ -114,7 +115,7 @@ const formData = ref({
 });
 const refreshTable = ref(null);
 const selectedRowData = ref({}); // 用于存储选中行的数据
-
+const searchText = ref('');
 const propsId = ref(''); // 接口入参
 
 //* 组件配置  --查询界面选择
@@ -164,17 +165,22 @@ const onEditRowClick1 = async (row) => {
 
 //* 查询
 const onInput = async (data: any) => {
-  setLoading(true);
   const { keyword } = data;
-  if (!data.value) {
-    const result = await api.containerType.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      keyword,
-    });
-    tableContainerData1.value = result.list;
-    dataTotal1.value = result.total;
-  }
+  searchText.value = keyword;
+  pageUI.value.page = 1;
+  fetchTable();
+};
+
+//* 表格数据
+const fetchTable = async () => {
+  setLoading(true);
+  const result = await api.containerType.getList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    keyword: searchText.value,
+  });
+  tableContainerData1.value = result.list;
+  dataTotal1.value = result.total;
   setLoading(false);
 };
 
