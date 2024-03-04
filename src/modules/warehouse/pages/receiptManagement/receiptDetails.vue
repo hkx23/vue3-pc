@@ -13,7 +13,7 @@
         <t-descriptions>
           <t-descriptions-item label="单据号：" name="billNo">{{ safeSomeData.billNo }}</t-descriptions-item>
           <t-descriptions-item label="关联单号：" name="relatedBillNo">{{
-            safeSomeData.relatedBillNo
+            safeSomeData.sourceBillNo
           }}</t-descriptions-item>
           <t-descriptions-item label="供应商：" name="supplierName">{{
             safeSomeData.supplierName
@@ -104,14 +104,6 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { title: '标签条码', colKey: 'scanBarcode', width: 85 },
   { title: '物料编码', width: 85, colKey: 'mitemCode' },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
-  {
-    title: '发出仓库',
-    width: 85,
-    colKey: 'warehouseName',
-  },
-  { title: '发出货位', width: 100, colKey: 'locationName' },
-  { title: '目标仓库', width: 100, colKey: 'toWarehouseName' },
-  { title: '目标货位', width: 100, colKey: 'toDistrictName' },
   { title: '单位', width: 100, colKey: 'uomName' },
   { title: '需求数量', width: 100, colKey: 'qty' },
 ];
