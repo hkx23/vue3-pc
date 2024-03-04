@@ -2,6 +2,7 @@
   <cmp-business-select
     name="人员"
     type="tree"
+    popup-width="720px"
     :fetch-data="fetchData"
     :fetch-search-data="fetchSearchData"
     :fetch-tree-node-data="fetchTreeNodeData"

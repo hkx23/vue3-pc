@@ -962,16 +962,12 @@ export interface IqcInspectStdFullSearch {
   iqcBillNo?: string;
   mitemCategoryId?: string;
   mitemId?: string;
-  /** 物料编码 */
-  mitemCode?: string;
   pickQty?: string;
   /** 严格度 */
   inspectionStringency?: string;
-  /** 一键合格 */
-  directInspectOk?: boolean;
-  /** 一键判退 */
-  directInspectNg?: boolean;
   supplierId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
   /** 接收单号信息 */
   billNoList?: IqcInspectSubmitDeliveryNoVO[];
 }
@@ -1120,9 +1116,7 @@ export type IqcInspectStdFullVO = {
   /** 接收质量限 */
   aql?: string;
   /** 检验结果 */
-  inspectResult?: string;
-  /** 检验结果 */
-  inspectResultSwitch?: boolean;
+  inspectResult?: boolean;
   /** 测量值 */
   measureList?: IqcInspectMeasureVO[];
   /** 不良数 */
@@ -1137,10 +1131,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1667,10 +1661,6 @@ export interface IqcInspectSubmitVO {
   supplierCode?: string;
   supplierName?: string;
   inspectionStringency?: string;
-  /** 一键合格 */
-  directInspectOk?: boolean;
-  /** 一键判退 */
-  directInspectNg?: boolean;
   /** 处理意见VO */
   iqcInspectNg?: IqcInspectNgVO;
   iqcInspectStdList?: IqcInspectStdFullVO[];
@@ -2649,10 +2639,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -2845,10 +2835,10 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  s2?: string;
-  s4?: string;
   s1?: string;
+  s2?: string;
+  i?: string;
+  s4?: string;
   ii?: string;
   s3?: string;
   iii?: string;
@@ -3860,21 +3850,6 @@ export const api = {
      */
     createdIqcInspectByMitemReceipt: (data: IqcInspectStdFullSearch) =>
       http.request<ResultBoolean['data']>(`/api/quality/iqcInspect/CreatedIqcInspectByMitemReceipt`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 物料检验头表
-     * @name CreatedIqcInspectAndStockIn
-     * @summary 一键判退或者一键合格，同时生成检验单和入库单
-     * @request POST:/iqcInspect/CreatedIqcInspectAndStockIn
-     * @secure
-     */
-    createdIqcInspectAndStockIn: (data: IqcInspectStdFullSearch) =>
-      http.request<ResultBoolean['data']>(`/api/quality/iqcInspect/CreatedIqcInspectAndStockIn`, {
         method: 'POST',
         body: data as any,
       }),

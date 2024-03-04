@@ -20,7 +20,7 @@
         @select-change="onSelectChange"
       >
         <template #title>
-          {{ t('materialRequisition.deliveryCardCommandList') }}
+          {{ t('deliveryCommand.deliveryCardCommandList') }}
         </template>
         <template #operation="{ row }">
           <t-space :size="8">
@@ -29,15 +29,14 @@
         </template>
         <template #button>
           <t-button theme="primary" @click="onAddClick">{{ t('common.button.add') }}</t-button>
-          <t-popconfirm theme="default" content="t('common.message.confirmDelete')" @confirm="onDeleteBatches()">
+          <t-popconfirm theme="default" :content="t('common.message.confirmDelete')" @confirm="onDeleteBatches()">
             <t-button theme="default" :disabled="selectedRowKeys.length < 1">{{
               t('common.button.cancellation')
             }}</t-button>
           </t-popconfirm>
           <t-button theme="default" :disabled="selectedRowKeys.length < 1" @click="onClickAddMaterialRule">
-            {{ t('materialRequisition.deliveryOrderCreation') }}
+            {{ t('deliveryCommand.deliveryOrderCreation') }}
           </t-button>
-          <t-button theme="default">{{ t('common.button.export') }}</t-button>
           <t-button theme="default">{{ t('common.button.print') }}</t-button>
         </template>
       </cmp-table>
@@ -49,7 +48,7 @@
       <t-row :gutter="[32, 16]">
         <!-- 第 1️⃣ 行数据 -->
         <t-col :span="6">
-          <t-form-item :label="t('materialRequisition.lineSideWarehouseCode')" name="warehouseId">
+          <t-form-item :label="t('deliveryCommand.lineSideWarehouseCode')" name="warehouseId">
             <bcmp-select-business
               v-model="deliveryFormParam.warehouseId"
               label=""
@@ -60,7 +59,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item :label="t('materialRequisition.moScheCodes')" name="moScheId">
+          <t-form-item :label="t('deliveryCommand.moScheCodes')" name="moScheId">
             <bcmp-select-business
               v-model="deliveryFormParam.moScheId"
               label=""
@@ -72,7 +71,7 @@
         </t-col>
         <!-- 第 2️⃣ 行数据 -->
         <t-col :span="6">
-          <t-form-item :label="t('materialRequisition.mitemCode')" name="mitemId">
+          <t-form-item :label="t('deliveryCommand.mitemCode')" name="mitemId">
             <bcmp-select-business
               v-model="deliveryFormParam.mitemId"
               label=""
@@ -84,18 +83,18 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item :label="t('materialRequisition.mitemDesc')" name="miteDecs">
+          <t-form-item :label="t('deliveryCommand.mitemDesc')" name="miteDecs">
             <t-input v-model="deliveryFormParam.miteDecs" disabled></t-input>
           </t-form-item>
         </t-col>
         <!-- 第 3️⃣ 行数据 -->
         <t-col :span="6">
-          <t-form-item :label="t('materialRequisition.uom')" name="uom">
+          <t-form-item :label="t('deliveryCommand.uom')" name="uom">
             <t-input v-model="deliveryFormParam.uom" disabled></t-input>
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item :label="t('materialRequisition.deliveryQuantity')" name="deliveryQty">
+          <t-form-item :label="t('deliveryCommand.deliveryQuantity')" name="deliveryQty">
             <t-input-number
               v-model="deliveryFormParam.deliveryQty"
               theme="column"
@@ -106,7 +105,7 @@
         </t-col>
         <!-- 第 4️⃣ 行数据 -->
         <t-col :span="6">
-          <t-form-item :label="t('materialRequisition.remark')" name="memo">
+          <t-form-item :label="t('deliveryCommand.remark')" name="memo">
             <t-textarea v-model="deliveryFormParam.memo" name="description" :autosize="{ minRows: 3, maxRows: 5 }" />
           </t-form-item>
         </t-col>
@@ -138,6 +137,7 @@ import {
 } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
+import { api as apiMain } from '@/api/main';
 import { api } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -158,14 +158,15 @@ const formVisible = ref(false);
 const isSubmit = ref(true); // 新增 or 编辑
 const selectMaterialRow = ref({}) as any; // 选中领料制单行
 const state = reactive({
-  checkOptions: [
-    { label: t('common.button.selectAll'), value: '', checkAll: true },
-    { value: 'DELIVERED', label: t('materialRequisition.delivered') },
-    { value: 'CREATED', label: t('materialRequisition.generated') },
-    { value: 'REQUIRED', label: t('materialRequisition.orderCreated') },
-    { value: 'CANCEL', label: t('materialRequisition.expired') },
-  ],
+  checkOptions: [],
 });
+
+const fetchStatueDic = async () => {
+  state.checkOptions = [
+    { label: t('common.button.selectAll'), value: '', checkAll: true },
+    ...(await apiMain.param.getListByGroupCode({ parmGroupCode: 'W_DELIVERY_ORDER_STATUS' })),
+  ];
+};
 
 // 表格数据总条数
 const deliveryTotal = ref(0);
@@ -180,57 +181,57 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'warehouseCode',
-    title: t('materialRequisition.lineSideWarehouseCode'),
+    title: t('deliveryCommand.lineSideWarehouseCode'),
     width: '110',
   },
   {
     colKey: 'warehouseName',
-    title: t('materialRequisition.lineSideWarehouseName'),
+    title: t('deliveryCommand.lineSideWarehouseName'),
     width: '150',
   },
   {
     colKey: 'scheCode',
-    title: t('materialRequisition.productionOrder'),
+    title: t('deliveryCommand.productionOrder'),
     width: '120',
   },
   {
     colKey: 'mitemCode',
-    title: t('materialRequisition.mitemCode'),
+    title: t('deliveryCommand.mitemCode'),
     width: '150',
   },
   {
     colKey: 'mitemDesc',
-    title: t('materialRequisition.mitemDesc'),
+    title: t('deliveryCommand.mitemDesc'),
     width: '150',
   },
   {
     colKey: 'deliveryQty',
-    title: t('materialRequisition.deliveryQuantity'),
+    title: t('deliveryCommand.deliveryQuantity'),
     width: '100',
   },
   {
     colKey: 'uomName',
-    title: t('materialRequisition.uom'),
+    title: t('deliveryCommand.uom'),
     width: '100',
   },
   {
     colKey: 'deliveryBillNo',
-    title: t('materialRequisition.deliveryDocumentNumber'),
+    title: t('deliveryCommand.deliveryDocumentNumber'),
     width: '10',
   },
   {
     colKey: 'statusName',
-    title: t('materialRequisition.commandStatus'),
+    title: t('deliveryCommand.commandStatus'),
     width: '100',
   },
   {
     colKey: 'modifierName',
-    title: t('materialRequisition.lastUpdatedBy'),
+    title: t('deliveryCommand.lastUpdatedBy'),
     width: '100',
   },
   {
     colKey: 'timeModified',
-    title: t('materialRequisition.lastUpdateTime'),
+    title: t('deliveryCommand.lastUpdateTime'),
     width: '150',
   },
   {
@@ -267,6 +268,7 @@ const eidtFormSubmit = () => {
 };
 // 初始渲染
 onMounted(async () => {
+  fetchStatueDic();
   await onGetDeliveryData(); // 获取 表格 数据
 });
 
@@ -376,7 +378,7 @@ const onDeleteBatches = async () => {
 const opts = computed(() => {
   return {
     warehouseId: {
-      label: t('materialRequisition.lineSideWarehouse'),
+      label: t('deliveryCommand.lineSideWarehouse'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -386,7 +388,7 @@ const opts = computed(() => {
       },
     },
     mitemId: {
-      label: t('materialRequisition.material'),
+      label: t('deliveryCommand.material'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -396,13 +398,13 @@ const opts = computed(() => {
       },
     },
     deliveryBillNo: {
-      label: t('materialRequisition.deliveryOrderNumber'),
+      label: t('deliveryCommand.deliveryOrderNumber'),
       comp: 't-input',
       event: 'business',
       defaultVal: '',
     },
     receiveDate: {
-      label: t('materialRequisition.creationTime'),
+      label: t('deliveryCommand.creationTime'),
       comp: 't-date-range-picker',
       event: 'daterangetime',
       defaultVal: [startOfSevenDaysAgo.format('YYYY-MM-DD HH:mm:ss'), endOfToday.format('YYYY-MM-DD HH:mm:ss')], // 初始化日期控件
@@ -412,7 +414,7 @@ const opts = computed(() => {
       },
     },
     status: {
-      label: t('materialRequisition.status'),
+      label: t('deliveryCommand.status'),
       comp: 't-checkbox-group',
       event: 'checkboxgroup',
       flex: '600px',
@@ -460,9 +462,10 @@ const isAdd = ref(true);
 const onClickAddMaterialRule = () => {
   const flag = warehouseNameArr.value.every((e) => e === warehouseNameArr.value[0]);
   if (!flag) {
-    MessagePlugin.warning(t('materialRequisition.pleaseSelectTheSameLineSideWarehouse'));
+    MessagePlugin.warning(t('deliveryCommand.pleaseSelectTheSameLineSideWarehouse'));
     return;
   }
+
   idCollection.value.warehouseId = Array.from(new Set(selectData.value.map((item) => item.warehouseId)));
   idCollection.value.moScheId = Array.from(new Set(selectData.value.map((item) => item.moScheId)));
   idCollection.value.mitemId = Array.from(new Set(selectData.value.map((item) => item.mitemId)));

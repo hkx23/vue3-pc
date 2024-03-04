@@ -63,7 +63,10 @@
                 ></cmp-list-item-meta>
               </t-list-item>
             </t-list>
-            <div v-else class="full-list">
+            <!-- <div v-else-if="props.type === 'table'" class="full-list">
+              <t-table :data="listData"> </t-table>
+            </div> -->
+            <div v-else-if="props.type === 'tree'" class="full-list">
               <t-tree :data="listData" hover expand-on-click-node :load="onLoadTreeNodes" value-mode="all">
                 <template #label="{ node }">
                   <div v-if="node.data?.row?.children">
@@ -140,9 +143,10 @@ import { BusinessItem } from './constants';
 
 export interface CmpBusinessSelectProps extends Omit<SelectInputProps, 'options'> {
   mode?: 'read' | 'edit';
-  type?: 'tree' | 'list';
+  type?: 'list' | 'table' | 'tree';
   plain?: boolean;
   name: string;
+  popupWidth?: string;
   fetchData: (pageIndex?: number) => Promise<BusinessItem[]>;
   fetchSearchData: (keyword: string, listData: any[]) => Promise<BusinessItem[]>;
   fetchTreeNodeData?: (
@@ -156,6 +160,7 @@ const props = withDefaults(defineProps<CmpBusinessSelectProps>(), {
   mode: 'edit',
   type: 'list',
   inputValue: '',
+  popupWidth: undefined,
   popupVisible: false,
   allowInput: true,
   clearable: true,
@@ -174,7 +179,7 @@ const targetAttrs = computed<CmpBusinessSelectProps>(() => {
   }
   newProps.popupProps = {
     overlayInnerStyle: {
-      width: props.multiple ? '580px' : '350px',
+      width: props.popupWidth || (props.multiple ? '580px' : '350px'),
       padding: 0,
     },
   };
@@ -307,7 +312,6 @@ const listAfterSearch = ref<BusinessItem[]>(undefined);
 const isSearch = ref(false);
 const onInputChange: SelectInputProps['onInputChange'] = debounce(async (val, _context) => {
   if (isEmpty(val)) {
-    // listAfterSearch.value = props.type === 'list' ? listData.value : undefined;
     listAfterSearch.value = undefined;
     isSearch.value = false;
     return;
@@ -357,6 +361,14 @@ const onLoadTreeNodes: TreeProps['load'] = (node) => {
       > .full-list {
         flex: 1;
         overflow-y: auto;
+
+        :deep(.t-tree__label:has(.b-item)) {
+          padding: 0;
+        }
+
+        :deep(.t-tree__icon:empty) {
+          width: 0;
+        }
       }
     }
   }
