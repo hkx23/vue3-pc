@@ -8,11 +8,13 @@
     @close="dialogClose"
   >
     <!-- doc -->
-    <div v-if="fileType == 'doc'" ref="docxRef" class="word-div">
+    <div v-show="fileType == 'doc'" ref="docxRef" class="word-div">
+      <div id="docView"></div>
       <!-- <vue-office-docx :src="previewAddress"></vue-office-docx> -->
     </div>
     <!-- xlsx -->
-    <div v-if="fileType == 'excel'" ref="xlsxRef" class="xlsx-div">
+    <div v-show="fileType == 'excel'" ref="xlsxRef" class="xlsx-div">
+      <div id="excelView"></div>
       <!-- <vue-office-excel :src="previewAddress" /> -->
       <!-- <t-tabs v-model="activeName">
         <t-tab-panel v-for="(item, index) in excelSheet" :key="index" :label="item.name" :value="item.name">
@@ -21,14 +23,15 @@
       </t-tabs> -->
     </div>
     <!-- 图片 -->
-    <div v-if="fileType == 'img'" class="img-div">
+    <div v-show="fileType == 'img'" class="img-div">
       <t-image :src="fileData.src" :alt="fileData.fileName" />
     </div>
 
     <!-- pdf -->
-    <!-- <div v-if="fileType == 'pdf'" class="pdf-div">
-      <vue-office-pdf :src="previewAddress" @rendered="renderedHandler" @error="errorHandler" />
-    </div> -->
+    <div v-show="fileType == 'pdf'" class="pdf-div">
+      <div id="pdfView"></div>
+      <!-- <vue-office-pdf :src="previewAddress" @rendered="renderedHandler" @error="errorHandler" /> -->
+    </div>
   </t-dialog>
 </template>
 <script setup lang="ts" name="docViewer">
@@ -41,6 +44,13 @@
 // import VueOfficeExcel from '@vue-office/excel';
 // 引入VueOfficePdf组件
 // import VueOfficePdf from '@vue-office/pdf';
+
+import '@js-preview/docx/lib/index.css';
+import '@js-preview/excel/lib/index.css';
+
+import jsPreviewDocx from '@js-preview/docx';
+import jsPreviewExcel from '@js-preview/excel';
+import jsPreviewPdf from '@js-preview/pdf';
 import { defineProps, ref } from 'vue';
 
 interface Props {
@@ -57,7 +67,7 @@ const formVisible = ref(props.visible);
 const fileType = ref(props.type);
 const dialogTitle = ref(props.dialogTitle);
 const docxRef = ref<any>();
-const previewAddress = ref('');
+// const previewAddress = ref('');
 const dialogClose = () => {
   formVisible.value = false;
   docxRef.value = '';
@@ -69,7 +79,17 @@ const viewDocx = async (data: any) => {
   formVisible.value = true;
   console.log(data);
   if (data.src) {
-    previewAddress.value = data.src;
+    const myDocxPreviewer = jsPreviewDocx.init(document.getElementById('docView'));
+    // previewAddress.value = data.src;
+
+    myDocxPreviewer
+      .preview(data.src)
+      .then((res) => {
+        console.log('预览完成', res);
+      })
+      .catch((e) => {
+        console.log('预览失败', e);
+      });
   }
 };
 
@@ -80,7 +100,17 @@ const viewXlsx = async (data: any) => {
   formVisible.value = true;
   console.log(data);
   if (data.src) {
-    previewAddress.value = data.src;
+    const myExcelPreviewer = jsPreviewExcel.init(document.getElementById('excelView'));
+    // previewAddress.value = data.src;
+
+    myExcelPreviewer
+      .preview(data.src)
+      .then((res) => {
+        console.log('预览完成', res);
+      })
+      .catch((e) => {
+        console.log('预览失败', e);
+      });
   }
 };
 
@@ -114,7 +144,17 @@ const viewPdf = async (data: any) => {
   formVisible.value = true;
   console.log(data);
   if (data.src) {
-    previewAddress.value = data.src;
+    const myPdfPreviewer = jsPreviewPdf.init(document.getElementById('pdfView'));
+    // previewAddress.value = data.src;
+
+    myPdfPreviewer
+      .preview(data.src)
+      .then((res) => {
+        console.log('预览完成', res);
+      })
+      .catch((e) => {
+        console.log('预览失败', e);
+      });
   }
 };
 // const renderedHandler = () => {

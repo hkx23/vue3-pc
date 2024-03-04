@@ -39,20 +39,24 @@
             v-if="!$props.readonly"
             ref="uploadRef"
             v-model="files"
+            :allow-upload-duplicate-file="true"
             :request-method="requestMethod"
             theme="custom"
+            :multiple="false"
             :before-upload="beforeUpload"
             @fail="handleFail"
           >
             <t-button theme="primary" :disabled="tableData?.length >= props.uploadCountLimit">上传</t-button>
           </t-upload>
-          <t-button
+          <t-popconfirm
             v-if="!$props.readonly"
             theme="default"
             :disabled="selectedRowKeys?.length <= 0"
-            @click="batchDelete"
-            >批量删除</t-button
+            content="确认删除已选中文件吗"
+            @confirm="batchDelete()"
           >
+            <t-button theme="default" :disabled="selectedRowKeys?.length <= 0">批量删除</t-button>
+          </t-popconfirm>
           <t-button theme="default" :disabled="selectedRowKeys?.length <= 0" @click="batchDownload">批量下载</t-button>
         </t-space>
       </template>
@@ -120,7 +124,7 @@ const props = defineProps({
   },
 });
 // const previewType = 'doc,docx,jpg,jpeg,png,xlsx';
-const previewType = 'jpg,jpeg,png';
+const previewType = 'jpg,jpeg,png,docx,xlsx,pdf';
 type RequestMethod = (files: UploadFile | UploadFile[]) => Promise<RequestMethodResponse>;
 // 计算属性 - 根据解析的数据计算出表格头
 const columns = computed(() => {
@@ -197,6 +201,7 @@ const fetchData = () => {
 const handleFail = ({ file }) => {
   tableData.value = tableData.value.filter((item) => item.fileName !== file.name);
   MessagePlugin.error(`文件 ${file.name} 上传失败`);
+  files.value = [];
   emits('uploadfail', file);
 };
 
@@ -346,6 +351,7 @@ const batchDelete = async () => {
     } else {
       emits('batchDeleteSuccess', deleteRows);
     }
+    selectedRowKeys.value = [];
   }
 };
 const batchDownload = () => {
@@ -447,10 +453,9 @@ const previewFun = (file: any) => {
     fileViewerRef.value?.viewXlsx(data);
   } else if (suffix === 'jpg' || suffix === 'jpeg' || suffix === 'png') {
     fileViewerRef.value?.viewImg(data);
+  } else if (suffix === 'pdf') {
+    fileViewerRef.value?.viewPdf(data);
   }
-  // else if (suffix === 'pdf') {
-  //   fileViewerRef.value?.viewPdf(data);
-  // }
 };
 
 watch(
