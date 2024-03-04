@@ -4,7 +4,7 @@
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :full="false" :full-sub-index="[0, 1]">
+            <cmp-container :full="true">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <!-- 查询组件  -->
                 <cmp-query :opts="opts" label-width="100" @submit="conditionEnter"
@@ -22,10 +22,10 @@
                   :table-column="groupColumns"
                   :table-data="stdList.list"
                   :loading="loading"
+                  :fixed-height="true"
                   :total="stdTableTotal"
                   :hover="true"
                   :selected-row-keys="stdRowKeys"
-                  style="height: 400px"
                   @select-change="onSelectedChange"
                   @refresh="onRefresh"
                 >
@@ -63,7 +63,7 @@
         </t-tab-panel>
         <t-tab-panel :value="1" label="标准分配" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :full="false" :full-sub-index="[0, 1]">
+            <cmp-container :full="true">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <cmp-query :opts="assignOpts" label-width="100" :is-reset-query="false" @submit="subSearchClick">
                   ></cmp-query
@@ -79,7 +79,7 @@
                   :table-column="assignColumns"
                   :table-data="assignDataList.list"
                   :total="assignDataTabTotal"
-                  style="height: 400px"
+                  :fixed-height="true"
                   @select-change="onProductRightFetchData"
                   @refresh="onRefreshTwo"
                 >

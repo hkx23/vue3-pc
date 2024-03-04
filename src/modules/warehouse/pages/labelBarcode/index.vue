@@ -329,6 +329,8 @@ const onPrint = async () => {
         LABEL_NO: foundItem.labelNo,
         QTY: foundItem.balanceQty,
         LOT_NO: foundItem.lotNo,
+        C_INV_STD: delivery.mitemName,
+        BATCH_NO: foundItem.batchNo,
         SUPPLIER_NAME: delivery.supplierName,
         SUPPLIER_CODE: delivery.supplierCode,
         MITEM_CODE: delivery.mitemCode,
