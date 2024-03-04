@@ -5,7 +5,7 @@
       :options="flattenRouters"
       :class="['header-search', { 'hover-active': isSearchFocus }]"
       :placeholder="$t('layout.searchPlaceholder')"
-      @blur="changeSearchFocus(false)"
+      @blur="changeSearchFocusDelay(false)"
       @focus="changeSearchFocus(true)"
       @enter="onEnterSearch"
       @select="onSelectSearch"
@@ -32,7 +32,7 @@
       :class="['header-search', { 'width-zero': !isSearchFocus }]"
       :placeholder="$t('layout.searchPlaceholder')"
       :autofocus="isSearchFocus"
-      @blur="changeSearchFocus(false)"
+      @blur="changeSearchFocusDelay(false)"
       @enter="onEnterSearch"
       @select="onSelectSearch"
     >
@@ -80,12 +80,13 @@ flatten(routers.value);
 
 const isSearchFocus = ref(false);
 const searchData = ref('');
-const changeSearchFocus = debounce((value: boolean) => {
+const changeSearchFocus = (value: boolean) => {
   if (!value) {
     searchData.value = '';
   }
   isSearchFocus.value = value;
-}, 100);
+};
+const changeSearchFocusDelay = debounce(changeSearchFocus, 200);
 const router = useRouter();
 
 const onSelectSearch = (value) => {

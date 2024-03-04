@@ -4,7 +4,7 @@
       <t-avatar>{{ props.avatarLabel || props.name?.charAt(0)?.toUpperCase() }}</t-avatar>
     </t-col>
     <t-col flex="auto">
-      <t-row>
+      <t-row style="font-size: 12px">
         <t-col flex="auto">
           <div>
             <b>{{ props.name }}</b> <sub>{{ props.code }}</sub>
@@ -24,7 +24,7 @@
             v-if="suffixTag"
             :class="'suffix-tag' + (props.showCloseButton ? ' auto-hidden' : '')"
             theme="success"
-            variant="outline"
+            variant="light-outline"
             size="small"
             >{{ suffixTag }}</t-tag
           >

@@ -1,11 +1,11 @@
 <template>
   <t-dialog
     v-model:visible="formCardVisible"
-    :header="t('materialRequisition.formtitle')"
+    :header="t('deliveryCommand.formtitle')"
     width="95%"
     top="20"
     :confirm-btn="{
-      content: t('materialRequisition.submit'),
+      content: t('deliveryCommand.submit'),
       theme: 'primary',
     }"
     :on-confirm="onConfirmForm"
@@ -24,7 +24,7 @@
         >
           <t-row :gutter="[0, 12]">
             <t-col :span="3">
-              <t-form-item :label="t('materialRequisition.warehouseId')" name="warehouseId">
+              <t-form-item :label="t('deliveryCommand.warehouseId')" name="warehouseId">
                 <bcmp-select-business
                   v-model="formData.warehouseId"
                   :disabled="formData.isLock"
@@ -34,7 +34,7 @@
               ></t-form-item>
             </t-col>
             <t-col :span="3">
-              <t-form-item :label="t('materialRequisition.toWarehouseId')" name="toWarehouseId">
+              <t-form-item :label="t('deliveryCommand.toWarehouseId')" name="toWarehouseId">
                 <bcmp-select-business
                   v-model="formData.toWarehouseId"
                   :disabled="true"
@@ -45,7 +45,7 @@
               ></t-form-item>
             </t-col>
             <t-col :span="3">
-              <t-form-item :label="t('materialRequisition.remark')" name="remark">
+              <t-form-item :label="t('deliveryCommand.remark')" name="remark">
                 <t-input v-model="formData.remark" />
               </t-form-item>
             </t-col>
@@ -125,9 +125,9 @@ const { loading: loadingMaterialDtl, setLoading: setLoadingMaterialDtl } = useLo
 const formCardVisible = ref(false);
 const formCardRef: Ref<FormInstanceFunctions> = ref(null);
 const FORM_RULES = {
-  moScheCodes: [{ required: true, message: t('common.placeholder.input', [t('materialRequisition.moScheCodes')]) }],
-  warehouseId: [{ required: true, message: t('common.placeholder.input', [t('materialRequisition.warehouseId')]) }],
-  toWarehouseId: [{ required: true, message: t('common.placeholder.input', [t('materialRequisition.toWarehouseId')]) }],
+  moScheCodes: [{ required: true, message: t('common.placeholder.input', [t('deliveryCommand.moScheCodes')]) }],
+  warehouseId: [{ required: true, message: t('common.placeholder.input', [t('deliveryCommand.warehouseId')]) }],
+  toWarehouseId: [{ required: true, message: t('common.placeholder.input', [t('deliveryCommand.toWarehouseId')]) }],
 };
 
 // 接收父组件传过来的 ID 集合
@@ -168,34 +168,34 @@ const formData: FormMaterialRequisition = reactive({
 });
 
 const tableMaterialSumColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: `${t('materialRequisition.mitemCode')}`, width: 120, colKey: 'mitemCode' },
-  { title: `${t('materialRequisition.mitemName')}`, width: 120, colKey: 'mitemName' },
-  { title: `${t('materialRequisition.warehouseId')}`, width: 120, colKey: 'warehouseName' },
-  { title: `${t('materialRequisition.onHandQty')}`, width: 120, colKey: 'handQty' },
-  { title: `${t('materialRequisition.toWarehouseId')}`, width: 120, colKey: 'toWarehouseName' },
-  { title: `${t('materialRequisition.reqQty')}`, width: 100, colKey: 'reqQty' },
+  { title: `${t('deliveryCommand.mitemCode')}`, width: 120, colKey: 'mitemCode' },
+  { title: `${t('deliveryCommand.mitemName')}`, width: 120, colKey: 'mitemName' },
+  { title: `${t('deliveryCommand.warehouseId')}`, width: 120, colKey: 'warehouseName' },
+  { title: `${t('deliveryCommand.onHandQty')}`, width: 120, colKey: 'handQty' },
+  { title: `${t('deliveryCommand.toWarehouseId')}`, width: 120, colKey: 'toWarehouseName' },
+  { title: `${t('deliveryCommand.reqQty')}`, width: 100, colKey: 'reqQty' },
 ];
 
 const tableMaterialDtlColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: `${t('materialRequisition.moScheCode')}`, width: 150, colKey: 'scheCode' },
-  { title: `${t('materialRequisition.mitemCode')}`, width: 120, colKey: 'mitemCode' },
-  { title: `${t('materialRequisition.mitemName')}`, width: 120, colKey: 'mitemName' },
-  { title: `${t('materialRequisition.uomName')}`, width: 120, colKey: 'uomName' },
+  { title: `${t('deliveryCommand.moScheCode')}`, width: 150, colKey: 'scheCode' },
+  { title: `${t('deliveryCommand.mitemCode')}`, width: 120, colKey: 'mitemCode' },
+  { title: `${t('deliveryCommand.mitemName')}`, width: 120, colKey: 'mitemName' },
+  { title: `${t('deliveryCommand.uomName')}`, width: 120, colKey: 'uomName' },
   {
-    title: `${t('materialRequisition.warehouseName')}`,
+    title: `${t('deliveryCommand.warehouseName')}`,
     width: 120,
     colKey: 'warehouseName',
   },
-  { title: `${t('materialRequisition.onHandQty')}`, width: 120, colKey: 'handQty' },
-  { title: `${t('materialRequisition.toWarehouseName')}`, width: 120, colKey: 'toWarehouseName' },
+  { title: `${t('deliveryCommand.onHandQty')}`, width: 120, colKey: 'handQty' },
+  { title: `${t('deliveryCommand.toWarehouseName')}`, width: 120, colKey: 'toWarehouseName' },
   {
-    title: `${t('materialRequisition.moRequestQty')}`,
+    title: `${t('deliveryCommand.moRequestQty')}`,
     width: 120,
     colKey: 'moRequestQty',
   },
-  { title: `${t('materialRequisition.pickQty')}`, width: 120, colKey: 'alreadyPickQty' },
-  { title: `${t('materialRequisition.reqQty')}`, width: 200, colKey: 'reqQty' },
-  { title: `${t('materialRequisition.handQty')}`, width: 120, colKey: 'handQty' },
+  { title: `${t('deliveryCommand.pickQty')}`, width: 120, colKey: 'alreadyPickQty' },
+  { title: `${t('deliveryCommand.reqQty')}`, width: 200, colKey: 'reqQty' },
+  { title: `${t('deliveryCommand.handQty')}`, width: 120, colKey: 'handQty' },
 ];
 
 const onRowClick = ({ row }) => {
@@ -269,7 +269,7 @@ const onFormConfirm = () => {
       return;
     }
     if (formData.warehouseId === formData.toWarehouseId) {
-      MessagePlugin.warning(t('materialRequisition.sameWarehouseTip'));
+      MessagePlugin.warning(t('deliveryCommand.sameWarehouseTip'));
       return;
     }
     formData.isLock = true;
@@ -287,7 +287,7 @@ const fetchMaterialDtlTable = async () => {
     setLoadingMaterialDtl(true);
     const data = await apiWarehouse.materialRequisition.getCommandReqDtls({
       ...formData,
-      mitemIds: props.idCollection.moScheId,
+      mitemIds: props.idCollection.mitemId,
       moScheCodeList: props.idCollection.moScheId,
     });
     tableDataMaterialRequisition.value = data;
@@ -335,14 +335,14 @@ const checkSubmit = () => {
     });
     if (isEmptyWarehouse) {
       isSuccess = false;
-      MessagePlugin.warning(t('materialRequisition.checkSubmitDtls'));
+      MessagePlugin.warning(t('deliveryCommand.checkSubmitDtls'));
     } else if (isEmptyQty) {
       isSuccess = false;
-      MessagePlugin.warning(t('materialRequisition.checkReqQtyEmpty'));
+      MessagePlugin.warning(t('deliveryCommand.checkReqQtyEmpty'));
     }
   } else {
     isSuccess = false;
-    MessagePlugin.warning(t('materialRequisition.checkSubmitDtls'));
+    MessagePlugin.warning(t('deliveryCommand.checkSubmitDtls'));
   }
   return isSuccess;
 };

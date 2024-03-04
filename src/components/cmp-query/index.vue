@@ -447,6 +447,9 @@ const computedExpandBtnVisible = () => {
 const search = () => {
   checkHandle();
 };
+const resetSearch = () => {
+  resetHandle();
+};
 onMounted(() => {
   debounceFunction();
   // window.addEventListener('resize', debounceFunction, false);
@@ -462,7 +465,7 @@ const setFromValue = (fromKey, fromValue) => {
   state.form[fromKey] = fromValue;
 };
 // 暴露方法出去
-defineExpose({ state, props, setFromValue, search });
+defineExpose({ state, props, setFromValue, search, resetSearch });
 </script>
 
 <style lang="less" scoped>
