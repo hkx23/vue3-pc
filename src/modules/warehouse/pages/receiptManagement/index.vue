@@ -205,11 +205,7 @@ const tabRefresh = async () => {
 const onInput = async (data: any) => {
   const { categoryName, mitemCode, supplierName, billNo, timeCreate } = data;
   // 提取categoryName数组中每个元素的label，合并成一个数组
-
-  console.log(categoryName);
   const businessCategoryIds = categoryName === '' ? [] : categoryName.split(',').map((item) => item.trim());
-  console.log(businessCategoryIds);
-
   if (!data.value) {
     const result = await api.billManagement.getList({
       pageNum: pageUI.value.page,
