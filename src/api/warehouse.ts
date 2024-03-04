@@ -3225,19 +3225,19 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
   /**

@@ -2145,8 +2145,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3923,15 +3923,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  stateName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isRawName?: string;
-  isProductName?: string;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -4074,8 +4074,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4410,9 +4410,9 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
+  erpbillNo?: string;
   imsgqueueStatus?: string;
   mesbillNo?: string;
-  erpbillNo?: string;
 }
 
 /** 显示工站 */
@@ -5292,8 +5292,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
