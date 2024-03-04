@@ -10,7 +10,7 @@
       <cmp-table
         v-model:pagination="pageUI"
         :loading="loading"
-        row-key="billId"
+        row-key="_timestamp"
         :table-column="tableReckoningManagementColumns"
         :table-data="tableDataReckoning"
         :fixed-height="true"
@@ -260,7 +260,12 @@ const fetchTable = async () => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
-  tableDataReckoning.value = [...data.list];
+  // 响应数据在response.list中
+  const dataWithTimestamps = data.list.map((item) => ({
+    ...item,
+    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+  }));
+  tableDataReckoning.value = dataWithTimestamps;
   dataTotal.value = data.total;
   setLoading(false);
 };
