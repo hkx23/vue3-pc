@@ -1,7 +1,7 @@
 <template>
-  <cmp-container :full="false">
+  <cmp-container :full="true" :full-sub-index="[2]">
     <!-- !提交暂存模块 -->
-    <cmp-card :span="12">
+    <cmp-card>
       <t-row justify="space-between" align="center">
         <t-col
           ><span class="span_title">{{ getTitle(formData.operateTpye) }}</span></t-col
@@ -14,7 +14,7 @@
       </t-row>
     </cmp-card>
     <!-- !基础信息模块 -->
-    <cmp-card :span="12" title="基础信息" class="cards_title">
+    <cmp-card title="基础信息" class="cards_title">
       <t-form ref="formRef" :rules="rules" :data="formData" :show-error-message="false">
         <t-row :gutter="[32, 16]">
           <!-- 第 1️⃣ 行数据 -->
@@ -64,17 +64,17 @@
       </t-form>
     </cmp-card>
     <!-- !检验项目表格模块 -->
-    <cmp-card :span="12" class="cards_title">
+    <cmp-card class="cards_title">
       <cmp-table
         ref="tableRefCard"
         v-model:pagination="pageUI"
         row-key="index"
         :active-row-type="'single'"
         :hover="true"
+        :fixed-height="true"
         :table-column="columns"
         :table-data="dtlTabData"
         :total="dataTotal"
-        style="height: 280px"
         :selected-row-keys="dtlRowKeys"
         @select-change="onDtlSelectedChange"
       >

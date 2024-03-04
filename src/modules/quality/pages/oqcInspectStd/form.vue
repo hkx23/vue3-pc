@@ -116,14 +116,15 @@ export default {
     const fetchSampingStdCodes = async () => {
       try {
         const data = (await api.oqcInspectStd.getOqcInspectList({
-          status: 'EFFECTIVE',
           pageNum: 1,
           pageSize: 10,
         })) as any;
-        namesOption.value = data.list.map((item: { inspectStdCode: any; id: any }) => ({
-          label: item.inspectStdCode,
-          value: item.id,
-        }));
+        namesOption.value = data.list
+          .filter((item) => item.status !== 'EXPIRED')
+          .map((item) => ({
+            label: item.inspectStdCode,
+            value: item.id,
+          }));
       } catch (e) {
         console.log(e);
       }
@@ -132,14 +133,16 @@ export default {
     const querySelectChange = async (event) => {
       const res = (await api.oqcInspectStd.getOqcInspectList({
         inspectStdCode: event.length >= 1 ? event : '',
-        status: 'EFFECTIVE',
         pageNum: 1,
         pageSize: 10,
       })) as any;
-      namesOption.value = res.list.map((item: { inspectStdCode: any; id: any }) => ({
-        label: item.inspectStdCode,
-        value: item.id,
-      }));
+      // 过滤出 status 不等于 'EXPIRED' 的数据，并映射为 namesOption.value
+      namesOption.value = res.list
+        .filter((item) => item.status !== 'EXPIRED' && item.status !== 'DISABLED')
+        .map((item) => ({
+          label: item.inspectStdCode,
+          value: item.id,
+        }));
     };
     const init = () => {
       formData.value = {

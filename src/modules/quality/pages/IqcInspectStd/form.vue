@@ -5,7 +5,7 @@
       <t-col :span="12">
         <t-form-item label="检验标准" name="inspectStdCode">
           <t-select
-            v-model="formData.inspectStdName"
+            v-model="formData.inspectStdCode"
             clearable
             filterable
             input-props
@@ -128,7 +128,7 @@ export default {
         namesOption.value = data.list
           .filter((item) => item.status !== 'EXPIRED')
           .map((item) => ({
-            label: item.inspectStdName,
+            label: item.inspectStdCode,
             value: item.id,
           }));
       } catch (e) {
@@ -146,7 +146,7 @@ export default {
       namesOption.value = res.list
         .filter((item) => item.status !== 'EXPIRED' && item.status !== 'DISABLED')
         .map((item) => ({
-          label: item.inspectStdName,
+          label: item.inspectStdCode,
           value: item.id,
         }));
     };

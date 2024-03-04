@@ -4,15 +4,10 @@
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :full="false" :full-sub-index="[0, 1]">
+            <cmp-container :full="true">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <!-- 查询组件  -->
-                <cmp-query :opts="opts" label-width="100" @submit="conditionEnter"
-                  ><template #querySelect="{ param }">
-                    <t-select v-model="param.status" label="状态" clearable>
-                      <t-option v-for="item in statusOption" :key="item.id" :label="item.label" :value="item.value" />
-                    </t-select> </template
-                ></cmp-query>
+                <cmp-query :opts="opts" label-width="100" @submit="conditionEnter"></cmp-query>
               </cmp-card>
               <cmp-card :ghost="true" class="padding-top-noline-16">
                 <cmp-table
@@ -22,10 +17,10 @@
                   :table-column="groupColumns"
                   :table-data="stdList.list"
                   :loading="loading"
+                  :fixed-height="true"
                   :total="stdTableTotal"
                   :hover="true"
                   :selected-row-keys="stdRowKeys"
-                  style="height: 400px"
                   @select-change="onSelectedChange"
                   @refresh="onRefresh"
                 >
@@ -63,9 +58,15 @@
         </t-tab-panel>
         <t-tab-panel :value="1" label="标准分配" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :full="false" :full-sub-index="[0, 1]">
+            <cmp-container :full="true">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
-                <cmp-query :opts="assignOpts" label-width="100" :is-reset-query="false" @submit="subSearchClick">
+                <cmp-query
+                  :opts="assignOpts"
+                  label-width="100"
+                  :is-reset-query="false"
+                  @submit="subSearchClick"
+                  @reset="onReset"
+                >
                   ></cmp-query
                 >
               </cmp-card>
@@ -79,7 +80,7 @@
                   :table-column="assignColumns"
                   :table-data="assignDataList.list"
                   :total="assignDataTabTotal"
-                  style="height: 400px"
+                  :fixed-height="true"
                   @select-change="onProductRightFetchData"
                   @refresh="onRefreshTwo"
                 >
@@ -104,12 +105,13 @@
   <t-dialog v-model:visible="formVisible" :close-on-overlay-click="false" header="标准分配" @confirm="onAssignConfirm">
     <materialAllotForm ref="assignFormRef"></materialAllotForm>
   </t-dialog>
-  <cmp-container v-show="pageShow">
+  <cmp-container v-show="pageShow" :full="true">
     <materialStandardAdd ref="formRef" @permission-show="onPermission"></materialStandardAdd>
   </cmp-container>
 </template>
 
 <script setup lang="ts">
+import { isEmpty } from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
@@ -139,7 +141,14 @@ const assignDataTabTotal = ref(0);
 // 日志界面 表格数据
 const stdRowKeys: Ref<any[]> = ref([]); //
 const selectedAssignRowKeys: Ref<any[]> = ref([]); // 打印数组
-// 补打，作废 DiaLog 数据
+const onReset = () => {
+  // const { resetSearch } = queryComponent.value;
+  // resetSearch();
+  assignDataList.list = [];
+  assignDataTabTotal.value = 0;
+  selectedAssignRowKeys.value = [];
+};
+
 const pageShow = ref(false);
 const onPermission = (value) => {
   pageShow.value = value;
@@ -168,8 +177,8 @@ const onAssignConfirm = async () => {
 // 标准头表查询初始化
 const queryCondition = ref({
   inspectStdCode: '',
-  status: '',
-  creator: '',
+  status: [],
+  userNames: [],
   pageNum: 1,
   pageSize: 20,
 });
@@ -435,8 +444,16 @@ const switchTab = (selectedTabIndex: any) => {
 // 打印界面点击查询按钮
 const conditionEnter = (data: any) => {
   queryCondition.value.inspectStdCode = data.inspectStdCode;
-  queryCondition.value.status = data.status;
-  queryCondition.value.creator = data.creator;
+  if (!isEmpty(data.status)) {
+    queryCondition.value.status = data.status.split(',');
+  } else {
+    queryCondition.value.status = [];
+  }
+  if (!isEmpty(data.userNames)) {
+    queryCondition.value.userNames = data.userNames.split(',');
+  } else {
+    queryCondition.value.userNames = [];
+  }
   fetchMainTable();
 };
 // 管理界面点击查询按钮
@@ -514,18 +531,26 @@ const opts = computed(() => {
       defaultVal: '',
     },
     status: {
-      label: '条码状态',
-      event: 'input',
-      defaultVal: '',
-      slotName: 'querySelect',
+      label: '状态',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: [],
+      bind: {
+        type: 'state',
+        showTitle: false,
+        isMultiple: true,
+        category: 'Q_INSPECTION_STD_STATUS',
+      },
     },
-    creator: {
+    userNames: {
       label: '创建人',
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
         type: 'user',
+        valueField: 'userName',
+        isMultiple: true,
         showTitle: false,
       },
     },
