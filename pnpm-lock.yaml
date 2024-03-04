@@ -5,6 +5,15 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@js-preview/docx':
+    specifier: ^1.6.0
+    version: 1.6.0
+  '@js-preview/excel':
+    specifier: ^1.6.4
+    version: 1.6.4
+  '@js-preview/pdf':
+    specifier: ^1.6.3
+    version: 1.6.3
   '@logicflow/core':
     specifier: ^1.2.18
     version: 1.2.18
@@ -168,7 +177,7 @@ devDependencies:
     version: 9.21.1(eslint@8.56.0)
   eslint-plugin-vue-scoped-css:
     specifier: ^2.7.2
-    version: 2.7.2(eslint@8.56.0)(vue-eslint-parser@9.3.2)
+    version: 2.7.2(eslint@8.56.0)(vue-eslint-parser@9.4.2)
   glob:
     specifier: ^10.3.10
     version: 10.3.10
@@ -189,7 +198,7 @@ devDependencies:
     version: 1.6.0
   postcss-less:
     specifier: ^6.0.0
-    version: 6.0.0(postcss@8.4.32)
+    version: 6.0.0(postcss@8.4.35)
   prettier:
     specifier: ^3.2.5
     version: 3.2.5
@@ -719,16 +728,6 @@ packages:
       conventional-changelog-conventionalcommits: 7.0.2
     dev: true
 
-  /@commitlint/config-validator@18.4.4:
-    resolution: {integrity: sha512-/QI8KIg/h7O0Eus36fPcEcO3QPBcdXuGfZeCF5m15k0EB2bcU8s6pHNTNEa6xz9PrAefHCL+yzRJj7w20T6Mow==}
-    engines: {node: '>=v18'}
-    requiresBuild: true
-    dependencies:
-      '@commitlint/types': 18.4.4
-      ajv: 8.12.0
-    dev: true
-    optional: true
-
   /@commitlint/config-validator@18.6.1:
     resolution: {integrity: sha512-05uiToBVfPhepcQWE1ZQBR/Io3+tb3gEotZjnI4tTzzPk16NffN6YABgwFQCLmzZefbDcmwWqJWc2XT47q7Znw==}
     engines: {node: '>=v18'}
@@ -748,13 +747,6 @@ packages:
       lodash.startcase: 4.4.0
       lodash.upperfirst: 4.3.1
     dev: true
-
-  /@commitlint/execute-rule@18.4.4:
-    resolution: {integrity: sha512-a37Nd3bDQydtg9PCLLWM9ZC+GO7X5i4zJvrggJv5jBhaHsXeQ9ZWdO6ODYR+f0LxBXXNYK3geYXJrCWUCP8JEg==}
-    engines: {node: '>=v18'}
-    requiresBuild: true
-    dev: true
-    optional: true
 
   /@commitlint/execute-rule@18.6.1:
     resolution: {integrity: sha512-7s37a+iWyJiGUeMFF6qBlyZciUkF8odSAnHijbD36YDctLhGKoYltdvuJ/AFfRm6cBLRtRk9cCVPdsEFtt/2rg==}
@@ -786,28 +778,6 @@ packages:
       '@commitlint/rules': 18.6.1
       '@commitlint/types': 18.6.1
     dev: true
-
-  /@commitlint/load@18.4.4(@types/node@20.9.1)(typescript@5.3.3):
-    resolution: {integrity: sha512-RaDIa9qwOw2xRJ3Jr2DBXd14rmnHJIX2XdZF4kmoF1rgsg/+7cvrExLSUNAkQUNimyjCn1b/bKX2Omm+GdY0XQ==}
-    engines: {node: '>=v18'}
-    requiresBuild: true
-    dependencies:
-      '@commitlint/config-validator': 18.4.4
-      '@commitlint/execute-rule': 18.4.4
-      '@commitlint/resolve-extends': 18.4.4
-      '@commitlint/types': 18.4.4
-      chalk: 4.1.2
-      cosmiconfig: 8.3.6(typescript@5.3.3)
-      cosmiconfig-typescript-loader: 5.0.0(@types/node@20.9.1)(cosmiconfig@8.3.6)(typescript@5.3.3)
-      lodash.isplainobject: 4.0.6
-      lodash.merge: 4.6.2
-      lodash.uniq: 4.5.0
-      resolve-from: 5.0.0
-    transitivePeerDependencies:
-      - '@types/node'
-      - typescript
-    dev: true
-    optional: true
 
   /@commitlint/load@18.6.1(@types/node@20.9.1)(typescript@5.3.3):
     resolution: {integrity: sha512-p26x8734tSXUHoAw0ERIiHyW4RaI4Bj99D8YgUlVV9SedLf8hlWAfyIFhHRIhfPngLlCe0QYOdRKYFt8gy56TA==}
@@ -853,20 +823,6 @@ packages:
       minimist: 1.2.8
     dev: true
 
-  /@commitlint/resolve-extends@18.4.4:
-    resolution: {integrity: sha512-RRpIHSbRnFvmGifVk21Gqazf1QF/yeP+Kkg/e3PlkegcOKd/FGOXp/Kx9cvSO2K7ucSn4GD/oBvgasFoy+NCAw==}
-    engines: {node: '>=v18'}
-    requiresBuild: true
-    dependencies:
-      '@commitlint/config-validator': 18.4.4
-      '@commitlint/types': 18.4.4
-      import-fresh: 3.3.0
-      lodash.mergewith: 4.6.2
-      resolve-from: 5.0.0
-      resolve-global: 1.0.0
-    dev: true
-    optional: true
-
   /@commitlint/resolve-extends@18.6.1:
     resolution: {integrity: sha512-ifRAQtHwK+Gj3Bxj/5chhc4L2LIc3s30lpsyW67yyjsETR6ctHAHRu1FSpt0KqahK5xESqoJ92v6XxoDRtjwEQ==}
     engines: {node: '>=v18'}
@@ -901,15 +857,6 @@ packages:
     dependencies:
       find-up: 5.0.0
     dev: true
-
-  /@commitlint/types@18.4.4:
-    resolution: {integrity: sha512-/FykLtodD8gKs3+VNkAUwofu4LBHankclj+I8fB2jTRvG6PV7k/OUt4P+VbM7ip853qS4F0g7Z6hLNa6JeMcAQ==}
-    engines: {node: '>=v18'}
-    requiresBuild: true
-    dependencies:
-      chalk: 4.1.2
-    dev: true
-    optional: true
 
   /@commitlint/types@18.6.1:
     resolution: {integrity: sha512-gwRLBLra/Dozj2OywopeuHj2ac26gjGkz2cZ+86cTJOdtWfiRRr4+e77ZDAGc6MDWxaWheI+mAV5TLWWRwqrFg==}
@@ -1863,6 +1810,18 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
+
+  /@js-preview/docx@1.6.0:
+    resolution: {integrity: sha512-ACK9lk2ySe1MIlBv1HwA6NUZH4qenMQ8sozbQVz+Y5Vty0MqPz6Nd8NGJHSmP86IUOsn1eCBkIaD3K5pHnZBUw==}
+    dev: false
+
+  /@js-preview/excel@1.6.4:
+    resolution: {integrity: sha512-i3a5J9mUV8Xk9pnZ3dpNVYYvSV14xjJrngGJKS8pXtKz47sIWz1OUJuHnws2+SJiMOgmVTfvUro97RwMmA2bGg==}
+    dev: false
+
+  /@js-preview/pdf@1.6.3:
+    resolution: {integrity: sha512-liijEHv08ejnhzyg3hzbtZ2GP0qMIGazKw7hcktwpbtq79ahSwTOInedjuhfYzQQAzRPkRVQEMomnK4THSGPBQ==}
+    dev: false
 
   /@juggle/resize-observer@3.4.0:
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
@@ -3966,7 +3925,7 @@ packages:
       longest: 2.0.1
       word-wrap: 1.2.5
     optionalDependencies:
-      '@commitlint/load': 18.4.4(@types/node@20.9.1)(typescript@5.3.3)
+      '@commitlint/load': 18.6.1(@types/node@20.9.1)(typescript@5.3.3)
     transitivePeerDependencies:
       - '@types/node'
       - typescript
@@ -4542,7 +4501,7 @@ packages:
       eslint: 8.56.0
     dev: true
 
-  /eslint-plugin-vue-scoped-css@2.7.2(eslint@8.56.0)(vue-eslint-parser@9.3.2):
+  /eslint-plugin-vue-scoped-css@2.7.2(eslint@8.56.0)(vue-eslint-parser@9.4.2):
     resolution: {integrity: sha512-myJ99CJuwmAx5kq1WjgIeaUkxeU6PIEUh7age79Alm30bhN4fVTapOQLSMlvVTgxr36Y3igsZ3BCJM32LbHHig==}
     engines: {node: ^12.22 || ^14.17 || >=16}
     peerDependencies:
@@ -4558,7 +4517,7 @@ packages:
       postcss-scss: 4.0.9(postcss@8.4.32)
       postcss-selector-parser: 6.0.13
       postcss-styl: 0.12.3
-      vue-eslint-parser: 9.3.2(eslint@8.56.0)
+      vue-eslint-parser: 9.4.2(eslint@8.56.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7564,13 +7523,13 @@ packages:
       postcss-safe-parser: 6.0.0(postcss@8.4.32)
     dev: true
 
-  /postcss-less@6.0.0(postcss@8.4.32):
+  /postcss-less@6.0.0(postcss@8.4.35):
     resolution: {integrity: sha512-FPX16mQLyEjLzEuuJtxA8X3ejDLNGGEG503d2YGZR5Ask1SpDN8KmZUMpzCvyalWRywAn1n1VOA5dcqfCLo5rg==}
     engines: {node: '>=12'}
     peerDependencies:
       postcss: ^8.3.5
     dependencies:
-      postcss: 8.4.32
+      postcss: 8.4.35
     dev: true
 
   /postcss-resolve-nested-selector@0.1.1:
