@@ -3927,10 +3927,10 @@ export interface MitemVO {
   isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isRawName?: string;
   isInProcessName?: string;
   isRawChecked?: boolean;
   isProductName?: string;
+  isRawName?: string;
   isBatchName?: string;
 }
 
@@ -6992,10 +6992,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;

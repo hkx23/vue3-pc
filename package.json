@@ -17,6 +17,9 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@js-preview/docx": "^1.6.0",
+    "@js-preview/excel": "^1.6.4",
+    "@js-preview/pdf": "^1.6.3",
     "@logicflow/core": "^1.2.18",
     "@logicflow/extension": "^1.2.19",
     "@tanstack/vue-table": "^8.11.8",

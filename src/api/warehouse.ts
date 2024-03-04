@@ -2448,9 +2448,9 @@ export interface ReturnStockOutDtlVO {
   transferBillNo?: string;
   /** 交易事务单号 */
   transferBillNoStatus?: string;
-  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  transferDtlId?: string;
 }
 
 /** 退货单扫描 */
@@ -2535,11 +2535,11 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
-  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  transferDtlId?: string;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 采购单明细 */
@@ -2607,11 +2607,11 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
-  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  transferDtlId?: string;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3235,11 +3235,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
+  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  tlpickQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -5485,6 +5485,8 @@ export interface BillManagementVO {
   costDepartment?: string;
   /** 标签条码 */
   scanBarcode?: string;
+  /** 标签数量 */
+  qty?: number;
 }
 
 /** 响应数据 */
@@ -5704,6 +5706,7 @@ export interface GoodsSentOutDtlVO {
   workshopId?: string;
   /** 库存可用量 */
   handQty?: number;
+  tranDtlId?: string;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
