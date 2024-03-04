@@ -188,6 +188,7 @@ const opts = computed(() => {
 });
 
 const onInput = async (data) => {
+  debugger;
   const newArr = data.user.map((item) => item.value);
   transferParam.value.userIds = newArr;
   transferParam.value.warehouseId = data.warehouse;
