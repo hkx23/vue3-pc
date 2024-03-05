@@ -37,10 +37,10 @@
           <t-descriptions-item label="供应商编码">{{ formData.supplierCode }}</t-descriptions-item>
           <t-descriptions-item label="供应商名称">{{ formData.supplierName }}</t-descriptions-item>
           <t-descriptions-item label="批量" span="2">
-            <t-input-number v-model="formData.inspectQty" />
+            <t-input-number v-model="formData.inspectQty" :disabled="!isEdit" />
           </t-descriptions-item>
           <t-descriptions-item label="复检原因"
-            ><t-textarea v-model="formData.recheckReason" clearable
+            ><t-textarea v-model="formData.recheckReason" clearable :disabled="!isEdit"
           /></t-descriptions-item>
         </t-descriptions>
       </cmp-card>
@@ -481,6 +481,7 @@ const onShowMeasureDialog = async (row) => {
 };
 const onFormCloseDialog = async () => {
   formVisible.value = false;
+  Emit('form-close-event');
 };
 const parentConfirm = async (measureList, isAllOK) => {
   if (!_.isEmpty(measureList)) {

@@ -44,7 +44,7 @@
   </cmp-container>
 
   <!--弹窗-->
-  <formInspect ref="formRef" @parent-refresh-event="fetchTable"></formInspect>
+  <formInspect ref="formRef" @parent-refresh-event="fetchTable" @form-close-event="onFormCloseDialog"></formInspect>
 </template>
 
 <script setup lang="ts">
@@ -268,6 +268,9 @@ const onShowDialog = async (isEdit, rowData) => {
   const { showForm, loadTable } = formRef.value;
   await showForm(isEdit, rowData.row);
   await loadTable();
+};
+const onFormCloseDialog = async () => {
+  fetchTable();
 };
 
 onMounted(() => {
