@@ -2574,6 +2574,59 @@ export interface InspectGroupInUser {
   userId?: string;
 }
 
+/** 品质检验组用户表 */
+export interface InspectGroupInMitemVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  inspectGroupId?: string;
+  mitemCategoryId?: string;
+  /** 检验组类别编码 */
+  categoryCode?: string;
+  /** 检验组类别名称 */
+  categoryName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataInspectGroupInMitemVO = {
+  list?: InspectGroupInMitemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataInspectGroupInMitemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataInspectGroupInMitemVO;
+}
+
 /** 响应数据 */
 export type MitemCategoryVO = {
   id?: string;
@@ -2629,59 +2682,6 @@ export interface ResultListMitemCategoryVO {
   message?: string;
   /** 响应数据 */
   data?: MitemCategoryVO[] | null;
-}
-
-/** 品质检验组用户表 */
-export interface InspectGroupInMitemVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  inspectGroupId?: string;
-  mitemCategoryId?: string;
-  /** 检验组类别编码 */
-  categoryCode?: string;
-  /** 检验组类别名称 */
-  categoryName?: string;
-}
-
-/** 响应数据 */
-export type PagingDataInspectGroupInMitemVO = {
-  list?: InspectGroupInMitemVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataInspectGroupInMitemVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataInspectGroupInMitemVO;
 }
 
 /** 品质检验组物料表 */
@@ -2800,6 +2800,149 @@ export interface InspectGroup {
   inspectGroupName?: string;
   /** 检验组描述 */
   inspectGroupDesc?: string;
+}
+
+export interface ImproveSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  supplierId?: string;
+  workshopId?: string;
+  mitemId?: string;
+  /** 检验单号 */
+  relateBillNo?: string;
+  /** 整改单号 */
+  billNo?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 发起开始日期
+   * @format date-time
+   */
+  timeCreateStart?: string;
+  /**
+   * 发起结束日期
+   * @format date-time
+   */
+  timeCreateEnd?: string;
+  /** 检验类型 */
+  inspectType?: string;
+}
+
+export interface ImproveVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 改善单号 */
+  billNo?: string;
+  /** 关联单号 */
+  relateBillNo?: string;
+  /** 检验类型 */
+  inspectType?: string;
+  /** 改善工具 */
+  improveTool?: string;
+  supplierId?: string;
+  mitemId?: string;
+  workshopId?: string;
+  moScheId?: string;
+  /** 问题描述 */
+  problemDesc?: string;
+  /** 问题描述补充 */
+  problemDescAdd?: string;
+  /** 不合格分类 */
+  defectCategory?: string;
+  /** 处理意见或方法 */
+  handleMethod?: string;
+  /** 整改意见 */
+  correctOpinion?: string;
+  personResponsibilityId?: string;
+  userResponsibilityId?: string;
+  deptResponsibilityId?: string;
+  /** 发生性质 */
+  occurNature?: string;
+  /**
+   * 是否批量
+   * @format int32
+   */
+  isBatch?: number;
+  /**
+   * 要求完成时间
+   * @format date-time
+   */
+  datetimeRequireFinish?: string;
+  /** 状态 */
+  status?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 车间 */
+  workshopName?: string;
+  /** 排产单号 */
+  scheCode?: string;
+  /** 创建人 */
+  creatorName?: string;
+  /** 责任人 */
+  userResponsibilityName?: string;
+  /** 责任部门 */
+  deptResponsibilityName?: string;
+  /** 检验类型 */
+  inspectTypeName?: string;
+  /** 修改人 */
+  modifierName?: string;
+  /** 状态 */
+  statusName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataImproveVO = {
+  list?: ImproveVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataImproveVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataImproveVO;
 }
 
 export interface BatchDynamicInsertDTO {
@@ -3238,10 +3381,10 @@ export type SampleCodeVO = {
   s3?: string;
   s4?: string;
   i?: string;
+  s1?: string;
   iii?: string;
   ii?: string;
   s2?: string;
-  s1?: string;
 } | null;
 
 /** 计量单位 */
@@ -4482,13 +4625,13 @@ export const api = {
      * No description
      *
      * @tags 品质检验组物料表
-     * @name GetCategoryList
-     * @summary 品质检验新增获取物料类别列表
-     * @request POST:/inspectGroupInMitem/getPersonList
+     * @name GetList
+     * @summary 品质检验组子表检验物料类数据
+     * @request POST:/inspectGroupInMitem/getList
      * @secure
      */
-    getCategoryList: (data: InspectGroupSearch) =>
-      http.request<ResultListMitemCategoryVO['data']>(`/api/quality/inspectGroupInMitem/getPersonList`, {
+    getList: (data: InspectGroupSearch) =>
+      http.request<ResultPagingDataInspectGroupInMitemVO['data']>(`/api/quality/inspectGroupInMitem/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4497,13 +4640,13 @@ export const api = {
      * No description
      *
      * @tags 品质检验组物料表
-     * @name GetList
-     * @summary 品质检验组子表检验物料类数据
-     * @request POST:/inspectGroupInMitem/getList
+     * @name GetCategoryList
+     * @summary 品质检验新增获取物料类别列表
+     * @request POST:/inspectGroupInMitem/getCategoryList
      * @secure
      */
-    getList: (data: InspectGroupSearch) =>
-      http.request<ResultPagingDataInspectGroupInMitemVO['data']>(`/api/quality/inspectGroupInMitem/getList`, {
+    getCategoryList: (data: InspectGroupSearch) =>
+      http.request<ResultListMitemCategoryVO['data']>(`/api/quality/inspectGroupInMitem/getCategoryList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -4611,6 +4754,37 @@ export const api = {
     getInspectGroupByUser: () =>
       http.request<ResultListInspectGroup['data']>(`/api/quality/inspectGroup/tables`, {
         method: 'GET',
+      }),
+  },
+  improve: {
+    /**
+     * No description
+     *
+     * @tags 品质改善表
+     * @name GetList
+     * @summary 品质改善主表数据
+     * @request POST:/improve/getList
+     * @secure
+     */
+    getList: (data: ImproveSearch) =>
+      http.request<ResultPagingDataImproveVO['data']>(`/api/quality/improve/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质改善表
+     * @name CancelById
+     * @summary 品质改善取消
+     * @request GET:/improve/cancelById
+     * @secure
+     */
+    cancelById: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/quality/improve/cancelById`, {
+        method: 'GET',
+        params: query,
       }),
   },
   importManage: {
