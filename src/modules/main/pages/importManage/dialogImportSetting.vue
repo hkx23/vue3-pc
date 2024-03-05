@@ -1214,7 +1214,7 @@ const templateFileName = ref('');
 const uploadSuccess = (file: AddFileType) => {
   uploadFiles.value = [];
   uploadFiles.value.push(file);
-  templatePath.value = file.signedUrl;
+  templatePath.value = file.fullfileName;
   templateFileName.value = file.fileName;
 };
 const saveImportSetting = () => {
@@ -1350,6 +1350,7 @@ const initEditData = (insetModel) => {
   const addFile: AddFileType = {
     id: Math.floor(Math.random() * 1999990),
     serialNumber: 1,
+    fullfileName: insetModel.settingModel.importTemplateUrl,
     fileName: getFileName(insetModel.settingModel.importTemplateUrl),
     fileSize: 0,
     fileSizeShow: '-',

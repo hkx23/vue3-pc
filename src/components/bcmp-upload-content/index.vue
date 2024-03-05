@@ -247,6 +247,7 @@ const beforeUpload = (file: UploadFile) => {
   const addFile: AddFileType = {
     id: Math.floor(Math.random() * 1999990),
     serialNumber: tableData.value.length + 1,
+    fullfileName: `${props.uploadPath}/${file.name}`,
     fileName: file.name,
     fileSize: file.size,
     fileSizeShow: formatBytes(file.size),
