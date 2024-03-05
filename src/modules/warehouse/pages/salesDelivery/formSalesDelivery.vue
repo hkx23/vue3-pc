@@ -105,15 +105,6 @@
                 @selection-change="(value) => warehouseSubChange(value, row)"
               ></bcmp-select-business>
             </template>
-            <!-- <template #districtName="{ row }">
-              <bcmp-select-business
-                v-model="row.districtId"
-                type="district"
-                :show-title="false"
-                :parent-id="row.warehouseId"
-                @selection-change="(value) => districtSubChange(value, row)"
-              ></bcmp-select-business>
-            </template> -->
             <template #reqQty="{ row }">
               <t-input-number
                 v-model="row.reqQty"
@@ -121,8 +112,10 @@
                 theme="normal"
                 :placeholder="t('salesDelivery.inputOnhandQty')"
                 :disabled="_.isNil(row.onhandQty) || row.onhandQty === 0"
-                @blur="onReqQtyblur(row)"
               />
+            </template>
+            <template #memo="{ row }">
+              <t-input v-model="row.memo" theme="normal" />
             </template>
           </t-table>
         </cmp-card>
@@ -228,22 +221,20 @@ const formData = reactive({
 const tableSalesSumData = computed(() => {
   const list = [];
   if (tableSalesDtlData.value && tableSalesDtlData.value.length > 0) {
-    tableSalesDtlData.value.forEach((n) => {
-      n.sumKey = `${n.mitemId}-${n.warehouseId}-${n.districtId}`;
-    });
-
-    const groupedDatas = _.groupBy(tableSalesDtlData.value, 'sumKey') as any;
-    if (groupedDatas) {
-      Object.keys(groupedDatas).forEach((groupKey) => {
-        const model = {} as any;
-        const groupedData = groupedDatas[groupKey];
-        if (groupedData && groupedData.length > 0) {
-          Object.assign(model, groupedData[0]);
-          const canPickQtySum = _.sumBy(groupedData, (o: any) => o.canPickQty);
-          model.canPickQty = canPickQtySum;
-          list.push(model);
-        }
-      });
+    // eslint-disable-next-line no-lone-blocks
+    {
+      const groupedDatas = _.groupBy(tableSalesDtlData.value, 'sumKey') as any;
+      if (groupedDatas) {
+        Object.keys(groupedDatas).forEach((groupKey) => {
+          const model = {} as any;
+          const groupedData = groupedDatas[groupKey];
+          if (groupedData && groupedData.length > 0) {
+            Object.assign(model, groupedData[0]);
+            model.reqQty = _.sumBy(groupedData, (o: any) => o.reqQty);
+            list.push(model);
+          }
+        });
+      }
     }
   }
   console.log(list);
@@ -257,7 +248,7 @@ const tableSalesSumColumns: PrimaryTableCol<TableRowData>[] = [
   // { title: '货区', width: 120, colKey: 'districtName' },
   { title: '本次发货数', width: 120, colKey: 'reqQty' },
   { title: '库存现有量', width: 120, colKey: 'onhandQty' },
-  { title: '库存可用量', width: 120, colKey: 'onhandQty' },
+  { title: '库存可用量', width: 120, colKey: 'canOnhandQty' },
 ];
 
 const tableSalesDtlKeys = ref([]);
@@ -270,11 +261,11 @@ const tableSalesDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '产品编码', width: 120, colKey: 'mitemCode' },
   { title: '总需求数量', width: 120, colKey: 'requireQty' },
   { title: '已发货数量', width: 120, colKey: 'deliveriedQty' },
-  { title: '代发货数量', width: 120, colKey: '' },
+  { title: '待发货数量', width: 120, colKey: '' },
   { title: '仓库', width: 160, colKey: 'warehouseName' },
   // { title: '货区', width: 160, colKey: 'districtName' },
   { title: '库存现有量', width: 120, colKey: 'onhandQty' },
-  { title: '库存可用量', width: 120, colKey: 'onhandQty' },
+  { title: '库存可用量', width: 120, colKey: 'canOnhandQty' },
   { title: '本次发货数', width: 140, colKey: 'reqQty' },
   { title: '单位', width: 120, colKey: 'uomName' },
   { title: '备注', width: 120, colKey: 'memo' },
@@ -352,28 +343,21 @@ const warehouseSubChange = async (val: any, row: SaleOrderDtlVO) => {
   row.warehouseId = val.id;
   row.warehouseCode = val.warehouseCode;
   row.warehouseName = val.warehouseName;
-  await getOnhandQtyByWarehouse(row);
-};
-// const districtSubChange = async (val: any, row: SaleOrderDtlVO) => {
-//   row.districtId = val.id;
-//   row.districtCode = val.districtCode;
-//   row.districtName = val.districtName;
-//   await getOnhandQtyByWarehouse(row);
-// };
-const onReqQtyblur = async (row: SaleOrderDtlVO) => {
-  if (row.reqQty > row.onhandQty) {
-    MessagePlugin.error('本次发货数量不能大于库存现有量');
-  }
+  await getMitemOnhandQtyByWarehouse(row);
 };
 
-const getOnhandQtyByWarehouse = async (row: SaleOrderDtlVO) => {
-  const data = await apiWarehouse.onhandQty.getMitemOnhandQtyByWarehouseAndDistrict({
-    warehouseId: row.warehouseId,
-    districtId: '',
-    // districtId: row.districtId,
-    mitemId: row.mitemId,
-  });
-  row.onhandQty = data;
+const getMitemOnhandQtyByWarehouse = async (row: SaleOrderDtlVO) => {
+  if (_.isEmpty(row)) {
+    row.reqQty = 0;
+  } else {
+    const data = await apiWarehouse.onhandQty.getMitemOnhandQtyByWarehouse({
+      warehouseId: row.warehouseId,
+      mitemId: row.mitemId,
+    });
+    row.onhandQty = data.onhandQty;
+    row.canOnhandQty = data.canOnhandQty;
+    row.reqQty = 0;
+  }
 };
 
 // 加载销售订单信息
@@ -437,8 +421,6 @@ const checkSubmit = () => {
     MessagePlugin.error('请选择发货时间');
   }
   if (tableSalesDtlData.value && tableSalesDtlData.value.length > 0) {
-    const isEmptyWarehouse = false;
-    const isEmptyQty = false;
     tableSalesDtlData.value.forEach((item) => {
       if (!_.isNumber(item.reqQty) || item.reqQty <= 0) {
         isSuccess = false;
@@ -453,6 +435,15 @@ const checkSubmit = () => {
     isSuccess = false;
     MessagePlugin.error('请选择销售订单');
   }
+  if (tableSalesSumData.value && tableSalesSumData.value.length > 0) {
+    tableSalesSumData.value.forEach((item) => {
+      if (item.reqQty > item.canOnhandQty) {
+        isSuccess = false;
+        MessagePlugin.error('本次发货数量不能大于库存现有量');
+      }
+    });
+  }
+
   return isSuccess;
 };
 

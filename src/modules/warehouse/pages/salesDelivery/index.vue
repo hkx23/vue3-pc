@@ -22,9 +22,11 @@
           <t-button theme="primary" @click="onClickAdd">
             {{ t('common.button.add') }}
           </t-button>
-          <t-button theme="default" :disabled="selectRowKeys?.length == 0" @click="onBatchCancelledClick">
-            {{ t('salesDelivery.cancel') }}
-          </t-button>
+          <t-popconfirm content="确认作废销售发货单？" @confirm="onBatchCancelledClick">
+            <t-button theme="default" :disabled="selectRowKeys?.length == 0">
+              {{ t('salesDelivery.cancel') }}
+            </t-button>
+          </t-popconfirm>
         </template>
       </cmp-table>
     </cmp-card>
@@ -58,8 +60,8 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api as apiWarehouse, SaleDeliveryVO } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -79,9 +81,6 @@ const { loading: loadingChildren, setLoading: setLoadingChildren } = useLoading(
 const isAdd = ref(true);
 
 const datePlanRangeDefault = ref([dayjs().format('YYYY-MM-DD'), dayjs().subtract(-31, 'day').format('YYYY-MM-DD')]); // 初始化日期控件
-
-// 查询组件值
-const optsValue = ref({});
 
 // 查询组件
 const opts = computed(() => {
@@ -122,7 +121,7 @@ const opts = computed(() => {
         valueField: 'id',
       },
     },
-    datePlanRange: {
+    dateRange: {
       label: '创建时间',
       comp: 't-date-range-picker',
       defaultVal: datePlanRangeDefault.value,
@@ -154,12 +153,12 @@ const tableMainColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '单据号', width: 140, colKey: 'billNo' },
   { title: '客户编码', width: 140, colKey: 'customerCode' },
   { title: '客户名称', width: 140, colKey: 'customerName' },
-  { title: '单据状态', width: 140, colKey: 'statusName' },
-  { title: '发货时间', width: 140, colKey: 'datetimeDelivery' },
-  { title: '创建人', width: 140, colKey: 'creatorName' },
-  { title: '创建时间', width: 140, colKey: 'timeCreate' },
-  { title: '更新人', width: 140, colKey: 'modifierName' },
-  { title: '更新时间', width: 140, colKey: 'timeModified' },
+  { title: '单据状态', width: 100, colKey: 'statusName' },
+  { title: '发货时间', width: 200, colKey: 'datetimeDelivery' },
+  { title: '创建人', width: 100, colKey: 'creatorName' },
+  { title: '创建时间', width: 200, colKey: 'timeCreate' },
+  { title: '更新人', width: 100, colKey: 'modifierName' },
+  { title: '更新时间', width: 200, colKey: 'timeModified' },
 ];
 
 const tableChildrenData = ref([]);
@@ -170,7 +169,7 @@ const tableChildrenColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '仓库', width: 140, colKey: 'warehouseName' },
   // { title: '货区', width: 140, colKey: 'districtName' },
   { title: '本次发货数', width: 140, colKey: 'qty' },
-  { title: '待发货数', width: 140, colKey: 'requireQty' },
+  // { title: '待发货数', width: 140, colKey: 'requireQty' },
   { title: '销售订单', width: 140, colKey: 'saleOrderNo' },
   { title: '销售订单行号', width: 140, colKey: 'saleOrderDtlId' },
   { title: '备注', width: 140, colKey: 'memo' },
@@ -193,9 +192,26 @@ const onRowClick = (rowObject: any) => {
   fetchChildrenTable();
 };
 
+const formData = reactive({
+  salesTimeBegin: '',
+  salesTimeEnd: '',
+  billNo: '',
+  customerId: '',
+  mitemId: '',
+  saleOrderNo: '',
+  status: '',
+});
 // 点击查询按钮
-const onSearch = (data: any) => {
-  optsValue.value = data;
+const onSearch = (query: any) => {
+  const [dateRangeStart, dateRangeEnd] = query.dateRange;
+
+  formData.salesTimeBegin = dateRangeStart;
+  formData.salesTimeEnd = dateRangeEnd;
+  formData.billNo = query.billNo;
+  formData.customerId = query.customerId;
+  formData.mitemId = query.mitemId;
+  formData.saleOrderNo = query.saleOrderNo;
+  formData.status = query.status;
   fetchTable();
 };
 
@@ -203,11 +219,19 @@ const onSearch = (data: any) => {
 const fetchTable = async () => {
   try {
     setLoading(true);
+    tableChildrenData.value = [];
 
     const data = await apiWarehouse.saleDelivery.getSalesDeliveryList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      ...optsValue.value,
+      // ...optsValue.value,
+      salesTimeBegin: formData.salesTimeBegin,
+      salesTimeEnd: formData.salesTimeEnd,
+      billNo: formData.billNo,
+      customerId: formData.customerId,
+      mitemId: formData.mitemId,
+      saleOrderNo: formData.saleOrderNo,
+      status: formData.status,
     });
     tableMainData.value = data.list;
     mainDataTotal.value = data.total;
@@ -224,25 +248,12 @@ const onBatchCancelledClick = async () => {
   selectRowKeys.value.forEach((element) => {
     ids.push(element);
   });
-  const confirmCanceled = DialogPlugin({
-    header: '作废',
-    body: '确认作废吗',
-    theme: 'warning',
-    confirmBtn: '确认',
-    cancelBtn: '取消',
-    onConfirm: async () => {
-      const deleteModel: SaleDeliveryVO = {
-        cancelledIds: ids,
-      };
-      await apiWarehouse.saleDelivery.updateBillNoByCancelled(deleteModel);
-      fetchTable();
-      confirmCanceled.hide();
-      MessagePlugin.success('作废成功');
-    },
-    onClose: () => {
-      confirmCanceled.hide();
-    },
-  });
+  const deleteModel: SaleDeliveryVO = {
+    cancelledIds: ids,
+  };
+  await apiWarehouse.saleDelivery.updateBillNoByCancelled(deleteModel);
+  fetchTable();
+  MessagePlugin.success('作废成功');
 };
 
 // 加载销售发货制单明细表格
