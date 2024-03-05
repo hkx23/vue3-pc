@@ -12,7 +12,7 @@
         <t-descriptions-item label="接口分类">{{ rowData.msgCategoryName }}</t-descriptions-item>
         <t-descriptions-item label="接口领域分类">{{ rowData.msgDomainCategoryName }}</t-descriptions-item>
         <t-descriptions-item label="MES业务单号">{{ rowData.billNo }}</t-descriptions-item>
-        <t-descriptions-item label="ERP凭据单号">{{ rowData.erpbillNo }}</t-descriptions-item>
+        <t-descriptions-item label="ERP凭据单号">{{ rowData.erpBillNo }}</t-descriptions-item>
         <t-descriptions-item label="交易开始时间">{{ rowData.datetimeExecuteStart }}</t-descriptions-item>
         <!-- 交易结束时间 -->
         <t-descriptions-item label="至">{{ rowData.datetimeExecuteEnd }}</t-descriptions-item>

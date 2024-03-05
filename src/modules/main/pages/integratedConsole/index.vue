@@ -174,7 +174,7 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: 'MES领域分类', width: 130, colKey: 'msgDomainCategoryName' },
   { title: 'MES业务单号', width: 120, colKey: 'billNo' },
   { title: '事务类型', width: 85, colKey: 'categoryName' },
-  { title: 'ERP凭据单号', width: 110, colKey: 'erpbillNo' },
+  { title: 'ERP凭据单号', width: 110, colKey: 'erpBillNo' },
   {
     title: '交易开始时间',
     width: 150,
