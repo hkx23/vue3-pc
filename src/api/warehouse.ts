@@ -1372,6 +1372,10 @@ export interface TransactionDetailSearch {
   businessCategoryId?: string;
   moScheId?: string;
   mitemId?: string;
+  /** MES业务单号 */
+  billNo?: string;
+  /** ERP单据号 */
+  erpLineNo?: string;
   /** 操作人 */
   creator?: string;
   /** 交接人ID */
@@ -1394,8 +1398,6 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
-  mesbillNo?: string;
 }
 
 /** 响应数据 */
@@ -2542,11 +2544,11 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 }
 
 /** 采购单明细 */
@@ -2614,11 +2616,11 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3233,25 +3235,25 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  tlpickQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
 }
 
 /** 通用响应类 */
@@ -3588,15 +3590,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -3726,13 +3728,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5717,15 +5719,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
