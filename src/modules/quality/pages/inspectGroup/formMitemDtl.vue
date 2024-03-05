@@ -2,7 +2,13 @@
   <cmp-container :full="true">
     <cmp-row>
       <cmp-card flex="400px">
-        <t-input v-model="formData.keyword" clearable @enter="fetchCategoryList" @clear="fetchCategoryList">
+        <t-input
+          v-model="formData.keyword"
+          clearable
+          @change="fetchCategoryList"
+          @enter="fetchCategoryList"
+          @clear="fetchCategoryList"
+        >
           <template #suffixIcon>
             <search-icon :style="{ cursor: 'pointer' }" @click="fetchCategoryList" />
           </template>

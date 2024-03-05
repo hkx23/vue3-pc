@@ -429,6 +429,7 @@ const onPrintManager = async () => {
 
     selectedManageRowKeys.value = [];
     onRefreshManage();
+    formVisible.value = false;
     return true; // 打印成功时返回 true
   } catch (e) {
     console.log(e);
