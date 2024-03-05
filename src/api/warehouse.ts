@@ -3242,8 +3242,8 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  tlpickQty?: number;
   flpickQty?: number;
+  tlpickQty?: number;
   bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
@@ -5584,8 +5584,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
