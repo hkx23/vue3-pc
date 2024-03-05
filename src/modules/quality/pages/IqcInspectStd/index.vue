@@ -167,6 +167,7 @@
 </template>
 
 <script setup lang="ts">
+import { isEmpty } from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
@@ -624,15 +625,15 @@ const opts = computed(() => {
 });
 // // #query 查询函数
 const onInput = async (data: any) => {
-  if (data.status) {
-    data.status.forEach((item, index, array) => {
-      array[index] = item.value;
-    });
+  if (data.status && !isEmpty(data.status)) {
+    data.status = data.status.split(',');
+  } else {
+    data.status = '';
   }
-  if (data.userNames) {
-    data.userNames.forEach((item, index, array) => {
-      array[index] = item.value;
-    });
+  if (data.userNames && !isEmpty(data.userNames)) {
+    data.userNames = data.userNames.split(',');
+  } else {
+    data.userNames = '';
   }
   Object.keys(data).forEach((key) => {
     if (key in materialStandardParam.value) {

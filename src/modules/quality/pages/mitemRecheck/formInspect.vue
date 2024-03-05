@@ -1,7 +1,7 @@
 <template>
   <t-dialog
     v-model:visible="formVisible"
-    header="物料入厂检验"
+    header="物料复检"
     width="98%"
     placement="top"
     top="20"
@@ -25,19 +25,23 @@
   >
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
-        <t-descriptions :title="'检验单号' + formData.iqcBillNo" :column="4" size="large">
-          <t-descriptions-item label="供应商">{{ formData.supplierName }}</t-descriptions-item>
+        <t-descriptions :title="'复检单号：' + formData.recheckBillNo" :column="4" size="large">
+          <t-descriptions-item label="复检类型"></t-descriptions-item>
+          <t-descriptions-item label="来源检验单">{{ formData.iqcBillNo }}</t-descriptions-item>
           <t-descriptions-item label="物料编码">{{ formData.mitemCategoryCode }}</t-descriptions-item>
           <t-descriptions-item label="物料名">
             <div class="div_break_word">
               {{ formData.mitemName }}
             </div>
           </t-descriptions-item>
-          <t-descriptions-item label="检验严格度">{{ formData.inspectionStringencyName }}</t-descriptions-item>
-          <t-descriptions-item label="报批数量">{{ formData.pickQty }}</t-descriptions-item>
-          <t-descriptions-item label="检验标准">{{ formData.inspectStdName }}</t-descriptions-item>
-          <t-descriptions-item label="接收单号">{{ formData.billNoStr }}</t-descriptions-item>
-          <t-descriptions-item label="查看附件"> <t-link theme="primary">查看附件</t-link></t-descriptions-item>
+          <t-descriptions-item label="供应商编码">{{ formData.supplierCode }}</t-descriptions-item>
+          <t-descriptions-item label="供应商名称">{{ formData.supplierName }}</t-descriptions-item>
+          <t-descriptions-item label="批量" span="2">
+            <t-input-number v-model="formData.inspectQty" :disabled="!isEdit" />
+          </t-descriptions-item>
+          <t-descriptions-item label="复检原因"
+            ><t-textarea v-model="formData.recheckReason" clearable :disabled="!isEdit"
+          /></t-descriptions-item>
         </t-descriptions>
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
@@ -193,7 +197,7 @@
 
   <cmp-files-upload
     ref="formFilesRef"
-    upload-path="IqcInspect"
+    upload-path="IqcInspectRecheck"
     @upload-success="uploadSuccess"
     @delete-success="deleteSuccess"
     @batch-delete-success="batchDeleteSuccess"
@@ -228,11 +232,12 @@ const formMeasureRef = ref(null);
 const formNgRef = ref(null);
 
 const selectTabValue = ref('tab1');
-const selectIqcInspectDtlId = ref(null);
+const selectIqcInspectRecheckDtlId = ref(null);
 
 const isEdit = ref(true); // 是否可编辑
 const formData = reactive({
   iqcBillNo: '',
+  recheckBillNo: '',
   billNoStr: '',
   billNoList: [{ billNo: '', erpLineNo: '', billNoDtlId: '' }],
   mitemId: '',
@@ -242,13 +247,14 @@ const formData = reactive({
   mitemCategoryId: '',
   mitemCategoryCode: '',
   mitemCategoryName: '',
-  pickQty: '',
+  inspectQty: 0,
   supplierId: '',
   supplierCode: '',
   supplierName: '',
   inspectionStringency: '',
   inspectionStringencyName: '',
   inspectStdName: '',
+  recheckReason: '',
 });
 
 const { loading } = useLoading();
@@ -324,9 +330,10 @@ const onConfirmForm = async () => {
     } else {
       LoadingPlugin(true);
 
-      await apiQuality.iqcInspect.submitIqcInspect({
+      await apiQuality.iqcInspectRecheck.submitIqcInspectRecheck({
         iqcBillNo: formData.iqcBillNo,
-        billNoList: formData.billNoList,
+        recheckBillNo: formData.recheckBillNo,
+        iqcBillNoList: [],
         mitemId: formData.mitemId,
         mitemCode: formData.mitemCode,
         mitemName: formData.mitemName,
@@ -334,7 +341,7 @@ const onConfirmForm = async () => {
         mitemCategoryId: formData.mitemCategoryId,
         mitemCategoryCode: formData.mitemCategoryCode,
         mitemCategoryName: formData.mitemCategoryName,
-        pickQty: Number(formData.pickQty),
+        inspectQty: Number(formData.inspectQty),
         supplierId: formData.supplierId,
         supplierCode: formData.supplierCode,
         supplierName: formData.supplierName,
@@ -357,23 +364,27 @@ const tabsChange = async (tabValue) => {
 };
 const getBillNo = async () => {
   try {
-    const iqcBillNo = await apiQuality.billSeq.getBillNo({ prefix: 'IQC' });
-    formData.iqcBillNo = iqcBillNo;
+    const recheckBillNo = await apiQuality.billSeq.getBillNo({ prefix: 'IQCFJ' });
+    formData.recheckBillNo = recheckBillNo;
   } catch (e) {
     console.log(e);
   }
 };
 
 const onShowFiles = async (rowData) => {
-  selectIqcInspectDtlId.value = rowData.row.iqcInspectDtlId;
+  selectIqcInspectRecheckDtlId.value = rowData.row.iqcInspectRecheckDtlId;
 
   try {
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectIqcInspectDtlId.value);
+    const { showForm } = formFilesRef.value;
+    if (!_.isEmpty(selectIqcInspectRecheckDtlId.value)) {
+      const list = await apiQuality.iqcInspectRecheckDtlFile.getIqcInspectRecheckDtlFileList(
+        selectIqcInspectRecheckDtlId.value,
+      );
       rowData.row.fileList = list;
 
-      const { showForm } = formFilesRef.value;
       await showForm(true, rowData.row.fileList);
+    } else {
+      await showForm(true, null);
     }
   } catch (e) {
     console.log(e);
@@ -382,10 +393,10 @@ const onShowFiles = async (rowData) => {
 const loadTable = async () => {
   try {
     const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
-      iqcBillNo: formData.iqcBillNo,
+      recheckBillNo: formData.recheckBillNo,
       mitemCategoryId: formData.mitemCategoryId,
       mitemId: formData.mitemId,
-      pickQty: formData.pickQty,
+      pickQty: `${formData.inspectQty}`,
       inspectionStringency: formData.inspectionStringency,
     });
     tableData.value = list;
@@ -420,8 +431,9 @@ const showForm = async (edit, row) => {
   formVisible.value = true;
   reset();
 
+  formData.recheckBillNo = row.recheckBillNo;
   formData.iqcBillNo = row.iqcBillNo;
-  formData.billNoList.push({ billNo: row.billNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
+  formData.billNoList.push({ billNo: row.recheckBillNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
   formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
   formData.mitemId = row.mitemId;
   formData.mitemCode = row.mitemCode;
@@ -430,7 +442,7 @@ const showForm = async (edit, row) => {
   formData.mitemCategoryId = row.mitemCategoryId;
   formData.mitemCategoryCode = row.mitemCategoryCode;
   formData.mitemCategoryName = row.mitemCategoryName;
-  formData.pickQty = `${row.pickQty}`;
+  formData.inspectQty = row.inspectQty;
   formData.supplierId = row.supplierId;
   formData.supplierCode = row.supplierCode;
   formData.supplierName = row.supplierName;
@@ -445,10 +457,9 @@ const showMergeForm = async (edit, reBillNoList) => {
   let totalPickQty = 0;
   reBillNoList.forEach((n) => {
     formData.billNoList.push({ billNo: n.billNo, erpLineNo: n.erpLineNo, billNoDtlId: n.id });
-    totalPickQty += n.pickQty;
+    totalPickQty += n.inspectQty;
   });
   const row = reBillNoList[0];
-  formData.iqcBillNo = row.iqcBillNo;
   formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
   formData.mitemId = row.mitemId;
   formData.mitemCode = row.mitemCode;
@@ -457,7 +468,7 @@ const showMergeForm = async (edit, reBillNoList) => {
   formData.mitemCategoryId = row.mitemCategoryId;
   formData.mitemCategoryCode = row.mitemCategoryCode;
   formData.mitemCategoryName = row.mitemCategoryName;
-  formData.pickQty = `${totalPickQty}`;
+  formData.inspectQty = totalPickQty;
   formData.supplierId = row.supplierId;
   formData.supplierCode = row.supplierCode;
   formData.supplierName = row.supplierName;
@@ -470,6 +481,7 @@ const onShowMeasureDialog = async (row) => {
 };
 const onFormCloseDialog = async () => {
   formVisible.value = false;
+  Emit('form-close-event');
 };
 const parentConfirm = async (measureList, isAllOK) => {
   if (!_.isEmpty(measureList)) {
@@ -484,25 +496,26 @@ const parentConfirm = async (measureList, isAllOK) => {
 
 const formFilesRef = ref(null);
 const showUplaodImg = async (rowData) => {
-  selectIqcInspectDtlId.value = rowData.row.iqcInspectDtlId;
+  selectIqcInspectRecheckDtlId.value = rowData.row.iqcInspectRecheckDtlId;
 
   try {
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectIqcInspectDtlId.value);
+    if (!_.isEmpty(selectIqcInspectRecheckDtlId.value)) {
+      const list = await apiQuality.iqcInspectRecheckDtlFile.getIqcInspectRecheckDtlFileList(
+        selectIqcInspectRecheckDtlId.value,
+      );
       rowData.row.fileList = list;
-
-      const { showForm } = formFilesRef.value;
-      await showForm(false, rowData.row.fileList);
     }
+    const { showForm } = formFilesRef.value;
+    await showForm(false, rowData.row.fileList);
   } catch (e) {
     console.log(e);
   }
 };
 const uploadSuccess = async (file: AddFileType) => {
   try {
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.addIqcInspectDtlFile({
-        iqcInspectDtlId: selectIqcInspectDtlId.value,
+    if (!_.isEmpty(selectIqcInspectRecheckDtlId.value)) {
+      const list = await apiQuality.iqcInspectRecheckDtlFile.addIqcInspectRecheckDtlFile({
+        iqcInspectRecheckDtlId: selectIqcInspectRecheckDtlId.value,
         fileName: file.fileName,
       });
       MessagePlugin.success('文件上传成功');
@@ -513,9 +526,9 @@ const uploadSuccess = async (file: AddFileType) => {
 };
 const deleteSuccess = async (file: AddFileType) => {
   try {
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.deleteIqcInspectDtlFile({
-        iqcInspectDtlId: selectIqcInspectDtlId.value,
+    if (!_.isEmpty(selectIqcInspectRecheckDtlId.value)) {
+      const list = await apiQuality.iqcInspectRecheckDtlFile.deleteIqcInspectRecheckDtlFile({
+        iqcInspectRecheckDtlId: selectIqcInspectRecheckDtlId.value,
         fileName: file.fileName,
       });
       MessagePlugin.success('文件删除成功');
@@ -526,16 +539,16 @@ const deleteSuccess = async (file: AddFileType) => {
 };
 const batchDeleteSuccess = async (files: AddFileType[]) => {
   try {
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
+    if (!_.isEmpty(selectIqcInspectRecheckDtlId.value)) {
       const deleteList = [];
 
       files.forEach((n) =>
         deleteList.push({
-          iqcInspectDtlId: selectIqcInspectDtlId.value,
+          iqcInspectRecheckDtlId: selectIqcInspectRecheckDtlId.value,
           fileName: n.fileName,
         }),
       );
-      const list = await apiQuality.iqcInspectDtlFile.deleteBatchIqcInspectDtlFile(deleteList);
+      const list = await apiQuality.iqcInspectRecheckDtlFile.deleteBatchIqcInspectRecheckDtlFile(deleteList);
       MessagePlugin.success('文件删除成功');
     }
   } catch (e) {

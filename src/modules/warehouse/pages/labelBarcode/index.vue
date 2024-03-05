@@ -84,8 +84,10 @@
                       :template-id="printMode.printTempId"
                       :disabled="printButtonOp"
                       :data="printData"
+                      :show-icon="false"
                       @before-print="onPrint"
-                    />
+                      >打印</cmp-print-button
+                    >
                   </template>
                 </cmp-table>
               </cmp-card>
@@ -133,7 +135,6 @@
                         :value="item.id"
                       />
                     </t-select>
-
                     <t-button theme="primary" :disabled="isEnable" @click="onReprint"> 补打 </t-button>
                     <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 作废 </t-button>
                     <t-button theme="default" :disabled="isEnable" @click="onSplit"> 拆分 </t-button>
@@ -157,6 +158,19 @@
     width="auto"
     @confirm="onConfirm"
   >
+    <template #footer>
+      <div v-if="buttonSwitch === '补打'">
+        <t-button theme="default" @click="onClose"> 关闭 </t-button>
+        <cmp-print-button
+          :template-id="printMode.printTempId"
+          :data="printManagerData"
+          :show-icon="false"
+          theme="primary"
+          @before-print="onPrintManager"
+          >打印</cmp-print-button
+        >
+      </div>
+    </template>
     <t-form ref="formRef" :data="reprintDialog" :rules="rules">
       <t-form-item v-if="reprintVoidSwitch === 1" label-width="80px" label="补打原因" name="reprintData">
         <t-select v-model="reprintDialog.reprintData">
@@ -248,7 +262,7 @@
   <t-loading :loading="pageLoading" text="加载中..." fullscreen />
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import dayjs from 'dayjs';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
@@ -267,7 +281,9 @@ const rules: ComputedRef<FormRules> = computed(() => {
     restsData: [{ required: true, trigger: 'blur' }],
   };
 });
+
 const printData = ref([]);
+const printManagerData = ref([]);
 const pageLoading = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { loading, setLoading } = useLoading();
@@ -305,6 +321,11 @@ const reprintDialog = ref({
   splitNum: '',
   qty: 0,
 });
+
+const onClose = () => {
+  formVisible.value = false;
+};
+
 // 定义外部变量 isSuccess
 let isSuccess = true;
 
@@ -356,11 +377,72 @@ const onPrint = async () => {
     pageLoading.value = false;
   }
 };
+// 点击 打印事件
+const onPrintManager = async () => {
+  try {
+    if (reprintDialog.value.reprintData === '其他原因' && !reprintDialog.value.restsData) {
+      MessagePlugin.warning('请补充必填信息！');
+      isSuccess = false; // 设置失败标志
+      return isSuccess; // 返回失败标志
+    }
+    let reason = '';
+    if (reprintDialog.value.restsData) {
+      reason = reprintDialog.value.restsData;
+    } else {
+      reason = reprintDialog.value.reprintData;
+    }
+
+    if (!reason) {
+      MessagePlugin.warning('请补充必填信息！');
+      isSuccess = false; // 设置失败标志
+      return isSuccess; // 返回失败标志
+    }
+
+    printManagerData.value = [];
+    pageLoading.value = true;
+
+    selectedManageRowKeys.value.forEach((id) => {
+      const foundItem = pkgManageDataList.list.find((item) => item.id === id);
+      const DataBase = {
+        LABEL_NO: foundItem.labelNo,
+        QTY: foundItem.balanceQty,
+        LOT_NO: foundItem.lotNo,
+        C_INV_STD: foundItem.mitemName,
+        BATCH_NO: foundItem.batchNo,
+        SUPPLIER_NAME: foundItem.supplierName,
+        SUPPLIER_CODE: foundItem.supplierCode,
+        MITEM_CODE: foundItem.mitemCode,
+        MITEM_DESC: foundItem.mitemDesc,
+      };
+      printManagerData.value.push({
+        variable: DataBase,
+        datasource: { DataBase },
+      });
+    });
+
+    await apiWarehouse.label.reprintBarcode({
+      ids: selectedManageRowKeys.value,
+      reason,
+      printTempId: printMode.value.printTempId,
+    });
+    MessagePlugin.success('补打成功');
+
+    selectedManageRowKeys.value = [];
+    onRefreshManage();
+    return true; // 打印成功时返回 true
+  } catch (e) {
+    console.log(e);
+    isSuccess = false;
+    return false; // 打印失败时返回 false
+  } finally {
+    pageLoading.value = false;
+  }
+};
 // 补打，作废确定
 const onConfirm = async () => {
   if (reprintDialog.value.reprintData === '其他原因' && !reprintDialog.value.restsData) {
     MessagePlugin.warning('请补充必填信息！');
-    return;
+    return false;
   }
   let reason = '';
   if (reprintDialog.value.restsData) {
@@ -371,7 +453,7 @@ const onConfirm = async () => {
 
   if (!reason) {
     MessagePlugin.warning('请补充必填信息！');
-    return;
+    return false;
   }
 
   try {
@@ -390,7 +472,7 @@ const onConfirm = async () => {
       const intValue = parseInt(reprintDialog.value.splitNum, 10);
       if (!Number.isInteger(intValue) || intValue === 0 || intValue > reprintDialog.value.qty) {
         MessagePlugin.warning(`拆分数量需为小于${reprintDialog.value.qty}的正整数`);
-        return;
+        return false;
       }
       await apiWarehouse.label.splitBarcode({
         labelId: reprintDialog.value.labelId,
@@ -415,8 +497,10 @@ const onConfirm = async () => {
 
     await fetchBracodeManageTable(); // 刷新表格数据
     formVisible.value = false;
+    return true;
   } catch (e) {
     console.log(e);
+    return false;
   } finally {
     pageLoading.value = false;
   }
@@ -541,6 +625,7 @@ const onProductRightFetchData = (value: any, context: any) => {
 // 补打 点击事件
 const reprintVoidSwitch = ref(1); // 控制
 const onReprint = () => {
+  console.log('1111111111');
   formRef.value.reset({ type: 'empty' });
   const specificStatus = barcodeStatusNameArr.value.some((item) => item === '已生成' || item === '已报废');
   if (specificStatus) {

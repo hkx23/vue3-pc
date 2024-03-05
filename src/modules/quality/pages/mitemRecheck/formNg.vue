@@ -14,19 +14,19 @@
   >
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
-        <t-descriptions :title="'检验单号' + formData.iqcBillNo" :column="4" size="large">
-          <t-descriptions-item label="供应商">{{ formData.supplierName }}</t-descriptions-item>
+        <t-descriptions :title="'复检单号：' + formData.recheckBillNo" :column="4" size="large">
+          <t-descriptions-item label="复检类型"></t-descriptions-item>
+          <t-descriptions-item label="来源检验单">{{ formData.iqcBillNo }}</t-descriptions-item>
           <t-descriptions-item label="物料编码">{{ formData.mitemCategoryCode }}</t-descriptions-item>
           <t-descriptions-item label="物料名">
             <div class="div_break_word">
               {{ formData.mitemName }}
             </div>
           </t-descriptions-item>
-          <t-descriptions-item label="检验严格度">{{ formData.inspectionStringencyName }}</t-descriptions-item>
-          <t-descriptions-item label="报批数量">{{ formData.pickQty }}</t-descriptions-item>
-          <t-descriptions-item label="检验标准">{{ formData.inspectStdName }}</t-descriptions-item>
-          <t-descriptions-item label="接收单号">{{ formData.billNoStr }}</t-descriptions-item>
-          <t-descriptions-item label="查看附件"> <t-link theme="primary">查看附件</t-link></t-descriptions-item>
+          <t-descriptions-item label="供应商编码">{{ formData.supplierCode }}</t-descriptions-item>
+          <t-descriptions-item label="供应商名称">{{ formData.supplierName }}</t-descriptions-item>
+          <t-descriptions-item label="批量" span="2"> {{ formData.inspectQty }} </t-descriptions-item>
+          <t-descriptions-item label="复检原因">{{ formData.recheckReason }}</t-descriptions-item>
         </t-descriptions>
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
@@ -92,6 +92,7 @@ const formNgRef: Ref<FormInstanceFunctions> = ref(null);
 
 const formData = reactive({
   iqcBillNo: '',
+  recheckBillNo: '',
   billNoStr: '',
   billNoList: [{ billNo: '', erpLineNo: '', billNoDtlId: '' }],
   mitemId: '',
@@ -101,13 +102,14 @@ const formData = reactive({
   mitemCategoryId: '',
   mitemCategoryCode: '',
   mitemCategoryName: '',
-  pickQty: '',
+  inspectQty: '',
   supplierId: '',
   supplierCode: '',
   supplierName: '',
   inspectionStringency: '',
   inspectionStringencyName: '',
   inspectStdName: '',
+  recheckReason: '',
 });
 
 const mainTableData = ref([]);
@@ -160,10 +162,11 @@ const onConfirmForm = async () => {
     }
     LoadingPlugin(true);
 
-    formNgData.isStartImprove = formNgData.isPdca ? 1 : 0;
-    await apiQuality.iqcInspect.submitIqcInspect({
+    // formNgData.isStartImprove = formNgData.isPdca ? 1 : 0;
+    await apiQuality.iqcInspectRecheck.submitIqcInspectRecheck({
       iqcBillNo: formData.iqcBillNo,
-      billNoList: formData.billNoList,
+      recheckBillNo: formData.recheckBillNo,
+      iqcBillNoList: [],
       mitemId: formData.mitemId,
       mitemCode: formData.mitemCode,
       mitemName: formData.mitemName,
@@ -171,13 +174,13 @@ const onConfirmForm = async () => {
       mitemCategoryId: formData.mitemCategoryId,
       mitemCategoryCode: formData.mitemCategoryCode,
       mitemCategoryName: formData.mitemCategoryName,
-      pickQty: Number(formData.pickQty),
+      inspectQty: Number(formData.inspectQty),
       supplierId: formData.supplierId,
       supplierCode: formData.supplierCode,
       supplierName: formData.supplierName,
       inspectionStringency: formData.inspectionStringency,
       iqcInspectStdList: mainTableData.value,
-      iqcInspectNg: formNgData,
+      iqcInspectRecheckNg: formNgData,
     });
 
     Emit('form-close-event');
@@ -219,7 +222,7 @@ const showForm = async (edit, row, tableData) => {
   formData.mitemCategoryId = row.mitemCategoryId;
   formData.mitemCategoryCode = row.mitemCategoryCode;
   formData.mitemCategoryName = row.mitemCategoryName;
-  formData.pickQty = `${row.pickQty}`;
+  formData.inspectQty = `${row.inspectQty}`;
   formData.supplierId = row.supplierId;
   formData.supplierCode = row.supplierCode;
   formData.supplierName = row.supplierName;

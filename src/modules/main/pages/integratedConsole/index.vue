@@ -41,11 +41,6 @@
                 <t-link variant="text" theme="primary" name="retransmission" disabled>重传</t-link>
               </t-space>
             </template>
-
-            <!-- 定义序号列的插槽 -->
-            <template #indexSlot="{ rowIndex }">
-              {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-            </template>
           </cmp-table>
         </cmp-card>
       </cmp-card>
@@ -169,12 +164,11 @@ const statusOption = ref([
 // 表格主位栏 1
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
-  { title: '序号', colKey: 'index', width: 60, cell: 'indexSlot' },
   { title: '接口分类', colKey: 'msgCategoryName', width: 110 },
   { title: 'MES领域分类', width: 130, colKey: 'msgDomainCategoryName' },
   { title: 'MES业务单号', width: 120, colKey: 'billNo' },
-  { title: '事务类型', width: 85, colKey: 'categoryName' },
-  { title: 'ERP凭据单号', width: 110, colKey: 'erpbillNo' },
+  { title: '事务类型', width: 85, colKey: 'businessCategoryName' },
+  { title: 'ERP凭据单号', width: 110, colKey: 'erpBillNo' },
   {
     title: '交易开始时间',
     width: 150,

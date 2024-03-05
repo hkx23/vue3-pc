@@ -1394,8 +1394,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 响应数据 */
@@ -1478,7 +1478,7 @@ export interface TransactionDetailVO {
   datetimeCanceled?: string;
   userCanceledId?: string;
   /**
-   * 过帐时间
+   * 交易时间
    * @format date-time
    */
   datetimeTransfer?: string;
@@ -1907,6 +1907,13 @@ export interface StockCheckBillVO {
   scanBarcode?: string;
   onhandId?: string;
   pdDtlId?: string;
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
+  isBatchNo?: number;
+  /** 是否条码管控，启用批次=非条码管控 */
+  isBatchNoName?: string;
 }
 
 /** 销售订单明细查询 */
@@ -2157,6 +2164,7 @@ export interface SaleDeliveryDtlVO {
   eid?: string;
   oid?: string;
   saleDeliveryId?: string;
+  warehouseId?: string;
   /**
    * 发货单行号
    * @format int32
@@ -2223,7 +2231,6 @@ export interface SaleDeliveryVO {
   oid?: string;
   /** 发货单单据号 */
   billNo?: string;
-  warehouseId?: string;
   customerId?: string;
   /**
    * 发货时间
@@ -2448,9 +2455,9 @@ export interface ReturnStockOutDtlVO {
   transferBillNo?: string;
   /** 交易事务单号 */
   transferBillNoStatus?: string;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
 }
 
 /** 退货单扫描 */
@@ -2535,9 +2542,9 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
 }
@@ -2607,9 +2614,9 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
 }
@@ -3235,11 +3242,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
   tlpickQty?: number;
+  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  bfpickQty?: number;
-  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -5577,8 +5584,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
