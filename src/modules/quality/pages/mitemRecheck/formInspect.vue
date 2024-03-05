@@ -26,9 +26,23 @@
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :title="'复检单号：' + formData.recheckBillNo" :column="4" size="large">
-          <t-descriptions-item label="复检类型"></t-descriptions-item>
+          <t-descriptions-item label="复检类型"
+            ><t-select
+              v-model="formData.recheckType"
+              :options="recheckTypeOption"
+              :disabled="!_.isEmpty(formData.iqcBillNo)"
+          /></t-descriptions-item>
           <t-descriptions-item label="来源检验单">{{ formData.iqcBillNo }}</t-descriptions-item>
-          <t-descriptions-item label="物料编码">{{ formData.mitemCategoryCode }}</t-descriptions-item>
+          <t-descriptions-item label="物料编码">
+            <bcmp-select-business
+              v-if="formData.recheckType !== 'EXCEPTION'"
+              v-model="formData.mitemId"
+              type="mitem"
+              :show-title="false"
+            />
+            <!-- @selection-change="mitemChange" -->
+            <div v-else>{{ formData.mitemCategoryCode }}</div>
+          </t-descriptions-item>
           <t-descriptions-item label="物料名">
             <div class="div_break_word">
               {{ formData.mitemName }}
@@ -212,7 +226,7 @@ export default {
 <script setup lang="ts">
 import _ from 'lodash';
 import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { reactive, Ref, ref } from 'vue';
+import { reactive, Ref, ref, watch } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
@@ -254,6 +268,8 @@ const formData = reactive({
   inspectionStringency: '',
   inspectionStringencyName: '',
   inspectStdName: '',
+  recheckType: '',
+  recheckTypeName: '',
   recheckReason: '',
 });
 
@@ -289,6 +305,27 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
 
 const tableDataCount = ref([]);
 const tableDataCquantitative = ref([]);
+
+watch(
+  () => formData.recheckType,
+  (newValue, oldValue) => {
+    if (newValue === 'EXCEPTION') {
+      formData.recheckTypeName = '异常复检';
+    } else if (newValue === 'OVERDUE') {
+      formData.recheckTypeName = '超期复检';
+    } else if (newValue === 'RECHECK') {
+      formData.recheckTypeName = '常规复检';
+    }
+  },
+);
+
+const recheckTypeOption = ref([]);
+const getRecheckTypeOption = async () => {
+  recheckTypeOption.value = [];
+  recheckTypeOption.value.push({ value: 'EXCEPTION', label: '异常复检' });
+  recheckTypeOption.value.push({ value: 'OVERDUE', label: '超期复检' });
+  recheckTypeOption.value.push({ value: 'RECHECK', label: '常规复检' });
+};
 
 const tableSelectedChange = (value: any[], { selectedRowData }: any) => {
   tableSelectedRowKeys.value = value;
@@ -346,6 +383,8 @@ const onConfirmForm = async () => {
         supplierCode: formData.supplierCode,
         supplierName: formData.supplierName,
         inspectionStringency: formData.inspectionStringency,
+        recheckType: formData.recheckType,
+        recheckReason: formData.recheckReason,
         iqcInspectStdList: tableData.value,
         // iqcInspectNg: null,
       });
@@ -415,6 +454,7 @@ const loadTable = async () => {
 const reset = () => {
   if (isEdit.value) {
     getBillNo();
+    getRecheckTypeOption();
   }
 
   // 清除所有对象的值
@@ -448,6 +488,8 @@ const showForm = async (edit, row) => {
   formData.supplierName = row.supplierName;
   formData.inspectionStringency = row.inspectionStringency;
   formData.inspectionStringencyName = row.inspectionStringencyName;
+  formData.recheckType = _.isEmpty(row.recheckType) ? 'EXCEPTION' : row.recheckType;
+  formData.recheckReason = row.recheckReason;
 };
 const showMergeForm = async (edit, reBillNoList) => {
   isEdit.value = edit;

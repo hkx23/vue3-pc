@@ -21,7 +21,7 @@
       >
         <template #title> 工作台 </template>
         <template #button>
-          <t-button theme="primary">复检</t-button>
+          <t-button theme="primary">新增复检</t-button>
         </template>
         <template #op="rowData">
           <t-space>
@@ -29,7 +29,7 @@
               v-if="rowData.row.inspectResult === 'UNINSPECT' || _.isEmpty(rowData.row.recheckBillNo)"
               theme="primary"
               @click="onShowDialog(true, rowData)"
-              >检验</t-link
+              >复检</t-link
             >
           </t-space>
         </template>
@@ -157,11 +157,11 @@ const iqcHandleMethodOption = ref([]);
 const waitInspectDataTotal = ref(0);
 const waitInspectData = ref([]);
 const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'row-select',
-    type: 'multiple',
-    width: 50,
-  },
+  // {
+  //   colKey: 'row-select',
+  //   type: 'multiple',
+  //   width: 50,
+  // },
   { title: '复检单号', width: 160, colKey: 'recheckBillNo' },
   { title: '复检类型', width: 100, colKey: 'reCheckTypeName' },
   { title: '来源检验单', width: 160, colKey: 'iqcBillNo' },
