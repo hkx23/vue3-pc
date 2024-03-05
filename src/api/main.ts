@@ -925,8 +925,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -3923,15 +3923,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  stateName?: string;
+  isState?: boolean;
+  isRawChecked?: boolean;
+  isRawName?: string;
   isProductName?: string;
   isInProcessName?: string;
   isBatchName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4074,8 +4074,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4400,6 +4400,10 @@ export interface IntegratedConsoleSearch {
   /** 接口领域分类 */
   msgDomainCategory?: string;
   businessCategoryId?: string;
+  /** MES业务单号 */
+  billNo?: string;
+  /** ERP单据号 */
+  erpBillNo?: string;
   /**
    * 开始日期
    * @format date-time
@@ -4410,9 +4414,7 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
-  erpbillNo?: string;
-  imsgqueueStatus?: string;
+  imsgQueueStatus?: string;
 }
 
 /** 显示工站 */
@@ -6994,12 +6996,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */

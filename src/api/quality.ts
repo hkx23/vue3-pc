@@ -883,6 +883,8 @@ export interface OqcInspectBillFullVO {
   inspectResultName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -3182,10 +3184,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -3385,6 +3387,8 @@ export type SampleCodeVO = {
   s3?: string;
   iii?: string;
   s2?: string;
+  s4?: string;
+  s3?: string;
 } | null;
 
 /** 计量单位 */

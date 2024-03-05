@@ -1372,6 +1372,10 @@ export interface TransactionDetailSearch {
   businessCategoryId?: string;
   moScheId?: string;
   mitemId?: string;
+  /** MES业务单号 */
+  billNo?: string;
+  /** ERP单据号 */
+  erpLineNo?: string;
   /** 操作人 */
   creator?: string;
   /** 交接人ID */
@@ -1394,8 +1398,6 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
-  mesbillNo?: string;
 }
 
 /** 响应数据 */
@@ -2031,6 +2033,8 @@ export interface SaleOrderDtlVO {
   districtName?: string;
   /** 库存现有量 */
   onhandQty?: number;
+  /** 库存可用量 */
+  canOnhandQty?: number;
   /** 本次需求量 */
   reqQty?: number;
   /** 仓库物料汇总key */
@@ -3232,21 +3236,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  tlpickQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3726,13 +3730,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5584,8 +5588,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -5927,6 +5931,27 @@ export interface ResultListPurchaseOrderDtlVO {
   /** 响应数据 */
   data?: PurchaseOrderDtlVO[] | null;
 }
+
+/** 通用响应类 */
+export interface ResultSaleDeliveryOnhandQtyVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 仓库可用量 */
+  data?: SaleDeliveryOnhandQtyVO;
+}
+
+/** 仓库可用量 */
+export type SaleDeliveryOnhandQtyVO = {
+  /** 库存现有量 */
+  onhandQty?: number;
+  /** 库存可用量 */
+  canOnhandQty?: number;
+} | null;
 
 export interface OnhandQtyDtlVO {
   /** 条码 */
@@ -7966,6 +7991,21 @@ export const api = {
      */
     getMitemOnhandQty: (query: { warehouseId: string; locationId: string; mitemId: string }) =>
       http.request<ResultBigDecimal['data']>(`/api/warehouse/onhandQty/getMitemOnhandQty`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 库存现有量表
+     * @name GetMitemOnhandQtyByWarehouse
+     * @summary 获取物料库存数量
+     * @request GET:/onhandQty/getMitemOnhandQtyByWarehouse
+     * @secure
+     */
+    getMitemOnhandQtyByWarehouse: (query: { warehouseId: string; mitemId: string }) =>
+      http.request<ResultSaleDeliveryOnhandQtyVO['data']>(`/api/warehouse/onhandQty/getMitemOnhandQtyByWarehouse`, {
         method: 'GET',
         params: query,
       }),

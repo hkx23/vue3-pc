@@ -15,7 +15,7 @@
           <cmp-table
             v-model:pagination="pageUI"
             :loading="loading"
-            row-key="billId"
+            row-key="_timestamp"
             :table-column="tableReckoningManagementColumns"
             :table-data="tableDataReckoning"
             :fixed-height="false"
@@ -114,7 +114,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    erpbillNo: {
+    erpBillNo: {
       label: 'ERP凭据单号',
       comp: 't-input',
       defaultVal: '',
@@ -122,7 +122,7 @@ const opts = computed(() => {
         clearable: true,
       },
     },
-    mesbillNo: {
+    billNo: {
       label: 'MES/业务单据号',
       comp: 't-input',
       defaultVal: '',
@@ -131,7 +131,7 @@ const opts = computed(() => {
       },
     },
 
-    imsgqueueStatus: {
+    IMsgQueueStatus: {
       label: '执行结果',
       comp: 't-select',
       defaultVal: [],
@@ -183,7 +183,7 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   {
     title: '执行结果',
     width: 120,
-    colKey: 'status',
+    colKey: 'statusName',
   },
   { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
 ];
@@ -217,7 +217,10 @@ const fetchTable = async () => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
-  tableDataReckoning.value = [...data.list];
+  tableDataReckoning.value = data.list.map((item) => ({
+    ...item,
+    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+  }));
   dataTotal.value = data.total;
   setLoading(false);
 };
@@ -307,10 +310,10 @@ const onInput = async (data: any) => {
     msgCategory, // 接口分类
     msgDomainCategory, // mes领域分类
     businessCategoryId, // 事务类型
-    imsgqueueStatus, // 执行结果
-    erpbillNo, // ERP凭据单号
+    IMsgQueueStatus, // 执行结果
+    erpBillNo, // ERP凭据单号
     datetimeExecute, // 事务开始时间
-    mesbillNo, // MES/业务单据号
+    billNo, // MES/业务单据号
   } = data;
   if (!data.value) {
     const data = await apiMain.integratedConsole.getList({
@@ -319,13 +322,16 @@ const onInput = async (data: any) => {
       msgCategory,
       msgDomainCategory,
       businessCategoryId,
-      imsgqueueStatus,
-      erpbillNo,
-      mesbillNo,
+      IMsgQueueStatus,
+      erpBillNo,
+      billNo,
       dateStart: datetimeExecute[0],
       dateEnd: datetimeExecute[1],
     });
-    tableDataReckoning.value = [...data.list];
+    tableDataReckoning.value = data.list.map((item) => ({
+      ...item,
+      _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+    }));
     dataTotal.value = data.total;
   }
   setLoading(false);

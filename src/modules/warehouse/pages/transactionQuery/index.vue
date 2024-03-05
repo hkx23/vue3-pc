@@ -21,7 +21,7 @@
       >
         <template #billNo="slotProps">
           <t-space :size="8">
-            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick()">{{
+            <t-link variant="text" theme="primary" name="edit" @click="onEditRowClick(slotProps.row.billNo)">{{
               slotProps.row.billNo
             }}</t-link>
           </t-space>
@@ -38,19 +38,21 @@
 import dayjs from 'dayjs';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { api } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
-import { openPage } from '@/router';
+// import { openPage } from '@/router';
 
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const inventoryManagement = ref([]);
 const tableDataReckoning = ref([]); //* 表格数据
 const dataTotal = ref(0);
+const router = useRouter();
 
 //* 组件配置--查询界面
 const opts = computed(() => {
@@ -79,7 +81,7 @@ const opts = computed(() => {
         blur: dateChange,
       },
     },
-    mesbillNo: {
+    billNo: {
       label: 'MES业务单号',
       comp: 't-input',
       defaultVal: '',
@@ -87,7 +89,7 @@ const opts = computed(() => {
         enableTimePicker: false,
       },
     },
-    erpbillNo: {
+    erpLineNo: {
       label: 'ERP单据号',
       comp: 't-input',
       defaultVal: '',
@@ -276,9 +278,13 @@ onMounted(async () => {
 });
 
 // 跳转到单据管理
-const onEditRowClick = () => {
-  const toDoUrl = '/warehouse#/receiptManagement';
-  openPage(toDoUrl);
+const onEditRowClick = (billNo: String) => {
+  const tabRouters = router.getRoutes();
+  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === `/warehouse#/receiptManagement`);
+  if (routeInfo) {
+    const url = `${routeInfo.path}?billNo=${billNo}`;
+    router.push(url);
+  }
 };
 
 //* 表格刷新
@@ -308,8 +314,8 @@ const onInput = async (data: any) => {
   const {
     businessCategoryId, // 事务类型
     timeCreate, // 时间
-    mesbillNo, // MES业务单号
-    erpbillNo, // ERP单据号
+    billNo, // MES业务单号
+    erpLineNo, // ERP单据号
     moScheId, // 排产单号
     mitemId, // 物料编码
     creator, // 操作人
@@ -326,11 +332,11 @@ const onInput = async (data: any) => {
       pageSize: pageUI.value.rows,
       businessCategoryId,
       mitemId,
-      mesbillNo,
+      billNo,
       moScheId,
       dateStart: timeCreate[0],
       dateEnd: timeCreate[1],
-      erpbillNo,
+      erpLineNo,
       creator,
       transferId,
       deliveryNo,
