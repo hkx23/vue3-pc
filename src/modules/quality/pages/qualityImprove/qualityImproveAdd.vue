@@ -14,7 +14,7 @@
       <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">
         <template #panel>
           <!-- !基础信息模块 -->
-          <cmp-container :full="true" style="margin-top: 15px">
+          <cmp-container :full="true" style="margin-top: 14px">
             <cmp-card :hover-shadow="false">
               <t-row style="margin-left: 26px" justify="space-between" align="center">
                 <t-col>
@@ -29,111 +29,103 @@
                 :show-error-message="false"
                 style="margin-top: 10px"
               >
-                <t-row :gutter="[0, 16]">
+                <t-row :gutter="[32, 16]">
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.inspectionType')" label-align="right" name="inspectStdCode">
-                      <t-select v-model="formData.status" clearable style="width: 200px">
+                    <t-form-item :label="t('qualityImprove.inspectionType')" label-align="right" name="inspectType">
+                      <t-select v-model="formData.inspectType" clearable style="width: 200px">
                         <t-option v-for="item in statusOption" :key="item.id" :label="item.label" :value="item.value" />
                       </t-select>
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.relateBillNo')" label-align="right" name="inspectStdName">
-                      <t-select v-model="formData.status" clearable style="width: 200px">
+                    <t-form-item :label="t('qualityImprove.relateBillNo')" label-align="right" name="relateBillNo">
+                      <t-select v-model="formData.relateBillNo" clearable style="width: 200px">
                         <t-option v-for="item in statusOption" :key="item.id" :label="item.label" :value="item.value" />
                       </t-select>
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.mitemCode')" label-align="right" name="revision">
-                      <t-input v-model="formData.revision" style="width: 200px" :disabled="true" />
+                    <t-form-item :label="t('qualityImprove.mitemCode')" label-align="right" name="mitemCode">
+                      <t-input v-model="formData.mitemCode" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
                   <!-- 第 2️⃣ 行数据 -->
                   <t-col :span="4">
-                    <t-form-item :label="t('business.main.mitemDesc')" label-align="right" name="status">
-                      <t-select v-model="formData.status" clearable style="width: 200px" :disabled="true">
+                    <t-form-item :label="t('business.main.mitemDesc')" label-align="right" name="mitemDesc">
+                      <t-select v-model="formData.mitemDesc" clearable style="width: 200px" :disabled="true">
                         <t-option v-for="item in statusOption" :key="item.id" :label="item.label" :value="item.value" />
                       </t-select>
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.supplierCode')" label-align="right" name="groupInspectStdId">
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" :disabled="true" />
+                    <t-form-item :label="t('qualityImprove.supplierCode')" label-align="right" name="supplierCode">
+                      <t-input v-model="formData.supplierCode" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.supplierName')" label-align="right" name="timeEffective">
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" :disabled="true" />
+                    <t-form-item :label="t('qualityImprove.supplierName')" label-align="right" name="supplierName">
+                      <t-input v-model="formData.supplierName" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('business.main.workshop')" label-align="right" name="timeInvalid">
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" :disabled="true" />
+                    <t-form-item :label="t('business.main.workshop')" label-align="right" name="workshopName">
+                      <t-input v-model="formData.workshopName" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('business.main.workcenter')" label-align="right" name="inspectTypeList">
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" :disabled="true" />
+                    <t-form-item :label="t('business.main.workcenter')" label-align="right" name="workcenterName">
+                      <t-input v-model="formData.workcenterName" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.moScheCode')" label-align="right" name="groupInspectStdId">
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" />
+                    <t-form-item :label="t('qualityImprove.moScheCode')" label-align="right" name="scheCode">
+                      <t-input v-model="formData.scheCode" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.defectCode')" label-align="right" name="groupInspectStdId">
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" :disabled="true" />
+                    <t-form-item :label="t('qualityImprove.defectCode')" label-align="right" name="defectCode">
+                      <t-input v-model="formData.defectCode" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item
-                      :label="t('qualityImprove.defectCategory')"
-                      label-align="right"
-                      name="groupInspectStdId"
-                    >
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" :disabled="true" />
+                    <t-form-item :label="t('qualityImprove.defectCategory')" label-align="right" name="defectCategory">
+                      <t-input v-model="formData.defectCategory" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.handleMethod')" label-align="right" name="groupInspectStdId">
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" :disabled="true" />
+                    <t-form-item :label="t('qualityImprove.handleMethod')" label-align="right" name="handleMethod">
+                      <t-input v-model="formData.handleMethod" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
                     <t-form-item
                       :label="t('qualityImprove.deptResponsibility')"
                       label-align="right"
-                      name="groupInspectStdId"
+                      name="deptResponsibilityName"
                     >
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" :disabled="true" />
+                      <t-input v-model="formData.deptResponsibilityName" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
-                  <t-col :span="7">
-                    <t-form-item :label="t('qualityImprove.problemDesc')" label-align="right" name="groupInspectStdId">
-                      <t-input v-model="formData.groupInspectStdId" />
-                    </t-form-item>
-                  </t-col>
+
                   <t-col :span="4">
                     <t-form-item
                       :label="t('qualityImprove.personResponsibility')"
                       label-align="right"
-                      name="groupInspectStdId"
+                      name="personResponsibilityName"
                     >
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" :disabled="true" />
+                      <t-input v-model="formData.personResponsibilityName" style="width: 200px" :disabled="true" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.occurNature')" label-align="right" name="groupInspectStdId">
-                      <t-select v-model="formData.status" clearable style="width: 200px">
+                    <t-form-item :label="t('qualityImprove.occurNature')" label-align="right" name="occurNature">
+                      <t-select v-model="formData.occurNature" clearable style="width: 200px">
                         <t-option v-for="item in statusOption" :key="item.id" :label="item.label" :value="item.value" />
                       </t-select>
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.isBatch')" label-align="right" name="groupInspectStdId">
-                      <t-select v-model="formData.groupInspectStdId" :clearable="true" style="width: 200px">
+                    <t-form-item :label="t('qualityImprove.isBatch')" label-align="right" name="isBatch">
+                      <t-select v-model="formData.isBatch" :clearable="true" style="width: 200px">
                         <t-option key="0" :label="t('business.main.yes')" value="1" />
                         <t-option key="1" :label="t('business.main.no')" value="0" />
                       </t-select>
@@ -143,10 +135,10 @@
                     <t-form-item
                       :label="t('qualityImprove.userResponsibility')"
                       label-align="right"
-                      name="groupInspectStdId"
+                      name="userResponsibilityName"
                     >
                       <bcmp-select-business
-                        v-model="formData.groupInspectStdId"
+                        v-model="formData.userResponsibilityName"
                         type="user"
                         :show-title="false"
                         style="width: 200px"
@@ -157,26 +149,31 @@
                     <t-form-item
                       :label="t('qualityImprove.datetimeRequireFinish')"
                       label-align="right"
-                      name="groupInspectStdId"
+                      name="datetimeRequireFinish"
                     >
-                      <t-input v-model="formData.groupInspectStdId" style="width: 200px" />
+                      <t-input v-model="formData.datetimeRequireFinish" style="width: 200px" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.improveTool')" label-align="right" name="groupInspectStdId">
-                      <t-select v-model="formData.groupInspectStdId" style="width: 200px">
+                    <t-form-item :label="t('qualityImprove.improveTool')" label-align="right" name="improveTool">
+                      <t-select v-model="formData.improveTool" style="width: 200px">
                         <t-option key="PDCA" label="PDCA" value="PDCA" />
                         <t-option key="8D" label="8D" value="8D" />
                       </t-select>
                     </t-form-item>
                   </t-col>
                   <t-col :span="11">
-                    <t-form-item
-                      :label="t('qualityImprove.problemDescAdd')"
-                      label-align="right"
-                      name="groupInspectStdId"
-                    >
-                      <t-textarea placeholder="请输入内容" autosize />
+                    <t-form-item :label="t('qualityImprove.problemDesc')" label-align="right" name="problemDesc">
+                      <t-input v-model="formData.problemDesc" />
+                    </t-form-item>
+                  </t-col>
+                  <t-col :span="11">
+                    <t-form-item :label="t('qualityImprove.problemDescAdd')" label-align="right" name="problemDescAdd">
+                      <t-textarea
+                        v-model="formData.problemDescAdd"
+                        :placeholder="t('common.placeholder.input')"
+                        autosize
+                      />
                     </t-form-item>
                   </t-col>
                   <!-- 第 4️⃣ 行数据 -->
@@ -207,7 +204,7 @@
     v-model:visible="formVisible"
     :close-on-overlay-click="false"
     header="附件上传"
-    width="50%"
+    width="40%"
     :confirm-btn="fileList.length >= 1 ? '确认' : null"
     @confirm="onConfirmFile"
   >
@@ -226,7 +223,7 @@
 
 <script setup lang="ts">
 // import { debounce } from 'lodash';
-import { isEmpty } from 'lodash';
+// import { isEmpty } from 'lodash';
 import { FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { Ref, ref } from 'vue';
 
@@ -260,18 +257,29 @@ const getDtlByStdId = async () => {
 
 const formData = ref({
   operateTpye: 'add',
-  billNo: 'add',
-  saveTpye: 'add',
+  billNo: '',
+  relateBillNo: '',
   id: '',
-  inspectStdCode: '',
-  inspectStdName: '',
-  groupInspectStdId: '',
-  revision: null,
-  timeEffective: '',
-  timeInvalid: '',
-  status: '',
-  statusName: '',
-  inspectTypeList: [],
+  inspectType: '',
+  deptResponsibilityName: '',
+  improveTool: '',
+  defectCode: '',
+  handleMethod: '',
+  supplierCode: '',
+  workcenterName: '',
+  mitemCode: '',
+  mitemDesc: '',
+  workshopName: '',
+  scheCode: '',
+  supplierName: '',
+  personResponsibilityName: '',
+  userResponsibilityName: '',
+  occurNature: '',
+  defectCategory: '',
+  problemDescAdd: '',
+  problemDesc: '',
+  datetimeRequireFinish: '',
+  isBatch: '',
 });
 const init = () => {
   fileList.value = [];
@@ -285,66 +293,26 @@ api.param.getListByGroupCode({ parmGroupCode: 'Q_IQC_INSPECTION_TYPE' }).then((d
 
 const submit = async () => {
   try {
-    if (isEmpty(formData.value.inspectStdCode)) {
-      MessagePlugin.error('请输入标准编码');
-      return false;
-    }
-    if (isEmpty(formData.value.inspectStdName)) {
-      MessagePlugin.error('请输入标准名称');
-      return false;
-    }
-    if (isEmpty(formData.value.timeEffective)) {
-      MessagePlugin.error('请选择生效时间');
-      return false;
-    }
-    if (isEmpty(formData.value.timeInvalid)) {
-      MessagePlugin.error('请选择失效时间');
-      return false;
-    }
-    if (isEmpty(formData.value.inspectTypeList)) {
-      MessagePlugin.error('请选择检验类型');
-      return false;
-    }
-
-    const timeEffective = new Date(formData.value.timeEffective);
-    const timeInvalid = new Date(formData.value.timeInvalid);
-
-    if (timeEffective >= timeInvalid) {
-      MessagePlugin.error('失效时间必须大于生效时间');
-      return false;
-    }
-    if (tableData.value.length < 1) {
-      MessagePlugin.error('请新增标准明细');
-      return false;
-    }
-
-    formData.value.status = formData.value.saveTpye === 'add' ? 'EFFECTIVE' : 'DRAFT';
-
-    if (formData.value.operateTpye === 'add') {
-      await apiQuality.oqcInspectStd.addOqcInspectStd({
-        ...formData.value,
-        list: tableData.value,
-        fileList: fileList.value,
-      });
-      MessagePlugin.success('新增成功');
-      Emit('permissionShow', false); // 回到父
-    } else if (formData.value.operateTpye === 'edit') {
-      await apiQuality.oqcInspectStd.changeStd({
-        ...formData.value,
-        perId: perId.value,
-        fileList: fileList.value,
-      });
-      MessagePlugin.success('编辑成功');
-      Emit('permissionShow', false); // 回到父
-    } else if (formData.value.operateTpye === 'copy') {
-      await apiQuality.oqcInspectStd.changeStd({
-        ...formData.value,
-        fileList: fileList.value,
-        perId: formData.value.id,
-      });
-      MessagePlugin.success('复制成功');
-      Emit('permissionShow', false); // 回到父
-    }
+    // if (isEmpty(formData.value.inspectStdCode)) {
+    //   MessagePlugin.error('请输入标准编码');
+    //   return false;
+    // }
+    // if (isEmpty(formData.value.inspectStdName)) {
+    //   MessagePlugin.error('请输入标准名称');
+    //   return false;
+    // }
+    // if (isEmpty(formData.value.timeEffective)) {
+    //   MessagePlugin.error('请选择生效时间');
+    //   return false;
+    // }
+    // if (isEmpty(formData.value.timeInvalid)) {
+    //   MessagePlugin.error('请选择失效时间');
+    //   return false;
+    // }
+    // if (isEmpty(formData.value.inspectTypeList)) {
+    //   MessagePlugin.error('请选择检验类型');
+    //   return false;
+    // }
   } catch (e) {
     console.log(e);
     return false;
@@ -359,14 +327,12 @@ const onConfirmFile = () => {
 const Emit = defineEmits(['permissionShow']);
 // 关闭窗口回到主页面
 const onStaging = async () => {
-  formData.value.saveTpye = 'onStaging';
   const data = await submit();
   if (data) {
     Emit('permissionShow', false); // 回到父
   }
 };
 const onSubmit = async () => {
-  formData.value.saveTpye = 'add';
   const data = await submit();
   if (data) {
     Emit('permissionShow', false); // 回到父
@@ -387,7 +353,7 @@ const uploadSuccess = (file: AddFileType) => {
   fileList.value.push(file);
   console.log('🚀 ~ file: materialStandardAdd.vue:149 ~ uploadSuccess ~ files.value:', fileList.value);
 
-  console.log('🚀 ~ file: materialStandardAdd.vue:150 ~ uploadSuccess ~ file:', file);
+  console.log('🚀 ~ file: materialStandardAdd.vue:140 ~ uploadSuccess ~ file:', file);
 };
 
 const uploadfail = (file: AddFileType) => {
