@@ -1912,6 +1912,8 @@ export interface StockCheckBillVO {
    * @format int32
    */
   isBatchNo?: number;
+  /** 是否条码管控，启用批次=非条码管控 */
+  isBatchNoName?: string;
 }
 
 /** 销售订单明细查询 */
@@ -2162,6 +2164,7 @@ export interface SaleDeliveryDtlVO {
   eid?: string;
   oid?: string;
   saleDeliveryId?: string;
+  warehouseId?: string;
   /**
    * 发货单行号
    * @format int32
@@ -2228,7 +2231,6 @@ export interface SaleDeliveryVO {
   oid?: string;
   /** 发货单单据号 */
   billNo?: string;
-  warehouseId?: string;
   customerId?: string;
   /**
    * 发货时间
@@ -3235,16 +3237,16 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  tlpickQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
