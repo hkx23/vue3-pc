@@ -168,7 +168,7 @@ const tableChildrenColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '产品名称', width: 140, colKey: 'mitemName' },
   { title: '单位', width: 140, colKey: 'uomName' },
   { title: '仓库', width: 140, colKey: 'warehouseName' },
-  { title: '货区', width: 140, colKey: 'districtName' },
+  // { title: '货区', width: 140, colKey: 'districtName' },
   { title: '本次发货数', width: 140, colKey: 'qty' },
   { title: '待发货数', width: 140, colKey: 'requireQty' },
   { title: '销售订单', width: 140, colKey: 'saleOrderNo' },

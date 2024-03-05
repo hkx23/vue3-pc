@@ -229,9 +229,8 @@ import { MessagePlugin, RequestMethodResponse, TableRowData, UploadFile } from '
 import { computed, nextTick, PropType, ref, watch } from 'vue';
 import * as XLSX from 'xlsx';
 
-import { api } from '@/api/main';
+import { api, CommonImportAuto } from '@/api/main';
 
-import { CommonImportMoodel } from './constants';
 // 首先定义一个接口来描述列配置项
 interface ColumnConfig {
   title: string;
@@ -245,8 +244,17 @@ const props = defineProps({
     type: Boolean as PropType<boolean>,
     required: true,
   },
+  // 设置类型
+  settingType: {
+    type: String,
+    default: 'db',
+  },
+  // 设置json
+  settingJson: {
+    type: Object,
+    default: null,
+  },
   // 导入Key
-
   importKey: {
     type: String,
     default: '表单名称',
@@ -443,8 +451,13 @@ const downTemplate = () => {
   // 通过URL下载模板
   const link = document.createElement('a');
   // const importAddress = `/import/template/${props.templateFileName}.xlsx`;
-  const importAddress = props.templateFileUrl;
+
+  let importAddress = props.templateFileUrl;
   const fileName = getFileName(importAddress);
+  if (props.settingType === 'json') {
+    importAddress = `/import/templates/${fileName}`;
+  }
+
   link.href = importAddress;
   link.download = fileName; // 自定义文件名，根据实际情况调整
   document.body.appendChild(link);
@@ -762,14 +775,17 @@ const importSubmit = async () => {
     return newItem;
   });
 
-  const postData: CommonImportMoodel = {
+  const postData: CommonImportAuto = {
     title: props.importTitle,
     tableName: props.importTableName,
     data: mappedData,
     columns: props.importColumns,
     batchSize: props.importBatchSize,
     importKey: props.importKey,
+    settingType: props.settingType,
+    setting: props.settingJson,
   };
+
   // await http
   //   .post<ImportSummary>(props.remoteUrl, postData)
   //   .then((data) => {

@@ -1394,8 +1394,8 @@ export interface TransactionDetailSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
   erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 响应数据 */
@@ -1478,7 +1478,7 @@ export interface TransactionDetailVO {
   datetimeCanceled?: string;
   userCanceledId?: string;
   /**
-   * 过帐时间
+   * 交易时间
    * @format date-time
    */
   datetimeTransfer?: string;
@@ -1907,6 +1907,13 @@ export interface StockCheckBillVO {
   scanBarcode?: string;
   onhandId?: string;
   pdDtlId?: string;
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
+  isBatchNo?: number;
+  /** 是否条码管控，启用批次=非条码管控 */
+  isBatchNoName?: string;
 }
 
 /** 销售订单明细查询 */
@@ -2157,6 +2164,7 @@ export interface SaleDeliveryDtlVO {
   eid?: string;
   oid?: string;
   saleDeliveryId?: string;
+  warehouseId?: string;
   /**
    * 发货单行号
    * @format int32
@@ -2223,7 +2231,6 @@ export interface SaleDeliveryVO {
   oid?: string;
   /** 发货单单据号 */
   billNo?: string;
-  warehouseId?: string;
   customerId?: string;
   /**
    * 发货时间
@@ -3235,9 +3242,9 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
-  flpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
   /**
@@ -3719,13 +3726,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5577,8 +5584,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */

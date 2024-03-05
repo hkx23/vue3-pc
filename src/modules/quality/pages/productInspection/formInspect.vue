@@ -364,6 +364,21 @@ const getBillNo = async () => {
   }
 };
 
+const onShowFiles = async (rowData) => {
+  selectIqcInspectDtlId.value = rowData.row.iqcInspectDtlId;
+
+  try {
+    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
+      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectIqcInspectDtlId.value);
+      rowData.row.fileList = list;
+
+      const { showForm } = formFilesRef.value;
+      await showForm(true, rowData.row.fileList);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
 const loadTable = async () => {
   try {
     const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
@@ -475,9 +490,10 @@ const showUplaodImg = async (rowData) => {
     if (!_.isEmpty(selectIqcInspectDtlId.value)) {
       const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectIqcInspectDtlId.value);
       rowData.row.fileList = list;
+
+      const { showForm } = formFilesRef.value;
+      await showForm(false, rowData.row.fileList);
     }
-    const { showForm } = formFilesRef.value;
-    await showForm(false, rowData.row.fileList);
   } catch (e) {
     console.log(e);
   }
@@ -526,24 +542,6 @@ const batchDeleteSuccess = async (files: AddFileType[]) => {
     console.log(e);
   }
 };
-const onShowFiles = async (rowData) => {
-  selectIqcInspectDtlId.value = rowData.row.iqcInspectDtlId;
-
-  try {
-    const { showForm } = formFilesRef.value;
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectIqcInspectDtlId.value);
-      rowData.row.fileList = list;
-
-      await showForm(true, rowData.row.fileList);
-    } else {
-      await showForm(true, null);
-    }
-  } catch (e) {
-    console.log(e);
-  }
-};
-
 // end 文件上传
 
 defineExpose({

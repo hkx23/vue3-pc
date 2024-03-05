@@ -3923,15 +3923,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
   stateName?: string;
   isState?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -4410,9 +4410,9 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
+  mesbillNo?: string;
   erpbillNo?: string;
   imsgqueueStatus?: string;
-  mesbillNo?: string;
 }
 
 /** 显示工站 */
@@ -4636,6 +4636,8 @@ export interface CommonImportAuto {
   columns?: ImportColumn[];
   /** @format int32 */
   batchSize?: number;
+  setting?: ImportSettingDTO;
+  settingType?: string;
 }
 
 /** 导入列配置表 */
@@ -6992,10 +6994,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -11484,6 +11486,21 @@ export const api = {
      */
     tables: (query: { businessCode: string }) =>
       http.request<ResultListDataTableVO['data']>(`/api/main/importManage/tables`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetSettingFileByKey
+     * @summary 根据key获取导入配置信息-文件
+     * @request GET:/importManage/settingFileByKey
+     * @secure
+     */
+    getSettingFileByKey: (query: { key: string }) =>
+      http.request<ResultString['data']>(`/api/main/importManage/settingFileByKey`, {
         method: 'GET',
         params: query,
       }),

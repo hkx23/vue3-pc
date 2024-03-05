@@ -1363,8 +1363,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -1990,10 +1990,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 停留时长 */
-  waitTime?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
+  /** 停留时长 */
+  waitTime?: string;
 }
 
 /** 响应数据 */

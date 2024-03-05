@@ -29,6 +29,8 @@
         <template #op="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onRowEdit(row)">{{ t('common.button.edit') }}</t-link>
+            <t-link theme="primary" @click="onRowDownLoad(row)">下载配置</t-link>
+            <t-link theme="primary" @click="onRowCopy(row)">复制按钮</t-link>
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelete(row)">
               <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
             </t-popconfirm>
@@ -48,6 +50,7 @@
 <script setup lang="ts">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
+import useClipboard from 'vue-clipboard3';
 
 import { api } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
@@ -75,7 +78,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'op',
     title: `${t('common.button.operation')}`,
-    width: '120px',
+    width: '250px',
     fixed: 'right',
   },
 ];
@@ -122,8 +125,12 @@ const conditionEnter = (data: any) => {
 const downAtta = (row: any) => {
   console.log('下载附件：', row);
   // 通过URL下载附件
+  downFile(row.importTemplateUrl);
+};
+
+const downFile = (downUrl) => {
   const link = document.createElement('a');
-  const downLink = row.importTemplateUrl;
+  const downLink = downUrl;
   const fileName = downLink.substring(downLink.lastIndexOf('/') + 1);
   link.href = downLink;
   link.download = fileName; // 自定义文件名，根据实际情况调整
@@ -193,6 +200,37 @@ const onRowEdit = (row: any) => {
     editDialogVisable.value = true;
   });
 };
+
+const onRowDownLoad = (row: any) => {
+  console.log(row);
+  // 根据行ID获取明细数据
+  const { importKeyCode } = row;
+  api.importManage.getSettingFileByKey({ key: importKeyCode }).then((res) => {
+    const editModel = res;
+    downFile(editModel);
+    console.log(editModel);
+  });
+};
+
+const onRowCopy = (row: any) => {
+  console.log(row);
+  const typeVariable = row.importKeyCode;
+  const buttonText = '导入';
+  const importButtonTemplate = `<bcmp-import-auto-button theme="default" button-text="${buttonText}" type="${typeVariable}"></bcmp-import-auto-button>`;
+
+  copyImportCode(importButtonTemplate);
+};
+
+const copyImportCode = async (item) => {
+  try {
+    const { toClipboard } = useClipboard();
+    await toClipboard(item);
+    MessagePlugin.success('复制成功,请粘贴到需要此导入按钮的页面代码中');
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 // 行删除按钮按下，删除对应行信息
 
 const onDelete = async (row: any) => {

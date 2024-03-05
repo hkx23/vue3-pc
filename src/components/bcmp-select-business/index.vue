@@ -275,8 +275,11 @@ const onSelectionChange = (val: any, valuKeys: any) => {
         });
       });
     }
-
-    emits('update:modelValue', valuKeys.join(','));
+    if (finalComponentType.value === 'list' || finalComponentType.value === 'list2') {
+      emits('update:modelValue', valuKeys.join(','));
+    } else {
+      emits('update:modelValue', multipleValues);
+    }
   }
   // 选择值
   emits('SelectionChange', val, valuKeys);

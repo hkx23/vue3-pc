@@ -94,7 +94,7 @@
 
               <t-input-number
                 v-model.number="row.checkQty"
-                :disabled="enableOnlyRefreshExportPrint"
+                :disabled="enableOnlyRefreshExportPrint || row.isBatchNoName == '是'"
                 placeholder="输入实盘数"
                 :min="0"
               ></t-input-number>
@@ -187,6 +187,7 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { title: '差异数', width: 100, colKey: 'differenceQty', cell: 'differenceNumberSlot' },
   { title: '差异原因', width: 150, colKey: 'diffReason', cell: 'differenceReasonSlot' },
   { title: '差异调整原因', width: 150, colKey: 'diffAdjustReason', cell: 'diffAdjustReasonSlot' },
+  { title: '条码管控', width: 100, colKey: 'isBatchNoName' },
 ];
 
 //* 表格标题--标签明细

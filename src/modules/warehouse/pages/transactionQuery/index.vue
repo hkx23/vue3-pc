@@ -10,7 +10,7 @@
       <cmp-table
         v-model:pagination="pageUI"
         :loading="loading"
-        row-key="billId"
+        row-key="_timestamp"
         :table-column="tableReckoningManagementColumns"
         :table-data="tableDataReckoning"
         :fixed-height="true"
@@ -191,7 +191,7 @@ const opts = computed(() => {
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '事务类型', colKey: 'categoryName', width: 110 },
   { title: 'MES业务单号', width: 130, colKey: 'billNo' },
-  { title: '排产单号', width: 120, colKey: 'moScheId' },
+  { title: '排产单号', width: 120, colKey: 'scheCode' },
   { title: '排产计划数', width: 100, colKey: 'planQty' },
   { title: '标签', width: 110, colKey: 'scanBarcode' },
   {
@@ -217,7 +217,7 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   {
     title: '目标仓库',
     width: 150,
-    colKey: 'toWarehouseId',
+    colKey: 'toWarehouseName',
   },
   { title: '目标货区', width: 150, colKey: 'toDistrictName' },
   {
@@ -236,7 +236,7 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   {
     title: '交易时间',
     width: 150,
-    colKey: 'datetimeTrans',
+    colKey: 'datetimeTransfer',
   },
   { title: '交易数量', width: 150, colKey: 'transQty' },
   {
@@ -247,7 +247,7 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   {
     title: '送货单号',
     width: 120,
-    colKey: 'deliveryNo',
+    colKey: 'lineSeq',
   },
 ];
 
@@ -260,7 +260,12 @@ const fetchTable = async () => {
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
-  tableDataReckoning.value = [...data.list];
+  // 响应数据在response.list中
+  const dataWithTimestamps = data.list.map((item) => ({
+    ...item,
+    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+  }));
+  tableDataReckoning.value = dataWithTimestamps;
   dataTotal.value = data.total;
   setLoading(false);
 };

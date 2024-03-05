@@ -105,7 +105,7 @@
                 @selection-change="(value) => warehouseSubChange(value, row)"
               ></bcmp-select-business>
             </template>
-            <template #districtName="{ row }">
+            <!-- <template #districtName="{ row }">
               <bcmp-select-business
                 v-model="row.districtId"
                 type="district"
@@ -113,7 +113,7 @@
                 :parent-id="row.warehouseId"
                 @selection-change="(value) => districtSubChange(value, row)"
               ></bcmp-select-business>
-            </template>
+            </template> -->
             <template #reqQty="{ row }">
               <t-input-number
                 v-model="row.reqQty"
@@ -254,7 +254,7 @@ const tableSalesSumColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '物料描述', width: 120, colKey: 'mitemDesc' },
   { title: '单位', width: 120, colKey: 'uomName' },
   { title: '仓库', width: 120, colKey: 'warehouseName' },
-  { title: '货区', width: 120, colKey: 'districtName' },
+  // { title: '货区', width: 120, colKey: 'districtName' },
   { title: '本次发货数', width: 120, colKey: 'reqQty' },
   { title: '库存现有量', width: 120, colKey: 'onhandQty' },
   { title: '库存可用量', width: 120, colKey: 'onhandQty' },
@@ -272,7 +272,7 @@ const tableSalesDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '已发货数量', width: 120, colKey: 'deliveriedQty' },
   { title: '代发货数量', width: 120, colKey: '' },
   { title: '仓库', width: 160, colKey: 'warehouseName' },
-  { title: '货区', width: 160, colKey: 'districtName' },
+  // { title: '货区', width: 160, colKey: 'districtName' },
   { title: '库存现有量', width: 120, colKey: 'onhandQty' },
   { title: '库存可用量', width: 120, colKey: 'onhandQty' },
   { title: '本次发货数', width: 140, colKey: 'reqQty' },
@@ -354,12 +354,12 @@ const warehouseSubChange = async (val: any, row: SaleOrderDtlVO) => {
   row.warehouseName = val.warehouseName;
   await getOnhandQtyByWarehouse(row);
 };
-const districtSubChange = async (val: any, row: SaleOrderDtlVO) => {
-  row.districtId = val.id;
-  row.districtCode = val.districtCode;
-  row.districtName = val.districtName;
-  await getOnhandQtyByWarehouse(row);
-};
+// const districtSubChange = async (val: any, row: SaleOrderDtlVO) => {
+//   row.districtId = val.id;
+//   row.districtCode = val.districtCode;
+//   row.districtName = val.districtName;
+//   await getOnhandQtyByWarehouse(row);
+// };
 const onReqQtyblur = async (row: SaleOrderDtlVO) => {
   if (row.reqQty > row.onhandQty) {
     MessagePlugin.error('本次发货数量不能大于库存现有量');
@@ -369,7 +369,8 @@ const onReqQtyblur = async (row: SaleOrderDtlVO) => {
 const getOnhandQtyByWarehouse = async (row: SaleOrderDtlVO) => {
   const data = await apiWarehouse.onhandQty.getMitemOnhandQtyByWarehouseAndDistrict({
     warehouseId: row.warehouseId,
-    districtId: row.districtId,
+    districtId: '',
+    // districtId: row.districtId,
     mitemId: row.mitemId,
   });
   row.onhandQty = data;
@@ -443,9 +444,9 @@ const checkSubmit = () => {
         isSuccess = false;
         MessagePlugin.error('请输入发货数量');
       }
-      if (_.isEmpty(item.warehouseId) || _.isEmpty(item.districtId)) {
+      if (_.isEmpty(item.warehouseId)) {
         isSuccess = false;
-        MessagePlugin.error('请选择仓库或货位');
+        MessagePlugin.error('请选择仓库');
       }
     });
   } else {

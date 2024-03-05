@@ -177,7 +177,7 @@ const opts = computed(() => {
       label: '用户',
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: [],
+      defaultVal: '',
       bind: {
         type: 'user',
         showTitle: false,
@@ -188,9 +188,10 @@ const opts = computed(() => {
 });
 
 const onInput = async (data) => {
-  const newArr = data.user.map((item) => item.value);
+  const { warehouse, user } = data;
+  const newArr = user === '' ? [] : user.split(',').map((item) => item.trim());
   transferParam.value.userIds = newArr;
-  transferParam.value.warehouseId = data.warehouse;
+  transferParam.value.warehouseId = warehouse;
   pageUI.value.page = 1;
   await onGetTransferData();
 };
