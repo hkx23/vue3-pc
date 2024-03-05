@@ -3923,13 +3923,13 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   stateName?: string;
   isState?: boolean;
 }
@@ -4074,8 +4074,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4411,8 +4411,8 @@ export interface IntegratedConsoleSearch {
    */
   dateEnd?: string;
   mesbillNo?: string;
-  imsgqueueStatus?: string;
   erpbillNo?: string;
+  imsgqueueStatus?: string;
 }
 
 /** 显示工站 */
@@ -6489,8 +6489,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  relate?: boolean;
   default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6992,14 +6992,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
