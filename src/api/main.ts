@@ -3923,15 +3923,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
   isProductName?: string;
   isRawName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4410,9 +4410,9 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
-  erpbillNo?: string;
   mesbillNo?: string;
   imsgqueueStatus?: string;
+  erpbillNo?: string;
 }
 
 /** 显示工站 */
@@ -4636,6 +4636,8 @@ export interface CommonImportAuto {
   columns?: ImportColumn[];
   /** @format int32 */
   batchSize?: number;
+  setting?: ImportSettingDTO;
+  settingType?: string;
 }
 
 /** 导入列配置表 */
@@ -6487,8 +6489,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  default?: boolean;
   relate?: boolean;
+  default?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -6990,14 +6992,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否可用 */
-  enabled?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
+  /** 是否可用 */
+  enabled?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11484,6 +11486,21 @@ export const api = {
      */
     tables: (query: { businessCode: string }) =>
       http.request<ResultListDataTableVO['data']>(`/api/main/importManage/tables`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GetSettingFileByKey
+     * @summary 根据key获取导入配置信息-文件
+     * @request GET:/importManage/settingFileByKey
+     * @secure
+     */
+    getSettingFileByKey: (query: { key: string }) =>
+      http.request<ResultString['data']>(`/api/main/importManage/settingFileByKey`, {
         method: 'GET',
         params: query,
       }),
