@@ -1,21 +1,21 @@
 <template>
   <t-dialog
     v-model:visible="formVisible"
-    header="计算结果"
+    :header="t('mitemIncomingInspection.计算结果')"
     width="60%"
     placement="top"
     top="40"
     :cancel-btn="
       isEdit
         ? {
-            content: '取消',
+            content: t('mitemIncomingInspection.取消'),
           }
         : null
     "
     :confirm-btn="
       isEdit
         ? {
-            content: '提交',
+            content: t('mitemIncomingInspection.提交'),
             theme: 'primary',
           }
         : null
@@ -26,10 +26,16 @@
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :column="4" size="large">
-          <t-descriptions-item label="样本数">{{ formData.sampleQty }}</t-descriptions-item>
-          <t-descriptions-item label="检验工具">{{ formData.inspectTool }}</t-descriptions-item>
-          <t-descriptions-item label="基准值">{{ `${formData.baseValue} ${formData.uom}` }}</t-descriptions-item>
-          <t-descriptions-item label="合格范围">{{
+          <t-descriptions-item :label="t('mitemIncomingInspection.样本数')">{{
+            formData.sampleQty
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.检验工具')">{{
+            formData.inspectTool
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.基准值')">{{
+            `${formData.baseValue} ${formData.uom}`
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.合格范围')">{{
             `${formData.minValue} - ${formData.maxValue} ${formData.uom}`
           }}</t-descriptions-item>
         </t-descriptions>
@@ -49,16 +55,14 @@
     </cmp-container>
   </t-dialog>
 </template>
-<script lang="ts">
-export default {
-  name: 'FormMeasure',
-};
-</script>
-<script setup lang="ts">
+<script lang="ts" setup>
 import _ from 'lodash';
 import { FormInstanceFunctions, LoadingPlugin, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
+import { useLang } from './lang';
+
+const { t } = useLang();
 const Emit = defineEmits(['parent-confirm-event', 'form-close-event']);
 
 const isEdit = ref(true); // 是否可编辑
@@ -82,7 +86,7 @@ const onConfirmForm = async () => {
     for (let index = 0; index < formData.measureList.length; index++) {
       const item = formData.measureList[index];
       if (item.measureValue === '') {
-        MessagePlugin.error('测量值不能为空.');
+        MessagePlugin.error(t('mitemIncomingInspection.测量值不能为空.'));
         return;
       }
     }
@@ -179,4 +183,3 @@ defineExpose({
   justify-content: flex-end;
 }
 </style>
-`
