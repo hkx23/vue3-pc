@@ -565,10 +565,10 @@ export type LabelVO = {
   supplierName?: string;
   /** 物料编码 */
   mitemCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
   /** 物料名称 */
   mitemName?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
   /**
    * 已打印数量
    * @format int32
@@ -2366,9 +2366,9 @@ export interface DeliveryDtlVO {
   scanQty?: number;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
+  transferDtlId?: string;
 }
 
 /** 采购单明细 */
@@ -2438,9 +2438,9 @@ export interface PurchaseOrderDtlVO {
   scanQty?: number;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
+  transferDtlId?: string;
 }
 
 /** 退货管理VO */
@@ -3054,26 +3054,26 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
   /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  bfpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -3410,15 +3410,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -3548,13 +3548,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -3913,140 +3913,6 @@ export interface ResultPagingDataLineWarehouseVO {
   data?: PagingDataLineWarehouseVO;
 }
 
-/** 标签日志表 */
-export interface LabelLog {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 标签号 */
-  labelNo?: string;
-  /** 原因 */
-  reason?: string;
-  /** 条码模板代码 */
-  tmplCode?: string;
-  /** 条码模板名称 */
-  tmplName?: string;
-  /** 条码模板类别 */
-  tmplCategory?: string;
-  /** 仓库代码 */
-  warehouseCode?: string;
-  /** 仓库名称 */
-  warehouseName?: string;
-  /** 货区代码 */
-  districtCode?: string;
-  /** 货区名称 */
-  districtName?: string;
-  /** 货位代码 */
-  locationCode?: string;
-  /** 货位名称 */
-  locationName?: string;
-  /** 数量 */
-  qty?: number;
-  /** 客户端机器名 */
-  hostname?: string;
-  /** 客户端IP */
-  ipaddress?: string;
-  /** 备注 */
-  memo?: string;
-  /** 操作类型 */
-  operateType?: string;
-  /** 状态 */
-  status?: string;
-}
-
-export interface LabelSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /**
-   * 收货开始日期
-   * @format date-time
-   */
-  dateStart?: string;
-  /**
-   * 收货结束日期
-   * @format date-time
-   */
-  dateEnd?: string;
-  supplierId?: string;
-  mitemId?: string;
-  /** 批次号 */
-  lotNo?: string;
-  /** 送货单 */
-  billNo?: string;
-  /** 是否仅显示未打印完成 */
-  isFinishDisplay?: boolean;
-  deliveryId?: string;
-  deliveryDtlId?: string;
-  labelId?: string;
-  /** 是否仅显示已生成 */
-  isCreated?: boolean;
-  /** 条码状态 */
-  barcodeStatus?: string;
-  /** 条码 */
-  labelNo?: string;
-  /**
-   * 生成开始日期
-   * @format date-time
-   */
-  timeCreatedStart?: string;
-  /**
-   * 生成结束日期
-   * @format date-time
-   */
-  timeCreatedEnd?: string;
-  barcodeRuleId?: string;
-  /** 条码 */
-  barcode?: string;
-  /**
-   * 生成数量
-   * @format int32
-   */
-  createNum?: number;
-  /**
-   * 拆分数量
-   * @format int32
-   */
-  splitNum?: number;
-  /**
-   * 行号
-   * @format int32
-   */
-  lineSeq?: number;
-  printTempId?: string;
-  /** 原因 */
-  reason?: string;
-  /** 批量ID */
-  ids?: string[];
-}
-
 export interface MitemForwardTraceSearch {
   /**
    * 页码
@@ -4153,6 +4019,81 @@ export interface ResultMFTVO {
   message?: string;
   /** 关键物料正向追溯VO */
   data?: MFTVO;
+}
+
+export interface LabelSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 收货开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 收货结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  supplierId?: string;
+  mitemId?: string;
+  /** 批次号 */
+  lotNo?: string;
+  /** 送货单 */
+  billNo?: string;
+  /** 是否仅显示未打印完成 */
+  isFinishDisplay?: boolean;
+  deliveryId?: string;
+  deliveryDtlId?: string;
+  labelId?: string;
+  /** 是否仅显示已生成 */
+  isCreated?: boolean;
+  /** 条码状态 */
+  barcodeStatus?: string;
+  /** 条码 */
+  labelNo?: string;
+  /**
+   * 生成开始日期
+   * @format date-time
+   */
+  timeCreatedStart?: string;
+  /**
+   * 生成结束日期
+   * @format date-time
+   */
+  timeCreatedEnd?: string;
+  barcodeRuleId?: string;
+  /** 条码 */
+  barcode?: string;
+  /**
+   * 生成数量
+   * @format int32
+   */
+  createNum?: number;
+  /**
+   * 拆分数量
+   * @format int32
+   */
+  splitNum?: number;
+  /**
+   * 行号
+   * @format int32
+   */
+  lineSeq?: number;
+  printTempId?: string;
+  /** 原因 */
+  reason?: string;
+  /** 批量ID */
+  ids?: string[];
+  /** 显示产品条码管理 */
+  deliveryLabel?: LabelVO;
 }
 
 /** 响应数据 */
@@ -4801,180 +4742,6 @@ export interface ResultPagingDataDeliveryCommandVO {
   data?: PagingDataDeliveryCommandVO;
 }
 
-/** 查询条码信息 */
-export type BarcodeDTO = {
-  id?: string;
-  barcode?: string;
-  moScheId?: string;
-  qty?: number;
-  barcodeType?: string;
-  status?: string;
-  statusName?: string;
-  parentBarcode?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultListBarcodeDTO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: BarcodeDTO[] | null;
-}
-
-export interface DeliveryCardSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /**
-   * 计划开始日期
-   * @format date-time
-   */
-  planDateStart?: string;
-  /**
-   * 计划结束日期
-   * @format date-time
-   */
-  planDateEnd?: string;
-  workshopId?: string;
-  workcenterId?: string;
-  mitemId?: string;
-  /** 排产单状态 */
-  scheStatus?: string;
-  /** 是否仅显示已打印 */
-  isFinishDisplay?: boolean;
-  /** 是否仅显示已生成 */
-  isCreated?: boolean;
-  moScheduleId?: string;
-  /**
-   * 生成开始日期
-   * @format date-time
-   */
-  createDateStart?: string;
-  /**
-   * 生成结束日期
-   * @format date-time
-   */
-  createDateEnd?: string;
-  /** 配送卡状态 */
-  deliveryStatus?: string;
-  /** 配送卡条码 */
-  deliveryCardNo?: string;
-  barcodeRuleId?: string;
-  /**
-   * 本次生成数量
-   * @format int32
-   */
-  createNum?: number;
-  /**
-   * 规格数量
-   * @format int32
-   */
-  createSize?: number;
-  /** 批量ID */
-  ids?: string[];
-  /** 原因 */
-  reason?: string;
-  deliveryCardId?: string;
-  /**
-   * 拆分数量
-   * @format int32
-   */
-  splitNum?: number;
-}
-
-/** 配送卡输出类 */
-export interface DeliveryCardVO {
-  moScheduleId?: string;
-  /** 排产单编码 */
-  scheCode?: string;
-  /** 排产单状态名称 */
-  scheStatusName?: string;
-  /**
-   * 计划生产日期
-   * @format date-time
-   */
-  datetimeSche?: string;
-  mitemId?: string;
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 物料名称 */
-  mitemName?: string;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /**
-   * 已生成数量
-   * @format int32
-   */
-  generateQty?: number;
-  /**
-   * 已打印数量
-   * @format int32
-   */
-  displayQty?: number;
-  /**
-   * 本次生成数量
-   * @format int32
-   */
-  thisTimeQty?: number;
-  /** 计量单位名称 */
-  uomName?: string;
-  /** 车间名称 */
-  workshopName?: string;
-  workcenterId?: string;
-  /** 工作中心名称 */
-  workcenterName?: string;
-  deliveryCardId?: string;
-  /** deliveryCard条码 */
-  deliveryCardNo?: string;
-  /** deliveryCard状态名称 */
-  deliveryCardStatuName?: string;
-  /** deliveryCard数量 */
-  qty?: number;
-  /** 创建人名称 */
-  creatorName?: string;
-  /** @format date-time */
-  timeCreate?: string;
-  /** 操作类型 */
-  operateType?: string;
-  /** 原因 */
-  reason?: string;
-}
-
-/** 响应数据 */
-export type PagingDataDeliveryCardVO = {
-  list?: DeliveryCardVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataDeliveryCardVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataDeliveryCardVO;
-}
-
 /** 送货单扫描 */
 export interface DeliverySearch {
   /** 交易事务单号 */
@@ -5539,15 +5306,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 通用响应类 */
@@ -6094,102 +5861,6 @@ export interface ResultPagingDataMaterialRequisitionVO {
   data?: PagingDataMaterialRequisitionVO;
 }
 
-/** 标签模板 */
-export type PrintTmpl = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  tmplCode?: string;
-  tmplName?: string;
-  tmplDesc?: string;
-  tmplBodyPath?: string;
-  tmplCategory?: string;
-  tmplType?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultListPrintTmpl {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PrintTmpl[] | null;
-}
-
-/** 条码生成规则 */
-export type BarcodeRule = {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 条码规则代码 */
-  ruleCode?: string;
-  /** 条码规则名称 */
-  ruleName?: string;
-  /** 条码规则描述 */
-  ruleDesc?: string;
-  /** 条码类型 */
-  barcodeType?: string;
-  /** 条码规则表达式 */
-  ruleExpression?: string;
-} | null;
-
-/** 通用响应类 */
-export interface ResultListBarcodeRule {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: BarcodeRule[] | null;
-}
-
 /** 通用响应类 */
 export interface ResultListDataTableVO {
   /**
@@ -6257,46 +5928,6 @@ export interface ResultListDeliveryDtlVO {
   message?: string;
   /** 响应数据 */
   data?: DeliveryDtlVO[] | null;
-}
-
-/** 响应数据 */
-export type PagingDataPrintTmpl = {
-  list?: PrintTmpl[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataPrintTmpl {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataPrintTmpl;
-}
-
-/** 响应数据 */
-export type PagingDataBarcodeRule = {
-  list?: BarcodeRule[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataBarcodeRule {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataBarcodeRule;
 }
 
 /** 通用响应类 */
@@ -8633,37 +8264,7 @@ export const api = {
         body: data as any,
       }),
   },
-  labelLog: {
-    /**
-     * No description
-     *
-     * @tags 标签日志表
-     * @name BatchSaveLog
-     * @request POST:/labelLog/batchSaveLog
-     * @secure
-     */
-    batchSaveLog: (data: LabelLog[]) =>
-      http.request<Result['data']>(`/api/warehouse/labelLog/batchSaveLog`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
   label: {
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name SplitBarcode
-     * @summary 拆分条码
-     * @request POST:/label/splitBarcode
-     * @secure
-     */
-    splitBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/label/splitBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
     /**
      * No description
      *
@@ -8675,21 +8276,6 @@ export const api = {
      */
     scanLabelByMm: (data: LabelMMSearch) =>
       http.request<ResultTransferHeadVO['data']>(`/api/warehouse/label/scanLabelByMM`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name ReprintBarcode
-     * @summary 补打条码
-     * @request POST:/label/reprintBarcode
-     * @secure
-     */
-    reprintBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/label/reprintBarcode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -8743,21 +8329,6 @@ export const api = {
      * No description
      *
      * @tags 标签表
-     * @name GetLabelLog
-     * @summary 查询日志
-     * @request POST:/label/getLabelLog
-     * @secure
-     */
-    getLabelLog: (data: LabelSearch) =>
-      http.request<ResultPagingDataLabelVO['data']>(`/api/warehouse/label/getLabelLog`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
      * @name GetIoInfo
      * @summary 出入库信息
      * @request POST:/label/getIOInfo
@@ -8797,49 +8368,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/label/generateBarcode`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name CancellationBarcode
-     * @summary 作废条码
-     * @request POST:/label/cancellationBarcode
-     * @secure
-     */
-    cancellationBarcode: (data: LabelSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/label/cancellationBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name GetLabelPrintTmplList
-     * @summary 获取条码打印模板
-     * @request GET:/label/getLabelPrintTmplList
-     * @secure
-     */
-    getLabelPrintTmplList: () =>
-      http.request<ResultListPrintTmpl['data']>(`/api/warehouse/label/getLabelPrintTmplList`, {
-        method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 标签表
-     * @name GetLabelBarcodeRuleList
-     * @summary 获取条码规则数据
-     * @request GET:/label/getLabelBarcodeRuleList
-     * @secure
-     */
-    getLabelBarcodeRuleList: () =>
-      http.request<ResultListBarcodeRule['data']>(`/api/warehouse/label/getLabelBarcodeRuleList`, {
-        method: 'GET',
       }),
   },
   iqcInspect: {
@@ -9138,187 +8666,6 @@ export const api = {
     test: () =>
       http.request<ResultObject['data']>(`/api/warehouse/deliveryCommand/test`, {
         method: 'GET',
-      }),
-  },
-  deliveryCard: {
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name WipCompletionScanList
-     * @summary 完工入库扫描配送卡
-     * @request POST:/deliveryCard/wipCompletionScanList
-     * @secure
-     */
-    wipCompletionScanList: (data: string[]) =>
-      http.request<ResultListBarcodeDTO['data']>(`/api/warehouse/deliveryCard/wipCompletionScanList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name SplitBarcode
-     * @summary 配送卡拆分
-     * @request POST:/deliveryCard/splitBarcode
-     * @secure
-     */
-    splitBarcode: (data: DeliveryCardSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/deliveryCard/splitBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name ReprintBarcode
-     * @summary 补打条码
-     * @request POST:/deliveryCard/reprintBarcode
-     * @secure
-     */
-    reprintBarcode: (data: DeliveryCardSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/deliveryCard/reprintBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name PrintBarcode
-     * @summary 打印条码
-     * @request POST:/deliveryCard/printBarcode
-     * @secure
-     */
-    printBarcode: (data: DeliveryCardSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/deliveryCard/printBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name GetMoScheduleList
-     * @summary 查询工单排产
-     * @request POST:/deliveryCard/getMoScheduleList
-     * @secure
-     */
-    getMoScheduleList: (data: DeliveryCardSearch) =>
-      http.request<ResultPagingDataDeliveryCardVO['data']>(`/api/warehouse/deliveryCard/getMoScheduleList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name GetDeliveryCardManagerList
-     * @summary 查询在制品条码(标签管理表格)
-     * @request POST:/deliveryCard/getDeliveryCardManagerList
-     * @secure
-     */
-    getDeliveryCardManagerList: (data: DeliveryCardSearch) =>
-      http.request<ResultPagingDataDeliveryCardVO['data']>(`/api/warehouse/deliveryCard/getDeliveryCardManagerList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name GetDeliveryCardLog
-     * @summary 查询日志
-     * @request POST:/deliveryCard/getDeliveryCardLog
-     * @secure
-     */
-    getDeliveryCardLog: (data: DeliveryCardSearch) =>
-      http.request<ResultPagingDataDeliveryCardVO['data']>(`/api/warehouse/deliveryCard/getDeliveryCardLog`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name GetDeliveryCardList
-     * @summary 查询在制品条码(打印下表格)
-     * @request POST:/deliveryCard/getDeliveryCardList
-     * @secure
-     */
-    getDeliveryCardList: (data: DeliveryCardSearch) =>
-      http.request<ResultPagingDataDeliveryCardVO['data']>(`/api/warehouse/deliveryCard/getDeliveryCardList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name GenerateBarcode
-     * @summary 生成条码
-     * @request POST:/deliveryCard/generateBarcode
-     * @secure
-     */
-    generateBarcode: (data: DeliveryCardSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/deliveryCard/generateBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name CancellationBarcode
-     * @summary 作废条码
-     * @request POST:/deliveryCard/cancellationBarcode
-     * @secure
-     */
-    cancellationBarcode: (data: DeliveryCardSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/deliveryCard/cancellationBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name GetPrintTmplList
-     * @summary 获得打印模板下拉数据
-     * @request GET:/deliveryCard/getPrintTmplList
-     * @secure
-     */
-    getPrintTmplList: (query: { moScheId: string }) =>
-      http.request<ResultPagingDataPrintTmpl['data']>(`/api/warehouse/deliveryCard/getPrintTmplList`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 配送卡表
-     * @name GetBarcodeRuleList
-     * @summary 获得条码规则下拉数据
-     * @request GET:/deliveryCard/getBarcodeRuleList
-     * @secure
-     */
-    getBarcodeRuleList: (query: { moScheId: string }) =>
-      http.request<ResultPagingDataBarcodeRule['data']>(`/api/warehouse/deliveryCard/getBarcodeRuleList`, {
-        method: 'GET',
-        params: query,
       }),
   },
   delivery: {
