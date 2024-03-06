@@ -877,12 +877,12 @@ export interface OqcInspectBillFullVO {
   /** 计量单位符号 */
   uomName?: string;
   displayName?: string;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -1363,8 +1363,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -3182,10 +3182,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -3379,10 +3379,10 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   s2?: string;
-  s1?: string;
   s4?: string;
-  iii?: string;
   ii?: string;
+  iii?: string;
+  s1?: string;
   s3?: string;
   i?: string;
 } | null;

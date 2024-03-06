@@ -1358,188 +1358,6 @@ export interface TransferConstraintVO {
   createTime?: string;
 }
 
-export interface TransactionDetailSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  businessCategoryId?: string;
-  moScheId?: string;
-  mitemId?: string;
-  /** MES业务单号 */
-  billNo?: string;
-  /** ERP单据号 */
-  erpLineNo?: string;
-  /** 操作人 */
-  creator?: string;
-  /** 交接人ID */
-  transferId?: string;
-  /** 采购订单号 */
-  purchaseNo?: string;
-  /** 送货单号 */
-  deliveryNo?: string;
-  /** 标签 */
-  scanBarcode?: string;
-  warehouseId?: string;
-  toWarehouseId?: string;
-  /**
-   * 开始日期
-   * @format date-time
-   */
-  dateStart?: string;
-  /**
-   * 结束日期
-   * @format date-time
-   */
-  dateEnd?: string;
-}
-
-/** 响应数据 */
-export type PagingDataTransactionDetailVO = {
-  list?: TransactionDetailVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataTransactionDetailVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataTransactionDetailVO;
-}
-
-/** 显示工站 */
-export interface TransactionDetailVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 单据号 */
-  billNo?: string;
-  businessCategoryId?: string;
-  /** 状态 */
-  status?: string;
-  /**
-   * 打印次数
-   * @format int32
-   */
-  printCount?: number;
-  /**
-   * 最后打印时间
-   * @format date-time
-   */
-  datetimeLastPrint?: string;
-  userLastPrintId?: string;
-  /**
-   * 批准时间
-   * @format date-time
-   */
-  datetimeApproved?: string;
-  userApprovedId?: string;
-  /**
-   * 驳回时间
-   * @format date-time
-   */
-  datetimeRejected?: string;
-  userRejectedId?: string;
-  /**
-   * 取消时间
-   * @format date-time
-   */
-  datetimeCanceled?: string;
-  userCanceledId?: string;
-  /**
-   * 交易时间
-   * @format date-time
-   */
-  datetimeTransfer?: string;
-  userTransferId?: string;
-  /**
-   * 作业完成时间
-   * @format date-time
-   */
-  datetimePicked?: string;
-  userPickedId?: string;
-  /**
-   * 接收时间
-   * @format date-time
-   */
-  datetimeReceipted?: string;
-  userReceiptedId?: string;
-  /** 业务类型名称 */
-  categoryName?: string;
-  /** 标签 */
-  scanBarcode?: string;
-  /** 标签数量 */
-  barcodeQty?: number;
-  /** 物料代码 */
-  mitemCode?: string;
-  /** 物料描述 */
-  mitemDesc?: string;
-  /** 计量单位符号名称 */
-  uomName?: string;
-  /** 源仓库名称 */
-  warehouseName?: string;
-  /** 源货区名称 */
-  districtName?: string;
-  /** 源货位名称 */
-  locationName?: string;
-  /** 目标仓库名称 */
-  toWarehouseName?: string;
-  /** 目标货区名称 */
-  toDistrictName?: string;
-  /** 目标货位名称 */
-  toLocationName?: string;
-  /** 供应商代码 */
-  supplierCode?: string;
-  /** 供应商名称 */
-  supplierName?: string;
-  /** 操作人 */
-  creatorName?: string;
-  /** 排产工单 */
-  scheCode?: string;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /** 交易数量 */
-  transQty?: number;
-  /** 送货单号 */
-  lineSeq?: string;
-}
-
 export interface StorageAgeQuerySearch {
   /**
    * 页码
@@ -2459,9 +2277,9 @@ export interface ReturnStockOutDtlVO {
   transferBillNo?: string;
   /** 交易事务单号 */
   transferBillNoStatus?: string;
-  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  transferDtlId?: string;
 }
 
 /** 退货单扫描 */
@@ -2546,9 +2364,9 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
-  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
 }
@@ -2618,9 +2436,9 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
-  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
 }
@@ -3237,24 +3055,24 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
   /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
+  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   bfpickQty?: number;
 }
 
@@ -3592,15 +3410,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -5721,15 +5539,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -7187,22 +7005,6 @@ export const api = {
     getCurrentOrg: () =>
       http.request<ResultListOrg['data']>(`/api/warehouse/transferConstraint/getCurrentOrg`, {
         method: 'GET',
-      }),
-  },
-  transactionDetail: {
-    /**
-     * No description
-     *
-     * @tags 事务明细查询
-     * @name GetList
-     * @summary 查询主页数据
-     * @request POST:/transactionDetail/getList
-     * @secure
-     */
-    getList: (data: TransactionDetailSearch) =>
-      http.request<ResultPagingDataTransactionDetailVO['data']>(`/api/warehouse/transactionDetail/getList`, {
-        method: 'POST',
-        body: data as any,
       }),
   },
   storageAgeQuery: {
