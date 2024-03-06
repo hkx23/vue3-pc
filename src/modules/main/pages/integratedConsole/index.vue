@@ -131,7 +131,7 @@ const opts = computed(() => {
       },
     },
 
-    IMsgQueueStatus: {
+    imsgQueueStatus: {
       label: '执行结果',
       comp: 't-select',
       defaultVal: [],
