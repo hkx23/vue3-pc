@@ -19,9 +19,9 @@
         @select-change="onSelectWaitInspectChange"
         @refresh="fetchTable"
       >
-        <template #title> 工作台 </template>
+        <template #title>工作台</template>
         <template #button>
-          <t-button theme="primary">新增复检</t-button>
+          <t-button theme="primary" @click="onShowDialog(true, null)">新增复检</t-button>
         </template>
         <template #op="rowData">
           <t-space>
@@ -36,7 +36,7 @@
 
         <template #recheckBillNo="rowData">
           <t-space>
-            <t-link theme="primary" @click="onShowDialog(false, rowData)">{{ rowData.row.recheckBillNo }}</t-link>
+            <t-link theme="primary" @click="onLoadFJDialog(false, rowData)">{{ rowData.row.recheckBillNo }}</t-link>
           </t-space>
         </template>
       </cmp-table>
@@ -265,9 +265,20 @@ const onSelectWaitInspectChange = (value: any) => {
   selectWaitId.value = value;
 };
 const onShowDialog = async (isEdit, rowData) => {
-  const { showForm, loadTable } = formRef.value;
-  await showForm(isEdit, rowData.row);
-  await loadTable();
+  const { showForm } = formRef.value;
+  if (rowData !== null) {
+    await showForm(isEdit, rowData.row);
+  } else {
+    await showForm(isEdit, null);
+  }
+};
+const onLoadFJDialog = async (isEdit, rowData) => {
+  const { showFJForm } = formRef.value;
+  if (rowData !== null) {
+    await showFJForm(isEdit, rowData.row);
+  } else {
+    await showFJForm(isEdit, null);
+  }
 };
 const onFormCloseDialog = async () => {
   fetchTable();

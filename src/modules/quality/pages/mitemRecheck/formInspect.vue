@@ -32,16 +32,25 @@
               :options="recheckTypeOption"
               :disabled="!_.isEmpty(formData.iqcBillNo)"
           /></t-descriptions-item>
-          <t-descriptions-item label="来源检验单">{{ formData.iqcBillNo }}</t-descriptions-item>
+          <t-descriptions-item label="来源检验单">
+            <bcmp-select-business
+              v-if="formData.recheckType === 'EXCEPTION' && isEdit"
+              v-model="formData.iqcBillNo"
+              type="IqcBillInfo"
+              :show-title="false"
+              @selection-change="onIqcBillNoSelectionChange"
+            />
+            <t-input v-else v-model="formData.iqcBillNo" disabled placeholder="" />
+          </t-descriptions-item>
           <t-descriptions-item label="物料编码">
             <bcmp-select-business
               v-if="formData.recheckType !== 'EXCEPTION'"
               v-model="formData.mitemId"
               type="mitem"
               :show-title="false"
+              label-field="mitemCode"
             />
-            <!-- @selection-change="mitemChange" -->
-            <div v-else>{{ formData.mitemCategoryCode }}</div>
+            <t-input v-else v-model="formData.mitemCode" disabled placeholder="" />
           </t-descriptions-item>
           <t-descriptions-item label="物料名">
             <div class="div_break_word">
@@ -433,6 +442,7 @@ const loadTable = async () => {
   try {
     const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
       recheckBillNo: formData.recheckBillNo,
+      // iqcBillNo: formData.iqcBillNo,
       mitemCategoryId: formData.mitemCategoryId,
       mitemId: formData.mitemId,
       pickQty: `${formData.inspectQty}`,
@@ -451,72 +461,90 @@ const loadTable = async () => {
     console.log(e);
   }
 };
-const reset = () => {
+const loadTableStd = async () => {
+  try {
+    const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
+      // iqcBillNo: formData.iqcBillNo,
+      mitemCategoryId: formData.mitemCategoryId,
+      mitemId: formData.mitemId,
+      pickQty: `${formData.inspectQty}`,
+      inspectionStringency: formData.inspectionStringency,
+    });
+    tableData.value = list;
+    tableDataCount.value = list.filter((item) => item.characteristics === 'COUNT');
+    tableDataCquantitative.value = list.filter((item) => item.characteristics === 'QUANTITATIVE');
+
+    if (list.length > 0) {
+      formData.inspectStdName = list[0].inspectStdName;
+    } else {
+      formData.inspectStdName = '';
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+const reset = async () => {
   if (isEdit.value) {
     getBillNo();
     getRecheckTypeOption();
   }
+  tableData.value = [];
+  tableDataCount.value = [];
+  tableDataCquantitative.value = [];
 
-  // 清除所有对象的值
-  Object.keys(formData).forEach((key) => {
-    if (_.isArray(formData[key])) {
-      formData[key] = [];
-    } else {
-      delete formData[key];
-    }
-  });
+  formData.iqcBillNo = '';
+  formData.recheckBillNo = '';
+  formData.billNoStr = '';
+  formData.billNoList = [{ billNo: '', erpLineNo: '', billNoDtlId: '' }];
+  formData.mitemId = '';
+  formData.mitemCode = '';
+  formData.mitemName = '';
+  formData.mitemDesc = '';
+  formData.mitemCategoryId = '';
+  formData.mitemCategoryCode = '';
+  formData.mitemCategoryName = '';
+  formData.inspectQty = 0;
+  formData.supplierId = '';
+  formData.supplierCode = '';
+  formData.supplierName = '';
+  formData.inspectionStringency = '';
+  formData.inspectionStringencyName = '';
+  formData.inspectStdName = '';
+  formData.recheckType = '';
+  formData.recheckTypeName = '';
+  formData.recheckReason = '';
 };
 const showForm = async (edit, row) => {
   isEdit.value = edit;
   formVisible.value = true;
+
   reset();
 
   formData.recheckBillNo = row.recheckBillNo;
-  formData.iqcBillNo = row.iqcBillNo;
   formData.billNoList.push({ billNo: row.recheckBillNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
   formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
-  formData.mitemId = row.mitemId;
-  formData.mitemCode = row.mitemCode;
-  formData.mitemName = row.mitemName;
-  formData.mitemDesc = row.mitemDesc;
-  formData.mitemCategoryId = row.mitemCategoryId;
-  formData.mitemCategoryCode = row.mitemCategoryCode;
-  formData.mitemCategoryName = row.mitemCategoryName;
-  formData.inspectQty = row.inspectQty;
-  formData.supplierId = row.supplierId;
-  formData.supplierCode = row.supplierCode;
-  formData.supplierName = row.supplierName;
-  formData.inspectionStringency = row.inspectionStringency;
-  formData.inspectionStringencyName = row.inspectionStringencyName;
   formData.recheckType = _.isEmpty(row.recheckType) ? 'EXCEPTION' : row.recheckType;
   formData.recheckReason = row.recheckReason;
+  formData.iqcBillNo = row.iqcBillNo;
+
+  onIqcBillNoSelectionChange();
 };
-const showMergeForm = async (edit, reBillNoList) => {
+const showFJForm = async (edit, row) => {
   isEdit.value = edit;
   formVisible.value = true;
+
   reset();
 
-  let totalPickQty = 0;
-  reBillNoList.forEach((n) => {
-    formData.billNoList.push({ billNo: n.billNo, erpLineNo: n.erpLineNo, billNoDtlId: n.id });
-    totalPickQty += n.inspectQty;
-  });
-  const row = reBillNoList[0];
+  formData.recheckBillNo = row.recheckBillNo;
+  formData.billNoList.push({ billNo: row.recheckBillNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
   formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
-  formData.mitemId = row.mitemId;
-  formData.mitemCode = row.mitemCode;
-  formData.mitemName = row.mitemName;
-  formData.mitemDesc = row.mitemDesc;
-  formData.mitemCategoryId = row.mitemCategoryId;
-  formData.mitemCategoryCode = row.mitemCategoryCode;
-  formData.mitemCategoryName = row.mitemCategoryName;
-  formData.inspectQty = totalPickQty;
-  formData.supplierId = row.supplierId;
-  formData.supplierCode = row.supplierCode;
-  formData.supplierName = row.supplierName;
-  formData.inspectionStringency = row.inspectionStringency;
-  formData.inspectionStringencyName = row.inspectionStringencyName;
+  formData.recheckType = _.isEmpty(row.recheckType) ? 'EXCEPTION' : row.recheckType;
+  formData.recheckReason = row.recheckReason;
+  formData.iqcBillNo = row.iqcBillNo;
+
+  onFjBillNoSelectionChange();
 };
+
 const onShowMeasureDialog = async (row) => {
   const { showForm } = formMeasureRef.value;
   await showForm(isEdit.value, row.measureList);
@@ -533,7 +561,50 @@ const parentConfirm = async (measureList, isAllOK) => {
     rowData.inspectResultSwitch = isAllOK;
   }
 };
+const onIqcBillNoSelectionChange = async () => {
+  try {
+    const model = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formData.iqcBillNo });
+    if (!_.isEmpty(model)) {
+      formData.mitemId = model.mitemId;
+      formData.mitemCode = model.mitemCode;
+      formData.mitemName = model.mitemName;
+      formData.inspectQty = model.inspectQty;
+      formData.supplierId = model.supplierId;
+      formData.supplierCode = model.supplierCode;
+      formData.supplierName = model.supplierName;
+      formData.mitemCategoryId = model.mitemCategoryId;
+      formData.mitemCategoryCode = model.mitemCategoryCode;
+      formData.mitemCategoryName = model.mitemCategoryName;
+      formData.inspectionStringency = model.inspectionStringency;
 
+      await loadTableStd();
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+const onFjBillNoSelectionChange = async () => {
+  try {
+    const model = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formData.iqcBillNo });
+    if (!_.isEmpty(model)) {
+      formData.mitemId = model.mitemId;
+      formData.mitemCode = model.mitemCode;
+      formData.mitemName = model.mitemName;
+      formData.inspectQty = model.inspectQty;
+      formData.supplierId = model.supplierId;
+      formData.supplierCode = model.supplierCode;
+      formData.supplierName = model.supplierName;
+      formData.mitemCategoryId = model.mitemCategoryId;
+      formData.mitemCategoryCode = model.mitemCategoryCode;
+      formData.mitemCategoryName = model.mitemCategoryName;
+      formData.inspectionStringency = model.inspectionStringency;
+
+      await loadTable();
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
 // begin 文件上传
 
 const formFilesRef = ref(null);
@@ -603,7 +674,7 @@ defineExpose({
   form: formRef,
   reset,
   showForm,
-  showMergeForm,
+  showFJForm,
   loadTable,
 });
 </script>

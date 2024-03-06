@@ -24,7 +24,7 @@
                   @select-change="onSelectWaitInspectChange"
                   @refresh="fetchTable"
                 >
-                  <template #title>{{ t('mitemIncomingInspection. 工作台 ') }}</template>
+                  <template #title>{{ t('mitemIncomingInspection.工作台') }}</template>
                   <template #button>
                     <t-button theme="primary" @click="mergeInspection(true)">{{
                       t('mitemIncomingInspection.合并检验')

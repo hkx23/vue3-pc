@@ -2,6 +2,7 @@ import { useI18n } from 'vue-i18n';
 
 import common from '@/locales/common';
 
+import enUs from './en-US.json';
 import zhCn from './zh-CN.json';
 
 const lang = {
@@ -9,6 +10,10 @@ const lang = {
   'zh-CN': {
     ...common['zh-CN'],
     ...zhCn,
+  },
+  'en-US': {
+    ...common['en-US'],
+    ...enUs,
   },
 };
 
