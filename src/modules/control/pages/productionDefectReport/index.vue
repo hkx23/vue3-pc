@@ -171,59 +171,59 @@ const columnsProduceReport1 = computed(() => {
     {
       colKey: 'workcenterName',
       title: '工作中心',
-      width: 110,
+      width: 120,
     },
     {
       colKey: 'scanBarcode',
       title: '条码',
-      width: 130,
+      width: 145,
     },
 
     {
       colKey: 'scheCode',
       title: '排产单',
-      width: 100,
+      width: 140,
     },
     {
       colKey: 'mitemCode',
       title: '产品编码',
-      width: 100,
+      width: 110,
     },
 
     {
       colKey: 'mitemName',
       title: '产品名称',
-      width: 100,
+      width: 110,
     },
     {
       colKey: 'mitemDesc',
       title: '产品描述',
-      width: 100,
+      width: 110,
     },
     {
       colKey: 'defectName',
       title: '缺陷描述',
-      width: 100,
+      width: 150,
     },
     {
       colKey: 'ngQty',
       title: '不合格数量',
-      width: 100,
+      width: 95,
     },
     {
       colKey: 'creatorName',
       title: '录入人',
-      width: 100,
+      width: 80,
     },
     {
       colKey: 'timeCreate',
       title: '录入时间',
-      width: 100,
+      width: 170,
     },
     {
       colKey: 'workstationName',
       title: '工站',
-      width: 100,
+      width: 120,
     },
     {
       colKey: 'defectReasonName',
@@ -243,12 +243,12 @@ const columnsProduceReport1 = computed(() => {
     {
       colKey: 'userRepairName',
       title: '维修人',
-      width: 100,
+      width: 80,
     },
     {
       colKey: 'datetimeRepaired',
       title: '维修时间',
-      width: 100,
+      width: 170,
     },
   ];
 });
@@ -258,7 +258,7 @@ const columnsProduceReport2 = computed(() => {
     {
       colKey: 'datetimeSche',
       title: '计划生产日期',
-      width: 120,
+      width: 100,
     },
     {
       colKey: 'workshopName',
@@ -273,7 +273,7 @@ const columnsProduceReport2 = computed(() => {
     {
       colKey: 'scheCode',
       title: '工单号',
-      width: 100,
+      width: 120,
     },
     {
       colKey: 'mitemCode',
@@ -330,7 +330,7 @@ const columnsProduceReport3 = computed(() => {
     {
       colKey: 'datetimeSche',
       title: '计划生产日期',
-      width: 120,
+      width: 100,
     },
     {
       colKey: 'workshopName',
@@ -345,7 +345,7 @@ const columnsProduceReport3 = computed(() => {
     {
       colKey: 'scheCode',
       title: '工单号',
-      width: 100,
+      width: 120,
     },
     {
       colKey: 'mitemCode',
@@ -393,7 +393,7 @@ const columnsProduceReport4 = computed(() => {
     {
       colKey: 'datetimeSche',
       title: '计划生产日期',
-      width: 120,
+      width: 100,
     },
     {
       colKey: 'workshopName',
@@ -408,7 +408,7 @@ const columnsProduceReport4 = computed(() => {
     {
       colKey: 'scheCode',
       title: '工单号',
-      width: 100,
+      width: 120,
     },
     {
       colKey: 'mitemCode',
@@ -454,7 +454,7 @@ const columnsProduceReport5 = computed(() => {
     {
       colKey: 'datetimeSche',
       title: '计划生产日期',
-      width: 120,
+      width: 100,
     },
     {
       colKey: 'workshopName',
@@ -469,7 +469,7 @@ const columnsProduceReport5 = computed(() => {
     {
       colKey: 'scheCode',
       title: '工单号',
-      width: 100,
+      width: 120,
     },
     {
       colKey: 'mitemCode',
