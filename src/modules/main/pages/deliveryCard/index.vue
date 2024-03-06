@@ -369,8 +369,7 @@ import {
 } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
-import { api as apiMain } from '@/api/main';
-import { api } from '@/api/warehouse';
+import { api } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -786,20 +785,20 @@ const generateData = ref({
 // // 获取 补打原因 下拉数据
 const reprintDataList = reactive({ list: [] });
 const onReprintSelectData = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'REPRINT_REASON' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'REPRINT_REASON' });
   reprintDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 // 获取 作废原因 下拉数据
 const cancellationDataList = reactive({ list: [] });
 const onCancellationSelectData = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'SCRAP_REASON' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'SCRAP_REASON' });
   cancellationDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 
 // 获取 拆分原因 下拉数据
 const resolutionList = reactive({ list: [] });
 const onResolutionSelectData = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'SPLIT_REASON' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'SPLIT_REASON' });
   resolutionList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 
@@ -835,14 +834,14 @@ const onGetPrintDownTabData = async () => {
 // // #获取搜索 工单状态 下拉框数据
 const workStateDataList = reactive({ list: [] });
 const onWorkStatus = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' });
   workStateDataList.list = res;
 };
 
 // // #获取搜索 条码状态 下拉框数据
 const barCodeStateList = reactive({ list: [] });
 const onBarCodeState = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_WIP_STATUS' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'BARCODE_WIP_STATUS' });
   barCodeStateList.list = res;
 };
 

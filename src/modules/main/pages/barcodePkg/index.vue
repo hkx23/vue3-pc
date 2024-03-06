@@ -252,8 +252,7 @@ import dayjs from 'dayjs';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
-import { api } from '@/api/control';
-import { api as apiMain } from '@/api/main';
+import { api } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -1067,26 +1066,26 @@ const pkgBarcodeManageOp = computed(() => {
 // 获取 补打原因 下拉数据
 const reprintDataList = reactive({ list: [] });
 const onReprintSelextData = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'REPRINT_REASON' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'REPRINT_REASON' });
   reprintDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 // 获取 作废原因 下拉数据
 const cancellationDataList = reactive({ list: [] });
 const onCancellationSelextData = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'SCRAP_REASON' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'SCRAP_REASON' });
   cancellationDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 
 const moStatusOption = ref([]);
-apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' }).then((data) => {
+api.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' }).then((data) => {
   moStatusOption.value = data;
 });
 const bracodeTypeOption = ref([]);
-apiMain.param.getListByGroupCode({ parmGroupCode: 'PKG_BARCODE_TYPE' }).then((data) => {
+api.param.getListByGroupCode({ parmGroupCode: 'PKG_BARCODE_TYPE' }).then((data) => {
   bracodeTypeOption.value = data;
 });
 const bracodeStatusOption = ref([]);
-apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_PKG_STATUS' }).then((data) => {
+api.param.getListByGroupCode({ parmGroupCode: 'BARCODE_PKG_STATUS' }).then((data) => {
   bracodeStatusOption.value = data;
 });
 const tabList = reactive({ list: [] });

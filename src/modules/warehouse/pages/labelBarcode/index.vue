@@ -420,7 +420,7 @@ const onPrintManager = async () => {
       });
     });
 
-    await apiWarehouse.label.reprintBarcode({
+    await apiMain.label.reprintBarcode({
       ids: selectedManageRowKeys.value,
       reason,
       printTempId: printMode.value.printTempId,
@@ -429,6 +429,7 @@ const onPrintManager = async () => {
 
     selectedManageRowKeys.value = [];
     onRefreshManage();
+    formVisible.value = false;
     return true; // 打印成功时返回 true
   } catch (e) {
     console.log(e);
@@ -459,7 +460,7 @@ const onConfirm = async () => {
   try {
     pageLoading.value = true;
     if (isReprintCancellation.value === 1) {
-      await apiWarehouse.label.reprintBarcode({
+      await apiMain.label.reprintBarcode({
         ids: selectedManageRowKeys.value,
         reason,
         printTempId: printMode.value.printTempId,
@@ -474,7 +475,7 @@ const onConfirm = async () => {
         MessagePlugin.warning(`拆分数量需为小于${reprintDialog.value.qty}的正整数`);
         return false;
       }
-      await apiWarehouse.label.splitBarcode({
+      await apiMain.label.splitBarcode({
         labelId: reprintDialog.value.labelId,
         splitNum: intValue,
         printTempId: printMode.value.printTempId,
@@ -485,7 +486,7 @@ const onConfirm = async () => {
       MessagePlugin.success('拆分成功');
       onRefreshManage();
     } else {
-      await apiWarehouse.label.cancellationBarcode({
+      await apiMain.label.cancellationBarcode({
         ids: selectedManageRowKeys.value,
         reason,
       });
@@ -567,7 +568,7 @@ const generateBracode = async () => {
   }
   try {
     pageLoading.value = true;
-    await apiMain.label.generateBarcode(printMode.value);
+    await apiWarehouse.label.generateBarcode(printMode.value);
     MessagePlugin.success('生成成功');
     // 延时几百毫秒后执行刷新操作
     onRefreshBelow();
@@ -715,7 +716,7 @@ const openLog = async (row: any) => {
   logNodeCode.value = row.labelNo;
   console.log(row.value);
   logInterfaceVisible.value = true; // 控制界面显示隐藏
-  const res = await apiWarehouse.label.getLabelLog({
+  const res = await apiMain.label.getLabelLog({
     labelNo: row.labelNo,
     pageNum: pageUIDay.value.page,
     pageSize: pageUIDay.value.rows,
@@ -726,13 +727,13 @@ const openLog = async (row: any) => {
 // 获取 条码规则 下拉数据
 const onBracodeRulesList = reactive({ list: [] });
 const onBracodeRulesData = async () => {
-  const res = await apiWarehouse.label.getLabelBarcodeRuleList();
+  const res = await apiMain.label.getLabelBarcodeRuleList();
   onBracodeRulesList.list = res;
 };
 // 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async () => {
-  const res = await apiWarehouse.label.getLabelPrintTmplList();
+  const res = await apiMain.label.getLabelPrintTmplList();
   onPrintTemplateList.list = res;
 };
 // 日志界面 表格数据
@@ -1120,7 +1121,7 @@ const managePageSearchClick = (data: any) => {
 };
 // 右表格数据刷新
 const onRightFetchData = async () => {
-  const res = await apiWarehouse.label.getLabelLog({
+  const res = await apiMain.label.getLabelLog({
     labelNo: logNodeCode.value,
     pageNum: pageUIDay.value.page,
     pageSize: pageUIDay.value.rows,

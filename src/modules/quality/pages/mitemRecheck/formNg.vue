@@ -15,7 +15,7 @@
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :title="'复检单号：' + formData.recheckBillNo" :column="4" size="large">
-          <t-descriptions-item label="复检类型"></t-descriptions-item>
+          <t-descriptions-item label="复检类型">{{ formData.recheckTypeName }}</t-descriptions-item>
           <t-descriptions-item label="来源检验单">{{ formData.iqcBillNo }}</t-descriptions-item>
           <t-descriptions-item label="物料编码">{{ formData.mitemCategoryCode }}</t-descriptions-item>
           <t-descriptions-item label="物料名">
@@ -90,7 +90,7 @@ const formVisible = ref(false);
 
 const formNgRef: Ref<FormInstanceFunctions> = ref(null);
 
-const formData = reactive({
+let formData = reactive({
   iqcBillNo: '',
   recheckBillNo: '',
   billNoStr: '',
@@ -102,13 +102,15 @@ const formData = reactive({
   mitemCategoryId: '',
   mitemCategoryCode: '',
   mitemCategoryName: '',
-  inspectQty: '',
+  inspectQty: 0,
   supplierId: '',
   supplierCode: '',
   supplierName: '',
   inspectionStringency: '',
   inspectionStringencyName: '',
   inspectStdName: '',
+  recheckType: '',
+  recheckTypeName: '',
   recheckReason: '',
 });
 
@@ -179,6 +181,8 @@ const onConfirmForm = async () => {
       supplierCode: formData.supplierCode,
       supplierName: formData.supplierName,
       inspectionStringency: formData.inspectionStringency,
+      recheckType: formData.recheckType,
+      recheckReason: formData.recheckReason,
       iqcInspectStdList: mainTableData.value,
       iqcInspectRecheckNg: formNgData,
     });
@@ -212,23 +216,7 @@ const reset = () => {
 const showForm = async (edit, row, tableData) => {
   formVisible.value = true;
   reset();
-  formData.billNoList = row.billNoList;
-  formData.billNoStr = row.billNoStr;
-  formData.iqcBillNo = row.iqcBillNo;
-  formData.mitemId = row.mitemId;
-  formData.mitemCode = row.mitemCode;
-  formData.mitemName = row.mitemName;
-  formData.mitemDesc = row.mitemDesc;
-  formData.mitemCategoryId = row.mitemCategoryId;
-  formData.mitemCategoryCode = row.mitemCategoryCode;
-  formData.mitemCategoryName = row.mitemCategoryName;
-  formData.inspectQty = `${row.inspectQty}`;
-  formData.supplierId = row.supplierId;
-  formData.supplierCode = row.supplierCode;
-  formData.supplierName = row.supplierName;
-  formData.inspectionStringency = row.inspectionStringency;
-  formData.inspectionStringencyName = row.inspectionStringencyName;
-  formData.inspectStdName = row.inspectStdName;
+  formData = row;
   mainTableData.value = tableData.value;
 };
 const closeForm = async () => {

@@ -301,8 +301,7 @@ import { debounce } from 'lodash';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
-import { api } from '@/api/control';
-import { api as apiMain } from '@/api/main';
+import { api } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -656,13 +655,13 @@ const generateData = ref({
 // 获取 补打原因 下拉数据
 const reprintDataList = reactive({ list: [] });
 const onReprintSelextData = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'REPRINT_REASON' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'REPRINT_REASON' });
   reprintDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 // 获取 作废原因 下拉数据
 const cancellationDataList = reactive({ list: [] });
 const onCancellationSelextData = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'SCRAP_REASON' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'SCRAP_REASON' });
   cancellationDataList.list = [...res, { label: '其他原因', value: '其他原因' }];
 };
 
@@ -677,7 +676,7 @@ const onConfirm = async () => {
   if (isReprintCancellation.value) {
     try {
       loading.value = true;
-      await api.labelManage.reprintBarcode({
+      await api.barcodeWip.reprintBarcode({
         ids: productSelectedRowKeys.value,
         reason,
       });
@@ -690,7 +689,7 @@ const onConfirm = async () => {
   } else {
     try {
       loading.value = true;
-      await api.labelManage.cancellationBarcode({
+      await api.barcodeWip.cancellationBarcode({
         ids: productSelectedRowKeys.value,
         reason,
       });
@@ -724,7 +723,7 @@ const topPrintData = ref({
 const onGetPrintTopTabData = async () => {
   topPrintData.value.pageNum = pageUITop.value.page;
   topPrintData.value.pageSize = pageUITop.value.rows;
-  const res = await api.labelManage.getMoScheduleList(topPrintData.value);
+  const res = await api.barcodeWip.getMoScheduleList(topPrintData.value);
   printTopTabData.list = res.list;
   totalPrintTop.value = res.total;
 };
@@ -737,7 +736,7 @@ const onGetPrintDownTabData = async () => {
   } else {
     isCreated = false;
   }
-  const res = await api.labelManage.getBarcodeWipList({
+  const res = await api.barcodeWip.getBarcodeWipList({
     pageNum: pageUIDown.value.page,
     pageSize: pageUIDown.value.rows,
     moScheduleId: topPrintID.value,
@@ -750,14 +749,14 @@ const onGetPrintDownTabData = async () => {
 // #获取搜索 工单状态 下拉框数据
 const workStateDataList = reactive({ list: [] });
 const onWorkStatus = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' });
   workStateDataList.list = res;
 };
 
 // #获取搜索 条码状态 下拉框数据
 const barCodeStateList = reactive({ list: [] });
 const onBarCodeState = async () => {
-  const res = await apiMain.param.getListByGroupCode({ parmGroupCode: 'BARCODE_WIP_STATUS' });
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'BARCODE_WIP_STATUS' });
   barCodeStateList.list = res;
 };
 
@@ -779,7 +778,7 @@ const ManageTabData = ref({
 const onLabelManageTabData = async () => {
   ManageTabData.value.pageNum = pageUI.value.page;
   ManageTabData.value.pageSize = pageUI.value.rows;
-  const res = await api.labelManage.getBarcodeWipManagerList(ManageTabData.value);
+  const res = await api.barcodeWip.getBarcodeWipManagerList(ManageTabData.value);
   manageTabData.list = res.list;
   totalManage.value = res.total;
 };
@@ -844,7 +843,7 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
 // 日志 点击 事件
 const onLogInterface = async (row: any) => {
   logInterfaceVisible.value = true; // 控制界面显示隐藏
-  const res = await api.labelManage.getBarcodeWipLog({
+  const res = await api.barcodeWip.getBarcodeWipLog({
     serialNumber: row.serialNumber,
     pageNum: pageUIDay.value.page,
     pageSize: pageUIDay.value.rows,
@@ -871,21 +870,21 @@ const onGenerateChange = async (value: any, context: any) => {
 // 获取条码规则下拉数据
 const onPrintRulesList = reactive({ list: [] });
 const onPrintRulesData = async (moScheId) => {
-  const res = await api.labelManage.getBarcodeRuleList({ moScheId });
+  const res = await api.barcodeWip.getBarcodeRuleList({ moScheId });
   onPrintRulesList.list = res;
 };
 
 // 获取 打印模板 下拉数据
 const onPrintTemplateList = reactive({ list: [] });
 const onPrintTemplateData = async (moScheId) => {
-  const res = await api.labelManage.getPrintTmplList({ moScheId });
+  const res = await api.barcodeWip.getPrintTmplList({ moScheId });
   onPrintTemplateList.list = res;
 };
 
 // 管理界面打印模板 下拉数据
 const onPrintManagementList = reactive({ list: [] });
 const onPrintManagementData = async (moScheId) => {
-  const res = await api.labelManage.getPrintTmplList({ moScheId });
+  const res = await api.barcodeWip.getPrintTmplList({ moScheId });
   onPrintManagementList.list = res;
 };
 
@@ -928,7 +927,7 @@ const onGenerate = debounce(async () => {
   }
   try {
     loading.value = true;
-    await api.labelManage.generateBarcode(generateData.value); // 生成请求
+    await api.barcodeWip.generateBarcode(generateData.value); // 生成请求
     await onGetPrintTopTabData(); // 刷新数据
     await onGetPrintDownTabData();
     MessagePlugin.success('生成成功');
@@ -959,7 +958,7 @@ const onPrint = debounce(async () => {
   }
   try {
     loading.value = true;
-    await api.labelManage.printBarcode({ ids: selectedRowKeys.value });
+    await api.barcodeWip.printBarcode({ ids: selectedRowKeys.value });
     await onGetPrintDownTabData(); // 刷新数据
     MessagePlugin.success('打印成功');
     selectedRowKeys.value = [];

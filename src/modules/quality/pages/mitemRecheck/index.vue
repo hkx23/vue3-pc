@@ -19,9 +19,9 @@
         @select-change="onSelectWaitInspectChange"
         @refresh="fetchTable"
       >
-        <template #title> 工作台 </template>
+        <template #title>工作台</template>
         <template #button>
-          <t-button theme="primary">复检</t-button>
+          <t-button theme="primary" @click="onShowDialog(true, null)">新增复检</t-button>
         </template>
         <template #op="rowData">
           <t-space>
@@ -29,14 +29,14 @@
               v-if="rowData.row.inspectResult === 'UNINSPECT' || _.isEmpty(rowData.row.recheckBillNo)"
               theme="primary"
               @click="onShowDialog(true, rowData)"
-              >检验</t-link
+              >复检</t-link
             >
           </t-space>
         </template>
 
         <template #recheckBillNo="rowData">
           <t-space>
-            <t-link theme="primary" @click="onShowDialog(false, rowData)">{{ rowData.row.recheckBillNo }}</t-link>
+            <t-link theme="primary" @click="onLoadFJDialog(false, rowData)">{{ rowData.row.recheckBillNo }}</t-link>
           </t-space>
         </template>
       </cmp-table>
@@ -157,11 +157,11 @@ const iqcHandleMethodOption = ref([]);
 const waitInspectDataTotal = ref(0);
 const waitInspectData = ref([]);
 const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'row-select',
-    type: 'multiple',
-    width: 50,
-  },
+  // {
+  //   colKey: 'row-select',
+  //   type: 'multiple',
+  //   width: 50,
+  // },
   { title: '复检单号', width: 160, colKey: 'recheckBillNo' },
   { title: '复检类型', width: 100, colKey: 'reCheckTypeName' },
   { title: '来源检验单', width: 160, colKey: 'iqcBillNo' },
@@ -265,9 +265,20 @@ const onSelectWaitInspectChange = (value: any) => {
   selectWaitId.value = value;
 };
 const onShowDialog = async (isEdit, rowData) => {
-  const { showForm, loadTable } = formRef.value;
-  await showForm(isEdit, rowData.row);
-  await loadTable();
+  const { showForm } = formRef.value;
+  if (rowData !== null) {
+    await showForm(isEdit, rowData.row);
+  } else {
+    await showForm(isEdit, null);
+  }
+};
+const onLoadFJDialog = async (isEdit, rowData) => {
+  const { showFJForm } = formRef.value;
+  if (rowData !== null) {
+    await showFJForm(isEdit, rowData.row);
+  } else {
+    await showFJForm(isEdit, null);
+  }
 };
 const onFormCloseDialog = async () => {
   fetchTable();

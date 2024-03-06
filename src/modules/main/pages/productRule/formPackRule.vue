@@ -24,7 +24,7 @@ export default {
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
-import { api as apiControl, ProductPackRule } from '@/api/control';
+import { api, ProductPackRule } from '@/api/main';
 
 import { useLang } from './lang';
 
@@ -65,12 +65,12 @@ const submit = async () => {
         return;
       }
       if (props.isAdd) {
-        apiControl.productPackRule.add(formData).then(() => {
+        api.productPackRule.add(formData).then(() => {
           MessagePlugin.success(t('common.message.addSuccess'));
           resolve(formData);
         });
       } else {
-        apiControl.productPackRule.update(formData).then(() => {
+        api.productPackRule.update(formData).then(() => {
           MessagePlugin.success(t('common.message.saveSuccess'));
           resolve(formData);
         });
