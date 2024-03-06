@@ -36,7 +36,13 @@
               :disabled="isEdit"
               @change="changeDomain"
             >
-              <t-option v-for="item in businessDomainList" :key="item.value" :label="item.label" :value="item.value" />
+              <t-option
+                v-for="item in businessDomainList"
+                :key="item.value"
+                :label="item.label + ' (' + item.value + ')'"
+                :value="item.value"
+                :name="item.label"
+              />
             </t-select>
           </t-form-item>
           <t-form-item :label="t('import.tableName')" name="tableName">
@@ -51,7 +57,8 @@
               <t-option
                 v-for="item in tableList"
                 :key="item.tableName"
-                :label="item.tableDescription"
+                :label="item.tableDescription + ' (' + item.tableName + ')'"
+                :name="item.tableDescription"
                 :value="item.tableName"
               />
             </t-select>
@@ -163,15 +170,16 @@
                 <t-input v-model="row.validateName"></t-input>
               </template>
               <template #validateType="{ row }">
-                <t-select v-model="row.validateType" :options="validateTypes" disabled> </t-select>
+                <t-select v-model="row.validateType" :options="validateTypes" disabled filterable> </t-select>
               </template>
               <template #uniqueColumns="{ row }">
-                <t-select v-model="row.uniqueColumns" multiple :min-collapsed-num="1">
+                <t-select v-model="row.uniqueColumns" multiple :min-collapsed-num="1" filterable>
                   <t-option
                     v-for="column in columnsData"
                     :key="column.columnName"
                     :value="column.columnName"
-                    :label="column.columnDesc"
+                    :name="column.columnDesc"
+                    :label="column.columnDesc + ' (' + column.columnName + ')'"
                   ></t-option>
                 </t-select>
               </template>
@@ -198,7 +206,13 @@
           :upload-count-limit="1"
           :file-list="uploadFiles"
           @upload-success="uploadSuccess"
-        ></bcmp-upload-content>
+          @delete-success="deleteSuccess"
+          @batch-delete-success="deleteSuccess"
+        >
+          <template #buttons>
+            <t-button theme="default" @click="generateTemplate">生成导入模板</t-button>
+          </template>
+        </bcmp-upload-content>
       </div>
       <!-- #endregion -->
     </cmp-container>
@@ -223,6 +237,23 @@
     </template>
   </t-dialog>
 
+  <!-- 删除弹窗 -->
+  <t-dialog
+    v-model:visible="isConfirmDialogVisible"
+    header="确认生成导入模板"
+    title="确认生成导入模板"
+    @confirm="confirmGenTemplate"
+  >
+    <t-space direction="vertical" style="width: 100%">
+      <t-alert v-if="uploadFiles.length > 0" theme="warning">
+        <template #message>确认生成模板会替换掉原有的导入模板！</template>
+      </t-alert>
+      <t-form ref="templateForm" :data="templateFormData" :rules="templateFormRules" scroll-to-first-error="smooth">
+        <t-form-item label="导入模板名" name="templateName">
+          <t-input v-model="templateFormData.templateName"></t-input>
+        </t-form-item> </t-form
+    ></t-space>
+  </t-dialog>
   <!-- 数据转换设置弹窗 -->
   <t-drawer
     v-model:visible="relateVisible"
@@ -277,27 +308,29 @@
         </t-form-item>
 
         <t-form-item label="数据源列">
-          <t-select v-model="sourceColumn" placeholder="选择数据源列">
+          <t-select v-model="sourceColumn" placeholder="选择数据源列" filterable>
             <t-option
               v-for="column in columnsDataWithoutDefault.filter(
                 (item) => item.columnName && item.columnDesc && item.isExcel,
               )"
               :key="column.columnName"
               :value="column.columnName"
-              :label="column.columnDesc"
+              :name="column.columnDesc"
+              :label="column.columnDesc + ' (' + column.columnName + ')'"
             ></t-option>
           </t-select>
         </t-form-item>
 
         <!-- 匹配字段选择 -->
         <t-form-item label="匹配字段">
-          <t-select v-model="matchField" placeholder="选择匹配字段" :options="paramGroupFields"> </t-select>
+          <t-select v-model="matchField" placeholder="选择匹配字段" :options="paramGroupFields" filterable> </t-select>
         </t-form-item>
 
         <!-- 取值字段选择 -->
         <t-form-item label="取值字段">
           <!-- 根据所选系统参数组动态获取可选取值字段 -->
-          <t-select v-model="getValueField" placeholder="选择取值字段" :options="paramGroupFields"> </t-select>
+          <t-select v-model="getValueField" placeholder="选择取值字段" :options="paramGroupFields" filterable>
+          </t-select>
         </t-form-item>
       </div>
 
@@ -310,12 +343,13 @@
         2.2.2 保存值 -->
       <div v-if="selectedType === 'customDict'">
         <t-form-item label="数据源列">
-          <t-select v-model="sourceColumn" placeholder="选择数据源列">
+          <t-select v-model="sourceColumn" placeholder="选择数据源列" filterable>
             <t-option
               v-for="column in columnsDataWithoutDefault"
               :key="column.columnName"
               :value="column.columnName"
-              :label="column.columnDesc"
+              :name="column.columnDesc"
+              :label="column.columnDesc + ' (' + column.columnName + ')'"
             ></t-option>
           </t-select>
         </t-form-item>
@@ -361,7 +395,13 @@
         <t-form-item :label="t('import.businessDomain')" name="businessDomain">
           <!-- 下拉选择框 -->
           <t-select v-model="mapBusinessDomain" :clearable="true" filterable @change="changeMapDomain">
-            <t-option v-for="item in businessDomainList" :key="item.value" :label="item.label" :value="item.value" />
+            <t-option
+              v-for="item in businessDomainList"
+              :key="item.value"
+              :label="item.label + ' (' + item.value + ')'"
+              :value="item.value"
+              :name="item.label"
+            />
           </t-select>
         </t-form-item>
         <t-form-item label="数据表">
@@ -369,7 +409,8 @@
             <t-option
               v-for="item in mapTableList"
               :key="item.tableName"
-              :label="item.tableDescription"
+              :label="item.tableDescription + ' (' + item.tableName + ')'"
+              :name="item.tableDescription"
               :value="item.tableName"
             />
           </t-select>
@@ -389,8 +430,9 @@
                   <t-option
                     v-for="item in selectMapColumns"
                     :key="item.columnName"
-                    :label="item.columnDesc"
+                    :name="item.columnDesc"
                     :value="item.columnName"
+                    :label="item.columnDesc + ' (' + item.columnName + ')'"
                   />
                 </t-select>
               </template>
@@ -409,8 +451,9 @@
                       (item) => item.columnName && item.columnDesc && item.isExcel,
                     )"
                     :key="item.columnName"
+                    :name="item.columnDesc"
                     :value="item.columnName"
-                    :label="item.columnDesc"
+                    :label="item.columnDesc + ' (' + item.columnName + ')'"
                   ></t-option>
                 </t-select>
               </template>
@@ -432,8 +475,9 @@
             <t-option
               v-for="item in selectMapColumns"
               :key="item.columnName"
-              :label="item.columnDesc"
+              :name="item.columnDesc"
               :value="item.columnName"
+              :label="item.columnDesc + ' (' + item.columnName + ')'"
             />
           </t-select>
         </t-form-item>
@@ -526,9 +570,11 @@ const loadTableList = async () => {
   tableList.value = res;
 };
 // #表格变化
+const tableDesc = ref('');
 const changeTable = (value, context) => {
   formData.importKeyCode = value;
-  formData.importDesc = `导入${context.option.label}`;
+  tableDesc.value = context.option.name;
+  formData.importDesc = `导入${context.option.name}`;
   selectedTable.value = tableList.value.find((item) => item.tableName === value);
   console.log(selectedTable.value);
   let seq = 0;
@@ -545,7 +591,7 @@ const changeTable = (value, context) => {
     seq: seq++,
   }));
 
-  columnsDataWithoutDefault.value = columnsData.value.filter((item) => item.isImport);
+  columnsDataWithoutDefault.value = columnsData.value.filter((item) => item.isImport && item.value !== 'eid');
   columnsDataWithoutDefault.value.forEach((item) => {
     const relateData = {
       relateType: 'none',
@@ -1012,10 +1058,10 @@ const sourceColumn = ref('');
 const matchField = ref('');
 const getValueField = ref('');
 const paramGroupFields = [
-  { value: 'paramValue', label: '系统参数值' },
-  { value: 'paramCode', label: '系统参数编码' },
-  { value: 'paramName', label: '系统参数名称' },
-  { value: 'paramDesc', label: '系统参数描述' },
+  { value: 'paramValue', label: '系统参数值 (paramValue)', name: '系统参数值' },
+  { value: 'paramCode', label: '系统参数编码 (paramCode)', name: '系统参数编码' },
+  { value: 'paramName', label: '系统参数名称 (paramName)', name: '系统参数名称' },
+  { value: 'paramDesc', label: '系统参数描述 (paramDesc)', name: '系统参数描述' },
 ];
 const columnsDic: any = computed(() => [
   {
@@ -1133,6 +1179,8 @@ const changeTableMatch = (value) => {
 const initEditColumns = (value) => {
   loadTableList().then(() => {
     const editTable = tableList.value.find((item) => item.tableName === value);
+
+    tableDesc.value = editTable?.tableDescription;
     columnsData.value = editTable?.columns.map((item) => ({
       ...item,
       value: item.columnName,
@@ -1208,15 +1256,55 @@ const saveValidateSetting = () => {
 };
 // #endregion
 // #region 第四步：维护导入模板
+
+const isConfirmDialogVisible = ref(false);
+const templateForm = ref();
+const templateFormData = ref({
+  templateName: '',
+});
+const templateFormRules = {
+  templateName: [{ required: true }],
+};
+const confirmGenTemplate = () => {
+  // 先验证导入模板文件名是否存在
+  templateForm.value.validate().then((result) => {
+    if (result !== true) {
+      MessagePlugin.warning(Object.values(result)[0][0].message);
+
+      return;
+    }
+    const insetModel: ImportSettingDTO = getInsetModel();
+    insetModel.genTemplateName = templateFormData.value.templateName;
+    api.importManage.generateImportTemplate(insetModel).then((data) => {
+      uploadFiles.value = [];
+      uploadFiles.value.push(data);
+      MessagePlugin.success('生成成功');
+      isConfirmDialogVisible.value = false;
+    });
+  });
+};
+
 const uploadFiles = ref([]);
 const templatePath = ref('');
 const templateFileName = ref('');
+const generateTemplate = () => {
+  isConfirmDialogVisible.value = true;
+  if (templateFormData.value.templateName === '') {
+    templateFormData.value.templateName = `导入模板_${tableDesc.value}`;
+  }
+};
 const uploadSuccess = (file: AddFileType) => {
   uploadFiles.value = [];
   uploadFiles.value.push(file);
-  templatePath.value = file.fullfileName;
+  templatePath.value = file.fullFileName;
   templateFileName.value = file.fileName;
 };
+const deleteSuccess = () => {
+  uploadFiles.value = [];
+  templatePath.value = '';
+  templateFileName.value = '';
+};
+
 const saveImportSetting = () => {
   let checkResult = true;
   if (!(uploadFiles.value && uploadFiles.value.length > 0)) {
@@ -1227,44 +1315,7 @@ const saveImportSetting = () => {
     // todo:保存事件
     MessagePlugin.info('数据保存中...', 1000);
 
-    const insetModel: ImportSettingDTO = {};
-
-    insetModel.settingModel = {
-      importKeyCode: formData.importKeyCode,
-      businessDomain: formData.businessDomain,
-      tableName: formData.tableName,
-      importDesc: formData.importDesc,
-      importTemplateUrl: templatePath.value,
-      batchCount: formData.batchCount,
-      sourceType: 'HANDSET',
-    };
-
-    insetModel.columnList = [];
-    columnsDataWithoutDefault.value.forEach((item) => {
-      insetModel.columnList.push({
-        columnField: item.columnName,
-        columnDesc: item.columnDesc,
-        columnDatetype: item.columnType,
-        isRequired: item.isRequire,
-        isImport: item.isImport,
-        isTemplate: item.isExcel,
-        defaultValue: item.defaultValue,
-        datatransferJson: item.datatransferJson,
-        regularExpression: '',
-        seq: item.seq,
-        fromTable: item.tableName,
-      });
-    });
-
-    insetModel.ruleList = [];
-    validationDatas.value.forEach((item) => {
-      insetModel.ruleList.push({
-        validateType: item.validateType,
-        validateName: item.validateName,
-        uniqueColumns: item.uniqueColumns,
-        datatransferJson: '',
-      });
-    });
+    const insetModel: ImportSettingDTO = getInsetModel();
 
     if (!isEdit.value) {
       // 提交保存数据到接口
@@ -1286,11 +1337,57 @@ const saveImportSetting = () => {
     }
   }
 };
+
+const getInsetModel = () => {
+  const insetModel: ImportSettingDTO = {};
+  if (uploadFiles.value && uploadFiles.value.length > 0) {
+    templatePath.value = uploadFiles.value[0].fullFileName;
+  }
+
+  insetModel.settingModel = {
+    importKeyCode: formData.importKeyCode,
+    businessDomain: formData.businessDomain,
+    tableName: formData.tableName,
+    importDesc: formData.importDesc,
+    importTemplateUrl: templatePath.value,
+    batchCount: formData.batchCount,
+    sourceType: 'HANDSET',
+  };
+
+  insetModel.columnList = [];
+  columnsDataWithoutDefault.value.forEach((item) => {
+    insetModel.columnList.push({
+      columnField: item.columnName,
+      columnDesc: item.columnDesc,
+      columnDatetype: item.columnType,
+      isRequired: item.isRequire,
+      isImport: item.isImport,
+      isTemplate: item.isExcel,
+      defaultValue: item.defaultValue,
+      datatransferJson: item.datatransferJson,
+      regularExpression: '',
+      seq: item.seq,
+      fromTable: item.tableName,
+    });
+  });
+
+  insetModel.ruleList = [];
+  validationDatas.value.forEach((item) => {
+    insetModel.ruleList.push({
+      validateType: item.validateType,
+      validateName: item.validateName,
+      uniqueColumns: item.uniqueColumns,
+      datatransferJson: '',
+    });
+  });
+  return insetModel;
+};
 // #endregion
 
 // 编辑-加载编辑的数据
 const initEditData = (insetModel) => {
   isEdit.value = true;
+  templateFormData.value.templateName = '';
   current.value = 0;
   // 将settingModel属性的值赋回formData
   formData.importKeyCode = insetModel.settingModel.importKeyCode;
@@ -1350,7 +1447,7 @@ const initEditData = (insetModel) => {
   const addFile: AddFileType = {
     id: Math.floor(Math.random() * 1999990),
     serialNumber: 1,
-    fullfileName: insetModel.settingModel.importTemplateUrl,
+    fullFileName: insetModel.settingModel.importTemplateUrl,
     fileName: getFileName(insetModel.settingModel.importTemplateUrl),
     fileSize: 0,
     fileSizeShow: '-',
@@ -1360,7 +1457,7 @@ const initEditData = (insetModel) => {
     fileType: '',
   };
   uploadFiles.value.push(addFile);
-  templatePath.value = addFile.signedUrl;
+  templatePath.value = addFile.fullFileName;
   templateFileName.value = addFile.fileName;
   initEditColumns(formData.tableName);
 };
@@ -1368,6 +1465,7 @@ const initEditData = (insetModel) => {
 // 新增-初始化新增的数据
 const initAddData = () => {
   isEdit.value = false;
+  templateFormData.value.templateName = '';
   current.value = 0;
   if (formRef.value) {
     formRef.value.clearValidate();

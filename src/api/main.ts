@@ -2145,8 +2145,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3843,6 +3843,7 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
+  items?: string[];
   required?: boolean;
   validateRepeat?: boolean;
 }
@@ -3923,15 +3924,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
-  isRawName?: string;
   isRawChecked?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  stateName?: string;
+  isProductName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawName?: string;
   isState?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4074,8 +4075,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4410,9 +4411,9 @@ export interface IntegratedConsoleSearch {
    * @format date-time
    */
   dateEnd?: string;
-  mesbillNo?: string;
-  erpbillNo?: string;
   imsgqueueStatus?: string;
+  erpbillNo?: string;
+  mesbillNo?: string;
 }
 
 /** 显示工站 */
@@ -4706,6 +4707,7 @@ export interface ImportSettingDTO {
   settingModel?: ImportSetting;
   columnList?: ImportSettingColumn[];
   ruleList?: ImportSettingRule[];
+  genTemplateName?: string;
 }
 
 /** 导入校验表 */
@@ -4741,6 +4743,33 @@ export interface ImportSettingRule {
   uniqueColumns?: string;
   /** 数据转换配置 */
   datatransferJson?: string;
+}
+
+/** 上传控件文件VO */
+export type AddFileTypeVO = {
+  id?: string;
+  serialNumber?: string;
+  fullFileName?: string;
+  fileName?: string;
+  fileType?: string;
+  fileSizeShow?: string;
+  fileSize?: number;
+  timeUpload?: string;
+  signedUrl?: string;
+  percent?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultAddFileTypeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 上传控件文件VO */
+  data?: AddFileTypeVO;
 }
 
 /** 通用响应类 */
@@ -5294,8 +5323,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -11426,6 +11455,21 @@ export const api = {
      */
     importData: (data: CommonImportAuto) =>
       http.request<ResultImportSummary['data']>(`/api/main/importManage/import`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name GenerateImportTemplate
+     * @summary 新增导入配置信息
+     * @request POST:/importManage/generateImportTemplate
+     * @secure
+     */
+    generateImportTemplate: (data: ImportSettingDTO) =>
+      http.request<ResultAddFileTypeVO['data']>(`/api/main/importManage/generateImportTemplate`, {
         method: 'POST',
         body: data as any,
       }),

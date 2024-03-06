@@ -1,7 +1,7 @@
 export interface AddFileType {
   id: number;
   serialNumber: number;
-  fullfileName: string;
+  fullFileName: string;
   fileName: string;
   fileType: string;
   fileSizeShow: string;
