@@ -2281,10 +2281,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 停留时长 */
   waitTime?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -3698,13 +3698,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s3?: string;
   ii?: string;
-  iii?: string;
-  s2?: string;
+  s4?: string;
   i?: string;
   s1?: string;
-  s4?: string;
+  iii?: string;
+  s3?: string;
+  s2?: string;
 } | null;
 
 /** 计量单位 */

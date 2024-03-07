@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue'; //* 查询组件
@@ -148,6 +148,8 @@ const fetchTable = async () => {
   const data = await api.district.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
+    warehouseId: formData.queryData.warehouseId,
+    districtKeyword: formData.queryData.districtKeyword,
   });
   tableDataWarehouse.value = data.list;
   dataTotal.value = data.total;
@@ -158,20 +160,22 @@ const tabRefresh = async () => {
   await fetchTable();
 };
 
+const formData = reactive({
+  queryData: {
+    warehouseId: '',
+    districtKeyword: '',
+  },
+});
+
 //* 查询
 const onInput = async (data: any) => {
+  pageUI.value.page = 1;
   if (!data.value) {
     const { warehouseId, districtKeyword } = data;
-    pageUI.value.page = 1;
-    const reslut = await api.district.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      warehouseId,
-      districtKeyword,
-    });
-    tableDataWarehouse.value = reslut.list;
-    dataTotal.value = reslut.total;
+    formData.queryData.warehouseId = warehouseId;
+    formData.queryData.districtKeyword = districtKeyword;
   }
+  await fetchTable();
 };
 //* 编辑
 const onEditRowClick = async (value: any) => {

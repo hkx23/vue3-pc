@@ -1,34 +1,37 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" is-expansion @submit="onSearch" />
-    </cmp-card>
-    <cmp-card :span="12">
-      <!-- ################# 处理组表格数据 ###################### -->
-      <cmp-table
-        ref="tableRef"
-        row-key="id"
-        :table-column="tableMainColumns"
-        :table-data="tableMainData"
-        :loading="loading"
-        :total="mainDataTotal"
-        :hover="false"
-        :stripe="false"
-        :header-affixed-top="true"
-        @refresh="fetchTable"
-        @cell-click="onRowClick"
-      >
-        <template #button>
-          <t-button theme="primary" @click="onClickAdd">
-            {{ t('common.button.add') }}
-          </t-button>
-          <t-popconfirm :content="$t('确认作废销售发货单？')" @confirm="onBatchCancelledClick">
-            <t-button theme="default" :disabled="selectRowKeys?.length == 0">
-              {{ t('salesDelivery.cancel') }}
+      <cmp-container :ghost="true">
+        <cmp-query :opts="opts" is-expansion @submit="onSearch" />
+
+        <!-- ################# 处理组表格数据 ###################### -->
+        <cmp-table
+          ref="tableRef"
+          row-key="id"
+          :table-column="tableMainColumns"
+          :table-data="tableMainData"
+          :loading="loading"
+          :total="mainDataTotal"
+          :hover="false"
+          :stripe="false"
+          max-height="300px"
+          :header-affixed-top="true"
+          @refresh="fetchTable"
+          @cell-click="onRowClick"
+        >
+          <template #title>发货单据列表</template>
+          <template #button>
+            <t-button theme="primary" @click="onClickAdd">
+              {{ t('common.button.add') }}
             </t-button>
-          </t-popconfirm>
-        </template>
-      </cmp-table>
+            <t-popconfirm :content="$t('确认作废销售发货单？')" @confirm="onBatchCancelledClick">
+              <t-button theme="default" :disabled="selectRowKeys?.length == 0">
+                {{ t('salesDelivery.cancel') }}
+              </t-button>
+            </t-popconfirm>
+          </template>
+        </cmp-table>
+      </cmp-container>
     </cmp-card>
     <cmp-row>
       <!-- ################# 子数据数据 ###################### -->
@@ -41,6 +44,7 @@
           :total="childrenDataTotal"
           :hover="false"
           :stripe="false"
+          :show-toolbar="false"
           :show-pagination="false"
           :header-affixed-top="true"
           @refresh="fetchTable"
@@ -140,7 +144,6 @@ const opts = computed(() => {
 });
 // 状态下拉初始数据
 const statusOption = ref([
-  { label: t('salesDelivery.全选'), value: '', checkAll: true },
   { value: 'CREATED', label: t('salesDelivery.已创建') },
   { value: 'DELIVERED', label: t('salesDelivery.已发货') },
   { value: 'CANCELED', label: t('salesDelivery.已取消') },
