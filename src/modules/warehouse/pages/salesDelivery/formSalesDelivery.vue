@@ -292,9 +292,16 @@ const warehouseChange = (val: any) => {
   formData.warehouseName = val.warehouseName;
 };
 const customerCodeChange = (val: Customer) => {
-  formData.customerId = val.id;
-  formData.customerCode = val.customerCode;
-  formData.customerName = val.customerName;
+  if (_.isEmpty(val)) {
+    tableSalesDtlData.value = [];
+  } else {
+    formData.customerId = val.id;
+    formData.customerCode = val.customerCode;
+    formData.customerName = val.customerName;
+    if (tableSalesDtlData.value.length > 0 && tableSalesDtlData.value[0].customerCode !== formData.customerCode) {
+      tableSalesDtlData.value = [];
+    }
+  }
 };
 
 const onShowSalesOrder = () => {
