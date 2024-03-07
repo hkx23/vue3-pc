@@ -287,7 +287,6 @@ const fetchMaterialDtlTable = async () => {
     setLoadingMaterialDtl(true);
     const data = await apiWarehouse.materialRequisition.getCommandReqDtls({
       ...formData,
-      mitemIds: props.idCollection.mitemId,
       moScheCodeList: props.idCollection.moScheId,
     });
     tableDataMaterialRequisition.value = data;
