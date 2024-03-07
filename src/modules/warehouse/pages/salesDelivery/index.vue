@@ -219,6 +219,7 @@ const fetchTable = async () => {
   try {
     setLoading(true);
     tableChildrenData.value = [];
+    tableRef.value.setSelectedRowKeys([]);
 
     const data = await apiWarehouse.saleDelivery.getSalesDeliveryList({
       pageNum: pageUI.value.page,

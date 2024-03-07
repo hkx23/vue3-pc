@@ -63,7 +63,7 @@
     "供方整改意见不能为空": "Supplier Corrective Action Comments Cannot Be Empty",
     "跟进人不能为空": "Follow-up Person Cannot Be Empty",
     "待检验": "Pending Inspection",
-    " 工作台 ": " Workbench ",
+    "工作台": " Workbench ",
     "合并检验": "Consolidated Inspection",
     "一键合格": "One-click Acceptance",
     "一键判退": "One-click Rejection",

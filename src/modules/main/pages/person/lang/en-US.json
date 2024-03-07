@@ -1,0 +1,30 @@
+{
+  "person": {
+    " 员工列表 ": "Employee List",
+    "导入": "Import",
+    "编辑": "Edit",
+    "员工编码": "Employee ID",
+    "姓名": "Name",
+    "请输入内容": "Please enter content",
+    "性别": "Gender",
+    "请选择性别": "Please select gender",
+    "手机号": "Mobile Number",
+    "邮箱": "Email",
+    "启用": "Activate",
+    "导入用户": "Import User",
+    "这是导入窗口": "This is the import window",
+    "男": "Male",
+    "女": "Female",
+    "人员编码": "Personnel Code",
+    "状态": "Status",
+    "操作": "Action",
+    "全部": "All",
+    "禁用": "Deactivate",
+    "员工": "Employee",
+    "请输入员工编号或姓名": "Please enter employee ID or name",
+    "请选择状态": "Please select status",
+    "请输入姓名": "Please enter name",
+    "编辑成功": "Edit Successful",
+    "操作成功": "Operation Successful"
+  }
+}

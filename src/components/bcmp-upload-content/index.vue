@@ -48,6 +48,7 @@
           >
             <t-button theme="primary" :disabled="tableData?.length >= props.uploadCountLimit">上传</t-button>
           </t-upload>
+          <slot name="buttons"></slot>
           <t-popconfirm
             v-if="!$props.readonly"
             theme="default"
@@ -247,7 +248,7 @@ const beforeUpload = (file: UploadFile) => {
   const addFile: AddFileType = {
     id: Math.floor(Math.random() * 1999990),
     serialNumber: tableData.value.length + 1,
-    fullfileName: `${props.uploadPath}/${file.name}`,
+    fullFileName: `${props.uploadPath}/${file.name}`,
     fileName: file.name,
     fileSize: file.size,
     fileSizeShow: formatBytes(file.size),

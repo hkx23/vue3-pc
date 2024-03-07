@@ -38,7 +38,7 @@ export default {
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
-import { api as apiControl, ProductPackRuleMapDTO } from '@/api/control';
+import { api, ProductPackRuleMapDTO } from '@/api/main';
 
 import BcmpSelectBusiness from '../../../../components/bcmp-select-business/index.vue';
 import { useLang } from './lang';
@@ -94,7 +94,7 @@ const submit = async () => {
     }
     if (props.isAdd) {
       formRef.value.validate().then((result) => {
-        apiControl.productPackRuleMap.add(formData).then(() => {
+        api.productPackRuleMap.add(formData).then(() => {
           MessagePlugin.success(t('common.message.addSuccess'));
           resolve(formData);
         });

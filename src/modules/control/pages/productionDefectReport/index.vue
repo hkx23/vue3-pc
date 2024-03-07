@@ -6,29 +6,32 @@
       <cmp-query ref="queryRef" :opts="opts" :is-reset-query="false" @reset="onReset" @submit="onInput"> </cmp-query>
     </cmp-card>
     <!-- 页签栏 -->
-    <cmp-card :span="12">
+    <cmp-card :span="12" class="full-tab">
       <t-tabs v-model="activeTab">
         <!-- 页签栏1 不良明细 -->
         <t-tab-panel value="tab1" label="不良明细" :destroy-on-hide="true">
           <!--  select-on-row-click
             :fixed-height="true"
             :hover="true" -->
-          <cmp-table
-            ref="tableRef"
-            v-model:pagination="firstPageUI"
-            row-key="_timestamp"
-            :table-column="columnsProduceReport1"
-            :table-data="Data1"
-            :total="total1"
-            @refresh="onRefresh"
-          >
-            <template #title>
-              {{ '不良明细' }}
-            </template>
-            <template #completedNum="{ row }">
-              <div>{{ row.completedNum }}</div>
-            </template>
-          </cmp-table>
+          <cmp-container :full="true">
+            <cmp-table
+              ref="tableRef"
+              v-model:pagination="firstPageUI"
+              :fixed-height="true"
+              row-key="_timestamp"
+              :table-column="columnsProduceReport1"
+              :table-data="Data1"
+              :total="total1"
+              @refresh="onRefresh"
+            >
+              <template #title>
+                {{ '不良明细' }}
+              </template>
+              <template #completedNum="{ row }">
+                <div>{{ row.completedNum }}</div>
+              </template>
+            </cmp-table>
+          </cmp-container>
         </t-tab-panel>
         <!-- 页签栏2 不良汇总 -->
         <t-tab-panel value="tab2" label="不良汇总" :destroy-on-hide="false">
@@ -36,6 +39,7 @@
             <cmp-table
               ref="tableRef"
               v-model:pagination="towPageUI"
+              :fixed-height="true"
               row-key="_timestamp"
               :table-column="columnsProduceReport2"
               :table-data="Data2"
@@ -63,6 +67,7 @@
             <cmp-table
               ref="tableRef"
               v-model:pagination="threePageUI"
+              :fixed-height="true"
               row-key="_timestamp"
               :table-column="columnsProduceReport3"
               :table-data="Data3"
@@ -86,6 +91,7 @@
             <cmp-table
               ref="tableRef"
               v-model:pagination="fourPageUI"
+              :fixed-height="true"
               row-key="_timestamp"
               :table-column="columnsProduceReport4"
               :table-data="Data4"
@@ -319,7 +325,7 @@ const columnsProduceReport2 = computed(() => {
     {
       colKey: 'passRate',
       title: '良率',
-      width: 170,
+      width: 300,
     },
   ];
 });
@@ -372,17 +378,17 @@ const columnsProduceReport3 = computed(() => {
     {
       colKey: 'defectReasonQuantity',
       title: '缺陷原因数量',
-      width: 70,
+      width: 120,
     },
     {
       colKey: 'defectReasonTotal',
       title: '缺陷原因总数量',
-      width: 70,
+      width: 120,
     },
     {
       colKey: 'defectProportion',
       title: '占比',
-      width: 170,
+      width: 300,
     },
   ];
 });
@@ -444,7 +450,7 @@ const columnsProduceReport4 = computed(() => {
     {
       colKey: 'repairProportion',
       title: '占比',
-      width: 170,
+      width: 300,
     },
   ];
 });
@@ -505,7 +511,7 @@ const columnsProduceReport5 = computed(() => {
     {
       colKey: 'dutyProportion2',
       title: '占比',
-      width: 170,
+      width: 300,
     },
   ];
 });

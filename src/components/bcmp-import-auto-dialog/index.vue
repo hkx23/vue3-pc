@@ -730,7 +730,9 @@ const getSettingTableData = () => {
       insertRow[item.colKey] = '表单字段';
       continue;
     }
-    const currentTitle = item.title;
+    let currentTitle = item.title;
+    // currentTitle的内容需要把“(必填)”替换掉
+    currentTitle = currentTitle.replace(/\(必填\)/g, '');
     const mapValues = props.importColumns.filter((ii) => ii.title === currentTitle || ii.field === currentTitle);
     insertRow[item.colKey] = mapValues[0]?.field || 'notset';
   }

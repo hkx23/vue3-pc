@@ -51,8 +51,7 @@ export default {
 import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
-import { api as apiControl, ProductPackRuleDtl } from '@/api/control';
-import { api as apimain } from '@/api/main';
+import { api, ProductPackRuleDtl } from '@/api/main';
 
 import { useLang } from './lang';
 
@@ -103,12 +102,12 @@ const submit = async () => {
         return;
       }
       if (props.isAdd) {
-        apiControl.productPackRuleDtl.add(formData).then(() => {
+        api.productPackRuleDtl.add(formData).then(() => {
           MessagePlugin.success(t('common.message.addSuccess'));
           resolve(formData);
         });
       } else {
-        apiControl.productPackRuleDtl.update(formData).then(() => {
+        api.productPackRuleDtl.update(formData).then(() => {
           MessagePlugin.success(t('common.message.saveSuccess'));
           resolve(formData);
         });
@@ -119,7 +118,7 @@ const submit = async () => {
 
 // 初始化包装类型
 const initPackType = async () => {
-  const res = (await apimain.param.getListByGroupCode({
+  const res = (await api.param.getListByGroupCode({
     parmGroupCode: 'PKG_BARCODE_TYPE',
   })) as any;
   selectOptions.value = res;

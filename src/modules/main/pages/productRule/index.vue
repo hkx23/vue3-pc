@@ -148,7 +148,7 @@
 import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 
-import { api as apiControl, ProductPackRuleDtlVO, ProductPackRuleMapDTO } from '@/api/control';
+import { api, ProductPackRuleDtlVO, ProductPackRuleMapDTO } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -314,7 +314,7 @@ const conditionEnter = (data: any) => {
 const fetchTable = async () => {
   setLoading(true);
   try {
-    const data = (await apiControl.productPackRule.list({
+    const data = (await api.productPackRule.list({
       packRuleCode: optsValue.value.packRule,
       mitemCode: optsValue.value.mitemCode,
       mitemCategory: optsValue.value.mitemCategory,
@@ -339,7 +339,7 @@ const fetchPackDtlTable = async () => {
   }
   try {
     setLoadingPackDtl(true);
-    const data = (await apiControl.productPackRuleDtl.tree({
+    const data = (await api.productPackRuleDtl.tree({
       productPackRuleId: selectPackRuleRow.value.id,
     })) as any;
     tableDataProductPackDtl.value = data;
@@ -362,7 +362,7 @@ const fetchMitemTable = async () => {
   }
   try {
     setLoadingMitem(true);
-    const data = (await apiControl.productPackRuleMap.list({
+    const data = (await api.productPackRuleMap.list({
       packRuleId: selectPackRuleRow.value.id,
     })) as any;
     tableDataMitem.value = data.list;
@@ -391,7 +391,7 @@ const onDeletePackRowClick = async (row: any) => {
     confirmBtn: t('common.button.confirm'),
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
-      await apiControl.productPackRule.delete({ id: row.id });
+      await api.productPackRule.delete({ id: row.id });
       fetchTable();
       confirmDia.hide();
       MessagePlugin.success(t('common.message.deleteSuccess'));
@@ -411,7 +411,7 @@ const onDeletePackDtlRowClick = async (row: any) => {
     confirmBtn: t('common.button.confirm'),
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
-      await apiControl.productPackRuleDtl.delete({ id: row.id });
+      await api.productPackRuleDtl.delete({ id: row.id });
       fetchPackDtlTable();
       confirmDia.hide();
       MessagePlugin.success(t('common.message.deleteSuccess'));
@@ -431,7 +431,7 @@ const onDeleteMitemRowClick = async (row: any) => {
     cancelBtn: t('common.button.cancel'),
     onConfirm: async () => {
       console.log(row);
-      await apiControl.productPackRuleMap.delete({ id: row.id });
+      await api.productPackRuleMap.delete({ id: row.id });
       fetchMitemTable();
       confirmDia.hide();
       MessagePlugin.success(t('common.message.deleteSuccess'));
@@ -458,7 +458,7 @@ const onBatchDeleteMitemRowClick = async (row: any) => {
       const deleteModel: ProductPackRuleMapDTO = {
         ids,
       };
-      await apiControl.productPackRuleMap.batchDelete(deleteModel);
+      await api.productPackRuleMap.batchDelete(deleteModel);
       fetchMitemTable();
       confirmDia.hide();
       MessagePlugin.success(t('common.message.deleteSuccess'));
