@@ -844,12 +844,12 @@ export interface OqcInspectBillFullVO {
   /** 计量单位符号 */
   uomName?: string;
   displayName?: string;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 显示在成品发货实体 */
@@ -1260,6 +1260,7 @@ export interface IqcInspectSubmitDeliveryNoVO {
 export interface AddFileTypeVO {
   id?: string;
   serialNumber?: string;
+  fullFileName?: string;
   fileName?: string;
   fileType?: string;
   fileSizeShow?: string;
@@ -1447,8 +1448,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -1788,6 +1789,8 @@ export interface MitemInspectionBillVO {
   inspectionStringencyName?: string;
   /** 报检人 */
   displayName?: string;
+  /** 复检类型名称 */
+  recheckTypeName?: string;
 }
 
 /** 响应数据 */
@@ -2074,10 +2077,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 停留时长 */
   waitTime?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -2168,6 +2171,8 @@ export interface IqcInspectSearch {
   customerConditions?: Filter[];
   /** IQC单号 */
   iqcBillNo?: string;
+  mitemId?: string;
+  supplierId?: string;
   iqcInspectStdId?: string;
 }
 
@@ -3126,6 +3131,7 @@ export interface ImportSettingColumn {
 export interface BatchDynamicQueryDTO {
   dataTable?: DataTable;
   rows?: Record<string, object>[];
+  eid?: string;
 }
 
 export interface ConditionData {
@@ -3292,10 +3298,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -3488,13 +3494,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s3?: string;
+  s1?: string;
+  s4?: string;
+  iii?: string;
   i?: string;
   ii?: string;
+  s3?: string;
   s2?: string;
-  s1?: string;
-  iii?: string;
-  s4?: string;
 } | null;
 
 /** 计量单位 */

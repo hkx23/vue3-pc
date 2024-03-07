@@ -27,10 +27,7 @@
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :title="'复检单号：' + formData.recheckBillNo" :column="4" size="large">
           <t-descriptions-item label="复检类型"
-            ><t-select
-              v-model="formData.recheckType"
-              :options="recheckTypeOption"
-              :disabled="!_.isEmpty(formData.iqcBillNo)"
+            ><t-select v-model="formData.recheckType" :options="recheckTypeOption" :disabled="!isEdit"
           /></t-descriptions-item>
           <t-descriptions-item label="来源检验单">
             <bcmp-select-business
@@ -44,11 +41,12 @@
           </t-descriptions-item>
           <t-descriptions-item label="物料编码">
             <bcmp-select-business
-              v-if="formData.recheckType !== 'EXCEPTION'"
+              v-if="formData.recheckType !== 'EXCEPTION' && isEdit"
               v-model="formData.mitemId"
               type="mitem"
               :show-title="false"
               label-field="mitemCode"
+              @selection-change="onMitemSelectionChange"
             />
             <t-input v-else v-model="formData.mitemCode" disabled placeholder="" />
           </t-descriptions-item>
@@ -57,10 +55,27 @@
               {{ formData.mitemName }}
             </div>
           </t-descriptions-item>
-          <t-descriptions-item label="供应商编码">{{ formData.supplierCode }}</t-descriptions-item>
+          <t-descriptions-item label="供应商编码">
+            <bcmp-select-business
+              v-if="formData.recheckType !== 'EXCEPTION' && isEdit"
+              v-model="formData.supplierCode"
+              type="mitemInSupplier"
+              :show-title="false"
+              :parent-id="formData.mitemId"
+              label-field="supplierCode"
+              @selection-change="onSupplierSelectionChange" />
+            <t-input v-else v-model="formData.supplierCode" disabled placeholder=""
+          /></t-descriptions-item>
           <t-descriptions-item label="供应商名称">{{ formData.supplierName }}</t-descriptions-item>
-          <t-descriptions-item label="批量" span="2">
+          <t-descriptions-item label="批量">
             <t-input-number v-model="formData.inspectQty" :disabled="!isEdit" />
+          </t-descriptions-item>
+          <t-descriptions-item>
+            <template #label>
+              <t-link v-if="formData.recheckType !== 'EXCEPTION' && isEdit" theme="primary" @click="linkLoadTableStd"
+                >加载检验项目</t-link
+              >
+            </template>
           </t-descriptions-item>
           <t-descriptions-item label="复检原因"
             ><t-textarea v-model="formData.recheckReason" clearable :disabled="!isEdit"
@@ -91,30 +106,37 @@
               @refresh="loadTable"
             >
               <template #title> </template>
+
               <template #button> </template>
+
               <template #files="rowData">
                 <t-space>
                   <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
                 </t-space>
               </template>
+
               <template #op="rowData">
                 <t-space>
                   <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
                 </t-space>
               </template>
+
               <template #inspectResultSwitch="{ row }">
                 <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
               </template>
+
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
                   <div v-if="isEdit">填写</div>
                   <div v-else>查看</div>
                 </t-link>
               </template>
+
               <template #ngQty="{ row }">
                 <t-input v-if="isEdit" v-model="row.ngQty" />
                 <div v-else>{{ row.ngQty }}</div>
               </template>
+
               <template #ngReason="{ row }">
                 <t-input v-if="isEdit" v-model="row.ngReason" />
                 <div v-else>{{ row.ngReason }}</div>
@@ -135,30 +157,37 @@
               :loading="loading"
             >
               <template #title> </template>
+
               <template #button> </template>
+
               <template #files="rowData">
                 <t-space>
                   <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
                 </t-space>
               </template>
+
               <template #op="rowData">
                 <t-space>
                   <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
                 </t-space>
               </template>
+
               <template #inspectResultSwitch="{ row }">
                 <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
               </template>
+
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
                   <div v-if="isEdit">填写</div>
                   <div v-else>查看</div>
                 </t-link>
               </template>
+
               <template #ngQty="{ row }">
                 <t-input v-if="isEdit" v-model="row.ngQty" />
                 <div v-else>{{ row.ngQty }}</div>
               </template>
+
               <template #ngReason="{ row }">
                 <t-input v-if="isEdit" v-model="row.ngReason" />
                 <div v-else>{{ row.ngReason }}</div>
@@ -179,30 +208,37 @@
               :loading="loading"
             >
               <template #title> </template>
+
               <template #button> </template>
+
               <template #files="rowData">
                 <t-space>
                   <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
                 </t-space>
               </template>
+
               <template #op="rowData">
                 <t-space>
                   <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
                 </t-space>
               </template>
+
               <template #inspectResultSwitch="{ row }">
                 <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
               </template>
+
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
                   <div v-if="isEdit">填写</div>
                   <div v-else>查看</div>
                 </t-link>
               </template>
+
               <template #ngQty="{ row }">
                 <t-input v-if="isEdit" v-model="row.ngQty" />
                 <div v-else>{{ row.ngQty }}</div>
               </template>
+
               <template #ngReason="{ row }">
                 <t-input v-if="isEdit" v-model="row.ngReason" />
                 <div v-else>{{ row.ngReason }}</div>
@@ -226,6 +262,7 @@
     @batch-delete-success="batchDeleteSuccess"
   />
 </template>
+
 <script lang="ts">
 export default {
   name: 'FormInspect',
@@ -237,10 +274,9 @@ import _ from 'lodash';
 import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { reactive, Ref, ref, watch } from 'vue';
 
+// import { api as apiMain } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
-import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
 import formMeasure from './formMeasure.vue';
@@ -341,6 +377,11 @@ const tableSelectedChange = (value: any[], { selectedRowData }: any) => {
 };
 const onConfirmForm = async () => {
   try {
+    if (_.isEmpty(formData.recheckType)) {
+      MessagePlugin.error('复检类型不能为空.');
+      return;
+    }
+
     for (let index = 0; index < tableData.value.length; index++) {
       const item = tableData.value[index];
       if (item.inspectResultSwitch) {
@@ -483,6 +524,29 @@ const loadTableStd = async () => {
     console.log(e);
   }
 };
+const linkLoadTableStd = async () => {
+  if (_.isEmpty(formData.recheckType)) {
+    MessagePlugin.error('请选择复检类型.');
+    return;
+  }
+  if (_.isEmpty(formData.mitemId)) {
+    MessagePlugin.error('请选择物料.');
+    return;
+  }
+
+  if (_.isEmpty(formData.supplierId)) {
+    MessagePlugin.error('请选择供应商.');
+    return;
+  }
+  if (formData.inspectQty <= 0) {
+    MessagePlugin.error('请输入有效批量.');
+    return;
+  }
+  await loadTableStd();
+  if (tableData.value.length === 0) {
+    MessagePlugin.error('未找到检验项目.');
+  }
+};
 const reset = async () => {
   if (isEdit.value) {
     getBillNo();
@@ -514,21 +578,22 @@ const reset = async () => {
   formData.recheckTypeName = '';
   formData.recheckReason = '';
 };
-const showForm = async (edit, row) => {
-  isEdit.value = edit;
-  formVisible.value = true;
+// const showInspectForm = async (edit, row) => {
+//   isEdit.value = edit;
+//   formVisible.value = true;
 
-  reset();
+//   reset();
 
-  formData.recheckBillNo = row.recheckBillNo;
-  formData.billNoList.push({ billNo: row.recheckBillNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
-  formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
-  formData.recheckType = _.isEmpty(row.recheckType) ? 'EXCEPTION' : row.recheckType;
-  formData.recheckReason = row.recheckReason;
-  formData.iqcBillNo = row.iqcBillNo;
+//   formData.recheckBillNo = row.recheckBillNo;
+//   formData.billNoList.push({ billNo: row.recheckBillNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
+//   formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
+//   formData.recheckType = _.isEmpty(row.recheckType) ? 'EXCEPTION' : row.recheckType;
+//   formData.recheckReason = row.recheckReason;
+//   formData.iqcBillNo = row.iqcBillNo;
 
-  onIqcBillNoSelectionChange();
-};
+//   debugger;
+//   onIqcBillNoSelectionChange();
+// };
 const showFJForm = async (edit, row) => {
   isEdit.value = edit;
   formVisible.value = true;
@@ -538,9 +603,21 @@ const showFJForm = async (edit, row) => {
   formData.recheckBillNo = row.recheckBillNo;
   formData.billNoList.push({ billNo: row.recheckBillNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
   formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
-  formData.recheckType = _.isEmpty(row.recheckType) ? 'EXCEPTION' : row.recheckType;
+  formData.recheckType = row.recheckType;
   formData.recheckReason = row.recheckReason;
   formData.iqcBillNo = row.iqcBillNo;
+
+  formData.mitemId = row.mitemId;
+  formData.mitemCode = row.mitemCode;
+  formData.mitemName = row.mitemName;
+  formData.mitemCategoryId = row.mitemCategoryId;
+  formData.mitemCategoryCode = row.mitemCategoryCode;
+  formData.mitemCategoryName = row.mitemCategoryName;
+  formData.supplierId = row.supplierId;
+  formData.supplierCode = row.supplierCode;
+  formData.supplierName = row.supplierName;
+  formData.inspectQty = row.inspectQty;
+  formData.inspectionStringency = row.inspectionStringency;
 
   onFjBillNoSelectionChange();
 };
@@ -563,21 +640,40 @@ const parentConfirm = async (measureList, isAllOK) => {
 };
 const onIqcBillNoSelectionChange = async () => {
   try {
-    const model = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formData.iqcBillNo });
-    if (!_.isEmpty(model)) {
-      formData.mitemId = model.mitemId;
-      formData.mitemCode = model.mitemCode;
-      formData.mitemName = model.mitemName;
-      formData.inspectQty = model.inspectQty;
-      formData.supplierId = model.supplierId;
-      formData.supplierCode = model.supplierCode;
-      formData.supplierName = model.supplierName;
-      formData.mitemCategoryId = model.mitemCategoryId;
-      formData.mitemCategoryCode = model.mitemCategoryCode;
-      formData.mitemCategoryName = model.mitemCategoryName;
-      formData.inspectionStringency = model.inspectionStringency;
+    if (!_.isEmpty(formData.iqcBillNo)) {
+      const model = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formData.iqcBillNo });
+      if (!_.isEmpty(model)) {
+        formData.mitemId = model.mitemId;
+        formData.mitemCode = model.mitemCode;
+        formData.mitemName = model.mitemName;
+        formData.inspectQty = model.inspectQty;
+        formData.supplierId = model.supplierId;
+        formData.supplierCode = model.supplierCode;
+        formData.supplierName = model.supplierName;
+        formData.mitemCategoryId = model.mitemCategoryId;
+        formData.mitemCategoryCode = model.mitemCategoryCode;
+        formData.mitemCategoryName = model.mitemCategoryName;
+        formData.inspectionStringency = model.inspectionStringency;
 
-      await loadTableStd();
+        await loadTableStd();
+      }
+    } else {
+      formData.mitemId = '';
+      formData.mitemCode = '';
+      formData.mitemName = '';
+      formData.inspectQty = 0;
+      formData.supplierId = '';
+      formData.supplierCode = '';
+      formData.supplierName = '';
+      formData.mitemCategoryId = '';
+      formData.mitemCategoryCode = '';
+      formData.mitemCategoryName = '';
+      formData.inspectionStringency = '';
+      formData.inspectStdName = '';
+
+      tableData.value = [];
+      tableDataCount.value = [];
+      tableDataCquantitative.value = [];
     }
   } catch (e) {
     console.log(e);
@@ -585,26 +681,52 @@ const onIqcBillNoSelectionChange = async () => {
 };
 const onFjBillNoSelectionChange = async () => {
   try {
-    const model = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formData.iqcBillNo });
-    if (!_.isEmpty(model)) {
-      formData.mitemId = model.mitemId;
-      formData.mitemCode = model.mitemCode;
-      formData.mitemName = model.mitemName;
-      formData.inspectQty = model.inspectQty;
-      formData.supplierId = model.supplierId;
-      formData.supplierCode = model.supplierCode;
-      formData.supplierName = model.supplierName;
-      formData.mitemCategoryId = model.mitemCategoryId;
-      formData.mitemCategoryCode = model.mitemCategoryCode;
-      formData.mitemCategoryName = model.mitemCategoryName;
-      formData.inspectionStringency = model.inspectionStringency;
-
-      await loadTable();
+    if (!_.isEmpty(formData.iqcBillNo)) {
+      const model = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formData.iqcBillNo });
+      if (!_.isEmpty(model)) {
+        formData.mitemId = model.mitemId;
+        formData.mitemCode = model.mitemCode;
+        formData.mitemName = model.mitemName;
+        formData.inspectQty = model.inspectQty;
+        formData.supplierId = model.supplierId;
+        formData.supplierCode = model.supplierCode;
+        formData.supplierName = model.supplierName;
+        formData.mitemCategoryId = model.mitemCategoryId;
+        formData.mitemCategoryCode = model.mitemCategoryCode;
+        formData.mitemCategoryName = model.mitemCategoryName;
+        formData.inspectionStringency = model.inspectionStringency;
+      }
     }
+    await loadTable();
   } catch (e) {
     console.log(e);
   }
 };
+const onMitemSelectionChange = async (data) => {
+  try {
+    formData.mitemCode = data.mitemCode;
+    formData.mitemName = data.mitemName;
+    formData.mitemCategoryId = data.mitemCategoryId;
+    formData.mitemCategoryCode = data.mitemCategoryCode;
+    formData.mitemCategoryName = data.mitemCategoryName;
+    formData.supplierId = '';
+    formData.supplierCode = '';
+    formData.supplierName = '';
+  } catch (e) {
+    console.log(e);
+  }
+};
+const onSupplierSelectionChange = async (data) => {
+  try {
+    formData.supplierId = data.supplierId;
+    formData.supplierCode = data.supplierCode;
+    formData.supplierName = data.supplierName;
+    formData.inspectionStringency = data.inspectionStringency;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 // begin 文件上传
 
 const formFilesRef = ref(null);
@@ -673,11 +795,12 @@ const batchDeleteSuccess = async (files: AddFileType[]) => {
 defineExpose({
   form: formRef,
   reset,
-  showForm,
+  // showInspectForm,
   showFJForm,
   loadTable,
 });
 </script>
+
 <style lang="less" scoped>
 :deep .t-dialog__body {
   padding: 0 !important;
@@ -699,18 +822,34 @@ defineExpose({
 .div_break_word {
   max-width: 500px;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* 允许的最大行数 */
-  -webkit-box-orient: vertical; /* 设置为垂直排列 */
-  overflow: hidden; /* 超出部分隐藏 */
-  text-overflow: ellipsis; /* 文本溢出时显示省略号 */
-  word-wrap: break-word; /* 强制换行，防止单词过长导致溢出 */
-  line-height: 1.5em; /* 行高，按需调整 */
-  max-height: 3em; /* 根据行高计算最多显示两行的高度 */
+  -webkit-line-clamp: 2;
+
+  /* 允许的最大行数 */
+  -webkit-box-orient: vertical;
+
+  /* 设置为垂直排列 */
+  overflow: hidden;
+
+  /* 超出部分隐藏 */
+  text-overflow: ellipsis;
+
+  /* 文本溢出时显示省略号 */
+  word-wrap: break-word;
+
+  /* 强制换行，防止单词过长导致溢出 */
+  line-height: 1.5em;
+
+  /* 行高，按需调整 */
+  max-height: 3em;
+
+  /* 根据行高计算最多显示两行的高度 */
 }
 
 .tabs_right_ops {
   display: flex;
-  justify-content: space-between; /* 水平间距均匀分配 */
+  justify-content: space-between;
+
+  /* 水平间距均匀分配 */
 
   /* 或者使用下面的方式实现间距 */
 

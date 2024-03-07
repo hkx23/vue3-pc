@@ -3055,10 +3055,16 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  flpickQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
   /**
@@ -3068,12 +3074,6 @@ export interface MoIssuanceDtlVO {
   moRequestQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  flpickQty?: number;
-  /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
 }
 
 /** 通用响应类 */
@@ -3410,15 +3410,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -3431,14 +3431,18 @@ export interface AlreadyRequisitionVO {
   pickQty?: number;
 }
 
+/** 配送制单获取明细实体 */
+export interface GetMaterialsDtlDTO {
+  moscheId?: string;
+  mitemId?: string;
+}
+
 /** 领料制单提交模型 */
 export interface MaterialRequisitionDTO {
   /** 作废的单据id集合 */
   cancelledIds?: string[];
   /** 新增界面-获取明细 */
   moScheCodeList?: string[];
-  /** 新增界面-多个物料ID */
-  mitemIds?: string[];
   warehouseId?: string;
   toWarehouseId?: string;
   /** 新增界面-备注 */
@@ -3449,6 +3453,8 @@ export interface MaterialRequisitionDTO {
   alreadyRequisitionVO?: AlreadyRequisitionVO;
   /** 新增界面-提交的模型-明细信息 */
   submitList?: MaterialRequisitionDtlVO[];
+  /** 配送指令-配送制单-获取明细请求参数实体列表 */
+  materialList?: GetMaterialsDtlDTO[];
 }
 
 /** 新增界面-提交的模型-明细信息 */
@@ -3548,13 +3554,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -4330,6 +4336,7 @@ export interface ImportSettingColumn {
 export interface BatchDynamicQueryDTO {
   dataTable?: DataTable;
   rows?: Record<string, object>[];
+  eid?: string;
 }
 
 export interface ConditionData {
@@ -5306,15 +5313,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */

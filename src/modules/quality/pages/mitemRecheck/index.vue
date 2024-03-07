@@ -21,17 +21,7 @@
       >
         <template #title>工作台</template>
         <template #button>
-          <t-button theme="primary" @click="onShowDialog(true, null)">新增复检</t-button>
-        </template>
-        <template #op="rowData">
-          <t-space>
-            <t-link
-              v-if="rowData.row.inspectResult === 'UNINSPECT' || _.isEmpty(rowData.row.recheckBillNo)"
-              theme="primary"
-              @click="onShowDialog(true, rowData)"
-              >复检</t-link
-            >
-          </t-space>
+          <t-button theme="primary" @click="onLoadFJDialog(true, null)">新增复检</t-button>
         </template>
 
         <template #recheckBillNo="rowData">
@@ -55,8 +45,6 @@ import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
-import CmpQuery from '@/components/cmp-query/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -163,7 +151,7 @@ const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
   //   width: 50,
   // },
   { title: '复检单号', width: 160, colKey: 'recheckBillNo' },
-  { title: '复检类型', width: 100, colKey: 'reCheckTypeName' },
+  { title: '复检类型', width: 100, colKey: 'recheckTypeName' },
   { title: '来源检验单', width: 160, colKey: 'iqcBillNo' },
   { title: '物料类别', width: 160, colKey: 'mitemCategoryName' },
   { title: '物料编码', width: 160, colKey: 'mitemCode' },
@@ -173,7 +161,7 @@ const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '批量', width: 100, colKey: 'inspectQty' },
   { title: '报检人', width: 100, colKey: 'displayName' },
   { title: '报检时间', width: 200, colKey: 'timeCreate' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  // { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 
 const getIqcInspectionStatus = async () => {
@@ -264,14 +252,14 @@ const pageInit = async () => {
 const onSelectWaitInspectChange = (value: any) => {
   selectWaitId.value = value;
 };
-const onShowDialog = async (isEdit, rowData) => {
-  const { showForm } = formRef.value;
-  if (rowData !== null) {
-    await showForm(isEdit, rowData.row);
-  } else {
-    await showForm(isEdit, null);
-  }
-};
+// const onShowDialog = async (isEdit, rowData) => {
+//   const { showInspectForm } = formRef.value;
+//   if (rowData !== null) {
+//     await showInspectForm(isEdit, rowData.row);
+//   } else {
+//     await showInspectForm(isEdit, null);
+//   }
+// };
 const onLoadFJDialog = async (isEdit, rowData) => {
   const { showFJForm } = formRef.value;
   if (rowData !== null) {

@@ -4011,14 +4011,108 @@ export interface ResultPagingDataMitemUom {
 }
 
 export interface MitemInSupplierSearch {
-  mitemKeyword?: string;
-  supplierKeyword?: string;
   /** @format int32 */
   pageNum?: number;
   /** @format int32 */
   pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
   sorts?: SortParam[];
   filters?: Filter[];
+  customerConditions?: Filter[];
+  mitemKeyword?: string;
+  supplierKeyword?: string;
+}
+
+/** 显示物料与供应商关系实体 */
+export interface MitemInSupplierVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  supplierId?: string;
+  mitemId?: string;
+  /**
+   * 最小包装数量
+   * @format int32
+   */
+  qty?: number;
+  /** 检验严格度 */
+  inspectionStringency?: string;
+  /**
+   * 是否免检
+   * @format int32
+   */
+  isExemptionInspection?: number;
+  /**
+   * 是否强制供方检验
+   * @format int32
+   */
+  isForceInspection?: number;
+  /**
+   * 免检失效日期
+   * @format date-time
+   */
+  dateExemptionExpired?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMitemInSupplierVO = {
+  list?: MitemInSupplierVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMitemInSupplierVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMitemInSupplierVO;
 }
 
 /** 物料供应商关系 */
@@ -4242,14 +4336,14 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isBatchName?: string;
+  isProductName?: string;
   stateName?: string;
   isState?: boolean;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isInProcessChecked?: boolean;
-  isBatchName?: string;
   isProductChecked?: boolean;
 }
 
@@ -8074,6 +8168,8 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
   /** 是否不可编辑 */
@@ -12294,6 +12390,24 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 物料供应商关系
+     * @name GetMitemInSupplierListByMitemId
+     * @summary 根据物料获取供应商信息
+     * @request POST:/mitemInSupplier/getMitemInSupplierListByMitemId
+     * @secure
+     */
+    getMitemInSupplierListByMitemId: (data: MitemInSupplierSearch) =>
+      http.request<ResultPagingDataMitemInSupplierVO['data']>(
+        `/api/main/mitemInSupplier/getMitemInSupplierListByMitemId`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
 
     /**
      * No description
