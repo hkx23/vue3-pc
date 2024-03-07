@@ -15,6 +15,7 @@
     :label="title"
     :multiple="multiple"
     :readonly="readonly"
+    :disabled="disabled"
     table-layout="auto"
     v-bind="selectAttr"
     :min-collapsed-num="1"

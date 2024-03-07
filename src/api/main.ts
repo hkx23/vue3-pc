@@ -4162,7 +4162,6 @@ export interface ImportColumn {
   isRequired?: boolean;
   isValidateRepeat?: boolean;
   validateExpression?: string;
-  items?: string[];
   required?: boolean;
   validateRepeat?: boolean;
 }
@@ -4245,13 +4244,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
+  isProductName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isProductName?: string;
-  isBatchName?: string;
   isInProcessName?: string;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4394,8 +4393,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5135,7 +5134,6 @@ export interface ImportSettingDTO {
   settingModel?: ImportSetting;
   columnList?: ImportSettingColumn[];
   ruleList?: ImportSettingRule[];
-  genTemplateName?: string;
 }
 
 /** 导入校验表 */
@@ -5171,33 +5169,6 @@ export interface ImportSettingRule {
   uniqueColumns?: string;
   /** 数据转换配置 */
   datatransferJson?: string;
-}
-
-/** 上传控件文件VO */
-export type AddFileTypeVO = {
-  id?: string;
-  serialNumber?: string;
-  fullFileName?: string;
-  fileName?: string;
-  fileType?: string;
-  fileSizeShow?: string;
-  fileSize?: number;
-  timeUpload?: string;
-  signedUrl?: string;
-  percent?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultAddFileTypeVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 上传控件文件VO */
-  data?: AddFileTypeVO;
 }
 
 /** 通用响应类 */
@@ -7185,8 +7156,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -8101,12 +8072,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12875,21 +12846,6 @@ export const api = {
      */
     importData: (data: CommonImportAuto) =>
       http.request<ResultImportSummary['data']>(`/api/main/importManage/import`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 用户
-     * @name GenerateImportTemplate
-     * @summary 新增导入配置信息
-     * @request POST:/importManage/generateImportTemplate
-     * @secure
-     */
-    generateImportTemplate: (data: ImportSettingDTO) =>
-      http.request<ResultAddFileTypeVO['data']>(`/api/main/importManage/generateImportTemplate`, {
         method: 'POST',
         body: data as any,
       }),
