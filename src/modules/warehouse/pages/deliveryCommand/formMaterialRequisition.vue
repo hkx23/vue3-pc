@@ -113,7 +113,13 @@ import _ from 'lodash';
 import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, defineProps, reactive, Ref, ref, watch } from 'vue';
 
-import { api as apiWarehouse, MaterialRequisitionDtlVO, MaterialRequisitionDTO, OnHandVO } from '@/api/warehouse';
+import {
+  api as apiWarehouse,
+  GetMaterialsDtlDTO,
+  MaterialRequisitionDtlVO,
+  MaterialRequisitionDTO,
+  OnHandVO,
+} from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 
 import { useLang } from './lang';
@@ -130,10 +136,15 @@ const FORM_RULES = {
   toWarehouseId: [{ required: true, message: t('common.placeholder.input', [t('deliveryCommand.toWarehouseId')]) }],
 };
 
+interface formMaterialRequisitionProps {
+  idCollection?: {
+    warehouseId: string;
+    list: GetMaterialsDtlDTO[];
+  };
+}
+
 // 接收父组件传过来的 ID 集合
-const props = defineProps({
-  idCollection: Object,
-});
+const props = withDefaults(defineProps<formMaterialRequisitionProps>(), {});
 
 interface FormMaterialRequisition extends MaterialRequisitionDTO {
   warehouseId: string;
@@ -146,7 +157,7 @@ interface FormMaterialRequisition extends MaterialRequisitionDTO {
 watch(
   () => props.idCollection,
   (newVal) => {
-    if (newVal && newVal.warehouseId && newVal.warehouseId.length > 0) {
+    if (newVal && newVal?.list.length > 0) {
       [formData.toWarehouseId] = newVal.warehouseId;
     }
   },
@@ -287,7 +298,9 @@ const fetchMaterialDtlTable = async () => {
     setLoadingMaterialDtl(true);
     const data = await apiWarehouse.materialRequisition.getCommandReqDtls({
       ...formData,
-      moScheCodeList: props.idCollection.moScheId,
+      materialList: props.idCollection?.list,
+      // mitemIds: props.idCollection.mitemId,
+      // moScheCodeList: props.idCollection.moScheId,
     });
     tableDataMaterialRequisition.value = data;
   } catch (e) {
