@@ -79,6 +79,7 @@
 </template>
 
 <script setup lang="ts">
+import { useFullscreen } from '@vueuse/core';
 import {
   ChevronDownIcon,
   Edit2Icon,
@@ -91,7 +92,6 @@ import {
 } from 'tdesign-icons-vue-next';
 import type { PropType } from 'vue';
 import { computed, ref, watch } from 'vue';
-import { useFullscreen } from 'vue-hooks-plus';
 import { useRouter } from 'vue-router';
 
 import LogoFull from '@/assets/assets-logo-full.svg?component';
@@ -201,9 +201,9 @@ const handleLogout = () => {
   });
 };
 
-const [, { enterFullscreen }] = useFullscreen();
+const { enter } = useFullscreen();
 const onClickFullScreen = () => {
-  enterFullscreen();
+  enter();
 };
 
 const formRef = ref(null);
