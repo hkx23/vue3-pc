@@ -1,21 +1,21 @@
 <template>
   <t-dialog
     v-model:visible="formVisible"
-    header="物料复检"
+    :header="t('mitemRecheck.物料复检')"
     width="98%"
     placement="top"
     top="20"
     :cancel-btn="
       isEdit
         ? {
-            content: '取消',
+            content: t('mitemRecheck.取消'),
           }
         : null
     "
     :confirm-btn="
       isEdit
         ? {
-            content: '提交',
+            content: t('mitemRecheck.提交'),
             theme: 'primary',
           }
         : null
@@ -25,15 +25,15 @@
   >
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
-        <t-descriptions :title="'复检单号：' + formInspectData.recheckBillNo" :column="4" size="large">
-          <t-descriptions-item label="复检类型"
+        <t-descriptions :title="t('mitemRecheck.复检单号：') + formInspectData.recheckBillNo" :column="4" size="large">
+          <t-descriptions-item :label="t('mitemRecheck.复检类型')"
             ><t-select
               v-model="formInspectData.recheckType"
               :options="recheckTypeOption"
               :disabled="!isEdit"
               @change="recheckTypeChange"
           /></t-descriptions-item>
-          <t-descriptions-item label="来源检验单">
+          <t-descriptions-item :label="t('mitemRecheck.来源检验单')">
             <bcmp-select-business
               v-if="formInspectData.recheckType === 'EXCEPTION' && isEdit"
               ref="recheckTypeRef"
@@ -45,7 +45,7 @@
             />
             <t-input v-else v-model="formInspectData.iqcBillNo" disabled placeholder="" />
           </t-descriptions-item>
-          <t-descriptions-item label="物料编码">
+          <t-descriptions-item :label="t('mitemRecheck.物料编码')">
             <bcmp-select-business
               v-if="formInspectData.recheckType !== 'EXCEPTION' && isEdit"
               v-model="formInspectData.mitemId"
@@ -57,12 +57,12 @@
             />
             <t-input v-else v-model="formInspectData.mitemCode" disabled placeholder="" />
           </t-descriptions-item>
-          <t-descriptions-item label="物料名">
+          <t-descriptions-item :label="t('mitemRecheck.物料名')">
             <div class="div_break_word">
               {{ formInspectData.mitemName }}
             </div>
           </t-descriptions-item>
-          <t-descriptions-item label="供应商编码">
+          <t-descriptions-item :label="t('mitemRecheck.供应商编码')">
             <bcmp-select-business
               v-if="formInspectData.recheckType !== 'EXCEPTION' && isEdit"
               v-model="formInspectData.supplierCode"
@@ -74,16 +74,20 @@
               @selection-change="onSupplierSelectionChange" />
             <t-input v-else v-model="formInspectData.supplierCode" disabled placeholder=""
           /></t-descriptions-item>
-          <t-descriptions-item label="供应商名称">{{ formInspectData.supplierName }}</t-descriptions-item>
-          <t-descriptions-item label="批量">
+          <t-descriptions-item :label="t('mitemRecheck.供应商名称')">{{
+            formInspectData.supplierName
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemRecheck.批量')">
             <t-input-number v-model="formInspectData.inspectQty" :disabled="!isEdit" @change="inspectQtyChange" />
           </t-descriptions-item>
           <t-descriptions-item>
             <template #label>
-              <t-link v-if="isEdit" theme="primary" @click="linkLoadTableStd">加载检验项目</t-link>
+              <t-link v-if="isEdit" theme="primary" @click="linkLoadTableStd">{{
+                t('mitemRecheck.加载检验项目')
+              }}</t-link>
             </template>
           </t-descriptions-item>
-          <t-descriptions-item label="复检原因"
+          <t-descriptions-item :label="t('mitemRecheck.复检原因')"
             ><t-textarea v-model="formInspectData.recheckReason" clearable :disabled="!isEdit"
           /></t-descriptions-item>
         </t-descriptions>
@@ -92,11 +96,11 @@
         <t-tabs :model-value="selectTabValue" @change="tabsChange">
           <template #action>
             <div class="tabs_right_ops">
-              <t-checkbox label="只显示不合格" style="width: 170px" />
-              <t-input placeholder="请输入搜索关键字" />
+              <t-checkbox :label="t('mitemRecheck.只显示不合格')" style="width: 170px" />
+              <t-input :placeholder="t('mitemRecheck.请输入搜索关键字')" />
             </div>
           </template>
-          <t-tab-panel value="tab1" label="全部" :destroy-on-hide="false">
+          <t-tab-panel value="tab1" :label="t('mitemRecheck.全部')" :destroy-on-hide="false">
             <cmp-table
               row-key="id"
               :hover="false"
@@ -117,13 +121,13 @@
 
               <template #files="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
+                  <t-link theme="primary" @click="onShowFiles(rowData)">{{ t('mitemRecheck.查看') }}</t-link>
                 </t-space>
               </template>
 
               <template #op="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
+                  <t-link theme="primary" @click="showUplaodImg(rowData)">{{ t('mitemRecheck.上传照片') }}</t-link>
                 </t-space>
               </template>
 
@@ -133,8 +137,8 @@
 
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
-                  <div v-if="isEdit">填写</div>
-                  <div v-else>查看</div>
+                  <div v-if="isEdit">{{ t('mitemRecheck.填写') }}</div>
+                  <div v-else>{{ t('mitemRecheck.查看') }}</div>
                 </t-link>
               </template>
 
@@ -149,7 +153,7 @@
               </template>
             </cmp-table>
           </t-tab-panel>
-          <t-tab-panel value="tab2" label="计数" :destroy-on-hide="false">
+          <t-tab-panel value="tab2" :label="t('mitemRecheck.计数')" :destroy-on-hide="false">
             <cmp-table
               row-key="id"
               :hover="false"
@@ -168,13 +172,13 @@
 
               <template #files="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
+                  <t-link theme="primary" @click="onShowFiles(rowData)">{{ t('mitemRecheck.查看') }}</t-link>
                 </t-space>
               </template>
 
               <template #op="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
+                  <t-link theme="primary" @click="showUplaodImg(rowData)">{{ t('mitemRecheck.上传照片') }}</t-link>
                 </t-space>
               </template>
 
@@ -184,8 +188,8 @@
 
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
-                  <div v-if="isEdit">填写</div>
-                  <div v-else>查看</div>
+                  <div v-if="isEdit">{{ t('mitemRecheck.填写') }}</div>
+                  <div v-else>{{ t('mitemRecheck.查看') }}</div>
                 </t-link>
               </template>
 
@@ -200,7 +204,7 @@
               </template>
             </cmp-table>
           </t-tab-panel>
-          <t-tab-panel value="tab3" label="计量" :destroy-on-hide="false">
+          <t-tab-panel value="tab3" :label="t('mitemRecheck.计量')" :destroy-on-hide="false">
             <cmp-table
               row-key="id"
               :hover="false"
@@ -219,13 +223,13 @@
 
               <template #files="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
+                  <t-link theme="primary" @click="onShowFiles(rowData)">{{ t('mitemRecheck.查看') }}</t-link>
                 </t-space>
               </template>
 
               <template #op="rowData">
                 <t-space>
-                  <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
+                  <t-link theme="primary" @click="showUplaodImg(rowData)">{{ t('mitemRecheck.上传照片') }}</t-link>
                 </t-space>
               </template>
 
@@ -235,8 +239,8 @@
 
               <template #measureOp="{ row }">
                 <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
-                  <div v-if="isEdit">填写</div>
-                  <div v-else>查看</div>
+                  <div v-if="isEdit">{{ t('mitemRecheck.填写') }}</div>
+                  <div v-else>{{ t('mitemRecheck.查看') }}</div>
                 </t-link>
               </template>
 
@@ -268,14 +272,7 @@
     @batch-delete-success="batchDeleteSuccess"
   />
 </template>
-
-<script lang="ts">
-export default {
-  name: 'FormInspect',
-};
-</script>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import _ from 'lodash';
 import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { reactive, Ref, ref, watch } from 'vue';
@@ -289,7 +286,9 @@ import { useLoading } from '@/hooks/modules/loading';
 
 import formMeasure from './formMeasure.vue';
 import formNg from './formNg.vue';
+import { useLang } from './lang';
 
+const { t } = useLang();
 const Emit = defineEmits(['parent-refresh-event', 'form-close-event']);
 
 const formVisible = ref(false);
@@ -338,24 +337,36 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   //   type: 'multiple',
   //   width: 50,
   // },
-  { title: '项目类别', width: 100, colKey: 'itemCategory' },
-  { title: '检验内容', width: 160, colKey: 'itemName' },
-  { title: '技术要求', width: 160, colKey: 'technicalRequest' },
-  { title: '项目特性', width: 100, colKey: 'characteristicsName' },
-  { title: '检验工具', width: 100, colKey: 'inspectTool' },
-  { title: '样本数', width: 100, colKey: 'sampleQty' },
+  { title: t('mitemRecheck.项目类别'), width: 100, colKey: 'itemCategory' },
+  { title: t('mitemRecheck.检验内容'), width: 160, colKey: 'itemName' },
+  { title: t('mitemRecheck.技术要求'), width: 160, colKey: 'technicalRequest' },
+  { title: t('mitemRecheck.项目特性'), width: 100, colKey: 'characteristicsName' },
+  { title: t('mitemRecheck.检验工具'), width: 100, colKey: 'inspectTool' },
+  { title: t('mitemRecheck.样本数'), width: 100, colKey: 'sampleQty' },
   { title: 'AC/RE', width: 100, colKey: 'acRe' },
-  { title: '检验结果', width: 100, colKey: 'inspectResultSwitch' },
-  { title: '测量值', width: 100, colKey: 'measureOp' },
-  { title: '不良数', width: 120, colKey: 'ngQty' },
-  { title: '不良描述', width: 200, colKey: 'ngReason' },
-  { title: '抽样方案', width: 100, colKey: 'samplingStandardType' },
-  { title: '检验水平', width: 160, colKey: 'inspectLevelName' },
-  { title: '不合格分类', width: 100, colKey: 'unqualifyCategoryName' },
-  { title: '是否CTQ', width: 100, colKey: 'isCtqName' },
-  { title: '检验依据', width: 160, colKey: 'inspectBasis' },
-  { title: '附件', align: 'left', fixed: 'right', width: 160, colKey: 'files' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  { title: t('mitemRecheck.检验结果'), width: 100, colKey: 'inspectResultSwitch' },
+  { title: t('mitemRecheck.测量值'), width: 100, colKey: 'measureOp' },
+  { title: t('mitemRecheck.不良数'), width: 120, colKey: 'ngQty' },
+  { title: t('mitemRecheck.不良描述'), width: 200, colKey: 'ngReason' },
+  { title: t('mitemRecheck.抽样方案'), width: 100, colKey: 'samplingStandardType' },
+  { title: t('mitemRecheck.检验水平'), width: 160, colKey: 'inspectLevelName' },
+  { title: t('mitemRecheck.不合格分类'), width: 100, colKey: 'unqualifyCategoryName' },
+  { title: t('mitemRecheck.是否CTQ'), width: 100, colKey: 'isCtqName' },
+  { title: t('mitemRecheck.检验依据'), width: 160, colKey: 'inspectBasis' },
+  {
+    title: t('mitemRecheck.附件'),
+    align: 'left',
+    fixed: 'right',
+    width: 160,
+    colKey: 'files',
+  },
+  {
+    title: t('mitemRecheck.操作'),
+    align: 'left',
+    fixed: 'right',
+    width: 160,
+    colKey: 'op',
+  },
 ];
 
 const tableDataCount = ref([]);
@@ -363,31 +374,34 @@ const tableDataCquantitative = ref([]);
 
 watch(
   () => formInspectData.recheckType,
-  (newValue, oldValue) => {
+  (newValue) => {
     if (newValue === 'EXCEPTION') {
-      formInspectData.recheckTypeName = '异常复检';
+      formInspectData.recheckTypeName = t('mitemRecheck.异常复检');
     } else if (newValue === 'OVERDUE') {
-      formInspectData.recheckTypeName = '超期复检';
+      formInspectData.recheckTypeName = t('mitemRecheck.超期复检');
     } else if (newValue === 'RECHECK') {
-      formInspectData.recheckTypeName = '常规复检';
+      formInspectData.recheckTypeName = t('mitemRecheck.常规复检');
     }
   },
 );
 const recheckTypeOption = ref([]);
 const getRecheckTypeOption = async () => {
   recheckTypeOption.value = [];
-  recheckTypeOption.value.push({ value: 'EXCEPTION', label: '异常复检' });
-  recheckTypeOption.value.push({ value: 'OVERDUE', label: '超期复检' });
-  recheckTypeOption.value.push({ value: 'RECHECK', label: '常规复检' });
+  recheckTypeOption.value.push({
+    value: 'EXCEPTION',
+    label: t('mitemRecheck.异常复检'),
+  });
+  recheckTypeOption.value.push({ value: 'OVERDUE', label: t('mitemRecheck.超期复检') });
+  recheckTypeOption.value.push({ value: 'RECHECK', label: t('mitemRecheck.常规复检') });
 };
 
-const tableSelectedChange = (value: any[], { selectedRowData }: any) => {
+const tableSelectedChange = (value: any[]) => {
   tableSelectedRowKeys.value = value;
 };
 const onConfirmForm = async () => {
   try {
     if (_.isEmpty(formInspectData.recheckType)) {
-      MessagePlugin.error('复检类型不能为空.');
+      MessagePlugin.error(t('mitemRecheck.复检类型不能为空.'));
       return;
     }
 
@@ -398,21 +412,21 @@ const onConfirmForm = async () => {
       } else {
         item.inspectResult = 'NG';
         if (item.characteristics === 'COUNT' && _.isEmpty(item.ngQty)) {
-          MessagePlugin.error('检验结果不合格时,请填写不良数.');
+          MessagePlugin.error(t('mitemRecheck.检验结果不合格时,请填写不良数.'));
           return;
         }
 
         if (item.characteristics === 'QUANTITATIVE') {
           if (_.isEmpty(item.ngQty) || item.ngQty === '') {
-            MessagePlugin.error('检验结果不合格时,请填写不良数.');
+            MessagePlugin.error(t('mitemRecheck.检验结果不合格时,请填写不良数.'));
             return;
           }
           if (item.ngQty > item.sampleQty) {
-            MessagePlugin.error('不良数不能大于样本数.');
+            MessagePlugin.error(t('mitemRecheck.不良数不能大于样本数.'));
             return;
           }
           if (item.ngQty <= 0) {
-            MessagePlugin.error('请输入正确不良数.');
+            MessagePlugin.error(t('mitemRecheck.请输入正确不良数.'));
             return;
           }
         }
@@ -461,7 +475,9 @@ const tabsChange = async (tabValue) => {
 };
 const getBillNo = async () => {
   try {
-    const recheckBillNo = await apiQuality.billSeq.getBillNo({ prefix: 'IQCFJ' });
+    const recheckBillNo = await apiQuality.billSeq.getBillNo({
+      prefix: 'IQCFJ',
+    });
     formInspectData.recheckBillNo = recheckBillNo;
   } catch (e) {
     console.log(e);
@@ -537,25 +553,25 @@ const loadTableStd = async () => {
 };
 const linkLoadTableStd = async () => {
   if (_.isEmpty(formInspectData.recheckType)) {
-    MessagePlugin.error('请选择复检类型.');
+    MessagePlugin.error(t('mitemRecheck.请选择复检类型.'));
     return;
   }
   if (_.isEmpty(formInspectData.mitemId)) {
-    MessagePlugin.error('请选择物料.');
+    MessagePlugin.error(t('mitemRecheck.请选择物料.'));
     return;
   }
 
   if (_.isEmpty(formInspectData.supplierId)) {
-    MessagePlugin.error('请选择供应商.');
+    MessagePlugin.error(t('mitemRecheck.请选择供应商.'));
     return;
   }
   if (formInspectData.inspectQty <= 0) {
-    MessagePlugin.error('请输入有效批量.');
+    MessagePlugin.error(t('mitemRecheck.请输入有效批量.'));
     return;
   }
   await loadTableStd();
   if (tableData.value.length === 0) {
-    MessagePlugin.error('未找到检验项目.');
+    MessagePlugin.error(t('mitemRecheck.未找到检验项目.'));
   }
 };
 const reset = async () => {
@@ -597,7 +613,11 @@ const showFJForm = async (edit, row) => {
 
   if (row !== null) {
     formInspectData.recheckBillNo = row.recheckBillNo;
-    formInspectData.billNoList.push({ billNo: row.recheckBillNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
+    formInspectData.billNoList.push({
+      billNo: row.recheckBillNo,
+      erpLineNo: row.erpLineNo,
+      billNoDtlId: row.id,
+    });
     formInspectData.billNoStr = formInspectData.billNoList.map((n) => n.billNo).join(',');
     formInspectData.recheckType = row.recheckType;
     formInspectData.recheckReason = row.recheckReason;
@@ -659,7 +679,9 @@ const onIqcBillNoSelectionChange = async () => {
   console.log('onIqcBillNoSelectionChange 更新');
   try {
     if (!_.isEmpty(formInspectData.iqcBillNo)) {
-      const model = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formInspectData.iqcBillNo });
+      const model = await apiQuality.iqcInspect.getIqcBillInfo({
+        iqcBillNo: formInspectData.iqcBillNo,
+      });
       if (!_.isEmpty(model)) {
         formInspectData.mitemId = model.mitemId;
         formInspectData.mitemCode = model.mitemCode;
@@ -707,12 +729,12 @@ const onSupplierSelectionChange = async (data) => {
   }
 };
 
-const inspectQtyChange = async (value, context) => {
+const inspectQtyChange = async () => {
   tableData.value = [];
   tableDataCount.value = [];
   tableDataCquantitative.value = [];
 };
-const recheckTypeChange = async (data) => {
+const recheckTypeChange = async () => {
   clearFormData();
 };
 
@@ -739,11 +761,11 @@ const showUplaodImg = async (rowData) => {
 const uploadSuccess = async (file: AddFileType) => {
   try {
     if (!_.isEmpty(selectIqcInspectRecheckDtlId.value)) {
-      const list = await apiQuality.iqcInspectRecheckDtlFile.addIqcInspectRecheckDtlFile({
+      await apiQuality.iqcInspectRecheckDtlFile.addIqcInspectRecheckDtlFile({
         iqcInspectRecheckDtlId: selectIqcInspectRecheckDtlId.value,
         fileName: file.fileName,
       });
-      MessagePlugin.success('文件上传成功');
+      MessagePlugin.success(t('mitemRecheck.文件上传成功'));
     }
   } catch (e) {
     console.log(e);
@@ -752,11 +774,11 @@ const uploadSuccess = async (file: AddFileType) => {
 const deleteSuccess = async (file: AddFileType) => {
   try {
     if (!_.isEmpty(selectIqcInspectRecheckDtlId.value)) {
-      const list = await apiQuality.iqcInspectRecheckDtlFile.deleteIqcInspectRecheckDtlFile({
+      await apiQuality.iqcInspectRecheckDtlFile.deleteIqcInspectRecheckDtlFile({
         iqcInspectRecheckDtlId: selectIqcInspectRecheckDtlId.value,
         fileName: file.fileName,
       });
-      MessagePlugin.success('文件删除成功');
+      MessagePlugin.success(t('mitemRecheck.文件删除成功'));
     }
   } catch (e) {
     console.log(e);
@@ -773,8 +795,8 @@ const batchDeleteSuccess = async (files: AddFileType[]) => {
           fileName: n.fileName,
         }),
       );
-      const list = await apiQuality.iqcInspectRecheckDtlFile.deleteBatchIqcInspectRecheckDtlFile(deleteList);
-      MessagePlugin.success('文件删除成功');
+      await apiQuality.iqcInspectRecheckDtlFile.deleteBatchIqcInspectRecheckDtlFile(deleteList);
+      MessagePlugin.success(t('mitemRecheck.文件删除成功'));
     }
   } catch (e) {
     console.log(e);
@@ -790,7 +812,6 @@ defineExpose({
   loadTable,
 });
 </script>
-
 <style lang="less" scoped>
 :deep .t-dialog__body {
   padding: 0 !important;
@@ -849,4 +870,3 @@ defineExpose({
   justify-content: flex-end;
 }
 </style>
-`
