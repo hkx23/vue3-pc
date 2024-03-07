@@ -216,7 +216,7 @@ const reset = () => {
 const showForm = async (edit, row, tableData) => {
   formVisible.value = true;
   reset();
-  formData = row;
+  formData = _.cloneDeep(row);
   mainTableData.value = tableData.value;
 };
 const closeForm = async () => {

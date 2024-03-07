@@ -25,60 +25,66 @@
   >
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
-        <t-descriptions :title="'复检单号：' + formData.recheckBillNo" :column="4" size="large">
+        <t-descriptions :title="'复检单号：' + formInspectData.recheckBillNo" :column="4" size="large">
           <t-descriptions-item label="复检类型"
-            ><t-select v-model="formData.recheckType" :options="recheckTypeOption" :disabled="!isEdit"
+            ><t-select
+              v-model="formInspectData.recheckType"
+              :options="recheckTypeOption"
+              :disabled="!isEdit"
+              @change="recheckTypeChange"
           /></t-descriptions-item>
           <t-descriptions-item label="来源检验单">
             <bcmp-select-business
-              v-if="formData.recheckType === 'EXCEPTION' && isEdit"
-              v-model="formData.iqcBillNo"
+              v-if="formInspectData.recheckType === 'EXCEPTION' && isEdit"
+              ref="recheckTypeRef"
+              v-model="formInspectData.iqcBillNo"
+              :select-txt="formInspectData.iqcBillNo"
               type="IqcBillInfo"
               :show-title="false"
               @selection-change="onIqcBillNoSelectionChange"
             />
-            <t-input v-else v-model="formData.iqcBillNo" disabled placeholder="" />
+            <t-input v-else v-model="formInspectData.iqcBillNo" disabled placeholder="" />
           </t-descriptions-item>
           <t-descriptions-item label="物料编码">
             <bcmp-select-business
-              v-if="formData.recheckType !== 'EXCEPTION' && isEdit"
-              v-model="formData.mitemId"
+              v-if="formInspectData.recheckType !== 'EXCEPTION' && isEdit"
+              v-model="formInspectData.mitemId"
+              :select-txt="formInspectData.mitemCode"
               type="mitem"
               :show-title="false"
               label-field="mitemCode"
               @selection-change="onMitemSelectionChange"
             />
-            <t-input v-else v-model="formData.mitemCode" disabled placeholder="" />
+            <t-input v-else v-model="formInspectData.mitemCode" disabled placeholder="" />
           </t-descriptions-item>
           <t-descriptions-item label="物料名">
             <div class="div_break_word">
-              {{ formData.mitemName }}
+              {{ formInspectData.mitemName }}
             </div>
           </t-descriptions-item>
           <t-descriptions-item label="供应商编码">
             <bcmp-select-business
-              v-if="formData.recheckType !== 'EXCEPTION' && isEdit"
-              v-model="formData.supplierCode"
+              v-if="formInspectData.recheckType !== 'EXCEPTION' && isEdit"
+              v-model="formInspectData.supplierCode"
+              :select-txt="formInspectData.supplierCode"
               type="mitemInSupplier"
               :show-title="false"
-              :parent-id="formData.mitemId"
+              :parent-id="formInspectData.mitemId"
               label-field="supplierCode"
               @selection-change="onSupplierSelectionChange" />
-            <t-input v-else v-model="formData.supplierCode" disabled placeholder=""
+            <t-input v-else v-model="formInspectData.supplierCode" disabled placeholder=""
           /></t-descriptions-item>
-          <t-descriptions-item label="供应商名称">{{ formData.supplierName }}</t-descriptions-item>
+          <t-descriptions-item label="供应商名称">{{ formInspectData.supplierName }}</t-descriptions-item>
           <t-descriptions-item label="批量">
-            <t-input-number v-model="formData.inspectQty" :disabled="!isEdit" />
+            <t-input-number v-model="formInspectData.inspectQty" :disabled="!isEdit" @change="inspectQtyChange" />
           </t-descriptions-item>
           <t-descriptions-item>
             <template #label>
-              <t-link v-if="formData.recheckType !== 'EXCEPTION' && isEdit" theme="primary" @click="linkLoadTableStd"
-                >加载检验项目</t-link
-              >
+              <t-link v-if="isEdit" theme="primary" @click="linkLoadTableStd">加载检验项目</t-link>
             </template>
           </t-descriptions-item>
           <t-descriptions-item label="复检原因"
-            ><t-textarea v-model="formData.recheckReason" clearable :disabled="!isEdit"
+            ><t-textarea v-model="formInspectData.recheckReason" clearable :disabled="!isEdit"
           /></t-descriptions-item>
         </t-descriptions>
       </cmp-card>
@@ -256,7 +262,7 @@
 
   <cmp-files-upload
     ref="formFilesRef"
-    upload-path="IqcInspectRecheck"
+    :upload-path="uploadPathType"
     @upload-success="uploadSuccess"
     @delete-success="deleteSuccess"
     @batch-delete-success="batchDeleteSuccess"
@@ -277,6 +283,8 @@ import { reactive, Ref, ref, watch } from 'vue';
 // import { api as apiMain } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
+import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
 import formMeasure from './formMeasure.vue';
@@ -289,12 +297,14 @@ const formVisible = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const formMeasureRef = ref(null);
 const formNgRef = ref(null);
+const recheckTypeRef = ref(null);
 
 const selectTabValue = ref('tab1');
 const selectIqcInspectRecheckDtlId = ref(null);
 
 const isEdit = ref(true); // 是否可编辑
-const formData = reactive({
+const uploadPathType = ref('IqcInspectRecheck');
+const formInspectData = reactive({
   iqcBillNo: '',
   recheckBillNo: '',
   billNoStr: '',
@@ -352,18 +362,17 @@ const tableDataCount = ref([]);
 const tableDataCquantitative = ref([]);
 
 watch(
-  () => formData.recheckType,
+  () => formInspectData.recheckType,
   (newValue, oldValue) => {
     if (newValue === 'EXCEPTION') {
-      formData.recheckTypeName = '异常复检';
+      formInspectData.recheckTypeName = '异常复检';
     } else if (newValue === 'OVERDUE') {
-      formData.recheckTypeName = '超期复检';
+      formInspectData.recheckTypeName = '超期复检';
     } else if (newValue === 'RECHECK') {
-      formData.recheckTypeName = '常规复检';
+      formInspectData.recheckTypeName = '常规复检';
     }
   },
 );
-
 const recheckTypeOption = ref([]);
 const getRecheckTypeOption = async () => {
   recheckTypeOption.value = [];
@@ -377,7 +386,7 @@ const tableSelectedChange = (value: any[], { selectedRowData }: any) => {
 };
 const onConfirmForm = async () => {
   try {
-    if (_.isEmpty(formData.recheckType)) {
+    if (_.isEmpty(formInspectData.recheckType)) {
       MessagePlugin.error('复检类型不能为空.');
       return;
     }
@@ -409,32 +418,31 @@ const onConfirmForm = async () => {
         }
       }
     }
-
     const ngList = tableData.value.filter((n) => !n.inspectResultSwitch);
     if (ngList.length > 0) {
       const { showForm } = formNgRef.value;
-      showForm(false, formData, tableData);
+      showForm(false, formInspectData, tableData);
     } else {
       LoadingPlugin(true);
 
       await apiQuality.iqcInspectRecheck.submitIqcInspectRecheck({
-        iqcBillNo: formData.iqcBillNo,
-        recheckBillNo: formData.recheckBillNo,
+        iqcBillNo: formInspectData.iqcBillNo,
+        recheckBillNo: formInspectData.recheckBillNo,
         iqcBillNoList: [],
-        mitemId: formData.mitemId,
-        mitemCode: formData.mitemCode,
-        mitemName: formData.mitemName,
-        mitemDesc: formData.mitemDesc,
-        mitemCategoryId: formData.mitemCategoryId,
-        mitemCategoryCode: formData.mitemCategoryCode,
-        mitemCategoryName: formData.mitemCategoryName,
-        inspectQty: Number(formData.inspectQty),
-        supplierId: formData.supplierId,
-        supplierCode: formData.supplierCode,
-        supplierName: formData.supplierName,
-        inspectionStringency: formData.inspectionStringency,
-        recheckType: formData.recheckType,
-        recheckReason: formData.recheckReason,
+        mitemId: formInspectData.mitemId,
+        mitemCode: formInspectData.mitemCode,
+        mitemName: formInspectData.mitemName,
+        mitemDesc: formInspectData.mitemDesc,
+        mitemCategoryId: formInspectData.mitemCategoryId,
+        mitemCategoryCode: formInspectData.mitemCategoryCode,
+        mitemCategoryName: formInspectData.mitemCategoryName,
+        inspectQty: Number(formInspectData.inspectQty),
+        supplierId: formInspectData.supplierId,
+        supplierCode: formInspectData.supplierCode,
+        supplierName: formInspectData.supplierName,
+        inspectionStringency: formInspectData.inspectionStringency,
+        recheckType: formInspectData.recheckType,
+        recheckReason: formInspectData.recheckReason,
         iqcInspectStdList: tableData.value,
         // iqcInspectNg: null,
       });
@@ -454,7 +462,7 @@ const tabsChange = async (tabValue) => {
 const getBillNo = async () => {
   try {
     const recheckBillNo = await apiQuality.billSeq.getBillNo({ prefix: 'IQCFJ' });
-    formData.recheckBillNo = recheckBillNo;
+    formInspectData.recheckBillNo = recheckBillNo;
   } catch (e) {
     console.log(e);
   }
@@ -482,21 +490,21 @@ const onShowFiles = async (rowData) => {
 const loadTable = async () => {
   try {
     const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
-      recheckBillNo: formData.recheckBillNo,
-      // iqcBillNo: formData.iqcBillNo,
-      mitemCategoryId: formData.mitemCategoryId,
-      mitemId: formData.mitemId,
-      pickQty: `${formData.inspectQty}`,
-      inspectionStringency: formData.inspectionStringency,
+      recheckBillNo: formInspectData.recheckBillNo,
+      // iqcBillNo: formInspectData.iqcBillNo,
+      mitemCategoryId: formInspectData.mitemCategoryId,
+      mitemId: formInspectData.mitemId,
+      pickQty: `${formInspectData.inspectQty}`,
+      inspectionStringency: formInspectData.inspectionStringency,
     });
     tableData.value = list;
     tableDataCount.value = list.filter((item) => item.characteristics === 'COUNT');
     tableDataCquantitative.value = list.filter((item) => item.characteristics === 'QUANTITATIVE');
 
     if (list.length > 0) {
-      formData.inspectStdName = list[0].inspectStdName;
+      formInspectData.inspectStdName = list[0].inspectStdName;
     } else {
-      formData.inspectStdName = '';
+      formInspectData.inspectStdName = '';
     }
   } catch (e) {
     console.log(e);
@@ -504,41 +512,44 @@ const loadTable = async () => {
 };
 const loadTableStd = async () => {
   try {
+    LoadingPlugin(true);
     const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
-      // iqcBillNo: formData.iqcBillNo,
-      mitemCategoryId: formData.mitemCategoryId,
-      mitemId: formData.mitemId,
-      pickQty: `${formData.inspectQty}`,
-      inspectionStringency: formData.inspectionStringency,
+      // iqcBillNo: formInspectData.iqcBillNo,
+      mitemCategoryId: formInspectData.mitemCategoryId,
+      mitemId: formInspectData.mitemId,
+      pickQty: `${formInspectData.inspectQty}`,
+      inspectionStringency: formInspectData.inspectionStringency,
     });
     tableData.value = list;
     tableDataCount.value = list.filter((item) => item.characteristics === 'COUNT');
     tableDataCquantitative.value = list.filter((item) => item.characteristics === 'QUANTITATIVE');
 
     if (list.length > 0) {
-      formData.inspectStdName = list[0].inspectStdName;
+      formInspectData.inspectStdName = list[0].inspectStdName;
     } else {
-      formData.inspectStdName = '';
+      formInspectData.inspectStdName = '';
     }
   } catch (e) {
     console.log(e);
+  } finally {
+    LoadingPlugin(false);
   }
 };
 const linkLoadTableStd = async () => {
-  if (_.isEmpty(formData.recheckType)) {
+  if (_.isEmpty(formInspectData.recheckType)) {
     MessagePlugin.error('请选择复检类型.');
     return;
   }
-  if (_.isEmpty(formData.mitemId)) {
+  if (_.isEmpty(formInspectData.mitemId)) {
     MessagePlugin.error('请选择物料.');
     return;
   }
 
-  if (_.isEmpty(formData.supplierId)) {
+  if (_.isEmpty(formInspectData.supplierId)) {
     MessagePlugin.error('请选择供应商.');
     return;
   }
-  if (formData.inspectQty <= 0) {
+  if (formInspectData.inspectQty <= 0) {
     MessagePlugin.error('请输入有效批量.');
     return;
   }
@@ -556,70 +567,56 @@ const reset = async () => {
   tableDataCount.value = [];
   tableDataCquantitative.value = [];
 
-  formData.iqcBillNo = '';
-  formData.recheckBillNo = '';
-  formData.billNoStr = '';
-  formData.billNoList = [{ billNo: '', erpLineNo: '', billNoDtlId: '' }];
-  formData.mitemId = '';
-  formData.mitemCode = '';
-  formData.mitemName = '';
-  formData.mitemDesc = '';
-  formData.mitemCategoryId = '';
-  formData.mitemCategoryCode = '';
-  formData.mitemCategoryName = '';
-  formData.inspectQty = 0;
-  formData.supplierId = '';
-  formData.supplierCode = '';
-  formData.supplierName = '';
-  formData.inspectionStringency = '';
-  formData.inspectionStringencyName = '';
-  formData.inspectStdName = '';
-  formData.recheckType = '';
-  formData.recheckTypeName = '';
-  formData.recheckReason = '';
+  formInspectData.iqcBillNo = '';
+  formInspectData.recheckBillNo = '';
+  formInspectData.billNoStr = '';
+  formInspectData.billNoList = [{ billNo: '', erpLineNo: '', billNoDtlId: '' }];
+  formInspectData.mitemId = '';
+  formInspectData.mitemCode = '';
+  formInspectData.mitemName = '';
+  formInspectData.mitemDesc = '';
+  formInspectData.mitemCategoryId = '';
+  formInspectData.mitemCategoryCode = '';
+  formInspectData.mitemCategoryName = '';
+  formInspectData.inspectQty = 0;
+  formInspectData.supplierId = '';
+  formInspectData.supplierCode = '';
+  formInspectData.supplierName = '';
+  formInspectData.inspectionStringency = '';
+  formInspectData.inspectionStringencyName = '';
+  formInspectData.inspectStdName = '';
+  formInspectData.recheckType = '';
+  formInspectData.recheckTypeName = '';
+  formInspectData.recheckReason = '';
 };
-// const showInspectForm = async (edit, row) => {
-//   isEdit.value = edit;
-//   formVisible.value = true;
-
-//   reset();
-
-//   formData.recheckBillNo = row.recheckBillNo;
-//   formData.billNoList.push({ billNo: row.recheckBillNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
-//   formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
-//   formData.recheckType = _.isEmpty(row.recheckType) ? 'EXCEPTION' : row.recheckType;
-//   formData.recheckReason = row.recheckReason;
-//   formData.iqcBillNo = row.iqcBillNo;
-
-//   debugger;
-//   onIqcBillNoSelectionChange();
-// };
 const showFJForm = async (edit, row) => {
   isEdit.value = edit;
   formVisible.value = true;
 
   reset();
 
-  formData.recheckBillNo = row.recheckBillNo;
-  formData.billNoList.push({ billNo: row.recheckBillNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
-  formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
-  formData.recheckType = row.recheckType;
-  formData.recheckReason = row.recheckReason;
-  formData.iqcBillNo = row.iqcBillNo;
+  if (row !== null) {
+    formInspectData.recheckBillNo = row.recheckBillNo;
+    formInspectData.billNoList.push({ billNo: row.recheckBillNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
+    formInspectData.billNoStr = formInspectData.billNoList.map((n) => n.billNo).join(',');
+    formInspectData.recheckType = row.recheckType;
+    formInspectData.recheckReason = row.recheckReason;
+    formInspectData.iqcBillNo = row.iqcBillNo;
 
-  formData.mitemId = row.mitemId;
-  formData.mitemCode = row.mitemCode;
-  formData.mitemName = row.mitemName;
-  formData.mitemCategoryId = row.mitemCategoryId;
-  formData.mitemCategoryCode = row.mitemCategoryCode;
-  formData.mitemCategoryName = row.mitemCategoryName;
-  formData.supplierId = row.supplierId;
-  formData.supplierCode = row.supplierCode;
-  formData.supplierName = row.supplierName;
-  formData.inspectQty = row.inspectQty;
-  formData.inspectionStringency = row.inspectionStringency;
-
-  onFjBillNoSelectionChange();
+    formInspectData.mitemId = row.mitemId;
+    formInspectData.mitemCode = row.mitemCode;
+    formInspectData.mitemName = row.mitemName;
+    formInspectData.mitemCategoryId = row.mitemCategoryId;
+    formInspectData.mitemCategoryCode = row.mitemCategoryCode;
+    formInspectData.mitemCategoryName = row.mitemCategoryName;
+    formInspectData.supplierId = row.supplierId;
+    formInspectData.supplierCode = row.supplierCode;
+    formInspectData.supplierName = row.supplierName;
+    formInspectData.inspectQty = row.inspectQty;
+    formInspectData.inspectionStringency = row.inspectionStringency;
+    // onFjBillNoSelectionChange();
+    await loadTable();
+  }
 };
 
 const onShowMeasureDialog = async (row) => {
@@ -638,93 +635,85 @@ const parentConfirm = async (measureList, isAllOK) => {
     rowData.inspectResultSwitch = isAllOK;
   }
 };
+
+const clearFormData = async () => {
+  formInspectData.iqcBillNo = '';
+  formInspectData.mitemId = '';
+  formInspectData.mitemCode = '';
+  formInspectData.mitemName = '';
+  formInspectData.inspectQty = 0;
+  formInspectData.supplierId = '';
+  formInspectData.supplierCode = '';
+  formInspectData.supplierName = '';
+  formInspectData.mitemCategoryId = '';
+  formInspectData.mitemCategoryCode = '';
+  formInspectData.mitemCategoryName = '';
+  formInspectData.inspectionStringency = '';
+  formInspectData.inspectStdName = '';
+
+  tableData.value = [];
+  tableDataCount.value = [];
+  tableDataCquantitative.value = [];
+};
 const onIqcBillNoSelectionChange = async () => {
+  console.log('onIqcBillNoSelectionChange 更新');
   try {
-    if (!_.isEmpty(formData.iqcBillNo)) {
-      const model = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formData.iqcBillNo });
+    if (!_.isEmpty(formInspectData.iqcBillNo)) {
+      const model = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formInspectData.iqcBillNo });
       if (!_.isEmpty(model)) {
-        formData.mitemId = model.mitemId;
-        formData.mitemCode = model.mitemCode;
-        formData.mitemName = model.mitemName;
-        formData.inspectQty = model.inspectQty;
-        formData.supplierId = model.supplierId;
-        formData.supplierCode = model.supplierCode;
-        formData.supplierName = model.supplierName;
-        formData.mitemCategoryId = model.mitemCategoryId;
-        formData.mitemCategoryCode = model.mitemCategoryCode;
-        formData.mitemCategoryName = model.mitemCategoryName;
-        formData.inspectionStringency = model.inspectionStringency;
+        formInspectData.mitemId = model.mitemId;
+        formInspectData.mitemCode = model.mitemCode;
+        formInspectData.mitemName = model.mitemName;
+        formInspectData.inspectQty = model.inspectQty;
+        formInspectData.supplierId = model.supplierId;
+        formInspectData.supplierCode = model.supplierCode;
+        formInspectData.supplierName = model.supplierName;
+        formInspectData.mitemCategoryId = model.mitemCategoryId;
+        formInspectData.mitemCategoryCode = model.mitemCategoryCode;
+        formInspectData.mitemCategoryName = model.mitemCategoryName;
+        formInspectData.inspectionStringency = model.inspectionStringency;
 
         await loadTableStd();
       }
     } else {
-      formData.mitemId = '';
-      formData.mitemCode = '';
-      formData.mitemName = '';
-      formData.inspectQty = 0;
-      formData.supplierId = '';
-      formData.supplierCode = '';
-      formData.supplierName = '';
-      formData.mitemCategoryId = '';
-      formData.mitemCategoryCode = '';
-      formData.mitemCategoryName = '';
-      formData.inspectionStringency = '';
-      formData.inspectStdName = '';
-
-      tableData.value = [];
-      tableDataCount.value = [];
-      tableDataCquantitative.value = [];
+      clearFormData();
     }
-  } catch (e) {
-    console.log(e);
-  }
-};
-const onFjBillNoSelectionChange = async () => {
-  try {
-    if (!_.isEmpty(formData.iqcBillNo)) {
-      const model = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formData.iqcBillNo });
-      if (!_.isEmpty(model)) {
-        formData.mitemId = model.mitemId;
-        formData.mitemCode = model.mitemCode;
-        formData.mitemName = model.mitemName;
-        formData.inspectQty = model.inspectQty;
-        formData.supplierId = model.supplierId;
-        formData.supplierCode = model.supplierCode;
-        formData.supplierName = model.supplierName;
-        formData.mitemCategoryId = model.mitemCategoryId;
-        formData.mitemCategoryCode = model.mitemCategoryCode;
-        formData.mitemCategoryName = model.mitemCategoryName;
-        formData.inspectionStringency = model.inspectionStringency;
-      }
-    }
-    await loadTable();
   } catch (e) {
     console.log(e);
   }
 };
 const onMitemSelectionChange = async (data) => {
   try {
-    formData.mitemCode = data.mitemCode;
-    formData.mitemName = data.mitemName;
-    formData.mitemCategoryId = data.mitemCategoryId;
-    formData.mitemCategoryCode = data.mitemCategoryCode;
-    formData.mitemCategoryName = data.mitemCategoryName;
-    formData.supplierId = '';
-    formData.supplierCode = '';
-    formData.supplierName = '';
+    formInspectData.mitemCode = data.mitemCode;
+    formInspectData.mitemName = data.mitemName;
+    formInspectData.mitemCategoryId = data.mitemCategoryId;
+    formInspectData.mitemCategoryCode = data.mitemCategoryCode;
+    formInspectData.mitemCategoryName = data.mitemCategoryName;
+    formInspectData.supplierId = '';
+    formInspectData.supplierCode = '';
+    formInspectData.supplierName = '';
   } catch (e) {
     console.log(e);
   }
 };
 const onSupplierSelectionChange = async (data) => {
   try {
-    formData.supplierId = data.supplierId;
-    formData.supplierCode = data.supplierCode;
-    formData.supplierName = data.supplierName;
-    formData.inspectionStringency = data.inspectionStringency;
+    formInspectData.supplierId = data.supplierId;
+    formInspectData.supplierCode = data.supplierCode;
+    formInspectData.supplierName = data.supplierName;
+    formInspectData.inspectionStringency = data.inspectionStringency;
   } catch (e) {
     console.log(e);
   }
+};
+
+const inspectQtyChange = async (value, context) => {
+  tableData.value = [];
+  tableDataCount.value = [];
+  tableDataCquantitative.value = [];
+};
+const recheckTypeChange = async (data) => {
+  clearFormData();
 };
 
 // begin 文件上传
@@ -735,9 +724,10 @@ const showUplaodImg = async (rowData) => {
 
   try {
     if (!_.isEmpty(selectIqcInspectRecheckDtlId.value)) {
-      const list = await apiQuality.iqcInspectRecheckDtlFile.getIqcInspectRecheckDtlFileList(
-        selectIqcInspectRecheckDtlId.value,
-      );
+      const list = await apiQuality.iqcInspectRecheckDtlFile.getIqcInspectRecheckDtlFileList({
+        iqcInspectDtlId: selectIqcInspectRecheckDtlId.value,
+        uploadPath: uploadPathType.value,
+      });
       rowData.row.fileList = list;
     }
     const { showForm } = formFilesRef.value;

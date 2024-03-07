@@ -26,18 +26,20 @@
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :column="4" size="large">
-          <t-descriptions-item label="样本数">{{ formData.sampleQty }}</t-descriptions-item>
-          <t-descriptions-item label="检验工具">{{ formData.inspectTool }}</t-descriptions-item>
-          <t-descriptions-item label="基准值">{{ `${formData.baseValue} ${formData.uom}` }}</t-descriptions-item>
+          <t-descriptions-item label="样本数">{{ formMeasureData.sampleQty }}</t-descriptions-item>
+          <t-descriptions-item label="检验工具">{{ formMeasureData.inspectTool }}</t-descriptions-item>
+          <t-descriptions-item label="基准值">{{
+            `${formMeasureData.baseValue} ${formMeasureData.uom}`
+          }}</t-descriptions-item>
           <t-descriptions-item label="合格范围">{{
-            `${formData.minValue} - ${formData.maxValue} ${formData.uom}`
+            `${formMeasureData.minValue} - ${formMeasureData.maxValue} ${formMeasureData.uom}`
           }}</t-descriptions-item>
         </t-descriptions>
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-space break-line style="height: 420px; overflow-y: auto">
           <t-input
-            v-for="(item, index) in formData.measureList"
+            v-for="(item, index) in formMeasureData.measureList"
             :key="index"
             v-model="item.measureValue"
             :disabled="!isEdit"
@@ -65,7 +67,7 @@ const isEdit = ref(true); // 是否可编辑
 const formVisible = ref(false);
 const formMeasureRef: Ref<FormInstanceFunctions> = ref(null);
 
-const formData = reactive({
+const formMeasureData = reactive({
   billNo: '',
   sampleQty: '',
   inspectTool: '',
@@ -79,16 +81,16 @@ const formData = reactive({
 const onConfirmForm = async () => {
   try {
     let isAllOK = true;
-    for (let index = 0; index < formData.measureList.length; index++) {
-      const item = formData.measureList[index];
+    for (let index = 0; index < formMeasureData.measureList.length; index++) {
+      const item = formMeasureData.measureList[index];
       if (item.measureValue === '') {
         MessagePlugin.error('测量值不能为空.');
         return;
       }
     }
 
-    for (let index = 0; index < formData.measureList.length; index++) {
-      const item = formData.measureList[index];
+    for (let index = 0; index < formMeasureData.measureList.length; index++) {
+      const item = formMeasureData.measureList[index];
       if (item.measureValue < item.minValue || item.measureValue > item.maxValue) {
         // MessagePlugin.error('请输入正确的测量值.');
         isAllOK = false;
@@ -98,7 +100,7 @@ const onConfirmForm = async () => {
 
     LoadingPlugin(true);
 
-    Emit('parent-confirm-event', formData.measureList, isAllOK);
+    Emit('parent-confirm-event', formMeasureData.measureList, isAllOK);
 
     formVisible.value = false;
   } catch (e) {
@@ -109,27 +111,23 @@ const onConfirmForm = async () => {
 };
 const reset = () => {
   // 清除所有对象的值
-  Object.keys(formData).forEach((key) => {
-    if (_.isArray(formData[key])) {
-      formData[key] = [];
-    } else {
-      delete formData[key];
-    }
+  Object.keys(formMeasureData).forEach((key) => {
+    delete formMeasureData[key];
   });
 };
 
-const showForm = async (edit, row) => {
+const showForm = async (edit, measureList) => {
   isEdit.value = edit;
   formVisible.value = true;
   reset();
-  formData.measureList = _.cloneDeep(row);
-  formData.sampleQty = `${row[0].sampleQty}`;
-  formData.inspectTool = `${row[0].inspectTool}`;
-  formData.baseValue = `${row[0].baseValue}`;
-  formData.uom = `${row[0].uom}`;
-  formData.sampleQty = `${row[0].sampleQty}`;
-  formData.minValue = `${row[0].minValue}`;
-  formData.maxValue = `${row[0].maxValue}`;
+  formMeasureData.measureList = _.cloneDeep(measureList);
+  formMeasureData.sampleQty = `${measureList[0].sampleQty}`;
+  formMeasureData.inspectTool = `${measureList[0].inspectTool}`;
+  formMeasureData.baseValue = `${measureList[0].baseValue}`;
+  formMeasureData.uom = `${measureList[0].uom}`;
+  formMeasureData.sampleQty = `${measureList[0].sampleQty}`;
+  formMeasureData.minValue = `${measureList[0].minValue}`;
+  formMeasureData.maxValue = `${measureList[0].maxValue}`;
 };
 defineExpose({
   form: formMeasureRef,
