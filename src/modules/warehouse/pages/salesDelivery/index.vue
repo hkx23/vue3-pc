@@ -1,34 +1,37 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" is-expansion @submit="onSearch" />
-    </cmp-card>
-    <cmp-card :span="12">
-      <!-- ################# 处理组表格数据 ###################### -->
-      <cmp-table
-        ref="tableRef"
-        row-key="id"
-        :table-column="tableMainColumns"
-        :table-data="tableMainData"
-        :loading="loading"
-        :total="mainDataTotal"
-        :hover="false"
-        :stripe="false"
-        :header-affixed-top="true"
-        @refresh="fetchTable"
-        @cell-click="onRowClick"
-      >
-        <template #button>
-          <t-button theme="primary" @click="onClickAdd">
-            {{ t('common.button.add') }}
-          </t-button>
-          <t-popconfirm content="确认作废销售发货单？" @confirm="onBatchCancelledClick">
-            <t-button theme="default" :disabled="selectRowKeys?.length == 0">
-              {{ t('salesDelivery.cancel') }}
+      <cmp-container :ghost="true">
+        <cmp-query :opts="opts" is-expansion @submit="onSearch" />
+
+        <!-- ################# 处理组表格数据 ###################### -->
+        <cmp-table
+          ref="tableRef"
+          row-key="id"
+          :table-column="tableMainColumns"
+          :table-data="tableMainData"
+          :loading="loading"
+          :total="mainDataTotal"
+          :hover="false"
+          :stripe="false"
+          max-height="300px"
+          :header-affixed-top="true"
+          @refresh="fetchTable"
+          @cell-click="onRowClick"
+        >
+          <template #title>发货单据列表</template>
+          <template #button>
+            <t-button theme="primary" @click="onClickAdd">
+              {{ t('common.button.add') }}
             </t-button>
-          </t-popconfirm>
-        </template>
-      </cmp-table>
+            <t-popconfirm :content="$t('确认作废销售发货单？')" @confirm="onBatchCancelledClick">
+              <t-button theme="default" :disabled="selectRowKeys?.length == 0">
+                {{ t('salesDelivery.cancel') }}
+              </t-button>
+            </t-popconfirm>
+          </template>
+        </cmp-table>
+      </cmp-container>
     </cmp-card>
     <cmp-row>
       <!-- ################# 子数据数据 ###################### -->
@@ -41,6 +44,7 @@
           :total="childrenDataTotal"
           :hover="false"
           :stripe="false"
+          :show-toolbar="false"
           :show-pagination="false"
           :header-affixed-top="true"
           @refresh="fetchTable"
@@ -57,8 +61,7 @@
     @show-close-event="onHandleShowClose"
   ></formSalesDelivery>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import dayjs from 'dayjs';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
@@ -86,14 +89,14 @@ const datePlanRangeDefault = ref([dayjs().format('YYYY-MM-DD'), dayjs().subtract
 const opts = computed(() => {
   return {
     billNo: {
-      label: '单据号',
+      label: t('salesDelivery.单据号'),
       comp: 't-input',
       defaultVal: '',
-      placeholder: '请输入单据号',
+      placeholder: t('salesDelivery.请输入单据号'),
     },
     customerId: {
-      label: '客户',
-      placeholder: '请选择客户',
+      label: t('salesDelivery.客户'),
+      placeholder: t('salesDelivery.请选择客户'),
       comp: 'bcmp-select-business',
       defaultVal: '',
       bind: {
@@ -102,8 +105,8 @@ const opts = computed(() => {
       },
     },
     saleOrderNo: {
-      label: '销售订单',
-      placeholder: '请选择销售订单',
+      label: t('salesDelivery.销售订单'),
+      placeholder: t('salesDelivery.请选择销售订单'),
       comp: 'bcmp-select-business',
       defaultVal: '',
       bind: {
@@ -112,8 +115,8 @@ const opts = computed(() => {
       },
     },
     mitemId: {
-      label: '产品编码',
-      placeholder: '请选择产品编码',
+      label: t('salesDelivery.产品编码'),
+      placeholder: t('salesDelivery.请选择产品编码'),
       comp: 'bcmp-select-business',
       defaultVal: '',
       bind: {
@@ -122,10 +125,10 @@ const opts = computed(() => {
       },
     },
     dateRange: {
-      label: '创建时间',
+      label: t('salesDelivery.创建时间'),
       comp: 't-date-range-picker',
       defaultVal: datePlanRangeDefault.value,
-      placeholder: '请选择创建时间',
+      placeholder: t('salesDelivery.请选择创建时间'),
     },
     status: {
       label: t('salesDelivery.statusName'),
@@ -141,38 +144,37 @@ const opts = computed(() => {
 });
 // 状态下拉初始数据
 const statusOption = ref([
-  { label: '全选', value: '', checkAll: true },
-  { value: 'CREATED', label: '已创建' },
-  { value: 'DELIVERED', label: '已发货' },
-  { value: 'CANCELED', label: '已取消' },
+  { value: 'CREATED', label: t('salesDelivery.已创建') },
+  { value: 'DELIVERED', label: t('salesDelivery.已发货') },
+  { value: 'CANCELED', label: t('salesDelivery.已取消') },
 ]);
 
 const tableMainData = ref([]);
 const tableMainColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
-  { title: '单据号', width: 140, colKey: 'billNo' },
-  { title: '客户编码', width: 140, colKey: 'customerCode' },
-  { title: '客户名称', width: 140, colKey: 'customerName' },
-  { title: '单据状态', width: 100, colKey: 'statusName' },
-  { title: '发货时间', width: 200, colKey: 'datetimeDelivery' },
-  { title: '创建人', width: 100, colKey: 'creatorName' },
-  { title: '创建时间', width: 200, colKey: 'timeCreate' },
-  { title: '更新人', width: 100, colKey: 'modifierName' },
-  { title: '更新时间', width: 200, colKey: 'timeModified' },
+  { title: t('salesDelivery.单据号'), width: 140, colKey: 'billNo' },
+  { title: t('salesDelivery.客户编码'), width: 140, colKey: 'customerCode' },
+  { title: t('salesDelivery.客户名称'), width: 140, colKey: 'customerName' },
+  { title: t('salesDelivery.单据状态'), width: 100, colKey: 'statusName' },
+  { title: t('salesDelivery.发货时间'), width: 200, colKey: 'datetimeDelivery' },
+  { title: t('salesDelivery.创建人'), width: 100, colKey: 'creatorName' },
+  { title: t('salesDelivery.创建时间'), width: 200, colKey: 'timeCreate' },
+  { title: t('salesDelivery.更新人'), width: 100, colKey: 'modifierName' },
+  { title: t('salesDelivery.更新时间'), width: 200, colKey: 'timeModified' },
 ];
 
 const tableChildrenData = ref([]);
 const tableChildrenColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '产品编码', width: 140, colKey: 'mitemCode' },
-  { title: '产品名称', width: 140, colKey: 'mitemName' },
-  { title: '单位', width: 140, colKey: 'uomName' },
-  { title: '仓库', width: 140, colKey: 'warehouseName' },
+  { title: t('salesDelivery.产品编码'), width: 140, colKey: 'mitemCode' },
+  { title: t('salesDelivery.产品名称'), width: 140, colKey: 'mitemName' },
+  { title: t('salesDelivery.单位'), width: 140, colKey: 'uomName' },
+  { title: t('salesDelivery.仓库'), width: 140, colKey: 'warehouseName' },
   // { title: '货区', width: 140, colKey: 'districtName' },
-  { title: '本次发货数', width: 140, colKey: 'qty' },
+  { title: t('salesDelivery.本次发货数'), width: 140, colKey: 'qty' },
   // { title: '待发货数', width: 140, colKey: 'requireQty' },
-  { title: '销售订单', width: 140, colKey: 'saleOrderNo' },
-  { title: '销售订单行号', width: 140, colKey: 'saleOrderDtlId' },
-  { title: '备注', width: 140, colKey: 'memo' },
+  { title: t('salesDelivery.销售订单'), width: 140, colKey: 'saleOrderNo' },
+  { title: t('salesDelivery.销售订单行号'), width: 140, colKey: 'saleOrderDtlId' },
+  { title: t('salesDelivery.备注'), width: 140, colKey: 'memo' },
 ];
 
 const formVisible = ref(false); // 显示和隐藏销售发货制单弹出框
@@ -220,6 +222,7 @@ const fetchTable = async () => {
   try {
     setLoading(true);
     tableChildrenData.value = [];
+    tableRef.value.setSelectedRowKeys([]);
 
     const data = await apiWarehouse.saleDelivery.getSalesDeliveryList({
       pageNum: pageUI.value.page,
@@ -253,7 +256,7 @@ const onBatchCancelledClick = async () => {
   };
   await apiWarehouse.saleDelivery.updateBillNoByCancelled(deleteModel);
   fetchTable();
-  MessagePlugin.success('作废成功');
+  MessagePlugin.success(t('salesDelivery.作废成功'));
 };
 
 // 加载销售发货制单明细表格
@@ -299,7 +302,6 @@ onMounted(() => {
   fetchTable();
 });
 </script>
-
 <style lang="less" scoped>
 .table-tree-container {
   background-color: var(--td-bg-color-container);

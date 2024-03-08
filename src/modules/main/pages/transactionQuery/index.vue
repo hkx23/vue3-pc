@@ -40,7 +40,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { api } from '@/api/warehouse';
+import { api } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -156,14 +156,14 @@ const opts = computed(() => {
       },
     },
 
-    scanBarcode: {
+    /* scanBarcode: {
       label: '标签',
       comp: 't-input',
       defaultVal: '',
       bind: {
         clearable: true,
       },
-    },
+    }, */
 
     warehouseId: {
       label: '源仓库',
@@ -191,66 +191,29 @@ const opts = computed(() => {
 
 // 表格主位栏
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '事务类型', colKey: 'categoryName', width: 110 },
+  { title: '事务类型', colKey: 'categoryName', width: 100 },
   { title: 'MES业务单号', width: 130, colKey: 'billNo' },
-  { title: '排产单号', width: 120, colKey: 'scheCode' },
-  { title: '排产计划数', width: 100, colKey: 'planQty' },
-  { title: '标签', width: 110, colKey: 'scanBarcode' },
-  {
-    title: '标签数量',
-    width: 150,
-    colKey: 'barcodeQty',
-  },
-  { title: '物料编码', width: 150, colKey: 'mitemCode' },
-  {
-    title: '物料描述',
-    width: 85,
-    colKey: 'mitemDesc',
-  },
-  {
-    title: '单位',
-    width: 120,
-    colKey: 'uomName',
-  },
-
-  { title: '源仓库', width: 120, colKey: 'warehouseName' },
-  { title: '源货区', width: 85, colKey: 'districtName' },
-  { title: '源货位', width: 110, colKey: 'locationName' },
-  {
-    title: '目标仓库',
-    width: 150,
-    colKey: 'toWarehouseName',
-  },
-  { title: '目标货区', width: 150, colKey: 'toDistrictName' },
-  {
-    title: '目标货位',
-    width: 85,
-    colKey: 'toLocationName',
-  },
-  {
-    title: '供应商编码',
-    width: 120,
-    colKey: 'supplierCode',
-  },
+  { title: '排产单号', width: 140, colKey: 'scheCode' },
+  { title: '排产计划数', width: 95, colKey: 'planQty' },
+  // { title: '标签', width: 110, colKey: 'scanBarcode' },
+  // { title: '标签数量', width: 150, colKey: 'barcodeQty' },
+  { title: '物料编码', width: 120, colKey: 'mitemCode' },
+  { title: '物料描述', width: 120, colKey: 'mitemDesc' },
+  { title: '单位', width: 60, colKey: 'uomName' },
+  { title: '源仓库', width: 110, colKey: 'warehouseName' },
+  { title: '源货区', width: 110, colKey: 'districtName' },
+  { title: '源货位', width: 110, colKey: 'locName' },
+  { title: '目标仓库', width: 110, colKey: 'toWarehouseName' },
+  { title: '目标货区', width: 110, colKey: 'toDistrictName' },
+  { title: '目标货位', width: 110, colKey: 'toLocName' },
+  { title: '供应商编码', width: 120, colKey: 'supplierCode' },
   { title: '供应商名称', width: 120, colKey: 'supplierName' },
   { title: '操作人', width: 85, colKey: 'creatorName' },
-  { title: '创建时间', width: 110, colKey: 'timeCreate' },
-  {
-    title: '交易时间',
-    width: 150,
-    colKey: 'datetimeTransfer',
-  },
-  { title: '交易数量', width: 150, colKey: 'transQty' },
-  {
-    title: '上传状态',
-    width: 85,
-    colKey: 'statusName',
-  },
-  {
-    title: '送货单号',
-    width: 120,
-    colKey: 'lineSeq',
-  },
+  { title: '创建时间', width: 165, colKey: 'timeCreate' },
+  { title: '交易时间', width: 165, colKey: 'datetimeTrans' },
+  { title: '交易数量', width: 80, colKey: 'transQty' },
+  { title: '上传状态', width: 85, colKey: 'statusName' },
+  { title: '送货单号', width: 130, colKey: 'deliveryNo' },
 ];
 
 //* 表格数据

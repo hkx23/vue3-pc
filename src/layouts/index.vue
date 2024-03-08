@@ -11,7 +11,7 @@
     </template>
 
     <template v-else>
-      <t-layout key="no-side">
+      <t-layout key="no-side" :class="isFullscreen ? 'fullscreen-layout' : ''">
         <t-header><layout-header /> </t-header>
         <t-layout :class="mainLayoutCls">
           <layout-side-nav />
@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import '@/style/layout.less';
 
+import { useFullscreen } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -42,10 +43,12 @@ const route = useRoute();
 const settingStore = useSettingStore();
 const tabsRouterStore = useTabsRouterStore();
 const setting = storeToRefs(settingStore);
+const { isFullscreen } = useFullscreen();
 
 const mainLayoutCls = computed(() => [
   {
     't-layout--with-sider': settingStore.showSidebar,
+    'fullscreen-layout': isFullscreen.value,
   },
 ]);
 
@@ -72,4 +75,15 @@ watch(
 );
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.fullscreen-layout {
+  :deep(.t-layout__header),
+  :deep(.@{starter-prefix}-layout-tabs-nav),
+  :deep(.@{starter-prefix}-sidebar-layout) {
+    display: none;
+  }
+  :deep(.@{starter-prefix}-layout) {
+    height: 100vh;
+  }
+}
+</style>

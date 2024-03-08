@@ -1,21 +1,21 @@
 <template>
   <t-dialog
     v-model:visible="formVisible"
-    header="计算结果"
+    :header="t('mitemRecheck.计算结果')"
     width="60%"
     placement="top"
     top="40"
     :cancel-btn="
       isEdit
         ? {
-            content: '取消',
+            content: t('mitemRecheck.取消'),
           }
         : null
     "
     :confirm-btn="
       isEdit
         ? {
-            content: '提交',
+            content: t('mitemRecheck.提交'),
             theme: 'primary',
           }
         : null
@@ -26,18 +26,22 @@
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :column="4" size="large">
-          <t-descriptions-item label="样本数">{{ formData.sampleQty }}</t-descriptions-item>
-          <t-descriptions-item label="检验工具">{{ formData.inspectTool }}</t-descriptions-item>
-          <t-descriptions-item label="基准值">{{ `${formData.baseValue} ${formData.uom}` }}</t-descriptions-item>
-          <t-descriptions-item label="合格范围">{{
-            `${formData.minValue} - ${formData.maxValue} ${formData.uom}`
+          <t-descriptions-item :label="t('mitemRecheck.样本数')">{{ formMeasureData.sampleQty }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemRecheck.检验工具')">{{
+            formMeasureData.inspectTool
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemRecheck.基准值')">{{
+            `${formMeasureData.baseValue} ${formMeasureData.uom}`
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemRecheck.合格范围')">{{
+            `${formMeasureData.minValue} - ${formMeasureData.maxValue} ${formMeasureData.uom}`
           }}</t-descriptions-item>
         </t-descriptions>
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-space break-line style="height: 420px; overflow-y: auto">
           <t-input
-            v-for="(item, index) in formData.measureList"
+            v-for="(item, index) in formMeasureData.measureList"
             :key="index"
             v-model="item.measureValue"
             :disabled="!isEdit"
@@ -49,23 +53,21 @@
     </cmp-container>
   </t-dialog>
 </template>
-<script lang="ts">
-export default {
-  name: 'FormMeasure',
-};
-</script>
-<script setup lang="ts">
+<script lang="ts" setup>
 import _ from 'lodash';
 import { FormInstanceFunctions, LoadingPlugin, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
+import { useLang } from './lang';
+
+const { t } = useLang();
 const Emit = defineEmits(['parent-confirm-event', 'form-close-event']);
 
 const isEdit = ref(true); // 是否可编辑
 const formVisible = ref(false);
 const formMeasureRef: Ref<FormInstanceFunctions> = ref(null);
 
-const formData = reactive({
+const formMeasureData = reactive({
   billNo: '',
   sampleQty: '',
   inspectTool: '',
@@ -79,18 +81,18 @@ const formData = reactive({
 const onConfirmForm = async () => {
   try {
     let isAllOK = true;
-    for (let index = 0; index < formData.measureList.length; index++) {
-      const item = formData.measureList[index];
+    for (let index = 0; index < formMeasureData.measureList.length; index++) {
+      const item = formMeasureData.measureList[index];
       if (item.measureValue === '') {
-        MessagePlugin.error('测量值不能为空.');
+        MessagePlugin.error(t('mitemRecheck.测量值不能为空'));
         return;
       }
     }
 
-    for (let index = 0; index < formData.measureList.length; index++) {
-      const item = formData.measureList[index];
+    for (let index = 0; index < formMeasureData.measureList.length; index++) {
+      const item = formMeasureData.measureList[index];
       if (item.measureValue < item.minValue || item.measureValue > item.maxValue) {
-        // MessagePlugin.error('请输入正确的测量值.');
+        // MessagePlugin.error('请输入正确的测量值');
         isAllOK = false;
         break;
       }
@@ -98,7 +100,7 @@ const onConfirmForm = async () => {
 
     LoadingPlugin(true);
 
-    Emit('parent-confirm-event', formData.measureList, isAllOK);
+    Emit('parent-confirm-event', formMeasureData.measureList, isAllOK);
 
     formVisible.value = false;
   } catch (e) {
@@ -109,27 +111,31 @@ const onConfirmForm = async () => {
 };
 const reset = () => {
   // 清除所有对象的值
-  Object.keys(formData).forEach((key) => {
-    if (_.isArray(formData[key])) {
-      formData[key] = [];
+  Object.keys(formMeasureData).forEach((key) => {
+    if (_.isArray(formMeasureData[key])) {
+      formMeasureData[key] = [];
+    } else if (_.isNumber(formMeasureData[key])) {
+      formMeasureData[key] = 0;
+    } else if (_.isBoolean(formMeasureData[key])) {
+      formMeasureData[key] = true;
     } else {
-      delete formData[key];
+      formMeasureData[key] = '';
     }
   });
 };
 
-const showForm = async (edit, row) => {
+const showForm = async (edit, measureList) => {
   isEdit.value = edit;
   formVisible.value = true;
   reset();
-  formData.measureList = _.cloneDeep(row);
-  formData.sampleQty = `${row[0].sampleQty}`;
-  formData.inspectTool = `${row[0].inspectTool}`;
-  formData.baseValue = `${row[0].baseValue}`;
-  formData.uom = `${row[0].uom}`;
-  formData.sampleQty = `${row[0].sampleQty}`;
-  formData.minValue = `${row[0].minValue}`;
-  formData.maxValue = `${row[0].maxValue}`;
+  formMeasureData.measureList = _.cloneDeep(measureList);
+  formMeasureData.sampleQty = `${measureList[0].sampleQty}`;
+  formMeasureData.inspectTool = `${measureList[0].inspectTool}`;
+  formMeasureData.baseValue = `${measureList[0].baseValue}`;
+  formMeasureData.uom = `${measureList[0].uom}`;
+  formMeasureData.sampleQty = `${measureList[0].sampleQty}`;
+  formMeasureData.minValue = `${measureList[0].minValue}`;
+  formMeasureData.maxValue = `${measureList[0].maxValue}`;
 };
 defineExpose({
   form: formMeasureRef,
@@ -179,4 +185,3 @@ defineExpose({
   justify-content: flex-end;
 }
 </style>
-`

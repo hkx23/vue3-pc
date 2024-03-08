@@ -131,7 +131,7 @@ const opts = computed(() => {
       },
     },
 
-    IMsgQueueStatus: {
+    imsgQueueStatus: {
       label: '执行结果',
       comp: 't-select',
       defaultVal: [],
@@ -310,7 +310,7 @@ const onInput = async (data: any) => {
     msgCategory, // 接口分类
     msgDomainCategory, // mes领域分类
     businessCategoryId, // 事务类型
-    IMsgQueueStatus, // 执行结果
+    imsgQueueStatus, // 执行结果
     erpBillNo, // ERP凭据单号
     datetimeExecute, // 事务开始时间
     billNo, // MES/业务单据号
@@ -322,7 +322,7 @@ const onInput = async (data: any) => {
       msgCategory,
       msgDomainCategory,
       businessCategoryId,
-      IMsgQueueStatus,
+      imsgQueueStatus,
       erpBillNo,
       billNo,
       dateStart: datetimeExecute[0],
