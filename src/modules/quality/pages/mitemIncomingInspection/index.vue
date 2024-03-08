@@ -81,16 +81,6 @@
                   @refresh="fetchTableInspec"
                 >
                   <template #title> </template>
-                  <template #op>
-                    <!-- <t-space>
-                      <t-link
-                        v-if="rowData.row.inspectResult === 'UNINSPECT' || _.isEmpty(rowData.row.iqcBillNo)"
-                        theme="primary"
-                        @click="onShowDialog(true, rowData)"
-                        >修改</t-link
-                      >
-                    </t-space> -->
-                  </template>
 
                   <template #iqcBillNo="rowData">
                     <t-space>
@@ -599,9 +589,8 @@ const onSelectInspecChange = (value: any) => {
   selectInspecId.value = value;
 };
 const onShowDialog = async (isEdit, rowData) => {
-  const { showForm, loadTable } = formRef.value;
+  const { showForm } = formRef.value;
   await showForm(isEdit, rowData.row);
-  await loadTable();
 };
 
 // 合并检验
@@ -609,9 +598,8 @@ const mergeInspection = async (isEdit) => {
   checkSelected().then(async (isRun) => {
     if (isRun) {
       const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
-      const { showMergeForm, loadTable } = formRef.value;
+      const { showMergeForm } = formRef.value;
       await showMergeForm(isEdit, selectKeys);
-      await loadTable();
     }
   });
 };
@@ -639,7 +627,7 @@ const directInspectOk = async () => {
       });
 
       await fetchTable();
-      MessagePlugin.success(t('mitemIncomingInspection.一键合格成功.'));
+      MessagePlugin.success(t('mitemIncomingInspection.一键合格成功'));
     }
   });
 };
@@ -667,14 +655,14 @@ const directInspectNg = async () => {
       });
 
       await fetchTable();
-      MessagePlugin.success(t('mitemIncomingInspection.一键判退成功.'));
+      MessagePlugin.success(t('mitemIncomingInspection.一键判退成功'));
     }
   });
 };
 
 const checkSelected = async () => {
   if (selectWaitId.value.length <= 0) {
-    MessagePlugin.error(t('mitemIncomingInspection.请选择待检单.'));
+    MessagePlugin.error(t('mitemIncomingInspection.请选择待检单'));
     return false;
   }
 
@@ -683,7 +671,7 @@ const checkSelected = async () => {
   for (let index = 0; index < selectKeys.length; index++) {
     const element = selectKeys[index];
     if (!_.isEmpty(element.iqcBillNo)) {
-      MessagePlugin.error(t('mitemIncomingInspection.单据不允许重复检验.'));
+      MessagePlugin.error(t('mitemIncomingInspection.单据不允许重复检验'));
       return false;
     }
   }

@@ -41,7 +41,7 @@
             formData.inspectionStringencyName
           }}</t-descriptions-item>
           <t-descriptions-item :label="t('mitemIncomingInspection.报批数量')">{{
-            formData.pickQty
+            formData.inspectQty
           }}</t-descriptions-item>
           <t-descriptions-item :label="t('mitemIncomingInspection.检验标准')">{{
             formData.inspectStdName
@@ -258,7 +258,7 @@ const formData = reactive({
   mitemCategoryId: '',
   mitemCategoryCode: '',
   mitemCategoryName: '',
-  pickQty: '',
+  inspectQty: 0,
   supplierId: '',
   supplierCode: '',
   supplierName: '',
@@ -324,21 +324,21 @@ const onConfirmForm = async () => {
       } else {
         item.inspectResult = 'NG';
         if (item.characteristics === 'COUNT' && _.isEmpty(item.ngQty)) {
-          MessagePlugin.error(t('mitemIncomingInspection.检验结果不合格时,请填写不良数.'));
+          MessagePlugin.error(t('mitemIncomingInspection.检验结果不合格时,请填写不良数'));
           return;
         }
 
         if (item.characteristics === 'QUANTITATIVE') {
           if (_.isEmpty(item.ngQty) || item.ngQty === '') {
-            MessagePlugin.error(t('mitemIncomingInspection.检验结果不合格时,请填写不良数.'));
+            MessagePlugin.error(t('mitemIncomingInspection.检验结果不合格时,请填写不良数'));
             return;
           }
           if (item.ngQty > item.sampleQty) {
-            MessagePlugin.error(t('mitemIncomingInspection.不良数不能大于样本数.'));
+            MessagePlugin.error(t('mitemIncomingInspection.不良数不能大于样本数'));
             return;
           }
           if (item.ngQty <= 0) {
-            MessagePlugin.error(t('mitemIncomingInspection.请输入正确不良数.'));
+            MessagePlugin.error(t('mitemIncomingInspection.请输入正确不良数'));
             return;
           }
         }
@@ -392,13 +392,14 @@ const getBillNo = async () => {
   }
 };
 
+// 加载新的检验标准
 const loadTable = async () => {
   try {
     const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
       iqcBillNo: formData.iqcBillNo,
       mitemCategoryId: formData.mitemCategoryId,
       mitemId: formData.mitemId,
-      pickQty: formData.pickQty,
+      pickQty: `${formData.inspectQty}`,
       inspectionStringency: formData.inspectionStringency,
     });
     tableData.value = list;
@@ -414,6 +415,27 @@ const loadTable = async () => {
     console.log(e);
   }
 };
+
+// 加载现有单据检验标准
+const loadIqcTable = async () => {
+  try {
+    const data = await apiQuality.iqcInspect.getIqcDtlInfoByBillVo({
+      iqcBillNo: formData.iqcBillNo,
+    });
+    tableData.value = data.list;
+    tableDataCount.value = data.list.filter((item) => item.characteristics === 'COUNT');
+    tableDataCquantitative.value = data.list.filter((item) => item.characteristics === 'QUANTITATIVE');
+    if (data.list.length > 0) {
+      formData.inspectStdName = data.list[0].inspectStdName;
+      formData.inspectionStringencyName = data.list[0].inspectionStringencyName;
+    } else {
+      formData.inspectStdName = '';
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const reset = () => {
   if (isEdit.value) {
     getBillNo();
@@ -423,8 +445,12 @@ const reset = () => {
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
       formData[key] = [];
+    } else if (_.isNumber(formData[key])) {
+      formData[key] = 0;
+    } else if (_.isBoolean(formData[key])) {
+      formData[key] = true;
     } else {
-      delete formData[key];
+      formData[key] = '';
     }
   });
 };
@@ -447,12 +473,18 @@ const showForm = async (edit, row) => {
   formData.mitemCategoryId = row.mitemCategoryId;
   formData.mitemCategoryCode = row.mitemCategoryCode;
   formData.mitemCategoryName = row.mitemCategoryName;
-  formData.pickQty = `${row.inspectQty}`;
+  formData.inspectQty = row.pickQty;
   formData.supplierId = row.supplierId;
   formData.supplierCode = row.supplierCode;
   formData.supplierName = row.supplierName;
-  formData.inspectionStringency = row.inspectStringency;
-  formData.inspectionStringencyName = row.inspectStringencyName;
+  formData.inspectionStringency = row.inspectionStringency;
+  formData.inspectionStringencyName = row.inspectionStringencyName;
+
+  if (isEdit.value) {
+    await loadTable();
+  } else {
+    await loadIqcTable();
+  }
 };
 const showMergeForm = async (edit, reBillNoList) => {
   isEdit.value = edit;

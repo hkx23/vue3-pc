@@ -401,7 +401,7 @@ const tableSelectedChange = (value: any[]) => {
 const onConfirmForm = async () => {
   try {
     if (_.isEmpty(formInspectData.recheckType)) {
-      MessagePlugin.error(t('mitemRecheck.复检类型不能为空.'));
+      MessagePlugin.error(t('mitemRecheck.复检类型不能为空'));
       return;
     }
 
@@ -412,21 +412,21 @@ const onConfirmForm = async () => {
       } else {
         item.inspectResult = 'NG';
         if (item.characteristics === 'COUNT' && _.isEmpty(item.ngQty)) {
-          MessagePlugin.error(t('mitemRecheck.检验结果不合格时,请填写不良数.'));
+          MessagePlugin.error(t('mitemRecheck.检验结果不合格时,请填写不良数'));
           return;
         }
 
         if (item.characteristics === 'QUANTITATIVE') {
           if (_.isEmpty(item.ngQty) || item.ngQty === '') {
-            MessagePlugin.error(t('mitemRecheck.检验结果不合格时,请填写不良数.'));
+            MessagePlugin.error(t('mitemRecheck.检验结果不合格时,请填写不良数'));
             return;
           }
           if (item.ngQty > item.sampleQty) {
-            MessagePlugin.error(t('mitemRecheck.不良数不能大于样本数.'));
+            MessagePlugin.error(t('mitemRecheck.不良数不能大于样本数'));
             return;
           }
           if (item.ngQty <= 0) {
-            MessagePlugin.error(t('mitemRecheck.请输入正确不良数.'));
+            MessagePlugin.error(t('mitemRecheck.请输入正确不良数'));
             return;
           }
         }
@@ -553,25 +553,25 @@ const loadTableStd = async () => {
 };
 const linkLoadTableStd = async () => {
   if (_.isEmpty(formInspectData.recheckType)) {
-    MessagePlugin.error(t('mitemRecheck.请选择复检类型.'));
+    MessagePlugin.error(t('mitemRecheck.请选择复检类型'));
     return;
   }
   if (_.isEmpty(formInspectData.mitemId)) {
-    MessagePlugin.error(t('mitemRecheck.请选择物料.'));
+    MessagePlugin.error(t('mitemRecheck.请选择物料'));
     return;
   }
 
   if (_.isEmpty(formInspectData.supplierId)) {
-    MessagePlugin.error(t('mitemRecheck.请选择供应商.'));
+    MessagePlugin.error(t('mitemRecheck.请选择供应商'));
     return;
   }
   if (formInspectData.inspectQty <= 0) {
-    MessagePlugin.error(t('mitemRecheck.请输入有效批量.'));
+    MessagePlugin.error(t('mitemRecheck.请输入有效批量'));
     return;
   }
   await loadTableStd();
   if (tableData.value.length === 0) {
-    MessagePlugin.error(t('mitemRecheck.未找到检验项目.'));
+    MessagePlugin.error(t('mitemRecheck.未找到检验项目'));
   }
 };
 const reset = async () => {

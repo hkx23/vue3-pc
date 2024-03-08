@@ -84,7 +84,7 @@ const onConfirmForm = async () => {
     for (let index = 0; index < formMeasureData.measureList.length; index++) {
       const item = formMeasureData.measureList[index];
       if (item.measureValue === '') {
-        MessagePlugin.error(t('mitemRecheck.测量值不能为空.'));
+        MessagePlugin.error(t('mitemRecheck.测量值不能为空'));
         return;
       }
     }
@@ -92,7 +92,7 @@ const onConfirmForm = async () => {
     for (let index = 0; index < formMeasureData.measureList.length; index++) {
       const item = formMeasureData.measureList[index];
       if (item.measureValue < item.minValue || item.measureValue > item.maxValue) {
-        // MessagePlugin.error('请输入正确的测量值.');
+        // MessagePlugin.error('请输入正确的测量值');
         isAllOK = false;
         break;
       }
@@ -112,7 +112,15 @@ const onConfirmForm = async () => {
 const reset = () => {
   // 清除所有对象的值
   Object.keys(formMeasureData).forEach((key) => {
-    delete formMeasureData[key];
+    if (_.isArray(formMeasureData[key])) {
+      formMeasureData[key] = [];
+    } else if (_.isNumber(formMeasureData[key])) {
+      formMeasureData[key] = 0;
+    } else if (_.isBoolean(formMeasureData[key])) {
+      formMeasureData[key] = true;
+    } else {
+      formMeasureData[key] = '';
+    }
   });
 };
 
