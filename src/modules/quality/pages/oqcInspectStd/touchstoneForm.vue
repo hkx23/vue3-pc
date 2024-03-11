@@ -276,11 +276,10 @@ const querySelectChange = async (event) => {
 };
 
 // 下拉初始数据
-const characteristicsOptions = [
-  { label: '计数', value: 1, id: 1 },
-  { label: '计量', value: 2, id: 2 },
-];
-
+const characteristicsOptions = ref([]);
+api.param.getListByGroupCode({ parmGroupCode: 'Q_CHARACTERISTICS' }).then((data) => {
+  characteristicsOptions.value = data;
+});
 // 下拉初始数据
 const stdTypeOption = [
   { label: '首检', value: 1 },
@@ -423,7 +422,8 @@ const onConfirmDtl = async () => {
     samplingStandardTypeName: dtlData.value.samplingStandardType === '1' ? '国标' : '企标',
     itemCategoryName: categoryOption.value.find((item) => item.value === dtlData.value.itemCategory)?.label,
     unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,
-    characteristicsName: characteristicsOptions[Number(dtlData.value.characteristics) - 1].label,
+    characteristicsName: characteristicsOptions.value.find((item) => item.value === dtlData.value.characteristics)
+      ?.label,
   };
   console.log(rowData);
   return true;

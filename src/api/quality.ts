@@ -851,10 +851,10 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
 }
 
 /** 显示在成品发货实体 */
@@ -1636,8 +1636,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -2851,9 +2851,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -3546,6 +3546,7 @@ export interface ImproveVO {
   currentStage?: string;
   improvePdca?: ImprovePdcaVO;
   improve8d?: Improve8DVO;
+  isSave?: boolean;
   fileList?: FileUpload[];
 }
 
@@ -3583,19 +3584,8 @@ export interface ImproveSearch {
   /** 检验类型 */
   inspectType?: string;
   keyword?: string;
-}
-
-/** 通用响应类 */
-export interface ResultListImproveVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: ImproveVO[] | null;
+  rejectType?: string;
+  reason?: string;
 }
 
 /** 响应数据 */
@@ -3616,6 +3606,19 @@ export interface ResultPagingDataImproveVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataImproveVO;
+}
+
+/** 通用响应类 */
+export interface ResultListImproveVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ImproveVO[] | null;
 }
 
 export interface BatchDynamicInsertDTO {
@@ -4052,12 +4055,12 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s4?: string;
-  s3?: string;
-  s1?: string;
-  i?: string;
-  s2?: string;
   iii?: string;
+  i?: string;
+  s3?: string;
+  s4?: string;
+  s1?: string;
+  s2?: string;
   ii?: string;
 } | null;
 
@@ -5621,6 +5624,21 @@ export const api = {
      */
     stagingBillNo: (data: ImproveVO) =>
       http.request<ResultObject['data']>(`/api/quality/improve/stagingBillNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 品质改善表
+     * @name Reject
+     * @summary 品质改善报告页面驳回
+     * @request POST:/improve/reject
+     * @secure
+     */
+    reject: (data: ImproveSearch) =>
+      http.request<ResultPagingDataImproveVO['data']>(`/api/quality/improve/reject`, {
         method: 'POST',
         body: data as any,
       }),

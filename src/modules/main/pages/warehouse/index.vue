@@ -20,7 +20,6 @@
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
           <t-button theme="default">导入</t-button>
-          <t-button theme="default">导出</t-button>
         </template>
         <template #opAttribute="slotProps">
           <t-space>
