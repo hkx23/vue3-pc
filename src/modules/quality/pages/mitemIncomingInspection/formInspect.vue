@@ -362,7 +362,7 @@ const onConfirmForm = async () => {
         mitemCategoryId: formData.mitemCategoryId,
         mitemCategoryCode: formData.mitemCategoryCode,
         mitemCategoryName: formData.mitemCategoryName,
-        pickQty: Number(formData.pickQty),
+        pickQty: formData.inspectQty,
         supplierId: formData.supplierId,
         supplierCode: formData.supplierCode,
         supplierName: formData.supplierName,
@@ -510,12 +510,15 @@ const showMergeForm = async (edit, reBillNoList) => {
   formData.mitemCategoryId = row.mitemCategoryId;
   formData.mitemCategoryCode = row.mitemCategoryCode;
   formData.mitemCategoryName = row.mitemCategoryName;
-  formData.pickQty = `${totalPickQty}`;
+  formData.inspectQty = totalPickQty;
   formData.supplierId = row.supplierId;
   formData.supplierCode = row.supplierCode;
   formData.supplierName = row.supplierName;
   formData.inspectionStringency = row.inspectionStringency;
   formData.inspectionStringencyName = row.inspectionStringencyName;
+  if (isEdit.value) {
+    await loadTable();
+  }
 };
 const onShowMeasureDialog = async (row) => {
   const { showForm } = formMeasureRef.value;
