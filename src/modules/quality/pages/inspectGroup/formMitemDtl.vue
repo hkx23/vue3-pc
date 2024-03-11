@@ -5,15 +5,21 @@
         <t-input
           v-model="formData.keyword"
           clearable
-          @change="fetchCategoryList"
-          @enter="fetchCategoryList"
-          @clear="fetchCategoryList"
+          @change="fetchCategoryInputList"
+          @enter="fetchCategoryInputList"
+          @clear="fetchCategoryInputList"
         >
           <template #suffixIcon>
-            <search-icon :style="{ cursor: 'pointer' }" @click="fetchCategoryList" />
+            <search-icon :style="{ cursor: 'pointer' }" @click="fetchCategoryInputList" />
           </template>
         </t-input>
-        <t-list style="margin-top: 20px">
+        <t-list
+          :style="{ 'max-height': '430px' }"
+          style="margin-top: 20px"
+          :async-loading="asyncLoading"
+          split
+          @load-more="scrollHandler"
+        >
           <t-list-item
             v-for="(item, index) in listItems"
             :key="index"
@@ -73,9 +79,10 @@ export default {
 };
 </script>
 <script setup lang="ts">
+import { debounce } from 'lodash';
 import { PlusIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { Ref, ref } from 'vue';
+import { computed, Ref, ref } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
 import { useLoading } from '@/hooks/modules/loading';
@@ -86,6 +93,24 @@ import { useLang } from './lang';
 const { setLoading: setLoadingUser } = useLoading();
 const { t } = useLang();
 const { pageUI } = usePage();
+const asyncLoadingRadio = ref('load-more');
+const totals = ref<number>(0); // 用户分页总数
+const asyncLoading = computed(() => {
+  if (asyncLoadingRadio.value === 'loading-custom') {
+    return '没有更多数据了~';
+  }
+  return asyncLoadingRadio.value;
+});
+// 点击加载更多
+const scrollHandler = debounce(async () => {
+  asyncLoadingRadio.value = 'loading';
+  formData.value.pageNum++;
+  await fetchCategoryList();
+  asyncLoadingRadio.value = 'load-more';
+  if (listItems.value.length >= totals.value) {
+    asyncLoadingRadio.value = 'loading-custom';
+  }
+}, 1000);
 const listItems = ref([]);
 const mitemRowKeys: Ref<any[]> = ref([]); //
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
@@ -103,6 +128,8 @@ const onSelectedChange = (value: any) => {
 const formData = ref({
   inspectGroupId: '',
   keyword: '',
+  pageNum: 1,
+  pageSize: 20,
 });
 
 // 加载组内物料关联明细表格
@@ -134,10 +161,36 @@ const fetchCategoryList = async () => {
   try {
     setLoadingUser(true);
     const data = (await apiQuality.inspectGroupInMitem.getCategoryList({
+      pageNum: formData.value.pageNum,
+      pageSize: formData.value.pageSize,
       keyword: formData.value.keyword,
       inspectGroupId: formData.value.inspectGroupId,
     })) as any;
-    listItems.value = data;
+    listItems.value = [...listItems.value, ...data.list];
+    totals.value = data.total;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoadingUser(false);
+  }
+};
+// 加载物料关联明细表格
+const fetchCategoryInputList = async () => {
+  if (!formData.value.inspectGroupId) {
+    return;
+  }
+  try {
+    formData.value.pageNum = 1;
+    formData.value.pageSize = 20;
+    setLoadingUser(true);
+    const data = (await apiQuality.inspectGroupInMitem.getCategoryList({
+      pageNum: formData.value.pageNum,
+      pageSize: formData.value.pageSize,
+      keyword: formData.value.keyword,
+      inspectGroupId: formData.value.inspectGroupId,
+    })) as any;
+    listItems.value = data.list;
+    totals.value = data.total;
   } catch (e) {
     console.log(e);
   } finally {
@@ -176,6 +229,8 @@ const reset = () => {
   formData.value = {
     inspectGroupId: '',
     keyword: '',
+    pageNum: 1,
+    pageSize: 20,
   };
 };
 
@@ -201,6 +256,10 @@ defineExpose({
 
 .custom-list-item {
   border-bottom: 1px solid #ddd;
+}
+
+.scorllTree {
+  overflow-y: auto;
 }
 
 .selected-card {
