@@ -44,14 +44,12 @@
         <!-- 规则明细表格-->
         <cmp-table
           v-model:pagination="pageUIUser"
-          class="son-table"
           row-key="id"
           :columns="tableUserColumns"
           :data="tableDataUserDtl"
           active-row-type="single"
           :loading="loadingPackDtl"
           :total="dataUserTotal"
-          :header-affixed-top="true"
           :fixed-height="true"
           :selected-row-keys="userRowKeys"
           @select-change="onSelectedChange"
@@ -89,9 +87,7 @@
           :table-column="tableMitemColumns"
           :table-data="tableDataMitem"
           :loading="loadingMitem"
-          :header-affixed-top="true"
           :total="dataMitemTotal"
-          class="son-table"
           :fixed-height="true"
           @refresh="fetchMitemTable"
         >

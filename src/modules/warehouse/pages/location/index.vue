@@ -68,9 +68,9 @@
 
 <script setup lang="ts">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api, LocationSearch } from '@/api/warehouse';
+import { api } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue'; //* 查询组件
 import CmpTable from '@/components/cmp-table/index.vue'; //* 表格组件
 import { useLoading } from '@/hooks/modules/loading';
@@ -159,6 +159,9 @@ const fetchTable = async () => {
   const data = await api.location.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
+    warehouseId: formData.queryData.warehouseId,
+    districtKeyword: formData.queryData.districtKeyword,
+    locationKeyword: formData.queryData.locationKeyword,
   });
   tableDataLocation.value = data.list;
   dataTotal.value = data.total;
@@ -169,21 +172,24 @@ const tabRefresh = async () => {
   await fetchTable();
 };
 
+const formData = reactive({
+  queryData: {
+    warehouseId: '',
+    districtKeyword: '',
+    locationKeyword: '',
+  },
+});
+
 //* 查询
 const onInput = async (data: any) => {
+  pageUI.value.page = 1;
   if (!data.value) {
     const { warehouseId, districtKeyword, locationKeyword } = data;
-    pageUI.value.page = 1;
-    const result = await api.location.getList({
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      warehouseId,
-      districtKeyword,
-      locationKeyword,
-    } as LocationSearch);
-    tableDataLocation.value = result.list;
-    dataTotal.value = result.total;
+    formData.queryData.warehouseId = warehouseId;
+    formData.queryData.districtKeyword = districtKeyword;
+    formData.queryData.locationKeyword = locationKeyword;
   }
+  await fetchTable();
 };
 
 const onEditRowClick = async (value: any) => {

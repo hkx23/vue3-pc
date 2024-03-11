@@ -86,7 +86,7 @@ const onConfirmForm = async () => {
     for (let index = 0; index < formData.measureList.length; index++) {
       const item = formData.measureList[index];
       if (item.measureValue === '') {
-        MessagePlugin.error(t('mitemIncomingInspection.测量值不能为空.'));
+        MessagePlugin.error(t('mitemIncomingInspection.测量值不能为空'));
         return;
       }
     }
@@ -94,7 +94,7 @@ const onConfirmForm = async () => {
     for (let index = 0; index < formData.measureList.length; index++) {
       const item = formData.measureList[index];
       if (item.measureValue < item.minValue || item.measureValue > item.maxValue) {
-        // MessagePlugin.error('请输入正确的测量值.');
+        // MessagePlugin.error('请输入正确的测量值');
         isAllOK = false;
         break;
       }
@@ -116,8 +116,12 @@ const reset = () => {
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
       formData[key] = [];
+    } else if (_.isNumber(formData[key])) {
+      formData[key] = 0;
+    } else if (_.isBoolean(formData[key])) {
+      formData[key] = true;
     } else {
-      delete formData[key];
+      formData[key] = '';
     }
   });
 };

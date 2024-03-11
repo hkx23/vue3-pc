@@ -22,20 +22,21 @@
           <t-link
             theme="primary"
             style="padding-right: 8px"
-            :disabled="row.status !== 'DRAFT' && row.status !== 'INITIATED' && row.status !== 'INPROGRESS'"
+            :disabled="row.status !== 'DRAFT' && row.status !== 'INITIATED' && row.status !== 'IN_PROGRESS'"
+            @click="onEdit(row)"
             >{{ t('qualityImprove.report') }}</t-link
           >
           <t-popconfirm :content="t('qualityImprove.confirmCancel')" @confirm="cancelById(row)">
             <t-link
               theme="primary"
               style="padding-right: 8px"
-              :disabled="row.status !== 'DRAFT' && row.status !== 'INITIATED' && row.status !== 'INPROGRESS'"
+              :disabled="row.status !== 'DRAFT' && row.status !== 'INITIATED' && row.status !== 'IN_PROGRESS'"
               >{{ t('common.button.cancel') }}</t-link
             >
           </t-popconfirm>
         </template>
         <template #billNoOp="{ row }">
-          <t-link theme="primary">{{ row.billNo }}</t-link>
+          <t-link theme="primary" @click="onCheck(row)">{{ row.billNo }}</t-link>
         </template>
         <template #relateBillNoOp="{ row }">
           <t-link theme="primary">{{ row.relateBillNo }}</t-link>
@@ -80,11 +81,25 @@ const onAdd = async () => {
   await formRef.value.init();
   pageShow.value = true;
 };
+const onEdit = async (row) => {
+  await formRef.value.init();
+  formRef.value.formData.id = row.id;
+  formRef.value.formData.operateType = 'edit';
+  await formRef.value.initEdit();
+  pageShow.value = true;
+};
+const onCheck = async (row) => {
+  await formRef.value.init();
+  formRef.value.formData.id = row.id;
+  formRef.value.formData.operateType = 'check';
+  await formRef.value.initEdit();
+  pageShow.value = true;
+};
 const columns: PrimaryTableCol<TableRowData>[] = [
-  { title: `${t('qualityImprove.billNo')}`, width: 120, colKey: 'billNoOp' },
-  { title: `${t('qualityImprove.inspectionType')}`, width: 130, colKey: 'inspectTypeName' },
-  { title: `${t('qualityImprove.status')}`, width: 110, colKey: 'statusName' },
-  { title: `${t('qualityImprove.relateBillNoCell')}`, width: 110, colKey: 'relateBillNoOp' },
+  { title: `${t('qualityImprove.billNo')}`, width: 160, colKey: 'billNoOp' },
+  { title: `${t('qualityImprove.inspectionType')}`, width: 90, colKey: 'inspectTypeName' },
+  { title: `${t('qualityImprove.status')}`, width: 80, colKey: 'statusName' },
+  { title: `${t('qualityImprove.relateBillNoCell')}`, width: 150, colKey: 'relateBillNoOp' },
   { title: `${t('qualityImprove.improveTool')}`, width: 110, colKey: 'improveTool' },
   { title: `${t('qualityImprove.mitemCode')}`, width: 110, colKey: 'mitemCode' },
   { title: `${t('business.main.mitemDesc')}`, width: 110, colKey: 'mitemDesc' },

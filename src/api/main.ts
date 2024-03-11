@@ -7303,6 +7303,50 @@ export interface ResultPagingDataBarcodePkgVO {
   data?: PagingDataBarcodePkgVO;
 }
 
+/** 完工入库标签实体 */
+export interface WipCompletionLabelDTO {
+  dtlBarcodeId?: string;
+  billId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 业务类型编码 */
+  businessCategoryCode?: string;
+  mitemId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料描述 */
+  mitemDesc?: string;
+  mitemCategoryId?: string;
+  warehouseId?: string;
+  /** 仓库编码 */
+  warehouseCode?: string;
+  moScheId?: string;
+  /** 工单编码 */
+  moCode?: string;
+  workshopId?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workcenterId?: string;
+  /** 工作中心名称 */
+  workcenterName?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 条码类型 */
+  barcodeType?: string;
+  /** 状态 */
+  status?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  onhandId?: string;
+}
+
 /** 出勤模式 */
 export interface AttendanceMode {
   id?: string;
@@ -13441,6 +13485,21 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
+     * @name UpdateDeliveryCardStatusAndOnhandId
+     * @summary 更新条码状态和库存现有量ID
+     * @request POST:/deliveryCard/updateDeliveryCardStatusAndOnhandId
+     * @secure
+     */
+    updateDeliveryCardStatusAndOnhandId: (data: LabelVO[]) =>
+      http.request<ResultObject['data']>(`/api/main/deliveryCard/updateDeliveryCardStatusAndOnhandId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
      * @name SplitBarcode
      * @summary 配送卡拆分
      * @request POST:/deliveryCard/splitBarcode
@@ -14150,6 +14209,21 @@ export const api = {
      * No description
      *
      * @tags 在制品条码表
+     * @name UpdateBarcodeStatusAndOnhandId
+     * @summary 更新条码状态和库存现有量ID
+     * @request POST:/barcodeWip/updateBarcodeStatusAndOnhandId
+     * @secure
+     */
+    updateBarcodeStatusAndOnhandId: (data: LabelVO[]) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeWip/updateBarcodeStatusAndOnhandId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品条码表
      * @name ReprintBarcode
      * @summary 补打产品条码
      * @request POST:/barcodeWip/reprintBarcode
@@ -14735,6 +14809,22 @@ export const api = {
       http.request<ResultPagingDataBarcodeRule['data']>(`/api/main/barcodePkg/getBarcodeRuleList`, {
         method: 'GET',
         params: query,
+      }),
+  },
+  barcode: {
+    /**
+     * No description
+     *
+     * @tags 条码公共方法
+     * @name WipCompletionUpdateBarcode
+     * @summary 完工入库更新条码信息
+     * @request POST:/barcode/wipCompletionUpdateBarcode
+     * @secure
+     */
+    wipCompletionUpdateBarcode: (data: WipCompletionLabelDTO[]) =>
+      http.request<ResultObject['data']>(`/api/main/barcode/wipCompletionUpdateBarcode`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   attendanceMode: {

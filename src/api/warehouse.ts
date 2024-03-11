@@ -54,7 +54,7 @@ export interface WipCompletionLabelDTO {
 }
 
 /** 通用响应类 */
-export interface ResultListWipCompletionLabelDTO {
+export interface ResultObject {
   /**
    * 响应代码
    * @format int32
@@ -63,7 +63,7 @@ export interface ResultListWipCompletionLabelDTO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: WipCompletionLabelDTO[] | null;
+  data?: object | null;
 }
 
 export interface UserWarehouseAuthoritySearch {
@@ -85,19 +85,6 @@ export interface UserWarehouseAuthoritySearch {
   inseartList?: string[];
   /** 需要删除的关系 */
   removeList?: string[];
-}
-
-/** 通用响应类 */
-export interface ResultObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: object | null;
 }
 
 export interface CommonSearch {
@@ -2364,11 +2351,11 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 }
 
 /** 采购单明细 */
@@ -2436,11 +2423,11 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3054,19 +3041,19 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  tlpickQty?: number;
   /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
   flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
@@ -5180,8 +5167,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -5950,6 +5937,19 @@ export interface ResultListBillManagementVO {
   data?: BillManagementVO[] | null;
 }
 
+/** 通用响应类 */
+export interface ResultListWipCompletionLabelDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WipCompletionLabelDTO[] | null;
+}
+
 /** 响应数据 */
 export type PagingDataWipCompletionBillVO = {
   list?: WipCompletionBillVO[];
@@ -5979,6 +5979,10 @@ export interface WipCompletionBillVO {
   warehouse?: string;
   /** 创建人 */
   creator?: string;
+  /** 创建人（显示名称） */
+  creatorDisplay?: string;
+  /** 是否自己的单据 */
+  self?: boolean;
 }
 
 /** 响应数据 */
@@ -6130,7 +6134,7 @@ export const api = {
      * @secure
      */
     submit: (id: string, data: WipCompletionLabelDTO[]) =>
-      http.request<ResultListWipCompletionLabelDTO['data']>(`/api/warehouse/billInfo/submit/${id}`, {
+      http.request<ResultObject['data']>(`/api/warehouse/billInfo/submit/${id}`, {
         method: 'PUT',
         body: data as any,
       }),
@@ -6204,6 +6208,21 @@ export const api = {
           params: query,
         },
       ),
+
+    /**
+     * No description
+     *
+     * @tags 单据信息表
+     * @name DeleteBill
+     * @summary 删除入库单
+     * @request DELETE:/billInfo/deleteBill
+     * @secure
+     */
+    deleteBill: (query: { billId: string }) =>
+      http.request<ResultObject['data']>(`/api/warehouse/billInfo/deleteBill`, {
+        method: 'DELETE',
+        params: query,
+      }),
 
     /**
      * No description

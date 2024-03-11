@@ -2439,12 +2439,12 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
 }
 
@@ -2488,10 +2488,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3627,16 +3627,16 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
+  stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
 }
 
@@ -3748,12 +3748,12 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
+  stateName?: string;
   isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
@@ -3967,6 +3967,10 @@ export interface WipCompletionBillVO {
   warehouse?: string;
   /** 创建人 */
   creator?: string;
+  /** 创建人（显示名称） */
+  creatorDisplay?: string;
+  /** 是否自己的单据 */
+  self?: boolean;
 }
 
 /** 通用响应类 */
@@ -4403,6 +4407,21 @@ export const api = {
           params: query,
         },
       ),
+
+    /**
+     * No description
+     *
+     * @tags 完工入库
+     * @name DeleteBill
+     * @summary 删除入库单
+     * @request DELETE:/wipCompletion/deleteBill
+     * @secure
+     */
+    deleteBill: (query: { billId: string }) =>
+      http.request<ResultObject['data']>(`/api/control/wipCompletion/deleteBill`, {
+        method: 'DELETE',
+        params: query,
+      }),
 
     /**
      * No description
