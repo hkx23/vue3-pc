@@ -134,8 +134,13 @@
                       :options="onPrintTemplateList"
                     >
                     </t-select>
-
-                    <t-button theme="primary" @click="onPrint"> 打印 </t-button>
+                    <cmp-print-button
+                      :template-id="printTemplateName"
+                      :data="printData"
+                      :show-icon="false"
+                      @before-print="onPrint"
+                      >打印</cmp-print-button
+                    >
                   </template>
                 </cmp-table>
               </cmp-card>
@@ -333,8 +338,21 @@
       </t-row>
     </t-form>
     <template #footer>
-      <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
-      <t-button theme="primary" @click="onSecondaryClick">{{ buttonSwitch }}</t-button>
+      <div v-if="buttonSwitch === '补打'">
+        <t-button theme="default" @click="onClose"> 关闭 </t-button>
+        <cmp-print-button
+          :template-id="printTemplateName"
+          :data="printManagerData"
+          :show-icon="false"
+          theme="primary"
+          @before-print="onPrintManager"
+          >打印</cmp-print-button
+        >
+      </div>
+      <div v-if="buttonSwitch !== '补打'">
+        <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
+        <t-button theme="primary" @click="onSecondaryClick">{{ buttonSwitch }}</t-button>
+      </div>
     </template>
   </t-dialog>
   <!---%日志 dialog 弹窗  -->
@@ -370,10 +388,13 @@ import {
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/main';
+import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
+const printData = ref([]);
+const printManagerData = ref([]);
 const radioValue = ref(1);
 const loading = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
@@ -391,6 +412,9 @@ const tabValue = ref(0);
 const isReprintCancellation = ref(false);
 const tableRefs = ref(); // 配送卡打印 上 表格 实例
 const tableRefCard = ref(); // 配送卡管理 表格 实例
+const onClose = () => {
+  formVisible.value = false;
+};
 // 补打，作废，拆分 DiaLog 数据
 const reprintDialog = ref({
   reprintData: '',
@@ -870,6 +894,66 @@ const onProductRightFetchData = (value: any, context: any) => {
   productSelectedRowKeys.value = value;
 };
 
+const onPrintManager = async () => {
+  try {
+    if (reprintDialog.value.reprintData === '其他原因' && !reprintDialog.value.restsData) {
+      MessagePlugin.warning('请补充必填信息！');
+      return false; // 返回失败标志
+    }
+    let reason = '';
+    if (reprintDialog.value.restsData) {
+      reason = reprintDialog.value.restsData;
+    } else {
+      reason = reprintDialog.value.reprintData;
+    }
+
+    if (!reason) {
+      MessagePlugin.warning('请补充必填信息！');
+      return false; // 返回失败标志
+    }
+
+    printManagerData.value = [];
+    loading.value = true;
+
+    productSelectedRowKeys.value.forEach((deliveryCardId) => {
+      const foundItem = manageTabData.list.find((item) => item.deliveryCardId === deliveryCardId);
+      const DataBase = {
+        DELIVERY_CARD_NO: foundItem.deliveryCardNo,
+        TIME_CREATE: new Date(),
+        PRINT_SEQ: foundItem.printSeq,
+        QTY: foundItem.qty,
+        MITEM_CODE: foundItem.mitemCode,
+        MITEM_NAME: foundItem.mitemName,
+        SCHE_CODE: foundItem.scheCode,
+        WC_NAME: foundItem.workcenterName,
+        DATETIME_SCHE: foundItem.datetimeSche,
+        ORG_NAME: foundItem.orgName,
+      };
+      printManagerData.value.push({
+        variable: DataBase,
+        datasource: { DataBase },
+      });
+    });
+
+    await api.deliveryCard.reprintBarcode({
+      ids: productSelectedRowKeys.value,
+      reason,
+    });
+
+    MessagePlugin.success('补打成功');
+
+    productSelectedRowKeys.value = [];
+    onRightFetchData();
+    formVisible.value = false;
+    return true; // 打印成功时返回 true
+  } catch (e) {
+    console.log(e);
+    return false; // 打印失败时返回 false
+  } finally {
+    loading.value = false;
+  }
+};
+
 // // 补打 点击事件
 const reprintVoidSwitch = ref(0); // 控制
 const onReprint = () => {
@@ -1006,7 +1090,6 @@ const onSecondarySubmit = async (context: { validateResult: boolean }) => {
     formVisible.value = false;
   }
 };
-
 // // 上表格 单选框 选择事件
 const onGenerateChange = async (value: any, context: any) => {
   const { moScheduleId } = context.currentRowData;
@@ -1123,33 +1206,57 @@ const onGenerate = debounce(async () => {
 }, 500);
 
 // // 点击 打印事件
-const onPrint = debounce(async () => {
+const onPrint = async () => {
   const hasNotGenerated = selectedData.value.some((item) => item !== '已生成');
   if (!printTemplateName.value) {
     MessagePlugin.warning('请选择打印模板！');
-    return;
+    return false;
   }
   if (selectedRowKeys?.value?.length < 1) {
     MessagePlugin.warning('至少选择一条需要打印的记录！');
-    return;
+    return false;
   }
   if (hasNotGenerated) {
     MessagePlugin.warning(`存在条码状态不为已生成状态，不允许打印！`);
-    return;
+    return false;
   }
   try {
+    printData.value = [];
     loading.value = true;
+    const moSchedule = printTopTabData.list.find((item) => item.moScheduleId === topPrintID.value);
+    selectedRowKeys.value.forEach((deliveryCardId) => {
+      const foundItem = printDownTabData.list.find((item) => item.deliveryCardId === deliveryCardId);
+      const DataBase = {
+        DELIVERY_CARD_NO: foundItem.deliveryCardNo,
+        TIME_CREATE: new Date(),
+        PRINT_SEQ: foundItem.printSeq,
+        QTY: foundItem.qty,
+        MITEM_CODE: moSchedule.mitemCode,
+        MITEM_NAME: moSchedule.mitemName,
+        SCHE_CODE: moSchedule.scheCode,
+        WC_NAME: moSchedule.workcenterName,
+        DATETIME_SCHE: moSchedule.datetimeSche,
+        ORG_NAME: moSchedule.orgName,
+      };
+      printData.value.push({
+        variable: DataBase,
+        datasource: { DataBase },
+      });
+    });
+
     await api.deliveryCard.printBarcode({ ids: selectedRowKeys.value });
     await onGetPrintDownTabData(); // 刷新数据
     await onGetPrintTopTabData();
     MessagePlugin.success('打印成功');
     selectedRowKeys.value = [];
+    return true;
   } catch (e) {
     console.log(e);
+    return false;
   } finally {
     loading.value = false;
   }
-}, 500);
+};
 
 // // 打印选择 框 行 事件
 const selectedData = ref([]);
