@@ -255,7 +255,7 @@
               </t-space>
             </template>
             <template #op="rowData">
-              <t-space v-if="formData.viewType != ViewType.BJ">
+              <t-space v-if="formData.viewType == ViewType.JY">
                 <t-link theme="primary" @click="showUplaodImg(rowData.row)">上传照片</t-link>
               </t-space>
             </template>
@@ -295,7 +295,7 @@
               </t-space>
             </template>
             <template #op="rowData">
-              <t-space v-if="formData.viewType != ViewType.BJ">
+              <t-space v-if="formData.viewType == ViewType.JY">
                 <t-link theme="primary" @click="showUplaodImg(rowData.row)">上传照片</t-link>
               </t-space>
             </template>
@@ -335,7 +335,7 @@
               </t-space>
             </template>
             <template #op="rowData">
-              <t-space v-if="formData.viewType != ViewType.BJ">
+              <t-space v-if="formData.viewType == ViewType.JY">
                 <t-link theme="primary" @click="showUplaodImg(rowData.row)">上传照片</t-link>
               </t-space>
             </template>
@@ -670,11 +670,10 @@ const getBillNo = async () => {
 };
 
 const onShowFiles = async (rowData) => {
-  selectOqcInspectItemId.value = rowData.row.iqcInspectDtlId;
-
+  selectOqcInspectItemId.value = rowData.row.oqcInspectItemId;
   try {
     if (!_.isEmpty(selectOqcInspectItemId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectOqcInspectItemId.value);
+      const list = await apiQuality.oqcInspect.getOqcInspectItemFileList(selectOqcInspectItemId.value);
       rowData.row.fileList = list;
 
       const { showForm } = formFilesRef.value;
