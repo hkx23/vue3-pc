@@ -11,7 +11,10 @@ import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import BCmpCustomer from './cmp-business/BCmpCustomer.vue';
 import BCmpMitem from './cmp-business/BCmpMitem.vue';
 import BCmpMitemCategory from './cmp-business/BCmpMitemCategory.vue';
+import BCmpMo from './cmp-business/BCmpMo.vue';
+import BCmpMoSchedule from './cmp-business/BCmpMoSchedule.vue';
 import BCmpPerson from './cmp-business/BCmpPerson.vue';
+import BCmpRouting from './cmp-business/BCmpRouting.vue';
 import BCmpSupplier from './cmp-business/BCmpSupplier.vue';
 import BCmpUser from './cmp-business/BCmpUser.vue';
 import CmpButton from './cmp-button/index.vue';
@@ -59,6 +62,9 @@ export default {
     app.component('BCmpCustomer', BCmpCustomer);
     app.component('BCmpMitem', BCmpMitem);
     app.component('BCmpMitemCategory', BCmpMitemCategory);
+    app.component('BCmpRouting', BCmpRouting);
+    app.component('BCmpMo', BCmpMo);
+    app.component('BCmpMoSchedule', BCmpMoSchedule);
   },
 };
 
@@ -78,5 +84,8 @@ declare module '@vue/runtime-core' {
     BCmpCustomer: typeof BCmpCustomer;
     BCmpMitem: typeof BCmpMitem;
     BCmpMitemCategory: typeof BCmpMitemCategory;
+    BCmpRouting: typeof BCmpRouting;
+    BCmpMo: typeof BCmpMo;
+    BCmpMoSchedule: typeof BCmpMoSchedule;
   }
 }

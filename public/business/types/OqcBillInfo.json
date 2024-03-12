@@ -1,0 +1,33 @@
+{
+  "title": "检验单：",
+  "placeholder": "请选择检验单",
+  "url": "/api/quality/oqcInspect/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "单据号",
+      "key": "billNo",
+      "align": "left"
+    },
+    {
+      "title": "单据状态",
+      "key": "statusName",
+      "align": "left"
+    },
+    {
+      "title": "创建人",
+      "key": "displayName",
+      "align": "left"
+    },
+    {
+      "title": "创建时间",
+      "key": "timeCreate",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "billNo",
+    "label": "billNo"
+  }
+}

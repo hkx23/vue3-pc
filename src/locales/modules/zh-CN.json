@@ -4,6 +4,8 @@
       "noMatchingData": "没有符合条件的数据"
     },
     "button": {
+      "submit": "提交",
+      "tempSave": "暂存",
       "confirm": "确认",
       "cancel": "取消",
       "save": "保存",

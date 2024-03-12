@@ -19,9 +19,9 @@
         @select-change="onSelectWaitInspectChange"
         @refresh="fetchTable"
       >
-        <template #title> 工作台 </template>
+        <template #title> 产品检验列表 </template>
         <template #button>
-          <t-button theme="primary" @click="onShowDialog(true, null)">报检</t-button>
+          <t-button theme="primary" @click="onShowDialogBJAdd()">报检</t-button>
           <t-button theme="default" :disabled="selectWaitId?.length == 0" @click="onHandlDeleteBillInfo">删除</t-button>
           <t-button theme="default" :disabled="selectWaitId?.length == 0" @click="onHandlePrint">打印</t-button>
           <t-button theme="default">启动品质改善</t-button>
@@ -29,16 +29,26 @@
         <template #op="rowData">
           <!--：UNSUBMIT 待提报、INSPECT 待检验-->
           <t-space>
-            <t-link
-              v-if="rowData.row.status === 'UNSUBMIT' || rowData.row.status === 'INSPECT'"
-              theme="primary"
-              @click="onShowDialog(true, rowData)"
+            <t-link v-if="rowData.row.status === 'UNSUBMIT'" theme="primary" @click="onShowDialogBJEdit(rowData)"
               >编辑</t-link
             >
           </t-space>
           <t-space>
-            <t-link v-if="rowData.row.status === 'INSPECT'" theme="primary" @click="onShowDialog(true, rowData)"
+            <t-link v-if="rowData.row.status === 'INSPECTING'" theme="primary" @click="onShowDialogJY(rowData)"
+              >编辑</t-link
+            >
+          </t-space>
+          <t-space>
+            <t-link v-if="rowData.row.status === 'INSPECT'" theme="primary" @click="onShowDialogJY(rowData)"
               >检验</t-link
+            >
+          </t-space>
+          <t-space>
+            <t-link
+              v-if="rowData.row.status === 'COMPLETED' || rowData.row.status === 'APPROVALING'"
+              theme="primary"
+              @click="onShowDialogView(rowData)"
+              >查看</t-link
             >
           </t-space>
         </template>
@@ -58,8 +68,6 @@ import { computed, onMounted, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
-import CmpQuery from '@/components/cmp-query/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -133,16 +141,6 @@ const optsTab1 = computed(() => {
         lazyLoad: true,
       },
     },
-    isStartImprove: {
-      label: '是否发起品质改善',
-      comp: 't-select',
-      defaultVal: '',
-      bind: {
-        class: 'check-box-conditon',
-        options: YNOption.value,
-        lazyLoad: true,
-      },
-    },
     inspectUserId: {
       label: '报检员',
       comp: 'bcmp-select-business',
@@ -151,16 +149,6 @@ const optsTab1 = computed(() => {
       bind: {
         type: 'person',
         showTitle: false,
-      },
-    },
-    inspectResult: {
-      label: '单据状态',
-      comp: 't-select',
-      defaultVal: '',
-      bind: {
-        class: 'check-box-conditon',
-        options: OKNGOption.value,
-        lazyLoad: true,
       },
     },
     dateRange: {
@@ -172,6 +160,17 @@ const optsTab1 = computed(() => {
         format: 'YYYY-MM-DD',
       },
     },
+    inspectResult: {
+      label: '检验结果',
+      comp: 't-select',
+      defaultVal: '',
+      bind: {
+        class: 'check-box-conditon',
+        options: OKNGOption.value,
+        lazyLoad: true,
+      },
+    },
+
     dateRangeCreate: {
       label: '创建日期', // 创建日期
       comp: 't-date-range-picker',
@@ -202,12 +201,6 @@ const inspectCategoryOption = ref([
   { value: 'REWORK', label: '返工' },
 ]);
 
-const YNOption = ref([
-  { value: '', label: '全部' },
-  { value: '1', label: '是' },
-  { value: '0', label: '否' },
-]);
-
 const OKNGOption = ref([
   { value: '', label: '全部' },
   { value: 'OK', label: '合格' },
@@ -225,29 +218,29 @@ const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
     type: 'multiple',
     width: 50,
   },
-  { title: '检验单号', width: 160, colKey: 'billNo' },
-  { title: '检验类型', width: 160, colKey: 'inspectCategoryName' },
-  { title: '业务类型', width: 160, colKey: 'inspectCategoryName' },
-  { title: '关联检验单号', width: 160, colKey: 'relateBillNo' },
-  { title: '报检时间', width: 160, colKey: 'timeCreate' },
-  { title: '检验完成时间', width: 160, colKey: 'datetimeInspect' },
-  { title: '排产工单号', width: 160, colKey: 'scheCode' },
-  { title: '产品编码', width: 160, colKey: 'mitemCode' },
-  { title: '产品描述', width: 160, colKey: 'mitemDesc' },
-  { title: '车间', width: 160, colKey: 'workShopName' },
-  { title: '报检数量', width: 200, colKey: 'qty' },
-  { title: '已检数量', width: 160, colKey: 'inspectQty' },
-  { title: '检验结果', width: 160, colKey: 'inspectResultName' },
-  { title: '单据状态', width: 160, colKey: 'statusName' },
-  { title: '单据创建时间', width: 160, colKey: 'timeCreate' },
-  { title: '单据创建人', width: 160, colKey: 'displayName' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  { title: `${t('productInspection.billNo')}`, width: 160, colKey: 'billNo' },
+  { title: `${t('productInspection.inspectCategoryName')}`, width: 160, colKey: 'inspectCategoryName' },
+  { title: `${t('productInspection.businessCategoryName')}`, width: 160, colKey: 'businessCategoryName' },
+  { title: `${t('productInspection.relateBillNo')}`, width: 160, colKey: 'relateBillNo' },
+  { title: `${t('productInspection.timeCheckCreate')}`, width: 160, colKey: 'timeCreate' },
+  { title: `${t('productInspection.datetimeInspect')}`, width: 160, colKey: 'datetimeInspect' },
+  { title: `${t('productInspection.scheCode')}`, width: 160, colKey: 'scheCode' },
+  { title: `${t('productInspection.mitemCode')}`, width: 160, colKey: 'mitemCode' },
+  { title: `${t('productInspection.mitemDesc')}`, width: 160, colKey: 'mitemDesc' },
+  { title: `${t('productInspection.workShopName')}`, width: 160, colKey: 'workShopName' },
+  { title: `${t('productInspection.qty')}`, width: 200, colKey: 'qty' },
+  { title: `${t('productInspection.inspectQty')}`, width: 160, colKey: 'inspectQty' },
+  { title: `${t('productInspection.inspectResultName')}`, width: 160, colKey: 'inspectResultName' },
+  { title: `${t('productInspection.statusName')}`, width: 160, colKey: 'statusName' },
+  { title: `${t('productInspection.timeCreate')}`, width: 160, colKey: 'timeCreate' },
+  { title: `${t('productInspection.displayName')}`, width: 160, colKey: 'displayName' },
+  { title: `${t('productInspection.op')}`, align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 
-const getIqcInspectionStatus = async () => {
+const getOqcInspectionStatus = async () => {
   inspectStatusOption.value = [];
   const data = await apiMain.param.getListByGroupCode({
-    parmGroupCode: 'Q_INSPECTION_STATUS',
+    parmGroupCode: 'Q_OQC_INSPECTION_STATUS',
   });
 
   inspectStatusOption.value.push({ value: '', label: '全部' });
@@ -314,16 +307,37 @@ const fetchTable = async () => {
 const pageInit = async () => {
   getInspectGroupByUser();
   getIqcHandleMethod();
-  getIqcInspectionStatus();
+  getOqcInspectionStatus();
 };
 const onSelectWaitInspectChange = (value: any) => {
   selectWaitId.value = value;
 };
 
-const onShowDialog = async (isEdit: boolean, rowData: any) => {
-  const { showForm, loadTable } = formRef.value;
-  await showForm(isEdit, rowData.row);
-  await loadTable();
+// 报检界面 -新增
+const onShowDialogBJAdd = async () => {
+  const { loadTable, initBJDetailFormAdd } = formRef.value;
+  initBJDetailFormAdd();
+  loadTable();
+};
+// 报检界面 -编辑
+const onShowDialogBJEdit = async (rowData: any) => {
+  const { loadTable, initBJDetailFormEdit } = formRef.value;
+  initBJDetailFormEdit(rowData.row);
+  loadTable();
+};
+
+// 检验界面
+const onShowDialogJY = async (rowData: any) => {
+  const { loadTable, initJYDetailForm } = formRef.value;
+  initJYDetailForm(rowData.row);
+  loadTable();
+};
+
+// 查看界面
+const onShowDialogView = async (rowData: any) => {
+  const { loadTable, initViewkDetailForm } = formRef.value;
+  initViewkDetailForm(rowData.row);
+  loadTable();
 };
 
 // 删除

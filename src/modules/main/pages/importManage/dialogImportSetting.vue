@@ -93,6 +93,8 @@
               bordered
               lazy-load
               row-key="seq"
+              drag-sort="row-handler"
+              @drag-sort="onDragSort"
             >
               <!-- <template #columnName="{ row }">
                 <t-input v-if="row.tableName == 'excel模板读取'" v-model="row.columnName"></t-input>
@@ -144,56 +146,208 @@
       <!-- #region 第三步：添加校验信息 -->
       <div v-if="current == 2" class="center-div">
         <cmp-card :ghost="true">
-          <t-space direction="vertical" size="8px">
-            <t-space align="end" style="float: right">
-              <t-button @click="addValidationData">添加校验条件</t-button>
-              <!-- <t-button @click="setLowerHeight">lower height</t-button> -->
-              <!-- <t-button @click="setHigherHeight">higher height</t-button> -->
-            </t-space>
-            <t-table
-              ref="validateRef"
-              :columns="validationColumns"
-              :data="validationDatas"
-              :max-height="300"
-              bordered
-              lazy-load
-              row-key="index"
-            >
-              <!-- <template #columnName="{ row }">
+          <t-tabs v-model="activeValidateTab">
+            <!-- 页签栏1 唯一校验 -->
+            <t-tab-panel value="tab1" label="唯一校验" :destroy-on-hide="true">
+              <t-space direction="vertical" size="8px" style="padding-top: 8px; width: 100%">
+                <div class="table-box_header">
+                  <div class="table-title"></div>
+                  <t-space size="small" :align="'center'">
+                    <t-space size="small" :align="'center'">
+                      <t-button @click="addValidationData">添加唯一校验</t-button>
+                    </t-space>
+                  </t-space>
+                </div>
+                <t-table
+                  ref="validateRef"
+                  :columns="validationColumns"
+                  :data="validationDatas"
+                  :max-height="300"
+                  bordered
+                  lazy-load
+                  row-key="index"
+                >
+                  <!-- <template #validateName="{ row }">
+                <t-input v-model="row.validateName"></t-input>
+              </template> -->
+                  <template #uniqueType="{ row }">
+                    <t-select
+                      v-model="row.uniqueType"
+                      :options="uniqueTypes"
+                      filterable
+                      @change="handleUniqueTypesChange(row)"
+                    >
+                    </t-select>
+                  </template>
+                  <template #uniqueColumns="{ row }">
+                    <t-select
+                      v-if="row.uniqueType == 'TEMPLATE'"
+                      v-model="row.uniqueColumns"
+                      multiple
+                      :min-collapsed-num="1"
+                      filterable
+                      @change="handleUniqueTemplateChange(row)"
+                    >
+                      <t-option
+                        v-for="column in columnsDataWithoutDefault.filter(
+                          (item) => item.columnName && item.columnDesc && item.isExcel,
+                        )"
+                        :key="column.columnName"
+                        :value="column.columnName"
+                        :name="column.columnDesc"
+                        :label="column.columnDesc + ' (' + column.columnName + ')'"
+                      ></t-option>
+                    </t-select>
+
+                    <t-select
+                      v-if="row.uniqueType == 'DB'"
+                      v-model="row.uniqueColumns"
+                      multiple
+                      :min-collapsed-num="1"
+                      filterable
+                      @change="handleUniqueDbChange(row)"
+                    >
+                      <t-option
+                        v-for="column in columnsData"
+                        :key="column.columnName"
+                        :value="column.columnName"
+                        :name="column.columnDesc"
+                        :label="column.columnDesc + ' (' + column.columnName + ')'"
+                      ></t-option>
+                    </t-select>
+                  </template>
+                  <template #showMsg="{ row }">
+                    <t-input v-model="row.showMsg"></t-input>
+                  </template>
+                  <template #op="row">
+                    <t-space :size="8">
+                      <t-link theme="primary" @click="onClickDeleteValidation(row)">删除</t-link>
+                    </t-space>
+
+                    <!-- <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
+                  <icon name="edit-1" class="black-icon" />
+                </t-button> -->
+                  </template>
+                </t-table>
+              </t-space>
+            </t-tab-panel>
+            <!-- 页签栏2 列校验 -->
+            <t-tab-panel value="tab2" label="列校验" :destroy-on-hide="false">
+              <t-space direction="vertical" size="8px" style="padding-top: 8px; width: 100%">
+                <div class="table-box_header">
+                  <div class="table-title"></div>
+                  <t-space size="small" :align="'center'">
+                    <t-space size="small" :align="'center'">
+                      <t-button @click="addValidationData2">添加列校验</t-button>
+                    </t-space>
+                  </t-space>
+                </div>
+                <t-table
+                  ref="validateColumnRef"
+                  :columns="validationColumns2"
+                  :data="validationDatas2"
+                  :max-height="300"
+                  bordered
+                  lazy-load
+                  row-key="index"
+                >
+                  <!-- <template #columnName="{ row }">
                 <t-input v-if="row.tableName == 'excel模板读取'" v-model="row.columnName"></t-input>
                 <span v-else>{{ row.columnName }}</span>
               </template> -->
-              <!-- <template #columnDesc="{ row }">
+                  <!-- <template #columnDesc="{ row }">
                 <t-input v-model="row.columnDesc"></t-input>
               </template> -->
-              <template #validateName="{ row }">
-                <t-input v-model="row.validateName"></t-input>
-              </template>
-              <template #validateType="{ row }">
-                <t-select v-model="row.validateType" :options="validateTypes" disabled filterable> </t-select>
-              </template>
-              <template #uniqueColumns="{ row }">
-                <t-select v-model="row.uniqueColumns" multiple :min-collapsed-num="1" filterable>
-                  <t-option
-                    v-for="column in columnsData"
-                    :key="column.columnName"
-                    :value="column.columnName"
-                    :name="column.columnDesc"
-                    :label="column.columnDesc + ' (' + column.columnName + ')'"
-                  ></t-option>
-                </t-select>
-              </template>
-              <template #op="row">
-                <t-space :size="8">
-                  <t-link theme="primary" @click="onClickDeleteValidation(row)">删除</t-link>
-                </t-space>
+                  <template #uniqueColumns="{ row }">
+                    <t-select v-model="row.uniqueColumns" filterable @change="handleUniqueColumnsChange(row)">
+                      <t-option
+                        v-for="column in columnsDataWithoutDefault.filter(
+                          (item) => item.columnName && item.columnDesc && item.isExcel && item.columnType !== 'Boolean',
+                        )"
+                        :key="column.columnName"
+                        :value="column.columnName"
+                        :name="column.columnDesc"
+                        :label="column.columnDesc + ' (' + column.columnName + ')'"
+                      ></t-option>
+                    </t-select>
+                  </template>
+                  <!-- <template #validateName="{ row }">
+                    <t-input v-model="row.validateName"></t-input>
+                  </template> -->
+                  <template #validateType="{ row }">
+                    <t-select
+                      v-if="row.columnType === 'String'"
+                      v-model="row.validateType"
+                      filterable
+                      @change="handleValidateTypeChange(row)"
+                    >
+                      <t-option value="LENGTH" label="字符长度限制"></t-option>
+                      <t-option value="REGEX" label="正则表达式"></t-option>
+                    </t-select>
+                    <t-select v-else v-model="row.validateType" filterable disabled>
+                      <t-option value="RANGE" label="范围限制"></t-option>
+                    </t-select>
+                  </template>
+                  <template #validateSetting="{ row }">
+                    <t-input
+                      v-if="row.validateType === 'REGEX'"
+                      v-model="row.regularExpression"
+                      @change="setColumnValidateMsg(row)"
+                    ></t-input>
+                    <t-input-number
+                      v-if="row.validateType === 'LENGTH'"
+                      v-model="row.lengthLimit"
+                      theme="column"
+                      @change="setColumnValidateMsg(row)"
+                    ></t-input-number>
+                    <div
+                      v-if="
+                        row.validateType === 'RANGE' && (row.columnType === 'Date' || row.columnType === 'Datetime')
+                      "
+                    >
+                      <t-date-range-picker
+                        v-model="row.rangeDate"
+                        allow-input
+                        clearable
+                        @change="setColumnValidateMsg(row)"
+                      />
+                    </div>
+                    <div
+                      v-if="
+                        row.validateType === 'RANGE' &&
+                        (row.columnType === 'Integer' || row.columnType === 'Long' || row.columnType === 'BigDecimal')
+                      "
+                    >
+                      <t-input-number
+                        v-model="row.minNumber"
+                        theme="column"
+                        @change="setColumnValidateMsg(row)"
+                      ></t-input-number>
+                      -
+                      <t-input-number
+                        v-model="row.maxNumber"
+                        theme="column"
+                        @change="setColumnValidateMsg(row)"
+                      ></t-input-number>
+                    </div>
+                  </template>
 
-                <!-- <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
+                  <template #showMsg="{ row }">
+                    <t-input v-model="row.showMsg"></t-input>
+                  </template>
+                  <template #op="row">
+                    <t-space :size="8">
+                      <t-link theme="primary" @click="onClickDeleteValidation2(row)">删除</t-link>
+                    </t-space>
+
+                    <!-- <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
                   <icon name="edit-1" class="black-icon" />
                 </t-button> -->
-              </template>
-            </t-table>
-          </t-space>
+                  </template>
+                </t-table>
+              </t-space>
+            </t-tab-panel>
+          </t-tabs>
         </cmp-card>
       </div>
       <!-- #endregion -->
@@ -486,7 +640,17 @@
   </t-drawer>
 </template>
 <script setup lang="tsx">
-import { Data, FormInstanceFunctions, FormRules, Input, MessagePlugin, TableRowData } from 'tdesign-vue-next';
+import { forEach } from 'lodash';
+import { MoveIcon } from 'tdesign-icons-vue-next';
+import {
+  Data,
+  FormInstanceFunctions,
+  FormRules,
+  Input,
+  MessagePlugin,
+  TableProps,
+  TableRowData,
+} from 'tdesign-vue-next';
 import { computed, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 
 import { api, ImportSetting, ImportSettingDTO } from '@/api/main';
@@ -540,7 +704,7 @@ onMounted(async () => {
 const dataTypes = [
   { value: 'String', label: 'String' },
   { value: 'Long', label: 'Long' },
-  { value: 'Interger', label: 'Interger' },
+  { value: 'Integer', label: 'Integer' },
   { value: 'Datetime', label: 'Datetime' },
   { value: 'Boolean', label: 'Boolean' },
 ];
@@ -690,12 +854,31 @@ const previewNext = () => {
 const tableColumnsRef = ref();
 const columnsData: Ref<TableRowData[]> = ref([]);
 const columnsDataWithoutDefault: Ref<TableRowData[]> = ref([]);
-
+const onDragSort: TableProps['onDragSort'] = (params) => {
+  console.log('交换行', params);
+  let seq = 1;
+  forEach(params.newData, (item) => {
+    item.seq = seq++;
+  });
+  columnsDataWithoutDefault.value = params.newData;
+};
 const columns: any = computed(() => [
   // {
   //   title: '表名',
   //   colKey: 'tableName',
   // },
+  {
+    colKey: 'drag',
+    // 列拖拽排序必要参数
+    title: '排序',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cell: (_h) => (
+      <span>
+        <MoveIcon />
+      </span>
+    ),
+    width: 46,
+  },
   {
     title: '列名',
     colKey: 'columnName',
@@ -1195,18 +1378,46 @@ onMounted(async () => {
 // #endregion
 
 // #region 第三步：维护校验信息
+const activeValidateTab = ref('tab1');
+/**
+ * @description: 生成随机字符串ID 不包含数字
+ * @param {length} 长度
+ * @return {String} 随机字符串
+ */
+const randomString = (length = 6) => {
+  const str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const len = str.length;
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += str.charAt(Math.floor(Math.random() * len));
+  }
+  return result;
+};
+
+// const templateColumns = computed(() => {
+//   debugger;
+//   return columnsDataWithoutDefault.value.filter((item) => item.isTemplate === 1);
+// });
 const validationColumns: any = computed(() => [
+  // {
+  //   title: '校验名称',
+  //   colKey: 'validateName',
+  //   width: '120',
+  // },
   {
-    title: '校验名称',
-    colKey: 'validateName',
-  },
-  {
-    title: '校验类型',
-    colKey: 'validateType',
+    title: '唯一校验类型',
+    colKey: 'uniqueType',
+    width: '120',
   },
   {
     title: '唯一键字段',
     colKey: 'uniqueColumns',
+    width: '220',
+  },
+  {
+    title: '校验失败提示信息',
+    colKey: 'showMsg',
+    width: '220',
   },
   // {
   //   title: '校验配置Json',
@@ -1224,34 +1435,261 @@ const validationDatas = ref([]);
 const onClickDeleteValidation = (row) => {
   validationDatas.value.splice(row.rowIndex, 1);
 };
-const validateTypes = [
-  { value: 'UNIQUE', label: '唯一' },
-  { value: 'REGEX', label: '正则' },
+const uniqueTypes = [
+  { value: 'TEMPLATE', label: '模板唯一校验' },
+  { value: 'DB', label: '数据表唯一校验' },
 ];
+// const validateTypes = [
+//   { value: 'UNIQUE', label: '唯一' },
+//   { value: 'REGEX', label: '正则' },
+// ];
 const addValidationData = () => {
-  let uniIndex = 0;
-  uniIndex = validationDatas.value.length + 1;
+  // let uniIndex = 0;
   validationDatas.value.push({
-    validateName: `UNIQUE_${uniIndex}`,
+    validateName: randomString(10),
+    uniqueType: 'DB',
     validateType: 'UNIQUE',
     uniqueColumns: [],
-    datatransferJson: '',
+    showMsg: '',
   });
 };
+
+const validationColumns2: any = computed(() => [
+  {
+    title: '校验列',
+    colKey: 'uniqueColumns',
+    width: '150',
+  },
+  {
+    title: '列类型',
+    colKey: 'columnType',
+    width: '80',
+  },
+  {
+    title: '校验类型',
+    colKey: 'validateType',
+    width: '160',
+  },
+  {
+    title: '校验设置',
+    colKey: 'validateSetting',
+    width: '280',
+  },
+  {
+    title: '校验失败提示信息',
+    colKey: 'showMsg',
+    width: '220',
+  },
+  // {
+  //   title: '校验配置Json',
+  //   colKey: 'datatransferJson',
+  // },
+  {
+    colKey: 'op',
+    title: '操作',
+    align: 'center',
+    fixed: 'right',
+    width: '80',
+  },
+]);
+const validationDatas2 = ref([]);
+
+const onClickDeleteValidation2 = (row) => {
+  validationDatas2.value.splice(row.rowIndex, 1);
+};
+// const validateTypes2 = [
+//   { value: 'UNIQUE', label: '唯一' },
+//   { value: 'REGEX', label: '正则' },
+// ];
+const addValidationData2 = () => {
+  // let uniIndex = 0;
+  // uniIndex = validationDatas2.value.length + 1;
+  validationDatas2.value.push({
+    validateName: randomString(10),
+    validateType: '',
+    uniqueColumns: '',
+    columnType: '',
+    showMsg: '',
+    lengthLimit: 80,
+    regularExpression: '',
+    minNumber: 0,
+    maxNumber: 100,
+    minDate: null,
+    maxDate: null,
+    rangeDate: [],
+  });
+};
+const handleUniqueTypesChange = (row) => {
+  row.uniqueColumns = [];
+};
+const findTemplateColumnDescByColumnName = (columnName) => {
+  return columnsDataWithoutDefault.value
+    .filter((item) => item.columnName && item.columnDesc && item.isExcel)
+    .find((column) => column.columnName === columnName)?.columnDesc;
+};
+const findDbColumnDescByColumnName = (columnName) => {
+  return columnsData.value.find((column) => column.columnName === columnName)?.columnDesc;
+};
+
+const handleUniqueTemplateChange = (row) => {
+  const selectedColumnDescs = row.uniqueColumns
+    .map((columnName) => findTemplateColumnDescByColumnName(columnName))
+    .filter((desc) => desc !== undefined); // 确保移除未找到的columnDesc
+  row.showMsg = `模板数据唯一校验失败：唯一校验字段为[${selectedColumnDescs.join(', ')}]`;
+};
+
+const handleUniqueDbChange = (row) => {
+  const selectedColumnDescs = row.uniqueColumns
+    .map((columnName) => findDbColumnDescByColumnName(columnName))
+    .filter((desc) => desc !== undefined); // 确保移除未找到的columnDesc
+  row.showMsg = `数据库唯一校验失败：唯一校验字段为[${selectedColumnDescs.join(', ')}]`;
+};
+const handleUniqueColumnsChange = (row) => {
+  if (row.uniqueColumns) {
+    const columnItem = columnsDataWithoutDefault.value
+      .filter((item) => item.columnName && item.columnDesc && item.isExcel && item.columnType !== 'Boolean')
+      .filter((item) => {
+        return item.columnName === row.uniqueColumns;
+      });
+    if (columnItem.length > 0) {
+      row.columnType = columnItem[0].columnType;
+      if (columnItem[0].columnType === 'String') {
+        row.validateType = 'LENGTH';
+      } else {
+        row.validateType = 'RANGE';
+      }
+    }
+    setColumnValidateMsg(row);
+  }
+};
+
+const handleValidateTypeChange = (row) => {
+  setColumnValidateMsg(row);
+};
+
+const setColumnValidateMsg = (row) => {
+  // 长度校验信息： 列【列名】长度校验失败，字符长度请在【最小长度】和【最大长度】之间
+  // 区间校验信息： 列【列名】值校验失败，值必须在【最小值】和【最大值】之间
+  // 正则校验信息： 列【列名】值校验失败，值必须符合正则表达式【正则表达式】
+  const columnItem = columnsDataWithoutDefault.value
+    .filter((item) => item.columnName && item.columnDesc && item.isExcel && item.columnType !== 'Boolean')
+    .filter((item) => {
+      return item.columnName === row.uniqueColumns;
+    });
+  if (columnItem) {
+    row.columnDesc = columnItem[0].columnDesc;
+  }
+  row.showMsg = '';
+  if (row.validateType === 'LENGTH') {
+    row.showMsg = `列【${row.columnDesc}】值校验失败，值字符长度必须少于【${row.lengthLimit}】字符`;
+  }
+  if (row.validateType === 'REGEX') {
+    row.showMsg = `列【${row.columnDesc}】值校验失败，值必须符合正则表达式【${row.regularExpression}】`;
+  }
+  if (row.validateType === 'RANGE' && (row.columnType === 'Date' || row.columnType === 'Datetime')) {
+    row.showMsg = `列【${row.columnDesc}】值校验失败，日期范围需在【${row.rangeDate[0]}】和【${row.rangeDate[1]}】之间`;
+  }
+  if (
+    row.validateType === 'RANGE' &&
+    (row.columnType === 'Integer' || row.columnType === 'Long' || row.columnType === 'BigDecimal')
+  ) {
+    row.showMsg = `列【${row.columnDesc}】值校验失败，值范围需在【${row.minNumber}】和【${row.maxNumber}】之间`;
+  }
+};
+
 const saveValidateSetting = () => {
   let checkResult = true;
+  let uniCheckRowIndex = 1;
+  const warnMsgList = [];
   validationDatas.value.forEach((item) => {
-    if (!item.validateName) {
-      MessagePlugin.warning('校验名称不可为空');
+    // if (!item.validateName) {
+    //   MessagePlugin.warning('校验名称不可为空');
+    //   checkResult = false;
+    // }
+    if (item.validateType === 'UNIQUE' && (!item.uniqueColumns || item.uniqueColumns.length === 0)) {
+      warnMsgList.push(`唯一校验-第${uniCheckRowIndex}行，唯一键字段不可为空;`);
+
       checkResult = false;
     }
-    if (item.validateType === 'UNIQUE' && (!item.uniqueColumns || item.uniqueColumns.length === 0)) {
-      MessagePlugin.warning('校验类型为唯一时，唯一键字段不可为空');
+    if (!item.showMsg) {
+      warnMsgList.push(`唯一校验-第${uniCheckRowIndex}行，校验失败提示信息不可为空;`);
       checkResult = false;
+    }
+    uniCheckRowIndex++;
+  });
+  uniCheckRowIndex = 1;
+  validationDatas2.value.forEach((item) => {
+    // if (!item.validateName) {
+    //   MessagePlugin.warning('校验名称不可为空');
+    //   checkResult = false;
+    // }
+    if (!item.uniqueColumns || item.uniqueColumns.length === 0) {
+      warnMsgList.push(`列校验-第${uniCheckRowIndex}行，校验列不可为空;`);
+
+      checkResult = false;
+    }
+    if (!item.showMsg) {
+      warnMsgList.push(`列校验-第${uniCheckRowIndex}行，校验失败提示信息不可为空;`);
+      checkResult = false;
+    }
+    if (!item.validateType) {
+      warnMsgList.push(`列校验-第${uniCheckRowIndex}行，校验类型不可为空;`);
+      checkResult = false;
+    }
+    if (item.uniqueColumns && item.validateType) {
+      switch (item.validateType) {
+        case 'REGEX':
+          if (!item.regularExpression) {
+            warnMsgList.push(`列校验-第${uniCheckRowIndex}行，校验正则式不可为空;`);
+            checkResult = false;
+          }
+          break;
+        case 'LENGTH':
+          if (!item.lengthLimit) {
+            warnMsgList.push(`列校验-第${uniCheckRowIndex}行，字符长度限制不可为空;`);
+            checkResult = false;
+          }
+          break;
+        case 'RANGE':
+          if (item.columnType === 'Date') {
+            if (!item.rangeDate) {
+              warnMsgList.push(`列校验-第${uniCheckRowIndex}行，日期范围不可为空;`);
+              checkResult = false;
+            }
+          } else if (
+            item.minNumber != null &&
+            item.maxNumber != null &&
+            item.minNumber !== '' &&
+            item.maxNumber !== ''
+          ) {
+            warnMsgList.push(`列校验-第${uniCheckRowIndex}行，字段值范围不可为空;`);
+            checkResult = false;
+          } else if (item.minNumber > item.maxNumber) {
+            warnMsgList.push(`列校验-第${uniCheckRowIndex}行，字段值最大值必须大于最小值;`);
+            checkResult = false;
+          }
+
+          break;
+
+        default:
+          break;
+      }
     }
   });
+
   if (checkResult) {
     current.value++;
+  } else {
+    const warnContainer = (
+      <div>
+        {warnMsgList.map((msg, index) => (
+          <div key={index} style="display:block;width:100%">
+            {msg}
+          </div>
+        ))}
+      </div>
+    );
+    MessagePlugin.warning({ content: () => warnContainer });
   }
 };
 // #endregion
@@ -1373,13 +1811,40 @@ const getInsetModel = () => {
 
   insetModel.ruleList = [];
   validationDatas.value.forEach((item) => {
+    const ruleData = {
+      showMsg: item.showMsg,
+      uniqueType: item.uniqueType,
+    };
     insetModel.ruleList.push({
-      validateType: item.validateType,
       validateName: item.validateName,
+      validateType: item.validateType,
       uniqueColumns: item.uniqueColumns,
-      datatransferJson: '',
+      datatransferJson: JSON.stringify(ruleData),
     });
   });
+
+  validationDatas2.value.forEach((item) => {
+    const ruleData = {
+      lengthLimit: item.lengthLimit,
+      regularExpression: item.regularExpression,
+      minNumber: item.minNumber,
+      maxNumber: item.maxNumber,
+      minDate: item.rangeDate.length > 0 ? item.rangeDate[0] : null,
+      maxDate: item.rangeDate.length > 1 ? item.rangeDate[1] : null,
+      rangeDate: item.rangeDate,
+      uniqueType: item.uniqueType,
+      columnType: item.columnType,
+      columnDesc: item.columnDesc,
+      showMsg: item.showMsg,
+    };
+    insetModel.ruleList.push({
+      validateName: item.validateName,
+      validateType: item.validateType,
+      uniqueColumns: item.uniqueColumns,
+      datatransferJson: JSON.stringify(ruleData),
+    });
+  });
+
   return insetModel;
 };
 // #endregion
@@ -1427,21 +1892,41 @@ const initEditData = (insetModel) => {
 
   // 将ruleList属性的值赋回validationDatas
   const validationDataArray = [];
+  const validationDataColumnArray = [];
   columnIndex = 0;
   insetModel.ruleList.forEach((item) => {
-    const validationData = {
-      index: columnIndex++,
-      validateType: item.validateType,
-      validateName: item.validateName,
-      uniqueColumns: JSON.parse(item.uniqueColumns),
-      // 同样，假设datatransferJson在原始数据结构中也是存在的，这里根据实际需求填充
-      datatransferJson: item.datatransferJson || '',
-    };
-    validationDataArray.push(validationData);
+    let uniqueColumns = null;
+    if (item.validateType === 'UNIQUE') {
+      uniqueColumns = JSON.parse(item.uniqueColumns);
+      const validationData = {
+        index: columnIndex++,
+        validateType: item.validateType,
+        validateName: item.validateName,
+        uniqueColumns,
+        // 同样，假设datatransferJson在原始数据结构中也是存在的，这里根据实际需求填充
+        datatransferJson: item.datatransferJson || '',
+        datatransfer: item.datatransferJson === '' ? item.datatransferJson : JSON.parse(item.datatransferJson),
+      };
+      Object.assign(validationData, validationData.datatransfer);
+      validationDataArray.push(validationData);
+      // 更新validationDatas（同样假设它是可写的）
+    } else {
+      uniqueColumns = item.uniqueColumns;
+      const validationData = {
+        index: columnIndex++,
+        validateType: item.validateType,
+        validateName: item.validateName,
+        uniqueColumns,
+        // 同样，假设datatransferJson在原始数据结构中也是存在的，这里根据实际需求填充
+        datatransferJson: item.datatransferJson || '',
+        datatransfer: item.datatransferJson === 'empty' ? item.datatransferJson : JSON.parse(item.datatransferJson),
+      };
+      Object.assign(validationData, validationData.datatransfer);
+      validationDataColumnArray.push(validationData);
+    }
   });
-  // 更新validationDatas（同样假设它是可写的）
   validationDatas.value = validationDataArray;
-
+  validationDatas2.value = validationDataColumnArray;
   // 添加文件列表
   uploadFiles.value = [];
   const addFile: AddFileType = {
@@ -1501,5 +1986,19 @@ defineExpose({ initEditData, initAddData });
   display: flex;
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
+}
+
+.table-box_header {
+  width: 100%;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-box__table {
+  flex: auto;
+  // border: 1px solid #d5d8db;
 }
 </style>
