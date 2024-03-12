@@ -296,7 +296,7 @@
             </template>
             <template #op="rowData">
               <t-space v-if="formData.viewType != ViewType.BJ">
-                <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
+                <t-link theme="primary" @click="showUplaodImg(rowData.row)">上传照片</t-link>
               </t-space>
             </template>
             <template #inspectResultSwitch="{ row }">
@@ -336,7 +336,7 @@
             </template>
             <template #op="rowData">
               <t-space v-if="formData.viewType != ViewType.BJ">
-                <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
+                <t-link theme="primary" @click="showUplaodImg(rowData.row)">上传照片</t-link>
               </t-space>
             </template>
             <template #inspectResultSwitch="{ row }">
@@ -374,7 +374,7 @@
 
   <cmp-files-upload
     ref="formFilesRef"
-    upload-path="IqcInspect"
+    upload-path="OqcInspect"
     @upload-success="uploadSuccess"
     @delete-success="deleteSuccess"
     @batch-delete-success="batchDeleteSuccess"
@@ -401,6 +401,7 @@ import { computed, onMounted, reactive, Ref, ref } from 'vue';
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality, BarcodeVO, OqcInspectBillFullVO, OqcInspectStdFullVO } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
+import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
 import formMeasure from './formMeasure.vue';
@@ -616,6 +617,11 @@ const submitBJQqcInspect = async (isTempSave: boolean) => {
     });
     Emit('parent-refresh-event');
     formVisible.value = false;
+    if (isTempSave) {
+      MessagePlugin.success('暂存成功');
+    } else {
+      MessagePlugin.success('提交成功');
+    }
   } catch (e) {
     console.log(e);
   } finally {
@@ -639,6 +645,11 @@ const submitJYQqcInspect = async (isTempSave: boolean) => {
     });
     Emit('parent-refresh-event');
     formVisible.value = false;
+    if (isTempSave) {
+      MessagePlugin.success('暂存成功');
+    } else {
+      MessagePlugin.success('提交成功');
+    }
   } catch (e) {
     console.log(e);
   } finally {
