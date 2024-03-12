@@ -1,11 +1,9 @@
 <template>
-  <cmp-container :full="false">
-    <cmp-card>
-      <cmp-query ref="optsValue" :opts="opts" is-expansion @submit="conditionEnter" />
-    </cmp-card>
-    <cmp-card :span="12">
-      <!-- ################# 处理组表格数据 ###################### -->
+  <cmp-container :full="true" :full-sub-index="[1]">
+    <cmp-card :span="16">
       <cmp-container :full="true" :ghost="true">
+        <cmp-query ref="optsValue" :opts="opts" is-expansion @submit="conditionEnter" />
+        <!-- ################# 处理组表格数据 ###################### -->
         <cmp-table
           ref="tableRef"
           v-model:pagination="pageUI"
@@ -17,8 +15,6 @@
           :hover="false"
           :stripe="false"
           active-row-type="single"
-          :fixed-height="true"
-          style="height: 200px"
           @row-click="onRowClick"
           @refresh="fetchTable"
         >
@@ -45,49 +41,42 @@
     <cmp-row>
       <!-- ################# 子数据数据 ###################### -->
       <cmp-card :span="6">
-        <div class="pack-dtl-table">
-          <!-- 规则明细表格-->
-          <cmp-table
-            v-model:pagination="pageUIUser"
-            class="son-table"
-            row-key="id"
-            :columns="tableUserColumns"
-            :data="tableDataUserDtl"
-            active-row-type="single"
-            :loading="loadingPackDtl"
-            :total="dataUserTotal"
-            :header-affixed-top="true"
-            :bordered="false"
-            :resizable="true"
-            :fixed-height="true"
-            style="height: 180px"
-            :selected-row-keys="userRowKeys"
-            @select-change="onSelectedChange"
-            @refresh="fetchUserTable"
-          >
-            <template #title> {{ t('inspectGroup.tableSubLeftTitle') }} </template>
-            <template #button>
-              <t-button v-if="selectRow.id" @click="onClickAddUser">
-                {{ t('common.button.add') }}
-              </t-button>
-              <t-button v-if="selectRow.id" theme="default" :disabled="loadingMitem" @click="onClickAddUser">
-                {{ t('common.button.import') }}
-              </t-button>
-              <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteUserBatchClick">
-                <t-button theme="default" :disabled="userRowKeys?.length < 2">
-                  {{ t('common.button.batchDelete') }}</t-button
-                >
+        <!-- 规则明细表格-->
+        <cmp-table
+          v-model:pagination="pageUIUser"
+          row-key="id"
+          :columns="tableUserColumns"
+          :data="tableDataUserDtl"
+          active-row-type="single"
+          :loading="loadingPackDtl"
+          :total="dataUserTotal"
+          :fixed-height="true"
+          :selected-row-keys="userRowKeys"
+          @select-change="onSelectedChange"
+          @refresh="fetchUserTable"
+        >
+          <template #title> {{ t('inspectGroup.tableSubLeftTitle') }} </template>
+          <template #button>
+            <t-button v-if="selectRow.id" @click="onClickAddUser">
+              {{ t('common.button.add') }}
+            </t-button>
+            <t-button v-if="selectRow.id" theme="default" :disabled="loadingMitem" @click="onClickAddUser">
+              {{ t('common.button.import') }}
+            </t-button>
+            <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteUserBatchClick">
+              <t-button theme="default" :disabled="userRowKeys?.length < 2">
+                {{ t('common.button.batchDelete') }}</t-button
+              >
+            </t-popconfirm>
+          </template>
+          <template #op="{ row }">
+            <t-space :size="8">
+              <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteUserRowClick(row)">
+                <t-link theme="primary" :disabled="loading">{{ t('common.button.delete') }}</t-link>
               </t-popconfirm>
-            </template>
-            <template #op="{ row }">
-              <t-space :size="8">
-                <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteUserRowClick(row)">
-                  <t-link theme="primary" :disabled="loading">{{ t('common.button.delete') }}</t-link>
-                </t-popconfirm>
-              </t-space>
-            </template></cmp-table
-          >
-        </div>
+            </t-space>
+          </template></cmp-table
+        >
       </cmp-card>
       <cmp-card :span="6">
         <!-- 物料表格-->
@@ -98,11 +87,8 @@
           :table-column="tableMitemColumns"
           :table-data="tableDataMitem"
           :loading="loadingMitem"
-          :header-affixed-top="true"
           :total="dataMitemTotal"
-          class="son-table"
           :fixed-height="true"
-          style="height: 180px"
           @refresh="fetchMitemTable"
         >
           <template #title> {{ t('inspectGroup.tableSubRightTitle') }} </template>
@@ -145,11 +131,11 @@
   <t-dialog
     v-model:visible="formDtlVisible"
     :header="formHeader"
-    :confirm-btn="null"
     :cancel-btn="null"
     :close-on-overlay-click="false"
     width="75%"
     @close="onRefreshAll"
+    @confirm="onConfirmSub"
   >
     <form-user-dtl ref="formDtlRef" :is-add="isAdd" :row="selectRowDtl"></form-user-dtl>
   </t-dialog>
@@ -158,10 +144,10 @@
   <t-dialog
     v-model:visible="formMitemVisible"
     :header="formHeader"
-    :confirm-btn="null"
     :cancel-btn="null"
     :close-on-overlay-click="false"
     width="75%"
+    @confirm="onConfirmSub"
     @close="onRefreshAll"
   >
     <form-mitem-dtl ref="formMitemRef" :is-add="isAdd"></form-mitem-dtl>
@@ -242,6 +228,11 @@ const opts = computed(() => {
     },
   };
 });
+const onConfirmSub = () => {
+  formDtlVisible.value = false;
+  formMitemVisible.value = false;
+  onRefreshAll();
+};
 
 const onSelectedChange = (value: any) => {
   userRowKeys.value = value;

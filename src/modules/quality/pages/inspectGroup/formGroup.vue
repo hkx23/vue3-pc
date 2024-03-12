@@ -8,7 +8,7 @@
     :show-error-message="false"
   >
     <t-form-item :label="t('inspectGroup.groupCode')" name="inspectGroupCode">
-      <t-input v-model="formData.inspectGroupCode" />
+      <t-input v-model="formData.inspectGroupCode" :disabled="!isAdd" />
     </t-form-item>
     <t-form-item :label="t('inspectGroup.groupName')" name="inspectGroupName">
       <t-input v-model="formData.inspectGroupName" clearable />
@@ -51,8 +51,8 @@ const props = defineProps({
 const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const FORM_RULES = {
-  inspectGroupCode: [{ required: true, message: t('common.placeholder.input', [t('inspectGroup.packRuleCode')]) }],
-  inspectGroupName: [{ required: true, message: t('common.placeholder.input', [t('inspectGroup.packRuleName')]) }],
+  inspectGroupCode: [{ required: true, message: t('common.placeholder.input', [t('inspectGroup.groupCode')]) }],
+  inspectGroupName: [{ required: true, message: t('common.placeholder.input', [t('inspectGroup.groupName')]) }],
 };
 
 const formData = ref({

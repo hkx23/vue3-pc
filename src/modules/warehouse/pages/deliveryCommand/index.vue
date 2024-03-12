@@ -138,7 +138,7 @@ import {
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
-import { api } from '@/api/warehouse';
+import { api, GetMaterialsDtlDTO } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -453,9 +453,8 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
 
 // 弹出新增领料制单界面
 const idCollection = ref({
-  warehouseId: [], // 线边仓编码
-  moScheId: [], // 排产单号
-  mitemId: [], // 物料编码
+  warehouseId: '', // 线边仓编码
+  list: [] as GetMaterialsDtlDTO[],
 });
 const formCardVisible = ref(false); // 显示和隐藏领料制单弹出框
 const isAdd = ref(true);
@@ -466,9 +465,17 @@ const onClickAddMaterialRule = () => {
     return;
   }
 
-  idCollection.value.warehouseId = Array.from(new Set(selectData.value.map((item) => item.warehouseId)));
-  idCollection.value.moScheId = Array.from(new Set(selectData.value.map((item) => item.moScheId)));
-  idCollection.value.mitemId = Array.from(new Set(selectData.value.map((item) => item.mitemId)));
+  idCollection.value.warehouseId = selectData.value[0].warehouseId;
+  idCollection.value.list = Array.from(
+    new Set(
+      selectData.value.map((item) => {
+        return {
+          moscheId: item.moScheId,
+          mitemId: item.mitemId,
+        };
+      }),
+    ),
+  );
   const { showPopform } = formCardRef.value;
   showPopform();
   formCardVisible.value = true;

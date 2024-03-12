@@ -6,6 +6,8 @@
   <bcmp-import-auto-dialog
     v-model:visible="visible"
     v-bind="importDialogSettings"
+    :setting-type="settingType"
+    :setting-json="settingJson"
     @close="handleClose"
   ></bcmp-import-auto-dialog>
 </template>
@@ -80,39 +82,67 @@ interface ImportDialogSettings {
   importColumns: ColumnConfig[];
 }
 
+const settingType = ref('db');
+const settingJson = ref(null);
 // 加载业务类型配置
 // loadTypeSetting();
 const importDialogSettings = ref<Partial<ImportDialogSettings>>({});
+
 const loadTypeSetting = () => {
   // 加载业务类型配置
   if (props.type !== '') {
-    api.importManage.getItemByKey({ key: props.type }).then((res) => {
-      // 成功数据
-      if (res) {
-        // 过滤insetModel.columnList中isExcel为true的数据
-        const filterColumns = res.columnList.filter((item) => item.isTemplate === 1);
-        const importList: ColumnConfig[] = [];
-        filterColumns.forEach((item) => {
-          importList.push({
-            title: item.columnDesc,
-            field: item.columnField,
-          });
-        });
+    const jsonAdd = `/import/types/${props.type}.json`;
+    // 先判断是否存在文件
 
-        importDialogSettings.value = {
-          importKey: res.settingModel.importKeyCode,
-          importTitle: res.settingModel.importDesc,
-          importTableName: res.settingModel.tableName,
-          templateFileName: getFileName(res.settingModel.importTemplateUrl),
-          templateFileUrl: res.settingModel.importTemplateUrl,
-          importFileSizeLimit: 5,
-          importRowCountLimit: 50000,
-          importColumnCountLimit: 100,
-          importBatchSize: res.settingModel.batchCount,
-          importColumns: importList || [],
-        };
-      }
+    fetch(jsonAdd)
+      .then((res) => res.json())
+      .then((res) => {
+        settingJson.value = res;
+        setSetting(res);
+        settingType.value = 'json';
+      })
+      .catch((err) => {
+        // 请求失败数据
+        console.log(err);
+        loadTypeSettingByURL();
+        settingType.value = 'db';
+      });
+  }
+};
+
+const loadTypeSettingByURL = () => {
+  // 加载业务类型配置
+  if (props.type !== '') {
+    api.importManage.getItemByKey({ key: props.type }).then((res) => {
+      setSetting(res);
     });
+  }
+};
+const setSetting = (res) => {
+  // 成功数据
+  if (res) {
+    // 过滤insetModel.columnList中isExcel为true的数据
+    const filterColumns = res.columnList.filter((item) => item.isTemplate === 1);
+    const importList: ColumnConfig[] = [];
+    filterColumns.forEach((item) => {
+      importList.push({
+        title: item.columnDesc,
+        field: item.columnField,
+      });
+    });
+
+    importDialogSettings.value = {
+      importKey: res.settingModel.importKeyCode,
+      importTitle: res.settingModel.importDesc,
+      importTableName: res.settingModel.tableName,
+      templateFileName: getFileName(res.settingModel.importTemplateUrl),
+      templateFileUrl: res.settingModel.importTemplateUrl,
+      importFileSizeLimit: 5,
+      importRowCountLimit: 50000,
+      importColumnCountLimit: 100,
+      importBatchSize: res.settingModel.batchCount,
+      importColumns: importList || [],
+    };
   }
 };
 const getFileName = (filePath) => {

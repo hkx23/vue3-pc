@@ -1,0 +1,33 @@
+{
+  "title": "供应商：",
+  "placeholder": "请选择供应商",
+  "url": "/api/main/mitemInSupplier/getMitemInSupplierListByMitemId",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "供应商编码",
+      "key": "supplierCode",
+      "align": "left"
+    },
+    {
+      "title": "供应商名称",
+      "key": "supplierName",
+      "align": "left"
+    },
+    {
+      "title": "物料编码",
+      "key": "mitemCode",
+      "align": "left"
+    },
+    {
+      "title": "物料名称",
+      "key": "mitemName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "supplierId",
+  "keywords": {
+    "value": "supplierId",
+    "label": "supplierName"
+  }
+}

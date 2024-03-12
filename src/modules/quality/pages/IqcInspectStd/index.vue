@@ -4,7 +4,7 @@
     <materialStandardAdd ref="formRef" @permission-show="onPermission"></materialStandardAdd>
   </cmp-container>
   <cmp-container v-show="!pageShow" :full="true">
-    <cmp-card class="not-full-tab" :hover-shadow="false">
+    <cmp-card class="full-tab">
       <t-tabs v-model="tabValue" @change="tabChange">
         <!-- ###############    标准 1️⃣ 表格数据   ######## -->
         <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">

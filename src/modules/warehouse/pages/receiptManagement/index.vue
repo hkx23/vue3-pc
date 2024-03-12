@@ -46,6 +46,7 @@
 <script setup lang="ts">
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { api } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
@@ -53,6 +54,7 @@ import { usePage } from '@/hooks/modules/page';
 
 import ReceiptDetails from './receiptDetails.vue';
 
+const router = useRouter();
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const formTitle = ref('');
@@ -179,17 +181,20 @@ const onEditRowClick = async (value: any) => {
 
 //* 初始渲染
 onMounted(async () => {
-  await fetchTable();
+  const transactionBillNo = router.currentRoute.value.query;
+  console.log(transactionBillNo);
+  await fetchTable(transactionBillNo);
 });
 
 //* 表格数据
-const fetchTable = async () => {
+const fetchTable = async (transactionBillNo) => {
   setLoading(true);
   selectedReceiptRowKeys.value = [];
   tableDataReceipt.value = [];
   const data = await api.billManagement.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
+    billNo: transactionBillNo.billNo,
   });
   tableDataReceipt.value = data.list;
   dataTotal.value = data.total;
@@ -198,14 +203,16 @@ const fetchTable = async () => {
 
 //* 表格刷新
 const tabRefresh = async () => {
-  await fetchTable();
+  const transactionBillNo = '';
+  await fetchTable(transactionBillNo);
 };
 
 //* 查询
 const onInput = async (data: any) => {
   const { categoryName, mitemCode, supplierName, billNo, timeCreate } = data;
   // 提取categoryName数组中每个元素的label，合并成一个数组
-  const businessCategoryIds = categoryName === '' ? [] : categoryName.split(',').map((item) => item.trim());
+  const businessCategoryIds =
+    categoryName === '' || categoryName === null ? [] : categoryName.split(',').map((item) => item.trim());
   if (!data.value) {
     const result = await api.billManagement.getList({
       pageNum: pageUI.value.page,

@@ -105,15 +105,6 @@
                 @selection-change="(value) => warehouseSubChange(value, row)"
               ></bcmp-select-business>
             </template>
-            <!-- <template #districtName="{ row }">
-              <bcmp-select-business
-                v-model="row.districtId"
-                type="district"
-                :show-title="false"
-                :parent-id="row.warehouseId"
-                @selection-change="(value) => districtSubChange(value, row)"
-              ></bcmp-select-business>
-            </template> -->
             <template #reqQty="{ row }">
               <t-input-number
                 v-model="row.reqQty"
@@ -121,8 +112,10 @@
                 theme="normal"
                 :placeholder="t('salesDelivery.inputOnhandQty')"
                 :disabled="_.isNil(row.onhandQty) || row.onhandQty === 0"
-                @blur="onReqQtyblur(row)"
               />
+            </template>
+            <template #memo="{ row }">
+              <t-input v-model="row.memo" theme="normal" />
             </template>
           </t-table>
         </cmp-card>
@@ -158,7 +151,7 @@
               />
             </t-col>
             <t-col flex="1">
-              <t-button theme="primary" style="margin-left: 10px" @click="onSalesOrdeSearch">搜索</t-button>
+              <t-button theme="primary" style="margin-left: 10px" @click="onSalesOrdeSearch">{{ $t('搜索') }}</t-button>
             </t-col>
           </t-row>
         </cmp-card>
@@ -182,12 +175,7 @@
     </cmp-container>
   </t-dialog>
 </template>
-<script lang="ts">
-export default {
-  name: 'FormSalesDelivery',
-};
-</script>
-<script setup lang="ts">
+<script lang="ts" setup>
 import _ from 'lodash';
 import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, reactive, Ref, ref } from 'vue';
@@ -228,58 +216,57 @@ const formData = reactive({
 const tableSalesSumData = computed(() => {
   const list = [];
   if (tableSalesDtlData.value && tableSalesDtlData.value.length > 0) {
-    tableSalesDtlData.value.forEach((n) => {
-      n.sumKey = `${n.mitemId}-${n.warehouseId}-${n.districtId}`;
-    });
-
-    const groupedDatas = _.groupBy(tableSalesDtlData.value, 'sumKey') as any;
-    if (groupedDatas) {
-      Object.keys(groupedDatas).forEach((groupKey) => {
-        const model = {} as any;
-        const groupedData = groupedDatas[groupKey];
-        if (groupedData && groupedData.length > 0) {
-          Object.assign(model, groupedData[0]);
-          const canPickQtySum = _.sumBy(groupedData, (o: any) => o.canPickQty);
-          model.canPickQty = canPickQtySum;
-          list.push(model);
-        }
-      });
+    // eslint-disable-next-line no-lone-blocks
+    {
+      const groupedDatas = _.groupBy(tableSalesDtlData.value, 'sumKey') as any;
+      if (groupedDatas) {
+        Object.keys(groupedDatas).forEach((groupKey) => {
+          const model = {} as any;
+          const groupedData = groupedDatas[groupKey];
+          if (groupedData && groupedData.length > 0) {
+            Object.assign(model, groupedData[0]);
+            model.reqQty = _.sumBy(groupedData, (o: any) => o.reqQty);
+            list.push(model);
+          }
+        });
+      }
     }
   }
   console.log(list);
   return list;
 });
 const tableSalesSumColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '物料编码', width: 120, colKey: 'mitemCode' },
-  { title: '物料描述', width: 120, colKey: 'mitemDesc' },
-  { title: '单位', width: 120, colKey: 'uomName' },
-  { title: '仓库', width: 120, colKey: 'warehouseName' },
+  { title: t('salesDelivery.物料编码'), width: 120, colKey: 'mitemCode' },
+  { title: t('salesDelivery.物料描述'), width: 120, colKey: 'mitemDesc' },
+  { title: t('salesDelivery.单位'), width: 120, colKey: 'uomName' },
+  { title: t('salesDelivery.仓库'), width: 120, colKey: 'warehouseName' },
   // { title: '货区', width: 120, colKey: 'districtName' },
-  { title: '本次发货数', width: 120, colKey: 'reqQty' },
-  { title: '库存现有量', width: 120, colKey: 'onhandQty' },
-  { title: '库存可用量', width: 120, colKey: 'onhandQty' },
+  { title: t('salesDelivery.本次发货数'), width: 120, colKey: 'reqQty' },
+  { title: t('salesDelivery.库存现有量'), width: 120, colKey: 'onhandQty' },
+  { title: t('salesDelivery.库存可用量'), width: 120, colKey: 'canOnhandQty' },
 ];
 
 const tableSalesDtlKeys = ref([]);
 const tableSalesDtlData = ref<SaleOrderDtlVO[]>([]);
 const tableSalesDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
-  { title: '销售订单', width: 150, colKey: 'billNo' },
-  { title: '销售订单行', width: 120, colKey: 'lineSeq' },
-  { title: '客户名称', width: 120, colKey: 'customerName' },
-  { title: '产品编码', width: 120, colKey: 'mitemCode' },
-  { title: '总需求数量', width: 120, colKey: 'requireQty' },
-  { title: '已发货数量', width: 120, colKey: 'deliveriedQty' },
-  { title: '代发货数量', width: 120, colKey: '' },
-  { title: '仓库', width: 160, colKey: 'warehouseName' },
+  { title: t('salesDelivery.销售订单'), width: 150, colKey: 'billNo' },
+  { title: t('salesDelivery.销售订单行'), width: 120, colKey: 'lineSeq' },
+  { title: t('salesDelivery.客户名称'), width: 120, colKey: 'customerName' },
+  { title: t('salesDelivery.产品编码'), width: 120, colKey: 'mitemCode' },
+  { title: t('salesDelivery.总需求数量'), width: 120, colKey: 'requireQty' },
+  { title: t('salesDelivery.已发货数量'), width: 120, colKey: 'deliveriedQty' },
+  { title: t('salesDelivery.待发货数量'), width: 120, colKey: '' },
+  { title: t('salesDelivery.仓库'), width: 160, colKey: 'warehouseName' },
   // { title: '货区', width: 160, colKey: 'districtName' },
-  { title: '库存现有量', width: 120, colKey: 'onhandQty' },
-  { title: '库存可用量', width: 120, colKey: 'onhandQty' },
-  { title: '本次发货数', width: 140, colKey: 'reqQty' },
-  { title: '单位', width: 120, colKey: 'uomName' },
-  { title: '备注', width: 120, colKey: 'memo' },
+  { title: t('salesDelivery.库存现有量'), width: 120, colKey: 'onhandQty' },
+  { title: t('salesDelivery.库存可用量'), width: 120, colKey: 'canOnhandQty' },
+  { title: t('salesDelivery.本次发货数'), width: 140, colKey: 'reqQty' },
+  { title: t('salesDelivery.单位'), width: 120, colKey: 'uomName' },
+  { title: t('salesDelivery.备注'), width: 120, colKey: 'memo' },
 ];
-const onSalesDtlSelectedChange = (keys, rows) => {
+
+const onSalesDtlSelectedChange = (keys) => {
   tableSalesDtlKeys.value = keys;
 };
 
@@ -290,28 +277,36 @@ const tableSalesOrderTotal = ref(0);
 const tableSalesOrderData = ref([]);
 const tableSalesOrderColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
-  { title: '销售订单', width: 150, colKey: 'billNo' },
-  { title: '客户名称', width: 120, colKey: 'customerName' },
-  { title: '产品编码', width: 120, colKey: 'mitemCode' },
-  { title: '要求发货时间', width: 120, colKey: 'datetimeDelivery' },
-  { title: '要求发货数量', width: 120, colKey: 'requireQty' },
-  { title: '已发货数量', width: 120, colKey: 'deliveriedQty' },
-  { title: '备注', width: 120, colKey: 'memo' },
+  { title: t('salesDelivery.销售订单'), width: 150, colKey: 'billNo' },
+  { title: t('salesDelivery.客户名称'), width: 120, colKey: 'customerName' },
+  { title: t('salesDelivery.产品编码'), width: 120, colKey: 'mitemCode' },
+  { title: t('salesDelivery.要求发货时间'), width: 120, colKey: 'datetimeDelivery' },
+  { title: t('salesDelivery.要求发货数量'), width: 120, colKey: 'requireQty' },
+  { title: t('salesDelivery.已发货数量'), width: 120, colKey: 'deliveriedQty' },
+  { title: t('salesDelivery.备注'), width: 120, colKey: 'memo' },
 ];
+
 const warehouseChange = (val: any) => {
   formData.warehouseId = val.id;
   formData.warehouseCode = val.warehouseCode;
   formData.warehouseName = val.warehouseName;
 };
 const customerCodeChange = (val: Customer) => {
-  formData.customerId = val.id;
-  formData.customerCode = val.customerCode;
-  formData.customerName = val.customerName;
+  if (_.isEmpty(val)) {
+    tableSalesDtlData.value = [];
+  } else {
+    formData.customerId = val.id;
+    formData.customerCode = val.customerCode;
+    formData.customerName = val.customerName;
+    if (tableSalesDtlData.value.length > 0 && tableSalesDtlData.value[0].customerCode !== formData.customerCode) {
+      tableSalesDtlData.value = [];
+    }
+  }
 };
 
 const onShowSalesOrder = () => {
   if (_.isEmpty(formData.customerId)) {
-    MessagePlugin.error('请选择客户');
+    MessagePlugin.error(t('salesDelivery.请选择客户'));
     return;
   }
 
@@ -320,7 +315,7 @@ const onShowSalesOrder = () => {
 };
 const onDeleteSalesOrder = () => {
   if (tableSalesDtlKeys.value.length === 0 || tableSalesDtlKeys.value.length === 0) {
-    MessagePlugin.error('请选择需要删除的行');
+    MessagePlugin.error(t('salesDelivery.请选择需要删除的行'));
     return;
   }
   tableSalesDtlKeys.value.forEach((delItem) => {
@@ -352,28 +347,21 @@ const warehouseSubChange = async (val: any, row: SaleOrderDtlVO) => {
   row.warehouseId = val.id;
   row.warehouseCode = val.warehouseCode;
   row.warehouseName = val.warehouseName;
-  await getOnhandQtyByWarehouse(row);
-};
-// const districtSubChange = async (val: any, row: SaleOrderDtlVO) => {
-//   row.districtId = val.id;
-//   row.districtCode = val.districtCode;
-//   row.districtName = val.districtName;
-//   await getOnhandQtyByWarehouse(row);
-// };
-const onReqQtyblur = async (row: SaleOrderDtlVO) => {
-  if (row.reqQty > row.onhandQty) {
-    MessagePlugin.error('本次发货数量不能大于库存现有量');
-  }
+  await getMitemOnhandQtyByWarehouse(row);
 };
 
-const getOnhandQtyByWarehouse = async (row: SaleOrderDtlVO) => {
-  const data = await apiWarehouse.onhandQty.getMitemOnhandQtyByWarehouseAndDistrict({
-    warehouseId: row.warehouseId,
-    districtId: '',
-    // districtId: row.districtId,
-    mitemId: row.mitemId,
-  });
-  row.onhandQty = data;
+const getMitemOnhandQtyByWarehouse = async (row: SaleOrderDtlVO) => {
+  if (_.isEmpty(row)) {
+    row.reqQty = 0;
+  } else {
+    const data = await apiWarehouse.onhandQty.getMitemOnhandQtyByWarehouse({
+      warehouseId: row.warehouseId,
+      mitemId: row.mitemId,
+    });
+    row.onhandQty = data.onhandQty;
+    row.canOnhandQty = data.canOnhandQty;
+    row.reqQty = 0;
+  }
 };
 
 // 加载销售订单信息
@@ -407,11 +395,11 @@ const onConfirmForm = async () => {
       return;
     }
     setLoadingSales(true);
-    const data = await apiWarehouse.saleDelivery.submitSalesDelivery({
+    await apiWarehouse.saleDelivery.submitSalesDelivery({
       ...formData,
       saleOrderDtlVOList: tableSalesDtlData.value,
     });
-    MessagePlugin.success('保存成功');
+    MessagePlugin.success(t('salesDelivery.保存成功'));
     formVisible.value = false;
     Emit('showCloseEvent', false);
   } catch (e) {
@@ -426,33 +414,40 @@ const checkSubmit = () => {
   let isSuccess = true;
   if (_.isEmpty(formData.customerId)) {
     isSuccess = false;
-    MessagePlugin.error('请选择客户');
+    MessagePlugin.error(t('salesDelivery.请选择客户'));
   }
   if (_.isEmpty(formData.address)) {
     isSuccess = false;
-    MessagePlugin.error('请输入发货地址');
+    MessagePlugin.error(t('salesDelivery.请输入发货地址'));
   }
   if (_.isEmpty(formData.salesTime)) {
     isSuccess = false;
-    MessagePlugin.error('请选择发货时间');
+    MessagePlugin.error(t('salesDelivery.请选择发货时间'));
   }
   if (tableSalesDtlData.value && tableSalesDtlData.value.length > 0) {
-    const isEmptyWarehouse = false;
-    const isEmptyQty = false;
     tableSalesDtlData.value.forEach((item) => {
       if (!_.isNumber(item.reqQty) || item.reqQty <= 0) {
         isSuccess = false;
-        MessagePlugin.error('请输入发货数量');
+        MessagePlugin.error(t('salesDelivery.请输入发货数量'));
       }
       if (_.isEmpty(item.warehouseId)) {
         isSuccess = false;
-        MessagePlugin.error('请选择仓库');
+        MessagePlugin.error(t('salesDelivery.请选择仓库'));
       }
     });
   } else {
     isSuccess = false;
-    MessagePlugin.error('请选择销售订单');
+    MessagePlugin.error(t('salesDelivery.请选择销售订单'));
   }
+  if (tableSalesSumData.value && tableSalesSumData.value.length > 0) {
+    tableSalesSumData.value.forEach((item) => {
+      if (item.reqQty > item.canOnhandQty) {
+        isSuccess = false;
+        MessagePlugin.error(t('salesDelivery.本次发货数量不能大于库存现有量'));
+      }
+    });
+  }
+
   return isSuccess;
 };
 
@@ -483,4 +478,3 @@ defineExpose({
   background: var(--td-bg-color-page) !important;
 }
 </style>
-`

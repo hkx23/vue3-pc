@@ -680,8 +680,12 @@ const reset = () => {
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
       formData[key] = [];
+    } else if (_.isNumber(formData[key])) {
+      formData[key] = 0;
+    } else if (_.isBoolean(formData[key])) {
+      formData[key] = true;
     } else {
-      delete formData[key];
+      formData[key] = '';
     }
   });
 };

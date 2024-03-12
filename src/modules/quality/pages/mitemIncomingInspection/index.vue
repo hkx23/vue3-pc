@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <cmp-card class="not-full-tab">
       <t-tabs :model-value="selectTabValue" @change="tabsChange">
-        <t-tab-panel value="tab1" label="待检验" :destroy-on-hide="false">
+        <t-tab-panel value="tab1" :label="t('mitemIncomingInspection.待检验')" :destroy-on-hide="false">
           <template #panel>
             <cmp-container :full="true">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
@@ -24,11 +24,17 @@
                   @select-change="onSelectWaitInspectChange"
                   @refresh="fetchTable"
                 >
-                  <template #title> 工作台 </template>
+                  <template #title>{{ t('mitemIncomingInspection.工作台') }}</template>
                   <template #button>
-                    <t-button theme="primary" @click="mergeInspection(true)">合并检验</t-button>
-                    <t-button theme="default" @click="directInspectOk">一键合格</t-button>
-                    <t-button theme="default" @click="directInspectNg">一键判退</t-button>
+                    <t-button theme="primary" @click="mergeInspection(true)">{{
+                      t('mitemIncomingInspection.合并检验')
+                    }}</t-button>
+                    <t-button theme="default" @click="directInspectOk">{{
+                      t('mitemIncomingInspection.一键合格')
+                    }}</t-button>
+                    <t-button theme="default" @click="directInspectNg">{{
+                      t('mitemIncomingInspection.一键判退')
+                    }}</t-button>
                   </template>
                   <template #op="rowData">
                     <t-space>
@@ -36,7 +42,7 @@
                         v-if="rowData.row.inspectResult === 'UNINSPECT' || _.isEmpty(rowData.row.iqcBillNo)"
                         theme="primary"
                         @click="onShowDialog(true, rowData)"
-                        >检验</t-link
+                        >{{ t('mitemIncomingInspection.检验') }}</t-link
                       >
                     </t-space>
                   </template>
@@ -51,7 +57,7 @@
             </cmp-container>
           </template>
         </t-tab-panel>
-        <t-tab-panel value="tab2" label="检验完成" :destroy-on-hide="false">
+        <t-tab-panel value="tab2" :label="t('mitemIncomingInspection.检验完成')" :destroy-on-hide="false">
           <template #panel>
             <cmp-container :full="true">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
@@ -75,16 +81,6 @@
                   @refresh="fetchTableInspec"
                 >
                   <template #title> </template>
-                  <template #op>
-                    <!-- <t-space>
-                      <t-link
-                        v-if="rowData.row.inspectResult === 'UNINSPECT' || _.isEmpty(rowData.row.iqcBillNo)"
-                        theme="primary"
-                        @click="onShowDialog(true, rowData)"
-                        >修改</t-link
-                      >
-                    </t-space> -->
-                  </template>
 
                   <template #iqcBillNo="rowData">
                     <t-space>
@@ -103,8 +99,7 @@
   <!--弹窗-->
   <formInspect ref="formRef" @parent-refresh-event="fetchTable"></formInspect>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
@@ -116,6 +111,10 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+
+import { useLang } from './lang';
+
+const { t } = useLang();
 
 import formInspect from './formInspect.vue';
 
@@ -161,12 +160,12 @@ const formInspecData = reactive({
   },
 });
 
-const inspectGroupOption = ref([{ label: '全部', value: '' }]);
+const inspectGroupOption = ref([{ label: t('mitemIncomingInspection.全部'), value: '' }]);
 // 待检验
 const optsTab1 = computed(() => {
   return {
     inspectGroupId: {
-      label: '检验组',
+      label: t('mitemIncomingInspection.检验组'),
       comp: 't-select',
       defaultVal: '',
       bind: {
@@ -177,7 +176,7 @@ const optsTab1 = computed(() => {
       row: 1,
     },
     billNo: {
-      label: '接收单号', // 来料接收单号
+      label: t('mitemIncomingInspection.接收单号'), // 来料接收单号
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -189,7 +188,7 @@ const optsTab1 = computed(() => {
       row: 1,
     },
     dateRange: {
-      label: '接收日期', // 来料接收单接收时间
+      label: t('mitemIncomingInspection.接收日期'), // 来料接收单接收时间
       comp: 't-date-range-picker',
       event: 'daterangetime',
       defaultVal: [],
@@ -199,7 +198,7 @@ const optsTab1 = computed(() => {
       row: 1,
     },
     mitemCategoryId: {
-      label: '物料类别',
+      label: t('mitemIncomingInspection.物料类别'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -210,7 +209,7 @@ const optsTab1 = computed(() => {
       row: 2,
     },
     mitemId: {
-      label: '物料',
+      label: t('mitemIncomingInspection.物料'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -221,7 +220,7 @@ const optsTab1 = computed(() => {
       row: 2,
     },
     iqcBillNo: {
-      label: '检验单号',
+      label: t('mitemIncomingInspection.检验单号'),
       comp: 't-input',
       event: 'input',
       defaultVal: '',
@@ -234,7 +233,7 @@ const optsTab1 = computed(() => {
 const optsTab2 = computed(() => {
   return {
     personResponsibilityId: {
-      label: '检验员',
+      label: t('mitemIncomingInspection.检验员'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -245,7 +244,7 @@ const optsTab2 = computed(() => {
       row: 1,
     },
     inspectGroupId: {
-      label: '检验组',
+      label: t('mitemIncomingInspection.检验组'),
       comp: 't-select',
       defaultVal: '',
       bind: {
@@ -256,7 +255,7 @@ const optsTab2 = computed(() => {
       row: 1,
     },
     dateRange: {
-      label: '接收日期',
+      label: t('mitemIncomingInspection.接收日期'),
       comp: 't-date-range-picker',
       event: 'daterangetime',
       defaultVal: [],
@@ -267,7 +266,7 @@ const optsTab2 = computed(() => {
       row: 1,
     },
     dateRangeInspectTion: {
-      label: '检验日期',
+      label: t('mitemIncomingInspection.检验日期'),
       comp: 't-date-range-picker',
       event: 'daterangetime',
       defaultVal: [],
@@ -277,7 +276,7 @@ const optsTab2 = computed(() => {
       row: 2,
     },
     inspectResult: {
-      label: '检验结果',
+      label: t('mitemIncomingInspection.检验结果'),
       comp: 't-select',
       defaultVal: '',
       bind: {
@@ -286,7 +285,7 @@ const optsTab2 = computed(() => {
       row: 2,
     },
     inspectStatus: {
-      label: '处理状态',
+      label: t('mitemIncomingInspection.处理状态'),
       comp: 't-select',
       defaultVal: '',
       bind: {
@@ -295,7 +294,7 @@ const optsTab2 = computed(() => {
       row: 2,
     },
     handleMethod: {
-      label: '处理方式',
+      label: t('mitemIncomingInspection.处理方式'),
       comp: 't-select',
       defaultVal: '',
       bind: {
@@ -304,7 +303,7 @@ const optsTab2 = computed(() => {
       row: 3,
     },
     iqcBillNo: {
-      label: '检验单号', // 来料接收单号
+      label: t('mitemIncomingInspection.检验单号'), // 来料接收单号
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -315,7 +314,7 @@ const optsTab2 = computed(() => {
       row: 3,
     },
     billNo: {
-      label: '接收单号', // 来料接收单号
+      label: t('mitemIncomingInspection.接收单号'), // 来料接收单号
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -327,7 +326,7 @@ const optsTab2 = computed(() => {
       row: 3,
     },
     supplierId: {
-      label: '供应商',
+      label: t('mitemIncomingInspection.供应商'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -338,7 +337,7 @@ const optsTab2 = computed(() => {
       row: 3,
     },
     mitemCategoryId: {
-      label: '物料类别',
+      label: t('mitemIncomingInspection.物料类别'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -349,7 +348,7 @@ const optsTab2 = computed(() => {
       row: 4,
     },
     mitemId: {
-      label: '物料',
+      label: t('mitemIncomingInspection.物料'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -360,7 +359,7 @@ const optsTab2 = computed(() => {
       row: 4,
     },
     iqcInspectStdCode: {
-      label: '检验标准',
+      label: t('mitemIncomingInspection.检验标准'),
       comp: 't-input',
       event: 'input',
       defaultVal: '',
@@ -370,9 +369,9 @@ const optsTab2 = computed(() => {
 });
 
 const inspectResultOption = ref([
-  { value: '', label: '全部' },
-  { value: 'OK', label: '合格' },
-  { value: 'NG', label: '不合格' },
+  { value: '', label: t('mitemIncomingInspection.全部') },
+  { value: 'OK', label: t('mitemIncomingInspection.合格') },
+  { value: 'NG', label: t('mitemIncomingInspection.不合格') },
 ]);
 const inspectStatusOption = ref([]);
 const iqcHandleMethodOption = ref([]);
@@ -385,42 +384,58 @@ const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
     type: 'multiple',
     width: 50,
   },
-  { title: '检验单号', width: 160, colKey: 'iqcBillNo' },
-  { title: '接收单号', width: 160, colKey: 'billNo' },
-  { title: '物料类别', width: 160, colKey: 'mitemCategoryName' },
-  { title: '物料编码', width: 160, colKey: 'mitemCode' },
-  { title: '物料描述', width: 160, colKey: 'mitemDesc' },
-  { title: '供应商', width: 160, colKey: 'supplierName' },
-  { title: '严格度', width: 160, colKey: 'inspectionStringencyName' },
-  { title: '接收批量', width: 160, colKey: 'pickQty' },
-  { title: '单位', width: 160, colKey: 'uomName' },
-  { title: '接收人', width: 160, colKey: 'userReceiptedDisplayName' },
-  { title: '接收时间', width: 200, colKey: 'datetimeReceipted' },
-  { title: '停留时长', width: 160, colKey: 'waitTime' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  { title: t('mitemIncomingInspection.检验单号'), width: 160, colKey: 'iqcBillNo' },
+  { title: t('mitemIncomingInspection.接收单号'), width: 160, colKey: 'billNo' },
+  { title: t('mitemIncomingInspection.物料类别'), width: 160, colKey: 'mitemCategoryName' },
+  { title: t('mitemIncomingInspection.物料编码'), width: 160, colKey: 'mitemCode' },
+  { title: t('mitemIncomingInspection.物料描述'), width: 160, colKey: 'mitemDesc' },
+  { title: t('mitemIncomingInspection.供应商'), width: 160, colKey: 'supplierName' },
+  { title: t('mitemIncomingInspection.严格度'), width: 160, colKey: 'inspectionStringencyName' },
+  { title: t('mitemIncomingInspection.接收批量'), width: 160, colKey: 'pickQty' },
+  { title: t('mitemIncomingInspection.单位'), width: 160, colKey: 'uomName' },
+  { title: t('mitemIncomingInspection.接收人'), width: 160, colKey: 'userReceiptedDisplayName' },
+  { title: t('mitemIncomingInspection.接收时间'), width: 200, colKey: 'datetimeReceipted' },
+  { title: t('mitemIncomingInspection.停留时长'), width: 160, colKey: 'waitTime' },
+  {
+    title: t('mitemIncomingInspection.操作'),
+    align: 'left',
+    fixed: 'right',
+    width: 160,
+    colKey: 'op',
+  },
 ];
 
 const inspectDataTotal = ref(0);
 const inspectData = ref([]);
 const inspectColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '检验单号', width: 160, colKey: 'iqcBillNo' },
-  { title: '接收单号', width: 160, colKey: 'billNo' },
-  { title: '抽样方式', width: 100, colKey: 'IsExemptionInspectionName' },
-  { title: '检验结果', width: 160, colKey: 'inspectResultName' },
-  { title: '处理方式', width: 160, colKey: 'handleMethodName' },
-  { title: '处理状态', width: 160, colKey: 'statusName' },
-  { title: '物料类别', width: 160, colKey: 'mitemCategoryName' },
-  { title: '物料编码', width: 160, colKey: 'mitemCode' },
-  { title: '物料描述', width: 160, colKey: 'mitemDesc' },
-  { title: '供应商', width: 160, colKey: 'supplierName' },
-  { title: '严格度', width: 100, colKey: 'inspectStringencyName' },
-  { title: '检验数量', width: 100, colKey: 'inspectQty' },
-  { title: '单位', width: 100, colKey: 'uomName' },
-  { title: '检验员', width: 160, colKey: 'displayName' },
-  { title: '检验时间', width: 200, colKey: 'timeCreate' },
-  { title: '检验标准', width: 160, colKey: 'inspectStdName' },
-  { title: '停留时长', width: 160, colKey: 'waitTime' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  { title: t('mitemIncomingInspection.检验单号'), width: 160, colKey: 'iqcBillNo' },
+  { title: t('mitemIncomingInspection.接收单号'), width: 160, colKey: 'billNo' },
+  {
+    title: t('mitemIncomingInspection.抽样方式'),
+    width: 100,
+    colKey: 'IsExemptionInspectionName',
+  },
+  { title: t('mitemIncomingInspection.检验结果'), width: 160, colKey: 'inspectResultName' },
+  { title: t('mitemIncomingInspection.处理方式'), width: 160, colKey: 'handleMethodName' },
+  { title: t('mitemIncomingInspection.处理状态'), width: 160, colKey: 'statusName' },
+  { title: t('mitemIncomingInspection.物料类别'), width: 160, colKey: 'mitemCategoryName' },
+  { title: t('mitemIncomingInspection.物料编码'), width: 160, colKey: 'mitemCode' },
+  { title: t('mitemIncomingInspection.物料描述'), width: 160, colKey: 'mitemDesc' },
+  { title: t('mitemIncomingInspection.供应商'), width: 160, colKey: 'supplierName' },
+  { title: t('mitemIncomingInspection.严格度'), width: 100, colKey: 'inspectStringencyName' },
+  { title: t('mitemIncomingInspection.检验数量'), width: 100, colKey: 'inspectQty' },
+  { title: t('mitemIncomingInspection.单位'), width: 100, colKey: 'uomName' },
+  { title: t('mitemIncomingInspection.检验员'), width: 160, colKey: 'displayName' },
+  { title: t('mitemIncomingInspection.检验时间'), width: 200, colKey: 'timeCreate' },
+  { title: t('mitemIncomingInspection.检验标准'), width: 160, colKey: 'inspectStdName' },
+  { title: t('mitemIncomingInspection.停留时长'), width: 160, colKey: 'waitTime' },
+  {
+    title: t('mitemIncomingInspection.操作'),
+    align: 'left',
+    fixed: 'right',
+    width: 160,
+    colKey: 'op',
+  },
 ];
 
 const getIqcInspectionStatus = async () => {
@@ -429,7 +444,7 @@ const getIqcInspectionStatus = async () => {
     parmGroupCode: 'Q_INSPECTION_STATUS',
   });
 
-  inspectStatusOption.value.push({ value: '', label: '全部' });
+  inspectStatusOption.value.push({ value: '', label: t('mitemIncomingInspection.全部') });
   data.forEach((item) => {
     inspectStatusOption.value.push({ value: item.value, label: item.label });
   });
@@ -440,7 +455,7 @@ const getIqcHandleMethod = async () => {
     parmGroupCode: 'Q_IQC_HANDLE_METHOD',
   });
 
-  iqcHandleMethodOption.value.push({ value: '', label: '全部' });
+  iqcHandleMethodOption.value.push({ value: '', label: t('mitemIncomingInspection.全部') });
   data.forEach((item) => {
     iqcHandleMethodOption.value.push({ value: item.value, label: item.label });
   });
@@ -453,7 +468,7 @@ const conditionEnter = (query: any) => {
   // 如果选择的天数超过31天，则调整日期范围
   if (daysDifference > 31) {
     // 将结束日期调整为开始日期的后31天
-    MessagePlugin.warning('日期跨度不得超过31天');
+    MessagePlugin.warning(t('mitemIncomingInspection.日期跨度不得超过31天'));
     return;
   }
 
@@ -475,7 +490,7 @@ const conditionInspecEnter = (query: any) => {
   // 如果选择的天数超过31天，则调整日期范围
   if (daysDifference > 31) {
     // 将结束日期调整为开始日期的后31天
-    MessagePlugin.warning('日期跨度不得超过31天');
+    MessagePlugin.warning(t('mitemIncomingInspection.日期跨度不得超过31天'));
     return;
   }
 
@@ -505,7 +520,10 @@ const getInspectGroupByUser = async () => {
   try {
     const list = await apiQuality.inspectGroup.getInspectGroupByUser();
     list.forEach((item) => {
-      inspectGroupOption.value.push({ label: item.inspectGroupName, value: item.id });
+      inspectGroupOption.value.push({
+        label: item.inspectGroupName,
+        value: item.id,
+      });
     });
   } catch (e) {
     console.log(e);
@@ -571,9 +589,8 @@ const onSelectInspecChange = (value: any) => {
   selectInspecId.value = value;
 };
 const onShowDialog = async (isEdit, rowData) => {
-  const { showForm, loadTable } = formRef.value;
+  const { showForm } = formRef.value;
   await showForm(isEdit, rowData.row);
-  await loadTable();
 };
 
 // 合并检验
@@ -581,9 +598,8 @@ const mergeInspection = async (isEdit) => {
   checkSelected().then(async (isRun) => {
     if (isRun) {
       const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
-      const { showMergeForm, loadTable } = formRef.value;
+      const { showMergeForm } = formRef.value;
       await showMergeForm(isEdit, selectKeys);
-      await loadTable();
     }
   });
 };
@@ -611,7 +627,7 @@ const directInspectOk = async () => {
       });
 
       await fetchTable();
-      MessagePlugin.success('一键合格成功.');
+      MessagePlugin.success(t('mitemIncomingInspection.一键合格成功'));
     }
   });
 };
@@ -639,14 +655,14 @@ const directInspectNg = async () => {
       });
 
       await fetchTable();
-      MessagePlugin.success('一键判退成功.');
+      MessagePlugin.success(t('mitemIncomingInspection.一键判退成功'));
     }
   });
 };
 
 const checkSelected = async () => {
   if (selectWaitId.value.length <= 0) {
-    MessagePlugin.error('请选择待检单.');
+    MessagePlugin.error(t('mitemIncomingInspection.请选择待检单'));
     return false;
   }
 
@@ -655,7 +671,7 @@ const checkSelected = async () => {
   for (let index = 0; index < selectKeys.length; index++) {
     const element = selectKeys[index];
     if (!_.isEmpty(element.iqcBillNo)) {
-      MessagePlugin.error('单据不允许重复检验.');
+      MessagePlugin.error(t('mitemIncomingInspection.单据不允许重复检验'));
       return false;
     }
   }
@@ -665,7 +681,7 @@ const checkSelected = async () => {
     .map((n) => n.supplierCode)
     .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
   if (!_.isEmpty(distinctSupplierCode) && distinctSupplierCode.length > 1) {
-    MessagePlugin.error('只能选择相同供应商的接收单');
+    MessagePlugin.error(t('mitemIncomingInspection.只能选择相同供应商的接收单'));
     return false;
   }
 
@@ -674,7 +690,7 @@ const checkSelected = async () => {
     .map((n) => n.mitemCode)
     .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
   if (!_.isEmpty(distinctMitemCode) && distinctMitemCode.length > 1) {
-    MessagePlugin.error('只能选择相同物料的接收单');
+    MessagePlugin.error(t('mitemIncomingInspection.只能选择相同物料的接收单'));
     return false;
   }
 
@@ -683,7 +699,7 @@ const checkSelected = async () => {
     .map((n) => dayjs(n.datetimeReceipted).format('YYYY-MM-DD'))
     .filter((value, index, self) => self.indexOf(value) === index) as Array<String>;
   if (!_.isEmpty(distinctDatetimeReceipted) && distinctDatetimeReceipted.length > 1) {
-    MessagePlugin.error('只能选择相同日期的接收单');
+    MessagePlugin.error(t('mitemIncomingInspection.只能选择相同日期的接收单'));
     return false;
   }
 
@@ -696,7 +712,6 @@ onMounted(() => {
   });
 });
 </script>
-
 <style lang="less" scoped>
 :deep .t-table__row--active {
   background-color: var(--td-brand-color-light) !important;

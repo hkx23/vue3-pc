@@ -1,12 +1,12 @@
 <template>
   <t-dialog
     v-model:visible="formVisible"
-    header="处理意见"
+    :header="t('mitemIncomingInspection.处理意见')"
     width="80%"
     placement="top"
     top="20"
     :confirm-btn="{
-      content: '提交',
+      content: t('mitemIncomingInspection.提交'),
       theme: 'primary',
     }"
     :on-confirm="onConfirmForm"
@@ -14,24 +14,38 @@
   >
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
-        <t-descriptions :title="'检验单号' + formData.iqcBillNo" :column="4" size="large">
-          <t-descriptions-item label="供应商">{{ formData.supplierName }}</t-descriptions-item>
-          <t-descriptions-item label="物料编码">{{ formData.mitemCategoryCode }}</t-descriptions-item>
-          <t-descriptions-item label="物料名">
+        <t-descriptions :title="t('mitemIncomingInspection.检验单号') + formData.iqcBillNo" :column="4" size="large">
+          <t-descriptions-item :label="t('mitemIncomingInspection.供应商')">{{
+            formData.supplierName
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.物料编码')">{{
+            formData.mitemCategoryCode
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.物料名')">
             <div class="div_break_word">
               {{ formData.mitemName }}
             </div>
           </t-descriptions-item>
-          <t-descriptions-item label="检验严格度">{{ formData.inspectionStringencyName }}</t-descriptions-item>
-          <t-descriptions-item label="报批数量">{{ formData.pickQty }}</t-descriptions-item>
-          <t-descriptions-item label="检验标准">{{ formData.inspectStdName }}</t-descriptions-item>
-          <t-descriptions-item label="接收单号">{{ formData.billNoStr }}</t-descriptions-item>
-          <t-descriptions-item label="查看附件"> <t-link theme="primary">查看附件</t-link></t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.检验严格度')">{{
+            formData.inspectionStringencyName
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.报批数量')">{{
+            formData.pickQty
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.检验标准')">{{
+            formData.inspectStdName
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.接收单号')">{{
+            formData.billNoStr
+          }}</t-descriptions-item>
+          <t-descriptions-item :label="t('mitemIncomingInspection.查看附件')">
+            <t-link theme="primary">{{ t('mitemIncomingInspection.查看附件') }}</t-link></t-descriptions-item
+          >
         </t-descriptions>
       </cmp-card>
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :column="3" size="large">
-          <t-descriptions-item label="缺陷类型">
+          <t-descriptions-item :label="t('mitemIncomingInspection.缺陷类型')">
             <bcmp-select-business
               v-model="formNgData.defectCodes"
               type="defectCode"
@@ -40,43 +54,37 @@
             >
             </bcmp-select-business>
           </t-descriptions-item>
-          <t-descriptions-item label="缺陷等级"
+          <t-descriptions-item :label="t('mitemIncomingInspection.缺陷等级')"
             ><t-select v-model="formNgData.iqcDefectCategoryCode" :options="iqcDefectCategoryOption" />
           </t-descriptions-item>
-          <t-descriptions-item label="物料处理意见"
+          <t-descriptions-item :label="t('mitemIncomingInspection.物料处理意见')"
             ><t-select v-model="formNgData.iqcHandleMethodCode" :options="iqcHandleMethodOption"
           /></t-descriptions-item>
-          <t-descriptions-item label="责任判定"
+          <t-descriptions-item :label="t('mitemIncomingInspection.责任判定')"
             ><t-select v-model="formNgData.iqcResponsibilityCode" :options="iqcResponsibilityOption"
           /></t-descriptions-item>
-          <t-descriptions-item label="供方整改意见"
+          <t-descriptions-item :label="t('mitemIncomingInspection.供方整改意见')"
             ><t-select v-model="formNgData.iqcCorrectCode" :options="iqcCorrectOpinion"
           /></t-descriptions-item>
-          <t-descriptions-item label="跟进人">
+          <t-descriptions-item :label="t('mitemIncomingInspection.跟进人')">
             <bcmp-select-business
               v-model="formNgData.personResponsibilityId"
               type="person"
               :show-title="false"
             ></bcmp-select-business
           ></t-descriptions-item>
-          <t-descriptions-item label="描述" :span="3">
-            <t-textarea v-model="formNgData.memo" placeholder="请输入内容"
+          <t-descriptions-item :label="t('mitemIncomingInspection.描述')" :span="3">
+            <t-textarea v-model="formNgData.memo" :placeholder="t('mitemIncomingInspection.请输入内容')"
           /></t-descriptions-item>
           <t-descriptions-item>
-            <t-checkbox v-model="formNgData.isPdca" label="启用PDCA" />
+            <t-checkbox v-model="formNgData.isPdca" :label="t('mitemIncomingInspection.启用PDCA')" />
           </t-descriptions-item>
         </t-descriptions>
       </cmp-card>
     </cmp-container>
   </t-dialog>
 </template>
-<script lang="ts">
-export default {
-  name: 'FormNg',
-};
-</script>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import _ from 'lodash';
 import { FormInstanceFunctions, LoadingPlugin, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
@@ -84,6 +92,9 @@ import { onMounted, reactive, Ref, ref } from 'vue';
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
 
+import { useLang } from './lang';
+
+const { t } = useLang();
 const Emit = defineEmits(['parent-refresh-event', 'form-close-event']);
 
 const formVisible = ref(false);
@@ -135,27 +146,27 @@ const onConfirmForm = async () => {
         };
       });
     } else {
-      MessagePlugin.error('缺陷类型不能为空');
+      MessagePlugin.error(t('mitemIncomingInspection.缺陷类型不能为空'));
       return;
     }
     if (_.isEmpty(formNgData.iqcDefectCategoryCode)) {
-      MessagePlugin.error('缺陷等级不能为空');
+      MessagePlugin.error(t('mitemIncomingInspection.缺陷等级不能为空'));
       return;
     }
     if (_.isEmpty(formNgData.iqcHandleMethodCode)) {
-      MessagePlugin.error('物料处理意见不能为空');
+      MessagePlugin.error(t('mitemIncomingInspection.物料处理意见不能为空'));
       return;
     }
     if (_.isEmpty(formNgData.iqcResponsibilityCode)) {
-      MessagePlugin.error('责任判定不能为空');
+      MessagePlugin.error(t('mitemIncomingInspection.责任判定不能为空'));
       return;
     }
     if (_.isEmpty(formNgData.iqcCorrectCode)) {
-      MessagePlugin.error('供方整改意见不能为空');
+      MessagePlugin.error(t('mitemIncomingInspection.供方整改意见不能为空'));
       return;
     }
     if (_.isEmpty(formNgData.personResponsibilityId)) {
-      MessagePlugin.error('跟进人不能为空');
+      MessagePlugin.error(t('mitemIncomingInspection.跟进人不能为空'));
       return;
     }
     LoadingPlugin(true);
@@ -193,16 +204,24 @@ const reset = () => {
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
       formData[key] = [];
+    } else if (_.isNumber(formData[key])) {
+      formData[key] = 0;
+    } else if (_.isBoolean(formData[key])) {
+      formData[key] = true;
     } else {
-      delete formData[key];
+      formData[key] = '';
     }
   });
   // 清除所有对象的值
   Object.keys(formNgData).forEach((key) => {
     if (_.isArray(formNgData[key])) {
       formNgData[key] = [];
+    } else if (_.isNumber(formNgData[key])) {
+      formNgData[key] = 0;
+    } else if (_.isBoolean(formNgData[key])) {
+      formNgData[key] = true;
     } else {
-      delete formNgData[key];
+      formNgData[key] = '';
     }
   });
 };
@@ -239,7 +258,10 @@ const getIqcHandleMethod = async () => {
   });
 
   data.forEach((item) => {
-    iqcHandleMethodOption.value.push({ value: item.paramCode, label: item.paramName });
+    iqcHandleMethodOption.value.push({
+      value: item.paramCode,
+      label: item.paramName,
+    });
   });
 };
 
@@ -251,7 +273,10 @@ const getIqcDefectCategory = async () => {
   });
 
   data.forEach((item) => {
-    iqcDefectCategoryOption.value.push({ value: item.paramCode, label: item.paramName });
+    iqcDefectCategoryOption.value.push({
+      value: item.paramCode,
+      label: item.paramName,
+    });
   });
 };
 
@@ -263,7 +288,10 @@ const getIqcResponsibilityOption = async () => {
   });
 
   data.forEach((item) => {
-    iqcResponsibilityOption.value.push({ value: item.paramCode, label: item.paramName });
+    iqcResponsibilityOption.value.push({
+      value: item.paramCode,
+      label: item.paramName,
+    });
   });
 };
 
@@ -275,7 +303,10 @@ const getIqcCorrectOpinionOption = async () => {
   });
 
   data.forEach((item) => {
-    iqcCorrectOpinion.value.push({ value: item.paramCode, label: item.paramName });
+    iqcCorrectOpinion.value.push({
+      value: item.paramCode,
+      label: item.paramName,
+    });
   });
 };
 
@@ -337,4 +368,3 @@ defineExpose({
   justify-content: flex-end;
 }
 </style>
-`

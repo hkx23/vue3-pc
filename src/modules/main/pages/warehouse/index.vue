@@ -20,7 +20,6 @@
         <template #button>
           <t-button theme="primary" @click="onAdd">新增</t-button>
           <t-button theme="default">导入</t-button>
-          <t-button theme="default">导出</t-button>
         </template>
         <template #opAttribute="slotProps">
           <t-space>
@@ -33,7 +32,7 @@
           </t-space>
         </template>
         <template #stateSwitch="{ row }">
-          <t-popconfirm :content="row.state == 0 ? '是否启用仓库' : '是否禁用仓库'" @confirm="onStateRowClick(row)">
+          <t-popconfirm :content="row.state == 1 ? '是否启用仓库' : '是否禁用仓库'" @confirm="onStateRowClick(row)">
             <t-switch v-model="row.state" :custom-value="[1, 0]" :default-value="row.state" size="large"></t-switch>
           </t-popconfirm>
         </template>

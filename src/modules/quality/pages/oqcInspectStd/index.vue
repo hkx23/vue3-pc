@@ -1,10 +1,10 @@
 <template>
   <cmp-container v-show="!pageShow" :full="true">
-    <cmp-card class="not-full-tab" :hover-shadow="false">
+    <cmp-card class="full-tab">
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="标准" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :full="true">
+            <cmp-container :full="true" :gutter="[0, 0]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <!-- 查询组件  -->
                 <cmp-query :opts="opts" label-width="100" @submit="conditionEnter"></cmp-query>

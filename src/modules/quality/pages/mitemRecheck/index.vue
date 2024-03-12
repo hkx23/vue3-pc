@@ -19,24 +19,14 @@
         @select-change="onSelectWaitInspectChange"
         @refresh="fetchTable"
       >
-        <template #title> 工作台 </template>
+        <template #title>{{ t('mitemRecheck.工作台') }}</template>
         <template #button>
-          <t-button theme="primary">复检</t-button>
-        </template>
-        <template #op="rowData">
-          <t-space>
-            <t-link
-              v-if="rowData.row.inspectResult === 'UNINSPECT' || _.isEmpty(rowData.row.recheckBillNo)"
-              theme="primary"
-              @click="onShowDialog(true, rowData)"
-              >检验</t-link
-            >
-          </t-space>
+          <t-button theme="primary" @click="onLoadFJDialog(true, null)">{{ t('mitemRecheck.新增复检') }}</t-button>
         </template>
 
         <template #recheckBillNo="rowData">
           <t-space>
-            <t-link theme="primary" @click="onShowDialog(false, rowData)">{{ rowData.row.recheckBillNo }}</t-link>
+            <t-link theme="primary" @click="onLoadFJDialog(false, rowData)">{{ rowData.row.recheckBillNo }}</t-link>
           </t-space>
         </template>
       </cmp-table>
@@ -46,8 +36,7 @@
   <!--弹窗-->
   <formInspect ref="formRef" @parent-refresh-event="fetchTable" @form-close-event="onFormCloseDialog"></formInspect>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
@@ -55,13 +44,13 @@ import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
-import CmpQuery from '@/components/cmp-query/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import formInspect from './formInspect.vue';
+import { useLang } from './lang';
 
+const { t } = useLang();
 const formRef = ref(null);
 
 const { loading } = useLoading();
@@ -81,11 +70,11 @@ const formData = reactive({
   },
 });
 
-const inspectGroupOption = ref([{ label: '全部', value: '' }]);
+const inspectGroupOption = ref([{ label: t('mitemRecheck.全部'), value: '' }]);
 const optsTab1 = computed(() => {
   return {
     dateRange: {
-      label: '复检时间', // 来料接收单接收时间
+      label: t('mitemRecheck.复检时间'), // 来料接收单接收时间
       comp: 't-date-range-picker',
       event: 'daterangetime',
       defaultVal: [],
@@ -95,7 +84,7 @@ const optsTab1 = computed(() => {
       row: 1,
     },
     recheckBillNo: {
-      label: '复检单号',
+      label: t('mitemRecheck.复检单号'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -106,7 +95,7 @@ const optsTab1 = computed(() => {
       row: 1,
     },
     supplierId: {
-      label: '供应商',
+      label: t('mitemRecheck.供应商'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -117,7 +106,7 @@ const optsTab1 = computed(() => {
       row: 2,
     },
     mitemId: {
-      label: '物料',
+      label: t('mitemRecheck.物料'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -128,7 +117,7 @@ const optsTab1 = computed(() => {
       row: 2,
     },
     personResponsibilityId: {
-      label: '报检人',
+      label: t('mitemRecheck.报检人'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -139,7 +128,7 @@ const optsTab1 = computed(() => {
       row: 2,
     },
     iqcBillNo: {
-      label: '检验单号',
+      label: t('mitemRecheck.检验单号'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
@@ -157,23 +146,23 @@ const iqcHandleMethodOption = ref([]);
 const waitInspectDataTotal = ref(0);
 const waitInspectData = ref([]);
 const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'row-select',
-    type: 'multiple',
-    width: 50,
-  },
-  { title: '复检单号', width: 160, colKey: 'recheckBillNo' },
-  { title: '复检类型', width: 100, colKey: 'reCheckTypeName' },
-  { title: '来源检验单', width: 160, colKey: 'iqcBillNo' },
-  { title: '物料类别', width: 160, colKey: 'mitemCategoryName' },
-  { title: '物料编码', width: 160, colKey: 'mitemCode' },
-  { title: '物料描述', width: 160, colKey: 'mitemDesc' },
-  { title: '供应商', width: 160, colKey: 'supplierName' },
-  { title: '严格度', width: 100, colKey: 'inspectionStringencyName' },
-  { title: '批量', width: 100, colKey: 'inspectQty' },
-  { title: '报检人', width: 100, colKey: 'displayName' },
-  { title: '报检时间', width: 200, colKey: 'timeCreate' },
-  { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
+  // {
+  //   colKey: 'row-select',
+  //   type: 'multiple',
+  //   width: 50,
+  // },
+  { title: t('mitemRecheck.复检单号'), width: 160, colKey: 'recheckBillNo' },
+  { title: t('mitemRecheck.复检类型'), width: 100, colKey: 'recheckTypeName' },
+  { title: t('mitemRecheck.来源检验单'), width: 160, colKey: 'iqcBillNo' },
+  { title: t('mitemRecheck.物料类别'), width: 160, colKey: 'mitemCategoryName' },
+  { title: t('mitemRecheck.物料编码'), width: 160, colKey: 'mitemCode' },
+  { title: t('mitemRecheck.物料描述'), width: 160, colKey: 'mitemDesc' },
+  { title: t('mitemRecheck.供应商'), width: 160, colKey: 'supplierName' },
+  { title: t('mitemRecheck.严格度'), width: 100, colKey: 'inspectionStringencyName' },
+  { title: t('mitemRecheck.批量'), width: 100, colKey: 'inspectQty' },
+  { title: t('mitemRecheck.报检人'), width: 100, colKey: 'displayName' },
+  { title: t('mitemRecheck.报检时间'), width: 200, colKey: 'timeCreate' },
+  // { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
 ];
 
 const getIqcInspectionStatus = async () => {
@@ -182,7 +171,7 @@ const getIqcInspectionStatus = async () => {
     parmGroupCode: 'Q_INSPECTION_STATUS',
   });
 
-  inspectStatusOption.value.push({ value: '', label: '全部' });
+  inspectStatusOption.value.push({ value: '', label: t('mitemRecheck.全部') });
   data.forEach((item) => {
     inspectStatusOption.value.push({ value: item.value, label: item.label });
   });
@@ -193,7 +182,7 @@ const getIqcHandleMethod = async () => {
     parmGroupCode: 'Q_IQC_HANDLE_METHOD',
   });
 
-  iqcHandleMethodOption.value.push({ value: '', label: '全部' });
+  iqcHandleMethodOption.value.push({ value: '', label: t('mitemRecheck.全部') });
   data.forEach((item) => {
     iqcHandleMethodOption.value.push({ value: item.value, label: item.label });
   });
@@ -206,7 +195,7 @@ const conditionEnter = (query: any) => {
   // 如果选择的天数超过31天，则调整日期范围
   if (daysDifference > 31) {
     // 将结束日期调整为开始日期的后31天
-    MessagePlugin.warning('日期跨度不得超过31天');
+    MessagePlugin.warning(t('mitemRecheck.日期跨度不得超过31天'));
     return;
   }
 
@@ -230,7 +219,10 @@ const getInspectGroupByUser = async () => {
   try {
     const list = await apiQuality.inspectGroup.getInspectGroupByUser();
     list.forEach((item) => {
-      inspectGroupOption.value.push({ label: item.inspectGroupName, value: item.id });
+      inspectGroupOption.value.push({
+        label: item.inspectGroupName,
+        value: item.id,
+      });
     });
   } catch (e) {
     console.log(e);
@@ -264,10 +256,21 @@ const pageInit = async () => {
 const onSelectWaitInspectChange = (value: any) => {
   selectWaitId.value = value;
 };
-const onShowDialog = async (isEdit, rowData) => {
-  const { showForm, loadTable } = formRef.value;
-  await showForm(isEdit, rowData.row);
-  await loadTable();
+// const onShowDialog = async (isEdit, rowData) => {
+//   const { showInspectForm } = formRef.value;
+//   if (rowData !== null) {
+//     await showInspectForm(isEdit, rowData.row);
+//   } else {
+//     await showInspectForm(isEdit, null);
+//   }
+// };
+const onLoadFJDialog = async (isEdit, rowData) => {
+  const { showFJForm } = formRef.value;
+  if (rowData !== null) {
+    await showFJForm(isEdit, rowData.row);
+  } else {
+    await showFJForm(isEdit, null);
+  }
 };
 const onFormCloseDialog = async () => {
   fetchTable();
@@ -279,7 +282,6 @@ onMounted(() => {
   });
 });
 </script>
-
 <style lang="less" scoped>
 :deep .t-table__row--active {
   background-color: var(--td-brand-color-light) !important;

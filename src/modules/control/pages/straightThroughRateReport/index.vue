@@ -4,15 +4,7 @@
     <!-- 查询 -->
     <cmp-card :span="12">
       <!-- @reset="onReset" -->
-      <cmp-query
-        ref="queryComponent"
-        :opts="opts"
-        :bool-enter="false"
-        @change="change"
-        @reset="onReset"
-        @submit="onInput"
-      >
-      </cmp-query>
+      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @reset="onReset" @submit="onInput"> </cmp-query>
     </cmp-card>
     <!-- 折线图 -->
     <cmp-card :span="12">
@@ -44,6 +36,7 @@ import { LineChart } from 'echarts/charts';
 import { GridComponent, LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
+import _ from 'lodash';
 
 echarts.use([CanvasRenderer]);
 import dayjs from 'dayjs';
@@ -127,6 +120,7 @@ const dateChange = async (data: any) => {
   // 将日期字符串转换为dayjs对象
   const startDate = dayjs(selectedDateRange[0]);
   const endDate = dayjs(selectedDateRange[1]);
+
   // 计算日期范围的天数差异
   const daysDifference = endDate.diff(startDate, 'day');
   // 如果选择的天数超过31天，则调整日期范围
@@ -136,37 +130,39 @@ const dateChange = async (data: any) => {
   }
 };
 
-// 定义响应式引用来跟踪禁用状态
-// const isWorkcenterDisabled = ref(false);
-// const isMitemDisabled = ref(false);
-
 /** 辅助函数 控制单选多选
  */
-const selectedProcessIds = ref([]);
-const selectedMitemIds = ref([]);
 const queryComponent = ref();
-const change = (val) => {
-  const { mitemIds, processIds } = val;
-  if (processIds.length > 1) {
-    // MessagePlugin.warning('多选工序不能选择产品！');
-    selectedMitemIds.value = []; // 清空产品选择
-    queryComponent.value.setFromValue('mitemIds', []);
-    isMitemDisabled.value = true;
-  } else {
-    isMitemDisabled.value = false;
-  }
-  if (mitemIds.length > 1) {
-    // MessagePlugin.warning('多选产品不能选择工序！');
-    selectedProcessIds.value = []; // 清空工序选择
-    queryComponent.value.setFromValue('processIds', []);
-    isWorkcenterDisabled.value = true;
-  } else {
-    isWorkcenterDisabled.value = false;
-  }
-};
+// const change = (val) => {
+//   const { mitemIds, processIds } = val;
 
-const mitemIds = ref([]); // dis1
-const processIds = ref([]); // dis2
+//   let resMitemIds = [];
+//   let resProcessIds = [];
+//   if (!_.isEmpty(mitemIds)) {
+//     resMitemIds = _.split(mitemIds, ',');
+//   }
+//   if (!_.isEmpty(processIds)) {
+//     resProcessIds = _.split(processIds, ',');
+//   }
+
+//   if (resProcessIds.length > 0) {
+//     selectedMitemIds.value = []; // 清空产品选择
+//     queryComponent.value.setFromValue('mitemIds', []);
+//     isMitemDisabled.value = true;
+//   } else {
+//     isMitemDisabled.value = false;
+//   }
+//   if (resMitemIds.length > 0) {
+//     selectedProcessIds.value = []; // 清空工序选择
+//     queryComponent.value.setFromValue('processIds', []);
+//     isWorkcenterDisabled.value = true;
+//   } else {
+//     isWorkcenterDisabled.value = false;
+//   }
+// };
+
+// const mitemIds = ref([]); // dis1
+// const processIds = ref([]); // dis2
 
 // 计算属性来确定标题
 // const chartTitle = computed(() => {
@@ -242,17 +238,15 @@ const opts = computed(() => {
         format: 'YYYY-MM-DD',
       },
     },
-
     processIds: {
       label: '工序',
       comp: 'bcmp-select-business',
       event: 'business',
-      // defaultVal: selectedProcessIds.value,
       bind: {
-        type: 'process', // processReturn
+        type: 'process',
         showTitle: false,
         isMultiple: true,
-        // onChange: handleWorkcenterChange,
+        category: 'INSPECT',
         disabled: isWorkcenterDisabled.value,
       },
     },
@@ -260,12 +254,11 @@ const opts = computed(() => {
       label: '产品',
       comp: 'bcmp-select-business',
       event: 'business',
-      // defaultVal: selectedMitemIds.value,
       bind: {
         type: 'mitem',
         showTitle: false,
         isMultiple: true, // 多选
-        // onChange: handleMitemChange,
+        'custom-conditions': mitemCustom,
         disabled: isMitemDisabled.value, // 根据响应式引用动态设置禁用状态
       },
     },
@@ -274,13 +267,15 @@ const opts = computed(() => {
 
 // 从 API 获取的数据
 const apiData = ref([]);
-
 const isMitemDisabled = ref(false);
 const isWorkcenterDisabled = ref(false);
-
-// 存储日期范围，用于表格列头
-const selectedDates = ref([]);
-
+const resMitemIds = ref([]);
+const resProcessIds = ref<string[]>([]);
+const selectedDates = ref<string[]>([]); // 存储日期范围，用于表格列头
+const mitemCustom = [
+  { field: 'is_in_process', operator: 'EQ', value: '1' },
+  { field: 'is_product', operator: 'EQ', value: '1' },
+];
 let straightThroughRateReportChart: HTMLElement;
 const countContainerParentRef = ref<HTMLElement>();
 let countChart: echarts.ECharts;
@@ -299,7 +294,7 @@ const straightThroughRateReportChartFn = async () => {
 
 onMounted(() => {
   straightThroughRateReportChartFn();
-  getlineData(); // todo
+  getlineData();
 });
 
 /** 辅助函数 格式化百分比值，保留两位小数
@@ -318,7 +313,7 @@ const generateDateRange = (startDate, endDate) => {
   let current = start;
 
   while (current.isBefore(end) || current.isSame(end, 'day')) {
-    dateRange.push(current.date()); // 改为使用.date()获取日期号
+    dateRange.push(current.date());
     current = current.add(1, 'day');
   }
   return dateRange;
@@ -350,67 +345,61 @@ const updateChartWithDateRange = (startDate, endDate) => {
 
 // 查询
 const onInput = async (data: any) => {
-  console.log('🚀 ~ onInput ~ data:', data);
-  const { servicingTime = [], mitemIds: incomingMitemIds = [], processIds: incomingProcessIds = [] } = data;
-
-  // 检查是否选择了时间范围和产品工序--2选1
-  // if (servicingTime.length === 0 || (incomingMitemIds.length === 0 && incomingProcessIds.length === 0)) {
-  //   MessagePlugin.warning('请选择产品或工序!');
-  //   return;
-  // }
-
+  const { servicingTime = [], mitemIds, processIds } = data;
   const [startDate, endDate] = servicingTime;
   selectedDates.value = generateDateRange(servicingTime[0], servicingTime[1]);
 
   updateChartWithDateRange(startDate, endDate); // 辅助函数 根据选择的日期范围更新图表
 
-  // 更新
-  processIds.value = incomingProcessIds;
-  mitemIds.value = incomingMitemIds;
-
   // 查询参数处理id []
-  const resMitemIds = incomingMitemIds ? incomingMitemIds.map((e) => e.value) : [];
-  const resProcessIDs = incomingProcessIds ? incomingProcessIds.map((e) => e.value) : [];
+  if (!_.isEmpty(mitemIds)) {
+    resMitemIds.value = _.split(mitemIds, ',');
+  } else {
+    resMitemIds.value = [];
+  }
+  if (!_.isEmpty(processIds)) {
+    resProcessIds.value = _.split(processIds, ',');
+  } else {
+    resProcessIds.value = [];
+  }
 
   let reset: ProcessData[] = [];
 
   // 根据不同条件调用不同API
-  if (processIds.value.length > 1) {
+  if (resProcessIds.value.length > 0 && resMitemIds.value.length === 0) {
     // 工序长度大于1，调用getProcesses接口
     reset = await api.straightThroughRateReport.getProcesses({
       pageNum: 1,
       pageSize: 20,
       dateStart: servicingTime[0],
       dateEnd: servicingTime[1],
-      mitemIds: resMitemIds,
-      processIds: resProcessIDs,
+      mitemIds: resMitemIds.value,
+      processIds: resProcessIds.value,
     });
-  } else if (mitemIds.value.length > 1) {
+  } else if (resMitemIds.value.length > 0 && resProcessIds.value.length === 0) {
     // 产品长度大于1，调用另一个接口(getProducts)
     reset = await api.straightThroughRateReport.getProducts({
       pageNum: 1,
       pageSize: 20,
       dateStart: servicingTime[0],
       dateEnd: servicingTime[1],
-      mitemIds: resMitemIds,
-      processIds: resProcessIDs,
+      mitemIds: resMitemIds.value,
+      processIds: resProcessIds.value,
     });
-  } else if (processIds.value.length === 1 && mitemIds.value.length === 1) {
+  } else if (resProcessIds.value.length > 0 && resMitemIds.value.length > 0) {
     // 工序和产品长度都为0，调用(getSingle)
     reset = await api.straightThroughRateReport.getSingle({
       pageNum: 1,
       pageSize: 20,
       dateStart: servicingTime[0],
       dateEnd: servicingTime[1],
-      mitemIds: resMitemIds,
-      processIds: resProcessIDs,
+      mitemIds: resMitemIds.value,
+      processIds: resProcessIds.value,
     });
   }
 
   // 存数据
   apiData.value = reset;
-
-  console.log('🚀 ~ onInput ~ reset:工序数据源', reset);
 
   // 处理数据：按日期和工序组织数据
   const processedData = reset.reduce(
@@ -457,7 +446,7 @@ const onInput = async (data: any) => {
   updateChartConfig();
 
   // 更新图表标题
-  updateChartTitle(processIds.value, mitemIds.value);
+  updateChartTitle();
 };
 
 //* 重置
@@ -466,17 +455,11 @@ const onReset = () => {
 };
 
 /* 辅助函数 直通率标题  */
-const updateChartTitle = (processIds, mitemIds) => {
-  console.log('🚀 ~ updateChartTitle ~ workcenterId111:', processIds);
-  console.log('🚀 ~ updateChartTitle ~ mitemIds:222', mitemIds);
-  // processIds 的值的长度 > 1 那么 title 就是 工序直通率
-  // mitemIds 的值的长度 > 1 那么 title 就是 产品直通率
-  // processIds 的值的长度 =  0 且  mitemIds的值的长度 = 0  那么 title 就是 工序 + 选中的第一条数据名称 + 直通率
-
-  if (processIds.length > 1) {
+const updateChartTitle = () => {
+  if (resProcessIds.value.length > 1) {
     return '工序直通率';
   }
-  if (mitemIds.length > 1) {
+  if (resMitemIds.value.length > 1) {
     return '产品直通率';
   }
   return '直通率'; // 默认标题或其他逻辑
@@ -491,8 +474,8 @@ const getlineData = async () => {
     pageSize: 20,
     dateStart: servicingTime[0],
     dateEnd: servicingTime[1],
-    mitemIds: mitemIds.value,
-    processIds: processIds.value,
+    mitemIds: resMitemIds.value,
+    processIds: resProcessIds.value,
   });
 };
 </script>
