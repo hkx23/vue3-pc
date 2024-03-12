@@ -160,13 +160,13 @@
                 <t-input
                   v-if="formData.samplingStandardType == 'NATIONAL'"
                   v-model="sampingStdCode"
-                  :disabled="formData.viewType != ViewType.BJ"
+                  :disabled="true"
                   placeholder=""
                 ></t-input>
                 <bcmp-select-business
                   v-if="formData.samplingStandardType == 'ENTERPRISE'"
                   v-model="formData.samplingStandardCode"
-                  :disabled="true"
+                  :disabled="formData.viewType != ViewType.BJ"
                   type="SamplingStd"
                   :show-title="false"
                   @selection-change="onEnterpriseCalculateSampQty"
@@ -684,21 +684,6 @@ const onShowFiles = async (rowData) => {
   }
 };
 
-const reset = () => {
-  console.log('reset');
-  // 清除所有对象的值
-  Object.keys(formData).forEach((key) => {
-    if (_.isArray(formData[key])) {
-      formData[key] = [];
-    } else if (_.isNumber(formData[key])) {
-      formData[key] = 0;
-    } else if (_.isBoolean(formData[key])) {
-      formData[key] = true;
-    } else {
-      formData[key] = '';
-    }
-  });
-};
 // const showForm = (edit, row) => {
 //   isEditTable.value = edit;
 //   formVisible.value = true;
@@ -1050,6 +1035,31 @@ const onEnterpriseCalculateSampQty = async () => {
   }
 };
 
+const reset = () => {
+  console.log('reset');
+  // 清除所有对象的值
+  Object.keys(formData).forEach((key) => {
+    if (_.isArray(formData[key])) {
+      formData[key] = [];
+    } else if (_.isNumber(formData[key])) {
+      formData[key] = 0;
+    } else if (_.isBoolean(formData[key])) {
+      formData[key] = true;
+    } else {
+      formData[key] = '';
+    }
+  });
+  // 清空检验项目信息
+  clearInspectStdTable();
+  // 清空条码
+  clearBarcodeList();
+};
+
+// 清空条码
+const clearBarcodeList = () => {
+  scanInfoList.value = [];
+};
+
 // 清空检验判定信息
 const clearCheckResultInfo = () => {
   formData.samplingStandardCode = '';
@@ -1076,7 +1086,7 @@ const checkBarcodeRepeat = (lbNo) => {
 
 // 初始化报检界面信息
 const initBJDetailFormAdd = () => {
-  clearInspectStdTable();
+  reset();
   formData.viewType = ViewType.BJ;
   formData.billNo = '';
   formData.samplingStandardType = 'NATIONAL';
@@ -1089,7 +1099,7 @@ const initBJDetailFormAdd = () => {
 
 // 报检界面信息 -编辑
 const initBJDetailFormEdit = (billInfo: OqcInspectBillFullVO) => {
-  clearInspectStdTable();
+  reset();
   Object.assign(formData, billInfo);
   console.log('initBJDetailFormEdit:', formData);
   formData.viewType = ViewType.BJ;
@@ -1101,7 +1111,7 @@ const initBJDetailFormEdit = (billInfo: OqcInspectBillFullVO) => {
 
 // 初始化检验界面信息
 const initJYDetailForm = async (billInfo: OqcInspectBillFullVO) => {
-  clearInspectStdTable();
+  reset();
   Object.assign(formData, billInfo);
   formData.viewType = ViewType.JY;
   isEditTable.value = true;
@@ -1113,7 +1123,7 @@ const initJYDetailForm = async (billInfo: OqcInspectBillFullVO) => {
 
 // 初始化详情查看界面信息
 const initViewkDetailForm = async (billInfo: OqcInspectBillFullVO) => {
-  clearInspectStdTable();
+  reset();
   Object.assign(formData, billInfo);
   formData.viewType = ViewType.VIEW;
   isEditTable.value = false;
