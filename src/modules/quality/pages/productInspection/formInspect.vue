@@ -1,190 +1,371 @@
 <template>
   <t-dialog
     v-model:visible="formVisible"
-    header="物料入厂检验"
+    :header="formHeader"
+    :diabled="formData.viewType === ViewType.VIEW"
     width="98%"
     placement="top"
     top="20"
-    :cancel-btn="
-      isEdit
-        ? {
-            content: '取消',
-          }
-        : null
-    "
-    :confirm-btn="
-      isEdit
-        ? {
-            content: '提交',
-            theme: 'primary',
-          }
-        : null
-    "
-    :on-confirm="onConfirmForm"
+    :cancel-btn="null"
+    :confirm-btn="null"
     :close-on-overlay-click="false"
   >
     <cmp-container :full="true" :ghost="true">
+      <cmp-row class="list-row">
+        <cmp-card :span="8" :ghost="false" :bordered="true">
+          <t-form
+            ref="formRefDetail"
+            :disabled="formData.viewType == ViewType.VIEW"
+            :data="formData"
+            :show-cancel="true"
+            :show-error-message="false"
+            :rules="FORM_RULES"
+            label-width="100px"
+          >
+            <t-row :gutter="[0, 12]">
+              <t-col :span="6">
+                <t-form-item :label="t('productInspection.inspectCategoryName')" name="inspectCategory">
+                  <t-select v-model="formData.inspectCategory" :disabled="scanInfoList && scanInfoList.length > 0">
+                    <t-option
+                      v-for="item in inspectCategoryOption"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    /> </t-select></t-form-item
+              ></t-col>
+              <t-col :span="6">
+                <t-form-item :label="t('productInspection.businessCategoryName')" name="businessCategory">
+                  <t-select v-model="formData.businessCategory" :disabled="scanInfoList && scanInfoList.length > 0">
+                    <t-option
+                      v-for="item in businessCategoryOption"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    /> </t-select
+                ></t-form-item>
+              </t-col>
+              <t-col v-show="formData.inspectCategory == 'RECHECK'" :span="6">
+                <t-form-item :label="t('productInspection.relateBillNo')" name="relateBillNo">
+                  <bcmp-select-business
+                    v-model="formData.relateBillNo"
+                    type="OqcBillInfo"
+                    :show-title="false"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col v-show="formData.inspectCategory && formData.businessCategory" :span="6">
+                <t-form-item :label="t('productInspection.moScheId')" name="moScheId">
+                  <bcmp-select-business
+                    v-model="formData.moScheId"
+                    :disabled="scanInfoList && scanInfoList.length > 0"
+                    type="moSchedule"
+                    :show-title="false"
+                    @selection-change="moScheduleSelectChange"
+                  ></bcmp-select-business
+                ></t-form-item>
+              </t-col>
+              <t-col
+                v-show="
+                  (formData.businessCategory == 'BARCODE' && formData.moScheId) || formData.viewType == ViewType.JY
+                "
+                :span="6"
+              >
+                <t-form-item :label="t('productInspection.scanBarcode')" name="scanBarcode">
+                  <cmp-scan-input
+                    ref="scanBarcodeInstance"
+                    v-model="formData.scanBarcode"
+                    label=""
+                    @enter="serialNumberEnter"
+                  ></cmp-scan-input
+                ></t-form-item>
+              </t-col>
+            </t-row>
+          </t-form>
+        </cmp-card>
+        <div class="customer-table" :span="4">
+          <cmp-table
+            ref="refInfoTable"
+            row-key="scanBarcode"
+            active-row-type="single"
+            :columns="scanInfoColumns"
+            :fixed-height="true"
+            :show-toolbar="false"
+            :table-data="scanInfoList"
+            :show-pagination="false"
+            :show-setting="false"
+            :hover="false"
+            :stript="false"
+            @row-click="tableBarcodeSelectedChange"
+          >
+            <template #op="rowInfo">
+              <t-space>
+                <t-link v-if="formData.viewType == ViewType.BJ" theme="primary" @click="onRemove(rowInfo.row)"
+                  >移除</t-link
+                >
+                <t-link
+                  v-if="formData.viewType == ViewType.JY && rowInfo.row.isScan == 'Y'"
+                  theme="primary"
+                  @click="onDelete(rowInfo.row)"
+                  >删除
+                </t-link>
+              </t-space>
+            </template>
+          </cmp-table>
+        </div>
+      </cmp-row>
       <cmp-card :span="12" :ghost="false" :bordered="true">
-        <t-descriptions :title="'检验单号' + formData.iqcBillNo" :column="4" size="large">
-          <t-descriptions-item label="供应商">{{ formData.supplierName }}</t-descriptions-item>
-          <t-descriptions-item label="物料编码">{{ formData.mitemCategoryCode }}</t-descriptions-item>
-          <t-descriptions-item label="物料名">
+        <t-descriptions title="产品信息" :column="3" size="large">
+          <t-descriptions-item label="检验单号">{{ formData.billNo }}</t-descriptions-item>
+          <t-descriptions-item label="单据状态">{{ formData.statusName }}</t-descriptions-item>
+          <t-descriptions-item label="检验标准">{{ formData.inspectStdName }}</t-descriptions-item>
+          <t-descriptions-item v-if="formData.businessCategory == 'MO'" label="报批数量">{{
+            formData.checkMoTotalQty
+          }}</t-descriptions-item>
+          <t-descriptions-item v-if="formData.businessCategory == 'BARCODE'" label="报批数量">{{
+            formData.checkBarcodeTotalQty
+          }}</t-descriptions-item>
+          <t-descriptions-item label="产品编码">{{ formData.mitemCode }}</t-descriptions-item>
+          <t-descriptions-item label="产品名称">
             <div class="div_break_word">
               {{ formData.mitemName }}
             </div>
           </t-descriptions-item>
-          <t-descriptions-item label="检验严格度">{{ formData.inspectionStringencyName }}</t-descriptions-item>
-          <t-descriptions-item label="报批数量">{{ formData.pickQty }}</t-descriptions-item>
-          <t-descriptions-item label="检验标准">{{ formData.inspectStdName }}</t-descriptions-item>
-          <t-descriptions-item label="接收单号">{{ formData.billNoStr }}</t-descriptions-item>
-          <t-descriptions-item label="查看附件"> <t-link theme="primary">查看附件</t-link></t-descriptions-item>
         </t-descriptions>
       </cmp-card>
-      <cmp-card :span="12" :ghost="false" :bordered="true">
-        <t-tabs :model-value="selectTabValue" @change="tabsChange">
-          <template #action>
-            <div class="tabs_right_ops">
-              <t-checkbox label="只显示不合格" style="width: 170px" />
-              <t-input placeholder="请输入搜索关键字" />
-            </div>
-          </template>
-          <t-tab-panel value="tab1" label="全部" :destroy-on-hide="false">
-            <cmp-table
-              row-key="id"
-              :hover="false"
-              :stript="false"
-              :resizable="true"
-              :show-toolbar="false"
-              :show-pagination="false"
-              :table-column="tableColumns"
-              active-row-type="single"
-              :table-data="tableData"
-              :loading="loading"
-              @select-change="tableSelectedChange"
-              @refresh="loadTable"
+      <cmp-card :span="12" :ghost="false" :bordered="true" title="检验判定信息">
+        <t-form
+          ref="formRefSubDetail"
+          :disabled="formData.viewType == ViewType.VIEW"
+          :data="formData"
+          :show-cancel="true"
+          :show-error-message="false"
+          :rules="FORM_RULES"
+          label-width="100px"
+        >
+          <t-row :gutter="[0, 12]">
+            <t-col :span="4">
+              <t-form-item :label="t('productInspection.samplingStandardType')" name="samplingStandardType">
+                <t-radio-group
+                  v-model="formData.samplingStandardType"
+                  :disabled="formData.viewType != ViewType.BJ"
+                  @change="onRadioChange"
+                >
+                  <t-radio value="NATIONAL">国标</t-radio>
+                  <t-radio value="ENTERPRISE">企标</t-radio>
+                </t-radio-group>
+              </t-form-item></t-col
             >
-              <template #title> </template>
-              <template #button> </template>
-              <template #files="rowData">
-                <t-space>
-                  <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
-                </t-space>
-              </template>
-              <template #op="rowData">
-                <t-space>
-                  <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
-                </t-space>
-              </template>
-              <template #inspectResultSwitch="{ row }">
-                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
-              </template>
-              <template #measureOp="{ row }">
-                <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
-                  <div v-if="isEdit">填写</div>
-                  <div v-else>查看</div>
-                </t-link>
-              </template>
-              <template #ngQty="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngQty" />
-                <div v-else>{{ row.ngQty }}</div>
-              </template>
-              <template #ngReason="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngReason" />
-                <div v-else>{{ row.ngReason }}</div>
-              </template>
-            </cmp-table>
-          </t-tab-panel>
-          <t-tab-panel value="tab2" label="计数" :destroy-on-hide="false">
-            <cmp-table
-              row-key="id"
-              :hover="false"
-              :stript="false"
-              :resizable="true"
-              :show-toolbar="false"
-              :show-pagination="false"
-              :table-column="tableColumns"
-              active-row-type="single"
-              :table-data="tableDataCount"
-              :loading="loading"
-            >
-              <template #title> </template>
-              <template #button> </template>
-              <template #files="rowData">
-                <t-space>
-                  <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
-                </t-space>
-              </template>
-              <template #op="rowData">
-                <t-space>
-                  <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
-                </t-space>
-              </template>
-              <template #inspectResultSwitch="{ row }">
-                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
-              </template>
-              <template #measureOp="{ row }">
-                <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
-                  <div v-if="isEdit">填写</div>
-                  <div v-else>查看</div>
-                </t-link>
-              </template>
-              <template #ngQty="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngQty" />
-                <div v-else>{{ row.ngQty }}</div>
-              </template>
-              <template #ngReason="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngReason" />
-                <div v-else>{{ row.ngReason }}</div>
-              </template>
-            </cmp-table>
-          </t-tab-panel>
-          <t-tab-panel value="tab3" label="计量" :destroy-on-hide="false">
-            <cmp-table
-              row-key="id"
-              :hover="false"
-              :stript="false"
-              :resizable="true"
-              :show-toolbar="false"
-              :show-pagination="false"
-              :table-column="tableColumns"
-              active-row-type="single"
-              :table-data="tableDataCquantitative"
-              :loading="loading"
-            >
-              <template #title> </template>
-              <template #button> </template>
-              <template #files="rowData">
-                <t-space>
-                  <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
-                </t-space>
-              </template>
-              <template #op="rowData">
-                <t-space>
-                  <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
-                </t-space>
-              </template>
-              <template #inspectResultSwitch="{ row }">
-                <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEdit" />
-              </template>
-              <template #measureOp="{ row }">
-                <t-link v-if="row.sampleQty > 0" theme="primary" @click="onShowMeasureDialog(row)">
-                  <div v-if="isEdit">填写</div>
-                  <div v-else>查看</div>
-                </t-link>
-              </template>
-              <template #ngQty="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngQty" />
-                <div v-else>{{ row.ngQty }}</div>
-              </template>
-              <template #ngReason="{ row }">
-                <t-input v-if="isEdit" v-model="row.ngReason" />
-                <div v-else>{{ row.ngReason }}</div>
-              </template>
-            </cmp-table>
-          </t-tab-panel>
-        </t-tabs>
+            <t-col :span="4">
+              <t-form-item :label="t('productInspection.samplingStandardId')" name="samplingStandardId">
+                <t-input
+                  v-if="formData.samplingStandardType == 'NATIONAL'"
+                  v-model="sampingStdCode"
+                  :disabled="formData.viewType != ViewType.BJ"
+                  placeholder=""
+                ></t-input>
+                <bcmp-select-business
+                  v-if="formData.samplingStandardType == 'ENTERPRISE'"
+                  v-model="formData.samplingStandardCode"
+                  :disabled="true"
+                  type="SamplingStd"
+                  :show-title="false"
+                  @selection-change="onEnterpriseCalculateSampQty"
+                ></bcmp-select-business>
+              </t-form-item>
+            </t-col>
+            <t-col v-show="formData.samplingStandardType == 'NATIONAL'" :span="4">
+              <t-form-item :label="t('productInspection.inspectStringency')" name="inspectStringency">
+                <t-select
+                  v-model="formData.inspectStringency"
+                  :disabled="formData.viewType != ViewType.BJ"
+                  @change="onNationalCalculateSampQty"
+                >
+                  <t-option
+                    v-for="item in inspectionStringencyOption"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </t-select>
+              </t-form-item>
+            </t-col>
+            <t-col v-show="formData.samplingStandardType == 'NATIONAL'" :span="4">
+              <t-form-item :label="t('productInspection.inspectLevel')" name="inspectLevel">
+                <t-select
+                  v-model="formData.inspectLevel"
+                  :disabled="formData.viewType != ViewType.BJ"
+                  @change="onNationalCalculateSampQty"
+                >
+                  <t-option
+                    v-for="item in inspectLevelOption"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  /> </t-select
+              ></t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item :label="t('productInspection.inspectQtyDemo')" name="inspectQty">
+                <t-input v-model="formData.inspectQty" :disabled="true" placeholder=""></t-input>
+              </t-form-item>
+            </t-col>
+            <t-col v-show="formData.viewType != ViewType.BJ" :span="4">
+              <t-form-item :label="t('productInspection.inspectResult')" name="inspectResult">
+                <t-select v-model="formData.inspectResult">
+                  <t-option
+                    v-for="item in OKNGOption"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  /> </t-select
+              ></t-form-item>
+            </t-col>
+          </t-row>
+        </t-form>
       </cmp-card>
+
+      <t-tabs :model-value="selectTabValue" @change="tabsChange">
+        <!-- <template #action>
+          <div class="tabs_right_ops">
+            <t-checkbox label="只显示不合格" style="width: 170px" />
+            <t-input placeholder="请输入搜索关键字" />
+          </div>
+        </template> -->
+        <t-tab-panel value="tab1" label="全部" :destroy-on-hide="false">
+          <cmp-table
+            row-key="id"
+            :hover="false"
+            :stript="false"
+            :resizable="true"
+            :fixed-height="false"
+            :show-toolbar="false"
+            :show-pagination="false"
+            :table-column="tableColumns"
+            active-row-type="single"
+            :table-data="tableData"
+            :loading="loading"
+            @select-change="tableSelectedChange"
+            @refresh="loadTable"
+          >
+            <template #title> </template>
+            <template #button> </template>
+            <template #files="rowData">
+              <t-space v-if="formData.viewType != ViewType.BJ">
+                <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
+              </t-space>
+            </template>
+            <template #op="rowData">
+              <t-space v-if="formData.viewType != ViewType.BJ">
+                <t-link theme="primary" @click="showUplaodImg(rowData.row)">上传照片</t-link>
+              </t-space>
+            </template>
+            <template #inspectResultSwitch="{ row }">
+              <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEditTable" />
+            </template>
+            <template #measureOp="{ row }">
+              <t-link theme="primary" @click="onShowMeasureDialog(row)">
+                <div v-if="isEditTable">填写</div>
+                <div v-else>查看</div>
+              </t-link>
+            </template>
+            <template #ngReason="{ row }">
+              <t-input v-if="isEditTable" v-model="row.ngReason" />
+              <div v-else>{{ row.ngReason }}</div>
+            </template>
+          </cmp-table>
+        </t-tab-panel>
+        <t-tab-panel value="tab2" label="计数" :destroy-on-hide="false">
+          <cmp-table
+            row-key="id"
+            :hover="false"
+            :stript="false"
+            :resizable="true"
+            :show-toolbar="false"
+            :show-pagination="false"
+            :table-column="tableColumns"
+            active-row-type="single"
+            :table-data="tableDataCount"
+            :loading="loading"
+          >
+            <template #title> </template>
+            <template #button> </template>
+            <template #files="rowData">
+              <t-space v-if="formData.viewType != ViewType.BJ">
+                <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
+              </t-space>
+            </template>
+            <template #op="rowData">
+              <t-space v-if="formData.viewType != ViewType.BJ">
+                <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
+              </t-space>
+            </template>
+            <template #inspectResultSwitch="{ row }">
+              <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEditTable" />
+            </template>
+            <template #measureOp="{ row }">
+              <t-link theme="primary" @click="onShowMeasureDialog(row)">
+                <div v-if="isEditTable">填写</div>
+                <div v-else>查看</div>
+              </t-link>
+            </template>
+            <template #ngReason="{ row }">
+              <t-input v-if="isEditTable" v-model="row.ngReason" />
+              <div v-else>{{ row.ngReason }}</div>
+            </template>
+          </cmp-table>
+        </t-tab-panel>
+        <t-tab-panel value="tab3" label="计量" :destroy-on-hide="false">
+          <cmp-table
+            row-key="id"
+            :hover="false"
+            :stript="false"
+            :resizable="true"
+            :show-toolbar="false"
+            :show-pagination="false"
+            :table-column="tableColumns"
+            active-row-type="single"
+            :table-data="tableDataCquantitative"
+            :loading="loading"
+          >
+            <template #title> </template>
+            <template #button> </template>
+            <template #files="rowData">
+              <t-space v-if="formData.viewType != ViewType.BJ">
+                <t-link theme="primary" @click="onShowFiles(rowData)">查看</t-link>
+              </t-space>
+            </template>
+            <template #op="rowData">
+              <t-space v-if="formData.viewType != ViewType.BJ">
+                <t-link theme="primary" @click="showUplaodImg(rowData)">上传照片</t-link>
+              </t-space>
+            </template>
+            <template #inspectResultSwitch="{ row }">
+              <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEditTable" />
+            </template>
+            <template #measureOp="{ row }">
+              <t-link theme="primary" @click="onShowMeasureDialog(row)">
+                <div v-if="isEditTable">填写</div>
+                <div v-else>查看</div>
+              </t-link>
+            </template>
+            <template #ngReason="{ row }">
+              <t-input v-if="isEditTable" v-model="row.ngReason" />
+              <div v-else>{{ row.ngReason }}</div>
+            </template>
+          </cmp-table>
+        </t-tab-panel>
+      </t-tabs>
     </cmp-container>
+
+    <template #footer>
+      <t-button v-if="formData.viewType != ViewType.VIEW" theme="default" @click="onConfirmForm(true)">{{
+        t('common.button.tempSave')
+      }}</t-button>
+      <t-button v-if="formData.viewType != ViewType.VIEW" theme="primary" @click="onConfirmForm(false)">{{
+        t('common.button.submit')
+      }}</t-button>
+      <t-button theme="default" @click="formVisible = false">{{ t('common.button.cancel') }}</t-button>
+    </template>
   </t-dialog>
 
   <!--弹窗-->
@@ -206,76 +387,191 @@ export default {
 </script>
 
 <script setup lang="ts">
-import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { reactive, Ref, ref } from 'vue';
+import _, { isEmpty } from 'lodash';
+import {
+  FormInstanceFunctions,
+  LoadingPlugin,
+  MessagePlugin,
+  NotifyPlugin,
+  PrimaryTableCol,
+  TableRowData,
+} from 'tdesign-vue-next';
+import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
-import { api as apiQuality } from '@/api/quality';
+import { api as apiMain } from '@/api/main';
+import { api as apiQuality, BarcodeVO, OqcInspectBillFullVO, OqcInspectStdFullVO } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
-import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 
 import formMeasure from './formMeasure.vue';
 import formNg from './formNg.vue';
+import { useLang } from './lang';
 
+const { t } = useLang();
 const Emit = defineEmits(['parent-refresh-event', 'form-close-event']);
+const OKNGOption = ref([
+  { value: '', label: '全部' },
+  { value: 'OK', label: '合格' },
+  { value: 'NG', label: '不合格' },
+]);
+// 国标标准编码
+const sampingStdCode = ref('');
+const getSampingStdCode = async () => {
+  apiMain.profileValue
+    .getValueByProfileCode({
+      code: 'GB_STD',
+      orgId: fw.getOrgId(),
+    })
+    .then((val) => {
+      sampingStdCode.value = val;
+    });
+};
 
+/** 获取 数据字典 检验水平
+ *  检验水平
+ */
+const inspectLevelOption = ref([]);
+const getInspectLevel = async () => {
+  try {
+    const res = await apiMain.param.getListByGroupCode({
+      parmGroupCode: 'Q_INSPECTION_LEVEL',
+    });
+    inspectLevelOption.value = res.map((status) => ({
+      label: status.label,
+      value: status.value,
+    }));
+  } catch (e) {
+    console.error(e);
+  }
+};
+/** 获取 数据字典 严格度
+ *  严格度
+ */
+const inspectionStringencyOption = ref([]);
+const getinspectionStringency = async () => {
+  try {
+    const res = await apiMain.param.getListByGroupCode({
+      parmGroupCode: 'Q_INSPECTION_STRINGENCY',
+    });
+    inspectionStringencyOption.value = res.map((status) => ({
+      label: status.label,
+      value: status.value,
+    }));
+  } catch (e) {
+    console.error(e);
+  }
+};
 const formVisible = ref(false);
-
+const formHeader = computed(() => {
+  let headerName = '';
+  if (formData.viewType === ViewType.BJ) {
+    headerName = '报检';
+  }
+  if (formData.viewType === ViewType.JY) {
+    headerName = '检验';
+  }
+  if (formData.viewType === ViewType.VIEW) {
+    headerName = '查看';
+  }
+  return headerName;
+});
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 const formMeasureRef = ref(null);
 const formNgRef = ref(null);
 
 const selectTabValue = ref('tab1');
-const selectIqcInspectDtlId = ref(null);
+const selectOqcInspectItemId = ref(null);
+enum ViewType {
+  BJ = 'BJ', // 报检模式
+  JY = 'JY', // 检验模式
+  VIEW = 'VIEW', // 查看模式
+}
+const isEditTable = ref(true); // 是否可编辑
 
-const isEdit = ref(true); // 是否可编辑
-const formData = reactive({
-  iqcBillNo: '',
-  billNoStr: '',
-  billNoList: [{ billNo: '', erpLineNo: '', billNoDtlId: '' }],
-  mitemId: '',
-  mitemCode: '',
-  mitemName: '',
-  mitemDesc: '',
-  mitemCategoryId: '',
-  mitemCategoryCode: '',
-  mitemCategoryName: '',
-  pickQty: '',
-  supplierId: '',
-  supplierCode: '',
-  supplierName: '',
-  inspectionStringency: '',
-  inspectionStringencyName: '',
-  inspectStdName: '',
+interface FormInspectInfo extends OqcInspectBillFullVO {
+  viewType: ViewType;
+  scanBarcode: string;
+}
+
+const formData: FormInspectInfo = reactive({
+  viewType: ViewType.VIEW,
+  scanBarcode: '',
 });
-
+// 检验类型
+const inspectCategoryOption = ref([
+  { value: '', label: '全部' },
+  { value: 'RANDOM', label: '抽检' },
+  { value: 'RECHECK', label: '复检' },
+  { value: 'INCREASE', label: '加抽' },
+  { value: 'REWORK', label: '返工' },
+  { value: 'OVERRECHECK', label: '超期复检' },
+]);
+// 业务类型
+const businessCategoryOption = ref([
+  { value: '', label: '全部' },
+  { value: 'MO', label: '按工单' },
+  { value: 'BARCODE', label: '按条码' },
+]);
 const { loading } = useLoading();
+const FORM_RULES = {
+  inspectCategory: [
+    { required: true, message: t('common.placeholder.input', [t('productInspection.inspectCategoryName')]) },
+  ],
+  businessCategory: [
+    { required: true, message: t('common.placeholder.input', [t('productInspection.businessCategoryName')]) },
+  ],
+  moScheId: [{ required: true, message: t('common.placeholder.input', [t('productInspection.moScheId')]) }],
+};
+const scanInfoList = ref<BarcodeVO[]>([]);
 
+const tableBarcodeSelectedChange = ({ row }) => {
+  // 加载条码检验项
+  barcodeSelectedChange(row);
+};
+
+// 加载条码检验项
+const barcodeSelectedChange = (row) => {
+  // 若已加载过检验项，则无需再加载
+  if (row.inspectItems && row.inspectItems.length === 0) {
+    loadBarcodeTable(row);
+  } else {
+    setBarcodeTable(row.inspectItems);
+  }
+};
+// 扫描信息
+const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    title: '产品条码',
+    width: 80,
+    colKey: 'scanBarcode',
+    attrs: (content) => {
+      if (content.row.isScan === 'Y') {
+        return {
+          style: {
+            color: 'white',
+            backgroundColor: 'var(--td-brand-color)',
+          },
+        };
+      }
+      return '';
+    },
+  },
+  { title: '判定结果', width: 50, colKey: 'inspectResult' },
+  { title: '操作', width: 50, colKey: 'op' },
+];
+const defaultTableData = ref<OqcInspectStdFullVO[]>([]); // 用于检验扫码时，存储条码和检验项一起保存
 const tableSelectedRowKeys = ref([]);
-const tableData = ref([]);
+const tableData = ref<OqcInspectStdFullVO[]>([]);
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
-  // {
-  //   colKey: 'row-select',
-  //   type: 'multiple',
-  //   width: 50,
-  // },
-  { title: '项目类别', width: 100, colKey: 'itemCategory' },
+  { title: '项目类别', width: 160, colKey: 'itemCategory' },
   { title: '检验内容', width: 160, colKey: 'itemName' },
   { title: '技术要求', width: 160, colKey: 'technicalRequest' },
   { title: '项目特性', width: 100, colKey: 'characteristicsName' },
   { title: '检验工具', width: 100, colKey: 'inspectTool' },
-  { title: '样本数', width: 100, colKey: 'sampleQty' },
-  { title: 'AC/RE', width: 100, colKey: 'acRe' },
   { title: '检验结果', width: 100, colKey: 'inspectResultSwitch' },
   { title: '测量值', width: 100, colKey: 'measureOp' },
-  { title: '不良数', width: 120, colKey: 'ngQty' },
   { title: '不良描述', width: 200, colKey: 'ngReason' },
   { title: '抽样方案', width: 100, colKey: 'samplingStandardType' },
-  { title: '检验水平', width: 160, colKey: 'inspectLevelName' },
-  { title: '不合格分类', width: 100, colKey: 'unqualifyCategoryName' },
-  { title: '是否CTQ', width: 100, colKey: 'isCtqName' },
   { title: '检验依据', width: 160, colKey: 'inspectBasis' },
   { title: '附件', align: 'left', fixed: 'right', width: 160, colKey: 'files' },
   { title: '操作', align: 'left', fixed: 'right', width: 160, colKey: 'op' },
@@ -287,89 +583,87 @@ const tableDataCquantitative = ref([]);
 const tableSelectedChange = (value: any[], { selectedRowData }: any) => {
   tableSelectedRowKeys.value = value;
 };
-const onConfirmForm = async () => {
-  try {
-    for (let index = 0; index < tableData.value.length; index++) {
-      const item = tableData.value[index];
-      if (item.inspectResultSwitch) {
-        item.inspectResult = 'OK';
+const onConfirmForm = async (isTempSave: boolean) => {
+  if (formData.viewType === ViewType.BJ) {
+    submitBJQqcInspect(isTempSave);
+  } else if (formData.viewType === ViewType.JY) {
+    if (isTempSave) {
+      submitJYQqcInspect(isTempSave);
+    } else if (isTempSave === false) {
+      if (formData.inspectResult === 'OK') {
+        submitJYQqcInspect(isTempSave);
       } else {
-        item.inspectResult = 'NG';
-        if (item.characteristics === 'COUNT' && _.isEmpty(item.ngQty)) {
-          MessagePlugin.error('检验结果不合格时,请填写不良数.');
-          return;
-        }
-
-        if (item.characteristics === 'QUANTITATIVE') {
-          if (_.isEmpty(item.ngQty) || item.ngQty === '') {
-            MessagePlugin.error('检验结果不合格时,请填写不良数.');
-            return;
-          }
-          if (item.ngQty > item.sampleQty) {
-            MessagePlugin.error('不良数不能大于样本数.');
-            return;
-          }
-          if (item.ngQty <= 0) {
-            MessagePlugin.error('请输入正确不良数.');
-            return;
-          }
-        }
+        const { showForm } = formNgRef.value;
+        showForm(false, formData, tableData.value, scanInfoList.value);
       }
     }
+  }
+};
 
-    const ngList = tableData.value.filter((n) => !n.inspectResultSwitch);
-    if (ngList.length > 0) {
-      const { showForm } = formNgRef.value;
-      showForm(false, formData, tableData);
-    } else {
-      LoadingPlugin(true);
-
-      await apiQuality.iqcInspect.submitIqcInspect({
-        iqcBillNo: formData.iqcBillNo,
-        billNoList: formData.billNoList,
-        mitemId: formData.mitemId,
-        mitemCode: formData.mitemCode,
-        mitemName: formData.mitemName,
-        mitemDesc: formData.mitemDesc,
-        mitemCategoryId: formData.mitemCategoryId,
-        mitemCategoryCode: formData.mitemCategoryCode,
-        mitemCategoryName: formData.mitemCategoryName,
-        pickQty: Number(formData.pickQty),
-        supplierId: formData.supplierId,
-        supplierCode: formData.supplierCode,
-        supplierName: formData.supplierName,
-        inspectionStringency: formData.inspectionStringency,
-        iqcInspectStdList: tableData.value,
-        // iqcInspectNg: null,
-      });
-
-      Emit('parent-refresh-event');
-      formVisible.value = false;
-    }
+// 报检-新增产品检验单据-暂存与提交
+const submitBJQqcInspect = async (isTempSave: boolean) => {
+  try {
+    LoadingPlugin(true);
+    await apiQuality.oqcInspect.submitBjQqcInspect({
+      oqcInspectId: formData.id,
+      billNo: formData.billNo,
+      viewType: formData.viewType,
+      businessCategory: formData.businessCategory,
+      oqcInspectBillInfo: formData,
+      isTempSave,
+      inspectItems: tableData.value,
+      barcodeList: scanInfoList.value,
+    });
+    Emit('parent-refresh-event');
+    formVisible.value = false;
   } catch (e) {
     console.log(e);
   } finally {
     LoadingPlugin(false);
   }
 };
+
+// 检验执行-暂存与提交
+const submitJYQqcInspect = async (isTempSave: boolean) => {
+  try {
+    LoadingPlugin(true);
+    await apiQuality.oqcInspect.submitJyQqcInspect({
+      oqcInspectId: formData.id,
+      billNo: formData.billNo,
+      viewType: formData.viewType,
+      businessCategory: formData.businessCategory,
+      oqcInspectBillInfo: formData,
+      isTempSave,
+      inspectItems: tableData.value,
+      barcodeList: scanInfoList.value,
+    });
+    Emit('parent-refresh-event');
+    formVisible.value = false;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    LoadingPlugin(false);
+  }
+};
+
 const tabsChange = async (tabValue) => {
   selectTabValue.value = tabValue;
 };
 const getBillNo = async () => {
   try {
-    const iqcBillNo = await apiQuality.billSeq.getBillNo({ prefix: 'IQC' });
-    formData.iqcBillNo = iqcBillNo;
+    const billNo = await apiQuality.billSeq.getBillNo({ prefix: 'OQC' });
+    formData.billNo = billNo;
   } catch (e) {
     console.log(e);
   }
 };
 
 const onShowFiles = async (rowData) => {
-  selectIqcInspectDtlId.value = rowData.row.iqcInspectDtlId;
+  selectOqcInspectItemId.value = rowData.row.iqcInspectDtlId;
 
   try {
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectIqcInspectDtlId.value);
+    if (!_.isEmpty(selectOqcInspectItemId.value)) {
+      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectOqcInspectItemId.value);
       rowData.row.fileList = list;
 
       const { showForm } = formFilesRef.value;
@@ -379,33 +673,9 @@ const onShowFiles = async (rowData) => {
     console.log(e);
   }
 };
-const loadTable = async () => {
-  try {
-    const list = await apiQuality.iqcInspectStdDtl.getStdDtlListByMitem({
-      iqcBillNo: formData.iqcBillNo,
-      mitemCategoryId: formData.mitemCategoryId,
-      mitemId: formData.mitemId,
-      pickQty: formData.pickQty,
-      inspectionStringency: formData.inspectionStringency,
-    });
-    tableData.value = list;
-    tableDataCount.value = list.filter((item) => item.characteristics === 'COUNT');
-    tableDataCquantitative.value = list.filter((item) => item.characteristics === 'QUANTITATIVE');
 
-    if (list.length > 0) {
-      formData.inspectStdName = list[0].inspectStdName;
-    } else {
-      formData.inspectStdName = '';
-    }
-  } catch (e) {
-    console.log(e);
-  }
-};
 const reset = () => {
-  if (isEdit.value) {
-    getBillNo();
-  }
-
+  console.log('reset');
   // 清除所有对象的值
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
@@ -415,61 +685,19 @@ const reset = () => {
     }
   });
 };
-const showForm = async (edit, row) => {
-  isEdit.value = edit;
-  formVisible.value = true;
-  reset();
-
-  formData.iqcBillNo = row.iqcBillNo;
-  formData.billNoList.push({ billNo: row.billNo, erpLineNo: row.erpLineNo, billNoDtlId: row.id });
-  formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
-  formData.mitemId = row.mitemId;
-  formData.mitemCode = row.mitemCode;
-  formData.mitemName = row.mitemName;
-  formData.mitemDesc = row.mitemDesc;
-  formData.mitemCategoryId = row.mitemCategoryId;
-  formData.mitemCategoryCode = row.mitemCategoryCode;
-  formData.mitemCategoryName = row.mitemCategoryName;
-  formData.pickQty = `${row.pickQty}`;
-  formData.supplierId = row.supplierId;
-  formData.supplierCode = row.supplierCode;
-  formData.supplierName = row.supplierName;
-  formData.inspectionStringency = row.inspectionStringency;
-  formData.inspectionStringencyName = row.inspectionStringencyName;
-};
-const showMergeForm = async (edit, reBillNoList) => {
-  isEdit.value = edit;
-  formVisible.value = true;
-  reset();
-
-  let totalPickQty = 0;
-  reBillNoList.forEach((n) => {
-    formData.billNoList.push({ billNo: n.billNo, erpLineNo: n.erpLineNo, billNoDtlId: n.id });
-    totalPickQty += n.pickQty;
-  });
-  const row = reBillNoList[0];
-  formData.iqcBillNo = row.iqcBillNo;
-  formData.billNoStr = formData.billNoList.map((n) => n.billNo).join(',');
-  formData.mitemId = row.mitemId;
-  formData.mitemCode = row.mitemCode;
-  formData.mitemName = row.mitemName;
-  formData.mitemDesc = row.mitemDesc;
-  formData.mitemCategoryId = row.mitemCategoryId;
-  formData.mitemCategoryCode = row.mitemCategoryCode;
-  formData.mitemCategoryName = row.mitemCategoryName;
-  formData.pickQty = `${totalPickQty}`;
-  formData.supplierId = row.supplierId;
-  formData.supplierCode = row.supplierCode;
-  formData.supplierName = row.supplierName;
-  formData.inspectionStringency = row.inspectionStringency;
-  formData.inspectionStringencyName = row.inspectionStringencyName;
-};
+// const showForm = (edit, row) => {
+//   isEditTable.value = edit;
+//   formVisible.value = true;
+//   reset();
+// };
 const onShowMeasureDialog = async (row) => {
   const { showForm } = formMeasureRef.value;
-  await showForm(isEdit.value, row.measureList);
+  await showForm(isEditTable.value, row.measureList);
 };
 const onFormCloseDialog = async () => {
   formVisible.value = false;
+  // 刷新主界面
+  Emit('parent-refresh-event');
 };
 const parentConfirm = async (measureList, isAllOK) => {
   if (!_.isEmpty(measureList)) {
@@ -483,16 +711,15 @@ const parentConfirm = async (measureList, isAllOK) => {
 // begin 文件上传
 
 const formFilesRef = ref(null);
-const showUplaodImg = async (rowData) => {
-  selectIqcInspectDtlId.value = rowData.row.iqcInspectDtlId;
+const showUplaodImg = async (row: OqcInspectStdFullVO) => {
+  selectOqcInspectItemId.value = row.oqcInspectItemId;
 
   try {
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.getIqcInspectDtlFileList(selectIqcInspectDtlId.value);
-      rowData.row.fileList = list;
-
+    if (!_.isEmpty(selectOqcInspectItemId.value)) {
+      const list = await apiQuality.oqcInspect.getOqcInspectItemFileList(selectOqcInspectItemId.value);
+      row.fileList = list;
       const { showForm } = formFilesRef.value;
-      await showForm(false, rowData.row.fileList);
+      await showForm(false, row.fileList);
     }
   } catch (e) {
     console.log(e);
@@ -500,9 +727,10 @@ const showUplaodImg = async (rowData) => {
 };
 const uploadSuccess = async (file: AddFileType) => {
   try {
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.addIqcInspectDtlFile({
-        iqcInspectDtlId: selectIqcInspectDtlId.value,
+    if (!_.isEmpty(selectOqcInspectItemId.value)) {
+      const list = await apiQuality.oqcInspect.addFile({
+        oqcInspectId: formData.id,
+        oqcInspectItemId: selectOqcInspectItemId.value,
         fileName: file.fileName,
       });
       MessagePlugin.success('文件上传成功');
@@ -513,9 +741,10 @@ const uploadSuccess = async (file: AddFileType) => {
 };
 const deleteSuccess = async (file: AddFileType) => {
   try {
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
-      const list = await apiQuality.iqcInspectDtlFile.deleteIqcInspectDtlFile({
-        iqcInspectDtlId: selectIqcInspectDtlId.value,
+    if (!_.isEmpty(selectOqcInspectItemId.value)) {
+      const list = await apiQuality.oqcInspect.deleteFile({
+        oqcInspectId: formData.id,
+        oqcInspectItemId: selectOqcInspectItemId.value,
         fileName: file.fileName,
       });
       MessagePlugin.success('文件删除成功');
@@ -526,16 +755,17 @@ const deleteSuccess = async (file: AddFileType) => {
 };
 const batchDeleteSuccess = async (files: AddFileType[]) => {
   try {
-    if (!_.isEmpty(selectIqcInspectDtlId.value)) {
+    if (!_.isEmpty(selectOqcInspectItemId.value)) {
       const deleteList = [];
 
       files.forEach((n) =>
         deleteList.push({
-          iqcInspectDtlId: selectIqcInspectDtlId.value,
+          oqcInspectId: formData.id,
+          oqcInspectItemId: selectOqcInspectItemId.value,
           fileName: n.fileName,
         }),
       );
-      const list = await apiQuality.iqcInspectDtlFile.deleteBatchIqcInspectDtlFile(deleteList);
+      const list = await apiQuality.oqcInspect.deleteBatchFiles(deleteList);
       MessagePlugin.success('文件删除成功');
     }
   } catch (e) {
@@ -544,12 +774,367 @@ const batchDeleteSuccess = async (files: AddFileType[]) => {
 };
 // end 文件上传
 
+const serialNumberEnter = async (value) => {
+  if (formData.viewType === ViewType.BJ) {
+    scanProductBarcode(value);
+  } else {
+    scanYJProductBarcode(value);
+  }
+};
+
+// 报验扫码
+const scanProductBarcode = async (value) => {
+  if (!isEmpty(value)) {
+    // 前端校验一次，条码是否扫重复，后端再校验一次
+    if (!checkBarcodeRepeat(value)) {
+      return;
+    }
+    LoadingPlugin(true);
+    try {
+      const list = (await apiQuality.oqcInspect.scanProductBarcode({
+        oqcInspectId: formData.id,
+        billNo: formData.billNo,
+        viewType: formData.viewType,
+        businessCategory: formData.businessCategory,
+        moScheId: formData.moScheId,
+        scanBarcode: formData.scanBarcode,
+        oqcInspectBillInfo: formData,
+      })) as BarcodeVO[];
+      if (list) {
+        scanInfoList.value.push(...list);
+      }
+      formData.scanBarcode = '';
+      // 设置按条码报批数量
+      setCheckmBarcodeTotalQty();
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      LoadingPlugin(false);
+    }
+  }
+};
+
+// 检验扫码
+const scanYJProductBarcode = async (value) => {
+  if (!isEmpty(value)) {
+    LoadingPlugin(true);
+    try {
+      const list = (await apiQuality.oqcInspect.scanYjProductBarcode({
+        oqcInspectId: formData.id,
+        billNo: formData.billNo,
+        viewType: formData.viewType,
+        businessCategory: formData.businessCategory,
+        moScheId: formData.moScheId,
+        scanBarcode: formData.scanBarcode,
+        oqcInspectBillInfo: formData,
+        inspectItems: defaultTableData.value,
+      })) as BarcodeVO[];
+      if (list) {
+        scanInfoList.value.push(...list);
+      }
+      formData.scanBarcode = '';
+      // 设置按条码报批数量
+      setCheckmBarcodeTotalQty();
+      getBarcodeTableList();
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      LoadingPlugin(false);
+    }
+  }
+};
+
+// 移除条码
+const onRemove = (row: any) => {
+  scanInfoList.value.splice(row.rowIndex, 1);
+  // 设置按条码报批数量
+  setCheckmBarcodeTotalQty();
+};
+
+// 删除条码
+const onDelete = async (row: any) => {
+  const oqcInspectDtlIds = [];
+  const oqcInspectDtlBarcodeIds = [];
+  oqcInspectDtlIds.push(row.id);
+  oqcInspectDtlBarcodeIds.push(row.oqcInspectBarcodeId);
+  await apiQuality.oqcInspect.deleteYjProductBarcode({
+    oqcInspectDtlIds,
+    oqcInspectDtlBarcodeIds,
+    businessCategory: formData.businessCategory,
+    oqcInspectId: formData.id.toString(),
+    inspectItems: tableData.value,
+  });
+  getBarcodeTableList();
+  MessagePlugin.success('删除成功');
+};
+
+// 加载条码列表
+const getBarcodeTableList = async () => {
+  const barcodeList = await apiQuality.oqcInspect.getBarcodeTableList({
+    oqcInspectId: formData.id,
+    viewType: formData.viewType,
+  });
+  scanInfoList.value = barcodeList;
+  if (barcodeList) {
+    // 加载条码检验项
+    barcodeSelectedChange(barcodeList[0]);
+  }
+};
+
+// 设置按条码报批数量
+const setCheckmBarcodeTotalQty = () => {
+  formData.checkBarcodeTotalQty = scanInfoList.value.length;
+};
+
+// 切换工单
+const moScheduleSelectChange = (data) => {
+  if (data) {
+    // 更新工单相关信息
+    formData.checkMoTotalQty = data.planQty;
+    formData.mitemId = data.mitemId;
+    formData.mitemCode = data.mitemCode;
+    formData.mitemName = data.mitemName;
+    formData.mitemDesc = data.mitemDesc;
+    formData.mitemCategoryId = data.categoryId;
+    formData.mitemCategoryCode = data.categoryCode;
+    formData.mitemCategoryName = data.categoryName;
+    loadTable(formData.viewType);
+  } else {
+    // 清空工单以及工单相关信息
+    onClearMoInfo();
+  }
+};
+
+// 报检 - 加载检验项信息
+const loadTable = async (viewType: String) => {
+  if (viewType === ViewType.BJ) {
+    try {
+      const list = await apiQuality.oqcInspect.getStdDtlListByMitem({
+        oqcInspectId: formData.id,
+        billNo: formData.billNo,
+        mitemCategoryId: formData.mitemCategoryId,
+        mitemId: formData.mitemId,
+        inspectType: formData.inspectCategory,
+        viewType: formData.viewType,
+      });
+      tableData.value = list;
+      tableDataCount.value = list.filter((item) => item.characteristics === 'COUNT');
+      tableDataCquantitative.value = list.filter((item) => item.characteristics === 'QUANTITATIVE');
+
+      if (list.length > 0) {
+        formData.inspectStdName = list[0].inspectStdName;
+        formData.oqcInspectStdId = list[0].inspectStdId;
+      } else {
+        formData.inspectStdName = '';
+        formData.oqcInspectStdId = null;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+};
+
+// 检验 - 加载默认的检验项目
+const loadDefaultTable = async () => {
+  try {
+    const list = await apiQuality.oqcInspect.getStdDtlListByMitem({
+      mitemCategoryId: formData.mitemCategoryId,
+      mitemId: formData.mitemId,
+      inspectType: formData.inspectCategory,
+      viewType: ViewType.BJ,
+    });
+    // 默认是合格
+    list.forEach((element) => {
+      element.inspectResult = 'OK';
+    });
+    defaultTableData.value = list;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+// 检验 - 加载条码检验项信息
+const loadBarcodeTable = async (rowBarcodeInfo: BarcodeVO) => {
+  try {
+    LoadingPlugin(true);
+    const list = await apiQuality.oqcInspect.getStdDtlListByMitem({
+      oqcInspectId: formData.id,
+      billNo: formData.billNo,
+      mitemCategoryId: formData.mitemCategoryId,
+      mitemId: formData.mitemId,
+      inspectType: formData.inspectCategory,
+      oqcInspectBarcodeId: rowBarcodeInfo.oqcInspectBarcodeId,
+      oqcInspectDtlId: rowBarcodeInfo.id,
+      viewType: formData.viewType,
+    });
+    tableData.value = list;
+    tableDataCount.value = list.filter((item) => item.characteristics === 'COUNT');
+    tableDataCquantitative.value = list.filter((item) => item.characteristics === 'QUANTITATIVE');
+    rowBarcodeInfo.inspectItems = list;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    LoadingPlugin(false);
+  }
+};
+
+// 检验 - 加载本地的检验项信息
+const setBarcodeTable = async (inspectItems: OqcInspectStdFullVO[]) => {
+  tableData.value = inspectItems;
+  tableDataCount.value = inspectItems.filter((item) => item.characteristics === 'COUNT');
+  tableDataCquantitative.value = inspectItems.filter((item) => item.characteristics === 'QUANTITATIVE');
+};
+
+// 清空工单以及工单相关信息
+const onClearMoInfo = () => {
+  console.log('onClearMoInfo');
+  const { inspectCategory } = formData;
+  const { businessCategory } = formData;
+  reset();
+  formData.inspectCategory = inspectCategory;
+  formData.businessCategory = businessCategory;
+};
+
+const onRadioChange = async (checked: any) => {
+  // 清空检验判定信息
+  clearCheckResultInfo();
+};
+
+// 计算国标样本数
+const onNationalCalculateSampQty = async () => {
+  let checkTotalQty = formData.checkMoTotalQty;
+  if (formData.businessCategory === 'BARCODE') {
+    checkTotalQty = formData.checkBarcodeTotalQty;
+  }
+  if (checkTotalQty > 0 && sampingStdCode.value && formData.inspectLevel && formData.inspectStringency) {
+    const inspectQty = await apiQuality.oqcInspect.getProductSampleQtyByNational({
+      inspectQty: checkTotalQty.toString(),
+      inspectLevel: formData.inspectLevel,
+      inspectionStringency: formData.inspectStringency,
+      sampingStdCode: sampingStdCode.value,
+    });
+    formData.inspectQty = inspectQty;
+  } else if (!checkTotalQty) {
+    MessagePlugin.error('无报批数量，请检查');
+  }
+};
+
+// 计算企表样本数
+const onEnterpriseCalculateSampQty = async () => {
+  let checkTotalQty = formData.checkMoTotalQty;
+  if (formData.businessCategory === 'BARCODE') {
+    checkTotalQty = formData.checkBarcodeTotalQty;
+  }
+  if (checkTotalQty > 0 && formData.samplingStandardCode) {
+    const inspectQty = await apiQuality.oqcInspect.getProductSampleQtyByEnterprise({
+      inspectQty: checkTotalQty.toString(),
+      samplingStandardId: formData.samplingStandardCode,
+    });
+    formData.inspectQty = inspectQty;
+  } else if (!checkTotalQty) {
+    MessagePlugin.error('无报批数量，请检查');
+  }
+};
+
+// 清空检验判定信息
+const clearCheckResultInfo = () => {
+  formData.samplingStandardCode = '';
+  formData.inspectStringency = '';
+  formData.inspectLevel = '';
+  formData.inspectQty = 0;
+};
+
+// 清空检验项目信息
+const clearInspectStdTable = () => {
+  tableData.value = [];
+};
+
+// 校验条码是否扫重复
+const checkBarcodeRepeat = (lbNo) => {
+  let isSuccess = true;
+  const barcodeInfo = _.find(scanInfoList.value, (item: BarcodeVO) => item.scanBarcode === lbNo);
+  if (barcodeInfo) {
+    isSuccess = false;
+    NotifyPlugin.error({ content: `该条码已扫描,请勿重复扫描`, duration: 2000, closeBtn: true });
+  }
+  return isSuccess;
+};
+
+// 初始化报检界面信息
+const initBJDetailFormAdd = () => {
+  clearInspectStdTable();
+  formData.viewType = ViewType.BJ;
+  formData.billNo = '';
+  formData.samplingStandardType = 'NATIONAL';
+  formData.status = 'UNSUBMIT';
+  formData.statusName = '待提报';
+  getBillNo();
+  formVisible.value = true;
+  isEditTable.value = false;
+};
+
+// 报检界面信息 -编辑
+const initBJDetailFormEdit = (billInfo: OqcInspectBillFullVO) => {
+  clearInspectStdTable();
+  Object.assign(formData, billInfo);
+  console.log('initBJDetailFormEdit:', formData);
+  formData.viewType = ViewType.BJ;
+  formVisible.value = true;
+  isEditTable.value = false;
+  commonInit();
+  getBarcodeTableList();
+};
+
+// 初始化检验界面信息
+const initJYDetailForm = async (billInfo: OqcInspectBillFullVO) => {
+  clearInspectStdTable();
+  Object.assign(formData, billInfo);
+  formData.viewType = ViewType.JY;
+  isEditTable.value = true;
+  formVisible.value = true;
+  commonInit();
+  getBarcodeTableList();
+  loadDefaultTable();
+};
+
+// 初始化详情查看界面信息
+const initViewkDetailForm = async (billInfo: OqcInspectBillFullVO) => {
+  clearInspectStdTable();
+  Object.assign(formData, billInfo);
+  formData.viewType = ViewType.VIEW;
+  isEditTable.value = false;
+  formVisible.value = true;
+  commonInit();
+  getBarcodeTableList();
+};
+
+const commonInit = () => {
+  if (formData.businessCategory === 'MO') {
+    formData.checkMoTotalQty = formData.qty;
+  } else {
+    formData.checkBarcodeTotalQty = formData.qty;
+  }
+};
+
+// 初始化详情信息
+const initForm = () => {
+  getinspectionStringency();
+  getInspectLevel();
+  getSampingStdCode();
+};
+
+onMounted(() => {
+  initForm();
+});
+
 defineExpose({
   form: formRef,
   reset,
-  showForm,
-  showMergeForm,
   loadTable,
+  initBJDetailFormAdd,
+  initBJDetailFormEdit,
+  initJYDetailForm,
+  initViewkDetailForm,
 });
 </script>
 <style lang="less" scoped>
@@ -593,5 +1178,30 @@ defineExpose({
   /* 或者让子元素紧贴在一起 */
   justify-content: flex-end;
 }
+
+.list-row {
+  height: 200px !important;
+}
+
+.customer-table {
+  height: 200px !important;
+}
+
+.customer-card {
+  margin-bottom: 8px;
+
+  :deep(.t-descriptions__body) {
+    width: 100%;
+  }
+
+  :deep(.t-card__body) {
+    padding: 8px 0;
+  }
+}
+
+:deep(.t-card__title) {
+  color: var(--td-text-color-primary);
+  font: var(--td-font-title-medium);
+  font-weight: 600;
+}
 </style>
-`

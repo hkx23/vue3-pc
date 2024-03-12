@@ -1,0 +1,28 @@
+{
+  "title": "检验标准：",
+  "placeholder": "请选择检验标准",
+  "url": "/api/quality/samplingStd/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "标准编号",
+      "key": "sampingStdCode",
+      "align": "left"
+    },
+    {
+      "title": "应用范围",
+      "key": "operationScopeName",
+      "align": "left"
+    },
+    {
+      "title": "检验方法",
+      "key": "operationMethodName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "sampingStdCode",
+  "keywords": {
+    "value": "sampingStdCode",
+    "label": "sampingStdCode"
+  }
+}

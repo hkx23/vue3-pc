@@ -2,7 +2,7 @@
   <t-dialog
     v-model:visible="formVisible"
     header="处理意见"
-    width="80%"
+    width="85%"
     placement="top"
     top="20"
     :confirm-btn="{
@@ -14,57 +14,35 @@
   >
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
-        <t-descriptions :title="'检验单号' + formData.iqcBillNo" :column="4" size="large">
-          <t-descriptions-item label="供应商">{{ formData.supplierName }}</t-descriptions-item>
-          <t-descriptions-item label="物料编码">{{ formData.mitemCategoryCode }}</t-descriptions-item>
-          <t-descriptions-item label="物料名">
-            <div class="div_break_word">
-              {{ formData.mitemName }}
-            </div>
-          </t-descriptions-item>
-          <t-descriptions-item label="检验严格度">{{ formData.inspectionStringencyName }}</t-descriptions-item>
-          <t-descriptions-item label="报批数量">{{ formData.pickQty }}</t-descriptions-item>
-          <t-descriptions-item label="检验标准">{{ formData.inspectStdName }}</t-descriptions-item>
-          <t-descriptions-item label="接收单号">{{ formData.billNoStr }}</t-descriptions-item>
-          <t-descriptions-item label="查看附件"> <t-link theme="primary">查看附件</t-link></t-descriptions-item>
-        </t-descriptions>
-      </cmp-card>
-      <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :column="3" size="large">
           <t-descriptions-item label="缺陷类型">
             <bcmp-select-business
-              v-model="formNgData.defectCodes"
+              v-model="formData.defectCodes"
               type="defectCode"
               :show-title="false"
               :is-multiple="true"
             >
             </bcmp-select-business>
           </t-descriptions-item>
-          <t-descriptions-item label="缺陷等级"
-            ><t-select v-model="formNgData.iqcDefectCategoryCode" :options="iqcDefectCategoryOption" />
-          </t-descriptions-item>
-          <t-descriptions-item label="物料处理意见"
-            ><t-select v-model="formNgData.iqcHandleMethodCode" :options="iqcHandleMethodOption"
+          <t-descriptions-item label="处理意见"
+            ><t-select v-model="formData.handleMethod" :options="iqcHandleMethodOption"
           /></t-descriptions-item>
-          <t-descriptions-item label="责任判定"
-            ><t-select v-model="formNgData.iqcResponsibilityCode" :options="iqcResponsibilityOption"
-          /></t-descriptions-item>
-          <t-descriptions-item label="供方整改意见"
-            ><t-select v-model="formNgData.iqcCorrectCode" :options="iqcCorrectOpinion"
+          <t-descriptions-item label="责任部门"
+            ><t-select v-model="formData.responsibility" :options="iqcResponsibilityOption"
           /></t-descriptions-item>
           <t-descriptions-item label="跟进人">
             <bcmp-select-business
-              v-model="formNgData.personResponsibilityId"
+              v-model="formData.personResponsibilityId"
               type="person"
               :show-title="false"
             ></bcmp-select-business
           ></t-descriptions-item>
           <t-descriptions-item label="描述" :span="3">
-            <t-textarea v-model="formNgData.memo" placeholder="请输入内容"
+            <t-textarea v-model="formData.memo" placeholder="请输入内容"
           /></t-descriptions-item>
-          <t-descriptions-item>
-            <t-checkbox v-model="formNgData.isPdca" label="启用PDCA" />
-          </t-descriptions-item>
+          <!-- <t-descriptions-item>
+            <t-checkbox v-model="formData.isPdca" label="启用PDCA" />
+          </t-descriptions-item> -->
         </t-descriptions>
       </cmp-card>
     </cmp-container>
@@ -78,57 +56,41 @@ export default {
 
 <script setup lang="ts">
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin, MessagePlugin } from 'tdesign-vue-next';
+import { FormInstanceFunctions, LoadingPlugin as LoadingPluginNg, MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
-import { api as apiQuality } from '@/api/quality';
+import { api as apiQuality, BarcodeVO, OqcInspectBillFullVO, OqcInspectStdFullVO } from '@/api/quality';
 
 const Emit = defineEmits(['parent-refresh-event', 'form-close-event']);
 
 const formVisible = ref(false);
 
 const formNgRef: Ref<FormInstanceFunctions> = ref(null);
+enum ViewType {
+  BJ = 'BJ', // 报检模式
+  JY = 'JY', // 检验模式
+  VIEW = 'VIEW', // 查看模式
+}
+interface FormInspectInfo extends OqcInspectBillFullVO {
+  viewType: ViewType;
+  scanBarcode: string;
+  defectCodes: string;
+}
 
-const formData = reactive({
-  iqcBillNo: '',
-  billNoStr: '',
-  billNoList: [{ billNo: '', erpLineNo: '', billNoDtlId: '' }],
-  mitemId: '',
-  mitemCode: '',
-  mitemName: '',
-  mitemDesc: '',
-  mitemCategoryId: '',
-  mitemCategoryCode: '',
-  mitemCategoryName: '',
-  pickQty: '',
-  supplierId: '',
-  supplierCode: '',
-  supplierName: '',
-  inspectionStringency: '',
-  inspectionStringencyName: '',
-  inspectStdName: '',
-});
-
-const mainTableData = ref([]);
-const formNgData = reactive({
-  personResponsibilityId: '',
-  iqcDefectCategoryCode: '',
-  iqcHandleMethodCode: '',
-  iqcResponsibilityCode: '',
-  iqcCorrectCode: '',
+const formData: FormInspectInfo = reactive({
+  viewType: ViewType.VIEW,
+  scanBarcode: '',
   defectCodes: '',
-  defectCodeList: [],
-  memo: '',
-  isPdca: false,
-  isStartImprove: 0,
 });
+const tableData = ref<OqcInspectStdFullVO[]>([]);
+const scanInfoList = ref<BarcodeVO[]>([]);
 
 const onConfirmForm = async () => {
   try {
-    if (formNgData.defectCodes.length > 0) {
-      const defectCodeList = formNgData.defectCodes.split(',');
-      formNgData.defectCodeList = defectCodeList.map((item) => {
+    if (formData.defectCodes && formData.defectCodes.length > 0) {
+      const defectCodeList = formData.defectCodes.split(',');
+      formData.defectCodeList = defectCodeList.map((item) => {
         return {
           value: item,
           label: item,
@@ -138,46 +100,18 @@ const onConfirmForm = async () => {
       MessagePlugin.error('缺陷类型不能为空');
       return;
     }
-    if (_.isEmpty(formNgData.iqcDefectCategoryCode)) {
-      MessagePlugin.error('缺陷等级不能为空');
-      return;
-    }
-    if (_.isEmpty(formNgData.iqcHandleMethodCode)) {
-      MessagePlugin.error('物料处理意见不能为空');
-      return;
-    }
-    if (_.isEmpty(formNgData.iqcResponsibilityCode)) {
-      MessagePlugin.error('责任判定不能为空');
-      return;
-    }
-    if (_.isEmpty(formNgData.iqcCorrectCode)) {
-      MessagePlugin.error('供方整改意见不能为空');
-      return;
-    }
-    if (_.isEmpty(formNgData.personResponsibilityId)) {
-      MessagePlugin.error('跟进人不能为空');
-      return;
-    }
-    LoadingPlugin(true);
 
-    formNgData.isStartImprove = formNgData.isPdca ? 1 : 0;
-    await apiQuality.iqcInspect.submitIqcInspect({
-      iqcBillNo: formData.iqcBillNo,
-      billNoList: formData.billNoList,
-      mitemId: formData.mitemId,
-      mitemCode: formData.mitemCode,
-      mitemName: formData.mitemName,
-      mitemDesc: formData.mitemDesc,
-      mitemCategoryId: formData.mitemCategoryId,
-      mitemCategoryCode: formData.mitemCategoryCode,
-      mitemCategoryName: formData.mitemCategoryName,
-      pickQty: Number(formData.pickQty),
-      supplierId: formData.supplierId,
-      supplierCode: formData.supplierCode,
-      supplierName: formData.supplierName,
-      inspectionStringency: formData.inspectionStringency,
-      iqcInspectStdList: mainTableData.value,
-      iqcInspectNg: formNgData,
+    LoadingPluginNg(true);
+
+    await apiQuality.oqcInspect.submitJyQqcInspect({
+      oqcInspectId: formData.id,
+      billNo: formData.billNo,
+      viewType: formData.viewType,
+      businessCategory: formData.businessCategory,
+      oqcInspectBillInfo: formData,
+      isTempSave: false,
+      inspectItems: tableData.value,
+      barcodeList: scanInfoList.value,
     });
 
     Emit('form-close-event');
@@ -185,7 +119,7 @@ const onConfirmForm = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    LoadingPlugin(false);
+    LoadingPluginNg(false);
   }
 };
 const reset = () => {
@@ -197,36 +131,13 @@ const reset = () => {
       delete formData[key];
     }
   });
-  // 清除所有对象的值
-  Object.keys(formNgData).forEach((key) => {
-    if (_.isArray(formNgData[key])) {
-      formNgData[key] = [];
-    } else {
-      delete formNgData[key];
-    }
-  });
 };
-const showForm = async (edit, row, tableData) => {
+const showForm = async (edit, row, tableDataTemp, scanInfoListTemp) => {
   formVisible.value = true;
   reset();
-  formData.billNoList = row.billNoList;
-  formData.billNoStr = row.billNoStr;
-  formData.iqcBillNo = row.iqcBillNo;
-  formData.mitemId = row.mitemId;
-  formData.mitemCode = row.mitemCode;
-  formData.mitemName = row.mitemName;
-  formData.mitemDesc = row.mitemDesc;
-  formData.mitemCategoryId = row.mitemCategoryId;
-  formData.mitemCategoryCode = row.mitemCategoryCode;
-  formData.mitemCategoryName = row.mitemCategoryName;
-  formData.pickQty = `${row.pickQty}`;
-  formData.supplierId = row.supplierId;
-  formData.supplierCode = row.supplierCode;
-  formData.supplierName = row.supplierName;
-  formData.inspectionStringency = row.inspectionStringency;
-  formData.inspectionStringencyName = row.inspectionStringencyName;
-  formData.inspectStdName = row.inspectStdName;
-  mainTableData.value = tableData.value;
+  Object.assign(formData, row);
+  tableData.value = tableDataTemp;
+  scanInfoList.value = scanInfoListTemp;
 };
 const closeForm = async () => {
   formVisible.value = false;

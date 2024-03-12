@@ -76,8 +76,6 @@ import { DialogPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdes
 import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 
 import { api as apiWarehouse, MaterialRequisitionDTO } from '@/api/warehouse';
-import CmpPrintButton from '@/components/cmp-print-button/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -92,8 +90,10 @@ const { loading, setLoading } = useLoading();
 const { loading: loadingMaterialDtl, setLoading: setLoadingMaterialDtl } = useLoading();
 const isAdd = ref(true);
 
-const datePlanRangeDefault = ref([dayjs().format('YYYY-MM-DD'), dayjs().subtract(-31, 'day').format('YYYY-MM-DD')]); // 初始化日期控件
-
+const datePlanRangeDefault = ref([
+  dayjs().format('YYYY-MM-DD 00:00:00'),
+  dayjs().subtract(-31, 'day').format('YYYY-MM-DD 23:59:59'),
+]);
 // 查询组件值
 const optsValue = ref({ datePlanRange: datePlanRangeDefault.value }) as any;
 // 查询组件
@@ -131,6 +131,9 @@ const opts = computed(() => {
       comp: 't-date-range-picker',
       defaultVal: datePlanRangeDefault.value,
       placeholder: t('common.placeholder.input', [`${t('materialRequisition.createTime')}`]),
+      bind: {
+        enableTimePicker: true,
+      },
     },
     status: {
       label: t('materialRequisition.statusName'),
@@ -148,7 +151,7 @@ const opts = computed(() => {
 // 状态下拉初始数据
 const statusOption = ref([
   { label: '全选', value: '', checkAll: true },
-  { value: 'CREATE', label: '已创建' },
+  { value: 'CREATED', label: '已创建' },
   { value: 'TRANSFERRED', label: '已完成' },
   { value: 'CANCELED', label: '已取消' },
 ]);
