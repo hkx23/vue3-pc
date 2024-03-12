@@ -37,6 +37,11 @@
           <t-button theme="default" :disabled="selectedRowKeys.length < 1" @click="onClickAddMaterialRule">
             {{ t('deliveryCommand.deliveryOrderCreation') }}
           </t-button>
+          <bcmp-import-auto-button
+            theme="default"
+            type="w_delivery_command"
+            button-text="导入"
+          ></bcmp-import-auto-button>
           <t-button theme="default">{{ t('common.button.print') }}</t-button>
         </template>
       </cmp-table>

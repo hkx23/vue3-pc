@@ -18,6 +18,9 @@
         label="物料类别"
         :multiple="isMultiple"
       ></BCmpMitemCategory>
+      <BCmpRouting v-model:value="selectRouting" label="工艺路线" :multiple="isMultiple"></BCmpRouting>
+      <BCmpMo v-model:value="selectMo" label="工单" :multiple="isMultiple"></BCmpMo>
+      <BCmpMoSchedule v-model:value="selectMoSchedule" label="排产单" :multiple="isMultiple"></BCmpMoSchedule>
     </t-space>
   </cmp-card>
 </template>
@@ -32,5 +35,8 @@ const selectSupplierValue = ref();
 const selectCustomerValue = ref();
 const selectMitemValue = ref();
 const selectMitemCategoryValue = ref();
+const selectRouting = ref();
+const selectMo = ref();
+const selectMoSchedule = ref();
 </script>
 <style lang="less" scoped></style>
