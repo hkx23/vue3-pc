@@ -236,7 +236,11 @@
     </template>
   </t-dialog>
 </template>
-
+<script lang="ts">
+export default {
+  name: 'ExtendedAttributes',
+};
+</script>
 <script setup lang="ts">
 import { Icon } from 'tdesign-icons-vue-next';
 import {

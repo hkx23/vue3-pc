@@ -3,7 +3,7 @@ import { RouteRecordRaw } from 'vue-router';
 export default [
   {
     path: '/printTemplate',
-    name: 'printTemplate',
+    name: 'PrintTemplate',
     component: () => import('../../pages/printTemplate/index.vue'),
     meta: {
       title: {

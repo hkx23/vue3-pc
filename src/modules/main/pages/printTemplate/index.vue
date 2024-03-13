@@ -91,7 +91,11 @@
     <template-map-form ref="templateMapFormRef" />
   </t-dialog>
 </template>
-
+<script lang="tsx">
+export default {
+  name: 'PrintTemplate',
+};
+</script>
 <script setup lang="tsx">
 import debounce from 'lodash/debounce';
 import { SearchIcon } from 'tdesign-icons-vue-next';

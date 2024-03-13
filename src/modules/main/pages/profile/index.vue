@@ -119,7 +119,11 @@
     <profile-form ref="formRef"></profile-form>
   </t-dialog>
 </template>
-
+<script lang="ts">
+export default {
+  name: 'Profile',
+};
+</script>
 <script setup lang="ts">
 import { Icon, SearchIcon } from 'tdesign-icons-vue-next';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
