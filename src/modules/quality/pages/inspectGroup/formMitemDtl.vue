@@ -222,10 +222,12 @@ const onAddMitem = async (item) => {
   await apiQuality.inspectGroupInMitem.add({ mitemCategoryId: item.id, inspectGroupId: formData.value.inspectGroupId });
   MessagePlugin.success(t('common.message.addSuccess'));
   fetchMitemTable();
-  fetchCategoryList();
+  fetchCategoryInputList();
 };
 
 const reset = () => {
+  listItems.value = [];
+  tabTotal.value = 0;
   formData.value = {
     inspectGroupId: '',
     keyword: '',
