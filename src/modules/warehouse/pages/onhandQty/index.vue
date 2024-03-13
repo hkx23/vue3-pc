@@ -262,7 +262,7 @@ const opts = computed(() => {
       label: '物料',
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: [],
+      defaultVal: '',
       bind: {
         type: 'mitem',
         showTitle: false,
@@ -307,13 +307,18 @@ const onLocationChange = async (visible: boolean) => {
 };
 
 const onInput = async (data: any) => {
+  const { warehouseId, districtId, locationId, mitemIds } = data;
   pageUI.value.page = 1;
-  Object.keys(handQtyParam.value).forEach((key) => {
-    if (Object.prototype.hasOwnProperty.call(data, key)) {
-      handQtyParam.value[key] = data[key];
-    }
-  });
-  handQtyParam.value.mitemIds = data.mitemIds === '' ? [] : data.mitemIds.split(',').map((item) => item.trim());
+  // Object.keys(handQtyParam.value).forEach((key) => {
+  //   if (Object.prototype.hasOwnProperty.call(data, key)) {
+  //     handQtyParam.value[key] = data[key];
+  //   }
+  // });
+  handQtyParam.value.warehouseId = warehouseId;
+  handQtyParam.value.districtId = districtId;
+  handQtyParam.value.locationId = locationId;
+  handQtyParam.value.mitemIds =
+    mitemIds === '' || mitemIds === null ? [] : mitemIds.split(',').map((item) => item.trim());
   await onGetHandQtyData();
 };
 </script>

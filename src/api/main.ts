@@ -4089,11 +4089,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   stateName?: string;
   isState?: boolean;
-  isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
-  isForceInspectionName?: string;
+  isForceInspectionChecked?: boolean;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -4258,8 +4258,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 /** 响应数据 */
@@ -4340,13 +4340,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   isRawName?: string;
-  isProductName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
-  isRawChecked?: boolean;
+  isProductName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4489,8 +4489,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4643,6 +4643,7 @@ export interface LabelVO {
 }
 
 export interface LabelSearch {
+  barcodeWipId?: string;
   /**
    * 页码
    * @format int32
@@ -6648,6 +6649,11 @@ export interface BarcodeWip {
 
 export interface BarcodeWipSearch {
   /**
+   * 拆分数量
+   * @format int32
+   */
+  splitNum?: number;
+  /**
    * 页码
    * @format int32
    */
@@ -7334,8 +7340,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -8294,12 +8300,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -14290,6 +14296,21 @@ export const api = {
      */
     updateBarcodeStatusAndOnhandId: (data: LabelVO[]) =>
       http.request<ResultObject['data']>(`/api/main/barcodeWip/updateBarcodeStatusAndOnhandId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品条码表
+     * @name SplitBarcode
+     * @summary 拆分条码
+     * @request POST:/barcodeWip/splitBarcode
+     * @secure
+     */
+    splitBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeWip/splitBarcode`, {
         method: 'POST',
         body: data as any,
       }),

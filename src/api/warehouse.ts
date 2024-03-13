@@ -4016,6 +4016,7 @@ export interface ResultMFTVO {
 }
 
 export interface LabelSearch {
+  barcodeWipId?: string;
   /**
    * 页码
    * @format int32
@@ -5169,8 +5170,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
