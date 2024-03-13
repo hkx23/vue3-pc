@@ -1276,6 +1276,55 @@ export interface ResultPagingDataOqcInspectStdDtlDTO {
   data?: PagingDataOqcInspectStdDtlDTO;
 }
 
+/** 产品检验标准全信息搜索类 */
+export interface OqcInspectStdFullSearch {
+  /** 模式：BJ 报检, JY 检验 */
+  viewType?: string;
+  /** OQC单据号 */
+  billNo?: string;
+  oqcInspectId?: string;
+  /** 产检验明细表 */
+  oqcInspectDtlId?: string;
+  /** 产检验条码明细表 */
+  oqcInspectBarcodeId?: string;
+  /** 检验类型 */
+  inspectType?: string;
+  mitemCategoryId?: string;
+  mitemId?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 严格度 */
+  inspectionStringency?: string;
+  /** 一键合格 */
+  directInspectOk?: boolean;
+  /** 一键判退 */
+  directInspectNg?: boolean;
+  supplierId?: string;
+  /** 检验类型转换(1：首检 2：巡检 4：抽检 8：复检) */
+  convertInspectType?: string;
+}
+
+/** 响应数据 */
+export type OqcInspectStdItemCategoryVO = {
+  itemCategory?: string;
+  checkStdList?: string[];
+  checkAll?: boolean;
+  oqcInspectStdFullList?: OqcInspectStdFullVO[];
+} | null;
+
+/** 通用响应类 */
+export interface ResultListOqcInspectStdItemCategoryVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: OqcInspectStdItemCategoryVO[] | null;
+}
+
 /** 产品检验标准附件表 */
 export interface OqcInspectStdFile {
   id?: string;
@@ -1554,34 +1603,6 @@ export interface ResultPagingDataOqcInspectBillFullVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataOqcInspectBillFullVO;
-}
-
-/** 产品检验标准全信息搜索类 */
-export interface OqcInspectStdFullSearch {
-  /** 模式：BJ 报检, JY 检验 */
-  viewType?: string;
-  /** OQC单据号 */
-  billNo?: string;
-  oqcInspectId?: string;
-  /** 产检验明细表 */
-  oqcInspectDtlId?: string;
-  /** 产检验条码明细表 */
-  oqcInspectBarcodeId?: string;
-  /** 检验类型 */
-  inspectType?: string;
-  mitemCategoryId?: string;
-  mitemId?: string;
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 严格度 */
-  inspectionStringency?: string;
-  /** 一键合格 */
-  directInspectOk?: boolean;
-  /** 一键判退 */
-  directInspectNg?: boolean;
-  supplierId?: string;
-  /** 检验类型转换(1：首检 2：巡检 4：抽检 8：复检) */
-  convertInspectType?: string;
 }
 
 /** 通用响应类 */
@@ -2732,10 +2753,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 停留时长 */
-  waitTime?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
+  /** 停留时长 */
+  waitTime?: string;
 }
 
 /** 响应数据 */
@@ -3327,9 +3348,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -4544,13 +4565,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  ii?: string;
-  s3?: string;
-  s4?: string;
   s1?: string;
   s2?: string;
+  ii?: string;
   iii?: string;
+  s3?: string;
+  s4?: string;
+  i?: string;
 } | null;
 
 /** 计量单位 */
@@ -5285,6 +5306,24 @@ export const api = {
       }),
   },
   oqcInspectStd: {
+    /**
+     * No description
+     *
+     * @tags 产品检验标准头表
+     * @name GetOqcInspectStdByItemCategory
+     * @summary 根据物料ID和物料分类，获取标准集合，并根据标准分类返回
+     * @request POST:/oqcInspectStd/getOqcInspectStdByItemCategory
+     * @secure
+     */
+    getOqcInspectStdByItemCategory: (data: OqcInspectStdFullSearch) =>
+      http.request<ResultListOqcInspectStdItemCategoryVO['data']>(
+        `/api/quality/oqcInspectStd/getOqcInspectStdByItemCategory`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
     /**
      * No description
      *
