@@ -381,7 +381,7 @@ const onPopupVisibleChange = (val: boolean, context: any) => {
   if (val) {
     selectSearch.value = '';
     onInputChange('');
-    console.log(val, context);
+    console.debug(val, context);
   } else if (!props.multiple) {
     emits('selectionChange', state.defaultValue, selectedRowKeys.value);
   }
@@ -676,7 +676,7 @@ onMounted(() => {
 
       state.defaultValue = props.value ? { [props.keywords.value]: props.value } : '';
       if (state.defaultValue) {
-        console.log('remoteLoad-按默认值查询');
+        console.debug('remoteLoad-按默认值查询');
         remoteLoad(props.value, true);
       }
     }
@@ -720,7 +720,7 @@ watch(
         }
       } else if (!isHandleSelectionChange.value) {
         if (props.value) {
-          console.log('remoteLoad-按默认值查询');
+          console.debug('remoteLoad-按默认值查询');
           // selectSearch.value = props.value.toString();
           defaultValue.value = props.value.toString();
           remoteLoad(props.value, true);

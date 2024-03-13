@@ -786,7 +786,7 @@ class dn {
     ) : g && p.append(JSON.stringify(r.body))), h.key = p.end();
     const l = this.pendingMap.get(h.key);
     if (l)
-      console.info(
+      console.debug(
         "[WebCore Http]: The same request is being executed, and this request has been cancelled. url: " + h.url
       ), h = l;
     else if (this.pendingMap.set(h.key, h), m && g) {
