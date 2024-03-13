@@ -376,11 +376,11 @@ const selectedRowKeys = computed<string[]>(() => {
   }
   return [state.defaultValue];
 });
-const onPopupVisibleChange = (val: boolean, context: any) => {
+const onPopupVisibleChange = (val: boolean, _context: any) => {
   if (val) {
     selectSearch.value = '';
     onInputChange('');
-    console.log(val, context);
+    // console.log(val, context);
     if (props.multiple) {
       if (Array.isArray(state.defaultValue) && state.defaultValue.length > 0) {
         // 去查接口获取已选择的数据
@@ -437,7 +437,7 @@ onMounted(() => {
 // todo: 默认选中（且只能默认选中第一页的数据）
 // 触发select隐藏
 const closeTable = () => {
-  console.log('closeTable');
+  // console.log('closeTable');
   popupVisible.value = false;
   selectSearch.value = '';
 };
@@ -502,8 +502,8 @@ const loadSelectedData = async () => {
     });
     state.selectedRowData = list;
     state.defaultValue = _.cloneDeep(list);
-  } catch (e) {
-    console.log(e);
+  } catch (_e) {
+    // console.log(e);
   } finally {
     loading.value = false;
   }
@@ -534,7 +534,7 @@ const remoteLoad = async (val: any) => {
 
   // 判断两次查询条件是否一样，一样的话，不获取数据
   if (isHandleSelectionChange.value && JSON.stringify(tempCondition.value) === JSON.stringify(searchCondition)) {
-    console.log('两次查询条件一样，不获取数据');
+    // console.log('两次查询条件一样，不获取数据');
     loading.value = false;
     return;
   }
@@ -553,8 +553,8 @@ const remoteLoad = async (val: any) => {
       state.tableData = state.tableData.concat(list);
     }
     asyncLoading.value = list.length < searchCondition.pageSize ? '' : 'load-more';
-  } catch (e) {
-    console.log(e);
+  } catch (_e) {
+    // console.log(_e);
   } finally {
     // 单选-如果完全匹配，直接选中
     radioCSelectRedirct(val);
@@ -575,8 +575,8 @@ const remoteLoadTree = async () => {
     }
     state.tableData = formatTreeNode(result);
     asyncLoading.value = '';
-  } catch (e) {
-    console.log(e);
+  } catch (_e) {
+    // console.log(_e);
   } finally {
     // 单选-如果完全匹配，直接选中
     // radioCSelectRedirct(val);
@@ -596,8 +596,8 @@ const onTagChange = (currentTags: any, context: { trigger: any; index: any; item
 
   // state.defaultValue = [];
   // console.log(currentTags, context);
-  const { trigger, index, item } = context;
-  console.log(trigger, index, item);
+  const { trigger, index } = context;
+  // console.log(trigger, index, item);
   if (trigger === 'clear') {
     state.defaultValue = [];
     state.selectedRowData = [];
@@ -621,7 +621,7 @@ const onTagChange = (currentTags: any, context: { trigger: any; index: any; item
 const fetchData = debounce((val) => {
   if (!props.filterable) return;
   if (props.isRemote) {
-    console.log('fetchData-远程加载');
+    // console.log('fetchData-远程加载');
     if (props.listSetting && props.listSetting.listType === 'tree' && val === '') {
       remoteLoadTree();
     } else {
@@ -629,7 +629,7 @@ const fetchData = debounce((val) => {
     }
   } else {
     const tableData = JSON.parse(JSON.stringify(props.table?.data));
-    console.log('表格数据', tableData);
+    // console.log('表格数据', tableData);
     if (tableData && tableData.length > 0) {
       state.tableData = tableData.filter((item: { [x: string]: string | any[] }) => {
         for (const key in item) {
@@ -647,7 +647,7 @@ const fetchData = debounce((val) => {
 }, 500);
 // 搜索过滤
 const onInputChange = (val: string) => {
-  console.log('onInputChange');
+  // console.log('onInputChange');
   selectSearch.value = val;
   loading.value = true;
   fetchData(val);
@@ -684,7 +684,7 @@ const formatTreeNode = (list: any[]): BusinessItem[] => {
 };
 
 const fetchTreeNodeData = async (key: string | number, children: any[]) => {
-  console.log(children);
+  // console.log(children);
   const searchCondition = {
     pageNum: 1, // pagination.value.current,
     pageSize: 9999, // pagination.value.pageSize,
@@ -723,7 +723,7 @@ onMounted(() => {
       }
     } else {
       // state.selectSearch = props.value;
-      console.log('remoteLoad-按默认值查询');
+      // console.log('remoteLoad-按默认值查询');
       if (typeof props.value === 'string') {
         defaultValue.value = props.value.toString();
       } else {
@@ -738,8 +738,8 @@ onMounted(() => {
 
 watch(
   () => props.value,
-  (val) => {
-    console.log('watch:props.value', `${props.title} ss ${val}`);
+  (_val) => {
+    // console.log('watch:props.value', `${props.title} ss ${val}`);
     nextTick(() => {
       // 多选
       if (props.multiple) {
@@ -758,7 +758,7 @@ watch(
         loadSelectedData();
       } else if (!isHandleSelectionChange.value) {
         if (props.value) {
-          console.log('remoteLoad-按默认值查询');
+          // console.log('remoteLoad-按默认值查询');
           defaultValue.value = props.value.toString();
 
           remoteLoad(props.value);
@@ -775,8 +775,8 @@ watch(
 );
 watch(
   () => props.parentId,
-  (val) => {
-    console.log('watch:props.parentId', `${props.parentId} ss ${val}`);
+  (_val) => {
+    // console.log('watch:props.parentId', `${props.parentId} ss ${val}`);
     isHandleSelectionChange.value = false;
     remoteLoad('');
   },

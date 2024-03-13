@@ -101,9 +101,9 @@ const loadTypeSetting = () => {
         setSetting(res);
         settingType.value = 'json';
       })
-      .catch((err) => {
+      .catch((_err) => {
         // 请求失败数据
-        console.log(err);
+        // console.log(err);
         loadTypeSettingByURL();
         settingType.value = 'db';
       });
@@ -165,8 +165,8 @@ onMounted(() => {
 });
 watch(
   () => props.type,
-  (val) => {
-    console.log(val);
+  (_val) => {
+    // console.log(val);
     loadTypeSetting();
   },
   { deep: true },

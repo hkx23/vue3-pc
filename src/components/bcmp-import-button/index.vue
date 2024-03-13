@@ -127,8 +127,8 @@ const loadTypeSetting = () => {
           };
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((_err) => {
+        // console.log(err);
       });
   }
 };
@@ -141,8 +141,8 @@ onMounted(() => {
 });
 watch(
   () => props.type,
-  (val) => {
-    console.log(val);
+  (_val) => {
+    // console.log(val);
     loadTypeSetting();
   },
   { deep: true },
