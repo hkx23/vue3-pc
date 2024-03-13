@@ -1,0 +1,15 @@
+{
+  "supplierQualificationRate": {
+    "title": "供应商合格率报表",
+    "supplierName": "供应商名称",
+    "timeCreate": "送检日期",
+    "mitemName": "物料名称",
+    "supplierCode": "供应商编码",
+    "totalInspection": "总送检批次",
+    "qualifiedBatch": "合格批次",
+    "ngBatch": "不合格批次",
+    "batchQualificationRate": "批次合格率",
+    "selectMitemAndTime": "请选择时间范围和产品！",
+    "inspectionTime": "送检时间"
+  }
+}

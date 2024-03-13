@@ -222,10 +222,12 @@ const onAddUser = async (item) => {
   await apiQuality.inspectGroupInUser.add({ ...item, inspectGroupId: formData.value.inspectGroupId });
   MessagePlugin.success(t('common.message.addSuccess'));
   fetchUserTable();
-  fetchUserList();
+  fetchUserInputList();
 };
 
 const reset = () => {
+  listItems.value = [];
+  tabTotal.value = 0;
   formData.value = {
     inspectGroupId: '',
     keyword: '',

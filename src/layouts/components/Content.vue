@@ -1,10 +1,8 @@
 <template>
-  <router-view v-if="!isRefreshing" v-slot="{ Component }">
+  <!-- <router-view /> -->
+  <router-view v-slot="{ Component }">
     <transition name="fade">
-      <!-- :include="aliveViews" -->
-      <keep-alive>
-        <component :is="Component" v-show="activeRouteIsNotIframe" />
-      </keep-alive>
+      <component :is="Component" />
     </transition>
   </router-view>
   <frame-page />
@@ -14,23 +12,23 @@
 // import isBoolean from 'lodash/isBoolean';
 // import isUndefined from 'lodash/isUndefined';
 // import type { ComputedRef } from 'vue';
-import { computed } from 'vue';
-// <suspense>标签属于实验性功能，请谨慎使用
-// 如果存在需解决/page/1=> /page/2 刷新数据问题 请修改代码 使用activeRouteFullPath 作为key
-// <suspense>
-//  <component :is="Component" :key="activeRouteFullPath" />
-// </suspense>
-import { useRouter } from 'vue-router';
+// import { computed } from 'vue';
+// // <suspense>标签属于实验性功能，请谨慎使用
+// // 如果存在需解决/page/1=> /page/2 刷新数据问题 请修改代码 使用activeRouteFullPath 作为key
+// // <suspense>
+// //  <component :is="Component" :key="activeRouteFullPath" />
+// // </suspense>
+// import { useRouter } from 'vue-router';
 
-import FramePage from '@/layouts/frame/index.vue';
-import { useTabsRouterStore } from '@/store';
+// import FramePage from '@/layouts/frame/index.vue';
+// import { useTabsRouterStore } from '@/store';
 
-const router = useRouter();
+// const router = useRouter();
 
-const activeRouteIsNotIframe = computed(() => {
-  const { currentRoute } = router;
-  return !currentRoute.value.meta.frameSrc;
-});
+// const activeRouteIsNotIframe = computed(() => {
+//   const { currentRoute } = router;
+//   return !currentRoute.value.meta.frameSrc;
+// });
 
 // const aliveViews = computed(() => {
 //   const tabsRouterStore = useTabsRouterStore();
@@ -44,11 +42,11 @@ const activeRouteIsNotIframe = computed(() => {
 //     .map((route) => route.name);
 // }) as ComputedRef<string[]>;
 
-const isRefreshing = computed(() => {
-  const tabsRouterStore = useTabsRouterStore();
-  const { refreshing } = tabsRouterStore;
-  return refreshing;
-});
+// const isRefreshing = computed(() => {
+//   const tabsRouterStore = useTabsRouterStore();
+//   const { refreshing } = tabsRouterStore;
+//   return refreshing;
+// });
 </script>
 <style lang="less" scoped>
 .fade-leave-active,

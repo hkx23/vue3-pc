@@ -342,8 +342,9 @@ export interface CommonSearch {
 
 export interface Filter {
   field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
   value?: string;
+  valuesList?: string[];
 }
 
 export interface SortParam {
@@ -2442,10 +2443,10 @@ export interface ProductReworkVO {
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2488,10 +2489,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
-  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3421,6 +3422,7 @@ export interface BatchDynamicQueryDTO {
   dataTable?: DataTable;
   rows?: Record<string, object>[];
   eid?: string;
+  oid?: string;
 }
 
 export interface ConditionData {
@@ -3633,11 +3635,11 @@ export interface BarcodeWipCollectVO {
   workshopName?: string;
   workshopId?: string;
   stateName?: string;
-  isState?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3754,9 +3756,9 @@ export interface BarcodeWipVO {
   workshopName?: string;
   workshopId?: string;
   stateName?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  isState?: boolean;
   defectCodeStr?: string;
 }
 

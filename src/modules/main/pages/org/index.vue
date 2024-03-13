@@ -61,6 +61,11 @@
     <org-form ref="formRef" />
   </t-dialog>
 </template>
+<script lang="tsx">
+export default {
+  name: 'Org',
+};
+</script>
 <script setup lang="tsx">
 import dayjs from 'dayjs';
 import { isEmpty } from 'lodash';

@@ -127,7 +127,14 @@
                           :value="item.id"
                         />
                       </t-select>
-                      <t-button theme="primary" :disabled="printButtonOp" @click="onPrint">打印</t-button>
+                      <cmp-print-button
+                        :template-id="printMode.printTempId"
+                        :disabled="printButtonOp"
+                        :data="printData"
+                        :show-icon="false"
+                        @before-print="onPrint"
+                        >打印</cmp-print-button
+                      >
                     </template>
                   </cmp-table>
                 </cmp-card>
@@ -186,9 +193,22 @@
     v-model:visible="formVisible"
     :confirm-btn="buttonSwitch"
     :header="diaLogTitle"
-    :autosize="{ minRows: 3, maxRows: 5 }"
+    width="auto"
     @confirm="onConfirm"
   >
+    <template #footer>
+      <div v-if="buttonSwitch === '补打'">
+        <t-button theme="default" @click="formVisible = false"> 关闭 </t-button>
+        <cmp-print-button
+          :template-id="printMode.printTempId"
+          :data="printManagerData"
+          :show-icon="false"
+          theme="primary"
+          @before-print="onPrintManager"
+          >打印</cmp-print-button
+        >
+      </div>
+    </template>
     <t-form ref="formRef" :data="reprintDialog" :rules="rules">
       <t-form-item v-if="reprintVoidSwitch" label-width="80px" label="补打原因" name="reprintData">
         <t-select v-model="reprintDialog.reprintData">
@@ -253,6 +273,7 @@ import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, Table
 import { computed, ComputedRef, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/main';
+import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -264,6 +285,8 @@ const { pageUI } = usePage(); // 分页工具
 const { pageUI: pageUIBracode } = usePage(); // 分页工具
 const { pageUI: pageUIMannage } = usePage(); // 分页工具
 const { pageUI: pageUIDay } = usePage(); // 分页工具
+const printData = ref([]);
+const printManagerData = ref([]);
 // $打印上 表格数据
 const moDataList = reactive({ list: [] });
 // $打印上 表格数据
@@ -306,15 +329,84 @@ const onPrint = async () => {
   if (!printMode.value.printTempId) {
     // 提示错误信息
     MessagePlugin.warning('请选择打印模板！');
-    return;
+    return false;
   }
   try {
     pageLoading.value = true;
+    printData.value = [];
+    selectedRowKeys.value.forEach((barcodePkgId) => {
+      const foundItem = moBelowList.list.find((item) => item.barcodePkgId === barcodePkgId);
+      const DataBase = {
+        PKG_BARCODE: foundItem.pkgBarcode,
+        QTY: foundItem.qty,
+        MITEM_CODE: curRow.value.mitemCode,
+        MITEM_NAME: curRow.value.mitemName,
+      };
+      printData.value.push({
+        variable: DataBase,
+        datasource: { DataBase },
+      });
+    });
+
     await api.barcodePkg.printBarcode({ ids: selectedRowKeys.value });
-    onRefreshTag();
     MessagePlugin.success('打印成功');
+    onRefreshTag();
+    return true;
   } catch (e) {
     console.log(e);
+    return false;
+  } finally {
+    pageLoading.value = false;
+  }
+};
+const onPrintManager = async () => {
+  try {
+    if (reprintDialog.value.reprintData === '其他原因' && !reprintDialog.value.restsData) {
+      MessagePlugin.warning('请补充必填信息！');
+      return false; // 返回失败标志
+    }
+    let reason = '';
+    if (reprintDialog.value.restsData) {
+      reason = reprintDialog.value.restsData;
+    } else {
+      reason = reprintDialog.value.reprintData;
+    }
+
+    if (!reason) {
+      MessagePlugin.warning('请补充必填信息！');
+      return false; // 返回失败标志
+    }
+
+    printManagerData.value = [];
+    pageLoading.value = true;
+
+    selectedManageRowKeys.value.forEach((barcodePkgId) => {
+      const foundItem = pkgManageDataList.list.find((item) => item.barcodePkgId === barcodePkgId);
+      const DataBase = {
+        PKG_BARCODE: foundItem.pkgBarcode,
+        QTY: foundItem.qty,
+        MITEM_CODE: foundItem.mitemCode,
+        MITEM_NAME: foundItem.mitemName,
+      };
+      printManagerData.value.push({
+        variable: DataBase,
+        datasource: { DataBase },
+      });
+    });
+
+    await api.barcodePkg.reprintBarcode({
+      ids: selectedManageRowKeys.value,
+      reason,
+    });
+    MessagePlugin.success('补打成功');
+
+    selectedManageRowKeys.value = [];
+    onRefresh();
+    formVisible.value = false;
+    return true; // 打印成功时返回 true
+  } catch (e) {
+    console.log(e);
+    return false; // 打印失败时返回 false
   } finally {
     pageLoading.value = false;
   }
@@ -502,6 +594,16 @@ const onProductRightFetchData = (value: any, context: any) => {
   if (context.selectedRowData[0]) {
     printRuCondition.value.packType = context.selectedRowData[0].pkgBarcodeType;
     printRuCondition.value.moScheId = context.selectedRowData[0].moScheduleId;
+  }
+  if (context.selectedRowData) {
+    const allPackTypesAreSame = context.selectedRowData.every((row, index, array) => {
+      // 检查当前元素的 packType 是否与第一个元素的 packType 相同
+      return row.pkgBarcodeType === array[0].pkgBarcodeType;
+    });
+
+    if (!allPackTypesAreSame) {
+      printMode.value.printTempId = '';
+    }
   }
   onPrintTemplateData();
   barcodeWipStatusNameArr.value = context.selectedRowData.map((item: any) => item.pkgBarcodeStatusName);
@@ -848,6 +950,7 @@ const switchTab = (selectedTabIndex: any) => {
   if (selectedTabIndex === 1) {
     fetchBracodeManageTable();
   } else {
+    tabList.list = [];
     fetchMoTable();
   }
 };
@@ -886,12 +989,14 @@ const onRightFetchData = async () => {
 const fetchMoTable = async () => {
   setLoading(true);
   try {
+    queryCondition.value.moScheduleId = '';
     queryCondition.value.pageNum = pageUI.value.page;
     queryCondition.value.pageSize = pageUI.value.rows;
     const data = (await api.barcodePkg.getMoScheduleList(queryCondition.value)) as any;
     const { list } = data;
     moDataList.list = list;
     moTabTotal.value = data.total;
+    moscheRowKeys.value = [];
   } catch (e) {
     console.log(e);
   } finally {
@@ -903,9 +1008,15 @@ const fetchMoTable = async () => {
 const fetchBracodeManageTable = async () => {
   setLoading(true);
   try {
+    printMode.value.printTempId = '';
     manageQueryCondition.value.pageNum = pageUIMannage.value.page;
     manageQueryCondition.value.pageSize = pageUIMannage.value.rows;
     const data = (await api.barcodePkg.getBarcodePkgManagerList(manageQueryCondition.value)) as any;
+    if (data.total !== 0 && data.total < pageUI.value.page * pageUI.value.rows && data.list && data.list.length === 0) {
+      pageUIMannage.value.page = 1;
+      pageUIMannage.value.rows = 10;
+      onRefresh();
+    }
     const { list } = data;
     pkgManageDataList.list = list;
     pkgManageTabTotal.value = data.total;
@@ -1164,9 +1275,10 @@ const onRefreshTag = async () => {
   });
   handleTabClick(tabValue.value); // 刷新数据
 };
-
+const curRow = ref();
 const onRowClick = ({ row }) => {
   tabValue.value = 1;
+  curRow.value = row;
   queryCondition.value.moScheduleId = row.moScheduleId;
   printRuCondition.value.moScheId = row.moScheduleId;
   printMode.value.moScheduleId = row.moScheduleId;

@@ -1,7 +1,7 @@
 export default [
   {
     path: '/orgLevel',
-    name: 'orgLevel',
+    name: 'OrgLevel',
     component: () => import('../../pages/orgLevel/index.vue'),
     meta: {
       title: {

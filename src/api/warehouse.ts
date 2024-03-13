@@ -106,8 +106,9 @@ export interface CommonSearch {
 
 export interface Filter {
   field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
   value?: string;
+  valuesList?: string[];
 }
 
 export interface SortParam {
@@ -2351,11 +2352,11 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 采购单明细 */
@@ -2423,11 +2424,11 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3041,26 +3042,26 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  tlpickQty?: number;
-  /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
-  flpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  tlpickQty?: number;
+  flpickQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 通用响应类 */
@@ -3397,15 +3398,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -3541,13 +3542,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -4015,6 +4016,7 @@ export interface ResultMFTVO {
 }
 
 export interface LabelSearch {
+  barcodeWipId?: string;
   /**
    * 页码
    * @format int32
@@ -4324,6 +4326,7 @@ export interface BatchDynamicQueryDTO {
   dataTable?: DataTable;
   rows?: Record<string, object>[];
   eid?: string;
+  oid?: string;
 }
 
 export interface ConditionData {
@@ -5300,15 +5303,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 通用响应类 */

@@ -9,12 +9,27 @@
   >
     <template #panel>
       <div class="container">
-        <t-row class="body">
+        <div v-if="$slots['filter']" class="filter-conditions">
+          <slot name="filter"></slot>
+        </div>
+        <t-row v-if="props.type === 'table'" class="body">
+          <t-col flex="1" class="content">
+            <div class="full-list">
+              <t-table
+                v-bind="tableProps"
+                :data="(isSearch ? listAfterSearch : listData) as TableRowData[]"
+                @scroll-y="onTableScroll"
+              >
+              </t-table>
+            </div>
+          </t-col>
+        </t-row>
+        <t-row v-else class="body">
           <t-col flex="1" class="content left">
             <p class="header">
               {{ props.name }}列表
               <t-link
-                v-show="isSearch"
+                v-show="isSearch && props.multiple"
                 class="action-btn"
                 hover="color"
                 theme="primary"
@@ -63,9 +78,6 @@
                 ></cmp-list-item-meta>
               </t-list-item>
             </t-list>
-            <!-- <div v-else-if="props.type === 'table'" class="full-list">
-              <t-table :data="listData"> </t-table>
-            </div> -->
             <div v-else-if="props.type === 'tree'" class="full-list">
               <t-tree :data="listData" hover expand-on-click-node :load="onLoadTreeNodes" value-mode="all">
                 <template #label="{ node }">
@@ -121,8 +133,13 @@
           </t-col>
         </t-row>
         <div v-if="props.multiple" class="footer">
-          <t-button theme="default" @click="popupVisible = false">取消</t-button>
-          <t-button theme="primary" @click="onClickConfirm">确定</t-button>
+          <div class="toolbar">
+            <slot name="toolbar"></slot>
+          </div>
+          <div class="btn-bar">
+            <t-button theme="default" @click="popupVisible = false">取消</t-button>
+            <t-button theme="primary" @click="onClickConfirm">确定</t-button>
+          </div>
         </div>
       </div>
     </template>
@@ -134,7 +151,7 @@
 <script setup lang="tsx">
 import { debounce, isEmpty } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
-import { ListProps, SelectInputProps, TreeNodeModel, TreeProps } from 'tdesign-vue-next';
+import { ListProps, SelectInputProps, TableProps, TableRowData, TreeNodeModel, TreeProps } from 'tdesign-vue-next';
 import { TypeTreeOptionData } from 'tdesign-vue-next/es/tree/adapt';
 import { computed, ref, useAttrs, watch } from 'vue';
 
@@ -147,14 +164,63 @@ export interface CmpBusinessSelectProps extends Omit<SelectInputProps, 'options'
   plain?: boolean;
   name: string;
   popupWidth?: string;
-  fetchData: (pageIndex?: number) => Promise<BusinessItem[]>;
-  fetchSearchData: (keyword: string, listData: any[]) => Promise<BusinessItem[]>;
+  tableProps?: TableProps;
+  fetchData: (pageIndex?: number) => Promise<BusinessItem[] | TableRowData[]>;
+  fetchSearchData: (keyword: string, listData: any[]) => Promise<BusinessItem[] | TableRowData[]>;
   fetchTreeNodeData?: (
     key: string | number,
     children: any[],
     node?: TreeNodeModel<TypeTreeOptionData>,
-  ) => Promise<BusinessItem[]>;
+  ) => Promise<BusinessItem[] | TableRowData[]>;
 }
+
+const defaultTableProps = {
+  size: 'small',
+  maxHeight: 328,
+} as TableProps;
+
+const selectedTableRowKeys = ref([]);
+const fixedTableProps = computed<TableProps>(() => {
+  let columns = [];
+  if (props?.tableProps?.columns) {
+    columns = [
+      {
+        colKey: 'row-select',
+        type: props.multiple ? 'multiple' : 'single',
+        width: 50,
+      },
+      ...props.tableProps.columns,
+    ];
+  }
+  return {
+    selectOnRowClick: true,
+    selectedRowKeys: selectedTableRowKeys.value,
+    asyncLoading: asyncLoading.value as unknown as TableProps['asyncLoading'],
+    onAsyncLoadingClick: (_ctx) => {
+      onLoadMore(null);
+    },
+    onSelectChange: (value, { selectedRowData }) => {
+      selectedTableRowKeys.value = value;
+      selectItems.value = selectedRowData;
+      if (!props.multiple) {
+        onClickConfirm();
+      }
+    },
+    columns,
+  } as TableProps;
+});
+
+const onTableScroll = debounce(({ e }: { e: WheelEvent }) => {
+  const contentElement = e.target as HTMLElement;
+  const { scrollTop, clientHeight, scrollHeight } = contentElement;
+  if (scrollTop + clientHeight >= scrollHeight) {
+    onLoadMore(null);
+  }
+}, 200);
+
+const tableProps = computed<TableProps>(() => {
+  return props.tableProps ? { ...defaultTableProps, ...props.tableProps, ...fixedTableProps.value } : undefined;
+});
 
 const props = withDefaults(defineProps<CmpBusinessSelectProps>(), {
   mode: 'edit',
@@ -239,15 +305,18 @@ watch(
   },
 );
 
-const listData = ref<BusinessItem[]>([]);
+const listData = ref<BusinessItem[] | TableRowData[]>([]);
 const pageIndex = ref(1);
 const fetchListData = async () => {
   const result = await props.fetchData(pageIndex.value);
+  if (pageIndex.value === 1) {
+    listData.value = [];
+  }
   if (result.length === 0) {
     asyncLoading.value = '';
   } else {
     asyncLoading.value = pageIndex.value === 1 && result.length < 10 ? '' : 'load-more';
-    listData.value = [...listData.value, ...result];
+    listData.value = [...listData.value, ...result] as BusinessItem[];
   }
 };
 
@@ -257,15 +326,19 @@ const selectIds = computed<string[]>(() => {
   }
   return [(selectItems.value as BusinessItem).value];
 });
-const selectItems = ref<BusinessItem | BusinessItem[]>(undefined);
-const onClickItem = (item: BusinessItem, openReverse: boolean = true) => {
+const selectItems = ref<BusinessItem | BusinessItem[] | TableRowData>(undefined);
+const getIdByItem = (item: BusinessItem | TableRowData) => {
+  return props.type === 'table' ? item.id : item.row.id;
+};
+const onClickItem = (item: BusinessItem | TableRowData, openReverse: boolean = true) => {
   if (props.multiple) {
     if (!Array.isArray(selectItems.value)) {
       selectItems.value = [];
     }
-    if (selectItems.value.findIndex((t) => t.row.id === item.row.id) >= 0) {
+    const id = getIdByItem(item);
+    if (selectItems.value.findIndex((t) => getIdByItem(t) === id) >= 0) {
       if (openReverse) {
-        onClickCloseItem(item.row.id);
+        onClickCloseItem(id);
       }
       return;
     }
@@ -277,7 +350,7 @@ const onClickItem = (item: BusinessItem, openReverse: boolean = true) => {
 };
 const onClickCloseItem = (id: string) => {
   if (Array.isArray(selectItems.value)) {
-    selectItems.value = selectItems.value.filter((t) => t.row.id !== id);
+    selectItems.value = selectItems.value.filter((t) => getIdByItem(t) !== id);
   }
 };
 const onClickCloseAll = () => {
@@ -308,7 +381,7 @@ const onTagChange: SelectInputProps['onTagChange'] = (_currentTags, context) => 
   emit('update:value', selectItems.value);
 };
 
-const listAfterSearch = ref<BusinessItem[]>(undefined);
+const listAfterSearch = ref<BusinessItem[] | TableRowData[]>(undefined);
 const isSearch = ref(false);
 const onInputChange: SelectInputProps['onInputChange'] = debounce(async (val, _context) => {
   if (isEmpty(val)) {
@@ -323,12 +396,32 @@ const onInputChange: SelectInputProps['onInputChange'] = debounce(async (val, _c
 const onLoadTreeNodes: TreeProps['load'] = (node) => {
   return props?.fetchTreeNodeData(node.data.row?.id as string, node.data.row?.children as any[], node);
 };
+
+defineExpose({
+  loadData: async () => {
+    pageIndex.value = 1;
+    await fetchListData();
+  },
+});
 </script>
 <style scoped lang="less">
 .container {
+  > .filter-conditions {
+    padding: 10px 15px;
+  }
+
   > .body {
     flex-flow: row nowrap;
     padding: 0 16px;
+
+    &:has(.t-table) {
+      padding: 1px;
+    }
+
+    :deep(.t-table) {
+      font-size: 12px;
+      border: 0;
+    }
 
     > .content {
       height: 330px;
@@ -374,9 +467,23 @@ const onLoadTreeNodes: TreeProps['load'] = (node) => {
   }
 
   > .footer {
-    text-align: right;
     padding: 10px 15px;
     border-top: 1px solid var(--td-border-level-1-color);
+
+    > .toolbar {
+      float: left;
+      line-height: 36px;
+    }
+
+    > .btn-bar {
+      float: right;
+    }
+
+    &::after {
+      content: '';
+      display: table;
+      clear: both;
+    }
   }
 }
 
