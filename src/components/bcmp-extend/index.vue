@@ -132,7 +132,7 @@ const onValidate = ({ validateResult, firstError }) => {
   }
 };
 const addItem = () => {
-  console.log('add');
+  // console.log('add');
   // const addNum = lastAddItem.value;
   // INITIAL_DATA[`add${addNum}`] = '';
   // addlist.value.push({ id: addNum, name: `add${addNum}` });
@@ -140,7 +140,7 @@ const addItem = () => {
 };
 const removeItem = (item, index) => {
   console.log(item, index);
-  console.log('remove');
+  // console.log('remove');
   // delete INITIAL_DATA[`add${item.id}`];
   // addlist.value.splice(index, 1);
 };

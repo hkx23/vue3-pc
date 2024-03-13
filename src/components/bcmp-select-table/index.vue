@@ -248,8 +248,8 @@ const state: any = reactive({
 
 const total = props.table.data.length;
 
-const onFilterChange = (filters: Filters, ctx: any) => {
-  console.log('filter-change', filters, ctx);
+const onFilterChange = (filters: Filters, _ctx: any) => {
+  // console.log('filter-change', filters, ctx);
   pagination.value.current = 1;
   filterList.value = [];
   for (const key in filters) {
@@ -267,8 +267,8 @@ const onFilterChange = (filters: Filters, ctx: any) => {
 const onPageChange = (PageInfo: any) => {
   pagination.value.current = PageInfo.current;
   pagination.value.pageSize = PageInfo.pageSize;
-  console.log(PageInfo);
-  console.log('remoteLoad-分页切换');
+  // console.log(PageInfo);
+  // console.log('remoteLoad-分页切换');
   remoteLoad(selectSearch.value, false);
 };
 // total强制转化成int
@@ -307,8 +307,8 @@ const onTagChange = (currentTags: any, context: { trigger: any; index: any; item
 
   // state.defaultValue = [];
   // console.log(currentTags, context);
-  const { trigger, index, item } = context;
-  console.log(trigger, index, item);
+  const { trigger, index } = context;
+  // console.log(trigger, index, item);
   if (trigger === 'clear') {
     state.defaultValue = [];
     state.selectedRowData = [];
@@ -343,7 +343,7 @@ const checkSelect = (keyValues: any[], rowData: any[]) => {
     state.defaultValue = [];
     state.selectedRowData = [];
   }
-  console.log('checkSelect');
+  // console.log('checkSelect');
   if (rowData.length === 0) {
     isHandleSelectionChange.value = false;
   } else {
@@ -377,11 +377,11 @@ const radioSelect = (keyValues: any[], rowData: any[], isOpen = false) => {
     emits('selectionChange', state.defaultValue, selectedRowKeys.value);
   }
 };
-const onPopupVisibleChange = (val: boolean, context: any) => {
+const onPopupVisibleChange = (val: boolean, _context: any) => {
   if (val) {
     selectSearch.value = '';
     onInputChange('');
-    console.debug(val, context);
+    // console.debug(val, context);
   } else if (!props.multiple) {
     emits('selectionChange', state.defaultValue, selectedRowKeys.value);
   }
@@ -428,7 +428,7 @@ onMounted(() => {
 
 // 单选键盘事件
 const onSelectKeyup = (e: any) => {
-  console.log('keyup');
+  // console.log('keyup');
   popupVisible.value = true;
   if (!props.multiple) {
     if (!props.isKeyup) return;
@@ -487,7 +487,7 @@ const onSelectKeyup = (e: any) => {
 // todo: 默认选中（且只能默认选中第一页的数据）
 // 触发select隐藏
 const closeTable = () => {
-  console.log('closeTable');
+  // console.log('closeTable');
   popupVisible.value = false;
   selectSearch.value = '';
 };
@@ -516,7 +516,7 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
 
   // 判断两次查询条件是否一样，一样的话，不获取数据
   if (isHandleSelectionChange.value && JSON.stringify(tempCondition.value) === JSON.stringify(searchCondition)) {
-    console.log('两次查询条件一样，不获取数据');
+    // console.log('两次查询条件一样，不获取数据');
     loading.value = false;
     return;
   }
@@ -528,8 +528,8 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
     });
     state.tableData = list;
     pagination.value.total = Number(total);
-  } catch (e) {
-    console.log(e);
+  } catch (_e) {
+    // console.log(e);
     state.tableData = [];
   } finally {
     // 单选-如果完全匹配，直接选中
@@ -544,11 +544,11 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
 const fetchData = debounce((val) => {
   if (!props.filterable) return;
   if (props.isRemote) {
-    console.log('fetchData-远程加载');
+    // console.log('fetchData-远程加载');
     remoteLoad(val, false);
   } else {
     const tableData = JSON.parse(JSON.stringify(props.table?.data));
-    console.log('表格数据', tableData);
+    // console.log('表格数据', tableData);
     if (tableData && tableData.length > 0) {
       state.tableData = tableData.filter((item: { [x: string]: string | any[] }) => {
         for (const key in item) {
@@ -566,7 +566,7 @@ const fetchData = debounce((val) => {
 }, 500);
 // 搜索过滤
 const onInputChange = (val: string) => {
-  console.log('onInputChange');
+  // console.log('onInputChange');
   selectSearch.value = val;
   loading.value = true;
 
@@ -676,7 +676,7 @@ onMounted(() => {
 
       state.defaultValue = props.value ? { [props.keywords.value]: props.value } : '';
       if (state.defaultValue) {
-        console.debug('remoteLoad-按默认值查询');
+        // console.debug('remoteLoad-按默认值查询');
         remoteLoad(props.value, true);
       }
     }
@@ -686,15 +686,15 @@ const sortList = ref([]);
 
 const sortChange = (val: any) => {
   sortList.value = val;
-  console.log(sortList.value);
-  console.log('remoteLoad-排序');
+  // console.log(sortList.value);
+  // console.log('remoteLoad-排序');
   remoteLoad(selectSearch.value, false);
 };
 
 watch(
   () => props.value,
-  (val) => {
-    console.log('watch:props.value', `${props.title} ss ${val}`);
+  (_val) => {
+    // console.log('watch:props.value', `${props.title} ss ${val}`);
 
     nextTick(() => {
       // 多选
@@ -720,7 +720,7 @@ watch(
         }
       } else if (!isHandleSelectionChange.value) {
         if (props.value) {
-          console.debug('remoteLoad-按默认值查询');
+          // console.debug('remoteLoad-按默认值查询');
           // selectSearch.value = props.value.toString();
           defaultValue.value = props.value.toString();
           remoteLoad(props.value, true);
@@ -737,8 +737,8 @@ watch(
 );
 watch(
   () => props.parentId,
-  (val) => {
-    console.log('watch:props.parentId', `${props.parentId} ss ${val}`);
+  (_val) => {
+    // console.log('watch:props.parentId', `${props.parentId} ss ${val}`);
     isHandleSelectionChange.value = false;
     remoteLoad('', false);
   },
@@ -746,8 +746,8 @@ watch(
 );
 watch(
   () => props.customConditions,
-  (val) => {
-    console.log('watch:props.customConditions', `${props.customConditions} ss ${val}`);
+  (_val) => {
+    // console.log('watch:props.customConditions', `${props.customConditions} ss ${val}`);
     isHandleSelectionChange.value = false;
     remoteLoad('', false);
   },
