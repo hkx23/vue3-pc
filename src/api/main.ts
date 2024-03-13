@@ -346,8 +346,9 @@ export interface Org {
 /** 筛选字段 */
 export interface Filter {
   field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
   value?: string;
+  valuesList?: string[];
 }
 
 /** 排序字段 */
@@ -4088,11 +4089,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   stateName?: string;
   isState?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4339,13 +4340,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isProductName?: string;
   isBatchName?: string;
-  isRawChecked?: boolean;
   isRawName?: string;
   isInProcessName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */

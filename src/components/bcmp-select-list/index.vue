@@ -7,7 +7,7 @@
     :popup-props="{
       overlayClassName: 'cmp-selector',
       overlayInnerStyle: {
-        width: props.multiple ? '580px' : '350px',
+        width: props.multiple || props.listSetting.listType == 'tree' ? '580px' : '350px',
         padding: 0,
       },
     }"
@@ -46,7 +46,7 @@
               </t-link>
             </p>
             <t-list
-              v-if="state.tableData"
+              v-if="state.tableData && (props.listSetting.listType !== 'tree' || selectSearch !== '')"
               style="flex: 1; overflow-y: auto"
               :async-loading="asyncLoading"
               @load-more="onLoadMore"
@@ -70,6 +70,28 @@
                 ></cmp-list-item-meta>
               </t-list-item>
             </t-list>
+
+            <div v-else-if="props.listSetting.listType === 'tree'" class="full-list">
+              <t-tree :data="state.tableData" hover expand-on-click-node :load="onLoadTreeNodes" value-mode="all">
+                <template #label="{ node }">
+                  <div v-if="node.data?.row?.children">
+                    {{ node.label }}
+                  </div>
+                  <div v-else>
+                    <cmp-list-item-meta
+                      :name="node.data[listSetting.nameField] || node.data[keywords.value]"
+                      :code="node.data[listSetting.codeField]"
+                      :description="node.data[listSetting.descField] || ''"
+                      :show-icon="node.data[listSetting.showIcon]"
+                      :suffix-tag="node.data[listSetting.categoryField]"
+                      :show-success="selectedRowKeys.indexOf(node.data[keywords.value]) >= 0"
+                      @click="onOptionClick(node.data)"
+                    ></cmp-list-item-meta>
+                    <!-- @click="onClickItem(node.data)" -->
+                  </div>
+                </template>
+              </t-tree>
+            </div>
           </t-col>
 
           <t-col v-if="props.multiple" flex="1" class="content right">
@@ -137,10 +159,11 @@
 <script setup lang="tsx" name="BcmpSelectSelect2">
 import _, { debounce, isEmpty } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
-import { ListProps } from 'tdesign-vue-next';
+import { ListProps, TreeProps } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
 
 import CmpListItemMeta from '../cmp-business/CmpListItemMeta.vue';
+import { BusinessItem } from '../cmp-business/constants';
 // 抛出事件
 const emits = defineEmits(['selectionChange']);
 // / 00-组件属性定义
@@ -291,6 +314,7 @@ const onOptionClick = (item, openReverse: boolean = true) => {
 const onClickConfirm = () => {
   // emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
   popupVisible.value = false;
+
   emits('selectionChange', state.selectedRowData, selectedRowKeys.value);
 };
 // 选择下拉属性集成
@@ -388,7 +412,9 @@ const onClear = () => {
 onMounted(() => {
   if (props.isRemote && !props.value) {
     setTimeout(() => {
-      remoteLoad('');
+      if (!(props.listSetting && props.listSetting.listType === 'tree')) {
+        remoteLoad(props.value);
+      }
     }, 500);
   }
 });
@@ -539,6 +565,28 @@ const remoteLoad = async (val: any) => {
   }
 };
 
+const remoteLoadTree = async () => {
+  loading.value = true;
+
+  try {
+    const result = await http.get<any>(props.listSetting.defaultTreeUrl);
+    if (!result) {
+      asyncLoading.value = '';
+    }
+    state.tableData = formatTreeNode(result);
+    asyncLoading.value = '';
+  } catch (e) {
+    console.log(e);
+  } finally {
+    // 单选-如果完全匹配，直接选中
+    // radioCSelectRedirct(val);
+    loading.value = false;
+    defaultValue.value = '';
+    isHandleSelectionChange.value = false;
+    // tempCondition.value = searchCondition;
+  }
+};
+
 // 可以根据触发来源，自由定制标签变化时的筛选器行为
 const onTagChange = (currentTags: any, context: { trigger: any; index: any; item: any }) => {
   if (!(state.defaultValue && state.defaultValue.length > 0)) {
@@ -574,7 +622,11 @@ const fetchData = debounce((val) => {
   if (!props.filterable) return;
   if (props.isRemote) {
     console.log('fetchData-远程加载');
-    remoteLoad(val);
+    if (props.listSetting && props.listSetting.listType === 'tree' && val === '') {
+      remoteLoadTree();
+    } else {
+      remoteLoad(val);
+    }
   } else {
     const tableData = JSON.parse(JSON.stringify(props.table?.data));
     console.log('表格数据', tableData);
@@ -598,14 +650,7 @@ const onInputChange = (val: string) => {
   console.log('onInputChange');
   selectSearch.value = val;
   loading.value = true;
-
   fetchData(val);
-  // if (val === '' && !props.multiple) {
-  //   state.defaultValue = '';
-  //   state.selectedRowData = [];
-  //   // const value = [];
-  //   // const selectedRowData = [];
-  // }
 };
 
 const asyncLoading = ref<ListProps['asyncLoading']>('load-more');
@@ -620,6 +665,41 @@ const onScrollList: ListProps['onScroll'] = debounce((e) => {
     onLoadMore(null);
   }
 }, 200);
+
+const onLoadTreeNodes: TreeProps['load'] = (node) => {
+  // return null;
+  return fetchTreeNodeData(node.data.row?.id as string, node.data.row?.children as any[]);
+};
+const formatTreeNode = (list: any[]): BusinessItem[] => {
+  if (isEmpty(list)) return [];
+  return list.map((t) => {
+    return {
+      label: t[props.listSetting.treeLabelField],
+      value: t[props.listSetting.treeValueField],
+      id: t[props.listSetting.treeIdField],
+      row: t,
+      children: true,
+    } as BusinessItem;
+  });
+};
+
+const fetchTreeNodeData = async (key: string | number, children: any[]) => {
+  console.log(children);
+  const searchCondition = {
+    pageNum: 1, // pagination.value.current,
+    pageSize: 9999, // pagination.value.pageSize,
+    selectedField: '',
+    selectedValue: '',
+    keyword: '',
+    category: '',
+    parentId: key,
+    filters: [],
+  };
+  const { list } = await http.post<any>(props.listSetting.loadNodeUrl, searchCondition);
+  const treeNodes = formatTreeNode(children);
+  return [...list, ...treeNodes];
+};
+
 // 设置默认值
 onMounted(() => {
   state.tableData = props.value;
@@ -649,7 +729,9 @@ onMounted(() => {
       } else {
         selectSearch.value = '';
       }
+      // if (!(props.listSetting && props.listSetting.listType === 'tree')) {
       remoteLoad(props.value);
+      // }
     }
   });
 });
@@ -742,6 +824,10 @@ defineExpose({ closeTable, onClear });
       &.left {
         margin-top: 10px;
         margin-right: 10px;
+      }
+
+      &.bottom {
+        margin-bottom: 10px;
       }
 
       > .header {
