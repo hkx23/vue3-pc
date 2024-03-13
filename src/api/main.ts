@@ -346,8 +346,9 @@ export interface Org {
 /** 筛选字段 */
 export interface Filter {
   field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE';
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
   value?: string;
+  valuesList?: string[];
 }
 
 /** 排序字段 */
@@ -4088,11 +4089,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   stateName?: string;
   isState?: boolean;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4257,8 +4258,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -4339,13 +4340,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isRawName?: string;
   isProductName?: string;
+  isInProcessName?: string;
   isBatchName?: string;
   isRawChecked?: boolean;
-  isRawName?: string;
-  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -4488,8 +4489,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5742,6 +5743,11 @@ export interface DeliveryCardSearch {
 
 /** 配送卡输出类 */
 export interface DeliveryCardVO {
+  /**
+   * 标签顺序号
+   * @format int32
+   */
+  printSeq?: number;
   moScheduleId?: string;
   /** 排产单编码 */
   scheCode?: string;
@@ -5799,6 +5805,7 @@ export interface DeliveryCardVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
+  orgName?: string;
 }
 
 /** 响应数据 */
@@ -6532,6 +6539,53 @@ export interface ResultListBusinessTmplLib {
   data?: BusinessTmplLib[] | null;
 }
 
+/** 在制品条码日志表 */
+export interface BarcodeWipLog {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 原因 */
+  reason?: string;
+  /** 条码模板代码 */
+  tmplCode?: string;
+  /** 条码模板名称 */
+  tmplName?: string;
+  /** 条码模板类别 */
+  tmplCategory?: string;
+  /** 客户端机器名 */
+  hostname?: string;
+  /** 客户端IP */
+  ipaddress?: string;
+  /** 备注 */
+  memo?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /** 状态 */
+  status?: string;
+}
+
 /** 在制品条码表 */
 export interface BarcodeWip {
   id?: string;
@@ -6695,6 +6749,7 @@ export interface BarcodeWipVO {
   printTmpl?: string;
   /** 车间名称 */
   workshopName?: string;
+  orgName?: string;
   workcenterId?: string;
   /** 工作中心名称 */
   workcenterName?: string;
@@ -7279,8 +7334,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -8239,12 +8294,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -14187,6 +14242,25 @@ export const api = {
       http.request<ResultLong['data']>(`/api/main/businessTmplLib/add`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  barcodeWipLog: {
+    /**
+     * No description
+     *
+     * @tags 在制品条码日志表
+     * @name Save
+     * @summary 保存在制品条码日志
+     * @request POST:/barcodeWipLog/save
+     * @secure
+     */
+    save: (query: {
+      /** 在制品条码日志表 */
+      model: BarcodeWipLog;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeWipLog/save`, {
+        method: 'POST',
+        params: query,
       }),
   },
   barcodeWip: {

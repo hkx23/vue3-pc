@@ -313,7 +313,7 @@ const onInput = async (data: any) => {
       handQtyParam.value[key] = data[key];
     }
   });
-  handQtyParam.value.mitemIds = data.mitemIds.map((item) => item.value);
+  handQtyParam.value.mitemIds = data.mitemIds === '' ? [] : data.mitemIds.split(',').map((item) => item.trim());
   await onGetHandQtyData();
 };
 </script>
