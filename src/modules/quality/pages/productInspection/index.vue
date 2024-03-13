@@ -240,7 +240,7 @@ const waitInspectColumns: PrimaryTableCol<TableRowData>[] = [
 const getOqcInspectionStatus = async () => {
   inspectStatusOption.value = [];
   const data = await apiMain.param.getListByGroupCode({
-    parmGroupCode: 'Q_OQC_INSPECTION_STATUS',
+    parmGroupCode: 'Q_INSPECTION_STATUS',
   });
 
   inspectStatusOption.value.push({ value: '', label: '全部' });
