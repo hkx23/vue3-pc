@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <cmp-card>
       <!-- 查询组件  -->
-      <cmp-query :opts="opts" @submit="conditionEnter"> </cmp-query>
+      <cmp-query v-if="pageShow" :opts="opts" @submit="conditionEnter" @reset="onRest"> </cmp-query>
     </cmp-card>
     <cmp-card>
       <cmp-table
@@ -64,6 +64,7 @@ const tableData = ref([]);
 const tableSubData = ref([]);
 
 const formVisible = ref(false);
+const pageShow = ref(false);
 
 const columns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('incidentBill.billNo')}`, width: 200, colKey: 'billNo' },
@@ -94,7 +95,8 @@ const subColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 // 初始渲染
 onMounted(async () => {
-  await fetchTable(); // 获取作废原因列表
+  await getWorkshopId();
+  await fetchTable();
 });
 
 const curBillNo = ref('');
@@ -138,6 +140,10 @@ const queryCompment = ref({
   status: '',
 });
 
+const onRest = async () => {
+  await getWorkshopId();
+};
+
 // 查询组件
 const opts = computed(() => {
   return {
@@ -171,7 +177,7 @@ const opts = computed(() => {
       label: t('incidentBill.org'),
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: '',
+      defaultVal: queryCompment.value.orgId,
       bind: {
         type: 'workshop',
         showTitle: false,
@@ -233,7 +239,6 @@ const conditionEnter = (data: any) => {
   queryCompment.value = data;
   onRefresh();
 };
-
 const onRefresh = () => {
   fetchTable();
 };
@@ -258,6 +263,14 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   }
+};
+
+const getWorkshopId = async () => {
+  const id = await api.incidentDeal.getWorkShopIdByLoginUser();
+  if (id) {
+    queryCompment.value.orgId = id;
+  }
+  pageShow.value = true;
 };
 </script>
 
