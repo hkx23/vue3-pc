@@ -34,10 +34,10 @@
             <t-icon v-else name="home" />
             <template #dropdown>
               <t-dropdown-menu>
-                <t-dropdown-item @click="() => handleRefresh(routeItem, index)">
+                <!-- <t-dropdown-item @click="() => handleRefresh(routeItem, index)">
                   <t-icon name="refresh" />
                   {{ $t('layout.tagTabs.refresh') }}
-                </t-dropdown-item>
+                </t-dropdown-item> -->
                 <t-dropdown-item v-if="index > 1" @click="() => handleCloseAhead(routeItem.path, index)">
                   <t-icon name="arrow-left" />
                   {{ $t('layout.tagTabs.closeLeft') }}
@@ -80,7 +80,7 @@
 <script setup lang="ts">
 import { some } from 'lodash';
 import type { PopupVisibleChangeContext } from 'tdesign-vue-next';
-import { computed, nextTick, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { api, Favorite } from '@/api/main';
@@ -116,14 +116,14 @@ const handleRemove = (options: TTabRemoveOptions) => {
   if ((options.value as string) === route.path) router.push({ path: nextRouter.path, query: nextRouter.query });
 };
 
-const handleRefresh = (route: TRouterInfo, routeIdx: number) => {
-  tabsRouterStore.toggleTabRouterAlive(routeIdx);
-  nextTick(() => {
-    tabsRouterStore.toggleTabRouterAlive(routeIdx);
-    router.replace({ path: route.path, query: route.query });
-  });
-  activeTabPath.value = null;
-};
+// const handleRefresh = (route: TRouterInfo, routeIdx: number) => {
+//   tabsRouterStore.toggleTabRouterAlive(routeIdx);
+//   nextTick(() => {
+//     tabsRouterStore.toggleTabRouterAlive(routeIdx);
+//     router.replace({ path: route.path, query: route.query });
+//   });
+//   activeTabPath.value = null;
+// };
 const handleCloseAhead = (path: string, routeIdx: number) => {
   tabsRouterStore.subtractTabRouterAhead({ path, routeIdx });
 

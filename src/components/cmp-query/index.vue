@@ -428,7 +428,7 @@ const onExpandSwitch = () => {
 
 useResizeObserver(QueryRef, (entries) => {
   const entry = entries[0];
-  console.log(entry);
+  console.debug(entry);
   debounceFunction();
 });
 const debounceFunction = _.debounce(() => {

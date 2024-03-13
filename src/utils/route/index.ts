@@ -75,7 +75,6 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
           }
           if (cmp?.name) {
             item.name = upperFirst(cmp.name);
-            console.log('🚀 ~ forawait ~ item.name:', item.name);
           }
           item.component = cmp?.component || layoutFound;
           item.meta.title = {

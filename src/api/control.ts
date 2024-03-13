@@ -767,8 +767,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1542,8 +1542,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -2438,11 +2438,11 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
@@ -2489,10 +2489,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3629,11 +3629,11 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** @format date-time */
-  datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
   stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
@@ -3750,16 +3750,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  /** @format date-time */
-  datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  defectCodeStr?: string;
   stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   isState?: boolean;
-  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3874,29 +3874,6 @@ export interface ResultPkgExtendVO {
   message?: string;
   /** 响应数据 */
   data?: PkgExtendVO;
-}
-
-/** 原子模型定义-Context上下文定义 */
-export interface AtomicContext {
-  /** 是否执行成功 */
-  success?: boolean;
-  /** 执行描述 */
-  message?: string;
-  /** 执行描述 */
-  hashMaps?: Record<string, object>;
-}
-
-/** 通用响应类 */
-export interface ResultAtomicContext {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 原子模型定义-Context上下文定义 */
-  data?: AtomicContext;
 }
 
 /** 通用响应类 */
@@ -5864,118 +5841,6 @@ export const api = {
       http.request<ResultPkgInfoRelationVO['data']>(`/api/control/barcodePkg/getPkgInfoRelation`, {
         method: 'GET',
         params: query,
-      }),
-  },
-  atomicSaveKeypart: {
-    /**
-     * No description
-     *
-     * @tags 原子相关方法-保存关键件信息
-     * @name ExcuteAtomic
-     * @summary 保存关键件信息
-     * @request POST:/atomicSaveKeypart/excuteAtomic
-     * @secure
-     */
-    excuteAtomic: (data: AtomicContext) =>
-      http.request<ResultAtomicContext['data']>(`/api/control/atomicSaveKeypart/excuteAtomic`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  atomicOutputByHour: {
-    /**
-     * No description
-     *
-     * @tags 原子相关方法-产能数据收集
-     * @name ExcuteAtomic
-     * @summary 产能数据收集原子
-     * @request POST:/atomicOutputByHour/excuteAtomic
-     * @secure
-     */
-    excuteAtomic: (data: AtomicContext) =>
-      http.request<ResultAtomicContext['data']>(`/api/control/atomicOutputByHour/excuteAtomic`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  atomicMoBarcodCheck: {
-    /**
-     * No description
-     *
-     * @tags 原子相关方法-校验条码状态、工单状态
-     * @name ExcuteAtomic
-     * @summary 校验条码状态、工单状态
-     * @request POST:/atomicMoBarcodCheck/excuteAtomic
-     * @secure
-     */
-    excuteAtomic: (data: AtomicContext) =>
-      http.request<ResultAtomicContext['data']>(`/api/control/atomicMoBarcodCheck/excuteAtomic`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  atomicCheckKeypart: {
-    /**
-     * No description
-     *
-     * @tags 原子相关方法-校验关键件
-     * @name ExcuteAtomic
-     * @summary 校验关键件
-     * @request POST:/atomicCheckKeypart/excuteAtomic
-     * @secure
-     */
-    excuteAtomic: (data: AtomicContext) =>
-      http.request<ResultAtomicContext['data']>(`/api/control/atomicCheckKeypart/excuteAtomic`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  atomicCheckBarcodeRouting: {
-    /**
-     * No description
-     *
-     * @tags 原子相关方法-校验扫描站点工艺路线是否正确
-     * @name ExcuteAtomic
-     * @summary 校验扫描站点工艺路线是否正确
-     * @request POST:/atomicCheckBarcodeRouting/excuteAtomic
-     * @secure
-     */
-    excuteAtomic: (data: AtomicContext) =>
-      http.request<ResultAtomicContext['data']>(`/api/control/atomicCheckBarcodeRouting/excuteAtomic`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  atomicCheckBarcodeRepeat: {
-    /**
-     * No description
-     *
-     * @tags 原子相关方法-校验条码是否重复扫描
-     * @name ExcuteAtomic
-     * @summary 校验条码是否重复扫描
-     * @request POST:/atomicCheckBarcodeRepeat/excuteAtomic
-     * @secure
-     */
-    excuteAtomic: (data: AtomicContext) =>
-      http.request<ResultAtomicContext['data']>(`/api/control/atomicCheckBarcodeRepeat/excuteAtomic`, {
-        method: 'POST',
-        body: data as any,
-      }),
-  },
-  atomicBarcodeComplete: {
-    /**
-     * No description
-     *
-     * @tags 原子相关方法-完工原子
-     * @name ExcuteAtomic
-     * @summary 完工原子
-     * @request POST:/atomicBarcodeComplete/excuteAtomic
-     * @secure
-     */
-    excuteAtomic: (data: AtomicContext) =>
-      http.request<ResultAtomicContext['data']>(`/api/control/atomicBarcodeComplete/excuteAtomic`, {
-        method: 'POST',
-        body: data as any,
       }),
   },
   moLog: {
