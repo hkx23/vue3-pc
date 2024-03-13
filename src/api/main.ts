@@ -4087,13 +4087,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
   stateName?: string;
   isState?: boolean;
-  isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4338,13 +4338,13 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
   isProductName?: string;
+  stateName?: string;
+  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
 }
@@ -7340,8 +7340,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -8300,12 +8300,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -14260,13 +14260,10 @@ export const api = {
      * @request POST:/barcodeWipLog/save
      * @secure
      */
-    save: (query: {
-      /** 在制品条码日志表 */
-      model: BarcodeWipLog;
-    }) =>
+    save: (data: BarcodeWipLog) =>
       http.request<ResultObject['data']>(`/api/main/barcodeWipLog/save`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
   },
   barcodeWip: {

@@ -1434,9 +1434,9 @@ export interface StorageAgeQueryVO {
   threeToSixMonths?: string;
   onwToThreeMonths?: string;
   thirtyDays?: string;
-  /** 标签条码 */
-  labelNo?: string;
-  /** 标签数量 */
+  /** 条码号 */
+  barcodeNo?: string;
+  /** 数量 */
   balanceQty?: number;
   expiredDays?: string;
 }
@@ -3052,11 +3052,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
   tlpickQty?: number;
   flpickQty?: number;
+  bfpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3542,13 +3542,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5170,8 +5170,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
