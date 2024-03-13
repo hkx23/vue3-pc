@@ -339,7 +339,6 @@ const colConfigs = ref<columnSetting[]>([]);
 // 表格内展示的列
 const columns = computed(() => {
   let indexCount = 0;
-  console.log(colConfigs.value);
   const propdCloumnsData = _.cloneDeep(props.tableColumn);
   propdCloumnsData.forEach((item) => {
     if (item.colKey !== 'row-select' && item.colKey !== 'op' && item.colKey !== 'serial-number') {
@@ -800,7 +799,6 @@ const onExport = async () => {
 watch(
   () => props.tableData,
   (val) => {
-    console.log('watch:props.tableData', val);
     nextTick(() => {
       finalTableData.value = props.tableData;
       emit('update:tableData', val);
@@ -855,19 +853,15 @@ const resetTableSetting = () => {
 
 // 加载表格设置
 const loadTableSetting = () => {
-  console.log('loadTableSetting');
   fetchTableSettingList();
 };
 
 const fetchTableSettingList = async () => {
-  // console.log(JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath);
   const path = getRouterPath();
-  console.log(path);
   tableSettingList.value = await api.tableSetting.getCurrentUserTable({
     tableKey: tableKeyCode.value,
     behaviorPath: path,
   });
-  console.log(tableSettingList.value);
   if (tableSettingList.value && tableSettingList.value.length > 0) {
     const savedSetting = JSON.parse(tableSettingList.value[0].jsonConfig);
     colConfigs.value = savedSetting;
@@ -879,7 +873,6 @@ const getRouterPath = () => {
   // 判断思路：抓取当前浏览器的URL
   const url = window.location.pathname + window.location.hash;
   const routerPath = JSON.parse(localStorage.getItem('tabsRouter')).currentRouterPath;
-  console.log(url);
   if (url.includes('/#/')) {
     return routerPath;
   }
@@ -936,7 +929,6 @@ const maxHeightValue = computed(() => {
   }
   // 如果配置了自适应高度，is-fixed-height,则使用监控的高度
   if (props.fixedHeight) {
-    console.log('fixedHeight', boxHeight.value);
     return `${boxHeight.value}px`;
   }
   return '';

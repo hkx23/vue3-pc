@@ -368,9 +368,9 @@ const loadTypeSetting = () => {
         finalRowKey.value = finalKeywords.value.value;
         finalUrl.value = res.url;
       })
-      .catch((err) => {
+      .catch((_err) => {
         // 请求失败数据
-        console.log(err);
+        // console.log(err);
       });
   }
 };
@@ -396,8 +396,8 @@ watch(
 );
 watch(
   () => props.type,
-  (val) => {
-    console.log(val);
+  (_val) => {
+    // console.log(_val);
     loadTypeSetting();
   },
   { deep: true },

@@ -77,18 +77,18 @@ const viewDocx = async (data: any) => {
   dialogTitle.value = `预览-${data.fileName}`;
   fileType.value = 'doc';
   formVisible.value = true;
-  console.log(data);
+  // console.log(data);
   if (data.src) {
     const myDocxPreviewer = jsPreviewDocx.init(document.getElementById('docView'));
     // previewAddress.value = data.src;
 
     myDocxPreviewer
       .preview(data.src)
-      .then((res) => {
-        console.log('预览完成', res);
+      .then((_res) => {
+        // console.log('预览完成', res);
       })
-      .catch((e) => {
-        console.log('预览失败', e);
+      .catch((_e) => {
+        // console.log('预览失败', e);
       });
   }
 };
@@ -98,18 +98,18 @@ const viewXlsx = async (data: any) => {
   dialogTitle.value = `预览-${data.fileName}`;
   fileType.value = 'excel';
   formVisible.value = true;
-  console.log(data);
+  // console.log(data);
   if (data.src) {
     const myExcelPreviewer = jsPreviewExcel.init(document.getElementById('excelView'));
     // previewAddress.value = data.src;
 
     myExcelPreviewer
       .preview(data.src)
-      .then((res) => {
-        console.log('预览完成', res);
+      .then((_res) => {
+        // console.log('预览完成', res);
       })
-      .catch((e) => {
-        console.log('预览失败', e);
+      .catch((_e) => {
+        // console.log('预览失败', e);
       });
   }
 };
@@ -142,18 +142,18 @@ const viewPdf = async (data: any) => {
   dialogTitle.value = `预览-${data.fileName}`;
   fileType.value = 'pdf';
   formVisible.value = true;
-  console.log(data);
+  // console.log(data);
   if (data.src) {
     const myPdfPreviewer = jsPreviewPdf.init(document.getElementById('pdfView'));
     // previewAddress.value = data.src;
 
     myPdfPreviewer
       .preview(data.src)
-      .then((res) => {
-        console.log('预览完成', res);
+      .then((_res) => {
+        // console.log('预览完成', res);
       })
-      .catch((e) => {
-        console.log('预览失败', e);
+      .catch((_e) => {
+        // console.log('预览失败', e);
       });
   }
 };

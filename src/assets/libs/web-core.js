@@ -786,7 +786,7 @@ class dn {
     ) : g && p.append(JSON.stringify(r.body))), h.key = p.end();
     const l = this.pendingMap.get(h.key);
     if (l)
-      console.info(
+      console.debug(
         "[WebCore Http]: The same request is being executed, and this request has been cancelled. url: " + h.url
       ), h = l;
     else if (this.pendingMap.set(h.key, h), m && g) {
@@ -1215,7 +1215,10 @@ const bn = (e) => {
   window._app.textToSpeech(e);
 }, In = () => {
   window._app.playSystem();
-}, Rn = {
+}, Rn = () => {
+  window._app.logout();
+}, Mn = {
+  logout: Rn,
   openCamera: bn,
   openScan: vn,
   openLocation: _n,
@@ -1366,7 +1369,7 @@ const K = {
   }
 }, P = K.platform == "APP" ? {
   ...K,
-  ...Rn
+  ...Mn
 } : K;
 class re extends Error {
   constructor(r, u, f, w = "") {
@@ -1379,13 +1382,13 @@ class re extends Error {
     this.message = r, this.name = "CustomError", this.code = u, this.status = f, this.type = "error", this.description = w, (h = P.ipc.targets.get("_self")) == null || h.send("custom_error", this);
   }
 }
-class Mn extends re {
+class Ln extends re {
   constructor(o, r, u, f = "") {
     super(o, r, u, f), this.name = "OperationError";
   }
 }
-const Ve = typeof window < "u", Ln = Ve ? null : require("node:path"), Bn = Ve ? null : require("node:fs");
-function Kn() {
+const Ve = typeof window < "u", Bn = Ve ? null : require("node:path"), Dn = Ve ? null : require("node:fs");
+function Yn() {
   return {
     name: "auto-check-updates",
     enforce: "pre",
@@ -1401,19 +1404,19 @@ function Kn() {
           second: "2-digit",
           hour12: !1
         })
-      }, o = Ln.resolve(process.cwd(), "public", "version.json");
-      Bn.writeFileSync(o, JSON.stringify(e));
+      }, o = Bn.resolve(process.cwd(), "public", "version.json");
+      Dn.writeFileSync(o, JSON.stringify(e));
     }
   };
 }
 let k = "";
 const _e = 2;
 let F = 0;
-const Dn = function() {
-  F++, F >= _e && (console.error(`获取资源超过错误次数阈值[${_e}]，触发版本检查！`), F = -9999, Wn()), setTimeout(() => {
+const Nn = function() {
+  F++, F >= _e && (console.error(`获取资源超过错误次数阈值[${_e}]，触发版本检查！`), F = -9999, Fn()), setTimeout(() => {
     F = 0;
   }, 1500);
-}, Nn = () => {
+}, Wn = () => {
   if (typeof window < "u") {
     if (window._version)
       return;
@@ -1423,22 +1426,22 @@ const Dn = function() {
       "error",
       function(o) {
         const r = o.target;
-        (r.tagName === "SCRIPT" || r.tagName === "LINK" || r.tagName === "IMG") && Dn();
+        (r.tagName === "SCRIPT" || r.tagName === "LINK" || r.tagName === "IMG") && Nn();
       },
       !0
     );
   }
-}, Wn = () => {
+}, Fn = () => {
   typeof window < "u" && window._version && fetch("/version.json?_t=" + (/* @__PURE__ */ new Date()).getTime()).then((e) => e.json()).then((e) => {
     if (k && k !== e.version)
-      throw new Mn(
+      throw new Ln(
         `[${e.version}] 有新的内容更新，请在保存页面数据后，刷新页面重新载入！`,
         404,
         404
       );
   });
-}, ke = typeof window < "u", Te = ke ? null : require("node:path"), Fn = ke ? null : require("swagger-typescript-api");
-function Yn(e) {
+}, ke = typeof window < "u", Te = ke ? null : require("node:path"), qn = ke ? null : require("swagger-typescript-api");
+function Xn(e) {
   if (!e || !e.baseUrl || !e.inputs)
     return null;
   const o = e.inputs.split(",");
@@ -1449,7 +1452,7 @@ function Yn(e) {
     async buildStart() {
       for await (const r of o) {
         const u = `/api/${r}`;
-        await Fn.generateApi({
+        await qn.generateApi({
           name: r,
           url: `${e.baseUrl}${u}/v3/api-docs`,
           output: Te.resolve(process.cwd(), (e == null ? void 0 : e.output) || "./src/api"),
@@ -1468,10 +1471,10 @@ function Yn(e) {
     }
   };
 }
-const qn = "YYYY-MM-DD HH:mm:ss";
+const Hn = "YYYY-MM-DD HH:mm:ss";
 function Je(e) {
   for (const o in e) {
-    if (e[o] && e[o]._isAMomentObject && (e[o] = e[o].format(qn)), ve(o)) {
+    if (e[o] && e[o]._isAMomentObject && (e[o] = e[o].format(Hn)), ve(o)) {
       const r = e[o];
       if (r)
         try {
@@ -1483,10 +1486,10 @@ function Je(e) {
     U(e[o]) && Je(e[o]);
   }
 }
-const Hn = async (e, o) => {
+const Vn = async (e, o) => {
   const r = e.requestOptions.body;
   r && Object.prototype.toString.call(r) === "[object Object]" && Je(r), await o();
-}, Vn = async (e, o) => {
+}, kn = async (e, o) => {
   var w, h, m, g;
   const r = e.requestOptions, u = r.body;
   if (!(u instanceof FormData) && !(u instanceof URLSearchParams)) {
@@ -1498,7 +1501,7 @@ const Hn = async (e, o) => {
     return;
   const f = ((h = e.response) == null ? void 0 : h.headers.get("Content-Type")) || "";
   (m = e.response) != null && m.ok && (f != null && f.startsWith("application/json")) && (e.result = await ((g = e.response) == null ? void 0 : g.json()));
-}, kn = async (e, o) => {
+}, Jn = async (e, o) => {
   var w, h, m, g;
   const u = e.requestOptions.headers, f = P.getToken();
   if (f && Xr(u.Authorization) && (u.Authorization = `Bearer ${f}`), u.eid = P.getEnterpriseId(), u.oid = P.getOrgId(), u["Accept-Language"] = P.getLanguage(), u["X-TZ-Offset"] = (/* @__PURE__ */ new Date()).getTimezoneOffset().toString(), await o(), !((w = e.response) != null && w.ok)) {
@@ -1514,7 +1517,7 @@ const Hn = async (e, o) => {
     else
       throw new re(p.message || "unknown", p.code, e.response.status, JSON.stringify(p));
   }
-}, Jn = async (e, o) => {
+}, zn = async (e, o) => {
   if (e.url.lastIndexOf("_t=") <= 0) {
     const r = (/* @__PURE__ */ new Date()).getTime();
     e.url += `${e.url.lastIndexOf("?") > 0 ? "&" : "?"}_t=${r}`;
@@ -1529,14 +1532,14 @@ ie.baseURL = () => {
       return P.config.baseUrl || location.origin;
   }
 };
-ie.middlewares = () => [kn, Vn, Hn, Jn];
-const zn = new dn(ie);
-typeof window < "u" && (P.ipc = oe.init(), P.ipc.addTarget("_self", window), window.http = zn, window.fw = P, Nn());
+ie.middlewares = () => [Jn, kn, Vn, zn];
+const Gn = new dn(ie);
+typeof window < "u" && (P.ipc = oe.init(), P.ipc.addTarget("_self", window), window.http = Gn, window.fw = P, Wn());
 export {
   re as CustomError,
   hn as Dictionary,
   oe as EventBus,
   dn as Http,
-  Kn as autoCheckUpdates,
-  Yn as swaggerApiGen
+  Yn as autoCheckUpdates,
+  Xn as swaggerApiGen
 };

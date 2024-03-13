@@ -73,7 +73,11 @@
     :title="t('user.resetPassword')"
   ></dialog-reset-password>
 </template>
-
+<script lang="ts">
+export default {
+  name: 'User',
+};
+</script>
 <script setup lang="ts">
 import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';

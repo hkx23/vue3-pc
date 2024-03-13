@@ -3639,6 +3639,7 @@ export interface BarcodeWipCollectVO {
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  /** @format date-time */
   stateName?: string;
 }
 
@@ -3758,8 +3759,9 @@ export interface BarcodeWipVO {
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
-  stateName?: string;
+  /** @format date-time */
   defectCodeStr?: string;
+  stateName?: string;
 }
 
 /** 通用响应类 */

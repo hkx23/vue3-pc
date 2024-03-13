@@ -34,10 +34,10 @@
             <t-icon v-else name="home" />
             <template #dropdown>
               <t-dropdown-menu>
-                <t-dropdown-item @click="() => handleRefresh(routeItem, index)">
+                <!-- <t-dropdown-item @click="() => handleRefresh(routeItem, index)">
                   <t-icon name="refresh" />
                   {{ $t('layout.tagTabs.refresh') }}
-                </t-dropdown-item>
+                </t-dropdown-item> -->
                 <t-dropdown-item v-if="index > 1" @click="() => handleCloseAhead(routeItem.path, index)">
                   <t-icon name="arrow-left" />
                   {{ $t('layout.tagTabs.closeLeft') }}
@@ -78,9 +78,9 @@
 </template>
 
 <script setup lang="ts">
-import _ from 'lodash';
+import { some } from 'lodash';
 import type { PopupVisibleChangeContext } from 'tdesign-vue-next';
-import { computed, nextTick, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { api, Favorite } from '@/api/main';
@@ -116,14 +116,14 @@ const handleRemove = (options: TTabRemoveOptions) => {
   if ((options.value as string) === route.path) router.push({ path: nextRouter.path, query: nextRouter.query });
 };
 
-const handleRefresh = (route: TRouterInfo, routeIdx: number) => {
-  tabsRouterStore.toggleTabRouterAlive(routeIdx);
-  nextTick(() => {
-    tabsRouterStore.toggleTabRouterAlive(routeIdx);
-    router.replace({ path: route.path, query: route.query });
-  });
-  activeTabPath.value = null;
-};
+// const handleRefresh = (route: TRouterInfo, routeIdx: number) => {
+//   tabsRouterStore.toggleTabRouterAlive(routeIdx);
+//   nextTick(() => {
+//     tabsRouterStore.toggleTabRouterAlive(routeIdx);
+//     router.replace({ path: route.path, query: route.query });
+//   });
+//   activeTabPath.value = null;
+// };
 const handleCloseAhead = (path: string, routeIdx: number) => {
   tabsRouterStore.subtractTabRouterAhead({ path, routeIdx });
 
@@ -171,7 +171,7 @@ const isMenuFavorite = (routeItem: TRouterInfo) => {
   const { favorites } = userStore.userInfo;
   let hasValue = false;
   if (routeItem.meta && routeItem.meta.id) {
-    hasValue = _.some(favorites, (item: Favorite) => item.moduleId === routeItem.meta.id);
+    hasValue = some(favorites, (item: Favorite) => item.moduleId === routeItem.meta.id);
   }
   return hasValue;
 };
@@ -210,3 +210,49 @@ const handleDragend = (options: { currentIndex: number; targetIndex: number }) =
   ];
 };
 </script>
+<style lang="less" scoped>
+:deep(.@{starter-prefix}-layout-tabs-nav) {
+  .t-tabs__bar {
+    &.t-is-top {
+      display: none;
+    }
+  }
+
+  .t-tabs__nav-item {
+    cursor: default;
+    height: 30px;
+    line-height: 30px;
+    margin-top: 2px;
+
+    &:not(.t-is-disabled, .t-is-active) {
+      &:hover {
+        .t-tabs__nav-item-wrapper {
+          background-color: transparent;
+        }
+      }
+
+      .t-tabs__nav-item-text-wrapper:hover {
+        color: var(--td-brand-color);
+      }
+    }
+
+    &.t-is-active {
+      background-color: var(--td-bg-color-page);
+      color: var(--td-text-color-secondary);
+      border-radius: var(--td-radius-default) var(--td-radius-default) 0 0;
+    }
+
+    > .remove-btn {
+      margin-left: 0;
+      margin-right: var(--td-comp-margin-s);
+
+      &:hover {
+        color: var(--td-brand-color);
+        cursor: pointer;
+        background-color: var(--td-bg-color-page);
+        border-radius: var(--td-radius-default);
+      }
+    }
+  }
+}
+</style>

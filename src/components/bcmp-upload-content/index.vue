@@ -207,9 +207,9 @@ const handleFail = ({ file }) => {
 };
 
 // 选择行变化
-const rehandleSelectChange = (value, ctx) => {
+const rehandleSelectChange = (value, _ctx) => {
   selectedRowKeys.value = value;
-  console.log(value, ctx);
+  // console.log(value, ctx);
 };
 
 // 上传前校验
@@ -241,7 +241,7 @@ const beforeUpload = (file: UploadFile) => {
       return false;
     }
   }
-  console.log(file);
+  // console.log(file);
   // 将file复制成tableData的一个项目，加入到tableData中
   // todo:ID问题
 
@@ -269,7 +269,7 @@ const requestMethod: RequestMethod = async (file: UploadFile) => {
     const lastItem = tableData.value[tableData.value.length - 1];
     lastItem.signedUrl = res;
     lastItem.percent = 100;
-    console.log(lastItem);
+    // console.log(lastItem);
     emits('uploadSuccess', lastItem);
 
     return { status: 'success', response: { url: 'none' } };
@@ -310,7 +310,7 @@ const formatBytes = (sizeInBytes: number, decimalPlaces = 2) => {
 
 // 下载附件
 const downAtta = (row: any) => {
-  console.log('下载附件：', row);
+  // console.log('下载附件：', row);
   // 通过URL下载附件
   const link = document.createElement('a');
   const downLink = row.signedUrl;
@@ -322,7 +322,7 @@ const downAtta = (row: any) => {
   document.body.removeChild(link);
 };
 const onDelConfirm = async (row: any) => {
-  console.log('删除附件：', row);
+  // console.log('删除附件：', row);
   try {
     if (!props.isHandDelete) {
       await api.file.deleteFile({ path: props.uploadPath, fileName: row.fileName });
@@ -340,7 +340,7 @@ const batchDelete = async () => {
     MessagePlugin.warning('请选择一行数据！');
     return;
   }
-  console.log('批量删除附件：', selectedRowKeys.value);
+  // console.log('批量删除附件：', selectedRowKeys.value);
 
   if (selectedRowKeys.value.length > 0) {
     const deleteRows = tableData.value.filter((item) => selectedRowKeys.value.includes(item.id));
@@ -361,7 +361,7 @@ const batchDownload = () => {
     MessagePlugin.warning('请选择一行数据！');
     return;
   }
-  console.log('批量下载附件：', selectedRowKeys.value);
+  // console.log('批量下载附件：', selectedRowKeys.value);
   if (selectedRowKeys.value.length > 0) {
     const downRows = tableData.value.filter((item) => selectedRowKeys.value.includes(item.id));
 
@@ -436,7 +436,7 @@ const getFileIcon = (fileName: any) => {
   return iconName;
 };
 const previewFun = (file: any) => {
-  console.log(file.signedUrl);
+  // console.log(file.signedUrl);
   dialogDoc.value = true;
   const data = file;
   // 上传过的文件组成完成的网络路径

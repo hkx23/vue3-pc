@@ -150,7 +150,11 @@
   >
   </t-dialog>
 </template>
-
+<script lang="ts">
+export default {
+  name: 'ParamGroup',
+};
+</script>
 <script setup lang="ts">
 import _ from 'lodash';
 import { MessagePlugin } from 'tdesign-vue-next';

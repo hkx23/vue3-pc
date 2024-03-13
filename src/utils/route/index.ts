@@ -1,3 +1,4 @@
+import { upperFirst } from 'lodash';
 import cloneDeep from 'lodash/cloneDeep';
 import { shallowRef } from 'vue';
 import { RouteRecordRaw } from 'vue-router';
@@ -72,6 +73,9 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
           if (cmp?.component) {
             item.meta.frameSrc = null;
           }
+          if (cmp?.name) {
+            item.name = upperFirst(cmp.name);
+          }
           item.component = cmp?.component || layoutFound;
           item.meta.title = {
             ...cmp?.meta.title,
@@ -95,6 +99,7 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
     if ((item as any).id) {
       item.meta.id = (item as any).id;
     }
+    item.redirect = '';
 
     // eslint-disable-next-line no-unused-expressions
     children && asyncImportRoute(children);
@@ -159,5 +164,6 @@ export async function transformItemToRoute<T = RouteItem>(route: RouteItem): Pro
   if ((route as any).id) {
     route.meta.id = (route as any).id;
   }
+  route.redirect = '';
   return route as unknown as T;
 }

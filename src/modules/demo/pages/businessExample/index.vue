@@ -14,6 +14,16 @@
       </p>
 
       <t-space direction="vertical" style="width: 680px">
+        <!--  人员选择 -->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business v-model="personValue" :is-multiple="isMultiple" type="person"></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="personValue" label="人员" disabled />
+          </t-col>
+        </t-row>
+
         <!-- 工厂选择 -->
         <t-row :gutter="[10, 10]">
           <t-col flex="300px">
@@ -364,7 +374,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
-const isMultiple = ref(true);
+const isMultiple = ref(false);
+
+const personValue = ref();
 const plantValue = ref('1744167886127157249,1725461564969635842');
 const stationValue = ref('1739886055668158465');
 const mitemCategoryValue = ref();

@@ -373,7 +373,11 @@
     </template>
   </t-dialog>
 </template>
-
+<script lang="ts">
+export default {
+  name: 'Module',
+};
+</script>
 <script setup lang="ts">
 import { Icon, manifest } from 'tdesign-icons-vue-next';
 import {
@@ -1000,7 +1004,6 @@ onMounted(async () => {
 // 获取树组件数据
 const onGetTreeData = async () => {
   const res = await api.module.getTree({ clientType: 1 }); // 获取节点数据
-  console.log('🚀 ~ file: index.vue:1026 ~ onGetTreeData ~ res:', res);
   treeData.list = res;
 };
 

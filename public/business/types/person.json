@@ -36,5 +36,22 @@
   "keywords": {
     "value": "id",
     "label": "personName"
-  }
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "idField": "id",
+    "codeField": "personCode",
+    "nameField": "personName",
+    "descField": "email",
+    "categoryField": "personCode",
+    "listType": "tree",
+    "treeIdField": "id",
+    "treeValueField": "orgCode",
+    "treeLabelField": "orgName",
+    "defaultTreeUrl": "/api/main/adminOrg/tree",
+    "loadNodeUrl": "/api/main/person/items"
+  },
+  "name": "人员",
+  "componentType": "list"
 }
