@@ -12,6 +12,8 @@
           :table-data="tableDataMain"
           :loading="loading"
           :total="dataTotal"
+          :fixed-height="true"
+          style="height: 280px"
           :hover="false"
           :stripe="false"
           active-row-type="single"
@@ -47,10 +49,8 @@
           row-key="id"
           :columns="tableUserColumns"
           :data="tableDataUserDtl"
-          active-row-type="single"
           :loading="loadingPackDtl"
           :total="dataUserTotal"
-          :fixed-height="true"
           :selected-row-keys="userRowKeys"
           @select-change="onSelectedChange"
           @refresh="fetchUserTable"
@@ -88,7 +88,6 @@
           :table-data="tableDataMitem"
           :loading="loadingMitem"
           :total="dataMitemTotal"
-          :fixed-height="true"
           @refresh="fetchMitemTable"
         >
           <template #title> {{ t('inspectGroup.tableSubRightTitle') }} </template>
@@ -364,6 +363,7 @@ const fetchMitemTable = async () => {
       pageSize: pageMitem.value.rows,
     })) as any;
     tableDataMitem.value = data.list;
+    dataMitemTotal.value = data.total;
   } catch (e) {
     console.log(e);
   } finally {
