@@ -4087,11 +4087,11 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
   stateName?: string;
   isState?: boolean;
-  isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
 }
@@ -4339,12 +4339,12 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
-  isBatchName?: string;
-  isRawName?: string;
   isInProcessName?: string;
   isProductName?: string;
+  isRawName?: string;
   isRawChecked?: boolean;
+  isBatchName?: string;
+  isState?: boolean;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
 }
@@ -7280,8 +7280,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
