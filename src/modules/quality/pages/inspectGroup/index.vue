@@ -452,7 +452,9 @@ const onConfirmForm = async () => {
 const onClickAddUser = () => {
   const { fetchUserList } = formDtlRef.value;
   const { setRow } = formDtlRef.value;
+  const { reset } = formDtlRef.value;
   const { fetchUserTable } = formDtlRef.value;
+  reset();
   formHeader.value = t('common.button.add');
   formDtlVisible.value = true;
   setRow(selectRow.value);
@@ -463,7 +465,9 @@ const onClickAddUser = () => {
 const onClickAddMitem = () => {
   const { fetchCategoryList } = formMitemRef.value;
   const { setRow } = formMitemRef.value;
+  const { reset } = formDtlRef.value;
   const { fetchMitemTable } = formMitemRef.value;
+  reset();
   formHeader.value = t('common.button.add');
   formMitemVisible.value = true;
   setRow(selectRow.value);

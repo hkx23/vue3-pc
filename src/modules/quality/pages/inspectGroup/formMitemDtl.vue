@@ -226,6 +226,8 @@ const onAddMitem = async (item) => {
 };
 
 const reset = () => {
+  listItems.value = [];
+  tabTotal.value = 0;
   formData.value = {
     inspectGroupId: '',
     keyword: '',
