@@ -189,7 +189,7 @@ const opts = computed(() => {
 
 const onInput = async (data) => {
   const { warehouse, user } = data;
-  const newArr = user === '' ? [] : user.split(',').map((item) => item.trim());
+  const newArr = user === '' || user === null ? [] : user.split(',').map((item) => item.trim());
   transferParam.value.userIds = newArr;
   transferParam.value.warehouseId = warehouse;
   pageUI.value.page = 1;

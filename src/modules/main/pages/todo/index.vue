@@ -59,7 +59,11 @@
     </cmp-row>
   </cmp-container>
 </template>
-
+<script lang="ts">
+export default {
+  name: 'Todo',
+};
+</script>
 <script setup lang="ts">
 // import dayjs from 'dayjs';
 import _ from 'lodash';

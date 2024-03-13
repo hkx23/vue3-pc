@@ -71,7 +71,7 @@ const flatten = (routers: RouteItem[]) => {
     } else if ((router as any)?.moduleCode) {
       const title = renderMenuTitle(router.meta?.title || router.name || router.path);
       flattenRouters.value.push(title);
-      flattenRouterObj[title] = router;
+      flattenRouterObj[title.toLowerCase()] = router;
     }
   });
 };
@@ -91,7 +91,7 @@ const router = useRouter();
 
 const onSelectSearch = (value) => {
   if (!value) return;
-  const route = flattenRouterObj[value];
+  const route = flattenRouterObj[value.toLowerCase()];
   router.push(route);
 };
 

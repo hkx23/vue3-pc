@@ -1,7 +1,7 @@
 export default [
   {
     path: '/alertCfg',
-    name: 'alertCfg',
+    name: 'AlertCfg',
     component: () => import('../../pages/alertCfg/index.vue'),
     meta: {
       title: {

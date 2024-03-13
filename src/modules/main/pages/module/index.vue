@@ -373,7 +373,11 @@
     </template>
   </t-dialog>
 </template>
-
+<script lang="ts">
+export default {
+  name: 'Module',
+};
+</script>
 <script setup lang="ts">
 import { Icon, manifest } from 'tdesign-icons-vue-next';
 import {

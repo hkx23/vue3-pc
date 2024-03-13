@@ -78,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import _ from 'lodash';
+import { some } from 'lodash';
 import type { PopupVisibleChangeContext } from 'tdesign-vue-next';
 import { computed, nextTick, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -171,7 +171,7 @@ const isMenuFavorite = (routeItem: TRouterInfo) => {
   const { favorites } = userStore.userInfo;
   let hasValue = false;
   if (routeItem.meta && routeItem.meta.id) {
-    hasValue = _.some(favorites, (item: Favorite) => item.moduleId === routeItem.meta.id);
+    hasValue = some(favorites, (item: Favorite) => item.moduleId === routeItem.meta.id);
   }
   return hasValue;
 };

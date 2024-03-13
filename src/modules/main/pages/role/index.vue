@@ -72,7 +72,11 @@
     :title="t('role.authTitle')"
   ></dialog-permission>
 </template>
-
+<script lang="ts">
+export default {
+  name: 'Role',
+};
+</script>
 <script setup lang="ts">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';

@@ -118,11 +118,14 @@ const fetchDic = async () => {
 };
 
 const onClickDesigner = async () => {
-  if (formData.tmplBodyPath) {
-    formData.fileContent = await api.printTmpl.getTmplByPath({ path: formData.tmplBodyPath });
-  } else {
-    formData.fileContent = '';
+  if (!formData.fileContent) {
+    if (formData.tmplBodyPath) {
+      formData.fileContent = await api.printTmpl.getTmplByPath({ path: formData.tmplBodyPath });
+    } else {
+      formData.fileContent = '';
+    }
   }
+
   designerVisible.value = true;
 };
 
