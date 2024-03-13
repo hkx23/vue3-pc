@@ -172,7 +172,7 @@ const fetchTable = async () => {
       data.list.length === 0
     ) {
       pageUI.value.page = 1;
-      pageUI.value.rows = 10;
+      pageUI.value.rows = 20;
       onRefresh();
     }
     // tableSupplierPagination.value = { ...tableSupplierPagination.value, total: data.total };

@@ -1,0 +1,31 @@
+{
+  "title": "异常类型：",
+  "placeholder": "请选择异常类型：",
+  "url": "/api/daily/incidentType/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "异常类型名称",
+      "key": "incidentName",
+      "align": "left"
+    },
+    {
+      "title": "异常类型代码",
+      "key": "incidentCode",
+      "align": "left"
+    }
+  ],
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "incidentCode",
+    "nameField": "incidentName"
+  },
+  "name": "异常类型",
+  "componentType": "list",
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "incidentName"
+  }
+}

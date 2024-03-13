@@ -77,6 +77,55 @@ export interface IncidentType {
   incidentModule?: string;
 }
 
+export interface CommonSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+}
+
+export interface Filter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  value?: string;
+  valuesList?: string[];
+}
+
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataIncidentType = {
+  list?: IncidentType[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataIncidentType {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataIncidentType;
+}
+
 /** 领域对象扩展属性分类 */
 export interface IncidentTypeVO {
   id?: string;
@@ -416,6 +465,8 @@ export interface IncidentDealVO {
   processedUploadFiles?: FileVO[];
   /** 异常模块名称 */
   incidentModuleName?: string;
+  /** 异常类型名称 */
+  incidentTypeName?: string;
   /**
    * 异常模块数量
    * @format int32
@@ -451,6 +502,24 @@ export interface IncidentDealSearch {
   /** 报障单状态 */
   statusList?: string[];
   curUserId?: string;
+  orgId?: string;
+  /** 异常模块 */
+  incidentModule?: string;
+  incidentTypeId?: string;
+  /** 单据状态 */
+  status?: string;
+  /** 单据号 */
+  billNo?: string;
+  /**
+   * 开始时间
+   * @format date-time
+   */
+  timeCreateStart?: string;
+  /**
+   * 结束时间
+   * @format date-time
+   */
+  timeCreateEnd?: string;
   /** 是否查询处理组 */
   isSearchSupportGroup?: boolean;
 }
@@ -703,6 +772,7 @@ export interface BatchDynamicQueryDTO {
   dataTable?: DataTable;
   rows?: Record<string, object>[];
   eid?: string;
+  oid?: string;
 }
 
 export interface ConditionData {
@@ -967,6 +1037,87 @@ export interface ResultPagingDataParam {
   data?: PagingDataParam;
 }
 
+/** 异常处理输出 */
+export interface IncidentDealLogVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 处理事件 */
+  dealEvent?: string;
+  /**
+   * 处理时间
+   * @format date-time
+   */
+  datetimeDeal?: string;
+  userDealId?: string;
+  supportGroupId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 异常原因 */
+  incidentReason?: string;
+  /** 处理方法 */
+  dealMethod?: string;
+  /** 处理详情 */
+  dealDetail?: string;
+  /** 显示名 */
+  displayName?: string;
+  /** 最后处理用户名 */
+  curUserName?: string;
+  /** 最后处理显示名 */
+  curDisplayName?: string;
+  /** 异常模块 */
+  incidentModule?: string;
+  /** 处理组名称 */
+  supportGroupName?: string;
+  /** 异常类型名称 */
+  incidentTypeName?: string;
+  /** 异常描述 */
+  incidentMemo?: string;
+  statusName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataIncidentDealLogVO = {
+  list?: IncidentDealLogVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataIncidentDealLogVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataIncidentDealLogVO;
+}
+
 /** 通用响应类 */
 export interface ResultListIncidentDealVO {
   /**
@@ -1165,6 +1316,20 @@ export const api = {
      */
     modifyIncidentType: (data: IncidentType) =>
       http.request<ResultObject['data']>(`/api/daily/incidentType/modifyIncidentType`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常类型表
+     * @name Search
+     * @request POST:/incidentType/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataIncidentType['data']>(`/api/daily/incidentType/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -1412,6 +1577,21 @@ export const api = {
     getSumList: () =>
       http.request<ResultIncidentDealSumVO['data']>(`/api/daily/incidentDeal/getSumList`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name GetList
+     * @summary 安灯单据报表查询
+     * @request POST:/incidentDeal/getList
+     * @secure
+     */
+    getList: (data: IncidentDealSearch) =>
+      http.request<ResultPagingDataIncidentDealVO['data']>(`/api/daily/incidentDeal/getList`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
@@ -1726,6 +1906,27 @@ export const api = {
       http.request<ResultObject['data']>(`/api/daily/alertCfg/addAlertCfg`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  incidentDealLog: {
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理日志表
+     * @name GetList
+     * @request GET:/incidentDealLog/getList
+     * @secure
+     */
+    getList: (query: {
+      billNo: string;
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+    }) =>
+      http.request<ResultPagingDataIncidentDealLogVO['data']>(`/api/daily/incidentDealLog/getList`, {
+        method: 'GET',
+        params: query,
       }),
   },
 };
