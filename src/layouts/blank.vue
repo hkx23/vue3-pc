@@ -2,16 +2,17 @@
   <div class="tdesign-wrapper">
     <!-- <router-view /> -->
     <router-view v-if="!isRefreshing" v-slot="{ Component, route }">
-      <keep-alive :include="aliveViews">
+      <!-- :include="aliveViews" -->
+      <keep-alive>
         <component :is="Component" v-show="activeRouteIsNotIframe" :key="route.meta.id" />
       </keep-alive>
     </router-view>
   </div>
 </template>
 <script setup lang="ts">
-import isBoolean from 'lodash/isBoolean';
-import isUndefined from 'lodash/isUndefined';
-import type { ComputedRef } from 'vue';
+// import isBoolean from 'lodash/isBoolean';
+// import isUndefined from 'lodash/isUndefined';
+// import type { ComputedRef } from 'vue';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -24,17 +25,17 @@ const activeRouteIsNotIframe = computed(() => {
   return !currentRoute.value.meta.frameSrc;
 });
 
-const aliveViews = computed(() => {
-  const tabsRouterStore = useTabsRouterStore();
-  const { tabRouters } = tabsRouterStore;
-  return tabRouters
-    .filter((route) => {
-      const keepAliveConfig = route.meta?.keepAlive;
-      const isRouteKeepAlive = isUndefined(keepAliveConfig) || (isBoolean(keepAliveConfig) && keepAliveConfig); // 默认开启keepalive
-      return route.isAlive && isRouteKeepAlive;
-    })
-    .map((route) => route.name);
-}) as ComputedRef<string[]>;
+// const aliveViews = computed(() => {
+//   const tabsRouterStore = useTabsRouterStore();
+//   const { tabRouters } = tabsRouterStore;
+//   return tabRouters
+//     .filter((route) => {
+//       const keepAliveConfig = route.meta?.keepAlive;
+//       const isRouteKeepAlive = isUndefined(keepAliveConfig) || (isBoolean(keepAliveConfig) && keepAliveConfig); // 默认开启keepalive
+//       return route.isAlive && isRouteKeepAlive;
+//     })
+//     .map((route) => route.name);
+// }) as ComputedRef<string[]>;
 
 const isRefreshing = computed(() => {
   const tabsRouterStore = useTabsRouterStore();
