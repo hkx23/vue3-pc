@@ -1296,6 +1296,139 @@ export interface PqcInspectBillSearch {
   statusList?: string[];
 }
 
+export interface PqcInspectFirstSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  /** 首检单号 */
+  billNo?: string;
+  /** 检验时机 */
+  inspectOpportunity?: string;
+  moScheId?: string;
+  mitemId?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 单据状态 */
+  status?: string;
+  /** 是否品质改善 */
+  isImprove?: string;
+}
+
+/** 响应数据 */
+export type PagingDataPqcInspectFirstVO = {
+  list?: PqcInspectFirstVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface PqcInspectFirstVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 首检单号 */
+  billNo?: string;
+  moScheId?: string;
+  /**
+   * 检验完成时间
+   * @format date-time
+   */
+  datetimeInspectEnd?: string;
+  userInspectId?: string;
+  oqcInspectStdId?: string;
+  /** 检验时机 */
+  inspectOpportunity?: string;
+  /** 检验数量 */
+  inspectQty?: number;
+  workgroupId?: string;
+  workcenterId?: string;
+  /** 不合格分类 */
+  defectCategory?: string;
+  /** 处理意见或方法 */
+  handleMethod?: string;
+  /** 整改意见 */
+  correctOpinion?: string;
+  personResponsibilityId?: string;
+  deptResponsibilityId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 单据状态 */
+  status?: string;
+  /** 检验时机名称 */
+  inspectOpportunityName?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 单据状态名称 */
+  statusName?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 工作中心名称 */
+  wcName?: string;
+  /** 检验人 */
+  userInspectName?: string;
+  /** 创建人 */
+  creatorName?: string;
+  /** 改善单据 */
+  improveNos?: string[];
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataPqcInspectFirstVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPqcInspectFirstVO;
+}
+
 /** 首检条码检验明细附件表 */
 export interface PqcInspectFirstBarcodeDtlFile {
   id?: string;
@@ -1887,12 +2020,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 业务类型名称 */
-  businessCategoryName?: string;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
+  /** 业务类型名称 */
+  businessCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -2429,10 +2562,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2465,8 +2598,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -3677,11 +3810,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
   iqcInspectDtlId?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
 }
 
 /** 响应数据 */
@@ -4894,13 +5027,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s4?: string;
-  s3?: string;
-  s1?: string;
-  s2?: string;
   iii?: string;
-  ii?: string;
+  s2?: string;
+  s3?: string;
+  s4?: string;
   i?: string;
+  ii?: string;
+  s1?: string;
 } | null;
 
 /** 计量单位 */
@@ -5409,6 +5542,21 @@ export const api = {
           body: data as any,
         },
       ),
+
+    /**
+     * No description
+     *
+     * @tags 首检检验表
+     * @name GetList
+     * @summary 获得主界面列表数据
+     * @request POST:/pqcInspectFirst/getList
+     * @secure
+     */
+    getList: (data: PqcInspectFirstSearch) =>
+      http.request<ResultPagingDataPqcInspectFirstVO['data']>(`/api/quality/pqcInspectFirst/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
 
     /**
      * No description
