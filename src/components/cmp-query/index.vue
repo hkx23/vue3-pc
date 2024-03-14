@@ -95,26 +95,30 @@
           </div>
         </t-form>
       </t-col>
-      <t-col v-if="showButton" flex="0 1 230px" style="text-align: end">
-        <t-space direction="horizontal" class="search-space search-form__button" size="large">
-          <div class="">
-            <t-space size="small" :align="'end'">
-              <t-button class="btn_check" :loading="loading" @click="checkHandle">{{
-                t('common.button.search')
-              }}</t-button>
-              <t-button v-if="reset" class="btn_reset" theme="default" @click="resetHandle">{{
-                t('common.button.reset')
-              }}</t-button>
-              <slot name="querybar"></slot>
-              <t-button v-if="showExpand" theme="primary" variant="text" @click="onExpandSwitch">
-                {{ openSearchForm ? t('common.button.collapse') : t('common.button.expand') }}
-                <template #icon> <t-icon :name="openSearchForm ? 'chevron-up' : 'chevron-down'" /></template
-              ></t-button>
-            </t-space>
-          </div>
-        </t-space>
-      </t-col>
     </t-row>
+    <div
+      v-if="showButton"
+      :style="{ width: buttonItemWidth + 'px' }"
+      :class="{
+        search_form__button: true,
+        botton__showlastrow: !(totalComLength && totalComLength == rowItemCount && openSearchForm),
+        botton__shownextrow: totalComLength && totalComLength == rowItemCount && openSearchForm,
+      }"
+    >
+      <t-space direction="horizontal" class="search-space" size="large" style="display: block; float: right">
+        <t-space size="small" :align="'end'">
+          <t-button class="btn_check" :loading="loading" @click="checkHandle">{{ t('common.button.search') }}</t-button>
+          <t-button v-if="reset" class="btn_reset" theme="default" @click="resetHandle">{{
+            t('common.button.reset')
+          }}</t-button>
+          <slot name="querybar"></slot>
+          <t-button v-if="showExpand" theme="primary" variant="text" @click="onExpandSwitch">
+            {{ openSearchForm ? t('common.button.collapse') : t('common.button.expand') }}
+            <template #icon> <t-icon :name="openSearchForm ? 'chevron-up' : 'chevron-down'" /></template
+          ></t-button>
+        </t-space>
+      </t-space>
+    </div>
   </t-loading>
 </template>
 
@@ -178,6 +182,7 @@ const props = defineProps({
     default: true,
   },
 });
+const rowItemCount = ref(1);
 // 初始化表单数据
 const state = reactive({
   form: Object.keys(props.opts).reduce((acc: any, field: any) => {
@@ -208,7 +213,6 @@ if (props.isExpansion) {
 // });
 const cOpts = computed(() => {
   // 先按row字段分组
-
   const result = Object.keys(props.opts).reduce((acc: any, field: any) => {
     const opt = {
       ...props.opts[field],
@@ -218,9 +222,14 @@ const cOpts = computed(() => {
     //   openSearchForm.value = true;
     // }
     if (opt.flex === undefined && opt.comp && opt.comp.includes('range')) {
-      opt.flex = '480px';
+      opt.comLength = 2;
+      opt.flex = `${2 * searchItemtWidth.value}px`;
     } else if (opt.flex === undefined) {
-      opt.flex = '240px';
+      opt.comLength = 1;
+      opt.flex = `${searchItemtWidth.value}px`;
+    } else {
+      const itemFlexNumber = parseInt(opt.flex.replace('px', ''), 10);
+      opt.comLength = Math.floor(itemFlexNumber / searchItemtWidth.value);
     }
 
     if (opt.span === undefined && opt.comp && opt.comp.includes('range')) {
@@ -414,6 +423,7 @@ watch(
   (opts, oldValue) => {
     console.log('query change', opts, oldValue);
     state.form = initForm(opts, true);
+    computedTableContentSize();
   },
   { deep: true },
 );
@@ -432,15 +442,84 @@ useResizeObserver(QueryRef, (entries) => {
   debounceFunction();
 });
 const debounceFunction = _.debounce(() => {
-  computedExpandBtnVisible();
-  // computedTableContentSize();
+  computedTableContentSize();
 }, 100);
+
+const searchItemtWidth = ref(200);
+
+const buttonItemWidth = ref(200);
+const totalComLength = ref(0);
 
 const computedExpandBtnVisible = () => {
   nextTick(() => {
-    if (formRowRef.value) {
-      const { clientHeight } = formRowRef.value;
-      showExpand.value = clientHeight > 40;
+    if (totalComLength.value >= rowItemCount.value) {
+      showExpand.value = true;
+    } else {
+      showExpand.value = false;
+    }
+  });
+};
+
+const computedTableContentSize = () => {
+  nextTick(() => {
+    if (QueryRef.value) {
+      let queryBoxCount = 24;
+      let targetWidth;
+      const { clientWidth } = QueryRef.value.$el;
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        targetWidth = Math.floor(clientWidth / queryBoxCount);
+
+        if (targetWidth >= 240 && targetWidth <= 440) {
+          rowItemCount.value = queryBoxCount;
+          break; // 如果宽度在范围内，则结束循环
+        } else {
+          queryBoxCount--; // 否则减少一个查询框并继续计算
+        }
+
+        // 防止负数或零的情况，如果已经减无可减，则跳出循环（假设至少需要一个查询框）
+        if (queryBoxCount <= 0) {
+          targetWidth = clientWidth / 2; // 或者给一个默认值
+          queryBoxCount = 2;
+          break;
+        }
+      }
+      searchItemtWidth.value = targetWidth;
+
+      // 已经算出了一行应该有多少个默认长度的控件了，可以循环检查第一行最后一个控件应该是哪一个
+      buttonItemWidth.value = targetWidth;
+      let totalComLengthSum = 0;
+      let leftSpace = _.cloneDeep(rowItemCount.value);
+      let isFirstRowLastProcessing = true;
+      for (let i = 0; i < cOpts.value[999].length; i++) {
+        const item = cOpts.value[999][i];
+        if (item.comLength) {
+          totalComLengthSum += item.comLength;
+        } else {
+          const itemFlexNumber = parseInt(item.flex.replace('px', ''), 10);
+          item.comLength = Math.floor(itemFlexNumber / targetWidth);
+          totalComLengthSum += item.comLength;
+        }
+
+        if (totalComLengthSum === rowItemCount.value && isFirstRowLastProcessing) {
+          buttonItemWidth.value = item.comLength * searchItemtWidth.value + 8;
+          isFirstRowLastProcessing = false;
+        }
+        const compareResultCount = totalComLengthSum - rowItemCount.value;
+        if (compareResultCount > 0 && isFirstRowLastProcessing) {
+          if (cOpts.value[999][i - 1].comLength > 1 && leftSpace > 0) {
+            buttonItemWidth.value = (cOpts.value[999][i - 1].comLength + leftSpace) * searchItemtWidth.value + 8;
+            isFirstRowLastProcessing = false;
+          } else {
+            buttonItemWidth.value = cOpts.value[999][i - 1].comLength * searchItemtWidth.value + 8;
+            isFirstRowLastProcessing = false;
+          }
+        }
+        leftSpace -= item.comLength;
+      }
+      totalComLength.value = totalComLengthSum;
+
+      computedExpandBtnVisible();
     }
   });
 };
