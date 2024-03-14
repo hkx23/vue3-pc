@@ -4087,11 +4087,11 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
   stateName?: string;
   isState?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
 }
@@ -4339,14 +4339,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
-  isState?: boolean;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isState?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -4643,6 +4643,7 @@ export interface LabelVO {
 }
 
 export interface LabelSearch {
+  barcodeWipId?: string;
   /**
    * 页码
    * @format int32
@@ -5743,6 +5744,11 @@ export interface DeliveryCardSearch {
 
 /** 配送卡输出类 */
 export interface DeliveryCardVO {
+  /**
+   * 标签顺序号
+   * @format int32
+   */
+  printSeq?: number;
   moScheduleId?: string;
   /** 排产单编码 */
   scheCode?: string;
@@ -5800,6 +5806,7 @@ export interface DeliveryCardVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
+  orgName?: string;
 }
 
 /** 响应数据 */
@@ -6533,6 +6540,53 @@ export interface ResultListBusinessTmplLib {
   data?: BusinessTmplLib[] | null;
 }
 
+/** 在制品条码日志表 */
+export interface BarcodeWipLog {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 原因 */
+  reason?: string;
+  /** 条码模板代码 */
+  tmplCode?: string;
+  /** 条码模板名称 */
+  tmplName?: string;
+  /** 条码模板类别 */
+  tmplCategory?: string;
+  /** 客户端机器名 */
+  hostname?: string;
+  /** 客户端IP */
+  ipaddress?: string;
+  /** 备注 */
+  memo?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /** 状态 */
+  status?: string;
+}
+
 /** 在制品条码表 */
 export interface BarcodeWip {
   id?: string;
@@ -6594,6 +6648,11 @@ export interface BarcodeWip {
 }
 
 export interface BarcodeWipSearch {
+  /**
+   * 拆分数量
+   * @format int32
+   */
+  splitNum?: number;
   /**
    * 页码
    * @format int32
@@ -6696,6 +6755,7 @@ export interface BarcodeWipVO {
   printTmpl?: string;
   /** 车间名称 */
   workshopName?: string;
+  orgName?: string;
   workcenterId?: string;
   /** 工作中心名称 */
   workcenterName?: string;
@@ -7280,8 +7340,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -8240,12 +8300,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -14190,6 +14250,22 @@ export const api = {
         body: data as any,
       }),
   },
+  barcodeWipLog: {
+    /**
+     * No description
+     *
+     * @tags 在制品条码日志表
+     * @name Save
+     * @summary 保存在制品条码日志
+     * @request POST:/barcodeWipLog/save
+     * @secure
+     */
+    save: (data: BarcodeWipLog) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeWipLog/save`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   barcodeWip: {
     /**
      * No description
@@ -14217,6 +14293,21 @@ export const api = {
      */
     updateBarcodeStatusAndOnhandId: (data: LabelVO[]) =>
       http.request<ResultObject['data']>(`/api/main/barcodeWip/updateBarcodeStatusAndOnhandId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品条码表
+     * @name SplitBarcode
+     * @summary 拆分条码
+     * @request POST:/barcodeWip/splitBarcode
+     * @secure
+     */
+    splitBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeWip/splitBarcode`, {
         method: 'POST',
         body: data as any,
       }),

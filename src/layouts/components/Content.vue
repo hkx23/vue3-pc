@@ -20,7 +20,7 @@
 // // </suspense>
 // import { useRouter } from 'vue-router';
 
-// import FramePage from '@/layouts/frame/index.vue';
+import FramePage from '@/layouts/frame/index.vue';
 // import { useTabsRouterStore } from '@/store';
 
 // const router = useRouter();
