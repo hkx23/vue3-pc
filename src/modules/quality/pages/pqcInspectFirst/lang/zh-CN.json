@@ -1,0 +1,18 @@
+{
+  "pqcInspectFirst": {
+    "billNo": "检查单号",
+    "inspectOpportunityName": "检验时机",
+    "scheCode": "排产单",
+    "mitemCode": "物料编码",
+    "mitemName": "物料名称",
+    "statusName": "单据状态",
+    "inspectResult": "检验结果",
+    "workshopName": "车间",
+    "wcName": "工作中心",
+    "userInspectName": "检验人",
+    "datetimeInspectEnd": "检验完成时间",
+    "creatorName": "创建人",
+    "timeCreate": "创建时间",
+    "improveNos": "改善单据"
+  }
+}
