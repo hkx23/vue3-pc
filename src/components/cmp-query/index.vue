@@ -101,8 +101,13 @@
       :style="{ width: buttonItemWidth + 'px' }"
       :class="{
         search_form__button: true,
-        botton__showlastrow: !(totalComLength && totalComLength == rowItemCount && openSearchForm),
-        botton__shownextrow: totalComLength && totalComLength == rowItemCount && openSearchForm,
+        botton__showlastrow: !(
+          totalComLength &&
+          (totalComLength == rowItemCount || totalComLength % rowItemCount == 0) &&
+          openSearchForm
+        ),
+        botton__shownextrow:
+          totalComLength && (totalComLength == rowItemCount || totalComLength % rowItemCount == 0) && openSearchForm,
       }"
     >
       <t-space direction="horizontal" class="search-space" size="large" style="display: block; float: right">
