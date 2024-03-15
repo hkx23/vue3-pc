@@ -28,6 +28,7 @@
         <t-form-item label="物料类别" name="mitemCategory">
           <bcmp-select-business
             v-model="formData.mitemCategoryIds"
+            :disabled="!isEmpty(formData.mitemId)"
             type="mitemCategory"
             is-multiple
             :clearable="true"
@@ -39,6 +40,7 @@
         <t-form-item label="物料" name="mitemId">
           <bcmp-select-business
             v-model="formData.mitemId"
+            :disabled="!isEmpty(formData.mitemCategoryIds)"
             type="mitem"
             :show-title="false"
             :clearable="true"
@@ -64,7 +66,7 @@ export default {
       id: '',
       inspectStdCode: '',
       inspectStdName: '',
-      mitemCategoryIds: '',
+      mitemCategoryIds: null,
       mitemId: '',
     });
     // #表单定义规则
@@ -75,16 +77,12 @@ export default {
     };
 
     const submit = async () => {
-      if (isEmpty(formData.value.mitemId)) {
-        MessagePlugin.warning('请选择物料');
+      if (isEmpty(formData.value.mitemId) && formData.value.mitemCategoryIds.length < 1) {
+        MessagePlugin.warning('请选择物料或物料类别');
         return false;
       }
       if (formData.value.type === 'add' && isEmpty(formData.value.inspectStdCode)) {
         MessagePlugin.warning('请选择产品检验标准');
-        return false;
-      }
-      if (formData.value.mitemCategoryIds.length < 1) {
-        MessagePlugin.warning('请选择物料类别');
         return false;
       }
       // const categotyList = formData.value.mitemCategortArr.map((item) => item.value);
@@ -95,19 +93,6 @@ export default {
       });
       MessagePlugin.success('操作成功');
       return true;
-    };
-    const getOqcInspectStdMitem = async () => {
-      const res = await api.oqcInspectStdMitem.getOqcInspectStdMitem({ stdId: formData.value.id });
-      if (res) {
-        formData.value.mitemId = res[0]?.mitemId;
-        const newData = res.map((item) => {
-          return item.mitemCategoryId;
-        });
-        formData.value.mitemCategoryIds = newData.join(',');
-      } else {
-        formData.value.mitemId = '';
-        formData.value.mitemCategoryIds = '';
-      }
     };
     const namesOption = ref([]);
     const onChange = (value: any) => {
@@ -161,10 +146,10 @@ export default {
       querySelectChange,
       namesOption,
       submit,
-      getOqcInspectStdMitem,
       rules,
       onChange,
       formData,
+      isEmpty,
     };
   },
 };

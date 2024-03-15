@@ -291,10 +291,10 @@ const onDelData = async (row) => {
 };
 const onAssign = async (row) => {
   assignFormRef.value.formData.type = '01';
+  assignFormRef.value.init();
   assignFormRef.value.formData.id = row.id;
   assignFormRef.value.formData.inspectStdName = row.inspectStdName;
   assignFormRef.value.formData.inspectStdCode = row.inspectStdCode;
-  await assignFormRef.value.getOqcInspectStdMitem();
   formVisible.value = true;
 };
 const onAddAssign = async () => {
