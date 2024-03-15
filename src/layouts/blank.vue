@@ -1,10 +1,10 @@
 <template>
-  <div class="tdesign-wrapper">
+  <div v-show="activeRouteIsNotIframe" class="tdesign-wrapper">
     <!-- <router-view /> -->
     <router-view v-if="!isRefreshing" v-slot="{ Component, route }">
       <!-- :include="aliveViews" -->
       <keep-alive>
-        <component :is="Component" v-show="activeRouteIsNotIframe" :key="route.meta.id" />
+        <component :is="Component" :key="route.meta.id" />
       </keep-alive>
     </router-view>
   </div>

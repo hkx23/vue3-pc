@@ -53,6 +53,9 @@ dependencies:
   grid-layout-plus:
     specifier: ^1.0.3
     version: 1.0.3(vue@3.3.13)
+  jszip:
+    specifier: ^3.10.1
+    version: 3.10.1
   lodash:
     specifier: ^4.17.21
     version: 4.17.21

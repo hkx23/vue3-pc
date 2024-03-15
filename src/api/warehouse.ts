@@ -1434,9 +1434,9 @@ export interface StorageAgeQueryVO {
   threeToSixMonths?: string;
   onwToThreeMonths?: string;
   thirtyDays?: string;
-  /** 标签条码 */
-  labelNo?: string;
-  /** 标签数量 */
+  /** 条码号 */
+  barcodeNo?: string;
+  /** 数量 */
   balanceQty?: number;
   expiredDays?: string;
 }
@@ -3047,16 +3047,16 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   flpickQty?: number;
-  tlpickQty?: number;
   bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
+  tlpickQty?: number;
   /**
    * 待扫数量
    * @format double

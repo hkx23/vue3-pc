@@ -98,78 +98,77 @@
         />
       </div>
     </div>
-  </div>
-
-  <t-dialog v-model:visible="downloadDialogVisible" header="自定义导出" width="600px" :footer="false">
-    <t-table
-      v-model:selectedRowKeys="downloadTableSelectedRowKeys"
-      size="small"
-      row-key="attrName"
-      :columns="downloadTableColumn"
-      :data="downloadTableData"
-      drag-sort="row-handler"
-      @drag-sort="onDownloadTableDragSort"
-    >
-    </t-table>
-    <t-form style="margin-top: 16px" layout="inline">
-      <t-form-item required-mark label="文件名称" name="filename">
-        <t-space>
-          <t-input-adornment append=".xlsx">
-            <t-input v-model="downloadFilename" style="width: 220px"></t-input>
-          </t-input-adornment>
-        </t-space>
-      </t-form-item>
-      <t-form-item>
-        <t-space>
-          <t-button theme="primary" @click="onConfirmDownload">导出</t-button>
-        </t-space>
-      </t-form-item>
-    </t-form>
-    <t-card v-if="historyDownloadList.length > 0" title="导出历史" style="margin-top: 16px">
-      <template #actions>
-        <t-space>
-          <t-link theme="primary" @click="fetchHistoryDownloadList">刷新</t-link>
-          <t-link theme="primary" @click="onClickRemoveHistoryFile()">清空</t-link>
-        </t-space>
-      </template>
-      <t-space break-line>
-        <t-tag
-          v-for="item in historyDownloadList"
-          :key="item.id"
-          variant="outline"
-          closable
-          @close="onClickRemoveHistoryFile([item.id])"
-        >
-          <template #icon>
-            <t-icon
-              v-if="item.status === 'DOWNLOADED'"
-              title="下载成功"
-              name="check-circle-filled"
-              style="color: var(--td-success-color)"
-            />
-            <t-icon
-              v-else-if="item.status === 'UNDOWNLOAD'"
-              title="待下载"
-              name="time-filled"
-              style="color: var(--td-text-color-placeholder)"
-            />
-            <t-loading
-              v-else-if="item.status === 'DOWNLOADING'"
-              size="small"
-              title="下载中"
-              style="margin-right: 5px"
-            ></t-loading>
-          </template>
-          <div
-            :style="{ cursor: item.status === 'DOWNLOADED' ? 'pointer' : 'default' }"
-            @click="onClickDownloadHistoryFile(item)"
+    <t-dialog v-model:visible="downloadDialogVisible" header="自定义导出" width="600px" :footer="false">
+      <t-table
+        v-model:selectedRowKeys="downloadTableSelectedRowKeys"
+        size="small"
+        row-key="attrName"
+        :columns="downloadTableColumn"
+        :data="downloadTableData"
+        drag-sort="row-handler"
+        @drag-sort="onDownloadTableDragSort"
+      >
+      </t-table>
+      <t-form style="margin-top: 16px" layout="inline">
+        <t-form-item required-mark label="文件名称" name="filename">
+          <t-space>
+            <t-input-adornment append=".xlsx">
+              <t-input v-model="downloadFilename" style="width: 220px"></t-input>
+            </t-input-adornment>
+          </t-space>
+        </t-form-item>
+        <t-form-item>
+          <t-space>
+            <t-button theme="primary" @click="onConfirmDownload">导出</t-button>
+          </t-space>
+        </t-form-item>
+      </t-form>
+      <t-card v-if="historyDownloadList.length > 0" title="导出历史" style="margin-top: 16px">
+        <template #actions>
+          <t-space>
+            <t-link theme="primary" @click="fetchHistoryDownloadList">刷新</t-link>
+            <t-link theme="primary" @click="onClickRemoveHistoryFile()">清空</t-link>
+          </t-space>
+        </template>
+        <t-space break-line>
+          <t-tag
+            v-for="item in historyDownloadList"
+            :key="item.id"
+            variant="outline"
+            closable
+            @close="onClickRemoveHistoryFile([item.id])"
           >
-            {{ item.excelPath.split('/')[3] }}
-          </div>
-        </t-tag>
-      </t-space>
-    </t-card>
-  </t-dialog>
+            <template #icon>
+              <t-icon
+                v-if="item.status === 'DOWNLOADED'"
+                title="下载成功"
+                name="check-circle-filled"
+                style="color: var(--td-success-color)"
+              />
+              <t-icon
+                v-else-if="item.status === 'UNDOWNLOAD'"
+                title="待下载"
+                name="time-filled"
+                style="color: var(--td-text-color-placeholder)"
+              />
+              <t-loading
+                v-else-if="item.status === 'DOWNLOADING'"
+                size="small"
+                title="下载中"
+                style="margin-right: 5px"
+              ></t-loading>
+            </template>
+            <div
+              :style="{ cursor: item.status === 'DOWNLOADED' ? 'pointer' : 'default' }"
+              @click="onClickDownloadHistoryFile(item)"
+            >
+              {{ item.excelPath.split('/')[3] }}
+            </div>
+          </t-tag>
+        </t-space>
+      </t-card>
+    </t-dialog>
+  </div>
 </template>
 
 <script lang="tsx" setup name="CmpTable">

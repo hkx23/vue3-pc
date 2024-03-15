@@ -2465,8 +2465,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4087,13 +4087,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isExemptionInspectionChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
-  stateName?: string;
-  isState?: boolean;
-  isForceInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
   dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -4258,8 +4258,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -4338,15 +4338,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
   isState?: boolean;
-  isInProcessChecked?: boolean;
+  stateName?: string;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isRawName?: string;
+  isProductName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -4489,8 +4489,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4643,6 +4643,7 @@ export interface LabelVO {
 }
 
 export interface LabelSearch {
+  barcodeWipId?: string;
   /**
    * 页码
    * @format int32
@@ -5743,6 +5744,11 @@ export interface DeliveryCardSearch {
 
 /** 配送卡输出类 */
 export interface DeliveryCardVO {
+  /**
+   * 标签顺序号
+   * @format int32
+   */
+  printSeq?: number;
   moScheduleId?: string;
   /** 排产单编码 */
   scheCode?: string;
@@ -5800,6 +5806,7 @@ export interface DeliveryCardVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
+  orgName?: string;
 }
 
 /** 响应数据 */
@@ -6020,8 +6027,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -6533,6 +6540,53 @@ export interface ResultListBusinessTmplLib {
   data?: BusinessTmplLib[] | null;
 }
 
+/** 在制品条码日志表 */
+export interface BarcodeWipLog {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 原因 */
+  reason?: string;
+  /** 条码模板代码 */
+  tmplCode?: string;
+  /** 条码模板名称 */
+  tmplName?: string;
+  /** 条码模板类别 */
+  tmplCategory?: string;
+  /** 客户端机器名 */
+  hostname?: string;
+  /** 客户端IP */
+  ipaddress?: string;
+  /** 备注 */
+  memo?: string;
+  /** 操作类型 */
+  operateType?: string;
+  /** 状态 */
+  status?: string;
+}
+
 /** 在制品条码表 */
 export interface BarcodeWip {
   id?: string;
@@ -6594,6 +6648,11 @@ export interface BarcodeWip {
 }
 
 export interface BarcodeWipSearch {
+  /**
+   * 拆分数量
+   * @format int32
+   */
+  splitNum?: number;
   /**
    * 页码
    * @format int32
@@ -6696,6 +6755,7 @@ export interface BarcodeWipVO {
   printTmpl?: string;
   /** 车间名称 */
   workshopName?: string;
+  orgName?: string;
   workcenterId?: string;
   /** 工作中心名称 */
   workcenterName?: string;
@@ -8881,6 +8941,67 @@ export interface ResultPagingDataBarcodeSegmentDTO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeSegmentDTO;
+}
+
+/** APP底座显示实体 */
+export interface AppBaseVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** APP名称 */
+  appName?: string;
+  /** APP版本号 */
+  appVersion?: string;
+  /** APP类型 */
+  appType?: string;
+  /** APP地址 */
+  appPath?: string;
+  /** APP构建版本号 */
+  appBuild?: number;
+  /** 包名称 */
+  packageName?: string;
+  /** 备注 */
+  memo?: string;
+  creatorName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAppBaseVO = {
+  list?: AppBaseVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAppBaseVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAppBaseVO;
 }
 
 /** 显示行政组织层级实体 */
@@ -14190,6 +14311,22 @@ export const api = {
         body: data as any,
       }),
   },
+  barcodeWipLog: {
+    /**
+     * No description
+     *
+     * @tags 在制品条码日志表
+     * @name Save
+     * @summary 保存在制品条码日志
+     * @request POST:/barcodeWipLog/save
+     * @secure
+     */
+    save: (data: BarcodeWipLog) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeWipLog/save`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   barcodeWip: {
     /**
      * No description
@@ -14217,6 +14354,21 @@ export const api = {
      */
     updateBarcodeStatusAndOnhandId: (data: LabelVO[]) =>
       http.request<ResultObject['data']>(`/api/main/barcodeWip/updateBarcodeStatusAndOnhandId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品条码表
+     * @name SplitBarcode
+     * @summary 拆分条码
+     * @request POST:/barcodeWip/splitBarcode
+     * @secure
+     */
+    splitBarcode: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeWip/splitBarcode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -14916,6 +15068,59 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/attendanceMode/addAttendanceMode`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  appBase: {
+    /**
+     * No description
+     *
+     * @tags APP底座表
+     * @name Add
+     * @summary 新增底座
+     * @request POST:/appBase/add
+     * @secure
+     */
+    add: (
+      query: {
+        appName: string;
+        appVersion: string;
+        appType: string;
+        /** @format int32 */
+        appBuild: number;
+        packageName: string;
+        memo: string;
+      },
+      data: {
+        /** @format binary */
+        file: File;
+      },
+    ) =>
+      http.request<ResultObject['data']>(`/api/main/appBase/add`, {
+        method: 'POST',
+        params: query,
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags APP底座表
+     * @name GetList
+     * @summary 获取底座列表
+     * @request GET:/appBase/getList
+     * @secure
+     */
+    getList: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      appName: string;
+      appType: string;
+    }) =>
+      http.request<ResultPagingDataAppBaseVO['data']>(`/api/main/appBase/getList`, {
+        method: 'GET',
+        params: query,
       }),
   },
   workbenchIndex: {

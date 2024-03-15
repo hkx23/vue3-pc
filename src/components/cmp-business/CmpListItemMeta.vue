@@ -22,6 +22,7 @@
         <t-col class="suffix-container">
           <t-tag
             v-if="suffixTag"
+            max-width="80"
             :class="'suffix-tag' + (props.showCloseButton ? ' auto-hidden' : '')"
             theme="success"
             variant="light-outline"

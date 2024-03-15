@@ -107,7 +107,8 @@
         "prefer-rest-params": "error", // ts provides better types with rest args over arguments
         "prefer-spread": "error", // ts transpiles spread to apply, so no need for manual apply
         "valid-typeof": "off", // ts(2367)
-        "max-classes-per-file": "off"
+        "max-classes-per-file": "off",
+        "no-bitwise": "off" // 允许位运算
       }
     }
   ]

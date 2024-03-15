@@ -1,6 +1,6 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card>
+    <cmp-card class="full_card">
       <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
         <div class="table-title">组织层级列表</div>
         <t-space size="small" :align="'end'">
@@ -15,6 +15,7 @@
 
       <t-enhanced-table
         ref="tableRef"
+        style="flex: 1"
         row-key="id"
         :columns="columns"
         :data="data"
@@ -122,6 +123,13 @@ const onClickDelete = async () => {
 
   :deep(.t-card__body) {
     padding: 0;
+  }
+}
+
+.cmp-card-full {
+  :deep(.t-card__body) {
+    display: flex;
+    flex-direction: column;
   }
 }
 

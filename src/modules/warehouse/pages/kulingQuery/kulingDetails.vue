@@ -45,7 +45,7 @@ const { loading, setLoading } = useLoading();
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
   // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   // { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
-  { title: '条码号', colKey: 'labelNo', width: 200 },
+  { title: '条码号', colKey: 'barcodeNo', width: 200 },
   { title: '物料编码', width: 120, colKey: 'mitemCode' },
   { title: '物料描述', width: 120, colKey: 'mitemDesc' },
   { title: '仓库编码', width: 85, colKey: 'warehouseCode' },

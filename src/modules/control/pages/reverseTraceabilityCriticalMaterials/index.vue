@@ -11,7 +11,7 @@
       >
       </cmp-query>
     </cmp-card>
-    <cmp-card class="not-full-tab">
+    <cmp-card class="full-tab">
       <tabs ref="tabsRef" :on-input-data="onInputData" :reset-data="resetData" @tab-changed="handleTabChange"></tabs>
     </cmp-card>
   </cmp-container>

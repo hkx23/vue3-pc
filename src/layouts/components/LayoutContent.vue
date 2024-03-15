@@ -210,3 +210,49 @@ const handleDragend = (options: { currentIndex: number; targetIndex: number }) =
   ];
 };
 </script>
+<style lang="less" scoped>
+:deep(.@{starter-prefix}-layout-tabs-nav) {
+  .t-tabs__bar {
+    &.t-is-top {
+      display: none;
+    }
+  }
+
+  .t-tabs__nav-item {
+    cursor: default;
+    height: 30px;
+    line-height: 30px;
+    margin-top: 2px;
+
+    &:not(.t-is-disabled, .t-is-active) {
+      &:hover {
+        .t-tabs__nav-item-wrapper {
+          background-color: transparent;
+        }
+      }
+
+      .t-tabs__nav-item-text-wrapper:hover {
+        color: var(--td-brand-color);
+      }
+    }
+
+    &.t-is-active {
+      background-color: var(--td-bg-color-page);
+      color: var(--td-text-color-secondary);
+      border-radius: var(--td-radius-default) var(--td-radius-default) 0 0;
+    }
+
+    > .remove-btn {
+      margin-left: 0;
+      margin-right: var(--td-comp-margin-s);
+
+      &:hover {
+        color: var(--td-brand-color);
+        cursor: pointer;
+        background-color: var(--td-bg-color-page);
+        border-radius: var(--td-radius-default);
+      }
+    }
+  }
+}
+</style>
