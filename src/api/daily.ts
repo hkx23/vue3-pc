@@ -520,6 +520,8 @@ export interface IncidentDealSearch {
    * @format date-time
    */
   timeCreateEnd?: string;
+  /** 按日期汇总 */
+  isDateSummary?: boolean;
   /** 是否查询处理组 */
   isSearchSupportGroup?: boolean;
 }
@@ -575,6 +577,41 @@ export interface ResultIncidentDealVO {
   message?: string;
   /** 异常处理输出 */
   data?: IncidentDealVO;
+}
+
+/** 异常处理输出 */
+export type IncidentDealAndonDailyVO = {
+  date?: string;
+  incidentTypeName?: string;
+  incidentTypeNameArr?: string[];
+  reportingObstaclesNumArr?: number[];
+  closeBillNumArr?: number[];
+  /** @format int32 */
+  reportingObstaclesNum?: number;
+  /** @format int32 */
+  reportingObstaclesTotal?: number;
+  /** @format int32 */
+  closeBillNum?: number;
+  /** @format int32 */
+  closeBillTotal?: number;
+  closeBillRate?: number;
+  closeBillRateName?: string;
+  /** @format int32 */
+  processingTimeout?: number;
+  processingTimeoutName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListIncidentDealAndonDailyVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: IncidentDealAndonDailyVO[] | null;
 }
 
 export interface IncidentCfgSearch {
@@ -1619,6 +1656,21 @@ export const api = {
       http.request<ResultIncidentDealVO['data']>(`/api/daily/incidentDeal/getIncidentDealDtl`, {
         method: 'POST',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 安灯异常处理表
+     * @name GetAndonDailyList
+     * @summary 安灯日报表查询
+     * @request POST:/incidentDeal/getAndonDailyList
+     * @secure
+     */
+    getAndonDailyList: (data: IncidentDealSearch) =>
+      http.request<ResultListIncidentDealAndonDailyVO['data']>(`/api/daily/incidentDeal/getAndonDailyList`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
