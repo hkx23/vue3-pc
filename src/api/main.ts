@@ -2465,8 +2465,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4087,13 +4087,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isState?: boolean;
   stateName?: string;
+  isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isState?: boolean;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -4338,15 +4338,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
-  isInProcessName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isRawName?: string;
+  isProductName?: string;
   isBatchName?: string;
   isRawChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isState?: boolean;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -4489,8 +4489,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6027,8 +6027,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -7340,8 +7340,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -7734,8 +7734,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  relate?: boolean;
   default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -8298,14 +8298,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -8941,6 +8941,67 @@ export interface ResultPagingDataBarcodeSegmentDTO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeSegmentDTO;
+}
+
+/** APP底座显示实体 */
+export interface AppBaseVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** APP名称 */
+  appName?: string;
+  /** APP版本号 */
+  appVersion?: string;
+  /** APP类型 */
+  appType?: string;
+  /** APP地址 */
+  appPath?: string;
+  /** APP构建版本号 */
+  appBuild?: number;
+  /** 包名称 */
+  packageName?: string;
+  /** 备注 */
+  memo?: string;
+  creatorName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAppBaseVO = {
+  list?: AppBaseVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAppBaseVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAppBaseVO;
 }
 
 /** 显示行政组织层级实体 */
@@ -15007,6 +15068,59 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/attendanceMode/addAttendanceMode`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  appBase: {
+    /**
+     * No description
+     *
+     * @tags APP底座表
+     * @name Add
+     * @summary 新增底座
+     * @request POST:/appBase/add
+     * @secure
+     */
+    add: (
+      query: {
+        appName: string;
+        appVersion: string;
+        appType: string;
+        /** @format int32 */
+        appBuild: number;
+        packageName: string;
+        memo: string;
+      },
+      data: {
+        /** @format binary */
+        file: File;
+      },
+    ) =>
+      http.request<ResultObject['data']>(`/api/main/appBase/add`, {
+        method: 'POST',
+        params: query,
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags APP底座表
+     * @name GetList
+     * @summary 获取底座列表
+     * @request GET:/appBase/getList
+     * @secure
+     */
+    getList: (query: {
+      /** @format int32 */
+      pageNum: number;
+      /** @format int32 */
+      pageSize: number;
+      appName: string;
+      appType: string;
+    }) =>
+      http.request<ResultPagingDataAppBaseVO['data']>(`/api/main/appBase/getList`, {
+        method: 'GET',
+        params: query,
       }),
   },
   workbenchIndex: {

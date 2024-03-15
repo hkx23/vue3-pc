@@ -3042,21 +3042,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  bfpickQty?: number;
-  tlpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  flpickQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
+  tlpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -5170,8 +5170,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */

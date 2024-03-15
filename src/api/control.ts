@@ -2440,13 +2440,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   workshopId?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
-  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3629,17 +3629,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   workshopId?: string;
+  stateName?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
-  datetimeScheStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3750,16 +3750,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   workshopId?: string;
-  defectCodeStr?: string;
-  scanDatetimeStr?: string;
+  stateName?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
