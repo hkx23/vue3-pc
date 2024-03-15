@@ -1,0 +1,15 @@
+{
+  "appBase": {
+    "appName": "App名称",
+    "appType": "App类型",
+    "appVersionCode": "App版本号",
+    "appVersionName": "App版本",
+    "appList": "App列表",
+    "appFile": "App底座",
+    "package": "包标识",
+    "memo": "备注",
+    "parsing": "正在解析...",
+    "saving": "正在保存...",
+    "saveSuccess": "保存成功"
+  }
+}
