@@ -1,98 +1,84 @@
 <template>
-  <div class="detailed-box">
+  <cmp-container :full="true">
     <!-- from -->
-    <div style="font-size: 18px; margin-bottom: 10px">
+    <div style="font-size: 18px">
       <span v-if="!row?.moCode">{{ '工单信息( )' }}</span>
       <span v-if="row?.moCode"> {{ `工单信息(工单号：${row?.moCode ? row?.moCode : ''})` }}</span>
     </div>
     <t-card class="list-card-container" :bordered="true">
       <t-row>
         <t-col :span="4">
-          <t-tag shape="round" size="large">{{ row?.moCode }}</t-tag>
+          <t-tag shape="round" size="medium">{{ row?.moCode }}</t-tag>
         </t-col>
         <t-col :span="1">
           <t-space class="tag-block-light">
-            <t-tag shape="round" theme="primary" size="large">{{ row?.moClassName }}</t-tag>
+            <t-tag shape="round" theme="primary" size="medium">{{ row?.moClassName }}</t-tag>
           </t-space>
         </t-col>
         <t-col :span="1">
-          <t-tag shape="round" size="large">{{ row?.statusName }}</t-tag>
+          <t-tag shape="round" size="medium">{{ row?.statusName }}</t-tag>
         </t-col>
       </t-row>
     </t-card>
-    <t-card :bordered="false">
-      <div class="form-item-box">
-        <t-form-item label="生产车间">
-          {{ row?.workshopName }}
-        </t-form-item>
-        <t-form-item label="工作中心"> {{ row?.workCenterName }}</t-form-item>
-        <t-form-item label="产品编码"> {{ row?.mitemCode }}</t-form-item>
-      </div>
-      <div class="form-item-box">
-        <t-form-item label="产品名称"> {{ row?.mitemDesc }}</t-form-item>
-        <t-form-item label="计划数量">
-          {{ row?.planQty }}
-        </t-form-item>
-        <t-form-item label="完工数量"> {{ row?.completedQty }}</t-form-item>
-      </div>
-      <div class="form-item-box">
-        <t-form-item label="计划开始时间"> {{ row?.datetimePlanStart }}</t-form-item>
-        <t-form-item label="计划完成时间"> {{ row?.datetimePlanEnd }}</t-form-item>
-        <t-form-item label="入库仓库"> {{ row?.warehouseName }}</t-form-item>
-      </div>
-      <div class="form-item-box">
-        <t-form-item label="销售订单"> {{ row?.soNo }}</t-form-item>
-        <t-form-item label="工艺路线版本"> {{ row?.routingName }}</t-form-item>
-        <t-form-item label=""> </t-form-item>
-      </div>
-      <div class="form-item-box">
-        <t-form-item label="备注"> {{ row?.memo }}</t-form-item>
-      </div>
+    <t-card :bordered="true">
+      <t-descriptions
+        :column="4"
+        :label-style="{ width: '120px', textAlign: 'right' }"
+        :content-style="{ textAlign: 'left' }"
+      >
+        <t-descriptions-item label="生产车间">{{ row?.workshopName }}</t-descriptions-item>
+        <t-descriptions-item label="工作中心">{{ row?.workCenterName }}</t-descriptions-item>
+        <t-descriptions-item label="产品编码">{{ row?.mitemCode }}</t-descriptions-item>
+
+        <t-descriptions-item label="产品名称">{{ row?.mitemDesc }}</t-descriptions-item>
+        <t-descriptions-item label="计划数量">{{ row?.planQty }}</t-descriptions-item>
+        <t-descriptions-item label="完工数量">{{ row?.completedQty }}</t-descriptions-item>
+
+        <t-descriptions-item label="计划开始时间">{{ row?.datetimePlanStart }}</t-descriptions-item>
+        <t-descriptions-item label="计划完成时间">{{ row?.datetimePlanEnd }}</t-descriptions-item>
+        <t-descriptions-item label="入库仓库">{{ row?.warehouseName }}</t-descriptions-item>
+
+        <t-descriptions-item label="销售订单">{{ row?.soNo }}</t-descriptions-item>
+        <t-descriptions-item label="工艺路线版本">{{ row?.routingName }}</t-descriptions-item>
+
+        <t-descriptions-item label="备注">{{ row?.memo }}</t-descriptions-item>
+      </t-descriptions>
     </t-card>
-    <t-row justify="space-between">
-      <t-col>
-        <t-space>
-          <t-space direction="horizontal">
-            <t-tabs v-for="(item, index) in tabModuleList" :key="index" v-model="selectModule" @change="onChangeTab">
-              <t-tab-panel :value="item.moduleCode" :label="item.moduleName"> </t-tab-panel>
-            </t-tabs>
-          </t-space>
-        </t-space>
-      </t-col>
-    </t-row>
-    <!-- table表格 -->
-    <footer class="detailed-work-center">
-      <div v-show="selectModule == 'MOBOM'" class="table-work-header">
-        <cmp-table
-          ref="tableBomRef"
-          row-key="name"
-          :table-column="columnsBom"
-          :table-data="moBomData"
-          :loading="loadingBom"
-          :show-pagination="false"
-          @refresh="fetchTableBom"
-        >
-        </cmp-table>
-      </div>
-
-      <div v-show="selectModule == 'MOLOG'" class="table-work-header">
-        <cmp-table
-          ref="tableLogRef"
-          row-key="name"
-          :table-column="columnsLog"
-          :table-data="moLogData"
-          :loading="loadingLog"
-          :show-pagination="false"
-          @refresh="fetchTableLog"
-        >
-        </cmp-table>
-      </div>
-    </footer>
-
-    <!-- <div class="popup-mo-foot-btn">
-      <t-button theme="default" @click="onHandleCancellation">取消</t-button>
-    </div> -->
-  </div>
+    <t-tabs v-model="selectModule" @change="onChangeTab">
+      <t-tab-panel value="MOBOM" label="工单BOM" :destroy-on-hide="false">
+        <cmp-container :full="true" style="padding-bottom: 8px">
+          <cmp-table
+            ref="tableBomRef"
+            :show-toolbar="false"
+            row-key="name"
+            :fixed-height="true"
+            :table-column="columnsBom"
+            :table-data="moBomData"
+            :loading="loadingBom"
+            :show-pagination="false"
+            @refresh="fetchTableBom"
+          >
+          </cmp-table>
+        </cmp-container>
+      </t-tab-panel>
+      <t-tab-panel value="MOLOG" label="作业日志" :destroy-on-hide="false">
+        <cmp-container :full="true" style="padding-bottom: 8px">
+          <cmp-table
+            ref="tableLogRef"
+            :show-toolbar="false"
+            row-key="name"
+            :fixed-height="true"
+            :table-column="columnsLog"
+            :table-data="moLogData"
+            :loading="loadingLog"
+            :show-pagination="false"
+            @refresh="fetchTableLog"
+          >
+          </cmp-table>
+        </cmp-container>
+      </t-tab-panel>
+    </t-tabs>
+  </cmp-container>
 </template>
 
 <script setup lang="ts">
@@ -117,10 +103,10 @@ const { loading: loadingLog, setLoading: setLoadingLog } = useLoading();
 const Emit = defineEmits(['addedShow']);
 const currentrow = ref({}); // 当前行工单信息
 // 页签
-const tabModuleList = ref([
-  { moduleCode: 'MOBOM', moduleName: '工单BOM' },
-  { moduleCode: 'MOLOG', moduleName: '作业日志' },
-]);
+// const tabModuleList = ref([
+//   { moduleCode: 'MOBOM', moduleName: '工单BOM' },
+//   { moduleCode: 'MOLOG', moduleName: '作业日志' },
+// ]);
 const selectModule = ref('MOLOG');
 // 工单BOM信息
 const moBomData = ref([]);
@@ -273,8 +259,8 @@ defineExpose({
 
 <style lang="less" scoped>
 .t-card {
-  border: 1px solid var(--td-border-level-2-color) !important;
-  margin-bottom: 24px;
+  border: 1px solid #d5d8db;
+  background: #f0f0f247;
 }
 
 .detailed-box {

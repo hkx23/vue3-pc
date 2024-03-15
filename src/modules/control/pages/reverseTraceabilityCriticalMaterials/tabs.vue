@@ -4,62 +4,74 @@
     <t-tab-panel :value="0" label="产品基础信息" :destroy-on-hide="false">
       <template #panel>
         <cmp-container :full="true">
-          <t-card :bordered="false">
-            <template #title>
-              <span v-if="!productBasicInformationForm?.moCode">工单信息( )</span>
-              <span
-                v-if="productBasicInformationForm?.moCode"
-                v-html="
-                  `工单信息(工单号：${productBasicInformationForm?.moCode ? productBasicInformationForm?.moCode : ''} )`
-                "
-              ></span>
-            </template>
-            <div class="form-item-box">
-              <t-form-item label="工序">{{ productBasicInformationForm?.curProcessName }}</t-form-item>
-              <t-form-item label="工站"> {{ productBasicInformationForm?.curWorkstationName }}</t-form-item>
-              <t-form-item label="工作中心"> {{ productBasicInformationForm?.curWorkcenterName }}</t-form-item>
-              <t-form-item label="车间"> {{ productBasicInformationForm?.curWorkshopName }}</t-form-item>
-            </div>
-            <div class="form-item-box">
-              <t-form-item label="产品编码">{{ productBasicInformationForm?.serialNumber }}</t-form-item>
-              <t-form-item label="排产单号"> {{ productBasicInformationForm?.moScheCode }}</t-form-item>
-              <t-form-item label="创建时间"> {{ productBasicInformationForm?.serialNumberTimeCreate }}</t-form-item>
-              <t-form-item label="最后更新时间"> {{ productBasicInformationForm?.lastTimeModified }}</t-form-item>
-            </div>
+          <t-card :bordered="true">
+            <t-descriptions
+              :column="4"
+              :label-style="{ width: '120px', textAlign: 'right' }"
+              :content-style="{ textAlign: 'left' }"
+            >
+              <template #title>
+                <span v-if="!productBasicInformationForm?.moCode">工单信息( )</span>
+                <span
+                  v-if="productBasicInformationForm?.moCode"
+                  v-html="
+                    `工单信息(工单号：${productBasicInformationForm?.moCode ? productBasicInformationForm?.moCode : ''} )`
+                  "
+                ></span>
+              </template>
+              <t-descriptions-item label="工序">{{ productBasicInformationForm?.curProcessName }}</t-descriptions-item>
+              <t-descriptions-item label="工站">{{
+                productBasicInformationForm?.curWorkstationName
+              }}</t-descriptions-item>
+              <t-descriptions-item label="工作中心">{{
+                productBasicInformationForm?.curWorkcenterName
+              }}</t-descriptions-item>
+              <t-descriptions-item label="车间">{{ productBasicInformationForm?.curWorkshopName }}</t-descriptions-item>
+
+              <t-descriptions-item label="产品编码">{{
+                productBasicInformationForm?.serialNumber
+              }}</t-descriptions-item>
+              <t-descriptions-item label="排产单号">{{ productBasicInformationForm?.moScheCode }}</t-descriptions-item>
+              <t-descriptions-item label="创建时间">{{
+                productBasicInformationForm?.serialNumberTimeCreate
+              }}</t-descriptions-item>
+              <t-descriptions-item label="最后更新时间">{{
+                productBasicInformationForm?.lastTimeModified
+              }}</t-descriptions-item>
+            </t-descriptions>
           </t-card>
-          <footer class="detailed-work-center">
-            <div class="table-work-header">
-              <cmp-table
-                ref="tableRefCardAD"
-                v-model:pagination="pageUI"
-                empty="没有符合条件的数据"
-                row-key="deliveryCardId"
-                :table-column="productBasicInformation"
-                :table-data="productBasicInformationForm?.wipLogList?.list"
-                :total="productBasicInformationForm?.wipLogList?.total"
-              >
-                <template #dcResult="{ row }">
-                  {{ row.dcResult ? '是' : '否' }}
-                </template>
-                <template #isCompleted="{ row }">
-                  {{ row.isCompleted ? '是' : '否' }}
-                </template>
-                <template #isHold="{ row }">
-                  {{ row.isHold ? '是' : '否' }}
-                </template>
-                <template #title>
-                  <span v-if="!productBasicInformationForm?.serialNumber">{{ '生产历史信息( )' }}</span>
-                  <span v-if="productBasicInformationForm?.serialNumber">
-                    {{
-                      `生产历史信息( 产品：${
-                        productBasicInformationForm?.serialNumber ? productBasicInformationForm?.serialNumber : ''
-                      } )`
-                    }}</span
-                  >
-                </template>
-              </cmp-table>
-            </div>
-          </footer>
+          <cmp-card :ghost="true">
+            <cmp-table
+              ref="tableRefCardAD"
+              v-model:pagination="pageUI"
+              :fixed-height="true"
+              empty="没有符合条件的数据"
+              row-key="deliveryCardId"
+              :table-column="productBasicInformation"
+              :table-data="productBasicInformationForm?.wipLogList?.list"
+              :total="productBasicInformationForm?.wipLogList?.total"
+            >
+              <template #dcResult="{ row }">
+                {{ row.dcResult ? '是' : '否' }}
+              </template>
+              <template #isCompleted="{ row }">
+                {{ row.isCompleted ? '是' : '否' }}
+              </template>
+              <template #isHold="{ row }">
+                {{ row.isHold ? '是' : '否' }}
+              </template>
+              <template #title>
+                <span v-if="!productBasicInformationForm?.serialNumber">{{ '生产历史信息( )' }}</span>
+                <span v-if="productBasicInformationForm?.serialNumber">
+                  {{
+                    `生产历史信息( 产品：${
+                      productBasicInformationForm?.serialNumber ? productBasicInformationForm?.serialNumber : ''
+                    } )`
+                  }}</span
+                >
+              </template>
+            </cmp-table>
+          </cmp-card>
         </cmp-container>
       </template>
     </t-tab-panel>
@@ -74,43 +86,43 @@
     <!-- # 3️⃣ 物料信息 -->
     <t-tab-panel :value="2" label="物料信息" :destroy-on-hide="false">
       <template #panel>
-        <cmp-container :full="true">
-          <footer class="detailed-work-center">
-            <div class="table-work-header">
-              <cmp-table
-                ref="tableRefThree"
-                v-model:pagination="pageUI"
-                empty="没有符合条件的数据"
-                :table-column="materialkey"
-                row-key="moCode"
-                select-on-row-click
-                :table-data="WipKeypartReportVOForm"
-                :total="WorkOrderTotal"
-                @select-change="onMaterialWorkOrderChange"
-                @refresh="onMaterialWorkOrderRefresh"
-              >
-                <template #title>
-                  {{ '产品信息-关键件信息' }}
-                </template>
-              </cmp-table>
-            </div>
-            <div class="table-work-header">
-              <cmp-table
-                ref="tableRefThreeDown"
-                v-model:pagination="pageUITwo"
-                empty="没有符合条件的数据"
-                :table-column="materialWorkOrder"
-                row-key="moCode"
-                :table-data="workOrderFeedData"
-                :total="workOrderFeedTotal"
-                @refresh="onWorkOrderFeedRefresh"
-              >
-                <template #title>
-                  {{ '产品信息-工单投料信息' }}
-                </template>
-              </cmp-table>
-            </div>
-          </footer>
+        <cmp-container :full="true" :full-sub-index="[0, 1]">
+          <cmp-card :ghost="true">
+            <cmp-table
+              ref="tableRefThree"
+              v-model:pagination="pageUI"
+              empty="没有符合条件的数据"
+              :table-column="materialkey"
+              row-key="moCode"
+              :fixed-height="true"
+              select-on-row-click
+              :table-data="WipKeypartReportVOForm"
+              :total="WorkOrderTotal"
+              @select-change="onMaterialWorkOrderChange"
+              @refresh="onMaterialWorkOrderRefresh"
+            >
+              <template #title>
+                {{ '产品信息-关键件信息' }}
+              </template>
+            </cmp-table>
+          </cmp-card>
+          <cmp-card :ghost="true">
+            <cmp-table
+              ref="tableRefThreeDown"
+              v-model:pagination="pageUITwo"
+              empty="没有符合条件的数据"
+              :fixed-height="true"
+              :table-column="materialWorkOrder"
+              row-key="moCode"
+              :table-data="workOrderFeedData"
+              :total="workOrderFeedTotal"
+              @refresh="onWorkOrderFeedRefresh"
+            >
+              <template #title>
+                {{ '产品信息-工单投料信息' }}
+              </template>
+            </cmp-table>
+          </cmp-card>
         </cmp-container>
       </template>
     </t-tab-panel>
@@ -173,74 +185,73 @@
     <t-tab-panel :value="5" label="工艺信息" :destroy-on-hide="false">
       <template #panel>
         <cmp-container :full="true">
-          <cmp-card :full="false">
-            <t-form>
-              <t-row>
-                <t-col :span="3"
-                  ><t-form-item label="工艺路线名称">{{ 'FMVP' }}</t-form-item></t-col
-                >
-                <t-col :span="3"><t-form-item label="工艺路线版本"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="工艺路线类别"> </t-form-item></t-col>
-                <t-col :span="3"><t-form-item label="启用日期"> </t-form-item></t-col>
-              </t-row>
-            </t-form>
-          </cmp-card>
-          <footer class="detailed-work-center">
-            <div class="table-work-header">
-              <cmp-table
-                ref="tableRefCard"
-                v-model:pagination="pageUI"
-                row-key="deliveryCardId"
-                :table-data="jiashuju"
-                :table-column="processDocument"
-                :total="2"
-              >
-                <template #title>
-                  {{ '工艺文件信息' }}
-                </template>
-              </cmp-table>
-            </div>
-          </footer>
+          <t-card>
+            <t-descriptions
+              title="工艺路线信息"
+              :column="4"
+              :label-style="{ width: '120px', textAlign: 'right' }"
+              :content-style="{ textAlign: 'left' }"
+            >
+              <t-descriptions-item label="工艺路线名称">FMVP</t-descriptions-item>
+              <t-descriptions-item label="工艺路线版本"></t-descriptions-item>
+              <t-descriptions-item label="工艺路线类别"></t-descriptions-item>
+              <t-descriptions-item label="启用日期"></t-descriptions-item>
+            </t-descriptions>
+          </t-card>
+
+          <cmp-table
+            ref="tableRefCard"
+            v-model:pagination="pageUI"
+            :fixed-height="true"
+            row-key="deliveryCardId"
+            :table-data="jiashuju"
+            :table-column="processDocument"
+            :total="2"
+          >
+            <template #title>
+              {{ '工艺文件信息' }}
+            </template>
+          </cmp-table>
         </cmp-container>
       </template>
     </t-tab-panel>
     <!-- # 7️⃣ 不良维修信息 -->
     <t-tab-panel :value="6" label="不良维修信息" :destroy-on-hide="false">
       <template #panel>
-        <cmp-container :full="true">
-          <footer class="detailed-work-center">
-            <div class="table-work-header">
-              <cmp-table
-                ref="tableRefSeven"
-                v-model:pagination="pageUI"
-                row-key="id"
-                select-on-row-click
-                :table-data="badMaintenanceData.list"
-                :table-column="productDefect"
-                :total="badMaintenanceTotal"
-                @select-change="onGenerateChange"
-                @refresh="onBadMaintenanceRefresh"
-              >
-                <template #title>
-                  {{ '产品不良信息' }}
-                </template>
-              </cmp-table>
-            </div>
-            <div class="table-work-header">
-              <cmp-table
-                ref="tableRefCard"
-                v-model:pagination="pageUI"
-                row-key="id"
-                :table-data="badMaintenanceDataTwo.list"
-                :table-column="maintenanceDetail"
-                :show-pagination="false"
-              >
-                <template #title>
-                  {{ '维修明细' }}
-                </template>
-              </cmp-table>
-            </div>
-          </footer>
+        <cmp-container :full="true" :full-sub-index="[0, 1]">
+          <cmp-card :ghost="true">
+            <cmp-table
+              ref="tableRefSeven"
+              v-model:pagination="pageUI"
+              row-key="id"
+              :fixed-height="true"
+              select-on-row-click
+              :table-data="badMaintenanceData.list"
+              :table-column="productDefect"
+              :total="badMaintenanceTotal"
+              @select-change="onGenerateChange"
+              @refresh="onBadMaintenanceRefresh"
+            >
+              <template #title>
+                {{ '产品不良信息' }}
+              </template>
+            </cmp-table>
+          </cmp-card>
+          <cmp-card :ghost="true">
+            <cmp-table
+              ref="tableRefCard"
+              v-model:pagination="pageUI"
+              :fixed-height="true"
+              row-key="id"
+              :table-data="badMaintenanceDataTwo.list"
+              :table-column="maintenanceDetail"
+              :show-pagination="false"
+            >
+              <template #title>
+                {{ '维修明细' }}
+              </template>
+            </cmp-table>
+          </cmp-card>
         </cmp-container>
       </template>
     </t-tab-panel>
@@ -248,24 +259,21 @@
     <t-tab-panel :value="7" label="出入库信息" :destroy-on-hide="false">
       <template #panel>
         <cmp-container :full="true">
-          <footer class="detailed-work-center">
-            <div class="table-work-header">
-              <cmp-table
-                ref="tableRefba"
-                v-model:pagination="pageUI"
-                row-key="id"
-                select-on-row-click
-                :table-data="inventoryInOutData.list"
-                :table-column="inventoryInOut"
-                :total="inventoryInOutTotal"
-                @refresh="onInventoryInOut"
-              >
-                <template #title>
-                  {{ '出入库信息' }}
-                </template>
-              </cmp-table>
-            </div>
-          </footer>
+          <cmp-table
+            ref="tableRefba"
+            v-model:pagination="pageUI"
+            row-key="id"
+            :fixed-height="true"
+            select-on-row-click
+            :table-data="inventoryInOutData.list"
+            :table-column="inventoryInOut"
+            :total="inventoryInOutTotal"
+            @refresh="onInventoryInOut"
+          >
+            <template #title>
+              {{ '出入库信息' }}
+            </template>
+          </cmp-table>
         </cmp-container>
       </template>
     </t-tab-panel>
@@ -1198,9 +1206,13 @@ const onInventoryInOut = async () => {
 </script>
 
 <style lang="less" scoped>
+// .t-card {
+//   border: 1px solid var(--td-border-level-2-color) !important;
+//   margin-bottom: 24px;
+// }
 .t-card {
-  border: 1px solid var(--td-border-level-2-color) !important;
-  margin-bottom: 24px;
+  border: 1px solid #d5d8db;
+  background: #f0f0f247;
 }
 
 .detailed-box {
