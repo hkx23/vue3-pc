@@ -223,9 +223,8 @@ const addApp = () => {
       getList();
       loading.hide();
     })
-    .catch((err) => {
+    .catch(() => {
       loading.hide();
-      MessagePlugin.error(err);
     });
 };
 onMounted(() => {
