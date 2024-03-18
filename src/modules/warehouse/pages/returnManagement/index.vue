@@ -5,6 +5,7 @@
         <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
         <cmp-table
           ref="tableRef"
+          v-model:pagination="pageUI"
           row-key="billNo"
           :table-column="tableReturnManagementColumns"
           :table-data="tableReturnManagementData"

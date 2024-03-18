@@ -7,6 +7,7 @@
         <!-- ################# 处理组表格数据 ###################### -->
         <cmp-table
           ref="tableRef"
+          v-model:pagination="pageUI"
           row-key="id"
           :table-column="tableMainColumns"
           :table-data="tableMainData"
