@@ -2487,6 +2487,8 @@ export interface ReturnManagementSearch {
    * @format date-time
    */
   endTime?: string;
+  /** 创建时间 */
+  timeCreate?: string[];
 }
 
 /** 响应数据 */
@@ -2507,6 +2509,26 @@ export interface ResultPagingDataTransferHeadVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataTransferHeadVO;
+}
+
+/** 响应数据 */
+export type PagingDataTransferDtlVO = {
+  list?: TransferDtlVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataTransferDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataTransferDtlVO;
 }
 
 /** 通用响应类 */
@@ -3043,25 +3065,25 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   tlpickQty?: number;
-  /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -3398,15 +3420,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -5303,15 +5325,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -7299,6 +7321,24 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
+     * @name GetReturnManagementDtlList
+     * @summary 查询退货单明细
+     * @request POST:/returnManagement/getReturnManagementDtlList
+     * @secure
+     */
+    getReturnManagementDtlList: (data: ReturnManagementSearch) =>
+      http.request<ResultPagingDataTransferDtlVO['data']>(
+        `/api/warehouse/returnManagement/getReturnManagementDtlList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
 
     /**
      * No description
