@@ -101,9 +101,9 @@ const getPieData = async () => {
   try {
     optionChart.value = {
       legend: {
-        show: false, // 将图例隐藏
+        // show: false, // 将图例隐藏
         orient: 'horizontal',
-        bottom: 10,
+        bottom: 40,
       },
       // tooltip: {
       //   trigger: 'item',
@@ -130,9 +130,9 @@ const getPieData = async () => {
     };
     optionCloseChart.value = {
       legend: {
-        show: false, // 将图例隐藏
+        // show: false, // 将图例隐藏
         orient: 'horizontal',
-        bottom: 10,
+        bottom: 40,
       },
       // tooltip: {
       //   trigger: 'item',
