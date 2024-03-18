@@ -1,19 +1,20 @@
 <!-- 库龄查询-条码明细详细维护 -->
 <template>
-  <t-dialog width="80%" :footer="false" :close-on-overlay-click="true">
+  <t-dialog width="90%" :footer="false" :close-on-overlay-click="true" top="56px">
     <template #header>
       <t-space align="center" style="width: 100%">
         <span>{{ props.formTitle }}</span>
       </t-space>
     </template>
-    <cmp-container :full="true">
-      <cmp-card>
+    <cmp-container :full="true" style="height: calc(90vh - 56px - 57px)">
+      <cmp-card :ghost="true">
         <!-- <template #title> 库龄查询-条码明细 </template> -->
         <!-- row-key="props.sunData.onhandId" todo -->
         <cmp-table
-          row-key="labelNo"
+          row-key="barcodeNo"
           :table-column="tableWarehouseColumns"
           :show-pagination="false"
+          :fixed-height="true"
           :loading="loading"
           empty="没有符合条件的数据"
           :show-toolbar="false"
