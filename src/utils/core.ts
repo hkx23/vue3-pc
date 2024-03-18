@@ -16,7 +16,7 @@ if (typeof window !== 'undefined' && window.top !== window) {
   window.top.fw?.ipc.addTarget(name, window);
 }
 
-export const useCore = () => {
+(() => {
   // portal 页面
   if (window.top === window) {
     // 添加路由事件
@@ -43,13 +43,13 @@ export const useCore = () => {
       locale.value = lang;
     });
   }
-};
+})();
 
 /**
  * 打开新页面
  * @param newRoute
  */
-export const openPage = (newRoute: TRouterInfo) => {
+export const appendToTab = (newRoute: TRouterInfo) => {
   fw.ipc.send('appendTabRouterList', newRoute);
 };
 
