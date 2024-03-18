@@ -31,6 +31,12 @@
                 {{ t('returnManagement.cancel') }}
               </t-button>
             </t-popconfirm>
+            <cmp-print-button
+              template-code="SUPPLIER_RETURN"
+              :disabled="selectRowKeys?.length == 0"
+              :data="printData"
+              @before-print="onPrintClick"
+            />
           </template>
         </cmp-table>
       </cmp-container>
@@ -65,6 +71,7 @@ import { computed, onMounted, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiWarehouse, TransferHeadVO } from '@/api/warehouse';
+import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -287,6 +294,52 @@ const getBillStatus = () => {
   });
 };
 
+// 打印数据
+const printData = ref([]);
+// 打印, 目前只支持单笔打印
+const onPrintClick = async () => {
+  let isSuccess = true;
+  printData.value = [];
+  const promiseAll = [];
+  setLoading(true);
+  try {
+    selectRowKeys.value.forEach((element) => {
+      const billInfo = tableReturnManagementData.value.find((item) => item.billNo === element);
+      if (billInfo) {
+        const promiseQuery = getPrintBillInfo(billInfo.billNo).then((billInfoData: any) => {
+          if (billInfoData) {
+            const billDtls = billInfoData.transferDtlList;
+            printData.value.push({
+              variable: billInfoData,
+              datasource: { BillInfoList: billInfoData, BillDetailInfoList: billDtls },
+            });
+          }
+        });
+        promiseAll.push(promiseQuery);
+      }
+    });
+    await Promise.all(promiseAll);
+  } catch (e) {
+    console.log(e);
+    isSuccess = false;
+  } finally {
+    setLoading(false);
+  }
+  return isSuccess;
+};
+// 打印方法
+const getPrintBillInfo = (billNo) => {
+  return new Promise((resolve, reject) => {
+    const billInfoData = apiWarehouse.returnManagement.getPrintBillInfo({
+      returnBillNo: billNo,
+    }) as any;
+    if (billInfoData) {
+      resolve(billInfoData);
+    } else {
+      reject();
+    }
+  });
+};
 onMounted(() => {
   getBillStatus();
   fetchTable();

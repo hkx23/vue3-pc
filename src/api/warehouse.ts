@@ -1117,16 +1117,26 @@ export interface TransferDtlVO {
   memo?: string;
   /** 来源单据行号 */
   sourceBillLineNo?: string;
-  /** 交易单身标签表 */
-  transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  toWarehouseCode?: string;
+  toWarehouseName?: string;
+  districtCode?: string;
+  districtName?: string;
+  toDistrictCode?: string;
+  toDistrictName?: string;
+  locationCode?: string;
   locationName?: string;
+  toLocationCode?: string;
   toLocationName?: string;
   uomName?: string;
   /** @format int32 */
   isBatchNo?: number;
+  /** 交易单身标签表 */
+  transferDtlBarcodeList?: TransferDtlBarcodeVO[];
 }
 
 /** 交易事务头表 */
@@ -3065,11 +3075,6 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
@@ -3082,8 +3087,13 @@ export interface MoIssuanceDtlVO {
   /** 已发料量 */
   alreadyPickQty?: number;
   tlpickQty?: number;
-  bfpickQty?: number;
   flpickQty?: number;
+  bfpickQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 通用响应类 */
@@ -3420,15 +3430,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -5192,8 +5202,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -5325,15 +5335,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 通用响应类 */
@@ -7372,6 +7382,21 @@ export const api = {
           params: query,
         },
       ),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
+     * @name GetPrintBillInfo
+     * @summary 查询退货单打印数据
+     * @request POST:/returnManagement/getPrintBillInfo
+     * @secure
+     */
+    getPrintBillInfo: (data: ReturnManagementSearch) =>
+      http.request<ResultTransferHeadVO['data']>(`/api/warehouse/returnManagement/getPrintBillInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
 
     /**
      * No description
