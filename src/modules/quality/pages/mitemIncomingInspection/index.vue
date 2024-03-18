@@ -173,7 +173,6 @@ const optsTab1 = computed(() => {
         options: inspectGroupOption.value,
         lazyLoad: true,
       },
-      row: 1,
     },
     billNo: {
       label: t('mitemIncomingInspection.接收单号'), // 来料接收单号
@@ -185,7 +184,6 @@ const optsTab1 = computed(() => {
         showTitle: false,
         customConditions: formData.queryData.conditions,
       },
-      row: 1,
     },
     dateRange: {
       label: t('mitemIncomingInspection.接收日期'), // 来料接收单接收时间
@@ -195,7 +193,6 @@ const optsTab1 = computed(() => {
       bind: {
         format: 'YYYY-MM-DD',
       },
-      row: 1,
     },
     mitemCategoryId: {
       label: t('mitemIncomingInspection.物料类别'),
@@ -206,7 +203,6 @@ const optsTab1 = computed(() => {
         type: 'mitemCategory',
         showTitle: false,
       },
-      row: 2,
     },
     mitemId: {
       label: t('mitemIncomingInspection.物料'),
@@ -217,14 +213,12 @@ const optsTab1 = computed(() => {
         type: 'mitem',
         showTitle: false,
       },
-      row: 2,
     },
     iqcBillNo: {
       label: t('mitemIncomingInspection.检验单号'),
       comp: 't-input',
       event: 'input',
       defaultVal: '',
-      row: 2,
     },
   };
 });
@@ -241,7 +235,6 @@ const optsTab2 = computed(() => {
         type: 'person',
         showTitle: false,
       },
-      row: 1,
     },
     inspectGroupId: {
       label: t('mitemIncomingInspection.检验组'),
@@ -252,7 +245,6 @@ const optsTab2 = computed(() => {
         options: inspectGroupOption.value,
         lazyLoad: true,
       },
-      row: 1,
     },
     dateRange: {
       label: t('mitemIncomingInspection.接收日期'),
@@ -263,7 +255,6 @@ const optsTab2 = computed(() => {
         format: 'YYYY-MM-DD',
         disabled: true,
       },
-      row: 1,
     },
     dateRangeInspectTion: {
       label: t('mitemIncomingInspection.检验日期'),
@@ -273,7 +264,6 @@ const optsTab2 = computed(() => {
       bind: {
         format: 'YYYY-MM-DD',
       },
-      row: 2,
     },
     inspectResult: {
       label: t('mitemIncomingInspection.检验结果'),
@@ -282,7 +272,6 @@ const optsTab2 = computed(() => {
       bind: {
         options: inspectResultOption.value,
       },
-      row: 2,
     },
     inspectStatus: {
       label: t('mitemIncomingInspection.处理状态'),
@@ -291,7 +280,6 @@ const optsTab2 = computed(() => {
       bind: {
         options: inspectStatusOption.value,
       },
-      row: 2,
     },
     handleMethod: {
       label: t('mitemIncomingInspection.处理方式'),
@@ -300,7 +288,6 @@ const optsTab2 = computed(() => {
       bind: {
         options: iqcHandleMethodOption.value,
       },
-      row: 3,
     },
     iqcBillNo: {
       label: t('mitemIncomingInspection.检验单号'), // 来料接收单号
@@ -311,7 +298,6 @@ const optsTab2 = computed(() => {
         type: 'IqcBillInfo',
         showTitle: false,
       },
-      row: 3,
     },
     billNo: {
       label: t('mitemIncomingInspection.接收单号'), // 来料接收单号
@@ -323,7 +309,6 @@ const optsTab2 = computed(() => {
         showTitle: false,
         customConditions: formData.queryData.conditions,
       },
-      row: 3,
     },
     supplierId: {
       label: t('mitemIncomingInspection.供应商'),
@@ -334,7 +319,6 @@ const optsTab2 = computed(() => {
         type: 'supplier',
         showTitle: false,
       },
-      row: 3,
     },
     mitemCategoryId: {
       label: t('mitemIncomingInspection.物料类别'),
@@ -345,7 +329,6 @@ const optsTab2 = computed(() => {
         type: 'mitemCategory',
         showTitle: false,
       },
-      row: 4,
     },
     mitemId: {
       label: t('mitemIncomingInspection.物料'),
@@ -356,14 +339,12 @@ const optsTab2 = computed(() => {
         type: 'mitem',
         showTitle: false,
       },
-      row: 4,
     },
     iqcInspectStdCode: {
       label: t('mitemIncomingInspection.检验标准'),
       comp: 't-input',
       event: 'input',
       defaultVal: '',
-      row: 4,
     },
   };
 });
