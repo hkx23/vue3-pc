@@ -21,7 +21,7 @@
                   :total="moTabTotal"
                   :selected-row-keys="moscheRowKeys"
                   :fixed-height="true"
-                  style="height: 300px"
+                  max-height="300"
                   @select-change="onSelectionChange"
                   @row-click="onRowClick"
                   @refresh="onRefresh"
@@ -97,7 +97,7 @@
                     </t-row>
                   </t-tab-panel>
                 </t-tabs>
-                <cmp-card header="条码列表" header-bordered class="padding-top-noline-16 no-h-padding-card">
+                <cmp-card header="" header-bordered class="padding-top-noline-16 no-h-padding-card">
                   <cmp-table
                     v-model:pagination="pageUIBracode"
                     row-key="barcodePkgId"
@@ -109,32 +109,37 @@
                     :table-data="moBelowList.list"
                     :total="barcodeTotal"
                     :fixed-height="true"
-                    style="height: 300px"
+                    max-height="300"
                     @select-change="onPrintChange"
                     @refresh="onRefreshBelow"
                   >
-                    <template #title>
-                      <t-radio v-model="queryBelowCondition.isCreated" allow-uncheck @change="onRefreshBelow"
-                        >仅显示已生成</t-radio
-                      >
-                    </template>
+                    <template #title> 条码列表 </template>
                     <template #button>
-                      <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
-                        <t-option
-                          v-for="item in onPrintTemplateList.list"
-                          :key="item.id"
-                          :label="item.tmplName"
-                          :value="item.id"
-                        />
-                      </t-select>
-                      <cmp-print-button
-                        :template-id="printMode.printTempId"
-                        :disabled="printButtonOp"
-                        :data="printData"
-                        :show-icon="false"
-                        @before-print="onPrint"
-                        >打印</cmp-print-button
-                      >
+                      <t-space :size="8">
+                        <t-radio
+                          v-model="queryBelowCondition.isCreated"
+                          style="line-height: 32px"
+                          allow-uncheck
+                          @change="onRefreshBelow"
+                          >仅显示已生成</t-radio
+                        >
+                        <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
+                          <t-option
+                            v-for="item in onPrintTemplateList.list"
+                            :key="item.id"
+                            :label="item.tmplName"
+                            :value="item.id"
+                          />
+                        </t-select>
+                        <cmp-print-button
+                          :template-id="printMode.printTempId"
+                          :disabled="printButtonOp"
+                          :data="printData"
+                          :show-icon="false"
+                          @before-print="onPrint"
+                          >打印</cmp-print-button
+                        >
+                      </t-space>
                     </template>
                   </cmp-table>
                 </cmp-card>
@@ -144,44 +149,43 @@
         </t-tab-panel>
         <t-tab-panel :value="1" label="包装标签管理" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :gutter="[0, 0]">
+            <cmp-container :full="true" :gutter="[0, 0]">
               <cmp-card :ghost="true" class="padding-bottom-line-16">
                 <!-- 查询组件  -->
                 <cmp-query :opts="pkgBarcodeManageOp" label-width="100" @submit="managePageSearchClick" />
               </cmp-card>
-              <cmp-card :ghost="true" class="padding-top-noline-16">
-                <cmp-table
-                  v-model:pagination="pageUIMannage"
-                  row-key="barcodePkgId"
-                  :selected-row-keys="selectedManageRowKeys"
-                  :loading="loading"
-                  :table-column="pkgBarcodeManageColumns"
-                  :table-data="pkgManageDataList.list"
-                  :total="pkgManageTabTotal"
-                  select-on-row-click
-                  :fixed-height="true"
-                  style="height: 300px"
-                  @select-change="onProductRightFetchData"
-                  @refresh="onRefresh"
-                >
-                  <template #button>
-                    <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
-                      <t-option
-                        v-for="item in onPrintTemplateList.list"
-                        :key="item.id"
-                        :label="item.tmplName"
-                        :value="item.id"
-                      />
-                    </t-select>
-                    <t-button theme="primary" :disabled="isEnable" @click="onReprint"> 补打 </t-button>
-                    <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 作废 </t-button>
-                    <t-button theme="default"> 导出 </t-button>
-                  </template>
-                  <template #operations="{ row }">
-                    <t-link theme="primary" @click.stop="openLog(row)"> 日志 </t-link>
-                  </template>
-                </cmp-table>
-              </cmp-card>
+
+              <cmp-table
+                v-model:pagination="pageUIMannage"
+                class="padding-top-noline-16"
+                row-key="barcodePkgId"
+                :selected-row-keys="selectedManageRowKeys"
+                :loading="loading"
+                :table-column="pkgBarcodeManageColumns"
+                :table-data="pkgManageDataList.list"
+                :total="pkgManageTabTotal"
+                select-on-row-click
+                :fixed-height="true"
+                @select-change="onProductRightFetchData"
+                @refresh="onRefresh"
+              >
+                <template #button>
+                  <t-select v-model="printMode.printTempId" style="width: 240px" label="打印模板">
+                    <t-option
+                      v-for="item in onPrintTemplateList.list"
+                      :key="item.id"
+                      :label="item.tmplName"
+                      :value="item.id"
+                    />
+                  </t-select>
+                  <t-button theme="primary" :disabled="isEnable" @click="onReprint"> 补打 </t-button>
+                  <t-button theme="default" :disabled="isEnable" @click="onCancellation"> 作废 </t-button>
+                  <t-button theme="default"> 导出 </t-button>
+                </template>
+                <template #operations="{ row }">
+                  <t-link theme="primary" @click.stop="openLog(row)"> 日志 </t-link>
+                </template>
+              </cmp-table>
             </cmp-container>
           </template>
         </t-tab-panel>
@@ -748,12 +752,12 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
 
 // #### 条码规则 表头
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'row-select',
-    type: 'single',
-    align: 'center',
-    width: '30',
-  },
+  // {
+  //   colKey: 'row-select',
+  //   type: 'single',
+  //   align: 'center',
+  //   width: '30',
+  // },
   {
     colKey: 'scheCode',
     title: '排产单',

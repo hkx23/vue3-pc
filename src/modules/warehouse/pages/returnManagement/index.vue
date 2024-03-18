@@ -1,36 +1,56 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
+      <cmp-container :full="true">
+        <cmp-query :opts="opts" is-expansion @submit="conditionEnter" />
+        <cmp-table
+          ref="tableRef"
+          row-key="billNo"
+          :table-column="tableReturnManagementColumns"
+          :table-data="tableReturnManagementData"
+          :loading="loading"
+          :total="dataTotal"
+          :hover="false"
+          :stripe="false"
+          :header-affixed-top="true"
+          max-height="300px"
+          title="退货管理"
+          empty="没有符合条件的数据"
+          @refresh="fetchTable"
+          @row-click="fetchTableRowClick"
+        >
+          <template #button>
+            <t-button theme="primary" @click="onClickAddReturnManagement">
+              {{ t('common.button.add') }}
+            </t-button>
+            <t-button theme="default" @click="onClickEditReturnManagement">
+              {{ t('common.button.edit') }}
+            </t-button>
+            <t-popconfirm content="确认作废？" @confirm="onBatchCancelledClick">
+              <t-button theme="default">
+                {{ t('returnManagement.cancel') }}
+              </t-button>
+            </t-popconfirm>
+          </template>
+        </cmp-table>
+      </cmp-container>
     </cmp-card>
+
     <cmp-card :span="12">
       <cmp-table
-        ref="tableRef"
-        row-key="billNo"
-        :table-column="tableReturnManagementColumns"
-        :table-data="tableReturnManagementData"
+        row-key="id"
+        :table-column="tableReturnManagementDetailColumns"
+        :table-data="tableReturnManagementDetailData"
         :loading="loading"
-        :total="dataTotal"
         :hover="false"
         :stripe="false"
         :header-affixed-top="true"
-        title="退货管理"
-        @refresh="fetchTable"
-      >
-        <template #button>
-          <t-button theme="primary" @click="onClickAddReturnManagement">
-            {{ t('common.button.add') }}
-          </t-button>
-          <t-button theme="default" @click="onClickEditReturnManagement">
-            {{ t('common.button.edit') }}
-          </t-button>
-          <t-popconfirm content="确认作废？" @confirm="onBatchCancelledClick">
-            <t-button theme="default">
-              {{ t('returnManagement.cancel') }}
-            </t-button>
-          </t-popconfirm>
-        </template>
-      </cmp-table>
+        :show-pagination="false"
+        :show-toolbar="false"
+        title="退货明细"
+        empty="没有符合条件的数据"
+        @refresh="fetchTableDtl"
+      />
     </cmp-card>
   </cmp-container>
 
@@ -63,6 +83,15 @@ const optsValue = ref({});
 // 查询组件
 const opts = computed(() => {
   return {
+    timeCreate: {
+      label: '创建时间',
+      comp: 't-date-range-picker',
+      defaultVal: [],
+      bind: {
+        enableTimePicker: false,
+        format: 'YYYY-MM-DD',
+      },
+    },
     returnBillNo: {
       label: t('returnManagement.billNo'),
       comp: 't-input',
@@ -137,9 +166,19 @@ const tableReturnManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('returnManagement.colStatusName')}`, width: 140, colKey: 'statusName' },
 ];
 
+const tableReturnManagementDetailData = ref<TransferHeadVO[]>([]);
+const tableReturnManagementDetailColumns: PrimaryTableCol<TableRowData>[] = [
+  { title: `${t('returnManagement.colmitemCode')}`, width: 140, colKey: 'mitemCode' },
+  { title: `${t('returnManagement.colmitemDesc')}`, width: 140, colKey: 'mitemDesc' },
+  { title: `${t('returnManagement.coluomName')}`, width: 140, colKey: 'uomName' },
+  { title: `${t('returnManagement.colreqQty')}`, width: 140, colKey: 'reqQty' },
+  { title: `${t('returnManagement.colpickQty')}`, width: 140, colKey: 'pickQty' },
+];
+
 const formRef = ref(null); // 规则主表
 const dataTotal = ref(0);
 const tableRef = ref();
+const rowBillNo = ref('');
 
 const selectRowKeys = computed(() => {
   return tableRef.value?.getSelectedRowKeys();
@@ -149,6 +188,12 @@ const selectRowKeys = computed(() => {
 const conditionEnter = (data: any) => {
   optsValue.value = data;
   fetchTable();
+};
+
+// 加载表格
+const fetchTableRowClick = async (context) => {
+  rowBillNo.value = context.row.billNo;
+  fetchTableDtl();
 };
 
 // 加载表格
@@ -168,7 +213,20 @@ const fetchTable = async () => {
     setLoading(false);
   }
 };
-
+// 加载表格
+const fetchTableDtl = async () => {
+  setLoading(true);
+  try {
+    const data = await apiWarehouse.returnManagement.getReturnManagementDtlList({
+      returnBillNo: rowBillNo.value,
+    });
+    tableReturnManagementDetailData.value = data.list;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setLoading(false);
+  }
+};
 // 批量作废
 const onBatchCancelledClick = async () => {
   const billNoList = [];
@@ -178,7 +236,7 @@ const onBatchCancelledClick = async () => {
 
   const selectRowModels = tableReturnManagementData.value.filter((n) => selectRowKeys.value.indexOf(n.billNo) > -1);
   if (!_.isNil(selectRowModels)) {
-    const tempList = selectRowModels.filter((n) => n.status !== 'DRAFT' && n.status !== 'CREATE');
+    const tempList = selectRowModels.filter((n) => n.status !== 'DRAFT' && n.status !== 'CREATED');
     if (tempList.length > 0) {
       MessagePlugin.error(t('returnManagement.只有起草或者已创建的单据才能作废'));
       return;
@@ -212,7 +270,7 @@ const onClickEditReturnManagement = () => {
 
   const selectRowModel = tableReturnManagementData.value.findLast((n) => n.billNo === selectRowKeys.value[0]);
   if (!_.isNil(selectRowModel)) {
-    if (selectRowModel.status !== 'DRAFT' && selectRowModel.status !== 'CREATE') {
+    if (selectRowModel.status !== 'DRAFT' && selectRowModel.status !== 'CREATED') {
       MessagePlugin.error(t('returnManagement.只有起草或者已创建的单据才能编辑'));
       return;
     }
