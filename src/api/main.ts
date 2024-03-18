@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -2465,8 +2465,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4087,13 +4087,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
-  stateName?: string;
-  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
+  stateName?: string;
+  isState?: boolean;
   isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -4338,15 +4338,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
-  isRawName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductName?: string;
+  isBatchName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -6027,8 +6027,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -8300,10 +8300,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
 } | null;
