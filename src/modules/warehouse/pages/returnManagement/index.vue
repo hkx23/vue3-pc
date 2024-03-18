@@ -63,6 +63,15 @@ const optsValue = ref({});
 // 查询组件
 const opts = computed(() => {
   return {
+    timeCreate: {
+      label: '创建时间',
+      comp: 't-date-range-picker',
+      defaultVal: [],
+      bind: {
+        enableTimePicker: false,
+        format: 'YYYY-MM-DD',
+      },
+    },
     returnBillNo: {
       label: t('returnManagement.billNo'),
       comp: 't-input',
