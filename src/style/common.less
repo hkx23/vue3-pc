@@ -189,7 +189,7 @@
 
 .t-dialog__header {
   padding: 16px;
-  background: rgb(250 250 250);
+  background: #f9f9f9;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   border-bottom: 1px solid rgb(232 232 232);
@@ -197,7 +197,7 @@
 
 .t-dialog__body {
   padding: 16px;
-  min-height: 200px;
+  // min-height: 200px;
 }
 
 .t-dialog__body__icon,
@@ -211,7 +211,7 @@
 
 .t-dialog__footer {
   padding: 16px;
-  background: rgb(250 250 250);
+  background: #f9f9f9;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
   border-top: 1px solid rgb(232 232 232);
@@ -373,11 +373,6 @@ a .t-tag:hover {
   padding: 8px;
 }
 
-.t-popconfirm__buttons .t-button.t-size-s {
-  padding-left: 12px;
-  padding-right: 12px;
-}
-
 .t-select-option {
   color: #454545;
   height: 32px;
@@ -394,4 +389,26 @@ a .t-tag:hover {
 
 .t-descriptions__body {
   width: 100%;
+}
+
+.t-popconfirm__content {
+  padding: 8px;
+}
+
+.t-popconfirm__buttons .t-button.t-size-s {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.t-popconfirm__buttons {
+  margin-top: 8px;
+}
+
+.t-tree__item {
+  --new-color: rgb(0 0 0 / 70%); /* 这里是原来颜色的 70% */
+}
+
+/* 当 --level 不等于 0 时应用新的颜色 */
+.t-tree__item:not([style*='--level: 0']) {
+  color: var(--new-color);
 }

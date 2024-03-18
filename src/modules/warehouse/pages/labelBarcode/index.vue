@@ -1,6 +1,12 @@
 <template>
-  <cmp-container :full="false">
-    <cmp-card class="not-full-tab" :hover-shadow="false">
+  <cmp-container :full="true">
+    <cmp-card
+      :class="{
+        'not-full-tab': !tagValue,
+        'full-tab': tagValue,
+      }"
+      :hover-shadow="false"
+    >
       <t-tabs v-model="tagValue" @change="switchTab">
         <t-tab-panel :value="0" label="来料标签打印" :destroy-on-hide="false">
           <template #panel>
@@ -9,7 +15,7 @@
                 <!-- 查询组件  -->
                 <cmp-query :opts="opts" label-width="100" @submit="conditionEnter"></cmp-query>
               </cmp-card>
-              <cmp-card :ghost="true" class="padding-top-noline-16">
+              <cmp-card :ghost="true">
                 <cmp-table
                   key="mainTable"
                   v-model:pagination="pageUI"
@@ -19,7 +25,7 @@
                   :loading="loading"
                   :total="moTabTotal"
                   :fixed-height="true"
-                  style="height: 300px"
+                  max-height="300px"
                   :hover="true"
                   :selected-row-keys="delivertRowKeys"
                   @select-change="onSelectionChange"
@@ -51,7 +57,7 @@
                 </cmp-table>
               </cmp-card>
 
-              <cmp-card header-bordered class="padding-top-noline-16 no-h-padding-card">
+              <cmp-card :ghost="true">
                 <cmp-table
                   v-model:pagination="pageUIBracode"
                   row-key="id"
@@ -63,7 +69,7 @@
                   :table-data="labelBelowList.list"
                   :total="barcodeTotal"
                   :fixed-height="true"
-                  style="height: 300px"
+                  max-height="300px"
                   @select-change="onPrintChange"
                   @refresh="onRefreshBelow"
                 >
@@ -96,21 +102,19 @@
         </t-tab-panel>
         <t-tab-panel :value="1" label="物料标签管理" :destroy-on-hide="false">
           <template #panel>
-            <cmp-container :gutter="[0, 0]">
-              <cmp-card :ghost="true" class="padding-bottom-line-16">
-                <cmp-query :opts="mitemBarcodeManageOp" label-width="100" @submit="managePageSearchClick">
-                  <template #querySelect="{ param }">
-                    <t-select v-model="param.barcodeStatus" label="条码状态" clearable>
-                      <t-option
-                        v-for="item in bracodeStatusOption"
-                        :key="item.id"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </t-select> </template
-                ></cmp-query>
-              </cmp-card>
-              <cmp-card :ghost="true" class="padding-top-noline-16">
+            <cmp-container :full="true">
+              <cmp-query :opts="mitemBarcodeManageOp" label-width="100" @submit="managePageSearchClick">
+                <template #querySelect="{ param }">
+                  <t-select v-model="param.barcodeStatus" label="条码状态" clearable>
+                    <t-option
+                      v-for="item in bracodeStatusOption"
+                      :key="item.id"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </t-select> </template
+              ></cmp-query>
+              <cmp-card ghost class="padding-top-line-16">
                 <cmp-table
                   v-model:pagination="pageUIMannage"
                   row-key="id"
@@ -121,7 +125,6 @@
                   :table-data="pkgManageDataList.list"
                   :total="pkgManageTabTotal"
                   :fixed-height="true"
-                  style="height: 400px"
                   @select-change="onProductRightFetchData"
                   @refresh="onRefreshManage"
                 >
@@ -142,8 +145,8 @@
                   <template #operations="{ row }">
                     <t-link theme="primary" @click.stop="openLog(row)"> 日志 </t-link>
                   </template>
-                </cmp-table>
-              </cmp-card>
+                </cmp-table></cmp-card
+              >
             </cmp-container>
           </template>
         </t-tab-panel>
@@ -802,12 +805,12 @@ const logInterface: PrimaryTableCol<TableRowData>[] = [
 
 // #### 条码规则 表头
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'row-select',
-    type: 'single',
-    align: 'center',
-    width: '30',
-  },
+  // {
+  //   colKey: 'row-select',
+  //   type: 'single',
+  //   align: 'center',
+  //   width: '30',
+  // },
   {
     colKey: 'billNo',
     title: '送货单',
@@ -1345,6 +1348,6 @@ const onRowClick = ({ row }) => {
 .align-right {
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px;
+  // margin-top: 20px;
 }
 </style>

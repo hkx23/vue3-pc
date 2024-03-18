@@ -39,7 +39,7 @@
             </template>
           </t-tree>
           <cmp-card :span="12" :ghost="true">
-            <t-button theme="default" variant="dashed" @click="onAddFirstNode">新增</t-button>
+            <t-button theme="default" @click="onAddFirstNode">新增</t-button>
           </cmp-card>
         </cmp-container>
       </cmp-card>
