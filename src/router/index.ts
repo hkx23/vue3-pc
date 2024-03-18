@@ -89,6 +89,8 @@ export const openPage = (modulePath: string) => {
   const route = routers.find((t) => t.meta.sourcePath === modulePath || t.meta.id === modulePath);
   if (route) {
     router.push(route.path);
+  } else {
+    router.push(`/dynamic${modulePath}`);
   }
 };
 

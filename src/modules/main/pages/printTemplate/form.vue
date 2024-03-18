@@ -22,7 +22,7 @@
       </t-select>
     </t-form-item>
     <t-form-item :label="t('printTemplate.templateCode')" name="tmplCode">
-      <t-input v-model="formData.tmplCode" clearable />
+      <t-input v-model="formData.tmplCode" :disabled="isFormEditing" clearable />
     </t-form-item>
     <t-form-item :label="t('printTemplate.templateName')" name="tmplName">
       <t-input v-model="formData.tmplName" clearable />
