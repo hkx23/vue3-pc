@@ -82,7 +82,28 @@
     </cmp-card>
     <!-- !基础信息模块 -->
     <cmp-card>
-      <div></div>
+      <t-row align="middle" type="flex" style="flex-wrap: wrap">
+        <t-col v-for="(item, index) in barcodeData" :key="index" :lg="{ span: 3 }" :offset="0" class="card-col-wb">
+          <t-card class="box-card">
+            <div slot1="header" class="barcodeDiv">
+              <t-row>
+                <t-col :flex="1">
+                  <h2>{{ index + 1 }}</h2>
+                </t-col>
+                <t-col :flex="5">
+                  {{ item.scanBarcode }}
+                </t-col>
+                <t-col :flex="5">
+                  <t-tag shape="round" theme="primary">{{ item.inspectResultName }}</t-tag>
+                </t-col>
+              </t-row>
+            </div>
+          </t-card>
+        </t-col>
+      </t-row>
+      <!-- <div v-for="(item, index) in barcodeData" v-if="index < 5" :key="index" class="barcodeDiv">
+        {{ item.scanBarcode }}
+      </div> -->
     </cmp-card>
     <!-- !检验项目表格模块 -->
     <cmp-card class="cards_title">
@@ -157,9 +178,9 @@
 // import { debounce } from 'lodash';
 import { SearchIcon } from 'tdesign-icons-vue-next';
 import { Icon, MessagePlugin } from 'tdesign-vue-next';
-import { computed, Ref, ref } from 'vue';
+import { computed, Ref, ref, watch } from 'vue';
 
-import { api } from '@/api/quality';
+import { api, PqcInspectFirstVO } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -175,6 +196,8 @@ const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
 const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const opType = ref('add');
+const barcodeData = ref<PqcInspectFirstVO[]>([]);
+const id = ref('');
 
 // 接收父组件的参数
 const props = defineProps({
@@ -182,12 +205,13 @@ const props = defineProps({
 });
 // 计算头部数据
 const headerDate = computed(() => {
+  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+  id.value = props.rowData.bill.id;
   return props.rowData ? props.rowData.bill : {};
 });
 // 根据检查结果获取对应的戳
 const stampUrl = computed(() => {
   const result = props.rowData.bill.inspectResult;
-  console.log(result);
   switch (result) {
     case 'OK':
       return '../../../../../../public/images/pqcInspectFirst/stamp/OK.png';
@@ -197,7 +221,15 @@ const stampUrl = computed(() => {
       return '../../../../../../public/images/pqcInspectFirst/stamp/UNDERWAY.png';
   }
 });
-
+// 监听 activeTab 的变化
+watch(id, async (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    const res = await api.pqcInspectFirst.getBarcodes(props.rowData.bill.id);
+    console.log('这是标签的数据：', res);
+    barcodeData.value = res;
+  }
+});
+// 根据首检单ID获取标签信息
 // 父方法
 const Emit = defineEmits(['permissionShow']);
 // 关闭窗口回到主页面
@@ -488,5 +520,13 @@ defineExpose({
   background-color: transparent;
   top: 50px; /* 设置图片顶部距离容器顶部的距离 */
   right: 50px; /* 设置图片左侧距离容器左侧的距离 */
+}
+
+.barcodeDiv {
+  border-width: 2px;
+  border-style: solid;
+  border-color: black;
+  border-radius: 5px;
+  padding: 10px;
 }
 </style>

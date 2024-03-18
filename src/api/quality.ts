@@ -388,7 +388,6 @@ export type SamplingAqlVO = {
 
 /** 上传控件文件VO */
 export interface AddFileTypeVO {
-  id?: string;
   serialNumber?: string;
   fullFileName?: string;
   fileName?: string;
@@ -398,6 +397,7 @@ export interface AddFileTypeVO {
   timeUpload?: string;
   signedUrl?: string;
   percent?: number;
+  id?: string;
 }
 
 /** 检验测量值 */
@@ -664,6 +664,7 @@ export interface ResultString {
 
 /** 前端文件VO */
 export interface FileVO {
+  id?: string;
   /** 文件名 */
   name?: string;
   size?: string;
@@ -1184,12 +1185,12 @@ export interface PqcBarcodeVO {
   mitemCategoryId?: string;
   /** 状态 */
   status?: string;
-  oqcInspectBarcodeId?: string;
+  pqcInspectBarcodeId?: string;
   moScheId?: string;
   /** 按条码的检验类型分组 */
   pqcStdItemCategoryVOList?: PqcStdItemCategoryVO[];
-  /** 条码检验项 */
-  inspectItems?: PqcInspectFirstStdFullVO[];
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 首末检提交模型 */
@@ -1204,7 +1205,7 @@ export interface PqcInspectBillDTO {
   /** 是否暂存 */
   isTempSave?: boolean;
   /** 开始检索的检验项目 */
-  startInspectItems?: PqcInspectFirstItem[];
+  startInspectItems?: PqcInspectFirstStdFullVO[];
   /** 条码列表 */
   barcodeList?: PqcBarcodeVO[];
   moScheId?: string;
@@ -1303,8 +1304,6 @@ export interface PqcInspectFirstBillFullVO {
   /** 检验时机名称 */
   inspectOpportunityName?: string;
   handleMethodName?: string;
-  /** 责任方 */
-  getDeptResponsibilityId?: string;
   /** 整改意见 */
   correctOpinionName?: string;
   /** 计量单位符号 */
@@ -1314,37 +1313,21 @@ export interface PqcInspectFirstBillFullVO {
   workCenterCode?: string;
   /** 产线名称 */
   workCenterName?: string;
+  /** 跟进人编码 */
+  personResponsibilityCode?: string;
+  /** 跟进人名称 */
+  personResponsibilityName?: string;
+  /** 责任部门编码 */
+  deptResponsibilityCode?: string;
+  /** 责任部门名称 */
+  deptResponsibilityName?: string;
+  /**
+   * 是否启动改善
+   * @format int32
+   */
+  isStartImprove?: number;
   /** 检验结果名称 */
   inspectResultName?: string;
-}
-
-/** 首检检验项目表 */
-export interface PqcInspectFirstItem {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  pqcInspectFirstId?: string;
-  oqcInspectStdDtlId?: string;
 }
 
 /** 产品检验标准全信息表 */
@@ -1442,8 +1425,6 @@ export interface PqcInspectFirstStdFullVO {
   unqualifyCategoryName?: string;
   /** 接收质量限 */
   aql?: string;
-  /** 检验结果 */
-  inspectResultSwitch?: boolean;
   /** 不良数 */
   ngQty?: number;
   /** AC值 */
@@ -1453,7 +1434,7 @@ export interface PqcInspectFirstStdFullVO {
   /** 项目分类名称 */
   itemCategoryName?: string;
   /** 文件列表 */
-  fileList?: AddFileTypeVO[];
+  fileList?: FileVO[];
   /** 项目特性 */
   characteristicsName?: string;
 }
@@ -1463,19 +1444,6 @@ export interface PqcStdItemCategoryVO {
   itemCategory?: string;
   itemCategoryName?: string;
   inspectItems?: PqcInspectFirstStdFullVO[];
-}
-
-/** 通用响应类 */
-export interface ResultListPqcBarcodeVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PqcBarcodeVO[] | null;
 }
 
 /** 响应数据 */
@@ -1678,6 +1646,7 @@ export interface PqcInspectFirstVO {
   inspectStdName?: string;
   /** 扫描的条码 */
   scanBarcode?: string;
+  pqcInspectFirstId?: string;
 }
 
 /** 通用响应类 */
@@ -1747,6 +1716,19 @@ export interface ResultListPqcInspectFirstVO {
   data?: PqcInspectFirstVO[] | null;
 }
 
+/** 通用响应类 */
+export interface ResultListPqcBarcodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PqcBarcodeVO[] | null;
+}
+
 /** 首检条码检验明细附件表 */
 export interface PqcInspectFirstBarcodeDtlFile {
   id?: string;
@@ -1778,19 +1760,6 @@ export interface PqcInspectFirstBarcodeDtlFile {
   /** 文件地址 */
   filePath?: string;
   pqcInspectFirstId?: string;
-}
-
-/** 通用响应类 */
-export interface ResultListAddFileTypeVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: AddFileTypeVO[] | null;
 }
 
 export interface OqcInspectStdMitemSearch {
@@ -2461,6 +2430,19 @@ export interface OqcInspectItemFile {
   fileName?: string;
   /** 文件地址 */
   filePath?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListAddFileTypeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: AddFileTypeVO[] | null;
 }
 
 /** 物料检验标准分配表 */
@@ -5331,12 +5313,12 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s2?: string;
-  s3?: string;
   i?: string;
-  s1?: string;
+  s2?: string;
   s4?: string;
+  s1?: string;
   ii?: string;
+  s3?: string;
   iii?: string;
 } | null;
 
@@ -5852,21 +5834,6 @@ export const api = {
      * No description
      *
      * @tags 首检检验表
-     * @name ScanProductBarcode
-     * @summary 报检-扫描产品条码
-     * @request POST:/pqcInspectFirst/scanProductBarcode
-     * @secure
-     */
-    scanProductBarcode: (data: PqcInspectBillDTO) =>
-      http.request<ResultListPqcBarcodeVO['data']>(`/api/quality/pqcInspectFirst/scanProductBarcode`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 首检检验表
      * @name ScanPqcYjProductBarcode
      * @summary 检验执行-扫描产品条码
      * @request POST:/pqcInspectFirst/scanPqcYJProductBarcode
@@ -5975,13 +5942,13 @@ export const api = {
      * No description
      *
      * @tags 首检检验表
-     * @name GetBarcodeTableList
-     * @summary 获取条码列表和条码对应的明细信息
-     * @request POST:/pqcInspectFirst/getBarcodeTableList
+     * @name GetBarcodes
+     * @summary 获得明细的条码数据
+     * @request POST:/pqcInspectFirst/getBarcodes
      * @secure
      */
-    getBarcodeTableList: (data: PqcInspectStdFullSearch) =>
-      http.request<ResultListPqcBarcodeVO['data']>(`/api/quality/pqcInspectFirst/getBarcodeTableList`, {
+    getBarcodes: (data: string) =>
+      http.request<ResultListPqcInspectFirstVO['data']>(`/api/quality/pqcInspectFirst/getBarcodes`, {
         method: 'POST',
         body: data as any,
       }),
@@ -5990,13 +5957,13 @@ export const api = {
      * No description
      *
      * @tags 首检检验表
-     * @name GetBarcodeList
-     * @summary 获得明细的条码数据
-     * @request POST:/pqcInspectFirst/getBarcodeList
+     * @name GetBarcodeTableList
+     * @summary 获取条码列表和条码对应的明细信息
+     * @request POST:/pqcInspectFirst/getBarcodeTableList
      * @secure
      */
-    getBarcodeList: (data: string) =>
-      http.request<ResultListPqcInspectFirstVO['data']>(`/api/quality/pqcInspectFirst/getBarcodeList`, {
+    getBarcodeTableList: (data: PqcInspectStdFullSearch) =>
+      http.request<ResultListPqcBarcodeVO['data']>(`/api/quality/pqcInspectFirst/getBarcodeTableList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -6035,6 +6002,21 @@ export const api = {
      * No description
      *
      * @tags 首检检验表
+     * @name CheckJyPreSubmit
+     * @summary 检验执行-保存前的校验
+     * @request POST:/pqcInspectFirst/checkJYPreSubmit
+     * @secure
+     */
+    checkJyPreSubmit: (data: PqcInspectBillDTO) =>
+      http.request<ResultBoolean['data']>(`/api/quality/pqcInspectFirst/checkJYPreSubmit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 首检检验表
      * @name Cancelled
      * @summary 主界面-作废
      * @request POST:/pqcInspectFirst/cancelled
@@ -6057,21 +6039,6 @@ export const api = {
      */
     addFile: (data: PqcInspectFirstBarcodeDtlFile) =>
       http.request<ResultBoolean['data']>(`/api/quality/pqcInspectFirst/addFile`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 首检检验表
-     * @name GetOqcInspectItemFileList
-     * @summary 根据ID获取文件信息
-     * @request POST:/pqcInspectFirst/GetOqcInspectItemFileList
-     * @secure
-     */
-    getOqcInspectItemFileList: (data: string) =>
-      http.request<ResultListAddFileTypeVO['data']>(`/api/quality/pqcInspectFirst/GetOqcInspectItemFileList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -6545,7 +6512,7 @@ export const api = {
      * @request POST:/oqcInspect/GetOqcInspectItemFileList
      * @secure
      */
-    GetOqcInspectItemFileList: (data: string) =>
+    getOqcInspectItemFileList: (data: string) =>
       http.request<ResultListAddFileTypeVO['data']>(`/api/quality/oqcInspect/GetOqcInspectItemFileList`, {
         method: 'POST',
         body: data as any,
