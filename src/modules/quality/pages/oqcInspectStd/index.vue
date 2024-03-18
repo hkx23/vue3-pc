@@ -152,7 +152,6 @@ const onReset = () => {
 const pageShow = ref(false);
 const onPermission = (value) => {
   pageShow.value = value;
-  onRefresh();
 };
 
 const onAssignConfirm = async () => {
@@ -292,9 +291,10 @@ const onDelData = async (row) => {
 };
 const onAssign = async (row) => {
   assignFormRef.value.formData.type = '01';
+  assignFormRef.value.init();
   assignFormRef.value.formData.id = row.id;
   assignFormRef.value.formData.inspectStdName = row.inspectStdName;
-  await assignFormRef.value.getOqcInspectStdMitem();
+  assignFormRef.value.formData.inspectStdCode = row.inspectStdCode;
   formVisible.value = true;
 };
 const onAddAssign = async () => {
@@ -302,7 +302,7 @@ const onAddAssign = async () => {
   assignFormRef.value.formData.inspectStdCode = '';
   assignFormRef.value.formData.id = '';
   assignFormRef.value.formData.mitemId = '';
-  assignFormRef.value.formData.mitemCategortArr = [];
+  assignFormRef.value.formData.mitemCategoryIds = null;
   formVisible.value = true;
 };
 const onDelDataBatch = async () => {

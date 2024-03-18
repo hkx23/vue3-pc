@@ -480,6 +480,7 @@ const onSelectionChange = (selectedRows) => {
   queryBelowCondition.value.pageNum = pageUIBracode.value.page;
   queryBelowCondition.value.pageSize = pageUIBracode.value.rows;
   const [firstItem] = selectedRows;
+  curRow.value = moDataList.list.find((item) => item.moScheduleId === firstItem);
   printMode.value.moScheduleId = firstItem;
   queryBelowCondition.value.moScheduleId = firstItem;
   api.barcodePkg.getTagList(queryBelowCondition.value).then((data) => {
@@ -961,6 +962,7 @@ const switchTab = (selectedTabIndex: any) => {
 // 打印界面点击查询按钮
 const conditionEnter = (data: any) => {
   queryCondition.value = data;
+  queryCondition.value.moScheduleId = data.moScheduleId;
   queryCondition.value.scheStatus = data.scheStatus;
   const [planDateStart, planDateEnd] = data.datetimePlanRange;
   queryCondition.value.planDateStart = planDateStart;
@@ -993,7 +995,6 @@ const onRightFetchData = async () => {
 const fetchMoTable = async () => {
   setLoading(true);
   try {
-    queryCondition.value.moScheduleId = '';
     queryCondition.value.pageNum = pageUI.value.page;
     queryCondition.value.pageSize = pageUI.value.rows;
     const data = (await api.barcodePkg.getMoScheduleList(queryCondition.value)) as any;

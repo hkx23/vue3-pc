@@ -220,11 +220,11 @@ const addApp = () => {
     .then(() => {
       MessagePlugin.success(t('appBase.saveSuccess'));
       formVisible.value = false;
+      getList();
       loading.hide();
     })
-    .catch((err) => {
+    .catch(() => {
       loading.hide();
-      MessagePlugin.error(err);
     });
 };
 onMounted(() => {
