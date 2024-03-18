@@ -111,7 +111,7 @@
     :header="dialogTitle"
     :cancel-btn="null"
     :confirm-btn="null"
-    top="60px"
+    top="56px"
     :width="showFormData ? '850px' : '450px'"
     @close="onSecondaryReset"
   >

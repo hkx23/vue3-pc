@@ -5,7 +5,7 @@
     :diabled="formData.viewType === ViewType.VIEW"
     width="98%"
     placement="top"
-    top="20"
+    top="56px"
     :cancel-btn="null"
     :confirm-btn="null"
     :close-on-overlay-click="false"

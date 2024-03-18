@@ -3,11 +3,11 @@
     :data="formData"
     :show-cancel="true"
     label-align="right"
-    label-width="125px"
+    label-width="100px"
     :show-error-message="false"
     @submit="submit"
   >
-    <t-row :gutter="[12, 12]">
+    <t-row :gutter="[12, 16]">
       <t-col :span="6">
         <t-form-item label="仓库编码" required-mark>
           <t-input v-model="formData.warehouseCode" :disabled="!(formData.operateTpye === 'add')" />
@@ -61,6 +61,7 @@
         <t-form-item label="交易上传时间">
           <t-date-picker
             v-model="formData.datetimeUpload"
+            style="width: 100%"
             allow-input
             enable-time-picker
             clearable

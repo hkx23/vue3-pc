@@ -107,7 +107,7 @@
     :cancel-btn="null"
     :confirm-btn="null"
     :header="diaLogTitle"
-    top="60px"
+    top="56px"
     width="850px"
     @close="onSecondaryReset"
   >

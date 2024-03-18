@@ -106,7 +106,7 @@
     :confirm-btn="null"
     :header="diaLogTitle"
     width="850px"
-    top="60px"
+    top="56px"
   >
     <t-form ref="formRef" :data="ruleTabData" :rules="rules" @submit="onAnomalyTypeSubmit">
       <t-row :gutter="[16, 16]">

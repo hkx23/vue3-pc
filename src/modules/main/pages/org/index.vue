@@ -53,6 +53,7 @@
   </cmp-container>
   <t-dialog
     v-model:visible="formVisible"
+    width="404px"
     :header="
       isEdit ? t('common.dialog.header.edit', [t('org.title')]) : t('common.dialog.header.add', [t('org.title')])
     "

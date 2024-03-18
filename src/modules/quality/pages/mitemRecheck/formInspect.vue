@@ -4,7 +4,7 @@
     :header="t('mitemRecheck.物料复检')"
     width="98%"
     placement="top"
-    top="20"
+    top="56px"
     :cancel-btn="
       isEdit
         ? {
