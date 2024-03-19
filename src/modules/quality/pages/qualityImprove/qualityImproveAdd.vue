@@ -1222,6 +1222,7 @@ const onRejectToBefore = async () => {
 const formData = ref({
   operateType: 'add',
   billNo: '',
+  moScheId: '',
   relateBillNo: '',
   id: '',
   inspectType: '',
@@ -1312,6 +1313,7 @@ const init = () => {
   formData.value = {
     operateType: 'add',
     billNo: '',
+    moScheId: '',
     relateBillNo: '',
     id: '',
     inspectType: '',
