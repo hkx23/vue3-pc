@@ -1984,7 +1984,6 @@ export interface SaleDeliveryDtlVO {
   eid?: string;
   oid?: string;
   saleDeliveryId?: string;
-  warehouseId?: string;
   /**
    * 发货单行号
    * @format int32
@@ -2000,6 +1999,7 @@ export interface SaleDeliveryDtlVO {
   /** 销售订单号 */
   saleOrderNo?: string;
   saleOrderDtlId?: string;
+  warehouseId?: string;
   districtId?: string;
   locId?: string;
   /** 备注 */
@@ -2339,6 +2339,8 @@ export interface DeliveryDtlVO {
   datePo?: string;
   /** 备注 */
   memo?: string;
+  /** 采购订单行号 */
+  poLineNo?: string;
   /** 交易事务单号 */
   transferBillNo?: string;
   /** 交易事务单号 */
@@ -3074,9 +3076,11 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  bfpickQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
   /**
    * 已扫描数量
    * @format double
@@ -3087,13 +3091,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
 }
 
 /** 通用响应类 */
@@ -3430,15 +3432,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -3574,13 +3576,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5202,8 +5204,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -5335,15 +5337,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */

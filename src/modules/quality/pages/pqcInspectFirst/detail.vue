@@ -1,6 +1,6 @@
 <template>
   <cmp-container :full="true">
-    <!-- !提交暂存模块 -->
+    <!-- !单据基本信息部分 -->
     <cmp-card>
       <t-row :full="true">
         <t-col :flex="8">
@@ -80,12 +80,17 @@
         <t-image :src="stampUrl" class="stamp" />
       </div>
     </cmp-card>
-    <!-- !基础信息模块 -->
-    <cmp-card>
-      <t-row align="middle" type="flex" style="flex-wrap: wrap">
-        <t-col v-for="(item, index) in barcodeData" :key="index" :lg="{ span: 3 }" :offset="0" class="card-col-wb">
+    <!-- !条码部分 -->
+    <cmp-card v-if="barcodeData.length > 0">
+      <t-row align="middle" type="flex">
+        <t-col v-for="(item, index) in barcodeData" :key="index" :lg="{ span: 3 }" :offset="0">
           <t-card class="box-card">
-            <div slot1="header" class="barcodeDiv">
+            <div
+              slot1="header"
+              class="barcodeDiv"
+              :style="{ backgroundColor: index === selectedCol ? 'lightblue' : 'white' }"
+              @click="searchItems(index)"
+            >
               <t-row>
                 <t-col :flex="1">
                   <h2>{{ index + 1 }}</h2>
@@ -93,8 +98,17 @@
                 <t-col :flex="5">
                   {{ item.scanBarcode }}
                 </t-col>
-                <t-col :flex="5">
-                  <t-tag shape="round" theme="primary">{{ item.inspectResultName }}</t-tag>
+                <t-col :flex="1">
+                  <t-tag
+                    shape="round"
+                    theme="primary"
+                    :class="{
+                      OK: item.inspectResultName === '合格',
+                      NG: item.inspectResultName === '不合格',
+                      UNDERWAY: item.inspectResultName === '暂无结果',
+                    }"
+                    >{{ item.inspectResultName }}</t-tag
+                  >
                 </t-col>
               </t-row>
             </div>
@@ -122,24 +136,6 @@
       >
         <template #title>
           {{ '检验项目' }}
-        </template>
-        <template #qualifiedRangeOp="{ row }">
-          <span v-if="row.maxValue !== null && row.minValue !== null">{{ `${row.minValue} ~ ${row.maxValue}` }}</span>
-        </template>
-        <template #isCtqName="{ row }">
-          <span>{{ row.isCtq ? '是' : '否' }}</span>
-        </template>
-        <template #button>
-          <t-input v-if="submitButControl" placeholder="请输入搜索关键字">
-            <template #suffixIcon>
-              <search-icon :style="{ cursor: 'pointer' }" />
-            </template>
-          </t-input>
-          <t-button :disabled="!butControl" @click="onAdd"> 新增 </t-button>
-          <t-button :disabled="!butControl" theme="default"> 导入 </t-button>
-          <t-popconfirm content="是否确认删除？" @confirm="delBatch">
-            <t-button :disabled="!delBtutControl" theme="default"> 批量删除 </t-button>
-          </t-popconfirm>
         </template>
         <template #operation="{ row }">
           <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
@@ -176,7 +172,6 @@
 
 <script setup lang="ts">
 // import { debounce } from 'lodash';
-import { SearchIcon } from 'tdesign-icons-vue-next';
 import { Icon, MessagePlugin } from 'tdesign-vue-next';
 import { computed, Ref, ref, watch } from 'vue';
 
@@ -196,8 +191,9 @@ const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
 const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const opType = ref('add');
-const barcodeData = ref<PqcInspectFirstVO[]>([]);
-const id = ref('');
+const barcodeData = ref<PqcInspectFirstVO[]>([]); // 条码栏数据
+const id = ref(''); // 用于watch监听，控制加载
+const selectedCol = ref();
 
 // 接收父组件的参数
 const props = defineProps({
@@ -221,7 +217,7 @@ const stampUrl = computed(() => {
       return '../../../../../../public/images/pqcInspectFirst/stamp/UNDERWAY.png';
   }
 });
-// 监听 activeTab 的变化
+// 监听 id 的变化
 watch(id, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
     const res = await api.pqcInspectFirst.getBarcodes(props.rowData.bill.id);
@@ -229,12 +225,15 @@ watch(id, async (newValue, oldValue) => {
     barcodeData.value = res;
   }
 });
-// 根据首检单ID获取标签信息
 // 父方法
 const Emit = defineEmits(['permissionShow']);
 // 关闭窗口回到主页面
 const onClose = () => {
   Emit('permissionShow', false); // 回到父
+};
+// 如果点击事件拿到的index和他自己所持有的一样，则变bgc,当前方法做参数传递
+const searchItems = async (index) => {
+  selectedCol.value = index;
 };
 
 // 父方法
@@ -255,13 +254,6 @@ const formData = ref({
   statusName: '起草中',
   inspectTypeList: [],
 });
-const onAdd = () => {
-  formTitle.value = '新增检验项目';
-  dtlFormRef.value.init();
-  dtlFormRef.value.dtlData.iqcInspectStdId = formData.value.id;
-  opType.value = 'add';
-  touchstoneFormVisible.value = true;
-};
 
 const onDtlSelectedChange = (value: any) => {
   dtlRowKeys.value = value;
@@ -290,24 +282,6 @@ const delDtlById = async (row) => {
     await api.iqcInspectStdDtl.removeBatch([row.id]);
   } else {
     allDtl.value.splice(row.index, 1);
-  }
-  onRefresh();
-};
-const delBatch = async () => {
-  console.log('111111111111111111');
-  if (formData.value.operateTpye === 'add') {
-    // 找出所有对应索引的元素并将它们的ID收集到一个数组中
-    const idsToDelete = dtlRowKeys.value.map((index) => dtlTabData.value[index].id);
-
-    // 调用 removeBatch 方法删除对应的元素
-    await api.iqcInspectStdDtl.removeBatch(idsToDelete);
-  } else {
-    // 获取要删除的索引，并按从大到小的顺序排序
-    const indexesToDelete = dtlRowKeys.value.sort((a, b) => b - a);
-    // 逐个删除元素
-    indexesToDelete.forEach((index) => {
-      allDtl.value.splice(index, 1);
-    });
   }
   onRefresh();
 };
@@ -525,8 +499,25 @@ defineExpose({
 .barcodeDiv {
   border-width: 2px;
   border-style: solid;
-  border-color: black;
+  border-color: rgb(49 172 243);
   border-radius: 5px;
   padding: 10px;
+}
+
+//条码栏背景card去边框
+.box-card {
+  border: none;
+}
+//检验结果tag根据结果的不同适用不同的主题样式
+.OK {
+  background-color: green;
+}
+
+.NG {
+  background-color: red;
+}
+
+.UNDERWAY {
+  background-color: blueviolet;
 }
 </style>
