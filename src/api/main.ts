@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -2465,8 +2465,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4087,13 +4087,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
-  stateName?: string;
+  isExemptionInspectionName?: string;
   isState?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4258,8 +4258,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -4338,15 +4338,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
+  isState?: boolean;
   isProductName?: string;
-  isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isState?: boolean;
+  isBatchName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -5271,7 +5271,6 @@ export interface ImportSettingRule {
 
 /** 上传控件文件VO */
 export type AddFileTypeVO = {
-  id?: string;
   serialNumber?: string;
   fullFileName?: string;
   fileName?: string;
@@ -5281,6 +5280,7 @@ export type AddFileTypeVO = {
   timeUpload?: string;
   signedUrl?: string;
   percent?: number;
+  id?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6027,8 +6027,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -7340,8 +7340,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -8300,12 +8300,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */

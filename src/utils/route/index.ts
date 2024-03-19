@@ -1,5 +1,6 @@
 import { upperFirst } from 'lodash';
 import cloneDeep from 'lodash/cloneDeep';
+import { pathToRegexp } from 'path-to-regexp';
 import { shallowRef } from 'vue';
 import { RouteRecordRaw } from 'vue-router';
 
@@ -26,21 +27,46 @@ LayoutMap.set('IFRAME', IFRAME);
 
 let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
 
-const dynamicModules: Record<string, any> = {};
-
 const moduleRouterMap = import.meta.glob('../../modules/**/router/pages/*.ts');
-for (const path in moduleRouterMap) {
-  transformRouterToModules(path);
-}
+
+const dynamicModules: Record<string, any> = {};
+const dynamicParamsModules: Record<string, any> = {};
+const dynamicParamsRoutes: Array<RouteRecordRaw> = [];
 async function transformRouterToModules(path: string) {
   if (Object.prototype.hasOwnProperty.call(moduleRouterMap, path)) {
     const router = moduleRouterMap[path];
     const moduleName = path.split('/')[3];
     const routerList = ((await router()) as any).default as Array<RouteRecordRaw>;
     for (const item of routerList) {
-      dynamicModules[`/${moduleName}#${item.path}`.toLowerCase()] = item;
+      if (item.path.lastIndexOf(':') > 0) {
+        dynamicParamsModules[`/${moduleName}#${item.path}`.toLowerCase()] = item;
+        dynamicParamsRoutes.push(item);
+      } else {
+        dynamicModules[`/${moduleName}#${item.path}`.toLowerCase()] = item;
+      }
     }
   }
+}
+export const dynamicParamRoutes = (async function loadDynamicModules() {
+  await Promise.all(Object.keys(moduleRouterMap).map((path) => transformRouterToModules(path)));
+  return dynamicParamsRoutes.map((t) => {
+    t.path = t.path.substring(1);
+    return t;
+  });
+})();
+
+export function getParamsModules(path: string): RouteRecordRaw {
+  const value = dynamicModules[path];
+  if (value) return value;
+  for (const key in dynamicParamsModules) {
+    const regexp = pathToRegexp(key);
+    const isMatch = regexp.test(path);
+
+    if (isMatch) {
+      return dynamicParamsModules[key];
+    }
+  }
+  return undefined;
 }
 
 // 动态从包内引入单个Icon
@@ -69,16 +95,16 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
       if (layoutFound) {
         if (componentName === 'IFRAME' || item.meta?.frameSrc) {
           item.meta.sourcePath = item.meta?.frameSrc;
-          const cmp = dynamicModules[item.meta.frameSrc.toLowerCase()];
+          const cmp = getParamsModules(item.meta.frameSrc.toLowerCase());
           if (cmp?.component) {
             item.meta.frameSrc = null;
           }
           if (cmp?.name) {
-            item.name = upperFirst(cmp.name);
+            item.name = upperFirst(cmp.name.toString());
           }
           item.component = cmp?.component || layoutFound;
           item.meta.title = {
-            ...cmp?.meta.title,
+            ...(cmp?.meta.title as any),
             ...(item.meta.title as any),
           };
         } else if (componentName === 'LAYOUT' && (children === null || children.length === 0)) {
@@ -102,7 +128,7 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
     item.redirect = '';
 
     // eslint-disable-next-line no-unused-expressions
-    children && asyncImportRoute(children);
+    children && (await asyncImportRoute(children));
   }
 }
 
