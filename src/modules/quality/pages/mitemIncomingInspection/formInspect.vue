@@ -4,7 +4,7 @@
     :header="t('mitemIncomingInspection.物料入厂检验')"
     width="98%"
     placement="top"
-    top="20"
+    top="56px"
     :cancel-btn="
       isEdit
         ? {

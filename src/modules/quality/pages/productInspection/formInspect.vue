@@ -5,7 +5,7 @@
     :diabled="formData.viewType === ViewType.VIEW"
     width="98%"
     placement="top"
-    top="20"
+    top="56px"
     :cancel-btn="null"
     :confirm-btn="null"
     :close-on-overlay-click="false"
@@ -673,7 +673,7 @@ const onShowFiles = async (rowData) => {
   selectOqcInspectItemId.value = rowData.row.oqcInspectItemId;
   try {
     if (!_.isEmpty(selectOqcInspectItemId.value)) {
-      const list = await apiQuality.oqcInspect.GetOqcInspectItemFileList(selectOqcInspectItemId.value);
+      const list = await apiQuality.oqcInspect.getOqcInspectItemFileList(selectOqcInspectItemId.value);
       rowData.row.fileList = list;
 
       const { showForm } = formFilesRef.value;
@@ -715,7 +715,7 @@ const showUplaodImg = async (row: OqcInspectStdFullVO) => {
 
   try {
     if (!_.isEmpty(selectOqcInspectItemId.value)) {
-      const list = await apiQuality.oqcInspect.GetOqcInspectItemFileList(selectOqcInspectItemId.value);
+      const list = await apiQuality.oqcInspect.getOqcInspectItemFileList(selectOqcInspectItemId.value);
       row.fileList = list;
       const { showForm } = formFilesRef.value;
       await showForm(false, row.fileList);
@@ -818,7 +818,7 @@ const scanYJProductBarcode = async (value) => {
   if (!isEmpty(value)) {
     LoadingPlugin(true);
     try {
-      const list = (await apiQuality.oqcInspect.scanYJProductBarcode({
+      const list = (await apiQuality.oqcInspect.scanYjProductBarcode({
         oqcInspectId: formData.id,
         billNo: formData.billNo,
         viewType: formData.viewType,
@@ -1229,4 +1229,3 @@ defineExpose({
   font-weight: 600;
 }
 </style>
-GetOqcInspectItemFileListGetOqcInspectItemFileListTDialogTDialogCmpContainerCmpContainerCmpRowCmpRowCmpCardCmpCardCmpCardCmpCardCmpCardCmpCardTFormTFormTFormTFormTRowTRowTRowTRowTColTColTColTColTColTColTColTColTColTColTColTColTColTColTColTColTColTColTColTColTColTColTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTFormItemTSelectTSelectTSelectTSelectTSelectTSelectTSelectTSelectTSelectTSelectTOptionTOptionTOptionTOptionTOptionCmpTableCmpTableCmpTableCmpTableCmpTableCmpTableCmpTableCmpTableTSpaceTSpaceTSpaceTSpaceTSpaceTSpaceTSpaceTSpaceTSpaceTSpaceTSpaceTSpaceTSpaceTSpaceTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTLinkTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTDescriptionsTRadioGroupTRadioGroupTRadioTRadioTRadioTRadioTInputTInputTInputTInputTInputTInputTInputTTabsTTabsTTabPanelTTabPanelTTabPanelTTabPanelTTabPanelTTabPanelTSwitchTSwitchTSwitchTButtonTButtonTButtonTButtonTButtonTButtonformMeasureformNgCmpFilesUpload

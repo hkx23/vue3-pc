@@ -1,6 +1,6 @@
 <template>
   <t-form ref="formRef" :data="formData" :show-cancel="true" :show-error-message="true" @submit="submit">
-    <t-row :gutter="[32, 16]">
+    <t-row :gutter="[12, 16]">
       <t-col :span="6">
         <t-form-item :label="t('business.main.mitemCode')" required-mark name="mitemCode">
           <t-input v-model="formData.mitemCode" disabled /> </t-form-item

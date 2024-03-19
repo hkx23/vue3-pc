@@ -3,7 +3,7 @@
     v-model:visible="formVisible"
     :header="t('salesDelivery.formtitle')"
     width="95%"
-    top="20"
+    top="56px"
     :confirm-btn="{
       content: t('salesDelivery.submit'),
       theme: 'primary',

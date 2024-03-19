@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -4089,11 +4089,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   isState?: boolean;
   stateName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
   isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -4258,8 +4258,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -4340,13 +4340,13 @@ export interface MitemVO {
   isBatchNo?: number;
   isState?: boolean;
   stateName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
   isRawChecked?: boolean;
-  isBatchName?: string;
+  isInProcessName?: string;
   isRawName?: string;
-  isProductChecked?: boolean;
+  isBatchName?: string;
+  isProductName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5271,7 +5271,6 @@ export interface ImportSettingRule {
 
 /** 上传控件文件VO */
 export type AddFileTypeVO = {
-  id?: string;
   serialNumber?: string;
   fullFileName?: string;
   fileName?: string;
@@ -5281,6 +5280,7 @@ export type AddFileTypeVO = {
   timeUpload?: string;
   signedUrl?: string;
   percent?: number;
+  id?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8300,12 +8300,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */

@@ -3,7 +3,7 @@
     v-model:visible="formVisible"
     :header="t('qcHold.formtitle')"
     width="75%"
-    top="20"
+    top="56px"
     :cancel-btn="null"
     :confirm-btn="null"
     :close-on-overlay-click="false"

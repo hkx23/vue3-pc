@@ -50,7 +50,7 @@
       v-model:visible="formVisible"
       :header="formTitle"
       :on-confirm="onConfirmForm"
-      width="850px"
+      width="786px"
       :close-on-overlay-click="false"
     >
       <warehouse-form ref="formRef"></warehouse-form>

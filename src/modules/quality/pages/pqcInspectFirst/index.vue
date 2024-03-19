@@ -1,6 +1,7 @@
 <!-- 首末检查询 -->
 <template>
-  <cmp-container :full="true">
+  <detail v-if="permission" :row-data="{ bill }" @permission-show="onPermission"></detail>
+  <cmp-container v-if="!permission" :full="true">
     <cmp-card :span="12">
       <!-- 查询组件  -->
       <cmp-query ref="queryRef" :opts="opts" @submit="onInput" @reset="onReset">
@@ -56,7 +57,9 @@
         </template>
         <template #billNo="slotProps">
           <t-space :size="8">
-            <t-link variant="text" theme="primary" name="edit" @click="pageSwitch()">{{ slotProps.row.billNo }}</t-link>
+            <t-link variant="text" theme="primary" name="edit" @click="pageSwitch(slotProps)">{{
+              slotProps.row.billNo
+            }}</t-link>
           </t-space>
         </template>
       </cmp-table>
@@ -74,6 +77,8 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+
+import detail from './detail.vue';
 
 const { pageUI } = usePage();
 
@@ -94,6 +99,7 @@ const printTemplate = ref(''); // 打印模板数据
 const selectedRowKeys: Ref<any[]> = ref([]); // 打印ID数组
 const printData = ref([]);
 const permission = ref(false); // 页面控制
+const bill = ref({});
 // 渲染函数
 onMounted(async () => {
   await queryRef.value.search();
@@ -319,8 +325,27 @@ const onPrint = async () => {
 };
 
 // 单据明细界面开关
-const pageSwitch = () => {
+const pageSwitch = async (value: any) => {
   permission.value = true;
+
+  try {
+    // 更新响应式数据
+    bill.value = value.row;
+  } catch (error) {
+    console.error('获取单据数据失败:', error);
+  }
+};
+
+const onPermission = async (value) => {
+  permission.value = value;
+  selectedRowKeys.value = [];
+  const res = await api.pqcInspectFirst.getList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    ...queryParams.value,
+  });
+  tableData.value = res.list; // 表格数据赋值
+  total.value = res.total; // 总页数赋值
 };
 
 // 重置按钮
@@ -378,7 +403,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     align: 'center',
   },
   {
-    colKey: 'inspectResult',
+    colKey: 'inspectResultName',
     title: t('pqcInspectFirst.inspectResult'), // 检验结果
     width: 80,
     align: 'center',

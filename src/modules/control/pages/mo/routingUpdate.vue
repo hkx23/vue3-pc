@@ -5,7 +5,7 @@
     header="工艺路线"
     :cancel-btn="null"
     :confirm-btn="null"
-    top="60px"
+    top="56px"
     width="950px"
     @close="onHandleCancel"
   >

@@ -65,6 +65,7 @@
   <div>
     <t-dialog
       v-model:visible="formVisible"
+      width="404px"
       header="分类编辑"
       :on-confirm="onConfirmForm"
       :close-on-overlay-click="false"

@@ -43,6 +43,7 @@
   <t-dialog
     v-model:visible="showDialog"
     :header="diaTitle"
+    width="424px"
     @close="onDialogClose"
     @cancel="onSecondaryReset"
     @confirm="submitForm"
@@ -54,7 +55,7 @@
       :data="formData"
       scroll-to-first-error="smooth"
       label-align="right"
-      label-width="130px"
+      label-width="120px"
       label-placement="left"
       @submit="onSubmit"
     >

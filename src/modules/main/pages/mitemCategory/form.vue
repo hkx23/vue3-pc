@@ -1,5 +1,5 @@
 <template>
-  <t-form :data="formData" :show-cancel="true" :show-error-message="false" @submit="submit">
+  <t-form :data="formData" :show-cancel="true" :show-error-message="false" label-width="100px" @submit="submit">
     <t-form-item label="分类编码" required-mark>
       <t-input v-model="formData.categoryCode" disabled />
     </t-form-item>
