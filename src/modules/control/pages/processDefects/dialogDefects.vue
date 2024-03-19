@@ -2,7 +2,7 @@
   <t-dialog
     v-model:visible="visible"
     :header="t('processDefects.defectList')"
-    top="60px"
+    top="56px"
     width="850px"
     :confirm-btn="{
       content: '添加',

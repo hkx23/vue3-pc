@@ -484,8 +484,8 @@ const computedTableContentSize = () => {
 
         // 防止负数或零的情况，如果已经减无可减，则跳出循环（假设至少需要一个查询框）
         if (queryBoxCount <= 0) {
-          targetWidth = clientWidth / 2; // 或者给一个默认值
-          queryBoxCount = 2;
+          targetWidth = clientWidth; // 或者给一个默认值
+          queryBoxCount = 1;
           break;
         }
       }

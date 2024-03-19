@@ -1,5 +1,5 @@
 <template>
-  <div v-show="activeRouteIsNotIframe" class="tdesign-wrapper">
+  <div class="tdesign-wrapper">
     <!-- <router-view /> -->
     <router-view v-if="!isRefreshing" v-slot="{ Component, route }">
       <!-- :include="aliveViews" -->
@@ -14,16 +14,8 @@
 // import isUndefined from 'lodash/isUndefined';
 // import type { ComputedRef } from 'vue';
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
 
 import { useTabsRouterStore } from '@/store';
-
-const router = useRouter();
-
-const activeRouteIsNotIframe = computed(() => {
-  const { currentRoute } = router;
-  return !currentRoute.value.meta.frameSrc;
-});
 
 // const aliveViews = computed(() => {
 //   const tabsRouterStore = useTabsRouterStore();

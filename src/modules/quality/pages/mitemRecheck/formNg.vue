@@ -4,7 +4,7 @@
     :header="t('mitemRecheck.处理意见')"
     width="80%"
     placement="top"
-    top="20"
+    top="56px"
     :confirm-btn="{
       content: t('mitemRecheck.提交'),
       theme: 'primary',

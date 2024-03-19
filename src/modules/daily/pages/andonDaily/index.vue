@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <cmp-card>
       <!-- 查询组件  -->
-      <cmp-query :opts="opts" @submit="conditionEnter"> </cmp-query>
+      <cmp-query ref="optRef" :opts="opts" @submit="conditionEnter"> </cmp-query>
     </cmp-card>
     <cmp-card>
       <t-row style="margin-bottom: 10px">
@@ -26,7 +26,7 @@
       >
         <template #title> {{ t('andonDaily.title') }}</template>
         <template #button>
-          <t-checkbox v-model="queryCompment.isDateSummary" :label="t('andonDaily.dateTotal')" @change="fetchTable">
+          <t-checkbox v-model="queryCompment.isDateSummary" :label="t('andonDaily.dateTotal')" @change="onCheckBox">
           </t-checkbox
         ></template>
         <template #dateOp="slotProps">
@@ -60,6 +60,7 @@ const { t } = useLang();
 
 const pageLoading = ref(false);
 const formRef = ref(null);
+const optRef = ref(null);
 const formRefSheet = ref(null);
 const { pageUI } = usePage();
 const { loading } = useLoading();
@@ -255,6 +256,12 @@ const conditionEnter = (data: any) => {
   queryCompment.value.timeCreateStart = data.timeCreateStart;
   queryCompment.value.timeCreateEnd = data.timeCreateEnd;
   onRefresh();
+};
+// 点击查询按钮
+const onCheckBox = () => {
+  console.log(optRef.value);
+  const { search } = optRef.value;
+  search();
 };
 const onRefresh = () => {
   fetchTable();

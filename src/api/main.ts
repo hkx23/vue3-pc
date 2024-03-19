@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -4087,13 +4087,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
-  stateName?: string;
+  isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
+  isState?: boolean;
   isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4339,14 +4339,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   isState?: boolean;
-  stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isRawName?: string;
   isProductName?: string;
-  isBatchName?: string;
+  isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
+  isBatchName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4489,8 +4489,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5271,7 +5271,6 @@ export interface ImportSettingRule {
 
 /** 上传控件文件VO */
 export type AddFileTypeVO = {
-  id?: string;
   serialNumber?: string;
   fullFileName?: string;
   fileName?: string;
@@ -5281,6 +5280,7 @@ export type AddFileTypeVO = {
   timeUpload?: string;
   signedUrl?: string;
   percent?: number;
+  id?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8300,12 +8300,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -8941,6 +8941,59 @@ export interface ResultPagingDataBarcodeSegmentDTO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataBarcodeSegmentDTO;
+}
+
+/** APP底座表 */
+export type AppBase = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** APP名称 */
+  appName?: string;
+  /** APP版本号 */
+  appVersion?: string;
+  /** APP类型 */
+  appType?: string;
+  /** APP地址 */
+  appPath?: string;
+  /** APP构建版本号 */
+  appBuild?: number;
+  /** 包名称 */
+  packageName?: string;
+  /** 备注 */
+  memo?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultAppBase {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** APP底座表 */
+  data?: AppBase;
 }
 
 /** APP底座显示实体 */
@@ -15105,6 +15158,25 @@ export const api = {
      * No description
      *
      * @tags APP底座表
+     * @name GetNewApp
+     * @summary 获取最新底座
+     * @request GET:/appBase/getNewApp
+     * @secure
+     */
+    getNewApp: (query: {
+      packageName: string;
+      /** @format int32 */
+      appBuild: number;
+    }) =>
+      http.request<ResultAppBase['data']>(`/api/main/appBase/getNewApp`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags APP底座表
      * @name GetList
      * @summary 获取底座列表
      * @request GET:/appBase/getList
@@ -15119,6 +15191,53 @@ export const api = {
       appType: string;
     }) =>
       http.request<ResultPagingDataAppBaseVO['data']>(`/api/main/appBase/getList`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  adminOrg: {
+    /**
+     * No description
+     *
+     * @tags 行政组织架构表
+     * @name GetAllListNoTree
+     * @summary 获取员工信息
+     * @request POST:/adminOrg/getAllListNoTree
+     * @secure
+     */
+    getAllListNoTree: () =>
+      http.request<ResultObject['data']>(`/api/main/adminOrg/getAllListNoTree`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 行政组织架构表
+     * @name Tree
+     * @summary 获取行政组织树
+     * @request GET:/adminOrg/tree
+     * @secure
+     */
+    tree: () =>
+      http.request<ResultListAdminOrgVO['data']>(`/api/main/adminOrg/tree`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 行政组织架构表
+     * @name Getlist
+     * @summary 获取员工信息
+     * @request GET:/adminOrg/getlist
+     * @secure
+     */
+    getlist: (query: {
+      /** @format int32 */
+      parent_org_id: number;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/adminOrg/getlist`, {
         method: 'GET',
         params: query,
       }),
@@ -15283,39 +15402,6 @@ export const api = {
     items: () =>
       http.request<ResultListBusinessUnit['data']>(`/api/main/businessUnit/items`, {
         method: 'GET',
-      }),
-  },
-  adminOrg: {
-    /**
-     * No description
-     *
-     * @tags 行政组织架构表
-     * @name Tree
-     * @summary 获取行政组织树
-     * @request GET:/adminOrg/tree
-     * @secure
-     */
-    tree: () =>
-      http.request<ResultListAdminOrgVO['data']>(`/api/main/adminOrg/tree`, {
-        method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 行政组织架构表
-     * @name Getlist
-     * @summary 获取员工信息
-     * @request GET:/adminOrg/getlist
-     * @secure
-     */
-    getlist: (query: {
-      /** @format int32 */
-      parent_org_id: number;
-    }) =>
-      http.request<ResultObject['data']>(`/api/main/adminOrg/getlist`, {
-        method: 'GET',
-        params: query,
       }),
   },
 };

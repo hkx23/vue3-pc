@@ -48,7 +48,7 @@
     header="工单明细"
     :cancel-btn="null"
     :confirm-btn="null"
-    top="60px"
+    top="56px"
     width="950px"
   >
     <detailed ref="detailFormRef" :row="currentrow" @added-show="onHandleBomShow"></detailed>

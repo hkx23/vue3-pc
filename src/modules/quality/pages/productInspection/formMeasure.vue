@@ -4,7 +4,7 @@
     header="计算结果"
     width="60%"
     placement="top"
-    top="40"
+    top="56px"
     :cancel-btn="
       isEdit
         ? {

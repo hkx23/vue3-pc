@@ -1117,16 +1117,26 @@ export interface TransferDtlVO {
   memo?: string;
   /** 来源单据行号 */
   sourceBillLineNo?: string;
-  /** 交易单身标签表 */
-  transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  toWarehouseCode?: string;
+  toWarehouseName?: string;
+  districtCode?: string;
+  districtName?: string;
+  toDistrictCode?: string;
+  toDistrictName?: string;
+  locationCode?: string;
   locationName?: string;
+  toLocationCode?: string;
   toLocationName?: string;
   uomName?: string;
   /** @format int32 */
   isBatchNo?: number;
+  /** 交易单身标签表 */
+  transferDtlBarcodeList?: TransferDtlBarcodeVO[];
 }
 
 /** 交易事务头表 */
@@ -2487,6 +2497,8 @@ export interface ReturnManagementSearch {
    * @format date-time
    */
   endTime?: string;
+  /** 创建时间 */
+  timeCreate?: string[];
 }
 
 /** 响应数据 */
@@ -2507,6 +2519,26 @@ export interface ResultPagingDataTransferHeadVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataTransferHeadVO;
+}
+
+/** 响应数据 */
+export type PagingDataTransferDtlVO = {
+  list?: TransferDtlVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataTransferDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataTransferDtlVO;
 }
 
 /** 通用响应类 */
@@ -3042,21 +3074,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  bfpickQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  tlpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3542,13 +3574,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -7304,6 +7336,24 @@ export const api = {
      * No description
      *
      * @tags 退货管理
+     * @name GetReturnManagementDtlList
+     * @summary 查询退货单明细
+     * @request POST:/returnManagement/getReturnManagementDtlList
+     * @secure
+     */
+    getReturnManagementDtlList: (data: ReturnManagementSearch) =>
+      http.request<ResultPagingDataTransferDtlVO['data']>(
+        `/api/warehouse/returnManagement/getReturnManagementDtlList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
      * @name GetRerurnStockOut
      * @summary 扫描退货单
      * @request POST:/returnManagement/getRerurnStockOut
@@ -7332,6 +7382,21 @@ export const api = {
           params: query,
         },
       ),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
+     * @name GetPrintBillInfo
+     * @summary 查询退货单打印数据
+     * @request POST:/returnManagement/getPrintBillInfo
+     * @secure
+     */
+    getPrintBillInfo: (data: ReturnManagementSearch) =>
+      http.request<ResultTransferHeadVO['data']>(`/api/warehouse/returnManagement/getPrintBillInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
 
     /**
      * No description

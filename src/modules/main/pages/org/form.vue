@@ -5,7 +5,7 @@
     :data="formData"
     :show-cancel="true"
     :show-error-message="false"
-    :label-width="135"
+    :label-width="100"
   >
     <t-form-item :label="t('org.parentOrgName')" name="parentLevelId">
       {{ formData.parentOrgName }}

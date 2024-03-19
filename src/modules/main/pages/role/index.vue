@@ -57,7 +57,7 @@
   <!-- 角色成员弹出窗 -->
   <t-dialog
     v-model:visible="formUserVisible"
-    top="25px"
+    top="56px"
     width="800px"
     :confirm-btn="null"
     :header="t('role.roleMember')"

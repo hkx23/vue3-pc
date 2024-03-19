@@ -137,7 +137,6 @@
 import dayjs from 'dayjs';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 import { api as apiControl } from '@/api/control';
 import { api as apimain } from '@/api/main';
@@ -145,11 +144,11 @@ import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
+import { openPage } from '@/router';
 
 import detailed from './detailed.vue';
 import { useLang } from './lang';
 
-const router = useRouter();
 const selectRows = ref([]);
 const curOperatorType = ref('');
 enum OperatorType {
@@ -993,17 +992,13 @@ const onHandelLock = (operatorType: OperatorType) => {
 // 解锁
 const onHandelUnLock = (operatorType: OperatorType) => {
   console.log(operatorType);
-  const tabRouters = router.getRoutes();
-  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === '/quality#/holdList/UNLOCK');
-  router.push(routeInfo);
+  openPage('/holdList/UNLOCK');
 };
 
 // 日志
 const onHandelLog = (operatorType: OperatorType) => {
   console.log(operatorType);
-  const tabRouters = router.getRoutes();
-  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === '/quality#/holdListView/VIEW');
-  router.push(routeInfo);
+  openPage('/holdListView/VIEW');
 };
 
 // 子组件控制执行窗口
