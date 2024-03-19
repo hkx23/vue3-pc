@@ -122,6 +122,7 @@ const dataTotal = ref(0);
 
 const fetchTable = async () => {
   try {
+    loading.value = true;
     const data = (await api.iqcInspect.getSupplierQualified({
       ...queryCompment.value,
       pageNum: pageUI.value.page,
@@ -129,8 +130,11 @@ const fetchTable = async () => {
     })) as any;
     tableData.value = data.list;
     dataTotal.value = data.total;
+    MessagePlugin.success(t('supplierQualificationRate.querySuccess'));
   } catch (e) {
     console.log(e);
+  } finally {
+    loading.value = false;
   }
 };
 </script>

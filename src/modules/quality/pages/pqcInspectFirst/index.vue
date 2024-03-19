@@ -336,9 +336,16 @@ const pageSwitch = async (value: any) => {
   }
 };
 
-const onPermission = (value) => {
+const onPermission = async (value) => {
   permission.value = value;
-  // onfetchData();
+  selectedRowKeys.value = [];
+  const res = await api.pqcInspectFirst.getList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    ...queryParams.value,
+  });
+  tableData.value = res.list; // 表格数据赋值
+  total.value = res.total; // 总页数赋值
 };
 
 // 重置按钮

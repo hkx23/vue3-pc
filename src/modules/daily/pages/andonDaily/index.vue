@@ -13,7 +13,7 @@
       <cmp-table
         v-model:pagination="pageUI"
         row-key="index"
-        :bordered="true"
+        bordered
         :hover="false"
         :show-pagination="false"
         :rowspan-and-colspan="rowspanAndColspan"

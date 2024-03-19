@@ -1,0 +1,10 @@
+{
+  "productCapacity": {
+    "mitemCode": "物料编码",
+    "querySuccess": "查询成功",
+    "title": "生产经济配置列表",
+    "speedRate": "速率值(H)",
+    "status": "状态",
+    "orgCode": "工厂编码"
+  }
+}
