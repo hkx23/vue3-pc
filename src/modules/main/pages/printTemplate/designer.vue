@@ -44,6 +44,7 @@ let designer: StiDesigner;
 onMounted(() => {
   const options = new Stimulsoft.Designer.StiDesignerOptions();
   options.appearance.fullScreenMode = true;
+  options.appearance.allowChangeWindowTitle = false;
   // options.appearance.showLocalization = true;
 
   Stimulsoft.Base.Localization.StiLocalization.setLocalizationFile(`./libs/stimulsoft/locales/${fw.getLanguage()}.xml`);

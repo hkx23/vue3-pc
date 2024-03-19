@@ -119,9 +119,13 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
       item.component = PARENT_LAYOUT();
     }
     item.meta.iconName = item.meta.icon;
-    if (item.meta.icon) {
-      item.meta.icon = await getMenuIcon(item.meta.icon);
+    if (!item.meta.icon) {
+      item.meta.icon = children && children.length > 0 ? 'folder' : 'file';
     }
+    item.meta.icon = await getMenuIcon(item.meta.icon);
+    // if (item.meta.icon) {
+    //   item.meta.icon = await getMenuIcon(item.meta.icon);
+    // }
     if ((item as any).id) {
       item.meta.id = (item as any).id;
     }
@@ -166,6 +170,7 @@ export async function transformObjectToRoute<T = RouteItem>(routeList: RouteItem
 }
 
 export async function transformItemToRoute<T = RouteItem>(route: RouteItem): Promise<T> {
+  console.log('🚀 ~ route:', route);
   const component = route.component as string;
 
   if (component) {
@@ -184,9 +189,10 @@ export async function transformItemToRoute<T = RouteItem>(route: RouteItem): Pro
   // eslint-disable-next-line no-unused-expressions
   route.children && (await asyncImportRoute(route.children));
   route.meta.iconName = route.meta.icon;
-  if (route.meta.icon) {
-    route.meta.icon = await getMenuIcon(route.meta.icon);
+  if (!route.meta.icon) {
+    route.meta.icon = 'system-3';
   }
+  route.meta.icon = await getMenuIcon(route.meta.icon);
   if ((route as any).id) {
     route.meta.id = (route as any).id;
   }
