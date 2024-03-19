@@ -1,6 +1,6 @@
 <template>
   <cmp-container :full="true">
-    <cmp-card class="not-full-tab">
+    <cmp-card>
       <!-- !提交暂存模块 -->
       <t-row v-if="alertReject" style="display: flex; justify-content: center">
         <t-alert theme="error">{{ alertRejectMessage }}</t-alert>
@@ -46,7 +46,7 @@
         <t-tab-panel :value="0" :label="t('qualityImprove.mainInfo')" :destroy-on-hide="false">
           <template #panel>
             <!-- !基础信息模块 -->
-            <cmp-card :hover-shadow="false" :ghost="true">
+            <cmp-card :hover-shadow="false">
               <t-row style="margin-left: 50px" justify="space-between" align="center">
                 <t-col>
                   <span class="span_title">{{ t('qualityImprove.baseInfo') }}</span>
@@ -835,11 +835,10 @@
         <t-tab-panel :value="1" :label="t('qualityImprove.processView')" :destroy-on-hide="false">
           <template #panel>
             <cmp-container :full="true">
-              <cmp-card :ghost="true">
+              <cmp-card>
                 <cmp-table
                   v-model:pagination="pageUI"
                   row-key="id"
-                  :fixed-height="true"
                   :hover="true"
                   :table-column="columns"
                   :table-data="tableData"
@@ -1223,6 +1222,7 @@ const onRejectToBefore = async () => {
 const formData = ref({
   operateType: 'add',
   billNo: '',
+  moScheId: '',
   relateBillNo: '',
   id: '',
   inspectType: '',
@@ -1313,6 +1313,7 @@ const init = () => {
   formData.value = {
     operateType: 'add',
     billNo: '',
+    moScheId: '',
     relateBillNo: '',
     id: '',
     inspectType: '',
@@ -1344,6 +1345,7 @@ const init = () => {
     status: 'DRAFT',
   };
   alertReject.value = false;
+  improveToolOp.value = false;
   fileList.value = [];
   tableData.value = [];
   dataTotal.value = 0;
@@ -1429,6 +1431,7 @@ const onChangeBillNo = async () => {
   formData.value.workshopId = item.workshopId;
   formData.value.mitemId = item.mitemId;
   formData.value.supplierId = item.supplierId;
+  formData.value.moScheId = item.moScheId;
 };
 const columns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('qualityImprove.currentStage')}`, width: 100, colKey: 'currentStage' },

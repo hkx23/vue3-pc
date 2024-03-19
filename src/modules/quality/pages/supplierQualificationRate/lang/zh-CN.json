@@ -8,6 +8,7 @@
     "totalInspection": "总送检批次",
     "qualifiedBatch": "合格批次",
     "ngBatch": "不合格批次",
+    "querySuccess": "查询成功",
     "batchQualificationRate": "批次合格率",
     "selectMitemAndTime": "请选择时间范围和产品！",
     "inspectionTime": "送检时间"

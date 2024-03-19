@@ -1,7 +1,4 @@
 import Layout from '@/layouts/index.vue';
-import { dynamicParamRoutes } from '@/utils/route';
-
-console.log('🚀 ~ dynamicParamRoutes:', dynamicParamRoutes);
 
 export default [
   {
@@ -14,6 +11,6 @@ export default [
       },
     },
     component: Layout,
-    children: [...(await dynamicParamRoutes)],
+    children: [],
   },
 ];

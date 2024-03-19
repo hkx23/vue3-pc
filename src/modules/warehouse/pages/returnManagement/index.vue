@@ -312,7 +312,7 @@ const onPrintClick = async () => {
             const billDtls = billInfoData.transferDtlList;
             printData.value.push({
               variable: billInfoData,
-              datasource: { BillInfoList: billInfoData, BillDetailInfoList: billDtls },
+              datasource: { head: billInfoData, body: billDtls },
             });
           }
         });
