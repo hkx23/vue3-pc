@@ -933,6 +933,8 @@ export interface PqcInspectPatrolSearch {
   customerConditions?: Filter[];
   /** 检验单据 */
   billNo?: string;
+  /** 待取消的检验单据 */
+  cancelBillNoList?: string[];
 }
 
 /** 通用响应类 */
@@ -1466,55 +1468,6 @@ export interface ResultPagingDataPqcInspectFirstBillFullVO {
   data?: PagingDataPqcInspectFirstBillFullVO;
 }
 
-/** 首末检全数据查询 */
-export interface PqcInspectBillSearch {
-  /** 关键字 */
-  keyWord?: string;
-  /** 是否显示本人的单据 0:表示本人 */
-  isMySelf?: string;
-  /** 模式：EXECUTE 首末检执行, HISTORY 首末检历史单据 */
-  viewType?: string;
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  /** 检验单号 */
-  billNo?: string;
-  moScheId?: string;
-  /** 报检员 */
-  creator?: string;
-  /** 检验结果 */
-  inspectResult?: string;
-  /**
-   * 创建开始时间
-   * @format date-time
-   */
-  beginDatetimeCreate?: string;
-  /**
-   * 创建结束时间
-   * @format date-time
-   */
-  endDatetimeCreate?: string;
-  workCenterId?: string;
-  /** 单据状态集合 */
-  statusList?: string[];
-  /** 单据状态 */
-  status?: string;
-}
-
-/** 通用响应类 */
-export interface ResultPqcInspectFirstBillFullVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 首末检全数据 */
-  data?: PqcInspectFirstBillFullVO;
-}
-
 export interface PqcInspectFirstSearch {
   /**
    * 页码
@@ -1550,16 +1503,16 @@ export interface PqcInspectFirstSearch {
   status?: string;
   /** 是否品质改善 */
   isImprove?: string;
+  pqcInspectFirstId?: string;
+  pqcInspectFirstBarcodeId?: string;
+  /** 项目分类 */
+  itemCategory?: string;
+  /** 是否仅显示不合格 */
+  isNg?: boolean;
 }
 
 /** 响应数据 */
-export type PagingDataPqcInspectFirstVO = {
-  list?: PqcInspectFirstVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-export interface PqcInspectFirstVO {
+export type PqcInspectFirstVO = {
   id?: string;
   /**
    * 创建时间
@@ -1647,7 +1600,96 @@ export interface PqcInspectFirstVO {
   /** 扫描的条码 */
   scanBarcode?: string;
   pqcInspectFirstId?: string;
+  /** 项目分类 */
+  itemCategory?: string;
+  /** 项目分类名称 */
+  itemCategoryName?: string;
+  /** 项目名称或内容 */
+  itemName?: string;
+  /** 技术要求 */
+  technicalRequest?: string;
+  /** 项目特性 */
+  characteristics?: string;
+  /** 项目特性名称 */
+  characteristicsName?: string;
+  /** 检验工具 */
+  inspectTool?: string;
+  /** 检测值 */
+  inspectValue?: number;
+  /** 不良原因 */
+  ngReason?: string;
+  /** 检验依据 */
+  inspectBasis?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListPqcInspectFirstVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PqcInspectFirstVO[] | null;
 }
+
+/** 首末检全数据查询 */
+export interface PqcInspectBillSearch {
+  /** 关键字 */
+  keyWord?: string;
+  /** 是否显示本人的单据 0:表示本人 */
+  isMySelf?: string;
+  /** 模式：EXECUTE 首末检执行, HISTORY 首末检历史单据 */
+  viewType?: string;
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** 检验单号 */
+  billNo?: string;
+  moScheId?: string;
+  /** 报检员 */
+  creator?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /**
+   * 创建开始时间
+   * @format date-time
+   */
+  beginDatetimeCreate?: string;
+  /**
+   * 创建结束时间
+   * @format date-time
+   */
+  endDatetimeCreate?: string;
+  workCenterId?: string;
+  /** 单据状态集合 */
+  statusList?: string[];
+  /** 单据状态 */
+  status?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPqcInspectFirstBillFullVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 首末检全数据 */
+  data?: PqcInspectFirstBillFullVO;
+}
+
+/** 响应数据 */
+export type PagingDataPqcInspectFirstVO = {
+  list?: PqcInspectFirstVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
 
 /** 通用响应类 */
 export interface ResultPagingDataPqcInspectFirstVO {
@@ -1701,19 +1743,6 @@ export interface ResultListPqcInspectFirstStdFullVO {
   message?: string;
   /** 响应数据 */
   data?: PqcInspectFirstStdFullVO[] | null;
-}
-
-/** 通用响应类 */
-export interface ResultListPqcInspectFirstVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PqcInspectFirstVO[] | null;
 }
 
 /** 通用响应类 */
@@ -2295,10 +2324,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -2694,6 +2723,8 @@ export interface IqcInspectStdFullSearch {
   directInspectOk?: boolean;
   /** 一键判退 */
   directInspectNg?: boolean;
+  /** 是否免检 */
+  isExemptionInspection?: boolean;
   supplierId?: string;
   /** 接收单号信息 */
   billNoList?: IqcInspectSubmitDeliveryNoVO[];
@@ -3572,6 +3603,8 @@ export interface IqcInspectSubmitVO {
   directInspectOk?: boolean;
   /** 一键判退 */
   directInspectNg?: boolean;
+  /** 是否免检 */
+  isExemptionInspection?: boolean;
   /** 处理意见VO */
   iqcInspectNg?: IqcInspectNgVO;
   iqcInspectStdList?: IqcInspectStdFullVO[];
@@ -4781,6 +4814,7 @@ export interface ImproveVO {
   workshopName?: string;
   /** 工作中心 */
   workcenterName?: string;
+  workcenteId?: string;
   /** 不合格分类 */
   defectCategoryName?: string;
   responsibility?: string;
@@ -5313,13 +5347,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s2?: string;
-  i?: string;
-  iii?: string;
-  s1?: string;
-  s3?: string;
-  s4?: string;
   ii?: string;
+  iii?: string;
+  i?: string;
+  s2?: string;
+  s3?: string;
+  s1?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */
@@ -5798,6 +5832,21 @@ export const api = {
           body: data as any,
         },
       ),
+
+    /**
+     * No description
+     *
+     * @tags 巡检检验表
+     * @name Cancelled
+     * @summary 单据取消
+     * @request POST:/pqcInspectPatrol/cancelled
+     * @secure
+     */
+    cancelled: (data: PqcInspectPatrolSearch) =>
+      http.request<ResultBoolean['data']>(`/api/quality/pqcInspectPatrol/cancelled`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   pqcInspectFirst: {
     /**
@@ -5871,6 +5920,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataPqcInspectFirstBillFullVO['data']>(`/api/quality/pqcInspectFirst/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 首检检验表
+     * @name GetTabs
+     * @summary 获得检验项目的分组Tab
+     * @request POST:/pqcInspectFirst/getTabs
+     * @secure
+     */
+    getTabs: (data: PqcInspectFirstSearch) =>
+      http.request<ResultListPqcInspectFirstVO['data']>(`/api/quality/pqcInspectFirst/getTabs`, {
         method: 'POST',
         body: data as any,
       }),
@@ -5964,6 +6028,21 @@ export const api = {
      */
     getBarcodeTableList: (data: PqcInspectStdFullSearch) =>
       http.request<ResultListPqcBarcodeVO['data']>(`/api/quality/pqcInspectFirst/getBarcodeTableList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 首检检验表
+     * @name GetBarcodeItems
+     * @summary 获得检验项目
+     * @request POST:/pqcInspectFirst/getBarcodeItems
+     * @secure
+     */
+    getBarcodeItems: (data: PqcInspectFirstSearch) =>
+      http.request<ResultPagingDataPqcInspectFirstVO['data']>(`/api/quality/pqcInspectFirst/getBarcodeItems`, {
         method: 'POST',
         body: data as any,
       }),

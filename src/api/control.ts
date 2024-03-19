@@ -2440,13 +2440,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2656,6 +2656,112 @@ export interface ProcessSearch {
   sorts?: SortParam[];
   filters?: Filter[];
   customerConditions?: Filter[];
+}
+
+export interface ProductCapacitySearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workCenterId?: string;
+  workshopId?: string;
+  mitemId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataProductCapacityVO = {
+  list?: ProductCapacityVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface ProductCapacityVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workcenterId?: string;
+  mitemId?: string;
+  /** 速率 */
+  speedRate?: number;
+  workshopId?: string;
+  orgCode?: string;
+  mitemCode?: string;
+  mitemDesc?: string;
+  workshopName?: string;
+  workcenterName?: string;
+  stateName?: string;
+  creatorName?: string;
+  modifierName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProductCapacityVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProductCapacityVO;
+}
+
+/** 产能型谱表 */
+export interface ProductCapacity {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workcenterId?: string;
+  mitemId?: string;
+  /** 速率 */
+  speedRate?: number;
 }
 
 export interface ProcessInDefectCodeSearch {
@@ -3631,15 +3737,15 @@ export interface BarcodeWipCollectVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3752,13 +3858,13 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopId?: string;
+  workshopName?: string;
   workshopCode?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -5254,6 +5360,52 @@ export const api = {
      */
     getReturnProcessByBarcode: (data: ProcessSearch) =>
       http.request<ResultPagingDataProcessVO['data']>(`/api/control/productRework/getReturnProcessByBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  productCapacity: {
+    /**
+     * No description
+     *
+     * @tags 产能型谱表
+     * @name GetList
+     * @summary 产能型谱表主界面表格
+     * @request POST:/productCapacity/getList
+     * @secure
+     */
+    getList: (data: ProductCapacitySearch) =>
+      http.request<ResultPagingDataProductCapacityVO['data']>(`/api/control/productCapacity/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产能型谱表
+     * @name Edit
+     * @summary 产能型谱编辑
+     * @request POST:/productCapacity/edit
+     * @secure
+     */
+    edit: (data: ProductCapacity) =>
+      http.request<ResultObject['data']>(`/api/control/productCapacity/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产能型谱表
+     * @name Add
+     * @summary 产能型谱新增
+     * @request POST:/productCapacity/add
+     * @secure
+     */
+    add: (data: ProductCapacity) =>
+      http.request<ResultObject['data']>(`/api/control/productCapacity/add`, {
         method: 'POST',
         body: data as any,
       }),
