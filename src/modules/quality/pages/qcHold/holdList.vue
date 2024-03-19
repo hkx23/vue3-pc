@@ -13,6 +13,7 @@
         :table-data="holdInfoList.list"
         :loading="loading"
         :total="holdInfoList.total"
+        :fixed-height="true"
         @refresh="onRefresh"
       >
         <template #title>{{ t('qcHold.holdListTitle') }}</template>
