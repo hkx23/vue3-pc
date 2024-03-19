@@ -337,7 +337,7 @@ const fetchTable = async () => {
       } else if (SelectNode.value.isSys === '0') {
         onAddParam(null);
       }
-      sortTable();
+      sortTable(true);
       pagination.value = { ...pagination.value, total: data.total };
     } catch (e) {
       console.log(e);
@@ -351,7 +351,7 @@ const onDeleteConfirm = async () => {
   dataLoading.value = true;
   try {
     dataTable.value.splice(deleteIdx.value, 1);
-    sortTable();
+    sortTable(true);
     onShowDeleteConfirmVisible.value = false;
   } catch (e) {
     // console.log(e);
@@ -385,7 +385,7 @@ const onAddParam = (item) => {
     dataTable.value = [];
     dataTable.value.push(obj.value);
   }
-  sortTable();
+  sortTable(true);
 };
 
 // 删除按钮
@@ -394,14 +394,16 @@ const handleClickDelete = (value: any, index: any) => {
   onShowDeleteConfirmVisible.value = true;
 };
 
-const sortTable = () => {
+const sortTable = (isNeedSort: boolean) => {
   const rowIndex = ref(1);
   if (dataTable.value) {
     dataTable.value.forEach((element) => {
       if (!element.key) {
         element.rowKey = _.uniqueId();
       }
-      element.seq = rowIndex.value; // 自动生成排序
+      if (isNeedSort) {
+        element.seq = rowIndex.value; // 自动生成排序'
+      }
       element.oid = element.isGlobal === true ? '0' : ''; // 0表示全局
       rowIndex.value++;
     });
@@ -447,7 +449,7 @@ const onChangeKeyword = () => {
 const clearTable = () => {
   dataTable.value = null;
   totaldataTable.value = null;
-  sortTable();
+  sortTable(true);
 };
 
 // 保存
@@ -470,7 +472,7 @@ const onSave = async () => {
   if (isEmpty) {
     MessagePlugin.error('存在参数编码或参数名称或参数值为空的数据，请检查');
   } else {
-    sortTable();
+    sortTable(false);
     dataLoading.value = true;
     let postData: ParamInfoDTO = {};
     postData = {

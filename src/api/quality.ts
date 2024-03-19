@@ -2295,10 +2295,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -5117,10 +5117,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -5313,13 +5313,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s2?: string;
-  i?: string;
-  iii?: string;
-  s1?: string;
-  s3?: string;
-  s4?: string;
   ii?: string;
+  iii?: string;
+  s2?: string;
+  s4?: string;
+  s3?: string;
+  s1?: string;
+  i?: string;
 } | null;
 
 /** 标签模板 */
