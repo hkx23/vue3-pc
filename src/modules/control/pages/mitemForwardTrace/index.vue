@@ -513,8 +513,8 @@ const opts = computed(() => {
 
 // 界面点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   queryCondition.value = data;
-
   if (queryCondition.value.searchType === 'mintemBatch') {
     queryCondition.value.mitemLabelNo = '';
   } else {

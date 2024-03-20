@@ -961,6 +961,7 @@ const switchTab = (selectedTabIndex: any) => {
 };
 // 打印界面点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   queryCondition.value = data;
   queryCondition.value.moScheduleId = data.moScheduleId;
   queryCondition.value.scheStatus = data.scheStatus;
@@ -971,6 +972,7 @@ const conditionEnter = (data: any) => {
 };
 // 管理界面点击查询按钮
 const managePageSearchClick = (data: any) => {
+  pageUIMannage.value.page = 1;
   manageQueryCondition.value = data;
   const [planDateStart, planDateEnd] = data.datetimePlanRange;
   const [timeCreatedStart, timeCreatedEnd] = data.timeCreatedRange;

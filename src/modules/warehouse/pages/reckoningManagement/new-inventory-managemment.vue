@@ -279,6 +279,7 @@ const onInput = async (data: any) => {
     MessagePlugin.error('仓库为必填项');
     return;
   }
+  pageUI.value.page = 1;
   if (!data.value) {
     const { stockCheckType, warehouseId, districtId, locationId, mitemId } = data;
     const result = await api.stockCheckBill.getOnHand({

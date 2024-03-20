@@ -108,6 +108,7 @@ const conditionEnter = (data: any) => {
   } else {
     data.supplierIds = '';
   }
+  pageUI.value.page = 1;
   queryCompment.value = data;
   const [timeCreateStart, timeCreateEnd] = data.timeCreateRange;
   queryCompment.value.timeCreateStart = timeCreateStart;

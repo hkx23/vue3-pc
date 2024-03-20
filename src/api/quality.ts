@@ -1509,8 +1509,6 @@ export interface PqcInspectFirstSearch {
   itemCategory?: string;
   /** 是否仅显示不合格 */
   isNg?: boolean;
-  /** 项目名称或内容 */
-  itemName?: string;
 }
 
 /** 响应数据 */
@@ -1622,8 +1620,6 @@ export type PqcInspectFirstVO = {
   ngReason?: string;
   /** 检验依据 */
   inspectBasis?: string;
-  /** 不合格分类名称 */
-  defectCategoryName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -1869,17 +1865,6 @@ export interface OqcInspectStdMitemAssign {
   mitemCategoryIds?: string[];
 }
 
-export interface OqcInspectStdSearch {
-  stdId?: string;
-  inspectStdCode?: string;
-  status?: string[];
-  userNames?: string[];
-  /** @format int32 */
-  pageSize?: number;
-  /** @format int32 */
-  pageNum?: number;
-}
-
 export interface FileUpload {
   fileName?: string;
   signedUrl?: string;
@@ -1998,6 +1983,17 @@ export interface OqcInspectStdDtlFile {
   fileName?: string;
   /** 文件地址 */
   filePath?: string;
+}
+
+export interface OqcInspectStdSearch {
+  stdId?: string;
+  inspectStdCode?: string;
+  status?: string[];
+  userNames?: string[];
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int32 */
+  pageNum?: number;
 }
 
 /** 响应数据 */
@@ -2326,10 +2322,10 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
 }
@@ -5155,10 +5151,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -5493,6 +5489,18 @@ export interface ResultListProfileValue {
   message?: string;
   /** 响应数据 */
   data?: ProfileValue[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultOqcInspectStdDtlDTO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: OqcInspectStdDtlDTO;
 }
 
 /** 通用响应类 */
@@ -6183,6 +6191,21 @@ export const api = {
      * No description
      *
      * @tags 产品检验标准明细表
+     * @name UpdateDtlById
+     * @summary 更新明细
+     * @request POST:/oqcInspectStdDtl/updateDtlById
+     * @secure
+     */
+    updateDtlById: (data: OqcInspectStdDtlDTO) =>
+      http.request<ResultObject['data']>(`/api/quality/oqcInspectStdDtl/updateDtlById`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准明细表
      * @name GetAllDtlByStdId
      * @summary 根据标准id获取明细数据
      * @request POST:/oqcInspectStdDtl/getAllDtlByStdId
@@ -6190,6 +6213,36 @@ export const api = {
      */
     getAllDtlByStdId: (data: OqcInspectStdSearch) =>
       http.request<ResultPagingDataOqcInspectStdDtlDTO['data']>(`/api/quality/oqcInspectStdDtl/getAllDtlByStdId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准明细表
+     * @name DelByIds
+     * @summary 删除明细
+     * @request POST:/oqcInspectStdDtl/delByIds
+     * @secure
+     */
+    delByIds: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/quality/oqcInspectStdDtl/delByIds`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准明细表
+     * @name AddDtl
+     * @summary 新增明细
+     * @request POST:/oqcInspectStdDtl/addDtl
+     * @secure
+     */
+    addDtl: (data: OqcInspectStdDtlDTO) =>
+      http.request<ResultObject['data']>(`/api/quality/oqcInspectStdDtl/addDtl`, {
         method: 'POST',
         body: data as any,
       }),
@@ -6220,6 +6273,21 @@ export const api = {
      */
     getProfileGbDropList: (query?: { key?: string }) =>
       http.request<ResultListProfileValue['data']>(`/api/quality/oqcInspectStdDtl/getProfileGBDropList`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准明细表
+     * @name GetDtlById
+     * @summary 根据id获取明细数据
+     * @request GET:/oqcInspectStdDtl/getDtlById
+     * @secure
+     */
+    getDtlById: (query: { id: string }) =>
+      http.request<ResultOqcInspectStdDtlDTO['data']>(`/api/quality/oqcInspectStdDtl/getDtlById`, {
         method: 'GET',
         params: query,
       }),
@@ -6298,6 +6366,21 @@ export const api = {
       http.request<ResultObject['data']>(`/api/quality/oqcInspectStd/addOqcInspectStd`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准头表
+     * @name CopyOqcInspectStd
+     * @summary 复制产品检验标准
+     * @request GET:/oqcInspectStd/copyOqcInspectStd
+     * @secure
+     */
+    copyOqcInspectStd: (query: { id: string }) =>
+      http.request<ResultLong['data']>(`/api/quality/oqcInspectStd/copyOqcInspectStd`, {
+        method: 'GET',
+        params: query,
       }),
   },
   oqcInspect: {

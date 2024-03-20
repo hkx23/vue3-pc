@@ -150,6 +150,7 @@ const permissionData = ref([]);
 
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   inputValue.value.workstationWord = data.workstationWord;
   inputValue.value.userWord = data.userWord;
   inputValue.value.workcenterWord = data.workcenterWord;

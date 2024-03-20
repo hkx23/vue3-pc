@@ -2441,8 +2441,8 @@ export interface ProductReworkVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopName?: string;
-  workshopId?: string;
   workshopCode?: string;
+  workshopId?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
@@ -3740,8 +3740,8 @@ export interface BarcodeWipCollectVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopName?: string;
-  workshopId?: string;
   workshopCode?: string;
+  workshopId?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
@@ -3861,8 +3861,8 @@ export interface BarcodeWipVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopName?: string;
-  workshopId?: string;
   workshopCode?: string;
+  workshopId?: string;
   defectCodeStr?: string;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
@@ -4262,19 +4262,6 @@ export interface ResultListPkgRelationVO {
   message?: string;
   /** 响应数据 */
   data?: PkgRelationVO[] | null;
-}
-
-/** 通用响应类 */
-export interface ResultListString {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: (string | null)[];
 }
 
 /** 显示排产工单BOM */
@@ -5594,21 +5581,6 @@ export const api = {
      * No description
      *
      * @tags 在制品箱包关系表
-     * @name PkgExist
-     * @summary 校验包装条码或SN是否被包装过
-     * @request GET:/pkgRelation/pkgExist
-     * @secure
-     */
-    pkgExist: (query: { barcode: string }) =>
-      http.request<ResultBoolean['data']>(`/api/control/pkgRelation/pkgExist`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 在制品箱包关系表
      * @name GetPkgRelationByParentBarcode
      * @summary 根据父条码获取包装关系
      * @request GET:/pkgRelation/getPkgRelationByParentBarcode
@@ -5616,21 +5588,6 @@ export const api = {
      */
     getPkgRelationByParentBarcode: (query: { barcode: string }) =>
       http.request<ResultListPkgRelationVO['data']>(`/api/control/pkgRelation/getPkgRelationByParentBarcode`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 在制品箱包关系表
-     * @name GetChildBarcodeList
-     * @summary 递归获取包装条码下的SN信息
-     * @request GET:/pkgRelation/getChildBarcodeList
-     * @secure
-     */
-    getChildBarcodeList: (query: { parentBarcode: string }) =>
-      http.request<ResultListString['data']>(`/api/control/pkgRelation/getChildBarcodeList`, {
         method: 'GET',
         params: query,
       }),

@@ -305,6 +305,7 @@ const documentStatusData = async () => {
 
 //* 查询
 const onInput = async (data: any) => {
+  pageUI.value.page = 1;
   setLoading(true);
   const {
     msgCategory, // 接口分类

@@ -432,7 +432,7 @@ const onInput = async (data: any) => {
     MessagePlugin.warning('请先选中主表数据');
     return; // 如果没有选中，则终止函数执行
   }
-
+  pageUI.value.page = 1;
   setLoading(true);
   inventoryManagement1.value = [];
   tableContainerData1.value = [];
@@ -459,6 +459,7 @@ const onInput2 = async (data: any) => {
     return; // 如果没有选中，则终止函数执行
   }
   setLoading(true);
+  pageUI.value.page = 1;
   inventoryManagement2.value = [];
   tableContainerData2.value = [];
   const { state, keyword } = data;

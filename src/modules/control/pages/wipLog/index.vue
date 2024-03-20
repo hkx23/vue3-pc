@@ -140,6 +140,7 @@ const queryCondition = ref({
 });
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   queryCondition.value = data;
   const [dateStart, dateEnd] = data.datetimeRange;
   // 计算日期范围的天数差异

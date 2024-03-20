@@ -442,6 +442,7 @@ const getIqcHandleMethod = async () => {
   });
 };
 const conditionEnter = (query: any) => {
+  pageTab1.value.page = 1;
   const [dateRangeStart, dateRangeEnd] = query.dateRange;
 
   // 计算日期范围的天数差异
@@ -464,6 +465,7 @@ const conditionEnter = (query: any) => {
   fetchTable();
 };
 const conditionInspecEnter = (query: any) => {
+  pageTab2.value.page = 1;
   const [dateRangeStart, dateRangeEnd] = query.dateRangeInspectTion;
 
   // 计算日期范围的天数差异

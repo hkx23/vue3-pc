@@ -435,42 +435,6 @@ export interface ResultListTransferDtlBarcodeVO {
 }
 
 /** 交易明细标签表 */
-export interface TransferDtlBarcodeSNVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 单据号 */
-  billNo?: string;
-  transferDtlBarcodeId?: string;
-  /** SN条码 */
-  snBarcode?: string;
-  mitemCode?: string;
-  mitemName?: string;
-  mitemDesc?: string;
-  uomName?: string;
-}
-
-/** 交易明细标签表 */
 export type TransferDtlBarcodeVO = {
   id?: string;
   /**
@@ -519,7 +483,6 @@ export type TransferDtlBarcodeVO = {
   mitemName?: string;
   mitemDesc?: string;
   uomName?: string;
-  transferDtlBarcodeSnList?: TransferDtlBarcodeSNVO[];
 } | null;
 
 /** 显示产品条码管理 */
@@ -3153,16 +3116,16 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  bfpickQty?: number;
-  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3377,13 +3340,6 @@ export interface MaterialRequisitionExcuteDTO {
   toWarehouseId?: string;
   /** 提交的模型-明细信息 */
   submitList?: MaterialRequisitionExcuteDtlVO[];
-  /** 条码信息 */
-  labelNo?: string;
-  /**
-   * 是否启用先进先出
-   * @format int32
-   */
-  isFifo?: number;
 }
 
 /** 提交的模型-明细信息 */
@@ -7954,13 +7910,19 @@ export const api = {
      * @tags 领料执行
      * @name ScanMitemLabel
      * @summary 扫描物料标签
-     * @request POST:/materialRequisitionExcute/scanMitemLabel
+     * @request GET:/materialRequisitionExcute/scanMitemLabel
      * @secure
      */
-    scanMitemLabel: (data: MaterialRequisitionExcuteDTO) =>
+    scanMitemLabel: (query: {
+      billNo: string;
+      tranDtlId: string;
+      labelNo: string;
+      /** @format int32 */
+      isFifo: number;
+    }) =>
       http.request<ResultString['data']>(`/api/warehouse/materialRequisitionExcute/scanMitemLabel`, {
-        method: 'POST',
-        body: data as any,
+        method: 'GET',
+        params: query,
       }),
 
     /**

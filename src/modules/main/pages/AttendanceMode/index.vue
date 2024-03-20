@@ -324,6 +324,7 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
 
 // # 出勤模式刷新按钮
 const onFetchGroupData = async () => {
+  pageUI.value.page = 1;
   await onShiftTabData(); // 获取 出勤模式表格 数据
   selectedRowKeys.value = [];
   supportPersonInUserList.list = [];

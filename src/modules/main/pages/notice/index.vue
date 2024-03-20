@@ -72,6 +72,7 @@ const opts = computed(() => {
   };
 });
 const conditionEnter = (data) => {
+  pageUI.value.page = 1;
   queryCondition.value = _.cloneDeep(data);
   onFetchData();
 };

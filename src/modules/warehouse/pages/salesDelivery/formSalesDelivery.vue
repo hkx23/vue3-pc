@@ -42,7 +42,7 @@
                 <bcmp-select-business
                   v-model="formData.warehouseId"
                   :disabled="formData.isLock"
-                  type="warehouseAuth"
+                  type="warehouseSalesDelivery"
                   :show-title="false"
                   @selection-change="warehouseChange"
                 ></bcmp-select-business
