@@ -63,7 +63,7 @@
   ></formSalesDelivery>
 </template>
 <script lang="ts" setup>
-// import dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
@@ -84,7 +84,7 @@ const { loading: loadingChildren, setLoading: setLoadingChildren } = useLoading(
 
 const isAdd = ref(true);
 
-const datePlanRangeDefault = ref([]); // 初始化日期控件
+const datePlanRangeDefault = ref([dayjs().subtract(6, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')]); // 初始化日期控件
 
 // 查询组件
 const opts = computed(() => {
@@ -300,6 +300,8 @@ const onHandleShowClose = () => {
 };
 
 onMounted(() => {
+  formData.salesTimeBegin = dayjs().subtract(6, 'day').format('YYYY-MM-DD');
+  formData.salesTimeEnd = dayjs().format('YYYY-MM-DD');
   fetchTable();
 });
 </script>

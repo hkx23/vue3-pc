@@ -62,6 +62,21 @@
             }}</t-link>
           </t-space>
         </template>
+        <template #improveNos="slotProps">
+          <template v-for="(improve, index) in slotProps.row.improveNos" :key="index">
+            <t-link :value="improve" variant="text" theme="primary" name="edit" @click="onEditRowClick(improve)"
+              >{{ improve }}
+            </t-link>
+            <t-text
+              v-if="index < slotProps.row.improveNos.length - 1"
+              :value="index"
+              variant="text"
+              theme="primary"
+              name="edit"
+              >、
+            </t-text>
+          </template>
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
@@ -71,6 +86,7 @@
 import dayjs from 'dayjs';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpQuery from '@/components/cmp-query/index.vue';
@@ -100,6 +116,7 @@ const selectedRowKeys: Ref<any[]> = ref([]); // 打印ID数组
 const printData = ref([]);
 const permission = ref(false); // 页面控制
 const bill = ref({});
+const router = useRouter();
 // 渲染函数
 onMounted(async () => {
   await queryRef.value.search();
@@ -328,7 +345,6 @@ const onPrint = async () => {
 // 单据明细界面开关
 const pageSwitch = async (value: any) => {
   permission.value = true;
-
   try {
     // 更新响应式数据
     bill.value = value.row;
@@ -347,6 +363,16 @@ const onPermission = async (value) => {
   });
   tableData.value = res.list; // 表格数据赋值
   total.value = res.total; // 总页数赋值
+};
+
+// 跳转到单据管理
+const onEditRowClick = (improve: String) => {
+  const tabRouters = router.getRoutes();
+  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === `/quality#/qualityImprove`);
+  if (routeInfo) {
+    const url = `${routeInfo.path}?billNo=${improve}`;
+    router.push(url);
+  }
 };
 
 // 重置按钮
