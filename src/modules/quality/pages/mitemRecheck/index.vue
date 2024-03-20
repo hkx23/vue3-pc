@@ -81,7 +81,6 @@ const optsTab1 = computed(() => {
       bind: {
         format: 'YYYY-MM-DD',
       },
-      row: 1,
     },
     recheckBillNo: {
       label: t('mitemRecheck.复检单号'),
@@ -92,7 +91,6 @@ const optsTab1 = computed(() => {
         type: 'reCheckBill',
         showTitle: false,
       },
-      row: 1,
     },
     supplierId: {
       label: t('mitemRecheck.供应商'),
@@ -103,7 +101,6 @@ const optsTab1 = computed(() => {
         type: 'supplier',
         showTitle: false,
       },
-      row: 2,
     },
     mitemId: {
       label: t('mitemRecheck.物料'),
@@ -114,7 +111,6 @@ const optsTab1 = computed(() => {
         type: 'mitem',
         showTitle: false,
       },
-      row: 2,
     },
     personResponsibilityId: {
       label: t('mitemRecheck.报检人'),
@@ -125,7 +121,6 @@ const optsTab1 = computed(() => {
         type: 'user',
         showTitle: false,
       },
-      row: 2,
     },
     iqcBillNo: {
       label: t('mitemRecheck.检验单号'),
@@ -136,7 +131,6 @@ const optsTab1 = computed(() => {
         type: 'IqcBillInfo',
         showTitle: false,
       },
-      row: 2,
     },
   };
 });
