@@ -126,7 +126,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '150',
   },
   {
-    colKey: 'datetimeReceipted',
+    colKey: 'datetimeStockin',
     title: '接收日期',
     width: '150',
   },

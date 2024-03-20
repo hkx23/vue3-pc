@@ -3148,16 +3148,16 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  bfpickQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  bfpickQty?: number;
+  tlpickQty?: number;
   /**
    * 已扫描数量
    * @format double
@@ -3239,11 +3239,6 @@ export interface MitemShelflifeReportVO {
   /** 供应商名称 */
   supplierName?: string;
   /**
-   * 接收时间
-   * @format date-time
-   */
-  datetimeReceipted?: string;
-  /**
    * 保质期天数
    * @format int32
    */
@@ -3258,6 +3253,11 @@ export interface MitemShelflifeReportVO {
   /** 标签数量 */
   qty?: number;
   onhandId?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
   expiredDays?: string;
 }
 
@@ -3655,13 +3655,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5283,8 +5283,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */

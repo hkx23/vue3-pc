@@ -4087,13 +4087,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
   stateName?: string;
   isState?: boolean;
   isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4338,15 +4338,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isProductName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
   isBatchName?: string;
+  isProductName?: string;
+  isInProcessName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4489,8 +4489,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
