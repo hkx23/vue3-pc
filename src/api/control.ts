@@ -767,8 +767,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1542,8 +1542,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -2438,15 +2438,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3735,17 +3735,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
   stateName?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 通用响应类 */
@@ -3856,16 +3856,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
   stateName?: string;
   defectCodeStr?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -4262,6 +4262,19 @@ export interface ResultListPkgRelationVO {
   message?: string;
   /** 响应数据 */
   data?: PkgRelationVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: (string | null)[];
 }
 
 /** 显示排产工单BOM */
@@ -5581,6 +5594,21 @@ export const api = {
      * No description
      *
      * @tags 在制品箱包关系表
+     * @name PkgExist
+     * @summary 校验包装条码或SN是否被包装过
+     * @request GET:/pkgRelation/pkgExist
+     * @secure
+     */
+    pkgExist: (query: { barcode: string }) =>
+      http.request<ResultBoolean['data']>(`/api/control/pkgRelation/pkgExist`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品箱包关系表
      * @name GetPkgRelationByParentBarcode
      * @summary 根据父条码获取包装关系
      * @request GET:/pkgRelation/getPkgRelationByParentBarcode
@@ -5588,6 +5616,21 @@ export const api = {
      */
     getPkgRelationByParentBarcode: (query: { barcode: string }) =>
       http.request<ResultListPkgRelationVO['data']>(`/api/control/pkgRelation/getPkgRelationByParentBarcode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品箱包关系表
+     * @name GetChildBarcodeList
+     * @summary 递归获取包装条码下的SN信息
+     * @request GET:/pkgRelation/getChildBarcodeList
+     * @secure
+     */
+    getChildBarcodeList: (query: { parentBarcode: string }) =>
+      http.request<ResultListString['data']>(`/api/control/pkgRelation/getChildBarcodeList`, {
         method: 'GET',
         params: query,
       }),

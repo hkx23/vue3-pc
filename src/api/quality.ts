@@ -5351,13 +5351,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  iii?: string;
-  ii?: string;
   s1?: string;
-  s2?: string;
-  s3?: string;
+  i?: string;
   s4?: string;
+  s3?: string;
+  ii?: string;
+  iii?: string;
+  s2?: string;
 } | null;
 
 /** 标签模板 */
