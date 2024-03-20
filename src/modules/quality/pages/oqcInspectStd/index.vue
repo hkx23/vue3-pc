@@ -152,6 +152,7 @@ const onReset = () => {
 const pageShow = ref(false);
 const onPermission = (value) => {
   pageShow.value = value;
+  onRefresh();
 };
 
 const onAssignConfirm = async () => {
@@ -251,11 +252,9 @@ const onSelectedChange = (value: any) => {
   }
 };
 const onEdit = async (row) => {
-  const res = (await apiQuality.oqcInspectStd.copyOqcInspectStd({ id: row.id })) as any;
   console.log(formRef);
   formRef.value.dtlRowKeys = [];
   formRef.value.formData = row;
-  formRef.value.perId = row.id;
   if (row.fileList) {
     row.fileList.forEach((file) => {
       file.timeUpload = file.timeCreate;
@@ -263,26 +262,23 @@ const onEdit = async (row) => {
     });
   }
   formRef.value.fileList = row.fileList;
-  formRef.value.formData.id = res;
+  formRef.value.formData.id = row.id;
   formRef.value.formData.operateTpye = 'edit';
   formRef.value.formData.revision = row.revisionName;
-  formRef.value.getDtlByStdId();
+  await formRef.value.getAllDtlById();
   pageShow.value = true;
 };
 const onCopy = async (row) => {
-  const res = (await apiQuality.oqcInspectStd.copyOqcInspectStd({ id: row.id })) as any;
-  if (res) {
-    formRef.value.dtlRowKeys = [];
-    formRef.value.ids = [];
-    formRef.value.formData = row;
-    formRef.value.formData.id = res;
-    formRef.value.formData.inspectStdCode = '';
-    formRef.value.formData.inspectStdName = '';
-    formRef.value.formData.operateTpye = 'copy';
-    formRef.value.formData.revision = '1.0';
-    pageShow.value = true;
-    formRef.value.getDtlByStdId();
-  }
+  formRef.value.dtlRowKeys = [];
+  formRef.value.ids = [];
+  formRef.value.formData = row;
+  formRef.value.formData.id = row.id;
+  formRef.value.formData.inspectStdCode = '';
+  formRef.value.formData.inspectStdName = '';
+  formRef.value.formData.operateTpye = 'copy';
+  formRef.value.formData.revision = '1.0';
+  await formRef.value.getAllDtlById();
+  pageShow.value = true;
 };
 const onDelData = async (row) => {
   await apiQuality.oqcInspectStd.delById([row.id]);
@@ -443,6 +439,7 @@ const switchTab = (selectedTabIndex: any) => {
 };
 // 打印界面点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   queryCondition.value.inspectStdCode = data.inspectStdCode;
   if (!isEmpty(data.status)) {
     queryCondition.value.status = data.status.split(',');
@@ -462,6 +459,7 @@ const subSearchClick = (data: any) => {
     MessagePlugin.warning('请至少选择一个查询条件');
     return;
   }
+  pageUIMannage.value.page = 1;
   subQueryCondition.value.mitemId = data.mitemId;
   subQueryCondition.value.mitemCategoryId = data.mitemCategoryId;
   subQueryCondition.value.inspectStdCode = data.inspectStdCode;

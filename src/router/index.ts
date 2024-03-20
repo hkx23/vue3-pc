@@ -1,6 +1,8 @@
 import uniq from 'lodash/uniq';
 import { createRouter, createWebHashHistory, RouteRecordRaw, useRoute } from 'vue-router';
 
+import { dynamicParamRoutes } from '@/utils/route';
+
 // const env = import.meta.env.MODE || 'development';
 
 // 导入homepage相关固定路由
@@ -84,13 +86,24 @@ const router = createRouter({
   },
 });
 
+let isLoadDynamicRoutes = false;
 export const openPage = (modulePath: string) => {
   const routers = router.getRoutes();
   const route = routers.find((t) => t.meta.sourcePath === modulePath || t.meta.id === modulePath);
   if (route) {
     router.push(route.path);
-  } else {
+  } else if (isLoadDynamicRoutes) {
     router.push(`/dynamic${modulePath}`);
+  } else {
+    dynamicParamRoutes.then((dynamicRoutes) => {
+      const dynamicRoute = router.options.routes.find((route) => route.name === 'dynamic');
+      if (dynamicRoute && dynamicRoute.children && dynamicRoute.children.length === 0) {
+        dynamicRoute.children = dynamicRoutes;
+        router.addRoute(dynamicRoute);
+        isLoadDynamicRoutes = true;
+      }
+      router.push(`/dynamic${modulePath}`);
+    });
   }
 };
 

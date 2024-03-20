@@ -383,7 +383,6 @@ const delDtlById = async (row) => {
   onRefresh();
 };
 const delBatch = async () => {
-  console.log('111111111111111111');
   if (formData.value.operateTpye === 'add') {
     // 找出所有对应索引的元素并将它们的ID收集到一个数组中
     const idsToDelete = dtlRowKeys.value.map((index) => dtlTabData.value[index].id);

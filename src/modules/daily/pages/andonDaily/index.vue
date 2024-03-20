@@ -13,7 +13,7 @@
       <cmp-table
         v-model:pagination="pageUI"
         row-key="index"
-        :bordered="true"
+        bordered
         :hover="false"
         :show-pagination="false"
         :rowspan-and-colspan="rowspanAndColspan"
@@ -249,6 +249,7 @@ const opts = computed(() => {
 
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   if (!data.timeCreateStart || !data.timeCreateEnd) {
     MessagePlugin.warning(t('andonDaily.queryWarning'));
     return;

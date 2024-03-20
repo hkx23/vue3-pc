@@ -113,6 +113,7 @@ const opts = computed(() => {
 // };
 
 const onInput = async (data: any) => {
+  pageUI.value.page = 1;
   if (isResetting.value) {
     return;
   }

@@ -209,6 +209,7 @@ const tabRefresh = async () => {
 
 //* 查询
 const onInput = async (data: any) => {
+  pageUI.value.page = 1;
   const { categoryName, mitemCode, supplierName, billNo, timeCreate } = data;
   // 提取categoryName数组中每个元素的label，合并成一个数组
   const businessCategoryIds =

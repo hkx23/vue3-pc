@@ -170,6 +170,7 @@ const reset = (isEdit: boolean, data?: PrintTmplDTO) => {
   formRef.value.reset({ type: 'initial' });
   isFormEditing = isEdit;
   if (data) {
+    onClickRemoveFile();
     if (isEdit) {
       Object.assign(formData, data);
     } else {

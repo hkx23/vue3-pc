@@ -1095,6 +1095,7 @@ const switchTab = (selectedTabIndex: any) => {
 };
 // 打印界面点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   queryCondition.value.mitemId = data.mitemId;
   queryCondition.value.supplierId = data.supplierId;
   queryCondition.value.billNo = data.billNo;
@@ -1109,6 +1110,7 @@ const managePageSearchClick = (data: any) => {
     MessagePlugin.warning('送货单行号须为正整数');
     return;
   }
+  pageUI.value.page = 1;
   const [timeCreatedStart, timeCreatedEnd] = data.timeCreatedRange;
   manageQueryCondition.value.timeCreatedStart = timeCreatedStart;
   manageQueryCondition.value.timeCreatedEnd = timeCreatedEnd;

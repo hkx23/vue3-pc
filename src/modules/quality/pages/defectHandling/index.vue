@@ -125,6 +125,7 @@ const disabledCode = ref(false); // 处理编码默认为启用
 const disabledType = ref(false); // 处理类别默认为启用
 // 搜索触发方法
 const onInput = (data) => {
+  pageUI.value.page = 1;
   formData.value.categoryName = data.categoryName;
   formData.value.methodCodeName = data.methodCodeName;
   onfetchData();

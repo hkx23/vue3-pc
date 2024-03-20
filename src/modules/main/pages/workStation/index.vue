@@ -260,6 +260,7 @@ const formData = ref({
 const workData = ref([]);
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   inputValue.value.workstaion = data.workstaion;
   inputValue.value.statevalue = data.statevalue;
   inputValue.value.workcenter = data.workcenter;

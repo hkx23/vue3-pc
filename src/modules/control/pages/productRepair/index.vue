@@ -425,6 +425,7 @@ watch(
 
 // 点击查询按钮
 const conditionEnter = (query: any) => {
+  pageTab1.value.page = 1;
   formData.queryData.barcode = query.barcode;
   formData.queryData.moScheId = query.moScheId;
 

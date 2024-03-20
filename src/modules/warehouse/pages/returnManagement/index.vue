@@ -194,6 +194,7 @@ const selectRowKeys = computed(() => {
 
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   optsValue.value = data;
   fetchTable();
 };
@@ -312,7 +313,7 @@ const onPrintClick = async () => {
             const billDtls = billInfoData.transferDtlList;
             printData.value.push({
               variable: billInfoData,
-              datasource: { BillInfoList: billInfoData, BillDetailInfoList: billDtls },
+              datasource: { head: billInfoData, body: billDtls },
             });
           }
         });

@@ -86,6 +86,7 @@ const opts = computed(() => {
   };
 });
 const onInput = (data) => {
+  pageUI.value.page = 1;
   keyWord.value = data.keyWord;
   fetchdefectData();
 };

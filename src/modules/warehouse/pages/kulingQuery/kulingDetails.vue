@@ -11,14 +11,16 @@
         <!-- <template #title> 库龄查询-条码明细 </template> -->
         <!-- row-key="props.sunData.onhandId" todo -->
         <cmp-table
+          v-model:pagination="pageUI"
           row-key="barcodeNo"
           :table-column="tableWarehouseColumns"
-          :show-pagination="false"
-          :fixed-height="true"
+          :table-data="tableDocumentDetails"
+          :total="dataTotal"
           :loading="loading"
+          :fixed-height="true"
           empty="没有符合条件的数据"
           :show-toolbar="false"
-          :table-data="tableDocumentDetails"
+          :hover="true"
         >
           <!-- <template #indexSlot="{ rowIndex }">
             {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
@@ -38,9 +40,10 @@ import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref, watch } from 'vue';
 
 import { useLoading } from '@/hooks/modules/loading';
-// import { usePage } from '@/hooks/modules/page';
+import { usePage } from '@/hooks/modules/page';
 
-// const { pageUI } = usePage();
+const { pageUI } = usePage();
+const dataTotal = ref(0);
 const { loading, setLoading } = useLoading();
 //* 表格标题--单据明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
@@ -77,6 +80,7 @@ watch(
   (newVal) => {
     setLoading(true);
     tableDocumentDetails.value = newVal;
+    dataTotal.value = newVal.length;
     setLoading(false);
   },
   { immediate: true },

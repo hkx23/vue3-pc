@@ -13,6 +13,7 @@
         :table-data="holdInfoList.list"
         :loading="loading"
         :total="holdInfoList.total"
+        :fixed-height="true"
         @refresh="onRefresh"
       >
         <template #title>{{ t('qcHold.holdListTitle') }}</template>
@@ -168,6 +169,7 @@ const optsHold = computed(() => {
 
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   optsHoldValue.value = data;
   fetchTable();
 };
