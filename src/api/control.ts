@@ -2441,12 +2441,12 @@ export interface ProductReworkVO {
   workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  scanDatetimeStr?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
-  workshopCode?: string;
-  workshopName?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3739,13 +3739,13 @@ export interface BarcodeWipCollectVO {
   stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  scanDatetimeStr?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
-  isState?: boolean;
-  workshopCode?: string;
-  workshopName?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -3860,12 +3860,12 @@ export interface BarcodeWipVO {
   stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  defectCodeStr?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
-  isState?: boolean;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */

@@ -75,6 +75,11 @@
             }}</t-descriptions-item>
           </t-descriptions>
         </t-col>
+        <t-col :span="3">
+          <t-form-item label="附件：" name="attachment">
+            <t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
+          </t-form-item>
+        </t-col>
       </t-row>
       <div>
         <t-image :src="stampUrl" class="stamp" />
@@ -82,14 +87,14 @@
     </cmp-card>
     <!-- !条码部分 -->
     <cmp-card v-if="barcodeData.length > 0">
-      <t-row align="middle" type="flex">
+      <t-row v-model="tabValue" align="middle" type="flex">
         <t-col v-for="(item, index) in barcodeData" :key="index" :lg="{ span: 3 }" :offset="0">
           <t-card class="box-card">
             <div
               slot1="header"
               class="barcodeDiv"
               :style="{ backgroundColor: index === selectedCol ? 'lightblue' : 'white' }"
-              @click="searchItems(index)"
+              @click="searchItems(item, index)"
             >
               <t-row>
                 <t-col :flex="1">
@@ -120,31 +125,59 @@
       </div> -->
     </cmp-card>
     <!-- !检验项目表格模块 -->
-    <cmp-card class="cards_title">
-      <cmp-table
-        ref="tableRefCard"
-        v-model:pagination="pageUI"
-        row-key="index"
-        :active-row-type="'single'"
-        :hover="true"
-        :fixed-height="true"
-        :table-column="columns"
-        :table-data="dtlTabData"
-        :total="dataTotal"
-        :selected-row-keys="dtlRowKeys"
-        @select-change="onDtlSelectedChange"
-      >
-        <template #title>
+    <t-row>
+      <t-col :flex="9">
+        <h3 class="itemTitle">
           {{ '检验项目' }}
-        </template>
-        <template #operation="{ row }">
-          <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
-          <t-popconfirm content="继续将删除该标准该检验项目，是否继续？" @confirm="delDtlById(row)">
-            <t-link theme="primary" style="padding-right: 8px">删除</t-link>
-          </t-popconfirm>
-          <t-link theme="primary" @click="onCopy(row)">复制</t-link>
-        </template>
-      </cmp-table>
+        </h3>
+      </t-col>
+      <t-col :flex="1"> {{ selectBarcode }} </t-col>
+    </t-row>
+    <cmp-card>
+      <t-tabs v-model="tabValue" @change="tabChange">
+        <t-tab-panel
+          v-for="(tabData, index) in itemTab"
+          :key="index"
+          :value="tabData.itemCategory"
+          :label="tabData.itemCategoryName"
+          :destroy-on-hide="true"
+        >
+          <cmp-container>
+            <cmp-table
+              ref="tableRefTop"
+              v-model:pagination="pageUI"
+              row-key="moScheduleId"
+              :fixed-height="true"
+              :active-row-type="'single'"
+              :hover="true"
+              :table-column="columns"
+              :table-data="itemData"
+              :total="itemData.length"
+              select-on-row-click
+              max-height="300px"
+              @select-change="selectChange"
+            >
+              <template #button>
+                <t-radio-group v-model="radioValue" @change="onRadioChange">
+                  <t-radio allow-uncheck :value="1"> 仅显示不合格</t-radio>
+                </t-radio-group>
+                <t-input placeholder="请输入搜索关键字">
+                  <template #suffixIcon>
+                    <search-icon :style="{ cursor: 'pointer' }" />
+                  </template>
+                </t-input>
+              </template>
+              <template #operation="{ row }">
+                <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
+                <t-popconfirm content="继续将删除该标准该检验项目，是否继续？" @confirm="delDtlById(row)">
+                  <t-link theme="primary" style="padding-right: 8px">删除</t-link>
+                </t-popconfirm>
+                <t-link theme="primary" @click="onCopy(row)">复制</t-link>
+              </template>
+            </cmp-table>
+          </cmp-container>
+        </t-tab-panel>
+      </t-tabs>
     </cmp-card>
   </cmp-container>
   <!-- !上传组件 弹框 -->
@@ -172,6 +205,7 @@
 
 <script setup lang="ts">
 // import { debounce } from 'lodash';
+import { SearchIcon } from 'tdesign-icons-vue-next';
 import { Icon, MessagePlugin } from 'tdesign-vue-next';
 import { computed, Ref, ref, watch } from 'vue';
 
@@ -182,8 +216,6 @@ import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false);
-const butControl = ref(false);
-const submitButControl = ref(false);
 const delBtutControl = ref(false);
 const formTitle = ref('');
 const touchstoneFormVisible = ref(false);
@@ -193,7 +225,14 @@ const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const opType = ref('add');
 const barcodeData = ref<PqcInspectFirstVO[]>([]); // 条码栏数据
 const id = ref(''); // 用于watch监听，控制加载
-const selectedCol = ref();
+const selectedCol = ref(0); // 条码部分被选中的index
+const selectBarcode = ref(); // 第三部分展示选中的啥条码
+const itemTab = ref<PqcInspectFirstVO[]>([]); // 检验项目类别Tab
+const radioValue = ref(1); // 仅显示不合格单选按钮
+const itemData = ref<PqcInspectFirstVO[]>([]); // 检验项目数据
+const pqcInspectFirstId = ref(); // 首检单ID丢全局
+const pqcInspectFirstBarcodeId = ref(); // 首检单条码ID丢全局
+const tabValue = ref('ALL');
 
 // 接收父组件的参数
 const props = defineProps({
@@ -220,9 +259,22 @@ const stampUrl = computed(() => {
 // 监听 id 的变化
 watch(id, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
-    const res = await api.pqcInspectFirst.getBarcodes(props.rowData.bill.id);
-    console.log('这是标签的数据：', res);
-    barcodeData.value = res;
+    const barcodes = await api.pqcInspectFirst.getBarcodes(props.rowData.bill.id);
+    if (barcodes.length > 0) {
+      barcodeData.value = barcodes;
+
+      pqcInspectFirstId.value = barcodes[0].pqcInspectFirstId;
+      pqcInspectFirstBarcodeId.value = barcodes[0].id;
+      // 获取tab数据
+      const tab = await api.pqcInspectFirst.getTabs({
+        pqcInspectFirstId: pqcInspectFirstId.value,
+        pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
+      });
+      const newObject = { itemCategory: 'ALL', itemCategoryName: '全部' };
+      tab.unshift(newObject);
+      itemTab.value = tab;
+      await getBarcodeItems();
+    }
   }
 });
 // 父方法
@@ -231,9 +283,66 @@ const Emit = defineEmits(['permissionShow']);
 const onClose = () => {
   Emit('permissionShow', false); // 回到父
 };
-// 如果点击事件拿到的index和他自己所持有的一样，则变bgc,当前方法做参数传递
-const searchItems = async (index) => {
+// 条码区域条码的点击事件
+const searchItems = async (item, index) => {
+  // 如果点击事件拿到的index和他自己所持有的一样，则变bgc,当前方法做参数传递
   selectedCol.value = index;
+  selectBarcode.value = item.scanBarcode;
+  pqcInspectFirstId.value = item.pqcInspectFirstId;
+  pqcInspectFirstBarcodeId.value = item.id;
+
+  itemTab.value = [];
+  itemData.value = [];
+  // 获取tab数据
+  const tab = await api.pqcInspectFirst.getTabs({
+    pqcInspectFirstId: pqcInspectFirstId.value,
+    pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
+  });
+  const newObject = { itemCategory: 'ALL', itemCategoryName: '全部' };
+  tab.unshift(newObject);
+  itemTab.value = tab;
+  // 获取项目数据
+  const res = await api.pqcInspectFirst.getBarcodeItems({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    pqcInspectFirstId: pqcInspectFirstId.value,
+    pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
+  });
+  itemData.value = res.list;
+};
+
+// TAb 栏切换事件
+const tabChange = async (value: string) => {
+  if (value === 'ALL') {
+    await getBarcodeItems();
+  } else {
+    const res = await api.pqcInspectFirst.getBarcodeItems({
+      itemCategory: value,
+      pqcInspectFirstId: pqcInspectFirstId.value,
+      pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+    });
+    itemData.value = res.list; // 表格数据赋值
+    dataTotal.value = res.total; // 总页数赋值
+  }
+};
+
+const onRadioChange = async (checked: any) => {
+  const radioValueNum = !checked ? 1 : 0;
+  radioValue.value = radioValueNum;
+  await getBarcodeItems();
+};
+
+// 检验项目数据获取方法
+const getBarcodeItems = async () => {
+  const res = await api.pqcInspectFirst.getBarcodeItems({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    pqcInspectFirstId: pqcInspectFirstId.value,
+    pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
+  });
+  itemData.value = res.list;
 };
 
 // 父方法
@@ -255,7 +364,7 @@ const formData = ref({
   inspectTypeList: [],
 });
 
-const onDtlSelectedChange = (value: any) => {
+const selectChange = (value: any) => {
   dtlRowKeys.value = value;
   delBtutControl.value = dtlRowKeys.value?.length > 1;
 };
@@ -283,7 +392,6 @@ const delDtlById = async (row) => {
   } else {
     allDtl.value.splice(row.index, 1);
   }
-  onRefresh();
 };
 
 // // 上传文件
@@ -292,9 +400,9 @@ const fileList = ref([]);
 const uploadSuccess = (file: AddFileType) => {
   MessagePlugin.info(`上传文件成功`);
   fileList.value.push(file);
-  console.log('🚀 ~ file: materialStandardAdd.vue:149 ~ uploadSuccess ~ files.value:', fileList.value);
+  console.log('🚀 ~ file: detail.vue:208 ~ uploadSuccess ~ files.value:', fileList.value);
 
-  console.log('🚀 ~ file: materialStandardAdd.vue:150 ~ uploadSuccess ~ file:', file);
+  console.log('🚀 ~ file: detail.vue:209 ~ uploadSuccess ~ file:', file);
 };
 
 const uploadfail = (file: AddFileType) => {
@@ -315,68 +423,19 @@ const batchDeleteSuccess = (files: AddFileType[]) => {
     fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
   });
 };
-const dtlTabData = ref([]);
-const getDtlById = async () => {
-  const res = (await api.iqcInspectStdDtl.getInspectStdDtlList({
-    iqcInspectStdId: formData.value.id,
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-  })) as any;
-  if (res) {
-    dtlTabData.value = res.list;
-    dataTotal.value = res.total;
-    dtlTabData.value.forEach((item, index) => {
-      item.index = index;
-    });
-  }
-};
 const allDtl = ref([]);
-const getAllDtlById = async () => {
-  const res = (await api.iqcInspectStdDtl.getInspectStdDtlList({
-    iqcInspectStdId: formData.value.id,
-    pageNum: pageUI.value.page,
-    pageSize: 9999999,
-  })) as any;
-  if (res) {
-    allDtl.value = res.list;
-    addIndex();
-  }
-};
-const getAllDtlFormCache = async () => {
-  if (allDtl.value) {
-    let startIndex = 0;
-    if (pageUI.value.page !== 1) {
-      startIndex = (pageUI.value.page - 1) * pageUI.value.rows;
-    }
-
-    const firstTwentyElements = allDtl.value.slice(startIndex, startIndex + pageUI.value.rows);
-    dtlTabData.value = firstTwentyElements;
-  }
-};
 const columns = [
   {
     colKey: 'row-select',
     type: 'multiple',
   },
   {
-    colKey: 'itemCategoryName',
-    title: '项目类别',
-  },
-  {
     colKey: 'itemName',
-    title: '检验内容',
-  },
-  {
-    colKey: 'inspectTypeName',
-    title: '检验类型',
+    title: '项目名称',
   },
   {
     colKey: 'technicalRequest',
     title: '技术要求',
-  },
-  {
-    colKey: 'unqualifyCategoryName',
-    title: '不合格分类',
   },
   {
     colKey: 'characteristicsName',
@@ -387,28 +446,16 @@ const columns = [
     title: '检验工具',
   },
   {
-    colKey: 'baseValue',
-    title: '基准值',
+    colKey: 'inspectResultName',
+    title: '检验结果',
   },
   {
-    colKey: 'uomName',
-    title: '单位',
+    colKey: 'inspectValue',
+    title: '检测值',
   },
   {
-    colKey: 'qualifiedRangeOp',
-    title: '合格范围',
-  },
-  {
-    colKey: 'samplingStandardCode',
-    title: '抽样方案',
-  },
-  {
-    colKey: 'inspectLevelName',
-    title: '检验水平',
-  },
-  {
-    colKey: 'isCtqName',
-    title: '是否CTQ',
+    colKey: 'ngReason',
+    title: '不良原因',
   },
   {
     colKey: 'inspectBasis',
@@ -421,57 +468,6 @@ const columns = [
     width: '130',
   },
 ];
-const init = () => {
-  butControl.value = false;
-  submitButControl.value = false;
-  delBtutControl.value = false;
-  fileList.value = [];
-  formData.value = {
-    operateTpye: 'add',
-    saveTpye: 'add',
-    id: '',
-    inspectStdCode: '',
-    inspectStdName: '',
-    groupInspectStdId: '',
-    revision: '1.0',
-    timeEffective: '',
-    timeInvalid: '',
-    status: 'DRAFT',
-    statusName: '起草中',
-    inspectTypeList: [],
-  };
-  dtlTabData.value = [];
-  dataTotal.value = 0;
-};
-
-const onRefresh = async () => {
-  if (formData.value.operateTpye === 'add') {
-    await getDtlById();
-  } else {
-    await getAllDtlFormCache();
-  }
-  dtlRowKeys.value = [];
-  submitButControl.value = !!dtlTabData.value;
-  console.log(submitButControl.value);
-};
-
-const addIndex = () => {
-  allDtl.value.forEach((item, index) => {
-    item.index = index;
-  });
-};
-
-defineExpose({
-  formData,
-  init,
-  fileList,
-  getDtlById,
-  getAllDtlById,
-  getAllDtlFormCache,
-  butControl,
-  submitButControl,
-  delBtutControl,
-});
 </script>
 
 <style lang="less" scoped>
@@ -487,6 +483,14 @@ defineExpose({
   font-weight: bold;
   color: var(--td-gray-color-8);
   font-size: 16px;
+}
+
+.itemTitle {
+  font-weight: bold;
+  color: var(--td-gray-color-8);
+  font-size: 16px;
+  line-height: 32px;
+  text-align: left;
 }
 
 .stamp {
