@@ -286,6 +286,7 @@ const documentStatusData = async () => {
 const lastQueryParams = ref({});
 //* 查询
 const onInput = async (data: any) => {
+  firstPageUI.value.page = 1;
   setLoading(true);
   const { billNo, status, warehouseId, timeCreate } = data;
 

@@ -169,6 +169,7 @@ const optsHold = computed(() => {
 
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   optsHoldValue.value = data;
   fetchTable();
 };

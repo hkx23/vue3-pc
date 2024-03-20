@@ -487,20 +487,23 @@ const conditionEnter = (data: any) => {
   switch (tagValue.value) {
     case 0: // 工单
       optsMoValue.value = data;
+      pageUI.value.page = 1;
       break;
     case 1: // 产品
       optsProductValue.value = data;
+      pageUIProduct.value.page = 1;
       break;
     case 2: // 机台工站
       optsWorkStationValue.value = data;
+      pageUIWorkStation.value.page = 1;
       break;
     case 3: // 物料
       optsMitemValue.value = data;
+      pageUIMitem.value.page = 1;
       break;
     default:
       break;
   }
-
   fetchTable();
 };
 

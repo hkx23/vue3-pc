@@ -396,6 +396,7 @@ const startOfSevenDaysAgo = dayjs().subtract(31, 'days').startOf('day');
 const endOfToday = dayjs().endOf('day');
 
 const onInput = async (context: any) => {
+  pageUI.value.page = 1;
   if (!context.workshop && !context.productCode && !context.workOrder) {
     MessagePlugin.warning('产品编码、车间、工单号至少选择一项！');
     return;

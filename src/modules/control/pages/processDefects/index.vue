@@ -127,6 +127,7 @@ const opts = computed(() => {
   };
 });
 const onInput = (data) => {
+  pageUI.value.page = 1;
   formData.value.keyWord = data.keyWord;
   onFetchData();
 };

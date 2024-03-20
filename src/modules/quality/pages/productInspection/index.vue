@@ -268,6 +268,7 @@ const conditionEnter = (query: any) => {
   //   MessagePlugin.warning('日期跨度不得超过31天');
   //   return;
   // }
+  pageTab1.value.page = 1;
   optsValue.value = query;
   const [dateRangeStart, dateRangeEnd] = query.dateRange;
   const [dateRangeCreateStart, dateRangeCreateEnd] = query.dateRangeCreate;

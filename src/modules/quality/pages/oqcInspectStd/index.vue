@@ -443,6 +443,7 @@ const switchTab = (selectedTabIndex: any) => {
 };
 // 打印界面点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   queryCondition.value.inspectStdCode = data.inspectStdCode;
   if (!isEmpty(data.status)) {
     queryCondition.value.status = data.status.split(',');
@@ -462,6 +463,7 @@ const subSearchClick = (data: any) => {
     MessagePlugin.warning('请至少选择一个查询条件');
     return;
   }
+  pageUIMannage.value.page = 1;
   subQueryCondition.value.mitemId = data.mitemId;
   subQueryCondition.value.mitemCategoryId = data.mitemCategoryId;
   subQueryCondition.value.inspectStdCode = data.inspectStdCode;

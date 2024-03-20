@@ -120,6 +120,7 @@ const onRefresh = async () => {
 
 // 点击查询按钮
 const conditionEnter = async (data: any) => {
+  pageUI.value.page = 1;
   queryData.value = data.queryData;
   await onRefresh();
   selectedRowKeys.value = [];

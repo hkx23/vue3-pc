@@ -207,7 +207,7 @@ const formData = reactive({
 // 点击查询按钮
 const onSearch = (query: any) => {
   const [dateRangeStart, dateRangeEnd] = query.dateRange;
-
+  pageUI.value.page = 1;
   formData.salesTimeBegin = dateRangeStart;
   formData.salesTimeEnd = dateRangeEnd;
   formData.billNo = query.billNo;

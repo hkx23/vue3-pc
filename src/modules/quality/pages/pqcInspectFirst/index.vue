@@ -109,6 +109,7 @@ onMounted(async () => {
 
 // 点击查询按钮
 const onInput = async (data: any) => {
+  pageUI.value.page = 1;
   const [dateStart, dateEnd] = data.servicingTime.map((date) => dayjs(date).format('YYYY-MM-DD'));
   // 更新查询参数状态
   queryParams.value = {

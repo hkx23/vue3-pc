@@ -306,6 +306,7 @@ const onRowPackRuleDtlClick = ({ row }: { row: any }) => {
 
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   optsValue.value = data;
   fetchTable();
 };

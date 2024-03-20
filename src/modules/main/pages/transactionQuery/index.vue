@@ -273,6 +273,7 @@ const dateChange = (data: any) => {
 
 //* 查询
 const onInput = async (data: any) => {
+  pageUI.value.page = 1;
   setLoading(true);
   const {
     businessCategoryId, // 事务类型

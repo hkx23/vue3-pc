@@ -172,6 +172,7 @@ const tabRefresh = async () => {
 
 //* 查询
 const onInput = async (data: any) => {
+  pageUI.value.page = 1;
   setLoading(true);
   const { mitemId, warehouseId, districtId, locationId } = data;
   const [stockInDateStart, stockInDateEnd] = data.stockInDate;

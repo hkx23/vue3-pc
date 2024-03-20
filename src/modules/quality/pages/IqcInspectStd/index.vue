@@ -625,6 +625,7 @@ const opts = computed(() => {
 });
 // // #query 查询函数
 const onInput = async (data: any) => {
+  pageUI.value.page = 1;
   if (data.status && !isEmpty(data.status)) {
     data.status = data.status.split(',');
   } else {
