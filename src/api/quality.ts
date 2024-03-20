@@ -1509,6 +1509,8 @@ export interface PqcInspectFirstSearch {
   itemCategory?: string;
   /** 是否仅显示不合格 */
   isNg?: boolean;
+  /** 项目名称或内容 */
+  itemName?: string;
 }
 
 /** 响应数据 */
@@ -5349,13 +5351,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  iii?: string;
-  s3?: string;
-  ii?: string;
-  s2?: string;
-  s4?: string;
-  s1?: string;
   i?: string;
+  iii?: string;
+  ii?: string;
+  s1?: string;
+  s2?: string;
+  s3?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */
