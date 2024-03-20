@@ -129,6 +129,7 @@
       <bcmp-upload-content
         :file-list="fileList"
         :is-hand-delete="true"
+        upload-path="oqcInspectStd"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
         @delete-success="deleteSuccess"
@@ -181,16 +182,12 @@ const onAdd = () => {
   dtlFormRef.value.dtlData.samplingStandardType = '1';
 };
 const onEdit = async (row) => {
-  const item = tableData.value[row.index];
+  const item = allDtl.value[row.index];
   formTitle.value = '检验项目编辑';
   opType.value = 'edit';
-  dtlFormRef.value.dtlData.id = row.id;
-  if (formData.value.operateTpye === 'add') {
-    dtlFormRef.value.dtlData = item;
-  } else {
-    await dtlFormRef.value.getDtlById();
-  }
-  dtlFormRef.value.dtlData.samplingStandardType = '1';
+  dtlFormRef.value.dtlData = item;
+  dtlFormRef.value.dtlData.oqcInspectStdId = formData.value.id;
+  dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
   touchstoneFormVisible.value = true;
 };
 const getLabelByValue = (value) => {
@@ -199,17 +196,45 @@ const getLabelByValue = (value) => {
 };
 
 const onRefresh = () => {
-  getDtlByStdId();
+  getAllDtlFormCache();
+  dtlRowKeys.value = [];
 };
-const getDtlByStdId = async () => {
-  const res = await apiQuality.oqcInspectStdDtl.getAllDtlByStdId({
+const allDtl = ref([]);
+const getAllDtlById = async () => {
+  allDtl.value = [];
+  const res = (await apiQuality.oqcInspectStdDtl.getAllDtlByStdId({
     stdId: formData.value.id,
     pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-  });
-  tableData.value = res.list.map((item, index) => ({ ...item, index }));
-  dataTotal.value = res.total;
-  dtlRowKeys.value = [];
+    pageSize: 9999999,
+  })) as any;
+  if (res) {
+    allDtl.value = res.list.map((item, index) => ({ ...item, index }));
+    dataTotal.value = res.total;
+    allDtl.value.forEach((item) => {
+      let concatenatedFileNames = '';
+      if (item.fileList) {
+        const fileListNames = item.fileList.map((file) => file.fileName);
+        concatenatedFileNames = fileListNames.join(','); // 使用 join 方法将文件名数组拼接成以逗号分隔的字符串
+      }
+      item.attachement = concatenatedFileNames;
+    });
+  }
+  getAllDtlFormCache();
+};
+const getAllDtlFormCache = async () => {
+  if (allDtl.value) {
+    let startIndex = 0;
+    if (pageUI.value.page !== 1) {
+      startIndex = (pageUI.value.page - 1) * pageUI.value.rows;
+    }
+
+    const firstTwentyElements = allDtl.value.slice(startIndex, startIndex + pageUI.value.rows);
+    tableData.value = firstTwentyElements;
+    dataTotal.value = allDtl.value.length;
+  } else {
+    tableData.value = [];
+    dataTotal.value = 0;
+  }
 };
 const getTitle = (type) => {
   switch (type) {
@@ -258,6 +283,7 @@ const init = () => {
   };
   tableData.value = [];
   dataTotal.value = 0;
+  allDtl.value = [];
 };
 const statusOption = ref([]);
 api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_STD_STATUS' }).then((data) => {
@@ -309,36 +335,29 @@ const submit = async () => {
       MessagePlugin.error('失效时间必须大于生效时间');
       return false;
     }
-    if (tableData.value.length < 1) {
+    if (allDtl.value.length < 1) {
       MessagePlugin.error('请新增标准明细');
       return false;
     }
 
     formData.value.status = formData.value.saveTpye === 'add' ? 'EFFECTIVE' : 'DRAFT';
 
-    if (formData.value.operateTpye === 'add') {
+    if (formData.value.operateTpye === 'add' || formData.value.operateTpye === 'copy') {
+      formData.value.id = '';
       await apiQuality.oqcInspectStd.addOqcInspectStd({
         ...formData.value,
-        list: tableData.value,
+        list: allDtl.value,
         fileList: fileList.value,
       });
-      MessagePlugin.success('新增成功');
+      MessagePlugin.success('操作成功');
       Emit('permissionShow', false); // 回到父
-    } else if (formData.value.operateTpye === 'edit') {
+    } else {
       await apiQuality.oqcInspectStd.changeStd({
         ...formData.value,
-        perId: perId.value,
+        list: allDtl.value,
         fileList: fileList.value,
       });
-      MessagePlugin.success('编辑成功');
-      Emit('permissionShow', false); // 回到父
-    } else if (formData.value.operateTpye === 'copy') {
-      await apiQuality.oqcInspectStd.changeStd({
-        ...formData.value,
-        fileList: fileList.value,
-        perId: formData.value.id,
-      });
-      MessagePlugin.success('复制成功');
+      MessagePlugin.success('操作成功');
       Emit('permissionShow', false); // 回到父
     }
   } catch (e) {
@@ -351,27 +370,26 @@ const opType = ref('add');
 const onConfirmDtl = async () => {
   const data = await dtlFormRef.value.onConfirmDtl();
   if (data) {
-    if (opType.value === 'add' && formData.value.operateTpye === 'add') {
-      if (tableData.value.length > 0) {
+    if (opType.value === 'add') {
+      if (allDtl.value.length > 0) {
         const { itemNme } = dtlFormRef.value.rowData;
-        const item = tableData.value.find((item) => item.itemName === itemNme);
-        console.log(item);
+        const item = allDtl.value.find((item) => item.itemName === itemNme);
         if (item) {
           MessagePlugin.warning('项目名称重复');
           return;
         }
       }
-      tableData.value.push({ ...dtlFormRef.value.rowData, index: tableData.value.length });
-      console.log(tableData.value);
-    } else if (opType.value === 'edit' && formData.value.operateTpye === 'edit') {
-      await apiQuality.oqcInspectStdDtl.updateDtlById(dtlFormRef.value.rowData);
-      onRefresh();
-    } else if (opType.value === 'edit' && formData.value.operateTpye === 'add') {
-      tableData.value.splice(dtlFormRef.value.rowData.index, 1, dtlFormRef.value.rowData);
-    } else if (opType.value === 'add' && formData.value.operateTpye === 'edit') {
-      await apiQuality.oqcInspectStdDtl.addDtl({ ...dtlFormRef.value.rowData, oqcInspectStdId: formData.value.id });
-      onRefresh();
+      allDtl.value.push({ ...dtlFormRef.value.rowData, index: allDtl.value.length });
+    } else if (opType.value === 'edit') {
+      const { itemNme } = dtlFormRef.value.rowData;
+      const item = allDtl.value.find((item) => item.itemName === itemNme);
+      if (item) {
+        MessagePlugin.warning('项目名称重复');
+        return;
+      }
+      allDtl.value.splice(dtlFormRef.value.rowData.index, 1, dtlFormRef.value.rowData);
     }
+    onRefresh();
     touchstoneFormVisible.value = false;
   }
 };
@@ -379,17 +397,12 @@ const onConfirmFile = () => {
   formVisible.value = false;
 };
 const onDelDtlData = async () => {
-  const idsToDelete = [];
-
-  for (const index of dtlRowKeys.value) {
-    const rowData = tableData.value[index];
-    if (rowData && rowData.id) {
-      idsToDelete.push(rowData.id);
-    }
-  }
-
-  // 调用删除 API，传入需要删除的 id 数组
-  await apiQuality.oqcInspectStdDtl.delByIds(idsToDelete);
+  // 获取要删除的索引，并按从大到小的顺序排序
+  const indexesToDelete = dtlRowKeys.value.sort((a, b) => b - a);
+  // 逐个删除元素
+  indexesToDelete.forEach((index) => {
+    allDtl.value.splice(index, 1);
+  });
 
   onRefresh();
 };
@@ -412,9 +425,6 @@ const onSubmit = async () => {
   }
 };
 const onClose = async () => {
-  if (formData.value.operateTpye !== 'add') {
-    await apiQuality.oqcInspectStd.delById([formData.value.id]);
-  }
   Emit('permissionShow', false); // 回到父
 };
 
@@ -563,9 +573,9 @@ defineExpose({
   form: formRef,
   dtlRowKeys,
   formData,
-  getDtlByStdId,
   init,
   perId,
+  getAllDtlById,
   fileList,
 });
 </script>

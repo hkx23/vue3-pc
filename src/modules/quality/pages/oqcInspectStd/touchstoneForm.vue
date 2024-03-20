@@ -158,6 +158,7 @@
     <cmp-container :full="true">
       <bcmp-upload-content
         :file-list="fileList"
+        upload-path="oqcInspectStd"
         :is-hand-delete="true"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
@@ -182,7 +183,7 @@ const fileList = ref([]);
 const formVisible = ref(false);
 
 const dtlData = ref({
-  iqcInspectStdId: '',
+  oqcInspectStdId: '',
   itemSeq: '',
   itemCategory: '',
   id: '',
@@ -208,7 +209,7 @@ const dtlData = ref({
 });
 const init = () => {
   dtlData.value = {
-    iqcInspectStdId: '',
+    oqcInspectStdId: '',
     itemSeq: '',
     id: '',
     itemCategory: '',
@@ -324,6 +325,9 @@ const deleteSuccess = (file: AddFileType) => {
 const batchDeleteSuccess = (files: AddFileType[]) => {
   MessagePlugin.info(`删除文件成功`);
   console.log('batchDeleteSuccess', files);
+  files.forEach((item) => {
+    fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
+  });
 };
 
 const categoryOption = ref([]);
@@ -343,20 +347,6 @@ api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_PROPERTY' }).then((d
   propertyOption.value = data;
 });
 const rowData = ref();
-const getDtlById = async () => {
-  const res = (await apiQuality.oqcInspectStdDtl.getDtlById({ id: dtlData.value.id })) as any;
-  if (res) {
-    dtlData.value = res;
-    if (res.fileListVo) {
-      res.fileListVo.forEach((file) => {
-        file.timeUpload = file.timeCreate;
-        file.signedUrl = file.filePath;
-      });
-    }
-    fileList.value = res.fileListVo;
-    dtlData.value.characteristics = res.characteristicsName;
-  }
-};
 const onConfirmDtl = async () => {
   // 首先创建一个数组来存储需要检查非空的属性
   const requiredFields = [
@@ -416,6 +406,11 @@ const onConfirmDtl = async () => {
   if (dtlData.value.inspectLevel) {
     dtlData.value.inspectLevelName = levelOption.value.find((item) => item.value === dtlData.value.inspectLevel)?.label;
   }
+  let concatenatedFileNames = '';
+  if (fileList.value.length > 0) {
+    const fileNames = fileList.value.map((item) => item.fileName); // 提取每个文件对象的 fileName 属性到一个新数组
+    concatenatedFileNames = fileNames.join(','); // 使用 join 方法将文件名数组拼接成以逗号分隔的字符串
+  }
   rowData.value = {
     ...dtlData.value,
     fileList,
@@ -424,6 +419,7 @@ const onConfirmDtl = async () => {
     unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,
     characteristicsName: characteristicsOptions.value.find((item) => item.value === dtlData.value.characteristics)
       ?.label,
+    attachement: concatenatedFileNames,
   };
   console.log(rowData);
   return true;
@@ -434,6 +430,6 @@ defineExpose({
   dtlData,
   rowData,
   init,
-  getDtlById,
+  fileList,
 });
 </script>
