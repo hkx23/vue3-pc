@@ -1,7 +1,7 @@
 {
   "title": "仓库：",
   "placeholder": "请选择仓库",
-  "url": "/api/warehouse/userWarehouseAuthority/itemsAuth",
+  "url": "/api/warehouse/saleDelivery/getUserWarehouseByUser",
   "httptype": "POST",
   "columns": [
     {
@@ -12,11 +12,6 @@
     {
       "title": "仓库名称",
       "key": "warehouseName",
-      "align": "left"
-    },
-    {
-      "title": "仓库类型",
-      "key": "warehouseCategory",
       "align": "left"
     }
   ],
@@ -29,8 +24,7 @@
     "image": "/images/assets-factory.svg",
     "icon": "building-1",
     "nameField": "warehouseCode",
-    "codeField": "warehouseName",
-    "categoryField": "warehouseCategory"
+    "codeField": "warehouseName"
   },
   "name": "仓库",
   "componentType": "list"

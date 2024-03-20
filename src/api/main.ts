@@ -4087,13 +4087,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
-  isState?: boolean;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4338,15 +4338,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
+  isProductChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
+  isBatchName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
-  isBatchName?: string;
-  isState?: boolean;
+  isRawName?: string;
+  isProductName?: string;
 }
 
 /** 响应数据 */
