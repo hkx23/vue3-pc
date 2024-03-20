@@ -2438,15 +2438,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
-  datetimeScheStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  scanDatetimeStr?: string;
+  workshopName?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2489,10 +2489,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3735,17 +3735,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  stateName?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3856,16 +3856,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
-  stateName?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  workshopId?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
   defectCodeStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */

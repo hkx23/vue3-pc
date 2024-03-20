@@ -120,62 +120,109 @@
           </t-card>
         </t-col>
       </t-row>
-      <!-- <div v-for="(item, index) in barcodeData" v-if="index < 5" :key="index" class="barcodeDiv">
-        {{ item.scanBarcode }}
-      </div> -->
     </cmp-card>
     <!-- !检验项目表格模块 -->
-    <t-row>
-      <t-col :flex="9">
-        <h3 class="itemTitle">
-          {{ '检验项目' }}
-        </h3>
-      </t-col>
-      <t-col :flex="1"> {{ selectBarcode }} </t-col>
-    </t-row>
     <cmp-card>
-      <t-tabs v-model="tabValue" @change="tabChange">
-        <t-tab-panel
-          v-for="(tabData, index) in itemTab"
-          :key="index"
-          :value="tabData.itemCategory"
-          :label="tabData.itemCategoryName"
-          :destroy-on-hide="true"
-        >
-          <cmp-container>
-            <cmp-table
-              ref="tableRefTop"
-              v-model:pagination="pageUI"
-              row-key="moScheduleId"
-              :fixed-height="true"
-              :active-row-type="'single'"
-              :hover="true"
-              :table-column="columns"
-              :table-data="itemData"
-              :total="itemData.length"
-              select-on-row-click
-              max-height="300px"
-              @select-change="selectChange"
+      <t-tabs v-model="itemTabValue" @change="itemTabChange">
+        <t-tab-panel label="检验项目" value="0" :destroy-on-hide="true" :full="true">
+          <t-tabs v-model="tabValue" @change="tabChange">
+            <t-tab-panel
+              v-for="(tabData, index) in itemTab"
+              :key="index"
+              :value="tabData.itemCategory"
+              :label="tabData.itemCategoryName"
+              :destroy-on-hide="true"
             >
-              <template #button>
-                <t-radio-group v-model="radioValue" @change="onRadioChange">
-                  <t-radio allow-uncheck :value="1"> 仅显示不合格</t-radio>
-                </t-radio-group>
-                <t-input placeholder="请输入搜索关键字">
-                  <template #suffixIcon>
-                    <search-icon :style="{ cursor: 'pointer' }" />
+              <cmp-container>
+                <cmp-table
+                  ref="tableRefTop"
+                  v-model:pagination="pageUI"
+                  row-key="moScheduleId"
+                  :fixed-height="true"
+                  :active-row-type="'single'"
+                  :hover="true"
+                  :table-column="columns"
+                  :table-data="itemData"
+                  :total="itemData.length"
+                  select-on-row-click
+                  max-height="300px"
+                  @select-change="selectChange"
+                >
+                  <template #button>
+                    <t-radio-group v-model="radioValue" @change="onRadioChange">
+                      <t-radio allow-uncheck :value="1"> 仅显示不合格</t-radio>
+                    </t-radio-group>
+                    <t-input placeholder="请输入项目名称关键字">
+                      <template #suffixIcon>
+                        <search-icon :style="{ cursor: 'pointer' }" @click="keywordSearch" />
+                      </template>
+                    </t-input>
                   </template>
-                </t-input>
-              </template>
-              <template #operation="{ row }">
-                <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
-                <t-popconfirm content="继续将删除该标准该检验项目，是否继续？" @confirm="delDtlById(row)">
-                  <t-link theme="primary" style="padding-right: 8px">删除</t-link>
-                </t-popconfirm>
-                <t-link theme="primary" @click="onCopy(row)">复制</t-link>
-              </template>
-            </cmp-table>
-          </cmp-container>
+                  <template #operation="{ row }">
+                    <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
+                    <t-popconfirm content="继续将删除该标准该检验项目，是否继续？" @confirm="delDtlById(row)">
+                      <t-link theme="primary" style="padding-right: 8px">删除</t-link>
+                    </t-popconfirm>
+                    <t-link theme="primary" @click="onCopy(row)">复制</t-link>
+                  </template>
+                </cmp-table>
+              </cmp-container>
+            </t-tab-panel>
+          </t-tabs>
+        </t-tab-panel>
+        <t-tab-panel v-if="isShow" label="不合格处理" value="1" :destroy-on-hide="true">
+          <t-row :gutter="[32, 16]">
+            <t-col :span="3">
+              <t-descriptions>
+                <t-descriptions-item label="不合格分类：" name="defectCategoryName">{{
+                  firstData.defectCategoryName
+                }}</t-descriptions-item>
+              </t-descriptions>
+            </t-col>
+            <t-col :span="3">
+              <t-descriptions>
+                <t-descriptions-item label="责任部门：" name="scheCode">{{ headerDate.scheCode }}</t-descriptions-item>
+              </t-descriptions>
+            </t-col>
+            <t-col :span="3">
+              <t-descriptions>
+                <t-descriptions-item label="跟进人：" name="mitemCode">{{ headerDate.mitemCode }}</t-descriptions-item>
+              </t-descriptions>
+            </t-col>
+            <t-col :span="3">
+              <t-descriptions>
+                <t-descriptions-item label="处理意见：" name="correctOpinion">{{
+                  firstData.correctOpinion
+                }}</t-descriptions-item>
+              </t-descriptions>
+            </t-col>
+          </t-row>
+          <t-row :gutter="[32, 16]">
+            <t-col :span="3">
+              <t-radio-group v-model="radioValue">
+                <t-radio allow-uncheck:false :value="1"> 启用品质改善</t-radio>
+              </t-radio-group>
+            </t-col>
+            <t-col :span="6">
+              <t-descriptions>
+                <t-descriptions-item label="改善单据：" name="improveNos">
+                  <template v-for="(improve, index) in firstData.improveNos" :key="index">
+                    <t-link :value="improve" variant="text" theme="primary" name="edit" @click="onEditRowClick(improve)"
+                      >{{ improve }}
+                    </t-link>
+                    <t-text
+                      v-if="index < firstData.improveNos.length - 1"
+                      :value="index"
+                      variant="text"
+                      theme="primary"
+                      name="edit"
+                      >、
+                    </t-text>
+                  </template>
+                </t-descriptions-item>
+              </t-descriptions>
+            </t-col>
+          </t-row>
         </t-tab-panel>
       </t-tabs>
     </cmp-card>
@@ -208,6 +255,7 @@
 import { SearchIcon } from 'tdesign-icons-vue-next';
 import { Icon, MessagePlugin } from 'tdesign-vue-next';
 import { computed, Ref, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { api, PqcInspectFirstVO } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
@@ -232,7 +280,13 @@ const radioValue = ref(1); // 仅显示不合格单选按钮
 const itemData = ref<PqcInspectFirstVO[]>([]); // 检验项目数据
 const pqcInspectFirstId = ref(); // 首检单ID丢全局
 const pqcInspectFirstBarcodeId = ref(); // 首检单条码ID丢全局
-const tabValue = ref('ALL');
+const itemTabValue = ref('0'); // 检验项目不合格分类tab的默认选中
+const tabValue = ref('ALL'); // 检验项目tab的默认选中
+const isShow = ref(false); // 不合格处理panel的开关
+const firstData = ref<PqcInspectFirstVO>(); // 检验单数据
+const isImproveRadioValue = ref(1); // 不合格处理界面启用品质改善控件
+const router = useRouter();
+const itemCategoryTab = ref();
 
 // 接收父组件的参数
 const props = defineProps({
@@ -277,6 +331,27 @@ watch(id, async (newValue, oldValue) => {
     }
   }
 });
+
+// 监听 条码ID 的变化
+watch(pqcInspectFirstBarcodeId, async (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    const res = await api.pqcInspectFirst.getList({
+      billNo: headerDate.value.billNo,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+    });
+    const now = res.list[0];
+    firstData.value = now; // 检验单的数据
+    console.log('这是检验单的数据：', firstData.value.defectCategoryName);
+    const { improveNos } = firstData.value;
+    if (improveNos.length > 0) {
+      isImproveRadioValue.value = 1;
+    } else {
+      isImproveRadioValue.value = 0;
+    }
+  }
+});
+
 // 父方法
 const Emit = defineEmits(['permissionShow']);
 // 关闭窗口回到主页面
@@ -290,7 +365,13 @@ const searchItems = async (item, index) => {
   selectBarcode.value = item.scanBarcode;
   pqcInspectFirstId.value = item.pqcInspectFirstId;
   pqcInspectFirstBarcodeId.value = item.id;
-
+  // 控制不合格分类是否展示
+  if (item.inspectResult === 'NG') {
+    isShow.value = true;
+  } else {
+    isShow.value = false;
+  }
+  // 清空原数据
   itemTab.value = [];
   itemData.value = [];
   // 获取tab数据
@@ -311,8 +392,9 @@ const searchItems = async (item, index) => {
   itemData.value = res.list;
 };
 
-// TAb 栏切换事件
+// 检验项目TAb 栏切换事件
 const tabChange = async (value: string) => {
+  itemCategoryTab.value = value;
   if (value === 'ALL') {
     await getBarcodeItems();
   } else {
@@ -328,8 +410,28 @@ const tabChange = async (value: string) => {
   }
 };
 
+// 检验项目不合格分类TAb 栏切换事件
+const itemTabChange = async (value: string) => {
+  if (value === '1') {
+    const res = await api.pqcInspectFirst.getList({
+      billNo: headerDate.value.billNo,
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
+    });
+    const now = res.list[0];
+    firstData.value = now; // 检验单的数据
+    const { improveNos } = firstData.value;
+    if (improveNos.length > 0) {
+      isImproveRadioValue.value = 1;
+    } else {
+      isImproveRadioValue.value = 0;
+    }
+  }
+};
+
 const onRadioChange = async (checked: any) => {
   const radioValueNum = !checked ? 1 : 0;
+  console.log('这是单选按钮的数据：', radioValueNum);
   radioValue.value = radioValueNum;
   await getBarcodeItems();
 };
@@ -343,6 +445,29 @@ const getBarcodeItems = async () => {
     pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
   });
   itemData.value = res.list;
+};
+
+// 检验项目关键词搜索
+const keywordSearch = async (value) => {
+  const res = await api.pqcInspectFirst.getBarcodeItems({
+    itemCategory: itemCategoryTab.value,
+    itemName: value,
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    pqcInspectFirstId: pqcInspectFirstId.value,
+    pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
+  });
+  itemData.value = res.list;
+};
+
+// 跳转到单据管理
+const onEditRowClick = (improve: String) => {
+  const tabRouters = router.getRoutes();
+  const routeInfo = tabRouters.find((item1) => item1.meta.sourcePath === `/quality#/qualityImprove`);
+  if (routeInfo) {
+    const url = `${routeInfo.path}?billNo=${improve}`;
+    router.push(url);
+  }
 };
 
 // 父方法

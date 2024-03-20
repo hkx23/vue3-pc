@@ -1620,6 +1620,8 @@ export type PqcInspectFirstVO = {
   ngReason?: string;
   /** 检验依据 */
   inspectBasis?: string;
+  /** 不合格分类名称 */
+  defectCategoryName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5151,10 +5153,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -5347,13 +5349,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  ii?: string;
   iii?: string;
-  i?: string;
-  s2?: string;
   s3?: string;
-  s1?: string;
+  ii?: string;
+  s2?: string;
   s4?: string;
+  s1?: string;
+  i?: string;
 } | null;
 
 /** 标签模板 */
