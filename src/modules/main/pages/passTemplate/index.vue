@@ -4,24 +4,39 @@
       <cmp-card flex="280px">
         <t-tabs v-model="currProcessTab">
           <t-tab-panel value="process" label="工序">
-            <t-input v-model="filterText" style="margin: 8px 0" :placeholder="t('common.placeholder.input')">
+            <t-input
+              v-model="filterText"
+              style="margin: var(--td-comp-margin-s) 0"
+              :placeholder="t('common.placeholder.input')"
+            >
               <template #suffix-icon>
                 <search-icon size="var(--td-comp-size-xxxs)" />
               </template>
             </t-input>
 
             <t-list size="small" split>
-              <t-list-item v-for="item in filterProcessList" :key="item.id" @click="onClickProcess(item.id, 'process')">
-                {{ item.processName }}
+              <t-list-item
+                v-for="item in filterProcessList"
+                :key="item.id"
+                :class="currProcessId == item.id ? 'activeProcess' : ''"
+                @click="onClickProcess(item.id, 'process')"
+              >
+                <div>
+                  <location-icon />
+                  <span style="margin-left: var(--td-comp-margin-s)">{{ item.processName }}</span>
+                </div>
                 <template #action>
-                  <edit-icon v-if="currProcessId == item.id" />
-                  <div v-if="headerCategoryData[item.id]" class="activeProcess"></div>
+                  <check-circle-filled-icon v-if="headerCategoryData[item.id]" style="color: var(--td-success-color)" />
                 </template>
               </t-list-item>
             </t-list>
           </t-tab-panel>
           <t-tab-panel value="routingProcess" label="工艺路线">
-            <t-input v-model="filterText" style="margin: 8px 0" :placeholder="t('common.placeholder.input')">
+            <t-input
+              v-model="filterText"
+              style="margin: var(--td-comp-margin-s) 0"
+              :placeholder="t('common.placeholder.input')"
+            >
               <template #suffix-icon>
                 <search-icon size="var(--td-comp-size-xxxs)" />
               </template>
@@ -37,11 +52,14 @@
               @click="({ node }) => (node.data.children ? null : onClickProcess(node.data.id, 'routingProcess'))"
             >
               <template #operations="{ node }">
-                <edit-icon v-if="currProcessId == node.data.id" />
+                <check-circle-filled-icon
+                  v-if="headerCategoryData[node.data.id]"
+                  style="color: var(--td-success-color)"
+                />
+
                 <t-tag v-if="node.data.children" size="small" theme="success" variant="outline">
                   {{ node.data.version }}
                 </t-tag>
-                <div v-if="headerCategoryData[node.data.id]" class="activeProcess"></div>
               </template>
             </t-tree>
           </t-tab-panel>
@@ -120,34 +138,29 @@
       </cmp-card>
       <cmp-card flex="280px" :ghost="true">
         <cmp-container :full="true" :full-sub-index="[0]">
-          <cmp-card>
-            <t-tabs model-value="api">
-              <t-tab-panel value="api" label="API" style="overflow-y: auto">
-                <t-collapse :borderless="true" style="margin-top: 8px">
-                  <t-collapse-panel
-                    v-for="item in API_CATEGORY"
-                    v-show="atomListByCategory(item.value)?.length > 0"
-                    :key="item.value"
-                    :value="item.value"
-                    :header="`${item.value} ${item.label}`"
-                  >
-                    <!-- <template v-for="apiItem in atomListByCategory(item.value)" :key="apiItem.id">
+          <cmp-card title="API" header-bordered no-fill>
+            <t-collapse :borderless="true" style="margin-top: var(--td-comp-margin-s)">
+              <t-collapse-panel
+                v-for="item in API_CATEGORY"
+                v-show="atomListByCategory(item.value)?.length > 0"
+                :key="item.value"
+                :value="item.value"
+                :header="`${item.value} ${item.label}`"
+              >
+                <!-- <template v-for="apiItem in atomListByCategory(item.value)" :key="apiItem.id">
                       <t-card :title="apiItem.apiName" header-bordered> {{ apiItem.apiDesc }} </t-card>
                     </template> -->
-                    <t-list stripe>
-                      <t-list-item
-                        v-for="apiItem in atomListByCategory(item.value)"
-                        :key="apiItem.id"
-                        @click="onClickAtom(apiItem)"
-                      >
-                        <t-list-item-meta :title="apiItem.apiName" :description="apiItem.apiDesc" />
-                      </t-list-item>
-                    </t-list>
-                  </t-collapse-panel>
-                </t-collapse>
-              </t-tab-panel>
-              <!-- <t-tab-panel value="script" label="Script"></t-tab-panel> -->
-            </t-tabs>
+                <t-list size="small" split>
+                  <t-list-item
+                    v-for="apiItem in atomListByCategory(item.value)"
+                    :key="apiItem.id"
+                    @click="onClickAtom(apiItem)"
+                  >
+                    <t-list-item-meta :title="apiItem.apiName" :description="apiItem.apiDesc" />
+                  </t-list-item>
+                </t-list>
+              </t-collapse-panel>
+            </t-collapse>
             <t-dialog v-model:visible="newTabSelectedVisible" :footer="false" header="选择条码类型">
               <t-select
                 v-model="newTabSelectedValue"
@@ -184,7 +197,7 @@
 
 <script setup lang="ts">
 import { isEmpty } from 'lodash';
-import { CloseIcon, DeleteIcon, EditIcon, SearchIcon } from 'tdesign-icons-vue-next';
+import { CheckCircleFilledIcon, CloseIcon, DeleteIcon, LocationIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { DialogPlugin, MessagePlugin, TreeNodeModel } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, Ref, ref } from 'vue';
 import { vDraggable } from 'vue-draggable-plus';
@@ -489,8 +502,17 @@ const onClickDeleteHeader = async (mainId: string) => {
   :deep(.t-list-item) {
     cursor: pointer;
 
-    &:hover {
-      color: var(--td-brand-color);
+    .t-list-item__meta-title {
+      font-size: 14px;
+    }
+
+    .t-list-item__meta-description {
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+    }
+
+    &:not(.activeProcess):hover {
+      background-color: var(--td-bg-color-container-hover);
       font-weight: 700;
     }
   }
@@ -517,12 +539,6 @@ const onClickDeleteHeader = async (mainId: string) => {
 }
 
 .activeProcess {
-  background-color: var(--td-brand-color);
-  width: 4px;
-  height: 16px;
-  border-radius: 2px;
-  position: absolute;
-  left: 0;
-  top: 11px;
+  background-color: var(--td-brand-color-light);
 }
 </style>
