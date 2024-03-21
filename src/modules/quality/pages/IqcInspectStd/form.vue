@@ -30,6 +30,7 @@
             v-model="formData.mitemCategoryId"
             type="mitemCategory"
             :clearable="true"
+            :disabled="!isEmpty(formData.mitemId)"
             :show-title="false"
           ></bcmp-select-business>
         </t-form-item>
@@ -40,6 +41,7 @@
             v-model="formData.mitemId"
             type="mitem"
             :show-title="false"
+            :disabled="!isEmpty(formData.mitemCategoryId)"
             :clearable="true"
           ></bcmp-select-business>
         </t-form-item>
@@ -75,18 +77,15 @@ export default {
     };
 
     const submit = async () => {
-      if (isEmpty(formData.value.mitemId)) {
-        MessagePlugin.warning('请选择物料');
+      if (isEmpty(formData.value.mitemId && !formData.value.mitemCategoryId)) {
+        MessagePlugin.warning('请选择物料或物料类别');
         return false;
       }
       if (formData.value.type === 'add' && isEmpty(formData.value.inspectStdCode)) {
         MessagePlugin.warning('请选择检验标准');
         return false;
       }
-      if (!formData.value.mitemCategoryId) {
-        MessagePlugin.warning('请选择物料类别');
-        return false;
-      }
+
       if (formData.value.type !== 'edit') {
         await api.iqcInspectStdMitem.add({
           iqcInspectStdId: formData.value.iqcInspectStdId,
@@ -172,6 +171,7 @@ export default {
       rules,
       onChange,
       formData,
+      isEmpty,
     };
   },
 };
