@@ -63,16 +63,6 @@
                 <t-input v-model="formData.memo" />
               </t-form-item>
             </t-col>
-            <!-- <t-col :span="4">
-              <t-form-item label="">
-                <t-button theme="primary" @click="onFormConfirm">
-                  {{ t('common.button.confirm') }}
-                </t-button>
-                <t-button theme="default" @click="reset">
-                  {{ t('common.button.reset') }}
-                </t-button>
-              </t-form-item>
-            </t-col> -->
           </t-row>
 
           <!-- table表格 -->
@@ -100,7 +90,8 @@
             <template #warehouseName="{ row }">
               <bcmp-select-business
                 v-model="row.warehouseId"
-                type="warehouseAuth"
+                label-field="warehouseName"
+                type="warehouseSalesDelivery"
                 :show-title="false"
                 @selection-change="(value) => warehouseSubChange(value, row)"
               ></bcmp-select-business>
@@ -256,7 +247,7 @@ const tableSalesDtlColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('salesDelivery.产品编码'), width: 120, colKey: 'mitemCode' },
   { title: t('salesDelivery.总需求数量'), width: 120, colKey: 'requireQty' },
   { title: t('salesDelivery.已发货数量'), width: 120, colKey: 'deliveriedQty' },
-  { title: t('salesDelivery.待发货数量'), width: 120, colKey: '' },
+  { title: t('salesDelivery.待发货数量'), width: 120, colKey: 'waitDeliveriedQty' },
   { title: t('salesDelivery.仓库'), width: 160, colKey: 'warehouseName' },
   // { title: '货区', width: 160, colKey: 'districtName' },
   { title: t('salesDelivery.库存现有量'), width: 120, colKey: 'onhandQty' },
@@ -286,10 +277,23 @@ const tableSalesOrderColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('salesDelivery.备注'), width: 120, colKey: 'memo' },
 ];
 
-const warehouseChange = (val: any) => {
-  formData.warehouseId = val.id;
+const warehouseChange = async (val: any) => {
+  formData.warehouseId = val.warehouseId;
   formData.warehouseCode = val.warehouseCode;
   formData.warehouseName = val.warehouseName;
+
+  if (!_.isEmpty(tableSalesDtlData.value)) {
+    tableSalesDtlData.value.forEach(async (item) => {
+      item.warehouseId = val.warehouseId;
+      item.warehouseCode = val.warehouseCode;
+      item.warehouseName = val.warehouseName;
+      item.districtId = '';
+      item.districtCode = '';
+      item.districtName = '';
+
+      await getMitemOnhandQtyByWarehouse(item);
+    });
+  }
 };
 const customerCodeChange = (val: Customer) => {
   if (_.isEmpty(val)) {
@@ -344,7 +348,8 @@ const onSalesOrdeConfirm = () => {
 };
 
 const warehouseSubChange = async (val: any, row: SaleOrderDtlVO) => {
-  row.warehouseId = val.id;
+  // debugger;
+  row.warehouseId = val.warehouseId;
   row.warehouseCode = val.warehouseCode;
   row.warehouseName = val.warehouseName;
   await getMitemOnhandQtyByWarehouse(row);
@@ -360,7 +365,7 @@ const getMitemOnhandQtyByWarehouse = async (row: SaleOrderDtlVO) => {
     });
     row.onhandQty = data.onhandQty;
     row.canOnhandQty = data.canOnhandQty;
-    row.reqQty = 0;
+    row.reqQty = _.isFinite(row.reqQty) && row.reqQty > 0 ? row.reqQty : 0; // 如果有值，保留原输入
   }
 };
 
