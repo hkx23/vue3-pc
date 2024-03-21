@@ -2919,8 +2919,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -5351,13 +5351,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
   ii?: string;
-  iii?: string;
-  s1?: string;
+  i?: string;
   s2?: string;
-  s4?: string;
   s3?: string;
+  s1?: string;
+  s4?: string;
+  iii?: string;
 } | null;
 
 /** 标签模板 */

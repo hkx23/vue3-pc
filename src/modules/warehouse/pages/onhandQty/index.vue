@@ -4,31 +4,21 @@
     <cmp-card :span="12">
       <cmp-query ref="queryRef" :opts="opts" @submit="onInput">
         <template #warehouseId="{ param }">
-          <t-select
-            v-model="param.warehouseId"
-            :clearable="true"
-            label="仓库"
-            @change="onWarehouseChange"
-            @popup-visible-change="onGetWarehouseId"
-          >
-            <t-option v-for="item in warehouseData" :key="item.id" :label="item.warehouseName" :value="item.id" />
-          </t-select>
+          <bcmp-select-business v-model="param.warehouseId" type="warehouseAuth"></bcmp-select-business>
         </template>
         <template #districtId="{ param }">
-          <t-select
+          <bcmp-select-business
             v-model="param.districtId"
-            :clearable="true"
-            label="货区"
-            @popup-visible-change="onDistrictChange"
-            @change="onDistrictInputChange"
-          >
-            <t-option v-for="item in districtData" :key="item.id" :label="item.districtName" :value="item.id" />
-          </t-select>
+            type="district"
+            :parent-id="param.warehouseId"
+          ></bcmp-select-business>
         </template>
         <template #locationId="{ param }">
-          <t-select v-model="param.locationId" :clearable="true" label="货位" @popup-visible-change="onLocationChange">
-            <t-option v-for="item in locationData" :key="item.id" :label="item.locationName" :value="item.id" />
-          </t-select>
+          <bcmp-select-business
+            v-model="param.locationId"
+            type="location"
+            :parent-id="param.districtId"
+          ></bcmp-select-business>
         </template>
       </cmp-query>
     </cmp-card>
@@ -82,10 +72,10 @@
   </t-dialog>
 </template>
 <script setup lang="ts">
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, reactive, ref } from 'vue';
 
-import { api, District, Location, OnhandQtyDtlVO, OnhandQtyVO, Warehouse } from '@/api/warehouse';
+import { api, OnhandQtyDtlVO, OnhandQtyVO } from '@/api/warehouse';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -231,15 +221,6 @@ const onGetHandQtyData = async () => {
   handQtyTotal.value = res.total;
 };
 
-// 仓库下拉数据获取
-const warehouseData = ref<Warehouse[]>([]);
-const onGetWarehouseId = async (visible) => {
-  if (visible) {
-    const res = await api.onhandQty.getWarehouse();
-    warehouseData.value = res;
-  }
-};
-
 // #query 查询参数
 const opts = computed(() => {
   return {
@@ -271,40 +252,6 @@ const opts = computed(() => {
     },
   };
 });
-
-// 仓库下拉事件-
-const onWarehouseChange = () => {
-  queryRef.value.state.form.districtId = '';
-  queryRef.value.state.form.locationId = '';
-};
-
-// 货区下拉事件
-const districtData = ref<District[]>([]);
-const onDistrictChange = async (visible: boolean) => {
-  if (visible) {
-    if (!queryRef.value.state.form.warehouseId) {
-      MessagePlugin.warning('请先选择仓库！');
-      return;
-    }
-    const res = await api.onhandQty.getDistrict({ warehouseId: queryRef.value.state.form.warehouseId });
-    districtData.value = res;
-  }
-};
-const onDistrictInputChange = () => {
-  queryRef.value.state.form.locationId = '';
-};
-// 货位下拉事件
-const locationData = ref<Location[]>([]);
-const onLocationChange = async (visible: boolean) => {
-  if (visible) {
-    if (!queryRef.value.state.form.districtId) {
-      MessagePlugin.warning('请先选择货区！');
-      return;
-    }
-    const res = await api.onhandQty.getLocation({ districtId: queryRef.value.state.form.districtId });
-    locationData.value = res;
-  }
-};
 
 const onInput = async (data: any) => {
   const { warehouseId, districtId, locationId, mitemIds } = data;

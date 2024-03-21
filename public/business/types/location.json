@@ -2,6 +2,7 @@
   "title": "货位：",
   "placeholder": "请选择货位",
   "url": "/api/warehouse/location/items",
+  "parentId":"",
   "httptype": "POST",
   "columns": [
     {
