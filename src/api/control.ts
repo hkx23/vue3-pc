@@ -3862,10 +3862,9 @@ export interface BarcodeWipVO {
   workshopCode?: string;
   workshopId?: string;
   stateName?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  defectCodeStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */

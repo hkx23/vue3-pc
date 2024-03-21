@@ -670,7 +670,7 @@ const onRepairRowClick = async ({ row }) => {
   await apiControl.wipRepair
     .updateWipRepairStatus({
       wipRepairIds: [row.id],
-      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginWorkstationId: userStore.currUserOrgInfo.workStationId,
       loginProcessId: userStore.currUserOrgInfo.processId,
     })
     .then(() => {
@@ -697,7 +697,7 @@ const onBatchRepairing = async () => {
 
     await apiControl.wipRepair.updateWipRepairStatus({
       wipRepairIds: selectRepairId.value,
-      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginWorkstationId: userStore.currUserOrgInfo.workStationId,
       loginProcessId: userStore.currUserOrgInfo.processId,
     });
     repairDtlData.value = [];
