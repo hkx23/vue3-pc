@@ -1509,6 +1509,8 @@ export interface PqcInspectFirstSearch {
   itemCategory?: string;
   /** 是否仅显示不合格 */
   isNg?: boolean;
+  /** 项目名称或内容 */
+  itemName?: string;
 }
 
 /** 响应数据 */
@@ -1620,6 +1622,8 @@ export type PqcInspectFirstVO = {
   ngReason?: string;
   /** 检验依据 */
   inspectBasis?: string;
+  /** 不合格分类名称 */
+  defectCategoryName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3532,10 +3536,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 停留时长 */
   waitTime?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -5347,13 +5351,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s3?: string;
-  ii?: string;
-  i?: string;
-  s2?: string;
-  iii?: string;
   s4?: string;
+  i?: string;
+  iii?: string;
+  s3?: string;
   s1?: string;
+  s2?: string;
+  ii?: string;
 } | null;
 
 /** 标签模板 */

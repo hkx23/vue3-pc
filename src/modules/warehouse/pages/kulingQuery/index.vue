@@ -37,7 +37,7 @@
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
-import { api } from '@/api/warehouse';
+import { api, StorageAgeQueryVO } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -50,7 +50,7 @@ const dataTotal = ref(0);
 const RPDRoutingVisible = ref(false); //* 弹窗默认关闭
 const selectedReceiptRowKeys = ref([]);
 const tableDataReceipt = ref([]); //* 表格数据
-const sunData = ref([]); // 用来存储接口调用结果
+const sunData = ref<StorageAgeQueryVO[]>([]); // 用来存储接口调用结果
 
 //* 组件配置  --查询界面选择
 const optsKuling = computed(() => {
@@ -172,10 +172,12 @@ const tabRefresh = async () => {
 
 //* 查询
 const onInput = async (data: any) => {
+  pageUI.value.page = 1;
   setLoading(true);
   const { mitemId, warehouseId, districtId, locationId } = data;
   const [stockInDateStart, stockInDateEnd] = data.stockInDate;
   if (!data.value) {
+    pageUI.value.page = 1;
     const result = await api.storageAgeQuery.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,

@@ -212,6 +212,7 @@ const onHandleCancellation = () => {
 // };
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   queryCondition.value = _.cloneDeep(data);
   onHandleQuery();
 };

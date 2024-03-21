@@ -6,9 +6,11 @@
     <t-col flex="auto">
       <t-row style="font-size: 12px">
         <t-col flex="auto">
-          <div>
-            <b>{{ props.name }}</b> <sub>{{ props.code }}</sub>
+          <div class="flex-row">
+            <span class="itemCode" :title="props.name">{{ props.name }}</span>
+            <span class="itemName" :title="props.code">{{ props.code }}</span>
           </div>
+
           <!-- <div>
         {{ props.subName }}
       </div> -->
@@ -27,6 +29,7 @@
             theme="success"
             variant="light-outline"
             size="small"
+            :title="suffixTag"
             >{{ suffixTag }}</t-tag
           >
           <check-circle-filled-icon v-if="props.showSuccess && !props.showCloseButton" class="success-state" />
@@ -79,6 +82,12 @@ const onClickClose = () => {
 };
 </script>
 <style scoped lang="less">
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
 .b-item {
   font-size: 12px;
   cursor: default;
@@ -95,15 +104,26 @@ const onClickClose = () => {
     padding-right: var(--td-comp-paddingTB-m) !important;
   }
 
-  b {
+  span.itemCode {
     color: #454545;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;
+    max-width: calc(50% - 4px); /* 根据实际情况调整最大宽度（这里假设是父容器一半宽度减去间距） */
   }
 
-  sub {
+  span.itemName {
     color: var(--td-text-color-secondary);
-    position: relative;
-    top: -3px;
+    // position: relative;
+    // top: -3px;
     font-size: 12px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(40% - 4px); /* 根据实际情况调整最大宽度（这里假设是父容器一半宽度减去间距） */
   }
 
   .desc {

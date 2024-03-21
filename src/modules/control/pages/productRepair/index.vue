@@ -425,6 +425,7 @@ watch(
 
 // 点击查询按钮
 const conditionEnter = (query: any) => {
+  pageTab1.value.page = 1;
   formData.queryData.barcode = query.barcode;
   formData.queryData.moScheId = query.moScheId;
 
@@ -669,7 +670,7 @@ const onRepairRowClick = async ({ row }) => {
   await apiControl.wipRepair
     .updateWipRepairStatus({
       wipRepairIds: [row.id],
-      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginWorkstationId: userStore.currUserOrgInfo.workStationId,
       loginProcessId: userStore.currUserOrgInfo.processId,
     })
     .then(() => {
@@ -696,7 +697,7 @@ const onBatchRepairing = async () => {
 
     await apiControl.wipRepair.updateWipRepairStatus({
       wipRepairIds: selectRepairId.value,
-      loginWorkstationId: userStore.currUserOrgInfo.workCenterId,
+      loginWorkstationId: userStore.currUserOrgInfo.workStationId,
       loginProcessId: userStore.currUserOrgInfo.processId,
     });
     repairDtlData.value = [];

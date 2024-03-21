@@ -191,6 +191,7 @@ const optsValue = ref({
   state: 1,
 });
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   optsValue.value = data;
   getRouting();
 };

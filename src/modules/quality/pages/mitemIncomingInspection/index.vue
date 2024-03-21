@@ -442,6 +442,7 @@ const getIqcHandleMethod = async () => {
   });
 };
 const conditionEnter = (query: any) => {
+  pageTab1.value.page = 1;
   const [dateRangeStart, dateRangeEnd] = query.dateRange;
 
   // 计算日期范围的天数差异
@@ -464,6 +465,7 @@ const conditionEnter = (query: any) => {
   fetchTable();
 };
 const conditionInspecEnter = (query: any) => {
+  pageTab2.value.page = 1;
   const [dateRangeStart, dateRangeEnd] = query.dateRangeInspectTion;
 
   // 计算日期范围的天数差异
@@ -524,8 +526,13 @@ const fetchTable = async () => {
       iqcBillNo: formData.queryData.iqcBillNo,
       billNo: formData.queryData.billNo,
     });
-    waitInspectData.value = list.list;
-    waitInspectDataTotal.value = list.total;
+    if (list === null) {
+      waitInspectData.value = [];
+      waitInspectDataTotal.value = 0;
+    } else {
+      waitInspectData.value = list.list;
+      waitInspectDataTotal.value = list.total;
+    }
   } catch (e) {
     console.log(e);
   }

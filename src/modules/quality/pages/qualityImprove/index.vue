@@ -207,6 +207,7 @@ const cancelById = async (row) => {
 
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   queryCompment.value = data;
   const [timeCreateStart, timeCreateEnd] = data.timeCreateRange;
   queryCompment.value.timeCreateStart = timeCreateStart;

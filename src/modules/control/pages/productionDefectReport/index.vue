@@ -658,6 +658,7 @@ const onInput = async (data) => {
   //   MessagePlugin.warning('日期跨度不得超过31天');
   //   return;
   // }
+  firstPageUI.value.page = 1;
   const [dateStart, dateEnd] = data.servicingTime.map((date) => dayjs(date).format('YYYY-MM-DD'));
 
   // 更新查询参数状态

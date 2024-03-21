@@ -140,6 +140,7 @@ const appData = reactive({
 
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   queryData.value = data;
   getList();
 };

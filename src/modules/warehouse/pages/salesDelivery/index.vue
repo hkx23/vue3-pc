@@ -8,7 +8,7 @@
         <cmp-table
           ref="tableRef"
           v-model:pagination="pageUI"
-          row-key="id"
+          row-key="billNo"
           :table-column="tableMainColumns"
           :table-data="tableMainData"
           :loading="loading"
@@ -30,6 +30,13 @@
                 {{ t('salesDelivery.cancel') }}
               </t-button>
             </t-popconfirm>
+
+            <cmp-print-button
+              template-code="DELIVERY_LIST"
+              :disabled="selectRowKeys?.length == 0"
+              :data="printData"
+              @before-print="onPrintClick"
+            />
           </template>
         </cmp-table>
       </cmp-container>
@@ -63,11 +70,12 @@
   ></formSalesDelivery>
 </template>
 <script lang="ts" setup>
-// import dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 import { api as apiWarehouse, SaleDeliveryVO } from '@/api/warehouse';
+import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -84,7 +92,7 @@ const { loading: loadingChildren, setLoading: setLoadingChildren } = useLoading(
 
 const isAdd = ref(true);
 
-const datePlanRangeDefault = ref([]); // 初始化日期控件
+const datePlanRangeDefault = ref([dayjs().subtract(6, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')]); // 初始化日期控件
 
 // 查询组件
 const opts = computed(() => {
@@ -215,6 +223,8 @@ const onSearch = (query: any) => {
   formData.mitemId = query.mitemId;
   formData.saleOrderNo = query.saleOrderNo;
   formData.status = query.status;
+
+  pageUI.value.page = 1;
   fetchTable();
 };
 
@@ -228,7 +238,6 @@ const fetchTable = async () => {
     const data = await apiWarehouse.saleDelivery.getSalesDeliveryList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      // ...optsValue.value,
       salesTimeBegin: formData.salesTimeBegin,
       salesTimeEnd: formData.salesTimeEnd,
       billNo: formData.billNo,
@@ -299,7 +308,56 @@ const onHandleShowClose = () => {
   fetchTable();
 };
 
+// 打印数据
+const printData = ref([]);
+// 打印, 目前只支持单笔打印
+const onPrintClick = async () => {
+  let isSuccess = true;
+  printData.value = [];
+  const promiseAll = [];
+  setLoading(true);
+  try {
+    selectRowKeys.value.forEach((element) => {
+      const billInfo = tableMainData.value.find((item) => item.billNo === element);
+      if (billInfo) {
+        const promiseQuery = getPrintBillInfo(billInfo.billNo).then((billInfoData: any) => {
+          if (billInfoData) {
+            const billDtls = billInfoData.saleDeliveryDtlVOList;
+            printData.value.push({
+              variable: billInfoData,
+              datasource: { head: billInfoData, body: billDtls },
+            });
+          }
+        });
+        promiseAll.push(promiseQuery);
+      }
+    });
+    await Promise.all(promiseAll);
+  } catch (e) {
+    console.log(e);
+    isSuccess = false;
+  } finally {
+    setLoading(false);
+  }
+  return isSuccess;
+};
+// 打印方法
+const getPrintBillInfo = (billNo) => {
+  return new Promise((resolve, reject) => {
+    const billInfoData = apiWarehouse.saleDelivery.getPrintBillInfo({
+      billNo,
+    }) as any;
+    if (billInfoData) {
+      resolve(billInfoData);
+    } else {
+      reject();
+    }
+  });
+};
+
 onMounted(() => {
+  formData.salesTimeBegin = dayjs().subtract(6, 'day').format('YYYY-MM-DD');
+  formData.salesTimeEnd = dayjs().format('YYYY-MM-DD');
   fetchTable();
 });
 </script>

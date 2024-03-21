@@ -81,6 +81,7 @@ const tableProcessColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 // 点击查询按钮
 const conditionEnter = (data: any) => {
+  pageUI.value.page = 1;
   keyword.value = data.keyword;
   processState.value = data.processState;
   pageUI.value.page = 1;
