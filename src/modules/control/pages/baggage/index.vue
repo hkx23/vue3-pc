@@ -126,8 +126,7 @@ const bagsSuitcasesData = ref({
 
 // 获取 表格 数据
 const onGetAnomalyTypeData = async () => {
-  const res = await api.pkgRelation.getPkgRelationReportList(bagsSuitcasesData.value);
-  console.log('🚀 ~ file: index.vue:126 ~ onGetAnomalyTypeData ~ res:', res);
+  const res = await api.pkgRelation.getPkgRelationReportAllList(bagsSuitcasesData.value);
   const newData = res.list.map((item) => {
     if (item.existPkgRelationReportcChildren) {
       if (item.children && item.children.length === 0) {
