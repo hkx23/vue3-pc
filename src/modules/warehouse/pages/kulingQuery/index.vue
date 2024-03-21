@@ -177,6 +177,7 @@ const onInput = async (data: any) => {
   const { mitemId, warehouseId, districtId, locationId } = data;
   const [stockInDateStart, stockInDateEnd] = data.stockInDate;
   if (!data.value) {
+    pageUI.value.page = 1;
     const result = await api.storageAgeQuery.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
