@@ -264,7 +264,7 @@ const columnsProduceReport2 = computed(() => {
     {
       colKey: 'datetimeSche',
       title: '计划生产日期',
-      width: 100,
+      width: 115,
     },
     {
       colKey: 'workshopName',
@@ -279,53 +279,53 @@ const columnsProduceReport2 = computed(() => {
     {
       colKey: 'scheCode',
       title: '工单号',
-      width: 120,
+      width: 140,
     },
     {
       colKey: 'mitemCode',
       title: '产品编码',
-      width: 100,
+      width: 110,
     },
     {
       colKey: 'mitemName',
       title: '产品名称',
-      width: 100,
+      width: 110,
     },
 
     {
       colKey: 'mitemDesc',
       title: '产品描述',
-      width: 100,
+      width: 110,
     },
     {
       colKey: 'processName',
       title: '工序',
-      width: 100,
+      width: 110,
     },
     {
       colKey: 'defectName',
       title: '缺陷描述',
-      width: 100,
+      width: 110,
     },
     {
       colKey: 'defectTotal',
       title: '缺陷总数',
-      width: 70,
+      width: 100,
     },
     {
       colKey: 'actualOutput',
       title: '实际产量',
-      width: 70,
+      width: 100,
     },
     {
       colKey: 'qualifiedQuantity',
       title: '合格数量',
-      width: 70,
+      width: 100,
     },
     {
       colKey: 'passRate',
       title: '良率',
-      width: 300,
+      width: 200,
     },
   ];
 });
@@ -444,7 +444,7 @@ const columnsProduceReport4 = computed(() => {
     },
     {
       colKey: 'repairTotal',
-      title: '维修总数量',
+      title: '维修总数',
       width: 70,
     },
     {
