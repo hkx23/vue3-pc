@@ -767,8 +767,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1317,6 +1317,117 @@ export interface WipProcessDtlVO {
   timeStay?: number;
 }
 
+export interface TimeSwitchProductSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 值类型;mitem:物料，mitem_category:物料分类 */
+  valueCategory?: string;
+  preValueId?: string;
+  backValueId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataTimeSwitchProductVO = {
+  list?: TimeSwitchProductVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataTimeSwitchProductVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataTimeSwitchProductVO;
+}
+
+export interface TimeSwitchProductVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 值类型;mitem:物料，mitem_category:物料分类 */
+  valueCategory?: string;
+  preValueId?: string;
+  backValueId?: string;
+  /** 切换时长 */
+  switchDuration?: number;
+  valueCategoryName?: string;
+  orgCode?: string;
+  perCode?: string;
+  perName?: string;
+  backCode?: string;
+  backName?: string;
+  stateName?: string;
+  creatorName?: string;
+  modifierName?: string;
+}
+
+/** 转产换型时间表 */
+export interface TimeSwitchProduct {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 值类型;mitem:物料，mitem_category:物料分类 */
+  valueCategory?: string;
+  preValueId?: string;
+  backValueId?: string;
+  /** 切换时长 */
+  switchDuration?: number;
+}
+
 export interface StraightThroughRateReportSearch {
   /**
    * 页码
@@ -1542,8 +1653,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -2438,15 +2549,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
-  datetimeScheStr?: string;
+  workshopName?: string;
+  workshopId?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2489,10 +2600,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3735,17 +3846,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
+  workshopName?: string;
+  workshopId?: string;
+  stateName?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3856,15 +3967,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
-  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
+  workshopName?: string;
+  workshopId?: string;
+  stateName?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
   defectCodeStr?: string;
 }
 
@@ -4262,6 +4373,19 @@ export interface ResultListPkgRelationVO {
   message?: string;
   /** 响应数据 */
   data?: PkgRelationVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: (string | null)[];
 }
 
 /** 显示排产工单BOM */
@@ -5034,6 +5158,52 @@ export const api = {
         method: 'GET',
       }),
   },
+  timeSwitchProduct: {
+    /**
+     * No description
+     *
+     * @tags 转产换型时间表
+     * @name GetList
+     * @summary 转产换型主界面表格
+     * @request POST:/timeSwitchProduct/getList
+     * @secure
+     */
+    getList: (data: TimeSwitchProductSearch) =>
+      http.request<ResultPagingDataTimeSwitchProductVO['data']>(`/api/control/timeSwitchProduct/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 转产换型时间表
+     * @name Edit
+     * @summary 产能型谱编辑
+     * @request POST:/timeSwitchProduct/edit
+     * @secure
+     */
+    edit: (data: TimeSwitchProduct) =>
+      http.request<ResultObject['data']>(`/api/control/timeSwitchProduct/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 转产换型时间表
+     * @name Add
+     * @summary 产能型谱新增
+     * @request POST:/timeSwitchProduct/add
+     * @secure
+     */
+    add: (data: TimeSwitchProduct) =>
+      http.request<ResultObject['data']>(`/api/control/timeSwitchProduct/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   straightThroughRateReport: {
     /**
      * No description
@@ -5581,6 +5751,21 @@ export const api = {
      * No description
      *
      * @tags 在制品箱包关系表
+     * @name PkgExist
+     * @summary 校验包装条码或SN是否被包装过
+     * @request GET:/pkgRelation/pkgExist
+     * @secure
+     */
+    pkgExist: (query: { barcode: string }) =>
+      http.request<ResultBoolean['data']>(`/api/control/pkgRelation/pkgExist`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品箱包关系表
      * @name GetPkgRelationByParentBarcode
      * @summary 根据父条码获取包装关系
      * @request GET:/pkgRelation/getPkgRelationByParentBarcode
@@ -5588,6 +5773,21 @@ export const api = {
      */
     getPkgRelationByParentBarcode: (query: { barcode: string }) =>
       http.request<ResultListPkgRelationVO['data']>(`/api/control/pkgRelation/getPkgRelationByParentBarcode`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品箱包关系表
+     * @name GetChildBarcodeList
+     * @summary 递归获取包装条码下的SN信息
+     * @request GET:/pkgRelation/getChildBarcodeList
+     * @secure
+     */
+    getChildBarcodeList: (query: { parentBarcode: string }) =>
+      http.request<ResultListString['data']>(`/api/control/pkgRelation/getChildBarcodeList`, {
         method: 'GET',
         params: query,
       }),

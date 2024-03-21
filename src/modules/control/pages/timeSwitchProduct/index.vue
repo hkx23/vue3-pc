@@ -8,7 +8,7 @@
             :label="t('timeSwitchProduct.valueCategory')"
             :clearable="true"
             @change="
-              param.perValueId = '';
+              param.preValueId = '';
               param.backValueId = '';
             "
           >
@@ -16,12 +16,12 @@
             <t-option key="1" :label="t('business.main.mitemTypeCode')" value="mitem_category" />
           </t-select>
         </template>
-        <template #perValue="{ param }">
+        <template #preValue="{ param }">
           <bcmp-select-business
-            v-model="param.perValueId"
+            v-model="param.preValueId"
             :disabled="!param.valueCategory"
-            :label="t('timeSwitchProduct.perValue')"
-            :placeholder="t('common.placeholder.select') + t('timeSwitchProduct.perValue')"
+            :label="t('timeSwitchProduct.preValue')"
+            :placeholder="t('common.placeholder.select') + t('timeSwitchProduct.preValue')"
             :type="param.valueCategory === 'mitem' ? 'mitem' : 'mitemCategory'"
             :clearable="true"
           ></bcmp-select-business>
@@ -63,12 +63,7 @@
         <template #button>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddTypeData"> {{ t('common.button.add') }} </t-button>
-            <bcmp-import-auto-button
-              theme="default"
-              type="f_product_capacity"
-              :button-text="t('common.button.import')"
-              @close="onFetchGroupData"
-            ></bcmp-import-auto-button>
+            <t-button theme="default" @click="formVisibleImport = true"> {{ t('common.button.import') }} </t-button>
           </t-space>
         </template>
       </cmp-table>
@@ -76,51 +71,79 @@
   </cmp-container>
 
   <!-- #班组 dialog 弹窗 -->
-  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="850px">
-    <t-form ref="formRef" :rules="rules" :data="teamFormData" @submit="onAnomalyTypeSubmit">
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle">
+    <t-form ref="formRef" :rules="rules" :data="teamFormData" label-width="120px" @submit="onAnomalyTypeSubmit">
       <t-row :gutter="[32, 16]">
         <!-- 第 1️⃣ 行数据 -->
-        <t-col :span="6">
-          <t-form-item :label="t('business.main.workshop')" name="workshopId">
-            <bcmp-select-business
-              v-model="teamFormData.workshopId"
-              label=""
-              type="workshop"
-              :clearable="true"
+        <t-col :span="12">
+          <t-form-item :label="t('timeSwitchProduct.valueCategory')" name="valueCategory">
+            <t-select
+              v-model="teamFormData.valueCategory"
               :disabled="!submitFalg"
+              label=""
+              :clearable="true"
               @change="onChange"
-            ></bcmp-select-business>
+            >
+              <t-option key="0" :label="t('business.main.mitemCode')" value="mitem" />
+              <t-option key="1" :label="t('business.main.mitemTypeCode')" value="mitem_category" />
+            </t-select>
           </t-form-item>
         </t-col>
-        <t-col :span="6">
-          <t-form-item :label="t('business.main.workcenter')" name="workcenterId">
+        <t-col v-if="teamFormData.valueCategory === 'mitem_category'" :span="12">
+          <t-form-item :label="t('timeSwitchProduct.preValue')" name="preValueId">
             <bcmp-select-business
-              v-model="teamFormData.workcenterId"
+              v-model="teamFormData.preValueId"
+              :disabled="!teamFormData.valueCategory || !submitFalg"
               label=""
-              :parent-id="teamFormData.workshopId"
-              type="workcenter"
+              :placeholder="t('common.placeholder.select') + t('timeSwitchProduct.preValue')"
+              type="mitemCategory"
               :clearable="true"
-              :disabled="!teamFormData.workshopId || !submitFalg"
             ></bcmp-select-business>
           </t-form-item>
         </t-col>
         <!-- 第 2️⃣ 行数据 -->
-        <t-col :span="6">
-          <t-form-item :label="t('business.main.mitemCode')" name="mitemId">
+        <t-col v-if="teamFormData.valueCategory === 'mitem_category'" :span="12">
+          <t-form-item :label="t('timeSwitchProduct.backValue')" name="backValueId">
             <bcmp-select-business
-              v-model="teamFormData.mitemId"
+              v-model="teamFormData.backValueId"
+              :disabled="!teamFormData.valueCategory || !submitFalg"
               label=""
+              :placeholder="t('common.placeholder.select') + t('timeSwitchProduct.backValue')"
+              type="mitemCategory"
+              :clearable="true"
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
+        <t-col v-if="teamFormData.valueCategory !== 'mitem_category'" :span="12">
+          <t-form-item :label="t('timeSwitchProduct.preValue')" name="preValueId">
+            <bcmp-select-business
+              v-model="teamFormData.preValueId"
+              :disabled="!teamFormData.valueCategory || !submitFalg"
+              label=""
+              :placeholder="t('common.placeholder.select') + t('timeSwitchProduct.preValue')"
               type="mitem"
               :clearable="true"
-              :disabled="!submitFalg"
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
+        <!-- 第 2️⃣ 行数据 -->
+        <t-col v-if="teamFormData.valueCategory !== 'mitem_category'" :span="12">
+          <t-form-item :label="t('timeSwitchProduct.backValue')" name="backValueId">
+            <bcmp-select-business
+              v-model="teamFormData.backValueId"
+              :disabled="!teamFormData.valueCategory || !submitFalg"
+              label=""
+              :placeholder="t('common.placeholder.select') + t('timeSwitchProduct.backValue')"
+              type="mitem"
+              :clearable="true"
             ></bcmp-select-business>
           </t-form-item>
         </t-col>
         <!-- 第 3️⃣ 行数据 -->
-        <t-col :span="6">
-          <t-form-item :label="t('timeSwitchProduct.speedRate')" name="speedRate">
+        <t-col :span="12">
+          <t-form-item :label="t('timeSwitchProduct.switchDurationNumber')" name="switchDuration">
             <t-input-number
-              v-model="teamFormData.speedRate"
+              v-model="teamFormData.switchDuration"
               theme="column"
               style="width: 100%"
               min="0"
@@ -128,7 +151,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item :label="t('timeSwitchProduct.status')">
+          <t-form-item :label="t('timeSwitchProduct.state')">
             <t-switch v-model="teamFormData.isState" />
           </t-form-item>
         </t-col>
@@ -138,6 +161,30 @@
       <t-button theme="default" variant="base" @click="formVisible = false">{{ t('common.button.cancel') }}</t-button>
       <t-button theme="primary" @click="eidtFormSubmit">{{ t('common.button.save') }}</t-button>
     </template>
+  </t-dialog>
+  <t-dialog
+    v-model:visible="formVisibleImport"
+    :close-on-overlay-click="false"
+    :header="t('timeSwitchProduct.selectImportType')"
+    :confirm-btn="null"
+    :cancel-btn="null"
+    width="300px"
+  >
+    <div style="display: flex; justify-content: center">
+      <bcmp-import-auto-button
+        theme="primary"
+        type="f_time_switch_product"
+        :button-text="t('business.main.mitemCode')"
+        @close="onFetchGroupData"
+      ></bcmp-import-auto-button>
+      <bcmp-import-auto-button
+        theme="default"
+        type="f_time_switch_product_mitem_category"
+        style="margin-left: 30px"
+        :button-text="t('business.main.mitemCategoryCode')"
+        @close="onFetchGroupData"
+      ></bcmp-import-auto-button>
+    </div>
   </t-dialog>
 </template>
 
@@ -171,12 +218,12 @@ const { t } = useLang();
 const { loading } = useLoading();
 const teamFormData = ref({
   id: '', // 行 ID
-  workshopId: '', // 仓库ID
-  workcenterId: '', // 仓库ID
-  mitemId: '', //  物料 ID
+  valueCategory: '',
+  preValueId: '',
+  backValueId: '',
   state: 0, //  物料 编码
+  switchDuration: null, //  物料 编码
   isState: false, //  物料 编码
-  speedRate: 0, // 安全库存
 });
 
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
@@ -184,6 +231,7 @@ const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 班组dialog 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
 const submitFalg = ref(false);
+const formVisibleImport = ref(false);
 // $ 表格数据
 const resultList = reactive({ list: [] });
 // 表格数据总条数
@@ -202,27 +250,27 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
     width: '120',
   },
   {
-    colKey: 'valueCategoryName',
-    title: t('timeSwitchProduct.perValue'),
+    colKey: 'perCode',
+    title: t('timeSwitchProduct.preValue'),
     width: '120',
   },
   {
-    colKey: 'valueCategoryName',
-    title: t('timeSwitchProduct.perValueName'),
+    colKey: 'perName',
+    title: t('timeSwitchProduct.preValueName'),
     width: '120',
   },
   {
-    colKey: 'valueCategoryName',
+    colKey: 'backCode',
     title: t('timeSwitchProduct.backValue'),
     width: '120',
   },
   {
-    colKey: 'valueCategoryName',
+    colKey: 'backName',
     title: t('timeSwitchProduct.backValueName'),
     width: '120',
   },
   {
-    colKey: 'speedRate',
+    colKey: 'switchDuration',
     title: t('timeSwitchProduct.switchDurationNumber'),
     width: '130',
   },
@@ -258,14 +306,16 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
     width: '80',
   },
 ];
-
 const onChange = () => {
   if (submitFalg.value) {
-    teamFormData.value.workcenterId = '';
+    teamFormData.value.preValueId = '';
+    teamFormData.value.backValueId = '';
   }
 };
+
 // # 刷新按钮
 const onFetchGroupData = async () => {
+  formVisibleImport.value = false;
   await getTabData(); //
 };
 
@@ -280,12 +330,12 @@ function validateNumber(value: any): boolean | CustomValidateResolveType {
   return true;
 }
 const rules: FormRules = {
-  workshopId: [{ required: true, trigger: 'change' }],
-  mitemId: [{ required: true, trigger: 'change' }],
-  workcenterId: [{ required: true, trigger: 'change' }],
-  speedRate: [
+  valueCategory: [{ required: true, trigger: 'change' }],
+  backValueId: [{ required: true, trigger: 'change' }],
+  preValueId: [{ required: true, trigger: 'change' }],
+  switchDuration: [
     { required: true, trigger: 'blur' },
-    { validator: validateNumber, trigger: 'blur' },
+    { validator: validateNumber, trigger: 'change' },
   ],
 };
 // # 初始渲染
@@ -301,9 +351,9 @@ const opts = computed(() => {
       slotName: 'valueCategory',
       defaultVal: '',
     },
-    perValueId: {
-      label: t('timeSwitchProduct.perValue'),
-      slotName: 'perValue',
+    preValueId: {
+      label: t('timeSwitchProduct.preValue'),
+      slotName: 'preValue',
       defaultVal: '',
     },
     backValueId: {
@@ -317,11 +367,10 @@ const opts = computed(() => {
 // 上侧搜索提交事件
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
-  queryConditions.value.mitemId = data.mitemId;
-  queryConditions.value.workcenterId = data.workcenterId;
-  queryConditions.value.workshopId = data.workshopId;
+  queryConditions.value.valueCategory = data.valueCategory;
+  queryConditions.value.preValueId = data.preValueId;
+  queryConditions.value.backValueId = data.backValueId;
   await getTabData();
-  MessagePlugin.success(t('timeSwitchProduct.querySuccess'));
 };
 
 const eidtFormSubmit = () => {
@@ -332,9 +381,9 @@ const eidtFormSubmit = () => {
 const queryConditions = ref({
   pageNum: 1,
   pageSize: 20,
-  workshopId: '',
-  workcenterId: '',
-  mitemId: '',
+  valueCategory: '',
+  backValueId: '',
+  preValueId: '',
 });
 
 const getTabData = async () => {
@@ -342,7 +391,7 @@ const getTabData = async () => {
   queryConditions.value.pageSize = pageUI.value.rows;
   try {
     loading.value = true;
-    const res = await api.productCapacity.getList(queryConditions.value);
+    const res = await api.timeSwitchProduct.getList(queryConditions.value);
     resultList.list = res.list;
     resultTotal.value = res.total;
   } catch (e) {
@@ -354,7 +403,7 @@ const getTabData = async () => {
 
 const onAddSupportGroup = async () => {
   teamFormData.value.state = teamFormData.value.isState === true ? 1 : 0;
-  await api.productCapacity.add(teamFormData.value);
+  await api.timeSwitchProduct.add(teamFormData.value);
   await getTabData();
   formVisible.value = false;
   MessagePlugin.success(t('common.message.success'));
@@ -372,21 +421,22 @@ const onAddTypeData = async () => {
 // // #编辑 点击
 const onEditRow = (row: any) => {
   formRef.value.reset({ type: 'empty' });
-  teamFormData.value.id = row.id;
-  teamFormData.value.mitemId = row.mitemId;
-  teamFormData.value.speedRate = row.speedRate;
-  teamFormData.value.isState = row.state === 1;
-  teamFormData.value.workcenterId = row.workcenterId;
-  teamFormData.value.workshopId = row.workshopId;
   submitFalg.value = false; // 编辑为 false
+  teamFormData.value.valueCategory = row.valueCategory;
+  teamFormData.value.id = row.id;
+  teamFormData.value.preValueId = row.preValueId;
+  teamFormData.value.backValueId = row.backValueId;
+  teamFormData.value.isState = row.state === 1;
+  teamFormData.value.switchDuration = row.switchDuration;
   formVisible.value = true;
+  console.log(teamFormData.value);
   diaLogTitle.value = t('common.button.edit');
 };
 
 // #编辑  请求
 const onGroupRequest = async () => {
   teamFormData.value.state = teamFormData.value.isState === true ? 1 : 0;
-  await api.productCapacity.edit(teamFormData.value);
+  await api.timeSwitchProduct.edit(teamFormData.value);
   await getTabData(); // 获取 班组表格 数据
   formVisible.value = false;
   MessagePlugin.success(t('common.message.success'));

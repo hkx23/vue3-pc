@@ -882,7 +882,6 @@
     :header="t('qualityImprove.selectRejectNode')"
     :confirm-btn="null"
     width="auto"
-    @confirm="onConfirmFile"
   >
     <div style="display: flex; justify-content: center">
       <t-button v-if="formData.operateType !== 'check'" @click="onRejectToBefore">{{

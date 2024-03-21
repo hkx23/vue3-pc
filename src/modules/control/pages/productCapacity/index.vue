@@ -304,7 +304,6 @@ const onInput = async (data: any) => {
   queryConditions.value.workcenterId = data.workcenterId;
   queryConditions.value.workshopId = data.workshopId;
   await getTabData();
-  MessagePlugin.success(t('productCapacity.querySuccess'));
 };
 
 const eidtFormSubmit = () => {
@@ -355,13 +354,13 @@ const onAddTypeData = async () => {
 // // #编辑 点击
 const onEditRow = (row: any) => {
   formRef.value.reset({ type: 'empty' });
+  submitFalg.value = false; // 编辑为 false
   teamFormData.value.id = row.id;
   teamFormData.value.mitemId = row.mitemId;
   teamFormData.value.speedRate = row.speedRate;
   teamFormData.value.isState = row.state === 1;
   teamFormData.value.workcenterId = row.workcenterId;
   teamFormData.value.workshopId = row.workshopId;
-  submitFalg.value = false; // 编辑为 false
   formVisible.value = true;
   diaLogTitle.value = t('common.button.edit');
 };
