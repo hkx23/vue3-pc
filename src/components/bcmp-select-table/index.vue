@@ -18,8 +18,6 @@
       :input-value="selectSearch"
       :filterable="filterable"
       :loading="loading"
-      :async-loading="asyncLoading"
-      @on-async-loading-click="onLoadMore"
       @clear="onClear"
       @tag-change="onTagChange"
       @input-change="onInputChange"
@@ -48,6 +46,7 @@
             :bordered="false"
             :data="state.tableData"
             lazy-load
+            :async-loading="asyncLoading"
             :row-selection-allow-unchselect-tableeck="false"
             :active-row-type="activeRowType"
             :row-selection-type="activeRowType"
@@ -56,6 +55,7 @@
             :row-key="rowKey"
             v-bind="$attrs"
             :columns="tableColumns"
+            @async-loading-click="onLoadMore"
             @scroll-y="onTableScroll"
             @select-change="rehandleSelectChange"
             @sort-change="sortChange"
@@ -497,14 +497,20 @@ const closeTable = () => {
 };
 
 const onTableScroll = debounce(({ e }: { e: WheelEvent }) => {
+  if (loading.value || asyncLoading.value === '') {
+    return;
+  }
   const contentElement = e.target as HTMLElement;
   const { scrollTop, clientHeight, scrollHeight } = contentElement;
-  if (scrollTop + clientHeight + 10 >= scrollHeight) {
+  if (scrollTop + clientHeight + 1 >= scrollHeight) {
     onLoadMore(null);
   }
 }, 200);
 const asyncLoading = ref<ListProps['asyncLoading']>('load-more');
 const onLoadMore: ListProps['onLoadMore'] = () => {
+  if (loading.value || asyncLoading.value === '') {
+    return;
+  }
   asyncLoading.value = 'loading';
   pagination.value.current++;
   fetchData(null);
@@ -552,9 +558,11 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
       state.tableData = state.tableData.concat(list);
     }
     asyncLoading.value = list.length < searchCondition.pageSize ? '' : 'load-more';
+    loading.value = false;
   } catch (_e) {
     // console.log(e);
     state.tableData = [];
+    loading.value = false;
   } finally {
     // 单选-如果完全匹配，直接选中
     radioCSelectRedirct(val);

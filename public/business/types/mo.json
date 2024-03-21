@@ -9,22 +9,26 @@
     {
       "title": "工单代码",
       "key": "moCode",
-      "align": "left"
+      "align": "left",
+      "width": "150"
     },
     {
       "title": "计划数量",
       "key": "planQty",
-      "align": "left"
+      "align": "left",
+      "width": "100"
     },
     {
       "title": "计划开始时间",
       "key": "datetimePlanStart",
-      "align": "left"
+      "align": "left",
+      "width": "160"
     },
     {
       "title": "计划完成时间",
       "key": "datetimePlanEnd",
-      "align": "left"
+      "align": "left",
+      "width": "160"
     }
   ],
   "rowKey": "id",

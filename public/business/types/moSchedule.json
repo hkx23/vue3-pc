@@ -23,25 +23,25 @@
     {
       "title": "计划数量",
       "key": "planQty",
-      "width": "150",
+      "width": "120",
       "align": "left"
     },
     {
       "title": "排产数量",
       "key": "scheQty",
-      "width": "150",
+      "width": "120",
       "align": "left"
     },
     {
       "title": "计划开始时间",
       "key": "datetimePlanStart",
-      "width": "150",
+      "width": "160",
       "align": "left"
     },
     {
       "title": "计划完成时间",
       "key": "datetimePlanEnd",
-      "width": "150",
+      "width": "160",
       "align": "left"
     },
     {
