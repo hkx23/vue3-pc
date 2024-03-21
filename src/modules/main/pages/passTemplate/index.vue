@@ -120,7 +120,9 @@
               </t-step-item>
             </t-steps>
             <div style="margin-top: 24px; text-align: center">
-              <t-button v-if="item?.detailList?.length > 0" @click="onClickSaveData(item?.detailList)">保存</t-button>
+              <t-button v-if="item?.detailList?.length > 0" @click="onClickSaveData(item?.head, item?.detailList)"
+                >保存</t-button
+              >
               <t-button
                 v-if="item?.detailList?.length > 0"
                 theme="default"
@@ -208,6 +210,7 @@ import {
   BusinessTmplLibDtl,
   BusinessUnit,
   KeyValuePairStringString,
+  ProcessBusinessLib,
   ProcessBusinessLibDtl,
   ProcessVO,
   RoutingProcessVO,
@@ -295,13 +298,19 @@ const fetchDetail = async (processId: string, barcodeCategory: string) => {
   const currPanelData = panelData.value.find((t) => t.value === barcodeCategory);
   if (currPanelData == null) return;
 
+  currPanelData.head = {
+    id: null,
+    ...params,
+  };
   if (detailList == null || detailList.length === 0) {
     currPanelData.mainId = await api.processBusinessLib.add(params);
+    currPanelData.head.id = currPanelData.mainId;
     currPanelData.detailList = [];
     return;
   }
 
   currPanelData.mainId = detailList[0].processBusinessLibId;
+  currPanelData.head.id = currPanelData.mainId;
   currPanelData.detailList = detailList;
 };
 
@@ -331,7 +340,9 @@ const treeKeys = { value: 'id', label: 'title' };
 const barcodeCategoryTab = ref('');
 const newTabSelectedValue = ref('');
 const newTabSelectedVisible = ref(false);
-const panelData = ref<{ label: string; value: string; mainId?: string; detailList?: ProcessBusinessLibDtl[] }[]>([]);
+const panelData = ref<
+  { label: string; value: string; mainId?: string; head?: ProcessBusinessLib; detailList?: ProcessBusinessLibDtl[] }[]
+>([]);
 const onClickAddTab = () => {
   newTabSelectedVisible.value = true;
 };
@@ -400,8 +411,11 @@ const onClickAtom = (item: BusinessUnit) => {
   });
 };
 
-const onClickSaveData = async (list: ProcessBusinessLibDtl[]) => {
-  await api.processBusinessLibDtl.addList(list);
+const onClickSaveData = async (head: ProcessBusinessLib, list: ProcessBusinessLibDtl[]) => {
+  await api.processBusinessLib.addList({
+    head,
+    list,
+  });
   await fetchDetail(currProcessId.value, barcodeCategoryTab.value);
   fetchHeaderMaintained();
   MessagePlugin.success(t('common.message.saveSuccess'));

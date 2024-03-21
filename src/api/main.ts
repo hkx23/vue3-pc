@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -2418,6 +2418,14 @@ export interface ResultLong {
   data?: string;
 }
 
+/** 业务模板添加实体类型 */
+export interface ProcessBusinessAddVO {
+  /** 工序业务执行单元库头表 */
+  head?: ProcessBusinessLib;
+  /** 详细步骤信息 */
+  list?: ProcessBusinessLibDtl[];
+}
+
 /** 响应数据 */
 export type PagingDataProcessVO = {
   list?: ProcessVO[];
@@ -2465,8 +2473,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4087,13 +4095,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  stateName?: string;
+  isState?: boolean;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
-  isState?: boolean;
-  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4258,8 +4266,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -4338,15 +4346,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isRawName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -4489,8 +4497,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6027,8 +6035,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -7340,8 +7348,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -11412,6 +11420,21 @@ export const api = {
      */
     add: (data: ProcessBusinessLib) =>
       http.request<ResultLong['data']>(`/api/main/processBusinessLib/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name AddList
+     * @summary 新增明细清单
+     * @request POST:/processBusinessLib/addList
+     * @secure
+     */
+    addList: (data: ProcessBusinessAddVO) =>
+      http.request<ResultObject['data']>(`/api/main/processBusinessLib/addList`, {
         method: 'POST',
         body: data as any,
       }),
