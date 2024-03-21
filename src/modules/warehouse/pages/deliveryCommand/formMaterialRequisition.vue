@@ -154,15 +154,10 @@ interface FormMaterialRequisition extends MaterialRequisitionDTO {
   selectRowId: string;
 }
 
-watch(
-  () => props.idCollection,
-  (newVal) => {
-    if (newVal && newVal?.list.length > 0) {
-      [formData.toWarehouseId] = newVal.warehouseId;
-    }
-  },
-  { deep: true },
-);
+watch(props.idCollection, () => {
+  [formData.toWarehouseId] = props.idCollection.warehouseId;
+  fetchMaterialDtlTable();
+});
 
 const formData: FormMaterialRequisition = reactive({
   moScheCodes: [],

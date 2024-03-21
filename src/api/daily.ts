@@ -336,6 +336,7 @@ export interface AlertCfgVO {
 
 /** 前端文件VO */
 export interface FileVO {
+  id?: string;
   /** 文件名 */
   name?: string;
   size?: string;

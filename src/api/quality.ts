@@ -5155,10 +5155,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -5352,12 +5352,12 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   s1?: string;
-  i?: string;
-  s4?: string;
   s3?: string;
+  i?: string;
   ii?: string;
   iii?: string;
   s2?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */

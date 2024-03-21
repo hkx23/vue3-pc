@@ -66,6 +66,7 @@ const tableDataReceipt = ref([]); //* 表格数据
 const someData1 = ref({}); // 用来存储接口调用结果
 const someData2 = ref([]);
 const someData3 = ref([]);
+const queryComponent = ref();
 
 //* 组件配置  --查询界面选择
 const optsReceipt = computed(() => {
@@ -182,7 +183,7 @@ const onEditRowClick = async (value: any) => {
 //* 初始渲染
 onMounted(async () => {
   const transactionBillNo = router.currentRoute.value.query;
-  console.log(transactionBillNo);
+  queryComponent.value.setFromValue('billNo', transactionBillNo.billNo);
   await fetchTable(transactionBillNo);
 });
 
