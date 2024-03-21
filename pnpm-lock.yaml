@@ -44,6 +44,9 @@ dependencies:
   dayjs:
     specifier: ^1.11.10
     version: 1.11.10
+  dhtmlx-gantt:
+    specifier: ^8.0.6
+    version: 8.0.6
   docx-preview:
     specifier: ^0.3.0
     version: 0.3.0
@@ -4088,6 +4091,10 @@ packages:
   /detect-newline@3.1.0:
     resolution: {integrity: sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==}
     engines: {node: '>=8'}
+    dev: false
+
+  /dhtmlx-gantt@8.0.6:
+    resolution: {integrity: sha512-GrEQ40/vgV1wDWkv/IvjJEM27Z4lDv76XvE5nlvMtFQTqUuo5VnL1XNDv/uFSJVMRnaN9StYaPxP1ebGamDLFg==}
     dev: false
 
   /didyoumean@1.2.2:

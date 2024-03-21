@@ -366,6 +366,38 @@
             <t-input v-model="workstationAuthValue" label="工站权限值" disabled />
           </t-col>
         </t-row>
+        <!-- 工单-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business v-model="moValue" :is-multiple="isMultiple" type="mo"></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="moValue" label="工单值" disabled />
+          </t-col>
+        </t-row>
+        <!-- 排产单-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business
+              v-model="moScheduleValue"
+              :is-multiple="isMultiple"
+              type="moSchedule"
+            ></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="moScheduleValue" label="排产单值" disabled />
+          </t-col>
+        </t-row>
+
+        <!-- 工艺路线-->
+        <t-row :gutter="[10, 10]">
+          <t-col flex="300px">
+            <bcmp-select-business v-model="routingValue" :is-multiple="isMultiple" type="routing"></bcmp-select-business
+          ></t-col>
+          <t-col flex="300px">
+            <t-input v-model="routingValue" label="工艺路线值" disabled />
+          </t-col>
+        </t-row>
       </t-space>
     </cmp-card>
   </cmp-container>
@@ -374,7 +406,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
-const isMultiple = ref(false);
+const isMultiple = ref(true);
 
 const personValue = ref();
 const plantValue = ref('1744167886127157249,1725461564969635842');
@@ -406,6 +438,10 @@ const uomValue = ref();
 const workcenterValue = ref();
 const workgroupValue = ref();
 const workstationAuthValue = ref();
+
+const routingValue = ref();
+const moValue = ref();
+const moScheduleValue = ref();
 
 onMounted(() => {});
 </script>

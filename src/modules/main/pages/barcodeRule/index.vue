@@ -562,7 +562,7 @@ const onConfirm = async () => {
   const { mitemId, mitemCategoryId } = formData.value;
   // 检查是否所有的属性都不为空;
   if (!mitemId && !mitemCategoryId) {
-    MessagePlugin.error('参数不能为空');
+    MessagePlugin.error('物料和物料类别至少选择一个！');
     return;
   }
   await api.barcodeRuleInMitem.addBarcodeRuleMitem(formData.value);

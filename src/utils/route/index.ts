@@ -120,12 +120,10 @@ async function asyncImportRoute(routes: RouteItem[] | undefined) {
     }
     item.meta.iconName = item.meta.icon;
     if (!item.meta.icon) {
-      item.meta.icon = children && children.length > 0 ? 'folder' : 'file';
+      item.meta.icon = children && children.length > 0 ? 'folder' : 'chart-3d';
     }
     item.meta.icon = await getMenuIcon(item.meta.icon);
-    // if (item.meta.icon) {
-    //   item.meta.icon = await getMenuIcon(item.meta.icon);
-    // }
+
     if ((item as any).id) {
       item.meta.id = (item as any).id;
     }
@@ -170,7 +168,6 @@ export async function transformObjectToRoute<T = RouteItem>(routeList: RouteItem
 }
 
 export async function transformItemToRoute<T = RouteItem>(route: RouteItem): Promise<T> {
-  console.log('🚀 ~ route:', route);
   const component = route.component as string;
 
   if (component) {
