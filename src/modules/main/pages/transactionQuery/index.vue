@@ -53,6 +53,7 @@ const inventoryManagement = ref([]);
 const tableDataReckoning = ref([]); //* 表格数据
 const dataTotal = ref(0);
 const router = useRouter();
+const queryComponent = ref();
 
 //* 组件配置--查询界面
 const opts = computed(() => {
@@ -192,7 +193,7 @@ const opts = computed(() => {
 // 表格主位栏
 const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '事务类型', colKey: 'categoryName', width: 100 },
-  { title: 'MES业务单号', width: 130, colKey: 'billNo' },
+  { title: 'MES业务单号', width: 140, colKey: 'billNo' },
   { title: '排产单号', width: 140, colKey: 'scheCode' },
   { title: '排产计划数', width: 95, colKey: 'planQty' },
   // { title: '标签', width: 110, colKey: 'scanBarcode' },
