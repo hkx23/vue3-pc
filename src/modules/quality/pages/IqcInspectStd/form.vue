@@ -77,7 +77,7 @@ export default {
     };
 
     const submit = async () => {
-      if (isEmpty(formData.value.mitemId && !formData.value.mitemCategoryId)) {
+      if (isEmpty(formData.value.mitemId) && !formData.value.mitemCategoryId) {
         MessagePlugin.warning('请选择物料或物料类别');
         return false;
       }
