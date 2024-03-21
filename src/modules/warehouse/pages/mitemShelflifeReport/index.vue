@@ -29,7 +29,7 @@
       </cmp-table>
     </cmp-card>
   </cmp-container>
-  <t-dialog v-model:visible="formVisible" width="850px" :footer="false">
+  <t-dialog v-model:visible="formVisible" width="90%" top="56px" :footer="false">
     <t-card :bordered="true">
       <div class="form-item-box">
         <t-form-item label="仓库">{{ detailRow?.warehouseName }}</t-form-item>
@@ -48,7 +48,7 @@
       :table-data="mitemShelflifeData"
       :total="mitemShelflifeTotal"
       select-on-row-click
-      style="height: 300px"
+      style="height: calc(90vh - 56px - 110px)"
       @refresh="onShelfLifeDetails"
     >
       <template #title>

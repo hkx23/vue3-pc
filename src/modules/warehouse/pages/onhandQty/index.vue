@@ -62,7 +62,7 @@
       :table-data="mitemShelflifeData"
       :total="mitemShelflifeTotal"
       select-on-row-click
-      style="height: 300px"
+      style="height: calc(90vh - 56px - 110px)"
       @refresh="onShelfLifeDetails"
     >
       <template #title>
