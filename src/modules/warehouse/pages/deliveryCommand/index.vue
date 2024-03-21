@@ -71,6 +71,7 @@
               type="moSchedule"
               :clearable="true"
               :disabled="!isSubmit"
+              @selection-change="onChangeMoSchedule"
             ></bcmp-select-business>
           </t-form-item>
         </t-col>
@@ -370,6 +371,9 @@ const onSelectChange = (value, context) => {
   warehouseNameArr.value = context.selectedRowData.map((item) => item.warehouseName);
   // 筛选出一个ID 合集 id'不重复
   selectedRowKeys.value = value;
+};
+const onChangeMoSchedule = (value) => {
+  deliveryFormParam.value.mitemId = value.mitemId;
 };
 
 // 作废点击事件

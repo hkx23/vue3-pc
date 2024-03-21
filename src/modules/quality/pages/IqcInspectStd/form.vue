@@ -78,14 +78,13 @@ export default {
 
     const submit = async () => {
       if (isEmpty(formData.value.mitemId) && !formData.value.mitemCategoryId) {
-        MessagePlugin.warning('请选择物料或物料类别');
+        MessagePlugin.warning('物料和物料类别至少选择一个！');
         return false;
       }
       if (formData.value.type === 'add' && isEmpty(formData.value.inspectStdCode)) {
         MessagePlugin.warning('请选择检验标准');
         return false;
       }
-
       if (formData.value.type !== 'edit') {
         await api.iqcInspectStdMitem.add({
           iqcInspectStdId: formData.value.iqcInspectStdId,
