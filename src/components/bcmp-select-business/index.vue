@@ -29,7 +29,7 @@
     :select-txt="selectTxt"
     :remote-url="finalUrl"
     :category="finalCategory"
-    :multiple="isMultiple"
+    :multiple="finalMultiple"
     :parent-id="finalParentId"
     :custom-conditions="finalCustomConditions"
     :readonly="readonly"
@@ -51,7 +51,7 @@
     :select-txt="selectTxt"
     :remote-url="finalUrl"
     :category="finalCategory"
-    :multiple="isMultiple"
+    :multiple="finalMultiple"
     :parent-id="finalParentId"
     :custom-conditions="finalCustomConditions"
     :disabled="disabled"
@@ -134,6 +134,11 @@ const props = defineProps({
   },
   // 是否多选
   isMultiple: {
+    type: Boolean,
+    default: false,
+  },
+  // 是否多选
+  multiple: {
     type: Boolean,
     default: false,
   },
@@ -255,10 +260,15 @@ const finaltableWidth = ref(props.tableWidth);
 const finalComponentType = ref(props.componentType);
 const finalListSetting = ref(props.listSetting);
 const finalCustomConditions = ref(props.customConditions);
+const finalMultiple = ref(props.isMultiple || props.multiple);
 
 const onSelectionChange = (val: any, valuKeys: any) => {
-  if (!props.isMultiple) {
+  if (!finalMultiple.value) {
     emits('update:modelValue', val[finalKeywords.value.value]);
+    // 选择值
+    emits('SelectionChange', val, valuKeys);
+    // 选择值
+    emits('change', valuKeys);
   } else {
     // 拼装成以下格式的数据
     //     const value = ref([
@@ -277,14 +287,12 @@ const onSelectionChange = (val: any, valuKeys: any) => {
     }
     if (finalComponentType.value === 'list' || finalComponentType.value === 'list2') {
       emits('update:modelValue', valuKeys.join(','));
-    } else {
-      emits('update:modelValue', multipleValues);
+      // 选择值
+      emits('SelectionChange', val, valuKeys.join(','));
+      // 选择值
+      emits('change', valuKeys.join(','));
     }
   }
-  // 选择值
-  emits('SelectionChange', val, valuKeys);
-  // 选择值
-  emits('change', valuKeys);
 };
 
 const loadTypeSetting = () => {

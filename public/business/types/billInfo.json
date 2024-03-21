@@ -7,22 +7,26 @@
     {
       "title": "单据号",
       "key": "billNo",
-      "align": "left"
+      "align": "left",
+      "width": "150px"
     },
     {
       "title": "单据状态",
       "key": "statusName",
-      "align": "left"
+      "align": "left",
+      "width": "120px"
     },
     {
       "title": "创建人",
       "key": "displayName",
-      "align": "left"
+      "align": "left",
+      "width": "120px"
     },
     {
       "title": "创建时间",
       "key": "timeCreate",
-      "align": "left"
+      "align": "left",
+      "width": "180px"
     }
   ],
   "rowKey": "id",

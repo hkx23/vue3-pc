@@ -18,6 +18,8 @@
       :input-value="selectSearch"
       :filterable="filterable"
       :loading="loading"
+      :async-loading="asyncLoading"
+      @on-async-loading-click="onLoadMore"
       @clear="onClear"
       @tag-change="onTagChange"
       @input-change="onInputChange"
@@ -39,11 +41,11 @@
             multiple-sort
             hover
             resizable
-            max-height="300"
+            size="small"
+            max-height="328"
             :disable-data-page="true"
             cell-empty-content="-"
-            bordered
-            :pagination="pagination"
+            :bordered="false"
             :data="state.tableData"
             lazy-load
             :row-selection-allow-unchselect-tableeck="false"
@@ -54,6 +56,7 @@
             :row-key="rowKey"
             v-bind="$attrs"
             :columns="tableColumns"
+            @scroll-y="onTableScroll"
             @select-change="rehandleSelectChange"
             @sort-change="sortChange"
             @filter-change="onFilterChange"
@@ -74,6 +77,7 @@
 <script setup lang="tsx" name="BcmpSelectTable">
 import _, { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
+import { ListProps } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
 // 抛出事件
 const emits = defineEmits(['selectionChange']);
@@ -492,6 +496,20 @@ const closeTable = () => {
   selectSearch.value = '';
 };
 
+const onTableScroll = debounce(({ e }: { e: WheelEvent }) => {
+  const contentElement = e.target as HTMLElement;
+  const { scrollTop, clientHeight, scrollHeight } = contentElement;
+  if (scrollTop + clientHeight + 10 >= scrollHeight) {
+    onLoadMore(null);
+  }
+}, 200);
+const asyncLoading = ref<ListProps['asyncLoading']>('load-more');
+const onLoadMore: ListProps['onLoadMore'] = () => {
+  asyncLoading.value = 'loading';
+  pagination.value.current++;
+  fetchData(null);
+};
+
 const tempCondition = ref({});
 
 const remoteLoad = async (val: any, isSetDefaultVal) => {
@@ -526,8 +544,14 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
       element.label = element[props.keywords.label];
       element.value = element[props.keywords.value];
     });
-    state.tableData = list;
+    // state.tableData = list;
     pagination.value.total = Number(total);
+    if (searchCondition.pageNum === 1) {
+      state.tableData = list;
+    } else {
+      state.tableData = state.tableData.concat(list);
+    }
+    asyncLoading.value = list.length < searchCondition.pageSize ? '' : 'load-more';
   } catch (_e) {
     // console.log(e);
     state.tableData = [];
@@ -568,6 +592,7 @@ const fetchData = debounce((val) => {
 const onInputChange = (val: string) => {
   // console.log('onInputChange');
   selectSearch.value = val;
+  pagination.value.current = 1;
   loading.value = true;
 
   fetchData(val);
@@ -620,10 +645,13 @@ onMounted(() => {
       sorter: false,
       filter: null,
     };
-    if (element.sorter !== false) {
-      addColumn.sorter = true;
-    }
-    if (element.filter !== false) {
+    // if (element.sorter !== false) {
+    //   addColumn.sorter = true;
+    // }
+
+    addColumn.sorter = element.sorter;
+    // if (element.filter !== false) {
+    if (element.filter) {
       addColumn.filter = {
         type: 'input',
         resetValue: '',
