@@ -30,8 +30,8 @@
             v-model="formData.mitemCategoryId"
             type="mitemCategory"
             :clearable="true"
+            :disabled="!isEmpty(formData.mitemId)"
             :show-title="false"
-            :disabled="!!formData.mitemId"
           ></bcmp-select-business>
         </t-form-item>
       </t-col>
@@ -41,8 +41,8 @@
             v-model="formData.mitemId"
             type="mitem"
             :show-title="false"
+            :disabled="!isEmpty(formData.mitemCategoryId)"
             :clearable="true"
-            :disabled="!!formData.mitemCategoryId"
           ></bcmp-select-business>
         </t-form-item>
       </t-col>
@@ -170,6 +170,7 @@ export default {
       rules,
       onChange,
       formData,
+      isEmpty,
     };
   },
 };

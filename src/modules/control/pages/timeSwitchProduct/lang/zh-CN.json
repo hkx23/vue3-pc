@@ -1,0 +1,18 @@
+{
+  "timeSwitchProduct": {
+    "mitemCode": "物料编码",
+    "selectImportType": "请选择导入类型",
+    "querySuccess": "查询成功",
+    "title": "转产换型时间列表",
+    "speedRate": "速率值(H)",
+    "status": "是否有效",
+    "state": "状态",
+    "valueCategory": "值类型",
+    "preValue": "值类型(前)",
+    "preValueName": "值名称(前)",
+    "backValue": "值类型(后)",
+    "switchDurationNumber": "切换小时数量",
+    "backValueName": "值名称(后)",
+    "orgCode": "工厂编码"
+  }
+}

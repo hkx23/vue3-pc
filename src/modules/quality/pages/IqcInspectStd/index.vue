@@ -260,6 +260,7 @@ const onAssign = async (row) => {
   assignFormRef.value.formData.type = 'assign';
   assignFormRef.value.formData.iqcInspectStdId = row.id;
   assignFormRef.value.formData.inspectStdName = row.inspectStdName;
+  assignFormRef.value.formData.inspectStdCode = row.inspectStdCode;
   formVisible.value = true;
 };
 const onSelectedAssignChange = (value: any) => {
