@@ -31,6 +31,7 @@
             type="mitemCategory"
             :clearable="true"
             :show-title="false"
+            :disabled="!!formData.mitemId"
           ></bcmp-select-business>
         </t-form-item>
       </t-col>
@@ -41,6 +42,7 @@
             type="mitem"
             :show-title="false"
             :clearable="true"
+            :disabled="!!formData.mitemCategoryId"
           ></bcmp-select-business>
         </t-form-item>
       </t-col>
@@ -75,16 +77,12 @@ export default {
     };
 
     const submit = async () => {
-      if (isEmpty(formData.value.mitemId)) {
-        MessagePlugin.warning('请选择物料');
+      if (isEmpty(formData.value.mitemId) && !formData.value.mitemCategoryId) {
+        MessagePlugin.warning('物料和物料类别至少选择一个！');
         return false;
       }
       if (formData.value.type === 'add' && isEmpty(formData.value.inspectStdCode)) {
         MessagePlugin.warning('请选择检验标准');
-        return false;
-      }
-      if (!formData.value.mitemCategoryId) {
-        MessagePlugin.warning('请选择物料类别');
         return false;
       }
       if (formData.value.type !== 'edit') {

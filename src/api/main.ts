@@ -2465,8 +2465,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4087,13 +4087,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
-  isState?: boolean;
+  isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
-  dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+  isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -4338,15 +4338,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isProductName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
+  isRawChecked?: boolean;
   isBatchName?: string;
-  isState?: boolean;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -6027,8 +6027,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -7340,8 +7340,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -7734,8 +7734,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  relate?: boolean;
   default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -8298,14 +8298,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否拒绝 */
-  refuse?: boolean;
+  /** 是否可用 */
+  enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否可用 */
-  enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -11029,9 +11029,10 @@ export const api = {
      * @request GET:/stressTest/test
      * @secure
      */
-    test: () =>
+    test: (query: { input: string }) =>
       http.request<ResultObject['data']>(`/api/main/stressTest/test`, {
         method: 'GET',
+        params: query,
       }),
 
     /**
