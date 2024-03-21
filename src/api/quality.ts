@@ -4133,9 +4133,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5155,10 +5155,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -5351,13 +5351,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  ii?: string;
-  i?: string;
-  s2?: string;
-  s3?: string;
   s1?: string;
-  s4?: string;
+  s3?: string;
+  i?: string;
+  ii?: string;
   iii?: string;
+  s2?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */

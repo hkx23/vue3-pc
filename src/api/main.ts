@@ -4087,13 +4087,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
-  isState?: boolean;
-  isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
+  isExemptionInspectionName?: string;
+  stateName?: string;
   isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4340,13 +4340,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isRawName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
 }
 
 /** 响应数据 */
@@ -8300,12 +8300,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
