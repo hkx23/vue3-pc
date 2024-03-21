@@ -767,8 +767,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1317,41 +1317,24 @@ export interface WipProcessDtlVO {
   timeStay?: number;
 }
 
-export interface TimeSwitchProductSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 值类型;mitem:物料，mitem_category:物料分类 */
-  valueCategory?: string;
-  preValueId?: string;
-  backValueId?: string;
+export interface CommonImportTimeSwitchProductVO {
+  title?: string;
+  tableName?: string;
+  data?: TimeSwitchProductVO[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
 }
 
-/** 响应数据 */
-export type PagingDataTimeSwitchProductVO = {
-  list?: TimeSwitchProductVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataTimeSwitchProductVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataTimeSwitchProductVO;
+export interface ImportColumn {
+  field?: string;
+  title?: string;
+  isRequired?: boolean;
+  isValidateRepeat?: boolean;
+  validateExpression?: string;
+  items?: string[];
+  required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface TimeSwitchProductVO {
@@ -1393,6 +1376,66 @@ export interface TimeSwitchProductVO {
   stateName?: string;
   creatorName?: string;
   modifierName?: string;
+}
+
+/** 响应数据 */
+export type ImportSummary = {
+  /** @format int32 */
+  successCount?: number;
+  /** @format int32 */
+  failCount?: number;
+  errorListFilePath?: string;
+  allSuccess?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultImportSummary {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ImportSummary;
+}
+
+export interface TimeSwitchProductSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 值类型;mitem:物料，mitem_category:物料分类 */
+  valueCategory?: string;
+  preValueId?: string;
+  backValueId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataTimeSwitchProductVO = {
+  list?: TimeSwitchProductVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataTimeSwitchProductVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataTimeSwitchProductVO;
 }
 
 /** 转产换型时间表 */
@@ -1653,8 +1696,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2096,8 +2139,15 @@ export interface PkgRelationReportVO {
   topParentPkgBarcode?: string;
   /** 是否存在子集 */
   existPkgRelationReportcChildren?: boolean;
-  /** 报表子集 */
+  /** 子集 */
   children?: PkgRelationReportVO[];
+  /** 当前条码的所有父级 */
+  parent?: PkgRelationReportVO[];
+  /**
+   * 层级关系
+   * @format int32
+   */
+  level?: number;
 }
 
 /** 通用响应类 */
@@ -2549,14 +2599,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   datetimeScheStr?: string;
-  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2599,10 +2650,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3845,16 +3896,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
   stateName?: string;
-  isState?: boolean;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3965,15 +4017,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
   workshopName?: string;
+  workshopId?: string;
   stateName?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   defectCodeStr?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -5160,6 +5213,21 @@ export const api = {
      * No description
      *
      * @tags 转产换型时间表
+     * @name ImportData
+     * @summary 导入转产换型时间
+     * @request POST:/timeSwitchProduct/import
+     * @secure
+     */
+    importData: (data: CommonImportTimeSwitchProductVO) =>
+      http.request<ResultImportSummary['data']>(`/api/control/timeSwitchProduct/import`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 转产换型时间表
      * @name GetList
      * @summary 转产换型主界面表格
      * @request POST:/timeSwitchProduct/getList
@@ -5743,6 +5811,24 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品箱包关系表
+     * @name GetPkgRelationReportAllList
+     * @summary 获取箱包关系报表(查询上下级关系)
+     * @request POST:/pkgRelation/getPkgRelationReportAllList
+     * @secure
+     */
+    getPkgRelationReportAllList: (data: PkgRelationSearch) =>
+      http.request<ResultPagingDataPkgRelationReportVO['data']>(
+        `/api/control/pkgRelation/getPkgRelationReportAllList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
 
     /**
      * No description

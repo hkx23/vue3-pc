@@ -430,7 +430,7 @@ watch(
 const downTemplate = () => {
   // 通过URL下载模板
   const link = document.createElement('a');
-  const importAddress = `/import/template/${props.templateFileName}.xlsx`;
+  const importAddress = `/import/templates/${props.templateFileName}.xlsx`;
   const fileName = importAddress.substring(importAddress.lastIndexOf('/') + 1);
   link.href = importAddress;
   link.download = fileName; // 自定义文件名，根据实际情况调整
