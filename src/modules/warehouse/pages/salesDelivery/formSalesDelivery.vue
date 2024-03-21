@@ -365,7 +365,7 @@ const getMitemOnhandQtyByWarehouse = async (row: SaleOrderDtlVO) => {
     });
     row.onhandQty = data.onhandQty;
     row.canOnhandQty = data.canOnhandQty;
-    row.reqQty = !_.isEmpty(row.reqQty) && row.reqQty > 0 ? row.reqQty : 0; // 如果有值，保留原输入
+    row.reqQty = _.isFinite(row.reqQty) && row.reqQty > 0 ? row.reqQty : 0; // 如果有值，保留原输入
   }
 };
 

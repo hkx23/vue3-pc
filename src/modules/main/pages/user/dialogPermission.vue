@@ -292,7 +292,6 @@ useResizeObserver(treeCard, (entries) => {
 const filterList = ref([]) as any;
 // 点击查询按钮
 const conditionEnter = (data: any) => {
-  pageUI.value.page = 1;
   filterList.value = [];
   for (const key in data) {
     const addFilter = {

@@ -197,6 +197,20 @@ export interface Warehouse {
 
 /** 用户权限信息 */
 export interface UserWarehouseSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
   categoryCodes?: string[];
   warehouseId?: string;
   toWarehouseId?: string;
@@ -1174,6 +1188,7 @@ export interface TransferDtlVO {
   uomName?: string;
   /** @format int32 */
   isBatchNo?: number;
+  scheCode?: string;
   /** 交易单身标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
 }
@@ -1896,6 +1911,8 @@ export interface SaleOrderDtlVO {
   saleDeliveryDtlId?: string;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -2039,7 +2056,8 @@ export interface SaleDeliveryDtlVO {
   qty?: number;
   /** 销售订单号 */
   saleOrderNo?: string;
-  saleOrderDtlId?: string;
+  /** 销售订单行号 */
+  saleOrderLineNo?: string;
   warehouseId?: string;
   districtId?: string;
   locId?: string;
@@ -3148,21 +3166,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  flpickQty?: number;
   tlpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   bfpickQty?: number;
+  flpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -5907,6 +5925,12 @@ export type MaterialRequisitionVO = {
    * @format date-time
    */
   modifiedTime?: string;
+  /** 排产单逗号隔开 */
+  moSheCodes?: string;
+  /** 物料编码逗号隔开 */
+  mitemCodes?: string;
+  /** 物料名称逗号隔开 */
+  mitemNames?: string;
   dtls?: MaterialRequisitionExcuteDtlVO[];
   /** 单据状态名称 */
   statusName?: string;

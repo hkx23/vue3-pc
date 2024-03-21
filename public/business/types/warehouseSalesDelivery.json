@@ -15,9 +15,9 @@
       "align": "left"
     }
   ],
-  "rowKey": "id",
+  "rowKey": "warehouseId",
   "keywords": {
-    "value": "id",
+    "value": "warehouseId",
     "label": "warehouseName"
   },
   "listSetting": {
