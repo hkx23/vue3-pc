@@ -67,6 +67,7 @@ const opts = computed(() => {
       bind: {
         type: 'businessCategory',
         showTitle: false,
+        multiple: true,
       },
     },
     timeCreate: {
