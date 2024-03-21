@@ -275,7 +275,7 @@ const onFormConfirm = () => {
       MessagePlugin.warning(t('materialRequisition.sameWarehouseTip'));
       return;
     }
-    formData.isLock = true;
+
     // 查询领料单的明细信息
     fetchMaterialDtlTable();
   });
@@ -292,6 +292,7 @@ const fetchMaterialDtlTable = async () => {
       ...formData,
     });
     tableDataMaterialRequisition.value = data;
+    formData.isLock = true;
   } catch (e) {
     console.log(e);
   } finally {
