@@ -2056,7 +2056,8 @@ export interface SaleDeliveryDtlVO {
   qty?: number;
   /** 销售订单号 */
   saleOrderNo?: string;
-  saleOrderDtlId?: string;
+  /** 销售订单行号 */
+  saleOrderLineNo?: string;
   warehouseId?: string;
   districtId?: string;
   locId?: string;
@@ -3165,19 +3166,19 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  tlpickQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
-  flpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
   /**
@@ -3672,13 +3673,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5300,8 +5301,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
