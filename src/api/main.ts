@@ -1464,7 +1464,8 @@ export interface TransactionDetailSearch {
    * @format int32
    */
   pageSize?: number;
-  businessCategoryId?: string;
+  /** 事务类型 */
+  businessCategoryId?: string[];
   moScheId?: string;
   mitemId?: string;
   /** MES业务单号 */
@@ -4095,11 +4096,11 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
   stateName?: string;
   isState?: boolean;
 }
@@ -4346,15 +4347,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   stateName?: string;
-  isState?: boolean;
+  isProductName?: string;
   isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isProductName?: string;
   isInProcessName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4497,8 +4498,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8308,12 +8309,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */

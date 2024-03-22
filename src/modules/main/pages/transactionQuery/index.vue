@@ -36,6 +36,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
+import _ from 'lodash';
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -293,10 +294,14 @@ const onInput = async (data: any) => {
     toWarehouseId, // 目标仓库
   } = data;
   if (!data.value) {
+    let list = [];
+    if (!_.isEmpty(businessCategoryId)) {
+      list = _.split(businessCategoryId, ',');
+    }
     const data = await api.transactionDetail.getList({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
-      businessCategoryId,
+      businessCategoryId: list,
       mitemId,
       billNo,
       moScheId,
