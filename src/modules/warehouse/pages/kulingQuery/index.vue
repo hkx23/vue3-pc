@@ -138,7 +138,7 @@ const onEditRowClick = async (value: any) => {
   RPDRoutingVisible.value = true;
   const { onhandId } = value.row;
   const result = await api.storageAgeQuery.getDtl({
-    pageNum: pageUI.value.page,
+    pageNum: 1,
     pageSize: pageUI.value.rows,
     onhandId,
   });

@@ -1486,22 +1486,68 @@ export interface StorageAgeQueryVO {
    * @format date-time
    */
   datetimeReceipted?: string;
+  /** 库存量 */
+  stockNum?: number;
   /**
-   * 库存量
+   * 三年以上
    * @format int32
    */
-  stockNum?: number;
-  threeYears?: string;
-  twoToThreeYears?: string;
-  oneToTwoYears?: string;
-  sixToTwelveMonths?: string;
-  threeToSixMonths?: string;
-  oneToThreeMonths?: string;
-  thirtyDays?: string;
+  threeYears?: number;
+  /**
+   * 两至三年
+   * @format int32
+   */
+  twoToThreeYears?: number;
+  /**
+   * 一到两年
+   * @format int32
+   */
+  oneToTwoYears?: number;
+  /**
+   * 6-12个月
+   * @format int32
+   */
+  sixToTwelveMonths?: number;
+  /**
+   * 3-6个月
+   * @format int32
+   */
+  threeToSixMonths?: number;
+  /**
+   * 1-3个月
+   * @format int32
+   */
+  oneToThreeMonths?: number;
+  /**
+   * 30天以内
+   * @format int32
+   */
+  thirtyDays?: number;
   /** 条码号 */
   barcodeNo?: string;
   /** 数量 */
   balanceQty?: number;
+  /**
+   * 标签的数量
+   * @format int32
+   */
+  labelNum?: number;
+  /**
+   * SN的数量
+   * @format int32
+   */
+  barcodeNum?: number;
+  /**
+   * 配送卡的数量
+   * @format int32
+   */
+  deliveryNum?: number;
+  /** 标签的库存 */
+  labelStock?: number;
+  /** SN的库存 */
+  barcodeStock?: number;
+  /** 配送卡的库存 */
+  deliveryStock?: number;
   expiredDays?: string;
 }
 
@@ -3176,11 +3222,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
   bfpickQty?: number;
+  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -5301,8 +5347,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
