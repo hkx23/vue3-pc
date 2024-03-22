@@ -17,6 +17,8 @@
     :custom-conditions="finalCustomConditions"
     :keywords="finalKeywords"
     :table-width="finaltableWidth"
+    :query-setting="finalListSetting"
+    :bottom-query-setting="finalBottomQuerySetting"
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >

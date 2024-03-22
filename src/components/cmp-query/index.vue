@@ -79,7 +79,7 @@
                   </t-radio-group>
                   <!-- t-checkbox  -->
                   <t-checkbox
-                    v-if="!opt.slotName && opt.comp.includes('t-checkbox')"
+                    v-if="!opt.slotName && opt.comp.includes('t-checkbox') && !opt.comp.includes('t-checkbox-group')"
                     v-model="state.form[opt.dataIndex]"
                     :size="size"
                     @change="handleEvent(opt.event, state.form[opt.dataIndex])"
@@ -95,7 +95,7 @@
                       !opt.comp.includes('date') &&
                       !opt.comp.includes('tree-select') &&
                       !opt.comp.includes('t-radio-button-group') &&
-                      !opt.comp.includes('t-checkbox')
+                      !(opt.comp.includes('t-checkbox') && !opt.comp.includes('t-checkbox-group'))
                     "
                     v-bind="
                       typeof opt.bind == 'function'

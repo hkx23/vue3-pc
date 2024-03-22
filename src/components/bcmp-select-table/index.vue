@@ -35,16 +35,16 @@
         <div class="t-table-select__table" :style="{ width: `${tableWidth}px` }">
           <cmp-container :full="true" :full-sub-index="[1]" :gutter="[0, 4]" style="padding: 0">
             <!-- cmp-query 查询组件 -->
-            <cmp-card v-show="opts" :span="12" :ghost="true">
-              <!-- <cmp-query
+            <cmp-card v-show="queryOpts !== {}" :span="12" :ghost="true">
+              <cmp-query
                 ref="queryComponent"
-                :opts="opts"
+                :opts="queryOpts"
                 is-expansion
                 :show-button="false"
                 @submit="conditionEnter"
                 @change="conditionEnter"
               >
-              </cmp-query> -->
+              </cmp-query>
             </cmp-card>
             <!-- cmp-table 表格组件   :row-select="{ type: 'single' }"    :selected-row-keys="selectedBillId" -->
             <cmp-card :span="12" :ghost="true">
@@ -83,16 +83,16 @@
               </t-table>
             </cmp-card>
             <!-- cmp-query 查询组件 -->
-            <cmp-card v-show="optsBottom" :span="12" :ghost="true">
-              <!-- <cmp-query
+            <cmp-card v-show="buttomQueryOpts !== {}" :span="12" :ghost="true">
+              <cmp-query
                 ref="queryComponentFooter"
                 :show-button="false"
-                :opts="optsBottom"
+                :opts="buttomQueryOpts"
                 is-expansion
                 @submit="conditionEnter"
                 @change="conditionEnter"
               >
-              </cmp-query> -->
+              </cmp-query>
             </cmp-card>
           </cmp-container>
         </div>
@@ -229,6 +229,18 @@ const props = defineProps({
   defaultSelectVal: {
     type: [String, Number, Array],
     default: '',
+  },
+  querySetting: {
+    type: Object,
+    default: () => {
+      return {};
+    },
+  },
+  bottomQuerySetting: {
+    type: Object,
+    default: () => {
+      return {};
+    },
   },
 });
 
@@ -662,13 +674,13 @@ const onInputChange = (val: string) => {
 };
 
 // 点击查询按钮
-// const conditionEnter = (data: any) => {
-//   console.log(data);
-//   // state.headQueryData = data;
-//   pagination.value.current = 1;
-//   loading.value = true;
-//   remoteLoad(selectSearch.value, false);
-// };
+const conditionEnter = (data: any) => {
+  console.log(data);
+  // state.headQueryData = data;
+  pagination.value.current = 1;
+  loading.value = true;
+  remoteLoad(selectSearch.value, false);
+};
 
 // 搜索完全匹配，直接选中
 const radioCSelectRedirct = (val: string) => {
@@ -849,36 +861,8 @@ watch(
 );
 
 //* 组件配置--查询界面
-const opts = computed(() => {
-  return {
-    dateArea: {
-      label: '日期范围',
-      comp: 't-radio-button-group',
-      defaultVal: '0',
-      options: [
-        { value: '0', label: '全部' },
-        { value: '1', label: '近一天' },
-        { value: '2', label: '近三天' },
-        { value: '3', label: '近一周' },
-      ],
-      flex: '280px',
-      operator: 'eq',
-    },
-  };
-});
-
-const optsBottom = computed(() => {
-  return {
-    isComplete: {
-      label: '显示未完成工单',
-      comp: 't-checkbox',
-      defaultVal: false,
-      flex: '280px',
-      operator: 'eq',
-    },
-  };
-});
-
+const queryOpts = ref({});
+const buttomQueryOpts = ref({});
 //* 查询
 // const onInput = async (data: any) => {
 //   console.log(data);
