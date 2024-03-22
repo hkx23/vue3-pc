@@ -35,6 +35,7 @@
                         : { clearable: true, filterable: true, allowInput: true, ...$attrs, ...opt.bind }
                     "
                     v-model="state.form[opt.dataIndex]"
+                    :size="size"
                     :label="opt.label"
                     :placeholder="opt.placeholder || getPlaceholder(opt)"
                     @change="handleEvent(opt.event, state.form[opt.dataIndex])"
@@ -54,11 +55,38 @@
                         : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
                     "
                     v-model="state.form[opt.dataIndex]"
+                    :size="size"
                     :label="opt.label"
                     :placeholder="opt.placeholder || getPlaceholder(opt)"
                     @change="handleEvent(opt.event, state.form[opt.dataIndex])"
                     v-on="cEvent(opt)"
                   />
+                  <!-- radiobutton组  -->
+                  <t-radio-group
+                    v-if="!opt.slotName && opt.comp.includes('t-radio-button-group')"
+                    v-model="state.form[opt.dataIndex]"
+                    variant="default-filled"
+                    :size="size"
+                    @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+                    v-on="cEvent(opt)"
+                  >
+                    <t-radio-button
+                      v-for="optionItem in opt.options"
+                      :key="optionItem.value"
+                      :value="optionItem.value"
+                      >{{ optionItem.label }}</t-radio-button
+                    >
+                  </t-radio-group>
+                  <!-- t-checkbox  -->
+                  <t-checkbox
+                    v-if="!opt.slotName && opt.comp.includes('t-checkbox') && !opt.comp.includes('t-checkbox-group')"
+                    v-model="state.form[opt.dataIndex]"
+                    :size="size"
+                    @change="handleEvent(opt.event, state.form[opt.dataIndex])"
+                    v-on="cEvent(opt)"
+                  >
+                    {{ opt.label }}
+                  </t-checkbox>
                   <!-- 非日期控件与树选择控件 -->
                   <component
                     :is="opt.comp"
@@ -66,7 +94,8 @@
                       !opt.slotName &&
                       !opt.comp.includes('date') &&
                       !opt.comp.includes('tree-select') &&
-                      !opt.comp.includes('t-select-muti')
+                      !opt.comp.includes('t-radio-button-group') &&
+                      !(opt.comp.includes('t-checkbox') && !opt.comp.includes('t-checkbox-group'))
                     "
                     v-bind="
                       typeof opt.bind == 'function'
@@ -74,6 +103,7 @@
                         : { clearable: true, filterable: true, ...$attrs, ...opt.bind }
                     "
                     v-model="state.form[opt.dataIndex]"
+                    :size="size"
                     :label="opt.label"
                     :placeholder="opt.placeholder || getPlaceholder(opt)"
                     @change="handleEvent(opt.event, state.form[opt.dataIndex])"
@@ -83,6 +113,7 @@
                       :is="compChildName(opt)"
                       v-for="(value, key, index) in selectListType(opt)"
                       :key="index"
+                      :size="size"
                       :disabled="value.disabled"
                       :label="compChildLabel(opt, value)"
                       :value="compChildValue(opt, value, key)"
@@ -112,12 +143,14 @@
     >
       <t-space direction="horizontal" class="search-space" size="large" style="display: block; float: right">
         <t-space size="small" :align="'end'">
-          <t-button class="btn_check" :loading="loading" @click="checkHandle">{{ t('common.button.search') }}</t-button>
-          <t-button v-if="reset" class="btn_reset" theme="default" @click="resetHandle">{{
+          <t-button :size="size" class="btn_check" :loading="loading" @click="checkHandle">{{
+            t('common.button.search')
+          }}</t-button>
+          <t-button v-if="reset" :size="size" class="btn_reset" theme="default" @click="resetHandle">{{
             t('common.button.reset')
           }}</t-button>
           <slot name="querybar"></slot>
-          <t-button v-if="showExpand" theme="primary" variant="text" @click="onExpandSwitch">
+          <t-button v-if="showExpand" :size="size" theme="primary" variant="text" @click="onExpandSwitch">
             {{ openSearchForm ? t('common.button.collapse') : t('common.button.expand') }}
             <template #icon> <t-icon :name="openSearchForm ? 'chevron-up' : 'chevron-down'" /></template
           ></t-button>
@@ -129,7 +162,18 @@
 
 <script setup lang="tsx" name="CmpQuery">
 import _ from 'lodash';
-import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import { SizeEnum } from 'tdesign-vue-next';
+import {
+  computed,
+  getCurrentInstance,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  PropType,
+  reactive,
+  ref,
+  watch,
+} from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { useLang } from './lang';
@@ -186,12 +230,24 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  // 尺寸
+  size: {
+    type: String as PropType<SizeEnum>,
+    default: 'medium',
+  },
 });
 const rowItemCount = ref(1);
 // 初始化表单数据
 const state = reactive({
   form: Object.keys(props.opts).reduce((acc: any, field: any) => {
-    acc[field] = props.opts[field].defaultVal || null;
+    const defaultValue = props.opts[field].defaultVal;
+
+    // 如果 defaultVal 存在并且不是 null，则将其添加到表单对象中
+    if (defaultValue !== undefined && defaultValue !== null) {
+      acc[field] = defaultValue;
+    } else {
+      acc[field] = null;
+    }
     return acc;
   }, {}),
 });
@@ -548,8 +604,14 @@ onBeforeUnmount(() => {
 const setFromValue = (fromKey, fromValue) => {
   state.form[fromKey] = fromValue;
 };
+const getFromValue = (fromKey) => {
+  return state.form[fromKey];
+};
+const getFromData = () => {
+  return state.form;
+};
 // 暴露方法出去
-defineExpose({ state, props, setFromValue, search, resetSearch });
+defineExpose({ state, props, setFromValue, getFromValue, getFromData, search, resetSearch });
 </script>
 
 <style lang="less" scoped>

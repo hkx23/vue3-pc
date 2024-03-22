@@ -13,6 +13,7 @@
     }"
     allow-input
     :label="title"
+    :size="size"
     :multiple="multiple"
     :readonly="readonly"
     :disabled="disabled"
@@ -159,8 +160,8 @@
 <script setup lang="tsx" name="BcmpSelectSelect2">
 import _, { debounce, isEmpty } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
-import { ListProps, TreeProps } from 'tdesign-vue-next';
-import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
+import { ListProps, SizeEnum, TreeProps } from 'tdesign-vue-next';
+import { computed, nextTick, onMounted, PropType, reactive, ref, useAttrs, watch } from 'vue';
 
 import CmpListItemMeta from '../cmp-business/CmpListItemMeta.vue';
 import { BusinessItem } from '../cmp-business/constants';
@@ -176,6 +177,11 @@ const props = defineProps({
   category: {
     type: [String],
     default: '',
+  },
+  // 尺寸
+  size: {
+    type: String as PropType<SizeEnum>,
+    default: 'medium',
   },
   // 父级ID
   parentId: {
