@@ -4349,12 +4349,12 @@ export interface MitemVO {
   isBatchNo?: number;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isBatchName?: string;
+  stateName?: string;
   isProductName?: string;
+  isBatchName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isRawName?: string;
-  stateName?: string;
   isState?: boolean;
 }
 
