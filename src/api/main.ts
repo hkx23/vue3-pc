@@ -1464,7 +1464,8 @@ export interface TransactionDetailSearch {
    * @format int32
    */
   pageSize?: number;
-  businessCategoryId?: string;
+  /** 事务类型 */
+  businessCategoryId?: string[];
   moScheId?: string;
   mitemId?: string;
   /** MES业务单号 */
@@ -2418,6 +2419,14 @@ export interface ResultLong {
   data?: string;
 }
 
+/** 业务模板添加实体类型 */
+export interface ProcessBusinessAddVO {
+  /** 工序业务执行单元库头表 */
+  head?: ProcessBusinessLib;
+  /** 详细步骤信息 */
+  list?: ProcessBusinessLibDtl[];
+}
+
 /** 响应数据 */
 export type PagingDataProcessVO = {
   list?: ProcessVO[];
@@ -2465,8 +2474,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4090,10 +4099,10 @@ export interface MitemInSupplierVO {
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -4338,15 +4347,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isRawName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isState?: boolean;
+  isInProcessChecked?: boolean;
   stateName?: string;
+  isProductName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isRawName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -6027,8 +6036,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -7340,8 +7349,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -11412,6 +11421,21 @@ export const api = {
      */
     add: (data: ProcessBusinessLib) =>
       http.request<ResultLong['data']>(`/api/main/processBusinessLib/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工序业务执行单元库头表
+     * @name AddList
+     * @summary 新增明细清单
+     * @request POST:/processBusinessLib/addList
+     * @secure
+     */
+    addList: (data: ProcessBusinessAddVO) =>
+      http.request<ResultObject['data']>(`/api/main/processBusinessLib/addList`, {
         method: 'POST',
         body: data as any,
       }),

@@ -63,7 +63,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
-    colKey: 'pkgBarcodeType',
+    colKey: 'pkgBarcodeTypeName',
     title: '条码类型',
     align: 'center',
     width: '110',
@@ -93,7 +93,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'creator',
+    colKey: 'displayName',
     title: '操作人',
     align: 'center',
     width: '100',
@@ -126,8 +126,7 @@ const bagsSuitcasesData = ref({
 
 // 获取 表格 数据
 const onGetAnomalyTypeData = async () => {
-  const res = await api.pkgRelation.getPkgRelationReportList(bagsSuitcasesData.value);
-  console.log('🚀 ~ file: index.vue:126 ~ onGetAnomalyTypeData ~ res:', res);
+  const res = await api.pkgRelation.getPkgRelationReportAllList(bagsSuitcasesData.value);
   const newData = res.list.map((item) => {
     if (item.existPkgRelationReportcChildren) {
       if (item.children && item.children.length === 0) {
@@ -181,17 +180,17 @@ const onExpandedTreeNodesChange = async (expandedTreeNodes: any, options: any) =
 const opts = computed(() => {
   return {
     productCode: {
-      label: '产品条码',
+      label: '条码',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
     },
-    boxCode: {
-      label: '箱条码',
-      comp: 't-input',
-      event: 'input',
-      defaultVal: '',
-    },
+    // boxCode: {
+    //   label: '箱条码',
+    //   comp: 't-input',
+    //   event: 'input',
+    //   defaultVal: '',
+    // },
     workOrder: {
       label: '排产单号',
       comp: 'bcmp-select-business',
@@ -242,7 +241,7 @@ const onInput = async (context) => {
   bagsSuitcasesData.value.barcode = context?.productCode ? context?.productCode : ''; // 每条数据的code
   bagsSuitcasesData.value.mitemCode = context?.productNo ? context?.productNo : ''; // 产品编码 物料接口
   bagsSuitcasesData.value.moScheCode = context?.workOrder ? context?.workOrder : ''; // 排产单号
-  bagsSuitcasesData.value.pkgBarcode = context?.boxCode ? context?.boxCode : ''; // 箱条码
+  // bagsSuitcasesData.value.pkgBarcode = context?.boxCode ? context?.boxCode : ''; // 箱条码
   bagsSuitcasesData.value.beginDate = beginDate; // 开始日期
   bagsSuitcasesData.value.endDate = endDate; // 结束日期
   await onGetAnomalyTypeData();

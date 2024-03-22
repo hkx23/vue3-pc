@@ -65,7 +65,7 @@
         </t-col>
         <!-- 第 2️⃣ 行数据 -->
         <t-col :span="6">
-          <t-form-item label="源仓库" name="sourceTissueId">
+          <t-form-item label="源组织" name="sourceTissueId">
             <t-select v-model="businessTabData.sourceTissueId" @popup-visible-change="onSourceTissueChange">
               <t-option
                 v-for="item in onSourceTissueDropDownList"
@@ -77,20 +77,17 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="" name="warehouseId">
-            <t-select v-model="businessTabData.warehouseId" @popup-visible-change="onSourceRepositoryFocus">
-              <t-option
-                v-for="item in onSourceRepositoryDropDownList"
-                :key="item.id"
-                :label="item.warehouseName"
-                :value="item.id"
-              />
-            </t-select>
+          <t-form-item label="源仓库" name="warehouseId">
+            <bcmp-select-business
+              v-model="businessTabData.warehouseId"
+              :parent-id="businessTabData.sourceTissueId"
+              type="warehouseAuthByOrg"
+            ></bcmp-select-business>
           </t-form-item>
         </t-col>
         <!-- 第 3️⃣ 行数据 -->
         <t-col :span="6">
-          <t-form-item label="目标仓库" name="toOid">
+          <t-form-item label="目标组织" name="toOid">
             <t-select v-model="businessTabData.toOid" @popup-visible-change="onTargetOrgChange">
               <t-option
                 v-for="item in onSourceTissueDropDownList"
@@ -102,15 +99,12 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="" name="toWWarehouseId">
-            <t-select v-model="businessTabData.toWWarehouseId" @popup-visible-change="onTargetWarehouseFocus">
-              <t-option
-                v-for="item in onTargetWarehouseDropDownList"
-                :key="item.id"
-                :label="item.warehouseName"
-                :value="item.id"
-              />
-            </t-select>
+          <t-form-item label="目标仓库" name="toWWarehouseId">
+            <bcmp-select-business
+              v-model="businessTabData.toWWarehouseId"
+              :parent-id="businessTabData.toOid"
+              type="warehouseAuthByOrg"
+            ></bcmp-select-business>
           </t-form-item>
         </t-col>
       </t-row>
@@ -195,8 +189,8 @@ const rules: FormRules = {
   businessCategoryId: [{ required: true, trigger: 'change' }],
   sourceTissueId: [{ required: false, trigger: 'change' }],
   warehouseId: [{ required: false, trigger: 'change' }],
-  toOid: [{ required: true, trigger: 'change' }],
-  toWWarehouseId: [{ required: true, trigger: 'change' }],
+  toOid: [{ required: false, trigger: 'change' }],
+  toWWarehouseId: [{ required: false, trigger: 'change' }],
 };
 // 初始渲染
 onMounted(async () => {
@@ -226,14 +220,6 @@ const onSourceTissue = async () => {
   onSourceTissueDropDownList.value = res;
 };
 
-// 仓库数据获取
-const onSourceRepository = async () => {
-  const res = await api.transferConstraint.getWarehouses({ id: businessTabData.value.sourceTissueId });
-  const resource = await api.transferConstraint.getWarehouses({ id: businessTabData.value.toOid });
-  onSourceRepositoryDropDownList.value = res;
-  onTargetWarehouseDropDownList.value = resource;
-};
-
 // 源组织下拉事件
 const onSourceTissueChange = async (visible: boolean) => {
   if (visible) {
@@ -241,27 +227,10 @@ const onSourceTissueChange = async (visible: boolean) => {
   }
 };
 
-const onSourceRepositoryDropDownList = ref([]);
-const onSourceRepositoryFocus = async (visible: boolean) => {
-  if (visible) {
-    const res = await api.transferConstraint.getWarehouses({ id: businessTabData.value.sourceTissueId });
-    onSourceRepositoryDropDownList.value = res;
-  }
-};
-
 // 目标组织下拉
 const onTargetOrgChange = async (visible: boolean) => {
   if (visible) {
     businessTabData.value.toWWarehouseId = '';
-  }
-};
-
-// 目标仓库下拉
-const onTargetWarehouseDropDownList = ref([]);
-const onTargetWarehouseFocus = async (visible: boolean) => {
-  if (visible) {
-    const res = await api.transferConstraint.getWarehouses({ id: businessTabData.value.toOid });
-    onTargetWarehouseDropDownList.value = res;
   }
 };
 
@@ -294,6 +263,13 @@ const submitFlag = ref(true); // 控制新增编辑
 const onAddClick = async () => {
   formRef.value.reset({ type: 'empty' });
   await onSourceTissue();
+
+  businessTabData.value.sourceTissueId = ''; // 源组织
+  businessTabData.value.businessCategoryId = ''; // 业务类型
+  businessTabData.value.warehouseId = ''; // 源仓库id
+  businessTabData.value.toOid = ''; // 目标组织
+  businessTabData.value.toWWarehouseId = ''; // 目标仓库id
+
   formVisible.value = true;
   submitFlag.value = true;
   diaLogTitle.value = '仓库转移规则新增';
@@ -317,7 +293,6 @@ const onEditRow = async (row: any) => {
   businessTabData.value.toOid = row.toOid;
   businessTabData.value.toWWarehouseId = row.toWWarehouseId;
   await onSourceTissue();
-  await onSourceRepository();
   formVisible.value = true;
   submitFlag.value = false;
   diaLogTitle.value = '仓库转移规则编辑';

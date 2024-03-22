@@ -143,6 +143,7 @@ const onEditRowClick = async (value: any) => {
     onhandId,
   });
   sunData.value = result.list;
+  dataTotal.value = result.total;
 };
 
 //* 初始渲染

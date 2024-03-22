@@ -32,9 +32,8 @@ export interface CmpPrintButtonProps extends Omit<ButtonProps, 'options'> {
 
 const props = withDefaults(defineProps<CmpPrintButtonProps>(), {
   showPreview: false,
-  // shape: 'circle',
-  variant: 'outline',
-  showIcon: true,
+  theme: 'default',
+  showIcon: false,
 });
 const attrs: Partial<CmpPrintButtonProps> = useAttrs();
 const targetAttrs = computed<CmpPrintButtonProps>(() => {

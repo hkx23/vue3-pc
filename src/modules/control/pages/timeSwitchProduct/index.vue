@@ -63,7 +63,13 @@
         <template #button>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddTypeData"> {{ t('common.button.add') }} </t-button>
-            <t-button theme="default" @click="formVisibleImport = true"> {{ t('common.button.import') }} </t-button>
+            <bcmp-import-button
+              theme="primary"
+              type="f_time_switch_product"
+              :button-text="t('common.button.import')"
+              @close="onFetchGroupData"
+            ></bcmp-import-button>
+            <!-- <t-button theme="default" @click="formVisibleImport = true"> {{ t('common.button.import') }} </t-button> -->
           </t-space>
         </template>
       </cmp-table>
@@ -162,30 +168,6 @@
       <t-button theme="primary" @click="eidtFormSubmit">{{ t('common.button.save') }}</t-button>
     </template>
   </t-dialog>
-  <t-dialog
-    v-model:visible="formVisibleImport"
-    :close-on-overlay-click="false"
-    :header="t('timeSwitchProduct.selectImportType')"
-    :confirm-btn="null"
-    :cancel-btn="null"
-    width="300px"
-  >
-    <div style="display: flex; justify-content: center">
-      <bcmp-import-auto-button
-        theme="primary"
-        type="f_time_switch_product"
-        :button-text="t('business.main.mitemCode')"
-        @close="onFetchGroupData"
-      ></bcmp-import-auto-button>
-      <bcmp-import-auto-button
-        theme="default"
-        type="f_time_switch_product_mitem_category"
-        style="margin-left: 30px"
-        :button-text="t('business.main.mitemCategoryCode')"
-        @close="onFetchGroupData"
-      ></bcmp-import-auto-button>
-    </div>
-  </t-dialog>
 </template>
 
 <script lang="tsx">
@@ -231,7 +213,6 @@ const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 班组dialog 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
 const submitFalg = ref(false);
-const formVisibleImport = ref(false);
 // $ 表格数据
 const resultList = reactive({ list: [] });
 // 表格数据总条数
@@ -315,7 +296,6 @@ const onChange = () => {
 
 // # 刷新按钮
 const onFetchGroupData = async () => {
-  formVisibleImport.value = false;
   await getTabData(); //
 };
 

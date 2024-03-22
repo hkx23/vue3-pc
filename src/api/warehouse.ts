@@ -3171,16 +3171,16 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
-  flpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
   tlpickQty?: number;
-  bfpickQty?: number;
+  flpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  bfpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3673,13 +3673,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -6406,6 +6406,20 @@ export const api = {
      */
     removeBatch: (data: string[]) =>
       http.request<ResultObject['data']>(`/api/warehouse/userWarehouseAuthority/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 用户仓库权限表
+     * @name ListAuthByOrg
+     * @request POST:/userWarehouseAuthority/listAuthByOrg
+     * @secure
+     */
+    listAuthByOrg: (data: CommonSearch) =>
+      http.request<ResultPagingDataWarehouse['data']>(`/api/warehouse/userWarehouseAuthority/listAuthByOrg`, {
         method: 'POST',
         body: data as any,
       }),

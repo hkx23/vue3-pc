@@ -1,0 +1,35 @@
+{
+  "importTitle": "转产换型时间",
+  "templateFileName": "导入模板_转产换型时间表",
+  "remoteUrl": "/api/control/timeSwitchProduct/import",
+  "importColumns": [
+    {
+      "title": "值类型(物料或物料类别)(必填)",
+      "field": "valueCategoryName"
+    },
+    {
+      "title": "值类型编码（前）(必填)",
+      "field": "perCode"
+    },
+    {
+      "title": "值类型名称（前）(必填)",
+      "field": "perName"
+    },
+    {
+      "title": "值类型编码（后）(必填)",
+      "field": "backCode"
+    },
+    {
+      "title": "值类型名称（后）(必填)",
+      "field": "backName"
+    },
+    {
+      "title": "切换时长(必填)",
+      "field": "switchDuration"
+    }
+  ],
+  "importFileSizeLimit": 5,
+  "importRowCountLimit": 50000,
+  "importColumnCountLimit": 100,
+  "importBatchSize": 10
+}

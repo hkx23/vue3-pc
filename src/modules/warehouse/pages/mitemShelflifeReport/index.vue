@@ -29,32 +29,35 @@
       </cmp-table>
     </cmp-card>
   </cmp-container>
-  <t-dialog v-model:visible="formVisible" width="850px" :footer="false">
-    <t-card :bordered="true">
-      <div class="form-item-box">
-        <t-form-item label="仓库">{{ detailRow?.warehouseName }}</t-form-item>
-        <t-form-item label="货区"> {{ detailRow?.districtName }}</t-form-item>
-        <t-form-item label="货位"> {{ detailRow?.locationName }}</t-form-item>
-        <t-form-item label="物料"> {{ detailRow?.mitemName }}</t-form-item>
-      </div>
-    </t-card>
-    <cmp-table
-      ref="tableRef"
-      v-model:pagination="pageUITwo"
-      row-key="labelNo"
-      empty="没有符合条件的数据"
-      :table-column="columnsDetail"
-      :fixed-height="true"
-      :table-data="mitemShelflifeData"
-      :total="mitemShelflifeTotal"
-      select-on-row-click
-      style="height: 300px"
-      @refresh="onShelfLifeDetails"
-    >
-      <template #title>
+  <t-dialog v-model:visible="formVisible" width="90%" top="56px" :footer="false">
+    <template #header>
+      <t-space align="center" style="width: 100%">
         {{ '物料保质期标签明细' }}
-      </template>
-    </cmp-table>
+      </t-space>
+    </template>
+    <cmp-container :full="true" style="height: calc(90vh - 56px - 57px)">
+      <t-card :bordered="true">
+        <div class="form-item-box">
+          <t-form-item label="仓库">{{ detailRow?.warehouseName }}</t-form-item>
+          <t-form-item label="货区"> {{ detailRow?.districtName }}</t-form-item>
+          <t-form-item label="货位"> {{ detailRow?.locationName }}</t-form-item>
+          <t-form-item label="物料"> {{ detailRow?.mitemName }}</t-form-item>
+        </div>
+      </t-card>
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="pageUITwo"
+        row-key="labelNo"
+        empty="没有符合条件的数据"
+        :table-column="columnsDetail"
+        :fixed-height="true"
+        :table-data="mitemShelflifeData"
+        :total="mitemShelflifeTotal"
+        select-on-row-click
+        @refresh="onShelfLifeDetails"
+      >
+      </cmp-table>
+    </cmp-container>
   </t-dialog>
 </template>
 <script setup lang="ts">
