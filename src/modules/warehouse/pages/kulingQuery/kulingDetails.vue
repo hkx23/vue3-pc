@@ -15,7 +15,7 @@
           row-key="barcodeNo"
           :table-column="tableWarehouseColumns"
           :table-data="tableDocumentDetails"
-          :total="dataTotal"
+          :total="detailTotal"
           :loading="loading"
           :fixed-height="true"
           empty="没有符合条件的数据"
@@ -43,7 +43,7 @@ import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage();
-const dataTotal = ref(0);
+const detailTotal = ref(0);
 const { loading, setLoading } = useLoading();
 //* 表格标题--单据明细
 const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
@@ -80,7 +80,7 @@ watch(
   (newVal) => {
     setLoading(true);
     tableDocumentDetails.value = newVal;
-    dataTotal.value = newVal.length;
+    detailTotal.value = newVal.length;
     setLoading(false);
   },
   { immediate: true },

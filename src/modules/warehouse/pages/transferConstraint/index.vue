@@ -82,6 +82,7 @@
               v-model="businessTabData.warehouseId"
               :parent-id="businessTabData.sourceTissueId"
               type="warehouseAuthByOrg"
+              :show-title="false"
             ></bcmp-select-business>
           </t-form-item>
         </t-col>
@@ -104,6 +105,7 @@
               v-model="businessTabData.toWWarehouseId"
               :parent-id="businessTabData.toOid"
               type="warehouseAuthByOrg"
+              :show-title="false"
             ></bcmp-select-business>
           </t-form-item>
         </t-col>
@@ -335,7 +337,16 @@ const onInput = async (data: any) => {
   await onGetTransferData();
 };
 
+// eslint-disable-next-line consistent-return
 const onSecondarySubmit = () => {
+  if (businessTabData.value.businessCategoryId === '') {
+    MessagePlugin.warning('业务类型必填！');
+    return false;
+  }
+  if (businessTabData.value.warehouseId === '' && businessTabData.value.toWWarehouseId === '') {
+    MessagePlugin.warning('原仓库和目标仓库至少选择一个！');
+    return false;
+  }
   formRef.value.submit();
 };
 

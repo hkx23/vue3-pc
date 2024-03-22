@@ -127,7 +127,7 @@ const tableReckoningManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '1-2年', width: 85, colKey: 'oneToTwoYears' },
   { title: '6-12个月', width: 85, colKey: 'sixToTwelveMonths' },
   { title: '3-6个月', width: 85, colKey: 'threeToSixMonths' },
-  { title: '1-3个月', width: 85, colKey: 'onwToThreeMonths' },
+  { title: '1-3个月', width: 85, colKey: 'oneToThreeMonths' },
   { title: '30天内', width: 85, colKey: 'thirtyDays' },
   { title: '条码明细', align: 'left', fixed: 'right', width: 85, colKey: 'labelNo' },
 ];
@@ -143,7 +143,6 @@ const onEditRowClick = async (value: any) => {
     onhandId,
   });
   sunData.value = result.list;
-  dataTotal.value = result.total;
 };
 
 //* 初始渲染

@@ -44,19 +44,22 @@
           <t-form-item label="物料"> {{ detailRow?.mitemName }}</t-form-item>
         </div>
       </t-card>
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="pageUITwo"
-        row-key="labelNo"
-        empty="没有符合条件的数据"
-        :table-column="columnsDetail"
-        :fixed-height="true"
-        :table-data="mitemShelflifeData"
-        :total="mitemShelflifeTotal"
-        select-on-row-click
-        @refresh="onShelfLifeDetails"
-      >
-      </cmp-table>
+      <cmp-card :ghost="true">
+        <cmp-table
+          ref="tableRef"
+          v-model:pagination="pageUITwo"
+          row-key="labelNo"
+          empty="没有符合条件的数据"
+          :table-column="columnsDetail"
+          :fixed-height="true"
+          :table-data="mitemShelflifeData"
+          :total="mitemShelflifeTotal"
+          :show-toolbar="false"
+          select-on-row-click
+          @refresh="onShelfLifeDetails"
+        >
+        </cmp-table>
+      </cmp-card>
     </cmp-container>
   </t-dialog>
 </template>
