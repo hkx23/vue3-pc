@@ -263,6 +263,13 @@ const submitFlag = ref(true); // 控制新增编辑
 const onAddClick = async () => {
   formRef.value.reset({ type: 'empty' });
   await onSourceTissue();
+
+  businessTabData.value.sourceTissueId = ''; // 源组织
+  businessTabData.value.businessCategoryId = ''; // 业务类型
+  businessTabData.value.warehouseId = ''; // 源仓库id
+  businessTabData.value.toOid = ''; // 目标组织
+  businessTabData.value.toWWarehouseId = ''; // 目标仓库id
+
   formVisible.value = true;
   submitFlag.value = true;
   diaLogTitle.value = '仓库转移规则新增';
