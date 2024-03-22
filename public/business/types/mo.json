@@ -4,7 +4,7 @@
   "url": "/api/main/mo/items",
   "httptype": "POST",
   "category": "",
-  "tableWidth": 800,
+  "tableWidth": 750,
   "columns": [
     {
       "title": "工单代码",
@@ -35,5 +35,45 @@
   "keywords": {
     "value": "id",
     "label": "moCode"
+  },
+  "querySetting": {
+    "options": {
+      "dateArea": {
+        "label": "日期范围",
+        "comp": "t-radio-button-group",
+        "defaultVal": "0",
+        "flex": "280px",
+        "options": [
+          {
+            "value": "0",
+            "label": "全部"
+          },
+          {
+            "value": "1",
+            "label": "近一天"
+          },
+          {
+            "value": "2",
+            "label": "近三天"
+          },
+          {
+            "value": "3",
+            "label": "近一周"
+          }
+        ],
+        "operator": "eq"
+      }
+    }
+  },
+  "bottomQuerySetting": {
+    "options": {
+      "isComplete": {
+        "label": "显示未完成工单",
+        "comp": "t-checkbox",
+        "defaultVal": false,
+        "flex": "280px",
+        "operator": "eq"
+      }
+    }
   }
 }

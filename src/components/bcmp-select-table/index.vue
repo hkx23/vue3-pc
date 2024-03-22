@@ -10,6 +10,7 @@
       :min-collapsed-num="1"
       allow-input
       :label="title"
+      :size="size"
       :multiple="multiple"
       :readonly="readonly"
       table-layout="auto"
@@ -32,39 +33,68 @@
       </template> -->
       <template #panel>
         <div class="t-table-select__table" :style="{ width: `${tableWidth}px` }">
-          <t-table
-            ref="selectTable"
-            v-model:active-row-keys="activeRowKeys"
-            v-model:selected-row-keys="selectedRowKeys"
-            multiple-sort
-            hover
-            resizable
-            size="small"
-            max-height="328"
-            :disable-data-page="true"
-            cell-empty-content="-"
-            :bordered="false"
-            :data="state.tableData"
-            lazy-load
-            :async-loading="asyncLoading"
-            :row-selection-allow-unchselect-tableeck="false"
-            :active-row-type="activeRowType"
-            :row-selection-type="activeRowType"
-            highlight-current-row
-            select-on-row-click
-            :row-key="rowKey"
-            v-bind="$attrs"
-            :columns="tableColumns"
-            @async-loading-click="onLoadMore"
-            @scroll-y="onTableScroll"
-            @select-change="rehandleSelectChange"
-            @sort-change="sortChange"
-            @filter-change="onFilterChange"
-          >
-            <!-- <template #[slotName]>
+          <cmp-container :full="true" :full-sub-index="[1]" :gutter="[0, 4]" style="padding: 0">
+            <!-- cmp-query 查询组件 -->
+            <cmp-card v-show="opts" :span="12" :ghost="true">
+              <!-- <cmp-query
+                ref="queryComponent"
+                :opts="opts"
+                is-expansion
+                :show-button="false"
+                @submit="conditionEnter"
+                @change="conditionEnter"
+              >
+              </cmp-query> -->
+            </cmp-card>
+            <!-- cmp-table 表格组件   :row-select="{ type: 'single' }"    :selected-row-keys="selectedBillId" -->
+            <cmp-card :span="12" :ghost="true">
+              <t-table
+                ref="selectTable"
+                v-model:active-row-keys="activeRowKeys"
+                v-model:selected-row-keys="selectedRowKeys"
+                multiple-sort
+                hover
+                resizable
+                size="small"
+                max-height="328"
+                :disable-data-page="true"
+                cell-empty-content="-"
+                :bordered="false"
+                :data="state.tableData"
+                lazy-load
+                :async-loading="asyncLoading"
+                :row-selection-allow-unchselect-tableeck="false"
+                :active-row-type="activeRowType"
+                :row-selection-type="activeRowType"
+                highlight-current-row
+                select-on-row-click
+                :row-key="rowKey"
+                v-bind="$attrs"
+                :columns="tableColumns"
+                @async-loading-click="onLoadMore"
+                @scroll-y="onTableScroll"
+                @select-change="rehandleSelectChange"
+                @sort-change="sortChange"
+                @filter-change="onFilterChange"
+              >
+                <!-- <template #[slotName]>
               <p>这里是动态插槽---{{ slotName }}</p>
             </template> -->
-          </t-table>
+              </t-table>
+            </cmp-card>
+            <!-- cmp-query 查询组件 -->
+            <cmp-card v-show="optsBottom" :span="12" :ghost="true">
+              <!-- <cmp-query
+                ref="queryComponentFooter"
+                :show-button="false"
+                :opts="optsBottom"
+                is-expansion
+                @submit="conditionEnter"
+                @change="conditionEnter"
+              >
+              </cmp-query> -->
+            </cmp-card>
+          </cmp-container>
         </div>
       </template>
       <template #suffixIcon>
@@ -77,8 +107,8 @@
 <script setup lang="tsx" name="BcmpSelectTable">
 import _, { debounce } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
-import { ListProps } from 'tdesign-vue-next';
-import { computed, nextTick, onMounted, reactive, ref, useAttrs, watch } from 'vue';
+import { ListProps, SizeEnum } from 'tdesign-vue-next';
+import { computed, nextTick, onMounted, PropType, reactive, ref, useAttrs, watch } from 'vue';
 // 抛出事件
 const emits = defineEmits(['selectionChange']);
 // / 00-组件属性定义
@@ -91,6 +121,11 @@ const props = defineProps({
   category: {
     type: [String],
     default: '',
+  },
+  // 尺寸
+  size: {
+    type: String as PropType<SizeEnum>,
+    default: 'medium',
   },
   // 父级ID
   parentId: {
@@ -224,6 +259,9 @@ const defaultValue = ref('');
 
 // const popupVisible = ref(false);
 
+const queryComponent = ref();
+const queryComponentFooter = ref();
+
 const filterList = ref([]);
 
 // 表格第一列设置，单选或多选
@@ -248,6 +286,8 @@ const state: any = reactive({
   defaultValue: props.value === '' ? [] : props.value, // 选中值
   ids: [], // 多选id集合
   tabularMap: {}, // 存储下拉tale的所有name
+  headQueryData: [],
+  footerQueryData: [],
 });
 
 const total = props.table.data.length;
@@ -526,6 +566,14 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
       finalFilterList.push(element);
     });
   }
+  if (queryComponent.value) {
+    state.headQueryData = queryComponent.value.getFromData();
+  }
+  if (queryComponentFooter.value) {
+    state.footerQueryData = queryComponentFooter.value.getFromData();
+  }
+  console.log(state.headQueryData);
+  console.log(state.footerQueryData);
   const searchCondition = {
     pageNum: pagination.value.current,
     pageSize: pagination.value.pageSize,
@@ -612,6 +660,16 @@ const onInputChange = (val: string) => {
     radioSelect([state.defaultValue[props.keywords.value]], [state.defaultValue], true);
   }
 };
+
+// 点击查询按钮
+// const conditionEnter = (data: any) => {
+//   console.log(data);
+//   // state.headQueryData = data;
+//   pagination.value.current = 1;
+//   loading.value = true;
+//   remoteLoad(selectSearch.value, false);
+// };
+
 // 搜索完全匹配，直接选中
 const radioCSelectRedirct = (val: string) => {
   if (!props.multiple) {
@@ -789,6 +847,42 @@ watch(
   },
   { deep: true },
 );
+
+//* 组件配置--查询界面
+const opts = computed(() => {
+  return {
+    dateArea: {
+      label: '日期范围',
+      comp: 't-radio-button-group',
+      defaultVal: '0',
+      options: [
+        { value: '0', label: '全部' },
+        { value: '1', label: '近一天' },
+        { value: '2', label: '近三天' },
+        { value: '3', label: '近一周' },
+      ],
+      flex: '280px',
+      operator: 'eq',
+    },
+  };
+});
+
+const optsBottom = computed(() => {
+  return {
+    isComplete: {
+      label: '显示未完成工单',
+      comp: 't-checkbox',
+      defaultVal: false,
+      flex: '280px',
+      operator: 'eq',
+    },
+  };
+});
+
+//* 查询
+// const onInput = async (data: any) => {
+//   console.log(data);
+// };
 // 暴露方法出去
 defineExpose({ closeTable, onClear });
 </script>

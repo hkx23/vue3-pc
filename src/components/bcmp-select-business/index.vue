@@ -4,6 +4,7 @@
     :value="modelValue"
     :columns="finalColumns"
     :row-key="finalRowKey"
+    :size="size"
     :select-txt="selectTxt"
     :remote-url="finalUrl"
     :category="finalCategory"
@@ -24,6 +25,7 @@
   <bcmp-select-list2
     v-if="finalComponentType === 'list2' && targetIsVisible"
     :value="modelValue"
+    :size="size"
     :columns="finalColumns"
     :row-key="finalRowKey"
     :select-txt="selectTxt"
@@ -46,6 +48,7 @@
   <bcmp-select-list
     v-if="finalComponentType === 'list' && targetIsVisible"
     :value="modelValue"
+    :size="size"
     :columns="finalColumns"
     :row-key="finalRowKey"
     :select-txt="selectTxt"
@@ -69,7 +72,8 @@
 </template>
 
 <script setup lang="tsx" name="BcmpSelectBusiness">
-import { computed, defineAsyncComponent, onMounted, ref, useAttrs, watch } from 'vue';
+import { SizeEnum } from 'tdesign-vue-next';
+import { computed, defineAsyncComponent, onMounted, PropType, ref, useAttrs, watch } from 'vue';
 
 const BcmpSelectTable = defineAsyncComponent(() => import('../bcmp-select-table/index.vue'));
 // import TSelectTable from '../select-table/index.vue';
@@ -97,6 +101,11 @@ const props = defineProps({
   type: {
     type: String,
     default: '',
+  },
+  // 尺寸
+  size: {
+    type: String as PropType<SizeEnum>,
+    default: 'medium',
   },
   // 占位字符
   placeholder: {
@@ -261,21 +270,13 @@ const finalComponentType = ref(props.componentType);
 const finalListSetting = ref(props.listSetting);
 const finalCustomConditions = ref(props.customConditions);
 const finalMultiple = ref(props.isMultiple || props.multiple);
+const finalQuerySetting = ref({});
+const finalBottomQuerySetting = ref({});
 
 const onSelectionChange = (val: any, valuKeys: any) => {
   if (!finalMultiple.value) {
     emits('update:modelValue', val[finalKeywords.value.value]);
-    // 选择值
-    emits('SelectionChange', val, valuKeys);
-    // 选择值
-    emits('change', valuKeys);
   } else {
-    // 拼装成以下格式的数据
-    //     const value = ref([
-    //   { label: 'Vue', value: 1 },
-    //   { label: 'React', value: 2 },
-    //   { label: 'Miniprogram', value: 3 },
-    // ]);
     const multipleValues: { label: any; value: any }[] = [];
     if (val && val.length > 0) {
       val.forEach((item: any) => {
@@ -287,12 +288,14 @@ const onSelectionChange = (val: any, valuKeys: any) => {
     }
     if (finalComponentType.value === 'list' || finalComponentType.value === 'list2') {
       emits('update:modelValue', valuKeys.join(','));
-      // 选择值
-      emits('SelectionChange', val, valuKeys.join(','));
-      // 选择值
-      emits('change', valuKeys.join(','));
+    } else {
+      emits('update:modelValue', multipleValues);
     }
   }
+  // 选择值
+  emits('SelectionChange', val, valuKeys);
+  // 选择值
+  emits('change', valuKeys);
 };
 
 const loadTypeSetting = () => {
@@ -317,11 +320,6 @@ const loadTypeSetting = () => {
           }
         } else {
           finalComponentType.value = props.componentType;
-        }
-        if (res.componentType) {
-          if (!finaltableWidth.value) {
-            finaltableWidth.value = res.tableWidth;
-          }
         }
         if (res.listSetting) {
           finalListSetting.value = res.listSetting;
@@ -356,8 +354,9 @@ const loadTypeSetting = () => {
             finalCategory.value = res.category;
           }
         }
+        console.error(res.tableWidth);
         if (res.tableWidth) {
-          if (!finaltableWidth.value) {
+          if (finaltableWidth.value === 500) {
             finaltableWidth.value = res.tableWidth;
           }
         }
@@ -375,6 +374,18 @@ const loadTypeSetting = () => {
         }
         finalRowKey.value = finalKeywords.value.value;
         finalUrl.value = res.url;
+
+        if (res.querySetting) {
+          if (!finalQuerySetting.value) {
+            finalQuerySetting.value = res.querySetting;
+          }
+        }
+
+        if (res.bottomQuerySetting) {
+          if (!finalBottomQuerySetting.value) {
+            finalBottomQuerySetting.value = res.querySetting;
+          }
+        }
       })
       .catch((_err) => {
         // 请求失败数据
