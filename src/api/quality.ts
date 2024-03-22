@@ -4133,9 +4133,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5351,13 +5351,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s1?: string;
-  s4?: string;
-  i?: string;
-  ii?: string;
-  s3?: string;
-  iii?: string;
   s2?: string;
+  i?: string;
+  s3?: string;
+  ii?: string;
+  s4?: string;
+  s1?: string;
+  iii?: string;
 } | null;
 
 /** 标签模板 */

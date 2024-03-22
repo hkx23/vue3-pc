@@ -189,8 +189,8 @@ const rules: FormRules = {
   businessCategoryId: [{ required: true, trigger: 'change' }],
   sourceTissueId: [{ required: false, trigger: 'change' }],
   warehouseId: [{ required: false, trigger: 'change' }],
-  toOid: [{ required: true, trigger: 'change' }],
-  toWWarehouseId: [{ required: true, trigger: 'change' }],
+  toOid: [{ required: false, trigger: 'change' }],
+  toWWarehouseId: [{ required: false, trigger: 'change' }],
 };
 // 初始渲染
 onMounted(async () => {
