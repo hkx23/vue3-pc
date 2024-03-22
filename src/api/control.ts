@@ -2129,6 +2129,8 @@ export interface PkgRelationReportVO {
   mitemDesc?: string;
   /** 用户名 */
   userName?: string;
+  /** 显示名 */
+  displayName?: string;
   /** 包装条码类型名称 */
   pkgBarcodeTypeName?: string;
   /** 父级包装条码类型名称 */
@@ -2598,13 +2600,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
-  workshopId?: string;
   workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3893,17 +3895,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
-  workshopId?: string;
   workshopName?: string;
-  stateName?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  isState?: boolean;
+  scanDatetimeStr?: string;
 }
 
 /** 通用响应类 */
@@ -4014,16 +4016,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
-  workshopId?: string;
   workshopName?: string;
-  stateName?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   defectCodeStr?: string;
-  isState?: boolean;
 }
 
 /** 通用响应类 */
