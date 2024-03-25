@@ -6570,7 +6570,7 @@ export const api = {
      *
      * @tags 物料检验标准分配表
      * @name Modify
-     * @summary 编辑标准物料关系
+     * @summary 新增标准物料关系
      * @request POST:/iqcInspectStdMitem/modify
      * @secure
      */

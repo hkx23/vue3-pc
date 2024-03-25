@@ -35,7 +35,11 @@
         <div class="t-table-select__table" :style="{ width: `${tableWidth}px` }">
           <cmp-container :full="true" :full-sub-index="[1]" :gutter="[0, 4]" style="padding: 0">
             <!-- cmp-query 查询组件 -->
-            <cmp-card v-show="queryOpts !== {}" :span="12" :ghost="true">
+            <cmp-card
+              v-show="!(Object.keys(queryOpts).length === 0 && queryOpts.constructor === Object)"
+              :span="12"
+              :ghost="true"
+            >
               <cmp-query
                 ref="queryComponent"
                 :opts="queryOpts"
@@ -83,7 +87,11 @@
               </t-table>
             </cmp-card>
             <!-- cmp-query 查询组件 -->
-            <cmp-card v-show="buttomQueryOpts !== {}" :span="12" :ghost="true">
+            <cmp-card
+              v-show="!(Object.keys(buttomQueryOpts).length === 0 && buttomQueryOpts.constructor === Object)"
+              :span="12"
+              :ghost="true"
+            >
               <cmp-query
                 ref="queryComponentFooter"
                 :show-button="false"
@@ -459,12 +467,15 @@ const onClear = () => {
 };
 // 初始化远程数据
 onMounted(() => {
-  // 点击才加载数据吧
-  // if (props.isRemote && !props.value) {
-  //   setTimeout(() => {
-  //     remoteLoad('');
-  //   }, 500);
-  // }
+  // 解析props里面的querySetting与 bottomQuerySetting
+  // 将querySetting.options 赋值给 queryOpts
+  if (props.querySetting != null && 'options' in props.querySetting) {
+    queryOpts.value = props.querySetting.options;
+  }
+  // 将bottomQuerySetting.options 赋值给 buttomQueryOpts
+  if (props.bottomQuerySetting != null && 'options' in props.bottomQuerySetting) {
+    buttomQueryOpts.value = props.bottomQuerySetting.options;
+  }
 });
 // 设置默认值
 onMounted(() => {
@@ -584,8 +595,33 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
   if (queryComponentFooter.value) {
     state.footerQueryData = queryComponentFooter.value.getFromData();
   }
-  console.log(state.headQueryData);
-  console.log(state.footerQueryData);
+  // 将 state.headQueryData 和 state.footerQueryData 整理成filter格式，添加到finalFilterList中
+  if (state.headQueryData && Object.keys(state.headQueryData).length > 0) {
+    const { headQueryData } = state;
+    for (const key in headQueryData) {
+      if (headQueryData[key] !== '') {
+        finalFilterList.push({
+          field: key,
+          value: headQueryData[key],
+          operator: 'EQ',
+        });
+      }
+    }
+  }
+
+  if (state.footerQueryData && Object.keys(state.footerQueryData).length > 0) {
+    const { footerQueryData } = state;
+    for (const key in footerQueryData) {
+      if (footerQueryData[key] !== '') {
+        finalFilterList.push({
+          field: key,
+          value: footerQueryData[key],
+          operator: 'EQ',
+        });
+      }
+    }
+  }
+
   const searchCondition = {
     pageNum: pagination.value.current,
     pageSize: pagination.value.pageSize,
@@ -674,8 +710,8 @@ const onInputChange = (val: string) => {
 };
 
 // 点击查询按钮
-const conditionEnter = (data: any) => {
-  console.log(data);
+const conditionEnter = (_data: any) => {
+  // console.log(data);
   // state.headQueryData = data;
   pagination.value.current = 1;
   loading.value = true;
@@ -755,7 +791,7 @@ onMounted(() => {
       let valueAsArray: unknown[];
       if (Array.isArray(props.value)) {
         valueAsArray = props.value;
-      } else if (typeof props.value === 'string') {
+      } else if (typeof props.value === 'string' && props.value !== '') {
         valueAsArray = props.value.split(',');
       } else {
         valueAsArray = [];
@@ -808,7 +844,7 @@ watch(
         let valueAsArray: unknown[];
         if (Array.isArray(props.value)) {
           valueAsArray = props.value;
-        } else if (typeof props.value === 'string') {
+        } else if (typeof props.value === 'string' && props.value !== '') {
           valueAsArray = props.value.split(',');
         } else {
           valueAsArray = [];

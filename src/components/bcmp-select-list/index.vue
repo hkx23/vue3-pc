@@ -715,7 +715,7 @@ onMounted(() => {
       let valueAsArray: unknown[];
       if (Array.isArray(props.value)) {
         valueAsArray = props.value;
-      } else if (typeof props.value === 'string') {
+      } else if (typeof props.value === 'string' && props.value.length > 0) {
         valueAsArray = props.value.split(',');
       } else {
         valueAsArray = [];

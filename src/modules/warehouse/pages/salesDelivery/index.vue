@@ -182,7 +182,7 @@ const tableChildrenColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('salesDelivery.本次发货数'), width: 140, colKey: 'qty' },
   // { title: '待发货数', width: 140, colKey: 'requireQty' },
   { title: t('salesDelivery.销售订单'), width: 140, colKey: 'saleOrderNo' },
-  { title: t('salesDelivery.销售订单行号'), width: 140, colKey: 'saleOrderDtlId' },
+  { title: t('salesDelivery.销售订单行号'), width: 140, colKey: 'saleOrderLineNo' },
   { title: t('salesDelivery.备注'), width: 140, colKey: 'memo' },
 ];
 

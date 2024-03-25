@@ -25,7 +25,7 @@
             ><t-form-item :label="t('processInspection.scheCode')">{{ productInfo.scheCode }} </t-form-item>
           </t-col>
           <t-col flex="250px"
-            ><t-form-item :label="t('processInspection.mitemCode')">{{ productInfo.moCode }} </t-form-item>
+            ><t-form-item :label="t('processInspection.mitemCode')">{{ productInfo.moMitemCode }} </t-form-item>
           </t-col>
           <t-col flex="250px"
             ><t-form-item :label="t('processInspection.mitemName')">{{ productInfo.moMitemName }} </t-form-item>
@@ -205,6 +205,7 @@ const productInfo = ref({
   scheDatetimeSche: '',
   scheQty: '',
   moCode: '',
+  moMitemCode: '',
   moMitemName: '',
   moCompletedQty: '',
 });
@@ -229,6 +230,7 @@ const serialNumberEnter = async (value) => {
         if (reData.scanSuccess) {
           productInfo.value.scheCode = reData.scheCode;
           productInfo.value.moCode = reData.moCode;
+          productInfo.value.moMitemCode = reData.mitemCode;
           productInfo.value.moMitemName = reData.mitemName;
           productInfo.value.scheDatetimeSche = reData.datetimeSche;
           productInfo.value.scheQty = reData.scheQty.toString();

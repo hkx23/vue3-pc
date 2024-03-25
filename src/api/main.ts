@@ -4098,11 +4098,10 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   isState?: boolean;
   stateName?: string;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -4267,8 +4266,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */

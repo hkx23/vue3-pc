@@ -481,8 +481,8 @@ onMounted(() => {
 });
 watch(
   () => props.opts,
-  (opts, oldValue) => {
-    console.log('query change', opts, oldValue);
+  (opts, _oldValue) => {
+    // console.log('query change', opts, oldValue);
     state.form = initForm(opts, true);
     computedTableContentSize();
   },
@@ -552,31 +552,33 @@ const computedTableContentSize = () => {
       let totalComLengthSum = 0;
       let leftSpace = _.cloneDeep(rowItemCount.value);
       let isFirstRowLastProcessing = true;
-      for (let i = 0; i < cOpts.value[999].length; i++) {
-        const item = cOpts.value[999][i];
-        if (item.comLength) {
-          totalComLengthSum += item.comLength;
-        } else {
-          const itemFlexNumber = parseInt(item.flex.replace('px', ''), 10);
-          item.comLength = Math.floor(itemFlexNumber / targetWidth);
-          totalComLengthSum += item.comLength;
-        }
-
-        if (totalComLengthSum === rowItemCount.value && isFirstRowLastProcessing) {
-          buttonItemWidth.value = item.comLength * searchItemtWidth.value + 8;
-          isFirstRowLastProcessing = false;
-        }
-        const compareResultCount = totalComLengthSum - rowItemCount.value;
-        if (compareResultCount > 0 && isFirstRowLastProcessing) {
-          if (cOpts.value[999][i - 1].comLength > 1 && leftSpace > 0) {
-            buttonItemWidth.value = (cOpts.value[999][i - 1].comLength + leftSpace) * searchItemtWidth.value + 8;
-            isFirstRowLastProcessing = false;
+      if (cOpts.value[999]) {
+        for (let i = 0; i < cOpts.value[999].length; i++) {
+          const item = cOpts.value[999][i];
+          if (item.comLength) {
+            totalComLengthSum += item.comLength;
           } else {
-            buttonItemWidth.value = cOpts.value[999][i - 1].comLength * searchItemtWidth.value + 8;
+            const itemFlexNumber = parseInt(item.flex.replace('px', ''), 10);
+            item.comLength = Math.floor(itemFlexNumber / targetWidth);
+            totalComLengthSum += item.comLength;
+          }
+
+          if (totalComLengthSum === rowItemCount.value && isFirstRowLastProcessing) {
+            buttonItemWidth.value = item.comLength * searchItemtWidth.value + 8;
             isFirstRowLastProcessing = false;
           }
+          const compareResultCount = totalComLengthSum - rowItemCount.value;
+          if (compareResultCount > 0 && isFirstRowLastProcessing && cOpts.value[999][i - 1]) {
+            if (cOpts.value[999][i - 1].comLength > 1 && leftSpace > 0) {
+              buttonItemWidth.value = (cOpts.value[999][i - 1].comLength + leftSpace) * searchItemtWidth.value + 8;
+              isFirstRowLastProcessing = false;
+            } else {
+              buttonItemWidth.value = cOpts.value[999][i - 1].comLength * searchItemtWidth.value + 8;
+              isFirstRowLastProcessing = false;
+            }
+          }
+          leftSpace -= item.comLength;
         }
-        leftSpace -= item.comLength;
       }
       totalComLength.value = totalComLengthSum;
 

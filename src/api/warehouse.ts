@@ -7194,6 +7194,20 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
+     * @name GetWarehouse
+     * @summary 获取有权限的仓库（下拉）
+     * @request GET:/stockCheckBill/getWarehouse
+     * @secure
+     */
+    getWarehouse: () =>
+      http.request<ResultListWarehouse['data']>(`/api/warehouse/stockCheckBill/getWarehouse`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
      * @name GetStockCheckByUser
      * @summary 根据用户获取盘点单信息
      * @request GET:/stockCheckBill/getStockCheckByUser
