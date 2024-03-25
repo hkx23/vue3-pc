@@ -1,14 +1,13 @@
 <!-- 盘点单维护 -->
 <template>
-  <t-dialog width="80%" :footer="false" :close-on-overlay-click="false">
+  <t-dialog width="90%" top="56px" :footer="false" :close-on-overlay-click="false">
     <template #header>
       <t-space align="center" style="width: 100%">
         <span>{{ props.formTitle }}</span>
       </t-space>
     </template>
-    <cmp-container :full="true">
-      <cmp-card>
-        <!-- 按钮操作逻辑
+    <cmp-card>
+      <!-- 按钮操作逻辑
 
           状态为 已创建或者 盘点中             不允许 差异调整 关闭单据
 
@@ -16,48 +15,44 @@
 
           状态为 已关闭或者 已作废 == 已取消    只允许刷新  导出 打印
          -->
-        <div class="buttonSty">
-          <t-button @click="getMaterialDetails(props.propsdtlId)">刷新</t-button>
-          <t-button>导出</t-button>
-          <t-button>打印</t-button>
-          <t-button :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint" @click="saveData"
-            >保存</t-button
-          >
-          <t-button
-            :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint"
-            @click="finish(props.propsdtlId)"
-            >盘点完成</t-button
-          >
-          <t-button :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint" @click="getAdjustment"
-            >差异调整</t-button
-          >
-          <t-button
-            :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint"
-            @click="closedocument(props.propsdtlId)"
-            >关闭单据</t-button
-          >
-        </div>
-      </cmp-card>
-      <!-- 盘点单相关详细信息 -->
-      <cmp-card>
-        <!-- <template #title> 盘点单{{ props.propsdtlId }}相关详细信息 </template> -->
-        <template #title> 盘点单{{ props.propsbillNo }}相关详细信息 </template>
-        <t-form>
-          <t-row>
-            <t-form-item label="盘点单号：" name="description">
-              <!-- <p>{{ props.propsdtlId }}</p> -->
-              <p>{{ props.propsbillNo }}</p>
-            </t-form-item>
-            <t-form-item label="盘点类型：" name="description">
-              <p>{{ props.stockCheckBillTypeName }}</p>
-            </t-form-item>
-            <t-form-item label="状态：" name="description">
-              <p>{{ props.stockCheckBillStatusName }}</p>
-            </t-form-item>
-          </t-row>
-        </t-form>
-      </cmp-card>
-
+      <div class="buttonSty">
+        <t-button @click="getMaterialDetails(props.propsdtlId)">刷新</t-button>
+        <t-button>导出</t-button>
+        <t-button>打印</t-button>
+        <t-button :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint" @click="saveData">保存</t-button>
+        <t-button :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint" @click="finish(props.propsdtlId)"
+          >盘点完成</t-button
+        >
+        <t-button :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint" @click="getAdjustment"
+          >差异调整</t-button
+        >
+        <t-button
+          :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint"
+          @click="closedocument(props.propsdtlId)"
+          >关闭单据</t-button
+        >
+      </div>
+    </cmp-card>
+    <!-- 盘点单相关详细信息 -->
+    <cmp-card>
+      <!-- <template #title> 盘点单{{ props.propsdtlId }}相关详细信息 </template> -->
+      <template #title> 盘点单{{ props.propsbillNo }}相关详细信息 </template>
+      <t-form>
+        <t-row>
+          <t-form-item label="盘点单号：" name="description">
+            <!-- <p>{{ props.propsdtlId }}</p> -->
+            <p>{{ props.propsbillNo }}</p>
+          </t-form-item>
+          <t-form-item label="盘点类型：" name="description">
+            <p>{{ props.stockCheckBillTypeName }}</p>
+          </t-form-item>
+          <t-form-item label="状态：" name="description">
+            <p>{{ props.stockCheckBillStatusName }}</p>
+          </t-form-item>
+        </t-row>
+      </t-form>
+    </cmp-card>
+    <cmp-container :full="true" style="height: calc(90vh - 56px - 220px)">
       <!-- table 物料明细 -->
       <cmp-card>
         <template #title> 物料明细 </template>
@@ -146,7 +141,6 @@
           :show-pagination="false"
           :hover="true"
           :fixed-height="true"
-          style="height: 200px"
           empty="没有符合条件的数据"
           :show-toolbar="false"
           :total="dataTotals"

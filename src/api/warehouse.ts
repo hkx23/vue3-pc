@@ -1990,10 +1990,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -3239,16 +3239,16 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
   tlpickQty?: number;
-  bfpickQty?: number;
-  flpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3742,13 +3742,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
+  /** 仓库物料汇总key */
+  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 仓库物料汇总key */
-  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5370,8 +5370,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -7194,20 +7194,6 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
-     * @name GetWarehouse
-     * @summary 获取有权限的仓库（下拉）
-     * @request GET:/stockCheckBill/getWarehouse
-     * @secure
-     */
-    getWarehouse: () =>
-      http.request<ResultListWarehouse['data']>(`/api/warehouse/stockCheckBill/getWarehouse`, {
-        method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 盘点单据表
      * @name GetStockCheckByUser
      * @summary 根据用户获取盘点单信息
      * @request GET:/stockCheckBill/getStockCheckByUser
@@ -8310,6 +8296,20 @@ export const api = {
      */
     modifyLocation: (data: Location) =>
       http.request<ResultObject['data']>(`/api/warehouse/location/modifyLocation`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name ListByDistrictId
+     * @request POST:/location/listByDistrictId
+     * @secure
+     */
+    listByDistrictId: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/location/listByDistrictId`, {
         method: 'POST',
         body: data as any,
       }),
