@@ -595,8 +595,33 @@ const remoteLoad = async (val: any, isSetDefaultVal) => {
   if (queryComponentFooter.value) {
     state.footerQueryData = queryComponentFooter.value.getFromData();
   }
-  console.log(state.headQueryData);
-  console.log(state.footerQueryData);
+  // 将 state.headQueryData 和 state.footerQueryData 整理成filter格式，添加到finalFilterList中
+  if (state.headQueryData && Object.keys(state.headQueryData).length > 0) {
+    const { headQueryData } = state;
+    for (const key in headQueryData) {
+      if (headQueryData[key] !== '') {
+        finalFilterList.push({
+          field: key,
+          value: headQueryData[key],
+          operator: 'EQ',
+        });
+      }
+    }
+  }
+
+  if (state.footerQueryData && Object.keys(state.footerQueryData).length > 0) {
+    const { footerQueryData } = state;
+    for (const key in footerQueryData) {
+      if (footerQueryData[key] !== '') {
+        finalFilterList.push({
+          field: key,
+          value: footerQueryData[key],
+          operator: 'EQ',
+        });
+      }
+    }
+  }
+
   const searchCondition = {
     pageNum: pagination.value.current,
     pageSize: pagination.value.pageSize,
@@ -685,8 +710,8 @@ const onInputChange = (val: string) => {
 };
 
 // 点击查询按钮
-const conditionEnter = (data: any) => {
-  console.log(data);
+const conditionEnter = (_data: any) => {
+  // console.log(data);
   // state.headQueryData = data;
   pagination.value.current = 1;
   loading.value = true;
@@ -766,7 +791,7 @@ onMounted(() => {
       let valueAsArray: unknown[];
       if (Array.isArray(props.value)) {
         valueAsArray = props.value;
-      } else if (typeof props.value === 'string') {
+      } else if (typeof props.value === 'string' && props.value !== '') {
         valueAsArray = props.value.split(',');
       } else {
         valueAsArray = [];
@@ -819,7 +844,7 @@ watch(
         let valueAsArray: unknown[];
         if (Array.isArray(props.value)) {
           valueAsArray = props.value;
-        } else if (typeof props.value === 'string') {
+        } else if (typeof props.value === 'string' && props.value !== '') {
           valueAsArray = props.value.split(',');
         } else {
           valueAsArray = [];

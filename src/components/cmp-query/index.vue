@@ -481,8 +481,8 @@ onMounted(() => {
 });
 watch(
   () => props.opts,
-  (opts, oldValue) => {
-    console.log('query change', opts, oldValue);
+  (opts, _oldValue) => {
+    // console.log('query change', opts, oldValue);
     state.form = initForm(opts, true);
     computedTableContentSize();
   },
@@ -568,7 +568,7 @@ const computedTableContentSize = () => {
             isFirstRowLastProcessing = false;
           }
           const compareResultCount = totalComLengthSum - rowItemCount.value;
-          if (compareResultCount > 0 && isFirstRowLastProcessing) {
+          if (compareResultCount > 0 && isFirstRowLastProcessing && cOpts.value[999][i - 1]) {
             if (cOpts.value[999][i - 1].comLength > 1 && leftSpace > 0) {
               buttonItemWidth.value = (cOpts.value[999][i - 1].comLength + leftSpace) * searchItemtWidth.value + 8;
               isFirstRowLastProcessing = false;
