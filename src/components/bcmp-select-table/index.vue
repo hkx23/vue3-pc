@@ -35,7 +35,11 @@
         <div class="t-table-select__table" :style="{ width: `${tableWidth}px` }">
           <cmp-container :full="true" :full-sub-index="[1]" :gutter="[0, 4]" style="padding: 0">
             <!-- cmp-query 查询组件 -->
-            <cmp-card v-show="queryOpts !== {}" :span="12" :ghost="true">
+            <cmp-card
+              v-show="!(Object.keys(queryOpts).length === 0 && queryOpts.constructor === Object)"
+              :span="12"
+              :ghost="true"
+            >
               <cmp-query
                 ref="queryComponent"
                 :opts="queryOpts"
@@ -83,7 +87,11 @@
               </t-table>
             </cmp-card>
             <!-- cmp-query 查询组件 -->
-            <cmp-card v-show="buttomQueryOpts !== {}" :span="12" :ghost="true">
+            <cmp-card
+              v-show="!(Object.keys(buttomQueryOpts).length === 0 && buttomQueryOpts.constructor === Object)"
+              :span="12"
+              :ghost="true"
+            >
               <cmp-query
                 ref="queryComponentFooter"
                 :show-button="false"
@@ -459,12 +467,15 @@ const onClear = () => {
 };
 // 初始化远程数据
 onMounted(() => {
-  // 点击才加载数据吧
-  // if (props.isRemote && !props.value) {
-  //   setTimeout(() => {
-  //     remoteLoad('');
-  //   }, 500);
-  // }
+  // 解析props里面的querySetting与 bottomQuerySetting
+  // 将querySetting.options 赋值给 queryOpts
+  if (props.querySetting != null && 'options' in props.querySetting) {
+    queryOpts.value = props.querySetting.options;
+  }
+  // 将bottomQuerySetting.options 赋值给 buttomQueryOpts
+  if (props.bottomQuerySetting != null && 'options' in props.bottomQuerySetting) {
+    buttomQueryOpts.value = props.bottomQuerySetting.options;
+  }
 });
 // 设置默认值
 onMounted(() => {
