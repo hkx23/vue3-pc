@@ -239,7 +239,7 @@ watch(propsdtlId, (newBillId) => {
 
 //* 表格数据 2
 const fetchTables = async (billId) => {
-  setLoading(false);
+  setLoading(true);
   detailsPageUI.value.page = 1; // 子表默认为第一页数据
   const data = await api.stockCheckBill.getDtlList({
     pageNum: detailsPageUI.value.page,

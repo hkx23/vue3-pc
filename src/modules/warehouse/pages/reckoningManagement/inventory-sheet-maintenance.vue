@@ -165,8 +165,8 @@ const { loading, setLoading } = useLoading();
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', width: 40, type: 'single', fixed: 'left' },
   { title: '序号', colKey: 'index', width: 65, cell: 'indexSlot' },
-  { title: '物料编码', colKey: 'mitemCode', width: 85 },
-  { title: '物料描述', width: 150, colKey: 'mitemDesc' },
+  { title: '物料编码', colKey: 'mitemCode', width: 110 },
+  { title: '物料描述', width: 110, colKey: 'mitemDesc' },
   { title: '单位', width: 85, colKey: 'uomName' },
   {
     title: '仓库',
@@ -188,7 +188,7 @@ const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
 const tableWarehouseColumns2: PrimaryTableCol<TableRowData>[] = [
   // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   // { title: '序号', colKey: 'index', width: 65 },
-  { title: '标签条码', colKey: 'scanBarcode', width: 85 },
+  { title: '标签条码', colKey: 'scanBarcode', width: 140 },
   { title: '物料编码', width: 85, colKey: 'mitemCode' },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
   { title: '发出仓库', width: 85, colKey: 'warehouseName' },
