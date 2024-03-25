@@ -3217,16 +3217,16 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  bfpickQty?: number;
-  tlpickQty?: number;
+  flpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -7165,20 +7165,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/addPD`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 盘点单据表
-     * @name GetWarehouse
-     * @summary 获取有权限的仓库（下拉）
-     * @request GET:/stockCheckBill/getWarehouse
-     * @secure
-     */
-    getWarehouse: () =>
-      http.request<ResultListWarehouse['data']>(`/api/warehouse/stockCheckBill/getWarehouse`, {
-        method: 'GET',
       }),
 
     /**
