@@ -227,6 +227,15 @@ const opts = computed(() => {
         options: moClassOption.value,
       },
     },
+    datePlanRange: {
+      label: '计划开始时间',
+      comp: 't-date-range-picker',
+      defaultVal: datePlanRangeDefault.value,
+      placeholder: '请选择计划开始时间',
+      bind: {
+        enableTimePicker: true,
+      },
+    },
     moCode: {
       label: '工单号',
       comp: 't-input',
@@ -283,15 +292,7 @@ const opts = computed(() => {
         valueField: 'routingCode',
       },
     },
-    datePlanRange: {
-      label: '计划开始时间',
-      comp: 't-date-range-picker',
-      defaultVal: datePlanRangeDefault.value,
-      placeholder: '请选择计划开始时间',
-      bind: {
-        enableTimePicker: true,
-      },
-    },
+
     moStatus: {
       label: '工单状态',
       comp: 't-checkbox-group',

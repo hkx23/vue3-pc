@@ -4133,9 +4133,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5351,13 +5351,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  i?: string;
+  ii?: string;
   iii?: string;
   s1?: string;
-  ii?: string;
-  s2?: string;
-  s3?: string;
-  i?: string;
   s4?: string;
+  s3?: string;
+  s2?: string;
 } | null;
 
 /** 标签模板 */
@@ -6570,7 +6570,7 @@ export const api = {
      *
      * @tags 物料检验标准分配表
      * @name Modify
-     * @summary 编辑标准物料关系
+     * @summary 新增标准物料关系
      * @request POST:/iqcInspectStdMitem/modify
      * @secure
      */

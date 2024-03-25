@@ -40,10 +40,16 @@
           </t-space>
         </template>
         <template #oidOrgName="{ row }">
-          {{ `${row.oidOrgName} — ${row.oidWarehouseName}` }}
+          {{
+            row.oidOrgName !== null && row.oidWarehouseName !== null
+              ? `${row.oidOrgName} — ${row.oidWarehouseName}`
+              : ''
+          }}
         </template>
         <template #businessDirection="{ row }">
-          {{ `${row.toOrgName} — ${row.toWarehouseName}` }}
+          {{
+            row.toOrgName !== null && row.toWarehouseName !== null ? `${row.toOrgName} — ${row.toWarehouseName}` : ''
+          }}
         </template>
       </cmp-table>
     </cmp-card>
