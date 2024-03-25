@@ -4097,12 +4097,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   isState?: boolean;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
-  stateName?: string;
   isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
+  stateName?: string;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -4347,15 +4347,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
   isState?: boolean;
-  stateName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
-  isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  stateName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -7349,8 +7349,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -8309,12 +8309,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
