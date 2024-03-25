@@ -15,7 +15,7 @@
         :total="dataTotal"
         :title="t('user.userList')"
         :fixed-height="true"
-        @refresh="conditionEnter"
+        @refresh="fetchTable"
       >
         <template #state="{ row }">
           <t-popconfirm
