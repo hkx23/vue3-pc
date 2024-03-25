@@ -428,6 +428,41 @@ export interface ResultPagingDataMiscellaneousManageVO {
   data?: PagingDataMiscellaneousManageVO;
 }
 
+/** 交易明细查询 */
+export interface TransferHeadSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  /** 单号 */
+  billNo?: string;
+  /** 待删除的物料标签 */
+  deleteLabelNoList?: string[];
+}
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
+}
+
 /** 交易明细标签表查询 */
 export interface TransferDtlBarcodeSearch {
   /** 单号 */
@@ -1955,10 +1990,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /** 待发货数量 */
   waitDeliveriedQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 响应数据 */
@@ -2198,19 +2233,6 @@ export interface SaleDeliverySubmitVO {
   memo?: string;
   /** 销售发货明细 */
   saleOrderDtlVOList?: SaleOrderDtlVO[];
-}
-
-/** 通用响应类 */
-export interface ResultBoolean {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
 }
 
 /** 响应数据 */
@@ -3217,13 +3239,13 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   flpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
@@ -3322,6 +3344,7 @@ export interface MitemShelflifeReportVO {
    * @format date-time
    */
   datetimeStockin?: string;
+  supplierId?: string;
   expiredDays?: string;
 }
 
@@ -5347,8 +5370,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -5517,19 +5540,6 @@ export interface ResultBigDecimal {
   data?: number | null;
 }
 
-/** 通用响应类 */
-export interface ResultListWarehouse {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: Warehouse[] | null;
-}
-
 /** 组织架构表 */
 export type Org = {
   id?: string;
@@ -5689,6 +5699,19 @@ export interface ResultListPurchaseOrderDtlVO {
   message?: string;
   /** 响应数据 */
   data?: PurchaseOrderDtlVO[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListWarehouse {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Warehouse[] | null;
 }
 
 /** 通用响应类 */
@@ -6562,6 +6585,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 交易单头表
+     * @name DeleteBarcodeAndUpdateDtl
+     * @summary 根据单据号和标签信息，删除标签并重新计算明细行汇总
+     * @request POST:/transferHead/deleteBarcodeAndUpdateDtl
+     * @secure
+     */
+    deleteBarcodeAndUpdateDtl: (data: TransferHeadSearch) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/transferHead/deleteBarcodeAndUpdateDtl`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   transferDtlBarcode: {
     /**
@@ -6819,21 +6857,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/transferConstraint/addTransferConstraint`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 仓库移转约束表
-     * @name GetWarehouses
-     * @summary 根据组织获得仓库（新增编辑界面下拉）
-     * @request GET:/transferConstraint/getWarehouses
-     * @secure
-     */
-    getWarehouses: (query: { id: string }) =>
-      http.request<ResultListWarehouse['data']>(`/api/warehouse/transferConstraint/getWarehouses`, {
-        method: 'GET',
-        params: query,
       }),
 
     /**
@@ -7948,8 +7971,9 @@ export const api = {
       /** @format int32 */
       pageSize: number;
       onhandId: string;
+      supplierId: string;
       lotNo: string;
-      receiveNo: string;
+      datetimeStockin: string;
     }) =>
       http.request<ResultPagingDataMitemShelflifeReportVO['data']>(`/api/warehouse/mitemShelflifeReport/getDtl`, {
         method: 'GET',

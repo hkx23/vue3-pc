@@ -2601,11 +2601,11 @@ export interface ProductReworkVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopName?: string;
-  workshopId?: string;
   workshopCode?: string;
-  scanDatetimeStr?: string;
+  workshopId?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  scanDatetimeStr?: string;
   datetimeScheStr?: string;
 }
 
@@ -3898,13 +3898,13 @@ export interface BarcodeWipCollectVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopName?: string;
-  workshopId?: string;
   workshopCode?: string;
+  workshopId?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  scanDatetimeStr?: string;
   datetimeScheStr?: string;
 }
 
@@ -4019,8 +4019,8 @@ export interface BarcodeWipVO {
   /** @format date-time */
   datetimeSche?: string;
   workshopName?: string;
-  workshopId?: string;
   workshopCode?: string;
+  workshopId?: string;
   stateName?: string;
   defectCodeStr?: string;
   isState?: boolean;
