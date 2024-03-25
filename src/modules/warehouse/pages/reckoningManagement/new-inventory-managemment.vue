@@ -211,16 +211,10 @@ const onClickBatchImport = async () => {
 onMounted(async () => {
   // await fetchTable({})
   await countingTypeData();
-  await getWarehouseData();
 });
 
 // 自定义事件传数据给父组件
 const emit = defineEmits(['update-data']);
-
-// 获取有权限的仓库
-const getWarehouseData = async () => {
-  resultWarehouseData.value = await api.stockCheckBill.getWarehouse();
-};
 
 // 获取货区
 const getDistrictData = async (warehouseId) => {
