@@ -5351,13 +5351,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  iii?: string;
-  s1?: string;
   ii?: string;
-  s2?: string;
-  s3?: string;
+  s1?: string;
   i?: string;
+  iii?: string;
+  s2?: string;
   s4?: string;
+  s3?: string;
 } | null;
 
 /** 标签模板 */
@@ -6570,7 +6570,7 @@ export const api = {
      *
      * @tags 物料检验标准分配表
      * @name Modify
-     * @summary 编辑标准物料关系
+     * @summary 新增标准物料关系
      * @request POST:/iqcInspectStdMitem/modify
      * @secure
      */

@@ -428,6 +428,41 @@ export interface ResultPagingDataMiscellaneousManageVO {
   data?: PagingDataMiscellaneousManageVO;
 }
 
+/** 交易明细查询 */
+export interface TransferHeadSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  /** 单号 */
+  billNo?: string;
+  /** 待删除的物料标签 */
+  deleteLabelNoList?: string[];
+}
+
+/** 通用响应类 */
+export interface ResultBoolean {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: boolean | null;
+}
+
 /** 交易明细标签表查询 */
 export interface TransferDtlBarcodeSearch {
   /** 单号 */
@@ -2200,19 +2235,6 @@ export interface SaleDeliverySubmitVO {
   saleOrderDtlVOList?: SaleOrderDtlVO[];
 }
 
-/** 通用响应类 */
-export interface ResultBoolean {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: boolean | null;
-}
-
 /** 响应数据 */
 export type PagingDataUserWarehouseVO = {
   list?: UserWarehouseVO[];
@@ -3212,21 +3234,21 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  tlpickQty?: number;
+  flpickQty?: number;
   bfpickQty?: number;
+  tlpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -6562,6 +6584,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 交易单头表
+     * @name DeleteBarcodeAndUpdateDtl
+     * @summary 根据单据号和标签信息，删除标签并重新计算明细行汇总
+     * @request POST:/transferHead/deleteBarcodeAndUpdateDtl
+     * @secure
+     */
+    deleteBarcodeAndUpdateDtl: (data: TransferHeadSearch) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/transferHead/deleteBarcodeAndUpdateDtl`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   transferDtlBarcode: {
     /**
@@ -7165,6 +7202,20 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/stockCheckBill/addPD`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
+     * @name GetWarehouse
+     * @summary 获取有权限的仓库（下拉）
+     * @request GET:/stockCheckBill/getWarehouse
+     * @secure
+     */
+    getWarehouse: () =>
+      http.request<ResultListWarehouse['data']>(`/api/warehouse/stockCheckBill/getWarehouse`, {
+        method: 'GET',
       }),
 
     /**
