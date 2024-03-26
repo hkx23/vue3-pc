@@ -440,7 +440,7 @@ const workgroupValue = ref();
 const workstationAuthValue = ref();
 
 const routingValue = ref();
-const moValue = ref();
+const moValue = ref('');
 const moScheduleValue = ref();
 
 onMounted(() => {});

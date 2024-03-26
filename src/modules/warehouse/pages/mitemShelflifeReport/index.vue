@@ -200,14 +200,16 @@ const mitemShelflifeData = ref([]);
 const mitemShelflifeTotal = ref(0);
 const detailRow = ref<any>({});
 const onhandId = ref('');
+const supplierId = ref('');
 const lotNo = ref('');
-const receiveNo = ref('');
+const datetimeStockin = ref();
 const onEditRow = async (row: any) => {
   detailRow.value = row;
   formVisible.value = true;
   onhandId.value = row.onhandId;
+  supplierId.value = row.supplierId;
   lotNo.value = row.lotNo;
-  receiveNo.value = row.receiveNo;
+  datetimeStockin.value = row.datetimeStockin;
   await onShelfLifeDetails();
 };
 
@@ -216,8 +218,9 @@ const onShelfLifeDetails = async () => {
     pageNum: pageNum.value,
     pageSize: pageSize.value,
     onhandId: onhandId.value,
+    supplierId: supplierId.value,
     lotNo: lotNo.value,
-    receiveNo: receiveNo.value,
+    datetimeStockin: datetimeStockin.value,
   });
   mitemShelflifeData.value = res.list;
   mitemShelflifeTotal.value = res.total;

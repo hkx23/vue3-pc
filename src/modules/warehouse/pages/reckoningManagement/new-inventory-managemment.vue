@@ -1,96 +1,75 @@
 <!-- 新增盘点管理 -->
 <template>
-  <t-dialog width="80%" :footer="true" :close-on-overlay-click="false" :on-confirm="onConfirmAnother">
+  <t-dialog width="78%" top="56px" :footer="true" :close-on-overlay-click="false" :on-confirm="onConfirmAnother">
     <template #header>
       <t-space align="center" style="width: 100%">
         <span>{{ props.formTitle }}</span>
       </t-space>
     </template>
-    <cmp-container :full="true">
-      <cmp-container>
-        <t-card :ghost="true">
-          <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput" @reset="onReset">
-            <template #soltStockCheckType="{ param }">
-              <t-select v-model="param.stockCheckType" clearable>
-                <template #label>
-                  <span style="color: red">*</span> {{ t('reckoningManagement.stockCheckType') }}</template
-                >
-                <t-option
-                  v-for="item in countingTypeDataOptions"
-                  :key="item.id"
-                  :label="item.label"
-                  :value="item.value"
-                ></t-option>
-              </t-select>
-            </template>
-
-            <template #soltWarehouse="{ param }">
-              <t-select v-model="param.warehouseId" clearable @change="handleWarehouseChange">
-                <template #label> <span style="color: red">*</span>{{ t('reckoningManagement.warehouse') }}</template>
-                <t-option
-                  v-for="item in resultWarehouseData"
-                  :key="item.id"
-                  :label="item.warehouseName"
-                  :value="item.id"
-                ></t-option>
-              </t-select>
-            </template>
-
-            <template #soltDistrict="{ param }">
-              <t-select
-                v-model="param.districtId"
-                :label="t('reckoningManagement.district')"
-                clearable
-                @change="handleDistrictChange"
-              >
-                <t-option v-for="item in authorizedDistrict" :key="item.id" :label="item.districtName" :value="item.id">
-                </t-option>
-              </t-select>
-            </template>
-
-            <template #soltLocation="{ param }">
-              <t-select v-model="param.locationId" :label="t('reckoningManagement.location')" clearable>
-                <t-option
-                  v-for="item in authorizedLocation"
-                  :key="item.id"
-                  :label="item.locationName"
-                  :value="item.id"
-                ></t-option>
-              </t-select>
-            </template>
-          </cmp-query>
-        </t-card>
-        <!-- table 盘点管理 -->
-        <cmp-card>
-          <cmp-table
-            v-model:pagination="pageUI"
-            v-model:selected-row-keys="selectedRowKeys"
-            :table-column="tablenewIMColumns"
-            :table-data="tableDataInventory"
-            select-on-row-click
-            row-key="onhandId"
-            :loading="loading"
-            :show-pagination="false"
-            :total="dataTotal"
-            :empty="t('reckoningManagement.table-empty')"
-          >
-            <template #button>
-              <!-- <t-space v-if="selectedRowKeys.length !== 0" :size="8">
+    <t-card :ghost="true">
+      <cmp-query ref="queryComponent" :opts="opts" :bool-enter="false" @submit="onInput" @reset="onReset">
+        <template #soltStockCheckType="{ param }">
+          <t-select v-model="param.stockCheckType" clearable>
+            <template #label> <span style="color: red">*</span> {{ t('reckoningManagement.stockCheckType') }}</template>
+            <t-option
+              v-for="item in countingTypeDataOptions"
+              :key="item.id"
+              :label="item.label"
+              :value="item.value"
+            ></t-option>
+          </t-select>
+        </template>
+        <template #soltWarehouse="{ param }">
+          <bcmp-select-business v-model="param.warehouseId" type="warehouseAuth"></bcmp-select-business>
+        </template>
+        <template #soltDistrict="{ param }">
+          <bcmp-select-business
+            v-model="param.districtId"
+            type="district"
+            :parent-id="param.warehouseId"
+          ></bcmp-select-business>
+        </template>
+        <template #soltLocation="{ param }">
+          <bcmp-select-business
+            v-model="param.locationId"
+            type="locationByDistrict"
+            :parent-id="param.districtId"
+          ></bcmp-select-business>
+        </template>
+      </cmp-query>
+    </t-card>
+    <!-- table 盘点管理 -->
+    <cmp-container :full="true" style="height: calc(90vh - 56px - 215px)">
+      <cmp-card>
+        <cmp-table
+          v-model:pagination="pageUI"
+          v-model:selected-row-keys="selectedRowKeys"
+          :table-column="tablenewIMColumns"
+          :table-data="tableDataInventory"
+          :fixed-height="true"
+          select-on-row-click
+          row-key="onhandId"
+          :loading="loading"
+          :show-pagination="false"
+          :total="dataTotal"
+          :empty="t('reckoningManagement.table-empty')"
+        >
+          <template #button>
+            <!-- <t-space v-if="selectedRowKeys.length !== 0" :size="8">
                 <t-popconfirm theme="default" content="确认删除吗" @confirm="onDeleteBatches()">
                   <t-button theme="default">批量删除</t-button>
                 </t-popconfirm>
               </t-space> -->
-              <t-space :size="8">
-                <t-button theme="primary" @click="onClickBatchImport">批量导入</t-button>
-              </t-space>
-            </template>
-            <!-- 定义序号列的插槽 -->
-            <!-- <template #indexSlot="{ rowIndex }">
+            <t-space :size="8">
+              <t-button theme="primary" @click="onClickBatchImport">批量导入</t-button>
+            </t-space>
+          </template>
+          <!-- 定义序号列的插槽 -->
+          <!-- <template #indexSlot="{ rowIndex }">
               {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
             </template> -->
-          </cmp-table>
-        </cmp-card>
-      </cmp-container>
+        </cmp-table>
+      </cmp-card>
     </cmp-container>
     <!-- 自定义底部按钮 -->
     <template #footer>
@@ -118,12 +97,11 @@ const { pageUI } = usePage();
 const dataTotal = ref(0);
 const selectedRowKeys = ref([]); // 勾选条数
 const countingTypeDataOptions = ref([]); // 盘点类型
-const resultWarehouseData = ref([]); // 仓库
-const authorizedDistrict = ref([]); // 货区
-const authorizedLocation = ref([]); // 货位
 // 添加所需字段
 const newstockCheckType = ref('');
 const newWarehouseId = ref('');
+
+const queryComponent = ref();
 
 //* 表格标题
 const tablenewIMColumns: PrimaryTableCol<TableRowData>[] = [
@@ -185,23 +163,6 @@ const props = defineProps({
   },
 });
 
-// 事件处理函数 仓库
-const handleWarehouseChange = async (param) => {
-  if (param) {
-    // 确保ID是lang类型
-    const warehouseId = param.toString();
-    await getDistrictData(warehouseId); // 根据仓库ID获取货区数据
-  }
-};
-
-// 事件处理函数 货区
-const handleDistrictChange = async (param) => {
-  if (param) {
-    const districtId = param.toString();
-    await getLocationtData(districtId);
-  }
-};
-
 // 批量导入
 const onClickBatchImport = async () => {
   return {};
@@ -210,35 +171,13 @@ const onClickBatchImport = async () => {
 //* 初始渲染
 onMounted(async () => {
   // await fetchTable({})
+
+  queryComponent.value.setFromValue('stockCheckType', null);
   await countingTypeData();
-  await getWarehouseData();
 });
 
 // 自定义事件传数据给父组件
 const emit = defineEmits(['update-data']);
-
-// 获取有权限的仓库
-const getWarehouseData = async () => {
-  resultWarehouseData.value = await api.stockCheckBill.getWarehouse();
-};
-
-// 获取货区
-const getDistrictData = async (warehouseId) => {
-  try {
-    authorizedDistrict.value = await api.stockCheckBill.getDistrict({ warehouseId });
-  } catch (e) {
-    console.error('获取货区数据失败:', e);
-  }
-};
-
-// 获取货位
-const getLocationtData = async (districtId) => {
-  try {
-    authorizedLocation.value = await api.stockCheckBill.getLocation({ districtId });
-  } catch (e) {
-    console.error('获取货区数据失败:', e);
-  }
-};
 
 // 初始化系统字典盘点类型
 const countingTypeData = async () => {

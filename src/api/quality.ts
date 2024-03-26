@@ -2326,12 +2326,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 通用响应类 */
@@ -2883,10 +2883,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3536,10 +3536,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 停留时长 */
   waitTime?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -4133,11 +4133,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
   iqcInspectDtlId?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
 }
 
 /** 响应数据 */
@@ -5155,10 +5155,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -5351,13 +5351,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  ii?: string;
-  s3?: string;
-  s4?: string;
   iii?: string;
-  i?: string;
-  s2?: string;
   s1?: string;
+  s3?: string;
+  s2?: string;
+  s4?: string;
+  i?: string;
+  ii?: string;
 } | null;
 
 /** 标签模板 */
@@ -6570,7 +6570,7 @@ export const api = {
      *
      * @tags 物料检验标准分配表
      * @name Modify
-     * @summary 新增标准物料关系
+     * @summary 编辑标准物料关系
      * @request POST:/iqcInspectStdMitem/modify
      * @secure
      */

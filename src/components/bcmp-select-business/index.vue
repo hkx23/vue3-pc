@@ -17,7 +17,7 @@
     :custom-conditions="finalCustomConditions"
     :keywords="finalKeywords"
     :table-width="finaltableWidth"
-    :query-setting="finalListSetting"
+    :query-setting="finalQuerySetting"
     :bottom-query-setting="finalBottomQuerySetting"
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
@@ -272,8 +272,8 @@ const finalComponentType = ref(props.componentType);
 const finalListSetting = ref(props.listSetting);
 const finalCustomConditions = ref(props.customConditions);
 const finalMultiple = ref(props.isMultiple || props.multiple);
-const finalQuerySetting = ref({});
-const finalBottomQuerySetting = ref({});
+const finalQuerySetting = ref(null);
+const finalBottomQuerySetting = ref(null);
 
 const onSelectionChange = (val: any, valuKeys: any) => {
   if (!finalMultiple.value) {
@@ -356,7 +356,7 @@ const loadTypeSetting = () => {
             finalCategory.value = res.category;
           }
         }
-        console.error(res.tableWidth);
+        // console.error(res.tableWidth);
         if (res.tableWidth) {
           if (finaltableWidth.value === 500) {
             finaltableWidth.value = res.tableWidth;
@@ -385,7 +385,7 @@ const loadTypeSetting = () => {
 
         if (res.bottomQuerySetting) {
           if (!finalBottomQuerySetting.value) {
-            finalBottomQuerySetting.value = res.querySetting;
+            finalBottomQuerySetting.value = res.bottomQuerySetting;
           }
         }
       })
