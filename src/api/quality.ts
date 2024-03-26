@@ -2328,10 +2328,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -2919,8 +2919,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -5351,13 +5351,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s4?: string;
-  i?: string;
-  s1?: string;
-  iii?: string;
-  ii?: string;
-  s2?: string;
   s3?: string;
+  s1?: string;
+  s4?: string;
+  s2?: string;
+  ii?: string;
+  i?: string;
+  iii?: string;
 } | null;
 
 /** 标签模板 */

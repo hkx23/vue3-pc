@@ -1333,8 +1333,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface TimeSwitchProductVO {
@@ -2600,13 +2600,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  datetimeScheStr?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  workshopName?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2649,10 +2649,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3895,17 +3895,17 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  stateName?: string;
-  isState?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  datetimeScheStr?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
+  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  workshopName?: string;
 }
 
 /** 通用响应类 */
@@ -4016,16 +4016,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  stateName?: string;
-  isState?: boolean;
+  defectCodeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
+  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  defectCodeStr?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  workshopName?: string;
 }
 
 /** 通用响应类 */
@@ -4395,6 +4395,65 @@ export interface ResultListDefectCodeVO {
   message?: string;
   /** 响应数据 */
   data?: DefectCodeVO[] | null;
+}
+
+/** 在制品箱包关系表 */
+export type PkgRelation = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moScheId?: string;
+  /** 包装条码 */
+  pkgBarcode?: string;
+  /** 包装条码类型 */
+  pkgBarcodeType?: string;
+  /** 父级包装条码 */
+  parentPkgBarcode?: string;
+  /** 父级包装条码类型 */
+  parentPkgType?: string;
+  /**
+   * 包装序号
+   * @format int32
+   */
+  seq?: number;
+  workstationId?: string;
+  workcenterId?: string;
+  workshopId?: string;
+  /** 状态 */
+  status?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPkgRelation {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 在制品箱包关系表 */
+  data?: PkgRelation;
 }
 
 /** 箱包关系前端显示 */
@@ -5840,6 +5899,21 @@ export const api = {
      */
     pkgExist: (query: { barcode: string }) =>
       http.request<ResultBoolean['data']>(`/api/control/pkgRelation/pkgExist`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品箱包关系表
+     * @name GetPkgRelation
+     * @summary 获取pkg关系
+     * @request GET:/pkgRelation/getPkgRelation
+     * @secure
+     */
+    getPkgRelation: (query: { barcode: string }) =>
+      http.request<ResultPkgRelation['data']>(`/api/control/pkgRelation/getPkgRelation`, {
         method: 'GET',
         params: query,
       }),
