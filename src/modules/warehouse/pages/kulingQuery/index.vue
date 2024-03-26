@@ -152,7 +152,7 @@ onMounted(async () => {
 
 //* 表格数据
 const fetchTable = async () => {
-  setLoading(false);
+  setLoading(true);
   selectedReceiptRowKeys.value = [];
   tableDataReceipt.value = [];
   const data = await api.storageAgeQuery.getList({

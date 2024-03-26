@@ -16,7 +16,7 @@
         <template #locationId="{ param }">
           <bcmp-select-business
             v-model="param.locationId"
-            type="location"
+            type="locationByDistrict"
             :parent-id="param.districtId"
           ></bcmp-select-business>
         </template>
