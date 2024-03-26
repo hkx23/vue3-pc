@@ -2488,9 +2488,9 @@ export interface ReturnStockOutDtlVO {
   transferBillNo?: string;
   /** 交易事务单号 */
   transferBillNoStatus?: string;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
 }
 
 /** 退货单扫描 */
@@ -2577,9 +2577,9 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
 }
@@ -2649,9 +2649,9 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
 }
@@ -3299,20 +3299,20 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
   bfpickQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 待扫数量
    * @format double

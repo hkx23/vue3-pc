@@ -87,6 +87,7 @@
             <bcmp-select-business
               v-model="businessTabData.warehouseId"
               :parent-id="businessTabData.sourceTissueId"
+              :disabled="isEmpty(businessTabData.sourceTissueId)"
               type="warehouseAuthByOrg"
               :show-title="false"
             ></bcmp-select-business>
@@ -110,6 +111,7 @@
             <bcmp-select-business
               v-model="businessTabData.toWWarehouseId"
               :parent-id="businessTabData.toOid"
+              :disabled="isEmpty(businessTabData.toOid)"
               type="warehouseAuthByOrg"
               :show-title="false"
             ></bcmp-select-business>
@@ -124,6 +126,7 @@
   </t-dialog>
 </template>
 <script setup lang="ts">
+import { isEmpty } from 'lodash';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
@@ -350,7 +353,7 @@ const onSecondarySubmit = () => {
     return false;
   }
   if (businessTabData.value.warehouseId === '' && businessTabData.value.toWWarehouseId === '') {
-    MessagePlugin.warning('原仓库和目标仓库至少选择一个！');
+    MessagePlugin.warning('源组织仓库和目标组织仓库至少选择一个！');
     return false;
   }
   formRef.value.submit();
