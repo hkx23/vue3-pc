@@ -4069,6 +4069,8 @@ export interface BarcodeWipVO {
   workshopName?: string;
   isState?: boolean;
   stateName?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 

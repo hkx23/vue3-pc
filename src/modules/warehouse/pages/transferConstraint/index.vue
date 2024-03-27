@@ -348,11 +348,16 @@ const onInput = async (data: any) => {
 
 // eslint-disable-next-line consistent-return
 const onSecondarySubmit = () => {
+  console.log('这是原仓库：', businessTabData.value.warehouseId);
+  console.log('这是目标仓库：', businessTabData.value.toWWarehouseId);
   if (businessTabData.value.businessCategoryId === '') {
     MessagePlugin.warning('业务类型必填！');
     return false;
   }
-  if (businessTabData.value.warehouseId === '' && businessTabData.value.toWWarehouseId === '') {
+  if (
+    (businessTabData.value.warehouseId === '' || businessTabData.value.warehouseId === undefined) &&
+    (businessTabData.value.toWWarehouseId === '' || businessTabData.value.toWWarehouseId === undefined)
+  ) {
     MessagePlugin.warning('源组织仓库和目标组织仓库至少选择一个！');
     return false;
   }
@@ -397,7 +402,19 @@ const onDeleteBatches = async () => {
 };
 
 // 表单提交事件
+// eslint-disable-next-line consistent-return
 const onBusinessSubmit = async (context: { validateResult: boolean }) => {
+  if (businessTabData.value.businessCategoryId === '') {
+    MessagePlugin.warning('业务类型必填！');
+    return false;
+  }
+  if (
+    (businessTabData.value.warehouseId === '' || businessTabData.value.warehouseId === undefined) &&
+    (businessTabData.value.toWWarehouseId === '' || businessTabData.value.toWWarehouseId === undefined)
+  ) {
+    MessagePlugin.warning('源组织仓库和目标组织仓库至少选择一个！');
+    return false;
+  }
   if (context.validateResult === true) {
     if (submitFlag.value) {
       await onAddBusinessType();
