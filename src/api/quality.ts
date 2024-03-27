@@ -2720,6 +2720,7 @@ export interface IqcInspectStdFullSearch {
   mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
+  uom?: string;
   pickQty?: string;
   /** 严格度 */
   inspectionStringency?: string;
@@ -2739,6 +2740,10 @@ export interface IqcInspectSubmitDeliveryNoVO {
   /** 接收单号 */
   billNo?: string;
   billNoDtlId?: string;
+  /** 业务单据号 */
+  businessBillNo?: string;
+  /** 业务单据行号 */
+  businessBillLineNo?: string;
 }
 
 /** 检验测量值 */
@@ -2919,8 +2924,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -3595,6 +3600,7 @@ export interface IqcInspectSubmitVO {
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
+  uom?: string;
   mitemCategoryId?: string;
   mitemCategoryCode?: string;
   mitemCategoryName?: string;
@@ -5351,13 +5357,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  ii?: string;
   iii?: string;
-  s1?: string;
   s4?: string;
-  s3?: string;
+  ii?: string;
+  i?: string;
   s2?: string;
+  s1?: string;
+  s3?: string;
 } | null;
 
 /** 标签模板 */
@@ -6570,7 +6576,7 @@ export const api = {
      *
      * @tags 物料检验标准分配表
      * @name Modify
-     * @summary 新增标准物料关系
+     * @summary 编辑标准物料关系
      * @request POST:/iqcInspectStdMitem/modify
      * @secure
      */
@@ -7077,13 +7083,13 @@ export const api = {
      * No description
      *
      * @tags 物料检验头表
-     * @name GetMitemReceiveBillVo
+     * @name GetMitemReceiveByUnInspect
      * @summary 获取仓库接收单数据
-     * @request POST:/iqcInspect/getMitemReceiveBillVO
+     * @request POST:/iqcInspect/getMitemReceiveByUnInspect
      * @secure
      */
-    getMitemReceiveBillVo: (data: MitemReceiveBillSearch) =>
-      http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/quality/iqcInspect/getMitemReceiveBillVO`, {
+    getMitemReceiveByUnInspect: (data: MitemReceiveBillSearch) =>
+      http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/quality/iqcInspect/getMitemReceiveByUnInspect`, {
         method: 'POST',
         body: data as any,
       }),

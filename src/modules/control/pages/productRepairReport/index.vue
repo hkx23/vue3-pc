@@ -2,7 +2,7 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
+      <cmp-query ref="queryParams" :opts="opts" @submit="onInput"> </cmp-query>
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
@@ -32,6 +32,7 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage();
+const queryParams = ref();
 // 表格实例
 const tableRef = ref(null);
 
@@ -121,7 +122,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 
 // 初始渲染
 onMounted(async () => {
-  await onGetProductMaintenanceReport(); // 获取 表格 数据
+  queryParams.value.search(); // 获取 表格 数据
 });
 
 // 表格数据 字段

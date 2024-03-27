@@ -571,6 +571,66 @@ export type TransferDtlBarcodeVO = {
   transferDtlBarcodeSnList?: TransferDtlBarcodeSNVO[];
 } | null;
 
+/** 在制品条码表 */
+export interface BarcodeWip {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  moScheId?: string;
+  workcenterId?: string;
+  processId?: string;
+  workstationId?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  seq?: number;
+  /** 在制品数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /**
+   * 缺陷次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /**
+   * 是否完工
+   * @format int32
+   */
+  isCompleted?: number;
+  /** 状态 */
+  status?: string;
+  onhandId?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
+}
+
 /** 显示产品条码管理 */
 export type LabelVO = {
   id?: string;
@@ -596,7 +656,7 @@ export type LabelVO = {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 标签号 */
+  /** 条码 */
   labelNo?: string;
   /** 标签类别 */
   labelCategory?: string;
@@ -633,6 +693,8 @@ export type LabelVO = {
    * @format int32
    */
   isHold?: number;
+  /** 条码类型 */
+  labelType?: string;
   /** 送货单 */
   billNo?: string;
   /** 供应商编码 */
@@ -705,6 +767,8 @@ export type LabelVO = {
   newOnhandId?: string;
   /** 标签新状态 */
   newStatus?: string;
+  /** 包装条码下的所有SN条码 */
+  barcodeWipList?: BarcodeWip[];
 } | null;
 
 /** 通用响应类 */
@@ -809,6 +873,8 @@ export interface LabelQcHoldVO {
    * @format int32
    */
   isHold?: number;
+  /** 标签类型 */
+  labelType?: string;
   /** 工单号 */
   scheCode?: string;
   /** 产品编码 */
@@ -1220,6 +1286,7 @@ export interface TransferDtlVO {
   locationName?: string;
   toLocationCode?: string;
   toLocationName?: string;
+  uom?: string;
   uomName?: string;
   /** @format int32 */
   isBatchNo?: number;
@@ -1523,60 +1590,24 @@ export interface StorageAgeQueryVO {
   datetimeReceipted?: string;
   /** 库存量 */
   stockNum?: number;
-  /**
-   * 三年以上
-   * @format int32
-   */
+  /** 三年以上 */
   threeYears?: number;
-  /**
-   * 两至三年
-   * @format int32
-   */
+  /** 两至三年 */
   twoToThreeYears?: number;
-  /**
-   * 一到两年
-   * @format int32
-   */
+  /** 一到两年 */
   oneToTwoYears?: number;
-  /**
-   * 6-12个月
-   * @format int32
-   */
+  /** 6-12个月 */
   sixToTwelveMonths?: number;
-  /**
-   * 3-6个月
-   * @format int32
-   */
+  /** 3-6个月 */
   threeToSixMonths?: number;
-  /**
-   * 1-3个月
-   * @format int32
-   */
+  /** 1-3个月 */
   oneToThreeMonths?: number;
-  /**
-   * 30天以内
-   * @format int32
-   */
+  /** 30天以内 */
   thirtyDays?: number;
   /** 条码号 */
   barcodeNo?: string;
   /** 数量 */
   balanceQty?: number;
-  /**
-   * 标签的数量
-   * @format int32
-   */
-  labelNum?: number;
-  /**
-   * SN的数量
-   * @format int32
-   */
-  barcodeNum?: number;
-  /**
-   * 配送卡的数量
-   * @format int32
-   */
-  deliveryNum?: number;
   /** 标签的库存 */
   labelStock?: number;
   /** SN的库存 */
@@ -3070,6 +3101,8 @@ export interface Label {
    * @format int32
    */
   isHold?: number;
+  /** 标签类型 */
+  labelType?: string;
 }
 
 /** 工单发料提交模型 */
@@ -3244,11 +3277,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  tlpickQty?: number;
   bfpickQty?: number;
-  flpickQty?: number;
+  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4245,6 +4278,8 @@ export interface LabelSearch {
   billNo?: string;
   /** 是否仅显示未打印完成 */
   isFinishDisplay?: boolean;
+  /** 是否仅显示本人 */
+  isMySelf?: boolean;
   deliveryId?: string;
   deliveryDtlId?: string;
   labelId?: string;
@@ -4272,6 +4307,8 @@ export interface LabelSearch {
    * @format int32
    */
   createNum?: number;
+  /** @format int32 */
+  thisNumber?: number;
   /**
    * 拆分数量
    * @format int32
@@ -4289,6 +4326,11 @@ export interface LabelSearch {
   ids?: string[];
   /** 显示产品条码管理 */
   deliveryLabel?: LabelVO;
+  /**
+   * 根据送货单生成的标签数据
+   * @format int32
+   */
+  minPkgQty?: number;
 }
 
 /** 响应数据 */
@@ -5370,8 +5412,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -7194,20 +7236,6 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
-     * @name GetWarehouse
-     * @summary 获取有权限的仓库（下拉）
-     * @request GET:/stockCheckBill/getWarehouse
-     * @secure
-     */
-    getWarehouse: () =>
-      http.request<ResultListWarehouse['data']>(`/api/warehouse/stockCheckBill/getWarehouse`, {
-        method: 'GET',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 盘点单据表
      * @name GetStockCheckByUser
      * @summary 根据用户获取盘点单信息
      * @request GET:/stockCheckBill/getStockCheckByUser
@@ -8310,6 +8338,20 @@ export const api = {
      */
     modifyLocation: (data: Location) =>
       http.request<ResultObject['data']>(`/api/warehouse/location/modifyLocation`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货位
+     * @name ListByDistrictId
+     * @request POST:/location/listByDistrictId
+     * @secure
+     */
+    listByDistrictId: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/location/listByDistrictId`, {
         method: 'POST',
         body: data as any,
       }),

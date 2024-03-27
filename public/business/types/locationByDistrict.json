@@ -1,0 +1,38 @@
+{
+  "title": "货位：",
+  "placeholder": "请选择货位",
+  "url": "/api/warehouse/location/listByDistrictId",
+  "parentId":"",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "货位代码",
+      "key": "locationCode",
+      "align": "left"
+    },
+    {
+      "title": "货位名称",
+      "key": "locationName",
+      "align": "left"
+    },
+    {
+      "title": "货位描述",
+      "key": "locationDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "locationName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "locationCode",
+    "nameField": "locationName",
+    "descField": "locationDesc"
+  },
+  "name": "货位",
+  "componentType": "list"
+}

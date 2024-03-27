@@ -410,13 +410,6 @@ const inspectColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('mitemIncomingInspection.检验时间'), width: 200, colKey: 'timeCreate' },
   { title: t('mitemIncomingInspection.检验标准'), width: 160, colKey: 'inspectStdName' },
   { title: t('mitemIncomingInspection.停留时长'), width: 160, colKey: 'waitTime' },
-  {
-    title: t('mitemIncomingInspection.操作'),
-    align: 'left',
-    fixed: 'right',
-    width: 160,
-    colKey: 'op',
-  },
 ];
 
 const getIqcInspectionStatus = async () => {
@@ -514,7 +507,7 @@ const getInspectGroupByUser = async () => {
 };
 const fetchTable = async () => {
   try {
-    const list = await apiQuality.iqcInspect.getMitemReceiveBillVo({
+    const list = await apiQuality.iqcInspect.getMitemReceiveByUnInspect({
       pageNum: pageTab1.value.page,
       pageSize: pageTab1.value.rows,
       prefix: 'PA',

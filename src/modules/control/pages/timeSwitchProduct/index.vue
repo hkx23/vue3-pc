@@ -18,21 +18,37 @@
         </template>
         <template #preValue="{ param }">
           <bcmp-select-business
+            v-if="param.valueCategory === 'mitem'"
             v-model="param.preValueId"
-            :disabled="!param.valueCategory"
             :label="t('timeSwitchProduct.preValue')"
             :placeholder="t('common.placeholder.select') + t('timeSwitchProduct.preValue')"
-            :type="param.valueCategory === 'mitem' ? 'mitem' : 'mitemCategory'"
+            type="mitem"
+            :clearable="true"
+          ></bcmp-select-business>
+          <bcmp-select-business
+            v-if="param.valueCategory === 'mitem_category'"
+            v-model="param.preValueId"
+            :label="t('timeSwitchProduct.preValue')"
+            :placeholder="t('common.placeholder.select') + t('timeSwitchProduct.preValue')"
+            type="mitemCategory"
             :clearable="true"
           ></bcmp-select-business>
         </template>
         <template #backValue="{ param }">
           <bcmp-select-business
+            v-if="param.valueCategory === 'mitem'"
             v-model="param.backValueId"
-            :disabled="!param.valueCategory"
             :label="t('timeSwitchProduct.backValue')"
             :placeholder="t('common.placeholder.select') + t('timeSwitchProduct.backValue')"
-            :type="param.valueCategory === 'mitem' ? 'mitem' : 'mitemCategory'"
+            type="mitem"
+            :clearable="true"
+          ></bcmp-select-business>
+          <bcmp-select-business
+            v-if="param.valueCategory === 'mitem_category'"
+            v-model="param.backValueId"
+            :label="t('timeSwitchProduct.backValue')"
+            :placeholder="t('common.placeholder.select') + t('timeSwitchProduct.backValue')"
+            type="mitemCategory"
             :clearable="true"
           ></bcmp-select-business>
         </template>

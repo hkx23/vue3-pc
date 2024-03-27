@@ -161,7 +161,7 @@
                   threshold: 10,
                   type: 'virtual',
                 }"
-                @click="treeClick"
+                @click="pasteToCursor"
               />
             </t-space>
           </cmp-card>
@@ -169,7 +169,7 @@
             <t-form-item>
               <h4>编码规则</h4>
             </t-form-item>
-            <t-form-item name="ruleExpression">
+            <t-form-item ref="textareaRef" name="ruleExpression">
               <t-textarea
                 v-model="ruleTabData.ruleExpression"
                 placeholder="请添加规则"
@@ -248,6 +248,8 @@ const filterText = ref(); // 树组件搜索框绑定的文本
 const treeRef = ref(); // 树组件实例
 const treeActiveKey = ref([]); // 树组件点击变化数组
 const currActiveData = ref({}); // ????
+
+const textareaRef = ref(null);
 // 编辑回填 ID
 const incidentID = ref('');
 // $处理组 表格数据
@@ -327,18 +329,43 @@ watch(treeActiveKey, () => {
 });
 // #  获取 树状结构 数据
 const ongetRuleTreeSegment = async () => {
-  const res = await api.barcodeRuleInMitem.getRuleSegment();
+  const res = await api.barcodeSegment.getRuleSegment();
   ruleTreeDataList.list = res.list;
 };
+
+// 粘贴字符串到鼠标光标位置
+const pasteToCursor = ({ node }) => {
+  if (node['__tdesign_tree-node__'].parent) {
+    // 获取要拼接的字符串
+    const { segmentFormat } = node['__tdesign_tree-node__'].data;
+
+    const document = textareaRef.value.$el.querySelector('textarea');
+    const cursorIndex = document.selectionStart;
+    if (cursorIndex === undefined) return;
+
+    const leftValue = cursorIndex !== 0 ? textareaRef.value.value.substring(0, cursorIndex) : ''; // 获取光标位置左边的文本
+    const rightValue = cursorIndex !== 0 ? textareaRef.value.value.substring(cursorIndex) : ''; // 获取光标位置右边的文本
+    // 将字符串粘贴到光标位置
+    textareaRef.value.value = leftValue + segmentFormat + rightValue;
+    ruleTabData.value.ruleExpression = textareaRef.value.value;
+
+    // 更新光标位置
+    textareaRef.value.setSelectionRange(cursorIndex + segmentFormat.length, cursorIndex + segmentFormat.length);
+    textareaRef.value.focus(); // 使输入框获取焦点
+  }
+};
+
 // #树节点 点击事件
-const treeClick = ({ node }) => {
+/* const treeClick = ({ node }) => {
   if (node['__tdesign_tree-node__'].parent) {
     // 获取要拼接的字符串
     const { segmentFormat } = node['__tdesign_tree-node__'].data;
     // 将其拼接到 ruleTabData.value.ruleExpression 中
+
+    // console.log('这是光标的位置：', cursorIndex);
     ruleTabData.value.ruleExpression += segmentFormat;
   }
-};
+}; */
 // 树组件数
 const ruleTreeDataList = reactive({ list: [] });
 // #### 条码规则 表头
@@ -450,7 +477,7 @@ const opts = computed(() => {
 // #上侧搜索提交事件
 const onSelsectInput = async (data: any) => {
   pageUI.value.page = 1;
-  const res = await api.barcodeRuleInMitem.getBarcodeRuleList({
+  const res = await api.barcodeRule.getBarcodeRuleList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     ruleKeyword: data.ruleNameCode, // 规则模糊查询关键词
@@ -463,7 +490,7 @@ const onSelsectInput = async (data: any) => {
 
 // #获取 条码规则 表格数据
 const onBarcodeRuleTabData = async () => {
-  const res = await api.barcodeRuleInMitem.getBarcodeRuleList({
+  const res = await api.barcodeRule.getBarcodeRuleList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
   });
@@ -487,7 +514,7 @@ const onMaterialTabData = async () => {
 // # Switch 状态获取
 const onSwitchChange = async (row: any, value: any) => {
   const isValue = value ? 1 : 0;
-  await api.barcodeRuleInMitem.modifyBarcodeRule({
+  await api.barcodeRule.modifyBarcodeRule({
     state: isValue,
     ruleName: row.ruleName,
     barcodeType: row.barcodeType,
@@ -522,7 +549,7 @@ const submitClick = () => {
 };
 // #  新增 条码规则
 const onAddrule = async () => {
-  await api.barcodeRuleInMitem.addBarcodeRule(ruleTabData.value);
+  await api.barcodeRule.addBarcodeRule(ruleTabData.value);
   await onBarcodeRuleTabData();
   MessagePlugin.success('新增成功');
 };
@@ -545,7 +572,7 @@ const onEditRow = (row: any) => {
 
 // # 编码规则 编辑 请求
 const onEditrule = async () => {
-  await api.barcodeRuleInMitem.modifyBarcodeRule({ ...ruleTabData.value, id: incidentID.value });
+  await api.barcodeRule.modifyBarcodeRule({ ...ruleTabData.value, id: incidentID.value });
   await onBarcodeRuleTabData();
   MessagePlugin.success('编辑成功');
 };
@@ -582,7 +609,7 @@ const onRulePreview = async () => {
     MessagePlugin.warning('请选择规则类型！');
     return;
   }
-  const res = await api.barcodeRuleInMitem.previewBarcode({
+  const res = await api.barcodeRule.previewBarcode({
     expression: ruleTabData.value.ruleExpression,
     barcodeType: ruleTabData.value.barcodeType,
   });

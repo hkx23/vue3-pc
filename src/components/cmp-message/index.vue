@@ -39,7 +39,9 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { ClearIcon, FileCopyIcon } from 'tdesign-icons-vue-next';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, nextTick, ref } from 'vue';
+import useClipboard from 'vue-clipboard3';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { useLang } from './lang';
@@ -84,12 +86,14 @@ const msgList = computed({
     emit('update:modelValue', val);
   },
 });
-const copy = () => {
+const copy = async () => {
   let msg = '';
   msgList.value.forEach((val) => {
     msg += `${val.content}-${val.time}\n`;
   });
-  navigator.clipboard.writeText(msg);
+  const { toClipboard } = useClipboard();
+  await toClipboard(msg);
+  MessagePlugin.success('复制成功');
 };
 const clear = () => {
   msgList.value = [];

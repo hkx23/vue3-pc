@@ -87,6 +87,7 @@
             <bcmp-select-business
               v-model="businessTabData.warehouseId"
               :parent-id="businessTabData.sourceTissueId"
+              :disabled="isEmpty(businessTabData.sourceTissueId)"
               type="warehouseAuthByOrg"
               :show-title="false"
             ></bcmp-select-business>
@@ -110,6 +111,7 @@
             <bcmp-select-business
               v-model="businessTabData.toWWarehouseId"
               :parent-id="businessTabData.toOid"
+              :disabled="isEmpty(businessTabData.toOid)"
               type="warehouseAuthByOrg"
               :show-title="false"
             ></bcmp-select-business>
@@ -124,6 +126,7 @@
   </t-dialog>
 </template>
 <script setup lang="ts">
+import { isEmpty } from 'lodash';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
@@ -345,12 +348,17 @@ const onInput = async (data: any) => {
 
 // eslint-disable-next-line consistent-return
 const onSecondarySubmit = () => {
+  console.log('这是原仓库：', businessTabData.value.warehouseId);
+  console.log('这是目标仓库：', businessTabData.value.toWWarehouseId);
   if (businessTabData.value.businessCategoryId === '') {
     MessagePlugin.warning('业务类型必填！');
     return false;
   }
-  if (businessTabData.value.warehouseId === '' && businessTabData.value.toWWarehouseId === '') {
-    MessagePlugin.warning('原仓库和目标仓库至少选择一个！');
+  if (
+    (businessTabData.value.warehouseId === '' || businessTabData.value.warehouseId === undefined) &&
+    (businessTabData.value.toWWarehouseId === '' || businessTabData.value.toWWarehouseId === undefined)
+  ) {
+    MessagePlugin.warning('源组织仓库和目标组织仓库至少选择一个！');
     return false;
   }
   formRef.value.submit();
@@ -394,7 +402,19 @@ const onDeleteBatches = async () => {
 };
 
 // 表单提交事件
+// eslint-disable-next-line consistent-return
 const onBusinessSubmit = async (context: { validateResult: boolean }) => {
+  if (businessTabData.value.businessCategoryId === '') {
+    MessagePlugin.warning('业务类型必填！');
+    return false;
+  }
+  if (
+    (businessTabData.value.warehouseId === '' || businessTabData.value.warehouseId === undefined) &&
+    (businessTabData.value.toWWarehouseId === '' || businessTabData.value.toWWarehouseId === undefined)
+  ) {
+    MessagePlugin.warning('源组织仓库和目标组织仓库至少选择一个！');
+    return false;
+  }
   if (context.validateResult === true) {
     if (submitFlag.value) {
       await onAddBusinessType();

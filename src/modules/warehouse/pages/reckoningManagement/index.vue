@@ -91,6 +91,7 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
@@ -143,7 +144,8 @@ const opts = computed(() => {
     timeCreate: {
       label: '创建时间',
       comp: 't-date-range-picker',
-      defaultVal: [],
+      event: 'daterangetime',
+      defaultVal: [dayjs(), dayjs()],
       bind: {
         enableTimePicker: false,
         format: 'YYYY-MM-DD',
@@ -237,7 +239,7 @@ watch(propsdtlId, (newBillId) => {
 
 //* 表格数据 2
 const fetchTables = async (billId) => {
-  setLoading(false);
+  setLoading(true);
   detailsPageUI.value.page = 1; // 子表默认为第一页数据
   const data = await api.stockCheckBill.getDtlList({
     pageNum: detailsPageUI.value.page,
@@ -288,18 +290,19 @@ const lastQueryParams = ref({});
 const onInput = async (data: any) => {
   firstPageUI.value.page = 1;
   setLoading(true);
-  const { billNo, status, warehouseId, timeCreate } = data;
+  const { billNo, status, warehouseId, timeCreate = [] } = data;
 
   // 保存当前的查询条件
   lastQueryParams.value = { billNo, status, warehouseId, timeCreate };
+  const [startDate, endDate] = timeCreate;
 
   firstPageUI.value.page = 1; // 条件过滤时必须赋值为1
   if (!data.value) {
     const data = await api.stockCheckBill.getPdList({
       pageNum: firstPageUI.value.page,
       pageSize: firstPageUI.value.rows,
-      dateStart: timeCreate[0],
-      dateEnd: timeCreate[1],
+      dateStart: startDate,
+      dateEnd: endDate,
       warehouseId,
       billNo,
       status,
