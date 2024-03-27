@@ -31,10 +31,13 @@
             <!-- :disabled="!(selectRowKeys?.length == 1)" -->
             <cmp-print-button
               template-code="LL"
+              :show-icon="false"
               :disabled="selectRowKeys?.length == 0"
               :data="printData"
               @before-print="onPrintClick"
-            />
+            >
+              {{ t('common.button.print') }}</cmp-print-button
+            >
           </template>
           <template #title> {{ t('materialRequisition.tableSubTilte') }} </template>
         </cmp-table>
