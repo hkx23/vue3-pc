@@ -39,5 +39,5 @@
     "descField": "expression"
   },
   "name": "出勤模式",
-  "componentType": "list"
+  "componentType": "table"
 }

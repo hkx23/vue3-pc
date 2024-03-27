@@ -56,9 +56,9 @@
             v-model="formData.attendanceModeIdsStr"
             label=""
             type="attendanceModeTable"
-            style="width: 580px"
+            style="width: 582px"
             :clearable="true"
-            :multiple="true"
+            :is-multiple="true"
           ></bcmp-select-business>
         </t-form-item>
       </t-col>
