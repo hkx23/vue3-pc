@@ -556,6 +556,7 @@ const onAddrule = async () => {
 
 // #编码规则 编辑 按钮点击
 const onEditRow = (row: any) => {
+  textareaRef.value.value = row.ruleExpression;
   previewResults.value = '';
   ruleTabData.value.ruleCode = row.ruleCode;
   ruleTabData.value.ruleName = row.ruleName;
