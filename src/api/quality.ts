@@ -2924,8 +2924,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -3506,10 +3506,10 @@ export interface IqcInspectBillFullVO {
   /** 供应商名称 */
   supplierName?: string;
   /** 检验数量 */
-  inspectQty?: number;
+  pickQty?: number;
   /** 检验严格度 */
-  inspectStringency?: string;
-  inspectStringencyName?: string;
+  inspectionStringency?: string;
+  inspectionStringencyName?: string;
   /** 缺陷等级 */
   defectCategory?: string;
   defectCategoryName?: string;
@@ -3608,6 +3608,7 @@ export interface IqcInspectSubmitVO {
   supplierId?: string;
   supplierCode?: string;
   supplierName?: string;
+  /** 严格度 */
   inspectionStringency?: string;
   /** 一键合格 */
   directInspectOk?: boolean;
@@ -3911,7 +3912,6 @@ export interface MitemReceiveBillSearch {
 
 /** 交易单身表 */
 export interface MitemReceiveBillVO {
-  id?: string;
   /**
    * 创建时间
    * @format date-time
@@ -3999,6 +3999,7 @@ export interface MitemReceiveBillVO {
   inspectionStringency?: string;
   /** 检验严格度 */
   inspectionStringencyName?: string;
+  id?: string;
 }
 
 /** 响应数据 */
@@ -5161,10 +5162,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -5357,13 +5358,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
   ii?: string;
-  s1?: string;
   s3?: string;
+  s1?: string;
   s4?: string;
-  s2?: string;
+  i?: string;
   iii?: string;
+  s2?: string;
 } | null;
 
 /** 标签模板 */

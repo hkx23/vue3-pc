@@ -523,6 +523,15 @@ export interface WorkCalenarSearch {
   workshopId?: string;
   /** 日期 */
   date?: string;
+  weekRange?: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[];
+  weekRangeInt?: number[];
+  /** @format date-time */
+  dateRageStart?: string;
+  /** @format date-time */
+  dateRageEnd?: string;
+  attendanceModeIds?: string[];
+  workCenterIds?: string[];
+  workshopIds?: string[];
 }
 
 /** 响应数据 */
@@ -2646,13 +2655,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   workshopId?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2829,8 +2838,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3943,15 +3952,15 @@ export interface BarcodeWipCollectVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   workshopId?: string;
-  stateName?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4064,14 +4073,14 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   workshopId?: string;
-  stateName?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  defectCodeStr?: string;
+  datetimeScheStr?: string;
   isState?: boolean;
+  stateName?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -4426,8 +4435,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5052,6 +5061,21 @@ export const api = {
      */
     getWcInfo: (data: WorkCalenarSearch) =>
       http.request<ResultPagingDataWorkCalenarVO['data']>(`/api/control/workCalenar/getWcInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作日历表
+     * @name AddWorkCalenar
+     * @summary 日历维护
+     * @request POST:/workCalenar/addWorkCalenar
+     * @secure
+     */
+    addWorkCalenar: (data: WorkCalenarSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workCalenar/addWorkCalenar`, {
         method: 'POST',
         body: data as any,
       }),

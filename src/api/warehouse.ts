@@ -3281,20 +3281,20 @@ export interface MoIssuanceDtlVO {
    */
   scanQty?: number;
   /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
   bfpickQty?: number;
   tlpickQty?: number;
-  flpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
+  flpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -5456,8 +5456,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -8139,6 +8139,21 @@ export const api = {
      */
     scanMitemLabel: (data: MaterialRequisitionExcuteDTO) =>
       http.request<ResultString['data']>(`/api/warehouse/materialRequisitionExcute/scanMitemLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料执行
+     * @name DeleteTransBarcodeByIds
+     * @summary 根据单据号和标签信息，删除标签
+     * @request POST:/materialRequisitionExcute/deleteBarcodeByIds
+     * @secure
+     */
+    deleteTransBarcodeByIds: (data: TransferHeadSearch) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/materialRequisitionExcute/deleteBarcodeByIds`, {
         method: 'POST',
         body: data as any,
       }),
