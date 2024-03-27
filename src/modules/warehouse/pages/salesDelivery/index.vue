@@ -36,7 +36,9 @@
               :disabled="selectRowKeys?.length == 0"
               :data="printData"
               @before-print="onPrintClick"
-            />
+            >
+              {{ t('common.button.print') }}
+            </cmp-print-button>
           </template>
         </cmp-table>
       </cmp-container>

@@ -207,8 +207,8 @@ const mitemInfoList = reactive({ list: [], total: 0 });
 const tagValue = ref(0);
 // 查询组件值
 const datePlanRangeDefault = ref([
-  dayjs().format('YYYY-MM-DD 00:00:00'),
-  dayjs().subtract(-31, 'day').format('YYYY-MM-DD 23:59:59'),
+  dayjs().subtract(31, 'day').format('YYYY-MM-DD 00:00:00'),
+  dayjs().add(1, 'day').format('YYYY-MM-DD 23:59:59'),
 ]); // 初始化日期控件
 const optsMoValue = ref({ datePlanRange: datePlanRangeDefault.value }) as any;
 const optsProductValue = ref({ datePlanRange: datePlanRangeDefault.value }) as any;

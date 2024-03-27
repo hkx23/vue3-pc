@@ -544,7 +544,6 @@ export type TransferDtlBarcodeVO = {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 单据号 */
   billNo?: string;
   transferDtlId?: string;
   mitemId?: string;
@@ -568,6 +567,12 @@ export type TransferDtlBarcodeVO = {
   mitemName?: string;
   mitemDesc?: string;
   uomName?: string;
+  sourceBillLineNo?: string;
+  sourceBillNo?: string;
+  onhandId?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
   transferDtlBarcodeSnList?: TransferDtlBarcodeSNVO[];
 } | null;
 
@@ -693,10 +698,10 @@ export type LabelVO = {
    * @format int32
    */
   isHold?: number;
-  /** 送货单 */
-  billNo?: string;
   /** 条码类型 */
   labelType?: string;
+  /** 送货单 */
+  billNo?: string;
   /** 供应商编码 */
   supplierCode?: string;
   /** 供应商名称 */
@@ -767,6 +772,9 @@ export type LabelVO = {
   newOnhandId?: string;
   /** 标签新状态 */
   newStatus?: string;
+  /** 标签类型-用于交易事务条码表 */
+  barcodeType?: string;
+  transferDtlBarcodeId?: string;
   /** 包装条码下的所有SN条码 */
   barcodeWipList?: BarcodeWip[];
 } | null;
@@ -873,6 +881,8 @@ export interface LabelQcHoldVO {
    * @format int32
    */
   isHold?: number;
+  /** 标签类型 */
+  labelType?: string;
   /** 工单号 */
   scheCode?: string;
   /** 产品编码 */
@@ -1284,6 +1294,7 @@ export interface TransferDtlVO {
   locationName?: string;
   toLocationCode?: string;
   toLocationName?: string;
+  uom?: string;
   uomName?: string;
   /** @format int32 */
   isBatchNo?: number;
@@ -1587,60 +1598,24 @@ export interface StorageAgeQueryVO {
   datetimeReceipted?: string;
   /** 库存量 */
   stockNum?: number;
-  /**
-   * 三年以上
-   * @format int32
-   */
+  /** 三年以上 */
   threeYears?: number;
-  /**
-   * 两至三年
-   * @format int32
-   */
+  /** 两至三年 */
   twoToThreeYears?: number;
-  /**
-   * 一到两年
-   * @format int32
-   */
+  /** 一到两年 */
   oneToTwoYears?: number;
-  /**
-   * 6-12个月
-   * @format int32
-   */
+  /** 6-12个月 */
   sixToTwelveMonths?: number;
-  /**
-   * 3-6个月
-   * @format int32
-   */
+  /** 3-6个月 */
   threeToSixMonths?: number;
-  /**
-   * 1-3个月
-   * @format int32
-   */
+  /** 1-3个月 */
   oneToThreeMonths?: number;
-  /**
-   * 30天以内
-   * @format int32
-   */
+  /** 30天以内 */
   thirtyDays?: number;
   /** 条码号 */
   barcodeNo?: string;
   /** 数量 */
   balanceQty?: number;
-  /**
-   * 标签的数量
-   * @format int32
-   */
-  labelNum?: number;
-  /**
-   * SN的数量
-   * @format int32
-   */
-  barcodeNum?: number;
-  /**
-   * 配送卡的数量
-   * @format int32
-   */
-  deliveryNum?: number;
   /** 标签的库存 */
   labelStock?: number;
   /** SN的库存 */
@@ -3134,6 +3109,8 @@ export interface Label {
    * @format int32
    */
   isHold?: number;
+  /** 标签类型 */
+  labelType?: string;
 }
 
 /** 工单发料提交模型 */
@@ -3299,16 +3276,6 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  bfpickQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
@@ -3318,6 +3285,16 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  tlpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -3524,10 +3501,18 @@ export interface ResultLocationVO {
 /** 领料执行提交模型 */
 export interface MaterialRequisitionExcuteDTO {
   /** 领料单号 */
+  sourceBillNo?: string;
+  /** 领料执行单号 */
   billNo?: string;
   toWarehouseId?: string;
-  /** 提交的模型-明细信息 */
+  /** 提交的模型-明细信息-仅需要存在数量的明细项，并且启用批次的明细 */
+  submitUseBatchList?: MaterialRequisitionExcuteDtlVO[];
+  /** 提交的模型-明细信息-仅需要存在数量的明细项-包括条码管理和批次管理的明细 */
   submitList?: MaterialRequisitionExcuteDtlVO[];
+  /** 提交的模型-明细信息 */
+  submitTotalList?: MaterialRequisitionExcuteDtlVO[];
+  /** 条码类型 */
+  labelCategory?: string;
   /** 条码信息 */
   labelNo?: string;
   /**
@@ -3535,9 +3520,15 @@ export interface MaterialRequisitionExcuteDTO {
    * @format int32
    */
   isFifo?: number;
+  /** 重新加载数据库最新的的单据信息 */
+  dtlInfo?: MaterialRequisitionExcuteDtlVO;
+  /** 扫码自动匹配成功的明细行集合 */
+  matchDtlList?: MaterialRequisitionExcuteDtlVO[];
+  /** 重新加载数据库最新的的单据信息 */
+  latestDtlList?: MaterialRequisitionExcuteDtlVO[];
 }
 
-/** 提交的模型-明细信息 */
+/** 重新加载数据库最新的的单据信息 */
 export interface MaterialRequisitionExcuteDtlVO {
   id?: string;
   /**
@@ -3659,15 +3650,19 @@ export interface MaterialRequisitionExcuteDtlVO {
   datetimeSche?: string;
   /** 库存可用量 */
   handQty?: number;
-  /** 交易单标签表 */
+  /** 临时存储已领用量 */
+  alreadyPickQty?: number;
+  /** 交易单标签表-查询时加载 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  /** 交易单标签表-扫码时存储-用于新增 */
+  addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
+   * 已扫描数量和已领用量
    * @format double
    */
   scanQty?: number;
   /**
-   * 待扫数量
+   * 待扫数量和待领用量
    * @format double
    */
   waitingScanQty?: number;
@@ -3691,6 +3686,8 @@ export interface GetMaterialsDtlDTO {
 
 /** 领料制单提交模型 */
 export interface MaterialRequisitionDTO {
+  /** 完成的单据id集合 */
+  completeIds?: string[];
   /** 作废的单据id集合 */
   cancelledIds?: string[];
   /** 新增界面-获取明细 */
@@ -4279,6 +4276,20 @@ export interface ResultMFTVO {
   data?: MFTVO;
 }
 
+/** 产品标签拆分模型 */
+export interface GroupLabelVO {
+  /** 标签号 */
+  labelNo?: string;
+  labelId?: string;
+  printTempId?: string;
+  /** 原因 */
+  reason?: string;
+  /** 状态 */
+  status?: string;
+  /** 拆标明细信息 */
+  labelVOList?: LabelVO[];
+}
+
 export interface LabelSearch {
   barcodeWipId?: string;
   /**
@@ -4309,6 +4320,8 @@ export interface LabelSearch {
   billNo?: string;
   /** 是否仅显示未打印完成 */
   isFinishDisplay?: boolean;
+  /** 是否仅显示本人 */
+  isMySelf?: boolean;
   deliveryId?: string;
   deliveryDtlId?: string;
   labelId?: string;
@@ -4336,6 +4349,8 @@ export interface LabelSearch {
    * @format int32
    */
   createNum?: number;
+  /** @format int32 */
+  thisNumber?: number;
   /**
    * 拆分数量
    * @format int32
@@ -4353,6 +4368,13 @@ export interface LabelSearch {
   ids?: string[];
   /** 显示产品条码管理 */
   deliveryLabel?: LabelVO;
+  /**
+   * 根据送货单生成的标签数据
+   * @format int32
+   */
+  minPkgQty?: number;
+  /** 标签拆分模型-一个标签拆分多个 */
+  groupLabelVOS?: GroupLabelVO[];
 }
 
 /** 响应数据 */
@@ -5434,8 +5456,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -6091,7 +6113,7 @@ export interface ResultMaterialRequisitionExcuteDtlVO {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 提交的模型-明细信息 */
+  /** 重新加载数据库最新的的单据信息 */
   data?: MaterialRequisitionExcuteDtlVO;
 }
 
@@ -8125,6 +8147,24 @@ export const api = {
      * No description
      *
      * @tags 领料执行
+     * @name GetTotalBarcodesBySourceLineNo
+     * @summary 根据领料单明细行获取所有领料执行单的条码
+     * @request GET:/materialRequisitionExcute/getTotalBarcodesBySourceLineNo
+     * @secure
+     */
+    getTotalBarcodesBySourceLineNo: (query: { sourceBillNo: string; sourceLineNo: string }) =>
+      http.request<ResultListTransferDtlBarcodeVO['data']>(
+        `/api/warehouse/materialRequisitionExcute/getTotalBarcodesBySourceLineNo`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 领料执行
      * @name GetMaterialRequisitionList
      * @summary 领料执行-获取领料制单列表
      * @request GET:/materialRequisitionExcute/getMaterialRequisitionList
@@ -8193,6 +8233,21 @@ export const api = {
      */
     saveData: (data: MaterialRequisitionDTO) =>
       http.request<ResultObject['data']>(`/api/warehouse/materialRequisition/saveData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料制单
+     * @name MaterialRequisitionComplete
+     * @summary 主界面-领料单作废
+     * @request POST:/materialRequisition/materialRequisitionComplete
+     * @secure
+     */
+    materialRequisitionComplete: (data: MaterialRequisitionDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/materialRequisition/materialRequisitionComplete`, {
         method: 'POST',
         body: data as any,
       }),

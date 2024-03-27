@@ -22,16 +22,22 @@
             <t-button theme="primary" @click="onClickAddMaterialRule">
               {{ t('common.button.add') }}
             </t-button>
+            <t-button theme="default" :disabled="selectRowKeys?.length == 0" @click="onBatchCompleteClick">
+              {{ t('materialRequisition.complete') }}
+            </t-button>
             <t-button theme="default" :disabled="selectRowKeys?.length == 0" @click="onBatchCancelledClick">
               {{ t('materialRequisition.cancel') }}
             </t-button>
             <!-- :disabled="!(selectRowKeys?.length == 1)" -->
             <cmp-print-button
               template-code="LL"
+              :show-icon="false"
               :disabled="selectRowKeys?.length == 0"
               :data="printData"
               @before-print="onPrintClick"
-            />
+            >
+              {{ t('common.button.print') }}</cmp-print-button
+            >
           </template>
           <template #title> {{ t('materialRequisition.tableSubTilte') }} </template>
         </cmp-table>
@@ -92,8 +98,8 @@ const { loading: loadingMaterialDtl, setLoading: setLoadingMaterialDtl } = useLo
 const isAdd = ref(true);
 
 const datePlanRangeDefault = ref([
-  dayjs().format('YYYY-MM-DD 00:00:00'),
-  dayjs().subtract(-31, 'day').format('YYYY-MM-DD 23:59:59'),
+  dayjs().subtract(31, 'day').format('YYYY-MM-DD 00:00:00'),
+  dayjs().add(1, 'day').format('YYYY-MM-DD 23:59:59'),
 ]);
 // 查询组件值
 const optsValue = ref({ datePlanRange: datePlanRangeDefault.value }) as any;
@@ -153,7 +159,8 @@ const opts = computed(() => {
 const statusOption = ref([
   { label: '全选', value: '', checkAll: true },
   { value: 'CREATED', label: '已创建' },
-  { value: 'TRANSFERRED', label: '已完成' },
+  { value: 'PICKING', label: '拣料中' },
+  { value: 'RECEIPTED', label: '已完成' },
   { value: 'CANCELED', label: '已取消' },
 ]);
 
@@ -246,6 +253,34 @@ const fetchTable = async () => {
     setLoading(false);
     fetchMaterialDtlTable();
   }
+};
+
+// 批量完成
+const onBatchCompleteClick = async (row: any) => {
+  const ids = [];
+  selectRowKeys.value.forEach((element) => {
+    ids.push(element);
+  });
+  const confirmDia = DialogPlugin({
+    header: t('materialRequisition.complete'),
+    body: t('materialRequisition.confirmComplete'),
+    theme: 'warning',
+    confirmBtn: t('common.button.confirm'),
+    cancelBtn: t('common.button.cancel'),
+    onConfirm: async () => {
+      console.log(row);
+      const deleteModel: MaterialRequisitionDTO = {
+        cancelledIds: ids,
+      };
+      await apiWarehouse.materialRequisition.materialRequisitionCanceled(deleteModel);
+      fetchTable();
+      confirmDia.hide();
+      MessagePlugin.success(t('materialRequisition.deleteSuccess'));
+    },
+    onClose: () => {
+      confirmDia.hide();
+    },
+  });
 };
 
 // 批量作废

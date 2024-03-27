@@ -2326,12 +2326,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
+  /** 检验结果名称 */
+  inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
-  /** 检验结果名称 */
-  inspectResultName?: string;
 }
 
 /** 通用响应类 */
@@ -2720,6 +2720,7 @@ export interface IqcInspectStdFullSearch {
   mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
+  uom?: string;
   pickQty?: string;
   /** 严格度 */
   inspectionStringency?: string;
@@ -2739,6 +2740,10 @@ export interface IqcInspectSubmitDeliveryNoVO {
   /** 接收单号 */
   billNo?: string;
   billNoDtlId?: string;
+  /** 业务单据号 */
+  businessBillNo?: string;
+  /** 业务单据行号 */
+  businessBillLineNo?: string;
 }
 
 /** 检验测量值 */
@@ -2883,10 +2888,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 是否CTQ */
-  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2919,8 +2924,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3501,10 +3506,10 @@ export interface IqcInspectBillFullVO {
   /** 供应商名称 */
   supplierName?: string;
   /** 检验数量 */
-  inspectQty?: number;
+  pickQty?: number;
   /** 检验严格度 */
-  inspectStringency?: string;
-  inspectStringencyName?: string;
+  inspectionStringency?: string;
+  inspectionStringencyName?: string;
   /** 缺陷等级 */
   defectCategory?: string;
   defectCategoryName?: string;
@@ -3536,10 +3541,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 停留时长 */
-  waitTime?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
+  /** 停留时长 */
+  waitTime?: string;
 }
 
 /** 响应数据 */
@@ -3595,6 +3600,7 @@ export interface IqcInspectSubmitVO {
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
+  uom?: string;
   mitemCategoryId?: string;
   mitemCategoryCode?: string;
   mitemCategoryName?: string;
@@ -3602,6 +3608,7 @@ export interface IqcInspectSubmitVO {
   supplierId?: string;
   supplierCode?: string;
   supplierName?: string;
+  /** 严格度 */
   inspectionStringency?: string;
   /** 一键合格 */
   directInspectOk?: boolean;
@@ -3905,7 +3912,6 @@ export interface MitemReceiveBillSearch {
 
 /** 交易单身表 */
 export interface MitemReceiveBillVO {
-  id?: string;
   /**
    * 创建时间
    * @format date-time
@@ -3993,6 +3999,7 @@ export interface MitemReceiveBillVO {
   inspectionStringency?: string;
   /** 检验严格度 */
   inspectionStringencyName?: string;
+  id?: string;
 }
 
 /** 响应数据 */
@@ -4133,11 +4140,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 }
 
 /** 响应数据 */
@@ -5155,10 +5162,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -5351,13 +5358,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  iii?: string;
+  i?: string;
   s1?: string;
   s3?: string;
+  iii?: string;
   s2?: string;
-  s4?: string;
-  i?: string;
   ii?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */
@@ -7077,13 +7084,13 @@ export const api = {
      * No description
      *
      * @tags 物料检验头表
-     * @name GetMitemReceiveBillVo
+     * @name GetMitemReceiveByUnInspect
      * @summary 获取仓库接收单数据
-     * @request POST:/iqcInspect/getMitemReceiveBillVO
+     * @request POST:/iqcInspect/getMitemReceiveByUnInspect
      * @secure
      */
-    getMitemReceiveBillVo: (data: MitemReceiveBillSearch) =>
-      http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/quality/iqcInspect/getMitemReceiveBillVO`, {
+    getMitemReceiveByUnInspect: (data: MitemReceiveBillSearch) =>
+      http.request<ResultPagingDataMitemReceiveBillVO['data']>(`/api/quality/iqcInspect/getMitemReceiveByUnInspect`, {
         method: 'POST',
         body: data as any,
       }),
