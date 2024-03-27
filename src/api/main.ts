@@ -2474,8 +2474,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4115,13 +4115,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isState?: boolean;
   stateName?: string;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
   dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
-  isState?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4366,15 +4366,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
   isState?: boolean;
-  isProductName?: string;
   isRawName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
   isBatchName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  stateName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4517,8 +4517,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4730,8 +4730,25 @@ export interface LabelVO {
   newOnhandId?: string;
   /** 标签新状态 */
   newStatus?: string;
+  /** 标签类型-用于交易事务条码表 */
+  barcodeType?: string;
+  transferDtlBarcodeId?: string;
   /** 包装条码下的所有SN条码 */
   barcodeWipList?: BarcodeWip[];
+}
+
+/** 产品标签拆分模型 */
+export interface GroupLabelVO {
+  /** 标签号 */
+  labelNo?: string;
+  labelId?: string;
+  printTempId?: string;
+  /** 原因 */
+  reason?: string;
+  /** 状态 */
+  status?: string;
+  /** 拆标明细信息 */
+  labelVOList?: LabelVO[];
 }
 
 export interface LabelSearch {
@@ -4817,6 +4834,8 @@ export interface LabelSearch {
    * @format int32
    */
   minPkgQty?: number;
+  /** 标签拆分模型-一个标签拆分多个 */
+  groupLabelVOS?: GroupLabelVO[];
 }
 
 /** 响应数据 */
@@ -5856,6 +5875,8 @@ export interface DeliveryCardSearch {
    * @format int32
    */
   splitNum?: number;
+  /** 标签拆分模型-一个标签拆分多个 */
+  groupLabelVOS?: GroupLabelVO[];
 }
 
 /** 配送卡输出类 */
@@ -6143,8 +6164,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -7396,8 +7417,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -8356,10 +8377,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
 } | null;
@@ -8563,6 +8584,19 @@ export interface ResultListOrg {
   message?: string;
   /** 响应数据 */
   data?: Org[] | null;
+}
+
+/** 通用响应类 */
+export interface ResultListLong {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string[] | null;
 }
 
 /** 响应数据 */
@@ -9800,6 +9834,20 @@ export const api = {
       http.request<ResultListOrg['data']>(`/api/main/org/getlistByLevelCode`, {
         method: 'GET',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
+     * @name GetWorkShopIdByLoginUser
+     * @summary 查询有权限的车间ID
+     * @request GET:/org/getWorkShopIdByLoginUser
+     * @secure
+     */
+    getWorkShopIdByLoginUser: () =>
+      http.request<ResultListLong['data']>(`/api/main/org/getWorkShopIdByLoginUser`, {
+        method: 'GET',
       }),
 
     /**
@@ -13047,8 +13095,23 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name SplitBarcodes
+     * @summary 拆分条码-一个条码拆分多个
+     * @request POST:/label/splitBarcodes
+     * @secure
+     */
+    splitBarcodes: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/main/label/splitBarcodes`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name SplitBarcode
-     * @summary 拆分条码
+     * @summary 拆分条码-仅拆分一个
      * @request POST:/label/splitBarcode
      * @secure
      */
@@ -13792,8 +13855,23 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
+     * @name SplitBarcodes
+     * @summary 配送卡拆分- 一个条码拆分多个
+     * @request POST:/deliveryCard/splitBarcodes
+     * @secure
+     */
+    splitBarcodes: (data: DeliveryCardSearch) =>
+      http.request<ResultObject['data']>(`/api/main/deliveryCard/splitBarcodes`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
      * @name SplitBarcode
-     * @summary 配送卡拆分
+     * @summary 配送卡拆分-仅拆分一个
      * @request POST:/deliveryCard/splitBarcode
      * @secure
      */

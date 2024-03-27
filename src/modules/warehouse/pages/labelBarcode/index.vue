@@ -114,22 +114,17 @@
                   <t-col :span="4">
                     <t-form-item label="物料名称" label-align="right" name="mitemId">
                       <bcmp-select-business
+                        ref="componetRef"
                         v-model="stockInData.mitemId"
                         type="mitem"
                         :show-title="false"
-                        style="width: 260px"
                         @change="onSelectMinPkgQty"
                       ></bcmp-select-business>
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
                     <t-form-item label="物料编码" label-align="right" name="mitemCode">
-                      <t-input
-                        v-model="stockInData.mitemCode"
-                        placeholder="请先选择物料"
-                        :readonly="true"
-                        style="width: 260px"
-                      />
+                      <t-input v-model="stockInData.mitemCode" placeholder="请先选择物料" :readonly="true" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
@@ -138,63 +133,43 @@
                         v-model="stockInData.supplierId"
                         type="supplier"
                         :show-title="false"
-                        style="width: 260px"
                         @change="onSelectMinPkgQty"
                       ></bcmp-select-business>
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
                     <t-form-item label="供应商编码" label-align="right" name="supplierCode">
-                      <t-input
-                        v-model="stockInData.supplierCode"
-                        :readonly="true"
-                        placeholder="请先选择供应商"
-                        style="width: 260px"
-                      />
+                      <t-input v-model="stockInData.supplierCode" :readonly="true" placeholder="请先选择供应商" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
                     <t-form-item label="批次号" label-align="right" name="lotNo">
-                      <t-input v-model="stockInData.lotNo" style="width: 260px" />
+                      <t-input v-model="stockInData.lotNo" />
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
                     <t-form-item label="本次生成数量" label-align="right" label-width="110px" name="thisNumber">
-                      <t-input-number
-                        v-model="stockInData.thisNumber"
-                        theme="column"
-                        style="width: 260px"
-                        min="1"
-                        @change="onNumberChange"
-                      ></t-input-number>
+                      <t-input v-model="stockInData.thisNumber" theme="column" @change="onNumberChange"></t-input>
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
                     <t-form-item label="最小包装数" label-align="right" name="minPkgQty">
-                      <t-input-number
-                        v-model="stockInData.minPkgQty"
-                        theme="column"
-                        style="width: 260px"
-                        min="1"
-                        @change="onNumberChange"
-                      ></t-input-number>
+                      <t-input v-model="stockInData.minPkgQty" theme="column" @change="onNumberChange"></t-input>
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
                     <t-form-item label="生成张数" label-align="right" name="createNumber">
-                      <t-input-number
+                      <t-input
                         v-model="stockInData.createNumber"
                         :disabled="true"
                         placeholder="请输入生成数量和最小包装数"
                         theme="column"
-                        style="width: 260px"
-                        min="0"
-                      ></t-input-number>
+                      ></t-input>
                     </t-form-item>
                   </t-col>
                   <t-col :span="4">
                     <t-form-item label="条码规则" label-align="right" label-width="110px" name="barcodeRuleId">
-                      <t-select v-model="stockInData.barcodeRuleId" label="" style="width: 260px">
+                      <t-select v-model="stockInData.barcodeRuleId" label="">
                         <t-option
                           v-for="item in onBracodeRulesList?.list"
                           :key="item.id"
@@ -501,6 +476,7 @@ const printData = ref([]);
 const printStockInData = ref([]);
 const printManagerData = ref([]);
 const mitemBarcodeManageRef = ref(null);
+const componetRef = ref(null);
 const pageLoading = ref(false);
 const isMySelf = ref(true);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
@@ -536,7 +512,6 @@ const delivertRowKeys: Ref<any[]> = ref([]); // 工单表数组
 const selectedManageRowKeys: Ref<any[]> = ref([]); // 打印数组
 const selectedStockIneRowKeys: Ref<any[]> = ref([]); // 打印数组
 const isReprintCancellation = ref(0);
-
 const stockInData = ref({
   barcodeRuleId: '',
   supplierId: '',
@@ -564,8 +539,14 @@ const onNumberChange = async () => {
   const { thisNumber } = stockInData.value;
 
   // 检查是否需要生成标签
+  if (!Number(minPkgQty) || !Number(thisNumber)) {
+    stockInData.value.createNumber = 0;
+    return;
+  }
+  // 检查是否需要生成标签
   if (!minPkgQty || !thisNumber) {
     stockInData.value.createNumber = 0;
+    return;
   }
 
   // 计算生成标签的数量

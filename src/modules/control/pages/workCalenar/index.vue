@@ -23,11 +23,13 @@
       </cmp-query>
     </cmp-card>
     <cmp-row>
-      <cmp-card ref="refProcessCard" flex="350px">
+      <cmp-card ref="refProcessCard" flex="280px">
+        <span class="span_title">{{ t('workCalenar.workcenterList') }}</span>
         <t-list
           size="small"
           split
           :async-loading="asyncLoading"
+          style="margin-top: 10px"
           :style="{ 'max-height': `${processHeight}` }"
           @load-more="scrollHandler"
         >
@@ -37,45 +39,48 @@
             :class="{ 'is-selected': currProcessId == item.workcenterId }"
             @click="currProcessId = item.workcenterId"
           >
-            <span style="width: 30%">{{ item.wcCode }}</span>
-            <span style="width: 30%">{{ item.houseCount }}(H)</span>
-            <template #action>
-              <t-icon v-if="currProcessId == item.id" name="focus" />
-              <div class="activeProcess"></div>
-            </template>
+            <span style="width: 50%">{{ item.wcCode }}</span>
+            <span style="width: 50%">{{ item.houseCount }} (H)</span>
           </t-list-item>
         </t-list>
       </cmp-card>
       <cmp-card flex="auto">
-        <div style="display: flex; align-items: center">
-          <t-button theme="primary" style="margin-left: auto">日历维护</t-button>
-          <t-button theme="default" style="margin-left: 10px">查漏补缺</t-button>
-        </div>
         <t-calendar
-          :controller-config="false"
+          :controller-config="controllerConfig"
           :month="dayValue"
           :year="yearValue"
+          :week="week"
+          :is-show-weekend-default="weekVisible"
           style="height: 100%; margin-top: 10px"
         >
-          <template #button>
-            <t-button theme="primary" style="margin-left: auto">日历维护</t-button>
-            <t-button theme="default" style="margin-left: 10px">查漏补缺</t-button>
+          <template #head>
+            <div style="display: flex; align-items: center">
+              <span class="span_title">{{ t('workCalenar.workCalenar') }}</span>
+              <t-button theme="primary" style="margin-left: auto" @click="onAdd">{{
+                t('workCalenar.calendarMaintenance')
+              }}</t-button>
+              <t-button theme="default" style="margin-left: 10px">{{ t('workCalenar.checkOmissions') }}</t-button>
+              <t-button
+                theme="default"
+                style="margin-left: 10px"
+                @click="weekVisible = weekVisible === true ? false : true"
+                >{{ weekVisible === true ? t('workCalenar.hideWeekends') : t('workCalenar.showWeekends') }}</t-button
+              >
+            </div>
           </template>
         </t-calendar>
       </cmp-card>
     </cmp-row>
   </cmp-container>
 
-  <!-- 组织弹出窗 -->
-  <dialog-defects
-    :id="currProcessId"
-    v-model="formDefectsVisible"
-    :title="t('workCalenar.defectList')"
-    @submit-result="onSubmitResult"
-  ></dialog-defects>
-
-  <t-dialog v-model:visible="deleteVisible" :header="t('common.message.confirmDelete')" :on-confirm="onDeleteConfirm">
-    <h3 class="list-save">选中{{ processRorKey.length }}条</h3>
+  <!--主表弹框-->
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="t('workCalenar.calendarMaintenance')"
+    :close-on-overlay-click="false"
+    width="800px"
+  >
+    <form-add ref="formRef"></form-add>
   </t-dialog>
 </template>
 
@@ -86,20 +91,92 @@ export default {
 </script>
 <script setup lang="tsx">
 import _, { debounce } from 'lodash';
-import { MessagePlugin } from 'tdesign-vue-next';
-import { computed, ref } from 'vue';
+import { CalendarController, CalendarProps, MessagePlugin } from 'tdesign-vue-next';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/control';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+import formAdd from './formAdd.vue';
 import { useLang } from './lang';
 
+onMounted(async () => {
+  queryCompnent.value.date = new Date().toISOString().substr(0, 7);
+  onFetchData();
+});
+const { t } = useLang();
+const weekVisible = ref(false); // 周末按钮控制
+const formRef = ref(null); // 周末按钮控制
+const week: CalendarProps['week'] = [
+  t('workCalenar.monday'),
+  t('workCalenar.tuesday'),
+  t('workCalenar.wednesday'),
+  t('workCalenar.thursday'),
+  t('workCalenar.friday'),
+  t('workCalenar.saturday'),
+  t('workCalenar.sunday'),
+];
+const controllerConfig: CalendarController = reactive({
+  visible: true,
+  disabled: false,
+  // 是否禁用（全部控件）
+  // 年份选择框组件相关设置
+  year: {
+    visible: false,
+    // 是否显示
+    selectProps: {
+      // 用于透传props给该select组件
+      disabled: false,
+      size: 'small',
+    },
+  },
+  // 月份选择框组件相关设置
+  month: {
+    visible: false,
+    // 是否显示（“year”模式下本身是不显示该组件的）
+    selectProps: {
+      // 用于透传props给该select组件
+      disabled: false,
+      size: 'small',
+    },
+  },
+  // 模式切换单选组件设置
+  mode: {
+    visible: false,
+    // 是否显示
+    radioGroupProps: {
+      disabled: false,
+      size: 'small',
+    },
+  },
+  // 隐藏\显示周末按钮组件相关设置
+  weekend: {
+    visible: false,
+  },
+  // “今天\本月”按钮组件相关设置
+  current: {
+    visible: false,
+    // 是否显示
+    currentDayButtonProps: {
+      // 用于透传props给“今天”钮组件（“month”模式下有效）
+      disabled: false,
+      size: 'small',
+      theme: 'warning',
+    },
+    currentMonthButtonProps: {
+      // 用于透传props给“本月”按钮组件（“year”模式下有效）
+      disabled: false,
+      size: 'small',
+      theme: 'success',
+    },
+  },
+});
 const asyncLoadingRadio = ref('load-more');
 const asyncLoading = computed(() => {
   if (asyncLoadingRadio.value === 'loading-custom') {
-    return '没有更多数据了~';
+    return t('workCalenar.noMoreData');
   }
   return asyncLoadingRadio.value;
 });
@@ -122,6 +199,7 @@ const scrollHandler = debounce(async () => {
   }
 }, 1000);
 const refProcessCard = ref(null);
+const formVisible = ref(false);
 const processHeight = ref('300px');
 useResizeObserver(refProcessCard, (entries) => {
   const entry = entries[0];
@@ -129,18 +207,29 @@ useResizeObserver(refProcessCard, (entries) => {
   processHeight.value = `${height - 150}px`;
   console.error('treeHeight', processHeight.value);
 });
-
+const onAdd = async () => {
+  await formRef.value.reset();
+  const res = await formRef.value.getWorkshopId();
+  if (!res) {
+    MessagePlugin.warning(t('workCalenar.warningLogin'));
+    return;
+  }
+  formVisible.value = true;
+};
 const onInput = (data) => {
   pageUI.value.page = 1;
   queryCompnent.value.date = data.date;
   queryCompnent.value.workshopId = data.workshopId;
   queryCompnent.value.workcenterId = data.workcenterId;
+  if (!data.date) {
+    MessagePlugin.warning(t('workCalenar.YearMonthMandatory'));
+    return;
+  }
   const [year, month] = data.date.split('-');
   dayValue.value = month;
   yearValue.value = year;
   onFetchData();
 };
-const formDefectsVisible = ref(false);
 const opts = computed(() => {
   return {
     workshopId: {
@@ -169,16 +258,10 @@ const yearValue = ref();
 const { pageUI } = usePage();
 const processRorKey = ref([]); // 存储多选选择数组
 const processList = ref([]);
-const deleteVisible = ref(false); // 删除窗口控制
 const { setLoading } = useLoading();
-const { t } = useLang();
+
 const currProcessId = ref('');
 
-const onSubmitResult = (res) => {
-  if (res) {
-    onFetchData();
-  }
-};
 // 进入首页发请求
 const onFetchData = async () => {
   processRorKey.value = [];
@@ -197,19 +280,6 @@ const onFetchData = async () => {
     console.log(e);
   } finally {
     setLoading(false);
-  }
-};
-
-// 删除确认弹窗
-const onDeleteConfirm = async () => {
-  try {
-    await api.processInDefectCode.removeProcessInDefectCodeBatch({ ids: processRorKey.value });
-    MessagePlugin.success('删除成功');
-    deleteVisible.value = false;
-    onFetchData();
-    processRorKey.value = [];
-  } catch (e) {
-    console.log(e);
   }
 };
 </script>
@@ -257,5 +327,11 @@ const onDeleteConfirm = async () => {
 .list-save {
   text-align: center;
   margin: 10px 0;
+}
+
+.span_title {
+  font-weight: bold;
+  color: var(--td-gray-color-8);
+  font-size: 14px;
 }
 </style>

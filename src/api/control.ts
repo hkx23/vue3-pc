@@ -523,6 +523,15 @@ export interface WorkCalenarSearch {
   workshopId?: string;
   /** 日期 */
   date?: string;
+  weekRange?: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[];
+  weekRangeInt?: number[];
+  /** @format date-time */
+  dateRageStart?: string;
+  /** @format date-time */
+  dateRageEnd?: string;
+  attendanceModeIds?: string[];
+  workCenterIds?: string[];
+  workshopIds?: string[];
 }
 
 /** 响应数据 */
@@ -2644,13 +2653,13 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
 }
@@ -3941,15 +3950,15 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
 }
@@ -4062,16 +4071,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  workshopId?: string;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   stateName?: string;
-  defectCodeStr?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 通用响应类 */
@@ -5052,6 +5061,21 @@ export const api = {
      */
     getWcInfo: (data: WorkCalenarSearch) =>
       http.request<ResultPagingDataWorkCalenarVO['data']>(`/api/control/workCalenar/getWcInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作日历表
+     * @name AddWorkCalenar
+     * @summary 日历维护
+     * @request POST:/workCalenar/addWorkCalenar
+     * @secure
+     */
+    addWorkCalenar: (data: WorkCalenarSearch) =>
+      http.request<ResultObject['data']>(`/api/control/workCalenar/addWorkCalenar`, {
         method: 'POST',
         body: data as any,
       }),
