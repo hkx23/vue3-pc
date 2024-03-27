@@ -514,7 +514,7 @@ const getInspectGroupByUser = async () => {
 };
 const fetchTable = async () => {
   try {
-    const list = await apiQuality.iqcInspect.getMitemReceiveBillVo({
+    const list = await apiQuality.iqcInspect.getMitemReceiveByUnInspect({
       pageNum: pageTab1.value.page,
       pageSize: pageTab1.value.rows,
       prefix: 'PA',
