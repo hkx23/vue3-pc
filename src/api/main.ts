@@ -2474,8 +2474,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3907,6 +3907,25 @@ export interface Mo {
   status?: string;
   /** 工单来源 */
   moSource?: string;
+  /** 暂挂（置尾）原因 */
+  holdReason?: string;
+  /**
+   * 工单释放时间
+   * @format date-time
+   */
+  datetimeRelease?: string;
+  userReleaseId?: string;
+  userMoCloseId?: string;
+  /** 计划单号 */
+  planNo?: string;
+  /**
+   * 需求日期
+   * @format date-time
+   */
+  datetimeRequire?: string;
+  /** 工单速率 */
+  moRate?: number;
+  workcenterId?: string;
 }
 
 /** 响应数据 */
@@ -4096,13 +4115,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
+  dateExemptionExpiredStr?: string;
   stateName?: string;
+  isForceInspectionName?: string;
+  isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4347,15 +4366,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  isProductName?: string;
+  stateName?: string;
   isRawName?: string;
   isBatchName?: string;
-  isInProcessName?: string;
   isRawChecked?: boolean;
-  stateName?: string;
-  isInProcessChecked?: boolean;
+  isInProcessName?: string;
+  isProductName?: string;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4637,10 +4656,10 @@ export interface LabelVO {
    * @format int32
    */
   isHold?: number;
-  /** 送货单 */
-  billNo?: string;
   /** 条码类型 */
   labelType?: string;
+  /** 送货单 */
+  billNo?: string;
   /** 供应商编码 */
   supplierCode?: string;
   /** 供应商名称 */
@@ -4745,6 +4764,8 @@ export interface LabelSearch {
   billNo?: string;
   /** 是否仅显示未打印完成 */
   isFinishDisplay?: boolean;
+  /** 是否仅显示本人 */
+  isMySelf?: boolean;
   deliveryId?: string;
   deliveryDtlId?: string;
   labelId?: string;
@@ -4772,6 +4793,8 @@ export interface LabelSearch {
    * @format int32
    */
   createNum?: number;
+  /** @format int32 */
+  thisNumber?: number;
   /**
    * 拆分数量
    * @format int32
@@ -4789,6 +4812,31 @@ export interface LabelSearch {
   ids?: string[];
   /** 显示产品条码管理 */
   deliveryLabel?: LabelVO;
+  /**
+   * 根据送货单生成的标签数据
+   * @format int32
+   */
+  minPkgQty?: number;
+}
+
+/** 响应数据 */
+export type PagingDataLabelVO = {
+  list?: LabelVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataLabelVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataLabelVO;
 }
 
 /** 标签日志表 */
@@ -4865,15 +4913,8 @@ export interface ResultListLabelLog {
   data?: LabelLog[] | null;
 }
 
-/** 响应数据 */
-export type PagingDataLabelVO = {
-  list?: LabelVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
 /** 通用响应类 */
-export interface ResultPagingDataLabelVO {
+export interface ResultLabelVO {
   /**
    * 响应代码
    * @format int32
@@ -4881,8 +4922,8 @@ export interface ResultPagingDataLabelVO {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 响应数据 */
-  data?: PagingDataLabelVO;
+  /** 显示产品条码管理 */
+  data?: LabelVO;
 }
 
 /** 通用响应类 */
@@ -4960,6 +5001,8 @@ export interface Label {
    * @format int32
    */
   isHold?: number;
+  /** 标签类型 */
+  labelType?: string;
 }
 
 export interface IntegratedConsoleSearch {
@@ -6100,8 +6143,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -8315,10 +8358,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -13049,6 +13092,21 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name GetStockInLabelList
+     * @summary 获取打印页标签数据
+     * @request POST:/label/getStockInLabelList
+     * @secure
+     */
+    getStockInLabelList: (data: LabelSearch) =>
+      http.request<ResultPagingDataLabelVO['data']>(`/api/main/label/getStockInLabelList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name GetNewLogByLabelNo
      * @summary 根据标签查询最新的日志
      * @request POST:/label/getNewLogByLabelNo
@@ -13056,6 +13114,21 @@ export const api = {
      */
     getNewLogByLabelNo: (data: string[]) =>
       http.request<ResultListLabelLog['data']>(`/api/main/label/getNewLogByLabelNo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GetMinPkgQty
+     * @summary 库内标签获取生成基础信息
+     * @request POST:/label/getMinPkgQty
+     * @secure
+     */
+    getMinPkgQty: (data: LabelSearch) =>
+      http.request<ResultLabelVO['data']>(`/api/main/label/getMinPkgQty`, {
         method: 'POST',
         body: data as any,
       }),
@@ -13115,6 +13188,21 @@ export const api = {
      */
     generateBarcode: (data: LabelSearch) =>
       http.request<ResultObject['data']>(`/api/main/label/generateBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
+     * @name GenerateBarcodeStockIn
+     * @summary 生库内标签
+     * @request POST:/label/generateBarcodeStockIn
+     * @secure
+     */
+    generateBarcodeStockIn: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/main/label/generateBarcodeStockIn`, {
         method: 'POST',
         body: data as any,
       }),

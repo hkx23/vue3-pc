@@ -693,10 +693,10 @@ export type LabelVO = {
    * @format int32
    */
   isHold?: number;
-  /** 送货单 */
-  billNo?: string;
   /** 条码类型 */
   labelType?: string;
+  /** 送货单 */
+  billNo?: string;
   /** 供应商编码 */
   supplierCode?: string;
   /** 供应商名称 */
@@ -873,6 +873,8 @@ export interface LabelQcHoldVO {
    * @format int32
    */
   isHold?: number;
+  /** 标签类型 */
+  labelType?: string;
   /** 工单号 */
   scheCode?: string;
   /** 产品编码 */
@@ -1284,6 +1286,7 @@ export interface TransferDtlVO {
   locationName?: string;
   toLocationCode?: string;
   toLocationName?: string;
+  uom?: string;
   uomName?: string;
   /** @format int32 */
   isBatchNo?: number;
@@ -1587,60 +1590,24 @@ export interface StorageAgeQueryVO {
   datetimeReceipted?: string;
   /** 库存量 */
   stockNum?: number;
-  /**
-   * 三年以上
-   * @format int32
-   */
+  /** 三年以上 */
   threeYears?: number;
-  /**
-   * 两至三年
-   * @format int32
-   */
+  /** 两至三年 */
   twoToThreeYears?: number;
-  /**
-   * 一到两年
-   * @format int32
-   */
+  /** 一到两年 */
   oneToTwoYears?: number;
-  /**
-   * 6-12个月
-   * @format int32
-   */
+  /** 6-12个月 */
   sixToTwelveMonths?: number;
-  /**
-   * 3-6个月
-   * @format int32
-   */
+  /** 3-6个月 */
   threeToSixMonths?: number;
-  /**
-   * 1-3个月
-   * @format int32
-   */
+  /** 1-3个月 */
   oneToThreeMonths?: number;
-  /**
-   * 30天以内
-   * @format int32
-   */
+  /** 30天以内 */
   thirtyDays?: number;
   /** 条码号 */
   barcodeNo?: string;
   /** 数量 */
   balanceQty?: number;
-  /**
-   * 标签的数量
-   * @format int32
-   */
-  labelNum?: number;
-  /**
-   * SN的数量
-   * @format int32
-   */
-  barcodeNum?: number;
-  /**
-   * 配送卡的数量
-   * @format int32
-   */
-  deliveryNum?: number;
   /** 标签的库存 */
   labelStock?: number;
   /** SN的库存 */
@@ -2054,10 +2021,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /** 待发货数量 */
   waitDeliveriedQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 响应数据 */
@@ -3134,6 +3101,8 @@ export interface Label {
    * @format int32
    */
   isHold?: number;
+  /** 标签类型 */
+  labelType?: string;
 }
 
 /** 工单发料提交模型 */
@@ -3299,20 +3268,20 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
+  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
   bfpickQty?: number;
-  flpickQty?: number;
   tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
+  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4309,6 +4278,8 @@ export interface LabelSearch {
   billNo?: string;
   /** 是否仅显示未打印完成 */
   isFinishDisplay?: boolean;
+  /** 是否仅显示本人 */
+  isMySelf?: boolean;
   deliveryId?: string;
   deliveryDtlId?: string;
   labelId?: string;
@@ -4336,6 +4307,8 @@ export interface LabelSearch {
    * @format int32
    */
   createNum?: number;
+  /** @format int32 */
+  thisNumber?: number;
   /**
    * 拆分数量
    * @format int32
@@ -4353,6 +4326,11 @@ export interface LabelSearch {
   ids?: string[];
   /** 显示产品条码管理 */
   deliveryLabel?: LabelVO;
+  /**
+   * 根据送货单生成的标签数据
+   * @format int32
+   */
+  minPkgQty?: number;
 }
 
 /** 响应数据 */
@@ -5434,8 +5412,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */

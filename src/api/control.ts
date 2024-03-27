@@ -508,6 +508,52 @@ export interface WorkgroupVO {
   personCount?: number;
 }
 
+export interface WorkCalenarSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workCenterId?: string;
+  workshopId?: string;
+  /** 日期 */
+  date?: string;
+}
+
+/** 响应数据 */
+export type PagingDataWorkCalenarVO = {
+  list?: WorkCalenarVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataWorkCalenarVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataWorkCalenarVO;
+}
+
+export interface WorkCalenarVO {
+  wcName?: string;
+  wcCode?: string;
+  /** @format int32 */
+  timeCount?: number;
+  houseCount?: number;
+  workcenterId?: string;
+}
+
 /** 通用响应类 */
 export interface ResultListWipRepairDtlVO {
   /**
@@ -2600,13 +2646,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2649,10 +2695,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -2783,8 +2829,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3897,15 +3943,15 @@ export interface BarcodeWipCollectVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
+  isState?: boolean;
   stateName?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
 }
 
 /** 通用响应类 */
@@ -4018,14 +4064,14 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
+  isState?: boolean;
   stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   defectCodeStr?: string;
-  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4380,8 +4426,8 @@ export type DefectCodeVO = {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -4990,6 +5036,22 @@ export const api = {
      */
     addWorkgroupPerson: (data: WorkgroupSearch) =>
       http.request<ResultObject['data']>(`/api/control/workgroup/addWorkgroupPerson`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  workCalenar: {
+    /**
+     * No description
+     *
+     * @tags 工作日历表
+     * @name GetWcInfo
+     * @summary 左侧获取工作中心信息
+     * @request POST:/workCalenar/getWcInfo
+     * @secure
+     */
+    getWcInfo: (data: WorkCalenarSearch) =>
+      http.request<ResultPagingDataWorkCalenarVO['data']>(`/api/control/workCalenar/getWcInfo`, {
         method: 'POST',
         body: data as any,
       }),
