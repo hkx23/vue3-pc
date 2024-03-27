@@ -122,7 +122,7 @@ const formData = ref({
   workshopId: '',
   workcenterId: '',
   calenarRange: [],
-  attendanceModeIdsStr: '',
+  attendanceModeIdsStr: [],
   weekRangeInt: [1, 2, 3, 4, 5],
 });
 
@@ -157,7 +157,7 @@ const reset = () => {
     workshopId: '',
     workcenterId: '',
     calenarRange: [],
-    attendanceModeIdsStr: '',
+    attendanceModeIdsStr: [],
     weekRangeInt: [1, 2, 3, 4, 5],
   };
 };
