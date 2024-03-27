@@ -39,7 +39,7 @@
                   <template #op="rowData">
                     <t-space>
                       <t-link
-                        v-if="rowData.row.inspectResult === 'UNINSPECT' || _.isEmpty(rowData.row.iqcBillNo)"
+                        v-if="rowData.row.status === 'UNINSPECT'"
                         theme="primary"
                         @click="onShowDialog(true, rowData)"
                         >{{ t('mitemIncomingInspection.检验') }}</t-link
@@ -49,7 +49,7 @@
 
                   <template #iqcBillNo="rowData">
                     <t-space>
-                      <t-link theme="primary" @click="onShowDialog(false, rowData)">{{ rowData.row.iqcBillNo }}</t-link>
+                      <t-link theme="primary" @click="onShowDialog(true, rowData)">{{ rowData.row.iqcBillNo }}</t-link>
                     </t-space>
                   </template>
                 </cmp-table>
@@ -84,7 +84,9 @@
 
                   <template #iqcBillNo="rowData">
                     <t-space>
-                      <t-link theme="primary" @click="onShowDialog(false, rowData)">{{ rowData.row.iqcBillNo }}</t-link>
+                      <t-link theme="primary" @click="onShowAndLoadDialog(false, rowData)">{{
+                        rowData.row.iqcBillNo
+                      }}</t-link>
                     </t-space>
                   </template>
                 </cmp-table>
@@ -97,7 +99,7 @@
   </cmp-container>
 
   <!--弹窗-->
-  <formInspect ref="formRef" @parent-refresh-event="fetchTable"></formInspect>
+  <formInspect ref="formInspectRef" @parent-refresh-event="fetchTable"></formInspect>
 </template>
 <script lang="ts" setup>
 import dayjs from 'dayjs';
@@ -118,7 +120,7 @@ const { t } = useLang();
 
 import formInspect from './formInspect.vue';
 
-const formRef = ref(null);
+const formInspectRef = ref(null);
 
 const { loading } = useLoading();
 const { pageUI: pageTab1 } = usePage();
@@ -403,8 +405,8 @@ const inspectColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('mitemIncomingInspection.物料编码'), width: 160, colKey: 'mitemCode' },
   { title: t('mitemIncomingInspection.物料描述'), width: 160, colKey: 'mitemDesc' },
   { title: t('mitemIncomingInspection.供应商'), width: 160, colKey: 'supplierName' },
-  { title: t('mitemIncomingInspection.严格度'), width: 100, colKey: 'inspectStringencyName' },
-  { title: t('mitemIncomingInspection.检验数量'), width: 100, colKey: 'inspectQty' },
+  { title: t('mitemIncomingInspection.严格度'), width: 100, colKey: 'inspectionStringencyName' },
+  { title: t('mitemIncomingInspection.检验数量'), width: 100, colKey: 'pickQty' },
   { title: t('mitemIncomingInspection.单位'), width: 100, colKey: 'uomName' },
   { title: t('mitemIncomingInspection.检验员'), width: 160, colKey: 'displayName' },
   { title: t('mitemIncomingInspection.检验时间'), width: 200, colKey: 'timeCreate' },
@@ -570,8 +572,13 @@ const onSelectInspecChange = (value: any) => {
   selectInspecId.value = value;
 };
 const onShowDialog = async (isEdit, rowData) => {
-  const { showForm } = formRef.value;
-  await showForm(isEdit, rowData.row);
+  const { showForm } = formInspectRef.value;
+  await showForm(isEdit, false, rowData.row);
+};
+
+const onShowAndLoadDialog = async (isEdit, rowData) => {
+  const { showForm } = formInspectRef.value;
+  await showForm(isEdit, true, rowData.row);
 };
 
 // 合并检验
@@ -579,7 +586,7 @@ const mergeInspection = async (isEdit) => {
   checkSelected().then(async (isRun) => {
     if (isRun) {
       const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
-      const { showMergeForm } = formRef.value;
+      const { showMergeForm } = formInspectRef.value;
       await showMergeForm(isEdit, selectKeys);
     }
   });

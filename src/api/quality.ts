@@ -3506,10 +3506,10 @@ export interface IqcInspectBillFullVO {
   /** 供应商名称 */
   supplierName?: string;
   /** 检验数量 */
-  inspectQty?: number;
+  pickQty?: number;
   /** 检验严格度 */
-  inspectStringency?: string;
-  inspectStringencyName?: string;
+  inspectionStringency?: string;
+  inspectionStringencyName?: string;
   /** 缺陷等级 */
   defectCategory?: string;
   defectCategoryName?: string;
@@ -3608,6 +3608,7 @@ export interface IqcInspectSubmitVO {
   supplierId?: string;
   supplierCode?: string;
   supplierName?: string;
+  /** 严格度 */
   inspectionStringency?: string;
   /** 一键合格 */
   directInspectOk?: boolean;
@@ -3911,7 +3912,6 @@ export interface MitemReceiveBillSearch {
 
 /** 交易单身表 */
 export interface MitemReceiveBillVO {
-  id?: string;
   /**
    * 创建时间
    * @format date-time
@@ -3999,6 +3999,7 @@ export interface MitemReceiveBillVO {
   inspectionStringency?: string;
   /** 检验严格度 */
   inspectionStringencyName?: string;
+  id?: string;
 }
 
 /** 响应数据 */
@@ -4139,9 +4140,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5358,12 +5359,12 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   i?: string;
-  ii?: string;
   s1?: string;
   s3?: string;
-  s4?: string;
-  s2?: string;
   iii?: string;
+  s2?: string;
+  ii?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */
