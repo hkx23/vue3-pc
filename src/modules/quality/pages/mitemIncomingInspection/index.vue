@@ -410,13 +410,6 @@ const inspectColumns: PrimaryTableCol<TableRowData>[] = [
   { title: t('mitemIncomingInspection.检验时间'), width: 200, colKey: 'timeCreate' },
   { title: t('mitemIncomingInspection.检验标准'), width: 160, colKey: 'inspectStdName' },
   { title: t('mitemIncomingInspection.停留时长'), width: 160, colKey: 'waitTime' },
-  {
-    title: t('mitemIncomingInspection.操作'),
-    align: 'left',
-    fixed: 'right',
-    width: 160,
-    colKey: 'op',
-  },
 ];
 
 const getIqcInspectionStatus = async () => {

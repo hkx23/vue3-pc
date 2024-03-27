@@ -88,8 +88,8 @@ const holdInfoList = reactive({ list: [], total: 0 });
 const reasonCategoryOption = ref([]);
 // 查询组件值
 const datePlanRangeDefault = ref([
-  dayjs().format('YYYY-MM-DD 00:00:00'),
-  dayjs().subtract(-31, 'day').format('YYYY-MM-DD 23:59:59'),
+  dayjs().subtract(31, 'day').format('YYYY-MM-DD 00:00:00'),
+  dayjs().add(1, 'day').format('YYYY-MM-DD 23:59:59'),
 ]); // 初始化日期控件
 const optsHoldValue = ref({ datePlanRange: datePlanRangeDefault.value }) as any;
 // 查询组件-工单
