@@ -127,6 +127,7 @@ const stockCheckBillStatusName = ref('');
 const stockCheckBillTypeName = ref('');
 
 const refreshTable = ref(null);
+const queryComponent = ref();
 
 //* 组件配置--查询界面
 const opts = computed(() => {
@@ -204,13 +205,7 @@ const fetchTable = async () => {
   setLoading(false);
   inventoryManagement.value = [];
   tableDataReckoning.value = [];
-  const data = await api.stockCheckBill.getPdList({
-    pageNum: firstPageUI.value.page,
-    pageSize: firstPageUI.value.rows,
-  });
-  // tableDataReckoning.value = data.list;
-  tableDataReckoning.value = [...data.list];
-  dataTotal.value = data.total;
+  queryComponent.value.search();
   setLoading(false);
 };
 

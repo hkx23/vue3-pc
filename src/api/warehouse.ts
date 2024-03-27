@@ -544,7 +544,6 @@ export type TransferDtlBarcodeVO = {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 单据号 */
   billNo?: string;
   transferDtlId?: string;
   mitemId?: string;
@@ -568,6 +567,12 @@ export type TransferDtlBarcodeVO = {
   mitemName?: string;
   mitemDesc?: string;
   uomName?: string;
+  sourceBillLineNo?: string;
+  sourceBillNo?: string;
+  onhandId?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
   transferDtlBarcodeSnList?: TransferDtlBarcodeSNVO[];
 } | null;
 
@@ -767,6 +772,9 @@ export type LabelVO = {
   newOnhandId?: string;
   /** 标签新状态 */
   newStatus?: string;
+  /** 标签类型-用于交易事务条码表 */
+  barcodeType?: string;
+  transferDtlBarcodeId?: string;
   /** 包装条码下的所有SN条码 */
   barcodeWipList?: BarcodeWip[];
 } | null;
@@ -2021,10 +2029,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -3279,9 +3287,9 @@ export interface MoIssuanceDtlVO {
   moRequestQty?: number;
   bfpickQty?: number;
   tlpickQty?: number;
+  flpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3493,10 +3501,18 @@ export interface ResultLocationVO {
 /** 领料执行提交模型 */
 export interface MaterialRequisitionExcuteDTO {
   /** 领料单号 */
+  sourceBillNo?: string;
+  /** 领料执行单号 */
   billNo?: string;
   toWarehouseId?: string;
-  /** 提交的模型-明细信息 */
+  /** 提交的模型-明细信息-仅需要存在数量的明细项，并且启用批次的明细 */
+  submitUseBatchList?: MaterialRequisitionExcuteDtlVO[];
+  /** 提交的模型-明细信息-仅需要存在数量的明细项-包括条码管理和批次管理的明细 */
   submitList?: MaterialRequisitionExcuteDtlVO[];
+  /** 提交的模型-明细信息 */
+  submitTotalList?: MaterialRequisitionExcuteDtlVO[];
+  /** 条码类型 */
+  labelCategory?: string;
   /** 条码信息 */
   labelNo?: string;
   /**
@@ -3504,9 +3520,15 @@ export interface MaterialRequisitionExcuteDTO {
    * @format int32
    */
   isFifo?: number;
+  /** 重新加载数据库最新的的单据信息 */
+  dtlInfo?: MaterialRequisitionExcuteDtlVO;
+  /** 扫码自动匹配成功的明细行集合 */
+  matchDtlList?: MaterialRequisitionExcuteDtlVO[];
+  /** 重新加载数据库最新的的单据信息 */
+  latestDtlList?: MaterialRequisitionExcuteDtlVO[];
 }
 
-/** 提交的模型-明细信息 */
+/** 重新加载数据库最新的的单据信息 */
 export interface MaterialRequisitionExcuteDtlVO {
   id?: string;
   /**
@@ -3628,15 +3650,19 @@ export interface MaterialRequisitionExcuteDtlVO {
   datetimeSche?: string;
   /** 库存可用量 */
   handQty?: number;
-  /** 交易单标签表 */
+  /** 临时存储已领用量 */
+  alreadyPickQty?: number;
+  /** 交易单标签表-查询时加载 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  /** 交易单标签表-扫码时存储-用于新增 */
+  addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
+   * 已扫描数量和已领用量
    * @format double
    */
   scanQty?: number;
   /**
-   * 待扫数量
+   * 待扫数量和待领用量
    * @format double
    */
   waitingScanQty?: number;
@@ -3660,6 +3686,8 @@ export interface GetMaterialsDtlDTO {
 
 /** 领料制单提交模型 */
 export interface MaterialRequisitionDTO {
+  /** 完成的单据id集合 */
+  completeIds?: string[];
   /** 作废的单据id集合 */
   cancelledIds?: string[];
   /** 新增界面-获取明细 */
@@ -4248,6 +4276,20 @@ export interface ResultMFTVO {
   data?: MFTVO;
 }
 
+/** 产品标签拆分模型 */
+export interface GroupLabelVO {
+  /** 标签号 */
+  labelNo?: string;
+  labelId?: string;
+  printTempId?: string;
+  /** 原因 */
+  reason?: string;
+  /** 状态 */
+  status?: string;
+  /** 拆标明细信息 */
+  labelVOList?: LabelVO[];
+}
+
 export interface LabelSearch {
   barcodeWipId?: string;
   /**
@@ -4331,6 +4373,8 @@ export interface LabelSearch {
    * @format int32
    */
   minPkgQty?: number;
+  /** 标签拆分模型-一个标签拆分多个 */
+  groupLabelVOS?: GroupLabelVO[];
 }
 
 /** 响应数据 */
@@ -5412,8 +5456,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -6069,7 +6113,7 @@ export interface ResultMaterialRequisitionExcuteDtlVO {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 提交的模型-明细信息 */
+  /** 重新加载数据库最新的的单据信息 */
   data?: MaterialRequisitionExcuteDtlVO;
 }
 
@@ -8103,6 +8147,24 @@ export const api = {
      * No description
      *
      * @tags 领料执行
+     * @name GetTotalBarcodesBySourceLineNo
+     * @summary 根据领料单明细行获取所有领料执行单的条码
+     * @request GET:/materialRequisitionExcute/getTotalBarcodesBySourceLineNo
+     * @secure
+     */
+    getTotalBarcodesBySourceLineNo: (query: { sourceBillNo: string; sourceLineNo: string }) =>
+      http.request<ResultListTransferDtlBarcodeVO['data']>(
+        `/api/warehouse/materialRequisitionExcute/getTotalBarcodesBySourceLineNo`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 领料执行
      * @name GetMaterialRequisitionList
      * @summary 领料执行-获取领料制单列表
      * @request GET:/materialRequisitionExcute/getMaterialRequisitionList
@@ -8171,6 +8233,21 @@ export const api = {
      */
     saveData: (data: MaterialRequisitionDTO) =>
       http.request<ResultObject['data']>(`/api/warehouse/materialRequisition/saveData`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料制单
+     * @name MaterialRequisitionComplete
+     * @summary 主界面-领料单作废
+     * @request POST:/materialRequisition/materialRequisitionComplete
+     * @secure
+     */
+    materialRequisitionComplete: (data: MaterialRequisitionDTO) =>
+      http.request<ResultObject['data']>(`/api/warehouse/materialRequisition/materialRequisitionComplete`, {
         method: 'POST',
         body: data as any,
       }),

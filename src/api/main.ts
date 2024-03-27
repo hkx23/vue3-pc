@@ -4115,13 +4115,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  dateExemptionExpiredStr?: string;
   stateName?: string;
-  isForceInspectionName?: string;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
   isState?: boolean;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -4367,14 +4367,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isRawName?: string;
-  isBatchName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   isProductName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
   isState?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4730,8 +4730,25 @@ export interface LabelVO {
   newOnhandId?: string;
   /** 标签新状态 */
   newStatus?: string;
+  /** 标签类型-用于交易事务条码表 */
+  barcodeType?: string;
+  transferDtlBarcodeId?: string;
   /** 包装条码下的所有SN条码 */
   barcodeWipList?: BarcodeWip[];
+}
+
+/** 产品标签拆分模型 */
+export interface GroupLabelVO {
+  /** 标签号 */
+  labelNo?: string;
+  labelId?: string;
+  printTempId?: string;
+  /** 原因 */
+  reason?: string;
+  /** 状态 */
+  status?: string;
+  /** 拆标明细信息 */
+  labelVOList?: LabelVO[];
 }
 
 export interface LabelSearch {
@@ -4817,6 +4834,8 @@ export interface LabelSearch {
    * @format int32
    */
   minPkgQty?: number;
+  /** 标签拆分模型-一个标签拆分多个 */
+  groupLabelVOS?: GroupLabelVO[];
 }
 
 /** 响应数据 */
@@ -5856,6 +5875,8 @@ export interface DeliveryCardSearch {
    * @format int32
    */
   splitNum?: number;
+  /** 标签拆分模型-一个标签拆分多个 */
+  groupLabelVOS?: GroupLabelVO[];
 }
 
 /** 配送卡输出类 */
@@ -13047,8 +13068,23 @@ export const api = {
      * No description
      *
      * @tags 标签表
+     * @name SplitBarcodes
+     * @summary 拆分条码-一个条码拆分多个
+     * @request POST:/label/splitBarcodes
+     * @secure
+     */
+    splitBarcodes: (data: LabelSearch) =>
+      http.request<ResultObject['data']>(`/api/main/label/splitBarcodes`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 标签表
      * @name SplitBarcode
-     * @summary 拆分条码
+     * @summary 拆分条码-仅拆分一个
      * @request POST:/label/splitBarcode
      * @secure
      */
@@ -13792,8 +13828,23 @@ export const api = {
      * No description
      *
      * @tags 配送卡表
+     * @name SplitBarcodes
+     * @summary 配送卡拆分- 一个条码拆分多个
+     * @request POST:/deliveryCard/splitBarcodes
+     * @secure
+     */
+    splitBarcodes: (data: DeliveryCardSearch) =>
+      http.request<ResultObject['data']>(`/api/main/deliveryCard/splitBarcodes`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 配送卡表
      * @name SplitBarcode
-     * @summary 配送卡拆分
+     * @summary 配送卡拆分-仅拆分一个
      * @request POST:/deliveryCard/splitBarcode
      * @secure
      */
