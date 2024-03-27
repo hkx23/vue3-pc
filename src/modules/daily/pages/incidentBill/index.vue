@@ -49,6 +49,7 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/daily';
+import { api as apiMain } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -267,9 +268,10 @@ const fetchTable = async () => {
 };
 
 const getWorkshopId = async () => {
-  const id = await api.incidentDeal.getWorkShopIdByLoginUser();
+  const id = await apiMain.org.getWorkShopIdByLoginUser();
   if (id) {
-    queryCompment.value.orgId = id;
+    const [orgId] = id;
+    queryCompment.value.orgId = orgId;
   }
   pageShow.value = true;
 };

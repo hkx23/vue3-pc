@@ -247,6 +247,8 @@ const selectTabValue = ref('tab1');
 const selectIqcInspectDtlId = ref(null);
 
 const isEdit = ref(true); // 是否可编辑
+const isLoad = ref(false); // 是否加载单据数据
+
 const formData = reactive({
   iqcBillNo: '',
   billNoStr: '',
@@ -323,22 +325,26 @@ const onConfirmForm = async () => {
         item.inspectResult = 'OK';
       } else {
         item.inspectResult = 'NG';
-        if (item.characteristics === 'COUNT' && _.isEmpty(item.ngQty)) {
+        const ngQty = Number(item.ngQty);
+        if (_.isNaN(ngQty)) {
           MessagePlugin.error(t('mitemIncomingInspection.检验结果不合格时,请填写不良数'));
           return;
         }
 
-        if (item.characteristics === 'QUANTITATIVE') {
-          if (_.isEmpty(item.ngQty) || item.ngQty === '') {
+        if (item.characteristics === 'COUNT') {
+          if (ngQty <= 0) {
             MessagePlugin.error(t('mitemIncomingInspection.检验结果不合格时,请填写不良数'));
             return;
           }
-          if (item.ngQty > item.sampleQty) {
-            MessagePlugin.error(t('mitemIncomingInspection.不良数不能大于样本数'));
+        }
+
+        if (item.characteristics === 'QUANTITATIVE') {
+          if (ngQty <= 0) {
+            MessagePlugin.error(t('mitemIncomingInspection.检验结果不合格时,请填写不良数'));
             return;
           }
-          if (item.ngQty <= 0) {
-            MessagePlugin.error(t('mitemIncomingInspection.请输入正确不良数'));
+          if (ngQty > item.sampleQty) {
+            MessagePlugin.error(t('mitemIncomingInspection.不良数不能大于样本数'));
             return;
           }
         }
@@ -437,10 +443,6 @@ const loadIqcTable = async () => {
 };
 
 const reset = () => {
-  if (isEdit.value) {
-    getBillNo();
-  }
-
   // 清除所有对象的值
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
@@ -454,10 +456,15 @@ const reset = () => {
     }
   });
 };
-const showForm = async (edit, row) => {
+const showForm = async (edit, load, row) => {
   isEdit.value = edit;
+  isLoad.value = load;
   formVisible.value = true;
   reset();
+
+  if (_.isEmpty(row.iqcBillNo)) {
+    getBillNo();
+  }
 
   formData.iqcBillNo = row.iqcBillNo;
   formData.billNoList.push({
@@ -480,10 +487,12 @@ const showForm = async (edit, row) => {
   formData.inspectionStringency = row.inspectionStringency;
   formData.inspectionStringencyName = row.inspectionStringencyName;
 
-  if (isEdit.value) {
-    await loadTable();
-  } else {
+  if (isEdit.value || isLoad.value) {
+    // 加载现有单据的明细
     await loadIqcTable();
+  } else {
+    // 加载STD标准下的明细
+    await loadTable();
   }
 };
 const showMergeForm = async (edit, reBillNoList) => {

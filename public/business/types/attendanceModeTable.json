@@ -1,0 +1,43 @@
+{
+  "title": "出勤模式：",
+  "placeholder": "请选择出勤模式",
+  "url": "/api/main/attendanceMode/items",
+  "httptype": "POST",
+  "category": "workshop",
+  "columns": [
+    {
+      "title": "模式代码",
+      "key": "modeCode",
+      "align": "left"
+    },
+    {
+      "title": "模式名称",
+      "key": "modeName",
+      "align": "left"
+    },
+    {
+      "title": "班次",
+      "key": "shiftName",
+      "align": "left"
+    },
+    {
+      "title": "工作时间",
+      "key": "expression",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "modeName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "modeName",
+    "codeField": "shiftName",
+    "descField": "expression"
+  },
+  "name": "出勤模式",
+  "componentType": "table"
+}
