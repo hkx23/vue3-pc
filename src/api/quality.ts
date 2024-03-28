@@ -2425,12 +2425,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
+  /** 检验结果名称 */
+  inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
-  /** 检验结果名称 */
-  inspectResultName?: string;
 }
 
 /** 通用响应类 */
@@ -2989,10 +2989,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3642,10 +3642,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 停留时长 */
   waitTime?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -4243,11 +4243,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  iqcInspectDtlId?: string;
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
+  iqcInspectDtlId?: string;
 }
 
 /** 响应数据 */
@@ -5462,11 +5462,11 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   i?: string;
+  ii?: string;
   s2?: string;
+  iii?: string;
   s4?: string;
   s1?: string;
-  iii?: string;
-  ii?: string;
   s3?: string;
 } | null;
 
@@ -5888,6 +5888,21 @@ export const api = {
      * No description
      *
      * @tags 巡检检验表
+     * @name Print
+     * @summary 打印产品条码
+     * @request POST:/pqcInspectPatrol/print
+     * @secure
+     */
+    print: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/quality/pqcInspectPatrol/print`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 巡检检验表
      * @name GetTabs
      * @summary 获得检验项目的分组Tab
      * @request POST:/pqcInspectPatrol/getTabs
@@ -5993,6 +6008,21 @@ export const api = {
       http.request<ResultBoolean['data']>(`/api/quality/pqcInspectPatrol/cancelled`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 巡检检验表
+     * @name GetPrintTmplList
+     * @summary 获得打印模板下拉数据
+     * @request GET:/pqcInspectPatrol/getPrintTmplList
+     * @secure
+     */
+    getPrintTmplList: (query: { moScheId: string }) =>
+      http.request<ResultListPrintTmpl['data']>(`/api/quality/pqcInspectPatrol/getPrintTmplList`, {
+        method: 'GET',
+        params: query,
       }),
   },
   pqcInspectFirst: {

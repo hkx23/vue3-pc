@@ -3304,9 +3304,9 @@ export interface MoIssuanceDtlVO {
   moRequestQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   flpickQty?: number;
+  bfpickQty?: number;
+  tlpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -5468,8 +5468,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
