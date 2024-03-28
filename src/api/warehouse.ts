@@ -465,9 +465,15 @@ export interface ResultBoolean {
 
 /** 交易明细标签表查询 */
 export interface TransferDtlBarcodeSearch {
+  /** 单据前缀 */
+  prefix?: string;
   /** 单号 */
   billNo?: string;
   transferDtlId?: string;
+  /** ERP单号 */
+  erpBillNo?: string;
+  /** ERP单行号 */
+  erpLineNo?: string;
 }
 
 /** 通用响应类 */
@@ -1402,6 +1408,8 @@ export type TransferHeadVO = {
   datetimeReceipted?: string;
   /** 交易单身表 */
   transferDtlList?: TransferDtlVO[];
+  /** 第一个明细的ERP单据行号 */
+  firstErpLineNo?: string;
 } | null;
 
 /** 仓库移转约束表 */
@@ -2029,10 +2037,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /** 待发货数量 */
   waitDeliveriedQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 响应数据 */
@@ -2552,8 +2560,10 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 已交接总量数量 */
+  receiptedAllQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
+  /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
@@ -3280,21 +3290,21 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
-  /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  tlpickQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -3803,13 +3813,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */

@@ -822,8 +822,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1751,8 +1751,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -2655,13 +2655,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  workshopCode?: string;
+  workshopId?: string;
+  workshopName?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2704,10 +2704,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
-  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3952,15 +3952,15 @@ export interface BarcodeWipCollectVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   workshopCode?: string;
+  workshopId?: string;
   workshopName?: string;
   stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
 }
 
 /** 通用响应类 */
@@ -4073,13 +4073,13 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   workshopCode?: string;
+  workshopId?: string;
   workshopName?: string;
   stateName?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
