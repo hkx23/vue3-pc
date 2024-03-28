@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -2474,8 +2474,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4115,13 +4115,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isForceInspectionChecked?: boolean;
   stateName?: string;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
   isState?: boolean;
+  isForceInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4286,8 +4286,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -4368,13 +4368,13 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isInProcessName?: string;
-  isRawName?: string;
   isRawChecked?: boolean;
-  isProductName?: string;
   isBatchName?: string;
-  isInProcessChecked?: boolean;
+  isProductName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -6164,8 +6164,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -7417,8 +7417,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -7811,8 +7811,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  relate?: boolean;
   default?: boolean;
+  relate?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -8375,14 +8375,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否不可编辑 */
-  disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */

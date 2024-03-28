@@ -118,7 +118,7 @@ const onInput = async (data: any) => {
     dateStart,
     dateEnd,
   };
-  const res = await api.pqcInspectFirst.getList({
+  const res = await api.pqcInspectPatrol.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     ...queryParams.value,
@@ -321,7 +321,7 @@ const pageSwitch = async (value: any) => {
 const onPermission = async (value) => {
   permission.value = value;
   selectedRowKeys.value = [];
-  const res = await api.pqcInspectFirst.getList({
+  const res = await api.pqcInspectPatrol.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     ...queryParams.value,

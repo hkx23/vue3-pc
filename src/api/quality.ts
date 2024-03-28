@@ -630,6 +630,11 @@ export interface PqcInspectPatrolVO {
   moCode?: string;
   /** 排产单 */
   scheCode?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
   mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
@@ -644,8 +649,22 @@ export interface PqcInspectPatrolVO {
   mitemCategoryName?: string;
   /** 检验标准编码 */
   oqcInspectStdCode?: string;
-  /** 检验标准描述 */
+  /** 检验标准名称 */
   oqcInspectStdName?: string;
+  /** 单据状态 */
+  statusName?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 工作中心名称 */
+  wcName?: string;
+  /** 质检人员 */
+  userInspectName?: string;
+  /** 不合格分类名称 */
+  defectCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
+  /** 改善单据 */
+  improveNos?: string[];
   oqcInspectStdFullList?: OqcInspectStdFullVO[];
 }
 
@@ -935,6 +954,26 @@ export interface PqcInspectPatrolSearch {
   billNo?: string;
   /** 待取消的检验单据 */
   cancelBillNoList?: string[];
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  moScheId?: string;
+  mitemId?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 检验状态 */
+  status?: string;
+  /** 质检人员 */
+  userId?: string;
 }
 
 /** 通用响应类 */
@@ -1145,6 +1184,26 @@ export interface ResultListOqcInspectStdItemCategoryVO {
   message?: string;
   /** 响应数据 */
   data?: OqcInspectStdItemCategoryVO[] | null;
+}
+
+/** 响应数据 */
+export type PagingDataPqcInspectPatrolVO = {
+  list?: PqcInspectPatrolVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataPqcInspectPatrolVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPqcInspectPatrolVO;
 }
 
 /** 显示在首末检实体 */
@@ -2326,12 +2385,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 检验结果名称 */
-  inspectResultName?: string;
-  /** 业务类型名称 */
-  businessCategoryName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 业务类型名称 */
+  businessCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 通用响应类 */
@@ -2888,10 +2947,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -2924,8 +2983,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3541,10 +3600,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 停留时长 */
   waitTime?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -4140,11 +4199,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
   iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
 }
 
 /** 响应数据 */
@@ -5358,12 +5417,12 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  ii?: string;
   s3?: string;
+  ii?: string;
   s1?: string;
-  s4?: string;
-  i?: string;
   iii?: string;
+  i?: string;
+  s4?: string;
   s2?: string;
 } | null;
 
@@ -5831,6 +5890,21 @@ export const api = {
           body: data as any,
         },
       ),
+
+    /**
+     * No description
+     *
+     * @tags 巡检检验表
+     * @name GetList
+     * @summary 获得主界面列表数据
+     * @request POST:/pqcInspectPatrol/getList
+     * @secure
+     */
+    getList: (data: PqcInspectPatrolSearch) =>
+      http.request<ResultPagingDataPqcInspectPatrolVO['data']>(`/api/quality/pqcInspectPatrol/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
 
     /**
      * No description
