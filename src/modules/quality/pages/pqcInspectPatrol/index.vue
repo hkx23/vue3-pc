@@ -47,6 +47,20 @@
             }}</t-link>
           </t-space>
         </template>
+        <template #inspectResultName="slotProps">
+          <t-space :size="8">
+            <t-tag
+              shape="round"
+              theme="primary"
+              :class="{
+                OK: slotProps.row.inspectResultName === '合格',
+                NG: slotProps.row.inspectResultName === '不合格',
+                UNDERWAY: slotProps.row.inspectResultName === '暂无结果',
+              }"
+              >{{ slotProps.row.inspectResultName }}</t-tag
+            >
+          </t-space>
+        </template>
         <template #improveNos="slotProps">
           <template v-for="(improve, index) in slotProps.row.improveNos" :key="index">
             <t-link :value="improve" variant="text" theme="primary" name="edit" @click="onEditRowClick(improve)"
@@ -404,7 +418,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'inspectResultName',
     title: t('pqcInspectPatrol.inspectResult'), // 检验结果
-    width: 80,
+    width: 100,
     align: 'center',
   },
   {
@@ -454,5 +468,18 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 .control-box {
   display: flex;
   justify-content: flex-end; /* 这会使按钮靠右对齐 */
+}
+
+//检验结果tag根据结果的不同适用不同的主题样式
+.OK {
+  background-color: green;
+}
+
+.NG {
+  background-color: red;
+}
+
+.UNDERWAY {
+  background-color: blueviolet;
 }
 </style>

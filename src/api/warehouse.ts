@@ -2634,8 +2634,10 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 已交接总量数量 */
+  receiptedAllQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
+  /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
@@ -3290,9 +3292,6 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3305,6 +3304,9 @@ export interface MoIssuanceDtlVO {
   moRequestQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -5466,8 +5468,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */

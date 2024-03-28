@@ -2655,13 +2655,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  workshopId?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  workshopName?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2704,10 +2704,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3952,15 +3952,15 @@ export interface BarcodeWipCollectVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   workshopCode?: string;
-  workshopId?: string;
   workshopName?: string;
+  workshopId?: string;
   stateName?: string;
   isState?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -4071,16 +4071,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  defectCodeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
   workshopCode?: string;
-  workshopId?: string;
   workshopName?: string;
+  workshopId?: string;
   stateName?: string;
   isState?: boolean;
-  defectCodeStr?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -6371,6 +6371,21 @@ export const api = {
      */
     scanBarcodeWipCollect: (data: BarcodeWipCollectVO) =>
       http.request<ResultBarcodeWipCollectVO['data']>(`/api/control/barcodeWipCollect/scanBarcodeWipCollect`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 过站采集
+     * @name GetBarcodeWipCollect
+     * @summary 过站采集扫码-压测查询接口
+     * @request POST:/barcodeWipCollect/getBarcodeWipCollect
+     * @secure
+     */
+    getBarcodeWipCollect: (data: BarcodeWipCollectVO) =>
+      http.request<ResultBarcodeWipCollectVO['data']>(`/api/control/barcodeWipCollect/getBarcodeWipCollect`, {
         method: 'POST',
         body: data as any,
       }),

@@ -12,75 +12,29 @@
       <t-row :full="true">
         <hr size="5" width="2000px" color="#808080" />
       </t-row>
-      <t-row :gutter="[32, 16]">
-        <t-col :span="3">
-          <t-descriptions>
-            <t-descriptions-item label="工作中心：" name="wcName">{{ headerDate.wcName }}</t-descriptions-item>
-          </t-descriptions>
-        </t-col>
-        <t-col :span="3">
-          <t-descriptions>
-            <t-descriptions-item label="排产单号：" name="scheCode">{{ headerDate.scheCode }}</t-descriptions-item>
-          </t-descriptions>
-        </t-col>
-        <t-col :span="3">
-          <t-descriptions>
-            <t-descriptions-item label="物料编码：" name="mitemCode">{{ headerDate.mitemCode }}</t-descriptions-item>
-          </t-descriptions>
-        </t-col>
-        <t-col :span="3">
-          <t-descriptions>
-            <t-descriptions-item label="物料描述：" name="mitemDesc">{{ headerDate.mitemDesc }}</t-descriptions-item>
-          </t-descriptions>
-        </t-col>
-      </t-row>
-      <t-row :gutter="[32, 16]">
-        <t-col :span="3">
-          <t-descriptions>
-            <t-descriptions-item label="排产数量：" name="scheQty">{{ headerDate.scheQty }}</t-descriptions-item>
-          </t-descriptions>
-        </t-col>
-        <t-col :span="3">
-          <t-descriptions
-            ><t-descriptions-item label="检验标准：" name="inspectStdName">{{
-              headerDate.inspectStdName
-            }}</t-descriptions-item>
-          </t-descriptions>
-        </t-col>
-        <t-col :span="3">
-          <t-descriptions>
-            <t-descriptions-item label="班组：" name="reason">{{ headerDate.scheCode }}</t-descriptions-item>
-          </t-descriptions>
-        </t-col>
-        <t-col :span="3">
-          <t-descriptions>
-            <t-descriptions-item label="检验时机：" name="inspectOpportunityName">{{
-              headerDate.inspectOpportunityName
-            }}</t-descriptions-item>
-          </t-descriptions>
-        </t-col>
-      </t-row>
-      <t-row :gutter="[32, 16]">
-        <t-col :span="3">
-          <t-descriptions>
-            <t-descriptions-item label="检验完成时间：" name="datetimeInspectEnd">{{
-              headerDate.datetimeInspectEnd
-            }}</t-descriptions-item>
-          </t-descriptions>
-        </t-col>
-        <t-col :span="3">
-          <t-descriptions>
-            <t-descriptions-item label="检验员：" name="userInspectName">{{
-              headerDate.userInspectName
-            }}</t-descriptions-item>
-          </t-descriptions>
-        </t-col>
-        <t-col :span="3">
-          <t-form-item label="附件：" name="attachment">
-            <t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
-          </t-form-item>
-        </t-col>
-      </t-row>
+      <t-descriptions :column="4" :label-style="{ width: '130px' }">
+        <t-descriptions-item label="工作中心" name="wcName">{{ headerDate.wcName }}</t-descriptions-item>
+        <t-descriptions-item label="排产单号" name="scheCode">{{ headerDate.scheCode }}</t-descriptions-item>
+        <t-descriptions-item label="物料编码" name="mitemCode">{{ headerDate.mitemCode }}</t-descriptions-item>
+        <t-descriptions-item label="物料描述" name="mitemDesc">{{ headerDate.mitemDesc }}</t-descriptions-item>
+        <t-descriptions-item label="排产数量" name="scheQty">{{ headerDate.scheQty }}</t-descriptions-item>
+        ><t-descriptions-item label="检验标准" name="inspectStdName">{{
+          headerDate.inspectStdName
+        }}</t-descriptions-item>
+        <t-descriptions-item label="班组" name="reason">{{ headerDate.scheCode }}</t-descriptions-item>
+        <t-descriptions-item label="检验时机" name="inspectOpportunityName">{{
+          headerDate.inspectOpportunityName
+        }}</t-descriptions-item>
+        <t-descriptions-item label="检验完成时间" name="datetimeInspectEnd">{{
+          headerDate.datetimeInspectEnd
+        }}</t-descriptions-item>
+        <t-descriptions-item label="检验员" name="userInspectName">{{
+          headerDate.userInspectName
+        }}</t-descriptions-item>
+        <t-descriptions-item label="附件" name="attachment"
+          ><t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
+        </t-descriptions-item>
+      </t-descriptions>
       <div>
         <t-image :src="stampUrl" class="stamp" />
       </div>
@@ -171,56 +125,41 @@
           </t-tabs>
         </t-tab-panel>
         <t-tab-panel v-if="isShow" label="不合格处理" value="1" :destroy-on-hide="true">
-          <t-row :gutter="[32, 16]">
-            <t-col :span="3">
-              <t-descriptions>
-                <t-descriptions-item label="不合格分类：" name="defectCategoryName">{{
-                  firstData.defectCategoryName
-                }}</t-descriptions-item>
-              </t-descriptions>
-            </t-col>
-            <t-col :span="3">
-              <t-descriptions>
-                <t-descriptions-item label="责任部门：" name="scheCode">{{ headerDate.scheCode }}</t-descriptions-item>
-              </t-descriptions>
-            </t-col>
-            <t-col :span="3">
-              <t-descriptions>
-                <t-descriptions-item label="跟进人：" name="mitemCode">{{ headerDate.mitemCode }}</t-descriptions-item>
-              </t-descriptions>
-            </t-col>
-            <t-col :span="3">
-              <t-descriptions>
-                <t-descriptions-item label="处理意见：" name="correctOpinion">{{
-                  firstData.correctOpinion
-                }}</t-descriptions-item>
-              </t-descriptions>
-            </t-col>
-          </t-row>
-          <t-row :gutter="[32, 16]">
-            <t-col :span="3">
+          <t-descriptions :label-style="{ width: '130px' }">
+            <t-descriptions-item label="不合格分类：" name="defectCategoryName">{{
+              firstData.defectCategoryName
+            }}</t-descriptions-item>
+            <t-descriptions-item label="责任部门：" name="scheCode">{{ headerDate.scheCode }}</t-descriptions-item>
+            <t-descriptions-item label="跟进人：" name="mitemCode">{{ headerDate.mitemCode }}</t-descriptions-item>
+            <t-descriptions-item label="处理意见：" name="correctOpinion">{{
+              firstData.correctOpinion
+            }}</t-descriptions-item>
+            <t-descriptions-item label="" name="correctOpinion">
               <t-radio-group v-model="radioValue">
                 <t-radio allow-uncheck:false :value="1"> 启用品质改善</t-radio>
-              </t-radio-group>
-            </t-col>
+              </t-radio-group></t-descriptions-item
+            >
+            <t-descriptions-item label="改善单据：" name="improveNos">
+              <template v-for="(improve, index) in firstData.improveNos" :key="index">
+                <t-link :value="improve" variant="text" theme="primary" name="edit" @click="onEditRowClick(improve)"
+                  >{{ improve }}
+                </t-link>
+                <t-text
+                  v-if="index < firstData.improveNos.length - 1"
+                  :value="index"
+                  variant="text"
+                  theme="primary"
+                  name="edit"
+                  >、
+                </t-text>
+              </template>
+            </t-descriptions-item>
+          </t-descriptions>
+
+          <t-row :gutter="[32, 16]">
+            <t-col :span="3"> </t-col>
             <t-col :span="6">
-              <t-descriptions>
-                <t-descriptions-item label="改善单据：" name="improveNos">
-                  <template v-for="(improve, index) in firstData.improveNos" :key="index">
-                    <t-link :value="improve" variant="text" theme="primary" name="edit" @click="onEditRowClick(improve)"
-                      >{{ improve }}
-                    </t-link>
-                    <t-text
-                      v-if="index < firstData.improveNos.length - 1"
-                      :value="index"
-                      variant="text"
-                      theme="primary"
-                      name="edit"
-                      >、
-                    </t-text>
-                  </template>
-                </t-descriptions-item>
-              </t-descriptions>
+              <t-descriptions> </t-descriptions>
             </t-col>
           </t-row>
         </t-tab-panel>
@@ -303,11 +242,11 @@ const stampUrl = computed(() => {
   const result = props.rowData.bill.inspectResult;
   switch (result) {
     case 'OK':
-      return '../../../../../../public/images/pqcInspectFirst/stamp/OK.png';
+      return '../../../../../../public/images/pqcInspect/stamp/OK.png';
     case 'NG':
-      return '../../../../../../public/images/pqcInspectFirst/stamp/NG.png';
+      return '../../../../../../public/images/pqcInspect/stamp/NG.png';
     default:
-      return '../../../../../../public/images/pqcInspectFirst/stamp/UNDERWAY.png';
+      return '../../../../../../public/images/pqcInspect/stamp/UNDERWAY.png';
   }
 });
 // 监听 id 的变化
@@ -374,6 +313,7 @@ const searchItems = async (item, index) => {
   // 清空原数据
   itemTab.value = [];
   itemData.value = [];
+  itemTabValue.value = '0';
   // 获取tab数据
   const tab = await api.pqcInspectFirst.getTabs({
     pqcInspectFirstId: pqcInspectFirstId.value,
@@ -426,6 +366,8 @@ const itemTabChange = async (value: string) => {
     } else {
       isImproveRadioValue.value = 0;
     }
+  } else {
+    await getBarcodeItems();
   }
 };
 
