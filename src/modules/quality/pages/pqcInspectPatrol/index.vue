@@ -31,7 +31,7 @@
         @refresh="fetchData"
         @select-change="onPrintChange"
       >
-        <template #title> 首末检记录 </template>
+        <template #title> 巡检记录 </template>
         <template #button>
           <t-select v-model="printTemplate" label="打印模板" :clearable="true" style="width: 240px">
             <t-option v-for="item in onPrintTemplateList.list" :key="item.id" :label="item.tmplName" :value="item.id" />
