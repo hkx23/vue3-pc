@@ -278,6 +278,9 @@ const opts = computed(() => {
       bind: {
         type: 'mitem',
         valueField: 'mitemCode',
+        changeFunc: (val: any) => {
+          console.log(val);
+        },
       },
     },
     workshopCode: {
