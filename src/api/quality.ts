@@ -630,6 +630,11 @@ export interface PqcInspectPatrolVO {
   moCode?: string;
   /** 排产单 */
   scheCode?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
   mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
@@ -644,8 +649,42 @@ export interface PqcInspectPatrolVO {
   mitemCategoryName?: string;
   /** 检验标准编码 */
   oqcInspectStdCode?: string;
-  /** 检验标准描述 */
+  /** 检验标准名称 */
   oqcInspectStdName?: string;
+  /** 单据状态 */
+  statusName?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  /** 工作中心名称 */
+  wcName?: string;
+  /** 质检人员 */
+  userInspectName?: string;
+  /** 不合格分类名称 */
+  defectCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
+  /** 改善单据 */
+  improveNos?: string[];
+  /** 项目分类名称 */
+  itemCategoryName?: string;
+  /** 项目分类 */
+  itemCategory?: string;
+  /** 项目名称或内容 */
+  itemName?: string;
+  /** 技术要求 */
+  technicalRequest?: string;
+  /** 项目特性 */
+  characteristics?: string;
+  /** 项目特性名称 */
+  characteristicsName?: string;
+  /** 检验工具 */
+  inspectTool?: string;
+  /** 检测值 */
+  inspectValue?: number;
+  /** 不良原因 */
+  ngReason?: string;
+  /** 检验依据 */
+  inspectBasis?: string;
   oqcInspectStdFullList?: OqcInspectStdFullVO[];
 }
 
@@ -935,6 +974,46 @@ export interface PqcInspectPatrolSearch {
   billNo?: string;
   /** 待取消的检验单据 */
   cancelBillNoList?: string[];
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  moScheId?: string;
+  mitemId?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 检验状态 */
+  status?: string;
+  /** 质检人员 */
+  userId?: string;
+  pqcInspectPatrolId?: string;
+  /** 项目分类 */
+  itemCategory?: string;
+  /** 是否仅显示不合格 */
+  isNg?: boolean;
+  /** 项目名称或内容 */
+  itemName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListPqcInspectPatrolVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PqcInspectPatrolVO[] | null;
 }
 
 /** 通用响应类 */
@@ -1094,6 +1173,26 @@ export interface ResultPagingDataPqcInspectPatrolBillFullVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataPqcInspectPatrolBillFullVO;
+}
+
+/** 响应数据 */
+export type PagingDataPqcInspectPatrolVO = {
+  list?: PqcInspectPatrolVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataPqcInspectPatrolVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataPqcInspectPatrolVO;
 }
 
 /** 产品检验标准全信息搜索类 */
@@ -2733,6 +2832,8 @@ export interface IqcInspectStdFullSearch {
   supplierId?: string;
   /** 接收单号信息 */
   billNoList?: IqcInspectSubmitDeliveryNoVO[];
+  /** 是否创建入库单据 */
+  isCreatedStockIn?: boolean;
 }
 
 /** 物料检验头表 */
@@ -3619,6 +3720,8 @@ export interface IqcInspectSubmitVO {
   /** 处理意见VO */
   iqcInspectNg?: IqcInspectNgVO;
   iqcInspectStdList?: IqcInspectStdFullVO[];
+  /** 是否创建入库单据 */
+  isCreatedStockIn?: boolean;
 }
 
 /** 物料检验单查询 */
@@ -3869,6 +3972,10 @@ export interface IqcInspectVO {
   unQualifiedBatch?: number;
   /** 批次合格率 */
   qualificationRate?: string;
+  /** 单据总不合格数量 */
+  sumNgQty?: number;
+  /** 本次可退数量 */
+  curReturnQty?: number;
 }
 
 /** 响应数据 */
@@ -5162,10 +5269,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -5358,13 +5465,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
   s1?: string;
-  s3?: string;
-  iii?: string;
   s2?: string;
-  ii?: string;
+  s3?: string;
   s4?: string;
+  i?: string;
+  ii?: string;
+  iii?: string;
 } | null;
 
 /** 标签模板 */
@@ -5785,6 +5892,36 @@ export const api = {
      * No description
      *
      * @tags 巡检检验表
+     * @name Print
+     * @summary 打印产品条码
+     * @request POST:/pqcInspectPatrol/print
+     * @secure
+     */
+    print: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/quality/pqcInspectPatrol/print`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 巡检检验表
+     * @name GetTabs
+     * @summary 获得检验项目的分组Tab
+     * @request POST:/pqcInspectPatrol/getTabs
+     * @secure
+     */
+    getTabs: (data: PqcInspectPatrolSearch) =>
+      http.request<ResultListPqcInspectPatrolVO['data']>(`/api/quality/pqcInspectPatrol/getTabs`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 巡检检验表
      * @name GetPqcInspectPatrolInfo
      * @summary 根据单号获取明细和附件信息
      * @request POST:/pqcInspectPatrol/getPqcInspectPatrolInfo
@@ -5818,6 +5955,21 @@ export const api = {
      * No description
      *
      * @tags 巡检检验表
+     * @name GetPatrolItems
+     * @summary 获得检验项目
+     * @request POST:/pqcInspectPatrol/getPatrolItems
+     * @secure
+     */
+    getPatrolItems: (data: PqcInspectPatrolSearch) =>
+      http.request<ResultPagingDataPqcInspectPatrolVO['data']>(`/api/quality/pqcInspectPatrol/getPatrolItems`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 巡检检验表
      * @name GetOqcInspectStdByItemCategory
      * @summary 根据物料ID和物料分类，获取标准集合，并根据标准分类返回
      * @request POST:/pqcInspectPatrol/getOqcInspectStdByItemCategory
@@ -5836,6 +5988,21 @@ export const api = {
      * No description
      *
      * @tags 巡检检验表
+     * @name GetList
+     * @summary 获得主界面列表数据
+     * @request POST:/pqcInspectPatrol/getList
+     * @secure
+     */
+    getList: (data: PqcInspectPatrolSearch) =>
+      http.request<ResultPagingDataPqcInspectPatrolVO['data']>(`/api/quality/pqcInspectPatrol/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 巡检检验表
      * @name Cancelled
      * @summary 单据取消
      * @request POST:/pqcInspectPatrol/cancelled
@@ -5845,6 +6012,21 @@ export const api = {
       http.request<ResultBoolean['data']>(`/api/quality/pqcInspectPatrol/cancelled`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 巡检检验表
+     * @name GetPrintTmplList
+     * @summary 获得打印模板下拉数据
+     * @request GET:/pqcInspectPatrol/getPrintTmplList
+     * @secure
+     */
+    getPrintTmplList: (query: { moScheId: string }) =>
+      http.request<ResultListPrintTmpl['data']>(`/api/quality/pqcInspectPatrol/getPrintTmplList`, {
+        method: 'GET',
+        params: query,
       }),
   },
   pqcInspectFirst: {

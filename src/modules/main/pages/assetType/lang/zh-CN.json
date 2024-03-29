@@ -1,0 +1,9 @@
+{
+  "assetType": {
+    "parentLevel": "上一层级",
+    "typeCode": "资产类型编码",
+    "typeName": "资产类型名称",
+    "typeDesc": "资产类型描述",
+    "operate": "操作"
+  }
+}

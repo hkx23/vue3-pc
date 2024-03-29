@@ -155,7 +155,7 @@
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref, watch } from 'vue';
 
-import { api } from '@/api/warehouse';
+import { api, StockCheckBillDtl } from '@/api/warehouse';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
@@ -223,6 +223,7 @@ const { pageUI } = usePage();
 const dataTotal = ref(0);
 const dataTotals = ref(0);
 const sonId = ref(''); // getBarcodes 接口入参
+const desData = ref<StockCheckBillDtl[]>([]);
 
 // 保存
 const saveData = async () => {
@@ -260,26 +261,20 @@ const finish = async (billId) => {
 // 差异调整
 const getAdjustment = async () => {
   // 处理参数
-  const desData = tableDataInventory1.value
-    .filter((row) => {
-      return row.checkQty || row.differenceReason || row.pdDtlId;
-    })
-    .map((row) => {
-      return {
-        checkQty: row.checkQty,
-        differenceReason: row.differenceReason,
-        id: row.pdDtlId,
-      };
-    });
-  const billId = props.propsdtlId;
+  desData.value = tableDataInventory1.value;
+  console.log('这是billid的值：', props.propsdtlId);
+  const billId = props.propsdtlId[0];
   const billNo = props.propsbillNo;
   const warehouseId = props.propswarehouseId;
   await api.stockCheckBill.adjustment({
     billId,
     billNo,
     warehouseId,
-    dtls: desData,
+    dtls: desData.value,
   });
+  emit('updateStatus', '已关闭'); // 发射事件，可以携带新状态作为参数
+  // 提示调整完成
+  await MessagePlugin.success('调整完成!');
 };
 
 // 关闭单据

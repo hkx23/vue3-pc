@@ -6,74 +6,31 @@
         <t-col :flex="8">
           <h3>检验单号：{{ headerDate.billNo }}</h3>
         </t-col>
-        <t-col :flex="1.5">创建时间：{{ headerDate.timeCreate }}</t-col>
-        <t-col :flex="0.5"><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
+
+        <t-col :flex="2">检验人员：{{ headerDate.userInspectName }}</t-col>
+        <t-col :flex="3">创建时间：{{ headerDate.timeCreate }}</t-col>
+        <t-col :flex="3">检验完成时间：{{ headerDate.datetimeInspectEnd }}</t-col>
+        <t-col :flex="1.5"><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
       </t-row>
       <t-row :full="true">
         <hr size="5" width="2000px" color="#808080" />
       </t-row>
-      <t-descriptions :column="4" :label-style="{ width: '130px' }">
+      <t-descriptions :column="4" :label-style="{ width: '100px' }">
         <t-descriptions-item label="工作中心" name="wcName">{{ headerDate.wcName }}</t-descriptions-item>
         <t-descriptions-item label="排产单号" name="scheCode">{{ headerDate.scheCode }}</t-descriptions-item>
         <t-descriptions-item label="物料编码" name="mitemCode">{{ headerDate.mitemCode }}</t-descriptions-item>
         <t-descriptions-item label="物料描述" name="mitemDesc">{{ headerDate.mitemDesc }}</t-descriptions-item>
         <t-descriptions-item label="排产数量" name="scheQty">{{ headerDate.scheQty }}</t-descriptions-item>
-        ><t-descriptions-item label="检验标准" name="inspectStdName">{{
-          headerDate.inspectStdName
+        <t-descriptions-item label="检验标准" name="oqcInspectStdName">{{
+          headerDate.oqcInspectStdName
         }}</t-descriptions-item>
-        <t-descriptions-item label="班组" name="reason">{{ headerDate.scheCode }}</t-descriptions-item>
-        <t-descriptions-item label="检验时机" name="inspectOpportunityName">{{
-          headerDate.inspectOpportunityName
-        }}</t-descriptions-item>
-        <t-descriptions-item label="检验完成时间" name="datetimeInspectEnd">{{
-          headerDate.datetimeInspectEnd
-        }}</t-descriptions-item>
-        <t-descriptions-item label="检验员" name="userInspectName">{{
-          headerDate.userInspectName
-        }}</t-descriptions-item>
-        <t-descriptions-item label="附件" name="attachment"
-          ><t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
-        </t-descriptions-item>
+        <t-descriptions-item label="附件：" name="attachment"
+          ><t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link></t-descriptions-item
+        >
       </t-descriptions>
       <div>
         <t-image :src="stampUrl" class="stamp" />
       </div>
-    </cmp-card>
-    <!-- !条码部分 -->
-    <cmp-card v-if="barcodeData.length > 0">
-      <t-row v-model="tabValue" align="middle" type="flex">
-        <t-col v-for="(item, index) in barcodeData" :key="index" :lg="{ span: 3 }" :offset="0">
-          <t-card class="box-card">
-            <div
-              slot1="header"
-              class="barcodeDiv"
-              :style="{ backgroundColor: index === selectedCol ? 'lightblue' : 'white' }"
-              @click="searchItems(item, index)"
-            >
-              <t-row>
-                <t-col :flex="1">
-                  <h2>{{ index + 1 }}</h2>
-                </t-col>
-                <t-col :flex="5">
-                  {{ item.scanBarcode }}
-                </t-col>
-                <t-col :flex="1">
-                  <t-tag
-                    shape="round"
-                    theme="primary"
-                    :class="{
-                      OK: item.inspectResultName === '合格',
-                      NG: item.inspectResultName === '不合格',
-                      UNDERWAY: item.inspectResultName === '暂无结果',
-                    }"
-                    >{{ item.inspectResultName }}</t-tag
-                  >
-                </t-col>
-              </t-row>
-            </div>
-          </t-card>
-        </t-col>
-      </t-row>
     </cmp-card>
     <!-- !检验项目表格模块 -->
     <cmp-card>
@@ -112,12 +69,8 @@
                       </template>
                     </t-input>
                   </template>
-                  <template #operation="{ row }">
-                    <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
-                    <t-popconfirm content="继续将删除该标准该检验项目，是否继续？" @confirm="delDtlById(row)">
-                      <t-link theme="primary" style="padding-right: 8px">删除</t-link>
-                    </t-popconfirm>
-                    <t-link theme="primary" @click="onCopy(row)">复制</t-link>
+                  <template #attachments="{ row }">
+                    <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">查看</t-link>
                   </template>
                 </cmp-table>
               </cmp-container>
@@ -126,26 +79,21 @@
         </t-tab-panel>
         <t-tab-panel v-if="isShow" label="不合格处理" value="1" :destroy-on-hide="true">
           <t-descriptions :label-style="{ width: '130px' }">
-            <t-descriptions-item label="不合格分类：" name="defectCategoryName">{{
-              firstData.defectCategoryName
+            <t-descriptions-item label="不合格分类" name="defectCategoryName">{{
+              patrolData.defectCategoryName
             }}</t-descriptions-item>
-            <t-descriptions-item label="责任部门：" name="scheCode">{{ headerDate.scheCode }}</t-descriptions-item>
-            <t-descriptions-item label="跟进人：" name="mitemCode">{{ headerDate.mitemCode }}</t-descriptions-item>
-            <t-descriptions-item label="处理意见：" name="correctOpinion">{{
-              firstData.correctOpinion
+            <t-descriptions-item label="责任部门" name="scheCode">{{ headerDate.scheCode }}</t-descriptions-item>
+            <t-descriptions-item label="跟进人" name="mitemCode">{{ headerDate.mitemCode }}</t-descriptions-item>
+            <t-descriptions-item label="处理意见" name="correctOpinion">{{
+              patrolData.correctOpinion
             }}</t-descriptions-item>
-            <t-descriptions-item label="" name="correctOpinion">
-              <t-radio-group v-model="radioValue">
-                <t-radio allow-uncheck:false :value="1"> 启用品质改善</t-radio>
-              </t-radio-group></t-descriptions-item
-            >
-            <t-descriptions-item label="改善单据：" name="improveNos">
-              <template v-for="(improve, index) in firstData.improveNos" :key="index">
+            <t-descriptions-item label="查看改善进度" name="improveNos">
+              <template v-for="(improve, index) in patrolData.improveNos" :key="index">
                 <t-link :value="improve" variant="text" theme="primary" name="edit" @click="onEditRowClick(improve)"
                   >{{ improve }}
                 </t-link>
                 <t-text
-                  v-if="index < firstData.improveNos.length - 1"
+                  v-if="index < patrolData.improveNos.length - 1"
                   :value="index"
                   variant="text"
                   theme="primary"
@@ -155,13 +103,6 @@
               </template>
             </t-descriptions-item>
           </t-descriptions>
-
-          <t-row :gutter="[32, 16]">
-            <t-col :span="3"> </t-col>
-            <t-col :span="6">
-              <t-descriptions> </t-descriptions>
-            </t-col>
-          </t-row>
         </t-tab-panel>
       </t-tabs>
     </cmp-card>
@@ -196,7 +137,7 @@ import { Icon, MessagePlugin } from 'tdesign-vue-next';
 import { computed, Ref, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { api, PqcInspectFirstVO } from '@/api/quality';
+import { api, PqcInspectPatrolVO } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -210,19 +151,14 @@ const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
 const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const opType = ref('add');
-const barcodeData = ref<PqcInspectFirstVO[]>([]); // 条码栏数据
 const id = ref(''); // 用于watch监听，控制加载
-const selectedCol = ref(0); // 条码部分被选中的index
-const selectBarcode = ref(); // 第三部分展示选中的啥条码
-const itemTab = ref<PqcInspectFirstVO[]>([]); // 检验项目类别Tab
+const itemTab = ref<PqcInspectPatrolVO[]>([]); // 检验项目类别Tab
 const radioValue = ref(1); // 仅显示不合格单选按钮
-const itemData = ref<PqcInspectFirstVO[]>([]); // 检验项目数据
-const pqcInspectFirstId = ref(); // 首检单ID丢全局
-const pqcInspectFirstBarcodeId = ref(); // 首检单条码ID丢全局
+const itemData = ref<PqcInspectPatrolVO[]>([]); // 检验项目数据
 const itemTabValue = ref('0'); // 检验项目不合格分类tab的默认选中
 const tabValue = ref('ALL'); // 检验项目tab的默认选中
 const isShow = ref(false); // 不合格处理panel的开关
-const firstData = ref<PqcInspectFirstVO>(); // 检验单数据
+const patrolData = ref<PqcInspectPatrolVO>(); // 检验单数据
 const isImproveRadioValue = ref(1); // 不合格处理界面启用品质改善控件
 const router = useRouter();
 const itemCategoryTab = ref();
@@ -252,37 +188,30 @@ const stampUrl = computed(() => {
 // 监听 id 的变化
 watch(id, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
-    const barcodes = await api.pqcInspectFirst.getBarcodes(props.rowData.bill.id);
-    if (barcodes.length > 0) {
-      barcodeData.value = barcodes;
+    // 获取tab数据
+    const tab = await api.pqcInspectPatrol.getTabs({
+      pqcInspectPatrolId: id.value,
+    });
+    const newObject = { itemCategory: 'ALL', itemCategoryName: '全部' };
+    tab.unshift(newObject);
+    itemTab.value = tab;
+    await getPatrolItems();
 
-      pqcInspectFirstId.value = barcodes[0].pqcInspectFirstId;
-      pqcInspectFirstBarcodeId.value = barcodes[0].id;
-      // 获取tab数据
-      const tab = await api.pqcInspectFirst.getTabs({
-        pqcInspectFirstId: pqcInspectFirstId.value,
-        pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
-      });
-      const newObject = { itemCategory: 'ALL', itemCategoryName: '全部' };
-      tab.unshift(newObject);
-      itemTab.value = tab;
-      await getBarcodeItems();
-    }
-  }
-});
-
-// 监听 条码ID 的变化
-watch(pqcInspectFirstBarcodeId, async (newValue, oldValue) => {
-  if (newValue !== oldValue) {
-    const res = await api.pqcInspectFirst.getList({
+    const res = await api.pqcInspectPatrol.getList({
       billNo: headerDate.value.billNo,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
     });
     const now = res.list[0];
-    firstData.value = now; // 检验单的数据
-    console.log('这是检验单的数据：', firstData.value.defectCategoryName);
-    const { improveNos } = firstData.value;
+    patrolData.value = now; // 检验单的数据
+    // 控制不合格分类是否展示
+    if (patrolData.value.inspectResult === 'NG') {
+      isShow.value = true;
+    } else {
+      isShow.value = false;
+    }
+    console.log('这是检验单的数据：', patrolData.value.defectCategoryName);
+    const { improveNos } = patrolData.value;
     if (improveNos.length > 0) {
       isImproveRadioValue.value = 1;
     } else {
@@ -297,51 +226,16 @@ const Emit = defineEmits(['permissionShow']);
 const onClose = () => {
   Emit('permissionShow', false); // 回到父
 };
-// 条码区域条码的点击事件
-const searchItems = async (item, index) => {
-  // 如果点击事件拿到的index和他自己所持有的一样，则变bgc,当前方法做参数传递
-  selectedCol.value = index;
-  selectBarcode.value = item.scanBarcode;
-  pqcInspectFirstId.value = item.pqcInspectFirstId;
-  pqcInspectFirstBarcodeId.value = item.id;
-  // 控制不合格分类是否展示
-  if (item.inspectResult === 'NG') {
-    isShow.value = true;
-  } else {
-    isShow.value = false;
-  }
-  // 清空原数据
-  itemTab.value = [];
-  itemData.value = [];
-  itemTabValue.value = '0';
-  // 获取tab数据
-  const tab = await api.pqcInspectFirst.getTabs({
-    pqcInspectFirstId: pqcInspectFirstId.value,
-    pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
-  });
-  const newObject = { itemCategory: 'ALL', itemCategoryName: '全部' };
-  tab.unshift(newObject);
-  itemTab.value = tab;
-  // 获取项目数据
-  const res = await api.pqcInspectFirst.getBarcodeItems({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-    pqcInspectFirstId: pqcInspectFirstId.value,
-    pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
-  });
-  itemData.value = res.list;
-};
 
 // 检验项目TAb 栏切换事件
 const tabChange = async (value: string) => {
   itemCategoryTab.value = value;
   if (value === 'ALL') {
-    await getBarcodeItems();
+    await getPatrolItems();
   } else {
-    const res = await api.pqcInspectFirst.getBarcodeItems({
+    const res = await api.pqcInspectPatrol.getPatrolItems({
       itemCategory: value,
-      pqcInspectFirstId: pqcInspectFirstId.value,
-      pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
+      pqcInspectPatrolId: id.value,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
     });
@@ -353,21 +247,21 @@ const tabChange = async (value: string) => {
 // 检验项目不合格分类TAb 栏切换事件
 const itemTabChange = async (value: string) => {
   if (value === '1') {
-    const res = await api.pqcInspectFirst.getList({
+    const res = await api.pqcInspectPatrol.getList({
       billNo: headerDate.value.billNo,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
     });
     const now = res.list[0];
-    firstData.value = now; // 检验单的数据
-    const { improveNos } = firstData.value;
+    patrolData.value = now; // 检验单的数据
+    const { improveNos } = patrolData.value;
     if (improveNos.length > 0) {
       isImproveRadioValue.value = 1;
     } else {
       isImproveRadioValue.value = 0;
     }
   } else {
-    await getBarcodeItems();
+    await getPatrolItems();
   }
 };
 
@@ -375,29 +269,27 @@ const onRadioChange = async (checked: any) => {
   const radioValueNum = !checked ? 1 : 0;
   console.log('这是单选按钮的数据：', radioValueNum);
   radioValue.value = radioValueNum;
-  await getBarcodeItems();
+  await getPatrolItems();
 };
 
 // 检验项目数据获取方法
-const getBarcodeItems = async () => {
-  const res = await api.pqcInspectFirst.getBarcodeItems({
+const getPatrolItems = async () => {
+  const res = await api.pqcInspectPatrol.getPatrolItems({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
-    pqcInspectFirstId: pqcInspectFirstId.value,
-    pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
+    pqcInspectPatrolId: id.value,
   });
   itemData.value = res.list;
 };
 
 // 检验项目关键词搜索
 const keywordSearch = async (value) => {
-  const res = await api.pqcInspectFirst.getBarcodeItems({
+  const res = await api.pqcInspectPatrol.getPatrolItems({
     itemCategory: itemCategoryTab.value,
     itemName: value,
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
-    pqcInspectFirstId: pqcInspectFirstId.value,
-    pqcInspectFirstBarcodeId: pqcInspectFirstBarcodeId.value,
+    pqcInspectPatrolId: id.value,
   });
   itemData.value = res.list;
 };
@@ -416,20 +308,6 @@ const onEditRowClick = (improve: String) => {
 const onConfirmFile = () => {
   formVisible.value = false;
 };
-const formData = ref({
-  operateTpye: 'add',
-  saveTpye: 'add',
-  id: '',
-  inspectStdCode: '',
-  inspectStdName: '',
-  groupInspectStdId: '',
-  revision: null,
-  timeEffective: '',
-  timeInvalid: '',
-  status: 'DRAFT',
-  statusName: '起草中',
-  inspectTypeList: [],
-});
 
 const selectChange = (value: any) => {
   dtlRowKeys.value = value;
@@ -443,22 +321,6 @@ const onEdit = (row) => {
   dtlFormRef.value.dtlData = item;
   dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
   touchstoneFormVisible.value = true;
-};
-const onCopy = (row) => {
-  formTitle.value = '检验项目复制';
-  opType.value = 'add';
-  const item = { ...row };
-  dtlFormRef.value.dtlData = item;
-  dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
-  dtlFormRef.value.dtlData.itemName = '';
-  touchstoneFormVisible.value = true;
-};
-const delDtlById = async (row) => {
-  if (formData.value.operateTpye === 'add') {
-    await api.iqcInspectStdDtl.removeBatch([row.id]);
-  } else {
-    allDtl.value.splice(row.index, 1);
-  }
 };
 
 // // 上传文件
@@ -490,11 +352,14 @@ const batchDeleteSuccess = (files: AddFileType[]) => {
     fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
   });
 };
-const allDtl = ref([]);
 const columns = [
   {
     colKey: 'row-select',
     type: 'multiple',
+  },
+  {
+    colKey: 'itemCategoryName',
+    title: '项目分类',
   },
   {
     colKey: 'itemName',
@@ -529,8 +394,8 @@ const columns = [
     title: '检验依据',
   },
   {
-    colKey: 'operation',
-    title: '操作',
+    colKey: 'attachments',
+    title: '附件',
     fixed: 'right',
     width: '130',
   },

@@ -1,33 +1,18 @@
-<!-- 首末检查询 -->
+<!-- 巡检查询 -->
 <template>
   <detail v-if="permission" :row-data="{ bill }" @permission-show="onPermission"></detail>
   <cmp-container v-if="!permission" :full="true">
     <cmp-card :span="12">
       <!-- 查询组件  -->
       <cmp-query ref="queryRef" :opts="opts" @submit="onInput" @reset="onReset">
-        <template #inspectOpportunity="{ param }">
-          <t-select v-model="param.inspectOpportunity" :clearable="true" label="检验时机">
-            <t-option
-              v-for="item in inspectOpportunityDataList.list"
-              :key="item.id"
-              :label="item.label"
-              :value="item.value"
-            />
-          </t-select>
-        </template>
         <template #inspectResult="{ param }">
           <t-select v-model="param.inspectResult" :clearable="true" label="检验结果">
             <t-option v-for="item in inspectResultDataList" :key="item.value" :label="item.label" :value="item.value" />
           </t-select>
         </template>
         <template #status="{ param }">
-          <t-select v-model="param.status" :clearable="true" label="单据状态">
+          <t-select v-model="param.status" :clearable="true" label="检验状态">
             <t-option v-for="item in statusDataList.list" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </template>
-        <template #isImprove="{ param }">
-          <t-select v-model="param.isImprove" :clearable="true" label="品质改善">
-            <t-option v-for="item in isImproveDataList" :key="item.value" :label="item.label" :value="item.value" />
           </t-select>
         </template>
       </cmp-query>
@@ -46,7 +31,7 @@
         @refresh="fetchData"
         @select-change="onPrintChange"
       >
-        <template #title> 首末检记录 </template>
+        <template #title> 巡检记录 </template>
         <template #button>
           <t-select v-model="printTemplate" label="打印模板" :clearable="true" style="width: 240px">
             <t-option v-for="item in onPrintTemplateList.list" :key="item.id" :label="item.tmplName" :value="item.id" />
@@ -134,7 +119,6 @@ const router = useRouter();
 // 渲染函数
 onMounted(async () => {
   await queryRef.value.search();
-  await loadInspectOpportunity();
   await loadStatus();
 });
 
@@ -148,7 +132,7 @@ const onInput = async (data: any) => {
     dateStart,
     dateEnd,
   };
-  const res = await api.pqcInspectFirst.getList({
+  const res = await api.pqcInspectPatrol.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     ...queryParams.value,
@@ -170,38 +154,29 @@ const opts = computed(() => {
         blur: dateChange,
       },
     },
+    status: {
+      label: '检验状态',
+      labelWidth: '60',
+      event: 'select',
+      defaultVal: '',
+      slotName: 'status',
+    },
+    inspectResult: {
+      label: '检验结果',
+      labelWidth: '60',
+      bind: {
+        options: inspectResultDataList,
+        lazyLoad: true,
+      },
+      event: 'select',
+      defaultVal: '',
+      slotName: 'inspectResult',
+    },
     billNo: {
       label: '检验单号',
       event: 'input',
       comp: 't-input',
       defaultVal: '',
-    },
-    inspectOpportunity: {
-      label: '检验时机',
-      labelWidth: '60',
-      event: 'select',
-      defaultVal: '',
-      slotName: 'inspectOpportunity',
-    },
-    moScheId: {
-      label: '排产单',
-      comp: 'bcmp-select-business',
-      event: 'business',
-      defaultVal: '',
-      bind: {
-        type: 'moSchedule',
-        showTitle: false,
-      },
-    },
-    mitemId: {
-      label: '物料',
-      comp: 'bcmp-select-business',
-      event: 'business',
-      defaultVal: '',
-      bind: {
-        type: 'mitem',
-        showTitle: false,
-      },
     },
     workshopId: {
       label: '车间',
@@ -223,34 +198,35 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    inspectResult: {
-      label: '检验结果',
-      labelWidth: '60',
+    moScheId: {
+      label: '排产单',
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
       bind: {
-        options: inspectResultDataList,
-        lazyLoad: true,
+        type: 'moSchedule',
+        showTitle: false,
       },
-      event: 'select',
-      defaultVal: '',
-      slotName: 'inspectResult',
     },
-    status: {
-      label: '单据状态',
-      labelWidth: '60',
-      event: 'select',
+    mitemId: {
+      label: '产品编码',
+      comp: 'bcmp-select-business',
+      event: 'business',
       defaultVal: '',
-      slotName: 'status',
-    },
-    isImprove: {
-      label: '品质改善',
-      labelWidth: '60',
       bind: {
-        options: isImproveDataList,
-        lazyLoad: true,
+        type: 'mitem',
+        showTitle: false,
       },
-      event: 'select',
+    },
+    user: {
+      label: '质检人员',
+      comp: 'bcmp-select-business',
+      event: 'business',
       defaultVal: '',
-      slotName: 'isImprove',
+      bind: {
+        type: 'user',
+        showTitle: false,
+      },
     },
   };
 });
@@ -272,12 +248,6 @@ const dateChange = async (data: any) => {
   }
 };
 
-// #获取搜索 检验时机 下拉框数据
-const inspectOpportunityDataList = reactive({ list: [] });
-const loadInspectOpportunity = async () => {
-  const res = await mainApi.param.getListByGroupCode({ parmGroupCode: 'INSPECTION_OPPORTUNITY' });
-  inspectOpportunityDataList.list = res;
-};
 // #获取搜索 单据状态 下拉框数据
 const statusDataList = reactive({ list: [] });
 const loadStatus = async () => {
@@ -288,11 +258,6 @@ const loadStatus = async () => {
 const inspectResultDataList = [
   { label: '合格', value: 'OK' },
   { label: '不合格', value: 'NG' },
-];
-// 初始化 品质改善 下拉框数据
-const isImproveDataList = [
-  { label: '是', value: 'true' },
-  { label: '否', value: 'false' },
 ];
 
 // 打印选择 框 行 事件
@@ -370,7 +335,7 @@ const pageSwitch = async (value: any) => {
 const onPermission = async (value) => {
   permission.value = value;
   selectedRowKeys.value = [];
-  const res = await api.pqcInspectFirst.getList({
+  const res = await api.pqcInspectPatrol.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
     ...queryParams.value,
@@ -410,84 +375,73 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'billNo',
-    title: t('pqcInspectFirst.billNo'), // 检验单号
+    title: t('pqcInspectPatrol.billNo'), // 检验单号
     align: 'center',
     width: 135,
   },
   {
-    colKey: 'inspectOpportunityName',
-    title: t('pqcInspectFirst.inspectOpportunityName'), // 检验时机
+    colKey: 'workshopName',
+    title: t('pqcInspectPatrol.workshopName'), // 车间
+    width: 110,
     align: 'center',
   },
   {
     colKey: 'scheCode',
-    title: t('pqcInspectFirst.scheCode'), // 排产单
+    title: t('pqcInspectPatrol.scheCode'), // 排产单
     width: 136,
     align: 'center',
   },
   {
+    colKey: 'wcName',
+    title: t('pqcInspectPatrol.wcName'), // 工作中心
+    width: 130,
+    align: 'center',
+  },
+  {
     colKey: 'mitemCode',
-    title: t('pqcInspectFirst.mitemCode'), // 物料编码
+    title: t('pqcInspectPatrol.mitemCode'), // 产品编码
     width: 110,
     align: 'center',
   },
   {
     colKey: 'mitemName',
-    title: t('pqcInspectFirst.mitemName'), // 物料名称
+    title: t('pqcInspectPatrol.mitemDesc'), // 产品描述
     width: 110,
     align: 'center',
   },
   {
     colKey: 'statusName',
-    title: t('pqcInspectFirst.statusName'), // 单据状态
+    title: t('pqcInspectPatrol.statusName'), // 单据状态
     width: 80,
     align: 'center',
   },
   {
     colKey: 'inspectResultName',
-    title: t('pqcInspectFirst.inspectResult'), // 检验结果
+    title: t('pqcInspectPatrol.inspectResult'), // 检验结果
     width: 100,
     align: 'center',
   },
   {
-    colKey: 'workshopName',
-    title: t('pqcInspectFirst.workshopName'), // 车间
-    width: 110,
-    align: 'center',
-  },
-  {
-    colKey: 'wcName',
-    title: t('pqcInspectFirst.wcName'), // 工作中心
-    width: 130,
-    align: 'center',
-  },
-  {
     colKey: 'userInspectName',
-    title: t('pqcInspectFirst.userInspectName'), // 检验人
+    title: t('pqcInspectPatrol.userInspectName'), // 质检人员
     width: 100,
     align: 'center',
   },
   {
     colKey: 'datetimeInspectEnd',
-    title: t('pqcInspectFirst.datetimeInspectEnd'), // 检验完成时间
+    title: t('pqcInspectPatrol.datetimeInspectEnd'), // 检验完成时间
     width: 162,
     align: 'center',
   },
   {
-    colKey: 'creatorName',
-    title: t('pqcInspectFirst.creatorName'), // 创建人
-    width: 100,
-    align: 'center',
-  },
-  {
     colKey: 'timeCreate',
-    title: t('pqcInspectFirst.timeCreate'), // 创建时间
+    title: t('pqcInspectPatrol.timeCreate'), // 创建时间
     width: 162,
     align: 'center',
   },
   {
     colKey: 'improveNos',
-    title: t('pqcInspectFirst.improveNos'), // 改善单据
+    title: t('pqcInspectPatrol.improveNos'), // 改善单据
     width: 180,
     align: 'center',
   },

@@ -1,0 +1,38 @@
+{
+  "title": "资产类型：",
+  "placeholder": "请选择资产类型",
+  "url": "/api/main/assetType/items",
+  "httptype": "POST",
+  "columns": [
+    
+    {
+      "title": "资产类型编码",
+      "key": "typeCode",
+      "align": "left"
+    },
+    {
+      "title": "资产类型名称",
+      "key": "typeName",
+      "align": "left"
+    },
+    {
+      "title": "资产类型描述",
+      "key": "typeDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "typeName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "typeCode",
+    "codeField": "typeName",
+    "descField": "typeDesc"
+  },
+  "name": "资产类型",
+  "componentType": "list"
+}

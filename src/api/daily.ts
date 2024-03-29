@@ -1157,18 +1157,6 @@ export interface ResultPagingDataIncidentDealLogVO {
 }
 
 /** 通用响应类 */
-export interface ResultLong {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  data?: string;
-}
-
-/** 通用响应类 */
 export interface ResultListIncidentDealVO {
   /**
    * 响应代码
@@ -1687,20 +1675,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/daily/incidentDeal/addIncidentDeal`, {
         method: 'POST',
         body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 安灯异常处理表
-     * @name GetWorkShopIdByLoginUser
-     * @summary 安灯单据报表查询
-     * @request GET:/incidentDeal/getWorkShopIdByLoginUser
-     * @secure
-     */
-    getWorkShopIdByLoginUser: () =>
-      http.request<ResultLong['data']>(`/api/daily/incidentDeal/getWorkShopIdByLoginUser`, {
-        method: 'GET',
       }),
 
     /**

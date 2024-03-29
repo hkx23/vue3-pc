@@ -48,7 +48,7 @@
                 <bcmp-select-business
                   v-model="formData.asnBillNo"
                   :parent-id="formData.supplierCode"
-                  type="deliveryReceipted"
+                  type="iqcBillInfo"
                   :show-title="false"
                 >
                 </bcmp-select-business>
@@ -92,6 +92,15 @@
                 :height="200"
                 @select-change="tableTab2SelectedChange"
               >
+                <template #curReturnQty="{ row }">
+                  <t-input-number
+                    v-model="row.curReturnQty"
+                    style="width: 120px"
+                    theme="normal"
+                    :placeholder="t('returnManagement.placeholderCurReturnQty')"
+                    :disabled="_.isNil(row.arrivaledQty) || row.arrivaledQty === 0"
+                  />
+                </template>
               </cmp-table>
             </t-row>
           </t-tab-panel>
@@ -111,7 +120,8 @@ import _ from 'lodash';
 import { FormInstanceFunctions, LoadingPlugin, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { reactive, Ref, ref, watch } from 'vue';
 
-import { api as apiWarehouse, DeliveryDtlVO, PurchaseOrderVO } from '@/api/warehouse';
+import { api as apiQuality } from '@/api/quality';
+import { api as apiWarehouse } from '@/api/warehouse';
 import CmpTable from '@/components/cmp-table/index.vue';
 
 import { useLang } from './lang';
@@ -160,25 +170,26 @@ watch(
 );
 
 const tableSelectedRowKeys = ref([]);
-const tableSelectedRowData = ref<DeliveryDtlVO[]>([]);
+const tableSelectedRowData = ref([]);
 const tableData = ref([]);
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
-  { title: `${t('returnManagement.asnBillNo')}`, width: 120, colKey: 'deliveryNo' },
-  { title: `${t('returnManagement.poBillNo')}`, width: 120, colKey: 'poNo' },
-  { title: `${t('returnManagement.supplierName')}`, width: 120, colKey: 'supplierName' },
-  { title: `${t('returnManagement.lineSeq')}`, width: 120, colKey: 'lineSeq' },
-  { title: `${t('returnManagement.mitemCode')}`, width: 120, colKey: 'mitemCode' },
-  { title: `${t('returnManagement.mitemDesc')}`, width: 120, colKey: 'mitemDesc' },
-  { title: `${t('returnManagement.qty')}`, width: 140, colKey: 'receivedQty' },
+  { title: '检验单据号', width: 120, colKey: 'billNo' },
+  { title: '供应商', width: 120, colKey: 'supplierName' },
+  { title: '物料编码', width: 120, colKey: 'mitemCode' },
+  { title: '物料描述', width: 120, colKey: 'mitemName' },
+  { title: '不合格数量', width: 120, colKey: 'sumNgQty' },
+  { title: '可退数量', width: 120, colKey: 'curReturnQty' },
+  { title: '关联单据号', width: 140, colKey: 'deliveryNo' },
 ];
+
 const tableSelectedChange = (value: any[], { selectedRowData }: any) => {
   tableSelectedRowKeys.value = value;
-  tableSelectedRowData.value = selectedRowData;
+  tableSelectedRowData.value = tableData.value.filter((n) => value.includes(n.id));
 };
 
 const tableTab2SelectedRowKeys = ref([]);
-const tableTab2SelectedRowData = ref<PurchaseOrderVO[]>([]);
+const tableTab2SelectedRowData = ref([]);
 const tableTab2Data = ref([]);
 const tableTab2Columns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
@@ -187,7 +198,8 @@ const tableTab2Columns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('returnManagement.lineSeq')}`, width: 120, colKey: 'billLineNo' },
   { title: `${t('returnManagement.mitemCode')}`, width: 120, colKey: 'mitemCode' },
   { title: `${t('returnManagement.mitemDesc')}`, width: 120, colKey: 'mitemDesc' },
-  { title: `${t('returnManagement.qty')}`, width: 140, colKey: 'arrivaledQty' },
+  { title: `${t('returnManagement.arrivaledQty')}`, width: 140, colKey: 'arrivaledQty' },
+  { title: `${t('returnManagement.curReturnQty')}`, width: 140, colKey: 'curReturnQty' },
 ];
 const tableTab2SelectedChange = (value: any[], { selectedRowData }: any) => {
   tableTab2SelectedRowKeys.value = value;
@@ -196,32 +208,48 @@ const tableTab2SelectedChange = (value: any[], { selectedRowData }: any) => {
 
 const onConfirmForm = async () => {
   try {
+    let isSuccess = true;
     if (_.isEmpty(formData.billNoDesc)) {
+      isSuccess = false;
       MessagePlugin.error(t('returnManagement.请输入退货单描述'));
       return;
     }
     if (_.isEmpty(formData.memo)) {
+      isSuccess = false;
       MessagePlugin.error(t('returnManagement.请输入备注'));
       return;
     }
 
     if (selectTabValue.value === 'tab1') {
       if (tableSelectedRowData.value.length === 0) {
+        isSuccess = false;
         MessagePlugin.error(t('returnManagement.请选择需要退货的物料'));
         return;
       }
 
       LoadingPlugin(true);
-      await apiWarehouse.returnManagement.submitBillNoByDelivery({
+      await apiWarehouse.returnManagement.submitBillNoByIqc({
         billNo: formData.billNo,
         billNoDesc: formData.billNoDesc,
         memo: formData.memo,
-        deliveryDtlList: tableSelectedRowData.value,
+        iqcInspectList: tableSelectedRowData.value,
       });
       MessagePlugin.success(t('returnManagement.退货单创建成功'));
     } else if (selectTabValue.value === 'tab2') {
       if (tableTab2SelectedRowData.value.length === 0) {
+        isSuccess = false;
         MessagePlugin.error(t('returnManagement.请选择需要退货的物料'));
+        return;
+      }
+
+      tableTab2SelectedRowData.value.forEach((item) => {
+        if (item.curReturnQty > item.arrivaledQty) {
+          isSuccess = false;
+          MessagePlugin.error(t('returnManagement.本次退货数量不能大于可退数量'));
+        }
+      });
+
+      if (!isSuccess) {
         return;
       }
 
@@ -264,8 +292,20 @@ const reset = () => {
 };
 const getReturnDeliveryDtl = async () => {
   if (!_.isNil(formData.supplierCode) && !_.isNil(formData.asnBillNo)) {
-    const data = await apiWarehouse.deliveryDtl.getReturnDeliveryDtl({ billNo: formData.asnBillNo });
-    tableData.value = data.list;
+    tableData.value = [];
+
+    const data = await apiQuality.iqcInspect.getIqcBillInfo({ iqcBillNo: formData.asnBillNo });
+    tableData.value.push({ ...data });
+    // tableData.value.push({
+    //   billNo: data.billNo,
+    //   supplierName: data.supplierName,
+    //   mitemCode: data.mitemCode,
+    //   mitemName: data.mitemName,
+    //   sumNgQty: data.sumNgQty,
+    //   curReturnQty: data.curReturnQty,
+    //   deliveryNo: data.deliveryNo,
+    // });
+
     tableSelectedRowKeys.value = [];
     tableSelectedRowData.value = [];
   }
@@ -287,18 +327,16 @@ const showForm = async (edit, billNo) => {
 
     if (billNo.substring(0, 3) === 'RMI') {
       selectTabValue.value = 'tab1';
-      const data = await apiWarehouse.returnManagement.getDeliveryReturnManagementByBillNo({ billNo });
+      const data = await apiWarehouse.returnManagement.getIqcReturnManagementByBillNo({ billNo });
       formData.billNo = data.billNo;
       formData.billNoDesc = data.billNoDesc;
       formData.memo = data.memo;
-      tableData.value = data.deliveryDtlList;
+      tableData.value = data.iqcInspectList;
+
       tableSelectedRowKeys.value = [];
       tableSelectedRowData.value = [];
-      const selectList = data.deliveryDtlList.filter((n) => !_.isEmpty(n.transferDtlId));
-      selectList.forEach((item) => {
-        tableSelectedRowKeys.value.push(item.id);
-        tableSelectedRowData.value.push(item);
-      });
+      tableSelectedRowKeys.value.push(data.iqcInspectList[0].id);
+      tableSelectedRowData.value.push(data.iqcInspectList[0]);
     } else if (billNo.substring(0, 3) === 'RMW') {
       selectTabValue.value = 'tab2';
       const data = await apiWarehouse.returnManagement.getPurchaseOrderReturnManagementByBillNo({ billNo });

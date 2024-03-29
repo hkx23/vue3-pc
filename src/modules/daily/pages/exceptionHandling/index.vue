@@ -81,14 +81,17 @@
           min="0"
         ></t-input-number>
       </t-form-item>
-      <t-form-item :label="t('exceptionHandling.transferOrders')" name="isAllowTransfer">
+      <t-form-item label="" name="checked">
+        <t-checkbox v-model="formItem.list.isAllowTransfer">是否允许转单</t-checkbox>
+      </t-form-item>
+      <!-- <t-form-item :label="t('exceptionHandling.transferOrders')" name="isAllowTransfer">
         <t-radio-group
           v-model="formItem.list.isAllowTransfer"
           name="city"
           :options="itemOptions"
           size="small"
         ></t-radio-group
-      ></t-form-item>
+      ></t-form-item> -->
     </t-form>
     <template #footer>
       <t-button theme="default" variant="base" @click="formVisible = false">取消</t-button>
@@ -134,6 +137,7 @@ const opts = computed(() => {
     },
   };
 });
+
 // form实例
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 
@@ -141,11 +145,6 @@ const formRef: Ref<FormInstanceFunctions> = ref(null);
 const submitFalg = ref(false);
 // 多选框删除数据数组
 const selectedRowKeys: Ref<any[]> = ref([]);
-// 单选框组件
-const itemOptions = [
-  { label: '允许', value: 1 },
-  { label: '不允许', value: 0 },
-];
 // 多语言
 const { t } = useLang();
 
@@ -264,7 +263,7 @@ const onAdd = async () => {
   formItem.list.incidentModule = '';
   formItem.list.supportGroupId = '';
   formItem.list.levelSeq = null; // 处理顺序
-  formItem.list.isAllowTransfer = null; // 是否允许转单
+  formItem.list.isAllowTransfer = 0; // 是否允许转单
   submitFalg.value = true; // true为新增
   formVisible.value = true; // 添加窗口控制
 };

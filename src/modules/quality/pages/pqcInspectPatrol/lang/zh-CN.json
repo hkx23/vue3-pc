@@ -1,0 +1,16 @@
+{
+  "pqcInspectPatrol": {
+    "billNo": "检查单号",
+    "workshopName": "车间",
+    "wcName": "工作中心",
+    "scheCode": "排产单号",
+    "mitemCode": "产品编码",
+    "mitemDesc": "产品描述",
+    "statusName": "检验状态",
+    "inspectResult": "检验结果",
+    "userInspectName": "质检人员",
+    "timeCreate": "创建时间",
+    "datetimeInspectEnd": "检验完成时间",
+    "improveNos": "改善单据"
+  }
+}

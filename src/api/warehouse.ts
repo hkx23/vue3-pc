@@ -465,9 +465,15 @@ export interface ResultBoolean {
 
 /** 交易明细标签表查询 */
 export interface TransferDtlBarcodeSearch {
+  /** 单据前缀 */
+  prefix?: string;
   /** 单号 */
   billNo?: string;
   transferDtlId?: string;
+  /** ERP单号 */
+  erpBillNo?: string;
+  /** ERP单行号 */
+  erpLineNo?: string;
 }
 
 /** 通用响应类 */
@@ -1402,6 +1408,8 @@ export type TransferHeadVO = {
   datetimeReceipted?: string;
   /** 交易单身表 */
   transferDtlList?: TransferDtlVO[];
+  /** 第一个明细的ERP单据行号 */
+  firstErpLineNo?: string;
 } | null;
 
 /** 仓库移转约束表 */
@@ -2029,10 +2037,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /** 待发货数量 */
   waitDeliveriedQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 响应数据 */
@@ -2552,11 +2560,95 @@ export interface DeliveryDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 已交接总量数量 */
+  receiptedAllQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
+}
+
+/** 物料检验单明细 */
+export interface IqcInspectVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
+  /** 检验单号 */
+  billNo?: string;
+  iqcInspectStdId?: string;
+  mitemId?: string;
+  supplierId?: string;
+  /** 检验数量 */
+  inspectQty?: number;
+  /** 检验严格度 */
+  inspectStringency?: string;
+  /** 缺陷等级 */
+  defectCategory?: string;
+  /** 处理意见或方法 */
+  handleMethod?: string;
+  /** 供方处理意见 */
+  supplyHandleMethod?: string;
+  /** 责任方 */
+  responsibility?: string;
+  /** 整改意见 */
+  correctOpinion?: string;
+  personResponsibilityId?: string;
+  /**
+   * 是否启动品质改善
+   * @format int32
+   */
+  isStartImprove?: number;
+  /** 让步接收数量 */
+  concessQty?: number;
+  /** 备注 */
+  memo?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 单据状态 */
+  status?: string;
+  /** 显示名 */
+  displayName?: string;
+  /** 单据状态名称 */
+  statusName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 检验严格度 */
+  inspectionStringency?: string;
+  /** 送货单号 */
+  deliveryNo?: string;
+  mitemCategoryId?: string;
+  /** 物料分类编码 */
+  mitemCategoryCode?: string;
+  /** 物料分类名称 */
+  mitemCategoryName?: string;
+  /**
+   * 总送检批次
+   * @format int32
+   */
+  totalCheckBatch?: number;
+  /**
+   * 合格批次
+   * @format int32
+   */
+  qualifiedBatch?: number;
+  /**
+   * 不合格批次
+   * @format int32
+   */
+  unQualifiedBatch?: number;
+  /** 批次合格率 */
+  qualificationRate?: string;
+  /** 单据总不合格数量 */
+  sumNgQty?: number;
+  /** 本次可退数量 */
+  curReturnQty?: number;
 }
 
 /** 采购单明细 */
@@ -2624,11 +2716,15 @@ export interface PurchaseOrderDtlVO {
   supplierName?: string;
   /** 已扫数量 */
   scanQty?: number;
+  /** 已交接总量数量 */
+  receiptedAllQty?: number;
+  /** 本次退货数量 */
+  curReturnQty?: number;
   transferDtlId?: string;
-  /** 待扫数量 */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -2645,6 +2741,8 @@ export interface ReturnManagementVO {
   deliveryDtlList?: DeliveryDtlVO[];
   /** 采购单 */
   purchaseOrderDtlList?: PurchaseOrderDtlVO[];
+  /** 检验单 */
+  iqcInspectList?: IqcInspectVO[];
 }
 
 /** 退货管理VO */
@@ -2667,6 +2765,8 @@ export interface ReturnManagementSearch {
   returnBillNo?: string;
   /** 送货单号 */
   asnBillNo?: string;
+  /** 检验单号 */
+  iqcBillNo?: string;
   /** 采购订单号 */
   poBillNo?: string;
   /** 供应商编码 */
@@ -3276,11 +3376,6 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
@@ -3291,10 +3386,15 @@ export interface MoIssuanceDtlVO {
    */
   moRequestQty?: number;
   flpickQty?: number;
+  tlpickQty?: number;
   bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  tlpickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -3657,15 +3757,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表-扫码时存储-用于新增 */
   addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量和已领用量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量和待领用量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量和已领用量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -5589,15 +5689,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -7562,6 +7662,21 @@ export const api = {
      * No description
      *
      * @tags 退货管理
+     * @name SubmitBillNoByIqc
+     * @summary 退货单提交（检验单）
+     * @request POST:/returnManagement/submitBillNoByIqc
+     * @secure
+     */
+    submitBillNoByIqc: (data: ReturnManagementVO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/returnManagement/submitBillNoByIqc`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
      * @name SubmitBillNoByDelivery
      * @summary 退货单提交（送货单）
      * @request POST:/returnManagement/submitBillNoByDelivery
@@ -7685,6 +7800,21 @@ export const api = {
       http.request<ResultTransferHeadVO['data']>(`/api/warehouse/returnManagement/getPrintBillInfo`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
+     * @name GetIqcReturnManagementByBillNo
+     * @summary 获取已勾选的检验单
+     * @request POST:/returnManagement/getIqcReturnManagementByBillNo
+     * @secure
+     */
+    getIqcReturnManagementByBillNo: (query: { billNo: string }) =>
+      http.request<ResultReturnManagementVO['data']>(`/api/warehouse/returnManagement/getIqcReturnManagementByBillNo`, {
+        method: 'POST',
+        params: query,
       }),
 
     /**
@@ -8139,6 +8269,21 @@ export const api = {
      */
     scanMitemLabel: (data: MaterialRequisitionExcuteDTO) =>
       http.request<ResultString['data']>(`/api/warehouse/materialRequisitionExcute/scanMitemLabel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 领料执行
+     * @name DeleteTransBarcodeByIds
+     * @summary 根据单据号和标签信息，删除标签
+     * @request POST:/materialRequisitionExcute/deleteBarcodeByIds
+     * @secure
+     */
+    deleteTransBarcodeByIds: (data: TransferHeadSearch) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/materialRequisitionExcute/deleteBarcodeByIds`, {
         method: 'POST',
         body: data as any,
       }),
