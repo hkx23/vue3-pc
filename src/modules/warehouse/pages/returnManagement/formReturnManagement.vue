@@ -327,18 +327,16 @@ const showForm = async (edit, billNo) => {
 
     if (billNo.substring(0, 3) === 'RMI') {
       selectTabValue.value = 'tab1';
-      const data = await apiWarehouse.returnManagement.getDeliveryReturnManagementByBillNo({ billNo });
+      const data = await apiWarehouse.returnManagement.getIqcReturnManagementByBillNo({ billNo });
       formData.billNo = data.billNo;
       formData.billNoDesc = data.billNoDesc;
       formData.memo = data.memo;
-      tableData.value = data.deliveryDtlList;
+      tableData.value = data.iqcInspectList;
+
       tableSelectedRowKeys.value = [];
       tableSelectedRowData.value = [];
-      const selectList = data.deliveryDtlList.filter((n) => !_.isEmpty(n.transferDtlId));
-      selectList.forEach((item) => {
-        tableSelectedRowKeys.value.push(item.id);
-        tableSelectedRowData.value.push(item);
-      });
+      tableSelectedRowKeys.value.push(data.iqcInspectList[0].id);
+      tableSelectedRowData.value.push(data.iqcInspectList[0]);
     } else if (billNo.substring(0, 3) === 'RMW') {
       selectTabValue.value = 'tab2';
       const data = await apiWarehouse.returnManagement.getPurchaseOrderReturnManagementByBillNo({ billNo });

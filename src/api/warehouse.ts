@@ -2037,10 +2037,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */

@@ -4120,8 +4120,6 @@ export interface MitemInSupplierVO {
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5502,7 +5500,11 @@ export interface Equipment {
   state?: number;
   eid?: string;
   oid?: string;
-  assetModelId?: string;
+  /**
+   * 资产型号ID
+   * @format int32
+   */
+  assetModelId?: number;
   /** 设备编码 */
   equipmentCode?: string;
   /** 设备名称 */
@@ -7413,8 +7415,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -7644,7 +7646,11 @@ export interface AssetType {
   typeName?: string;
   /** 资产类型描述 */
   typeDesc?: string;
-  parentTypeId?: string;
+  /**
+   * 父级资产类型ID
+   * @format int32
+   */
+  parentTypeId?: number;
 }
 
 /** 响应数据 */
@@ -7764,7 +7770,11 @@ export interface AssetBrand {
   state?: number;
   eid?: string;
   oid?: string;
-  assetTypeId?: string;
+  /**
+   * 资产类型ID
+   * @format int32
+   */
+  assetTypeId?: number;
   /** 资产品牌编码 */
   brandCode?: string;
   /** 资产品牌名称 */
@@ -7812,7 +7822,11 @@ export interface AssetBrandVO {
   state?: number;
   eid?: string;
   oid?: string;
-  assetTypeId?: string;
+  /**
+   * 资产类型ID
+   * @format int32
+   */
+  assetTypeId?: number;
   /** 资产品牌编码 */
   brandCode?: string;
   /** 资产品牌名称 */
