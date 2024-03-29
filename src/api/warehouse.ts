@@ -2563,14 +2563,17 @@ export interface DeliveryDtlVO {
   /** 已交接总量数量 */
   receiptedAllQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 物料检验单明细 */
 export interface IqcInspectVO {
+  id?: string;
+  eid?: string;
+  oid?: string;
   /** 检验单号 */
   billNo?: string;
   iqcInspectStdId?: string;
@@ -2602,10 +2605,10 @@ export interface IqcInspectVO {
   memo?: string;
   /** 检验结果 */
   inspectResult?: string;
-  /** 显示名 */
-  displayName?: string;
   /** 单据状态 */
   status?: string;
+  /** 显示名 */
+  displayName?: string;
   /** 单据状态名称 */
   statusName?: string;
   /** 物料编码 */
@@ -2718,10 +2721,10 @@ export interface PurchaseOrderDtlVO {
   /** 本次退货数量 */
   curReturnQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3370,6 +3373,9 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  flpickQty?: number;
+  bfpickQty?: number;
+  tlpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3382,9 +3388,6 @@ export interface MoIssuanceDtlVO {
   moRequestQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
@@ -7795,6 +7798,21 @@ export const api = {
       http.request<ResultTransferHeadVO['data']>(`/api/warehouse/returnManagement/getPrintBillInfo`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
+     * @name GetIqcReturnManagementByBillNo
+     * @summary 获取已勾选的检验单
+     * @request POST:/returnManagement/getIqcReturnManagementByBillNo
+     * @secure
+     */
+    getIqcReturnManagementByBillNo: (query: { billNo: string }) =>
+      http.request<ResultReturnManagementVO['data']>(`/api/warehouse/returnManagement/getIqcReturnManagementByBillNo`, {
+        method: 'POST',
+        params: query,
       }),
 
     /**

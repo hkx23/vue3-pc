@@ -166,7 +166,9 @@ const tableReturnManagementColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
   { title: `${t('returnManagement.colBillNo')}`, width: 140, colKey: 'billNo' },
   { title: `${t('returnManagement.colBillNoDesc')}`, width: 140, colKey: 'reason' },
-  { title: `${t('returnManagement.colPoAndAsn')}`, width: 140, colKey: 'erpBillNo' },
+  { title: `${t('returnManagement.colIqcBillNo')}`, width: 140, colKey: 'sourceBillNo' },
+  { title: `${t('returnManagement.colPoBillNo')}`, width: 140, colKey: 'erpBillNo' },
+
   { title: `${t('returnManagement.colSupplierCode')}`, width: 140, colKey: 'supplierCode' },
   { title: `${t('returnManagement.colSupplierName')}`, width: 140, colKey: 'supplierName' },
   { title: `${t('returnManagement.colCreatorUserName')}`, width: 140, colKey: 'displayName' },
@@ -216,6 +218,7 @@ const fetchTable = async () => {
     });
     tableReturnManagementData.value = data.list;
     dataTotal.value = data.total;
+    tableRef.value?.setSelectedRowKeys([]);
   } catch (e) {
     console.log(e);
   } finally {
