@@ -19,15 +19,6 @@
         <template #title>
           {{ '资产品牌列表' }}
         </template>
-        <template #required="{ row }">
-          <t-checkbox v-model="row.required"></t-checkbox>
-        </template>
-        <template #multiterm="{ row }">
-          <t-checkbox v-model="row.multiterm"></t-checkbox>
-        </template>
-        <template #verify="{ row }">
-          <t-checkbox v-model="row.verify"></t-checkbox>
-        </template>
         <template #actionSlot="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
