@@ -2037,10 +2037,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -2569,6 +2569,85 @@ export interface DeliveryDtlVO {
   isComplete?: boolean;
 }
 
+/** 物料检验单明细 */
+export interface IqcInspectVO {
+  /** 检验单号 */
+  billNo?: string;
+  iqcInspectStdId?: string;
+  mitemId?: string;
+  supplierId?: string;
+  /** 检验数量 */
+  inspectQty?: number;
+  /** 检验严格度 */
+  inspectStringency?: string;
+  /** 缺陷等级 */
+  defectCategory?: string;
+  /** 处理意见或方法 */
+  handleMethod?: string;
+  /** 供方处理意见 */
+  supplyHandleMethod?: string;
+  /** 责任方 */
+  responsibility?: string;
+  /** 整改意见 */
+  correctOpinion?: string;
+  personResponsibilityId?: string;
+  /**
+   * 是否启动品质改善
+   * @format int32
+   */
+  isStartImprove?: number;
+  /** 让步接收数量 */
+  concessQty?: number;
+  /** 备注 */
+  memo?: string;
+  /** 检验结果 */
+  inspectResult?: string;
+  /** 显示名 */
+  displayName?: string;
+  /** 单据状态 */
+  status?: string;
+  /** 单据状态名称 */
+  statusName?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 供应商编码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 检验严格度 */
+  inspectionStringency?: string;
+  /** 送货单号 */
+  deliveryNo?: string;
+  mitemCategoryId?: string;
+  /** 物料分类编码 */
+  mitemCategoryCode?: string;
+  /** 物料分类名称 */
+  mitemCategoryName?: string;
+  /**
+   * 总送检批次
+   * @format int32
+   */
+  totalCheckBatch?: number;
+  /**
+   * 合格批次
+   * @format int32
+   */
+  qualifiedBatch?: number;
+  /**
+   * 不合格批次
+   * @format int32
+   */
+  unQualifiedBatch?: number;
+  /** 批次合格率 */
+  qualificationRate?: string;
+  /** 单据总不合格数量 */
+  sumNgQty?: number;
+  /** 本次可退数量 */
+  curReturnQty?: number;
+}
+
 /** 采购单明细 */
 export interface PurchaseOrderDtlVO {
   id?: string;
@@ -2636,6 +2715,8 @@ export interface PurchaseOrderDtlVO {
   scanQty?: number;
   /** 已交接总量数量 */
   receiptedAllQty?: number;
+  /** 本次退货数量 */
+  curReturnQty?: number;
   transferDtlId?: string;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
@@ -2657,6 +2738,8 @@ export interface ReturnManagementVO {
   deliveryDtlList?: DeliveryDtlVO[];
   /** 采购单 */
   purchaseOrderDtlList?: PurchaseOrderDtlVO[];
+  /** 检验单 */
+  iqcInspectList?: IqcInspectVO[];
 }
 
 /** 退货管理VO */
@@ -3288,11 +3371,6 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
@@ -3305,8 +3383,13 @@ export interface MoIssuanceDtlVO {
   /** 已发料量 */
   alreadyPickQty?: number;
   flpickQty?: number;
-  bfpickQty?: number;
   tlpickQty?: number;
+  bfpickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -3669,15 +3752,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表-扫码时存储-用于新增 */
   addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量和已领用量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量和待领用量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量和已领用量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -5468,8 +5551,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -5601,15 +5684,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -7566,6 +7649,21 @@ export const api = {
      */
     submitBillNoByPurchaseOrder: (data: ReturnManagementVO) =>
       http.request<ResultBoolean['data']>(`/api/warehouse/returnManagement/submitBillNoByPurchaseOrder`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 退货管理
+     * @name SubmitBillNoByIqc
+     * @summary 退货单提交（检验单）
+     * @request POST:/returnManagement/submitBillNoByIqc
+     * @secure
+     */
+    submitBillNoByIqc: (data: ReturnManagementVO) =>
+      http.request<ResultBoolean['data']>(`/api/warehouse/returnManagement/submitBillNoByIqc`, {
         method: 'POST',
         body: data as any,
       }),

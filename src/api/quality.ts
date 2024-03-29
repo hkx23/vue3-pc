@@ -2989,10 +2989,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 是否CTQ */
-  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3642,10 +3642,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 停留时长 */
-  waitTime?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
+  /** 停留时长 */
+  waitTime?: string;
 }
 
 /** 响应数据 */
@@ -3972,6 +3972,10 @@ export interface IqcInspectVO {
   unQualifiedBatch?: number;
   /** 批次合格率 */
   qualificationRate?: string;
+  /** 单据总不合格数量 */
+  sumNgQty?: number;
+  /** 本次可退数量 */
+  curReturnQty?: number;
 }
 
 /** 响应数据 */
@@ -4243,11 +4247,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 }
 
 /** 响应数据 */
@@ -5461,13 +5465,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  s2?: string;
   i?: string;
   ii?: string;
-  s2?: string;
-  iii?: string;
-  s4?: string;
   s1?: string;
   s3?: string;
+  iii?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */
