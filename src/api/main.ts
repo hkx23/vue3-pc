@@ -2474,8 +2474,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3824,6 +3824,31 @@ export interface MoReleaseSearch {
   pageSize?: number;
   /** 模糊关键词 */
   keyword?: string;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  /** 下发版本 */
+  version?: string;
+  /** 下发标识 */
+  flag?: string;
+  orgId?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  mitemId?: string;
+  /** 计划单号 */
+  planNo?: string;
+  /** 工单号 */
+  moCode?: string;
+  moId?: string;
+  /** 工单状态 */
+  moStatus?: string;
 }
 
 export interface MoReleaseVO {
@@ -3958,6 +3983,9 @@ export interface MoReleaseVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  /** 状态名称 */
+  statusName?: string;
+  stayTime?: string;
 }
 
 /** 响应数据 */
@@ -4519,13 +4547,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
-  isState?: boolean;
   stateName?: string;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+  isState?: boolean;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4770,15 +4798,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isProductName?: string;
-  isRawName?: string;
-  isBatchName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4921,8 +4949,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6551,8 +6579,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -8996,12 +9024,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */

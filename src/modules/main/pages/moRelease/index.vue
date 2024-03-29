@@ -1,20 +1,15 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" @submit="onInput">
-        <template #version="{ param }">
-          <t-select v-model="param.version" :clearable="true" label="下发版本">
-            <t-option v-for="item in versionDataList" :key="item.value" :label="item.label" :value="item.value" />
-          </t-select>
-        </template>
+      <cmp-query ref="queryParams" :opts="opts" @submit="onInput">
         <template #flag="{ param }">
           <t-select v-model="param.flag" :clearable="true" label="下发标识">
-            <t-option v-for="item in flagDataList" :key="item.value" :label="item.label" :value="item.value" />
+            <t-option v-for="item in flagDataList.list" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </template>
-        <template #workState="{ param }">
-          <t-select v-model="param.workState" :clearable="true" label="工单状态">
-            <t-option v-for="item in workStateDataList.list" :key="item.id" :label="item.label" :value="item.value" />
+        <template #moStatus="{ param }">
+          <t-select v-model="param.moStatus" :clearable="true" label="工单状态">
+            <t-option v-for="item in moStatusDataList.list" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </template>
       </cmp-query>
@@ -30,7 +25,6 @@
         :total="anomalyTotal"
         :selected-row-keys="selectedRowKeys"
         @refresh="onFetchData"
-        @select-change="rehandleSelectChange"
       >
         <template #title>
           {{ '排产下发历史查询列表' }}
@@ -51,29 +45,27 @@ import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage(); // 分页工具
 const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
+const queryParams = ref();
 
 // 初始渲染
 onMounted(async () => {
-  await onWorkStatus();
-  await onGetAnomalyTypeData(); // 获取 表格 数据
+  await onflag();
+  await onMoStatus();
+  await queryParams.value.search(); // 获取 表格 数据
 });
 
-// 初始化 下发版本 下拉框数据
-const versionDataList = [
-  { label: '是', value: 'true' },
-  { label: '否', value: 'false' },
-];
-// 初始化 下发标识 下拉框数据
-const flagDataList = [
-  { label: '是', value: 'true' },
-  { label: '否', value: 'false' },
-];
+// #获取搜索 下发标识 下拉框数据
+const flagDataList = reactive({ list: [] });
+const onflag = async () => {
+  const res = await api.param.getListByGroupCode({ parmGroupCode: 'FP_PUBLISH_FLAG' });
+  flagDataList.list = res;
+};
 
 // #获取搜索 工单状态 下拉框数据
-const workStateDataList = reactive({ list: [] });
-const onWorkStatus = async () => {
+const moStatusDataList = reactive({ list: [] });
+const onMoStatus = async () => {
   const res = await api.param.getListByGroupCode({ parmGroupCode: 'C_MO_STATUS' });
-  workStateDataList.list = res;
+  moStatusDataList.list = res;
 };
 
 // 表格数据总条数
@@ -172,19 +164,19 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'datetimePlanStart',
+    colKey: 'datetimeActualStart',
     title: '开始时间',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'datetimePlanEnd',
+    colKey: 'datetimeActualEnd',
     title: '结束时间',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'aa',
+    colKey: 'stayTime',
     title: '占用时长',
     align: 'center',
     width: '100',
@@ -202,7 +194,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   }, */
   {
-    colKey: 'status',
+    colKey: 'statusName',
     title: '状态',
     align: 'center',
     width: '100',
@@ -235,18 +227,8 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 
 // 刷新按钮
 const onFetchData = () => {
-  onGetAnomalyTypeData();
+  queryParams.value.search();
   selectedRowKeys.value = [];
-};
-
-// 获取 表格 数据
-const onGetAnomalyTypeData = async () => {
-  const res = await api.moRelease.getList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
-  });
-  anomalyTypeData.list = res.list;
-  anomalyTotal.value = res.total;
 };
 
 // #query 查询参数
@@ -262,14 +244,9 @@ const opts = computed(() => {
     },
     version: {
       label: '下发版本',
-      labelWidth: '60',
-      bind: {
-        options: versionDataList,
-        lazyLoad: true,
-      },
-      event: 'select',
+      event: 'input',
+      comp: 't-input',
       defaultVal: '',
-      slotName: 'version',
     },
     flag: {
       label: '下发标识',
@@ -282,7 +259,7 @@ const opts = computed(() => {
       defaultVal: '',
       slotName: 'flag',
     },
-    workshopId: {
+    org: {
       label: '工厂',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -292,7 +269,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    group: {
+    workshop: {
       label: '计划组',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -302,7 +279,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    workcenterId: {
+    workcenter: {
       label: '生产线',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -318,7 +295,7 @@ const opts = computed(() => {
       comp: 't-input',
       defaultVal: '',
     },
-    mitemId: {
+    mitem: {
       label: '物料',
       comp: 'bcmp-select-business',
       event: 'business',
@@ -328,7 +305,7 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    moNo: {
+    moCode: {
       label: '工单号',
       event: 'input',
       comp: 't-input',
@@ -344,32 +321,40 @@ const opts = computed(() => {
         showTitle: false,
       },
     },
-    workState: {
+    moStatus: {
       label: '工单状态',
       labelWidth: '60',
       event: 'select',
       defaultVal: '',
-      slotName: 'workState',
+      slotName: 'moStatus',
     },
   };
 });
 
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
+  const { servicingTime, version, flag, org, workshop, workcenter, planNo, mitem, moCode, mo, moStatus } = data;
+  const [dateStart, dateEnd] = servicingTime;
   const res = await api.moRelease.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
-    keyword: data.soltDemo,
+    dateStart,
+    dateEnd,
+    version,
+    flag,
+    orgId: org,
+    workshopId: workshop,
+    workcenterId: workcenter,
+    planNo,
+    mitemId: mitem,
+    moCode,
+    moId: mo,
+    moStatus,
   });
 
   anomalyTypeData.list = res.list;
   anomalyTotal.value = res.total;
   MessagePlugin.success('查询成功');
-};
-
-// 获取批量删除数组
-const rehandleSelectChange = async (value: any[]) => {
-  selectedRowKeys.value = value;
 };
 </script>
 
