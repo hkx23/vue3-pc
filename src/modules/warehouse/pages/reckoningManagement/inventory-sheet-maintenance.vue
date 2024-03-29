@@ -64,7 +64,7 @@
           select-on-row-click
           :show-pagination="false"
           :hover="true"
-          max-height="250px"
+          max-height="200px"
           empty="没有符合条件的数据"
           :show-toolbar="false"
           :total="dataTotal"
