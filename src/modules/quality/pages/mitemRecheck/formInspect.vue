@@ -39,7 +39,7 @@
               ref="recheckTypeRef"
               v-model="formInspectData.iqcBillNo"
               :select-txt="formInspectData.iqcBillNo"
-              type="IqcBillInfo"
+              type="iqcBillInfo"
               :show-title="false"
               @selection-change="onIqcBillNoSelectionChange"
             />
