@@ -4522,8 +4522,8 @@ export interface MitemInSupplierVO {
   dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
   isState?: boolean;
   stateName?: string;
 }

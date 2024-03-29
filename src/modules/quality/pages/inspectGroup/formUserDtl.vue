@@ -26,8 +26,8 @@
             class="custom-list-item"
             :class="{ 'selected-card': item.isAdd }"
           >
-            <span style="margin-top: 8px; margin-bottom: 8px; width: 30%">{{ item.personCode }}</span>
-            <span style="margin-top: 8px; margin-bottom: 8px; width: 30%">{{ item.personName }}</span>
+            <span style="margin-top: 8px; margin-bottom: 8px; width: 30%">{{ item.userName }}</span>
+            <span style="margin-top: 8px; margin-bottom: 8px; width: 30%">{{ item.displayName }}</span>
 
             <template #action>
               <plus-icon theme="primary" @click="onAddUser(item)" />
@@ -117,7 +117,7 @@ const listItems = ref([]);
 const userRowKeys: Ref<any[]> = ref([]); //
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
-  { title: `${t('inspectGroup.jobNo')}`, width: 150, colKey: 'personCode' },
+  { title: `${t('inspectGroup.userName')}`, width: 150, colKey: 'personCode' },
   { title: `${t('inspectGroup.name')}`, width: 150, colKey: 'personName' },
   { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 80, colKey: 'op' },
 ];
@@ -219,7 +219,7 @@ const onAddUser = async (item) => {
   if (item.isAdd) {
     return;
   }
-  await apiQuality.inspectGroupInUser.add({ ...item, inspectGroupId: formData.value.inspectGroupId });
+  await apiQuality.inspectGroupInUser.add({ userId: item.id, inspectGroupId: formData.value.inspectGroupId });
   MessagePlugin.success(t('common.message.addSuccess'));
   fetchUserTable();
   fetchUserInputList();

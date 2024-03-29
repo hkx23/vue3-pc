@@ -254,7 +254,7 @@ const tableGroupColumns: PrimaryTableCol<TableRowData>[] = [
 
 const tableUserColumns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
-  { title: `${t('inspectGroup.jobNo')}`, width: 150, colKey: 'personCode' },
+  { title: `${t('inspectGroup.userName')}`, width: 150, colKey: 'personCode' },
   { title: `${t('inspectGroup.name')}`, width: 150, colKey: 'personName' },
   { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 80, colKey: 'op' },
 ];

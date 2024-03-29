@@ -20,6 +20,11 @@
     "noMoreData": "没有更多数据了~",
     "showWeekends": "显示周末",
     "hideWeekends": "隐藏周末",
+    "wcCode": "工作中心编码",
+    "wcName": "工作中心名称",
+    "missingDateRange": "缺漏日期范围",
+    "workshopCode": "车间编码",
+    "workshopName": "车间名称",
     "sunday": "周日"
   }
 }
