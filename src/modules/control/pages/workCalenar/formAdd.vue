@@ -14,7 +14,7 @@
         </t-form-item>
       </t-col>
       <t-col :span="12">
-        <t-form-item :label="t('workCalenar.selectWeekRange')" name="weekRange">
+        <t-form-item :label="t('workCalenar.selectWeekRange')" :required-mark="true" name="weekRange">
           <t-row>
             <t-checkbox-group
               v-model="formData.weekRangeInt"
@@ -51,9 +51,9 @@
         </t-form-item>
       </t-col>
       <t-col :span="12">
-        <t-form-item :label="t('workCalenar.attendanceMode')" name="attendanceMode">
+        <t-form-item :label="t('workCalenar.attendanceMode')" :required-mark="true" ame="attendanceMode">
           <bcmp-select-business
-            v-model="formData.attendanceModeIdsStr"
+            v-model="formData.attendanceModeId"
             label=""
             type="attendanceModeTable"
             style="width: 582px"
@@ -71,8 +71,8 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { FormInstanceFunctions, MessagePlugin } from 'tdesign-vue-next';
-import { Ref, ref } from 'vue';
+import { FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-next';
+import { computed, ComputedRef, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
 import { api as apiMain } from '@/api/main';
@@ -81,12 +81,13 @@ import { useLang } from './lang';
 
 const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null);
-const FORM_RULES = {
-  calenarRange: [{ required: true, message: t('common.placeholder.input', [t('workCalenar.calenarRange')]) }],
-  weekRange: [{ required: true, message: t('common.placeholder.input', [t('workCalenar.weekRange')]) }],
-  workcenterId: [{ required: true, message: t('common.placeholder.input', [t('workCalenar.weekRange')]) }],
-  attendanceMode: [{ required: true, message: t('common.placeholder.input', [t('workCalenar.weekRange')]) }],
-};
+
+const FORM_RULES: ComputedRef<FormRules> = computed(() => {
+  return {
+    calenarRange: [{ required: true, message: t('common.placeholder.input', [t('workCalenar.selectCalenarRange')]) }],
+    workcenterId: [{ required: true, message: t('common.placeholder.input', [t('business.main.workcenter')]) }],
+  };
+});
 const weekRangeOp = [
   {
     label: t('workCalenar.monday'),
@@ -121,8 +122,9 @@ const formData = ref({
   id: '',
   workshopId: '',
   workcenterId: '',
+  workcenterIds: [],
   calenarRange: [],
-  attendanceModeIdsStr: [],
+  attendanceModeId: [],
   weekRangeInt: [1, 2, 3, 4, 5],
 });
 
@@ -136,10 +138,32 @@ const submit = async () => {
         reject();
         return;
       }
-      api.workCalenar.addWorkCalenar(formData.value).then(() => {
-        MessagePlugin.success(t('common.message.addSuccess'));
-        resolve(formData);
-      });
+      if (formData.value.weekRangeInt.length < 1) {
+        MessagePlugin.warning(t('workCalenar.selectWeekRange'));
+        reject();
+        return;
+      }
+      if (formData.value.attendanceModeId.length < 1) {
+        MessagePlugin.warning(t('common.placeholder.input', [t('business.main.attendanceMode')]));
+        reject();
+        return;
+      }
+      formData.value.workcenterIds = formData.value.workcenterId.split(',');
+      const start = formData.value.calenarRange[0];
+      const end = formData.value.calenarRange[1];
+      const ids = formData.value.attendanceModeId.map((item) => item.value);
+      api.workCalenar
+        .addWorkCalenar({
+          workCenterIds: formData.value.workcenterIds,
+          weekRangeInt: formData.value.weekRangeInt,
+          dateRageStart: start,
+          dateRageEnd: end,
+          attendanceModeIds: ids,
+        })
+        .then(() => {
+          MessagePlugin.success(t('common.message.addSuccess'));
+          resolve(formData);
+        });
     });
   });
 };
@@ -156,8 +180,9 @@ const reset = () => {
     id: '',
     workshopId: '',
     workcenterId: '',
+    workcenterIds: [],
     calenarRange: [],
-    attendanceModeIdsStr: [],
+    attendanceModeId: [],
     weekRangeInt: [1, 2, 3, 4, 5],
   };
 };

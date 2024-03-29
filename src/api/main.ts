@@ -2474,8 +2474,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4115,13 +4115,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
   stateName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4366,15 +4366,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
   stateName?: string;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5502,11 +5502,7 @@ export interface Equipment {
   state?: number;
   eid?: string;
   oid?: string;
-  /**
-   * 资产型号ID
-   * @format int32
-   */
-  assetModelId?: number;
+  assetModelId?: string;
   /** 设备编码 */
   equipmentCode?: string;
   /** 设备名称 */
@@ -6164,8 +6160,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -7417,8 +7413,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -7615,6 +7611,238 @@ export interface AttendanceModeSearch {
   keyword?: string;
   /** 班次 */
   shiftCode?: string;
+}
+
+/** 资产类型 */
+export interface AssetType {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 资产类型编码 */
+  typeCode?: string;
+  /** 资产类型名称 */
+  typeName?: string;
+  /** 资产类型描述 */
+  typeDesc?: string;
+  parentTypeId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAssetType = {
+  list?: AssetType[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAssetType {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAssetType;
+}
+
+export interface AssetTypeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  parentDefectId?: string;
+}
+
+/** 显示缺陷代码实体 */
+export interface AssetTypeVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 资产类型编码 */
+  typeCode?: string;
+  /** 资产类型名称 */
+  typeName?: string;
+  /** 资产类型描述 */
+  typeDesc?: string;
+  parentTypeId?: string;
+  /** 子元素 */
+  child?: AssetTypeVO[];
+}
+
+/** 响应数据 */
+export type PagingDataAssetTypeVO = {
+  list?: AssetTypeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAssetTypeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAssetTypeVO;
+}
+
+/** 资产品牌 */
+export interface AssetBrand {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetTypeId?: string;
+  /** 资产品牌编码 */
+  brandCode?: string;
+  /** 资产品牌名称 */
+  brandName?: string;
+  /** 资产品牌描述 */
+  brandDesc?: string;
+}
+
+export interface AssetBrandSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+}
+
+export interface AssetBrandVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetTypeId?: string;
+  /** 资产品牌编码 */
+  brandCode?: string;
+  /** 资产品牌名称 */
+  brandName?: string;
+  /** 资产品牌描述 */
+  brandDesc?: string;
+  /** 企业简称 */
+  epName?: string;
+  /** 资产类型名称 */
+  typeName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAssetBrandVO = {
+  list?: AssetBrandVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAssetBrandVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAssetBrandVO;
 }
 
 /** 通用响应类 */
@@ -15301,6 +15529,172 @@ export const api = {
      */
     addAttendanceMode: (data: AttendanceMode) =>
       http.request<ResultObject['data']>(`/api/main/attendanceMode/addAttendanceMode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  assetType: {
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name Remove
+     * @summary 行删除资产类型
+     * @request POST:/assetType/remove
+     * @secure
+     */
+    remove: (data: string) =>
+      http.request<ResultObject['data']>(`/api/main/assetType/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name RemoveBatch
+     * @summary 批量删除资产类型
+     * @request POST:/assetType/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/assetType/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name Modify
+     * @summary 编辑资产类型
+     * @request POST:/assetType/modify
+     * @secure
+     */
+    modify: (data: AssetType) =>
+      http.request<ResultObject['data']>(`/api/main/assetType/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name Search
+     * @request POST:/assetType/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataAssetType['data']>(`/api/main/assetType/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name GetParent
+     * @summary 查询父级缺陷
+     * @request POST:/assetType/getParent
+     * @secure
+     */
+    getParent: (data: string) =>
+      http.request<ResultPagingDataAssetType['data']>(`/api/main/assetType/getParent`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name GetList
+     * @summary 查询资产类型
+     * @request POST:/assetType/getList
+     * @secure
+     */
+    getList: (data: AssetTypeSearch) =>
+      http.request<ResultPagingDataAssetTypeVO['data']>(`/api/main/assetType/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name Add
+     * @summary 新增资产类型
+     * @request POST:/assetType/add
+     * @secure
+     */
+    add: (data: AssetType) =>
+      http.request<ResultObject['data']>(`/api/main/assetType/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  assetBrand: {
+    /**
+     * No description
+     *
+     * @tags 资产品牌
+     * @name RemoveBatch
+     * @summary 批量删除资产品牌
+     * @request POST:/assetBrand/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/assetBrand/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产品牌
+     * @name Modify
+     * @summary 编辑资产品牌
+     * @request POST:/assetBrand/modify
+     * @secure
+     */
+    modify: (data: AssetBrand) =>
+      http.request<ResultObject['data']>(`/api/main/assetBrand/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产品牌
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/assetBrand/getList
+     * @secure
+     */
+    getList: (data: AssetBrandSearch) =>
+      http.request<ResultPagingDataAssetBrandVO['data']>(`/api/main/assetBrand/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产品牌
+     * @name Add
+     * @summary 新增资产品牌
+     * @request POST:/assetBrand/add
+     * @secure
+     */
+    add: (data: AssetBrand) =>
+      http.request<ResultObject['data']>(`/api/main/assetBrand/add`, {
         method: 'POST',
         body: data as any,
       }),
