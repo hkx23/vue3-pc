@@ -245,6 +245,10 @@ const props = defineProps({
       };
     },
   },
+  changeFunc: {
+    type: Function,
+    default: null,
+  },
 });
 // 抛出事件
 const emits = defineEmits(['SelectionChange', 'change', 'update:modelValue']);
@@ -298,6 +302,9 @@ const onSelectionChange = (val: any, valuKeys: any) => {
   emits('SelectionChange', val, valuKeys);
   // 选择值
   emits('change', valuKeys);
+  if (props.changeFunc) {
+    props.changeFunc(val);
+  }
 };
 
 const loadTypeSetting = () => {

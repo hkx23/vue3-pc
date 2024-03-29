@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <cmp-card :span="12">
       <!-- 查询组件  -->
-      <cmp-query :opts="opts" @submit="conditionEnter" @reset="onHandleResetting" />
+      <cmp-query :opts="opts" @submit="conditionEnter" @reset="onHandleResetting" @change="onQuerychange" />
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
@@ -38,6 +38,14 @@
           </t-link>
         </template>
         <template #title> 工单列表</template>
+        <template #button>
+          <t-button theme="primary" :disabled="true">创建</t-button>
+          <t-button theme="default">取消</t-button>
+          <t-button theme="default">释放</t-button>
+          <t-button theme="default">关闭</t-button>
+          <t-button theme="default">置尾</t-button>
+          <t-button theme="default">取消置尾</t-button>
+        </template>
       </cmp-table>
     </cmp-card>
   </cmp-container>
@@ -105,6 +113,7 @@ const queryCondition = ref({
   status: '',
   datetimePlanStart: '',
   datetimePlanEnd: '',
+  workshopId: '',
   workshopCode: '',
   workCenterCode: '',
   rootingCode: '',
@@ -115,19 +124,19 @@ const detailedShow = ref(false); // 控制工单BOM显示隐藏
 const routingUpdateShow = ref(false); // 控制工单工艺路线显示隐藏
 const routingFormRef = ref(null);
 // 表格th数据
+// - 错误信息。--优化
 const columns = ref([
-  {
-    colKey: 'moCode',
-    title: '工单号',
-    width: '150',
-  },
-  { colKey: 'moClassName', title: '工单类型' },
-  {
-    colKey: 'statusName',
-    title: '工单状态',
-  },
+  { colKey: 'factoryName', title: '工厂', width: '120' },
+  { colKey: 'moCode', title: '工单号', width: '150' },
+  { colKey: 'statusName', title: '工单状态', width: '120' },
+  { colKey: 'moClassName', title: '工单类型', width: '120' },
+  { colKey: 'moRate', title: '非标工单速率', width: '120' },
   { colKey: 'mitemCode', title: '产品编码', width: '120' },
   { colKey: 'mitemDesc', title: '产品描述', width: '150' },
+  { colKey: 'isHoldName', title: '是否置尾', width: '150' },
+  { colKey: 'holdReason', title: '置尾原因', width: '150' },
+
+  { colKey: 'planNo', title: '计划单号', width: '150' },
   { colKey: 'planQty', title: '计划数量' },
   { colKey: 'completedQty', title: '完成数量' },
   { colKey: 'uomName', title: '单位' },
@@ -139,6 +148,12 @@ const columns = ref([
   { colKey: 'datetimeActualStart', title: '实际开始时间', width: '150' },
   { colKey: 'datetimeActualEnd', title: '实际完成时间', width: '150' },
   { colKey: 'datetimeMoClose', title: '工单关闭时间', width: '150' },
+  { colKey: 'userMoCloseName', title: '关闭人', width: '150' },
+  { colKey: 'datetimeRequire', title: '需求日期', width: '150' },
+  { colKey: 'datetimeRelease', title: '释放日期', width: '150' },
+  { colKey: 'userReleaseName', title: '释放人', width: '150' },
+
+  { colKey: 'memo', title: '备注', width: '150' },
   { colKey: 'op', title: t('common.button.operation'), width: '100', fixed: 'right' },
 ]);
 // 工单信息
@@ -160,9 +175,9 @@ const fetchTable = async () => {
       queryCondition.value.status = queryCondition.value.moStatus.join(',');
     }
     const res = (await apimain.mo.getmolist({
+      pageNum: pageUI.value.page,
+      pageSize: pageUI.value.rows,
       ...queryCondition.value,
-      pagenum: pageUI.value.page,
-      pagesize: pageUI.value.rows,
     })) as any;
     moData.value = res.list;
     dataTotal.value = Number(res.total);
@@ -207,14 +222,11 @@ const initMoType = async () => {
 const onHandleCancellation = () => {
   detailFormRef.value.onHandleCancellation();
 };
-// const onChangeMoStatus = (val) => {
-//   console.log(selectMoStatus.value, val);
-// };
 // 点击查询按钮
 const conditionEnter = (data: any) => {
   pageUI.value.page = 1;
   queryCondition.value = _.cloneDeep(data);
-  onHandleQuery();
+  fetchTable();
 };
 const opts = computed(() => {
   return {
@@ -242,6 +254,12 @@ const opts = computed(() => {
       defaultVal: '',
       placeholder: '请输入工单号',
     },
+    plan_no: {
+      label: '计划单号',
+      comp: 't-input',
+      defaultVal: '',
+      placeholder: '请输入计划单号',
+    },
     mitemCategroyCode: {
       label: '产品类别',
       comp: 'bcmp-select-business',
@@ -260,6 +278,9 @@ const opts = computed(() => {
       bind: {
         type: 'mitem',
         valueField: 'mitemCode',
+        changeFunc: (val: any) => {
+          console.log(val);
+        },
       },
     },
     workshopCode: {
@@ -268,8 +289,9 @@ const opts = computed(() => {
       defaultVal: '',
       placeholder: '请选择车间',
       bind: {
+        isMultiple: true,
         type: 'workshop',
-        valueField: 'orgCode',
+        valueField: 'id',
       },
     },
     workCenterCode: {
@@ -278,8 +300,10 @@ const opts = computed(() => {
       defaultVal: '',
       placeholder: '请选择工作中心',
       bind: {
+        isMultiple: true,
         type: 'workcenter',
         valueField: 'wcCode',
+        parentId: queryCondition.value.workshopId,
       },
     },
     rootingCode: {
@@ -292,7 +316,14 @@ const opts = computed(() => {
         valueField: 'routingCode',
       },
     },
-
+    isHold: {
+      label: '是否置尾',
+      comp: 't-select',
+      placeholder: '请选择是否置尾',
+      bind: {
+        options: isHoldOptions,
+      },
+    },
     moStatus: {
       label: '工单状态',
       comp: 't-checkbox-group',
@@ -308,28 +339,21 @@ const opts = computed(() => {
   };
 });
 
-// 防抖
-const debounce = (func: { (): void; apply?: any }, delay: number) => {
-  let timeoutId: NodeJS.Timeout;
-  return (...args: any) => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      clearTimeout(timeoutId);
-      func.apply(this, args);
-    }, delay);
-  };
-};
-const onHandleQuery = debounce(() => {
-  fetchTable();
-}, 200);
+// 下拉初始数据
+const isHoldOptions = [
+  { label: '是', value: 1 },
+  { label: '否', value: 0 },
+];
 
 // 重置
 const onHandleResetting = () => {
   keyword.value = '';
   pageUI.value.page = 1;
   fetchTable();
+};
+
+const onQuerychange = (value) => {
+  queryCondition.value.workshopId = value.workshopCode;
 };
 
 // 跳转到BOM明细界面
