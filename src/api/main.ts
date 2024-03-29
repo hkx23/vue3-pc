@@ -2474,8 +2474,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4115,13 +4115,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isState?: boolean;
   stateName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
-  isState?: boolean;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -4366,15 +4366,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
   isInProcessName?: string;
-  isProductName?: string;
   isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isState?: boolean;
+  isProductName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4517,8 +4517,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5502,11 +5502,7 @@ export interface Equipment {
   state?: number;
   eid?: string;
   oid?: string;
-  /**
-   * 资产型号ID
-   * @format int32
-   */
-  assetModelId?: number;
+  assetModelId?: string;
   /** 设备编码 */
   equipmentCode?: string;
   /** 设备名称 */
@@ -6164,8 +6160,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -7417,8 +7413,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -7648,11 +7644,7 @@ export interface AssetType {
   typeName?: string;
   /** 资产类型描述 */
   typeDesc?: string;
-  /**
-   * 父级资产类型ID
-   * @format int32
-   */
-  parentTypeId?: number;
+  parentTypeId?: string;
 }
 
 /** 响应数据 */
@@ -7673,6 +7665,89 @@ export interface ResultPagingDataAssetType {
   message?: string;
   /** 响应数据 */
   data?: PagingDataAssetType;
+}
+
+export interface AssetTypeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  id?: string;
+  /** 多个ID */
+  ids?: string[];
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+}
+
+/** 显示缺陷代码实体 */
+export interface AssetTypeVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 资产类型编码 */
+  typeCode?: string;
+  /** 资产类型名称 */
+  typeName?: string;
+  /** 资产类型描述 */
+  typeDesc?: string;
+  parentTypeId?: string;
+  /** 前端按钮样式 */
+  themeButton?: string;
+  /** 工序id */
+  processId?: string;
+  /** 子元素 */
+  child?: AssetTypeVO[];
+  isState?: boolean;
+  stateName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAssetTypeVO = {
+  list?: AssetTypeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAssetTypeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAssetTypeVO;
 }
 
 /** 资产品牌 */
@@ -7700,11 +7775,7 @@ export interface AssetBrand {
   state?: number;
   eid?: string;
   oid?: string;
-  /**
-   * 资产类型ID
-   * @format int32
-   */
-  assetTypeId?: number;
+  assetTypeId?: string;
   /** 资产品牌编码 */
   brandCode?: string;
   /** 资产品牌名称 */
@@ -7752,11 +7823,7 @@ export interface AssetBrandVO {
   state?: number;
   eid?: string;
   oid?: string;
-  /**
-   * 资产类型ID
-   * @format int32
-   */
-  assetTypeId?: number;
+  assetTypeId?: string;
   /** 资产品牌编码 */
   brandCode?: string;
   /** 资产品牌名称 */
@@ -8547,14 +8614,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -15488,6 +15555,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataAssetType['data']>(`/api/main/assetType/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name GetList
+     * @summary 查询缺陷代码
+     * @request POST:/assetType/getList
+     * @secure
+     */
+    getList: (data: AssetTypeSearch) =>
+      http.request<ResultPagingDataAssetTypeVO['data']>(`/api/main/assetType/getList`, {
         method: 'POST',
         body: data as any,
       }),
