@@ -554,13 +554,91 @@ export interface ResultPagingDataWorkCalenarVO {
   data?: PagingDataWorkCalenarVO;
 }
 
+export interface WorkCalenarDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workCalendarId?: string;
+  attendanceModeId?: string;
+  /** 班次 */
+  shiftCode?: string;
+  /** 出勤模式表达式 */
+  attendanceExpression?: string;
+  shiftName?: string;
+}
+
 export interface WorkCalenarVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  workcenterId?: string;
+  /**
+   * 工作日期
+   * @format date-time
+   */
+  datetimeWork?: string;
   wcName?: string;
   wcCode?: string;
+  workshopCode?: string;
+  workshopName?: string;
   /** @format int32 */
   timeCount?: number;
   houseCount?: number;
-  workcenterId?: string;
+  list?: WorkCalenarDtlVO[];
+  dateRange?: string;
+}
+
+/** 通用响应类 */
+export interface ResultListWorkCalenarVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WorkCalenarVO[] | null;
 }
 
 /** 通用响应类 */
@@ -822,8 +900,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1751,8 +1829,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2660,8 +2738,8 @@ export interface ProductReworkVO {
   workshopId?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3956,11 +4034,11 @@ export interface BarcodeWipCollectVO {
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -4077,10 +4155,10 @@ export interface BarcodeWipVO {
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  isState?: boolean;
   defectCodeStr?: string;
+  isState?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 通用响应类 */
@@ -5061,6 +5139,36 @@ export const api = {
      */
     getWcInfo: (data: WorkCalenarSearch) =>
       http.request<ResultPagingDataWorkCalenarVO['data']>(`/api/control/workCalenar/getWcInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作日历表
+     * @name GetMissing
+     * @summary 查漏补缺
+     * @request POST:/workCalenar/getMissing
+     * @secure
+     */
+    getMissing: (data: WorkCalenarSearch) =>
+      http.request<ResultPagingDataWorkCalenarVO['data']>(`/api/control/workCalenar/getMissing`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工作日历表
+     * @name GetList
+     * @summary 右侧获取日历信息
+     * @request POST:/workCalenar/getList
+     * @secure
+     */
+    getList: (data: WorkCalenarSearch) =>
+      http.request<ResultListWorkCalenarVO['data']>(`/api/control/workCalenar/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -6448,6 +6556,22 @@ export const api = {
      */
     getPkgInfoRelation: (query: { barcode: string }) =>
       http.request<ResultPkgInfoRelationVO['data']>(`/api/control/barcodePkg/getPkgInfoRelation`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
+  workCalenarDtl: {
+    /**
+     * No description
+     *
+     * @tags 工作日历明细表
+     * @name ChangeState
+     * @summary 启用禁用
+     * @request GET:/workCalenarDtl
+     * @secure
+     */
+    changeState: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/control/workCalenarDtl`, {
         method: 'GET',
         params: query,
       }),

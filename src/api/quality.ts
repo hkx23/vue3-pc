@@ -4247,9 +4247,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -4299,14 +4299,7 @@ export interface InspectGroupSearch {
   mitemCategoryId?: string;
 }
 
-/** 响应数据 */
-export type PagingDataPersonVO = {
-  list?: PersonVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-export interface PersonVO {
+export interface InspectGroupUserVO {
   id?: string;
   /**
    * 创建时间
@@ -4329,27 +4322,78 @@ export interface PersonVO {
    */
   state?: number;
   eid?: string;
-  /** 人员编号 */
-  personCode?: string;
-  /** 姓名 */
-  personName?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 显示名 */
+  displayName?: string;
+  /** 密码 */
+  password?: string;
   /**
-   * 性别，1男，0女
+   * 用户上次进行身份验证时间
+   * @format date-time
+   */
+  timeLastActivity?: string;
+  /**
+   * 用户上次登录时间
+   * @format date-time
+   */
+  timeLastLogin?: string;
+  /**
+   * 上次更新成员资格用户的密码的日期和时间
+   * @format date-time
+   */
+  timeLastPasswordChanged?: string;
+  /**
+   * 用户当前是否联机
    * @format int32
    */
-  gender?: number;
-  /** 邮箱 */
-  email?: string;
-  /** 手机号 */
-  mobilePhone?: string;
-  adminOrgId?: string;
+  isOnline?: number;
+  /**
+   * 指示成员资格用户是否因被锁定而无法进行验证
+   * @format int32
+   */
+  isLockedOut?: number;
+  /**
+   * 最近一次锁定成员资格用户的日期和时间
+   * @format date-time
+   */
+  timeLastLockedOut?: string;
+  /**
+   * 输入密码尝试失败的次数
+   * @format int32
+   */
+  failedAttemptCount?: number;
+  /**
+   * 输入密码尝试失败的起始时间
+   * @format date-time
+   */
+  timeFailedAttemptStart?: string;
+  /**
+   * 用户帐号类型
+   * @format int32
+   */
+  accountType?: number;
+  /**
+   * 用户失效时间
+   * @format date-time
+   */
+  timeExpiration?: string;
+  personId?: string;
+  orgId?: string;
   userId?: string;
   /** @format int32 */
   isAdd?: number;
 }
 
+/** 响应数据 */
+export type PagingDataInspectGroupUserVO = {
+  list?: InspectGroupUserVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
 /** 通用响应类 */
-export interface ResultPagingDataPersonVO {
+export interface ResultPagingDataInspectGroupUserVO {
   /**
    * 响应代码
    * @format int32
@@ -4358,7 +4402,7 @@ export interface ResultPagingDataPersonVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataPersonVO;
+  data?: PagingDataInspectGroupUserVO;
 }
 
 /** 品质检验组用户表 */
@@ -5269,10 +5313,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -5465,12 +5509,12 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s1?: string;
   s2?: string;
-  s3?: string;
   s4?: string;
+  s1?: string;
   i?: string;
   ii?: string;
+  s3?: string;
   iii?: string;
 } | null;
 
@@ -7377,7 +7421,7 @@ export const api = {
      * @secure
      */
     getPersonList: (data: InspectGroupSearch) =>
-      http.request<ResultPagingDataPersonVO['data']>(`/api/quality/inspectGroupInUser/getPersonList`, {
+      http.request<ResultPagingDataInspectGroupUserVO['data']>(`/api/quality/inspectGroupInUser/getPersonList`, {
         method: 'POST',
         body: data as any,
       }),
