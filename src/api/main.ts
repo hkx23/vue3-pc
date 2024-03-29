@@ -2474,8 +2474,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4115,10 +4115,10 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
   stateName?: string;
-  isExemptionInspectionChecked?: boolean;
+  isState?: boolean;
   isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
@@ -4366,15 +4366,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isInProcessName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isState?: boolean;
   isBatchName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
+  isInProcessName?: string;
   isProductName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4517,8 +4517,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6160,8 +6160,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -7678,13 +7678,8 @@ export interface AssetTypeSearch {
    * @format int32
    */
   pageSize?: number;
-  id?: string;
-  /** 多个ID */
-  ids?: string[];
-  /** 缺陷代码 */
-  defectCode?: string;
-  /** 缺陷名称 */
-  defectName?: string;
+  /** 模糊关键词 */
+  keyword?: string;
   parentDefectId?: string;
 }
 
@@ -7720,14 +7715,8 @@ export interface AssetTypeVO {
   /** 资产类型描述 */
   typeDesc?: string;
   parentTypeId?: string;
-  /** 前端按钮样式 */
-  themeButton?: string;
-  /** 工序id */
-  processId?: string;
   /** 子元素 */
   child?: AssetTypeVO[];
-  isState?: boolean;
-  stateName?: string;
 }
 
 /** 响应数据 */
@@ -8616,12 +8605,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -15549,6 +15538,51 @@ export const api = {
      * No description
      *
      * @tags 资产类型
+     * @name Remove
+     * @summary 行删除资产类型
+     * @request POST:/assetType/remove
+     * @secure
+     */
+    remove: (data: string) =>
+      http.request<ResultObject['data']>(`/api/main/assetType/remove`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name RemoveBatch
+     * @summary 批量删除资产类型
+     * @request POST:/assetType/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/assetType/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name Modify
+     * @summary 编辑资产类型
+     * @request POST:/assetType/modify
+     * @secure
+     */
+    modify: (data: AssetType) =>
+      http.request<ResultObject['data']>(`/api/main/assetType/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
      * @name Search
      * @request POST:/assetType/items
      * @secure
@@ -15563,13 +15597,43 @@ export const api = {
      * No description
      *
      * @tags 资产类型
+     * @name GetParent
+     * @summary 查询父级缺陷
+     * @request POST:/assetType/getParent
+     * @secure
+     */
+    getParent: (data: string) =>
+      http.request<ResultPagingDataAssetType['data']>(`/api/main/assetType/getParent`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
      * @name GetList
-     * @summary 查询缺陷代码
+     * @summary 查询资产类型
      * @request POST:/assetType/getList
      * @secure
      */
     getList: (data: AssetTypeSearch) =>
       http.request<ResultPagingDataAssetTypeVO['data']>(`/api/main/assetType/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name Add
+     * @summary 新增资产类型
+     * @request POST:/assetType/add
+     * @secure
+     */
+    add: (data: AssetType) =>
+      http.request<ResultObject['data']>(`/api/main/assetType/add`, {
         method: 'POST',
         body: data as any,
       }),

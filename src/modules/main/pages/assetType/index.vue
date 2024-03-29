@@ -1,10 +1,13 @@
 <!-- 资产类型 -->
 <template>
   <cmp-container :full="true">
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
+    </cmp-card>
     <cmp-card ref="tableCardRef" :span="12">
       <t-space style="text-align: end; width: 100%; margin-bottom: 8px">
         <t-space size="small" :align="'end'">
-          <t-button @click="onAdd">新增</t-button>
+          <t-button @click="onAdd">新增根节点</t-button>
           <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeletes">
             <t-button theme="default">批量删除</t-button>
           </t-popconfirm>
@@ -40,14 +43,17 @@
 
   <t-dialog v-model:visible="formVisible" :header="defectTitle" :cancel-btn="null" :confirm-btn="null">
     <t-form ref="formRef" :data="formItem" :rules="rules" @submit="onBtn">
-      <t-form-item v-if="!showHideFlag" :label="t('assetType.typeCode')" name="parentLevel">
+      <t-form-item v-if="!showHideFlag" :label="t('assetType.parentLevel')" name="parentLevel">
         <t-input v-model="formItem.parentLevel" placeholder="请输入" :disabled="true"></t-input>
       </t-form-item>
-      <t-form-item :label="t('assetType.typeName')" name="defectCode">
-        <t-input v-model="formItem.defectCode" placeholder="请输入" :disabled="disabledShow"></t-input>
+      <t-form-item :label="t('assetType.typeCode')" name="typeCode">
+        <t-input v-model="formItem.typeCode" placeholder="请输入" :disabled="disabledShow"></t-input>
       </t-form-item>
-      <t-form-item :label="t('assetType.typeDesc')" name="defectName">
-        <t-input v-model="formItem.defectName" placeholder="请输入"></t-input>
+      <t-form-item :label="t('assetType.typeName')" name="typeName">
+        <t-input v-model="formItem.typeName" placeholder="请输入"></t-input>
+      </t-form-item>
+      <t-form-item :label="t('assetType.typeDesc')" name="typeDesc">
+        <t-input v-model="formItem.typeDesc" placeholder="请输入"></t-input>
       </t-form-item>
     </t-form>
     <template #footer>
@@ -60,14 +66,26 @@
 <script setup lang="ts">
 import _ from 'lodash';
 import { Data, FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { nextTick, onMounted, reactive, Ref, ref } from 'vue';
+import { computed, nextTick, onMounted, reactive, Ref, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/main';
 
 import { useLang } from './lang';
 
-const disabledShow = ref(false); // 缺陷代码
+// #query 查询参数
+const opts = computed(() => {
+  return {
+    soltDemo: {
+      label: '资产编码/名称',
+      comp: 't-input',
+      event: 'input',
+      defaultVal: '',
+    },
+  };
+});
+
+const disabledShow = ref(false); // 控件禁用启用开关
 const defectTitle = ref('');
 // 装数控的
 const treeConfig = reactive({
@@ -81,6 +99,17 @@ const pagination = ref({
   total: 10,
 });
 const isAddAndEdit = ref(1); // 判断是编辑还是新增默认为新增
+
+const onInput = async (param: any) => {
+  const res = await api.assetType.getList({
+    pageNum: 1,
+    pageSize: 999999,
+    keyword: param.soltDemo,
+  });
+  data.value = res.list;
+  pagination.value.total = res.total;
+  MessagePlugin.success('查询成功');
+};
 
 // 多选框
 const selectedRowKeys = ref([]); // 选择的要删除数据
@@ -97,9 +126,10 @@ const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null);
 // 表单
 const formItem = ref({
-  parentLevel: '', // 上级节点
-  defectCode: '', // 缺陷代码
-  defectName: '', // 缺陷名称
+  parentLevel: '', // 上一级
+  typeCode: '', // 资产类型编码
+  typeName: '', // 资产类型名称
+  typeDesc: '', // 资产类型描述
   ParentId: 0, // 父类
   id: '',
 });
@@ -128,10 +158,11 @@ const onFetchData = async () => {
 const onIsAddAndEdit = async () => {
   if (isAddAndEdit.value === 1) {
     try {
-      await api.defectCode.addDefectCode({
-        defectCode: formItem.value.defectCode,
-        defectName: formItem.value.defectName,
-        parentDefectId: `${formItem.value.ParentId}`,
+      await api.assetType.add({
+        typeCode: formItem.value.typeCode,
+        typeName: formItem.value.typeName,
+        typeDesc: formItem.value.typeDesc,
+        parentTypeId: `${formItem.value.ParentId}`,
       });
       formVisible.value = false;
       onFetchData();
@@ -140,10 +171,11 @@ const onIsAddAndEdit = async () => {
     }
   } else {
     try {
-      await api.defectCode.modifyDefectCode({
-        defectCode: formItem.value.defectCode,
-        defectName: formItem.value.defectName,
-        parentDefectId: formItem.value.ParentId.toString(),
+      await api.assetType.modify({
+        typeCode: formItem.value.typeCode,
+        typeName: formItem.value.typeName,
+        typeDesc: formItem.value.typeDesc,
+        parentTypeId: formItem.value.ParentId.toString(),
         id: formItem.value.id,
       });
       formVisible.value = false;
@@ -159,23 +191,23 @@ const onIsAddAndEdit = async () => {
 const showHideFlag = ref(false);
 const onAdd = async () => {
   formRef.value.reset({ type: 'initial' });
-  defectTitle.value = '缺陷代码新增';
+  defectTitle.value = '资产类型新增';
   formItem.value.ParentId = 0;
-  formVisible.value = true;
-  showHideFlag.value = true; // 控制 上一层级 显示隐藏
-  disabledShow.value = false;
+  formVisible.value = true; // dialog开关
+  showHideFlag.value = true; // 父级控件开关
+  disabledShow.value = false; // 控件开关
 };
 
 // 子级新增
 const onAddSon = async (row: any) => {
   formRef.value.reset({ type: 'initial' });
   console.log('🚀 ~ onAddSon ~ row:', row);
-  disabledShow.value = false;
-  defectTitle.value = '缺陷代码新增';
+  defectTitle.value = '资产类型新增';
   formItem.value.ParentId = row.id;
-  formItem.value.parentLevel = row.defectName;
-  formVisible.value = true;
-  showHideFlag.value = false; // 控制 上一层级 显示隐藏
+  formItem.value.parentLevel = row.typeName;
+  formVisible.value = true; // dialog开关
+  showHideFlag.value = false; // 父级控件开关
+  disabledShow.value = false; // 控件开关
 };
 // 点击保存
 const onBtn = (context) => {
@@ -194,9 +226,7 @@ const onDeletes = async () => {
 // 批量删除确定
 const onSave1 = async () => {
   try {
-    await api.defectCode.removeDefectCodeBatch({
-      ids: selectedRowKeys.value,
-    });
+    await api.assetType.removeBatch(selectedRowKeys.value);
     await onFetchData();
     selectedRowKeys.value = [];
   } catch (e) {
@@ -211,23 +241,24 @@ const onSecondaryReset = () => {
 const listDataShow = ref(1); // 控制编辑父级为全部的时候
 // 编辑
 const onSeparateEdit = async (row) => {
-  defectTitle.value = '缺陷代码编辑';
+  defectTitle.value = '资产类型编辑';
   isAddAndEdit.value = 0;
   try {
-    const list = await api.defectCode.getParent({ id: row.parentDefectId });
+    const list = await api.assetType.getParent(row.parentTypeId);
     if (list.list.length < 1) {
       formItem.value.parentLevel = '全部';
       formItem.value.ParentId = 0;
     } else {
       listDataShow.value = 2;
       list.list.forEach((item) => {
-        formItem.value.parentLevel = item.defectName;
+        formItem.value.parentLevel = item.typeName;
       });
-      formItem.value.ParentId = row.parentDefectId; //
+      formItem.value.ParentId = row.parentTypeId; //
     }
     formItem.value.id = row.id;
-    formItem.value.defectName = row.defectName;
-    formItem.value.defectCode = row.defectCode;
+    formItem.value.typeCode = row.typeCode;
+    formItem.value.typeName = row.typeName;
+    formItem.value.typeDesc = row.typeDesc;
     disabledShow.value = true;
     formVisible.value = true;
   } catch (e) {
@@ -237,9 +268,7 @@ const onSeparateEdit = async (row) => {
 
 // 单删除
 const onDelete = async (row) => {
-  await api.defectCode.removeDefectCode({
-    id: row.id,
-  });
+  await api.assetType.remove(row.id);
   onFetchData();
 };
 // form校验
