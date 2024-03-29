@@ -75,7 +75,6 @@ import { FormInstanceFunctions, FormRules, MessagePlugin } from 'tdesign-vue-nex
 import { computed, ComputedRef, Ref, ref } from 'vue';
 
 import { api } from '@/api/control';
-import { api as apiMain } from '@/api/main';
 
 import { useLang } from './lang';
 
@@ -167,14 +166,7 @@ const submit = async () => {
     });
   });
 };
-const getWorkshopId = async () => {
-  const ids = await apiMain.org.getWorkShopIdByLoginUser();
-  if (ids.length > 0) {
-    formData.value.workshopId = ids.join(',');
-    return true;
-  }
-  return false;
-};
+
 const reset = () => {
   formData.value = {
     id: '',
@@ -192,7 +184,6 @@ defineExpose({
   submit,
   reset,
   formData,
-  getWorkshopId,
 });
 </script>
 <style lang="less" scoped></style>

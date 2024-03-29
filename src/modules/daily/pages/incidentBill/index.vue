@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <cmp-card>
       <!-- 查询组件  -->
-      <cmp-query v-if="pageShow" :opts="opts" @submit="conditionEnter" @reset="onRest"> </cmp-query>
+      <cmp-query :opts="opts" @submit="conditionEnter"> </cmp-query>
     </cmp-card>
     <cmp-card>
       <cmp-table
@@ -49,7 +49,6 @@ import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/daily';
-import { api as apiMain } from '@/api/main';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
@@ -65,7 +64,6 @@ const tableData = ref([]);
 const tableSubData = ref([]);
 
 const formVisible = ref(false);
-const pageShow = ref(false);
 
 const columns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('incidentBill.billNo')}`, width: 200, colKey: 'billNo' },
@@ -96,7 +94,6 @@ const subColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 // 初始渲染
 onMounted(async () => {
-  await getWorkshopId();
   await fetchTable();
 });
 
@@ -140,10 +137,6 @@ const queryCompment = ref({
   orgId: '',
   status: '',
 });
-
-const onRest = async () => {
-  await getWorkshopId();
-};
 
 // 查询组件
 const opts = computed(() => {
@@ -265,15 +258,6 @@ const fetchTable = async () => {
   } catch (e) {
     console.log(e);
   }
-};
-
-const getWorkshopId = async () => {
-  const id = await apiMain.org.getWorkShopIdByLoginUser();
-  if (id) {
-    const [orgId] = id;
-    queryCompment.value.orgId = orgId;
-  }
-  pageShow.value = true;
 };
 </script>
 

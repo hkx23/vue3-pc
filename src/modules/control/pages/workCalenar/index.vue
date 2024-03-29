@@ -246,11 +246,6 @@ useResizeObserver(refProcessCard, (entries) => {
 });
 const onAdd = async () => {
   await formRef.value.reset();
-  const res = await formRef.value.getWorkshopId();
-  if (!res) {
-    MessagePlugin.warning(t('workCalenar.warningLogin'));
-    return;
-  }
   formVisible.value = true;
 };
 
