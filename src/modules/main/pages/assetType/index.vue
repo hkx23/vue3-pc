@@ -114,7 +114,7 @@ const data = ref([]);
 // 进入首页请求
 const onFetchData = async () => {
   try {
-    const res = await api.defectCode.getList({
+    const res = await api.assetType.getList({
       pageNum: 1,
       pageSize: 999999,
     });

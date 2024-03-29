@@ -4117,11 +4117,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   isState?: boolean;
   stateName?: string;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -4368,13 +4368,13 @@ export interface MitemVO {
   isBatchNo?: number;
   isState?: boolean;
   stateName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
   isProductName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4517,8 +4517,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7417,8 +7417,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -7673,6 +7673,93 @@ export interface ResultPagingDataAssetType {
   message?: string;
   /** 响应数据 */
   data?: PagingDataAssetType;
+}
+
+export interface AssetTypeSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  id?: string;
+  /** 多个ID */
+  ids?: string[];
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+}
+
+/** 显示缺陷代码实体 */
+export interface AssetTypeVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 资产类型编码 */
+  typeCode?: string;
+  /** 资产类型名称 */
+  typeName?: string;
+  /** 资产类型描述 */
+  typeDesc?: string;
+  /**
+   * 父级资产类型ID
+   * @format int32
+   */
+  parentTypeId?: number;
+  /** 前端按钮样式 */
+  themeButton?: string;
+  /** 工序id */
+  processId?: string;
+  /** 子元素 */
+  child?: AssetTypeVO[];
+  isState?: boolean;
+  stateName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAssetTypeVO = {
+  list?: AssetTypeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAssetTypeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAssetTypeVO;
 }
 
 /** 资产品牌 */
@@ -8549,10 +8636,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
 } | null;
@@ -15488,6 +15575,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataAssetType['data']>(`/api/main/assetType/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产类型
+     * @name GetList
+     * @summary 查询缺陷代码
+     * @request POST:/assetType/getList
+     * @secure
+     */
+    getList: (data: AssetTypeSearch) =>
+      http.request<ResultPagingDataAssetTypeVO['data']>(`/api/main/assetType/getList`, {
         method: 'POST',
         body: data as any,
       }),
