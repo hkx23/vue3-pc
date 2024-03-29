@@ -235,6 +235,18 @@ const fetchTable = async () => {
 };
 
 onMounted(() => {
+  // 获取当前日期
+  const today = new Date();
+
+  // 计算三天前的日期
+  const threeDaysAgo = new Date();
+  threeDaysAgo.setDate(today.getDate() - 3);
+
+  // 将日期转换为字符串，格式可以根据需要进行调整
+  const timeCreatedStart = threeDaysAgo.toISOString().split('T')[0];
+  const timeCreatedEnd = today.toISOString().split('T')[0];
+  queryCompment.value.timeCreateStart = timeCreatedStart;
+  queryCompment.value.timeCreateEnd = timeCreatedEnd;
   fetchTable();
 });
 </script>
