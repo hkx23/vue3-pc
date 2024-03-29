@@ -4117,8 +4117,8 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   isState?: boolean;
   stateName?: string;
-  isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
@@ -4368,13 +4368,13 @@ export interface MitemVO {
   isBatchNo?: number;
   isState?: boolean;
   stateName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
-  isProductName?: string;
-  isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
   isRawName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4517,8 +4517,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5502,11 +5502,7 @@ export interface Equipment {
   state?: number;
   eid?: string;
   oid?: string;
-  /**
-   * 资产型号ID
-   * @format int32
-   */
-  assetModelId?: number;
+  assetModelId?: string;
   /** 设备编码 */
   equipmentCode?: string;
   /** 设备名称 */
@@ -7417,8 +7413,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -7648,11 +7644,7 @@ export interface AssetType {
   typeName?: string;
   /** 资产类型描述 */
   typeDesc?: string;
-  /**
-   * 父级资产类型ID
-   * @format int32
-   */
-  parentTypeId?: number;
+  parentTypeId?: string;
 }
 
 /** 响应数据 */
@@ -7727,11 +7719,7 @@ export interface AssetTypeVO {
   typeName?: string;
   /** 资产类型描述 */
   typeDesc?: string;
-  /**
-   * 父级资产类型ID
-   * @format int32
-   */
-  parentTypeId?: number;
+  parentTypeId?: string;
   /** 前端按钮样式 */
   themeButton?: string;
   /** 工序id */
@@ -7787,11 +7775,7 @@ export interface AssetBrand {
   state?: number;
   eid?: string;
   oid?: string;
-  /**
-   * 资产类型ID
-   * @format int32
-   */
-  assetTypeId?: number;
+  assetTypeId?: string;
   /** 资产品牌编码 */
   brandCode?: string;
   /** 资产品牌名称 */
@@ -7839,11 +7823,7 @@ export interface AssetBrandVO {
   state?: number;
   eid?: string;
   oid?: string;
-  /**
-   * 资产类型ID
-   * @format int32
-   */
-  assetTypeId?: number;
+  assetTypeId?: string;
   /** 资产品牌编码 */
   brandCode?: string;
   /** 资产品牌名称 */
@@ -8636,12 +8616,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */

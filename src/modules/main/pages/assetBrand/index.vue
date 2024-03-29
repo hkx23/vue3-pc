@@ -84,7 +84,7 @@
       <!-- 第 4️⃣ 行数据 -->
       <t-form-item label="资产类型" name="assetType">
         <bcmp-select-business
-          v-model="assetBrandTabData.list.assetType"
+          v-model="assetBrandTabData.list.assetTypeId"
           label=""
           type="assetType"
           :clearable="true"
@@ -130,7 +130,7 @@ const assetBrandTabData = reactive({
     brandCode: '', // 资产品牌编码
     brandName: '', // 资产品牌名称
     brandDesc: '', // 资产品牌描述
-    assetType: '', // 资产类型
+    assetTypeId: '', // 资产类型
   },
 });
 // 表格列表数据
@@ -184,7 +184,7 @@ const rules: FormRules = {
   brandCode: [{ required: true, message: '资产品牌编码不能为空', trigger: 'blur' }],
   brandName: [{ required: true, message: '资产品牌名称不能为空', trigger: 'blur' }],
   brandDesc: [{ required: true, message: '资产品牌描述不能为空', trigger: 'blur' }],
-  assetType: [{ required: true, message: '资产类型不能为空', trigger: 'change' }],
+  assetTypeId: [{ required: true, message: '资产类型不能为空', trigger: 'change' }],
 };
 // 初始渲染
 onMounted(async () => {
@@ -215,7 +215,7 @@ const onAddTypeData = () => {
   assetBrandTabData.list.brandName = ''; // 资产品牌名称
   assetBrandTabData.list.brandCode = ''; // 资产品牌编码
   assetBrandTabData.list.brandDesc = ''; // 资产品牌描述
-  assetBrandTabData.list.assetType = '';
+  assetBrandTabData.list.assetTypeId = '';
   submitFalg.value = true;
   diaLogTitle.value = '新增资产品牌';
 };
@@ -266,7 +266,7 @@ const onEditRow = (row: any) => {
   assetBrandTabData.list.brandName = row.brandName; // 资产品牌名称
   assetBrandTabData.list.brandCode = row.brandCode; // 资产品牌编码
   assetBrandTabData.list.brandCode = row.brandDesc; // 资产品牌描述
-  assetBrandTabData.list.assetType = row.assetTypeId; // 资产类型
+  assetBrandTabData.list.assetTypeId = row.assetTypeId; // 资产类型
   incidentID.value = row.id; // 编辑回填 ID
   submitFalg.value = false;
   formVisible.value = true;
@@ -321,7 +321,7 @@ const deleteBatches = async () => {
 // 关闭模态框事件
 const onSecondaryReset = () => {
   formRef.value.reset({ type: 'empty' });
-  assetBrandTabData.list.assetType = '';
+  assetBrandTabData.list.assetTypeId = '';
   formVisible.value = false;
 };
 
