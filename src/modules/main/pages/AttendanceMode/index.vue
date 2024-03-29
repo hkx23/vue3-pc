@@ -444,7 +444,7 @@ const onGroupRequest = async () => {
   }
   const newArr = appendNFromFirstDecrease(flattenedConvertedIntervals);
   const convert = convertToTimeRange(newArr).join(';');
-  delete teamFormData.value.expression;
+  // delete teamFormData.value.expression;
   await api.attendanceMode.modifyAttendanceMode({
     ...teamFormData.value,
     expression: convert,
