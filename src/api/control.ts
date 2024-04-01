@@ -2731,13 +2731,13 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
 }
@@ -2782,10 +2782,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  isScanFinish?: boolean;
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
+  isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3057,6 +3057,284 @@ export interface ProductCapacity {
   speedRate?: number;
 }
 
+/** 检验工单 */
+export interface ProcessInspectionByMoVO {
+  scheId?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  /** 工单排产状态 */
+  scheStatus?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  routingRevisionId?: string;
+  moId?: string;
+  /** 工单名称 */
+  moCode?: string;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  mitemId?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  preProcessId?: string;
+  /** 上一个工序代码 */
+  preProcessCode?: string;
+  /** 上一个工序名称 */
+  preProcessName?: string;
+  curProcessId?: string;
+  /** 当前工序代码 */
+  curProcessCode?: string;
+  /** 当前工序名称 */
+  curProcessName?: string;
+  /** 扫描信息 */
+  scanMessage?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  workCenterId?: string;
+  /** 工作中心代码 */
+  workCenterCode?: string;
+  /** 工作中心名称 */
+  workCenterName?: string;
+  curWorkstationId?: string;
+  /** 当前工站代码 */
+  curWorkstationCode?: string;
+  /** 当前工站名称 */
+  curWorkstationName?: string;
+  preWorkstationId?: string;
+  /** 上一个工站代码 */
+  preWorkstationCode?: string;
+  /** 上一个工站名称 */
+  preWorkstationName?: string;
+  /** 扫描选中的缺陷列表 */
+  defectCodeList?: ProcessInspectionDefectCode[];
+  defectCodeStr?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+}
+
+/** 扫描选中的缺陷列表 */
+export interface ProcessInspectionDefectCode {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /** 不合格分类 */
+  classification?: string;
+}
+
+/** 通用响应类 */
+export interface ResultProcessInspectionByMoVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 检验工单 */
+  data?: ProcessInspectionByMoVO;
+}
+
+/** 显示在制品条码实体 */
+export interface BarcodeWipVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  moScheId?: string;
+  workcenterId?: string;
+  processId?: string;
+  workstationId?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  seq?: number;
+  /** 在制品数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /**
+   * 缺陷次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /**
+   * 是否完工
+   * @format int32
+   */
+  isCompleted?: number;
+  /** 状态 */
+  status?: string;
+  onhandId?: string;
+  /**
+   * 入库时间
+   * @format date-time
+   */
+  datetimeStockin?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  /** 工单排产状态 */
+  scheStatus?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  routingRevisionId?: string;
+  moId?: string;
+  /** 工单名称 */
+  moCode?: string;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  mitemId?: string;
+  /** 物料代码 */
+  mitemCode?: string;
+  /** 物料名称 */
+  mitemName?: string;
+  /** 工序代码 */
+  processCode?: string;
+  /** 工序名称 */
+  processName?: string;
+  /** 扫描信息 */
+  scanMessage?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  /** 工作中心代码 */
+  workCenterCode?: string;
+  /** 工作中心名称 */
+  workCenterName?: string;
+  /** 扫描选中的缺陷列表 */
+  defectCodeList?: DefectCode[];
+  defectCodeStr?: string;
+  stateName?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
+  isState?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+}
+
+/** 缺陷代码 */
+export interface DefectCode {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 缺陷代码 */
+  defectCode?: string;
+  /** 缺陷名称 */
+  defectName?: string;
+  parentDefectId?: string;
+  /**
+   * 层级序号
+   * @format int32
+   */
+  levelSeq?: number;
+  /** 不合格分类 */
+  classification?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBarcodeWipVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示在制品条码实体 */
+  data?: BarcodeWipVO;
+}
+
 export interface ProcessInDefectCodeSearch {
   /**
    * 页码
@@ -3130,45 +3408,6 @@ export interface DefectCodeSearch {
   keyWord?: string;
   /** 工序ID */
   processId?: string;
-}
-
-/** 缺陷代码 */
-export interface DefectCode {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 缺陷代码 */
-  defectCode?: string;
-  /** 缺陷名称 */
-  defectName?: string;
-  parentDefectId?: string;
-  /**
-   * 层级序号
-   * @format int32
-   */
-  levelSeq?: number;
-  /** 不合格分类 */
-  classification?: string;
 }
 
 /** 响应数据 */
@@ -4028,34 +4267,29 @@ export interface BarcodeWipCollectVO {
   keyPartSumList?: WipKeyPartCollectVO[];
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
+  /** 工作中心 */
+  workCenterModel?: Workcenter;
+  /** 工序 */
+  processModel?: Process;
+  /** 工站 */
+  workstationModel?: Workstation;
+  /** 请求ID */
+  requestScanID?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  stateName?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
   isState?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
 }
 
-/** 通用响应类 */
-export interface ResultBarcodeWipCollectVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 显示过站采集实体 */
-  data?: BarcodeWipCollectVO;
-}
-
-/** 显示在制品条码实体 */
-export interface BarcodeWipVO {
+/** 工序 */
+export interface Process {
   id?: string;
   /**
    * 创建时间
@@ -4079,90 +4313,110 @@ export interface BarcodeWipVO {
   state?: number;
   eid?: string;
   oid?: string;
-  /** 条码序列号 */
-  serialNumber?: string;
-  moScheId?: string;
-  workcenterId?: string;
-  processId?: string;
-  workstationId?: string;
-  /**
-   * 顺序
-   * @format int32
-   */
-  seq?: number;
-  /** 在制品数量 */
-  qty?: number;
-  /** 结余数量 */
-  balanceQty?: number;
-  /**
-   * 缺陷次数
-   * @format int32
-   */
-  ngTimes?: number;
-  /**
-   * 是否完工
-   * @format int32
-   */
-  isCompleted?: number;
-  /** 状态 */
-  status?: string;
-  onhandId?: string;
-  /**
-   * 入库时间
-   * @format date-time
-   */
-  datetimeStockin?: string;
-  /** 排产工单 */
-  scheCode?: string;
-  /** 工单排产状态 */
-  scheStatus?: string;
-  /**
-   * 排产数量
-   * @format int32
-   */
-  scheQty?: number;
-  routingRevisionId?: string;
-  moId?: string;
-  /** 工单名称 */
-  moCode?: string;
-  /**
-   * 完工数量
-   * @format int32
-   */
-  completedQty?: number;
-  mitemId?: string;
-  /** 物料代码 */
-  mitemCode?: string;
-  /** 物料名称 */
-  mitemName?: string;
   /** 工序代码 */
   processCode?: string;
   /** 工序名称 */
   processName?: string;
-  /** 扫描信息 */
-  scanMessage?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
-  /** 工作中心代码 */
-  workCenterCode?: string;
-  /** 工作中心名称 */
-  workCenterName?: string;
-  /** 扫描选中的缺陷列表 */
-  defectCodeList?: DefectCode[];
+  /** 工序描述 */
+  processDesc?: string;
+  /** 工序别名 */
+  processAlias?: string;
+  /** 工序类别 */
+  processCategory?: string;
+}
+
+/** 工作中心 */
+export interface Workcenter {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工站代码 */
+  wcCode?: string;
+  /** 工站名称 */
+  wcName?: string;
+  /** 工站描述 */
+  wcDesc?: string;
   workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  stateName?: string;
-  defectCodeStr?: string;
-  isState?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
+  parentWcId?: string;
+  /**
+   * 顺序
+   * @format int32
+   */
+  wcSeq?: number;
+  /**
+   * 类型
+   * @format int32
+   */
+  wcObjectType?: number;
+  wcObjectId?: string;
+  /** 地点 */
+  wcLocation?: string;
+  /** 负责人 */
+  wcOwner?: string;
+}
+
+/** 工站 */
+export interface Workstation {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工站代码 */
+  workstationCode?: string;
+  /** 工站名称 */
+  workstationName?: string;
+  /** 工站描述 */
+  workstationDesc?: string;
+  processId?: string;
+  workcenterId?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
 }
 
 /** 通用响应类 */
-export interface ResultBarcodeWipVO {
+export interface ResultBarcodeWipCollectVO {
   /**
    * 响应代码
    * @format int32
@@ -4170,8 +4424,8 @@ export interface ResultBarcodeWipVO {
   code?: number;
   /** 提示信息 */
   message?: string;
-  /** 显示在制品条码实体 */
-  data?: BarcodeWipVO;
+  /** 显示过站采集实体 */
+  data?: BarcodeWipCollectVO;
 }
 
 /** 通用响应类 */
@@ -5897,6 +6151,38 @@ export const api = {
         body: data as any,
       }),
   },
+  processInspectionByMo: {
+    /**
+     * No description
+     *
+     * @tags 工序检验（按订单）
+     * @name ScanBarcodeWip
+     * @summary 获取在制品条码信息
+     * @request POST:/processInspectionByMo/scanBarcodeWip
+     * @secure
+     */
+    scanBarcodeWip: (data: ProcessInspectionByMoVO) =>
+      http.request<ResultProcessInspectionByMoVO['data']>(`/api/control/processInspectionByMo/scanBarcodeWip`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  processInspection: {
+    /**
+     * No description
+     *
+     * @tags 工序检验
+     * @name ScanBarcodeWip
+     * @summary 获取在制品条码信息
+     * @request POST:/processInspection/scanBarcodeWip
+     * @secure
+     */
+    scanBarcodeWip: (data: BarcodeWipVO) =>
+      http.request<ResultBarcodeWipVO['data']>(`/api/control/processInspection/scanBarcodeWip`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   processInDefectCode: {
     /**
      * No description
@@ -6499,21 +6785,6 @@ export const api = {
       }),
   },
   barcodeWip: {
-    /**
-     * No description
-     *
-     * @tags 在制品条码表
-     * @name ScanBarcodeWip
-     * @summary 获取在制品条码信息
-     * @request POST:/barcodeWip/scanBarcodeWip
-     * @secure
-     */
-    scanBarcodeWip: (data: BarcodeWipVO) =>
-      http.request<ResultBarcodeWipVO['data']>(`/api/control/barcodeWip/scanBarcodeWip`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
     /**
      * No description
      *
