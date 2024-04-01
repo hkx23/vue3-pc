@@ -6,8 +6,11 @@
         <span>{{ props.formTitle }}</span>
       </t-space>
     </template>
-    <cmp-card>
-      <!-- 按钮操作逻辑
+
+    <cmp-container :full="true" style="height: calc(90vh - 56px - 57px)">
+      <scroll-view ref="scrollView" class="scroll-view">
+        <cmp-card>
+          <!-- 按钮操作逻辑
 
           状态为 已创建或者 盘点中             不允许 差异调整 关闭单据
 
@@ -15,69 +18,72 @@
 
           状态为 已关闭或者 已作废 == 已取消    只允许刷新  导出 打印
          -->
-      <div class="buttonSty">
-        <t-button @click="getMaterialDetails(props.propsdtlId)">刷新</t-button>
-        <t-button>导出</t-button>
-        <t-button>打印</t-button>
-        <t-button :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint" @click="saveData">保存</t-button>
-        <t-button :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint" @click="finish(props.propsdtlId)"
-          >盘点完成</t-button
-        >
-        <t-button :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint" @click="getAdjustment"
-          >差异调整</t-button
-        >
-        <t-button
-          :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint"
-          @click="closedocument(props.propsdtlId)"
-          >关闭单据</t-button
-        >
-      </div>
-    </cmp-card>
-    <!-- 盘点单相关详细信息 -->
-    <cmp-card>
-      <!-- <template #title> 盘点单{{ props.propsdtlId }}相关详细信息 </template> -->
-      <template #title> 盘点单{{ props.propsbillNo }}相关详细信息 </template>
-      <t-form>
-        <t-row>
-          <t-form-item label="盘点单号：" name="description">
-            <!-- <p>{{ props.propsdtlId }}</p> -->
-            <p>{{ props.propsbillNo }}</p>
-          </t-form-item>
-          <t-form-item label="盘点类型：" name="description">
-            <p>{{ props.stockCheckBillTypeName }}</p>
-          </t-form-item>
-          <t-form-item label="状态：" name="description">
-            <p>{{ props.stockCheckBillStatusName }}</p>
-          </t-form-item>
-        </t-row>
-      </t-form>
-    </cmp-card>
-    <cmp-container :full="true" style="height: calc(90vh - 56px - 220px)">
-      <!-- table 物料明细 -->
-      <cmp-card>
-        <template #title> 物料明细 </template>
-        <t-table
-          row-key="pdDtlId"
-          :loading="loading"
-          :columns="tableWarehouseColumns1"
-          :data="tableDataInventory1"
-          select-on-row-click
-          :show-pagination="false"
-          :hover="true"
-          max-height="200px"
-          empty="没有符合条件的数据"
-          :show-toolbar="false"
-          :total="dataTotal"
-          @select-change="handleRowSelectChange"
-        >
-          <template #indexSlot="{ rowIndex }">
-            {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
-          </template>
-          <!-- 实盘数的插槽 -->
-          <template #firmOfferNumberSlot="{ row }">
-            <div class="operation-buttons">
-              <!-- todo input-number -->
-              <!-- <t-button
+          <div class="buttonSty">
+            <t-button @click="getMaterialDetails(props.propsdtlId)">刷新</t-button>
+            <t-button>导出</t-button>
+            <t-button>打印</t-button>
+            <t-button :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint" @click="saveData"
+              >保存</t-button
+            >
+            <t-button
+              :disabled="disableSaveAndCompletion || enableOnlyRefreshExportPrint"
+              @click="finish(props.propsdtlId)"
+              >盘点完成</t-button
+            >
+            <t-button :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint" @click="getAdjustment"
+              >差异调整</t-button
+            >
+            <t-button
+              :disabled="disableAdjustmentAndClosure || enableOnlyRefreshExportPrint"
+              @click="closedocument(props.propsdtlId)"
+              >关闭单据</t-button
+            >
+          </div>
+        </cmp-card>
+        <!-- 盘点单相关详细信息 -->
+        <cmp-card>
+          <!-- <template #title> 盘点单{{ props.propsdtlId }}相关详细信息 </template> -->
+          <template #title> 盘点单{{ props.propsbillNo }}相关详细信息 </template>
+          <t-form>
+            <t-row>
+              <t-form-item label="盘点单号：" name="description">
+                <!-- <p>{{ props.propsdtlId }}</p> -->
+                <p>{{ props.propsbillNo }}</p>
+              </t-form-item>
+              <t-form-item label="盘点类型：" name="description">
+                <p>{{ props.stockCheckBillTypeName }}</p>
+              </t-form-item>
+              <t-form-item label="状态：" name="description">
+                <p>{{ props.stockCheckBillStatusName }}</p>
+              </t-form-item>
+            </t-row>
+          </t-form>
+        </cmp-card>
+        <!-- table 物料明细 -->
+        <cmp-card>
+          <template #title> 物料明细 </template>
+          <t-table
+            row-key="pdDtlId"
+            :loading="loading"
+            :columns="tableWarehouseColumns1"
+            :data="tableDataInventory1"
+            select-on-row-click
+            :show-pagination="false"
+            :hover="true"
+            max-height="250px"
+            empty="没有符合条件的数据"
+            :show-toolbar="false"
+            :total="dataTotal"
+            @select-change="handleRowSelectChange"
+          >
+            <template #indexSlot="{ rowIndex }">
+              {{ (pageUI.page - 1) * pageUI.rows + rowIndex + 1 }}
+            </template>
+            <!-- 实盘数的插槽 -->
+            <template #firmOfferNumberSlot="{ row }">
+              <div class="operation-buttons">
+                <!-- todo input-number -->
+                <!-- <t-button
                 :disabled="enableOnlyRefreshExportPrint"
                 variant="outline"
                 theme="default"
@@ -85,15 +91,15 @@
                 @click="increment(row)"
                 >+</t-button
               > -->
-              <!-- <t-input-number v-model="formData1.createNum" :min="1" :max="100"></t-input-number> -->
+                <!-- <t-input-number v-model="formData1.createNum" :min="1" :max="100"></t-input-number> -->
 
-              <t-input-number
-                v-model.number="row.checkQty"
-                :disabled="enableOnlyRefreshExportPrint || row.isBatchNoName == '是'"
-                placeholder="输入实盘数"
-                :min="0"
-              ></t-input-number>
-              <!--               
+                <t-input-number
+                  v-model.number="row.checkQty"
+                  :disabled="enableOnlyRefreshExportPrint || row.isBatchNoName == '是'"
+                  placeholder="输入实盘数"
+                  :min="0"
+                ></t-input-number>
+                <!--               
               <t-button
                 :disabled="enableOnlyRefreshExportPrint"
                 variant="outline"
@@ -102,51 +108,52 @@
                 @click="decrement(row)"
                 >-</t-button
               > -->
-            </div>
-          </template>
-          <!-- 差异数的插槽 -->
-          <template #differenceNumberSlot="{ row }">
-            <span :style="{ color: getDifference(row.checkQty, row.onhandQty) < 0 ? 'red' : 'black' }">
-              {{ getDifference(row.checkQty, row.onhandQty) }}
-            </span>
-          </template>
+              </div>
+            </template>
+            <!-- 差异数的插槽 -->
+            <template #differenceNumberSlot="{ row }">
+              <span :style="{ color: getDifference(row.checkQty, row.onhandQty) < 0 ? 'red' : 'black' }">
+                {{ getDifference(row.checkQty, row.onhandQty) }}
+              </span>
+            </template>
 
-          <!-- 差异原因的插槽 -->
-          <template #differenceReasonSlot="{ row }">
-            <!-- 差异原因 已创建，盘点中 才能输入 -->
-            <t-input v-model="row.diffReason" placeholder="输入差异原因" :disabled="!disableAdjustmentAndClosure">
-            </t-input>
-          </template>
+            <!-- 差异原因的插槽 -->
+            <template #differenceReasonSlot="{ row }">
+              <!-- 差异原因 已创建，盘点中 才能输入 -->
+              <t-input v-model="row.diffReason" placeholder="输入差异原因" :disabled="!disableAdjustmentAndClosure">
+              </t-input>
+            </template>
 
-          <!-- 差异调整原因的插槽 -->
-          <template #diffAdjustReasonSlot="{ row }">
-            <!-- 差异调整原因 已完成 才能输入-->
-            <t-input
-              v-model="row.differenceReason"
-              placeholder="输入差异调整原因"
-              :disabled="!disableSaveAndCompletion"
-            >
-            </t-input>
-          </template>
-        </t-table>
-      </cmp-card>
+            <!-- 差异调整原因的插槽 -->
+            <template #diffAdjustReasonSlot="{ row }">
+              <!-- 差异调整原因 已完成 才能输入-->
+              <t-input
+                v-model="row.differenceReason"
+                placeholder="输入差异调整原因"
+                :disabled="!disableSaveAndCompletion"
+              >
+              </t-input>
+            </template>
+          </t-table>
+        </cmp-card>
 
-      <!-- table 标签明细 -->
-      <cmp-card>
-        <template #title> 标签明细 </template>
-        <cmp-table
-          row-key="scanBarcode"
-          :table-column="tableWarehouseColumns2"
-          :table-data="tableDataInventory2"
-          :show-pagination="false"
-          :hover="true"
-          :fixed-height="true"
-          empty="没有符合条件的数据"
-          :show-toolbar="false"
-          :total="dataTotals"
-        >
-        </cmp-table>
-      </cmp-card>
+        <!-- table 标签明细 -->
+        <cmp-card>
+          <template #title> 标签明细 </template>
+          <cmp-table
+            row-key="scanBarcode"
+            :table-column="tableWarehouseColumns2"
+            :table-data="tableDataInventory2"
+            :show-pagination="false"
+            :hover="true"
+            max-height="400px"
+            empty="没有符合条件的数据"
+            :show-toolbar="false"
+            :total="dataTotals"
+          >
+          </cmp-table>
+        </cmp-card>
+      </scroll-view>
     </cmp-container>
   </t-dialog>
 </template>
@@ -406,5 +413,10 @@ defineExpose({
 
 .operation-buttons > t-button:last-child {
   margin-right: 0; /* 最后一个按钮不需要右边距 */
+}
+
+.scroll-view {
+  height: 100%;
+  overflow-y: auto;
 }
 </style>

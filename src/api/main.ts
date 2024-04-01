@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -4548,12 +4548,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
   isState?: boolean;
-  isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -4718,8 +4718,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 /** 响应数据 */
@@ -4799,14 +4799,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
   isState?: boolean;
-  isProductName?: string;
-  isRawName?: string;
   isInProcessName?: string;
   isRawChecked?: boolean;
   isBatchName?: string;
+  isRawName?: string;
+  isProductName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4949,8 +4949,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5948,10 +5948,23 @@ export interface Equipment {
   userOwner?: string;
   /** 设备供应商 */
   equipmentSupplier?: string;
-  /** 维保供应商 */
+  /** 维保联系人 */
   maintenanceOwner?: string;
   /** 维保联系方式 */
   maintenanceOwnerContact?: string;
+  /**
+   * 进场时间
+   * @format date-time
+   */
+  datetimeEntry?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  inspectDealId?: string;
+  inspectAcceptId?: string;
+  /** 状态 */
+  status?: string;
 }
 
 /** 响应数据 */
@@ -9032,12 +9045,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
 } | null;
 
 /** 通用响应类 */

@@ -66,6 +66,7 @@
           empty="没有符合条件的数据"
           :table-column="columnsDetail"
           :fixed-height="true"
+          :show-toolbar="false"
           :table-data="mitemShelflifeData"
           :total="mitemShelflifeTotal"
           select-on-row-click

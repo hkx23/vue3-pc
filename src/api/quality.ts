@@ -176,9 +176,9 @@ export interface SamplingStdDtlDTO {
   /** 批量范围结束值 */
   lotTo: number;
   /** 抽样比例 */
-  samplingPer: number;
+  samplingPer?: number;
   /** 抽样数量 */
-  samplingNum: number;
+  samplingNum?: number;
   /** A类允收数 */
   acceptQtyClassA: number;
   /** A类拒收数 */
@@ -321,16 +321,6 @@ export interface ResultListSamplingAqlVO {
   data?: SamplingAqlVO[] | null;
 }
 
-/** 国标抽样方案装aql的容器 */
-export interface SamplingAqlDTO {
-  /** 接收质量限 */
-  aql?: number;
-  /** 允收数 */
-  acceptQty?: number;
-  /** 拒收数 */
-  rejectQty?: number;
-}
-
 /** 国标抽样方案渲染 */
 export type SamplingAqlVO = {
   id?: string;
@@ -434,8 +424,6 @@ export type SamplingAqlVO = {
   aql650?: string;
   /** aql1000 */
   aql1000?: string;
-  /** 允收拒收数 */
-  arguments?: SamplingAqlDTO[];
 } | null;
 
 /** 上传控件文件VO */
@@ -2479,10 +2467,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -5561,13 +5549,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s3?: string;
-  ii?: string;
-  s1?: string;
-  s2?: string;
   iii?: string;
   i?: string;
+  s2?: string;
+  s1?: string;
+  ii?: string;
   s4?: string;
+  s3?: string;
 } | null;
 
 /** 标签模板 */
