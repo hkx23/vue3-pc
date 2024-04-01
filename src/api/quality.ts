@@ -382,6 +382,58 @@ export type SamplingAqlVO = {
    * @format int32
    */
   batchEnd?: number;
+  /** aql0.01 */
+  aql001?: string;
+  /** aql0.015 */
+  aql0015?: string;
+  /** aql0.025 */
+  aql0025?: string;
+  /** aql0.04 */
+  aql004?: string;
+  /** aql0.065 */
+  aql0065?: string;
+  /** aql0.1 */
+  aql01?: string;
+  /** aql0.15 */
+  aql015?: string;
+  /** aql0.25 */
+  aql025?: string;
+  /** aql0.4 */
+  aql04?: string;
+  /** aql0.65 */
+  aql065?: string;
+  /** aql1 */
+  aql1?: string;
+  /** aql1.5 */
+  aql1_5?: string;
+  /** aql2.5 */
+  aql2_5?: string;
+  /** aql4 */
+  aql4?: string;
+  /** aql6.5 */
+  aql6_5?: string;
+  /** aql10 */
+  aql10?: string;
+  /** aql15 */
+  aql15?: string;
+  /** aql25 */
+  aql25?: string;
+  /** aql40 */
+  aql40?: string;
+  /** aql65 */
+  aql65?: string;
+  /** aql100 */
+  aql100?: string;
+  /** aql150 */
+  aql150?: string;
+  /** aql250 */
+  aql250?: string;
+  /** aql400 */
+  aql400?: string;
+  /** aql650 */
+  aql650?: string;
+  /** aql1000 */
+  aql1000?: string;
   /** 允收拒收数 */
   arguments?: SamplingAqlDTO[];
 } | null;
@@ -2427,10 +2479,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 业务类型名称 */
-  businessCategoryName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 业务类型名称 */
+  businessCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -5509,13 +5561,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s2?: string;
-  s1?: string;
-  iii?: string;
   s3?: string;
-  s4?: string;
   ii?: string;
+  s1?: string;
+  s2?: string;
+  iii?: string;
   i?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */
