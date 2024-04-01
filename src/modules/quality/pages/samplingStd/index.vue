@@ -1,28 +1,8 @@
 <template>
-  <cmp-container :full="true">
+  <cmp-container v-show="!formVisible" :full="true">
     <cmp-card :span="12">
       <!-- 查询组件  -->
-      <cmp-query :opts="opts" @submit="conditionEnter" @reset="conditionReset">
-        <template #querySelect="{ param }">
-          <t-select
-            v-model="param.sampingStdCode"
-            label="标准编码"
-            clearable
-            filterable
-            input-props
-            @clear="fetchSampingStdCodes"
-            @input-change="querySelectChange($event)"
-          >
-            <t-option
-              v-for="item in sampingStdCodesOption"
-              :key="item.id"
-              :label="item.sampingStdCode"
-              :value="item.sampingStdCode"
-              :lazy-load="true"
-            />
-          </t-select>
-        </template>
-      </cmp-query>
+      <cmp-query :opts="opts" @submit="conditionEnter" @reset="conditionReset"> </cmp-query>
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
@@ -58,22 +38,20 @@
     </cmp-card>
   </cmp-container>
 
-  <div>
-    <t-dialog v-model:visible="formVisible" width="90%" :footer="false" :close-on-overlay-click="false">
-      <sampling-std-form ref="formRef"></sampling-std-form>
-    </t-dialog>
-    <t-dialog v-model:visible="stateVisible" width="30%" :header="false" @confirm="onStateChange" @close="fetchTable">
-      <div v-if="countMessage">
-        <span
-          >该抽样方案共有
-          {{ countMessage }} 个标准检验项目在使用，如果禁用将对这些标准检验项目产生影响。请确认是否继续禁用？</span
-        >
-      </div>
-      <div v-if="!countMessage">
-        <span>请确认是否禁用？</span>
-      </div>
-    </t-dialog>
-  </div>
+  <cmp-container v-show="formVisible" :full="true" :close-on-overlay-click="false">
+    <sampling-std-form ref="formRef" @permission-show="onPermission"></sampling-std-form>
+  </cmp-container>
+  <t-dialog v-model:visible="stateVisible" width="30%" :header="false" @confirm="onStateChange" @close="fetchTable">
+    <div v-if="countMessage">
+      <span
+        >该抽样方案共有
+        {{ countMessage }} 个标准检验项目在使用，如果禁用将对这些标准检验项目产生影响。请确认是否继续禁用？</span
+      >
+    </div>
+    <div v-if="!countMessage">
+      <span>请确认是否禁用？</span>
+    </div>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -90,7 +68,6 @@ import SamplingStdForm from './form.vue';
 const { pageUI } = usePage();
 const { loading } = useLoading();
 const sampingStdCode = ref('');
-const selectedRowKeys = ref([]);
 const tableData = ref([]);
 const formVisible = ref(false);
 const stateVisible = ref(false);
@@ -98,14 +75,18 @@ const formRef = ref(null);
 const formTitle = ref('');
 const operationScope = ref(-1);
 const countMessage = ref();
-const sampingStdCodesOption = ref([]);
 const curId = ref();
 
+const onPermission = (value) => {
+  formVisible.value = value;
+  onRefresh();
+};
 // 下拉初始数据
 const scopeOptions = [
   { label: '全部', value: -1 },
   { label: '物料', value: 1 },
   { label: '产品', value: 2 },
+  { label: '物料+产品', value: 3 },
 ];
 
 const samplingStdColumns: PrimaryTableCol<TableRowData>[] = [
@@ -123,9 +104,8 @@ const opts = computed(() => {
   return {
     sampingStdCode: {
       label: '标准编码',
-      event: 't-select',
+      comp: 't-input',
       defaultVal: '',
-      slotName: 'querySelect',
     },
     operationScope: {
       label: '应用范围',
@@ -138,19 +118,16 @@ const opts = computed(() => {
     },
   };
 });
-const onEditRowClick = (value: any) => {
+const onEditRowClick = async (value: any) => {
   formTitle.value = '查看';
   console.log(value.row);
   formRef.value.formData.sampingStdId = value.row.id;
+  formRef.value.formData.operationMethod = value.row.operationMethod;
   formRef.value.formData.sampingStdCode = value.row.sampingStdCode;
   const { fetchTable } = formRef.value;
+  console.log(formRef.value.formData);
   formVisible.value = true;
-  fetchTable();
-};
-
-const querySelectChange = async (event) => {
-  const res = (await api.samplingStd.getSampingStdCode({ key: event.length >= 2 ? event : '' })) as any;
-  sampingStdCodesOption.value = res;
+  await fetchTable();
 };
 // 点击查询按钮
 const conditionEnter = (data: any) => {
@@ -168,7 +145,6 @@ const onRefresh = () => {
 const conditionReset = () => {
   sampingStdCode.value = '';
   operationScope.value = -1;
-  fetchSampingStdCodes();
 };
 const dataTotal = ref(0);
 
@@ -182,16 +158,6 @@ const fetchTable = async () => {
     })) as any;
     tableData.value = data.list;
     dataTotal.value = data.total;
-  } catch (e) {
-    console.log(e);
-  }
-};
-const fetchSampingStdCodes = async () => {
-  try {
-    selectedRowKeys.value = [];
-    tableData.value = [];
-    const data = (await api.samplingStd.getSampingStdCode()) as any;
-    sampingStdCodesOption.value = data;
   } catch (e) {
     console.log(e);
   }
@@ -224,7 +190,6 @@ const onStateRowClick = async (value, row) => {
 
 onMounted(() => {
   fetchTable();
-  fetchSampingStdCodes();
 });
 </script>
 
