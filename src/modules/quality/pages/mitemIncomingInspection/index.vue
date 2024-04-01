@@ -297,7 +297,7 @@ const optsTab2 = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'IqcBillInfo',
+        type: 'iqcBillInfo',
         showTitle: false,
       },
     },

@@ -216,7 +216,7 @@ const Init = async () => {
 
 const serialNumberEnter = async (value) => {
   if (!isEmpty(value)) {
-    await api.barcodeWip
+    await api.processInspection
       .scanBarcodeWip({
         serialNumber: mainform.value.serialNumber,
         workcenterId: userStore.currUserOrgInfo.workCenterId,

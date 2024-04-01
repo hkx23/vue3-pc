@@ -4547,12 +4547,12 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isForceInspectionChecked?: boolean;
+  stateName?: string;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
-  stateName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
+  isForceInspectionChecked?: boolean;
   isState?: boolean;
 }
 
@@ -4799,14 +4799,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
-  isRawName?: string;
   isInProcessName?: string;
   isProductName?: string;
-  isRawChecked?: boolean;
+  isRawName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5948,10 +5948,23 @@ export interface Equipment {
   userOwner?: string;
   /** 设备供应商 */
   equipmentSupplier?: string;
-  /** 维保供应商 */
+  /** 维保联系人 */
   maintenanceOwner?: string;
   /** 维保联系方式 */
   maintenanceOwnerContact?: string;
+  /**
+   * 进场时间
+   * @format date-time
+   */
+  datetimeEntry?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  inspectDealId?: string;
+  inspectAcceptId?: string;
+  /** 状态 */
+  status?: string;
 }
 
 /** 响应数据 */
@@ -7139,6 +7152,14 @@ export interface BarcodeWipLog {
   status?: string;
 }
 
+/** 产品标签提交模型 */
+export interface LabelDTO {
+  /** 在制品条码表 */
+  barcodeWip?: BarcodeWip;
+  /** 在制品条码日志表 */
+  barcodeWipLog?: BarcodeWipLog;
+}
+
 export interface BarcodeWipSearch {
   /**
    * 拆分数量
@@ -7832,8 +7853,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -9026,10 +9047,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -15220,6 +15241,21 @@ export const api = {
      */
     updateById: (data: BarcodeWip) =>
       http.request<ResultObject['data']>(`/api/main/barcodeWip/updateById`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 在制品条码表
+     * @name UpdateByIdAndInsertLog
+     * @summary 根据ID更新条码与插入日志
+     * @request POST:/barcodeWip/updateByIdAndInsertLog
+     * @secure
+     */
+    updateByIdAndInsertLog: (data: LabelDTO) =>
+      http.request<ResultObject['data']>(`/api/main/barcodeWip/updateByIdAndInsertLog`, {
         method: 'POST',
         body: data as any,
       }),
