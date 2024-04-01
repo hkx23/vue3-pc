@@ -2037,10 +2037,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -3376,15 +3376,15 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 需求用量
    * @format int32
@@ -3392,8 +3392,8 @@ export interface MoIssuanceDtlVO {
   moRequestQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  flpickQty?: number;
   bfpickQty?: number;
+  flpickQty?: number;
   tlpickQty?: number;
 }
 
@@ -3757,15 +3757,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表-扫码时存储-用于新增 */
   addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量和已领用量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量和待领用量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量和已领用量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -5689,15 +5689,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
