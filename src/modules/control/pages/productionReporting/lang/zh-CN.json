@@ -1,0 +1,15 @@
+{
+  "productionReporting": {
+    "mitemCode": "物料编码",
+    "datetimeActualStart": "排产开始时间",
+    "querySuccess": "查询成功",
+    "billNo": "单据号",
+    "title": "生产报工列表",
+    "scheQty": "排产数量",
+    "status": "状态",
+    "reportingUser": "报工人",
+    "reportingQty": "报工数量",
+    "reportedQty": "已报工数量",
+    "reportingTime": "报工时间"
+  }
+}

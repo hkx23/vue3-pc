@@ -935,6 +935,56 @@ export interface ResultPagingDataLabelQcHoldVO {
   data?: PagingDataLabelQcHoldVO;
 }
 
+export interface ProductionReportingSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  workcenterId?: string;
+  moScheduleId?: string;
+  mitemId?: string;
+  userId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataProductionReportingVO = {
+  list?: ProductionReportingVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+export interface ProductionReportingVO {
+  id?: string;
+  billNo?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  wcName?: string;
+  pickQty?: number;
+  pickQtyCount?: number;
+  creatorName?: string;
+  timeCreate?: string;
+  /** @format date-time */
+  datetimePlanStart?: string;
+  /** @format date-time */
+  datetimePlanEnd?: string;
+  /** @format int32 */
+  scheQty?: number;
+  scheCode?: string;
+}
+
+/** 通用响应类 */
+export interface ResultPagingDataProductionReportingVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataProductionReportingVO;
+}
+
 /** 关键物料追溯（反向）-查询 */
 export interface ReverseTraceabilityReportSearch {
   /** @format int32 */
@@ -2037,10 +2087,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /** 待发货数量 */
   waitDeliveriedQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 响应数据 */
@@ -2563,10 +2613,10 @@ export interface DeliveryDtlVO {
   /** 已交接总量数量 */
   receiptedAllQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 物料检验单明细 */
@@ -2721,10 +2771,10 @@ export interface PurchaseOrderDtlVO {
   /** 本次退货数量 */
   curReturnQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3381,20 +3431,20 @@ export interface MoIssuanceDtlVO {
    */
   waitingScanQty?: number;
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  bfpickQty?: number;
   flpickQty?: number;
   tlpickQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -5556,8 +5606,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -6894,6 +6944,24 @@ export const api = {
       }),
   },
   transferDtl: {
+    /**
+     * No description
+     *
+     * @tags 交易单身表
+     * @name ProductionReportingList
+     * @summary 生产报工主表格
+     * @request POST:/transferDtl/productionReportingList
+     * @secure
+     */
+    productionReportingList: (data: ProductionReportingSearch) =>
+      http.request<ResultPagingDataProductionReportingVO['data']>(
+        `/api/warehouse/transferDtl/productionReportingList`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
     /**
      * No description
      *

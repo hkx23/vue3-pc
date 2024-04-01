@@ -207,13 +207,13 @@ const onDeleteRowClick = async (row) => {
   await apiQuality.inspectGroupInMitem.delByIds([row.id]);
   MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchMitemTable();
-  fetchCategoryList();
+  fetchCategoryInputList();
 };
 const onDelBatch = async () => {
   await apiQuality.inspectGroupInMitem.delByIds(mitemRowKeys.value);
   MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchMitemTable();
-  fetchCategoryList();
+  fetchCategoryInputList();
 };
 const onAddMitem = async (item) => {
   if (item.isAdd) {
