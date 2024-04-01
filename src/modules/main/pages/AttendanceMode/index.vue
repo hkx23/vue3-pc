@@ -396,7 +396,7 @@ const onAddSupportGroup = async () => {
     const newArr = appendNFromFirstDecrease(flattenedConvertedIntervals);
     const convert = convertToTimeRange(newArr).join(';');
     const teamFormDataCloneDeep = _.cloneDeep(teamFormData.value);
-    delete teamFormDataCloneDeep.expression;
+    // delete teamFormDataCloneDeep.expression;
     await api.attendanceMode.addAttendanceMode({ ...teamFormDataCloneDeep, expression: convert });
     await onShiftTabData(); // 获取 出勤模式表格 数据
     formVisible.value = false;

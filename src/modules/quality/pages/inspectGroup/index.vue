@@ -466,7 +466,7 @@ const onClickAddUser = () => {
 const onClickAddMitem = () => {
   const { fetchCategoryList } = formMitemRef.value;
   const { setRow } = formMitemRef.value;
-  const { reset } = formDtlRef.value;
+  const { reset } = formMitemRef.value;
   const { fetchMitemTable } = formMitemRef.value;
   reset();
   formHeader.value = t('common.button.add');
