@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <cmp-card :span="12">
       <!-- 查询组件  -->
-      <cmp-query :opts="opts" @submit="conditionEnter" @reset="onHandleResetting" @change="onQuerychange" />
+      <cmp-query :opts="opts" @submit="conditionEnter" @reset="onHandleResetting" />
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
@@ -278,9 +278,6 @@ const opts = computed(() => {
       bind: {
         type: 'mitem',
         valueField: 'mitemCode',
-        changeFunc: (val: any) => {
-          console.log(val);
-        },
       },
     },
     workshopCode: {
@@ -291,7 +288,10 @@ const opts = computed(() => {
       bind: {
         isMultiple: true,
         type: 'workshop',
-        valueField: 'id',
+        valueField: 'orgCode',
+        changeFunc: (val: any) => {
+          queryCondition.value.workshopId = val.map((n) => n.id).join(',');
+        },
       },
     },
     workCenterCode: {
@@ -350,10 +350,6 @@ const onHandleResetting = () => {
   keyword.value = '';
   pageUI.value.page = 1;
   fetchTable();
-};
-
-const onQuerychange = (value) => {
-  queryCondition.value.workshopId = value.workshopCode;
 };
 
 // 跳转到BOM明细界面
