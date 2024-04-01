@@ -6,6 +6,7 @@
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
+        ref="moDataRef"
         v-model:pagination="pageUI"
         row-key="id"
         active-row-type="single"
@@ -39,12 +40,12 @@
         </template>
         <template #title> 工单列表</template>
         <template #button>
-          <t-button theme="primary" :disabled="true">创建</t-button>
-          <t-button theme="default">取消</t-button>
-          <t-button theme="default">释放</t-button>
-          <t-button theme="default">关闭</t-button>
-          <t-button theme="default">置尾</t-button>
-          <t-button theme="default">取消置尾</t-button>
+          <t-button theme="primary" :disabled="true" @click="onUpdateMoStatus('CREATED')">创建</t-button>
+          <t-button theme="default" @click="onUpdateMoStatus('CANCELLED')">取消</t-button>
+          <t-button theme="default" @click="onUpdateMoStatus('RELEASED')">释放</t-button>
+          <t-button theme="default" @click="onUpdateMoStatus('CLOSED')">关闭</t-button>
+          <t-button theme="default" @click="onUpdateMoHold(true)">置尾</t-button>
+          <t-button theme="default" @click="onUpdateMoHold(false)">取消置尾</t-button>
         </template>
       </cmp-table>
     </cmp-card>
@@ -77,6 +78,7 @@
 <script setup lang="tsx">
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api as apimain } from '@/api/main';
@@ -92,6 +94,9 @@ const { t } = useLang();
 const { pageUI } = usePage();
 const { loading, setLoading } = useLoading();
 const currentrow = ref({}); // 当前行工单信息
+
+const moDataRef = ref(null);
+
 // 控制
 const keyword = ref(''); // 控制模糊搜索
 // const formVisible = ref(false); // 控制弹窗显示
@@ -126,6 +131,11 @@ const routingFormRef = ref(null);
 // 表格th数据
 // - 错误信息。--优化
 const columns = ref([
+  {
+    colKey: 'row-select',
+    type: 'multiple',
+    width: 50,
+  },
   { colKey: 'factoryName', title: '工厂', width: '120' },
   { colKey: 'moCode', title: '工单号', width: '150' },
   { colKey: 'statusName', title: '工单状态', width: '120' },
@@ -373,6 +383,65 @@ const onHandleBomShow = (value: any) => {
 // 子组件控制Routing窗口
 const onHandleRoutingShow = (value: any) => {
   routingUpdateShow.value = value;
+};
+
+// 工单状态控制
+const onUpdateMoStatus = async (value) => {
+  try {
+    setLoading(true);
+
+    checkSelected().then(async (isRun) => {
+      if (isRun) {
+        const selectedRowKeys = moDataRef.value?.getSelectedRowKeys();
+        const moCodes = moData.value.filter((n) => selectedRowKeys.indexOf(n.id) !== -1).map((n) => n.moCode);
+
+        await apimain.mo.updateMoStatus({
+          moCodeList: moCodes,
+          toMoStatus: value,
+        });
+        MessagePlugin.success('工单更新成功。');
+        fetchTable();
+      }
+    });
+  } catch (e) {
+    console.log('cus', e);
+  } finally {
+    setLoading(false);
+  }
+};
+// 工单置尾
+const onUpdateMoHold = async (value) => {
+  try {
+    setLoading(true);
+
+    checkSelected().then(async (isRun) => {
+      if (isRun) {
+        const selectedRowKeys = moDataRef.value?.getSelectedRowKeys();
+        const moCodes = moData.value.filter((n) => selectedRowKeys.indexOf(n.id) !== -1).map((n) => n.moCode);
+
+        await apimain.mo.updateMoIsHold({
+          moCodeList: moCodes,
+          isHold: value ? 1 : 0,
+        });
+        MessagePlugin.success('工单更新成功。');
+        fetchTable();
+      }
+    });
+  } catch (e) {
+    console.log('cus', e);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const checkSelected = async () => {
+  const selectedRowKeys = moDataRef.value?.getSelectedRowKeys();
+  if (selectedRowKeys.length <= 0) {
+    MessagePlugin.error('请选择操作工单');
+    return false;
+  }
+
+  return true;
 };
 
 // 子组件控制刷新

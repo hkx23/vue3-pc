@@ -2471,9 +2471,9 @@ export interface ReturnStockOutDtlVO {
   transferBillNo?: string;
   /** 交易事务单号 */
   transferBillNoStatus?: string;
-  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
+  transferDtlId?: string;
 }
 
 /** 退货单扫描 */
@@ -2562,11 +2562,11 @@ export interface DeliveryDtlVO {
   scanQty?: number;
   /** 已交接总量数量 */
   receiptedAllQty?: number;
-  transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
+  transferDtlId?: string;
 }
 
 /** 物料检验单明细 */
@@ -2720,11 +2720,11 @@ export interface PurchaseOrderDtlVO {
   receiptedAllQty?: number;
   /** 本次退货数量 */
   curReturnQty?: number;
-  transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
+  transferDtlId?: string;
 }
 
 /** 退货管理VO */
@@ -3376,25 +3376,25 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
   /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
   bfpickQty?: number;
   flpickQty?: number;
-  tlpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -3757,15 +3757,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表-扫码时存储-用于新增 */
   addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量和待领用量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量和已领用量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量和待领用量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -5689,15 +5689,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 通用响应类 */

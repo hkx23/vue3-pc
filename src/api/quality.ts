@@ -5509,13 +5509,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s2?: string;
   s1?: string;
+  i?: string;
+  ii?: string;
+  s2?: string;
+  s4?: string;
   iii?: string;
   s3?: string;
-  s4?: string;
-  ii?: string;
-  i?: string;
 } | null;
 
 /** 标签模板 */
