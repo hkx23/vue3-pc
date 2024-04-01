@@ -86,8 +86,8 @@ const tableProps = computed<TableProps>(() => {
 
 const fetchData = async (pageIndex?: number) => {
   const data = await mainApi.mo.getmolist({
-    pagenum: pageIndex || 1,
-    pagesize: 20,
+    pageNum: pageIndex || 1,
+    pageSize: 20,
     ...filterData.value,
   });
   return (data as any).list;
@@ -95,8 +95,8 @@ const fetchData = async (pageIndex?: number) => {
 
 const fetchSearchData = async (keyword: string, _listData: any[]) => {
   const data = await mainApi.mo.getmolist({
-    pagenum: 1,
-    pagesize: 50,
+    pageNum: 1,
+    pageSize: 50,
     moCode: keyword,
     ...filterData.value,
   });
