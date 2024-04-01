@@ -20,20 +20,9 @@
         <template #title>
           {{ t('productionReporting.title') }}
         </template>
-        <template #actionSlot="{ row }">
-          <t-space :size="8">
-            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
-          </t-space>
-        </template>
         <template #button>
           <t-space :size="8">
-            <t-button theme="primary" @click="onAddTypeData"> {{ t('common.button.add') }} </t-button>
-            <bcmp-import-auto-button
-              theme="default"
-              type="f_product_capacity"
-              :button-text="t('common.button.import')"
-              @close="onFetchGroupData"
-            ></bcmp-import-auto-button>
+            <t-button theme="primary" @click="onAddTypeData"> {{ t('productionReporting.reporting') }} </t-button>
           </t-space>
         </template>
       </cmp-table>
@@ -41,60 +30,68 @@
   </cmp-container>
 
   <!-- #班组 dialog 弹窗 -->
-  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="850px">
-    <t-form ref="formRef" :rules="rules" :data="teamFormData" @submit="onAnomalyTypeSubmit">
-      <t-row :gutter="[32, 16]">
-        <!-- 第 1️⃣ 行数据 -->
+  <t-dialog v-model:visible="formVisible" :cancel-btn="null" :confirm-btn="null" :header="diaLogTitle" width="806px">
+    <t-form ref="formRef" :rules="rules" :data="teamFormData" label-width="110px" @submit="onAnomalyTypeSubmit">
+      <t-row :gutter="[0, 16]">
         <t-col :span="6">
-          <t-form-item :label="t('business.main.workshop')" name="workshopId">
+          <t-form-item :label="t('business.control.moScheCode')" name="moScheduleId">
             <bcmp-select-business
-              v-model="teamFormData.workshopId"
+              v-model="teamFormData.moScheduleId"
               label=""
-              type="workshop"
+              type="moSchedule"
               :clearable="true"
-              :disabled="!submitFalg"
               @change="onChange"
             ></bcmp-select-business>
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item :label="t('business.main.workcenter')" name="workcenterId">
-            <bcmp-select-business
-              v-model="teamFormData.workcenterId"
-              label=""
-              :parent-id="teamFormData.workshopId"
-              type="workcenter"
-              :clearable="true"
-              :disabled="!teamFormData.workshopId || !submitFalg"
-            ></bcmp-select-business>
-          </t-form-item>
-        </t-col>
-        <!-- 第 2️⃣ 行数据 -->
-        <t-col :span="6">
-          <t-form-item :label="t('business.main.mitemCode')" name="mitemId">
-            <bcmp-select-business
-              v-model="teamFormData.mitemId"
-              label=""
-              type="mitem"
-              :clearable="true"
-              :disabled="!submitFalg"
-            ></bcmp-select-business>
-          </t-form-item>
-        </t-col>
-        <!-- 第 3️⃣ 行数据 -->
-        <t-col :span="6">
-          <t-form-item :label="t('productionReporting.speedRate')" name="speedRate">
-            <t-input-number
-              v-model="teamFormData.speedRate"
-              theme="column"
-              style="width: 100%"
-              min="0"
-            ></t-input-number>
+          <t-form-item :label="t('business.control.productCode')" name="mitemCode">
+            <t-input
+              v-model="teamFormData.mitemCode"
+              :readonly="true"
+              :placeholder="t('productionReporting.selectMoSche')"
+            ></t-input>
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item :label="t('productionReporting.status')">
-            <t-switch v-model="teamFormData.isState" />
+          <t-form-item :label="t('business.control.productName')" name="mitemName">
+            <t-input
+              v-model="teamFormData.mitemName"
+              :readonly="true"
+              :placeholder="t('productionReporting.selectMoSche')"
+            ></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item :label="t('productionReporting.datetimeActual')" name="datetimePlanStart">
+            <t-input
+              v-model="teamFormData.datetimePlanStart"
+              :readonly="true"
+              :placeholder="t('productionReporting.selectMoSche')"
+            ></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item :label="t('productionReporting.scheQty')" name="scheQty">
+            <t-input
+              v-model="teamFormData.scheQty"
+              :readonly="true"
+              :placeholder="t('productionReporting.selectMoSche')"
+            ></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item :label="t('productionReporting.reportedQty')" name="pickQtyCount">
+            <t-input
+              v-model="teamFormData.pickQtyCount"
+              :readonly="true"
+              :placeholder="t('productionReporting.selectMoSche')"
+            ></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item :label="t('productionReporting.thisReportingQty')" name="pickQty">
+            <t-input-number v-model="teamFormData.pickQty" theme="column" style="width: 100%" min="0"></t-input-number>
           </t-form-item>
         </t-col>
       </t-row>
@@ -136,13 +133,13 @@ const { t } = useLang();
 
 const { loading } = useLoading();
 const teamFormData = ref({
-  id: '', // 行 ID
-  workshopId: '', // 仓库ID
-  workcenterId: '', // 仓库ID
-  mitemId: '', //  物料 ID
-  state: 0, //  物料 编码
-  isState: false, //  物料 编码
-  speedRate: 0, // 安全库存
+  moScheduleId: '',
+  mitemCode: '',
+  mitemName: '',
+  datetimePlanStart: '',
+  scheQty: '',
+  pickQtyCount: '',
+  pickQty: 0,
 });
 
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
@@ -215,9 +212,7 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const onChange = () => {
-  if (submitFalg.value) {
-    teamFormData.value.workcenterId = '';
-  }
+  // 1
 };
 // # 刷新按钮
 const onFetchGroupData = async () => {
@@ -235,10 +230,8 @@ function validateNumber(value: any): boolean | CustomValidateResolveType {
   return true;
 }
 const rules: FormRules = {
-  workshopId: [{ required: true, trigger: 'change' }],
-  mitemId: [{ required: true, trigger: 'change' }],
-  workcenterId: [{ required: true, trigger: 'change' }],
-  speedRate: [
+  moScheduleId: [{ required: true, trigger: 'change' }],
+  pickQty: [
     { required: true, trigger: 'blur' },
     { validator: validateNumber, trigger: 'blur' },
   ],
@@ -283,16 +276,18 @@ const opts = computed(() => {
       defaultVal: '',
       bind: {
         type: 'mitem',
+        labelField: 'mitemCode',
         showTitle: false,
       },
     },
-    userId: {
+    userName: {
       label: t('productionReporting.reportingUser'),
       comp: 'bcmp-select-business',
       event: 'business',
       defaultVal: '',
       bind: {
         type: 'user',
+        valueField: 'userName',
         showTitle: false,
       },
     },
@@ -303,7 +298,11 @@ const onInput = async (data: any) => {
   pageUI.value.page = 1;
   queryConditions.value.mitemId = data.mitemId;
   queryConditions.value.workcenterId = data.workcenterId;
-  queryConditions.value.workshopId = data.workshopId;
+  queryConditions.value.userName = data.userName;
+  queryConditions.value.moScheduleId = data.moScheduleId;
+  const [timeCreateStart, timeCreateEnd] = data.timeCreateRange;
+  queryConditions.value.timeCreateStart = timeCreateStart;
+  queryConditions.value.timeCreateEnd = timeCreateEnd;
   await getTabData();
 };
 
@@ -315,8 +314,11 @@ const eidtFormSubmit = () => {
 const queryConditions = ref({
   pageNum: 1,
   pageSize: 20,
-  workshopId: '',
+  moScheduleId: '',
   workcenterId: '',
+  timeCreateStart: '',
+  timeCreateEnd: '',
+  userName: '',
   mitemId: '',
 });
 
@@ -336,7 +338,6 @@ const getTabData = async () => {
 };
 
 const onAddSupportGroup = async () => {
-  teamFormData.value.state = teamFormData.value.isState === true ? 1 : 0;
   // await api.productionReporting.add(teamFormData.value);
   await getTabData();
   formVisible.value = false;
@@ -346,29 +347,12 @@ const onAddSupportGroup = async () => {
 // // #添加按钮点击事件
 const onAddTypeData = async () => {
   formRef.value.reset({ type: 'empty' });
-  teamFormData.value.isState = false;
-  submitFalg.value = true; // true为新增
   formVisible.value = true;
-  diaLogTitle.value = t('common.button.add');
-};
-
-// // #编辑 点击
-const onEditRow = (row: any) => {
-  formRef.value.reset({ type: 'empty' });
-  submitFalg.value = false; // 编辑为 false
-  teamFormData.value.id = row.id;
-  teamFormData.value.mitemId = row.mitemId;
-  teamFormData.value.speedRate = row.speedRate;
-  teamFormData.value.isState = row.state === 1;
-  teamFormData.value.workcenterId = row.workcenterId;
-  teamFormData.value.workshopId = row.workshopId;
-  formVisible.value = true;
-  diaLogTitle.value = t('common.button.edit');
+  diaLogTitle.value = t('productionReporting.reporting');
 };
 
 // #编辑  请求
 const onGroupRequest = async () => {
-  teamFormData.value.state = teamFormData.value.isState === true ? 1 : 0;
   // await api.productionReporting.edit(teamFormData.value);
   await getTabData(); // 获取 班组表格 数据
   formVisible.value = false;
