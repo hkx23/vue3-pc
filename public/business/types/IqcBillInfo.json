@@ -3,6 +3,7 @@
   "placeholder": "请选择检验单",
   "url": "/api/quality/iqcInspect/items",
   "httptype": "POST",
+  
   "columns": [
     {
       "title": "单据号",
