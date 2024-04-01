@@ -900,8 +900,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1829,8 +1829,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */

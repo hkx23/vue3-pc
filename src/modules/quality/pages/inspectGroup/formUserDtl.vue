@@ -207,13 +207,13 @@ const onDeleteRowClick = async (row) => {
   await apiQuality.inspectGroupInUser.delByIds([row.id]);
   MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchUserTable();
-  fetchUserList();
+  fetchUserInputList();
 };
 const onDelBatch = async () => {
   await apiQuality.inspectGroupInUser.delByIds(userRowKeys.value);
   MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchUserTable();
-  fetchUserList();
+  fetchUserInputList();
 };
 const onAddUser = async (item) => {
   if (item.isAdd) {

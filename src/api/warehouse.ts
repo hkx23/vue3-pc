@@ -2613,10 +2613,10 @@ export interface DeliveryDtlVO {
   /** 已交接总量数量 */
   receiptedAllQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 物料检验单明细 */
@@ -2771,10 +2771,10 @@ export interface PurchaseOrderDtlVO {
   /** 本次退货数量 */
   curReturnQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
