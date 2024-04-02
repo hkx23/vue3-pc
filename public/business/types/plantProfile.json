@@ -1,0 +1,38 @@
+{
+  "title": "工厂：",
+  "name": "工厂",
+  "placeholder": "请选择工厂",
+  "url": "/api/main/org/items/profile",
+  "httptype": "POST",
+  "category": "PLANT",
+  "columns": [
+    {
+      "title": "工厂代码",
+      "key": "orgCode",
+      "align": "left"
+    },
+    {
+      "title": "工厂名称",
+      "key": "orgName",
+      "align": "left"
+    },
+    {
+      "title": "工厂描述",
+      "key": "orgDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "orgName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "orgCode",
+    "nameField": "orgName",
+    "descField": "orgDesc"
+  },
+  "componentType": "list"
+}

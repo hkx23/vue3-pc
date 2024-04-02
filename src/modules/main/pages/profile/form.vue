@@ -41,7 +41,7 @@
             <template v-if="formData.profileCategory === 'plant'">
               <bcmp-select-business
                 v-model="formData.profileCategoryValue"
-                type="plant"
+                type="plantProfile"
                 :show-title="false"
               ></bcmp-select-business>
             </template>
