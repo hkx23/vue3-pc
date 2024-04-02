@@ -1,10 +1,8 @@
 <template>
-  <cmp-container :full="true">
+  <cmp-container v-if="pageShow" :full="true">
     <cmp-card>
       <cmp-table
         v-model:pagination="pageUI"
-        v-model:filters="filterList"
-        v-model:sorters="sortList"
         row-key="id"
         active-row-type="single"
         :fixed-height="true"
@@ -62,12 +60,13 @@ import { usePage } from '@/hooks/modules/page';
 
 const formData = ref({
   sampingStdId: '',
-  operationMethod: 0,
+  operationMethod: null,
   sampingStdCode: '',
 });
 // 父方法
 const emit = defineEmits(['permissionShow']);
 const onClose = async () => {
+  pageShow.value = false;
   emit('permissionShow', false); // 回到父
 };
 const editIcon = () => h(EditIcon, { size: '18px' });
@@ -76,6 +75,8 @@ const saveIcon = () => h(SaveIcon, { size: '18px' });
 const { loading, setLoading } = useLoading();
 const { pageUI } = usePage();
 const tableDataWarehouse = ref([]);
+const falg = ref(false);
+const pageShow = ref(false);
 const dataTotal = ref(0);
 const curIndex = ref(-1);
 const sortList = ref({ sorters: [] });
@@ -101,7 +102,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       props: {
         clearable: true,
         autoWidth: true,
-        disabled: formData.value.operationMethod !== 0,
+        disabled: falg.value,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -142,7 +143,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       props: {
         clearable: true,
         autoWidth: true,
-        disabled: formData.value.operationMethod !== 1,
+        disabled: !falg.value,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -749,8 +750,18 @@ const fetchTable = async () => {
     setLoading(false);
   }
 };
+const setRow = (data) => {
+  formData.value = {
+    sampingStdId: data.id,
+    operationMethod: data.operationMethod,
+    sampingStdCode: data.sampingStdCode,
+  };
+  falg.value = formData.value.operationMethod === 1;
+};
 defineExpose({
   formData,
+  setRow,
+  pageShow,
   fetchTable,
 });
 </script>
