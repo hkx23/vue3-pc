@@ -6,7 +6,7 @@
         row-key="id"
         active-row-type="single"
         :fixed-height="true"
-        :table-column="tableColumns"
+        :table-column="falg ? tableColumns2 : tableColumns"
         :editable-cell-state="editableCellState"
         :table-data="tableDataWarehouse"
         :loading="loading"
@@ -102,7 +102,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       props: {
         clearable: true,
         autoWidth: true,
-        disabled: falg.value,
+        showColumn: !falg.value,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
@@ -132,6 +132,415 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
     },
   },
   {
+    colKey: 'lotFrom',
+    title: '批量下限',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+    edit: {
+      component: Input,
+      // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
+      props: {
+        clearable: true,
+        autoWidth: true,
+      },
+      // 触发校验的时机（when to validate)
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      on: (editContext) => ({
+        onBlur: () => {
+          console.log('失去焦点', editContext);
+        },
+        onEnter: (ctx) => {
+          ctx?.e?.preventDefault();
+          console.log('onEnter', ctx);
+        },
+      }),
+      // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
+      abortEditOnEvent: ['onBlur'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: (context) => {
+        const newData = [...tableDataWarehouse.value];
+        newData.splice(context.rowIndex, 1, context.newRowData);
+        tableDataWarehouse.value = newData;
+      },
+      // 校验规则，此处同 Form 表单。https://tdesign.tencent.com/vue-next/components/form
+
+      // 默认是否为编辑状态
+      showEditIcon: false,
+      keepEditMode: true,
+    },
+  },
+  {
+    colKey: 'lotTo',
+    title: '批量上限',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+    edit: {
+      component: Input,
+      // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
+      props: {
+        clearable: true,
+        autoWidth: true,
+      },
+      // 触发校验的时机（when to validate)
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      on: (editContext) => ({
+        onBlur: () => {
+          console.log('失去焦点', editContext);
+        },
+        onEnter: (ctx) => {
+          ctx?.e?.preventDefault();
+          console.log('onEnter', ctx);
+        },
+      }),
+      // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
+      abortEditOnEvent: ['onBlur'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: async (context) => {
+        const newData = [...tableDataWarehouse.value];
+        newData.splice(context.rowIndex, 1, context.newRowData);
+        tableDataWarehouse.value = newData;
+        return Promise.resolve();
+      },
+      // 校验规则，此处同 Form 表单。https://tdesign.tencent.com/vue-next/components/form
+
+      // 默认是否为编辑状态
+      showEditIcon: false,
+      keepEditMode: true,
+    },
+  },
+  {
+    colKey: 'acceptQtyClassA',
+    title: 'A类AC',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+    edit: {
+      component: Input,
+      // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
+      props: {
+        clearable: true,
+        autoWidth: true,
+      },
+      // 触发校验的时机（when to validate)
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      on: (editContext) => ({
+        onBlur: () => {
+          console.log('失去焦点', editContext);
+        },
+        onEnter: (ctx) => {
+          ctx?.e?.preventDefault();
+          console.log('onEnter', ctx);
+        },
+      }),
+      // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
+      abortEditOnEvent: ['onBlur'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: (context) => {
+        console.log(context.newRowData, '1111111111');
+        const newData = [...tableDataWarehouse.value];
+        newData.splice(context.rowIndex, 1, context.newRowData);
+        tableDataWarehouse.value = newData;
+      },
+      // 校验规则，此处同 Form 表单。https://tdesign.tencent.com/vue-next/components/form
+
+      // 默认是否为编辑状态
+      showEditIcon: false,
+      keepEditMode: true,
+    },
+  },
+  {
+    colKey: 'rejectQtyClassA',
+    title: 'A类RE',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+    edit: {
+      component: Input,
+      // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
+      props: {
+        clearable: true,
+        autoWidth: true,
+      },
+      // 触发校验的时机（when to validate)
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      on: (editContext) => ({
+        onBlur: () => {
+          console.log('失去焦点', editContext);
+        },
+        onEnter: (ctx) => {
+          ctx?.e?.preventDefault();
+          console.log('onEnter', ctx);
+        },
+      }),
+      // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
+      abortEditOnEvent: ['onBlur'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: (context) => {
+        const newData = [...tableDataWarehouse.value];
+        newData.splice(context.rowIndex, 1, context.newRowData);
+        tableDataWarehouse.value = newData;
+      },
+      // 校验规则，此处同 Form 表单。https://tdesign.tencent.com/vue-next/components/form
+
+      // 默认是否为编辑状态
+      showEditIcon: false,
+      keepEditMode: true,
+    },
+  },
+  {
+    colKey: 'acceptQtyClassB',
+    title: 'B类AC',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+    edit: {
+      component: Input,
+      // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
+      props: {
+        clearable: true,
+        autoWidth: true,
+      },
+      // 触发校验的时机（when to validate)
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      on: (editContext) => ({
+        onBlur: () => {
+          console.log('失去焦点', editContext);
+        },
+        onEnter: (ctx) => {
+          ctx?.e?.preventDefault();
+          console.log('onEnter', ctx);
+        },
+      }),
+      // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
+      abortEditOnEvent: ['onBlur'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: (context) => {
+        const newData = [...tableDataWarehouse.value];
+        newData.splice(context.rowIndex, 1, context.newRowData);
+        tableDataWarehouse.value = newData;
+      },
+      // 校验规则，此处同 Form 表单。https://tdesign.tencent.com/vue-next/components/form
+
+      // 默认是否为编辑状态
+      showEditIcon: false,
+      keepEditMode: true,
+    },
+  },
+  {
+    colKey: 'rejectQtyClassB',
+    title: 'B类RE',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+    edit: {
+      component: Input,
+      // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
+      props: {
+        clearable: true,
+        autoWidth: true,
+      },
+      // 触发校验的时机（when to validate)
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      on: (editContext) => ({
+        onBlur: () => {
+          console.log('失去焦点', editContext);
+        },
+        onEnter: (ctx) => {
+          ctx?.e?.preventDefault();
+          console.log('onEnter', ctx);
+        },
+      }),
+      // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
+      abortEditOnEvent: ['onBlur'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: (context) => {
+        const newData = [...tableDataWarehouse.value];
+        newData.splice(context.rowIndex, 1, context.newRowData);
+        tableDataWarehouse.value = newData;
+      },
+      // 校验规则，此处同 Form 表单。https://tdesign.tencent.com/vue-next/components/form
+
+      // 默认是否为编辑状态
+      showEditIcon: false,
+      keepEditMode: true,
+    },
+  },
+  {
+    colKey: 'acceptQtyClassC',
+    title: 'C类AC',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+    edit: {
+      component: Input,
+      // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
+      props: {
+        clearable: true,
+        autoWidth: true,
+      },
+      // 触发校验的时机（when to validate)
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      on: (editContext) => ({
+        onBlur: () => {
+          console.log('失去焦点', editContext);
+        },
+        onEnter: (ctx) => {
+          ctx?.e?.preventDefault();
+          console.log('onEnter', ctx);
+        },
+      }),
+      // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
+      abortEditOnEvent: ['onBlur'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: (context) => {
+        const newData = [...tableDataWarehouse.value];
+        newData.splice(context.rowIndex, 1, context.newRowData);
+        tableDataWarehouse.value = newData;
+      },
+      // 校验规则，此处同 Form 表单。https://tdesign.tencent.com/vue-next/components/form
+
+      // 默认是否为编辑状态
+      showEditIcon: false,
+      keepEditMode: true,
+    },
+  },
+  {
+    colKey: 'rejectQtyClassC',
+    title: 'C类RE',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+    edit: {
+      component: Input,
+      // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
+      props: {
+        clearable: true,
+        autoWidth: true,
+      },
+      // 触发校验的时机（when to validate)
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      on: (editContext) => ({
+        onBlur: () => {
+          console.log('失去焦点', editContext);
+        },
+        onEnter: (ctx) => {
+          ctx?.e?.preventDefault();
+          console.log('onEnter', ctx);
+        },
+      }),
+      // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
+      abortEditOnEvent: ['onBlur'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: (context) => {
+        const newData = [...tableDataWarehouse.value];
+        newData.splice(context.rowIndex, 1, context.newRowData);
+        tableDataWarehouse.value = newData;
+      },
+      // 校验规则，此处同 Form 表单。https://tdesign.tencent.com/vue-next/components/form
+
+      // 默认是否为编辑状态
+      showEditIcon: false,
+      keepEditMode: true,
+    },
+  },
+  {
+    colKey: 'acceptQtyClassD',
+    title: 'D类AC',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+    edit: {
+      component: Input,
+      // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
+      props: {
+        clearable: true,
+        autoWidth: true,
+      },
+      // 触发校验的时机（when to validate)
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      on: (editContext) => ({
+        onBlur: () => {
+          console.log('失去焦点', editContext);
+        },
+        onEnter: (ctx) => {
+          ctx?.e?.preventDefault();
+          console.log('onEnter', ctx);
+        },
+      }),
+      // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
+      abortEditOnEvent: ['onBlur'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: (context) => {
+        const newData = [...tableDataWarehouse.value];
+        newData.splice(context.rowIndex, 1, context.newRowData);
+        tableDataWarehouse.value = newData;
+      },
+      // 校验规则，此处同 Form 表单。https://tdesign.tencent.com/vue-next/components/form
+
+      // 默认是否为编辑状态
+      showEditIcon: false,
+      keepEditMode: true,
+    },
+  },
+  {
+    colKey: 'rejectQtyClassD',
+    title: 'D类RE',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+    edit: {
+      component: Input,
+      // props, 透传全部属性到 Input 组件。可以是一个函数，不同行有不同的 props 属性 时，使用 Function）
+      props: {
+        clearable: true,
+        autoWidth: true,
+      },
+      // 触发校验的时机（when to validate)
+      validateTrigger: 'change',
+      // 透传给 component: Input 的事件（也可以在 edit.props 中添加）
+      // 除了点击非自身元素退出编辑态之外，还有哪些事件退出编辑态
+      abortEditOnEvent: ['onBlur'],
+      // 编辑完成，退出编辑态后触发
+      onEdited: (context) => {
+        const newData = [...tableDataWarehouse.value];
+        newData.splice(context.rowIndex, 1, context.newRowData);
+        tableDataWarehouse.value = newData;
+      },
+      // 校验规则，此处同 Form 表单。https://tdesign.tencent.com/vue-next/components/form
+
+      // 默认是否为编辑状态
+      showEditIcon: false,
+      keepEditMode: true,
+    },
+  },
+  {
+    colKey: 'op',
+    title: '操作',
+    width: '110',
+    align: 'left',
+    fixed: 'right',
+  },
+];
+const tableColumns2: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'sampingStdCode',
+    title: '抽样编码',
+    width: '110',
+    // sorter: true,
+    // filter: { type: 'input' },
+  },
+  {
     colKey: 'samplingPer',
     title: '抽样比例(%)',
     width: '130',
@@ -143,7 +552,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
       props: {
         clearable: true,
         autoWidth: true,
-        disabled: !falg.value,
+        showColumn: falg.value,
       },
       // 触发校验的时机（when to validate)
       validateTrigger: 'change',
