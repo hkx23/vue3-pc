@@ -176,9 +176,9 @@ export interface SamplingStdDtlDTO {
   /** 批量范围结束值 */
   lotTo: number;
   /** 抽样比例 */
-  samplingPer: number;
+  samplingPer?: number;
   /** 抽样数量 */
-  samplingNum: number;
+  samplingNum?: number;
   /** A类允收数 */
   acceptQtyClassA: number;
   /** A类拒收数 */
@@ -321,16 +321,6 @@ export interface ResultListSamplingAqlVO {
   data?: SamplingAqlVO[] | null;
 }
 
-/** 国标抽样方案装aql的容器 */
-export interface SamplingAqlDTO {
-  /** 接收质量限 */
-  aql?: number;
-  /** 允收数 */
-  acceptQty?: number;
-  /** 拒收数 */
-  rejectQty?: number;
-}
-
 /** 国标抽样方案渲染 */
 export type SamplingAqlVO = {
   id?: string;
@@ -382,8 +372,58 @@ export type SamplingAqlVO = {
    * @format int32
    */
   batchEnd?: number;
-  /** 允收拒收数 */
-  arguments?: SamplingAqlDTO[];
+  /** aql0.01 */
+  aql001?: string;
+  /** aql0.015 */
+  aql0015?: string;
+  /** aql0.025 */
+  aql0025?: string;
+  /** aql0.04 */
+  aql004?: string;
+  /** aql0.065 */
+  aql0065?: string;
+  /** aql0.1 */
+  aql01?: string;
+  /** aql0.15 */
+  aql015?: string;
+  /** aql0.25 */
+  aql025?: string;
+  /** aql0.4 */
+  aql04?: string;
+  /** aql0.65 */
+  aql065?: string;
+  /** aql1 */
+  aql1?: string;
+  /** aql1.5 */
+  aql1_5?: string;
+  /** aql2.5 */
+  aql2_5?: string;
+  /** aql4 */
+  aql4?: string;
+  /** aql6.5 */
+  aql6_5?: string;
+  /** aql10 */
+  aql10?: string;
+  /** aql15 */
+  aql15?: string;
+  /** aql25 */
+  aql25?: string;
+  /** aql40 */
+  aql40?: string;
+  /** aql65 */
+  aql65?: string;
+  /** aql100 */
+  aql100?: string;
+  /** aql150 */
+  aql150?: string;
+  /** aql250 */
+  aql250?: string;
+  /** aql400 */
+  aql400?: string;
+  /** aql650 */
+  aql650?: string;
+  /** aql1000 */
+  aql1000?: string;
 } | null;
 
 /** 上传控件文件VO */
@@ -5510,12 +5550,12 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   iii?: string;
-  s4?: string;
+  i?: string;
   s2?: string;
   s1?: string;
-  s3?: string;
-  i?: string;
   ii?: string;
+  s4?: string;
+  s3?: string;
 } | null;
 
 /** 标签模板 */

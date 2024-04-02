@@ -2,13 +2,13 @@
 <template>
   <cmp-container :full="true">
     <cmp-card>
-      <cmp-query :opts="opts" @submit="onInput" @reset="onReset"></cmp-query>
+      <cmp-query ref="queryRef" :opts="opts" @submit="onInput" @reset="onReset"></cmp-query>
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
         ref="tableRefTop"
         v-model:pagination="pageUI"
-        row-key="batch"
+        row-key="_timestamp"
         :table-data="tableData"
         active-row-type="single"
         :total="0"
@@ -19,7 +19,11 @@
         :fixed-height="true"
       >
         <template #batch="{ row }">
-          <div class="no-wrap">{{ row.batch }}</div>
+          {{
+            row.batchStart !== null && row.batchEnd !== null
+              ? `${row.batchStart}${row.batchEnd == '2147483647' ? '及以上' : '~' + row.batchEnd}`
+              : ''
+          }}
         </template>
         <template #title>
           {{ '国标抽样方案' }}
@@ -30,14 +34,15 @@
 </template>
 
 <script setup lang="ts">
-import { MessagePlugin } from 'tdesign-vue-next';
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/main';
 import { api as apiMain } from '@/api/quality';
 import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage();
+const queryRef = ref();
 
 onMounted(async () => {
   await getcheckLevel();
@@ -46,18 +51,10 @@ onMounted(async () => {
 
 //* 重置
 const isResetting = ref(false);
+// 重置按钮
 const onReset = () => {
-  // 阻止调用接口
-  isResetting.value = true;
-  nextTick(() => {
-    tableData.value = batch.value.map((batchItem) => ({
-      batch: batchItem,
-      sampleQty: '',
-      acRe: '',
-    }));
-    isResetting.value = false;
-  });
-  MessagePlugin.success('重置成功');
+  queryRef.value = '';
+  queryRef.value.search();
 };
 
 const opts = computed(() => {
@@ -128,16 +125,10 @@ const onInput = async (data: any) => {
       inspectionStringency,
     });
 
-    tableData.value = batch.value.map((batchItem, index) => {
-      const item = updatedData[index] || {};
-      console.log('🚀 ~ tableData.value=batch.value.map ~ item:000', item);
-      return {
-        batch: batchItem,
-        sampleQty: item.sampleQty || '',
-        acRe: item.acceptQty ? `${item.acceptQty}/${item.rejectQty}` : '',
-        aql: item.aql ? `${item.aql}/${item.aql}` : '',
-      };
-    });
+    tableData.value = updatedData.map((item) => ({
+      ...item,
+      _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+    }));
     console.log('🚀 ~ tableData.value=batch.value.map ~ tableData.value111:', tableData.value);
   } catch (error) {
     console.error('查询出错:', error);
@@ -182,84 +173,154 @@ const getinspectionStringency = async () => {
   }
 };
 
-// 最左侧数据结构
-const batch = ref([
-  '2~8',
-  '9~15',
-  '16~25',
-  '26~50',
-  '51~90',
-  '91~150',
-  '151~280',
-  '281~500',
-  '501~1200',
-  '1201~3200',
-  '3201~10000',
-  '10001~35000',
-  '35001~150000',
-  '150001~500000',
-  '500001及基以上',
-  '',
-]);
 const tableData = ref([]);
 
-// 生成列数据结构
-const generateColumns = () => {
-  const sizes = [
-    '0.01',
-    '0.015',
-    '0.025',
-    '0.04',
-    '0.065',
-    '0.1',
-    '0.15',
-    '0.25',
-    '0.4',
-    '0.65',
-    '1',
-    '1.5',
-    '2.5',
-    '4',
-    '6.5',
-    '10',
-    '15',
-    '25',
-    '40',
-    '65',
-    '100',
-    '150',
-    '250',
-    '400',
-    '650',
-    '1000',
-  ];
-  const columns = ref([
-    {
-      children: [
-        {
-          title: '样本大小',
-          colKey: 'batch',
-          width: '150px',
-          cell: 'batchSlot',
-        },
-        { title: '样本数', colKey: 'sampleQty' },
-        ...sizes.map((size) => ({
-          title: size,
-          children: [{ title: 'Ac Re', colKey: 'acRe' }],
-        })),
-      ],
-    },
-  ]);
-  return columns;
-};
-const columns = ref(generateColumns());
+// 表格列表数据
+const columns: PrimaryTableCol<TableRowData>[] = [
+  {
+    title: '样本大小',
+    colKey: 'batch',
+    width: '150',
+    cell: 'batchSlot',
+  },
+  {
+    title: '样本数',
+    colKey: 'sampleQty',
+    width: '70',
+  },
+  {
+    title: '0.01',
+    children: [{ title: 'Ac Re', colKey: 'aql001', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '0.015',
+    children: [{ title: 'Ac Re', colKey: 'aql0015', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '0.025',
+    children: [{ title: 'Ac Re', colKey: 'aql0025', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '0.04',
+    children: [{ title: 'Ac Re', colKey: 'aql004', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '0.065',
+    children: [{ title: 'Ac Re', colKey: 'aql0065', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '0.1',
+    children: [{ title: 'Ac Re', colKey: 'aql01', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '0.15',
+    children: [{ title: 'Ac Re', colKey: 'aql015', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '0.25',
+    children: [{ title: 'Ac Re', colKey: 'aql025', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '0.4',
+    children: [{ title: 'Ac Re', colKey: 'aql04', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '0.65',
+    children: [{ title: 'Ac Re', colKey: 'aql065', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '1',
+    children: [{ title: 'Ac Re', colKey: 'aql1', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '1.5',
+    children: [{ title: 'Ac Re', colKey: 'aql1_5', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '2.5',
+    children: [{ title: 'Ac Re', colKey: 'aql2_5', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '4',
+    children: [{ title: 'Ac Re', colKey: 'aql4', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '6.5',
+    children: [{ title: 'Ac Re', colKey: 'aql6_5', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '10',
+    children: [{ title: 'Ac Re', colKey: 'aql10', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '15',
+    children: [{ title: 'Ac Re', colKey: 'aql15', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '25',
+    children: [{ title: 'Ac Re', colKey: 'aql25', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '40',
+    children: [{ title: 'Ac Re', colKey: 'aql40', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '65',
+    children: [{ title: 'Ac Re', colKey: 'aql65', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '100',
+    children: [{ title: 'Ac Re', colKey: 'aql100', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '150',
+    children: [{ title: 'Ac Re', colKey: 'aql150', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '250',
+    children: [{ title: 'Ac Re', colKey: 'aql250', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '400',
+    children: [{ title: 'Ac Re', colKey: 'aql400', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '650',
+    children: [{ title: 'Ac Re', colKey: 'aql650', width: '65' }],
+    width: '110',
+  },
+  {
+    title: '1000',
+    children: [{ title: 'Ac Re', colKey: 'aql1000', width: '65' }],
+    width: '110',
+  },
+];
 
-onMounted(() => {
-  tableData.value = batch.value.map((batch) => ({
-    batch,
-    sampleQty: '',
-    acRe: '', // 没有初始Ac/Re值
-  }));
+onMounted(async () => {
   getcheckLevel();
   getinspectionStringency();
 });

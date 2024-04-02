@@ -943,7 +943,12 @@ export interface ProductionReportingSearch {
   workcenterId?: string;
   moScheduleId?: string;
   mitemId?: string;
-  userId?: string;
+  userName?: string;
+  /** @format date-time */
+  timeCreateStart?: string;
+  /** @format date-time */
+  timeCreateEnd?: string;
+  pickQty?: number;
 }
 
 /** 响应数据 */
@@ -2613,10 +2618,10 @@ export interface DeliveryDtlVO {
   /** 已交接总量数量 */
   receiptedAllQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 物料检验单明细 */
@@ -2771,10 +2776,10 @@ export interface PurchaseOrderDtlVO {
   /** 本次退货数量 */
   curReturnQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3440,11 +3445,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
   tlpickQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -5606,8 +5611,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
@@ -7034,6 +7039,21 @@ export const api = {
      */
     batchDelDtlByMm: (data: string[]) =>
       http.request<Result['data']>(`/api/warehouse/transferDtl/batchDelDtlByMM`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 交易单身表
+     * @name AddProductionReporting
+     * @summary 生产报工
+     * @request POST:/transferDtl/addProductionReporting
+     * @secure
+     */
+    addProductionReporting: (data: ProductionReportingSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/transferDtl/addProductionReporting`, {
         method: 'POST',
         body: data as any,
       }),

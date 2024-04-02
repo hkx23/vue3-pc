@@ -4548,12 +4548,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
+  isState?: boolean;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4799,14 +4799,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
+  isState?: boolean;
   isInProcessName?: string;
-  isProductName?: string;
-  isRawName?: string;
-  isBatchName?: string;
   isRawChecked?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
+  isProductName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -9047,10 +9047,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
