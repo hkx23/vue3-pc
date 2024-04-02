@@ -348,10 +348,9 @@ const getMaterialDetails = async (billId) => {
   setLoading(true);
   newInventoryManagement1.value = [];
   tableDataInventory1.value = [];
-  pageUI.value.page = 1;
   const data = await api.stockCheckBill.getDtlList({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
+    pageNum: 1,
+    pageSize: 9999999,
     billId,
   });
   tableDataInventory1.value = data.list;
@@ -363,10 +362,9 @@ const getMaterialDetails = async (billId) => {
 const getBarcodesData = async (dtlId) => {
   newInventoryManagement2.value = [];
   tableDataInventory2.value = [];
-  pageUI.value.page = 1;
   const data = await api.stockCheckBill.getBarcodes({
-    pageNum: pageUI.value.page,
-    pageSize: pageUI.value.rows,
+    pageNum: 1,
+    pageSize: 9999999,
     dtlId,
   });
   tableDataInventory2.value = data.list;
