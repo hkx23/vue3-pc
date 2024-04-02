@@ -197,7 +197,6 @@ const opts = computed(() => {
       event: 'business',
       bind: {
         type: 'user',
-        isMultiple: true,
         showTitle: false,
       },
     },
@@ -209,7 +208,6 @@ const opts = computed(() => {
       event: 'business',
       bind: {
         type: 'mitemCategory',
-        isMultiple: true,
         showTitle: false,
       },
     },
@@ -221,7 +219,6 @@ const opts = computed(() => {
       event: 'business',
       bind: {
         type: 'mitem',
-        isMultiple: true,
         showTitle: false,
       },
     },
@@ -305,6 +302,7 @@ const onRowClick = ({ row }) => {
 // 点击查询按钮
 const conditionEnter = (data: any) => {
   pageUI.value.page = 1;
+  console.log(data);
   optsValue.value = data;
   fetchTable();
 };
@@ -316,6 +314,7 @@ const fetchTable = async () => {
     const data = (await apiQuality.inspectGroup.getList({
       keyword: optsValue.value.keyword,
       mitemId: optsValue.value.mitemId,
+      userId: optsValue.value.userId,
       mitemCategoryId: optsValue.value.mitemCategoryId,
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,

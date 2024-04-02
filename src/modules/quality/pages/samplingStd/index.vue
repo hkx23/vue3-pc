@@ -120,14 +120,12 @@ const opts = computed(() => {
 });
 const onEditRowClick = async (value: any) => {
   formTitle.value = '查看';
-  console.log(value.row);
-  formRef.value.formData.sampingStdId = value.row.id;
-  formRef.value.formData.operationMethod = value.row.operationMethod;
-  formRef.value.formData.sampingStdCode = value.row.sampingStdCode;
+  const { setRow } = formRef.value;
+  await setRow(value.row);
   const { fetchTable } = formRef.value;
-  console.log(formRef.value.formData);
-  formVisible.value = true;
+  formRef.value.pageShow = true;
   await fetchTable();
+  formVisible.value = true;
 };
 // 点击查询按钮
 const conditionEnter = (data: any) => {
