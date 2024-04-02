@@ -197,7 +197,6 @@ const opts = computed(() => {
       event: 'business',
       bind: {
         type: 'user',
-        isMultiple: true,
         showTitle: false,
       },
     },
@@ -209,7 +208,6 @@ const opts = computed(() => {
       event: 'business',
       bind: {
         type: 'mitemCategory',
-        isMultiple: true,
         showTitle: false,
       },
     },
@@ -221,7 +219,6 @@ const opts = computed(() => {
       event: 'business',
       bind: {
         type: 'mitem',
-        isMultiple: true,
         showTitle: false,
       },
     },
