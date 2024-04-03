@@ -137,8 +137,8 @@ const teamFormData = ref({
   mitemCode: '',
   mitemName: '',
   datetimePlanStart: '',
-  scheQty: '',
-  pickQtyCount: '',
+  scheQty: 0,
+  pickQtyCount: 0,
   pickQty: 0,
 });
 
@@ -146,7 +146,6 @@ const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清�
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 班组dialog 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
-const submitFalg = ref(false);
 // $ 表格数据
 const resultList = reactive({ list: [] });
 // 表格数据总条数
@@ -157,17 +156,17 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'billNo',
     title: t('productionReporting.billNo'),
-    width: '100',
+    width: '150',
   },
   {
     colKey: 'wcName',
     title: t('business.main.workcenter'),
-    width: '100',
+    width: '120',
   },
   {
     colKey: 'scheCode',
     title: t('business.control.moScheCode'),
-    width: '120',
+    width: '140',
   },
   {
     colKey: 'datetimePlanStart',
@@ -207,12 +206,22 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'timeCreate',
     title: t('productionReporting.reportingTime'),
-    width: '80',
+    width: '190',
   },
 ];
 
-const onChange = () => {
-  // 1
+const onChange = async () => {
+  if (!teamFormData.value.moScheduleId) {
+    return;
+  }
+  const res = await api.transferDtl.getDataByMoScheId({ moScheduleId: teamFormData.value.moScheduleId });
+  if (res) {
+    teamFormData.value.mitemCode = res.mitemCode;
+    teamFormData.value.mitemName = res.mitemName;
+    teamFormData.value.datetimePlanStart = res.datetimePlanStart;
+    teamFormData.value.scheQty = res.scheQty;
+    teamFormData.value.pickQtyCount = res.pickQtyCount ? res.pickQtyCount : 0;
+  }
 };
 // # 刷新按钮
 const onFetchGroupData = async () => {
@@ -338,7 +347,7 @@ const getTabData = async () => {
 };
 
 const onAddSupportGroup = async () => {
-  // await api.productionReporting.add(teamFormData.value);
+  await api.transferDtl.addProductionReporting(teamFormData.value);
   await getTabData();
   formVisible.value = false;
   MessagePlugin.success(t('common.message.success'));
@@ -351,22 +360,10 @@ const onAddTypeData = async () => {
   diaLogTitle.value = t('productionReporting.reporting');
 };
 
-// #编辑  请求
-const onGroupRequest = async () => {
-  // await api.productionReporting.edit(teamFormData.value);
-  await getTabData(); // 获取 班组表格 数据
-  formVisible.value = false;
-  MessagePlugin.success(t('common.message.success'));
-};
-
 // // @表单提交事件
 const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
   if (context.validateResult === true) {
-    if (submitFalg.value) {
-      await onAddSupportGroup(); // 新增请求
-    } else {
-      await onGroupRequest(); // 编辑请求
-    }
+    await onAddSupportGroup(); // 新增请求
   }
 };
 </script>

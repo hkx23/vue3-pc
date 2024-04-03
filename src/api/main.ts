@@ -3724,7 +3724,6 @@ export interface MoScheduleVO {
   warehouseId?: string;
   parentMoId?: string;
   workshopId?: string;
-  /** 备注 */
   memo?: string;
   /** 状态 */
   status?: string;
@@ -3765,6 +3764,11 @@ export interface MoScheduleVO {
   warehouseCode?: string;
   warehouseName?: string;
   moClassName?: string;
+  planNo?: string;
+  /** @format date-time */
+  datetimeRequire?: string;
+  moRate?: number;
+  uph?: number;
 }
 
 /** 响应数据 */
@@ -3800,6 +3804,123 @@ export interface ResultMoSchedule {
   data?: MoSchedule;
 }
 
+/** 工单表 */
+export interface Mo {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工单名称 */
+  moCode?: string;
+  mitemId?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 销售订单 */
+  soNo?: string;
+  /**
+   * 销售订单行号
+   * @format int32
+   */
+  soSeq?: number;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 下线数量
+   * @format int32
+   */
+  offlineQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 入库数量
+   * @format int32
+   */
+  stockinQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
+   * 工单关闭时间
+   * @format date-time
+   */
+  datetimeMoClose?: string;
+  warehouseId?: string;
+  parentMoId?: string;
+  workshopId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 状态 */
+  status?: string;
+  /** 工单来源 */
+  moSource?: string;
+  /** 暂挂（置尾）原因 */
+  holdReason?: string;
+  /**
+   * 工单释放时间
+   * @format date-time
+   */
+  datetimeRelease?: string;
+  userReleaseId?: string;
+  userMoCloseId?: string;
+  /** 计划单号 */
+  planNo?: string;
+  /**
+   * 需求日期
+   * @format date-time
+   */
+  datetimeRequire?: string;
+  /** 工单速率 */
+  moRate?: number;
+  workcenterId?: string;
+}
+
 /** 排产单 */
 export interface MoScheduleDTO {
   /** @format int32 */
@@ -3809,6 +3930,19 @@ export interface MoScheduleDTO {
   /** @format int32 */
   isHold?: number;
   keyList?: string[];
+  moCode?: string;
+  moClass?: string;
+  status?: string;
+  datetimePlanStart?: string;
+  datetimePlanEnd?: string;
+  workshopCode?: string;
+  workshopIds?: string;
+  workCenterIds?: string;
+  workCenterCode?: string;
+  rootingCode?: string;
+  categoryCode?: string;
+  mitemCode?: string;
+  moList?: Mo[];
 }
 
 export interface MoReleaseSearch {
@@ -4034,201 +4168,6 @@ export interface ResultBoolean {
   data?: boolean | null;
 }
 
-/** 工单表 */
-export interface Mo {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 工单名称 */
-  moCode?: string;
-  mitemId?: string;
-  /** 工单类型 */
-  moClass?: string;
-  /** 销售订单 */
-  soNo?: string;
-  /**
-   * 销售订单行号
-   * @format int32
-   */
-  soSeq?: number;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
-  /**
-   * 计划数量
-   * @format int32
-   */
-  planQty?: number;
-  /**
-   * 下线数量
-   * @format int32
-   */
-  offlineQty?: number;
-  /**
-   * 完工数量
-   * @format int32
-   */
-  completedQty?: number;
-  /**
-   * 入库数量
-   * @format int32
-   */
-  stockinQty?: number;
-  /**
-   * 计划开始时间
-   * @format date-time
-   */
-  datetimePlanStart?: string;
-  /**
-   * 计划完成时间
-   * @format date-time
-   */
-  datetimePlanEnd?: string;
-  /**
-   * 实际开始时间
-   * @format date-time
-   */
-  datetimeActualStart?: string;
-  /**
-   * 实际完成时间
-   * @format date-time
-   */
-  datetimeActualEnd?: string;
-  /**
-   * 工单关闭时间
-   * @format date-time
-   */
-  datetimeMoClose?: string;
-  warehouseId?: string;
-  parentMoId?: string;
-  workshopId?: string;
-  /** 备注 */
-  memo?: string;
-  /** 状态 */
-  status?: string;
-  /** 工单来源 */
-  moSource?: string;
-  /** 暂挂（置尾）原因 */
-  holdReason?: string;
-  /**
-   * 工单释放时间
-   * @format date-time
-   */
-  datetimeRelease?: string;
-  userReleaseId?: string;
-  userMoCloseId?: string;
-  /** 计划单号 */
-  planNo?: string;
-  /**
-   * 需求日期
-   * @format date-time
-   */
-  datetimeRequire?: string;
-  /** 工单速率 */
-  moRate?: number;
-  workcenterId?: string;
-}
-
-/** 响应数据 */
-export type PagingDataMo = {
-  list?: Mo[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataMo {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataMo;
-}
-
-/** 通用响应类 */
-export interface ResultMo {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 工单表 */
-  data?: Mo;
-}
-
-/** 工单查询 */
-export interface MoSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  selectedField?: string;
-  selectedValue?: string;
-  keyword?: string;
-  /** @format int32 */
-  state?: number;
-  parentId?: string;
-  category?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-  customerConditions?: Filter[];
-  /** 工单编码 */
-  moCode?: string;
-  /** 工单类型 */
-  moClass?: string;
-  /** 状态 */
-  status?: string;
-  /** 计划开始时间 */
-  datetimePlanStart?: string;
-  /** 计划开始时间 */
-  datetimePlanEnd?: string;
-  /** 车间编码 */
-  workshopCode?: string;
-  /** 工作中心编码 */
-  workCenterCode?: string;
-  /** 工艺路线编码 */
-  rootingCode?: string;
-  /** 物料分类编码 */
-  categoryCode?: string;
-  /** 物料编码 */
-  mitemCode?: string;
-  /** 计划单号 */
-  planNo?: string;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
-}
-
 /** 显示工单管理列表 */
 export interface MoVO {
   id?: string;
@@ -4345,6 +4284,7 @@ export interface MoVO {
   moRate?: number;
   workcenterId?: string;
   mitemCode?: string;
+  mitemName?: string;
   mitemDesc?: string;
   uom?: string;
   uomName?: string;
@@ -4391,6 +4331,64 @@ export interface ResultPagingDataMoVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataMoVO;
+}
+
+/** 通用响应类 */
+export interface ResultMo {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 工单表 */
+  data?: Mo;
+}
+
+/** 工单查询 */
+export interface MoSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  /** 工单编码 */
+  moCode?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 状态 */
+  status?: string;
+  /** 计划开始时间 */
+  datetimePlanStart?: string;
+  /** 计划开始时间 */
+  datetimePlanEnd?: string;
+  /** 车间编码 */
+  workshopCode?: string;
+  /** 工作中心编码 */
+  workCenterCode?: string;
+  /** 工艺路线编码 */
+  rootingCode?: string;
+  /** 物料分类编码 */
+  categoryCode?: string;
+  /** 物料编码 */
+  mitemCode?: string;
+  /** 计划单号 */
+  planNo?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
 }
 
 /** 显示计量单位 */
@@ -4548,11 +4546,11 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
   isForceInspectionName?: string;
-  isForceInspectionChecked?: boolean;
   dateExemptionExpiredStr?: string;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
   isState?: boolean;
 }
 
@@ -4800,12 +4798,12 @@ export interface MitemVO {
   isBatchNo?: number;
   stateName?: string;
   isState?: boolean;
-  isProductName?: string;
+  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessName?: string;
+  isProductName?: string;
   isRawName?: string;
   isRawChecked?: boolean;
-  isInProcessName?: string;
-  isInProcessChecked?: boolean;
   isBatchName?: string;
 }
 
@@ -4949,8 +4947,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -9047,10 +9045,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -10445,6 +10443,21 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultOrg['data']>(`/api/main/org/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织架构表
+     * @name SearchProfile
+     * @summary 配置中心获取组织
+     * @request POST:/org/items/profile
+     * @secure
+     */
+    searchProfile: (data: CommonSearch) =>
+      http.request<ResultPagingDataOrg['data']>(`/api/main/org/items/profile`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
@@ -13271,7 +13284,7 @@ export const api = {
      * @secure
      */
     search: (data: CommonSearch) =>
-      http.request<ResultPagingDataMo['data']>(`/api/main/mo/items`, {
+      http.request<ResultPagingDataMoVO['data']>(`/api/main/mo/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -13300,7 +13313,7 @@ export const api = {
      * @secure
      */
     searchRunningMo: (data: CommonSearch) =>
-      http.request<ResultPagingDataMo['data']>(`/api/main/mo/itemRunningMo`, {
+      http.request<ResultPagingDataMoVO['data']>(`/api/main/mo/itemRunningMo`, {
         method: 'POST',
         body: data as any,
       }),
