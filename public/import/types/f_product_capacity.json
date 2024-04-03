@@ -1,0 +1,27 @@
+{
+  "importTitle": "产能型谱",
+  "templateFileName": "导入模板_产能型谱",
+  "remoteUrl": "/api/control/productCapacity/import",
+  "importColumns": [
+    {
+      "title": "速率(必填)",
+      "field": "speedRate"
+    },
+    {
+      "title": "物料编码(必填)",
+      "field": "mitemCode"
+    },
+    {
+      "title": "工作中心编码(必填)",
+      "field": "wcCode"
+    },
+    {
+      "title": "是否有效(必填)",
+      "field": "stateName"
+    }
+  ],
+  "importFileSizeLimit": 5,
+  "importRowCountLimit": 50000,
+  "importColumnCountLimit": 100,
+  "importBatchSize": 10
+}
