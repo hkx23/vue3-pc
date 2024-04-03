@@ -98,7 +98,7 @@
                     style="width: 120px"
                     theme="normal"
                     :placeholder="t('returnManagement.placeholderCurReturnQty')"
-                    :disabled="_.isNil(row.arrivaledQty) || row.arrivaledQty === 0"
+                    :disabled="_.isNil(row.stockInQty) || row.stockInQty === 0"
                   />
                 </template>
               </cmp-table>
@@ -198,7 +198,7 @@ const tableTab2Columns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('returnManagement.lineSeq')}`, width: 120, colKey: 'billLineNo' },
   { title: `${t('returnManagement.mitemCode')}`, width: 120, colKey: 'mitemCode' },
   { title: `${t('returnManagement.mitemDesc')}`, width: 120, colKey: 'mitemDesc' },
-  { title: `${t('returnManagement.arrivaledQty')}`, width: 140, colKey: 'arrivaledQty' },
+  { title: `${t('returnManagement.stockInQty')}`, width: 140, colKey: 'stockInQty' },
   { title: `${t('returnManagement.curReturnQty')}`, width: 140, colKey: 'curReturnQty' },
 ];
 const tableTab2SelectedChange = (value: any[], { selectedRowData }: any) => {
@@ -243,7 +243,7 @@ const onConfirmForm = async () => {
       }
 
       tableTab2SelectedRowData.value.forEach((item) => {
-        if (item.curReturnQty > item.arrivaledQty) {
+        if (item.curReturnQty > item.stockInQty) {
           isSuccess = false;
           MessagePlugin.error(t('returnManagement.本次退货数量不能大于可退数量'));
         }

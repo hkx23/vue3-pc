@@ -3065,8 +3065,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -4287,9 +4287,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5204,7 +5204,7 @@ export interface DataTable {
 }
 
 /** 通用响应类 */
-export interface ResultListT {
+export interface ResultListMapStringObject {
   /**
    * 响应代码
    * @format int32
@@ -5213,11 +5213,8 @@ export interface ResultListT {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: T[] | null;
+  data?: Record<string, object | null>[];
 }
-
-/** 响应数据 */
-export type T = object | null;
 
 export interface DynamicCheckUniqueDTO {
   mapTable?: string;
@@ -5549,13 +5546,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
+  s4?: string;
+  s1?: string;
   ii?: string;
   iii?: string;
-  s1?: string;
-  s2?: string;
   s3?: string;
-  s4?: string;
+  s2?: string;
+  i?: string;
 } | null;
 
 /** 标签模板 */
@@ -7779,7 +7776,7 @@ export const api = {
      * @secure
      */
     batchDynamicQuery: (data: BatchDynamicQueryDTO) =>
-      http.request<ResultListT['data']>(`/api/quality/importManage/batchDynamicQuery`, {
+      http.request<ResultListMapStringObject['data']>(`/api/quality/importManage/batchDynamicQuery`, {
         method: 'POST',
         body: data as any,
       }),
