@@ -19,7 +19,7 @@
     "mitemDesc": "物料描述",
     "memo": "备注",
     "qty": "可退数量",
-    "arrivaledQty": "可退数量",
+    "stockInQty": "可退数量",
     "curReturnQty": "本次退货数量",
     "placeholderCurReturnQty": "请输入退货数量",
     "lineSeq": "行号",

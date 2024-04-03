@@ -828,7 +828,7 @@ export interface DataTable {
 }
 
 /** 通用响应类 */
-export interface ResultListT {
+export interface ResultListMapStringObject {
   /**
    * 响应代码
    * @format int32
@@ -837,11 +837,8 @@ export interface ResultListT {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: T[] | null;
+  data?: Record<string, object | null>[];
 }
-
-/** 响应数据 */
-export type T = object | null;
 
 export interface DynamicCheckUniqueDTO {
   mapTable?: string;
@@ -1835,7 +1832,7 @@ export const api = {
      * @secure
      */
     batchDynamicQuery: (data: BatchDynamicQueryDTO) =>
-      http.request<ResultListT['data']>(`/api/daily/importManage/batchDynamicQuery`, {
+      http.request<ResultListMapStringObject['data']>(`/api/daily/importManage/batchDynamicQuery`, {
         method: 'POST',
         body: data as any,
       }),

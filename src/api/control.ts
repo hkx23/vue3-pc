@@ -2733,12 +2733,12 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
 }
 
@@ -3115,14 +3115,14 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
+  defectCodeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3272,16 +3272,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  defectCodeStr?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
-  stateName?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
   isState?: boolean;
-  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -3531,6 +3531,147 @@ export interface PkgRelationSearch {
   parentPkgBarcode?: string;
 }
 
+/** 工单表 */
+export interface Mo {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工单名称 */
+  moCode?: string;
+  mitemId?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 销售订单 */
+  soNo?: string;
+  /**
+   * 销售订单行号
+   * @format int32
+   */
+  soSeq?: number;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 下线数量
+   * @format int32
+   */
+  offlineQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 入库数量
+   * @format int32
+   */
+  stockinQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
+   * 工单关闭时间
+   * @format date-time
+   */
+  datetimeMoClose?: string;
+  warehouseId?: string;
+  parentMoId?: string;
+  workshopId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 状态 */
+  status?: string;
+  /** 工单来源 */
+  moSource?: string;
+  /** 暂挂（置尾）原因 */
+  holdReason?: string;
+  /**
+   * 工单释放时间
+   * @format date-time
+   */
+  datetimeRelease?: string;
+  userReleaseId?: string;
+  userMoCloseId?: string;
+  /** 计划单号 */
+  planNo?: string;
+  /**
+   * 需求日期
+   * @format date-time
+   */
+  datetimeRequire?: string;
+  /** 工单速率 */
+  moRate?: number;
+  workcenterId?: string;
+}
+
+/** 排产单 */
+export interface MoScheduleDTO {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int32 */
+  isHold?: number;
+  keyList?: string[];
+  moCode?: string;
+  moClass?: string;
+  status?: string;
+  datetimePlanStart?: string;
+  datetimePlanEnd?: string;
+  workshopCode?: string;
+  workshopIds?: string;
+  workCenterIds?: string;
+  workCenterCode?: string;
+  rootingCode?: string;
+  categoryCode?: string;
+  mitemCode?: string;
+  moList?: Mo[];
+}
+
 export interface ProductionProgressSearch {
   /**
    * 页码
@@ -3652,7 +3793,6 @@ export interface ProductionProgressVO {
   warehouseId?: string;
   parentMoId?: string;
   workshopId?: string;
-  /** 备注 */
   memo?: string;
   /** 状态 */
   status?: string;
@@ -3693,6 +3833,11 @@ export interface ProductionProgressVO {
   warehouseCode?: string;
   warehouseName?: string;
   moClassName?: string;
+  planNo?: string;
+  /** @format date-time */
+  datetimeRequire?: string;
+  moRate?: number;
+  uph?: number;
   completionProgress?: number;
 }
 
@@ -3707,6 +3852,320 @@ export interface ResultPagingDataProductionProgressVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataProductionProgressVO;
+}
+
+/** 显示工单投料的视图 */
+export interface MoScheduleVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moId?: string;
+  mitemId?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 销售订单 */
+  soNo?: string;
+  /**
+   * 销售订单行号
+   * @format int32
+   */
+  soSeq?: number;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 下线数量
+   * @format int32
+   */
+  offlineQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 入库数量
+   * @format int32
+   */
+  stockinQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
+   * 工单关闭时间
+   * @format date-time
+   */
+  datetimeMoClose?: string;
+  warehouseId?: string;
+  parentMoId?: string;
+  workshopId?: string;
+  memo?: string;
+  /** 状态 */
+  status?: string;
+  /** 工单来源 */
+  moSource?: string;
+  workcenterId?: string;
+  /**
+   * 排产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  routingRevisionId?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uomName?: string;
+  statusName?: string;
+  moCode?: string;
+  routingCode?: string;
+  routingName?: string;
+  uom?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  routingId?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  uomSymbol?: string;
+  categoryId?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  moClassName?: string;
+  planNo?: string;
+  /** @format date-time */
+  datetimeRequire?: string;
+  moRate?: number;
+  uph?: number;
+}
+
+/** 响应数据 */
+export type PagingDataMoScheduleVO = {
+  list?: MoScheduleVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMoScheduleVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMoScheduleVO;
+}
+
+/** 显示工单管理列表 */
+export type MoVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 工单名称 */
+  moCode?: string;
+  mitemId?: string;
+  /** 工单类型 */
+  moClass?: string;
+  /** 销售订单 */
+  soNo?: string;
+  /**
+   * 销售订单行号
+   * @format int32
+   */
+  soSeq?: number;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 下线数量
+   * @format int32
+   */
+  offlineQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 入库数量
+   * @format int32
+   */
+  stockinQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  /**
+   * 工单关闭时间
+   * @format date-time
+   */
+  datetimeMoClose?: string;
+  warehouseId?: string;
+  parentMoId?: string;
+  workshopId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 状态 */
+  status?: string;
+  /** 工单来源 */
+  moSource?: string;
+  /** 暂挂（置尾）原因 */
+  holdReason?: string;
+  /**
+   * 工单释放时间
+   * @format date-time
+   */
+  datetimeRelease?: string;
+  userReleaseId?: string;
+  userMoCloseId?: string;
+  /** 计划单号 */
+  planNo?: string;
+  /**
+   * 需求日期
+   * @format date-time
+   */
+  datetimeRequire?: string;
+  /** 工单速率 */
+  moRate?: number;
+  workcenterId?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uom?: string;
+  uomName?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  factoryCode?: string;
+  factoryName?: string;
+  routingId?: string;
+  routingRevisionId?: string;
+  routingCode?: string;
+  routingName?: string;
+  workCenterId?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  uomSymbol?: string;
+  categoryId?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  moScheduleId?: string;
+  statusName?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  moClassName?: string;
+  userReleaseName?: string;
+  userMoCloseName?: string;
+  isHoldName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListMoVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MoVO[] | null;
 }
 
 export interface MoOnboardSearch {
@@ -4079,7 +4538,7 @@ export interface DataTable {
 }
 
 /** 通用响应类 */
-export interface ResultListT {
+export interface ResultListMapStringObject {
   /**
    * 响应代码
    * @format int32
@@ -4088,11 +4547,8 @@ export interface ResultListT {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: T[] | null;
+  data?: Record<string, object | null>[];
 }
-
-/** 响应数据 */
-export type T = object | null;
 
 export interface DynamicCheckUniqueDTO {
   mapTable?: string;
@@ -4276,15 +4732,15 @@ export interface BarcodeWipCollectVO {
   workstationModel?: Workstation;
   /** 请求ID */
   requestScanID?: string;
+  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
-  stateName?: string;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
   scanDatetimeStr?: string;
   isState?: boolean;
 }
@@ -5751,7 +6207,7 @@ export const api = {
      *
      * @tags 转产换型时间表
      * @name Edit
-     * @summary 产能型谱编辑
+     * @summary 转产换型编辑
      * @request POST:/timeSwitchProduct/edit
      * @secure
      */
@@ -5766,7 +6222,7 @@ export const api = {
      *
      * @tags 转产换型时间表
      * @name Add
-     * @summary 产能型谱新增
+     * @summary 转产换型新增
      * @request POST:/timeSwitchProduct/add
      * @secure
      */
@@ -6464,6 +6920,21 @@ export const api = {
      * No description
      *
      * @tags 工单排产表
+     * @name Refresh
+     * @summary 排产刷新
+     * @request POST:/moSchedule/refresh
+     * @secure
+     */
+    refresh: (data: MoScheduleDTO) =>
+      http.request<ResultObject['data']>(`/api/control/moSchedule/refresh`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
      * @name GetProductionProgress
      * @summary 生产进度报表
      * @request POST:/moSchedule/getProductionProgress
@@ -6471,6 +6942,36 @@ export const api = {
      */
     getProductionProgress: (data: ProductionProgressSearch) =>
       http.request<ResultPagingDataProductionProgressVO['data']>(`/api/control/moSchedule/getProductionProgress`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name GetMoScheduleList
+     * @summary 获取工单排产列表 - 排产平台
+     * @request POST:/moSchedule/getMoScheduleList
+     * @secure
+     */
+    getMoScheduleList: (data: MoScheduleDTO) =>
+      http.request<ResultPagingDataMoScheduleVO['data']>(`/api/control/moSchedule/getMoScheduleList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单排产表
+     * @name GetMoScheduleGantt
+     * @summary 获取排产甘特图数据
+     * @request POST:/moSchedule/getMoScheduleGantt
+     * @secure
+     */
+    getMoScheduleGantt: (data: MoScheduleDTO) =>
+      http.request<ResultListMoVO['data']>(`/api/control/moSchedule/getMoScheduleGantt`, {
         method: 'POST',
         body: data as any,
       }),
@@ -6704,7 +7205,7 @@ export const api = {
      * @secure
      */
     batchDynamicQuery: (data: BatchDynamicQueryDTO) =>
-      http.request<ResultListT['data']>(`/api/control/importManage/batchDynamicQuery`, {
+      http.request<ResultListMapStringObject['data']>(`/api/control/importManage/batchDynamicQuery`, {
         method: 'POST',
         body: data as any,
       }),
