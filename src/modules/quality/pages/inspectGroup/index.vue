@@ -65,6 +65,7 @@
               :button-text="t('common.button.import')"
               :disabled="loadingMitem"
               type="q_inspect_group_in_user"
+              @close="fetchUserTable"
             ></bcmp-import-auto-button>
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteUserBatchClick">
               <t-button theme="default" :disabled="userRowKeys?.length < 2">
@@ -111,6 +112,7 @@
               theme="default"
               :button-text="t('common.button.import')"
               type="q_inspect_group_in_mitem"
+              @close="fetchMitemTable"
             ></bcmp-import-auto-button>
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onBatchDeleteMitemRowClick">
               <t-button theme="default" :disabled="selectMitemRowKeys?.length < 2">
