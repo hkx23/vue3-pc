@@ -47,12 +47,12 @@
         <template #button>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddTypeData"> {{ t('common.button.add') }} </t-button>
-            <bcmp-import-auto-button
-              theme="default"
+            <bcmp-import-button
+              theme="primary"
               type="f_product_capacity"
               :button-text="t('common.button.import')"
               @close="onFetchGroupData"
-            ></bcmp-import-auto-button>
+            ></bcmp-import-button>
           </t-space>
         </template>
       </cmp-table>
