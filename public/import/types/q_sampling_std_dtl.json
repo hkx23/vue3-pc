@@ -1,0 +1,63 @@
+{
+  "importTitle": "企业抽样标准明细",
+  "templateFileName": "导入模板_企业抽样标准明细",
+  "remoteUrl": "/api/quality/samplingStdDtl/import",
+  "importColumns": [
+    {
+      "title": "企业抽样标准编码(必填)",
+      "field": "sampingStdCode"
+    },
+    {
+      "title": "抽样比例（%）",
+      "field": "samplingPer"
+    },
+    {
+      "title": "抽样数量",
+      "field": "samplingNum"
+    },
+    {
+      "title": "批量下限(必填)",
+      "field": "lotFrom"
+    },
+    {
+      "title": "批量上限(必填)",
+      "field": "lotTo"
+    },
+    {
+      "title": "A类AC(必填)",
+      "field": "acceptQtyClassA"
+    },
+    {
+      "title": "A类RE(必填)",
+      "field": "rejectQtyClassA"
+    },
+    {
+      "title": "B类AC(必填)",
+      "field": "acceptQtyClassA"
+    },
+    {
+      "title": "B类RE(必填)",
+      "field": "rejectQtyClassB"
+    },
+    {
+      "title": "C类AC(必填)",
+      "field": "acceptQtyClassC"
+    },
+    {
+      "title": "C类RE(必填)",
+      "field": "rejectQtyClassC"
+    },
+    {
+      "title": "D类AC(必填)",
+      "field": "acceptQtyClassD"
+    },
+    {
+      "title": "D类RE(必填)",
+      "field": "rejectQtyClassD"
+    }
+  ],
+  "importFileSizeLimit": 5,
+  "importRowCountLimit": 50000,
+  "importColumnCountLimit": 100,
+  "importBatchSize": 10
+}
