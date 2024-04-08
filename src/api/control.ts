@@ -902,8 +902,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1831,8 +1831,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -2737,13 +2737,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2786,10 +2786,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
-  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -2920,8 +2920,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3073,23 +3073,11 @@ export interface ProductCapacity {
 
 /** 检验工单 */
 export interface ProcessInspectionByMoVO {
-  /**
-   * 排产日期
-   * @format date-time
-   */
-  datetimeSche?: string;
   scheId?: string;
   /** 排产工单 */
   scheCode?: string;
   /** 工单排产状态 */
   scheStatus?: string;
-  /** 工单状态 */
-  moStatus?: string;
-  /**
-   * 是否暂挂
-   * @format int32
-   */
-  isHold?: number;
   /**
    * 排产数量
    * @format int32
@@ -3123,16 +3111,11 @@ export interface ProcessInspectionByMoVO {
   scanMessage?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  workshopId?: string;
-  /** 车间代码 */
-  workshopCode?: string;
-  /** 车间名称 */
-  workshopName?: string;
-  workcenterId?: string;
+  workCenterId?: string;
   /** 工作中心代码 */
-  workcenterCode?: string;
+  workCenterCode?: string;
   /** 工作中心名称 */
-  workcenterName?: string;
+  workCenterName?: string;
   curWorkstationId?: string;
   /** 当前工站代码 */
   curWorkstationCode?: string;
@@ -3145,9 +3128,14 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
+  /** @format date-time */
+  datetimeSche?: string;
   defectCodeStr?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3299,16 +3287,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  defectCodeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  stateName?: string;
-  isState?: boolean;
+  defectCodeStr?: string;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  isState?: boolean;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
 }
 
 /** 缺陷代码 */
@@ -4929,15 +4917,15 @@ export interface BarcodeWipCollectVO {
   requestScanID?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  stateName?: string;
-  isState?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
+  isState?: boolean;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
 }
 
 /** 工序 */
@@ -5421,8 +5409,8 @@ export type DefectCodeVO = {
   ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */

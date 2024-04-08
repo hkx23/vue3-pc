@@ -37,7 +37,15 @@
               <t-popconfirm theme="default" content="确认作废吗？" @confirm="scrappedBill(propsdtlId)">
                 <t-button theme="default"> 作废 </t-button>
               </t-popconfirm>
-              <t-button theme="default"> 打印 </t-button>
+              <cmp-print-button
+                template-code="CHECK_STOCK"
+                :show-icon="false"
+                :disabled="selectedRowKeys?.length == 0"
+                :data="printData"
+                @before-print="onPrintClick"
+              >
+                {{ '打印' }}</cmp-print-button
+              >
               <!-- <t-button theme="default">导出</t-button> -->
             </t-space>
           </template>
@@ -97,6 +105,7 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api } from '@/api/warehouse';
+import CmpPrintButton from '@/components/cmp-print-button/index.vue';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
@@ -128,6 +137,7 @@ const stockCheckBillTypeName = ref('');
 
 const refreshTable = ref(null);
 const queryComponent = ref();
+const printData = ref([]);
 
 //* 组件配置--查询界面
 const opts = computed(() => {
@@ -199,6 +209,55 @@ const tableMaterialDetailsColumns = ref([
   { colKey: 'checkQty', title: '实盘数', width: 100 },
   { colKey: 'differenceQty', title: '差异数', width: 100 },
 ]);
+
+// 打印, 目前只支持单笔打印
+const onPrintClick = async () => {
+  let isSuccess = true;
+  printData.value = [];
+  const promiseAll = [];
+  setLoading(true);
+  try {
+    selectedRowKeys.value.forEach((element) => {
+      const billInfo = tableDataReckoning.value.find((item: any) => item.billId === element);
+      if (billInfo) {
+        const promiseQuery = getPrintBillInfo(billInfo.billNo, billInfo.billId).then((billInfoData: any) => {
+          if (billInfoData) {
+            const billDtls = billInfoData.dtls;
+            // printData.value.push([{ datasource: billInfoData, datasource1: billDtls }]);
+            printData.value.push({
+              variable: billInfoData,
+              datasource: { DataBase: billInfoData, BillDetailInfoList: billDtls },
+            });
+          }
+        });
+        promiseAll.push(promiseQuery);
+      }
+    });
+    await Promise.all(promiseAll);
+  } catch (e) {
+    console.log(e);
+    isSuccess = false;
+  } finally {
+    setLoading(false);
+  }
+  return isSuccess;
+};
+
+const getPrintBillInfo = (billNo, billId) => {
+  return new Promise((resolve, reject) => {
+    const billInfoData = api.stockCheckBill.getBill({
+      pageNum: 1,
+      pageSize: 999999,
+      billNo,
+      billId,
+    }) as any;
+    if (billInfoData) {
+      resolve(billInfoData);
+    } else {
+      reject();
+    }
+  });
+};
 
 //* 表格数据 1
 const fetchTable = async () => {
