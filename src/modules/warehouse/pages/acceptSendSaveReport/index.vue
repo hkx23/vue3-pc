@@ -12,7 +12,7 @@
       <cmp-table
         ref="tableRef"
         v-model:pagination="pageUI"
-        row-key="id"
+        row-key="_timestamp"
         empty="没有符合条件的数据"
         :table-column="columns"
         :fixed-height="true"
@@ -154,7 +154,10 @@ const onGetHandQtyData = async () => {
   handQtyParam.value.pageNum = pageUI.value.page;
   handQtyParam.value.pageSize = pageUI.value.rows;
   const res = await api.acceptSendSaveReport.getList(handQtyParam.value);
-  handQtyData.list = res.list;
+  handQtyData.list = res.list.map((item) => ({
+    ...item,
+    _timestamp: Date.now() + Math.random(), // 使用Date.now()加上随机数来生成唯一时间戳
+  }));
   handQtyTotal.value = res.total;
 };
 
