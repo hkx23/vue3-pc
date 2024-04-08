@@ -685,6 +685,8 @@ export type WipRepairDtlVO = {
   defectReason?: string;
   /** 缺陷责任别 */
   defectBlame?: string;
+  /** 不合格数量 */
+  ngQty?: number;
   /**
    * 维修次数
    * @format int32
@@ -2399,6 +2401,8 @@ export type ProductWipRepairDtlVO = {
   defectReason?: string;
   /** 缺陷责任别 */
   defectBlame?: string;
+  /** 不合格数量 */
+  ngQty?: number;
   /**
    * 维修次数
    * @format int32
@@ -2733,13 +2737,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2951,28 +2955,14 @@ export interface ProcessSearch {
   customerConditions?: Filter[];
 }
 
-export interface ProductCapacitySearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  workCenterId?: string;
-  workshopId?: string;
-  mitemId?: string;
-}
-
-/** 响应数据 */
-export type PagingDataProductCapacityVO = {
-  list?: ProductCapacityVO[];
+export interface CommonImportProductCapacityVO {
+  title?: string;
+  tableName?: string;
+  data?: ProductCapacityVO[];
+  columns?: ImportColumn[];
   /** @format int32 */
-  total?: number;
-} | null;
+  batchSize?: number;
+}
 
 export interface ProductCapacityVO {
   id?: string;
@@ -3013,6 +3003,29 @@ export interface ProductCapacityVO {
   creatorName?: string;
   modifierName?: string;
 }
+
+export interface ProductCapacitySearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  workCenterId?: string;
+  workshopId?: string;
+  mitemId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataProductCapacityVO = {
+  list?: ProductCapacityVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
 
 /** 通用响应类 */
 export interface ResultPagingDataProductCapacityVO {
@@ -3115,14 +3128,14 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  defectCodeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3162,6 +3175,8 @@ export interface ProcessInspectionDefectCode {
   levelSeq?: number;
   /** 不合格分类 */
   classification?: string;
+  /** 检验数量 */
+  ngQty?: number;
 }
 
 /** 通用响应类 */
@@ -3272,16 +3287,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  defectCodeStr?: string;
-  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  stateName?: string;
   isState?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -3529,6 +3544,165 @@ export interface PkgRelationSearch {
   endDate?: string;
   /** 父级包装条码 */
   parentPkgBarcode?: string;
+}
+
+/** 显示工单转产信息 */
+export interface MoSwitchDTO {
+  workShopId?: string;
+  workCenterId?: string;
+  workGroupId?: string;
+  newMoScheId?: string;
+}
+
+export interface MoSwitchSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 转产开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 转产结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  /** 状态 */
+  statusList?: string[];
+  workGroupId?: string;
+  workShopId?: string;
+  workCenterId?: string;
+  moSwitchId?: string;
+}
+
+/** 显示工单转产信息 */
+export type MoSwitchVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  moId?: string;
+  mitemId?: string;
+  /**
+   * 计划数量
+   * @format int32
+   */
+  planQty?: number;
+  /**
+   * 完工数量
+   * @format int32
+   */
+  completedQty?: number;
+  /**
+   * 计划开始时间
+   * @format date-time
+   */
+  datetimePlanStart?: string;
+  /**
+   * 计划完成时间
+   * @format date-time
+   */
+  datetimePlanEnd?: string;
+  /**
+   * 实际开始时间
+   * @format date-time
+   */
+  datetimeActualStart?: string;
+  /**
+   * 实际完成时间
+   * @format date-time
+   */
+  datetimeActualEnd?: string;
+  workshopId?: string;
+  workcenterId?: string;
+  /** 排产工单 */
+  scheCode?: string;
+  /** 上一排产工单 */
+  preScheCode?: string;
+  /**
+   * 转产时间
+   * @format date-time
+   */
+  datetimeMoSwitch?: string;
+  userSwitchId?: string;
+  /** 状态 */
+  status?: string;
+  workGroupId?: string;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  uom?: string;
+  uomName?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  workCenterId?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  statusName?: string;
+  moSwitchId?: string;
+  moScheId?: string;
+  /**
+   * 排产数量
+   * @format int32
+   */
+  scheQty?: number;
+  /** 排产单状态 */
+  moScheStatus?: string;
+  /** 排产单状态名称 */
+  moScheStatusName?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMoSwitchVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示工单转产信息 */
+  data?: MoSwitchVO;
+}
+
+/** 通用响应类 */
+export interface ResultListMoSwitchVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: MoSwitchVO[] | null;
 }
 
 /** 工单表 */
@@ -4732,17 +4906,17 @@ export interface BarcodeWipCollectVO {
   workstationModel?: Workstation;
   /** 请求ID */
   requestScanID?: string;
-  stateName?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
+  stateName?: string;
+  isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
-  isState?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 工序 */
@@ -5222,6 +5396,8 @@ export type DefectCodeVO = {
   themeButton?: string;
   /** 工序id */
   processId?: string;
+  /** 工序缺陷数量 */
+  ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
   stateName?: string;
@@ -6567,6 +6743,21 @@ export const api = {
      * No description
      *
      * @tags 产能型谱表
+     * @name ImportData
+     * @summary 导入
+     * @request POST:/productCapacity/import
+     * @secure
+     */
+    importData: (data: CommonImportProductCapacityVO) =>
+      http.request<ResultImportSummary['data']>(`/api/control/productCapacity/import`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产能型谱表
      * @name GetList
      * @summary 产能型谱表主界面表格
      * @request POST:/productCapacity/getList
@@ -6613,13 +6804,13 @@ export const api = {
      * No description
      *
      * @tags 工序检验（按订单）
-     * @name ScanBarcodeWip
-     * @summary 获取在制品条码信息
-     * @request POST:/processInspectionByMo/scanBarcodeWip
+     * @name ScanScheCode
+     * @summary 扫描订单
+     * @request POST:/processInspectionByMo/ScanScheCode
      * @secure
      */
-    scanBarcodeWip: (data: ProcessInspectionByMoVO) =>
-      http.request<ResultProcessInspectionByMoVO['data']>(`/api/control/processInspectionByMo/scanBarcodeWip`, {
+    scanScheCode: (data: ProcessInspectionByMoVO) =>
+      http.request<ResultProcessInspectionByMoVO['data']>(`/api/control/processInspectionByMo/ScanScheCode`, {
         method: 'POST',
         body: data as any,
       }),
@@ -6913,6 +7104,52 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/pkgRelation/releaseAll`, {
         method: 'DELETE',
         params: query,
+      }),
+  },
+  moSwitch: {
+    /**
+     * No description
+     *
+     * @tags 工单转产表
+     * @name MoSwitch
+     * @summary 转产
+     * @request POST:/moSwitch/moSwitch
+     * @secure
+     */
+    moSwitch: (data: MoSwitchDTO) =>
+      http.request<ResultBoolean['data']>(`/api/control/moSwitch/moSwitch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单转产表
+     * @name MoSwitchInfo
+     * @summary 获取正在转产中的工单转产信息
+     * @request POST:/moSwitch/moSwitchInfo
+     * @secure
+     */
+    moSwitchInfo: (data: MoSwitchSearch) =>
+      http.request<ResultMoSwitchVO['data']>(`/api/control/moSwitch/moSwitchInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单转产表
+     * @name List
+     * @summary 获取工单转产列表
+     * @request POST:/moSwitch/list
+     * @secure
+     */
+    list: (data: MoSwitchSearch) =>
+      http.request<ResultListMoSwitchVO['data']>(`/api/control/moSwitch/list`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   moSchedule: {
