@@ -5,6 +5,7 @@
     "title": "产能型谱列表",
     "speedRate": "速率值(H)",
     "status": "状态",
+    "wcCode": "工作中心编码",
     "orgCode": "工厂编码"
   }
 }

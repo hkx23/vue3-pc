@@ -509,6 +509,8 @@ const getInspectGroupByUser = async () => {
 };
 const fetchTable = async () => {
   try {
+    waitInspectData.value = [];
+    waitInspectDataTotal.value = 0;
     const list = await apiQuality.iqcInspect.getMitemReceiveByUnInspect({
       pageNum: pageTab1.value.page,
       pageSize: pageTab1.value.rows,
@@ -521,10 +523,7 @@ const fetchTable = async () => {
       iqcBillNo: formData.queryData.iqcBillNo,
       billNo: formData.queryData.billNo,
     });
-    if (list === null) {
-      waitInspectData.value = [];
-      waitInspectDataTotal.value = 0;
-    } else {
+    if (list !== null) {
       waitInspectData.value = list.list;
       waitInspectDataTotal.value = list.total;
     }

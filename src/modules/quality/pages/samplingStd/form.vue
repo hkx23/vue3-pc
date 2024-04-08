@@ -18,7 +18,12 @@
         <template #button>
           <t-button theme="primary" @click="onRefresh">刷新</t-button>
           <t-button theme="default" @click="onAdd">新增</t-button>
-          <t-button theme="default">导入</t-button>
+          <bcmp-import-button
+            theme="default"
+            type="q_sampling_std_dtl"
+            button-text="导入"
+            @close="onRefresh"
+          ></bcmp-import-button>
           <t-button theme="default" @click="onClose">返回</t-button>
         </template>
         <template #op="slotProps">

@@ -444,6 +444,9 @@ const loadIqcTable = async () => {
 
 const reset = () => {
   // 清除所有对象的值
+  tableData.value = [];
+  tableDataCount.value = [];
+  tableDataCquantitative.value = [];
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
       formData[key] = [];

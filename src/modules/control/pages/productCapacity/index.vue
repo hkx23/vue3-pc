@@ -47,12 +47,12 @@
         <template #button>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddTypeData"> {{ t('common.button.add') }} </t-button>
-            <bcmp-import-auto-button
-              theme="default"
+            <bcmp-import-button
+              theme="primary"
               type="f_product_capacity"
               :button-text="t('common.button.import')"
               @close="onFetchGroupData"
-            ></bcmp-import-auto-button>
+            ></bcmp-import-button>
           </t-space>
         </template>
       </cmp-table>
@@ -158,8 +158,8 @@ const teamFormData = ref({
   workshopId: '', // 仓库ID
   workcenterId: '', // 仓库ID
   mitemId: '', //  物料 ID
-  state: 0, //  物料 编码
-  isState: false, //  物料 编码
+  state: 1, //  物料 编码
+  isState: true, //  物料 编码
   speedRate: 0, // 安全库存
 });
 
@@ -198,6 +198,11 @@ const shiftColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'workcenterName',
     title: t('business.main.workcenter'),
+    width: '120',
+  },
+  {
+    colKey: 'wcCode',
+    title: t('productCapacity.wcCode'),
     width: '120',
   },
   {
@@ -345,7 +350,7 @@ const onAddSupportGroup = async () => {
 // // #添加按钮点击事件
 const onAddTypeData = async () => {
   formRef.value.reset({ type: 'empty' });
-  teamFormData.value.isState = false;
+  teamFormData.value.isState = true;
   submitFalg.value = true; // true为新增
   formVisible.value = true;
   diaLogTitle.value = t('common.button.add');

@@ -60,9 +60,13 @@
             <t-button v-if="selectRow.id" @click="onClickAddUser">
               {{ t('common.button.add') }}
             </t-button>
-            <t-button v-if="selectRow.id" theme="default" :disabled="loadingMitem" @click="onClickAddUser">
-              {{ t('common.button.import') }}
-            </t-button>
+            <bcmp-import-auto-button
+              theme="default"
+              :button-text="t('common.button.import')"
+              :disabled="loadingMitem"
+              type="q_inspect_group_in_user"
+              @close="fetchUserTable"
+            ></bcmp-import-auto-button>
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteUserBatchClick">
               <t-button theme="default" :disabled="userRowKeys?.length < 2">
                 {{ t('common.button.batchDelete') }}</t-button
@@ -102,9 +106,14 @@
             <t-button v-if="selectRow.id" @click="onClickAddMitem">
               {{ t('common.button.add') }}
             </t-button>
-            <t-button v-if="selectRow.id" theme="default" :disabled="loadingMitem">
-              {{ t('common.button.import') }}
-            </t-button>
+            <bcmp-import-auto-button
+              v-if="selectRow.id"
+              :disabled="loadingMitem"
+              theme="default"
+              :button-text="t('common.button.import')"
+              type="q_inspect_group_in_mitem"
+              @close="fetchMitemTable"
+            ></bcmp-import-auto-button>
             <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onBatchDeleteMitemRowClick">
               <t-button theme="default" :disabled="selectMitemRowKeys?.length < 2">
                 {{ t('common.button.batchDelete') }}</t-button
