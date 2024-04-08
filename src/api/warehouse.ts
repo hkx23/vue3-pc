@@ -1946,6 +1946,8 @@ export interface StockCheckBillVO {
   /** 单据号 */
   billNo?: string;
   warehouseId?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
   /** 仓库名称 */
   warehouseName?: string;
   /** 盘点类型名称 */
@@ -1974,8 +1976,12 @@ export interface StockCheckBillVO {
   mitemDesc?: string;
   /** 计量单位 */
   uomName?: string;
+  /** 货区代码 */
+  districtCode?: string;
   /** 货区名称 */
   districtName?: string;
+  /** 货位代码 */
+  locationCode?: string;
   /** 货位名称 */
   locationName?: string;
   /** 帐面数 */
@@ -1997,6 +2003,25 @@ export interface StockCheckBillVO {
   isBatchNo?: number;
   /** 是否条码管控，启用批次=非条码管控 */
   isBatchNoName?: string;
+  /** 打印装载明细数据 */
+  dtls?: StockCheckBillVO[];
+  /**
+   * 打印日期
+   * @format date-time
+   */
+  printDate?: string;
+}
+
+/** 通用响应类 */
+export interface ResultStockCheckBillVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  data?: StockCheckBillVO;
 }
 
 /** 销售订单明细查询 */
@@ -2554,9 +2579,9 @@ export interface ReturnStockOutDtlVO {
   transferBillNo?: string;
   /** 交易事务单号 */
   transferBillNoStatus?: string;
+  transferDtlId?: string;
   /** 待扫数量 */
   waitScanQty?: number;
-  transferDtlId?: string;
 }
 
 /** 退货单扫描 */
@@ -2645,11 +2670,11 @@ export interface DeliveryDtlVO {
   scanQty?: number;
   /** 已交接总量数量 */
   receiptedAllQty?: number;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
+  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
-  transferDtlId?: string;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 物料检验单明细 */
@@ -2805,11 +2830,11 @@ export interface PurchaseOrderDtlVO {
   receiptedAllQty?: number;
   /** 本次退货数量 */
   curReturnQty?: number;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
+  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
-  transferDtlId?: string;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3460,9 +3485,11 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3473,13 +3500,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -3702,6 +3727,8 @@ export type LocationVO = {
   warehouseName?: string;
   /** 修改人 */
   modifierName?: string;
+  /** 物料名称 */
+  mitemName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3876,15 +3903,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表-扫码时存储-用于新增 */
   addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量和待领用量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量和已领用量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量和待领用量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 查询排产单维度，BOM物料的单据执行数量信息 */
@@ -4022,13 +4049,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -5805,15 +5832,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
 }
 
 /** 通用响应类 */
@@ -7521,6 +7548,21 @@ export const api = {
      */
     getOnHand: (data: StockCheckBillSearch) =>
       http.request<ResultPagingDataStockCheckBillVO['data']>(`/api/warehouse/stockCheckBill/getOnHand`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
+     * @name GetBill
+     * @summary 盘点管理-根据单号和ID获取单据
+     * @request POST:/stockCheckBill/getBill
+     * @secure
+     */
+    getBill: (data: StockCheckBillSearch) =>
+      http.request<ResultStockCheckBillVO['data']>(`/api/warehouse/stockCheckBill/getBill`, {
         method: 'POST',
         body: data as any,
       }),

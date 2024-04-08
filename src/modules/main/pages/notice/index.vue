@@ -18,11 +18,37 @@
             :fixed-height="true"
             @refresh="onFetchData"
           >
+            <template #button>
+              <t-button>
+                {{ t('notice.public') }}
+              </t-button>
+              <t-button @click="onAdd">
+                {{ t('common.button.add') }}
+              </t-button>
+            </template>
+            <template #op="{ row }">
+              <t-space :size="8">
+                <t-link theme="primary" :disabled="loading" @click="onEidt(row)">{{ t('common.button.edit') }}</t-link>
+                <t-popconfirm :content="t('common.message.confirmDelete')">
+                  <t-link theme="primary" :disabled="loading">{{ t('common.button.delete') }}</t-link>
+                </t-popconfirm>
+              </t-space>
+            </template>
           </cmp-table>
         </cmp-card>
       </cmp-container>
     </cmp-row>
   </cmp-container>
+  <!--主表弹框-->
+  <t-dialog
+    v-model:visible="formVisible"
+    :header="formTitle"
+    :close-on-overlay-click="false"
+    width="850px"
+    :on-confirm="onConfirm"
+  >
+    <formAdd ref="formRef"></formAdd>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -35,6 +61,7 @@ import { api as apiMain } from '@/api/main';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
+import formAdd from './form.vue';
 import { useLang } from './lang';
 
 onMounted(() => {
@@ -44,6 +71,9 @@ onMounted(() => {
   }
   onFetchData();
 });
+const formRef = ref(null);
+const formVisible = ref(false);
+const formTitle = ref('');
 const refNoticeCard = ref(null);
 const noticeHeight = ref('300px');
 useResizeObserver(refNoticeCard, (entries) => {
@@ -52,6 +82,15 @@ useResizeObserver(refNoticeCard, (entries) => {
   noticeHeight.value = `${height - 130}px`;
   console.error('treeHeight', noticeHeight.value);
 });
+const onAdd = () => {
+  formTitle.value = t('common.button.add');
+  formVisible.value = true;
+};
+const onEidt = (row) => {
+  console.log(row);
+  formTitle.value = t('common.button.edit');
+  formVisible.value = true;
+};
 
 // input框搜索
 const opts = computed(() => {
@@ -68,6 +107,17 @@ const opts = computed(() => {
       comp: 't-date-range-picker',
       defaultVal: datePlanRangeDefault.value,
       placeholder: '请选择',
+    },
+    status: {
+      label: t('notice.publicStatus'),
+      comp: 'bcmp-select-business',
+      event: 'business',
+      defaultVal: '',
+      bind: {
+        type: 'state',
+        showTitle: false,
+        category: 'Q_INSPECTION_STD_STATUS',
+      },
     },
   };
 });
@@ -87,6 +137,7 @@ const queryCondition = ref({
   title: '',
   datetimeStart: '',
   datetimeEnd: '',
+  status: '',
   datePlanRange: datePlanRangeDefault.value,
 });
 
@@ -113,6 +164,8 @@ const column = ref([
   { title: t('notice.dateInvalid'), colKey: 'dateInvalid', align: 'center', width: 120 },
   { title: t('notice.timeCreate'), colKey: 'timeCreate', align: 'center', width: 120 },
   { title: t('notice.creatorName'), colKey: 'creatorName', align: 'center', width: 120 },
+  { title: t('notice.publicStatus'), colKey: 'statusName', align: 'center', width: 120 },
+  { title: t('notice.publicStatus'), colKey: 'op', align: 'center', width: 120 },
 ]);
 // table数据
 const noticeData = ref([]);
@@ -141,6 +194,11 @@ const onFetchData = async () => {
   } finally {
     setLoading(false);
   }
+};
+const onConfirm = async () => {
+  await formRef.value.confirm();
+  formVisible.value = false;
+  onFetchData();
 };
 const getQueryString = (paramName: string) => {
   const queryString = window.location.href.split('?')[1];

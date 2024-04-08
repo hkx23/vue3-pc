@@ -180,7 +180,7 @@ const formData = ref({
   inspectStdCode: '',
   inspectStdName: '',
   groupInspectStdId: '',
-  revision: null,
+  revision: '',
   timeEffective: '',
   timeInvalid: '',
   status: 'DRAFT',
@@ -240,8 +240,8 @@ const onSubimit = async () => {
     MessagePlugin.error('集团检验标准须为数字（暂行）');
     return;
   }
-  if (!Number(formData.value.revision) || Number(formData.value.revision) < 0) {
-    MessagePlugin.error('版本号须为正数');
+  if (isEmpty(formData.value.revision)) {
+    MessagePlugin.error('请输入版本号');
     return;
   }
 
@@ -299,8 +299,8 @@ const onStaging = async () => {
     MessagePlugin.error('集团检验标准须为数字（暂行）');
     return;
   }
-  if (!Number(formData.value.revision) || Number(formData.value.revision) < 0) {
-    MessagePlugin.error('版本号须为正数');
+  if (isEmpty(formData.value.revision)) {
+    MessagePlugin.error('请输入版本号');
     return;
   }
 

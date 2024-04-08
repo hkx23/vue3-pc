@@ -67,13 +67,14 @@
       </t-col>
       <t-col :span="4">
         <t-form-item label="基准值" name="baseValue">
-          <t-input v-model="dtlData.baseValue" style="width: 70%" />
+          <t-input v-model="dtlData.baseValue" :disabled="dtlData.characteristics === 'COUNT'" yle="width: 70%" />
           <div style="width: 30%">
             <bcmp-select-business
               v-model="dtlData.uom"
               type="uom"
               :show-title="false"
               value-field="uom"
+              :disabled="dtlData.characteristics === 'COUNT'"
             ></bcmp-select-business>
           </div>
         </t-form-item>
@@ -81,12 +82,12 @@
       <!-- 第 4️⃣ 行数据 -->
       <t-col :span="4">
         <t-form-item label="最小值" name="minValue">
-          <t-input v-model="dtlData.minValue" style="width: 280px" />
+          <t-input v-model="dtlData.minValue" :disabled="dtlData.characteristics === 'COUNT'" style="width: 280px" />
         </t-form-item>
       </t-col>
       <t-col :span="4">
         <t-form-item label="最大值" name="maxValue">
-          <t-input v-model="dtlData.maxValue" style="width: 280px" />
+          <t-input v-model="dtlData.maxValue" :disabled="dtlData.characteristics === 'COUNT'" style="width: 280px" />
         </t-form-item>
       </t-col>
       <t-col :span="4">

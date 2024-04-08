@@ -3178,6 +3178,23 @@ export interface ObjectProperty {
   isDataMultiple?: number;
 }
 
+export interface NoticeDTO {
+  /**
+   * @maxItems 2147483647
+   * @minItems 1
+   */
+  receiveIds?: string[];
+  /** 标题 */
+  titleName: string;
+  noticeType: string;
+  noticeContent: string;
+  /** @format date-time */
+  noticeEffective: string;
+  /** @format date-time */
+  dateInvalid: string;
+  noticePurpose: string;
+}
+
 /** 信息推送主表 */
 export interface MsgDTO {
   id?: string;
@@ -4546,12 +4563,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
-  isState?: boolean;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4716,8 +4733,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 /** 响应数据 */
@@ -4797,14 +4814,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isProductName?: string;
-  isRawName?: string;
   isRawChecked?: boolean;
   isInProcessName?: string;
   isBatchName?: string;
+  isProductName?: string;
+  isRawName?: string;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -7851,8 +7868,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -9043,10 +9060,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -12773,6 +12790,72 @@ export const api = {
         params: query,
       }),
   },
+  notice: {
+    /**
+     * No description
+     *
+     * @tags 系统通知表
+     * @name DelById
+     * @summary 删除公告
+     * @request POST:/notice/delById/{id}
+     * @secure
+     */
+    delById: (id: string) =>
+      http.request<ResultObject['data']>(`/api/main/notice/delById/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统通知表
+     * @name Add
+     * @summary 新增公告
+     * @request POST:/notice/add
+     * @secure
+     */
+    add: (data: NoticeDTO) =>
+      http.request<ResultObject['data']>(`/api/main/notice/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统通知表
+     * @name List
+     * @summary 获取系统通知
+     * @request GET:/notice/list
+     * @secure
+     */
+    list: (query?: {
+      /**
+       * @format int32
+       * @default 1
+       */
+      pageNum?: number;
+      /**
+       * @format int32
+       * @default 20
+       */
+      pageSize?: number;
+      /** @default "" */
+      title?: string;
+      /** @default "" */
+      datetimeStart?: string;
+      /** @default "" */
+      datetimeEnd?: string;
+      /** @default "" */
+      status?: string;
+      /** @default "" */
+      id?: string;
+    }) =>
+      http.request<ResultObject['data']>(`/api/main/notice/list`, {
+        method: 'GET',
+        params: query,
+      }),
+  },
   msg: {
     /**
      * No description
@@ -16380,41 +16463,6 @@ export const api = {
      */
     getObjectValueList: (query: { objectId: string; objectCode: string; propertyCode: string }) =>
       http.request<ResultListObjectPropertyValueVO['data']>(`/api/main/objectProperty/getObjectValueList`, {
-        method: 'GET',
-        params: query,
-      }),
-  },
-  notice: {
-    /**
-     * No description
-     *
-     * @tags 系统通知表
-     * @name List
-     * @summary 获取系统通知
-     * @request GET:/notice/list
-     * @secure
-     */
-    list: (query?: {
-      /**
-       * @format int32
-       * @default 1
-       */
-      pageNum?: number;
-      /**
-       * @format int32
-       * @default 20
-       */
-      pageSize?: number;
-      /** @default "" */
-      title?: string;
-      /** @default "" */
-      datetimeStart?: string;
-      /** @default "" */
-      datetimeEnd?: string;
-      /** @default "" */
-      id?: string;
-    }) =>
-      http.request<ResultObject['data']>(`/api/main/notice/list`, {
         method: 'GET',
         params: query,
       }),

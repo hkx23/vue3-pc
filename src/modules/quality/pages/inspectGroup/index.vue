@@ -61,9 +61,10 @@
               {{ t('common.button.add') }}
             </t-button>
             <bcmp-import-auto-button
+              v-if="selectRow.id"
               theme="default"
               :button-text="t('common.button.import')"
-              :disabled="loadingMitem"
+              :disabled="loadingPackDtl"
               type="q_inspect_group_in_user"
               @close="fetchUserTable"
             ></bcmp-import-auto-button>

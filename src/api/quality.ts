@@ -146,31 +146,30 @@ export interface StringencyTransferRuleVO {
   targetInspectStringencyName?: string;
 }
 
-export interface Filter {
+export interface CommonImportSamplingStdDtlDTO {
+  title?: string;
+  tableName?: string;
+  data?: SamplingStdDtlDTO[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
+}
+
+export interface ImportColumn {
   field?: string;
-  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
-  value?: string;
-  valuesList?: string[];
-}
-
-export interface SamplingStdDtlSearch {
-  /** @format int32 */
-  pageNum?: number;
-  /** @format int32 */
-  pageSize?: number;
-  sampingStdId?: string;
-  sorts?: SortParam[];
-  filters?: Filter[];
-}
-
-export interface SortParam {
-  sortBy?: string;
-  descending?: boolean;
+  title?: string;
+  isRequired?: boolean;
+  isValidateRepeat?: boolean;
+  validateExpression?: string;
+  items?: string[];
+  required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface SamplingStdDtlDTO {
   id?: string;
   sampingStdId: string;
+  sampingStdCode?: string;
   /** 批量范围起始值 */
   lotFrom: number;
   /** 批量范围结束值 */
@@ -195,6 +194,51 @@ export interface SamplingStdDtlDTO {
   acceptQtyClassD: number;
   /** D类拒收数 */
   rejectQtyClassD: number;
+}
+
+/** 响应数据 */
+export type ImportSummary = {
+  /** @format int32 */
+  successCount?: number;
+  /** @format int32 */
+  failCount?: number;
+  errorListFilePath?: string;
+  allSuccess?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultImportSummary {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ImportSummary;
+}
+
+export interface Filter {
+  field?: string;
+  operator?: 'EQ' | 'GT' | 'LT' | 'LTE' | 'GTE' | 'LIKE' | 'IN';
+  value?: string;
+  valuesList?: string[];
+}
+
+export interface SamplingStdDtlSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  sampingStdId?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+}
+
+export interface SortParam {
+  sortBy?: string;
+  descending?: boolean;
 }
 
 /** 通用响应类 */
@@ -2259,7 +2303,7 @@ export interface OqcInspectStdFullDTO {
   inspectStdName: string;
   groupInspectStdId?: string;
   /** 版本号 */
-  revision: number;
+  revision: string;
   /**
    * 生效时间
    * @format date-time
@@ -3120,7 +3164,7 @@ export interface IqcInspectStdVO {
   inspectStdName?: string;
   groupInspectStdId?: string;
   /** 版本号 */
-  revision?: number;
+  revision?: string;
   /**
    * 生效时间
    * @format date-time
@@ -4287,9 +4331,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5546,13 +5590,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s4?: string;
-  s1?: string;
-  ii?: string;
-  iii?: string;
-  s3?: string;
-  s2?: string;
   i?: string;
+  s2?: string;
+  iii?: string;
+  s4?: string;
+  ii?: string;
+  s3?: string;
+  s1?: string;
 } | null;
 
 /** 标签模板 */
@@ -5804,6 +5848,21 @@ export const api = {
       }),
   },
   samplingStdDtl: {
+    /**
+     * No description
+     *
+     * @tags 企业抽样方案明细表
+     * @name ImportData
+     * @summary 导入
+     * @request POST:/samplingStdDtl/import
+     * @secure
+     */
+    importData: (data: CommonImportSamplingStdDtlDTO) =>
+      http.request<ResultImportSummary['data']>(`/api/quality/samplingStdDtl/import`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

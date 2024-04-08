@@ -7,13 +7,18 @@
     "sourceOrgCode": "来源组织代码",
     "sourceOrgName": "来源组织名称",
     "receiveOrgCode": "接收组织代码",
+    "receiveOrg": "接收组织",
     "receiveOrgName": "接收组织名称",
     "noticeContent": "通知内容",
+    "noticeEffectiveName": "生效日期",
     "noticeEffective": "通知开始日期",
     "dateInvalid": "通知结束日期",
+    "dateInvalidName": "失效日期",
     "timeCreate": "创建时间",
     "creatorName": "创建人",
     "detailContent":"查看详情",
+    "publicStatus":"发布状态",
+    "public":"发布",
     "title": "公告"
   }
 }
