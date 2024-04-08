@@ -902,8 +902,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1831,8 +1831,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2737,13 +2737,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
   workshopId?: string;
   workshopCode?: string;
-  workshopName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3073,11 +3073,23 @@ export interface ProductCapacity {
 
 /** 检验工单 */
 export interface ProcessInspectionByMoVO {
+  /**
+   * 排产日期
+   * @format date-time
+   */
+  datetimeSche?: string;
   scheId?: string;
   /** 排产工单 */
   scheCode?: string;
   /** 工单排产状态 */
   scheStatus?: string;
+  /** 工单状态 */
+  moStatus?: string;
+  /**
+   * 是否暂挂
+   * @format int32
+   */
+  isHold?: number;
   /**
    * 排产数量
    * @format int32
@@ -3111,11 +3123,16 @@ export interface ProcessInspectionByMoVO {
   scanMessage?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  workCenterId?: string;
+  workshopId?: string;
+  /** 车间代码 */
+  workshopCode?: string;
+  /** 车间名称 */
+  workshopName?: string;
+  workcenterId?: string;
   /** 工作中心代码 */
-  workCenterCode?: string;
+  workcenterCode?: string;
   /** 工作中心名称 */
-  workCenterName?: string;
+  workcenterName?: string;
   curWorkstationId?: string;
   /** 当前工站代码 */
   curWorkstationCode?: string;
@@ -3128,14 +3145,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopId?: string;
-  workshopCode?: string;
-  workshopName?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   defectCodeStr?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3287,16 +3299,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
+  defectCodeStr?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
   workshopId?: string;
   workshopCode?: string;
-  workshopName?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
-  defectCodeStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -3550,7 +3562,7 @@ export interface PkgRelationSearch {
 export interface MoSwitchDTO {
   workShopId?: string;
   workCenterId?: string;
-  workGroupId?: string;
+  workgroupId?: string;
   newMoScheId?: string;
 }
 
@@ -3584,7 +3596,7 @@ export interface MoSwitchSearch {
 }
 
 /** 显示工单转产信息 */
-export type MoSwitchVO = {
+export interface MoSwitchVO {
   id?: string;
   /**
    * 创建时间
@@ -3654,7 +3666,7 @@ export type MoSwitchVO = {
   userSwitchId?: string;
   /** 状态 */
   status?: string;
-  workGroupId?: string;
+  workgroupId?: string;
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
@@ -3677,7 +3689,29 @@ export type MoSwitchVO = {
   moScheStatus?: string;
   /** 排产单状态名称 */
   moScheStatusName?: string;
+  workgroupCode?: string;
+  workgroupName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataMoSwitchVO = {
+  list?: MoSwitchVO[];
+  /** @format int32 */
+  total?: number;
 } | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataMoSwitchVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataMoSwitchVO;
+}
 
 /** 通用响应类 */
 export interface ResultMoSwitchVO {
@@ -3690,19 +3724,6 @@ export interface ResultMoSwitchVO {
   message?: string;
   /** 显示工单转产信息 */
   data?: MoSwitchVO;
-}
-
-/** 通用响应类 */
-export interface ResultListMoSwitchVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: MoSwitchVO[] | null;
 }
 
 /** 工单表 */
@@ -4908,15 +4929,15 @@ export interface BarcodeWipCollectVO {
   requestScanID?: string;
   /** @format date-time */
   datetimeSche?: string;
+  workshopName?: string;
   workshopId?: string;
   workshopCode?: string;
-  workshopName?: string;
   stateName?: string;
   isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 工序 */
@@ -7126,13 +7147,13 @@ export const api = {
      * No description
      *
      * @tags 工单转产表
-     * @name MoSwitchInfo
-     * @summary 获取正在转产中的工单转产信息
-     * @request POST:/moSwitch/moSwitchInfo
+     * @name List
+     * @summary 获取工单转产列表
+     * @request POST:/moSwitch/list
      * @secure
      */
-    moSwitchInfo: (data: MoSwitchSearch) =>
-      http.request<ResultMoSwitchVO['data']>(`/api/control/moSwitch/moSwitchInfo`, {
+    list: (data: MoSwitchSearch) =>
+      http.request<ResultPagingDataMoSwitchVO['data']>(`/api/control/moSwitch/list`, {
         method: 'POST',
         body: data as any,
       }),
@@ -7141,13 +7162,13 @@ export const api = {
      * No description
      *
      * @tags 工单转产表
-     * @name List
-     * @summary 获取工单转产列表
-     * @request POST:/moSwitch/list
+     * @name GetMoSwitchInfo
+     * @summary 获取正在转产中的工单转产信息
+     * @request POST:/moSwitch/getMoSwitchInfo
      * @secure
      */
-    list: (data: MoSwitchSearch) =>
-      http.request<ResultListMoSwitchVO['data']>(`/api/control/moSwitch/list`, {
+    getMoSwitchInfo: (data: MoSwitchSearch) =>
+      http.request<ResultMoSwitchVO['data']>(`/api/control/moSwitch/getMoSwitchInfo`, {
         method: 'POST',
         body: data as any,
       }),

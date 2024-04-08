@@ -8,18 +8,17 @@
           <t-descriptions :column="4">
             <t-descriptions-item label="排产单号" span="2">
               <bcmp-select-business
-                ref="scanInput"
                 v-model="mainform.serialNumber"
                 type="moSchedule"
                 component-type="table"
                 :show-title="false"
-                @selection-change="serialNumberEnter"
+                @selection-change="moScheduleChange"
               />
             </t-descriptions-item>
-            <t-descriptions-item label="缺陷数量">100</t-descriptions-item>
+            <t-descriptions-item label="缺陷数量">{{ allNgQty }}</t-descriptions-item>
             <t-descriptions-item>
               <template #label>
-                <t-button style="width: 100px">保存</t-button>
+                <t-button style="width: 100px" @click="submitSave">保存</t-button>
               </template>
             </t-descriptions-item>
 
@@ -95,7 +94,6 @@
                         v-for="(item_child, index_child) in item.child"
                         :key="index_child"
                         :theme="getThemeButton(item_child.themeButton)"
-                        @click="clickDefectCode(item_child)"
                       >
                         <template #content>
                           <div style="white-space: normal; word-wrap: break-word; width: 80px; text-align: left">
@@ -103,7 +101,7 @@
                           </div>
                         </template>
                         <template #suffix>
-                          <t-input-number v-model="item_child.ngQty" />
+                          <t-input-number v-model="item_child.ngQty" min="0" />
                         </template>
                       </t-button>
                     </t-space>
@@ -129,7 +127,8 @@
 </template>
 
 <script setup lang="ts">
-import _, { isEmpty, isNil } from 'lodash';
+import _ from 'lodash';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
@@ -157,13 +156,8 @@ const mainform = ref({
   serialNumber: '',
 });
 
-const scanInput = ref(null);
-
 // 全局缺陷列表
 const defectCodeList = ref<DefectCodeVO[]>([]);
-
-// 当前选中的缺陷列表
-const selectDefectCodeList = ref<DefectCodeVO[]>([]);
 
 // 界面产品信息
 const productInfo = ref({
@@ -180,47 +174,12 @@ const Init = async () => {
   getDefectCodeTree();
 };
 
-const serialNumberEnter = async (value) => {
-  if (!isEmpty(value)) {
-    await api.processInspection
-      .scanBarcodeWip({
-        serialNumber: mainform.value.serialNumber,
-        workcenterId: userStore.currUserOrgInfo.workCenterId,
-        workCenterCode: userStore.currUserOrgInfo.workCenterCode,
-        workCenterName: userStore.currUserOrgInfo.workCenterName,
-        workstationId: userStore.currUserOrgInfo.workStationId,
-        processId: userStore.currUserOrgInfo.processId,
-        defectCodeList: selectDefectCodeList.value,
-      })
-      .then((reData) => {
-        if (reData.scanSuccess) {
-          productInfo.value.scheCode = reData.scheCode;
-          productInfo.value.moCode = reData.moCode;
-          productInfo.value.moMitemCode = reData.mitemCode;
-          productInfo.value.moMitemName = reData.mitemName;
-          productInfo.value.scheDatetimeSche = reData.datetimeSche;
-          productInfo.value.scheQty = reData.scheQty.toString();
-          productInfo.value.moCompletedQty = reData.completedQty.toString();
-          mainform.value.serialNumber = '';
-          selectDefectCodeList.value = [];
-          defectCodeList.value.forEach((item) => {
-            item.themeButton = 'default';
-            item.child.forEach((cldItem) => {
-              cldItem.themeButton = 'default';
-            });
-          });
-
-          scanInput.value.selectAll();
-        } else {
-          scanInput.value.selectAll();
-          throw new Error(reData.scanMessage);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        scanInput.value.selectAll();
-      });
-  }
+const moScheduleChange = async (value) => {
+  productInfo.value.moMitemCode = value.mitemCode;
+  productInfo.value.moMitemName = value.mitemName;
+  productInfo.value.scheDatetimeSche = value.datetimeSche;
+  productInfo.value.scheQty = value.planQty;
+  productInfo.value.scheCode = value.scheCode;
 };
 
 const getDefectCodeTree = async () => {
@@ -235,19 +194,6 @@ const getDefectCodeTree = async () => {
     });
   } catch (error) {
     console.log(error);
-  }
-};
-
-const clickDefectCode = async (item) => {
-  const model = item as DefectCodeVO;
-
-  const selectModel = selectDefectCodeList.value.find((n) => n.defectCode === model.defectCode);
-  if (isNil(selectModel)) {
-    selectDefectCodeList.value.push(model);
-    model.themeButton = 'success';
-  } else {
-    selectDefectCodeList.value = selectDefectCodeList.value.filter((n) => n !== selectModel);
-    model.themeButton = 'default';
   }
 };
 
@@ -283,6 +229,96 @@ const getThemeButton = (value: string) => {
   console.log('click', value);
   return themes.default;
 };
+
+const submitSave = async (value) => {
+  if (_.isEmpty(productInfo.value.scheCode)) {
+    MessagePlugin.error('请选择排产工单');
+    return;
+  }
+  if (allNgQty.value <= 0) {
+    MessagePlugin.error('请输入缺陷数量');
+    return;
+  }
+
+  const moSche = productInfo.value.scheCode;
+
+  await api.processInspectionByMo
+    .scanScheCode({
+      workcenterId: userStore.currUserOrgInfo.workCenterId,
+      workcenterCode: userStore.currUserOrgInfo.workCenterCode,
+      workcenterName: userStore.currUserOrgInfo.workCenterName,
+      curWorkstationId: userStore.currUserOrgInfo.workStationId,
+      curProcessId: userStore.currUserOrgInfo.processId,
+      defectCodeList: selectDefectCodeList.value,
+      scheCode: moSche,
+    })
+    .then((reData) => {
+      if (reData.scanSuccess) {
+        defectCodeList.value.forEach((item) => {
+          item.child.forEach((cldItem) => {
+            cldItem.ngQty = 0;
+          });
+        });
+        writeScanInfoSuccess(`${moSche} ${reData.scanMessage}`, allNgQty, '');
+      } else {
+        writeScanInfoError(`${moSche} ${reData.scanMessage}`, allNgQty, '');
+        MessagePlugin.error(`${moSche} ${reData.scanMessage}`);
+      }
+    })
+    .catch((e) => {
+      writeScanInfoError(value, 0, e.message);
+    });
+};
+
+const writeScanInfoSuccess = async (lbNo, lbQty, lbError) => {
+  scanInfoList.value.unshift({
+    serialNumber: lbNo,
+    qty: lbQty,
+    status: 'OK',
+    errorinfo: lbError,
+    statusColor: 'green',
+  });
+};
+
+const writeScanInfoError = async (lbNo, lbQty, lbError) => {
+  scanInfoList.value.unshift({
+    serialNumber: lbNo,
+    qty: lbQty,
+    status: 'NG',
+    errorinfo: lbError,
+    statusColor: 'red',
+  });
+};
+
+// 汇总不合格数量
+const allNgQty = computed(() => {
+  let qty = 0;
+  if (_.isArray(defectCodeList.value)) {
+    const list = defectCodeList.value.filter((sourceItem) => sourceItem.child.length > 0);
+    list.forEach((n) => {
+      n.child.forEach((item) => {
+        qty += item.ngQty;
+      });
+    });
+  }
+  return qty;
+});
+
+// 当前有数量的缺陷汇总
+const selectDefectCodeList = computed(() => {
+  const dcList = [];
+  if (_.isArray(defectCodeList.value)) {
+    const list = defectCodeList.value.filter((sourceItem) => sourceItem.child.length > 0);
+    list.forEach((n) => {
+      n.child.forEach((item) => {
+        if (item.ngQty > 0) {
+          dcList.push(item);
+        }
+      });
+    });
+  }
+  return dcList;
+});
 
 onMounted(() => {
   Init();

@@ -5590,13 +5590,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s2?: string;
-  s3?: string;
-  s1?: string;
   ii?: string;
   iii?: string;
+  s3?: string;
   i?: string;
   s4?: string;
+  s1?: string;
+  s2?: string;
 } | null;
 
 /** 标签模板 */
