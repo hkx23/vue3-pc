@@ -402,7 +402,7 @@ const onAddSupportGroup = async () => {
     formVisible.value = false;
     MessagePlugin.success('新增成功');
   } catch (error) {
-    teamFormData.value.expression = [defaultTimeRange];
+    // teamFormData.value.expression = [defaultTimeRange];
   }
 };
 
