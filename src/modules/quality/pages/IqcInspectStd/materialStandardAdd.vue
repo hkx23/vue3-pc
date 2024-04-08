@@ -7,7 +7,7 @@
           ><span class="span_title">{{ getTitle(formData.operateTpye) }}</span></t-col
         >
         <t-col>
-          <t-button :disabled="!submitButControl" @click="onSubimit">提交</t-button>
+          <t-button @click="onSubimit">提交</t-button>
           <t-button theme="default" @click="onStaging">暂存</t-button>
           <t-button theme="default" @click="onClose">关闭</t-button>
         </t-col>
@@ -88,11 +88,11 @@
           <span>{{ row.isCtq ? '是' : '否' }}</span>
         </template>
         <template #button>
-          <t-input v-if="submitButControl" placeholder="请输入搜索关键字">
+          <!-- <t-input v-if="submitButControl" placeholder="请输入搜索关键字">
             <template #suffixIcon>
               <search-icon :style="{ cursor: 'pointer' }" />
             </template>
-          </t-input>
+          </t-input> -->
           <t-button :disabled="!butControl" @click="onAdd"> 新增 </t-button>
           <t-button :disabled="!butControl" theme="default"> 导入 </t-button>
           <t-popconfirm content="是否确认删除？" @confirm="delBatch">
@@ -146,7 +146,7 @@
 <script setup lang="ts">
 // import { debounce } from 'lodash';
 import { isEmpty } from 'lodash';
-import { SearchIcon } from 'tdesign-icons-vue-next';
+// import { SearchIcon } from 'tdesign-icons-vue-next';
 import { FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { Ref, ref } from 'vue';
 
