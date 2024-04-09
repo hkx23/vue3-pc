@@ -135,7 +135,7 @@ const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
 };
 const submit = async () => {
   return new Promise((resolve, reject) => {
-    formRef.value.validate().then((result) => {
+    formRef.value.validate().then(async (result) => {
       if (result !== true) {
         MessagePlugin.warning(Object.values(result)[0][0].message);
         reject();
@@ -143,10 +143,17 @@ const submit = async () => {
       }
 
       formData.value.receiveIds = formData.value.receiveId.split(',');
-      api.notice.add(formData.value).then(() => {
-        MessagePlugin.success(t('common.message.addSuccess'));
-        resolve(formData);
-      });
+      if (formData.value.opType === 'add') {
+        await api.notice.add(formData.value).then(() => {
+          MessagePlugin.success(t('common.message.addSuccess'));
+          resolve(formData);
+        });
+      } else {
+        await api.notice.edit(formData.value).then(() => {
+          MessagePlugin.success(t('common.message.editSuccess'));
+          resolve(formData);
+        });
+      }
     });
   });
 };
