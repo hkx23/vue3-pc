@@ -4563,12 +4563,12 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
+  isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
   stateName?: string;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
   isState?: boolean;
 }
 
@@ -4739,17 +4739,18 @@ export interface ImportColumn {
 }
 
 /** 响应数据 */
-export type ImportSummary = {
+export type ImportSummaryObject = {
   /** @format int32 */
   successCount?: number;
   /** @format int32 */
   failCount?: number;
   errorListFilePath?: string;
+  returnData?: object[];
   allSuccess?: boolean;
 } | null;
 
 /** 通用响应类 */
-export interface ResultImportSummary {
+export interface ResultImportSummaryObject {
   /**
    * 响应代码
    * @format int32
@@ -4758,7 +4759,7 @@ export interface ResultImportSummary {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: ImportSummary;
+  data?: ImportSummaryObject;
 }
 
 /** 显示物料实体 */
@@ -4814,14 +4815,14 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   isRawName?: string;
-  isRawChecked?: boolean;
   isProductName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  stateName?: string;
   isState?: boolean;
 }
 
@@ -4965,8 +4966,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -12812,7 +12813,7 @@ export const api = {
      *
      * @tags 系统通知表
      * @name Edit
-     * @summary 新增公告
+     * @summary 编辑公告
      * @request POST:/notice/edit
      * @secure
      */
@@ -13641,7 +13642,7 @@ export const api = {
      * @secure
      */
     importData: (data: CommonImportMitemCategory) =>
-      http.request<ResultImportSummary['data']>(`/api/main/mitemCategory/import`, {
+      http.request<ResultImportSummaryObject['data']>(`/api/main/mitemCategory/import`, {
         method: 'POST',
         body: data as any,
       }),
@@ -14166,7 +14167,7 @@ export const api = {
      * @secure
      */
     importData: (data: CommonImportAuto) =>
-      http.request<ResultImportSummary['data']>(`/api/main/importManage/import`, {
+      http.request<ResultImportSummaryObject['data']>(`/api/main/importManage/import`, {
         method: 'POST',
         body: data as any,
       }),

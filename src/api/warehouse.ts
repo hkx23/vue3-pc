@@ -2014,17 +2014,18 @@ export interface StockCheckBillVO {
 }
 
 /** 响应数据 */
-export type ImportSummary = {
+export type ImportSummaryObject = {
   /** @format int32 */
   successCount?: number;
   /** @format int32 */
   failCount?: number;
   errorListFilePath?: string;
+  returnData?: object[];
   allSuccess?: boolean;
 } | null;
 
 /** 通用响应类 */
-export interface ResultImportSummary {
+export interface ResultImportSummaryObject {
   /**
    * 响应代码
    * @format int32
@@ -2033,7 +2034,7 @@ export interface ResultImportSummary {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: ImportSummary;
+  data?: ImportSummaryObject;
 }
 
 /** 响应数据 */
@@ -2189,10 +2190,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -3544,11 +3545,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  tlpickQty?: number;
   flpickQty?: number;
-  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
-  tlpickQty?: number;
+  bfpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -7576,7 +7577,7 @@ export const api = {
      * @secure
      */
     importData: (data: CommonImportStockCheckBillVO) =>
-      http.request<ResultImportSummary['data']>(`/api/warehouse/stockCheckBill/import`, {
+      http.request<ResultImportSummaryObject['data']>(`/api/warehouse/stockCheckBill/import`, {
         method: 'POST',
         body: data as any,
       }),

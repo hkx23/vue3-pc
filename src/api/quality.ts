@@ -197,17 +197,18 @@ export interface SamplingStdDtlDTO {
 }
 
 /** 响应数据 */
-export type ImportSummary = {
+export type ImportSummaryObject = {
   /** @format int32 */
   successCount?: number;
   /** @format int32 */
   failCount?: number;
   errorListFilePath?: string;
+  returnData?: object[];
   allSuccess?: boolean;
 } | null;
 
 /** 通用响应类 */
-export interface ResultImportSummary {
+export interface ResultImportSummaryObject {
   /**
    * 响应代码
    * @format int32
@@ -216,7 +217,7 @@ export interface ResultImportSummary {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: ImportSummary;
+  data?: ImportSummaryObject;
 }
 
 export interface Filter {
@@ -2511,10 +2512,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 业务类型名称 */
-  businessCategoryName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 业务类型名称 */
+  businessCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -4397,9 +4398,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5656,13 +5657,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  iii?: string;
-  s2?: string;
-  s3?: string;
   i?: string;
-  s4?: string;
   ii?: string;
+  iii?: string;
+  s4?: string;
+  s3?: string;
   s1?: string;
+  s2?: string;
 } | null;
 
 /** 标签模板 */
@@ -5924,7 +5925,7 @@ export const api = {
      * @secure
      */
     importData: (data: CommonImportSamplingStdDtlDTO) =>
-      http.request<ResultImportSummary['data']>(`/api/quality/samplingStdDtl/import`, {
+      http.request<ResultImportSummaryObject['data']>(`/api/quality/samplingStdDtl/import`, {
         method: 'POST',
         body: data as any,
       }),

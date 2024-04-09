@@ -25,6 +25,7 @@ export type ImportSummary = {
   failCount?: number;
   errorListFilePath?: string;
   allSuccess?: boolean;
+  returnData?: any[];
 } | null;
 
 /** 通用响应类 */

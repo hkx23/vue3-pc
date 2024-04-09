@@ -61,7 +61,12 @@
                 </t-popconfirm>
               </t-space> -->
             <t-space :size="8">
-              <bcmp-import-button theme="primary" type="w_onhand_qty" button-text="批量导入"></bcmp-import-button>
+              <bcmp-import-button
+                theme="primary"
+                type="w_onhand_qty"
+                button-text="批量导入"
+                @close="onFetchGroupData"
+              ></bcmp-import-button>
             </t-space>
           </template>
           <!-- 定义序号列的插槽 -->
@@ -102,6 +107,12 @@ const newstockCheckType = ref('');
 const newWarehouseId = ref('');
 
 const queryComponent = ref();
+
+// # 刷新按钮
+const onFetchGroupData = async (returnData: any) => {
+  console.log(returnData);
+  tableDataInventory.value = returnData;
+};
 
 //* 表格标题
 const tablenewIMColumns: PrimaryTableCol<TableRowData>[] = [
