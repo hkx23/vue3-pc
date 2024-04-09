@@ -48,6 +48,7 @@
     :header="formTitle"
     :close-on-overlay-click="false"
     width="850px"
+    top="60"
     :on-confirm="onConfirm"
   >
     <formAdd ref="formRef"></formAdd>

@@ -96,6 +96,7 @@
     :header="t('workCalenar.calendarMaintenance')"
     :close-on-overlay-click="false"
     width="800px"
+    top="60"
     :on-confirm="onConfirmAdd"
   >
     <form-add ref="formRef"></form-add>
