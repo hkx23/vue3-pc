@@ -304,12 +304,12 @@ const onAddAssign = async () => {
 const onDelDataBatch = async () => {
   await apiQuality.oqcInspectStd.delById(stdRowKeys.value);
   MessagePlugin.success('删除成功');
-  onRefresh();
+  onRefreshTwo();
 };
 const onDelAssignDataBatch = async () => {
   await apiQuality.oqcInspectStdMitem.delByIds(selectedAssignRowKeys.value);
   MessagePlugin.success('删除成功');
-  onRefresh();
+  onRefreshTwo();
 };
 
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
