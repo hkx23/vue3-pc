@@ -1,0 +1,37 @@
+{
+  "title": "检验标准：",
+  "placeholder": "请选择检验标准",
+  "url": "/api/quality/iqcInspectStd/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "标准编号",
+      "key": "inspectStdCode",
+      "align": "left"
+    },
+    {
+      "title": "标准名称",
+      "key": "inspectStdName",
+      "align": "left"
+    },
+    {
+      "title": "版本号",
+      "key": "revision",
+      "align": "left"
+    }
+  ],
+  "rowKey": "inspectStdCode",
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "inspectStdCode",
+    "nameField": "inspectStdName",
+    "descField": "revision"
+  },
+  "name": "检验标准",
+  "componentType": "list",
+  "keywords": {
+    "value": "id",
+    "label": "inspectStdCode"
+  }
+}
