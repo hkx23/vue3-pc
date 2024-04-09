@@ -6,149 +6,113 @@
     label-align="right"
     label-width="120px"
     :show-error-message="false"
+    layout="inline"
   >
-    <t-row :gutter="[32, 16]">
-      <!-- 第 1️⃣ 行数据 -->
-      <t-col :span="4">
-        <t-form-item label="项目类别" label-align="right" name="itemCategory">
-          <t-select v-model="dtlData.itemCategory" clearable style="width: 280px">
-            <t-option v-for="item in categoryOption" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item label="检验类型" label-align="right" name="inspectType">
-          <t-select v-model="dtlData.inspectType" clearable style="width: 280px">
-            <t-option v-for="item in stdTypeOption" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item label="检验内容" label-align="right" name="itemName">
-          <t-input v-model="dtlData.itemName" style="width: 280px" />
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item label="项目行号" label-align="right" name="itemSeq">
-          <t-input v-model="dtlData.itemSeq" style="width: 280px" />
-        </t-form-item>
-      </t-col>
-      <!-- 第 2️⃣ 行数据 -->
-      <t-col :span="4">
-        <t-form-item label="检验依据" label-align="right" name="inspectBasis">
-          <t-input v-model="dtlData.inspectBasis" style="width: 280px" />
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item label="技术要求" label-align="right" name="technicalRequest">
-          <t-input v-model="dtlData.technicalRequest" style="width: 280px" />
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item label="是否CTQ" name="isCtq">
-          <t-select v-model="dtlData.isCtq" :clearable="true">
-            <t-option key="0" label="是" value="1" />
-            <t-option key="1" label="否" value="0" />
-          </t-select>
-        </t-form-item>
-      </t-col>
-      <!-- 第 3️⃣ 行数据 -->
-      <t-col :span="4">
-        <t-form-item label="项目特性" name="characteristics">
-          <t-select v-model="dtlData.characteristics" clearable style="width: 280px">
-            <t-option v-for="item in characteristicsOptions" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item label="检验工具" name="inspectTool">
-          <t-input v-model="dtlData.inspectTool" style="width: 280px" />
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item label="基准值" name="baseValue">
-          <t-input v-model="dtlData.baseValue" style="width: 70%" />
-          <div style="width: 30%">
-            <bcmp-select-business
-              v-model="dtlData.uom"
-              type="uom"
-              :show-title="false"
-              value-field="uom"
-            ></bcmp-select-business>
-          </div>
-        </t-form-item>
-      </t-col>
-      <!-- 第 4️⃣ 行数据 -->
-      <t-col :span="4">
-        <t-form-item label="最小值" name="minValue">
-          <t-input v-model="dtlData.minValue" style="width: 280px" />
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item label="最大值" name="maxValue">
-          <t-input v-model="dtlData.maxValue" style="width: 280px" />
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item label="不合格分类" name="unqualifyCategory">
-          <t-select v-model="dtlData.unqualifyCategory" clearable style="width: 280px">
-            <t-option v-for="item in unCategoryOption" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </t-form-item>
-      </t-col>
-      <!-- 第 5️⃣ 行数据 -->
-      <t-col :span="4">
-        <t-form-item label="抽样方案类型" name="samplingStandardType">
-          <t-radio-group v-model="dtlData.samplingStandardType" default-value="1">
-            <t-radio value="GB">国标</t-radio>
-            <t-radio value="QB">企标</t-radio>
-          </t-radio-group>
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item label="抽样方案" name="samplingStandardCode">
-          <t-select
-            v-model="dtlData.samplingStandardCode"
-            clearable
-            filterable
-            input-props
-            @clear="fetchSampingStdCodes"
-            @input-change="querySelectChange($event)"
-          >
-            <t-option
-              v-for="item in codesOption"
-              :key="item.id"
-              :label="item.label"
-              :value="item.value"
-              :lazy-load="true"
-            />
-          </t-select>
-        </t-form-item>
-      </t-col>
-      <t-col :span="4">
-        <t-form-item
-          label="检验水平"
-          label-align="right"
-          name="inspectLevel"
-          :required-mark="dtlData.samplingStandardType === 'GB'"
-        >
-          <t-select
-            v-model="dtlData.inspectLevel"
-            clearable
-            style="width: 280px"
-            :disabled="dtlData.samplingStandardType !== 'GB'"
-          >
-            <t-option v-for="item in levelOption" :key="item.id" :label="item.label" :value="item.value" />
-          </t-select>
-        </t-form-item>
-      </t-col>
-      <!-- 第 5️⃣ 行数据 -->
-      <t-col :span="4">
-        <t-form-item label="附件：" name="mitemCode">
-          <t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
-        </t-form-item>
-      </t-col>
-    </t-row>
+    <!-- 第 1️⃣ 行数据 -->
+    <t-form-item label="项目类别" label-align="right" name="itemCategory">
+      <t-select v-model="dtlData.itemCategory" clearable style="width: 280px">
+        <t-option v-for="item in categoryOption" :key="item.id" :label="item.label" :value="item.value" />
+      </t-select>
+    </t-form-item>
+    <t-form-item label="检验类型" label-align="right" name="inspectType">
+      <t-select v-model="dtlData.inspectType" clearable style="width: 280px">
+        <t-option v-for="item in stdTypeOption" :key="item.id" :label="item.label" :value="item.value" />
+      </t-select>
+    </t-form-item>
+    <t-form-item label="检验内容" label-align="right" name="itemName">
+      <t-input v-model="dtlData.itemName" style="width: 280px" />
+    </t-form-item>
+    <t-form-item label="项目行号" label-align="right" name="itemSeq">
+      <t-input v-model="dtlData.itemSeq" style="width: 280px" />
+    </t-form-item>
+    <!-- 第 2️⃣ 行数据 -->
+    <t-form-item label="检验依据" label-align="right" name="inspectBasis">
+      <t-input v-model="dtlData.inspectBasis" style="width: 280px" />
+    </t-form-item>
+    <t-form-item label="技术要求" label-align="right" name="technicalRequest">
+      <t-input v-model="dtlData.technicalRequest" style="width: 280px" />
+    </t-form-item>
+    <t-form-item label="是否CTQ" name="isCtq">
+      <t-select v-model="dtlData.isCtq" :clearable="true">
+        <t-option key="0" label="是" value="1" />
+        <t-option key="1" label="否" value="0" />
+      </t-select>
+    </t-form-item>
+    <t-form-item label="项目特性" name="characteristics">
+      <t-select v-model="dtlData.characteristics" clearable style="width: 280px">
+        <t-option v-for="item in characteristicsOptions" :key="item.id" :label="item.label" :value="item.value" />
+      </t-select>
+    </t-form-item>
+    <t-form-item label="检验工具" name="inspectTool">
+      <t-input v-model="dtlData.inspectTool" style="width: 280px" />
+    </t-form-item>
+    <t-form-item label="基准值" name="baseValue">
+      <t-input v-model="dtlData.baseValue" :disabled="dtlData.characteristics === 'COUNT'" yle="width: 70%" />
+      <div style="width: 30%">
+        <bcmp-select-business
+          v-model="dtlData.uom"
+          type="uom"
+          :show-title="false"
+          value-field="uom"
+          :disabled="dtlData.characteristics === 'COUNT'"
+        ></bcmp-select-business>
+      </div>
+    </t-form-item>
+    <t-form-item label="最小值" name="minValue">
+      <t-input v-model="dtlData.minValue" :disabled="dtlData.characteristics === 'COUNT'" style="width: 280px" />
+    </t-form-item>
+    <t-form-item label="最大值" name="maxValue">
+      <t-input v-model="dtlData.maxValue" :disabled="dtlData.characteristics === 'COUNT'" style="width: 280px" />
+    </t-form-item>
+    <t-form-item label="不合格分类" name="unqualifyCategory">
+      <t-select v-model="dtlData.unqualifyCategory" clearable style="width: 280px">
+        <t-option v-for="item in unCategoryOption" :key="item.id" :label="item.label" :value="item.value" />
+      </t-select>
+    </t-form-item>
+    <!-- 第 5️⃣ 行数据 -->
+    <t-form-item label="抽样方案类型" name="samplingStandardType">
+      <t-radio-group v-model="dtlData.samplingStandardType" default-value="1">
+        <t-radio value="GB">国标</t-radio>
+        <t-radio value="QB">企标</t-radio>
+      </t-radio-group>
+    </t-form-item>
+    <t-form-item label="抽样方案" name="samplingStandardCode">
+      <t-select
+        v-model="dtlData.samplingStandardCode"
+        clearable
+        filterable
+        input-props
+        @clear="fetchSampingStdCodes"
+        @input-change="querySelectChange($event)"
+      >
+        <t-option
+          v-for="item in codesOption"
+          :key="item.id"
+          :label="item.label"
+          :value="item.value"
+          :lazy-load="true"
+        />
+      </t-select>
+    </t-form-item>
+    <t-form-item
+      label="检验水平"
+      label-align="right"
+      name="inspectLevel"
+      :required-mark="dtlData.samplingStandardType === 'GB'"
+    >
+      <t-select
+        v-model="dtlData.inspectLevel"
+        clearable
+        style="width: 280px"
+        :disabled="dtlData.samplingStandardType !== 'GB'"
+      >
+        <t-option v-for="item in levelOption" :key="item.id" :label="item.label" :value="item.value" />
+      </t-select>
+    </t-form-item>
+    <!-- 第 5️⃣ 行数据 -->
+    <t-form-item label="附件：" name="mitemCode">
+      <t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
+    </t-form-item>
   </t-form>
   <t-dialog
     v-model:visible="formVisible"
@@ -420,3 +384,15 @@ defineExpose({
   rowData,
 });
 </script>
+
+<style lang="less" scoped>
+:deep(.t-form__controls-content) {
+  width: 200px !important;
+
+  .t-date-picker,
+  .t-input-number,
+  .t-color-picker__trigger {
+    width: 200px;
+  }
+}
+</style>

@@ -89,7 +89,9 @@ export default {
       await api.oqcInspectStdMitem.assignOqcInspectStdMitem({
         stdId: formData.value.id,
         mitemId: formData.value.mitemId,
-        mitemCategoryIds: formData.value.mitemCategoryIds.split(','),
+        mitemCategoryIds: isEmpty(formData.value.mitemCategoryIds)
+          ? formData.value.mitemCategoryIds
+          : formData.value.mitemCategoryIds.split(','),
       });
       MessagePlugin.success('操作成功');
       return true;

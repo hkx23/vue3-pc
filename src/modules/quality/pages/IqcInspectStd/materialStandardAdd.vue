@@ -7,7 +7,7 @@
           ><span class="span_title">{{ getTitle(formData.operateTpye) }}</span></t-col
         >
         <t-col>
-          <t-button :disabled="!submitButControl" @click="onSubimit">提交</t-button>
+          <t-button @click="onSubimit">提交</t-button>
           <t-button theme="default" @click="onStaging">暂存</t-button>
           <t-button theme="default" @click="onClose">关闭</t-button>
         </t-col>
@@ -88,11 +88,11 @@
           <span>{{ row.isCtq ? '是' : '否' }}</span>
         </template>
         <template #button>
-          <t-input v-if="submitButControl" placeholder="请输入搜索关键字">
+          <!-- <t-input v-if="submitButControl" placeholder="请输入搜索关键字">
             <template #suffixIcon>
               <search-icon :style="{ cursor: 'pointer' }" />
             </template>
-          </t-input>
+          </t-input> -->
           <t-button :disabled="!butControl" @click="onAdd"> 新增 </t-button>
           <t-button :disabled="!butControl" theme="default"> 导入 </t-button>
           <t-popconfirm content="是否确认删除？" @confirm="delBatch">
@@ -136,7 +136,7 @@
     :close-on-overlay-click="false"
     :header="formTitle"
     confirm-btn="保存"
-    width="85%"
+    width="95%"
     @confirm="onConfirmDtl"
   >
     <touchstoneForm ref="dtlFormRef"></touchstoneForm>
@@ -146,7 +146,7 @@
 <script setup lang="ts">
 // import { debounce } from 'lodash';
 import { isEmpty } from 'lodash';
-import { SearchIcon } from 'tdesign-icons-vue-next';
+// import { SearchIcon } from 'tdesign-icons-vue-next';
 import { FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { Ref, ref } from 'vue';
 
@@ -180,7 +180,7 @@ const formData = ref({
   inspectStdCode: '',
   inspectStdName: '',
   groupInspectStdId: '',
-  revision: null,
+  revision: '',
   timeEffective: '',
   timeInvalid: '',
   status: 'DRAFT',
@@ -240,8 +240,8 @@ const onSubimit = async () => {
     MessagePlugin.error('集团检验标准须为数字（暂行）');
     return;
   }
-  if (!Number(formData.value.revision) || Number(formData.value.revision) < 0) {
-    MessagePlugin.error('版本号须为正数');
+  if (isEmpty(formData.value.revision)) {
+    MessagePlugin.error('请输入版本号');
     return;
   }
 
@@ -299,8 +299,8 @@ const onStaging = async () => {
     MessagePlugin.error('集团检验标准须为数字（暂行）');
     return;
   }
-  if (!Number(formData.value.revision) || Number(formData.value.revision) < 0) {
-    MessagePlugin.error('版本号须为正数');
+  if (isEmpty(formData.value.revision)) {
+    MessagePlugin.error('请输入版本号');
     return;
   }
 

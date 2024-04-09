@@ -22,7 +22,9 @@
         <template #title> 产品检验列表 </template>
         <template #button>
           <t-button theme="primary" @click="onShowDialogBJAdd()">报检</t-button>
-          <t-button theme="default" :disabled="selectWaitId?.length == 0" @click="onHandlDeleteBillInfo">删除</t-button>
+          <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onHandlDeleteBillInfo">
+            <t-button theme="default" :disabled="selectWaitId?.length == 0"> {{ t('common.button.delete') }}</t-button>
+          </t-popconfirm>
           <t-button theme="default" :disabled="selectWaitId?.length == 0" @click="onHandlePrint">打印</t-button>
           <t-button theme="default">启动品质改善</t-button>
         </template>
@@ -345,16 +347,19 @@ const onShowDialogView = async (rowData: any) => {
 const onHandlDeleteBillInfo = async () => {
   checkSelected();
   const selectKeys = waitInspectData.value.filter((n) => selectWaitId.value.indexOf(n.id) !== -1);
+  const ids = [];
   for (let index = 0; index < selectKeys.length; index++) {
     const element = selectKeys[index];
+    ids.push(element.id);
     if (!(element.status === 'INSPECT' || element.status === 'UNSUBMIT')) {
       MessagePlugin.error('只有状态为待提报、待检验的单据才允许操作.');
       return;
     }
   }
   await apiQuality.oqcInspect.deleteList({
-    cancelledIds: selectKeys,
+    cancelledIds: ids,
   });
+  MessagePlugin.success(t('common.message.deleteSuccess'));
   fetchTable();
 };
 

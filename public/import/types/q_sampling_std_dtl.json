@@ -1,6 +1,6 @@
 {
   "importTitle": "企业抽样标准明细",
-  "templateFileName": "导入模板_企业抽样标准明细",
+  "templateFileName": "导入模板_企业抽样标准明细表",
   "remoteUrl": "/api/quality/samplingStdDtl/import",
   "importColumns": [
     {
@@ -8,7 +8,7 @@
       "field": "sampingStdCode"
     },
     {
-      "title": "抽样比例（%）",
+      "title": "抽样比例(%)",
       "field": "samplingPer"
     },
     {
@@ -33,7 +33,7 @@
     },
     {
       "title": "B类AC(必填)",
-      "field": "acceptQtyClassA"
+      "field": "acceptQtyClassB"
     },
     {
       "title": "B类RE(必填)",
