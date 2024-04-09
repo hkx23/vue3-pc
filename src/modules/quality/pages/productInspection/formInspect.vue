@@ -691,17 +691,16 @@ const onShowFiles = async (rowData) => {
 // };
 const onShowMeasureDialog = async (row) => {
   const { showForm } = formMeasureRef.value;
-  await showForm(isEditTable.value, row.measureList);
+  await showForm(isEditTable.value, row.measureList, row.id);
 };
 const onFormCloseDialog = async () => {
   formVisible.value = false;
   // 刷新主界面
   Emit('parent-refresh-event');
 };
-const parentConfirm = async (measureList, isAllOK) => {
+const parentConfirm = async (measureList, isAllOK, dtlId) => {
   if (!_.isEmpty(measureList)) {
-    const { stdDtlId } = measureList[0];
-    const rowData = tableData.value.find((n) => n.id === stdDtlId);
+    const rowData = tableData.value.find((n) => n.id === dtlId);
     rowData.measureList = measureList;
     rowData.inspectResultSwitch = isAllOK;
   }
