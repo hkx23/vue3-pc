@@ -57,7 +57,7 @@
           <!-- 第 3️⃣ 行数据 -->
           <t-col :span="4">
             <t-form-item label="附件：" name="attachment">
-              <t-link :disabled="!butControl" theme="primary" @click="formVisible = true"> 附件上传 </t-link>
+              <t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
             </t-form-item>
           </t-col>
         </t-row>
@@ -93,10 +93,10 @@
               <search-icon :style="{ cursor: 'pointer' }" />
             </template>
           </t-input> -->
-          <t-button :disabled="!butControl" @click="onAdd"> 新增 </t-button>
+          <t-button @click="onAdd"> 新增 </t-button>
           <t-button :disabled="!butControl" theme="default"> 导入 </t-button>
           <t-popconfirm content="是否确认删除？" @confirm="delBatch">
-            <t-button :disabled="!delBtutControl" theme="default"> 批量删除 </t-button>
+            <t-button theme="default"> 批量删除 </t-button>
           </t-popconfirm>
         </template>
         <template #operation="{ row }">
@@ -258,8 +258,8 @@ const onSubimit = async () => {
     MessagePlugin.error('失效时间必须大于今天');
     return;
   }
-  if (formData.value.id && formData.value.operateTpye === 'add') {
-    await api.iqcInspectStd.modify({
+  if (formData.value.operateTpye === 'add') {
+    await api.iqcInspectStd.addAndTemporaryStorage({
       ...formData.value,
       files: fileList.value,
       dtls: dtlTabData.value,
@@ -267,14 +267,23 @@ const onSubimit = async () => {
     });
     MessagePlugin.success('提交成功');
     Emit('permissionShow', false); // 回到父
-  } else {
-    await api.iqcInspectStd.modify({
+  } else if (formData.value.operateTpye === 'edit') {
+    await api.iqcInspectStd.modifyAndTemporaryStorage({
       ...formData.value,
       files: fileList.value,
       dtls: allDtl.value,
       isTemporaryStorage: false,
     });
     MessagePlugin.success('提交成功');
+    Emit('permissionShow', false); // 回到父
+  } else {
+    await api.iqcInspectStd.copy({
+      ...formData.value,
+      files: fileList.value,
+      dtls: allDtl.value,
+      isTemporaryStorage: false,
+    });
+    MessagePlugin.success('复制成功');
     Emit('permissionShow', false); // 回到父
   }
 };
@@ -318,23 +327,20 @@ const onStaging = async () => {
     return;
   }
   if (!formData.value.id) {
-    const res = (await api.iqcInspectStd.temporaryStorage({ ...formData.value })) as any;
+    const res = (await api.iqcInspectStd.addAndTemporaryStorage({
+      ...formData.value,
+      files: fileList.value,
+      dtls: allDtl.value,
+      isTemporaryStorage: true,
+    })) as any;
     if (res) {
       butControl.value = true;
       formData.value.id = res;
       MessagePlugin.success('暂存成功');
+      Emit('permissionShow', false); // 回到父
     }
-  } else if (formData.value.id && formData.value.operateTpye === 'add') {
-    await api.iqcInspectStd.modify({
-      ...formData.value,
-      files: fileList.value,
-      dtls: dtlTabData.value,
-      isTemporaryStorage: true,
-    });
-    MessagePlugin.success('暂存成功');
-    Emit('permissionShow', false); // 回到父
   } else if (formData.value.id && formData.value.operateTpye === 'edit') {
-    await api.iqcInspectStd.modify({
+    await api.iqcInspectStd.modifyAndTemporaryStorage({
       ...formData.value,
       files: fileList.value,
       dtls: allDtl.value,
@@ -344,7 +350,7 @@ const onStaging = async () => {
     Emit('permissionShow', false); // 回到父
   } else if (formData.value.id && formData.value.operateTpye === 'copy') {
     formData.value.id = '';
-    await api.iqcInspectStd.modify({
+    await api.iqcInspectStd.copy({
       ...formData.value,
       files: fileList.value,
       dtls: allDtl.value,
@@ -383,20 +389,12 @@ const delDtlById = async (row) => {
   onRefresh();
 };
 const delBatch = async () => {
-  if (formData.value.operateTpye === 'add') {
-    // 找出所有对应索引的元素并将它们的ID收集到一个数组中
-    const idsToDelete = dtlRowKeys.value.map((index) => dtlTabData.value[index].id);
-
-    // 调用 removeBatch 方法删除对应的元素
-    await api.iqcInspectStdDtl.removeBatch(idsToDelete);
-  } else {
-    // 获取要删除的索引，并按从大到小的顺序排序
-    const indexesToDelete = dtlRowKeys.value.sort((a, b) => b - a);
-    // 逐个删除元素
-    indexesToDelete.forEach((index) => {
-      allDtl.value.splice(index, 1);
-    });
-  }
+  // 获取要删除的索引，并按从大到小的顺序排序
+  const indexesToDelete = dtlRowKeys.value.sort((a, b) => b - a);
+  // 逐个删除元素
+  indexesToDelete.forEach((index) => {
+    allDtl.value.splice(index, 1);
+  });
   onRefresh();
 };
 
@@ -539,6 +537,7 @@ const init = () => {
   butControl.value = false;
   submitButControl.value = false;
   delBtutControl.value = false;
+  allDtl.value = [];
   fileList.value = [];
   formData.value = {
     operateTpye: 'add',
@@ -560,12 +559,7 @@ const init = () => {
 const onConfirmDtl = async () => {
   const data = await dtlFormRef.value.onConfirmDtl();
   if (data) {
-    // 只允许新增标准直接插入数据库
-    if (opType.value === 'add' && formData.value.operateTpye === 'add') {
-      await api.iqcInspectStdDtl.addDtl(dtlFormRef.value.rowData);
-      onRefresh();
-      // 只允许新增标准直接更新数据库
-    } else if (opType.value === 'edit' && formData.value.operateTpye === 'edit') {
+    if (opType.value === 'edit') {
       // 校验itemName
       const result = confirmItemName();
       if (!result) {
@@ -577,7 +571,7 @@ const onConfirmDtl = async () => {
         allDtl.value.splice(allIndex, 1, dtlFormRef.value.rowData);
       }
       onRefresh();
-    } else if (opType.value === 'add' && formData.value.operateTpye === 'edit') {
+    } else if (opType.value === 'add') {
       // 校验itemName
       const result = confirmItemName();
       if (!result) {
@@ -595,15 +589,12 @@ const onConfirmCode = async () => {
   }
 };
 const onRefresh = async () => {
-  if (formData.value.operateTpye === 'add') {
-    await getDtlById();
-  } else {
-    await getAllDtlFormCache();
-  }
+  await getAllDtlFormCache();
   dtlRowKeys.value = [];
   submitButControl.value = !!dtlTabData.value;
   console.log(submitButControl.value);
 };
+
 const confirmItemName = () => {
   if (opType.value === 'add') {
     // 校验itemName
