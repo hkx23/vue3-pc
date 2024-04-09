@@ -5657,12 +5657,12 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   iii?: string;
-  i?: string;
-  s4?: string;
-  s1?: string;
   s2?: string;
   s3?: string;
+  i?: string;
+  s4?: string;
   ii?: string;
+  s1?: string;
 } | null;
 
 /** 标签模板 */

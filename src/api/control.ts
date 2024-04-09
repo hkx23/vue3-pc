@@ -902,8 +902,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1831,8 +1831,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -2741,9 +2741,9 @@ export interface ProductReworkVO {
   workshopName?: string;
   workshopId?: string;
   scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3145,9 +3145,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
+  defectCodeStr?: string;
   scanDatetimeStr?: string;
   datetimeScheStr?: string;
-  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3305,10 +3305,10 @@ export interface BarcodeWipVO {
   workshopName?: string;
   workshopId?: string;
   stateName?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   defectCodeStr?: string;
   isState?: boolean;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 缺陷代码 */
@@ -3678,7 +3678,6 @@ export interface MoSwitchVO {
   workCenterId?: string;
   workCenterCode?: string;
   workCenterName?: string;
-  statusName?: string;
   moSwitchId?: string;
   moScheId?: string;
   /**
@@ -3692,6 +3691,8 @@ export interface MoSwitchVO {
   moScheStatusName?: string;
   workgroupCode?: string;
   workgroupName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 响应数据 */
@@ -4934,11 +4935,11 @@ export interface BarcodeWipCollectVO {
   workshopName?: string;
   workshopId?: string;
   stateName?: string;
+  isState?: boolean;
   scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  isState?: boolean;
+  datetimeScheStr?: string;
 }
 
 /** 工序 */

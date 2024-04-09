@@ -73,6 +73,7 @@ const formData = reactive({
   uom: '',
   minValue: '',
   maxValue: '',
+  dtlId: '',
   measureList: [],
 });
 
@@ -81,7 +82,7 @@ const onConfirmForm = async () => {
     let isAllOK = true;
     for (let index = 0; index < formData.measureList.length; index++) {
       const item = formData.measureList[index];
-      if (item.measureValue === '') {
+      if (!item.measureValue) {
         MessagePlugin.error('测量值不能为空.');
         return;
       }
@@ -89,6 +90,14 @@ const onConfirmForm = async () => {
 
     for (let index = 0; index < formData.measureList.length; index++) {
       const item = formData.measureList[index];
+      if (!item.minValue) {
+        MessagePlugin.error('合格范围最小值异常,请检查');
+        return;
+      }
+      if (!item.maxValue) {
+        MessagePlugin.error('合格范围最大值异常,请检查');
+        return;
+      }
       if (item.measureValue < item.minValue || item.measureValue > item.maxValue) {
         // MessagePlugin.error('请输入正确的测量值.');
         isAllOK = false;
@@ -98,7 +107,7 @@ const onConfirmForm = async () => {
 
     LoadingPlugin(true);
 
-    Emit('parent-confirm-event', formData.measureList, isAllOK);
+    Emit('parent-confirm-event', formData.measureList, isAllOK, formData.dtlId);
 
     formVisible.value = false;
   } catch (e) {
@@ -122,11 +131,12 @@ const reset = () => {
   });
 };
 
-const showForm = async (edit, row) => {
+const showForm = async (edit, row, dtlId) => {
   isEdit.value = edit;
   formVisible.value = true;
   reset();
   formData.measureList = _.cloneDeep(row);
+  formData.dtlId = dtlId;
   formData.sampleQty = `${row[0].sampleQty}`;
   formData.inspectTool = `${row[0].inspectTool}`;
   formData.baseValue = `${row[0].baseValue}`;
