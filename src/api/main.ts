@@ -2474,8 +2474,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4562,13 +4562,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  isState?: boolean;
   stateName?: string;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
+  isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
-  isState?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -4813,15 +4813,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isBatchName?: string;
   isProductName?: string;
   isRawName?: string;
-  isInProcessChecked?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
   isProductChecked?: boolean;
-  isState?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -6607,8 +6607,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -7868,8 +7868,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -9060,10 +9060,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -12791,6 +12791,21 @@ export const api = {
       }),
   },
   notice: {
+    /**
+     * No description
+     *
+     * @tags 系统通知表
+     * @name PublishNotice
+     * @summary 发布
+     * @request POST:/notice/publishNotice
+     * @secure
+     */
+    publishNotice: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/notice/publishNotice`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

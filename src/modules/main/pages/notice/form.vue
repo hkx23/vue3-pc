@@ -10,12 +10,12 @@
     <t-row :gutter="[32, 16]">
       <t-col :span="6">
         <t-form-item :label="t('notice.titleName')" name="titleName">
-          <t-input v-model="formData.titleName" />
+          <t-input v-model="formData.titleName" :disabled="formData.opType === 'edit'" />
         </t-form-item>
       </t-col>
       <t-col :span="6">
         <t-form-item :label="t('notice.noticeContent')" name="noticeContent">
-          <t-input v-model="formData.noticeContent" />
+          <t-input v-model="formData.noticeContent" :disabled="formData.opType === 'edit'" />
         </t-form-item>
       </t-col>
       <t-col :span="6">
@@ -29,6 +29,7 @@
             type="state"
             category="NOTICE_PURPOSE"
             :clearable="true"
+            :disabled="formData.opType === 'edit'"
           ></bcmp-select-business>
         </t-form-item>
       </t-col>
@@ -43,17 +44,30 @@
             type="state"
             category="SOP_NOTICE_TYPE"
             :clearable="true"
+            :disabled="formData.opType === 'edit'"
           ></bcmp-select-business>
         </t-form-item>
       </t-col>
       <t-col :span="6">
         <t-form-item :label="t('notice.noticeEffectiveName')" name="noticeEffective">
-          <t-date-picker v-model="formData.noticeEffective" allow-input clearable style="width: 400px" />
+          <t-date-picker
+            v-model="formData.noticeEffective"
+            allow-input
+            clearable
+            :disabled="formData.opType === 'edit'"
+            style="width: 400px"
+          />
         </t-form-item>
       </t-col>
       <t-col :span="6">
         <t-form-item :label="t('notice.dateInvalidName')" name="dateInvalid">
-          <t-date-picker v-model="formData.dateInvalid" allow-input clearable style="width: 400px" />
+          <t-date-picker
+            v-model="formData.dateInvalid"
+            allow-input
+            clearable
+            :disabled="formData.opType === 'edit'"
+            style="width: 400px"
+          />
         </t-form-item>
       </t-col>
       <t-col :span="6">

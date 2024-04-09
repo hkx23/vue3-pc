@@ -12,14 +12,17 @@
             v-model:pagination="pageUI"
             row-key="id"
             :table-column="column"
+            :selected-row-keys="selectedRowKeys"
             :table-data="noticeData"
             :loading="loading"
             :total="total"
             :fixed-height="true"
+            @select-change="onSelectChange"
             @refresh="onFetchData"
           >
+            <template #title> {{ t('notice.noticeList') }}</template>
             <template #button>
-              <t-button>
+              <t-button @click="onPublish">
                 {{ t('notice.public') }}
               </t-button>
               <t-button @click="onAdd">
@@ -29,7 +32,7 @@
             <template #op="{ row }">
               <t-space :size="8">
                 <t-link theme="primary" :disabled="loading" @click="onEidt(row)">{{ t('common.button.edit') }}</t-link>
-                <t-popconfirm :content="t('common.message.confirmDelete')">
+                <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDel">
                   <t-link theme="primary" :disabled="loading">{{ t('common.button.delete') }}</t-link>
                 </t-popconfirm>
               </t-space>
@@ -54,7 +57,8 @@
 <script setup lang="ts">
 // import dayjs from 'dayjs';
 import _ from 'lodash';
-import { computed, onMounted, ref } from 'vue';
+import MessagePlugin from 'tdesign-vue-next/es/message/plugin';
+import { computed, onMounted, Ref, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api as apiMain } from '@/api/main';
@@ -71,6 +75,19 @@ onMounted(() => {
   }
   onFetchData();
 });
+
+const selectedRowKeys: Ref<any[]> = ref([]);
+const onSelectChange = (value) => {
+  selectedRowKeys.value = value;
+};
+const onPublish = async () => {
+  if (selectedRowKeys.value.length < 0) {
+    return;
+  }
+  await apiMain.notice.publishNotice(selectedRowKeys.value);
+  MessagePlugin.success(t('common.message.success'));
+  onFetchData();
+};
 const formRef = ref(null);
 const formVisible = ref(false);
 const formTitle = ref('');
@@ -84,12 +101,21 @@ useResizeObserver(refNoticeCard, (entries) => {
 });
 const onAdd = () => {
   formTitle.value = t('common.button.add');
+  formRef.value.formData.opType = 'add';
   formVisible.value = true;
 };
 const onEidt = (row) => {
   console.log(row);
   formTitle.value = t('common.button.edit');
+  formRef.value.formData = row;
+  formRef.value.formData.opType = 'edit';
   formVisible.value = true;
+};
+
+const onDel = async (row) => {
+  await apiMain.notice.delById(row.id);
+  MessagePlugin.success(t('common.message.deleteSuccess'));
+  onFetchData();
 };
 
 // input框搜索
@@ -146,6 +172,11 @@ const { t } = useLang();
 // table定义
 const column = ref([
   // { colKey: 'multiple', type: 'multiple', align: 'center' },
+  {
+    colKey: 'row-select',
+    type: 'multiple',
+    width: 30,
+  },
   { title: t('notice.titleName'), colKey: 'titleName', align: 'center', width: 200 },
   { title: t('notice.noticeContent'), colKey: 'noticeContent', align: 'center', width: 300 },
   {
