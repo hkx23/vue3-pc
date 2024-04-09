@@ -177,8 +177,6 @@ const props = defineProps({
 //* 初始渲染
 onMounted(async () => {
   // await fetchTable({})
-
-  queryComponent.value.setFromValue('stockCheckType', null);
   await countingTypeData();
 });
 
