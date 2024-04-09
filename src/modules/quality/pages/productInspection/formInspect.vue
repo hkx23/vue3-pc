@@ -1037,6 +1037,7 @@ const onEnterpriseCalculateSampQty = async () => {
 
 const reset = () => {
   console.log('reset');
+  defaultTableData.value = [];
   // 清除所有对象的值
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
@@ -1106,7 +1107,9 @@ const initBJDetailFormEdit = (billInfo: OqcInspectBillFullVO) => {
   formVisible.value = true;
   isEditTable.value = false;
   commonInit();
+  loadTable(formData.viewType);
   getBarcodeTableList();
+  loadDefaultTable();
 };
 
 // 初始化检验界面信息
