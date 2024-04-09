@@ -136,7 +136,7 @@
     :close-on-overlay-click="false"
     :header="formTitle"
     confirm-btn="保存"
-    width="85%"
+    width="95%"
     @confirm="onConfirmDtl"
   >
     <touchstoneForm ref="dtlFormRef"></touchstoneForm>
