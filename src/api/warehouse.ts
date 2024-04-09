@@ -562,7 +562,7 @@ export type TransferDtlBarcodeVO = {
   /** 单位 */
   uom?: string;
   /** 到货批次 */
-  batchNo?: string;
+  batchLot?: string;
   /** 扫描的条形码 */
   scanBarcode?: string;
   /** 条码类型 */
@@ -1152,7 +1152,7 @@ export type TransferDtlVO = {
   /** 通知凭证 */
   noticeVoucherLineNo?: string;
   /** 到货批次 */
-  batchNo?: string;
+  batchLot?: string;
   /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
@@ -1258,7 +1258,7 @@ export type TransferDtl = {
   /** 通知凭证 */
   noticeVoucherLineNo?: string;
   /** 到货批次 */
-  batchNo?: string;
+  batchLot?: string;
   /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
@@ -1913,6 +1913,7 @@ export interface StockCheckBillSearch {
   mitemId?: string;
   districtId?: string;
   locationId?: string;
+  onhandId?: string;
   /** 盘点类型 */
   stockCheckType?: string;
   /** 新增勾选的库存现有量记录ID */
@@ -1921,24 +1922,24 @@ export interface StockCheckBillSearch {
   dtls?: StockCheckBillDtl[];
 }
 
-/** 响应数据 */
-export type PagingDataStockCheckBillVO = {
-  list?: StockCheckBillVO[];
+export interface CommonImportStockCheckBillVO {
+  title?: string;
+  tableName?: string;
+  data?: StockCheckBillVO[];
+  columns?: ImportColumn[];
   /** @format int32 */
-  total?: number;
-} | null;
+  batchSize?: number;
+}
 
-/** 通用响应类 */
-export interface ResultPagingDataStockCheckBillVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataStockCheckBillVO;
+export interface ImportColumn {
+  field?: string;
+  title?: string;
+  isRequired?: boolean;
+  isValidateRepeat?: boolean;
+  validateExpression?: string;
+  items?: string[];
+  required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface StockCheckBillVO {
@@ -2010,6 +2011,49 @@ export interface StockCheckBillVO {
    * @format date-time
    */
   printDate?: string;
+}
+
+/** 响应数据 */
+export type ImportSummary = {
+  /** @format int32 */
+  successCount?: number;
+  /** @format int32 */
+  failCount?: number;
+  errorListFilePath?: string;
+  allSuccess?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultImportSummary {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ImportSummary;
+}
+
+/** 响应数据 */
+export type PagingDataStockCheckBillVO = {
+  list?: StockCheckBillVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataStockCheckBillVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataStockCheckBillVO;
 }
 
 /** 通用响应类 */
@@ -2496,7 +2540,7 @@ export interface ReturnStockOutDtlBarcodeVO {
   /** 单位 */
   uom?: string;
   /** 到货批次 */
-  batchNo?: string;
+  batchLot?: string;
   /** 扫描的条形码 */
   scanBarcode?: string;
   /** 条码类型 */
@@ -2555,7 +2599,7 @@ export interface ReturnStockOutDtlVO {
   /** 通知凭证 */
   noticeVoucherLineNo?: string;
   /** 到货批次 */
-  batchNo?: string;
+  batchLot?: string;
   /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
@@ -2671,10 +2715,10 @@ export interface DeliveryDtlVO {
   /** 已交接总量数量 */
   receiptedAllQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 物料检验单明细 */
@@ -2831,10 +2875,10 @@ export interface PurchaseOrderDtlVO {
   /** 本次退货数量 */
   curReturnQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3406,7 +3450,7 @@ export interface MoIssuanceDtlVO {
   /** 通知凭证 */
   noticeVoucherLineNo?: string;
   /** 到货批次 */
-  batchNo?: string;
+  batchLot?: string;
   /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
@@ -3491,20 +3535,20 @@ export interface MoIssuanceDtlVO {
    */
   scanQty?: number;
   /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   flpickQty?: number;
+  bfpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  tlpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -3822,7 +3866,7 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 通知凭证 */
   noticeVoucherLineNo?: string;
   /** 到货批次 */
-  batchNo?: string;
+  batchLot?: string;
   /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
@@ -4000,7 +4044,7 @@ export interface MaterialRequisitionDtlVO {
   /** 通知凭证 */
   noticeVoucherLineNo?: string;
   /** 到货批次 */
-  batchNo?: string;
+  batchLot?: string;
   /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
@@ -4722,7 +4766,7 @@ export interface MitemReceiveBillVO {
   /** 通知凭证 */
   noticeVoucherLineNo?: string;
   /** 到货批次 */
-  batchNo?: string;
+  batchLot?: string;
   /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
@@ -5699,8 +5743,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -5795,7 +5839,7 @@ export interface GoodsSentOutDtlVO {
   /** 通知凭证 */
   noticeVoucherLineNo?: string;
   /** 到货批次 */
-  batchNo?: string;
+  batchLot?: string;
   /** 采购订单号 */
   poNum?: string;
   /** ERP单据明细号 */
@@ -5971,32 +6015,6 @@ export interface ResultPagingDataStockCheckBillExecuteVO {
   data?: PagingDataStockCheckBillExecuteVO;
 }
 
-/** 通用响应类 */
-export interface ResultListLocation {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: Location[] | null;
-}
-
-/** 通用响应类 */
-export interface ResultListDistrict {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: District[] | null;
-}
-
 /** 响应数据 */
 export type PagingDataPurchaseOrderDtlVO = {
   list?: PurchaseOrderDtlVO[];
@@ -6064,6 +6082,19 @@ export type SaleDeliveryOnhandQtyVO = {
   canOnhandQty?: number;
 } | null;
 
+/** 通用响应类 */
+export interface ResultListLocation {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: Location[] | null;
+}
+
 export interface OnhandQtyDtlVO {
   /** 条码 */
   serialNumber?: string;
@@ -6095,6 +6126,19 @@ export interface ResultPagingDataOnhandQtyDtlVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataOnhandQtyDtlVO;
+}
+
+/** 通用响应类 */
+export interface ResultListDistrict {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: District[] | null;
 }
 
 /** 响应数据 */
@@ -7526,6 +7570,21 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
+     * @name ImportData
+     * @summary 导入
+     * @request POST:/stockCheckBill/import
+     * @secure
+     */
+    importData: (data: CommonImportStockCheckBillVO) =>
+      http.request<ResultImportSummary['data']>(`/api/warehouse/stockCheckBill/import`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
      * @name GetPdList
      * @summary 查询主界面盘点单据
      * @request POST:/stockCheckBill/getPDList
@@ -7557,7 +7616,7 @@ export const api = {
      *
      * @tags 盘点单据表
      * @name GetBill
-     * @summary 盘点管理-根据单号和ID获取单据
+     * @summary 获取打印数据
      * @request POST:/stockCheckBill/getBill
      * @secure
      */
@@ -7624,21 +7683,6 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
-     * @name GetLocation
-     * @summary 获取所选货区的货位（下拉）
-     * @request GET:/stockCheckBill/getLocation
-     * @secure
-     */
-    getLocation: (query: { districtId: string }) =>
-      http.request<ResultListLocation['data']>(`/api/warehouse/stockCheckBill/getLocation`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 盘点单据表
      * @name GetDtlList
      * @summary 查询主界面盘点明细
      * @request GET:/stockCheckBill/getDtlList
@@ -7652,21 +7696,6 @@ export const api = {
       billId: string;
     }) =>
       http.request<ResultPagingDataStockCheckBillVO['data']>(`/api/warehouse/stockCheckBill/getDtlList`, {
-        method: 'GET',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 盘点单据表
-     * @name GetDistrict
-     * @summary 获取所选仓库的货区（下拉）
-     * @request GET:/stockCheckBill/getDistrict
-     * @secure
-     */
-    getDistrict: (query: { warehouseId: string }) =>
-      http.request<ResultListDistrict['data']>(`/api/warehouse/stockCheckBill/getDistrict`, {
         method: 'GET',
         params: query,
       }),

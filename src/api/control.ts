@@ -902,8 +902,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1468,8 +1468,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface TimeSwitchProductVO {
@@ -1831,8 +1831,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2735,15 +2735,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
-  datetimeScheStr?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  workshopId?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2786,10 +2786,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -2920,8 +2920,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3145,8 +3145,8 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -3299,15 +3299,15 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
   workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
   stateName?: string;
+  isState?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   defectCodeStr?: string;
 }
 
@@ -3564,6 +3564,7 @@ export interface MoSwitchDTO {
   workCenterId?: string;
   workgroupId?: string;
   newMoScheId?: string;
+  moSwitchId?: string;
 }
 
 export interface MoSwitchSearch {
@@ -3677,7 +3678,6 @@ export interface MoSwitchVO {
   workCenterId?: string;
   workCenterCode?: string;
   workCenterName?: string;
-  statusName?: string;
   moSwitchId?: string;
   moScheId?: string;
   /**
@@ -3691,6 +3691,8 @@ export interface MoSwitchVO {
   moScheStatusName?: string;
   workgroupCode?: string;
   workgroupName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 响应数据 */
@@ -4927,17 +4929,17 @@ export interface BarcodeWipCollectVO {
   workstationModel?: Workstation;
   /** 请求ID */
   requestScanID?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  workshopName?: string;
+  stateName?: string;
   isState?: boolean;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
-  datetimeScheStr?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopName?: string;
-  workshopCode?: string;
-  workshopId?: string;
-  stateName?: string;
 }
 
 /** 工序 */
@@ -5421,8 +5423,8 @@ export type DefectCodeVO = {
   ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -7169,6 +7171,21 @@ export const api = {
      */
     getMoSwitchInfo: (data: MoSwitchSearch) =>
       http.request<ResultMoSwitchVO['data']>(`/api/control/moSwitch/getMoSwitchInfo`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工单转产表
+     * @name Completed
+     * @summary 结束
+     * @request POST:/moSwitch/completed
+     * @secure
+     */
+    completed: (data: MoSwitchDTO) =>
+      http.request<ResultBoolean['data']>(`/api/control/moSwitch/completed`, {
         method: 'POST',
         body: data as any,
       }),

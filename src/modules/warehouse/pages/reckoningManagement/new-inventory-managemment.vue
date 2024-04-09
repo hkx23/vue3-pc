@@ -61,7 +61,7 @@
                 </t-popconfirm>
               </t-space> -->
             <t-space :size="8">
-              <t-button theme="primary" @click="onClickBatchImport">批量导入</t-button>
+              <bcmp-import-button theme="primary" type="w_onhand_qty" button-text="批量导入"></bcmp-import-button>
             </t-space>
           </template>
           <!-- 定义序号列的插槽 -->
@@ -162,11 +162,6 @@ const props = defineProps({
     type: String,
   },
 });
-
-// 批量导入
-const onClickBatchImport = async () => {
-  return {};
-};
 
 //* 初始渲染
 onMounted(async () => {

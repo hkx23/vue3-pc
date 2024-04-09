@@ -162,8 +162,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface SamplingStdDtlDTO {
@@ -2303,7 +2303,7 @@ export interface OqcInspectStdFullDTO {
   inspectStdName: string;
   groupInspectStdId?: string;
   /** 版本号 */
-  revision: number;
+  revision: string;
   /**
    * 生效时间
    * @format date-time
@@ -2511,10 +2511,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -3109,8 +3109,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3164,7 +3164,7 @@ export interface IqcInspectStdVO {
   inspectStdName?: string;
   groupInspectStdId?: string;
   /** 版本号 */
-  revision?: number;
+  revision?: string;
   /**
    * 生效时间
    * @format date-time
@@ -3188,6 +3188,72 @@ export interface IqcInspectStdVO {
   files?: FileUpload[];
   dtls?: IqcInspectStdDtlVO[];
   isTemporaryStorage?: boolean;
+}
+
+/** 物料检验标准头表 */
+export interface IqcInspectStd {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 标准编码 */
+  inspectStdCode?: string;
+  /** 标准名称 */
+  inspectStdName?: string;
+  groupInspectStdId?: string;
+  /** 版本号 */
+  revision?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  timeEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  timeInvalid?: string;
+  /** 状态 */
+  status?: string;
+}
+
+/** 响应数据 */
+export type PagingDataIqcInspectStd = {
+  list?: IqcInspectStd[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataIqcInspectStd {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataIqcInspectStd;
 }
 
 export interface IqcInspectStdSearch {
@@ -4331,9 +4397,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5590,13 +5656,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s2?: string;
-  i?: string;
-  ii?: string;
-  iii?: string;
   s4?: string;
   s1?: string;
+  iii?: string;
+  s2?: string;
   s3?: string;
+  ii?: string;
+  i?: string;
 } | null;
 
 /** 标签模板 */
@@ -7050,13 +7116,13 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准头表
-     * @name Modify
-     * @summary 编辑标准(提交)
-     * @request POST:/iqcInspectStd/modify
+     * @name ModifyAndTemporaryStorage
+     * @summary 编辑提交及暂存
+     * @request POST:/iqcInspectStd/modifyAndTemporaryStorage
      * @secure
      */
-    modify: (data: IqcInspectStdVO) =>
-      http.request<ResultObject['data']>(`/api/quality/iqcInspectStd/modify`, {
+    modifyAndTemporaryStorage: (data: IqcInspectStdVO) =>
+      http.request<ResultObject['data']>(`/api/quality/iqcInspectStd/modifyAndTemporaryStorage`, {
         method: 'POST',
         body: data as any,
       }),
@@ -7072,6 +7138,21 @@ export const api = {
      */
     loseEffectiveness: (data: string) =>
       http.request<ResultObject['data']>(`/api/quality/iqcInspectStd/loseEffectiveness`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 物料检验标准头表
+     * @name Search
+     * @summary 物料检验标准业务组件接口
+     * @request POST:/iqcInspectStd/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataIqcInspectStd['data']>(`/api/quality/iqcInspectStd/items`, {
         method: 'POST',
         body: data as any,
       }),
@@ -7125,13 +7206,13 @@ export const api = {
      * No description
      *
      * @tags 物料检验标准头表
-     * @name TemporaryStorage
-     * @summary 暂存标准
-     * @request POST:/iqcInspectStd/TemporaryStorage
+     * @name AddAndTemporaryStorage
+     * @summary 新增提交及暂存
+     * @request POST:/iqcInspectStd/addAndTemporaryStorage
      * @secure
      */
-    temporaryStorage: (data: IqcInspectStdVO) =>
-      http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/TemporaryStorage`, {
+    addAndTemporaryStorage: (data: IqcInspectStdVO) =>
+      http.request<ResultLong['data']>(`/api/quality/iqcInspectStd/addAndTemporaryStorage`, {
         method: 'POST',
         body: data as any,
       }),
