@@ -10,27 +10,27 @@
   >
     <!-- 第 1️⃣ 行数据 -->
     <t-form-item label="项目类别" label-align="right" name="itemCategory">
-      <t-select v-model="dtlData.itemCategory" clearable style="width: 280px">
+      <t-select v-model="dtlData.itemCategory" clearable>
         <t-option v-for="item in categoryOption" :key="item.id" :label="item.label" :value="item.value" />
       </t-select>
     </t-form-item>
     <t-form-item label="检验类型" label-align="right" name="inspectType">
-      <t-select v-model="dtlData.inspectType" clearable style="width: 280px">
+      <t-select v-model="dtlData.inspectType" clearable>
         <t-option v-for="item in stdTypeOption" :key="item.id" :label="item.label" :value="item.value" />
       </t-select>
     </t-form-item>
     <t-form-item label="检验内容" label-align="right" name="itemName">
-      <t-input v-model="dtlData.itemName" style="width: 280px" />
+      <t-input v-model="dtlData.itemName" />
     </t-form-item>
     <t-form-item label="项目行号" label-align="right" name="itemSeq">
-      <t-input v-model="dtlData.itemSeq" style="width: 280px" />
+      <t-input v-model="dtlData.itemSeq" />
     </t-form-item>
     <!-- 第 2️⃣ 行数据 -->
     <t-form-item label="检验依据" label-align="right" name="inspectBasis">
-      <t-input v-model="dtlData.inspectBasis" style="width: 280px" />
+      <t-input v-model="dtlData.inspectBasis" />
     </t-form-item>
     <t-form-item label="技术要求" label-align="right" name="technicalRequest">
-      <t-input v-model="dtlData.technicalRequest" style="width: 280px" />
+      <t-input v-model="dtlData.technicalRequest" />
     </t-form-item>
     <t-form-item label="是否CTQ" name="isCtq">
       <t-select v-model="dtlData.isCtq" :clearable="true">
@@ -39,16 +39,16 @@
       </t-select>
     </t-form-item>
     <t-form-item label="项目特性" name="characteristics">
-      <t-select v-model="dtlData.characteristics" clearable style="width: 280px">
+      <t-select v-model="dtlData.characteristics" clearable>
         <t-option v-for="item in characteristicsOptions" :key="item.id" :label="item.label" :value="item.value" />
       </t-select>
     </t-form-item>
     <t-form-item label="检验工具" name="inspectTool">
-      <t-input v-model="dtlData.inspectTool" style="width: 280px" />
+      <t-input v-model="dtlData.inspectTool" />
     </t-form-item>
     <t-form-item label="基准值" name="baseValue">
-      <t-input v-model="dtlData.baseValue" :disabled="dtlData.characteristics === 'COUNT'" yle="width: 70%" />
-      <div style="width: 30%">
+      <t-input v-model="dtlData.baseValue" :disabled="dtlData.characteristics === 'COUNT'" yle="width: 60%" />
+      <div style="width: 40%">
         <bcmp-select-business
           v-model="dtlData.uom"
           type="uom"
@@ -59,13 +59,13 @@
       </div>
     </t-form-item>
     <t-form-item label="最小值" name="minValue">
-      <t-input v-model="dtlData.minValue" :disabled="dtlData.characteristics === 'COUNT'" style="width: 280px" />
+      <t-input v-model="dtlData.minValue" :disabled="dtlData.characteristics === 'COUNT'" />
     </t-form-item>
     <t-form-item label="最大值" name="maxValue">
-      <t-input v-model="dtlData.maxValue" :disabled="dtlData.characteristics === 'COUNT'" style="width: 280px" />
+      <t-input v-model="dtlData.maxValue" :disabled="dtlData.characteristics === 'COUNT'" />
     </t-form-item>
     <t-form-item label="不合格分类" name="unqualifyCategory">
-      <t-select v-model="dtlData.unqualifyCategory" clearable style="width: 280px">
+      <t-select v-model="dtlData.unqualifyCategory" clearable>
         <t-option v-for="item in unCategoryOption" :key="item.id" :label="item.label" :value="item.value" />
       </t-select>
     </t-form-item>
@@ -100,12 +100,7 @@
       name="inspectLevel"
       :required-mark="dtlData.samplingStandardType === 'GB'"
     >
-      <t-select
-        v-model="dtlData.inspectLevel"
-        clearable
-        style="width: 280px"
-        :disabled="dtlData.samplingStandardType !== 'GB'"
-      >
+      <t-select v-model="dtlData.inspectLevel" clearable :disabled="dtlData.samplingStandardType !== 'GB'">
         <t-option v-for="item in levelOption" :key="item.id" :label="item.label" :value="item.value" />
       </t-select>
     </t-form-item>
@@ -387,7 +382,7 @@ defineExpose({
 
 <style lang="less" scoped>
 :deep(.t-form__controls-content) {
-  width: 200px !important;
+  width: 200 !important;
 
   .t-date-picker,
   .t-input-number,

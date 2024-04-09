@@ -71,6 +71,7 @@
                     <t-link v-if="row.status === 'DRAFT'" theme="primary" style="padding-right: 8px">删除</t-link>
                   </t-popconfirm>
                   <t-popconfirm
+                    v-if="row.status !== 'DRAFT' && row.status !== 'EXPIRED'"
                     content="失效后该标准将被禁用，同时解除物料及物料类对该标准的引用，是否继续？"
                     @confirm="onChangStatus(row)"
                   >
