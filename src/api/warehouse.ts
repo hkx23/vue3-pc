@@ -2189,10 +2189,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /** 待发货数量 */
   waitDeliveriedQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 响应数据 */
@@ -5743,8 +5743,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
