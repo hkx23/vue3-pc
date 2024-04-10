@@ -902,8 +902,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -1697,6 +1697,57 @@ export type StraightThroughRateReportVO = {
   mitemRate?: number;
 } | null;
 
+export interface SopFileSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  keyword?: string;
+}
+
+/** 响应数据 */
+export type PagingDataSopCategoryTreeVO = {
+  list?: SopCategoryTreeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSopCategoryTreeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSopCategoryTreeVO;
+}
+
+export interface SopCategoryMitemVO {
+  mitemCode?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  mitemName?: string;
+  mitemId?: string;
+  categoryId?: string;
+}
+
+export interface SopCategoryTreeVO {
+  categoryCode?: string;
+  id?: string;
+  /** @format int32 */
+  num?: number;
+  list?: SopCategoryMitemVO[];
+}
+
 /** 关键物料追溯（反向）-查询 */
 export interface ReverseTraceabilityReportSearch {
   /** @format int32 */
@@ -1832,8 +1883,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  retentionTime?: string;
   outTimeShowColor?: string;
+  retentionTime?: string;
 }
 
 /** 通用响应类 */
@@ -2736,13 +2787,13 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  workshopCode?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
 }
@@ -2787,10 +2838,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3302,13 +3353,13 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  workshopCode?: string;
   stateName?: string;
-  isState?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  isState?: boolean;
   defectCodeStr?: string;
 }
 
@@ -4930,17 +4981,17 @@ export interface BarcodeWipCollectVO {
   workstationModel?: Workstation;
   /** 请求ID */
   requestScanID?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
+  workshopCode?: string;
   stateName?: string;
-  isState?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  isState?: boolean;
 }
 
 /** 工序 */
@@ -6483,6 +6534,22 @@ export const api = {
           body: data as any,
         },
       ),
+  },
+  sopProduct: {
+    /**
+     * No description
+     *
+     * @tags 工艺文件与产品关系表
+     * @name GetMitemCategoryList
+     * @summary 获取树
+     * @request POST:/sopProduct/getMitemCategoryList
+     * @secure
+     */
+    getMitemCategoryList: (data: SopFileSearch) =>
+      http.request<ResultPagingDataSopCategoryTreeVO['data']>(`/api/control/sopProduct/getMitemCategoryList`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   reversetraceability: {
     /**

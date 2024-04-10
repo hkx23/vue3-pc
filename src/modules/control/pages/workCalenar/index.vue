@@ -85,12 +85,14 @@
             </div>
           </template>
         </t-calendar> -->
-        <div style="display: flex; align-items: center; margin-bottom: 10px">
-          <span class="span_title" style="width: 70px">{{ t('workCalenar.workCalenar') }}</span>
-          <t-button theme="primary" style="margin-left: auto" @click="onAdd">{{
-            t('workCalenar.calendarMaintenance')
-          }}</t-button>
-          <t-button theme="default" @click="onCheckOmissions">{{ t('workCalenar.checkOmissions') }}</t-button>
+        <div style="position: relative; margin-bottom: 10px">
+          <div style="overflow-x: clip">
+            <span class="span_title" style="width: 70px">{{ t('workCalenar.workCalenar') }}</span>
+            <div style="position: absolute; top: 0; right: 0">
+              <t-button theme="primary" @click="onAdd">{{ t('workCalenar.calendarMaintenance') }}</t-button>
+              <t-button theme="default" @click="onCheckOmissions">{{ t('workCalenar.checkOmissions') }}</t-button>
+            </div>
+          </div>
         </div>
         <div class="box">
           <div class="monthList">

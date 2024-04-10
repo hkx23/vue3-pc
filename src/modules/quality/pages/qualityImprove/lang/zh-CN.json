@@ -1,6 +1,7 @@
 {
   "qualityImprove": {
     "Launch": "Launch 发起",
+    "selectBillNo": "请选择检验单号",
     "reject": "驳回",
     "rejectTwo": "[驳回]",
     "rejectToBefore": "驳回至上个节点",
@@ -26,6 +27,7 @@
     "plan": "计划",
     "attachment": "附件",
     "attachmentUpload": "附件上传",
+    "attachmentCheck": "查看附件",
     "PDCAD": "Do 执行",
     "do": "执行",
     "PDCAC": "Check 检查",
