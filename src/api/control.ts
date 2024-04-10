@@ -385,6 +385,19 @@ export interface ResultWorkgroup {
   data?: Workgroup;
 }
 
+/** 通用响应类 */
+export interface ResultString {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: string | null;
+}
+
 /** 响应数据 */
 export type PagingDataPersonOfWorkgroupVO = {
   list?: PersonOfWorkgroupVO[];
@@ -1697,6 +1710,58 @@ export type StraightThroughRateReportVO = {
   mitemRate?: number;
 } | null;
 
+export interface SopFileSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  keyword?: string;
+}
+
+/** 响应数据 */
+export type PagingDataSopCategoryTreeVO = {
+  list?: SopCategoryTreeVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSopCategoryTreeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSopCategoryTreeVO;
+}
+
+export interface SopCategoryMitemVO {
+  mitemCode?: string;
+  categoryCode?: string;
+  categoryName?: string;
+  mitemName?: string;
+  mitemId?: string;
+  categoryId?: string;
+}
+
+export interface SopCategoryTreeVO {
+  categoryCode?: string;
+  categoryName?: string;
+  id?: string;
+  /** @format int32 */
+  num?: number;
+  list?: SopCategoryMitemVO[];
+}
+
 /** 关键物料追溯（反向）-查询 */
 export interface ReverseTraceabilityReportSearch {
   /** @format int32 */
@@ -2738,13 +2803,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
-  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2921,8 +2986,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3146,9 +3211,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
   defectCodeStr?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3302,14 +3367,14 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
+  isState?: boolean;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
   stateName?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
-  isState?: boolean;
   defectCodeStr?: string;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -4932,15 +4997,15 @@ export interface BarcodeWipCollectVO {
   requestScanID?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopName?: string;
+  isState?: boolean;
   workshopCode?: string;
+  workshopName?: string;
   workshopId?: string;
   stateName?: string;
+  datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   scanDatetimeStr?: string;
-  datetimeScheStr?: string;
-  isState?: boolean;
 }
 
 /** 工序 */
@@ -5424,8 +5489,8 @@ export type DefectCodeVO = {
   ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5946,6 +6011,21 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultWorkgroup['data']>(`/api/control/workgroup/items/${id}`, {
         method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 班组
+     * @name GetWorkGroupNameById
+     * @summary 根据ID获取班组名称
+     * @request POST:/workgroup/getWorkGroupNameById
+     * @secure
+     */
+    getWorkGroupNameById: (data: string) =>
+      http.request<ResultString['data']>(`/api/control/workgroup/getWorkGroupNameById`, {
+        method: 'POST',
+        body: data as any,
       }),
 
     /**
@@ -6483,6 +6563,22 @@ export const api = {
           body: data as any,
         },
       ),
+  },
+  sopProduct: {
+    /**
+     * No description
+     *
+     * @tags 工艺文件与产品关系表
+     * @name GetMitemCategoryList
+     * @summary 获取树
+     * @request POST:/sopProduct/getMitemCategoryList
+     * @secure
+     */
+    getMitemCategoryList: (data: SopFileSearch) =>
+      http.request<ResultPagingDataSopCategoryTreeVO['data']>(`/api/control/sopProduct/getMitemCategoryList`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   reversetraceability: {
     /**

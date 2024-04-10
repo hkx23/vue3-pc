@@ -1,7 +1,7 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
+      <cmp-query ref="queryCompent" :opts="opts" @submit="onInput"> </cmp-query>
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
@@ -19,10 +19,24 @@
         <template #title>
           {{ '资产台账列表' }}
         </template>
+        <template #stateSwitch="{ row }">
+          <t-switch
+            :custom-value="[1, 0]"
+            :value="row.state"
+            :default-value="row.state"
+            @change="(value) => onSwitchChange(row, value)"
+          ></t-switch>
+        </template>
         <template #actionSlot="{ row }">
           <t-space :size="8">
             <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
-
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
+              <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
+          </t-space>
+        </template>
+        <template #fileActionSlot="{ row }">
+          <t-space :size="8">
             <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
               <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
             </t-popconfirm>
@@ -51,47 +65,146 @@
     :cancel-btn="null"
     :confirm-btn="null"
     :header="diaLogTitle"
+    width="48%"
+    top="90px"
     @close="onSecondaryReset"
   >
-    <t-form
-      ref="formRef"
-      :rules="rules"
-      :data="assetModelTabData.list"
-      label-width="120px"
-      @submit="onAnomalyTypeSubmit"
-    >
-      <!-- 第 1️⃣ 行数据 -->
-      <t-form-item label="资产品牌" name="assetBrand">
-        <bcmp-select-business
-          v-model="assetModelTabData.list.assetBrandId"
-          label=""
-          type="assetBrand"
-          :clearable="true"
-          :disabled="isDisabled"
-          @selection-change="onWarehouseSelect"
-        ></bcmp-select-business>
-      </t-form-item>
-      <!-- 第 2️⃣ 行数据 -->
-      <t-form-item label="资产品牌描述" name="brandDesc">
-        <t-input v-model="assetModelTabData.list.brandDesc" disabled></t-input>
-      </t-form-item>
-      <!-- 第 3️⃣ 行数据 -->
-      <t-form-item label="资产型号编码" name="modelCode">
-        <t-input v-model="assetModelTabData.list.modelCode"></t-input>
-      </t-form-item>
-      <!-- 第 4️⃣ 行数据 -->
-      <t-form-item label="资产型号名称" name="modelName">
-        <t-input v-model="assetModelTabData.list.modelName"></t-input>
-      </t-form-item>
-      <!-- 第 5 行数据 -->
-      <t-form-item label="资产型号描述" name="modelDesc">
-        <t-input v-model="assetModelTabData.list.modelDesc"></t-input>
-      </t-form-item>
-    </t-form>
-    <template #footer>
-      <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-      <t-button theme="primary" @click="onSecondarySubmit">保存</t-button>
-    </template>
+    <cmp-container :full="true" style="height: calc(90vh - 140px - 140px)">
+      <t-tabs v-model="tabDefaultValue" @change="tabChange">
+        <t-tab-panel label="设备信息" value="0" :destroy-on-hide="true">
+          <t-form
+            v-if="tabCurrentValue == '0'"
+            ref="formRef"
+            :rules="rules"
+            :colon="true"
+            layout="inline"
+            :data="equipmentData.list"
+            label-width="120px"
+            @submit="onAnomalyTypeSubmit"
+          >
+            <t-form-item label="设备类型" name="assetType">
+              <bcmp-select-business
+                v-model="equipmentData.list.assetTypeId"
+                label=""
+                type="assetType"
+                :clearable="true"
+                :disabled="isDisabled"
+              ></bcmp-select-business>
+            </t-form-item>
+            <t-form-item label="设备品牌" name="assetBrand">
+              <bcmp-select-business
+                v-model="equipmentData.list.assetBrandId"
+                label=""
+                type="assetBrand"
+                :parent="equipmentData.list.assetTypeId"
+                :clearable="true"
+                :disabled="isDisabled"
+              ></bcmp-select-business>
+            </t-form-item>
+            <t-form-item label="设备型号" name="assetModel">
+              <bcmp-select-business
+                v-model="equipmentData.list.assetModelId"
+                label=""
+                type="assetModel"
+                :parent="equipmentData.list.assetBrandId"
+                :clearable="true"
+                :disabled="isDisabled"
+              ></bcmp-select-business>
+            </t-form-item>
+            <t-form-item label="设备编码" name="equipmentCode">
+              <t-input v-model="equipmentData.list.equipmentCode"></t-input>
+            </t-form-item>
+            <t-form-item label="设备名称" name="equipmentName">
+              <t-input v-model="equipmentData.list.equipmentName"></t-input>
+            </t-form-item>
+            <t-form-item label="设备描述" name="equipmentDesc">
+              <t-input v-model="equipmentData.list.equipmentDesc"></t-input>
+            </t-form-item>
+            <t-form-item label="设备存放位置" name="position">
+              <t-input v-model="equipmentData.list.position"></t-input>
+            </t-form-item>
+            <t-form-item label="保管部门" name="departmentOwner">
+              <t-input v-model="equipmentData.list.departmentOwner"></t-input>
+            </t-form-item>
+            <t-form-item label="设备资产编号" name="assetCode">
+              <t-input v-model="equipmentData.list.assetCode"></t-input>
+            </t-form-item>
+            <t-form-item label="管理部门" name="departmentOwner">
+              <t-input v-model="equipmentData.list.departmentOwner" disabled></t-input>
+            </t-form-item>
+            <t-form-item label="设备供应商" name="equipmentSupplier">
+              <t-input v-model="equipmentData.list.equipmentSupplier"></t-input>
+            </t-form-item>
+            <t-form-item label="保管人" name="userOwner">
+              <t-input v-model="equipmentData.list.userOwner"></t-input>
+            </t-form-item>
+            <t-form-item label="维保联系人" name="maintenanceOwner">
+              <t-input v-model="equipmentData.list.maintenanceOwner"></t-input>
+            </t-form-item>
+            <t-form-item label="维保人联系方式" name="maintenanceOwnerContact">
+              <t-input v-model="equipmentData.list.maintenanceOwnerContact"></t-input>
+            </t-form-item>
+            <t-form-item label="生效日期" name="dateEffective" class="width: 100%">
+              <t-date-picker v-model="equipmentData.list.dateEffective" clearable style="width: 300px" />
+            </t-form-item>
+            <t-form-item label="失效日期" name="dateInvalid">
+              <t-date-picker v-model="equipmentData.list.dateInvalid" clearable style="width: 300px" />
+            </t-form-item>
+            <t-form-item label="进场日期" name="datetimeEntry">
+              <t-date-picker v-model="equipmentData.list.datetimeEntry" clearable style="width: 300px" />
+            </t-form-item>
+            <t-form-item label="状态" name="status">
+              <t-select v-model="equipmentData.list.status" :clearable="true">
+                <t-option
+                  v-for="item in equipmentStatusDataList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </t-select>
+            </t-form-item>
+            <t-form-item label="维修处理组" name="repairDeal">
+              <t-input v-model="equipmentData.list.repairDealId"></t-input>
+            </t-form-item>
+            <t-form-item label="维修验收组" name="repairAccept">
+              <t-input v-model="equipmentData.list.repairAcceptId"></t-input>
+            </t-form-item>
+            <t-form-item label="保养处理组" name="maintenanceDeal">
+              <t-input v-model="equipmentData.list.maintenanceDealId"></t-input>
+            </t-form-item>
+            <t-form-item label="保养验收组" name="maintenanceAccept">
+              <t-input v-model="equipmentData.list.maintenanceAcceptId"></t-input>
+            </t-form-item>
+            <t-form-item label="点检处理组" name="inspectDeal">
+              <t-input v-model="equipmentData.list.inspectDealId"></t-input>
+            </t-form-item>
+            <t-form-item label="点检验收组" name="inspectAccept">
+              <t-input v-model="equipmentData.list.inspectAcceptId"></t-input>
+            </t-form-item>
+          </t-form>
+        </t-tab-panel>
+        <t-tab-panel label="技术文件" value="1" :destroy-on-hide="true">
+          <cmp-table
+            ref="tableRef"
+            row-key="id"
+            :show-toolbar="false"
+            :show-pagination="false"
+            :hover="true"
+            :fixed-height="false"
+            empty="没有符合条件的数据"
+            :table-data="anomalyTypeData.list"
+            :table-column="fileColumns"
+            :total="anomalyTotal"
+          ></cmp-table>
+        </t-tab-panel>
+        <t-tab-panel label="维保履历" value="2" :destroy-on-hide="true"></t-tab-panel>
+        <t-tab-panel label="拓展属性" value="3" :destroy-on-hide="true"></t-tab-panel>
+      </t-tabs>
+      <template #footer>
+        <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+        <t-button theme="primary" @click="onSecondarySubmit">保存</t-button>
+      </template>
+    </cmp-container>
   </t-dialog>
 </template>
 <script setup lang="ts">
@@ -113,6 +226,9 @@ const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
 const submitFalg = ref(false);
+const queryCompent = ref(); // 查询组件对象传递
+const tabDefaultValue = ref('0'); // tab的默认选中
+const tabCurrentValue = ref(); // 当前tab的value值
 
 // 表格数据总条数
 const anomalyTotal = ref(0);
@@ -120,14 +236,34 @@ const anomalyTotal = ref(0);
 const incidentID = ref('');
 // 表格数据
 const anomalyTypeData = reactive({ list: [] });
+
 // dialog 弹框数据
-const assetModelTabData = reactive({
+const equipmentData = reactive({
   list: {
-    assetBrandId: '', // 资产品牌
-    brandDesc: '', // 资产品牌描述
-    modelCode: '', // 资产型号编码
-    modelName: '', // 资产型号名称
-    modelDesc: ' ', // 资产型号描述
+    equipmentCode: '', // 设备编码
+    equipmentName: '', // 设备名称
+    assetTypeId: '', // 设备类型ID
+    equipmentDesc: '', // 设备描述
+    assetBrandId: ' ', // 设备品牌ID
+    position: ' ', // 设备存放位置
+    assetModelId: ' ', // 设备型号ID
+    departmentOwner: ' ', // 保管部门
+    assetCode: ' ', // 设备资产编号
+    // assetModelId: ' ', // 管理部门
+    equipmentSupplier: ' ', // 设备供应商
+    userOwner: ' ', // 保管人
+    maintenanceOwner: ' ', // 维保联系人
+    maintenanceOwnerContact: ' ', // 维保联系方式
+    dateEffective: '', // 生效时间
+    dateInvalid: '', // 失效时间
+    datetimeEntry: '', // 进场时间
+    status: '', // 状态
+    repairDealId: '', // 维修处理组
+    repairAcceptId: '', // 维修验收组
+    maintenanceDealId: '', // 保养处理组
+    maintenanceAcceptId: '', // 保养验收组
+    inspectDealId: '', // 点检处理组
+    inspectAcceptId: '', // 点检验收组
   },
 });
 // 表格列表数据
@@ -156,7 +292,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'modelDesc',
+    colKey: 'brandName',
     title: '资产品牌',
     align: 'center',
     width: '100',
@@ -204,10 +340,11 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'stateName',
+    colKey: 'state',
     title: '管理状态',
     align: 'center',
     width: '100',
+    cell: 'stateSwitch',
   },
   {
     colKey: 'op',
@@ -220,21 +357,67 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 ];
 // 表单验证规则
 const rules: FormRules = {
+  assetTypeId: [{ required: true, message: '资产类型不能为空', trigger: 'change' }],
   assetBrandId: [{ required: true, message: '资产品牌不能为空', trigger: 'change' }],
-  brandDesc: [{ required: true, message: '资产品牌描述不能为空', trigger: 'blur' }],
-  modelCode: [{ required: true, message: '资产型号编码不能为空', trigger: 'blur' }],
-  modelName: [{ required: true, message: '资产型号名称不能为空', trigger: 'blur' }],
-  modelDesc: [{ required: true, message: '资产型号描述不能为空', trigger: 'blur' }],
+  assetModelId: [{ required: true, message: '资产型号不能为空', trigger: 'change' }],
+  assetCode: [{ required: true, message: '设备资产编号不能为空', trigger: 'blur' }],
+  equipmentCode: [{ required: true, message: '设备编码不能为空', trigger: 'blur' }],
+  equipmentName: [{ required: true, message: '设备名称不能为空', trigger: 'blur' }],
+  equipmentDesc: [{ required: true, message: '设备描述不能为空', trigger: 'blur' }],
+  status: [{ required: true, message: '状态不能为空', trigger: 'change' }],
 };
+// 表格列表数据
+const fileColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'row-select',
+    type: 'single',
+    width: 46,
+  },
+  {
+    colKey: 'fileName',
+    title: '文件名',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'op',
+    title: '操作',
+    align: 'center',
+    fixed: 'right',
+    width: '130',
+    cell: 'fileActionSlot', // 引用具名插槽
+  },
+];
 // 初始渲染
 onMounted(async () => {
   await onGetAnomalyTypeData(); // 获取 表格 数据
 });
 
-// 添加资产品牌下拉数据
-const onWarehouseSelect = (context) => {
-  assetModelTabData.list.brandDesc = context.brandDesc;
+// switch 开关事件
+const onSwitchChange = async (row: any, value: any) => {
+  const isValue = value ? 1 : 0;
+  await api.assetLedger.modify({
+    state: isValue,
+    equipmentCode: row.equipmentCode,
+    assetModelId: row.assetModelId,
+    id: row.id,
+  });
+  await queryCompent.value.search();
+  MessagePlugin.success('操作成功');
 };
+
+// TAb 栏切换事件
+const tabChange = async (value: any) => {
+  tabCurrentValue.value = value;
+};
+
+// 初始化 状态 下拉框数据
+const equipmentStatusDataList = [
+  { label: '正常', value: 'NORMAL' },
+  { label: '维修中', value: 'REPAIR' },
+  { label: '保养中', value: 'MAINTENANCE' },
+  { label: '已报废', value: 'SCRAPED' },
+];
 
 // 刷新按钮
 const onFetchData = () => {
@@ -254,26 +437,16 @@ const onGetAnomalyTypeData = async () => {
 
 // 添加按钮点击事件
 const onAddTypeData = () => {
-  formRef.value.reset({ type: 'empty' });
-  isDisabled.value = false;
-  formVisible.value = true;
-  assetModelTabData.list.brandDesc = ''; // 资产品牌描述
-  assetModelTabData.list.modelCode = ''; // 资产型号编码
-  assetModelTabData.list.modelName = ''; // 资产型号名称
-  assetModelTabData.list.modelDesc = ''; // 资产型号描述
-  assetModelTabData.list.assetBrandId = '';
-  submitFalg.value = true;
-  diaLogTitle.value = '新增资产型号';
+  tabCurrentValue.value = '0'; // 当前tab的value值设0，默认加载第一个form表单
+  isDisabled.value = false; // 控件开关
+  formVisible.value = true; // dialog开关
+  submitFalg.value = true; // 区分新增编辑的开关
+  diaLogTitle.value = '新增设备台账';
 };
 
-// 下拉框点击事件
-// const onObjectCodeChange = (data: { paramCode: string }) => {
-//   assetModelTabData.list.assetType = data.paramCode;
-// };
-
-// 添加异常类型请求
+// 添加资产台账请求
 const onAddTypeRequest = async () => {
-  await api.assetModel.add(assetModelTabData.list);
+  await api.assetLedger.add(equipmentData.list);
   await onGetAnomalyTypeData();
   MessagePlugin.success('添加成功');
 };
@@ -308,21 +481,43 @@ const onSecondarySubmit = () => {
 };
 // 右侧表格编辑按钮
 const onEditRow = (row: any) => {
-  isDisabled.value = true;
-  assetModelTabData.list.brandDesc = row.brandDesc; // 资产品牌描述
-  assetModelTabData.list.modelCode = row.modelCode; // 资产型号编码
-  assetModelTabData.list.modelName = row.modelName; // 资产型号名称
-  assetModelTabData.list.modelDesc = row.modelDesc; // 资产型号描述
-  assetModelTabData.list.assetBrandId = row.assetBrandId; // 资产品牌
+  tabCurrentValue.value = '0'; // 当前tab的value值设0，默认加载第一个form表单
+  isDisabled.value = true; // 控件的开关
+  formVisible.value = true; // dialog的开关
+  submitFalg.value = false; // 区分新增编辑的开关
+  // 回填数据
+  equipmentData.list.equipmentCode = row.equipmentCode; // 设备编码
+  equipmentData.list.equipmentName = row.equipmentName; // 设备名称
+  equipmentData.list.assetTypeId = row.assetTypeId; // 设备类型ID
+  equipmentData.list.equipmentDesc = row.equipmentDesc; // 设备描述
+  equipmentData.list.assetBrandId = row.assetBrandId; // 设备品牌ID
+  equipmentData.list.position = row.position; // 设备存放位置
+  equipmentData.list.assetModelId = row.assetModelId; // 设备型号ID
+  equipmentData.list.departmentOwner = row.departmentOwner; // 保管部门
+  equipmentData.list.assetCode = row.assetCode; // 设备资产编号
+  // assetModelId: ' '; // 管理部门
+  equipmentData.list.equipmentSupplier = row.equipmentSupplier; // 设备供应商
+  equipmentData.list.userOwner = row.userOwner; // 保管人
+  equipmentData.list.maintenanceOwner = row.maintenanceOwner; // 维保联系人
+  equipmentData.list.maintenanceOwnerContact = row.maintenanceOwnerContact; // 维保联系方式
+  equipmentData.list.dateEffective = row.dateEffective; // 生效时间
+  equipmentData.list.dateInvalid = row.dateInvalid; // 失效时间
+  equipmentData.list.datetimeEntry = row.datetimeEntry; // 进场时间
+  equipmentData.list.status = row.status; // 状态
+  equipmentData.list.repairDealId = row.repairDealId; // 维修处理组
+  equipmentData.list.repairAcceptId = row.repairAcceptId; // 维修验收组
+  equipmentData.list.maintenanceDealId = row.maintenanceDealId; // 保养处理组
+  equipmentData.list.maintenanceAcceptId = row.maintenanceAcceptId; // 保养验收组
+  equipmentData.list.inspectDealId = row.inspectDealId; // 点检处理组
+  equipmentData.list.inspectAcceptId = row.inspectAcceptId; // 点检验收组
+
   incidentID.value = row.id; // 编辑回填 ID
-  submitFalg.value = false;
-  formVisible.value = true;
-  diaLogTitle.value = '编辑资产型号';
+  diaLogTitle.value = '编辑资产台账';
 };
 
 // 编辑表格数据 请求
 const onRedactTypeRequest = async () => {
-  await api.assetModel.modify({ ...assetModelTabData.list, id: incidentID.value });
+  await api.assetLedger.modify({ ...equipmentData.list, id: incidentID.value });
   await onGetAnomalyTypeData();
   MessagePlugin.success('修改成功');
 };
@@ -340,7 +535,7 @@ const onDeleteRow = (row: any) => {
 
 // 右侧表格删除确认按钮
 const onDelConfirm = async () => {
-  await api.assetModel.removeBatch(selectedRowKeys.value);
+  await api.assetLedger.removeBatch(selectedRowKeys.value);
   if (anomalyTypeData.list.length <= 1 && pageUI.value.page > 1) {
     pageUI.value.page--;
   }
@@ -354,7 +549,7 @@ const deleteBatches = async () => {
   // 步骤 1: 检查删除前的数据总量
   const initialLength = anomalyTypeData.list.length;
   // 步骤 2: 执行删除操作
-  await api.assetModel.removeBatch(selectedRowKeys.value);
+  await api.assetLedger.removeBatch(selectedRowKeys.value);
   // 步骤 3: 检查当前页是否还有数据
   if (initialLength === anomalyTypeData.list.length && pageUI.value.page > 1) {
     // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
@@ -368,7 +563,7 @@ const deleteBatches = async () => {
 // 关闭模态框事件
 const onSecondaryReset = () => {
   formRef.value.reset({ type: 'empty' });
-  assetModelTabData.list.assetBrandId = '';
+  equipmentData.list.assetBrandId = '';
   formVisible.value = false;
 };
 

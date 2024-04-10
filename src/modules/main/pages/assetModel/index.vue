@@ -68,7 +68,7 @@
           type="assetBrand"
           :clearable="true"
           :disabled="isDisabled"
-          @selection-change="onWarehouseSelect"
+          @selection-change="onAssetBrandSelect"
         ></bcmp-select-business>
       </t-form-item>
       <!-- 第 2️⃣ 行数据 -->
@@ -184,7 +184,7 @@ onMounted(async () => {
 });
 
 // 添加资产品牌下拉数据
-const onWarehouseSelect = (context) => {
+const onAssetBrandSelect = (context) => {
   assetModelTabData.list.brandDesc = context.brandDesc;
 };
 
