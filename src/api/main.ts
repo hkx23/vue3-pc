@@ -4564,12 +4564,12 @@ export interface MitemInSupplierVO {
   /** 物料名称 */
   mitemName?: string;
   stateName?: string;
-  isState?: boolean;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4815,15 +4815,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
   stateName?: string;
-  isState?: boolean;
   isBatchName?: string;
   isInProcessName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isProductName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4966,8 +4966,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8302,6 +8302,121 @@ export interface ResultPagingDataAssetModelVO {
   data?: PagingDataAssetModelVO;
 }
 
+export interface AssetLedgerSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+}
+
+export interface AssetLedgerVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetModelId?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+  /** 设备描述 */
+  equipmentDesc?: string;
+  /** 资产编码 */
+  assetCode?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  dateEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  dateInvalid?: string;
+  /** 存放位置 */
+  position?: string;
+  /** 保管部门 */
+  departmentOwner?: string;
+  /** 保管人 */
+  userOwner?: string;
+  /** 设备供应商 */
+  equipmentSupplier?: string;
+  /** 维保联系人 */
+  maintenanceOwner?: string;
+  /** 维保联系方式 */
+  maintenanceOwnerContact?: string;
+  /**
+   * 进场时间
+   * @format date-time
+   */
+  datetimeEntry?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  inspectDealId?: string;
+  inspectAcceptId?: string;
+  /** 状态 */
+  status?: string;
+  /** 资产型号名称 */
+  modelName?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /** 管理状态名称 */
+  stateName?: string;
+  /** 资产品牌名称 */
+  brandName?: string;
+  /** 资产品牌描述 */
+  brandDesc?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAssetLedgerVO = {
+  list?: AssetLedgerVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAssetLedgerVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAssetLedgerVO;
+}
+
 /** 资产品牌 */
 export interface AssetBrand {
   id?: string;
@@ -9188,10 +9303,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -16390,6 +16505,22 @@ export const api = {
      */
     add: (data: AssetModel) =>
       http.request<ResultObject['data']>(`/api/main/assetModel/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  assetLedger: {
+    /**
+     * No description
+     *
+     * @tags 资产台账
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/assetLedger/getList
+     * @secure
+     */
+    getList: (data: AssetLedgerSearch) =>
+      http.request<ResultPagingDataAssetLedgerVO['data']>(`/api/main/assetLedger/getList`, {
         method: 'POST',
         body: data as any,
       }),
