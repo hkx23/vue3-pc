@@ -244,7 +244,6 @@ const serialNumberEnter = async (value) => {
             });
           });
           pushMessage('success', value, reData.scanMessage);
-          // writeMessageListSuccess(reData.scanMessage, reData.scanDatetimeStr);
 
           if (reData.defectCodeStr.length > 0) {
             scanInput.value.selectAll();
@@ -255,16 +254,13 @@ const serialNumberEnter = async (value) => {
           }
         } else {
           scanInput.value.selectAll();
-          writeScanInfoError(reData.serialNumber, reData.qty, reData.defectCodeStr);
           throw new Error(reData.scanMessage);
-          // writeMessageListError(reData.scanMessage, reData.scanDatetimeStr);
         }
       })
       .catch((e) => {
         scanInput.value.selectAll();
         pushMessage('error', value, e.message);
         writeScanInfoError(value, 0, e.message);
-        // writeMessageListError(e.message, dayjs().format('YYYY-MM-DD HH:mm:ss'));
       });
   }
 };
