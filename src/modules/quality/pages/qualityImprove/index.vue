@@ -154,7 +154,7 @@ const opts = computed(() => {
       bind: {
         type: 'state',
         showTitle: false,
-        category: 'Q_IQC_INSPECTION_TYPE',
+        category: 'Q_INSPECTION_TYPE',
       },
     },
     relateBillNo: {

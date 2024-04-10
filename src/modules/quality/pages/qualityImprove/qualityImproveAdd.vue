@@ -84,7 +84,7 @@
                     <t-form-item :label="t('qualityImprove.relateBillNo')" label-align="right" name="relateBillNo">
                       <t-select
                         v-model="formData.relateBillNo"
-                        :placeholder="t('qualityImprove.selectInspectionType')"
+                        :placeholder="t('qualityImprove.selectBillNo')"
                         style="width: 200px"
                         filterable
                         input-props
@@ -321,7 +321,12 @@
                   <t-col :span="4">
                     <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                       <t-link theme="primary" @click="formVisible = true">
-                        {{ t('qualityImprove.attachmentUpload') }}
+                        <div v-if="formData.status !== 'DRAFT' || formData.operateType === 'check'">
+                          {{ t('qualityImprove.attachmentCheck') }}
+                        </div>
+                        <div v-else>
+                          {{ t('qualityImprove.attachmentUpload') }}
+                        </div>
                       </t-link>
                     </t-form-item>
                   </t-col>
@@ -364,7 +369,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleP = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improvePdca.status !== '1' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -405,7 +415,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleD = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improvePdca.status !== '2' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -446,7 +461,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleC = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improvePdca.status !== '3' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -487,7 +507,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleA = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improvePdca.status !== '4' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -531,7 +556,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleD1 = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improve8d.status !== '1' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -572,7 +602,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleD2 = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improve8d.status !== '2' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -613,7 +648,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleD3 = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improve8d.status !== '3' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -654,7 +694,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleD4 = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improve8d.status !== '4' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -695,7 +740,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleD5 = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improve8d.status !== '5' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -736,7 +786,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleD6 = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improve8d.status !== '6' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -781,7 +836,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleD7 = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improve8d.status !== '7' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -822,7 +882,12 @@
                     <t-col :span="4">
                       <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
                         <t-link theme="primary" @click="formVisibleD8 = true">
-                          {{ t('qualityImprove.attachmentUpload') }}
+                          <div v-if="improve8d.status !== '8' || formData.operateType === 'check'">
+                            {{ t('qualityImprove.attachmentCheck') }}
+                          </div>
+                          <div v-else>
+                            {{ t('qualityImprove.attachmentUpload') }}
+                          </div>
                         </t-link>
                       </t-form-item>
                     </t-col>
@@ -1309,6 +1374,62 @@ const improvePdca = ref({
   fileListA: [],
 });
 const init = () => {
+  improvePdca.value = {
+    id: '',
+    status: '',
+    userPlanName: '',
+    userCheckName: '',
+    userDoName: '',
+    userActName: '',
+    planDesc: '',
+    doDesc: '',
+    checkDesc: '',
+    actDesc: '',
+    datetimePlan: '',
+    datetimeDo: '',
+    datetimeCheck: '',
+    datetimeAct: '',
+    fileListP: [],
+    fileListD: [],
+    fileListC: [],
+    fileListA: [],
+  };
+  improve8d.value = {
+    id: '',
+    userD1Name: '',
+    userD2Name: '',
+    userD3Name: '',
+    userD4Name: '',
+    userD5Name: '',
+    userD6Name: '',
+    userD7Name: '',
+    userD8Name: '',
+    datetimeD1: '',
+    datetimeD2: '',
+    datetimeD3: '',
+    datetimeD4: '',
+    datetimeD5: '',
+    datetimeD6: '',
+    datetimeD7: '',
+    datetimeD8: '',
+    d1Desc: '',
+    d2Desc: '',
+    d3Desc: '',
+    d4Desc: '',
+    d5Desc: '',
+    d6Desc: '',
+    d7Desc: '',
+    d8Desc: '',
+    status: '',
+    fileListD1: [],
+    fileListD2: [],
+    fileListD3: [],
+    fileListD4: [],
+    fileListD5: [],
+    fileListD6: [],
+    fileListD7: [],
+    fileListD8: [],
+  };
   formData.value = {
     operateType: 'add',
     billNo: '',

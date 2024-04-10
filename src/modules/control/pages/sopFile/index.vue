@@ -1,19 +1,32 @@
 <template>
   <cmp-container :full="true">
     <cmp-row>
-      <cmp-card ref="treeCard" flex="300px">
+      <cmp-card ref="treeCard" flex="360px">
         <t-space direction="vertical" :size="8">
-          <t-input
-            v-model="treeKey"
-            style="width: 230px"
-            placeholder="输入关键字进行过滤"
-            clearable
-            @change="demo1Input"
-          >
-            <template #suffixIcon>
-              <search-icon :style="{ cursor: 'pointer' }" @click="demo1Input" />
-            </template>
-          </t-input>
+          <span class="span_title">产品</span>
+          <div class="divider"></div>
+          <div class="container">
+            <t-button size="small">
+              <add-rectangle-icon @click="demo1Input" />
+            </t-button>
+            <t-button variant="outline" size="small">
+              <multiply-icon @click="demo1Input" />
+            </t-button>
+            <t-button variant="outline" size="small">
+              <login-icon @click="demo1Input" />
+            </t-button>
+            <t-input
+              v-model="treeKey"
+              style="width: 190px; margin-left: 5px"
+              placeholder="产品关键字搜索"
+              clearable
+              @change="demo1Input"
+            >
+              <template #suffixIcon>
+                <search-icon :style="{ cursor: 'pointer' }" @click="demo1Input" />
+              </template>
+            </t-input>
+          </div>
           <t-tree
             ref="treeRef"
             style="width: 100%"
@@ -22,7 +35,6 @@
             line
             activable
             :filter="demo1Filter"
-            :expand-level="2"
             :height="treeHeight"
             :transition="true"
             :expand-on-click-node="false"
@@ -36,75 +48,58 @@
             @click="treeClick"
           >
             <template #icon="{ node }">
-              <icon v-if="node.getChildren() && !node.expanded" name="caret-right" />
-              <icon v-else-if="node.getChildren() && node.expanded && node.loading" name="loading" />
-              <icon v-else-if="node.getChildren() && node.expanded" name="caret-down" />
-              <icon v-else-if="node.data.attribute == 2" name="attach" />
+              <icon :name="node.expanded ? 'folder-open' : 'folder'" />
+            </template>
+            <template #label="{ node }">
+              <div class="no-wrap" :title="node.label">{{ node.label }}</div>
             </template>
           </t-tree>
         </t-space>
       </cmp-card>
       <cmp-card flex="auto">
-        <cmp-container :full="true" style="padding: 0">
-          <cmp-card :ghost="true">
-            <t-breadcrumb :max-item-width="'150'" style="padding-left: 0">
-              <t-breadcrumbItem v-if="treeClickData?.two">{{ treeClickData.two }}</t-breadcrumbItem>
-              <t-breadcrumbItem v-if="treeClickData?.one" :max-width="'160'">
-                {{ treeClickData.one }}
-              </t-breadcrumbItem>
-            </t-breadcrumb>
-          </cmp-card>
-          <cmp-card :ghost="true">
-            <cmp-table
-              ref="tableRef"
-              v-model:pagination="pageUI"
-              row-key="id"
-              :table-column="columns"
-              :table-data="moduleData"
-              :fixed-height="true"
-              :total="tabTotal"
-              @refresh="fetchData"
-            >
-              <template #stateOp="slotProps">
-                <t-space>
-                  {{ getstateName(slotProps.row.state) }}
-                </t-space>
-              </template>
-              <template #profileCategoryOp="slotProps">
-                <t-space>
-                  {{ getProfileCategory(slotProps.row.profileCategory) }}
-                </t-space>
-              </template>
-              <template #op="slotProps">
-                <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
-                <!-- <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
+        <cmp-table
+          ref="tableRef"
+          v-model:pagination="pageUI"
+          row-key="id"
+          :table-column="columns"
+          :table-data="moduleData"
+          :fixed-height="true"
+          :total="tabTotal"
+          @refresh="fetchData"
+        >
+          <template #stateOp="slotProps">
+            <t-space>
+              {{ getstateName(slotProps.row.state) }}
+            </t-space>
+          </template>
+          <template #profileCategoryOp="slotProps">
+            <t-space>
+              {{ getProfileCategory(slotProps.row.profileCategory) }}
+            </t-space>
+          </template>
+          <template #op="slotProps">
+            <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
+            <!-- <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
                   <icon name="edit-1" class="black-icon" />
                 </t-button> -->
-              </template>
-              <template #title>
-                <t-space direction="horizontal">
-                  <t-input
-                    v-model="keyword"
-                    style="width: 250px"
-                    placeholder="输入关键字进行过滤"
-                    :on-enter="onRefresh"
-                  >
-                    <template #suffixIcon>
-                      <search-icon :style="{ cursor: 'pointer' }" @click="onRefresh" />
-                    </template>
-                  </t-input>
+          </template>
+          <template #title>
+            <t-space direction="horizontal">
+              <t-input v-model="keyword" style="width: 250px" placeholder="输入关键字进行过滤" :on-enter="onRefresh">
+                <template #suffixIcon>
+                  <search-icon :style="{ cursor: 'pointer' }" @click="onRefresh" />
+                </template>
+              </t-input>
 
-                  <!-- <t-button theme="primary" @click="onRefresh">查询</t-button> -->
-                </t-space>
-              </template>
-              <template #button>
-                <t-space direction="vertical">
-                  <t-button theme="primary" :disabled="isButtonDisabled" @click="onAdd()">新增</t-button>
-                </t-space>
-              </template>
-            </cmp-table>
-          </cmp-card>
-        </cmp-container>
+              <!-- <t-button theme="primary" @click="onRefresh">查询</t-button> -->
+            </t-space>
+          </template>
+          <template #button>
+            <t-space direction="vertical">
+              <t-button theme="primary" :disabled="isButtonDisabled" @click="onAdd()">新增</t-button>
+            </t-space>
+          </template>
+        </cmp-table>
       </cmp-card>
     </cmp-row>
   </cmp-container>
@@ -125,12 +120,13 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { Icon, SearchIcon } from 'tdesign-icons-vue-next';
+import _ from 'lodash';
+import { AddRectangleIcon, Icon, LoginIcon, MultiplyIcon, SearchIcon } from 'tdesign-icons-vue-next';
 import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
-import { api } from '@/api/main';
+import { api } from '@/api/control';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
@@ -142,6 +138,11 @@ const { t } = useLang();
 const iconValue = ref('add');
 const { pageUI } = usePage();
 
+const queryCompnent = ref({
+  pageSize: 9999,
+  pageNum: 1,
+});
+const totals = ref<number>(0); // 用户分页总数
 // 树组件节点名称 TS 类型
 interface TreeLabelData {
   firstLayerLabels: string[];
@@ -348,25 +349,29 @@ function filterLabels(treeData: any[]) {
   return { firstLayerLabels, secondLayerLabels, thirdLayerLabels };
 }
 
-// 筛选树节点递归函数
 function simplifyObject(obj: {
   id: any;
-  modelName: any;
-  attribute: any;
-  profileDesc: any;
-  childList: any[];
+  mitemId: any;
+  categoryCode: any;
+  categoryName: any;
+  mitemCode: any;
+  mitemName: any;
+  list: any[];
   children: any[];
 }) {
-  // 创建一个新对象，仅包含 name 和 children 字段
+  // 创建一个新对象，仅包含 label 和 children 字段
   const simplified = {
-    id: obj.id,
-    label: obj.modelName,
-    attribute: obj.attribute,
-    profileDesc: obj.profileDesc,
-    children: obj.childList ? obj.childList.map((child: any) => simplifyObject(child)) : [],
+    id: obj.id ? obj.id : obj.mitemId,
+    label: obj.id ? `${obj.categoryCode} ${obj.categoryName}` : `${obj.mitemCode} ${obj.mitemName}`,
+    children: [],
   };
-  // 检查是否存在 children 字段
-  if (obj.children && Array.isArray(obj.children)) {
+  // 检查是否存在 list 字段，如果存在则处理子级对象
+  if (obj.list && Array.isArray(obj.list)) {
+    // 递归处理每个子对象
+    simplified.children = obj.list.map((child: any) => simplifyObject(child));
+  }
+  // 检查是否存在 children 字段，如果存在则处理子级对象
+  else if (obj.children && Array.isArray(obj.children)) {
     // 递归处理每个子对象
     simplified.children = obj.children.map((child: any) => simplifyObject(child));
   }
@@ -376,29 +381,13 @@ function simplifyObject(obj: {
 // 在组件挂载后模拟 点击 第一个节点
 onMounted(async () => {
   await onGetTreeData();
-  // 确保树的第一个节点存在，并且它有子节点
-  if (treeData.value.length > 0 && treeData.value[0].children && treeData.value[0].children.length > 0) {
-    const firstNode = treeData.value[0]; // 第一个节点
-    const { id } = firstNode; // 保存该子节点的 ID
-    clickNodeId.value.nodeId = id; // 保存当前节点的 ID
-    const rules = await api.profileValue.getProfileValueList({
-      key: '',
-      pageNum: 1,
-      pageSize: 10,
-      nodeId: id,
-      attribute: 0,
-    }); // 请求：获取第二节点的数据
-    moduleData.value = rules.list; // 表格数据赋值
-    tabTotal.value = rules.total;
-    treeClick({ node: { '__tdesign_tree-node__': firstNode } }); // 模拟点击第一个节点下的第一个子节点
-    treeClickData.value.one = firstNode.label; // 赋值第二个节点名称给面包屑
-  }
 });
 
 // 获取树组件数据
 const onGetTreeData = async () => {
-  const res = await api.profile.getAllTree(); // 获取节点数据
-  treeData.value = res.map(simplifyObject); // 转化数据保存
+  const res = await api.sopProduct.getMitemCategoryList({ keyword: treeKey.value, ...queryCompnent.value }); // 获取节点数据
+  treeData.value = res.list.map(simplifyObject); // 转化数据保存
+  totals.value = res.total;
   const filteredLabels = filterLabels(treeData.value); // 转化数组
   treeArr.value = filteredLabels;
 };
@@ -408,9 +397,9 @@ const onGetTabData = async () => {
   clickNodeId.value.pageNum = pageUI.value.page;
   clickNodeId.value.pageSize = pageUI.value.rows;
   clickNodeId.value.key = keyword.value;
-  const res = await api.profileValue.getProfileValueList(clickNodeId.value); // 获取第二节点的数据
-  moduleData.value = res.list; // 表格数据赋值
-  tabTotal.value = res.total;
+  // const res = await api.profileValue.getProfileValueList(clickNodeId.value); // 获取第二节点的数据
+  // moduleData.value = res.list; // 表格数据赋值
+  // tabTotal.value = res.total;
 };
 
 // 树节点的点击事件，获取点击节点的文本
@@ -478,9 +467,33 @@ useResizeObserver(treeCard, (entries) => {
   margin-top: 20px;
 }
 
+.divider {
+  height: 1px;
+  width: 100%; /* 设置间隔宽度 */
+  background-color: var(--td-gray-color-8);
+}
+
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.no-wrap {
+  max-width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* 防止文本换行 */
+  overflow: hidden; /* 隐藏超出部分 */
+}
+
 .align-right {
   display: flex;
   justify-content: flex-end;
+}
+
+.span_title {
+  font-weight: bold;
+  color: var(--td-gray-color-8);
+  font-size: 14px;
 }
 
 .overlay-options {
