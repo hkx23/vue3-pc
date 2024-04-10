@@ -29,8 +29,8 @@
   "listSetting": {
     "image": "/images/assets-factory.svg",
     "icon": "building-1",
-    "nameField": "typeCode",
-    "codeField": "typeName",
+    "nameField": "typeName",
+    "codeField": "typeCode",
     "descField": "typeDesc"
   },
   "name": "资产类型",

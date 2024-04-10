@@ -1514,17 +1514,18 @@ export interface TimeSwitchProductVO {
 }
 
 /** 响应数据 */
-export type ImportSummary = {
+export type ImportSummaryObject = {
   /** @format int32 */
   successCount?: number;
   /** @format int32 */
   failCount?: number;
   errorListFilePath?: string;
+  returnData?: object[];
   allSuccess?: boolean;
 } | null;
 
 /** 通用响应类 */
-export interface ResultImportSummary {
+export interface ResultImportSummaryObject {
   /**
    * 响应代码
    * @format int32
@@ -1533,7 +1534,7 @@ export interface ResultImportSummary {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: ImportSummary;
+  data?: ImportSummaryObject;
 }
 
 export interface TimeSwitchProductSearch {
@@ -2735,15 +2736,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
   workshopName?: string;
   workshopId?: string;
-  scanDatetimeStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2786,10 +2787,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
+  keyPartCodeStr?: string;
   /** @format int32 */
   requestQty?: number;
   isScanFinish?: boolean;
-  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -3145,9 +3146,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  defectCodeStr?: string;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3305,10 +3306,10 @@ export interface BarcodeWipVO {
   workshopName?: string;
   workshopId?: string;
   stateName?: string;
-  defectCodeStr?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -3567,35 +3568,6 @@ export interface MoSwitchDTO {
   moSwitchId?: string;
 }
 
-export interface MoSwitchSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /**
-   * 转产开始日期
-   * @format date-time
-   */
-  dateStart?: string;
-  /**
-   * 转产结束日期
-   * @format date-time
-   */
-  dateEnd?: string;
-  /** 状态 */
-  statusList?: string[];
-  workGroupId?: string;
-  workShopId?: string;
-  workCenterId?: string;
-  moSwitchId?: string;
-}
-
 /** 显示工单转产信息 */
 export interface MoSwitchVO {
   id?: string;
@@ -3713,6 +3685,35 @@ export interface ResultPagingDataMoSwitchVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataMoSwitchVO;
+}
+
+export interface MoSwitchSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 转产开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 转产结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  /** 状态 */
+  statusList?: string[];
+  workGroupId?: string;
+  workShopId?: string;
+  workCenterId?: string;
+  moSwitchId?: string;
 }
 
 /** 通用响应类 */
@@ -4929,6 +4930,8 @@ export interface BarcodeWipCollectVO {
   workstationModel?: Workstation;
   /** 请求ID */
   requestScanID?: string;
+  /** 扫描状态 */
+  scanSuccess?: boolean;
   /** @format date-time */
   datetimeSche?: string;
   workshopCode?: string;
@@ -4936,10 +4939,8 @@ export interface BarcodeWipCollectVO {
   workshopId?: string;
   stateName?: string;
   isState?: boolean;
-  scanDatetimeStr?: string;
-  /** 扫描状态 */
-  scanSuccess?: boolean;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 工序 */
@@ -6381,7 +6382,7 @@ export const api = {
      * @secure
      */
     importData: (data: CommonImportTimeSwitchProductVO) =>
-      http.request<ResultImportSummary['data']>(`/api/control/timeSwitchProduct/import`, {
+      http.request<ResultImportSummaryObject['data']>(`/api/control/timeSwitchProduct/import`, {
         method: 'POST',
         body: data as any,
       }),
@@ -6772,7 +6773,7 @@ export const api = {
      * @secure
      */
     importData: (data: CommonImportProductCapacityVO) =>
-      http.request<ResultImportSummary['data']>(`/api/control/productCapacity/import`, {
+      http.request<ResultImportSummaryObject['data']>(`/api/control/productCapacity/import`, {
         method: 'POST',
         body: data as any,
       }),
@@ -7150,11 +7151,11 @@ export const api = {
      *
      * @tags 工单转产表
      * @name List
-     * @summary 获取工单转产列表
+     * @summary 获取工单转产列表--公共弹框控件
      * @request POST:/moSwitch/list
      * @secure
      */
-    list: (data: MoSwitchSearch) =>
+    list: (data: CommonSearch) =>
       http.request<ResultPagingDataMoSwitchVO['data']>(`/api/control/moSwitch/list`, {
         method: 'POST',
         body: data as any,

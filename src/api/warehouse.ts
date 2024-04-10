@@ -2014,17 +2014,18 @@ export interface StockCheckBillVO {
 }
 
 /** 响应数据 */
-export type ImportSummary = {
+export type ImportSummaryObject = {
   /** @format int32 */
   successCount?: number;
   /** @format int32 */
   failCount?: number;
   errorListFilePath?: string;
+  returnData?: object[];
   allSuccess?: boolean;
 } | null;
 
 /** 通用响应类 */
-export interface ResultImportSummary {
+export interface ResultImportSummaryObject {
   /**
    * 响应代码
    * @format int32
@@ -2033,7 +2034,7 @@ export interface ResultImportSummary {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: ImportSummary;
+  data?: ImportSummaryObject;
 }
 
 /** 响应数据 */
@@ -2189,10 +2190,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -2715,10 +2716,10 @@ export interface DeliveryDtlVO {
   /** 已交接总量数量 */
   receiptedAllQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 物料检验单明细 */
@@ -2875,10 +2876,10 @@ export interface PurchaseOrderDtlVO {
   /** 本次退货数量 */
   curReturnQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3534,6 +3535,11 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  tlpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3544,11 +3550,6 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  flpickQty?: number;
-  bfpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  tlpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -5743,8 +5744,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -7576,7 +7577,7 @@ export const api = {
      * @secure
      */
     importData: (data: CommonImportStockCheckBillVO) =>
-      http.request<ResultImportSummary['data']>(`/api/warehouse/stockCheckBill/import`, {
+      http.request<ResultImportSummaryObject['data']>(`/api/warehouse/stockCheckBill/import`, {
         method: 'POST',
         body: data as any,
       }),

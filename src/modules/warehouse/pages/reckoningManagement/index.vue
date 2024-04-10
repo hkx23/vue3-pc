@@ -83,7 +83,12 @@
     </cmp-card>
   </cmp-container>
   <!-- 新增弹窗组件 -->
-  <newInventoryManagemment v-model:visible="eidtRoutingVisible" :form-title="formTitle" @update-data="closeDialog" />
+  <newInventoryManagemment
+    v-if="eidtRoutingVisible"
+    v-model:visible="eidtRoutingVisible"
+    :form-title="formTitle"
+    @update-data="closeDialog"
+  />
   <!-- 盘点单维护组件 -->
   <inventory-sheet-maintenance
     ref="refreshTable"

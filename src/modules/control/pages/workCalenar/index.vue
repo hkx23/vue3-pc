@@ -1,5 +1,5 @@
 <template>
-  <cmp-container :full="true" :full-sub-index="[2]">
+  <cmp-container :full="true">
     <cmp-card>
       <cmp-query ref="optsRef" :opts="opts" :bool-enter="true" @submit="onInput">
         <template #workcenter="{ param }">
@@ -25,14 +25,7 @@
     <cmp-row>
       <cmp-card ref="refProcessCard" flex="280px">
         <span class="span_title">{{ t('workCalenar.workcenterList') }}</span>
-        <t-list
-          size="small"
-          split
-          :async-loading="asyncLoading"
-          style="margin-top: 10px"
-          :style="{ 'max-height': `${processHeight}` }"
-          @load-more="scrollHandler"
-        >
+        <t-list size="small" split :async-loading="asyncLoading" style="margin-top: 10px" @load-more="scrollHandler">
           <t-list-item
             v-for="item in processList"
             :key="item.workcenterId"
@@ -45,12 +38,12 @@
         </t-list>
       </cmp-card>
       <cmp-card flex="auto">
-        <t-calendar
+        <!-- <t-calendar
           :controller-config="controllerConfig"
           :month="dayValue"
           :year="yearValue"
           :week="week"
-          :is-show-weekend-default="weekVisible"
+          style="width: auto"
         >
           <template #head>
             <div style="display: flex; align-items: center">
@@ -65,27 +58,72 @@
               }}</t-button>
             </div>
           </template>
-          <template #cellAppend="data">
+          <template #cell="data">
             <div class="outerWarper">
-              <!-- <div class="number">
+              <div class="number">
                 {{ displayNum(data) }}
-              </div> -->
+              </div>
               <div v-if="getShow(data)">
-                <div class="slotWarper">
-                  <div :class="{ 'two-columns': getDisplayStr(data).length >= 4 && weekVisible === false }">
-                    <div v-for="item in getDisplayStr(data)" :key="item.id">
-                      <t-checkbox v-model="item.state" :disabled="getDisabled(data)" @change="onChangeState(item)">
-                        <div class="item no-wrap" :title="item.shiftName + '(' + item.attendanceExpression + ')'">
-                          {{ item.shiftName }}
+                <div class="slotWarper no-wrap">
+                  <div v-for="item in getDisplayStr(data)" :key="item.id" class="itemClass">
+                    <t-row style="align-items: center">
+                      <t-checkbox
+                        v-model="item.state"
+                        class="custom-checkbox"
+                        :disabled="getDisabled(data)"
+                        style="margin-left: 1px"
+                        @change="onChangeState(item)"
+                      >
+                        <div class="columns">
+                          {{ item.shiftName + '(' + item.attendanceExpression + ')' }}
                         </div>
                       </t-checkbox>
-                    </div>
+                    </t-row>
                   </div>
                 </div>
               </div>
             </div>
           </template>
-        </t-calendar>
+        </t-calendar> -->
+        <div style="display: flex; align-items: center; margin-bottom: 10px">
+          <span class="span_title" style="width: 70px">{{ t('workCalenar.workCalenar') }}</span>
+          <t-button theme="primary" style="margin-left: auto" @click="onAdd">{{
+            t('workCalenar.calendarMaintenance')
+          }}</t-button>
+          <t-button theme="default" @click="onCheckOmissions">{{ t('workCalenar.checkOmissions') }}</t-button>
+        </div>
+        <div class="box">
+          <div class="monthList">
+            <div class="weekDay">
+              <div v-for="(item, index) in week" :key="index" class="day" style="width: 300px">
+                {{ item }}
+              </div>
+            </div>
+            <div class="weekList">
+              <ul>
+                <li v-for="(item, ss) in monthDay" :key="ss">
+                  <div class="dayTitle">
+                    {{ item.day }}
+                  </div>
+                  <div v-if="getShow(item)">
+                    <div v-for="itemCheckBox in getDisplayStr(item)" :key="itemCheckBox.id" class="itemClass no-wrap">
+                      <t-checkbox
+                        v-model="itemCheckBox.state"
+                        class="custom-checkbox"
+                        :disabled="getDisabled(item)"
+                        @change="onChangeState(itemCheckBox)"
+                      >
+                        <div class="columns">
+                          {{ itemCheckBox.shiftName + '(' + itemCheckBox.attendanceExpression + ')' }}
+                        </div>
+                      </t-checkbox>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </cmp-card>
     </cmp-row>
   </cmp-container>
@@ -96,6 +134,7 @@
     :header="t('workCalenar.calendarMaintenance')"
     :close-on-overlay-click="false"
     width="800px"
+    top="60"
     :on-confirm="onConfirmAdd"
   >
     <form-add ref="formRef"></form-add>
@@ -120,8 +159,8 @@ export default {
 <script setup lang="tsx">
 import { isSameDay, parseISO } from 'date-fns';
 import _, { debounce } from 'lodash';
-import { CalendarController, CalendarProps, MessagePlugin } from 'tdesign-vue-next';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { CalendarProps, MessagePlugin } from 'tdesign-vue-next';
+import { computed, onMounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/control';
@@ -135,9 +174,10 @@ import { useLang } from './lang';
 onMounted(async () => {
   queryCompnent.value.date = new Date().toISOString().substr(0, 7);
   onFetchData();
+  init();
 });
 const { t } = useLang();
-const weekVisible = ref(false); // 周末按钮控制
+// const weekVisible = ref(false); // 周末按钮控制
 const formTableVisible = ref(false);
 const onCheckOmissions = async () => {
   formTableVisible.value = true;
@@ -155,61 +195,134 @@ const week: CalendarProps['week'] = [
   t('workCalenar.saturday'),
   t('workCalenar.sunday'),
 ];
-const controllerConfig: CalendarController = reactive({
-  visible: true,
-  disabled: false,
-  // 是否禁用（全部控件）
-  // 年份选择框组件相关设置
-  year: {
-    visible: false,
-    // 是否显示
-    selectProps: {
-      // 用于透传props给该select组件
-      disabled: false,
-      size: 'small',
-    },
-  },
-  // 月份选择框组件相关设置
-  month: {
-    visible: false,
-    // 是否显示（“year”模式下本身是不显示该组件的）
-    selectProps: {
-      // 用于透传props给该select组件
-      disabled: false,
-      size: 'small',
-    },
-  },
-  // 模式切换单选组件设置
-  mode: {
-    visible: false,
-    // 是否显示
-    radioGroupProps: {
-      disabled: false,
-      size: 'small',
-    },
-  },
-  // 隐藏\显示周末按钮组件相关设置
-  weekend: {
-    visible: false,
-  },
-  // “今天\本月”按钮组件相关设置
-  current: {
-    visible: false,
-    // 是否显示
-    currentDayButtonProps: {
-      // 用于透传props给“今天”钮组件（“month”模式下有效）
-      disabled: false,
-      size: 'small',
-      theme: 'warning',
-    },
-    currentMonthButtonProps: {
-      // 用于透传props给“本月”按钮组件（“year”模式下有效）
-      disabled: false,
-      size: 'small',
-      theme: 'success',
-    },
-  },
-});
+const getCurrentMonthFirst = (val) => {
+  const date = val;
+  date.setDate(1);
+  return date;
+};
+const monthDay = ref([]);
+const init = () => {
+  // 置空日历
+  monthDay.value = [];
+  // 获取传入的时间戳
+  const nowDate = queryCompnent.value.date;
+  const itemDate = new Date(nowDate);
+  // 获取传入的年
+  const year = itemDate.getFullYear();
+  // 获取传入的月
+  const month = itemDate.getMonth();
+  // 获取传入的月有多少天
+  const allDays = new Date(year, month + 1, 0).getDate();
+  // 获取传入的月第一天的时间戳
+  const nowMonthDay = new Date(getCurrentMonthFirst(itemDate));
+  // 获取传入的月第一天是周几
+  let nowMonthWeek = nowMonthDay.getDay();
+  const dayOffset = nowMonthWeek === 0 ? 6 : nowMonthWeek - 1; // 如果本月第一天是周日，则 dayOffset 为 6，否则为 firstDayOfMonth - 1
+
+  // 获取上个月的最后一天
+  const lastDayOfLastMonth = new Date(year, month, 0).getDate();
+
+  // 填充上个月的最后几天到当前月份的第一周
+  for (let i = dayOffset; i > 0; i--) {
+    const obj = { index: 0, day: '', formattedDate: '' };
+    obj.index = i;
+    obj.day = (lastDayOfLastMonth - (dayOffset - i)).toString(); // 设置日期为上个月的最后几天
+    obj.formattedDate = new Date(year, month - 1, Number(obj.day)).toString(); // 设置日期对象
+    monthDay.value.push(obj);
+  }
+
+  // 周天是0  所以做三目判断 让礼拜天成为7
+  nowMonthWeek = nowMonthWeek === 0 ? 7 : nowMonthWeek;
+  // 获取当天 的 年月日
+  const nowyear = new Date().getFullYear();
+  const nowMonth = new Date().getMonth();
+  const nowDay = new Date().getDate();
+
+  let num = 1;
+  let numIndex = 0; // 用于循环行数
+  // 传入月的天数 + 传入月第一天的周几
+  if (nowMonthWeek + allDays < 30) {
+    numIndex = 29; // 展示4行 一行7个
+  } else if (nowMonthWeek + allDays < 36) {
+    numIndex = 36; // 展示5行 一行7个
+  } else {
+    numIndex = 42;
+  }
+
+  for (let i = 1; i < numIndex; i++) {
+    const obj = { index: 0, day: '', formattedDate: '' };
+    obj.index = i;
+    // 当前日的格子
+    if (i >= nowMonthWeek && num <= allDays) {
+      obj.day = num.toString();
+      num++;
+      // 计算并赋值日期对象给 date 属性
+      obj.formattedDate = new Date(year, month, num - 1).toString();
+      monthDay.value.push(obj);
+    }
+  }
+};
+// const displayNum = (cellData) => {
+//   if (cellData.mode === 'month') {
+//     return cellData.date.getDate();
+//   }
+//   return cellData.date.getMonth() + 1;
+// };
+// const controllerConfig: CalendarController = reactive({
+//   visible: true,
+//   disabled: false,
+//   // 是否禁用（全部控件）
+//   // 年份选择框组件相关设置
+//   year: {
+//     visible: false,
+//     // 是否显示
+//     selectProps: {
+//       // 用于透传props给该select组件
+//       disabled: false,
+//       size: 'small',
+//     },
+//   },
+//   // 月份选择框组件相关设置
+//   month: {
+//     visible: false,
+//     // 是否显示（“year”模式下本身是不显示该组件的）
+//     selectProps: {
+//       // 用于透传props给该select组件
+//       disabled: false,
+//       size: 'small',
+//     },
+//   },
+//   // 模式切换单选组件设置
+//   mode: {
+//     visible: false,
+//     // 是否显示
+//     radioGroupProps: {
+//       disabled: false,
+//       size: 'small',
+//     },
+//   },
+//   // 隐藏\显示周末按钮组件相关设置
+//   weekend: {
+//     visible: false,
+//   },
+//   // “今天\本月”按钮组件相关设置
+//   current: {
+//     visible: false,
+//     // 是否显示
+//     currentDayButtonProps: {
+//       // 用于透传props给“今天”钮组件（“month”模式下有效）
+//       disabled: false,
+//       size: 'small',
+//       theme: 'warning',
+//     },
+//     currentMonthButtonProps: {
+//       // 用于透传props给“本月”按钮组件（“year”模式下有效）
+//       disabled: false,
+//       size: 'small',
+//       theme: 'success',
+//     },
+//   },
+// });
 const asyncLoadingRadio = ref('load-more');
 const asyncLoading = computed(() => {
   if (asyncLoadingRadio.value === 'loading-custom') {
@@ -254,13 +367,15 @@ const getShow = (data) => {
     const { formattedDate } = data;
 
     // 将日期字符串解析为日期对象
-    const dateToCompare = parseISO(formattedDate);
+    const dateToCompare = new Date(formattedDate);
     // 使用 Array.some() 方法检查数组中是否存在与给定日期相同的元素
     const hasSameDate = dataList.value.some((item) => {
       const itemDate = parseISO(item.datetimeWork);
+
+      console.log(dateToCompare);
+      console.log(itemDate);
       return isSameDay(itemDate, dateToCompare);
     });
-
     return hasSameDate;
   } catch (e) {
     console.log(e);
@@ -270,16 +385,14 @@ const getShow = (data) => {
 const getDisplayStr = (data) => {
   const { formattedDate } = data;
   // 将日期字符串解析为日期对象
-  const dateToCompare = parseISO(formattedDate);
+  const dateToCompare = new Date(formattedDate);
 
   // 使用 Array.find() 方法查找与给定日期相同的元素
   const sameDateItem = dataList.value.find((item) => {
     const itemDate = parseISO(item.datetimeWork);
     return isSameDay(itemDate, dateToCompare);
   });
-
   const { list } = sameDateItem;
-
   return list;
 };
 const dataList = ref([]);
@@ -333,6 +446,7 @@ const onInput = (data) => {
   const [year, month] = data.date.split('-');
   dayValue.value = month;
   yearValue.value = year;
+  init();
   onFetchData();
 };
 const opts = computed(() => {
@@ -396,38 +510,46 @@ const onFetchData = async () => {
 .outerWarper {
   width: 100%;
   height: 100%;
+  margin-left: 3px;
 
-  .number {
-    font-weight: 600;
-    position: absolute;
-    right: 0;
-    font-size: 14px;
-    line-height: 22px;
-  }
-
-  .item {
+  .itemClass {
     position: relative;
     align-items: center;
     color: var(--td-text-color-secondary);
-    font-size: 14px;
-    line-height: 22px;
+    font-size: 10px;
   }
 
   .slotWarper {
-    position: absolute;
-    bottom: 2px;
+    // position: absolute;
+    // bottom: 2px;
+    font-size: 10px;
     left: 5px;
+  }
+
+  .number {
+    font-weight: 600;
+    position: static;
+    right: 50%; /* 水平居中 */
+    transform: translateX(50%); /* 水平居中 */
+    font-size: 14px;
+    line-height: 22px;
   }
 }
 
+/* 设置日历组件单元格的最小宽度 */
+.t-calendar .cell {
+  min-width: 800px !important;
+}
+
 .no-wrap {
+  // max-width: calc(85% - 4px);
+  text-overflow: ellipsis;
   white-space: nowrap; /* 防止文本换行 */
   overflow: hidden; /* 隐藏超出部分 */
 }
 
-.two-columns {
-  column-count: 2; /* 设置为两列布局 */
-  column-gap: 20px; /* 设置列之间的间隔 */
+.columns {
+  font-size: 12px;
 }
 
 .span_title {
@@ -444,5 +566,91 @@ const onFetchData = async () => {
 .t-list .is-selected {
   color: var(--td-brand-color);
   background-color: var(--td-brand-color-light); /* 替换为你希望的颜色 */
+}
+
+.searchTop {
+  border-bottom: 1px solid rgb(211 211 211);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.box {
+  height: 100%;
+  display: flex;
+
+  .monthList {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .weekDay {
+      display: flex;
+      align-items: right;
+      box-sizing: border-box;
+
+      .day {
+        min-width: 270px;
+        height: 32px;
+        display: flex;
+        align-items: flex-end; /* 确保文本位于底部 */
+        justify-content: flex-end; /* 文本右对齐 */
+        font-size: 16px;
+      }
+    }
+
+    .weekList {
+      flex: 1;
+      position: relative;
+      margin-bottom: 20px;
+
+      ul {
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: auto auto;
+        display: flex;
+        margin: 0;
+        padding: 0;
+        flex-wrap: wrap;
+
+        &::-webkit-scrollbar {
+          /* 滚动条整体样式 */
+          width: 8px; /* 高宽分别对应横竖滚动条的尺寸 */
+          height: 8px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          /* 滚动条里面小方块 */
+          border-radius: 5px;
+          background: rgb(0 0 0 / 20%); /* 设置滚动条颜色 */
+        }
+
+        li {
+          list-style: none;
+          min-width: 300px;
+          min-height: 100px;
+          border-right: 1px solid rgb(211 211 211);
+          border-top: 1px solid rgb(211 211 211);
+          border-bottom: 1px solid rgb(211 211 211);
+          display: flex;
+          flex-direction: column;
+          padding: 10px;
+          box-sizing: border-box;
+
+          &:nth-child(7n + 1) {
+            border-left: 1px solid rgb(211 211 211);
+          }
+
+          .dayTitle {
+            font-size: 16px;
+            text-align: right;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

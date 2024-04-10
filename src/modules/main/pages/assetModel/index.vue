@@ -1,0 +1,364 @@
+<template>
+  <cmp-container :full="true">
+    <cmp-card :span="12">
+      <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
+    </cmp-card>
+    <cmp-card :span="12">
+      <cmp-table
+        ref="tableRef"
+        v-model:pagination="pageUI"
+        row-key="id"
+        :table-column="columns"
+        :fixed-height="true"
+        :table-data="anomalyTypeData.list"
+        :total="anomalyTotal"
+        :selected-row-keys="selectedRowKeys"
+        @refresh="onFetchData"
+        @select-change="rehandleSelectChange"
+      >
+        <template #title>
+          {{ '资产型号列表' }}
+        </template>
+        <template #actionSlot="{ row }">
+          <t-space :size="8">
+            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
+              <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
+            </t-popconfirm>
+          </t-space>
+        </template>
+        <template #button>
+          <t-space :size="8">
+            <t-button theme="primary" @click="onAddTypeData">新增</t-button>
+            <!-- <t-button theme="default">导入</t-button> -->
+            <bcmp-import-auto-button
+              theme="default"
+              button-text="导入"
+              type="a_incident_type"
+            ></bcmp-import-auto-button>
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="deleteBatches()">
+              <t-button theme="default">批量删除</t-button>
+            </t-popconfirm>
+          </t-space>
+        </template>
+      </cmp-table>
+    </cmp-card>
+  </cmp-container>
+  <!-- dialog 弹窗 -->
+  <t-dialog
+    v-model:visible="formVisible"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    :header="diaLogTitle"
+    @close="onSecondaryReset"
+  >
+    <t-form
+      ref="formRef"
+      :rules="rules"
+      :data="assetModelTabData.list"
+      label-width="120px"
+      @submit="onAnomalyTypeSubmit"
+    >
+      <!-- 第 1️⃣ 行数据 -->
+      <t-form-item label="资产品牌" name="assetBrand">
+        <bcmp-select-business
+          v-model="assetModelTabData.list.assetBrandId"
+          label=""
+          type="assetBrand"
+          :clearable="true"
+          :disabled="isDisabled"
+          @selection-change="onWarehouseSelect"
+        ></bcmp-select-business>
+      </t-form-item>
+      <!-- 第 2️⃣ 行数据 -->
+      <t-form-item label="资产品牌描述" name="brandDesc">
+        <t-input v-model="assetModelTabData.list.brandDesc" disabled></t-input>
+      </t-form-item>
+      <!-- 第 3️⃣ 行数据 -->
+      <t-form-item label="资产型号编码" name="modelCode">
+        <t-input v-model="assetModelTabData.list.modelCode"></t-input>
+      </t-form-item>
+      <!-- 第 4️⃣ 行数据 -->
+      <t-form-item label="资产型号名称" name="modelName">
+        <t-input v-model="assetModelTabData.list.modelName"></t-input>
+      </t-form-item>
+      <!-- 第 5 行数据 -->
+      <t-form-item label="资产型号描述" name="modelDesc">
+        <t-input v-model="assetModelTabData.list.modelDesc"></t-input>
+      </t-form-item>
+    </t-form>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+      <t-button theme="primary" @click="onSecondarySubmit">保存</t-button>
+    </template>
+  </t-dialog>
+</template>
+<script setup lang="ts">
+import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { computed, onMounted, reactive, Ref, ref } from 'vue';
+
+import { api } from '@/api/main';
+import CmpQuery from '@/components/cmp-query/index.vue';
+import CmpTable from '@/components/cmp-table/index.vue';
+import { usePage } from '@/hooks/modules/page';
+
+import { useLang } from './lang';
+
+const { t } = useLang();
+const isDisabled = ref(false);
+const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
+const { pageUI } = usePage(); // 分页工具
+const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
+const diaLogTitle = ref(''); // 弹窗标题
+const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
+const submitFalg = ref(false);
+
+// 表格数据总条数
+const anomalyTotal = ref(0);
+// 编辑回填 ID
+const incidentID = ref('');
+// 表格数据
+const anomalyTypeData = reactive({ list: [] });
+// dialog 弹框数据
+const assetModelTabData = reactive({
+  list: {
+    assetBrandId: '', // 资产品牌
+    brandDesc: '', // 资产品牌描述
+    modelCode: '', // 资产型号编码
+    modelName: '', // 资产型号名称
+    modelDesc: ' ', // 资产型号描述
+  },
+});
+// 表格列表数据
+const columns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'row-select',
+    type: 'multiple',
+    width: 46,
+  },
+  {
+    colKey: 'brandName',
+    title: '资产品牌名称',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'brandDesc',
+    title: '资产品牌描述',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'modelName',
+    title: '资产型号名称',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'modelDesc',
+    title: '资产型号描述',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'op',
+    title: '操作',
+    align: 'center',
+    fixed: 'right',
+    width: '130',
+    cell: 'actionSlot', // 引用具名插槽
+  },
+];
+// 表单验证规则
+const rules: FormRules = {
+  assetBrandId: [{ required: true, message: '资产品牌不能为空', trigger: 'change' }],
+  brandDesc: [{ required: true, message: '资产品牌描述不能为空', trigger: 'blur' }],
+  modelCode: [{ required: true, message: '资产型号编码不能为空', trigger: 'blur' }],
+  modelName: [{ required: true, message: '资产型号名称不能为空', trigger: 'blur' }],
+  modelDesc: [{ required: true, message: '资产型号描述不能为空', trigger: 'blur' }],
+};
+// 初始渲染
+onMounted(async () => {
+  await onGetAnomalyTypeData(); // 获取 表格 数据
+});
+
+// 添加资产品牌下拉数据
+const onWarehouseSelect = (context) => {
+  assetModelTabData.list.brandDesc = context.brandDesc;
+};
+
+// 刷新按钮
+const onFetchData = () => {
+  onGetAnomalyTypeData();
+  selectedRowKeys.value = [];
+};
+
+// 获取 表格 数据
+const onGetAnomalyTypeData = async () => {
+  const res = await api.assetModel.getList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+  });
+  anomalyTypeData.list = res.list;
+  anomalyTotal.value = res.total;
+};
+
+// 添加按钮点击事件
+const onAddTypeData = () => {
+  formRef.value.reset({ type: 'empty' });
+  isDisabled.value = false;
+  formVisible.value = true;
+  assetModelTabData.list.brandDesc = ''; // 资产品牌描述
+  assetModelTabData.list.modelCode = ''; // 资产型号编码
+  assetModelTabData.list.modelName = ''; // 资产型号名称
+  assetModelTabData.list.modelDesc = ''; // 资产型号描述
+  assetModelTabData.list.assetBrandId = '';
+  submitFalg.value = true;
+  diaLogTitle.value = '新增资产型号';
+};
+
+// 下拉框点击事件
+// const onObjectCodeChange = (data: { paramCode: string }) => {
+//   assetModelTabData.list.assetType = data.paramCode;
+// };
+
+// 添加异常类型请求
+const onAddTypeRequest = async () => {
+  await api.assetModel.add(assetModelTabData.list);
+  await onGetAnomalyTypeData();
+  MessagePlugin.success('添加成功');
+};
+
+// #query 查询参数
+const opts = computed(() => {
+  return {
+    soltDemo: {
+      label: '品牌编码/名称',
+      comp: 't-input',
+      event: 'input',
+      defaultVal: '',
+    },
+  };
+});
+
+const onInput = async (data: any) => {
+  pageUI.value.page = 1;
+  const res = await api.assetModel.getList({
+    pageNum: pageUI.value.page,
+    pageSize: pageUI.value.rows,
+    keyword: data.soltDemo,
+  });
+
+  anomalyTypeData.list = res.list;
+  anomalyTotal.value = res.total;
+  MessagePlugin.success('查询成功');
+};
+
+const onSecondarySubmit = () => {
+  formRef.value.submit();
+};
+// 右侧表格编辑按钮
+const onEditRow = (row: any) => {
+  isDisabled.value = true;
+  assetModelTabData.list.brandDesc = row.brandDesc; // 资产品牌描述
+  assetModelTabData.list.modelCode = row.modelCode; // 资产型号编码
+  assetModelTabData.list.modelName = row.modelName; // 资产型号名称
+  assetModelTabData.list.modelDesc = row.modelDesc; // 资产型号描述
+  assetModelTabData.list.assetBrandId = row.assetBrandId; // 资产品牌
+  incidentID.value = row.id; // 编辑回填 ID
+  submitFalg.value = false;
+  formVisible.value = true;
+  diaLogTitle.value = '编辑资产型号';
+};
+
+// 编辑表格数据 请求
+const onRedactTypeRequest = async () => {
+  await api.assetModel.modify({ ...assetModelTabData.list, id: incidentID.value });
+  await onGetAnomalyTypeData();
+  MessagePlugin.success('修改成功');
+};
+
+// 获取批量删除数组
+const rehandleSelectChange = async (value: any[]) => {
+  selectedRowKeys.value = value;
+};
+
+// 右侧表格删除按钮
+const onDeleteRow = (row: any) => {
+  selectedRowKeys.value = [];
+  selectedRowKeys.value.push(row.id);
+};
+
+// 右侧表格删除确认按钮
+const onDelConfirm = async () => {
+  await api.assetModel.removeBatch(selectedRowKeys.value);
+  if (anomalyTypeData.list.length <= 1 && pageUI.value.page > 1) {
+    pageUI.value.page--;
+  }
+  await onGetAnomalyTypeData(); // 重新渲染数组
+  selectedRowKeys.value = [];
+  MessagePlugin.success('删除成功');
+};
+
+// 批量删除
+const deleteBatches = async () => {
+  // 步骤 1: 检查删除前的数据总量
+  const initialLength = anomalyTypeData.list.length;
+  // 步骤 2: 执行删除操作
+  await api.assetModel.removeBatch(selectedRowKeys.value);
+  // 步骤 3: 检查当前页是否还有数据
+  if (initialLength === anomalyTypeData.list.length && pageUI.value.page > 1) {
+    // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
+    pageUI.value.page--;
+    await onGetAnomalyTypeData(); // 重新渲染数组
+    selectedRowKeys.value = [];
+    MessagePlugin.success('批量删除成功');
+  }
+};
+
+// 关闭模态框事件
+const onSecondaryReset = () => {
+  formRef.value.reset({ type: 'empty' });
+  assetModelTabData.list.assetBrandId = '';
+  formVisible.value = false;
+};
+
+// 表单提交事件
+const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
+  if (context.validateResult === true) {
+    if (submitFalg.value) {
+      await onAddTypeRequest(); // 新增请求
+    } else {
+      await onRedactTypeRequest(); // 编辑请求
+    }
+    formVisible.value = false;
+  }
+};
+</script>
+
+<style lang="less" scoped>
+.module-tree-container {
+  padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
+  background-color: var(--td-bg-color-container);
+  border-radius: var(--td-radius-medium);
+}
+
+.module-edit {
+  margin: 0 10px;
+}
+
+.control-box {
+  text-align: right;
+  margin-top: 20px;
+}
+
+.row-class {
+  margin-bottom: 10px;
+}
+
+.align-right {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>
