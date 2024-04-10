@@ -148,8 +148,8 @@ watch(
   { deep: true },
 );
 const emit = defineEmits(['close']);
-const handleClose = () => {
-  emit('close');
+const handleClose = (data) => {
+  emit('close', data);
 };
 </script>
 

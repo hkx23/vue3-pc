@@ -1,0 +1,38 @@
+{
+  "title": "资产品牌：",
+  "placeholder": "请选择资产品牌",
+  "url": "/api/main/assetBrand/items",
+  "httptype": "POST",
+  "columns": [
+    
+    {
+      "title": "资产品牌编码",
+      "key": "brandCode",
+      "align": "left"
+    },
+    {
+      "title": "资产品牌名称",
+      "key": "brandName",
+      "align": "left"
+    },
+    {
+      "title": "资产品牌描述",
+      "key": "brandDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "brandName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "brandName",
+    "codeField": "brandCode",
+    "descField": "brandDesc"
+  },
+  "name": "资产品牌",
+  "componentType": "list"
+}

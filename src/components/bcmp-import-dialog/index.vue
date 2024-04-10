@@ -324,6 +324,7 @@ const activeRowData = ref([]);
 const importAllSuccess = ref(true);
 const successCount = ref(0);
 const failCount = ref(0);
+const returnData = ref([]);
 
 // 设置表格数据（第3步的数据集合）
 const settingTableData = ref([]);
@@ -418,7 +419,7 @@ watch(
   () => props.visible,
   (val) => {
     if (!val && current.value === 3 && !processing.value) {
-      emit('close');
+      emit('close', returnData.value);
     }
     formImportVisible.value = val;
   },
@@ -749,6 +750,7 @@ const importSubmit = async () => {
       importAllSuccess.value = data.allSuccess;
       successCount.value = data.successCount;
       failCount.value = data.failCount;
+      returnData.value = data.returnData;
 
       processing.value = false;
     })
