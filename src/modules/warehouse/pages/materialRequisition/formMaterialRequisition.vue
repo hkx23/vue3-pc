@@ -137,7 +137,9 @@ const formRef: Ref<FormInstanceFunctions> = ref(null);
 const FORM_RULES = {
   moScheCodes: [{ required: true, message: t('common.placeholder.input', [t('materialRequisition.moScheCodes')]) }],
   warehouseId: [{ required: true, message: t('common.placeholder.input', [t('materialRequisition.warehouseId')]) }],
-  toWarehouseId: [{ required: true, message: t('common.placeholder.input', [t('materialRequisition.toWarehouseId')]) }],
+  toWarehouseId: [
+    { required: false, message: t('common.placeholder.input', [t('materialRequisition.toWarehouseId')]) },
+  ],
 };
 
 interface FormMaterialRequisition extends MaterialRequisitionDTO {
