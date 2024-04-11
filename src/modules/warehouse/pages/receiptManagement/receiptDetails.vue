@@ -1,16 +1,16 @@
 <!-- 单据详细维护 -->
 <template>
-  <t-dialog width="80%" :footer="false" :close-on-overlay-click="false">
+  <t-dialog width="80%" top="56px" :footer="false" :close-on-overlay-click="false">
     <template #header>
       <t-space align="center" style="width: 100%">
         <span>{{ props.formTitle }}</span>
       </t-space>
     </template>
-    <cmp-container :full="true">
+    <cmp-container :full="true" style="height: calc(90vh - 56px - 57px)">
       <!-- 单据相关详细信息 -->
       <cmp-card v-if="safeSomeData && safeSomeData.billNo">
         <template #title> 单据号{{ safeSomeData.billNo }}相关详细信息 </template>
-        <t-descriptions>
+        <t-descriptions :column="3">
           <t-descriptions-item label="单据号：" name="billNo">{{ safeSomeData.billNo }}</t-descriptions-item>
           <t-descriptions-item label="关联单号：" name="relatedBillNo">{{
             safeSomeData.sourceBillNo
@@ -101,11 +101,12 @@ const tableWarehouseColumns: PrimaryTableCol<TableRowData>[] = [
 const tableWarehouseColumns1: PrimaryTableCol<TableRowData>[] = [
   // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
   // { title: '序号', colKey: 'index', width: 85, cell: 'indexSlot' },
-  { title: '标签条码', colKey: 'scanBarcode', width: 85 },
+  { title: '标签条码', colKey: 'scanBarcode', width: 140 },
+  { title: '到货批次', width: 85, colKey: 'batchLot' },
   { title: '物料编码', width: 85, colKey: 'mitemCode' },
   { title: '物料描述', width: 85, colKey: 'mitemDesc' },
   { title: '单位', width: 100, colKey: 'uomName' },
-  { title: '需求数量', width: 100, colKey: 'qty' },
+  { title: '交易数量', width: 100, colKey: 'qty' },
 ];
 const tableDocumentDetails = ref([]);
 const tableLabelDetail = ref([]);

@@ -6,7 +6,7 @@
         <t-col :flex="8">
           <h3>检验单号：{{ headerDate.billNo }}</h3>
         </t-col>
-        <t-col :flex="1.5">创建时间：{{ headerDate.timeCreate }}</t-col>
+        <t-col :flex="2">创建时间：{{ headerDate.timeCreate }}</t-col>
         <t-col :flex="0.5"><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
       </t-row>
       <t-row :full="true">
@@ -571,6 +571,7 @@ const columns = [
 }
 
 .barcodeDiv {
+  width: 285px;
   border-width: 2px;
   border-style: solid;
   border-color: rgb(49 172 243);
