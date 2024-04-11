@@ -35,13 +35,6 @@
             </t-popconfirm>
           </t-space>
         </template>
-        <template #fileActionSlot="{ row }">
-          <t-space :size="8">
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
-              <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
-            </t-popconfirm>
-          </t-space>
-        </template>
         <template #button>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddTypeData">新增</t-button>
@@ -73,7 +66,6 @@
       <t-tabs v-model="tabDefaultValue" @change="tabChange">
         <t-tab-panel label="设备信息" value="0" :destroy-on-hide="true">
           <t-form
-            v-if="tabCurrentValue == '0'"
             ref="formRef"
             :rules="rules"
             :colon="true"
@@ -184,27 +176,41 @@
           </t-form>
         </t-tab-panel>
         <t-tab-panel label="技术文件" value="1" :destroy-on-hide="true">
-          <cmp-table
-            ref="tableRef"
-            row-key="id"
-            :show-toolbar="false"
-            :show-pagination="false"
-            :hover="true"
-            :fixed-height="false"
-            empty="没有符合条件的数据"
-            :table-data="anomalyTypeData.list"
-            :table-column="fileColumns"
-            :total="anomalyTotal"
-          ></cmp-table>
+          <cmp-container :full="true">
+            <bcmp-upload-content
+              :file-list="fileList"
+              upload-path="inspectStd"
+              :is-hand-delete="true"
+              @upload-success="uploadSuccess"
+              @uploadfail="uploadfail"
+              @delete-success="deleteSuccess"
+              @batch-delete-success="batchDeleteSuccess"
+            ></bcmp-upload-content>
+          </cmp-container>
         </t-tab-panel>
-        <t-tab-panel label="维保履历" value="2" :destroy-on-hide="true"></t-tab-panel>
+        <t-tab-panel label="维保履历" value="2" :destroy-on-hide="true">
+          <!-- <cmp-table
+            ref="tableRef"
+            row-key="serialNumber"
+            :table-column="maintenanceColumns"
+            empty="没有符合条件的数据"
+            :table-data="tableData"
+            :show-pagination="false"
+            :show-setting="false"
+            :show-toolbar="false"
+            :is-fixed-height="true"
+            :select-on-row-click="false"
+            :loading="isLoading"
+            :selected-row-keys="selectedRowKeys"
+          ></cmp-table> -->
+        </t-tab-panel>
         <t-tab-panel label="拓展属性" value="3" :destroy-on-hide="true"></t-tab-panel>
       </t-tabs>
-      <template #footer>
-        <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
-        <t-button theme="primary" @click="onSecondarySubmit">保存</t-button>
-      </template>
     </cmp-container>
+    <template #footer>
+      <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
+      <t-button theme="primary" @click="onSecondarySubmit">保存</t-button>
+    </template>
   </t-dialog>
 </template>
 <script setup lang="ts">
@@ -212,6 +218,7 @@ import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, Table
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/main';
+import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -228,7 +235,8 @@ const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
 const submitFalg = ref(false);
 const queryCompent = ref(); // 查询组件对象传递
 const tabDefaultValue = ref('0'); // tab的默认选中
-const tabCurrentValue = ref(); // 当前tab的value值
+const tabCurrentValue = ref(''); // 当前tab的value值
+const fileList = ref([]); // 上传文件列表
 
 // 表格数据总条数
 const anomalyTotal = ref(0);
@@ -366,28 +374,14 @@ const rules: FormRules = {
   equipmentDesc: [{ required: true, message: '设备描述不能为空', trigger: 'blur' }],
   status: [{ required: true, message: '状态不能为空', trigger: 'change' }],
 };
-// 表格列表数据
-const fileColumns: PrimaryTableCol<TableRowData>[] = [
+/* // 表格列表数据
+const maintenanceColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
-    type: 'single',
+    type: 'multiple',
     width: 46,
   },
-  {
-    colKey: 'fileName',
-    title: '文件名',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'op',
-    title: '操作',
-    align: 'center',
-    fixed: 'right',
-    width: '130',
-    cell: 'fileActionSlot', // 引用具名插槽
-  },
-];
+]; */
 // 初始渲染
 onMounted(async () => {
   await onGetAnomalyTypeData(); // 获取 表格 数据
@@ -442,6 +436,31 @@ const onAddTypeData = () => {
   formVisible.value = true; // dialog开关
   submitFalg.value = true; // 区分新增编辑的开关
   diaLogTitle.value = '新增设备台账';
+  // 清空数据
+  equipmentData.list.equipmentCode = ''; // 设备编码
+  equipmentData.list.equipmentName = ''; // 设备名称
+  equipmentData.list.assetTypeId = ''; // 设备类型ID
+  equipmentData.list.equipmentDesc = ''; // 设备描述
+  equipmentData.list.assetBrandId = ''; // 设备品牌ID
+  equipmentData.list.position = ''; // 设备存放位置
+  equipmentData.list.assetModelId = ''; // 设备型号ID
+  equipmentData.list.departmentOwner = ''; // 保管部门
+  equipmentData.list.assetCode = ''; // 设备资产编号
+  // assetModelId: ' '; // 管理部门
+  equipmentData.list.equipmentSupplier = ''; // 设备供应商
+  equipmentData.list.userOwner = ''; // 保管人
+  equipmentData.list.maintenanceOwner = ''; // 维保联系人
+  equipmentData.list.maintenanceOwnerContact = ''; // 维保联系方式
+  equipmentData.list.dateEffective = ''; // 生效时间
+  equipmentData.list.dateInvalid = ''; // 失效时间
+  equipmentData.list.datetimeEntry = ''; // 进场时间
+  equipmentData.list.status = ''; // 状态
+  equipmentData.list.repairDealId = ''; // 维修处理组
+  equipmentData.list.repairAcceptId = ''; // 维修验收组
+  equipmentData.list.maintenanceDealId = ''; // 保养处理组
+  equipmentData.list.maintenanceAcceptId = ''; // 保养验收组
+  equipmentData.list.inspectDealId = ''; // 点检处理组
+  equipmentData.list.inspectAcceptId = ''; // 点检验收组
 };
 
 // 添加资产台账请求
@@ -477,7 +496,11 @@ const onInput = async (data: any) => {
 };
 
 const onSecondarySubmit = () => {
-  formRef.value.submit();
+  if (tabCurrentValue.value === '0') {
+    formRef.value.submit();
+  } else if (tabCurrentValue.value === '1') {
+    formVisible.value = false;
+  }
 };
 // 右侧表格编辑按钮
 const onEditRow = (row: any) => {
@@ -520,6 +543,33 @@ const onRedactTypeRequest = async () => {
   await api.assetLedger.modify({ ...equipmentData.list, id: incidentID.value });
   await onGetAnomalyTypeData();
   MessagePlugin.success('修改成功');
+};
+
+const uploadSuccess = (file: AddFileType) => {
+  MessagePlugin.info(`上传文件成功`);
+  fileList.value.push(file);
+  console.log('🚀 ~ file: detail.vue:208 ~ uploadSuccess ~ files.value:', fileList.value);
+
+  console.log('🚀 ~ file: detail.vue:209 ~ uploadSuccess ~ file:', file);
+};
+
+const uploadfail = (file: AddFileType) => {
+  MessagePlugin.info(`上传文件失败`);
+  console.log('uploadSuccess', file);
+};
+
+const deleteSuccess = (file: AddFileType) => {
+  MessagePlugin.info(`删除文件成功`);
+  console.log('deleteSuccess', file);
+  fileList.value = fileList.value.filter((item) => item.signedUrl !== file.signedUrl);
+};
+
+const batchDeleteSuccess = (files: AddFileType[]) => {
+  MessagePlugin.info(`删除文件成功`);
+  console.log('batchDeleteSuccess', files);
+  files.forEach((item) => {
+    fileList.value = fileList.value.filter((file) => file.signedUrl !== item.signedUrl);
+  });
 };
 
 // 获取批量删除数组

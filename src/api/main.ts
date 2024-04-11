@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -4563,11 +4563,11 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
   stateName?: string;
   isState?: boolean;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
 }
@@ -4734,8 +4734,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 /** 响应数据 */
@@ -4815,15 +4815,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isProductName?: string;
   isRawChecked?: boolean;
+  isRawName?: string;
   isInProcessName?: string;
   isBatchName?: string;
-  isRawName?: string;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
+  stateName?: string;
   isState?: boolean;
+  isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5911,6 +5911,120 @@ export interface Favorite {
   eid?: string;
   userId?: string;
   moduleId?: string;
+}
+
+export interface EquipmentFileSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  equipmentId?: string;
+}
+
+export interface EquipmentFileVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetModelId?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+  /** 设备描述 */
+  equipmentDesc?: string;
+  /** 资产编码 */
+  assetCode?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  dateEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  dateInvalid?: string;
+  /** 存放位置 */
+  position?: string;
+  /** 保管部门 */
+  departmentOwner?: string;
+  /** 保管人 */
+  userOwner?: string;
+  /** 设备供应商 */
+  equipmentSupplier?: string;
+  /** 维保联系人 */
+  maintenanceOwner?: string;
+  /** 维保联系方式 */
+  maintenanceOwnerContact?: string;
+  /**
+   * 进场时间
+   * @format date-time
+   */
+  datetimeEntry?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  inspectDealId?: string;
+  inspectAcceptId?: string;
+  /** 状态 */
+  status?: string;
+  /** 资产型号名称 */
+  modelName?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /** 管理状态名称 */
+  stateName?: string;
+  assetBrandId?: string;
+  /** 资产品牌名称 */
+  brandName?: string;
+  assetTypeId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataEquipmentFileVO = {
+  list?: EquipmentFileVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataEquipmentFileVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataEquipmentFileVO;
 }
 
 /** 设备 */
@@ -7870,8 +7984,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -8411,8 +8525,10 @@ export interface AssetLedgerVO {
   statusName?: string;
   /** 管理状态名称 */
   stateName?: string;
+  assetBrandId?: string;
   /** 资产品牌名称 */
   brandName?: string;
+  assetTypeId?: string;
 }
 
 /** 响应数据 */
@@ -9321,12 +9437,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -14708,6 +14824,22 @@ export const api = {
     list: () =>
       http.request<ResultListFavorite['data']>(`/api/main/favorite/list`, {
         method: 'GET',
+      }),
+  },
+  equipmentFile: {
+    /**
+     * No description
+     *
+     * @tags 设备附件表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/equipmentFile/getList
+     * @secure
+     */
+    getList: (data: EquipmentFileSearch) =>
+      http.request<ResultPagingDataEquipmentFileVO['data']>(`/api/main/equipmentFile/getList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   equipment: {

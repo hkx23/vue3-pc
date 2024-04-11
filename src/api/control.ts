@@ -1481,8 +1481,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface TimeSwitchProductVO {
@@ -2801,15 +2801,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
+  workshopId?: string;
+  workshopName?: string;
+  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
-  workshopName?: string;
-  workshopId?: string;
+  scanDatetimeStr?: string;
   datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2852,10 +2852,10 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  keyPartCodeStr?: string;
+  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
-  isScanFinish?: boolean;
+  keyPartCodeStr?: string;
 }
 
 /** 在制品关键件采集表 */
@@ -2986,8 +2986,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -3212,8 +3212,8 @@ export interface ProcessInspectionByMoVO {
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
   defectCodeStr?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3365,16 +3365,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  isState?: boolean;
-  datetimeScheStr?: string;
-  scanDatetimeStr?: string;
-  defectCodeStr?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  workshopCode?: string;
-  workshopName?: string;
   workshopId?: string;
   stateName?: string;
+  defectCodeStr?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
 }
 
 /** 缺陷代码 */
@@ -4995,17 +4995,17 @@ export interface BarcodeWipCollectVO {
   workstationModel?: Workstation;
   /** 请求ID */
   requestScanID?: string;
-  /** @format date-time */
-  datetimeSche?: string;
-  isState?: boolean;
-  workshopCode?: string;
-  workshopName?: string;
   workshopId?: string;
   stateName?: string;
+  workshopName?: string;
+  workshopCode?: string;
+  /** @format date-time */
+  datetimeSche?: string;
+  scanDatetimeStr?: string;
   datetimeScheStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  scanDatetimeStr?: string;
+  isState?: boolean;
 }
 
 /** 工序 */
@@ -5489,8 +5489,8 @@ export type DefectCodeVO = {
   ngQty?: number;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 } | null;
 
 /** 通用响应类 */
