@@ -59,7 +59,7 @@
     :cancel-btn="null"
     :confirm-btn="null"
     :header="diaLogTitle"
-    width="48%"
+    width="58%"
     top="90px"
     @close="onSecondaryReset"
   >
@@ -207,8 +207,31 @@
         <t-tab-panel label="拓展属性" value="3" :destroy-on-hide="true">
           <cmp-card :span="12">
             <t-tabs v-model="propertyTabValue" @change="propertyTabChange">
-              <t-tab-panel label="通用属性" value="common" :destroy-on-hide="true"></t-tab-panel>
-              <t-tab-panel label="基础属性" value="basics" :destroy-on-hide="true"></t-tab-panel>
+              <t-tab-panel
+                v-for="item in propertyCategoryTab"
+                :key="item.id"
+                :value="item.id"
+                :label="item.categoryName"
+                :destroy-on-hide="true"
+              >
+                <t-form
+                  ref="propertyFormRef"
+                  :colon="true"
+                  layout="inline"
+                  :data="propertyDataList"
+                  label-width="120px"
+                >
+                  <t-form-item
+                    v-for="property in propertyDataList"
+                    :key="property.id"
+                    :value="property.id"
+                    :label="property.displayName"
+                    :destroy-on-hide="true"
+                  >
+                    <t-input v-model="equipmentData.list.inspectDealId"></t-input>
+                  </t-form-item>
+                </t-form>
+              </t-tab-panel>
             </t-tabs>
           </cmp-card>
         </t-tab-panel>
@@ -224,7 +247,7 @@
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
-import { api, EquipmentFile } from '@/api/main';
+import { api, EquipmentFile, ObjectPropertyCategoryVO } from '@/api/main';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -235,6 +258,7 @@ import { useLang } from './lang';
 const { t } = useLang();
 const isDisabled = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
+const propertyFormRef: Ref<FormInstanceFunctions> = ref(null); // 扩展属性表单数据清除，获取表单实例
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
@@ -246,6 +270,8 @@ const propertyTabValue = ref('common'); // 扩展属性tab的默认选中
 const fileList = ref([]); // 上传文件列表
 const isLoading = ref(false); // 是否用loading
 const fileData = ref<EquipmentFile[]>([]);
+const propertyCategoryTab = ref<ObjectPropertyCategoryVO[]>([]);
+const propertyDataList = ref<ObjectPropertyCategoryVO[]>([]);
 
 // 表格数据总条数
 const anomalyTotal = ref(0);
@@ -418,7 +444,27 @@ const maintenanceColumns: PrimaryTableCol<TableRowData>[] = [
 // 初始渲染
 onMounted(async () => {
   await onGetAnomalyTypeData(); // 获取 表格 数据
+  await getPropertyTabData();
+  propertyTabValue.value = propertyCategoryTab.value[0].id;
+  await getPropertyData();
 });
+
+// 获取设备的扩展属性tab
+// 加载扩展属性的tap用于遍历生成panel
+const getPropertyTabData = async () => {
+  const propertyTabData = await api.objectPropertyCategory.getObjectCategory({ objectCode: 'equipment' });
+  propertyCategoryTab.value = propertyTabData.list;
+};
+// 加载第一个扩展属性分类的数据用于遍历生成input
+const getPropertyData = async () => {
+  const propertyData = await api.objectPropertyCategory.getObjectCategoryList({
+    pageNum: 1,
+    pageSize: 9999999,
+    objectCode: 'equipment',
+    id: propertyCategoryTab.value[0].id,
+  });
+  propertyDataList.value = propertyData.list;
+};
 
 // switch 开关事件
 const onSwitchChange = async (row: any, value: any) => {
@@ -446,7 +492,13 @@ const tabChange = async (value: any) => {
 };
 // 扩展TAb 栏切换事件
 const propertyTabChange = async (value: any) => {
-  propertyTabValue.value = value;
+  const propertyData = await api.objectPropertyCategory.getObjectCategoryList({
+    pageNum: 1,
+    pageSize: 9999999,
+    objectCode: 'equipment',
+    id: value,
+  });
+  propertyDataList.value = propertyData.list;
 };
 // 初始化 状态 下拉框数据
 const equipmentStatusDataList = [
@@ -480,6 +532,7 @@ const onAddTypeData = () => {
   submitFalg.value = true; // 区分新增编辑的开关
   diaLogTitle.value = '新增设备台账';
   fileList.value = []; // 清空文件列表
+  propertyTabValue.value = propertyCategoryTab.value[0].id; // 扩展属性的tab重置到第一个
   // 清空数据
   equipmentData.list.equipmentCode = ''; // 设备编码
   equipmentData.list.equipmentName = ''; // 设备名称
@@ -550,6 +603,8 @@ const onSecondarySubmit = async () => {
       equipmentId: equipmentID.value,
     });
     formVisible.value = false;
+  } else if (tabValue.value === '3') {
+    // 需要补充扩展属性值的编辑
   }
 };
 // 右侧表格编辑按钮
@@ -559,6 +614,7 @@ const onEditRow = (row: any) => {
   formVisible.value = true; // dialog的开关
   submitFalg.value = false; // 区分新增编辑的开关
   diaLogTitle.value = '编辑资产台账';
+  propertyTabValue.value = propertyCategoryTab.value[0].id; // 扩展属性的tab重置到第一个
   // 回填数据
   equipmentData.list.equipmentCode = row.equipmentCode; // 设备编码
   equipmentData.list.equipmentName = row.equipmentName; // 设备名称

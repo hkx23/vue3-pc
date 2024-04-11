@@ -1938,8 +1938,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface StockCheckBillVO {
@@ -3576,6 +3576,11 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  tlpickQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3586,11 +3591,6 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  tlpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  bfpickQty?: number;
-  flpickQty?: number;
 }
 
 /** 通用响应类 */

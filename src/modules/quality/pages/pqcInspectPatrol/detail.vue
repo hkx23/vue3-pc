@@ -138,6 +138,9 @@ import { computed, Ref, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { api, PqcInspectPatrolVO } from '@/api/quality';
+import ngStamp from '@/assets/images/NG.png';
+import okStamp from '@/assets/images/OK.png';
+import underwayStamp from '@/assets/images/UNDERWAY.png';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -178,11 +181,11 @@ const stampUrl = computed(() => {
   const result = props.rowData.bill.inspectResult;
   switch (result) {
     case 'OK':
-      return '../../../../../../public/images/pqcInspect/stamp/OK.png';
+      return okStamp;
     case 'NG':
-      return '../../../../../../public/images/pqcInspect/stamp/NG.png';
+      return ngStamp;
     default:
-      return '../../../../../../public/images/pqcInspect/stamp/UNDERWAY.png';
+      return underwayStamp;
   }
 });
 // 监听 id 的变化
