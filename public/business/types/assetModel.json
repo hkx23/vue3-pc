@@ -1,0 +1,39 @@
+{
+  "title": "资产型号：",
+  "placeholder": "请选择资产型号",
+  "url": "/api/main/assetModel/items",
+  "httptype": "POST",
+  "parentId": "",
+  "columns": [
+    
+    {
+      "title": "资产型号编码",
+      "key": "modelCode",
+      "align": "left"
+    },
+    {
+      "title": "资产型号名称",
+      "key": "modelName",
+      "align": "left"
+    },
+    {
+      "title": "资产型号描述",
+      "key": "modelDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "modelName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "modelName",
+    "codeField": "modelCode",
+    "descField": "modelDesc"
+  },
+  "name": "资产型号",
+  "componentType": "list"
+}

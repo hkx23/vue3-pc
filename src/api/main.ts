@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -4563,13 +4563,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
   isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4734,8 +4734,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 /** 响应数据 */
@@ -4815,12 +4815,12 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
   stateName?: string;
-  isBatchName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
+  isBatchName?: string;
+  isRawName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
   isState?: boolean;
@@ -4966,8 +4966,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7870,8 +7870,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -8230,6 +8230,26 @@ export interface AssetModel {
   modelDesc?: string;
 }
 
+/** 响应数据 */
+export type PagingDataAssetModel = {
+  list?: AssetModel[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAssetModel {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAssetModel;
+}
+
 export interface AssetModelSearch {
   /**
    * 页码
@@ -8393,8 +8413,6 @@ export interface AssetLedgerVO {
   stateName?: string;
   /** 资产品牌名称 */
   brandName?: string;
-  /** 资产品牌描述 */
-  brandDesc?: string;
 }
 
 /** 响应数据 */
@@ -9303,12 +9321,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -16483,6 +16501,20 @@ export const api = {
      * No description
      *
      * @tags 资产型号
+     * @name Search
+     * @request POST:/assetModel/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataAssetModel['data']>(`/api/main/assetModel/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产型号
      * @name GetList
      * @summary 获得主界面数据
      * @request POST:/assetModel/getList
@@ -16514,6 +16546,36 @@ export const api = {
      * No description
      *
      * @tags 资产台账
+     * @name RemoveBatch
+     * @summary 批量删除资产台账
+     * @request POST:/assetLedger/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/assetLedger/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产台账
+     * @name Modify
+     * @summary 编辑资产台账
+     * @request POST:/assetLedger/modify
+     * @secure
+     */
+    modify: (data: Equipment) =>
+      http.request<ResultObject['data']>(`/api/main/assetLedger/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产台账
      * @name GetList
      * @summary 获得主界面数据
      * @request POST:/assetLedger/getList
@@ -16521,6 +16583,21 @@ export const api = {
      */
     getList: (data: AssetLedgerSearch) =>
       http.request<ResultPagingDataAssetLedgerVO['data']>(`/api/main/assetLedger/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产台账
+     * @name Add
+     * @summary 新增资产台账
+     * @request POST:/assetLedger/add
+     * @secure
+     */
+    add: (data: Equipment) =>
+      http.request<ResultObject['data']>(`/api/main/assetLedger/add`, {
         method: 'POST',
         body: data as any,
       }),

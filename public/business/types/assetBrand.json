@@ -3,6 +3,7 @@
   "placeholder": "请选择资产品牌",
   "url": "/api/main/assetBrand/items",
   "httptype": "POST",
+  "parentId": "",
   "columns": [
     
     {
