@@ -1487,7 +1487,7 @@ const isBatchOption = [
 const inspectTypeOption = ref([]);
 const occurNatureOption = ref([]);
 const billNoOption = ref([]);
-api.param.getListByGroupCode({ parmGroupCode: 'Q_IQC_INSPECTION_TYPE' }).then((data) => {
+api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_TYPE' }).then((data) => {
   inspectTypeOption.value = data;
 });
 api.param.getListByGroupCode({ parmGroupCode: 'NATURE_OF_OCCURRENCE' }).then((data) => {
