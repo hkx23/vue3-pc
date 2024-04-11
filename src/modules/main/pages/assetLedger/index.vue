@@ -54,6 +54,7 @@
   </cmp-container>
   <!-- dialog 弹窗 -->
   <t-dialog
+    v-if="formVisible"
     v-model:visible="formVisible"
     :cancel-btn="null"
     :confirm-btn="null"
@@ -63,7 +64,7 @@
     @close="onSecondaryReset"
   >
     <cmp-container :full="true" style="height: calc(90vh - 140px - 140px)">
-      <t-tabs v-model="tabDefaultValue" @change="tabChange">
+      <t-tabs v-if="formVisible" v-model="tabValue" @change="tabChange">
         <t-tab-panel label="设备信息" value="0" :destroy-on-hide="true">
           <t-form
             ref="formRef"
@@ -189,22 +190,28 @@
           </cmp-container>
         </t-tab-panel>
         <t-tab-panel label="维保履历" value="2" :destroy-on-hide="true">
-          <!-- <cmp-table
+          <cmp-table
             ref="tableRef"
             row-key="serialNumber"
-            :table-column="maintenanceColumns"
-            empty="没有符合条件的数据"
-            :table-data="tableData"
             :show-pagination="false"
             :show-setting="false"
             :show-toolbar="false"
-            :is-fixed-height="true"
             :select-on-row-click="false"
+            empty="没有符合条件的数据"
+            :table-column="maintenanceColumns"
+            :table-data="anomalyTypeData.list"
             :loading="isLoading"
             :selected-row-keys="selectedRowKeys"
-          ></cmp-table> -->
+          ></cmp-table>
         </t-tab-panel>
-        <t-tab-panel label="拓展属性" value="3" :destroy-on-hide="true"></t-tab-panel>
+        <t-tab-panel label="拓展属性" value="3" :destroy-on-hide="true">
+          <cmp-card :span="12">
+            <t-tabs v-model="propertyTabValue" @change="propertyTabChange">
+              <t-tab-panel label="通用属性" value="common" :destroy-on-hide="true"></t-tab-panel>
+              <t-tab-panel label="基础属性" value="basics" :destroy-on-hide="true"></t-tab-panel>
+            </t-tabs>
+          </cmp-card>
+        </t-tab-panel>
       </t-tabs>
     </cmp-container>
     <template #footer>
@@ -217,7 +224,7 @@
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
-import { api } from '@/api/main';
+import { api, EquipmentFile } from '@/api/main';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -234,14 +241,16 @@ const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
 const submitFalg = ref(false);
 const queryCompent = ref(); // 查询组件对象传递
-const tabDefaultValue = ref('0'); // tab的默认选中
-const tabCurrentValue = ref(''); // 当前tab的value值
+const tabValue = ref('0'); // tab的默认选中
+const propertyTabValue = ref('common'); // 扩展属性tab的默认选中
 const fileList = ref([]); // 上传文件列表
+const isLoading = ref(false); // 是否用loading
+const fileData = ref<EquipmentFile[]>([]);
 
 // 表格数据总条数
 const anomalyTotal = ref(0);
 // 编辑回填 ID
-const incidentID = ref('');
+const equipmentID = ref('');
 // 表格数据
 const anomalyTypeData = reactive({ list: [] });
 
@@ -374,14 +383,38 @@ const rules: FormRules = {
   equipmentDesc: [{ required: true, message: '设备描述不能为空', trigger: 'blur' }],
   status: [{ required: true, message: '状态不能为空', trigger: 'change' }],
 };
-/* // 表格列表数据
+// 表格列表数据
 const maintenanceColumns: PrimaryTableCol<TableRowData>[] = [
   {
     colKey: 'row-select',
-    type: 'multiple',
+    type: 'single',
     width: 46,
   },
-]; */
+  {
+    colKey: 'statusName',
+    title: '单据编号',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'statusName',
+    title: '单据类型',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'statusName',
+    title: '完成日期',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'statusName',
+    title: '处理人',
+    align: 'center',
+    width: '100',
+  },
+];
 // 初始渲染
 onMounted(async () => {
   await onGetAnomalyTypeData(); // 获取 表格 数据
@@ -402,9 +435,19 @@ const onSwitchChange = async (row: any, value: any) => {
 
 // TAb 栏切换事件
 const tabChange = async (value: any) => {
-  tabCurrentValue.value = value;
+  if (value === '1' && diaLogTitle.value === '编辑资产台账') {
+    const filesData = await api.equipmentFile.getList({
+      pageNum: 1,
+      pageSize: 99999,
+      equipmentId: equipmentID.value,
+    });
+    fileList.value = filesData.list;
+  }
 };
-
+// 扩展TAb 栏切换事件
+const propertyTabChange = async (value: any) => {
+  propertyTabValue.value = value;
+};
 // 初始化 状态 下拉框数据
 const equipmentStatusDataList = [
   { label: '正常', value: 'NORMAL' },
@@ -431,11 +474,12 @@ const onGetAnomalyTypeData = async () => {
 
 // 添加按钮点击事件
 const onAddTypeData = () => {
-  tabCurrentValue.value = '0'; // 当前tab的value值设0，默认加载第一个form表单
+  tabValue.value = '0'; // 当前tab的value值设0，默认加载第一个form表单
   isDisabled.value = false; // 控件开关
   formVisible.value = true; // dialog开关
   submitFalg.value = true; // 区分新增编辑的开关
   diaLogTitle.value = '新增设备台账';
+  fileList.value = []; // 清空文件列表
   // 清空数据
   equipmentData.list.equipmentCode = ''; // 设备编码
   equipmentData.list.equipmentName = ''; // 设备名称
@@ -489,25 +533,32 @@ const onInput = async (data: any) => {
     pageSize: pageUI.value.rows,
     keyword: data.soltDemo,
   });
-
   anomalyTypeData.list = res.list;
   anomalyTotal.value = res.total;
   MessagePlugin.success('查询成功');
 };
 
-const onSecondarySubmit = () => {
-  if (tabCurrentValue.value === '0') {
+const onSecondarySubmit = async () => {
+  if (tabValue.value === '0') {
     formRef.value.submit();
-  } else if (tabCurrentValue.value === '1') {
+  } else if (tabValue.value === '1') {
+    fileData.value = fileList.value.map((item) => {
+      return { equipmentId: equipmentID.value, fileName: item.fileName, filePath: item.signedUrl };
+    });
+    await api.equipmentFile.modifyFileList({
+      fileList: fileData.value,
+      equipmentId: equipmentID.value,
+    });
     formVisible.value = false;
   }
 };
 // 右侧表格编辑按钮
 const onEditRow = (row: any) => {
-  tabCurrentValue.value = '0'; // 当前tab的value值设0，默认加载第一个form表单
+  tabValue.value = '0'; // 当前tab的value值设0，默认加载第一个form表单
   isDisabled.value = true; // 控件的开关
   formVisible.value = true; // dialog的开关
   submitFalg.value = false; // 区分新增编辑的开关
+  diaLogTitle.value = '编辑资产台账';
   // 回填数据
   equipmentData.list.equipmentCode = row.equipmentCode; // 设备编码
   equipmentData.list.equipmentName = row.equipmentName; // 设备名称
@@ -534,13 +585,12 @@ const onEditRow = (row: any) => {
   equipmentData.list.inspectDealId = row.inspectDealId; // 点检处理组
   equipmentData.list.inspectAcceptId = row.inspectAcceptId; // 点检验收组
 
-  incidentID.value = row.id; // 编辑回填 ID
-  diaLogTitle.value = '编辑资产台账';
+  equipmentID.value = row.id; // 编辑回填 ID
 };
 
 // 编辑表格数据 请求
 const onRedactTypeRequest = async () => {
-  await api.assetLedger.modify({ ...equipmentData.list, id: incidentID.value });
+  await api.assetLedger.modify({ ...equipmentData.list, id: equipmentID.value });
   await onGetAnomalyTypeData();
   MessagePlugin.success('修改成功');
 };
@@ -612,7 +662,6 @@ const deleteBatches = async () => {
 
 // 关闭模态框事件
 const onSecondaryReset = () => {
-  formRef.value.reset({ type: 'empty' });
   equipmentData.list.assetBrandId = '';
   formVisible.value = false;
 };

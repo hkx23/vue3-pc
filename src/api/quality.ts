@@ -162,8 +162,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface SamplingStdDtlDTO {
@@ -2512,12 +2512,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -3112,8 +3112,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -4400,9 +4400,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5659,13 +5659,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  ii?: string;
-  s1?: string;
-  iii?: string;
-  s2?: string;
   s3?: string;
+  i?: string;
+  s1?: string;
+  ii?: string;
+  iii?: string;
   s4?: string;
+  s2?: string;
 } | null;
 
 /** 标签模板 */

@@ -1722,6 +1722,9 @@ export interface SopFileSearch {
    */
   pageSize?: number;
   keyword?: string;
+  status?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
 }
 
 /** 响应数据 */
@@ -1760,6 +1763,78 @@ export interface SopCategoryTreeVO {
   /** @format int32 */
   num?: number;
   list?: SopCategoryMitemVO[];
+}
+
+/** 响应数据 */
+export type PagingDataSopFileVO = {
+  list?: SopFileVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSopFileVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSopFileVO;
+}
+
+export interface SopFileVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+  /** 文件分类 */
+  sopCategory?: string;
+  /** 版本号 */
+  revision?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  timeEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  timeInvalid?: string;
+  /** 状态 */
+  status?: string;
+  /** 文件分类 */
+  sopCategoryName?: string;
+  /** 文件分类 */
+  statusName?: string;
+  processName?: string;
+  workcenterName?: string;
 }
 
 /** 关键物料追溯（反向）-查询 */
@@ -2801,15 +2876,15 @@ export interface ProductReworkVO {
   preSetting?: ProductReworkPreSettingDTO;
   /** 是否提交事务 */
   isCommit?: boolean;
-  workshopId?: string;
-  workshopName?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -2852,9 +2927,9 @@ export interface WipKeyPartCollectVO {
   isDeleteKeyPart?: boolean;
   /** 关键条码信息 */
   keyPartList?: WipKeypart[];
-  isScanFinish?: boolean;
   /** @format int32 */
   requestQty?: number;
+  isScanFinish?: boolean;
   keyPartCodeStr?: string;
 }
 
@@ -3211,9 +3286,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  defectCodeStr?: string;
-  scanDatetimeStr?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3365,16 +3440,16 @@ export interface BarcodeWipVO {
   workCenterName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: DefectCode[];
-  workshopId?: string;
-  stateName?: string;
-  defectCodeStr?: string;
-  workshopName?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  scanDatetimeStr?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  stateName?: string;
   datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   isState?: boolean;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -4995,16 +5070,16 @@ export interface BarcodeWipCollectVO {
   workstationModel?: Workstation;
   /** 请求ID */
   requestScanID?: string;
-  workshopId?: string;
-  stateName?: string;
-  workshopName?: string;
-  workshopCode?: string;
   /** @format date-time */
   datetimeSche?: string;
-  scanDatetimeStr?: string;
-  datetimeScheStr?: string;
+  workshopName?: string;
+  workshopId?: string;
+  workshopCode?: string;
+  stateName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
+  datetimeScheStr?: string;
+  scanDatetimeStr?: string;
   isState?: boolean;
 }
 
@@ -6569,6 +6644,21 @@ export const api = {
      * No description
      *
      * @tags 工艺文件与产品关系表
+     * @name OnDelBatch
+     * @summary 逻辑删除产品下的所以文件
+     * @request POST:/sopProduct/onDelBatch
+     * @secure
+     */
+    onDelBatch: (data: SopFileSearch) =>
+      http.request<ResultObject['data']>(`/api/control/sopProduct/onDelBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺文件与产品关系表
      * @name GetMitemCategoryList
      * @summary 获取树
      * @request POST:/sopProduct/getMitemCategoryList
@@ -6576,6 +6666,36 @@ export const api = {
      */
     getMitemCategoryList: (data: SopFileSearch) =>
       http.request<ResultPagingDataSopCategoryTreeVO['data']>(`/api/control/sopProduct/getMitemCategoryList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺文件与产品关系表
+     * @name AddMitemCategory
+     * @summary 新增产品类别
+     * @request POST:/sopProduct/addMitemCategory
+     * @secure
+     */
+    addMitemCategory: (data: SopFileSearch) =>
+      http.request<ResultObject['data']>(`/api/control/sopProduct/addMitemCategory`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  sopFile: {
+    /**
+     * No description
+     *
+     * @tags 工艺文件表
+     * @name GetList
+     * @request POST:/sopFile/getList
+     * @secure
+     */
+    getList: (data: SopFileSearch) =>
+      http.request<ResultPagingDataSopFileVO['data']>(`/api/control/sopFile/getList`, {
         method: 'POST',
         body: data as any,
       }),

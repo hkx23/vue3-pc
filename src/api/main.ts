@@ -4563,13 +4563,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
-  isState?: boolean;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  stateName?: string;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -4815,13 +4815,13 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
   stateName?: string;
   isState?: boolean;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
 }
@@ -5913,6 +5913,38 @@ export interface Favorite {
   moduleId?: string;
 }
 
+/** 设备附件表 */
+export interface EquipmentFile {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  equipmentId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+}
+
 export interface EquipmentFileSearch {
   /**
    * 页码
@@ -5925,6 +5957,8 @@ export interface EquipmentFileSearch {
    */
   pageSize?: number;
   equipmentId?: string;
+  /** 保存传递的文件列表 */
+  fileList?: EquipmentFile[];
 }
 
 export interface EquipmentFileVO {
@@ -5951,60 +5985,11 @@ export interface EquipmentFileVO {
   state?: number;
   eid?: string;
   oid?: string;
-  assetModelId?: string;
-  /** 设备编码 */
-  equipmentCode?: string;
-  /** 设备名称 */
-  equipmentName?: string;
-  /** 设备描述 */
-  equipmentDesc?: string;
-  /** 资产编码 */
-  assetCode?: string;
-  /**
-   * 生效时间
-   * @format date-time
-   */
-  dateEffective?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  dateInvalid?: string;
-  /** 存放位置 */
-  position?: string;
-  /** 保管部门 */
-  departmentOwner?: string;
-  /** 保管人 */
-  userOwner?: string;
-  /** 设备供应商 */
-  equipmentSupplier?: string;
-  /** 维保联系人 */
-  maintenanceOwner?: string;
-  /** 维保联系方式 */
-  maintenanceOwnerContact?: string;
-  /**
-   * 进场时间
-   * @format date-time
-   */
-  datetimeEntry?: string;
-  repairDealId?: string;
-  repairAcceptId?: string;
-  maintenanceDealId?: string;
-  maintenanceAcceptId?: string;
-  inspectDealId?: string;
-  inspectAcceptId?: string;
-  /** 状态 */
-  status?: string;
-  /** 资产型号名称 */
-  modelName?: string;
-  /** 状态名称 */
-  statusName?: string;
-  /** 管理状态名称 */
-  stateName?: string;
-  assetBrandId?: string;
-  /** 资产品牌名称 */
-  brandName?: string;
-  assetTypeId?: string;
+  equipmentId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
 }
 
 /** 响应数据 */
@@ -9439,10 +9424,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -14827,6 +14812,21 @@ export const api = {
       }),
   },
   equipmentFile: {
+    /**
+     * No description
+     *
+     * @tags 设备附件表
+     * @name ModifyFileList
+     * @summary 更新上传文件
+     * @request POST:/equipmentFile/modifyFileList
+     * @secure
+     */
+    modifyFileList: (data: EquipmentFileSearch) =>
+      http.request<ResultObject['data']>(`/api/main/equipmentFile/modifyFileList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
