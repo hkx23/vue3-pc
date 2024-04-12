@@ -496,7 +496,6 @@ const onExpandSwitch = () => {
 };
 
 useResizeObserver(QueryRef, (entries) => {
-  loading.value = true;
   const entry = entries[0];
   console.debug(entry);
   debounceFunction();
@@ -511,6 +510,7 @@ const buttonItemWidth = ref(200);
 const totalComLength = ref(0);
 
 const computedExpandBtnVisible = () => {
+  loading.value = true;
   nextTick(() => {
     if (totalComLength.value >= rowItemCount.value) {
       showExpand.value = true;
