@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -1948,6 +1948,137 @@ export interface ResultPagingDataMsgSendLog {
   message?: string;
   /** 响应数据 */
   data?: PagingDataMsgSendLog;
+}
+
+/** 备品备件表 */
+export interface SparePart {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 备品备件编码 */
+  sparePartCode?: string;
+  /** 备品备件名称 */
+  sparePartName?: string;
+  supplierId?: string;
+  /** 备品备件型号 */
+  sparePartModel?: string;
+  /** 单位 */
+  uom?: string;
+  /** 安全库存 */
+  safetyStockQty?: number;
+  /** 备注 */
+  memo?: string;
+}
+
+export interface SparePartSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  warehouseId?: string;
+  districtId?: string;
+  /** 是否低于安全库存 */
+  isBelowSafelyStock?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataSparePartVO = {
+  list?: SparePartVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSparePartVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSparePartVO;
+}
+
+export interface SparePartVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 备品备件编码 */
+  sparePartCode?: string;
+  /** 备品备件名称 */
+  sparePartName?: string;
+  supplierId?: string;
+  /** 备品备件型号 */
+  sparePartModel?: string;
+  /** 单位 */
+  uom?: string;
+  /** 安全库存 */
+  safetyStockQty?: number;
+  /** 备注 */
+  memo?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 计量单位符号 */
+  uomName?: string;
+  /**
+   * 现有量
+   * @format int32
+   */
+  qty?: number;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 货位名称 */
+  districtName?: string;
 }
 
 /** 工艺路线映射表 */
@@ -4563,13 +4694,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
-  stateName?: string;
   dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
+  stateName?: string;
   isState?: boolean;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4816,14 +4947,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isState?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
+  isInProcessName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
-  isInProcessName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -6326,6 +6457,129 @@ export interface ResultListDlTask {
   message?: string;
   /** 响应数据 */
   data?: DlTask[] | null;
+}
+
+/** 货区 */
+export interface District {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 货位代码 */
+  districtCode?: string;
+  /** 货位名称 */
+  districtName?: string;
+  /** 货位描述 */
+  districtDesc?: string;
+  warehouseId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultDistrict {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 货区 */
+  data?: District;
+}
+
+export interface DistrictSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  warehouseId?: string;
+  /** 货区搜索关键字 */
+  districtKeyword?: string;
+}
+
+/** 公共方法输出类 */
+export interface DistrictVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 货位代码 */
+  districtCode?: string;
+  /** 货位名称 */
+  districtName?: string;
+  /** 货位描述 */
+  districtDesc?: string;
+  warehouseId?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 修改人 */
+  modifierName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataDistrictVO = {
+  list?: DistrictVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDistrictVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDistrictVO;
 }
 
 /** 查询条码信息 */
@@ -7969,8 +8223,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -9422,12 +9676,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12198,6 +12452,67 @@ export const api = {
     cpuCompute: () =>
       http.request<ResultInteger['data']>(`/api/main/stressTest/CPUCompute`, {
         method: 'GET',
+      }),
+  },
+  sparePart: {
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name RemoveBatch
+     * @summary 批量删除备品备件
+     * @request POST:/sparePart/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/sparePart/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name Modify
+     * @summary 编辑备品备件
+     * @request POST:/sparePart/modify
+     * @secure
+     */
+    modify: (data: SparePart) =>
+      http.request<ResultObject['data']>(`/api/main/sparePart/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/sparePart/getList
+     * @secure
+     */
+    getList: (data: SparePartSearch) =>
+      http.request<ResultPagingDataSparePartVO['data']>(`/api/main/sparePart/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name Add
+     * @summary 新增备品备件
+     * @request POST:/sparePart/add
+     * @secure
+     */
+    add: (data: SparePart) =>
+      http.request<ResultObject['data']>(`/api/main/sparePart/add`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   roleAuthorization: {
@@ -14991,6 +15306,109 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/dlTask/add`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  district: {
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name RemoveDistrict
+     * @summary 删除货区
+     * @request POST:/district/removeDistrict
+     * @secure
+     */
+    removeDistrict: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/main/district/removeDistrict`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name ModifyDistrict
+     * @summary 编辑货区
+     * @request POST:/district/modifyDistrict
+     * @secure
+     */
+    modifyDistrict: (data: District) =>
+      http.request<ResultObject['data']>(`/api/main/district/modifyDistrict`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name Search
+     * @request POST:/district/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/district/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name GetItemById
+     * @request POST:/district/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultDistrict['data']>(`/api/main/district/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name GetList
+     * @summary 查询货区
+     * @request POST:/district/getList
+     * @secure
+     */
+    getList: (data: DistrictSearch) =>
+      http.request<ResultPagingDataDistrictVO['data']>(`/api/main/district/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name AddDistrict
+     * @summary 新增货区
+     * @request POST:/district/addDistrict
+     * @secure
+     */
+    addDistrict: (data: District) =>
+      http.request<ResultObject['data']>(`/api/main/district/addDistrict`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name GetNameById
+     * @summary 根据ID获得名称
+     * @request GET:/district/getNameById
+     * @secure
+     */
+    getNameById: (query: { id: string }) =>
+      http.request<ResultString['data']>(`/api/main/district/getNameById`, {
+        method: 'GET',
+        params: query,
       }),
   },
   deliveryCard: {

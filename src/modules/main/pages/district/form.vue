@@ -61,7 +61,7 @@ import { isEmpty } from 'lodash';
 import { Data, FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
-import { api, District } from '@/api/warehouse';
+import { api, District } from '@/api/main';
 
 interface DistrictForm extends District {
   operateTpye: string;

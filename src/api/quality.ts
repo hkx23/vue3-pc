@@ -162,8 +162,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 export interface SamplingStdDtlDTO {
@@ -2468,8 +2468,8 @@ export interface OqcInspectBillFullVO {
   /** 整改意见 */
   correctOpinion?: string;
   personResponsibilityId?: string;
-  /** 责任方 */
-  responsibility?: string;
+  /** 责任部门ID */
+  deptResponsibilityId?: string;
   /** 抽样标准类型 */
   samplingStandardType?: string;
   /** 抽样标准编码 */
@@ -2505,6 +2505,8 @@ export interface OqcInspectBillFullVO {
   inspectStringencyName?: string;
   defectCategoryName?: string;
   handleMethodName?: string;
+  /** 责任方 */
+  responsibility?: string;
   /** 整改意见 */
   correctOpinionName?: string;
   /** 计量单位符号 */
@@ -2512,12 +2514,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 检验结果名称 */
-  inspectResultName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 通用响应类 */
@@ -3076,10 +3078,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3795,10 +3797,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 停留时长 */
   waitTime?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
 }
 
 /** 响应数据 */
@@ -4400,11 +4402,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  iqcInspectDtlId?: string;
-  /** 项目特性 */
-  characteristicsName?: string;
   /** 是否CTQ */
   isCtqName?: string;
+  /** 项目特性 */
+  characteristicsName?: string;
+  iqcInspectDtlId?: string;
 }
 
 /** 响应数据 */
@@ -5463,10 +5465,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -5659,13 +5661,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
+  s3?: string;
   iii?: string;
   s1?: string;
-  i?: string;
-  s3?: string;
+  s4?: string;
   ii?: string;
   s2?: string;
-  s4?: string;
+  i?: string;
 } | null;
 
 /** 标签模板 */

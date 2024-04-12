@@ -3571,26 +3571,26 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  bfpickQty?: number;
-  tlpickQty?: number;
-  flpickQty?: number;
   /**
    * 已扫描数量
    * @format double
    */
   scanQty?: number;
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
+  tlpickQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  flpickQty?: number;
+  bfpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -5033,129 +5033,6 @@ export interface DynamicColumn {
   defaultValue?: string;
 }
 
-/** 货区 */
-export interface District {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 货位代码 */
-  districtCode?: string;
-  /** 货位名称 */
-  districtName?: string;
-  /** 货位描述 */
-  districtDesc?: string;
-  warehouseId?: string;
-}
-
-/** 通用响应类 */
-export interface ResultDistrict {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 货区 */
-  data?: District;
-}
-
-export interface DistrictSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  warehouseId?: string;
-  /** 货区搜索关键字 */
-  districtKeyword?: string;
-}
-
-/** 公共方法输出类 */
-export interface DistrictVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  /** 货位代码 */
-  districtCode?: string;
-  /** 货位名称 */
-  districtName?: string;
-  /** 货位描述 */
-  districtDesc?: string;
-  warehouseId?: string;
-  /** 仓库代码 */
-  warehouseCode?: string;
-  /** 仓库名称 */
-  warehouseName?: string;
-  /** 修改人 */
-  modifierName?: string;
-}
-
-/** 响应数据 */
-export type PagingDataDistrictVO = {
-  list?: DistrictVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataDistrictVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataDistrictVO;
-}
-
 export interface DeliveryCommandSearch {
   /**
    * 页码
@@ -6184,6 +6061,40 @@ export interface ResultPagingDataOnhandQtyDtlVO {
   /** 响应数据 */
   data?: PagingDataOnhandQtyDtlVO;
 }
+
+/** 货区 */
+export type District = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 货位代码 */
+  districtCode?: string;
+  /** 货位名称 */
+  districtName?: string;
+  /** 货位描述 */
+  districtDesc?: string;
+  warehouseId?: string;
+} | null;
 
 /** 通用响应类 */
 export interface ResultListDistrict {
@@ -9366,109 +9277,6 @@ export const api = {
       http.request<ResultObject['data']>(`/api/warehouse/dynamicManage/batchUpdateData`, {
         method: 'POST',
         body: data as any,
-      }),
-  },
-  district: {
-    /**
-     * No description
-     *
-     * @tags 货区
-     * @name RemoveDistrict
-     * @summary 删除货区
-     * @request POST:/district/removeDistrict
-     * @secure
-     */
-    removeDistrict: (query: { id: string }) =>
-      http.request<ResultObject['data']>(`/api/warehouse/district/removeDistrict`, {
-        method: 'POST',
-        params: query,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 货区
-     * @name ModifyDistrict
-     * @summary 编辑货区
-     * @request POST:/district/modifyDistrict
-     * @secure
-     */
-    modifyDistrict: (data: District) =>
-      http.request<ResultObject['data']>(`/api/warehouse/district/modifyDistrict`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 货区
-     * @name Search
-     * @request POST:/district/items
-     * @secure
-     */
-    search: (data: CommonSearch) =>
-      http.request<ResultObject['data']>(`/api/warehouse/district/items`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 货区
-     * @name GetItemById
-     * @request POST:/district/items/{id}
-     * @secure
-     */
-    getItemById: (id: string) =>
-      http.request<ResultDistrict['data']>(`/api/warehouse/district/items/${id}`, {
-        method: 'POST',
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 货区
-     * @name GetList
-     * @summary 查询货区
-     * @request POST:/district/getList
-     * @secure
-     */
-    getList: (data: DistrictSearch) =>
-      http.request<ResultPagingDataDistrictVO['data']>(`/api/warehouse/district/getList`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 货区
-     * @name AddDistrict
-     * @summary 新增货区
-     * @request POST:/district/addDistrict
-     * @secure
-     */
-    addDistrict: (data: District) =>
-      http.request<ResultObject['data']>(`/api/warehouse/district/addDistrict`, {
-        method: 'POST',
-        body: data as any,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 货区
-     * @name GetNameById
-     * @summary 根据ID获得名称
-     * @request GET:/district/getNameById
-     * @secure
-     */
-    getNameById: (query: { id: string }) =>
-      http.request<ResultString['data']>(`/api/warehouse/district/getNameById`, {
-        method: 'GET',
-        params: query,
       }),
   },
   deliveryCommand: {

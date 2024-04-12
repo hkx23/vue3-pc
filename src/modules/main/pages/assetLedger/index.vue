@@ -54,7 +54,6 @@
   </cmp-container>
   <!-- dialog 弹窗 -->
   <t-dialog
-    v-if="formVisible"
     v-model:visible="formVisible"
     :cancel-btn="null"
     :confirm-btn="null"

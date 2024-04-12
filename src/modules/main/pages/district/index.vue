@@ -70,7 +70,7 @@
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api } from '@/api/warehouse';
+import { api } from '@/api/main';
 import CmpQuery from '@/components/cmp-query/index.vue'; //* 查询组件
 import CmpTable from '@/components/cmp-table/index.vue'; //* 表格组件
 import { useLoading } from '@/hooks/modules/loading';
