@@ -118,10 +118,10 @@
           <t-descriptions-item label="检验单号">{{ formData.billNo }}</t-descriptions-item>
           <t-descriptions-item label="单据状态">{{ formData.statusName }}</t-descriptions-item>
           <t-descriptions-item label="检验标准">{{ formData.inspectStdName }}</t-descriptions-item>
-          <t-descriptions-item v-if="formData.businessCategory == 'MO'" label="报批数量">{{
+          <t-descriptions-item v-if="formData.businessCategory == 'MO'" label="批量">{{
             formData.checkMoTotalQty
           }}</t-descriptions-item>
-          <t-descriptions-item v-if="formData.businessCategory == 'BARCODE'" label="报批数量">{{
+          <t-descriptions-item v-if="formData.businessCategory == 'BARCODE'" label="批量">{{
             formData.checkBarcodeTotalQty
           }}</t-descriptions-item>
           <t-descriptions-item label="产品编码">{{ formData.mitemCode }}</t-descriptions-item>
