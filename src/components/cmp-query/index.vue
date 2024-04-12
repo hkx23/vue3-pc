@@ -12,7 +12,7 @@
           size="default"
           @submit.prevent
         >
-          <div ref="formRowRef" style="width: 100%">
+          <div ref="formRowRef" style="width: 100%" :style="loading ? 'opacity: 0.1' : ''">
             <t-row v-for="(optRow, rowI) in cOpts" :key="rowI" class="item-row" :gutter="[8, 8]">
               <!--  :span="opt.span" -->
               <t-col v-for="(opt, i) in optRow" v-show="!opt.isHide" :key="i" :flex="opt.flex"
@@ -203,10 +203,7 @@ const props = defineProps({
   btnResetBind: {
     type: [Object],
   },
-  loading: {
-    type: Boolean,
-    default: false,
-  },
+
   reset: {
     type: Boolean,
     default: true,
@@ -236,6 +233,7 @@ const props = defineProps({
     default: 'medium',
   },
 });
+const loading = ref(false);
 const rowItemCount = ref(1);
 // 初始化表单数据
 const state = reactive({
@@ -492,12 +490,15 @@ watch(
 // 展开按钮点击事件
 const onExpandSwitch = () => {
   openSearchForm.value = !openSearchForm.value;
+  // loading.value = false;
   // nextTick(() => {
   //   computedTableContentSize();
   // });
 };
 
 useResizeObserver(QueryRef, (entries) => {
+  loading.value = true;
+
   const entry = entries[0];
   console.debug(entry);
   debounceFunction();
@@ -518,6 +519,7 @@ const computedExpandBtnVisible = () => {
     } else {
       showExpand.value = false;
     }
+    loading.value = false;
   });
 };
 
