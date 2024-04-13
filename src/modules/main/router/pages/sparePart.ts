@@ -5,8 +5,8 @@ export default [
     component: () => import('../../pages/sparePart/index.vue'),
     meta: {
       title: {
-        zh_CN: '备品备件台账',
-        en_US: 'sparePart',
+        'zh-CN': '备品备件台账',
+        'en-US': 'sparePart',
       },
       orderNo: 0,
     },

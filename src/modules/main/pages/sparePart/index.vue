@@ -46,11 +46,12 @@
           <t-space :size="8">
             <t-button theme="primary" @click="onAddTypeData">新增</t-button>
             <!-- <t-button theme="default">导入</t-button> -->
-            <bcmp-import-auto-button
-              theme="default"
-              button-text="导入"
-              type="a_incident_type"
-            ></bcmp-import-auto-button>
+            <bcmp-import-button
+              theme="primary"
+              type="m_spare_part"
+              button-text="批量导入"
+              @close="onFetchGroupData"
+            ></bcmp-import-button>
             <t-popconfirm theme="default" content="确认删除吗" @confirm="deleteBatches()">
               <t-button theme="default">批量删除</t-button>
             </t-popconfirm>
@@ -237,15 +238,22 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 ];
 // 表单验证规则
 const rules: FormRules = {
-  brandCode: [{ required: true, message: '资产品牌编码不能为空', trigger: 'blur' }],
-  brandName: [{ required: true, message: '资产品牌名称不能为空', trigger: 'blur' }],
-  brandDesc: [{ required: true, message: '资产品牌描述不能为空', trigger: 'blur' }],
-  assetTypeId: [{ required: true, message: '资产类型不能为空', trigger: 'change' }],
+  sparePartCode: [{ required: true, message: '备品备件编码不能为空', trigger: 'blur' }],
+  sparePartName: [{ required: true, message: '备品备件名称不能为空', trigger: 'blur' }],
+  supplierId: [{ required: true, message: '供应商不能为空', trigger: 'change' }],
+  sparePartModel: [{ required: true, message: '备品备件型号不能为空', trigger: 'blur' }],
+  uom: [{ required: true, message: '单位不能为空', trigger: 'change' }],
+  safetyStockQty: [{ required: true, message: '安全库存不能为空', trigger: 'blur' }],
 };
 // 初始渲染
 onMounted(async () => {
   await queryParam.value.search(); // 获取 表格 数据
 });
+
+// # 刷新按钮
+const onFetchGroupData = async () => {
+  await queryParam.value.search();
+};
 
 // 刷新按钮
 const onFetchData = () => {

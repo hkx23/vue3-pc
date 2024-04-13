@@ -1990,43 +1990,24 @@ export interface SparePart {
   memo?: string;
 }
 
-export interface SparePartSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 模糊关键词 */
-  keyword?: string;
-  warehouseId?: string;
-  districtId?: string;
-  /** 是否低于安全库存 */
-  isBelowSafelyStock?: boolean;
+export interface CommonImportSparePartVO {
+  title?: string;
+  tableName?: string;
+  data?: SparePartVO[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
 }
 
-/** 响应数据 */
-export type PagingDataSparePartVO = {
-  list?: SparePartVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataSparePartVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataSparePartVO;
+export interface ImportColumn {
+  field?: string;
+  title?: string;
+  isRequired?: boolean;
+  isValidateRepeat?: boolean;
+  validateExpression?: string;
+  items?: string[];
+  validateRepeat?: boolean;
+  required?: boolean;
 }
 
 export interface SparePartVO {
@@ -2066,6 +2047,8 @@ export interface SparePartVO {
   safetyStockQty?: number;
   /** 备注 */
   memo?: string;
+  /** 供应商代码 */
+  supplierCode?: string;
   /** 供应商名称 */
   supplierName?: string;
   /** 计量单位符号 */
@@ -2079,6 +2062,69 @@ export interface SparePartVO {
   warehouseName?: string;
   /** 货位名称 */
   districtName?: string;
+}
+
+/** 响应数据 */
+export type ImportSummaryObject = {
+  /** @format int32 */
+  successCount?: number;
+  /** @format int32 */
+  failCount?: number;
+  errorListFilePath?: string;
+  returnData?: object[];
+  allSuccess?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultImportSummaryObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ImportSummaryObject;
+}
+
+export interface SparePartSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  warehouseId?: string;
+  districtId?: string;
+  /** 是否低于安全库存 */
+  isBelowSafelyStock?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataSparePartVO = {
+  list?: SparePartVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSparePartVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSparePartVO;
 }
 
 /** 工艺路线映射表 */
@@ -2605,8 +2651,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4694,12 +4740,12 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionName?: string;
-  stateName?: string;
   isState?: boolean;
-  isExemptionInspectionName?: string;
+  stateName?: string;
+  isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
   isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
 }
 
@@ -4858,41 +4904,6 @@ export interface CommonImportMitemCategory {
   batchSize?: number;
 }
 
-export interface ImportColumn {
-  field?: string;
-  title?: string;
-  isRequired?: boolean;
-  isValidateRepeat?: boolean;
-  validateExpression?: string;
-  items?: string[];
-  required?: boolean;
-  validateRepeat?: boolean;
-}
-
-/** 响应数据 */
-export type ImportSummaryObject = {
-  /** @format int32 */
-  successCount?: number;
-  /** @format int32 */
-  failCount?: number;
-  errorListFilePath?: string;
-  returnData?: object[];
-  allSuccess?: boolean;
-} | null;
-
-/** 通用响应类 */
-export interface ResultImportSummaryObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: ImportSummaryObject;
-}
-
 /** 显示物料实体 */
 export interface MitemVO {
   id?: string;
@@ -4946,15 +4957,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
-  isBatchName?: string;
+  isProductName?: string;
   isRawName?: string;
   isInProcessName?: string;
+  isBatchName?: string;
   isRawChecked?: boolean;
-  isProductName?: string;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isState?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5097,8 +5108,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6962,8 +6973,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -9678,10 +9689,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12481,6 +12492,21 @@ export const api = {
      */
     modify: (data: SparePart) =>
       http.request<ResultObject['data']>(`/api/main/sparePart/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name ImportData
+     * @summary 导入
+     * @request POST:/sparePart/import
+     * @secure
+     */
+    importData: (data: CommonImportSparePartVO) =>
+      http.request<ResultImportSummaryObject['data']>(`/api/main/sparePart/import`, {
         method: 'POST',
         body: data as any,
       }),
