@@ -40,10 +40,17 @@
           </t-col>
           <!-- 第 2️⃣ 行数据 -->
           <t-col :span="4">
+            <t-form-item label="状态" label-align="right" name="status">
+              <t-select v-model="formData.status" clearable style="width: 200px" :disabled="true">
+                <t-option v-for="item in statusOption" :key="item.id" :label="item.label" :value="item.value" />
+              </t-select>
+            </t-form-item>
+          </t-col>
+          <!-- <t-col :span="4">
             <t-form-item label="集团检验标准" name="groupInspectStdId">
               <t-input v-model="formData.groupInspectStdId" style="width: 200px" />
             </t-form-item>
-          </t-col>
+          </t-col> -->
           <t-col :span="4">
             <t-form-item label="生效时间" name="timeEffective" class="width: 100%">
               <t-date-picker v-model="formData.timeEffective" clearable style="width: 200px" />
@@ -88,13 +95,12 @@
           <span>{{ row.isCtq ? '是' : '否' }}</span>
         </template>
         <template #button>
-          <!-- <t-input v-if="submitButControl" placeholder="请输入搜索关键字">
+          <t-input v-model="keyword" placeholder="请输入搜索关键字" @enter="onSearchKey" @change="onSearchKey">
             <template #suffixIcon>
               <search-icon :style="{ cursor: 'pointer' }" />
             </template>
-          </t-input> -->
+          </t-input>
           <t-button @click="onAdd"> 新增 </t-button>
-          <t-button :disabled="!butControl" theme="default"> 导入 </t-button>
           <t-popconfirm content="是否确认删除？" @confirm="delBatch">
             <t-button theme="default"> 批量删除 </t-button>
           </t-popconfirm>
@@ -146,10 +152,11 @@
 <script setup lang="ts">
 // import { debounce } from 'lodash';
 import { isEmpty } from 'lodash';
-// import { SearchIcon } from 'tdesign-icons-vue-next';
+import { SearchIcon } from 'tdesign-icons-vue-next';
 import { FormRules, MessagePlugin } from 'tdesign-vue-next';
 import { Ref, ref } from 'vue';
 
+import { api as apiMain } from '@/api/main';
 import { api } from '@/api/quality';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -168,6 +175,20 @@ const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
 const dtlFormRef = ref(null); // 新增表单数据清除，获取表单实例
 const opType = ref('add');
+const keyword = ref('');
+const onSearchKey = () => {
+  // 使用 Array.prototype.filter() 方法过滤数组
+  dtlTabData.value = allDtl.value.filter((item) => {
+    // 使用 String.prototype.includes() 方法检查每个元素的三个字段是否包含关键字
+    const isMatch =
+      item.itemCategory.includes(keyword.value) ||
+      item.itemName.includes(keyword.value) ||
+      item.technicalRequest.includes(keyword.value);
+
+    // 返回布尔值以过滤符合条件的元素
+    return isMatch;
+  });
+};
 // 父方法
 const Emit = defineEmits(['permissionShow']);
 const onConfirmFile = () => {
@@ -219,6 +240,10 @@ const onDtlSelectedChange = (value: any) => {
   dtlRowKeys.value = value;
   delBtutControl.value = dtlRowKeys.value?.length > 1;
 };
+const statusOption = ref([]);
+apiMain.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_STD_STATUS' }).then((data) => {
+  statusOption.value = data;
+});
 const onSubimit = async () => {
   if (isEmpty(formData.value.inspectStdCode)) {
     MessagePlugin.error('请输入标准编码');
@@ -236,10 +261,10 @@ const onSubimit = async () => {
     MessagePlugin.error('请选择失效时间');
     return;
   }
-  if (!Number(formData.value.groupInspectStdId)) {
-    MessagePlugin.error('集团检验标准须为数字（暂行）');
-    return;
-  }
+  // if (!Number(formData.value.groupInspectStdId)) {
+  //   MessagePlugin.error('集团检验标准须为数字（暂行）');
+  //   return;
+  // }
   if (isEmpty(formData.value.revision)) {
     MessagePlugin.error('请输入版本号');
     return;
@@ -304,10 +329,10 @@ const onStaging = async () => {
     MessagePlugin.error('请选择失效时间');
     return;
   }
-  if (!Number(formData.value.groupInspectStdId)) {
-    MessagePlugin.error('集团检验标准须为数字（暂行）');
-    return;
-  }
+  // if (!Number(formData.value.groupInspectStdId)) {
+  //   MessagePlugin.error('集团检验标准须为数字（暂行）');
+  //   return;
+  // }
   if (isEmpty(formData.value.revision)) {
     MessagePlugin.error('请输入版本号');
     return;
@@ -381,13 +406,10 @@ const onCopy = (row) => {
   touchstoneFormVisible.value = true;
 };
 const delDtlById = async (row) => {
-  if (formData.value.operateTpye === 'add') {
-    await api.iqcInspectStdDtl.removeBatch([row.id]);
-  } else {
-    allDtl.value.splice(row.index, 1);
-  }
+  allDtl.value.splice(row.index, 1);
   onRefresh();
 };
+
 const delBatch = async () => {
   // 获取要删除的索引，并按从大到小的顺序排序
   const indexesToDelete = dtlRowKeys.value.sort((a, b) => b - a);
@@ -451,7 +473,16 @@ const getAllDtlById = async () => {
   })) as any;
   if (res) {
     allDtl.value = res.list;
+    dataTotal.value = res.total;
     addIndex();
+    allDtl.value.forEach((item) => {
+      let concatenatedFileNames = '';
+      if (item.fileList) {
+        const fileListNames = item.fileList.map((file) => file.fileName);
+        concatenatedFileNames = fileListNames.join(','); // 使用 join 方法将文件名数组拼接成以逗号分隔的字符串
+      }
+      item.attachement = concatenatedFileNames;
+    });
   }
 };
 const getAllDtlFormCache = async () => {
@@ -471,32 +502,56 @@ const columns = [
     type: 'multiple',
   },
   {
+    colKey: 'itemName',
+    title: '项目名称',
+  },
+  {
     colKey: 'itemCategoryName',
     title: '项目类别',
   },
   {
-    colKey: 'itemName',
-    title: '检验内容',
-  },
-  {
-    colKey: 'inspectTypeName',
-    title: '检验类型',
-  },
-  {
-    colKey: 'technicalRequest',
-    title: '技术要求',
-  },
-  {
-    colKey: 'unqualifyCategoryName',
-    title: '不合格分类',
+    colKey: 'itemSeq',
+    title: '项目行号',
   },
   {
     colKey: 'characteristicsName',
     title: '项目特性',
   },
   {
+    colKey: 'samplingStandardCode',
+    title: '抽样方案',
+  },
+  {
+    colKey: 'inspectLevelName',
+    title: '检验水平',
+  },
+  {
+    colKey: 'unqualifyCategoryName',
+    title: '不合格分类',
+  },
+  {
+    colKey: 'inspectTypeName',
+    title: '检验业务类型',
+  },
+  {
     colKey: 'inspectTool',
     title: '检验工具',
+  },
+  {
+    colKey: 'inspectBasis',
+    title: '检验依据',
+  },
+  {
+    colKey: 'technicalRequest',
+    title: '技术要求',
+  },
+  {
+    colKey: 'minValue',
+    title: '最小值',
+  },
+  {
+    colKey: 'maxValue',
+    title: '最大值',
   },
   {
     colKey: 'baseValue',
@@ -511,20 +566,14 @@ const columns = [
     title: '合格范围',
   },
   {
-    colKey: 'samplingStandardCode',
-    title: '抽样方案',
-  },
-  {
-    colKey: 'inspectLevelName',
-    title: '检验水平',
-  },
-  {
     colKey: 'isCtqName',
     title: '是否CTQ',
   },
   {
-    colKey: 'inspectBasis',
-    title: '检验依据',
+    colKey: 'attachement',
+    title: '附件',
+    align: 'center',
+    width: '110',
   },
   {
     colKey: 'operation',
@@ -571,6 +620,7 @@ const onConfirmDtl = async () => {
         allDtl.value.splice(allIndex, 1, dtlFormRef.value.rowData);
       }
       onRefresh();
+      onSearchKey();
     } else if (opType.value === 'add') {
       // 校验itemName
       const result = confirmItemName();
@@ -579,6 +629,7 @@ const onConfirmDtl = async () => {
       }
       allDtl.value.push({ ...dtlFormRef.value.rowData, index: allDtl.value.length });
       onRefresh();
+      onSearchKey();
     }
     touchstoneFormVisible.value = false;
   }

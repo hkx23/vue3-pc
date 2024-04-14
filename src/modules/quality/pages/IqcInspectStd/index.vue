@@ -17,74 +17,76 @@
                   </t-select>
                 </template>
               </cmp-query>
-              <cmp-table
-                ref="tableRefs"
-                v-model:pagination="pageUI"
-                empty="没有符合条件的数据"
-                row-key="id"
-                :fixed-height="true"
-                :active-row-type="'single'"
-                :hover="true"
-                :table-column="standardColumn"
-                :table-data="materialStandardList"
-                :total="materialStandardTotal"
-                :selected-row-keys="stdRowKeys"
-                @select-change="onSelectedChange"
-                @refresh="onRefresh"
-              >
-                <template #title>
-                  {{ '物料检验标准列表' }}
-                </template>
-                <template #inspectStdCodeOp="{ row }">
-                  <t-link theme="primary" @click="onEdit(row)">{{ row.inspectStdCode }}</t-link>
-                </template>
-                <template #button>
-                  <t-button @click="onAddClick">新增</t-button>
-                  <bcmp-import-auto-button
-                    theme="default"
-                    button-text="导入"
-                    type="q_iqc_inspect_std"
-                  ></bcmp-import-auto-button>
-                  <t-popconfirm content="确认删除吗" @confirm="delStdByIdBatch">
-                    <t-button v-if="stdRowKeys.length > 1" theme="default" variant="base">批量删除</t-button>
-                  </t-popconfirm>
-                </template>
-                <template #operation="{ row }">
-                  <t-link
-                    v-if="row.status !== 'EXPIRED'"
-                    theme="primary"
-                    style="padding-right: 8px"
-                    @click="onAssign(row)"
-                    >分配</t-link
-                  >
-                  <t-link
-                    v-if="row.status !== 'EXPIRED'"
-                    theme="primary"
-                    style="padding-right: 8px"
-                    @click="onEdit(row)"
-                    >编辑</t-link
-                  >
-                  <t-popconfirm
-                    content="继续将删除该标准对应的检验项目、物料关系、附件等，是否继续？"
-                    @confirm="delStdById(row)"
-                  >
-                    <t-link v-if="row.status === 'DRAFT'" theme="primary" style="padding-right: 8px">删除</t-link>
-                  </t-popconfirm>
-                  <t-popconfirm
-                    v-if="row.status !== 'DRAFT' && row.status !== 'EXPIRED'"
-                    content="失效后该标准将被禁用，同时解除物料及物料类对该标准的引用，是否继续？"
-                    @confirm="onChangStatus(row)"
-                  >
+              <cmp-card :ghost="true" class="padding-top-noline-16">
+                <cmp-table
+                  ref="tableRefs"
+                  v-model:pagination="pageUI"
+                  empty="没有符合条件的数据"
+                  row-key="id"
+                  :fixed-height="true"
+                  :active-row-type="'single'"
+                  :hover="true"
+                  :table-column="standardColumn"
+                  :table-data="materialStandardList"
+                  :total="materialStandardTotal"
+                  :selected-row-keys="stdRowKeys"
+                  @select-change="onSelectedChange"
+                  @refresh="onRefresh"
+                >
+                  <template #title>
+                    {{ '物料检验标准列表' }}
+                  </template>
+                  <template #inspectStdCodeOp="{ row }">
+                    <t-link theme="primary" @click="onEdit(row)">{{ row.inspectStdCode }}</t-link>
+                  </template>
+                  <template #button>
+                    <t-button @click="onAddClick">新增</t-button>
+                    <bcmp-import-auto-button
+                      theme="default"
+                      button-text="导入"
+                      type="q_iqc_inspect_std"
+                    ></bcmp-import-auto-button>
+                    <t-popconfirm content="确认删除吗" @confirm="delStdByIdBatch">
+                      <t-button v-if="stdRowKeys.length > 1" theme="default" variant="base">批量删除</t-button>
+                    </t-popconfirm>
+                  </template>
+                  <template #operation="{ row }">
                     <t-link
-                      v-if="row.status !== 'DRAFT' && row.status !== 'EXPIRED'"
+                      v-if="row.status !== 'EXPIRED'"
                       theme="primary"
                       style="padding-right: 8px"
-                      >失效</t-link
+                      @click="onAssign(row)"
+                      >分配</t-link
                     >
-                  </t-popconfirm>
-                  <t-link theme="primary" @click="onCopyStd(row)">复制</t-link>
-                </template>
-              </cmp-table>
+                    <t-link
+                      v-if="row.status !== 'EXPIRED'"
+                      theme="primary"
+                      style="padding-right: 8px"
+                      @click="onEdit(row)"
+                      >编辑</t-link
+                    >
+                    <t-popconfirm
+                      content="继续将删除该标准对应的检验项目、物料关系、附件等，是否继续？"
+                      @confirm="delStdById(row)"
+                    >
+                      <t-link v-if="row.status === 'DRAFT'" theme="primary" style="padding-right: 8px">删除</t-link>
+                    </t-popconfirm>
+                    <t-popconfirm
+                      v-if="row.status !== 'DRAFT' && row.status !== 'EXPIRED'"
+                      content="失效后该标准将被禁用，同时解除物料及物料类对该标准的引用，是否继续？"
+                      @confirm="onChangStatus(row)"
+                    >
+                      <t-link
+                        v-if="row.status !== 'DRAFT' && row.status !== 'EXPIRED'"
+                        theme="primary"
+                        style="padding-right: 8px"
+                        >失效</t-link
+                      >
+                    </t-popconfirm>
+                    <t-link theme="primary" @click="onCopyStd(row)">复制</t-link>
+                  </template>
+                </cmp-table>
+              </cmp-card>
             </cmp-container>
           </template>
         </t-tab-panel>
@@ -92,23 +94,22 @@
         <t-tab-panel :value="1" label="标准分配" :destroy-on-hide="false">
           <template #panel>
             <cmp-container :full="true">
-              <cmp-container :full="true">
-                <cmp-query
-                  ref="queryComponent"
-                  :opts="opts"
-                  :bool-enter="false"
-                  :is-reset-query="false"
-                  @submit="onInput"
-                  @reset="onReset"
-                >
-                </cmp-query>
+              <cmp-query
+                ref="queryComponent"
+                :opts="opts"
+                :bool-enter="false"
+                :is-reset-query="false"
+                @submit="onInput"
+                @reset="onReset"
+              >
+              </cmp-query>
+              <cmp-card :ghost="true" class="padding-top-noline-16">
                 <cmp-table
                   ref="tableRefCard"
                   v-model:pagination="pageUINorm"
                   row-key="id"
                   :fixed-height="true"
                   :active-row-type="'single'"
-                  :hover="true"
                   :table-column="standardAllotColumn"
                   :table-data="assignTabData.list"
                   :total="totalAssign"
@@ -127,14 +128,14 @@
                     </t-popconfirm>
                   </template>
                   <template #operations="{ row }">
-                    <t-link theme="primary" style="padding-right: 8px" @click="onEditAssign(row)"> 编辑 </t-link>
+                    <!-- <t-link theme="primary" style="padding-right: 8px" @click="onEditAssign(row)"> 编辑 </t-link> -->
                     <t-popconfirm theme="default" content="确认删除吗" @confirm="delAssign(row)">
                       <t-link theme="primary" style="padding-right: 8px"> 删除 </t-link>
                     </t-popconfirm>
-                    <t-link theme="primary" @click="onCopyAssign(row)"> 复制 </t-link>
+                    <!-- <t-link theme="primary" @click="onCopyAssign(row)"> 复制 </t-link> -->
                   </template>
                 </cmp-table>
-              </cmp-container>
+              </cmp-card>
             </cmp-container>
           </template>
         </t-tab-panel>
@@ -397,7 +398,7 @@ const standardAllotColumn: PrimaryTableCol<TableRowData>[] = [
     colKey: 'operations',
     title: '操作',
     fixed: 'right',
-    width: '130',
+    width: '80',
   },
 ];
 // 待检单列表数据
@@ -493,20 +494,20 @@ const onAddAssign = async () => {
   assignFormRef.value.formData.mitemCategoryId = '';
   formVisible.value = true;
 };
-const onCopyAssign = async (row) => {
-  assignFormRef.value.formData.type = 'add';
-  assignFormRef.value.formData.mitemId = row.mitemId;
-  assignFormRef.value.formData.mitemCategoryId = row.mitemCategoryId;
-  formVisible.value = true;
-};
-const onEditAssign = async (row) => {
-  assignFormRef.value.formData.type = 'edit';
-  assignFormRef.value.formData.inspectStdCode = row.inspectStdCode;
-  assignFormRef.value.formData.id = row.id;
-  assignFormRef.value.formData.mitemCategoryId = row.mitemCategoryId;
-  assignFormRef.value.formData.mitemId = row.mitemId;
-  formVisible.value = true;
-};
+// const onCopyAssign = async (row) => {
+//   assignFormRef.value.formData.type = 'add';
+//   assignFormRef.value.formData.mitemId = row.mitemId;
+//   assignFormRef.value.formData.mitemCategoryId = row.mitemCategoryId;
+//   formVisible.value = true;
+// };
+// const onEditAssign = async (row) => {
+//   assignFormRef.value.formData.type = 'edit';
+//   assignFormRef.value.formData.inspectStdCode = row.inspectStdCode;
+//   assignFormRef.value.formData.id = row.id;
+//   assignFormRef.value.formData.mitemCategoryId = row.mitemCategoryId;
+//   assignFormRef.value.formData.mitemId = row.mitemId;
+//   formVisible.value = true;
+// };
 const onEdit = async (row) => {
   formRef.value.dtlRowKeys = [];
   formRef.value.formData = row;

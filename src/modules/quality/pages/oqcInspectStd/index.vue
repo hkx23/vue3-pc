@@ -25,14 +25,29 @@
                   @refresh="onRefresh"
                 >
                   <template #title> 产品检验标准列表 </template>
+                  <template #inspectStdCodeOp="{ row }">
+                    <t-link theme="primary" @click="onCheck(row)">{{ row.inspectStdCode }}</t-link>
+                  </template>
                   <template #op="{ row }">
                     <t-space :size="8">
-                      <t-link theme="primary" @click="onAssign(row)">{{ '分配' }}</t-link>
-                      <t-link theme="primary" :disabled="row.status !== 'DRAFT'" @click="onEdit(row)">{{
+                      <t-link theme="primary" :disabled="row.status === 'EXPIRED'" @click="onAssign(row)">{{
+                        '分配'
+                      }}</t-link>
+                      <t-link theme="primary" :disabled="row.status === 'EXPIRED'" @click="onEdit(row)">{{
                         '编辑'
                       }}</t-link>
-                      <t-popconfirm content="是否确认删除" @confirm="onDelData(row)">
+                      <t-popconfirm v-if="row.status === 'DRAFT'" content="是否确认删除" @confirm="onDelData(row)">
                         <t-link theme="primary" :disabled="row.status !== 'DRAFT'">{{ '删除' }}</t-link>
+                      </t-popconfirm>
+                      <t-popconfirm
+                        v-if="row.status !== 'DRAFT'"
+                        :disabled="row.status === 'EXPIRED'"
+                        content="失效后该标准将被禁用，同时解除物料及物料类对该标准的引用，是否继续？"
+                        @confirm="onChangStatus(row)"
+                      >
+                        <t-link theme="primary" style="padding-right: 8px" :disabled="row.status === 'EXPIRED'"
+                          >失效</t-link
+                        >
                       </t-popconfirm>
                       <t-link theme="primary" @click="onCopy(row)">{{ '复制' }}</t-link>
                     </t-space>
@@ -40,14 +55,13 @@
                   <template #button>
                     <t-space :size="8">
                       <t-button theme="primary" @click="onAdd">新增</t-button>
+                      <bcmp-import-auto-button
+                        theme="default"
+                        button-text="导入"
+                        type="q_iqc_inspect_std"
+                      ></bcmp-import-auto-button>
                       <t-popconfirm content="是否确认删除" @confirm="onDelDataBatch">
                         <t-button v-if="delButton" theme="default">删除</t-button>
-                      </t-popconfirm>
-                      <t-popconfirm content="是否确认生效" @confirm="onChangeStatus">
-                        <t-button v-if="enableButton" theme="primary">生效</t-button>
-                      </t-popconfirm>
-                      <t-popconfirm content="是否确认失效" @confirm="onChangeStatus">
-                        <t-button v-if="closeButton" theme="primary">失效</t-button>
                       </t-popconfirm>
                     </t-space>
                   </template>
@@ -88,10 +102,18 @@
                   <template #button>
                     <t-space :size="8">
                       <t-button theme="primary" @click="onAddAssign">新增</t-button>
+                      <t-button theme="default">导入</t-button>
                       <t-popconfirm content="是否确认删除" @confirm="onDelAssignDataBatch">
-                        <t-button theme="default">删除</t-button>
+                        <t-button theme="default">批量删除</t-button>
                       </t-popconfirm>
                     </t-space>
+                  </template>
+                  <template #operations="{ row }">
+                    <!-- <t-link theme="primary" style="padding-right: 8px" @click="onEditAssign(row)"> 编辑 </t-link> -->
+                    <t-popconfirm theme="default" content="确认删除吗" @confirm="delAssign(row)">
+                      <t-link theme="primary" style="padding-right: 8px"> 删除 </t-link>
+                    </t-popconfirm>
+                    <!-- <t-link theme="primary" @click="onCopyAssign(row)"> 复制 </t-link> -->
                   </template>
                 </cmp-table>
               </cmp-card>
@@ -154,7 +176,11 @@ const onPermission = (value) => {
   pageShow.value = value;
   onRefresh();
 };
-
+const onChangStatus = async (row) => {
+  await apiQuality.oqcInspectStd.changStatus([row.id]);
+  MessagePlugin.success('失效成功');
+  onRefresh();
+};
 const onAssignConfirm = async () => {
   const data = await assignFormRef.value.submit();
   if (data) {
@@ -204,16 +230,16 @@ const onRefresh = async () => {
 const onRefreshTwo = async () => {
   await fetchSubTable();
 };
-// 刷新按钮
-const onChangeStatus = async () => {
-  await apiQuality.oqcInspectStd.changStatus(stdRowKeys.value);
-  MessagePlugin.success('操作成功');
-  stdRowKeys.value = [];
-  enableButton.value = false;
-  closeButton.value = false;
-  delButton.value = false;
-  onRefresh();
-};
+// // 刷新按钮
+// const onChangeStatus = async () => {
+//   await apiQuality.oqcInspectStd.changStatus(stdRowKeys.value);
+//   MessagePlugin.success('操作成功');
+//   stdRowKeys.value = [];
+//   enableButton.value = false;
+//   closeButton.value = false;
+//   delButton.value = false;
+//   onRefresh();
+// };
 
 const onAdd = async () => {
   await formRef.value.init();
@@ -251,6 +277,22 @@ const onSelectedChange = (value: any) => {
     delButton.value = false;
   }
 };
+const onCheck = async (row) => {
+  formRef.value.dtlRowKeys = [];
+  formRef.value.formData = row;
+  if (row.fileList) {
+    row.fileList.forEach((file) => {
+      file.timeUpload = file.timeCreate;
+      file.signedUrl = file.filePath;
+    });
+  }
+  formRef.value.fileList = row.fileList;
+  formRef.value.formData.id = row.id;
+  formRef.value.formData.operateTpye = 'check';
+  formRef.value.formData.revision = row.revisionName;
+  await formRef.value.getAllDtlById();
+  pageShow.value = true;
+};
 const onEdit = async (row) => {
   console.log(formRef);
   formRef.value.dtlRowKeys = [];
@@ -286,8 +328,8 @@ const onDelData = async (row) => {
   onRefresh();
 };
 const onAssign = async (row) => {
-  assignFormRef.value.formData.type = '01';
   assignFormRef.value.init();
+  assignFormRef.value.formData.type = 'edit';
   assignFormRef.value.formData.id = row.id;
   assignFormRef.value.formData.inspectStdName = row.inspectStdName;
   assignFormRef.value.formData.inspectStdCode = row.inspectStdCode;
@@ -311,6 +353,11 @@ const onDelAssignDataBatch = async () => {
   MessagePlugin.success('删除成功');
   onRefreshTwo();
 };
+const delAssign = async (row) => {
+  await apiQuality.oqcInspectStdMitem.delByIds([row.id]);
+  MessagePlugin.success('删除成功');
+  onRefreshTwo();
+};
 
 const groupColumns: PrimaryTableCol<TableRowData>[] = [
   {
@@ -320,7 +367,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     width: '30',
   },
   {
-    colKey: 'inspectStdCode',
+    colKey: 'inspectStdCodeOp',
     title: '标准编码',
     align: 'left',
     width: '90',
@@ -378,7 +425,7 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     title: '操作',
     fixed: 'right',
     align: 'left',
-    width: '160',
+    width: '170',
   },
 ];
 const assignColumns: PrimaryTableCol<TableRowData>[] = [
@@ -429,6 +476,23 @@ const assignColumns: PrimaryTableCol<TableRowData>[] = [
     title: '产品名称',
     align: 'left',
     width: '110',
+  },
+  {
+    colKey: 'creatorName',
+    title: '创建人',
+    width: '100',
+  },
+  {
+    colKey: 'timeCreate',
+    title: '创建时间',
+    width: '150',
+  },
+  {
+    colKey: 'operations',
+    title: '操作',
+    fixed: 'right',
+    align: 'left',
+    width: '60',
   },
 ];
 
@@ -532,7 +596,7 @@ const opts = computed(() => {
       label: '状态',
       comp: 'bcmp-select-business',
       event: 'business',
-      defaultVal: [],
+      defaultVal: 'EFFECTIVE',
       bind: {
         type: 'state',
         showTitle: false,
@@ -600,6 +664,7 @@ apiMain.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_STD_STATUS' }).t
 
 // ################ 初始渲染
 onMounted(async () => {
+  queryCondition.value.status = ['EFFECTIVE'];
   await fetchMainTable(); // 获取 物料编码 表格数据
 });
 </script>

@@ -1,0 +1,32 @@
+{
+  "title": "文件类型",
+  "placeholder": "请选择文件类型",
+  "url": "/api/main/param/items",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "字典编码",
+      "key": "paramCode",
+      "align": "left"
+    },
+    {
+      "title": "字典值",
+      "key": "paramValue",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "paramCode",
+    "label": "paramValue"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "paramCode",
+    "nameField": "paramValue"
+  },
+  "name": "文件类型",
+  "componentType": "list"
+}

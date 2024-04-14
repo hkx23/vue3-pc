@@ -7,8 +7,8 @@
           ><span class="span_title">{{ getTitle(formData.operateTpye) }}</span></t-col
         >
         <t-col>
-          <t-button @click="onSubmit">提交</t-button>
-          <t-button theme="default" @click="onStaging">暂存</t-button>
+          <t-button v-if="formData.operateTpye !== 'check'" @click="onSubmit">提交</t-button>
+          <t-button v-if="formData.operateTpye !== 'check'" theme="default" @click="onStaging">暂存</t-button>
           <t-button theme="default" @click="onClose">关闭</t-button>
         </t-col>
       </t-row>
@@ -40,11 +40,11 @@
               </t-select>
             </t-form-item>
           </t-col>
-          <t-col :span="4">
+          <!-- <t-col :span="4">
             <t-form-item label="集团检验标准" label-align="right" name="groupInspectStdId">
               <t-input v-model="formData.groupInspectStdId" style="width: 200px" />
             </t-form-item>
-          </t-col>
+          </t-col> -->
           <t-col :span="4">
             <t-form-item label="生效时间" label-align="right" name="timeEffective">
               <t-date-picker v-model="formData.timeEffective" style="width: 200px" />
@@ -92,26 +92,26 @@
         </template>
         <template #op="{ row }">
           <t-space :size="8">
-            <t-link theme="primary" @click="onEdit(row)">{{ '编辑' }}</t-link>
+            <t-link v-if="formData.operateTpye !== 'check'" theme="primary" @click="onEdit(row)">{{ '编辑' }}</t-link>
           </t-space>
         </template>
         <template #button>
-          <!-- <t-input placeholder="请输入搜索关键字">
+          <t-input v-model="keyword" placeholder="请输入搜索关键字" @enter="onSearchKey" @change="onSearchKey">
             <template #suffixIcon>
               <search-icon :style="{ cursor: 'pointer' }" />
             </template>
-          </t-input> -->
-          <t-button @click="onAdd"> 新增 </t-button>
-          <t-popconfirm content="是否确认删除" @confirm="onDelDtlData">
-            <t-button theme="default" :disabled="dtlRowKeys.length < 1">删除</t-button>
+          </t-input>
+          <t-button v-if="formData.operateTpye !== 'check'" @click="onAdd"> 新增 </t-button>
+          <t-popconfirm v-if="formData.operateTpye !== 'check'" content="是否确认删除" @confirm="onDelDtlData">
+            <t-button theme="default" :disabled="dtlRowKeys.length < 1">批量删除</t-button>
           </t-popconfirm>
         </template>
-        <template #inspectTypeListOp="{ row }">
-          <t-row>
-            <div v-for="(type, index) in row.inspectTypeList" :key="index" class="tag-item">
-              <t-tag theme="primary">{{ getLabelByValue(type) }}</t-tag>
-            </div>
-          </t-row>
+        <template #operation="{ row }">
+          <t-link theme="primary" style="padding-right: 8px" @click="onEdit(row)">编辑</t-link>
+          <t-popconfirm content="继续将删除该标准该检验项目，是否继续？" @confirm="delDtlById(row)">
+            <t-link theme="primary" style="padding-right: 8px">删除</t-link>
+          </t-popconfirm>
+          <t-link theme="primary" @click="onCopy(row)">复制</t-link>
         </template>
       </cmp-table>
     </cmp-card>
@@ -183,6 +183,8 @@ const onAdd = () => {
 };
 const onEdit = async (row) => {
   const item = allDtl.value[row.index];
+  console.log(allDtl.value);
+  console.log(item);
   formTitle.value = '检验项目编辑';
   opType.value = 'edit';
   dtlFormRef.value.dtlData = item;
@@ -190,11 +192,20 @@ const onEdit = async (row) => {
   dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
   touchstoneFormVisible.value = true;
 };
-const getLabelByValue = (value) => {
-  const option = stdTypeOption.find((item) => item.value === value);
-  return option ? option.label : '';
-};
 
+const delDtlById = async (row) => {
+  allDtl.value.splice(row.index, 1);
+  onRefresh();
+};
+const onCopy = (row) => {
+  formTitle.value = '检验项目复制';
+  opType.value = 'add';
+  const item = { ...row };
+  dtlFormRef.value.dtlData = item;
+  dtlFormRef.value.fileList = item.fileList ? item.fileList : [];
+  dtlFormRef.value.dtlData.itemName = '';
+  touchstoneFormVisible.value = true;
+};
 const onRefresh = () => {
   getAllDtlFormCache();
   dtlRowKeys.value = [];
@@ -230,10 +241,8 @@ const getAllDtlFormCache = async () => {
 
     const firstTwentyElements = allDtl.value.slice(startIndex, startIndex + pageUI.value.rows);
     tableData.value = firstTwentyElements;
-    dataTotal.value = allDtl.value.length;
   } else {
     tableData.value = [];
-    dataTotal.value = 0;
   }
 };
 const getTitle = (type) => {
@@ -244,6 +253,8 @@ const getTitle = (type) => {
       return '编辑产品检验标准';
     case 'copy':
       return '复制产品检验标准';
+    case 'check':
+      return '查看产品检验标准';
     default:
       return '';
   }
@@ -304,6 +315,20 @@ const stdTypeOption = [
   { label: '抽检', value: 4 },
   { label: '复检', value: 8 },
 ];
+const keyword = ref('');
+const onSearchKey = () => {
+  // 使用 Array.prototype.filter() 方法过滤数组
+  tableData.value = allDtl.value.filter((item) => {
+    // 使用 String.prototype.includes() 方法检查每个元素的三个字段是否包含关键字
+    const isMatch =
+      item.itemCategory.includes(keyword.value) ||
+      item.itemName.includes(keyword.value) ||
+      item.technicalRequest.includes(keyword.value);
+
+    // 返回布尔值以过滤符合条件的元素
+    return isMatch;
+  });
+};
 
 const submit = async () => {
   try {
@@ -343,7 +368,6 @@ const submit = async () => {
     formData.value.status = formData.value.saveTpye === 'add' ? 'EFFECTIVE' : 'DRAFT';
 
     if (formData.value.operateTpye === 'add' || formData.value.operateTpye === 'copy') {
-      formData.value.id = '';
       await apiQuality.oqcInspectStd.addOqcInspectStd({
         ...formData.value,
         list: allDtl.value,
@@ -390,6 +414,7 @@ const onConfirmDtl = async () => {
       allDtl.value.splice(dtlFormRef.value.rowData.index, 1, dtlFormRef.value.rowData);
     }
     onRefresh();
+    onSearchKey();
     touchstoneFormVisible.value = false;
   }
 };
@@ -475,38 +500,26 @@ const tableStdDtlColumns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
+    colKey: 'itemSeq',
+    title: '项目行号',
+    align: 'center',
+    width: '110',
+  },
+  {
     colKey: 'characteristicsName',
     title: '项目特性',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'inspectTypeListOp',
-    title: '检验类型',
-    align: 'center',
-    width: '250',
-  },
-  {
-    colKey: 'inspectTool',
-    title: '检验工具',
-    align: 'center',
-    width: '110',
-  },
-  {
-    colKey: 'technicalRequest',
-    title: '技术要求',
-    align: 'center',
-    width: '110',
-  },
-  {
-    colKey: 'inspectBasis',
-    title: '检验依据',
-    align: 'center',
-    width: '110',
-  },
-  {
     colKey: 'samplingStandardCode',
-    title: '抽样标准',
+    title: '抽样方案',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'inspectLevelName',
+    title: '检验水平',
     align: 'center',
     width: '110',
   },
@@ -517,14 +530,44 @@ const tableStdDtlColumns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
-    colKey: 'inspectFrequency',
-    title: '检验频率',
+    colKey: 'inspectTypeName',
+    title: '检验业务类型',
+    align: 'center',
+    width: '250',
+  },
+  {
+    colKey: 'inspectPropertyName',
+    title: '检验属性',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'inspectLevelName',
-    title: '检验水平',
+    colKey: 'inspectTool',
+    title: '检验工具',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'inspectBasis',
+    title: '检验依据',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'processName',
+    title: '工序',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'technicalRequest',
+    title: '技术要求',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'inspectFrequency',
+    title: '检验频率',
     align: 'center',
     width: '110',
   },
@@ -541,11 +584,11 @@ const tableStdDtlColumns: PrimaryTableCol<TableRowData>[] = [
     width: '110',
   },
   {
-    colKey: 'op',
+    colKey: 'operation',
     title: '操作',
     fixed: 'right',
     align: 'left',
-    width: '60',
+    width: '130',
   },
 ];
 // #表单定义规则

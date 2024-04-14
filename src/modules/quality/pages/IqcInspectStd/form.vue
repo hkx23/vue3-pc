@@ -8,6 +8,7 @@
             v-model="formData.inspectStdCode"
             type="inspectStd"
             :show-title="false"
+            :disabled="formData.type === 'assign'"
             value-field="inspectStdCode"
           ></bcmp-select-business>
         </t-form-item>

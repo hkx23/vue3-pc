@@ -9,105 +9,141 @@
     layout="inline"
   >
     <!-- 第 1️⃣ 行数据 -->
-    <t-form-item label="项目类别" label-align="right" name="itemCategory">
-      <t-select v-model="dtlData.itemCategory" clearable>
-        <t-option v-for="item in categoryOption" :key="item.id" :label="item.label" :value="item.value" />
-      </t-select>
-    </t-form-item>
-    <t-form-item label="检验类型" label-align="right" name="inspectType">
-      <t-select v-model="dtlData.inspectType" clearable>
-        <t-option v-for="item in stdTypeOption" :key="item.id" :label="item.label" :value="item.value" />
-      </t-select>
-    </t-form-item>
-    <t-form-item label="检验内容" label-align="right" name="itemName">
-      <t-input v-model="dtlData.itemName" />
-    </t-form-item>
-    <t-form-item label="项目行号" label-align="right" name="itemSeq">
-      <t-input v-model="dtlData.itemSeq" />
-    </t-form-item>
-    <!-- 第 2️⃣ 行数据 -->
-    <t-form-item label="检验依据" label-align="right" name="inspectBasis">
-      <t-input v-model="dtlData.inspectBasis" />
-    </t-form-item>
-    <t-form-item label="技术要求" label-align="right" name="technicalRequest">
-      <t-input v-model="dtlData.technicalRequest" />
-    </t-form-item>
-    <t-form-item label="是否CTQ" name="isCtq">
-      <t-select v-model="dtlData.isCtq" :clearable="true">
-        <t-option key="0" label="是" value="1" />
-        <t-option key="1" label="否" value="0" />
-      </t-select>
-    </t-form-item>
-    <t-form-item label="项目特性" name="characteristics">
-      <t-select v-model="dtlData.characteristics" clearable>
-        <t-option v-for="item in characteristicsOptions" :key="item.id" :label="item.label" :value="item.value" />
-      </t-select>
-    </t-form-item>
-    <t-form-item label="检验工具" name="inspectTool">
-      <t-input v-model="dtlData.inspectTool" />
-    </t-form-item>
-    <t-form-item label="基准值" name="baseValue">
-      <t-input v-model="dtlData.baseValue" :disabled="dtlData.characteristics === 'COUNT'" yle="width: 60%" />
-      <div style="width: 40%">
-        <bcmp-select-business
-          v-model="dtlData.uom"
-          type="uom"
-          :show-title="false"
-          value-field="uom"
-          :disabled="dtlData.characteristics === 'COUNT'"
-        ></bcmp-select-business>
-      </div>
-    </t-form-item>
-    <t-form-item label="最小值" name="minValue">
-      <t-input v-model="dtlData.minValue" :disabled="dtlData.characteristics === 'COUNT'" />
-    </t-form-item>
-    <t-form-item label="最大值" name="maxValue">
-      <t-input v-model="dtlData.maxValue" :disabled="dtlData.characteristics === 'COUNT'" />
-    </t-form-item>
-    <t-form-item label="不合格分类" name="unqualifyCategory">
-      <t-select v-model="dtlData.unqualifyCategory" clearable>
-        <t-option v-for="item in unCategoryOption" :key="item.id" :label="item.label" :value="item.value" />
-      </t-select>
-    </t-form-item>
-    <!-- 第 5️⃣ 行数据 -->
-    <t-form-item label="抽样方案类型" name="samplingStandardType">
-      <t-radio-group v-model="dtlData.samplingStandardType" default-value="1">
-        <t-radio value="GB">国标</t-radio>
-        <t-radio value="QB">企标</t-radio>
-      </t-radio-group>
-    </t-form-item>
-    <t-form-item label="抽样方案" name="samplingStandardCode">
-      <t-select
-        v-model="dtlData.samplingStandardCode"
-        clearable
-        filterable
-        input-props
-        @clear="fetchSampingStdCodes"
-        @input-change="querySelectChange($event)"
-      >
-        <t-option
-          v-for="item in codesOption"
-          :key="item.id"
-          :label="item.label"
-          :value="item.value"
-          :lazy-load="true"
-        />
-      </t-select>
-    </t-form-item>
-    <t-form-item
-      label="检验水平"
-      label-align="right"
-      name="inspectLevel"
-      :required-mark="dtlData.samplingStandardType === 'GB'"
-    >
-      <t-select v-model="dtlData.inspectLevel" clearable :disabled="dtlData.samplingStandardType !== 'GB'">
-        <t-option v-for="item in levelOption" :key="item.id" :label="item.label" :value="item.value" />
-      </t-select>
-    </t-form-item>
-    <!-- 第 5️⃣ 行数据 -->
-    <t-form-item label="附件：" name="mitemCode">
-      <t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
-    </t-form-item>
+    <t-row :gutter="[32, 16]">
+      <t-col :span="4">
+        <t-form-item label="项目名称" label-align="right" name="itemName">
+          <t-input v-model="dtlData.itemName" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="项目类别" label-align="right" name="itemCategory">
+          <t-select v-model="dtlData.itemCategory" clearable>
+            <t-option v-for="item in categoryOption" :key="item.id" :label="item.label" :value="item.value" />
+          </t-select>
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="项目行号" label-align="right" name="itemSeq">
+          <t-input v-model="dtlData.itemSeq" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="项目特性" name="characteristics">
+          <t-select v-model="dtlData.characteristics" clearable>
+            <t-option v-for="item in characteristicsOptions" :key="item.id" :label="item.label" :value="item.value" />
+          </t-select>
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="抽样方案类型" name="samplingStandardType">
+          <t-radio-group v-model="dtlData.samplingStandardType" default-value="1">
+            <t-radio value="GB">国标</t-radio>
+            <t-radio value="QB">企标</t-radio>
+          </t-radio-group>
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="抽样方案" name="samplingStandardCode">
+          <t-select
+            v-model="dtlData.samplingStandardCode"
+            clearable
+            filterable
+            input-props
+            @clear="fetchSampingStdCodes"
+            @input-change="querySelectChange($event)"
+          >
+            <t-option
+              v-for="item in codesOption"
+              :key="item.id"
+              :label="item.label"
+              :value="item.value"
+              :lazy-load="true"
+            />
+          </t-select>
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item
+          label="检验水平"
+          label-align="right"
+          name="inspectLevel"
+          :required-mark="dtlData.samplingStandardType === 'GB'"
+        >
+          <t-select v-model="dtlData.inspectLevel" clearable :disabled="dtlData.samplingStandardType !== 'GB'">
+            <t-option v-for="item in levelOption" :key="item.id" :label="item.label" :value="item.value" />
+          </t-select>
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="不合格分类" name="unqualifyCategory">
+          <t-select v-model="dtlData.unqualifyCategory" clearable>
+            <t-option v-for="item in unCategoryOption" :key="item.id" :label="item.label" :value="item.value" />
+          </t-select>
+        </t-form-item>
+      </t-col>
+      <!-- 第 5️⃣ 行数据 -->
+      <t-col :span="4">
+        <t-form-item label="检验业务类型" label-align="right" name="inspectType">
+          <t-select v-model="dtlData.inspectType" clearable>
+            <t-option v-for="item in stdTypeOption" :key="item.id" :label="item.label" :value="item.value" />
+          </t-select>
+        </t-form-item>
+      </t-col>
+      <!-- 第 2️⃣ 行数据 -->
+      <t-col :span="4">
+        <t-form-item label="检验工具" name="inspectTool">
+          <t-input v-model="dtlData.inspectTool" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="检验依据" label-align="right" name="inspectBasis">
+          <t-input v-model="dtlData.inspectBasis" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="技术要求" label-align="right" name="technicalRequest">
+          <t-input v-model="dtlData.technicalRequest" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="最小值" name="minValue">
+          <t-input v-model="dtlData.minValue" :disabled="dtlData.characteristics === 'COUNT'" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="最大值" name="maxValue">
+          <t-input v-model="dtlData.maxValue" :disabled="dtlData.characteristics === 'COUNT'" />
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="基准值" name="baseValue">
+          <t-input v-model="dtlData.baseValue" :disabled="dtlData.characteristics === 'COUNT'" yle="width: 60%" />
+          <div style="width: 40%">
+            <bcmp-select-business
+              v-model="dtlData.uom"
+              type="uom"
+              :show-title="false"
+              value-field="uom"
+              :disabled="dtlData.characteristics === 'COUNT'"
+            ></bcmp-select-business>
+          </div>
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <t-form-item label="是否CTQ" name="isCtq">
+          <t-select v-model="dtlData.isCtq" :clearable="true">
+            <t-option key="0" label="是" value="1" />
+            <t-option key="1" label="否" value="0" />
+          </t-select>
+        </t-form-item>
+      </t-col>
+      <t-col :span="4">
+        <!-- 第 5️⃣ 行数据 -->
+        <t-form-item label="附件：" name="mitemCode">
+          <t-link theme="primary" @click="formVisible = true"> 附件上传 </t-link>
+        </t-form-item>
+      </t-col>
+    </t-row>
   </t-form>
   <t-dialog
     v-model:visible="formVisible"
@@ -255,7 +291,7 @@ api.param.getListByGroupCode({ parmGroupCode: 'Q_CHARACTERISTICS' }).then((data)
   characteristicsOptions.value = data;
 });
 const stdTypeOption = ref([]);
-api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_TYPE' }).then((data) => {
+api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECT_TYPE' }).then((data) => {
   stdTypeOption.value = data;
 });
 const categoryOption = ref([]);
@@ -267,7 +303,7 @@ api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_STD_LEVEL' }).then((
   levelOption.value = data;
 });
 const unCategoryOption = ref([]);
-api.param.getListByGroupCode({ parmGroupCode: 'Q_IQC_UNQUALIFY_CATEGORY' }).then((data) => {
+api.param.getListByGroupCode({ parmGroupCode: 'Q_UNQUALIFY_CATEGORY' }).then((data) => {
   unCategoryOption.value = data;
 });
 
@@ -331,6 +367,11 @@ const onConfirmDtl = async () => {
   if (dtlData.value.inspectLevel) {
     dtlData.value.inspectLevelName = levelOption.value.find((item) => item.value === dtlData.value.inspectLevel)?.label;
   }
+  let concatenatedFileNames = '';
+  if (fileList.value.length > 0) {
+    const fileNames = fileList.value.map((item) => item.fileName); // 提取每个文件对象的 fileName 属性到一个新数组
+    concatenatedFileNames = fileNames.join(','); // 使用 join 方法将文件名数组拼接成以逗号分隔的字符串
+  }
   rowData.value = {
     ...dtlData.value,
     fileList,
@@ -340,6 +381,7 @@ const onConfirmDtl = async () => {
     unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,
     characteristicsName: characteristicsOptions.value.find((item) => item.value === dtlData.value.characteristics)
       ?.label,
+    attachement: concatenatedFileNames,
   };
   return true;
 };

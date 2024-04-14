@@ -7,11 +7,13 @@
           <div class="divider"></div>
           <div class="container">
             <t-button size="small">
-              <add-rectangle-icon @click="demo1Input" />
+              <add-rectangle-icon @click="onAddMitemCategory" />
             </t-button>
-            <t-button variant="outline" size="small">
-              <multiply-icon @click="demo1Input" />
-            </t-button>
+            <t-popconfirm content="继续会删除该产品相应的工艺文件，是否继续？" @confirm="onDel">
+              <t-button variant="outline" size="small">
+                <multiply-icon />
+              </t-button>
+            </t-popconfirm>
             <t-button variant="outline" size="small">
               <login-icon @click="demo1Input" />
             </t-button>
@@ -72,19 +74,19 @@
               {{ getstateName(slotProps.row.state) }}
             </t-space>
           </template>
-          <template #profileCategoryOp="slotProps">
-            <t-space>
-              {{ getProfileCategory(slotProps.row.profileCategory) }}
-            </t-space>
-          </template>
-          <template #op="slotProps">
-            <t-link theme="primary" @click="onEditRowClick(slotProps)">{{ t('common.button.edit') }}</t-link>
-            <!-- <t-button size="small" variant="text" @click="onEditRowClick(slotProps)">
-                  <icon name="edit-1" class="black-icon" />
-                </t-button> -->
-          </template>
           <template #title>
+            <t-button theme="primary" @click="onAddFile">新增</t-button>
+            <t-button theme="default" :disabled="isButtonDisabled" @click="onEditRowClick">编辑</t-button>
+            <t-button theme="default" :disabled="isButtonDisabled" @click="onEditRowClick">删除</t-button>
+          </template>
+          <template #button>
             <t-space direction="horizontal">
+              <t-select v-model="clickNodeId.status" default-value="ALL">
+                <t-option key="0" label="全部状态" value="ALL" />
+                <t-option key="1" label="已生效" value="EFFECTIVE" />
+                <t-option key="2" label="已失效" value="EXPIRED" />
+                <t-option key="3" label="未启用" value="UNENABLE" />
+              </t-select>
               <t-input v-model="keyword" style="width: 250px" placeholder="输入关键字进行过滤" :on-enter="onRefresh">
                 <template #suffixIcon>
                   <search-icon :style="{ cursor: 'pointer' }" @click="onRefresh" />
@@ -92,11 +94,6 @@
               </t-input>
 
               <!-- <t-button theme="primary" @click="onRefresh">查询</t-button> -->
-            </t-space>
-          </template>
-          <template #button>
-            <t-space direction="vertical">
-              <t-button theme="primary" :disabled="isButtonDisabled" @click="onAdd()">新增</t-button>
             </t-space>
           </template>
         </cmp-table>
@@ -107,11 +104,51 @@
   <t-dialog
     v-model:visible="formVisible"
     :header="formTitle"
-    :on-confirm="onConfirmForm"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    width="450px"
+    :close-on-overlay-click="false"
+    @close="onGetTreeData"
+  >
+    <template #footer>
+      <t-button theme="default" @click="onCancelForm">保存并继续</t-button>
+      <t-button theme="primary" @click="onConfirmForm()">保存</t-button>
+    </template>
+    <profile-form ref="formRef"></profile-form>
+  </t-dialog>
+  <t-dialog
+    v-model:visible="formVisibleAdd"
+    :header="formTitle"
+    :cancel-btn="null"
+    :confirm-btn="null"
     width="850px"
     :close-on-overlay-click="false"
+    @close="onGetTreeData"
   >
-    <profile-form ref="formRef"></profile-form>
+    <template #footer>
+      <t-button theme="default" @click="onCancelForm">保存并继续</t-button>
+      <t-button theme="primary" @click="onConfirmForm()">保存</t-button>
+    </template>
+    <formAdd ref="formRefAdd"></formAdd>
+  </t-dialog>
+  <!-- !上传组件 弹框 -->
+  <t-dialog
+    v-model:visible="formVisibleFile"
+    :close-on-overlay-click="false"
+    header="文件上传"
+    :confirm-btn="null"
+    :cancel-btn="null"
+    width="50%"
+  >
+    <cmp-container :full="true">
+      <bcmp-upload-content
+        :file-list="fileList"
+        upload-path="sopFile"
+        :is-hand-delete="true"
+        @upload-success="uploadSuccess"
+        @uploadfail="uploadfail"
+      ></bcmp-upload-content>
+    </cmp-container>
   </t-dialog>
 </template>
 <script lang="ts">
@@ -122,22 +159,23 @@ export default {
 <script setup lang="ts">
 import _ from 'lodash';
 import { AddRectangleIcon, Icon, LoginIcon, MultiplyIcon, SearchIcon } from 'tdesign-icons-vue-next';
-import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/control';
+import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 import ProfileForm from './form.vue';
-import { useLang } from './lang';
+import formAdd from './formAdd.vue';
 
-const { t } = useLang();
 // 获取全部图标的列表
 const iconValue = ref('add');
 const { pageUI } = usePage();
-
+// // 上传文件
+const fileList = ref([]);
 const queryCompnent = ref({
   pageSize: 9999,
   pageNum: 1,
@@ -149,6 +187,32 @@ interface TreeLabelData {
   secondLayerLabels: string[];
   thirdLayerLabels: string[];
 }
+const onAddFile = () => {
+  if (!clickNodeId.value.mitemId) {
+    MessagePlugin.warning('请选择产品');
+    return;
+  }
+  formVisibleFile.value = true;
+};
+const uploadSuccess = (file: AddFileType) => {
+  MessagePlugin.info(`上传文件成功`);
+  fileList.value.push(file);
+  formRefAdd.value.init();
+  formRefAdd.value.formData.fileName = file.fileName;
+  formRefAdd.value.formData.mitemId = clickNodeId.value.mitemId;
+  formRefAdd.value.formData.mitemCategoryId = clickNodeId.value.mitemCategoryId;
+  formVisibleFile.value = false;
+  formTitle.value = '新增';
+  formVisibleAdd.value = true;
+  console.log('🚀 ~ file: materialStandardAdd.vue:149 ~ uploadSuccess ~ files.value:', fileList.value);
+
+  console.log('🚀 ~ file: materialStandardAdd.vue:150 ~ uploadSuccess ~ file:', file);
+};
+
+const uploadfail = (file: AddFileType) => {
+  MessagePlugin.info(`上传文件失败`);
+  console.log('uploadSuccess', file);
+};
 
 // 树状数据 TS 类型
 interface TreeNode {
@@ -157,23 +221,22 @@ interface TreeNode {
   children?: TreeNode[]; // 可选属性，表示子节点数组
 }
 const formVisible = ref(false);
+const formVisibleFile = ref(false);
+const formVisibleAdd = ref(false);
 const formRef = ref(null);
+const formRefAdd = ref(null);
 const formTitle = ref('');
 const treeRef = ref(null); // 树组件实例
 const treeArr = ref<TreeLabelData | null>(null); // 组件挂载获取树组件名称数组
-const treeClickData = ref({ one: '', two: '' }); // 面包屑文本
 const treeData = ref<TreeNode[]>([]); // 树组件数据
 const tabListData = ref(1); // 多端选中数据
 const clickNodeId = ref({
-  nodeId: '',
-  clientType: 1,
+  mitemCategoryId: '',
+  mitemId: '',
   pageNum: 1,
   pageSize: 10,
-  attribute: 0,
-  moduleName: '',
-  key: '',
-  profileDesc: '',
-  parentModuleName: '',
+  status: 'ALL',
+  keyword: '',
 });
 const tabTotal = ref(0); // 表格数据总页数
 const moduleData = ref([]); // 表格数据
@@ -195,6 +258,15 @@ const formDataTwo = ref({
   iconPath: iconValue.value, // 图标地址
   parentModuleId: null, // 父组件 ID
 });
+
+const onDel = async () => {
+  if (!clickNodeId.value.mitemId) {
+    MessagePlugin.warning('请选择产品');
+    return;
+  }
+  await api.sopProduct.onDelBatch(clickNodeId.value);
+  MessagePlugin.success('操作成功');
+};
 
 // 侦听 formDataTwo.iconPath 的变化
 watch(
@@ -225,57 +297,51 @@ watch(tabListData, (newValue) => {
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
-    colKey: 'moduleName',
-    title: '功能名称',
+    colKey: 'fileName',
+    title: '名称',
     align: 'center',
     width: '90',
   },
   {
-    colKey: 'profileName',
-    title: '配置项名称',
+    colKey: 'sopCategoryName',
+    title: '文件类型',
     align: 'center',
     width: '140',
   },
   {
-    colKey: 'profileCategoryOp',
-    title: '配置项维度',
+    colKey: 'statusOp',
+    title: '状态',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'profileCategoryValueName',
-    title: '维度值',
+    colKey: 'timeEffective',
+    title: '启用日期',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'profileValue',
-    title: '配置项值',
+    colKey: 'timeInvalid',
+    title: '失效日期',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'stateOp',
-    title: '是否应用',
+    colKey: 'processName',
+    title: '工序',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'profileDesc',
-    title: '配置项说明',
+    colKey: 'workcenterName',
+    title: '工作中心',
     align: 'center',
     width: '100',
-  },
-  {
-    colKey: 'op',
-    title: '操作',
-    align: 'center',
-    fixed: 'right',
-    width: '130',
   },
 ];
 // 查询按钮
 const onRefresh = () => {
+  pageUI.value.page = 1;
   onGetTabData();
 };
 
@@ -283,19 +349,36 @@ const onRefresh = () => {
 const fetchData = () => {
   onGetTabData();
 };
-
 // 新增
-const onAdd = () => {
+const onAddMitemCategory = () => {
   formTitle.value = '新增';
-  formRef.value.init(clickNodeId);
   formVisible.value = true;
 };
 
 const onConfirmForm = async () => {
+  const id = formRef.value.formData.mitemCategoryId;
+  const item = treeData.value.find((item) => item.id === id);
+  if (item) {
+    MessagePlugin.warning('产品类别已存在，请确认后继续');
+    return;
+  }
   formRef.value.submit().then((data: any) => {
     if (data) {
       formVisible.value = false;
       fetchData();
+    }
+  });
+};
+const onCancelForm = async () => {
+  const id = formRef.value.formData.mitemCategoryId;
+  const item = treeData.value.find((item) => item.id === id);
+  if (item) {
+    MessagePlugin.warning('产品类别已存在，请确认后继续');
+    return;
+  }
+  formRef.value.submit().then((data: any) => {
+    if (data) {
+      formRef.value.init();
     }
   });
 };
@@ -324,15 +407,6 @@ const getstateName = (id: any) => {
   return '';
 };
 
-const getProfileCategory = (value: any) => {
-  for (const element of formRef.value.profileCategoryOption) {
-    if (value === element.value) {
-      return element.label;
-    }
-  }
-  return '';
-};
-
 // 筛选树组件名称数组的函数
 function filterLabels(treeData: any[]) {
   const firstLayerLabels = treeData.map((node: { label: any }) => node.label);
@@ -351,6 +425,7 @@ function filterLabels(treeData: any[]) {
 
 function simplifyObject(obj: {
   id: any;
+  categoryId: any;
   mitemId: any;
   categoryCode: any;
   categoryName: any;
@@ -362,6 +437,7 @@ function simplifyObject(obj: {
   // 创建一个新对象，仅包含 label 和 children 字段
   const simplified = {
     id: obj.id ? obj.id : obj.mitemId,
+    categoryId: obj.id ? obj.id : obj.categoryId,
     label: obj.id ? `${obj.categoryCode} ${obj.categoryName}` : `${obj.mitemCode} ${obj.mitemName}`,
     children: [],
   };
@@ -396,45 +472,40 @@ const onGetTreeData = async () => {
 const onGetTabData = async () => {
   clickNodeId.value.pageNum = pageUI.value.page;
   clickNodeId.value.pageSize = pageUI.value.rows;
-  clickNodeId.value.key = keyword.value;
-  // const res = await api.profileValue.getProfileValueList(clickNodeId.value); // 获取第二节点的数据
-  // moduleData.value = res.list; // 表格数据赋值
-  // tabTotal.value = res.total;
+  clickNodeId.value.keyword = keyword.value;
+  const res = await api.sopFile.getList(clickNodeId.value); // 获取第二节点的数据
+  moduleData.value = res.list; // 表格数据赋值
+  tabTotal.value = res.total;
 };
 
 // 树节点的点击事件，获取点击节点的文本
 const treeClick = async ({ node }: { node: any }) => {
-  pageUI.value.page = 1;
-  formDataTwo.value.parentModuleId = node[`__tdesign_tree-node__`]?.data?.id;
-  clickNodeId.value.nodeId = node[`__tdesign_tree-node__`]?.data?.id; // 保存当前点击节点的 ID
-  clickNodeId.value.attribute = node[`__tdesign_tree-node__`]?.data?.attribute; // 保存当前点击节点的 属性
-  clickNodeId.value.moduleName = node[`__tdesign_tree-node__`]?.data?.label; // 保存当前点击节点的 名称
-  clickNodeId.value.parentModuleName = node[`__tdesign_tree-node__`]?.data?.label; // 保存当前点击节点的 说明
-  clickNodeId.value.parentModuleName = node[`__tdesign_tree-node__`]?.parent?.label; // 保存当前点击节点父节点名称
-  console.log(node.data);
-  // 判断是否有子节点
+  clickNodeId.value.mitemId = '';
+  // 检查节点是否有子节点，如果有则返回不操作
   if (node.data.children && node.data.children.length > 0) {
-    isButtonDisabled.value = true;
-  } else if (clickNodeId.value.attribute === 2) {
-    // 没有子节点
-    isButtonDisabled.value = false;
+    return;
   }
 
+  // 执行其他操作
+  pageUI.value.page = 1;
+  clickNodeId.value.mitemId = node[`__tdesign_tree-node__`]?.data?.id; // 保存当前点击节点的 ID
+  clickNodeId.value.mitemCategoryId = node[`__tdesign_tree-node__`]?.data?.categoryId; // 保存当前点击节点的 ID
   await onGetTabData();
-  treeClickData.value.one = node['__tdesign_tree-node__'].label;
-  treeClickData.value.two = node['__tdesign_tree-node__'].parent?.label;
 };
 const demo1Filter = ref(null);
 const demo1Input = (state: any) => {
   console.info('demo1 input:', state);
   if (treeKey.value) {
     // 存在过滤文案，才启用过滤
-    demo1Filter.value = (node: { data: { label: string | any[] } }) => {
-      const rs = node.data.label.indexOf(treeKey.value) >= 0;
-      // 命中的节点会强制展示
-      // 命中节点的路径节点会锁定展示
-      // 未命中的节点会隐藏
-      return rs;
+    demo1Filter.value = (node: { data: { label: string; children: any[] } }) => {
+      // 检查节点是否有子节点
+      const hasChildren = node.data.children && node.data.children.length > 0;
+      // 如果节点没有子节点，且节点的文本包含过滤文案，则返回 true，表示命中
+      if (!hasChildren && node.data.label.indexOf(treeKey.value) >= 0) {
+        return true;
+      }
+      // 如果节点有子节点，则不进行过滤
+      return false;
     };
   } else {
     // 过滤文案为空，则还原 tree 为无过滤状态

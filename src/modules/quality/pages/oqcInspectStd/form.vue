@@ -3,25 +3,14 @@
     <t-row :gutter="[32, 16]">
       <!-- 第 1️⃣ 行数据 -->
       <t-col :span="12">
-        <t-form-item label="标准编码" name="inspectStdCode">
-          <t-select
+        <t-form-item label="检验标准" name="inspectStdCode">
+          <bcmp-select-business
             v-model="formData.inspectStdCode"
-            clearable
-            filterable
-            input-props
-            :disabled="formData.type !== 'add'"
-            @change="onChange"
-            @clear="fetchSampingStdCodes"
-            @input-change="querySelectChange($event)"
-          >
-            <t-option
-              v-for="item in namesOption"
-              :key="item.id"
-              :label="item.label"
-              :value="item.value"
-              :lazy-load="true"
-            />
-          </t-select>
+            :disabled="formData.type === 'edit'"
+            type="oqcInspectStd"
+            :show-title="false"
+            value-field="inspectStdCode"
+          ></bcmp-select-business>
         </t-form-item>
       </t-col>
       <t-col :span="12">
