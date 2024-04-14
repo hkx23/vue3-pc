@@ -1765,6 +1765,32 @@ export interface SopCategoryTreeVO {
   list?: SopCategoryMitemVO[];
 }
 
+export interface SopProductDTO {
+  /** 工序ID */
+  processIds?: string[];
+  /** 工作中心ID */
+  workcenterIds?: string[];
+  mitemCategoryId?: string;
+  mitemId?: string;
+  id?: string;
+  workcenterId?: string;
+  processId?: string;
+  fileName?: string;
+  fileDesc?: string;
+  sopCategory?: string;
+  status?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  timeEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  timeInvalid?: string;
+}
+
 /** 响应数据 */
 export type PagingDataSopFileVO = {
   list?: SopFileVO[];
@@ -1829,12 +1855,19 @@ export interface SopFileVO {
   timeInvalid?: string;
   /** 状态 */
   status?: string;
+  /** 描述 */
+  fileDesc?: string;
   /** 文件分类 */
   sopCategoryName?: string;
   /** 文件分类 */
   statusName?: string;
+  /** 工序 */
   processName?: string;
+  /** 工作中心 */
   workcenterName?: string;
+  sopProductId?: string;
+  processId?: string;
+  workcenterId?: string;
 }
 
 /** 关键物料追溯（反向）-查询 */
@@ -2878,13 +2911,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   workshopId?: string;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   datetimeScheStr?: string;
-  scanDatetimeStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3286,9 +3319,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3442,14 +3475,14 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
+  workshopId?: string;
   stateName?: string;
-  defectCodeStr?: string;
-  isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  isState?: boolean;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -5072,15 +5105,15 @@ export interface BarcodeWipCollectVO {
   requestScanID?: string;
   /** @format date-time */
   datetimeSche?: string;
-  workshopCode?: string;
   workshopName?: string;
+  workshopCode?: string;
   workshopId?: string;
   stateName?: string;
-  isState?: boolean;
+  scanDatetimeStr?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
   datetimeScheStr?: string;
-  scanDatetimeStr?: string;
+  isState?: boolean;
 }
 
 /** 工序 */
@@ -6674,6 +6707,21 @@ export const api = {
      * No description
      *
      * @tags 工艺文件与产品关系表
+     * @name EditFile
+     * @summary 新增产品类别
+     * @request POST:/sopProduct/editFile
+     * @secure
+     */
+    editFile: (data: SopProductDTO) =>
+      http.request<ResultObject['data']>(`/api/control/sopProduct/editFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺文件与产品关系表
      * @name AddMitemCategory
      * @summary 新增产品类别
      * @request POST:/sopProduct/addMitemCategory
@@ -6683,6 +6731,36 @@ export const api = {
       http.request<ResultObject['data']>(`/api/control/sopProduct/addMitemCategory`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺文件与产品关系表
+     * @name AddFile
+     * @summary 新增产品类别
+     * @request POST:/sopProduct/addFile
+     * @secure
+     */
+    addFile: (data: SopProductDTO) =>
+      http.request<ResultObject['data']>(`/api/control/sopProduct/addFile`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 工艺文件与产品关系表
+     * @name DelFile
+     * @summary 新增产品类别
+     * @request GET:/sopProduct/delFile
+     * @secure
+     */
+    delFile: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/control/sopProduct/delFile`, {
+        method: 'GET',
+        params: query,
       }),
   },
   sopFile: {

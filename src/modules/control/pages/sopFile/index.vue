@@ -62,22 +62,29 @@
         <cmp-table
           ref="tableRef"
           v-model:pagination="pageUI"
-          row-key="id"
+          row-key="sopProductId"
           :table-column="columns"
           :table-data="moduleData"
           :fixed-height="true"
           :total="tabTotal"
+          @row-click="onRowClick"
           @refresh="fetchData"
         >
           <template #stateOp="slotProps">
-            <t-space>
-              {{ getstateName(slotProps.row.state) }}
-            </t-space>
+            <t-tag v-if="slotProps.row.status === 'EFFECTIVE'" theme="success" variant="outline">
+              {{ slotProps.row.statusName }}
+            </t-tag>
+            <t-tag v-else-if="slotProps.row.status === 'EXPIRED'" theme="danger" variant="outline">
+              {{ slotProps.row.statusName }}
+            </t-tag>
+            <t-tag v-else variant="outline">
+              {{ slotProps.row.statusName }}
+            </t-tag>
           </template>
           <template #title>
             <t-button theme="primary" @click="onAddFile">新增</t-button>
-            <t-button theme="default" :disabled="isButtonDisabled" @click="onEditRowClick">编辑</t-button>
-            <t-button theme="default" :disabled="isButtonDisabled" @click="onEditRowClick">删除</t-button>
+            <t-button theme="default" :disabled="isButtonDisabled" @click="onEditRow">编辑</t-button>
+            <t-button theme="default" :disabled="isButtonDisabled" @click="onDelRow">删除</t-button>
           </template>
           <template #button>
             <t-space direction="horizontal">
@@ -119,16 +126,11 @@
   <t-dialog
     v-model:visible="formVisibleAdd"
     :header="formTitle"
-    :cancel-btn="null"
-    :confirm-btn="null"
+    :on-confirm="onConfirmFormAdd"
     width="850px"
     :close-on-overlay-click="false"
     @close="onGetTreeData"
   >
-    <template #footer>
-      <t-button theme="default" @click="onCancelForm">保存并继续</t-button>
-      <t-button theme="primary" @click="onConfirmForm()">保存</t-button>
-    </template>
     <formAdd ref="formRefAdd"></formAdd>
   </t-dialog>
   <!-- !上传组件 弹框 -->
@@ -194,11 +196,33 @@ const onAddFile = () => {
   }
   formVisibleFile.value = true;
 };
+const curRow = ref();
+const onRowClick = ({ row }) => {
+  isButtonDisabled.value = false;
+  curRow.value = row;
+};
+const onEditRow = () => {
+  formRefAdd.value.init();
+  formRefAdd.value.formData = curRow.value;
+  formRefAdd.value.formData.id = curRow.value.sopProductId;
+  formRefAdd.value.formData.isState = curRow.value.status !== 'UNENABLE';
+  formRefAdd.value.formData.mitemId = clickNodeId.value.mitemId;
+  formRefAdd.value.formData.mitemCategoryId = clickNodeId.value.mitemCategoryId;
+  formRefAdd.value.formData.opType = 'edit';
+  formTitle.value = '编辑';
+  formVisibleAdd.value = true;
+};
+const onDelRow = async () => {
+  await api.sopProduct.delFile({ id: curRow.value.sopProductId });
+  MessagePlugin.success('删除成功');
+  onRefresh();
+};
 const uploadSuccess = (file: AddFileType) => {
   MessagePlugin.info(`上传文件成功`);
   fileList.value.push(file);
   formRefAdd.value.init();
   formRefAdd.value.formData.fileName = file.fileName;
+  formRefAdd.value.formData.opType = 'add';
   formRefAdd.value.formData.mitemId = clickNodeId.value.mitemId;
   formRefAdd.value.formData.mitemCategoryId = clickNodeId.value.mitemCategoryId;
   formVisibleFile.value = false;
@@ -309,7 +333,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '140',
   },
   {
-    colKey: 'statusOp',
+    colKey: 'stateOp',
     title: '状态',
     align: 'center',
     width: '100',
@@ -369,6 +393,14 @@ const onConfirmForm = async () => {
     }
   });
 };
+const onConfirmFormAdd = async () => {
+  formRefAdd.value.submit().then((data: any) => {
+    if (data) {
+      formVisibleAdd.value = false;
+      onRefresh();
+    }
+  });
+};
 const onCancelForm = async () => {
   const id = formRef.value.formData.mitemCategoryId;
   const item = treeData.value.find((item) => item.id === id);
@@ -381,30 +413,6 @@ const onCancelForm = async () => {
       formRef.value.init();
     }
   });
-};
-const onEditRowClick = (value: any) => {
-  formTitle.value = '编辑';
-  formRef.value.formData = JSON.parse(JSON.stringify(value.row));
-  formRef.value.formData.id = value.row.id;
-  formRef.value.formData.valueType = value.row.valueType;
-  formRef.value.formData.isState = value.row.state === 1;
-  formRef.value.formData.operateTpye = 'edit';
-  formRef.value.setCategoryLabel();
-  formVisible.value = true;
-  onGetTabData();
-};
-
-const stateOptions = [
-  { label: '是', id: 1 },
-  { label: '否', id: 0 },
-];
-const getstateName = (id: any) => {
-  for (const element of stateOptions) {
-    if (id === element.id) {
-      return element.label;
-    }
-  }
-  return '';
 };
 
 // 筛选树组件名称数组的函数

@@ -13,7 +13,7 @@
               v-model="formData.processId"
               type="process"
               :show-title="false"
-              :is-multiple="true"
+              :is-multiple="formData.opType === 'add'"
             ></bcmp-select-business>
           </t-form-item>
         </t-col>
@@ -23,7 +23,7 @@
               v-model="formData.workcenterId"
               type="workcenter"
               :show-title="false"
-              :is-multiple="true"
+              :is-multiple="formData.opType === 'add'"
             ></bcmp-select-business>
           </t-form-item>
         </t-col>
@@ -48,9 +48,9 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item label="文件类型" name="processId">
+          <t-form-item label="文件类型" name="processId" :required-mark="true">
             <bcmp-select-business
-              v-model="formData.processId"
+              v-model="formData.sopCategory"
               type="fileType"
               category="P_FILE_TYPE"
               :show-title="false"
@@ -79,14 +79,20 @@ export default {
   setup() {
     const selectformRef = ref(null);
     const formData = ref({
+      id: '',
+      opType: '',
       fileDesc: '',
       fileName: '',
       mitemCategoryId: '',
-      timeEffective: '',
+      timeEffective: new Date().toISOString().substr(0, 10),
       timeInvalid: '',
+      status: '',
       mitemId: '',
+      sopCategory: '',
       processId: '',
+      processIds: [],
       workcenterId: '',
+      workcenterIds: [],
       isState: true,
     });
     // #表单定义规则
@@ -95,21 +101,37 @@ export default {
     };
 
     const submit = async () => {
-      if (!formData.value.mitemCategoryId) {
-        MessagePlugin.warning('产品类别必填');
+      if (!formData.value.sopCategory) {
+        MessagePlugin.warning('文件类型必填');
         return false;
       }
+      if (!isEmpty(formData.value.processId)) {
+        formData.value.processIds = formData.value.processId.split(',');
+      }
+      if (!isEmpty(formData.value.workcenterId)) {
+        formData.value.workcenterIds = formData.value.workcenterId.split(',');
+      }
 
-      await api.sopProduct.addMitemCategory({
-        mitemCategoryId: formData.value.mitemCategoryId,
-      });
+      formData.value.status = formData.value.isState ? 'EFFECTIVE' : 'UNENABLE';
+
+      if (formData.value.opType === 'add') {
+        await api.sopProduct.addFile(formData.value);
+      } else {
+        await api.sopProduct.editFile(formData.value);
+      }
 
       MessagePlugin.success('操作成功');
       return true;
     };
     const init = () => {
       formData.value = {
+        id: '',
+        opType: '',
         fileDesc: '',
+        processIds: [],
+        workcenterIds: [],
+        sopCategory: '',
+        status: '',
         fileName: '',
         mitemCategoryId: '',
         timeEffective: '',
