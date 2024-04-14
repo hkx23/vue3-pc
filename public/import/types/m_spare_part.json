@@ -1,0 +1,39 @@
+{
+  "importTitle": "备品备件表",
+  "templateFileName": "导入模板_备品备件表",
+  "remoteUrl": "/api/main/sparePart/import",
+  "importColumns": [
+    {
+      "title": "备件编码(必填)",
+      "field": "sparePartCode"
+    },
+    {
+      "title": "备件名称(必填)",
+      "field": "sparePartName"
+    },
+    {
+      "title": "供应商编码(必填)",
+      "field": "supplierCode"
+    },
+    {
+      "title": "备件型号(必填)",
+      "field": "sparePartModel"
+    },
+    {
+      "title": "单位(必填)",
+      "field": "uom"
+    },
+    {
+      "title": "安全库存(默认0,,必填)",
+      "field": "safetyStockQty"
+    },
+    {
+      "title": "备注(允许为空)",
+      "field": "memo"
+    }
+  ],
+  "importFileSizeLimit": 5,
+  "importRowCountLimit": 50000,
+  "importColumnCountLimit": 100,
+  "importBatchSize": 10
+}

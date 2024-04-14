@@ -181,6 +181,7 @@ const tableReturnManagementDetailColumns: PrimaryTableCol<TableRowData>[] = [
   { title: `${t('returnManagement.colmitemCode')}`, width: 140, colKey: 'mitemCode' },
   { title: `${t('returnManagement.colmitemDesc')}`, width: 140, colKey: 'mitemDesc' },
   { title: `${t('returnManagement.coluomName')}`, width: 140, colKey: 'uomName' },
+  { title: `${t('returnManagement.colbatchLot')}`, width: 140, colKey: 'batchLot' },
   { title: `${t('returnManagement.colreqQty')}`, width: 140, colKey: 'reqQty' },
   { title: `${t('returnManagement.colpickQty')}`, width: 140, colKey: 'pickQty' },
 ];

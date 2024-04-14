@@ -14,7 +14,7 @@
     </div>
     <!-- xlsx -->
     <div v-show="fileType == 'excel'" ref="xlsxRef" class="xlsx-div">
-      <div id="excelView"></div>
+      <div id="excel-view"></div>
       <!-- <vue-office-excel :src="previewAddress" /> -->
       <!-- <t-tabs v-model="activeName">
         <t-tab-panel v-for="(item, index) in excelSheet" :key="index" :label="item.name" :value="item.name">
@@ -100,7 +100,9 @@ const viewXlsx = async (data: any) => {
   formVisible.value = true;
   // console.log(data);
   if (data.src) {
-    const myExcelPreviewer = jsPreviewExcel.init(document.getElementById('excelView'));
+    const divElement = document.getElementById('excel-view');
+    divElement.innerHTML = '';
+    const myExcelPreviewer = jsPreviewExcel.init(divElement);
     // previewAddress.value = data.src;
 
     myExcelPreviewer
@@ -173,13 +175,17 @@ defineExpose({
 </script>
 <style scoped lang="less">
 .word-div {
-  height: calc(50vh);
+  height: 500px;
   overflow: auto;
 }
 
 .xlsx-div {
-  height: calc(50vh);
+  height: 500px;
   overflow: auto;
+
+  #excel-view {
+    height: 100%;
+  }
 }
 
 .img-div {
@@ -192,7 +198,7 @@ defineExpose({
 }
 
 .pdf-div {
-  height: calc(50vh);
+  height: 500px;
   overflow: auto;
 }
 </style>

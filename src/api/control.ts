@@ -3442,9 +3442,9 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
+  workshopId?: string;
   workshopCode?: string;
   workshopName?: string;
-  workshopId?: string;
   stateName?: string;
   defectCodeStr?: string;
   isState?: boolean;

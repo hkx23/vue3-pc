@@ -8,9 +8,9 @@
         </t-col>
 
         <t-col :flex="2">检验人员：{{ headerDate.userInspectName }}</t-col>
-        <t-col :flex="3">创建时间：{{ headerDate.timeCreate }}</t-col>
-        <t-col :flex="3">检验完成时间：{{ headerDate.datetimeInspectEnd }}</t-col>
-        <t-col :flex="1.5"><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
+        <t-col :flex="3.5">创建时间：{{ headerDate.timeCreate }}</t-col>
+        <t-col :flex="3.5">检验完成时间：{{ headerDate.datetimeInspectEnd }}</t-col>
+        <t-col :flex="0.5"><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
       </t-row>
       <t-row :full="true">
         <hr size="5" width="2000px" color="#808080" />
@@ -138,6 +138,9 @@ import { computed, Ref, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { api, PqcInspectPatrolVO } from '@/api/quality';
+import ngStamp from '@/assets/images/NG.png';
+import okStamp from '@/assets/images/OK.png';
+import underwayStamp from '@/assets/images/UNDERWAY.png';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -178,11 +181,11 @@ const stampUrl = computed(() => {
   const result = props.rowData.bill.inspectResult;
   switch (result) {
     case 'OK':
-      return '../../../../../../public/images/pqcInspect/stamp/OK.png';
+      return okStamp;
     case 'NG':
-      return '../../../../../../public/images/pqcInspect/stamp/NG.png';
+      return ngStamp;
     default:
-      return '../../../../../../public/images/pqcInspect/stamp/UNDERWAY.png';
+      return underwayStamp;
   }
 });
 // 监听 id 的变化
@@ -430,14 +433,6 @@ const columns = [
   background-color: transparent;
   top: 50px; /* 设置图片顶部距离容器顶部的距离 */
   right: 50px; /* 设置图片左侧距离容器左侧的距离 */
-}
-
-.barcodeDiv {
-  border-width: 2px;
-  border-style: solid;
-  border-color: rgb(49 172 243);
-  border-radius: 5px;
-  padding: 10px;
 }
 
 //条码栏背景card去边框

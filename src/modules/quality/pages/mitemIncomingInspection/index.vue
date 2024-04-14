@@ -533,6 +533,7 @@ const fetchTable = async () => {
 };
 const fetchTableInspec = async () => {
   try {
+    inspectData.value = [];
     const list = await apiQuality.iqcInspectBill.getIqcInspectDtlFullBillList({
       pageNum: pageTab2.value.page,
       pageSize: pageTab2.value.rows,

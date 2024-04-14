@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -1950,6 +1950,183 @@ export interface ResultPagingDataMsgSendLog {
   data?: PagingDataMsgSendLog;
 }
 
+/** 备品备件表 */
+export interface SparePart {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 备品备件编码 */
+  sparePartCode?: string;
+  /** 备品备件名称 */
+  sparePartName?: string;
+  supplierId?: string;
+  /** 备品备件型号 */
+  sparePartModel?: string;
+  /** 单位 */
+  uom?: string;
+  /** 安全库存 */
+  safetyStockQty?: number;
+  /** 备注 */
+  memo?: string;
+}
+
+export interface CommonImportSparePartVO {
+  title?: string;
+  tableName?: string;
+  data?: SparePartVO[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
+}
+
+export interface ImportColumn {
+  field?: string;
+  title?: string;
+  isRequired?: boolean;
+  isValidateRepeat?: boolean;
+  validateExpression?: string;
+  items?: string[];
+  validateRepeat?: boolean;
+  required?: boolean;
+}
+
+export interface SparePartVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 备品备件编码 */
+  sparePartCode?: string;
+  /** 备品备件名称 */
+  sparePartName?: string;
+  supplierId?: string;
+  /** 备品备件型号 */
+  sparePartModel?: string;
+  /** 单位 */
+  uom?: string;
+  /** 安全库存 */
+  safetyStockQty?: number;
+  /** 备注 */
+  memo?: string;
+  /** 供应商代码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /** 计量单位符号 */
+  uomName?: string;
+  /**
+   * 现有量
+   * @format int32
+   */
+  qty?: number;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 货位名称 */
+  districtName?: string;
+}
+
+/** 响应数据 */
+export type ImportSummaryObject = {
+  /** @format int32 */
+  successCount?: number;
+  /** @format int32 */
+  failCount?: number;
+  errorListFilePath?: string;
+  returnData?: object[];
+  allSuccess?: boolean;
+} | null;
+
+/** 通用响应类 */
+export interface ResultImportSummaryObject {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ImportSummaryObject;
+}
+
+export interface SparePartSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+  warehouseId?: string;
+  districtId?: string;
+  /** 是否低于安全库存 */
+  isBelowSafelyStock?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataSparePartVO = {
+  list?: SparePartVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSparePartVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSparePartVO;
+}
+
 /** 工艺路线映射表 */
 export interface RoutingMap {
   id?: string;
@@ -2474,8 +2651,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -4563,13 +4740,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4727,41 +4904,6 @@ export interface CommonImportMitemCategory {
   batchSize?: number;
 }
 
-export interface ImportColumn {
-  field?: string;
-  title?: string;
-  isRequired?: boolean;
-  isValidateRepeat?: boolean;
-  validateExpression?: string;
-  items?: string[];
-  validateRepeat?: boolean;
-  required?: boolean;
-}
-
-/** 响应数据 */
-export type ImportSummaryObject = {
-  /** @format int32 */
-  successCount?: number;
-  /** @format int32 */
-  failCount?: number;
-  errorListFilePath?: string;
-  returnData?: object[];
-  allSuccess?: boolean;
-} | null;
-
-/** 通用响应类 */
-export interface ResultImportSummaryObject {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: ImportSummaryObject;
-}
-
 /** 显示物料实体 */
 export interface MitemVO {
   id?: string;
@@ -4815,15 +4957,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
   isProductName?: string;
-  isRawChecked?: boolean;
+  isRawName?: string;
   isInProcessName?: string;
   isBatchName?: string;
-  isRawName?: string;
-  isProductChecked?: boolean;
+  isRawChecked?: boolean;
   isInProcessChecked?: boolean;
-  isState?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4966,8 +5108,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -5913,6 +6055,105 @@ export interface Favorite {
   moduleId?: string;
 }
 
+/** 设备附件表 */
+export interface EquipmentFile {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  equipmentId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+}
+
+export interface EquipmentFileSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  equipmentId?: string;
+  /** 保存传递的文件列表 */
+  fileList?: EquipmentFile[];
+}
+
+export interface EquipmentFileVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  equipmentId?: string;
+  /** 文件名称 */
+  fileName?: string;
+  /** 文件地址 */
+  filePath?: string;
+}
+
+/** 响应数据 */
+export type PagingDataEquipmentFileVO = {
+  list?: EquipmentFileVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataEquipmentFileVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataEquipmentFileVO;
+}
+
 /** 设备 */
 export interface Equipment {
   id?: string;
@@ -6227,6 +6468,129 @@ export interface ResultListDlTask {
   message?: string;
   /** 响应数据 */
   data?: DlTask[] | null;
+}
+
+/** 货区 */
+export interface District {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 货位代码 */
+  districtCode?: string;
+  /** 货位名称 */
+  districtName?: string;
+  /** 货位描述 */
+  districtDesc?: string;
+  warehouseId?: string;
+}
+
+/** 通用响应类 */
+export interface ResultDistrict {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 货区 */
+  data?: District;
+}
+
+export interface DistrictSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  warehouseId?: string;
+  /** 货区搜索关键字 */
+  districtKeyword?: string;
+}
+
+/** 公共方法输出类 */
+export interface DistrictVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 货位代码 */
+  districtCode?: string;
+  /** 货位名称 */
+  districtName?: string;
+  /** 货位描述 */
+  districtDesc?: string;
+  warehouseId?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
+  /** 仓库名称 */
+  warehouseName?: string;
+  /** 修改人 */
+  modifierName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataDistrictVO = {
+  list?: DistrictVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataDistrictVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataDistrictVO;
 }
 
 /** 查询条码信息 */
@@ -6609,8 +6973,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -8411,8 +8775,10 @@ export interface AssetLedgerVO {
   statusName?: string;
   /** 管理状态名称 */
   stateName?: string;
+  assetBrandId?: string;
   /** 资产品牌名称 */
   brandName?: string;
+  assetTypeId?: string;
 }
 
 /** 响应数据 */
@@ -9321,12 +9687,12 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12099,6 +12465,82 @@ export const api = {
         method: 'GET',
       }),
   },
+  sparePart: {
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name RemoveBatch
+     * @summary 批量删除备品备件
+     * @request POST:/sparePart/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/sparePart/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name Modify
+     * @summary 编辑备品备件
+     * @request POST:/sparePart/modify
+     * @secure
+     */
+    modify: (data: SparePart) =>
+      http.request<ResultObject['data']>(`/api/main/sparePart/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name ImportData
+     * @summary 导入
+     * @request POST:/sparePart/import
+     * @secure
+     */
+    importData: (data: CommonImportSparePartVO) =>
+      http.request<ResultImportSummaryObject['data']>(`/api/main/sparePart/import`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/sparePart/getList
+     * @secure
+     */
+    getList: (data: SparePartSearch) =>
+      http.request<ResultPagingDataSparePartVO['data']>(`/api/main/sparePart/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
+     * @name Add
+     * @summary 新增备品备件
+     * @request POST:/sparePart/add
+     * @secure
+     */
+    add: (data: SparePart) =>
+      http.request<ResultObject['data']>(`/api/main/sparePart/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   roleAuthorization: {
     /**
      * No description
@@ -14710,6 +15152,37 @@ export const api = {
         method: 'GET',
       }),
   },
+  equipmentFile: {
+    /**
+     * No description
+     *
+     * @tags 设备附件表
+     * @name ModifyFileList
+     * @summary 更新上传文件
+     * @request POST:/equipmentFile/modifyFileList
+     * @secure
+     */
+    modifyFileList: (data: EquipmentFileSearch) =>
+      http.request<ResultObject['data']>(`/api/main/equipmentFile/modifyFileList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 设备附件表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/equipmentFile/getList
+     * @secure
+     */
+    getList: (data: EquipmentFileSearch) =>
+      http.request<ResultPagingDataEquipmentFileVO['data']>(`/api/main/equipmentFile/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   equipment: {
     /**
      * No description
@@ -14859,6 +15332,109 @@ export const api = {
       http.request<ResultObject['data']>(`/api/main/dlTask/add`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  district: {
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name RemoveDistrict
+     * @summary 删除货区
+     * @request POST:/district/removeDistrict
+     * @secure
+     */
+    removeDistrict: (query: { id: string }) =>
+      http.request<ResultObject['data']>(`/api/main/district/removeDistrict`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name ModifyDistrict
+     * @summary 编辑货区
+     * @request POST:/district/modifyDistrict
+     * @secure
+     */
+    modifyDistrict: (data: District) =>
+      http.request<ResultObject['data']>(`/api/main/district/modifyDistrict`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name Search
+     * @request POST:/district/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultObject['data']>(`/api/main/district/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name GetItemById
+     * @request POST:/district/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultDistrict['data']>(`/api/main/district/items/${id}`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name GetList
+     * @summary 查询货区
+     * @request POST:/district/getList
+     * @secure
+     */
+    getList: (data: DistrictSearch) =>
+      http.request<ResultPagingDataDistrictVO['data']>(`/api/main/district/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name AddDistrict
+     * @summary 新增货区
+     * @request POST:/district/addDistrict
+     * @secure
+     */
+    addDistrict: (data: District) =>
+      http.request<ResultObject['data']>(`/api/main/district/addDistrict`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 货区
+     * @name GetNameById
+     * @summary 根据ID获得名称
+     * @request GET:/district/getNameById
+     * @secure
+     */
+    getNameById: (query: { id: string }) =>
+      http.request<ResultString['data']>(`/api/main/district/getNameById`, {
+        method: 'GET',
+        params: query,
       }),
   },
   deliveryCard: {

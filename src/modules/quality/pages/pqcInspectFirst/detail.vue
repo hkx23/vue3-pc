@@ -6,7 +6,7 @@
         <t-col :flex="8">
           <h3>检验单号：{{ headerDate.billNo }}</h3>
         </t-col>
-        <t-col :flex="1.5">创建时间：{{ headerDate.timeCreate }}</t-col>
+        <t-col :flex="2">创建时间：{{ headerDate.timeCreate }}</t-col>
         <t-col :flex="0.5"><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
       </t-row>
       <t-row :full="true">
@@ -197,6 +197,9 @@ import { computed, Ref, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { api, PqcInspectFirstVO } from '@/api/quality';
+import ngStamp from '@/assets/images/NG.png';
+import okStamp from '@/assets/images/OK.png';
+import underwayStamp from '@/assets/images/UNDERWAY.png';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
@@ -242,11 +245,11 @@ const stampUrl = computed(() => {
   const result = props.rowData.bill.inspectResult;
   switch (result) {
     case 'OK':
-      return '../../../../../../public/images/pqcInspect/stamp/OK.png';
+      return okStamp;
     case 'NG':
-      return '../../../../../../public/images/pqcInspect/stamp/NG.png';
+      return ngStamp;
     default:
-      return '../../../../../../public/images/pqcInspect/stamp/UNDERWAY.png';
+      return underwayStamp;
   }
 });
 // 监听 id 的变化
@@ -568,6 +571,7 @@ const columns = [
 }
 
 .barcodeDiv {
+  width: 285px;
   border-width: 2px;
   border-style: solid;
   border-color: rgb(49 172 243);

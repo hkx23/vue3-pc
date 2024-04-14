@@ -2468,14 +2468,13 @@ export interface OqcInspectBillFullVO {
   /** 整改意见 */
   correctOpinion?: string;
   personResponsibilityId?: string;
-  /** 责任方 */
-  responsibility?: string;
   /** 抽样标准类型 */
   samplingStandardType?: string;
   /** 抽样标准编码 */
   samplingStandardCode?: string;
   /** 检验水平 */
   inspectLevel?: string;
+  deptResponsibilityId?: string;
   /** 报批数量-按工单 */
   checkMoTotalQty?: number;
   /** 报批数量-按条码 */
@@ -2505,6 +2504,8 @@ export interface OqcInspectBillFullVO {
   inspectStringencyName?: string;
   defectCategoryName?: string;
   handleMethodName?: string;
+  /** 责任方 */
+  responsibility?: string;
   /** 整改意见 */
   correctOpinionName?: string;
   /** 计量单位符号 */
@@ -3076,10 +3077,10 @@ export type IqcInspectStdFullVO = {
   acRe?: string;
   /** 文件列表 */
   fileList?: AddFileTypeVO[];
-  /** 是否CTQ */
-  isCtqName?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 } | null;
 
 /** 通用响应类 */
@@ -3112,8 +3113,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -3795,10 +3796,10 @@ export interface IqcInspectBillFullVO {
    * @format int32
    */
   isExemptionInspection?: number;
-  /** 停留时长 */
-  waitTime?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
+  /** 停留时长 */
+  waitTime?: string;
 }
 
 /** 响应数据 */
@@ -4400,11 +4401,11 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  /** 是否CTQ */
-  isCtqName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
+  /** 是否CTQ */
+  isCtqName?: string;
 }
 
 /** 响应数据 */
@@ -5660,12 +5661,12 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   i?: string;
-  s3?: string;
-  s2?: string;
-  s4?: string;
-  iii?: string;
-  s1?: string;
   ii?: string;
+  iii?: string;
+  s3?: string;
+  s1?: string;
+  s4?: string;
+  s2?: string;
 } | null;
 
 /** 标签模板 */

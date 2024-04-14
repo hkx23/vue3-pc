@@ -74,7 +74,31 @@
           <t-tab-panel value="tab2" :label="t('returnManagement.tabName2')" :destroy-on-hide="false">
             <t-row style="margin-top: 10px; margin-bottom: 10px">
               <t-col style="margin-right: 10px">
-                <bcmp-select-business v-model="formData.poBillNo" type="purchaseOrder" :show-title="false">
+                <bcmp-select-business
+                  v-model="formData.poBillNo"
+                  type="purchaseOrder"
+                  :show-title="false"
+                  @selection-change="onChangePo"
+                >
+                </bcmp-select-business>
+              </t-col>
+              <t-col style="margin-right: 10px">
+                <bcmp-select-business
+                  v-model="formData.warehouseId"
+                  type="warehousePurchaseOrder"
+                  :custom-conditions="formData.warehouseConditions"
+                  :show-title="false"
+                  @selection-change="onChangeWarehouse"
+                >
+                </bcmp-select-business>
+              </t-col>
+              <t-col style="margin-right: 10px">
+                <bcmp-select-business
+                  v-model="formData.mitemId"
+                  type="mitemPurchaseOrder"
+                  :custom-conditions="formData.mitemConditions"
+                  :show-title="false"
+                >
                 </bcmp-select-business>
               </t-col>
             </t-row>
@@ -144,6 +168,14 @@ const formData = reactive({
   supplierName: '',
   asnBillNo: '',
   poBillNo: '',
+  warehouseId: '',
+  warehouseName: '',
+  warehouseCode: '',
+  warehouseConditions: [],
+  mitemId: '',
+  mitemName: '',
+  mitemCode: '',
+  mitemConditions: [],
   deliveryDtlList: [],
   purchaseOrderList: [],
 });
@@ -157,16 +189,27 @@ watch(
   (newValues) => {
     getReturnDeliveryDtl();
   },
+  { deep: true },
 );
 
-// 单字段监控
 watch(
   () => ({
     poBillNo: formData.poBillNo,
+    warehouseId: formData.warehouseId,
+    mitemId: formData.mitemId,
   }),
   (newValues) => {
+    if (_.isEmpty(formData.poBillNo)) {
+      formData.warehouseId = '';
+      formData.mitemId = '';
+    } else if (_.isEmpty(formData.warehouseId)) {
+      formData.mitemId = '';
+    } else if (_.isEmpty(formData.mitemId)) {
+      formData.mitemId = '';
+    }
     getReturnPurchaseDtl();
   },
+  { deep: true },
 );
 
 const tableSelectedRowKeys = ref([]);
@@ -193,12 +236,14 @@ const tableTab2SelectedRowData = ref([]);
 const tableTab2Data = ref([]);
 const tableTab2Columns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
-  { title: `${t('returnManagement.returnPoBillNo')}`, width: 120, colKey: 'purchaseOrderNo' },
-  { title: `${t('returnManagement.supplierName')}`, width: 120, colKey: 'supplierName' },
+  { title: `${t('returnManagement.returnPoBillNo')}`, width: 140, colKey: 'purchaseOrderNo' },
+  { title: `${t('returnManagement.supplierName')}`, width: 140, colKey: 'supplierName' },
   { title: `${t('returnManagement.lineSeq')}`, width: 120, colKey: 'billLineNo' },
+  { title: `${t('returnManagement.warehouseName')}`, width: 140, colKey: 'warehouseName' },
+  { title: `${t('returnManagement.batchLot')}`, width: 140, colKey: 'batchLot' },
   { title: `${t('returnManagement.mitemCode')}`, width: 120, colKey: 'mitemCode' },
   { title: `${t('returnManagement.mitemDesc')}`, width: 120, colKey: 'mitemDesc' },
-  { title: `${t('returnManagement.stockInQty')}`, width: 140, colKey: 'stockInQty' },
+  { title: `${t('returnManagement.stockInQty')}`, width: 100, colKey: 'stockInQty' },
   { title: `${t('returnManagement.curReturnQty')}`, width: 140, colKey: 'curReturnQty' },
 ];
 const tableTab2SelectedChange = (value: any[], { selectedRowData }: any) => {
@@ -311,13 +356,35 @@ const getReturnDeliveryDtl = async () => {
   }
 };
 const getReturnPurchaseDtl = async () => {
+  tableTab2Data.value = [];
+
   if (!_.isNil(formData.poBillNo)) {
-    const data = await apiWarehouse.purchaseOrderDtl.getReturnPurchaseDtl({ billNo: formData.poBillNo });
+    const data = await apiWarehouse.purchaseOrderDtl.getReturnPurchaseDtlByTransfer({
+      billNo: formData.poBillNo,
+      warehouseId: formData.warehouseId,
+      mitemId: formData.mitemId,
+    });
     tableTab2Data.value = data.list;
     tableTab2SelectedRowKeys.value = [];
     tableTab2SelectedRowData.value = [];
   }
 };
+
+const onChangeWarehouse = async (value) => {
+  const list = [];
+  list.push({ field: 'poBillNo', operator: 'EQ', value: formData.poBillNo });
+  list.push({ field: 'warehouseId', operator: 'EQ', value: value.id });
+  formData.mitemConditions = list;
+  formData.warehouseId = value.id;
+};
+
+const onChangePo = async (value) => {
+  const list = [];
+  list.push({ field: 'poBillNo', operator: 'EQ', value: value.billNo });
+  formData.warehouseConditions = list;
+  formData.poBillNo = value.billNo;
+};
+
 const showForm = async (edit, billNo) => {
   formVisible.value = true;
   reset();
