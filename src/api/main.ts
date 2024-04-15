@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -2717,8 +2717,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4806,7 +4806,6 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
   stateName?: string;
   isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
@@ -5027,8 +5026,8 @@ export interface MitemVO {
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
   stateName?: string;
-  isProductName?: string;
   isRawChecked?: boolean;
+  isProductName?: string;
   isRawName?: string;
   isBatchName?: string;
   isInProcessName?: string;
@@ -7070,8 +7069,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
