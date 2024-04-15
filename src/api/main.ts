@@ -2006,8 +2006,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface SparePartVO {
@@ -2058,10 +2058,37 @@ export interface SparePartVO {
    * @format int32
    */
   qty?: number;
+  warehouseId?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
   /** 仓库名称 */
   warehouseName?: string;
-  /** 货位名称 */
+  districtId?: string;
+  /** 货区代码 */
+  districtCode?: string;
+  /** 货区名称 */
   districtName?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  /** 资产类型编码 */
+  typeCode?: string;
+  /** 资产类型名称 */
+  typeName?: string;
+  /** 资产类型描述 */
+  typeDesc?: string;
+  /** 资产品牌编码 */
+  brandCode?: string;
+  /** 资产品牌名称 */
+  brandName?: string;
+  /** 资产品牌描述 */
+  brandDesc?: string;
+  /** 资产型号编码 */
+  modelCode?: string;
+  /** 资产型号名称 */
+  modelName?: string;
+  /** 资产型号描述 */
+  modelDesc?: string;
 }
 
 /** 响应数据 */
@@ -2089,6 +2116,42 @@ export interface ResultImportSummaryObject {
 }
 
 export interface SparePartSearch {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 备品备件编码 */
+  sparePartCode?: string;
+  /** 备品备件名称 */
+  sparePartName?: string;
+  supplierId?: string;
+  /** 备品备件型号 */
+  sparePartModel?: string;
+  /** 单位 */
+  uom?: string;
+  /** 安全库存 */
+  safetyStockQty?: number;
+  /** 备注 */
+  memo?: string;
   /**
    * 页码
    * @format int32
@@ -2105,6 +2168,9 @@ export interface SparePartSearch {
   districtId?: string;
   /** 是否低于安全库存 */
   isBelowSafelyStock?: boolean;
+  sparePartId?: string;
+  /** tab查询分类 */
+  category?: string;
 }
 
 /** 响应数据 */
@@ -4742,11 +4808,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   isState?: boolean;
   stateName?: string;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
   isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -4958,14 +5024,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   isState?: boolean;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
   stateName?: string;
   isProductName?: string;
-  isRawName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
   isRawChecked?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  isRawName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
 }
 
 /** 响应数据 */
@@ -5108,8 +5174,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6053,6 +6119,37 @@ export interface Favorite {
   eid?: string;
   userId?: string;
   moduleId?: string;
+}
+
+/** 设备与备品备件关联表 */
+export interface EquipmentInSparePart {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  sparePartId?: string;
 }
 
 /** 设备附件表 */
@@ -8501,7 +8598,6 @@ export interface AssetTypeSearch {
   pageSize?: number;
   /** 模糊关键词 */
   keyword?: string;
-  parentDefectId?: string;
 }
 
 /** 显示缺陷代码实体 */
@@ -9121,8 +9217,8 @@ export type UserInOrgVO = {
   userName?: string;
   /** 用户id */
   userId?: string;
-  default?: boolean;
   relate?: boolean;
+  default?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -9685,14 +9781,14 @@ export type ModulePermissionDTO = {
   children?: ModulePermissionDTO[];
   /** 按钮权限 */
   buttons?: ModulePermissionDTO[];
-  /** 是否可用 */
-  enabled?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
+  /** 是否可用 */
+  enabled?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12470,13 +12566,13 @@ export const api = {
      * No description
      *
      * @tags 备品备件表
-     * @name RemoveBatch
-     * @summary 批量删除备品备件
-     * @request POST:/sparePart/removeBatch
+     * @name RemoveSpare
+     * @summary 删除备品备件
+     * @request POST:/sparePart/removeSpare
      * @secure
      */
-    removeBatch: (data: string[]) =>
-      http.request<ResultObject['data']>(`/api/main/sparePart/removeBatch`, {
+    removeSpare: (data: string) =>
+      http.request<ResultObject['data']>(`/api/main/sparePart/removeSpare`, {
         method: 'POST',
         body: data as any,
       }),
@@ -12530,12 +12626,27 @@ export const api = {
      * No description
      *
      * @tags 备品备件表
+     * @name GetAssetInfoBySpare
+     * @summary 查询备品备件的关联关系
+     * @request POST:/sparePart/getAssetInfoBySpare
+     * @secure
+     */
+    getAssetInfoBySpare: (data: SparePartSearch) =>
+      http.request<ResultPagingDataSparePartVO['data']>(`/api/main/sparePart/getAssetInfoBySpare`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
      * @name Add
      * @summary 新增备品备件
      * @request POST:/sparePart/add
      * @secure
      */
-    add: (data: SparePart) =>
+    add: (data: SparePartSearch) =>
       http.request<ResultObject['data']>(`/api/main/sparePart/add`, {
         method: 'POST',
         body: data as any,
@@ -15150,6 +15261,22 @@ export const api = {
     list: () =>
       http.request<ResultListFavorite['data']>(`/api/main/favorite/list`, {
         method: 'GET',
+      }),
+  },
+  equipmentInSparePart: {
+    /**
+     * No description
+     *
+     * @tags 设备与备品备件关联表
+     * @name Add
+     * @summary 新增关联资产
+     * @request POST:/equipmentInSparePart/add
+     * @secure
+     */
+    add: (data: EquipmentInSparePart) =>
+      http.request<ResultObject['data']>(`/api/main/equipmentInSparePart/add`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   equipmentFile: {
