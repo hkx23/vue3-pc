@@ -1,0 +1,113 @@
+{
+  "importTitle": "转产换型时间",
+  "templateFileName": "导入模板_产品检验标准",
+  "remoteUrl": "/api/control/timeSwitchProduct/import",
+  "importColumns": [
+    {
+      "title": "标准编码(必填)",
+      "field": "inspectStdCode"
+    },
+    {
+      "title": "标准名称(必填)",
+      "field": "inspectStdName"
+    },
+    {
+      "title": "版本号(必填)",
+      "field": "revision"
+    },
+    {
+      "title": "生效日期(必填)",
+      "field": "timeEffective"
+    },
+    {
+      "title": "失效日期(必填)",
+      "field": "timeInvalid"
+    },
+    {
+      "title": "明细",
+      "field": "list",
+      "list": [
+        {
+          "title": "项目名称(必填)",
+          "field": "itemName"
+        },
+        {
+          "title": "项目类别(必填)",
+          "field": "itemCategory"
+        },
+        {
+          "title": "项目行号(必填)",
+          "field": "itemSeq"
+        },
+        {
+          "title": "项目特性(必填)",
+          "field": "characteristics"
+        },
+        {
+          "title": "抽样方案类型(必填)",
+          "field": "samplingStandardType"
+        },
+        {
+          "title": "抽样方案(必填)",
+          "field": "samplingStandardCode"
+        },
+        {
+          "title": "检验水平（国标必填）",
+          "field": "inspectLevel"
+        },
+        {
+          "title": "不合格分类(必填)",
+          "field": "unqualifyCategory"
+        },
+        {
+          "title": "检验业务类型(必填)",
+          "field": "inspectType"
+        },
+        {
+          "title": "检验属性(必填)",
+          "field": "inspectProperty"
+        },
+        {
+          "title": "检验工具(必填)",
+          "field": "inspectTool"
+        },
+        {
+          "title": "检验依据(必填)",
+          "field": "inspectBasis"
+        },
+        {
+          "title": "工序",
+          "field": "processName"
+        },
+        {
+          "title": "技术要求",
+          "field": "technicalRequest"
+        },
+        {
+          "title": "检验频率",
+          "field": "inspectFrequency"
+        },
+        {
+          "title": "最小值",
+          "field": "minValue"
+        },
+        {
+          "title": "最大值",
+          "field": "maxValue"
+        },
+        {
+          "title": "基准值",
+          "field": "baseValue"
+        },
+        {
+          "title": "单位",
+          "field": "uomName"
+        }
+      ]
+    }
+  ],
+  "importFileSizeLimit": 5,
+  "importRowCountLimit": 50000,
+  "importColumnCountLimit": 100,
+  "importBatchSize": 10
+}
