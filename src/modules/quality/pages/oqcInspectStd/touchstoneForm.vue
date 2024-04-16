@@ -29,8 +29,8 @@
       <t-col :span="4">
         <t-form-item label="抽样方案类型" label-align="right" name="samplingStandardType">
           <t-radio-group v-model="dtlData.samplingStandardType" default-value="1">
-            <t-radio value="1">国标</t-radio>
-            <t-radio value="2">企标</t-radio>
+            <t-radio value="GB">国标</t-radio>
+            <t-radio value="QB">企标</t-radio>
           </t-radio-group>
         </t-form-item>
       </t-col>
