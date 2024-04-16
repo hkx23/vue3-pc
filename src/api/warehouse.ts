@@ -1938,6 +1938,7 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
+  list?: ImportColumn[];
   required?: boolean;
   validateRepeat?: boolean;
 }
@@ -2190,10 +2191,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /** 待发货数量 */
   waitDeliveriedQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 响应数据 */
@@ -2729,11 +2730,11 @@ export interface DeliveryDtlVO {
   batchLot?: string;
   /** 批次接收量 */
   batchLotQty?: number;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
+  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
-  transferDtlId?: string;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 物料检验单明细 */
@@ -2903,11 +2904,11 @@ export interface PurchaseOrderDtlVO {
   batchLot?: string;
   /** 批次接收量 */
   batchLotQty?: number;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
+  transferDtlId?: string;
   /** 是否接收完成 */
   isComplete?: boolean;
-  transferDtlId?: string;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3788,15 +3789,15 @@ export interface MoIssuanceDtlVO {
    */
   scanQty?: number;
   /**
-   * 待扫数量
-   * @format double
-   */
-  waitingScanQty?: number;
-  /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /**
+   * 待扫数量
+   * @format double
+   */
+  waitingScanQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
 }

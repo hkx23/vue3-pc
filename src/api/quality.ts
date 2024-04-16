@@ -162,6 +162,7 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
+  list?: ImportColumn[];
   required?: boolean;
   validateRepeat?: boolean;
 }
@@ -2590,12 +2591,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -5737,13 +5738,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s2?: string;
-  s4?: string;
-  s3?: string;
-  iii?: string;
-  ii?: string;
-  s1?: string;
   i?: string;
+  s1?: string;
+  ii?: string;
+  iii?: string;
+  s4?: string;
+  s2?: string;
+  s3?: string;
 } | null;
 
 /** 标签模板 */

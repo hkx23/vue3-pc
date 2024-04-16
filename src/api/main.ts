@@ -2114,6 +2114,19 @@ export interface AssetLedgerVO {
   /** 资产品牌名称 */
   brandName?: string;
   assetTypeId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 单据类型 */
+  billCategory?: string;
+  /** 单据类型名称 */
+  billCategoryName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
 }
 
 /** 响应数据 */
@@ -4993,13 +5006,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isState?: boolean;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5210,15 +5223,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
   isRawName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
   isRawChecked?: boolean;
+  isProductName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -17333,6 +17346,21 @@ export const api = {
      */
     modify: (data: Equipment) =>
       http.request<ResultObject['data']>(`/api/main/assetLedger/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产台账
+     * @name GetMaintenanceList
+     * @summary 查询维保履历
+     * @request POST:/assetLedger/getMaintenanceList
+     * @secure
+     */
+    getMaintenanceList: (data: AssetLedgerSearch) =>
+      http.request<ResultPagingDataAssetLedgerVO['data']>(`/api/main/assetLedger/getMaintenanceList`, {
         method: 'POST',
         body: data as any,
       }),
