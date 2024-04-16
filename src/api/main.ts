@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  isReadName?: string;
   statusName?: string;
+  isReadName?: string;
 }
 
 /** 工作台布局表 */
@@ -1950,6 +1950,192 @@ export interface ResultPagingDataMsgSendLog {
   data?: PagingDataMsgSendLog;
 }
 
+/** 设备 */
+export interface Equipment {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetModelId?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+  /** 设备描述 */
+  equipmentDesc?: string;
+  /** 资产编码 */
+  assetCode?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  dateEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  dateInvalid?: string;
+  /** 存放位置 */
+  position?: string;
+  /** 保管部门 */
+  departmentOwner?: string;
+  /** 保管人 */
+  userOwner?: string;
+  /** 设备供应商 */
+  equipmentSupplier?: string;
+  /** 维保联系人 */
+  maintenanceOwner?: string;
+  /** 维保联系方式 */
+  maintenanceOwnerContact?: string;
+  /**
+   * 进场时间
+   * @format date-time
+   */
+  datetimeEntry?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  inspectDealId?: string;
+  inspectAcceptId?: string;
+  /** 状态 */
+  status?: string;
+}
+
+export interface AssetLedgerSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /** 模糊关键词 */
+  keyword?: string;
+}
+
+export interface AssetLedgerVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetModelId?: string;
+  /** 设备编码 */
+  equipmentCode?: string;
+  /** 设备名称 */
+  equipmentName?: string;
+  /** 设备描述 */
+  equipmentDesc?: string;
+  /** 资产编码 */
+  assetCode?: string;
+  /**
+   * 生效时间
+   * @format date-time
+   */
+  dateEffective?: string;
+  /**
+   * 失效时间
+   * @format date-time
+   */
+  dateInvalid?: string;
+  /** 存放位置 */
+  position?: string;
+  /** 保管部门 */
+  departmentOwner?: string;
+  /** 保管人 */
+  userOwner?: string;
+  /** 设备供应商 */
+  equipmentSupplier?: string;
+  /** 维保联系人 */
+  maintenanceOwner?: string;
+  /** 维保联系方式 */
+  maintenanceOwnerContact?: string;
+  /**
+   * 进场时间
+   * @format date-time
+   */
+  datetimeEntry?: string;
+  repairDealId?: string;
+  repairAcceptId?: string;
+  maintenanceDealId?: string;
+  maintenanceAcceptId?: string;
+  inspectDealId?: string;
+  inspectAcceptId?: string;
+  /** 状态 */
+  status?: string;
+  /** 资产型号名称 */
+  modelName?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /** 管理状态名称 */
+  stateName?: string;
+  assetBrandId?: string;
+  /** 资产品牌名称 */
+  brandName?: string;
+  assetTypeId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataAssetLedgerVO = {
+  list?: AssetLedgerVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAssetLedgerVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAssetLedgerVO;
+}
+
 /** 备品备件表 */
 export interface SparePart {
   id?: string;
@@ -2006,6 +2192,7 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
+  list?: ImportColumn[];
   required?: boolean;
   validateRepeat?: boolean;
 }
@@ -2058,10 +2245,37 @@ export interface SparePartVO {
    * @format int32
    */
   qty?: number;
+  warehouseId?: string;
+  /** 仓库代码 */
+  warehouseCode?: string;
   /** 仓库名称 */
   warehouseName?: string;
-  /** 货位名称 */
+  districtId?: string;
+  /** 货区代码 */
+  districtCode?: string;
+  /** 货区名称 */
   districtName?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  /** 资产类型编码 */
+  typeCode?: string;
+  /** 资产类型名称 */
+  typeName?: string;
+  /** 资产类型描述 */
+  typeDesc?: string;
+  /** 资产品牌编码 */
+  brandCode?: string;
+  /** 资产品牌名称 */
+  brandName?: string;
+  /** 资产品牌描述 */
+  brandDesc?: string;
+  /** 资产型号编码 */
+  modelCode?: string;
+  /** 资产型号名称 */
+  modelName?: string;
+  /** 资产型号描述 */
+  modelDesc?: string;
 }
 
 /** 响应数据 */
@@ -2089,6 +2303,42 @@ export interface ResultImportSummaryObject {
 }
 
 export interface SparePartSearch {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 备品备件编码 */
+  sparePartCode?: string;
+  /** 备品备件名称 */
+  sparePartName?: string;
+  supplierId?: string;
+  /** 备品备件型号 */
+  sparePartModel?: string;
+  /** 单位 */
+  uom?: string;
+  /** 安全库存 */
+  safetyStockQty?: number;
+  /** 备注 */
+  memo?: string;
   /**
    * 页码
    * @format int32
@@ -2105,6 +2355,9 @@ export interface SparePartSearch {
   districtId?: string;
   /** 是否低于安全库存 */
   isBelowSafelyStock?: boolean;
+  sparePartId?: string;
+  /** tab查询分类 */
+  category?: string;
 }
 
 /** 响应数据 */
@@ -2651,8 +2904,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -4740,13 +4993,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
   stateName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
+  isState?: boolean;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4957,15 +5210,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isProductName?: string;
-  isBatchName?: string;
+  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isRawName?: string;
+  isProductName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isRawChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5108,8 +5361,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6055,6 +6308,37 @@ export interface Favorite {
   moduleId?: string;
 }
 
+/** 设备与备品备件关联表 */
+export interface EquipmentInSparePart {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  assetTypeId?: string;
+  assetBrandId?: string;
+  assetModelId?: string;
+  sparePartId?: string;
+}
+
 /** 设备附件表 */
 export interface EquipmentFile {
   id?: string;
@@ -6152,77 +6436,6 @@ export interface ResultPagingDataEquipmentFileVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataEquipmentFileVO;
-}
-
-/** 设备 */
-export interface Equipment {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  assetModelId?: string;
-  /** 设备编码 */
-  equipmentCode?: string;
-  /** 设备名称 */
-  equipmentName?: string;
-  /** 设备描述 */
-  equipmentDesc?: string;
-  /** 资产编码 */
-  assetCode?: string;
-  /**
-   * 生效时间
-   * @format date-time
-   */
-  dateEffective?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  dateInvalid?: string;
-  /** 存放位置 */
-  position?: string;
-  /** 保管部门 */
-  departmentOwner?: string;
-  /** 保管人 */
-  userOwner?: string;
-  /** 设备供应商 */
-  equipmentSupplier?: string;
-  /** 维保联系人 */
-  maintenanceOwner?: string;
-  /** 维保联系方式 */
-  maintenanceOwnerContact?: string;
-  /**
-   * 进场时间
-   * @format date-time
-   */
-  datetimeEntry?: string;
-  repairDealId?: string;
-  repairAcceptId?: string;
-  maintenanceDealId?: string;
-  maintenanceAcceptId?: string;
-  inspectDealId?: string;
-  inspectAcceptId?: string;
-  /** 状态 */
-  status?: string;
 }
 
 /** 响应数据 */
@@ -6973,8 +7186,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -8234,8 +8447,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -8501,7 +8714,6 @@ export interface AssetTypeSearch {
   pageSize?: number;
   /** 模糊关键词 */
   keyword?: string;
-  parentDefectId?: string;
 }
 
 /** 显示缺陷代码实体 */
@@ -8684,121 +8896,6 @@ export interface ResultPagingDataAssetModelVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataAssetModelVO;
-}
-
-export interface AssetLedgerSearch {
-  /**
-   * 页码
-   * @format int32
-   */
-  pageNum?: number;
-  /**
-   * 页最大记录条数
-   * @format int32
-   */
-  pageSize?: number;
-  /** 模糊关键词 */
-  keyword?: string;
-}
-
-export interface AssetLedgerVO {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  assetModelId?: string;
-  /** 设备编码 */
-  equipmentCode?: string;
-  /** 设备名称 */
-  equipmentName?: string;
-  /** 设备描述 */
-  equipmentDesc?: string;
-  /** 资产编码 */
-  assetCode?: string;
-  /**
-   * 生效时间
-   * @format date-time
-   */
-  dateEffective?: string;
-  /**
-   * 失效时间
-   * @format date-time
-   */
-  dateInvalid?: string;
-  /** 存放位置 */
-  position?: string;
-  /** 保管部门 */
-  departmentOwner?: string;
-  /** 保管人 */
-  userOwner?: string;
-  /** 设备供应商 */
-  equipmentSupplier?: string;
-  /** 维保联系人 */
-  maintenanceOwner?: string;
-  /** 维保联系方式 */
-  maintenanceOwnerContact?: string;
-  /**
-   * 进场时间
-   * @format date-time
-   */
-  datetimeEntry?: string;
-  repairDealId?: string;
-  repairAcceptId?: string;
-  maintenanceDealId?: string;
-  maintenanceAcceptId?: string;
-  inspectDealId?: string;
-  inspectAcceptId?: string;
-  /** 状态 */
-  status?: string;
-  /** 资产型号名称 */
-  modelName?: string;
-  /** 状态名称 */
-  statusName?: string;
-  /** 管理状态名称 */
-  stateName?: string;
-  assetBrandId?: string;
-  /** 资产品牌名称 */
-  brandName?: string;
-  assetTypeId?: string;
-}
-
-/** 响应数据 */
-export type PagingDataAssetLedgerVO = {
-  list?: AssetLedgerVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataAssetLedgerVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataAssetLedgerVO;
 }
 
 /** 资产品牌 */
@@ -9689,10 +9786,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -12465,18 +12562,79 @@ export const api = {
         method: 'GET',
       }),
   },
+  sparePartTransfer: {
+    /**
+     * No description
+     *
+     * @tags 备品备件出入库报表
+     * @name RemoveBatch
+     * @summary 批量删除资产台账
+     * @request POST:/sparePartTransfer/removeBatch
+     * @secure
+     */
+    removeBatch: (data: string[]) =>
+      http.request<ResultObject['data']>(`/api/main/sparePartTransfer/removeBatch`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件出入库报表
+     * @name Modify
+     * @summary 编辑资产台账
+     * @request POST:/sparePartTransfer/modify
+     * @secure
+     */
+    modify: (data: Equipment) =>
+      http.request<ResultObject['data']>(`/api/main/sparePartTransfer/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件出入库报表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/sparePartTransfer/getList
+     * @secure
+     */
+    getList: (data: AssetLedgerSearch) =>
+      http.request<ResultPagingDataAssetLedgerVO['data']>(`/api/main/sparePartTransfer/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件出入库报表
+     * @name Add
+     * @summary 新增资产台账
+     * @request POST:/sparePartTransfer/add
+     * @secure
+     */
+    add: (data: Equipment) =>
+      http.request<ResultObject['data']>(`/api/main/sparePartTransfer/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   sparePart: {
     /**
      * No description
      *
      * @tags 备品备件表
-     * @name RemoveBatch
-     * @summary 批量删除备品备件
-     * @request POST:/sparePart/removeBatch
+     * @name RemoveSpare
+     * @summary 删除备品备件
+     * @request POST:/sparePart/removeSpare
      * @secure
      */
-    removeBatch: (data: string[]) =>
-      http.request<ResultObject['data']>(`/api/main/sparePart/removeBatch`, {
+    removeSpare: (data: string) =>
+      http.request<ResultObject['data']>(`/api/main/sparePart/removeSpare`, {
         method: 'POST',
         body: data as any,
       }),
@@ -12530,12 +12688,27 @@ export const api = {
      * No description
      *
      * @tags 备品备件表
+     * @name GetAssetInfoBySpare
+     * @summary 查询备品备件的关联关系
+     * @request POST:/sparePart/getAssetInfoBySpare
+     * @secure
+     */
+    getAssetInfoBySpare: (data: SparePartSearch) =>
+      http.request<ResultPagingDataSparePartVO['data']>(`/api/main/sparePart/getAssetInfoBySpare`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 备品备件表
      * @name Add
      * @summary 新增备品备件
      * @request POST:/sparePart/add
      * @secure
      */
-    add: (data: SparePart) =>
+    add: (data: SparePartSearch) =>
       http.request<ResultObject['data']>(`/api/main/sparePart/add`, {
         method: 'POST',
         body: data as any,
@@ -15150,6 +15323,22 @@ export const api = {
     list: () =>
       http.request<ResultListFavorite['data']>(`/api/main/favorite/list`, {
         method: 'GET',
+      }),
+  },
+  equipmentInSparePart: {
+    /**
+     * No description
+     *
+     * @tags 设备与备品备件关联表
+     * @name Add
+     * @summary 新增关联资产
+     * @request POST:/equipmentInSparePart/add
+     * @secure
+     */
+    add: (data: EquipmentInSparePart) =>
+      http.request<ResultObject['data']>(`/api/main/equipmentInSparePart/add`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   equipmentFile: {
