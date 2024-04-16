@@ -2114,6 +2114,19 @@ export interface AssetLedgerVO {
   /** 资产品牌名称 */
   brandName?: string;
   assetTypeId?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 单据类型 */
+  billCategory?: string;
+  /** 单据类型名称 */
+  billCategoryName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
 }
 
 /** 响应数据 */
@@ -2192,6 +2205,7 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
+  list?: ImportColumn[];
   required?: boolean;
   validateRepeat?: boolean;
 }
@@ -4992,13 +5006,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
-  dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
-  isState?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
+  stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5209,14 +5223,14 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
-  isProductName?: string;
-  isRawChecked?: boolean;
-  isInProcessName?: string;
-  isRawName?: string;
-  isBatchName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
+  isBatchName?: string;
+  isInProcessName?: string;
+  stateName?: string;
   isState?: boolean;
 }
 
@@ -8446,8 +8460,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -9783,10 +9797,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -12561,18 +12575,18 @@ export const api = {
         method: 'GET',
       }),
   },
-  sparePartTransferReport: {
+  sparePartTransfer: {
     /**
      * No description
      *
      * @tags 备品备件出入库报表
      * @name RemoveBatch
      * @summary 批量删除资产台账
-     * @request POST:/sparePartTransferReport/removeBatch
+     * @request POST:/sparePartTransfer/removeBatch
      * @secure
      */
     removeBatch: (data: string[]) =>
-      http.request<ResultObject['data']>(`/api/main/sparePartTransferReport/removeBatch`, {
+      http.request<ResultObject['data']>(`/api/main/sparePartTransfer/removeBatch`, {
         method: 'POST',
         body: data as any,
       }),
@@ -12583,11 +12597,11 @@ export const api = {
      * @tags 备品备件出入库报表
      * @name Modify
      * @summary 编辑资产台账
-     * @request POST:/sparePartTransferReport/modify
+     * @request POST:/sparePartTransfer/modify
      * @secure
      */
     modify: (data: Equipment) =>
-      http.request<ResultObject['data']>(`/api/main/sparePartTransferReport/modify`, {
+      http.request<ResultObject['data']>(`/api/main/sparePartTransfer/modify`, {
         method: 'POST',
         body: data as any,
       }),
@@ -12598,11 +12612,11 @@ export const api = {
      * @tags 备品备件出入库报表
      * @name GetList
      * @summary 获得主界面数据
-     * @request POST:/sparePartTransferReport/getList
+     * @request POST:/sparePartTransfer/getList
      * @secure
      */
     getList: (data: AssetLedgerSearch) =>
-      http.request<ResultPagingDataAssetLedgerVO['data']>(`/api/main/sparePartTransferReport/getList`, {
+      http.request<ResultPagingDataAssetLedgerVO['data']>(`/api/main/sparePartTransfer/getList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -12613,11 +12627,11 @@ export const api = {
      * @tags 备品备件出入库报表
      * @name Add
      * @summary 新增资产台账
-     * @request POST:/sparePartTransferReport/add
+     * @request POST:/sparePartTransfer/add
      * @secure
      */
     add: (data: Equipment) =>
-      http.request<ResultObject['data']>(`/api/main/sparePartTransferReport/add`, {
+      http.request<ResultObject['data']>(`/api/main/sparePartTransfer/add`, {
         method: 'POST',
         body: data as any,
       }),
@@ -17332,6 +17346,21 @@ export const api = {
      */
     modify: (data: Equipment) =>
       http.request<ResultObject['data']>(`/api/main/assetLedger/modify`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 资产台账
+     * @name GetMaintenanceList
+     * @summary 查询维保履历
+     * @request POST:/assetLedger/getMaintenanceList
+     * @secure
+     */
+    getMaintenanceList: (data: AssetLedgerSearch) =>
+      http.request<ResultPagingDataAssetLedgerVO['data']>(`/api/main/assetLedger/getMaintenanceList`, {
         method: 'POST',
         body: data as any,
       }),
