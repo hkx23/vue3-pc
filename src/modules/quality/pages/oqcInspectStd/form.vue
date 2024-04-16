@@ -5,11 +5,10 @@
       <t-col :span="12">
         <t-form-item label="检验标准" name="inspectStdCode">
           <bcmp-select-business
-            v-model="formData.inspectStdCode"
+            v-model="formData.id"
             :disabled="formData.type === 'edit'"
             type="oqcInspectStd"
             :show-title="false"
-            value-field="inspectStdCode"
           ></bcmp-select-business>
         </t-form-item>
       </t-col>
