@@ -1,7 +1,7 @@
 {
-  "importTitle": "转产换型时间",
+  "importTitle": "产品检验标准",
   "templateFileName": "导入模板_产品检验标准",
-  "remoteUrl": "/api/control/timeSwitchProduct/import",
+  "remoteUrl": "/api/quality/oqcInspectStd/import",
   "importColumns": [
     {
       "title": "标准编码(必填)",
@@ -33,7 +33,7 @@
         },
         {
           "title": "项目类别(必填)",
-          "field": "itemCategory"
+          "field": "itemCategoryName"
         },
         {
           "title": "项目行号(必填)",
@@ -41,11 +41,11 @@
         },
         {
           "title": "项目特性(必填)",
-          "field": "characteristics"
+          "field": "characteristicsName"
         },
         {
           "title": "抽样方案类型(必填)",
-          "field": "samplingStandardType"
+          "field": "samplingStandardTypeName"
         },
         {
           "title": "抽样方案(必填)",
@@ -53,19 +53,19 @@
         },
         {
           "title": "检验水平（国标必填）",
-          "field": "inspectLevel"
+          "field": "inspectTypeName"
         },
         {
           "title": "不合格分类(必填)",
-          "field": "unqualifyCategory"
+          "field": "unqualifyCategoryName"
         },
         {
           "title": "检验业务类型(必填)",
-          "field": "inspectType"
+          "field": "inspectTypeName"
         },
         {
           "title": "检验属性(必填)",
-          "field": "inspectProperty"
+          "field": "inspectPropertyName"
         },
         {
           "title": "检验工具(必填)",

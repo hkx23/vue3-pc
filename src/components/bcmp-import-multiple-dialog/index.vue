@@ -541,8 +541,10 @@ const loadFile = (res): Promise<void> => {
       }
 
       const clolumns = props.importColumns.map((item) => item.field);
+      const clolumnsTitle = props.importColumns.map((item) => item.title);
       const sub = props.importColumns.filter((item) => item.field === 'list');
       const subClolumns = sub[0].list.map((item) => item.field);
+      const subClolumnsTitle = sub[0].list.map((item) => item.title);
 
       for (let col = range.s.c; col <= range.e.c; col++) {
         const columnHeader = clolumns[col];
@@ -552,6 +554,7 @@ const loadFile = (res): Promise<void> => {
         const columnHeader = subClolumns[col];
         headersTwo.push(columnHeader);
       }
+
       let tempPercent = 0;
       // 遍历数据行，并考虑合并单元格的情况
       for (let row = range.s.r; row <= range.e.r; row++) {
@@ -585,6 +588,12 @@ const loadFile = (res): Promise<void> => {
           }
 
           if (cellValue !== null) {
+            if (row === 0) {
+              if (cellValue !== clolumnsTitle[col]) {
+                reject(new Error('模板格式错误,请检查导入文件'));
+                return;
+              }
+            }
             rowData[headers[col - range.s.c]] = cellValue; // 使用当前列对应的标题
           }
         }
@@ -622,14 +631,20 @@ const loadFile = (res): Promise<void> => {
           }
 
           if (cellValue !== null) {
+            if (row === 0) {
+              if (cellValue !== subClolumnsTitle[col]) {
+                reject(new Error('模板格式错误,请检查导入文件'));
+                return;
+              }
+            }
             rowTwoData[headersTwo[col - rangeTwo.s.c]] = cellValue; // 使用当前列对应的标题
+            console.log(cellValue);
           }
         }
         jsonDataTwo.push(rowTwoData);
       }
       jsonData[1].list = jsonDataTwo;
       const filteredData = jsonData.filter((rowItem) => Object.keys(rowItem).length > 1);
-      console.log(filteredData);
 
       worksheetData.value = filteredData;
       worksheetHeaderData.value = headers;
