@@ -1000,8 +1000,8 @@ export interface WorkbenchTodoVO {
    * @format int32
    */
   isRead?: number;
-  statusName?: string;
   isReadName?: string;
+  statusName?: string;
 }
 
 /** 工作台布局表 */
@@ -2006,8 +2006,8 @@ export interface ImportColumn {
   isValidateRepeat?: boolean;
   validateExpression?: string;
   items?: string[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface SparePartVO {
@@ -4742,11 +4742,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   isState?: boolean;
   stateName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isForceInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
   isForceInspectionName?: string;
   dateExemptionExpiredStr?: string;
-  isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
-  isForceInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -4959,13 +4959,13 @@ export interface MitemVO {
   isBatchNo?: number;
   isState?: boolean;
   stateName?: string;
-  isProductName?: string;
   isRawName?: string;
-  isInProcessName?: string;
-  isBatchName?: string;
   isRawChecked?: boolean;
-  isInProcessChecked?: boolean;
+  isInProcessName?: string;
+  isProductName?: string;
+  isBatchName?: string;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5108,8 +5108,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8234,8 +8234,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */

@@ -30,7 +30,7 @@
             formData.supplierName
           }}</t-descriptions-item>
           <t-descriptions-item :label="t('mitemIncomingInspection.物料编码')">{{
-            formData.mitemCategoryCode
+            formData.mitemCode
           }}</t-descriptions-item>
           <t-descriptions-item :label="t('mitemIncomingInspection.物料名')">
             <div class="div_break_word">

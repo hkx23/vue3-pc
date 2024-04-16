@@ -2,8 +2,8 @@
   <cmp-container :full="true">
     <cmp-card :span="12">
       <cmp-query ref="queryParam" :opts="opts" @submit="onInput">
-        <template #warehouseId="{ param }">
-          <bcmp-select-business v-model="param.warehouseId" type="warehouseAuth"></bcmp-select-business>
+        <template #userId="{ param }">
+          <bcmp-select-business v-model="param.userId" type="user" label="创建人"></bcmp-select-business>
         </template>
         <template #districtId="{ param }">
           <bcmp-select-business
@@ -11,9 +11,6 @@
             type="district"
             :parent-id="param.warehouseId"
           ></bcmp-select-business>
-        </template>
-        <template #isBelowSafelyStock="{ param }">
-          <t-checkbox v-model="param.isBelowSafelyStock">低于安全库存</t-checkbox>
         </template>
       </cmp-query>
     </cmp-card>
@@ -35,7 +32,7 @@
         @select-change="rehandleSelectChange"
       >
         <template #title>
-          {{ '备品备件台账列表' }}
+          {{ '备品备件出入库列表' }}
         </template>
         <template #actionSlot="{ row }">
           <t-space :size="8">
@@ -48,57 +45,29 @@
         </template>
         <template #button>
           <t-space :size="8">
-            <t-button theme="primary" @click="onAddTypeData">新增</t-button>
-            <bcmp-import-button
+            <t-button theme="primary" @click="onAddTypeData">转入</t-button>
+            <t-button :disabled="selectedRowKey != ''" heme="primary" @click="onAddSpareRelation">转出</t-button>
+            <!-- <bcmp-import-button
               theme="primary"
               type="m_spare_part"
               button-text="导入"
               @close="onFetchGroupData"
-            ></bcmp-import-button>
-            <t-button :disabled="selectedRowKey != ''" heme="primary" @click="onAddSpareRelation">关联资产</t-button>
+            ></bcmp-import-button> -->
           </t-space>
         </template>
       </cmp-table>
     </cmp-card>
     <cmp-card :span="12">
-      <t-tabs v-model="tabValue" @change="tabChange">
-        <t-tab-panel label="资产类型" value="type" :destroy-on-hide="true">
-          <cmp-table
-            ref="typeTableRef"
-            v-model:pagination="pageUIDown"
-            row-key="id"
-            :show-toolbar="false"
-            :table-column="typeColumns"
-            :table-data="assetInfoData.list"
-            :total="totalDown"
-            :selected-row-keys="selectedRowKey"
-          ></cmp-table>
-        </t-tab-panel>
-        <t-tab-panel label="资产品牌" value="brand" :destroy-on-hide="true">
-          <cmp-table
-            ref="brandTableRef"
-            v-model:pagination="pageUIDown"
-            row-key="id"
-            :show-toolbar="false"
-            :table-column="brandColumns"
-            :table-data="assetInfoData.list"
-            :total="totalDown"
-            :selected-row-keys="selectedRowKey"
-          ></cmp-table>
-        </t-tab-panel>
-        <t-tab-panel label="资产型号" value="model" :destroy-on-hide="true">
-          <cmp-table
-            ref="modelTableRef"
-            v-model:pagination="pageUIDown"
-            row-key="id"
-            :show-toolbar="false"
-            :table-column="modelColumns"
-            :table-data="assetInfoData.list"
-            :total="totalDown"
-            :selected-row-keys="selectedRowKey"
-          ></cmp-table>
-        </t-tab-panel>
-      </t-tabs>
+      <cmp-table
+        ref="typeTableRef"
+        v-model:pagination="pageUIDown"
+        row-key="id"
+        :show-toolbar="false"
+        :table-column="typeColumns"
+        :table-data="assetInfoData.list"
+        :total="totalDown"
+        :selected-row-keys="selectedRowKey"
+      ></cmp-table>
     </cmp-card>
   </cmp-container>
   <!-- 新增编辑弹窗 -->
@@ -205,6 +174,7 @@
   </t-dialog>
 </template>
 <script setup lang="ts">
+import dayjs from 'dayjs';
 import { isEmpty } from 'lodash';
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
@@ -230,11 +200,6 @@ const queryParam = ref(); // 搜索对象传递
 const tabValue = ref('type'); // 主界面tab的默认选中
 const totalTop = ref(0);
 const totalDown = ref(0);
-
-// TAb 栏切换事件
-const tabChange = async () => {
-  await getAssetInfo();
-};
 
 // 关联资产确认按钮
 const onConfirm = async () => {
@@ -283,87 +248,50 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   { colKey: 'row-select', type: 'single' },
   {
     colKey: 'sparePartCode',
-    title: '备件编码',
+    title: '单据类型',
     align: 'center',
     width: '110',
   },
   {
     colKey: 'sparePartName',
-    title: '备件名称',
+    title: '单据号',
     align: 'center',
     width: '110',
   },
   {
     colKey: 'supplierName',
-    title: '供应商',
+    title: '关联单据号',
     align: 'center',
     width: '130',
   },
   {
     colKey: 'sparePartModel',
-    title: '备件型号',
+    title: '成本类型',
     align: 'center',
     width: '100',
   },
   {
     colKey: 'warehouseName',
-    title: '仓库',
+    title: '创建人',
     align: 'center',
     width: '100',
   },
   {
     colKey: 'districtName',
-    title: '货区',
+    title: '创建时间',
     align: 'center',
     width: '100',
-  },
-  {
-    colKey: 'uomName',
-    title: '单位',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'qty',
-    title: '现有量',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'safetyStockQty',
-    title: '安全库存',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'memo',
-    title: '备注',
-    align: 'center',
-    width: '100',
-  },
-  {
-    colKey: 'op',
-    title: '操作',
-    align: 'center',
-    fixed: 'right',
-    width: '130',
-    cell: 'actionSlot', // 引用具名插槽
   },
 ];
 const typeColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'typeCode', title: '资产类型编码', align: 'center', width: '200px' },
-  { colKey: 'typeName', title: '资产类型名称', align: 'center' },
-  { colKey: 'typeDesc', title: '资产类型描述', align: 'center' },
-];
-const brandColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'brandCode', title: '资产品牌编码', align: 'center', width: '200px' },
-  { colKey: 'brandName', title: '资产品牌名称', align: 'center' },
-  { colKey: 'brandDesc', title: '资产品牌描述', align: 'center' },
-];
-const modelColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'modelCode', title: '资产型号编码', align: 'center', width: '200px' },
-  { colKey: 'modelName', title: '资产型号名称', align: 'center' },
-  { colKey: 'modelDesc', title: '资产型号描述', align: 'center' },
+  { colKey: 'typeCode', title: '备件编码', align: 'center', width: '200px' },
+  { colKey: 'typeName', title: '备件名称', align: 'center' },
+  { colKey: 'typeDesc', title: '仓库', align: 'center' },
+  { colKey: 'typeDesc', title: '货区', align: 'center' },
+  { colKey: 'typeDesc', title: '数量', align: 'center' },
+  { colKey: 'typeDesc', title: '单位', align: 'center' },
+  { colKey: 'typeDesc', title: '价格', align: 'center' },
+  { colKey: 'typeDesc', title: '备注', align: 'center' },
 ];
 
 // 表单验证规则
@@ -381,10 +309,10 @@ onMounted(async () => {
   await queryParam.value.search(); // 获取 表格 数据
 });
 
-// # 刷新按钮
-const onFetchGroupData = async () => {
-  await queryParam.value.search();
-};
+// // # 刷新按钮
+// const onFetchGroupData = async () => {
+//   await queryParam.value.search();
+// };
 
 // 刷新按钮
 const onFetchData = () => {
@@ -452,26 +380,32 @@ const onAddTypeRequest = async () => {
 // #query 查询参数
 const opts = computed(() => {
   return {
-    soltDemo: {
-      label: '备件编码/名称',
+    scheduledProductionDate: {
+      label: '开始日期',
+      labelWidth: '100px',
+      comp: 't-date-range-picker',
+      event: 'daterangetime',
+      defaultVal: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')], // 初始化日期控件
+      bind: {
+        enableTimePicker: false,
+        format: 'YYYY-MM-DD',
+      },
+    },
+    billNo: {
+      label: '单据号',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
     },
-    warehouseId: {
-      label: '仓库',
+    userId: {
+      label: '创建人',
       defaultVal: '',
-      slotName: 'warehouseId',
+      slotName: 'userId',
     },
     districtId: {
-      label: '货区',
+      label: '单据类型',
       defaultVal: '',
       slotName: 'districtId',
-    },
-    isBelowSafelyStock: {
-      label: '低于安全库存',
-      defaultVal: true,
-      slotName: 'isBelowSafelyStock',
     },
   };
 });
@@ -481,7 +415,7 @@ const onInput = async (data: any) => {
   const res = await api.sparePart.getList({
     pageNum: pageUITop.value.page,
     pageSize: pageUITop.value.rows,
-    keyword: data.soltDemo,
+    keyword: data.billNo,
     warehouseId: data.warehouseId,
     districtId: data.districtId,
     isBelowSafelyStock: data.isBelowSafelyStock,

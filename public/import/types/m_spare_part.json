@@ -20,11 +20,19 @@
       "field": "sparePartModel"
     },
     {
+      "title": "仓库编码(必填)",
+      "field": "warehouseCode"
+    },
+    {
+      "title": "货区编码(允许为空)",
+      "field": "districtCode"
+    },
+    {
       "title": "单位(必填)",
       "field": "uom"
     },
     {
-      "title": "安全库存(默认0,,必填)",
+      "title": "安全库存(默认0,必填)",
       "field": "safetyStockQty"
     },
     {
