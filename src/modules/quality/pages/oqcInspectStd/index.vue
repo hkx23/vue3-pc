@@ -55,11 +55,12 @@
                   <template #button>
                     <t-space :size="8">
                       <t-button theme="primary" @click="onAdd">新增</t-button>
-                      <bcmp-import-auto-button
-                        theme="default"
+                      <import-button
+                        theme="primary"
+                        type="q_oqc_inspect_std"
                         button-text="导入"
-                        type="q_iqc_inspect_std"
-                      ></bcmp-import-auto-button>
+                        @close="onRefresh"
+                      ></import-button>
                       <t-popconfirm content="是否确认删除" @confirm="onDelDataBatch">
                         <t-button v-if="delButton" theme="default">删除</t-button>
                       </t-popconfirm>
@@ -139,6 +140,7 @@ import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
+import ImportButton from '@/components/bcmp-import-multiple-button/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';

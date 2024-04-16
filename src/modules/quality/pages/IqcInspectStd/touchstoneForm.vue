@@ -291,7 +291,7 @@ api.param.getListByGroupCode({ parmGroupCode: 'Q_CHARACTERISTICS' }).then((data)
   characteristicsOptions.value = data;
 });
 const stdTypeOption = ref([]);
-api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECT_TYPE' }).then((data) => {
+api.param.getListByGroupCode({ parmGroupCode: 'Q_INSPECTION_TYPE' }).then((data) => {
   stdTypeOption.value = data;
 });
 const categoryOption = ref([]);

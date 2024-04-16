@@ -199,7 +199,7 @@
                       name="deptResponsibilityName"
                     >
                       <t-input
-                        v-model="formData.responsibility"
+                        v-model="formData.deptResponsibilityName"
                         :placeholder="t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
@@ -1298,6 +1298,7 @@ const formData = ref({
   supplierId: '',
   workcenterId: '',
   workcenterName: '',
+  deptResponsibilityName: '',
   mitemCode: '',
   mitemDesc: '',
   workshopName: '',
@@ -1434,6 +1435,7 @@ const init = () => {
     operateType: 'add',
     billNo: '',
     moScheId: '',
+    deptResponsibilityName: '',
     relateBillNo: '',
     id: '',
     inspectType: '',
@@ -1524,6 +1526,7 @@ const onChangeType = async () => {
   formData.value.supplierName = '';
   formData.value.scheCode = '';
   formData.value.responsibility = '';
+  formData.value.deptResponsibilityName = '';
   formData.value.personResponsibilityName = '';
   formData.value.handleMethod = '';
   formData.value.workcenterName = '';
@@ -1542,6 +1545,7 @@ const onChangeBillNo = async () => {
   formData.value.scheCode = item.scheCode ? item.scheCode : '';
   formData.value.responsibility = item.responsibility;
   formData.value.personResponsibilityName = item.personResponsibilityName;
+  formData.value.deptResponsibilityName = item.deptResponsibilityName;
   formData.value.personResponsibilityId = item.personResponsibilityId;
   formData.value.problemDesc = item.personResponsibilityName;
   formData.value.handleMethod = item.handleMethod;
