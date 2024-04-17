@@ -1483,7 +1483,7 @@ const isBatchOption = [
   {
     label: t('business.main.no'),
     value: 0,
-    id: 0,
+    id: 2,
   },
 ];
 const inspectTypeOption = ref([]);
@@ -1575,6 +1575,7 @@ const initEdit = async () => {
         formData.value[key] = res[key];
       }
     });
+    formData.value.isBatch = res.isBatch;
     const improve8dVo = res.improve8d;
     if (improve8dVo) {
       Object.keys(improve8dVo).forEach((key) => {
