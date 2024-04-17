@@ -105,7 +105,7 @@
                     <t-form-item :label="t('qualityImprove.mitemCode')" label-align="right" name="mitemCode">
                       <t-input
                         v-model="formData.mitemCode"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -116,7 +116,7 @@
                     <t-form-item :label="t('business.main.mitemDesc')" label-align="right" name="mitemDesc">
                       <t-input
                         v-model="formData.mitemDesc"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -126,7 +126,7 @@
                     <t-form-item :label="t('qualityImprove.supplierCode')" label-align="right" name="supplierCode">
                       <t-input
                         v-model="formData.supplierCode"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -176,7 +176,7 @@
                     <t-form-item :label="t('qualityImprove.defectCategory')" label-align="right" name="defectCategory">
                       <t-input
                         v-model="formData.defectCategoryName"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -186,7 +186,7 @@
                     <t-form-item :label="t('qualityImprove.handleMethod')" label-align="right" name="handleMethod">
                       <t-input
                         v-model="formData.handleMethod"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -216,7 +216,7 @@
                     >
                       <t-input
                         v-model="formData.personResponsibilityName"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
