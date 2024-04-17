@@ -46,7 +46,7 @@
     "selectdeptResponsibilityId": "请先选择责任部门",
     "selectInspectionType": "请先选择检验类型",
     "selectOccurNature": "请先选择发生性质",
-    "selectproblemDesc": "请先选择发生性质",
+    "selectproblemDesc": "请先选择问题描述",
     "selectIsBatch": "请先选择是否批量",
     "selectisUserResponsibility": "请先选择责任人",
     "selectisUserdatetimeRequireFinish": "请先选择要求完成时间",
