@@ -154,7 +154,7 @@
       </div> -->
       <!-- #endregion -->
       <!-- #region 第四步：导入过程，显示进度条 -->
-      <div v-if="current == 3">
+      <div v-if="current == 1">
         <t-space direction="vertical" class="import-progress">
           <t-progress
             theme="line"
@@ -293,7 +293,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:visible', 'close']);
 // ref设置
-const previewTable = ref();
+// const previewTable = ref();
 const uploadRef = ref();
 
 // 导入标题
@@ -314,7 +314,7 @@ const worksheetHeaderData = ref<any[]>([]);
 const woeksheetRowCount = ref(0);
 
 // 表格行属性
-const hoveredRowIndex = ref(1);
+// const hoveredRowIndex = ref(1);
 const activeRowKeys = ref([1]);
 // const tempRowKeys = ref([1]);
 // const activeRowData = ref([]);
@@ -409,7 +409,7 @@ watch(formImportVisible, (value: boolean) => {
   if (value) {
     current.value = 0;
     processing.value = true;
-  } else if (current.value === 3 && !processing.value) {
+  } else if (current.value === 1 && !processing.value) {
     emit('close');
   }
   emit('update:visible', value);
@@ -417,7 +417,7 @@ watch(formImportVisible, (value: boolean) => {
 watch(
   () => props.visible,
   (val) => {
-    if (!val && current.value === 3 && !processing.value) {
+    if (!val && current.value === 1 && !processing.value) {
       emit('close', returnData.value);
     }
     formImportVisible.value = val;
@@ -451,7 +451,6 @@ const handleChange = (value: any, context: any) => {
       if (worksheetData.value && worksheetHeaderData.value) {
         setTimeout(() => {
           files.value = [];
-          registerHover();
         }, 1000);
       }
     });
@@ -526,7 +525,7 @@ const loadFile = (res): Promise<void> => {
       const rangeTwo = XLSX.utils.decode_range(worksheetTwo['!ref']);
       const mergesTwo = worksheetTwo['!merges'] || [];
 
-      woeksheetRowCount.value = range.e.r;
+      woeksheetRowCount.value = range.e.r + rangeTwo.e.r;
       if (range.e.c > props.importColumnCountLimit || rangeTwo.e.c > props.importColumnCountLimit) {
         reject(new Error(`导入文件列数不能超过${props.importColumnCountLimit}列`));
         return;
@@ -688,36 +687,36 @@ const getMergedCellValue: any = (worksheet: XLSX.WorkSheet, mergedRange: XLSX.Ra
 //   setSettingTableColumns();
 // };
 
-// 设置悬停行
-const registerHover = () => {
-  nextTick(() => {
-    const tableBody = previewTable.value.$el.querySelector('tbody');
-    if (tableBody) {
-      tableBody.addEventListener('mouseover', (event) => {
-        const targetRow = event.target.closest('tr');
-        if (targetRow) {
-          const rowIndex = Array.from(tableBody.querySelectorAll('tr')).indexOf(targetRow);
-          // 更新悬停行索引
-          onMouseOver(rowIndex);
-        }
-      });
+// // 设置悬停行
+// const registerHover = () => {
+//   nextTick(() => {
+//     const tableBody = previewTable.value.$el.querySelector('tbody');
+//     if (tableBody) {
+//       tableBody.addEventListener('mouseover', (event) => {
+//         const targetRow = event.target.closest('tr');
+//         if (targetRow) {
+//           const rowIndex = Array.from(tableBody.querySelectorAll('tr')).indexOf(targetRow);
+//           // 更新悬停行索引
+//           onMouseOver(rowIndex);
+//         }
+//       });
 
-      tableBody.addEventListener('mouseleave', () => {
-        onMouseLeave();
-      });
-    }
-  });
-};
+//       tableBody.addEventListener('mouseleave', () => {
+//         onMouseLeave();
+//       });
+//     }
+//   });
+// };
 // 表格鼠标悬停事件
-const onMouseOver = (rowIndex) => {
-  hoveredRowIndex.value = rowIndex;
-  // 根据hoveredRowIndex更新相关数据或样式
-};
+// const onMouseOver = (rowIndex) => {
+//   hoveredRowIndex.value = rowIndex;
+//   // 根据hoveredRowIndex更新相关数据或样式
+// };
 // 表格鼠标离开事件
-const onMouseLeave = () => {
-  hoveredRowIndex.value = null;
-  // 清除相关数据或样式
-};
+// const onMouseLeave = () => {
+//   hoveredRowIndex.value = null;
+//   // 清除相关数据或样式
+// };
 // // 下一页，跳转到第三步的设置页
 // const previewNext = () => {
 //   current.value = 2;
@@ -798,7 +797,6 @@ const onMouseLeave = () => {
 // };
 // 导入提交
 const importSubmit = async () => {
-  current.value++;
   const main = worksheetData.value.slice(activeRowKeys.value[0], activeRowKeys.value[0] + 999999);
   const list = worksheetData.value[1].list.slice(activeRowKeys.value[0], activeRowKeys.value[0] + 999999);
   main[0].list = list;
