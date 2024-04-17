@@ -265,7 +265,7 @@
                       <bcmp-select-business
                         v-model="formData.userResponsibilityId"
                         :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
-                        type="user"
+                        type="person"
                         :show-title="false"
                         style="width: 200px"
                       ></bcmp-select-business>
@@ -1546,7 +1546,6 @@ const onChangeBillNo = async () => {
   formData.value.responsibility = item.responsibility;
   formData.value.personResponsibilityName = item.personResponsibilityName;
   formData.value.personResponsibilityId = item.personResponsibilityId;
-  formData.value.problemDesc = item.personResponsibilityName;
   formData.value.handleMethod = item.handleMethod;
   formData.value.workcenterName = item.workcenterName;
   formData.value.workcenterId = item.workcenterId;
@@ -1685,7 +1684,7 @@ const onSubmit = async () => {
     return;
   }
   if (isEmpty(formData.value.problemDesc)) {
-    MessagePlugin.warning(t('qualityImprove.selectOccurNature'));
+    MessagePlugin.warning(t('qualityImprove.selectproblemDesc'));
     return;
   }
   if (isEmpty(formData.value.userResponsibilityId)) {

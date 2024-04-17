@@ -142,7 +142,8 @@
     :header="formHeader"
     :cancel-btn="null"
     :close-on-overlay-click="false"
-    width="75%"
+    top="56px"
+    width="800px"
     @close="onRefreshAll"
     @confirm="onConfirmSub"
   >
@@ -155,7 +156,8 @@
     :header="formHeader"
     :cancel-btn="null"
     :close-on-overlay-click="false"
-    width="75%"
+    top="56px"
+    width="800px"
     @confirm="onConfirmSub"
     @close="onRefreshAll"
   >
