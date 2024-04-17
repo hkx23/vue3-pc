@@ -13,18 +13,18 @@
             v-for="(formItem, itemIndex) in itemGroupList[category]"
             :key="itemIndex"
             :label="formItem.displayName"
-            :name="formItem.propertyCode"
+            :name="formItem.id"
             :label-width="130"
           >
             <t-space v-if="formItem.ControlType == 'NumberInput'" class="input-fixed-width-200">
-              <t-input-number v-model="formModel[formItem.propertyCode]" theme="column" class="input-fixed-width-200" />
+              <t-input-number v-model="formModel[formItem.id]" theme="column" class="input-fixed-width-200" />
             </t-space>
             <t-space v-if="formItem.ControlType == 'Input'" class="input-fixed-width-200">
-              <t-input v-model="formModel[formItem.propertyCode]"></t-input>
+              <t-input v-model="formModel[formItem.id]"></t-input>
             </t-space>
             <t-space v-if="formItem.ControlType == 'DatetPicker'" class="input-fixed-width-200">
               <t-date-picker
-                v-model="formModel[formItem.propertyCode]"
+                v-model="formModel[formItem.id]"
                 class="input-fixed-width-200"
                 enable-time-picker
                 allow-input
@@ -34,7 +34,7 @@
             </t-space>
             <t-space v-if="formItem.ControlType == 'Select'" class="input-fixed-width-200">
               <t-select
-                v-model="formModel[formItem.propertyCode]"
+                v-model="formModel[formItem.id]"
                 filterable
                 :options="formItem.dataSourceOptions"
                 clearable
@@ -45,7 +45,7 @@
 
             <t-space v-if="formItem.ControlType == 'Business'" class="input-fixed-width-200">
               <bcmp-select-business
-                v-model="formModel[formItem.propertyCode]"
+                v-model="formModel[formItem.id]"
                 :type="formItem.dataSourcePath"
                 :show-title="false"
                 :is-multiple="formItem.isDataMultiple == 1"
@@ -216,7 +216,7 @@ const initFormSetting = async () => {
             message: '规则校验不通过',
           });
         }
-        rules.value[item.propertyCode] = itemValidRules;
+        rules.value[item.id] = itemValidRules;
         // 给表单设置默认值
         if (item.propertyValue === undefined || item.propertyValue === null) {
           if (item.isDataMultiple === 1) {
@@ -225,7 +225,7 @@ const initFormSetting = async () => {
             item.propertyValue = '';
           }
         }
-        formModel.value[item.propertyCode] = item.propertyValue;
+        formModel.value[item.id] = item.propertyValue;
       }
     }
   } catch (e) {
@@ -238,7 +238,7 @@ onMounted(() => {
   initFormSetting();
 });
 
-defineExpose({ getComponentData });
+defineExpose({ getComponentData, initFormSetting });
 </script>
 
 <style lang="less" scoped>

@@ -157,6 +157,7 @@ export interface CommonImportSamplingStdDtlDTO {
 
 export interface ImportColumn {
   field?: string;
+  fieldType?: string;
   title?: string;
   isRequired?: boolean;
   isValidateRepeat?: boolean;
@@ -2027,6 +2028,7 @@ export interface OqcInspectStdMitemVO {
   revision?: number;
   revisionName?: string;
   creatorName?: string;
+  modifierName?: string;
   inspectStdName?: string;
   mitemCategortArr?: Record<string, string>;
 }
@@ -2146,11 +2148,11 @@ export interface OqcInspectStdDtlDTO {
   /** 检验频率 */
   inspectFrequency?: string;
   processId?: string;
-  inspectTypeList: number[];
   itemCategoryName?: string;
   unqualifyCategoryName?: string;
   inspectLevelName?: string;
   inspectTypeName?: string;
+  samplingStandardTypeName?: string;
   uomName?: string;
   characteristicsName?: string;
   inspectPropertyName?: string;
@@ -2280,6 +2282,51 @@ export interface ResultPagingDataOqcInspectStd {
   message?: string;
   /** 响应数据 */
   data?: PagingDataOqcInspectStd;
+}
+
+export interface CommonImportOqcInspectStdFullImport {
+  title?: string;
+  tableName?: string;
+  data?: OqcInspectStdFullImport[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
+}
+
+export interface OqcInspectStdDtlImport {
+  itemCategoryName?: string;
+  itemName?: string;
+  itemSeq?: string;
+  unqualifyCategoryName?: string;
+  inspectLevelName?: string;
+  inspectTypeName?: string;
+  samplingStandardTypeName?: string;
+  samplingStandardCode?: string;
+  uomName?: string;
+  characteristicsName?: string;
+  inspectPropertyName?: string;
+  processName?: string;
+  baseValue?: string;
+  maxValue?: string;
+  minValue?: string;
+  technicalRequest?: string;
+  inspectTool?: string;
+  inspectBasis?: string;
+  inspectFrequency?: string;
+}
+
+export interface OqcInspectStdFullImport {
+  /** 标准编码 */
+  inspectStdCode?: string;
+  /** 标准名称 */
+  inspectStdName?: string;
+  /** 版本号 */
+  revision?: string;
+  /** 生效时间 */
+  timeEffective?: string;
+  /** 失效时间 */
+  timeInvalid?: string;
+  list?: OqcInspectStdDtlImport[];
 }
 
 /** 产品检验标准附件表 */
@@ -2591,12 +2638,12 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 检验结果名称 */
   inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -3191,8 +3238,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -4479,9 +4526,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -4526,6 +4573,8 @@ export interface InspectGroupSearch {
   pageSize?: number;
   keyword?: string;
   userId?: string;
+  userIds?: string[];
+  mitemCategoryIds?: string[];
   inspectGroupId?: string;
   mitemId?: string;
   mitemCategoryId?: string;
@@ -4693,35 +4742,6 @@ export interface ResultPagingDataInspectGroupInUserVO {
 }
 
 /** 品质检验组用户表 */
-export interface InspectGroupInUser {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  inspectGroupId?: string;
-  userId?: string;
-}
-
-/** 品质检验组用户表 */
 export interface InspectGroupInMitemVO {
   id?: string;
   /**
@@ -4774,7 +4794,8 @@ export interface ResultPagingDataInspectGroupInMitemVO {
   data?: PagingDataInspectGroupInMitemVO;
 }
 
-export interface MitemCategoryVO {
+/** 物料分类 */
+export interface MitemCategory {
   id?: string;
   /**
    * 创建时间
@@ -4813,19 +4834,17 @@ export interface MitemCategoryVO {
    * @format int32
    */
   isManual?: number;
-  /** @format int32 */
-  isAdd?: number;
 }
 
 /** 响应数据 */
-export type PagingDataMitemCategoryVO = {
-  list?: MitemCategoryVO[];
+export type PagingDataMitemCategory = {
+  list?: MitemCategory[];
   /** @format int32 */
   total?: number;
 } | null;
 
 /** 通用响应类 */
-export interface ResultPagingDataMitemCategoryVO {
+export interface ResultPagingDataMitemCategory {
   /**
    * 响应代码
    * @format int32
@@ -4834,36 +4853,7 @@ export interface ResultPagingDataMitemCategoryVO {
   /** 提示信息 */
   message?: string;
   /** 响应数据 */
-  data?: PagingDataMitemCategoryVO;
-}
-
-/** 品质检验组物料表 */
-export interface InspectGroupInMitem {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
-  inspectGroupId?: string;
-  mitemCategoryId?: string;
+  data?: PagingDataMitemCategory;
 }
 
 export interface InspectGroupVO {
@@ -5738,13 +5728,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  s1?: string;
+  s3?: string;
   ii?: string;
   iii?: string;
+  s1?: string;
   s4?: string;
+  i?: string;
   s2?: string;
-  s3?: string;
 } | null;
 
 /** 标签模板 */
@@ -6713,6 +6703,21 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataOqcInspectStd['data']>(`/api/quality/oqcInspectStd/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验标准头表
+     * @name ImportData
+     * @summary 导入
+     * @request POST:/oqcInspectStd/import
+     * @secure
+     */
+    importData: (data: CommonImportOqcInspectStdFullImport) =>
+      http.request<ResultImportSummaryObject['data']>(`/api/quality/oqcInspectStd/import`, {
         method: 'POST',
         body: data as any,
       }),
@@ -7739,7 +7744,7 @@ export const api = {
      * @request POST:/inspectGroupInUser/add
      * @secure
      */
-    add: (data: InspectGroupInUser) =>
+    add: (data: InspectGroupSearch) =>
       http.request<ResultObject['data']>(`/api/quality/inspectGroupInUser/add`, {
         method: 'POST',
         body: data as any,
@@ -7771,7 +7776,7 @@ export const api = {
      * @secure
      */
     getCategoryList: (data: InspectGroupSearch) =>
-      http.request<ResultPagingDataMitemCategoryVO['data']>(`/api/quality/inspectGroupInMitem/getCategoryList`, {
+      http.request<ResultPagingDataMitemCategory['data']>(`/api/quality/inspectGroupInMitem/getCategoryList`, {
         method: 'POST',
         body: data as any,
       }),
@@ -7800,7 +7805,7 @@ export const api = {
      * @request POST:/inspectGroupInMitem/add
      * @secure
      */
-    add: (data: InspectGroupInMitem) =>
+    add: (data: InspectGroupSearch) =>
       http.request<ResultObject['data']>(`/api/quality/inspectGroupInMitem/add`, {
         method: 'POST',
         body: data as any,

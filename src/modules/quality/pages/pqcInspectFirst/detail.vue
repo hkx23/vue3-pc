@@ -571,7 +571,7 @@ const columns = [
 }
 
 .barcodeDiv {
-  width: 285px;
+  width: 260px;
   border-width: 2px;
   border-style: solid;
   border-color: rgb(49 172 243);

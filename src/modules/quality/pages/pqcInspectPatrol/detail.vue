@@ -8,8 +8,8 @@
         </t-col>
 
         <t-col :flex="2">检验人员：{{ headerDate.userInspectName }}</t-col>
-        <t-col :flex="3.5">创建时间：{{ headerDate.timeCreate }}</t-col>
-        <t-col :flex="3.5">检验完成时间：{{ headerDate.datetimeInspectEnd }}</t-col>
+        <t-col :flex="4">创建时间：{{ headerDate.timeCreate }}</t-col>
+        <t-col :flex="4">检验完成时间：{{ headerDate.datetimeInspectEnd }}</t-col>
         <t-col :flex="0.5"><icon name="close" size="20px" style="cursor: pointer" @click="onClose"></icon></t-col>
       </t-row>
       <t-row :full="true">

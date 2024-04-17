@@ -2034,6 +2034,7 @@ export interface AssetLedgerSearch {
   pageSize?: number;
   /** 模糊关键词 */
   keyword?: string;
+  equipmentId?: string;
 }
 
 export interface AssetLedgerVO {
@@ -2200,6 +2201,7 @@ export interface CommonImportSparePartVO {
 
 export interface ImportColumn {
   field?: string;
+  fieldType?: string;
   title?: string;
   isRequired?: boolean;
   isValidateRepeat?: boolean;
@@ -2917,8 +2919,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -3415,6 +3417,26 @@ export interface ResultParam {
   message?: string;
   /** 系统字典明细 */
   data?: Param;
+}
+
+/** 响应数据 */
+export type PagingDataParam = {
+  list?: Param[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataParam {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataParam;
 }
 
 /** 响应数据 */
@@ -5006,13 +5028,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
-  isForceInspectionChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
-  stateName?: string;
-  isState?: boolean;
+  isForceInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5223,15 +5245,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
+  stateName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  isRawChecked?: boolean;
+  isRawName?: string;
+  isInProcessName?: string;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isRawName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
-  isBatchName?: string;
-  isInProcessName?: string;
-  stateName?: string;
-  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -5374,8 +5396,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -6321,6 +6343,29 @@ export interface Favorite {
   moduleId?: string;
 }
 
+/** 扩展属性列表 */
+export interface EquipmentPropertyDTO {
+  propertyId?: string;
+  /** 扩展属性VALUE */
+  propertyValue?: string;
+}
+
+export interface EquipmentPropertySearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  equipmentId?: string;
+  /** 扩展属性列表 */
+  propertyList?: EquipmentPropertyDTO[];
+}
+
 /** 设备与备品备件关联表 */
 export interface EquipmentInSparePart {
   id?: string;
@@ -7199,8 +7244,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -8729,7 +8774,6 @@ export interface AssetTypeSearch {
   keyword?: string;
 }
 
-/** 显示缺陷代码实体 */
 export interface AssetTypeVO {
   id?: string;
   /**
@@ -9037,6 +9081,52 @@ export interface ResultPagingDataAssetBrandVO {
   data?: PagingDataAssetBrandVO;
 }
 
+/** 显示行政组织层级实体 */
+export interface AdminOrgVO {
+  id?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 组织描述 */
+  orgDesc?: string;
+  parentOrgId?: string;
+  /**
+   * 是否生效（1是，0否）
+   * @format int32
+   */
+  isActive?: number;
+  /** 子层级 */
+  children?: AdminOrgVO[];
+}
+
+/** 响应数据 */
+export type PagingDataAdminOrgVO = {
+  list?: AdminOrgVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataAdminOrgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataAdminOrgVO;
+}
+
 /** 通用响应类 */
 export interface ResultWorkcenterVO {
   /**
@@ -9308,26 +9398,6 @@ export interface UserRoleVO {
   code?: string;
   /** 角色名称 */
   name?: string;
-}
-
-/** 响应数据 */
-export type PagingDataParam = {
-  list?: Param[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataParam {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataParam;
 }
 
 /** 通用响应类 */
@@ -9799,10 +9869,10 @@ export type ModulePermissionDTO = {
   enabled?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
 } | null;
 
 /** 通用响应类 */
@@ -10553,32 +10623,6 @@ export interface ResultPagingDataAppBaseVO {
   /** 响应数据 */
   data?: PagingDataAppBaseVO;
 }
-
-/** 显示行政组织层级实体 */
-export type AdminOrgVO = {
-  id?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 组织编号 */
-  orgCode?: string;
-  /** 组织名称 */
-  orgName?: string;
-  /** 组织描述 */
-  orgDesc?: string;
-  parentOrgId?: string;
-  /**
-   * 是否生效（1是，0否）
-   * @format int32
-   */
-  isActive?: number;
-  /** 子层级 */
-  children?: AdminOrgVO[];
-} | null;
 
 /** 通用响应类 */
 export interface ResultListAdminOrgVO {
@@ -13454,6 +13498,21 @@ export const api = {
      * No description
      *
      * @tags 系统字典明细
+     * @name GetParamForBusiness
+     * @summary 根据系统参数组获取参数明细
+     * @request POST:/param/getParamForBusiness
+     * @secure
+     */
+    getParamForBusiness: (data: CommonSearch) =>
+      http.request<ResultPagingDataParam['data']>(`/api/main/param/getParamForBusiness`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 系统字典明细
      * @name List
      * @summary 弹出框公共方法
      * @request GET:/param/list
@@ -15336,6 +15395,22 @@ export const api = {
     list: () =>
       http.request<ResultListFavorite['data']>(`/api/main/favorite/list`, {
         method: 'GET',
+      }),
+  },
+  equipmentProperty: {
+    /**
+     * No description
+     *
+     * @tags 设备扩展属性表
+     * @name Save
+     * @summary 保存设备的扩展属性值的修改
+     * @request POST:/equipmentProperty/save
+     * @secure
+     */
+    save: (data: EquipmentPropertySearch) =>
+      http.request<ResultObject['data']>(`/api/main/equipmentProperty/save`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   equipmentInSparePart: {
@@ -17543,6 +17618,21 @@ export const api = {
       }),
   },
   adminOrg: {
+    /**
+     * No description
+     *
+     * @tags 行政组织架构表
+     * @name Search
+     * @summary 获责任部门
+     * @request POST:/adminOrg/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataAdminOrgVO['data']>(`/api/main/adminOrg/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *

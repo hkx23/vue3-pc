@@ -38,7 +38,6 @@
         <template #button>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddTypeData">新增</t-button>
-            <!-- <t-button theme="default">导入</t-button> -->
             <bcmp-import-auto-button
               theme="default"
               button-text="导入"
@@ -190,48 +189,22 @@
         </t-tab-panel>
         <t-tab-panel label="维保履历" value="2" :destroy-on-hide="true">
           <cmp-table
-            ref="tableRef"
-            row-key="serialNumber"
+            row-key="billNo"
             :show-pagination="false"
             :show-setting="false"
             :show-toolbar="false"
             :select-on-row-click="false"
             empty="没有符合条件的数据"
             :table-column="maintenanceColumns"
-            :table-data="anomalyTypeData.list"
+            :table-data="repairMaintenanceData"
             :loading="isLoading"
             :selected-row-keys="selectedRowKeys"
           ></cmp-table>
         </t-tab-panel>
         <t-tab-panel label="拓展属性" value="3" :destroy-on-hide="true">
           <cmp-card :span="12">
-            <t-tabs v-model="propertyTabValue" @change="propertyTabChange">
-              <t-tab-panel
-                v-for="item in propertyCategoryTab"
-                :key="item.id"
-                :value="item.id"
-                :label="item.categoryName"
-                :destroy-on-hide="true"
-              >
-                <t-form
-                  ref="propertyFormRef"
-                  :colon="true"
-                  layout="inline"
-                  :data="propertyDataList"
-                  label-width="120px"
-                >
-                  <t-form-item
-                    v-for="property in propertyDataList"
-                    :key="property.id"
-                    :value="property.id"
-                    :label="property.displayName"
-                    :destroy-on-hide="true"
-                  >
-                    <t-input v-model="equipmentData.list.inspectDealId"></t-input>
-                  </t-form-item>
-                </t-form>
-              </t-tab-panel>
-            </t-tabs>
+            <t-button @click="getExtend"> 校验与获取数据 </t-button>
+            <bcmp-extend ref="demoExtend" :object-id="objectId" object-code="equipment"></bcmp-extend>
           </cmp-card>
         </t-tab-panel>
       </t-tabs>
@@ -246,7 +219,7 @@
 import { FormInstanceFunctions, FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
-import { api, EquipmentFile, ObjectPropertyCategoryVO } from '@/api/main';
+import { api, EquipmentFile } from '@/api/main';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
@@ -257,7 +230,6 @@ import { useLang } from './lang';
 const { t } = useLang();
 const isDisabled = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
-const propertyFormRef: Ref<FormInstanceFunctions> = ref(null); // 扩展属性表单数据清除，获取表单实例
 const { pageUI } = usePage(); // 分页工具
 const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
@@ -265,12 +237,27 @@ const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
 const submitFalg = ref(false);
 const queryCompent = ref(); // 查询组件对象传递
 const tabValue = ref('0'); // tab的默认选中
-const propertyTabValue = ref('common'); // 扩展属性tab的默认选中
 const fileList = ref([]); // 上传文件列表
 const isLoading = ref(false); // 是否用loading
 const fileData = ref<EquipmentFile[]>([]);
-const propertyCategoryTab = ref<ObjectPropertyCategoryVO[]>([]);
-const propertyDataList = ref<ObjectPropertyCategoryVO[]>([]);
+const repairMaintenanceData = ref([]);
+const demoExtend = ref<any>(); // 扩展属性组件引用传递
+const objectId = ref(); // 扩展属性组件参数动态变量
+const propertyDataList = ref([]); // 扩展属性表单参数
+
+const getExtend = () => {
+  demoExtend.value.getComponentData().then((data) => {
+    MessagePlugin.info(
+      `校验结果:${data.success}   扩展属性类别code:${data.objectCategorycode}---   值变化:${JSON.stringify(data.data)}`,
+    );
+  });
+  // debugger;
+  // const extensionResult = demoExtend.value.getComponentData();
+  // if (extensionResult.success) {
+  //   debugger;
+  //   MessagePlugin.info(`值变化:${extensionResult.data}`);
+  // }
+};
 
 // 表格数据总条数
 const anomalyTotal = ref(0);
@@ -416,25 +403,25 @@ const maintenanceColumns: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'statusName',
+    colKey: 'billNo',
     title: '单据编号',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'statusName',
+    colKey: 'billCategoryName',
     title: '单据类型',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'statusName',
+    colKey: 'createTime',
     title: '完成日期',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'statusName',
+    colKey: 'creatorName',
     title: '处理人',
     align: 'center',
     width: '100',
@@ -443,27 +430,7 @@ const maintenanceColumns: PrimaryTableCol<TableRowData>[] = [
 // 初始渲染
 onMounted(async () => {
   await onGetAnomalyTypeData(); // 获取 表格 数据
-  await getPropertyTabData();
-  propertyTabValue.value = propertyCategoryTab.value[0].id;
-  await getPropertyData();
 });
-
-// 获取设备的扩展属性tab
-// 加载扩展属性的tap用于遍历生成panel
-const getPropertyTabData = async () => {
-  const propertyTabData = await api.objectPropertyCategory.getObjectCategory({ objectCode: 'equipment' });
-  propertyCategoryTab.value = propertyTabData.list;
-};
-// 加载第一个扩展属性分类的数据用于遍历生成input
-const getPropertyData = async () => {
-  const propertyData = await api.objectPropertyCategory.getObjectCategoryList({
-    pageNum: 1,
-    pageSize: 9999999,
-    objectCode: 'equipment',
-    id: propertyCategoryTab.value[0].id,
-  });
-  propertyDataList.value = propertyData.list;
-};
 
 // switch 开关事件
 const onSwitchChange = async (row: any, value: any) => {
@@ -487,18 +454,23 @@ const tabChange = async (value: any) => {
       equipmentId: equipmentID.value,
     });
     fileList.value = filesData.list;
+  } else if (value === '2' && diaLogTitle.value === '编辑资产台账') {
+    const res = await api.assetLedger.getMaintenanceList({
+      pageNum: 1,
+      pageSize: 99999,
+      equipmentId: equipmentID.value,
+    });
+    repairMaintenanceData.value = res.list;
+  } else if (value === '3' && diaLogTitle.value === '编辑资产台账') {
+    objectId.value = equipmentID.value;
+    demoExtend.value.initFormSetting({
+      objectCode: 'equipment',
+      propertyCode: '',
+      objectId: equipmentID.value,
+    });
   }
 };
-// 扩展TAb 栏切换事件
-const propertyTabChange = async (value: any) => {
-  const propertyData = await api.objectPropertyCategory.getObjectCategoryList({
-    pageNum: 1,
-    pageSize: 9999999,
-    objectCode: 'equipment',
-    id: value,
-  });
-  propertyDataList.value = propertyData.list;
-};
+
 // 初始化 状态 下拉框数据
 const equipmentStatusDataList = [
   { label: '正常', value: 'NORMAL' },
@@ -531,7 +503,6 @@ const onAddTypeData = () => {
   submitFalg.value = true; // 区分新增编辑的开关
   diaLogTitle.value = '新增设备台账';
   fileList.value = []; // 清空文件列表
-  propertyTabValue.value = propertyCategoryTab.value[0].id; // 扩展属性的tab重置到第一个
   // 清空数据
   equipmentData.list.equipmentCode = ''; // 设备编码
   equipmentData.list.equipmentName = ''; // 设备名称
@@ -603,7 +574,20 @@ const onSecondarySubmit = async () => {
     });
     formVisible.value = false;
   } else if (tabValue.value === '3') {
-    // 需要补充扩展属性值的编辑
+    demoExtend.value.getComponentData().then((data) => {
+      if (data.success) {
+        propertyDataList.value = Object.keys(data.data).map((key) => {
+          return { propertyId: key, propertyValue: data.data[key] };
+        });
+      } else {
+        MessagePlugin.warning('数据格式校验失败！');
+      }
+    });
+    await api.equipmentProperty.save({
+      equipmentId: equipmentID.value,
+      propertyList: propertyDataList.value,
+    });
+    formVisible.value = false;
   }
 };
 // 右侧表格编辑按钮
@@ -613,7 +597,6 @@ const onEditRow = (row: any) => {
   formVisible.value = true; // dialog的开关
   submitFalg.value = false; // 区分新增编辑的开关
   diaLogTitle.value = '编辑资产台账';
-  propertyTabValue.value = propertyCategoryTab.value[0].id; // 扩展属性的tab重置到第一个
   // 回填数据
   equipmentData.list.equipmentCode = row.equipmentCode; // 设备编码
   equipmentData.list.equipmentName = row.equipmentName; // 设备名称

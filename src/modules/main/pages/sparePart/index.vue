@@ -55,7 +55,7 @@
               button-text="导入"
               @close="onFetchGroupData"
             ></bcmp-import-button>
-            <t-button :disabled="selectedRowKey != ''" heme="primary" @click="onAddSpareRelation">关联资产</t-button>
+            <t-button :disabled="isEmpty(selectedRowKey)" heme="primary" @click="onAddSpareRelation">关联资产</t-button>
           </t-space>
         </template>
       </cmp-table>
