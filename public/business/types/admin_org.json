@@ -1,0 +1,38 @@
+{
+  "title": "责任部门",
+  "name": "责任部门",
+  "placeholder": "请选择责任部门",
+  "url": "/api/main/adminOrg/items",
+  "httptype": "POST",
+  "category": "PLANT",
+  "columns": [
+    {
+      "title": "责任部门代码",
+      "key": "orgCode",
+      "align": "left"
+    },
+    {
+      "title": "责任部门名称",
+      "key": "orgName",
+      "align": "left"
+    },
+    {
+      "title": "责任部门描述",
+      "key": "orgDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "orgName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "orgCode",
+    "nameField": "orgName",
+    "descField": "orgDesc"
+  },
+  "componentType": "list"
+}

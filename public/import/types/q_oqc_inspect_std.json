@@ -1,106 +1,131 @@
 {
-  "importTitle": "转产换型时间",
+  "importTitle": "产品检验标准",
   "templateFileName": "导入模板_产品检验标准",
-  "remoteUrl": "/api/control/timeSwitchProduct/import",
+  "remoteUrl": "/api/quality/oqcInspectStd/import",
   "importColumns": [
     {
       "title": "标准编码(必填)",
-      "field": "inspectStdCode"
+      "field": "inspectStdCode",
+      "fieldType": "String"
     },
     {
       "title": "标准名称(必填)",
-      "field": "inspectStdName"
+      "field": "inspectStdName",
+      "fieldType": "String"
     },
     {
       "title": "版本号(必填)",
+      "fieldType": "String",
       "field": "revision"
     },
     {
       "title": "生效日期(必填)",
+      "fieldType": "Date",
       "field": "timeEffective"
     },
     {
       "title": "失效日期(必填)",
+      "fieldType": "Date",
       "field": "timeInvalid"
     },
     {
       "title": "明细",
       "field": "list",
+      "fieldType": "List",
       "list": [
         {
           "title": "项目名称(必填)",
+          "fieldType": "String",
           "field": "itemName"
         },
         {
           "title": "项目类别(必填)",
-          "field": "itemCategory"
+          "fieldType": "String",
+          "field": "itemCategoryName"
         },
         {
           "title": "项目行号(必填)",
+          "fieldType": "Integer",
           "field": "itemSeq"
         },
         {
           "title": "项目特性(必填)",
-          "field": "characteristics"
+          "fieldType": "String",
+          "field": "characteristicsName"
         },
         {
           "title": "抽样方案类型(必填)",
-          "field": "samplingStandardType"
+          "fieldType": "String",
+          "field": "samplingStandardTypeName"
         },
         {
           "title": "抽样方案(必填)",
+          "fieldType": "String",
           "field": "samplingStandardCode"
         },
         {
           "title": "检验水平（国标必填）",
-          "field": "inspectLevel"
+          "fieldType": "String",
+          "field": "inspectLevelName"
         },
         {
           "title": "不合格分类(必填)",
-          "field": "unqualifyCategory"
+          "fieldType": "String",
+          "field": "unqualifyCategoryName"
         },
         {
           "title": "检验业务类型(必填)",
-          "field": "inspectType"
+          "fieldType": "String",
+          "field": "inspectTypeName"
         },
         {
           "title": "检验属性(必填)",
-          "field": "inspectProperty"
+          "fieldType": "String",
+          "field": "inspectPropertyName"
         },
         {
           "title": "检验工具(必填)",
+          "fieldType": "String",
           "field": "inspectTool"
         },
         {
           "title": "检验依据(必填)",
+          "fieldType": "String",
           "field": "inspectBasis"
         },
         {
           "title": "工序",
+          "fieldType": "String",
           "field": "processName"
         },
         {
           "title": "技术要求",
+          "fieldType": "String",
           "field": "technicalRequest"
         },
         {
           "title": "检验频率",
+          "fieldType": "String",
           "field": "inspectFrequency"
         },
         {
           "title": "最小值",
+          "fieldType": "BigDecimal",
           "field": "minValue"
         },
         {
           "title": "最大值",
+          "fieldType": "BigDecimal",
           "field": "maxValue"
         },
         {
           "title": "基准值",
+          "fieldType": "BigDecimal",
           "field": "baseValue"
         },
         {
           "title": "单位",
+          "fieldType": "String",
           "field": "uomName"
         }
       ]

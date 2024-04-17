@@ -1,76 +1,86 @@
 <template>
   <cmp-container :full="true">
     <cmp-row>
-      <cmp-card flex="400px">
-        <t-input
-          v-model="formData.keyword"
-          clearable
-          @change="fetchUserInputList"
-          @enter="fetchUserInputList"
-          @clear="fetchUserInputList"
-        >
-          <template #suffixIcon>
-            <search-icon :style="{ cursor: 'pointer' }" @click="fetchUserInputList" />
-          </template>
-        </t-input>
-        <t-list
-          :style="{ 'max-height': '430px' }"
-          style="margin-top: 20px"
-          :async-loading="asyncLoading"
-          split
-          @load-more="scrollHandler"
-        >
-          <t-list-item
-            v-for="(item, index) in listItems"
-            :key="index"
-            class="custom-list-item"
-            :class="{ 'selected-card': item.isAdd }"
-          >
-            <span style="margin-top: 8px; margin-bottom: 8px; width: 30%">{{ item.userName }}</span>
-            <span style="margin-top: 8px; margin-bottom: 8px; width: 30%">{{ item.displayName }}</span>
-
-            <template #action>
-              <plus-icon theme="primary" @click="onAddUser(item)" />
-            </template>
-          </t-list-item>
-        </t-list>
-      </cmp-card>
-      <cmp-card flex="auto">
-        <cmp-container :full="true" style="padding: 0">
-          <cmp-card :ghost="true">
-            <cmp-table
-              ref="tableRef"
-              v-model:pagination="pageUI"
-              row-key="id"
-              :table-column="tableColumns"
-              :table-data="moduleData"
-              :total="tabTotal"
-              :fixed-height="true"
-              :max-height="treeHeight"
-              :selected-row-keys="userRowKeys"
-              style="height: 420px"
-              @select-change="onSelectedChange"
-              @refresh="fetchUserTable"
+      <t-col :flex="6">
+        <div>
+          <t-card :title="toSelectTitle" header-bordered :style="{ width: '100%' }">
+            <template #actions> {{ waitSelectCount + '/' + waitCount }} </template>
+            <t-space direction="vertical" :size="8">
+              <t-input v-model="formData.keyword" placeholder="请输入用户名/姓名" clearable @change="fetchUserList">
+                <template #suffixIcon>
+                  <search-icon :style="{ cursor: 'pointer' }" />
+                </template>
+              </t-input>
+              <t-table
+                row-key="id"
+                :loading="loading"
+                :data="waitData"
+                :height="tableHeight"
+                select-on-row-click
+                :columns="tableSelectColumns"
+                :selected-row-keys="selectedRowKeys"
+                :hover="true"
+                lazy-load
+                @select-change="rehandleSelectChange"
+              >
+                <template #op="{ row }">
+                  <t-link hover="color" theme="primary" @click="onAddUser(row)">
+                    <t-icon name="plus"></t-icon>
+                  </t-link> </template
+              ></t-table>
+            </t-space>
+          </t-card>
+        </div>
+      </t-col>
+      <t-col :flex="1">
+        <div style="background-color: rgb(255 255 255); padding: 150px 8px 8px; justify-items: center">
+          <t-space direction="vertical" :size="8">
+            <t-button v-if="waitSelectCount > 0" theme="default" variant="outline" size="small" @click="onBatchAdd">
+              <template #icon><t-icon name="swap-right"></t-icon></template>
+              添加
+            </t-button>
+            <t-button
+              v-show="selectedSelectCount > 0"
+              theme="default"
+              variant="outline"
+              size="small"
+              @click="onDelBatch"
             >
-              <template #title> {{ t('inspectGroup.tableSubLeftTitle') }} </template>
-              <template #button>
-                <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDelBatch">
-                  <t-button :disabled="userRowKeys.length < 1" theme="default">
-                    {{ t('common.button.batchDelete') }}</t-button
-                  >
-                </t-popconfirm>
+              <template #icon><t-icon name="swap-left"></t-icon></template>
+              删减
+            </t-button>
+          </t-space>
+        </div>
+      </t-col>
+      <t-col :flex="6">
+        <t-card :title="selectedTitle" header-bordered :style="{ width: '100%' }">
+          <template #actions>{{ selectedSelectCount + '/' + selectedCount }} </template>
+          <t-space direction="vertical" :size="8">
+            <t-input v-model="formData.keywordAdd" placeholder="请输入用户名/姓名" clearable @change="fetchUserTable">
+              <template #suffixIcon>
+                <search-icon :style="{ cursor: 'pointer' }" />
               </template>
+            </t-input>
+            <t-table
+              :height="tableHeight"
+              row-key="id"
+              :loading="selectedLoading"
+              :data="selectedData"
+              select-on-row-click
+              :selected-row-keys="userRowKeys"
+              :columns="tableColumns"
+              :hover="true"
+              lazy-load
+              @select-change="rehandleSelectSChange"
+            >
               <template #op="{ row }">
-                <t-space>
-                  <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteRowClick(row)">
-                    <t-link theme="primary">{{ t('common.button.delete') }}</t-link>
-                  </t-popconfirm>
-                </t-space>
-              </template>
-            </cmp-table>
-          </cmp-card>
-        </cmp-container>
-      </cmp-card>
+                <t-link hover="color" theme="primary" @click="onDeleteRowClick(row)">
+                  <t-icon name="minus"></t-icon>
+                </t-link> </template
+            ></t-table>
+          </t-space>
+        </t-card>
+      </t-col>
     </cmp-row>
   </cmp-container>
 </template>
@@ -80,10 +90,9 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { debounce } from 'lodash';
-import { PlusIcon, SearchIcon } from 'tdesign-icons-vue-next';
+import { SearchIcon } from 'tdesign-icons-vue-next';
 import { FormInstanceFunctions, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, Ref, ref } from 'vue';
+import { Ref, ref } from 'vue';
 
 import { api as apiQuality } from '@/api/quality';
 import { useLoading } from '@/hooks/modules/loading';
@@ -91,45 +100,53 @@ import { usePage } from '@/hooks/modules/page';
 
 import { useLang } from './lang';
 
-const treeHeight = ref('300px');
-const asyncLoadingRadio = ref('load-more');
-const totals = ref<number>(0); // 用户分页总数
-const asyncLoading = computed(() => {
-  if (asyncLoadingRadio.value === 'loading-custom') {
-    return '没有更多数据了~';
-  }
-  return asyncLoadingRadio.value;
-});
-// 点击加载更多
-const scrollHandler = debounce(async () => {
-  asyncLoadingRadio.value = 'loading';
-  formData.value.pageNum++;
-  await fetchUserList();
-  asyncLoadingRadio.value = 'load-more';
-  if (listItems.value.length >= totals.value) {
-    asyncLoadingRadio.value = 'loading-custom';
-  }
-}, 1000);
+const { loading } = useLoading();
+const { loading: selectedLoading } = useLoading();
+const toSelectTitle = '待选列表';
+const selectedTitle = '已选列表';
+
 const { setLoading: setLoadingUser } = useLoading();
 const { t } = useLang();
 const { pageUI } = usePage();
+const waitData = ref([]);
+const waitCount = ref(0);
+const waitSelectCount = ref(0);
+
+const selectedData = ref([]);
+const selectedCount = ref(0);
+const selectedSelectCount = ref(0);
 const listItems = ref([]);
 const userRowKeys: Ref<any[]> = ref([]); //
+const selectedRowKeys: Ref<any[]> = ref([]); //
+const rehandleSelectSChange = (value, ctx) => {
+  userRowKeys.value = value;
+  selectedSelectCount.value = value.length;
+};
+const rehandleSelectChange = (value, ctx) => {
+  selectedRowKeys.value = value;
+  waitSelectCount.value = value.length;
+};
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
-  { colKey: 'row-select', type: 'multiple', width: 40, fixed: 'left' },
-  { title: `${t('inspectGroup.userName')}`, width: 150, colKey: 'personCode' },
-  { title: `${t('inspectGroup.name')}`, width: 150, colKey: 'personName' },
-  { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 80, colKey: 'op' },
+  { colKey: 'row-select', type: 'multiple', width: 50, fixed: 'left' },
+  { title: `${t('inspectGroup.userName')}`, colKey: 'personCode', ellipsis: true },
+  { title: `${t('inspectGroup.name')}`, colKey: 'personName', ellipsis: true },
+  { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 60, colKey: 'op' },
 ];
+const tableSelectColumns: PrimaryTableCol<TableRowData>[] = [
+  { colKey: 'row-select', type: 'multiple', width: 50, fixed: 'left' },
+  { title: `${t('inspectGroup.userName')}`, colKey: 'userName', ellipsis: true },
+  { title: `${t('inspectGroup.name')}`, colKey: 'displayName', ellipsis: true },
+  { title: `${t('common.button.operation')}`, align: 'left', fixed: 'right', width: 60, colKey: 'op' },
+];
+const tableHeight = ref('280px');
 const moduleData = ref([]);
 const tabTotal = ref(0);
 const formRef: Ref<FormInstanceFunctions> = ref(null);
-const onSelectedChange = (value: any) => {
-  userRowKeys.value = value;
-};
+
 const formData = ref({
   inspectGroupId: '',
   keyword: '',
+  keywordAdd: '',
   pageNum: 1,
   pageSize: 20,
 });
@@ -144,11 +161,12 @@ const fetchUserTable = async () => {
     setLoadingUser(true);
     const data = (await apiQuality.inspectGroupInUser.getList({
       pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
+      pageSize: 9999999,
+      keyword: formData.value.keywordAdd,
       inspectGroupId: formData.value.inspectGroupId,
     })) as any;
-    moduleData.value = data.list;
-    tabTotal.value = data.total;
+    selectedData.value = data.list;
+    selectedCount.value = data.total;
   } catch (e) {
     console.log(e);
   } finally {
@@ -164,33 +182,12 @@ const fetchUserList = async () => {
     setLoadingUser(true);
     const data = (await apiQuality.inspectGroupInUser.getPersonList({
       pageNum: formData.value.pageNum,
-      pageSize: formData.value.pageSize,
+      pageSize: 9999999,
       keyword: formData.value.keyword,
       inspectGroupId: formData.value.inspectGroupId,
     })) as any;
-    listItems.value = [...listItems.value, ...data.list];
-    totals.value = data.total;
-  } catch (e) {
-    console.log(e);
-  } finally {
-    setLoadingUser(false);
-  }
-};
-// 加载人员明细表格
-const fetchUserInputList = async () => {
-  if (!formData.value.inspectGroupId) {
-    return;
-  }
-  try {
-    setLoadingUser(true);
-    const data = (await apiQuality.inspectGroupInUser.getPersonList({
-      pageNum: 1,
-      pageSize: 20,
-      keyword: formData.value.keyword,
-      inspectGroupId: formData.value.inspectGroupId,
-    })) as any;
-    listItems.value = data.list;
-    totals.value = data.total;
+    waitData.value = data.list;
+    waitCount.value = data.total;
   } catch (e) {
     console.log(e);
   } finally {
@@ -206,23 +203,37 @@ const clearUserTable = async () => {
 const onDeleteRowClick = async (row) => {
   await apiQuality.inspectGroupInUser.delByIds([row.id]);
   MessagePlugin.success(t('common.message.deleteSuccess'));
+  selectedRowKeys.value = [];
+  userRowKeys.value = [];
   fetchUserTable();
-  fetchUserInputList();
+  fetchUserList();
 };
 const onDelBatch = async () => {
   await apiQuality.inspectGroupInUser.delByIds(userRowKeys.value);
   MessagePlugin.success(t('common.message.deleteSuccess'));
+  selectedRowKeys.value = [];
+  userRowKeys.value = [];
   fetchUserTable();
-  fetchUserInputList();
+  fetchUserList();
 };
 const onAddUser = async (item) => {
-  if (item.isAdd) {
-    return;
-  }
-  await apiQuality.inspectGroupInUser.add({ userId: item.id, inspectGroupId: formData.value.inspectGroupId });
+  await apiQuality.inspectGroupInUser.add({ userIds: [item.id], inspectGroupId: formData.value.inspectGroupId });
   MessagePlugin.success(t('common.message.addSuccess'));
+  selectedRowKeys.value = [];
+  userRowKeys.value = [];
   fetchUserTable();
-  fetchUserInputList();
+  fetchUserList();
+};
+const onBatchAdd = async () => {
+  await apiQuality.inspectGroupInUser.add({
+    userIds: selectedRowKeys.value,
+    inspectGroupId: formData.value.inspectGroupId,
+  });
+  MessagePlugin.success(t('common.message.addSuccess'));
+  selectedRowKeys.value = [];
+  userRowKeys.value = [];
+  fetchUserTable();
+  fetchUserList();
 };
 
 const reset = () => {
@@ -230,6 +241,7 @@ const reset = () => {
   tabTotal.value = 0;
   formData.value = {
     inspectGroupId: '',
+    keywordAdd: '',
     keyword: '',
     pageNum: 1,
     pageSize: 20,

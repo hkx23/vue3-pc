@@ -28,9 +28,9 @@
       </t-col>
       <t-col :span="4">
         <t-form-item label="抽样方案类型" label-align="right" name="samplingStandardType">
-          <t-radio-group v-model="dtlData.samplingStandardType" default-value="1">
-            <t-radio value="1">国标</t-radio>
-            <t-radio value="2">企标</t-radio>
+          <t-radio-group v-model="dtlData.samplingStandardType" default-value="GB">
+            <t-radio value="GB">国标</t-radio>
+            <t-radio value="QB">企标</t-radio>
           </t-radio-group>
         </t-form-item>
       </t-col>
@@ -59,9 +59,9 @@
           label="检验水平"
           label-align="right"
           name="inspectLevel"
-          :required-mark="dtlData.samplingStandardType === '1'"
+          :required-mark="dtlData.samplingStandardType === 'GB'"
         >
-          <t-select v-model="dtlData.inspectLevel" clearable :disabled="dtlData.samplingStandardType !== '1'">
+          <t-select v-model="dtlData.inspectLevel" clearable :disabled="dtlData.samplingStandardType !== 'GB'">
             <t-option v-for="item in levelOption" :key="item.id" :label="item.label" :value="item.value" />
           </t-select>
         </t-form-item>
@@ -214,7 +214,7 @@ const dtlData = ref({
   technicalRequest: '',
   uom: '',
   uomName: '',
-  samplingStandardType: '1',
+  samplingStandardType: 'GB',
   samplingStandardCode: '',
   inspectLevel: '',
   inspectLevelName: '',
@@ -251,7 +251,7 @@ const init = () => {
     technicalRequest: '',
     uom: null,
     uomName: '',
-    samplingStandardType: '1',
+    samplingStandardType: 'GB',
     samplingStandardCode: '',
     inspectLevel: '',
     inspectLevelName: '',
@@ -272,7 +272,7 @@ const codesOption = ref([]);
 
 const fetchSampingStdCodes = async () => {
   try {
-    if (dtlData.value.samplingStandardType === '2') {
+    if (dtlData.value.samplingStandardType === 'QB') {
       const data = (await apiQuality.samplingStd.getSampingStdCode()) as any;
       codesOption.value = data.map((item: { sampingStdCode: any; id: any }) => ({
         label: item.sampingStdCode,
@@ -290,7 +290,7 @@ const fetchSampingStdCodes = async () => {
   }
 };
 const querySelectChange = async (event) => {
-  if (dtlData.value.samplingStandardType === '2') {
+  if (dtlData.value.samplingStandardType === 'QB') {
     const res = (await apiQuality.samplingStd.getSampingStdCode({ key: event.length >= 2 ? event : '' })) as any;
     codesOption.value = res.map((item: { sampingStdCode: any; id: any }) => ({
       label: item.sampingStdCode,
@@ -404,7 +404,7 @@ const onConfirmDtl = async () => {
     MessagePlugin.warning('请补充表单信息');
     return false;
   }
-  if (dtlData.value.samplingStandardType === '1') {
+  if (dtlData.value.samplingStandardType === 'GB') {
     if (isEmpty(dtlData.value.inspectLevel)) {
       MessagePlugin.error('请补充表单信息');
       return false;
@@ -463,7 +463,7 @@ const onConfirmDtl = async () => {
   rowData.value = {
     ...dtlData.value,
     fileList: fileList.value,
-    samplingStandardTypeName: dtlData.value.samplingStandardType === '1' ? '国标' : '企标',
+    samplingStandardTypeName: dtlData.value.samplingStandardType === 'GB' ? '国标' : '企标',
     itemCategoryName: categoryOption.value.find((item) => item.value === dtlData.value.itemCategory)?.label,
     unqualifyCategoryName: unCategoryOption.value.find((item) => item.value === dtlData.value.unqualifyCategory)?.label,
     inspectTypeName: stdTypeOption.value.find((item) => item.value === dtlData.value.inspectType)?.label,

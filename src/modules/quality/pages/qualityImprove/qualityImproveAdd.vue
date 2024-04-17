@@ -105,7 +105,7 @@
                     <t-form-item :label="t('qualityImprove.mitemCode')" label-align="right" name="mitemCode">
                       <t-input
                         v-model="formData.mitemCode"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -116,7 +116,7 @@
                     <t-form-item :label="t('business.main.mitemDesc')" label-align="right" name="mitemDesc">
                       <t-input
                         v-model="formData.mitemDesc"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -126,7 +126,7 @@
                     <t-form-item :label="t('qualityImprove.supplierCode')" label-align="right" name="supplierCode">
                       <t-input
                         v-model="formData.supplierCode"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -176,7 +176,7 @@
                     <t-form-item :label="t('qualityImprove.defectCategory')" label-align="right" name="defectCategory">
                       <t-input
                         v-model="formData.defectCategoryName"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -186,7 +186,7 @@
                     <t-form-item :label="t('qualityImprove.handleMethod')" label-align="right" name="handleMethod">
                       <t-input
                         v-model="formData.handleMethod"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -196,14 +196,15 @@
                     <t-form-item
                       :label="t('qualityImprove.deptResponsibility')"
                       label-align="right"
-                      name="deptResponsibilityName"
+                      name="deptResponsibilityId"
                     >
-                      <t-input
-                        v-model="formData.deptResponsibilityName"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                      <bcmp-select-business
+                        v-model="formData.deptResponsibilityId"
+                        :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
+                        type="admin_org"
+                        :show-title="false"
                         style="width: 200px"
-                        :disabled="true"
-                      />
+                      ></bcmp-select-business>
                     </t-form-item>
                   </t-col>
 
@@ -215,7 +216,7 @@
                     >
                       <t-input
                         v-model="formData.personResponsibilityName"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
+                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
                         style="width: 200px"
                         :disabled="true"
                       />
@@ -264,7 +265,7 @@
                       <bcmp-select-business
                         v-model="formData.userResponsibilityId"
                         :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
-                        type="user"
+                        type="person"
                         :show-title="false"
                         style="width: 200px"
                       ></bcmp-select-business>
@@ -302,8 +303,8 @@
                     <t-form-item :label="t('qualityImprove.problemDesc')" label-align="right" name="problemDesc">
                       <t-input
                         v-model="formData.problemDesc"
-                        :placeholder="t('qualityImprove.selectRelateBillNo')"
-                        :disabled="true"
+                        :placeholder="t('common.placeholder.input')"
+                        :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
                       />
                     </t-form-item>
                   </t-col>
@@ -1298,7 +1299,7 @@ const formData = ref({
   supplierId: '',
   workcenterId: '',
   workcenterName: '',
-  deptResponsibilityName: '',
+  deptResponsibilityId: '',
   mitemCode: '',
   mitemDesc: '',
   workshopName: '',
@@ -1435,7 +1436,7 @@ const init = () => {
     operateType: 'add',
     billNo: '',
     moScheId: '',
-    deptResponsibilityName: '',
+    deptResponsibilityId: '',
     relateBillNo: '',
     id: '',
     inspectType: '',
@@ -1483,7 +1484,7 @@ const isBatchOption = [
   {
     label: t('business.main.no'),
     value: 0,
-    id: 0,
+    id: 2,
   },
 ];
 const inspectTypeOption = ref([]);
@@ -1526,7 +1527,6 @@ const onChangeType = async () => {
   formData.value.supplierName = '';
   formData.value.scheCode = '';
   formData.value.responsibility = '';
-  formData.value.deptResponsibilityName = '';
   formData.value.personResponsibilityName = '';
   formData.value.handleMethod = '';
   formData.value.workcenterName = '';
@@ -1545,9 +1545,7 @@ const onChangeBillNo = async () => {
   formData.value.scheCode = item.scheCode ? item.scheCode : '';
   formData.value.responsibility = item.responsibility;
   formData.value.personResponsibilityName = item.personResponsibilityName;
-  formData.value.deptResponsibilityName = item.deptResponsibilityName;
   formData.value.personResponsibilityId = item.personResponsibilityId;
-  formData.value.problemDesc = item.personResponsibilityName;
   formData.value.handleMethod = item.handleMethod;
   formData.value.workcenterName = item.workcenterName;
   formData.value.workcenterId = item.workcenterId;
@@ -1575,6 +1573,7 @@ const initEdit = async () => {
         formData.value[key] = res[key];
       }
     });
+    formData.value.isBatch = res.isBatch;
     const improve8dVo = res.improve8d;
     if (improve8dVo) {
       Object.keys(improve8dVo).forEach((key) => {
@@ -1684,8 +1683,16 @@ const onSubmit = async () => {
     MessagePlugin.warning(t('qualityImprove.selectOccurNature'));
     return;
   }
+  if (isEmpty(formData.value.problemDesc)) {
+    MessagePlugin.warning(t('qualityImprove.selectproblemDesc'));
+    return;
+  }
   if (isEmpty(formData.value.userResponsibilityId)) {
     MessagePlugin.warning(t('qualityImprove.selectisUserResponsibility'));
+    return;
+  }
+  if (isEmpty(formData.value.deptResponsibilityId)) {
+    MessagePlugin.warning(t('qualityImprove.selectdeptResponsibilityId'));
     return;
   }
   if (isEmpty(formData.value.datetimeRequireFinish)) {
@@ -1781,8 +1788,10 @@ const tableData = ref([]);
 // #表单定义规则
 const rules: FormRules = {
   inspectType: [{ required: true, message: '不能为空', trigger: 'change' }],
+  deptResponsibilityId: [{ required: true, message: '不能为空', trigger: 'change' }],
   reason: [{ required: true, message: '不能为空', trigger: 'change' }],
   relateBillNo: [{ required: true, message: '不能为空', trigger: 'change' }],
+  problemDesc: [{ required: true, message: '不能为空', trigger: 'change' }],
   occurNature: [{ required: true, message: '不能为空', trigger: 'change' }],
   isBatch: [{ required: true, message: '不能为空', trigger: 'change' }],
   userResponsibilityName: [{ required: true, message: '不能为空', trigger: 'change' }],

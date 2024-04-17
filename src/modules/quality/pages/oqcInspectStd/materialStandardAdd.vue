@@ -179,7 +179,7 @@ const onAdd = () => {
   opType.value = 'add';
   dtlFormRef.value.init();
   touchstoneFormVisible.value = true;
-  dtlFormRef.value.dtlData.samplingStandardType = '1';
+  dtlFormRef.value.dtlData.samplingStandardType = 'GB';
 };
 const onEdit = async (row) => {
   const item = allDtl.value[row.index];
