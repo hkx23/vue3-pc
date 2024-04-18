@@ -4,7 +4,13 @@
     <cmp-card>
       <cmp-query ref="queryRef" :opts="opts" @submit="onInput" @reset="onReset">
         <template #inspectionStringency="{ param }">
-          <t-select v-model="param.inspectionStringency" :clearable="true" label="严格度" @change="passStringency()">
+          <t-select
+            v-model="param.inspectionStringency"
+            :clearable="true"
+            label="严格度"
+            placeholder="请选择严格度"
+            @change="passStringency()"
+          >
             <t-option
               v-for="item in inspectionStringencyOption"
               :key="item.label"
@@ -14,46 +20,73 @@
           </t-select>
         </template>
         <template #aql="{ param }">
-          <t-select v-model="param.aql" :clearable="true" label="接收质量限" @click="onAqls(param)">
+          <t-select
+            v-model="param.aql"
+            :clearable="true"
+            label="接收质量限"
+            placeholder="请选择接收质量限"
+            @click="onAqls(param)"
+          >
             <t-option v-for="item in aqlDataList.list" :key="item" :label="item" :value="item" />
           </t-select>
         </template>
+        <template #approvalNum="{ param }">
+          <t-input-number
+            v-model="param.approvalNum"
+            label="审批编号"
+            theme="column"
+            placeholder="请输入审批编号"
+            align="left"
+            style="width: 100%"
+          />
+        </template>
       </cmp-query>
     </cmp-card>
-    <cmp-card :span="12">
+    <cmp-card :span="12" class="full-tab">
       <t-tabs v-model="tabValue" @change="tabChange">
         <t-tab-panel label="国标抽样方案" value="0" :destroy-on-hide="true">
-          <cmp-table
-            ref="tableRefTop"
-            v-model:pagination="pageUI"
-            row-key="_timestamp"
-            :columns="columns"
-            :table-data="tableData"
-            active-row-type="single"
-            :total="0"
-            :hover="true"
-            :bordered="true"
-            :show-pagination="false"
-            :show-toolbar="false"
-          >
-            <template #batch="{ row }">
-              {{
-                row.batchStart !== null && row.batchEnd !== null
-                  ? `${row.batchStart}${row.batchEnd == '2147483647' ? '及以上' : '~' + row.batchEnd}`
-                  : ''
-              }}
-            </template>
-            <template #title>
-              {{ '国标抽样方案' }}
-            </template>
-          </cmp-table>
+          <template #panel>
+            <cmp-container :full="true">
+              <cmp-card :ghost="true">
+                <cmp-table
+                  ref="tableRefTop"
+                  v-model:pagination="pageUI"
+                  row-key="_timestamp"
+                  :columns="columns"
+                  :table-data="tableData"
+                  active-row-type="single"
+                  :fixed-height="true"
+                  :total="0"
+                  :hover="true"
+                  :bordered="true"
+                  :show-pagination="false"
+                  :show-toolbar="false"
+                >
+                  <template #batch="{ row }">
+                    {{
+                      row.batchStart !== null && row.batchEnd !== null
+                        ? `${row.batchStart}${row.batchEnd == '2147483647' ? '及以上' : '~' + row.batchEnd}`
+                        : ''
+                    }}
+                  </template>
+                  <template #title>
+                    {{ '国标抽样方案' }}
+                  </template>
+                </cmp-table>
+              </cmp-card>
+            </cmp-container>
+          </template>
         </t-tab-panel>
-        <t-tab-panel label="参考文件" value="1" :destroy-on-hide="true">
-          <div>
-            <t-image v-if="stringency == 'NORMAL'" :src="normalDrawing" />
-            <t-image v-if="stringency == 'RELAX'" :src="relaxDrawing" />
-            <t-image v-if="stringency == 'STRICT'" :src="strictDrawing" />
-          </div>
+        <t-tab-panel label="参考文件" value="1" :destroy-on-hide="true" style="overflow: auto">
+          <template #panel>
+            <cmp-container :full="false">
+              <cmp-card :ghost="true">
+                <t-image v-if="stringency == 'NORMAL'" :src="normalDrawing" />
+                <t-image v-if="stringency == 'RELAX'" :src="relaxDrawing" />
+                <t-image v-if="stringency == 'STRICT'" :src="strictDrawing" />
+              </cmp-card>
+            </cmp-container>
+          </template>
         </t-tab-panel>
       </t-tabs>
     </cmp-card>
@@ -142,9 +175,9 @@ const opts = computed(() => {
     },
     approvalNum: {
       label: '报批数量',
-      comp: 't-input',
       event: 'input',
       defaultVal: '',
+      slotName: 'approvalNum',
     },
   };
 });
@@ -231,12 +264,12 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '70',
   },
   {
-    title: '允收数',
+    title: '允收数(AC)',
     colKey: 'acceptQty',
     width: '70',
   },
   {
-    title: '拒收数',
+    title: '拒收数(RE)',
     colKey: 'rejectQty',
     width: '70',
   },
