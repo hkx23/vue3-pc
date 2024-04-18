@@ -353,6 +353,13 @@ export interface SamplingAqlSearch {
   checkLevel?: string;
   /** 抽样严格度 */
   inspectionStringency?: string;
+  /** 接收质量限 */
+  aql?: number;
+  /**
+   * 报批数量
+   * @format int32
+   */
+  approvalNum?: number;
 }
 
 /** 通用响应类 */
@@ -419,59 +426,20 @@ export type SamplingAqlVO = {
    * @format int32
    */
   batchEnd?: number;
-  /** aql0.01 */
-  aql001?: string;
-  /** aql0.015 */
-  aql0015?: string;
-  /** aql0.025 */
-  aql0025?: string;
-  /** aql0.04 */
-  aql004?: string;
-  /** aql0.065 */
-  aql0065?: string;
-  /** aql0.1 */
-  aql01?: string;
-  /** aql0.15 */
-  aql015?: string;
-  /** aql0.25 */
-  aql025?: string;
-  /** aql0.4 */
-  aql04?: string;
-  /** aql0.65 */
-  aql065?: string;
-  /** aql1 */
-  aql1?: string;
-  /** aql1.5 */
-  aql1_5?: string;
-  /** aql2.5 */
-  aql2_5?: string;
-  /** aql4 */
-  aql4?: string;
-  /** aql6.5 */
-  aql6_5?: string;
-  /** aql10 */
-  aql10?: string;
-  /** aql15 */
-  aql15?: string;
-  /** aql25 */
-  aql25?: string;
-  /** aql40 */
-  aql40?: string;
-  /** aql65 */
-  aql65?: string;
-  /** aql100 */
-  aql100?: string;
-  /** aql150 */
-  aql150?: string;
-  /** aql250 */
-  aql250?: string;
-  /** aql400 */
-  aql400?: string;
-  /** aql650 */
-  aql650?: string;
-  /** aql1000 */
-  aql1000?: string;
 } | null;
+
+/** 通用响应类 */
+export interface ResultListBigDecimal {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: (number | null)[];
+}
 
 /** 上传控件文件VO */
 export interface AddFileTypeVO {
@@ -1634,6 +1602,19 @@ export interface PqcStdItemCategoryVO {
   itemCategory?: string;
   itemCategoryName?: string;
   inspectItems?: PqcInspectFirstStdFullVO[];
+}
+
+/** 通用响应类 */
+export interface ResultPqcBarcodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示在首末检实体 */
+  data?: PqcBarcodeVO;
 }
 
 /** 响应数据 */
@@ -5532,10 +5513,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 状态名称 */
-  statusName?: string;
   /** 操作类别名称 */
   holdCategoryName?: string;
+  /** 状态名称 */
+  statusName?: string;
 }
 
 /** 品质控制 */
@@ -5728,13 +5709,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s3?: string;
-  ii?: string;
-  iii?: string;
-  s1?: string;
   s4?: string;
-  i?: string;
+  s1?: string;
+  s3?: string;
   s2?: string;
+  iii?: string;
+  i?: string;
+  ii?: string;
 } | null;
 
 /** 标签模板 */
@@ -6134,6 +6115,21 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 国标抽样方案表
+     * @name GetAqlList
+     * @summary 下拉框数据-AQL
+     * @request POST:/samplingAql/getAqlList
+     * @secure
+     */
+    getAqlList: (data: SamplingAqlSearch) =>
+      http.request<ResultListBigDecimal['data']>(`/api/quality/samplingAql/getAqlList`, {
+        method: 'POST',
+        body: data as any,
+      }),
   },
   pqcInspectPatrol: {
     /**
@@ -6348,7 +6344,7 @@ export const api = {
      * @secure
      */
     scanPqcYjProductBarcode: (data: PqcInspectBillDTO) =>
-      http.request<ResultObject['data']>(`/api/quality/pqcInspectFirst/scanPqcYJProductBarcode`, {
+      http.request<ResultPqcBarcodeVO['data']>(`/api/quality/pqcInspectFirst/scanPqcYJProductBarcode`, {
         method: 'POST',
         body: data as any,
       }),

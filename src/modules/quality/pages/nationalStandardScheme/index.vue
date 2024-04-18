@@ -2,52 +2,107 @@
 <template>
   <cmp-container :full="true">
     <cmp-card>
-      <cmp-query ref="queryRef" :opts="opts" @submit="onInput" @reset="onReset"></cmp-query>
+      <cmp-query ref="queryRef" :opts="opts" @submit="onInput" @reset="onReset">
+        <template #inspectionStringency="{ param }">
+          <t-select v-model="param.inspectionStringency" :clearable="true" label="严格度" @change="passStringency()">
+            <t-option
+              v-for="item in inspectionStringencyOption"
+              :key="item.label"
+              :label="item.label"
+              :value="item.value"
+            />
+          </t-select>
+        </template>
+        <template #aql="{ param }">
+          <t-select v-model="param.aql" :clearable="true" label="接收质量限" @click="onAqls(param)">
+            <t-option v-for="item in aqlDataList.list" :key="item" :label="item" :value="item" />
+          </t-select>
+        </template>
+      </cmp-query>
     </cmp-card>
     <cmp-card :span="12">
-      <cmp-table
-        ref="tableRefTop"
-        v-model:pagination="pageUI"
-        row-key="_timestamp"
-        :table-data="tableData"
-        active-row-type="single"
-        :total="0"
-        :hover="true"
-        :columns="columns"
-        :bordered="true"
-        :show-pagination="false"
-        :fixed-height="true"
-      >
-        <template #batch="{ row }">
-          {{
-            row.batchStart !== null && row.batchEnd !== null
-              ? `${row.batchStart}${row.batchEnd == '2147483647' ? '及以上' : '~' + row.batchEnd}`
-              : ''
-          }}
-        </template>
-        <template #title>
-          {{ '国标抽样方案' }}
-        </template>
-      </cmp-table>
+      <t-tabs v-model="tabValue" @change="tabChange">
+        <t-tab-panel label="国标抽样方案" value="0" :destroy-on-hide="true">
+          <cmp-table
+            ref="tableRefTop"
+            v-model:pagination="pageUI"
+            row-key="_timestamp"
+            :columns="columns"
+            :table-data="tableData"
+            active-row-type="single"
+            :total="0"
+            :hover="true"
+            :bordered="true"
+            :show-pagination="false"
+            :show-toolbar="false"
+          >
+            <template #batch="{ row }">
+              {{
+                row.batchStart !== null && row.batchEnd !== null
+                  ? `${row.batchStart}${row.batchEnd == '2147483647' ? '及以上' : '~' + row.batchEnd}`
+                  : ''
+              }}
+            </template>
+            <template #title>
+              {{ '国标抽样方案' }}
+            </template>
+          </cmp-table>
+        </t-tab-panel>
+        <t-tab-panel label="参考文件" value="1" :destroy-on-hide="true">
+          <div>
+            <t-image v-if="stringency == 'NORMAL'" :src="normalDrawing" />
+            <t-image v-if="stringency == 'RELAX'" :src="relaxDrawing" />
+            <t-image v-if="stringency == 'STRICT'" :src="strictDrawing" />
+          </div>
+        </t-tab-panel>
+      </t-tabs>
     </cmp-card>
   </cmp-container>
 </template>
 
 <script setup lang="ts">
 import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 
-import { api } from '@/api/main';
-import { api as apiMain } from '@/api/quality';
+import { api as apiMain } from '@/api/main';
+import { api } from '@/api/quality';
+import normalDrawing from '@/assets/images/NORMAL.jpg';
+import relaxDrawing from '@/assets/images/RELAX.jpg';
+import strictDrawing from '@/assets/images/STRICT.jpg';
 import { usePage } from '@/hooks/modules/page';
 
 const { pageUI } = usePage();
 const queryRef = ref();
+const tabValue = ref('0'); // 主界面tab的默认选中
+const stringency = ref(''); // 严格度值
 
 onMounted(async () => {
   await getcheckLevel();
   await getinspectionStringency();
 });
+
+// TAb 栏切换事件
+const tabChange = async (value) => {
+  if (value === '0') {
+    await queryRef.value.search();
+  } else if (value === '1') {
+    stringency.value = queryRef.value.getFromValue('inspectionStringency');
+  }
+};
+
+const passStringency = () => {
+  stringency.value = queryRef.value.getFromValue('inspectionStringency');
+};
+
+// #获取搜索 接收质量限 下拉框数据
+const aqlDataList = reactive({ list: [] });
+const onAqls = async (param) => {
+  const res = await api.samplingAql.getAqlList({
+    checkLevel: param.checkLevel,
+    inspectionStringency: param.inspectionStringency,
+  });
+  aqlDataList.list = res;
+};
 
 //* 重置
 const isResetting = ref(false);
@@ -70,59 +125,43 @@ const opts = computed(() => {
     },
     inspectionStringency: {
       label: '严格度',
-      comp: 't-select',
+      labelWidth: '60',
+      event: 'select',
       defaultVal: '',
-      bind: {
-        options: inspectionStringencyOption.value,
-        clearable: true,
-      },
+      slotName: 'inspectionStringency',
+    },
+    aql: {
+      label: '接收质量限',
+      labelWidth: '60',
+      event: 'select',
+      defaultVal: '',
+      slotName: 'aql',
+    },
+    approvalNum: {
+      label: '报批数量',
+      comp: 't-input',
+      event: 'input',
+      defaultVal: '',
     },
   };
 });
-
-//* 查询
-// const onInput = async (data: any) => {
-//   if (isResetting.value) {
-//     return;
-//   }
-//   const { checkLevel, inspectionStringency } = data;
-//   // 检查是否选择了必要的选项
-//   if (!checkLevel || !inspectionStringency) {
-//     MessagePlugin.warning('请先选择检验水平和严格度');
-//     return;
-//   }
-//   try {
-//     const updatedData = await apiMain.samplingAql.getList({
-//       checkLevel,
-//       inspectionStringency,
-//     });
-//     const data = updatedData.map((item, index) => ({
-//       batch: batch.value[index], // 从预定义的batch数组获取对应的值
-//       sampleQty: item.sampleQty,
-//       acRe: `${item.acceptQty} ${item.rejectQty}`,
-//       aql: item.aql,
-//     }));
-//     tableData.value = data;
-//   } catch (error) {
-//     console.error('查询出错:', error);
-//     MessagePlugin.error('查询失败，请稍后重试');
-//   }
-// };
 
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
   if (isResetting.value) {
     return;
   }
-  const { checkLevel, inspectionStringency } = data;
-  if (!checkLevel || !inspectionStringency) {
-    MessagePlugin.warning('请先选择检验水平和严格度');
+  const { checkLevel, inspectionStringency, aql, approvalNum } = data;
+  if (!checkLevel || !inspectionStringency || !aql) {
+    MessagePlugin.warning('请先选择检验水平、严格度和接收质量限！');
     return;
   }
   try {
-    const updatedData = await apiMain.samplingAql.getList({
+    const updatedData = await api.samplingAql.getList({
       checkLevel,
       inspectionStringency,
+      aql,
+      approvalNum,
     });
 
     tableData.value = updatedData.map((item) => ({
@@ -143,7 +182,7 @@ const onInput = async (data: any) => {
 const checkLevelOption = ref([]);
 const getcheckLevel = async () => {
   try {
-    const res = await api.param.getListByGroupCode({
+    const res = await apiMain.param.getListByGroupCode({
       parmGroupCode: 'Q_INSPECTION_STD_LEVEL',
     });
     checkLevelOption.value = res.map((status) => ({
@@ -161,7 +200,7 @@ const getcheckLevel = async () => {
 const inspectionStringencyOption = ref([]);
 const getinspectionStringency = async () => {
   try {
-    const res = await api.param.getListByGroupCode({
+    const res = await apiMain.param.getListByGroupCode({
       parmGroupCode: 'Q_INSPECTION_STRINGENCY',
     });
     inspectionStringencyOption.value = res.map((status) => ({
@@ -180,7 +219,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   {
     title: '样本大小',
     colKey: 'batch',
-    width: '150',
+    width: '70',
     cell: 'batchSlot',
   },
   {
@@ -189,134 +228,14 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '70',
   },
   {
-    title: '0.01',
-    children: [{ title: 'Ac Re', colKey: 'aql001', width: '65' }],
-    width: '110',
+    title: '允收数',
+    colKey: 'acceptQty',
+    width: '70',
   },
   {
-    title: '0.015',
-    children: [{ title: 'Ac Re', colKey: 'aql0015', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '0.025',
-    children: [{ title: 'Ac Re', colKey: 'aql0025', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '0.04',
-    children: [{ title: 'Ac Re', colKey: 'aql004', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '0.065',
-    children: [{ title: 'Ac Re', colKey: 'aql0065', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '0.1',
-    children: [{ title: 'Ac Re', colKey: 'aql01', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '0.15',
-    children: [{ title: 'Ac Re', colKey: 'aql015', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '0.25',
-    children: [{ title: 'Ac Re', colKey: 'aql025', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '0.4',
-    children: [{ title: 'Ac Re', colKey: 'aql04', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '0.65',
-    children: [{ title: 'Ac Re', colKey: 'aql065', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '1',
-    children: [{ title: 'Ac Re', colKey: 'aql1', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '1.5',
-    children: [{ title: 'Ac Re', colKey: 'aql1_5', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '2.5',
-    children: [{ title: 'Ac Re', colKey: 'aql2_5', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '4',
-    children: [{ title: 'Ac Re', colKey: 'aql4', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '6.5',
-    children: [{ title: 'Ac Re', colKey: 'aql6_5', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '10',
-    children: [{ title: 'Ac Re', colKey: 'aql10', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '15',
-    children: [{ title: 'Ac Re', colKey: 'aql15', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '25',
-    children: [{ title: 'Ac Re', colKey: 'aql25', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '40',
-    children: [{ title: 'Ac Re', colKey: 'aql40', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '65',
-    children: [{ title: 'Ac Re', colKey: 'aql65', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '100',
-    children: [{ title: 'Ac Re', colKey: 'aql100', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '150',
-    children: [{ title: 'Ac Re', colKey: 'aql150', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '250',
-    children: [{ title: 'Ac Re', colKey: 'aql250', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '400',
-    children: [{ title: 'Ac Re', colKey: 'aql400', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '650',
-    children: [{ title: 'Ac Re', colKey: 'aql650', width: '65' }],
-    width: '110',
-  },
-  {
-    title: '1000',
-    children: [{ title: 'Ac Re', colKey: 'aql1000', width: '65' }],
-    width: '110',
+    title: '拒收数',
+    colKey: 'rejectQty',
+    width: '70',
   },
 ];
 

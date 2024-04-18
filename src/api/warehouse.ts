@@ -356,12 +356,23 @@ export interface MiscellaneousManageSearch {
   pageNum?: number;
   /** @format int32 */
   pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
   /** 单据号 */
   billNo?: string;
   /** 原因 */
   reason?: string;
   creatorId?: string;
   warehouseId?: string;
+  businessCategoryId?: string;
 }
 
 /** 杂项管理VO */
@@ -1181,6 +1192,7 @@ export type TransferDtlVO = {
   memo?: string;
   /** 来源单据行号 */
   sourceBillLineNo?: string;
+  status?: string;
   mitemCode?: string;
   mitemName?: string;
   mitemDesc?: string;
@@ -1511,6 +1523,12 @@ export type TransferHeadVO = {
   datetimeReceipted?: string;
   /** 交易单身表 */
   transferDtlList?: TransferDtlVO[];
+  /** 原因 */
+  reasonName?: string;
+  /** 科目 */
+  accountName?: string;
+  /** 费用部门 */
+  costDepartmentName?: string;
   /** 第一个明细的ERP单据行号 */
   firstErpLineNo?: string;
 } | null;
@@ -3853,11 +3871,6 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
-  flpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  bfpickQty?: number;
-  tlpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -3868,6 +3881,11 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
+  flpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
 }
 
 /** 通用响应类 */
@@ -4105,6 +4123,220 @@ export interface ResultLocationVO {
   message?: string;
   /** 显示产品条码管理 */
   data?: LocationVO;
+}
+
+/** 杂项管理明细 */
+export interface MiscellaneousManageDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  warehouseId?: string;
+  districtId?: string;
+  locId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  toLocId?: string;
+  mitemId?: string;
+  mitemCategoryId?: string;
+  moScheId?: string;
+  /** 需求数量 */
+  reqQty?: number;
+  /** 实际拣料数量 */
+  pickQty?: number;
+  /** 原因 */
+  reason?: string;
+  /** 相关凭证号 */
+  voucherLineNo?: string;
+  /** 通知凭证 */
+  noticeVoucherLineNo?: string;
+  /** 批次号 */
+  batchLot?: string;
+  /** 采购订单号 */
+  poNum?: string;
+  /** ERP单据明细号 */
+  erpLineNo?: string;
+  /** 备注 */
+  memo?: string;
+  /** 来源单据行号 */
+  sourceBillLineNo?: string;
+  /** 单据状态 */
+  status?: string;
+  /** 批次接收量 */
+  batchLotQty?: number;
+  mitemCode?: string;
+  mitemName?: string;
+  mitemDesc?: string;
+  warehouseCode?: string;
+  warehouseName?: string;
+  toWarehouseCode?: string;
+  toWarehouseName?: string;
+  districtCode?: string;
+  districtName?: string;
+  toDistrictCode?: string;
+  toDistrictName?: string;
+  locationCode?: string;
+  locationName?: string;
+  toLocationCode?: string;
+  toLocationName?: string;
+  uom?: string;
+  uomName?: string;
+  /**
+   * 是否启用批次,1：是；0：否
+   * @format int32
+   */
+  isBatchNo?: number;
+  scheCode?: string;
+  /** 交易单身标签表 */
+  transferDtlBarcodeList?: TransferDtlBarcodeVO[];
+  /** 是否已完成交接 */
+  isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
+}
+
+/** 杂项管理头表 */
+export type MiscellaneousManageHeadVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  /**
+   * 单身行数
+   * @format int32
+   */
+  lineCount?: number;
+  /** ERP单据号 */
+  erpBillNo?: string;
+  /** 来源单据号 */
+  sourceBillNo?: string;
+  /** 用途 */
+  purpose?: string;
+  /** 相关凭证 */
+  voucherNo?: string;
+  /** 通知凭证 */
+  noticeVoucherNo?: string;
+  supplierId?: string;
+  /** 备注 */
+  memo?: string;
+  /** 原因 */
+  reason?: string;
+  /** 科目 */
+  account?: string;
+  /** 费用部门 */
+  costDepartment?: string;
+  /** 状态 */
+  status?: string;
+  /** 状态名称 */
+  statusName?: string;
+  /** 创建人名称 */
+  userName?: string;
+  /** 创建人姓名 */
+  displayName?: string;
+  businessCategoryId?: string;
+  /** 单据业务类型编码 */
+  businessCategoryCode?: string;
+  /** 单据业务类型名称 */
+  businessCategoryName?: string;
+  userTransferId?: string;
+  /** 过帐人名称 */
+  userTransferName?: string;
+  /** 过帐人姓名 */
+  displayTransferName?: string;
+  /**
+   * 过帐时间
+   * @format date-time
+   */
+  datetimeTransfer?: string;
+  /** 数量 */
+  qty?: number;
+  /** 工单 */
+  moCode?: string;
+  warehouseId?: string;
+  /** 来源仓库编码 */
+  warehouseCode?: string;
+  /** 来源仓库名称 */
+  warehouseName?: string;
+  toWarehouseId?: string;
+  /** 目标仓库编码 */
+  toWarehouseCode?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
+  /** 供应商代码 */
+  supplierCode?: string;
+  /** 供应商名称 */
+  supplierName?: string;
+  /**
+   * 接收时间
+   * @format date-time
+   */
+  datetimeReceipted?: string;
+  /** 交易单身表 */
+  transferDtlList?: MiscellaneousManageDtlVO[];
+  /** 原因 */
+  reasonName?: string;
+  /** 科目 */
+  accountName?: string;
+  /** 费用部门 */
+  costDepartmentName?: string;
+  /** 第一个明细的ERP单据行号 */
+  firstErpLineNo?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultMiscellaneousManageHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 杂项管理头表 */
+  data?: MiscellaneousManageHeadVO;
 }
 
 /** 领料执行提交模型 */
@@ -4542,13 +4774,13 @@ export interface MaterialRequisitionDtlVO {
   /** 已领用量 */
   alreadyPickQty?: number;
   supplierId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /**
    * 需求用量
    * @format int32
    */
   moRequestQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 查询库存模型 */
@@ -8833,6 +9065,25 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+  },
+  miscellaneousmanage: {
+    /**
+     * No description
+     *
+     * @tags 杂项管理
+     * @name GetTransferByOdiAndOdo
+     * @summary 获取杂项单据信息
+     * @request POST:/miscellaneousmanage/getTransferByOdiAndOdo
+     * @secure
+     */
+    getTransferByOdiAndOdo: (data: MiscellaneousManageSearch) =>
+      http.request<ResultMiscellaneousManageHeadVO['data']>(
+        `/api/warehouse/miscellaneousmanage/getTransferByOdiAndOdo`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
   },
   materialRequisitionExcute: {
     /**
