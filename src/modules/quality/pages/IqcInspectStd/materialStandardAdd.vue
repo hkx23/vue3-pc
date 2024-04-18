@@ -630,6 +630,7 @@ const onConfirmDtl = async () => {
       allDtl.value.push({ ...dtlFormRef.value.rowData, index: allDtl.value.length });
       onRefresh();
       onSearchKey();
+      dataTotal.value += 1;
     }
     touchstoneFormVisible.value = false;
   }
