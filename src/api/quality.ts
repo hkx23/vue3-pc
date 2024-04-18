@@ -1588,7 +1588,7 @@ export interface PqcInspectFirstStdFullVO {
   /** AC值 */
   acValue?: number;
   /** 检验类型 */
-  inspectTypeName?: number;
+  inspectTypeName?: string;
   /** 项目分类名称 */
   itemCategoryName?: string;
   /** 文件列表 */
@@ -2621,10 +2621,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 业务类型名称 */
-  businessCategoryName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+  /** 业务类型名称 */
+  businessCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -3219,8 +3219,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdId?: string;
   iqcInspectStdDtlId?: string;
+  iqcInspectStdId?: string;
 }
 
 /** 响应数据 */
@@ -4507,9 +4507,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
-  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
+  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5709,13 +5709,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s4?: string;
-  s1?: string;
-  s3?: string;
-  s2?: string;
-  iii?: string;
   i?: string;
   ii?: string;
+  iii?: string;
+  s4?: string;
+  s2?: string;
+  s3?: string;
+  s1?: string;
 } | null;
 
 /** 标签模板 */
