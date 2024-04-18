@@ -87,6 +87,9 @@ const tabChange = async (value) => {
     await queryRef.value.search();
   } else if (value === '1') {
     stringency.value = queryRef.value.getFromValue('inspectionStringency');
+    if (stringency.value === '') {
+      MessagePlugin.warning('请先选择严格度！');
+    }
   }
 };
 
