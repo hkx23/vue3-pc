@@ -1484,6 +1484,8 @@ export interface PqcInspectFirstBillFullVO {
    * @format int32
    */
   isStartImprove?: number;
+  /** 检验标准头表附件 */
+  inspectStdHeadAttachment?: ViewFileVO[];
   /** 检验结果名称 */
   inspectResultName?: string;
 }
@@ -1591,8 +1593,10 @@ export interface PqcInspectFirstStdFullVO {
   inspectTypeName?: string;
   /** 项目分类名称 */
   itemCategoryName?: string;
-  /** 文件列表 */
-  fileList?: FileVO[];
+  /** 产品检验项目执行的文件列表 */
+  fileList?: UploadFile[];
+  /** 检验标准项目的标准附件 */
+  inspectStdDtlAttachment?: ViewFileVO[];
   /** 项目特性 */
   characteristicsName?: string;
 }
@@ -1602,6 +1606,39 @@ export interface PqcStdItemCategoryVO {
   itemCategory?: string;
   itemCategoryName?: string;
   inspectItems?: PqcInspectFirstStdFullVO[];
+}
+
+/** 前端文件VO */
+export interface UploadFile {
+  id?: string;
+  /** 文件名 */
+  name?: string;
+  size?: string;
+  /** 文件MIME类型 */
+  type?: string;
+  lastModified?: string;
+  /** 文件相对路径 */
+  webkitRelativePath?: string;
+  /** 文件路径（也可能是Base64数据） */
+  url?: string;
+  /** 上传状态 */
+  status?: string;
+  /** 文件内容 */
+  fileContent?: string;
+}
+
+/** 移动端附件查看 */
+export interface ViewFileVO {
+  id?: string;
+  /** 文件名 */
+  fileName?: string;
+  /** 文件尺寸 */
+  path?: string;
+  /**
+   * 文件最后修改时间戳
+   * @format date-time
+   */
+  lastModified?: string;
 }
 
 /** 通用响应类 */
@@ -2621,10 +2658,10 @@ export interface OqcInspectBillFullVO {
   defectCodeList?: Dropdown[];
   /** 检验结果名称 */
   inspectResultName?: string;
-  /** 检验类型名称 */
-  inspectCategoryName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验类型名称 */
+  inspectCategoryName?: string;
 }
 
 /** 通用响应类 */
@@ -2815,6 +2852,8 @@ export interface IqcInspectStdMitemSearch {
   /** 标准编码名称模糊 */
   keyword?: string;
   mitemCategoryId?: string;
+  /** 物料类别ID列表 */
+  mitemCategoryIds?: string[];
   mitemId?: string;
   iqcInspectStdId?: string;
 }
@@ -3219,8 +3258,8 @@ export interface IqcInspectStdDtlSearch {
   status?: string[];
   /** 创建人名称 */
   userNames?: string[];
-  iqcInspectStdDtlId?: string;
   iqcInspectStdId?: string;
+  iqcInspectStdDtlId?: string;
 }
 
 /** 响应数据 */
@@ -4507,9 +4546,9 @@ export interface IqcInspectDtlFullVO {
   uom?: string;
   /** 计量单位符号 */
   uomName?: string;
+  iqcInspectDtlId?: string;
   /** 项目特性 */
   characteristicsName?: string;
-  iqcInspectDtlId?: string;
   /** 是否CTQ */
   isCtqName?: string;
 }
@@ -5513,10 +5552,10 @@ export interface QcHoldVO {
    */
   modifiedTime?: string;
   dtls?: QcHoldDtlVO[];
-  /** 操作类别名称 */
-  holdCategoryName?: string;
   /** 状态名称 */
   statusName?: string;
+  /** 操作类别名称 */
+  holdCategoryName?: string;
 }
 
 /** 品质控制 */
@@ -5709,13 +5748,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  i?: string;
-  ii?: string;
   iii?: string;
-  s4?: string;
-  s2?: string;
   s3?: string;
+  s2?: string;
   s1?: string;
+  s4?: string;
+  ii?: string;
+  i?: string;
 } | null;
 
 /** 标签模板 */
@@ -6797,7 +6836,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name SubmitJyQqcInspect
      * @summary 检验执行-暂存与提交
      * @request POST:/oqcInspect/submitJyQqcInspect
@@ -6812,7 +6851,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name SubmitBjQqcInspect
      * @summary 报检-新增产品检验单据-暂存与提交
      * @request POST:/oqcInspect/submitBjQqcInspect
@@ -6827,7 +6866,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name ScanYjProductBarcode
      * @summary 检验执行-扫描产品条码
      * @request POST:/oqcInspect/scanYJProductBarcode
@@ -6842,7 +6881,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name ScanProductBarcode
      * @summary 报检-扫描产品条码
      * @request POST:/oqcInspect/scanProductBarcode
@@ -6857,7 +6896,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name Search
      * @summary 获取产品检验单据（筛选用）-公共组件 - 仅显示状态为已完成
      * @request POST:/oqcInspect/items
@@ -6872,7 +6911,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name GetStdDtlListByMitem
      * @summary 根据物料或者物料分类获取产品检验项目
      * @request POST:/oqcInspect/getStdDtlListByMitem
@@ -6887,7 +6926,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name GetOqcInspectDtlFullBillList
      * @summary 主界面-查询
      * @request POST:/oqcInspect/getOqcInspectDtlFullBillList
@@ -6905,7 +6944,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name GetBarcodeTableList
      * @summary 获取条码列表
      * @request POST:/oqcInspect/getBarcodeTableList
@@ -6920,7 +6959,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name DeleteYjProductBarcode
      * @summary 检验执行-删除产品条码
      * @request POST:/oqcInspect/deleteYJProductBarcode
@@ -6935,7 +6974,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name DeleteList
      * @summary 主界面-删除
      * @request POST:/oqcInspect/deleteList
@@ -6950,7 +6989,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name DeleteFile
      * @summary 删除文件
      * @request POST:/oqcInspect/deleteFile
@@ -6965,7 +7004,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name DeleteBatchFiles
      * @summary 批量删除文件
      * @request POST:/oqcInspect/deleteBatchFile
@@ -6980,7 +7019,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name AddFile
      * @summary 新增文件
      * @request POST:/oqcInspect/addFile
@@ -6995,7 +7034,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name GetOqcInspectItemFileList
      * @summary 根据ID获取文件信息
      * @request POST:/oqcInspect/GetOqcInspectItemFileList
@@ -7010,7 +7049,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name GetProductSampleQtyByNational
      * @summary 国标-获取产品检验的样本数
      * @request GET:/oqcInspect/getProductSampleQtyByNational
@@ -7030,7 +7069,7 @@ export const api = {
     /**
      * No description
      *
-     * @tags 成品检验头表
+     * @tags 产品检验
      * @name GetProductSampleQtyByEnterprise
      * @summary 企标-获取产品检验的样本数
      * @request GET:/oqcInspect/getProductInspectQtyByEnterprise
@@ -7097,7 +7136,7 @@ export const api = {
      * @request POST:/iqcInspectStdMitem/add
      * @secure
      */
-    add: (data: IqcInspectStdMitem) =>
+    add: (data: IqcInspectStdMitemSearch) =>
       http.request<ResultObject['data']>(`/api/quality/iqcInspectStdMitem/add`, {
         method: 'POST',
         body: data as any,

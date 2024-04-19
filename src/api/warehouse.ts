@@ -256,6 +256,7 @@ export type UserWarehouseVO = {
   oid?: string;
   userId?: string;
   warehouseId?: string;
+  transferConstraintId?: string;
   warehouseCode?: string;
   warehouseName?: string;
   warehouseCategory?: string;
@@ -2230,10 +2231,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 仓库物料汇总key */
-  sumKey?: string;
   /** 待发货数量 */
   waitDeliveriedQty?: number;
+  /** 仓库物料汇总key */
+  sumKey?: string;
 }
 
 /** 响应数据 */
@@ -2750,10 +2751,10 @@ export interface DeliveryDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 物料检验单明细 */
@@ -2924,10 +2925,10 @@ export interface PurchaseOrderDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3866,9 +3867,6 @@ export interface MoIssuanceDtlVO {
   handQty?: number;
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  flpickQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
   /**
    * 已扫描数量
    * @format double
@@ -3886,6 +3884,9 @@ export interface MoIssuanceDtlVO {
   moRequestQty?: number;
   /** 已发料量 */
   alreadyPickQty?: number;
+  flpickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -4211,10 +4212,12 @@ export interface MiscellaneousManageDtlVO {
   scheCode?: string;
   /** 交易单身标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
+  /** 库存现有量 */
+  onhandQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 /** 杂项管理头表 */
@@ -4337,6 +4340,27 @@ export interface ResultMiscellaneousManageHeadVO {
   message?: string;
   /** 杂项管理头表 */
   data?: MiscellaneousManageHeadVO;
+}
+
+export interface MiscellaneousManageConfirmSubmit {
+  billNo?: string;
+  labelNo?: string;
+  mitemCode?: string;
+  transferTypeValue?: string;
+  businessCategoryId?: string;
+  transferConstraintId?: string;
+  warehouseId?: string;
+  toOid?: string;
+  toWarehouseId?: string;
+  locId?: string;
+  toLocId?: string;
+  /** 费用部门 */
+  costDepartmentValue?: string;
+  /** 科目 */
+  accountValue?: string;
+  /** 原因 */
+  reasonValue?: string;
+  list?: BillInfoMMVO[];
 }
 
 /** 领料执行提交模型 */
@@ -9079,6 +9103,24 @@ export const api = {
     getTransferByOdiAndOdo: (data: MiscellaneousManageSearch) =>
       http.request<ResultMiscellaneousManageHeadVO['data']>(
         `/api/warehouse/miscellaneousmanage/getTransferByOdiAndOdo`,
+        {
+          method: 'POST',
+          body: data as any,
+        },
+      ),
+
+    /**
+     * No description
+     *
+     * @tags 杂项管理
+     * @name AddOdiAndOdoDtlByMitem
+     * @summary 根据物料创建或修改杂项单据明细
+     * @request POST:/miscellaneousmanage/addOdiAndOdoDtlByMitem
+     * @secure
+     */
+    addOdiAndOdoDtlByMitem: (data: MiscellaneousManageConfirmSubmit) =>
+      http.request<ResultMiscellaneousManageHeadVO['data']>(
+        `/api/warehouse/miscellaneousmanage/addOdiAndOdoDtlByMitem`,
         {
           method: 'POST',
           body: data as any,

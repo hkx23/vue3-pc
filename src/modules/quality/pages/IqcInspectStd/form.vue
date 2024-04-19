@@ -15,11 +15,12 @@
       <t-col :span="12">
         <t-form-item label="物料类别" name="mitemCategory">
           <bcmp-select-business
-            v-model="formData.mitemCategoryId"
+            v-model="formData.mitemCategoryIds"
             type="mitemCategory"
             :clearable="true"
             :disabled="!isEmpty(formData.mitemId)"
             :show-title="false"
+            is-multiple
           ></bcmp-select-business>
         </t-form-item>
       </t-col>
@@ -29,7 +30,7 @@
             v-model="formData.mitemId"
             type="mitem"
             :show-title="false"
-            :disabled="!isEmpty(formData.mitemCategoryId)"
+            :disabled="!isEmpty(formData.mitemCategoryIds)"
             :clearable="true"
           ></bcmp-select-business>
         </t-form-item>
@@ -54,7 +55,7 @@ export default {
       id: '',
       inspectStdCode: '',
       inspectStdName: '',
-      mitemCategoryId: '',
+      mitemCategoryIds: null,
       mitemId: '',
     });
     // #表单定义规则
@@ -65,8 +66,8 @@ export default {
     };
 
     const submit = async () => {
-      if (isEmpty(formData.value.mitemId) && !formData.value.mitemCategoryId) {
-        MessagePlugin.warning('物料和物料类别至少选择一个！');
+      if (isEmpty(formData.value.mitemId) && formData.value.mitemCategoryIds.length < 1) {
+        MessagePlugin.warning('请选择物料或物料类别！');
         return false;
       }
       if (formData.value.type === 'add' && isEmpty(formData.value.inspectStdCode)) {
@@ -77,7 +78,9 @@ export default {
         await api.iqcInspectStdMitem.add({
           iqcInspectStdId: formData.value.iqcInspectStdId,
           mitemId: formData.value.mitemId,
-          mitemCategoryId: formData.value.mitemCategoryId,
+          mitemCategoryIds: isEmpty(formData.value.mitemCategoryIds)
+            ? formData.value.mitemCategoryIds
+            : formData.value.mitemCategoryIds.split(','),
         });
       } else {
         await api.iqcInspectStdMitem.modify({
@@ -95,10 +98,10 @@ export default {
       });
       if (res) {
         formData.value.mitemId = res[0]?.mitemId;
-        formData.value.mitemCategoryId = res[0]?.mitemCategoryId;
+        formData.value.mitemCategoryIds = res[0]?.mitemCategoryId;
       } else {
         formData.value.mitemId = '';
-        formData.value.mitemCategoryId = '';
+        formData.value.mitemCategoryIds = '';
       }
     };
     const namesOption = ref([]);
@@ -143,7 +146,7 @@ export default {
         iqcInspectStdId: '',
         inspectStdCode: '',
         inspectStdName: '',
-        mitemCategoryId: '',
+        mitemCategoryIds: '',
         mitemId: '',
       };
     };

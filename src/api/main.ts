@@ -1950,6 +1950,189 @@ export interface ResultPagingDataMsgSendLog {
   data?: PagingDataMsgSendLog;
 }
 
+export interface SparePartTransferHeadSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  /** 单据号模糊 */
+  billNo?: string;
+  /** 单据类型 */
+  billCategory?: string;
+  creatorId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataSparePartTransferHeadVO = {
+  list?: SparePartTransferHeadVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSparePartTransferHeadVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSparePartTransferHeadVO;
+}
+
+export interface SparePartTransferHeadVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 单据业务类型 */
+  billBusinessType?: string;
+  /** 单据类型 */
+  billCategory?: string;
+  /** 关联单据号 */
+  relateBillNo?: string;
+  /** 备注 */
+  memo?: string;
+  /** 单据类型名称 */
+  billCategoryName?: string;
+  /** 单据业务类型名称 */
+  billBusinessTypeName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+}
+
+export interface SparePartTransferDtlSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  transferHeadId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataSparePartTransferDtlVO = {
+  list?: SparePartTransferDtlVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataSparePartTransferDtlVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataSparePartTransferDtlVO;
+}
+
+export interface SparePartTransferDtlVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  transferHeadId?: string;
+  sparePartId?: string;
+  warehouseId?: string;
+  districtId?: string;
+  toWarehouseId?: string;
+  toDistrictId?: string;
+  /** 数量 */
+  qty?: number;
+  /** 单位 */
+  uom?: string;
+  /** 备注 */
+  memo?: string;
+  /** 备品备件编码 */
+  sparePartCode?: string;
+  /** 备品备件名称 */
+  sparePartName?: string;
+  /** 源仓库名称 */
+  warehouseName?: string;
+  /** 源货位名称 */
+  districtName?: string;
+  /** 目标仓库名称 */
+  toWarehouseName?: string;
+  /** 目标货位名称 */
+  toDistrictName?: string;
+  /** 计量单位符号 */
+  uomName?: string;
+}
+
 /** 设备 */
 export interface Equipment {
   id?: string;
@@ -2919,8 +3102,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -5028,11 +5211,11 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
+  stateName?: string;
+  isState?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
   isExemptionInspectionChecked?: boolean;
-  isState?: boolean;
-  stateName?: string;
   dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
 }
@@ -5245,15 +5428,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isState?: boolean;
   stateName?: string;
+  isInProcessName?: string;
+  isBatchName?: string;
+  isProductName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isState?: boolean;
   isProductChecked?: boolean;
   isInProcessChecked?: boolean;
-  isProductName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isRawName?: string;
-  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -7244,8 +7427,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -8505,8 +8688,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -9867,10 +10050,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
 } | null;
@@ -12617,6 +12800,38 @@ export const api = {
     cpuCompute: () =>
       http.request<ResultInteger['data']>(`/api/main/stressTest/CPUCompute`, {
         method: 'GET',
+      }),
+  },
+  sparePartTransferHead: {
+    /**
+     * No description
+     *
+     * @tags 备品备件库存交易头表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/sparePartTransferHead/getList
+     * @secure
+     */
+    getList: (data: SparePartTransferHeadSearch) =>
+      http.request<ResultPagingDataSparePartTransferHeadVO['data']>(`/api/main/sparePartTransferHead/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  sparePartTransferDtl: {
+    /**
+     * No description
+     *
+     * @tags 备品备件库存交易明细表
+     * @name GetList
+     * @summary 查询主界面数据
+     * @request POST:/sparePartTransferDtl/getList
+     * @secure
+     */
+    getList: (data: SparePartTransferDtlSearch) =>
+      http.request<ResultPagingDataSparePartTransferDtlVO['data']>(`/api/main/sparePartTransferDtl/getList`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   sparePartTransfer: {
