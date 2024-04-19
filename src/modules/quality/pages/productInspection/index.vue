@@ -1,14 +1,13 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query :opts="optsTab1" :is-expansion="true" @submit="conditionEnter" @reset="onReset" />
+      <cmp-query :opts="optsTab1" :is-expansion="false" @submit="conditionEnter" @reset="onReset" />
     </cmp-card>
     <cmp-card :span="12">
       <cmp-table
         v-model:pagination="pageTab1"
         row-key="id"
-        :hover="false"
-        :stript="false"
+        :fixed-height="true"
         :table-column="waitInspectColumns"
         active-row-type="single"
         :table-data="waitInspectData"
@@ -149,7 +148,7 @@ const optsTab1 = computed(() => {
       event: 'business',
       defaultVal: '',
       bind: {
-        type: 'person',
+        type: 'user',
         showTitle: false,
       },
     },

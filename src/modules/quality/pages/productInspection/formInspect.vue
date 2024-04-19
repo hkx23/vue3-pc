@@ -526,6 +526,9 @@ const FORM_RULES = {
 const scanInfoList = ref<BarcodeVO[]>([]);
 
 const tableBarcodeSelectedChange = ({ row }) => {
+  if (formData.viewType === ViewType.BJ) {
+    return;
+  }
   // 加载条码检验项
   barcodeSelectedChange(row);
 };
@@ -564,7 +567,7 @@ const defaultTableData = ref<OqcInspectStdFullVO[]>([]); // 用于检验扫码�
 const tableSelectedRowKeys = ref([]);
 const tableData = ref<OqcInspectStdFullVO[]>([]);
 const tableColumns: PrimaryTableCol<TableRowData>[] = [
-  { title: '项目类别', width: 160, colKey: 'itemCategory' },
+  { title: '项目类别', width: 160, colKey: 'itemCategoryName' },
   { title: '检验内容', width: 160, colKey: 'itemName' },
   { title: '技术要求', width: 160, colKey: 'technicalRequest' },
   { title: '项目特性', width: 100, colKey: 'characteristicsName' },
