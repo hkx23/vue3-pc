@@ -416,3 +416,15 @@ a .t-tag:hover {
 .t-tree__item:not([style*='--level: 0']) {
   color: var(--new-color);
 }
+
+.full-screen-dialog-flex {
+  .t-dialog__wrap {
+    display: flex !important;
+    overflow: hidden !important;
+    flex-direction: column !important;
+  }
+
+  .t-dialog__body .t-form .t-form__item .t-form__controls-content {
+    width: 100%;
+  }
+}

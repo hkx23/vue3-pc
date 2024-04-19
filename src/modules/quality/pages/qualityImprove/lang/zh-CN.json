@@ -84,6 +84,8 @@
     "isBatch": "是否批量",
     "problemDescAdd": "问题补充",
     "datetimeRequireFinish": "要求完成时间",
-    "relateBillNoCell": "关联检验单号"
+    "relateBillNoCell": "关联检验单号",
+    "dialogTitleAdd": "发起品质改善",
+    "dialogTitleEdit": "填写报告"
   }
 }

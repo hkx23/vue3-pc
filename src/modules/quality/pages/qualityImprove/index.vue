@@ -1,5 +1,5 @@
 <template>
-  <cmp-container v-show="!pageShow" :full="true">
+  <cmp-container :full="true">
     <cmp-card :span="12">
       <!-- 查询组件  -->
       <cmp-query :opts="opts" @submit="conditionEnter"> </cmp-query>
@@ -47,9 +47,17 @@
       </cmp-table>
     </cmp-card>
   </cmp-container>
-  <cmp-container v-show="pageShow" :full="true">
+  <!-- <cmp-container v-show="pageShow" :full="true">
+    
     <qualityImproveAdd ref="formRef" @permission-show="onPermission"></qualityImproveAdd>
-  </cmp-container>
+  </cmp-container> -->
+
+  <qualityImproveAdd
+    ref="formRef"
+    v-model:visible="pageShow"
+    :title="dialogTitle"
+    @permission-show="onPermission"
+  ></qualityImproveAdd>
 </template>
 
 <script setup lang="ts">
@@ -71,6 +79,7 @@ const { pageUI } = usePage();
 const { loading } = useLoading();
 const tableData = ref([]);
 const formRef = ref(null);
+const dialogTitle = ref('');
 
 const pageShow = ref(false);
 const onPermission = (value) => {
@@ -79,6 +88,7 @@ const onPermission = (value) => {
 };
 const onAdd = async () => {
   await formRef.value.init();
+  dialogTitle.value = t('qualityImprove.dialogTitleAdd');
   pageShow.value = true;
 };
 const onEdit = async (row) => {
@@ -86,6 +96,7 @@ const onEdit = async (row) => {
   formRef.value.formData.id = row.id;
   formRef.value.formData.operateType = 'edit';
   await formRef.value.initEdit();
+  dialogTitle.value = t('qualityImprove.dialogTitleEdit');
   pageShow.value = true;
 };
 const onCheck = async (row) => {

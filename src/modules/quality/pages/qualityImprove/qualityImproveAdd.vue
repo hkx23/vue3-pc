@@ -1,947 +1,1128 @@
 <template>
-  <cmp-container :full="true">
-    <cmp-card>
-      <!-- !提交暂存模块 -->
-      <t-row v-if="alertReject" style="display: flex; justify-content: center">
-        <t-alert theme="error">{{ alertRejectMessage }}</t-alert>
-      </t-row>
-      <t-row justify="space-between" align="center">
-        <t-col>
-          <t-button v-if="formData.operateType !== 'check'" @click="onSubmit">{{ t('common.button.save') }}</t-button>
-          <t-button v-if="formData.operateType !== 'check'" theme="default" @click="onStaging">{{
-            t('qualityImprove.staging')
-          }}</t-button>
-          <t-button
-            v-if="formData.status != 'DRAFT' && formData.operateType != 'check'"
-            theme="default"
-            @click="formVisibleReject = true"
-            >{{ t('qualityImprove.reject') }}</t-button
-          >
-        </t-col>
-        <close-icon :style="{ cursor: 'pointer' }" @click="onClose" />
-      </t-row>
-      <t-row v-if="formData.status !== 'DRAFT' && formData.improveTool === '8D'" style="margin-top: 20px">
-        <t-steps :current="currentStage" readonly>
-          <t-step-item :content="t('qualityImprove.Launch')" />
-          <t-step-item :content="t('qualityImprove.8dStepOne')" />
-          <t-step-item :content="t('qualityImprove.8dStepTwo')" />
-          <t-step-item :content="t('qualityImprove.8dStepThere')" />
-          <t-step-item :content="t('qualityImprove.8dStepFour')" />
-          <t-step-item :content="t('qualityImprove.8dStepFive')" />
-          <t-step-item :content="t('qualityImprove.8dStepSix')" />
-          <t-step-item :content="t('qualityImprove.8dStepSeven')" />
-          <t-step-item :content="t('qualityImprove.8dStepEight')" />
-        </t-steps>
-      </t-row>
-      <t-row v-if="formData.status !== 'DRAFT' && formData.improveTool === 'PDCA'" style="margin-top: 20px">
-        <t-steps :current="currentStage" readonly>
-          <t-step-item :content="t('qualityImprove.Launch')" />
-          <t-step-item :content="t('qualityImprove.PDCAP')" />
-          <t-step-item :content="t('qualityImprove.PDCAD')" />
-          <t-step-item :content="t('qualityImprove.PDCAC')" />
-          <t-step-item :content="t('qualityImprove.PDCAA')" />
-        </t-steps>
-      </t-row>
-      <t-tabs v-model="tagValue" style="margin-top: 20px">
-        <t-tab-panel :value="0" :label="t('qualityImprove.mainInfo')" :destroy-on-hide="false">
-          <template #panel>
-            <!-- !基础信息模块 -->
-            <cmp-card :hover-shadow="false">
-              <t-row style="margin-left: 50px" justify="space-between" align="center">
-                <t-col>
-                  <span class="span_title">{{ t('qualityImprove.baseInfo') }}</span>
-                  <span style="margin-left: 10px">{{ formData.billNo }}</span>
-                </t-col>
-              </t-row>
-              <t-form
-                ref="formRef"
-                :rules="rules"
-                :data="formData"
-                :show-error-message="false"
-                label-align="right"
-                label-width="120px"
-                style="margin-top: 10px"
+  <t-dialog
+    v-model:visible="mainDialogVisible"
+    :close-on-overlay-click="false"
+    :header="props.title"
+    mode="full-screen"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    class="full-screen-dialog-flex"
+  >
+    <cmp-container :full="true">
+      <cmp-card :ghost="true">
+        <cmp-container :full="true" :full-sub-index="[1]">
+          <cmp-card :ghost="true">
+            <!-- !提交暂存模块 -->
+            <t-row v-if="alertReject" style="display: flex; justify-content: center">
+              <t-alert theme="error">{{ alertRejectMessage }}</t-alert>
+            </t-row>
+            <!-- <t-row justify="space-between" align="center">
+            <t-col>
+              <t-button v-if="formData.operateType !== 'check'" @click="onSubmit">{{
+                t('common.button.save')
+              }}</t-button>
+              <t-button v-if="formData.operateType !== 'check'" theme="default" @click="onStaging">{{
+                t('qualityImprove.staging')
+              }}</t-button>
+              <t-button
+                v-if="formData.status != 'DRAFT' && formData.operateType != 'check'"
+                theme="default"
+                @click="formVisibleReject = true"
+                >{{ t('qualityImprove.reject') }}</t-button
               >
-                <t-row :gutter="[32, 16]">
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.inspectionType')" label-align="right" name="inspectType">
-                      <t-select
-                        v-model="formData.inspectType"
-                        style="width: 200px"
-                        :disabled="formData.id !== ''"
-                        @change="onChangeType"
-                      >
-                        <t-option
-                          v-for="item in inspectTypeOption"
-                          :key="item.id"
-                          :label="item.label"
-                          :value="item.value"
-                        />
-                      </t-select>
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.relateBillNo')" label-align="right" name="relateBillNo">
-                      <t-select
-                        v-model="formData.relateBillNo"
-                        :placeholder="t('qualityImprove.selectBillNo')"
-                        style="width: 200px"
-                        filterable
-                        input-props
-                        :disabled="formData.id !== ''"
-                        @change="onChangeBillNo"
-                        @input-change="querySelectChange($event)"
-                      >
-                        <t-option
-                          v-for="item in billNoOption"
-                          :key="item.id"
-                          :label="item.billNo"
-                          :value="item.billNo"
-                        />
-                      </t-select>
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.mitemCode')" label-align="right" name="mitemCode">
-                      <t-input
-                        v-model="formData.mitemCode"
-                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
-                        style="width: 200px"
-                        :disabled="true"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <!-- 第 2️⃣ 行数据 -->
-                  <t-col :span="4">
-                    <t-form-item :label="t('business.main.mitemDesc')" label-align="right" name="mitemDesc">
-                      <t-input
-                        v-model="formData.mitemDesc"
-                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
-                        style="width: 200px"
-                        :disabled="true"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.supplierCode')" label-align="right" name="supplierCode">
-                      <t-input
-                        v-model="formData.supplierCode"
-                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
-                        style="width: 200px"
-                        :disabled="true"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.supplierName')" label-align="right" name="supplierName">
-                      <t-input
-                        v-model="formData.supplierName"
-                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
-                        style="width: 200px"
-                        :disabled="true"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('business.main.workshop')" label-align="right" name="workshopName">
-                      <t-input
-                        v-model="formData.workshopName"
-                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
-                        style="width: 200px"
-                        :disabled="true"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('business.main.workcenter')" label-align="right" name="workcenterName">
-                      <t-input
-                        v-model="formData.workcenterName"
-                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
-                        style="width: 200px"
-                        :disabled="true"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.moScheCode')" label-align="right" name="scheCode">
-                      <t-input
-                        v-model="formData.scheCode"
-                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
-                        style="width: 200px"
-                        :disabled="true"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.defectCategory')" label-align="right" name="defectCategory">
-                      <t-input
-                        v-model="formData.defectCategoryName"
-                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
-                        style="width: 200px"
-                        :disabled="true"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.handleMethod')" label-align="right" name="handleMethod">
-                      <t-input
-                        v-model="formData.handleMethod"
-                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
-                        style="width: 200px"
-                        :disabled="true"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item
-                      :label="t('qualityImprove.deptResponsibility')"
-                      label-align="right"
-                      name="deptResponsibilityId"
-                    >
-                      <bcmp-select-business
-                        v-model="formData.deptResponsibilityId"
-                        :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
-                        type="admin_org"
-                        :show-title="false"
-                        style="width: 200px"
-                      ></bcmp-select-business>
-                    </t-form-item>
-                  </t-col>
+            </t-col>
+            <close-icon :style="{ cursor: 'pointer' }" @click="onClose" />
+          </t-row> -->
+            <t-row v-if="formData.status !== 'DRAFT' && formData.improveTool === '8D'" style="margin-top: 12px">
+              <t-steps :current="currentStage" readonly class="main-steps">
+                <t-step-item :title="t('qualityImprove.Launch')" />
+                <t-step-item :title="t('qualityImprove.8dStepOne')" />
+                <t-step-item :title="t('qualityImprove.8dStepTwo')" />
+                <t-step-item :title="t('qualityImprove.8dStepThere')" />
+                <t-step-item :title="t('qualityImprove.8dStepFour')" />
+                <t-step-item :title="t('qualityImprove.8dStepFive')" />
+                <t-step-item :title="t('qualityImprove.8dStepSix')" />
+                <t-step-item :title="t('qualityImprove.8dStepSeven')" />
+                <t-step-item :title="t('qualityImprove.8dStepEight')" />
+              </t-steps>
+            </t-row>
+            <t-row v-if="formData.status !== 'DRAFT' && formData.improveTool === 'PDCA'" style="margin-top: 12px">
+              <t-steps :current="currentStage" readonly class="main-steps">
+                <t-step-item :title="t('qualityImprove.Launch')" />
+                <t-step-item :title="t('qualityImprove.PDCAP')" />
+                <t-step-item :title="t('qualityImprove.PDCAD')" />
+                <t-step-item :title="t('qualityImprove.PDCAC')" />
+                <t-step-item :title="t('qualityImprove.PDCAA')" />
+              </t-steps>
+            </t-row>
+          </cmp-card>
+          <cmp-card
+            :ghost="true"
+            :class="{
+              'not-full-tab': !tagValue,
+              'full-tab': tagValue,
+            }"
+          >
+            <t-tabs v-model="tagValue">
+              <t-tab-panel :value="0" :label="t('qualityImprove.mainInfo')" :destroy-on-hide="false">
+                <template #panel>
+                  <cmp-container :full="false" class="tab-add-padding-bottom">
+                    <!-- !基础信息模块 -->
+                    <cmp-card :hover-shadow="false" class="card-borded">
+                      <cmp-container>
+                        <t-row justify="space-between" align="center">
+                          <t-col>
+                            <span class="span_title">{{ t('qualityImprove.baseInfo') }}</span>
+                            <span style="margin-left: 10px">{{ formData.billNo }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="110px"
+                          style="margin-top: 12px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.inspectionType')"
+                                label-align="right"
+                                name="inspectType"
+                              >
+                                <t-select
+                                  v-model="formData.inspectType"
+                                  style="width: 100%"
+                                  :disabled="formData.id !== ''"
+                                  @change="onChangeType"
+                                >
+                                  <t-option
+                                    v-for="item in inspectTypeOption"
+                                    :key="item.id"
+                                    :label="item.label"
+                                    :value="item.value"
+                                  />
+                                </t-select>
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.relateBillNo')"
+                                label-align="right"
+                                name="relateBillNo"
+                              >
+                                <t-select
+                                  v-model="formData.relateBillNo"
+                                  :placeholder="t('qualityImprove.selectBillNo')"
+                                  style="width: 100%"
+                                  filterable
+                                  input-props
+                                  :disabled="formData.id !== ''"
+                                  @change="onChangeBillNo"
+                                  @input-change="querySelectChange($event)"
+                                >
+                                  <t-option
+                                    v-for="item in billNoOption"
+                                    :key="item.id"
+                                    :label="item.billNo"
+                                    :value="item.billNo"
+                                  />
+                                </t-select>
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.mitemCode')" label-align="right" name="mitemCode">
+                                <t-input
+                                  v-model="formData.mitemCode"
+                                  :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
+                                  style="width: 100%"
+                                  :disabled="true"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <!-- 第 2️⃣ 行数据 -->
+                            <t-col :span="4">
+                              <t-form-item :label="t('business.main.mitemDesc')" label-align="right" name="mitemDesc">
+                                <t-input
+                                  v-model="formData.mitemDesc"
+                                  :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
+                                  style="width: 100%"
+                                  :disabled="true"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.supplierCode')"
+                                label-align="right"
+                                name="supplierCode"
+                              >
+                                <t-input
+                                  v-model="formData.supplierCode"
+                                  :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
+                                  style="width: 100%"
+                                  :disabled="true"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.supplierName')"
+                                label-align="right"
+                                name="supplierName"
+                              >
+                                <t-input
+                                  v-model="formData.supplierName"
+                                  :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
+                                  style="width: 100%"
+                                  :disabled="true"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('business.main.workshop')" label-align="right" name="workshopName">
+                                <t-input
+                                  v-model="formData.workshopName"
+                                  :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
+                                  style="width: 100%"
+                                  :disabled="true"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('business.main.workcenter')"
+                                label-align="right"
+                                name="workcenterName"
+                              >
+                                <t-input
+                                  v-model="formData.workcenterName"
+                                  :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
+                                  style="width: 100%"
+                                  :disabled="true"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.moScheCode')" label-align="right" name="scheCode">
+                                <t-input
+                                  v-model="formData.scheCode"
+                                  :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
+                                  style="width: 100%"
+                                  :disabled="true"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.defectCategory')"
+                                label-align="right"
+                                name="defectCategory"
+                              >
+                                <t-input
+                                  v-model="formData.defectCategoryName"
+                                  :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
+                                  style="width: 100%"
+                                  :disabled="true"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.handleMethod')"
+                                label-align="right"
+                                name="handleMethod"
+                              >
+                                <t-input
+                                  v-model="formData.handleMethod"
+                                  :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
+                                  style="width: 100%"
+                                  :disabled="true"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.deptResponsibility')"
+                                label-align="right"
+                                name="deptResponsibilityId"
+                              >
+                                <bcmp-select-business
+                                  v-model="formData.deptResponsibilityId"
+                                  :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
+                                  type="admin_org"
+                                  :show-title="false"
+                                  style="width: 100%"
+                                ></bcmp-select-business>
+                              </t-form-item>
+                            </t-col>
 
-                  <t-col :span="4">
-                    <t-form-item
-                      :label="t('qualityImprove.personResponsibility')"
-                      label-align="right"
-                      name="personResponsibilityName"
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.personResponsibility')"
+                                label-align="right"
+                                name="personResponsibilityName"
+                              >
+                                <t-input
+                                  v-model="formData.personResponsibilityName"
+                                  :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
+                                  style="width: 100%"
+                                  :disabled="true"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.occurNature')"
+                                label-align="right"
+                                name="occurNature"
+                              >
+                                <t-select
+                                  v-model="formData.occurNature"
+                                  clearable
+                                  style="width: 100%"
+                                  :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
+                                >
+                                  <t-option
+                                    v-for="item in occurNatureOption"
+                                    :key="item.id"
+                                    :label="item.label"
+                                    :value="item.value"
+                                  />
+                                </t-select>
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.isBatch')" label-align="right" name="isBatch">
+                                <t-select
+                                  v-model="formData.isBatch"
+                                  :clearable="true"
+                                  style="width: 100%"
+                                  :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
+                                >
+                                  <t-option
+                                    v-for="item in isBatchOption"
+                                    :key="item.id"
+                                    :label="item.label"
+                                    :value="item.value"
+                                  />
+                                </t-select>
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.userResponsibility')"
+                                label-align="right"
+                                name="userResponsibilityName"
+                              >
+                                <bcmp-select-business
+                                  v-model="formData.userResponsibilityId"
+                                  :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
+                                  type="person"
+                                  :show-title="false"
+                                  style="width: 100%"
+                                ></bcmp-select-business>
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.datetimeRequireFinish')"
+                                label-align="right"
+                                name="datetimeRequireFinish"
+                              >
+                                <t-date-picker
+                                  v-model="formData.datetimeRequireFinish"
+                                  enable-time-picker
+                                  allow-input
+                                  clearable
+                                  style="width: 100%"
+                                  :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
+                                  format="YYYY-MM-DD hh:mm:ss"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item
+                                :label="t('qualityImprove.improveTool')"
+                                label-align="right"
+                                name="improveTool"
+                              >
+                                <t-select
+                                  v-model="formData.improveTool"
+                                  style="width: 100%"
+                                  :disabled="improveToolOp || formData.operateType === 'check'"
+                                >
+                                  <t-option key="PDCA" label="PDCA" value="PDCA" />
+                                  <t-option key="8D" label="8D" value="8D" />
+                                </t-select>
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="12">
+                              <t-form-item
+                                :label="t('qualityImprove.problemDesc')"
+                                label-align="right"
+                                name="problemDesc"
+                              >
+                                <t-input
+                                  v-model="formData.problemDesc"
+                                  style="width: 100%"
+                                  :placeholder="t('common.placeholder.input')"
+                                  :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="12">
+                              <t-form-item
+                                :label="t('qualityImprove.problemDescAdd')"
+                                label-align="right"
+                                name="problemDescAdd"
+                              >
+                                <t-textarea
+                                  v-model="formData.problemDescAdd"
+                                  style="width: 100%"
+                                  :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <!-- 第 4️⃣ 行数据 -->
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisible = true">
+                                  <div v-if="formData.status !== 'DRAFT' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-container>
+                    </cmp-card>
+                    <!-- // PDCA -->
+                    <div v-if="formData.status !== 'DRAFT' && formData.improveTool === 'PDCA'" style="margin-top: 0">
+                      <cmp-card
+                        v-show="Number(improvePdca.status) > 0"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 0"
+                        class="card-borded"
+                      >
+                        <t-row justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.PDCAP') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improvePdca.userPlanName }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improvePdca.datetimePlan }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="100px"
+                          style="margin-top: 10px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item :label="t('qualityImprove.plan')" label-align="right" name="planDesc">
+                                <t-textarea
+                                  v-model="improvePdca.planDesc"
+                                  :disabled="Number(improvePdca.status) > 1 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="12">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleP = true">
+                                  <div v-if="improvePdca.status !== '1' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                      <cmp-card
+                        v-show="Number(improvePdca.status) > 1"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 12px"
+                        class="card-borded"
+                      >
+                        <t-row justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.PDCAD') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improvePdca.userDoName }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improvePdca.datetimeDo }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="110px"
+                          style="margin-top: 12px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item :label="t('qualityImprove.do')" label-align="right" name="doDesc">
+                                <t-textarea
+                                  v-model="improvePdca.doDesc"
+                                  :disabled="Number(improvePdca.status) > 2 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleD = true">
+                                  <div v-if="improvePdca.status !== '2' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                      <cmp-card
+                        v-show="Number(improvePdca.status) > 2"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 12px"
+                        class="card-borded"
+                      >
+                        <t-row justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.PDCAC') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improvePdca.userCheckName }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improvePdca.datetimeCheck }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="120px"
+                          style="margin-top: 10px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item :label="t('qualityImprove.check')" label-align="right" name="checkDesc">
+                                <t-textarea
+                                  v-model="improvePdca.checkDesc"
+                                  :disabled="Number(improvePdca.status) > 3 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleC = true">
+                                  <div v-if="improvePdca.status !== '3' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                      <cmp-card
+                        v-show="Number(improvePdca.status) > 3"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 12px"
+                        class="card-borded"
+                      >
+                        <t-row justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.PDCAA') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improvePdca.userActName }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improvePdca.datetimeAct }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="120px"
+                          style="margin-top: 10px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item :label="t('qualityImprove.act')" label-align="right" name="actDesc">
+                                <t-textarea
+                                  v-model="improvePdca.actDesc"
+                                  :disabled="Number(improvePdca.status) > 4 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleA = true">
+                                  <div v-if="improvePdca.status !== '4' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                    </div>
+                    <!-- 8D -->
+                    <div v-if="formData.status !== 'DRAFT' && formData.improveTool === '8D'" style="margin-top: 0">
+                      <cmp-card
+                        v-show="Number(improve8d.status) > 0"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 0"
+                        class="card-borded"
+                      >
+                        <t-row justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.8dStepOne') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improve8d.userD1Name }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD1 }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="110px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item :label="t('qualityImprove.createGroup')" label-align="right" name="d1Desc">
+                                <t-textarea
+                                  v-model="improve8d.d1Desc"
+                                  :disabled="Number(improve8d.status) > 1 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="12">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleD1 = true">
+                                  <div v-if="improve8d.status !== '1' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                      <cmp-card
+                        v-show="Number(improve8d.status) > 1"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 12px"
+                        class="card-borded"
+                      >
+                        <t-row justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.8dStepTwo') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improve8d.userD2Name }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD2 }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="120px"
+                          style="margin-top: 10px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item :label="t('qualityImprove.problemDesc')" label-align="right" name="d2Desc">
+                                <t-textarea
+                                  v-model="improve8d.d2Desc"
+                                  :disabled="Number(improve8d.status) > 2 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleD2 = true">
+                                  <div v-if="improve8d.status !== '2' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                      <cmp-card
+                        v-show="Number(improve8d.status) > 2"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 12px"
+                        class="card-borded"
+                      >
+                        <t-row justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.8dStepThere') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improve8d.userD3Name }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD3 }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="120px"
+                          style="margin-top: 10px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item
+                                :label="t('qualityImprove.analyzeReasons')"
+                                label-align="right"
+                                name="d3Desc"
+                              >
+                                <t-textarea
+                                  v-model="improve8d.d3Desc"
+                                  :disabled="Number(improve8d.status) > 3 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleD3 = true">
+                                  <div v-if="improve8d.status !== '3' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                      <cmp-card
+                        v-show="Number(improve8d.status) > 3"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 12px"
+                        class="card-borded"
+                      >
+                        <t-row justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.8dStepFour') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improve8d.userD4Name }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD4 }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="120px"
+                          style="margin-top: 10px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item
+                                :label="t('qualityImprove.emergencyMeasures')"
+                                label-align="right"
+                                name="d4Desc"
+                              >
+                                <t-textarea
+                                  v-model="improve8d.d4Desc"
+                                  :disabled="Number(improve8d.status) > 4 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleD4 = true">
+                                  <div v-if="improve8d.status !== '4' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                      <cmp-card
+                        v-show="Number(improve8d.status) > 4"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 12px"
+                        class="card-borded"
+                      >
+                        <t-row justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.8dStepFive') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improve8d.userD5Name }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD5 }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="120px"
+                          style="margin-top: 10px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item
+                                :label="t('qualityImprove.preventiveMeasures')"
+                                label-align="right"
+                                name="d5Desc"
+                              >
+                                <t-textarea
+                                  v-model="improve8d.d5Desc"
+                                  :disabled="Number(improve8d.status) > 5 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleD5 = true">
+                                  <div v-if="improve8d.status !== '5' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                      <cmp-card
+                        v-show="Number(improve8d.status) > 5"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 12px"
+                        class="card-borded"
+                      >
+                        <t-row style="margin-left: 10px" justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.8dStepSix') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improve8d.userD6Name }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD6 }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="120px"
+                          style="margin-top: 10px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item
+                                :label="t('qualityImprove.preventRecurrence')"
+                                label-align="right"
+                                name="d6Desc"
+                              >
+                                <t-textarea
+                                  v-model="improve8d.d6Desc"
+                                  :disabled="Number(improve8d.status) > 6 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleD6 = true">
+                                  <div v-if="improve8d.status !== '6' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                      <cmp-card
+                        v-show="Number(improve8d.status) > 6"
+                        :hover-shadow="false"
+                        :ghost="true"
+                        style="margin-top: 12px"
+                        class="card-borded"
+                      >
+                        <t-row justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.8dStepSeven') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improve8d.userD7Name }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD7 }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="122px"
+                          style="margin-top: 10px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item
+                                :label="t('qualityImprove.executionEffectTrackingVerification')"
+                                label-align="right"
+                                name="d7Desc"
+                              >
+                                <t-textarea
+                                  v-model="improve8d.d7Desc"
+                                  :disabled="Number(improve8d.status) > 7 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleD7 = true">
+                                  <div v-if="improve8d.status !== '7' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                      <cmp-card
+                        v-show="Number(improve8d.status) > 7"
+                        :hover-shadow="false"
+                        :ghost="false"
+                        style="margin-top: 12px"
+                        class="card-borded"
+                      >
+                        <t-row style="margin-left: 10px" justify="space-between" align="center"
+                          ><t-col>
+                            <span class="span_title">{{ t('qualityImprove.8dStepEight') }}</span>
+                          </t-col>
+                          <t-col>
+                            <span class="span_text">{{ improve8d.userD8Name }}</span>
+                            <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD8 }}</span>
+                          </t-col>
+                        </t-row>
+                        <t-divider class="divider-line" />
+                        <t-form
+                          ref="formRef"
+                          :rules="rules"
+                          :data="formData"
+                          :show-error-message="false"
+                          label-align="right"
+                          label-width="120px"
+                          style="margin-top: 10px"
+                        >
+                          <t-row :gutter="[12, 12]">
+                            <t-col :span="12">
+                              <t-form-item
+                                :label="t('qualityImprove.celebrationAndSharing')"
+                                label-align="right"
+                                name="d8Desc"
+                              >
+                                <t-textarea
+                                  v-model="improve8d.d8Desc"
+                                  :disabled="Number(improve8d.status) > 8 || formData.operateType === 'check'"
+                                  :placeholder="t('common.placeholder.input')"
+                                  autosize
+                                />
+                              </t-form-item>
+                            </t-col>
+                            <t-col :span="4">
+                              <t-form-item :label="t('qualityImprove.attachment') + ''" name="attachment">
+                                <t-link theme="primary" @click="formVisibleD8 = true">
+                                  <div v-if="improve8d.status !== '8' || formData.operateType === 'check'">
+                                    {{ t('qualityImprove.attachmentCheck') }}
+                                  </div>
+                                  <div v-else>
+                                    {{ t('qualityImprove.attachmentUpload') }}
+                                  </div>
+                                </t-link>
+                              </t-form-item>
+                            </t-col>
+                          </t-row>
+                        </t-form>
+                      </cmp-card>
+                    </div>
+                  </cmp-container>
+                </template>
+              </t-tab-panel>
+              <t-tab-panel :value="1" :label="t('qualityImprove.processView')" :destroy-on-hide="false">
+                <template #panel>
+                  <cmp-container :full="true" :full-sub-index="[0]">
+                    <cmp-table
+                      v-model:pagination="pageUI"
+                      row-key="id"
+                      :hover="true"
+                      :table-column="columns"
+                      :table-data="tableData"
+                      :total="dataTotal"
+                      :resizable="true"
+                      :fixed-height="true"
                     >
-                      <t-input
-                        v-model="formData.personResponsibilityName"
-                        :placeholder="formData.relateBillNo ? '' : t('qualityImprove.selectRelateBillNo')"
-                        style="width: 200px"
-                        :disabled="true"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.occurNature')" label-align="right" name="occurNature">
-                      <t-select
-                        v-model="formData.occurNature"
-                        clearable
-                        style="width: 200px"
-                        :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
+                      <template #title> {{ t('qualityImprove.subTitle') }}</template>
+                      <template #handleMethodOp="{ row }">
+                        <span v-if="row.handleMethod === 'SAVE'">
+                          {{ t('common.button.save') }}
+                        </span>
+                        <span v-if="row.handleMethod === 'STAGING'">
+                          {{ t('qualityImprove.staging') }}
+                        </span>
+                        <span v-if="row.handleMethod === 'REJECT_TO_BEFORE'">
+                          {{
+                            t('qualityImprove.rejectTwo') +
+                            '-' +
+                            t('qualityImprove.rejectToBefore') +
+                            '，' +
+                            row.problemDesc
+                          }}
+                        </span>
+                        <span v-if="row.handleMethod === 'REJECT_TO_DRAFT'">
+                          {{
+                            t('qualityImprove.rejectTwo') +
+                            '-' +
+                            t('qualityImprove.rejectToDraft') +
+                            '，' +
+                            row.problemDesc
+                          }}
+                        </span></template
                       >
-                        <t-option
-                          v-for="item in occurNatureOption"
-                          :key="item.id"
-                          :label="item.label"
-                          :value="item.value"
-                        />
-                      </t-select>
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.isBatch')" label-align="right" name="isBatch">
-                      <t-select
-                        v-model="formData.isBatch"
-                        :clearable="true"
-                        style="width: 200px"
-                        :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
-                      >
-                        <t-option
-                          v-for="item in isBatchOption"
-                          :key="item.id"
-                          :label="item.label"
-                          :value="item.value"
-                        />
-                      </t-select>
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item
-                      :label="t('qualityImprove.userResponsibility')"
-                      label-align="right"
-                      name="userResponsibilityName"
-                    >
-                      <bcmp-select-business
-                        v-model="formData.userResponsibilityId"
-                        :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
-                        type="person"
-                        :show-title="false"
-                        style="width: 200px"
-                      ></bcmp-select-business>
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item
-                      :label="t('qualityImprove.datetimeRequireFinish')"
-                      label-align="right"
-                      name="datetimeRequireFinish"
-                    >
-                      <t-date-picker
-                        v-model="formData.datetimeRequireFinish"
-                        enable-time-picker
-                        allow-input
-                        clearable
-                        :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
-                        format="YYYY-MM-DD hh:mm:ss"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.improveTool')" label-align="right" name="improveTool">
-                      <t-select
-                        v-model="formData.improveTool"
-                        style="width: 200px"
-                        :disabled="improveToolOp || formData.operateType === 'check'"
-                      >
-                        <t-option key="PDCA" label="PDCA" value="PDCA" />
-                        <t-option key="8D" label="8D" value="8D" />
-                      </t-select>
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="11">
-                    <t-form-item :label="t('qualityImprove.problemDesc')" label-align="right" name="problemDesc">
-                      <t-input
-                        v-model="formData.problemDesc"
-                        :placeholder="t('common.placeholder.input')"
-                        :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <t-col :span="11">
-                    <t-form-item :label="t('qualityImprove.problemDescAdd')" label-align="right" name="problemDescAdd">
-                      <t-textarea
-                        v-model="formData.problemDescAdd"
-                        :disabled="formData.status !== 'DRAFT' || formData.operateType === 'check'"
-                        :placeholder="t('common.placeholder.input')"
-                        autosize
-                      />
-                    </t-form-item>
-                  </t-col>
-                  <!-- 第 4️⃣ 行数据 -->
-                  <t-col :span="4">
-                    <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                      <t-link theme="primary" @click="formVisible = true">
-                        <div v-if="formData.status !== 'DRAFT' || formData.operateType === 'check'">
-                          {{ t('qualityImprove.attachmentCheck') }}
-                        </div>
-                        <div v-else>
-                          {{ t('qualityImprove.attachmentUpload') }}
-                        </div>
-                      </t-link>
-                    </t-form-item>
-                  </t-col>
-                </t-row>
-              </t-form>
-            </cmp-card>
-            <!-- // PDCA -->
-            <div v-if="formData.status !== 'DRAFT' && formData.improveTool === 'PDCA'" style="margin-top: 50px">
-              <cmp-card v-show="Number(improvePdca.status) > 0" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 40px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.PDCAP') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improvePdca.userPlanName }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improvePdca.datetimePlan }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.plan')" label-align="right" name="planDesc">
-                        <t-textarea
-                          v-model="improvePdca.planDesc"
-                          :disabled="Number(improvePdca.status) > 1 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleP = true">
-                          <div v-if="improvePdca.status !== '1' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-              <cmp-card v-show="Number(improvePdca.status) > 1" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 40px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.PDCAD') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improvePdca.userDoName }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improvePdca.datetimeDo }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.do')" label-align="right" name="doDesc">
-                        <t-textarea
-                          v-model="improvePdca.doDesc"
-                          :disabled="Number(improvePdca.status) > 2 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleD = true">
-                          <div v-if="improvePdca.status !== '2' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-              <cmp-card v-show="Number(improvePdca.status) > 2" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 40px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.PDCAC') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improvePdca.userCheckName }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improvePdca.datetimeCheck }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.check')" label-align="right" name="checkDesc">
-                        <t-textarea
-                          v-model="improvePdca.checkDesc"
-                          :disabled="Number(improvePdca.status) > 3 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleC = true">
-                          <div v-if="improvePdca.status !== '3' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-              <cmp-card v-show="Number(improvePdca.status) > 3" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 40px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.PDCAA') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improvePdca.userActName }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improvePdca.datetimeAct }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.act')" label-align="right" name="actDesc">
-                        <t-textarea
-                          v-model="improvePdca.actDesc"
-                          :disabled="Number(improvePdca.status) > 4 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleA = true">
-                          <div v-if="improvePdca.status !== '4' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-            </div>
-            <!-- 8D -->
-            <div v-if="formData.status !== 'DRAFT' && formData.improveTool === '8D'" style="margin-top: 50px">
-              <cmp-card v-show="Number(improve8d.status) > 0" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 40px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.8dStepOne') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improve8d.userD1Name }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD1 }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.createGroup')" label-align="right" name="d1Desc">
-                        <t-textarea
-                          v-model="improve8d.d1Desc"
-                          :disabled="Number(improve8d.status) > 1 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleD1 = true">
-                          <div v-if="improve8d.status !== '1' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-              <cmp-card v-show="Number(improve8d.status) > 1" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 40px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.8dStepTwo') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improve8d.userD2Name }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD2 }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.problemDesc')" label-align="right" name="d2Desc">
-                        <t-textarea
-                          v-model="improve8d.d2Desc"
-                          :disabled="Number(improve8d.status) > 2 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleD2 = true">
-                          <div v-if="improve8d.status !== '2' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-              <cmp-card v-show="Number(improve8d.status) > 2" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 10px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.8dStepThere') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improve8d.userD3Name }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD3 }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.analyzeReasons')" label-align="right" name="d3Desc">
-                        <t-textarea
-                          v-model="improve8d.d3Desc"
-                          :disabled="Number(improve8d.status) > 3 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleD3 = true">
-                          <div v-if="improve8d.status !== '3' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-              <cmp-card v-show="Number(improve8d.status) > 3" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 40px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.8dStepFour') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improve8d.userD4Name }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD4 }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.emergencyMeasures')" label-align="right" name="d4Desc">
-                        <t-textarea
-                          v-model="improve8d.d4Desc"
-                          :disabled="Number(improve8d.status) > 4 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleD4 = true">
-                          <div v-if="improve8d.status !== '4' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-              <cmp-card v-show="Number(improve8d.status) > 4" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 40px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.8dStepFive') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improve8d.userD5Name }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD5 }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.preventiveMeasures')" label-align="right" name="d5Desc">
-                        <t-textarea
-                          v-model="improve8d.d5Desc"
-                          :disabled="Number(improve8d.status) > 5 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleD5 = true">
-                          <div v-if="improve8d.status !== '5' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-              <cmp-card v-show="Number(improve8d.status) > 5" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 10px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.8dStepSix') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improve8d.userD6Name }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD6 }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.preventRecurrence')" label-align="right" name="d6Desc">
-                        <t-textarea
-                          v-model="improve8d.d6Desc"
-                          :disabled="Number(improve8d.status) > 6 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleD6 = true">
-                          <div v-if="improve8d.status !== '6' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-              <cmp-card v-show="Number(improve8d.status) > 6" :ghost="true" style="margin-top: 20px">
-                <t-row justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.8dStepSeven') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improve8d.userD7Name }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD7 }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="122px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item
-                        :label="t('qualityImprove.executionEffectTrackingVerification')"
-                        label-align="right"
-                        name="d7Desc"
-                      >
-                        <t-textarea
-                          v-model="improve8d.d7Desc"
-                          :disabled="Number(improve8d.status) > 7 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleD7 = true">
-                          <div v-if="improve8d.status !== '7' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-              <cmp-card v-show="Number(improve8d.status) > 7" :ghost="true" style="margin-top: 20px">
-                <t-row style="margin-left: 10px" justify="space-between" align="center"
-                  ><t-col>
-                    <span class="span_title">{{ t('qualityImprove.8dStepEight') }}</span>
-                  </t-col>
-                  <t-col>
-                    <span class="span_text">{{ improve8d.userD8Name }}</span>
-                    <span style="margin-left: 10px" class="span_text">{{ improve8d.datetimeD8 }}</span>
-                  </t-col>
-                </t-row>
-                <t-divider class="divider-line" />
-                <t-form
-                  ref="formRef"
-                  :rules="rules"
-                  :data="formData"
-                  :show-error-message="false"
-                  label-align="right"
-                  label-width="120px"
-                  style="margin-top: 10px"
-                >
-                  <t-row :gutter="[32, 16]">
-                    <t-col :span="11">
-                      <t-form-item :label="t('qualityImprove.celebrationAndSharing')" label-align="right" name="d8Desc">
-                        <t-textarea
-                          v-model="improve8d.d8Desc"
-                          :disabled="Number(improve8d.status) > 8 || formData.operateType === 'check'"
-                          :placeholder="t('common.placeholder.input')"
-                          autosize
-                        />
-                      </t-form-item>
-                    </t-col>
-                    <t-col :span="4">
-                      <t-form-item :label="t('qualityImprove.attachment') + ':'" name="attachment">
-                        <t-link theme="primary" @click="formVisibleD8 = true">
-                          <div v-if="improve8d.status !== '8' || formData.operateType === 'check'">
-                            {{ t('qualityImprove.attachmentCheck') }}
-                          </div>
-                          <div v-else>
-                            {{ t('qualityImprove.attachmentUpload') }}
-                          </div>
-                        </t-link>
-                      </t-form-item>
-                    </t-col>
-                  </t-row>
-                </t-form>
-              </cmp-card>
-            </div>
-          </template>
-        </t-tab-panel>
-        <t-tab-panel :value="1" :label="t('qualityImprove.processView')" :destroy-on-hide="false">
-          <template #panel>
-            <cmp-container :full="true">
-              <cmp-card>
-                <cmp-table
-                  v-model:pagination="pageUI"
-                  row-key="id"
-                  :hover="true"
-                  :table-column="columns"
-                  :table-data="tableData"
-                  :total="dataTotal"
-                  :resizable="true"
-                >
-                  <template #title> {{ t('qualityImprove.subTitle') }}</template>
-                  <template #handleMethodOp="{ row }">
-                    <span v-if="row.handleMethod === 'SAVE'">
-                      {{ t('common.button.save') }}
-                    </span>
-                    <span v-if="row.handleMethod === 'STAGING'">
-                      {{ t('qualityImprove.staging') }}
-                    </span>
-                    <span v-if="row.handleMethod === 'REJECT_TO_BEFORE'">
-                      {{
-                        t('qualityImprove.rejectTwo') +
-                        '-' +
-                        t('qualityImprove.rejectToBefore') +
-                        '，' +
-                        row.problemDesc
-                      }}
-                    </span>
-                    <span v-if="row.handleMethod === 'REJECT_TO_DRAFT'">
-                      {{
-                        t('qualityImprove.rejectTwo') + '-' + t('qualityImprove.rejectToDraft') + '，' + row.problemDesc
-                      }}
-                    </span></template
-                  >
-                </cmp-table>
-              </cmp-card>
-            </cmp-container>
-          </template>
-        </t-tab-panel>
-      </t-tabs>
-    </cmp-card>
-  </cmp-container>
+                    </cmp-table>
+                  </cmp-container>
+                </template>
+              </t-tab-panel>
+            </t-tabs>
+          </cmp-card>
+        </cmp-container>
+      </cmp-card>
+    </cmp-container>
+    <template #footer>
+      <t-button v-if="formData.operateType !== 'check'" @click="onSubmit">{{ t('common.button.save') }}</t-button>
+      <t-button v-if="formData.operateType !== 'check'" theme="default" @click="onStaging">{{
+        t('qualityImprove.staging')
+      }}</t-button>
+      <t-button
+        v-if="formData.status != 'DRAFT' && formData.operateType != 'check'"
+        theme="default"
+        @click="formVisibleReject = true"
+        >{{ t('qualityImprove.reject') }}</t-button
+      >
+    </template>
+  </t-dialog>
   <t-dialog
     v-model:visible="formVisibleReject"
     :close-on-overlay-click="false"
@@ -1216,9 +1397,9 @@
 <script setup lang="ts">
 // import { debounce } from 'lodash';
 import { isEmpty } from 'lodash';
-import { CloseIcon } from 'tdesign-icons-vue-next';
+// import { CloseIcon } from 'tdesign-icons-vue-next';
 import { FormRules, MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { Ref, ref } from 'vue';
+import { PropType, Ref, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 import { api as apiQuality } from '@/api/quality';
@@ -1227,8 +1408,18 @@ import { usePage } from '@/hooks/modules/page';
 
 import { useLang } from './lang';
 
+const emit = defineEmits(['update:visible', 'permissionShow']);
+const props = defineProps({
+  visible: {
+    type: Boolean as PropType<boolean>,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+});
 const { t } = useLang();
-
 const tagValue = ref(0);
 const { pageUI } = usePage(); // 分页工具
 const formRef = ref(null);
@@ -1254,7 +1445,7 @@ const dataTotal = ref(0);
 const dtlRowKeys: Ref<any[]> = ref([]);
 const perId = ref('');
 const currentStage = ref(0);
-
+const mainDialogVisible = ref(props.visible);
 const onRejectToDraft = async () => {
   if (isEmpty(reason.value)) {
     MessagePlugin.warning(t('qualityImprove.inputReason'));
@@ -1644,7 +1835,7 @@ const onConfirmFile = () => {
 };
 
 // 父方法
-const Emit = defineEmits(['permissionShow']);
+// const Emit = defineEmits(['permissionShow',]);
 // 关闭窗口回到主页面
 const onStaging = async () => {
   if (isEmpty(formData.value.inspectType)) {
@@ -1723,7 +1914,7 @@ const onClose = async () => {
   if (formData.value.operateType !== 'add') {
     await apiQuality.oqcInspectStd.delById([formData.value.id]);
   }
-  Emit('permissionShow', false); // 回到父
+  emit('permissionShow', false); // 回到父
 };
 
 // // 上传文件
@@ -1800,6 +1991,17 @@ const rules: FormRules = {
   datetimeRequireFinish: [{ required: true, message: '不能为空', trigger: 'change' }],
 };
 
+watch(mainDialogVisible, (value: boolean) => {
+  emit('update:visible', value);
+});
+watch(
+  () => props.visible,
+  (val) => {
+    mainDialogVisible.value = val;
+  },
+  { deep: true },
+);
+
 defineExpose({
   form: formRef,
   dtlRowKeys,
@@ -1832,11 +2034,39 @@ defineExpose({
 }
 
 .span_text {
-  color: var(--td-gray-color-8);
-  font-size: 16px;
+  color: rgb(69 69 69 / 100%);
+  font-size: 14px;
 }
 
 .divider-line {
-  border-bottom: 1px solid var(--td-gray-color-8);
+  border-bottom: 1px solid rgb(213 216 219 / 10%);
+  margin: 12px 0;
+}
+
+.main-steps {
+  :deep(.t-steps-item__inner) {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  :deep(.t-steps-item__title) {
+    font-size: 12px;
+  }
+
+  :deep(.t-steps-item__title::after) {
+    top: 0 !important;
+  }
+}
+
+.card-borded {
+  border: 1px solid rgb(213 216 219 / 100%);
+  border-radius: 4px;
+}
+
+.tab-add-padding-bottom {
+  padding-bottom: 20px !important;
 }
 </style>
