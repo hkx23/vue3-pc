@@ -1,5 +1,6 @@
 {
   "productInspection": {
+    "buttonViewNgForm":"查看不合格信息",
     "samplingStandardType":"抽样标准类型",
     "samplingStandardId":"抽样标准",
     "inspectStringency":"检验严格度",

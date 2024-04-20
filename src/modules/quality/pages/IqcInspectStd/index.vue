@@ -667,7 +667,7 @@ const onInput = async (data: any) => {
     }
     await onGetMaterialAssignData();
   }
-  MessagePlugin.success('查询成功');
+  // MessagePlugin.success('查询成功');
 };
 const delStdById = async (row) => {
   await api.iqcInspectStd.removeBatch([row.id]);

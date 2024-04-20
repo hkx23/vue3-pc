@@ -108,7 +108,7 @@ const onInput = async (param: any) => {
   });
   data.value = res.list;
   pagination.value.total = res.total;
-  MessagePlugin.success('查询成功');
+  // MessagePlugin.success('查询成功');
 };
 
 // 多选框

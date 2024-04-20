@@ -1239,7 +1239,7 @@ const onInput = async (data: any) => {
     await onLabelManageTabData(); // 产品标签管理 表格数据
     productSelectedRowKeys.value = [];
   }
-  MessagePlugin.success('查询成功');
+  // MessagePlugin.success('查询成功');
 };
 </script>
 

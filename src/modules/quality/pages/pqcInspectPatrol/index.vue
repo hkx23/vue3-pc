@@ -140,7 +140,7 @@ const onInput = async (data: any) => {
   tableData.value = res.list; // 表格数据赋值
   total.value = res.total; // 总页数赋值
   selectedRowKeys.value = [];
-  MessagePlugin.success('查询成功');
+  // MessagePlugin.success('查询成功');
 };
 const opts = computed(() => {
   return {
