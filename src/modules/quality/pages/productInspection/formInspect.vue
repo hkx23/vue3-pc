@@ -529,12 +529,14 @@ interface FormInspectInfo extends OqcInspectBillFullVO {
   viewType: ViewType;
   scanBarcode: string;
   currentBarcode: BarcodeVO;
+  enableProcessApproval: string;
 }
 
 const formData: FormInspectInfo = reactive({
   viewType: ViewType.VIEW,
   scanBarcode: '',
   currentBarcode: {},
+  enableProcessApproval: '',
 });
 // 检验类型
 const inspectCategoryOption = ref([
@@ -730,7 +732,6 @@ const submitJYQqcInspect = async (isTempSave: boolean) => {
       isTempSave,
       defaultInspectItems: tableData.value,
       barcodeList: scanInfoList.value,
-      enableProcessApproval: enableProcessApproval.value,
     });
     Emit('parent-refresh-event');
     formVisible.value = false;
@@ -1291,6 +1292,7 @@ const commonInit = () => {
   } else {
     formData.checkBarcodeTotalQty = formData.qty;
   }
+  formData.enableProcessApproval = enableProcessApproval.value;
 };
 
 // 初始化详情信息
