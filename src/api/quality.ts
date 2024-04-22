@@ -605,8 +605,6 @@ export interface OqcInspectStdFullVO {
   aql?: string;
   /** 检验结果 */
   inspectResult?: string;
-  /** 检验结果 */
-  inspectResultSwitch?: boolean;
   /** 测量值 */
   measureList?: OqcInspectMeasureVO[];
   /** 不良数 */
@@ -623,6 +621,10 @@ export interface OqcInspectStdFullVO {
   fileList?: AddFileTypeVO[];
   /** 检验分类名称 */
   itemCategoryName?: string;
+  /** 扫描的条形码 */
+  scanBarcode?: string;
+  /** 检验标准项目的标准附件 */
+  inspectStdDtlAttachment?: ViewFileVO[];
   /** 项目特性 */
   characteristicsName?: string;
 }
@@ -741,6 +743,20 @@ export interface PqcInspectPatrolVO {
   /** 检验依据 */
   inspectBasis?: string;
   oqcInspectStdFullList?: OqcInspectStdFullVO[];
+}
+
+/** 移动端附件查看 */
+export interface ViewFileVO {
+  id?: string;
+  /** 文件名 */
+  fileName?: string;
+  /** 文件尺寸 */
+  path?: string;
+  /**
+   * 文件最后修改时间戳
+   * @format date-time
+   */
+  lastModified?: string;
 }
 
 /** 通用响应类 */
@@ -1554,6 +1570,7 @@ export interface PqcInspectFirstStdFullVO {
   /** 检验结果 */
   inspectResult?: string;
   pqcInspectFirstId?: string;
+  oqcInspectStdDtlId?: string;
   oqcInspectItemId?: string;
   /** 标准ID */
   inspectStdId?: string;
@@ -1625,20 +1642,6 @@ export interface UploadFile {
   status?: string;
   /** 文件内容 */
   fileContent?: string;
-}
-
-/** 移动端附件查看 */
-export interface ViewFileVO {
-  id?: string;
-  /** 文件名 */
-  fileName?: string;
-  /** 文件尺寸 */
-  path?: string;
-  /**
-   * 文件最后修改时间戳
-   * @format date-time
-   */
-  lastModified?: string;
 }
 
 /** 通用响应类 */
@@ -2538,8 +2541,8 @@ export interface OqcInspectBillDTO {
   oqcInspectBillInfo?: OqcInspectBillFullVO;
   /** 是否暂存 */
   isTempSave?: boolean;
-  /** 检验项目 */
-  inspectItems?: OqcInspectStdFullVO[];
+  /** 默认匹配到的检验项目 */
+  defaultInspectItems?: OqcInspectStdFullVO[];
   /** 条码列表 */
   barcodeList?: BarcodeVO[];
   moScheId?: string;
@@ -2647,8 +2650,6 @@ export interface OqcInspectBillFullVO {
   inspectStringencyName?: string;
   defectCategoryName?: string;
   handleMethodName?: string;
-  /** 责任方 */
-  responsibility?: string;
   /** 整改意见 */
   correctOpinionName?: string;
   /** 计量单位符号 */
@@ -5748,13 +5749,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  iii?: string;
-  s3?: string;
-  s2?: string;
   s1?: string;
+  iii?: string;
+  s2?: string;
+  s3?: string;
+  i?: string;
   s4?: string;
   ii?: string;
-  i?: string;
 } | null;
 
 /** 标签模板 */
@@ -7020,6 +7021,21 @@ export const api = {
      * No description
      *
      * @tags 产品检验
+     * @name CheckJyPreSubmit
+     * @summary 检验执行-提交前的校验
+     * @request POST:/oqcInspect/checkJyPreSubmit
+     * @secure
+     */
+    checkJyPreSubmit: (data: OqcInspectBillDTO) =>
+      http.request<ResultBoolean['data']>(`/api/quality/oqcInspect/checkJyPreSubmit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验
      * @name AddFile
      * @summary 新增文件
      * @request POST:/oqcInspect/addFile
@@ -7077,6 +7093,21 @@ export const api = {
      */
     getProductSampleQtyByEnterprise: (query: { inspectQty: string; samplingStandardId: string }) =>
       http.request<ResultBigDecimal['data']>(`/api/quality/oqcInspect/getProductInspectQtyByEnterprise`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 产品检验
+     * @name GetDefectNames
+     * @summary 获取缺陷信息
+     * @request GET:/oqcInspect/getDefectNames
+     * @secure
+     */
+    getDefectNames: (query: { oqcInspectId: string }) =>
+      http.request<ResultString['data']>(`/api/quality/oqcInspect/getDefectNames`, {
         method: 'GET',
         params: query,
       }),

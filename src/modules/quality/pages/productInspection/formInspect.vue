@@ -259,11 +259,18 @@
                 <t-link theme="primary" @click="showUplaodImg(rowData.row)">上传照片</t-link>
               </t-space>
             </template>
-            <template #inspectResultSwitch="{ row }">
-              <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEditTable" />
+            <template #inspectResult="{ row }">
+              <t-radio-group
+                v-model="row.inspectResult"
+                :disabled="!isEditTable"
+                @change="setBarcodeStatus(formData.currentBarcode)"
+              >
+                <t-radio value="OK">合格</t-radio>
+                <t-radio value="NG">不合格</t-radio>
+              </t-radio-group>
             </template>
             <template #measureOp="{ row }">
-              <t-link theme="primary" @click="onShowMeasureDialog(row)">
+              <t-link v-if="row.characteristics === 'QUANTITATIVE'" theme="primary" @click="onShowMeasureDialog(row)">
                 <div v-if="isEditTable">填写</div>
                 <div v-else>查看</div>
               </t-link>
@@ -299,11 +306,18 @@
                 <t-link theme="primary" @click="showUplaodImg(rowData.row)">上传照片</t-link>
               </t-space>
             </template>
-            <template #inspectResultSwitch="{ row }">
-              <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEditTable" />
+            <template #inspectResult="{ row }">
+              <t-radio-group
+                v-model="row.inspectResult"
+                :disabled="!isEditTable"
+                @change="setBarcodeStatus(formData.currentBarcode)"
+              >
+                <t-radio value="OK">合格</t-radio>
+                <t-radio value="NG">不合格</t-radio>
+              </t-radio-group>
             </template>
             <template #measureOp="{ row }">
-              <t-link theme="primary" @click="onShowMeasureDialog(row)">
+              <t-link v-if="row.characteristics === 'QUANTITATIVE'" theme="primary" @click="onShowMeasureDialog(row)">
                 <div v-if="isEditTable">填写</div>
                 <div v-else>查看</div>
               </t-link>
@@ -339,11 +353,18 @@
                 <t-link theme="primary" @click="showUplaodImg(rowData.row)">上传照片</t-link>
               </t-space>
             </template>
-            <template #inspectResultSwitch="{ row }">
-              <t-switch v-model="row.inspectResultSwitch" size="large" :disabled="!isEditTable" />
+            <template #inspectResult="{ row }">
+              <t-radio-group
+                v-model="row.inspectResult"
+                :disabled="!isEditTable"
+                @change="setBarcodeStatus(formData.currentBarcode)"
+              >
+                <t-radio value="OK">合格</t-radio>
+                <t-radio value="NG">不合格</t-radio>
+              </t-radio-group>
             </template>
             <template #measureOp="{ row }">
-              <t-link theme="primary" @click="onShowMeasureDialog(row)">
+              <t-link v-if="row.characteristics === 'QUANTITATIVE'" theme="primary" @click="onShowMeasureDialog(row)">
                 <div v-if="isEditTable">填写</div>
                 <div v-else>查看</div>
               </t-link>
@@ -363,6 +384,9 @@
       }}</t-button>
       <t-button v-if="formData.viewType != ViewType.VIEW" theme="primary" @click="onConfirmForm(false)">{{
         t('common.button.submit')
+      }}</t-button>
+      <t-button v-if="formData.viewType === ViewType.VIEW" theme="primary" @click="onHandleView">{{
+        t('productInspection.buttonViewNgForm')
       }}</t-button>
       <t-button theme="default" @click="formVisible = false">{{ t('common.button.cancel') }}</t-button>
     </template>
@@ -492,11 +516,13 @@ const isEditTable = ref(true); // 是否可编辑
 interface FormInspectInfo extends OqcInspectBillFullVO {
   viewType: ViewType;
   scanBarcode: string;
+  currentBarcode: BarcodeVO;
 }
 
 const formData: FormInspectInfo = reactive({
   viewType: ViewType.VIEW,
   scanBarcode: '',
+  currentBarcode: {},
 });
 // 检验类型
 const inspectCategoryOption = ref([
@@ -535,6 +561,8 @@ const tableBarcodeSelectedChange = ({ row }) => {
 
 // 加载条码检验项
 const barcodeSelectedChange = (row) => {
+  // 设置当前选中的条码
+  setSelectBarcode(row);
   // 若已加载过检验项，则无需再加载
   if (row.inspectItems && row.inspectItems.length === 0) {
     loadBarcodeTable(row);
@@ -572,7 +600,7 @@ const tableColumns: PrimaryTableCol<TableRowData>[] = [
   { title: '技术要求', width: 160, colKey: 'technicalRequest' },
   { title: '项目特性', width: 100, colKey: 'characteristicsName' },
   { title: '检验工具', width: 100, colKey: 'inspectTool' },
-  { title: '检验结果', width: 100, colKey: 'inspectResultSwitch' },
+  { title: '检验结果', width: 200, colKey: 'inspectResult' },
   { title: '测量值', width: 100, colKey: 'measureOp' },
   { title: '不良描述', width: 200, colKey: 'ngReason' },
   { title: '抽样方案', width: 100, colKey: 'samplingStandardType' },
@@ -594,14 +622,59 @@ const onConfirmForm = async (isTempSave: boolean) => {
     if (isTempSave) {
       submitJYQqcInspect(isTempSave);
     } else if (isTempSave === false) {
-      if (formData.inspectResult === 'OK') {
-        submitJYQqcInspect(isTempSave);
-      } else {
-        const { showForm } = formNgRef.value;
-        showForm(false, formData, tableData.value, scanInfoList.value);
+      if (checkFieldsRequired(isTempSave)) {
+        if (formData.inspectResult === 'OK') {
+          submitJYQqcInspect(isTempSave);
+        } else if (formData.inspectResult === 'NG') {
+          const checkSuccess = await checkJyPreSubmit(isTempSave);
+          if (checkSuccess) {
+            const { showForm } = formNgRef.value;
+            showForm(false, formData, tableData.value, scanInfoList.value);
+          }
+        }
       }
     }
   }
+};
+
+const onHandleView = async () => {
+  const { showFormView } = formNgRef.value;
+  showFormView(false, formData, tableData.value, scanInfoList.value);
+};
+
+// 检验执行-前端校验必填信息
+const checkFieldsRequired = async (isTempSave: boolean) => {
+  if (!isTempSave) {
+    if (!formData.inspectResult) {
+      MessagePlugin.error('判定结果不能为空');
+      return false;
+    }
+  }
+  return true;
+};
+
+// 检验执行-提交前的校验
+const checkJyPreSubmit = async (isTempSave: boolean) => {
+  let success = false;
+  try {
+    LoadingPlugin(true);
+    success = await apiQuality.oqcInspect.checkJyPreSubmit({
+      oqcInspectId: formData.id,
+      billNo: formData.billNo,
+      viewType: formData.viewType,
+      businessCategory: formData.businessCategory,
+      oqcInspectBillInfo: formData,
+      isTempSave,
+      defaultInspectItems: tableData.value,
+      barcodeList: scanInfoList.value,
+    });
+  } catch (e) {
+    success = false;
+    console.log(e);
+  } finally {
+    LoadingPlugin(false);
+  }
+  return success;
 };
 
 // 报检-新增产品检验单据-暂存与提交
@@ -615,7 +688,7 @@ const submitBJQqcInspect = async (isTempSave: boolean) => {
       businessCategory: formData.businessCategory,
       oqcInspectBillInfo: formData,
       isTempSave,
-      inspectItems: tableData.value,
+      defaultInspectItems: tableData.value,
       barcodeList: scanInfoList.value,
     });
     Emit('parent-refresh-event');
@@ -643,7 +716,7 @@ const submitJYQqcInspect = async (isTempSave: boolean) => {
       businessCategory: formData.businessCategory,
       oqcInspectBillInfo: formData,
       isTempSave,
-      inspectItems: tableData.value,
+      defaultInspectItems: tableData.value,
       barcodeList: scanInfoList.value,
     });
     Emit('parent-refresh-event');
@@ -705,8 +778,71 @@ const parentConfirm = async (measureList, isAllOK, dtlId) => {
   if (!_.isEmpty(measureList)) {
     const rowData = tableData.value.find((n) => n.id === dtlId);
     rowData.measureList = measureList;
-    rowData.inspectResultSwitch = isAllOK;
+    rowData.inspectResult = isAllOK ? 'OK' : 'NG';
   }
+};
+
+const checkAllOKComputed = computed(() => {
+  let sumNg = 0;
+  let noCheckSum = 0; // 未判定的总数量
+  let result = '';
+  if (scanInfoList.value) {
+    sumNg = scanInfoList.value.filter((item) => {
+      return item.inspectResult === 'NG' && item.isScan === 'Y';
+    }).length;
+
+    noCheckSum = scanInfoList.value.filter((item) => {
+      return !item.inspectResult && item.isScan === 'Y';
+    }).length;
+  }
+  // 存在未判定的条码,则整体单据自动判断合格
+  if (noCheckSum > 0) {
+    result = '';
+  } else if (sumNg === 0) {
+    result = 'OK';
+  } else {
+    result = 'NG';
+  }
+  return result;
+});
+
+// 设置当前选中的条码
+const setSelectBarcode = (curBarcodeInfo: BarcodeVO) => {
+  formData.currentBarcode = {};
+  formData.currentBarcode = curBarcodeInfo;
+};
+
+// 设置条码是否合格
+const setBarcodeStatus = (curBarcodeInfo: BarcodeVO) => {
+  let result = 'OK';
+  let resultName = '合格';
+  if (curBarcodeInfo && curBarcodeInfo.inspectItems) {
+    curBarcodeInfo.inspectItems.forEach((item) => {
+      if (item.inspectResult === 'NG') {
+        result = 'NG';
+        resultName = '不合格';
+      }
+    });
+
+    let noCheckSum = 0; // 未判定的检验项数量
+    noCheckSum = curBarcodeInfo.inspectItems.filter((item) => {
+      return !item.inspectResult;
+    }).length;
+    if (noCheckSum > 0) {
+      result = '';
+      resultName = '未判定';
+    }
+    curBarcodeInfo.inspectResult = result;
+
+    // 设置整体单据的合格状态
+    setBillStatus();
+  }
+};
+
+// 设置整体单据的合格状态
+const setBillStatus = () => {
+  // 自动设置单据的合格信息,但允许手动修改
+  formData.inspectResult = checkAllOKComputed.value;
 };
 
 // begin 文件上传
@@ -828,7 +964,7 @@ const scanYJProductBarcode = async (value) => {
         moScheId: formData.moScheId,
         scanBarcode: formData.scanBarcode,
         oqcInspectBillInfo: formData,
-        inspectItems: defaultTableData.value,
+        defaultInspectItems: defaultTableData.value,
       })) as BarcodeVO[];
       if (list) {
         scanInfoList.value.push(...list);
@@ -863,7 +999,7 @@ const onDelete = async (row: any) => {
     oqcInspectDtlBarcodeIds,
     businessCategory: formData.businessCategory,
     oqcInspectId: formData.id.toString(),
-    inspectItems: tableData.value,
+    defaultInspectItems: tableData.value,
   });
   getBarcodeTableList();
   MessagePlugin.success('删除成功');

@@ -35,7 +35,7 @@
 </template>
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api } from '@/api/main';
@@ -354,7 +354,7 @@ const onInput = async (data: any) => {
 
   anomalyTypeData.list = res.list;
   anomalyTotal.value = res.total;
-  MessagePlugin.success('查询成功');
+  // MessagePlugin.success('查询成功');
 };
 </script>
 

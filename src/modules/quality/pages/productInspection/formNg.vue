@@ -5,40 +5,53 @@
     width="85%"
     placement="top"
     top="56px"
-    :confirm-btn="{
-      content: '提交',
-      theme: 'primary',
-    }"
-    :on-confirm="onConfirmForm"
+    :cancel-btn="null"
+    :confirm-btn="null"
     :close-on-overlay-click="false"
   >
     <cmp-container :full="true" :ghost="true">
       <cmp-card :span="12" :ghost="false" :bordered="true">
         <t-descriptions :column="3" size="large">
-          <t-descriptions-item label="缺陷类型">
+          <t-descriptions-item v-if="formData.viewType !== ViewType.VIEW" label="缺陷类型">
             <bcmp-select-business
               v-model="formData.defectCodes"
+              :disabled="formData.viewType === ViewType.VIEW"
               type="defectCode"
               :show-title="false"
               :is-multiple="true"
             >
             </bcmp-select-business>
           </t-descriptions-item>
+          <t-descriptions-item v-else label="缺陷类型">
+            <t-input v-model="formData.defectNames" :disabled="true" />
+          </t-descriptions-item>
           <t-descriptions-item label="处理意见"
-            ><t-select v-model="formData.handleMethod" :options="iqcHandleMethodOption"
+            ><t-select
+              v-model="formData.handleMethod"
+              :disabled="formData.viewType === ViewType.VIEW"
+              :options="iqcHandleMethodOption"
           /></t-descriptions-item>
-          <t-descriptions-item label="责任部门"
-            ><t-select v-model="formData.responsibility" :options="iqcResponsibilityOption"
-          /></t-descriptions-item>
+          <t-descriptions-item label="责任部门">
+            <bcmp-select-business
+              v-model="formData.deptResponsibilityId"
+              :disabled="formData.viewType === ViewType.VIEW"
+              type="admin_org"
+              :show-title="false"
+            ></bcmp-select-business>
+          </t-descriptions-item>
           <t-descriptions-item label="跟进人">
             <bcmp-select-business
               v-model="formData.personResponsibilityId"
+              :disabled="formData.viewType === ViewType.VIEW"
               type="person"
               :show-title="false"
             ></bcmp-select-business
           ></t-descriptions-item>
           <t-descriptions-item label="描述" :span="3">
-            <t-textarea v-model="formData.memo" placeholder="请输入内容"
+            <t-textarea
+              v-model="formData.memo"
+              :disabled="formData.viewType === ViewType.VIEW"
+              placeholder="请输入内容"
           /></t-descriptions-item>
           <!-- <t-descriptions-item>
             <t-checkbox v-model="formData.isPdca" label="启用PDCA" />
@@ -46,6 +59,13 @@
         </t-descriptions>
       </cmp-card>
     </cmp-container>
+
+    <template #footer>
+      <t-button v-if="formData.viewType != ViewType.VIEW" theme="primary" @click="onConfirmForm">{{
+        t('common.button.submit')
+      }}</t-button>
+      <t-button theme="default" @click="formVisible = false">{{ t('common.button.cancel') }}</t-button>
+    </template>
   </t-dialog>
 </template>
 <script lang="ts">
@@ -62,10 +82,12 @@ import { onMounted, reactive, Ref, ref } from 'vue';
 import { api as apiMain } from '@/api/main';
 import { api as apiQuality, BarcodeVO, OqcInspectBillFullVO, OqcInspectStdFullVO } from '@/api/quality';
 
+import { useLang } from './lang';
+
+const { t } = useLang();
 const Emit = defineEmits(['parent-refresh-event', 'form-close-event']);
 
 const formVisible = ref(false);
-
 const formNgRef: Ref<FormInstanceFunctions> = ref(null);
 enum ViewType {
   BJ = 'BJ', // 报检模式
@@ -76,12 +98,14 @@ interface FormInspectInfo extends OqcInspectBillFullVO {
   viewType: ViewType;
   scanBarcode: string;
   defectCodes: string;
+  defectNames: string;
 }
 
 const formData: FormInspectInfo = reactive({
   viewType: ViewType.VIEW,
   scanBarcode: '',
   defectCodes: '',
+  defectNames: '',
 });
 const tableData = ref<OqcInspectStdFullVO[]>([]);
 const scanInfoList = ref<BarcodeVO[]>([]);
@@ -110,7 +134,7 @@ const onConfirmForm = async () => {
       businessCategory: formData.businessCategory,
       oqcInspectBillInfo: formData,
       isTempSave: false,
-      inspectItems: tableData.value,
+      defaultInspectItems: tableData.value,
       barcodeList: scanInfoList.value,
     });
 
@@ -139,6 +163,31 @@ const showForm = async (edit, row, tableDataTemp, scanInfoListTemp) => {
   tableData.value = tableDataTemp;
   scanInfoList.value = scanInfoListTemp;
 };
+
+const showFormView = async (edit, row, tableDataTemp, scanInfoListTemp) => {
+  formVisible.value = true;
+  reset();
+  Object.assign(formData, row);
+  tableData.value = tableDataTemp;
+  scanInfoList.value = scanInfoListTemp;
+  // 获取缺陷信息
+  getDefectList();
+};
+
+// 获取缺陷信息
+const getDefectList = async () => {
+  try {
+    const defectNames = await apiQuality.oqcInspect.getDefectNames({
+      oqcInspectId: formData.id.toString(),
+    });
+    if (defectNames) {
+      formData.defectNames = defectNames;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 const closeForm = async () => {
   formVisible.value = false;
 };
@@ -203,6 +252,7 @@ defineExpose({
   form: formNgRef,
   reset,
   showForm,
+  showFormView,
   closeForm,
 });
 </script>
