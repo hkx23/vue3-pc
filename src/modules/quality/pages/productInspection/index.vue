@@ -40,7 +40,7 @@
             >
           </t-space>
           <t-space>
-            <t-link v-if="rowData.row.status === 'INSPECT'" theme="primary" @click="onShowDialogJY(rowData)"
+            <t-link v-if="rowData.row.status === 'UNINSPECT'" theme="primary" @click="onShowDialogJY(rowData)"
               >检验</t-link
             >
           </t-space>
@@ -350,7 +350,7 @@ const onHandlDeleteBillInfo = async () => {
   for (let index = 0; index < selectKeys.length; index++) {
     const element = selectKeys[index];
     ids.push(element.id);
-    if (!(element.status === 'INSPECT' || element.status === 'UNSUBMIT')) {
+    if (!(element.status === 'UNINSPECT' || element.status === 'UNSUBMIT')) {
       MessagePlugin.error('只有状态为待提报、待检验的单据才允许操作.');
       return;
     }
