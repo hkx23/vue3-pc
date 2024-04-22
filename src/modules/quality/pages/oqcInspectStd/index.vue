@@ -423,6 +423,16 @@ const groupColumns: PrimaryTableCol<TableRowData>[] = [
     width: '180',
   },
   {
+    colKey: 'modifierName',
+    title: '最后修订人',
+    width: '100',
+  },
+  {
+    colKey: 'timeModified',
+    title: '最后修订时间',
+    width: '150',
+  },
+  {
     colKey: 'op',
     title: '操作',
     fixed: 'right',
