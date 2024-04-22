@@ -15,7 +15,7 @@
           <t-descriptions-item v-if="formData.viewType !== ViewType.VIEW" label="缺陷类型">
             <bcmp-select-business
               v-model="formData.defectCodes"
-              :disabled="formData.viewType === ViewType.VIEW"
+              :disabled="!isCanEdit"
               type="defectCode"
               :show-title="false"
               :is-multiple="true"
@@ -26,15 +26,12 @@
             <t-input v-model="formData.defectNames" :disabled="true" />
           </t-descriptions-item>
           <t-descriptions-item label="处理意见"
-            ><t-select
-              v-model="formData.handleMethod"
-              :disabled="formData.viewType === ViewType.VIEW"
-              :options="iqcHandleMethodOption"
+            ><t-select v-model="formData.handleMethod" :disabled="!isCanEdit" :options="iqcHandleMethodOption"
           /></t-descriptions-item>
           <t-descriptions-item label="责任部门">
             <bcmp-select-business
               v-model="formData.deptResponsibilityId"
-              :disabled="formData.viewType === ViewType.VIEW"
+              :disabled="!isCanEdit"
               type="admin_org"
               :show-title="false"
             ></bcmp-select-business>
@@ -42,16 +39,13 @@
           <t-descriptions-item label="跟进人">
             <bcmp-select-business
               v-model="formData.personResponsibilityId"
-              :disabled="formData.viewType === ViewType.VIEW"
+              :disabled="!isCanEdit"
               type="person"
               :show-title="false"
             ></bcmp-select-business
           ></t-descriptions-item>
           <t-descriptions-item label="描述" :span="3">
-            <t-textarea
-              v-model="formData.memo"
-              :disabled="formData.viewType === ViewType.VIEW"
-              placeholder="请输入内容"
+            <t-textarea v-model="formData.memo" :disabled="!isCanEdit" placeholder="请输入内容"
           /></t-descriptions-item>
           <!-- <t-descriptions-item>
             <t-checkbox v-model="formData.isPdca" label="启用PDCA" />
@@ -86,7 +80,7 @@ import { useLang } from './lang';
 
 const { t } = useLang();
 const Emit = defineEmits(['parent-refresh-event', 'form-close-event']);
-
+const isCanEdit = ref(true);
 const formVisible = ref(false);
 const formNgRef: Ref<FormInstanceFunctions> = ref(null);
 enum ViewType {
@@ -162,6 +156,9 @@ const showForm = async (edit, row, tableDataTemp, scanInfoListTemp) => {
   Object.assign(formData, row);
   tableData.value = tableDataTemp;
   scanInfoList.value = scanInfoListTemp;
+  if (formData.viewType === ViewType.VIEW) {
+    isCanEdit.value = false;
+  }
 };
 
 const showFormView = async (edit, row, tableDataTemp, scanInfoListTemp) => {
