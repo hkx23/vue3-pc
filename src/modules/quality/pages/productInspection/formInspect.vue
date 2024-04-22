@@ -435,7 +435,6 @@ import { useLang } from './lang';
 const { t } = useLang();
 const Emit = defineEmits(['parent-refresh-event', 'form-close-event']);
 const OKNGOption = ref([
-  { value: '', label: '全部' },
   { value: 'OK', label: '合格' },
   { value: 'NG', label: '不合格' },
 ]);
@@ -449,6 +448,19 @@ const getSampingStdCode = async () => {
     })
     .then((val) => {
       sampingStdCode.value = val;
+    });
+};
+
+// 是否启用审批流程
+const enableProcessApproval = ref('');
+const getEnableProcessApproval = async () => {
+  apiMain.profileValue
+    .getValueByProfileCode({
+      code: 'Enable_process_approval',
+      orgId: fw.getOrgId(),
+    })
+    .then((val) => {
+      enableProcessApproval.value = val;
     });
 };
 
@@ -718,6 +730,7 @@ const submitJYQqcInspect = async (isTempSave: boolean) => {
       isTempSave,
       defaultInspectItems: tableData.value,
       barcodeList: scanInfoList.value,
+      enableProcessApproval: enableProcessApproval.value,
     });
     Emit('parent-refresh-event');
     formVisible.value = false;
@@ -814,13 +827,16 @@ const setSelectBarcode = (curBarcodeInfo: BarcodeVO) => {
 
 // 设置条码是否合格
 const setBarcodeStatus = (curBarcodeInfo: BarcodeVO) => {
-  let result = 'OK';
-  let resultName = '合格';
+  let result = '';
+  let resultName = '';
   if (curBarcodeInfo && curBarcodeInfo.inspectItems) {
     curBarcodeInfo.inspectItems.forEach((item) => {
       if (item.inspectResult === 'NG') {
         result = 'NG';
         resultName = '不合格';
+      } else if (item.inspectResult === 'OK') {
+        result = 'OK';
+        resultName = '合格';
       }
     });
 
@@ -1080,10 +1096,6 @@ const loadDefaultTable = async () => {
       inspectType: formData.inspectCategory,
       viewType: ViewType.BJ,
     });
-    // 默认是合格
-    list.forEach((element) => {
-      element.inspectResult = 'OK';
-    });
     defaultTableData.value = list;
   } catch (e) {
     console.log(e);
@@ -1286,6 +1298,7 @@ const initForm = () => {
   getinspectionStringency();
   getInspectLevel();
   getSampingStdCode();
+  getEnableProcessApproval();
 };
 
 onMounted(() => {
