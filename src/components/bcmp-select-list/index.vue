@@ -651,12 +651,19 @@ const fetchData = debounce((val) => {
     loading.value = false;
   }
 }, 500);
+const isFirstLoad = ref(true);
 // 搜索过滤
 const onInputChange = (val: string) => {
   // console.log('onInputChange');
-  selectSearch.value = val;
-  loading.value = true;
-  fetchData(val);
+  if (isFirstLoad.value || val !== '') {
+    isFirstLoad.value = false;
+    selectSearch.value = val;
+    loading.value = true;
+    if (val !== '') {
+      isFirstLoad.value = true;
+    }
+    fetchData(val);
+  }
 };
 
 const asyncLoading = ref<ListProps['asyncLoading']>('load-more');
@@ -735,9 +742,9 @@ onMounted(() => {
       } else {
         selectSearch.value = '';
       }
-      // if (!(props.listSetting && props.listSetting.listType === 'tree')) {
-      remoteLoad(props.value);
-      // }
+      if (!(props.listSetting && props.listSetting.listType === 'tree')) {
+        remoteLoad(props.value);
+      }
     }
   });
 });
@@ -766,8 +773,9 @@ watch(
         if (props.value) {
           // console.log('remoteLoad-按默认值查询');
           defaultValue.value = props.value.toString();
-
-          remoteLoad(props.value);
+          if (!(props.listSetting && props.listSetting.listType === 'tree')) {
+            remoteLoad(props.value);
+          }
         } else {
           state.defaultValue = '';
           // selectedRowKeys.value = [];
