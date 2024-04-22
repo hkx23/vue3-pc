@@ -20,22 +20,16 @@
           </t-select>
         </template>
         <template #aql="{ param }">
-          <t-select
-            v-model="param.aql"
-            :clearable="true"
-            label="接收质量限"
-            placeholder="请选择接收质量限"
-            @click="onAqls(param)"
-          >
+          <t-select v-model="param.aql" :clearable="true" label="AQL" placeholder="请选择AQL" @click="onAqls(param)">
             <t-option v-for="item in aqlDataList.list" :key="item" :label="item" :value="item" />
           </t-select>
         </template>
         <template #approvalNum="{ param }">
           <t-input-number
             v-model="param.approvalNum"
-            label="审批编号"
+            label="报检数量"
             theme="column"
-            placeholder="请输入审批编号"
+            placeholder="请输入报检数量"
             align="left"
             style="width: 100%"
           />
