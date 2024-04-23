@@ -6,6 +6,7 @@ import BcmpImportDialog from './bcmp-import-dialog/index.vue';
 import BcmpSelectBusiness from './bcmp-select-business/index.vue';
 import BcmpSelectList from './bcmp-select-list/index.vue';
 import BcmpSelectList2 from './bcmp-select-list2/index.vue';
+import BcmpSelectParam from './bcmp-select-param/index.vue';
 import BcmpSelectTable from './bcmp-select-table/index.vue';
 import BcmpUploadContent from './bcmp-upload-content/index.vue';
 import BCmpCustomer from './cmp-business/BCmpCustomer.vue';
@@ -30,6 +31,7 @@ import CmpTable from './cmp-table/index.vue';
 
 export default {
   install: (app) => {
+    app.component('BcmpSelectParam', BcmpSelectParam);
     app.component('BcmpSelectBusiness', BcmpSelectBusiness);
     app.component('BcmpSelectTable', BcmpSelectTable);
     app.component('BcmpSelectList', BcmpSelectList);

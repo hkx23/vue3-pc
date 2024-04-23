@@ -1,0 +1,33 @@
+{
+  "title": "会议",
+  "name": "会议",
+  "placeholder": "请选择会议",
+  "url": "/api/daily/conference/items",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "会议代码",
+      "key": "orgCode",
+      "align": "left"
+    },
+    {
+      "title": "会议名称",
+      "key": "orgName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "conferenceCode",
+  "keywords": {
+    "value": "id",
+    "label": "conferenceName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "conferenceCode",
+    "nameField": "conferenceName",
+    "descField": ""
+  },
+  "componentType": "list"
+}

@@ -860,21 +860,8 @@ export interface ResultBoolean {
   data?: boolean | null;
 }
 
-export interface BatchDynamicUpdateDTO {
-  /** 表唯一主键 */
-  primaryKey?: string;
-  /** 领域名称 */
-  businessDomain?: string;
-  /** 表名 */
-  tableName?: string;
-  /** 更新的字段列表 */
-  columnList?: DynamicColumn[];
-  /** 更新的数据信息 */
-  rows?: Record<string, object>[];
-}
-
-/** 动态列字段 */
-export interface DynamicColumn {
+/** 事件管理输出 */
+export interface EventVO {
   id?: string;
   /**
    * 创建时间
@@ -897,19 +884,157 @@ export interface DynamicColumn {
    */
   state?: number;
   eid?: string;
-  /** 字段名称 */
-  columnField?: string;
-  /** 字段描述 */
-  columnDesc?: string;
-  /** 列数据类型 */
-  columnDateType?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 事件类型 */
+  eventType?: string;
+  /** 事件来源 */
+  eventSource?: string;
+  conferenceResponsibilityId?: string;
+  deptProposeId?: string;
+  userProposeId?: string;
   /**
-   * 是否必填项
+   * 提出时间
+   * @format date-time
+   */
+  datetimePropose?: string;
+  /**
+   * 计划解决时间
+   * @format date-time
+   */
+  datetimePlanSolve?: string;
+  /**
+   * 实际解决时间
+   * @format date-time
+   */
+  datetimeActualSolve?: string;
+  deptResponsibilityId?: string;
+  userResponsibilityId?: string;
+  supportGroupId?: string;
+  moShceId?: string;
+  /** 重要程度 */
+  importantDegree?: string;
+  /** 事件描述 */
+  eventDesc?: string;
+  /** 原因分析 */
+  causeAnalysis?: string;
+  /** 改善对策 */
+  improveMeasure?: string;
+  isOverdue?: string;
+  /** 状态 */
+  status?: string;
+  /** 责任会议 */
+  conferenceResponsibilityName?: string;
+  /** 提出部门 */
+  deptProposeName?: string;
+  /** 提出人 */
+  userProposeName?: string;
+  /** 责任部门 */
+  deptResponsibilityName?: string;
+  /** 责任人 */
+  userResponsibilityName?: string;
+  /** 关联工单 */
+  moShceCode?: string;
+}
+
+/** 响应数据 */
+export type PagingDataEventVO = {
+  list?: EventVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataEventVO {
+  /**
+   * 响应代码
    * @format int32
    */
-  isRequired?: number;
-  /** 默认值 */
-  defaultValue?: string;
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataEventVO;
+}
+
+/** 事件表 */
+export type Event = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 单据号 */
+  billNo?: string;
+  /** 事件类型 */
+  eventType?: string;
+  /** 事件来源 */
+  eventSource?: string;
+  conferenceResponsibilityId?: string;
+  deptProposeId?: string;
+  userProposeId?: string;
+  /**
+   * 提出时间
+   * @format date-time
+   */
+  datetimePropose?: string;
+  /**
+   * 计划解决时间
+   * @format date-time
+   */
+  datetimePlanSolve?: string;
+  /**
+   * 实际解决时间
+   * @format date-time
+   */
+  datetimeActualSolve?: string;
+  deptResponsibilityId?: string;
+  userResponsibilityId?: string;
+  supportGroupId?: string;
+  moShceId?: string;
+  /** 重要程度 */
+  importantDegree?: string;
+  /** 事件描述 */
+  eventDesc?: string;
+  /** 原因分析 */
+  causeAnalysis?: string;
+  /** 改善对策 */
+  improveMeasure?: string;
+  isOverdue?: string;
+  /** 状态 */
+  status?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultEvent {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 事件表 */
+  data?: Event;
 }
 
 /** 安灯警报配置表 */
@@ -1866,20 +1991,34 @@ export const api = {
         method: 'GET',
       }),
   },
-  dynamicManage: {
+  event: {
     /**
      * No description
      *
-     * @tags 动态服务
-     * @name BatchUpdateData
-     * @summary 根据领域进行动态表字段更新
-     * @request POST:/dynamicManage/batchUpdateData
+     * @tags 事件表
+     * @name Search
+     * @summary 获取事件列表
+     * @request POST:/event/items
      * @secure
      */
-    batchUpdateData: (data: BatchDynamicUpdateDTO) =>
-      http.request<ResultObject['data']>(`/api/daily/dynamicManage/batchUpdateData`, {
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataEventVO['data']>(`/api/daily/event/items`, {
         method: 'POST',
         body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 事件表
+     * @name GetItemById
+     * @summary 根据ID获取事件信息
+     * @request POST:/event/items/{id}
+     * @secure
+     */
+    getItemById: (id: string) =>
+      http.request<ResultEvent['data']>(`/api/daily/event/items/${id}`, {
+        method: 'POST',
       }),
   },
   alertCfg: {
