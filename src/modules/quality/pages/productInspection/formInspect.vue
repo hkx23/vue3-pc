@@ -828,16 +828,13 @@ const setSelectBarcode = (curBarcodeInfo: BarcodeVO) => {
 
 // 设置条码是否合格
 const setBarcodeStatus = (curBarcodeInfo: BarcodeVO) => {
-  let result = '';
-  let resultName = '';
+  let result = 'OK';
+  let resultName = '合格';
   if (curBarcodeInfo && curBarcodeInfo.inspectItems) {
     curBarcodeInfo.inspectItems.forEach((item) => {
       if (item.inspectResult === 'NG') {
         result = 'NG';
         resultName = '不合格';
-      } else if (item.inspectResult === 'OK') {
-        result = 'OK';
-        resultName = '合格';
       }
     });
 
