@@ -385,9 +385,12 @@
       <t-button v-if="formData.viewType != ViewType.VIEW" theme="primary" @click="onConfirmForm(false)">{{
         t('common.button.submit')
       }}</t-button>
-      <t-button v-if="formData.viewType === ViewType.VIEW" theme="primary" @click="onHandleView">{{
-        t('productInspection.buttonViewNgForm')
-      }}</t-button>
+      <t-button
+        v-if="formData.viewType === ViewType.VIEW && formData.inspectResult === 'NG'"
+        theme="primary"
+        @click="onHandleView"
+        >{{ t('productInspection.buttonViewNgForm') }}</t-button
+      >
       <t-button theme="default" @click="formVisible = false">{{ t('common.button.cancel') }}</t-button>
     </template>
   </t-dialog>
