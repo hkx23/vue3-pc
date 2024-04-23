@@ -93,6 +93,7 @@ interface FormInspectInfo extends OqcInspectBillFullVO {
   scanBarcode: string;
   defectCodes: string;
   defectNames: string;
+  enableProcessApproval: string;
 }
 
 const formData: FormInspectInfo = reactive({
@@ -100,6 +101,7 @@ const formData: FormInspectInfo = reactive({
   scanBarcode: '',
   defectCodes: '',
   defectNames: '',
+  enableProcessApproval: '',
 });
 const tableData = ref<OqcInspectStdFullVO[]>([]);
 const scanInfoList = ref<BarcodeVO[]>([]);
@@ -130,6 +132,7 @@ const onConfirmForm = async () => {
       isTempSave: false,
       defaultInspectItems: tableData.value,
       barcodeList: scanInfoList.value,
+      enableProcessApproval: formData.enableProcessApproval,
     });
 
     Emit('form-close-event');

@@ -399,7 +399,6 @@ export type SamplingAqlVO = {
    */
   state?: number;
   eid?: string;
-  oid?: string;
   /** 标准编号 */
   sampingStdCode?: string;
   /** 严格度 */
@@ -1290,6 +1289,8 @@ export interface OqcInspectStdFullSearch {
   /** 一键判退 */
   directInspectNg?: boolean;
   supplierId?: string;
+  /** 标签号码 */
+  scanBarcode?: string;
   /** 检验类型转换(1：首检 2：巡检 4：抽检 8：复检) */
   convertInspectType?: string;
 }
@@ -2417,6 +2418,13 @@ export interface OqcInspectStdVO {
   creatorName?: string;
   statusName?: string;
   isGroupName?: string;
+  /** 最后修订人 */
+  modifierName?: string;
+  /**
+   * 最后修订时间
+   * @format date-time
+   */
+  timeModified?: string;
   inspectTypeList?: number[];
   fileList?: OqcInspectStdFile[];
 }
@@ -2545,6 +2553,8 @@ export interface OqcInspectBillDTO {
   defaultInspectItems?: OqcInspectStdFullVO[];
   /** 条码列表 */
   barcodeList?: BarcodeVO[];
+  /** 是否启用审批流程 */
+  enableProcessApproval?: string;
   moScheId?: string;
   /** 标签号码 */
   scanBarcode?: string;
@@ -2663,6 +2673,19 @@ export interface OqcInspectBillFullVO {
   businessCategoryName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
+}
+
+/** 通用响应类 */
+export interface ResultBarcodeVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 显示在成品发货实体 */
+  data?: BarcodeVO;
 }
 
 /** 通用响应类 */
@@ -5750,12 +5773,12 @@ export type SampleCodeVO = {
    */
   batchEnd?: number;
   s1?: string;
-  iii?: string;
-  s2?: string;
-  s3?: string;
-  i?: string;
-  s4?: string;
   ii?: string;
+  i?: string;
+  iii?: string;
+  s3?: string;
+  s2?: string;
+  s4?: string;
 } | null;
 
 /** 标签模板 */
@@ -6874,7 +6897,7 @@ export const api = {
      * @secure
      */
     scanYjProductBarcode: (data: OqcInspectBillDTO) =>
-      http.request<ResultObject['data']>(`/api/quality/oqcInspect/scanYJProductBarcode`, {
+      http.request<ResultBarcodeVO['data']>(`/api/quality/oqcInspect/scanYJProductBarcode`, {
         method: 'POST',
         body: data as any,
       }),
