@@ -732,6 +732,7 @@ const submitJYQqcInspect = async (isTempSave: boolean) => {
       isTempSave,
       defaultInspectItems: tableData.value,
       barcodeList: scanInfoList.value,
+      enableProcessApproval: formData.enableProcessApproval,
     });
     Emit('parent-refresh-event');
     formVisible.value = false;
@@ -970,7 +971,7 @@ const scanYJProductBarcode = async (value) => {
   if (!isEmpty(value)) {
     LoadingPlugin(true);
     try {
-      const list = (await apiQuality.oqcInspect.scanYjProductBarcode({
+      const barcodeInfo = (await apiQuality.oqcInspect.scanYjProductBarcode({
         oqcInspectId: formData.id,
         billNo: formData.billNo,
         viewType: formData.viewType,
@@ -979,19 +980,38 @@ const scanYJProductBarcode = async (value) => {
         scanBarcode: formData.scanBarcode,
         oqcInspectBillInfo: formData,
         defaultInspectItems: defaultTableData.value,
-      })) as BarcodeVO[];
-      if (list) {
-        scanInfoList.value.push(...list);
-      }
+      })) as BarcodeVO;
       formData.scanBarcode = '';
       // 设置按条码报批数量
       setCheckmBarcodeTotalQty();
-      getBarcodeTableList();
+      // 扫码时动态新增,不影响已有填入的数据信息
+      addBarcodeInfo(barcodeInfo);
     } catch (error) {
       console.error(error.message);
     } finally {
       LoadingPlugin(false);
     }
+  }
+};
+
+// 扫码时动态新增,不影响已有填入的数据信息
+const addBarcodeInfo = (barcodeInfo: BarcodeVO) => {
+  if (barcodeInfo) {
+    scanInfoList.value.unshift(barcodeInfo);
+    // 自动刷新页面动态计算的信息
+    autoRefreshUI();
+  }
+};
+
+// 由于条码列表扫码时，显示的条码有重复异常，实际api返回的信息是对的
+// 自动刷新页面动态计算的信息
+const autoRefreshUI = () => {
+  if (scanInfoList.value && scanInfoList.value.length > 0) {
+    const curBarcodeInfo = scanInfoList.value[0];
+    // 设置当前选中的条码
+    setSelectBarcode(curBarcodeInfo);
+    // 设置整体单据的合格状态
+    setBillStatus();
   }
 };
 
