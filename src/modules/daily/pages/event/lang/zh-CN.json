@@ -34,6 +34,7 @@
     "deptResponsibilityId": "责任部门ID",
     "deptResponsibilityName": "责任部门",
     "userResponsibilityId": "责任人员ID",
+    "userResponsibilityName": "责任人员",
     "resopnseSuccess": "事件已响应",
     "handleSuccess": "事件已处理",
     "receiveSuccess": "事件已验收",
