@@ -3,6 +3,7 @@ export interface AddFileType {
   serialNumber: number;
   fullFileName: string;
   fileName: string;
+  filePath: string;
   fileType: string;
   fileSizeShow: string;
   fileSize: number;

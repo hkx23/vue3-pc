@@ -406,7 +406,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
-const isMultiple = ref(true);
+const isMultiple = ref(false);
 
 const personValue = ref();
 const plantValue = ref('1744167886127157249,1725461564969635842');

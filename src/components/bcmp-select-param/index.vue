@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 
 import { api as apiMain } from '../../api/main';
 
@@ -38,4 +38,17 @@ onMounted(() => {
     loadParamData();
   }
 });
+
+watch(
+  () => props.modelValue,
+  (_val) => {
+    // console.log('watch:props.value', `${props.title} ss ${val}`);
+    nextTick(() => {
+      // 多选
+      modelValue.value = _val;
+      emits('update:modelValue', _val);
+    });
+  },
+  { deep: true },
+);
 </script>

@@ -9,6 +9,7 @@ interface OrgUser extends UserInfo {
   eid?: string;
   orgId?: string;
   personId?: string;
+  adminOrgId?: string;
   timeModified?: string;
   timeLastPasswordChanged?: string;
   orgs?: OrgVO[];
@@ -96,6 +97,7 @@ export const useUserStore = defineStore('user', {
         code: res.userName,
         eid: res.eid,
         personId: res.personId,
+        adminOrgId: res.adminOrgId,
         timeModified: res.timeModified,
         timeLastPasswordChanged: res.timeLastPasswordChanged,
         orgId,
