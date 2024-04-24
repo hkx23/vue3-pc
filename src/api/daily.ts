@@ -1037,6 +1037,165 @@ export interface ResultEvent {
   data?: Event;
 }
 
+export interface ConferenceIndexSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  /** 指标维度 */
+  indexDimension?: string;
+  /** 指标分类 */
+  indexType?: string;
+  /** 指标代码 */
+  indexCode?: string;
+}
+
+export interface ConferenceIndexVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 指标代码 */
+  indexCode?: string;
+  /** 指标名称 */
+  indexName?: string;
+  /** 指标描述 */
+  indexDesc?: string;
+  /** 指标分类 */
+  indexType?: string;
+  /** 指标维度 */
+  indexDimension?: string;
+  /** 缩略图地址 */
+  indexIconPath?: string;
+  /** 指标地址 */
+  indexUrl?: string;
+  /** 指标分类名称 */
+  indexTypeName?: string;
+  /** 指标维度名称 */
+  indexDimensionName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  /** 状态名称 */
+  statusName?: string;
+}
+
+/** 响应数据 */
+export type PagingDataConferenceIndexVO = {
+  list?: ConferenceIndexVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataConferenceIndexVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataConferenceIndexVO;
+}
+
+export interface ConferenceIndexDTO {
+  conferenceIndexVO?: ConferenceIndexVO;
+  /** id集合 */
+  ids?: string[];
+}
+
+/** 会议表 */
+export interface Conference {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 会议编码 */
+  conferenceCode?: string;
+  /** 会议名称 */
+  conferenceName?: string;
+  conferenceTemplateId?: string;
+  /** 模板维度 */
+  templateDimension?: string;
+}
+
+/** 响应数据 */
+export type PagingDataConference = {
+  list?: Conference[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataConference {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataConference;
+}
+
 /** 安灯警报配置表 */
 export interface AlertCfg {
   id?: string;
@@ -2019,6 +2178,98 @@ export const api = {
     getItemById: (id: string) =>
       http.request<ResultEvent['data']>(`/api/daily/event/items/${id}`, {
         method: 'POST',
+      }),
+  },
+  conferenceIndex: {
+    /**
+     * No description
+     *
+     * @tags 会议指标表
+     * @name List
+     * @summary 获取会议指标
+     * @request POST:/conferenceIndex/list
+     * @secure
+     */
+    list: (query: { search: ConferenceIndexSearch }) =>
+      http.request<ResultPagingDataConferenceIndexVO['data']>(`/api/daily/conferenceIndex/list`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议指标表
+     * @name Edit
+     * @summary 编辑会议指标
+     * @request POST:/conferenceIndex/edit
+     * @secure
+     */
+    edit: (data: ConferenceIndexDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceIndex/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议指标表
+     * @name DeleteList
+     * @summary 删除会议指标
+     * @request POST:/conferenceIndex/deleteList
+     * @secure
+     */
+    deleteList: (data: ConferenceIndexDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceIndex/deleteList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议指标表
+     * @name Cancel
+     * @summary 失效会议指标
+     * @request POST:/conferenceIndex/cancel
+     * @secure
+     */
+    cancel: (data: ConferenceIndexDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceIndex/cancel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议指标表
+     * @name Add
+     * @summary 新增会议指标
+     * @request POST:/conferenceIndex/add
+     * @secure
+     */
+    add: (data: ConferenceIndexDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceIndex/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  conference: {
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name Search
+     * @summary 获取会议列表
+     * @request POST:/conference/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataConference['data']>(`/api/daily/conference/items`, {
+        method: 'POST',
+        body: data as any,
       }),
   },
   alertCfg: {

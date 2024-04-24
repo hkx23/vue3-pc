@@ -797,6 +797,8 @@ const parentConfirm = async (measureList, isAllOK, dtlId) => {
     const rowData = tableData.value.find((n) => n.id === dtlId);
     rowData.measureList = measureList;
     rowData.inspectResult = isAllOK ? 'OK' : 'NG';
+    // 设置条码是否合格
+    setSelectBarcode(rowData);
   }
 };
 
