@@ -2190,10 +2190,10 @@ export const api = {
      * @request POST:/conferenceIndex/list
      * @secure
      */
-    list: (query: { search: ConferenceIndexSearch }) =>
+    list: (data: ConferenceIndexSearch) =>
       http.request<ResultPagingDataConferenceIndexVO['data']>(`/api/daily/conferenceIndex/list`, {
         method: 'POST',
-        params: query,
+        body: data as any,
       }),
 
     /**
