@@ -580,12 +580,6 @@ const tableBarcodeSelectedChange = ({ row }) => {
 const barcodeSelectedChange = (row) => {
   // 设置当前选中的条码
   setSelectBarcode(row);
-  // 若已加载过检验项，则无需再加载
-  if (row.inspectItems && row.inspectItems.length === 0) {
-    loadBarcodeTable(row);
-  } else {
-    setBarcodeTable(row.inspectItems);
-  }
 };
 // 扫描信息
 const scanInfoColumns: PrimaryTableCol<TableRowData>[] = [
@@ -797,6 +791,8 @@ const parentConfirm = async (measureList, isAllOK, dtlId) => {
     const rowData = tableData.value.find((n) => n.id === dtlId);
     rowData.measureList = measureList;
     rowData.inspectResult = isAllOK ? 'OK' : 'NG';
+    // 设置条码是否合格
+    setSelectBarcode(rowData);
   }
 };
 
@@ -828,6 +824,13 @@ const checkAllOKComputed = computed(() => {
 const setSelectBarcode = (curBarcodeInfo: BarcodeVO) => {
   formData.currentBarcode = {};
   formData.currentBarcode = curBarcodeInfo;
+
+  // 若已加载过检验项，则无需再加载
+  if (curBarcodeInfo.inspectItems && curBarcodeInfo.inspectItems.length === 0) {
+    loadBarcodeTable(curBarcodeInfo);
+  } else {
+    setBarcodeTable(curBarcodeInfo.inspectItems);
+  }
 };
 
 // 设置条码是否合格
@@ -1000,6 +1003,11 @@ const scanYJProductBarcode = async (value) => {
 // 扫码时动态新增,不影响已有填入的数据信息
 const addBarcodeInfo = (barcodeInfo: BarcodeVO) => {
   if (barcodeInfo) {
+    // 若存在条码,则需要先删除再插入集合
+    scanInfoList.value = scanInfoList.value.filter((item) => {
+      return item.scanBarcode !== barcodeInfo.scanBarcode;
+    });
+    // 插入条码放在首位
     scanInfoList.value.unshift(barcodeInfo);
     // 自动刷新页面动态计算的信息
     autoRefreshUI();
