@@ -29,20 +29,6 @@
           </t-form-item>
         </t-col>
         <t-col :span="6">
-          <t-form-item :label="t('conferenceLayout.布局类型')" name="layoutType">
-            <bcmp-select-business
-              v-model="formData.layoutType"
-              label=""
-              :show-title="false"
-              :name="t('conferenceLayout.布局类型')"
-              :placeholder="t('common.placeholder.select')"
-              type="state"
-              category="CONFERNCE_INDEX_TYPE"
-              :clearable="true"
-            ></bcmp-select-business>
-          </t-form-item>
-        </t-col>
-        <t-col :span="6">
           <t-form-item :label="t('conferenceLayout.布局生效')" name="isState">
             <t-switch v-model="formData.isState" />
           </t-form-item>
