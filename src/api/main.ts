@@ -3102,8 +3102,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5211,11 +5211,11 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
+  isExemptionInspectionChecked?: boolean;
   isExemptionInspectionName?: string;
   isForceInspectionChecked?: boolean;
-  isExemptionInspectionChecked?: boolean;
   dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
 }
@@ -5428,15 +5428,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
+  isState?: boolean;
   stateName?: string;
   isInProcessName?: string;
-  isBatchName?: string;
   isProductName?: string;
-  isRawName?: string;
   isRawChecked?: boolean;
-  isState?: boolean;
-  isProductChecked?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -7427,8 +7427,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -8688,8 +8688,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -9539,6 +9539,7 @@ export type CurrentUserVO = {
   email?: string;
   /** 手机号 */
   mobilePhone?: string;
+  adminOrgId?: string;
   /**
    * 上次更新成员资格用户的密码的日期和时间
    * @format date-time
@@ -10050,10 +10051,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 拒绝是否不可编辑 */
-  refuseDisable?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 拒绝是否不可编辑 */
+  refuseDisable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
 } | null;

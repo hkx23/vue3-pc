@@ -1929,7 +1929,7 @@ const initEditData = (insetModel) => {
   validationDatas2.value = validationDataColumnArray;
   // 添加文件列表
   uploadFiles.value = [];
-  const addFile: AddFileType = {
+  const addFile: any = {
     id: Math.floor(Math.random() * 1999990),
     serialNumber: 1,
     fullFileName: insetModel.settingModel.importTemplateUrl,

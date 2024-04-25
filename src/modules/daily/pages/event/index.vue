@@ -97,7 +97,9 @@
             >
               {{ t('event.reject') }}
             </t-button>
-            <t-button theme="default" @click="onUpgradeMeetingClick"> {{ t('event.upgradeMeeting') }} </t-button>
+            <t-button theme="default" :disabled="true" @click="onUpgradeMeetingClick">
+              {{ t('event.upgradeMeeting') }}
+            </t-button>
             <!--
 
         
