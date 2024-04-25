@@ -15,6 +15,9 @@
       @refresh="fetchData"
       @select-change="rehandleSelectChange"
     >
+      <template #title>
+        <slot name="title"></slot>
+      </template>
       <template #fileName="{ row }">
         <t-link v-show="row.percent === 100" theme="primary" @click="previewFun(row)"
           ><t-icon :name="getFileIcon(row.fileName)"></t-icon>{{ row.fileName }}</t-link
@@ -76,7 +79,7 @@ import { computed, onMounted, PropType, ref, watch } from 'vue';
 
 import { api } from '@/api/main';
 
-import { AddFileType } from './constants';
+// import { AddFileType } from './constants';
 import docViewer from './docViewer.vue';
 
 // / 00-组件属性定义
@@ -108,8 +111,8 @@ const props = defineProps({
   },
   // 附件列表
   fileList: {
-    type: Array as PropType<AddFileType[]>,
-    default: () => [] as AddFileType[],
+    type: Array as PropType<any[]>,
+    default: () => [] as any[],
   },
   ghost: {
     type: Boolean,
@@ -174,8 +177,9 @@ const files = ref([]);
 const rowKey = 'id';
 const isLoading = ref(false);
 const selectedRowKeys = ref([]);
+const uploadPath = ref(props.uploadPath);
 
-const tableData = ref<AddFileType[]>([]);
+const tableData = ref<any[]>([]);
 
 // 查询数据
 const fetchData = () => {
@@ -184,7 +188,8 @@ const fetchData = () => {
     isLoading.value = false;
     tableData.value = _.cloneDeep(props.fileList);
     tableData.value.forEach((item) => {
-      item.fileSizeShow = formatBytes(item.fileSize);
+      item.fileSizeShow = item.fileSize ? formatBytes(item.fileSize) : '-';
+      item.timeUpload = item.timeUpload || '-';
       item.percent = 100;
     });
 
@@ -245,11 +250,12 @@ const beforeUpload = (file: UploadFile) => {
   // 将file复制成tableData的一个项目，加入到tableData中
   // todo:ID问题
 
-  const addFile: AddFileType = {
+  const addFile: any = {
     id: Math.floor(Math.random() * 1999990),
     serialNumber: tableData.value.length + 1,
-    fullFileName: `${props.uploadPath}/${file.name}`,
+    fullFileName: `${uploadPath.value}/${file.name}`,
     fileName: file.name,
+    filePath: uploadPath.value,
     fileSize: file.size,
     fileSizeShow: formatBytes(file.size),
     timeUpload: dayjs().format('YYYY-MM-DD HH:mm:ss'),
@@ -286,7 +292,7 @@ const requestMethod: RequestMethod = async (file: UploadFile) => {
 const upLoadFile = async (file: UploadFile) => {
   const res = await api.file.uploadFile(
     {
-      path: props.uploadPath,
+      path: uploadPath.value,
     },
     {
       file: file.raw,
@@ -325,10 +331,11 @@ const onDelConfirm = async (row: any) => {
   // console.log('删除附件：', row);
   try {
     if (!props.isHandDelete) {
-      await api.file.deleteFile({ path: props.uploadPath, fileName: row.fileName });
+      await api.file.deleteFile({ path: uploadPath.value, fileName: row.fileName });
       tableData.value = tableData.value.filter((item) => item.id !== row.id);
       emits('deleteSuccess', row);
     } else {
+      tableData.value = tableData.value.filter((item) => item.id !== row.id);
       emits('deleteSuccess', row);
     }
   } catch (error) {
@@ -337,7 +344,7 @@ const onDelConfirm = async (row: any) => {
 };
 const batchDelete = async () => {
   if (!(selectedRowKeys?.value?.length > 0)) {
-    MessagePlugin.warning('请选择一行数据！');
+    MessagePlugin.warning('请选择至少一行数据！');
     return;
   }
   // console.log('批量删除附件：', selectedRowKeys.value);
@@ -347,7 +354,7 @@ const batchDelete = async () => {
     if (!props.isHandDelete) {
       const deleteFileNames = deleteRows.map((item) => item.fileName);
       // 批量删除
-      await api.file.batchDeleteFile({ path: props.uploadPath, fileNames: deleteFileNames });
+      await api.file.batchDeleteFile({ path: uploadPath.value, fileNames: deleteFileNames });
       tableData.value = tableData.value.filter((item) => !selectedRowKeys.value.includes(item.id));
       emits('batchDeleteSuccess', deleteRows);
     } else {
@@ -401,7 +408,7 @@ const batchDownload = () => {
   //   const downRows = tableData.value.filter((item) => selectedRowKeys.value.includes(item.id));
   //   const downFileNames = downRows.map((item) => item.fileName);
   //   // 批量下载
-  //   await api.file.downloadSelectedFilesAsZip({ path: props.uploadPath, fileNames: downFileNames });
+  //   await api.file.downloadSelectedFilesAsZip({ path: uploadPath.value, fileNames: downFileNames });
   //   // tableData.value = tableData.value.filter((item) => !selectedRowKeys.value.includes(item.id));
   // }
 };
@@ -467,6 +474,14 @@ watch(
   () => props.fileList,
   () => {
     fetchData();
+  },
+  { deep: true },
+);
+
+watch(
+  () => props.uploadPath,
+  (val) => {
+    uploadPath.value = val;
   },
   { deep: true },
 );
