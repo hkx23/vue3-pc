@@ -12,7 +12,9 @@
       <bcmp-upload-content
         ref="formFilesUploadRef"
         :upload-path="uploadPath"
-        :readonly="isEdit"
+        :upload-type-limit="uploadTypeLimit"
+        :upload-count-limit="uploadCountLimit"
+        :readonly="isReadonly"
         @upload-success="uploadSuccess"
         @uploadfail="uploadfail"
         @delete-success="deleteSuccess"
@@ -29,7 +31,7 @@ import { onMounted, reactive, Ref, ref } from 'vue';
 import { AddFileType } from '../bcmp-upload-content/constants';
 // import BcmpUploadContent from './bcmp-upload-content/index.vue';
 
-const isEdit = ref(true); // 是否可编辑
+const isReadonly = ref(true); // 是否可编辑
 const formVisible = ref(false);
 const formData = reactive({});
 const formRef: Ref<FormInstanceFunctions> = ref(null);
@@ -40,6 +42,14 @@ const props = defineProps({
   uploadPath: {
     type: String,
     default: 'Common',
+  },
+  uploadTypeLimit: {
+    type: String,
+    default: '',
+  },
+  uploadCountLimit: {
+    type: Number,
+    default: 999,
   },
 });
 
@@ -93,7 +103,7 @@ const reset = () => {
   });
 };
 const showForm = async (edit, files) => {
-  isEdit.value = edit;
+  isReadonly.value = edit;
   formVisible.value = true;
   setFileList(files);
 };

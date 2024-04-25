@@ -414,25 +414,28 @@ const dialogDoc: any = ref(false);
 const fileViewerRef = ref<any>(null);
 const getFileIcon = (fileName: any) => {
   let iconName = 'file-unknown';
-  const suffix = fileName.split('.')[1];
-  switch (suffix) {
-    case 'docx':
-      iconName = 'file-word';
-      break;
-    case 'xlsx':
-      iconName = 'file-excel';
-      break;
-    case 'jpg':
-    case 'jpeg':
-    case 'png':
-      iconName = 'file-image';
-      break;
-    case 'pdf':
-      iconName = 'file-pdf';
-      break;
-    default:
-      break;
+  if (fileName) {
+    const suffix = fileName.split('.')[1];
+    switch (suffix) {
+      case 'docx':
+        iconName = 'file-word';
+        break;
+      case 'xlsx':
+        iconName = 'file-excel';
+        break;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        iconName = 'file-image';
+        break;
+      case 'pdf':
+        iconName = 'file-pdf';
+        break;
+      default:
+        break;
+    }
   }
+
   return iconName;
 };
 const previewFun = (file: any) => {

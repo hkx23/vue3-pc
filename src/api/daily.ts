@@ -1037,6 +1037,105 @@ export interface ResultEvent {
   data?: Event;
 }
 
+export interface ConferenceLayoutSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  /** 布局维度 */
+  layoutDimension?: string;
+  /** 布局分类 */
+  layoutType?: string;
+  /** 布局代码 */
+  layoutCode?: string;
+}
+
+export interface ConferenceLayoutVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 布局代码 */
+  layoutCode?: string;
+  /** 布局名称 */
+  layoutName?: string;
+  /** 布局描述 */
+  layoutDesc?: string;
+  /** 布局尺寸 */
+  layoutSize?: string;
+  /** 布局分类名称 */
+  layoutTypeName?: string;
+  /** 布局维度名称 */
+  layoutDimensionName?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  /** 有效值转换 */
+  isState?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataConferenceLayoutVO = {
+  list?: ConferenceLayoutVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataConferenceLayoutVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataConferenceLayoutVO;
+}
+
+export interface ConferenceLayoutDTO {
+  conferenceLayoutVO?: ConferenceLayoutVO;
+  /** id集合 */
+  ids?: string[];
+}
+
 export interface ConferenceIndexSearch {
   /**
    * 页码
@@ -1102,6 +1201,8 @@ export interface ConferenceIndexVO {
   indexDimension?: string;
   /** 缩略图地址 */
   indexIconPath?: string;
+  /** 缩略图名称 */
+  indexIconName?: string;
   /** 指标地址 */
   indexUrl?: string;
   /** 指标分类名称 */
@@ -1112,8 +1213,8 @@ export interface ConferenceIndexVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
-  /** 状态名称 */
-  statusName?: string;
+  /** 有效值转换 */
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -2180,6 +2281,82 @@ export const api = {
         method: 'POST',
       }),
   },
+  conferenceLayout: {
+    /**
+     * No description
+     *
+     * @tags 会议布局表
+     * @name List
+     * @summary 获取会议布局
+     * @request POST:/conferenceLayout/list
+     * @secure
+     */
+    list: (data: ConferenceLayoutSearch) =>
+      http.request<ResultPagingDataConferenceLayoutVO['data']>(`/api/daily/conferenceLayout/list`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议布局表
+     * @name Edit
+     * @summary 编辑会议布局
+     * @request POST:/conferenceLayout/edit
+     * @secure
+     */
+    edit: (data: ConferenceLayoutDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceLayout/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议布局表
+     * @name DeleteList
+     * @summary 删除会议布局
+     * @request POST:/conferenceLayout/deleteList
+     * @secure
+     */
+    deleteList: (data: ConferenceLayoutDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceLayout/deleteList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议布局表
+     * @name Cancel
+     * @summary 设置会议布局有效或失效
+     * @request POST:/conferenceLayout/cancel
+     * @secure
+     */
+    cancel: (data: ConferenceLayoutDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceLayout/cancel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议布局表
+     * @name Add
+     * @summary 新增会议布局
+     * @request POST:/conferenceLayout/add
+     * @secure
+     */
+    add: (data: ConferenceLayoutDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceLayout/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   conferenceIndex: {
     /**
      * No description
@@ -2231,7 +2408,7 @@ export const api = {
      *
      * @tags 会议指标表
      * @name Cancel
-     * @summary 失效会议指标
+     * @summary 设置会议指标有效或失效
      * @request POST:/conferenceIndex/cancel
      * @secure
      */
