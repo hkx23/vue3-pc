@@ -2,7 +2,7 @@
   <cmp-container :full="true">
     <cmp-card>
       <!-- 查询组件  -->
-      <cmp-query :opts="opts" @submit="conditionEnter"> </cmp-query>
+      <cmp-query ref="queryRef" :opts="opts" :bool-enter="true" @submit="conditionEnter"> </cmp-query>
     </cmp-card>
     <cmp-card>
       <cmp-table
@@ -132,6 +132,19 @@
   >
     <event-form ref="formRef" />
   </t-dialog>
+  <t-dialog
+    v-model:visible="fileShowVisible"
+    header="附件查看"
+    top="56px"
+    width="50%"
+    :cancel-btn="null"
+    :confirm-btn="null"
+    :close-on-overlay-click="false"
+  >
+    <cmp-container :full="true">
+      <bcmp-upload-content ref="formFilesUploadRef" :readonly="true" :file-list="currentfileList"></bcmp-upload-content>
+    </cmp-container>
+  </t-dialog>
 </template>
 
 <script setup lang="ts">
@@ -183,16 +196,17 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   //   fixed: 'right',
   // },
 ];
+const queryRef = ref();
 // 初始渲染
-onMounted(async () => {
-  await fetchTable();
+onMounted(() => {
+  queryRef.value.search();
 });
 
 // 查询条件处理数据
 const filterList = ref([]) as any;
 
 const datePlanRangeDefault = ref([
-  dayjs().format('YYYY-MM-DD 00:00:00'),
+  dayjs().subtract(31, 'day').format('YYYY-MM-DD 00:00:00'),
   dayjs().subtract(-31, 'day').format('YYYY-MM-DD 23:59:59'),
 ]); // 初始化日期控件
 
@@ -488,8 +502,14 @@ const onRowChange = (value: any, context) => {
   currentRowuserResponsibilityId.value = selectedData.value[0].userResponsibilityId;
 };
 
+const fileShowVisible = ref(false);
+const currentfileList = ref([]);
+
 const onFileView = async (row: any) => {
   console.log('查看', row);
+  const fileList = (await api.event.getFileListByItemId(row.id)) as any;
+  currentfileList.value = fileList;
+  fileShowVisible.value = true;
 };
 </script>
 

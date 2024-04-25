@@ -259,9 +259,11 @@ let isFormEditing = false;
 const reset = (isEdit: boolean, data?: Event) => {
   // isAdmin = false;
   formRef.value.reset({ type: 'empty' });
+
   formData.id = '';
   formData.oid = '';
   formData.eid = '';
+  formData.fileList = [];
   // 将id小写后比较
   if (!isEdit) {
     formData.id = commmon.generateBigIntId().toString();
@@ -281,6 +283,7 @@ const reset = (isEdit: boolean, data?: Event) => {
     }
   }
   uploadPath.value = `daily/event/${formData.id}`;
+  formRef.value.clearValidate();
 };
 
 const deleteSuccess = (file: any) => {

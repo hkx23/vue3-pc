@@ -315,10 +315,18 @@ const formatBytes = (sizeInBytes: number, decimalPlaces = 2) => {
 };
 
 // 下载附件
-const downAtta = (row: any) => {
+const downAtta = async (row: any) => {
   // console.log('下载附件：', row);
   // 通过URL下载附件
   const link = document.createElement('a');
+  if (row.signedUrl === undefined) {
+    // 根据path与fileName获取地址
+    const res = await api.file.getSignedUrl({
+      file: row.fileName,
+      path: row.filePath,
+    });
+    row.signedUrl = res;
+  }
   const downLink = row.signedUrl;
   const fileName = downLink.substring(downLink.lastIndexOf('/') + 1);
   link.href = downLink;
@@ -371,6 +379,17 @@ const batchDownload = () => {
   // console.log('批量下载附件：', selectedRowKeys.value);
   if (selectedRowKeys.value.length > 0) {
     const downRows = tableData.value.filter((item) => selectedRowKeys.value.includes(item.id));
+
+    downRows.forEach(async (row) => {
+      if (row.signedUrl === undefined) {
+        // 根据path与fileName获取地址
+        const res = await api.file.getSignedUrl({
+          file: row.fileName,
+          path: row.filePath,
+        });
+        row.signedUrl = res;
+      }
+    });
 
     // 创建一个队列来保存待下载的资源信息
     const downloadQueue = downRows.map((row) => ({
@@ -445,13 +464,20 @@ const getFileIcon = (fileName: any) => {
 
   return iconName;
 };
-const previewFun = (file: any) => {
+const previewFun = async (file: any) => {
   // console.log(file.signedUrl);
   dialogDoc.value = true;
   const data = file;
   // 上传过的文件组成完成的网络路径
   if (file.signedUrl) {
     data.src = file.signedUrl;
+  } else {
+    // 根据path与fileName获取地址
+    const res = await api.file.getSignedUrl({
+      file: file.fileName,
+      path: file.filePath,
+    });
+    data.src = res;
   }
 
   const suffix = data.fileName.split('.')[1];
