@@ -1366,6 +1366,84 @@ export interface ResultPagingDataConference {
   data?: PagingDataConference;
 }
 
+/** 点检项目 */
+export interface CheckItemVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 项目代码 */
+  itemCode?: string;
+  /** 项目名称 */
+  itemName?: string;
+  /** 项目描述 */
+  itemDesc?: string;
+  /** 项目类型 */
+  itemType?: string;
+  ids?: string[];
+  itemTypeName?: string;
+}
+
+export interface CheckItemSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  itemCode?: string;
+  itemName?: string;
+  itemType?: string;
+  ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataCheckItemVO = {
+  list?: CheckItemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataCheckItemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataCheckItemVO;
+}
+
 /** 安灯警报配置表 */
 export interface AlertCfg {
   id?: string;
@@ -2587,6 +2665,81 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataConference['data']>(`/api/daily/conference/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  checkItem: {
+    /**
+     * No description
+     *
+     * @tags 点检项目表
+     * @name Update
+     * @summary 编辑资产品牌
+     * @request POST:/checkItem/update
+     * @secure
+     */
+    update: (data: CheckItemVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkItem/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检项目表
+     * @name Search
+     * @request POST:/checkItem/items
+     * @secure
+     */
+    search: (data: CheckItemSearch) =>
+      http.request<ResultPagingDataCheckItemVO['data']>(`/api/daily/checkItem/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检项目表
+     * @name Insert
+     * @summary 新增资产品牌
+     * @request POST:/checkItem/insert
+     * @secure
+     */
+    insert: (data: CheckItemVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkItem/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检项目表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/checkItem/getList
+     * @secure
+     */
+    getList: (data: CheckItemSearch) =>
+      http.request<ResultPagingDataCheckItemVO['data']>(`/api/daily/checkItem/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检项目表
+     * @name BatchUpdateState
+     * @summary 批量删除资产品牌
+     * @request POST:/checkItem/batchUpdateState
+     * @secure
+     */
+    batchUpdateState: (data: CheckItemVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checkItem/batchUpdateState`, {
         method: 'POST',
         body: data as any,
       }),
