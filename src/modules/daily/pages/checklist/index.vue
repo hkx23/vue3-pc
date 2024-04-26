@@ -10,14 +10,14 @@
         row-key="id"
         :table-column="columns"
         :fixed-height="true"
-        :table-data="checkItemData.list"
-        :total="checkItemTotal"
+        :table-data="checklistData.list"
+        :total="checklistTotal"
         :selected-row-keys="selectedRowKeys"
         @refresh="fetchTable"
         @select-change="rehandleSelectChange"
       >
         <template #title>
-          {{ '点检项目列表' }}
+          {{ '点检清单列表' }}
         </template>
         <template #actionSlot="{ row }">
           <t-space :size="8">
@@ -26,17 +26,16 @@
         </template>
         <template #state="{ row }">
           <t-popconfirm
-            :content="row.state == 0 ? t('checkItem.confirmEnable') : t('checkItem.confirmDisable')"
+            :content="row.state == 0 ? t('checklist.confirmEnable') : t('checklist.confirmDisable')"
             @confirm="onRowStateChange(row)"
           >
             <t-switch :custom-value="[1, 0]" :value="row.state" :default-value="row.state" size="large"></t-switch>
-            <!-- <t-link theme="primary">{{ row.state == 0 ? t('user.enable') : t('user.disable') }}</t-link> -->
           </t-popconfirm>
         </template>
 
         <template #button>
           <t-space :size="8">
-            <t-button theme="primary" @click="onAddTypeData">新增</t-button>
+            <t-button theme="primary" @click="onAddData">新增</t-button>
             <bcmp-import-auto-button
               theme="default"
               button-text="导入"
@@ -56,27 +55,29 @@
     :header="diaLogTitle"
     @close="onSecondaryReset"
   >
-    <t-form
-      ref="formRef"
-      :rules="rules"
-      :data="checkItemTabData.list"
-      label-width="120px"
-      @submit="onAnomalyTypeSubmit"
-    >
-      <t-form-item label="点检项目编码" name="itemCode">
-        <t-input v-model="checkItemTabData.list.itemCode" :disabled="isDisabled"></t-input>
+    <t-form ref="formRef" :rules="rules" :data="checklistTabData.list" label-width="120px" @submit="onSubmit">
+      <t-form-item label="点检清单编码" name="checklistCode">
+        <t-input v-model="checklistTabData.list.checklistCode" :disabled="isDisabled"></t-input>
       </t-form-item>
-      <t-form-item label="点检项目名称" name="itemName">
-        <t-input v-model="checkItemTabData.list.itemName"></t-input>
+      <t-form-item label="点检清单名称" name="checklistName">
+        <t-input v-model="checklistTabData.list.checklistName"></t-input>
       </t-form-item>
-      <t-form-item label="点检项目描述" name="itemDesc">
-        <t-input v-model="checkItemTabData.list.itemDesc"></t-input>
+      <t-form-item label="点检清单描述" name="checklistDesc">
+        <t-input v-model="checklistTabData.list.checklistDesc"></t-input>
       </t-form-item>
-      <t-form-item label="项目类型" name="itemType">
+      <t-form-item label="清单类型" name="checklistCategory">
         <bcmp-select-param
-          v-model="checkItemTabData.list.itemType"
-          placeholder="请选择项目类型"
-          param-group="Q_ITEM_TYPE"
+          v-model="checklistTabData.list.checklistCategory"
+          param-group="D_CHECKLIST_CATEGORY"
+        ></bcmp-select-param>
+      </t-form-item>
+      <t-form-item label="出勤班次" name="shiftCode">
+        <bcmp-select-param v-model="checklistTabData.list.shiftCode" param-group="SHIFT_CODE"></bcmp-select-param>
+      </t-form-item>
+      <t-form-item label="频率" name="executeFrequenceCode">
+        <bcmp-select-param
+          v-model="checklistTabData.list.executeFrequenceCode"
+          param-group="EXECUTE_FREQUENCE"
         ></bcmp-select-param>
       </t-form-item>
     </t-form>
@@ -107,20 +108,28 @@ const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
 const submitFalg = ref(false);
 
-const formData = ref(null);
+const formData = ref({
+  checklistCode: '',
+  checklistName: '',
+  checklistCategory: '',
+  shiftCode: '',
+  executeFrequenceCode: '',
+});
 // 表格数据总条数
-const checkItemTotal = ref(0);
+const checklistTotal = ref(0);
 // 编辑回填 ID
 const incidentID = ref('');
 // 表格数据
-const checkItemData = reactive({ list: [] });
+const checklistData = reactive({ list: [] });
 // dialog 弹框数据
-const checkItemTabData = reactive({
+const checklistTabData = reactive({
   list: {
-    itemCode: '', // 点检项目编码
-    itemName: '', // 点检项目名称
-    itemDesc: '', // 点检项目描述
-    itemType: '', // 项目类型
+    checklistCode: '', // 点检清单编码
+    checklistName: '', // 点检清单名称
+    checklistDesc: '', // 点检清单描述
+    checklistCategory: '', // 清单类型
+    shiftCode: '',
+    executeFrequenceCode: '',
   },
 });
 // 表格列表数据
@@ -131,32 +140,44 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'itemCode',
-    title: '点检项目编码',
+    colKey: 'checklistCode',
+    title: '点检清单编码',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'itemName',
-    title: '点检项目名称',
+    colKey: 'checklistName',
+    title: '点检清单名称',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'itemDesc',
-    title: '点检项目描述',
+    colKey: 'checklistDesc',
+    title: '点检清单描述',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'itemTypeName',
-    title: '项目类型',
+    colKey: 'checklistCategoryName',
+    title: '清单类型',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'shiftCodeName',
+    title: '出勤模式',
+    align: 'center',
+    width: '100',
+  },
+  {
+    colKey: 'executeFrequenceName',
+    title: '频率',
     align: 'center',
     width: '100',
   },
   {
     colKey: 'state',
-    title: '项目状态',
+    title: '清单状态',
     align: 'center',
     width: '100',
   },
@@ -171,29 +192,33 @@ const columns: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const rules: FormRules = {
-  itemCode: [{ required: true, message: '点检项目编码不能为空', trigger: 'blur' }],
-  itemName: [{ required: true, message: '点检项目名称不能为空', trigger: 'blur' }],
-  itemType: [{ required: true, message: '项目类型不能为空', trigger: 'change' }],
+  checklistCode: [{ required: true, message: '点检清单编码不能为空', trigger: 'blur' }],
+  checklistName: [{ required: true, message: '点检清单名称不能为空', trigger: 'blur' }],
+  checklistCategory: [{ required: true, message: '清单类型不能为空', trigger: 'change' }],
+  shiftCode: [{ required: true, message: '出勤班次不能为空', trigger: 'change' }],
+  executeFrequenceCode: [{ required: true, message: '频率不能为空', trigger: 'change' }],
 };
 
 onMounted(async () => {
   await fetchTable(); // 获取 表格 数据
 });
 
-const onAddTypeData = () => {
+const onAddData = () => {
   formRef.value.reset({ type: 'empty' });
   isDisabled.value = false;
   formVisible.value = true;
-  checkItemTabData.list.itemName = ''; // 点检项目名称
-  checkItemTabData.list.itemCode = ''; // 点检项目编码
-  checkItemTabData.list.itemDesc = ''; // 点检项目描述
-  checkItemTabData.list.itemType = '';
+  checklistTabData.list.checklistName = ''; // 点检清单名称
+  checklistTabData.list.checklistCode = ''; // 点检清单编码
+  checklistTabData.list.checklistDesc = ''; // 点检清单描述
+  checklistTabData.list.checklistCategory = '';
+  checklistTabData.list.shiftCode = '';
+  checklistTabData.list.executeFrequenceCode = '';
   submitFalg.value = true;
-  diaLogTitle.value = '新增点检项目';
+  diaLogTitle.value = '新增点检清单';
 };
 
-const onAddTypeRequest = async () => {
-  await apiDaily.checkItem.insert(checkItemTabData.list);
+const onAddRequest = async () => {
+  await apiDaily.checklist.insert(checklistTabData.list);
   await fetchTable();
   MessagePlugin.success('添加成功');
 };
@@ -201,24 +226,40 @@ const onAddTypeRequest = async () => {
 // #query 查询参数
 const opts = computed(() => {
   return {
-    itemCode: {
-      label: '项目编码',
+    checklistCode: {
+      label: '清单编码',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
     },
-    itemName: {
-      label: '项目名称',
+    checklistName: {
+      label: '清单名称',
       comp: 't-input',
       event: 'input',
       defaultVal: '',
     },
-    itemType: {
-      label: '项目类型',
+    checklistCategory: {
+      label: '清单类型',
       comp: 'bcmp-select-param',
       defaultVal: '',
       bind: {
-        paramGroup: 'Q_ITEM_TYPE',
+        paramGroup: 'D_CHECKLIST_CATEGORY',
+      },
+    },
+    executeFrequenceCode: {
+      label: '频率',
+      comp: 'bcmp-select-param',
+      defaultVal: '',
+      bind: {
+        paramGroup: 'EXECUTE_FREQUENCE',
+      },
+    },
+    shiftCode: {
+      label: '出勤班次',
+      comp: 'bcmp-select-param',
+      defaultVal: '',
+      bind: {
+        paramGroup: 'SHIFT_CODE',
       },
     },
   };
@@ -232,18 +273,20 @@ const onInput = async (data: any) => {
 };
 
 const fetchTable = async () => {
-  const res = await apiDaily.checkItem.getList({
+  const res = await apiDaily.checklist.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
-    keyword: formData.value.soltDemo,
-    itemCode: formData.value.itemCode,
-    itemName: formData.value.itemName,
-    itemType: formData.value.itemType,
+    checklistCode: formData.value.checklistCode,
+    checklistName: formData.value.checklistName,
+    checklistCategory: formData.value.checklistCategory,
+    shiftCode: formData.value.shiftCode,
+    executeFrequenceCode: formData.value.executeFrequenceCode,
   });
 
-  checkItemData.list = res.list;
-  checkItemTotal.value = res.total;
+  checklistData.list = res.list;
+  checklistTotal.value = res.total;
   selectedRowKeys.value = [];
+  MessagePlugin.success('查询成功');
 };
 
 const onSecondarySubmit = () => {
@@ -252,19 +295,22 @@ const onSecondarySubmit = () => {
 // 右侧表格编辑按钮
 const onEditRow = (row: any) => {
   isDisabled.value = true;
-  checkItemTabData.list.itemName = row.itemName; // 点检项目名称
-  checkItemTabData.list.itemCode = row.itemCode; // 点检项目编码
-  checkItemTabData.list.itemDesc = row.itemDesc; // 点检项目描述
-  checkItemTabData.list.itemType = row.itemType; // 项目类型
+  checklistTabData.list.checklistName = row.checklistName; // 点检清单名称
+  checklistTabData.list.checklistCode = row.checklistCode; // 点检清单编码
+  checklistTabData.list.checklistDesc = row.checklistDesc; // 点检清单描述
+  checklistTabData.list.checklistCategory = row.checklistCategory;
+  checklistTabData.list.shiftCode = row.shiftCode;
+  checklistTabData.list.executeFrequenceCode = row.executeFrequenceCode;
+
   incidentID.value = row.id; // 编辑回填 ID
   submitFalg.value = false;
   formVisible.value = true;
-  diaLogTitle.value = '编辑点检项目';
+  diaLogTitle.value = '编辑点检清单';
 };
 
 // 编辑表格数据 请求
-const onRedactTypeRequest = async () => {
-  await apiDaily.checkItem.update({ ...checkItemTabData.list, id: incidentID.value });
+const onUpdateRequest = async () => {
+  await apiDaily.checklist.update({ ...checklistTabData.list, id: incidentID.value });
   await fetchTable();
   MessagePlugin.success('修改成功');
 };
@@ -277,17 +323,20 @@ const rehandleSelectChange = async (value: any[]) => {
 // 关闭模态框事件
 const onSecondaryReset = () => {
   formRef.value.reset({ type: 'empty' });
-  checkItemTabData.list.itemType = '';
+  checklistTabData.list.checklistCategory = '';
+  checklistTabData.list.shiftCode = '';
+  checklistTabData.list.executeFrequenceCode = '';
+
   formVisible.value = false;
 };
 
 // 表单提交事件
-const onAnomalyTypeSubmit = async (context: { validateResult: boolean }) => {
+const onSubmit = async (context: { validateResult: boolean }) => {
   if (context.validateResult === true) {
     if (submitFalg.value) {
-      await onAddTypeRequest(); // 新增请求
+      await onAddRequest(); // 新增请求
     } else {
-      await onRedactTypeRequest(); // 编辑请求
+      await onUpdateRequest(); // 编辑请求
     }
     formVisible.value = false;
   }
@@ -299,13 +348,13 @@ const onRowStateChange = async (row: any) => {
   idsList.push(row.id);
   if (postRow.state === 1) {
     postRow.state = 0;
-    await apiDaily.checkItem.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
+    await apiDaily.checklist.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
       MessagePlugin.success('禁用成功');
       row.state = postRow.state;
     });
   } else {
     postRow.state = 1;
-    await apiDaily.checkItem.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
+    await apiDaily.checklist.batchUpdateState({ ids: idsList, state: postRow.state }).then(() => {
       MessagePlugin.success('启用成功');
       row.state = postRow.state;
     });

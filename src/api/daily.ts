@@ -1366,6 +1366,94 @@ export interface ResultPagingDataConference {
   data?: PagingDataConference;
 }
 
+/** 点检清单 */
+export interface ChecklistVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 点检清单代码 */
+  checklistCode?: string;
+  /** 点检清单名称 */
+  checklistName?: string;
+  /** 点检清单描述 */
+  checklistDesc?: string;
+  /** 点检清单类别 */
+  checklistCategory?: string;
+  /** 班次 */
+  shiftCode?: string;
+  /**
+   * 执行频率
+   * @format int32
+   */
+  executeFrequence?: number;
+  ids?: string[];
+  checklistCategoryName?: string;
+  executeFrequenceCode?: string;
+}
+
+export interface ChecklistSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  checklistCode?: string;
+  checklistName?: string;
+  checklistCategory?: string;
+  shiftCode?: string;
+  executeFrequenceCode?: string;
+  ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataChecklistVO = {
+  list?: ChecklistVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataChecklistVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataChecklistVO;
+}
+
 /** 点检项目 */
 export interface CheckItemVO {
   id?: string;
@@ -2669,13 +2757,88 @@ export const api = {
         body: data as any,
       }),
   },
+  checklist: {
+    /**
+     * No description
+     *
+     * @tags 点检清单表
+     * @name Update
+     * @summary 编辑点检清单
+     * @request POST:/checklist/update
+     * @secure
+     */
+    update: (data: ChecklistVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checklist/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检清单表
+     * @name Search
+     * @request POST:/checklist/items
+     * @secure
+     */
+    search: (data: ChecklistSearch) =>
+      http.request<ResultPagingDataChecklistVO['data']>(`/api/daily/checklist/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检清单表
+     * @name Insert
+     * @summary 新增点检清单
+     * @request POST:/checklist/insert
+     * @secure
+     */
+    insert: (data: ChecklistVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checklist/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检清单表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/checklist/getList
+     * @secure
+     */
+    getList: (data: ChecklistSearch) =>
+      http.request<ResultPagingDataChecklistVO['data']>(`/api/daily/checklist/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检清单表
+     * @name BatchUpdateState
+     * @summary 批量删除点检清单
+     * @request POST:/checklist/batchUpdateState
+     * @secure
+     */
+    batchUpdateState: (data: ChecklistVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checklist/batchUpdateState`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   checkItem: {
     /**
      * No description
      *
      * @tags 点检项目表
      * @name Update
-     * @summary 编辑资产品牌
+     * @summary 编辑点检项目
      * @request POST:/checkItem/update
      * @secure
      */
@@ -2704,7 +2867,7 @@ export const api = {
      *
      * @tags 点检项目表
      * @name Insert
-     * @summary 新增资产品牌
+     * @summary 新增点检项目
      * @request POST:/checkItem/insert
      * @secure
      */
@@ -2734,7 +2897,7 @@ export const api = {
      *
      * @tags 点检项目表
      * @name BatchUpdateState
-     * @summary 批量删除资产品牌
+     * @summary 批量删除点检项目
      * @request POST:/checkItem/batchUpdateState
      * @secure
      */
