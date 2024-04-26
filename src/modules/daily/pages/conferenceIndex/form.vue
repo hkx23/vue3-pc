@@ -137,9 +137,13 @@ const FORM_RULES: ComputedRef<FormRules> = computed(() => {
   return {
     indexCode: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标编码')]) }],
     indexName: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标生效')]) }],
-    indexDimension: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标维度')]) }],
+    indexType: [
+      { trigger: 'blur', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标类型')]) },
+    ],
+    indexDimension: [
+      { trigger: 'blur', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标维度')]) },
+    ],
     indexUrl: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标路径')]) }],
-    indexType: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标类型')]) }],
   };
 });
 const Emit = defineEmits(['parent-refresh-event']);
@@ -173,6 +177,9 @@ const confirm = () => {
 
 const reset = () => {
   console.log('reset');
+  formRef.value.clearValidate();
+  formRef.value.reset({ type: 'empty' });
+
   // 清除所有对象的值
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
@@ -193,6 +200,7 @@ const initFormAdd = () => {
   formHeader.value = t('common.button.add');
   formData.opType = 'add';
   formVisible.value = true;
+  formData.isState = true;
 };
 const formHeader = ref('');
 // 初始化编辑信息

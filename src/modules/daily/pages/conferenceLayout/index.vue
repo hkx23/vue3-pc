@@ -158,7 +158,7 @@ const column = ref([
   { title: t('conferenceLayout.创建时间'), colKey: 'timeCreate', align: 'center', width: 180 },
   { title: t('conferenceLayout.修改人'), colKey: 'modifierName', align: 'center', width: 120 },
   { title: t('conferenceLayout.修改时间'), colKey: 'timeModified', align: 'center', width: 180 },
-  { title: t('conferenceLayout.操作'), colKey: 'op', align: 'center', width: 120 },
+  { title: t('conferenceLayout.操作'), colKey: 'op', align: 'center', width: 120, fixed: 'right' },
 ]);
 // table数据
 const conferenceLayoutData = ref([]);
