@@ -107,7 +107,11 @@ const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
 const submitFalg = ref(false);
 
-const formData = ref(null);
+const formData = ref({
+  itemCode: '',
+  itemName: '',
+  itemType: '',
+});
 // 表格数据总条数
 const checkItemTotal = ref(0);
 // 编辑回填 ID
