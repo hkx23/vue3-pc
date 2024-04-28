@@ -1,50 +1,51 @@
 <template>
-  <cmp-container :full="true">
-    <cmp-card :span="12">
-      <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
-    </cmp-card>
-    <cmp-card :span="12">
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="pageUI"
-        row-key="id"
-        :table-column="columns"
-        :fixed-height="true"
-        :table-data="checkItemData.list"
-        :total="checkItemTotal"
-        :selected-row-keys="selectedRowKeys"
-        @refresh="fetchTable"
-        @select-change="rehandleSelectChange"
-      >
-        <template #title>
-          {{ '点检项目列表' }}
-        </template>
-        <template #actionSlot="{ row }">
-          <t-space :size="8">
-            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
-          </t-space>
-        </template>
-        <template #state="{ row }">
-          <t-popconfirm
-            :content="row.state == 0 ? t('checkItem.confirmEnable') : t('checkItem.confirmDisable')"
-            @confirm="onRowStateChange(row)"
+  <cmp-container :full="true" :full-sub-index="[0, 1]">
+    <cmp-card>
+      <cmp-container :full="true">
+        <cmp-query :opts="opts" @submit="onInput" />
+        <cmp-card :ghost="true">
+          <cmp-table
+            v-model:pagination="pageUI"
+            row-key="id"
+            :table-column="columns"
+            :fixed-height="true"
+            :table-data="checkItemData.list"
+            :total="checkItemTotal"
+            :selected-row-keys="selectedRowKeys"
+            @refresh="fetchTable"
+            @select-change="rehandleSelectChange"
           >
-            <t-switch :custom-value="[1, 0]" :value="row.state" :default-value="row.state" size="large"></t-switch>
-            <!-- <t-link theme="primary">{{ row.state == 0 ? t('user.enable') : t('user.disable') }}</t-link> -->
-          </t-popconfirm>
-        </template>
+            <template #title>
+              {{ '点检项目列表' }}
+            </template>
+            <template #actionSlot="{ row }">
+              <t-space :size="8">
+                <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+              </t-space>
+            </template>
+            <template #state="{ row }">
+              <t-popconfirm
+                :content="row.state == 0 ? t('checkItem.confirmEnable') : t('checkItem.confirmDisable')"
+                @confirm="onRowStateChange(row)"
+              >
+                <t-switch :custom-value="[1, 0]" :value="row.state" :default-value="row.state" size="large"></t-switch>
+                <!-- <t-link theme="primary">{{ row.state == 0 ? t('user.enable') : t('user.disable') }}</t-link> -->
+              </t-popconfirm>
+            </template>
 
-        <template #button>
-          <t-space :size="8">
-            <t-button theme="primary" @click="onAddTypeData">新增</t-button>
-            <bcmp-import-auto-button
-              theme="default"
-              button-text="导入"
-              type="a_incident_type"
-            ></bcmp-import-auto-button>
-          </t-space>
-        </template>
-      </cmp-table>
+            <template #button>
+              <t-space :size="8">
+                <t-button theme="primary" @click="onAddTypeData">新增</t-button>
+                <bcmp-import-auto-button
+                  theme="default"
+                  button-text="导入"
+                  type="a_incident_type"
+                ></bcmp-import-auto-button>
+              </t-space>
+            </template>
+          </cmp-table>
+        </cmp-card>
+      </cmp-container>
     </cmp-card>
   </cmp-container>
 
@@ -100,11 +101,11 @@ import { useLang } from './lang';
 
 const { t } = useLang();
 const isDisabled = ref(false);
-const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
-const { pageUI } = usePage(); // 分页工具
-const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
-const diaLogTitle = ref(''); // 弹窗标题
-const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
+const formRef: Ref<FormInstanceFunctions> = ref(null);
+const { pageUI } = usePage();
+const formVisible = ref(false);
+const diaLogTitle = ref('');
+const selectedRowKeys: Ref<any[]> = ref([]);
 const submitFalg = ref(false);
 
 const formData = ref({
@@ -114,6 +115,7 @@ const formData = ref({
 });
 // 表格数据总条数
 const checkItemTotal = ref(0);
+
 // 编辑回填 ID
 const incidentID = ref('');
 // 表格数据
@@ -127,6 +129,7 @@ const checkItemTabData = reactive({
     itemType: '', // 项目类型
   },
 });
+
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
   {
@@ -179,7 +182,6 @@ const rules: FormRules = {
   itemName: [{ required: true, message: '点检项目名称不能为空', trigger: 'blur' }],
   itemType: [{ required: true, message: '项目类型不能为空', trigger: 'change' }],
 };
-
 onMounted(async () => {
   await fetchTable(); // 获取 表格 数据
 });

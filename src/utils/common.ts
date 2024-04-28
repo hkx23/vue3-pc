@@ -6,11 +6,12 @@ export default {
   reset(formData) {
     Object.keys(formData).forEach((key) => {
       if (_.isArray(formData[key])) {
-        formData[key] = [];
+        // formData[key] = []; // 直接赋值空，再嵌套深层页面有，可能会改变集合引用
+        formData[key].splice(0, formData[key].length);
       } else if (_.isNumber(formData[key])) {
         formData[key] = 0;
       } else if (_.isBoolean(formData[key])) {
-        formData[key] = true;
+        formData[key] = false;
       } else {
         formData[key] = '';
       }

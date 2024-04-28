@@ -1,46 +1,80 @@
 <template>
-  <cmp-container :full="true">
-    <cmp-card :span="12">
-      <cmp-query :opts="opts" @submit="onInput"> </cmp-query>
+  <cmp-container :full="true" :full-sub-index="[0, 1]">
+    <cmp-card>
+      <cmp-container :full="true">
+        <cmp-query :opts="opts" @submit="onInput" />
+        <cmp-table
+          ref="tableRef"
+          v-model:pagination="pageUI"
+          row-key="id"
+          :table-column="columns"
+          :fixed-height="true"
+          :table-data="checklistData.list"
+          :total="checklistTotal"
+          :selected-row-keys="selectedRowKeys"
+          @refresh="fetchTable"
+          @row-click="onSelectChange"
+          @select-change="rehandleSelectChange"
+        >
+          <template #title>
+            {{ '点检清单列表' }}
+          </template>
+          <template #actionSlot="{ row }">
+            <t-space :size="8">
+              <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+            </t-space>
+          </template>
+          <template #state="{ row }">
+            <t-popconfirm
+              :content="row.state == 0 ? t('checklist.confirmEnable') : t('checklist.confirmDisable')"
+              @confirm="onRowStateChange(row)"
+            >
+              <t-switch :custom-value="[1, 0]" :value="row.state" :default-value="row.state" size="large"></t-switch>
+            </t-popconfirm>
+          </template>
+
+          <template #button>
+            <t-space :size="8">
+              <t-button theme="primary" @click="onAddData">新增</t-button>
+              <bcmp-import-auto-button
+                theme="default"
+                button-text="导入"
+                type="a_incident_type"
+              ></bcmp-import-auto-button>
+            </t-space>
+          </template>
+        </cmp-table>
+      </cmp-container>
     </cmp-card>
-    <cmp-card :span="12">
+    <cmp-card>
+      <!-- ################# 子表格数据 ###################### -->
       <cmp-table
-        ref="tableRef"
-        v-model:pagination="pageUI"
-        row-key="id"
-        :table-column="columns"
+        v-model:pagination="itemPage"
         :fixed-height="true"
-        :table-data="checklistData.list"
-        :total="checklistTotal"
-        :selected-row-keys="selectedRowKeys"
-        @refresh="fetchTable"
-        @select-change="rehandleSelectChange"
+        row-key="userId"
+        :hover="false"
+        :stripe="false"
+        :table-column="itemColumns"
+        active-row-type="single"
+        :table-data="itemInCheckList.list"
+        :total="itemTotal"
+        select-on-row-click
+        @refresh="onFetchItemData"
       >
         <template #title>
-          {{ '点检清单列表' }}
+          {{ '项目列表' }}
         </template>
-        <template #actionSlot="{ row }">
-          <t-space :size="8">
-            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
-          </t-space>
-        </template>
-        <template #state="{ row }">
-          <t-popconfirm
-            :content="row.state == 0 ? t('checklist.confirmEnable') : t('checklist.confirmDisable')"
-            @confirm="onRowStateChange(row)"
-          >
-            <t-switch :custom-value="[1, 0]" :value="row.state" :default-value="row.state" size="large"></t-switch>
+        <template #actionSlot>
+          <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelItemConfirm()">
+            <t-link theme="primary" @click="onDelItemRow">{{ t('common.button.delete') }}</t-link>
           </t-popconfirm>
         </template>
-
         <template #button>
           <t-space :size="8">
-            <t-button theme="primary" @click="onAddData">新增</t-button>
-            <bcmp-import-auto-button
-              theme="default"
-              button-text="导入"
-              type="a_incident_type"
-            ></bcmp-import-auto-button>
+            <t-button theme="primary" @click="onAddItemData"> 新增项目 </t-button>
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onItemdeleteBatches()">
+              <t-button theme="default"> 项目批量删除 </t-button>
+            </t-popconfirm>
           </t-space>
         </template>
       </cmp-table>
@@ -86,6 +120,8 @@
       <t-button theme="primary" @click="onSecondarySubmit">保存</t-button>
     </template>
   </t-dialog>
+
+  <formItem ref="formItemRef" />
 </template>
 <script setup lang="ts">
 import _ from 'lodash';
@@ -97,12 +133,14 @@ import CmpQuery from '@/components/cmp-query/index.vue';
 import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
+import formItem from './formItem.vue';
 import { useLang } from './lang';
 
 const { t } = useLang();
 const isDisabled = ref(false);
 const formRef: Ref<FormInstanceFunctions> = ref(null); // 新增表单数据清除，获取表单实例
 const { pageUI } = usePage(); // 分页工具
+const { pageUI: itemPage } = usePage();
 const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
 const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
@@ -134,11 +172,11 @@ const checklistTabData = reactive({
 });
 // 表格列表数据
 const columns: PrimaryTableCol<TableRowData>[] = [
-  {
-    colKey: 'row-select',
-    type: 'multiple',
-    width: 46,
-  },
+  // {
+  //   colKey: 'row-select',
+  //   type: 'multiple',
+  //   width: 46,
+  // },
   {
     colKey: 'checklistCode',
     title: '点检清单编码',
@@ -359,6 +397,124 @@ const onRowStateChange = async (row: any) => {
       row.state = postRow.state;
     });
   }
+};
+
+const rowClick = ref(null); // 点击行ID
+const onSelectChange = async ({ row }) => {
+  rowClick.value = row;
+  await supportItemInUserTabData(); // 获取 人员表格 数据
+};
+
+// # 人员
+const formItemRef = ref(null);
+const itemInCheckList = reactive({ list: [] });
+const itemTotal = ref(0);
+const onFetchItemData = async () => {
+  await supportItemInUserTabData();
+};
+const supportItemInUserTabData = async () => {
+  // const res = await api.supportGroup.getItemList({
+  //   pageNum: itemPage.value.page,
+  //   pageSize: itemPage.value.rows,
+  //   groupKeyword: '',
+  //   supportGroupId: rowClickId.value,
+  // });
+  // itemInCheckList.list = res.list;
+  // itemTotal.value = res.total;
+};
+const onDelItemRow = () => {
+  // delItemRowKeys.value = [];
+};
+const onDelItemConfirm = async () => {
+  // await api.supportGroup.removeItemBatch({ supportGroupId: rowClickId.value, ids: delItemRowKeys.value });
+  // if (itemInCheckList.list.length <= 1 && itemPage.value.page > 1) {
+  //   itemPage.value.page--;
+  // }
+  // await supportItemInUserTabData(); // 获取 人员表格 数据
+  // await onAddItemTabData(); // 获取 添加 表格人员数据
+  // await onDelItemTabData(); // 获取 删除 表格人员数据
+  // MessagePlugin.success('删除成功');
+  // delItemRowKeys.value = [];
+};
+const itemColumns: PrimaryTableCol<TableRowData>[] = [
+  {
+    colKey: 'row-select',
+    type: 'multiple',
+    width: 46,
+  },
+  {
+    colKey: 'userName',
+    title: '项目账号',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'userDisplayName',
+    title: '姓名',
+    align: 'center',
+    width: '110',
+  },
+  {
+    colKey: 'mobilePhone',
+    title: '联系方式',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'email',
+    title: '邮箱',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'enterprise',
+    title: '隶属企业',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'organization',
+    title: '组织架构',
+    align: 'center',
+    width: '130',
+  },
+  {
+    colKey: 'actionSlot',
+    title: '操作',
+    align: 'center',
+    fixed: 'right',
+    width: '130',
+    cell: 'actionSlot', // 引用具名插槽
+  },
+];
+const onAddItemData = async () => {
+  if (selectedRowKeys.value.length > 1) {
+    MessagePlugin.warning('只能选择一个点检清单！');
+    return;
+  }
+  if (!rowClick.value) {
+    MessagePlugin.warning('请选择一个点检清单！');
+    return;
+  }
+
+  const { showForm } = formItemRef.value;
+  await showForm(false, rowClick.value);
+};
+const onItemdeleteBatches = async () => {
+  // // 步骤 1: 检查删除前的数据总量
+  // const initialLength = itemInCheckList.list.length;
+  // // 步骤 2: 执行删除操作
+  // await api.supportGroup.removeItemBatch({ supportGroupId: rowGroupId.value, ids: delItemRowKeys.value });
+  // // 步骤 3: 检查当前页是否还有数据
+  // if (initialLength === itemInCheckList.list.length && pageUI.value.page > 1) {
+  //   // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
+  //   pageUI.value.page--;
+  // }
+  // await supportItemInUserTabData(); // 获取 人员表格 数据
+  // await onAddItemTabData(); // 获取 添加 表格人员数据
+  // await onDelItemTabData(); // 获取 删除 表格人员数据
+  // MessagePlugin.success('批量删除成功');
+  // delItemRowKeys.value = [];
 };
 </script>
 
