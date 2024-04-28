@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { api } from '@/api/daily';
@@ -254,7 +254,7 @@ const fetchTable = async () => {
     }
     tableData.value = data.list;
     dataTotal.value = data.total;
-    MessagePlugin.success(t('incidentBill.querySuccess'));
+    // MessagePlugin.success(t('incidentBill.querySuccess'));
   } catch (e) {
     console.log(e);
   }

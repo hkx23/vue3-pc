@@ -371,7 +371,7 @@ const fetchTable = async () => {
     }
     tableData.value = data.list;
     dataTotal.value = data.total;
-    MessagePlugin.success(t('event.querySuccess'));
+    // MessagePlugin.success(t('event.querySuccess'));
     selectedRowKeys.value = [];
     selectedData.value = [];
   } catch (e) {

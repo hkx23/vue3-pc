@@ -286,7 +286,7 @@ const fetchTable = async () => {
     if (data) {
       const res = expandData(data);
       tableData.value = res;
-      MessagePlugin.success(t('andonDaily.querySuccess'));
+      // MessagePlugin.success(t('andonDaily.querySuccess'));
     }
   } catch (e) {
     console.log(e);
