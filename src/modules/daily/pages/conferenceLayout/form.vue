@@ -42,7 +42,6 @@
     </t-form>
     <conference-layout-com
       ref="layoutComRef"
-      :col-num="12"
       option-type="addLayout"
       :readonly="formData.opType === ViewType.view"
     ></conference-layout-com>
