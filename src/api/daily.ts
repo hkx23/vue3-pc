@@ -1407,8 +1407,10 @@ export interface ChecklistVO {
    */
   executeFrequence?: number;
   ids?: string[];
+  shiftCodeName?: string;
   checklistCategoryName?: string;
   executeFrequenceCode?: string;
+  executeFrequenceName?: string;
 }
 
 export interface ChecklistSearch {
