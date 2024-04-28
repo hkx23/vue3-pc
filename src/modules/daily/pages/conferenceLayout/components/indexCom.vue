@@ -56,14 +56,6 @@
                   <t-button shape="square" variant="text"><more-icon /></t-button>
                 </t-dropdown>
               </template>
-              <template #footer>
-                <div style="float: right">
-                  <t-link size="small" @click="onClickRedirect(comp?.redirect)">
-                    更多
-                    <template #suffix-icon><t-icon name="chevron-right"></t-icon></template>
-                  </t-link>
-                </div>
-              </template>
             </cmp-card>
           </div>
           <!--编辑与查看模式-->
@@ -89,14 +81,6 @@
                   <t-button shape="square" variant="text"><more-icon /></t-button>
                 </t-dropdown>
               </template>
-              <template v-if="!comp.ghost" #footer>
-                <div style="float: right">
-                  <t-link v-if="comp?.redirect" size="small" @click="onClickRedirect(comp?.redirect)">
-                    更多
-                    <template #suffix-icon><t-icon name="chevron-right"></t-icon></template>
-                  </t-link>
-                </div>
-              </template>
             </cmp-card>
           </div>
         </template>
@@ -116,8 +100,7 @@ import { MoreIcon } from 'tdesign-icons-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 // import { api } from '@/api/main';
-import { openPage } from '@/router';
-
+// import { openPage } from '@/router';
 import { componentItem, components, groupedComponentItem } from './components';
 
 const props = defineProps({
@@ -250,9 +233,9 @@ const onClickMore = (data, id) => {
   }
 };
 
-const onClickRedirect = (path) => {
-  openPage(path);
-};
+// const onClickRedirect = (path) => {
+//   openPage(path);
+// };
 
 onBeforeUnmount(() => {
   document.removeEventListener('dragover', syncMousePosition);
@@ -280,7 +263,7 @@ const comps = computed(() => {
 });
 
 // 是否为允许编辑模式
-const enableEditingMode = computed<Boolean>(() => {
+const enableEditingMode = computed<boolean>(() => {
   let enableEditing = false;
   if (props.optionType === 'addLayout' || props.optionType === 'editConferenceIndex') {
     enableEditing = true;

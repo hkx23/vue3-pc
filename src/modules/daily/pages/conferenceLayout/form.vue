@@ -44,7 +44,7 @@
       ref="layoutComRef"
       :col-num="12"
       option-type="addLayout"
-      :readonly="formData.opType === ViewType.view"
+      :readonly="true"
     ></conference-layout-com>
     <template #footer>
       <t-button v-if="formData.opType !== ViewType.view" theme="primary" @click="confirm">{{
