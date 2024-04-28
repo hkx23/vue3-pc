@@ -32,7 +32,7 @@
       <grid-layout
         ref="gridLayoutRef"
         v-model:layout="layout"
-        :col-num="3"
+        :col-num="props.colNum"
         :row-height="48"
         :margin="[12, 12]"
         :is-draggable="enableEditingMode"
@@ -40,6 +40,7 @@
         vertical-compact
         :auto-size="true"
         :min-w="1"
+        :min-h="1"
         use-css-transforms
         prevent-collision
       >
