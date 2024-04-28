@@ -138,10 +138,10 @@ const FORM_RULES: ComputedRef<FormRules> = computed(() => {
     indexCode: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标编码')]) }],
     indexName: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标生效')]) }],
     indexType: [
-      { trigger: 'blur', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标类型')]) },
+      { trigger: 'change', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标类型')]) },
     ],
     indexDimension: [
-      { trigger: 'blur', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标维度')]) },
+      { trigger: 'change', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标维度')]) },
     ],
     indexUrl: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标路径')]) }],
   };

@@ -1,28 +1,18 @@
 import { LayoutItem } from 'grid-layout-plus';
 
 // 功能组件
-// import oftenUseMenu from './base/components/often-use-menu/index.vue';
+import oftenUseMenu from '@/pages/dashboard/base/components/often-use-menu/index.vue';
 
+// 所有二开的看板都需要在此初始化
 export const components = [
   {
     code: 'often-use-menu',
-    title: '常用&收藏1',
+    title: '常用&收藏',
     showTitle: true,
     ghost: true,
     description: '显示常用&收藏功能',
     category: '系统',
-    component: null,
-    w: 1,
-    h: 1,
-  },
-  {
-    code: 'often-use-menu1',
-    title: '常用&收藏2',
-    showTitle: true,
-    ghost: true,
-    description: '显示常用&收藏功能',
-    category: '系统',
-    component: null,
+    component: oftenUseMenu,
     w: 1,
     h: 1,
   },

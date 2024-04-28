@@ -1106,6 +1106,99 @@ export interface ResultListEventFile {
   data?: EventFile[] | null;
 }
 
+export interface ConferenceTemplateSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  /** 模板维度 */
+  templateDimension?: string;
+  /** 模板分类 */
+  templateType?: string;
+  /** 模板代码 */
+  templateCode?: string;
+}
+
+export interface ConferenceTemplateVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 模板代码 */
+  templateCode?: string;
+  /** 模板名称 */
+  templateName?: string;
+  /** 模板描述 */
+  templateDesc?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  /** 有效值转换 */
+  isState?: boolean;
+}
+
+/** 响应数据 */
+export type PagingDataConferenceTemplateVO = {
+  list?: ConferenceTemplateVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataConferenceTemplateVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataConferenceTemplateVO;
+}
+
+export interface ConferenceTemplateDTO {
+  conferenceTemplateVO?: ConferenceTemplateVO;
+  /** id集合 */
+  ids?: string[];
+}
+
 export interface ConferenceLayoutSearch {
   /**
    * 页码
@@ -2587,6 +2680,82 @@ export const api = {
      */
     add: (data: EventDTO) =>
       http.request<ResultObject['data']>(`/api/daily/event/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
+  conferenceTemplate: {
+    /**
+     * No description
+     *
+     * @tags 会议模板表
+     * @name List
+     * @summary 获取会议模板
+     * @request POST:/conferenceTemplate/list
+     * @secure
+     */
+    list: (data: ConferenceTemplateSearch) =>
+      http.request<ResultPagingDataConferenceTemplateVO['data']>(`/api/daily/conferenceTemplate/list`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议模板表
+     * @name Edit
+     * @summary 编辑会议模板
+     * @request POST:/conferenceTemplate/edit
+     * @secure
+     */
+    edit: (data: ConferenceTemplateDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceTemplate/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议模板表
+     * @name DeleteList
+     * @summary 删除会议模板
+     * @request POST:/conferenceTemplate/deleteList
+     * @secure
+     */
+    deleteList: (data: ConferenceTemplateDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceTemplate/deleteList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议模板表
+     * @name Cancel
+     * @summary 设置会议模板有效或失效
+     * @request POST:/conferenceTemplate/cancel
+     * @secure
+     */
+    cancel: (data: ConferenceTemplateDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceTemplate/cancel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议模板表
+     * @name Add
+     * @summary 新增会议模板
+     * @request POST:/conferenceTemplate/add
+     * @secure
+     */
+    add: (data: ConferenceTemplateDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conferenceTemplate/add`, {
         method: 'POST',
         body: data as any,
       }),

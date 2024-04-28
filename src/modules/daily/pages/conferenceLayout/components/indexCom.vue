@@ -35,8 +35,8 @@
         :col-num="props.colNum"
         :row-height="48"
         :margin="[12, 12]"
-        :is-draggable="enableEditingMode"
-        :is-resizable="enableEditingMode"
+        :is-draggable="props.optionType === ViewType.addLayout"
+        :is-resizable="props.optionType === ViewType.addLayout"
         vertical-compact
         :auto-size="true"
         :min-w="1"
@@ -45,9 +45,12 @@
         prevent-collision
       >
         <template #item="{ item }">
-          <!--新增模式-->
-          <div v-if="props.optionType === ViewType.addLayout" :class="cmpCardClass">
-            <cmp-card :key="item.i" height="100%" :full="true" :ghost="true" :is-mini="item.h <= 2">
+          <!--新增模式与编辑-->
+          <div
+            v-if="props.optionType === ViewType.addLayout || props.optionType === ViewType.editConferenceIndex"
+            :class="cmpCardClass"
+          >
+            <cmp-card :key="item.i" height="100%" :full="true" :ghost="true" :is-mini="item.h <= 1">
               <template #actions>
                 <t-dropdown
                   v-if="moreBtnOptions.length > 0"
@@ -59,7 +62,7 @@
               </template>
             </cmp-card>
           </div>
-          <!--编辑与查看模式-->
+          <!--查看模式-->
           <div v-else :class="cmpCardClass">
             <cmp-card
               v-for="comp in comps.filter((t) => t.code === item.i)"
@@ -70,7 +73,7 @@
               :ghost="comp.ghost"
               :title="comp.showTitle ? comp.title : ''"
               :subtitle="comp.showTitle ? comp.subtitle : ''"
-              :is-mini="item.h <= 2"
+              :is-mini="item.h <= 1"
             >
               <component :is="comp?.component" />
               <template #actions>
@@ -88,6 +91,7 @@
       </grid-layout>
     </div>
   </div>
+  <relation-conference ref="relationConferenceRef" @parent-refresh-event="parentCloseEvent" />
 </template>
 <script lang="tsx">
 export default {
@@ -104,6 +108,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 // import { api } from '@/api/main';
 // import { openPage } from '@/router';
 import { componentItem, components, groupedComponentItem } from './components';
+import RelationConference from './relationConference.vue';
 
 const props = defineProps({
   // 面板列数
@@ -226,7 +231,7 @@ const moreBtnOptions = computed(() => {
     if (props.optionType === ViewType.addLayout) {
       result = [{ content: '删除面板', value: 'REMOVE_PANEL' }, ...result];
     }
-    if (props.optionType === ViewType.addLayout) {
+    if (props.optionType === ViewType.editConferenceIndex) {
       result = [{ content: '关联指标', value: 'RELATION_CONFERENCE_INDEX' }, ...result];
     }
   }
@@ -242,13 +247,20 @@ const onClickMore = (data, id) => {
       break;
     // 关联指标
     case 'RELATION_CONFERENCE_INDEX':
-      // todo
+      onRelationConference();
       break;
     default:
       break;
   }
 };
 
+// 显示关联指标界面
+const relationConferenceRef = ref(null);
+const onRelationConference = () => {
+  relationConferenceRef.value.initGrid();
+};
+
+const parentCloseEvent = async (isRefresh: boolean) => {};
 // const onClickRedirect = (path) => {
 //   openPage(path);
 // };

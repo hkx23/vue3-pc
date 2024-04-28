@@ -175,7 +175,7 @@ const onFetchData = async () => {
       }
     }
 
-    // 获取通告列表信息
+    // 获取布局列表信息
     const res = await apiDaily.conferenceLayout.list({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
