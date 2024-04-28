@@ -286,7 +286,7 @@ const fetchTable = async () => {
   checklistData.list = res.list;
   checklistTotal.value = res.total;
   selectedRowKeys.value = [];
-  MessagePlugin.success('查询成功');
+  // MessagePlugin.success('查询成功');
 };
 
 const onSecondarySubmit = () => {

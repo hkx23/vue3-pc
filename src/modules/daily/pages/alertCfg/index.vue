@@ -250,7 +250,7 @@ const onInput = async (data: any) => {
   });
   alertCfgData.list = res.list;
   alertCfgTotal.value = res.total;
-  MessagePlugin.success('查询成功');
+  // MessagePlugin.success('查询成功');
 };
 
 // 定义自定义搜索的样式
