@@ -235,7 +235,6 @@ const fetchTable = async () => {
   const res = await apiDaily.checkItem.getList({
     pageNum: pageUI.value.page,
     pageSize: pageUI.value.rows,
-    keyword: formData.value.soltDemo,
     itemCode: formData.value.itemCode,
     itemName: formData.value.itemName,
     itemType: formData.value.itemType,

@@ -2716,10 +2716,10 @@ export interface DeliveryDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 物料检验单明细 */
@@ -2890,10 +2890,10 @@ export interface PurchaseOrderDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 是否接收完成 */
-  isComplete?: boolean;
   /** 待扫数量(需要接收数量-已经接收数量) */
   waitScanQty?: number;
+  /** 是否接收完成 */
+  isComplete?: boolean;
 }
 
 /** 退货管理VO */
@@ -3496,10 +3496,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 /** 库存转移头表 */
@@ -3767,10 +3767,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 是否已完成交接 */
-  isComplete?: boolean;
   /** 待扫数量(需求数量-已扫数量) */
   waitScanQty?: number;
+  /** 是否已完成交接 */
+  isComplete?: boolean;
 }
 
 export interface OnhandQtyBatchVO {
@@ -4222,15 +4222,15 @@ export interface MoIssuanceDtlVO {
    */
   scanQty?: number;
   /**
-   * 需求用量
-   * @format int32
-   */
-  moRequestQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 需求用量
+   * @format int32
+   */
+  moRequestQty?: number;
   tlpickQty?: number;
   bfpickQty?: number;
   /** 已发料量 */
@@ -6683,8 +6683,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
