@@ -4,7 +4,7 @@
     :header="formHeader"
     placement="top"
     top="56px"
-    width="60%"
+    width="65%"
     :cancel-btn="null"
     :confirm-btn="null"
     :close-on-overlay-click="false"
