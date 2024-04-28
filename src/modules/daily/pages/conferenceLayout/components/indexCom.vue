@@ -2,7 +2,7 @@
   <!-- <div v-if="props.optionType === 'addLayout'" class="layout-com-btn">
     <t-button theme="default" @click="addLayoutCom">新增布局内容</t-button>
   </div> -->
-  <div class="layout-com">
+  <div ref="el" class="layout-com" :style="styleAttrs">
     <div v-if="props.optionType === ViewType.addLayout && !props.readonly" class="panel-wrapper">
       <div class="search-input">
         <t-input v-model="filterText" placeholder="请输入" clearable>
@@ -95,8 +95,9 @@ export default {
 };
 </script>
 <script setup lang="tsx">
+import { useResizeObserver } from '@vueuse/core';
 import { GridLayout, LayoutItem } from 'grid-layout-plus';
-import _, { throttle } from 'lodash';
+import _, { debounce, throttle } from 'lodash';
 import { MoreIcon } from 'tdesign-icons-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
@@ -105,21 +106,35 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { componentItem, components, groupedComponentItem } from './components';
 
 const props = defineProps({
+  // 面板列数
   colNum: {
     type: Number,
-    default: 4,
+    default: 12,
   },
-  rowNum: {
+  // 面板宽度
+  designWidth: {
     type: Number,
-    default: 4,
+    default: 1920,
   },
+  // 面板高度
+  designHeight: {
+    type: Number,
+    default: 1080,
+  },
+  // 是否自动自适应计算
+  isAutoSize: {
+    type: Boolean,
+    default: false,
+  },
+  // 是否只读
   readonly: {
     type: Boolean,
     default: false,
   },
+  // addLayout: 新增(占位符布局信息),editConferenceIndex:编辑(配置关联指标),viewKanban:查看模式
   optionType: {
     type: String,
-    default: 'addLayout', // addLayout: 新增(占位符布局信息),editConferenceIndex:编辑(配置关联指标),viewKanban:查看模式
+    default: 'addLayout',
   },
 });
 
@@ -179,7 +194,7 @@ const defaultComponent = [
     i: '',
   },
   {
-    code: 'default-Layout-com4',
+    code: 'default-Layout-com5',
     title: '布局项尺寸(5*5)',
     showTitle: true,
     ghost: true,
@@ -191,15 +206,15 @@ const defaultComponent = [
     i: '',
   },
   {
-    code: 'default-Layout-com4',
-    title: '布局项尺寸(10*10)',
+    code: 'default-Layout-com6',
+    title: '布局项尺寸(6*6)',
     showTitle: true,
     ghost: true,
     description: '拖拽布局项至面板',
     category: '系统',
     component: null,
-    w: 10,
-    h: 10,
+    w: 6,
+    h: 6,
     i: '',
   },
 ] as componentItem[];
@@ -411,8 +426,46 @@ const reset = () => {
   console.log('reset');
   layout.value = [];
 };
+
+// 自适应自动计算
+const scaleInfo = ref({
+  y: 1,
+  x: 1,
+});
+const updateScale = (width, height) => {
+  scaleInfo.value = {
+    x: width / props.designWidth,
+    y: height / props.designHeight,
+  };
+};
+const styleAttrs = computed(() => {
+  let attrs = {
+    height: `${props.designHeight}px`,
+  } as any;
+
+  if (props.isAutoSize) {
+    attrs = {
+      'min-width': `${props.designWidth}px`,
+      'min-height': `${props.designHeight}px`,
+      transform: `scale(${scaleInfo.value.x}, ${scaleInfo.value.y})`,
+      'transform-origin': '0 0',
+    };
+  }
+  return attrs;
+});
+
+const el = ref<HTMLElement>();
 onMounted(() => {
   document.addEventListener('dragover', syncMousePosition);
+  el.value.parentElement.style.overflow = 'hidden';
+  useResizeObserver(
+    el.value.parentElement,
+    debounce((entries) => {
+      const entry = entries[0];
+      const { width, height } = entry.contentRect;
+      updateScale(width, height);
+    }, 100),
+  );
 });
 
 defineExpose({
@@ -426,8 +479,8 @@ defineExpose({
   display: flex;
   flex-direction: row;
   margin-top: 8px;
-  height: 1080px;
   width: 100%;
+  height: 100%;
 }
 
 .layout-com-btn {
