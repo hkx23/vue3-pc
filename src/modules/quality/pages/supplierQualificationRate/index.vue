@@ -131,7 +131,7 @@ const fetchTable = async () => {
     })) as any;
     tableData.value = data.list;
     dataTotal.value = data.total;
-    MessagePlugin.success(t('supplierQualificationRate.querySuccess'));
+    // MessagePlugin.success(t('supplierQualificationRate.querySuccess'));
   } catch (e) {
     console.log(e);
   } finally {
