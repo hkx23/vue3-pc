@@ -2667,10 +2667,10 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
 }
@@ -5772,13 +5772,13 @@ export type SampleCodeVO = {
    * @format int32
    */
   batchEnd?: number;
-  s2?: string;
-  i?: string;
   s1?: string;
-  s3?: string;
+  ii?: string;
+  s2?: string;
   iii?: string;
   s4?: string;
-  ii?: string;
+  s3?: string;
+  i?: string;
 } | null;
 
 /** 标签模板 */

@@ -5430,13 +5430,13 @@ export interface MitemVO {
   isBatchNo?: number;
   isState?: boolean;
   stateName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
+  isRawChecked?: boolean;
+  isInProcessName?: string;
   isRawName?: string;
   isProductName?: string;
   isBatchName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isProductChecked?: boolean;
-  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5579,8 +5579,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8688,8 +8688,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -9398,6 +9398,27 @@ export type WorkbenchIndex = {
 } | null;
 
 /** 通用响应类 */
+export interface ResultWechatSignature {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WechatSignature;
+}
+
+/** 响应数据 */
+export type WechatSignature = {
+  appid?: string;
+  timestamp?: string;
+  noncestr?: string;
+  signature?: string;
+} | null;
+
+/** 通用响应类 */
 export interface ResultListUserInRoleVO {
   /**
    * 响应代码
@@ -10051,10 +10072,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -11978,6 +11999,110 @@ export const api = {
     getByCurrentUser: () =>
       http.request<ResultWorkbenchLayout['data']>(`/api/main/workbenchLayout/getByCurrentUser`, {
         method: 'GET',
+      }),
+  },
+  wechat: {
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name BindUser
+     * @summary 绑定微信用户
+     * @request POST:/wechat/bindUser
+     * @secure
+     */
+    bindUser: (query: { openId: string }) =>
+      http.request<ResultObject['data']>(`/api/main/wechat/bindUser`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name VerifyToken
+     * @summary 判断token是否有效
+     * @request GET:/wechat/verifyToken
+     * @secure
+     */
+    verifyToken: () =>
+      http.request<ResultObject['data']>(`/api/main/wechat/verifyToken`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name Signature
+     * @summary 微信URL签名
+     * @request GET:/wechat/signature
+     * @secure
+     */
+    signature: (query: { url: string }) =>
+      http.request<ResultWechatSignature['data']>(`/api/main/wechat/signature`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name IsUserBind
+     * @summary 判断微信用户是否已绑定
+     * @request GET:/wechat/isUserBind
+     * @secure
+     */
+    isUserBind: (query: { openId: string }) =>
+      http.request<ResultBoolean['data']>(`/api/main/wechat/isUserBind`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name GetOpenId
+     * @summary 获取微信openId
+     * @request GET:/wechat/getOpenId
+     * @secure
+     */
+    getOpenId: (query: { code: string }) =>
+      http.request<ResultString['data']>(`/api/main/wechat/getOpenId`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name GetAppId
+     * @summary 获取微信appId配置
+     * @request GET:/wechat/getAppId
+     * @secure
+     */
+    getAppId: () =>
+      http.request<ResultString['data']>(`/api/main/wechat/getAppId`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name UnbindUser
+     * @summary 解除绑定微信用户
+     * @request DELETE:/wechat/unbindUser
+     * @secure
+     */
+    unbindUser: (query: { openId: string }) =>
+      http.request<ResultObject['data']>(`/api/main/wechat/unbindUser`, {
+        method: 'DELETE',
+        params: query,
       }),
   },
   warehouse: {

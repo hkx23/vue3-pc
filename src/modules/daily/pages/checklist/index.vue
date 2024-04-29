@@ -51,28 +51,30 @@
       <cmp-table
         v-model:pagination="itemPage"
         :fixed-height="true"
-        row-key="userId"
+        row-key="id"
         :hover="false"
         :stripe="false"
         :table-column="itemColumns"
-        active-row-type="single"
         :table-data="itemInCheckList.list"
         :total="itemTotal"
         select-on-row-click
+        active-row-type="single"
+        :selected-row-keys="delItemRowKeys"
+        @select-change="onItemSelectChange"
         @refresh="onFetchItemData"
       >
         <template #title>
           {{ '项目列表' }}
         </template>
-        <template #actionSlot>
-          <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelItemConfirm()">
+        <template #op="{ row }">
+          <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelItemConfirm(row)">
             <t-link theme="primary" @click="onDelItemRow">{{ t('common.button.delete') }}</t-link>
           </t-popconfirm>
         </template>
         <template #button>
           <t-space :size="8">
             <t-button theme="primary" @click="onAddItemData"> 新增项目 </t-button>
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onItemdeleteBatches()">
+            <t-popconfirm theme="default" content="确认删除吗" @confirm="onItemDeleteBatches()">
               <t-button theme="default"> 项目批量删除 </t-button>
             </t-popconfirm>
           </t-space>
@@ -121,7 +123,7 @@
     </template>
   </t-dialog>
 
-  <formItem ref="formItemRef" />
+  <formItem ref="formItemRef" @parent-refresh-event="getChecklistItemList" />
 </template>
 <script setup lang="ts">
 import _ from 'lodash';
@@ -143,7 +145,8 @@ const { pageUI } = usePage(); // 分页工具
 const { pageUI: itemPage } = usePage();
 const formVisible = ref(false); // 控制 dialog 弹窗显示隐藏
 const diaLogTitle = ref(''); // 弹窗标题
-const selectedRowKeys: Ref<any[]> = ref([]); // 要删除的id
+const selectedRowKeys = ref([]); // 要删除的id
+const delItemRowKeys = ref([]);
 const submitFalg = ref(false);
 
 const formData = ref({
@@ -242,7 +245,7 @@ onMounted(async () => {
 });
 
 const onAddData = () => {
-  formRef.value.reset({ type: 'empty' });
+  formRef.value.reset({ type: 'empty' }); // 清除formRef数据
   isDisabled.value = false;
   formVisible.value = true;
   checklistTabData.list.checklistName = ''; // 点检清单名称
@@ -306,7 +309,6 @@ const opts = computed(() => {
 const onInput = async (data: any) => {
   pageUI.value.page = 1;
   formData.value = { ...data };
-
   fetchTable();
 };
 
@@ -324,12 +326,14 @@ const fetchTable = async () => {
   checklistData.list = res.list;
   checklistTotal.value = res.total;
   selectedRowKeys.value = [];
-  // MessagePlugin.success('查询成功');
+  delItemRowKeys.value = [];
+  MessagePlugin.success('查询成功');
 };
 
 const onSecondarySubmit = () => {
   formRef.value.submit();
 };
+
 // 右侧表格编辑按钮
 const onEditRow = (row: any) => {
   isDisabled.value = true;
@@ -365,6 +369,8 @@ const onSecondaryReset = () => {
   checklistTabData.list.shiftCode = '';
   checklistTabData.list.executeFrequenceCode = '';
 
+  selectedRowKeys.value = [];
+  delItemRowKeys.value = [];
   formVisible.value = false;
 };
 
@@ -402,39 +408,39 @@ const onRowStateChange = async (row: any) => {
 const rowClick = ref(null); // 点击行ID
 const onSelectChange = async ({ row }) => {
   rowClick.value = row;
-  await supportItemInUserTabData(); // 获取 人员表格 数据
+  await getChecklistItemList();
 };
 
-// # 人员
+// # 项目
 const formItemRef = ref(null);
 const itemInCheckList = reactive({ list: [] });
 const itemTotal = ref(0);
 const onFetchItemData = async () => {
-  await supportItemInUserTabData();
+  await getChecklistItemList();
 };
-const supportItemInUserTabData = async () => {
-  // const res = await api.supportGroup.getItemList({
-  //   pageNum: itemPage.value.page,
-  //   pageSize: itemPage.value.rows,
-  //   groupKeyword: '',
-  //   supportGroupId: rowClickId.value,
-  // });
-  // itemInCheckList.list = res.list;
-  // itemTotal.value = res.total;
+const getChecklistItemList = async () => {
+  const res = await apiDaily.checklistItem.getList({
+    pageNum: 1,
+    pageSize: 99999,
+    checklistId: rowClick.value.id,
+  });
+  itemInCheckList.list = res.list;
+  itemTotal.value = res.total;
 };
 const onDelItemRow = () => {
-  // delItemRowKeys.value = [];
+  delItemRowKeys.value = [];
 };
-const onDelItemConfirm = async () => {
-  // await api.supportGroup.removeItemBatch({ supportGroupId: rowClickId.value, ids: delItemRowKeys.value });
-  // if (itemInCheckList.list.length <= 1 && itemPage.value.page > 1) {
-  //   itemPage.value.page--;
-  // }
-  // await supportItemInUserTabData(); // 获取 人员表格 数据
-  // await onAddItemTabData(); // 获取 添加 表格人员数据
-  // await onDelItemTabData(); // 获取 删除 表格人员数据
-  // MessagePlugin.success('删除成功');
-  // delItemRowKeys.value = [];
+const onDelItemConfirm = async (row) => {
+  const idsList = [];
+  idsList.push(row.id);
+
+  const data = await apiDaily.checklistItem.batchDeleteItem({
+    ids: idsList,
+  });
+  if (data) {
+    getChecklistItemList();
+    MessagePlugin.success('删除成功');
+  }
 };
 const itemColumns: PrimaryTableCol<TableRowData>[] = [
   {
@@ -443,48 +449,41 @@ const itemColumns: PrimaryTableCol<TableRowData>[] = [
     width: 46,
   },
   {
-    colKey: 'userName',
-    title: '项目账号',
+    colKey: 'itemCode',
+    title: '项目编码',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'userDisplayName',
-    title: '姓名',
+    colKey: 'itemName',
+    title: '项目名称',
     align: 'center',
     width: '110',
   },
   {
-    colKey: 'mobilePhone',
-    title: '联系方式',
+    colKey: 'itemTypeName',
+    title: '项目类型',
     align: 'center',
     width: '130',
   },
   {
-    colKey: 'email',
-    title: '邮箱',
+    colKey: 'executeBeginTime',
+    title: '执行开始时间',
     align: 'center',
     width: '130',
   },
   {
-    colKey: 'enterprise',
-    title: '隶属企业',
+    colKey: 'executeEndTime',
+    title: '执行结束时间',
     align: 'center',
     width: '130',
   },
   {
-    colKey: 'organization',
-    title: '组织架构',
-    align: 'center',
-    width: '130',
-  },
-  {
-    colKey: 'actionSlot',
+    colKey: 'op',
     title: '操作',
     align: 'center',
     fixed: 'right',
     width: '130',
-    cell: 'actionSlot', // 引用具名插槽
   },
 ];
 const onAddItemData = async () => {
@@ -500,21 +499,25 @@ const onAddItemData = async () => {
   const { showForm } = formItemRef.value;
   await showForm(false, rowClick.value);
 };
-const onItemdeleteBatches = async () => {
-  // // 步骤 1: 检查删除前的数据总量
-  // const initialLength = itemInCheckList.list.length;
-  // // 步骤 2: 执行删除操作
-  // await api.supportGroup.removeItemBatch({ supportGroupId: rowGroupId.value, ids: delItemRowKeys.value });
-  // // 步骤 3: 检查当前页是否还有数据
-  // if (initialLength === itemInCheckList.list.length && pageUI.value.page > 1) {
-  //   // 如果删除的数据量等于当前页的数据量，并且不在第一页，则页码减一
-  //   pageUI.value.page--;
-  // }
-  // await supportItemInUserTabData(); // 获取 人员表格 数据
-  // await onAddItemTabData(); // 获取 添加 表格人员数据
-  // await onDelItemTabData(); // 获取 删除 表格人员数据
-  // MessagePlugin.success('批量删除成功');
-  // delItemRowKeys.value = [];
+const onItemSelectChange = async (value: any[]) => {
+  delItemRowKeys.value = value;
+};
+const onItemDeleteBatches = async () => {
+  if (_.isEmpty(delItemRowKeys.value)) {
+    MessagePlugin.error('请选择项目信息');
+    return;
+  }
+  const idsList = [];
+  idsList.push(...delItemRowKeys.value);
+
+  const data = await apiDaily.checklistItem.batchDeleteItem({
+    ids: idsList,
+  });
+  if (data) {
+    getChecklistItemList();
+    MessagePlugin.success('删除成功');
+    delItemRowKeys.value = [];
+  }
 };
 </script>
 

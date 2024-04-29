@@ -1169,6 +1169,12 @@ export interface ConferenceTemplateVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
+  /** 模板内容 */
+  templateIndexContent?: string;
+  /** 模板维度 */
+  templateDimension?: string;
+  /** 模板维度转换 */
+  templateDimensionList?: string[];
   /** 有效值转换 */
   isState?: boolean;
 }
@@ -1459,6 +1465,99 @@ export interface ResultPagingDataConference {
   data?: PagingDataConference;
 }
 
+/** 点检清单项目 */
+export interface ChecklistItemVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  checklistId?: string;
+  checkItemId?: string;
+  /** 执行开始时间 */
+  executeBeginTime?: string;
+  /** 执行结束时间 */
+  executeEndTime?: string;
+  /** 点检清单代码 */
+  checklistCode?: string;
+  /** 点检清单名称 */
+  checklistName?: string;
+  /** 点检清单描述 */
+  checklistDesc?: string;
+  /** 点检清单类别 */
+  checklistCategory?: string;
+  checklistCategoryName?: string;
+  shiftCodeName?: string;
+  executeFrequenceCode?: string;
+  executeFrequenceName?: string;
+  /** 项目代码 */
+  itemCode?: string;
+  /** 项目名称 */
+  itemName?: string;
+  /** 项目描述 */
+  itemDesc?: string;
+  /** 项目类型 */
+  itemType?: string;
+  itemTypeName?: string;
+}
+
+export interface ChecklistItemSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  ids?: string[];
+  checklistId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataChecklistItemVO = {
+  list?: ChecklistItemVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataChecklistItemVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataChecklistItemVO;
+}
+
 /** 点检清单 */
 export interface ChecklistVO {
   id?: string;
@@ -1499,7 +1598,6 @@ export interface ChecklistVO {
    * @format int32
    */
   executeFrequence?: number;
-  ids?: string[];
   shiftCodeName?: string;
   checklistCategoryName?: string;
   executeFrequenceCode?: string;
@@ -1582,7 +1680,6 @@ export interface CheckItemVO {
   itemDesc?: string;
   /** 项目类型 */
   itemType?: string;
-  ids?: string[];
   itemTypeName?: string;
 }
 
@@ -2780,6 +2877,21 @@ export const api = {
      * No description
      *
      * @tags 会议布局表
+     * @name Search
+     * @summary 获取会议指标-公共弹框组件
+     * @request POST:/conferenceLayout/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataConferenceLayoutVO['data']>(`/api/daily/conferenceLayout/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议布局表
      * @name Edit
      * @summary 编辑会议布局
      * @request POST:/conferenceLayout/edit
@@ -2928,6 +3040,67 @@ export const api = {
         body: data as any,
       }),
   },
+  checklistItem: {
+    /**
+     * No description
+     *
+     * @tags 点检清单项目表
+     * @name Update
+     * @summary 编辑点检清单项目
+     * @request POST:/checklistItem/update
+     * @secure
+     */
+    update: (data: ChecklistItemVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checklistItem/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检清单项目表
+     * @name Insert
+     * @summary 新增点检清单项目
+     * @request POST:/checklistItem/insert
+     * @secure
+     */
+    insert: (data: ChecklistItemVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checklistItem/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检清单项目表
+     * @name GetList
+     * @summary 根据清单ID获取项目信息
+     * @request POST:/checklistItem/getList
+     * @secure
+     */
+    getList: (data: ChecklistItemSearch) =>
+      http.request<ResultPagingDataChecklistItemVO['data']>(`/api/daily/checklistItem/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 点检清单项目表
+     * @name BatchDeleteItem
+     * @summary 批量删除点检清单项目
+     * @request POST:/checklistItem/batchDeleteItem
+     * @secure
+     */
+    batchDeleteItem: (data: ChecklistItemSearch) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checklistItem/batchDeleteItem`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   checklist: {
     /**
      * No description
@@ -2997,7 +3170,7 @@ export const api = {
      * @request POST:/checklist/batchUpdateState
      * @secure
      */
-    batchUpdateState: (data: ChecklistVO) =>
+    batchUpdateState: (data: ChecklistSearch) =>
       http.request<ResultBoolean['data']>(`/api/daily/checklist/batchUpdateState`, {
         method: 'POST',
         body: data as any,
@@ -3072,7 +3245,7 @@ export const api = {
      * @request POST:/checkItem/batchUpdateState
      * @secure
      */
-    batchUpdateState: (data: CheckItemVO) =>
+    batchUpdateState: (data: CheckItemSearch) =>
       http.request<ResultBoolean['data']>(`/api/daily/checkItem/batchUpdateState`, {
         method: 'POST',
         body: data as any,

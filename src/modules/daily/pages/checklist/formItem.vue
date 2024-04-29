@@ -11,8 +11,8 @@
     :close-on-overlay-click="false"
   >
     <cmp-container :full="true" :ghost="true">
-      <cmp-card :span="12" :ghost="false">
-        <t-descriptions :column="1">
+      <cmp-card :span="12" :ghost="true">
+        <t-descriptions :column="1" bordered>
           <t-descriptions-item label="点检清单名称" :content="formData.checklistName" />
           <t-descriptions-item label="项目代码">
             <bcmp-select-business
@@ -26,10 +26,10 @@
           <t-descriptions-item label="项目类型" :content="formData.itemTypeName" />
           <t-descriptions-item label="项目描述" :content="formData.itemDesc" />
           <t-descriptions-item label="执行开始时间">
-            <t-time-picker format="HH:mm" />
+            <t-time-picker v-model="formData.executeBeginTime" format="HH:mm" />
           </t-descriptions-item>
           <t-descriptions-item label="执行结束时间">
-            <t-time-picker format="HH:mm" />
+            <t-time-picker v-model="formData.executeEndTime" format="HH:mm" />
           </t-descriptions-item>
         </t-descriptions>
       </cmp-card>
@@ -38,10 +38,10 @@
 </template>
 <script lang="ts" setup>
 import _ from 'lodash';
-import { FormInstanceFunctions, LoadingPlugin } from 'tdesign-vue-next';
+import { FormInstanceFunctions, LoadingPlugin, MessagePlugin } from 'tdesign-vue-next';
 import { reactive, Ref, ref } from 'vue';
 
-// import { api as apiDaily } from '@/api/daily';
+import { api as apiDaily } from '@/api/daily';
 import common from '@/utils/common';
 
 // const { t } = useLang();
@@ -71,18 +71,36 @@ const formData = reactive({
 
 const onConfirmForm = async () => {
   try {
-    // if (item.inspectResultSwitch) {
-    //   item.inspectResult = 'OK';
-    // }
+    if (_.isEmpty(formData.itemCode)) {
+      MessagePlugin.error('请选择项目');
+      return;
+    }
+    if (_.isEmpty(formData.executeBeginTime)) {
+      MessagePlugin.error('请选择执行开始时间');
+      return;
+    }
+    if (_.isEmpty(formData.executeEndTime)) {
+      MessagePlugin.error('请选择执行结束时间');
+      return;
+    }
 
-    // const ngList = tableData.value.filter((n) => !n.inspectResultSwitch);
+    LoadingPlugin(true);
 
-    // LoadingPlugin(true);
-
-    // await apiQuality.iqcInspect.submitIqcInspect({
-    //   iqcBillNo: formData.iqcBillNo,
-    //   billNoList: formData.billNoList,
-    // });
+    if (isEdit.value) {
+      await apiDaily.checklistItem.update({
+        checklistId: formData.checklistId,
+        checkItemId: formData.checkItemId,
+        executeBeginTime: formData.executeBeginTime,
+        executeEndTime: formData.executeEndTime,
+      });
+    } else {
+      await apiDaily.checklistItem.insert({
+        checklistId: formData.checklistId,
+        checkItemId: formData.checkItemId,
+        executeBeginTime: formData.executeBeginTime,
+        executeEndTime: formData.executeEndTime,
+      });
+    }
 
     Emit('parent-refresh-event');
     formVisible.value = false;

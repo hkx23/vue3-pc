@@ -2196,10 +2196,10 @@ export interface SaleOrderDtlVO {
   reqQty?: number;
   /** 送货单明细id */
   saleDeliveryDtlId?: string;
-  /** 待发货数量 */
-  waitDeliveriedQty?: number;
   /** 仓库物料汇总key */
   sumKey?: string;
+  /** 待发货数量 */
+  waitDeliveriedQty?: number;
 }
 
 /** 响应数据 */
@@ -2716,10 +2716,10 @@ export interface DeliveryDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 物料检验单明细 */
@@ -2890,10 +2890,10 @@ export interface PurchaseOrderDtlVO {
   /** 批次接收量 */
   batchLotQty?: number;
   transferDtlId?: string;
-  /** 待扫数量(需要接收数量-已经接收数量) */
-  waitScanQty?: number;
   /** 是否接收完成 */
   isComplete?: boolean;
+  /** 待扫数量(需要接收数量-已经接收数量) */
+  waitScanQty?: number;
 }
 
 /** 退货管理VO */
@@ -3496,10 +3496,10 @@ export interface MiscellaneousManageDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 /** 库存转移头表 */
@@ -3767,10 +3767,10 @@ export interface OnhandTransferDtlVO {
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /** 库存现有量 */
   onhandQty?: number;
-  /** 待扫数量(需求数量-已扫数量) */
-  waitScanQty?: number;
   /** 是否已完成交接 */
   isComplete?: boolean;
+  /** 待扫数量(需求数量-已扫数量) */
+  waitScanQty?: number;
 }
 
 export interface OnhandQtyBatchVO {
@@ -4221,6 +4221,11 @@ export interface MoIssuanceDtlVO {
    * @format double
    */
   scanQty?: number;
+  bfpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  tlpickQty?: number;
+  flpickQty?: number;
   /**
    * 待扫数量
    * @format double
@@ -4231,11 +4236,6 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
-  tlpickQty?: number;
-  bfpickQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  flpickQty?: number;
 }
 
 /** 通用响应类 */
@@ -6683,8 +6683,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeIn?: number;
   beforeOut?: number;
+  beforeIn?: number;
 }
 
 /** 响应数据 */
