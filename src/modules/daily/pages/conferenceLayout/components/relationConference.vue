@@ -13,7 +13,7 @@
       <cmp-row>
         <t-space :break-line="true" :style="{ height: '480px', 'overflow-y': 'scroll', 'scrollbar-width': 'thin' }">
           <t-radio-group v-model="selectConference" class="group-container">
-            <div v-for="item in conferenceIndexData" :key="item" class="image-item">
+            <div v-for="item in conferenceIndexData" :key="item.id" class="image-item">
               <t-image :src="item.indexIconPath" :style="{ width: '300px', height: '140px' }" :lazy="true" />
               <t-radio :key="item.id" :label="item.indexName" :value="item.id"></t-radio>
             </div>

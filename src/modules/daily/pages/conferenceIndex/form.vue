@@ -58,7 +58,8 @@
         </t-col>
         <t-col :span="6">
           <t-form-item :label="t('conferenceIndex.指标路径')" name="indexUrl">
-            <t-input v-model="formData.indexUrl" />
+            <t-select v-model="formData.indexUrl" clearable :options="indexUrlOptions" filterable />
+            <!-- <t-input v-model="formData.indexUrl" /> -->
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -115,6 +116,7 @@ import { computed, ComputedRef, reactive, Ref, ref } from 'vue';
 import { api, ConferenceIndexVO } from '@/api/daily';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
+import { components } from '@/modules/daily/pages/conferenceLayout/components/components';
 
 import { useLang } from './lang';
 
@@ -147,10 +149,8 @@ const FORM_RULES: ComputedRef<FormRules> = computed(() => {
   };
 });
 const Emit = defineEmits(['parent-refresh-event']);
-// onMounted(() => {});
 
 const confirm = () => {
-  // formRef.value.submit();
   return new Promise((resolve, reject) => {
     formRef.value.validate().then(async (result) => {
       if (result !== true) {
@@ -179,7 +179,7 @@ const reset = () => {
   console.log('reset');
   formRef.value.clearValidate();
   formRef.value.reset({ type: 'empty' });
-
+  indexUrlOptions.value = [];
   // 清除所有对象的值
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
@@ -191,6 +191,20 @@ const reset = () => {
     } else {
       formData[key] = '';
     }
+  });
+  // 初始化指标路径下拉框
+  initIndexUrlOptions();
+};
+
+const indexUrlOptions = ref([]);
+// 初始化指标路径下拉框
+const initIndexUrlOptions = () => {
+  components.forEach((item) => {
+    const itemOption = {
+      label: item.title,
+      value: item.code,
+    };
+    indexUrlOptions.value.push(itemOption);
   });
 };
 const formVisible = ref(false);

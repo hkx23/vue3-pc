@@ -51,6 +51,13 @@
             :class="cmpCardClass"
           >
             <cmp-card :key="item.i" height="100%" :full="true" :ghost="true" :is-mini="item.h <= 1">
+              <t-image
+                v-if="item.indexIconPath"
+                :src="item.indexIconPath"
+                class="customer-image"
+                :style="{ width: '100%', height: '100%' }"
+                :lazy="true"
+              />
               <template #actions>
                 <t-dropdown
                   v-if="moreBtnOptions.length > 0"
@@ -65,7 +72,7 @@
           <!--查看模式-->
           <div v-else :class="cmpCardClass">
             <cmp-card
-              v-for="comp in comps.filter((t) => t.code === item.i)"
+              v-for="comp in comps.filter((t) => t.code === item.code)"
               :key="comp.code"
               :class="cmpCardClass"
               height="100%"
@@ -100,7 +107,7 @@ export default {
 </script>
 <script setup lang="tsx">
 import { useResizeObserver } from '@vueuse/core';
-import { GridLayout, LayoutItem } from 'grid-layout-plus';
+import { GridLayout } from 'grid-layout-plus';
 import _, { debounce, throttle } from 'lodash';
 import { MoreIcon } from 'tdesign-icons-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
@@ -263,7 +270,8 @@ const onRelationConference = (id: string) => {
 const parentCloseEvent = async (rowData: ConferenceIndexVO, itemId: string) => {
   const layoutItem = layout.value.find((x) => x.i === itemId);
   if (layoutItem) {
-    // layoutItem.
+    layoutItem.code = rowData.indexUrl;
+    layoutItem.indexIconPath = rowData.indexIconPath;
   }
 };
 // const onClickRedirect = (path) => {
@@ -280,7 +288,7 @@ const syncMousePosition = (event: MouseEvent) => {
   mouseAt.y = event.clientY;
 };
 
-const layout = ref<LayoutItem[]>([]);
+const layout = ref<componentItem[]>([]);
 const filterText = ref('');
 const comps = computed(() => {
   if (props.optionType === ViewType.addLayout) {
@@ -334,13 +342,14 @@ const onHandDragLayout = throttle((dragItem: componentItem) => {
     mouseAt.y < parentRect.bottom;
 
   if (mouseInGrid && !layout.value.find((item) => item.i === dropId)) {
-    layout.value.push({
+    const layoutItem = {
       x: (layout.value.length * 2) % 12,
       y: layout.value.length + 12, // puts it at the bottom
       w: 2,
       h: 2,
       i: dropId,
-    });
+    } as componentItem;
+    layout.value.push(layoutItem);
   }
 
   const index = layout.value.findIndex((item) => item.i === dropId);
@@ -396,13 +405,14 @@ const onHandDragLayoutEnd = (dragItem: componentItem) => {
     return;
   }
 
-  layout.value.push({
+  const layoutItem = {
     x: dragItem.x,
     y: dragItem.y,
     w: dragItem.w,
     h: dragItem.h,
     i: dragItem.i,
-  });
+  } as componentItem;
+  layout.value.push(layoutItem);
   gridLayoutRef.value.dragEvent('dragend', dragItem.i, dragItem.x, dragItem.y, dragItem.h, dragItem.w);
 
   const item = gridLayoutRef.value.getItem(dropId);
@@ -467,6 +477,11 @@ const styleAttrs = computed(() => {
       transform: `scale(${scaleInfo.value.x}, ${scaleInfo.value.y})`,
       'transform-origin': '0 0',
     };
+  }
+
+  // 查看模式修改下底色
+  if (props.optionType === ViewType.viewKanban) {
+    attrs.background = 'var(--td-bg-color-page)';
   }
   return attrs;
 });
@@ -552,7 +567,6 @@ defineExpose({
 .wrapper {
   min-height: 100%;
   flex: 1;
-  padding: 8px;
 
   &.editable {
     .vgl-layout::before {
@@ -628,5 +642,11 @@ defineExpose({
 .cmp-layout-card-color-none {
   background: none;
   height: 100%;
+}
+
+.customer-image {
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 3px 6px rgb(0 0 0 / 10%);
 }
 </style>

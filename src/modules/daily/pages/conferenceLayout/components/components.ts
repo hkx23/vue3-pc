@@ -7,10 +7,10 @@ import oftenUseMenu from '@/pages/dashboard/base/components/often-use-menu/index
 export const components = [
   {
     code: 'often-use-menu',
-    title: '常用&收藏',
+    title: '常用&收藏(demo)',
     showTitle: true,
     ghost: true,
-    description: '显示常用&收藏功能',
+    description: '显示常用&收藏功能(例子:后续可删除)',
     category: '系统',
     component: oftenUseMenu,
     w: 1,
@@ -25,7 +25,7 @@ export interface groupedComponentItem {
 
 export interface componentItem extends LayoutItem {
   /**
-   * 唯一编码
+   * 唯一编码(也是指标的指标路径信息)
    */
   code: string;
   /**
@@ -60,4 +60,8 @@ export interface componentItem extends LayoutItem {
    * 跳转路径（显示其他按钮）
    */
   redirect?: string;
+  /**
+   * 指标缩略图
+   */
+  indexIconPath?: string;
 }
