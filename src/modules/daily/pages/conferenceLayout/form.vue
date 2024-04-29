@@ -113,6 +113,7 @@ const confirm = () => {
         return;
       }
       formData.layoutBody = JSON.stringify(layoutData.value);
+      formData.state = formData.isState === true ? 1 : 0;
       if (formData.opType === 'add') {
         await api.conferenceLayout.add({ conferenceLayoutVO: formData }).then(() => {
           MessagePlugin.success(t('common.message.addSuccess'));

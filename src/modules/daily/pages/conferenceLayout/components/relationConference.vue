@@ -9,16 +9,18 @@
     :confirm-btn="null"
     :close-on-overlay-click="false"
   >
-    <t-space :key="loadingCount" direction="vertical">
-      <t-space :break-line="true" :style="{ height: '480px', 'overflow-y': 'scroll' }">
-        <t-radio-group v-model="selectConference">
-          <div v-for="item in conferenceIndexData" :key="item" class="image-item">
-            <t-image :src="item.indexIconPath" :style="{ width: '300px', height: '140px' }" :lazy="true" />
-            <t-radio :key="item.id" :label="item.indexName" :value="item.id" />
-          </div>
-        </t-radio-group>
-      </t-space>
-    </t-space>
+    <cmp-container :full="true" class="root">
+      <cmp-row>
+        <t-space :break-line="true" :style="{ height: '480px', 'overflow-y': 'scroll', 'scrollbar-width': 'thin' }">
+          <t-radio-group v-model="selectConference" class="group-container">
+            <div v-for="item in conferenceIndexData" :key="item" class="image-item">
+              <t-image :src="item.indexIconPath" :style="{ width: '300px', height: '140px' }" :lazy="true" />
+              <t-radio :key="item.id" :label="item.indexName" :value="item.id"></t-radio>
+            </div>
+          </t-radio-group>
+        </t-space>
+      </cmp-row>
+    </cmp-container>
     <template #footer>
       <t-button theme="primary" @click="confirm">{{ t('common.button.confirm') }}</t-button>
       <t-button theme="default" @click="formVisible = false">{{ t('common.button.cancel') }}</t-button>
@@ -32,6 +34,7 @@ export default {
 </script>
 <script setup lang="ts">
 import _ from 'lodash';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import { api as apiDaily, ConferenceIndexVO } from '@/api/daily';
@@ -39,23 +42,31 @@ import { api as apiDaily, ConferenceIndexVO } from '@/api/daily';
 import { useLang } from '../../conferenceLayout/lang';
 
 const { t } = useLang();
-const loadingCount = ref(0);
-const selectConference = ref([]);
+const selectConference = ref('');
+const itemId = ref('');
 const Emit = defineEmits(['parent-refresh-event']);
 
 const confirm = () => {
+  if (selectConference.value && selectConference.value.length === 0) {
+    MessagePlugin.error(t('conferenceLayout.请先选择指标'));
+    return;
+  }
   formVisible.value = false;
-  Emit('parent-refresh-event', true);
+  const rowData = conferenceIndexData.value.find((x) => x.id === selectConference.value);
+  Emit('parent-refresh-event', rowData, itemId.value);
 };
 
 const reset = () => {
   console.log('reset');
+  selectConference.value = '';
+  itemId.value = '';
 };
 const formVisible = ref(false);
 const formHeader = ref('');
 // 初始化图片信息
-const initGrid = () => {
+const initGrid = (id: string) => {
   reset();
+  itemId.value = id;
   formHeader.value = t('conferenceLayout.关联指标信息');
   formVisible.value = true;
   // 获取指标列表信息
@@ -94,6 +105,11 @@ defineExpose({
 
 :deep(.t-radio) {
   margin-top: 12px !important;
+}
+
+.group-container {
+  display: flex;
+  justify-content: space-around;
 }
 </style>
 `

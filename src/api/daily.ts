@@ -1173,10 +1173,14 @@ export interface ConferenceTemplateVO {
   templateIndexContent?: string;
   /** 模板维度 */
   templateDimension?: string;
+  /** 模板维度数组转换 */
+  templateDimensionNameList?: string[];
   /** 模板维度转换 */
   templateDimensionList?: string[];
   /** 有效值转换 */
   isState?: boolean;
+  /** 模板维度名称转换 */
+  templateDimensionNames?: string;
 }
 
 /** 响应数据 */

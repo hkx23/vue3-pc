@@ -69,8 +69,13 @@
               </t-col>
             </t-row>
             <div>
-              <t-row v-for="(item, index) in dataTable" :key="item.rowKey" class="table-row" justify="space-between">
-                <t-col :span="0.5" class="table-row-checkbox">
+              <t-row
+                v-for="(item, index) in dataTable"
+                :key="item.rowKey"
+                class="customer-table-row"
+                justify="space-between"
+              >
+                <t-col :span="0.5" class="customer-table-row-checkbox">
                   <t-checkbox v-model="item.isGlobal" :disabled="SelectNode.isSys == '1'"> </t-checkbox>
                 </t-col>
                 <t-col :span="2">
@@ -542,7 +547,7 @@ onMounted(() => {
   margin-top: 20px;
 }
 
-.table-row {
+.customer-table-row {
   margin: 8px;
   align-items: flex-end;
 
@@ -565,7 +570,7 @@ onMounted(() => {
   }
 }
 
-.table-row-checkbox {
+.customer-table-row-checkbox {
   padding-bottom: 2px;
 }
 

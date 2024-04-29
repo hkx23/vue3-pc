@@ -105,8 +105,8 @@ import _, { debounce, throttle } from 'lodash';
 import { MoreIcon } from 'tdesign-icons-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
-// import { api } from '@/api/main';
-// import { openPage } from '@/router';
+import { ConferenceIndexVO } from '@/api/daily';
+
 import { componentItem, components, groupedComponentItem } from './components';
 import RelationConference from './relationConference.vue';
 
@@ -247,7 +247,7 @@ const onClickMore = (data, id) => {
       break;
     // 关联指标
     case 'RELATION_CONFERENCE_INDEX':
-      onRelationConference();
+      onRelationConference(id);
       break;
     default:
       break;
@@ -256,11 +256,16 @@ const onClickMore = (data, id) => {
 
 // 显示关联指标界面
 const relationConferenceRef = ref(null);
-const onRelationConference = () => {
-  relationConferenceRef.value.initGrid();
+const onRelationConference = (id: string) => {
+  relationConferenceRef.value.initGrid(id);
 };
 
-const parentCloseEvent = async (isRefresh: boolean) => {};
+const parentCloseEvent = async (rowData: ConferenceIndexVO, itemId: string) => {
+  const layoutItem = layout.value.find((x) => x.i === itemId);
+  if (layoutItem) {
+    // layoutItem.
+  }
+};
 // const onClickRedirect = (path) => {
 //   openPage(path);
 // };
