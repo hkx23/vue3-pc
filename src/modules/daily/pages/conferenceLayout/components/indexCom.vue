@@ -528,7 +528,7 @@ defineExpose({
   z-index: 5000;
   overflow-y: auto;
   padding: 16px;
-  margin-top: 14px;
+  margin-top: 8px;
 
   :deep(h3) {
     font-size: 14px;

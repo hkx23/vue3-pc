@@ -10,6 +10,7 @@
     :close-on-overlay-click="false"
   >
     <t-form
+      v-show="formData.opType !== ViewType.preView"
       ref="formRef"
       :disabled="formData.opType === ViewType.view"
       :rules="FORM_RULES"
@@ -66,9 +67,12 @@
       :readonly="formData.opType === ViewType.view || formData.opType === ViewType.preView"
     ></conference-layout-com>
     <template #footer>
-      <t-button v-if="formData.opType !== ViewType.view" theme="primary" @click="confirm">{{
-        t('common.button.save')
-      }}</t-button>
+      <t-button
+        v-if="formData.opType === ViewType.add || formData.opType === ViewType.edit"
+        theme="primary"
+        @click="confirm"
+        >{{ t('common.button.save') }}</t-button
+      >
       <t-button theme="default" @click="formVisible = false">{{ t('common.button.cancel') }}</t-button>
     </template>
   </t-dialog>
@@ -224,7 +228,7 @@ const initFormView = (row: FormInspectInfo) => {
   optionType.value = LayoutViewType.editConferenceIndex.toString();
   formHeader.value = t('common.button.view');
   Object.assign(formData, row);
-  formData.opType = ViewType.preView;
+  formData.opType = ViewType.view;
   formData.isState = formData.state === 1;
   formVisible.value = true;
   // 初始化模板组件 templateIndexContent
@@ -241,7 +245,7 @@ const initFormPreView = (row: FormInspectInfo) => {
   optionType.value = LayoutViewType.viewKanban.toString();
   formHeader.value = t('common.button.preView');
   Object.assign(formData, row);
-  formData.opType = ViewType.view;
+  formData.opType = ViewType.preView;
   formData.isState = formData.state === 1;
   formVisible.value = true;
   // 初始化模板组件 templateIndexContent
