@@ -36,6 +36,9 @@
               <t-space :size="8">
                 <t-link theme="primary" :disabled="loading" @click="onEidt(row)">{{ t('common.button.edit') }}</t-link>
                 <t-link theme="primary" :disabled="loading" @click="onView(row)">{{ t('common.button.view') }}</t-link>
+                <t-link theme="primary" :disabled="loading" @click="onPreView(row)">{{
+                  t('common.button.preView')
+                }}</t-link>
               </t-space>
             </template>
             <template #isState="{ row }">
@@ -81,7 +84,9 @@ const onEidt = (row) => {
 const onView = (row) => {
   formRef.value.initFormView(row);
 };
-
+const onPreView = (row) => {
+  formRef.value.initFormPreView(row);
+};
 const onDel = async () => {
   if (selectedRowKeys.value.length < 0) {
     return;
@@ -159,7 +164,7 @@ const column = ref([
   { title: t('conferenceTemplate.创建时间'), colKey: 'timeCreate', align: 'center', width: 180 },
   { title: t('conferenceTemplate.修改人'), colKey: 'modifierName', align: 'center', width: 120 },
   { title: t('conferenceTemplate.修改时间'), colKey: 'timeModified', align: 'center', width: 180 },
-  { title: t('conferenceTemplate.操作'), colKey: 'op', align: 'center', width: 120, fixed: 'right' },
+  { title: t('conferenceTemplate.操作'), colKey: 'op', align: 'center', width: 150, fixed: 'right' },
 ]);
 // table数据
 const conferenceTemplateData = ref([]);

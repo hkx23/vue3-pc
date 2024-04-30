@@ -62,8 +62,8 @@
     </t-form>
     <conference-layout-com
       ref="templateComRef"
-      option-type="editConferenceIndex"
-      :readonly="formData.opType === ViewType.view"
+      :option-type="optionType"
+      :readonly="formData.opType === ViewType.view || formData.opType === ViewType.preView"
     ></conference-layout-com>
     <template #footer>
       <t-button v-if="formData.opType !== ViewType.view" theme="primary" @click="confirm">{{
@@ -92,11 +92,17 @@ import { useLang } from './lang';
 
 const { t } = useLang();
 const formRef: Ref<FormInstanceFunctions> = ref(null);
+enum LayoutViewType {
+  addLayout = 'addLayout', // addLayout: 新增(占位符布局信息)
+  editConferenceIndex = 'editConferenceIndex', // editConferenceIndex:编辑(配置关联指标)
+  viewKanban = 'viewKanban', // viewKanban:查看模式(看板模式)
+}
 
 enum ViewType {
   add = 'add',
   edit = 'edit',
   view = 'view',
+  preView = 'preView',
 }
 interface FormInspectInfo extends ConferenceTemplateVO {
   opType: string;
@@ -164,6 +170,7 @@ const reset = () => {
   if (formRef.value) {
     formRef.value.reset();
   }
+  optionType.value = '';
   templateData.value = [];
   // 清除所有对象的值
   Object.keys(formData).forEach((key) => {
@@ -180,9 +187,11 @@ const reset = () => {
   initDimensionOption();
 };
 const formVisible = ref(false);
+const optionType = ref('editConferenceIndex');
 // 初始化新增信息
 const initFormAdd = () => {
   reset();
+  optionType.value = LayoutViewType.editConferenceIndex.toString();
   formHeader.value = t('common.button.add');
   formData.opType = ViewType.add;
   formVisible.value = true;
@@ -194,6 +203,7 @@ const formHeader = ref('');
 // 初始化编辑信息
 const initFormEdit = (row: FormInspectInfo) => {
   reset();
+  optionType.value = LayoutViewType.editConferenceIndex.toString();
   formHeader.value = t('common.button.edit');
   Object.assign(formData, row);
   formData.opType = ViewType.edit;
@@ -211,7 +221,25 @@ const initFormEdit = (row: FormInspectInfo) => {
 // 初始化查看信息
 const initFormView = (row: FormInspectInfo) => {
   reset();
+  optionType.value = LayoutViewType.editConferenceIndex.toString();
   formHeader.value = t('common.button.view');
+  Object.assign(formData, row);
+  formData.opType = ViewType.preView;
+  formData.isState = formData.state === 1;
+  formVisible.value = true;
+  // 初始化模板组件 templateIndexContent
+  if (row.templateIndexContent) {
+    templateData.value = JSON.parse(row.templateIndexContent);
+  }
+  const { setLayoutComData } = templateComRef.value;
+  setLayoutComData(templateData.value);
+};
+
+// 初始化预览信息
+const initFormPreView = (row: FormInspectInfo) => {
+  reset();
+  optionType.value = LayoutViewType.viewKanban.toString();
+  formHeader.value = t('common.button.preView');
   Object.assign(formData, row);
   formData.opType = ViewType.view;
   formData.isState = formData.state === 1;
@@ -250,6 +278,7 @@ defineExpose({
   initFormAdd,
   initFormEdit,
   initFormView,
+  initFormPreView,
 });
 </script>
 <style lang="less" scoped></style>

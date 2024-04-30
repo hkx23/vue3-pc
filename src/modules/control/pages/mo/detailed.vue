@@ -48,7 +48,7 @@
       <div v-show="selectModule == 'MOBOM'" class="table-work-header">
         <cmp-table
           ref="tableBomRef"
-          row-key="name"
+          row-key="id"
           :table-column="columnsBom"
           :table-data="moBomData"
           :loading="loadingBom"
@@ -62,7 +62,7 @@
       <div v-show="selectModule == 'MOLOG'" class="table-work-header">
         <cmp-table
           ref="tableLogRef"
-          row-key="name"
+          row-key="id"
           :table-column="columnsLog"
           :table-data="moLogData"
           :loading="loadingLog"
