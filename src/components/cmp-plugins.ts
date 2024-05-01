@@ -20,6 +20,8 @@ import BCmpSupplier from './cmp-business/BCmpSupplier.vue';
 import BCmpUser from './cmp-business/BCmpUser.vue';
 import CmpButton from './cmp-button/index.vue';
 import CmpWrapper from './cmp-kanban/CmpWrapper.vue';
+import CmpKanbanBox from './cmp-kanban-box/index.vue';
+import CmpKanbanDefault from './cmp-kanban-default/index.vue';
 import CmpCard from './cmp-layout/CmpCard.vue';
 import CmpContainer from './cmp-layout/CmpContainer.vue';
 import CmpRow from './cmp-layout/CmpRow.vue';
@@ -47,6 +49,9 @@ export default {
     app.component('BcmpExtend', BcmpExtend);
     app.component('CmpTable', CmpTable);
     app.component('CmpMessage', CmpMessage);
+
+    app.component('CmpKanbanDefault', CmpKanbanDefault);
+    app.component('CmpKanbanBox', CmpKanbanBox);
 
     // 布局
     app.component('CmpContainer', CmpContainer);
