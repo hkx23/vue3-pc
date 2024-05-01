@@ -2391,8 +2391,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  required?: boolean;
   validateRepeat?: boolean;
+  required?: boolean;
 }
 
 export interface SparePartVO {
@@ -3102,8 +3102,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5211,13 +5211,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
-  isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isForceInspectionChecked?: boolean;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
   isState?: boolean;
+  stateName?: string;
+  isExemptionInspectionChecked?: boolean;
+  isExemptionInspectionName?: string;
+  isForceInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
 }
 
 /** 响应数据 */
@@ -5428,15 +5428,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  stateName?: string;
+  isBatchName?: string;
   isProductName?: string;
+  isInProcessName?: string;
   isRawName?: string;
+  isRawChecked?: boolean;
+  isState?: boolean;
+  stateName?: string;
   isInProcessChecked?: boolean;
   isProductChecked?: boolean;
-  isState?: boolean;
-  isBatchName?: string;
 }
 
 /** 响应数据 */
@@ -5579,8 +5579,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7427,8 +7427,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -9395,6 +9395,27 @@ export type WorkbenchIndex = {
   indexCategory?: string;
   /** 指标图标 */
   indexIcon?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultWechatSignature {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: WechatSignature;
+}
+
+/** 响应数据 */
+export type WechatSignature = {
+  appid?: string;
+  timestamp?: string;
+  noncestr?: string;
+  signature?: string;
 } | null;
 
 /** 通用响应类 */
@@ -11978,6 +11999,110 @@ export const api = {
     getByCurrentUser: () =>
       http.request<ResultWorkbenchLayout['data']>(`/api/main/workbenchLayout/getByCurrentUser`, {
         method: 'GET',
+      }),
+  },
+  wechat: {
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name BindUser
+     * @summary 绑定微信用户
+     * @request POST:/wechat/bindUser
+     * @secure
+     */
+    bindUser: (query: { openId: string }) =>
+      http.request<ResultObject['data']>(`/api/main/wechat/bindUser`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name VerifyToken
+     * @summary 判断token是否有效
+     * @request GET:/wechat/verifyToken
+     * @secure
+     */
+    verifyToken: () =>
+      http.request<ResultObject['data']>(`/api/main/wechat/verifyToken`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name Signature
+     * @summary 微信URL签名
+     * @request GET:/wechat/signature
+     * @secure
+     */
+    signature: (query: { url: string }) =>
+      http.request<ResultWechatSignature['data']>(`/api/main/wechat/signature`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name IsUserBind
+     * @summary 判断微信用户是否已绑定
+     * @request GET:/wechat/isUserBind
+     * @secure
+     */
+    isUserBind: (query: { openId: string }) =>
+      http.request<ResultBoolean['data']>(`/api/main/wechat/isUserBind`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name GetOpenId
+     * @summary 获取微信openId
+     * @request GET:/wechat/getOpenId
+     * @secure
+     */
+    getOpenId: (query: { code: string }) =>
+      http.request<ResultString['data']>(`/api/main/wechat/getOpenId`, {
+        method: 'GET',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name GetAppId
+     * @summary 获取微信appId配置
+     * @request GET:/wechat/getAppId
+     * @secure
+     */
+    getAppId: () =>
+      http.request<ResultString['data']>(`/api/main/wechat/getAppId`, {
+        method: 'GET',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 微信相关
+     * @name UnbindUser
+     * @summary 解除绑定微信用户
+     * @request DELETE:/wechat/unbindUser
+     * @secure
+     */
+    unbindUser: (query: { openId: string }) =>
+      http.request<ResultObject['data']>(`/api/main/wechat/unbindUser`, {
+        method: 'DELETE',
+        params: query,
       }),
   },
   warehouse: {

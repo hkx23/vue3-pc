@@ -1,0 +1,38 @@
+{
+  "title": "会议布局",
+  "name": "会议布局",
+  "placeholder": "请选择会议布局",
+  "url": "/api/daily/conferenceLayout/items",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "会议布局代码",
+      "key": "layoutCode",
+      "align": "left"
+    },
+    {
+      "title": "会议布局名称",
+      "key": "layoutName",
+      "align": "left"
+    },
+    {
+      "title": "会议布局描述",
+      "key": "layoutDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "layoutName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "layoutCode",
+    "nameField": "layoutName",
+    "descField": "layoutDesc"
+  },
+  "componentType": "list"
+}

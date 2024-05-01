@@ -1,4 +1,4 @@
-<!-- 会议布局 -->
+<!-- 会议模板 -->
 <template>
   <cmp-container :full="true" class="root">
     <cmp-row>
@@ -13,14 +13,14 @@
             row-key="id"
             :table-column="column"
             :selected-row-keys="selectedRowKeys"
-            :table-data="conferenceLayoutData"
+            :table-data="conferenceTemplateData"
             :loading="loading"
             :total="total"
             :fixed-height="true"
             @select-change="onSelectChange"
             @refresh="onFetchData"
           >
-            <template #title> {{ t('conferenceLayout.会议布局列表') }}</template>
+            <template #title> {{ t('conferenceTemplate.会议模板列表') }}</template>
             <template #button>
               <t-button @click="onAdd">
                 {{ t('common.button.add') }}
@@ -36,6 +36,9 @@
               <t-space :size="8">
                 <t-link theme="primary" :disabled="loading" @click="onEidt(row)">{{ t('common.button.edit') }}</t-link>
                 <t-link theme="primary" :disabled="loading" @click="onView(row)">{{ t('common.button.view') }}</t-link>
+                <t-link theme="primary" :disabled="loading" @click="onPreView(row)">{{
+                  t('common.button.preView')
+                }}</t-link>
               </t-space>
             </template>
             <template #isState="{ row }">
@@ -81,19 +84,21 @@ const onEidt = (row) => {
 const onView = (row) => {
   formRef.value.initFormView(row);
 };
-
+const onPreView = (row) => {
+  formRef.value.initFormPreView(row);
+};
 const onDel = async () => {
   if (selectedRowKeys.value.length < 0) {
     return;
   }
-  await apiDaily.conferenceLayout.deleteList({ ids: selectedRowKeys.value });
+  await apiDaily.conferenceTemplate.deleteList({ ids: selectedRowKeys.value });
   MessagePlugin.success(t('common.message.deleteSuccess'));
   onFetchData();
 };
 
 const onCancle = async ($event: any, row: any) => {
   const state = $event === true ? 1 : 0;
-  await apiDaily.conferenceLayout.cancel({ conferenceLayoutVO: { id: row.id, state } });
+  await apiDaily.conferenceTemplate.cancel({ conferenceTemplateVO: { id: row.id, state } });
   MessagePlugin.success(t('common.message.saveSuccess'));
   onFetchData();
 };
@@ -102,13 +107,13 @@ const onCancle = async ($event: any, row: any) => {
 const opts = computed(() => {
   return {
     datePlanRange: {
-      label: t('conferenceLayout.创建时间'),
+      label: t('conferenceTemplate.创建时间'),
       comp: 't-date-range-picker',
       defaultVal: datePlanRangeDefault.value,
       placeholder: '请选择',
     },
-    layoutCode: {
-      label: t('conferenceLayout.布局'),
+    templateCode: {
+      label: t('conferenceTemplate.模板'),
       comp: 't-input',
       event: 'input',
       defaultVal: '',
@@ -145,23 +150,24 @@ const column = ref([
     type: 'multiple',
     width: 30,
   },
-  { title: t('conferenceLayout.布局编码'), colKey: 'layoutCode', align: 'center', width: 120 },
-  { title: t('conferenceLayout.布局名称'), colKey: 'layoutName', align: 'center', width: 150 },
+  { title: t('conferenceTemplate.模板编码'), colKey: 'templateCode', align: 'center', width: 120 },
+  { title: t('conferenceTemplate.模板名称'), colKey: 'templateName', align: 'center', width: 150 },
+  { title: t('conferenceTemplate.模板描述'), colKey: 'templateDesc', align: 'center', width: 150 },
   {
-    colKey: 'layoutSize',
-    title: t('conferenceLayout.布局尺寸'),
+    colKey: 'templateDimensionNames',
+    title: t('conferenceTemplate.模板维度'),
     align: 'center',
-    width: 200,
+    width: 120,
   },
-  { title: t('conferenceLayout.有效'), colKey: 'isState', align: 'center', width: 120 },
-  { title: t('conferenceLayout.创建人'), colKey: 'creatorName', align: 'center', width: 120 },
-  { title: t('conferenceLayout.创建时间'), colKey: 'timeCreate', align: 'center', width: 180 },
-  { title: t('conferenceLayout.修改人'), colKey: 'modifierName', align: 'center', width: 120 },
-  { title: t('conferenceLayout.修改时间'), colKey: 'timeModified', align: 'center', width: 180 },
-  { title: t('conferenceLayout.操作'), colKey: 'op', align: 'center', width: 120, fixed: 'right' },
+  { title: t('conferenceTemplate.有效'), colKey: 'isState', align: 'center', width: 120 },
+  { title: t('conferenceTemplate.创建人'), colKey: 'creatorName', align: 'center', width: 120 },
+  { title: t('conferenceTemplate.创建时间'), colKey: 'timeCreate', align: 'center', width: 180 },
+  { title: t('conferenceTemplate.修改人'), colKey: 'modifierName', align: 'center', width: 120 },
+  { title: t('conferenceTemplate.修改时间'), colKey: 'timeModified', align: 'center', width: 180 },
+  { title: t('conferenceTemplate.操作'), colKey: 'op', align: 'center', width: 150, fixed: 'right' },
 ]);
 // table数据
-const conferenceLayoutData = ref([]);
+const conferenceTemplateData = ref([]);
 // 获取通告列表和通告总数信息
 const onFetchData = async () => {
   try {
@@ -175,13 +181,13 @@ const onFetchData = async () => {
       }
     }
 
-    // 获取布局列表信息
-    const res = await apiDaily.conferenceLayout.list({
+    // 获取通告列表信息
+    const res = await apiDaily.conferenceTemplate.list({
       pageNum: pageUI.value.page,
       pageSize: pageUI.value.rows,
       ...queryCondition.value,
     });
-    conferenceLayoutData.value = res.list;
+    conferenceTemplateData.value = res.list;
     total.value = res.total;
   } catch (e) {
     console.log(e);

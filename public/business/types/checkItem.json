@@ -1,0 +1,42 @@
+{
+  "title": "点检项目：",
+  "placeholder": "请选择点检项目",
+  "url": "/api/daily/checkItem/items",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "点检项目代码",
+      "key": "itemCode",
+      "align": "left"
+    },
+    {
+      "title": "点检项目名称",
+      "key": "itemName",
+      "align": "left"
+    },
+    {
+      "title": "点检项目描述",
+      "key": "itemDesc",
+      "align": "left"
+    },
+    {
+      "title": "点检项目类型",
+      "key": "itemTypeName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "itemName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "itemName",
+    "codeField": "itemCode"
+  },
+  "name": "点检项目",
+  "componentType": "list"
+}

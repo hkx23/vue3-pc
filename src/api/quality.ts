@@ -1289,7 +1289,7 @@ export interface OqcInspectStdFullSearch {
   /** 一键判退 */
   directInspectNg?: boolean;
   supplierId?: string;
-  /** 标签号码 */
+  /** 标签号码集合 */
   scanBarcode?: string;
   /** 检验类型转换(1：首检 2：巡检 4：抽检 8：复检) */
   convertInspectType?: string;
@@ -2667,10 +2667,10 @@ export interface OqcInspectBillFullVO {
   displayName?: string;
   /** 缺陷类型 */
   defectCodeList?: Dropdown[];
-  /** 检验结果名称 */
-  inspectResultName?: string;
   /** 业务类型名称 */
   businessCategoryName?: string;
+  /** 检验结果名称 */
+  inspectResultName?: string;
   /** 检验类型名称 */
   inspectCategoryName?: string;
 }
@@ -5774,11 +5774,11 @@ export type SampleCodeVO = {
   batchEnd?: number;
   s1?: string;
   ii?: string;
-  i?: string;
-  iii?: string;
-  s3?: string;
   s2?: string;
+  iii?: string;
   s4?: string;
+  s3?: string;
+  i?: string;
 } | null;
 
 /** 标签模板 */
@@ -6892,7 +6892,7 @@ export const api = {
      *
      * @tags 产品检验
      * @name ScanYjProductBarcode
-     * @summary 检验执行-扫描产品条码
+     * @summary 检验执行-仅扫描产品条码
      * @request POST:/oqcInspect/scanYJProductBarcode
      * @secure
      */
@@ -6907,7 +6907,7 @@ export const api = {
      *
      * @tags 产品检验
      * @name ScanProductBarcode
-     * @summary 报检-扫描产品条码
+     * @summary 报检-扫描产品条码或包装条码
      * @request POST:/oqcInspect/scanProductBarcode
      * @secure
      */

@@ -792,7 +792,7 @@ const parentConfirm = async (measureList, isAllOK, dtlId) => {
     rowData.measureList = measureList;
     rowData.inspectResult = isAllOK ? 'OK' : 'NG';
     // 设置条码是否合格
-    setSelectBarcode(rowData);
+    setSelectBarcode(formData.currentBarcode);
   }
 };
 
@@ -824,7 +824,6 @@ const checkAllOKComputed = computed(() => {
 const setSelectBarcode = (curBarcodeInfo: BarcodeVO) => {
   formData.currentBarcode = {};
   formData.currentBarcode = curBarcodeInfo;
-
   // 若已加载过检验项，则无需再加载
   if (curBarcodeInfo.inspectItems && curBarcodeInfo.inspectItems.length === 0) {
     loadBarcodeTable(curBarcodeInfo);
@@ -1158,9 +1157,11 @@ const loadBarcodeTable = async (rowBarcodeInfo: BarcodeVO) => {
 
 // 检验 - 加载本地的检验项信息
 const setBarcodeTable = async (inspectItems: OqcInspectStdFullVO[]) => {
-  tableData.value = inspectItems;
-  tableDataCount.value = inspectItems.filter((item) => item.characteristics === 'COUNT');
-  tableDataCquantitative.value = inspectItems.filter((item) => item.characteristics === 'QUANTITATIVE');
+  if (inspectItems) {
+    tableData.value = inspectItems;
+    tableDataCount.value = inspectItems.filter((item) => item.characteristics === 'COUNT');
+    tableDataCquantitative.value = inspectItems.filter((item) => item.characteristics === 'QUANTITATIVE');
+  }
 };
 
 // 清空工单以及工单相关信息

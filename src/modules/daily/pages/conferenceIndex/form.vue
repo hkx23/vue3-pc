@@ -4,7 +4,7 @@
     :header="formHeader"
     placement="top"
     top="56px"
-    width="60%"
+    width="65%"
     :cancel-btn="null"
     :confirm-btn="null"
     :close-on-overlay-click="false"
@@ -58,7 +58,8 @@
         </t-col>
         <t-col :span="6">
           <t-form-item :label="t('conferenceIndex.指标路径')" name="indexUrl">
-            <t-input v-model="formData.indexUrl" />
+            <t-select v-model="formData.indexUrl" clearable :options="indexUrlOptions" filterable />
+            <!-- <t-input v-model="formData.indexUrl" /> -->
           </t-form-item>
         </t-col>
         <t-col :span="6">
@@ -115,6 +116,7 @@ import { computed, ComputedRef, reactive, Ref, ref } from 'vue';
 import { api, ConferenceIndexVO } from '@/api/daily';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
+import { components } from '@/modules/daily/pages/conferenceLayout/components/components';
 
 import { useLang } from './lang';
 
@@ -137,16 +139,18 @@ const FORM_RULES: ComputedRef<FormRules> = computed(() => {
   return {
     indexCode: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标编码')]) }],
     indexName: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标生效')]) }],
-    indexDimension: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标维度')]) }],
+    indexType: [
+      { trigger: 'change', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标类型')]) },
+    ],
+    indexDimension: [
+      { trigger: 'change', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标维度')]) },
+    ],
     indexUrl: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标路径')]) }],
-    indexType: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标类型')]) }],
   };
 });
 const Emit = defineEmits(['parent-refresh-event']);
-// onMounted(() => {});
 
 const confirm = () => {
-  // formRef.value.submit();
   return new Promise((resolve, reject) => {
     formRef.value.validate().then(async (result) => {
       if (result !== true) {
@@ -173,6 +177,9 @@ const confirm = () => {
 
 const reset = () => {
   console.log('reset');
+  formRef.value.clearValidate();
+  formRef.value.reset({ type: 'empty' });
+  indexUrlOptions.value = [];
   // 清除所有对象的值
   Object.keys(formData).forEach((key) => {
     if (_.isArray(formData[key])) {
@@ -185,6 +192,20 @@ const reset = () => {
       formData[key] = '';
     }
   });
+  // 初始化指标路径下拉框
+  initIndexUrlOptions();
+};
+
+const indexUrlOptions = ref([]);
+// 初始化指标路径下拉框
+const initIndexUrlOptions = () => {
+  components.forEach((item) => {
+    const itemOption = {
+      label: item.title,
+      value: item.code,
+    };
+    indexUrlOptions.value.push(itemOption);
+  });
 };
 const formVisible = ref(false);
 // 初始化新增信息
@@ -193,6 +214,7 @@ const initFormAdd = () => {
   formHeader.value = t('common.button.add');
   formData.opType = 'add';
   formVisible.value = true;
+  formData.isState = true;
 };
 const formHeader = ref('');
 // 初始化编辑信息

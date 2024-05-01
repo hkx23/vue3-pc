@@ -170,7 +170,7 @@ const fetchTable = async () => {
   try {
     queryCondition.value.pageNum = pageUI.value.page;
     queryCondition.value.pageSize = pageUI.value.rows;
-    const data = (await apiWarehouse.transferHead.getMiscellaneousList(queryCondition.value)) as any;
+    const data = (await apiWarehouse.miscellaneousManage.getMiscellaneousList(queryCondition.value)) as any;
     tableDataWarehouse.value = data.list;
     dataTotal.value = data.total;
   } catch (e) {

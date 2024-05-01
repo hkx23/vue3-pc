@@ -14,6 +14,12 @@ module.exports = {
         ignorePseudoClasses: ['deep'],
       },
     ],
+    'at-rule-no-unknown': [
+      true,
+      {
+        ignoreAtRules: ['tailwind', 'apply', 'variants', 'responsive', 'screen'],
+      },
+    ],
   },
   overrides: [
     {

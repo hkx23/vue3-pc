@@ -915,8 +915,8 @@ export interface WipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: WipRepairIds[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 export interface DefectDealMethodSearch {
@@ -2007,8 +2007,8 @@ export interface ProductWipRepairVO {
   wipRepairId?: string;
   /** 维修中提交的ID */
   wipRepairIdList?: string[];
-  outTimeShowColor?: string;
   retentionTime?: string;
+  outTimeShowColor?: string;
 }
 
 /** 通用响应类 */
@@ -2913,13 +2913,13 @@ export interface ProductReworkVO {
   isCommit?: boolean;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopCode?: string;
+  workshopId?: string;
   workshopName?: string;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 显示过站采集关键件实体 */
@@ -3321,9 +3321,9 @@ export interface ProcessInspectionByMoVO {
   preWorkstationName?: string;
   /** 扫描选中的缺陷列表 */
   defectCodeList?: ProcessInspectionDefectCode[];
-  defectCodeStr?: string;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 扫描选中的缺陷列表 */
@@ -3477,14 +3477,14 @@ export interface BarcodeWipVO {
   defectCodeList?: DefectCode[];
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopCode?: string;
+  workshopId?: string;
   workshopName?: string;
   stateName?: string;
-  defectCodeStr?: string;
   isState?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
+  defectCodeStr?: string;
 }
 
 /** 缺陷代码 */
@@ -5103,19 +5103,26 @@ export interface BarcodeWipCollectVO {
   processModel?: Process;
   /** 工站 */
   workstationModel?: Workstation;
+  /** 在制品表 */
+  wipModel?: Wip;
   /** 请求ID */
   requestScanID?: string;
+  /**
+   * 排产单HOLD
+   * @format int32
+   */
+  moHold?: number;
   /** @format date-time */
   datetimeSche?: string;
-  workshopId?: string;
   workshopCode?: string;
+  workshopId?: string;
   workshopName?: string;
   stateName?: string;
   isState?: boolean;
   /** 扫描状态 */
   scanSuccess?: boolean;
-  datetimeScheStr?: string;
   scanDatetimeStr?: string;
+  datetimeScheStr?: string;
 }
 
 /** 工序 */
@@ -5153,6 +5160,71 @@ export interface Process {
   processAlias?: string;
   /** 工序类别 */
   processCategory?: string;
+}
+
+/** 在制品表 */
+export interface Wip {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 条码序列号 */
+  serialNumber?: string;
+  /** 流程卡号 */
+  runCard?: string;
+  moScheId?: string;
+  moId?: string;
+  workcenterId?: string;
+  preProcessId?: string;
+  preWorkstationId?: string;
+  mitemId?: string;
+  curProcessId?: string;
+  curWorkstationId?: string;
+  /** 在制品数量 */
+  qty?: number;
+  /** 结余数量 */
+  balanceQty?: number;
+  /**
+   * 缺陷次数
+   * @format int32
+   */
+  ngTimes?: number;
+  /**
+   * 是否完工
+   * @format int32
+   */
+  isCompleted?: number;
+  /**
+   * 是否合格 0：合格；1：不合格
+   * @format int32
+   */
+  isNg?: number;
+  /**
+   * 是否暂停
+   * @format int32
+   */
+  isHold?: number;
+  /** 终端计算机名 */
+  terminal?: string;
 }
 
 /** 工作中心 */
