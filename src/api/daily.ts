@@ -1072,6 +1072,13 @@ export interface EventDTO {
   fileList?: EventFile[];
   /** 文件列表 */
   deleteFileList?: EventFile[];
+  /** 范围 */
+  range?: string;
+  /**
+   * 查询月份
+   * @format int32
+   */
+  month?: number;
 }
 
 /** 事件文件表 */
@@ -1221,10 +1228,10 @@ export interface ConferenceTemplateVO {
   templateDimension?: string;
   /** 模板维度数组转换 */
   templateDimensionNameList?: string[];
-  /** 有效值转换 */
-  isState?: boolean;
   /** 模板维度转换 */
   templateDimensionList?: string[];
+  /** 有效值转换 */
+  isState?: boolean;
   /** 模板维度名称转换 */
   templateDimensionNames?: string;
 }

@@ -2391,8 +2391,8 @@ export interface ImportColumn {
   validateExpression?: string;
   items?: string[];
   list?: ImportColumn[];
-  validateRepeat?: boolean;
   required?: boolean;
+  validateRepeat?: boolean;
 }
 
 export interface SparePartVO {
@@ -3102,8 +3102,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 通用响应类 */
@@ -5211,13 +5211,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  isState?: boolean;
   stateName?: string;
-  isExemptionInspectionChecked?: boolean;
-  isExemptionInspectionName?: string;
+  isState?: boolean;
   isForceInspectionChecked?: boolean;
-  dateExemptionExpiredStr?: string;
+  isExemptionInspectionName?: string;
+  isExemptionInspectionChecked?: boolean;
   isForceInspectionName?: string;
+  dateExemptionExpiredStr?: string;
 }
 
 /** 响应数据 */
@@ -5428,15 +5428,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  isBatchName?: string;
+  stateName?: string;
   isProductName?: string;
   isInProcessName?: string;
-  isRawName?: string;
   isRawChecked?: boolean;
+  isBatchName?: string;
+  isRawName?: string;
   isState?: boolean;
-  stateName?: string;
-  isInProcessChecked?: boolean;
   isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -7427,8 +7427,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  isState?: boolean;
   stateName?: string;
+  isState?: boolean;
 }
 
 /** 响应数据 */
