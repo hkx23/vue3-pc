@@ -129,7 +129,7 @@
     <div class="center grid-container">
       <cmp-kanban-box class="grid-item first">
         <template #title> 各部门问题统计表 </template>
-        <cmp-table
+        <!-- <cmp-table
           v-model:pagination="pageUI"
           :show-toolbar="false"
           :table-column="columns"
@@ -139,7 +139,48 @@
           :fixed-height="true"
           @refresh="fetchTable"
         >
-        </cmp-table>
+        </cmp-table> -->
+
+        <div class="table-mom-wrapper table-shijian" :style="'height:' + table1Height + 'px;'">
+          <ul class="table-header">
+            <li>
+              <span style="flex-grow: 3">{{ t('eventKanban.deptResponsibilityName') }}</span>
+              <span style="flex-grow: 2">{{ t('eventKanban.createCount') }}</span>
+              <span style="flex-grow: 2">{{ t('eventKanban.handlingCount') }}</span>
+              <span style="flex-grow: 2">{{ t('eventKanban.handledCount') }}</span>
+              <span style="flex-grow: 2">{{ t('eventKanban.overdueCount') }}</span>
+              <span style="flex-grow: 2">{{ t('eventKanban.overdueRate') }}</span>
+              <span style="flex-grow: 2">{{ t('eventKanban.closeCount') }}</span>
+              <span style="flex-grow: 2">{{ t('eventKanban.totalCount') }}</span>
+              <span style="flex-grow: 2">{{ t('eventKanban.closeRate') }}</span>
+            </li>
+          </ul>
+
+          <vue3-seamless-scroll :list="deptEventRateList" :hover="true" class="seamless-warp">
+            <ul
+              class="list"
+              :style="'height:' + deptEventRateList.length * 50 + 'px;'"
+              @mousemove="stopScroll"
+              @mouseout="doScroll"
+            >
+              <li
+                v-for="(item, index) in deptEventRateList"
+                :key="index"
+                :class="{ devicelistitem: true, even: (index + 1) % 2 !== 0 }"
+              >
+                <span style="flex-grow: 3" :title="item.deptResponsibilityName">{{ item.deptResponsibilityName }}</span>
+                <span style="flex-grow: 2" :title="item.createCount">{{ item.createCount }}</span>
+                <span style="flex-grow: 2" :title="item.handlingCount">{{ item.handlingCount }}</span>
+                <span style="flex-grow: 2" :title="item.handledCount">{{ item.handledCount }}</span>
+                <span style="flex-grow: 2" :title="item.overdueCount">{{ item.overdueCount }}</span>
+                <span style="flex-grow: 2" :title="item.overdueRate">{{ item.overdueRate }}</span>
+                <span style="flex-grow: 2" :title="item.closeCount">{{ item.closeCount }}</span>
+                <span style="flex-grow: 2" :title="item.totalCount">{{ item.totalCount }}</span>
+                <span style="flex-grow: 2" :title="item.closeRate">{{ item.closeRate }}</span>
+              </li>
+            </ul>
+          </vue3-seamless-scroll>
+        </div>
       </cmp-kanban-box>
 
       <cmp-kanban-box class="grid-item">
@@ -258,39 +299,35 @@
 </template>
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, ref } from 'vue';
+import { Vue3SeamlessScroll } from 'vue3-seamless-scroll';
 
 import { api, EventDTO } from '@/api/daily';
-import { useLoading } from '@/hooks/modules/loading';
+// import { useLoading } from '@/hooks/modules/loading';
 import { usePage } from '@/hooks/modules/page';
 
 import { useLang } from './lang';
 
-const { loading } = useLoading();
+// const { loading } = useLoading();
 const { t } = useLang();
 const { pageUI } = usePage();
 const tableData = ref([]);
 const dataTotal = ref(0);
 // 查询条件处理数据
 const filterList = ref([]) as any;
-const columns: PrimaryTableCol<TableRowData>[] = [
-  { title: `${t('eventKanban.deptResponsibilityName')}`, width: 100, colKey: 'deptResponsibilityName' },
-  { title: `${t('eventKanban.createCount')}`, width: 80, colKey: 'createCount' },
-  { title: `${t('eventKanban.handlingCount')}`, width: 80, colKey: 'handlingCount' },
-  { title: `${t('eventKanban.handledCount')}`, width: 80, colKey: 'handledCount' },
-  { title: `${t('eventKanban.overdueCount')}`, width: 80, colKey: 'overdueCount' },
-  { title: `${t('eventKanban.overdueRate')}`, width: 80, colKey: 'overdueRate' },
-  { title: `${t('eventKanban.closeCount')}`, width: 80, colKey: 'closeCount' },
-  { title: `${t('eventKanban.totalCount')}`, width: 80, colKey: 'totalCount' },
-  { title: `${t('eventKanban.closeRate')}`, width: 80, colKey: 'closeRate' },
-  // {
-  //   colKey: 'op',
-  //   title: `${t('common.button.operation')}`,
-  //   width: '80px',
-  //   fixed: 'right',
-  // },
-];
+// const columns: PrimaryTableCol<TableRowData>[] = [
+//   { title: `${t('eventKanban.deptResponsibilityName')}`, width: 100, colKey: 'deptResponsibilityName' },
+//   { title: `${t('eventKanban.createCount')}`, width: 80, colKey: 'createCount' },
+//   { title: `${t('eventKanban.handlingCount')}`, width: 80, colKey: 'handlingCount' },
+//   { title: `${t('eventKanban.handledCount')}`, width: 80, colKey: 'handledCount' },
+//   { title: `${t('eventKanban.overdueCount')}`, width: 80, colKey: 'overdueCount' },
+//   { title: `${t('eventKanban.overdueRate')}`, width: 80, colKey: 'overdueRate' },
+//   { title: `${t('eventKanban.closeCount')}`, width: 80, colKey: 'closeCount' },
+//   { title: `${t('eventKanban.totalCount')}`, width: 80, colKey: 'totalCount' },
+//   { title: `${t('eventKanban.closeRate')}`, width: 80, colKey: 'closeRate' },
+
+// ];
 const formData: EventDTO = reactive({
   deptResponsibilityId: '',
   conferenceResponsibilityId: '',
@@ -308,7 +345,8 @@ const deptList = ref<any[]>([]);
 const eventList = ref<any[]>([]);
 const overdueList = ref<any[]>([]);
 const workingList = ref<any[]>([]);
-
+const table1Height = ref(357);
+const table1MaxHeight = ref(357);
 const fetchTable = async () => {
   try {
     if (formData.deptResponsibilityId === '' && formData.conferenceResponsibilityId === '') {
@@ -351,11 +389,28 @@ const fetchTable = async () => {
     overdueList.value = data.overdueList;
     workingList.value = data.workingList;
 
+    const height = 57 + deptEventRateList.value.length * 50;
+    if (height > table1MaxHeight.value) {
+      table1Height.value = table1MaxHeight.value;
+    } else {
+      table1Height.value = height;
+    }
+
     MessagePlugin.success(t('eventKanban.querySuccess'));
   } catch (e) {
     console.log(e);
   }
 };
+
+const allowScroll = ref(true);
+const stopScroll = () => {
+  allowScroll.value = false;
+};
+
+const doScroll = () => {
+  allowScroll.value = true;
+};
+
 // 初始渲染
 onMounted(() => {
   onRefresh();
@@ -562,4 +617,78 @@ body,
   align-self: center;
   border-radius: 4px;
 }
+</style>
+<style lang="less" scoped>
+.table-mom-wrapper {
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  border: #0064f075 1px solid;
+  overflow: hidden;
+  background: transparent;
+}
+
+.table-mom-wrapper .table-header {
+  margin: 0;
+  height: 50px;
+  flex: 1;
+  list-style: none;
+  padding-inline-start: 0;
+  border: #0064f075 1px solid;
+  background: linear-gradient(180deg, rgb(85 109 255 / 30%), rgb(45 67 139 / 30%), rgb(85 109 255 / 30%));
+}
+
+.table-mom-wrapper .table-header li {
+  height: 50px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.table-mom-wrapper .table-header li span {
+  line-height: 40px;
+  flex: 1;
+  font-size: 18px;
+  font-weight: 400;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border: rgb(25 137 250 / 34.1%) 1px solid;
+}
+
+.table-mom-wrapper .seamless-warp {
+  overflow: hidden;
+}
+
+.table-mom-wrapper .seamless-warp .list {
+  overflow: hidden;
+  padding-inline-start: 0;
+  margin-block: 0 0;
+}
+
+.table-mom-wrapper .seamless-warp .list .devicelistitem {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 50px;
+  padding-inline-start: 0;
+}
+
+.table-mom-wrapper .seamless-warp .list .devicelistitem span {
+  overflow: hidden;
+  flex: 1;
+  height: 50px;
+  line-height: 50px;
+  font-size: 16px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  color: #d7def5;
+  text-align: center;
+  white-space: nowrap;
+  border: rgb(25 137 250 / 34.1%) 1px solid;
+}
+
+// .table-mom-wrapper .seamless-warp .list .even {
+//   background: linear-gradient(180deg, rgba(85, 109, 255, 0.3), rgba(45, 67, 139, 0.3), rgba(85, 109, 255, 0.3));
+// }
 </style>
