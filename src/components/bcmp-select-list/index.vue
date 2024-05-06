@@ -31,7 +31,10 @@
   >
     <template #panel>
       <div class="container">
-        <t-row class="body">
+        <div v-show="loading" style="padding: 12px; text-align: center; width: 100%">
+          <t-loading></t-loading>
+        </div>
+        <t-row v-show="!loading" class="body">
           <t-col flex="1" :class="['content left', { bottom: !props.multiple }]">
             <p class="header">
               {{ props.name }}列表
@@ -157,7 +160,7 @@
   </t-select-input>
 </template>
 
-<script setup lang="tsx" name="BcmpSelectSelect2">
+<script setup lang="tsx" name="BcmpSelectSelect">
 import _, { debounce, isEmpty } from 'lodash';
 import { ChevronDownIcon } from 'tdesign-icons-vue-next';
 import { ListProps, SizeEnum, TreeProps } from 'tdesign-vue-next';
@@ -335,7 +338,6 @@ const filterList = ref([]);
 
 // 是否在加载数据
 const loading = ref(false);
-
 // 是否选择变化
 const isHandleSelectionChange = ref(false);
 
@@ -651,19 +653,25 @@ const fetchData = debounce((val) => {
     loading.value = false;
   }
 }, 500);
-const isFirstLoad = ref(true);
+
+// const isFirstLoad = ref(true);
+
 // 搜索过滤
 const onInputChange = (val: string) => {
-  // console.log('onInputChange');
-  if (isFirstLoad.value || val !== '') {
-    isFirstLoad.value = false;
-    selectSearch.value = val;
-    loading.value = true;
-    if (val !== '') {
-      isFirstLoad.value = true;
-    }
-    fetchData(val);
-  }
+  console.log('onInputChange');
+  selectSearch.value = val;
+  loading.value = true;
+  fetchData(val);
+
+  // if (!(props.listSetting.listType === 'tree' && (isFirstLoad.value === false || val === ''))) {
+  //   isFirstLoad.value = false;
+  //   selectSearch.value = val;
+  //   loading.value = true;
+  //   if (val !== '') {
+  //     isFirstLoad.value = true;
+  //   }
+  //   fetchData(val);
+  // }
 };
 
 const asyncLoading = ref<ListProps['asyncLoading']>('load-more');
@@ -742,9 +750,9 @@ onMounted(() => {
       } else {
         selectSearch.value = '';
       }
-      if (!(props.listSetting && props.listSetting.listType === 'tree')) {
-        remoteLoad(props.value);
-      }
+      // if (!(props.listSetting && props.listSetting.listType === 'tree')) {
+      remoteLoad(props.value);
+      // }
     }
   });
 });
@@ -773,9 +781,8 @@ watch(
         if (props.value) {
           // console.log('remoteLoad-按默认值查询');
           defaultValue.value = props.value.toString();
-          if (!(props.listSetting && props.listSetting.listType === 'tree')) {
-            remoteLoad(props.value);
-          }
+
+          remoteLoad(props.value);
         } else {
           state.defaultValue = '';
           // selectedRowKeys.value = [];

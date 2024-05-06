@@ -1468,6 +1468,104 @@ export interface ConferenceIndexDTO {
   ids?: string[];
 }
 
+export interface ConferenceSearch {
+  /**
+   * 页码
+   * @format int32
+   */
+  pageNum?: number;
+  /**
+   * 页最大记录条数
+   * @format int32
+   */
+  pageSize?: number;
+  /**
+   * 开始日期
+   * @format date-time
+   */
+  dateStart?: string;
+  /**
+   * 结束日期
+   * @format date-time
+   */
+  dateEnd?: string;
+  /** 维度 */
+  templateDimension?: string;
+  /** 分类 */
+  templateType?: string;
+  /** 会议代码 */
+  conferenceCode?: string;
+}
+
+export interface ConferenceVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 会议编码 */
+  conferenceCode?: string;
+  /** 会议名称 */
+  conferenceName?: string;
+  conferenceTemplateId?: string;
+  /** 维度 */
+  templateDimension?: string;
+  /** 创建人名称 */
+  creatorName?: string;
+  /** 修改人名称 */
+  modifierName?: string;
+  /** 编码 */
+  templateCode?: string;
+  /** 名称 */
+  templateName?: string;
+  /** 维度数组转换 */
+  templateDimensionNameList?: string[];
+  /** 维度转换 */
+  dimensionList?: string[];
+  /** 有效值转换 */
+  isState?: boolean;
+  /** 维度名称转换 */
+  dimensionNames?: string;
+}
+
+/** 响应数据 */
+export type PagingDataConferenceVO = {
+  list?: ConferenceVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataConferenceVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataConferenceVO;
+}
+
 /** 会议表 */
 export interface Conference {
   id?: string;
@@ -1520,6 +1618,75 @@ export interface ResultPagingDataConference {
   message?: string;
   /** 响应数据 */
   data?: PagingDataConference;
+}
+
+export interface ConferenceDTO {
+  conferenceVO?: ConferenceVO;
+  /** 会议组织 */
+  conferenceOrgs?: ConferenceOrg[];
+  /** 会议用户 */
+  conferenceUsers?: ConferenceUser[];
+  /** id集合 */
+  ids?: string[];
+}
+
+/** 会议组织表 */
+export interface ConferenceOrg {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  conferenceId?: string;
+  orgId?: string;
+  workcenterId?: string;
+}
+
+/** 会议用户表 */
+export interface ConferenceUser {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  conferenceId?: string;
+  userId?: string;
 }
 
 /** 点检清单项目 */
@@ -2127,6 +2294,8 @@ export interface Org {
    * @format int32
    */
   isActive?: number;
+  /** 组织路径 */
+  orgPath?: string;
 }
 
 /** 响应数据 */
@@ -3102,6 +3271,21 @@ export const api = {
      * No description
      *
      * @tags 会议表
+     * @name List
+     * @summary 获取会议
+     * @request POST:/conference/list
+     * @secure
+     */
+    list: (data: ConferenceSearch) =>
+      http.request<ResultPagingDataConferenceVO['data']>(`/api/daily/conference/list`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
      * @name Search
      * @summary 获取会议列表
      * @request POST:/conference/items
@@ -3109,6 +3293,96 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataConference['data']>(`/api/daily/conference/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name Edit
+     * @summary 编辑会议
+     * @request POST:/conference/edit
+     * @secure
+     */
+    edit: (data: ConferenceDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conference/edit`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name DeleteUser
+     * @summary 删除会议用户
+     * @request POST:/conference/deleteUser
+     * @secure
+     */
+    deleteUser: (data: ConferenceDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conference/deleteUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name DeleteList
+     * @summary 删除会议
+     * @request POST:/conference/deleteList
+     * @secure
+     */
+    deleteList: (data: ConferenceDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conference/deleteList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name Cancel
+     * @summary 设置会议有效或失效
+     * @request POST:/conference/cancel
+     * @secure
+     */
+    cancel: (data: ConferenceDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conference/cancel`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name Add
+     * @summary 新增会议
+     * @request POST:/conference/add
+     * @secure
+     */
+    add: (data: ConferenceDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conference/add`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name AddUser
+     * @summary 新增会议用户
+     * @request POST:/conference/addUser
+     * @secure
+     */
+    addUser: (data: ConferenceDTO) =>
+      http.request<ResultObject['data']>(`/api/daily/conference/addUser`, {
         method: 'POST',
         body: data as any,
       }),

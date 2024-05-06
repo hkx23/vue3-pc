@@ -45,7 +45,7 @@
     "nameField": "personName",
     "descField": "email",
     "categoryField": "personCode",
-    "listType": "list",
+    "listType": "tree",
     "treeIdField": "id",
     "treeValueField": "orgCode",
     "treeLabelField": "orgName",
