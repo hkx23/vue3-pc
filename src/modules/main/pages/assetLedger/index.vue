@@ -68,7 +68,6 @@
             ref="formRef"
             :rules="rules"
             :colon="true"
-            layout="inline"
             :data="equipmentData.list"
             label-width="120px"
             @submit="onAnomalyTypeSubmit"

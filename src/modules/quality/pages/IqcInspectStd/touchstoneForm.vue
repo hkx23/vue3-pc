@@ -6,7 +6,6 @@
     label-align="right"
     label-width="120px"
     :show-error-message="false"
-    layout="inline"
   >
     <!-- 第 1️⃣ 行数据 -->
     <t-row :gutter="[32, 16]">
