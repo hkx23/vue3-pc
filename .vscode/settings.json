@@ -38,17 +38,7 @@
     },
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
-  "cSpell.words": [
-    "commitlint",
-    "echarts",
-    "Gantt",
-    "nprogress",
-    "pinia",
-    "qrcode",
-    "stylelint",
-    "tdesign",
-    "tvision"
-  ],
+  "cSpell.words": ["commitlint", "echarts", "Gantt", "nprogress", "pinia", "qrcode", "stylelint", "tdesign", "tvision"],
   "volar.addSpaceBetweenDoubleCurlyBrackets": false,
   "volar.autoWrapParentheses": false,
   "volar.codeLens.references": false,
