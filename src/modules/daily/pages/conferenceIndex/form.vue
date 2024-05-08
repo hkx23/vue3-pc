@@ -127,21 +127,23 @@ interface FormInspectInfo extends ConferenceIndexVO {
   opType: string;
   isState: boolean;
   indexIconPath: string;
+  indexType: string;
+  indexDimension: string;
 }
 
 const formData: FormInspectInfo = reactive({
   opType: '',
   isState: true,
   indexIconPath: '',
+  indexType: '',
+  indexDimension: '',
 });
 
 const FORM_RULES: ComputedRef<FormRules> = computed(() => {
   return {
     indexCode: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标编码')]) }],
     indexName: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标生效')]) }],
-    indexType: [
-      { trigger: 'change', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标类型')]) },
-    ],
+    indexType: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标类型')]) }],
     indexDimension: [
       { trigger: 'change', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标维度')]) },
     ],
@@ -177,8 +179,8 @@ const confirm = () => {
 
 const reset = () => {
   console.log('reset');
-  formRef.value.clearValidate();
   formRef.value.reset({ type: 'empty' });
+  formRef.value.clearValidate();
   indexUrlOptions.value = [];
   // 清除所有对象的值
   Object.keys(formData).forEach((key) => {

@@ -1,0 +1,51 @@
+{
+  "title": "用户：",
+  "placeholder": "请选择用户",
+  "url": "/api/main/user/userPersonList",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "用户名",
+      "key": "userName",
+      "width": "100",
+      "align": "left"
+    },
+    {
+      "title": "显示名",
+      "key": "displayName",
+      "width": "100",
+      "align": "left"
+    },
+    {
+      "title": "工号",
+      "key": "personCode",
+      "width": "140",
+      "align": "left"
+    },
+    {
+      "title": "邮箱",
+      "key": "email",
+      "width": "140",
+      "align": "left"
+    }, 
+    {
+      "title": "所属部门",
+      "key": "deptName",
+      "width": "140",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "displayName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "displayName",
+    "descField": "userName"
+  },
+  "name": "用户",
+  "componentType": "table"
+}

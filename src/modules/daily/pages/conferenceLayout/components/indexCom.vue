@@ -45,7 +45,7 @@
         prevent-collision
       >
         <template #item="{ item }">
-          <!--新增模式与编辑-->
+          <!--新增模式(占位符)与编辑(关联指标)-->
           <div
             v-if="props.optionType === ViewType.addLayout || props.optionType === ViewType.editConferenceIndex"
             :class="cmpCardClass"
@@ -69,7 +69,7 @@
               </template>
             </cmp-card>
           </div>
-          <!--查看模式-->
+          <!--查看模式(实际效果)-->
           <div v-else :class="cmpCardClass">
             <cmp-card
               v-for="comp in comps.filter((t) => t.code === item.code)"
