@@ -119,7 +119,7 @@ const table = useVueTable({
 </script>
 
 <template>
-  <cmp-wrapper title="线边仓水位看板">
+  <cmp-kanban-default title="线边仓水位看板">
     <div class="outer_box">
       <table>
         <thead>
@@ -149,7 +149,7 @@ const table = useVueTable({
         </div>
       </div>
     </div>
-  </cmp-wrapper>
+  </cmp-kanban-default>
 </template>
 <style scoped>
 table {
