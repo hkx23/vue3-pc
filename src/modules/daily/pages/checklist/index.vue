@@ -36,11 +36,6 @@
           <template #button>
             <t-space :size="8">
               <t-button theme="primary" @click="onAddData">新增</t-button>
-              <bcmp-import-auto-button
-                theme="default"
-                button-text="导入"
-                type="a_incident_type"
-              ></bcmp-import-auto-button>
             </t-space>
           </template>
         </cmp-table>

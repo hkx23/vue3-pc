@@ -341,6 +341,8 @@ export interface Org {
    * @format int32
    */
   isActive?: number;
+  /** 组织路径 */
+  orgPath?: string;
 }
 
 /** 筛选字段 */
@@ -5213,11 +5215,11 @@ export interface MitemInSupplierVO {
   mitemName?: string;
   stateName?: string;
   isState?: boolean;
-  isForceInspectionChecked?: boolean;
+  dateExemptionExpiredStr?: string;
+  isForceInspectionName?: string;
   isExemptionInspectionName?: string;
   isExemptionInspectionChecked?: boolean;
-  isForceInspectionName?: string;
-  dateExemptionExpiredStr?: string;
+  isForceInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5429,14 +5431,14 @@ export interface MitemVO {
    */
   isBatchNo?: number;
   stateName?: string;
-  isProductName?: string;
-  isInProcessName?: string;
-  isRawChecked?: boolean;
-  isBatchName?: string;
-  isRawName?: string;
   isState?: boolean;
-  isProductChecked?: boolean;
   isInProcessChecked?: boolean;
+  isProductChecked?: boolean;
+  isBatchName?: string;
+  isInProcessName?: string;
+  isRawName?: string;
+  isRawChecked?: boolean;
+  isProductName?: string;
 }
 
 /** 响应数据 */
@@ -5579,8 +5581,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  wwarehouseId?: string;
   mmitemCategoryId?: string;
+  wwarehouseId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -8688,8 +8690,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  ruleDtlId?: string;
   barcodePkgId?: string;
+  ruleDtlId?: string;
 }
 
 /** 响应数据 */
@@ -9521,6 +9523,8 @@ export type UserInOrgVO = {
    * @format int32
    */
   isActive?: number;
+  /** 组织路径 */
+  orgPath?: string;
   /** 用户名 */
   userName?: string;
   /** 用户id */
@@ -9575,12 +9579,54 @@ export type CurrentUserVO = {
 
 /** 组织基础实体 */
 export interface OrgVO {
-  /** 组织ID */
   id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 组织描述 */
+  orgDesc?: string;
+  parentOrgId?: string;
+  /** 组织层级代码 */
+  levelCode?: string;
+  /**
+   * 是否生效，1是，0否
+   * @format int32
+   */
+  isActive?: number;
+  /** 组织路径 */
+  orgPath?: string;
   /** 组织编码 */
   code?: string;
   /** 组织名称 */
   name?: string;
+  /**
+   * 组织层级ID
+   * @format int32
+   */
+  levelSeq?: number;
 }
 
 /** 通用响应类 */
@@ -10072,10 +10118,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否不可编辑 */
-  disable?: boolean;
   /** 是否拒绝 */
   refuse?: boolean;
+  /** 是否不可编辑 */
+  disable?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;

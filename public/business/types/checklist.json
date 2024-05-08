@@ -1,0 +1,42 @@
+{
+  "title": "点检清单：",
+  "placeholder": "请选择点检清单",
+  "url": "/api/daily/checklist/items",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "点检清单代码",
+      "key": "checklistCode",
+      "align": "left"
+    },
+    {
+      "title": "点检清单名称",
+      "key": "checklistName",
+      "align": "left"
+    },
+    {
+      "title": "点检清单描述",
+      "key": "checklistDesc",
+      "align": "left"
+    },
+    {
+      "title": "点检清单类型",
+      "key": "checklistCategory",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "checklistName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "checklistName",
+    "codeField": "checklistCode"
+  },
+  "name": "点检清单",
+  "componentType": "list"
+}
