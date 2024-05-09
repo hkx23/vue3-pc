@@ -59,13 +59,6 @@
           @refresh="fetchUserTable"
         >
           <template #title> {{ t('conference.参会用户列表') }} </template>
-          <template #op="{ row }">
-            <t-space>
-              <t-popconfirm :content="t('common.message.confirmDelete')" @confirm="onDeleteUserRowClick(row)">
-                <t-link theme="primary" :disabled="loadingUser">{{ t('common.button.delete') }}</t-link>
-              </t-popconfirm>
-            </t-space>
-          </template>
           <template #button>
             <t-button v-if="selectMainRow.id" :disabled="loadingUser" @click="onUserAdd">
               {{ t('common.button.add') }}
@@ -171,21 +164,13 @@ const fetchUserTable = async () => {
     setLoadingUser(false);
   }
 };
-// 清除关联物料表格
+// 清除关联表格
 const clearUserTable = async () => {
   tableDataUser.value = [];
 };
-const onDeleteUserRowClick = async () => {
-  if (selectUserRowKeys.value.length < 0) {
-    return;
-  }
-  await apiDaily.conference.deleteUser({ ids: selectUserRowKeys.value });
-  MessagePlugin.success(t('common.message.deleteSuccess'));
-  onFetchData();
-};
 
 const selectMainRow = ref({}) as any; // 选中行
-// 点击包装规则行
+// 点击行
 const onEditPackRowClick = (rowObject: any) => {
   console.log(`表格点击:${{ rowObject }}`);
   selectMainRow.value = rowObject.row;
