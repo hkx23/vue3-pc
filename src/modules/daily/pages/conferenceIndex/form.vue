@@ -95,7 +95,7 @@
 
     <cmp-files-upload
       ref="formFilesRef"
-      upload-path="conferenceIndex"
+      upload-path="daily/conferenceIndex"
       :upload-count-limit="1"
       @upload-success="uploadSuccess"
       @delete-success="deleteSuccess"
@@ -117,6 +117,7 @@ import { api, ConferenceIndexVO } from '@/api/daily';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import { components } from '@/modules/daily/pages/conferenceLayout/components/components';
+import commmon from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -244,13 +245,14 @@ const initFormView = (row: FormInspectInfo) => {
 const formFilesRef = ref(null);
 const showUplaodImg = async () => {
   try {
+    const signedUrl = (await commmon.getSignedUrl(formData.indexIconPath)) as string;
     const filelist: AddFileType[] = [];
     if (formData.indexIconPath) {
       const file = {} as AddFileType;
       file.fileName = formData.indexIconName;
       file.percent = 100;
       file.timeUpload = formData.timeModified;
-      file.signedUrl = formData.indexIconPath;
+      file.signedUrl = signedUrl;
       filelist.push(file);
     }
     const { showForm } = formFilesRef.value;
@@ -262,7 +264,7 @@ const showUplaodImg = async () => {
 };
 const uploadSuccess = async (file: AddFileType) => {
   try {
-    formData.indexIconPath = file.signedUrl;
+    formData.indexIconPath = file.fullFileName;
     formData.indexIconName = file.fileName;
     MessagePlugin.success('文件已上传,请最后点击保存');
   } catch (e) {

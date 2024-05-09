@@ -1,6 +1,8 @@
 // 通用方法
 import _ from 'lodash';
 
+import { api as apiMain } from '@/api/main';
+
 export default {
   // 初始化对象
   reset(formData) {
@@ -29,6 +31,28 @@ export default {
 
     // 将浮点数转换为整数并确保其落在指定范围内
     return randomBigInt;
+  },
+
+  // 获取minio的配置信息
+  getFileServerHost() {
+    return new Promise((resolve, reject) => {
+      const data = apiMain.file.getFileServerHost();
+      if (data) {
+        resolve(data);
+      } else {
+        reject();
+      }
+    });
+  },
+  getSignedUrl(pathFileName: string) {
+    return new Promise((resolve, reject) => {
+      const data = apiMain.file.getSignedUrlByFullName({ pathFileName });
+      if (data) {
+        resolve(data);
+      } else {
+        reject();
+      }
+    });
   },
 
   // 可以在这里继续添加更多的通用方法。

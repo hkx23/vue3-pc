@@ -1230,10 +1230,10 @@ export interface ConferenceTemplateVO {
   templateDimensionNameList?: string[];
   /** 模板维度名称转换 */
   templateDimensionNames?: string;
-  /** 有效值转换 */
-  isState?: boolean;
   /** 模板维度转换 */
   templateDimensionList?: string[];
+  /** 有效值转换 */
+  isState?: boolean;
 }
 
 /** 响应数据 */
@@ -1438,6 +1438,8 @@ export interface ConferenceIndexVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
+  /** 缩率图实际地址 */
+  fileSignedUrl?: string;
   /** 有效值转换 */
   isState?: boolean;
 }
@@ -1541,10 +1543,10 @@ export interface ConferenceVO {
   templateDimensionNameList?: string[];
   /** 维度名称转换 */
   templateDimensionNames?: string;
-  /** 有效值转换 */
-  isState?: boolean;
   /** 维度转换 */
   templateDimensionList?: string[];
+  /** 有效值转换 */
+  isState?: boolean;
 }
 
 /** 响应数据 */
