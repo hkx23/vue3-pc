@@ -1734,6 +1734,10 @@ export interface StockCheckBillExecuteSearch {
   dtlId?: string;
   /** 实盘数 */
   checkQty?: number;
+  /** 批次号 */
+  batchLot?: string;
+  /** 待删除的批次号 */
+  deleteBatchLotList?: string[];
 }
 
 /** 通用响应类 */
@@ -1761,6 +1765,8 @@ export interface StockCheckBillExecuteSubVO {
   stockCheckBillTypeName?: string;
   /** 盘点状态名称 */
   stockCheckBillStatusName?: string;
+  /** 物料ID */
+  mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
   /** 物料名称 */
@@ -1793,6 +1799,8 @@ export interface StockCheckBillExecuteSubVO {
    * @format int32
    */
   isBatchNo?: number;
+  /** 批次 */
+  batchLot?: string;
 }
 
 /** 响应数据 */
@@ -1924,30 +1932,11 @@ export interface StockCheckBillSearch {
   onHandIds?: string[];
   /** 盘点保存的明细记录修改 */
   dtls?: StockCheckBillDtl[];
+  /** 盘点保存的明细记录修改-包含条码 */
+  dtlsWithBarcode?: StockCheckBillVO[];
 }
 
-export interface CommonImportStockCheckBillVO {
-  title?: string;
-  tableName?: string;
-  data?: StockCheckBillVO[];
-  columns?: ImportColumn[];
-  /** @format int32 */
-  batchSize?: number;
-}
-
-export interface ImportColumn {
-  field?: string;
-  fieldType?: string;
-  title?: string;
-  isRequired?: boolean;
-  isValidateRepeat?: boolean;
-  validateExpression?: string;
-  items?: string[];
-  list?: ImportColumn[];
-  required?: boolean;
-  validateRepeat?: boolean;
-}
-
+/** 盘点保存的明细记录修改-包含条码 */
 export interface StockCheckBillVO {
   billId?: string;
   /** 单据号 */
@@ -1975,6 +1964,7 @@ export interface StockCheckBillVO {
    * @format date-time
    */
   timeModified?: string;
+  mitemId?: string;
   /** 物料编码 */
   mitemCode?: string;
   /** 物料名称 */
@@ -1983,10 +1973,12 @@ export interface StockCheckBillVO {
   mitemDesc?: string;
   /** 计量单位 */
   uomName?: string;
+  districtId?: string;
   /** 货区代码 */
   districtCode?: string;
   /** 货区名称 */
   districtName?: string;
+  locationId?: string;
   /** 货位代码 */
   locationCode?: string;
   /** 货位名称 */
@@ -1997,6 +1989,8 @@ export interface StockCheckBillVO {
   checkQty?: number;
   /** 差异数 */
   differenceQty?: number;
+  /** 批次 */
+  batchLot?: string;
   /** 差异原因 */
   diffReason?: string;
   /** 扫描的标签号 */
@@ -2010,6 +2004,7 @@ export interface StockCheckBillVO {
   isBatchNo?: number;
   /** 是否条码管控，启用批次=非条码管控 */
   isBatchNoName?: string;
+  barcodeId?: string;
   /** 打印装载明细数据 */
   dtls?: StockCheckBillVO[];
   /**
@@ -2017,6 +2012,48 @@ export interface StockCheckBillVO {
    * @format date-time
    */
   printDate?: string;
+}
+
+/** 响应数据 */
+export type PagingDataStockCheckBillExecuteVO = {
+  list?: StockCheckBillExecuteVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataStockCheckBillExecuteVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataStockCheckBillExecuteVO;
+}
+
+export interface CommonImportStockCheckBillVO {
+  title?: string;
+  tableName?: string;
+  data?: StockCheckBillVO[];
+  columns?: ImportColumn[];
+  /** @format int32 */
+  batchSize?: number;
+}
+
+export interface ImportColumn {
+  field?: string;
+  fieldType?: string;
+  title?: string;
+  isRequired?: boolean;
+  isValidateRepeat?: boolean;
+  validateExpression?: string;
+  items?: string[];
+  list?: ImportColumn[];
+  required?: boolean;
+  validateRepeat?: boolean;
 }
 
 /** 响应数据 */
@@ -2072,6 +2109,7 @@ export interface ResultStockCheckBillVO {
   code?: number;
   /** 提示信息 */
   message?: string;
+  /** 盘点保存的明细记录修改-包含条码 */
   data?: StockCheckBillVO;
 }
 
@@ -4217,16 +4255,6 @@ export interface MoIssuanceDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /** 已发料量 */
-  alreadyPickQty?: number;
-  bfpickQty?: number;
-  flpickQty?: number;
-  tlpickQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
@@ -4236,6 +4264,16 @@ export interface MoIssuanceDtlVO {
    * @format int32
    */
   moRequestQty?: number;
+  flpickQty?: number;
+  /** 已发料量 */
+  alreadyPickQty?: number;
+  tlpickQty?: number;
+  bfpickQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 /** 通用响应类 */
@@ -4990,15 +5028,15 @@ export interface MaterialRequisitionExcuteDtlVO {
   /** 交易单标签表-扫码时存储-用于新增 */
   addTransferDtlBarcodes?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量和已领用量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量和待领用量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量和已领用量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 export interface MaterialRequisitionVO {
@@ -6805,8 +6843,8 @@ export interface AcceptSendSaveReportVO {
   primaryNum?: number;
   /** 期末库存 */
   lastNum?: number;
-  beforeOut?: number;
   beforeIn?: number;
+  beforeOut?: number;
 }
 
 /** 响应数据 */
@@ -6938,15 +6976,15 @@ export interface GoodsSentOutDtlVO {
   /** 交易单标签表 */
   transferDtlBarcodeList?: TransferDtlBarcodeVO[];
   /**
-   * 已扫描数量
-   * @format double
-   */
-  scanQty?: number;
-  /**
    * 待扫数量
    * @format double
    */
   waitingScanQty?: number;
+  /**
+   * 已扫描数量
+   * @format double
+   */
+  scanQty?: number;
 }
 
 export interface GoodsSentOutVO {
@@ -7180,27 +7218,9 @@ export type StockCheckBillExecuteBarcodeVO = {
   onhandQty?: number;
   /** 实盘数 */
   checkQty?: number;
+  /** 批次 */
+  batchLot?: string;
 } | null;
-
-/** 响应数据 */
-export type PagingDataStockCheckBillExecuteVO = {
-  list?: StockCheckBillExecuteVO[];
-  /** @format int32 */
-  total?: number;
-} | null;
-
-/** 通用响应类 */
-export interface ResultPagingDataStockCheckBillExecuteVO {
-  /**
-   * 响应代码
-   * @format int32
-   */
-  code?: number;
-  /** 提示信息 */
-  message?: string;
-  /** 响应数据 */
-  data?: PagingDataStockCheckBillExecuteVO;
-}
 
 /** 通用响应类 */
 export interface ResultListPurchaseOrderDtlVO {
@@ -8360,6 +8380,21 @@ export const api = {
      * No description
      *
      * @tags 盘点单据明细表
+     * @name DeleteBatchBarcode
+     * @summary 批量删除盘点批次
+     * @request POST:/stockCheckBillDtl/deleteBatchBarcode
+     * @secure
+     */
+    deleteBatchBarcode: (data: StockCheckBillExecuteSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBillDtl/deleteBatchBarcode`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据明细表
      * @name ChangeCheckQtyByDtlId
      * @summary 更改实盘数
      * @request POST:/stockCheckBillDtl/changeCheckQtyByDtlId
@@ -8367,6 +8402,21 @@ export const api = {
      */
     changeCheckQtyByDtlId: (data: StockCheckBillExecuteSearch) =>
       http.request<ResultObject['data']>(`/api/warehouse/stockCheckBillDtl/changeCheckQtyByDtlId`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据明细表
+     * @name ChangeCheckQtyBatchByDtlId
+     * @summary 盘点批次数量
+     * @request POST:/stockCheckBillDtl/changeCheckQtyBatchByDtlId
+     * @secure
+     */
+    changeCheckQtyBatchByDtlId: (data: StockCheckBillExecuteSearch) =>
+      http.request<ResultObject['data']>(`/api/warehouse/stockCheckBillDtl/changeCheckQtyBatchByDtlId`, {
         method: 'POST',
         body: data as any,
       }),
@@ -8386,6 +8436,24 @@ export const api = {
         method: 'POST',
         body: data as any,
       }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据标签表
+     * @name GetBatchByBillDtlId
+     * @summary 根据详情id获取标签
+     * @request GET:/stockCheckBillBarcode/getBatchByBillDtlId
+     * @secure
+     */
+    getBatchByBillDtlId: (query: { dtlId: string }) =>
+      http.request<ResultListStockCheckBillExecuteBarcodeVO['data']>(
+        `/api/warehouse/stockCheckBillBarcode/getBatchByBillDtlId`,
+        {
+          method: 'GET',
+          params: query,
+        },
+      ),
 
     /**
      * No description
@@ -8485,6 +8553,21 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
+     * @name GetStockCheckByUser
+     * @summary 根据用户获取盘点单信息----公共弹框控件
+     * @request POST:/stockCheckBill/itemsByUser
+     * @secure
+     */
+    getStockCheckByUser: (data: CommonSearch) =>
+      http.request<ResultPagingDataStockCheckBillExecuteVO['data']>(`/api/warehouse/stockCheckBill/itemsByUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 盘点单据表
      * @name ImportData
      * @summary 导入
      * @request POST:/stockCheckBill/import
@@ -8575,12 +8658,14 @@ export const api = {
      * No description
      *
      * @tags 盘点单据表
-     * @name GetStockCheckByUser
+     * @name GetStockCheckByUser2
      * @summary 根据用户获取盘点单信息
      * @request GET:/stockCheckBill/getStockCheckByUser
+     * @originalName getStockCheckByUser
+     * @duplicate
      * @secure
      */
-    getStockCheckByUser: (query: {
+    getStockCheckByUser2: (query: {
       /** @format int32 */
       pageNum: number;
       /** @format int32 */

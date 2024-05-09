@@ -1,0 +1,27 @@
+{
+  "importTitle": "盘点",
+  "templateFileName": "导入模板_盘点",
+  "remoteUrl": "/api/warehouse/stockCheckBill/import",
+  "importColumns": [
+    {
+      "title": "仓库代码(必填)",
+      "field": "warehouseCode"
+    },
+    {
+      "title": "货区代码",
+      "field": "districtCode"
+    },
+    {
+      "title": "货位代码",
+      "field": "locationCode"
+    },
+    {
+      "title": "物料代码(必填)",
+      "field": "mitemCode"
+    }
+  ],
+  "importFileSizeLimit": 5,
+  "importRowCountLimit": 50000,
+  "importColumnCountLimit": 100,
+  "importBatchSize": 10
+}

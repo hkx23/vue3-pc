@@ -63,7 +63,7 @@
             <t-space :size="8">
               <bcmp-import-button
                 theme="primary"
-                type="w_onhand_qty"
+                type="w_stockcheck"
                 button-text="批量导入"
                 @close="onFetchGroupData"
               ></bcmp-import-button>
@@ -112,6 +112,9 @@ const queryComponent = ref();
 const onFetchGroupData = async (returnData: any) => {
   console.log(returnData);
   tableDataInventory.value = returnData;
+  if (returnData && returnData.length > 0) {
+    queryComponent.value.setFromValue('warehouseId', returnData[0].warehouseId);
+  }
 };
 
 //* 表格标题
@@ -248,6 +251,8 @@ const onInput = async (data: any) => {
 
 // 确定提交
 const onConfirmAnother = async () => {
+  newstockCheckType.value = queryComponent.value.getFromValue('stockCheckType');
+  newWarehouseId.value = queryComponent.value.getFromValue('warehouseId');
   const onHandIds = selectedRowKeys.value;
   const stockCheckType = newstockCheckType.value; // 盘点类型
   const warehouseId = newWarehouseId.value; // 仓库ID

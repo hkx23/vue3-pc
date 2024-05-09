@@ -92,13 +92,13 @@
                 >+</t-button
               > -->
                 <!-- <t-input-number v-model="formData1.createNum" :min="1" :max="100"></t-input-number> -->
-
-                <t-input-number
+                {{ row.checkQty }}
+                <!-- <t-input-number
                   v-model.number="row.checkQty"
                   :disabled="enableOnlyRefreshExportPrint || row.isBatchNoName == '是'"
                   placeholder="输入实盘数"
                   :min="0"
-                ></t-input-number>
+                ></t-input-number> -->
                 <!--               
               <t-button
                 :disabled="enableOnlyRefreshExportPrint"
@@ -139,8 +139,9 @@
 
         <!-- table 标签明细 -->
         <cmp-card>
-          <template #title> 标签明细 </template>
+          <template #title> {{ selectedRowBatch ? '批次明细' : '标签明细' }} </template>
           <cmp-table
+            v-show="!selectedRowBatch"
             row-key="scanBarcode"
             :table-column="tableWarehouseColumns2"
             :table-data="tableDataInventory2"
@@ -151,6 +152,50 @@
             :show-toolbar="false"
             :total="dataTotals"
           >
+          </cmp-table>
+          <cmp-table
+            v-show="selectedRowBatch"
+            row-key="batchLot"
+            :table-column="tableWarehouseColumns3"
+            :table-data="tableDataInventory2"
+            :show-pagination="false"
+            :hover="true"
+            max-height="400px"
+            empty="没有符合条件的数据"
+            :show-toolbar="false"
+            :total="dataTotals"
+          >
+            <!-- 实盘数的插槽 -->
+            <template #firmOfferNumberSlot="{ row }">
+              <div class="operation-buttons">
+                <!-- todo input-number -->
+                <!-- <t-button
+                :disabled="enableOnlyRefreshExportPrint"
+                variant="outline"
+                theme="default"
+                size="small"
+                @click="increment(row)"
+                >+</t-button
+              > -->
+                <!-- <t-input-number v-model="formData1.createNum" :min="1" :max="100"></t-input-number> -->
+                <!-- {{ row.checkQty }} -->
+                <t-input-number
+                  v-model.number="row.checkQty"
+                  :disabled="enableOnlyRefreshExportPrint"
+                  placeholder="输入实盘数"
+                  :min="0"
+                ></t-input-number>
+                <!--               
+              <t-button
+                :disabled="enableOnlyRefreshExportPrint"
+                variant="outline"
+                theme="default"
+                size="small"
+                @click="decrement(row)"
+                >-</t-button
+              > -->
+              </div>
+            </template>
           </cmp-table>
         </cmp-card>
       </scroll-view>
@@ -201,8 +246,22 @@ const tableWarehouseColumns2: PrimaryTableCol<TableRowData>[] = [
   { title: '发出仓库', width: 85, colKey: 'warehouseName' },
   { title: '货区', width: 100, colKey: 'districtName' },
   { title: '发出货位', width: 100, colKey: 'locationName' },
+  { title: '实盘数', width: 100, colKey: 'checkQty' },
   { title: '单位', width: 100, colKey: 'uomName' },
-  { title: '盘点数量', width: 100, colKey: 'checkQty' },
+  // { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
+];
+
+const tableWarehouseColumns3: PrimaryTableCol<TableRowData>[] = [
+  // { colKey: 'row-select', width: 40, type: 'multiple', fixed: 'left' },
+  // { title: '序号', colKey: 'index', width: 65 },
+  { title: '物料批次', colKey: 'batchLot', width: 140 },
+  { title: '物料编码', width: 85, colKey: 'mitemCode' },
+  { title: '物料描述', width: 85, colKey: 'mitemDesc' },
+  { title: '发出仓库', width: 85, colKey: 'warehouseName' },
+  { title: '货区', width: 100, colKey: 'districtName' },
+  { title: '发出货位', width: 100, colKey: 'locationName' },
+  { title: '实盘数', width: 100, colKey: 'checkQty', cell: 'firmOfferNumberSlot' },
+  { title: '单位', width: 100, colKey: 'uomName' },
   // { title: '操作', align: 'left', fixed: 'right', width: 150, colKey: 'op' },
 ];
 
@@ -243,12 +302,13 @@ const saveData = async () => {
       return {
         checkQty: row.checkQty,
         diffReason: row.diffReason,
-        id: row.pdDtlId,
+        pdDtlId: row.pdDtlId,
+        dtls: row.dtls,
       };
     });
 
   /// 保存接口
-  await api.stockCheckBill.save({ dtls: modifiedData });
+  await api.stockCheckBill.save({ dtlsWithBarcode: modifiedData });
   await getMaterialDetails(props.propsdtlId);
   await MessagePlugin.success('保存成功!');
 };
@@ -298,10 +358,16 @@ const closedocument = async (billId) => {
 onMounted(async () => {
   await getMaterialDetails(props.propsdtlId);
 });
-
-const handleRowSelectChange = (value: any[]) => {
+// const rehandleSelectChange = (value, { selectedRowData }) => {
+//   selectedRowKeys.value = value;
+//   console.log(value, selectedRowData);
+// };
+const selectedRowBatch = ref(false);
+const handleRowSelectChange = (value, { selectedRowData }) => {
   if (value.length > 0) {
     sonId.value = value[value.length - 1];
+    selectedRowData.value = selectedRowData;
+    selectedRowBatch.value = selectedRowData[0].isBatchNo === 1;
   }
 };
 
@@ -310,6 +376,21 @@ watch(sonId, (newBillId) => {
     getBarcodesData(newBillId);
   }
 });
+
+watch(
+  tableDataInventory2,
+  () => {
+    // 根据明细数据更新主数据的总数量
+    tableDataInventory1.value.forEach((mainItem) => {
+      const relatedDetails = tableDataInventory2.value.filter((detail) => detail.pdDtlId === mainItem.pdDtlId);
+      if (relatedDetails && relatedDetails.length > 0) {
+        const total = relatedDetails.reduce((sum, detail) => sum + detail.checkQty, 0);
+        mainItem.checkQty = total;
+      }
+    });
+  },
+  { deep: true },
+);
 
 // // 加
 // const increment = (row) => {
@@ -362,13 +443,17 @@ const getMaterialDetails = async (billId) => {
 const getBarcodesData = async (dtlId) => {
   newInventoryManagement2.value = [];
   tableDataInventory2.value = [];
-  const data = await api.stockCheckBill.getBarcodes({
-    pageNum: 1,
-    pageSize: 9999999,
-    dtlId,
-  });
-  tableDataInventory2.value = data.list;
-  dataTotals.value = data.total;
+
+  // const data = await api.stockCheckBill.getBarcodes({
+  //   pageNum: 1,
+  //   pageSize: 9999999,
+  //   dtlId,
+  // });
+  const data = tableDataInventory1.value.filter((item) => item.pdDtlId === dtlId);
+  if (data && data.length > 0) {
+    tableDataInventory2.value = data[0].dtls;
+    dataTotals.value = data[0].dtls.length;
+  }
 };
 
 watch(
