@@ -236,6 +236,7 @@ const getConferenceOrgs = async () => {
     conferenceId: formData.id,
   })) as any;
   if (datas) {
+    formData.conferenceOrgs = datas;
     // 对象数组集合获取字段按逗号隔开字符串
     const orgsList = datas.map((item: any) => item.orgId);
     const workcenterList = datas.map((item: any) => item.workcenterId);
@@ -268,6 +269,7 @@ const conferenceTemplateChange = (val: any) => {
 const conferenceOrgsChange = (vals: any) => {
   console.log(vals);
   if (vals) {
+    formData.conferenceOrgs = [];
     // todo: 按类型判断是工作中心还是组织架构, 若为工作中心,则组织架构字段为0
     vals.forEach((element) => {
       formData.conferenceOrgs.push({
