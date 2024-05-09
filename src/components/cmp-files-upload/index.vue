@@ -23,6 +23,11 @@
     </cmp-container>
   </t-dialog>
 </template>
+<script lang="tsx">
+export default {
+  name: 'CmpFilesUpload',
+};
+</script>
 <script setup lang="tsx">
 import _ from 'lodash';
 import { FormInstanceFunctions } from 'tdesign-vue-next';

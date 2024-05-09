@@ -45,7 +45,7 @@
         prevent-collision
       >
         <template #item="{ item }">
-          <!--新增模式与编辑-->
+          <!--新增模式(占位符)与编辑(关联指标)-->
           <div
             v-if="props.optionType === ViewType.addLayout || props.optionType === ViewType.editConferenceIndex"
             :class="cmpCardClass"
@@ -53,7 +53,7 @@
             <cmp-card :key="item.i" height="100%" :full="true" :ghost="true" :is-mini="item.h <= 1">
               <t-image
                 v-if="item.indexIconPath"
-                :src="item.indexIconPath"
+                :src="item.fileSignedUrl"
                 class="customer-image"
                 :style="{ width: '100%', height: '100%' }"
                 :lazy="true"
@@ -69,7 +69,7 @@
               </template>
             </cmp-card>
           </div>
-          <!--查看模式-->
+          <!--查看模式(实际效果)-->
           <div v-else :class="cmpCardClass">
             <cmp-card
               v-for="comp in comps.filter((t) => t.code === item.code)"
@@ -113,6 +113,7 @@ import { MoreIcon } from 'tdesign-icons-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { ConferenceIndexVO } from '@/api/daily';
+import commmon from '@/utils/common';
 
 import { componentItem, components, groupedComponentItem } from './components';
 import RelationConference from './relationConference.vue';
@@ -272,6 +273,7 @@ const parentCloseEvent = async (rowData: ConferenceIndexVO, itemId: string) => {
   if (layoutItem) {
     layoutItem.code = rowData.indexUrl;
     layoutItem.indexIconPath = rowData.indexIconPath;
+    layoutItem.fileSignedUrl = rowData.fileSignedUrl;
   }
 };
 // const onClickRedirect = (path) => {
@@ -447,6 +449,18 @@ const getLayoutComData = () => {
 // 设置布局组件的数据
 const setLayoutComData = (data: componentItem[]) => {
   layout.value = data;
+  if (data) {
+    layout.value.forEach((item) => {
+      if (item.indexIconPath) {
+        getSignedUrl(item);
+      }
+    });
+  }
+};
+
+// 获取缩率图地址
+const getSignedUrl = async (item: any) => {
+  item.fileSignedUrl = (await commmon.getSignedUrl(item.indexIconPath)) as string;
 };
 
 const reset = () => {

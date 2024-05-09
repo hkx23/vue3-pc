@@ -14,7 +14,7 @@
         <t-space :break-line="true" :style="{ height: '480px', 'overflow-y': 'scroll', 'scrollbar-width': 'thin' }">
           <t-radio-group v-model="selectConference" class="group-container">
             <div v-for="item in conferenceIndexData" :key="item.id" class="image-item">
-              <t-image :src="item.indexIconPath" :style="{ width: '300px', height: '140px' }" :lazy="true" />
+              <t-image :src="item.fileSignedUrl" :style="{ width: '300px', height: '140px' }" :lazy="true" />
               <t-radio :key="item.id" :label="item.indexName" :value="item.id"></t-radio>
             </div>
           </t-radio-group>
@@ -38,6 +38,7 @@ import { MessagePlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import { api as apiDaily, ConferenceIndexVO } from '@/api/daily';
+import commmon from '@/utils/common';
 
 import { useLang } from '../../conferenceLayout/lang';
 
@@ -81,7 +82,17 @@ const getConferenceList = async () => {
   });
   if (res) {
     conferenceIndexData.value = res.list;
+    conferenceIndexData.value.forEach((item) => {
+      if (item.indexIconPath) {
+        getSignedUrl(item);
+      }
+    });
   }
+};
+
+// 获取缩率图地址
+const getSignedUrl = async (item: any) => {
+  item.fileSignedUrl = (await commmon.getSignedUrl(item.indexIconPath)) as string;
 };
 
 defineExpose({

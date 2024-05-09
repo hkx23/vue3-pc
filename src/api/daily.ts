@@ -1228,12 +1228,12 @@ export interface ConferenceTemplateVO {
   templateDimension?: string;
   /** 模板维度数组转换 */
   templateDimensionNameList?: string[];
+  /** 模板维度名称转换 */
+  templateDimensionNames?: string;
   /** 模板维度转换 */
   templateDimensionList?: string[];
   /** 有效值转换 */
   isState?: boolean;
-  /** 模板维度名称转换 */
-  templateDimensionNames?: string;
 }
 
 /** 响应数据 */
@@ -1438,6 +1438,8 @@ export interface ConferenceIndexVO {
   creatorName?: string;
   /** 修改人名称 */
   modifierName?: string;
+  /** 缩率图实际地址 */
+  fileSignedUrl?: string;
   /** 有效值转换 */
   isState?: boolean;
 }
@@ -1495,6 +1497,7 @@ export interface ConferenceSearch {
   templateType?: string;
   /** 会议代码 */
   conferenceCode?: string;
+  conferenceId?: string;
 }
 
 export interface ConferenceVO {
@@ -1526,7 +1529,7 @@ export interface ConferenceVO {
   /** 会议名称 */
   conferenceName?: string;
   conferenceTemplateId?: string;
-  /** 维度 */
+  /** 模板维度 */
   templateDimension?: string;
   /** 创建人名称 */
   creatorName?: string;
@@ -1538,12 +1541,12 @@ export interface ConferenceVO {
   templateName?: string;
   /** 维度数组转换 */
   templateDimensionNameList?: string[];
+  /** 维度名称转换 */
+  templateDimensionNames?: string;
   /** 维度转换 */
-  dimensionList?: string[];
+  templateDimensionList?: string[];
   /** 有效值转换 */
   isState?: boolean;
-  /** 维度名称转换 */
-  dimensionNames?: string;
 }
 
 /** 响应数据 */
@@ -1564,6 +1567,95 @@ export interface ResultPagingDataConferenceVO {
   message?: string;
   /** 响应数据 */
   data?: PagingDataConferenceVO;
+}
+
+/** 响应数据 */
+export type ConferenceUserVO = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  conferenceId?: string;
+  userId?: string;
+  userName?: string;
+  displayName?: string;
+  email?: string;
+  personCode?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListConferenceUserVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ConferenceUserVO[] | null;
+}
+
+/** 会议组织表 */
+export type ConferenceOrg = {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  conferenceId?: string;
+  orgId?: string;
+  workcenterId?: string;
+} | null;
+
+/** 通用响应类 */
+export interface ResultListConferenceOrg {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: ConferenceOrg[] | null;
 }
 
 /** 会议表 */
@@ -1628,36 +1720,7 @@ export interface ConferenceDTO {
   conferenceUsers?: ConferenceUser[];
   /** id集合 */
   ids?: string[];
-}
-
-/** 会议组织表 */
-export interface ConferenceOrg {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  oid?: string;
   conferenceId?: string;
-  orgId?: string;
-  workcenterId?: string;
 }
 
 /** 会议用户表 */
@@ -3043,6 +3106,21 @@ export const api = {
      * No description
      *
      * @tags 会议模板表
+     * @name Search
+     * @summary 获取会议模板列表-弹出框组件
+     * @request POST:/conferenceTemplate/items
+     * @secure
+     */
+    search: (data: CommonSearch) =>
+      http.request<ResultPagingDataConferenceTemplateVO['data']>(`/api/daily/conferenceTemplate/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议模板表
      * @name Edit
      * @summary 编辑会议模板
      * @request POST:/conferenceTemplate/edit
@@ -3278,6 +3356,36 @@ export const api = {
      */
     list: (data: ConferenceSearch) =>
       http.request<ResultPagingDataConferenceVO['data']>(`/api/daily/conference/list`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name ListUser
+     * @summary 获取会议用户
+     * @request POST:/conference/listUser
+     * @secure
+     */
+    listUser: (data: ConferenceSearch) =>
+      http.request<ResultListConferenceUserVO['data']>(`/api/daily/conference/listUser`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name ListOrg
+     * @summary 获取会议组织
+     * @request POST:/conference/listOrg
+     * @secure
+     */
+    listOrg: (data: ConferenceSearch) =>
+      http.request<ResultListConferenceOrg['data']>(`/api/daily/conference/listOrg`, {
         method: 'POST',
         body: data as any,
       }),

@@ -91,7 +91,7 @@
                 <cmp-table
                   ref="tableRefTop"
                   v-model:pagination="pageUI"
-                  row-key="moScheduleId"
+                  row-key="id"
                   :fixed-height="true"
                   :active-row-type="'single'"
                   :hover="true"

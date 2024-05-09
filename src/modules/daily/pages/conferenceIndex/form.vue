@@ -95,7 +95,7 @@
 
     <cmp-files-upload
       ref="formFilesRef"
-      upload-path="conferenceIndex"
+      upload-path="daily/conferenceIndex"
       :upload-count-limit="1"
       @upload-success="uploadSuccess"
       @delete-success="deleteSuccess"
@@ -117,6 +117,7 @@ import { api, ConferenceIndexVO } from '@/api/daily';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
 import CmpFilesUpload from '@/components/cmp-files-upload/index.vue';
 import { components } from '@/modules/daily/pages/conferenceLayout/components/components';
+import commmon from '@/utils/common';
 
 import { useLang } from './lang';
 
@@ -127,21 +128,23 @@ interface FormInspectInfo extends ConferenceIndexVO {
   opType: string;
   isState: boolean;
   indexIconPath: string;
+  indexType: string;
+  indexDimension: string;
 }
 
 const formData: FormInspectInfo = reactive({
   opType: '',
   isState: true,
   indexIconPath: '',
+  indexType: '',
+  indexDimension: '',
 });
 
 const FORM_RULES: ComputedRef<FormRules> = computed(() => {
   return {
     indexCode: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标编码')]) }],
     indexName: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标生效')]) }],
-    indexType: [
-      { trigger: 'change', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标类型')]) },
-    ],
+    indexType: [{ required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标类型')]) }],
     indexDimension: [
       { trigger: 'change', required: true, message: t('common.placeholder.input', [t('conferenceIndex.指标维度')]) },
     ],
@@ -177,8 +180,8 @@ const confirm = () => {
 
 const reset = () => {
   console.log('reset');
-  formRef.value.clearValidate();
   formRef.value.reset({ type: 'empty' });
+  formRef.value.clearValidate();
   indexUrlOptions.value = [];
   // 清除所有对象的值
   Object.keys(formData).forEach((key) => {
@@ -242,13 +245,14 @@ const initFormView = (row: FormInspectInfo) => {
 const formFilesRef = ref(null);
 const showUplaodImg = async () => {
   try {
+    const signedUrl = (await commmon.getSignedUrl(formData.indexIconPath)) as string;
     const filelist: AddFileType[] = [];
     if (formData.indexIconPath) {
       const file = {} as AddFileType;
       file.fileName = formData.indexIconName;
       file.percent = 100;
       file.timeUpload = formData.timeModified;
-      file.signedUrl = formData.indexIconPath;
+      file.signedUrl = signedUrl;
       filelist.push(file);
     }
     const { showForm } = formFilesRef.value;
@@ -260,7 +264,7 @@ const showUplaodImg = async () => {
 };
 const uploadSuccess = async (file: AddFileType) => {
   try {
-    formData.indexIconPath = file.signedUrl;
+    formData.indexIconPath = file.fullFileName;
     formData.indexIconName = file.fileName;
     MessagePlugin.success('文件已上传,请最后点击保存');
   } catch (e) {

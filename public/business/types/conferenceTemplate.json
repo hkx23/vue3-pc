@@ -1,0 +1,38 @@
+{
+  "title": "会议模板",
+  "name": "会议模板",
+  "placeholder": "请选择会议模板",
+  "url": "/api/daily/conferenceTemplate/items",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "会议模板码",
+      "key": "templateCode",
+      "align": "left"
+    },
+    {
+      "title": "会议模板名称",
+      "key": "templateName",
+      "align": "left"
+    },
+    {
+      "title": "会议模板描述",
+      "key": "templateDesc",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "templateName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "templateCode",
+    "nameField": "templateName",
+    "descField": "templateDesc"
+  },
+  "componentType": "list"
+}

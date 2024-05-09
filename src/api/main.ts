@@ -1246,90 +1246,6 @@ export interface UserAuthDTO {
   permissionIds?: string[];
 }
 
-/** 用户 */
-export interface User {
-  id?: string;
-  /**
-   * 创建时间
-   * @format date-time
-   */
-  timeCreate?: string;
-  /** 创建人 */
-  creator?: string;
-  /**
-   * 修改时间
-   * @format date-time
-   */
-  timeModified?: string;
-  /** 修改人 */
-  modifier?: string;
-  /**
-   * 状态，1可用；0禁用
-   * @format int32
-   * @default 1
-   */
-  state?: number;
-  eid?: string;
-  /** 用户名 */
-  userName?: string;
-  /** 显示名 */
-  displayName?: string;
-  /** 密码 */
-  password?: string;
-  /**
-   * 用户上次进行身份验证时间
-   * @format date-time
-   */
-  timeLastActivity?: string;
-  /**
-   * 用户上次登录时间
-   * @format date-time
-   */
-  timeLastLogin?: string;
-  /**
-   * 上次更新成员资格用户的密码的日期和时间
-   * @format date-time
-   */
-  timeLastPasswordChanged?: string;
-  /**
-   * 用户当前是否联机
-   * @format int32
-   */
-  isOnline?: number;
-  /**
-   * 指示成员资格用户是否因被锁定而无法进行验证
-   * @format int32
-   */
-  isLockedOut?: number;
-  /**
-   * 最近一次锁定成员资格用户的日期和时间
-   * @format date-time
-   */
-  timeLastLockedOut?: string;
-  /**
-   * 输入密码尝试失败的次数
-   * @format int32
-   */
-  failedAttemptCount?: number;
-  /**
-   * 输入密码尝试失败的起始时间
-   * @format date-time
-   */
-  timeFailedAttemptStart?: string;
-  /**
-   * 用户帐号类型
-   * @format int32
-   */
-  accountType?: number;
-  /**
-   * 用户失效时间
-   * @format date-time
-   */
-  timeExpiration?: string;
-  personId?: string;
-  orgId?: string;
-}
-
 /** 响应数据 */
 export type PagingDataUserVO = {
   list?: UserVO[];
@@ -1440,6 +1356,98 @@ export interface UserVO {
   orgCode?: string;
   /** 组织名称 */
   orgName?: string;
+  /** 部门b编码 */
+  deptCode?: string;
+  /** 部门名称 */
+  deptName?: string;
+  /** 邮箱 */
+  email?: string;
+  /** 工号 */
+  personCode?: string;
+}
+
+/** 用户 */
+export interface User {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  /** 用户名 */
+  userName?: string;
+  /** 显示名 */
+  displayName?: string;
+  /** 密码 */
+  password?: string;
+  /**
+   * 用户上次进行身份验证时间
+   * @format date-time
+   */
+  timeLastActivity?: string;
+  /**
+   * 用户上次登录时间
+   * @format date-time
+   */
+  timeLastLogin?: string;
+  /**
+   * 上次更新成员资格用户的密码的日期和时间
+   * @format date-time
+   */
+  timeLastPasswordChanged?: string;
+  /**
+   * 用户当前是否联机
+   * @format int32
+   */
+  isOnline?: number;
+  /**
+   * 指示成员资格用户是否因被锁定而无法进行验证
+   * @format int32
+   */
+  isLockedOut?: number;
+  /**
+   * 最近一次锁定成员资格用户的日期和时间
+   * @format date-time
+   */
+  timeLastLockedOut?: string;
+  /**
+   * 输入密码尝试失败的次数
+   * @format int32
+   */
+  failedAttemptCount?: number;
+  /**
+   * 输入密码尝试失败的起始时间
+   * @format date-time
+   */
+  timeFailedAttemptStart?: string;
+  /**
+   * 用户帐号类型
+   * @format int32
+   */
+  accountType?: number;
+  /**
+   * 用户失效时间
+   * @format date-time
+   */
+  timeExpiration?: string;
+  personId?: string;
+  orgId?: string;
 }
 
 /** 通用响应类 */
@@ -3104,8 +3112,8 @@ export interface ProcessVO {
   modifierName?: string;
   /** 工序类型 */
   processCategoryName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 通用响应类 */
@@ -5213,13 +5221,13 @@ export interface MitemInSupplierVO {
   mitemCode?: string;
   /** 物料名称 */
   mitemName?: string;
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
   dateExemptionExpiredStr?: string;
   isForceInspectionName?: string;
   isExemptionInspectionName?: string;
-  isExemptionInspectionChecked?: boolean;
   isForceInspectionChecked?: boolean;
+  isExemptionInspectionChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5430,15 +5438,15 @@ export interface MitemVO {
    * @format int32
    */
   isBatchNo?: number;
-  stateName?: string;
   isState?: boolean;
-  isInProcessChecked?: boolean;
-  isProductChecked?: boolean;
+  stateName?: string;
+  isProductName?: string;
   isBatchName?: string;
+  isRawChecked?: boolean;
   isInProcessName?: string;
   isRawName?: string;
-  isRawChecked?: boolean;
-  isProductName?: string;
+  isProductChecked?: boolean;
+  isInProcessChecked?: boolean;
 }
 
 /** 响应数据 */
@@ -5581,8 +5589,8 @@ export type MitemFeignDTO = {
    * @format int32
    */
   isBatchNo?: number;
-  mmitemCategoryId?: string;
   wwarehouseId?: string;
+  mmitemCategoryId?: string;
 } | null;
 
 /** 通用响应类 */
@@ -7429,8 +7437,8 @@ export interface DefectCodeVO {
   processId?: string;
   /** 子元素 */
   child?: DefectCodeVO[];
-  stateName?: string;
   isState?: boolean;
+  stateName?: string;
 }
 
 /** 响应数据 */
@@ -8690,8 +8698,8 @@ export interface BarcodePkgVO {
   operateType?: string;
   /** 原因 */
   reason?: string;
-  barcodePkgId?: string;
   ruleDtlId?: string;
+  barcodePkgId?: string;
 }
 
 /** 响应数据 */
@@ -10118,10 +10126,10 @@ export type ModulePermissionDTO = {
   buttons?: ModulePermissionDTO[];
   /** 是否可用 */
   enabled?: boolean;
-  /** 是否拒绝 */
-  refuse?: boolean;
   /** 是否不可编辑 */
   disable?: boolean;
+  /** 是否拒绝 */
+  refuse?: boolean;
   /** 拒绝是否不可编辑 */
   refuseDisable?: boolean;
 } | null;
@@ -12421,6 +12429,21 @@ export const api = {
       }),
   },
   user: {
+    /**
+     * No description
+     *
+     * @tags 用户
+     * @name UserPersonList
+     * @summary 获取用户人员信息-公共弹框组件
+     * @request POST:/user/userPersonList
+     * @secure
+     */
+    userPersonList: (data: CommonSearch) =>
+      http.request<ResultPagingDataUserVO['data']>(`/api/main/user/userPersonList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
     /**
      * No description
      *
@@ -15707,6 +15730,35 @@ export const api = {
       http.request<ResultString['data']>(`/api/main/file/getSignedUrl`, {
         method: 'POST',
         params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name GetSignedUrlByFullName
+     * @summary 获取文件下载路径
+     * @request POST:/file/getSignedUrlByFullName
+     * @secure
+     */
+    getSignedUrlByFullName: (query: { pathFileName: string }) =>
+      http.request<ResultString['data']>(`/api/main/file/getSignedUrlByFullName`, {
+        method: 'POST',
+        params: query,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 文件上传操作
+     * @name GetFileServerHost
+     * @summary 获取文件服务host
+     * @request POST:/file/getFileServerHost
+     * @secure
+     */
+    getFileServerHost: () =>
+      http.request<ResultString['data']>(`/api/main/file/getFileServerHost`, {
+        method: 'POST',
       }),
 
     /**

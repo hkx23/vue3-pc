@@ -61,7 +61,11 @@ export interface componentItem extends LayoutItem {
    */
   redirect?: string;
   /**
-   * 指标缩略图
+   * 指标缩略图相对地址
    */
   indexIconPath?: string;
+  /**
+   * 指标缩略图全地址
+   */
+  fileSignedUrl?: string;
 }

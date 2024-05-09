@@ -1,111 +1,117 @@
 <template>
   <cmp-container :full="true">
     <cmp-card :span="12">
-      <cmp-query ref="queryParam" :opts="opts" @submit="onInput">
-        <template #warehouseId="{ param }">
-          <bcmp-select-business v-model="param.warehouseId" type="warehouseAuth"></bcmp-select-business>
-        </template>
-        <template #districtId="{ param }">
-          <bcmp-select-business
-            v-model="param.districtId"
-            type="district"
-            :parent-id="param.warehouseId"
-          ></bcmp-select-business>
-        </template>
-        <template #isBelowSafelyStock="{ param }">
-          <t-checkbox v-model="param.isBelowSafelyStock">低于安全库存</t-checkbox>
-        </template>
-      </cmp-query>
-    </cmp-card>
-    <cmp-card :span="12">
-      <cmp-table
-        ref="tableRef"
-        v-model:pagination="pageUITop"
-        empty="没有符合条件的数据"
-        row-key="id"
-        :fixed-height="true"
-        :active-row-type="'single'"
-        :hover="true"
-        :table-column="columns"
-        :table-data="anomalyTypeData.list"
-        :total="totalTop"
-        max-height="300px"
-        select-on-row-click
-        @refresh="onFetchData"
-        @select-change="rehandleSelectChange"
-      >
-        <template #title>
-          {{ '备品备件台账列表' }}
-        </template>
-        <template #actionSlot="{ row }">
-          <t-space :size="8">
-            <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
+      <cmp-container :full="true" :ghost="true">
+        <cmp-query ref="queryParam" :opts="opts" @submit="onInput">
+          <template #warehouseId="{ param }">
+            <bcmp-select-business v-model="param.warehouseId" type="warehouseAuth"></bcmp-select-business>
+          </template>
+          <template #districtId="{ param }">
+            <bcmp-select-business
+              v-model="param.districtId"
+              type="district"
+              :parent-id="param.warehouseId"
+            ></bcmp-select-business>
+          </template>
+          <template #isBelowSafelyStock="{ param }">
+            <t-checkbox v-model="param.isBelowSafelyStock">低于安全库存</t-checkbox>
+          </template>
+        </cmp-query>
+        <cmp-table
+          ref="tableRef"
+          v-model:pagination="pageUITop"
+          empty="没有符合条件的数据"
+          row-key="id"
+          :fixed-height="true"
+          :active-row-type="'single'"
+          :hover="true"
+          :table-column="columns"
+          :table-data="anomalyTypeData.list"
+          :total="totalTop"
+          max-height="300px"
+          select-on-row-click
+          @refresh="onFetchData"
+          @select-change="rehandleSelectChange"
+        >
+          <template #title>
+            {{ '备品备件台账列表' }}
+          </template>
+          <template #actionSlot="{ row }">
+            <t-space :size="8">
+              <t-link theme="primary" @click="onEditRow(row)">{{ t('common.button.edit') }}</t-link>
 
-            <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
-              <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
-            </t-popconfirm>
-          </t-space>
-        </template>
-        <template #button>
-          <t-space :size="8">
-            <t-button theme="primary" @click="onAddTypeData">新增</t-button>
-            <bcmp-import-button
-              theme="primary"
-              type="m_spare_part"
-              button-text="导入"
-              @close="onFetchGroupData"
-            ></bcmp-import-button>
-            <t-button :disabled="isEmpty(selectedRowKey)" heme="primary" @click="onAddSpareRelation">关联资产</t-button>
-          </t-space>
-        </template>
-      </cmp-table>
+              <t-popconfirm theme="default" content="确认删除吗" @confirm="onDelConfirm()">
+                <t-link theme="primary" @click="onDeleteRow(row)">{{ t('common.button.delete') }}</t-link>
+              </t-popconfirm>
+            </t-space>
+          </template>
+          <template #button>
+            <t-space :size="8">
+              <t-button theme="primary" @click="onAddTypeData">新增</t-button>
+              <bcmp-import-button
+                theme="primary"
+                type="m_spare_part"
+                button-text="导入"
+                @close="onFetchGroupData"
+              ></bcmp-import-button>
+              <t-button :disabled="isEmpty(selectedRowKey)" heme="primary" @click="onAddSpareRelation"
+                >关联资产</t-button
+              >
+            </t-space>
+          </template>
+        </cmp-table>
+      </cmp-container>
     </cmp-card>
-    <cmp-card :span="12">
-      <t-tabs v-model="tabValue" @change="tabChange">
-        <t-tab-panel label="资产类型" value="type" :destroy-on-hide="true">
-          <cmp-table
-            ref="typeTableRef"
-            v-model:pagination="pageUIDown"
-            row-key="id"
-            :show-toolbar="false"
-            :table-column="typeColumns"
-            :table-data="assetInfoData.list"
-            :total="totalDown"
-            :selected-row-keys="selectedRowKey"
-          ></cmp-table>
-        </t-tab-panel>
-        <t-tab-panel label="资产品牌" value="brand" :destroy-on-hide="true">
-          <cmp-table
-            ref="brandTableRef"
-            v-model:pagination="pageUIDown"
-            row-key="id"
-            :show-toolbar="false"
-            :table-column="brandColumns"
-            :table-data="assetInfoData.list"
-            :total="totalDown"
-            :selected-row-keys="selectedRowKey"
-          ></cmp-table>
-        </t-tab-panel>
-        <t-tab-panel label="资产型号" value="model" :destroy-on-hide="true">
-          <cmp-table
-            ref="modelTableRef"
-            v-model:pagination="pageUIDown"
-            row-key="id"
-            :show-toolbar="false"
-            :table-column="modelColumns"
-            :table-data="assetInfoData.list"
-            :total="totalDown"
-            :selected-row-keys="selectedRowKey"
-          ></cmp-table>
-        </t-tab-panel>
-      </t-tabs>
-    </cmp-card>
+    <cmp-row>
+      <cmp-card :span="12">
+        <t-tabs v-model="tabValue" style="height: 100%" @change="tabChange">
+          <t-tab-panel label="资产类型" value="type" :destroy-on-hide="true">
+            <cmp-table
+              ref="typeTableRef"
+              v-model:pagination="pageUIDown"
+              row-key="id"
+              :show-toolbar="false"
+              :table-column="typeColumns"
+              :table-data="assetInfoData.list"
+              :header-affixed-top="true"
+              :total="totalDown"
+              :selected-row-keys="selectedRowKey"
+            ></cmp-table>
+          </t-tab-panel>
+          <t-tab-panel label="资产品牌" value="brand" :destroy-on-hide="true">
+            <cmp-table
+              ref="brandTableRef"
+              v-model:pagination="pageUIDown"
+              row-key="id"
+              :show-toolbar="false"
+              :table-column="brandColumns"
+              :table-data="assetInfoData.list"
+              :total="totalDown"
+              :selected-row-keys="selectedRowKey"
+            ></cmp-table>
+          </t-tab-panel>
+          <t-tab-panel label="资产型号" value="model" :destroy-on-hide="true">
+            <cmp-table
+              ref="modelTableRef"
+              v-model:pagination="pageUIDown"
+              row-key="id"
+              :show-toolbar="false"
+              :table-column="modelColumns"
+              :table-data="assetInfoData.list"
+              :total="totalDown"
+              :selected-row-keys="selectedRowKey"
+            ></cmp-table>
+          </t-tab-panel>
+        </t-tabs>
+      </cmp-card>
+    </cmp-row>
   </cmp-container>
   <!-- 新增编辑弹窗 -->
   <t-dialog
     v-model:visible="formVisible"
     :cancel-btn="null"
     :confirm-btn="null"
+    width="65%"
     :header="diaLogTitle"
     @close="onSecondaryReset"
   >
@@ -113,59 +119,78 @@
       ref="formRef"
       :rules="rules"
       :colon="true"
-      layout="inline"
       :data="sparePartData.list"
       label-width="100px"
       @submit="onAnomalyTypeSubmit"
     >
-      <t-form-item label="备件编码" name="sparePartCode">
-        <t-input v-model="sparePartData.list.sparePartCode" :disabled="isDisabled"></t-input>
-      </t-form-item>
-      <t-form-item label="备件名称" name="sparePartName">
-        <t-input v-model="sparePartData.list.sparePartName"></t-input>
-      </t-form-item>
-      <t-form-item label="供应商" name="supplierId">
-        <bcmp-select-business
-          v-model="sparePartData.list.supplierId"
-          label=""
-          type="supplier"
-          :clearable="true"
-          :disabled="isDisabled"
-        ></bcmp-select-business>
-      </t-form-item>
-      <t-form-item label="备件型号" name="sparePartModel">
-        <t-input v-model="sparePartData.list.sparePartModel"></t-input>
-      </t-form-item>
-      <t-form-item label="仓库" name="warehouseId">
-        <bcmp-select-business
-          v-model="sparePartData.list.warehouseId"
-          type="warehouseAuth"
-          label=""
-        ></bcmp-select-business>
-      </t-form-item>
-      <t-form-item label="货区" name="districtId">
-        <bcmp-select-business
-          v-model="sparePartData.list.districtId"
-          label=""
-          type="district"
-          :parent-id="sparePartData.list.warehouseId"
-        ></bcmp-select-business>
-      </t-form-item>
-      <t-form-item label="单位" name="uom">
-        <bcmp-select-business
-          v-model="sparePartData.list.uom"
-          label=""
-          type="uom"
-          :clearable="true"
-          :disabled="isDisabled"
-        ></bcmp-select-business>
-      </t-form-item>
-      <t-form-item label="安全库存" name="safetyStockQty">
-        <t-input v-model="sparePartData.list.safetyStockQty"></t-input>
-      </t-form-item>
-      <t-form-item label="备注" name="memo">
-        <t-input v-model="sparePartData.list.memo"></t-input>
-      </t-form-item>
+      <t-row :gutter="[32, 16]">
+        <t-col :span="6">
+          <t-form-item label="备件编码" name="sparePartCode">
+            <t-input v-model="sparePartData.list.sparePartCode" :disabled="isDisabled"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="备件名称" name="sparePartName">
+            <t-input v-model="sparePartData.list.sparePartName"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="供应商" name="supplierId">
+            <bcmp-select-business
+              v-model="sparePartData.list.supplierId"
+              label=""
+              type="supplier"
+              :clearable="true"
+              :disabled="isDisabled"
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="备件型号" name="sparePartModel">
+            <t-input v-model="sparePartData.list.sparePartModel"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="仓库" name="warehouseId">
+            <bcmp-select-business
+              v-model="sparePartData.list.warehouseId"
+              type="warehouseAuth"
+              label=""
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="货区" name="districtId">
+            <bcmp-select-business
+              v-model="sparePartData.list.districtId"
+              label=""
+              type="district"
+              :parent-id="sparePartData.list.warehouseId"
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="单位" name="uom">
+            <bcmp-select-business
+              v-model="sparePartData.list.uom"
+              label=""
+              type="uom"
+              :clearable="true"
+              :disabled="isDisabled"
+            ></bcmp-select-business>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="安全库存" name="safetyStockQty">
+            <t-input v-model="sparePartData.list.safetyStockQty"></t-input>
+          </t-form-item>
+        </t-col>
+        <t-col :span="6">
+          <t-form-item label="备注" name="memo">
+            <t-input v-model="sparePartData.list.memo"></t-input>
+          </t-form-item>
+        </t-col>
+      </t-row>
     </t-form>
     <template #footer>
       <t-button theme="default" variant="base" @click="onSecondaryReset">取消</t-button>
