@@ -1228,12 +1228,12 @@ export interface ConferenceTemplateVO {
   templateDimension?: string;
   /** 模板维度数组转换 */
   templateDimensionNameList?: string[];
-  /** 模板维度名称转换 */
-  templateDimensionNames?: string;
   /** 模板维度转换 */
   templateDimensionList?: string[];
   /** 有效值转换 */
   isState?: boolean;
+  /** 模板维度名称转换 */
+  templateDimensionNames?: string;
 }
 
 /** 响应数据 */
@@ -1426,10 +1426,10 @@ export interface ConferenceIndexVO {
   indexDimension?: string;
   /** 缩略图地址 */
   indexIconPath?: string;
-  /** 缩略图名称 */
-  indexIconName?: string;
   /** 指标地址 */
   indexUrl?: string;
+  /** 缩略图名称 */
+  indexIconName?: string;
   /** 指标分类名称 */
   indexTypeName?: string;
   /** 指标维度名称 */
@@ -1541,12 +1541,12 @@ export interface ConferenceVO {
   templateName?: string;
   /** 维度数组转换 */
   templateDimensionNameList?: string[];
-  /** 维度名称转换 */
-  templateDimensionNames?: string;
   /** 维度转换 */
   templateDimensionList?: string[];
   /** 有效值转换 */
   isState?: boolean;
+  /** 维度名称转换 */
+  templateDimensionNames?: string;
 }
 
 /** 响应数据 */
@@ -1750,6 +1750,173 @@ export interface ConferenceUser {
   oid?: string;
   conferenceId?: string;
   userId?: string;
+}
+
+/** 点检清单 */
+export interface ChecklistOrgVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  orgId?: string;
+  workcenterId?: string;
+  /** 点检清单代码 */
+  checklistCode?: string;
+  /** 点检清单名称 */
+  checklistName?: string;
+  /** 点检清单描述 */
+  checklistDesc?: string;
+  /** 点检清单类别 */
+  checklistCategory?: string;
+  /** 班次 */
+  shiftCode?: string;
+  /**
+   * 执行频率
+   * @format int32
+   */
+  executeFrequence?: number;
+  personId?: string;
+  /** 关联组织 */
+  orgCode?: string;
+  orgName?: string;
+  workcenterCode?: string;
+  workcenterName?: string;
+  personCode?: string;
+  personName?: string;
+  shiftCodeName?: string;
+  checklistCategoryName?: string;
+  executeFrequenceCode?: string;
+  executeFrequenceName?: string;
+  checklistId?: string;
+}
+
+export interface ChecklistOrgSearch {
+  /** @format int32 */
+  pageNum?: number;
+  /** @format int32 */
+  pageSize?: number;
+  selectedField?: string;
+  selectedValue?: string;
+  keyword?: string;
+  /** @format int32 */
+  state?: number;
+  parentId?: string;
+  category?: string;
+  sorts?: SortParam[];
+  filters?: Filter[];
+  customerConditions?: Filter[];
+  checklistCode?: string;
+  checklistName?: string;
+  checklistCategory?: string;
+  shiftCode?: string;
+  executeFrequenceCode?: string;
+  ids?: string[];
+}
+
+/** 响应数据 */
+export type PagingDataChecklistOrgVO = {
+  list?: ChecklistOrgVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataChecklistOrgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataChecklistOrgVO;
+}
+
+/** 组织基础实体 */
+export interface OrgVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  /** 组织编号 */
+  orgCode?: string;
+  /** 组织名称 */
+  orgName?: string;
+  /** 组织描述 */
+  orgDesc?: string;
+  parentOrgId?: string;
+  /** 组织层级代码 */
+  levelCode?: string;
+  /**
+   * 是否生效，1是，0否
+   * @format int32
+   */
+  isActive?: number;
+  /** 组织路径 */
+  orgPath?: string;
+  orgId?: string;
+  workcenterId?: string;
+  /** 子层级 */
+  children?: OrgVO[];
+}
+
+/** 响应数据 */
+export type PagingDataOrgVO = {
+  list?: OrgVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataOrgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataOrgVO;
 }
 
 /** 点检清单项目 */
@@ -3495,6 +3662,95 @@ export const api = {
         body: data as any,
       }),
   },
+  checklistOrg: {
+    /**
+     * No description
+     *
+     * @tags 组织点检清单表
+     * @name Update
+     * @summary 编辑点检清单
+     * @request POST:/checklistOrg/update
+     * @secure
+     */
+    update: (data: ChecklistOrgVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checklistOrg/update`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织点检清单表
+     * @name Search
+     * @request POST:/checklistOrg/items
+     * @secure
+     */
+    search: (data: ChecklistOrgSearch) =>
+      http.request<ResultPagingDataChecklistOrgVO['data']>(`/api/daily/checklistOrg/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织点检清单表
+     * @name Insert
+     * @summary 新增点检清单
+     * @request POST:/checklistOrg/insert
+     * @secure
+     */
+    insert: (data: ChecklistOrgVO) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checklistOrg/insert`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织点检清单表
+     * @name GetWorkShopAndWorkcenterTree
+     * @summary 车间和产线树节点
+     * @request POST:/checklistOrg/getWorkShopAndWorkcenterTree
+     * @secure
+     */
+    getWorkShopAndWorkcenterTree: () =>
+      http.request<ResultPagingDataOrgVO['data']>(`/api/daily/checklistOrg/getWorkShopAndWorkcenterTree`, {
+        method: 'POST',
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织点检清单表
+     * @name GetList
+     * @summary 获得主界面数据
+     * @request POST:/checklistOrg/getList
+     * @secure
+     */
+    getList: (data: ChecklistOrgSearch) =>
+      http.request<ResultPagingDataChecklistOrgVO['data']>(`/api/daily/checklistOrg/getList`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 组织点检清单表
+     * @name BatchUpdateState
+     * @summary 批量删除点检清单
+     * @request POST:/checklistOrg/batchUpdateState
+     * @secure
+     */
+    batchUpdateState: (data: ChecklistOrgSearch) =>
+      http.request<ResultBoolean['data']>(`/api/daily/checklistOrg/batchUpdateState`, {
+        method: 'POST',
+        body: data as any,
+      }),
+  },
   checklistItem: {
     /**
      * No description
@@ -3704,6 +3960,21 @@ export const api = {
       http.request<ResultBoolean['data']>(`/api/daily/checkItem/batchUpdateState`, {
         method: 'POST',
         body: data as any,
+      }),
+  },
+  checkBillHead: {
+    /**
+     * No description
+     *
+     * @tags 点检单据头表
+     * @name CheckBillCreatedJob
+     * @summary 本地测试JOB用
+     * @request POST:/checkBillHead/checkBillCreatedJob
+     * @secure
+     */
+    checkBillCreatedJob: () =>
+      http.request<ResultObject['data']>(`/api/daily/checkBillHead/checkBillCreatedJob`, {
+        method: 'POST',
       }),
   },
   alertCfg: {
