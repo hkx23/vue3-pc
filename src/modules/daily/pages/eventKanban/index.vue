@@ -416,18 +416,8 @@ onMounted(() => {
   onRefresh();
 });
 </script>
-<!-- eslint-disable-next-line vue-scoped-css/enforce-style-type -->
-<style lang="less">
-html,
-body,
-#app {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
 
+<style lang="less" scoped>
 .top {
   height: 132px;
   display: flex;
@@ -493,24 +483,6 @@ body,
 
       .complete-uom {
         color: rgb(0 255 254 / 30%);
-      }
-
-      .t-input__prefix {
-        color: aliceblue;
-      }
-
-      .t-input__inner {
-        color: white;
-      }
-
-      .t-input--focused .t-input__prefix,
-      .t-input--focused .t-input__inner {
-        color: black;
-      }
-
-      .t-input:hover .t-input__prefix,
-      .t-input:hover .t-input__inner {
-        color: black;
       }
     }
   }

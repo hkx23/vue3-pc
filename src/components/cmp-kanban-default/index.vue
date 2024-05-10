@@ -1,3 +1,5 @@
+<!-- eslint-disable vue-scoped-css/enforce-style-type -->
+<!-- eslint-disable vue-scoped-css/enforce-style-type -->
 <template>
   <div ref="el" v-bind="targetAttrs" class="cmp-wrapper" :style="styleAttrs">
     <div class="ccp-page">
@@ -180,6 +182,28 @@ const currentTime = useDateFormat(useNow(), 'YYYY-MM-DD HH:mm:ss');
       height: 72px;
       text-align: center;
     }
+  }
+}
+</style>
+<!-- eslint-disable-next-line vue-scoped-css/enforce-style-type -->
+<style lang="less">
+.cmp-wrapper {
+  .t-input__prefix {
+    color: aliceblue;
+  }
+
+  .t-input__inner {
+    color: white;
+  }
+
+  .t-input--focused .t-input__prefix,
+  .t-input--focused .t-input__inner {
+    color: black;
+  }
+
+  .t-input:hover .t-input__prefix,
+  .t-input:hover .t-input__inner {
+    color: black;
   }
 }
 </style>
