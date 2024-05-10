@@ -132,7 +132,7 @@ const props = defineProps({
   // 面板高度
   designHeight: {
     type: Number,
-    default: 1080,
+    default: 730,
   },
   // 是否自动自适应计算
   isAutoSize: {
@@ -477,13 +477,13 @@ const updateScale = (width, height) => {
   scaleInfo.value = {
     x: width / props.designWidth,
     y: height / props.designHeight,
+    // y: 849 / props.designHeight,
   };
 };
 const styleAttrs = computed(() => {
   let attrs = {
     height: `${props.designHeight}px`,
   } as any;
-
   if (props.isAutoSize) {
     attrs = {
       'min-width': `${props.designWidth}px`,
@@ -495,8 +495,9 @@ const styleAttrs = computed(() => {
 
   // 查看模式修改下底色
   if (props.optionType === ViewType.viewKanban) {
-    attrs.background = 'var(--td-bg-color-page)';
+    attrs.background = `url('/images/kanban/theme/default/backgroud.jpg')`;
   }
+
   return attrs;
 });
 
@@ -508,9 +509,9 @@ onMounted(() => {
     el.value.parentElement,
     debounce((entries) => {
       const entry = entries[0];
-      const { width, height } = entry.contentRect;
-      updateScale(width, height);
-    }, 100),
+      const { inlineSize, blockSize } = entry.contentBoxSize[0];
+      updateScale(inlineSize, blockSize);
+    }, 200),
   );
 });
 
@@ -524,7 +525,6 @@ defineExpose({
 .layout-com {
   display: flex;
   flex-direction: row;
-  margin-top: 8px;
   width: 100%;
   height: 100%;
 }

@@ -2,6 +2,7 @@ import { LayoutItem } from 'grid-layout-plus';
 
 // 功能组件
 import oftenUseMenu from '@/pages/dashboard/base/components/often-use-menu/index.vue';
+import PoductionAchievementRateRanking from '@/pages/dashboard/base/components/poduction-achievement rate-ranking/index.vue';
 
 // 所有二开的看板都需要在此初始化
 export const components = [
@@ -13,6 +14,16 @@ export const components = [
     description: '显示常用&收藏功能(例子:后续可删除)',
     category: '系统',
     component: oftenUseMenu,
+    w: 1,
+    h: 1,
+  },
+  {
+    code: 'poduction-achievement-rate-ranking',
+    title: '当天生产达成率排行',
+    showTitle: true,
+    description: '当天生产达成率排行',
+    category: '生产',
+    component: PoductionAchievementRateRanking,
     w: 1,
     h: 1,
   },

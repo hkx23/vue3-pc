@@ -40,11 +40,14 @@
         </t-col>
       </t-row>
     </t-form>
-    <conference-layout-com
-      ref="layoutComRef"
-      option-type="addLayout"
-      :readonly="formData.opType === ViewType.view"
-    ></conference-layout-com>
+    <div style="margin-top: 8px">
+      <conference-layout-com
+        ref="layoutComRef"
+        option-type="addLayout"
+        :readonly="formData.opType === ViewType.view"
+      ></conference-layout-com>
+    </div>
+
     <template #footer>
       <t-button v-if="formData.opType !== ViewType.view" theme="primary" @click="confirm">{{
         t('common.button.save')

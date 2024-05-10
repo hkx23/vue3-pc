@@ -245,9 +245,9 @@ const initFormView = (row: FormInspectInfo) => {
 const formFilesRef = ref(null);
 const showUplaodImg = async () => {
   try {
-    const signedUrl = (await commmon.getSignedUrl(formData.indexIconPath)) as string;
     const filelist: AddFileType[] = [];
     if (formData.indexIconPath) {
+      const signedUrl = (await commmon.getSignedUrl(formData.indexIconPath)) as string;
       const file = {} as AddFileType;
       file.fileName = formData.indexIconName;
       file.percent = 100;
