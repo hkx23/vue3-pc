@@ -78,8 +78,10 @@ const styleAttrs = computed(() => {
     };
   }
   return {
-    'max-width': `${props.designWidth}px`,
-    'max-height': `${props.designHeight}px`,
+    'max-width': `${props.designWidth * 2}px`,
+    'max-height': `${props.designHeight * 2}px`,
+    'min-width': `${props.designWidth}px`,
+    'min-height': `${props.designHeight}px`,
     transform: `scale(${scaleInfo.value.x}, ${scaleInfo.value.y})`,
     'transform-origin': '0 0',
     ...bgStyle,
