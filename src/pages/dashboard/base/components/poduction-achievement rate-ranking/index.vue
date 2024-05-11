@@ -12,6 +12,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { useResizeObserver } from 'vue-hooks-plus';
 
 import { api } from '@/api/control';
+import { componentCondition } from '@/modules/daily/pages/conferenceLayout/components/components';
 
 echarts.use([
   TooltipComponent,
@@ -78,6 +79,15 @@ onUnmounted(() => {
   countChart.dispose();
 });
 
+// 刷新事件
+const refresh = async (condition: componentCondition) => {
+  console.log(`refreshCondition`, condition);
+  renderCountChart();
+};
+
+defineExpose({
+  refresh,
+});
 const getBarData = async () => {
   const data = await api.wip.getAchievingRate();
   const echarData = data.map((n) => ({ value: n.achievingRateOfToday * 100, name: n.mitemName }));

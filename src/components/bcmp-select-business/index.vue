@@ -43,6 +43,7 @@
     :keywords="finalKeywords"
     :table-width="finaltableWidth"
     :list-setting="finalListSetting"
+    :auto-width="autoWidth"
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
@@ -67,6 +68,7 @@
     :keywords="finalKeywords"
     :table-width="finaltableWidth"
     :list-setting="finalListSetting"
+    :auto-width="autoWidth"
     v-bind="selectAttr"
     @selection-change="onSelectionChange"
   >
@@ -248,6 +250,10 @@ const props = defineProps({
   changeFunc: {
     type: Function,
     default: null,
+  },
+  autoWidth: {
+    type: Boolean,
+    default: false,
   },
 });
 // 抛出事件

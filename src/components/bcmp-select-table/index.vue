@@ -19,6 +19,7 @@
       :input-value="selectSearch"
       :filterable="filterable"
       :loading="loading"
+      :auto-width="autoWidth"
       @clear="onClear"
       @tag-change="onTagChange"
       @input-change="onInputChange"
@@ -249,6 +250,10 @@ const props = defineProps({
     default: () => {
       return {};
     },
+  },
+  autoWidth: {
+    type: Boolean,
+    default: false,
   },
 });
 

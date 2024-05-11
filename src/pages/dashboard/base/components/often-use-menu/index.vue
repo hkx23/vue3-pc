@@ -33,6 +33,7 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { usePage } from '@/hooks/modules/page';
+import { componentCondition } from '@/modules/daily/pages/conferenceLayout/components/components';
 import { renderMenuTitle } from '@/router/locale';
 import { getUserTabsHistoryStore, useUserStore } from '@/store';
 import type { TRouterInfo } from '@/types/interface';
@@ -87,6 +88,15 @@ const randomNumber = () => {
 const onModuleClick = (item: TRouterInfo) => {
   router.push(item.path);
 };
+
+// 刷新事件
+const refresh = async (condition: componentCondition) => {
+  console.log(`refreshCondition`, condition);
+};
+
+defineExpose({
+  refresh,
+});
 </script>
 
 <style lang="less" scoped>

@@ -1,0 +1,33 @@
+{
+  "title": "会议组织",
+  "name": "会议组织",
+  "placeholder": "请选择会议组织",
+  "url": "/api/daily/conference/itemsOrg",
+  "httptype": "POST",
+  "category": "",
+  "columns": [
+    {
+      "title": "组织代码",
+      "key": "convertOrgCode",
+      "align": "left"
+    },
+    {
+      "title": "组织名称",
+      "key": "convertOrgName",
+      "align": "left"
+    }
+  ],
+  "rowKey": "convertOrgCode",
+  "keywords": {
+    "value": "id",
+    "label": "convertOrgName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "codeField": "convertOrgCode",
+    "nameField": "convertOrgName",
+    "descField": ""
+  },
+  "componentType": "list"
+}

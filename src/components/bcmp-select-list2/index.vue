@@ -17,6 +17,7 @@
       :input-value="selectSearch"
       :filterable="filterable"
       :loading="loading"
+      :auto-width="autoWidth"
       @input-change="onInputChange"
       @clear="onClear"
       @popup-visible-change="onPopupVisibleChange"
@@ -173,6 +174,10 @@ const props = defineProps({
   defaultSelectVal: {
     type: [String, Number, Array],
     default: '',
+  },
+  autoWidth: {
+    type: Boolean,
+    default: false,
   },
 });
 const onOptionClick = (item) => {

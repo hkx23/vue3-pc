@@ -35,14 +35,13 @@
         :col-num="props.colNum"
         :row-height="48"
         :margin="[12, 12]"
-        :is-draggable="props.optionType === ViewType.addLayout"
-        :is-resizable="props.optionType === ViewType.addLayout"
+        :is-draggable="enableEditingMode"
+        :is-resizable="enableEditingMode"
         vertical-compact
         :auto-size="true"
         :min-w="1"
         :min-h="1"
         use-css-transforms
-        prevent-collision
       >
         <template #item="{ item }">
           <!--新增模式(占位符)与编辑(关联指标)-->
@@ -82,7 +81,7 @@
               :subtitle="comp.showTitle ? comp.subtitle : ''"
               :is-mini="item.h <= 1"
             >
-              <component :is="comp?.component" />
+              <component :is="comp?.component" ref="compsInstance" />
               <template #actions>
                 <t-dropdown
                   v-if="moreBtnOptions.length > 0"
@@ -115,7 +114,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { ConferenceIndexVO } from '@/api/daily';
 import commmon from '@/utils/common';
 
-import { componentItem, components, groupedComponentItem } from './components';
+import { componentCondition, componentItem, components, groupedComponentItem } from './components';
 import RelationConference from './relationConference.vue';
 
 const props = defineProps({
@@ -129,10 +128,10 @@ const props = defineProps({
     type: Number,
     default: 1920,
   },
-  // 面板高度
+  // 面板高度(每个格子高度是默认60)
   designHeight: {
     type: Number,
-    default: 730,
+    default: 850,
   },
   // 是否自动自适应计算
   isAutoSize: {
@@ -323,6 +322,9 @@ const cmpCardClass = computed<String>(() => {
   if (props.optionType === 'addLayout' || props.optionType === 'editConferenceIndex') {
     cardClass = 'cmp-layout-card-color';
   }
+  if (props.optionType === ViewType.viewKanban) {
+    cardClass = 'cmp-layout-card-color-none';
+  }
   return cardClass;
 });
 
@@ -448,6 +450,7 @@ const getLayoutComData = () => {
 
 // 设置布局组件的数据
 const setLayoutComData = (data: componentItem[]) => {
+  reset();
   layout.value = data;
   if (data) {
     layout.value.forEach((item) => {
@@ -501,6 +504,21 @@ const styleAttrs = computed(() => {
   return attrs;
 });
 
+const compsInstance = ref(null);
+// 刷新事件
+const refresh = async (condition: componentCondition) => {
+  // 循环动态调用组件的刷新事件
+  if (compsInstance.value && compsInstance.value.length > 0) {
+    compsInstance.value.forEach((comp) => {
+      const { refresh } = comp;
+      if (refresh) {
+        refresh(condition);
+      }
+    });
+  }
+};
+
+const overlayHeight = 20; // 参与组件高度自动计算,若计算错误, 适当调整此值
 const el = ref<HTMLElement>();
 onMounted(() => {
   document.addEventListener('dragover', syncMousePosition);
@@ -510,7 +528,7 @@ onMounted(() => {
     debounce((entries) => {
       const entry = entries[0];
       const { inlineSize, blockSize } = entry.contentBoxSize[0];
-      updateScale(inlineSize, blockSize);
+      updateScale(inlineSize, blockSize + overlayHeight);
     }, 200),
   );
 });
@@ -519,6 +537,7 @@ defineExpose({
   getLayoutComData,
   setLayoutComData,
   reset,
+  refresh,
 });
 </script>
 <style lang="less" scoped>
@@ -656,6 +675,19 @@ defineExpose({
 .cmp-layout-card-color-none {
   background: none;
   height: 100%;
+
+  :deep(.t-card) {
+    background-color: rgb(48 99 195 / 20%) !important;
+    color: aliceblue !important;
+  }
+
+  :deep(.t-card__title) {
+    color: aliceblue !important;
+  }
+}
+
+:deep(.vgl-item__resizer) {
+  z-index: 10000 !important;
 }
 
 .customer-image {

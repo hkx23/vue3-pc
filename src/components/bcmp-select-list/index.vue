@@ -14,6 +14,7 @@
     allow-input
     :label="title"
     :size="size"
+    :auto-width="autoWidth"
     :multiple="multiple"
     :readonly="readonly"
     :disabled="disabled"
@@ -297,6 +298,10 @@ const props = defineProps({
     default: () => {
       return [];
     },
+  },
+  autoWidth: {
+    type: Boolean,
+    default: false,
   },
 });
 const onOptionClick = (item, openReverse: boolean = true) => {

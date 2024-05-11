@@ -1228,6 +1228,12 @@ export interface ConferenceTemplateVO {
   templateDimension?: string;
   /** 模板维度数组转换 */
   templateDimensionNameList?: string[];
+  /** 会议ID */
+  conferenceId?: string;
+  /** 会议编码 */
+  conferenceCode?: string;
+  /** 会议名称 */
+  conferenceName?: string;
   /** 模板维度转换 */
   templateDimensionList?: string[];
   /** 有效值转换 */
@@ -1710,6 +1716,67 @@ export interface ResultPagingDataConference {
   message?: string;
   /** 响应数据 */
   data?: PagingDataConference;
+}
+
+export interface ConferenceOrgVO {
+  id?: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  timeCreate?: string;
+  /** 创建人 */
+  creator?: string;
+  /**
+   * 修改时间
+   * @format date-time
+   */
+  timeModified?: string;
+  /** 修改人 */
+  modifier?: string;
+  /**
+   * 状态，1可用；0禁用
+   * @format int32
+   * @default 1
+   */
+  state?: number;
+  eid?: string;
+  oid?: string;
+  conferenceId?: string;
+  orgId?: string;
+  workcenterId?: string;
+  orgCode?: string;
+  orgName?: string;
+  workCenterCode?: string;
+  workCenterName?: string;
+  typeName?: string;
+  /** 类型 */
+  type?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
+  /** 转换后的组织编码 */
+  convertOrgName?: string;
+  convertOrgId?: string;
+}
+
+/** 响应数据 */
+export type PagingDataConferenceOrgVO = {
+  list?: ConferenceOrgVO[];
+  /** @format int32 */
+  total?: number;
+} | null;
+
+/** 通用响应类 */
+export interface ResultPagingDataConferenceOrgVO {
+  /**
+   * 响应代码
+   * @format int32
+   */
+  code?: number;
+  /** 提示信息 */
+  message?: string;
+  /** 响应数据 */
+  data?: PagingDataConferenceOrgVO;
 }
 
 export interface ConferenceDTO {
@@ -3568,6 +3635,36 @@ export const api = {
      */
     search: (data: CommonSearch) =>
       http.request<ResultPagingDataConference['data']>(`/api/daily/conference/items`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name ItemsOrg
+     * @summary 获取会议组织列表(公共弹框组件
+     * @request POST:/conference/itemsOrg
+     * @secure
+     */
+    itemsOrg: (data: CommonSearch) =>
+      http.request<ResultPagingDataConferenceOrgVO['data']>(`/api/daily/conference/itemsOrg`, {
+        method: 'POST',
+        body: data as any,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 会议表
+     * @name ItemsAuth
+     * @summary 获取会议列表(有权限的用户会议)-公共弹框组件
+     * @request POST:/conference/itemsAuth
+     * @secure
+     */
+    itemsAuth: (data: CommonSearch) =>
+      http.request<ResultPagingDataConferenceTemplateVO['data']>(`/api/daily/conference/itemsAuth`, {
         method: 'POST',
         body: data as any,
       }),

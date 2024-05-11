@@ -1,15 +1,15 @@
 <template>
-  <cmp-kanban-default :title="t('conferenceKanban.会议看板')">
+  <cmp-kanban-default :title="t('conferenceKanban.会议看板')" grid-size="small">
     <div class="top">
       <div class="top-left box-content">
         <div class="flex-row">
           <div class="card" style="flex-direction: row">
             <div class="card-content">
               <bcmp-select-business
-                v-model="formData.conferenceResponsibilityId"
+                v-model="condition.conferenceId"
                 borderless
                 :label="t('conferenceKanban.会议')"
-                type="conferenceTemplate"
+                type="conferenceAuth"
                 :show-title="false"
                 @selection-change="conferenceLayoutChange"
               ></bcmp-select-business>
@@ -18,42 +18,42 @@
           <div class="card" style="flex-direction: row">
             <div class="card-content">
               <bcmp-select-business
-                v-model="formData.deptResponsibilityId"
+                v-model="condition.attendanceModeId"
                 borderless
                 :label="t('conferenceKanban.出勤模式')"
                 type="attendanceMode"
                 :show-title="false"
-                @change="fetchTable"
+                @selection-change="attendanceModeChange"
               ></bcmp-select-business>
             </div>
           </div>
           <div class="card" style="flex-direction: row">
             <div class="card-content">
               <t-select
-                v-model="formData.month"
+                v-model="condition.dimension"
                 borderless
-                label="月份"
-                placeholder="请选择"
                 style="width: 100%"
-                @change="fetchTable"
+                :options="dimensionOption"
+                :label="t('conferenceKanban.时间维度')"
+                :placeholder="t('common.placeholder.select', [t('conferenceKanban.时间维度')])"
+                @change="onRefresh"
               >
-                <t-option v-for="month in 12" :key="month" :label="`${month}月`" :value="month"> </t-option>
               </t-select>
             </div>
           </div>
           <div class="card" style="flex-direction: row">
             <div class="card-content">
-              <t-select
-                v-model="formData.range"
+              <bcmp-select-business
+                v-model="condition.conferenceOrgIds"
                 borderless
-                label="当前组织"
-                placeholder="请选择"
-                style="width: 100%"
-                @change="fetchTable"
-              >
-                <t-option key="current" label="当前组织" value="current" />
-                <t-option key="currentAnd" label="当前及以下组织" value="currentAnd"></t-option>
-              </t-select>
+                :parent-id="condition.conferenceId"
+                :label="t('conferenceKanban.会议组织')"
+                type="conferenceOrg"
+                :show-title="false"
+                :is-multiple="true"
+                :auto-width="true"
+                @selection-change="conferenceOrgIdsChange"
+              ></bcmp-select-business>
             </div>
           </div>
         </div>
@@ -69,21 +69,19 @@
   </cmp-kanban-default>
 </template>
 <script setup lang="ts">
-import dayjs from 'dayjs';
+import _, { debounce } from 'lodash';
 // import { MessagePlugin } from 'tdesign-vue-next';
 import { onMounted, reactive, ref } from 'vue';
 
-import { api, EventDTO } from '@/api/daily';
-import { usePage } from '@/hooks/modules/page';
+import { api as apiDaily, ConferenceOrgVO, ConferenceTemplateVO } from '@/api/daily';
+import { api as apiMain } from '@/api/main';
+import { componentCondition } from '@/modules/daily/pages/conferenceLayout/components/components';
 import ConferenceLayoutCom from '@/modules/daily/pages/conferenceLayout/components/indexCom.vue';
 
 import { useLang } from './lang';
 
 // const { loading } = useLoading();
 const { t } = useLang();
-const { pageUI } = usePage();
-const tableData = ref([]);
-const dataTotal = ref(0);
 
 // 组件信息
 const templateComRef = ref(null);
@@ -92,97 +90,141 @@ enum LayoutViewType {
   editConferenceIndex = 'editConferenceIndex', // editConferenceIndex:编辑(配置关联指标)
   viewKanban = 'viewKanban', // viewKanban:查看模式(看板模式)
 }
-// 查询条件处理数据
-const filterList = ref([]) as any;
-const formData: EventDTO = reactive({
-  deptResponsibilityId: '',
-  conferenceResponsibilityId: '',
-  month: dayjs().month() + 1,
-  range: 'currentAnd',
+
+interface conditionInstance extends componentCondition {}
+const condition: conditionInstance = reactive({
+  conferenceId: '',
+  conferenceCoode: '',
+  conferenceName: '',
+  attendanceModeId: '',
+  attendanceModeCode: '',
+  attendanceModeName: '',
+  conferenceOrgIds: '',
+  conferenceOrgs: [],
+  defaultCnferenceOrgs: [],
+  dimension: '',
+  defaultDimension: [],
 });
 
-const onRefresh = () => {
-  fetchTable();
+const dimensionOption = ref([]);
+const totalDimensionOption = ref([]);
+
+// 选择会议信息
+const conferenceLayoutChange = async (rowData) => {
+  if (rowData && rowData.templateIndexContent) {
+    commonRefresh(rowData);
+  } else {
+    // 清空数据
+    const noneData = [];
+    const { setLayoutComData } = templateComRef.value;
+    setLayoutComData(noneData);
+    reset();
+  }
 };
-const sumItem = ref();
-const deptEventRateList = ref<any[]>([]);
-const completeList = ref<any[]>([]);
-const deptList = ref<any[]>([]);
-const eventList = ref<any[]>([]);
-const overdueList = ref<any[]>([]);
-const workingList = ref<any[]>([]);
-const table1Height = ref(357);
-const table1MaxHeight = ref(357);
-const fetchTable = async () => {
+
+// 选择出勤模式
+const attendanceModeChange = async (rowData) => {
+  if (rowData) {
+    condition.attendanceModeCode = rowData.modeCode;
+    condition.attendanceModeName = rowData.modeName;
+    onRefresh();
+  }
+};
+
+// 选择会议组织
+const conferenceOrgIdsChange = async (rowData) => {
+  if (rowData) {
+    condition.conferenceOrgs = rowData;
+    onRefresh();
+  }
+};
+
+const commonRefresh = async (conferenceData: ConferenceTemplateVO) => {
+  condition.conferenceCoode = conferenceData.conferenceCode;
+  condition.conferenceName = conferenceData.conferenceName;
+
+  // 初始化布局组件
+  const layoutData = JSON.parse(conferenceData.templateIndexContent);
+  const { setLayoutComData } = templateComRef.value;
+  setLayoutComData(layoutData);
+
+  // 设置会议对应的时间维度
+  setDimensionOption(conferenceData);
+
+  // 获取默认的所有会议组织信息
+  await getDefaultCnferenceOrgs(conferenceData.conferenceId);
+
+  onRefresh();
+};
+
+// 设置会议对应的时间维度
+const setDimensionOption = async (conferenceData: ConferenceTemplateVO) => {
+  if (totalDimensionOption.value && conferenceData.templateDimensionList) {
+    dimensionOption.value = totalDimensionOption.value.filter(
+      (item) => conferenceData.templateDimensionList.indexOf(item.value) > -1,
+    );
+
+    // 默认的所有时间维度信息
+    condition.defaultDimension = dimensionOption.value.map((item) => item.value);
+  }
+};
+
+// 获取默认的所有会议组织信息
+const getDefaultCnferenceOrgs = async (conferenceId: string) => {
+  const res = (await apiDaily.conference.itemsOrg({
+    parentId: conferenceId,
+  })) as ConferenceOrgVO[];
+  condition.defaultCnferenceOrgs = res;
+};
+
+// 初始化系统字典
+const initDimensionOption = async () => {
+  const res = (await apiMain.param.getListByGroupCode({
+    parmGroupCode: 'CONFERNCE_INDEX_DIMENSION',
+  })) as any;
+  totalDimensionOption.value = res;
+};
+
+const reset = () => {
+  // 清除所有对象的值
+  Object.keys(condition).forEach((key) => {
+    if (_.isArray(condition[key])) {
+      condition[key] = [];
+    } else if (_.isNumber(condition[key])) {
+      condition[key] = 0;
+    } else if (_.isBoolean(condition[key])) {
+      condition[key] = true;
+    } else {
+      condition[key] = '';
+    }
+  });
+  dimensionOption.value = [];
+};
+
+// 刷新事件
+const onRefresh = debounce(async () => {
   try {
-    if (formData.deptResponsibilityId === '' && formData.conferenceResponsibilityId === '') {
-      // MessagePlugin.warning(t('eventKanban.plsSelectNeed'));
+    if (condition.conferenceId === '') {
+      // MessagePlugin.warning(t('common.placeholder.select', [t('conferenceKanban.会议')]));
       return;
     }
-    filterList.value = [];
-    for (const key in formData) {
-      const addFilter = {
-        field: key,
-        operator: 'EQ',
-        value: formData[key],
-      };
-      if (key !== 'keyWord' && addFilter.value) {
-        filterList.value.push(addFilter);
-      }
-    }
-
-    // 查询条件
-    const searchCondition = {
-      pageNum: pageUI.value.page,
-      pageSize: pageUI.value.rows,
-      filters: filterList.value,
-    };
-
-    const data = (await api.eventKanban.getKanban(searchCondition)) as any;
-    if (data.total !== 0 && data.total < pageUI.value.page * pageUI.value.rows && data.list && data.list.length === 0) {
-      pageUI.value.page = 1;
-      pageUI.value.rows = 20;
-      onRefresh();
-    }
-    tableData.value = data.list;
-    dataTotal.value = data.total;
-
-    [sumItem.value] = data.sumEventRateList;
-    deptEventRateList.value = data.deptEventRateList;
-    completeList.value = data.completeList;
-    deptList.value = data.deptList;
-    eventList.value = data.eventList;
-    overdueList.value = data.overdueList;
-    workingList.value = data.workingList;
-
-    const height = 57 + deptEventRateList.value.length * 50;
-    if (height > table1MaxHeight.value) {
-      table1Height.value = table1MaxHeight.value;
-    } else {
-      table1Height.value = height;
+    const { refresh } = templateComRef.value;
+    if (refresh) {
+      refresh(condition);
     }
   } catch (e) {
     console.log(e);
   }
-};
-
-const conferenceLayoutChange = (rowData) => {
-  // 初始化布局组件
-  let layoutData = [];
-  if (rowData.templateIndexContent) {
-    layoutData = JSON.parse(rowData.templateIndexContent);
-    const { setLayoutComData } = templateComRef.value;
-    setLayoutComData(layoutData);
-  }
-};
+}, 100);
 
 // 初始渲染
 onMounted(() => {
+  initDimensionOption();
   onRefresh();
 });
 </script>
 <!-- eslint-disable-next-line vue-scoped-css/enforce-style-type -->
-<style lang="less">
+<style lang="less" scoped>
 html,
 body,
 #app {
@@ -198,6 +240,7 @@ body,
   display: flex;
   flex-direction: row;
   gap: 12px;
+  margin: 0 12px;
 
   .card {
     width: 100%;
@@ -285,7 +328,7 @@ body,
     display: flex;
     flex-direction: row;
     margin-top: 12px;
-    margin-bottom: 12px;
+    //margin-bottom: 12px;
   }
 
   .top-right {
@@ -453,7 +496,12 @@ body,
   border: rgb(25 137 250 / 34.1%) 1px solid;
 }
 
-// .table-mom-wrapper .seamless-warp .list .even {
-//   background: linear-gradient(180deg, rgba(85, 109, 255, 0.3), rgba(45, 67, 139, 0.3), rgba(85, 109, 255, 0.3));
-// }
+:deep(.t-tag--default) {
+  background-color: rgb(48 99 195 / 20%) !important;
+  color: white !important;
+}
+
+:deep(.t-tag--default .t-tag__icon-close) {
+  color: rgb(48 99 195 / 20%) !important;
+}
 </style>

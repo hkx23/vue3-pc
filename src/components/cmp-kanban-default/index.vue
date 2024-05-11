@@ -20,7 +20,7 @@
           <div class="current-time">{{ currentTime }}</div>
         </div>
       </div>
-      <div class="ccp-grid">
+      <div :class="gridAttrs">
         <slot></slot>
       </div>
 
@@ -57,12 +57,14 @@ export interface CmpKanbanProps {
   designHeight: number;
   title: string;
   theme: string;
+  gridSize: string;
 }
 const props = withDefaults(defineProps<CmpKanbanProps>(), {
   designWidth: 1920,
   designHeight: 1080,
   title: '默认车间生产看板',
   theme: 'default',
+  gridSize: 'default',
 });
 const attrs: Partial<CmpKanbanProps> = useAttrs();
 const targetAttrs = computed<CmpKanbanProps>(() => {
@@ -82,6 +84,14 @@ const styleAttrs = computed(() => {
     'transform-origin': '0 0',
     ...bgStyle,
   };
+});
+
+const gridAttrs = computed(() => {
+  let bgStyleName = 'ccp-grid';
+  if (props.gridSize === 'small') {
+    bgStyleName = 'ccp-grid-small';
+  }
+  return bgStyleName;
 });
 
 const el = ref<HTMLElement>();
@@ -173,6 +183,15 @@ const currentTime = useDateFormat(useNow(), 'YYYY-MM-DD HH:mm:ss');
       margin-top: -85px;
       margin-bottom: -30px;
       padding: 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ccp-grid-small {
+      flex: 1;
+      margin-top: -85px;
+      margin-bottom: -30px;
+      padding: 18px 3px 12px;
       display: flex;
       flex-direction: column;
     }
