@@ -78,8 +78,8 @@ const styleAttrs = computed(() => {
     };
   }
   return {
-    'max-width': `${props.designWidth * 2}px`,
-    'max-height': `${props.designHeight * 2}px`,
+    'max-width': `${props.designWidth}px`,
+    'max-height': `${props.designHeight}px`,
     'min-width': `${props.designWidth}px`,
     'min-height': `${props.designHeight}px`,
     transform: `scale(${scaleInfo.value.x}, ${scaleInfo.value.y})`,
@@ -103,9 +103,13 @@ const scaleInfo = ref({
   x: 1,
 });
 const updateScale = (width, height) => {
+  // scaleInfo.value = {
+  //   x: width / props.designWidth,
+  //   y: height / props.designHeight,
+  // };
   scaleInfo.value = {
-    x: width / props.designWidth,
-    y: height / props.designHeight,
+    x: 1.624,
+    y: 1.62,
   };
 };
 
