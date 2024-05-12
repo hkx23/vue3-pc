@@ -1234,10 +1234,10 @@ export interface ConferenceTemplateVO {
   conferenceCode?: string;
   /** 会议名称 */
   conferenceName?: string;
-  /** 模板维度转换 */
-  templateDimensionList?: string[];
   /** 有效值转换 */
   isState?: boolean;
+  /** 模板维度转换 */
+  templateDimensionList?: string[];
   /** 模板维度名称转换 */
   templateDimensionNames?: string;
 }
@@ -1547,10 +1547,10 @@ export interface ConferenceVO {
   templateName?: string;
   /** 维度数组转换 */
   templateDimensionNameList?: string[];
-  /** 维度转换 */
-  templateDimensionList?: string[];
   /** 有效值转换 */
   isState?: boolean;
+  /** 维度转换 */
+  templateDimensionList?: string[];
   /** 维度名称转换 */
   templateDimensionNames?: string;
 }
@@ -1749,14 +1749,14 @@ export interface ConferenceOrgVO {
   orgName?: string;
   workCenterCode?: string;
   workCenterName?: string;
+  convertOrgId?: string;
+  /** 转换后的组织编码 */
+  convertOrgName?: string;
+  /** 转换后的组织编码 */
+  convertOrgCode?: string;
   typeName?: string;
   /** 类型 */
   type?: string;
-  /** 转换后的组织编码 */
-  convertOrgCode?: string;
-  /** 转换后的组织编码 */
-  convertOrgName?: string;
-  convertOrgId?: string;
 }
 
 /** 响应数据 */

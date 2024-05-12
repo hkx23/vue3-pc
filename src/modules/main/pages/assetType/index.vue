@@ -208,6 +208,7 @@ const onAddSon = async (row: any) => {
   formVisible.value = true; // dialog开关
   showHideFlag.value = false; // 父级控件开关
   disabledShow.value = false; // 控件开关
+  isAddAndEdit.value = 1;
 };
 // 点击保存
 const onBtn = (context) => {

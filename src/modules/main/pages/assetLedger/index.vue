@@ -57,120 +57,238 @@
     :cancel-btn="null"
     :confirm-btn="null"
     :header="diaLogTitle"
-    width="58%"
-    top="90px"
+    width="70%"
+    top="50px"
     @close="onSecondaryReset"
   >
-    <cmp-container :full="true" style="height: calc(90vh - 140px - 140px)">
+    <cmp-container :full="true">
       <t-tabs v-if="formVisible" v-model="tabValue" @change="tabChange">
         <t-tab-panel label="设备信息" value="0" :destroy-on-hide="true">
           <t-form
             ref="formRef"
+            style="margin-top: 12px"
             :rules="rules"
             :colon="true"
             :data="equipmentData.list"
             label-width="120px"
             @submit="onAnomalyTypeSubmit"
           >
-            <t-form-item label="设备类型" name="assetType">
-              <bcmp-select-business
-                v-model="equipmentData.list.assetTypeId"
-                label=""
-                type="assetType"
-                :clearable="true"
-                :disabled="isDisabled"
-              ></bcmp-select-business>
-            </t-form-item>
-            <t-form-item label="设备品牌" name="assetBrand">
-              <bcmp-select-business
-                v-model="equipmentData.list.assetBrandId"
-                label=""
-                type="assetBrand"
-                :parent="equipmentData.list.assetTypeId"
-                :clearable="true"
-                :disabled="isDisabled"
-              ></bcmp-select-business>
-            </t-form-item>
-            <t-form-item label="设备型号" name="assetModel">
-              <bcmp-select-business
-                v-model="equipmentData.list.assetModelId"
-                label=""
-                type="assetModel"
-                :parent="equipmentData.list.assetBrandId"
-                :clearable="true"
-                :disabled="isDisabled"
-              ></bcmp-select-business>
-            </t-form-item>
-            <t-form-item label="设备编码" name="equipmentCode">
-              <t-input v-model="equipmentData.list.equipmentCode"></t-input>
-            </t-form-item>
-            <t-form-item label="设备名称" name="equipmentName">
-              <t-input v-model="equipmentData.list.equipmentName"></t-input>
-            </t-form-item>
-            <t-form-item label="设备描述" name="equipmentDesc">
-              <t-input v-model="equipmentData.list.equipmentDesc"></t-input>
-            </t-form-item>
-            <t-form-item label="设备存放位置" name="position">
-              <t-input v-model="equipmentData.list.position"></t-input>
-            </t-form-item>
-            <t-form-item label="保管部门" name="departmentOwner">
-              <t-input v-model="equipmentData.list.departmentOwner"></t-input>
-            </t-form-item>
-            <t-form-item label="设备资产编号" name="assetCode">
-              <t-input v-model="equipmentData.list.assetCode"></t-input>
-            </t-form-item>
-            <t-form-item label="管理部门" name="departmentOwner">
-              <t-input v-model="equipmentData.list.departmentOwner" disabled></t-input>
-            </t-form-item>
-            <t-form-item label="设备供应商" name="equipmentSupplier">
-              <t-input v-model="equipmentData.list.equipmentSupplier"></t-input>
-            </t-form-item>
-            <t-form-item label="保管人" name="userOwner">
-              <t-input v-model="equipmentData.list.userOwner"></t-input>
-            </t-form-item>
-            <t-form-item label="维保联系人" name="maintenanceOwner">
-              <t-input v-model="equipmentData.list.maintenanceOwner"></t-input>
-            </t-form-item>
-            <t-form-item label="维保人联系方式" name="maintenanceOwnerContact">
-              <t-input v-model="equipmentData.list.maintenanceOwnerContact"></t-input>
-            </t-form-item>
-            <t-form-item label="生效日期" name="dateEffective" class="width: 100%">
-              <t-date-picker v-model="equipmentData.list.dateEffective" clearable style="width: 300px" />
-            </t-form-item>
-            <t-form-item label="失效日期" name="dateInvalid">
-              <t-date-picker v-model="equipmentData.list.dateInvalid" clearable style="width: 300px" />
-            </t-form-item>
-            <t-form-item label="进场日期" name="datetimeEntry">
-              <t-date-picker v-model="equipmentData.list.datetimeEntry" clearable style="width: 300px" />
-            </t-form-item>
-            <t-form-item label="状态" name="status">
-              <t-select v-model="equipmentData.list.status" :clearable="true">
-                <t-option
-                  v-for="item in equipmentStatusDataList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </t-select>
-            </t-form-item>
-            <t-form-item label="维修处理组" name="repairDeal">
-              <t-input v-model="equipmentData.list.repairDealId"></t-input>
-            </t-form-item>
-            <t-form-item label="维修验收组" name="repairAccept">
-              <t-input v-model="equipmentData.list.repairAcceptId"></t-input>
-            </t-form-item>
-            <t-form-item label="保养处理组" name="maintenanceDeal">
-              <t-input v-model="equipmentData.list.maintenanceDealId"></t-input>
-            </t-form-item>
-            <t-form-item label="保养验收组" name="maintenanceAccept">
-              <t-input v-model="equipmentData.list.maintenanceAcceptId"></t-input>
-            </t-form-item>
-            <t-form-item label="点检处理组" name="inspectDeal">
-              <t-input v-model="equipmentData.list.inspectDealId"></t-input>
-            </t-form-item>
-            <t-form-item label="点检验收组" name="inspectAccept">
-              <t-input v-model="equipmentData.list.inspectAcceptId"></t-input>
-            </t-form-item>
+            <t-row :gutter="[32, 16]">
+              <t-col :span="6">
+                <t-form-item label="设备类型" name="assetType">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.assetTypeId"
+                    label=""
+                    type="assetType"
+                    :clearable="true"
+                    :disabled="isDisabled"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="设备品牌" name="assetBrand">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.assetBrandId"
+                    label=""
+                    type="assetBrand"
+                    :parent="equipmentData.list.assetTypeId"
+                    :clearable="true"
+                    :disabled="isDisabled"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="设备型号" name="assetModel">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.assetModelId"
+                    label=""
+                    type="assetModel"
+                    :parent="equipmentData.list.assetBrandId"
+                    :clearable="true"
+                    :disabled="isDisabled"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="设备编码" name="equipmentCode">
+                  <t-input v-model="equipmentData.list.equipmentCode"></t-input>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="设备名称" name="equipmentName">
+                  <t-input v-model="equipmentData.list.equipmentName"></t-input>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="设备描述" name="equipmentDesc">
+                  <t-input v-model="equipmentData.list.equipmentDesc"></t-input>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="设备存放位置" name="position">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.position"
+                    label=""
+                    :show-title="false"
+                    :name="t('assetLedger.设备存放位置')"
+                    :placeholder="t('common.placeholder.select')"
+                    type="workcenter"
+                    :clearable="true"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="保管部门" name="departmentOwner">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.departmentOwner"
+                    label=""
+                    :show-title="false"
+                    :name="t('assetLedger.保管部门')"
+                    :placeholder="t('common.placeholder.select')"
+                    type="adminOrg"
+                    :clearable="true"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="设备资产编号" name="assetCode">
+                  <t-input v-model="equipmentData.list.assetCode"></t-input>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="设备供应商" name="equipmentSupplier">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.equipmentSupplier"
+                    label=""
+                    :show-title="false"
+                    :placeholder="t('common.placeholder.select')"
+                    type="supplier"
+                    :clearable="true"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="保管人" name="userOwner">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.userOwner"
+                    label=""
+                    :show-title="false"
+                    :placeholder="t('common.placeholder.select')"
+                    type="person"
+                    :clearable="true"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="维保联系人" name="maintenanceOwner">
+                  <t-input v-model="equipmentData.list.maintenanceOwner"></t-input>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="维保人联系方式" name="maintenanceOwnerContact">
+                  <t-input v-model="equipmentData.list.maintenanceOwnerContact"></t-input>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="生效日期" name="dateEffective" class="width: 100%">
+                  <t-date-picker v-model="equipmentData.list.dateEffective" clearable style="width: 300px" />
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="失效日期" name="dateInvalid">
+                  <t-date-picker v-model="equipmentData.list.dateInvalid" clearable style="width: 300px" />
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="进场日期" name="datetimeEntry">
+                  <t-date-picker v-model="equipmentData.list.datetimeEntry" clearable style="width: 300px" />
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="状态" name="status">
+                  <t-select v-model="equipmentData.list.status" :clearable="true">
+                    <t-option
+                      v-for="item in equipmentStatusDataList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </t-select>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="维修处理组" name="repairDeal">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.repairDealId"
+                    label=""
+                    :show-title="false"
+                    :placeholder="t('common.placeholder.select')"
+                    type="supportGroup"
+                    :clearable="true"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="维修验收组" name="repairAccept">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.repairAcceptId"
+                    label=""
+                    :show-title="false"
+                    :placeholder="t('common.placeholder.select')"
+                    type="supportGroup"
+                    :clearable="true"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="保养处理组" name="maintenanceDeal">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.maintenanceDealId"
+                    label=""
+                    :show-title="false"
+                    :placeholder="t('common.placeholder.select')"
+                    type="supportGroup"
+                    :clearable="true"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="保养验收组" name="maintenanceAccept">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.maintenanceAcceptId"
+                    label=""
+                    :show-title="false"
+                    :placeholder="t('common.placeholder.select')"
+                    type="supportGroup"
+                    :clearable="true"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="点检处理组" name="inspectDeal">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.inspectDealId"
+                    label=""
+                    :show-title="false"
+                    :placeholder="t('common.placeholder.select')"
+                    type="supportGroup"
+                    :clearable="true"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+              <t-col :span="6">
+                <t-form-item label="点检验收组" name="inspectAccept">
+                  <bcmp-select-business
+                    v-model="equipmentData.list.inspectAcceptId"
+                    label=""
+                    :show-title="false"
+                    :placeholder="t('common.placeholder.select')"
+                    type="supportGroup"
+                    :clearable="true"
+                  ></bcmp-select-business>
+                </t-form-item>
+              </t-col>
+            </t-row>
           </t-form>
         </t-tab-panel>
         <t-tab-panel label="技术文件" value="1" :destroy-on-hide="true">
@@ -220,8 +338,6 @@ import { computed, onMounted, reactive, Ref, ref } from 'vue';
 
 import { api, EquipmentFile } from '@/api/main';
 import { AddFileType } from '@/components/bcmp-upload-content/constants';
-import CmpQuery from '@/components/cmp-query/index.vue';
-import CmpTable from '@/components/cmp-table/index.vue';
 import { usePage } from '@/hooks/modules/page';
 
 import { useLang } from './lang';
@@ -332,13 +448,13 @@ const columns: PrimaryTableCol<TableRowData>[] = [
     width: '100',
   },
   {
-    colKey: 'position',
+    colKey: 'positionName',
     title: '存放位置',
     align: 'center',
     width: '100',
   },
   {
-    colKey: 'departmentOwner',
+    colKey: 'departmentOwnerName',
     title: '保管部门',
     align: 'center',
     width: '100',
@@ -369,7 +485,7 @@ const columns: PrimaryTableCol<TableRowData>[] = [
   },
   {
     colKey: 'state',
-    title: '管理状态',
+    title: '有效',
     align: 'center',
     width: '100',
     cell: 'stateSwitch',
@@ -392,6 +508,11 @@ const rules: FormRules = {
   equipmentCode: [{ required: true, message: '设备编码不能为空', trigger: 'blur' }],
   equipmentName: [{ required: true, message: '设备名称不能为空', trigger: 'blur' }],
   equipmentDesc: [{ required: true, message: '设备描述不能为空', trigger: 'blur' }],
+  position: [{ required: true, message: '设备存放位置不能为空', trigger: 'change' }],
+  departmentOwner: [{ required: true, message: '保管部门不能为空', trigger: 'change' }],
+  equipmentSupplier: [{ required: true, message: '设备供应商不能为空', trigger: 'change' }],
+  dateEffective: [{ required: true, message: '生效日期不能为空', trigger: 'change' }],
+  dateInvalid: [{ required: true, message: '失效日期不能为空', trigger: 'change' }],
   status: [{ required: true, message: '状态不能为空', trigger: 'change' }],
 };
 // 表格列表数据

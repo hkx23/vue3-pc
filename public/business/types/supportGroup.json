@@ -1,0 +1,37 @@
+{
+  "title": "处理组",
+  "placeholder": "请选择处理组",
+  "url": "/api/main/supportGroup/items",
+  "httptype": "POST",
+  "columns": [
+    {
+      "title": "处理组编码",
+      "key": "supportGroupCode",
+      "align": "left"
+    },
+    {
+      "title": "处理组名称",
+      "key": "supportGroupName",
+      "align": "left"
+    },
+    {
+      "title": "处理组类型",
+      "key": "supportGroupType",
+      "align": "left"
+    }
+  ],
+  "rowKey": "id",
+  "keywords": {
+    "value": "id",
+    "label": "supportGroupName"
+  },
+  "listSetting": {
+    "image": "/images/assets-factory.svg",
+    "icon": "building-1",
+    "nameField": "supportGroupName",
+    "codeField": "supportGroupCode",
+    "descField": "supportGroupName"
+  },
+  "name": "处理组",
+  "componentType": "list"
+}
